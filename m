@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-175984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F173E8C2848
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64A648C284D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72069B25683
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:55:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215A3287CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE29172BAA;
-	Fri, 10 May 2024 15:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C84172777;
+	Fri, 10 May 2024 15:55:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a3EJexqL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="j2TqeLIG"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD32912C49A;
-	Fri, 10 May 2024 15:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA8212C49A;
+	Fri, 10 May 2024 15:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356527; cv=none; b=E9XzjwaHQPpL2IYy2a/vL4GtVkojul3kyFOxSw/nbjJTeNHD9MxKf96jpzWlXI9Hzstg4vXTj+syJck0avliYUqvyyv00gJhU2pxPMgkMAlyBjH2k1TjHzCivOBvJTmvDYnvBm4ybwPBlXHwoo6jn7dcC404scLXaHL+RWemn5s=
+	t=1715356552; cv=none; b=MdUrzuUrOHsuqosYU4xyZmYRA+UfpwZ6Sv/7CyR+z8wG/pkak7NJeO9tFCgimv64O4hW/inW6vBhJgHpTAcmdgA+XVotbeBy0cpumGjK63XAB11O35lnuXmZ1rwcGDc3F6fnHtBYRRQprRWxJSdd7I8+6rcgsWHyDsRDnqxxDhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356527; c=relaxed/simple;
-	bh=j+PEZx8467CAXDutqvKyg1G+wTPrUXhPSpI3yRUttds=;
+	s=arc-20240116; t=1715356552; c=relaxed/simple;
+	bh=IBLZr/tGroMZp0lVjQIUbjuvOt/Nd1d3apRv1DjPoXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NI4+5FUgG5psGjQ4QWdi1KbMlB9/tLYBbBqlMASmjA8JvqUqq6EuUQkQePRqgNODwa3pth058ecyrNzV8w6raDAp/8K4kIGgarv+K+//x3boItegJy1mTP1r6lcJtLzA+TzFAYFWoocbb+hbrr36FAEmSSD+oIK0/yYUUpF5XYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a3EJexqL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715356526; x=1746892526;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j+PEZx8467CAXDutqvKyg1G+wTPrUXhPSpI3yRUttds=;
-  b=a3EJexqLq9CD85OUp8dGYNvQUSFs7yaVCTv2JhFAhWRTcYLYj6PDSkh5
-   r9HRGGGLEzUOG3ytgk0aleoI05KBlqk7KJnTWz1O6Y9Wsp3LsB8wvCO0l
-   zQFBwp7qgHewerXiBASSAraBKwMHzRRFh1v/xf+evOwuLFbzZXlguZMVY
-   62O6we5WqvCq9ndEgzAsXosCyCHYWXlg2hAQXYt+EWmmT7+qeW+DqZzFt
-   O+t2MCUzhGrqXh/nbZZl/r7bSJTXINET+PLHU36yuAksOXQTH0kn97WGa
-   C73fZkk9ttaKW52Ls//h2pPFgolHcuDyVDt9Brvxr3rsShSiOd3gCYUHv
-   w==;
-X-CSE-ConnectionGUID: Ay0D0ftWT4Stikvob9tD9w==
-X-CSE-MsgGUID: O0V4t7U2TheHwv2J9t1w0w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="15156304"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="15156304"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:55:25 -0700
-X-CSE-ConnectionGUID: whxk1HeLTWmDvmtnEXGwlQ==
-X-CSE-MsgGUID: eJFq66uXTs2bxZHOT4FK7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="52869228"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:55:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5Sae-000000069Ys-0KtG;
-	Fri, 10 May 2024 18:55:20 +0300
-Date: Fri, 10 May 2024 18:55:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bingbu Cao <bingbu.cao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
-Message-ID: <Zj5DZ4ORVfeCZSsV@smile.fi.intel.com>
-References: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5MBER0OKGQyfqx3QZ1DdhVvjlR0SVvPlYTA05yw3eIcUM6RfiQ+7OBcevy+d1IcD7gHOK3EXSVbH6wtZduwW/9IAQ04DHOZvMwaai+on8Kh4DogWQyMikDmTMxL74gPndfjCjAiv+cgSJyFQdAYyaSwx5VHdpPbiuBJFy8SqHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=j2TqeLIG; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dy8lSBZHGbHQucNhRUnmeh0rwb1O8iiwSESw+dcfU8A=; b=j2TqeLIGRT+ss1rjOoJ2nVsQgo
+	8wXrn3qFtsaVTL35D/EoE1B/D3oVEMpSXUgYDR42dPQEMAwNi6EmP+RKs6DNvbpiNyoBv+utI+Rde
+	4XDlVZFI659lKYxs9nW+Wmwk18TRd0FxdzkO0Zm8HZfFzzsWyBBvvj8+CIhz2wfplqG6Yaoe57IkF
+	ef/yIA1z0C6ZtKKI8/JpZyttM7s2DcorU6JCY0AmWJvmmXFno9Qv3dMpYwOZmbRN5VekXeC83terg
+	YrAjAuovYMSRQ6cyZK4bIz8trOfi3914NvnzuXM8q6W2AS+yB0WBgdyY13YR9eIIQo1AWbXIMVkRX
+	jgVRTthQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42354)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s5Sar-0007b1-0E;
+	Fri, 10 May 2024 16:55:33 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s5Sar-0003R6-5s; Fri, 10 May 2024 16:55:33 +0100
+Date: Fri, 10 May 2024 16:55:33 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH net-next v6 3/7] net: stmmac: Make stmmac_xpcs_setup()
+ generic to all PCS devices
+Message-ID: <Zj5DddF4nl/B4zZM@shell.armlinux.org.uk>
+References: <20240510-rzn1-gmac1-v6-0-b63942be334c@bootlin.com>
+ <20240510-rzn1-gmac1-v6-3-b63942be334c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,23 +85,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240510-rzn1-gmac1-v6-3-b63942be334c@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, May 10, 2024 at 06:43:31PM +0300, Dan Carpenter wrote:
-> Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
+On Fri, May 10, 2024 at 09:38:10AM +0200, Romain Gantois wrote:
+> From: Serge Semin <fancer.lancer@gmail.com>
+> 
+> A pcs_init() callback will be introduced to stmmac in a future patch. This
+> new function will be called during the hardware initialization phase.
+> Instead of separately initializing XPCS and PCS components, let's group all
+> PCS-related hardware initialization logic in the current
+> stmmac_xpcs_setup() function.
+> 
+> Rename stmmac_xpcs_setup() to stmmac_pcs_setup() and move the conditional
+> call to stmmac_xpcs_setup() inside the function itself.
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
 
-LGTM, but I leave the main Q "Is it really the error case?" to the maintainers.
-I would imagine the use case where either from the following may happen:
-1) the sensors are all new and not listed as supported;
-2) there no sensors connected for real.
+stmmac_pcs_init() looks weird in this patch, but the reason is set out
+here. So:
 
-In both cases I don't see this as a critical error that we can't enumerate
-the bridge itself.
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+Thanks!
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
