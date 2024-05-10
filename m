@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-175929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D959C8C275F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 344268C2773
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:11:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 400A0B23FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E33F1284898
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D50171645;
-	Fri, 10 May 2024 15:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE71171E54;
+	Fri, 10 May 2024 15:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HJE88Yu+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BpprehXU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0CC12C461;
-	Fri, 10 May 2024 15:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B765F17166F;
+	Fri, 10 May 2024 15:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715353717; cv=none; b=iFzsUCZXCmvVgNuMzjwIyE/ba2a31hEO1phP/ugH0axPQn1UI2aEeCyUIda4O9Gf9nHC7lSNWwEgsYc6x5EgNg5DIUltr4zYnpW673uA89Lk2rhbMLclKbDENUpIfEW8fChr3eurCg93ZgY7MZ66fGkdlQGdSvixP46P1t/MlhM=
+	t=1715353850; cv=none; b=WaOYhTljJvvHRDG/2qet7FBGCymHr3Z9cojM8h2AOnuY3Q7NqyXEvrN62FpawsT97WrjNw9GiypupBT5QKbvHdW2P91umunOHwCk2GpPDOVJt58siancbDl7hdj6kjGmj1ekpMVaEv8K9/ThpuVEBeEng99vNxqirTT9dMdiUrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715353717; c=relaxed/simple;
-	bh=/lJNxijefJ/utW/c1qkfBk8egXnkRoHiD+hGQWtMKi0=;
+	s=arc-20240116; t=1715353850; c=relaxed/simple;
+	bh=1j7eg+9n1ylc7PMU1qKoy953XxcAw3FLb1qDay6E/FI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FXZsi1XTBI07jYM4fdPGWwH5Pbj45mCzQkZBkHBWf8efgaiTgUuQlOs58mwEMZcPdcgTMqmJOZsotIG0UYq2NB/YgmgJSieGUHFDGqU1aJFMJDrVyb4/ouBm6BiEunT8GGtNDeuCF3qyZv2rSeoPmeuTYeR//lH0e+JmTpxNUbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HJE88Yu+; arc=none smtp.client-ip=198.175.65.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8GIj7D3WiAq07EZAa6S2l/dCkr/hmatWQiHtmth3oz1Y2JPXT35tSRgJKkMKfFKvHDrD9Z1Rp1srY+n566R5d+do0do8LUdU7bwujXwUdmwUow9hm9HqBmSXi239exsBy6GZgtqTT1YFlvw86v4EIHoKhhuk5kZo8bbwPM1uWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BpprehXU; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715353715; x=1746889715;
+  t=1715353848; x=1746889848;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=/lJNxijefJ/utW/c1qkfBk8egXnkRoHiD+hGQWtMKi0=;
-  b=HJE88Yu+GQcgtbJSxt6icceHGJhHO3rrKCGdximUSeUBcqPi0yGJMHca
-   JEHgtJkZUyL9mKSQinQsE7pPeRdzakEMCpTit0769CeDJYJuJt9LPYFjS
-   PrJuMr1jkouPz8YbEiKWTVKLU1XnicXNe/Tz2IfzS7VffJBWZ5ltX6lR5
-   UEXotnPZm8XED2TTbRi3rBH9d3pvejOIAOZZ5g2VxFdAzLw27c/5aA+G9
-   foQW+IClFS0+Pf5vPCy5q7PA3IjGWr+6NZCmXkMCh7JowkZBFUR14iGuB
-   TRfb8ATMpNLxTysDbfFaEQChCWWJ5JSrIAjQyIiy5/pVY7Ed5wa39iHq0
-   w==;
-X-CSE-ConnectionGUID: rlJH3kONQb2EhhVCzlBmxA==
-X-CSE-MsgGUID: bFlHVRgaRn6H/gU8OmTyEQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11465773"
+  bh=1j7eg+9n1ylc7PMU1qKoy953XxcAw3FLb1qDay6E/FI=;
+  b=BpprehXUhdtp8LWG3bdIzCRxhOUpbTOTYLmJivb1nK14IVm1o33jOWrk
+   fU26FbyZEv+HRhvADwQxjoGDyNW82R4CME2mlRUvw44Z44G9cS0fqPqvZ
+   MytA1HjaODFN121a4kcRjTrBkp1p/Ux52mcd8BEoW1Z8LLfaTvncej33+
+   4ysy8ozR2SnKKfKFWuTVb8utj3dJOC9k3GTAeqiyYizq0bUEzhyCqvPa7
+   0sabDT4M5NQ3YMj738qfcKleWe3RuXUoQfi1aXd4qcPOpxKJR5nmrkrN3
+   GGYR7j2LzgkCUmJbjyWIdMPX7uPKtZrxGNIjruDBlKuD5MwEE/CURp12W
+   g==;
+X-CSE-ConnectionGUID: XDZxHLDZSaeyCL4Z7XIilw==
+X-CSE-MsgGUID: vHZSQCaFRJKCbJq4aJGD6A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11468751"
 X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="11465773"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:08:35 -0700
-X-CSE-ConnectionGUID: NThJguWNTcG2TAIhx/OkQw==
-X-CSE-MsgGUID: gkPfs8l1RO+MJ8WG84blCQ==
+   d="scan'208";a="11468751"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:10:46 -0700
+X-CSE-ConnectionGUID: NAF67pl8Qe+TSKl8VaEpXQ==
+X-CSE-MsgGUID: SGb+tI1vQvi8k665RFaHhQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="34517822"
+   d="scan'208";a="29592182"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:08:34 -0700
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:10:41 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.97)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5RrL-000000068gN-09s0;
-	Fri, 10 May 2024 18:08:31 +0300
-Date: Fri, 10 May 2024 18:08:30 +0300
+	id 1s5RtN-000000068i4-1K3v;
+	Fri, 10 May 2024 18:10:37 +0300
+Date: Fri, 10 May 2024 18:10:37 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the gpio-brgl tree with the
- gpio-brgl-fixes tree
-Message-ID: <Zj44bgNE5Fav2Qfv@smile.fi.intel.com>
-References: <20240510153212.246fbf31@canb.auug.org.au>
- <CACMJSev6EDeLdQ0e7A7f6AMhh08FznA67x5ONG+vSseC5QLt6A@mail.gmail.com>
- <20240510170827.2b655636@canb.auug.org.au>
- <20240510171049.2e0e3c56@canb.auug.org.au>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	benjamin.gaignard@collabora.com, sebastian.fricke@collabora.com,
+	dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
+	nicolas@ndufresne.ca, p.zabel@pengutronix.de, airlied@gmail.com,
+	daniel@ffwll.ch, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, adobriyan@gmail.com,
+	jani.nikula@intel.com
+Subject: Re: [PATCH v7 7/8] media: imagination: Round to closest multiple for
+ cropping region
+Message-ID: <Zj447ePSnccbj76v@smile.fi.intel.com>
+References: <20240509184001.4064820-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,23 +87,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240510171049.2e0e3c56@canb.auug.org.au>
+In-Reply-To: <20240509184001.4064820-1-devarsht@ti.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 10, 2024 at 05:10:49PM +1000, Stephen Rothwell wrote:
-> On Fri, 10 May 2024 17:08:27 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > On Fri, 10 May 2024 08:33:37 +0200 Bartosz Golaszewski <bartosz.golaszewski@linaro.org> wrote:
-> > >
-> > > Thanks! I will send the fixes upstream today and then pull v6.9 into
-> > > my tree before the merge window PR to fix this conflict.  
-> > 
-> > Or you could just merge your for-current branch into your for-next
-> > branch and avoid possible issues with all the rest of v6.9 ...
+On Fri, May 10, 2024 at 12:10:01AM +0530, Devarsh Thakkar wrote:
+> If neither of the flags to round down (V4L2_SEL_FLAG_LE) or round up
+> (V4L2_SEL_FLAG_GE) are specified by the user, then round to nearest
+> multiple of requested value while updating the crop rectangle coordinates.
 > 
-> Or, since it is a pretty simple conflict, just do not merge and just
-> mention the conflict to Linus in your merge window PR.
+> Use the rounding macro which gives preference to rounding down in case two
+> nearest values (high and low) are possible to raise the probability of
+> cropping rectangle falling inside the bound region.
 
-I also would go the latest suggestion.
+This is arguable. How do we know that the bigger range is supported?
+The safest side is to go smaller than bigger.
 
 -- 
 With Best Regards,
