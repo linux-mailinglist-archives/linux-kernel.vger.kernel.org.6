@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-175846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C538C261C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837E88C261D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20E2F1F21C91
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4B731C21584
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4368912EBEA;
-	Fri, 10 May 2024 13:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C2212C544;
+	Fri, 10 May 2024 13:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5C1O290"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfhZINet"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDDD12CD99;
-	Fri, 10 May 2024 13:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CE012C46B;
+	Fri, 10 May 2024 13:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715349190; cv=none; b=keGdLXgsPKEvbhwAusZ4RXInydE/l21fb8DgRPv9sQ/ZBL9fWDE8YXlAwsDQcYvDnNwYjNU7u1ASKGOP+YZ+mmMRGmA/A0mBC5BKlVbf4tJ8dw4qN4ZoqPQmcnLjAbCgIMjSr28ACxkTJ4qaMoQSJ+mqXgGNXPyxjxxxUUwnaKc=
+	t=1715349250; cv=none; b=n6RQyPlFuTNgnO5R2dDZbP4EfOCfxm64EhRm9o4Uzuhd6/eczKCYRQP17ayRd/lJOgNKi+PsFlPO/r2f4qoAJrEiNEj4oJQk1yVHcw98EdE+wNxaDSG5KEblXXEE3kI/we/9o6bJIhHQUc06lCbyNegoQXpEKugjQrsrWGE8igU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715349190; c=relaxed/simple;
-	bh=98I2lvAbhwMpFBygf6Bolb8VFy2UDJUsMGNQmAfaKLY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=pcsZL0lPdVJtBufkvpcy06QdKnT5Jzvs6KYoPV6dLSEeoBrNEildkx7UleFE/CvRPxhCpghe1AMVli/qKuQzc20+Dlk8K2/fyqSbcb+fCdtd6ar0S4i1djumSlB+zRbygGkRoAxteGq4nz+XiIUzhkuL9yG/Dxwm1hReACHn6fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5C1O290; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D78C32786;
-	Fri, 10 May 2024 13:53:09 +0000 (UTC)
+	s=arc-20240116; t=1715349250; c=relaxed/simple;
+	bh=JykUQXVZnA9s05U9WJm3I8AGGS491GmkM8kocE4qnpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VkWIVJggcY5ymRYZanZGPn+L6aheoDPqTPS7J/MQuVZYrXVszQMUUxszTNiPGnPTjb4pdGes/bliF9W4iZCTO2UyC1mNvjFaFjhGiEXBti7rb8SF/waB7ABoejzNPCxy5cUtO+S3aRXSfLgCa+sxMWVyL9XW0CfV0zisKgolMM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfhZINet; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10557C2BBFC;
+	Fri, 10 May 2024 13:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715349190;
-	bh=98I2lvAbhwMpFBygf6Bolb8VFy2UDJUsMGNQmAfaKLY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=J5C1O290PAZGnQFciGZvk+rneQkT466GtnjPvAI3pzVW3qp5loHy5p9s+gvOvbeSX
-	 3TjKGFRDKoUHtpv0WAMu5PCf/rVmuMFXJtoOi1LJAxINKTDiF0Dsftjlj3FsAWKNxu
-	 IYBX9PXwTKBeESTOlaSYgCVZmoBGTNQs8xnsM/6xAY+Vtul3Ydcpm6jtaY/J+TFIKP
-	 Bc95ee61kYLbd4Gwb7AYEi96z8rzDv8x814aYoT8L30s4G0YtAC7PLgmOAJQWWsMmY
-	 gQxxFah7BSYhuqN4LrFU0uXDtuJHIIQW3PdFImKZ5bknlKMWigVAoLUBZfBgGAJh+y
-	 XOdC2Af2QEF2Q==
-Date: Fri, 10 May 2024 08:53:08 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1715349250;
+	bh=JykUQXVZnA9s05U9WJm3I8AGGS491GmkM8kocE4qnpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TfhZINetWAppiYJSpUU15y4ofywLmWA44autqYr1VIuwdzpv6JdWGvkHR1v5Y5vVa
+	 KtSU9ohVTJWtu4sKjk8wxgv6QJzgZICVXw1o08Ft39frocdEavTw1OaJCPiazvjYkQ
+	 zPoXXMvZkfjF50z9Z1c3ozMBKe4wl80zB/rNOhnRp8vyokr7HtaxZfQBHuO7Rb3oOM
+	 HMTEbTJFmVFDuTd9j++6RZQkw/39aPQBnYMxWXqhfaR8VomSOUQkOi6j6tOFVyj8uV
+	 fSQN0GqnIoYYpOQpTTZc8QkpVwdRyPCE781v4wSUWCL4w5onowxstu2qht+WHdTy+m
+	 zv3r23SrWeNXg==
+Date: Fri, 10 May 2024 10:54:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Ignore deleted cgroups
+Message-ID: <Zj4m_v5uEjmSLMb0@x1>
+References: <20240509182235.2319599-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Srinivasa Rao Mandadapu <quic_srivasam@quicinc.com>, 
- devicetree@vger.kernel.org, Mohammad Rafi Shaik <quic_mohs@quicinc.com>, 
- linux-kernel@vger.kernel.org, cros-qcom-dts-watchers@chromium.org, 
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240510-sc7280-apr-v1-0-e9eabda05f85@fairphone.com>
-References: <20240510-sc7280-apr-v1-0-e9eabda05f85@fairphone.com>
-Message-Id: <171534910860.4114812.2084039403374857519.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Add basic APR sound support for SC7280 SoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509182235.2319599-1-namhyung@kernel.org>
 
+On Thu, May 09, 2024 at 11:22:35AM -0700, Namhyung Kim wrote:
+> On a large system, cgroups can be created and deleted often.  That means
+> there's a race between perf tools and cgroups when it gets the cgroup
+> name and opens the cgroup.  I got a report that perf stat with many
+> cgroups failed a quite often due to the missing cgroups on such a large
+> machine.
+> 
+> I think we can ignore such cgroups when expanding events and use id 0 if
+> it fails to read the cgroup id.  IIUC 0 is not a vaild cgroup id so it
+> won't update event counts for the failed cgroups.
 
-On Fri, 10 May 2024 14:27:07 +0200, Luca Weiss wrote:
-> Validated on Fairphone 5 (QCM6490) smartphone by using DisplayPort over
-> USB-C audio, connected to a TV, with a basic UCM to enable
-> 'DISPLAY_PORT_RX Audio Mixer MultiMedia1':
-> https://gitlab.com/postmarketOS/pmaports/-/tree/master/device/testing/device-fairphone-fp5/ucm
-> 
-> Unfortunately all the device-specific things can't be enabled yet
-> upstream as detailed in the second patch, but the SoC parts should be
-> good to go.
-> 
-> As an extra note, I'm not sure how this will behave on SC7280 devices
-> that seem to use GPR (q6apm + q6prm) / "audioreach" as added in this
-> series from mid 2023 which was never applied:
-> https://lore.kernel.org/linux-arm-msm/20230616103534.4031331-1-quic_mohs@quicinc.com/
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Thanks, applied to perf-tools-next,
+
+- Arnaldo
+ 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 > ---
-> Luca Weiss (2):
->       arm64: dts: qcom: sc7280: Add APR nodes for sound
->       [DNM] arm64: dts: qcom: qcm6490-fairphone-fp5: Add DisplayPort sound support
+>  tools/perf/util/bpf_counter_cgroup.c | 5 ++---
+>  tools/perf/util/cgroup.c             | 4 +++-
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 > 
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 36 +++++++++++
->  arch/arm64/boot/dts/qcom/sc7280.dtsi               | 73 ++++++++++++++++++++++
->  2 files changed, 109 insertions(+)
-> ---
-> base-commit: 940d65ef852b4a58c9115eb82b07844c999b8356
-> change-id: 20240510-sc7280-apr-c6d10ac2c331
-> 
-> Best regards,
-> --
-> Luca Weiss <luca.weiss@fairphone.com>
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/qcm6490-fairphone-fp5.dtb' for 20240510-sc7280-apr-v1-0-e9eabda05f85@fairphone.com:
-
-arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dtb: /sound: failed to match any schema with compatible: ['fairphone,fp5-sndcard']
-
-
-
-
-
+> diff --git a/tools/perf/util/bpf_counter_cgroup.c b/tools/perf/util/bpf_counter_cgroup.c
+> index 1c82377ed78b..ea29c372f339 100644
+> --- a/tools/perf/util/bpf_counter_cgroup.c
+> +++ b/tools/perf/util/bpf_counter_cgroup.c
+> @@ -136,9 +136,8 @@ static int bperf_load_program(struct evlist *evlist)
+>  		cgrp = evsel->cgrp;
+>  
+>  		if (read_cgroup_id(cgrp) < 0) {
+> -			pr_err("Failed to get cgroup id\n");
+> -			err = -1;
+> -			goto out;
+> +			pr_debug("Failed to get cgroup id for %s\n", cgrp->name);
+> +			cgrp->id = 0;
+>  		}
+>  
+>  		map_fd = bpf_map__fd(skel->maps.cgrp_idx);
+> diff --git a/tools/perf/util/cgroup.c b/tools/perf/util/cgroup.c
+> index fcb509058499..0f759dd96db7 100644
+> --- a/tools/perf/util/cgroup.c
+> +++ b/tools/perf/util/cgroup.c
+> @@ -465,9 +465,11 @@ int evlist__expand_cgroup(struct evlist *evlist, const char *str,
+>  		name = cn->name + prefix_len;
+>  		if (name[0] == '/' && name[1])
+>  			name++;
+> +
+> +		/* the cgroup can go away in the meantime */
+>  		cgrp = cgroup__new(name, open_cgroup);
+>  		if (cgrp == NULL)
+> -			goto out_err;
+> +			continue;
+>  
+>  		leader = NULL;
+>  		evlist__for_each_entry(orig_list, pos) {
+> -- 
+> 2.45.0.118.g7fe29c98d7-goog
 
