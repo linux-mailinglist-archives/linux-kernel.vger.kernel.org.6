@@ -1,66 +1,47 @@
-Return-Path: <linux-kernel+bounces-175471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5628C2021
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:57:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D6638C2026
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C27FB2125A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:57:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41643B213AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3A215F3FA;
-	Fri, 10 May 2024 08:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sggz6lFb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D470C1A2C0F;
+	Fri, 10 May 2024 09:01:31 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B9F1A2C0F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92D077119;
+	Fri, 10 May 2024 09:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715331464; cv=none; b=uK9FjiAtOM+DcbkRsVbfM9IJZBvkPM+6BTxPNIK+fW9caSq2yUkAdHr2mNDZzhnTOuaBfhePnYKam0+8cLsiv3Tt+DdRUUpWHy1+FHUsGNIxjolGNzdbtpeCIT44YwOCQn0mplisxom0Nsi9yyEHWpWzDjHhnLXtsyARxCjbc3E=
+	t=1715331691; cv=none; b=HQbeFJ8hnaqFTigVzv2kyBqoQDl6TQ/tMSPay4oEs4JwbTfFQ58DfbzAG4FX0gJXnQWjN4dgD/A7fkuRpsnqpFg+d4CWPWHHpYRxm6dn8+RExw5+0+YJRpG777ONQ8byeSeg/k+9zFTYML1TqLxtDPFiR48KSJ57zNGQRpSThBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715331464; c=relaxed/simple;
-	bh=i7lzNbNU766SPvXgvLbc9nKxUz6ZhlRWGGhNlC8Djwo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YtJy/SiHdnX7hvtZogU3gWV9LEVqL7Cag9cEMlQbngylLjaK3Gi/IPM9lws3JQRe6YWNB1bq/YR7aohpcr58EBV3mEIdzORnRDIdpHsgEOPSdw8H5H/pCHKaDI1s2G/PIuUDMvziXqilcTZl1i4JypwhEM0YpDq8mYcnRvqyyOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sggz6lFb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715331461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=67Tjslp/ob1JH0/G6tnxQC8C57IHxzX8yRCE85hX0kc=;
-	b=Sggz6lFbMy8PyEGNCN8Acy8VDebJ6y0znIFJNu5jufJc9zxaQruisnviDB1BE7+kCPTECA
-	sMi21bcmbiUQaZJ+T8qpbT9FwNd5t1K0uuF8dGNwBd014jBmqjvuRiv5RAaK5sOnCM4Vfl
-	lNkrH/1CTT7QCtLO1kh7evOoR6bkG6E=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-FUWC7ru5OjOluU0xYKoIlA-1; Fri, 10 May 2024 04:57:35 -0400
-X-MC-Unique: FUWC7ru5OjOluU0xYKoIlA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C75A9800CA5;
-	Fri, 10 May 2024 08:57:34 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.109])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5FBFE5751D3;
-	Fri, 10 May 2024 08:57:33 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: mcgrof@kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: lucas.demarchi@intel.com,
-	Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Subject: [PATCH v3] module: create weak dependecies
-Date: Fri, 10 May 2024 10:57:22 +0200
-Message-ID: <20240510085726.327831-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1715331691; c=relaxed/simple;
+	bh=MGQgGQ0Iu5HQ3Uu82ZP8L0jLXlDORQB5TOSq/IIUP34=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JlpXj0F0Pbo+J3DQ8pItQvRPK4NuyoHpcWNrDIV285ISc3ODIR+pkgWHn8QIow8yP2ELBtPL1Hq2FwBcyZq9jqGygS8hiVJgofUq01FHMgKAX3z9QZKYf2kcn5kRiTFlp98ARi7Jy9ePcfmdxDrTi7VMZG0wmHs+5ZovVHKvgIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABXX+dg4j1mzzgOCg--.44565S2;
+	Fri, 10 May 2024 17:01:20 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: vigneshr@ti.com,
+	jpanis@baylibre.com,
+	wbg@kernel.org
+Cc: linux-iio@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] counter: ti-ecap-capture: Handle error for clk_enable
+Date: Fri, 10 May 2024 17:00:59 +0800
+Message-Id: <20240510090059.2126666-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,68 +49,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+X-CM-TRANSID:zQCowABXX+dg4j1mzzgOCg--.44565S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xr47tF1xGF13Xr1Utw1UZFb_yoWfXwbE9F
+	Wq9w4xZF45X3Wvkr12qwn8Zr98Wrn2qryxtw4vqws7JayUt3sxXr4Ivw1DC3yrZ3y7CFn0
+	yrnYyryxZr13CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb2AFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8uwCF
+	04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r
+	18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vI
+	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUSsjbUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-It has been seen that for some network mac drivers (i.e. lan78xx) the
-related module for the phy is loaded dynamically depending on the current
-hardware. In this case, the associated phy is read using mdio bus and then
-the associated phy module is loaded during runtime (kernel function
-phy_request_driver_module). However, no software dependency is defined, so
-the user tools will no be able to get this dependency. For example, if
-dracut is used and the hardware is present, lan78xx will be included but no
-phy module will be added, and in the next restart the device will not work
-from boot because no related phy will be found during initramfs stage.
+As the potential failure of the clk_enable(), it should be better to
+check it and return error if fails.
 
-In order to solve this, we could define a normal 'pre' software dependency
-in lan78xx module with all the possible phy modules (there may be some),
-but proceeding in that way, all the possible phy modules would be loaded
-while only one is necessary.
-
-The idea is to create a new type of dependency, that we are going to call
-'weak' to be used only by the user tools that need to detect this situation.
-In that way, for example, dracut could check the 'weak' dependency of the
-modules involved in order to install these dependencies in initramfs too.
-That is, for the commented lan78xx module, defining the 'weak' dependency
-with the possible phy modules list, only the necessary phy would be loaded
-on demand keeping the same behavior, but all the possible phy modules would
-be available from initramfs.
-
-The 'weak' dependency support has been included in kmod:
-https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
-But, take into account that this can only be used if depmod is new enough.
-If it isn't, depmod will have the same behavior as always (keeping backward
-compatibility) and the information for the 'weak' dependency will not be
-provided.
-
-Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 ---
-V2 -> V3:
-- Include note about backward compatibility.
-- Balance the /* and */.
-V1 -> V2:
-- Include reference to 'weak' dependency support in kmod.
+ drivers/counter/ti-ecap-capture.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
- include/linux/module.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 1153b0d99a80..2a056017df5b 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -173,6 +173,12 @@ extern void cleanup_module(void);
-  */
- #define MODULE_SOFTDEP(_softdep) MODULE_INFO(softdep, _softdep)
+diff --git a/drivers/counter/ti-ecap-capture.c b/drivers/counter/ti-ecap-capture.c
+index 675447315caf..30a269fa5da0 100644
+--- a/drivers/counter/ti-ecap-capture.c
++++ b/drivers/counter/ti-ecap-capture.c
+@@ -574,8 +574,11 @@ static int ecap_cnt_resume(struct device *dev)
+ {
+ 	struct counter_device *counter_dev = dev_get_drvdata(dev);
+ 	struct ecap_cnt_dev *ecap_dev = counter_priv(counter_dev);
++	int ret;
  
-+/*
-+ * Weak module dependencies. See man modprobe.d for details.
-+ * Example: MODULE_WEAKDEP("module-foo")
-+ */
-+#define MODULE_WEAKDEP(_weakdep) MODULE_INFO(weakdep, _weakdep)
-+
- /*
-  * MODULE_FILE is used for generating modules.builtin
-  * So, make it no-op when this is being built as a module
+-	clk_enable(ecap_dev->clk);
++	ret = clk_enable(ecap_dev->clk);
++	if (ret)
++		return ret;
+ 
+ 	ecap_cnt_capture_set_evmode(counter_dev, ecap_dev->pm_ctx.ev_mode);
+ 
 -- 
-2.44.0
+2.25.1
 
 
