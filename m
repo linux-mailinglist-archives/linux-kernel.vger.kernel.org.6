@@ -1,298 +1,143 @@
-Return-Path: <linux-kernel+bounces-175866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65748C2669
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:09:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76748C266D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288C2285909
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:09:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5825E1F2429A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6822812D1E8;
-	Fri, 10 May 2024 14:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44DC812FB39;
+	Fri, 10 May 2024 14:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MASFm11c"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ee5+blIk"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33A712CD89
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FAF481C0;
+	Fri, 10 May 2024 14:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715350090; cv=none; b=EKEJNUNtrdLfXiZx7BvxX2E6HloiJe70TCMu/h7pzqU6YzVR8AP37Vk8ZDNDMISCbr5Z8wFdn9BsdnERJE5VlaYKRW8DcfM6IViavbsb5xphn2ozYJPCMs1LLFOs49T3rqcEVMhYANOlw9wscK4yVm/bSzB4GfEIxZjFSn5cEKU=
+	t=1715350185; cv=none; b=sfJDYvVMdNvCtssHyD5mdnyChzihyAx2QL9lrxvVJcmM+Lj8qPtJsxc9vtBc7JWB++iPqgGKBdV7tr4Db4k1lLDY/5Aky/EDpar3aAqnfNiXEkoiVGTJDBPJVkGuopTolzK7DI0X4JlbdgrAhCDpc0TS3OfV9Jf6qXb3xrbG68w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715350090; c=relaxed/simple;
-	bh=GY8QKF6N/5yxj3g4eHK9Mo7u5V+hozEk12ERqyApuWw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WAxZjM/d81P1M67AjT2N+0wPxo4lWLI30L6riJqoWJ0rwlSjFfubukupJiBivR21wloa0YLUtS3cwJf3Fk6SLT/hAG1oelHRtpXmYA9J4VC0r1Wb1yv92J0mRPyJcoXQDw0KlGqDcxGBKEaU5fjsLqaRVa4qK0OZTFRyT2M6k9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MASFm11c; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715350087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k8FkXX8ag030wY75AQZvmJGfyiDrhLTTaDh51EZd1JY=;
-	b=MASFm11cSRjBFCjI1Yl4AlqTO8vy1HF/e0mOcsPrOaN4lNSTHRKl9Xx8ctAs1hKCL1O/kP
-	pjo8lT7AU1IQSarO7mO4LL3jmjOqHVjMSVj5l4yBAousGYFnSYUZ3i6gYbSw419kBkAj0k
-	/TOlz8jMYmSNcAhwP8qzbTYKi+6tXrQ=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-cJOXsvMFPxqCMZeoTfqDlg-1; Fri,
- 10 May 2024 10:08:05 -0400
-X-MC-Unique: cJOXsvMFPxqCMZeoTfqDlg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 35B6C1C02151;
-	Fri, 10 May 2024 14:08:05 +0000 (UTC)
-Received: from file1-rdu.file-001.prod.rdu2.dc.redhat.com (unknown [10.11.5.21])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2A58F49103D;
-	Fri, 10 May 2024 14:08:05 +0000 (UTC)
-Received: by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix, from userid 12668)
-	id 03E1C30C1B93; Fri, 10 May 2024 14:08:04 +0000 (UTC)
-Received: from localhost (localhost [127.0.0.1])
-	by file1-rdu.file-001.prod.rdu2.dc.redhat.com (Postfix) with ESMTP id F1CE43FB52;
-	Fri, 10 May 2024 16:08:04 +0200 (CEST)
-Date: Fri, 10 May 2024 16:08:04 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Yang Yang <yang.yang@vivo.com>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] dm: Avoid sending redundant empty flush bios to the
- same block device
-In-Reply-To: <20240422100540.2213-1-yang.yang@vivo.com>
-Message-ID: <1f741e4d-c33f-a2e3-f4dd-d7f613443534@redhat.com>
-References: <20240422100540.2213-1-yang.yang@vivo.com>
+	s=arc-20240116; t=1715350185; c=relaxed/simple;
+	bh=ryAv9ViKVMcOS6EqwqI46QOfJSeiIcFkcxoPyrq5zlc=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X6w4Q7OiOum8n+5k10rIvg+UdjI1oiRxEeEspZC7zrcD67fq8iW4KrJQMNJ5yn7Zm6+s9LuR8EcSoStmT0AiHc7pAbBTEXByxALd+ShmVk6Ldar07nl6zTCEiBcCLjtLbAwPAq7/VMIvdsnKm1+SaeQOR9kIBLidoA1xb2u6xEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ee5+blIk; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-520f9d559f6so2313425e87.3;
+        Fri, 10 May 2024 07:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715350182; x=1715954982; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUshYNDgznxLpJcEyG0DD70zqbgXQycZfQ4megorFuE=;
+        b=Ee5+blIkGiB5RgOo8h1ikBX8t7OgRrPz9dAwvkvjrG0XvvYEQCZQ2Hjkv2x8OdjJpJ
+         kChTxnQNAEB71DHnryr6O76zlmzg8T8ITyxU1jAbTckxgxpGAExtrDQi1BehUnie14XZ
+         Ee8V9B2a+4r41PGfJyLQ8uixmtIjHIfzPVnHwy5gefdbYUQ5f93bp8MFu57jTuYjt8Z1
+         IUyg/YkjWYKhVgcbBmfV2X1m6fJi+CPxYEvDoPw9v7947mOluDPMykGlbo6UlXZv6zBa
+         9cMp80c+VuFcX6wmcNx9++HoVD+xHE5iWKFompM7DJEBYoghYKj6GMk1sUvtLDVCFNoI
+         VY6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715350182; x=1715954982;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IUshYNDgznxLpJcEyG0DD70zqbgXQycZfQ4megorFuE=;
+        b=bBQLdCv3zBUAT3D97f2uhdlaUO6aJ5oMWF8gsRagHyGglmoBmhfrJqwk10CxEbUOh+
+         nZ2K4LvSMrmxkXCeTE/1mnQexH80ZgU9Pqsd65WOZa6GOopjReiVYZjcvGqfLaxpmwh/
+         kNbBFs7rQjHRNhhpIHQeyvT81msIxX1+3xw7sX1ihoWp1Az6NlR+6OK22I4sB2gnRnsZ
+         R9c0LsN79e9UGoo5ju3VWu9YD7YpKBUtkYctD0bW5AwbsfmthrQgjzBgvpV+q6qfrOyR
+         2AZIXgqsZisjLD+lR4ksB1wrJQS5yktiydQwVQjaf5UpAQdbEOQHCqqs50+PTcaOshxQ
+         z1aA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjjmyEOmtCyBOlMk6tbdnQSOLR+KEWoNV6ifVOajZPvNE7mOHv7GC/cVmTPUghEp57NEnHwdhWQRhtOgpD+I3ZSdClIPgdmRTEMx0t/Uqnf/+95yKPF9Z0IfnekIKf5UMp3Sr16j9kNV5eKsZnXzhaW1N5em6uNBdq48ogR3qn/5EdtkA=
+X-Gm-Message-State: AOJu0YyGl8H7W0cWFyjO2YngUnWrQcbkI2oQOVSwRy9euDjmP818nwYT
+	gSLUZp7ovoFOfh30ydr0QIjBda2VF+RF8b8/D1sTcTkDR+STRQA6
+X-Google-Smtp-Source: AGHT+IHPnFwxBKyNEbIQhl0xygTuNDfAL4ZLXFsiihw6QPJeyV0T7tJdRJWji7wQMeLS9PIpNkPVWg==
+X-Received: by 2002:a05:6512:104b:b0:521:f000:5d1a with SMTP id 2adb3069b0e04-5221006cd2dmr2006606e87.59.1715350181498;
+        Fri, 10 May 2024 07:09:41 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce2449sm66291035e9.16.2024.05.10.07.09.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 07:09:40 -0700 (PDT)
+Message-ID: <663e2aa4.050a0220.a4c56.1c5a@mx.google.com>
+X-Google-Original-Message-ID: <Zj4qoTIXSWlkVStH@Ansuel-XPS.>
+Date: Fri, 10 May 2024 16:09:37 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, ath10k@lists.infradead.org,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+	Steve deRosier <derosier@cal-sierra.com>,
+	Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
+ various chipsets
+References: <20230611080505.17393-1-ansuelsmth@gmail.com>
+ <878rcjbaqs.fsf@kernel.org>
+ <648cdebb.5d0a0220.be7f8.a096@mx.google.com>
+ <648ded2a.df0a0220.b78de.4603@mx.google.com>
+ <CA+_ehUzzVq_sVTgVCM+r=oLp=GNn-6nJRBG=bndJjrRDhCodaw@mail.gmail.com>
+ <87v83nlhb3.fsf@kernel.org>
+ <663c9fc7.050a0220.5fb3a.4e87@mx.google.com>
+ <87a5kxlqrn.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a5kxlqrn.fsf@kernel.org>
 
-Hi
-
-Regarding *bitmap = bitmap_zalloc(t->num_devices + 1, GFP_KERNEL); - you 
-can't allocate memory in the I/O processing path, because it may deadlock. 
-Think of a case when the system is out of memory and it needs to swap out 
-some pages and the swap out operation attempts to allocate more memory.
-
-Anyway, the patch is too complicated. I suggest to try this:
-
-* introduce a per-target bit "flush_pass_around" that is set for dm-linear 
-  and dm-stripe and that means that the target supports flush optimization
-
-* set a per-table "flush_pass_around" bit if all the targets in the table 
-  have "flush_pass_around" set
-
-* in __send_empty_flush, test the table's "flush_pass_around" bit and if 
-  it is set, bypass this loop "for (unsigned int i = 0; i < 
-  t->num_targets; i++) {" and iterate over dm_table->devices and send the 
-  flush to each of them.
-
-Hopefully, these changes will make the patch smaller and more acceptable.
-
-Mikulas
-
-
-
-On Mon, 22 Apr 2024, Yang Yang wrote:
-
-> __send_empty_flush() sends empty flush bios to every target in the
-> dm_table. However, if the num_targets exceeds the number of block
-> devices in the dm_table's device list, it could lead to multiple
-> invocations of __send_duplicate_bios() for the same block device.
-> Typically, a single thread sending numerous empty flush bios to one
-> block device is redundant, as these bios are likely to be merged by the
-> flush state machine. In scenarios where num_targets significantly
-> outweighs the number of block devices, such behavior may result in a
-> noteworthy decrease in performance.
+On Fri, May 10, 2024 at 04:50:52PM +0300, Kalle Valo wrote:
+> Christian Marangi <ansuelsmth@gmail.com> writes:
 > 
-> This issue can be reproduced using this command line:
->   for i in {0..1023}; do
->     echo $((8000*$i)) 8000 linear /dev/sda2 $((16384*$i))
->   done | dmsetup create example
+> >> 
+> >> Sorry for the delay but finally I looked at this again. I decided to
+> >> just remove the fixme and otherwise it looks good for me. Please check
+> >> my changes:
+> >> 
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=688130a66ed49f20ca0ce02c3987f6a474f7c93a
+> >>
+> >
+> > All ok for me, Just I notice the ATH10K_LEDS is not exposed anymore? Is
+> > that intended?
 > 
-> With this fix, a random write with fsync workload executed with the
-> following fio command:
+> Yes. It follows the same idea as other wireless drivers do, for example iwlwifi:
 > 
->   fio --group_reporting --name=benchmark --filename=/dev/mapper/example \
->       --ioengine=sync --invalidate=1 --numjobs=16 --rw=randwrite \
->       --blocksize=4k --size=2G --time_based --runtime=30 --fdatasync=1
+> config IWLWIFI_LEDS
+> 	bool
+> 	depends on LEDS_CLASS=y || LEDS_CLASS=MAC80211
+> 	depends on IWLMVM || IWLDVM
+> 	select LEDS_TRIGGERS
+> 	select MAC80211_LEDS
+> 	default y
 > 
-> results in an increase from 857 KB/s to 30.8 MB/s of the write
-> throughput (3580% increase).
+> So what this patch now does:
 > 
-> Signed-off-by: Yang Yang <yang.yang@vivo.com>
-> ---
->  drivers/md/dm-core.h          |  1 +
->  drivers/md/dm-table.c         |  7 +++++
->  drivers/md/dm.c               | 59 +++++++++++++++++++++++++++++++++++
->  include/linux/device-mapper.h |  6 ++++
->  4 files changed, 73 insertions(+)
+> config ATH10K_LEDS
+> 	bool
+> 	depends on ATH10K
+> 	depends on LEDS_CLASS=y || LEDS_CLASS=MAC80211
+> 	default y
 > 
-> diff --git a/drivers/md/dm-core.h b/drivers/md/dm-core.h
-> index e6757a30dcca..7e3f2168289f 100644
-> --- a/drivers/md/dm-core.h
-> +++ b/drivers/md/dm-core.h
-> @@ -217,6 +217,7 @@ struct dm_table {
->  	/* a list of devices used by this table */
->  	struct list_head devices;
->  	struct rw_semaphore devices_lock;
-> +	unsigned short num_devices;
->  
->  	/* events get handed up using this callback */
->  	void (*event_fn)(void *data);
-> diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-> index 41f1d731ae5a..ddc60e498afb 100644
-> --- a/drivers/md/dm-table.c
-> +++ b/drivers/md/dm-table.c
-> @@ -2133,6 +2133,8 @@ void dm_table_postsuspend_targets(struct dm_table *t)
->  
->  int dm_table_resume_targets(struct dm_table *t)
->  {
-> +	struct list_head *devices = dm_table_get_devices(t);
-> +	struct dm_dev_internal *dd;
->  	unsigned int i;
->  	int r = 0;
->  
-> @@ -2159,6 +2161,11 @@ int dm_table_resume_targets(struct dm_table *t)
->  			ti->type->resume(ti);
->  	}
->  
-> +	t->num_devices = 0;
-> +
-> +	list_for_each_entry(dd, devices, list)
-> +		dd->dm_dev->index = ++(t->num_devices);
-> +
->  	return 0;
->  }
->  
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 56aa2a8b9d71..7297235291f6 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -48,6 +48,8 @@
->   */
->  #define REQ_DM_POLL_LIST	REQ_DRV
->  
-> +#define DM_MAX_TABLE_DEVICES	1024
-> +
->  static const char *_name = DM_NAME;
->  
->  static unsigned int major;
-> @@ -1543,10 +1545,38 @@ static unsigned int __send_duplicate_bios(struct clone_info *ci, struct dm_targe
->  	return ret;
->  }
->  
-> +static inline bool has_redundant_flush(struct dm_table *t,
-> +		unsigned long **bitmap)
-> +{
-> +	if (t->num_devices < t->num_targets) {
-> +		/* Add a limit here to prevent excessive memory usage for bitmaps */
-> +		if (t->num_devices >= DM_MAX_TABLE_DEVICES)
-> +			return false;
-> +
-> +		/* dm_dev's index starts from 1, so need plus 1 here */
-> +		*bitmap = bitmap_zalloc(t->num_devices + 1, GFP_KERNEL);
-> +		if (*bitmap)
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +static int dm_get_dev_index(struct dm_target *ti, struct dm_dev *dev,
-> +				     sector_t start, sector_t len, void *data)
-> +{
-> +	unsigned short *index = data;
-> +	*index = dev->index;
-> +	return 0;
-> +}
-> +
->  static void __send_empty_flush(struct clone_info *ci)
->  {
->  	struct dm_table *t = ci->map;
->  	struct bio flush_bio;
-> +	unsigned long *handled_map;
-> +	unsigned int nr_handled = 0;
-> +	bool check = has_redundant_flush(t, &handled_map);
->  
->  	/*
->  	 * Use an on-stack bio for this, it's safe since we don't
-> @@ -1562,17 +1592,46 @@ static void __send_empty_flush(struct clone_info *ci)
->  
->  	for (unsigned int i = 0; i < t->num_targets; i++) {
->  		unsigned int bios;
-> +		unsigned short index = 0;
->  		struct dm_target *ti = dm_table_get_target(t, i);
->  
->  		if (unlikely(ti->num_flush_bios == 0))
->  			continue;
->  
-> +		/*
-> +		 * If the num_targets is greater than the number of block devices
-> +		 * in the dm_table's devices list, __send_empty_flush() might
-> +		 * invoke __send_duplicate_bios() multiple times for the same
-> +		 * block device. This could lead to a substantial decrease in
-> +		 * performance when num_targets significantly exceeds the number
-> +		 * of block devices.
-> +		 * Ensure that __send_duplicate_bios() is only called once for
-> +		 * each block device.
-> +		 */
-> +		if (check) {
-> +			if (nr_handled == t->num_devices)
-> +				break;
-> +
-> +			if (ti->type->iterate_devices)
-> +				ti->type->iterate_devices(ti, dm_get_dev_index, &index);
-> +
-> +			if (index > 0) {
-> +				if (__test_and_set_bit(index, handled_map))
-> +					continue;
-> +				else
-> +					nr_handled++;
-> +			}
-> +		}
-> +
->  		atomic_add(ti->num_flush_bios, &ci->io->io_count);
->  		bios = __send_duplicate_bios(ci, ti, ti->num_flush_bios,
->  					     NULL, GFP_NOWAIT);
->  		atomic_sub(ti->num_flush_bios - bios, &ci->io->io_count);
->  	}
->  
-> +	if (check)
-> +		bitmap_free(handled_map);
-> +
->  	/*
->  	 * alloc_io() takes one extra reference for submission, so the
->  	 * reference won't reach 0 without the following subtraction
-> diff --git a/include/linux/device-mapper.h b/include/linux/device-mapper.h
-> index 82b2195efaca..4a54b4f0a609 100644
-> --- a/include/linux/device-mapper.h
-> +++ b/include/linux/device-mapper.h
-> @@ -169,6 +169,12 @@ struct dm_dev {
->  	struct dax_device *dax_dev;
->  	blk_mode_t mode;
->  	char name[16];
-> +
-> +	/*
-> +	 * sequential number for each dm_dev in dm_table's devices list,
-> +	 * start from 1
-> +	 */
-> +	unsigned short index;
->  };
->  
->  /*
-> -- 
-> 2.34.1
-> 
+> The idea being that if LEDS_CLASS is enabled then ATH10K_LEDS is
+> automatically enabled. But please let us know if something is wrong
+> here.
+>
 
+Sure, was just asking some clarification about it. Not a problem for me
+since we are using other pattern to handle this.
+
+-- 
+	Ansuel
 
