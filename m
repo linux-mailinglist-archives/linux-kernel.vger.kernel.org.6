@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-175165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 702F78C1BA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:35:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 409A98C1BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:35:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7BA1B24EC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9887285793
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974FDD2F5;
-	Fri, 10 May 2024 00:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD1445BEC;
+	Fri, 10 May 2024 00:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pj74wjJV"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hj1zd51h"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294258827
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6098DFC01
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715300281; cv=none; b=KRQ8RnsHKqbqnPlqlhXCBxYthHSke7nxOmSyy6KK8C0wyPgEokczI614wPirUyLJWMgE3cXwzKLxP2uXVpc8IHvK6rpDrwr8cJZytFfv7Vf60x60whRbEjpNIeTmNqrXBYOljD+wnAxcq8wXhe4CkxG7qYWPtDdMGabmuI2Tv3Q=
+	t=1715300309; cv=none; b=iC77j2fiEdJcaPTgh/oshSfQxwOFeuJ1J2dxwOtI5z+aovN+SLm78SC9vlmPBv8cnaW/H0Xqx0NWS9MokBcn32QPSxeHUlpv5K8AccamgkTMYHtScMdzZ8yhLptGcuYLtjLvRPThhA9yztunL0/B2jjSGZYgf48F38bDbhV5kyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715300281; c=relaxed/simple;
-	bh=32zunW/937A+VI7TVLODQJmupnG7J5u7L6VNkYS8N0g=;
+	s=arc-20240116; t=1715300309; c=relaxed/simple;
+	bh=uBI6muGg2LUHewxBbL3Q804DYTwy8KcBitG3ZqgBURE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bqyiyqh8spB5aXwAXBuUA/JWWLv/g1BbcVVTMMMyQbwoVEYSqyxvYAoH8MLZ39R2hR7nZ8KhxcnydZIcg52Hi6ICiycVoGDXCdHStmuVlQR/WW7nfhd8vW3+cWmdCc946/2Ll0kzO80C9BhHGn4CGJe3m1EC1uvX9egH9aK0P04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pj74wjJV; arc=none smtp.client-ip=209.85.221.54
+	 To:Cc:Content-Type; b=tDQwiUkm3xGl3edq3Gn8CARoNRnw55F5dMEeRzhzym2a5a/2nDfAennUydP/8imUfpYdwoQd28fT+DsLjNZmjEfzLPI5fAlJnZQWwdPcTgIW/LlQdPAUgYWAKIUXwQyPHQzyaOsAA80ZZQ6Kp0byiGSAvdN2e1hv/7vfQ82GLUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hj1zd51h; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34ef66c0178so946120f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:17:59 -0700 (PDT)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-34de61b7ca4so962280f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:18:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715300278; x=1715905078; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715300305; x=1715905105; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FAKOkwp1JwGuxJyPuHfQGI6AWg0YhiVqZy4MwUSsneI=;
-        b=Pj74wjJVcaOX8X2/hslmwnqJ09RdaVWp/hQA+EBrwlOM0a+FpNg2/uQKhwrrbJwxwF
-         UflcfACHGuRP9xFO2tWzQo0OwzCyJx4AWeYxP909/xEMtmXHyHa/k0ZjDYErlByViLgn
-         uufLANXu9K3FINFTEBj1mPNsn0Y1j+JQ34AepaDdiemdQWhro+sMegewTvHa20A8cowh
-         oQrsovo7vdTMtaM6NjIPc9rSABDPToPu5/ZDIqltA79a2AYvj88+umaOZudCQlFqfUdy
-         ickYDmSg6r6TJRkEwDYgjC1guxyn/upK4aWms2uyqzLXo2SeO56xpp1rPvLhLQemfKVd
-         by/A==
+        bh=UNxvqWloC5NwFVPsMXWaj67YNJ/lJ6Hhh2MkAXokG+o=;
+        b=Hj1zd51hV1iJBrgdIUL5+AjXKWnS6N71He/x93DF2Sk51vlsdkvrhqm5uDljYAnYxl
+         wfns49tYVeHnkbuiufwmqtf+89fV5An0NGcqUEk2Dla556P/IrT07Vo3RyQflVWMAZNw
+         6QPdLZFsb7AKkXAK+10zhjQM3RliXXjQbzEQkJjqmjZEqc3gTFvO5MtovLu7kioQ2mMv
+         YuzEowVhqTTQuLgWycGYPhtSE8PX1721zLZOqZVr2DmnwYdHvMiAGORbRcqrewqGdmCj
+         7K6UPiLXUeoO+jqZ6UxFjvBEGe0xYx20XMmf+s697rJg46TQnA2tBRhPa+WMC2rsPRMB
+         pvQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715300278; x=1715905078;
+        d=1e100.net; s=20230601; t=1715300305; x=1715905105;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FAKOkwp1JwGuxJyPuHfQGI6AWg0YhiVqZy4MwUSsneI=;
-        b=l8Mh1FRaic2NDiYAPd8AZjIM5XecI1OFGYVHdPMpPrIAEOBGRT1J54QCEh9uJfuLDK
-         SFtC9U6AUtkp5j/iaHTkZhTZZ5h11W23EyIYGcV2vOocfqdR4GHpWj2zbugCdSoqDMCN
-         SwNnq7JyWfSjRuE7bbShuwtlTXcvAKblXk5oAUNrM4wgvZfKWZ2fmC+DwbpQBohG0tjs
-         tuPYZURu3b1mIKCFf815iAtcZHpD1nAztEMuuavvyfNSpDAqkIBEOH9V2UGHE/tudvXC
-         88EuLTpIwFIpNYufDyqDO0PB6CL2AUbH+H9hI+XBdf645vo/l4VZhq763H99AfbzshT9
-         n+Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1lJyfhx2fnwBcUp9wp9o89DdDeB08YKINulobwSAtGE6/n0Og/g400VXSP1aM2jKPpkwEEf6zeAQOHYCIK7/yNI3loicaJ0108kef
-X-Gm-Message-State: AOJu0YzDtqU5RMJZopwwnGC19Nau6pQ0TzaAgjqX0jHy/0WAA5ZKOixg
-	AYNWR1nJD84WU0DDhdiY3hNkpx/m5XvWnNe6H8uM1qSO/Eljjsg/uKBtBK8QbBwO6OTZ24llXND
-	/tBW+BPRT2lhe3c0u1IAwblResgXeYfaqpHOX
-X-Google-Smtp-Source: AGHT+IGsTBm3kyqRWwyxe6aen4twfHmKaMlCO8UBWYeZRet/IFXhY3zvqOMxnBrLHbg5/lRkKBbynn/nm7/LVaHKXmM=
-X-Received: by 2002:a5d:4fd0:0:b0:34f:e19f:6186 with SMTP id
- ffacd0b85a97d-3504a737144mr858323f8f.31.1715300278279; Thu, 09 May 2024
- 17:17:58 -0700 (PDT)
+        bh=UNxvqWloC5NwFVPsMXWaj67YNJ/lJ6Hhh2MkAXokG+o=;
+        b=bZdLvvWYaIebiJtjC9yJSQCPB26GpEerhNVkmXQHaKaKHGTt648OYTNQwzKpfIxEpA
+         VJxkNqDhBm9vi2x5jIC2O2Q/sdQqU1trWztnvqsAlSpdftO+oC44bK/WWjMlD/t9nkot
+         vyPEjHuSo8EouNz+LKlowcVu3R3B57Wvm+uZLIUjEoWNpSLtUKT9dtTPjWVgPctVfz2n
+         HB7G62agmC1FJplP2QXl6t1ApB3WHUDtWT2OyY6SJbV5UwE8/ZcI9xWly7MllsttzKdO
+         7pu3nn+E1my5zIT0ngcnp0qRFeEC65atPNNOTK1mezgk5XQFG5XJNgChkohntXKhTY45
+         1hrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+Tii2y4GWCO86SlOers6EFFIS25wUq8vvux2QTspH1cVgswipVdvZpKPSBeRKzU5jW5Yfatxl076fofqrKqkCXBFYbnqRbOniAcdb
+X-Gm-Message-State: AOJu0YyjKr4PmnCtQkQUaoszqwOIEO9l4+4LPajSy7DFFGBu6zplDiG6
+	b7wezixOyGZddwDX3mxPOZxRfXqzs6UnjzE567v8b8KrIiCjx245llqh4qI43gDkEBL2EZOF/J6
+	HiwEpLZXia6RTP3GG8sUMHLatgc3bo4si962N
+X-Google-Smtp-Source: AGHT+IGEdZ2ExF/g4PkMyb+bHCJZqXWQ0s54ii0EmiA9WXhQJOSQ6c4f7IfWEF0EN2cW90UR5vP1IDzmB2e9/2eMuE4=
+X-Received: by 2002:adf:e586:0:b0:34f:3293:85c6 with SMTP id
+ ffacd0b85a97d-3504a96b7c9mr1100172f8f.64.1715300304486; Thu, 09 May 2024
+ 17:18:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,12 +71,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240507225945.1408516-1-ziweixiao@google.com>
- <20240507225945.1408516-4-ziweixiao@google.com> <64a7690e-50a1-4b3b-9b9b-5c2efa552806@davidwei.uk>
-In-Reply-To: <64a7690e-50a1-4b3b-9b9b-5c2efa552806@davidwei.uk>
+ <20240507225945.1408516-4-ziweixiao@google.com> <6a98fda2-54f4-4c1d-9b4a-bd39abe27179@davidwei.uk>
+In-Reply-To: <6a98fda2-54f4-4c1d-9b4a-bd39abe27179@davidwei.uk>
 From: Ziwei Xiao <ziweixiao@google.com>
-Date: Thu, 9 May 2024 17:17:46 -0700
-Message-ID: <CAG-FcCO=Ck9-eWXO4W87SFWr3uEQfMh=0x_HWkY0S+Yioa7FuQ@mail.gmail.com>
-Subject: Re: [PATCH net-next 2/5] gve: Add adminq extended command
+Date: Thu, 9 May 2024 17:18:13 -0700
+Message-ID: <CAG-FcCM5-c3vCRWenUoxdswfKAfaVNkBEpzkvKRhy6UfSzbu0Q@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/5] gve: Add flow steering device option
 To: David Wei <dw@davidwei.uk>
 Cc: netdev@vger.kernel.org, jeroendb@google.com, pkaligineedi@google.com, 
 	shailend@google.com, davem@davemloft.net, edumazet@google.com, 
@@ -86,7 +86,7 @@ Cc: netdev@vger.kernel.org, jeroendb@google.com, pkaligineedi@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 7, 2024 at 10:34=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+On Tue, May 7, 2024 at 10:33=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
 >
 > On 2024-05-07 15:59, Ziwei Xiao wrote:
 > > From: Jeroen de Borst <jeroendb@google.com>
@@ -95,9 +95,6 @@ On Tue, May 7, 2024 at 10:34=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
 s
 > > flow steering. This device option also carries the maximum number of
 > > flow steering rules that the device can store.
->
-> Other than superficial style choices, looks good.
->
 > >
 > > Signed-off-by: Jeroen de Borst <jeroendb@google.com>
 > > Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
@@ -110,6 +107,15 @@ s
 > >  drivers/net/ethernet/google/gve/gve_adminq.c | 42 ++++++++++++++++++--
 > >  drivers/net/ethernet/google/gve/gve_adminq.h | 11 +++++
 > >  3 files changed, 51 insertions(+), 4 deletions(-)
+>
+> Think something went wrong here. The title is different but patch is
+> same as 2/5.
+This is the patch for adding the device option(3/5), while the
+previous patch you commented is actually for adding extended
+adminq(2/5). I don't see any wrong with these two patches. Maybe it's
+replying in the wrong thread?
+
+>
 > >
 > > diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethern=
 et/google/gve/gve.h
@@ -124,12 +130,6 @@ et/google/gve/gve.h
  by the user */
 > > +
 > > +     u32 max_flow_rules;
->
-> nit: this struct is lovingly documented, could we continue by adding a
-> one liner here maybe about how it's device configured?
->
-Will add.
-
 > >  };
 > >
 > >  enum gve_service_task_flags_bit {
@@ -147,8 +147,190 @@ o_qpl,
 op_buffer_sizes,
 > > +                          struct gve_device_option_flow_steering **dev=
 _op_flow_steering,
->
-> nit: getting unwieldy here, is it time to pack into a struct?
-Thank you for pointing this out! We have plans to improve this device
-option part, but may not be able to be included in this patch.
+> >                            struct gve_device_option_modify_ring **dev_o=
+p_modify_ring)
+> >  {
+> >       u32 req_feat_mask =3D be32_to_cpu(option->required_features_mask)=
+;
+> > @@ -189,6 +190,23 @@ void gve_parse_device_option(struct gve_priv *priv=
+,
+> >               if (option_length =3D=3D GVE_DEVICE_OPTION_NO_MIN_RING_SI=
+ZE)
+> >                       priv->default_min_ring_size =3D true;
+> >               break;
+> > +     case GVE_DEV_OPT_ID_FLOW_STEERING:
+> > +             if (option_length < sizeof(**dev_op_flow_steering) ||
+> > +                 req_feat_mask !=3D GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STE=
+ERING) {
+> > +                     dev_warn(&priv->pdev->dev, GVE_DEVICE_OPTION_ERRO=
+R_FMT,
+> > +                              "Flow Steering",
+> > +                              (int)sizeof(**dev_op_flow_steering),
+> > +                              GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STEERING,
+> > +                              option_length, req_feat_mask);
+> > +                     break;
+> > +             }
+> > +
+> > +             if (option_length > sizeof(**dev_op_flow_steering))
+> > +                     dev_warn(&priv->pdev->dev,
+> > +                              GVE_DEVICE_OPTION_TOO_BIG_FMT,
+> > +                              "Flow Steering");
+> > +             *dev_op_flow_steering =3D (void *)(option + 1);
+> > +             break;
+> >       default:
+> >               /* If we don't recognize the option just continue
+> >                * without doing anything.
+> > @@ -208,6 +226,7 @@ gve_process_device_options(struct gve_priv *priv,
+> >                          struct gve_device_option_jumbo_frames **dev_op=
+_jumbo_frames,
+> >                          struct gve_device_option_dqo_qpl **dev_op_dqo_=
+qpl,
+> >                          struct gve_device_option_buffer_sizes **dev_op=
+_buffer_sizes,
+> > +                        struct gve_device_option_flow_steering **dev_o=
+p_flow_steering,
+> >                          struct gve_device_option_modify_ring **dev_op_=
+modify_ring)
+> >  {
+> >       const int num_options =3D be16_to_cpu(descriptor->num_device_opti=
+ons);
+> > @@ -230,7 +249,7 @@ gve_process_device_options(struct gve_priv *priv,
+> >                                       dev_op_gqi_rda, dev_op_gqi_qpl,
+> >                                       dev_op_dqo_rda, dev_op_jumbo_fram=
+es,
+> >                                       dev_op_dqo_qpl, dev_op_buffer_siz=
+es,
+> > -                                     dev_op_modify_ring);
+> > +                                     dev_op_flow_steering, dev_op_modi=
+fy_ring);
+> >               dev_opt =3D next_opt;
+> >       }
+> >
+> > @@ -838,6 +857,8 @@ static void gve_enable_supported_features(struct gv=
+e_priv *priv,
+> >                                         *dev_op_dqo_qpl,
+> >                                         const struct gve_device_option_=
+buffer_sizes
+> >                                         *dev_op_buffer_sizes,
+> > +                                       const struct gve_device_option_=
+flow_steering
+> > +                                       *dev_op_flow_steering,
+> >                                         const struct gve_device_option_=
+modify_ring
+> >                                         *dev_op_modify_ring)
+> >  {
+> > @@ -890,10 +911,22 @@ static void gve_enable_supported_features(struct =
+gve_priv *priv,
+> >                       priv->min_tx_desc_cnt =3D be16_to_cpu(dev_op_modi=
+fy_ring->min_tx_ring_size);
+> >               }
+> >       }
+> > +
+> > +     if (dev_op_flow_steering &&
+> > +         (supported_features_mask & GVE_SUP_FLOW_STEERING_MASK)) {
+> > +             if (dev_op_flow_steering->max_flow_rules) {
+> > +                     priv->max_flow_rules =3D
+> > +                             be32_to_cpu(dev_op_flow_steering->max_flo=
+w_rules);
+> > +                     dev_info(&priv->pdev->dev,
+> > +                              "FLOW STEERING device option enabled wit=
+h max rule limit of %u.\n",
+> > +                              priv->max_flow_rules);
+> > +             }
+> > +     }
+> >  }
+> >
+> >  int gve_adminq_describe_device(struct gve_priv *priv)
+> >  {
+> > +     struct gve_device_option_flow_steering *dev_op_flow_steering =3D =
+NULL;
+> >       struct gve_device_option_buffer_sizes *dev_op_buffer_sizes =3D NU=
+LL;
+> >       struct gve_device_option_jumbo_frames *dev_op_jumbo_frames =3D NU=
+LL;
+> >       struct gve_device_option_modify_ring *dev_op_modify_ring =3D NULL=
+;
+> > @@ -930,6 +963,7 @@ int gve_adminq_describe_device(struct gve_priv *pri=
+v)
+> >                                        &dev_op_gqi_qpl, &dev_op_dqo_rda=
+,
+> >                                        &dev_op_jumbo_frames, &dev_op_dq=
+o_qpl,
+> >                                        &dev_op_buffer_sizes,
+> > +                                      &dev_op_flow_steering,
+> >                                        &dev_op_modify_ring);
+> >       if (err)
+> >               goto free_device_descriptor;
+> > @@ -969,9 +1003,8 @@ int gve_adminq_describe_device(struct gve_priv *pr=
+iv)
+> >       /* set default descriptor counts */
+> >       gve_set_default_desc_cnt(priv, descriptor);
+> >
+> > -     /* DQO supports LRO. */
+> >       if (!gve_is_gqi(priv))
+> > -             priv->dev->hw_features |=3D NETIF_F_LRO;
+> > +             priv->dev->hw_features |=3D NETIF_F_LRO | NETIF_F_NTUPLE;
+> >
+> >       priv->max_registered_pages =3D
+> >                               be64_to_cpu(descriptor->max_registered_pa=
+ges);
+> > @@ -991,7 +1024,8 @@ int gve_adminq_describe_device(struct gve_priv *pr=
+iv)
+> >
+> >       gve_enable_supported_features(priv, supported_features_mask,
+> >                                     dev_op_jumbo_frames, dev_op_dqo_qpl=
+,
+> > -                                   dev_op_buffer_sizes, dev_op_modify_=
+ring);
+> > +                                   dev_op_buffer_sizes, dev_op_flow_st=
+eering,
+> > +                                   dev_op_modify_ring);
+> >
+> >  free_device_descriptor:
+> >       dma_pool_free(priv->adminq_pool, descriptor, descriptor_bus);
+> > diff --git a/drivers/net/ethernet/google/gve/gve_adminq.h b/drivers/net=
+/ethernet/google/gve/gve_adminq.h
+> > index e0370ace8397..e64a0e72e781 100644
+> > --- a/drivers/net/ethernet/google/gve/gve_adminq.h
+> > +++ b/drivers/net/ethernet/google/gve/gve_adminq.h
+> > @@ -146,6 +146,14 @@ struct gve_device_option_modify_ring {
+> >
+> >  static_assert(sizeof(struct gve_device_option_modify_ring) =3D=3D 12);
+> >
+> > +struct gve_device_option_flow_steering {
+> > +     __be32 supported_features_mask;
+> > +     __be32 reserved;
+> > +     __be32 max_flow_rules;
+> > +};
+> > +
+> > +static_assert(sizeof(struct gve_device_option_flow_steering) =3D=3D 12=
+);
+> > +
+> >  /* Terminology:
+> >   *
+> >   * RDA - Raw DMA Addressing - Buffers associated with SKBs are directl=
+y DMA
+> > @@ -163,6 +171,7 @@ enum gve_dev_opt_id {
+> >       GVE_DEV_OPT_ID_DQO_QPL                  =3D 0x7,
+> >       GVE_DEV_OPT_ID_JUMBO_FRAMES             =3D 0x8,
+> >       GVE_DEV_OPT_ID_BUFFER_SIZES             =3D 0xa,
+> > +     GVE_DEV_OPT_ID_FLOW_STEERING            =3D 0xb,
+> >  };
+> >
+> >  enum gve_dev_opt_req_feat_mask {
+> > @@ -174,12 +183,14 @@ enum gve_dev_opt_req_feat_mask {
+> >       GVE_DEV_OPT_REQ_FEAT_MASK_DQO_QPL               =3D 0x0,
+> >       GVE_DEV_OPT_REQ_FEAT_MASK_BUFFER_SIZES          =3D 0x0,
+> >       GVE_DEV_OPT_REQ_FEAT_MASK_MODIFY_RING           =3D 0x0,
+> > +     GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STEERING         =3D 0x0,
+> >  };
+> >
+> >  enum gve_sup_feature_mask {
+> >       GVE_SUP_MODIFY_RING_MASK        =3D 1 << 0,
+> >       GVE_SUP_JUMBO_FRAMES_MASK       =3D 1 << 2,
+> >       GVE_SUP_BUFFER_SIZES_MASK       =3D 1 << 4,
+> > +     GVE_SUP_FLOW_STEERING_MASK      =3D 1 << 5,
+> >  };
+> >
+> >  #define GVE_DEV_OPT_LEN_GQI_RAW_ADDRESSING 0x0
 
