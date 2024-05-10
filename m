@@ -1,445 +1,371 @@
-Return-Path: <linux-kernel+bounces-176152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484C28C2AD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:55:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2188C2AD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8D22876E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC7C3B24525
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F134CB4E;
-	Fri, 10 May 2024 19:55:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FB74D13F;
+	Fri, 10 May 2024 19:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HTTOlhnI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="B+88HWKj"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2BD4AEC8
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 19:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B454CB28;
+	Fri, 10 May 2024 19:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715370940; cv=none; b=iGRayF9swQuiNnMKu0wdj31cgL5R9znDNG4bC+5rbIyuAM/D3r8QDx2sn+t+VA4podcNLetZanFJJnyd+52tbWq79y8cop1rYHiz9eav5WFpzwcOpeR7sIzk7tV2iHgPNqSiebrJbqgRxr2qMoAh6j05YRmzpVS20AII1Nw8itk=
+	t=1715371165; cv=none; b=auHJwXh9qE8X4pmBpDnYvl4I22ghF+gI5V+qvUyCJzlTRKgyK71GL2wBzKUtReD6RFVw2+NY2vITwkjaQwpeD7Y/l6+gIHgnA0FTPe0m16aZlavwGPyTpVBEuKQU4h6oZUID4TwMV2Hm3nQjAtgXXaLmvSUktJSA4wm5EN5AwWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715370940; c=relaxed/simple;
-	bh=7N79Cc1wOFMSsDDyjWHTW4I4FZNuavURtKrdNEHxbyY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=FlV0g1+mWyeMMsOHIlg1fHiK0m12s+0DdQ6LNT/bK9aEbF2cVu8wyUUttyk66b8Vq+kUpDZL/MDQKAQJFTkEK37zWy2u0cpPdmj+z2m6pDY4p9n8VEvNm42x341qhvDw8i+cFBAjZLALBYKSrdKPaw3rBS0laerwMAYvGWyZFKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HTTOlhnI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715370937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=77iTtuTAICuw/H86O+BM2/FFN/3thgThNre5PX281P8=;
-	b=HTTOlhnIl0Hikea4yhpbAmLN9vnYoKiMmO5kDNWoLmksDG31o312EyhR5dGugTxs2oPfpq
-	4XtDQ5skj2Uv/ttfQNZDzSas/TCCbiTAeyUxZjapQB/dfppLr6N27PauEvlv9UbKgWuem+
-	NvbYx3uGBwdBXSL0X9jv9Gz9PQnP+D0=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-688-ku4LS2h8Py-Fxr3FYiGxzw-1; Fri, 10 May 2024 15:51:03 -0400
-X-MC-Unique: ku4LS2h8Py-Fxr3FYiGxzw-1
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-5c66a69ec8eso1912520a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:51:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715370662; x=1715975462;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=77iTtuTAICuw/H86O+BM2/FFN/3thgThNre5PX281P8=;
-        b=Jw483tSE7/sg9fZucCkWPLut6oAMM7sbxisLYy2dhKU1ZpzpmQRhNMSDYAsokWFP6a
-         CmnILNd72VsCUmnBfjvQZEPi7eryn3ip8hl1vmUCGDJEuaLDQfncaVeyTql8yaJVp19a
-         BjaXtbrH0XHCEaijt5nlSB53pGnG/7ivXRcLtZgCW2MpgtN6ElP/kWo38h3Gtz2ktygj
-         rTNfEv3QC4n6nkeBux427RakdQkXB5DETdbTFptE/ToI/zzfk1QNt44caV7kMsRElUYR
-         wQLlpGO5h7Dpcz2mGIbpQPCKsK6PY+y0fLayyS5jmMhp0g/sJLOJrT1fNSQZ0J1n/eSI
-         bUXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUB2L115DJYOL/g7g//nnTd8yhqpYds7fvxFsIsAGDyWbA/f/GXs46RWjuGQRi+7z7Fn3tweLbQMZWGup9fE+UpnlOjFWbOCzMyGUDG
-X-Gm-Message-State: AOJu0YyvQoGTlDMjUCJM70Xd4qmfrceec02FLsC84vIi8tCHGdhQiiFU
-	fMu8IicX3M+WVXrfDdzUW3xLyNFNyfkBqhDNM7t+yPteCnTWRdvt/U/xl20GEGbD4RF5dw0wg0l
-	B55upyxQ7qUrbgXjKukSghO8puNGs+0O8bFybf9zbDGp5ARD9dPbPYU8q6NF9MA==
-X-Received: by 2002:a05:6a20:9145:b0:1ad:7e4d:2ea2 with SMTP id adf61e73a8af0-1afde0825dbmr5271985637.4.1715370662360;
-        Fri, 10 May 2024 12:51:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHNimRuY9IezukVV9xELSqrI2Uj0shkidemhyXzN9aQ5WnE44Y0YHWYyDwyL19neSIjVsPW9Q==
-X-Received: by 2002:a05:6a20:9145:b0:1ad:7e4d:2ea2 with SMTP id adf61e73a8af0-1afde0825dbmr5271947637.4.1715370661756;
-        Fri, 10 May 2024 12:51:01 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a800:8d87:eac1:dae4:8dd4:fe50])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c0369f1sm35978865ad.185.2024.05.10.12.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 12:51:00 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/2] Avoid rcu_core() if CPU just left guest vcpu
-Date: Fri, 10 May 2024 16:50:41 -0300
-Message-ID: <Zj56kVxuTJm4EsAn@LeoBras>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <d5021b48-09d6-4a54-9874-740051aab574@paulmck-laptop>
-References: <ZjsZVUdmDXZOn10l@LeoBras> <ZjuFuZHKUy7n6-sG@google.com> <5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop> <ZjyGefTZ8ThZukNG@LeoBras> <Zjyh-qRt3YewHsdP@LeoBras> <09a8f4f6-a692-4586-bb68-b0a524b7a5d8@paulmck-laptop> <Zj5GEK8bt3061TiD@LeoBras> <a5784417-d65d-45c2-a66f-310a494b9827@paulmck-laptop> <Zj5VgM_RzaDWQs1t@LeoBras> <d5021b48-09d6-4a54-9874-740051aab574@paulmck-laptop>
+	s=arc-20240116; t=1715371165; c=relaxed/simple;
+	bh=HCxYPNqMKmIC9oasAoMTLtVxY87R2ML81RDXDqCIFmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ovB1TRlZYjnuIGyqmbyNRwBdUtwaFuGtnKYLwrdpdSpBdAEsFNWiKydT00iZ9oUbcutpJJBjQdkGT2n3u1NLRrIEYswmffHQrwIhG2YNW6qQkVtgjr7VUnWuK1/TF0iuLXXG3YXZ+4S1jDImEmQuOfYljEtKKfCR2jURx5wPngE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=B+88HWKj; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715371160;
+	bh=HCxYPNqMKmIC9oasAoMTLtVxY87R2ML81RDXDqCIFmg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B+88HWKjDf+0+AUiHRWPB3h2QxenCzofYk52o/psGABx4sjTLpYq1kGyLlBYLelLb
+	 0G5hLXIw/ICjmEEtJN/l5xIuGi7mkKsdCHLa97TXIoaR4XjA7pW+TBspRkD1qnEsss
+	 AnZHiR7HTfbstLI9ev9zb47ZW0bSe/sbuwZSzjqyFlF2Z30xyCxKW3jbrtgBUVqyXr
+	 6cZpQ4Gmy+KvwBousO1zBbD1ai3o0c3EV1PxwYWsjqFht+tZ8E6l3fDxThJmBPQwXB
+	 QOqDTxHOLv3gcsziSfYnqJzO7Njzhlg+z7Oi/r04SQHa38Trp7MuK1t/qVau3DdS8R
+	 +HNWVPuRmvxYA==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A2DFD3782190;
+	Fri, 10 May 2024 19:59:17 +0000 (UTC)
+Date: Fri, 10 May 2024 15:59:15 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	Laura Nao <laura.nao@collabora.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
+Message-ID: <43fcbb00-bea2-469b-9942-0e66e74f65e1@notapiano>
+References: <20240502224703.103150-1-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240502224703.103150-1-swboyd@chromium.org>
 
-On Fri, May 10, 2024 at 10:41:53AM -0700, Paul E. McKenney wrote:
-> On Fri, May 10, 2024 at 02:12:32PM -0300, Leonardo Bras wrote:
-> > On Fri, May 10, 2024 at 09:21:59AM -0700, Paul E. McKenney wrote:
-> > > On Fri, May 10, 2024 at 01:06:40PM -0300, Leonardo Bras wrote:
-> > > > On Thu, May 09, 2024 at 04:45:53PM -0700, Paul E. McKenney wrote:
-> > > > > On Thu, May 09, 2024 at 07:14:18AM -0300, Leonardo Bras wrote:
-> > > > > > On Thu, May 09, 2024 at 05:16:57AM -0300, Leonardo Bras wrote:
-> > > > > 
-> > > > > [ . . . ]
-> > > > > 
-> > > > > > > Here I suppose something like this can take care of not needing to convert 
-> > > > > > > ms -> jiffies every rcu_pending():
-> > > > > > > 
-> > > > > > > +	nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
-> > > > > > > 
-> > > > > > 
-> > > > > > Uh, there is more to it, actually. We need to make sure the user 
-> > > > > > understands that we are rounding-down the value to multiple of a jiffy 
-> > > > > > period, so it's not a surprise if the delay value is not exactly the same 
-> > > > > > as the passed on kernel cmdline.
-> > > > > > 
-> > > > > > So something like bellow diff should be ok, as this behavior is explained 
-> > > > > > in the docs, and pr_info() will print the effective value.
-> > > > > > 
-> > > > > > What do you think?
-> > > > > 
-> > > > > Good point, and I have taken your advice on making the documentation
-> > > > > say what it does.
-> > > > 
-> > > > Thanks :)
-> > > > 
-> > > > > 
-> > > > > > Thanks!
-> > > > > > Leo
-> > > > > > 
-> > > > > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > > > > > index 0a3b0fd1910e..9a50be9fd9eb 100644
-> > > > > > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > > > > > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > > > > > @@ -4974,20 +4974,28 @@
-> > > > > >                         otherwise be caused by callback floods through
-> > > > > >                         use of the ->nocb_bypass list.  However, in the
-> > > > > >                         common non-flooded case, RCU queues directly to
-> > > > > >                         the main ->cblist in order to avoid the extra
-> > > > > >                         overhead of the ->nocb_bypass list and its lock.
-> > > > > >                         But if there are too many callbacks queued during
-> > > > > >                         a single jiffy, RCU pre-queues the callbacks into
-> > > > > >                         the ->nocb_bypass queue.  The definition of "too
-> > > > > >                         many" is supplied by this kernel boot parameter.
-> > > > > >  
-> > > > > > +       rcutree.nocb_patience_delay= [KNL]
-> > > > > > +                       On callback-offloaded (rcu_nocbs) CPUs, avoid
-> > > > > > +                       disturbing RCU unless the grace period has
-> > > > > > +                       reached the specified age in milliseconds.
-> > > > > > +                       Defaults to zero.  Large values will be capped
-> > > > > > +                       at five seconds. Values rounded-down to a multiple
-> > > > > > +                       of a jiffy period.
-> > > > > > +
-> > > > > >         rcutree.qhimark= [KNL]
-> > > > > >                         Set threshold of queued RCU callbacks beyond which
-> > > > > >                         batch limiting is disabled.
-> > > > > >  
-> > > > > >         rcutree.qlowmark= [KNL]
-> > > > > >                         Set threshold of queued RCU callbacks below which
-> > > > > >                         batch limiting is re-enabled.
-> > > > > >  
-> > > > > >         rcutree.qovld= [KNL]
-> > > > > >                         Set threshold of queued RCU callbacks beyond which
-> > > > > > diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-> > > > > > index fcf2b4aa3441..62ede401420f 100644
-> > > > > > --- a/kernel/rcu/tree.h
-> > > > > > +++ b/kernel/rcu/tree.h
-> > > > > > @@ -512,20 +512,21 @@ do {                                                              \
-> > > > > >         local_irq_save(flags);                                  \
-> > > > > >         if (rcu_segcblist_is_offloaded(&(rdp)->cblist)) \
-> > > > > >                 raw_spin_lock(&(rdp)->nocb_lock);               \
-> > > > > >  } while (0)
-> > > > > >  #else /* #ifdef CONFIG_RCU_NOCB_CPU */
-> > > > > >  #define rcu_nocb_lock_irqsave(rdp, flags) local_irq_save(flags)
-> > > > > >  #endif /* #else #ifdef CONFIG_RCU_NOCB_CPU */
-> > > > > >  
-> > > > > >  static void rcu_bind_gp_kthread(void);
-> > > > > >  static bool rcu_nohz_full_cpu(void);
-> > > > > > +static bool rcu_on_patience_delay(void);
-> > > > > 
-> > > > > I don't think we need an access function, but will check below.
-> > > > > 
-> > > > > >  /* Forward declarations for tree_stall.h */
-> > > > > >  static void record_gp_stall_check_time(void);
-> > > > > >  static void rcu_iw_handler(struct irq_work *iwp);
-> > > > > >  static void check_cpu_stall(struct rcu_data *rdp);
-> > > > > >  static void rcu_check_gp_start_stall(struct rcu_node *rnp, struct rcu_data *rdp,
-> > > > > >                                      const unsigned long gpssdelay);
-> > > > > >  
-> > > > > >  /* Forward declarations for tree_exp.h. */
-> > > > > >  static void sync_rcu_do_polled_gp(struct work_struct *wp);
-> > > > > > diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-> > > > > > index 340bbefe5f65..639243b0410f 100644
-> > > > > > --- a/kernel/rcu/tree_plugin.h
-> > > > > > +++ b/kernel/rcu/tree_plugin.h
-> > > > > > @@ -5,20 +5,21 @@
-> > > > > >   * or preemptible semantics.
-> > > > > >   *
-> > > > > >   * Copyright Red Hat, 2009
-> > > > > >   * Copyright IBM Corporation, 2009
-> > > > > >   *
-> > > > > >   * Author: Ingo Molnar <mingo@elte.hu>
-> > > > > >   *        Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > >   */
-> > > > > >  
-> > > > > >  #include "../locking/rtmutex_common.h"
-> > > > > > +#include <linux/jiffies.h>
-> > > > > 
-> > > > > This is already pulled in by the enclosing tree.c file, so it should not
-> > > > > be necessary to include it again. 
-> > > > 
-> > > > Even better :)
-> > > > 
-> > > > > (Or did you get a build failure when
-> > > > > leaving this out?)
-> > > > 
-> > > > I didn't, it's just that my editor complained the symbols were not getting 
-> > > > properly resolved, so I included it and it was fixed. But since clangd is 
-> > > > know to make some mistakes, I should have compile-test'd before adding it.
-> > > 
-> > > Ah, got it!  ;-)
-> > > 
-> > > > > >  static bool rcu_rdp_is_offloaded(struct rcu_data *rdp)
-> > > > > >  {
-> > > > > >         /*
-> > > > > >          * In order to read the offloaded state of an rdp in a safe
-> > > > > >          * and stable way and prevent from its value to be changed
-> > > > > >          * under us, we must either hold the barrier mutex, the cpu
-> > > > > >          * hotplug lock (read or write) or the nocb lock. Local
-> > > > > >          * non-preemptible reads are also safe. NOCB kthreads and
-> > > > > >          * timers have their own means of synchronization against the
-> > > > > > @@ -86,20 +87,33 @@ static void __init rcu_bootup_announce_oddness(void)
-> > > > > >         if (rcu_kick_kthreads)
-> > > > > >                 pr_info("\tKick kthreads if too-long grace period.\n");
-> > > > > >         if (IS_ENABLED(CONFIG_DEBUG_OBJECTS_RCU_HEAD))
-> > > > > >                 pr_info("\tRCU callback double-/use-after-free debug is enabled.\n");
-> > > > > >         if (gp_preinit_delay)
-> > > > > >                 pr_info("\tRCU debug GP pre-init slowdown %d jiffies.\n", gp_preinit_delay);
-> > > > > >         if (gp_init_delay)
-> > > > > >                 pr_info("\tRCU debug GP init slowdown %d jiffies.\n", gp_init_delay);
-> > > > > >         if (gp_cleanup_delay)
-> > > > > >                 pr_info("\tRCU debug GP cleanup slowdown %d jiffies.\n", gp_cleanup_delay);
-> > > > > > +       if (nocb_patience_delay < 0) {
-> > > > > > +               pr_info("\tRCU NOCB CPU patience negative (%d), resetting to zero.\n",
-> > > > > > +                       nocb_patience_delay);
-> > > > > > +               nocb_patience_delay = 0;
-> > > > > > +       } else if (nocb_patience_delay > 5 * MSEC_PER_SEC) {
-> > > > > > +               pr_info("\tRCU NOCB CPU patience too large (%d), resetting to %ld.\n",
-> > > > > > +                       nocb_patience_delay, 5 * MSEC_PER_SEC);
-> > > > > > +               nocb_patience_delay = msecs_to_jiffies(5 * MSEC_PER_SEC);
-> > > > > > +       } else if (nocb_patience_delay) {
-> > > > > > +               nocb_patience_delay = msecs_to_jiffies(nocb_patience_delay);
-> > > > > > +               pr_info("\tRCU NOCB CPU patience set to %d milliseconds.\n",
-> > > > > > +                       jiffies_to_msecs(nocb_patience_delay);
-> > > > > > +       }
-> > > > > 
-> > > > > I just did this here at the end:
-> > > > > 
-> > > > > 	nocb_patience_delay_jiffies = msecs_to_jiffies(nocb_patience_delay);
-> > > > > 
-> > > > > Ah, you are wanting to print out the milliseconds after the rounding
-> > > > > to jiffies.
-> > > > 
-> > > > That's right, just to make sure the user gets the effective patience time, 
-> > > > instead of the before-rounding one, which was on input.
-> > > > 
-> > > > > I am going to hold off on that for the moment, but I hear your request
-> > > > > and I have not yet said "no".  ;-)
-> > > > 
-> > > > Sure :)
-> > > > It's just something I think it's nice to have (as a user).
-> > > 
-> > > If you would like to do a separate patch adding this, here are the
-> > > requirements:
-> > > 
-> > > o	If the current code prints nothing, nothing additional should
-> > > 	be printed.
-> > > 
-> > > o	If the rounding ended up with the same value (as it should in
-> > > 	systems with HZ=1000), nothing additional should be printed.
-> > > 
-> > > o	Your choice as to whether or not you want to print out the
-> > > 	jiffies value.
-> > > 
-> > > o	If the additional message is on a new line, it needs to be
-> > > 	indented so that it is clear that it is subordinate to the
-> > > 	previous message.
-> > > 
-> > > 	Otherwise, you can use pr_cont() to continue the previous
-> > > 	line, of course being careful about "\n".
-> > > 
-> > > Probably also something that I am forgetting, but that is most of it.
-> > 
-> > Thanks!
-> > I will work on a patch doing that :)
+On Thu, May 02, 2024 at 03:47:02PM -0700, Stephen Boyd wrote:
+> There's two problems with shared RCGs.
 > 
-> Very good, looking forward to seeing what you come up with!
+> The first problem is that they incorrectly report the parent after
+> commit 703db1f5da1e ("clk: qcom: rcg2: Cache CFG register updates for
+> parked RCGs"). That's because the cached CFG register value needs to be
+> populated when the clk is registered. clk_rcg2_shared_enable() writes
+> the cached CFG register value 'parked_cfg'. This value is initially zero
+> due to static initializers. If a driver calls clk_enable() before
+> setting a rate or parent, it will set the parent to '0' which is
+> (almost?) always XO, and may not reflect the parent at registration. In
+> the worst case, this switches the RCG from sourcing a fast PLL to the
+> slow crystal speed.
 > 
-> My current state is on the "dev" branch of the -rcu tree, so please base
-> on that.
-
-Thanks! I used it earlier to send the previous diff :)
-
+> The second problem is that the force enable bit isn't cleared. The force
+> enable bit is only used during parking and unparking of shared RCGs.
+> Otherwise it shouldn't be set because it keeps the RCG enabled even when
+> all the branches on the output of the RCG are disabled (the hardware has
+> a feedback mechanism so that any child branches keep the RCG enabled
+> when the branch enable bit is set). This problem wastes power if the clk
+> is unused, and is harmful in the case that the clk framework disables
+> the parent of the force enabled RCG. In the latter case, the GDSC the
+> shared RCG is associated with will get wedged if the RCG's source clk is
+> disabled and the GDSC tries to enable the RCG to do "housekeeping" while
+> powering on.
 > 
-> > > > > >         if (!use_softirq)
-> > > > > >                 pr_info("\tRCU_SOFTIRQ processing moved to rcuc kthreads.\n");
-> > > > > >         if (IS_ENABLED(CONFIG_RCU_EQS_DEBUG))
-> > > > > >                 pr_info("\tRCU debug extended QS entry/exit.\n");
-> > > > > >         rcupdate_announce_bootup_oddness();
-> > > > > >  }
-> > > > > >  
-> > > > > >  #ifdef CONFIG_PREEMPT_RCU
-> > > > > >  
-> > > > > >  static void rcu_report_exp_rnp(struct rcu_node *rnp, bool wake);
-> > > > > > @@ -1260,10 +1274,29 @@ static bool rcu_nohz_full_cpu(void)
-> > > > > >  
-> > > > > >  /*
-> > > > > >   * Bind the RCU grace-period kthreads to the housekeeping CPU.
-> > > > > >   */
-> > > > > >  static void rcu_bind_gp_kthread(void)
-> > > > > >  {
-> > > > > >         if (!tick_nohz_full_enabled())
-> > > > > >                 return;
-> > > > > >         housekeeping_affine(current, HK_TYPE_RCU);
-> > > > > >  }
-> > > > > > +
-> > > > > > +/*
-> > > > > > + * Is this CPU a NO_HZ_FULL CPU that should ignore RCU if the time since the
-> > > > > > + * start of current grace period is smaller than nocb_patience_delay ?
-> > > > > > + *
-> > > > > > + * This code relies on the fact that all NO_HZ_FULL CPUs are also
-> > > > > > + * RCU_NOCB_CPU CPUs.
-> > > > > > + */
-> > > > > > +static bool rcu_on_patience_delay(void)
-> > > > > > +{
-> > > > > > +#ifdef CONFIG_NO_HZ_FULL
-> > > > > 
-> > > > > You lost me on this one.  Why do we need the #ifdef instead of
-> > > > > IS_ENABLED()?  Also, please note that rcu_nohz_full_cpu() is already a
-> > > > > compile-time @false in CONFIG_NO_HZ_FULL=n kernels.
-> > > > 
-> > > > You are right. rcu_nohz_full_cpu() has a high chance of being inlined on
-> > > > 	if ((...) && rcu_nohz_full_cpu())
-> > > > And since it returns false, this whole statement will be compiled out, and 
-> > > > the new function will not exist in CONFIG_NO_HZ_FULL=n, so there  is no 
-> > > > need to test it.
-> > > 
-> > > Very good!  You had me going there for a bit.  ;-)
-> > > 
-> > > > > > +       if (!nocb_patience_delay)
-> > > > > > +               return false;
-> > > > > 
-> > > > > We get this automatically with the comparison below, right?
-> > > > 
-> > > > Right
-> > > > 
-> > > > >   If so, we
-> > > > > are not gaining much by creating the helper function.  Or am I missing
-> > > > > some trick here?
-> > > > 
-> > > > Well, it's a fastpath. Up to here, we just need to read 
-> > > > nocb_patience_delay{,_jiffies} from memory.
-> > > 
-> > > Just nocb_patience_delay_jiffies, correct?  Unless I am missing something,
-> > > nocb_patience_delay is unused after boot.
-> > 
-> > Right, I used both because I was referring to the older version and the 
-> > current version with _jiffies.
+> Both of these problems combined with incorrect runtime PM usage in the
+> display driver lead to a black screen on Qualcomm sc7180 Trogdor
+> chromebooks. What happens is that the bootloader leaves the
+> 'disp_cc_mdss_rot_clk' enabled and the 'disp_cc_mdss_rot_clk_src' force
+> enabled and parented to 'disp_cc_pll0'. The mdss driver probes and
+> runtime suspends, disabling the mdss_gdsc which uses the
+> 'disp_cc_mdss_rot_clk_src' for "housekeeping". The
+> 'disp_cc_mdss_rot_clk' is disabled during late init because the clk is
+> unused, but the parent 'disp_cc_mdss_rot_clk_src' is still force enabled
+> because the force enable bit was never cleared. Then 'disp_cc_pll0' is
+> disabled because it is also unused. That's because the clk framework
+> believes the parent of the RCG is XO when it isn't. A child device of
+> the mdss device (e.g. DSI) runtime resumes mdss which powers on the
+> mdss_gdsc. This wedges the GDSC because 'disp_cc_mdss_rot_clk_src' is
+> parented to 'disp_cc_pll0' and that PLL is off. With the GDSC wedged,
+> mdss_runtime_resume() tries to enable 'disp_cc_mdss_mdp_clk' but it
+> can't because the GDSC has wedged all the clks associated with the GDSC
+> causing clks to stay stuck off.
 > 
-> Fair enough!
+> This leads to the following warning seen at boot and a black screen
+> because the display driver fails to probe.
 > 
-> > > > If we don't include the fastpath we have to read jiffies and 
-> > > > rcu_state.gp_start, which can take extra time: up to 2 cache misses.
-> > > > 
-> > > > I thought it could be relevant, as we reduce the overhead of the new 
-> > > > parameter when it's disabled (patience=0). 
-> > > > 
-> > > > Do you think that could be relevant?
-> > > 
-> > > Well, the hardware's opinion is what matters.  ;-)
-> > > 
-> > > But the caller's code path reads jiffies a few times, so it should
-> > > be hot in the cache, correct?
-> > 
-> > Right, but I wonder how are the chances of it getting updated between  
-> > caller's use and this function's. Same for gp_start.
+>  disp_cc_mdss_mdp_clk status stuck at 'off'
+>  WARNING: CPU: 1 PID: 81 at drivers/clk/qcom/clk-branch.c:87 clk_branch_toggle+0x114/0x168
+>  Modules linked in:
+>  CPU: 1 PID: 81 Comm: kworker/u16:4 Not tainted 6.7.0-g0dd3ee311255 #1 f5757d475795053fd2ad52247a070cd50dd046f2
+>  Hardware name: Google Lazor (rev1 - 2) with LTE (DT)
+>  Workqueue: events_unbound deferred_probe_work_func
+>  pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>  pc : clk_branch_toggle+0x114/0x168
+>  lr : clk_branch_toggle+0x110/0x168
+>  sp : ffffffc08084b670
+>  pmr_save: 00000060
+>  x29: ffffffc08084b680 x28: ffffff808006de00 x27: 0000000000000001
+>  x26: ffffff8080dbd4f4 x25: 0000000000000000 x24: 0000000000000000
+>  x23: 0000000000000000 x22: ffffffd838461198 x21: ffffffd838007997
+>  x20: ffffffd837541d5c x19: 0000000000000001 x18: 0000000000000004
+>  x17: 0000000000000000 x16: 0000000000000010 x15: ffffffd837070fac
+>  x14: 0000000000000003 x13: 0000000000000004 x12: 0000000000000001
+>  x11: c0000000ffffdfff x10: ffffffd838347aa0 x9 : 08dadf92e516c000
+>  x8 : 08dadf92e516c000 x7 : 0000000000000000 x6 : 0000000000000027
+>  x5 : ffffffd8385a61f2 x4 : 0000000000000000 x3 : ffffffc08084b398
+>  x2 : ffffffc08084b3a0 x1 : 00000000ffffdfff x0 : 00000000fffffff0
+>  Call trace:
+>   clk_branch_toggle+0x114/0x168
+>   clk_branch2_enable+0x24/0x30
+>   clk_core_enable+0x5c/0x1c8
+>   clk_enable+0x38/0x58
+>   clk_bulk_enable+0x40/0xb0
+>   mdss_runtime_resume+0x68/0x258
+>   pm_generic_runtime_resume+0x30/0x44
+>   __genpd_runtime_resume+0x30/0x80
+>   genpd_runtime_resume+0x124/0x214
+>   __rpm_callback+0x7c/0x15c
+>   rpm_callback+0x30/0x88
+>   rpm_resume+0x390/0x4d8
+>   rpm_resume+0x43c/0x4d8
+>   __pm_runtime_resume+0x54/0x98
+>   __device_attach+0xe0/0x170
+>   device_initial_probe+0x1c/0x28
+>   bus_probe_device+0x48/0xa4
+>   device_add+0x52c/0x6fc
+>   mipi_dsi_device_register_full+0x104/0x1a8
+>   devm_mipi_dsi_device_register_full+0x28/0x78
+>   ti_sn_bridge_probe+0x1dc/0x2bc
+>   auxiliary_bus_probe+0x4c/0x94
+>   really_probe+0xf8/0x270
+>   __driver_probe_device+0xa8/0x130
+>   driver_probe_device+0x44/0x104
+>   __device_attach_driver+0xa4/0xcc
+>   bus_for_each_drv+0x94/0xe8
+>   __device_attach+0xf8/0x170
+>   device_initial_probe+0x1c/0x28
+>   bus_probe_device+0x48/0xa4
+>   deferred_probe_work_func+0x9c/0xd8
 > 
-> Well, jiffies is updated at most once per millisecond, and gp_start is
-> updated at most once per few milliseconds.  So the chances of it being
-> updated within that code sequence are quite small.
-
-Fair enough, and we probably don't need to worry about it getting 
-cached-out in this sequence, as well. 
-
-Also time_before() is a macro and we don't need to worry on the function 
-call, so we just spend 2 extra L1-cache reads and a couple arithmetic 
-instructions which are not supposed to take long, so it's fair to assume 
-the fast-path would not be that much faster than the slow path, which means 
-we don't need a fast path after all.
-
-Thanks for helping me notice that :)
-
+> Fix these problems by parking shared RCGs at boot. This will properly
+> initialize the parked_cfg struct member so that the parent is reported
+> properly and ensure that the clk won't get stuck on or off because the
+> RCG is parented to the safe source (XO).
 > 
-> > > But that does lead to another topic, namely the possibility of tagging
-> > > nocb_patience_delay_jiffies with __read_mostly. 
-> > 
-> > Oh, right. This was supposed to be in the diff I sent earlier, but I 
-> > completelly forgot to change before sending. So, yeah, I agree on 
-> > nocb_patience_delay being __read_mostly; 
-> > 
-> > > And there might be
-> > > a number of other of RCU's variables that could be similarly tagged
-> > > in order to avoid false sharing.  (But is there any false sharing?
-> > > This might be worth testing.)
-> > 
-> > Maybe there isn't, but I wonder if it would hurt performance if they were 
-> > tagged as __read_only anyway. 
-> 
-> Let's be at least a little careful here.  It is just as easy to hurt
-> performance by marking things __read_mostly or __read_only as it is
-> to help performance.  ;-)
+> Fixes: 703db1f5da1e ("clk: qcom: rcg2: Cache CFG register updates for parked RCGs")
+> Reported-by: Stephen Boyd <sboyd@kernel.org>
+> Closes: https://lore.kernel.org/r/1290a5a0f7f584fcce722eeb2a1fd898.sboyd@kernel.org
+> Closes: https://issuetracker.google.com/319956935
+> Reported-by: Laura Nao <laura.nao@collabora.com>
+> Closes: https://lore.kernel.org/r/20231218091806.7155-1-laura.nao@collabora.com
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+[..]
 
-Fair enough :)
+On the sc7180-trogdor-kingoftown and sc7180-trogdor-lazor-limozeen devices we
+have in KernelCI, the issue was not only the warning, but it was also followed
+by a kernel panic, which looks to be in the removal path of the msm drm driver
+(I've included the trace below).
 
-> 
-> 							Thanx, Paul
-> 
+With this patch applied, those platforms no longer panic, they now boot
+perfectly fine. I've tested on next-20240429 with the KernelCI config fragment
+[1] applied on top of the defconfig and ran the dt kselftest to verify that no
+device related to the display pipeline failed to probe.
 
-Thanks!
-Leo
+Feel free to add
 
+Tested-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+Thanks,
+Nícolas
+
+[1] https://github.com/kernelci/kernelci-core/blob/a4e885cc673cfbef52f3e664d498af8d53b5abc0/config/core/build-configs.yaml#L159
+
+
+[   11.298220] disp_cc_mdss_mdp_clk status stuck at 'off'
+[   11.298282] WARNING: CPU: 4 PID: 190 at drivers/clk/qcom/clk-branch.c:87 clk_branch_wait+0x144/0x15c
+[   11.312967] Modules linked in: venus_dec venus_enc videobuf2_dma_contig cbmem hci_uart qcom_spmi_adc5 qcom_spmi_adc_tm5 ath10k_snoc btqca qcom_vadc_common venus_core uvcvideo uvc btrtl ath10k_core videobuf2_vmalloc v4l2_mem2mem videobuf2_memops cros_ec_lid_angle btbcm videobuf2_v4l2 crct10dif_ce ath cros_ec_sensors_core bluetooth coresight_stm mac80211 qcom_stats stm_core videodev industrialio_triggered_buffer kfifo_buf cros_ec_chardev videobuf2_common onboard_usb_dev sbs_battery libarc4 ecdh_generic elan_i2c elants_i2c panel_edp(+) ecc mc cfg80211 icc_bwmon coresight_etm4x rfkill coresight_tmc coresight_funnel coresight_replicator ramoops coreboot_table coresight reed_solomon pwm_bl backlight
+[   11.376284] CPU: 4 PID: 190 Comm: (udev-worker) Not tainted 6.9.0-rc6-next-20240429-00004-g194b5bfc4dd4-dirty #374
+[   11.386913] Hardware name: Google Kingoftown (DT)
+[   11.391760] pstate: 604000c9 (nZCv daIF +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   11.398926] pc : clk_branch_wait+0x144/0x15c
+[   11.403328] lr : clk_branch_wait+0x144/0x15c
+[   11.407731] sp : ffff800081fdb0a0
+[   11.411144] x29: ffff800081fdb0a0 x28: ffff800081fdbc70 x27: 0000000000000000
+[   11.418496] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[   11.425844] x23: ffffc652b6b1b138 x22: 0000000000000001 x21: ffffc652b537d4ac
+[   11.433195] x20: 0000000000000000 x19: ffffc652b7a1c1f8 x18: 0000000000000038
+[   11.440544] x17: 000000040044ffff x16: 0000000000000000 x15: fffffffffffe9b90
+[   11.447894] x14: ffffc652b7802208 x13: 00000000000006d5 x12: 0000000000000247
+[   11.452662] usb 2-1.3: new SuperSpeed USB device number 4 using xhci-hcd
+[   11.455235] x11: fffffffffffe9b90 x10: fffffffffffe9b58 x9 : 00000000fffff247
+[   11.469464] x8 : ffffc652b7802208 x7 : ffffc652b785a208 x6 : 0000000000001b54
+[   11.476811] x5 : 40000000fffff247 x4 : 000000000000aff5 x3 : 0000000000000000
+[   11.484158] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff394d176f4500
+[   11.491501] Call trace:
+[   11.494028]  clk_branch_wait+0x144/0x15c
+[   11.498081]  clk_branch2_enable+0x30/0x40
+[   11.502218]  clk_core_enable+0x6c/0xbc
+[   11.506097]  clk_enable+0x2c/0x4c
+[   11.509518]  clk_bulk_enable+0x4c/0xd8
+[   11.513398]  msm_mdss_enable+0xc8/0x264
+[   11.517363]  mdss_runtime_resume+0x34/0x44
+[   11.521590]  pm_generic_runtime_resume+0x2c/0x44
+[   11.526352]  __genpd_runtime_resume+0x30/0xa8
+[   11.530852]  genpd_runtime_resume+0xb4/0x29c
+[   11.535257]  __rpm_callback+0x48/0x198
+[   11.539133]  rpm_callback+0x68/0x74
+[   11.542740]  rpm_resume+0x3cc/0x680
+[   11.546350]  rpm_resume+0x24c/0x680
+[   11.549959]  __pm_runtime_resume+0x4c/0x90
+[   11.554188]  __device_attach+0x90/0x1b0
+[   11.558158]  device_initial_probe+0x14/0x20
+[   11.562474]  bus_probe_device+0xa8/0xac
+[   11.566436]  device_add+0x590/0x750
+[   11.570043]  device_register+0x20/0x30
+[   11.573905]  i2c_register_adapter+0xe8/0x644
+[   11.578311]  i2c_add_adapter+0x78/0xd0
+[   11.582172]  drm_dp_aux_register+0x4c/0x104
+[   11.586497]  dp_aux_register+0x18/0x78
+[   11.590362]  dp_display_bind+0x4c/0x118
+[   11.594321]  component_bind_all+0x118/0x248
+[   11.598641]  msm_drm_bind+0x1bc/0x3d0
+[   11.602423]  try_to_bring_up_aggregate_device+0x168/0x1d4
+[   11.607978]  __component_add+0xa4/0x170
+[   11.611932]  component_add+0x14/0x20
+[   11.615619]  dsi_dev_attach+0x20/0x2c
+[   11.619403]  dsi_host_attach+0x9c/0x144
+[   11.623360]  devm_mipi_dsi_attach+0x34/0x90
+[   11.627688]  ps8640_bridge_link_panel+0x64/0x74
+[   11.632363]  dp_aux_ep_probe+0x4c/0xf0
+[   11.636232]  really_probe+0xbc/0x2a0
+[   11.639926]  __driver_probe_device+0x78/0x12c
+[   11.644418]  driver_probe_device+0x40/0x160
+[   11.648736]  __driver_attach+0x94/0x19c
+[   11.652696]  bus_for_each_dev+0x74/0xd4
+[   11.656656]  driver_attach+0x24/0x30
+[   11.660347]  bus_add_driver+0xe4/0x208
+[   11.664213]  driver_register+0x60/0x128
+[   11.668165]  __dp_aux_dp_driver_register+0x24/0x30
+[   11.673102]  panel_edp_init+0x44/0x1000 [panel_edp]
+[   11.678153]  do_one_initcall+0x6c/0x1b0
+[   11.682116]  do_init_module+0x60/0x1f0
+[   11.685988]  load_module+0x191c/0x1b04
+[   11.689853]  init_module_from_file+0x84/0xc0
+[   11.694256]  __arm64_sys_finit_module+0x1b8/0x27c
+[   11.699103]  invoke_syscall+0x48/0x118
+[   11.702976]  el0_svc_common.constprop.0+0x40/0xe0
+[   11.707821]  do_el0_svc+0x1c/0x28
+[   11.711244]  el0_svc+0x34/0xdc
+[   11.714411]  el0t_64_sync_handler+0xc0/0xc4
+[   11.718720]  el0t_64_sync+0x190/0x194
+[   11.722504] ---[ end trace 0000000000000000 ]---
+[   11.727445] Failed to enable clk 'core': -16
+[   11.731997] msm-mdss ae00000.display-subsystem: clock enable failed, ret:-16
+[   11.741316] msm_dpu ae01000.display-controller: bound ae90000.displayport-controller (ops dp_display_comp_ops)
+[   11.752180] adreno 5000000.gpu: supply vdd not found, using dummy regulator
+[   11.759422] adreno 5000000.gpu: supply vddcx not found, using dummy regulator
+[   11.768317] platform 506a000.gmu: Adding to iommu group 15
+[   11.774827] msm_dpu ae01000.display-controller: bound 5000000.gpu (ops a3xx_ops)
+[   11.785298] msm_dpu ae01000.display-controller: [drm:msm_drm_kms_init] *ERROR* kms hw init failed: -16
+[   11.794867] Unable to handle kernel paging request at virtual address dead000000000108
+[   11.802998] Mem abort info:
+[   11.805873]   ESR = 0x0000000096000044
+[   11.809724]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   11.815177]   SET = 0, FnV = 0
+[   11.818321]   EA = 0, S1PTW = 0
+[   11.821554]   FSC = 0x04: level 0 translation fault
+[   11.826560] Data abort info:
+[   11.829524]   ISV = 0, ISS = 0x00000044, ISS2 = 0x00000000
+[   11.835156]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
+[   11.840340]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   11.845795] [dead000000000108] address between user and kernel address ranges
+[   11.853120] Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
+[   11.859558] Modules linked in: venus_dec venus_enc videobuf2_dma_contig cbmem hci_uart qcom_spmi_adc5 qcom_spmi_adc_tm5 ath10k_snoc btqca qcom_vadc_common venus_core uvcvideo uvc btrtl ath10k_core videobuf2_vmalloc v4l2_mem2mem videobuf2_memops cros_ec_lid_angle btbcm videobuf2_v4l2 crct10dif_ce ath cros_ec_sensors_core bluetooth coresight_stm mac80211 qcom_stats stm_core videodev industrialio_triggered_buffer kfifo_buf cros_ec_chardev videobuf2_common onboard_usb_dev sbs_battery libarc4 ecdh_generic elan_i2c elants_i2c panel_edp(+) ecc mc cfg80211 icc_bwmon coresight_etm4x rfkill coresight_tmc coresight_funnel coresight_replicator ramoops coreboot_table coresight reed_solomon pwm_bl backlight
+[   11.922542] CPU: 7 PID: 190 Comm: (udev-worker) Tainted: G        W          6.9.0-rc6-next-20240429-00004-g194b5bfc4dd4-dirty #374
+[   11.934669] Hardware name: Google Kingoftown (DT)
+[   11.939505] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[   11.946649] pc : drm_atomic_private_obj_fini+0x24/0x70
+[   11.951923] lr : _dpu_kms_hw_destroy+0x4c/0x64
+[   11.956492] sp : ffff800081fdb5d0
+[   11.959892] x29: ffff800081fdb5d0 x28: ffff800081fdbc70 x27: ffff394d055ceec0
+[   11.967215] x26: ffffc652b7b86200 x25: ffff394d01978880 x24: ffff394d03bfa080
+[   11.974537] x23: ffff394d04f3c800 x22: ffff394d04625810 x21: ffff394d03bfa080
+[   11.981860] x20: ffff394d03bfa638 x19: ffff394d03bfa080 x18: 0000000000000030
+[   11.989183] x17: 4f5252452a205d74 x16: 696e695f736d6b5f x15: 6d72645f6d736d3a
+[   11.996504] x14: ffffc652b7802208 x13: 00000000000007d7 x12: 000000000000029d
+[   12.003826] x11: 20776820736d6b20 x10: ffffc652b785a208 x9 : 00000000fffff000
+[   12.011147] x8 : ffffc652b7802208 x7 : ffffc652b785a208 x6 : 0000000000000000
+[   12.018469] x5 : 80000000fffff000 x4 : dead000000000100 x3 : dead000000000122
+[   12.025791] x2 : dead000000000100 x1 : dead000000000122 x0 : ffff394d03bfa6c0
+[   12.033114] Call trace:
+[   12.035630]  drm_atomic_private_obj_fini+0x24/0x70
+[   12.040554]  _dpu_kms_hw_destroy+0x4c/0x64
+[   12.044761]  dpu_kms_destroy+0x28/0xa4
+[   12.048609]  msm_drm_kms_uninit+0xb8/0xe4
+[   12.052727]  msm_drm_uninit.isra.0+0x58/0xd0
+[   12.057116]  msm_drm_bind+0x304/0x3d0
+[   12.060876]  try_to_bring_up_aggregate_device+0x168/0x1d4
+[   12.066418]  __component_add+0xa4/0x170
+[   12.070358]  component_add+0x14/0x20
+[   12.074028]  dsi_dev_attach+0x20/0x2c
+[   12.077789]  dsi_host_attach+0x9c/0x144
+[   12.081729]  devm_mipi_dsi_attach+0x34/0x90
+[   12.086028]  ps8640_bridge_link_panel+0x64/0x74
+[   12.090686]  dp_aux_ep_probe+0x4c/0xf0
+[   12.094534]  really_probe+0xbc/0x2a0
+[   12.098206]  __driver_probe_device+0x78/0x12c
+[   12.102684]  driver_probe_device+0x40/0x160
+[   12.106984]  __driver_attach+0x94/0x19c
+[   12.110924]  bus_for_each_dev+0x74/0xd4
+[   12.114864]  driver_attach+0x24/0x30
+[   12.118537]  bus_add_driver+0xe4/0x208
+[   12.122386]  driver_register+0x60/0x128
+[   12.126326]  __dp_aux_dp_driver_register+0x24/0x30
+[   12.131241]  panel_edp_init+0x44/0x1000 [panel_edp]
+[   12.136260]  do_one_initcall+0x6c/0x1b0
+[   12.140202]  do_init_module+0x60/0x1f0
+[   12.144052]  load_module+0x191c/0x1b04
+[   12.147900]  init_module_from_file+0x84/0xc0
+[   12.152287]  __arm64_sys_finit_module+0x1b8/0x27c
+[   12.157123]  invoke_syscall+0x48/0x118
+[   12.160973]  el0_svc_common.constprop.0+0x40/0xe0
+[   12.165808]  do_el0_svc+0x1c/0x28
+[   12.169212]  el0_svc+0x34/0xdc
+[   12.172357]  el0t_64_sync_handler+0xc0/0xc4
+[   12.176655]  el0t_64_sync+0x190/0x194
+[   12.180417] Code: d2802443 f2fbd5a4 f2fbd5a3 a9400402 (f9000441) 
+[   12.186675] ---[ end trace 0000000000000000 ]---
 
