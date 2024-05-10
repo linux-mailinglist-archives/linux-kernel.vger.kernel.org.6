@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-175915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6148C2717
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:45:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32628C271B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94424283ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:45:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60532B2199E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:46:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025A517108A;
-	Fri, 10 May 2024 14:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E529171086;
+	Fri, 10 May 2024 14:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T/R9ZiRD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e6M65UEp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6478168AFC
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00B168AFC;
+	Fri, 10 May 2024 14:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715352318; cv=none; b=f5HYKG1p9ZsaJwkUgAWKx0n3y5/j2HBSTRlosI302SSacefp2HT5s9tspMBQoPPmOhBoZAzvVdEdddcgdlClaYGCp4ZM0T0dPFN+LSloKPZ+KdjcPzwzafDccB2mF3sBCR6Jw2mwSSXeX51N65mebdeZgVhL5bd5pMcdILltrdU=
+	t=1715352381; cv=none; b=i+BqwmF1bQL5F55Lg9Pvi/m7xHWjEhnPCgyRCXgIv/SIOFJoPfiiQLDqm2/JWKka0NQpvb+hARuwSDLDqsLMj4bo2DGLyD8Ww2a58OOkkwpCzoNYhEl5S0dTJgPsIYIhmglh3WpZRgXqzo1glWcX8q2z8LcIPCotr8AjQFZbIZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715352318; c=relaxed/simple;
-	bh=kmj44PEzEs1Hc7RYAG2y6Omx6rTiyxtrlA8AzcCTcUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFltvad8SstX9EWte9d+852otTYPNVUm9aGfc8DsMJOtV4LjMj3MfJtppwgwAUlungJvJQsePjapuPQB4xcSaLZMhvufVb1/pb+F4tPrs7MXdPWvIViOQyJIGqQJJLILGuW5CMOfIgGzyRHpt00pPeve2ckAI6xJJewtEdh0gtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T/R9ZiRD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715352315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V0JbujFYt/9SItNTEbEiczRuSL3qAb2lZe4U6XNdsCE=;
-	b=T/R9ZiRD8cowlEvt6k45zjjee8Kz32Ig6uE04Hl+0adaxC7SEYVRZ9pHV6omzhdCLueWKJ
-	5Tr5u9HyopoRvIY/YBvdMI54UffAINO2tR/Fc+LDtxVUeMwEVeCeOlaxa0G4xa1LHr/WpC
-	VkRlaK5h061dzpV+hatkQdfPbrK6eH8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-BGv3MJGHMumIaHyZGJNQOQ-1; Fri, 10 May 2024 10:44:59 -0400
-X-MC-Unique: BGv3MJGHMumIaHyZGJNQOQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34d7a7585d7so1208101f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:44:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715352297; x=1715957097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V0JbujFYt/9SItNTEbEiczRuSL3qAb2lZe4U6XNdsCE=;
-        b=YGEyy7c/OF8V99/8n7UDQshtuL8qS/UuKQXW3Fv/igG/OS2GySYrT3oO486bHOpfjx
-         keP+Q/1xeGSqKdRBSf6z3ZW8oJdaPRdQWrYxGR6sYYUTyYaqbzXGoiiolHTZSnIc/D9J
-         8ZUsWZDdR78jeKnQEmPHnsqT7tfQ94UdQTjo9iQc4g5XVTJo4T+NhfDOFoFgZyHw5dxP
-         myXqHiB38CgM1gQ3cWo1zDYh1mxSvfBdH/c7OOomrCGPQ+ebaa95ESuW9f2n0HT4d0Ut
-         dJyW2/ucrz6dewDkvt7ZZfd35AW6MqfDX4h6jjEC/T+soZZwqr2EgLcU4d9KmLNCS5Mi
-         faSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZwCMDF9SIjwqOx/4Qi3ZOM5ATAEWxvBzQffL+5hDSiAP0U4eFcTIo3Qi0Bldj+0CokVXY5SQC7aaQGmgIytpcfbl90tODw5A8fJm3
-X-Gm-Message-State: AOJu0YzyqTeLBRCGyx9Oo+BYn78Uqnw5uplwqI9kwLnAPwm1KJZ4sPwc
-	R8UYPr4GAfNLvlQxJntwxxO2CJPjdqHgXH/G67c3aLipsAH/isrbqH32jTZ1bpaJsQm6SlxCkrJ
-	O2yuDXMIBheIwT5GSMkayuUBk11VThIejdAMpYPDj6MKuNnqsGpd4GI2gucg3XPXQ6d06PoZh/v
-	4CrgCXJZOx0lnTDHbxD1Veuhufv/p84yUB6gt/
-X-Received: by 2002:a05:6000:1003:b0:33e:7f5c:a75d with SMTP id ffacd0b85a97d-3504a96cca2mr1881556f8f.57.1715352297327;
-        Fri, 10 May 2024 07:44:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqPh3msW6mLhD5AYzc7IzmHoZiilZKRmz2o9qQNP3DbnrKVIBIgk/dOAj3od9jdxMGgdFJY8LFNOkvNb4LRmc=
-X-Received: by 2002:a05:6000:1003:b0:33e:7f5c:a75d with SMTP id
- ffacd0b85a97d-3504a96cca2mr1881542f8f.57.1715352296757; Fri, 10 May 2024
- 07:44:56 -0700 (PDT)
+	s=arc-20240116; t=1715352381; c=relaxed/simple;
+	bh=PiJqpHpxECsvIuqM1iLqQKFUGF/+tlUVyGz3yiigaxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eN4QDnp+cxd8vvqkvT9xCA5Mms3qj0PN6JlqQAUcdNGmGDzuw443iTMk3V5xbwF9xQq5rrFU26usFXLTFZX9geiZMxWNG8GuZOYADScrABzTbMFFXgGYqR4LI/4b9ir5CLBBtjsua+CBY8CgFHtUi7jtxrHNgv0tVtS/00leelI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e6M65UEp; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715352380; x=1746888380;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PiJqpHpxECsvIuqM1iLqQKFUGF/+tlUVyGz3yiigaxc=;
+  b=e6M65UEpiVRZGk0vyMlIXzGZUZKg6wH/jXjxK2BE7w7J4vp2bJt0c/7m
+   IXqdspOLU7ReSCBVN8yIupzT9f+RjgWaaUul5sXjXCbqcqngkrVt+wW9N
+   4FCLHrHr2GBKRCVBqQf8Q+LKV1PGQ/cXjwBh95OSDjM7/e7FcGapepCvv
+   /kJ47Z0RM6uDiwbHVJwptQcsT+0O+X2rH7Xc22hwZsIqiSNVi1+3+UwmR
+   ei3JjUhMS8yEMTEfKwk0A7TVnMb+aqe1d3DEMcvZuZq97mYdz6QHaX9Qc
+   qgGCpdozTk2a0oZ6eSxe1Ze8Jr1xdwsce5Cqywjyag+vW+mAEqBi+r7F6
+   w==;
+X-CSE-ConnectionGUID: kLZfFGoOT6mNfacOOXS0Sg==
+X-CSE-MsgGUID: kwqZNo8TT6i7RG+TKneDYg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11186325"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="11186325"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:46:20 -0700
+X-CSE-ConnectionGUID: JXtM5Uk0SgKoHE4imzvCnQ==
+X-CSE-MsgGUID: vDUdxz2dS/2Nxpe5MFM+EQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="34284943"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:46:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5RVm-000000068IS-1O6i;
+	Fri, 10 May 2024 17:46:14 +0300
+Date: Fri, 10 May 2024 17:46:13 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Laura Nao <laura.nao@collabora.com>
+Cc: mika.westerberg@linux.intel.com, linus.walleij@linaro.org,
+	brgl@bgdev.pl, kernel@collabora.com, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	"kernelci.org bot" <bot@kernelci.org>
+Subject: Re: [PATCH] gpiolib: acpi: Add ACPI device NULL check to
+ acpi_can_fallback_to_crs()
+Message-ID: <Zj4zNefxGUGKjxha@smile.fi.intel.com>
+References: <20240509104605.538274-1-laura.nao@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508150240.225429-1-chenhuacai@loongson.cn>
-In-Reply-To: <20240508150240.225429-1-chenhuacai@loongson.cn>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Fri, 10 May 2024 16:44:44 +0200
-Message-ID: <CABgObfaivYUYZwmC9p2uwCWTC-hzJc4P_=rK0S244Hjx3X8kvg@mail.gmail.com>
-Subject: Re: [GIT PULL] LoongArch KVM changes for v6.10
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509104605.538274-1-laura.nao@collabora.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, May 8, 2024 at 5:11=E2=80=AFPM Huacai Chen <chenhuacai@loongson.cn>=
- wrote:
->
-> The following changes since commit dd5a440a31fae6e459c0d6271dddd628255053=
-61:
->
->   Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson=
-git tags/loongarch-kvm-6.10
->
-> for you to fetch changes up to 7b7e584f90bf670d5c6f2b1fff884bf3b972cad4:
->
->   LoongArch: KVM: Add mmio trace events support (2024-05-06 22:00:47 +080=
-0)
+On Thu, May 09, 2024 at 12:46:05PM +0200, Laura Nao wrote:
+> Check ACPI device for NULL inside acpi_can_fallback_to_crs(), so callers
+> won't need to.
 
-Pulled, thanks.
+Thank you for the patch, one change seems good to have along this.
 
-Paolo
+..
 
-> ----------------------------------------------------------------
-> LoongArch KVM changes for v6.10
->
-> 1. Add ParaVirt IPI support.
-> 2. Add software breakpoint support.
-> 3. Add mmio trace events support.
->
-> ----------------------------------------------------------------
-> Bibo Mao (8):
->       LoongArch/smp: Refine some ipi functions on LoongArch platform
->       LoongArch: KVM: Add hypercall instruction emulation
->       LoongArch: KVM: Add cpucfg area for kvm hypervisor
->       LoongArch: KVM: Add vcpu mapping from physical cpuid
->       LoongArch: KVM: Add PV IPI support on host side
->       LoongArch: KVM: Add PV IPI support on guest side
->       LoongArch: KVM: Add software breakpoint support
->       LoongArch: KVM: Add mmio trace events support
->
->  arch/loongarch/Kconfig                          |   9 ++
->  arch/loongarch/include/asm/Kbuild               |   1 -
->  arch/loongarch/include/asm/hardirq.h            |   6 +
->  arch/loongarch/include/asm/inst.h               |   2 +
->  arch/loongarch/include/asm/irq.h                |  11 +-
->  arch/loongarch/include/asm/kvm_host.h           |  33 +++++
->  arch/loongarch/include/asm/kvm_para.h           | 161 ++++++++++++++++++=
-++++++
->  arch/loongarch/include/asm/kvm_vcpu.h           |  11 ++
->  arch/loongarch/include/asm/loongarch.h          |  12 ++
->  arch/loongarch/include/asm/paravirt.h           |  30 +++++
->  arch/loongarch/include/asm/paravirt_api_clock.h |   1 +
->  arch/loongarch/include/asm/smp.h                |  22 ++--
->  arch/loongarch/include/uapi/asm/kvm.h           |   4 +
->  arch/loongarch/kernel/Makefile                  |   1 +
->  arch/loongarch/kernel/irq.c                     |  24 +---
->  arch/loongarch/kernel/paravirt.c                | 151 ++++++++++++++++++=
-++++
->  arch/loongarch/kernel/perf_event.c              |  14 +--
->  arch/loongarch/kernel/smp.c                     |  52 +++++---
->  arch/loongarch/kernel/time.c                    |  12 +-
->  arch/loongarch/kvm/exit.c                       | 151 ++++++++++++++++++=
-+---
->  arch/loongarch/kvm/trace.h                      |  20 ++-
->  arch/loongarch/kvm/vcpu.c                       | 105 +++++++++++++++-
->  arch/loongarch/kvm/vm.c                         |  11 ++
->  23 files changed, 746 insertions(+), 98 deletions(-)
->  create mode 100644 arch/loongarch/include/asm/kvm_para.h
->  create mode 100644 arch/loongarch/include/asm/paravirt.h
->  create mode 100644 arch/loongarch/include/asm/paravirt_api_clock.h
->  create mode 100644 arch/loongarch/kernel/paravirt.c
->
+>  	/* Never allow fallback if the device has properties */
+> -	if (acpi_dev_has_props(adev) || adev->driver_gpios)
+> +	if (!adev || acpi_dev_has_props(adev) || adev->driver_gpios)
+
+Right, since it was adev || _crs() combined.
+
+>  		return false;
+
+Now we may remove that check from __acpi_find_gpio():
+
+--- a/drivers/gpio/gpiolib-acpi.c
++++ b/drivers/gpio/gpiolib-acpi.c
+@@ -988,10 +988,10 @@ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int
+ 	}
+ 
+ 	/* Then from plain _CRS GPIOs */
+-	if (!adev || !can_fallback)
+-		return ERR_PTR(-ENOENT);
++	if (can_fallback)
++		return acpi_get_gpiod_by_index(adev, NULL, idx, info);
+ 
+-	return acpi_get_gpiod_by_index(adev, NULL, idx, info);
++	return ERR_PTR(-ENOENT);
+ }
+ 
+ struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
+
+
+As a side effect it will make the comment better to understand.
+
+With above suggestion applied, feel free to add mine
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+You might need to rephrase the commit message to say that
+
+ "We also move the check in additional to the moving the function call
+ outside of __acpi_find_gpio()."
+
+or something similar, up to you.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
