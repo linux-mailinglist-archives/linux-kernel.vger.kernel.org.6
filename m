@@ -1,101 +1,134 @@
-Return-Path: <linux-kernel+bounces-175768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C120C8C2496
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B088C24B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9CD1F22DFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325E7286A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E0916E898;
-	Fri, 10 May 2024 12:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A95A416F0EE;
+	Fri, 10 May 2024 12:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="Nyb7eTNv"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BB416E87D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRUE2dcA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7A01DA4E;
+	Fri, 10 May 2024 12:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715343186; cv=none; b=X6gIOn033NURE9YFIgy6Pe1uB4FimUbfG0gwVg1HZ2+cRQat6kUtrRnDM8RoT91P7L3dlZtsOFer9CsAnBh3roK7Q34aA8jdFap50hoadhUQWD2VTyumsVQda9593w43C3iuWUo2xV19Wf0eMUW9GPztwGYiZ9SoEtDKQhJvHjE=
+	t=1715343595; cv=none; b=FXz6BBn1NFgeoLMfAJb2dVojCI9XhlK9xBI2bFNvgJQ2DZHqUk0FFYB4MHaYk2MlGlB1M1BySeFXOhWzLeLQyzbC/FCaqQIq9aK07SnYJn478ru+ALWYyaPebYaNr2t57w7prsjxBsbscm/912XYNLuDNxB0vRACOlo6+gxRkcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715343186; c=relaxed/simple;
-	bh=860vc7EDeMsi2h0cfciZJJggMSckKs+q0Rj4TXZkHWQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rI8BqxmjAgHVVNyvTclRRcg0tV2p3bvBeAEBvV1zWC2YMLC8pUPCjDM7csYLaLFUXv6lrPKguIbQdVRkLMPfS1z4U4gkh7WygAAgQWACXMlnCwbgLnqFVDS8Uc2vQ3/y6BMosrMQlqSiLKTvzNCk8Lh+MRgyqVr2i47I8xfa+Vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=Nyb7eTNv; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1715343182;
-	bh=OpDRLzmyyX12mJJWamt32hf+O2uzAL23YMcEm8ju4jw=; l=613;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=Nyb7eTNvqMnqFxXuHhH0OSCAZ759IN5tE/R+JYWLaPdiq7QZ4W5rgNdrpbkBwTPzf
-	 NCXjBjafjCng5e7bsgKRVFW+HWLehcxLCscCjQLE4NsUB3DF+e/McULSB7kNLpIWrg
-	 OjWecU+6mh88TiOmWckiXGRHqRbsPnD0VW6aTc0VI15loEwTmMTNzxTdU22WHnvZ1h
-	 pOKqe1/W2pTsEnxVB2N8JLRKXeojCppTy+sp54T4sFgcgrYV+q4V0D3PQYkg5eV4mu
-	 njam6yBncJLq6zPVRdcc1txGVIUrCtbTZf/uqAXiEXfsP2CFdoBSigvr5Z5w2FAHC+
-	 SCMHyi6armYSw==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(3213203:0:AUTH_RELAY)
-	(envelope-from <alina_yu@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 10 May 2024 20:12:54 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 10 May
- 2024 20:12:54 +0800
-Received: from linuxcarl2.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Fri, 10 May 2024 20:12:54 +0800
-Date: Fri, 10 May 2024 20:12:54 +0800
-From: Alina Yu <alina_yu@richtek.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <lgirdwood@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<johnny_lai@richtek.com>, <cy_huang@richtek.com>
-Subject: Re: [PATCH v2 2/4] regulator: rtq2208: Fix LDO to be compatible with
- both fixed and adjustable vout
-Message-ID: <20240510121254.GA31299@linuxcarl2.richtek.com>
-References: <ZjGmmYWHu-ZQQdIh@finisterre.sirena.org.uk>
- <20240502073029.GA4055@linuxcarl2.richtek.com>
- <20240502092614.GA31518@linuxcarl2.richtek.com>
- <ZjRAsJHn57pZy5UH@finisterre.sirena.org.uk>
- <20240503073536.GA12846@linuxcarl2.richtek.com>
- <ZjjwFTtiopqsYdeJ@finisterre.sirena.org.uk>
- <20240508065402.GA7462@linuxcarl2.richtek.com>
- <ZjtnvjlJpfNn7qVT@finisterre.sirena.org.uk>
- <20240509091503.GA32333@linuxcarl2.richtek.com>
- <ZjzuY6RZ2ar7ZI_N@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1715343595; c=relaxed/simple;
+	bh=0QTGb7ws1UQC09T7WK/RIF3FX3HdoKHcCegXclf7Gfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlXTOQT8X51botzhRlUWVf49oEFYNjsSRZ8JlFZcRbeiolTbf9+ZeBu6uTIoVVJLhysbV23K5scqRm6csHwIp20Af345sY0bli1eRcQH4+//LE91Sp61obNcJ2MaEhww9x3eNs4f2///veWI+OmnE7/N1W89JYN8cmsH/GkOSGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRUE2dcA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C71C2C113CC;
+	Fri, 10 May 2024 12:19:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715343594;
+	bh=0QTGb7ws1UQC09T7WK/RIF3FX3HdoKHcCegXclf7Gfc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tRUE2dcAxPO9x17TT+k3Umlur0rdkBu3SuqfJvxYBbv1RDVxNzXBT93eSxhOW8igd
+	 nTsL763Naz9DaIo0VjMenFRtEtkgCbropKwnpnPGHLUCZrAnF4MVme8Qlb9ptlDUof
+	 KghTa0aVh+Duy60x+rXAC9ISTx2m9bo1lFpH022C/+oYCdMn3kS2br49l1CHTc6bmq
+	 ESfLMnlESIJp5HOq/61o61R+IlR4ZMYVeYt3mexz+ju8BwwAngn7ujZ1ZwuvyICbNj
+	 NrjEa95O6IralrWJNz3nU4BpTzjB4DYUO+wAaYGvR8TcY1KKEPxt6mvOWmSAld0o7q
+	 Odt0HWKz0/3pg==
+Date: Fri, 10 May 2024 13:19:48 +0100
+From: Simon Horman <horms@kernel.org>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH] net/sched: Get stab before calling ops->change()
+Message-ID: <20240510121948.GT2347895@kernel.org>
+References: <20240509024043.3532677-1-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjzuY6RZ2ar7ZI_N@finisterre.sirena.org.uk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20240509024043.3532677-1-xiaolei.wang@windriver.com>
 
-On Thu, May 09, 2024 at 05:40:19PM +0200, Mark Brown wrote:
-> On Thu, May 09, 2024 at 05:15:03PM +0800, Alina Yu wrote:
+On Thu, May 09, 2024 at 10:40:43AM +0800, Xiaolei Wang wrote:
+> ops->change() depends on stab, there is such a situation
+> When no parameters are passed in for the first time, stab
+> is omitted, as in configuration 1 below. At this time, a
+> warning "Warning: sch_taprio: Size table not specified, frame
+> length estimates may be inaccurate" will be received. When
+> stab is added for the second time, parameters, like configuration
+> 2 below, because the stab is still empty when ops->change()
+> is running, you will also receive the above warning.
 > 
-> > Or may I add the following condition to check the constraints.min_uV and constraints.max_uV match the specified fixed voltage ?
+> 1. tc qdisc replace dev eth1 parent root handle 100 taprio \
+>   num_tc 5 map 0 1 2 3 4 queues 1@0 1@1 1@2 1@3 1@4 base-time 0 \
+>   sched-entry S 1 100000 \
+>   sched-entry S 2 100000 \
+>   sched-entry S 4 100000 \
+>   max-sdu 0 0 0 0 0 0 0 200 \
+>   flags 2
 > 
-> That seems like a reasonable check, though I think we should just do
-> that in the core any time we have a fixed voltage regulator rather than
-> doing it in a single driver.
+>   2. tc qdisc replace dev eth1 parent root overhead 24 handle 100 taprio \
+>   num_tc 5 map 0 1 2 3 4 queues 1@0 1@1 1@2 1@3 1@4 base-time 0 \
+>   sched-entry S 1 100000 \
+>   sched-entry S 2 100000 \
+>   sched-entry S 4 100000 \
+>   max-sdu 0 0 0 0 0 0 0 200 \
+>   flags 2
+> 
 
-Hi,
-Mark
+Hi Xiaolei Wang,
 
-Thank you so much for your review.
-I have compiled all of your suggestions and implemented the modifications for the v3 series.
+If this is a fix, targeted at the net tree, then it should probably have
+a Fixes tag here (no blank line between it and other tags).
 
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> ---
+>  net/sched/sch_api.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+> index 60239378d43f..fec358f497d5 100644
+> --- a/net/sched/sch_api.c
+> +++ b/net/sched/sch_api.c
+> @@ -1404,6 +1404,16 @@ static int qdisc_change(struct Qdisc *sch, struct nlattr **tca,
+>  	struct qdisc_size_table *ostab, *stab = NULL;
+>  	int err = 0;
+>  
+> +	if (tca[TCA_STAB]) {
+> +		stab = qdisc_get_stab(tca[TCA_STAB], extack);
+> +		if (IS_ERR(stab))
+> +			return PTR_ERR(stab);
+> +	}
+> +
+> +	ostab = rtnl_dereference(sch->stab);
+> +	rcu_assign_pointer(sch->stab, stab);
+> +	qdisc_put_stab(ostab);
+> +
+>  	if (tca[TCA_OPTIONS]) {
+>  		if (!sch->ops->change) {
+>  			NL_SET_ERR_MSG(extack, "Change operation not supported by specified qdisc");
 
+I am concerned that in this case the stab will be updated even if the
+change operation is rejected by the following code in the if
+(tca[TCA_OPTIONS]) block, just below the above hunk.
 
-Best regards,
-Alina
+		if (tca[TCA_INGRESS_BLOCK] || tca[TCA_EGRESS_BLOCK]) {
+			NL_SET_ERR_MSG(extack, "Change of blocks is not supported");
+			return -EOPNOTSUPP;
+		}
+..
+
+-- 
+pw-bot: under-review
 
