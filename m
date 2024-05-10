@@ -1,179 +1,145 @@
-Return-Path: <linux-kernel+bounces-175338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9193B8C1E35
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:39:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E70A88C1E3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A277283B8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:39:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DDAD1F2288E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B3F56B9C;
-	Fri, 10 May 2024 06:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E3613BAC2;
+	Fri, 10 May 2024 06:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="PCflBbWN"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="uW1RJp4o"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355591BC2A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8B81A2C0E;
+	Fri, 10 May 2024 06:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715323186; cv=none; b=jbdkVzVaaHKBciJTLsaTMjbZf1CFy8O+j7DzFbMFYp8eT2gUv/Ek6f9KHnYM7pBskwvIQMjy3h/1Mz5mRKephALGOXYgfprgbhkqE/3GteYtHrgE6SxYOh+khhgInYj3G/0FfO4RiTWjn/7R7QB2IZPH0+pvRGloG9HNp/T8cDk=
+	t=1715323317; cv=none; b=hydDow8OwDKbHZGkPipZto20a9q+hsSM/8pRB9oOjjRCIOqbtAoafqgozKhUSnc1r19Xe8kez0v6psUlsZ50r4t0fqWxhC6vgVEGynu6C6jfFQyRs9fkJ9SOpSBSKrWQTJh4PLvv2f6V0Jp7m1aMl0Pw2SxmuG6DhBs/yjBIiHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715323186; c=relaxed/simple;
-	bh=M6/ShrmFP2zIiQ209mU5GrLeH/mOx0rrCknJicOhDHU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=KlzAzdf4u0cmHWdJnLTiNp1UwiBHp+U8QWKodBBZX8Si9PA/SzastBvzp/GGLloiTXioBSH4ea+Zb4XbWIQpmBpS1aN7CYGiY1k6rlMUut+/feo/kHZb8498ap1z2H2k67VjHl5tb/1FNa37o9sZdM+6yP4BcJMtFjZ31NLxMYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=PCflBbWN; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51f1b378ca5so2920253e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 23:39:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1715323182; x=1715927982; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDDYjOZbYyI7+VrCFYHuMsQn9IaAJCiNGNvsyl18CMA=;
-        b=PCflBbWNTX7wwLbMKwOVhvxeVR3FPu8+ObpKj15As9kUpMtCDJxv2ir+RzocjInPMR
-         YuO48E5N2SwtUxkobLAiHekFNXXAEsiB/tsTQxlkT3e+8jG6lPXSD6kJalQ63ThaMrD1
-         pc5WtVnScmxeeJ0zYRZYbeDII2wNJa3ntfW+5gKBnKjG7j4IZED8YBTAkKw0q8bc9YPA
-         iSx66roBjBemB7f/cKu09hj5st0ljH6C8MRoC+KLpJ5wejGxekK254RKNzg/aoxV2Fen
-         IhCA93Wgs4SFFB0aETw1dfuXkod7i+zzrKJDAp3m+jVXoUYyNQU8RJzA6HE9rX6tYRyx
-         6R1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715323182; x=1715927982;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yDDYjOZbYyI7+VrCFYHuMsQn9IaAJCiNGNvsyl18CMA=;
-        b=toJurs/4wrO6fYHhPHdV8Kj/5orSkg2L7qiozYTxsGIOSwT4ZUHq3G2AIbi6lQVEzT
-         JynIZL8jgHtosT98J949Ms7GQrVe9qNxgxlwN7hzueb5BWRnEXEoKHb5oka11yQUrsLb
-         Ms2jjRRYYoTbgB3Qu0jkB9HR+TyD6NOc74Lv9CKELV+17llmOiGZ21oWe2EriMPoCMJf
-         IttXPskQC/vabjTPHVhSsC4Kn99ZKxA+XVzIs0OkZGMkor/wonhqVL/MMsDrS4KLcskW
-         Bt04/TxEgQc8p98IWnqrOXI6ML2lgYBgZw6HjwsS/xMZ4ttJ6XMMZtSpsDDqy8968DMC
-         I5zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXByDW6B5NDYyNMmS0sozim4f3kxjlc3E0F/hDv8uHLlykQu1VbnRaMMAFR302eIbTXXKIKQZTdil7R5g+2QnAolopJWpT2AhCKkeFI
-X-Gm-Message-State: AOJu0YyMSmpq5kkMWD6/q5NR/r5bRp5fw2N0NFZsbRoH0bV9ig2+o5ha
-	abhFZublA513LldEOygh14FLocwX1lGI9UwT+mP1/pI6nJ5AXo0/lO4v4dN/mDk=
-X-Google-Smtp-Source: AGHT+IGTdkIuRQEy0jY4PTiYExRK3QqxMe0SAVoIPw3mJH1Zqc0JsGLFwwgxvxkPwCC5Ylk5LEfNcA==
-X-Received: by 2002:a19:761a:0:b0:519:e878:9385 with SMTP id 2adb3069b0e04-5220fd7c7eemr1123427e87.18.1715323182260;
-        Thu, 09 May 2024 23:39:42 -0700 (PDT)
-Received: from localhost (2a02-a210-20ba-5a00-9ceb-707b-2d57-26f7.cable.dynamic.v6.ziggo.nl. [2a02:a210:20ba:5a00:9ceb:707b:2d57:26f7])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d207sm150850766b.22.2024.05.09.23.39.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 23:39:41 -0700 (PDT)
+	s=arc-20240116; t=1715323317; c=relaxed/simple;
+	bh=zHw5rmsy7qKm+z8qwjnC5Xt6TIYGmbIqlRzkdS4jp2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tGhxAEu1CuiARzDMx8w3K3APHOCoOJgJ8D2S0G0gqsulowYaAXIs9zLS9ZCUHWLd9Jy1Px7syovhXoS6933bw5gYFRGt3W8lzzzp4XYHt3y3vydeysS80Zp6W68TwnNWUgKvXPDRjPy6kCWYvgIzDW11gA0EQZkMJ/NE/GT2ZKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=uW1RJp4o; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44A4dBKK006983;
+	Fri, 10 May 2024 02:41:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	from:to:cc:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=DKIM; bh=kVni+v16C442TfQ6e1EmMu0Ew
+	QbjLzJZQSp6aTqUDI8=; b=uW1RJp4osExmx4dk9fVw96mCbfLxzMikFa1E8Z6/V
+	Xva1MkJJ7+AgVKQUl2p79P1yxK6Wxypu1MjrFo8WR9bpZE8hD5zENjCrKnkFXbVS
+	JS+0luQi8LMw1RHQp35hgvAH7gh6KcXYArYdZqvZ2R8fs8RFxJC751jfJ9Aq3b57
+	npoP+A9tZCBj3UWpoP9XhivOydXUkpH2X2TW/YXDTRrq5N8wjxoxqM8YvZhbqqXN
+	bKa2RPHaZKUXZ4Nzqp5MJhkoMn1iDWKoviKIwWvKKeWdnCZWGI+/Cbh81juc5bLr
+	Te5G16FnOSUglyl73CwCvAC2j+aXaxs7eljfU/7hY7Ufg==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3y16xt1c5c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 02:41:18 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 44A6fHsv051476
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 10 May 2024 02:41:17 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 10 May
+ 2024 02:41:16 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 10 May 2024 02:41:16 -0400
+Received: from MTINACO-L03.ad.analog.com (MTINACO-L03.ad.analog.com [10.117.116.80])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 44A6ewwb001379;
+	Fri, 10 May 2024 02:41:00 -0400
+From: Mariel Tinaco <Mariel.Tinaco@analog.com>
+To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark
+ Brown <broonie@kernel.org>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+        Dimitri Fedrau
+	<dima.fedrau@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 0/2] add AD8460 DAC driver
+Date: Fri, 10 May 2024 14:40:51 +0800
+Message-ID: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 10 May 2024 08:39:41 +0200
-Message-Id: <D15RBIV5HF6S.2FFLSGU60X1UB@fairphone.com>
-Subject: Re: [RFT PATCH v2 01/48] drm/panel: raydium-rm692e5: Stop tracking
- prepared
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Douglas Anderson" <dianders@chromium.org>,
- <dri-devel@lists.freedesktop.org>, "Maxime Ripard" <mripard@kernel.org>
-Cc: "Linus Walleij" <linus.walleij@linaro.org>, "Chris Morgan"
- <macromorgan@hotmail.com>, "Yuran Pereira" <yuran.pereira@hotmail.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>, "Konrad Dybcio"
- <konrad.dybcio@linaro.org>, "Daniel Vetter" <daniel@ffwll.ch>, "David
- Airlie" <airlied@gmail.com>, "Jessica Zhang" <quic_jesszhan@quicinc.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Sam Ravnborg"
- <sam@ravnborg.org>, "Thomas Zimmermann" <tzimmermann@suse.de>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240503213441.177109-1-dianders@chromium.org>
- <20240503143327.RFT.v2.1.I784238de4810658212a5786b219f128460562a37@changeid>
-In-Reply-To: <20240503143327.RFT.v2.1.I784238de4810658212a5786b219f128460562a37@changeid>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: lT5dUnIKRTt949X5kgeiLUUb5vZVrppF
+X-Proofpoint-ORIG-GUID: lT5dUnIKRTt949X5kgeiLUUb5vZVrppF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-10_04,2024-05-10_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 mlxlogscore=999 phishscore=0 clxscore=1011
+ impostorscore=0 malwarescore=0 mlxscore=0 adultscore=0 bulkscore=0
+ suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405100046
 
-On Fri May 3, 2024 at 11:32 PM CEST, Douglas Anderson wrote:
-> As talked about in commit d2aacaf07395 ("drm/panel: Check for already
-> prepared/enabled in drm_panel"), we want to remove needless code from
-> panel drivers that was storing and double-checking the
-> prepared/enabled state. Even if someone was relying on the
-> double-check before, that double-check is now in the core and not
-> needed in individual drivers.
->
-> Cc: Luca Weiss <luca.weiss@fairphone.com>
-> Cc: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+The AD8460 is a 14-bit, high power +-40V 1A, high-speed DAC,
+with dual digital input modes, programmable supply current and
+fault monitoring and protection settings for output current,
+output voltage and junction temperature.
 
-Seems to match with the changes I did for another (generated) panel
-driver I upstreamed - see also:
-https://github.com/msm8916-mainline/linux-mdss-dsi-panel-driver-generator/c=
-ommit/74c104440dfd828aa94194fd279c0c505ab55854
+The fault monitoring and shutdown protection features were
+supported in the earlier versions of the IIO driver but was
+scrapped due to uncertainties if the functionalities belong to
+the IIO driver. However, it would be best to implement it for
+the device's quality of life. I'd like to know if it's better
+suited as a stand-alone HWMON driver.
 
-Functionally also seems to be fine, I don't see any problems. Thanks!
+The following are the configurable and readable parameters
+through SPI that could be implemented on the HWMON driver:
+  * An enable bit to arm/protect the device on overcurrent,
+overvoltage or overtemperature events. The device is shut down
+upon detection.
+  * A configurable range/threshold for voltage, current and
+temperature that raises alarm when exceeded while the device is
+armed.
+  * Flags that can be polled to raise alarm upon detection of
+overcurrent, overvoltage or overtemperature events, and apply
+additional protective measures.
+  * Programmable quiescent current (optional)
+  * Thermal monitoring is done by measuring voltage on TMP pin
+(unlikely to be included)
 
-Tested-by: Luca Weiss <luca.weiss@fairphone.com>
+Mariel Tinaco (2):
+  dt-bindings: iio: dac: add docs for ad8460
+  iio: dac: support the ad8460 Waveform DAC
 
-Regards
-Luca
+ .../bindings/iio/dac/adi,ad8460.yaml          |  67 ++
+ MAINTAINERS                                   |   8 +
+ drivers/iio/dac/Kconfig                       |  13 +
+ drivers/iio/dac/Makefile                      |   1 +
+ drivers/iio/dac/ad8460.c                      | 652 ++++++++++++++++++
+ 5 files changed, 741 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
+ create mode 100644 drivers/iio/dac/ad8460.c
 
-> ---
->
-> Changes in v2:
-> - New
->
->  drivers/gpu/drm/panel/panel-raydium-rm692e5.c | 10 ----------
->  1 file changed, 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panel/panel-raydium-rm692e5.c b/drivers/gpu/=
-drm/panel/panel-raydium-rm692e5.c
-> index a613ba5b816c..21d97f6b8a2f 100644
-> --- a/drivers/gpu/drm/panel/panel-raydium-rm692e5.c
-> +++ b/drivers/gpu/drm/panel/panel-raydium-rm692e5.c
-> @@ -23,7 +23,6 @@ struct rm692e5_panel {
->  	struct drm_dsc_config dsc;
->  	struct regulator_bulk_data supplies[3];
->  	struct gpio_desc *reset_gpio;
-> -	bool prepared;
->  };
-> =20
->  static inline struct rm692e5_panel *to_rm692e5_panel(struct drm_panel *p=
-anel)
-> @@ -171,9 +170,6 @@ static int rm692e5_prepare(struct drm_panel *panel)
->  	struct device *dev =3D &ctx->dsi->dev;
->  	int ret;
-> =20
-> -	if (ctx->prepared)
-> -		return 0;
-> -
->  	ret =3D regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies)=
-;
->  	if (ret < 0) {
->  		dev_err(dev, "Failed to enable regulators: %d\n", ret);
-> @@ -213,8 +209,6 @@ static int rm692e5_prepare(struct drm_panel *panel)
-> =20
->  	mipi_dsi_generic_write_seq(ctx->dsi, 0xfe, 0x00);
-> =20
-> -	ctx->prepared =3D true;
-> -
->  	return 0;
->  }
-> =20
-> @@ -222,13 +216,9 @@ static int rm692e5_unprepare(struct drm_panel *panel=
-)
->  {
->  	struct rm692e5_panel *ctx =3D to_rm692e5_panel(panel);
-> =20
-> -	if (!ctx->prepared)
-> -		return 0;
-> -
->  	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
->  	regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-> =20
-> -	ctx->prepared =3D false;
->  	return 0;
->  }
-> =20
+
+base-commit: 9900e7a54764998ba3a22f06ec629f7b5fe0b422
+-- 
+2.34.1
 
 
