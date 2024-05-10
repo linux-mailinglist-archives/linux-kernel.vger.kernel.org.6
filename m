@@ -1,231 +1,393 @@
-Return-Path: <linux-kernel+bounces-175898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000E58C26C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5B58C26CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66BE1B22F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:26:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D02C1C22224
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FFB16EBFA;
-	Fri, 10 May 2024 14:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3614D17088F;
+	Fri, 10 May 2024 14:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BP03ZOR6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bt+PLyPJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6651168BE;
-	Fri, 10 May 2024 14:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1493812C49A;
+	Fri, 10 May 2024 14:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351184; cv=none; b=jotbzK8Lt9qFpkEFqPlVZ2+XMUChunzeAP3rY95hRSMhvGad3XvY7calJVqszAZo2uZe9lJq1BTcyjxAf9HLZzrLMon+9eeox6f6bRQb1sbakqfLt66BmEA1ae+BCXPhFUZm25nFYntLJ5X90CfdkYYInS4MiK3+bztlSi5QFzg=
+	t=1715351190; cv=none; b=HribT+k0zhzbx9hH6viiTKMk42DWVutzXDoT0/4uogXDbwoUTyU3QFyOb7niD19nBEy4z1SnbqK6JEIyMGjT8P43ebuu4WzUi4NldfrAYA8msLpslwnVo6iMQCR6IJycz8bR9/KZTCCe67rUbQZeN9SoHywQZCgRE8/Jfc6zYn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351184; c=relaxed/simple;
-	bh=+DKU1DJyZN/2cve2AGF0NsYjCUCGhPhoIoQ+JdEnSqU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGzE0FkO/lZNwfVTc+0OEwYp4e5v06vULGtBY7lVYGCmtORQs1qLfXNaTUoXHvZBK6pNhQy2g65rX/rj/ZosxWVhszo0c0KFtjEAhzUNSo9jPp8rDJc3YqqoiZhYB3JZ6EJ1BvzxWSjFuVZ0PdYhULHjujyYIUB2iSJjaMacBv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BP03ZOR6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC11DC113CC;
-	Fri, 10 May 2024 14:26:23 +0000 (UTC)
+	s=arc-20240116; t=1715351190; c=relaxed/simple;
+	bh=UHieGComjeAJShXra8dHb1zZEtS/wf9h9mPlwoie+to=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u0vbATL7YDPGgQzyBqnOFLGYrRIFi11XGI0ruBRejJdgvU4tvb1yVBJCyjI3jUmTXePJl9QChb0az6JBzBM4bY3LWszwMEOCsALPC5N0Ab9hWP0om0rCiz+Dyx2e31JVr1GYnPDTsDfoIrHRbdGyUvm0YojKifNWULQVNJ/yRs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bt+PLyPJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83289C113CC;
+	Fri, 10 May 2024 14:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715351184;
-	bh=+DKU1DJyZN/2cve2AGF0NsYjCUCGhPhoIoQ+JdEnSqU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BP03ZOR6tAb3/dpjyiyJ1juh8WAZwYg4kfdZf5R9+4fsQ9KcZmpg6PdOQwlyN4INl
-	 NUhVVE3Cfq1yMxi7PcqQ1Rp26HoBv2uGHNi7lbYK6+SXNWfkuoMbu6Nm1ukTJdq4sy
-	 95jGL3dWHf0QrB54wXny5eL2nSnOSdGkhNmTPux7VZs2MaJb/yTjho9QlLxEnkHx/C
-	 vkAE3Wa1QAbkkEHrrK0ZHBQ4d2W5SjAQbyzgmJwphBs1GFta7IwfHrKgxV01DD3oso
-	 WbGnsLj/HWWGZwKnCcWcqjMxc23YdMOHTX/ovibAJD6PLgMu5AyOzDer01L6qH0WsH
-	 BGnzvxWtZRuOQ==
-Date: Fri, 10 May 2024 11:26:21 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-	"segher@kernel.crashing.org" <segher@kernel.crashing.org>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"maddy@linux.ibm.com" <maddy@linux.ibm.com>,
-	"kjain@linux.ibm.com" <kjain@linux.ibm.com>,
-	"disgoel@linux.vnet.ibm.com" <disgoel@linux.vnet.ibm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"akanksha@linux.ibm.com" <akanksha@linux.ibm.com>
-Subject: Re: [PATCH V2 4/9] tools/perf: Add support to capture and parse raw
- instruction in objdump
-Message-ID: <Zj4ujanupo0eKyby@x1>
-References: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
- <20240506121906.76639-5-atrajeev@linux.vnet.ibm.com>
- <f2efdb9d-e636-4678-b492-83d3a28d8134@csgroup.eu>
- <E21FF3FD-1080-4A6C-99B0-7239AD831532@linux.vnet.ibm.com>
+	s=k20201202; t=1715351189;
+	bh=UHieGComjeAJShXra8dHb1zZEtS/wf9h9mPlwoie+to=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bt+PLyPJL7kM2Fi6ztoKpTBdc0zuDo5S7vQdcVvSvzRfpf38wRvnpLfSDrajdbg9R
+	 oTf6SS5ETUO/mHsdXVtlDLsrix1vm2/DdGPs1woo2X4yYO6qQWaLsQvPRfkHqR4JBF
+	 AJgUxPd5G7Q1juhPg4vPhzWZg28rHpsgdhNw/Sb3jR7peljtpCIh1MoGFF/7xsf8nX
+	 B22PfF4tXf/KkAUZxVOKYJWcB6Pl/MuNB9aCpTP7zLCTHhyIt+TRhLj0WrOWqtLr+9
+	 GkJgC/w1Ocpdb7ym9jL8jdcRYmcXqiSasLThT+J/S0qjT4ddgbjsKyb4d5LDxTes2N
+	 QFoja/GIXVIVQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1s5RCd-00CEXP-62;
+	Fri, 10 May 2024 15:26:27 +0100
+Date: Fri, 10 May 2024 15:26:23 +0100
+Message-ID: <861q69oi9c.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Oliver
+ Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v5] KVM: arm64: Add early_param to control WFx trapping
+In-Reply-To: <20240430181444.670773-1-coltonlewis@google.com>
+References: <20240430181444.670773-1-coltonlewis@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E21FF3FD-1080-4A6C-99B0-7239AD831532@linux.vnet.ibm.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: coltonlewis@google.com, kvm@vger.kernel.org, corbet@lwn.net, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, May 09, 2024 at 10:56:23PM +0530, Athira Rajeev wrote:
+On Tue, 30 Apr 2024 19:14:44 +0100,
+Colton Lewis <coltonlewis@google.com> wrote:
 > 
+> Add an early_params to control WFI and WFE trapping. This is to
+> control the degree guests can wait for interrupts on their own without
+> being trapped by KVM. Options for each param are trap and notrap. trap
+> enables the trap. notrap disables the trap. Absent an explicitly set
+> policy, default to current behavior: disabling the trap if only a
+> single task is running and enabling otherwise.
 > 
-> > On 7 May 2024, at 3:05 PM, Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
-> > 
-> > 
-> > 
-> > Le 06/05/2024 à 14:19, Athira Rajeev a écrit :
-> >> Add support to capture and parse raw instruction in objdump.
-> > 
-> > What's the purpose of using 'objdump' for reading raw instructions ? 
-> > Can't they be read directly without invoking 'objdump' ? It looks odd to 
-> > me to use objdump to provide readable text and then parse it back.
+> Signed-off-by: Colton Lewis <coltonlewis@google.com>
+> ---
+> v5:
 > 
-> Hi Christophe,
+> * Move trap configuration to vcpu_reset_hcr(). This required moving
+>   kvm_emulate.h:vcpu_reset_hcr() to arm.c:kvm_vcpu_reset_hcr() to avoid needing
+>   to pull scheduler headers and my enums into kvm_emulate.h. I thought the
+>   function looked too bulky for that header anyway.
+> * Delete vcpu_{set,clear}_vfx_traps helpers that are no longer used anywhere.
+> * Remove documentation of explicit option for default behavior to avoid any
+>   implicit suggestion default behavior will stay that way.
 > 
-> Thanks for your review comments.
+> v4:
+> https://lore.kernel.org/kvmarm/20240422181716.237284-1-coltonlewis@google.com/
 > 
-> Current implementation for data type profiling on X86 uses "objdump" tool to get the disassembled code.
-
-commit 6d17edc113de1e21fc66afa76be475a4f7c91826
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Fri Mar 29 14:58:11 2024 -0700
-
-    perf annotate: Use libcapstone to disassemble
-    
-    Now it can use the capstone library to disassemble the instructions.
-    Let's use that (if available) for perf annotate to speed up.  Currently
-    it only supports x86 architecture.  With this change I can see ~3x speed
-    up in data type profiling.
-    
-    But note that capstone cannot give the source file and line number info.
-    For now, users should use the external objdump for that by specifying
-    the --objdump option explicitly.
-    
-    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-    Tested-by: Ian Rogers <irogers@google.com>
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: Changbin Du <changbin.du@huawei.com>
-    Cc: Ingo Molnar <mingo@kernel.org>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Kan Liang <kan.liang@linux.intel.com>
-    Cc: Peter Zijlstra <peterz@infradead.org>
-    Link: https://lore.kernel.org/r/20240329215812.537846-5-namhyung@kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-From a quick look at http://www.capstone-engine.org/compile.html it
-seems PowerPC is supported.
-
-But since we did it first with objdump output parsing, its good to have
-it as an alternative and sometimes a fallback:
-
-commit f35847de2a65137e011e559f38a3de5902a5463f
-Author: Namhyung Kim <namhyung@kernel.org>
-Date:   Wed Apr 24 17:51:56 2024 -0700
-
-    perf annotate: Fallback disassemble to objdump when capstone fails
-    
-    I found some cases that capstone failed to disassemble.  Probably my
-    capstone is an old version but anyway there's a chance it can fail.  And
-    then it silently stopped in the middle.  In my case, it didn't
-    understand "RDPKRU" instruction.
-    
-    Let's check if the capstone disassemble reached the end of the function
-    and fallback to objdump if not
-
----------------
-
-- Arnaldo
-
-> And then the objdump result lines are parsed to get the instruction
-> name and register fields. The initial patchset I posted to enable the
-> data type profiling feature in powerpc was using the same way by
-> getting disassembled code from objdump and parsing the disassembled
-> lines. But in V2, we are introducing change for powerpc to use "raw
-> instruction" and fetch opcode, reg fields from the raw instruction.
- 
-> I tried to explain below that current objdump uses option
-> "--no-show-raw-insn" which doesn't capture raw instruction.  So to
-> capture raw instruction, V2 patchset has changes to use default option
-> "--show-raw-insn" and get the raw instruction [ for powerpc ] along
-> with human readable annotation [ which is used by other archs ]. Since
-> perf tool already has objdump implementation in place, I went in the
-> direction to enhance it to use "--show-raw-insn" for powerpc purpose.
- 
-> But as you mentioned, we can directly read raw instruction without
-> using "objdump" tool.  perf has support to read object code. The dso
-> open/read utilities and helper functions are already present in
-> "util/dso.c" And "dso__data_read_offset" function reads data from dso
-> file offset. We can use these functions and I can make changes to
-> directly read binary instruction without using objdump.
- 
-> Namhyung, Arnaldo, Christophe
-> Looking for your valuable feedback on this approach. Please suggest if this approach looks fine
+> v3:
+> https://lore.kernel.org/kvmarm/20240410175437.793508-1-coltonlewis@google.com/
 > 
+> v2:
+> https://lore.kernel.org/kvmarm/20240319164341.1674863-1-coltonlewis@google.com/
 > 
-> Thanks
-> Athira
-> > 
-> >> Currently, the perf tool infrastructure uses "--no-show-raw-insn" option
-> >> with "objdump" while disassemble. Example from powerpc with this option
-> >> for an instruction address is:
-> > 
-> > Yes and that makes sense because the purpose of objdump is to provide 
-> > human readable annotations, not to perform automated analysis. Am I 
-> > missing something ?
-> > 
-> >> 
-> >> Snippet from:
-> >> objdump  --start-address=<address> --stop-address=<address>  -d --no-show-raw-insn -C <vmlinux>
-> >> 
-> >> c0000000010224b4: lwz     r10,0(r9)
-> >> 
-> >> This line "lwz r10,0(r9)" is parsed to extract instruction name,
-> >> registers names and offset. Also to find whether there is a memory
-> >> reference in the operands, "memory_ref_char" field of objdump is used.
-> >> For x86, "(" is used as memory_ref_char to tackle instructions of the
-> >> form "mov  (%rax), %rcx".
-> >> 
-> >> In case of powerpc, not all instructions using "(" are the only memory
-> >> instructions. Example, above instruction can also be of extended form (X
-> >> form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
-> >> and extract the source/target registers, patch adds support to use raw
-> >> instruction. With raw instruction, macros are added to extract opcode
-> >> and register fields.
-> >> 
-> >> "struct ins_operands" and "struct ins" is updated to carry opcode and
-> >> raw instruction binary code (raw_insn). Function "disasm_line__parse"
-> >> is updated to fill the raw instruction hex value and opcode in newly
-> >> added fields. There is no changes in existing code paths, which parses
-> >> the disassembled code. The architecture using the instruction name and
-> >> present approach is not altered. Since this approach targets powerpc,
-> >> the macro implementation is added for powerpc as of now.
-> >> 
-> >> Example:
-> >> representation using --show-raw-insn in objdump gives result:
-> >> 
-> >> 38 01 81 e8     ld      r4,312(r1)
-> >> 
-> >> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
-> >> this translates to instruction form: "ld RT,DS(RA)" and binary code
-> >> as:
-> >> _____________________________________
-> >> | 58 |  RT  |  RA |      DS       | |
-> >> -------------------------------------
-> >> 0    6     11    16              30 31
-> >> 
-> >> Function "disasm_line__parse" is updated to capture:
-> >> 
-> >> line:    38 01 81 e8     ld      r4,312(r1)
-> >> opcode and raw instruction "38 01 81 e8"
-> >> Raw instruction is used later to extract the reg/offset fields.
-> >> 
-> >> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> >> ---
+> v1:
+> https://lore.kernel.org/kvmarm/20240129213918.3124494-1-coltonlewis@google.com/
+> 
+>  .../admin-guide/kernel-parameters.txt         |  16 +++
+>  arch/arm64/include/asm/kvm_emulate.h          |  53 ---------
+>  arch/arm64/include/asm/kvm_host.h             |   7 ++
+>  arch/arm64/kvm/arm.c                          | 110 +++++++++++++++++-
+>  4 files changed, 127 insertions(+), 59 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 31b3a25680d0..a4d94d9abbe4 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2653,6 +2653,22 @@
+>  			[KVM,ARM] Allow use of GICv4 for direct injection of
+>  			LPIs.
+> 
+> +	kvm-arm.wfe_trap_policy=
+> +			[KVM,ARM] Control when to set WFE instruction trap for
+> +			KVM VMs.
+> +
+> +			trap: set WFE instruction trap
+> +
+> +			notrap: clear WFE instruction trap
+> +
+> +	kvm-arm.wfi_trap_policy=
+> +			[KVM,ARM] Control when to set WFI instruction trap for
+> +			KVM VMs.
+> +
+> +			trap: set WFI instruction trap
+> +
+> +			notrap: clear WFI instruction trap
+> +
+
+Please make it clear that neither traps are guaranteed. The
+architecture *allows* an implementation to trap when no events (resp.
+interrupts) are pending, but nothing more. An implementation is
+perfectly allowed to ignore these bits.
+
+>  	kvm_cma_resv_ratio=n [PPC]
+>  			Reserves given percentage from system memory area for
+>  			contiguous memory allocation for KVM hash pagetable
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index b804fe832184..c2a9a409ebfe 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -67,64 +67,11 @@ static __always_inline bool vcpu_el1_is_32bit(struct kvm_vcpu *vcpu)
+>  }
+>  #endif
+> 
+> -static inline void vcpu_reset_hcr(struct kvm_vcpu *vcpu)
+> -{
+> -	vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
+> -	if (has_vhe() || has_hvhe())
+> -		vcpu->arch.hcr_el2 |= HCR_E2H;
+> -	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
+> -		/* route synchronous external abort exceptions to EL2 */
+> -		vcpu->arch.hcr_el2 |= HCR_TEA;
+> -		/* trap error record accesses */
+> -		vcpu->arch.hcr_el2 |= HCR_TERR;
+> -	}
+> -
+> -	if (cpus_have_final_cap(ARM64_HAS_STAGE2_FWB)) {
+> -		vcpu->arch.hcr_el2 |= HCR_FWB;
+> -	} else {
+> -		/*
+> -		 * For non-FWB CPUs, we trap VM ops (HCR_EL2.TVM) until M+C
+> -		 * get set in SCTLR_EL1 such that we can detect when the guest
+> -		 * MMU gets turned on and do the necessary cache maintenance
+> -		 * then.
+> -		 */
+> -		vcpu->arch.hcr_el2 |= HCR_TVM;
+> -	}
+> -
+> -	if (cpus_have_final_cap(ARM64_HAS_EVT) &&
+> -	    !cpus_have_final_cap(ARM64_MISMATCHED_CACHE_TYPE))
+> -		vcpu->arch.hcr_el2 |= HCR_TID4;
+> -	else
+> -		vcpu->arch.hcr_el2 |= HCR_TID2;
+> -
+> -	if (vcpu_el1_is_32bit(vcpu))
+> -		vcpu->arch.hcr_el2 &= ~HCR_RW;
+> -
+> -	if (kvm_has_mte(vcpu->kvm))
+> -		vcpu->arch.hcr_el2 |= HCR_ATA;
+> -}
+> -
+>  static inline unsigned long *vcpu_hcr(struct kvm_vcpu *vcpu)
+>  {
+>  	return (unsigned long *)&vcpu->arch.hcr_el2;
+>  }
+> 
+> -static inline void vcpu_clear_wfx_traps(struct kvm_vcpu *vcpu)
+> -{
+> -	vcpu->arch.hcr_el2 &= ~HCR_TWE;
+> -	if (atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
+> -	    vcpu->kvm->arch.vgic.nassgireq)
+> -		vcpu->arch.hcr_el2 &= ~HCR_TWI;
+> -	else
+> -		vcpu->arch.hcr_el2 |= HCR_TWI;
+> -}
+> -
+> -static inline void vcpu_set_wfx_traps(struct kvm_vcpu *vcpu)
+> -{
+> -	vcpu->arch.hcr_el2 |= HCR_TWE;
+> -	vcpu->arch.hcr_el2 |= HCR_TWI;
+> -}
+> -
+>  static inline void vcpu_ptrauth_enable(struct kvm_vcpu *vcpu)
+>  {
+>  	vcpu->arch.hcr_el2 |= (HCR_API | HCR_APK);
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 21c57b812569..315ee7bfc1cb 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -67,6 +67,13 @@ enum kvm_mode {
+>  	KVM_MODE_NV,
+>  	KVM_MODE_NONE,
+>  };
+> +
+> +enum kvm_wfx_trap_policy {
+> +	KVM_WFX_NOTRAP_SINGLE_TASK, /* Default option */
+> +	KVM_WFX_NOTRAP,
+> +	KVM_WFX_TRAP,
+> +};
+
+Since this is only ever used in arm.c, it really doesn't need to be
+exposed anywhere else.
+
+> +
+>  #ifdef CONFIG_KVM
+>  enum kvm_mode kvm_get_mode(void);
+>  #else
+> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+> index a25265aca432..5ec52333e042 100644
+> --- a/arch/arm64/kvm/arm.c
+> +++ b/arch/arm64/kvm/arm.c
+> @@ -46,6 +46,8 @@
+>  #include <kvm/arm_psci.h>
+> 
+>  static enum kvm_mode kvm_mode = KVM_MODE_DEFAULT;
+> +static enum kvm_wfx_trap_policy kvm_wfi_trap_policy = KVM_WFX_NOTRAP_SINGLE_TASK;
+> +static enum kvm_wfx_trap_policy kvm_wfe_trap_policy = KVM_WFX_NOTRAP_SINGLE_TASK;
+
+It would be worth declaring those as __read_mostly.
+
+>
+>  DECLARE_KVM_HYP_PER_CPU(unsigned long, kvm_hyp_vector);
+> 
+> @@ -456,11 +458,6 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+>  	if (kvm_arm_is_pvtime_enabled(&vcpu->arch))
+>  		kvm_make_request(KVM_REQ_RECORD_STEAL, vcpu);
+> 
+> -	if (single_task_running())
+> -		vcpu_clear_wfx_traps(vcpu);
+> -	else
+> -		vcpu_set_wfx_traps(vcpu);
+> -
+>  	if (vcpu_has_ptrauth(vcpu))
+>  		vcpu_ptrauth_disable(vcpu);
+>  	kvm_arch_vcpu_load_debug_state_flags(vcpu);
+> @@ -1391,6 +1388,72 @@ static int kvm_vcpu_set_target(struct kvm_vcpu *vcpu,
+>  	return 0;
+>  }
+> 
+> +static bool kvm_vcpu_should_clear_twi(struct kvm_vcpu *vcpu)
+> +{
+> +	if (likely(kvm_wfi_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
+> +		return single_task_running() &&
+> +			(atomic_read(&vcpu->arch.vgic_cpu.vgic_v3.its_vpe.vlpi_count) ||
+> +			 vcpu->kvm->arch.vgic.nassgireq);
+
+So you are evaluating a runtime condition (scheduler queue length,
+number of LPIs)...
+
+> +
+> +	return kvm_wfi_trap_policy == KVM_WFX_NOTRAP;
+> +}
+> +
+> +static bool kvm_vcpu_should_clear_twe(struct kvm_vcpu *vcpu)
+> +{
+> +	if (likely(kvm_wfe_trap_policy == KVM_WFX_NOTRAP_SINGLE_TASK))
+> +		return single_task_running();
+> +
+> +	return kvm_wfe_trap_policy == KVM_WFX_NOTRAP;
+> +}
+> +
+> +static inline void kvm_vcpu_reset_hcr(struct kvm_vcpu *vcpu)
+
+Why the inline?
+
+> +{
+> +	vcpu->arch.hcr_el2 = HCR_GUEST_FLAGS;
+> +	if (has_vhe() || has_hvhe())
+> +		vcpu->arch.hcr_el2 |= HCR_E2H;
+> +	if (cpus_have_final_cap(ARM64_HAS_RAS_EXTN)) {
+> +		/* route synchronous external abort exceptions to EL2 */
+> +		vcpu->arch.hcr_el2 |= HCR_TEA;
+> +		/* trap error record accesses */
+> +		vcpu->arch.hcr_el2 |= HCR_TERR;
+> +	}
+> +
+> +	if (cpus_have_final_cap(ARM64_HAS_STAGE2_FWB)) {
+> +		vcpu->arch.hcr_el2 |= HCR_FWB;
+> +	} else {
+> +		/*
+> +		 * For non-FWB CPUs, we trap VM ops (HCR_EL2.TVM) until M+C
+> +		 * get set in SCTLR_EL1 such that we can detect when the guest
+> +		 * MMU gets turned on and do the necessary cache maintenance
+> +		 * then.
+> +		 */
+> +		vcpu->arch.hcr_el2 |= HCR_TVM;
+> +	}
+> +
+> +	if (cpus_have_final_cap(ARM64_HAS_EVT) &&
+> +	    !cpus_have_final_cap(ARM64_MISMATCHED_CACHE_TYPE))
+> +		vcpu->arch.hcr_el2 |= HCR_TID4;
+> +	else
+> +		vcpu->arch.hcr_el2 |= HCR_TID2;
+> +
+> +	if (vcpu_el1_is_32bit(vcpu))
+> +		vcpu->arch.hcr_el2 &= ~HCR_RW;
+> +
+> +	if (kvm_has_mte(vcpu->kvm))
+> +		vcpu->arch.hcr_el2 |= HCR_ATA;
+> +
+> +
+> +	if (kvm_vcpu_should_clear_twe(vcpu))
+> +		vcpu->arch.hcr_el2 &= ~HCR_TWE;
+> +	else
+> +		vcpu->arch.hcr_el2 |= HCR_TWE;
+> +
+> +	if (kvm_vcpu_should_clear_twi(vcpu))
+> +		vcpu->arch.hcr_el2 &= ~HCR_TWI;
+> +	else
+> +		vcpu->arch.hcr_el2 |= HCR_TWI;
+
+.. and from the above runtime conditions you make it a forever
+decision, for a vcpu that still hasn't executed a single instruction.
+What could possibly go wrong?
+
+> +}
+> +
+>  static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
+>  					 struct kvm_vcpu_init *init)
+>  {
+> @@ -1427,7 +1490,7 @@ static int kvm_arch_vcpu_ioctl_vcpu_init(struct kvm_vcpu *vcpu,
+>  			icache_inval_all_pou();
+>  	}
+> 
+> -	vcpu_reset_hcr(vcpu);
+> +	kvm_vcpu_reset_hcr(vcpu);
+>  	vcpu->arch.cptr_el2 = kvm_get_reset_cptr_el2(vcpu);
+> 
+>  	/*
+> @@ -2654,6 +2717,41 @@ static int __init early_kvm_mode_cfg(char *arg)
+>  }
+>  early_param("kvm-arm.mode", early_kvm_mode_cfg);
+> 
+> +static int __init early_kvm_wfx_trap_policy_cfg(char *arg, enum kvm_wfx_trap_policy *p)
+> +{
+> +	if (!arg)
+> +		return -EINVAL;
+> +
+> +	if (strcmp(arg, "trap") == 0) {
+> +		*p = KVM_WFX_TRAP;
+> +		return 0;
+> +	}
+> +
+> +	if (strcmp(arg, "notrap") == 0) {
+> +		*p = KVM_WFX_NOTRAP;
+> +		return 0;
+> +	}
+> +
+> +	if (strcmp(arg, "default") == 0) {
+> +		*p = KVM_WFX_NOTRAP_SINGLE_TASK;
+> +		return 0;
+> +	}
+
+Where is this "default" coming from? It's not documented.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
