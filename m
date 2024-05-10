@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-175334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6A58C1E23
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:33:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8ABD8C1E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83DD21F22B6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63A09283D87
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B07756B9C;
-	Fri, 10 May 2024 06:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227E415E5D7;
+	Fri, 10 May 2024 06:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qRNDEWY6"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdyWyMgS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E629F14F9DB
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5105C2940D;
+	Fri, 10 May 2024 06:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715322831; cv=none; b=oWibonZURYwbUndifBZ1HD/lywMgiitbxTQK1id/lIB4GOJo0bjFOqjDNuZaD0p50sZAfXV361kMrArhrs/Dh/pTfn/qd+EhNsID0LbX5aKu99/cfuKP3PpHMs65kCKBihztIgq9tRU2hjS0h0d1NIMKvLcbLLELwnyOoUrGbcY=
+	t=1715322843; cv=none; b=YQlhI39pggUGQYYioV84/+v/ds2kDl1JfRN5Ag7HlpAMmAnNMWgjm92Ge+RAJaWKA5RGwhqmMERnbMnZ+eq3dj7KtAdRwa6BXN0gvxmnKwU8slvRKuAMzr+hFzLHgUpQW3yi0dTX2yrhw/83eOxjgKOg04o7dSKAAW4QuSZvN+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715322831; c=relaxed/simple;
-	bh=3ofQXbsjDk0lOpjDWHHWp/oM1EqDprLrmM7JVCDltUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eFjNfujejSCDDdR518kbeoF8gKfT+ClaEVCA9LGSL/qioR6h/L+WBZR+Ufx/+w3LK9ftluWy9HYuJC8FZLqKMcdLdamFnJwFf+C1WC/5oVmknjzzIApphcLbSOHw1V1R8kVb3+8rfJSdpC2rdxZTcsaZkaNsX2aHfyob5eK1u0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qRNDEWY6; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-de5b1e6beceso1959375276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 23:33:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715322829; x=1715927629; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/HjyroUHxm+tc1k61kbaX+pvdLFB01JEisDgEC4gIWc=;
-        b=qRNDEWY6dYUBrPHexTnaHbJYqce5qrjCQIHjS+Dk0Dfoh0ktMRnN5nIRGJn629oAJM
-         +5byVELfgUHicW0wMT4UZ4sTeVZJUkQtbUx0YG9MWoQVrjuehFz0qoVY9iF7H44Cbj2Z
-         hWo67Twk1dXj4oxHpX2Ge90njHMAEiFodxS5iI/dYCwt+uON6HCOOUST4hXlrOoan3El
-         S1Cx8edOTebbiyxUOVtPuF6sPivPlCco3nQhh+GgGbkom5hlOSRDBCIsgkUdgJBVc/0z
-         EJeFINILBeqTdkI7eDfr3vAHb3sL/EKBuOKP5JM/c/xFtsIrLiwWK2IsWmlJ+/FvGr7V
-         gxHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715322829; x=1715927629;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/HjyroUHxm+tc1k61kbaX+pvdLFB01JEisDgEC4gIWc=;
-        b=nMp1dC/2X6xyz9Un2+Rbj99CfBBOEWatgsZ8KUWiqf4SHPXHtrTwMhYiVKQdhBUxK/
-         vRAF7QQG056ZOZNtGlS8nhdV6mskvUVj7hj8NxJRhYGYoABUOkTUG9XyWqoSKY3rduHh
-         /WXekm4UN1Pj6o2pxnLViN3hs+amaHS/RpOgQu3C8W+vgs7W68Ss8iKubg7T6HYLdey8
-         yNnvZ41KGtqZF7GrjaQY8QXZBi3vxe8FpBH8AXkl70U0ApIAxrR5EHgD5WCI1zSa3aB6
-         FHhH54sLLkgsUPvzr4pfYEsJ1NdlxZ7QDD4AtAOzKj/1Cz71ugZSPEEu+I+gDJhclyTT
-         3vHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmVremgquspmrMw8TTQN6AFnVlqTs21luHHVMlr4zLl1v/FWcz6ARw1AZh8CmFpeg6FZn9ytHopki7PYRl6yQomPk/ejRQrGJX8BPb
-X-Gm-Message-State: AOJu0Yzp1x2L3rQ+0dFsjcKsa9UrsS4OhHo3hkHqNvlgFuF8xtVx27Al
-	nfcCEB9eDJfrghgp/RvAykfpuZYWH94WkPQ/TEjvtDORsgMzteWV0JDq04/+L+lcbYCPlL0imfi
-	1ObQ1X9ZHLCOP+Rg+BO7S/1NWUIGyloUflEXWhyM2pvf0lomO
-X-Google-Smtp-Source: AGHT+IHubxzlkUn7k4BARDf3PiCcUoMRimR8a06KBJqzISFFwH5erCzHVVNfk8KRghfBI5OFESiC+PP8hyVD8zDnkao=
-X-Received: by 2002:a25:d3c9:0:b0:dcf:30d9:1d7b with SMTP id
- 3f1490d57ef6-dee4f4bac01mr1771090276.45.1715322828717; Thu, 09 May 2024
- 23:33:48 -0700 (PDT)
+	s=arc-20240116; t=1715322843; c=relaxed/simple;
+	bh=wVgOOLtVKMV7bsilEbUlznVvVGVC/ysLZc58xE9C6/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0mbDgFSg6hK5z9U7easKBmrJo4UC5L80vOg7hTPDeahY/blLt8v3CmNXr5L6/OkbE8uGlN1pMZwS4w0bBSCjHzFSThIHOJc+SYflkum0S3qoeS7UNZI6piDv9kEEHEHFTnAE9Yv20P3NA8bMy9zsxpv3fbtpBBZH30DBl+DOpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdyWyMgS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C318BC113CC;
+	Fri, 10 May 2024 06:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715322842;
+	bh=wVgOOLtVKMV7bsilEbUlznVvVGVC/ysLZc58xE9C6/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jdyWyMgS+v9qUGAFlHih7XgvQwrmsyDQCIOGDIKvOfqMEFtpGPQ0OGCTu8jYydX/R
+	 D5aAXl+I3zxvW5NV9UXZpfwVEJ+cUvSc6GFxu267oR/eyntQ+aO7DUNJWJtaGnni47
+	 5yiXHQuv2uRwexYJnTqAVm4IxxgkCHS2sX7PBkpAWGQ+xjDDk1Z+FmTypT8l0+3tns
+	 YAVR2sp3FWUjEdwhxPam5R0321D2eTUJUx7qVrlAA/Tdugfyfca6c1Ao6f1pHPlIp5
+	 zi02q1WopIt+CS92a/E7+wnTqhdrRX2WrjomGr6uAH+TwysbzNY1rm6tT5Ire4VWc9
+	 cMw7Z7GkywhrQ==
+Date: Fri, 10 May 2024 08:33:54 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Simon Ser <contact@emersion.fr>, 
+	Pekka Paalanen <pekka.paalanen@collabora.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
+	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
+	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
+	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
+Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Message-ID: <20240510-abnehmen-klammheimlich-36242d03b7a0@brauner>
+References: <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+ <ZjoKX4nmrRdevyxm@phenom.ffwll.local>
+ <CAHk-=wgh5S-7sCCqXBxGcXHZDhe4U8cuaXpVTjtXLej2si2f3g@mail.gmail.com>
+ <CAKMK7uGzhAHHkWj0N33NB3OXMFtNHv7=h=P-bdtYkw=Ja9kwHw@mail.gmail.com>
+ <CAHk-=whFyOn4vp7+++MTOd1Y3wgVFxRoVdSuPmN1_b6q_Jjkxg@mail.gmail.com>
+ <CAHk-=wixO-fmQYgbGic-BQVUd9RQhwGsF4bGk8ufWDKnRS1v_A@mail.gmail.com>
+ <CAHk-=wjmC+coFdA_k6_JODD8_bvad=H4pn4yGREqOTm+eMB+rg@mail.gmail.com>
+ <20240509-kutschieren-tacker-c3968b8d3853@brauner>
+ <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510153212.246fbf31@canb.auug.org.au>
-In-Reply-To: <20240510153212.246fbf31@canb.auug.org.au>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Fri, 10 May 2024 08:33:37 +0200
-Message-ID: <CACMJSev6EDeLdQ0e7A7f6AMhh08FznA67x5ONG+vSseC5QLt6A@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the gpio-brgl tree with the
- gpio-brgl-fixes tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgKdWwdVUvjSNLL-ne9ezQN=BrwN34Kq38_=9yF8c03uA@mail.gmail.com>
 
-On Fri, 10 May 2024 at 07:32, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Today's linux-next merge of the gpio-brgl tree got a conflict in:
->
->   drivers/gpio/gpiolib.h
->
-> between commit:
->
->   7765ffed533d ("gpiolib: use a single SRCU struct for all GPIO descriptors")
->
-> from the gpio-brgl-fixes tree and commit:
->
->   8a7a61032587 ("gpiolib: Get rid of never false gpio_is_valid() calls")
->
-> from the gpio-brgl tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc drivers/gpio/gpiolib.h
-> index 8e0e211ebf08,7f94580efdbc..000000000000
-> --- a/drivers/gpio/gpiolib.h
-> +++ b/drivers/gpio/gpiolib.h
-> @@@ -62,8 -61,7 +62,8 @@@ struct gpio_device
->         struct module           *owner;
->         struct gpio_chip __rcu  *chip;
->         struct gpio_desc        *descs;
->  +      struct srcu_struct      desc_srcu;
-> -       int                     base;
-> +       unsigned int            base;
->         u16                     ngpio;
->         bool                    can_sleep;
->         const char              *label;
+On Thu, May 09, 2024 at 08:48:20AM -0700, Linus Torvalds wrote:
+> On Thu, 9 May 2024 at 04:39, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > Not worth it without someone explaining in detail why imho. First pass
+> > should be to try and replace kcmp() in scenarios where it's obviously
+> > not needed or overkill.
+> 
+> Ack.
+> 
+> > I've added a CLASS(fd_raw) in a preliminary patch since we'll need that
+> > anyway which means that your comparison patch becomes even simpler imho.
+> > I've also added a selftest patch:
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/log/?h=vfs.misc
+> 
+> LGTM.
+> 
+> Maybe worth adding an explicit test for "open same file, but two
+> separate opens, F_DUPFD_QUERY returns 0? Just to clarify the "it's not
+> testing the file on the filesystem for equality, but the file pointer
+> itself".
 
-Thanks! I will send the fixes upstream today and then pull v6.9 into
-my tree before the merge window PR to fix this conflict.
-
-Bart
+Yep, good point. Added now.
 
