@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-176183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D348C2B56
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:54:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CDBD8C2B59
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3A2BB24FDE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B842854A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AE113849C;
-	Fri, 10 May 2024 20:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D0413B58D;
+	Fri, 10 May 2024 20:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FmidGq/q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcX1OJQm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC0C137C5A;
-	Fri, 10 May 2024 20:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA44913AD29;
+	Fri, 10 May 2024 20:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715374451; cv=none; b=CKxb9nmMiYsaqxKnZqMiscyxC0iDfJIwOiIq46yE73OvH57FeqN/U7c1Br+ELjGPYbpAjtNX+Cn4dS42ONw01os9m6b8zS7ylSQCjo2xmqgaXi3/0ZMVmGPweF9vF4965MEVOscg/OtyEbTS/sFwsYp920k+omo2tbRh4N008eg=
+	t=1715374575; cv=none; b=CiGLdS7Mf6iVaOVG/t/5Xx+YcDi1UHwNrln6VsR6iGNzvDbeLHKTEW1XNpGJ0uqdiYlJIxtUiTEaejPIrY+R3ObrhOj30X5upKhpNZhCL7yVxUNRnesjIqTavGu/CoaM7L+aJfoW9yCzhStXRt2+ZWHQncrQzp5bQNXgpUKIvlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715374451; c=relaxed/simple;
-	bh=kv4KfnaKXK9z5kNW3ckxm9VTy+D5aMPSn3wwuinK2ng=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RGApbiRc14kBvmWIIGnaFibzfRJ6SZMKzZwPEQ6mleHxQycGMJqBPN7kwlti2kSpaHAkAjvR3keUgjAJebUpcLzFwv/ybfqLurgOs++FozuPiMW8WUPvxbigyJlKLJ/fwk0xT/mqVCsaksza9JzU+V0h/7FaflKhUkcjHP+t4H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FmidGq/q; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715374450; x=1746910450;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=kv4KfnaKXK9z5kNW3ckxm9VTy+D5aMPSn3wwuinK2ng=;
-  b=FmidGq/qr7c6aadvRzSo05WcfU6BK4ULqBuAfZrKmymAK1RqL8IlA89q
-   2eIksyJikDf7f1VRzUJvPbqouxu7FvtSR85DpxOhxb94O8THrq5La/u/Q
-   p4/0AdMs9XtBOy5CSik0mlz0zfDKlJ4BtPXweDdJ28w9a79btDYhfcrPj
-   E2ulY34zIxcFAVYgB3d5BINAudGZ1iPKXPO09Rrtrp8EnJA2SJQUOYOcP
-   TPy87vnW40qPQ4fWKE/h8Lkx6jAWqGwS5fdpBNZuZpneRT2eCBJg4iDBY
-   dDAUQD95Qia/W7esJjhH4RP7euLoGVoP0xNkcDA7Sp0cw9USGrRMtt7Ah
-   w==;
-X-CSE-ConnectionGUID: jDrmk3fsTDK/Qwnd5cWfqg==
-X-CSE-MsgGUID: OXu0Xu8TQ3WU4TYI9SGRBA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11533603"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="11533603"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 13:54:09 -0700
-X-CSE-ConnectionGUID: goZj2AC1SACb7BO1WbIkDA==
-X-CSE-MsgGUID: IDMuEtAQTZyk6C3fdjzjYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="34264862"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.208])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 13:54:06 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- Dan Williams <dan.j.williams@intel.com>
-Subject:
- Re: [RFC PATCH v2 3/3] ACPI: extlog: Make print_extlog_rcd() log
- unconditionally
-Date: Fri, 10 May 2024 22:54:03 +0200
-Message-ID: <2881368.Ex9A2HvPv6@fdefranc-mobl3>
-In-Reply-To: <20240510192556.GDZj50xFIWSqK2gzQR@fat_crate.local>
-References:
- <20240510112740.667445-1-fabio.m.de.francesco@linux.intel.com>
- <7009544.jJDZkT8p0M@fdefranc-mobl3>
- <20240510192556.GDZj50xFIWSqK2gzQR@fat_crate.local>
+	s=arc-20240116; t=1715374575; c=relaxed/simple;
+	bh=cByeZ/lC6AB3uZmC/kZETxlLuSZiIR/cTU3FsQbCfIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sZ329cx4jtynigcSS+hN/+8tHmq5HHniSP2l4sPSEaPQhnxwSrsyJLHOeI/zYBvOrMi3yEqFn/2BSE4957bESFDv+5iohMYednhmkFYg2ibfd5LMzjUStAOf1tVy06wesfHpxqyQdqD8B8nQkxChQviO5F6PAaAd04XzdjNydmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcX1OJQm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF9BC113CC;
+	Fri, 10 May 2024 20:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715374574;
+	bh=cByeZ/lC6AB3uZmC/kZETxlLuSZiIR/cTU3FsQbCfIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hcX1OJQmLlYLWY4DVkqGz99mxPY7Md3b6PeC4zeEj3znodufL9/snjgAXDo74z6Nh
+	 QBcLqcOUTIjNUn03dWuJtdPlU6Edy7WtXcaDdiJFAjyO8PubOS/n4GKlkLRY/GomP2
+	 E401y5gPBQ5wM0cY4NVwWYsZW/tqifWQVavW7TRLvxdq5KK0rQ0nFsFszL/Hpv85Zi
+	 UrNGc5lHz/7erFAkz6nSz/HH1vWWpwgM+q/73U8kdiSIHG7n5CyXcrm6SLpOxt3KTW
+	 AENf5HG+0MeICek8ytlk1KaL+0pOiYikl1bfs//wxis1KVvwKijPTwvanB8hkfY255
+	 ekmW3goYlpWiw==
+Date: Fri, 10 May 2024 21:56:07 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Xiao Wang <xiao.w.wang@intel.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	luke.r.nels@gmail.com, xi.wang@gmail.com, bjorn@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@google.com, haoluo@google.com,
+	jolsa@kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	pulehui@huawei.com, haicheng.li@intel.com
+Subject: Re: [PATCH] riscv, bpf: Optimize zextw insn with Zba extension
+Message-ID: <20240510-essay-subwoofer-e055375ff1cb@spud>
+References: <20240507104528.435980-1-xiao.w.wang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jtU1AroXrzjM0WOG"
+Content-Disposition: inline
+In-Reply-To: <20240507104528.435980-1-xiao.w.wang@intel.com>
+
+
+--jtU1AroXrzjM0WOG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Friday, May 10, 2024 9:25:56=E2=80=AFPM GMT+2 Borislav Petkov wrote:
-> On Fri, May 10, 2024 at 09:00:34PM +0200, Fabio M. De Francesco wrote:
-> > I thought that ELOG and GHES should be modeled consistently. ghes_proc()
-> > prints to the console while ghes_do_proc() also uses ftrace.
+On Tue, May 07, 2024 at 06:45:28PM +0800, Xiao Wang wrote:
+> The Zba extension provides add.uw insn which can be used to implement
+> zext.w with rs2 set as ZERO.
 >=20
-> ghes_proc() calls ghes_do_proc(). I have no clue what you mean here.
->
+> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
+> ---
+>  arch/riscv/Kconfig       | 19 +++++++++++++++++++
+>  arch/riscv/net/bpf_jit.h | 18 ++++++++++++++++++
+>  2 files changed, 37 insertions(+)
+>=20
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 6bec1bce6586..0679127cc0ea 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -586,6 +586,14 @@ config RISCV_ISA_V_PREEMPTIVE
+>  	  preemption. Enabling this config will result in higher memory
+>  	  consumption due to the allocation of per-task's kernel Vector context.
+> =20
+> +config TOOLCHAIN_HAS_ZBA
+> +	bool
+> +	default y
+> +	depends on !64BIT || $(cc-option,-mabi=3Dlp64 -march=3Drv64ima_zba)
+> +	depends on !32BIT || $(cc-option,-mabi=3Dilp32 -march=3Drv32ima_zba)
+> +	depends on LLD_VERSION >=3D 150000 || LD_VERSION >=3D 23900
+> +	depends on AS_HAS_OPTION_ARCH
+> +
+>  config TOOLCHAIN_HAS_ZBB
+>  	bool
+>  	default y
+> @@ -601,6 +609,17 @@ config TOOLCHAIN_HAS_VECTOR_CRYPTO
+>  	def_bool $(as-instr, .option arch$(comma) +v$(comma) +zvkb)
+>  	depends on AS_HAS_OPTION_ARCH
+> =20
+> +config RISCV_ISA_ZBA
+> +	bool "Zba extension support for bit manipulation instructions"
+> +	depends on TOOLCHAIN_HAS_ZBA
+> +	depends on RISCV_ALTERNATIVE
+> +	default y
+> +	help
+> +	   Adds support to dynamically detect the presence of the ZBA
+> +	   extension (address generation acceleration) and enable its usage.
 
-My understanding is that ghes_proc() logs to the console and ghes_do_proc()=
-=20
-calls the tracers.=20
+Recently I sent some patches to reword other extensions' help text,
+because the "add support to dynamically detect" had confused people a
+bit. Dynamic detection is done regardless of config options for Zba.
+The wording I went with in my patch for Zbb was:
+	   Add support for enabling optimisations in the kernel when the
+	   Zbb extension is detected at boot.
+Could you use something similar here in the opening sentence please?
 
-Therefore, GHES at the same time always reports the errors via two differen=
-t=20
-means.
+Thanks,
+Conor.
 
-Instead ELOG depends on the check on ras_userspace_consumers() to decide=20
-whether to call print_extlog_rcd() to print the logs. And if it print to th=
-e=20
-kernel logs, it jumps to "out" and skips the tracers.
+--jtU1AroXrzjM0WOG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Why is it different with respect to how error reporting is made in GHES?=20
+-----BEGIN PGP SIGNATURE-----
 
-I thought that ELOG should be modeled similarly to GHES and so it should pr=
-int=20
-to the kernel logs always unconditionally and then it should also use ftrac=
-e=20
-(no goto "out" and skip tracers).
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj6J5wAKCRB4tDGHoIJi
+0hI6AQCwdFRVZ6kbYjLkxwS53moo/SJNNSnkuYEOouupqPCGPwD/XT7r7ko4jzGW
+TgQCNlEOK7C1NRhLOBJ754MCcA84/wM=
+=wgKo
+-----END PGP SIGNATURE-----
 
-(1) Is my understanding of logging and tracing in ELOG and GHES correct?
-(2) If it is, does it make sense for ELOG to print to the kernel log,=20
-unconditionally, and then call the tracers like ghes_proc() + ghes_do_proc(=
-)=20
-do?
-
-=46abio
-
-
-
+--jtU1AroXrzjM0WOG--
 
