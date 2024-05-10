@@ -1,119 +1,71 @@
-Return-Path: <linux-kernel+bounces-175332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA158C1E21
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:33:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865668C1E22
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3ABF1F21F69
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BC9B1F227E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F7713A41B;
-	Fri, 10 May 2024 06:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3868F56B9C;
+	Fri, 10 May 2024 06:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="o4C5hjbt"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="C3DM713X"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E305F1361;
-	Fri, 10 May 2024 06:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1161E876
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715322805; cv=none; b=pOyWhvtTabb0h2rlzerqffCc9J2ZIs4xtC+gbDGpTZOtke5rwQCPPg4r5hFSmh6jWE1xCbq3v3cPSjougbjLr9M9/0Fk2S9IU4uXoIgTyPAuQBbdthI+jbk3RCLW+Gg/j8r9IJKwS3sLe1OhbOV/CwcM9vj2MKpsz9uALUMBy4A=
+	t=1715322818; cv=none; b=VxMSBKAJFiziIQeMcuKH6XHag0emLgCQAaqij2ZUMTxq+TVpo6BLsH66zeJOAdzMdd2Z+FOXyk8y2Fb+BhErctGIOPT+j7BdOEfGwzVGlvbEcinNpd4CpTsbA3AVwLT5fhwEVDemSJsBEBdAUrDrb0XpdRDFatsE0Agm2lgO9Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715322805; c=relaxed/simple;
-	bh=qdVy5lQR/hkHET0xFeljYrMZlyEIN4uWW3qGUTY1qr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UF4nbbl4a8+PdC7avOTP7gsa17CeOqMZJmF2Mh9ZPjy2uDwbtoji/eo4Y4UWF6TJWRburMNoxsmVV2gbP38JPFWTD+k1AmUD/ZZBb/GwxalFIZZcHdvxG4Q2mAV4mWY+tP2F6hELfKMMrLhPrME1MgibSbSBgTyoMt8j4sZonAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=o4C5hjbt; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MKNeISn8K7vuJhQ8g5TvGG841WrKg3O3R8hz7bMsFas=; b=o4C5hjbtyaqXhEkAfrTLLtFIK6
-	bimUmCocM02fBDgO7tK6Ktztj2cTyuH2d5gknANN4i9jY+sj1H1L3gOw4NNjdyUpc/5OxoLl4ieNH
-	B8Vk+r19IZDaLJ89xwnL4yPDFD8EhEtqFe5SA0r8YbaLyMh3drUjZKZqVultnO9EWd1IECsHLVsVN
-	kHgsEGevmmSAbT+DI/vuSh/JZduIJOyq6Wzhw8rZpGdqY0xNn99Adp+BiFPL3eDhX5i6qh3cPPcXp
-	fGHcDgVlflp/1GKo7fQUFLkD7Do2kTbGAlkRWa0Hh29V4EnQbH00p3XjOsKnLVG1/efw86d9eGTna
-	SDuIl6oQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1s5Joe-002ACy-2z;
-	Fri, 10 May 2024 06:33:13 +0000
-Date: Fri, 10 May 2024 07:33:12 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] libfs: fix accidental overflow in offset calculation
-Message-ID: <20240510063312.GX2118490@ZenIV>
-References: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
- <20240510004906.GU2118490@ZenIV>
- <20240510010451.GV2118490@ZenIV>
- <6oq7du4gkj3mvgzgnmqn7x44ccd3go2d22agay36chzvuv3zyt@4fktkazj4cvw>
- <20240510044805.GW2118490@ZenIV>
+	s=arc-20240116; t=1715322818; c=relaxed/simple;
+	bh=cs2uCEPZ2queaI3Y08dzcNLbo5ENYC8TyXw0m4o+TAI=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=CWNexNHt9yioMkroTiuNnjckgjtC2Cv4jHgDf7tNlyInrelhsPDfG8QGhloaruU5dYpZijd9Ptkt8YSpR+Ssgh1lHX9yc4Bd++T1fQsyVCC/kIEDg/Cb+r7Z8TmpsY2/py6m4HtSg78OjFP35rMYLS1yV1tyB7fBkDPf3RRg95w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=C3DM713X; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
+	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Qgr9IpMRctnIFqJm2dbO75HLt287kgs26KK3eVoOYvA=; b=C3DM713X924J2SQE4+xs5hKXDl
+	XwGG878zxirrjBDa7k08+NP/EBp2kWgGJb9LbBEANWN/NP+fg2Y9G8WbdGLP0DI19yX+dmj8xYisr
+	01FPHR08asTyB4eQwzwaSugvrwEThWQCNXecpyCvpNvjQYMz0M1Q+QrSMINdH0hYPopTobeyXth6Z
+	6Myf4X83mFZpmwHpXK0q/xL3wi1oHm0xshw+px780SGRHjv8rdidycgh3yshFJbba6V7T5SF2OQfW
+	3OlQr3mfw12vlVq+salfS6/21+ninIjTkPxqE/DoROd+0HDboHCehAby4ZRIDu96PjaM2zqMWSvpQ
+	PrispqMw==;
+Received: from [2a02:fe1:7001:f100:c9a6:32:edff:c6ac] (port=50555)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <ywe_caerlyn@bit-x.org>)
+	id 1s5Joz-008jVq-H4
+	for linux-kernel@vger.kernel.org;
+	Fri, 10 May 2024 08:33:33 +0200
+Message-ID: <7975bed2-2969-4964-bbeb-4f763dcd5f13@bit-x.org>
+Date: Fri, 10 May 2024 08:33:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510044805.GW2118490@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
+Subject: Bit X, IT Icons, design style (was Fair Pay, Low Jitter)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 10, 2024 at 05:48:05AM +0100, Al Viro wrote:
-> On Fri, May 10, 2024 at 03:26:08AM +0000, Justin Stitt wrote:
-> 
-> > This feels like a case of accidental correctness. You demonstrated that
-> > even with overflow we end up going down a control path that returns an
-> > error code so all is good.
-> 
-> No.  It's about a very simple arithmetical fact: the smallest number that
-> wraps to 0 is 2^N, which is more than twice the maximal signed N-bit
-> value.  So wraparound on adding a signed N-bit to non-negative signed N-bit
-> will always end up with negative result.  That's *NOT* a hard math.  Really.
-> 
-> As for the rest... SEEK_CUR semantics is "seek to current position + offset";
-> just about any ->llseek() instance will have that shape - calculate the
-> position we want to get to, then forget about the difference between
-> SEEK_SET and SEEK_CUR.  So noticing that wraparound ends with negative
-> is enough - we reject straight SEEK_SET to negatives anyway, so no
-> extra logics is needed.
-> 
-> > However, I think finding the solution
-> > shouldn't require as much mental gymnastics. We clearly don't want our
-> > file offsets to wraparound and a plain-and-simple check for that lets
-> > readers of the code understand this.
-> 
-> No comments that would be suitable for any kind of polite company.
+Yes, using IT for iconstyle seems good also. Updated my summary graphics 
+on https://bit-x.org/BIT/BIT.html
 
-FWIW, exchange of nasty cracks aside, I believe that this kind of
-whack-a-mole in ->llseek() instances is just plain wrong.  We have
-80-odd instances in the tree.
-
-Sure, a lot of them a wrappers for standard helpers, but that's
-still way too many places to spill that stuff over.  And just
-about every instance that supports SEEK_CUR has exact same kind
-of logics.
-
-As the matter of fact, it would be interesting to find out
-which instances, if any, do *not* have that relationship
-between SEEK_CUR and SEEK_SET.  If such are rare, it might
-make sense to mark them as such in file_operations and
-have vfs_llseek() check that - it would've killed a whole
-lot of boilerplate.  And there it a careful handling of
-overflow checks (or a clear comment explaining what's
-going on) would make a lot more sense.
-
-IF we know that an instance deals with SEEK_CUR as SEEK_SET to
-offset + ->f_pos, we can translate SEEK_CUR into SEEK_SET
-in the caller.
+The Light Be With You,
+Ywe.
 
