@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-175980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D918C2838
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:52:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694C18C283E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFAD1F216CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:52:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7001C20E97
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4933171E72;
-	Fri, 10 May 2024 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpGT41MT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17564171E55;
+	Fri, 10 May 2024 15:53:03 +0000 (UTC)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E296171675;
-	Fri, 10 May 2024 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2022171E45;
+	Fri, 10 May 2024 15:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356347; cv=none; b=tIVJIqXMJ04LjAk34hxN+IVREggTU9HtATg59TPnnABGXgYX7y7EyxwsvXzE7HIC3Gfe+4guvADqj6YFJ+6jQTogKSqvolfEyjhuL/PYvp30ExvmnzngmVhe6Umz1gTan+Kk75rNCKfMRJ68QhiN9DkMEwYOxCEV0Ihv327ev98=
+	t=1715356382; cv=none; b=mtteT2HOOzCGo//OlFeVu6EMjYchI73CEheOTUsCqAr0kmDZereOj83YIb92jhN3uT31d91CUGGbmJHRVMYKmNAjx0irRCsVqXt7rR7/vtc/OIEEhqLNO7pyvjWF5rIBWS2N3MAT5aRK4iXm4+r+L6KGb7ICD0QS4v32OhDqH5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356347; c=relaxed/simple;
-	bh=h5nTT0Du2UCghXIKEWt0yFqx/MaUNSrO06p/4aGpyvU=;
+	s=arc-20240116; t=1715356382; c=relaxed/simple;
+	bh=+4sZXvm3Gqi4I8ILFKfuPYd/ZE/h973QVzTsoLlBtS0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nLjkx356W5Js9VcpuvVwWLT92yz3g1YDNUsZr7TuDnclb5Aytug/Ahd8nyQ7PC5kuUrA1AsFNXusE7Ho6Pi4N1RDc2GW1zeOmscoRk4cyoQQ97+m0O3nQBRzvmICh7Pz662GO9dJSbosDevQ35CBM3vw79vg8JnKGK9Vjw7CO2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpGT41MT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0A1C32781;
-	Fri, 10 May 2024 15:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715356347;
-	bh=h5nTT0Du2UCghXIKEWt0yFqx/MaUNSrO06p/4aGpyvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dpGT41MTOaFu1jCl8Uwvjdbh7Qn5oQcrzA5iFcUPMJ79nJcka2C6bP6oax3zjb/FP
-	 yUxMdrhS620X8kneqIwlE5uIoc48ULno1WIuo72+dre55FfN+be/Gj4Y0Wcbpsblnz
-	 Bb8a4ZjijACzy+sJ1iJZ+/VF0EJVb3U7+b8UrEbkp6VJhM2wEfyVAJzah+RrvSzg7B
-	 ePyM8KzPDyvlmXd9zfBlRpurUE1oM8dC8sIUh4QqYR4lTbAQF407kWs3m3OpH5zAab
-	 ovaRCs0gstD861+gqxwTbl/R/gfXuf2inGSiBee3JL/4OjnLKb6fL9G52CAoCuBLPG
-	 +bMbd3oyrzLjA==
-Date: Fri, 10 May 2024 16:52:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, vkoul@kernel.org, kishon@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, frank.li@nxp.com,
-	conor+dt@kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 2/3] dt-bindings: phy: Add i.MX8Q HSIO SerDes PHY
- binding
-Message-ID: <20240510-daisy-overkill-99c4bee476c0@spud>
-References: <1715234181-672-1-git-send-email-hongxing.zhu@nxp.com>
- <1715234181-672-3-git-send-email-hongxing.zhu@nxp.com>
- <20240510153849.GA308062-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=faI9os51+AWgO7N0ZogRKy86OMErqApC2SkmR7Nm3iLINZ+tgKxsU8zyX1QXhIug6IQwpn7Nmecz6ORjZxnW6UebozlZ5ewpph3CL3sDrOue4MmdUf4MQWFG9taoawAyDc6njanTZyV/n02gS9pGP1zzZDpGMoxDjWaScGPUGUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59b097b202so523783766b.0;
+        Fri, 10 May 2024 08:53:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715356379; x=1715961179;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M6CSLBPD1JVMRDYt44OaDJisYcYfySjJVMAGDPBFUPo=;
+        b=Jkpc22ZIEavjR7+x75kzURYd0eefPe4jKXc0PccY/l0oUaer6K5n6SpyKBqApmc9Ia
+         96pZ7DJCL3XN2JK9jLgv1iqZlaXxJ6geBycrbN4/6AbykqT+NpBTifuYAD6Wd7cce5C5
+         zQWWAC8qYqDnkHy+xBEUx3UzqWFteDAA8nHNGegkMDCMCo+MMBfFLRXELfUZjcW4Llc+
+         rRH1jutDtX7TRrYhUm1+SMAYSwXJOB3XxQDSdHw6nd5AhIYj8vb6YcRlsxDLn9F5lxoi
+         U9Qdmqi3VioYwJ8Wnrqc3Hya0dqwVHFiO6W6M20FXVpWk+yoqv1d7XrIozbX+OSboege
+         +Lrg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/DavawiZTzoA8qPteD2BCsCnrmmldjDJkL7KsUChsYUqgfBVvYzsXNV4Nt/RzIP3ggenfKsqw0Qtj3Gqz6aQNc0E/ESv3ULP3vVFwZbz3TRUEUzmLdgtP0dzieTItV013
+X-Gm-Message-State: AOJu0YwRN6XpFKFxVHplO2682AbK4L1Mx1vczBKxzxuiffVRvDIxXKfK
+	nyr76QKhO0h2YuMheYgbR/477zjdiT2UC6a86i6yMsgNFvUL6A1F
+X-Google-Smtp-Source: AGHT+IGGUnNynG/k0GDVF79CArCVvLyER6wOL8kRk1i8NIAeVdxtYGo1FbEbz3miTo1c4Q/lus1HuQ==
+X-Received: by 2002:a17:906:852:b0:a59:aa0d:6d with SMTP id a640c23a62f3a-a5a2d6287b5mr189905166b.62.1715356379024;
+        Fri, 10 May 2024 08:52:59 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01797sm198406466b.176.2024.05.10.08.52.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 08:52:58 -0700 (PDT)
+Date: Fri, 10 May 2024 08:52:56 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, rbc@meta.com, paulmck@kernel.org,
+	"open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KVM: Addressing a possible race in kvm_vcpu_on_spin:
+Message-ID: <Zj5C2Psbm8EY+Q4F@gmail.com>
+References: <20240509090146.146153-1-leitao@debian.org>
+ <Zjz9CLAIxRXlWe0F@google.com>
+ <Zj3ksShWaFSWstii@gmail.com>
+ <Zj4xkoMZh8zJdKyq@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Wr3y6L4YTPWbkVH7"
-Content-Disposition: inline
-In-Reply-To: <20240510153849.GA308062-robh@kernel.org>
-
-
---Wr3y6L4YTPWbkVH7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zj4xkoMZh8zJdKyq@google.com>
 
-On Fri, May 10, 2024 at 10:38:49AM -0500, Rob Herring wrote:
-> On Thu, May 09, 2024 at 01:56:20PM +0800, Richard Zhu wrote:
-> > +  fsl,refclk-pad-mode:
-> > +    description:
-> > +      Specifies the mode of the refclk pad used. INPUT(PHY refclock is
-> > +      provided externally via the refclk pad) or OUTPUT(PHY refclock is
-> > +      derived from SoC internal source and provided on the refclk pad).
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    enum: [ "input", "output" ]
->=20
-> default?
->=20
-> Really, this could just be a boolean for the non-default mode.
+On Fri, May 10, 2024 at 07:39:14AM -0700, Sean Christopherson wrote:
+> On Fri, May 10, 2024, Breno Leitao wrote:
+> > > IMO, reworking it to be like this is more straightforward:
+> > > 
+> > > 	int nr_vcpus, start, i, idx, yielded;
+> > > 	struct kvm *kvm = me->kvm;
+> > > 	struct kvm_vcpu *vcpu;
+> > > 	int try = 3;
+> > > 
+> > > 	nr_vcpus = atomic_read(&kvm->online_vcpus);
+> > > 	if (nr_vcpus < 2)
+> > > 		return;
+> > > 
+> > > 	/* Pairs with the smp_wmb() in kvm_vm_ioctl_create_vcpu(). */
+> > > 	smp_rmb();
+> > 
+> > Why do you need this now? Isn't the RCU read lock in xa_load() enough?
+> 
+> No.  RCU read lock doesn't suffice, because on kernels without PREEMPT_COUNT
+> rcu_read_lock() may be a literal nop.  There may be a _compiler_ barrier, but
+> smp_rmb() requires more than a compiler barrier on many architectures.
 
-There's actually a third option, or at least there was in v1, unused.
-The description in v1 was:
+Makes sense. In fact, it makes sense to have an explicit barrier in-between
+the xarray modify operations and reading/storing online_vcpus.
 
-      It can be UNUSED(PHY
-      refclock is derived from SoC internal source), INPUT(PHY refclock
-      is provided externally via the refclk pad) or OUTPUT(PHY refclock
-      is derived from SoC internal source and provided on the refclk pad).
+> > > 	kvm_vcpu_set_in_spin_loop(me, true);
+> > > 
+> > > 	start = READ_ONCE(kvm->last_boosted_vcpu) + 1;
+> > > 	for (i = 0; i < nr_vcpus; i++) {
+> > 
+> > Why do you need to started at the last boosted vcpu? I.e, why not
+> > starting at 0 and skipping me->vcpu_idx and kvm->last_boosted_vcpu?
+> 
+> To provide round-robin style yielding in order to (hopefully) yield to the vCPU
+> that is holding a spinlock (or some other asset that is causing a vCPU to spin
+> in kernel mode).
+> 
+> E.g. if there are 4 vCPUs all running on a single CPU, vCPU3 gets preempted while
+> holding a spinlock, and all vCPUs are contented for said spinlock then starting
+> at vCPU0 every time would result in vCPU1 yielding to vCPU0, and vCPU0 yielding
+> back to vCPU1, indefinitely.
 
-I suggested that there should be 3 strings and not having the property
-would mean unused. But all mention of unused seems to have vanished :/
-
---Wr3y6L4YTPWbkVH7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj5CowAKCRB4tDGHoIJi
-0jCbAP4o1fystkUik1QzniCgEWNmiXcfwOndTsN+6kqytNqrpQD+Lxdi0pmPgkTY
-MDMSv9vyFHydgHukhatYEY2utuVzXAo=
-=mJ4j
------END PGP SIGNATURE-----
-
---Wr3y6L4YTPWbkVH7--
+Makes sense, this would always privilege vCPU 0 in favor of the last
+vCPU. 100% clear. Thanks!
 
