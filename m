@@ -1,133 +1,133 @@
-Return-Path: <linux-kernel+bounces-175577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC9B8C21BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:11:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14F98C2193
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283B01F23AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:11:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19E01C2114E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13816165FD2;
-	Fri, 10 May 2024 10:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D175165FD1;
+	Fri, 10 May 2024 10:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="db7NsSpJ"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHzdP4Vw"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD7B15FA62;
-	Fri, 10 May 2024 10:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B80D1635B5;
+	Fri, 10 May 2024 10:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335863; cv=none; b=gytQz1fbsTAc8wso96mZpSGvjLNrDd08E5AtVcjJxpBHKUf/nfOlz7rm4FgM/iKakE0HFnMZCuyzbcSMYTRhuinmXnZoD63ryReFKV6YhhZopeqxrBBUTSPW8bMT/grudIiqSitTL7kmfpmKWMOjDLSmnxj3YBRR3tO58CXHuZM=
+	t=1715335538; cv=none; b=Lf+G9gfyG6ca2eu5ox6S60yvJlg1AuR4YGNRiZZX+GMeMoWhzeDfgQTcTZWHv/XUB3g1o6C5JCiXoZ+1PFa2nkA8VOm7RsqNm32zoOkbpCFJ/eqIll4eAflo8y51VJuxN+vZVm4QQJAZXlu7gXK2khO/Ob6J4w2Oebnt1vu+mRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335863; c=relaxed/simple;
-	bh=ZMLWh8Qj4mJWhLapzw2DXD+cmGmkXcA9W7KIGpEo4lg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VG5u/0iiCRcdG3weNcgbDuc4IUcfWdTydbNPwR4pTOFe/LFYHU67GjyI6GiL4X7fmhqQusJNKfn7bR//YuoHjA68jye8fkIbPR0pUvCe6MumXPQ01vSLXiVOUWNH0+o/kVUNugW51BGOipnPdnIYqT1UwbPJrwh4ssEgs9W/k1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=db7NsSpJ; arc=none smtp.client-ip=209.85.222.171
+	s=arc-20240116; t=1715335538; c=relaxed/simple;
+	bh=bNxY+o7w/EluTDohpX6Vmx9RgZAOBzGsaVfZ2SgYTKc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OehfXSDRRPIuM+7JEJXWc1Y5jwavGKT1RBoY1/efh3xjI5OJy8RWufd7KyMF800dGbH+i0ow7Rtz/6k/MYkXsVviBoCX0yBKzMa04C2rVR1xNrnFHCSsJfz+qM16cQPIGGeB05Lt62Yi+zHxu64nAUjtuEEDfqL0lkyCqB1qfbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHzdP4Vw; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-792b8ebc4eeso127652085a.1;
-        Fri, 10 May 2024 03:11:01 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a64db066so464919266b.3;
+        Fri, 10 May 2024 03:05:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715335860; x=1715940660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qmNXjtQqInK2DrYq2plkekwqQKtx06eUbKR+MF8j63Q=;
-        b=db7NsSpJH2tOG7yChlNBH/LBRRQep9N+MtF+GB/ZvweC1uzuuJtXi2JTYzzuGX6w7y
-         S9fTNepUcVNoz2QJ5PYxnnPz0EKUV78Gn/PAn1nS9Lzdpjvd/SUwm7HlWT9BGUTg2enD
-         8U8ro92siKdko6pPcYZdtMdizKfVSUjwUfBJp137azl24fDoIWq7hYq3i5X5kTX87imV
-         KPey2j9OyM3QZDHuqEOgeMrUvWBaclY+1MEOWTVpEKpfgGxPz9DI72YwuupyV0VgMqrE
-         1T3bU50HpknTkRXp1epMYw7Pzs/tfSvKOthk8BS1r5NRVbCT+fg4qMJYfztFSLL3FSkz
-         wtxg==
+        d=gmail.com; s=20230601; t=1715335535; x=1715940335; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jvyJt6mXT3ke3TNec2g3jJkXUKl8h7wFAhJ349b/sWE=;
+        b=DHzdP4VwUq5QXS9O4PdsB9psOZy1DfGXfKm+JVu/tL/rDHeJcLNHChP8JhDL8+fExC
+         /bct8r71jAK/zQ2hAw6S/EfNvQ749sA/HvtZUekCrGudhWX73SJGDbWLTrCC/ceBxKQl
+         gPeD9CzaApk/ZyOtvIvUyuzdXTGnHxIIxt4T1aOCa8oTRy+infabTgSu8+OvBzzGBwwq
+         YJdM41qk669eP0kidZQzvqVHltt6jCJcGwx0T9vYgBy4sWx0pbk2SzVWXAFcPmSQ8BfX
+         lSZhOxSqJwdTNR+1SRNlkw7VG3AFNtN1L+DNrWWcggmnv2pcloIbJe383snBZii6roZF
+         mssg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715335860; x=1715940660;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qmNXjtQqInK2DrYq2plkekwqQKtx06eUbKR+MF8j63Q=;
-        b=F4TYCZtEQf7Zma0l1nCap99615ID0q8KhLwu2vQr+fzsd9RLPksl3IQStOUVPyBQQY
-         8CiiSTRVwn884K6Iaq8DNE2vPKSBDq2FdnK/nX+bu+VHHf/5u1DC95BQ27T6izEwo4zF
-         yGqX644K5A3kw0C2PStaqB3BiDnB4xB9Z1y6Iq7UcTceKQTPa29wP4nR7F7iZ36j1uWY
-         T4Sgf5pI/XrX7eEPuu2qnx8BZLIEwtNRIygqh5Ih/F98X9LO1wcFu3cxrzE/USjJZTIG
-         cB9m29FMwUuK9IKsi9381QJfXlf2B/v7aHb8Qn2Co4/OKyDs5cTcbKIC+R4Hq7Nr654Y
-         lc4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYITPveQXr1YvawrBfWERTK42wqGV5ITxCoEymCiBs95Y1+dGlTeqBkX31l3K2DaQIiJ8TtH/E4Hg8iZWJwEi/3kJG0oZGSOBZRV5jDNdMhGx8YrMWQSMIHtkzELe6FT0XD2EGsDH0yjY=
-X-Gm-Message-State: AOJu0YxEtJKRZWTWm1ra5BiBmcbbUQUPM1O0/i4l1Ky/Dj9/0WfTdfN2
-	zxATHLjL1hxd36bVca41GfP62H4GgX/WRViQWDXG3p4VzAmsXbaB
-X-Google-Smtp-Source: AGHT+IHx6PD8MXyuK4ND+nNLwcCP8oPAW9GAQy4H7bRXw63mJxSR03olceHdYeSFseK083XTIGi4yQ==
-X-Received: by 2002:a05:620a:a45:b0:790:e65f:915f with SMTP id af79cd13be357-792c75ac087mr225689585a.41.1715335860198;
-        Fri, 10 May 2024 03:11:00 -0700 (PDT)
-Received: from debug-VirtualBox.phub.net.cable.rogers.com (pool-174-114-162-125.cpe.net.cable.rogers.com. [174.114.162.125])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fd1a6sm164060385a.91.2024.05.10.03.10.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 03:10:59 -0700 (PDT)
-From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-To: sakari.ailus@linux.intel.com,
-	dave.stevenson@raspberrypi.com,
-	jacopo@jmondi.org,
-	mchehab@kernel.org,
-	julia.lawall@inria.fr
-Cc: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com
-Subject: [PATCH] media: i2c: replacing of_node_put with __free(device_node)
-Date: Fri, 10 May 2024 06:03:24 -0400
-Message-Id: <20240510100324.5961-1-abdulrasaqolawani@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1715335535; x=1715940335;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jvyJt6mXT3ke3TNec2g3jJkXUKl8h7wFAhJ349b/sWE=;
+        b=H7OSC55fj4Iz5bPicXkwabwU/puzti0jXeSPDG9nMqAiH+BWRPppQvN5typyjfpvpS
+         S4NCnZkT2/xHWzaP1i5VDhjv/hG8DdncD4wjbuV2RMtTS0a+by7yH6s3Tyen1A2jP6ql
+         r8L0I8Pdac3OvrV2Ge2MjsrtKT+fMu4VNQj0XJTBDs/iVnS9KlWuQbt7f0zzLWWE+Zd5
+         uUEdFrTzCEpYDt3vVyDof+dfc0/plIN/zid9j7HL3HV0a9Agg95Bj9dtWtmWYDiE24uJ
+         sggeSarWyw/TmMHh9s1VXLWY7XDmoWlOoCAxKSJo7YARMRsEb6nWgs2Z0j94u92xY7PH
+         s/dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUz/Ml2JKHiw5Fq7x/CEHPr+UJZ5ECedWfp/Cp3sTHzfJ4KIDT0e6Xs4E/8Yw0n+B0Fbkxk/Xf2moGeJ7IGo1wR+S261lKegEF6AOWAqqmhaPjTTb9qhBzrIuPu4wy0rzRXXIhSo65QcB4wDxScqmdNnCaxe0IoCcT8XOgkcfpW5GZ+7w==
+X-Gm-Message-State: AOJu0YzCZsfegC3w0ZPGnN2Yfl5P6PlCfvV0mMH4YyhZ/IW9q6Dpx6V3
+	Q6tZeXmNDOByl+e/Yp3ZpMS3zq90GcOOOlX1iQiLBFPgbgE5GOuP
+X-Google-Smtp-Source: AGHT+IGa90M9SKT4W839DqYKUjMyqadXlmKJvXXAnlyhf9gjRGzZ+Yt9tUAVrfALpDcuKwCII9ApPw==
+X-Received: by 2002:a50:baeb:0:b0:56e:2ebc:5c4 with SMTP id 4fb4d7f45d1cf-5734d5ceae0mr1478379a12.20.1715335535307;
+        Fri, 10 May 2024 03:05:35 -0700 (PDT)
+Received: from [192.168.0.105] (c7.campus.utcluj.ro. [193.226.6.226])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7d3esm1655178a12.73.2024.05.10.03.05.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 03:05:34 -0700 (PDT)
+Message-ID: <73365049-670b-4068-a159-fbdd0539f5a9@gmail.com>
+Date: Fri, 10 May 2024 13:05:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/6] dt-bindings: iio: adc: ad7192: Add AD7194 support
+To: Conor Dooley <conor@kernel.org>
+Cc: michael.hennerich@analog.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alexandru.tachici@analog.com, lars@metafoo.de, jic23@kernel.org,
+ robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ lgirdwood@gmail.com, broonie@kernel.org, andy@kernel.org,
+ nuno.sa@analog.com, marcelo.schmitt@analog.com, bigunclemax@gmail.com,
+ dlechner@baylibre.com, okan.sahin@analog.com, fr0st61te@gmail.com,
+ alisa.roman@analog.com, marcus.folkesson@gmail.com, schnelle@linux.ibm.com,
+ liambeguin@gmail.com
+References: <20240430162946.589423-1-alisa.roman@analog.com>
+ <20240430162946.589423-6-alisa.roman@analog.com>
+ <20240430-winnings-wrongness-32328ccfe3b5@spud>
+Content-Language: en-US
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+In-Reply-To: <20240430-winnings-wrongness-32328ccfe3b5@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replaced instance of of_node_put with __free(device_node)
-to protect against any memory leaks due to future changes
-in control flow.
+On 30.04.2024 20:21, Conor Dooley wrote:
+> On Tue, Apr 30, 2024 at 07:29:45PM +0300, Alisa-Dariana Roman wrote:
+>> +      diff-channels:
+>> +        description:
+>> +          Both inputs can be connected to pins AIN1 to AIN16 by choosing the
+>> +          appropriate value from 1 to 16.
+>> +        items:
+>> +          minimum: 1
+>> +          maximum: 16
+>> +
+>> +      single-channel:
+>> +        description:
+>> +          Positive input can be connected to pins AIN1 to AIN16 by choosing the
+>> +          appropriate value from 1 to 16. Negative input is connected to AINCOM.
+>> +        items:
+>> +          minimum: 1
+>> +          maximum: 16
+> 
+> Up to 16 differential channels and 16 single-ended channels, but only 16
+> pins? Would the number of differential channels not max out at 8?
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
----
- drivers/media/i2c/ov5647.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Hello, Conor! I really appreciate the feedback!
 
-diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-index 7e1ecdf2485f..d593dba092e3 100644
---- a/drivers/media/i2c/ov5647.c
-+++ b/drivers/media/i2c/ov5647.c
-@@ -1360,23 +1360,19 @@ static int ov5647_parse_dt(struct ov5647 *sensor, struct device_node *np)
- 	struct v4l2_fwnode_endpoint bus_cfg = {
- 		.bus_type = V4L2_MBUS_CSI2_DPHY,
- 	};
--	struct device_node *ep;
-+	struct device_node *ep __free(device_node) = of_graph_get_endpoint_by_regs(np, 0, -1);
- 	int ret;
- 
--	ep = of_graph_get_endpoint_by_regs(np, 0, -1);
- 	if (!ep)
- 		return -EINVAL;
- 
- 	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep), &bus_cfg);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	sensor->clock_ncont = bus_cfg.bus.mipi_csi2.flags &
- 			      V4L2_MBUS_CSI2_NONCONTINUOUS_CLOCK;
- 
--out:
--	of_node_put(ep);
--
- 	return ret;
- }
- 
--- 
-2.34.1
+The way I thought about it, the only thing constraining the number of 
+channels is the reg number (minimum: 0, maximum: 271). 272 channels 
+cover all possible combinations (16*16 differential and 16 single ended) 
+and I thought there is no need for anything stricter. I added items: 
+minimum:1 maximum:16 to make sure the numbers are from 1 to 16, 
+corresponding to AIN1-AIN16.
+
+Please let me know what should be improved!
+
+Kind regards,
+Alisa-Dariana Roman.
 
 
