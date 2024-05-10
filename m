@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-175179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6758C1BC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F92F8C1BCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77F3281A4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF20D1F2153E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842BB8F58;
-	Fri, 10 May 2024 00:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A000FC0B;
+	Fri, 10 May 2024 00:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L1jQ/h+2"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="SrRg8syR"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22595ECF;
-	Fri, 10 May 2024 00:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A576FC6
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715301333; cv=none; b=LrVWlbq6fm++20+XktlxmLOdGxD85a/csdTp+FGMOeCTSP1V6+ZfD5/clBprqcqhYAAIL3fVpHusnZkxta2NcoYy5aI0HwO3PcQBeHQIiykTitqo1uEgMDkG6OHx1P0Qk2TuHBQmmV9yGtvzgd6iDcaH2nFD5DyIO6HVJUlzKBg=
+	t=1715301354; cv=none; b=c7Z3tWam6lS4/4bmS0TOBYGj+xl3F72Vjaczo+Gy3kkhIpemOetlddK+Y8Ej84cDGoyt2zUnB7Pcum/pSPk4Lx8zJEECLeiLpVdpU/xtf2eS9uWXxkCTk4RnwYeLDa8DhxnCmaAS28gOpGweINUBY9p9YYvZUwjV7T2zbLkVYOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715301333; c=relaxed/simple;
-	bh=JJZKe2t0kamyMzVROuPedbDxFm+zHMjxwqHfKjv86Vs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BAG+8ob9d7zlilE031i/2ZQSb6BJBcibSThwv5J03/G+Y4EheYNA2MnQfNxI1jqzLuGXT4b/xQV1/bujgvpelGOCs7C+KvzVkh4wXGoDKNnwDN4Qe0Iywhfr4NXtjONnRabe/AR8wGulrnHrKj1dTuOfAIybD7IypJUql6sEUE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=L1jQ/h+2; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A0J0xi002256;
-	Fri, 10 May 2024 00:34:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=ukCGGXI9Jxb1GstaggI2PMFSAmqWV+ZT0DPIrBgA8Ns=;
- b=L1jQ/h+2fhCTmuZ25GA3iapSMQbWow1nNDIQenSfqKOQy8+Qixe2ScOBteDgAYKN47ma
- GW5NfNVXChmz22KuVNOGVt4k3ZtoRWUBz6VMjSi2sk17Ql8TncNNzrXUJ8ngYSsd3fId
- Rv+JU7BnzmeM1lTQTkEvCbcxN6bmIG+xuyme4CyZs/3neFQQohNrysyOMnfto8+Sgkue
- xKn+UOk/9vhOfK6ZM7Qbhv85HEg7iauXCG1dRL/z10pysFHjs07tKdiOq8I61U6F7f+F
- ZDQTeA6UVDrsbjcTllaby4wgodepU6xVE67g1sthM/YGwstxfkSe0st5ffu3ThBkQDKh ug== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y17qwg263-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 00:34:53 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 449NSV0t020216;
-	Fri, 10 May 2024 00:34:27 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfp9693-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 00:34:27 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44A0XcEe035161;
-	Fri, 10 May 2024 00:34:26 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3xysfp968q-1;
-	Fri, 10 May 2024 00:34:26 +0000
-From: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
-To: namhyung@kernel.org, acme@kernel.org
-Cc: peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        samasth.norway.ananda@oracle.com
-Subject: [PATCH RESEND] perf daemon: Fix file leak in daemon_session__control
-Date: Thu,  9 May 2024 17:34:24 -0700
-Message-ID: <20240510003424.2016914-1-samasth.norway.ananda@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715301354; c=relaxed/simple;
+	bh=A6Ud7RP+XPGEndCXwu0iH4gOduKG/AYC7ysUshGfKZQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ss0bxEtNroGsI0zjGLmda2T1++vt4CQGHe2zRtXU2euHj8JyH/d7asNU9OqhWg8w84Vca4sCVBvL63lqtL3lusaW0kBnvFw1p4ji5K4eMsH5WsMYWEAH/uAKYX/8XidT4wXOkDS6t/3oHRhQLf3cmQIZohA0LmB9uRP8rWzEU1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SrRg8syR; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6204c4f4240so22117597b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715301352; x=1715906152; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JRIoam0j1M49iTn2E355v3TI8UxS6k39m0Um4TZVhLw=;
+        b=SrRg8syRlktl/jJWW6gSttTzqFhpXWkgxsodKFtHHNjx6wQ8ryw6UookH19/m/9IwQ
+         /qTrxKOLKPozU3ac38JA545YZCXBfBgfzzeeZiJsHNfB6nitQoR4UKEhrw1X3RXLWN+2
+         8iQ9STeO45nkWiuMTKwX9OYuR0foxQuGdwfG4+Xq+CMABYjr66NeYTmAkMILB6W4NTtA
+         yIxuypOe96dzpAna5lZ0F0VbmIaPzwJOg9HZy4Yji1bYO7VHXLfXKE9mN3orpdn8c9Zu
+         JEO1wVsAxsqAKbYbsYUD8tIt8QXDyLtn1DONCpXqa9VYj/lnJIJx9IDtrefpk6X+EWxc
+         BeLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715301352; x=1715906152;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JRIoam0j1M49iTn2E355v3TI8UxS6k39m0Um4TZVhLw=;
+        b=Y3LlCZ5mqWZAOAsyCjxFRst6zm8Hxisq/ZTvtjrjJaQc3Fgn753VCbAbSHjLIDklns
+         3bbe5QwdXomXq96oEW5Dperp6NCXsm3zEBr+ViH3Q6gcfgNTNk+yyXzKG7nxyIkuvjT5
+         F/w4nVv+s1ibMMs6OLgRXf+8Um/jGFvElLmcnbz49b/AptiMOt7HmSa+1CNeN7U/LyCP
+         fKbNvDfg5/pOschHelOpA3jszhdFpLtsmKV1Kl7AlLlKpBddkKlJ5MzKGuYhF0l8SSX2
+         N/7zhpuwvK9eVZAsn/x5yjH73whCoNsa3PKEPxmBANPGsXiWbcPYkGRcbHFxz2QObmWE
+         bfDw==
+X-Forwarded-Encrypted: i=1; AJvYcCULLcrQCy9dPu063kPeVSHbVp/lrClNXs3YDOwMDQ/dlm5aXOhuG4rnUJzGBXJAqCpod1KrWN2HcGHJsYbUagYV5rmQ0yCaXwJp9p5B
+X-Gm-Message-State: AOJu0Yw+lw57aMbUYDmrGji+/Y7Q6Pg9bL+ypKxurQyN2AjHWVFLl3cy
+	exusBGUv0ZUBVxEt2zCro6G86U3whx6hIi4FqofaQpSh5DnPhfvhOgFliBan+WC5K638FLzq+Hu
+	Qk/cNqHhmJUIri4SJIGanzA==
+X-Google-Smtp-Source: AGHT+IHJL8hsG0mvnXN9NTELNsYrQvpZSdlZUdc+4IRp10nXSK7S/+o1UQOBYkTXbb92FFrUo0i8behfYeZs/OhBkw==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:690c:4d88:b0:61a:d161:ff8a with
+ SMTP id 00721157ae682-622aff477f3mr3037367b3.1.1715301352393; Thu, 09 May
+ 2024 17:35:52 -0700 (PDT)
+Date: Fri, 10 May 2024 00:35:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405100002
-X-Proofpoint-GUID: NFJhzcK27C6HUsDn3dol3madTVv9GZFb
-X-Proofpoint-ORIG-GUID: NFJhzcK27C6HUsDn3dol3madTVv9GZFb
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAOZrPWYC/x2MQQqAMAzAviI9W5izOvQr4mHTqgVRWUEE2d8dH
+ gNJXlCOwgp98ULkW1TOI0NVFjBt/lgZZc4M1lgyjekwEGYHdwmLYus6cpbIk68hJ1fkRZ5/N4w pfa+vRBFeAAAA
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715301351; l=3359;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=A6Ud7RP+XPGEndCXwu0iH4gOduKG/AYC7ysUshGfKZQ=; b=Qz81LOMknGCFGBFXpjp8tTJXGsQ9A8sScMtbF2qSupAvT3AI53qskUBYHBt1xTlul7o8nliAo
+ /rHuR0QAfQhDLKW/2/JBfllQFsn9fZ92VgMllO/zxN3OF004iyse9Hh
+X-Mailer: b4 0.12.3
+Message-ID: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
+Subject: [PATCH] libfs: fix accidental overflow in offset calculation
+From: Justin Stitt <justinstitt@google.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-The open() function returns -1 on error.
-'control' and 'ack' both initialized with open() and further
-validated with 'if' statement. 'if (!control)' would evaluate
-to 'true' if returned value on error were '0' but it is actually '-1'.
+Running syzkaller with the newly reintroduced signed integer overflow
+sanitizer gives this report:
 
-Fixes: edcaa47958c7 ("perf daemon: Add 'ping' command")
-Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+[ 6008.464680] UBSAN: signed-integer-overflow in ../fs/libfs.c:149:11
+[ 6008.468664] 9223372036854775807 + 16387 cannot be represented in type 'loff_t' (aka 'long long')
+[ 6008.474167] CPU: 1 PID: 1214 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00041-gec7cb1052e44-dirty #15
+[ 6008.479662] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[ 6008.485276] Call Trace:
+[ 6008.486819]  <TASK>
+[ 6008.488258]  dump_stack_lvl+0x93/0xd0
+[ 6008.490535]  handle_overflow+0x171/0x1b0
+[ 6008.492957]  dcache_dir_lseek+0x3bf/0x3d0
+..
+
+Use the check_add_overflow() helper to gracefully check for
+unintentional overflow causing wraparound in our offset calculations.
+
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/359
+Cc: linux-hardening@vger.kernel.org
+Signed-off-by: Justin Stitt <justinstitt@google.com>
 ---
-Found this error through static analysis. This has only been compile
-tested.
----
- tools/perf/builtin-daemon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-daemon.c b/tools/perf/builtin-daemon.c
-index 83954af36753..de76bbc50bfb 100644
---- a/tools/perf/builtin-daemon.c
-+++ b/tools/perf/builtin-daemon.c
-@@ -523,7 +523,7 @@ static int daemon_session__control(struct daemon_session *session,
- 		  session->base, SESSION_CONTROL);
- 
- 	control = open(control_path, O_WRONLY|O_NONBLOCK);
--	if (!control)
-+	if (control < 0)
- 		return -1;
- 
- 	if (do_ack) {
-@@ -532,7 +532,7 @@ static int daemon_session__control(struct daemon_session *session,
- 			  session->base, SESSION_ACK);
- 
- 		ack = open(ack_path, O_RDONLY, O_NONBLOCK);
--		if (!ack) {
-+		if (ack < 0) {
- 			close(control);
- 			return -1;
- 		}
--- 
-2.42.0
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
+
+Here's the syzkaller reproducer:
+
+| # {Threaded:false Repeat:false RepeatTimes:0 Procs:1 Slowdown:1 Sandbox:
+| # SandboxArg:0 Leak:false NetInjection:false NetDevices:false
+| # NetReset:false Cgroups:false BinfmtMisc:false CloseFDs:false KCSAN:false
+| # DevlinkPCI:false NicVF:false USB:false VhciInjection:false Wifi:false
+| # IEEE802154:false Sysctl:false Swap:false UseTmpDir:false
+| # HandleSegv:false Repro:false Trace:false LegacyOptions:{Collide:false
+| # Fault:false FaultCall:0 FaultNth:0}}
+| r0 = openat$sysfs(0xffffffffffffff9c, &(0x7f0000000000)='/sys/kernel/tracing', 0x0, 0x0)
+| lseek(r0, 0x4003, 0x0)
+| lseek(r0, 0x7fffffffffffffff, 0x1)
+
+.. which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+
+.. with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ fs/libfs.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 3a6f2cb364f8..3fdc1aaddd45 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -147,7 +147,9 @@ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	switch (whence) {
+ 		case 1:
+-			offset += file->f_pos;
++			/* cannot represent offset with loff_t */
++			if (check_add_overflow(offset, file->f_pos, &offset))
++				return -EOVERFLOW;
+ 			fallthrough;
+ 		case 0:
+ 			if (offset >= 0)
+@@ -422,7 +424,9 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
+ {
+ 	switch (whence) {
+ 	case SEEK_CUR:
+-		offset += file->f_pos;
++		/* cannot represent offset with loff_t */
++		if (check_add_overflow(offset, file->f_pos, &offset))
++			return -EOVERFLOW;
+ 		fallthrough;
+ 	case SEEK_SET:
+ 		if (offset >= 0)
+
+---
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240509-b4-sio-libfs-67947244a4a3
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
 
 
