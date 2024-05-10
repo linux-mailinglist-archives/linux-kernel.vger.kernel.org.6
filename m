@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-176271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0222A8C2C95
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:25:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A79B38C2C99
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADF57285961
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6332228562D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D222213D24D;
-	Fri, 10 May 2024 22:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B0513D260;
+	Fri, 10 May 2024 22:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n6l1lOgH"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5vbAAzy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652AA15E86
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 22:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34A613D244
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 22:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715379939; cv=none; b=VksqoDn2laJicuEXZlDa7DrNUdjZZWNnptYfEebnyjjYKMuxlD7VeWRDxWw5tH8kAALYEe+RJ98fGaXimCAZw2AhvfIBWGegy3x+g0fDD7oxkMeRU3ubI6yrAdHdstyI+biV00YQRTXToyfiQoVDECLP8uTIPvutxVYvw2Geacc=
+	t=1715379987; cv=none; b=oy8igNGIMW3sdiyfqbC4OfBpnnolRzhT4H24511oO26lf1O9H6Ym3C91nrDk2DDvrSrZ5jY3d/GknBUnIqQa04m7cQtwpcBYBvOtys9jtz9dgbgojbQ5e8sSJTlOrAVIabympBOn5W1z4V/saluXpwKTjqgr2lg4DhBRLZn9HJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715379939; c=relaxed/simple;
-	bh=xz1FMJnT6STvw2K8nlt4UObpEN1TZgFZdWliO7h2thU=;
+	s=arc-20240116; t=1715379987; c=relaxed/simple;
+	bh=7AiDI83wh1yuDTxM8zawvskTQliLVpgN03KQsOSmIbs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ENhbhHJi6NokGbvw36tnqZIc5cW85eXceWy2f6J/f8GQcHA04iVfcSpRNpoea/5M/Sf+gj4Zv4iMLEH2piOQYl6HDzK50nKCOEHVF5DCQ3fKHApAywMD7SZS38syy5Vla5rBVjyWiyrKK9SYYTYfeunTss/AFV8G7InPlaepxmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n6l1lOgH; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51ef64d051bso3054911e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:25:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715379935; x=1715984735; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=W6HjquRKOFN+fNdCcBFqV2IKTVODauXieX60eZohwyo=;
-        b=n6l1lOgH22p+sPw+eaHHL8ypLHm342ryflRtMvPKQk4OigawoDVi6XjVWhpnxyHQBI
-         rjzeIJGaEaRw2ne4FlmfNxFsngtQPk4D4AS3XSISaqGRoMWBPcvUMYUlN0CSeazZd8SU
-         wOXMi67WdjA8NkAO5u21xLhGMHoJPQgNwHvZg6drTKam4EzQQfOulUEop3pPYOHbZigL
-         gRu/7x7WwSeq39DqQRmiA0covGTMkO4E80ei5/HqX25Tvz1AxRBsaeovGcZ124A/AT6B
-         I+JkQB3XRAeFHGTOqjTpYwxUGwBohiL6wAmC+QEuCN+sjvUJ5cxQrxGNEj6a325re0Dm
-         NX1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715379935; x=1715984735;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W6HjquRKOFN+fNdCcBFqV2IKTVODauXieX60eZohwyo=;
-        b=krgw5IPrJMOsun28v0JOzCnuJmOkBSccQcH3BSswH7YGh0Y14zLcEtJQvFoE8uKGEk
-         7KKG7+z/mvIJWSnby2vyhwf0ToJi+ZNI2nYPbS9KrueQYQ4VVYKXQn0o4O+QSwWQI84J
-         e58Rn/c9Bl2oHNr3btJEMt6gpfaMsSkqlBCl2Wzs8s45R2iOiXMbCe+8VWs6NlDaAToy
-         goVnowVU4/jVh0bSv5QQJABOlnY6R4ZmKEbJJ4WkYyBl0BIbKSX0O7RMoWCPADZL6xvx
-         XmzJQmuA1Nxu7YHvP0QZGcsSAX00G4jP8QJJF8XwMBWJR/3knOyu0znq5hHll5mFHSER
-         bQjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYsEXJFqzjxQnkos2zsFxnhevK4E9dbWcZ4X5Vy5ISmFBPF5J1dhk8r2PEQG6YRp3NICZ4fHyFqdfTn8uZoKR/zIvyWHIDV5xJQB6r
-X-Gm-Message-State: AOJu0Yw4rE/eUkX3AQlHqK1ybrTLDRx2rvQcgrpTPVocaAsCp/Iejwf9
-	TcQKlm6SJhZlfGz07ApxsvEcYvElXZ8eDFtw3VBElYnYUekOwaVQPMpGh8h9UWo=
-X-Google-Smtp-Source: AGHT+IEFoajKWL5Ia66X2EESRVbXuMiDkkxy0S8gKkoH1kR/jrIMoqoUuKrVGiU/0xgAGVyjDlJflg==
-X-Received: by 2002:a05:6512:358e:b0:522:2990:7739 with SMTP id 2adb3069b0e04-522299078a7mr1051254e87.20.1715379935513;
-        Fri, 10 May 2024 15:25:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad535sm835358e87.28.2024.05.10.15.25.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 15:25:35 -0700 (PDT)
-Date: Sat, 11 May 2024 01:25:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Vinod Koul <vkoul@kernel.org>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 6/7] drm/panel: lg-sw43408: add missing error handling
-Message-ID: <hf7u3rxard7yg2z3fkmntemhnnmwnsgmhmfhpt74modswg7nj4@7kwyba55x6o7>
-References: <20240510-dsi-panels-upd-api-v1-0-317c78a0dcc8@linaro.org>
- <20240510-dsi-panels-upd-api-v1-6-317c78a0dcc8@linaro.org>
- <CAD=FV=Uu2=6c_3Q44BK384cgSLX=++_bBbg6=CCqBaXnqcEK=g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KnXqQXlFwzIMA/bkAIB9GSq5b08StT1rxsRx1iRIMuxlAf9+zSct/1yl87QsANl4OF/fGNaPvTOkbDVwruhh+Y5rcRdLzEm8UNilDOuxRw3ZvafB21PCic4uj+8+nxPVJdr9raoN6x7+kf67cV2RvFEeWRSi4Z7Y74AgXxU6OKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5vbAAzy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDD57C113CC;
+	Fri, 10 May 2024 22:26:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715379987;
+	bh=7AiDI83wh1yuDTxM8zawvskTQliLVpgN03KQsOSmIbs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X5vbAAzyygPUoflDfm2+WfORsmKIWrU5hyDenSGkQpfTj3vlQ1o4tBqK+Hg0zTSiA
+	 d69twgicFFhPkapfZVrTAjoh6J9jiO5lmuwlb7a38ykiZ2aD4+OiN0cuWnGPgkhyq2
+	 zxLJoyITqmNPmfFFnwAl7iZikmc0lLP3KwbywOJpMfWG9d+hIj7Dg03jBMgaXQL8IQ
+	 RBu3nrBZyoANA5z1DHPxL89svP9WQ8nTEHNpjcBvcpPkBxwuferQZg6wWvz8+vTURA
+	 R62ZtkeuLBlKr9AsmxFxsuU3xJdvbxVb7BwZ/lSkl4bhC4yTgy5q6hEwxW52XhgWu2
+	 DfN6Fc1hCQOZQ==
+Date: Fri, 10 May 2024 23:26:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Song Liu <song@kernel.org>, Xi Wang <xi.wang@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] riscv: Add PLATFORM_MAY_SUPPORT_RISCV_ISA_V
+ Kconfig option
+Message-ID: <20240510-pursuable-oppose-e0b8430271f6@spud>
+References: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
+ <20240507-compile_kernel_with_extensions-v2-2-722c21c328c6@rivosinc.com>
+ <20240510-earthly-regress-7a8c8dba55db@spud>
+ <Zj6U7sZNNh8GQPYM@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HEtmufuxgphf9/yt"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=Uu2=6c_3Q44BK384cgSLX=++_bBbg6=CCqBaXnqcEK=g@mail.gmail.com>
+In-Reply-To: <Zj6U7sZNNh8GQPYM@ghost>
 
-On Fri, May 10, 2024 at 02:47:05PM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Thu, May 9, 2024 at 3:37 PM Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
-> >
-> > Add missing error handling for the mipi_dsi_ functions that actually
-> > return error code instead of silently ignoring it.
-> >
-> > Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  drivers/gpu/drm/panel/panel-lg-sw43408.c | 33 ++++++++++++++++++++++++++------
-> >  1 file changed, 27 insertions(+), 6 deletions(-)
-> 
-> Looks right to me. Only slight nit would be that I'd put this as the
-> first patch in the series to make it obvious to anyone backporting it
-> to older kernels that it doesn't have any dependencies on the earlier
-> patches in the series. It's fairly obvious so this isn't a huge deal,
-> but still could be nice.
 
-Yes. I wanted to emphasise the _multi stuff rather than this fix. I'll
-reorder patches for v2. Maybe I should also rebase the series on top of
-patches by Cong Yang. WDYT?
+--HEtmufuxgphf9/yt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+On Fri, May 10, 2024 at 02:43:10PM -0700, Charlie Jenkins wrote:
+> On Fri, May 10, 2024 at 09:43:33PM +0100, Conor Dooley wrote:
+> > Hey Charlie,
+> >=20
+> > On Tue, May 07, 2024 at 06:36:28PM -0700, Charlie Jenkins wrote:
+> > > Current versions of the kernel add "v" to the march and then immeidat=
+ely
+> > > filter it out such that "v" is not passed to CFLAGS.  Instead of doing
+> > > this filtering, code blocks in the kernel that want to use vector
+> > > assembly have been changed to locally enable vector (using ".option
+> > > arch, +v").
+> >=20
+> > Other content in the series aside, since this is a change that could be
+> > made independently of the main series objectives, I figured it was worth
+> > pointing out that this is not a change without downsides: I think that
+> > it would drop support for vector with most versions of LLVM as
+> > .option arch support there is much more recent thing than it is for gcc.
+> > Off the top of my head I don't know exactly the versions involved, but
+> > it is something like LLVM-14 supports vector but only LLVM-17 and later
+> > supports .option arch.
+>=20
+> Toolchain incompatibilities are always fun. It does look like .option
+> arch was introduced in LLVM-17. That would be a regression. We do use
+> .option arch for every other extension, but vector was treated special
+> when it was introduced unfortunately so maybe we have to live with the
+> weird march parsing hack.
 
--- 
-With best wishes
-Dmitry
+I wrote out a long message about the history of some of this, but right
+at the end I was scrolling through my chat logs with Andy and realised
+we actually did make it depend on AS_HAS_OPTION_ARCH, so it should be
+safe to do without regressing anything. I didn't notice in the diff that
+the AS_HAS_OPTION_ARCH was a movement, not an addition. Maybe Andy knows
+why, despite the dependency on the assembler having it, we didn't use it
+everywhere.
+
+
+--HEtmufuxgphf9/yt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj6fDgAKCRB4tDGHoIJi
+0lfQAQD3cQ2CGBi7hXtxX18Wz1zL4peotma/GipMZCf24Lst1wD+Pe1HhV+6Rivu
+m6xh9DDrjmnxYPbvbcSjixAM7a5evwc=
+=FWXT
+-----END PGP SIGNATURE-----
+
+--HEtmufuxgphf9/yt--
 
