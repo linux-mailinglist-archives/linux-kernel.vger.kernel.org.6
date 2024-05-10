@@ -1,51 +1,57 @@
-Return-Path: <linux-kernel+bounces-175534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94868C20FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:34:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCAC8C2102
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55AE1C215E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:34:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F3DDB21801
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9E5161B6A;
-	Fri, 10 May 2024 09:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76BC1635BF;
+	Fri, 10 May 2024 09:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KMPebKyZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7UXPYPE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E07110A3E;
-	Fri, 10 May 2024 09:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF5F161330;
+	Fri, 10 May 2024 09:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715333651; cv=none; b=jYtwqJ+2H/9CiMdLs49Tr9dsLioKcjVvvOD6qdLcaEYnc0YegMIqJRpafwPSaD1ZGhOQhETuRXKKCcGixRZX6VzJjNKIJqDJBrGAbSUauoUAw47JObQcV3Yl28s8wJzlmUYniQGrfQI6Sjs9aRoehz42310m1xm1aNMDIjKTfy0=
+	t=1715333675; cv=none; b=u/X+Zivtf6KqyGd8JfkzLINhSg+djKLuj87CahC9dJW0nibHRk5Xd5fgFCnfN9nmUebZNgXYoa+VhmdXT6r6x4ClHstV4SM1GozyYXUTy6F0XTa9+ZkqFCLnA2OroZ5HQ9GJKySHghMRRhu8tgd5eWK8M/tPChew1olIR82XlDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715333651; c=relaxed/simple;
-	bh=PYfpJSicKdob+Dew7EMxzG7V511iTL5iPZFXkg2MC4A=;
+	s=arc-20240116; t=1715333675; c=relaxed/simple;
+	bh=fkKst5tRTPmG3SWpn0MZBr1yx/AoXoDQnBVjNHcEMhs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoyaFpUbkyKhxCwOGch36XlAIJGr8b3dKmP5MiCdDoIXasCKWHa8Kd4zge+oRsC4W8DfFUwGMixvHqQId3jOR4j0mt/dzLce+hF8wCE58VE6ql0361NryIJFlof7Nc3qqgJL03yZwcWZjrA+zq8wH7POWqySqaL4JJxdQST9+w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KMPebKyZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4C5C113CC;
-	Fri, 10 May 2024 09:34:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715333649;
-	bh=PYfpJSicKdob+Dew7EMxzG7V511iTL5iPZFXkg2MC4A=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fkxi2dy+IpoohgH7z+mC153CpHiYfz0Z8aMYU8/l5z7zZMlH/VXJhFAZfWwGTdGyLj6zot0GZnZeVywsFV+8TScaabdKN48ASIrKseJVSAMIjsY44j1BwccBeaISv5orxfjr/twEt4zZz6jsCnTNvStpuEAB0ShZnMc3cqXqptQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7UXPYPE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3B8C113CC;
+	Fri, 10 May 2024 09:34:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715333674;
+	bh=fkKst5tRTPmG3SWpn0MZBr1yx/AoXoDQnBVjNHcEMhs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KMPebKyZhF1VD73UY+H2xHl6Zyc+b7YnTd7D8dBxwGZCuJd7OpAKc08BoXT/YsLib
-	 sWps0/rY8WjX2EDnbGL2iytunNZWmMOxQnq8C6eBUs9kjbj2k3KAXSUKpzlleIAjSP
-	 sy2hTvwoYMq3law1uLj5ug2lL+Jgqoq1TsIk7uF4=
-Date: Fri, 10 May 2024 10:34:05 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v1 1/1] usb: fotg210: Add missing kernel doc description
-Message-ID: <2024051047-scrabble-variable-6e29@gregkh>
-References: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
+	b=g7UXPYPElwbH6RH2AbctTcL35+I6v0LHbxah7Qb0nxfHFh0PCe5zBFBuckuTCeszb
+	 GQsalXVhtQ6PfUF8bCkmcVWGgg8P0d3gMCWGuPNWXGWx/wR5LN1QJKgmSVnaUnRgWS
+	 yiuc0jxlH3sA6GPFbHlAaNYi9IJcU3chIloFPL027+FIEPajLPumlAntrtJC4DzkY5
+	 thWGerpq92S8oGz5KVnXmyM0TFhzssV70mGZWDmyN30aywKkdc+fM9OMoTtO8aaThq
+	 uohhmfzP+YNpMCnVDjpiZl7Zp9L+CfNA92DlxcWa9KLsbbWBvHQQD4XLKtAvg7wLAq
+	 ab4exq9fijocA==
+Date: Fri, 10 May 2024 11:34:28 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: John Meneghini <jmeneghi@redhat.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, kbusch@kernel.org,
+	hch@lst.de, sagi@grimberg.me, emilne@redhat.com, hare@kernel.org,
+	linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	jrani@purestorage.com, randyj@purestorage.com, aviv.coro@ibm.com
+Subject: Re: [PATCH v3 0/3] block,nvme: latency-based I/O scheduler
+Message-ID: <Zj3qJP_J-D3DEP6W@ryzen.lan>
+References: <20240403141756.88233-1-hare@kernel.org>
+ <20240509204324.832846-1-jmeneghi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,33 +60,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240509204324.832846-1-jmeneghi@redhat.com>
 
-On Wed, May 08, 2024 at 06:03:35PM +0300, Andy Shevchenko wrote:
-> kernel-doc validator is not happy:
-> 
->   warning: Function parameter or struct member 'fotg' not described in 'fotg210_vbus'
-> 
-> Add missing description.
-> 
-> Fixes: 3e679bde529e ("usb: fotg210-udc: Implement VBUS session")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/usb/fotg210/fotg210-core.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/usb/fotg210/fotg210-core.c b/drivers/usb/fotg210/fotg210-core.c
-> index 958fc40eae86..00483da40f04 100644
-> --- a/drivers/usb/fotg210/fotg210-core.c
-> +++ b/drivers/usb/fotg210/fotg210-core.c
-> @@ -95,6 +95,7 @@ static int fotg210_gemini_init(struct fotg210 *fotg, struct resource *res,
->  
->  /**
->   * fotg210_vbus() - Called by gadget driver to enable/disable VBUS
-> + * @fotg210: pointer to a private fotg210 object
->   * @enable: true to enable VBUS, false to disable VBUS
->   */
->  void fotg210_vbus(struct fotg210 *fotg, bool enable)
+On Thu, May 09, 2024 at 04:43:21PM -0400, John Meneghini wrote:
+> I'm re-issuing Hannes's latency patches in preparation for LSFMM
 
-I don't think you actually built the documentation after this patch :(
+Hello John,
+
+Just a small note.
+
+Please don't reply-to the previous version of the series (v2), when sending
+out a v3.
+
+It creates "an unmanageable forest of references in email clients".
+
+See:
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#explicit-in-reply-to-headers
+
+Instead just add the url to the v2 on lore.kernel.org.
+
+See you at LSFMM!
+
+
+Kind regards,
+Niklas
+
+> 
+> Changes since V2:
+> 
+> I've done quite a bit of work cleaning up these patches. There were a
+> number of checkpatch.pl problems as well as some compile time errors
+> when config BLK_NODE_LATENCY was turned off. After the clean up I
+> rebased these patches onto Ewan's "nvme: queue-depth multipath iopolicy"
+> patches. This allowed me to test both iopolicy changes together. 
+> 
+> All of my test results, together with the scripts I used to generate these
+> graphs, are available at:
+> 
+>   https://github.com/johnmeneghini/iopolicy
+> 
+> Please use the scripts in this repository to do your own testing.
+> 
+> Changes since V1:
+> 
+> Hi all,
+> 
+> there had been several attempts to implement a latency-based I/O
+> scheduler for native nvme multipath, all of which had its issues.
+> 
+> So time to start afresh, this time using the QoS framework
+> already present in the block layer.
+> It consists of two parts:
+> - a new 'blk-nlatency' QoS module, which is just a simple per-node
+>   latency tracker
+> - a 'latency' nvme I/O policy
+> 
+> Using the 'tiobench' fio script with 512 byte blocksize I'm getting
+> the following latencies (in usecs) as a baseline:
+> - seq write: avg 186 stddev 331
+> - rand write: avg 4598 stddev 7903
+> - seq read: avg 149 stddev 65
+> - rand read: avg 150 stddev 68
+> 
+> Enabling the 'latency' iopolicy:
+> - seq write: avg 178 stddev 113
+> - rand write: avg 3427 stddev 6703
+> - seq read: avg 140 stddev 59
+> - rand read: avg 141 stddev 58
+> 
+> Setting the 'decay' parameter to 10:
+> - seq write: avg 182 stddev 65
+> - rand write: avg 2619 stddev 5894
+> - seq read: avg 142 stddev 57
+> - rand read: avg 140 stddev 57  
+> 
+> That's on a 32G FC testbed running against a brd target,
+> fio running with 48 threads. So promises are met: latency
+> goes down, and we're even able to control the standard
+> deviation via the 'decay' parameter.
+> 
+> As usual, comments and reviews are welcome.
+> 
+> Changes to the original version:
+> - split the rqos debugfs entries
+> - Modify commit message to indicate latency
+> - rename to blk-nlatency
+> 
+> Hannes Reinecke (2):
+>   block: track per-node I/O latency
+>   nvme: add 'latency' iopolicy
+> 
+> John Meneghini (1):
+>   nvme: multipath: pr_notice when iopolicy changes
+> 
+>  MAINTAINERS                   |   1 +
+>  block/Kconfig                 |   9 +
+>  block/Makefile                |   1 +
+>  block/blk-mq-debugfs.c        |   2 +
+>  block/blk-nlatency.c          | 389 ++++++++++++++++++++++++++++++++++
+>  block/blk-rq-qos.h            |   6 +
+>  drivers/nvme/host/multipath.c |  73 ++++++-
+>  drivers/nvme/host/nvme.h      |   1 +
+>  include/linux/blk-mq.h        |  11 +
+>  9 files changed, 484 insertions(+), 9 deletions(-)
+>  create mode 100644 block/blk-nlatency.c
+> 
+> -- 
+> 2.39.3
+> 
+> 
 
