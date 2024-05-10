@@ -1,182 +1,127 @@
-Return-Path: <linux-kernel+bounces-175178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617868C1BC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6758C1BC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 656291C22174
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A77F3281A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CA657304;
-	Fri, 10 May 2024 00:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842BB8F58;
+	Fri, 10 May 2024 00:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rX3ONkD5"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="L1jQ/h+2"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F5A171A7
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22595ECF;
+	Fri, 10 May 2024 00:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715301068; cv=none; b=RTqTVO/oEegt9F2Ojh416uEIJRuHMOAvOhAZiHhBgkiD4tPmD8t0D9d+Vb5NTGKrASTdNopiDEgSYITTQMxeRifil+vfhMFK/WWJ7KxZ6fiaBRCckXHTCpH8grPF31MRgvPlyLUAirORsOKY5ttyNKGjQFUBE1BtLAnWjqcnMMA=
+	t=1715301333; cv=none; b=LrVWlbq6fm++20+XktlxmLOdGxD85a/csdTp+FGMOeCTSP1V6+ZfD5/clBprqcqhYAAIL3fVpHusnZkxta2NcoYy5aI0HwO3PcQBeHQIiykTitqo1uEgMDkG6OHx1P0Qk2TuHBQmmV9yGtvzgd6iDcaH2nFD5DyIO6HVJUlzKBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715301068; c=relaxed/simple;
-	bh=0KgQrDUz9XM38RTU0UKKESCM6bwbLhmxO4pbT7KG+xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPtoH5NUQZvg60BNSeqQcrmsntXMMf5lpNXNCAN9y9vC7hqlCOZ3rJEma9N3PhZ/DxCHf8SvgEv0qTMRvWtqL5GMgLAeTzTAnY1+JBzsd/LE+T2ELN78TqFKBJ7/1vDkHl/xO0fIDvHaP0RaLgHBdeqDWg79HYTYSA6RiUcJpRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rX3ONkD5; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5ca29c131ebso1059629a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715301066; x=1715905866; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uW7kaHfhybyf7BeUNmVZfbR4EXdAjRYiQZg99RGCKIE=;
-        b=rX3ONkD5mxRxzsiOE/Js1ZlOlAPFmHjzD26Hmg/hB7YrkiVzdKNuJFOjDL0kT9aY19
-         wzCgXHP2KlzSHnWkWgwSsqx1X89g8/xOTqY/E07CYsgsoll9ZUds+QqHgdhR9EQfTljE
-         QcaOAdo8fAy8JvTzfNsNSsbdo6v0XdVlcPzNk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715301066; x=1715905866;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uW7kaHfhybyf7BeUNmVZfbR4EXdAjRYiQZg99RGCKIE=;
-        b=KQ33qcJWARptaqzY89P09FFOKB0ELfvbfXb4Ymaii0OFD90UjErrnN49F8AGnRdzwm
-         xDYZnC9F5dSncYo0sX+b8IEhvXAJJn902YL+eeqj5NMMZrO6NpHlRfGpSS1RIlbktjrb
-         /8KJarCXDdqaJoOAAZRYTPHxOCNqBa2l6c+ja2gzlZ8VutWj5QNxzC69ugaM9AXU7dE5
-         SDPno3tNcdfYKyy8SqVYtZOxbYjx+7nFn/evKMo7qCAJeXZVDxlC/Ty0yU4GlbQRr2RK
-         1aWU2NxS7gL6Rw0nixEpBTR6X/3ag7zXfsEA8dY0FBb2TNaMmEoRzRVS2JvjiMxxO64e
-         hYOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXlgbm8cXnaQ3+cMOO+Gvlu6VuNenIFsrlbojqkepHYS3W7Q5LXPI1PSSwbKBK/7bIgorgF8DttLsCsSwBzmTMZtMoPzFwZdJDm0KSt
-X-Gm-Message-State: AOJu0YzsQF86J984u0rW0qGjlDYoiSSUa/cO611n3xTppnwu1C8mVJ9R
-	pw6ThaoYyTRuXqGpi4fl+7ehieewFfsiuqel6xtRY9HXc9PWoNBodway9YwsFdo=
-X-Google-Smtp-Source: AGHT+IG4t+GAVKOh7/FjtEXQWtNTTgiQcAduFs5qq7NWKRBkX7tswNr5fhXjKQpcwb1Az4bClUsw0w==
-X-Received: by 2002:a17:90b:3587:b0:2b2:a607:ea4a with SMTP id 98e67ed59e1d1-2b6ccd8fc28mr1005227a91.44.1715301066486;
-        Thu, 09 May 2024 17:31:06 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30bb9sm20245965ad.135.2024.05.09.17.31.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 17:31:05 -0700 (PDT)
-Date: Thu, 9 May 2024 17:31:02 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	saeedm@nvidia.com, gal@nvidia.com, nalramli@fastly.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next 0/1] mlx5: Add netdev-genl queue stats
-Message-ID: <Zj1qxgElgHhtxj4h@LQ3V64L9R2>
-References: <ZjV5BG8JFGRBoKaz@LQ3V64L9R2>
- <20240503173429.10402325@kernel.org>
- <ZjkbpLRyZ9h0U01_@LQ3V64L9R2>
- <8678e62c-f33b-469c-ac6c-68a060273754@gmail.com>
- <ZjwJmKa6orPm9NHF@LQ3V64L9R2>
- <20240508175638.7b391b7b@kernel.org>
- <ZjwtoH1K1o0F5k+N@ubuntu>
- <20240508190839.16ec4003@kernel.org>
- <ZjxtejIZmJCwLgKC@ubuntu>
- <32495a72-4d41-4b72-84e7-0d86badfd316@gmail.com>
+	s=arc-20240116; t=1715301333; c=relaxed/simple;
+	bh=JJZKe2t0kamyMzVROuPedbDxFm+zHMjxwqHfKjv86Vs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BAG+8ob9d7zlilE031i/2ZQSb6BJBcibSThwv5J03/G+Y4EheYNA2MnQfNxI1jqzLuGXT4b/xQV1/bujgvpelGOCs7C+KvzVkh4wXGoDKNnwDN4Qe0Iywhfr4NXtjONnRabe/AR8wGulrnHrKj1dTuOfAIybD7IypJUql6sEUE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=L1jQ/h+2; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A0J0xi002256;
+	Fri, 10 May 2024 00:34:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=ukCGGXI9Jxb1GstaggI2PMFSAmqWV+ZT0DPIrBgA8Ns=;
+ b=L1jQ/h+2fhCTmuZ25GA3iapSMQbWow1nNDIQenSfqKOQy8+Qixe2ScOBteDgAYKN47ma
+ GW5NfNVXChmz22KuVNOGVt4k3ZtoRWUBz6VMjSi2sk17Ql8TncNNzrXUJ8ngYSsd3fId
+ Rv+JU7BnzmeM1lTQTkEvCbcxN6bmIG+xuyme4CyZs/3neFQQohNrysyOMnfto8+Sgkue
+ xKn+UOk/9vhOfK6ZM7Qbhv85HEg7iauXCG1dRL/z10pysFHjs07tKdiOq8I61U6F7f+F
+ ZDQTeA6UVDrsbjcTllaby4wgodepU6xVE67g1sthM/YGwstxfkSe0st5ffu3ThBkQDKh ug== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y17qwg263-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 May 2024 00:34:53 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 449NSV0t020216;
+	Fri, 10 May 2024 00:34:27 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3xysfp9693-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 10 May 2024 00:34:27 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44A0XcEe035161;
+	Fri, 10 May 2024 00:34:26 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3xysfp968q-1;
+	Fri, 10 May 2024 00:34:26 +0000
+From: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+To: namhyung@kernel.org, acme@kernel.org
+Cc: peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        samasth.norway.ananda@oracle.com
+Subject: [PATCH RESEND] perf daemon: Fix file leak in daemon_session__control
+Date: Thu,  9 May 2024 17:34:24 -0700
+Message-ID: <20240510003424.2016914-1-samasth.norway.ananda@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32495a72-4d41-4b72-84e7-0d86badfd316@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 mlxscore=0 suspectscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405100002
+X-Proofpoint-GUID: NFJhzcK27C6HUsDn3dol3madTVv9GZFb
+X-Proofpoint-ORIG-GUID: NFJhzcK27C6HUsDn3dol3madTVv9GZFb
 
-On Thu, May 09, 2024 at 01:16:15PM +0300, Tariq Toukan wrote:
-> 
-> 
-> On 09/05/2024 9:30, Joe Damato wrote:
-> > On Wed, May 08, 2024 at 07:08:39PM -0700, Jakub Kicinski wrote:
-> > > On Thu, 9 May 2024 01:57:52 +0000 Joe Damato wrote:
-> > > > If I'm following that right and understanding mlx5 (two things I am
-> > > > unlikely to do simultaneously), that sounds to me like:
-> > > > 
-> > > > - mlx5e_get_queue_stats_rx and mlx5e_get_queue_stats_tx check if i <
-> > > >    priv->channels.params.num_channels (instead of priv->stats_nch),
-> > > 
-> > > Yes, tho, not sure whether the "if i < ...num_channels" is even
-> > > necessary, as core already checks against real_num_rx_queues.
-> > > 
-> > > >    and when
-> > > >    summing mlx5e_sq_stats in the latter function, it's up to
-> > > >    priv->channels.params.mqprio.num_tc instead of priv->max_opened_tc.
-> > > > 
-> > > > - mlx5e_get_base_stats accumulates and outputs stats for everything from
-> > > >    priv->channels.params.num_channels to priv->stats_nch, and
-> > > 
-> > > I'm not sure num_channels gets set to 0 when device is down so possibly
-> > > from "0 if down else ...num_channels" to stats_nch.
-> > 
-> > Yea, you were right:
-> > 
-> >    if (priv->channels.num == 0)
-> >            i = 0;
-> >    else
-> >            i = priv->channels.params.num_channels;
-> >    for (; i < priv->stats_nch; i++) {
-> > 
-> > Seems to be working now when I adjust the queue count and the test is
-> > passing as I adjust the queue count up or down. Cool.
-> > 
-> 
-> I agree that get_base should include all inactive queues stats.
-> But it's not straight forward to implement.
-> 
-> A few guiding points:
-> 
-> Use mlx5e_get_dcb_num_tc(params) for current num_tc.
-> 
-> txq_ix (within the real_num_tx_queues) is calculated by c->ix + tc *
-> params->num_channels.
-> 
-> The txqsq stats struct is chosen by channel_stats[c->ix]->sq[tc].
-> 
-> It means, in the base stats you should include SQ stats for:
-> 1. all SQs of non-active channels, i.e. ch in [params.num_channels,
-> priv->stats_nch), tc in [0, priv->max_opened_tc).
-> 2. all SQs of non-active TCs in active channels [0, params.num_channels), tc
-> in [mlx5e_get_dcb_num_tc(params), priv->max_opened_tc).
-> 
-> Now I actually see that the patch has issues in mlx5e_get_queue_stats_tx.
-> You should not loop over all TCs of channel index i.
-> You must do a reverse mapping from "i" to the pair/tuple [ch_ix, tc], and
-> then access a single TXQ stats by priv->channel_stats[ch_ix].sq[tc].
+The open() function returns -1 on error.
+'control' and 'ack' both initialized with open() and further
+validated with 'if' statement. 'if (!control)' would evaluate
+to 'true' if returned value on error were '0' but it is actually '-1'.
 
-It looks like txq2sq probably will help with this?
+Fixes: edcaa47958c7 ("perf daemon: Add 'ping' command")
+Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+---
+Found this error through static analysis. This has only been compile
+tested.
+---
+ tools/perf/builtin-daemon.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Something like:
+diff --git a/tools/perf/builtin-daemon.c b/tools/perf/builtin-daemon.c
+index 83954af36753..de76bbc50bfb 100644
+--- a/tools/perf/builtin-daemon.c
++++ b/tools/perf/builtin-daemon.c
+@@ -523,7 +523,7 @@ static int daemon_session__control(struct daemon_session *session,
+ 		  session->base, SESSION_CONTROL);
+ 
+ 	control = open(control_path, O_WRONLY|O_NONBLOCK);
+-	if (!control)
++	if (control < 0)
+ 		return -1;
+ 
+ 	if (do_ack) {
+@@ -532,7 +532,7 @@ static int daemon_session__control(struct daemon_session *session,
+ 			  session->base, SESSION_ACK);
+ 
+ 		ack = open(ack_path, O_RDONLY, O_NONBLOCK);
+-		if (!ack) {
++		if (ack < 0) {
+ 			close(control);
+ 			return -1;
+ 		}
+-- 
+2.42.0
 
-for (j = 0; j < mlx5e_get_dcb_num_tc(); j++) {
-  sq = priv->txq2sq[j];
-  if (sq->ch_ix == i) {
-    /* this sq->stats is what I need */
-  }
-}
-
-Is that right?
-
-Not sure if I'm missing something obvious here, sorry, I've been puzzling
-over the mlx5 source for a bit.
-
-BTW: kind of related but in mlx5e_alloc_txqsq the int tc param is unused (I
-think). It might be helpful to struct mlx5e_txqsq to have a tc field and
-then in mlx5e_alloc_txqsq:
-
-  sq->tc = tc;
-
-Not sure if that'd be helpful in general, but I could send that as a
-separate patch.
 
