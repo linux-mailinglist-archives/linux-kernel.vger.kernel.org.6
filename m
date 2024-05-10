@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-176308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926B58C2DB7
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8D98C2DB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC63BB242E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43BF61F2479D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14FB17A938;
-	Fri, 10 May 2024 23:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C3217B515;
+	Fri, 10 May 2024 23:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bkce7VLF"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RwJ7tQa6"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FFE179206
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 23:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84EC17A932
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 23:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715385066; cv=none; b=haIeUlx+TNI+67FZXLxaNxy9uPMWVZDQd5M8Gh/kwDtt7Dg/B69NNgRDjJ3mobacKkm/XwbRu/kOIe5K2cfjkiMR/scGcze1TL4TQZINn75wZ4E0J1GJsMIwZCw47zQMssKDydNz2dwVCpapTHBtKbRdeEaUFFWxl+p+6/bh2j8=
+	t=1715385068; cv=none; b=PbMugElszvjPVxouJstWvrmct+LPO91bgfYvZE2239TdXfVwrOc7xZMkvBfcScxmPZZVSIeLEu9IWaSYQRJop+uF+M97AMWou32g62NziQ8WTt49lS9e6LCiUGBBRrYxrTbR2wx1nY8XU5RUoNTLPESCH5ByXL4geI2fb4zonGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715385066; c=relaxed/simple;
-	bh=ZlffHLYLW2tKey64BAi+uDrFxzH6O45Ynpm+ndlWyW4=;
+	s=arc-20240116; t=1715385068; c=relaxed/simple;
+	bh=uQVa5GV6l573W5V02dsJrOxh0J85arazX6O7XuEK/1I=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c2X7ab7YYuAO1ZnWy9lZVEQLo/ItoahWTuU+zSVYHvt5ZBkhWF9UELsVRcYvHQu+G1AaD6WvaVEez8/TOSSEJDdCsj294ZVFhCx3tPzWBv42ouoaxYj2xjPEv316g3vqF2lhAnAEwrIe/B3VBw34m79o/vYpowMg3FpjiEZyjHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bkce7VLF; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=NRuvS97QkfpbbrvtyybCVCjXDi5YL/YOT/S+XrwSCOYS6PSBz7pQSfP9igaKVSyn7H6km7APUeRN1ExmAC1IKrz1FhSA2HdoYfo4MNWJNPPPwKaRIElKUjIPkEMCuU5liZgcp2ECzMTUtRXJnMSK5E+YZwEsR4ORIqwchjgVtw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RwJ7tQa6; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2a473ba0632so2357007a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:51:04 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1edf507b9e4so26238625ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:51:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715385064; x=1715989864; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1715385066; x=1715989866; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=+oxS+OE/YCIQOoW32vIVdH9ODHELlY8/x8l7G2xYxLk=;
-        b=Bkce7VLFptAAjRDgl6JGndcB8omALDmqk212F+Mg1jtz9S5VdxcGdxKajZ3B31yMB5
-         k0Zz/zbAlZBWD5BSQ/zfcZoS659Nx0ByCRjJIukHOx34YRLs2ouo9ZKVsONgEMutvwiX
-         KW6omvvUabEnfyOJeE38jqK7zbarm4+u2qyP61GrW/CdvGkRJXYg3QX26ZzQ5j1kAtnv
-         LhAXGCPmppz/nqtzky23ESEm30XFEYb1Pyyeb1NzauN+14av7tIOWQa2r/1MsEujJew1
-         UjJgtuVvaDC0haGJiOn8uFSeXaGB5MKlN9gKoTQHF3Qzx1e9RhaeIsJVV8YjPwu556QO
-         f35g==
+        bh=hZTZMqbrhKFbALv0wH7v4E1dBb2W4CdYh+08yY5Xv/Y=;
+        b=RwJ7tQa6I/SyhMOPmPesEg1T1d9umG6eLwcqt3LyVSJOJq3wh1fo++y2k9sKyiFADa
+         iNJeOM/sl2t2btKiAouhQGcPYx+X6Gu2PbSVmsuql2SxVFdhYz3kckHc6999R77mmxmW
+         PUnkVKkQE0bbQQDdV0eCWBUdhxAlsMRjckRhrn5u8jIkvNvu404BZlxa2x1UrYFUcqxW
+         db+U0sV/u8irXsa+lZnn4tZajIKI3qmqSOaI6E3N9AUtdVhnUoY+fZCEpQ4tTRvnwwyQ
+         ySiJCppH5wCnDGQ2NyhS1kWIQu2rG+aNk7mBbdyQydLdL9XBr8E6I8iSRp75E2Di9L9y
+         cVew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715385064; x=1715989864;
+        d=1e100.net; s=20230601; t=1715385066; x=1715989866;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+oxS+OE/YCIQOoW32vIVdH9ODHELlY8/x8l7G2xYxLk=;
-        b=VIq1sIjWA5nvqjs5wQ10kzq/Mqwj37Hhav+42A22xLYmE9IJPamz5PxR0bKvW34VXY
-         pQOlgSpS0YAz6hVpuDTCWzwGAJHlklqMNAGHAiVgmTJ/qBiGej+Xt+wxHcdgN87LQiMo
-         UEdJopgYroaZSbgRlWoN6P3Cphnqg27wKroZq1sFEzUHMY3n295W/ylCaNCSHmy6AC2s
-         wuhLyPCEiBgKW+uHd9WVXkFkjkmXiGOY0GNiH/172XJGW5mEyI8k03hzj/+LZou1ZVJ4
-         /R7tHpxbYCCgFHlMYJnymBHChNA8CI4J0LGO9kIen302s0QcRx3qI7DHfxDaXALA6sPe
-         tOdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVv/8ZCaaHHlNs4+uHTi4H0C29eWqkFd7Q9pDjX7o0hpVnZ0JGTiO7M68Ni0Tw5JSIZcCh9YImWeD2wlCpb1i4V4rYIxSlepllKLVgz
-X-Gm-Message-State: AOJu0YxoOKPugsgngqab2wpXrgrAFLaVwv9UCR8LOG4lRwYirbwd2hJE
-	ojs96WpujMbKWGsgS39lw/0Cr3XqRvWrAaWIXKa0YWo52gnYsu1P4bbr9esqJDYlP2L8ErVNLl5
-	ryA==
-X-Google-Smtp-Source: AGHT+IEF86qaNaZhdbUdqAfO36CKBgwl6mZXf9q97ikcfkb+M0hzFfMoK0Ecqt4QjhWdh5g4c+0Pgj7tOSk=
+        bh=hZTZMqbrhKFbALv0wH7v4E1dBb2W4CdYh+08yY5Xv/Y=;
+        b=E8UpBfICWp69eZpTFNnlMa+zIL5HeuIF/wVvoTN+4jg0byorrJa+ZQIYUDrk0/le8d
+         ZGVOGhlFWhccGVSFW7Fw1J9Gk2eSnY08BhRYsV/d5vxeZ+qRPUxpLvRauJrtRmQWj1az
+         ll3B2XeS/BpwCxIJ5XllNasyzCR9OLcKjMoNjwflDZ8feZuldQaYESOLexExGrFlhoZf
+         +wPKR7SFCRr+Qf3B2yHB7WfTCqd4ULfC6U1f55AXV8cYPbS09P+WZwrF+YI8Um0aoCMy
+         SHBjAn2kBc5gVFh6ys9/iokbjdjkh65/S9Ksr5qsHScbgw+3Hx84bxPSUAdNdud9vyQ0
+         oliw==
+X-Forwarded-Encrypted: i=1; AJvYcCUdD7fxJT4S6MYUDWys+DO4NDoEAb4nW3QL97EA5iNwbhPltnY8d5FmRF7shPY3e+h5wPbt1q9Pa81HTtSKhOSHZRY8Q8Py2IXWopBP
+X-Gm-Message-State: AOJu0YyrGPzqpAFrFEvYuZS6PkzBT6gRbfnxrGE180F1IXTetXApADgK
+	ZsycqK/b2WmZZ+QvcqBoPKz+jS8lSl2bVimEGH+zTKIbU8gX0HncRGntBHHOuWZVq6hg3fplJDM
+	ElA==
+X-Google-Smtp-Source: AGHT+IE85PaR2cbdEqIrCBZRZcE7pMEVkdP20YgwrcWtnJaJkb9VxHdCm24I7E3BtYRAe0WVMiU/rXQClZk=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:fb4c:b0:1eb:7b9:4f7d with SMTP id
- d9443c01a7336-1ef44049833mr757285ad.11.1715385064140; Fri, 10 May 2024
- 16:51:04 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:903:187:b0:1eb:511d:a48d with SMTP id
+ d9443c01a7336-1ef43f4ce3cmr2781985ad.9.1715385066106; Fri, 10 May 2024
+ 16:51:06 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 10 May 2024 16:50:48 -0700
+Date: Fri, 10 May 2024 16:50:49 -0700
 In-Reply-To: <20240510235055.2811352-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,15 +75,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240510235055.2811352-1-seanjc@google.com>
 X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Message-ID: <20240510235055.2811352-4-seanjc@google.com>
-Subject: [GIT PULL] KVM: x86: MMU changes for 6.10
+Message-ID: <20240510235055.2811352-5-seanjc@google.com>
+Subject: [GIT PULL] KVM: Selftests cleanups and fixes for 6.10
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Tag says it all, though I feel the urge to have _something_ here.
+This is 1 of 2 selftests pull request for 6.10.  This is (by far) the smaller
+of the two, and contains fairly localized changes.  The most notable fix is to
+skip tests as needed if the host doesn't support KVM_CAP_USER_MEMORY2, as the
+selftests currently just fail miserably on KVM_SET_USER_MEMORY_REGION2.
+
+More details about why there are two pull requests in 2 of 2.
 
 The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
 
@@ -91,32 +96,70 @@ The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
 
 are available in the Git repository at:
 
-  https://github.com/kvm-x86/linux.git tags/kvm-x86-mmu-6.10
+  https://github.com/kvm-x86/linux.git tags/kvm-x86-selftests-6.10
 
-for you to fetch changes up to 226d9b8f16883ca412ef8efbad6f3594587a8dab:
+for you to fetch changes up to 8a53e13021330a25775a31ced44fbec2225a9443:
 
-  KVM: x86/mmu: Fix a largely theoretical race in kvm_mmu_track_write() (2024-05-02 07:49:06 -0700)
-
-----------------------------------------------------------------
-KVM x86 MMU changes for 6.10:
-
- - Process TDP MMU SPTEs that are are zapped while holding mmu_lock for read
-   after replacing REMOVED_SPTE with '0' and flushing remote TLBs, which allows
-   vCPU tasks to repopulate the zapped region while the zapper finishes tearing
-   down the old, defunct page tables.
-
- - Fix a longstanding, likely benign-in-practice race where KVM could fail to
-   detect a write from kvm_mmu_track_write() to a shadowed GPTE if the GPTE is
-   first page table being shadowed.
+  KVM: selftests: Require KVM_CAP_USER_MEMORY2 for tests that create memslots (2024-05-02 16:12:28 -0700)
 
 ----------------------------------------------------------------
-David Matlack (1):
-      KVM: x86/mmu: Process atomically-zapped SPTEs after TLB flush
+KVM selftests cleanups and fixes for 6.10:
+
+ - Enhance the demand paging test to allow for better reporting and stressing
+   of UFFD performance.
+
+ - Convert the steal time test to generate TAP-friendly output.
+
+ - Fix a flaky false positive in the xen_shinfo_test due to comparing elapsed
+   time across two different clock domains.
+
+ - Skip the MONITOR/MWAIT test if the host doesn't actually support MWAIT.
+
+ - Avoid unnecessary use of "sudo" in the NX hugepage test to play nice with
+   running in a minimal userspace environment.
+
+ - Allow skipping the RSEQ test's sanity check that the vCPU was able to
+   complete a reasonable number of KVM_RUNs, as the assert can fail on a
+   completely valid setup.  If the test is run on a large-ish system that is
+   otherwise idle, and the test isn't affined to a low-ish number of CPUs, the
+   vCPU task can be repeatedly migrated to CPUs that are in deep sleep states,
+   which results in the vCPU having very little net runtime before the next
+   migration due to high wakeup latencies.
+
+----------------------------------------------------------------
+Anish Moorthy (3):
+      KVM: selftests: Report per-vcpu demand paging rate from demand paging test
+      KVM: selftests: Allow many vCPUs and reader threads per UFFD in demand paging test
+      KVM: selftests: Use EPOLL in userfaultfd_util reader threads
+
+Brendan Jackman (1):
+      KVM: selftests: Avoid assuming "sudo" exists in NX hugepage test
+
+Colin Ian King (1):
+      KVM: selftests: Remove second semicolon
 
 Sean Christopherson (1):
-      KVM: x86/mmu: Fix a largely theoretical race in kvm_mmu_track_write()
+      KVM: selftests: Require KVM_CAP_USER_MEMORY2 for tests that create memslots
 
- arch/x86/kvm/mmu/mmu.c     | 20 +++++++++++--
- arch/x86/kvm/mmu/tdp_mmu.c | 75 ++++++++++++++++++++++++++++++----------------
- 2 files changed, 66 insertions(+), 29 deletions(-)
+Thomas Huth (1):
+      KVM: selftests: Use TAP in the steal_time test
+
+Vitaly Kuznetsov (1):
+      KVM: selftests: Compare wall time from xen shinfo against KVM_GET_CLOCK
+
+Zide Chen (2):
+      KVM: selftests: Make monitor_mwait require MONITOR/MWAIT feature
+      KVM: selftests: Allow skipping the KVM_RUN sanity check in rseq_test
+
+ .../selftests/kvm/aarch64/page_fault_test.c        |   4 +-
+ tools/testing/selftests/kvm/demand_paging_test.c   |  90 +++++++++---
+ .../selftests/kvm/include/userfaultfd_util.h       |  16 ++-
+ tools/testing/selftests/kvm/lib/kvm_util.c         |   8 ++
+ tools/testing/selftests/kvm/lib/userfaultfd_util.c | 153 ++++++++++++---------
+ tools/testing/selftests/kvm/rseq_test.c            |  35 ++++-
+ tools/testing/selftests/kvm/steal_time.c           |  47 +++----
+ .../selftests/kvm/x86_64/monitor_mwait_test.c      |   1 +
+ .../selftests/kvm/x86_64/nx_huge_pages_test.sh     |  13 +-
+ .../testing/selftests/kvm/x86_64/xen_shinfo_test.c |  52 +++----
+ 10 files changed, 282 insertions(+), 137 deletions(-)
 
