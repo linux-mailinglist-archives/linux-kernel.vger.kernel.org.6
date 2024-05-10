@@ -1,78 +1,64 @@
-Return-Path: <linux-kernel+bounces-175781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2267A8C24E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330F78C24DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A704A281A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7D921F2587D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FDD17082B;
-	Fri, 10 May 2024 12:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6422916D4F5;
+	Fri, 10 May 2024 12:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L4gn41EP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMv8z6SJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6310816D4DF;
-	Fri, 10 May 2024 12:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A521F487BC;
+	Fri, 10 May 2024 12:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715344212; cv=none; b=V/WauXrw8maerT4rWYN5eUYW2VzQOLGXdiZj4v/oZS1labWcTQmMAfIp0zjX8k1KBDdJT8z3IBdPNIqE9AEjViHjeaNpGafEIYkJl9g7as6AkxBPJfeI9ys0fmJcOeBlKXzgmX78slYQf/eBYb0CY8J38lMXbjqv1pOg8zY9fA8=
+	t=1715344174; cv=none; b=OffNrJEfCIbS1sudWCfwh1Wq0jkJC7vtYsN1KUzVrd4G6rE1rlkkYO5Tmdf2Jox559GXImw2nh0uGpngL9H9lLeywRm3ilt/gz9gr0qmitFIa9kkz67jJz/F9PXdJHroKvlQ3cYoZP5AjTwm/rqqu9jVnfYyf25w0GEsGS3/xBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715344212; c=relaxed/simple;
-	bh=11RXuL0ZvlTdxUPPzXosyvDPvDTezfS8XZOnSQLvLt4=;
+	s=arc-20240116; t=1715344174; c=relaxed/simple;
+	bh=KLTEQaQm0FiKrFX+yiOF9TjuFZuP1CHAkj/bzBphg3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzqwOWcgfOKRH60jcgX1qoMUZg8fLI7OuHZgwYzgVicX5eaCjUsArWhsC+WFYlwltpe22MQa1IOcJ0OfQkaMMf7dYMYIsF8VHSOSgEbnj1xKcf2lHoKO3grq+kTaIg4nTeTRNuIiAeoAJ3WbrKkbaUTGSeIhvuPFFOiTdRZ+tZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L4gn41EP; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715344210; x=1746880210;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=11RXuL0ZvlTdxUPPzXosyvDPvDTezfS8XZOnSQLvLt4=;
-  b=L4gn41EPOlxE1FizhbvXvGGwJIC6GOANiE4eRanEkMvVhngsy5NFf0YU
-   /NqGbyFE+WMbTYP0G+ELywtKgGJFSg/dJxI7x7llLqgyCxEJO3eBpPs3+
-   +RNVL/0Kg1StyyJFK+Ko+mtJv+K4YMCMOpOdk/nUweVMOXF1KUAk4iOcz
-   hWxLHP7Np1atnfXNiRpjpcTJPclMT2IJPGfsHEVSMIpEEeACGTo7eS7VJ
-   kljSa3R5u4l8fk7FAJAZk6y9cK1KYugeGMYQWFtf7rYj0x3eF3rU+fuXA
-   +vvUPgaZ+uVgLv0A0YEd4VWUXA8/sqvi+BuInfcxi08SU6WKGeizL6Mtx
-   w==;
-X-CSE-ConnectionGUID: 5VSJy6z5Rmi/Fh3UZCajug==
-X-CSE-MsgGUID: wRT4T2BDS4SjNetqmDzoPQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="28832847"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="28832847"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 05:30:09 -0700
-X-CSE-ConnectionGUID: Tnc5xe9LSFCkD0JD2WoBrQ==
-X-CSE-MsgGUID: o/Q84inkQwWuL3RmWgHJ2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="60771038"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 10 May 2024 05:30:07 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s5PO0-00068Y-2g;
-	Fri, 10 May 2024 12:30:04 +0000
-Date: Fri, 10 May 2024 20:29:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, lars@metafoo.de, swboyd@chromium.org,
-	nuno.a@analog.com, andy.shevchenko@gmail.com,
-	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yasin.lee.x@gmail.com,
-	yasin.lee.x@outlook.com
-Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor
- driver
-Message-ID: <202405102039.QdXzki1Z-lkp@intel.com>
-References: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eVzDGq8/dF4oaFkzthWiAneEn2SP8UZ5edGoo4of34hvoEynFEuhLwsWquiMnjFgsFpAcRzPUNdPeMPEUoHt/Z3mjgLDnLJ0IV44zZdemQb8cfuLmi6rAWQDt9eqWb5QhNAlTj5KytVDRJrmTgvGzdWvP2A5Vql+gEFPzBZxJvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMv8z6SJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D53C113CC;
+	Fri, 10 May 2024 12:29:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715344174;
+	bh=KLTEQaQm0FiKrFX+yiOF9TjuFZuP1CHAkj/bzBphg3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EMv8z6SJgjOkYO8F9OmlDJc1OX4Dw5sMcTwrp3qrJanEAm/UX1rAcrxLFwfNqgmpe
+	 /PU0QXrxfVoVPBdfZtCdM7hNA2mrscGvYlNjz+rGtb3UflMUsDV7gQf7ZSj6t+Y0zO
+	 1tUWYEW4lmf3Ou1nPm1/+sXXklEKH5URkSc9iPsp7sdFU39ggWDZBLXd+U54iCSZ0T
+	 RIJXeJFaJWCGJixm99vjbFAI7GFg10MRVv7AqJtG3zFkhB3vvX2ie8P+2BhXQJM8UJ
+	 BuAlyCfrOyqgNYHZ6wWS8+ZE0wyKNb3odRDQQCwpR9nN1NPcfCKnY8OhbCT0SG8SyO
+	 F3MgcnXQ/EWSQ==
+Date: Fri, 10 May 2024 13:29:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	UNGLinuxDriver@microchip.com, David Ahern <dsahern@kernel.org>,
+	Willem de Bruijn <willemb@google.com>,
+	=?utf-8?B?U8O4cmVu?= Andersen <san@skov.dk>
+Subject: Re: [PATCH net-next v3 2/3] net: dsa: microchip: dcb: add comments
+ for DSCP related functions
+Message-ID: <20240510122927.GW2347895@kernel.org>
+References: <20240510053828.2412516-1-o.rempel@pengutronix.de>
+ <20240510053828.2412516-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,52 +67,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
+In-Reply-To: <20240510053828.2412516-3-o.rempel@pengutronix.de>
 
-Hi Yasin,
+On Fri, May 10, 2024 at 07:38:27AM +0200, Oleksij Rempel wrote:
+> All other functions are commented. Add missing comments to following
+> functions:
+> ksz_set_global_dscp_entry()
+> ksz_port_add_dscp_prio()
+> ksz_port_del_dscp_prio()
+> 
+> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> Acked-by: Arun Ramadoss <arun.ramadoss@microchip.com>
 
-kernel test robot noticed the following build warnings:
+Thanks,
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.9-rc7 next-20240510]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I really appreciate attention to this detail.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9031as-Add-TYHX-HX9031AS-HX9023S-sensor-driver/20240510-173839
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/SN7PR12MB8101EDFA7F91A59761095A28A4E72%40SN7PR12MB8101.namprd12.prod.outlook.com
-patch subject: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor driver
-reproduce: (https://download.01.org/0day-ci/archive/20240510/202405102039.QdXzki1Z-lkp@intel.com/reproduce)
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405102039.QdXzki1Z-lkp@intel.com/
-
-versioncheck warnings: (new ones prefixed by >>)
-   INFO PATH=/opt/cross/rustc-1.76.0-bindgen-0.65.1/cargo/bin:/opt/cross/clang-18/bin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-   /usr/bin/timeout -k 100 3h /usr/bin/make KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wenum-conversion W=1 --keep-going LLVM=1 -j32 ARCH=x86_64 versioncheck
-   find ./* \( -name SCCS -o -name BitKeeper -o -name .svn -o -name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o \
-   	-name '*.[hcS]' -type f -print | sort \
-   	| xargs perl -w ./scripts/checkversion.pl
-   ./drivers/accessibility/speakup/genmap.c: 13 linux/version.h not needed.
-   ./drivers/accessibility/speakup/makemapdata.c: 13 linux/version.h not needed.
->> ./drivers/iio/proximity/hx9031as.c: 16 linux/version.h not needed.
-   ./drivers/staging/media/atomisp/include/linux/atomisp.h: 23 linux/version.h not needed.
-   ./samples/bpf/spintest.bpf.c: 8 linux/version.h not needed.
-   ./samples/trace_events/trace_custom_sched.c: 11 linux/version.h not needed.
-   ./sound/soc/codecs/cs42l42.c: 14 linux/version.h not needed.
-   ./tools/lib/bpf/bpf_helpers.h: 410: need linux/version.h
-   ./tools/testing/selftests/bpf/progs/dev_cgroup.c: 9 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/netcnt_prog.c: 3 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_map_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_send_signal_kern.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_spin_lock.c: 4 linux/version.h not needed.
-   ./tools/testing/selftests/bpf/progs/test_tcp_estats.c: 37 linux/version.h not needed.
-   ./tools/testing/selftests/wireguard/qemu/init.c: 27 linux/version.h not needed.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
