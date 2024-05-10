@@ -1,66 +1,64 @@
-Return-Path: <linux-kernel+bounces-175323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7F0D8C1E10
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:27:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8301C8C1E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2B41F21629
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 371962829EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F42165FCB;
-	Fri, 10 May 2024 06:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4693161319;
+	Fri, 10 May 2024 06:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g+GG0Ikx"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LZmENFvc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PR7hUigL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F23C1649DD
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2D0153BE2
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715322397; cv=none; b=L59aXli8X4BWAMa81722XuR6nlESUNkmKoLwFt2XDJj5LoKzGEMoHz6/Am0Gp6DTNRw0JrsJXLnhnUryUkyS6YGx7/UCw7Q5wJaqUfRC6XsdzFYA7nPhRUc+LIxtuvLbYgfjbLO1fCcDS/Y1zrnVVZM3F3UK2M7Z0GQo1dNfoo4=
+	t=1715322536; cv=none; b=NZi/XA+ETUy/0+qkmKEgix//jXos7KFAkypJkQQKswWYnZWPeVGJTFbIhVJsmbScGUp3XzRJ55pOWpin2yrA9FqIZJjqyl0jt9txHYDBXllKHO2bF7JetMhoQ8/Bo+ODswYAKRwTxIr+72yCwLvl8vUSwRiQ+O19lC49RK+nF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715322397; c=relaxed/simple;
-	bh=wCzAosb9yCwghwfxx/CGqsZgf9AZk6yq9vaFDYv2tRY=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qDWn7sPFwpgBAt7YkrB7vYGrRXXwbSdi5fFki+HQjX6JtsN+E+IjoWrtbhVv9/2ZJ0VgWEqORfimdbpYBE0t+TjJ5WH4qhfrwrnIKmZ18ZsbSxVZ+9cFqmE7BSi33EB+apWqDmHz5aVSxtUGkK2ypJNutmOA02/r7w3G3zbUxpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=g+GG0Ikx; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A6MlnA021258;
-	Fri, 10 May 2024 06:26:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references : mime-version :
- content-transfer-encoding; s=corp-2023-11-20;
- bh=tFRwwH8vMdoczPoQRYMz5N41Zt2owkILdQOhrik+iU8=;
- b=g+GG0IkxeBwWGSyuHfsSdSx+LFncqCu5jZOcbVaDHmkL9ozkB8xCjsgtm+GrDkXmTUj5
- MXoy9msQbB+PCutyZxq+HAKT2pUU8SvxyEZ2h8S8G7Zgpmx8DuozzcRn3wU88odGNPMW
- 64+S4Ksxo0HtObmuilQyCk1Bd9sTw/qfkE5mtg1aJGpyp2oOSkUjnFa5aXIRYK5lfYTI
- vAky1uOu1pEQjAxLxo/Of1rF5SrdrkCi2qS+I3DhHhWoODouj/cHvEGyv5JIMn/0SxtB
- 9EzEdDUEkS747E2AHQEmFIXqS5giacQ4OQ2QB0t2qfddTjokh/pxF1dkkb3+namnHna6 sA== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y1e8sr05v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 06:26:26 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44A5vUjP020104;
-	Fri, 10 May 2024 06:26:24 GMT
-Received: from brm-x62-16.us.oracle.com (brm-x62-16.us.oracle.com [10.80.150.37])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3xysfpghcd-6;
-	Fri, 10 May 2024 06:26:24 +0000
-From: Jane Chu <jane.chu@oracle.com>
-To: linmiaohe@huawei.com, nao.horiguchi@gmail.com, akpm@linux-foundation.org,
-        osalvador@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] mm/memory-failure: send SIGBUS in the event of thp split fail
-Date: Fri, 10 May 2024 00:26:02 -0600
-Message-Id: <20240510062602.901510-6-jane.chu@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240510062602.901510-1-jane.chu@oracle.com>
-References: <20240510062602.901510-1-jane.chu@oracle.com>
+	s=arc-20240116; t=1715322536; c=relaxed/simple;
+	bh=jvk7b0LQDo86RhaoPKvODKD7tH5jMXWL2BeqHj+GO3w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nss45YE35XpVYzyFnWIFzzPIvQkxgtJmVZSuGnG6m3f0WXtMv0ABQs7HPCWtxrzqVZi2R1+dP3uHAaKUb+uoAAko0myUH9gOaG9raaf8avBbmoN3fHtcGEIAlbVHmj4IXurhpMOmS/+s4t8IGQMnTTeON4m0yn7IATXmRGr8PHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LZmENFvc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PR7hUigL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715322531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1sssw5A/ygmjEBxrlSd+7ue0RV3n8+xaY+HzQNbRFGM=;
+	b=LZmENFvc4euk2x3YKMDS4vZQ6njaWRRmcZhRv6mhgQDO9hm76yMnLcLAclJllAXzEWI+R8
+	DjMXMIQbAuNWUQU6RCme2fe+8LD7SJDor0843GvNcpMwBb9sA10gR33A6RNLBltUFyLQlt
+	lKjiK2m6Ogj39GjYZoyhpfijSF4dbf+9rLTNVsC7in6cDBJABquEZBCCWiUZ32OUd6qtHo
+	k53H64a5hACVKj3W1eCC8TxXG5DPJVaWvnDRArrrvRJi2mOC8JhxiaUGRLmDCAtk2/P/nd
+	zz7c/qo+lPNtYH4bWk6rEBoDWA/SU1RAdM6Mn4T6/KIspEl0mCl5JP29Ao7/tQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715322531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1sssw5A/ygmjEBxrlSd+7ue0RV3n8+xaY+HzQNbRFGM=;
+	b=PR7hUigLr/KX3+deEvAwKob4CebeKY++2BeuPPXpRSX1LmYFaGaHGKwQ9QYnLsI910absd
+	h8W+VHwpLEyX2eBg==
+To: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: [PATCH 0/7] remove size limit on XIP kernel
+Date: Fri, 10 May 2024 08:28:38 +0200
+Message-Id: <cover.1715286093.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,97 +66,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_04,2024-05-10_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 suspectscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405100044
-X-Proofpoint-ORIG-GUID: Bbu3oqFBFYt86uLCdWySG1px70G6up9M
-X-Proofpoint-GUID: Bbu3oqFBFYt86uLCdWySG1px70G6up9M
 
-When handle hwpoison in a RDMA longterm pinned thp page,
-try_to_split_thp_page() will fail. And at this point, there is
-little else the kernel could do except sending a SIGBUS to
-the user process, thus give it a chance to recover.
+Hi,
 
-Signed-off-by: Jane Chu <jane.chu@oracle.com>
----
- mm/memory-failure.c | 31 ++++++++++++++++++++++++++-----
- 1 file changed, 26 insertions(+), 5 deletions(-)
+For XIP kernel, the writable data section is always at offset specified in
+XIP_OFFSET, which is hard-coded to 32MB.
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 2fa884d8b5a3..15bb1c0c42e8 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1697,7 +1697,7 @@ static int identify_page_state(unsigned long pfn, struct page *p,
- 	return page_action(ps, p, pfn);
- }
- 
--static int try_to_split_thp_page(struct page *page)
-+static int try_to_split_thp_page(struct page *page, bool release)
- {
- 	int ret;
- 
-@@ -1705,7 +1705,7 @@ static int try_to_split_thp_page(struct page *page)
- 	ret = split_huge_page(page);
- 	unlock_page(page);
- 
--	if (unlikely(ret))
-+	if (ret && release)
- 		put_page(page);
- 
- 	return ret;
-@@ -2177,6 +2177,24 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
- 	return rc;
- }
- 
-+/*
-+ * The calling condition is as such: thp split failed, page might have
-+ * been RDMA pinned, not much can be done for recovery.
-+ * But a SIGBUS should be delivered with vaddr provided so that the user
-+ * application has a chance to recover. Also, application processes'
-+ * election for MCE early killed will be honored.
-+ */
-+static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
-+				struct folio *folio)
-+{
-+	LIST_HEAD(tokill);
-+
-+	collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
-+	kill_procs(&tokill, true, pfn, flags);
-+
-+	return -EHWPOISON;
-+}
-+
- /**
-  * memory_failure - Handle memory failure of a page.
-  * @pfn: Page Number of the corrupted page
-@@ -2313,8 +2331,11 @@ int memory_failure(unsigned long pfn, int flags)
- 		 * page is a valid handlable page.
- 		 */
- 		folio_set_has_hwpoisoned(folio);
--		if (try_to_split_thp_page(p) < 0) {
--			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_IGNORED);
-+		if (try_to_split_thp_page(p, false) < 0) {
-+			pr_err("%#lx: thp split failed\n", pfn);
-+			res = kill_procs_now(p, pfn, flags, folio);
-+			put_page(p);
-+			res = action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
- 			goto unlock_mutex;
- 		}
- 		VM_BUG_ON_PAGE(!page_count(p), p);
-@@ -2688,7 +2709,7 @@ static int soft_offline_in_use_page(struct page *page)
- 	};
- 
- 	if (!huge && folio_test_large(folio)) {
--		if (try_to_split_thp_page(page)) {
-+		if (try_to_split_thp_page(page, true)) {
- 			pr_info("soft offline: %#lx: thp split failed\n", pfn);
- 			return -EBUSY;
- 		}
+Unfortunately, this means the read-only section (placed before the
+writable section) is restricted in size. This causes build failure if the
+kernel gets too large.
+
+This series remove the use of XIP_OFFSET one by one, then remove this
+macro entirely at the end, with the goal of lifting this size restriction.
+
+Also some cleanup and documentation along the way.
+
+This series depends on
+    https://lore.kernel.org/linux-riscv/20240508191917.2892064-1-namcao@linutronix.de/
+to apply cleanly, and also depends on
+    https://lore.kernel.org/linux-riscv/20240508173116.2866192-1-namcao@linutronix.de/
+which fixes a boot issue.
+
+Best regards,
+Nam
+
+Nam Cao (7):
+  riscv: cleanup XIP_FIXUP macro
+  riscv: replace va_kernel_pa_offset with va_kernel_data_pa_offset on
+    XIP
+  riscv: drop the use of XIP_OFFSET in XIP_FIXUP_OFFSET
+  riscv: drop the use of XIP_OFFSET in XIP_FIXUP_FLASH_OFFSET
+  riscv: drop the use of XIP_OFFSET in kernel_mapping_va_to_pa()
+  riscv: drop the use of XIP_OFFSET in create_kernel_page_table()
+  riscv: remove limit on the size of read-only section for XIP kernel
+
+ arch/riscv/include/asm/page.h       | 25 ++++++++++++++++++------
+ arch/riscv/include/asm/pgtable.h    | 18 +++++++----------
+ arch/riscv/include/asm/xip_fixup.h  | 30 +++++++++++++++++++++++------
+ arch/riscv/kernel/vmlinux-xip.lds.S |  4 ++--
+ arch/riscv/mm/init.c                | 11 +++++++----
+ 5 files changed, 59 insertions(+), 29 deletions(-)
+
 -- 
-2.39.3
+2.39.2
 
 
