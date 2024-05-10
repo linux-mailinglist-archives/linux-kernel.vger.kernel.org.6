@@ -1,326 +1,206 @@
-Return-Path: <linux-kernel+bounces-175266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92E08C1D43
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F115D8C1D45
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D38B223A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:56:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10146B22ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACF8149DF5;
-	Fri, 10 May 2024 03:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF67A149DE7;
+	Fri, 10 May 2024 03:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cd/dwRVc"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKrtnzVL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD07149C56
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32C0013B787;
+	Fri, 10 May 2024 03:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715313359; cv=none; b=KJxPo3H3UbPNXeGoCsRs/kNWzorM/XUyzDsiqhYaIK8N3HA637LczKdeGgEK801XcYZamYgZMdVdcnlsBzecpuWPObp7EJp4c6nACP5/jh5RNiAoARKfJM4X1ujIWv+DW+hYYJLT23XMH6e1KT62KqDey63DLUb3evYh9Da9gTI=
+	t=1715313569; cv=none; b=Q5ScD6VIgS2E38wyCNTtbZTRr/SCBDSvOdXwkq1+t2WnNJBQJbk5L+VlSMcdjLaAoR12HrhfqZoVCVvwDXvuWNk9Y+F+3UiZq3+GFMMuZok/7aiE6yitMFFocAqg4oV/1TKvswqQxtC/zWGMvS0Og329S8Wnll24aL0BlEI7LMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715313359; c=relaxed/simple;
-	bh=Gq7ZLPmyu89Uk8KcUySCVCBrMLucKqZcBx8iVDQw1rY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ekAYEE102N46ZwOpiG7BZJ6yzWfV+RIXgo8gX2aTCXf+077oUNLwlLv5c8JJIt5ADR1LdeQZs4BMi907bgG0jbYzZcfbtut3kTAPOJBOd6Z7THOjRQzSh9lCrvY5rj/OJsTBKwbKmJClA09VSKDPhqBPoZ+oLTyStBJUymhVMjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Cd/dwRVc; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2a2d82537efso1260328a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 20:55:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715313357; x=1715918157; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NOiQ3uCdZgYPCQ2ajDEf6iQmTXnyeSAaxgpBopxztVU=;
-        b=Cd/dwRVcKYL7ZdNRgXzjtMh61z93eHK4DrInQL4qcMKtKiVSKGxGNZDAWpm7Yp/yp0
-         CXL4RT6Ctvq0W3tKnG62cCwXsLvSUzDCWg8KERA0p+NSn0iQij3zrOqcSjaCHgweGzff
-         O9mnbdizdXYG8IMrEyxGm4AOK9FuOmIBLa15Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715313357; x=1715918157;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NOiQ3uCdZgYPCQ2ajDEf6iQmTXnyeSAaxgpBopxztVU=;
-        b=TDnJO8evT5Y/CfLBkzsEDr2BhpJ08+r5H2+Ex1aGFNshf7W7YKJoEtD7H/CIUKRgKr
-         twm8Eg2qxe1kzDsHi70YqSHgtvuE6e0VDPqIshL4ZsYE6Mia6IxyKwjqBqC/dcRV9gFF
-         zTI2Al8eA2hzEsGBujAc3rxjYjPnLxdZa0vci5lWJILxWylPNJXSq1ixAtI/tvgpGwPo
-         SNmRA+1e7QYbvuArAGkq98/Xj0BzGAiCUehL5inED36Jv7uZ82Nf6a/3rZ+dSpVKtpb/
-         /jm2qWVp4ykxYxU6t847nuYM9rtIrPcXsIqJc5jpt+O3ymBbcdfbdjGKhNdr3MEqFnRM
-         4nvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+lx4izivgVoFRIdoh4kZYgkBh0aycdl7QIJbzjRaZ0vd+CAmDfccRUZObYoiBthCbcmnTyQYuYmX6S4TqXXk6SQBsUhfsahLeycgA
-X-Gm-Message-State: AOJu0Yx2zsTEpUeUJAfLlKYLxUparwTV3kRNluXLk7wkcJp/4zx/NMAR
-	s796X69oI7kB+Wjma5qvBj/S95by54GTK3DpEYHTtvESLuTT/xgJBlBXMcSFsPDw6mzW3cd5ANr
-	AZqwYF4x4X4KiOujNOGhMReFJbg4EbRqpNhfg
-X-Google-Smtp-Source: AGHT+IFJOehPbmZkaqlNrXh1ID19oQluYLarmVqIut2VGat0+rCUCNc1ELWs+axvjYkChlh96sgJn0FzAz2QpRZxnXo=
-X-Received: by 2002:a17:90a:17ef:b0:2b6:ab87:5434 with SMTP id
- 98e67ed59e1d1-2b6ccd9ec2amr1659245a91.35.1715313357387; Thu, 09 May 2024
- 20:55:57 -0700 (PDT)
+	s=arc-20240116; t=1715313569; c=relaxed/simple;
+	bh=lR/6ycEqY8yVvEsBHCwGyES8BgQErTXVxwI8zleD1NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSxQd85H7m0rmN1BeJhNRZhF6tnT/Im08tnl73ykNZkWdotpQxFE7ruBZE3HCrwHF4gEq/d4J9g/tqjqwPhKZ29htV2mjSOvKF/eqJPCSVTZv3SvFF9K1WU5VeRgJgd0Oe/KYJWFcT0Cm1USNVF5xOEIHgDHVeVOdbbq3IK9rsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKrtnzVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E860C113CC;
+	Fri, 10 May 2024 03:59:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715313568;
+	bh=lR/6ycEqY8yVvEsBHCwGyES8BgQErTXVxwI8zleD1NE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=HKrtnzVLRcXxjc6T4iiv2lcTSxnFLFqXlBoRRu83BAqcaOOllh7T5YPXgvpJg+7Cv
+	 JnyYiMoyOijEMewV/dtG+JdpoyTit3dq5PA/6tuz+qSsdv1+mtlsCkABZmBUuNSJSX
+	 ew0RRSQOtgAfdQVL7JyEL5HqzbliKhOC40WuorC7GD+qgyY36ulJPDgnykKu1fRG9h
+	 q3Zp75EpVKtKOu0qM6GBIaHgOw6vcB05ZTOHeqrHWC0yLvf5P3eOvs29r8lfl/7KTG
+	 J5QfI1qq3suM/wUUVkaZ10c4FRwO8l1PKyei7xB0L2H/oCvSVDL/fJahLtalmKqPRR
+	 WPlmUz3Kysn5w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 302F3CE12E9; Thu,  9 May 2024 20:59:28 -0700 (PDT)
+Date: Thu, 9 May 2024 20:59:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Message-ID: <f0a02cfe-7fc2-494c-8734-e5583f42a8f7@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240507093530.3043-1-urezki@gmail.com>
+ <20240507093530.3043-26-urezki@gmail.com>
+ <ZjpAsYJIfzYSKgdA@redhat.com>
+ <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
+ <20240509151312.GA22612@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509162741.1937586-1-wei.huang2@amd.com> <20240509162741.1937586-9-wei.huang2@amd.com>
- <868a4758-2873-4ede-83e5-65f42cb12b81@linux.dev>
-In-Reply-To: <868a4758-2873-4ede-83e5-65f42cb12b81@linux.dev>
-From: Ajit Khaparde <ajit.khaparde@broadcom.com>
-Date: Thu, 9 May 2024 20:55:39 -0700
-Message-ID: <CACZ4nhuBMOX8s1ODcJOvvCKp-VsOPHShEUHAsPvB75Yv2823qA@mail.gmail.com>
-Subject: Re: [PATCH V1 8/9] bnxt_en: Add TPH support in BNXT driver
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	netdev@vger.kernel.org, bhelgaas@google.com, corbet@lwn.net, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	alex.williamson@redhat.com, gospo@broadcom.com, michael.chan@broadcom.com, 
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000005e3a610618118310"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509151312.GA22612@redhat.com>
 
---0000000000005e3a610618118310
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, May 09, 2024 at 05:13:12PM +0200, Oleg Nesterov wrote:
+> On 05/07, Paul E. McKenney wrote:
+> >
+> > On Tue, May 07, 2024 at 10:54:41AM -0400, Oleg Nesterov wrote:
+> > > Hello,
+> > >
+> > > I feel I don't really like this patch but I am travelling without my working
+> > > laptop, can't read the source code ;) Quite possibly I am wrong, I'll return
+> > > to this when I get back on May 10.
+> >
+> > By the stricter data-race rules used in RCU code [1], this is a bug that
+> > needs to be fixed.
+> 
+> Now that I can read the code... Sorry, still can't understand.
+> 
+> > which is read locklessly,
+> 
+> Where???
+> 
+> OK, OK, we have
+> 
+> 	// rcu_sync_exit()
+> 	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0)
+> 
+> and
+> 
+> 	// rcu_sync_dtor()
+> 	WARN_ON_ONCE(READ_ONCE(rsp->gp_count));
+> 
+> other than that ->gp_count is always accessed under ->rss_lock.
+> 
+> And yes, at least WARN_ON_ONCE() in rcu_sync_exit() can obviously race with
+> rcu_sync_enter/exit which update gp_count. I think this is fine correctness-wise.
+> 
+> But OK, we need to please KCSAN (or is there another problem I missed ???)
+> 
+> We can move these WARN_ON()'s into the ->rss_lock protected section.
+> 
+> Or perhaps we can use data_race(rsp->gp_count) ? To be honest I thought
+> that READ_ONCE() should be enough...
+> 
+> Or we can simply kill these WARN_ON_ONCE()'s.
 
-On Thu, May 9, 2024 at 2:50=E2=80=AFPM Vadim Fedorenko
-<vadim.fedorenko@linux.dev> wrote:
->
-> On 09/05/2024 17:27, Wei Huang wrote:
-> > From: Manoj Panicker <manoj.panicker2@amd.com>
-> >
-> > As a usage example, this patch implements TPH support in Broadcom BNXT
-> > device driver by invoking pcie_tph_set_st() function when interrupt
-> > affinity is changed.
-> >
-> > Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> > Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-> > Reviewed-by: Wei Huang <wei.huang2@amd.com>
-> > Signed-off-by: Manoj Panicker <manoj.panicker2@amd.com>
-> > ---
-> >   drivers/net/ethernet/broadcom/bnxt/bnxt.c | 51 ++++++++++++++++++++++=
-+
-> >   drivers/net/ethernet/broadcom/bnxt/bnxt.h |  4 ++
-> >   2 files changed, 55 insertions(+)
-> >
-> > diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/et=
-hernet/broadcom/bnxt/bnxt.c
-> > index 2c2ee79c4d77..be9c17566fb4 100644
-> > --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> > +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> > @@ -55,6 +55,7 @@
-> >   #include <net/page_pool/helpers.h>
-> >   #include <linux/align.h>
-> >   #include <net/netdev_queues.h>
-> > +#include <linux/pci-tph.h>
-> >
-> >   #include "bnxt_hsi.h"
-> >   #include "bnxt.h"
-> > @@ -10491,6 +10492,7 @@ static void bnxt_free_irq(struct bnxt *bp)
-> >                               free_cpumask_var(irq->cpu_mask);
-> >                               irq->have_cpumask =3D 0;
-> >                       }
-> > +                     irq_set_affinity_notifier(irq->vector, NULL);
-> >                       free_irq(irq->vector, bp->bnapi[i]);
-> >               }
-> >
-> > @@ -10498,6 +10500,45 @@ static void bnxt_free_irq(struct bnxt *bp)
-> >       }
-> >   }
-> >
-> > +static void bnxt_rtnl_lock_sp(struct bnxt *bp);
-> > +static void bnxt_rtnl_unlock_sp(struct bnxt *bp);
-> > +static void bnxt_irq_affinity_notify(struct irq_affinity_notify *notif=
-y,
-> > +                                  const cpumask_t *mask)
-> > +{
-> > +     struct bnxt_irq *irq;
-> > +
-> > +     irq =3D container_of(notify, struct bnxt_irq, affinity_notify);
-> > +     cpumask_copy(irq->cpu_mask, mask);
-> > +
-> > +     if (!pcie_tph_set_st(irq->bp->pdev, irq->msix_nr,
-> > +                          cpumask_first(irq->cpu_mask),
-> > +                          TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY))
-> > +             pr_err("error in configuring steering tag\n");
-> > +
-> > +     if (netif_running(irq->bp->dev)) {
-> > +             rtnl_lock();
-> > +             bnxt_close_nic(irq->bp, false, false);
-> > +             bnxt_open_nic(irq->bp, false, false);
-> > +             rtnl_unlock();
-> > +     }
->
-> Is it really needed? It will cause link flap and pause in the traffic
-> service for the device. Why the device needs full restart in this case?
+Or we could move those WARN_ON_ONCE() under the lock.  If this would
+be a lock-contention issue, we could condition them with something like
+IS_ENABLED(CONFIG_PROVE_RCU).  Then all accesses to those variables would
+always be protected by the lock, and the WRITE_ONCE() and READ_ONCE()
+calls could be dropped.  (Or am I missing another lockless access?)
 
-In that sequence only the rings are recreated for the hardware to sync
-up the tags.
+Which would have the further advantage that if anyone accessed these
+without holding the lock, KCSAN would complain.
 
-Actually its not a full restart. There is no link reinit or other
-heavy lifting in this sequence.
-The pause in traffic may be momentary. Do IRQ/CPU affinities change frequen=
-tly?
-Probably not?
+> I don't understand why should we add more WRITE_ONCE()'s into the critical
+> section protected by ->rss_lock.
 
->
->
-> > +}
-> > +
-> > +static void bnxt_irq_affinity_release(struct kref __always_unused *ref=
-)
-> > +{
-> > +}
-> > +
-> > +static inline void __bnxt_register_notify_irqchanges(struct bnxt_irq *=
-irq)
->
-> No inlines in .c files, please. Let compiler decide what to inline.
->
-> > +{
-> > +     struct irq_affinity_notify *notify;
-> > +
-> > +     notify =3D &irq->affinity_notify;
-> > +     notify->irq =3D irq->vector;
-> > +     notify->notify =3D bnxt_irq_affinity_notify;
-> > +     notify->release =3D bnxt_irq_affinity_release;
-> > +
-> > +     irq_set_affinity_notifier(irq->vector, notify);
-> > +}
-> > +
-> >   static int bnxt_request_irq(struct bnxt *bp)
-> >   {
-> >       int i, j, rc =3D 0;
-> > @@ -10543,6 +10584,7 @@ static int bnxt_request_irq(struct bnxt *bp)
-> >                       int numa_node =3D dev_to_node(&bp->pdev->dev);
+There are indeed several ways to fix this.  Which would you prefer?
+
+> Help! ;)
+
+;-) ;-) ;-)
+
+							Thanx, Paul
+
+> Oleg.
+> 
+> 
+> which in turn results in a data race.  The fix is to mark
+> > the updates (as below) with WRITE_ONCE().
 > >
-> >                       irq->have_cpumask =3D 1;
-> > +                     irq->msix_nr =3D map_idx;
-> >                       cpumask_set_cpu(cpumask_local_spread(i, numa_node=
-),
-> >                                       irq->cpu_mask);
-> >                       rc =3D irq_set_affinity_hint(irq->vector, irq->cp=
-u_mask);
-> > @@ -10552,6 +10594,15 @@ static int bnxt_request_irq(struct bnxt *bp)
-> >                                           irq->vector);
-> >                               break;
-> >                       }
-> > +
-> > +                     if (!pcie_tph_set_st(bp->pdev, i,
-> > +                                          cpumask_first(irq->cpu_mask)=
-,
-> > +                                          TPH_MEM_TYPE_VM, PCI_TPH_REQ=
-_TPH_ONLY)) {
-> > +                             netdev_err(bp->dev, "error in setting ste=
-ering tag\n");
-> > +                     } else {
-> > +                             irq->bp =3D bp;
-> > +                             __bnxt_register_notify_irqchanges(irq);
-> > +                     }
-> >               }
-> >       }
-> >       return rc;
-> > diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/et=
-hernet/broadcom/bnxt/bnxt.h
-> > index dd849e715c9b..0d3442590bb4 100644
-> > --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> > +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> > @@ -1195,6 +1195,10 @@ struct bnxt_irq {
-> >       u8              have_cpumask:1;
-> >       char            name[IFNAMSIZ + 2];
-> >       cpumask_var_t   cpu_mask;
-> > +
-> > +     int             msix_nr;
-> > +     struct bnxt     *bp;
-> > +     struct irq_affinity_notify affinity_notify;
-> >   };
+> > Or is there something in one or the other of these updates to ->gp_count
+> > that excludes lockless readers?  (I am not seeing it, but you know this
+> > code way better than I do!)
 > >
-> >   #define HWRM_RING_ALLOC_TX  0x1
->
-
---0000000000005e3a610618118310
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-pZEyqKnwS1lKCzjX7mV5W955rFsFxChdAKfw0HilwtqdY24mhy62+GeaEkD0gYIj1tCmw9gnQToc
-K+0s7xEunfR9pBrzmOwS3OQbcP0nJ8SmQ8R+reroH6LYuFpaqK1rgQIDAQABo4IB2zCCAdcwDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAlBgNVHREEHjAcgRphaml0LmtoYXBhcmRlQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEF
-BQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUbrcTuh0mr2qP
-xYdtyDgFeRIiE/gwDQYJKoZIhvcNAQELBQADggEBALrc1TljKrDhXicOaZlzIQyqOEkKAZ324i8X
-OwzA0n2EcPGmMZvgARurvanSLD3mLeeuyq1feCcjfGM1CJFh4+EY7EkbFbpVPOIdstSBhbnAJnOl
-aC/q0wTndKoC/xXBhXOZB8YL/Zq4ZclQLMUO6xi/fFRyHviI5/IrosdrpniXFJ9ukJoOXtvdrEF+
-KlMYg/Deg9xo3wddCqQIsztHSkR4XaANdn+dbLRQpctZ13BY1lim4uz5bYn3M0IxyZWkQ1JuPHCK
-aRJv0SfR88PoI4RB7NCEHqFwARTj1KvFPQi8pK/YISFydZYbZrxQdyWDidqm4wSuJfpE6i0cWvCd
-u50xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNh
-MTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwM2Vrj
-4nZK0WWosNswDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIOOsd5ecXZGoMm5/mYqH
-uqLJk5/9Q1OmDcsOG+V24ZfaMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkF
-MQ8XDTI0MDUxMDAzNTU1N1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUD
-BAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsG
-CWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAYiGjAD5c1e+7x42AFctCDxizucdgHfQKDYJP6
-n2Qc7n0uIR6OwVBot2J5sn6eKHUN/LjeK54NObsDMLxd91ubqczeDKUiByZwkDJSJVkMN66bTd+b
-Rgd9AWGkKF0jHvjpfP7ISj6F4ajq7oNWHvasS9rt8EBUzd+A5LqSmCk88mVNmNIhagm/0YDdZik6
-tixK+Jx621Jit8ZBHT7b63fcuvTzzeAb+A48LIzQqZl9iZL1q62ro1jYSr3UoW9CCA2AdPMuX5My
-cQiB6U2QSpx7MhG0ZT5hl1gODladeo7sOi+9BRNhLFllWv+Fa6oonlAMNPmLWMuvyv99zydb4fXT
---0000000000005e3a610618118310--
+> > 							Thanx, Paul
+> >
+> > [1] https://docs.google.com/document/d/1FwZaXSg3A55ivVoWffA9iMuhJ3_Gmj_E494dLYjjyLQ/edit?usp=sharing
+> >
+> > > Oleg.
+> > >
+> > > On 05/07, Uladzislau Rezki (Sony) wrote:
+> > > >
+> > > > From: "Paul E. McKenney" <paulmck@kernel.org>
+> > > >
+> > > > The rcu_sync structure's ->gp_count field is updated under the protection
+> > > > of ->rss_lock, but read locklessly, and KCSAN noted the data race.
+> > > > This commit therefore uses WRITE_ONCE() to do this update to clearly
+> > > > document its racy nature.
+> > > >
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > Cc: Oleg Nesterov <oleg@redhat.com>
+> > > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > ---
+> > > >  kernel/rcu/sync.c | 8 ++++++--
+> > > >  1 file changed, 6 insertions(+), 2 deletions(-)
+> > > >
+> > > > diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
+> > > > index 86df878a2fee..6c2bd9001adc 100644
+> > > > --- a/kernel/rcu/sync.c
+> > > > +++ b/kernel/rcu/sync.c
+> > > > @@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+> > > >  		 * we are called at early boot time but this shouldn't happen.
+> > > >  		 */
+> > > >  	}
+> > > > -	rsp->gp_count++;
+> > > > +	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
+> > > >  	spin_unlock_irq(&rsp->rss_lock);
+> > > >
+> > > >  	if (gp_state == GP_IDLE) {
+> > > > @@ -151,11 +151,15 @@ void rcu_sync_enter(struct rcu_sync *rsp)
+> > > >   */
+> > > >  void rcu_sync_exit(struct rcu_sync *rsp)
+> > > >  {
+> > > > +	int gpc;
+> > > > +
+> > > >  	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
+> > > >  	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
+> > > >
+> > > >  	spin_lock_irq(&rsp->rss_lock);
+> > > > -	if (!--rsp->gp_count) {
+> > > > +	gpc = rsp->gp_count - 1;
+> > > > +	WRITE_ONCE(rsp->gp_count, gpc);
+> > > > +	if (!gpc) {
+> > > >  		if (rsp->gp_state == GP_PASSED) {
+> > > >  			WRITE_ONCE(rsp->gp_state, GP_EXIT);
+> > > >  			rcu_sync_call(rsp);
+> > > > --
+> > > > 2.39.2
+> > > >
+> > >
+> >
+> 
 
