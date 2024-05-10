@@ -1,154 +1,295 @@
-Return-Path: <linux-kernel+bounces-175303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EE7A8C1DD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:54:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF26C8C1DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B0B2154B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7896C283011
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0D415E5D2;
-	Fri, 10 May 2024 05:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A246A15747E;
+	Fri, 10 May 2024 06:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lc9/js3I"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gVrissG5"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F9812DD88
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22704152795
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715320440; cv=none; b=Vje6OhI7JuGvEMA2j8KWY9u7n30+N+N7q7R6LYD8XYJ/Iy6f5Re2qAjyIJuqXQBGz7TpVPzDCbDW4rtiFSMZEHeNjRVo0wE66VtaNHYvY/fZn6r9YP9Jhhchnjj+OOM7U/P3FcPR3rGhXDYjzo9WInXT8gzqORf2+KVJEjAtAME=
+	t=1715321122; cv=none; b=roBtmsQn88FZUBbn0hj46TIjoB8PlGYCxTzwCEyZK2ecdJ0CWSVv8fE5B3tAM4yfWIol6rKWGqi+HIa/a43qFLRjEv0rgP1TnhIfaggiQk84SOU/cBouhmP252PxX5LXvSH1VKCaVfD4zprJfb2LAFMjQTvi/UoveIspWaUBjms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715320440; c=relaxed/simple;
-	bh=4PEitjlgb+KO6v9/1VnUNw8pVTM6GDPJ4mUKQsGr/KM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQLy5eUgbGNlxvpoBancXQezrTV4nZkVgHPFvJUYBL/kgmP5i+4wPZK3PbmWq4gHOLcE4Q6hVVhWxWZAqe5AAbi8yzUkhnSmBjeBSZz4+3W3vzGetsOSdLWIfcXN1PC8depyH+aE3uKmPAZ9SYgL6wGZFRr++skOKYmw1Gd954Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lc9/js3I; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com [209.85.208.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id AA3DB3F366
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715320435;
-	bh=pb53mmGBdA39Om/S6gifWUIT/OZjQtmNrFO1eNmJ+LA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=lc9/js3Igi2d+FF9o7mqGr1bWPXeF+NVTbzNHdvfAMidNges6cXEmNKSGevcQ/4pM
-	 IklAiEzrQGPOwgst6GRSlK9ry19SC9rYeJN/hLFjoD5Xd4nJWICTGO3u0uXpGOzvrc
-	 CiO+K2Kgpnew8vRm8YquRNA5tF4QH8uRYrg50eMkCLVLlfXbR2sJFS7CucTmr6PZgH
-	 Q/D7Cg/uALctuoEDkzFMLWJtJKna0FX93CkJSJ/EV2Zt5iSmb9BQDAq04WJrgnSLso
-	 XwrPCnNEJrkahJN7MjZpcI+xtx0TcKWYBCiqdEijFONaeL9h54EcFs58GUpIUW3tYR
-	 83YAaiON74HbQ==
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-572ef3eb368so635636a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 22:53:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715320435; x=1715925235;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1715321122; c=relaxed/simple;
+	bh=5ArqpzPwM9vLnDyPf4R8czcBAe3geJK0WFO/dNt3fLQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kIRDLMbCVcUFrH7deBxxf3scvHC/n7l+Q9AjxkLCpE0Ak0wJynssFrasrQsN6mdNgA8Z+mwhLWKnTbkgZunEw3e3XlyqQqer9RqkAiccvld1z6Zs+reKdgxeGwX7p1H+cFdYjRcnb2tLNbSprWkffVvpaNKQJUdz/BW56YBVyps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gVrissG5; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1e4bf0b3e06so14746595ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 23:05:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715321120; x=1715925920; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pb53mmGBdA39Om/S6gifWUIT/OZjQtmNrFO1eNmJ+LA=;
-        b=C7JKxid8BsSIF86Td/DwVYfNAdV2xyyQADWqRPpGmqIEc5CXIlnqBSkhMSTIWQoWyd
-         IjkNSwrv1oKwVu4N9X7GHj/AWWm/5fPFoKaq7D3v6wO/oamkJLhEXnfJsoDx/TOGcDXX
-         4yLhqjutCpE58yY2B0OwEYkCTrEvsye2cseJCZCi3kDR1o2043/E2spaqMYX0iBt5WWw
-         G2FzsLX89ihSp36kkd0UIgsk48XxcMhzxAdRb0Hld7SldCkz+tFcO7/yN4H2XzLu7+Aj
-         KvAaaRp6n6E5Ald03ZVERRmDqCQL3LVShZSKhFpjwLELTwYSLHSTvLGrh45aFchJIUp+
-         +UhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVr3YzK1px98Ur13MC7wGGVsdjgu7KbnZcVdc6bAJTmNBQ4zZhW728TdhFwqryCrq7nb69uPr9bccJa4yuYr8quIBwT/+SnHh+TkILw
-X-Gm-Message-State: AOJu0Yxvkqu5xm2KAftEyThr8zsNVxtxMwmhlrPhFyT6YoTWvxs+F1Xh
-	rfe+TCQcKYeDqyjYjuPMTxxBUWH+0GaUQ+Vx/4Swg1CVyA0o57mfRH0OaXneBAnQTHm7dXacFIB
-	9RTfHI7nn3OYa+XhyYkG8uPJeuipVT1zaIFIZFT3pycRzXkAETutddcHOtYpL6Xs8VXANL2ftb1
-	bEVg==
-X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id 4fb4d7f45d1cf-5734d5c1692mr1161727a12.7.1715320435059;
-        Thu, 09 May 2024 22:53:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUERLBxoc5gVqjALyHDp2f85+2hPeKHWBMU3eKKrua9AkiVLI6CvgwDj1X1kdppOmcHMa0VA==
-X-Received: by 2002:a50:bb05:0:b0:572:5f28:1f25 with SMTP id 4fb4d7f45d1cf-5734d5c1692mr1161698a12.7.1715320434315;
-        Thu, 09 May 2024 22:53:54 -0700 (PDT)
-Received: from localhost (host-82-49-69-7.retail.telecomitalia.it. [82.49.69.7])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c3229b5sm1436042a12.79.2024.05.09.22.53.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 22:53:53 -0700 (PDT)
-Date: Fri, 10 May 2024 07:53:52 +0200
-From: Andrea Righi <andrea.righi@canonical.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Steve French <smfrench@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>,
-	Christian Brauner <christian@brauner.io>, linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Latchesar Ionkov <lucho@ionkov.net>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>
-Subject: Re: [PATCH v5 40/40] 9p: Use netfslib read/write_iter
-Message-ID: <Zj22cFnMynv_EF8x@gpd>
-References: <Zj0ErxVBE3DYT2Ea@gpd>
- <20231221132400.1601991-1-dhowells@redhat.com>
- <20231221132400.1601991-41-dhowells@redhat.com>
- <1567252.1715290417@warthog.procyon.org.uk>
+        bh=3l9Zhk1CinuAg1XYDxK911+bsjq1ZwhNZoOZALb8UiE=;
+        b=gVrissG5qo3BWeSOVKtSo7qDXWhE7/QgbPxAP2m8juy3tX5xLLQfZ8KYo66n2Uymbg
+         acNnH8WyGHv2JS7EtVghB9Iv/BmyfTDsKjUAVdKUSoyB0uMs+5LjUe8nUlNKdP1cX6Zr
+         RTCmTGf/+N3XddLO3gOtzTRNFfidVDZDY4uYZ86wn0FfELfyXr2IGXgq8Tlo9VPwCUQP
+         rqpbv/A+IVAjTDPE6KtxgdWuHMPAHPqQszxUSXI56C8KAjOK4fmLEB7uKvtzccnmOwRr
+         FCfSCJFCngy7JfYHFvqIwRy8ZgcttbS1UZ6kFoniEW0kEc95Sk5ubAyRFxuw+mh8AsoM
+         LMhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715321120; x=1715925920;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3l9Zhk1CinuAg1XYDxK911+bsjq1ZwhNZoOZALb8UiE=;
+        b=oF1mYGrSSIxhHj2Fw1n69p1ZzkpLuCBCXMQPIV8gZ5iqC2i1PPJFx8CDKoticF4o9Z
+         f5SjyVQGpswL215H0Hlpvp6BPkug06YQGatnkWS8WUd/Dknc2/CdklqzeG+tAJrAgta5
+         ofH9SobRpDir3kqpeR7Bxgr1q3kg5tX1zBRaziXTPk4T2gsR1dWQnL4P1IvuKsrDEgO/
+         aVt8IYDpqjvrcXaMxsx50mSivHkBHMX0COAZfcL0x/HKyD3lw0zmGszkoG5yCpnDmkOq
+         R+oCba4nYXrp0ekgLmIV+w/OXUyoykd31AjZY0Ba+6iK7PbDBmzMSnJcAGvJ/uJboBsk
+         0pBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVN/fE80RCEH9cSsqUNyH1r8hnFFyb/6n42hBnU643OfhNquWaAD8SVjIrJJVypbjLq6JlJPDxvFF3iypEVmaA7RhzJdkWl/6fQHccZ
+X-Gm-Message-State: AOJu0YxBsh9/c8Jdihh3Wxr/5wZ44O7yIIn2OH/vEKN4VSF6IXcqev6w
+	grJli3z0un0Y5rqD0DLAUPnAaF6Z/Vt61oFTne2UlhcKBGey+y4ZqRGAm03/+fFgcGNerxi3UmC
+	3XnrZ9LFCFdehYkkdOVKLJfke60Fk9x9opAt5Pw==
+X-Google-Smtp-Source: AGHT+IHHD/CHw//DnmrclZoHVWyraKaM7aOGtysmOL6I5Ech4AujZ822XKMc9TvmkKxt5ikp+pwjEo1hUxbShHn5m4c=
+X-Received: by 2002:a17:90a:df85:b0:2b1:e314:a5e6 with SMTP id
+ 98e67ed59e1d1-2b6cc144d48mr1628397a91.7.1715321120379; Thu, 09 May 2024
+ 23:05:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1567252.1715290417@warthog.procyon.org.uk>
+References: <20240509015207.3271370-1-yangcong5@huaqin.corp-partner.google.com>
+ <20240509015207.3271370-8-yangcong5@huaqin.corp-partner.google.com> <CAD=FV=Vd34kBy4meaqqYECQKaT1=XcCFdq3qaU5n=YBWVAVi-Q@mail.gmail.com>
+In-Reply-To: <CAD=FV=Vd34kBy4meaqqYECQKaT1=XcCFdq3qaU5n=YBWVAVi-Q@mail.gmail.com>
+From: cong yang <yangcong5@huaqin.corp-partner.google.com>
+Date: Fri, 10 May 2024 14:05:09 +0800
+Message-ID: <CAHwB_N+4_cJ3NuEm+AxqhxYosLvJ+WA6SG9HhTckCxNEBkvwSw@mail.gmail.com>
+Subject: Re: [PATCH v5 7/7] drm/panel: himax-hx83102: Support for IVO t109nw41
+ MIPI-DSI panel
+To: Doug Anderson <dianders@chromium.org>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
+	robh+dt@kernel.org, conor+dt@kernel.org, airlied@gmail.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 09, 2024 at 10:33:37PM +0100, David Howells wrote:
-> Andrea Righi <andrea.righi@canonical.com> wrote:
-> 
-> > On Thu, Dec 21, 2023 at 01:23:35PM +0000, David Howells wrote:
-> > > Use netfslib's read and write iteration helpers, allowing netfslib to take
-> > > over the management of the page cache for 9p files and to manage local disk
-> > > caching.  In particular, this eliminates write_begin, write_end, writepage
-> > > and all mentions of struct page and struct folio from 9p.
-> > > 
-> > > Note that netfslib now offers the possibility of write-through caching if
-> > > that is desirable for 9p: just set the NETFS_ICTX_WRITETHROUGH flag in
-> > > v9inode->netfs.flags in v9fs_set_netfs_context().
-> > > 
-> > > Note also this is untested as I can't get ganesha.nfsd to correctly parse
-> > > the config to turn on 9p support.
-> > 
-> > It looks like this patch has introduced a regression with autopkgtest,
-> > see: https://bugs.launchpad.net/bugs/2056461
-> > 
-> > I haven't looked at the details yet, I just did some bisecting and
-> > apparently reverting this one seems to fix the problem.
-> > 
-> > Let me know if you want me to test something in particular or if you
-> > already have a potential fix. Otherwise I'll take a look.
-> 
-> Do you have a reproducer?
-> 
-> I'll be at LSF next week, so if I can't fix it tomorrow, I won't be able to
-> poke at it until after that.
-> 
-> David
+Hi,
 
-The only reproducer that I have at the moment is the autopkgtest command
-mentioned in the bug, that is a bit convoluted, I'll try to see if I can
-better isolate the problem and find a simpler reproducer, but I'll also
-be travelling next week to a Canonical event.
+Doug Anderson <dianders@chromium.org> =E4=BA=8E2024=E5=B9=B45=E6=9C=8810=E6=
+=97=A5=E5=91=A8=E4=BA=94 00:49=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi,
+>
+> On Wed, May 8, 2024 at 6:53=E2=80=AFPM Cong Yang
+> <yangcong5@huaqin.corp-partner.google.com> wrote:
+> >
+> > +static int ivo_t109nw41_init(struct hx83102 *ctx)
+> > +{
+> > +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi }=
+;
+> > +
+> > +       msleep(60);
+> > +
+> > +       hx83102_enable_extended_cmds(&dsi_ctx, true);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x2c, =
+0xed, 0xed, 0x0f, 0xcf, 0x42,
+> > +                                    0xf5, 0x39, 0x36, 0x36, 0x36, 0x36=
+, 0x32, 0x8b, 0x11, 0x65, 0x00, 0x88,
+> > +                                    0xfa, 0xff, 0xff, 0x8f, 0xff, 0x08=
+, 0xd6, 0x33);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDISP, 0x00, 0=
+x47, 0xb0, 0x80, 0x00, 0x12,
+> > +                                    0x71, 0x3c, 0xa3, 0x22, 0x20, 0x00=
+, 0x00, 0x88, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x35, 0x=
+35, 0x43, 0x43, 0x35, 0x35,
+> > +                                    0x30, 0x7a, 0x30, 0x7a, 0x01, 0x9d=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xcd)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x84);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETVDC, 0x1b, 0x=
+04);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_BE, 0x20=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xfc, 0=
+xc4);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSTBA, 0x34, 0=
+x34, 0x22, 0x11, 0x22, 0xa0,
+> > +                                    0x31, 0x08, 0xf5, 0x03);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xcc)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x80);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xd3)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x22);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc6)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETRAMDMY, 0x97)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPWM, 0x00, 0x=
+1e, 0x13, 0x88, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x08, =
+0x13, 0x07, 0x00, 0x0f, 0x34);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPANEL, 0x02, =
+0x03, 0x44);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc4)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCASCADE, 0x03=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPCTRL, 0x07, =
+0x06, 0x00, 0x02, 0x04, 0x2c,
+> > +                                    0xff);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x06, 0=
+x00, 0x00, 0x00, 0x00, 0x08,
+> > +                                    0x08, 0x08, 0x08, 0x37, 0x07, 0x64=
+, 0x7c, 0x11, 0x11, 0x03, 0x03, 0x32,
+> > +                                    0x10, 0x0e, 0x00, 0x0e, 0x32, 0x17=
+, 0x97, 0x07, 0x97, 0x32, 0x00, 0x02,
+> > +                                    0x00, 0x02, 0x00, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP1, 0x25, 0=
+x24, 0x25, 0x24, 0x18, 0x18,
+> > +                                    0x18, 0x18, 0x07, 0x06, 0x07, 0x06=
+, 0x05, 0x04, 0x05, 0x04, 0x03, 0x02,
+> > +                                    0x03, 0x02, 0x01, 0x00, 0x01, 0x00=
+, 0x1e, 0x1e, 0x1e, 0x1e, 0x1f, 0x1f,
+> > +                                    0x1f, 0x1f, 0x21, 0x20, 0x21, 0x20=
+, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
+> > +                                    0x18, 0x18);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xaa, 0=
+xaa, 0xaa, 0xaa, 0xaa, 0xa0,
+> > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0=
+, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00=
+, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGMA, 0x04, 0x=
+04, 0x06, 0x0a, 0x0a, 0x05,
+> > +                                    0x12, 0x14, 0x17, 0x13, 0x2c, 0x33=
+, 0x39, 0x4b, 0x4c, 0x56, 0x61, 0x78,
+> > +                                    0x7a, 0x41, 0x50, 0x68, 0x73, 0x04=
+, 0x04, 0x06, 0x0a, 0x0a, 0x05, 0x12,
+> > +                                    0x14, 0x17, 0x13, 0x2c, 0x33, 0x39=
+, 0x4b, 0x4c, 0x56, 0x61, 0x78, 0x7a,
+> > +                                    0x41, 0x50, 0x68, 0x73);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x07, 0x=
+10, 0x10, 0x1a, 0x26, 0x9e,
+> > +                                    0x00, 0x4f, 0xa0, 0x14, 0x14, 0x00=
+, 0x00, 0x00, 0x00, 0x12, 0x0a, 0x02,
+> > +                                    0x02, 0x00, 0x33, 0x02, 0x04, 0x18=
+, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x01, =
+0x7f, 0x11, 0xfd);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x86);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x00, 0=
+x00, 0x04, 0x00, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0x00, 0=
+x00, 0x00, 0x00, 0x00, 0x00,
+> > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00=
+, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
+> > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0=
+, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x02, 0x=
+00, 0x2b, 0x01, 0x7e, 0x0f,
+> > +                                    0x7e, 0x10, 0xa0, 0x00, 0x00, 0x77=
+, 0x00, 0x00, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x02);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xf2);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x03, =
+0x07, 0x00, 0x10, 0x79);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xff, 0=
+xff, 0xff, 0xff, 0xfa, 0xa0,
+> > +                                    0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0xfe, 0x=
+01, 0xfe, 0x01, 0xfe, 0x01,
+> > +                                    0x00, 0x00, 0x00, 0x23, 0x00, 0x23=
+, 0x81, 0x02, 0x40, 0x00, 0x20, 0x6e,
+> > +                                    0x02, 0x01, 0x00, 0x00, 0x00, 0x00=
+, 0x00, 0x00, 0x00, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x03);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xaa,=
+ 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
+> > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0=
+, 0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0,
+> > +                                    0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0=
+, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
+> > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0=
+, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc6)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x03, 0x=
+ff, 0xf8);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_E1, 0x00=
+);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0xff=
+, 0xff, 0xff, 0xff, 0xff, 0xff);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc4)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x96);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc5)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x4f);
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f)=
+;
+> > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
+> > +       if (dsi_ctx.accum_err)
+> > +               return dsi_ctx.accum_err;
+>
+> Since this is a new panel you're adding support for and there's no
+> excuse that we don't want to change the old command sequence, it seems
+> like you should add the call to:
+>
+> hx83102_enable_extended_cmds(&dsi_ctx, false);
+>
+> If for some reason that would be a bad idea, let me know.
 
-At the moment I'll temporarily revert the commit (that seems to prevent
-the issue from happening) and I'll keep you posted if I find something.
+Confirm with the vendor again , disable extended cmds is prevent the ESD
+mechanism write (currently there is no ESD check mechanism) ic register.
+So it may not have any impact whether add disable extended cmds or not.
+Of course for me, I prefer to upload according to the initial code
+provided by  vendor.
 
-Thanks,
--Andrea
+If you prefer add it I also can fix in V6.
+
+Thanks.
+
+>
+> -Doug
 
