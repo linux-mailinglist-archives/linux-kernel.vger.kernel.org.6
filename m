@@ -1,121 +1,149 @@
-Return-Path: <linux-kernel+bounces-175608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B622C8C228C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:54:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EA18C228E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67B831F22638
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:54:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 740872821B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A2516D4FE;
-	Fri, 10 May 2024 10:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D296116C693;
+	Fri, 10 May 2024 10:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K8/osNAe"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QefonEiI"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA0B21340;
-	Fri, 10 May 2024 10:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B2C168AFC;
+	Fri, 10 May 2024 10:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715338472; cv=none; b=IY98tqi25mcn+V6kr+BopmACCTOpfDqP80trBgYL1tI8S+VdHtHwZVjyeyN2mTDJlzjAzM/Zcw8x0i+uUDS4yQ+2GiX9GlwDlwKniIP+GyQF+98s2lMGqBogwyq7tbTcOGAexCkhff6YAg7cvJzf0fu5lbokoHJlBguftQgMjcQ=
+	t=1715338503; cv=none; b=q97BD8frC3/12LWQR5KBaNRTCA/e7lAshX3JAr55qbLJUmN7vwzB3HAvBs78duJrOEkhJF+205GmTN/Y2ieMbMJYIuCarVKzQu3ml2i8icl1d8Ibc/pW5FusCQm479P+IMWzASDq/cnrJCI6FH42AiqaXJkgJGuTVJWm5z+PLi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715338472; c=relaxed/simple;
-	bh=dNw1Wr2Av5DW4mueAwQ+s5X4+nf5AQYXYvvohA5R6Ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qnn7viifnP9lnylQZK+1AMsGKJNAIFlW8F3FYvmWk9lTbWiMMEQdk/h/QMHTip00RvuZVZWxIi6tneVjs+7AUTvr+rkfGU2jG3tTgHUBGIjcOhYrfhaP8qoMwc6ZJuHqltd1jg/D3v3lvR4ZdgEazNzz+iLnPHYZ8o5HI6fag4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K8/osNAe; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0C3521BF209;
-	Fri, 10 May 2024 10:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715338468;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HOtPKmgchyWmbrYBxXPn7lnbrTTGQ4uEd2Sa5ZRuwlA=;
-	b=K8/osNAe6yE6WlZSa8kDL76s6DRm+Pr287W3LpLbtgxSpsaDIxWdGDgQ7rtcfdvMoj6sW3
-	6smdCd36av8J2gBSTZyDfllC3FC9b0Wye2UHk3DPoifHiB+u6jKIOTxm+iP2pHt59JhJ07
-	1MnbmnZ0yQzUPunOD0uEG1bYasiPNrOAt7PYxtZD8vXm/bta91ynh+X1fqvtN1Gba7lq5S
-	SahPpF3qSwHSNJ/MYWLI160fLR2sAchbNfaXYYw4JpaCChKQ288Pej96+ZxCQd6m4aW0ig
-	S67GjXdksqWDSDSZSHcEvS/fXRs5W9T8mAz/+mtEH0Xi9GLymQBAdiETwpf93A==
-Date: Fri, 10 May 2024 12:54:23 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Andrzej Hajda" <andrzej.hajda@intel.com>,
- "Neil Armstrong" <neil.armstrong@linaro.org>, "Robert Foss"
- <rfoss@kernel.org>, "laurent.pinchart" <Laurent.pinchart@ideasonboard.com>,
- "Jonas Karlman" <jonas@kwiboo.se>, "Jernej Skrabec"
- <jernej.skrabec@gmail.com>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "Dave Airlie"
- <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- "derek.kiernan@amd.com" <derek.kiernan@amd.com>, "dragan.cvetic@amd.com"
- <dragan.cvetic@amd.com>, "Saravana Kannan" <saravanak@google.com>, "Paul
- Kocialkowski" <contact@paulk.fr>, "Herve Codina"
- <herve.codina@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, "Paul
- Kocialkowski" <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v2 5/5] misc: add ge-addon-connector driver
-Message-ID: <20240510125423.25d4b3ed@booty>
-In-Reply-To: <a1970921-f00b-411d-832d-5289f9812ba0@app.fastmail.com>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
-	<20240510-hotplug-drm-bridge-v2-5-ec32f2c66d56@bootlin.com>
-	<2024051039-decree-shrimp-45c6@gregkh>
-	<a1970921-f00b-411d-832d-5289f9812ba0@app.fastmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715338503; c=relaxed/simple;
+	bh=Xc/cXEVgw9u0jMbXKst96nBJlyCSNol4PbtonuV86l8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S2Iw2Rmo69+SzESDsC/vFsmsBEZqrLORuL5rkQGOQbxvhRRp1MMEFlQ1KMOQcDknF0TxTaz2bHayW9ZIRm6G3tVAU3U0d0Aj+4MVh45cq+mR1WQqem4FjCzgtdj7wDMo6hlII6FuMmXeEa4+VOwRgJps4iMINwL8g+X/BkmTGUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QefonEiI; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4df4016b3c9so715886e0c.1;
+        Fri, 10 May 2024 03:55:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715338500; x=1715943300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wlupgt5KecgpQVJqF2FhR9ZPlaju+6jPVqD7qRDHUs=;
+        b=QefonEiIf91q1vQ3uqSZrxWF7SEWLj3ucRor3fFemRL9FapvGt4I8F5A31S9VkFSHn
+         CNiMjkZuagG8wMVoaHmXRa9BY0yBcEhu5+I2TVP9eo8ScNQRjrs9jLdJr56O1f2vopLR
+         OacSqPJO8U1Bk2UfTd8e+qcSRbNhGPzpojhEVPVPfTo489LyuLpFLZ1uYuQTQmGLaTiT
+         /Z/ElLf/F0xlKWWWQpntX8wcxI3LcdbXyTOVB188F9KAYeCs45BGad7usywybxdb8FVO
+         oBH97NzlLWX8r6+ZKNxfDms7IgCiTiOkZmk5LoZqogI3Om2erwhsNTHlHZTLLLOsQYQ2
+         pV1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715338500; x=1715943300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1wlupgt5KecgpQVJqF2FhR9ZPlaju+6jPVqD7qRDHUs=;
+        b=BRN2TLDmNILk6slLC1XXmLTd/LhDSwYrxwNpQOOLTfYnHXZuiucY8UVladckEGM9hy
+         6RM1derFkBWDGLC4I+B6YziyLXpRiPWCZ+4L2Zb/HInde34Aak/dBJ3CS6YNHtz6sUrG
+         VWAD1dmZtgR+mkaPdQiYnPRIhVwTB2NG140D5JhoTWyQeAw9Qtv1K/+xKypfH42hDaen
+         GAkY6KXrBEN+wK+JPazdjcc4WDcaFvfa14UYwhckrf4UuAFSFiqnobD3cdSysG/bO0Lf
+         8rOwtEeB3UhOUP2P1nHQRQwtgJE6TwmvGpy4Sgw5J33+xWi+QfmHKZCgWWIayjb8wgT6
+         hCaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPd5R0UySHkESJRrL90SflFyI9JArEdi2QiuQbhkMSnfqlwIZoUt77qEhBEjDYs3BIpQBHTHRsSsaFX2tbPsXtaWYEgawnLwpGG6+ZgKgVl+9+7UoHe398/JONuOSE8s27S4lS
+X-Gm-Message-State: AOJu0YxvfsjQbwVL0zJaUgZIqlaPaS4KmKPay7n8Nab6ziqL0Usn5PF6
+	LXGI+tIeR6lZo7wGb1CWujlUgZ1nMZhGuIKtEq3/bX0LLcNb2jsBQorcBkiBz2M8+e3diEt0wrF
+	uZHcT6X01fGdDniyauNuQwcymRFQ=
+X-Google-Smtp-Source: AGHT+IFR2+tVUJwKSg0yCQqekFJUJKlDpXohzwpk4X8JX2XpMN0jt0HmJOqMsnO+dytDXoRDBxrkKutlKBCdH2sJhjY=
+X-Received: by 2002:a05:6122:411b:b0:4df:2b08:f217 with SMTP id
+ 71dfb90a1353d-4df882c2bf7mr2526033e0c.6.1715338499019; Fri, 10 May 2024
+ 03:54:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+References: <20240510100131.1865-1-hailong.liu@oppo.com>
+In-Reply-To: <20240510100131.1865-1-hailong.liu@oppo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 10 May 2024 22:54:47 +1200
+Message-ID: <CAGsJ_4y0adNv2ukxNeGct3yPDgscWXFKSvSjZiA3S=CeUWEftw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm/vmalloc: fix vmalloc which may return null if
+ called with __GFP_NOFAIL
+To: hailong.liu@oppo.com
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org, 
+	lstoakes@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	xiang@kernel.org, chao@kernel.org, mhocko@suse.com, stable@vger.kernel.org, 
+	Oven <liyangouwen1@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Greg, Arnd,
+On Fri, May 10, 2024 at 10:01=E2=80=AFPM <hailong.liu@oppo.com> wrote:
+>
+> From: "Hailong.Liu" <hailong.liu@oppo.com>
+>
+> commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmalloc")
+> includes support for __GFP_NOFAIL, but it presents a conflict with
+> commit dd544141b9eb ("vmalloc: back off when the current task is
+> OOM-killed"). A possible scenario is as follows:
+>
+> process-a
+> __vmalloc_node_range(GFP_KERNEL | __GFP_NOFAIL)
+>     __vmalloc_area_node()
+>         vm_area_alloc_pages()
+>                 --> oom-killer send SIGKILL to process-a
+>         if (fatal_signal_pending(current)) break;
+> --> return NULL;
+>
+> To fix this, do not check fatal_signal_pending() in vm_area_alloc_pages()
+> if __GFP_NOFAIL set.
+>
+> Fixes: 9376130c390a ("mm/vmalloc: add support for __GFP_NOFAIL")
+> Cc: <stable@vger.kernel.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Suggested-by: Barry Song <21cnbao@gmail.com>
+> Reported-by: Oven <liyangouwen1@oppo.com>
+> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
 
-On Fri, 10 May 2024 12:24:06 +0200
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+Reviewed-by: Barry Song <baohua@kernel.org>
 
-> On Fri, May 10, 2024, at 09:55, Greg Kroah-Hartman wrote:
-> > On Fri, May 10, 2024 at 09:10:41AM +0200, Luca Ceresoli wrote:  
-> >>  
-> >> +config GE_SUNH_CONNECTOR
-> >> +	tristate "GE SUNH hotplug add-on connector"
-> >> +	depends on OF
-> >> +	select OF_OVERLAY
-> >> +	select FW_LOADER
-> >> +	select NVMEM
-> >> +	select DRM_HOTPLUG_BRIDGE  
-> >
-> > Can these be depends instead of select?  'select' causes dependencies
-> > that are hard, if not almost impossible, to detect at times why
-> > something is being enabled.  
-> 
-> I think FW_LOADER needs to be 'select' since it is normally
-> a hidden symbol and gets selected by its users, all the other
-> ones should be 'depends on'.
-
-I see, makes sense.
-
-And as you pointed that out, I realize perhaps DRM_HOTPLUG_BRIDGE could
-become a hidden symbol as it's not expected to be used alone.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> ---
+>  mm/vmalloc.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 125427cbdb87..109272b8ee2e 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3492,7 +3492,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>  {
+>         unsigned int nr_allocated =3D 0;
+>         gfp_t alloc_gfp =3D gfp;
+> -       bool nofail =3D false;
+> +       bool nofail =3D gfp & __GFP_NOFAIL;
+>         struct page *page;
+>         int i;
+>
+> @@ -3549,12 +3549,11 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>                  * and compaction etc.
+>                  */
+>                 alloc_gfp &=3D ~__GFP_NOFAIL;
+> -               nofail =3D true;
+>         }
+>
+>         /* High-order pages or fallback path if "bulk" fails. */
+>         while (nr_allocated < nr_pages) {
+> -               if (fatal_signal_pending(current))
+> +               if (!nofail && fatal_signal_pending(current))
+>                         break;
+>
+>                 if (nid =3D=3D NUMA_NO_NODE)
+> ---
 
