@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-175426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5038C1F82
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:10:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870A78C1F83
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A8251F220D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423472834CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6003B15F40B;
-	Fri, 10 May 2024 08:10:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8199115F411;
+	Fri, 10 May 2024 08:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="V6F4acAT";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="V6F4acAT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVZ9F3Gr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20529131192
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:10:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE7E131192;
+	Fri, 10 May 2024 08:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715328615; cv=none; b=B0LwnHBDR6/7l9kXwx7Wfn4q2uU4WyRNOf+fqe6IMnqHpLLOtq4jKbhpIq5Jm74mnsNRaN4E/zafPViLCqa+hYCesF417XKr3XiR3hX6Kc6+xzMd95q2UVAVU2RtfCdFmtValMjphA05L4QMgef50DViDFHQOc9uz0TZoFU/vZ0=
+	t=1715328651; cv=none; b=orNP6AtHHKL7uDRaHLBrmmGUVj7fn7WpET0yFV2KvFqxZewppAafUNu8Til6bmMh4DA14ff1YZuOP/7iVl6o7g+IZ8fxAtpxF+yx1bzlXqTf07TzABtqPqVPj9maO4pIV5OzRlFvOjsLtonICdsIzNU2SxCtQAB2ypG1V/W5FBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715328615; c=relaxed/simple;
-	bh=zgAuHVFHQr1ht3IEgbfanxeRqi+MyvpjdLBqSFhWuZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mxwIrGTcFOAR8cTqYNR5A1H/pbMJk/30THNlkFgSXrDdQVwxXNQDN2M+pomK9yF/cT1iV2hf8ueXkauqniTvZ9bQcNvLzXWECdlEZTgu3l2LQfCD70dPXGmA/PnCxJtW9fA7EjBEXxQinUTYykjqvKGGn1Op9V9LNvqh/qNhDBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=V6F4acAT; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=V6F4acAT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5044B3EBAF;
-	Fri, 10 May 2024 08:10:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715328612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=khNvkzd8LR0P71VStresAD/ElP/DV4CPOO6yMG2z+nA=;
-	b=V6F4acATUac5VcSM2ZCsP4xzayjl4x+Gy2cVYGnxr8gm2PKSRphltaIxHfpctDxOzRXofe
-	yg/HOUkf8c9DcjibchUGpJ8EHIodzXVgpNt0Y+87+o/O7dhOoriZKK0Dugq0kuXQHJD0sc
-	Oup8aylmjo82XX4tUWEJfMUfNWQBNFY=
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=V6F4acAT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715328612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=khNvkzd8LR0P71VStresAD/ElP/DV4CPOO6yMG2z+nA=;
-	b=V6F4acATUac5VcSM2ZCsP4xzayjl4x+Gy2cVYGnxr8gm2PKSRphltaIxHfpctDxOzRXofe
-	yg/HOUkf8c9DcjibchUGpJ8EHIodzXVgpNt0Y+87+o/O7dhOoriZKK0Dugq0kuXQHJD0sc
-	Oup8aylmjo82XX4tUWEJfMUfNWQBNFY=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 329CD1386E;
-	Fri, 10 May 2024 08:10:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wbIqCmTWPWbYHgAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Fri, 10 May 2024 08:10:12 +0000
-Date: Fri, 10 May 2024 10:10:03 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: David Rientjes <rientjes@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, gthelen@google.coma,
-	Chris Li <chriscli@google.com>
-Subject: Re: [PATCH rfc 0/9] mm: memcg: separate legacy cgroup v1 code and
- put under config option
-Message-ID: <Zj3WWwJ-21xWqRcL@tiehlicka>
-References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
- <jf44dfyaenz6xmn2hcodaginrshw5d5hfhmakdxtj4x6szk6b2@cr2rxamkgj2m>
- <edff9a60-a77f-bc6c-3d07-4f96a97f1e38@google.com>
+	s=arc-20240116; t=1715328651; c=relaxed/simple;
+	bh=ssf9Iev4stgbN7TAdwZopVFc09VyaC1stjJzZv6XHi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=EbHNmkjzr3DlQzUAa7zALFABUSxNWuWEXTjGU5aMP+2XBa1I5MqBBcTAdeGEZ7Zgb2U3yxUiyVl2kXZHV6NYGvS3fjvVkDkFdPmrHAmbNLrdlkp0xseMje+OtzmMzsmwgZ3OXbSSfbJ4E4XWBJg0c4fMCHfgj+UhcT+znpuu4R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVZ9F3Gr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8184C113CC;
+	Fri, 10 May 2024 08:10:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715328651;
+	bh=ssf9Iev4stgbN7TAdwZopVFc09VyaC1stjJzZv6XHi8=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
+	b=tVZ9F3Grp/f0quLHZq8e5wKEvMEIANtDPBzPn3iGEeocJHnT4tC4FB+7Y2waDQDsi
+	 NMAeydiMdfeT5/FbUA3v2sKWm3182DekxVbSer/5lcmJPxjyu1VUqMp89WgIUv5jO3
+	 2FKcJpoZMgwLZ8gdGb7ttA07Vyq26S6xlKOEGGk0fUo/zUjjRkhnEmPvom259BNDCe
+	 dzSMai9vqfVERa2WP9251MTlMBeeRY7LWFJdT6bqHno2m3FMCPiB6VDFq6KXa/NPk6
+	 dWOVGHmes4x8Op9RW9J/uDoa77xXdTEqgEFDkcVDsn9XmFw/CKkqIBXgLIpi9H1d1I
+	 hoKxVuiY0/63A==
+Message-ID: <bb4232d6-2387-425f-9b10-811163e74329@kernel.org>
+Date: Fri, 10 May 2024 10:10:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <edff9a60-a77f-bc6c-3d07-4f96a97f1e38@google.com>
-X-Spam-Flag: NO
-X-Spam-Score: -6.01
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 5044B3EBAF
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-6.01 / 50.00];
-	BAYES_HAM(-3.00)[99.98%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim]
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rtla: Fix -t/--trace[=file]
+To: John Kacur <jkacur@redhat.com>
+References: <20240508212155.71946-1-jkacur@redhat.com>
+Content-Language: en-US, pt-BR, it-IT
+From: Daniel Bristot de Oliveira <bristot@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-devel@vger.kernel.org,
+ lkml <linux-kernel@vger.kernel.org>
+In-Reply-To: <20240508212155.71946-1-jkacur@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 09-05-24 19:59:19, David Rientjes wrote:
-> On Wed, 8 May 2024, Shakeel Butt wrote:
+On 5/8/24 23:21, John Kacur wrote:
+> Normally with a short option we don't provide an equals sign like this
+> -tfile.txt
+> -t file.txt
 > 
-> > Hi Roman,
-> > 
-> > A very timely and important topic and we should definitely talk about it
-> > during LSFMM as well. I have been thinking about this problem for quite
-> > sometime and I am getting more and more convinced that we should aim to
-> > completely deprecate memcg-v1.
-> > 
+> But we do provide an equals sign with the long option like this
+> --trace=file.txt
 > 
-> I think this would be a very worthwhile discussion at LSF/MM, I'm not sure 
-> if it would be too late for someone to make a formal proposal for it to be 
-> included in the schedule.  Michal would know if there is a opportunity.
+> Also, a good parser should work with a space instead of an equals sign
+> --trace file.txt
+> 
+> Most of these are broken!
 
-yes, I think we can and should have this discussion. I will put that on
-the schedule. I will reference this email thread as a topic proposal
-with Shakeel and Roman to lead the session.
--- 
-Michal Hocko
-SUSE Labs
+So, it is set to work _only_ with =file. It would be better to have
+it more robust... yes.
+
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
+> Saving trace to ile.txt
+> File name truncated
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
+> Saving trace to timerlat_trace.txt
+> Default file name used instead of the requested one.
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
+> Saving trace to file.txt
+> This works, but people normally don't use '=' with a short option
+> 
+> /rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
+> Saving trace to ile.txt
+> File name truncated
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
+> timerlat_trace.txt
+> Default file name used instead of the requested one.
+> 
+> After the fix
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
+> Saving trace to file.txt
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
+> Saving trace to file.txt
+> 
+> I also tested -t and --trace without providing a file name both as the
+> last requested option and with a following long and short option
+> 
+> For example
+> 
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t -u
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace -u
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t
+> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace
+> 
+> And all correctly do Saving trace to timerlat_trace.txt as expected
+> 
+> This fix is applied to both timerlat top and hist
+> and to osnoise top and hist.
+
+Ok, code wise it is fine. But it is still missing the changes for the --help
+messages and man pages. Would you mind addressing them?
+
+For instance, removing the need for the =...
+
+s/
+-t/--trace[=file]: save the stopped trace to [file|timerlat_trace.txt]
+/
+-t/--trace [file]: save the stopped trace to [file|timerlat_trace.txt]
+/
+
+Also, for the man page we will have to move the -t option from common_options.rst
+to common_timerlat_options.rst and common_osnoise_options.rst to fix this in
+man rtla-timerlat-top:
+
+       -t, --trace[=file]
+          Save the stopped trace to [file|osnoise_trace.txt].
+
+(it is pointing to the wrong file)
+
+Thanks!
+-- Daniel
+
 
