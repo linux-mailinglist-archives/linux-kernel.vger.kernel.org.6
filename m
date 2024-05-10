@@ -1,51 +1,61 @@
-Return-Path: <linux-kernel+bounces-176103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D238C29F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:31:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DC28C2A0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 113EB282262
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:31:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02461B24123
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFE543149;
-	Fri, 10 May 2024 18:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039AB4436C;
+	Fri, 10 May 2024 18:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m0gx9mlq"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b="CJy1hrkt"
+Received: from raptorengineering.com (mail.raptorengineering.com [23.155.224.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D688511713;
-	Fri, 10 May 2024 18:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FC345012;
+	Fri, 10 May 2024 18:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.155.224.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715365855; cv=none; b=f/klpoYYH9RrBBEEopubT+CqYc6vEoHF8RHY0DEcITdhS757H9bramjGgnAT6nyHLMnr2AC08ikuIHts2Ac7wBBmWgCW9aSg1rI4cNr9HNhAef8aHm5LTo+uixoyux71XbNfLdnUakunXbPHcs6JxgfTTHXEaAA/mR0nrEg3thE=
+	t=1715366594; cv=none; b=qiiUeuWJktCzFUsrlXi8b6jAeCSenRUsASbuLkWa0CEbPLaA9yO6++zyUs1tnJRXW2uqFq1m/SHWaqTTX1e8rRcIHCQcbNDbrKsiK+dLuD6BSSEp0jZSG+1XCWYl4rai7LEeWfGeKvJhxnMOxKbGNSq6u0KpwvsqkmPM/GYPWEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715365855; c=relaxed/simple;
-	bh=3iPOfcunpN3iBQwE1TT0LZMff8smSsv0J6fKYFJXBeE=;
+	s=arc-20240116; t=1715366594; c=relaxed/simple;
+	bh=HgF/3Xa5VSNjvU/9axvTODFvHXS3OxmrPA3wQpo+6SY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tS8vYR/iShMJP5Sfg/mjfV4Db6S0bb36q/AUTtBLYpJIS8YKxtePEC4UzSIU8ROIrXafisuEwrzKTfOf9gktDPpzMMMi0UWWv45n8qLt/+/oujFTfDRPc+i25iJ2w9PV8YjbWZtr+ZppBCI8pwk34UtWTsrnZSoAMlRqgfgSxSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m0gx9mlq; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=aONa/loSB4zk1VdXAk5+sCgpvMBlByp57fP/65dugMk=; b=m0gx9mlqN2qsVRL4rOqe25juBc
-	yA0kqCouo2T4ssz09wwpNdH7mciXKGsckJ9h4wZx5M0NEj/pn0Au4FsOokOQwWA598kWpsKMzVwMx
-	8pJPR9OmJipZANVa8/cA/TqsToThER+ithPi34BkEbVzx+xud1JpoRiujhkZ4Nx5rFFCEuXOGPARR
-	YZu3xjc0Vh8RxrfkNQ94R//eogMRxW9YXvi4VFxfI/uetE9ucwLCwDXo2AeItI/uLl+P2zxcXEefF
-	OMaciRmWwrT9sTVx+JJZ3TWyoDQIT+oMBIY6auFOUjVXmWL3s/P3ggHhWx8rYXJyIYVfq+mPFwual
-	Ux5fBVVA==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s5V18-000000068zh-3Gsl;
-	Fri, 10 May 2024 18:30:50 +0000
-Message-ID: <463d6564-ea67-4f1f-92f2-196a1334cc3c@infradead.org>
-Date: Fri, 10 May 2024 11:30:49 -0700
+	 In-Reply-To:Content-Type; b=SwS1hvQQsW3nlUhKYcyfKfPKOH9UYfUwwLsPC4cJ/La/5HnxYYAJyZf5qHTERL9taKz6TvopgYC2iikMD9rTmJHgr+fNui2jjN6ZmiQXGdQTk0s9Z07+k6we7PKw09Q3Ift4ZenX4ejN8tHON1ioO+eGv5u5uLDC7fEGE6Wzbt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com; spf=pass smtp.mailfrom=raptorengineering.com; dkim=pass (1024-bit key) header.d=raptorengineering.com header.i=@raptorengineering.com header.b=CJy1hrkt; arc=none smtp.client-ip=23.155.224.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=raptorengineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raptorengineering.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id 8AD098286B62;
+	Fri, 10 May 2024 13:33:16 -0500 (CDT)
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id 6_lArAH4eB26; Fri, 10 May 2024 13:33:15 -0500 (CDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.rptsys.com (Postfix) with ESMTP id BE7B9828545C;
+	Fri, 10 May 2024 13:33:15 -0500 (CDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.rptsys.com BE7B9828545C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=raptorengineering.com; s=B8E824E6-0BE2-11E6-931D-288C65937AAD;
+	t=1715365995; bh=/XIFIR9y/2aocYtN3V2XjaxnPUosdNnwRa6IYBoAXzA=;
+	h=Message-ID:Date:MIME-Version:To:From;
+	b=CJy1hrktEB9x2OiZs64ig8A6vj/hAO/TrVpn4xyLbZrYt1jiF5E6+9uKZ8lcnwXhs
+	 UTYcm1KtnLbVMzjSISe55+IxF/BbadMrJ3848lhIIXnj9P2J3ZR3iypriRFHaJsL0I
+	 MYgsa2Nqe9lxgudeG0G8f12VdNsjaUYb2e4/U6/w=
+X-Virus-Scanned: amavisd-new at rptsys.com
+Received: from mail.rptsys.com ([127.0.0.1])
+	by localhost (vali.starlink.edu [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id DW4fhZglJ2dW; Fri, 10 May 2024 13:33:15 -0500 (CDT)
+Received: from [10.11.0.2] (5.edge.rptsys.com [23.155.224.38])
+	by mail.rptsys.com (Postfix) with ESMTPSA id CCE2E82853A8;
+	Fri, 10 May 2024 13:33:14 -0500 (CDT)
+Message-ID: <202e8af6-8073-4d87-a38f-746644bb338d@raptorengineering.com>
+Date: Fri, 10 May 2024 13:33:13 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,118 +63,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 12/13] mm: page_frag: update documentation for
- page_frag
-To: Yunsheng Lin <linyunsheng@huawei.com>, davem@davemloft.net,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Alexander Duyck <alexander.duyck@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org
-References: <20240508133408.54708-1-linyunsheng@huawei.com>
- <20240508133408.54708-13-linyunsheng@huawei.com>
- <0ac5219b-b756-4a8d-ba31-21601eb1e7f4@infradead.org>
- <ff1089c8-ad02-04bb-f715-ca97c118338b@huawei.com>
+Subject: Re: [RFC PATCH v2 0/6] powerpc: pSeries: vfio: iommu: Re-enable
+ support for SPAPR TCE VFIO
+To: Jason Gunthorpe <jgg@ziepe.ca>, Shivaprasad G Bhat <sbhat@linux.ibm.com>
+Cc: kvm@vger.kernel.org, aik@ozlabs.ru, linux-kernel@vger.kernel.org,
+ oohall@gmail.com, ruscur@russell.cc, brking@linux.vnet.ibm.com,
+ robh@kernel.org, svaidy@linux.ibm.com, aneesh.kumar@kernel.org,
+ joel@jms.id.au, naveen.n.rao@linux.ibm.com, msuchanek@suse.de,
+ jroedel@suse.de, gbatra@linux.vnet.ibm.com, npiggin@gmail.com,
+ alex.williamson@redhat.com, mahesh@linux.ibm.com,
+ tpearson@raptorengineering.com, Alexey Kardashevskiy <aik@amd.com>,
+ vaibhav@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
+References: <171450753489.10851.3056035705169121613.stgit@linux.ibm.com>
+ <20240501140942.GA1723318@ziepe.ca>
+ <703f15b0-d895-4518-9886-0827a6c4e769@amd.com>
+ <8c28a1d5-ac84-445b-80e6-a705e6d7ff1b@linux.ibm.com>
+ <20240506174357.GF901876@ziepe.ca>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <ff1089c8-ad02-04bb-f715-ca97c118338b@huawei.com>
+From: Shawn Anastasio <sanastasio@raptorengineering.com>
+In-Reply-To: <20240506174357.GF901876@ziepe.ca>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi.
+On 5/6/24 12:43 PM, Jason Gunthorpe wrote:
+> On Sat, May 04, 2024 at 12:33:53AM +0530, Shivaprasad G Bhat wrote:
+>> We have legacy workloads using VFIO in userspace/kvm guests running
+>> on downstream distro kernels. We want these workloads to be able to
+>> continue running on our arch.
+> 
+> It has been broken since 2018, I don't find this reasoning entirely
+> reasonable :\
+>
 
-On 5/10/24 5:32 AM, Yunsheng Lin wrote:
-> On 2024/5/9 8:44, Randy Dunlap wrote:
->>
->>
-> 
->>>  
->>> +/**
->>> + * page_frag_cache_is_pfmemalloc() - Check for pfmemalloc.
->>> + * @nc: page_frag cache from which to check
->>> + *
->>> + * Used to check if the current page in page_frag cache is pfmemalloc'ed.
->>> + * It has the same calling context expection as the alloc API.
->>> + *
->>> + * Return:
->>> + * Return true if the current page in page_frag cache is pfmemalloc'ed,
->>
->> Drop the (second) word "Return"...
-> 
-> Did you mean something like below:
-> 
-> * Return:
-> * Return true if the current page in page_frag cache is pfmemalloc'ed,
-> * otherwise false.
-> 
-> Or:
-> 
-> * Return:
-> * true if the current page in page_frag cache is pfmemalloc'ed, otherwise
-> * return false.
+Raptor is currently working on an automated test runner setup to
+exercise the VFIO subsystem on PowerNV and (to a lesser extent) pSeries,
+so breakages like this going forward will hopefully be caught much more
+quickly.
 
-This one ^^^^^^^^^^^^^^^^^^^^.
-
+>> I firmly believe the refactoring in this patch series is a step in
+>> that direction.
 > 
->>
->>> + * otherwise return false.
->>> + */
->>>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
->>>  {
->>>  	return encoded_page_pfmemalloc(nc->encoded_va);
->>> @@ -92,6 +109,19 @@ void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
->>>  				 unsigned int fragsz, gfp_t gfp_mask,
->>>  				 unsigned int align_mask);
->>>  
->>> +/**
->>> + * page_frag_alloc_va_align() - Alloc a page fragment with aligning requirement.
->>> + * @nc: page_frag cache from which to allocate
->>> + * @fragsz: the requested fragment size
->>> + * @gfp_mask: the allocation gfp to use when cache need to be refilled
->>
->>                                                       needs
->>
->>> + * @align: the requested aligning requirement for 'va'
->>
->>                  or                                  @va
-> 
-> What does the 'or' means?
+> But fine, as long as we are going to fix it. PPC really needs this to
+> be resolved to keep working.
+>
 
-I was just trying to say that you could use
-     'va'
-or
-     @va
-here.
+Agreed. Modernizing/de-cluttering PPC's IOMMU code in general is another
+task that we're working towards. As mentioned previously on the list,
+we're working towards a more standard IOMMU driver for PPC that can be
+used with dma_iommu, which I think will be a good step towards cleaning
+this up. Initially PowerNV is going to be our target, but to the extent
+that it is possible and useful, pSeries support could be brought in
+later.
 
-> 
->>
-> 
-> ...
-> 
->>
->>                                                  needs
->>
->>> + *
->>> + * Prepare a page fragment with minimum size of ‘fragsz’, 'fragsz' is also used
->>
->>                                                    'fragsz'. 'fragsz'
->> (don't use fancy single quote marks)
-> 
-> You mean using @parameter to replace all the parameters marked with single
-> quote marks, right?
+> Jason
 
-That's what I would do, but there is also the issue of the first occurrence of
-quoted fragsz that uses Unicode quote marks, but the second occurrence of
-quoted fragsz uses plain ASCII quote marks. This happens in multiple places
-(probably due to copy-paste).
-
-> 
-> ...
-
-Thanks.
-
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+Thanks,
+Shawn
 
