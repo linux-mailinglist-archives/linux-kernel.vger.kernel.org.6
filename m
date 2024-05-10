@@ -1,204 +1,118 @@
-Return-Path: <linux-kernel+bounces-175269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 470CE8C1D4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:02:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614FD8C1D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3101C21DDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:02:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06623B22A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A564149DEE;
-	Fri, 10 May 2024 04:02:30 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DA014C5A9;
+	Fri, 10 May 2024 04:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuJ13vB4"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC0E149C56
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5AE14A098;
+	Fri, 10 May 2024 04:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715313749; cv=none; b=F30al+H+dn/p1xAPWZcnSkPj59v55QDFVjLTd4CHbnBB3h/f/KjzmgkGZK6080Dw2Vsp5Uo2F/pXsrbfBvoQfNr4DQeBoTFzKDW33m4IH2fAGe0GMKAX244hmYo+wvlCTiMLwaFmKnaO9IENVCOAesNUW3HPvtErbAI8vzdQ+ck=
+	t=1715313780; cv=none; b=Y4xtAYnSox1R1npq4TiCxrK4xGLPWBzAPJ3+0w9dAxQqSsvLohCQTUmiTNkdSS4mQ3B9LVkM0WZeYxtQh7A4LK40WdPXDT992liqbiwuHz25+L1fiHxtJmqHF+nPpEGeqsjCPiuQ2VUUFjpTP9JEGQPn4obcdcRJe+RYk3zhmH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715313749; c=relaxed/simple;
-	bh=FX4YDm1+K2XG8kzOQ0sYIE8tr2B0jbpKTCbNR6tcPdc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pGFHs+k0HfotjGw8js2lhyAcsIRx611t7f6dgw/p+NR4nhxKxxGrnfhTQsvCziwOBWBv/6KSu3uLA0AcUGL/WB5VE+fUh3VvemjpCrcW7O0f3MjucOzrjt5YNKFx6vrnNlbwPuXFFv2qfBl972qmoU6SyNaR8HIt0GR4H943vc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7ddf08e17e4so123809539f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 21:02:28 -0700 (PDT)
+	s=arc-20240116; t=1715313780; c=relaxed/simple;
+	bh=jvSmy0FOqXnRlpmANSVHSxZbSvwbfOidyhPqHt9kz0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=efuQ4ctE4ewoxZpq2uC6L0SgSCXCOzIevJ/uUSOjVyTAHerP8cuqZ8Sslfe9b2s03MjkhNyZMhyQsnFKG6/PzV9MYpDmDkdP6rcd6+Wp2Mh8KMGHYgJGte5qbQUOEeciCQSehrYVZnQHAnQRKbLACzCQP9Nn7aH7aUHEIhQpGk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuJ13vB4; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-36c5eedd124so6777535ab.2;
+        Thu, 09 May 2024 21:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715313770; x=1715918570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OEJsQFf2xgBkjpapTfqeer4vWYgNIVVXGtaAWZEXf5Q=;
+        b=kuJ13vB4G2VWJVwmeubBZsY001g6m4EbbqZAmb7qKeKqRftjVE51Xvv1JZybsC905b
+         O+ajYibx9y9bPrUOXWXsFBnDXLu8JIFn0POc3n7zp/KdKMGpdE0UZz/tNcytkMoOnxgg
+         mZf10acfZnqvebk5F0GsTZA1Oh1OLx+Hv07t2PbvBOWpPMT6CCA4cH18zhrOki+6jLgw
+         YcnBEFm1qn3/z4g4gMEmzvp/dRGpAfLi43CC0f62SbYcA3PgCgzRcPK9W1N1QmTTr/Uz
+         1kNk5cuzTJ4/B4/XX9TmIGE5BrEo30piASJrO++6ahjYn5SbLiEvf1z7n34Qv6M2n8gT
+         7/wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715313747; x=1715918547;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=If1PDv1uBM3szrPcm69kN2kOnkiY7/ecFpsuuHWQ2ds=;
-        b=R/xWlXv8l/R7u3+oihCFhVafGusrBBheb+6mDCWGho1aGkBllPv6uA0EjqPffd27/i
-         vbgZ41r06bT8JAtwWQqnRTi2EsNMpCIGwtIB+NEcUNFxNevCGpJ5HYY8xZRRGmrSp2ta
-         1Z1WbTYhZMgUzi1D9i2Rukyh1qKP890nnINjq2/Mqd46dSr+NBeDmSNPgTMP8xbuKeJq
-         CN42Ni/I2KAfvF2B4XF7hdXKIhqLuVSRr+Pq7MTSalF7MR3XFzLI97LQ2kmtFqt3PAKf
-         sMckPs+S5qdBVozFJlF3coPy6+FLwZoTiAWpr4pq8NajvzunyU/VBES1QIbb1I0k99sO
-         endg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg+CjXfHh8qQ2/gMtWOUATrCKISjoezcUXuXeRC8K0q/T2osMovWrs+OCy7th/YLyRtDr2SDHVvg0Ctq2dRYUd2TZBZWLSIrNmd+YJ
-X-Gm-Message-State: AOJu0Yy6AD7s3aCorEUWc/wEzWxuFBSVKwTjytZkWEwahTsO9s2qCZ0f
-	7vJkxxK15uYjxnVAZbtwr3cfcvFPxQxpHwJnTuJ4VLMtsWMMtqMKj4csuVjx5mYx/eHEh6kqjhZ
-	epSg7K9GDqyTDdETeZetTplKO72/fCw5H2TSEy4vWX9/i4B8iR2JgT/4=
-X-Google-Smtp-Source: AGHT+IHbBwegPr7g9i4rDVm3C4RvodhKYqtM8sMkz5gW79d+RrZRpzYuSXDxq+ROajsAmwDC+0y1nsJ3lbeR5B2XK+/DXiAIRt7u
+        d=1e100.net; s=20230601; t=1715313770; x=1715918570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OEJsQFf2xgBkjpapTfqeer4vWYgNIVVXGtaAWZEXf5Q=;
+        b=FrejcXdxugf/02RyFF3sMn6nGs07+KYDE/jK49ofWD5m68nzBjz4JM+lFjJHKIO1WT
+         Hav/PVSEmEE04nAa037DdHvosedO5Z4zIN4LNfcyrFovNCHPKFsr1C3EXXbSdOgpDGmX
+         H9CIxDrO8mRZ630webACmLaTNMC3uj+9cWYY6MGRsWCdBu3G+oOKrN3jKfuE8evbGdW+
+         aBu9YjtvZzInQ3qTRKTgtNLlexzEx6Mfg9dae7Dq0aXrHSgT6Qicaepi4FdsN+RgQS2+
+         Hodzm1hgg4QhqBPKthM5S38H6ZW90wFxYe41eHIH7bYNBTxi0PKJncDFOQ7Bz329Ekmb
+         xvlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLlXG/rgPCGBglnZV7p7vpr36MJFJQZAA9wXhjkOOBcma8b6VQ4Ge90wKThEDO7Tu1ugzggb/+RnuFDMRcVsysFTDMMS7o75iBxtxvuLJlF39HjyGNKtE3JE6HIibdnsC+dTIDRhiXVCF0rp8UlcKBooUXWa+4dNjFvrFeLOCfNzx9AA==
+X-Gm-Message-State: AOJu0YzI9o1NY6ec86X0kyfC3UWNTfu5QHXRMq/tVeet/R/ltRCW44fH
+	BHsirDmgXznCOheGXQ7gcdqoQwv20s0i8R4wVj6x51Mwfwcu2bPOeYSdGcDM1yUg1vTfRlBpJ5j
+	QEV9I4fXck4oDWhVnKPiTNM0aLek=
+X-Google-Smtp-Source: AGHT+IF/DRHYkgq9YNV2uNigtRq8cxq3EAkCVJLj/pteVRJ9Grp/Sf/n2cJ8GF/Gh2HUaqN1IhBXSRvg/7uJWGVE1Uc=
+X-Received: by 2002:a05:6e02:1909:b0:36c:f0b:4f55 with SMTP id
+ e9e14a558f8ab-36cc14f7bcdmr18846195ab.26.1715313770452; Thu, 09 May 2024
+ 21:02:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1609:b0:7da:bb15:56fd with SMTP id
- ca18e2360f4ac-7e1b51facc1mr7556439f.1.1715313747497; Thu, 09 May 2024
- 21:02:27 -0700 (PDT)
-Date: Thu, 09 May 2024 21:02:27 -0700
-In-Reply-To: <0000000000000fe556061725a7be@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000099249d0618119a0c@google.com>
-Subject: Re: [syzbot] [crypto?] KMSAN: uninit-value in aes_encrypt (5)
-From: syzbot <syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715219038-32453-3-git-send-email-shengjiu.wang@nxp.com> <0d10a689504be61c50b186d89ddbf9d1.sboyd@kernel.org>
+In-Reply-To: <0d10a689504be61c50b186d89ddbf9d1.sboyd@kernel.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 10 May 2024 12:02:39 +0800
+Message-ID: <CAA+D8AP9uS1ePxSeSUPGCGe42U5sNguZYQS3d-9T305d2iVbhQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] clk: imx: clk-audiomix: Add reset controller
+To: Stephen Boyd <sboyd@kernel.org>, p.zabel@pengutronix.de
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, conor+dt@kernel.org, 
+	festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de, 
+	krzk+dt@kernel.org, marex@denx.de, mturquette@baylibre.com, peng.fan@nxp.com, 
+	robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Fri, May 10, 2024 at 6:04=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+>
+> Quoting Shengjiu Wang (2024-05-08 18:43:56)
+> > Audiomix block control can be a reset controller for
+> > Enhanced Audio Return Channel (EARC), which is one of
+> > modules in this audiomix subsystem.
+> >
+> > The EARC PHY software reset and EARC controller software
+> > reset need to be supported.
+>
+> Can you move this to drivers/reset and use auxiliary device APIs to do
+> that? The idea would be to have reset maintainers review reset code.
 
-HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14d9bfdf180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=617171361dd3cd47
-dashboard link: https://syzkaller.appspot.com/bug?extid=aeb14e2539ffb6d21130
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1617adb8980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112f45d4980000
+Thanks for your comments.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/232e7c2a73a5/disk-45db3ab7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7e9bf7c936ab/vmlinux-45db3ab7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5e8f98ee02d8/bzImage-45db3ab7.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fcc88c919ed9/mount_1.gz
+This is a minor reset control only for XCVR devices, two reset bits
+are accessed.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aeb14e2539ffb6d21130@syzkaller.appspotmail.com
+If we move to an auxiliary device,  we need to define a new header file
+and a new driver, which will bring more code size and complexity.
 
-fscrypt: AES-256-XTS using implementation "xts(ecb(aes-fixed-time))"
-=====================================================
-BUG: KMSAN: uninit-value in subshift lib/crypto/aes.c:149 [inline]
-BUG: KMSAN: uninit-value in aes_encrypt+0x15cc/0x1db0 lib/crypto/aes.c:282
- subshift lib/crypto/aes.c:149 [inline]
- aes_encrypt+0x15cc/0x1db0 lib/crypto/aes.c:282
- aesti_encrypt+0x7d/0xf0 crypto/aes_ti.c:31
- crypto_ecb_crypt crypto/ecb.c:23 [inline]
- crypto_ecb_encrypt2+0x18a/0x300 crypto/ecb.c:40
- crypto_lskcipher_crypt_sg+0x36b/0x7f0 crypto/lskcipher.c:228
- crypto_lskcipher_encrypt_sg+0x8a/0xc0 crypto/lskcipher.c:247
- crypto_skcipher_encrypt+0x119/0x1e0 crypto/skcipher.c:669
- xts_encrypt+0x3c4/0x550 crypto/xts.c:269
- crypto_skcipher_encrypt+0x1a0/0x1e0 crypto/skcipher.c:671
- fscrypt_crypt_data_unit+0x4ee/0x8f0 fs/crypto/crypto.c:144
- fscrypt_encrypt_pagecache_blocks+0x422/0x900 fs/crypto/crypto.c:207
- ext4_bio_write_folio+0x13db/0x2e40 fs/ext4/page-io.c:526
- mpage_submit_folio+0x351/0x4a0 fs/ext4/inode.c:1869
- mpage_process_page_bufs+0xb92/0xe30 fs/ext4/inode.c:1982
- mpage_prepare_extent_to_map+0x1702/0x22c0 fs/ext4/inode.c:2490
- ext4_do_writepages+0x1117/0x62e0 fs/ext4/inode.c:2632
- ext4_writepages+0x312/0x830 fs/ext4/inode.c:2768
- do_writepages+0x427/0xc30 mm/page-writeback.c:2612
- filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x1bf/0x370 mm/filemap.c:788
- generic_buffers_fsync_noflush+0x84/0x3e0 fs/buffer.c:602
- ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
- ext4_sync_file+0x5ba/0x13a0 fs/ext4/fsync.c:151
- vfs_fsync_range+0x20d/0x270 fs/sync.c:188
- generic_write_sync include/linux/fs.h:2795 [inline]
- ext4_buffered_write_iter+0x9ad/0xaa0 fs/ext4/file.c:305
- ext4_file_write_iter+0x208/0x3450
- call_write_iter include/linux/fs.h:2110 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb63/0x1520 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+So is it necessary to separate it to another auxiliary driver/device?
 
-Uninit was stored to memory at:
- le128_xor include/crypto/b128ops.h:69 [inline]
- xts_xor_tweak+0x4ae/0xbf0 crypto/xts.c:123
- xts_xor_tweak_pre crypto/xts.c:135 [inline]
- xts_encrypt+0x296/0x550 crypto/xts.c:268
- crypto_skcipher_encrypt+0x1a0/0x1e0 crypto/skcipher.c:671
- fscrypt_crypt_data_unit+0x4ee/0x8f0 fs/crypto/crypto.c:144
- fscrypt_encrypt_pagecache_blocks+0x422/0x900 fs/crypto/crypto.c:207
- ext4_bio_write_folio+0x13db/0x2e40 fs/ext4/page-io.c:526
- mpage_submit_folio+0x351/0x4a0 fs/ext4/inode.c:1869
- mpage_process_page_bufs+0xb92/0xe30 fs/ext4/inode.c:1982
- mpage_prepare_extent_to_map+0x1702/0x22c0 fs/ext4/inode.c:2490
- ext4_do_writepages+0x1117/0x62e0 fs/ext4/inode.c:2632
- ext4_writepages+0x312/0x830 fs/ext4/inode.c:2768
- do_writepages+0x427/0xc30 mm/page-writeback.c:2612
- filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
- __filemap_fdatawrite_range mm/filemap.c:430 [inline]
- file_write_and_wait_range+0x1bf/0x370 mm/filemap.c:788
- generic_buffers_fsync_noflush+0x84/0x3e0 fs/buffer.c:602
- ext4_fsync_nojournal fs/ext4/fsync.c:88 [inline]
- ext4_sync_file+0x5ba/0x13a0 fs/ext4/fsync.c:151
- vfs_fsync_range+0x20d/0x270 fs/sync.c:188
- generic_write_sync include/linux/fs.h:2795 [inline]
- ext4_buffered_write_iter+0x9ad/0xaa0 fs/ext4/file.c:305
- ext4_file_write_iter+0x208/0x3450
- call_write_iter include/linux/fs.h:2110 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb63/0x1520 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+And add Philipp Zabel in loop for review.
 
-Uninit was created at:
- __alloc_pages+0x9d6/0xe70 mm/page_alloc.c:4598
- alloc_pages_mpol+0x299/0x990 mm/mempolicy.c:2264
- alloc_pages mm/mempolicy.c:2335 [inline]
- folio_alloc+0x1d0/0x230 mm/mempolicy.c:2342
- filemap_alloc_folio+0xa6/0x440 mm/filemap.c:984
- __filemap_get_folio+0xa10/0x14b0 mm/filemap.c:1926
- ext4_write_begin+0x3e5/0x2230 fs/ext4/inode.c:1159
- generic_perform_write+0x400/0xc60 mm/filemap.c:3974
- ext4_buffered_write_iter+0x564/0xaa0 fs/ext4/file.c:299
- ext4_file_write_iter+0x208/0x3450
- call_write_iter include/linux/fs.h:2110 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xb63/0x1520 fs/read_write.c:590
- ksys_write+0x20f/0x4c0 fs/read_write.c:643
- __do_sys_write fs/read_write.c:655 [inline]
- __se_sys_write fs/read_write.c:652 [inline]
- __x64_sys_write+0x93/0xe0 fs/read_write.c:652
- x64_sys_call+0x3062/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 PID: 5048 Comm: syz-executor132 Not tainted 6.9.0-rc7-syzkaller-00056-g45db3ab70092 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-=====================================================
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Best Regards
+Shengjiu Wang
 
