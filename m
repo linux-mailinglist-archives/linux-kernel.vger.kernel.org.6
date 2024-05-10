@@ -1,193 +1,152 @@
-Return-Path: <linux-kernel+bounces-176238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F2C8C2BE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:30:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9778C2BEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C95E2837E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:30:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F981F21ECE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:32:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D1D13BADA;
-	Fri, 10 May 2024 21:30:11 +0000 (UTC)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC9613BC06;
+	Fri, 10 May 2024 21:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PW0loYjB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122711BDC8;
-	Fri, 10 May 2024 21:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2897613BAD8;
+	Fri, 10 May 2024 21:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715376611; cv=none; b=V4UqNVcfFjqSOe8CGkEi7lgKasbG3C+LYjCVkqH8ZyQSJ2/LZiI4ToA+1VAPs8GA9wtlgnkapE8GRet/Kf6+k1QEQaZGaMIRhntLNi8s9prYVS5wIIv7MRRRZID75t5Q8d7578rhSyQebUxVKuaQS6krWD2Qyp73n4iTRpKYUkE=
+	t=1715376747; cv=none; b=DmIn9xt0IszqhYShyfEdJcYWGkAI0f0FLnUimkOhl5V9X5w6a6dUCqWoExSfjN6qYDONhmvc8Shikhg+/QZr/fRtNNfcj0PUr7x2UN/kSnwV+pScFC0DxqU3ANq4eSSsQ4SHg9MsIXft85RwX5wb36Z7RGXO5VTlE+0pXk2g+kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715376611; c=relaxed/simple;
-	bh=eS1QIdyLTdFWFAB2PrpvAfGPAebgZ8VSah0rayF6MeI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DVOMbY96HvfY0jetv/y+CY40lU4asbmSyqZ0r0WpzniUiNcGuUaTGuAtEg+JqmnmXVyxu6qSjTTrENGv2IUYhs+LIo2Ni6mH4xXX4Rf/C++YzBJosGLT0qfySOXyD2OWc6KruS1JW+O0y1cb9hzWgXEdbbCBiA48+P8OqLI1BmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b36232fa48so1943598a91.1;
-        Fri, 10 May 2024 14:30:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715376609; x=1715981409;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMAf5rKeg6w+VI/gIYLoiifCQecVQKRvthW/4/8BwYI=;
-        b=R5O/sUHHIYW/puUQkGVtrc9X+AkD8yk67JDKaV78ke35tW1LKwYaBh+AvsvqMnogVH
-         RssM/edkdBC0BsA65H57j186FbtnKzxx5qdqxTe8tVSA/FkjWdVpWdrBwfgk5voS8rL0
-         Cql2jEWEk22Vir1tqBGvpSQeDSabwJNf29TIb/vKCVGiN3mlHtM4k+/R4JmFwGORUVTn
-         ENp1+dTvB3qj2V0WTwBuFj35k6Z8Idj1ZcBA5CDCXjUfklqhekIw7/xol91ydKIpNhNM
-         msAKy+Lf7mctms0itQSzDTnTE1ZO1EyLmyuQmIrE935ysxMsdnODXfFfjQpgO/GwSBbr
-         azmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUD0ebiNAJrRg+goAfOkwdeEhKAKaEbc3Z9FNj0TZpj3ET5zxSita+Z97ic+isOTBu6OHsJdwltZC9tTX9m9XXVYv/P272QkqeAxahImhm3r0wqS0stBUyVWsYAN01hOpEYisL/82e5o8LJGqes5yGnAKb1vu8PG4wFSEvvNZ8lGTXDg==
-X-Gm-Message-State: AOJu0YyW5Xwp8n59q52xxJKzakjwT1+kxTWKaqrlZQ2kO0Fsw0SZX738
-	pNcdAUcY48ISxh3a7BYql+aqOw+YN2/YjRxNZTJHNXsjE943+Xfl4KSlLQTGpaVojrxWsK7CuBn
-	VCyE4ypCdn8CAzU8sZtZrRHSiVqE=
-X-Google-Smtp-Source: AGHT+IFZkbSenvkLhokyv4EMxK86TWp9XlqSlcLUgh3x5kwN3NGOIxUQGzTPrJdFy06QmvA9W3LCymPfU5Y4Ft3Wj+I=
-X-Received: by 2002:a17:90a:296:b0:2b3:463d:992b with SMTP id
- 98e67ed59e1d1-2b6ccef6431mr3678869a91.42.1715376609286; Fri, 10 May 2024
- 14:30:09 -0700 (PDT)
+	s=arc-20240116; t=1715376747; c=relaxed/simple;
+	bh=HaAF5YLZNnHFDlTcRRRh1aLznDIBDt54LRmZro1kBkY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dp+3ehmoTkn87EdalLDWPcTq7n6ySKF67kUaRLd2LvYWqJKBQSBVL2vyuj7Qog2EcOT5onvnONzXZEqyIiB8xah4Mky+o/COyefHpr07KbcrpeLRcS6fytUFCFyuRaoL2YQYuChDqL2XDZJsmxCLC6fJMUqi+HDuVSzcwN9L6Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PW0loYjB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4010FC2BD11;
+	Fri, 10 May 2024 21:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715376745;
+	bh=HaAF5YLZNnHFDlTcRRRh1aLznDIBDt54LRmZro1kBkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PW0loYjBa6QcXh8gmikKKdFQ+JniYLnMAwVmZvGkjTJ0rDFzoJZbvYtI56baJyF+I
+	 gc2m1x1XG5f/Df6pBje4TguN/vGK8UrmL+3rV64DotR+AG/+iwJMfgQx78wYWNpv6X
+	 kb1gvVD0w4RjMFvfoE1zDAPMNGRkLXkcCJ6AcvZPHLmFJkW5zLMyZoTpIuQOf++BXu
+	 5cqXNmgNIDj8OhwCxbZDyuQ34sZWdpai2kLZHn/qPXBqevODaevVM4e+5E8A8fWiYw
+	 7ZqOFAvSOJLpZR1pveFlSDZhpQyySDjVqIbFXdbrunnUNYO+a9bnZBV0h32zvviK8d
+	 T/Or0mgVLdhXQ==
+Date: Fri, 10 May 2024 22:32:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Evan Green <evan@rivosinc.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v6 06/17] riscv: Add vendor extensions to /proc/cpuinfo
+Message-ID: <20240510-unexposed-desecrate-e30674d4530b@spud>
+References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
+ <20240503-dev-charlie-support_thead_vector_6_9-v6-6-cb7624e65d82@rivosinc.com>
+ <20240507-divisive-swoop-c2737a2d9a9f@spud>
+ <20240510-childcare-outlook-d18e3cc5ccb3@spud>
+ <Zj6QxisrBZSWq7ax@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510191423.2297538-1-yabinc@google.com> <20240510191423.2297538-4-yabinc@google.com>
-In-Reply-To: <20240510191423.2297538-4-yabinc@google.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Fri, 10 May 2024 14:29:58 -0700
-Message-ID: <CAM9d7chNz8-84m28q5qSLjUjZ=Ni1CA_JzbB_P+YJooLQd85YA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] perf/core: Check sample_type in perf_sample_save_brstack
-To: Yabin Cui <yabinc@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="a4gruBJ406lMx+Li"
+Content-Disposition: inline
+In-Reply-To: <Zj6QxisrBZSWq7ax@ghost>
+
+
+--a4gruBJ406lMx+Li
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 12:14=E2=80=AFPM Yabin Cui <yabinc@google.com> wrot=
-e:
->
-> Check sample_type in perf_sample_save_brstack() to prevent
-> saving branch stack data when it isn't required.
->
-> Suggested-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Yabin Cui <yabinc@google.com>
+On Fri, May 10, 2024 at 02:25:26PM -0700, Charlie Jenkins wrote:
+> On Fri, May 10, 2024 at 09:50:32PM +0100, Conor Dooley wrote:
+> > On Tue, May 07, 2024 at 06:03:19PM +0100, Conor Dooley wrote:
+> > > On Fri, May 03, 2024 at 11:18:21AM -0700, Charlie Jenkins wrote:
+> > > > All of the supported vendor extensions that have been listed in
+> > > > riscv_isa_vendor_ext_list can be exported through /proc/cpuinfo.
+> > > >=20
+> > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > >=20
+> > > This seems fine, thanks for updating this interface :)
+> > >=20
+> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+> > Hmm, actually the automation on patchwork is complaining a bunch about
+> > the series, but I think that's mostly false positives except for this
+> > patch. The nommu defconfigs are prob the easiest way to reproduce this:
+> >   /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:41:55: er=
+ror: 'struct riscv_isa_vendor_ext_data_list' has no member named 'vendor_bi=
+tmap'
+> >   /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:42:60: er=
+ror: 'struct riscv_isa_vendor_ext_data_list' has no member named 'per_hart_=
+vendor_bitmap'; did you mean 'per_hart_isa_bitmap'?
+> >   /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:43:60: er=
+ror: 'struct riscv_isa_vendor_ext_data_list' has no member named 'bitmap_si=
+ze'
+> >=20
+> > Cheers,
+> > Conor.
+>=20
+> The false negatives always throw me off.
 
-It seems powerpc has the similar bug, then you need this:
+Aye, it's pretty frustrating for me trying to report anything. Any time
+a bunch of headers change produces a bunch of file rebuilds and
+therefore warnings. That should in theory be caught by the fact that we
+apply the patch & build, jump back to HEAD~1, build that & grab the
+"before" warning state and then jump forward, rebuild the patch and
+gather the "after" state. The idea is that that is an apples:apples
+comparison as the same files will need to be rebuilt for both but it is
+falling over somewhere. Maybe I'll have time to look into that soonTM.
 
-Fixes: eb55b455ef9c ("perf/core: Add perf_sample_save_brstack() helper")
+> The errors are also offset by
+> one patch.
 
-Thanks,
-Namhyung
+Ye, that's my bad I think. In a rush off to another patch before the
+thought I had on it left my brain and just pressed reply on the wrong
+email. Sorry bout that :)
 
-> ---
->  arch/x86/events/amd/core.c |  3 +--
->  arch/x86/events/core.c     |  3 +--
->  arch/x86/events/intel/ds.c |  3 +--
->  include/linux/perf_event.h | 13 ++++++++-----
->  4 files changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-> index 985ef3b47919..fb9bf3aa1b42 100644
-> --- a/arch/x86/events/amd/core.c
-> +++ b/arch/x86/events/amd/core.c
-> @@ -967,8 +967,7 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs=
-)
->                 if (!x86_perf_event_set_period(event))
->                         continue;
->
-> -               if (has_branch_stack(event))
-> -                       perf_sample_save_brstack(&data, event, &cpuc->lbr=
-_stack, NULL);
-> +               perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, =
-NULL);
->
->                 if (perf_event_overflow(event, &data, regs))
->                         x86_pmu_stop(event, 0);
-> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> index 5b0dd07b1ef1..ff5577315938 100644
-> --- a/arch/x86/events/core.c
-> +++ b/arch/x86/events/core.c
-> @@ -1702,8 +1702,7 @@ int x86_pmu_handle_irq(struct pt_regs *regs)
->
->                 perf_sample_data_init(&data, 0, event->hw.last_period);
->
-> -               if (has_branch_stack(event))
-> -                       perf_sample_save_brstack(&data, event, &cpuc->lbr=
-_stack, NULL);
-> +               perf_sample_save_brstack(&data, event, &cpuc->lbr_stack, =
-NULL);
->
->                 if (perf_event_overflow(event, &data, regs))
->                         x86_pmu_stop(event, 0);
-> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-> index c2b5585aa6d1..f25236ffa28f 100644
-> --- a/arch/x86/events/intel/ds.c
-> +++ b/arch/x86/events/intel/ds.c
-> @@ -1754,8 +1754,7 @@ static void setup_pebs_fixed_sample_data(struct per=
-f_event *event,
->         if (x86_pmu.intel_cap.pebs_format >=3D 3)
->                 setup_pebs_time(event, data, pebs->tsc);
->
-> -       if (has_branch_stack(event))
-> -               perf_sample_save_brstack(data, event, &cpuc->lbr_stack, N=
-ULL);
-> +       perf_sample_save_brstack(data, event, &cpuc->lbr_stack, NULL);
->  }
->
->  static void adaptive_pebs_save_regs(struct pt_regs *regs,
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index 8617815456b0..ecfbe22ff299 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -1269,6 +1269,11 @@ static inline void perf_sample_save_raw_data(struc=
-t perf_sample_data *data,
->         data->sample_flags |=3D PERF_SAMPLE_RAW;
->  }
->
-> +static inline bool has_branch_stack(struct perf_event *event)
-> +{
-> +       return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
-> +}
-> +
->  static inline void perf_sample_save_brstack(struct perf_sample_data *dat=
-a,
->                                             struct perf_event *event,
->                                             struct perf_branch_stack *brs=
-,
-> @@ -1276,6 +1281,9 @@ static inline void perf_sample_save_brstack(struct =
-perf_sample_data *data,
->  {
->         int size =3D sizeof(u64); /* nr */
->
-> +       if (!has_branch_stack(event))
-> +               return;
-> +
->         if (branch_sample_hw_index(event))
->                 size +=3D sizeof(u64);
->         size +=3D brs->nr * sizeof(struct perf_branch_entry);
-> @@ -1665,11 +1673,6 @@ extern void perf_bp_event(struct perf_event *event=
-, void *data);
->  # define perf_arch_bpf_user_pt_regs(regs) regs
->  #endif
->
-> -static inline bool has_branch_stack(struct perf_event *event)
-> -{
-> -       return event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK;
-> -}
-> -
->  static inline bool needs_branch_stack(struct perf_event *event)
->  {
->         return event->attr.branch_sample_type !=3D 0;
-> --
-> 2.45.0.118.g7fe29c98d7-goog
->
+> This was actually introduced in the following patch "riscv:
+> Introduce vendor variants of extension helpers" because I accidentally
+> fixed this issue in the patch "riscv: cpufeature: Extract common
+> elements from extension checking" instead of the one it was introduced
+> in.
+
+
+--a4gruBJ406lMx+Li
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj6SYwAKCRB4tDGHoIJi
+0qSAAP9DtyG6cFxATpySce/LDWJjuSKIYinHHmeKGVGjDvqZkAEAkXi4b5NHBscV
+XEmApTynzq59bPinnFytkPxtGEnfKAw=
+=Z9vu
+-----END PGP SIGNATURE-----
+
+--a4gruBJ406lMx+Li--
 
