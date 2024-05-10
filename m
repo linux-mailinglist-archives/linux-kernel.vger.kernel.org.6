@@ -1,157 +1,174 @@
-Return-Path: <linux-kernel+bounces-175692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A6198C23BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:39:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 894CA8C23C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5371C2370B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:39:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD02A1C23346
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A8B16EBEA;
-	Fri, 10 May 2024 11:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcF4nxlg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15E116F0C9;
+	Fri, 10 May 2024 11:41:07 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E04621340;
-	Fri, 10 May 2024 11:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B168112AAC0;
+	Fri, 10 May 2024 11:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341161; cv=none; b=ThLnPiIDqssLzxy5NeOHGGNnTjDPeo8yaLKsTgBW/+ccTOWB0z7chxzbVOKGMiQhV+1akY4yIrhM/prXYDJyR/qc+w7IWYVRWguts6+xCg1xXXWs3L+a9t2bMkpipSi58bAV1aFcETrnTXtuzTMRchiXvrAb2+2KfChN5ujX1tw=
+	t=1715341267; cv=none; b=KBZWk+zfxKELB0qHR+YwdDfRRCLtLlen7jHONsddEtUOZz6RBpqfTwjUw5vKW1/ZFxcLDiLqP9FIUuUyR1l2+yLO2ywod/a8EY4s6ESIIo28C8JOTjt3odUzSsKvOScjPxTMSQnXdXVat9OT3qpxfEKN4xw6ttfMx9H4pAhghQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341161; c=relaxed/simple;
-	bh=gBgODkg3DdI9NzHPa1K7qm2JszTbSglDjzlA/h4YKWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uDsiAw70Modtv15d8qJFMSt6cdvb9mjAqvYyiHcFK3BeerDj+AJw5ikNO5du27Q89cj4o2BvVoDrYI+AHEhXy4DU4eO/ovR0MYL+aSNewvyjt+oKtvlYWZqZSOOXrZ+PcizMxxNwSx+OrOMyOUa/WtwU4up3xa/QWe4MvQqy3kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcF4nxlg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD37EC113CC;
-	Fri, 10 May 2024 11:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715341160;
-	bh=gBgODkg3DdI9NzHPa1K7qm2JszTbSglDjzlA/h4YKWM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tcF4nxlg0QDEweWZwzWRCeVMhoRIu7J1gmdn73ynftzzX5dbSA1P4W8ujpGv0+jrm
-	 nbOzvPAqUbgaOYo/PdyUL81APw3bP5ZqUlEA1bv2v06ThVSZ+1EGMPEOkJGIiyfYGJ
-	 kCkxZxWZtBeI1+Ib7DROy4aZjp3wcPfVzFz4kwz+SAnlI9U2RPXX7ELddRRwyhmnGF
-	 djstVSRcMGs3bD5X3DNa8uPLVYL5h5TL6IyZsAv6NnYu8t3K0W+2r1dDyIki3R/AJK
-	 NVBFC0k1dteGFqP6NSb5O4MZkFfK9HiWqs8V/gqLo9ApsQQzr7m7Unm72abzdxhsLM
-	 EC1q/CFOAekrQ==
-Date: Fri, 10 May 2024 12:39:11 +0100
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, Jonathan Corbet <corbet@lwn.net>,
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada
- <masahiroy@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, Jon
- Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] docs: document python version used for compilation
-Message-ID: <20240510123911.34f050b5@sal.lan>
-In-Reply-To: <CAA8EJprcjDnpsriXOrRO4cVh5Sm9KDbHbsyKePru=6pn0-bfJA@mail.gmail.com>
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
-	<878r0ijdh5.fsf@intel.com>
-	<20240510102036.3ea40b37@sal.lan>
-	<87o79ehtbz.fsf@intel.com>
-	<CAA8EJprcjDnpsriXOrRO4cVh5Sm9KDbHbsyKePru=6pn0-bfJA@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715341267; c=relaxed/simple;
+	bh=hlouBtpydRVYfVMmQQ0wu/ck0rpVStqkPJRM3qUCENs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ace6pmEF6BCEz2XKdUJg5TmtrbF/vAleCPSNRrjLClFX8KhNjibyoBVQO20v3AO4ccsDuTDMSLbqmaJ58gwcjLDQgdtQ5NPFEsaVgHETRNrES++4AQfQCYiKL1FP1wp3HYvhwYiwteRMUQN1f6AzIQxwfVi6YME8V9cpJnfaIPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VbRlj2WyPz4f3m8q;
+	Fri, 10 May 2024 19:40:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id B63811A0568;
+	Fri, 10 May 2024 19:40:54 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAXOQzEBz5mwBtJMg--.30386S3;
+	Fri, 10 May 2024 19:40:54 +0800 (CST)
+Subject: Re: [PATCH v3 03/26] ext4: correct the hole length returned by
+ ext4_map_blocks()
+To: Luis Henriques <luis.henriques@linux.dev>
+Cc: Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca, jack@suse.cz,
+ ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
+ <20240127015825.1608160-4-yi.zhang@huaweicloud.com>
+ <87zfszuib1.fsf@brahms.olymp> <20240509163953.GI3620298@mit.edu>
+ <87h6f6vqzj.fsf@brahms.olymp>
+ <b9b93ad2-2253-6850-da38-afc42370303e@huaweicloud.com>
+ <87seyquhpi.fsf@brahms.olymp>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <ea7d4019-fec7-d30c-e62a-37e665ccd610@huaweicloud.com>
+Date: Fri, 10 May 2024 19:40:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <87seyquhpi.fsf@brahms.olymp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAXOQzEBz5mwBtJMg--.30386S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxWFyUZry8uF13Cw4fZF4xJFb_yoW5tFW8pF
+	WfZFnrtr4kJ348CrZ2yw1rXF10vr45Gr15Xr4rJryfAas09rykWF42kFWY9F97Wr40gw1U
+	tF4jva9rWFyjvFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
+	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU13rcDUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Em Fri, 10 May 2024 13:39:17 +0300
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> escreveu:
+On 2024/5/10 17:41, Luis Henriques wrote:
+> On Fri 10 May 2024 11:39:48 AM +08, Zhang Yi wrote;
+> 
+>> On 2024/5/10 1:23, Luis Henriques wrote:
+>>> On Thu 09 May 2024 12:39:53 PM -04, Theodore Ts'o wrote;
+>>>
+>>>> On Thu, May 09, 2024 at 04:16:34PM +0100, Luis Henriques wrote:
+>>>>>
+>>>>> It's looks like it's easy to trigger an infinite loop here using fstest
+>>>>> generic/039.  If I understand it correctly (which doesn't happen as often
+>>>>> as I'd like), this is due to an integer overflow in the 'if' condition,
+>>>>> and should be fixed with the patch below.
+>>>>
+>>>> Thanks for the report.  However, I can't reproduce the failure, and
+>>>> looking at generic/039, I don't see how it could be relevant to the
+>>>> code path in question.  Generic/039 creates a test symlink with two
+>>>> hard links in the same directory, syncs the file system, and then
+>>>> removes one of the hard links, and then drops access to the block
+>>>> device using dmflakey.  So I don't see how the extent code would be
+>>>> involved at all.  Are you sure that you have the correct test listed?
+>>>
+>>> Yep, I just retested and it's definitely generic/039.  I'm using a simple
+>>> test environment, with virtme-ng.
+>>>
+>>>> Looking at the code in question in fs/ext4/extents.c:
+>>>>
+>>>> again:
+>>>> 	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, hole_start,
+>>>> 				  hole_start + len - 1, &es);
+>>>> 	if (!es.es_len)
+>>>> 		goto insert_hole;
+>>>>
+>>>>   	 * There's a delalloc extent in the hole, handle it if the delalloc
+>>>>   	 * extent is in front of, behind and straddle the queried range.
+>>>>   	 */
+>>>>  -	if (lblk >= es.es_lblk + es.es_len) {
+>>>>  +	if (lblk >= ((__u64) es.es_lblk) + es.es_len) {
+>>>>   		/*
+>>>>   		 * The delalloc extent is in front of the queried range,
+>>>>   		 * find again from the queried start block.
+>>>> 		len -= lblk - hole_start;
+>>>> 		hole_start = lblk;
+>>>> 		goto again;
+>>>>
+>>>> lblk and es.es_lblk are both __u32.  So the infinite loop is
+>>>> presumably because es.es_lblk + es.es_len has overflowed.  This should
+>>>> never happen(tm), and in fact we have a test for this case which
+>>>
+>>> If I instrument the code, I can see that es.es_len is definitely set to
+>>> EXT_MAX_BLOCKS, which will overflow.
+>>>
+>>
+>> Thanks for the report. After looking at the code, I think the root
+>> cause of this issue is the variable es was not initialized on replaying
+>> fast commit. ext4_es_find_extent_range() will return directly when
+>> EXT4_FC_REPLAY flag is set, and then the es.len becomes stall.
+>>
+>> I can always reproduce this issue on generic/039 with
+>> MKFS_OPTIONS="-O fast_commit".
+>>
+>> This uninitialization problem originally existed in the old
+>> ext4_ext_put_gap_in_cache(), but it didn't trigger any real problem
+>> since we never check and use extent cache when replaying fast commit.
+>> So I suppose the correct fix would be to unconditionally initialize
+>> the es variable.
+> 
+> Oh, you're absolutely right -- the extent_status 'es' struct isn't being
+> initialized in that case.  I totally failed to see that.  And yes, I also
+> failed to mention I had 'fast_commit' feature enabled, sorry!
+> 
+> Thanks a lot for figuring this out, Yi.  I'm looking at this code and
+> trying to understand if it would be safe to call __es_find_extent_range()
+> when EXT4_FC_REPLAY is in progress.  Probably not, and probably better to
+> simply do:
+> 
+> 	es->es_lblk = es->es_len = es->es_pblk = 0;
+> 
+> in that case.  I'll send out a patch later today.
+> 
 
-> On Fri, 10 May 2024 at 13:09, Jani Nikula <jani.nikula@intel.com> wrote:
-> >
-> > On Fri, 10 May 2024, Mauro Carvalho Chehab <mchehab@kernel.org> wrote: =
-=20
-> > > Em Fri, 10 May 2024 11:08:38 +0300
-> > > Jani Nikula <jani.nikula@intel.com> escreveu:
-> > > =20
-> > >> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =
-wrote: =20
-> > >> > The drm/msm driver had adopted using Python3 script to generate re=
-gister
-> > >> > header files instead of shipping pre-generated header files. Docum=
-ent
-> > >> > the minimal Python version supported by the script.
-> > >> >
-> > >> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > >> > ---
-> > >> >  Documentation/process/changes.rst | 1 +
-> > >> >  1 file changed, 1 insertion(+)
-> > >> >
-> > >> > diff --git a/Documentation/process/changes.rst b/Documentation/pro=
-cess/changes.rst
-> > >> > index 5685d7bfe4d0..8d225a9f65a2 100644
-> > >> > --- a/Documentation/process/changes.rst
-> > >> > +++ b/Documentation/process/changes.rst
-> > >> > @@ -63,6 +63,7 @@ cpio                   any              cpio --v=
-ersion
-> > >> >  GNU tar                1.28             tar --version
-> > >> >  gtags (optional)       6.6.5            gtags --version
-> > >> >  mkimage (optional)     2017.01          mkimage --version
-> > >> > +Python (optional)      3.5.x            python3 --version =20
-> > >>
-> > >> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the poi=
-nt in
-> > >> using anything older than the oldest supported version of Python,
-> > >> i.e. 3.8 at this time? =20
-> > >
-> > > What's the point of breaking compilation with on older distros?
-> > > The idea of minimal versions here is to specify the absolute minimum
-> > > version that it is required for the build to happen. If 3.5 is
-> > > the minimal one, then be it. =20
-> >
-> > AFAICT 3.5 was an arbitrary rather than a deliberate choice. We should
-> > at least be aware *why* we'd be sticking to old versions. =20
->=20
-> From my side, the 3.5 was chosen basing on the previous feedback from
-> Jon Hunter: https://lore.kernel.org/dri-devel/20240412165407.42163-1-jona=
-thanh@nvidia.com/
+Yeah, I'm glad it could help.
 
-Patch there seems small/simple enough if it is all it takes for 3.5.
+Thanks,
+Yi.
 
-Yet, it would be nice to hear from Jon Hunter about the rationale
-for 3.5 support (if any).
-
-> > Minimum versions here also means sticking to features available in said
-> > versions, for Python just as well as for GCC or any other tool. That's
-> > not zero cost.
-> >
-> > I guess there are two angles here too. The absolute minimum version
-> > currently required, and the, uh, maximum the minimum version can be
-> > safely bumped to. Say, you want to use a feature not available in the
-> > current minimum, how far up can you bump the version to?
-> >
-> > Could we define and document the criteria (e.g. based on distros as you
-> > suggest below) so we don't have to repeat the discussion?
-
-Agreed. While we should not bump version randomly, defining a
-criteria about when we should update the requirement sounds a great idea.
-
-For me, the criteria is:
-
-- the minimal version shall be at least the minimal one required for the
-  Kernel to build at the most used LTS distros that are not EOL, e. g.:=20
-  Debian, openSUSE/SUSE, CentOS/RHEL and Ubuntu LTS[1].
-
-[1] In practice, Ubuntu LTS usually has a python version newer than
-    Debian LTS, and CentOS versions are identical to RHEL ones, so
-    I guess checking for Debian, openSUSE, SUSE and RHEL should be
-    enough.
-
-Regards,
-Mauro
 
