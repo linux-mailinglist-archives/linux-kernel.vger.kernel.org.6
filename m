@@ -1,211 +1,121 @@
-Return-Path: <linux-kernel+bounces-175219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191A98C1C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:39:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C798C1C89
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B2A31C213FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26399B214BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5191442F1;
-	Fri, 10 May 2024 02:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C212148851;
+	Fri, 10 May 2024 02:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqMOeopC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVGoX4Dd"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78693308A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A9F5579A;
+	Fri, 10 May 2024 02:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715308754; cv=none; b=DOW9j8/xanDcKJucGcwDd2J+1whaW7/9Cx+KjCrgURLdpNZAcdbhHKDyaNJBPHG2rG2Fe8rLD8tx9VGzGa04RrIuLimyZbPKZF4BFo0ibAdW+YpaWJEPHanlNm+Vqldfvn38ERObF8j+p8bsuz5giOPxHcUSEr+9n4L1Y/qDM78=
+	t=1715309015; cv=none; b=LidnE36AUEGXhLP0LMvfDm88v5vLidhfHgfCHWN5YR8hulFaKs1Ujz+XQSK1maBOWAoY498yyr2S9s4V72rkNh+Yyo5OrKxu8SatWhLJn/Ae+OUQJ047wRG2rANkMVnodH5GJiOBhp+nhsKhLT5shJukuB3txGtlJ1MqBCcf8J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715308754; c=relaxed/simple;
-	bh=M3iK44q4XaDBGfbEx+OpWbmqokN+nvYknGFBDDBsslM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSIQBXPJpyeOTpQw63Vy00I6hBK++O8gIeIjvIiCE2smZ4Hbsl++WaaEhbmzL7DBJ+L8L+gD1vT9AfRajbw6uA2a8D/wPXdYkBbdM2AO6bZseYXzmp/+1c1bwVYh1Jr9cnFpaiOds+G62nviRxgJj0WMHj3xIG/h/BUvMB5hQzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqMOeopC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD39C116B1;
-	Fri, 10 May 2024 02:39:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715308754;
-	bh=M3iK44q4XaDBGfbEx+OpWbmqokN+nvYknGFBDDBsslM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DqMOeopC5rR16hKDZK7Cd4bMFWFhJs8c2volLMTdFdL3rj5urU9Vo36UaR0n9B2sP
-	 bBe9S9+Ra4i160s7SEsY/+aiO1BeGFPNiJt5TNsHVYuYKoFM5vc+PjfOjCLnjqBItb
-	 BGh3SFIxjtVkQuc8XoTZZwokVMR0+ximqKniJNBMQeOJBHkcBbbLviEvANx0jHFmdS
-	 RiT1vtHW+c+hOw/Totn4leoaPkqacGkkS2Brr2Gg9qhcJEEqvyhqbciRyk9VPtyaxo
-	 bQpNI23maOeAe4EckcnGqQ/kj/cup3zsut0L68wCJcxCyteWyRqUrtmW9gYq9hk/yG
-	 UMO2tAUptA+3A==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH v2] f2fs: fix to avoid racing in between read and OPU dio write
-Date: Fri, 10 May 2024 10:39:06 +0800
-Message-Id: <20240510023906.281700-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1715309015; c=relaxed/simple;
+	bh=h3NjcfgxQkvN6Dm0qeLjtqzQYAbriKkylaDfBSkN64s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g7SZE3xTqutgtjVfoXIDFaZ1/kXcg4jAmRfRJKWnlCf/hBLd7yqmQt/M9ExYaZQTH6IYr5OtnbLjH1/cFK5dTOFyzBx4Aw7r/R0ZLHfMaiobVwBVjicOVVWbRbS6LRkDex3yOGXJo5BlHu6KeVVTUGzei8Xgn9koNw4pVDyUvG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVGoX4Dd; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-51f12ccff5eso2040882e87.1;
+        Thu, 09 May 2024 19:43:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715309012; x=1715913812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g8bWLxZ3dWuYmospB5SpCzowfyzVsObI//ksFh6x8MM=;
+        b=KVGoX4Dd5Doh9ccJ/9Qk4EPsRZ/jx5xVFsAX4Gu2688Z2F5Et5YZOnpd0D/xpRh7Ln
+         rcIzN4Cvgvjw446x5EW3MNnJv9PDsPTFhpFryVTeD882v4xnkQ7XNfpWJz3QGJQOoooB
+         p9e0iX0VR7ZHJ5w/xfOReu3076wy2bLKNCCEHGjkI6y75f/pPj2KRdQa/nHsZ6yZQKHg
+         KG9l5ci2XZb+Q1tAroPGZ9bhV6qxz8QiM3YLrYAO94lZeAyiFt8ktkcqD+Nfk6pujX0H
+         KyoRWTcRErtHqLQSJQ56imViZ+TfOpppAv/xcRz+eNZU5gHE0iPVmupL76BV3G5ox3n5
+         xb/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715309012; x=1715913812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g8bWLxZ3dWuYmospB5SpCzowfyzVsObI//ksFh6x8MM=;
+        b=vMZ7MXZ3Jgq7sqKkmraCzWKNcu2VdDKH3v7cIst3+krbtyANQnn4JXvQMLGT3Zk3/0
+         MOa7GZwJWQnAUZhJoGIX3ozy6dPsqiuTYUDisJgLHDdGn99Zek71GdMesTcaMf7dppj4
+         IJN8fM3HxLaMk7bpC/rYpDSF8ruFN3A3kEF7GEvz4IssJ44rZbhmsYJEkMYmUTZnUW/q
+         GzbKGv9a0/pxikDzb49wpPgMUjnaStHXXmwm1Kc6NCvq9F0mODSzxTDo+/bpe1LElRrt
+         3NtzL6JcmMdUIC6w8sdEpUscXK8SWTGjJaIvyhqNZI5Plu8RA1CnP9kV4a14k7xsUD1v
+         +/6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU/R50IymvCri1PNYMt12bPnDJ55AnZi5OW4QZcr3NOgNSQ+s8kn8kZLWtxmCoGp+UfEuKaCyjru2QfcMLr9JG1lmh6rD/54lg3Z+Q5kBDmhW1EeVysZB6sphYQAz8mkYvVhzeWOfzGomH7fnu8TEWNqC/e8AimBl9WZQFTWI8Cc8if
+X-Gm-Message-State: AOJu0Yxlh5enc1NHtaDJIVAHB8/mEb+GioQeRx/ujoQjTDcUgQfxZbDq
+	hpr6WkPMkiGGvnuNRh8pM8IduO54guAEhPe/2xR7GVPFkZuFjG65HMy/DeJvbcfWM5iVDwKsxQp
+	h1Eui0qZ0t85n4yI7J7odrwarZhs=
+X-Google-Smtp-Source: AGHT+IFhIfznkaEMQqLl9o1NxKnyivv7zGsM19YS4eYwjFwbY47MDQuu4EJX+dXxoZTHgNpQjgXvpatppIweYsGqr2E=
+X-Received: by 2002:a19:5e4b:0:b0:515:b8d5:c5b7 with SMTP id
+ 2adb3069b0e04-522105844c0mr604760e87.56.1715309011548; Thu, 09 May 2024
+ 19:43:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
+ <20240509023937.1090421-3-zhaoyang.huang@unisoc.com> <Zjw_0UPKvGkPfKFO@casper.infradead.org>
+In-Reply-To: <Zjw_0UPKvGkPfKFO@casper.infradead.org>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Fri, 10 May 2024 10:43:20 +0800
+Message-ID: <CAGWkznGZP3KUBN2M6syrjTmVOdSM0zx23hcJ6+hqE8Drgz2f-A@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If lfs mode is on, buffered read may race w/ OPU dio write as below,
-it may cause buffered read hits unwritten data unexpectly, and for
-dio read, the race condition exists as well.
+On Thu, May 9, 2024 at 11:15=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Thu, May 09, 2024 at 10:39:37AM +0800, zhaoyang.huang wrote:
+> > -static unsigned long get_next_ra_size(struct file_ra_state *ra,
+> > +static unsigned long get_next_ra_size(struct readahead_control *ractl,
+> >                                     unsigned long max)
+> >  {
+> > -     unsigned long cur =3D ra->size;
+> > +     unsigned long cur =3D ractl->ra->size;
+> > +     struct inode *inode =3D ractl->mapping->host;
+> > +     unsigned long budgt =3D inode->i_sb->s_bdev ?
+> > +                     blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
+>
+> You can't do this.  There's no guarantee that the IO is going to
+> mapping->host->i_sb->s_bdev.  You'd have to figure out how to ask the
+> filesystem to get the bdev for the particular range (eg the fs might
+> implement RAID internally).
+>
+Thanks for the prompt. I did some basic research on soft RAID and
+wonder if applying the bps limit on /dev/md0 like below could make
+this work.
 
-Thread A			Thread B
-- f2fs_file_write_iter
- - f2fs_dio_write_iter
-  - __iomap_dio_rw
-   - f2fs_iomap_begin
-    - f2fs_map_blocks
-     - __allocate_data_block
-      - allocated blkaddr #x
-       - iomap_dio_submit_bio
-				- f2fs_file_read_iter
-				 - filemap_read
-				  - f2fs_read_data_folio
-				   - f2fs_mpage_readpages
-				    - f2fs_map_blocks
-				     : get blkaddr #x
-				    - f2fs_submit_read_bio
-				IRQ
-				- f2fs_read_end_io
-				 : read IO on blkaddr #x complete
-IRQ
-- iomap_dio_bio_end_io
- : direct write IO on blkaddr #x complete
+mdadm -C -v /dev/md0 -l raid0 -n 2 /dev/sd[b-c]1
+mount /dev/md0 /mnt/raid0/
+echo "/dev/md0 100000" > blkio.throttle.read_bps_device
 
-This patch introduces a new per-inode i_opu_rwsem lock to avoid
-such race condition.
-
-Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
-v2:
-- fix to cover dio read path w/ i_opu_rwsem as well.
- fs/f2fs/f2fs.h  |  1 +
- fs/f2fs/file.c  | 28 ++++++++++++++++++++++++++--
- fs/f2fs/super.c |  1 +
- 3 files changed, 28 insertions(+), 2 deletions(-)
-
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 30058e16a5d0..91cf4b3d6bc6 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -847,6 +847,7 @@ struct f2fs_inode_info {
- 	/* avoid racing between foreground op and gc */
- 	struct f2fs_rwsem i_gc_rwsem[2];
- 	struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
-+	struct f2fs_rwsem i_opu_rwsem;	/* avoid racing between buf read and opu dio write */
- 
- 	int i_extra_isize;		/* size of extra space located in i_addr */
- 	kprojid_t i_projid;		/* id for project quota */
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 72ce1a522fb2..4ec260af321f 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4445,6 +4445,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	const loff_t pos = iocb->ki_pos;
- 	const size_t count = iov_iter_count(to);
- 	struct iomap_dio *dio;
-+	bool do_opu = f2fs_lfs_mode(sbi);
- 	ssize_t ret;
- 
- 	if (count == 0)
-@@ -4457,8 +4458,14 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 			ret = -EAGAIN;
- 			goto out;
- 		}
-+		if (do_opu && !f2fs_down_read_trylock(&fi->i_opu_rwsem)) {
-+			f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+			ret = -EAGAIN;
-+			goto out;
-+		}
- 	} else {
- 		f2fs_down_read(&fi->i_gc_rwsem[READ]);
-+		f2fs_down_read(&fi->i_opu_rwsem);
- 	}
- 
- 	/*
-@@ -4477,6 +4484,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 		ret = iomap_dio_complete(dio);
- 	}
- 
-+	f2fs_up_read(&fi->i_opu_rwsem);
- 	f2fs_up_read(&fi->i_gc_rwsem[READ]);
- 
- 	file_accessed(file);
-@@ -4523,7 +4531,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (f2fs_should_use_dio(inode, iocb, to)) {
- 		ret = f2fs_dio_read_iter(iocb, to);
- 	} else {
-+		bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
-+
-+		if (do_opu)
-+			f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
- 		ret = filemap_read(iocb, to, 0);
-+		if (do_opu)
-+			f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
- 		if (ret > 0)
- 			f2fs_update_iostat(F2FS_I_SB(inode), inode,
- 						APP_BUFFERED_READ_IO, ret);
-@@ -4748,14 +4762,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 			ret = -EAGAIN;
- 			goto out;
- 		}
-+		if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
-+			f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+			f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
-+			ret = -EAGAIN;
-+			goto out;
-+		}
- 	} else {
- 		ret = f2fs_convert_inline_inode(inode);
- 		if (ret)
- 			goto out;
- 
- 		f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
--		if (do_opu)
-+		if (do_opu) {
- 			f2fs_down_read(&fi->i_gc_rwsem[READ]);
-+			f2fs_down_write(&fi->i_opu_rwsem);
-+		}
- 	}
- 
- 	/*
-@@ -4779,8 +4801,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 		ret = iomap_dio_complete(dio);
- 	}
- 
--	if (do_opu)
-+	if (do_opu) {
-+		f2fs_up_write(&fi->i_opu_rwsem);
- 		f2fs_up_read(&fi->i_gc_rwsem[READ]);
-+	}
- 	f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
- 
- 	if (ret < 0)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index daf2c4dbe150..b4ed3b094366 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
- 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
- 	init_f2fs_rwsem(&fi->i_xattr_sem);
-+	init_f2fs_rwsem(&fi->i_opu_rwsem);
- 
- 	/* Will be used by directory only */
- 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
--- 
-2.40.1
-
+I didn't find information about 'RAID internally'. Could we set the
+limit on the root device(the one used for mount) to manage the whole
+partition without caring about where the bio finally goes? Or ask the
+user to decide if to use by making sure the device they apply will not
+do RAID?
 
