@@ -1,149 +1,152 @@
-Return-Path: <linux-kernel+bounces-175544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895BD8C2132
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:41:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F0228C2136
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B57B21C20F3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B81CC1F215AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:42:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B031635C1;
-	Fri, 10 May 2024 09:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F731635DC;
+	Fri, 10 May 2024 09:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AT0g+QV7"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wjdczF31"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6DB1649DD;
-	Fri, 10 May 2024 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB58160877
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715334063; cv=none; b=iFwMqxK/SoVXbXwmsV6sF0aoNUY25tqtQ50S6Mts1Z+CiqlsItJGPm8E8+jxS9dtZ7hpNdM6T2Wu9jW9cuQlibxJFjd9x5xBA2sAEQNLzVF+fwnywWtqXNkwcVF6ff/Q4bEbfZyKioO9Yw0d8CNjLErfgkfeH4CWCCjWxHhyJFY=
+	t=1715334114; cv=none; b=nLVDZ26YVT3wsTrdvul/WbMzn/j5GcldR4nBwJhvGvgM3DHcw2b75tFRoelAP7M9fckB1B9NqkHjATd6IpuWV3idA9ZBHJ9DxLx1LOHP0mQAU6OykU0UXtc+bnuglrz2NsB/F+OkCv8mLgfdNrknEnZIJ64cdtByrS1BhRcM12U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715334063; c=relaxed/simple;
-	bh=1AdAs/JP/a3mKsJUfe3CkMCB928cBD8nioKo20W2VsM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nt70Ebe7/1h2phUbBXGXA1snPcsOUs+SUkFCeBtnw9cW6xYPjvwxiAi7o0Oc9mbQuani2pRPFvH5FMdkcr83w+JRgwJAa3Y0PBjpKT/jrM3GpJprPD1Bq4hCopCHbPjkmHEv/TRlLxuEOWiqtDJisxNJ6OQszD7qfGgT5rNZG0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AT0g+QV7; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f4dcc3eeb3so680274b3a.0;
-        Fri, 10 May 2024 02:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715334061; x=1715938861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYCA026a98+jinm4XXjivyCMpzTaBQNxk+cwgCPrDy4=;
-        b=AT0g+QV72pJc1e7BisZ5Qon4GauE4AfiXMUNsJ2bCERTZ7cbE/uUVW8Rzgwmbd2kHm
-         Y6ZcQFArkqQiyE3wjtzPfFdbMtzXnK23E1nGtV+uyPhnitjIrfF6F5vkfw0d13oKW46Z
-         /Rvl2Uuk52jqqPA7mKwLS98/8sc7Luv9sKHMnI7ZmsLSZwkx3luQ/74FmouQW4mTXg8N
-         zMkfPRLBBVq/0ekQeFdaEF2yc4rCkOZenhdKw2dFozdhbKBlFDOaWQsIfaPEnCAj6sIK
-         nE6ddHm04Ts3AjoyTx0CFnpqxgpA7/s0wFk3a2cVCJken2ShIaNDsQRXVqyf+C1KFLxE
-         /HvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715334061; x=1715938861;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xYCA026a98+jinm4XXjivyCMpzTaBQNxk+cwgCPrDy4=;
-        b=hpHSbXSQ6k8+zmZ9xFdUWhWDw4mtqxbRJiY1Z5t/pDIYEcZkOCUwywXIJYbaybex2b
-         Nq/z/lcCLiTzrDxgvD6Cf2GRi7xY/fefBhxYVeAqFmqRM6zIY/HdUS7D0lJuDBzn0hzt
-         IthgCGG9RK1aV18kx7wBLgm5pV87ggrp3cYXHpanhxAhMqXsnsycOyNI/QeBci3+m6jY
-         +EY6OFcQxsJLcAgXWHqFLjGfHL3vmZ5K/9qKIgkLcAHzlqTZs1oASlKTrxzYouTKdzL3
-         1rFf4+PbdUDoEUak2t21YgnnBQiis1WRpAsrBjhhhZ01gGtRIu5MR+kczmkbjE5uadlc
-         vZdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdVn7njd9Nqfu7XLtmWZv9LPmSofvesYkmpFggUMWSuwzAOCIKPoYf2pBI0fRCixLwcgd40ypJpeqLCaESLXMHnhnAArvx3iaKDaEq2FZOQXo3Ha3YrQ8yTlwZrH/26tK0F1HQnG9lXlrD1PKmOppsfDHhL5eZ3lDrhSM7WaRGwmprtcSw+duf3g==
-X-Gm-Message-State: AOJu0YyUZg1NkgoIZs7C87IuhxVPxIEuKXL7rtVoB+Io05ygejkBkgFO
-	O5I/3D2D4uW4j+aPtdipqscs4/ON4fLBEe8Vw3cOq3r8nx3h/Vug
-X-Google-Smtp-Source: AGHT+IGv0EhQaZQv5264QLirP3eVLjx8maXcHjKU/FgFJ8ZT4iudZpiwgz4HLBkM4c/WXo008palAg==
-X-Received: by 2002:a05:6a00:3cc7:b0:6f3:e6e0:d9fb with SMTP id d2e1a72fcca58-6f4e02c6a0emr2055840b3a.11.1715334061383;
-        Fri, 10 May 2024 02:41:01 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ade28asm2554518b3a.139.2024.05.10.02.40.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 02:41:01 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Chanwoo Choi <cw00.choi@samsung.com>,
-	MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Kyungmin Park <kyungmin.park@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Anand Moon <linux.amoon@gmail.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] PM / devfreq: exynos: Use local clk variable instead of exynos_bus member
-Date: Fri, 10 May 2024 15:10:25 +0530
-Message-ID: <20240510094034.12493-2-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240510094034.12493-1-linux.amoon@gmail.com>
-References: <20240510094034.12493-1-linux.amoon@gmail.com>
+	s=arc-20240116; t=1715334114; c=relaxed/simple;
+	bh=9UIZO+fMK0093XFA1cdCPdokYDtdUqkFjEBrjHtGLrQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ev1Uj7Tnjff+u7Mr1BZ0udzUWWht3DembgDWHwp/5Fr/NC4TYjqCXPDqWJ2iGHEG0M11e2vw2tFp7qGLeOMznLu5HYIMb08BaVZUqvJUboWC8WSO6yLQNRRx4tZzW9MO0hPl1rug9wJKBWx9XjIBNeCYoXxvIWMmrBMICNXwmNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wjdczF31; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715334110;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jVrskhxBKxvv9z8KIVgQd5Lldn1b3J2MV9vWclbKXxw=;
+	b=wjdczF31RF+qRp+6AWaFv5jmUHfu3EMgiww/OAXl2mQujL6olclJLVYnjVcNaimCCHjAGb
+	lmD1GtIin78uuOReujW6fU/7VxHMSkQDXK5prD+whOMoDmBVzfL9tnRBif4oL2HHqEuIuD
+	Xi87nFlgpTVI2CcJN359VVQNE1uH43A=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Theodore Ts'o <tytso@mit.edu>,  linux-ext4@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  adilger.kernel@dilger.ca,  jack@suse.cz,
+  ritesh.list@gmail.com,  hch@infradead.org,  djwong@kernel.org,
+  willy@infradead.org,  zokeefe@google.com,  yi.zhang@huawei.com,
+  chengzhihao1@huawei.com,  yukuai3@huawei.com,  wangkefeng.wang@huawei.com
+Subject: Re: [PATCH v3 03/26] ext4: correct the hole length returned by
+ ext4_map_blocks()
+In-Reply-To: <b9b93ad2-2253-6850-da38-afc42370303e@huaweicloud.com> (Zhang
+	Yi's message of "Fri, 10 May 2024 11:39:48 +0800")
+References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
+	<20240127015825.1608160-4-yi.zhang@huaweicloud.com>
+	<87zfszuib1.fsf@brahms.olymp> <20240509163953.GI3620298@mit.edu>
+	<87h6f6vqzj.fsf@brahms.olymp>
+	<b9b93ad2-2253-6850-da38-afc42370303e@huaweicloud.com>
+Date: Fri, 10 May 2024 10:41:45 +0100
+Message-ID: <87seyquhpi.fsf@brahms.olymp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-This commit modifies the exynos bus driver to use a local clk variable
-for clock handling instead of storing it in the exynos_bus struct member.
-This helps in simplifying the code and makes it more readable.
+On Fri 10 May 2024 11:39:48 AM +08, Zhang Yi wrote;
 
-Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v5: New patch
----
- drivers/devfreq/exynos-bus.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+> On 2024/5/10 1:23, Luis Henriques wrote:
+>> On Thu 09 May 2024 12:39:53 PM -04, Theodore Ts'o wrote;
+>> 
+>>> On Thu, May 09, 2024 at 04:16:34PM +0100, Luis Henriques wrote:
+>>>>
+>>>> It's looks like it's easy to trigger an infinite loop here using fstest
+>>>> generic/039.  If I understand it correctly (which doesn't happen as often
+>>>> as I'd like), this is due to an integer overflow in the 'if' condition,
+>>>> and should be fixed with the patch below.
+>>>
+>>> Thanks for the report.  However, I can't reproduce the failure, and
+>>> looking at generic/039, I don't see how it could be relevant to the
+>>> code path in question.  Generic/039 creates a test symlink with two
+>>> hard links in the same directory, syncs the file system, and then
+>>> removes one of the hard links, and then drops access to the block
+>>> device using dmflakey.  So I don't see how the extent code would be
+>>> involved at all.  Are you sure that you have the correct test listed?
+>> 
+>> Yep, I just retested and it's definitely generic/039.  I'm using a simple
+>> test environment, with virtme-ng.
+>> 
+>>> Looking at the code in question in fs/ext4/extents.c:
+>>>
+>>> again:
+>>> 	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, hole_start,
+>>> 				  hole_start + len - 1, &es);
+>>> 	if (!es.es_len)
+>>> 		goto insert_hole;
+>>>
+>>>   	 * There's a delalloc extent in the hole, handle it if the delalloc
+>>>   	 * extent is in front of, behind and straddle the queried range.
+>>>   	 */
+>>>  -	if (lblk >= es.es_lblk + es.es_len) {
+>>>  +	if (lblk >= ((__u64) es.es_lblk) + es.es_len) {
+>>>   		/*
+>>>   		 * The delalloc extent is in front of the queried range,
+>>>   		 * find again from the queried start block.
+>>> 		len -= lblk - hole_start;
+>>> 		hole_start = lblk;
+>>> 		goto again;
+>>>
+>>> lblk and es.es_lblk are both __u32.  So the infinite loop is
+>>> presumably because es.es_lblk + es.es_len has overflowed.  This should
+>>> never happen(tm), and in fact we have a test for this case which
+>> 
+>> If I instrument the code, I can see that es.es_len is definitely set to
+>> EXT_MAX_BLOCKS, which will overflow.
+>> 
+>
+> Thanks for the report. After looking at the code, I think the root
+> cause of this issue is the variable es was not initialized on replaying
+> fast commit. ext4_es_find_extent_range() will return directly when
+> EXT4_FC_REPLAY flag is set, and then the es.len becomes stall.
+>
+> I can always reproduce this issue on generic/039 with
+> MKFS_OPTIONS="-O fast_commit".
+>
+> This uninitialization problem originally existed in the old
+> ext4_ext_put_gap_in_cache(), but it didn't trigger any real problem
+> since we never check and use extent cache when replaying fast commit.
+> So I suppose the correct fix would be to unconditionally initialize
+> the es variable.
 
-diff --git a/drivers/devfreq/exynos-bus.c b/drivers/devfreq/exynos-bus.c
-index 7d06c476d8e9..e55ae59a8ae7 100644
---- a/drivers/devfreq/exynos-bus.c
-+++ b/drivers/devfreq/exynos-bus.c
-@@ -34,7 +34,6 @@ struct exynos_bus {
- 	unsigned long curr_freq;
- 
- 	int opp_token;
--	struct clk *clk;
- 	unsigned int ratio;
- };
- 
-@@ -241,13 +240,14 @@ static int exynos_bus_parse_of(struct device_node *np,
- {
- 	struct device *dev = bus->dev;
- 	struct dev_pm_opp *opp;
-+	struct clk *clk;
- 	unsigned long rate;
- 	int ret;
- 
- 	/* Get the clock to provide each bus with source clock */
--	bus->clk = devm_clk_get_enabled(dev, "bus");
--	if (IS_ERR(bus->clk))
--		return dev_err_probe(dev, PTR_ERR(bus->clk),
-+	clk = devm_clk_get_enabled(dev, "bus");
-+	if (IS_ERR(clk))
-+		return dev_err_probe(dev, PTR_ERR(clk),
- 				"failed to get bus clock\n");
- 
- 	/* Get the freq and voltage from OPP table to scale the bus freq */
-@@ -257,7 +257,7 @@ static int exynos_bus_parse_of(struct device_node *np,
- 		return ret;
- 	}
- 
--	rate = clk_get_rate(bus->clk);
-+	rate = clk_get_rate(clk);
- 
- 	opp = devfreq_recommended_opp(dev, &rate, 0);
- 	if (IS_ERR(opp)) {
+Oh, you're absolutely right -- the extent_status 'es' struct isn't being
+initialized in that case.  I totally failed to see that.  And yes, I also
+failed to mention I had 'fast_commit' feature enabled, sorry!
+
+Thanks a lot for figuring this out, Yi.  I'm looking at this code and
+trying to understand if it would be safe to call __es_find_extent_range()
+when EXT4_FC_REPLAY is in progress.  Probably not, and probably better to
+simply do:
+
+	es->es_lblk = es->es_len = es->es_pblk = 0;
+
+in that case.  I'll send out a patch later today.
+
+Cheers,
 -- 
-2.44.0
-
+Luis
 
