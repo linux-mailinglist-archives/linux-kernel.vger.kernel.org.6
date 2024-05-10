@@ -1,97 +1,76 @@
-Return-Path: <linux-kernel+bounces-175525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1AE68C20D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:24:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C068C20AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257FBB20EB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:24:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85DC51C21CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD331635C4;
-	Fri, 10 May 2024 09:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="J6PKm0iI"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3246C16087B;
+	Fri, 10 May 2024 09:18:21 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665481635B7
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3679945;
+	Fri, 10 May 2024 09:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715333047; cv=none; b=HPZsNDfUHc8QmhswMEa0yjDFd2EIBw2LH4TBd16+LHF0cRDFcYbOLXGR2chlSlhjmHIivzo8HfWvl+N1EmXkA4K8z2IzLrhEySkz0k3bKPTmn6P98+ZmLVEgPAI7uoFHD3t4f11/OxuiZ3VdChMfWP3v3eWkKnkZbR3/tFaC2G8=
+	t=1715332700; cv=none; b=oMPg6/b0q/WrPdP/SaTq9dCiIfiJGQ/ZQIBAAN5O2foJ0VTUG9483qXp83iGzbfoS8w4SfQ7P5lYYIl5Sk//mAc4GGAWiA26g5bZGCC3J26aGbMe0nPB3G+WsVwhXKte4SjL5qH+DPwLiE8EUzfLZMvOc3YccqzVbvhQP13F1U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715333047; c=relaxed/simple;
-	bh=PzEAvfubVdzbr1Rad2HFxtO4tJenQDkig1qLCknoPWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QNQIZZTRKkeD7HYzhJcYkhRD9qq/O/QUZISTIwETJwA8ZYz0BJOC7LDzWYG3rwvc+qsTY2Xe9HWGVwvXz0LGjGZ4jU39AKlb0uuYd8uXNNOJSkFc3GURmCSu+GAza/Yw6reFMRtoyz5QScgDjlcEZwhi+7827Jc2SKyWS2HD9pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=J6PKm0iI; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52192578b95so2008433e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:24:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715333043; x=1715937843; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PzEAvfubVdzbr1Rad2HFxtO4tJenQDkig1qLCknoPWc=;
-        b=J6PKm0iI97liOMawv3Xf9F+UDm4jxYDjniXPPya1MdYTGRZBuD9xww8atsOT72KmPy
-         vzcNzQJjQ7uZmNterneF6Fn8+aVSK6hWZmLkkVHxcZhLJ0rI8C/wKgJG3uq4HvpnqtN+
-         FFa3PMHWziX/JqRbiXM1g5cxOy6w8HXSmxlqk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715333043; x=1715937843;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PzEAvfubVdzbr1Rad2HFxtO4tJenQDkig1qLCknoPWc=;
-        b=C/2axvIlH+xqiaHyFtlWhgHmA1mud9fzpGQ8+dw/YyNte4eXGc896sfSUirS769wsr
-         z6XLt4LVY7wJCiCCkvG5mSQH0pyW9RhKU4EHPyID8YBH3eugun6f9hOjhbsNzhPTjJZO
-         NXn/vUTnKDPkM0xJ4pe4euxI2ni3yVCotlY3Lj05Q+oQpPSYHDnN6z9xraeApCIiqQwu
-         fhU6x4ue0wPVPk1e9Bn+FP838Qho81tOPbm/oCNtrdLvYlXyat9CYXi46LGZ+1ZG8eZl
-         8A4p25uy9lo+kNsRZTIjlkvRKXYctR7w1zu+Vp/ZJv1UQOF+foGPhuzelci9EMzJDD5e
-         G4Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPgStnuLjSKtr42ERei1XFgRqsM4katz8F3LfZjsL7/k9nB9HtJhEze/E0NyzLNENhUon0ZEb1uFZ6V0ONl6Tdso86CiVkNtUhcRNI
-X-Gm-Message-State: AOJu0Yw8oQFRsUh0+WmJRFINjobb52YHUWdfF3kQWQU0gApPrnyAF9gg
-	3r3sT+9ib7NloScnQZD3cD5EuGAXtTHU0pukRJ/G5HlzRoE/ViF3A+itAVr6XPiCAxh2wpLCvuy
-	S6Wl+pCnMrWQ+RlTuKyGxiwjnKvTC47Z3Cwo1eXYvzgrZVz+h
-X-Google-Smtp-Source: AGHT+IEBQo/Qbfl2WC+0rK4SGXKb1MtU+UuvKOJs0bGdaUK/2EFugpwAD8QMjqigbM55196R57Wz0hxTuWlnljjn/MU=
-X-Received: by 2002:a17:907:6d01:b0:a59:9f3e:b1ca with SMTP id
- a640c23a62f3a-a5a2d6657camr156437666b.55.1715332611232; Fri, 10 May 2024
- 02:16:51 -0700 (PDT)
+	s=arc-20240116; t=1715332700; c=relaxed/simple;
+	bh=E6Ay7Fs1hTsSl0DvT8d82qvURwi2t3B7eqBbVBHr9pM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X39yqD1FzIk4bcDfRcs40PhvbN19HVVPaLxdNwDrjinOSfS6Zh2RvyE9BIMWsqQ00jJvjSm1YFFjdOs0o2Cl5eTix+yaen/ovaNmR8DfSFA8kridVh7l1/833sDHg5C/t7OsYGIImXGYec+u4PSkLtbI+J2Cn00Ma7Cu0bUCPj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1s5MOF-00DK86-1G;
+	Fri, 10 May 2024 17:18:08 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 May 2024 17:18:08 +0800
+Date: Fri, 10 May 2024 17:18:08 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jia Jie Ho <jiajie.ho@starfivetech.com>
+Cc: "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 0/4] crypto: starfive - Minor fixes for AES and RSA
+Message-ID: <Zj3mUIispwCN_Az_@gondor.apana.org.au>
+References: <20240429060640.2451685-1-jiajie.ho@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509122154.782930-1-houtao@huaweicloud.com>
-In-Reply-To: <20240509122154.782930-1-houtao@huaweicloud.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 10 May 2024 11:16:40 +0200
-Message-ID: <CAJfpegvJgFfJmDZXw7NBGZ5WASdxTy+EVjQxBSydAq1oARCntw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] fuse: two tiny fixes for fuse_resend()
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, Zhao Chen <winters.zc@antgroup.com>, 
-	linux-kernel@vger.kernel.org, houtao1@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240429060640.2451685-1-jiajie.ho@starfivetech.com>
 
-On Thu, 9 May 2024 at 14:21, Hou Tao <houtao@huaweicloud.com> wrote:
->
-> From: Hou Tao <houtao1@huawei.com>
->
-> Hi,
->
-> The patch set just includes two tiny fixes for fuse_resend(). Patch #1
-> replaces __set_bit() by set_bit() to set FR_PENDING atomically. Patch #2
-> clears FR_SENT when moving requests from processing lists to pending
-> list.
->
-> Please check the individual patches for more details. And comments are
-> always welcome.
+On Mon, Apr 29, 2024 at 02:06:36PM +0800, Jia Jie Ho wrote:
+> This patch series fix a bug caused by freeing a stack buffer in RSA
+> module and skip some unneeded steps in StarFive crypto driver.
+> 
+> Jia Jie Ho (4):
+>   crypto: starfive - Skip dma setup for zeroed message
+>   crypto: starfive: Skip unneeded fallback allocation
+>   crypto: starfive: Do not free stack buffer
+>   crypto: starfive: Use fallback for unaligned dma access
+> 
+>  drivers/crypto/starfive/jh7110-aes.c | 16 +++++++++++-----
+>  drivers/crypto/starfive/jh7110-rsa.c | 11 ++++-------
+>  2 files changed, 15 insertions(+), 12 deletions(-)
+> 
+> -- 
+> 2.40.1
 
-Applied, thanks.
-
-Miklos
+All applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
