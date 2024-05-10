@@ -1,277 +1,198 @@
-Return-Path: <linux-kernel+bounces-176154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C498C2ADD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 380138C2AE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50DF01F23E4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:04:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCDBB1F249AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901274D9E3;
-	Fri, 10 May 2024 20:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2294CB28;
+	Fri, 10 May 2024 20:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b="uiZsIrz8"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4bxUDBF"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90D14CB28
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 20:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D6A4D13B;
+	Fri, 10 May 2024 20:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715371436; cv=none; b=hhM3un89sFVn6bwI8+R63Uec47SBhcBzE1cdofe8mXdw0dBQovk2M7DXESe2OnBYQ+sSj60tp9g2aRNmVL8qlgow1J2dpXXNeEF1z+TSezlzloDl3oinZW6t2oNNscRqcpt5TuANToi6RJ0NDZvUKNZE1rrGSlcjOCbPfB9hu/g=
+	t=1715371457; cv=none; b=VvHKfGAzujG8Ro/cZKycBY7esH1/9vRCYdo1xPNUbCPrX88I/wDd+CMbdILxzrgsNJH9xTKrVhKi2VWiqgfIgzaXEmEp6dcE0WZvakdvfVQoF8XNDnoz62gBf12JWtv65HQaxpWwd0pj3tkecKX0C2iTVNI1+PfqL5sTRwvTh/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715371436; c=relaxed/simple;
-	bh=SxPIHdr8S+eRfdtMNOCxfApLuqEkP+GJwy3FGwuKuXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DPoalLgquwa3XJ31cUd4/tKKtl+442EkiGFN0WEpFeSiUUn77bSYV1lXgygiZz1TiemNP1Y/l7dtaKFoAwojD/KG7vvUoFE6pK8tP44RwJuSkcV5D3eus54pNdvBJjp1JcCHqZMBB50yPR2Y/FSJr8vqDEmO6SXlzehhOmVAwQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk; spf=none smtp.mailfrom=davidwei.uk; dkim=pass (2048-bit key) header.d=davidwei-uk.20230601.gappssmtp.com header.i=@davidwei-uk.20230601.gappssmtp.com header.b=uiZsIrz8; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidwei.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=davidwei.uk
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ec92e355bfso22351245ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:03:54 -0700 (PDT)
+	s=arc-20240116; t=1715371457; c=relaxed/simple;
+	bh=NTpJ5mZLyP6kU52VSGq8JCs19pLGgOI5J6ZUilwq1Is=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=al6HnbipnId9sO2t4SpCQuR/7XsHJEIp5sznz1KAhF0kipGXPAMYqCqPIHQfTDf/EkFqIZmiqMQPAs+ziage3roX9cHF0n45BqW6Amn7RZP7SXpDeqB3769yL0S1k8H3pNZuCUQuqbvNjYlHDsJ9n2S9YMtzJzKAMEU7QoC3PtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4bxUDBF; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59c5c9c6aeso597077966b.2;
+        Fri, 10 May 2024 13:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=davidwei-uk.20230601.gappssmtp.com; s=20230601; t=1715371434; x=1715976234; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RskZ8n5PeN0X02QsGxL+0rF1EfA4GzHbygmSEftJMSg=;
-        b=uiZsIrz8SMQXKrZmOR0alh6olSRedJ14V3AMT7QFTckfotZeJadzVEHQ3iBI1+Li82
-         NCwTDl9/x496x8BpbWH35nnePcAK7t0OcQYhRsgxz3aZsu7Q8sayVBfM6cEuLyNJ9ETW
-         4AbEDevqkT0o8Tz3MxxYVNZvKx46Mapuh6PI7hTWJ4/dx0C/qzony26aIMpM/04+09QT
-         3ogiNoyl7zfd/kQqpRwX55AyEjCvNVBK9gT0W6BCAulXLJJZCKvBApxWM9Zw/kTSB6Z5
-         46wGFS9wbvNskpjX9TzhDhiCyvkuxNBuE41KTJueKsvzlMOt9lu4M8nkAA2KM49vLIh/
-         0mug==
+        d=gmail.com; s=20230601; t=1715371454; x=1715976254; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3w76oPIiLr/d19BookiO28Dm/LSyOamo5VRLJKyQTcM=;
+        b=a4bxUDBF/gNoLhLYzxabqHaqH+iL5fBp1yb1RhGZ8kYa3J+9U0D3s8XlO3ecIlb76K
+         Hb3Aht3KioU2Sd4Mg3Du/meFFj7v4HAyd9AWKUT3Fb8XTu/7NlI+6lh0jbOg+pOS5CJK
+         LPy3TB0T1A5Z8Y06bstvFWWNViHVV8PbrZtFszp+4iMkAAyoCzeqwX6v9/8+O2CRbCBC
+         whlzvZQVsywsso1aaxamGab2J0TEQtaJWBFVKWfJP6otDWi5hW+JG2BmRJea0h6WaQJY
+         o93RndoA963j97NFF3ga1Y+0XxKTr7yC5p8oZUtlnGqTbSjYhX2JyNhxbcO0QTJtix00
+         9RrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715371434; x=1715976234;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RskZ8n5PeN0X02QsGxL+0rF1EfA4GzHbygmSEftJMSg=;
-        b=cwTAOdE1XxyFx+FjPC/CurAKDCzLGpm287736jyKB2UcfMYpRrneYnOTKxwIfwYMkB
-         M+gechyWmW1UlzySImkGUFPhlG+hqhCz6miX0B8YQJXm8Z3Xedizki0fzajjym1UjoE3
-         8bGI2sxd4DvGtYf6ti47M59as9ZBTAGqnXOclgw9Ds+yUpaH6JtytrYbZA3FizZfamsS
-         +Gg5syI9JPJnWJ2aVDcC6hm8GRze3sioSJ+NDLSMk76jK5Q2Lsa3ZBNCbWAP0LmCuVcy
-         8VCTHphrkRifyXOoQpxZc0r06mu5yshUBJ9RxqNLOKtO3WWUENfEx/3LwBt7cMAWv4xr
-         ZOHA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5IdGbvw5QvUMHU2xK48QM/vAMk8qIvQyo5RKsRPlqgLM3jQMI7RthPUVQYrKHfuSFZ6BQF7l3QNE778mAUM4ytXj1ercBejmOjTt2
-X-Gm-Message-State: AOJu0YwSioMp7x7ffJQybnadvd7Qj6oCtGZQ88LwGuiLF80GxwRtgs5s
-	6G7cYf4eu8Sp/0HSAud4+kG4xP/Vbp3ISYzDFzeHvvGrS4uTcHds83Fn58Noh9A=
-X-Google-Smtp-Source: AGHT+IFNOsXVgAh69FDONwW3rAmu1T5fW2J+sp2MDhwChy9Q7hvd+YfmOPzDj6gXW9jqqqmT2D6cGQ==
-X-Received: by 2002:a17:902:a9ca:b0:1eb:1473:c878 with SMTP id d9443c01a7336-1ef43e266bbmr35101295ad.36.1715371433758;
-        Fri, 10 May 2024 13:03:53 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1156:1:1cbd:da2b:a9f2:881? ([2620:10d:c090:500::7:10f0])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf2f722sm36034885ad.120.2024.05.10.13.03.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 13:03:53 -0700 (PDT)
-Message-ID: <0ef50183-42d4-4abd-adeb-bd92b030fe6a@davidwei.uk>
-Date: Fri, 10 May 2024 13:03:50 -0700
+        d=1e100.net; s=20230601; t=1715371454; x=1715976254;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3w76oPIiLr/d19BookiO28Dm/LSyOamo5VRLJKyQTcM=;
+        b=xUZm41sul/zOvwVsqI4Gr901nhAurfxSBXE59H8I9ygXPhCVQSHKRlNISBlPLKQnpd
+         eApxiSYaFr7eYHf82zrLzGPMBnDb3L6d5kaAVxM0GEKNhSHzy6aXTBblcd87XNEVpVXp
+         RpRtrU+qRNY/m6kGlXh/nT03rbB4A4XCvJl0jaqxBrxIqljWPJ6BLD3hpeIePTYZ8SCr
+         q9eo8jlGEE/Nsvp+4cPb2cISi/6LV2oJ9pKsZbK215PtYf58cv/rkd425ZuhXH3ACIwQ
+         F7xcoRf8iNaYEiHx0Svpato/c0+JiAi7ChXMmjXvhcE1Aeioq9K9vdVQYQn9D7YaLLhn
+         La7g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+U399z6u07Axk4PS1CRhKNA2HNJblAYlhN0ucapJVKs6ShirNzH06Qm9/QBprcl1zYxT0CEFO9WzH6qzo3IxSMwxx+9x0izxSA9Kz5q9aIYIf1ao8kNe7XvW7f/SGoC9Jze1f0TeaKTg9vNABmLBqhBit9Hw4oz7qoXClo5E/8s2ExwJw/EaOMEcO21TNEoKC105MfTBRoYqyyGJGGxCtXw==
+X-Gm-Message-State: AOJu0Yx+DBVB7Rx/BtbvGrVgh/6z3I98ygK4Gq6dI1nNXsGM4O+8GhXl
+	98dY1HFemG0L7YUqWEJ9ePPVjsYVBXWMtl2lhApM/LNmzeXAI3m3RvWZ7++06r2MFLLjhnmUrcy
+	gxc4VB9Z5IgBYuG2LtHIqPq52Aho=
+X-Google-Smtp-Source: AGHT+IEOZIt/kgQAQ9S2hYehUkMrxzbU+PDxfVocTwJSC9s/TAZ5/r2D+c6d3cBlKbP4DaN8BXoB1u0mHygG1fPm6z4=
+X-Received: by 2002:a50:9e61:0:b0:566:d333:45e8 with SMTP id
+ 4fb4d7f45d1cf-5734d5ce24fmr2906201a12.20.1715371454083; Fri, 10 May 2024
+ 13:04:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 8/9] bnxt_en: Add TPH support in BNXT driver
-Content-Language: en-GB
-To: Andy Gospodarek <andrew.gospodarek@broadcom.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, Wei Huang
- <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org, bhelgaas@google.com, corbet@lwn.net,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, alex.williamson@redhat.com, michael.chan@broadcom.com,
- manoj.panicker2@amd.com, Eric.VanTassell@amd.com
-References: <20240509162741.1937586-1-wei.huang2@amd.com>
- <20240509162741.1937586-9-wei.huang2@amd.com>
- <868a4758-2873-4ede-83e5-65f42cb12b81@linux.dev>
- <CACZ4nhuBMOX8s1ODcJOvvCKp-VsOPHShEUHAsPvB75Yv2823qA@mail.gmail.com>
- <4c6a8b86-6544-4c99-a0f2-030e2ec4e98f@linux.dev>
- <Zj48BPYoFU1ISaiL@C02YVCJELVCG.dhcp.broadcom.net>
-From: David Wei <dw@davidwei.uk>
-In-Reply-To: <Zj48BPYoFU1ISaiL@C02YVCJELVCG.dhcp.broadcom.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
+ <878r0ijdh5.fsf@intel.com> <20240510102036.3ea40b37@sal.lan> <87o79ehtbz.fsf@intel.com>
+In-Reply-To: <87o79ehtbz.fsf@intel.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 10 May 2024 13:04:02 -0700
+Message-ID: <CAF6AEGvTkL=JxGDaOab9XpJ4htWQnBA1dTEOUxBUTAavM0DB4w@mail.gmail.com>
+Subject: Re: [PATCH] docs: document python version used for compilation
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, workflows@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-10 08:23, Andy Gospodarek wrote:
-> On Fri, May 10, 2024 at 11:35:35AM +0100, Vadim Fedorenko wrote:
->> On 10.05.2024 04:55, Ajit Khaparde wrote:
->>> On Thu, May 9, 2024 at 2:50 PM Vadim Fedorenko
->>> <vadim.fedorenko@linux.dev> wrote:
->>>>
->>>> On 09/05/2024 17:27, Wei Huang wrote:
->>>>> From: Manoj Panicker <manoj.panicker2@amd.com>
->>>>>
->>>>> As a usage example, this patch implements TPH support in Broadcom BNXT
->>>>> device driver by invoking pcie_tph_set_st() function when interrupt
->>>>> affinity is changed.
->>>>>
->>>>> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
->>>>> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
->>>>> Reviewed-by: Wei Huang <wei.huang2@amd.com>
->>>>> Signed-off-by: Manoj Panicker <manoj.panicker2@amd.com>
->>>>> ---
->>>>>    drivers/net/ethernet/broadcom/bnxt/bnxt.c | 51 +++++++++++++++++++++++
->>>>>    drivers/net/ethernet/broadcom/bnxt/bnxt.h |  4 ++
->>>>>    2 files changed, 55 insertions(+)
->>>>>
->>>>> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
->>>>> index 2c2ee79c4d77..be9c17566fb4 100644
->>>>> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
->>>>> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
->>>>> @@ -55,6 +55,7 @@
->>>>>    #include <net/page_pool/helpers.h>
->>>>>    #include <linux/align.h>
->>>>>    #include <net/netdev_queues.h>
->>>>> +#include <linux/pci-tph.h>
->>>>>
->>>>>    #include "bnxt_hsi.h"
->>>>>    #include "bnxt.h"
->>>>> @@ -10491,6 +10492,7 @@ static void bnxt_free_irq(struct bnxt *bp)
->>>>>                                free_cpumask_var(irq->cpu_mask);
->>>>>                                irq->have_cpumask = 0;
->>>>>                        }
->>>>> +                     irq_set_affinity_notifier(irq->vector, NULL);
->>>>>                        free_irq(irq->vector, bp->bnapi[i]);
->>>>>                }
->>>>>
->>>>> @@ -10498,6 +10500,45 @@ static void bnxt_free_irq(struct bnxt *bp)
->>>>>        }
->>>>>    }
->>>>>
->>>>> +static void bnxt_rtnl_lock_sp(struct bnxt *bp);
->>>>> +static void bnxt_rtnl_unlock_sp(struct bnxt *bp);
->>>>> +static void bnxt_irq_affinity_notify(struct irq_affinity_notify *notify,
->>>>> +                                  const cpumask_t *mask)
->>>>> +{
->>>>> +     struct bnxt_irq *irq;
->>>>> +
->>>>> +     irq = container_of(notify, struct bnxt_irq, affinity_notify);
->>>>> +     cpumask_copy(irq->cpu_mask, mask);
->>>>> +
->>>>> +     if (!pcie_tph_set_st(irq->bp->pdev, irq->msix_nr,
->>>>> +                          cpumask_first(irq->cpu_mask),
->>>>> +                          TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY))
->>>>> +             pr_err("error in configuring steering tag\n");
->>>>> +
->>>>> +     if (netif_running(irq->bp->dev)) {
->>>>> +             rtnl_lock();
->>>>> +             bnxt_close_nic(irq->bp, false, false);
->>>>> +             bnxt_open_nic(irq->bp, false, false);
->>>>> +             rtnl_unlock();
->>>>> +     }
->>>>
->>>> Is it really needed? It will cause link flap and pause in the traffic
->>>> service for the device. Why the device needs full restart in this case?
->>>
->>> In that sequence only the rings are recreated for the hardware to sync
->>> up the tags.
->>>
->>> Actually its not a full restart. There is no link reinit or other
->>> heavy lifting in this sequence.
->>> The pause in traffic may be momentary. Do IRQ/CPU affinities change frequently?
->>> Probably not?
->>
->> From what I can see in bnxt_en, proper validation of link_re_init parameter is
->> not (yet?) implemented, __bnxt_open_nic will unconditionally call
->> netif_carrier_off() which will be treated as loss of carrier with counters
->> increment and proper events posted. Changes to CPU affinities were
->> non-disruptive before the patch, but now it may break user-space
->> assumptions.
-> 
-> From my testing the link should not flap.  I just fired up a recent net-next
-> and confirmed the same by calling $ ethtool -G ens7f0np0 rx 1024 which does a
-> similar bnxt_close_nic(bp, false, false)/bnxt_open_nic(bp, false, false) as
-> this patch.  Link remained up -- even with a non-Broadocm link-partner.
-> 
->> Does FW need full rings re-init to update target value, which is one u32 write?
->> It looks like overkill TBH.
-> 
-> Full rings do not, but the initialization of that particular ring associated
-> with this irq does need to be done.  On my list of things we need to do in
-> bnxt_en is implement the new ndo_queue_stop/start and ndo_queue_mem_alloc/free
-> operations and once those are done we could make a switch as that may be less
-> disruptive.
+On Fri, May 10, 2024 at 3:09=E2=80=AFAM Jani Nikula <jani.nikula@intel.com>=
+ wrote:
+>
+> On Fri, 10 May 2024, Mauro Carvalho Chehab <mchehab@kernel.org> wrote:
+> > Em Fri, 10 May 2024 11:08:38 +0300
+> > Jani Nikula <jani.nikula@intel.com> escreveu:
+> >
+> >> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wr=
+ote:
+> >> > The drm/msm driver had adopted using Python3 script to generate regi=
+ster
+> >> > header files instead of shipping pre-generated header files. Documen=
+t
+> >> > the minimal Python version supported by the script.
+> >> >
+> >> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >> > ---
+> >> >  Documentation/process/changes.rst | 1 +
+> >> >  1 file changed, 1 insertion(+)
+> >> >
+> >> > diff --git a/Documentation/process/changes.rst b/Documentation/proce=
+ss/changes.rst
+> >> > index 5685d7bfe4d0..8d225a9f65a2 100644
+> >> > --- a/Documentation/process/changes.rst
+> >> > +++ b/Documentation/process/changes.rst
+> >> > @@ -63,6 +63,7 @@ cpio                   any              cpio --ver=
+sion
+> >> >  GNU tar                1.28             tar --version
+> >> >  gtags (optional)       6.6.5            gtags --version
+> >> >  mkimage (optional)     2017.01          mkimage --version
+> >> > +Python (optional)      3.5.x            python3 --version
+> >>
+> >> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the point=
+ in
+> >> using anything older than the oldest supported version of Python,
+> >> i.e. 3.8 at this time?
+> >
+> > What's the point of breaking compilation with on older distros?
+> > The idea of minimal versions here is to specify the absolute minimum
+> > version that it is required for the build to happen. If 3.5 is
+> > the minimal one, then be it.
+>
+> AFAICT 3.5 was an arbitrary rather than a deliberate choice. We should
+> at least be aware *why* we'd be sticking to old versions.
+>
+> Minimum versions here also means sticking to features available in said
+> versions, for Python just as well as for GCC or any other tool. That's
+> not zero cost.
 
-Hi Andy, I have an implementation of the new ndo_queue_stop/start() API
-[1] and would appreciate comments. I've been trying to test it but
-without avail due to FW issues.
+At this point, the cost to having a lower minimum version is pretty
+small, so I'm not worrying too much about it.
 
-[1]: https://lore.kernel.org/netdev/20240502045410.3524155-1-dw@davidwei.uk/
+Maybe once kernel developers discover mako, and start generating more
+at build time, we'll have to re-evaluate. ;-)
 
-> 
->> And yes, affinities can be change on fly according to the changes of the
->> workload on the host.
->>
->>>>
->>>>
->>>>> +}
->>>>> +
->>>>> +static void bnxt_irq_affinity_release(struct kref __always_unused *ref)
->>>>> +{
->>>>> +}
->>>>> +
->>>>> +static inline void __bnxt_register_notify_irqchanges(struct bnxt_irq *irq)
->>>>
->>>> No inlines in .c files, please. Let compiler decide what to inline.
->>>>
->>>>> +{
->>>>> +     struct irq_affinity_notify *notify;
->>>>> +
->>>>> +     notify = &irq->affinity_notify;
->>>>> +     notify->irq = irq->vector;
->>>>> +     notify->notify = bnxt_irq_affinity_notify;
->>>>> +     notify->release = bnxt_irq_affinity_release;
->>>>> +
->>>>> +     irq_set_affinity_notifier(irq->vector, notify);
->>>>> +}
->>>>> +
->>>>>    static int bnxt_request_irq(struct bnxt *bp)
->>>>>    {
->>>>>        int i, j, rc = 0;
->>>>> @@ -10543,6 +10584,7 @@ static int bnxt_request_irq(struct bnxt *bp)
->>>>>                        int numa_node = dev_to_node(&bp->pdev->dev);
->>>>>
->>>>>                        irq->have_cpumask = 1;
->>>>> +                     irq->msix_nr = map_idx;
->>>>>                        cpumask_set_cpu(cpumask_local_spread(i, numa_node),
->>>>>                                        irq->cpu_mask);
->>>>>                        rc = irq_set_affinity_hint(irq->vector, irq->cpu_mask);
->>>>> @@ -10552,6 +10594,15 @@ static int bnxt_request_irq(struct bnxt *bp)
->>>>>                                            irq->vector);
->>>>>                                break;
->>>>>                        }
->>>>> +
->>>>> +                     if (!pcie_tph_set_st(bp->pdev, i,
->>>>> +                                          cpumask_first(irq->cpu_mask),
->>>>> +                                          TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY)) {
->>>>> +                             netdev_err(bp->dev, "error in setting steering tag\n");
->>>>> +                     } else {
->>>>> +                             irq->bp = bp;
->>>>> +                             __bnxt_register_notify_irqchanges(irq);
->>>>> +                     }
->>>>>                }
->>>>>        }
->>>>>        return rc;
->>>>> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
->>>>> index dd849e715c9b..0d3442590bb4 100644
->>>>> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
->>>>> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
->>>>> @@ -1195,6 +1195,10 @@ struct bnxt_irq {
->>>>>        u8              have_cpumask:1;
->>>>>        char            name[IFNAMSIZ + 2];
->>>>>        cpumask_var_t   cpu_mask;
->>>>> +
->>>>> +     int             msix_nr;
->>>>> +     struct bnxt     *bp;
->>>>> +     struct irq_affinity_notify affinity_notify;
->>>>>    };
->>>>>
->>>>>    #define HWRM_RING_ALLOC_TX  0x1
->>>>
->>
+BR,
+-R
+
+> I guess there are two angles here too. The absolute minimum version
+> currently required, and the, uh, maximum the minimum version can be
+> safely bumped to. Say, you want to use a feature not available in the
+> current minimum, how far up can you bump the version to?
+>
+> Could we define and document the criteria (e.g. based on distros as you
+> suggest below) so we don't have to repeat the discussion?
+>
+>
+> BR,
+> Jani.
+>
+> >
+> > -
+> >
+> > Now, a criteria is needed to raise the minimal version. IMO, the
+> > minimal version shall be at least the minimal one present on most
+> > used LTS distros that are not EOL.
+> >
+> > I would look for at least 4 such distros:
+> >
+> > - Debian
+> >
+> >   Looking at https://wiki.debian.org/LTS, Debian 10 EOL will be on
+> >   June, 2024.
+> >
+> >   Looking at:
+> >
+> >       https://distrowatch.com/table.php?distribution=3Ddebian
+> >
+> >   Debian 10 uses python 3.7.3.
+> >
+> > - Looking at Distrowatch for openSUSE Leap 15.5, it uses Python
+> >   3.6.15 and has an EOL schedule for Dec, 2024.
+> >
+> > - RHEL 8.9 uses a bigger version than those two - 3.11.5 - again
+> >   looking at Distrowatch to check it.
+> >
+> > - SLES 15 SP4 and above uses Python 3.11, according with:
+> >   https://www.suse.com/c/python-3-11-stack-for-suse-linux-enterprise-15=
+/
+> >
+> > From the above, IMO kernel shall support building with Python 3.6
+> > at least until the end of this year.
+> >
+> > Regards,
+> > Mauro
+>
+> --
+> Jani Nikula, Intel
 
