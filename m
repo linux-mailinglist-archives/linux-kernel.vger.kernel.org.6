@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-176061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A3878C2978
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:42:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9408C297C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 107481F22A29
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:42:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 052C51F22C54
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DD71C68D;
-	Fri, 10 May 2024 17:42:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45D11C6A5;
-	Fri, 10 May 2024 17:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFF2219E2;
+	Fri, 10 May 2024 17:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ssdy8x/g"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC92199B9
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715362940; cv=none; b=Nop1Zo/IPdEdLYxpbZbzGJF1C/pO8MZzauk35MAHHv8ygn7MDmWQkLhvVCFOH9CBLMqObP0zfQ0HBqDhT7GS0g61fVXFtSBy4nNb0BPIFhQBDtV5zEJi+SBT9jj9gWEikPc+6SyO4voeXrNHx+wHjTz4dNNMCw2fs/+YDOV6e1U=
+	t=1715363089; cv=none; b=bOK6I7lgIKXziVNLXxNCXkxdNx6sXcR1ERauAD80mkyVhwm0JROaueQeQYT6C7ivlG54ZqM9XfOF22BnFp76Dpj/Ov4qzglfS2Je8OrQZsLSXUrqU+JgmoLiOzeNwvID7hm1UfI4MHeK82roODbC167A6qkppl7Tj2uPCyArIEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715362940; c=relaxed/simple;
-	bh=6Rt5NSPnzn2NwoYdNUH+A4syqFWse6boHm56KdEPN7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JlH1Oq1GNQCA2iUReiY+jV17tugQtKV28dzLHmSWcdxGkVhAWU5zTqG+9ShRXeTHR8/HKdu6ezvG0jgXc/Jl+9HJpFKU8T54hGfsBuH+by8lTl/HBp6zgLBZWTvv7tOwODiT07rJhOkmx4ZmWFnwtoCIXhDYKWXzLc8KzVr9nAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9082711FB;
-	Fri, 10 May 2024 10:42:42 -0700 (PDT)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 831123F6A8;
-	Fri, 10 May 2024 10:42:15 -0700 (PDT)
-Date: Fri, 10 May 2024 18:42:13 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Yangtao Li <tiny.windzz@gmail.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] cpufreq: sun50i: replace of_node_put() with
- automatic cleanup handler
-Message-ID: <20240510184213.68f92cab@donnerap.manchester.arm.com>
-In-Reply-To: <20240503-sun50i-cpufreq-nvmem-cleanup-v1-2-0a2352cac46b@gmail.com>
-References: <20240503-sun50i-cpufreq-nvmem-cleanup-v1-0-0a2352cac46b@gmail.com>
-	<20240503-sun50i-cpufreq-nvmem-cleanup-v1-2-0a2352cac46b@gmail.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1715363089; c=relaxed/simple;
+	bh=xJmMGpijLVbfzV1aLbCyIFqmqtVghhRlL3fIAx0Zf3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=msh/reZiJnbw6pFE2juCwUhJlxw7W3KJlYv8ap0zGsgiwmp4e6XwC5ZCmfqa6Hsx6fyDYwpDz4Ao4U7Yry597mu2uOb4PKJuqBuo9E+HNxdlD0msgliDnW6JGoY5yqQUFrIbI2MuVV9wrYlrwT4oMumKIfHnI+gHqlD0gHvO64A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ssdy8x/g; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5f80aa2d4a3so1980313a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715363087; x=1715967887; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L57+zK9MzVoCupg09U6DhX9rKCFQrUW4lM5mF0fCgNY=;
+        b=Ssdy8x/gu3v6owk4cRKjS558k6DX65Wm05p8vmbUS80yA1nhMtBEJKTlXakydU7iv4
+         jz8AfO4nTvtwcQQHM5EqSaU/QOgxMSGVsoDmr4ZGk5pIburKLY11uAn84+0OKXfb5nef
+         O8XA4bl+7ytiI5z8A35fyK64yuLYpUa3igqEI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715363087; x=1715967887;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L57+zK9MzVoCupg09U6DhX9rKCFQrUW4lM5mF0fCgNY=;
+        b=ABwgw7fkqXm0NLxtbpuOY7SwEkIMM2VI3emUWetjZSUb8Nug/m9K1jSRkf+XnsDo4o
+         Jfp4hgGQNV3df18gh4dFEyXxHm9tbD6t4wxp4Lw4aGOmAry6l0hzvq+wAPgPnjRoPQ0+
+         kHIJH1R5m93ybftSlzbNECB/ewPKuGYvTC5CDqaHrnr3I7yA+VRku48HmS9Whipp37pg
+         2uAaEfiWvBI6Vuqem7FhoVZDARglcrZBjcgunw6VlgNpmzrXJzsyilGkfyCLzL7SNX7o
+         D/57heevlIKCSIq7m3gBt0i9w6O/vjDD2SL1dLLb13e1y+rEMUrwHmgaK1CQPw/gWk2I
+         vn5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVT26hsIZyjxkP3w2aBkLywO6MA1c/TgTGbdjdQ4LbtFXTrosRimyIDI06LzFdNOjkt60xEqP9AWwhp++m8QGCSzzygo1hPgln+GCpG
+X-Gm-Message-State: AOJu0Yy6FlsQFrQZSRrB98ETT0mEazu7KjTK8uCSVGfafznHakg7HJh0
+	tHQWu7pWbELghyjFxOzYgYrOPBZ4cCEn+rzKos/WqAQL+KBDkp0WV78Mu3RGLQ==
+X-Google-Smtp-Source: AGHT+IES457OerJ6E+sjpYxMiTqrSeTP8IOKWgMKTpX1LuCp+KnQ+g1iaESf6bNjK6mubIK/EdZwFw==
+X-Received: by 2002:a17:90b:46c4:b0:2b1:817d:982b with SMTP id 98e67ed59e1d1-2b6cc777f3cmr3358191a91.14.1715363086792;
+        Fri, 10 May 2024 10:44:46 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628ca53cesm5360572a91.44.2024.05.10.10.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 10:44:45 -0700 (PDT)
+Date: Fri, 10 May 2024 10:44:44 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+	bpf@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 13/66] selftests/exec: Drop duplicate -D_GNU_SOURCE
+Message-ID: <202405101044.5D2742EC@keescook>
+References: <20240510000842.410729-1-edliaw@google.com>
+ <20240510000842.410729-14-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510000842.410729-14-edliaw@google.com>
 
-On Fri, 03 May 2024 19:52:33 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
-
-Hi,
-
-> Make use of the __free() cleanup handler to automatically free nodes
-> when they get out of scope.
-
-Looks alright, the last function is now particularly neat.
-
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-I haven't tested the error paths yet, but it certainly boots fine on an
-OrangePi Zero3.
-
-Cheers,
-Andre
-
-> ---
->  drivers/cpufreq/sun50i-cpufreq-nvmem.c | 25 ++++++++-----------------
->  1 file changed, 8 insertions(+), 17 deletions(-)
+On Fri, May 10, 2024 at 12:06:30AM +0000, Edward Liaw wrote:
+> -D_GNU_SOURCE can be de-duplicated here, as it is added by lib.mk.
 > 
-> diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> index ef83e4bf2639..eb47c193269c 100644
-> --- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-> @@ -131,14 +131,14 @@ static const struct of_device_id cpu_opp_match_list[] = {
->  static bool dt_has_supported_hw(void)
->  {
->  	bool has_opp_supported_hw = false;
-> -	struct device_node *np;
->  	struct device *cpu_dev;
->  
->  	cpu_dev = get_cpu_device(0);
->  	if (!cpu_dev)
->  		return false;
->  
-> -	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> +	struct device_node *np __free(device_node) =
-> +		dev_pm_opp_of_get_opp_desc_node(cpu_dev);
->  	if (!np)
->  		return false;
->  
-> @@ -149,8 +149,6 @@ static bool dt_has_supported_hw(void)
->  		}
->  	}
->  
-> -	of_node_put(np);
-> -
->  	return has_opp_supported_hw;
->  }
->  
-> @@ -165,7 +163,6 @@ static int sun50i_cpufreq_get_efuse(void)
->  	const struct sunxi_cpufreq_data *opp_data;
->  	struct nvmem_cell *speedbin_nvmem;
->  	const struct of_device_id *match;
-> -	struct device_node *np;
->  	struct device *cpu_dev;
->  	u32 *speedbin;
->  	int ret;
-> @@ -174,19 +171,18 @@ static int sun50i_cpufreq_get_efuse(void)
->  	if (!cpu_dev)
->  		return -ENODEV;
->  
-> -	np = dev_pm_opp_of_get_opp_desc_node(cpu_dev);
-> +	struct device_node *np __free(device_node) =
-> +		dev_pm_opp_of_get_opp_desc_node(cpu_dev);
->  	if (!np)
->  		return -ENOENT;
->  
->  	match = of_match_node(cpu_opp_match_list, np);
-> -	if (!match) {
-> -		of_node_put(np);
-> +	if (!match)
->  		return -ENOENT;
-> -	}
-> +
->  	opp_data = match->data;
->  
->  	speedbin_nvmem = of_nvmem_cell_get(np, NULL);
-> -	of_node_put(np);
->  	if (IS_ERR(speedbin_nvmem))
->  		return dev_err_probe(cpu_dev, PTR_ERR(speedbin_nvmem),
->  				     "Could not get nvmem cell\n");
-> @@ -301,14 +297,9 @@ MODULE_DEVICE_TABLE(of, sun50i_cpufreq_match_list);
->  
->  static const struct of_device_id *sun50i_cpufreq_match_node(void)
->  {
-> -	const struct of_device_id *match;
-> -	struct device_node *np;
-> -
-> -	np = of_find_node_by_path("/");
-> -	match = of_match_node(sun50i_cpufreq_match_list, np);
-> -	of_node_put(np);
-> +	struct device_node *np __free(device_node) = of_find_node_by_path("/");
->  
-> -	return match;
-> +	return of_match_node(sun50i_cpufreq_match_list, np);
->  }
->  
->  /*
-> 
+> Signed-off-by: Edward Liaw <edliaw@google.com>
 
+Thanks!
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-- 
+Kees Cook
 
