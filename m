@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-176122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265438C2A20
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:54:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC02B8C2A26
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59AF286C48
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:54:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CEBCB24D01
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FFF44393;
-	Fri, 10 May 2024 18:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64623446AB;
+	Fri, 10 May 2024 19:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QlT4L3vG"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RhDibBVA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7E1BDC8;
-	Fri, 10 May 2024 18:54:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AA71D530;
+	Fri, 10 May 2024 19:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715367247; cv=none; b=gI9Ih8kW1ddOVECqaQAZ14IN9hRXpFntzSdOK4XJKBa6da98xuDUTMThcIFxv3ZYC+oPIEiHHb6VfLXb+P0xAwmyxFtszFnb6mV2kAshcZjWlqgoAzWUWK40Nd78qt13xQmaqQUb3WefWVGi8x6vhRwImBctq4e4q2Mqve4wXmE=
+	t=1715367657; cv=none; b=dz5qQlRuz1i/EJF2e+BItw13bS43s8GM8/PLJyuFyo68ZocMkxcpGRB+UG48fag4q25e1NUIQphd4z/8wn5lbGfzectrLVQcAnVtYn2YORYvYrlkzWOqB3e+gjql1J/px1Taq3eIShTL/cUabrwHMB/mGNFGainHnxwzT4frkx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715367247; c=relaxed/simple;
-	bh=4vpAjobi1YxeVzKhUzPgFAloD1MAKmnN9hswaFis0sw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hOMp9U2ZpZ1xi5HmJuDPai+50uu2Pf06gHFLGet5fQE/9DM466+gWwLPRUu1r1chS7uzk/mgtUH31D4DuFchFKPbp3GQu5ZWH0EHADRujugzzuqY/UmQjP9NKKleziy+vGK9puW/9KITQMUUa7icsB8CxM8vWQQ8z3gPXjn0lGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QlT4L3vG; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IendhRezRdHkCFfFsZTgYGRwbs6ppEzGZGzENXeNAlY=; b=QlT4L3vGo5BrUtvEY1sfaC06j7
-	To1YWpICqsmeQ609slk/5cgfCAReOS553T/uzYN3F0aMh6cgEm3exzjNMR7B2WFOrXcSYGX+3yB7o
-	r0WqXAinAy3ItWy6mo7YlGNIezhpxG16dFJ3gZh1Y0DEPGv2CyFhyW2mKWCO2k/pfWFGOHIGo10YD
-	ymHGxYCFNEOg2CrRU6zPUNhic1J7oovXxEmJ0nJOo/2W6+ONVa6P+NvbHTkNm6jl82No+JfNjaY/p
-	n9ufYyaf9xxVbyolbD8JeMkS0eQ/X8hSmDt9QNe/jq4wzIRfUp8dRZbZ9IcusIR/OSvaQPfabAKy0
-	dQg5K0Hw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s5VNP-00000006BoA-0F3k;
-	Fri, 10 May 2024 18:53:51 +0000
-Date: Fri, 10 May 2024 11:53:51 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Christoph Lameter <christoph@lameter.com>,
-	Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"hughd@google.com" <hughd@google.com>,
-	"ioworker0@gmail.com" <ioworker0@gmail.com>,
-	"wangkefeng.wang@huawei.com" <wangkefeng.wang@huawei.com>,
-	"ying.huang@intel.com" <ying.huang@intel.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"shy828301@gmail.com" <shy828301@gmail.com>,
-	"ziy@nvidia.com" <ziy@nvidia.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 0/8] add mTHP support for anonymous shmem
-Message-ID: <Zj5tP7k1muaCDtO_@bombadil.infradead.org>
-References: <cover.1714978902.git.baolin.wang@linux.alibaba.com>
- <CGME20240508113934eucas1p13a3972f3f9955365f40155e084a7c7d5@eucas1p1.samsung.com>
- <fqtaxc5pgu3zmvbdad4w6xty5iozye7v5z2b5ckqcjv273nz7b@hhdrjwf6rai3>
- <f44dc19a-e117-4418-9114-b723c5dc1178@redhat.com>
- <ZjvRPLaXQewA8K4s@bombadil.infradead.org>
- <23ea6dbd-1d4e-4aeb-900b-646db880cfb6@redhat.com>
+	s=arc-20240116; t=1715367657; c=relaxed/simple;
+	bh=s6ILEciIW26eOwuIRXGs/El6boV8M8kmhjL1g78NP5Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kl/yemxnN1kNYUdz8c24wJImJY24Mo+frZacIv9lPWUtjnCXwklYaRDCKk5y8EoUrxAEfKGLxQ/nDYJJ6qvUrLAIM6VunTuegaydb95z7K/oMxO7KP6ahSH7MDsf6JWcsL3mTUVraF3XFIjrRfZIaWAzGBZslwADo0GdHhggFvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RhDibBVA; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715367641; x=1746903641;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=s6ILEciIW26eOwuIRXGs/El6boV8M8kmhjL1g78NP5Y=;
+  b=RhDibBVAbioEKD2w4jNJugXmVXuTXVhuqK7//KqE8oK0JZpItt3AVP+8
+   UxmpTdNyK7cEhyoERddhGLO9n+wlatMjKKSZWB6TtnIyWqYL5bULZXwCn
+   8RYp90jPLq8DC059SZULRPArky8SaisMr/9eu1Wbcme8OxdZJrJVTbIGS
+   dyNXA/P8TxU9AtlbTv5EofiubMNq+XQvwB2ArZ/Ys44MId1+bJei5lPJl
+   2fqnyIqwIZn1MJj2QCL6F7ga4BwoLfaeMgkbI9tnZ9ypbdBUQD2aVW6cz
+   8AfNQfY7Jmh8+sclz2m4ekG4E9M8qkVnjd8Jvm69tO7qGnvc/rxaeWqOP
+   w==;
+X-CSE-ConnectionGUID: bsHmoWZcSyyahwBUX+v1JA==
+X-CSE-MsgGUID: NBczbAh1SJut/sj5twODzg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="36742681"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="36742681"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 12:00:41 -0700
+X-CSE-ConnectionGUID: xvcr9McrQYOjlNzYC7TPfQ==
+X-CSE-MsgGUID: n8D6LLd2QJKk7lGohA/VyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="34139624"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.205])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 12:00:38 -0700
+From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ Dan Williams <dan.j.williams@intel.com>
+Subject:
+ Re: [RFC PATCH v2 3/3] ACPI: extlog: Make print_extlog_rcd() log
+ unconditionally
+Date: Fri, 10 May 2024 21:00:34 +0200
+Message-ID: <7009544.jJDZkT8p0M@fdefranc-mobl3>
+In-Reply-To: <20240510125214.GCZj4YfluoP-mDz3_U@fat_crate.local>
+References:
+ <20240510112740.667445-1-fabio.m.de.francesco@linux.intel.com>
+ <20240510112740.667445-4-fabio.m.de.francesco@linux.intel.com>
+ <20240510125214.GCZj4YfluoP-mDz3_U@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23ea6dbd-1d4e-4aeb-900b-646db880cfb6@redhat.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Thu, May 09, 2024 at 07:48:46PM +0200, David Hildenbrand wrote:
-> On 08.05.24 21:23, Luis Chamberlain wrote:
-> >  From my perspective the more shared code the better, and the more shared
-> > paths the better. There is a chance to help test swap with large folios
-> > instead of splitting the folios for swap, and that would could be done
-> > first with tmpfs. I have not evaluated the difference in testing or how
-> > we could get the most of shared code if we take a mTHP approach or the
-> > iomap approach for tmpfs, that should be considered.
-> 
-> I don't have a clear picture yet of what might be best for ordinary shmem
-> (IOW, not MAP_SHARED|MAP_PRIVATE), and I'm afraid there is no easy answer.
+On Friday, May 10, 2024 2:52:14=E2=80=AFPM GMT+2 Borislav Petkov wrote:
+> On Fri, May 10, 2024 at 01:21:47PM +0200, Fabio M. De Francesco wrote:
+> > Make extlog_print_rcd() log unconditionally to report errors even if
+> > userspace is not consuming trace events. Remove ras_userspace_consumers=
+()
+> > because it is not anymore used.
+>=20
+> Did you do any git archeology before that?
+>=20
+> d6cae935ec5b ("trace, eMCA: Add a knob to adjust where to save event log")
+>=20
+> I can't find in this commit message why this is needed... Do share pls.=20
+>=20
+> > This change makes extlog_print() (ELOG) log consistently with ghes_proc=
+()
+> > (GHES).
 
-OK so it sounds like the different options needs to be thought out and
-reviewed.
+I thought that ELOG and GHES should be modeled consistently. ghes_proc()=20
+prints to the console while ghes_do_proc() also uses ftrace. I made this sh=
+ort=20
+series an RFC mainly to ask / receive comments on this change (3/3).
 
-> As long as we don't end up wasting memory, it's not obviously bad.
+If we want to make ELOG and GHES act similarly, this patch is needed.=20
+Otherwise, things should be left the way they currently are.=20
 
-Sure.
+I'll make a v3  with a more clear explanation of why I think we should pref=
+er=20
+to make ELOG act similarly to GHES in how kernel logs are handled.
 
-> But some
-> things might be tricky (see my example about large folios stranding in shmem
-> and never being able to be really reclaimed+reused for better purposes)
+> Avoid having "This patch" or "This commit" in the commit message. It is
+> tautologically useless.
+>
+> Also, do
+>=20
+> $ git grep 'This patch' Documentation/process
+>=20
+> for more details.
+>=20
+> Pls have a look at our documentation and check all your patches.
+>=20
+> Thx.
 
-Where is that stated BTW? Could that be resolved?
+Please note that I was introducing the "why" part of the message. I never=20
+refer to this patch for the "what", and I always use an imperative tone onl=
+y=20
+in the "what" part.=20
 
-> I'll note that mTHP really is just (supposed to be) a user interface to
-> enable the various folio sizes (well, and to expose better per-size stats),
-> not more.
+However, I see why this commit message was poor. And probably also the othe=
+r=20
+two were low quality. Therefore, I'll rework this and also the other two=20
+messages.
 
-Sure but given filesystems using large folios don't have silly APIs for
-using which large folios to enable, it just seems odd for tmpfs to take
-a different approach.
+Thanks for your comments,
 
-> From that point of view, it's just a filter. Enable all, and you get the
-> same behavior as you likely would in the pagecache mode.
+=46abio
 
-Which begs the quesiton, *why* have an API to just constrain to certain
-large folios, which diverges from what filesystems are doing with large
-folios?
 
-> > Are there other things to consider? Does this require some dialog at
-> > LSFMM?
-> 
-> As raised in my reply to Daniel, I'll be at LSF/MM and happy to discuss. I'm
-> also not a SHMEM expert, so I'm hoping at some point we'd get feedback from
-> Hugh.
 
-Hugh, will you be at LSFMM?
-
-  Luis
 
