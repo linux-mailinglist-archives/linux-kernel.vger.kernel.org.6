@@ -1,148 +1,110 @@
-Return-Path: <linux-kernel+bounces-175886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6008C8C26A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:21:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A20D8C268D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A941CB22C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:21:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4941F22191
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28841708B1;
-	Fri, 10 May 2024 14:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB85F135A57;
+	Fri, 10 May 2024 14:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="GEEQcbXs"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+ocGzjW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ADF12FB39;
-	Fri, 10 May 2024 14:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F873F8D1;
+	Fri, 10 May 2024 14:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715350845; cv=none; b=fbdjtjaNZlbywN9bmufdyYNjaNDffaOLtubtYSaTVuTmBG5rAJ9YZ4pMVY0rqNfD+Fayf0+qW6tl/fk9xvB5iz7u2OYvKQ9ssGCKkqHn3W3S9CPAXi8Um8VMB9MzxapKayOq84WBWI+mgaUPsH7qmMFj1WCF9EvP54HweAod9wY=
+	t=1715350624; cv=none; b=Ao3tAUELDaR2TTNb2mbVtDkF5VTBf3EkZWd7+qUdp0787FoQgfYqLv0M9fN4NiUxFo/GFEjt4Y/bMjbBJ2RxGsIuEK01zVOcJFZuZsvYqCW/QYghziwYhRyhwcr36fE2jlvCkieuVHuq8CcLzVIVIM2duRnqId1V9rqu3KJsS/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715350845; c=relaxed/simple;
-	bh=kj0fHUv9hccCyohXhp+3qUh/xZKH1f7iQnqBhqFt5TE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aojaQ+FQT2INblqOBIZixuHGnkT1UcOy8XZvBor9xW/PvuUhULuJKXiIqG4B027AfWVJrN9m9T+JtWf3lSeni9TelUb5TyTT2DnhoUlFyMdi2hKSlOF7TUBSiCrmk3eD7dU0iq0IYe71CxJiebvr9x5pwQ/VnnWYYbjsM1MkbYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=GEEQcbXs reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.0.0)
- id b8b218a2613aa1f1; Fri, 10 May 2024 16:20:41 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 6C5912102F3F;
-	Fri, 10 May 2024 16:20:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1715350840;
-	bh=kj0fHUv9hccCyohXhp+3qUh/xZKH1f7iQnqBhqFt5TE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=GEEQcbXs9jESdVUXXanIe7JtOdDzKeZihuum5VzN1nBUqYQzTZupbnwfYp0zxh44H
-	 ezobRcCEHz2HFaHZMjbF7WE3w1z9vXE7PDINqFT39IGRU3YKu0K6iQY4/A9+RCgDHG
-	 VzjlNPGsEQZhEDwXUQZsZNE2JvKzcLbsE45M3qReuKetTtsrJ8CR70xQjP6w2J1xu2
-	 5t5sEJduQeENLBcpkaMUruS7+0xjLjMayHo8Ky9+vr1EvJmQiDBQWqVcLxRt6jRYg/
-	 8uHXRXva4BGrHvdWbm2y+ZYlfD78sh5SJnPHRnTWR16/JeTV3o95Iz4aS/RnzdJ06a
-	 MVmA2Bglf29gQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v1 3/6] thermal: trip: Make thermal_zone_set_trips() use trip
- thresholds
-Date: Fri, 10 May 2024 16:16:52 +0200
-Message-ID: <1974336.PYKUYFuaPT@kreacher>
-In-Reply-To: <13518388.uLZWGnKmhe@kreacher>
-References: <13518388.uLZWGnKmhe@kreacher>
+	s=arc-20240116; t=1715350624; c=relaxed/simple;
+	bh=V450PsVFKYuLz/CjQ5KVeg3wqYL5FGkcrDqCeTiCgww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QY2TdYyAnLmXi5DcKSY58daNSKxGRPgSs3eMqXt3o/uupqz830QQYlpZPO742DejStKP7dmxAJYJoywRCa0vbohpEZRwtZty8PM1o0DHYBmqpvMNQsZpwCw/2xUjCKZo1QWPBKkg+1wcJLR0cC2m1MUNd3Yc74NFUpdUgALMTUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+ocGzjW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21174C113CC;
+	Fri, 10 May 2024 14:17:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715350623;
+	bh=V450PsVFKYuLz/CjQ5KVeg3wqYL5FGkcrDqCeTiCgww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q+ocGzjWS4vHjZml0C7t25uCD7NfD9xoTBfNCQwEMwNXA2c5JhqEQOTWTP7bjW54C
+	 gDQsceixmbfHBaaqZFd5eS0DqcbxSkLS5dET3l+EDUION8wB39IdzngRyxhlfZy4aM
+	 OmxWcDVFsTL0SsjBJn7D1rg146sx+dtVjslXIzwaVr/5AmoZS5cdb/BCctZBttNu1W
+	 qxZi92HgtWPEsIwQJ352XeQGTMS7QszVM2VJsacB0OhLgGo23lsiD4pa1LZ+ERXRii
+	 FtmVabvdSCn11qll6YcaTTE4DAZBaNAmJc2XEE9B42lEzGfVjp9BRgM21szFbec2eS
+	 oHmqybYxI9PEw==
+Date: Fri, 10 May 2024 11:17:00 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v1] libsubcmd: Fix parse-options memory leak
+Message-ID: <Zj4sXKG9WNY_bDa2@x1>
+References: <20240509052015.1914670-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgjeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigt
- rghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509052015.1914670-1-irogers@google.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, May 08, 2024 at 10:20:15PM -0700, Ian Rogers wrote:
+> If a usage string is built in parse_options_subcommand, also free it.
 
-Modify thermal_zone_set_trips() to use trip thresholds instead of
-computing the low temperature for each trip to avoid deriving both
-the high and low temperature levels from the same trip (which may
-happen if the zone temperature falls into the hysteresis range of
-one trip).
+Thanks, applied to perf-tools-next,
 
-Accordingly, make __thermal_zone_device_update() call
-thermal_zone_set_trips() later, when threshold values have
-been updated for all trips.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/thermal_core.c |    4 ++--
- drivers/thermal/thermal_trip.c |   14 ++++----------
- 2 files changed, 6 insertions(+), 12 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -498,13 +498,13 @@ void __thermal_zone_device_update(struct
- 	if (tz->temperature == THERMAL_TEMP_INVALID)
- 		return;
+- Arnaldo
  
--	thermal_zone_set_trips(tz);
--
- 	tz->notify_event = event;
- 
- 	for_each_trip_desc(tz, td)
- 		handle_thermal_trip(tz, td, &way_up_list, &way_down_list);
- 
-+	thermal_zone_set_trips(tz);
-+
- 	list_sort(&way_up_list, &way_up_list, thermal_trip_notify_cmp);
- 	list_for_each_entry(td, &way_up_list, notify_list_node) {
- 		thermal_notify_tz_trip_up(tz, &td->trip);
-Index: linux-pm/drivers/thermal/thermal_trip.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_trip.c
-+++ linux-pm/drivers/thermal/thermal_trip.c
-@@ -88,17 +88,11 @@ void thermal_zone_set_trips(struct therm
- 		return;
- 
- 	for_each_trip_desc(tz, td) {
--		const struct thermal_trip *trip = &td->trip;
--		int trip_low;
-+		if (td->threshold < tz->temperature && td->threshold > low)
-+			low = td->threshold;
- 
--		trip_low = trip->temperature - trip->hysteresis;
--
--		if (trip_low < tz->temperature && trip_low > low)
--			low = trip_low;
--
--		if (trip->temperature > tz->temperature &&
--		    trip->temperature < high)
--			high = trip->temperature;
-+		if (td->threshold > tz->temperature && td->threshold < high)
-+			high = td->threshold;
- 	}
- 
- 	/* No need to change trip points */
-
-
-
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/lib/subcmd/parse-options.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+> index 9fa75943f2ed..d943d78b787e 100644
+> --- a/tools/lib/subcmd/parse-options.c
+> +++ b/tools/lib/subcmd/parse-options.c
+> @@ -633,11 +633,10 @@ int parse_options_subcommand(int argc, const char **argv, const struct option *o
+>  			const char *const subcommands[], const char *usagestr[], int flags)
+>  {
+>  	struct parse_opt_ctx_t ctx;
+> +	char *buf = NULL;
+>  
+>  	/* build usage string if it's not provided */
+>  	if (subcommands && !usagestr[0]) {
+> -		char *buf = NULL;
+> -
+>  		astrcatf(&buf, "%s %s [<options>] {", subcmd_config.exec_name, argv[0]);
+>  
+>  		for (int i = 0; subcommands[i]; i++) {
+> @@ -679,7 +678,10 @@ int parse_options_subcommand(int argc, const char **argv, const struct option *o
+>  			astrcatf(&error_buf, "unknown switch `%c'", *ctx.opt);
+>  		usage_with_options(usagestr, options);
+>  	}
+> -
+> +	if (buf) {
+> +		usagestr[0] = NULL;
+> +		free(buf);
+> +	}
+>  	return parse_options_end(&ctx);
+>  }
+>  
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 
