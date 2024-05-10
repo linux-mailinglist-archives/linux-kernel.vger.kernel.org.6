@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-175723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E3F8C2411
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:58:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4831A8C2413
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31608284088
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:58:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA5E1B25EDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DD216EBE5;
-	Fri, 10 May 2024 11:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D11B16EC08;
+	Fri, 10 May 2024 11:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO+CPuxH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Are0CCm4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736B821340
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD95A16DED7;
+	Fri, 10 May 2024 11:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715342301; cv=none; b=cwBwvSNOU2TstVPx0YoVeo8GhJkr5Up25X2jmCg3Z0NSgtkbVg7tQVWaJJK9be/dOPqhaLd6beehGN/jjuRNW/rwPtQ4DS0B95RWkRrorkYSmLSg+lp7uwCrFUB8LHsu68TYmloYrCCtMxQiNdB8dgYmPgW3gASv4BP0M/s5U5o=
+	t=1715342315; cv=none; b=TiR8PKSVsZQcs3I3+vX1FlRYpz9X6eMgFVach810CEP/aotqqpPAElqoAhZV0MAI81qHNn8uY/jD3N8uNLMJBWrHTwscAyFr1sGzhxgbXDezHsSJ/2iLyBZ0+ycKL66l5mRrefbCtI0TzRKu44H3fsZ+X7Schc2jUmxQ4HX7mA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715342301; c=relaxed/simple;
-	bh=l1+qHEhMt9OAwRHmaM4J/Mj6s8ThW/PsHrbGScytz3U=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=IaEFSjblqjcEPHX7qVLC+da0fEvswtZgry2/+k4OrWecxbtDnXdctCn7qLdjlZSot8VdrikAR3iE20ICDS1uBPqqCRDClEXyIuN/Ib9wlgvCq3twbPX4la8mHGUL7zyCsRhDzM832Vmmh6QqNlQrJeQl/P7oXhqqaa2U2BAEFc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO+CPuxH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9860BC113CC;
-	Fri, 10 May 2024 11:58:20 +0000 (UTC)
+	s=arc-20240116; t=1715342315; c=relaxed/simple;
+	bh=w1n9f5zQ5v+scTfOQWdmcNEIJEkb7jEiVN5I/WVfYso=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=aFNa2DqrQP35vUW1RkQ5uro0p4CQu6gHpIF9gAfNST+NLFNpvyq5//f+Al8QInk1ZgwfgmDaXfuCI8EU/uehekVTbQXKFoKxa/JW775z4rGh9jLhCHMdeG2/l6sKf39Z/JbrhDRebd9SHmxtKeTRq6wFmaDJ8DeQzPRB0A2F8Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Are0CCm4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2EA0C2BBFC;
+	Fri, 10 May 2024 11:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715342301;
-	bh=l1+qHEhMt9OAwRHmaM4J/Mj6s8ThW/PsHrbGScytz3U=;
+	s=k20201202; t=1715342315;
+	bh=w1n9f5zQ5v+scTfOQWdmcNEIJEkb7jEiVN5I/WVfYso=;
 	h=From:To:Cc:Subject:Date:From;
-	b=PO+CPuxHDeXr3dP49DI0viTOxFiKrkvueHFxHZS6aUPjHU5ty8yU4kw1/jlC5pBKy
-	 qoLjt6wKBA084dX0/ToKYBCBFAaNs5CgTgo/gV88fW1GrRpU9seSUjyES9tyyL+AC/
-	 Bv0mmavafFNQMglwkuxwX3mKFqv9TpPo4aPP6Fy2ucGIFUr8FSIt7/39VYvSAFQgGw
-	 rLEfFxceCQCqzm7sVcsHn6eZukZt4ZArNxWFVnZEPgFBKblFcBUvAd6EzAotVBrMPp
-	 syS12ta3ps7if1S2JuEiA+BweetfokGck0yofMiednXXwhLfMguMYrRBo7nFce1o5G
-	 vRFVk4LsFqOCg==
-Message-ID: <5a083c1fa21b73db20ea4b8a8c86a5c9.broonie@kernel.org>
+	b=Are0CCm4YtKsAswCho792G2n/Vn9YCo0MwAI7O1FTVlvtkuO/HDl9JHtjGrDHuaHf
+	 ZgVfxXw6aWH5dNjJHIuODOJxjTdqL8X1IvCkfBW+qdVeDCKhTgxgkBlFBnqhT1wBx6
+	 XUjlvJQW4AtjrWAJ0ppxR7ZO+5jZglKcKUyo9VtNONMXjN7qFgLcv42tcojXEMyV5C
+	 cg39gL6o+z1hbTPCjqyGYYIRZOhevFmktTnbJ5oCG4X83m2XeXVJCYSaFaHuSjnib5
+	 Mdk7Sf9xxHEkCQhSnPZPBVcSpZ5HhZ0aoVTpJohrlMWdr8J6BRDVcrM1LE8auEPc0+
+	 ZAVgdJR+yIIYg==
+Message-ID: <275b918bbf12753d81537f9697615900.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator fixes for v6.9-rc7
-Date: Fri, 10 May 2024 12:58:12 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI fixes for v6.9-rc7
+Date: Fri, 10 May 2024 12:58:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The following changes since commit ff33132605c1a0acea59e4c523cb7c6fabe856b2:
+The following changes since commit 4756fa529b2f12b7cb8f21fe229b0f6f47190829:
 
-  regulator: change devm_regulator_get_enable_optional() stub to return Ok (2024-04-24 10:13:30 +0900)
+  spi: fix null pointer dereference within spi_sync (2024-05-01 11:02:48 +0900)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.9-rc7
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.9-rc7
 
-for you to fetch changes up to 2a4b49bb58123bad6ec0e07b02845f74c23d5e04:
+for you to fetch changes up to ef13561d2b163ac0ae6befa53bca58a26dc3320b:
 
-  regulator: core: fix debugfs creation regression (2024-05-09 17:43:57 +0200)
-
-----------------------------------------------------------------
-regulator: Fixes for v6.9
-
-Two fixes here, one from Johan which fixes error handling when we
-attempt to create duplicate debugfs files and one for an incorrect
-specification of ramp_delay with the rtq2208.
+  spi: microchip-core-qspi: fix setting spi bus clock rate (2024-05-09 06:59:19 +0200)
 
 ----------------------------------------------------------------
-Alina Yu (1):
-      regulator: rtq2208: Fix the BUCK ramp_delay range to maximum of 16mVstep/us
+spi: Fixes for v6.9
 
-Johan Hovold (1):
-      regulator: core: fix debugfs creation regression
+Two device specific fixes here, one avoiding glitches on chip select
+with the STM32 driver and one for incorrectly configured clocks on the
+Microchip QSPI controller.
 
- drivers/regulator/core.c              | 27 ++++++++++++++++-----------
- drivers/regulator/rtq2208-regulator.c |  7 +++----
- 2 files changed, 19 insertions(+), 15 deletions(-)
+----------------------------------------------------------------
+Ben Wolsieffer (1):
+      spi: stm32: enable controller before asserting CS
+
+Conor Dooley (1):
+      spi: microchip-core-qspi: fix setting spi bus clock rate
+
+ drivers/spi/spi-microchip-core-qspi.c |  1 +
+ drivers/spi/spi-stm32.c               | 14 ++------------
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
