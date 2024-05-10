@@ -1,146 +1,113 @@
-Return-Path: <linux-kernel+bounces-175998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D978C288C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E288C288E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:13:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0271CB24F1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:13:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7DE2872D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FB5172BA6;
-	Fri, 10 May 2024 16:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF54172799;
+	Fri, 10 May 2024 16:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qN84oVx6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vbVW3k8b"
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EEF446BD;
-	Fri, 10 May 2024 16:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFE41A2C3A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715357596; cv=none; b=N535h7IcACBY/aasjQVbxYrQXN4uDrli8YHSNaUcwdnnTrjpPfNoYMGpVyDX3giUx8lmmZvmFWoJJqzWaGR43KE3785OhbKFwjNuamAbbNZnz5N8Ztjn/lyN9nnXBWRNEAbpg0zqVueXUbGWL9OL9a65AZkCM8FjgmpiW2tx2tg=
+	t=1715357630; cv=none; b=u6FRQQ0rxa7eYqzKM1UY+1avm8lBWqr9c7H2A4svUZMkFBwMk9pgxqcYcrEhdsKwwnsyKLecW315oAYBaClop5Sa7fJv/JNW2CaIaVPVkOX7tNijbuk0dtIJ9Huhu9xgVieB2r8Lg8mX3+Uo8b8afVz9pFxSBobi9vZIMnTH8rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715357596; c=relaxed/simple;
-	bh=yXGrs/eTjT4agxaYblkMzIWYx2DuBXJA2AYYKw7Nb2w=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=JT6G9pBWy45JdHF79lNHH83Ss7c6AbCm0YVsCgvQLI+/M3NmCOCzApNTclvgOwnHUJjYXfdv8k6ACRPkMepzSyUvgti1Wqd1t7HtfbNBuQbuy/hbLVZvNHTvThdyANNV0hDjyUsMjxa7jIM06sIiZXrcB37Pora9h7iByP07xVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qN84oVx6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DF8C113CC;
-	Fri, 10 May 2024 16:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715357596;
-	bh=yXGrs/eTjT4agxaYblkMzIWYx2DuBXJA2AYYKw7Nb2w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qN84oVx6B94xCmFMUzOl4TqBCSsVnZwJWehYaf6faaRPOj5bLGuxebqXT5oq2R6Zk
-	 Xv9gNiKlkxGtiBod3Kezx5R4mwVwjH+86ODKuZJiptVpfdcydHFFkhq7WOoJ83SIlj
-	 BG9K/qus3XyPxLNj8B/FWHvVeXWKExFBrsPfzh0RTFcy/1HTIYgqeqqCYMnN8BZQQ/
-	 3uLFGoF3PKHeGCe2oRy6MGnfhmJIvasHeBZLxOTe+D2f8DzuRJ/lUIp7SVZI2PytJ9
-	 JYjtFxPk9C2fH+S4nBbzp8QW6OPZ8nz3/+VP7qOsEQzeCZBjECZUsvfEHZh/j0uT8o
-	 2M+k0oJvnrczg==
-Received: from disco-boy.misterjones.org ([217.182.43.188] helo=www.loen.fr)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1s5Srx-00CG3e-NP;
-	Fri, 10 May 2024 17:13:13 +0100
+	s=arc-20240116; t=1715357630; c=relaxed/simple;
+	bh=b2Vtp/c0wZElNrbeWZjvkBtkRs6Hnk/JEEfb33UNJTE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mZahnmpGpaUAec17bLmyY9SjuNN+G4oRhomlQyA70uMtS+JrteqeUn3gpsDOchvPAYC4/9yZycA0hVjXMGI5s457aL+ZtZDYw0qay/qfoEk/07MaVc0UBvG2ZnpRIjKDlc5CcFb0JlKNV9sz0bbVZMdNqD5hwlms+OM4qRURatY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vbVW3k8b; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-7f919bc2e1cso875418241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715357628; x=1715962428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b2Vtp/c0wZElNrbeWZjvkBtkRs6Hnk/JEEfb33UNJTE=;
+        b=vbVW3k8b8CuwO2i4y7DDdC8Zwd2VUBt/1Fkc+zhxmi9mpiZMYHAFMTQD9krnxYe7G+
+         akkK50WuYKHhx9/u43UnUnHzOMvAyOFKR0KrFqSRUobcdQa6M328zG+E0tkvEb9ZCjI3
+         95IRkok8ieJxRhYsRu6rEX5tnTRrp2Tc6mvT9M4jFh8/SjRFd5HQ7Fyi9Ho+oBlguplM
+         x/pGU0nwEeXsDsJTyWSI5VMHuM5M1g2Qr60VzLE3l7L4CzgE7MAjwyt2Yb/Dmsq0ifft
+         JLOvhguhIHVRXEnstaEBbJcWtNgLsomGjZCEbU96Ps67w6eIME6CBgHnIpkHt+wbIo9I
+         /+vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715357628; x=1715962428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b2Vtp/c0wZElNrbeWZjvkBtkRs6Hnk/JEEfb33UNJTE=;
+        b=k9b93E8FBsU4alExwC6BRkCGClulHxrS4PdT8Z9eYXqNcGe5xgq0HOcNCpS7iOa7AB
+         EzVtEhKeyx0QQQ44ZNpjOBSfYToUF094BAABJd5HUY4aBB/0SEne4BTyF4jCYYtxATzo
+         QTyCtsigKZk2/RLaagUvDul6dWTP/VzXL2xCLDefd+XyuBT2Vk+Qb7eq4++7RQ1iNnaS
+         gCfKj8nG3ugbsxuv/1MTbcLbwOo29jYgqQDZUUm2zg3dUpXFzcpWHfqAswfzTxnNNTJj
+         gQVOVAaYyybtvGYb5AkSHfY8bcOHxkGjf1spqCQR9EUAKAphjp613PVOpCs9UY3xbD0+
+         t1cA==
+X-Forwarded-Encrypted: i=1; AJvYcCX0fpzkUZOdozj8poQ8EdGX9I5jldjLS2OnGUfiYasuCZTGURZM5R5qQCPOVgAbXnKQORYVqfqK+9Cb9X+1dLUmSzslYHPzu2PFHkVw
+X-Gm-Message-State: AOJu0Yyb4JgsXtweIrAuYAxTtdBIOWWPIUQseZrkI7Jrcyp6HsyN2mKW
+	j05KwZk3lrPULhhW26+qhT/nv1pk+FAfTo3bKK7f559TTaPPST/6Yav/za6onOqZcJmfVFhkuym
+	NF/IAIjlNoy1POOceLmr2ZPCvUMLc4K1+KWog
+X-Google-Smtp-Source: AGHT+IG41/Va6A/PicQEwVzYdPo29oFPCeD2uQQ0q6aGV6VfwkSy/QFh16mwRnTYc1WroFao7pdgMaWgVuqXaACix2Q=
+X-Received: by 2002:a67:ec0a:0:b0:47b:ab0d:b3f2 with SMTP id
+ ada2fe7eead31-47fabb4fafcmr5674759137.9.1715357626878; Fri, 10 May 2024
+ 09:13:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 10 May 2024 17:13:13 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui
- <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Broadcom
- internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ulf
- Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kamal Dasu <kamal.dasu@broadcom.com>, Al Cooper <alcooperx@gmail.com>, Eric
- Anholt <eric@anholt.net>, Stefan Wahren <wahrenst@gmx.net>,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] arm64: dts: broadcom: Add support for BCM2712
-In-Reply-To: <59a3015c3a6f2f0b70a38c030274a163773e7757.1715332922.git.andrea.porta@suse.com>
-References: <cover.1715332922.git.andrea.porta@suse.com>
- <59a3015c3a6f2f0b70a38c030274a163773e7757.1715332922.git.andrea.porta@suse.com>
-User-Agent: Roundcube Webmail/1.4.15
-Message-ID: <12363be5b11c752b7155cc0c416fdfd2@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 217.182.43.188
-X-SA-Exim-Rcpt-To: andrea.porta@suse.com, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, florian.fainelli@broadcom.com, rjui@broadcom.com, sbranden@broadcom.com, bcm-kernel-feedback-list@broadcom.com, ulf.hansson@linaro.org, adrian.hunter@intel.com, kamal.dasu@broadcom.com, alcooperx@gmail.com, eric@anholt.net, wahrenst@gmx.net, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+References: <20240506-b4-sio-scrollback-delta-v1-1-4164d162a2b8@google.com> <2024051039-bankable-liking-e836@gregkh>
+In-Reply-To: <2024051039-bankable-liking-e836@gregkh>
+From: Justin Stitt <justinstitt@google.com>
+Date: Fri, 10 May 2024 09:13:34 -0700
+Message-ID: <CAFhGd8oo-th9bw-VQQAPva6_zNBHQjmOp+oEcaZOM4uk+xi-oQ@mail.gmail.com>
+Subject: Re: [PATCH] tty: vt: saturate scrollback_delta to avoid overflow
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Bill Wendling <morbo@google.com>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-05-10 15:35, Andrea della Porta wrote:
-> The BCM2712 SoC family can be found on Raspberry Pi 5.
-> Add minimal SoC and board (Rpi5 specific) dts file to be able to
-> boot from SD card and use console on debug UART.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
->  .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  62 ++++
->  arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 302 ++++++++++++++++++
->  3 files changed, 365 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
->  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> 
+On Fri, May 10, 2024 at 3:40=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, May 06, 2024 at 06:55:19PM +0000, Justin Stitt wrote:
+> > Using the signed overflow sanitizer with syzkaller produces this UBSAN
+> > report:
+>
+> <snip>
+>
+> I think you might want to hold off on these until the discussion on the
+> hardening list about overflows all settles down to a solid resolution.
+> Right now these all seem to be a mess and perhaps you will have a better
+> set of primitives to work with once that thread is finished.
 
-[...]
+Agreed.
 
-> +	psci {
-> +		method = "smc";
-> +		compatible = "arm,psci-1.0", "arm,psci-0.2", "arm,psci";
-> +		cpu_on = <0xc4000003>;
-> +		cpu_suspend = <0xc4000001>;
-> +		cpu_off = <0x84000002>;
+I came to the same conclusion once I reached fs/*.
 
-Please drop the PSCI function numbers. From PSCI-0.2, these are 
-standard,
-and what is implemented is discoverable.
+Let's see how folks want to go forward with handling wraparound :thumbs_up:
 
-> +	};
-> +
+>
+> thanks,
+>
+> greg k-h
 
-[...]
-
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
-> +					  IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
-> +					  IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
-> +					  IRQ_TYPE_LEVEL_LOW)>,
-> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
-> +					  IRQ_TYPE_LEVEL_LOW)>;
-
-This is missing the EL2 virtual timer interrupt, as this is a 
-VHE-capable
-system.
-
-
-> +		/* This only applies to the ARMv7 stub */
-> +		arm,cpu-registers-not-fw-configured;
-
-Please drop this. It makes no sense on a modern platform.
-
-> +	};
-> +};
-
-Thanks,
-
-         M.
--- 
-Jazz is not dead. It just smells funny...
+Thanks
+Justin
 
