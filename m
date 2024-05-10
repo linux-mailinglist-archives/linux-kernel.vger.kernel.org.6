@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-175666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70ED8C235C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:29:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915DD8C2361
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CE07286BF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDA81F25572
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9011708B9;
-	Fri, 10 May 2024 11:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96858173352;
+	Fri, 10 May 2024 11:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XlI0vmeq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHeelpjE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFD3165FB6;
-	Fri, 10 May 2024 11:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88EC17083A;
+	Fri, 10 May 2024 11:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340424; cv=none; b=BzeWI3rY2/L5f9z5LWchqjKVbG/Pgx6gnBzPiHBrm/+kIA6pdPdq6Pa0K0U1G/Hm763Qfz/Xrmmv2UJ20ccDAGUTyAHrb/On9KRUEa+zJC1XhOynrf4EMR5kE6HQIvXXjpJZTtoPj9m+nVjtVjmGAMujnG+b9EImPEi2XGBdYDU=
+	t=1715340441; cv=none; b=owKDxX2sVQjAghEsldjFPPN+wbjFVJee96EdkqJeir0KxF3NSCjhGlW2OMyEd04UHgp2vH45YEjjmq3hWMFBmLXsieCxqtBs9WQ0mH7f+GrILvqtOhl7uVcn5/pZt/Z1yzxDAcXLHMOFXZzvEx0JhCHhKZAqN2k9GZb80EAXUSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340424; c=relaxed/simple;
-	bh=pO6nmr5+7VupXvsb41CCKHVwTMMT0X+8Hrcrhi85fBs=;
+	s=arc-20240116; t=1715340441; c=relaxed/simple;
+	bh=4Dh5dxwQMUwQnOXqLi6BQvRsTeACaaji7ugLz/WH9Aw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDveK/pfQJeJdIuKJGlXHHtxjHd1OCzdIhb6oCKl40oTiJyYQ2h/gaq9JgkKJVECtt6y86joQ87lUFlGHP4sITMpMpIIrkS/Z8tXcs66yEDaObYK88pthcJ+lDnhS4ARDu3IKaZ34LEVAGPDywfoHBGPhS9UrMB4CNNeoC/KJVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XlI0vmeq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC8AFC2BD11;
-	Fri, 10 May 2024 11:27:01 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oqV6/bGXg+LTtSnLsxHe/3TNrjzfyzMUHSu1W66mixyb1XvspPij6L5f6g/GpwZe1ifAyTs+8+Ss8FTc0iZklzLartR5pocoyOG70dPt41CCdhlNUNEwrhJoBlCSOf6UHib/EorwvnyIcClOVbG1CJ7QZge+CQoEAIOkE6X/hG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHeelpjE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 451ACC113CC;
+	Fri, 10 May 2024 11:27:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715340423;
-	bh=pO6nmr5+7VupXvsb41CCKHVwTMMT0X+8Hrcrhi85fBs=;
+	s=k20201202; t=1715340441;
+	bh=4Dh5dxwQMUwQnOXqLi6BQvRsTeACaaji7ugLz/WH9Aw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XlI0vmeqlVks88yTEl0eT9yQOL7AoGDf+gO8osKL4DfB2dFLS5GDT333OKFLakDEd
-	 oQvxUClfw1FLrZ7R9uSJC+J9X9dUmXM26aEPXMuQXhuH+UM9Z22CIOidYvqfxUkrMU
-	 B0hBuJF6dfeLef+ZSBS2ojd3dKWTv2XLJ854h4lxzwgtjHFX76deEpw0LmqoVDwgyd
-	 o451qG1a1cQK5IBkqBrJXF8XO/ycWX2PbLm3Faiwvwm1QdUsBD8SKY8uyLC2l7YiN2
-	 t9KZ4doxgxS6e8vSxo1C7QRIypMkrwByZPhVAiNdvJrHNdwe4L0/evpURpU71KBvMi
-	 QZsjLNPMePSDQ==
-Date: Fri, 10 May 2024 12:26:59 +0100
+	b=WHeelpjEShFmQNx4WfooXMnJ5OwskZztJP/zt30LRFe/Gy9CFLt0KYKiblHfKQ7tp
+	 wRDkp2t9LAks6q8Ix1VBDhx+azNAwS/6yKWNXga/uDrf4ZT+rRPY25TOI4XBNlS0zu
+	 6BjJzEpCPYd51dcoDD2zil/VokoPgQp9YixpYJH8OjB+5PyfSFuHt3lVwkPBcLn5FU
+	 0APdOifPvMzjhOFJ5ceC06M+eVz0et/oRzKFtMIMpBchO7LFMx4X9QfTJ4B/v3HKMc
+	 oOh9+UcAeoX74Y/x+qKX+FgBueXeiKF6U3nbJN7El1lTd5TPSGLwSVV7PRyQnJZJvp
+	 23cZSYPsRw2AA==
+Date: Fri, 10 May 2024 12:27:15 +0100
 From: Simon Horman <horms@kernel.org>
 To: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -49,11 +49,11 @@ Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	Manish Chopra <manishc@marvell.com>,
 	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Subject: Re: [PATCH net-next v2 02/14] net: qede: use extack in
- qede_set_v6_tuple_to_profile()
-Message-ID: <20240510112659.GE2347895@kernel.org>
+Subject: Re: [PATCH net-next v2 03/14] net: qede: use extack in
+ qede_set_v4_tuple_to_profile()
+Message-ID: <20240510112715.GF2347895@kernel.org>
 References: <20240508143404.95901-1-ast@fiberby.net>
- <20240508143404.95901-3-ast@fiberby.net>
+ <20240508143404.95901-4-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,15 +63,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240508143404.95901-3-ast@fiberby.net>
+In-Reply-To: <20240508143404.95901-4-ast@fiberby.net>
 
-On Wed, May 08, 2024 at 02:33:50PM +0000, Asbjørn Sloth Tønnesen wrote:
-> Convert qede_set_v6_tuple_to_profile() to take extack,
+On Wed, May 08, 2024 at 02:33:51PM +0000, Asbjørn Sloth Tønnesen wrote:
+> Convert qede_set_v4_tuple_to_profile() to take extack,
 > and drop the edev argument.
 > 
 > Convert DP_INFO call to use NL_SET_ERR_MSG_MOD instead.
 > 
-> In calls to qede_set_v6_tuple_to_profile(), use NULL as extack
+> In calls to qede_set_v4_tuple_to_profile(), use NULL as extack
 > for now, until a subsequent patch makes extack available.
 > 
 > Only compile tested.
