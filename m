@@ -1,307 +1,106 @@
-Return-Path: <linux-kernel+bounces-175233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E3E8C1CD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B5A8C1CDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C563D1C209C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:11:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B091C21266
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0048A148FFA;
-	Fri, 10 May 2024 03:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B716148859;
+	Fri, 10 May 2024 03:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="TWh8bvFP"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E0D148837
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:10:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="0gC8GNCY"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB48333CD1
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715310650; cv=none; b=tamricF+5YjhTg2KX3Vb4U7+B1Y8VqhdC8Izs0JirAJlMpq/cpiiBUkqfuPow9M5NrISOreS05P19KibiuHZYRmPiVPm73KupFPmumnIqRWyNuiztT9WBdJPoCZTGNF6GJOZvnbCSz16OILLJySUuU4ZaHiM8WIPj2rGVJHOYFg=
+	t=1715310797; cv=none; b=u+ZHDR8N8peUTu3q+3Nf2fK3AlNHMw/j/aYy/AaOx5DVnZzgho5h6zTsPhmW30tF+narbkT0AfxGrPBAD58LVejBzaN3kUpSYpsmA7ICCubRJgaz9Ka4iTyW16+HqvPkayWWD/ax+IsHBY3DAuPaJv6ehPp+P4Yn07a0SImPzxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715310650; c=relaxed/simple;
-	bh=G9+JsAN9VBOUFU6FD2XkNqeWaHcVEN2jYzSHbA7vWwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MX/7VxC3IbrknaDAp/XkEPf07OPLLd9FyaB63jz5UVO3cu7/sXUnSSNhN4hqAcro87cKF1CCFZH2CZqahNEulvkCo+tbgaXXChBnNGYsPbLrfaGH1d4vEb2WakuGEjbrmFRZ9l6ZLWsH8RMtfDs3Gxowcj6/UqewGysLpgJaKzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=TWh8bvFP; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-7f8df927790so486702241.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 20:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715310648; x=1715915448; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rAHyEe4wsWXx/DPIQLwnHQufY4tXIB/DbEkvQstYHB4=;
-        b=TWh8bvFPmOk+uaIuo+z/kBYgSdXCMMfDhRigbJtqVAONvslxDQr/kUq0wem/468QR3
-         vIBYhASSKT+f6yO4tOlqLJufRoi37ryHF/uc6Hpl6nbWD/HOAeo8zGAJTHbdl4jlFmro
-         mH/bBJs2g87rq4fK/UOalXY89UaAgQMSWvz0M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715310648; x=1715915448;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rAHyEe4wsWXx/DPIQLwnHQufY4tXIB/DbEkvQstYHB4=;
-        b=pVdaLCUvZOk0fDOFiM+Sx1c9iAVPSFqWtRlPXIVd8nzzZGtoJpCcmrGtSMMOCeWQI4
-         3SeLe6cKVB0iWxXxM+Guqzf67JfZkIxhpZ+JDyGALCXnehuqZi+c6IOCH+XKxB8W4qeF
-         Z1xDNYweyxFcfBH2X09X/yjmYOuWYYWgoIboh+axI9ipryvzLgeOY/ASEsfjdSoARpgX
-         QPThVFFgFqoGAU+AJ2afkzahryjQo2GBMvMTPW/TjPietwBbmgXv1e4D0iIEAMVWT5aV
-         JDHjb0U8reLgUApu21GvwOr96v+5iW40g8/ddJOa0KnPxL1NmYK6cAY6k3Spj9R7pAYF
-         fDPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu+a+slsOYnDS21UecCHwqOJF0kDpdwF+ax94Whfh/yqzVCVaWXXEitm71Ou5An213+Q8DenNcKhwV1uxln7uIw7VzD7/zYMqy52BL
-X-Gm-Message-State: AOJu0YwlJ0HJtfoAVoJFkuziF5zMsy7yz7wNMgF0yBINuZ9Hsww9WG4s
-	3PvTdosU4h2uAsBfGgMza+jKvZ+wza8UqDrajGdF4+i9vD5RUD/cDP1ugKDmk1NmLp2kLhx0S4e
-	UbHoJS+SZjWSCtwuk2flvJbj8lIBpiKnsyZsT
-X-Google-Smtp-Source: AGHT+IFJuSX44NqVs2r/U5GHYoXwdi1J6G95y/KWwvepUrEc9R8Vmh0ux8iHyli1z0reSz3HIpuODRWo/SoDmXr0E2E=
-X-Received: by 2002:a05:6102:4187:b0:47c:2a81:a98 with SMTP id
- ada2fe7eead31-48077e176fbmr1877791137.20.1715310647325; Thu, 09 May 2024
- 20:10:47 -0700 (PDT)
+	s=arc-20240116; t=1715310797; c=relaxed/simple;
+	bh=jHuBYJh1fWMU79daz3sn1J9/58kgK/BwHiHDGGVnTds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ojLjD1d1aJ294lvqdrFXpXJan69yPKbs9oGVr2dN3CW8tYDDv+yPx1FyztDVgCqUsuhYefctKD/JIg+ML/5pR0ZxpGn2SJXm38UxJVprxsqpYCTNBsogkyavn8AG9ixPbzaRgzqKjJvMkHB97U3CBjwc4OcHpVNgBOE388Y1c5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=0gC8GNCY; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 3363514C2DB;
+	Fri, 10 May 2024 05:13:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1715310787;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+QPtvYM7X3Y1l9pvLzIZVB30PRJqZmzc/z7JfxU/viA=;
+	b=0gC8GNCYZ1wj2RPqnwoAPoJ6D8SwRKAhpdqLYzrhbuZM/qWOlkJVBClAlbkeixv1ryqgaF
+	7VfZ6TLbRJ53YBZ9qi9vhmuFb9ftxoeq6v5icB+GpTPmnr0wG88iz4rqkmXFOXoi+hNMhk
+	goZ7pqib5At+Y7LrrJ6J/KQshBWDHTa2YWw/tDRB6h0odQiw2dOM1J9p+Vrj6fOYhxiLHH
+	A7OwOUONGAqLCmAsT8eQkHv6SL6b9Khz+IPIk85JDJCP1LslAbrhKiL8Am80Z8nC3sKPVz
+	AyWzmFnR7lPT98Vr7v8ajBvDulHO3ThJhtjNp1olvdPeqIt9/wKGpeqEbebqZA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id a006931a;
+	Fri, 10 May 2024 03:13:01 +0000 (UTC)
+Date: Fri, 10 May 2024 12:12:46 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: CVE-2022-48655: firmware: arm_scmi: Harden accesses to the reset
+ domains
+Message-ID: <Zj2Qrt6_kJzqA0-S@codewreck.org>
+References: <2024042859-CVE-2022-48655-5feb@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509162741.1937586-1-wei.huang2@amd.com> <20240509162741.1937586-9-wei.huang2@amd.com>
-In-Reply-To: <20240509162741.1937586-9-wei.huang2@amd.com>
-From: Somnath Kotur <somnath.kotur@broadcom.com>
-Date: Fri, 10 May 2024 08:40:34 +0530
-Message-ID: <CAOBf=msuCassc=XAQ3DFVwKEfrT9sJfwnkEmEsYaySv=Aa3q7g@mail.gmail.com>
-Subject: Re: [PATCH V1 8/9] bnxt_en: Add TPH support in BNXT driver
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org, bhelgaas@google.com, 
-	corbet@lwn.net, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com, 
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com, 
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000dff0df061810e186"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2024042859-CVE-2022-48655-5feb@gregkh>
 
---000000000000dff0df061810e186
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+meta-question: I've had a look at Documentation/process/cve.rst and
+while it describes how to report newly fixed issues, it doesn't describe
+how to add informations to already submitted CVEs.
 
-On Thu, May 9, 2024 at 10:02=E2=80=AFPM Wei Huang <wei.huang2@amd.com> wrot=
-e:
->
-> From: Manoj Panicker <manoj.panicker2@amd.com>
->
-> As a usage example, this patch implements TPH support in Broadcom BNXT
-> device driver by invoking pcie_tph_set_st() function when interrupt
-> affinity is changed.
->
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-> Reviewed-by: Wei Huang <wei.huang2@amd.com>
-> Signed-off-by: Manoj Panicker <manoj.panicker2@amd.com>
-> ---
->  drivers/net/ethernet/broadcom/bnxt/bnxt.c | 51 +++++++++++++++++++++++
->  drivers/net/ethernet/broadcom/bnxt/bnxt.h |  4 ++
->  2 files changed, 55 insertions(+)
->
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethe=
-rnet/broadcom/bnxt/bnxt.c
-> index 2c2ee79c4d77..be9c17566fb4 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-> @@ -55,6 +55,7 @@
->  #include <net/page_pool/helpers.h>
->  #include <linux/align.h>
->  #include <net/netdev_queues.h>
-> +#include <linux/pci-tph.h>
->
->  #include "bnxt_hsi.h"
->  #include "bnxt.h"
-> @@ -10491,6 +10492,7 @@ static void bnxt_free_irq(struct bnxt *bp)
->                                 free_cpumask_var(irq->cpu_mask);
->                                 irq->have_cpumask =3D 0;
->                         }
-> +                       irq_set_affinity_notifier(irq->vector, NULL);
->                         free_irq(irq->vector, bp->bnapi[i]);
->                 }
->
-> @@ -10498,6 +10500,45 @@ static void bnxt_free_irq(struct bnxt *bp)
->         }
->  }
->
-> +static void bnxt_rtnl_lock_sp(struct bnxt *bp);
-> +static void bnxt_rtnl_unlock_sp(struct bnxt *bp);
-> +static void bnxt_irq_affinity_notify(struct irq_affinity_notify *notify,
-> +                                    const cpumask_t *mask)
-> +{
-> +       struct bnxt_irq *irq;
-> +
-> +       irq =3D container_of(notify, struct bnxt_irq, affinity_notify);
-> +       cpumask_copy(irq->cpu_mask, mask);
-> +
-> +       if (!pcie_tph_set_st(irq->bp->pdev, irq->msix_nr,
-> +                            cpumask_first(irq->cpu_mask),
-> +                            TPH_MEM_TYPE_VM, PCI_TPH_REQ_TPH_ONLY))
-> +               pr_err("error in configuring steering tag\n");
-> +
-> +       if (netif_running(irq->bp->dev)) {
-> +               rtnl_lock();
-> +               bnxt_close_nic(irq->bp, false, false);
-> +               bnxt_open_nic(irq->bp, false, false);
-> +               rtnl_unlock();
-> +       }
-> +}
-> +
-> +static void bnxt_irq_affinity_release(struct kref __always_unused *ref)
-> +{
-> +}
-> +
-> +static inline void __bnxt_register_notify_irqchanges(struct bnxt_irq *ir=
-q)
-> +{
-> +       struct irq_affinity_notify *notify;
-> +
-> +       notify =3D &irq->affinity_notify;
-> +       notify->irq =3D irq->vector;
-> +       notify->notify =3D bnxt_irq_affinity_notify;
-> +       notify->release =3D bnxt_irq_affinity_release;
-> +
-> +       irq_set_affinity_notifier(irq->vector, notify);
-> +}
-> +
->  static int bnxt_request_irq(struct bnxt *bp)
->  {
->         int i, j, rc =3D 0;
-> @@ -10543,6 +10584,7 @@ static int bnxt_request_irq(struct bnxt *bp)
->                         int numa_node =3D dev_to_node(&bp->pdev->dev);
->
->                         irq->have_cpumask =3D 1;
-> +                       irq->msix_nr =3D map_idx;
->                         cpumask_set_cpu(cpumask_local_spread(i, numa_node=
-),
->                                         irq->cpu_mask);
->                         rc =3D irq_set_affinity_hint(irq->vector, irq->cp=
-u_mask);
-> @@ -10552,6 +10594,15 @@ static int bnxt_request_irq(struct bnxt *bp)
->                                             irq->vector);
->                                 break;
->                         }
-> +
-> +                       if (!pcie_tph_set_st(bp->pdev, i,
-> +                                            cpumask_first(irq->cpu_mask)=
-,
-> +                                            TPH_MEM_TYPE_VM, PCI_TPH_REQ=
-_TPH_ONLY)) {
-> +                               netdev_err(bp->dev, "error in setting ste=
-ering tag\n");
-> +                       } else {
-> +                               irq->bp =3D bp;
-> +                               __bnxt_register_notify_irqchanges(irq);
-> +                       }
->                 }
->         }
->         return rc;
-> diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethe=
-rnet/broadcom/bnxt/bnxt.h
-> index dd849e715c9b..0d3442590bb4 100644
-> --- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> +++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-> @@ -1195,6 +1195,10 @@ struct bnxt_irq {
->         u8              have_cpumask:1;
->         char            name[IFNAMSIZ + 2];
->         cpumask_var_t   cpu_mask;
-> +
-> +       int             msix_nr;
-> +       struct bnxt     *bp;
-> +       struct irq_affinity_notify affinity_notify;
->  };
->
->  #define HWRM_RING_ALLOC_TX     0x1
-> --
-> 2.44.0
->
->
-Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
+For some reason one of our customers saw this CVE through some news
+outlet and asked us if they were vulnerable (NVD flags this as
+high[1]...); so I had a quick look at the minimum version that could be
+updated for everyone.
+[1] https://nvd.nist.gov/vuln/detail/CVE-2022-48655
 
---000000000000dff0df061810e186
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I can submit an edit as a patch to vulns.git json, but this doesn't seem
+overly important so for now a mail will probably do.
 
-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
-nSGLsSobByQoGh1GyLfFTXI7QOGn/6qvrJ7x9Oem5V7miUTD0wGAIozD7MCVoluf5Psa4Q2a5AFV
-gROLty059Ex4oK55Op/0e3Aa/a8hZD/tPBT3WE70owdiCwIDAQABo4IB2zCCAdcwDgYDVR0PAQH/
-BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3VyZS5nbG9i
-YWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEGCCsGAQUF
-BzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAy
-MDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xv
-YmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6hjhodHRw
-Oi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNybDAlBgNV
-HREEHjAcgRpzb21uYXRoLmtvdHVyQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAf
-BgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUabMpSsFcjDNUWMvGf76o
-yB7jBJUwDQYJKoZIhvcNAQELBQADggEBAJBDQpQ1TqY57vpQbwtXYP0N01q8J3tfNA/K2vOiNOpv
-IufqZ5WKdKEtmT21nujCeuaCQ6SmpWqCUJVkLd+u/sHR62vCo8j2fb1pTkA7jeuCAuT9YMPRE86M
-sUphsGDq2ylriQ7y5kvl728hZ0Oakm3xUCnZ9DYS/32sFGSZyrCGZipTBnjK4n5uLQ0yekSLACiD
-R0zi4nzkbhwXqDbDaB+Duk52ec/Vj4xuc2uWu9rTmJNVjdk0qu9vh48xcd/BzrlmwY0crGTijAC/
-r4x2/y9OfG0FyVmakU0qwDnZX982aa66tXnKNgae2k20WCDVMM5FPTrbMsQyz6Hrv3bg6qgxggJt
-MIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYD
-VQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgx6wAr6NdQY0sTG
-G7cwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIHWb6CVByNUeKT9WdKLXET+1bIF1
-UmOFoE9yd+mYBVhqMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0
-MDUxMDAzMTA0OFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFl
-AwQCATANBgkqhkiG9w0BAQEFAASCAQClK6L/ZX5ZyvUJU+OxAFO9vzpKDl9ffWUFn+Gf6XkP8O3p
-zyKmsQrldHwkHD+5Zo881jCwOunoFEGkBYqEz//CEFQ4ui8lMRCPiI4pJWL55855KBF3lB02lQmy
-2f21KvfGxO+E+UIZlCKZC1gXcxtRToRFN1VRa14m0ppK9qO8+wY9eM95vOil11QiImc3dMk3Ib8Q
-a4jqw/8P5RVpzhK80RcIcqROQApR2GZp5rdKoE2G+jiXdvoz/LKqund9nwwFxWckJYtocqzI6X+9
-/f72RLLLDe4yFkvXlLB8dQhlsty95yLr+Eg9fx4/nGn54ZoX9LHZOD/XXYBnzwNjtXCc
---000000000000dff0df061810e186--
+Greg Kroah-Hartman wrote on Sun, Apr 28, 2024 at 03:05:16PM +0200:
+> Affected and fixed versions
+> ===========================
+> 
+> 	Fixed in 5.15.71 with commit 1f08a1b26cfc
+> 	Fixed in 5.19.12 with commit 8e65edf0d376
+> 	Fixed in 6.0 with commit e9076ffbcaed
+
+These commits lacked a Fixes tag, so this CVE does not have a minimum
+version.
+
+From a quick look it would seem it fixes arm_scmi from the addition of
+scmi_domain_reset() in 95a15d80aa0d ("firmware: arm_scmi: Add RESET
+protocol in SCMI v2.0"), which first appeared in v5.4-rc1, and does not
+appear to have been backported to older kernels, so v5.4+ can be added
+as a requirement.
+
+This means the current 5.4/5.10 trees are affected; the commit doesn't
+backport cleanly because of a trivial context conflict so if that helps
+I can send a couple of stable patch if that helps even if our systems
+are not using arm_scmi (CVEs also don't have any way of expressing
+whether the affected driver is used (or even built) at all, so I guess
+people with affected versions will have to check that themselves...)
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
 
