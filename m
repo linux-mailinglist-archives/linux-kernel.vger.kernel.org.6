@@ -1,92 +1,153 @@
-Return-Path: <linux-kernel+bounces-175282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6345D8C1D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:08:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC8788C1D98
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E73F8283710
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE6421C20D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66C914D716;
-	Fri, 10 May 2024 05:08:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989EF150994;
+	Fri, 10 May 2024 05:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BhKEHf6b"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE5020309
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E65548EC
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715317686; cv=none; b=VBILn3WDVD0WPHlc0TIpBsetgwWPf0AVw9/MvCJTNSpd0nHZ6MI5/RtQyo5JBCMtzQKm3mJO67zSNesBrMNKSuXlZLnVKpZfc5xJYYh3DeNENO1kUlk3OaYnd4MEVHMp+Ge8XICLgtVSbKXvYtr9bS6WFPsAWDEu5bNlwWn3In4=
+	t=1715317994; cv=none; b=jrPWbiLSM1nX8nD4LlYvGtoJSW3CMMKt7EMSqHZuHOdI5NJUOgj08iGYBOLVQnoghT+EfSaM5OlORSXEbwXHX6yV+Jh2QQcE0b7dw5EAUlxbxC/bT1HAjc9NM0gIM9RRWp6Pw0b2BB0TfH/etrTSIK8YA257Mugou2duGb9IgJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715317686; c=relaxed/simple;
-	bh=Pqy5lmmcw0oAX8mFgZ9RrdJ5pDBFdd8DQ9gUz5hvWO0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=D1mmP1zjFrRW5RlU/0Ix2U3j663sswJMFsPxGK8z9ABlwzzBSMwIvhWmZY7JripkgZOFKRQuLLRb/KHleYxYBB/o5gv4xSPTyRVywAJ6B45G+owo5f3XRwS8hgCLiQL3rVd1+0F2FVilHbB4IVj79tD6P1Fi6iKxKZLRSqicgsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7da52a99cbdso158989339f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 22:08:04 -0700 (PDT)
+	s=arc-20240116; t=1715317994; c=relaxed/simple;
+	bh=2CSSuDANH+DI3ZSn1/F+R7LCv62bfHS4CcN1mcJHHl0=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=CaiqX0ivNrk5RJTxcX5xjv294jxFH6oMWsUX+mSkjsQpZjwQZ/+hmbfqNaTkc6vq7iNExg8JACZU45/V2WnsaUFGiDUgw3fG/cUuI/G2cJUaSFEhrxS/oSguCuBDE3k0SbHfZ3/HK24EZ0CizW/VrmxroNDnOceo8FCN/OFnE4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BhKEHf6b; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6dbdcfd39so2949535276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 22:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715317992; x=1715922792; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OKjQVp3FAUgk+ze053pkAabzKwTqf9LXD3i69ugyhcQ=;
+        b=BhKEHf6bd0kN0LlV9WIEzc2zpWFB3f95GDz68qlfhx996R9+2nnU9+xkWni/2P2ksc
+         6ly3W/+dYZPL2sAao4imnuu87oliWZFLmqUQcjdAVyKpAa8HiEK28+bIBu723yDmbJ34
+         oQV8QDTcDOCFrodkRlcFzN6rrr9RMBwVmmoJPLP5WwZmO/bufTqcRTYsn8asfsU9zNZK
+         wwGPIogd3i9pis/OzZYI2FZfgUkBlSKxZhcFRFB5Leu4oUml9OvLW5PB5ALcz/cyV/z6
+         W21nlvvn6sSroVoZWfLsQiHfw2xGcZnKSp7rY9jFAmR4Dm6znrGPrjVuM+ZneKrE1Wui
+         snCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715317684; x=1715922484;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AEYzaVFxClHnzclCpBQe8wBmRudx65WCcAHd23Nvkgw=;
-        b=uWRlu21D9lIOZYCQbeQELreFdoBPUNlVAsvv1T2WlZ71gsQpdjBE4xg513kigVcC4G
-         JNGZliJjUsnMVnR4GvySwMxn6mc4R8Gx+FkGhtffDKHfgndce3XCXPAjYGU9gHHLm0Dt
-         QvkaS9mLr9nSYAi3e+5qWk8VXLHB4bXNjbrJMVDRKx5H6i3sOezX7D8Pqqv7bR1pMx24
-         j9lvE0u11NctZpDPD+VU9LuNUyiIgovKCZ3qorRiSsSAphOZPAFXfxW+q7TE+KLjyE/b
-         OTUE7tXdIR5FOkUDjJEysYmqt3j0TIjOPULzjtzj7qQjY91dIXK15X0fo0jsxwBCYA2i
-         SadA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSJiNBMWBGcSnbR9+AdtOMU59fnqCk9lSD0zUQtlmMERtT3etgnhD8jmigDCo7ohxsAEqq2/7m3Mkf1TjSojuAr6SXu0L6qud6HBbd
-X-Gm-Message-State: AOJu0Yy/z1Iahc/lNtYjfkmfyMqd301kynm28nDI5E5xeeZWT5Ds7yoU
-	SrsAmHbwQcK7Dlh1Uz7Vi0UJyAov+Y9jzjyY5GR4dQ9zzyRGhnWxLV9TvndMiUWoEtc7v1Y7O54
-	w7McubHK6YobKYChGqXltAv2X0cAojNWhsFiuXQtk9ZqpSxbnD/zIljE=
-X-Google-Smtp-Source: AGHT+IFy+SsvaSHRdbnflxzcQlgQCYz3IBbSgJxxHgkxgGzAV6KjiLv7yNcYRq+cK8DyyZtxlQZrgTbjP3aFM1U+sIF0b5l10DXH
+        d=1e100.net; s=20230601; t=1715317992; x=1715922792;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OKjQVp3FAUgk+ze053pkAabzKwTqf9LXD3i69ugyhcQ=;
+        b=qAjafST5hAFcL3NZWzVF9hPerlq3youXW7X9ZPg6hznXpMoKwZ5e5L9yC28Dxgjiyq
+         fwSSMahf61MW1VTxnUREO4FPb5bt6Vw8ND3JlboMFTo0JF0/caNcJhA1cMh33n6sASF3
+         e8tUha/qx4k56sNocix1mySDQ/09u1vb5mRhYfaI0CvXVOXzxG1x6LMlyp1eOhBk6t8c
+         AxNWtTtKmwG+AOWXifMLEMEvpcJC+tkUGpovz62z8CPItd88+XUSaQtSXIPn4mZpjGIv
+         PywnntUi2AgO0967fuCf1khu41W6JFZ7eGrbO3qormCruBsAa5W4nTiFS+29JV0vdHEw
+         eWQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUm3rlg2ommGaNQZyhh32uNcW+W+mNk1tjoXVLRrJyssqyPgHukeZjWRegJAvR5x10xDdQVRTM9nxzg72XCtS682cYzxQfJ4+xkGTr4
+X-Gm-Message-State: AOJu0YwTrE6WH/NKZePYb64JIPwixCitqZN9dBb2TPROJGlWGU36WKOD
+	OJWnLvRJF1TSk7Lp4G+SgtMiSCF/cWWxGu2m/WDNigQl8E9CTD86pb3i6CjOookPSvtxeUV7caB
+	kS1t9Dg==
+X-Google-Smtp-Source: AGHT+IEyteZvNqV/b2Tct9YqzW6qTIA83prGM1x9o7/VX+ENGd5xhTev2l0+eI7qtwOmojAY0zI1cu7QxLHz
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:79ed:c375:51e3:ed39])
+ (user=irogers job=sendgmr) by 2002:a05:6902:1081:b0:de5:53a9:384a with SMTP
+ id 3f1490d57ef6-dee4f53a18emr445869276.13.1715317992474; Thu, 09 May 2024
+ 22:13:12 -0700 (PDT)
+Date: Thu,  9 May 2024 22:13:09 -0700
+Message-Id: <20240510051309.2452468-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:608c:b0:7de:3f44:a6fe with SMTP id
- ca18e2360f4ac-7e1b519cfb4mr4772039f.1.1715317684278; Thu, 09 May 2024
- 22:08:04 -0700 (PDT)
-Date: Thu, 09 May 2024 22:08:04 -0700
-In-Reply-To: <000000000000611ffc061800de0d@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003fa9d106181285ed@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in __journal_res_get
-From: syzbot <syzbot+c60cd352aedb109528bf@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
+Subject: [PATCH v1] perf stat: Don't display metric header for non-leader
+ uncore events
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Kaige Ye <ye@kaige.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot has bisected this issue to:
+On an Intel tigerlake laptop a metric like:
+```
+    {
+        "BriefDescription": "Test",
+        "MetricExpr": "imc_free_running@data_read@ + imc_free_running@data_write@",
+        "MetricGroup": "Test",
+        "MetricName": "Test",
+        "ScaleUnit": "6.103515625e-5MiB"
+    },
+```
+Will have 4 events:
+uncore_imc_free_running_0/data_read/
+uncore_imc_free_running_0/data_write/
+uncore_imc_free_running_1/data_read/
+uncore_imc_free_running_1/data_write/
 
-commit 2d02bfb01b2743da06748ba396ff7da4425488ef
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Fri Jan 5 19:17:57 2024 +0000
+If aggregration is disabled with metric-only 2 column headers are
+needed:
+```
+$ perf stat -M test --metric-only -A -a sleep 1
 
-    bcachefs: improve validate_bset_keys()
+ Performance counter stats for 'system wide':
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1232e998980000
-start commit:   45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1132e998980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1632e998980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=c60cd352aedb109528bf
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b795a8980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17592c00980000
+                  MiB  Test            MiB  Test
+CPU0                 1821.0               1820.5
+```
+But when not, the counts aggregated in the metric leader and only 1
+column should be shown:
+```
+$ perf stat -M test --metric-only -a sleep 1
+ Performance counter stats for 'system wide':
 
-Reported-by: syzbot+c60cd352aedb109528bf@syzkaller.appspotmail.com
-Fixes: 2d02bfb01b27 ("bcachefs: improve validate_bset_keys()")
+            MiB  Test
+              5909.4
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+       1.001258915 seconds time elapsed
+```
+Achieve this by skipping events that aren't metric leaders when
+printing column headers and aggregation isn't disabled.
+
+The bug is long standing, the fixes tag is set to a refactor as that
+is as far back as is reasonable to backport.
+
+Fixes: 088519f318be ("perf stat: Move the display functions to stat-display.c")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/stat-display.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
+index ea11e3437444..bb6bbb821b5a 100644
+--- a/tools/perf/util/stat-display.c
++++ b/tools/perf/util/stat-display.c
+@@ -1251,6 +1251,9 @@ static void print_metric_headers(struct perf_stat_config *config,
+ 
+ 	/* Print metrics headers only */
+ 	evlist__for_each_entry(evlist, counter) {
++		if (config->aggr_mode != AGGR_NONE && counter->metric_leader != counter)
++			continue;
++
+ 		os.evsel = counter;
+ 
+ 		perf_stat__print_shadow_stats(config, counter, 0,
+-- 
+2.45.0.118.g7fe29c98d7-goog
+
 
