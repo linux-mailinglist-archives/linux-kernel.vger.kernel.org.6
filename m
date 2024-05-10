@@ -1,146 +1,124 @@
-Return-Path: <linux-kernel+bounces-175967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94FB8C2800
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:39:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0160C8C2804
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B841F213D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0763281357
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8793817166E;
-	Fri, 10 May 2024 15:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAC0171679;
+	Fri, 10 May 2024 15:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="axsPjNSI"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ct/jClQ9"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416F717109E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C45171666;
+	Fri, 10 May 2024 15:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355587; cv=none; b=awDAm3qI8W4Ft/mVuLxvV9z0A3F3dKhNOgQ+MrLn3OA4pz0eZfZ9dDf+jZXzDpLqd6Ma0MQSVRFv2uOOoEf89D3xVwtu8emlLmlnLFDeO7oqtOnKYJn31n373DcwiPvRes+b+tHnOqgueqI9FYiHdl4onhnx/j5fiWWDAj2nu9Q=
+	t=1715355665; cv=none; b=WLJ8SgkbcUR5KvV5dsDFObjtHy0T0UqoZ0yku9+0prPREuskNVBepWv/kaNfF5dCiPyTJWyYUMy1447Q78OQbcE6pG89lgBF3cUsJMbe/n4msEnXdHid2aDfRz+HzduC8Mgr7yKBHAtE5jiOU74zMZ+ToDX9YH7BcCymZDB5TqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355587; c=relaxed/simple;
-	bh=HvWEHSRJd6IvYIb/63G1QS6o1Crb2nY1hmA2zf0cIX4=;
+	s=arc-20240116; t=1715355665; c=relaxed/simple;
+	bh=CKunOYXyn/VAhDnWGXGmiC49CJrlDoM/ZPQJtbdNQ60=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tp3w74xGOSaF0Rh9UA8vETEoWq6tlg1+LNFscf63MypSR6Xng0jclC2IKeOaBbGbF8rxsYr4stZ1W1fT9N/lyxzEJxUCI+bZPeXYCfgbX+KHtaKFZUmBKpBgURADjgDLHhnZeUaFchp4nGyD1AF5tsWsvLPmvkG/5o7f1FzVi2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=axsPjNSI; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e0933d3b5fso30942661fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:39:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=D/eIlFhLvqepoePoIjnWu7pxJG2Qz6hIygNVrOuwZ3y0pe0i+DZcKCRWbZUzM53cYmRD1skkxPMT3FOaQydEpoHgeB2rf6I+2vY2XF5hPjmTUMzzexU27+S+Qm6pX8R/qtrKeln3adc8ENlUjsIj1ie1pjAwF3nh0H/HRe8toGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ct/jClQ9; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so15012135ad.1;
+        Fri, 10 May 2024 08:41:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715355583; x=1715960383; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715355664; x=1715960464; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x+69akUanwgyaCNLHvZQ4aJZ/iUQNzDFDBetcAZ8+1g=;
-        b=axsPjNSI/b1f8QwE4NVvhVDymU5avjHQAZB4KlT7CYSosUK+Zxto7Ix10bRybrsbJn
-         h8+spQuR+5ckqYR3kZZhA/WVaiuZ7riGLGF+w7Bj8OlfUrs8dL7k40R/ewjP8SstNQeE
-         pE1WapnLVaaFuYngkASiY9zdQHn2VJS8uxP7ryi8KOKogA6N3mLRdvSu1+XzVSYQ7EX2
-         giggcg5BXP3qxVLoUgFIepavuxnH/zjUylejOAZrn3Nhpcj2tOTY0iWI5IO3Ulf7E8xG
-         uEY/V7yTd9w4kOLmEjwus/WWBCoA3y+jH07jZcFX+0azLAJTvdcELmfy9lOg8LcI16q8
-         RVJg==
+        bh=Z1NMq9il33+y9mKx5YlkejFWAQlsQ5vAdnhUq+IEfAA=;
+        b=ct/jClQ96Rh7rRXZ0RbsHyTgAN6Y1hYLYSclyyhqbmzBYnT//+fWN9+GiWBUCqnIrO
+         U7hCz690mOZtEF0O81vj+tNrz3uCBvXg4NBt5vbVbECssAhVDtsHHqwe8BBvy63GBAHW
+         5EWlOvqab/A7yJFMS9ECgXPQmS4jbt3ikJCKepNKU3mx3GFVcH+ZVr0zuVrW3ttr7F3t
+         kGbSrJrBYxiSfAyiUVfdeWfsePwfbJwyLlP2zWUiLsxIcKtbnKAYRGIDEJ4QINOaRQF/
+         hFKy+OOZkC21kflWIVArW6TQp75QKoQXgO3vhe+l8A0NIrlYFZTvrAaKFyk3kW6Ic+4k
+         CyTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715355583; x=1715960383;
+        d=1e100.net; s=20230601; t=1715355664; x=1715960464;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x+69akUanwgyaCNLHvZQ4aJZ/iUQNzDFDBetcAZ8+1g=;
-        b=PXpzm8MqP23/r+YbOK7wq4gLzOngBTpPrpZjUT9RiDzozA2R/oFb0wtxateLLwQxDs
-         W68WUbe2HkQ3HU0Q3mJLp85Ak3POLsoLcEDtG7hkKEFA066enI3QYhJGOlHadvxoP6ww
-         WXZIcBXfAUNpPEQosm3JRbPcY4sDIJlZPuYejL3d6vVRTI+7VeoWVuBH0tNOAQK57tjC
-         JBcvywYh+oG9xDGekGnrNUe+qPLLBZCXda6CO/7YEDOwsQSj7FCXbviKwvswpnscgPKk
-         S4uNAxqOvXUMBw4+g833uYZpx6zro5Q7Rckocz6MsanpCspTqbDVRkQiz5G1I+tUxG+J
-         tJ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUWHZ7Hp3jEK45w2N7FopaFHHi435W1NqHk/KfHgMxOf5G0qFiNXLb+Z95KuC9YIplkS+3wau/V2Ykr4pH4xQrlWv9e49uYGkk+XkTS
-X-Gm-Message-State: AOJu0YxmxLeVZhBmokQX4f7Si7YkASLFv2s37cdHJJKKVN6atbt1jRdt
-	vl4fI7o34hIw6k3OY/tyzmL4LDjMi2nEx1HEVfRIPEd2BEt1bipCmUC1CkeyBoj0U5UpN3H9BuD
-	Va4Q1oLL+USDpRi+G4zpr3yhTh77SIeWmkO9YEA==
-X-Google-Smtp-Source: AGHT+IGvAUhvYlrtXZu2653xvaGDm6s2fzNFAgaftNCnvvM/30wdVu20vvVqDYxJw62jeNpNorB/ZBPheswDD4t/bgI=
-X-Received: by 2002:a2e:9d82:0:b0:2e1:aafb:6a2 with SMTP id
- 38308e7fff4ca-2e52038a43emr20484121fa.36.1715355583503; Fri, 10 May 2024
- 08:39:43 -0700 (PDT)
+        bh=Z1NMq9il33+y9mKx5YlkejFWAQlsQ5vAdnhUq+IEfAA=;
+        b=Q08uv4IPEBbbasXqb5jtaIXNescerEsksryVP8hWGAo3sXHlit8pknYuE2HzV/7N3d
+         at2DIsVMFTnLMcEqr5m4rAJnZkS/Nk7yA1F4JXWxatMxB7kpZ2tBtXRS8Kv00BaplQzF
+         COdPUG8MNHtbyaJp4MkQmvoytDQLsDoSN2VOmT+Bhs8VqY6TseSPQREKzl74NukgZeLo
+         E+f6hsU8TYbt347cfD6SGo3Vuavm1llGLIWnBtSQQViHM1DbsI33dAynORvxpSFx9On6
+         2RQtjTejUjF1cOV+9t1W5zSZPye4FM/nLCoJc9S+G6GBu5ac1jrYuj+rVIaJX/tergs5
+         nPaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRjurvK5NYR4v0MpjUI3rLa9hwHRnKD5rOcyu6i788GBxW86MHmCT5VQlfQPFqceX888QZ/lFFeQ4AKw6x6X3wqDhdr9YAeVRGvFnQZgNZZddKEqigM8QEUDk+bfmsdRtLGcwPdog0ZA==
+X-Gm-Message-State: AOJu0Yxr5lDNKFlaLOYajSxuoa5HcMk+PHOdE/I4CnHvmHx1rg88kWSb
+	HAXYthGuKZ3F21XaOrM8MJZzlSsN4uo3U4P5J2wuDhS3PNTY64NQAoQCtLD0NHgCuG+Vn6X9Zq2
+	PZ/x4wR/fNnAmuuubV67mnuVOfj8jOg==
+X-Google-Smtp-Source: AGHT+IHvCUL2yFY+CKv648nymXOwAlvwARkChLmD6Po+/oRyO/ys64x2+bkPNCubPXo3hR2sP6eaRkPoFy6xR/uRLC0=
+X-Received: by 2002:a17:903:41c9:b0:1e1:3300:702b with SMTP id
+ d9443c01a7336-1ef43d1558emr34534465ad.15.1715355663609; Fri, 10 May 2024
+ 08:41:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510141836.1624009-1-adureghello@baylibre.org>
-In-Reply-To: <20240510141836.1624009-1-adureghello@baylibre.org>
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 10 May 2024 10:39:31 -0500
-Message-ID: <CAMknhBFUUCvxbuHz0pPKd-KBcG3zfXNr8wu=AnrZx0C495RKOQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: iio: dac: add ad35xxr single output variants
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	nuno.sa@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240509082313.1249dabf@canb.auug.org.au> <2b3ea2b9-1959-40ff-b8f9-5ad1569f72be@redhat.com>
+In-Reply-To: <2b3ea2b9-1959-40ff-b8f9-5ad1569f72be@redhat.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 10 May 2024 11:40:51 -0400
+Message-ID: <CADnq5_Nk0qZzBPJaBYVBjuEOxaTDtXu2tosGyZigum5rnz2fRw@mail.gmail.com>
+Subject: Re: linux-next: Fixes tag needs some work in the amdgpu tree
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <mdaenzer@redhat.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 9:19=E2=80=AFAM Angelo Dureghello
-<adureghello@baylibre.com> wrote:
+On Fri, May 10, 2024 at 4:56=E2=80=AFAM Michel D=C3=A4nzer <mdaenzer@redhat=
+com> wrote:
 >
-> From: Angelo Dureghello <adureghello@baylibre.com>
+> On 2024-05-09 00:23, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > In commit
+> >
+> >    27557a840463 ("drm/amdgpu: Fix comparison in amdgpu_res_cpu_visible"=
+)
+> >
+> > Fixes tag
+> >
+> >    Fixes: a6ff969fe9 ("drm/amdgpu: fix visible VRAM handling during fau=
+lts")
+> >
+> > has these problem(s):
+> >
+> >    - SHA1 should be at least 12 digits long
+> >      This can be fixed for the future by setting core.abbrev to 12 (or
+> >      more) or (for git v2.11 or later) just making sure it is not set
+> >      (or set to "auto").
 >
-> Add support for ad3541r and ad3551r single output variants.
->
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml       | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml b=
-/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> index 8265d709094d..17442cdfbe27 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> It wouldn't have helped, since I pruned it manually from the full hash
+> (from gitk). The intention was pruning to 12 as always, apparently I
+> miscounted though. Oops.
 
-It would be nice to also add the datasheet links in the description.
+I've fixed it up and repushed.
 
-> @@ -19,7 +19,9 @@ description: |
->  properties:
->    compatible:
->      enum:
-> +      - adi,ad3541r
->        - adi,ad3542r
-> +      - adi,ad3551r
->        - adi,ad3552r
+Alex
+
 >
->    reg:
-> @@ -128,7 +130,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: adi,ad3542r
-> +            enum:
-> +              - adi,ad3541r
-> +              - adi,ad3542r
->      then:
->        patternProperties:
->          "^channel@([0-1])$":
-> @@ -158,7 +162,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: adi,ad3552r
-> +            enum:
-> +              - adi,ad3551r
-> +              - adi,ad3552r
->      then:
->        patternProperties:
->          "^channel@([0-1])$":
+>
 > --
-> 2.45.0.rc1
+> Earthling Michel D=C3=A4nzer            |                  https://redhat=
+com
+> Libre software enthusiast          |         Mesa and Xwayland developer
 >
->
-
-Since these are single channel, it would not hurt to restrict the
-`reg` property of of the `channel@` nodes to 1.
 
