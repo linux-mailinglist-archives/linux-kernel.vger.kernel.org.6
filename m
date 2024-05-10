@@ -1,184 +1,201 @@
-Return-Path: <linux-kernel+bounces-175205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B4F8C1C47
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:59:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 819898C1C4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C99681C212E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:59:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD9B282548
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4863713B7BE;
-	Fri, 10 May 2024 01:59:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06B913BAC6;
+	Fri, 10 May 2024 02:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fI3dHeba"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsaMpkKi"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867AE33CD1;
-	Fri, 10 May 2024 01:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960F29CE1;
+	Fri, 10 May 2024 02:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715306387; cv=none; b=FeQUq7MupVFP+alDRcutXdZei/F7jrfz9sEdWNDjvX2nZWegqi1fLcq1CT74rRXiwjDyTyir25OoWamFNTx6hGcZQ3MersY2t61juuHT0qp/xT/vmPWgwrl67nOZtZLHM64HiOLtKQHEKmJ09tT+J/vkBSIIkB/7ZawsabkX0P8=
+	t=1715306679; cv=none; b=J20L6H2jbbnGsiLLPOm5rrfATLTkRKM9SMjhFwKQIO0FiWhe3gYfjKbytVYqTsKzKsMVhWNTzdfJQ/tQ37KAPbE5LSpkBOeRV101F2yY3130+6web+8HM7aMH70dmunbzrqOpO6AKDf43qOOISjfVY5CengAoNimc+gpsl0Mz8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715306387; c=relaxed/simple;
-	bh=1zvBhO11KU07W6//cXwWC2aMDcPdVMYA8rYU21wJ2M4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RfdNjo+8honSO/fV0VU0JiFGV/CHugtKPsVjXy3xv42QIl1yXDp+kpDp/JOvWJZUO8QrXov94I7jfiOpIBsDm3DmTFpcbiCZurG7+cnRi+Tt2Pdcx9PoWB/dHFQdBdq/z4eo8MFn54yux4D271WalR/W6NH3B0m7Gmtu+VvA49U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fI3dHeba; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44A1lenh017504;
-	Fri, 10 May 2024 01:59:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding; s=pp1;
- bh=6hQdQWIJQzQJKZkddUQqTAvsAlR93yaL2HeF+Kt++gM=;
- b=fI3dHebaSoPgdeo5SWBQxMdoME/WtTPJAhMDH8wd8I7e1aFBR1+hHtP2hmvNlBOz125A
- TuQVPxWFQqZ83p3SMKPICox2DWSJ1qfVDYpWIzaJtMjnjcLR0mFmXxIJmh7V8jkqBNsY
- ECgk+23EAzt9aJnYEjVCSVFQ2kgl4Sft7x8GjbuTExhlLW4uIJDevvV4C5hfttsf1YAM
- CZynZsTno/nbIabtHZJECjrwRm5pake0aACvzhlTHg+gG9IRT3FK6UzEkFAlX12aVP3k
- x/U8H/WtXEUeXYH7QCuTk2uqg6QuYQfkwQe0e+rOgi16PbuMxLqQTQTmWx9N9MHD57f4 3g== 
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y1a7p80jx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 01:59:31 +0000
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44A0Y2ZQ026745;
-	Fri, 10 May 2024 01:59:30 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3xysfwxerx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 01:59:30 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44A1xRHY10355390
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 May 2024 01:59:30 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BF00C58061;
-	Fri, 10 May 2024 01:59:27 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 503105803F;
-	Fri, 10 May 2024 01:59:27 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 10 May 2024 01:59:27 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        herbert@gondor.apana.org.au, davem@davemloft.net
-Cc: linux-kernel@vger.kernel.org, lukas@wunner.de, jarkko@kernel.org,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v3] crypto: ecc - Prevent ecc_digits_from_bytes from reading too many bytes
-Date: Thu,  9 May 2024 21:59:21 -0400
-Message-ID: <20240510015921.179175-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715306679; c=relaxed/simple;
+	bh=Wt5NjcQsRy6vXuKFt+dzg0rWl480IGdBGm0rPEQXqIE=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ApPKcjsg4nXbuCNLjMwv1SUri0cY9sQQ8OTRwy0HWk7MVLgl5UpcyZ1ev4ao5sV8ylLLk5ZHrqfKLFd0GWPRQtGH2QU8Dtu9SMhoALp7aOtSvuBp6WwoUMFWgPlUC98MkFX4tErDwME8eGVIL21qbZec8+mEJL7g8Vsr1eewXEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsaMpkKi; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59c0a6415fso422903266b.1;
+        Thu, 09 May 2024 19:04:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715306676; x=1715911476; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BI5tyqymmN9gGbJ6fagCaRykBg1tbmyzeV+T0zeBy6M=;
+        b=LsaMpkKiUrke9UHG/PL+f9HgcQRSqapYJVK2RCIu3Vx3V00gxiMJS9hC4rzxf8dlYC
+         x6oIcXrZ2B9Lx/x8wWUllD0xgUPnN1IdJA9xlVbSHDPEThP7w7O9B4xcs4hTM3yct0+W
+         I8s4GWrI/WviZKmSt82Y0TFF1DFiyQoDd66ScauXv3XWv2p5fCICTHvwzSWXTIr2lVu5
+         aIT9t/9yqUCHnUxWtzeixIpZOPn1xpwJLREi14E1rpZA+Q5ntomvm93WQW5J2BceiD6u
+         +Fl2qbcjukrvl+5XAC6MRnwL1C1tZh3no5RAr8C4nWejxmSIZpjJ4WMP4fsqC/BXg3hZ
+         RPJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715306676; x=1715911476;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BI5tyqymmN9gGbJ6fagCaRykBg1tbmyzeV+T0zeBy6M=;
+        b=umcFnLoT3HlyY7XWxZnUUywWlAnDC5d6ze+6PUNT3ziTir2yMevF+QXvhRotZrJFSY
+         UHwaDpvtP+01ELpvVZm80J+21oszRIQL8ujiYV2oJDsc47L0Vaa0b3ssfld1FkcHIwdJ
+         qOtw+n1wUZwrePvLl3+fujFnHksvQP3BQZ8CecQtLfwjk82E5YCHVnyHUYIgIPveq3Xv
+         5EYFao8TL8y4pY43hdh+qfNkX7eKgRIRoNNKCjeSHK0R42f8fli4+QTDI8mcM7Q7izrZ
+         uHtWedwarpb65dCL3JqMBZgo+6kGz69YB8Uiyx+5ZQHOzyNsFNYxjbmGHjsYCxQkCUC1
+         SCgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZbS3JV3F9sHS5iIK2JnYUmUBJPfWHzrjFh40EWJjdxQAOCIUuiowyyXuw7gvpRf8xjnZpXf8LGBMB5jgk0tr2xJl1FFkjfgAAtyzH4i7W02Z34u10kAfdYaFE+4dFMBqDqQ/YNI4Kg==
+X-Gm-Message-State: AOJu0YxChRBg23aDeDqQNGtaKnKbVwBVkjuMdPEuHz9+R/3LUUADEQum
+	w90KF67gwAtXooFmGooKqzXN/HjSe5ulO15buJ1PEi8Lsrone0zQ3WQH0z9D
+X-Google-Smtp-Source: AGHT+IF2QDguCK8rTieenO0F4aGJLfLKKE/VD2hKk7gSUjMQEBdHmWN/fJPbugbyh1hN9Y/Vir1/Ug==
+X-Received: by 2002:a17:906:3c57:b0:a59:2e45:f528 with SMTP id a640c23a62f3a-a5a2d5c96b5mr71148666b.38.1715306675648;
+        Thu, 09 May 2024 19:04:35 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d553sm133706966b.43.2024.05.09.19.04.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 09 May 2024 19:04:34 -0700 (PDT)
+From: Wei Yang <richard.weiyang@gmail.com>
+To: mpe@ellerman.id.au,
+	npiggin@gmail.com,
+	christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org,
+	naveen.n.rao@linux.ibm.com,
+	arnd@arndb.de,
+	rppt@kernel.org,
+	anshuman.khandual@arm.com
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	Wei Yang <richard.weiyang@gmail.com>
+Subject: [Patch v2] mm/memblock: discard .text/.data if CONFIG_ARCH_KEEP_MEMBLOCK not set
+Date: Fri, 10 May 2024 02:04:22 +0000
+Message-Id: <20240510020422.8038-1-richard.weiyang@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: OWCrg3R4g_-Y7GN8ak5RkX8wPvR2PPAC
-X-Proofpoint-ORIG-GUID: OWCrg3R4g_-Y7GN8ak5RkX8wPvR2PPAC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_01,2024-05-09_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 phishscore=0
- adultscore=0 spamscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- bulkscore=0 mlxlogscore=999 malwarescore=0 lowpriorityscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405100012
 
-Prevent ecc_digits_from_bytes from reading too many bytes from the input
-byte array in case an insufficient number of bytes is provided to fill the
-output digit array of ndigits. Therefore, initialize the most significant
-digits with 0 to avoid trying to read too many bytes later on. Convert the
-function into a regular function since it is getting too big for an inline
-function.
+When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
+code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
+neither.
 
-If too many bytes are provided on the input byte array the extra bytes
-are ignored since the input variable 'ndigits' limits the number of digits
-that will be filled.
+This patch puts memblock's .text/.data into its own section, so that it
+only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
+data.
 
-Fixes: d67c96fb97b5 ("crypto: ecdsa - Convert byte arrays with key coordinates to digits")
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+After this, from the log message in mem_init_print_info(), init size
+increase from 2420K to 2432K on arch x86.
+
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
 
 ---
-v3:
- - Applied Jarkko's tag
-
-v2:
- - un-inline function
- - use memset
+v2: fix orphan section for powerpc
 ---
- crypto/ecc.c                  | 22 ++++++++++++++++++++++
- include/crypto/internal/ecc.h | 15 ++-------------
- 2 files changed, 24 insertions(+), 13 deletions(-)
+ arch/powerpc/kernel/vmlinux.lds.S |  1 +
+ include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
+ include/linux/memblock.h          |  8 ++++----
+ 3 files changed, 18 insertions(+), 5 deletions(-)
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index c1d2e884be1e..fe761256e335 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -68,6 +68,28 @@ const struct ecc_curve *ecc_get_curve(unsigned int curve_id)
- }
- EXPORT_SYMBOL(ecc_get_curve);
+diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
+index f420df7888a7..d6d33bec597a 100644
+--- a/arch/powerpc/kernel/vmlinux.lds.S
++++ b/arch/powerpc/kernel/vmlinux.lds.S
+@@ -125,6 +125,7 @@ SECTIONS
+ 		*(.text.asan.* .text.tsan.*)
+ 		MEM_KEEP(init.text)
+ 		MEM_KEEP(exit.text)
++		MEMBLOCK_KEEP(init.text)
+ 	} :text
  
-+void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
-+			   u64 *out, unsigned int ndigits)
-+{
-+	int diff = ndigits - DIV_ROUND_UP(nbytes, sizeof(u64));
-+	unsigned int o = nbytes & 7;
-+	__be64 msd = 0;
-+
-+	/* diff > 0: not enough input bytes: set most significant digits to 0 */
-+	if (diff > 0) {
-+		ndigits -= diff;
-+		memset(&out[ndigits - 1], 0, diff * sizeof(u64));
-+	}
-+
-+	if (o) {
-+		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
-+		out[--ndigits] = be64_to_cpu(msd);
-+		in += o;
-+	}
-+	ecc_swap_digits(in, out, ndigits);
-+}
-+EXPORT_SYMBOL(ecc_digits_from_bytes);
-+
- static u64 *ecc_alloc_digits_space(unsigned int ndigits)
- {
- 	size_t len = ndigits * sizeof(u64);
-diff --git a/include/crypto/internal/ecc.h b/include/crypto/internal/ecc.h
-index 7ca1f463d1ec..f7e75e1e71f3 100644
---- a/include/crypto/internal/ecc.h
-+++ b/include/crypto/internal/ecc.h
-@@ -64,19 +64,8 @@ static inline void ecc_swap_digits(const void *in, u64 *out, unsigned int ndigit
-  * @out       Output digits array
-  * @ndigits:  Number of digits to create from byte array
-  */
--static inline void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
--					 u64 *out, unsigned int ndigits)
--{
--	unsigned int o = nbytes & 7;
--	__be64 msd = 0;
--
--	if (o) {
--		memcpy((u8 *)&msd + sizeof(msd) - o, in, o);
--		out[--ndigits] = be64_to_cpu(msd);
--		in += o;
--	}
--	ecc_swap_digits(in, out, ndigits);
--}
-+void ecc_digits_from_bytes(const u8 *in, unsigned int nbytes,
-+			   u64 *out, unsigned int ndigits);
+ 	. = ALIGN(PAGE_SIZE);
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index f7749d0f2562..775c5eedb9e6 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -147,6 +147,14 @@
+ #define MEM_DISCARD(sec) *(.mem##sec)
+ #endif
  
- /**
-  * ecc_is_key_valid() - Validate a given ECDH private key
++#if defined(CONFIG_ARCH_KEEP_MEMBLOCK)
++#define MEMBLOCK_KEEP(sec)    *(.mb##sec)
++#define MEMBLOCK_DISCARD(sec)
++#else
++#define MEMBLOCK_KEEP(sec)
++#define MEMBLOCK_DISCARD(sec) *(.mb##sec)
++#endif
++
+ #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+ #define KEEP_PATCHABLE		KEEP(*(__patchable_function_entries))
+ #define PATCHABLE_DISCARDS
+@@ -356,6 +364,7 @@
+ 	*(.ref.data)							\
+ 	*(.data..shared_aligned) /* percpu related */			\
+ 	MEM_KEEP(init.data*)						\
++	MEMBLOCK_KEEP(init.data*)					\
+ 	*(.data.unlikely)						\
+ 	__start_once = .;						\
+ 	*(.data.once)							\
+@@ -573,6 +582,7 @@
+ 		*(.ref.text)						\
+ 		*(.text.asan.* .text.tsan.*)				\
+ 	MEM_KEEP(init.text*)						\
++	MEMBLOCK_KEEP(init.text*)					\
+ 
+ 
+ /* sched.text is aling to function alignment to secure we have same
+@@ -680,6 +690,7 @@
+ 	KEEP(*(SORT(___kentry+*)))					\
+ 	*(.init.data .init.data.*)					\
+ 	MEM_DISCARD(init.data*)						\
++	MEMBLOCK_DISCARD(init.data*)					\
+ 	KERNEL_CTORS()							\
+ 	MCOUNT_REC()							\
+ 	*(.init.rodata .init.rodata.*)					\
+@@ -706,7 +717,8 @@
+ #define INIT_TEXT							\
+ 	*(.init.text .init.text.*)					\
+ 	*(.text.startup)						\
+-	MEM_DISCARD(init.text*)
++	MEM_DISCARD(init.text*)						\
++	MEMBLOCK_DISCARD(init.text*)
+ 
+ #define EXIT_DATA							\
+ 	*(.exit.data .exit.data.*)					\
+diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+index e2082240586d..3e1f1d42dde7 100644
+--- a/include/linux/memblock.h
++++ b/include/linux/memblock.h
+@@ -100,13 +100,13 @@ struct memblock {
+ 
+ extern struct memblock memblock;
+ 
++#define __init_memblock        __section(".mbinit.text") __cold notrace \
++						  __latent_entropy
++#define __initdata_memblock    __section(".mbinit.data")
++
+ #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
+-#define __init_memblock __meminit
+-#define __initdata_memblock __meminitdata
+ void memblock_discard(void);
+ #else
+-#define __init_memblock
+-#define __initdata_memblock
+ static inline void memblock_discard(void) {}
+ #endif
+ 
 -- 
-2.43.0
+2.34.1
 
 
