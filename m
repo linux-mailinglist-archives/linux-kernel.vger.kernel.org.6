@@ -1,322 +1,231 @@
-Return-Path: <linux-kernel+bounces-175897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FB7B8C26C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:25:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 000E58C26C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:26:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D961C22150
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:25:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66BE1B22F86
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA82B16E898;
-	Fri, 10 May 2024 14:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FFB16EBFA;
+	Fri, 10 May 2024 14:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z4Kv1+vF"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BP03ZOR6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104D0127B52
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6651168BE;
+	Fri, 10 May 2024 14:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351095; cv=none; b=P5t+irAJlvdujkuoov0T4g+sdx0hNL3ivQ02JsNhaVYsnwq3MT9SALtwYiYwBLS1yb01LnG6PRuMColvd2fS9rnwTRhURN8A5x2B2OxUo07MitoAmKzGfB4O5OKallnlrx0hji4SELFwJPw1aKWhhKmiuIwuTd/xOsgmEyRsMPc=
+	t=1715351184; cv=none; b=jotbzK8Lt9qFpkEFqPlVZ2+XMUChunzeAP3rY95hRSMhvGad3XvY7calJVqszAZo2uZe9lJq1BTcyjxAf9HLZzrLMon+9eeox6f6bRQb1sbakqfLt66BmEA1ae+BCXPhFUZm25nFYntLJ5X90CfdkYYInS4MiK3+bztlSi5QFzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351095; c=relaxed/simple;
-	bh=an+bTm0fGEwyqEeSZ+W9NNIDPQFzqRHdP9OK6kceivk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cNS82R0oaShwmAEJIDUbFHgbRTx5tz5PHOeGnRsqkkGaQCDwI7yTHT4c3VicMehkyDX2Nu3wEO7LLari6mUa+3kMiN+PC4utx7TEu7vu1xA+nMhWDt63ufPY2XISmapROY2C0gWI9kIdvMRDJy1q266z5wLdF/kq5Bi3ziCaOM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z4Kv1+vF; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-792b8d31702so142589985a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:24:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715351091; x=1715955891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J1NXrtOs8kNipk5Cgp2Wy8A5yaV129in3aAVvIhs+qA=;
-        b=Z4Kv1+vF3mTNeMJ/MjuzsHDw6GCbDP3HOZPf4SzmDWbfQjwXsx8yf7fQ3DvoWesv6H
-         fEtB82MkFLJVJEDeNlfRd38kg6pKJz9gV/rgBkAVqLLsGfiHy4N25+U6gsgTTVAii/xI
-         dy9ADFwGfqBavLtdI242t6pB+7tadA/98eDCk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715351091; x=1715955891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J1NXrtOs8kNipk5Cgp2Wy8A5yaV129in3aAVvIhs+qA=;
-        b=kPmzu9GrJ6jjZL2QUIAM/8SelyMKJH3+BQW5n3hvwkfOaDXr5iu4E0jKNtafEXi0sq
-         ezhgY/e4H81iMDyrV/Yx5NRnaOLlJIhoGcZipv+Fo++gKScwiD3AjKnSUHQb16Arzcxt
-         dfgWrDKz0Z9dC8+fnvNChpvIraJLao/9yHQ8LBk5vIjsKNoihY3lptHTXDNVf2tmwPFr
-         By90p92y7SYxFqy6KkanO8Y5aK00y/5DwzRZEcrwDPuCzMje6213q9dhYmneK8A+jsE7
-         gXE2BuWDdQTHFRKEfJiSqsiw2oWUP3xsn0oX3Uppv4jI8B7VoPG9uxB8d7I0UyyqfIjo
-         efWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUk2DD038yn42wHsYbN2HCbsyqfCNan8wOLusaIlkIw0fcQOGvOvzb/al8/fKT4hTUxWmRj9sZMWsPbEd/ms76VVl3RvG/EAppK7R3Y
-X-Gm-Message-State: AOJu0YwAcO4nrk53QNb0DCCbJU+lf21/3uTVAWYnTKI2/3as4XXCCUBa
-	idL7fjhJ1JvXvubXpAE8thGVaea9bIJIjMMY5HwP/IKGIiGiAlQJoW9YqP0A85Tv/0Pi37NLAro
-	=
-X-Google-Smtp-Source: AGHT+IH2mhhfqyU7+I7wuKyXRUxReaf/m4Yw10u/ELsS/cSMzdBZIYpzk0erFiUREErEyz94fCN4YQ==
-X-Received: by 2002:a05:620a:55bc:b0:792:92e5:4f1 with SMTP id af79cd13be357-792c758ff1bmr293477185a.24.1715351090807;
-        Fri, 10 May 2024 07:24:50 -0700 (PDT)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc67esm184191085a.74.2024.05.10.07.24.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 07:24:49 -0700 (PDT)
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-43dfe020675so470831cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:24:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVmjZPm4Pd06RZtmKG2CuOF//sPnLQDMUHnQ2R5Kp/BVoTZhBLGgeEwtRexOqSLeqLOqz7CWMc06tTYHd5T3xbHjuY2ptDiCo5iXByd
-X-Received: by 2002:a05:622a:53c3:b0:439:ef72:75fb with SMTP id
- d75a77b69052e-43dfefcd76emr2575731cf.1.1715351089237; Fri, 10 May 2024
- 07:24:49 -0700 (PDT)
+	s=arc-20240116; t=1715351184; c=relaxed/simple;
+	bh=+DKU1DJyZN/2cve2AGF0NsYjCUCGhPhoIoQ+JdEnSqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FGzE0FkO/lZNwfVTc+0OEwYp4e5v06vULGtBY7lVYGCmtORQs1qLfXNaTUoXHvZBK6pNhQy2g65rX/rj/ZosxWVhszo0c0KFtjEAhzUNSo9jPp8rDJc3YqqoiZhYB3JZ6EJ1BvzxWSjFuVZ0PdYhULHjujyYIUB2iSJjaMacBv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BP03ZOR6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC11DC113CC;
+	Fri, 10 May 2024 14:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715351184;
+	bh=+DKU1DJyZN/2cve2AGF0NsYjCUCGhPhoIoQ+JdEnSqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BP03ZOR6tAb3/dpjyiyJ1juh8WAZwYg4kfdZf5R9+4fsQ9KcZmpg6PdOQwlyN4INl
+	 NUhVVE3Cfq1yMxi7PcqQ1Rp26HoBv2uGHNi7lbYK6+SXNWfkuoMbu6Nm1ukTJdq4sy
+	 95jGL3dWHf0QrB54wXny5eL2nSnOSdGkhNmTPux7VZs2MaJb/yTjho9QlLxEnkHx/C
+	 vkAE3Wa1QAbkkEHrrK0ZHBQ4d2W5SjAQbyzgmJwphBs1GFta7IwfHrKgxV01DD3oso
+	 WbGnsLj/HWWGZwKnCcWcqjMxc23YdMOHTX/ovibAJD6PLgMu5AyOzDer01L6qH0WsH
+	 BGnzvxWtZRuOQ==
+Date: Fri, 10 May 2024 11:26:21 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+	"segher@kernel.crashing.org" <segher@kernel.crashing.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+	"maddy@linux.ibm.com" <maddy@linux.ibm.com>,
+	"kjain@linux.ibm.com" <kjain@linux.ibm.com>,
+	"disgoel@linux.vnet.ibm.com" <disgoel@linux.vnet.ibm.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"akanksha@linux.ibm.com" <akanksha@linux.ibm.com>
+Subject: Re: [PATCH V2 4/9] tools/perf: Add support to capture and parse raw
+ instruction in objdump
+Message-ID: <Zj4ujanupo0eKyby@x1>
+References: <20240506121906.76639-1-atrajeev@linux.vnet.ibm.com>
+ <20240506121906.76639-5-atrajeev@linux.vnet.ibm.com>
+ <f2efdb9d-e636-4678-b492-83d3a28d8134@csgroup.eu>
+ <E21FF3FD-1080-4A6C-99B0-7239AD831532@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509015207.3271370-1-yangcong5@huaqin.corp-partner.google.com>
- <20240509015207.3271370-8-yangcong5@huaqin.corp-partner.google.com>
- <CAD=FV=Vd34kBy4meaqqYECQKaT1=XcCFdq3qaU5n=YBWVAVi-Q@mail.gmail.com> <CAHwB_N+4_cJ3NuEm+AxqhxYosLvJ+WA6SG9HhTckCxNEBkvwSw@mail.gmail.com>
-In-Reply-To: <CAHwB_N+4_cJ3NuEm+AxqhxYosLvJ+WA6SG9HhTckCxNEBkvwSw@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 10 May 2024 07:24:33 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VUjy7UL9vQX8wc9VygLhVaRw52Stm9JWxiQiy9YaQUCw@mail.gmail.com>
-Message-ID: <CAD=FV=VUjy7UL9vQX8wc9VygLhVaRw52Stm9JWxiQiy9YaQUCw@mail.gmail.com>
-Subject: Re: [PATCH v5 7/7] drm/panel: himax-hx83102: Support for IVO t109nw41
- MIPI-DSI panel
-To: cong yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
-	linus.walleij@linaro.org, krzysztof.kozlowski+dt@linaro.org, 
-	robh+dt@kernel.org, conor+dt@kernel.org, airlied@gmail.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <E21FF3FD-1080-4A6C-99B0-7239AD831532@linux.vnet.ibm.com>
 
-Hi,
+On Thu, May 09, 2024 at 10:56:23PM +0530, Athira Rajeev wrote:
+> 
+> 
+> > On 7 May 2024, at 3:05 PM, Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+> > 
+> > 
+> > 
+> > Le 06/05/2024 à 14:19, Athira Rajeev a écrit :
+> >> Add support to capture and parse raw instruction in objdump.
+> > 
+> > What's the purpose of using 'objdump' for reading raw instructions ? 
+> > Can't they be read directly without invoking 'objdump' ? It looks odd to 
+> > me to use objdump to provide readable text and then parse it back.
+> 
+> Hi Christophe,
+> 
+> Thanks for your review comments.
+> 
+> Current implementation for data type profiling on X86 uses "objdump" tool to get the disassembled code.
 
-On Thu, May 9, 2024 at 11:05=E2=80=AFPM cong yang
-<yangcong5@huaqin.corp-partner.google.com> wrote:
->
-> Hi,
->
-> Doug Anderson <dianders@chromium.org> =E4=BA=8E2024=E5=B9=B45=E6=9C=8810=
-=E6=97=A5=E5=91=A8=E4=BA=94 00:49=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Hi,
-> >
-> > On Wed, May 8, 2024 at 6:53=E2=80=AFPM Cong Yang
-> > <yangcong5@huaqin.corp-partner.google.com> wrote:
-> > >
-> > > +static int ivo_t109nw41_init(struct hx83102 *ctx)
-> > > +{
-> > > +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D ctx->dsi=
- };
-> > > +
-> > > +       msleep(60);
-> > > +
-> > > +       hx83102_enable_extended_cmds(&dsi_ctx, true);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x2c=
-, 0xed, 0xed, 0x0f, 0xcf, 0x42,
-> > > +                                    0xf5, 0x39, 0x36, 0x36, 0x36, 0x=
-36, 0x32, 0x8b, 0x11, 0x65, 0x00, 0x88,
-> > > +                                    0xfa, 0xff, 0xff, 0x8f, 0xff, 0x=
-08, 0xd6, 0x33);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDISP, 0x00,=
- 0x47, 0xb0, 0x80, 0x00, 0x12,
-> > > +                                    0x71, 0x3c, 0xa3, 0x22, 0x20, 0x=
-00, 0x00, 0x88, 0x01);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x35, =
-0x35, 0x43, 0x43, 0x35, 0x35,
-> > > +                                    0x30, 0x7a, 0x30, 0x7a, 0x01, 0x=
-9d);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-d);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x84)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETVDC, 0x1b, =
-0x04);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_BE, 0x=
-20);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xfc,=
- 0xc4);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSTBA, 0x34,=
- 0x34, 0x22, 0x11, 0x22, 0xa0,
-> > > +                                    0x31, 0x08, 0xf5, 0x03);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-c);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x80)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xd=
-3);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x22)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-6);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETRAMDMY, 0x9=
-7);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPWM, 0x00, =
-0x1e, 0x13, 0x88, 0x01);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x08=
-, 0x13, 0x07, 0x00, 0x0f, 0x34);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPANEL, 0x02=
-, 0x03, 0x44);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-4);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCASCADE, 0x=
-03);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPCTRL, 0x07=
-, 0x06, 0x00, 0x02, 0x04, 0x2c,
-> > > +                                    0xff);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x06,=
- 0x00, 0x00, 0x00, 0x00, 0x08,
-> > > +                                    0x08, 0x08, 0x08, 0x37, 0x07, 0x=
-64, 0x7c, 0x11, 0x11, 0x03, 0x03, 0x32,
-> > > +                                    0x10, 0x0e, 0x00, 0x0e, 0x32, 0x=
-17, 0x97, 0x07, 0x97, 0x32, 0x00, 0x02,
-> > > +                                    0x00, 0x02, 0x00, 0x00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP1, 0x25,=
- 0x24, 0x25, 0x24, 0x18, 0x18,
-> > > +                                    0x18, 0x18, 0x07, 0x06, 0x07, 0x=
-06, 0x05, 0x04, 0x05, 0x04, 0x03, 0x02,
-> > > +                                    0x03, 0x02, 0x01, 0x00, 0x01, 0x=
-00, 0x1e, 0x1e, 0x1e, 0x1e, 0x1f, 0x1f,
-> > > +                                    0x1f, 0x1f, 0x21, 0x20, 0x21, 0x=
-20, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
-> > > +                                    0x18, 0x18);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xaa,=
- 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-> > > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x=
-a0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> > > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x=
-00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> > > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x=
-00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGMA, 0x04, =
-0x04, 0x06, 0x0a, 0x0a, 0x05,
-> > > +                                    0x12, 0x14, 0x17, 0x13, 0x2c, 0x=
-33, 0x39, 0x4b, 0x4c, 0x56, 0x61, 0x78,
-> > > +                                    0x7a, 0x41, 0x50, 0x68, 0x73, 0x=
-04, 0x04, 0x06, 0x0a, 0x0a, 0x05, 0x12,
-> > > +                                    0x14, 0x17, 0x13, 0x2c, 0x33, 0x=
-39, 0x4b, 0x4c, 0x56, 0x61, 0x78, 0x7a,
-> > > +                                    0x41, 0x50, 0x68, 0x73);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x07, =
-0x10, 0x10, 0x1a, 0x26, 0x9e,
-> > > +                                    0x00, 0x4f, 0xa0, 0x14, 0x14, 0x=
-00, 0x00, 0x00, 0x00, 0x12, 0x0a, 0x02,
-> > > +                                    0x02, 0x00, 0x33, 0x02, 0x04, 0x=
-18, 0x01);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x01=
-, 0x7f, 0x11, 0xfd);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x86=
-);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x00,=
- 0x00, 0x04, 0x00, 0x00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0x00,=
- 0x00, 0x00, 0x00, 0x00, 0x00,
-> > > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x=
-00, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-> > > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x=
-a0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> > > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x=
-00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x02, =
-0x00, 0x2b, 0x01, 0x7e, 0x0f,
-> > > +                                    0x7e, 0x10, 0xa0, 0x00, 0x00, 0x=
-77, 0x00, 0x00, 0x00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x02)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xf2)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x03=
-, 0x07, 0x00, 0x10, 0x79);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xff,=
- 0xff, 0xff, 0xff, 0xfa, 0xa0,
-> > > +                                    0xff, 0xff, 0xff, 0xff, 0xfa, 0x=
-a0);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0xfe, =
-0x01, 0xfe, 0x01, 0xfe, 0x01,
-> > > +                                    0x00, 0x00, 0x00, 0x23, 0x00, 0x=
-23, 0x81, 0x02, 0x40, 0x00, 0x20, 0x6e,
-> > > +                                    0x02, 0x01, 0x00, 0x00, 0x00, 0x=
-00, 0x00, 0x00, 0x00, 0x00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x03)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xa=
-a, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-> > > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x=
-a0, 0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0,
-> > > +                                    0xff, 0xff, 0xff, 0xff, 0xfa, 0x=
-a0, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-> > > +                                    0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0x=
-a0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> > > +                                    0x00, 0x00, 0x00, 0x00, 0x00, 0x=
-00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-6);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x03, =
-0xff, 0xf8);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_E1, 0x=
-00);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0x=
-ff, 0xff, 0xff, 0xff, 0xff, 0xff);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-4);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x96)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc=
-5);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x4f)=
-;
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3=
-f);
-> > > +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00)=
-;
-> > > +       if (dsi_ctx.accum_err)
-> > > +               return dsi_ctx.accum_err;
-> >
-> > Since this is a new panel you're adding support for and there's no
-> > excuse that we don't want to change the old command sequence, it seems
-> > like you should add the call to:
-> >
-> > hx83102_enable_extended_cmds(&dsi_ctx, false);
-> >
-> > If for some reason that would be a bad idea, let me know.
->
-> Confirm with the vendor again , disable extended cmds is prevent the ESD
-> mechanism write (currently there is no ESD check mechanism) ic register.
-> So it may not have any impact whether add disable extended cmds or not.
-> Of course for me, I prefer to upload according to the initial code
-> provided by  vendor.
->
-> If you prefer add it I also can fix in V6.
+commit 6d17edc113de1e21fc66afa76be475a4f7c91826
+Author: Namhyung Kim <namhyung@kernel.org>
+Date:   Fri Mar 29 14:58:11 2024 -0700
 
-I'd prefer it be added for any new panels unless a vendor says we
-shouldn't. For the old panel I'd be OK w/ keeping it how it was.
+    perf annotate: Use libcapstone to disassemble
+    
+    Now it can use the capstone library to disassemble the instructions.
+    Let's use that (if available) for perf annotate to speed up.  Currently
+    it only supports x86 architecture.  With this change I can see ~3x speed
+    up in data type profiling.
+    
+    But note that capstone cannot give the source file and line number info.
+    For now, users should use the external objdump for that by specifying
+    the --objdump option explicitly.
+    
+    Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+    Tested-by: Ian Rogers <irogers@google.com>
+    Cc: Adrian Hunter <adrian.hunter@intel.com>
+    Cc: Changbin Du <changbin.du@huawei.com>
+    Cc: Ingo Molnar <mingo@kernel.org>
+    Cc: Jiri Olsa <jolsa@kernel.org>
+    Cc: Kan Liang <kan.liang@linux.intel.com>
+    Cc: Peter Zijlstra <peterz@infradead.org>
+    Link: https://lore.kernel.org/r/20240329215812.537846-5-namhyung@kernel.org
+    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
--Doug
+From a quick look at http://www.capstone-engine.org/compile.html it
+seems PowerPC is supported.
+
+But since we did it first with objdump output parsing, its good to have
+it as an alternative and sometimes a fallback:
+
+commit f35847de2a65137e011e559f38a3de5902a5463f
+Author: Namhyung Kim <namhyung@kernel.org>
+Date:   Wed Apr 24 17:51:56 2024 -0700
+
+    perf annotate: Fallback disassemble to objdump when capstone fails
+    
+    I found some cases that capstone failed to disassemble.  Probably my
+    capstone is an old version but anyway there's a chance it can fail.  And
+    then it silently stopped in the middle.  In my case, it didn't
+    understand "RDPKRU" instruction.
+    
+    Let's check if the capstone disassemble reached the end of the function
+    and fallback to objdump if not
+
+---------------
+
+- Arnaldo
+
+> And then the objdump result lines are parsed to get the instruction
+> name and register fields. The initial patchset I posted to enable the
+> data type profiling feature in powerpc was using the same way by
+> getting disassembled code from objdump and parsing the disassembled
+> lines. But in V2, we are introducing change for powerpc to use "raw
+> instruction" and fetch opcode, reg fields from the raw instruction.
+ 
+> I tried to explain below that current objdump uses option
+> "--no-show-raw-insn" which doesn't capture raw instruction.  So to
+> capture raw instruction, V2 patchset has changes to use default option
+> "--show-raw-insn" and get the raw instruction [ for powerpc ] along
+> with human readable annotation [ which is used by other archs ]. Since
+> perf tool already has objdump implementation in place, I went in the
+> direction to enhance it to use "--show-raw-insn" for powerpc purpose.
+ 
+> But as you mentioned, we can directly read raw instruction without
+> using "objdump" tool.  perf has support to read object code. The dso
+> open/read utilities and helper functions are already present in
+> "util/dso.c" And "dso__data_read_offset" function reads data from dso
+> file offset. We can use these functions and I can make changes to
+> directly read binary instruction without using objdump.
+ 
+> Namhyung, Arnaldo, Christophe
+> Looking for your valuable feedback on this approach. Please suggest if this approach looks fine
+> 
+> 
+> Thanks
+> Athira
+> > 
+> >> Currently, the perf tool infrastructure uses "--no-show-raw-insn" option
+> >> with "objdump" while disassemble. Example from powerpc with this option
+> >> for an instruction address is:
+> > 
+> > Yes and that makes sense because the purpose of objdump is to provide 
+> > human readable annotations, not to perform automated analysis. Am I 
+> > missing something ?
+> > 
+> >> 
+> >> Snippet from:
+> >> objdump  --start-address=<address> --stop-address=<address>  -d --no-show-raw-insn -C <vmlinux>
+> >> 
+> >> c0000000010224b4: lwz     r10,0(r9)
+> >> 
+> >> This line "lwz r10,0(r9)" is parsed to extract instruction name,
+> >> registers names and offset. Also to find whether there is a memory
+> >> reference in the operands, "memory_ref_char" field of objdump is used.
+> >> For x86, "(" is used as memory_ref_char to tackle instructions of the
+> >> form "mov  (%rax), %rcx".
+> >> 
+> >> In case of powerpc, not all instructions using "(" are the only memory
+> >> instructions. Example, above instruction can also be of extended form (X
+> >> form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+> >> and extract the source/target registers, patch adds support to use raw
+> >> instruction. With raw instruction, macros are added to extract opcode
+> >> and register fields.
+> >> 
+> >> "struct ins_operands" and "struct ins" is updated to carry opcode and
+> >> raw instruction binary code (raw_insn). Function "disasm_line__parse"
+> >> is updated to fill the raw instruction hex value and opcode in newly
+> >> added fields. There is no changes in existing code paths, which parses
+> >> the disassembled code. The architecture using the instruction name and
+> >> present approach is not altered. Since this approach targets powerpc,
+> >> the macro implementation is added for powerpc as of now.
+> >> 
+> >> Example:
+> >> representation using --show-raw-insn in objdump gives result:
+> >> 
+> >> 38 01 81 e8     ld      r4,312(r1)
+> >> 
+> >> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+> >> this translates to instruction form: "ld RT,DS(RA)" and binary code
+> >> as:
+> >> _____________________________________
+> >> | 58 |  RT  |  RA |      DS       | |
+> >> -------------------------------------
+> >> 0    6     11    16              30 31
+> >> 
+> >> Function "disasm_line__parse" is updated to capture:
+> >> 
+> >> line:    38 01 81 e8     ld      r4,312(r1)
+> >> opcode and raw instruction "38 01 81 e8"
+> >> Raw instruction is used later to extract the reg/offset fields.
+> >> 
+> >> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> >> ---
 
