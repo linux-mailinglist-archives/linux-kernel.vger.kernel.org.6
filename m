@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-175396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 873868C1EEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:21:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F858C1EEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32DAAB20E92
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E48C1C21425
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A4815ECE2;
-	Fri, 10 May 2024 07:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D0E15ECDF;
+	Fri, 10 May 2024 07:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0tl1lcq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQPMddhw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0C81DFEA;
-	Fri, 10 May 2024 07:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5640915279B;
+	Fri, 10 May 2024 07:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715325685; cv=none; b=jJ3SK9wzBauK6HGs8RivdczDS1klwiRP6KEK1+ky6Hp715DWsXWJOsuGA3I7TxRV7YR1LOGJ3V3ApdTDPTVkGLW3wLt8+ygOPkBbebTF9YnBmZIgL8SEYDvh4a5ATvhfkXMTeFo4A13sEtos8lIWlWTn6RhcCtQqqzkIIyOfegQ=
+	t=1715325746; cv=none; b=mdIb1Yuq97lPhNNwI6x4Ow8LgfgvRnLhQ5bWNJOqc9vmtFsDUL0CQBKvo/N7+LAm/+QGhule8qNtO5d5xpmCPz6KcV/4+owqh9uZ1Z9c4PBBCR+uHozR1J6U3O2isBSrgPlygBoabvup9SsP2JW0p/ampzWEXHBLuznaLly1+eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715325685; c=relaxed/simple;
-	bh=CRlufBsEbWIRod4jJHaad7SQ+08UlCRsxSu1B2VBLhU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=smWGJ1c4Eqk7C80OdudZfbDGUwJ0oYLJcYQKTI5sHQKdWVzcwKXrHkqRH64sn04dUXLeOVD3NkGxS2peKr9Q660bblSYClUX3OYdpJt62bgSnQ/G9tsI8qKMHy50DltzUwEogVGl6bnXLvGqAEfdHVZfAbkSH4Up7T9ww9uLd2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0tl1lcq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF0EC113CC;
-	Fri, 10 May 2024 07:21:24 +0000 (UTC)
+	s=arc-20240116; t=1715325746; c=relaxed/simple;
+	bh=EzdfZ0kpf3fhUbIFDljCEYBvplIrKON70GWCiQd1UDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VaRo/XLDdR4il2fdNXqZsc4jwpfLFF6cLyxsLEW6tJYyzXbqsD6bh987+rfZUBiEza59Gl1YyXWtjx/LSWouzRH1U8V3MasfGXpm+TOk7spqhfF+vMpW0Ysqan3sSe7t3YfBwj15ybwgKGu/fcKnveHYXMnpF3LA43ztW5QdOe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQPMddhw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4962DC113CC;
+	Fri, 10 May 2024 07:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715325685;
-	bh=CRlufBsEbWIRod4jJHaad7SQ+08UlCRsxSu1B2VBLhU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=S0tl1lcqj8Bik0LppcLisGZoo55rD2MWAjidKwdsqcbtbwVbnWxbeHvUw10jjb/Mh
-	 /5DfT175Fq4UgJZOhEH5L+ZotDXvYZBz0z0b4+rjMbcA2WyDLq5nDPfxQC0EcljT1f
-	 w+9az8cunxBnLhabmhPvLLPqQYOTB2fxqPLz81FILN0pJ6dr77QHJ834XhtYzoJPJy
-	 SkfB7Iu4miTaMNy5psF3H0g+W3+m7st8tg1Vw5iQYMmwf4vYYxfPnO0Kh8/cRNsLt7
-	 l7of/QDBntdjgOGKRzOGrn8wkZQy2/280FBR5KH/+TXRybYmXt4jPh0W46k0kD0MNw
-	 5Urv4wg1vF3Bw==
-Date: Fri, 10 May 2024 02:21:23 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1715325746;
+	bh=EzdfZ0kpf3fhUbIFDljCEYBvplIrKON70GWCiQd1UDM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=iQPMddhweUBjd9ncDSrkcRN3oMPdHf4DboeeRHGz8m9kRzalpIecEE5K2u4Kr6CBR
+	 x9HZsB/Cvuz1fw69VhodG65NIhgtGF/miuq7c5g4WoCaZVUD18fMjRI9TAofvOyOo3
+	 iJSf23KyS6oZdoU/77MnMhxNbOcJJeTTQ8Tt8pCndYkk0W7yg2vnl58omSssN4zZ8X
+	 wgoE8y3xFTEiFIOmFrSe2TO13uUPNH8fBKDWa/CkDu+cOHS/N9igs8yKIStmugXkw5
+	 I9wHUEcxnHf8oe5XHnLN1I2lIrRYFEtrkt3fypgnjgG/F2l/c9OFa0MpvgaVxOxdxF
+	 VO9LiiMR4fWtw==
+Message-ID: <3f293b59-0992-4d39-8473-283a8dcbbf43@kernel.org>
+Date: Fri, 10 May 2024 16:22:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, Guenter Roeck <linux@roeck-us.net>, 
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, 
- Jonathan Cameron <jic23@kernel.org>, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Marcelo Schmitt <marcelo.schmitt1@gmail.com>, 
- Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-In-Reply-To: <20240510064053.278257-2-Mariel.Tinaco@analog.com>
-References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
- <20240510064053.278257-2-Mariel.Tinaco@analog.com>
-Message-Id: <171532568373.3099714.15391241523800053923.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: dac: add docs for ad8460
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build failure after merge of the block tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Jens Axboe <axboe@kernel.dk>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20240510131003.70f46881@canb.auug.org.au>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240510131003.70f46881@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 10 May 2024 14:40:52 +0800, Mariel Tinaco wrote:
-> This adds the bindings documentation for the 14-bit
-> High Voltage, High Current, Waveform Generator
-> Digital-to-Analog converter.
+On 5/10/24 12:10, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
+> After merging the block tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> block/blk-zoned.c: In function 'blk_zone_write_plug_bio_endio':
+> block/blk-zoned.c:1260:25: error: 'struct block_device' has no member named 'bd_has_submit_bio'
+>  1260 |         if (bio->bi_bdev->bd_has_submit_bio)
+>       |                         ^~
+> block/blk-zoned.c: In function 'blk_zone_wplug_bio_work':
+> block/blk-zoned.c:1329:17: error: 'struct block_device' has no member named 'bd_has_submit_bio'
+>  1329 |         if (bdev->bd_has_submit_bio)
+>       |                 ^~
+> 
+> Caused by commit
+> 
+>   dd291d77cc90 ("block: Introduce zone write plugging")
+> 
+> interacting with commit
+> 
+>   ac2b6f9dee8f ("bdev: move ->bd_has_subit_bio to ->__bd_flags")
+> 
+> from the vfs tree.
+> 
+> I have applied the following merge resolution patch.
+
+Looks good to me. Thanks Stephen !
+
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 10 May 2024 12:59:09 +1000
+> Subject: [PATCH] fix up for "bdev: move ->bd_has_subit_bio to ->__bd_flags"
+> 
+> interacting with "block: Introduce zone write plugging".
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 > ---
->  .../bindings/iio/dac/adi,ad8460.yaml          | 67 +++++++++++++++++++
->  MAINTAINERS                                   |  7 ++
->  2 files changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
+>  block/blk-zoned.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
+> diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+> index 57d367ada1f2..03aa4eead39e 100644
+> --- a/block/blk-zoned.c
+> +++ b/block/blk-zoned.c
+> @@ -1257,7 +1257,7 @@ void blk_zone_write_plug_bio_endio(struct bio *bio)
+>  	 * is not called. So we need to schedule execution of the next
+>  	 * plugged BIO here.
+>  	 */
+> -	if (bio->bi_bdev->bd_has_submit_bio)
+> +	if (bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+>  		disk_zone_wplug_unplug_bio(disk, zwplug);
+>  
+>  	/* Drop the reference we took when entering this function. */
+> @@ -1326,7 +1326,7 @@ static void blk_zone_wplug_bio_work(struct work_struct *work)
+>  	 * path for BIO-based devices will not do that. So drop this extra
+>  	 * reference here.
+>  	 */
+> -	if (bdev->bd_has_submit_bio)
+> +	if (bdev_test_flag(bdev, BD_HAS_SUBMIT_BIO))
+>  		blk_queue_exit(bdev->bd_disk->queue);
+>  
+>  put_zwplug:
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dts:22.17-27: Warning (reg_format): /example-0/spi/dac@0:reg: property has invalid length (4 bytes) (#address-cells == 2, #size-cells == 1)
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (pci_device_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (simple_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (i2c_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dts:19.13-29.11: Warning (spi_bus_bridge): /example-0/spi: incorrect #address-cells for SPI bus
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dts:19.13-29.11: Warning (spi_bus_bridge): /example-0/spi: incorrect #size-cells for SPI bus
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'reg_format'
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (spi_bus_reg): Failed prerequisite 'spi_bus_bridge'
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dts:20.19-28.15: Warning (avoid_default_addr_size): /example-0/spi/dac@0: Relying on default #address-cells value
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dts:20.19-28.15: Warning (avoid_default_addr_size): /example-0/spi/dac@0: Relying on default #size-cells value
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.example.dtb: Warning (unique_unit_address_if_enabled): Failed prerequisite 'avoid_default_addr_size'
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240510064053.278257-2-Mariel.Tinaco@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+Damien Le Moal
+Western Digital Research
 
 
