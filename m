@@ -1,110 +1,141 @@
-Return-Path: <linux-kernel+bounces-175309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1436A8C1DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8875E8C1DF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455131C20DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:14:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A638D1C213B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4D515B116;
-	Fri, 10 May 2024 06:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8EF15D5BD;
+	Fri, 10 May 2024 06:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VcxfVZkH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4ZQ91omp"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8FF14D716
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834771494DE
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715321647; cv=none; b=p86Wa3JseWvQXrhC2m0vFVmphRnt9/rZKrMfVC1RS0L/RzFp7cO33GEpDs0sZSAt+JdQkec2Zpha9pqq8nkHanmViojjpXhoeAhG7q5OVNl9qLoNSZYCJRtFZLENonObDf5wb01P6zBX+iwDs0yG5xgDN8tTq013UF1Lq/wglBQ=
+	t=1715321815; cv=none; b=Rim6Gr3yKXzEfeOeSJAnO0dArATPYrS1QDpC3kqpfs48lrlzdEQiokghD5RB3kpqMSTJsr9j/hkcJsrsJ9351I8Xh27j+iaTmvg/4GR3W4uIaqipQXMT+oQsEclhob03QCCyHtlG9KJ/GYnn7LFZP0A3p4O1+/JpI11A7YNJ+mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715321647; c=relaxed/simple;
-	bh=GcGGzGvYTnpARMt/AI5IU7S4k5OFyk1tpsWpYMoYjcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Df7kAR43GxV1p/CIoHR6GdwNcMsS8TB4D8OvDbkub3Gzw0ugm2U9XnRKUM4eD3mn0pKdbNo+PcJCjtTaZHVs7iFTuEekC1WwwMMBhVlQGl4UmEcJVZVxFSRRmcdfMxFpa8fI2BkVWBgDE5lF9QCvyR+3UQZAupaF12wYI4GJ5jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VcxfVZkH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD07C113CC;
-	Fri, 10 May 2024 06:14:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715321646;
-	bh=GcGGzGvYTnpARMt/AI5IU7S4k5OFyk1tpsWpYMoYjcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VcxfVZkHI2PN9GT/A6Ie2JpUCLXvDZ445sFIKtu6SteAEJNjUEIQmcSPtTL9Gaff4
-	 9F+i4dcWBCvQA+c2jHCvTcK0vTrEC72EQLiig7BopziafxXVX2gXJMX5OO7+kxyr0U
-	 p9U39b+JKiWRmO1xfVlfNzTKz8cRpti/PQnJsXkmEu7iwKFV97iUz3NhPSNUJt3O6G
-	 blDtJy+LTrw51bUX2cjujeqpByvrjN81pldB/ef8JVDGxdlKmoCR5PBsVS8RBdrIwF
-	 +xrQyRCT0mnb8Wh4oYrc7VdpvOdpR+NOnu1ivJh0UNUwHvAGF2ggVlRalqTlrAKONo
-	 weeHegGwXFt+Q==
-Date: Fri, 10 May 2024 07:14:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-	liam.r.girdwood@intel.com, bard.liao@intel.com,
-	yung-chuan.liao@linux.intel.com, kevin-lu@ti.com,
-	cameron.berkenpas@gmail.com, tiwai@suse.de, baojun.xu@ti.com,
-	soyer@irl.hu, Baojun.Xu@fpt.com
-Subject: Re: [PATCH v4 2/3] ALSA: ASoc/tas2781: Fix wrong loading calibrated
- data sequence
-Message-ID: <Zj27LHKXSFXx_6G2@finisterre.sirena.org.uk>
-References: <20240510034123.1181-1-shenghao-ding@ti.com>
- <20240510034123.1181-2-shenghao-ding@ti.com>
+	s=arc-20240116; t=1715321815; c=relaxed/simple;
+	bh=6feafTWRKD/pFfv6a7aXeKx22UNSWKArlBNWuqJ7QgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bbb0V7bEEW1q+Qd8E1ddvbcB4BZsCerJe1t5nuqzUmeCskXSp0O1BQfCTgoTzCWIMQUeAfAKm53bhSoVQ4WjBCxo5ZSNbpb73xl547ECEY9NsJEekX6FqM02Gtao+RnnojTVIi/nPuG0gBwADTt3VcK2SOql3dDT3mfJjDwN1Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4ZQ91omp; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43df9ac3ebcso193951cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 23:16:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715321812; x=1715926612; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P013eBlgxlZ/UL/3+JN87mWVkNfsmaCM+AjZob2UWLs=;
+        b=4ZQ91ompuwz0icugSg63hINIrh511TEMRTYeqxW/IVdOhuLI7HrgVTs0QH+Egx23qS
+         v8d8up62e+FgUEtqBR3Ex17p1Q53CnB9RE+mEbCrQegUfgMaeVxs/KRv4kiJALiyU6rT
+         Ss2UqUwet5nmTSCDk2M2oz3ootlGgZcjRtULAlzo0XcAQqfwb1JcJc5iAmIh9IQBkRKi
+         D/9YoIbs38SwyNEIE0vrdPyIXHt0NNfzw/t2hlbkAxQsKPSTbz100HY5FfcKRF3mwGI6
+         JbfudLTqFdroJ+QXdVbhDQeQxf+kFgGnL4MuTPrrdBQd33uI2N7iY3ain/kvnnl2BWbG
+         RDOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715321812; x=1715926612;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=P013eBlgxlZ/UL/3+JN87mWVkNfsmaCM+AjZob2UWLs=;
+        b=EFyNbqAKJzG08EOTzerwU1PHnWbG+ifbxxf24RUFt5A2sLShi2wOkmaRWasUoE5xkZ
+         rY9+u2kUkYzFtplKNNzvKMR4GU3ej/VqFCcRdvi6AXVmsQgS3/r4k/RmNUWRK+G9gfOz
+         SmmWmTZ5kbK+iZEAodkl6yQf0a4opgHvZh4kGSejmyeTeze5jfyS340Vxbo3sTLX/Cyg
+         dPxLMkEtZoIRPM/w8aUtePN9okHRK47K5snG/jQZ5PXJcHK6bpABXQU69MxonBGLDUMV
+         rYPomFw+Zf98s70cWKqUFqs7UGJmF3BkhfNrqQ3weKXPlnFoaqpF51mOpNpDdjMTEKgo
+         jjIA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1FJUFtDB2vNnMiSPrvCmRtYWHV3u027x15aWuerIbtL54U2cEX32cDq/no0PetiRCYX9ScPTKT3ZXauYxNPYX/BEV1/hwIcGW9ci2
+X-Gm-Message-State: AOJu0YwipNBm4NCXodv55AX5rKJ/0g4B9u654nu9cGuV5/jnXO9IZw+0
+	jKYRlN1wRabyBg9KWYu9sBUiufilwp1VUtBfse6hoHvt+wYTmCpXQKJxKe4ot3je4Z4uih4i78U
+	FtO8yIViM/ChLSJ6EZ3fX4lDBURA6EYORNfOW
+X-Google-Smtp-Source: AGHT+IFj8uz5shdiGB57AmNqO93sQ2qQyODvVTabB80D4SoJl0+JOBpTmDZ919M9UNY8Ync9DaLF5pxcLW3G9qyMVeo=
+X-Received: by 2002:a05:622a:5292:b0:43a:bcee:eaa2 with SMTP id
+ d75a77b69052e-43dfdce7f5dmr1976371cf.20.1715321812281; Thu, 09 May 2024
+ 23:16:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="XFZRnGJeJ9yJiLPF"
-Content-Disposition: inline
-In-Reply-To: <20240510034123.1181-2-shenghao-ding@ti.com>
-X-Cookie: Did I SELL OUT yet??
+References: <20240510024729.1075732-1-justin.he@arm.com> <20240510024729.1075732-3-justin.he@arm.com>
+In-Reply-To: <20240510024729.1075732-3-justin.he@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 9 May 2024 23:16:40 -0700
+Message-ID: <CAP-5=fVGD-pK1igABj0wiq6-KVM+Z4i7rnRhM=Vy7bFHW4pLQA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf pmu: Fix num_events calculation
+To: Jia He <justin.he@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, May 9, 2024 at 7:47=E2=80=AFPM Jia He <justin.he@arm.com> wrote:
+>
+> When pe is NULL in the function perf_pmu__new_alias(), the total number
+> of events is added to loaded_json_aliases. However, if pmu->events_table
+> is NULL and cpu_aliases_added is false, the calculation for the events
+> number in perf_pmu__num_events() is incorrect.
+>
+> Then cause the error report after "perf list":
+> Unexpected event smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
+>
+> Fix it by adding loaded_json_aliases in the calculation under the
+> mentioned conditions.
+>
+> Test it also with "perf bench internals pmu-scan" and there is no
+> regression.
+>
+> Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
+> Signed-off-by: Jia He <justin.he@arm.com>
+> ---
+>  tools/perf/util/pmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index a1eef7b2e389..a53224e2ce7e 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1639,6 +1639,8 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
+>                  nr +=3D pmu->loaded_json_aliases;
+>         else if (pmu->events_table)
+>                 nr +=3D pmu_events_table__num_events(pmu->events_table, p=
+mu) - pmu->loaded_json_aliases;
+> +       else
+> +               nr +=3D pmu->loaded_json_aliases;
 
---XFZRnGJeJ9yJiLPF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for working on this! The "struct pmu_event *pe" in new_alias is
+an entry from the json data, and "pmu->events_table" should NULL if
+there is no json data. I believe the code is assuming that these lines
+aren't necessary as it shouldn't be possible to load json data if the
+json events table doesn't exist for the PMU - if there is no json data
+then loaded_json_aliases should be 0 and no addition is necessary. I'm
+wondering why this case isn't true for you.
 
-On Fri, May 10, 2024 at 11:41:20AM +0800, Shenghao Ding wrote:
+Thanks,
+Ian
 
->  - Divide one patch into two individual patches. compiling warning patch
->    has been upstream in another patch (Fixes: 1ae14f3520b1 ("ASoC: tas2781:
->    Fix a warning reported by robot kernel test"))
-
-Oh, I see what's going on - when you split a patch up into several
-patches each individual patch needs to have it's own changelog
-describing what's going on in that specific patch.  If you just
-replicate the changelog you had for the original patch into each of the
-split patches it will inevitably not describe the separated out patches
-well.
-
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
-
---XFZRnGJeJ9yJiLPF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmY9uysACgkQJNaLcl1U
-h9C/xQf/cyPxlEXFdtS915Zzymf6A2TgMO5OeS1+5HrB001oEMTyOX9DmHRVNiZG
-53thK9VMJPUFZcw/qrjxtTRSV8Uf2zOx7YtC7QXCyonB3HM4MwRk6wvmF0n1AV/u
-jBamorjme2Bfv1lqfPvv/guVNWhl0AUOWnDlBNYfU9Q71/MBADrixWHqACG0GLO1
-MvgUgBYHXSj9uUbtcLNhyUY4chDk6lx7L2DP8lIC8dGrxK7r5W4j1y8Wodnn5RlB
-oehwsucjA/N5Pgw7ZuXRAcaXnZYgsdVPIlG7IKGjBXhAh0aK5+QDtWR9Td6bfmsb
-La3dh+SC1AEosVa63EqnSlaFgs1R4A==
-=VKsH
------END PGP SIGNATURE-----
-
---XFZRnGJeJ9yJiLPF--
+>
+>         return pmu->selectable ? nr + 1 : nr;
+>  }
+> --
+> 2.34.1
+>
 
