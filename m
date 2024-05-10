@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-175895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5339D8C26BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D86E8C26BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50C91F22249
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:24:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05B9A284250
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713C414B08C;
-	Fri, 10 May 2024 14:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D75170843;
+	Fri, 10 May 2024 14:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="VAm2divA"
-Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A2612C49A
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTpOCqjL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29714C7D;
+	Fri, 10 May 2024 14:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351036; cv=none; b=L4HrGNbAkN8zfSZmT/Dt+dvM0J5K2mlRq9qoi7Yktuabs4DaOTzkDrJCDFwfrypnG5dJR0jzzMfTwY6oaJE+nkgZRgwN+liGdS6QPw9rWzw+jEsVfeVQDSTvhEdFtwhrYrGLpnokvqQSbSk5UJHIaJDU9wfwn/nz6uPpPzUdkbQ=
+	t=1715351018; cv=none; b=WwKJwneNlU/5sLOFcbrCLkSZor1VP/8ZSzEOkbsZJ5drQ2OcucXvmh7gaBwaRL2BbaQMqeyYHSW4dx9ZnpkY2px6jULsHyAluUySZ2ZwamwecctIfTLY2qGxt7c3JgX6denTiLHlzwDm2SDkm8XMi8eFlo1Nf3YwT1AvgFOHBIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351036; c=relaxed/simple;
-	bh=i5TyrrTHj5tpvHv/9wICnh9yDMkt6Jws8WcmLr/O/44=;
+	s=arc-20240116; t=1715351018; c=relaxed/simple;
+	bh=Z48LlJ3Z8srSQHu5V3rVv+goUQkwYLlS7gGZiYysLAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+W3D8iCSX15WvTPQ/FWPpZO4K8K7S/YFq3/hSSk67dslqULwIi0aZbPC8fMElMLGaHPVMkYeBT7p5uX/J/bEN8+Hi3iyuiiZamwKtJIX3KipIoI9/YeZEGKFAUEWilPPFW2ISoPt/QTQYKgWXXFa8cs8SZbxaFJfO100fduCzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=VAm2divA; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 627B414C2DB;
-	Fri, 10 May 2024 16:23:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1715351031;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y0Rwysq4bAvF6adPo4fCiuwoVubXcZKN7gxYVT6zVK4=;
-	b=VAm2divABxt2aDDQge/jvw0E27ewg9h6JpupieolrBpI1US8gblBFF2w9KR/n9VGUqW0VT
-	9s6QiueFmmNRiH91wUGVB9j8/ThDbT7VvGSwqDbOJArWhbNqMlHYAGrdRGs8pNa5FY3apr
-	P7S6MIzsa9ZNJUjsA0EO6BKlndZW6SXlTqou18dCjz+D5RE18OhIafLA25uq5MJ/rI6EOc
-	Zi9WUcHNiWz677hAdXd1QyWk5cX46TfasQzfLPHeYLGG86zCPlIlw4dx4xqUjXAN/5nNeW
-	ITCHZWxnkfOJ9/P5iu4RUGiDAqFtfrjqpBTArGo6QcN4wMA26V1Lwhx0fZot7g==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id e7f7255e;
-	Fri, 10 May 2024 14:23:45 +0000 (UTC)
-Date: Fri, 10 May 2024 23:23:30 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bLD6ixoKV6+Iv/ondOTAGT4AyPYYzMVjoocRx0kBM+b93b632F3POExO96M7S8cEsb8NSa44Vxp4abW/VinMMaWMVsT0cT8nGyRSO3rbY0Wou1sZJI5Yjhi8szyMbv1r/Z4pN+SpvWnfVb/Si2PFTp2dt6hVelt+MMqgLuSnR6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTpOCqjL; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715351016; x=1746887016;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z48LlJ3Z8srSQHu5V3rVv+goUQkwYLlS7gGZiYysLAY=;
+  b=MTpOCqjLIe6/MoihUw8ZBOBY4fuP+aK76ues8QwyUuqTs2QcU3g4QU0u
+   dbGrWjfH/RsmITg9G+4X4TseLEDvDE86BIaw2WsyOeckfXbHeyGQQZtTO
+   3k4aekKkgHmW4CjT+Ewqp9YyP7KifRU+M8Uv14c5mcd5fw0ehKTWoCJYD
+   NBdbUg0jNQvGdjBQd5mo17Y5lw9OJPTV6x4wVl2Ob1PX2yO0vLeYzjG49
+   gMNwBh+Oh5jG7mgo6SrQ0+9UadXuTKRzilOlNH8OIaqjp6cT0bZSjHI/N
+   Sc4q88EU6qOx/VzJiSehH5kFtQ937+jLdkMUDgdNe/GPCwfG7WJ6MHL2c
+   g==;
+X-CSE-ConnectionGUID: JRStkU7USHeZWPGjP9lmVA==
+X-CSE-MsgGUID: 0qutUi3rQay6Jkb8fvtmcw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11170459"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="11170459"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:23:36 -0700
+X-CSE-ConnectionGUID: D1MMH9fVSv+GbVQZTf9AdQ==
+X-CSE-MsgGUID: 734wwzgFRzu1HZhaULXFeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="29576126"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:23:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5R9o-000000067tN-0bg0;
+	Fri, 10 May 2024 17:23:32 +0300
+Date: Fri, 10 May 2024 17:23:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2022-48655: firmware: arm_scmi: Harden accesses to the reset
- domains
-Message-ID: <Zj4t4q_w6gqzdvhz@codewreck.org>
-References: <2024042859-CVE-2022-48655-5feb@gregkh>
- <Zj2Qrt6_kJzqA0-S@codewreck.org>
- <2024051041-resisting-chatroom-32c8@gregkh>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v1 1/1] usb: fotg210: Add missing kernel doc description
+Message-ID: <Zj4t4zOjMlW3o57c@smile.fi.intel.com>
+References: <20240508150335.1378629-1-andriy.shevchenko@linux.intel.com>
+ <2024051047-scrabble-variable-6e29@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024051041-resisting-chatroom-32c8@gregkh>
+In-Reply-To: <2024051047-scrabble-variable-6e29@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Greg Kroah-Hartman wrote on Fri, May 10, 2024 at 09:55:15AM +0100:
-> > I can submit an edit as a patch to vulns.git json, but this doesn't seem
-> > overly important so for now a mail will probably do.
+On Fri, May 10, 2024 at 10:34:05AM +0100, Greg Kroah-Hartman wrote:
+> On Wed, May 08, 2024 at 06:03:35PM +0300, Andy Shevchenko wrote:
+> > kernel-doc validator is not happy:
+> > 
+> >   warning: Function parameter or struct member 'fotg' not described in 'fotg210_vbus'
+> > 
+> > Add missing description.
+
+..
+
+> >  /**
+> >   * fotg210_vbus() - Called by gadget driver to enable/disable VBUS
+> > + * @fotg210: pointer to a private fotg210 object
+> >   * @enable: true to enable VBUS, false to disable VBUS
+> >   */
+> >  void fotg210_vbus(struct fotg210 *fotg, bool enable)
 > 
-> the json and mbox files are generated by tools, so patches to them is
-> not a good idea as they will be overwritten the next time the scripts
-> are run.
+> I don't think you actually built the documentation after this patch :(
 
-Just let me know what's the most convenient; if mail it is I won't
-bother :)
+Yeah, it slips over my fingers, sorry. I will try again.
 
-> > >From a quick look it would seem it fixes arm_scmi from the addition of
-> > scmi_domain_reset() in 95a15d80aa0d ("firmware: arm_scmi: Add RESET
-> > protocol in SCMI v2.0"), which first appeared in v5.4-rc1, and does not
-> > appear to have been backported to older kernels, so v5.4+ can be added
-> > as a requirement.
-> 
-> We can add a "this is where the problem showed up" if you know it, so
-> that would be 95a15d80aa0d ("firmware: arm_scmi: Add RESET protocol in
-> SCMI v2.0"), correct?
-
-Yes; this commit adds the out of bound access.
-
-> > This means the current 5.4/5.10 trees are affected; the commit doesn't
-> > backport cleanly because of a trivial context conflict so if that helps
-> > I can send a couple of stable patch if that helps even if our systems
-> > are not using arm_scmi (CVEs also don't have any way of expressing
-> > whether the affected driver is used (or even built) at all, so I guess
-> > people with affected versions will have to check that themselves...)
-> 
-> As everyone has different configurations, yes, everyone needs to check
-> themselves, there is no way for us to determine this at all.  But we do
-> list the files affected, so that should help you out in determining this
-> automatically on your end.
-
-I didn't see hte list of files anywhere for this, does it depend on the
-commit?
-(not that it's a problem to look at the commits referenced, I don't
-think we'll automate anything for the forseeable future)
-
-> And yes, backported patches would be always appreciated for older
-> kernels if you have them.
-
-Sure, I'll take a min to finish the patches and send them on Monday;
-might as well use work time when I've got an excuse to do kernel stuff.
-
-
-Thanks,
 -- 
-Dominique Martinet | Asmadeus
+With Best Regards,
+Andy Shevchenko
+
+
 
