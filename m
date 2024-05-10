@@ -1,342 +1,280 @@
-Return-Path: <linux-kernel+bounces-175474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D908C202B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:03:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070078C2030
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48C21F22170
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19C12819C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005E616132E;
-	Fri, 10 May 2024 09:03:20 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9F31607B9;
+	Fri, 10 May 2024 09:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A5yMeiOT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3461607A3;
-	Fri, 10 May 2024 09:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715331799; cv=none; b=uJOC1Buw+H/JVFVrFL+CkTB6Xe67HwgoYjwzsNXzPnWNglAqqeeCZ5vv09SxWgVpRTxzUmzhqfqe7+YXuCuegoNH8tvQG0dXSkhT266j/WCBXKqy4Chve6LAeHZtZMZ2N4Sbj9i2p6Ngu6pGmh7Sgi/jRDDSElIgMA9aDgvKAAk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715331799; c=relaxed/simple;
-	bh=glmPpNnjWxfvpn59tClr8Pv6XgRUAHoo+HWFtiSoBv8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JmHUeWSvylNOt8z17V6/g9zn/X11laM/nX72fKfK0spASS05PyQaTmPjXN25rXUTeFLIpVHaWymv21BcLHtH1tm53zWBAraN1kizMZQ0t1CoycyoUxH6VGElmNg+WVAVvw9Kg61e80FNyOi81wt6LpUbPper8YvY68lRME3+NDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VbNBB6ypqz6JBH0;
-	Fri, 10 May 2024 17:00:02 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id B46771400D4;
-	Fri, 10 May 2024 17:03:07 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 10 May
- 2024 10:03:06 +0100
-Date: Fri, 10 May 2024 10:03:05 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Dan Williams <dan.j.williams@intel.com>
-CC: <shiju.jose@huawei.com>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>, <dave@stgolabs.net>,
-	<dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
-	<linux-edac@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<david@redhat.com>, <Vilas.Sridharan@amd.com>, <leo.duran@amd.com>,
-	<Yazen.Ghannam@amd.com>, <rientjes@google.com>, <jiaqiyan@google.com>,
-	<tony.luck@intel.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <naoya.horiguchi@nec.com>,
-	<james.morse@arm.com>, <jthoughton@google.com>, <somasundaram.a@hpe.com>,
-	<erdemaktas@google.com>, <pgonda@google.com>, <duenwen@google.com>,
-	<mike.malvestuto@intel.com>, <gthelen@google.com>,
-	<wschwartz@amperecomputing.com>, <dferguson@amperecomputing.com>,
-	<wbs@os.amperecomputing.com>, <nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>,
-	<prime.zeng@hisilicon.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240510100305.00000a2b@Huawei.com>
-In-Reply-To: <663d448c2ef3_1c0a1929453@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20240419164720.1765-1-shiju.jose@huawei.com>
-	<20240419164720.1765-2-shiju.jose@huawei.com>
-	<663d448c2ef3_1c0a1929453@dwillia2-xfh.jf.intel.com.notmuch>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A54115FA87;
+	Fri, 10 May 2024 09:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715331827; cv=fail; b=tWayM0gf4/Am/36gtPXTd3iyzToNumslwPQ157R0j07NJcnNueasMkg2TkbJcRHdYSB5R2KFPm/gLFnPDsm8RqQnqqW2uTe55NRJa4yMacHkg+XdZ90IexacUoc5VL1ZSYE1aprXHRz8+Kr3bdzB1N8r5ARYHu+N9/ydPx4UWks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715331827; c=relaxed/simple;
+	bh=zWsp29DFVC148FyJxRGCD2zORk8hUl2UjuZcKHcN+nw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Om17t48N86dkdbB7giCZVqi5EZmdvaNJA3JPce7uYk356JyjQx9JpJTGKw7EdD8451DVKxBXWlNZZwetkHixgKvYF7DcteHRtJTsONcw+kEP5LK0a0L7wHKongaEnWf64HPpbAsIzjiEARBbyfBTHZ+6msreHgAUOxGF52J63YY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A5yMeiOT; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715331826; x=1746867826;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=zWsp29DFVC148FyJxRGCD2zORk8hUl2UjuZcKHcN+nw=;
+  b=A5yMeiOTy3RPCnSKC3M8xfHwghCdQpZtn3wak2LHo59Vhm6Yc10AEIKL
+   38FyyWk8yFWyKirC/BCgFKWj33S8tnDc78lw/ntIMOAnww0yz4fEzqhfh
+   cELPCOgRN/guZ8MgarwLzf9LsPJhS+nWj9Fim4Ne06zcda9f5O9Crmrj1
+   9ZsH9HKfhTrzTdjc88DE44YUinPfFvsLnjkuHMCQ5vmq7tnDrWPO56ypr
+   I3Ng/Rz5KJMBDj5aPknsuZnjX+6K4nUcA0ktK9zio8u5DRXvcaMMGHaFR
+   5KR3ibSbiNDLQC1VoCrWINcTlwsxUau4rVkm48CqDd10sHJ+b7kNhMaQ6
+   w==;
+X-CSE-ConnectionGUID: Iw6KbDVdQC+rUZOswbkt+w==
+X-CSE-MsgGUID: 5isFrOs9Rdi/My2gZKGXhg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11139380"
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="11139380"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 02:03:45 -0700
+X-CSE-ConnectionGUID: 6fnKlzJUSeq+mfzvb6aW+g==
+X-CSE-MsgGUID: O9YKKTeTT12kx8nbJp7o/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="67015577"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 May 2024 02:03:44 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 10 May 2024 02:03:43 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Fri, 10 May 2024 02:03:43 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 10 May 2024 02:03:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Nfph186v4JGmtb05mPJNuu2Il1OliX9048VysKRCb/TUBNY1vEoatHVxnbBKXam3YHdFA4B+Kpa+/ATUOqeGMixvisdfDDCB2Cnl+uVosCkq18Tfb41mn4CVtPSG5I2bFLfrb90KSHeQ2vr2kVkLL0ut3O9wpQwzS+zacbPH/Q6kJYtki6h1wVcmuouJ71aTNbASGyL4DVO9EgRAauYz5l0PYbOpGhRoJ/wefYfPpa2fQXh1+bwRme2cB6ox1enx0ufL8ifcuIyM4onJMfW2bx/orW09g6L7fsCaM/mcOnIGcgp8m3jXiRg71yAZfzxvMwsUGRNf5HnF+ZxBb8pAUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FmAJ2COWofY2u0cvbYFjytCJ2ZIEvekotvoa6PxPe2I=;
+ b=gYxwudpB6TzNAgaM6+i/r1CIVu/PlinHfJKNQuGTE1sAsBXHPUXwXgG3kcJUWpMxsGl0wTsJ7OU0UwGikFc0RG2uJTp/ZamH6rhBlF4llYfgvqWLa6vvF5jmHRiSq8ZMCPHr4v6G3MVOjn05QoP0tQllOTnQEP6XkeayB7qWDca9MCWM1nJr4cx4VMdbcQVQrYPefY4IywqVvJ8FPzN57r+1ZgGegs4/Js78uHj7KlZR8ZHkvyj4LxZxs/2vFkhJYeQx79WJkdxOQUgwBWPkJjjRL4oBzayIs1upk/gv+H0i1fONUfofPkH8ipejbFAu++fXEhImE/+dY/iLC8CCTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM3PR11MB8735.namprd11.prod.outlook.com (2603:10b6:0:4b::20) by
+ SA3PR11MB8047.namprd11.prod.outlook.com (2603:10b6:806:2fc::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 09:03:41 +0000
+Received: from DM3PR11MB8735.namprd11.prod.outlook.com
+ ([fe80::12da:5f9b:1b90:d23c]) by DM3PR11MB8735.namprd11.prod.outlook.com
+ ([fe80::12da:5f9b:1b90:d23c%5]) with mapi id 15.20.7544.049; Fri, 10 May 2024
+ 09:03:41 +0000
+Message-ID: <0867c527-6fe5-4f54-adcc-0344e9416f9b@intel.com>
+Date: Fri, 10 May 2024 17:03:28 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/15] KVM: x86: Kill cur_tsc_{nsec,offset,write}
+ fields
+To: David Woodhouse <dwmw2@infradead.org>, <kvm@vger.kernel.org>
+CC: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+	Sean Christopherson <seanjc@google.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Shuah Khan
+	<shuah@kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>, "Oliver
+ Upton" <oliver.upton@linux.dev>, Marcelo Tosatti <mtosatti@redhat.com>,
+	<jalliste@amazon.co.uk>, <sveith@amazon.de>, <zide.chen@intel.com>, "Dongli
+ Zhang" <dongli.zhang@oracle.com>
+References: <20240427111929.9600-1-dwmw2@infradead.org>
+ <20240427111929.9600-14-dwmw2@infradead.org>
+From: Chenyi Qiang <chenyi.qiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20240427111929.9600-14-dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0003.apcprd02.prod.outlook.com
+ (2603:1096:3:17::15) To DM3PR11MB8735.namprd11.prod.outlook.com
+ (2603:10b6:0:4b::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
-
-On Thu, 9 May 2024 14:47:56 -0700
-Dan Williams <dan.j.williams@intel.com> wrote:
-
-> shiju.jose@ wrote:
-> > From: Shiju Jose <shiju.jose@huawei.com>
-> >=20
-> > Add scrub subsystem supports configuring the memory scrubbers
-> > in the system. The scrub subsystem provides the interface for
-> > registering the scrub devices. The scrub control attributes
-> > are provided to the user in /sys/class/ras/rasX/scrub
-> >=20
-> > Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-> > ---
-> >  .../ABI/testing/sysfs-class-scrub-configure   |  47 +++
-> >  drivers/ras/Kconfig                           |   7 +
-> >  drivers/ras/Makefile                          |   1 +
-> >  drivers/ras/memory_scrub.c                    | 271 ++++++++++++++++++
-> >  include/linux/memory_scrub.h                  |  37 +++
-> >  5 files changed, 363 insertions(+)
-> >  create mode 100644 Documentation/ABI/testing/sysfs-class-scrub-configu=
-re
-> >  create mode 100755 drivers/ras/memory_scrub.c
-> >  create mode 100755 include/linux/memory_scrub.h
-> >=20
-> > diff --git a/Documentation/ABI/testing/sysfs-class-scrub-configure b/Do=
-cumentation/ABI/testing/sysfs-class-scrub-configure
-> > new file mode 100644
-> > index 000000000000..3ed77dbb00ad
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-class-scrub-configure
-> > @@ -0,0 +1,47 @@
-> > +What:		/sys/class/ras/
-> > +Date:		March 2024
-> > +KernelVersion:	6.9
-> > +Contact:	linux-kernel@vger.kernel.org
-> > +Description:
-> > +		The ras/ class subdirectory belongs to the
-> > +		common ras features such as scrub subsystem.=20
-
-Hi Dan,
-=20
->=20
-> Why create "ras" class versus just a "srcub" class? I am otherwise not
-> aware of a precedent for class device hierarchy. For example, on my
-> system there is:
-
-I think that's miss described - aim is on subsystem, the first feature
-supported is scrub.  Intent here is to group RAS features of a given
-device / interface etc into one place. This was a request in an review
-of an earlier version on basis these interfaces tend to get grouped together
-in a device.
-So options are
-
-/sys/class/ras/cxl_mem0/scrub/rate etc.
-/sys/class/ras/cxl_mem0/ecs/rate etc
-(maybe separate for ECS because it annoyingly looks nothing like scrub desp=
-ite name
- and there are multiple impelmentations)
-
-vs
-/sys/class/ras/cxl_mem0_scrub
-/sys/class/ras/cxl_mem0_ecs
-etc
-Note that generic naming not including what the source was got
-negative reviews in favor of making that the device instance name here.
-So that rulled out simply
-/sys/class/ras/scrubX/
-/sys/class/ras/ecsX/
-
-I don't mind which way we go; both are extensible.
-
->=20
-> /sys/class/
-> =E2=94=9C=E2=94=80=E2=94=80 scsi_device
-> =E2=94=9C=E2=94=80=E2=94=80 scsi_disk
-> =E2=94=9C=E2=94=80=E2=94=80 scsi_generic
-> =E2=94=94=E2=94=80=E2=94=80 scsi_host
->=20
-> ...not:
->=20
-> /sys/class/scsi/
-> =E2=94=9C=E2=94=80=E2=94=80 device
-> =E2=94=9C=E2=94=80=E2=94=80 disk
-> =E2=94=9C=E2=94=80=E2=94=80 generic
-> =E2=94=94=E2=94=80=E2=94=80 host
-
-That's a docs problem - this was never the intent.
-
->=20
->=20
-> > +
-> > +What:		/sys/class/ras/rasX/scrub/
-> > +Date:		March 2024
-> > +KernelVersion:	6.9
-> > +Contact:	linux-kernel@vger.kernel.org
-> > +Description:
-> > +		The /sys/class/ras/ras{0,1,2,3,...}/scrub directories
-> > +		correspond to each scrub device registered with the
-> > +		scrub subsystem. =20
->=20
-> I notice there are some visibility rules in the code, but those
-> expectations are not documented here.
->=20
-> This documentation would also help developers writing new users of
-> scrub_device_register().
-Agreed. One to improve.
-
->=20
-> > +
-> > +What:		/sys/class/ras/rasX/scrub/name
-> > +Date:		March 2024
-> > +KernelVersion:	6.9
-> > +Contact:	linux-kernel@vger.kernel.org
-> > +Description:
-> > +		(RO) name of the memory scrubber
-> > +
-> > +What:		/sys/class/ras/rasX/scrub/enable_background
-> > +Date:		March 2024
-> > +KernelVersion:	6.9
-> > +Contact:	linux-kernel@vger.kernel.org
-> > +Description:
-> > +		(RW) Enable/Disable background(patrol) scrubbing if supported.
-> > +
-> > +What:		/sys/class/ras/rasX/scrub/rate_available
-> > +Date:		March 2024
-> > +KernelVersion:	6.9
-> > +Contact:	linux-kernel@vger.kernel.org
-> > +Description:
-> > +		(RO) Supported range for the scrub rate by the scrubber.
-> > +		The scrub rate represents in hours.
-> > +
-> > +What:		/sys/class/ras/rasX/scrub/rate
-> > +Date:		March 2024
-> > +KernelVersion:	6.9
-> > +Contact:	linux-kernel@vger.kernel.org
-> > +Description:
-> > +		(RW) The scrub rate specified and it must be with in the
-> > +		supported range by the scrubber.
-> > +		The scrub rate represents in hours.
-> > diff --git a/drivers/ras/Kconfig b/drivers/ras/Kconfig
-> > index fc4f4bb94a4c..181701479564 100644
-> > --- a/drivers/ras/Kconfig
-> > +++ b/drivers/ras/Kconfig
-> > @@ -46,4 +46,11 @@ config RAS_FMPM
-> >  	  Memory will be retired during boot time and run time depending on
-> >  	  platform-specific policies.
-> > =20
-> > +config SCRUB
-> > +	tristate "Memory scrub driver"
-> > +	help
-> > +	  This option selects the memory scrub subsystem, supports
-> > +	  configuring the parameters of underlying scrubbers in the
-> > +	  system for the DRAM memories.
-> > +
-> >  endif
-> > diff --git a/drivers/ras/Makefile b/drivers/ras/Makefile
-> > index 11f95d59d397..89bcf0d84355 100644
-> > --- a/drivers/ras/Makefile
-> > +++ b/drivers/ras/Makefile
-> > @@ -2,6 +2,7 @@
-> >  obj-$(CONFIG_RAS)	+=3D ras.o
-> >  obj-$(CONFIG_DEBUG_FS)	+=3D debugfs.o
-> >  obj-$(CONFIG_RAS_CEC)	+=3D cec.o
-> > +obj-$(CONFIG_SCRUB)	+=3D memory_scrub.o
-> > =20
-> >  obj-$(CONFIG_RAS_FMPM)	+=3D amd/fmpm.o
-> >  obj-y			+=3D amd/atl/
-> > diff --git a/drivers/ras/memory_scrub.c b/drivers/ras/memory_scrub.c
-> > new file mode 100755
-> > index 000000000000..7e995380ec3a
-> > --- /dev/null
-> > +++ b/drivers/ras/memory_scrub.c
-> > @@ -0,0 +1,271 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Memory scrub subsystem supports configuring the registered
-> > + * memory scrubbers.
-> > + *
-> > + * Copyright (c) 2024 HiSilicon Limited.
-> > + */
-> > +
-> > +#define pr_fmt(fmt)     "MEM SCRUB: " fmt
-> > +
-> > +#include <linux/acpi.h>
-> > +#include <linux/bitops.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/kfifo.h>
-> > +#include <linux/memory_scrub.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +/* memory scrubber config definitions */
-> > +#define SCRUB_ID_PREFIX "ras"
-> > +#define SCRUB_ID_FORMAT SCRUB_ID_PREFIX "%d"
-> > +
-> > +static DEFINE_IDA(scrub_ida);
-> > +
-> > +struct scrub_device {
-> > +	int id;
-> > +	struct device dev;
-> > +	const struct scrub_ops *ops;
-> > +};
-> > +
-> > +#define to_scrub_device(d) container_of(d, struct scrub_device, dev)
-> > +static ssize_t enable_background_store(struct device *dev,
-> > +				       struct device_attribute *attr,
-> > +				       const char *buf, size_t len)
-> > +{
-> > +	struct scrub_device *scrub_dev =3D to_scrub_device(dev);
-> > +	bool enable;
-> > +	int ret;
-> > +
-> > +	ret =3D kstrtobool(buf, &enable);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret =3D scrub_dev->ops->set_enabled_bg(dev, enable);
-> > +	if (ret)
-> > +		return ret; =20
->=20
-> It strikes me as somewhat pointless to have such a thin sysfs
-> implementation whose only job is to call down into a callback to do the
-> work. Unless there are other consumers of 'struct scrub_ops' outside of
-> these sysfs files why not just have the low-level drivers register their
-> corresponding attributes themselves?
->=20
-> Unless the functionality is truly generic just let the low-level driver
-> be responsible for conforming to the sysfs ABI expectations, and, for
-> example, each register their own "enable_background" attribute if they
-> support that semantic.
-
-This was me pushing for this based on that approach having been a pain
-in subystems I've been involved with in the past. so I'll answer.
-
-Maybe if we think the number of scrub drivers remains very low we can
-rely on ABI review. However, it's painful.  Everyone wants to add
-their own custom ABI, so every review consists of 'no that is
-isn't consistent' reviews.  The callback schemes reduce that considerably.
-As someone with their name next to one of the largest sysfs ABIs in the
-kernel, maybe I'm projecting my pain points on this one.
-
-Note that this approach has failed for multiple similar simple subsystems
-in the past and they have migrated to a (mostly) tighter description for
-ABI simply because those constraints are useful.  A fairly recent one
-maybe 8 years ago? Was hwmon. There are other advantages that may not
-yet apply here (in kernel interfaces are much easier, even if they are
-only occasionally used for a given subsystem), but my motivation in=20
-pushing Shiju this way was to lock down the userspace interface.
-
->=20
-> So scrub_device_register() would grow a 'const struct attribute_group
-> **groups' argument, or something along those lines.
-
-Sure. Shiju had that in an earlier version.  Personally I think it's
-an approach that may bite in the long run, but meh, maybe this will
-only ever have half a dozen drivers so it might remain manageable.
-If not, I love say 'I told you so' :)
-
-Jonathan
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM3PR11MB8735:EE_|SA3PR11MB8047:EE_
+X-MS-Office365-Filtering-Correlation-Id: aa05751d-8d43-4a6c-63c1-08dc70d01664
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|7416005|366007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?UkNrWlpMb2RwTms5NEdKaG54d0ZYWE5EU1AvaWlYSzlwNVJ4cWpzNC8xOVFG?=
+ =?utf-8?B?M1VrZ3Y3ejlING9vbW9zMmxZUzBmNjlETGtCN2FXVS9YbHdXR0ExMWtVTmdp?=
+ =?utf-8?B?UVViZ2pReU0vcW9pdUJVdUdsSFJZV25yZUJFT09RNEptbXFIRTJYK2xENkk5?=
+ =?utf-8?B?OFU4U1VPVUVPRnMzUlRSampjMGtXdHBrUGZKKzRnSnM1a3hsSUh1Q29BRlc4?=
+ =?utf-8?B?RTFSdVovVExlWGtWbEJqWDJZNFRVK2hQaU5ycXFqTjM0Sm5UUmk0eFkyK1pW?=
+ =?utf-8?B?Q0RHVVU1TGJUbFhMbm5VUjhtem5zMnBzOGdtdDY0WFpiM1l6SFhtWHVSSzVW?=
+ =?utf-8?B?TklHZ1hpSGx2WGxrdVN3QmdxTUFReldodkQzRVlKd2tnZ2dtSTk5L1ExeG1E?=
+ =?utf-8?B?NWRscURsZ1NCWjdyQVJQU3JGVWN4UkRueXRMMkVpOVFQczAyQ01jMWFEQ3Yv?=
+ =?utf-8?B?SHo4cFBaRmZiLzdzL044QTlKc1dKb0JMUk10NTA2aHcyL3dGNEdvbGhDc2g4?=
+ =?utf-8?B?NFBBOU40ZElGeXFWM3dEb0s5UFhBeG5uV2ZnMlFpZlNxTDkyM1ZCSGdJWDQ2?=
+ =?utf-8?B?aVJuL21ORUZXSU83WUwxZENjWCtFL1U0T1JhNzAzOGNBeWVNb0ZIWHQyUFR3?=
+ =?utf-8?B?NXlrSmsvTmhETk5PV2FyRm1XRTBucFJOTkhEOWQ5ZC9keEREcU5EaTgwUUFz?=
+ =?utf-8?B?d1Y5Smh5ZTVQMWRsMXNZYlBvOWh2OG1BLzVkaFB6aVpTMU9DQ09TSVh0Q2xv?=
+ =?utf-8?B?eVZabmpMNE04TkJ0SXByL0ovTGRIb2F6bE55dUJNbWpGcEIveUhpbDI0QjNZ?=
+ =?utf-8?B?d0xOZ05LZjB1bWZkYnJFazFKMk9iMGxFSmtFR2llZndzYjNHRmRZQTJvOWFI?=
+ =?utf-8?B?UURCWGYvUXJ6Zzh0VkFNN2NxdXpreG1YbFJPSXVkdVNEQnJqVzlyRlVBQ1Vq?=
+ =?utf-8?B?MHRVd0R0SWN6eFVla0FEL2xaODUvelBZRFhiK3doeUpRenhzb1JaVFQvVStv?=
+ =?utf-8?B?YnBZSEFsYTVtZGFnQjBRcUY3L2xiWU5IbkxjbkxRK3BDbUhiK1puRVo4Y3Y3?=
+ =?utf-8?B?L3FwL0VwM3J4NjZUNS85aWU3K21qR3FTcmdSMmlHWkxyL2VqVVFEWlRzbUE3?=
+ =?utf-8?B?aVErR3lwU1V6a1hCTURmT3BwWjNIclpkM0lHTzUyaFZ4VkFpRHlzTHBwV0pD?=
+ =?utf-8?B?TFZ5SjAyS3F0cGg4WUhNaDhDSGRQZTFrenZFb2pJbUF0Y1kwVnpYVHkxS2xh?=
+ =?utf-8?B?TlFleWtJMjNMZ1R1N1ZmbzBYVS9BWVAydUd5dVJ2OUlzaWNRY21RTlU5Y3A4?=
+ =?utf-8?B?bTRiUzl6Q2lFd29rT0xRZ0ZmRUJSSU1mVGZ2aEZhMmdxenZsQUtqdnI4Z2c1?=
+ =?utf-8?B?WW5WSUF2d1dhMzVKNEk1dU9XN3R0YWIvNU9uaTZzWWpnTUVJbmR0Y25aUEY1?=
+ =?utf-8?B?bU1qby93VzlsRndyeDNqZ1dWdkE4WEZuYjRKS1h6QWNwUDNpWVRaY1A3TXlQ?=
+ =?utf-8?B?N01vM21LdjdsbWJVUllKWWxZc3R3TGx0RkxTZmhiZi9aYVd2WFo4NVVHbzdK?=
+ =?utf-8?B?WU1SaFFTYlQ2QkoxQVpKc04zSC9mN21abzVoYzZEeGtLbVEvNzF3cXhRVVFm?=
+ =?utf-8?B?bDFUb2VnQXB1RlRndG5CWHBBWDhkR3dpNy9LUFBhR0lGTU9Wd1NhTTlXTDJn?=
+ =?utf-8?B?TVBnejMrUXA4MGdHWi9ZQXFNZ0pCVHpJWDBNcGNxeXVaQVZwaks4UU9RPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PR11MB8735.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?azJZbXkzYzNuRDZBVnJGaWNYRG5YcjhDQ0Z2UU9uUjR5bFdSMDVYR1lyVkx4?=
+ =?utf-8?B?OXlNdzFDODNhaHhFQVFVang0ODFmS2hPbFhaSEU0ZjNVUHpCMWxPZ1l2N3JF?=
+ =?utf-8?B?NFk3VGIyOFZHN2hiZFA2cHdaWkJnenFTLzRCU1JONm55NkpXaU5XTGpKVE1z?=
+ =?utf-8?B?RjgrYlN1QjREakhmOUQzK3M3cWJsNTBzamlrZm1MRTVOb0NDN2c0TEdrVkpM?=
+ =?utf-8?B?STVBWklySTI1VTAxbkpCY0FBZXZsYVFwUmIzTnprVzVLbnAvZTdnZ2hGTlFa?=
+ =?utf-8?B?KzZJRndMVjJldDkxTVhYMGZVNkhTSG5kT2w3VjJkZ3RnRlB2bmpvZG54QjU5?=
+ =?utf-8?B?TlJXMEpjVURHc2ttOWNBejM5RTBwNjR2ZSsrWVVHLzhlQms1Ymt2OTQxMllL?=
+ =?utf-8?B?MGFOaUxJdzFTUVpWWlMya0EwK2dvSXNvSEVIamY0WUhBVWVtemVaTXRXSkZR?=
+ =?utf-8?B?SlBrbm9hZnpYeWFsK3lrbWcrQXJnZUVmcXVPYXplV241SU0yd2JXQWxRT0JC?=
+ =?utf-8?B?dmV2RjFhN0pDNzlTU3MxcktkRy84L2QwMk40WFF6R0lCR1VQUTY0QUxQK2Vr?=
+ =?utf-8?B?QzMwNnRTL0VMSldjZWEvajlEQmx5dGM3bTNxMlV5S2xXUUJRNGFsTGQ1aHpv?=
+ =?utf-8?B?anBRNU95WG9xR0xXOVBWM1VsRzIxendYMzVZYnhIeHQySkFtYlFFV0dsN2Jp?=
+ =?utf-8?B?aVlXZE9hdE5mUUVtMUhkZlhjS2ZNVHpFMGVzSHZFWFR3LzRTNXdjeFJDVGc1?=
+ =?utf-8?B?L2N6Ui93akhscXRXTHlpekp4NWpLbEIxODVWVjlDUktvL1ZXd05XazhVMm5v?=
+ =?utf-8?B?dVQvNnFDMVh0cWUwc3dDc1BxNkRSYVlWTE4vSWdQZW8zWGJUdkhNNldYMW5u?=
+ =?utf-8?B?Rm42MTFUQ1d3bkYrWHF5c1JjZlBpdHpiQVFwL1Vjb2ZRNlJWUldHNmNyWTFk?=
+ =?utf-8?B?eXlqLytpcWdlNjEyZXFmaVZkUWVEVVhZWFEzQkVVYU5UdzFmWmV3UVJBbjNi?=
+ =?utf-8?B?VTk3ZVZlR1crME9rQ0pNM0ZwZVBDaGw1cHNYRzJIL3JoKzJoVWNkZDhBY3dB?=
+ =?utf-8?B?Q3RPcDRzU2FYeDNWL0RNRWhHbm5XaFJ4UzRiNFFRVUcwWEFtRnlKS1V4SHk3?=
+ =?utf-8?B?Zi9ublJQRFhkV2FwaFVtVHVFUUJlMmQrdXg3YTVlN2Fqb3RwRjZ1WE4rYzI5?=
+ =?utf-8?B?dVpXdGdnRHpYTGlqcnI3a2JjdU00a1FaN28yV0dWeitxck1oY2VlUVhqekhV?=
+ =?utf-8?B?UGVwSE9sbldrY0NreVpZNXVnbHppbVRmTWpsSzdSOVVNWHdad0xvZG9JYlB2?=
+ =?utf-8?B?UDJPT0ZmWUJMM2FXanUzRU1jcDZqam01WjB6ekdDalVSczJ6Y1AzeXlkR2V5?=
+ =?utf-8?B?Mk9YbE5KaHFlRDUyVURtV3RTM0Q4NzN2Y0NFUzZwL1hxK0trQjZuWExCRm1I?=
+ =?utf-8?B?cHBoYXRNZHR4Uk1FcXB3RHFzQzFSVnM2V1JkWXRWd0VPQm82dEQwYk8xVmlB?=
+ =?utf-8?B?eFEvdGVCYWlIUUFPelFGYS8xT2hSZ2Z6Q2NRM0dtUWlzZ0paTGJVUEVyM1Ar?=
+ =?utf-8?B?dGdSRkcyS09GaUw0djROYU5Zd0lhSVh2WVVrbks4cElCOXVoSERseVhsQWRm?=
+ =?utf-8?B?aHFUekVGRHFkK1ljNlVoWmlzQ3c4eGxSQlFJR1NIcStJTUJnT3NETUZHWVZw?=
+ =?utf-8?B?SXBUTmM0M0gxVklWS3VMTkI5YmRFZ0F3YldlZklGWllWQ3VqSDM2Rmg2S2VU?=
+ =?utf-8?B?Q2hoSmFDbklvTXZ0MjJTL1l0Y1Y4U1ZKM044SThneVV5TTBBUXVkZWFUa2FI?=
+ =?utf-8?B?bGhhMGczMWJ3TXN3bW96d1RMbmlJd0tzYWsvN1VnK2hwcll0TVJXek9icDlT?=
+ =?utf-8?B?cWQ2MEM4RUdlSTZIeGtueWRLV1Jpem5uV3gyUzFjWHNTdVBjQ2JRbGE3Tlhm?=
+ =?utf-8?B?T1lHdW1iT0Rhd0Y0dlhmZDBNODlkTVBqQURXMVVhbUFOSnpMaHFIZlp2NDQ1?=
+ =?utf-8?B?S0VTZUl5NEloSnBWMjFQY1RIbk9jWVFCVUM3MXRxdWxMeXpoV2l0WVNJZmJ3?=
+ =?utf-8?B?MEMyaTl6SUNUTHZNZWQ1MElxVmtKZ2ZZZjhQbG1vOVBVdksrRVJqdFZBQWo4?=
+ =?utf-8?B?dGRHb0hkMTE5eEFjQnBaR3NCNDVvdlJNd1F4RUxXRkxkQzVNRWtTRjlCMXRi?=
+ =?utf-8?B?THc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa05751d-8d43-4a6c-63c1-08dc70d01664
+X-MS-Exchange-CrossTenant-AuthSource: DM3PR11MB8735.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 09:03:41.3817
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: N5RlBJjT0YySIZK15/TUEsfExtsIzhjAyVVLWWW3ZrwIaSIdOKzGQw0QLXDPydd0OJ31du/HKIL16kiXoHybBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB8047
+X-OriginatorOrg: intel.com
 
 
+
+On 4/27/2024 7:05 PM, David Woodhouse wrote:
+> From: David Woodhouse <dwmw@amazon.co.uk>
+> 
+> These pointlessly duplicate of the last_tsc_{nsec,offset,write} values.
+> 
+> The only place they were used was where the TSC is stable and a new vCPU
+> is being synchronized to the previous setting, in which case the 'last_'
+> value is definitely identical.
+> 
+> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> ---
+>  arch/x86/include/asm/kvm_host.h | 3 ---
+>  arch/x86/kvm/x86.c              | 9 ++-------
+>  2 files changed, 2 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index b01c1d000fff..7d06f389a607 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -1354,9 +1354,6 @@ struct kvm_arch {
+>  	u32 last_tsc_khz;
+>  	u64 last_tsc_offset;
+>  	u64 last_tsc_scaling_ratio;
+> -	u64 cur_tsc_nsec;
+> -	u64 cur_tsc_write;
+> -	u64 cur_tsc_offset;
+>  	u64 cur_tsc_generation;
+>  	int nr_vcpus_matched_tsc;
+>  
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 6ec43f39bdb0..92e81bfca25a 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2737,9 +2737,6 @@ static void __kvm_synchronize_tsc(struct kvm_vcpu *vcpu, u64 offset, u64 tsc,
+>  		 * These values are tracked in kvm->arch.cur_xxx variables.
+>  		 */
+>  		kvm->arch.cur_tsc_generation++;
+> -		kvm->arch.cur_tsc_nsec = ns;
+> -		kvm->arch.cur_tsc_write = tsc;
+> -		kvm->arch.cur_tsc_offset = offset;
+>  		kvm->arch.nr_vcpus_matched_tsc = 0;
+>  	} else if (vcpu->arch.this_tsc_generation != kvm->arch.cur_tsc_generation) {
+>  		kvm->arch.nr_vcpus_matched_tsc++;
+> @@ -2747,8 +2744,6 @@ static void __kvm_synchronize_tsc(struct kvm_vcpu *vcpu, u64 offset, u64 tsc,
+>  
+>  	/* Keep track of which generation this VCPU has synchronized to */
+>  	vcpu->arch.this_tsc_generation = kvm->arch.cur_tsc_generation;
+> -	vcpu->arch.this_tsc_nsec = kvm->arch.cur_tsc_nsec;
+> -	vcpu->arch.this_tsc_write = kvm->arch.cur_tsc_write;
+
+Do we need to track vcpu->arch.this_tsc_nsec/this_tsc_write? At least
+they are still used in compute_guest_tsc() to calculate the guest tsc.
+
+>  
+>  	kvm_track_tsc_matching(vcpu);
+>  }
+> @@ -2825,8 +2820,8 @@ static void kvm_synchronize_tsc(struct kvm_vcpu *vcpu, u64 *user_value)
+>  		data = kvm->arch.last_tsc_write;
+>  
+>  		if (!kvm_check_tsc_unstable()) {
+> -			offset = kvm->arch.cur_tsc_offset;
+> -			ns = kvm->arch.cur_tsc_nsec;
+> +			offset = kvm->arch.last_tsc_offset;
+> +			ns = kvm->arch.last_tsc_nsec;
+>  		} else {
+>  			/*
+>  			 * ... unless the TSC is unstable and has to be
 
