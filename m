@@ -1,94 +1,115 @@
-Return-Path: <linux-kernel+bounces-175659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC838C2344
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:25:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462438C2349
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F9A28195E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:25:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84E8B2232B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED0B16EC18;
-	Fri, 10 May 2024 11:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E3E16FF49;
+	Fri, 10 May 2024 11:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="JpYLSKGO"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KQdR1rZy"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D7C16DEAA
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B9716F0C6;
+	Fri, 10 May 2024 11:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340240; cv=none; b=nqTiBk/0noZ1w85Ob8wgGsGJvmV3jeqYtUryYgnfrpyiOM4P+GMijagvrj0LjeAH1yIgObbLbIOtZwet9FsXBywPM8s3yxmcbM9Rdn7NlSKB7em/SvFnqYQZttQIwSpQS5binyObmqBRSrRfXcBRnUDbZR/McXBeI1RbLt7030U=
+	t=1715340258; cv=none; b=jmqbw/DP3JKjwWV35e+ZgRGbSXa+dJVBGdV8e9dmabU8X8khVt4swc89I7KVWG7sahwaU7gJ5/SlkrwN5F/yVdZbXMnbNsYSgsU7NX3p3oYR2cGj8vsoTmWRtrF5tj8GnIUJw+W6iaYif3eoXdTOTfBcztppbjmVH+CwCN2IzZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340240; c=relaxed/simple;
-	bh=47x/4Pk6TGycDhdZnlbzTMHVd0iRYhoMxpqaHz5aors=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XHz3rdNs/bEitY+UAq9TGRra17R3oe5F7hP+E+5PoSdYDq3cV9TP9liGi2gTP8w/5LTtbOoDFLjji23gD5gfNPPjDqSgQsW96tTaUzoZp3BV0yXXJ7s8QHW1gyZKhU+8wLIRw66eHvbvk5iF5tgPW3J6weGO8JXKZ1XrsoDqi3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=JpYLSKGO; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59c448b44aso490633866b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1715340237; x=1715945037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=47x/4Pk6TGycDhdZnlbzTMHVd0iRYhoMxpqaHz5aors=;
-        b=JpYLSKGOBfaIc5A8kOsi5/Dp2+/FW5QcD3PSDQjxzFhPoThcC9BFnBTZ6bjdLPn1y2
-         H3Ciyfq/DoepN2m57HmuLeQcub49JESXoeDmgeJbyvwVncXszisdoYaiKihDJhidJ0fS
-         guBqjTh2IcbqsTVlhlUJUWjpelIrxQkrhmoR0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715340237; x=1715945037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=47x/4Pk6TGycDhdZnlbzTMHVd0iRYhoMxpqaHz5aors=;
-        b=vDmUfn3sp5pU7GSS2AFu4wJdPqXLCq14g2fKfUvzewamOqEidnDPAO04kx9JW1ZAIv
-         Ou3KUC2EHYI+Ltb0qGwrdUoKKfFRxNrEO8iAljtjgyitBwkg4rxi26+vrKZ4myT4gQdY
-         3zuKWAMRbFEtgacHydjHDV58pRFXJKpVqIyCru2fdRhV/SF050ENxLJHpKx+7lCenjBe
-         1eCEmKW8OZI4rCIBz22/2phgqz+15DkYF6u/HnwMZATBgOwRpSMisWnHaftuASHfvN42
-         5Ij/fSb2LbCgzyrS9esKQwoAflDmCTpgssVwkGcOCSU4WWdQ6fKPg32HjnzpenT5SzMg
-         r95g==
-X-Forwarded-Encrypted: i=1; AJvYcCV5I6m7jcQ9mPId85ZP9hh+q5fMZ03B/G3WbGev7NlXI0YN9pcwmWIk2zbaKpqtcm6JQSOxMjJHrltXVW1C8YF715Wc1kz6zeoVRS/o
-X-Gm-Message-State: AOJu0Yx59CQIqMvCDBV1L7e2BFAhQsAXTf7W+5bbFJ9Yf9BBtx5MbvzZ
-	zV2anYqg4nUDI46w1c0SC764dv58SQpBYN4f9NE8GRbPO/41fZnidtWYmyRBDCkSXEuUh0wwRv8
-	2nAeCUQGr3iNai4ZfKf4AYYEYVNk0/3F0nMU3qA==
-X-Google-Smtp-Source: AGHT+IFz5qP18mAylhBbmtThupMzDKv7Hxf/YKoxmcI8024bWwzwHlVosWJHVpjswkQo1H6JZ+uOIVvInsfVrUzL8aQ=
-X-Received: by 2002:a17:907:26c9:b0:a59:ba2b:5913 with SMTP id
- a640c23a62f3a-a5a2d66b525mr199596766b.62.1715340236873; Fri, 10 May 2024
- 04:23:56 -0700 (PDT)
+	s=arc-20240116; t=1715340258; c=relaxed/simple;
+	bh=MuOQCmUzXNyKWcjxb84KgDM7bo5qL9Sff9/5cgSTgyQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=S55zchHKqOKTuBdW2l0TqHhQIsotbaKRdwZN4Mc2gpy/4jqE4XqhsFOkJIz0Ym0x4nEVZYDz9cQRgLrdQ/k2XdZlOKfzqr5of/umb4211DLZ5O3063WGyZQxhfIrULO4moScGK27qQ18wKwgZbjh8e7owFMdBAE9u/Y5jR8eigc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KQdR1rZy; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715340254;
+	bh=MuOQCmUzXNyKWcjxb84KgDM7bo5qL9Sff9/5cgSTgyQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=KQdR1rZyH79i9HPkv0ze2lsOUVn2BdiLTVYRsF1zHKTkchSG3t1PBrTXH3G4QZjLm
+	 coour17sQx6x8JqSy2Vq5deh+PBtF94+9NUJ8e+F0cZhY8dZYV7G5POGBAgWdsmWtJ
+	 CgffO67gYdlgsz9t0v0jyUf2y4ILIjgVHFGpOufGZiOnv26N2/YqnnIFHMRWossONs
+	 20DRPqgUbNQ2Fl9Pq24kvJ10ntF7dgHAAHBdz6IZt5K7Df0/iQtk9Nx4bS4B3vTK2M
+	 uDE8dF67X0GA+7LppCMMLqRnPfXabyF4huJgl9ecG12ZJGxvCKO6qsqfnG2o51XDD8
+	 Oz17qnxfMlvrA==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E8BA63782185;
+	Fri, 10 May 2024 11:24:07 +0000 (UTC)
+Message-ID: <ebad1587-3016-4eb7-8cfa-4d2e1e60b95a@collabora.com>
+Date: Fri, 10 May 2024 16:24:32 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502212631.110175-1-thorsten.blum@toblux.com> <20240502212631.110175-3-thorsten.blum@toblux.com>
-In-Reply-To: <20240502212631.110175-3-thorsten.blum@toblux.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 10 May 2024 13:23:45 +0200
-Message-ID: <CAJfpegsVWa-fu=DePSC0J1WkfQxhaqs0RTxopMBHduwMANieyQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] overlayfs: Remove duplicate included header
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	kexec@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Kunwu Chan <chentao@kylinos.cn>
+Subject: Re: [PATCH bpf-next v2 4/4] selftests/bpf: Add a null pointer check
+ for the serial_test_tp_attach_query
+To: kunwu.chan@linux.dev, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, kunwu.chan@hotmail.com
+References: <20240510095803.472840-1-kunwu.chan@linux.dev>
+ <20240510095803.472840-5-kunwu.chan@linux.dev>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240510095803.472840-5-kunwu.chan@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2 May 2024 at 23:27, Thorsten Blum <thorsten.blum@toblux.com> wrote:
->
-> Remove duplicate included header file linux/posix_acl.h
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+On 5/10/24 2:58 PM, kunwu.chan@linux.dev wrote:
+> From: Kunwu Chan <chentao@kylinos.cn>
+> 
+> There is a 'malloc' call, which can be unsuccessful.
+> Add the malloc failure checking to avoid possible null
+> dereference.
+> 
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+> Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
+> ---
+> Changes in v2:
+> 	- Use ASSERT* instead of CHECK
+> 	- Add suggested-by tag
+> ---
+>  tools/testing/selftests/bpf/prog_tests/tp_attach_query.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c b/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
+> index 655d69f0ff0b..a5ebfc172ad8 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
+> @@ -39,6 +39,9 @@ void serial_test_tp_attach_query(void)
+>  	attr.wakeup_events = 1;
+>  
+>  	query = malloc(sizeof(*query) + sizeof(__u32) * num_progs);
+> +	if (!ASSERT_OK_PTR(query, "malloc"))
+> +		return;
+> +
+LGTM
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Applied, thanks.
+>  	for (i = 0; i < num_progs; i++) {
+>  		err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj[i],
+>  				    &prog_fd[i]);
 
-Miklos
+-- 
+BR,
+Muhammad Usama Anjum
 
