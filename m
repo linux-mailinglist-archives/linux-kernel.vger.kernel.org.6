@@ -1,100 +1,154 @@
-Return-Path: <linux-kernel+bounces-175164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F9F8C1BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:35:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 702F78C1BA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA151F20FFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:35:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7BA1B24EC7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1D643AD9;
-	Fri, 10 May 2024 00:13:18 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974FDD2F5;
+	Fri, 10 May 2024 00:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pj74wjJV"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49FF9746E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294258827
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715299997; cv=none; b=kwWLM+Xn1teMkdycfixVRZ21WdwI93/d/g8el6+Jnv2TW4JAhBLm1hiu6pFqxIphS6PP7LqehYhK+dWymhxuPtr4EWNj6gLxR8tsUkGQDs7UehK+bXP1rYsiZIXp/KZHKX+ompi5RAW5BY59g44vkvTSYqCs9xlQtnMWA0wVylA=
+	t=1715300281; cv=none; b=KRQ8RnsHKqbqnPlqlhXCBxYthHSke7nxOmSyy6KK8C0wyPgEokczI614wPirUyLJWMgE3cXwzKLxP2uXVpc8IHvK6rpDrwr8cJZytFfv7Vf60x60whRbEjpNIeTmNqrXBYOljD+wnAxcq8wXhe4CkxG7qYWPtDdMGabmuI2Tv3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715299997; c=relaxed/simple;
-	bh=CPKlspD/ZSfWixUM8SglUnOrdGxitKBWwWP9lEY6reA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=pufkb8j4NOK7s5+zW8CwDgD56tWc86eXkVm5c7pfYX/gvnB4x23k3zX2wvM+1ObGDQe1iUbLOl0MtqTV9C9JVVmVDwk40aEkumn/4M9aXYRgP4l7lI6oRvDHVVzXx1OenCB4UVo0yhdy8dVgYLlMmkGX46gNX6eKU0I1Y6MyyOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1b97c1b19so12686839f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:13:16 -0700 (PDT)
+	s=arc-20240116; t=1715300281; c=relaxed/simple;
+	bh=32zunW/937A+VI7TVLODQJmupnG7J5u7L6VNkYS8N0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bqyiyqh8spB5aXwAXBuUA/JWWLv/g1BbcVVTMMMyQbwoVEYSqyxvYAoH8MLZ39R2hR7nZ8KhxcnydZIcg52Hi6ICiycVoGDXCdHStmuVlQR/WW7nfhd8vW3+cWmdCc946/2Ll0kzO80C9BhHGn4CGJe3m1EC1uvX9egH9aK0P04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pj74wjJV; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34ef66c0178so946120f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715300278; x=1715905078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FAKOkwp1JwGuxJyPuHfQGI6AWg0YhiVqZy4MwUSsneI=;
+        b=Pj74wjJVcaOX8X2/hslmwnqJ09RdaVWp/hQA+EBrwlOM0a+FpNg2/uQKhwrrbJwxwF
+         UflcfACHGuRP9xFO2tWzQo0OwzCyJx4AWeYxP909/xEMtmXHyHa/k0ZjDYErlByViLgn
+         uufLANXu9K3FINFTEBj1mPNsn0Y1j+JQ34AepaDdiemdQWhro+sMegewTvHa20A8cowh
+         oQrsovo7vdTMtaM6NjIPc9rSABDPToPu5/ZDIqltA79a2AYvj88+umaOZudCQlFqfUdy
+         ickYDmSg6r6TJRkEwDYgjC1guxyn/upK4aWms2uyqzLXo2SeO56xpp1rPvLhLQemfKVd
+         by/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715299995; x=1715904795;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CPKlspD/ZSfWixUM8SglUnOrdGxitKBWwWP9lEY6reA=;
-        b=J1eBZiH04i1a4s+Saz0nRXUmBW+H1eIiAiMqJZo0wpFDnlJzgy0fetnVs/vvrKBOYB
-         PkIfigmMd+CCL38Q5QYpDKFsPK2+4KBBv+WSffwylrU1J02OR43MX9bZ41SDAOJXCfTc
-         9fr1nxvJTmOvaBX26F5fPEbjxpR+AKC2OfQi5lQ3W5JI+w2PFbPTG3PNCxY2hcw3CeKo
-         L1O1J4dIpMbSdSKoCHZX2V9YrIadKsqaaJ2PtuvJXwRpGFaZp/EVdJSaP42q4ugVHuEN
-         mM5CJdHOccyMWlTR5cYL6Gm5MhN5xbH1v+JRcggdU2lA2F9jC0IoUKhEg6dc+Lq3gjUh
-         qhLw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2vDTOMH5x5XxYwxVwDs+b2sOzkTEUG52WEL3fnuaykPndt1wEDfNoy/ui1jD1Y1ju7Xq9E7seaayNky2RI4S7hTmX+A4xMHFAvGEc
-X-Gm-Message-State: AOJu0YyuakyazNdyPwBwm89fmVTu6nkpcYFFxv1cqmmziyb9Eth/mStT
-	o2fkEGCZNT4YUinHEO2njPyocYvS0XJVc/bKSnAha1Y25/cNpi/jKLrsxeeIu0Pc6l7JyAzyNDQ
-	9ttBAIs1kfhXvvTwvJsXHP+l1Sb70lFT9gvIS6JiB87NeDO2YcrC451M=
-X-Google-Smtp-Source: AGHT+IG8lV0gayEeQv4OnAIVKR5a30CHHZDSkXwY5iPgzJNo/IM83a2phKBkZt0ExDotYyJ/Z5YKhymuoW7uYJ1qBEE9drN4R2p+
+        d=1e100.net; s=20230601; t=1715300278; x=1715905078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FAKOkwp1JwGuxJyPuHfQGI6AWg0YhiVqZy4MwUSsneI=;
+        b=l8Mh1FRaic2NDiYAPd8AZjIM5XecI1OFGYVHdPMpPrIAEOBGRT1J54QCEh9uJfuLDK
+         SFtC9U6AUtkp5j/iaHTkZhTZZ5h11W23EyIYGcV2vOocfqdR4GHpWj2zbugCdSoqDMCN
+         SwNnq7JyWfSjRuE7bbShuwtlTXcvAKblXk5oAUNrM4wgvZfKWZ2fmC+DwbpQBohG0tjs
+         tuPYZURu3b1mIKCFf815iAtcZHpD1nAztEMuuavvyfNSpDAqkIBEOH9V2UGHE/tudvXC
+         88EuLTpIwFIpNYufDyqDO0PB6CL2AUbH+H9hI+XBdf645vo/l4VZhq763H99AfbzshT9
+         n+Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1lJyfhx2fnwBcUp9wp9o89DdDeB08YKINulobwSAtGE6/n0Og/g400VXSP1aM2jKPpkwEEf6zeAQOHYCIK7/yNI3loicaJ0108kef
+X-Gm-Message-State: AOJu0YzDtqU5RMJZopwwnGC19Nau6pQ0TzaAgjqX0jHy/0WAA5ZKOixg
+	AYNWR1nJD84WU0DDhdiY3hNkpx/m5XvWnNe6H8uM1qSO/Eljjsg/uKBtBK8QbBwO6OTZ24llXND
+	/tBW+BPRT2lhe3c0u1IAwblResgXeYfaqpHOX
+X-Google-Smtp-Source: AGHT+IGsTBm3kyqRWwyxe6aen4twfHmKaMlCO8UBWYeZRet/IFXhY3zvqOMxnBrLHbg5/lRkKBbynn/nm7/LVaHKXmM=
+X-Received: by 2002:a5d:4fd0:0:b0:34f:e19f:6186 with SMTP id
+ ffacd0b85a97d-3504a737144mr858323f8f.31.1715300278279; Thu, 09 May 2024
+ 17:17:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:150b:b0:488:dd9c:2483 with SMTP id
- 8926c6da1cb9f-4895912b334mr69327173.5.1715299995594; Thu, 09 May 2024
- 17:13:15 -0700 (PDT)
-Date: Thu, 09 May 2024 17:13:15 -0700
-In-Reply-To: <0000000000006fd14305f00bdc84@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ebbc6706180e6692@google.com>
-Subject: Re: [syzbot] kernel BUG in ext4_do_writepages
-From: syzbot <syzbot+d1da16f03614058fdc48@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+References: <20240507225945.1408516-1-ziweixiao@google.com>
+ <20240507225945.1408516-4-ziweixiao@google.com> <64a7690e-50a1-4b3b-9b9b-5c2efa552806@davidwei.uk>
+In-Reply-To: <64a7690e-50a1-4b3b-9b9b-5c2efa552806@davidwei.uk>
+From: Ziwei Xiao <ziweixiao@google.com>
+Date: Thu, 9 May 2024 17:17:46 -0700
+Message-ID: <CAG-FcCO=Ck9-eWXO4W87SFWr3uEQfMh=0x_HWkY0S+Yioa7FuQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/5] gve: Add adminq extended command
+To: David Wei <dw@davidwei.uk>
+Cc: netdev@vger.kernel.org, jeroendb@google.com, pkaligineedi@google.com, 
+	shailend@google.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, willemb@google.com, 
+	hramamurthy@google.com, rushilg@google.com, jfraker@google.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This bug is marked as fixed by commit:
-ext4: fix race condition between buffer write and page_mkwrite
+On Tue, May 7, 2024 at 10:34=E2=80=AFPM David Wei <dw@davidwei.uk> wrote:
+>
+> On 2024-05-07 15:59, Ziwei Xiao wrote:
+> > From: Jeroen de Borst <jeroendb@google.com>
+> >
+> > Add a new device option to signal to the driver that the device support=
+s
+> > flow steering. This device option also carries the maximum number of
+> > flow steering rules that the device can store.
+>
+> Other than superficial style choices, looks good.
+>
+> >
+> > Signed-off-by: Jeroen de Borst <jeroendb@google.com>
+> > Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
+> > Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
+> > Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
+> > Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
+> > Reviewed-by: Willem de Bruijn <willemb@google.com>
+> > ---
+> >  drivers/net/ethernet/google/gve/gve.h        |  2 +
+> >  drivers/net/ethernet/google/gve/gve_adminq.c | 42 ++++++++++++++++++--
+> >  drivers/net/ethernet/google/gve/gve_adminq.h | 11 +++++
+> >  3 files changed, 51 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/google/gve/gve.h b/drivers/net/ethern=
+et/google/gve/gve.h
+> > index ca7fce17f2c0..58213c15e084 100644
+> > --- a/drivers/net/ethernet/google/gve/gve.h
+> > +++ b/drivers/net/ethernet/google/gve/gve.h
+> > @@ -786,6 +786,8 @@ struct gve_priv {
+> >
+> >       u16 header_buf_size; /* device configured, header-split supported=
+ if non-zero */
+> >       bool header_split_enabled; /* True if the header split is enabled=
+ by the user */
+> > +
+> > +     u32 max_flow_rules;
+>
+> nit: this struct is lovingly documented, could we continue by adding a
+> one liner here maybe about how it's device configured?
+>
+Will add.
 
-But I can't find it in the tested trees[1] for more than 90 days.
-Is it a correct commit? Please update it by replying:
-
-#syz fix: exact-commit-title
-
-Until then the bug is still considered open and new crashes with
-the same signature are ignored.
-
-Kernel: Linux
-Dashboard link: https://syzkaller.appspot.com/bug?extid=d1da16f03614058fdc48
-
----
-[1] I expect the commit to be present in:
-
-1. for-kernelci branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
-
-2. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
-
-3. master branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
-
-4. main branch of
-git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
-
-The full list of 9 trees can be found at
-https://syzkaller.appspot.com/upstream/repos
+> >  };
+> >
+> >  enum gve_service_task_flags_bit {
+> > diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net=
+/ethernet/google/gve/gve_adminq.c
+> > index 514641b3ccc7..85d0d742ad21 100644
+> > --- a/drivers/net/ethernet/google/gve/gve_adminq.c
+> > +++ b/drivers/net/ethernet/google/gve/gve_adminq.c
+> > @@ -44,6 +44,7 @@ void gve_parse_device_option(struct gve_priv *priv,
+> >                            struct gve_device_option_jumbo_frames **dev_=
+op_jumbo_frames,
+> >                            struct gve_device_option_dqo_qpl **dev_op_dq=
+o_qpl,
+> >                            struct gve_device_option_buffer_sizes **dev_=
+op_buffer_sizes,
+> > +                          struct gve_device_option_flow_steering **dev=
+_op_flow_steering,
+>
+> nit: getting unwieldy here, is it time to pack into a struct?
+Thank you for pointing this out! We have plans to improve this device
+option part, but may not be able to be included in this patch.
 
