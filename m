@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-175738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81CA88C2444
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:03:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE70C8C2445
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25631C2454C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594021F2755F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0001817798F;
-	Fri, 10 May 2024 11:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB771779B8;
+	Fri, 10 May 2024 11:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R2U5veYu"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V9zy/C1I"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CFFA174EFB
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D3B17085B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715342395; cv=none; b=IMJQCg+nX0VGsGdLBUexYk+n5pH/+WuNpspw+vt4XTAwmAjY1EZPhM7IPIcXkMYrTUtNtmuoCEXmqySKlgScH4fsakV9vveqlVTrkjrvjLz45pGpierJ3129IenM4fbIMERRX/aTjnhb6DEx6VMOfyTKHkiotfDRuoQgE4eQiNw=
+	t=1715342395; cv=none; b=ltVvGgtHfcHg08XXcCZnSdZ7razktWWmBWU1pbUTWqpLdvdSI+/xa6IHn02E/3htBa3wENGmBCH+UOKfuuX5zVJp2O6BcN4YyNp5ZxhqwPQRNFfIxI3Q59WjCtx9jy+ebwLmWfTwb/B7gq7e89pVKa+qjnFdLaDVWCGkx30MAho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715342395; c=relaxed/simple;
-	bh=5CSw9DLoFQwug4L1mYX3ngIFb/t4mhjPkYRZKMe1FUA=;
+	bh=hJAnTcSS233J/pq2GGKjdE5Nwm9koJwphvqL++mXdtU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MyyYBiwlCliiy6Em9MtA77X5oXshUaoQz41K3G4o/ovNeyGOyr7wwt4sxdjTwFeXhXelXL9p6WRArPQrFZnBayWnlIPplBKtRqVXTXJU3rZWvAXqwfGCvT4Z7CmK0oGB7qSkqRUNrtQ2Fs240KtL2bfdWgZo8LLPWqPISXrulZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R2U5veYu; arc=none smtp.client-ip=209.85.218.51
+	 In-Reply-To:To:Cc; b=t7HgfQruFZYiRT60HmJfBP+g7mO+HdrvYgkyBFAZ64rqtu0JlQ30P0MLSxCQAPtw4gH0cgRXYJ0zejXTPiZCB6yKjNOKS5JJEzDjgQGeSykKjFE8iKC/lnggdH8GpXH1KMyWIABGAFtbTv3sVn9Sv5mmOy2ExVi8fXWJf7EdVms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V9zy/C1I; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59cc765c29so433238566b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:59:52 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a59cf8140d0so477355366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:59:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715342391; x=1715947191; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715342393; x=1715947193; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FuVEvcZ73sR11OO61dwu9pTyz0Xsj1eoAqJzsVpMEhw=;
-        b=R2U5veYuWqy0GrdSjgKW5JB9015oeGjXuJFBbWoLg/sKIrJLgVt0eoZaMqoKRk+ZG1
-         IUpIIgO2XzK0WDCBXZChqjjFxBitibk+Fb6bF+9dxE6CUCqGVDd8BUJBQeK6eLLPKcTR
-         tb9mnd3xfk2gVpo0aMKRlAa7KQhQ5XCstN9TU7nY4nEElJsXZgybNe9sF0RkBQCTYU81
-         +XDZFYoDCj33LDkDmEtKGVV3objyCaCLyH2MnRBZlsPD9wMOJKHLx3mE9u5j+WFLJqzx
-         hwB65BbhfWbgUmOI9gkkZFCs1Jxu9QxQOVgh64pmjnjT2iDvzlcnVIIZeyo8SSZrnIho
-         wYkg==
+        bh=m1cwL1GyWWAwhJFJuq8v2puUXx3BB6mJq5XCosZUEqM=;
+        b=V9zy/C1IYcUX9qOH68VoWsGzEsNjvQL6ePfRVP+nxZkIokzaKDcGRc1IbSll9EDba4
+         Gk1AtGUd840/cN1klF/ayZcJq+rQQGWuXiqrPKaroSiAyutg47k0NZN6pugfs1Os9NK3
+         s1QHWudYXv8iibp7G3E0WVnNaMIIxibAwp5oLQETo1DYyzK1e9JJMaKt0trC0qelifyj
+         gWMPJFhoGIjqgRXRXC7CId4NhfXoNs/fquUUev0QwJuDmrRwtoQKEhFGDz9fo86HoAC8
+         y5ZW7y1iok0GgEUs9u8VLXFYqy7CDuZcScKMdyV0qj3uWanEevbvrxhlTJyo81XBWIU1
+         h9Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715342391; x=1715947191;
+        d=1e100.net; s=20230601; t=1715342393; x=1715947193;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FuVEvcZ73sR11OO61dwu9pTyz0Xsj1eoAqJzsVpMEhw=;
-        b=V0rXCswWP+YzFjbvQeJ8pRbr/EBDNf7NJ4FLZpokNImAhymoIM8Kxamq87RnKh6eib
-         BNmflSzZIn9Ooc8ZFixetDbV5tADS280tVd57hpSvlwQH0ahwoB1ri6/GwnMiFh1sbYe
-         OkkzOc0ik5Pn8otIn0J/hA0adUM2tVyTLThgAuM5WqTwZJ/ikS03A6IfliPXR+r4Dfbt
-         qDWls2rm9867FFMUMmFaKseOsRLWboDnmIXZ6VBrFDhc1GQ5bnB4AW9jy4iOC4w2xYmG
-         cUrUiHOGG1A7hypvxKSrmE+JQXTGdG8vIYJM8R8yM0b4OlEngohXBbkuBkJtNN+lAce6
-         Fkqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVb/8M1CThkAyQWspScXIUNwPC/vqU30Sl4OVUPWgX5iweXnZ1s3cJ40VaB3O3QEtkq3DxXTaGXKHbJt1ZUK60IX5zwDOuatQX6tN/p
-X-Gm-Message-State: AOJu0YxNnBxnutCWaH/GIDL0jlMgH1q0tv4wP8Xo787Eben0ShxzMEJ6
-	mC0an0zSPHLLQfw5GGMtZGlHC5SkaFmbZbQRqCL5pWJomrQWiSMoVwhc4hsVGEU=
-X-Google-Smtp-Source: AGHT+IGNjE5VODPCkm0AnGnT7XxC6dXH0eF6PF4HcpdsXTM1X8hp1li7g8QxZBCjjrjLHoiWq0Htiw==
-X-Received: by 2002:a17:907:76d3:b0:a59:c7d7:8b0f with SMTP id a640c23a62f3a-a5a2d57a717mr160952266b.29.1715342391690;
-        Fri, 10 May 2024 04:59:51 -0700 (PDT)
+        bh=m1cwL1GyWWAwhJFJuq8v2puUXx3BB6mJq5XCosZUEqM=;
+        b=UfECIVWsTA2KO+R5KIw84Y45/+ElDwBH2+4oCKezVB0ACbbiwAsX6iAwxXUwJcSG8/
+         +VPpwZK1t+qzwJuwxdX0DmirQAFLUZFkAbdT9lhDrxAy351sgpXn6AHjoX2OL1SmcrUJ
+         vThORAW+5g+i5JUJOLuZRwzfQeul4CE8i3rEA+17KlD3uCjNYuxD1HUq5zc8ho4eWN1G
+         FsxYv8N8DXFdK3GzbbfjF4odf9zjsnij2nN5A6+PdnOS0GwUsppQ57QcytC8gWv8/lCL
+         AUWv4OXDZavCsvkCaH+4ZKFNDg7N82zt7tQURZc4mfOhpfOSjiI4lW+wP7TyTDwvLzss
+         4wwA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8H8MhEK2TkS/wtbrfgWNs523I5AC48f89d8yEJ2uUyFADJIsnWD4qLeD82+FfaUclZpsH3rYL0t7JIfi8mSbMvHA2M3YMv5hS2xXs
+X-Gm-Message-State: AOJu0Yzlp7+EBE4IDWQEIgPq+GqbSk68wm0JP+ElzMEzEKXRpWrtxEhB
+	RPWi7k3BponoiGWdjn/XWPCns9ZxLtK+SMCU8Y8/Egz+TyDRVxawXavjycO15cw=
+X-Google-Smtp-Source: AGHT+IEAAccpAb7Agm+ODkggJHJYK9cRJa2aPR7diwSj0ZiazeQ/xNJgMicNpeIH/RxpIli8PB83Vg==
+X-Received: by 2002:a17:906:b0c:b0:a59:d5f7:a697 with SMTP id a640c23a62f3a-a5a2d54c47fmr152192566b.9.1715342392904;
+        Fri, 10 May 2024 04:59:52 -0700 (PDT)
 Received: from [127.0.1.1] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7df7sm176795666b.111.2024.05.10.04.59.50
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7df7sm176795666b.111.2024.05.10.04.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 04:59:51 -0700 (PDT)
+        Fri, 10 May 2024 04:59:52 -0700 (PDT)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 10 May 2024 13:59:36 +0200
-Subject: [PATCH v2 13/31] arm64: dts: qcom: qcm2290-*: Remove thermal zone
+Date: Fri, 10 May 2024 13:59:37 +0200
+Subject: [PATCH v2 14/31] arm64: dts: qcom: qcs404-*: Remove thermal zone
  polling delays
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240510-topic-msm-polling-cleanup-v2-13-436ca4218da2@linaro.org>
+Message-Id: <20240510-topic-msm-polling-cleanup-v2-14-436ca4218da2@linaro.org>
 References: <20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org>
 In-Reply-To: <20240510-topic-msm-polling-cleanup-v2-0-436ca4218da2@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -94,113 +94,93 @@ bogus and unnecessary polling that only wastes CPU time.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/qcm2290.dtsi | 30 ------------------------------
- 1 file changed, 30 deletions(-)
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-index 106110a9f551..e1d176b277ce 100644
---- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-@@ -1924,9 +1924,6 @@ lmh_cluster: lmh@f550800 {
- 
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index ac451f378056..ba7fe56a75b3 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -1600,7 +1600,6 @@ wcss_smp2p_in: slave-kernel {
  	thermal-zones {
- 		mapss-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 0>;
+ 		aoss-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
  
- 			trips {
-@@ -1951,9 +1948,6 @@ mapss_crit: mapss-crit {
- 		};
+ 			thermal-sensors = <&tsens 0>;
  
- 		video-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 1>;
+@@ -1615,7 +1614,6 @@ aoss_alert0: trip-point0 {
  
- 			trips {
-@@ -1978,9 +1972,6 @@ video_crit: video-crit {
- 		};
+ 		q6-hvx-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
+ 
+ 			thermal-sensors = <&tsens 1>;
+ 
+@@ -1630,7 +1628,6 @@ q6_hvx_alert0: trip-point0 {
+ 
+ 		lpass-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
+ 
+ 			thermal-sensors = <&tsens 2>;
+ 
+@@ -1645,7 +1642,6 @@ lpass_alert0: trip-point0 {
  
  		wlan-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 2>;
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
  
- 			trips {
-@@ -2005,9 +1996,6 @@ wlan_crit: wlan-crit {
- 		};
+ 			thermal-sensors = <&tsens 3>;
  
- 		cpuss0-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 3>;
+@@ -1660,7 +1656,6 @@ wlan_alert0: trip-point0 {
  
- 			trips {
-@@ -2032,9 +2020,6 @@ cpuss0_crit: cpuss0-crit {
- 		};
+ 		cluster-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
  
- 		cpuss1-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 4>;
+ 			thermal-sensors = <&tsens 4>;
  
- 			trips {
-@@ -2059,9 +2044,6 @@ cpuss1_crit: cpuss1-crit {
- 		};
+@@ -1694,7 +1689,6 @@ map0 {
  
- 		mdm0-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 5>;
+ 		cpu0-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
  
- 			trips {
-@@ -2086,9 +2068,6 @@ mdm0_crit: mdm0-crit {
- 		};
+ 			thermal-sensors = <&tsens 5>;
  
- 		mdm1-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 6>;
+@@ -1728,7 +1722,6 @@ map0 {
  
- 			trips {
-@@ -2113,9 +2092,6 @@ mdm1_crit: mdm1-crit {
- 		};
+ 		cpu1-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
+ 
+ 			thermal-sensors = <&tsens 6>;
+ 
+@@ -1762,7 +1755,6 @@ map0 {
+ 
+ 		cpu2-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
+ 
+ 			thermal-sensors = <&tsens 7>;
+ 
+@@ -1796,7 +1788,6 @@ map0 {
+ 
+ 		cpu3-thermal {
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
+ 
+ 			thermal-sensors = <&tsens 8>;
+ 
+@@ -1830,7 +1821,6 @@ map0 {
  
  		gpu-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 7>;
+ 			polling-delay-passive = <250>;
+-			polling-delay = <1000>;
  
- 			trips {
-@@ -2140,9 +2116,6 @@ gpu_crit: gpu-crit {
- 		};
+ 			thermal-sensors = <&tsens 9>;
  
- 		hm-center-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 8>;
- 
- 			trips {
-@@ -2167,9 +2140,6 @@ hm_center_crit: hm-center-crit {
- 		};
- 
- 		camera-thermal {
--			polling-delay-passive = <0>;
--			polling-delay = <0>;
--
- 			thermal-sensors = <&tsens0 9>;
- 
- 			trips {
 
 -- 
 2.40.1
