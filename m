@@ -1,252 +1,240 @@
-Return-Path: <linux-kernel+bounces-176210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287298C2BAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:18:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 272B18C2BB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95B111F210B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23152818C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1391B13B7A1;
-	Fri, 10 May 2024 21:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ED1524DC;
+	Fri, 10 May 2024 21:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEi5A5OH"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QOpwtB3j";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="InT8nqHg"
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D519F13B5B0
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3332313B59A;
+	Fri, 10 May 2024 21:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715375911; cv=none; b=a8Y3jsZldVF8y8DQCVpduZ7izr8HVveE5g2AXOm44/DBmv7aoUjl87h/TrHPBM+1u2fIP+t5d4MaYBpKBm/HSRKG95urdBNG4qc2W0GXyDmlDLzsQgsBBCMOeEBtDLWgjOdPfxcwO0df3W4zZikTBWbh1RtgVo9niTC7pr9kvk4=
+	t=1715376023; cv=none; b=V21aovs9e1XgMUXEEkFpI5RluLfH9v+50YVML6dZGSXnVYJBXbj1fLXP6hr8HsgqAkUZbwjA98dx2Cp/Eg/lgGQzGxy+DX7kddH00/yEZYp4Fqb8RcnmABGzNZILe5JY9rVVeAcZiZeQW16iR+0WvvlgZO2aXTmtLgoigyJ1Tjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715375911; c=relaxed/simple;
-	bh=YlawKcNma3OW7iUJ7dX7RhMRDpnHiurpM0xck2qN+AA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=dBgqqdrJlPJvKrnrJ9S3jrjUkhM+jfqV2F1zVCwF1OyE0/KDjZ8zlmX3TKWBO/zb75CvHFYPnjMZgm4FDygtHafcXrLnSI7sOmVa0DrUwLOYLHKVN4Zpkk5dX1oLmD/aY0uLvL4ixtuALBuOFLWDKLiX6fwjumoRSa+fA4Eqf2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEi5A5OH; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f40b5e059so2764597e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715375904; x=1715980704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=bW+gUUp7l8Go1CEjGjrXDMeS/n8FalO7s3mty8efupU=;
-        b=IEi5A5OHpoMKyGqT1ENiMyHycHYzC2zwhz49SygyAIVQqe8iT/TrE1mlxhjtirn3FG
-         GrlrEeBNs8NOVPPvTBnOp4ZWBG1xP1wkCXTQZFEggVEu8KMYHhkH7cqHxCJjDcVW2+xH
-         dyaJ8eTsoEgFOjAJhqTGkUYB3pxzCDpmrqasRo/5h8PGGB+o1nUcygJP8TdAmiNnsFqg
-         7UPBFObTmznrdR22E+oNvZgkcmphdqjIXTOVKKntw6zJ9cIW2DlvftjABabE2tX44Ase
-         uOtMYj3OKBGWidzcJFN/sJN2aFxYvf1+G96NnPAWDpFsfFPNfaKGnNF5ZK5Vb/xIfxKf
-         1ejg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715375904; x=1715980704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bW+gUUp7l8Go1CEjGjrXDMeS/n8FalO7s3mty8efupU=;
-        b=iJrrZ8x6WXDVXjMw/SZYPCpb0JqFzGt+ZiSjor1Yp7axEz+R+rffvWQGX5YgxsJAx7
-         JRRAweZOoJEtIHOuSsxuTxO+F6vJ5rLciXsirSezlI+7hS6AWLIttUBNVLBGSs5XwF0s
-         Yn8apnwAqDWbZdgk3WtZjBuLhajdS4of4O77aFp6qcR/H2hXvdvLmFhtUdRZvS02biU5
-         BJ3erBATzfhxD6qgHjkrswjb5hOJQxHJ09ftPq4VqNXD+vqEGO/omRG4DrrNZA5+E8RE
-         cHudtbuhE1dDB0lfCgQpRNdQZ+Yw61HUgdH+FbqqoYb/8jMqPRyVruEJbImneUVImu9M
-         jiOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm0MWyLB3vCp2JQfDbubRPa34/YstuAxKkaNYHr2GMtbxMQ46KM5dWr3isqFUm4Uz5uAtMP/ptovRqBaI+GQ43vhHId10ZptEIa/qd
-X-Gm-Message-State: AOJu0Yw1JR9oZPhUYdEBD0hNSwb/SwOrr20LtrvgVczpQeZ4IPZXA2FF
-	iD5sOMX3Ld6X0aBwE5f63TV3S/XyGj+4vDJudEXZXXS75E8OnDMvBPW/HQjpgW6q/wwmcmClkW/
-	ct/jRRSLrsbr0yB4H25rBQqhbs0sZMOYw
-X-Google-Smtp-Source: AGHT+IGPkILCn/IMVULz6wDQe+q9nP4ck7QElKaVUtKeX7kznQ9B34b4fGHKhJyPm9699w9mGDIT8u2ZCO+H1TNmzU4=
-X-Received: by 2002:a05:6512:1287:b0:51d:2a27:9574 with SMTP id
- 2adb3069b0e04-5220fb698bemr3152547e87.6.1715375903458; Fri, 10 May 2024
- 14:18:23 -0700 (PDT)
+	s=arc-20240116; t=1715376023; c=relaxed/simple;
+	bh=tSJuiRDV+CYJB5wJGdMlExG6bfQqglAbRPbjngLBA28=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=L/ZhN4RINfSGRUffCcZKyKB0i6UcJp6ModrUeJre7p2EJbOQbWcX8RZRwjLRCZQgjdjINgjUsF6S0kup1JzykKDjq+V+yqSlhuLbbX+Zy9MvwEabnsGsZGEObpcSVnEfOITY1+PxUvUXUgXrfZzMBG/3yy2KJhWReT2fd5kjq+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QOpwtB3j; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=InT8nqHg; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 357961140150;
+	Fri, 10 May 2024 17:20:17 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Fri, 10 May 2024 17:20:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1715376017; x=1715462417; bh=EkgGfm04sZ
+	P1741DkIoCLols09u8gma8LG+8ffwSpT0=; b=QOpwtB3jdubpJMtx2RzaGifonH
+	XjSJQYhlEHb8Fbr4hYxbnroL2NgXd1yoL4sacCBesirdOZV2Xm1lDHa4l6fdJC9f
+	O0C3TfpPa3yuianGmrDUVhWF7ZKfbXH6zk4w1wib/dJ0COdpdAJNuadwv9Qjr4aW
+	PKEQFzM4Uw3eysoIKOgqZG8ceHv8kDZlfAolM1Y1ByqFXM+a1CpSW6LJ4h25de1Y
+	+c1Ogniw8XyYRerPNsgivEiGWc7UKNmGh6UT1Xp2Fu3WfNgM7R5sghjEdYR29Byj
+	clK5s8HrQAETcRI+xz4M1XiZVQSVKEfoMwNjM3t/kWxzUx111+R+koo9yRsA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715376017; x=1715462417; bh=EkgGfm04sZP1741DkIoCLols09u8
+	gma8LG+8ffwSpT0=; b=InT8nqHgEihs7Emcqt9D4Lr9tiprsbozFTfOT7qkHk39
+	VH9R76ThjN1NuvOdMcQKwp45WJQZ5kSoCqpJcgxLiezWinkpK+oa5ua+/VVoQ/3p
+	4lRVpFRv+ZyG/eJakMdTwmB/NP785PcpeHrjXhUPGCQEtNGxyERsbS2Gr6kq8YVq
+	3Y++2eDfy4Fgv9lVqvnGA+zthoIFhuXnxyfTfvQ2z1+x6yV/xhLMdHh+aDRU184V
+	zuLi4pBUz3z532qnHps1havE5y7KymARsnIKoOVjJuQb1MZWa/2IOagdA2fUP+UR
+	Gs0p7xPksSnNq5PqgeGp5rcJnS7VaOkhcj3OnUxAsQ==
+X-ME-Sender: <xms:kI8-ZhPwibcwi-LvSD0JiZIIVCbfuo-AblFtgKEvDxLSxdnUYfVx9g>
+    <xme:kI8-Zj9m5iaDwdIYWNNvpQnixQ5cLId7NmQKTXLwzAz3FYTo3BXw8vg_CDm7i8WAa
+    OCmoVZBURUJm2Myxgo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgudehlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
+    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:kI8-ZgR7amt0jP0ZO8gmvjA4bwQJ0qdevFt-9SZ_-gOHrW-KW14OJA>
+    <xmx:kI8-Zttkb4tB-AV13IRtRTCovr1wb1rtbHWKQwhVzwtyFL580FWC2g>
+    <xmx:kI8-Zpd3MpO2GFGad5LxJ0d3aE4TLTrac3F0SGMNuJf2NJQrRcfWRg>
+    <xmx:kI8-Zp0xCbYH71j01W0xOYtMqzSC3IXxZXI8BCOwxDO_DP-5XEG6Fw>
+    <xmx:kY8-ZowsfpBRFRkmOyxqR0H2m5HgNil51hRrZaCZpuV85f_xe9h0EQqA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 6A8DDB6008D; Fri, 10 May 2024 17:20:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Dave Airlie <airlied@gmail.com>
-Date: Sat, 11 May 2024 07:18:11 +1000
-Message-ID: <CAPM=9tzZ8edq4gpxJpube9EOAVDFXr-n7Hwh9qwZ=_aBP34esA@mail.gmail.com>
-Subject: [git pull] drm fixes for 6.9 final
-To: Linus Torvalds <torvalds@linux-foundation.org>, Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+In-Reply-To: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+Date: Fri, 10 May 2024 23:19:56 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-alpha@vger.kernel.org,
+ "Richard Henderson" <richard.henderson@linaro.org>,
+ "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
+ "Matt Turner" <mattst88@gmail.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Paul E. McKenney" <paulmck@kernel.org>
+Subject: [GIT PULL] alpha: cleanups and build fixes for 6.10
+Content-Type: text/plain
 
-Hi Linus,
+The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
 
-This should be the last set of fixes for 6.9, i915, xe and amdgpu are
-the bulk here, one of the previous nouveau fixes turned up an issue,
-so reverting it, otherwise one core and a couple of meson fixes.
-
-drm-fixes-2024-05-11:
-drm fixes for 6.9 final
-
-core:
-- fix connector debugging output
-
-i915:
-- Automate CCS Mode setting during engine resets
-- Fix audio time stamp programming for DP
-- Fix parsing backlight BDB data
-
-xe:
-- Fix use zero-length element array
-- Move more from system wq to ordered private wq
-- Do not ignore return for drmm_mutex_init
-
-amdgpu:
-- DCN 3.5 fix
-- MST DSC fixes
-- S0i3 fix
-- S4 fix
-- HDP MMIO mapping fix
-- Fix a regression in visible vram handling
-
-amdkfd:
-- Spatial partition fix
-
-meson:
-- dw-hdmi: power-up fixes
-- dw-hdmi: add badngap setting for g12
-
-nouveau:
-- revert SG_DEBUG fix that has a side effect
-The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361=
-:
-
-  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
+  Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
 
 are available in the Git repository at:
 
-  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-05-11
+  https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-alpha
 
-for you to fetch changes up to a222a6470d7eea91193946e8162066fa88da64c2:
+for you to fetch changes up to a4184174be36369c3af8d937e165f28a43ef1e02:
 
-  Revert "drm/nouveau/firmware: Fix SG_DEBUG error with
-nvkm_firmware_ctor()" (2024-05-11 07:04:10 +1000)
-
-----------------------------------------------------------------
-drm fixes for 6.9 final
-
-core:
-- fix connector debugging output
-
-i915:
-- Automate CCS Mode setting during engine resets
-- Fix audio time stamp programming for DP
-- Fix parsing backlight BDB data
-
-xe:
-- Fix use zero-length element array
-- Move more from system wq to ordered private wq
-- Do not ignore return for drmm_mutex_init
-
-amdgpu:
-- DCN 3.5 fix
-- MST DSC fixes
-- S0i3 fix
-- S4 fix
-- HDP MMIO mapping fix
-- Fix a regression in visible vram handling
-
-amdkfd:
-- Spatial partition fix
-
-meson:
-- dw-hdmi: power-up fixes
-- dw-hdmi: add badngap setting for g12
-
-nouveau:
-- revert SG_DEBUG fix that has a side effect
+  alpha: drop pre-EV56 support (2024-05-06 12:05:00 +0200)
 
 ----------------------------------------------------------------
-Agustin Gutierrez (2):
-      drm/amd/display: Fix DSC-re-computing
-      drm/amd/display: MST DSC check for older devices
+alpha: cleanups and build fixes
 
-Alex Deucher (1):
-      drm/amdkfd: don't allow mapping the MMIO HDP page with large pages
+I had investigated dropping support for alpha EV5 and earlier a while
+ago after noticing that this is the only supported CPU family
+in the kernel without native byte access and that Debian has already
+dropped support for this generation last year [1] in order to
+improve performance for the newer machines.
 
-Andi Shyti (1):
-      drm/i915/gt: Automate CCS Mode setting during engine resets
+This topic came up again when Paul E. McKenney noticed that
+parts of the RCU code already rely on byte access and do not
+work on alpha EV5 reliably, so we decided on using my series to
+avoid the problem entirely.
 
-Chaitanya Kumar Borah (1):
-      drm/i915/audio: Fix audio time stamp programming for DP
+Al Viro did another series for alpha to address all the known build
+issues. I rebased his patches without any further changes and included
+it as a baseline for my work here to avoid conflicts and allow
+backporting the fixes to stable kernels for the now removed hardware
+support as well.
 
-Daniele Ceraolo Spurio (1):
-      drm/xe/guc: Check error code when initializing the CT mutex
+----------------------------------------------------------------
+Al Viro (9):
+      alpha: sort scr_mem{cpy,move}w() out
+      alpha: fix modversions for strcpy() et.al.
+      alpha: add clone3() support
+      alpha: don't make functions public without a reason
+      alpha: sys_sio: fix misspelled ifdefs
+      alpha: missing includes
+      alpha: core_lca: take the unused functions out
+      alpha: jensen, t2 - make __EXTERN_INLINE same as for the rest
+      alpha: trim the unused stuff from asm-offsets.c
 
-Dave Airlie (5):
-      Merge tag 'drm-intel-fixes-2024-05-08' of
-https://anongit.freedesktop.org/git/drm/drm-intel into drm-fixes
-      Merge tag 'drm-xe-fixes-2024-05-09' of
-https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
-      Merge tag 'amd-drm-fixes-6.9-2024-05-10' of
-https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
-      Merge tag 'drm-misc-fixes-2024-05-10' of
-https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
-      Revert "drm/nouveau/firmware: Fix SG_DEBUG error with
-nvkm_firmware_ctor()"
+Arnd Bergmann (5):
+      alpha: remove DECpc AXP150 (Jensen) support
+      alpha: sable: remove early machine support
+      alpha: remove LCA and APECS based machines
+      alpha: cabriolet: remove EV5 CPU support
+      alpha: drop pre-EV56 support
 
-Douglas Anderson (1):
-      drm/connector: Add \n to message about demoting connector force-probe=
-s
-
-Jerome Brunet (2):
-      drm/meson: dw-hdmi: power up phy on device init
-      drm/meson: dw-hdmi: add bandgap setting for g12
-
-Karthikeyan Ramasubramanian (1):
-      drm/i915/bios: Fix parsing backlight BDB data
-
-Lijo Lazar (1):
-      Revert "drm/amdkfd: Add partition id field to location_id"
-
-Lucas De Marchi (1):
-      drm/xe/ads: Use flexible-array
-
-Mario Limonciello (1):
-      dm/amd/pm: Fix problems with reboot/shutdown for some SMU
-13.0.4/13.0.11 users
-
-Matthew Brost (1):
-      drm/xe: Use ordered WQ for G2H handler
-
-Michel D=C3=A4nzer (1):
-      drm/amdgpu: Fix comparison in amdgpu_res_cpu_visible
-
-Nicholas Kazlauskas (1):
-      drm/amd/display: Fix idle optimization checks for multi-display
-and dual eDP
-
-Nicholas Susanto (1):
-      drm/amd/display: Enable urgent latency adjustments for DCN35
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c            |   2 +-
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c           |   7 +-
- drivers/gpu/drm/amd/amdkfd/kfd_topology.c          |   5 +-
- .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |  16 ++-
- .../gpu/drm/amd/display/dc/dml/dcn35/dcn35_fpu.c   |   4 +-
- .../drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c    |  33 ++++--
- .../gpu/drm/amd/pm/swsmu/smu13/smu_v13_0_4_ppt.c   |   2 +-
- drivers/gpu/drm/drm_connector.c                    |   2 +-
- drivers/gpu/drm/i915/display/intel_audio.c         | 113 ++---------------=
-----
- drivers/gpu/drm/i915/display/intel_bios.c          |  19 +---
- drivers/gpu/drm/i915/display/intel_vbt_defs.h      |   5 -
- drivers/gpu/drm/i915/gt/intel_gt_ccs_mode.c        |   6 +-
- drivers/gpu/drm/i915/gt/intel_gt_ccs_mode.h        |   2 +-
- drivers/gpu/drm/i915/gt/intel_workarounds.c        |   4 +-
- drivers/gpu/drm/meson/meson_dw_hdmi.c              |  70 ++++++-------
- drivers/gpu/drm/nouveau/nvkm/core/firmware.c       |  19 ++--
- drivers/gpu/drm/xe/xe_guc_ads.c                    |   2 +-
- drivers/gpu/drm/xe/xe_guc_ct.c                     |  10 +-
- drivers/gpu/drm/xe/xe_guc_ct.h                     |   2 +-
- drivers/gpu/drm/xe/xe_guc_ct_types.h               |   2 +
- 20 files changed, 122 insertions(+), 203 deletions(-)
+ Documentation/driver-api/eisa.rst      |   4 +-
+ arch/alpha/Kconfig                     | 175 +----------
+ arch/alpha/Makefile                    |   8 +-
+ arch/alpha/include/asm/core_apecs.h    | 534 ---------------------------------
+ arch/alpha/include/asm/core_lca.h      | 378 -----------------------
+ arch/alpha/include/asm/core_t2.h       |   8 -
+ arch/alpha/include/asm/dma-mapping.h   |   4 -
+ arch/alpha/include/asm/dma.h           |   9 +-
+ arch/alpha/include/asm/elf.h           |   4 +-
+ arch/alpha/include/asm/io.h            |  26 +-
+ arch/alpha/include/asm/irq.h           |  10 +-
+ arch/alpha/include/asm/jensen.h        | 363 ----------------------
+ arch/alpha/include/asm/machvec.h       |   9 -
+ arch/alpha/include/asm/mmu_context.h   |  45 +--
+ arch/alpha/include/asm/special_insns.h |   5 +-
+ arch/alpha/include/asm/tlbflush.h      |  37 +--
+ arch/alpha/include/asm/uaccess.h       |  80 -----
+ arch/alpha/include/asm/vga.h           |   2 +
+ arch/alpha/include/uapi/asm/compiler.h |  18 --
+ arch/alpha/kernel/Makefile             |  25 +-
+ arch/alpha/kernel/asm-offsets.c        |  21 +-
+ arch/alpha/kernel/bugs.c               |   1 +
+ arch/alpha/kernel/console.c            |   1 +
+ arch/alpha/kernel/core_apecs.c         | 420 --------------------------
+ arch/alpha/kernel/core_cia.c           |   6 +-
+ arch/alpha/kernel/core_irongate.c      |   1 -
+ arch/alpha/kernel/core_lca.c           | 517 -------------------------------
+ arch/alpha/kernel/core_marvel.c        |   2 +-
+ arch/alpha/kernel/core_t2.c            |   2 +-
+ arch/alpha/kernel/core_wildfire.c      |   8 +-
+ arch/alpha/kernel/entry.S              |   1 +
+ arch/alpha/kernel/io.c                 |  19 ++
+ arch/alpha/kernel/irq.c                |   1 +
+ arch/alpha/kernel/irq_i8259.c          |   4 -
+ arch/alpha/kernel/machvec_impl.h       |  25 +-
+ arch/alpha/kernel/pci-noop.c           | 113 -------
+ arch/alpha/kernel/pci_impl.h           |   4 +-
+ arch/alpha/kernel/perf_event.c         |   2 +-
+ arch/alpha/kernel/proto.h              |  44 +--
+ arch/alpha/kernel/setup.c              | 109 +------
+ arch/alpha/kernel/smc37c669.c          |   6 +-
+ arch/alpha/kernel/smc37c93x.c          |   2 +
+ arch/alpha/kernel/smp.c                |   1 +
+ arch/alpha/kernel/srmcons.c            |   2 +
+ arch/alpha/kernel/sys_cabriolet.c      |  87 +-----
+ arch/alpha/kernel/sys_eb64p.c          | 238 ---------------
+ arch/alpha/kernel/sys_jensen.c         | 237 ---------------
+ arch/alpha/kernel/sys_mikasa.c         |  57 ----
+ arch/alpha/kernel/sys_nautilus.c       |   8 +-
+ arch/alpha/kernel/sys_noritake.c       |  60 ----
+ arch/alpha/kernel/sys_sable.c          | 294 +-----------------
+ arch/alpha/kernel/sys_sio.c            | 486 ------------------------------
+ arch/alpha/kernel/syscalls/syscall.tbl |   2 +-
+ arch/alpha/kernel/traps.c              |  64 ----
+ arch/alpha/lib/Makefile                |  14 -
+ arch/alpha/lib/checksum.c              |   1 +
+ arch/alpha/lib/fpreg.c                 |   1 +
+ arch/alpha/lib/memcpy.c                |   3 +
+ arch/alpha/lib/stycpy.S                |  11 +
+ arch/alpha/lib/styncpy.S               |  11 +
+ arch/alpha/math-emu/math.c             |   7 +-
+ arch/alpha/mm/init.c                   |   2 +-
+ drivers/char/agp/alpha-agp.c           |   2 +-
+ drivers/eisa/Kconfig                   |   9 +-
+ drivers/eisa/virtual_root.c            |   2 +-
+ drivers/input/serio/i8042-io.h         |   5 +-
+ drivers/tty/serial/8250/8250.h         |   3 -
+ drivers/tty/serial/8250/8250_alpha.c   |  21 --
+ drivers/tty/serial/8250/8250_core.c    |   4 -
+ drivers/tty/serial/8250/Makefile       |   2 -
+ include/linux/blk_types.h              |   6 -
+ include/linux/tty.h                    |  14 +-
+ 72 files changed, 166 insertions(+), 4541 deletions(-)
+ delete mode 100644 arch/alpha/include/asm/core_apecs.h
+ delete mode 100644 arch/alpha/include/asm/core_lca.h
+ delete mode 100644 arch/alpha/include/asm/jensen.h
+ delete mode 100644 arch/alpha/kernel/core_apecs.c
+ delete mode 100644 arch/alpha/kernel/core_lca.c
+ delete mode 100644 arch/alpha/kernel/pci-noop.c
+ delete mode 100644 arch/alpha/kernel/sys_eb64p.c
+ delete mode 100644 arch/alpha/kernel/sys_jensen.c
+ delete mode 100644 arch/alpha/kernel/sys_sio.c
+ create mode 100644 arch/alpha/lib/stycpy.S
+ create mode 100644 arch/alpha/lib/styncpy.S
+ delete mode 100644 drivers/tty/serial/8250/8250_alpha.c
 
