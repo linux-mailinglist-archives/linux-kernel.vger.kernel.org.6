@@ -1,141 +1,206 @@
-Return-Path: <linux-kernel+bounces-175310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8875E8C1DF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:17:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3318C1DF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A638D1C213B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A38A283455
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8EF15D5BD;
-	Fri, 10 May 2024 06:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6489115B152;
+	Fri, 10 May 2024 06:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4ZQ91omp"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pS73xYb6"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834771494DE
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2ED1494DE
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 06:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715321815; cv=none; b=Rim6Gr3yKXzEfeOeSJAnO0dArATPYrS1QDpC3kqpfs48lrlzdEQiokghD5RB3kpqMSTJsr9j/hkcJsrsJ9351I8Xh27j+iaTmvg/4GR3W4uIaqipQXMT+oQsEclhob03QCCyHtlG9KJ/GYnn7LFZP0A3p4O1+/JpI11A7YNJ+mI=
+	t=1715321851; cv=none; b=Attp1DDTPUbnbUxrXAttQHbRfWITUr22yKnMm/ca7W0ZcrSpqr47dPNy7V+Szynb3Kza8aJ+i4UkG7MRSkiCbmULz8ByJYB+pyYnBxX59kUSVhQkSrcbF+agG3a6/MYZBcx5o0wTqRGb5SM/52dVdkHim6Wo2q6fik/rg0C/HRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715321815; c=relaxed/simple;
-	bh=6feafTWRKD/pFfv6a7aXeKx22UNSWKArlBNWuqJ7QgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bbb0V7bEEW1q+Qd8E1ddvbcB4BZsCerJe1t5nuqzUmeCskXSp0O1BQfCTgoTzCWIMQUeAfAKm53bhSoVQ4WjBCxo5ZSNbpb73xl547ECEY9NsJEekX6FqM02Gtao+RnnojTVIi/nPuG0gBwADTt3VcK2SOql3dDT3mfJjDwN1Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4ZQ91omp; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43df9ac3ebcso193951cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 23:16:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715321812; x=1715926612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P013eBlgxlZ/UL/3+JN87mWVkNfsmaCM+AjZob2UWLs=;
-        b=4ZQ91ompuwz0icugSg63hINIrh511TEMRTYeqxW/IVdOhuLI7HrgVTs0QH+Egx23qS
-         v8d8up62e+FgUEtqBR3Ex17p1Q53CnB9RE+mEbCrQegUfgMaeVxs/KRv4kiJALiyU6rT
-         Ss2UqUwet5nmTSCDk2M2oz3ootlGgZcjRtULAlzo0XcAQqfwb1JcJc5iAmIh9IQBkRKi
-         D/9YoIbs38SwyNEIE0vrdPyIXHt0NNfzw/t2hlbkAxQsKPSTbz100HY5FfcKRF3mwGI6
-         JbfudLTqFdroJ+QXdVbhDQeQxf+kFgGnL4MuTPrrdBQd33uI2N7iY3ain/kvnnl2BWbG
-         RDOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715321812; x=1715926612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P013eBlgxlZ/UL/3+JN87mWVkNfsmaCM+AjZob2UWLs=;
-        b=EFyNbqAKJzG08EOTzerwU1PHnWbG+ifbxxf24RUFt5A2sLShi2wOkmaRWasUoE5xkZ
-         rY9+u2kUkYzFtplKNNzvKMR4GU3ej/VqFCcRdvi6AXVmsQgS3/r4k/RmNUWRK+G9gfOz
-         SmmWmTZ5kbK+iZEAodkl6yQf0a4opgHvZh4kGSejmyeTeze5jfyS340Vxbo3sTLX/Cyg
-         dPxLMkEtZoIRPM/w8aUtePN9okHRK47K5snG/jQZ5PXJcHK6bpABXQU69MxonBGLDUMV
-         rYPomFw+Zf98s70cWKqUFqs7UGJmF3BkhfNrqQ3weKXPlnFoaqpF51mOpNpDdjMTEKgo
-         jjIA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1FJUFtDB2vNnMiSPrvCmRtYWHV3u027x15aWuerIbtL54U2cEX32cDq/no0PetiRCYX9ScPTKT3ZXauYxNPYX/BEV1/hwIcGW9ci2
-X-Gm-Message-State: AOJu0YwipNBm4NCXodv55AX5rKJ/0g4B9u654nu9cGuV5/jnXO9IZw+0
-	jKYRlN1wRabyBg9KWYu9sBUiufilwp1VUtBfse6hoHvt+wYTmCpXQKJxKe4ot3je4Z4uih4i78U
-	FtO8yIViM/ChLSJ6EZ3fX4lDBURA6EYORNfOW
-X-Google-Smtp-Source: AGHT+IFj8uz5shdiGB57AmNqO93sQ2qQyODvVTabB80D4SoJl0+JOBpTmDZ919M9UNY8Ync9DaLF5pxcLW3G9qyMVeo=
-X-Received: by 2002:a05:622a:5292:b0:43a:bcee:eaa2 with SMTP id
- d75a77b69052e-43dfdce7f5dmr1976371cf.20.1715321812281; Thu, 09 May 2024
- 23:16:52 -0700 (PDT)
+	s=arc-20240116; t=1715321851; c=relaxed/simple;
+	bh=PqWwMhX4dWLjs4sg1qmjRm6shA3EYN7mFwupVDXL9bo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rcBY8v3iGRiSrttLtf6tmYrSHnpWqsT88f/Gc8oTlAtTztfVPW/vUY4n6Ny2+RpLSoZ6KHWp2FxO1xr656oZ21DlqYcH/twL5donaD8EuS2QaohwSISqeAPaVj5mX6W8cMnpBIvG7K97YeQnIr1vB0w1ONawosnkxhQnwFAOQZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pS73xYb6; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f6f19e1c0e9411efb92737409a0e9459-20240510
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=puTXK9xgqDgUnsxXNMU30peMYkT6Y/1bWHM3NEeCpa8=;
+	b=pS73xYb6hWbILobQQNhJ5Oidfng9mKHqYvKZy62QXbwbQD8XfjWJD6uSckuyAPdaCZS0ONCIWg/INO1QKy7Z35Cn7lcD4/CgpRblLQfDlgLSVsquBm6cZZPSFXup0KMOvxMnHODe7zfwqDwy6Umrq0Qj3sIlok7jgyPMTAGpo3g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:2dc44579-df8a-481f-9aaf-650356b23347,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:82c5f88,CLOUDID:7a13af83-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,UR
+	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
+	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: f6f19e1c0e9411efb92737409a0e9459-20240510
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw01.mediatek.com
+	(envelope-from <liankun.yang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1872033711; Fri, 10 May 2024 14:17:23 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 10 May 2024 14:17:19 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 10 May 2024 14:17:18 +0800
+From: Liankun Yang <liankun.yang@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>,
+	<mac.shen@mediatek.com>, <liankun.yang@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 1/1] Fix get efuse issue for MT8188 DPTX
+Date: Fri, 10 May 2024 14:16:57 +0800
+Message-ID: <20240510061716.31103-1-liankun.yang@mediatek.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510024729.1075732-1-justin.he@arm.com> <20240510024729.1075732-3-justin.he@arm.com>
-In-Reply-To: <20240510024729.1075732-3-justin.he@arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 9 May 2024 23:16:40 -0700
-Message-ID: <CAP-5=fVGD-pK1igABj0wiq6-KVM+Z4i7rnRhM=Vy7bFHW4pLQA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] perf pmu: Fix num_events calculation
-To: Jia He <justin.he@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@arm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--3.274600-8.000000
+X-TMASE-MatchedRID: HyBr+9HIEazPvAv72Y9dJYzb2GR6Ttd3nhD9A3Sa7pZcU0dNErOD+vlY
+	oV6p/cSxhVmF9kz2wxKE+/1bNiTZfFqxshHHoiYzbT3mGmWPpNdaNaxZBRbNWmlUUOdVs6yao8W
+	MkQWv6iXBcIE78YqRWvcUt5lc1lLgKIzdZS3ou0WbFewbmqprKsJKuC5FVjYYlFxPBKXM9hY3vL
+	qlRqyqyx2YKru/07rb6P6EiJbjbgHVW6hawn5RRbnypOu9sm/kLl13mrjijIwc/j4aI5S1Lnr9G
+	D0zfOvEAaqvv/mhgrFLtG3H3wC1xA==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--3.274600-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	6A4A9F5F72FA535015BBD4F07CE0894FCBC069D93143B8DE1EEA6D1714DD3D332000:8
+X-MTK: N
 
-On Thu, May 9, 2024 at 7:47=E2=80=AFPM Jia He <justin.he@arm.com> wrote:
->
-> When pe is NULL in the function perf_pmu__new_alias(), the total number
-> of events is added to loaded_json_aliases. However, if pmu->events_table
-> is NULL and cpu_aliases_added is false, the calculation for the events
-> number in perf_pmu__num_events() is incorrect.
->
-> Then cause the error report after "perf list":
-> Unexpected event smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
->
-> Fix it by adding loaded_json_aliases in the calculation under the
-> mentioned conditions.
->
-> Test it also with "perf bench internals pmu-scan" and there is no
-> regression.
->
-> Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
-> Signed-off-by: Jia He <justin.he@arm.com>
-> ---
->  tools/perf/util/pmu.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index a1eef7b2e389..a53224e2ce7e 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -1639,6 +1639,8 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
->                  nr +=3D pmu->loaded_json_aliases;
->         else if (pmu->events_table)
->                 nr +=3D pmu_events_table__num_events(pmu->events_table, p=
-mu) - pmu->loaded_json_aliases;
-> +       else
-> +               nr +=3D pmu->loaded_json_aliases;
+Fix get efuse issue for MT8188 DPTX.
 
-Thanks for working on this! The "struct pmu_event *pe" in new_alias is
-an entry from the json data, and "pmu->events_table" should NULL if
-there is no json data. I believe the code is assuming that these lines
-aren't necessary as it shouldn't be possible to load json data if the
-json events table doesn't exist for the PMU - if there is no json data
-then loaded_json_aliases should be 0 and no addition is necessary. I'm
-wondering why this case isn't true for you.
+Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
+ 1 file changed, 84 insertions(+), 1 deletion(-)
 
-Thanks,
-Ian
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+index 2136a596efa1..32b36b63a4e1 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -145,6 +145,89 @@ struct mtk_dp_data {
+ 	u16 audio_m_div2_bit;
+ };
+ 
++static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX] = {
++	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
++		.idx = 0,
++		.shift = 10,
++		.mask = 0x1f,
++		.min_val = 1,
++		.max_val = 0x1e,
++		.default_val = 0xf,
++	},
++	[MTK_DP_CAL_CLKTX_IMPSE] = {
++		.idx = 0,
++		.shift = 15,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] = {
++		.idx = 1,
++		.shift = 0,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] = {
++		.idx = 1,
++		.shift = 8,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] = {
++		.idx = 1,
++		.shift = 16,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] = {
++		.idx = 1,
++		.shift = 24,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] = {
++		.idx = 1,
++		.shift = 4,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] = {
++		.idx = 1,
++		.shift = 12,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] = {
++		.idx = 1,
++		.shift = 20,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++	[MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] = {
++		.idx = 1,
++		.shift = 28,
++		.mask = 0xf,
++		.min_val = 1,
++		.max_val = 0xe,
++		.default_val = 0x8,
++	},
++};
++
+ static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX] = {
+ 	[MTK_DP_CAL_GLB_BIAS_TRIM] = {
+ 		.idx = 3,
+@@ -2758,7 +2841,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_suspend, mtk_dp_resume);
+ static const struct mtk_dp_data mt8188_dp_data = {
+ 	.bridge_type = DRM_MODE_CONNECTOR_DisplayPort,
+ 	.smc_cmd = MTK_DP_SIP_ATF_VIDEO_UNMUTE,
+-	.efuse_fmt = mt8195_dp_efuse_fmt,
++	.efuse_fmt = mt8188_dp_efuse_fmt,
+ 	.audio_supported = true,
+ 	.audio_pkt_in_hblank_area = true,
+ 	.audio_m_div2_bit = MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0_DIV_2,
+-- 
+2.18.0
 
->
->         return pmu->selectable ? nr + 1 : nr;
->  }
-> --
-> 2.34.1
->
 
