@@ -1,188 +1,248 @@
-Return-Path: <linux-kernel+bounces-175276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38BD78C1D6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:27:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9DA8C1D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 06:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86125B22314
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:27:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813BF1C21078
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0089914BF8A;
-	Fri, 10 May 2024 04:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="D5JlEHsH"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66D6149C43
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B781114A63C;
+	Fri, 10 May 2024 04:29:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C180046
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715315237; cv=none; b=OPYYPH2COezjfUqvAf3oAIVGHBBxheAeGTgLT3K5X9c4jMl0QirIzJInK/Ouwx5x++9v+8jCGU/Vgzukkr5NTbD0LpW+6Y4UX5tNWkrIeMESvrYgQR9vaDFBDFC3mF6jgioqQ/MNQcocK1GJZn0M/dMzYP7+Kqgm183Ogavdq/I=
+	t=1715315345; cv=none; b=RL9DEfmkeY8KiOMQb+rrXu9qCcAvqHmBALkrs9AU91S4WzyPvJ7oRIM7CKodCasJ8+JCXh5G8UNaXKSCoWrlXBldAxUka/vF0EHp/dJCVXvx/+SyBkz/z33SqLLVWOyyAKDwrk3ZivzHN4/EHon13qHSP3GwuaaZrWlchtvZ5og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715315237; c=relaxed/simple;
-	bh=14nSWpNeh0d7rXYDykeBcTJq2Hy8sObAceg8DfUEvNU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TA+A+qgnBqAUQtozrC4Vk334Yt6lDqCnm5Mqk/SWtw4BtM/68eOqiRsGrS6tX0gJ+U123Br2tfmtHldddzFNLk4hlyT9mM4WqX5WtjFkBwSWK50Axil7uBqMlRKT4W0Bcqe7vgJ2K7/y7YQleGjsyyFybZ1WcV0xhtN3mXY6k2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=D5JlEHsH; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1eecc71311eso13345975ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 21:27:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715315235; x=1715920035; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JO706E9CS5Et8zewEmeRZI9gpEtF+EgDmsWANk00whE=;
-        b=D5JlEHsH8qYYy1Wi//0FTaTRc5BvOeijmbHWET5z0nV9I/uqls4/JnThzl+zXDDJef
-         RBDyeCcJBkvHuww+NPi3tntLec/J2wnoG97Degzol7LiCd7D9C9sBXF0uAWbYV7K5b9F
-         5L5PFdoJPHhMJSylqVo4JXVv2NeL+T6rkgP5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715315235; x=1715920035;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JO706E9CS5Et8zewEmeRZI9gpEtF+EgDmsWANk00whE=;
-        b=X27SWfybanHL7imWz6wV3WsSLRAIV6xwfhaq+R0LsrmGc1Jn67+ZaHXyykYneE055Y
-         5703ceFAAnstPtqOZtEycMfgdoGy6JFinmMS3BE0+ZfQVRuC8WsJifxoHzs/Eon/MPrY
-         Z7pNbA5+TCVEuhIuhm76mrDzFL34OB4xobTEbaw/vaAtBRZoDMTdnZaGFAW5QebAddpt
-         mnYyjjUBo9len1fuov9yFODV9dqywwcXVCnzsLwrUFegZbss9CllNxlqJzluUHRnpSMC
-         39MHx9Tovfw3YomhLGaCRCdKXvtR17vJ8veTshOGjoqhviPcFaT24/D9ZDGipbJjQ0Pv
-         MHZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXeArmnmvVweWFzkRrqtpglR0GaXzSXGt1qJYx8Akx6W8LNr01BmKS2fk/W7XUATTk3wImIVNUZxq/ZP1Cb/hFXAWqcNbF8OG7ZF7X3
-X-Gm-Message-State: AOJu0Yw4yA22OfrUF3Y8GfCayi7oP/S7QBVaD9PgJQ69c3o6pbW1trhO
-	IM8PRjRjf01H+4EyDT8ct8oFErRiU8WPy4WmA4vPUQ/a1Ql6yX693Z5UvTPyK7A=
-X-Google-Smtp-Source: AGHT+IGpQAmfRjfA2BEioKWQ7Pne3T/JJXafarTVBkxYhZOG8AnFDxWJ9uvzwShO4ilaXkKzhcMhJA==
-X-Received: by 2002:a17:902:e883:b0:1eb:d79a:c111 with SMTP id d9443c01a7336-1ef43c095b1mr22932935ad.4.1715315235174;
-        Thu, 09 May 2024 21:27:15 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad6176sm22571335ad.76.2024.05.09.21.27.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 21:27:14 -0700 (PDT)
-Date: Thu, 9 May 2024 21:27:11 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Tariq Toukan <ttoukan.linux@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Zhu Yanjun <zyjzyj2000@gmail.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	saeedm@nvidia.com, gal@nvidia.com, nalramli@fastly.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>, Tariq Toukan <tariqt@nvidia.com>
-Subject: Re: [PATCH net-next 0/1] mlx5: Add netdev-genl queue stats
-Message-ID: <Zj2iHwEO4NLvCT06@LQ3V64L9R2>
-References: <20240503173429.10402325@kernel.org>
- <ZjkbpLRyZ9h0U01_@LQ3V64L9R2>
- <8678e62c-f33b-469c-ac6c-68a060273754@gmail.com>
- <ZjwJmKa6orPm9NHF@LQ3V64L9R2>
- <20240508175638.7b391b7b@kernel.org>
- <ZjwtoH1K1o0F5k+N@ubuntu>
- <20240508190839.16ec4003@kernel.org>
- <ZjxtejIZmJCwLgKC@ubuntu>
- <32495a72-4d41-4b72-84e7-0d86badfd316@gmail.com>
- <Zj1qxgElgHhtxj4h@LQ3V64L9R2>
+	s=arc-20240116; t=1715315345; c=relaxed/simple;
+	bh=O840MrsrAQB+7MaiiLKUB8HaKsvkvNE2dTnR+IXHXbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hlhRMg2yvigdpQi65XhhOyzjDq5Rd3wj2d/rNkI7vvKHpOZMBIuuvtNnh6+Fo5EwGrNH6o7cNCowcnU3XbtBbVLEtiNY1BV381Wpfqyug9GE7DjIMxM7JbY+lbrAfF+BoIZe4KtR3uVnX5BrYiN+A0rS2HD+jzfHldBMQOKZSYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33638106F;
+	Thu,  9 May 2024 21:29:26 -0700 (PDT)
+Received: from [10.163.37.102] (unknown [10.163.37.102])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3FFBF3F762;
+	Thu,  9 May 2024 21:28:47 -0700 (PDT)
+Message-ID: <42837c05-c111-49fc-bf19-e690608f66da@arm.com>
+Date: Fri, 10 May 2024 09:58:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zj1qxgElgHhtxj4h@LQ3V64L9R2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
+Content-Language: en-US
+To: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
+ <c9c3c0d5-bb61-4eed-8b89-b0341a2c6f5c@arm.com>
+ <bb60d304-3341-472d-a4ee-d31b4754c39b@os.amperecomputing.com>
+ <5e6158aa-09d3-4665-878e-17358aee10cb@arm.com>
+ <328c4c86-96c8-4896-8b6d-94f2facdac9a@os.amperecomputing.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <328c4c86-96c8-4896-8b6d-94f2facdac9a@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 05:31:06PM -0700, Joe Damato wrote:
-> On Thu, May 09, 2024 at 01:16:15PM +0300, Tariq Toukan wrote:
-> > 
-> > 
-> > On 09/05/2024 9:30, Joe Damato wrote:
-> > > On Wed, May 08, 2024 at 07:08:39PM -0700, Jakub Kicinski wrote:
-> > > > On Thu, 9 May 2024 01:57:52 +0000 Joe Damato wrote:
-> > > > > If I'm following that right and understanding mlx5 (two things I am
-> > > > > unlikely to do simultaneously), that sounds to me like:
-> > > > > 
-> > > > > - mlx5e_get_queue_stats_rx and mlx5e_get_queue_stats_tx check if i <
-> > > > >    priv->channels.params.num_channels (instead of priv->stats_nch),
-> > > > 
-> > > > Yes, tho, not sure whether the "if i < ...num_channels" is even
-> > > > necessary, as core already checks against real_num_rx_queues.
-> > > > 
-> > > > >    and when
-> > > > >    summing mlx5e_sq_stats in the latter function, it's up to
-> > > > >    priv->channels.params.mqprio.num_tc instead of priv->max_opened_tc.
-> > > > > 
-> > > > > - mlx5e_get_base_stats accumulates and outputs stats for everything from
-> > > > >    priv->channels.params.num_channels to priv->stats_nch, and
-> > > > 
-> > > > I'm not sure num_channels gets set to 0 when device is down so possibly
-> > > > from "0 if down else ...num_channels" to stats_nch.
-> > > 
-> > > Yea, you were right:
-> > > 
-> > >    if (priv->channels.num == 0)
-> > >            i = 0;
-> > >    else
-> > >            i = priv->channels.params.num_channels;
-> > >    for (; i < priv->stats_nch; i++) {
-> > > 
-> > > Seems to be working now when I adjust the queue count and the test is
-> > > passing as I adjust the queue count up or down. Cool.
-> > > 
-> > 
-> > I agree that get_base should include all inactive queues stats.
-> > But it's not straight forward to implement.
-> > 
-> > A few guiding points:
-> > 
-> > Use mlx5e_get_dcb_num_tc(params) for current num_tc.
-> > 
-> > txq_ix (within the real_num_tx_queues) is calculated by c->ix + tc *
-> > params->num_channels.
-> > 
-> > The txqsq stats struct is chosen by channel_stats[c->ix]->sq[tc].
-> > 
-> > It means, in the base stats you should include SQ stats for:
-> > 1. all SQs of non-active channels, i.e. ch in [params.num_channels,
-> > priv->stats_nch), tc in [0, priv->max_opened_tc).
-> > 2. all SQs of non-active TCs in active channels [0, params.num_channels), tc
-> > in [mlx5e_get_dcb_num_tc(params), priv->max_opened_tc).
-> > 
-> > Now I actually see that the patch has issues in mlx5e_get_queue_stats_tx.
-> > You should not loop over all TCs of channel index i.
-> > You must do a reverse mapping from "i" to the pair/tuple [ch_ix, tc], and
-> > then access a single TXQ stats by priv->channel_stats[ch_ix].sq[tc].
-> 
-> It looks like txq2sq probably will help with this?
-> 
-> Something like:
-> 
-> for (j = 0; j < mlx5e_get_dcb_num_tc(); j++) {
->   sq = priv->txq2sq[j];
->   if (sq->ch_ix == i) {
->     /* this sq->stats is what I need */
->   }
-> }
-> 
-> Is that right?
 
-This was incorrect, but I think I got it in the v2 I just sent out. When
-you have the time, please take a look at that version.
 
-Thanks for the guidance, it was very helpful.
- 
-> Not sure if I'm missing something obvious here, sorry, I've been puzzling
-> over the mlx5 source for a bit.
+On 5/10/24 03:16, Yang Shi wrote:
 > 
-> BTW: kind of related but in mlx5e_alloc_txqsq the int tc param is unused (I
-> think). It might be helpful to struct mlx5e_txqsq to have a tc field and
-> then in mlx5e_alloc_txqsq:
 > 
->   sq->tc = tc;
+> On 5/8/24 9:31 PM, Anshuman Khandual wrote:
+>>
+>> On 5/9/24 00:07, Yang Shi wrote:
+>>>
+>>> On 5/7/24 11:45 PM, Anshuman Khandual wrote:
+>>>> Hello Yang,
+>>>>
+>>>> On 5/8/24 04:05, Yang Shi wrote:
+>>>>> The atomic RMW instructions, for example, ldadd, actually does load +
+>>>>> add + store in one instruction, it may trigger two page faults, the
+>>>>> first fault is a read fault, the second fault is a write fault.
+>>>> It may or it will definitely create two consecutive page faults. What
+>>>> if the second write fault never came about. In that case an writable
+>>>> page table entry would be created unnecessarily (or even wrongfully),
+>>>> thus breaking the CoW.
+>>>>
+>>>> Just trying to understand, is the double page fault a possibility or
+>>>> a certainty. Does that depend on architecture (please do provide some
+>>>> links) or is it implementation defined.
+>>> Christopher helped answer some questions, I will skip those if I have nothing to add.
+>>>
+>>> It is defined in ARM architecture reference manual, so it is not implementation defined.
+>> Sure, but please replace the "may trigger" phrase above as appropriate.
 > 
-> Not sure if that'd be helpful in general, but I could send that as a
-> separate patch.
+> Yeah, sure.
+> 
+>>
+>>>>> Some applications use atomic RMW instructions to populate memory, for
+>>>>> example, openjdk uses atomic-add-0 to do pretouch (populate heap memory
+>>>> But why cannot normal store operation is sufficient for pre-touching
+>>>> the heap memory, why read-modify-write (RMW) is required instead ?
+>>> Memory write is fine, but it depends on applications. For example, JVM may want to "permit use of memory concurrently with pretouch". So they chose use atomic instead of memory write.
+>>>
+>>>>> at launch time) between v18 and v22.
+>>>> V18, V22 ?
+>>> v18/v19/v20/v21/v22
+>>>
+>>>>> But the double page fault has some problems:
+>>>>>
+>>>>> 1. Noticeable TLB overhead.  The kernel actually installs zero page with
+>>>>>      readonly PTE for the read fault.  The write fault will trigger a
+>>>>>      write-protection fault (CoW).  The CoW will allocate a new page and
+>>>>>      make the PTE point to the new page, this needs TLB invalidations.  The
+>>>>>      tlb invalidation and the mandatory memory barriers may incur
+>>>>>      significant overhead, particularly on the machines with many cores.
+>>>>>
+>>>>> 2. Break up huge pages.  If THP is on the read fault will install huge
+>>>>>      zero pages.  The later CoW will break up the huge page and allocate
+>>>>>      base pages instead of huge page.  The applications have to rely on
+>>>>>      khugepaged (kernel thread) to collapse huge pages asynchronously.
+>>>>>      This also incurs noticeable performance penalty.
+>>>>>
+>>>>> 3. 512x page faults with huge page.  Due to #2, the applications have to
+>>>>>      have page faults for every 4K area for the write, this makes the speed
+>>>>>      up by using huge page actually gone.
+>>>> The problems mentioned above are reasonable and expected.
+>>>>    If the memory address has some valid data, it must have already reached there
+>>>> via a previous write access, which would have caused initial CoW transition ?
+>>>> If the memory address has no valid data to begin with, why even use RMW ?
+>>>>
+>>>>> So it sounds pointless to have two page faults since we know the memory
+>>>>> will be definitely written very soon.  Forcing write fault for atomic RMW
+>>>>> instruction makes some sense and it can solve the aforementioned problems:
+>>>>>
+>>>>> Firstly, it just allocates zero'ed page, no tlb invalidation and memory
+>>>>> barriers anymore.
+>>>>> Secondly, it can populate writable huge pages in the first place and
+>>>>> don't break them up.  Just one page fault is needed for 2M area instrad
+>>>>> of 512 faults and also save cpu time by not using khugepaged.
+>>>>>
+>>>>> A simple micro benchmark which populates 1G memory shows the number of
+>>>>> page faults is reduced by half and the time spent by system is reduced
+>>>>> by 60% on a VM running on Ampere Altra platform.
+>>>>>
+>>>>> And the benchmark for anonymous read fault on 1G memory, file read fault
+>>>>> on 1G file (cold page cache and warm page cache) don't show noticeable
+>>>>> regression.
+>>>>>
+>>>>> Some other architectures also have code inspection in page fault path,
+>>>>> for example, SPARC and x86.
+>>>> Okay, I was about to ask, but is not calling get_user() for all data
+>>>> read page faults increase the cost for a hot code path in general for
+>>>> some potential savings for a very specific use case. Not sure if that
+>>>> is worth the trade-off.
+>>> I tested read fault latency (anonymous read fault and file read fault), I didn't see noticeable regression.
+>> Could you please run a multi threaded application accessing one common
+>> buffer while running these atomic operations. We just need to ensure
+>> that pagefault_disable()-enable() window is not preventing concurrent
+>> page faults and adding access latency to other threads.
+> 
+> I modified page_fault1 test in will-it-scale to make it just generate read fault (the original code generated write fault), and anonymous read fault should be the most sensitive case to this change. Then I ran the test with different number of threads (1 - 160 
+
+Right, only with read data faults i.e (!FAULT_FLAG_WRITE and !FAULT_FLAG_INSTRUCTION)
+code path enters the pagefault_disable/enable() window, but all others will skip it.
+
+because total 160 cores on my test machine), please see the below table (hopefully my email client won't mess it)
+
+Thanks for providing the test results.
+
+> 
+> nr_threads           before                after            +/-
+> 1                      2056996            2048030        -0.4%
+> 20                    17836422          16718606      -6.27%
+> 40                    28536237          27958875      -2.03%
+> 60                    35947854          35236884      -2%
+> 80                    31646632          39209665      +24%
+> 100                  20836142          21017796      +0.9%
+> 120                  20350980          20635603      +1.4%
+> 140                  20041920          19904015      -0.7%
+> 160                  19561908          20264360      +3.6%
+> 
+> Sometimes the after is better than the before, sometimes opposite. There are two outliers, other than them there is not noticeable regression.
+
+This does not look that bad, but will probably let others weigh in.
+
+> 
+> To rule out the worst case, I also ran the test 100 iterations with 160 threads then compared the worst case:
+> 
+>     N           Min           Max        Median           Avg Stddev
+>  100         34770         84979         65536       63537.7 10358.873
+>  100         38077         87652         65536      63119.02 8792.7399
+> 
+> Still no noticeable regression.
+
+I guess to make things better, probably pagefault_enable() could be moved
+before aarch64_insn_is_class_atomic() which might not need page faults to
+be disabled ? Also what about non user mode atomic instructions, causing
+similar scenarios ? Because get_user() will not be able to fetch those. 
+
+> 
+>>
+>>>>> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+>>>>> ---
+>>>>>    arch/arm64/include/asm/insn.h |  1 +
+>>>>>    arch/arm64/mm/fault.c         | 19 +++++++++++++++++++
+>>>>>    2 files changed, 20 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+>>>>> index db1aeacd4cd9..5d5a3fbeecc0 100644
+>>>>> --- a/arch/arm64/include/asm/insn.h
+>>>>> +++ b/arch/arm64/include/asm/insn.h
+>>>>> @@ -319,6 +319,7 @@ static __always_inline u32 aarch64_insn_get_##abbr##_value(void)    \
+>>>>>     * "-" means "don't care"
+>>>>>     */
+>>>>>    __AARCH64_INSN_FUNCS(class_branch_sys,    0x1c000000, 0x14000000)
+>>>>> +__AARCH64_INSN_FUNCS(class_atomic,    0x3b200c00, 0x38200000)
+>>>>>      __AARCH64_INSN_FUNCS(adr,    0x9F000000, 0x10000000)
+>>>>>    __AARCH64_INSN_FUNCS(adrp,    0x9F000000, 0x90000000)
+>>>>> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+>>>>> index 8251e2fea9c7..f7bceedf5ef3 100644
+>>>>> --- a/arch/arm64/mm/fault.c
+>>>>> +++ b/arch/arm64/mm/fault.c
+>>>>> @@ -529,6 +529,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>>>>>        unsigned int mm_flags = FAULT_FLAG_DEFAULT;
+>>>>>        unsigned long addr = untagged_addr(far);
+>>>>>        struct vm_area_struct *vma;
+>>>>> +    unsigned int insn;
+>>>>>          if (kprobe_page_fault(regs, esr))
+>>>>>            return 0;
+>>>>> @@ -586,6 +587,24 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
+>>>>>        if (!vma)
+>>>>>            goto lock_mmap;
+>>>>>    +    if (mm_flags & (FAULT_FLAG_WRITE | FAULT_FLAG_INSTRUCTION))
+>>>>> +        goto continue_fault;
+>>>>> +
+>>>>> +    pagefault_disable();
+>>>>> +
+>>>>> +    if (get_user(insn, (unsigned int __user *) instruction_pointer(regs))) {
+>>>>> +        pagefault_enable();
+>>>>> +        goto continue_fault;
+>>>>> +    }
+>>>>> +
+>>>>> +    if (aarch64_insn_is_class_atomic(insn)) {
+>>>>> +        vm_flags = VM_WRITE;
+>>>>> +        mm_flags |= FAULT_FLAG_WRITE;
+>>>>> +    }
+>>>>> +
+>>>>> +    pagefault_enable();
+>>>>> +
+>>>>> +continue_fault:
+>>>>>        if (!(vma->vm_flags & vm_flags)) {
+>>>>>            vma_end_read(vma);
+>>>>>            goto lock_mmap;
+> 
 
