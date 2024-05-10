@@ -1,143 +1,180 @@
-Return-Path: <linux-kernel+bounces-175086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECBFA8C1A26
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:00:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E12F8C1A2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D66F1F23EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E65B1C23172
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 00:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2551311A1;
-	Fri, 10 May 2024 00:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB4B15BB;
+	Fri, 10 May 2024 00:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b="kBP0G5gd"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RHyJUuvm"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCD412FF9F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2234A7F
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 00:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715299203; cv=none; b=Yju+og341g2IC2ASSSWsnFMD2jqcs+jy+voWie0drhKYCL6sag4yLc4C7zh/+9BFK621l21dCeCEfzbCwFN45aWnv29d3W56TAGKgo+uoppxeeQfat53hnmb+JEA2c+d//EnnjIfCNY7ws0DDdRcTg7k6OycB+J2aD/okJF9cjM=
+	t=1715299322; cv=none; b=or0qay+iHYgEYtkUNGKth2waAvfBj2fHPNc/SdMe1FHloNfyrhB75WUJ4BAL/NLsvHP5JsK720hfyViXGNTRLaf9wqNv6e/anarWmo4LxJTX4QvmiwmE1j8yHR7vumvcooOwfI9C7kthjuEqVzcjwEgOdzZlbwi4q5r6LEq5Xd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715299203; c=relaxed/simple;
-	bh=n7znReOatkTCp/ojgNhGLxLQ8+ymQ1YvCj4wgmT2e+E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NWG7z0jI3peiq74gutxfg2tfFvJ7qMMvC/FXXaY3VATm832hbrki87zReCnWpp1lazkI71jFkDKNAZCH3c40EleGeJS5TYX8FnaSpmuOJ/vEOy1Q3kJwwu1BgoAHU0J+RXBDy75NhDiqg6nITmhBoA83g2gAIGT2HObxCsCxqxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie; spf=none smtp.mailfrom=nexus-software.ie; dkim=pass (2048-bit key) header.d=nexus-software-ie.20230601.gappssmtp.com header.i=@nexus-software-ie.20230601.gappssmtp.com header.b=kBP0G5gd; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexus-software.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nexus-software.ie
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41c7ac71996so10161765e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:00:00 -0700 (PDT)
+	s=arc-20240116; t=1715299322; c=relaxed/simple;
+	bh=OlAITSwVfVGwfbVP8ZkkJm+w/eV7SN9Ioh/iFkWSAaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pJmXJxyKAh/kwlXP/Pr8WkUBEcOzX8LmUdQSZu/Y/cqaC5nvXdEOt+nIn8hxSkH/Wcfvxxk3KkuLsW3B2hIHV8m/e9B/fjuEtDa/v7iG9LmzjOaSau7mCX3I2MASjU6wVb0HSFhSquUw+ioikFE2XEXUm83qBbJ09ksNaQKUtls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RHyJUuvm; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-de462f3d992so1539573276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 17:02:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20230601.gappssmtp.com; s=20230601; t=1715299199; x=1715903999; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ac8m1lg1I0T289VUpecDSdF94afPIFuxyWL4V464XBs=;
-        b=kBP0G5gdJmNzUc/OcxOB4V6kXjisAnOfrnJOY14xnFeEecyO4Ykp95nY+sgd4oHYVJ
-         JrSrv+KrdHueN0BengHG8VA3gGWPntC8HmzO4xU5yDYSmdcCa1wZhyA6GxCjNvYcuYX9
-         wQn74Iwq2ezNknWTY/z5y8ry7itm0e5byxAiD8vyuBUJOONVxqc7CyC8D03IXy7pizWW
-         vzoP41teAH1rznHA8X197U6S6UU+m8vK44BPfpyCCZa1luiWK7sOR1x27vpDqtRpRV74
-         XyCqFnGIXGsAUqKETMvJqJSU827Jm7Nc71lDEHVc8ByN/Q68joSr4AejnG4/aOz81VI9
-         Owsw==
+        d=paul-moore.com; s=google; t=1715299320; x=1715904120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5CcBKlmciLpmvNHCsy7hLP5Lu9KrCDmkSJsbPPcO9nI=;
+        b=RHyJUuvmxgglJQt5oHNUcyONhDWEl6fVIoRo9ze3BIK0bxoPSX3p6y3vYELmNBovaj
+         NiKh+6ugldjcpeQueoy9x5bAbZvo2bYQ2c6ROjHNkk1dTejagIqDhWTLJ14NwJKNnZcl
+         nJUX36m6Kh8j+0BHepT0wftrVmrX4OuoCdPdg9grI4AOejIgBytvZxhcVr18GOQHPH2X
+         +O0/V/rRE2WG9+Lv9FR7N3tR0PQ19VcjBEgqEFQHRb9xW6h+Ls5GPaXz5KygLHsx4Ok3
+         K7j2v1kaJdK2UEpV6FW8tue/ENkdrhJv85JILwtr2Pwf1VjDg6mSxhFZKWVjx+MHkMls
+         kkFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715299199; x=1715903999;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ac8m1lg1I0T289VUpecDSdF94afPIFuxyWL4V464XBs=;
-        b=Wo2uvHC0BPeuWs9pQ1RVVmwY8N1vriEuhoLd4UhnYWCGpgZchJko4gqFEB5V9TxCrq
-         XvfBgB/MK0odfQsiAEIL2NH+EYeH8QUgcCfX4p4oV0o5tkE80cyd375vWsCoJENSQH5f
-         WdkGWjP8E18pg6fBRRB1Rd7dW9hOq/8pa5WJEsVMbE4fzarGAysveUemohBQmmfYG0bb
-         7Eu27QXpJJsGexNwMyhFTm50ILjmIzly5UBoI4rgWrjPrY5SNpcS2J0ne2VK72D5bCIT
-         gerbRh/or8jXE2VZXikGKzZcBdKchqfU8nrac5q+qQJ1UDrxLoLiHaIuMgWySFObULM1
-         QBzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLA3Alj0as1dSqiRF+z3utQW3Tb63UflvYuUUIfyRkuuEg/sAQFMKZbZDuBOL9kzvtAHL3M4KufyuHSPNmU3Qy/7ih971SvZXfTQnt
-X-Gm-Message-State: AOJu0YwbywgerTrdbhfLP4wQfIRyf1d23ShpLwdn7zClySy5ygDjda7C
-	aCr3cMwv8b7abCTOO4BLjVaFJxsRQ8bPhp/kepgExR+2bnMtvdbkfloAXS9S6SU=
-X-Google-Smtp-Source: AGHT+IG2PSyqS+bqV1WZloHrOnS1oEGY7MOpk1/VDvcVVtKw/Iui2AjmDMB4m7sMKJweAG7DjovZSg==
-X-Received: by 2002:a05:600c:35c2:b0:41b:cb18:e24b with SMTP id 5b1f17b1804b1-41feaa39167mr8110355e9.9.1715299199008;
-        Thu, 09 May 2024 16:59:59 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f86e7e340sm77518495e9.0.2024.05.09.16.59.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 16:59:58 -0700 (PDT)
-Message-ID: <43fec2ec-7192-4b2d-9af5-2073be1da3d1@nexus-software.ie>
-Date: Fri, 10 May 2024 00:59:56 +0100
+        d=1e100.net; s=20230601; t=1715299320; x=1715904120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5CcBKlmciLpmvNHCsy7hLP5Lu9KrCDmkSJsbPPcO9nI=;
+        b=LaG95QIbwJ1a6AjxiH7lPSOe0+gXAPQcA7DXi8gncBe9h9aAMuNp4araI8/yRAzyn/
+         N7chBWXc84z+B5pWIS4uJJWKKqkgj92PtWtKCOyFhoPBL1Kfy2IyeZIfpfYaXEZBW4AC
+         uivabvR3drrMP4xrV1OMc4NxbZ1pNgqeSfoFskqy43UktklCsbupxeYMlJK8J4sBUY/m
+         ZTgZfbj/EwmIqxuYb34hg6aFT7YaeP3623rKZi0kb6xO/DC8OJlj0E4qhNcPgm05kLmk
+         Qx0N/TjkWl40J/dYi9KpnLssv49n5rPmratmOzgWWtBYjVH3P+igyzufat5sOjkC4dCb
+         084w==
+X-Forwarded-Encrypted: i=1; AJvYcCUqrmOhgOnHeav92ZmMzvmkJv35obC1KvqdgzvjEu+YnOUZDnPCRWqG6A3+vm3vVJvmPQhREdw2EcS+C/IZDbjfqWMKjoEZyTP3ui/B
+X-Gm-Message-State: AOJu0YwM5gccnmEBy7ufU3iRNmkUchJF2ep0JbiL4nq2ZypaoL3G84Tv
+	UKV2R4h20gAutVtPBAEeQsW6i43dSgDUvt77uZ+cw7/wfeNTSbPGTeKSjwCJL6B0uPGY+H7qhUN
+	oZnLsojfJuKR053n1CdnBSdJBIrcHU4J9hatLgXVUrnbvtQ4nFQ==
+X-Google-Smtp-Source: AGHT+IE18PXcU1Zk0HonLutuj4iXiCiY3rmdMI/HJHdA3NXYauV2mPvHIlo4wNvQLCqg/6HjtJ/weA7nVqy+dwfsn5k=
+X-Received: by 2002:a25:8109:0:b0:dcd:3663:b5e5 with SMTP id
+ 3f1490d57ef6-dee4f2e38eemr984971276.25.1715299320168; Thu, 09 May 2024
+ 17:02:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/18] media: venus: Refactor
- hfi_session_empty_buffer_compressed_pkt
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Andy Walls <awalls@md.metrocast.net>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-References: <20240507-cocci-flexarray-v2-0-7aea262cf065@chromium.org>
- <20240507-cocci-flexarray-v2-15-7aea262cf065@chromium.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <pure.logic@nexus-software.ie>
-In-Reply-To: <20240507-cocci-flexarray-v2-15-7aea262cf065@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <00000000000076ba3b0617f65cc8@google.com>
+In-Reply-To: <00000000000076ba3b0617f65cc8@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 9 May 2024 20:01:49 -0400
+Message-ID: <CAHC9VhSmbAY8gX=Mh2OT-dkQt+W3xaa9q9LVWkP9q8pnMh+E_w@mail.gmail.com>
+Subject: Re: [syzbot] [lsm?] general protection fault in hook_inode_free_security
+To: syzbot <syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com>
+Cc: jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, mic@digikod.net, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/05/2024 17:27, Ricardo Ribalda wrote:
-> The single element array data[1] is never used. Replace it with a
-> padding field of the same size.
-> 
-> This fixes the following cocci warning:
-> drivers/media/platform/qcom/venus/hfi_cmds.h:146:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->   drivers/media/platform/qcom/venus/hfi_cmds.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> index 15271b3f2b49..02e9a073d0c1 100644
-> --- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-> +++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-> @@ -143,7 +143,7 @@ struct hfi_session_empty_buffer_compressed_pkt {
->   	u32 input_tag;
->   	u32 packet_buffer;
->   	u32 extradata_buffer;
-> -	u32 data[1];
-> +	u32 padding;
->   };
->   
->   struct hfi_session_empty_buffer_uncompressed_plane0_pkt {
-> 
+On Wed, May 8, 2024 at 3:32=E2=80=AFPM syzbot
+<syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.ker=
+n..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D14a4676098000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D6d14c12b661fb=
+43
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D5446fbf332b0602=
+ede0b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/39d66018d8ad/dis=
+k-dccb07f2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/c160b651d1bc/vmlinu=
+x-dccb07f2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3662a33ac713/b=
+zImage-dccb07f2.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+5446fbf332b0602ede0b@syzkaller.appspotmail.com
+>
+> general protection fault, probably for non-canonical address 0xdffffc018f=
+62f515: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> KASAN: probably user-memory-access in range [0x0000000c7b17a8a8-0x0000000=
+c7b17a8af]
+> CPU: 1 PID: 5102 Comm: syz-executor.1 Not tainted 6.9.0-rc7-syzkaller-000=
+12-gdccb07f2914c #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 04/02/2024
+> RIP: 0010:hook_inode_free_security+0x5b/0xb0 security/landlock/fs.c:1047
 
-Same comment as previous patch.
+Possibly a Landlock issue, Micka=C3=ABl?
 
-`data` is what we use in this driver's namespace not padding and the 
-protocol structures enumerate the content of the payload as data not 
-padding.
+> Code: 8a fd 48 8b 1b 48 c7 c0 c4 4e d5 8d 48 c1 e8 03 42 0f b6 04 30 84 c=
+0 75 3e 48 63 05 33 59 65 09 48 01 c3 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00=
+ 74 08 48 89 df e8 66 be 8a fd 48 83 3b 00 75 0d e8
+> RSP: 0018:ffffc9000307f9a8 EFLAGS: 00010212
+> RAX: 000000018f62f515 RBX: 0000000c7b17a8a8 RCX: ffff888027668000
+> RDX: 0000000000000000 RSI: 0000000000000040 RDI: ffff88805c0bb270
+> RBP: ffffffff8c01fb00 R08: ffffffff82132a15 R09: 1ffff1100b81765f
+> R10: dffffc0000000000 R11: ffffffff846ff540 R12: dffffc0000000000
+> R13: 1ffff1100b817683 R14: dffffc0000000000 R15: dffffc0000000000
+> FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f43c42de000 CR3: 00000000635f8000 CR4: 0000000000350ef0
+> Call Trace:
+>  <TASK>
+>  security_inode_free+0x4a/0xd0 security/security.c:1613
+>  __destroy_inode+0x2d9/0x650 fs/inode.c:286
+>  destroy_inode fs/inode.c:309 [inline]
+>  evict+0x521/0x630 fs/inode.c:682
+>  dispose_list fs/inode.c:700 [inline]
+>  evict_inodes+0x5f9/0x690 fs/inode.c:750
+>  generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+>  kill_block_super+0x44/0x90 fs/super.c:1675
+>  deactivate_locked_super+0xc6/0x130 fs/super.c:472
+>  cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+>  task_work_run+0x251/0x310 kernel/task_work.c:180
+>  exit_task_work include/linux/task_work.h:38 [inline]
+>  do_exit+0xa1b/0x27e0 kernel/exit.c:878
+>  do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+>  __do_sys_exit_group kernel/exit.c:1038 [inline]
+>  __se_sys_exit_group kernel/exit.c:1036 [inline]
+>  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1036
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f731567dd69
+> Code: Unable to access opcode bytes at 0x7f731567dd3f.
+> RSP: 002b:00007fff4f0804d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+> RAX: ffffffffffffffda RBX: 00007f73156c93a3 RCX: 00007f731567dd69
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000002 R08: 00007fff4f07e277 R09: 00007fff4f081790
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff4f081790
+> R13: 00007f73156c937e R14: 00000000000154d0 R15: 000000000000001e
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
 
-u32 data;
-
-Then
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
----
-bod
+--=20
+paul-moore.com
 
