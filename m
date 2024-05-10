@@ -1,133 +1,109 @@
-Return-Path: <linux-kernel+bounces-175669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988588C2373
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:31:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566E18C237A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19160B2456E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CEF71F25B7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E1E178CEE;
-	Fri, 10 May 2024 11:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D52171651;
+	Fri, 10 May 2024 11:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="esPKBCkP"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lFxZj0gs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2F1171E7D
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B1217B4E7;
+	Fri, 10 May 2024 11:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340462; cv=none; b=dHjS8CoY1kR3jOCdfmZEZyz2l0ux5RbOktDqEiGaGqAG6T3M2yEGjQC0IrB2VVIMyj4kSflLJTx6ELrSI+bjvYI6G/dFMF+4swYl0HIp94kmv4NcDBe4WMIxHYdL1A2p5LBvW5DBcOFR3t8OABMwmdJ6nQQ9O6/0ap96dvJpvqw=
+	t=1715340472; cv=none; b=A40xmWMdt8JNVktvU49sGgB9qDEHw0xf/vwe8bL14sABSoaDUWMeCtnnASo2tz235JFWeJnEVTtLGPHDFn3EoMNc2pvQsqnOOssA9MrXPtazHG6oTbb+R0+y7a65QCrhxS121EA0/4dBFsi/6WCTJV0RXFJs+OZezaMSJye7DZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340462; c=relaxed/simple;
-	bh=zNXwSOWeBMueOtABnUo69wqjco2rwqNtJ/nGjlKDC3g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nwHQ/C+1a3cDvSlBpB+hXInUMCM+6wWLfK16ctabwBUsLmAw+lMZO+i1kCrqLb5qM3iHSDLM88voQBQrm35Wo76coLl9u+zeS1G7sJ7a0F9L/x8F/B3ZEPo1EEbUDEUgq9R/UMxC73HF9bDx7LozAcGvi4sgMwni1tkW9glMB2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=esPKBCkP; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59b81d087aso474980966b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 04:27:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715340458; x=1715945258; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zNXwSOWeBMueOtABnUo69wqjco2rwqNtJ/nGjlKDC3g=;
-        b=esPKBCkP7bBK7iPHa/ipNqAmhGzxdtQaZC9mLpj2zYIyTClXdxfgcBX8gRK5mRc1qt
-         xmTcu9T7Ip+xWL8I5FPoNVvnxv4bXzLfFKqqZgPG0N9L36a85vuTLAtmC5R40i3DOTk7
-         jEki5Les6qHJZlFdONe/8r7esYGgqHWrIGYIX2RSmQ22WbdEaSGIUDr2oB3kiahHowfd
-         /XsdHSb4z9s1iYf13qZK8AIPsys5NzMb/ZEPuq00sJdaeaZPbOZenJeQoK2cPw/ki+rR
-         79zGzHLpz0R0cSdOd3Eh3TOf6+YQ9droAkmB4BBubg1agX9gM7sIn/2drvoNSJQNcVw/
-         7P4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715340458; x=1715945258;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNXwSOWeBMueOtABnUo69wqjco2rwqNtJ/nGjlKDC3g=;
-        b=H4dmbWsJu92DJ2I8VVdY2lsh9rv44xlsv55VR33YSmXsglUD/yZPuVYpwPAObT9H9I
-         ytIrTh8OZoqTuoc1A09c3kwtTtx09yLdvT6QbH/VvwWxnjWehXRipPA/tYN8o6waOXd/
-         1sfbHZOK/j7Y5GFURruU5Xxadglakxqn0P5iGj/kBXXFJKW8b2RxRvPyBLiVX2KxM6KZ
-         HbBrKR633xuWtOjYFoH2vncp9jwFfFHqNu0XzBlBt4uK8g9SLIXRL6H4KmH473ngCBMk
-         IMSZ/rFN5zh+oN+HGmQflobwNdlXzQiXoXPc0Cz6pRfaksLiogeOsJ7Vls7AZmDMBlm1
-         +qQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkJKXWv9rbYhmOMbvLhq9Yefw7Mzw27m2VQfATwTSORS8QNFyDctrE8IrkMKhJ+ns6/2qJJPdJuqlZuBiG54kwKSU19Dn9U3FuS4/C
-X-Gm-Message-State: AOJu0YxiRmCH9gowwtZNdDD8iP+YnZnX4tGygpBKIdMRwAxewQltDfw1
-	XFH/Xxju4B4hs2bo1PYla5asfLv9ZFdzGbNwPIiDF2l5Uef6YAXYyOoeetsVmjU=
-X-Google-Smtp-Source: AGHT+IGWH9NtKldOHxG5Jn85QZLrAtp/ZGMY4ac6yPg5kx3Hs4lPh9R3ZW28bnofErwGNFhMNfHAYA==
-X-Received: by 2002:a50:d583:0:b0:572:637b:c7e1 with SMTP id 4fb4d7f45d1cf-5734d5f48b1mr2421443a12.21.1715340458312;
-        Fri, 10 May 2024 04:27:38 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873c:a500:6aaf:b7a7:7c29:ae5c? (p200300e5873ca5006aafb7a77c29ae5c.dip0.t-ipconnect.de. [2003:e5:873c:a500:6aaf:b7a7:7c29:ae5c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bea651asm1706341a12.11.2024.05.10.04.27.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 04:27:38 -0700 (PDT)
-Message-ID: <0aac68ac-cf40-4c3d-ac02-95b9a37aaa11@suse.com>
-Date: Fri, 10 May 2024 13:27:37 +0200
+	s=arc-20240116; t=1715340472; c=relaxed/simple;
+	bh=aANSSUvUc/Jg9oLoo6P63WSiKIet7EGu6f4hUvfSXkc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HDd8/+IneUM4rL2UsuiHyDPCSj+3+AZZ9vyGG5/risFotMbJNEuxPJytJ3NQ3OvcT1IpwkBrxwms9ZoS6ACLvAGkTkgUwRfz/Wm9ODaaqXJW1bAVeSLheJEr3CkdUEiXv5VL3FPucaWx1cMK59+6intjjwAHxcuABKBGvLn4v8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lFxZj0gs; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715340471; x=1746876471;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=aANSSUvUc/Jg9oLoo6P63WSiKIet7EGu6f4hUvfSXkc=;
+  b=lFxZj0gsf6Y47TFCYEtL3suuFDOys1ZWWm5mWJ29+SlR8HIo5SYRQU09
+   YxAkJPAXPgitXZRkuMLl/4+6hCavD6gIE8tkycBbOih63N/UeFtsMKM2D
+   KdkDLrenEKlB50nmbq36jm/nCI2hG6YaE3g9oENYDGuj+8NbId3XEYw+0
+   bjTb6EAfU0mweFdvk574dBmIRQelqd0f+v06vrYEIYq3pnEH9efkZSdRj
+   kFP2uy6MSZ4BkatGNT0+cnlb6fhwUfAfpySoFodp5+pS6Zyg1b9KqFNxQ
+   83h3Pp3W0BwbxDTT2SnuzzkSXQwhsMSyIkJ0p2TPLlmjQrZCd6HNRfWvb
+   g==;
+X-CSE-ConnectionGUID: 8TCUo9LcS6Ok58H38oiw4w==
+X-CSE-MsgGUID: CuwhhOSASpi8RLEc5W108Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="21988053"
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="21988053"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 04:27:50 -0700
+X-CSE-ConnectionGUID: ocveNKGZTIqcD+m/mfZGtg==
+X-CSE-MsgGUID: NlwU2s0wTVeIuf/ciOKKlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="29543350"
+Received: from ettammin-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.180])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 04:27:41 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ chunfeng.yun@mediatek.com, vkoul@kernel.org, kishon@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ jitao.shi@mediatek.com, mac.shen@mediatek.com, liankun.yang@mediatek.com,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Subject: Re: [PATCH v2 0/2] Add PHY-dp bindings
+In-Reply-To: <20240510110523.12524-1-liankun.yang@mediatek.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240510110523.12524-1-liankun.yang@mediatek.com>
+Date: Fri, 10 May 2024 14:27:38 +0300
+Message-ID: <87frupj49h.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC KERNEL PATCH v6 3/3] xen/privcmd: Add new syscall to get gsi
- from irq
-To: "Chen, Jiqian" <Jiqian.Chen@amd.com>
-Cc: Stefano Stabellini <sstabellini@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, "Rafael J . Wysocki"
- <rafael@kernel.org>, =?UTF-8?Q?Roger_Pau_Monn=C3=A9?=
- <roger.pau@citrix.com>,
- "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "Huang, Ray" <Ray.Huang@amd.com>
-References: <20240419033616.607889-1-Jiqian.Chen@amd.com>
- <20240419033616.607889-4-Jiqian.Chen@amd.com>
- <79666084-fc2f-4637-8f0b-3846285601b8@suse.com>
- <BL1PR12MB58493D17E23751A06FC931DDE7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
- <c30ebad2-1ad3-4b58-afaf-e6dc32c091fc@suse.com>
- <BL1PR12MB58491D2210091DF9607A354AE7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
- <d0b5e7d5-3503-49be-9fa3-4b79c62059ca@suse.com>
- <BL1PR12MB5849F1DE8B4A3538C79CE5D3E7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-In-Reply-To: <BL1PR12MB5849F1DE8B4A3538C79CE5D3E7E72@BL1PR12MB5849.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 10.05.24 12:32, Chen, Jiqian wrote:
-> On 2024/5/10 18:21, Jürgen Groß wrote:
->> On 10.05.24 12:13, Chen, Jiqian wrote:
->>> On 2024/5/10 17:53, Jürgen Groß wrote:
->>>> On 10.05.24 11:06, Chen, Jiqian wrote:
->>>>> Hi,
->>>>>
->>>>> On 2024/5/10 14:46, Jürgen Groß wrote:
->>>>>> On 19.04.24 05:36, Jiqian Chen wrote:
->>>>>>> +
->>>>>>> +    info->type = IRQT_PIRQ;
->>>>> I am considering whether I need to use a new type(like IRQT_GSI) here to distinguish with IRQT_PIRQ, because function restore_pirqs will process all IRQT_PIRQ.
->>>>
->>>> restore_pirqs() already considers gsi == 0 to be not GSI related. Isn't this
->>>> enough?
->>> No, it is not enough.
->>> xen_pvh_add_gsi_irq_map adds the mapping of gsi and irq, but the value of gsi is not 0,
->>> once restore_pirqs is called, it will do PHYSDEVOP_map_pirq for that gsi, but in pvh dom0, we shouldn't do PHYSDEVOP_map_pirq.
->>
->> Okay, then add a new flag to info->u.pirq.flags for that purpose?
-> I feel like adding "new flag to info->u.pirq.flags" is not as good as adding " new type to info->type".
-> Because in restore_pirqs, it considers " info->type != IRQT_PIRQ", if adding " new flag to info->u.pirq.flags", we need to add a new condition in restore_pirqs.
-> And actually this mapping(gsi and irq of pvh) doesn't have pirq, so it is not suitable to add to u.pirq.flags.
+On Fri, 10 May 2024, Liankun Yang <liankun.yang@mediatek.com> wrote:
+> Update write DP phyd register and add phy-dp bindings.
+>
+> Liankun Yang (2):
+>   Add write DP phyd register from parse dts
+>   Add dp PHY dt-bindings
 
-Does this mean there is no other IRQT_PIRQ related activity relevant for those
-GSIs/IRQs? In that case I agree to add IRQT_GSI.
+Please use the proper subject prefix for the driver. git log suggests
+"phy: phy-mtk-dp:".
+
+Thanks,
+Jani.
 
 
-Juergen
+>
+>  .../display/mediatek/mediatek.phy-dp.yaml     | 45 +++++++++++++++++++
+>  drivers/phy/mediatek/phy-mtk-dp.c             | 37 +++++++++++++++
+>  2 files changed, 82 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek.phy-dp.yaml
+
+-- 
+Jani Nikula, Intel
 
