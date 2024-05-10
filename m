@@ -1,216 +1,134 @@
-Return-Path: <linux-kernel+bounces-175910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955368C2702
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:37:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A56918C2703
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E531D2869DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:37:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F96F281092
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AA21708B5;
-	Fri, 10 May 2024 14:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8B1708B1;
+	Fri, 10 May 2024 14:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZYCSRI7v"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4R96vW7N"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF412C526;
-	Fri, 10 May 2024 14:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A3714B08C
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351856; cv=none; b=MUzpAFqgd+R7Msxwr+wW2thWyF47Fg6F61Hb+pNZbVctxG7Vt54t47vwbbv1DSZ/GA63ghQfclGOMEdXESTYlcitgcr9J3KOIn5qrm3EyS3PFuHsqNdv6swn6q0AgBug9MT6SY0v9S8S+00QVPH7qgBH6D4tWTOluAdwSG6XRlA=
+	t=1715351957; cv=none; b=Xvr7UkgEFdij6cup+Q08WwtHC3lqdQzW0Mg4JNr4EnzJmALf/HrwKFiBuwLocdFRBN7vpkKEpLzK5s5842mAsR2GXRkfzmDfd5YlGXK92bjIyS7VENIKmGKP1WmmDmJLn12AKix/4UF2nj3oFCl6ZFczwTDC+0agWSTTGRLjsck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351856; c=relaxed/simple;
-	bh=Rs8unjHuGUxifVY/9+LC+KIT6hLlUWyGTvZnyD5tKSI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ioGODtkzXU5uiO9h5ZkU8Nx66tIUQQivomZ0aC2dszG/XYW2laIUhFSJl3HdMdiWbWihR3ehC7J64DsjbECaX8pnuyCCw2U2n1qiz6yVr7OWbFyNZYDiFyKBTAYsIkOGQgulnGvcvc8oy4dFbNjOsbX79Vln4m5PYRl7JKe2tbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZYCSRI7v; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: lukma@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 36EF688122;
-	Fri, 10 May 2024 16:37:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1715351846;
-	bh=jOpOKeXB26MZGG5tc6iWhny1B4Ybi73lxsddx0Swstw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZYCSRI7vYaB9EJXXMJidQqjnmSwNoVkIWGX4FrOSw/9Re8XKPS0fZTBUMumBo/BdT
-	 JRGLaqKHk30YJZBbsU1veZ4D7yeJwn4AGPqLSlADSbKED+7L765V7aoaMP//g5dkmw
-	 UhavJevqRi+k4JszuQEWCS5oPf8IuxJhVgnQvmzc27QrmKdJCOHil92PqC0pd48hnL
-	 acAagRV3kTW1V7vL86Fh30wRxcjO0/eyr7myB4EjBye5MEafwP7dqQXcqNxGy1bMqj
-	 RyQx7GJOmlU8RsYhQGnj3lL1a4YwxHwLCM99zPGFYA/9BZth6FoRMOjCp/5bqM+5LZ
-	 pdIXc9cMimREA==
-From: Lukasz Majewski <lukma@denx.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Eric Dumazet <edumazet@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Casper Andersson <casper.casan@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Lukasz Majewski <lukma@denx.de>
-Subject: [net-next PATCH] test: hsr: Extend the hsr_redbox.sh to have more SAN devices connected
-Date: Fri, 10 May 2024 16:37:10 +0200
-Message-Id: <20240510143710.3916631-1-lukma@denx.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715351957; c=relaxed/simple;
+	bh=2w9De7V5jOfTq8rH1l9a1Xsc541rGrm7F/L+4BdzLqw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eqsoXkLtd9ii6mR+GDxmrx79YdSxPZHBbjkD19KOi+fGVC3Z2SXok8KambjmdEZhpA16nVjYtZTw2gGdOPhnRiIkgnGW/AoT2fHOfP4UZS99d5JAPEisA5y2/qonL2xF8lnptqvStmlPxNvFbyRVTEaxOpLjdyRng4H/cO6XmLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4R96vW7N; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2b38f3e2919so2499622a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:39:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715351956; x=1715956756; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKy0hWUxkHzFjSEjyTqN35P4DeSOXD6rseF0af2cPcA=;
+        b=4R96vW7N54aIW9Yb0dziMr+i6W3KFdPC8+UVYhim7167BnmAT8iXdWsZJGvsH9mtNJ
+         EyV0GQIC4gKMeOnZ3z9X2F3buOTQc7spaCR3a1UJraa7bl9fzrVO8XFy5Lsr+xYz49Vx
+         AIVzHxtc1mbfBTzQeUsZWcyM73Sv+mBMyJ/w1bOASMF9n85UkIqed9ZxPzIMDJ856xwf
+         XeirRXaz8MHj0wsIi00z6uJwRsuFFgwlW8adYCp+3d7RIQYgXlUVgPoVE24ZtPBL0e9F
+         vLYpEvc4RLZ7aU9Crc0tWPDKoGSRi0+hmppRzQ/p5Uaqdff3Fg/oMMDKnKLFNoOjsZTS
+         342w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715351956; x=1715956756;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKy0hWUxkHzFjSEjyTqN35P4DeSOXD6rseF0af2cPcA=;
+        b=RzQJxCvlI5msN0N1jz6AAax18GFV7lvAsGytRaH2CxVRpYG+MrLKTJ1nX+LwFib/mw
+         0FdzQPVwRYuRl51pffU2hVgIzLR2GGiwAKSgxpHO61HMtavbSMIg7FRQtlpJ01Ex0vyn
+         LCa9sQ2bp3b8U+wFSPIIrjJsbaalIyihU6l6GBnkxBkooBCqURfscjrq1yb8DVq7CEor
+         CXtI+az6Dxr9cDGE7PSvHRxxNgPxxYGwUi+0CeNiTrPxiBsrrnX3c0e5EcFpO3gpMjrU
+         3QqL+clAkcVc+JsNE/N5pHc6SZiCD8DqQKyontkPKR2N7igfJC13Pa3XadrSjiLMSnT8
+         Ujcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXED+TW/UeyiedeuLALkhCQ/jfuZk2IEQy7Uxjn7AXZ8AbVCOxBxAg8Rgw7W7zVkINxpoGNQAZS3VtPnHpUCq0p671MfppnsyfOLYvU
+X-Gm-Message-State: AOJu0Yw14SIE9K0wYc2pUoGndKec3ZNQuK2Jp1IDEnnob0FKUwz7kxbd
+	KHyzOS2gwbUUsDg9EeHtZqIeuo8uKNHe1hnuEIchrJmvfAGhbYX+Xkc22tySe6CUi+m9zXb1rdH
+	jWg==
+X-Google-Smtp-Source: AGHT+IGZeVKNIE9bJ4O0rd5TeJRSNjyTsYan7QSvYjPkqaIu/3O25cixtXLnzCOJSyWTprQTMx7K6kjXyfo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90b:30c5:b0:2b2:1919:dda4 with SMTP id
+ 98e67ed59e1d1-2b6c75cf00amr30981a91.4.1715351955569; Fri, 10 May 2024
+ 07:39:15 -0700 (PDT)
+Date: Fri, 10 May 2024 07:39:14 -0700
+In-Reply-To: <Zj3ksShWaFSWstii@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Mime-Version: 1.0
+References: <20240509090146.146153-1-leitao@debian.org> <Zjz9CLAIxRXlWe0F@google.com>
+ <Zj3ksShWaFSWstii@gmail.com>
+Message-ID: <Zj4xkoMZh8zJdKyq@google.com>
+Subject: Re: [PATCH] KVM: Addressing a possible race in kvm_vcpu_on_spin:
+From: Sean Christopherson <seanjc@google.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, rbc@meta.com, paulmck@kernel.org, 
+	"open list:KERNEL VIRTUAL MACHINE (KVM)" <kvm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-After this change the single SAN device (ns3eth1) is now replaced with
-two SAN devices - respectively ns4eth1 and ns5eth1.
+On Fri, May 10, 2024, Breno Leitao wrote:
+> > IMO, reworking it to be like this is more straightforward:
+> > 
+> > 	int nr_vcpus, start, i, idx, yielded;
+> > 	struct kvm *kvm = me->kvm;
+> > 	struct kvm_vcpu *vcpu;
+> > 	int try = 3;
+> > 
+> > 	nr_vcpus = atomic_read(&kvm->online_vcpus);
+> > 	if (nr_vcpus < 2)
+> > 		return;
+> > 
+> > 	/* Pairs with the smp_wmb() in kvm_vm_ioctl_create_vcpu(). */
+> > 	smp_rmb();
+> 
+> Why do you need this now? Isn't the RCU read lock in xa_load() enough?
 
-It is possible to extend this script to have more SAN devices connected
-by adding them to ns3br1 bridge.
+No.  RCU read lock doesn't suffice, because on kernels without PREEMPT_COUNT
+rcu_read_lock() may be a literal nop.  There may be a _compiler_ barrier, but
+smp_rmb() requires more than a compiler barrier on many architectures.
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
- tools/testing/selftests/net/hsr/hsr_redbox.sh | 71 +++++++++++++------
- 1 file changed, 49 insertions(+), 22 deletions(-)
+And just as importantly, KVM shouldn't be relying on the inner details of other
+code without a hard guarantee of that behavior.  E.g. KVM does rely on
+srcu_read_unlock() to provide a full memory barrier, but KVM does so through an
+"official" API, smp_mb__after_srcu_read_unlock().
 
-diff --git a/tools/testing/selftests/net/hsr/hsr_redbox.sh b/tools/testing/selftests/net/hsr/hsr_redbox.sh
-index db69be95ecb3..1f36785347c0 100755
---- a/tools/testing/selftests/net/hsr/hsr_redbox.sh
-+++ b/tools/testing/selftests/net/hsr/hsr_redbox.sh
-@@ -8,12 +8,19 @@ source ./hsr_common.sh
- do_complete_ping_test()
- {
- 	echo "INFO: Initial validation ping (HSR-SAN/RedBox)."
--	# Each node has to be able each one.
-+	# Each node has to be able to reach each one.
- 	do_ping "${ns1}" 100.64.0.2
- 	do_ping "${ns2}" 100.64.0.1
--	# Ping from SAN to hsr1 (via hsr2)
-+	# Ping between SANs (test bridge)
-+	do_ping "${ns4}" 100.64.0.51
-+	do_ping "${ns5}" 100.64.0.41
-+	# Ping from SANs to hsr1 (via hsr2) (and opposite)
- 	do_ping "${ns3}" 100.64.0.1
- 	do_ping "${ns1}" 100.64.0.3
-+	do_ping "${ns1}" 100.64.0.41
-+	do_ping "${ns4}" 100.64.0.1
-+	do_ping "${ns1}" 100.64.0.51
-+	do_ping "${ns5}" 100.64.0.1
- 	stop_if_error "Initial validation failed."
- 
- 	# Wait for MGNT HSR frames being received and nodes being
-@@ -23,8 +30,12 @@ do_complete_ping_test()
- 	echo "INFO: Longer ping test (HSR-SAN/RedBox)."
- 	# Ping from SAN to hsr1 (via hsr2)
- 	do_ping_long "${ns3}" 100.64.0.1
--	# Ping from hsr1 (via hsr2) to SAN
-+	# Ping from hsr1 (via hsr2) to SANs (and opposite)
- 	do_ping_long "${ns1}" 100.64.0.3
-+	do_ping_long "${ns1}" 100.64.0.41
-+	do_ping_long "${ns4}" 100.64.0.1
-+	do_ping_long "${ns1}" 100.64.0.51
-+	do_ping_long "${ns5}" 100.64.0.1
- 	stop_if_error "Longer ping test failed."
- 
- 	echo "INFO: All good."
-@@ -35,22 +46,26 @@ setup_hsr_interfaces()
- 	local HSRv="$1"
- 
- 	echo "INFO: preparing interfaces for HSRv${HSRv} (HSR-SAN/RedBox)."
--
--#       |NS1                     |
--#       |                        |
--#       |    /-- hsr1 --\        |
--#       | ns1eth1     ns1eth2    |
--#       |------------------------|
--#            |            |
--#            |            |
--#            |            |
--#       |------------------------|        |-----------|
--#       | ns2eth1     ns2eth2    |        |           |
--#       |    \-- hsr2 --/        |        |           |
--#       |            \           |        |           |
--#       |             ns2eth3    |--------| ns3eth1   |
--#       |             (interlink)|        |           |
--#       |NS2 (RedBOX)            |        |NS3 (SAN)  |
-+#
-+# IPv4 addresses (100.64.X.Y/24), and [X.Y] is presented on below diagram:
-+#
-+#
-+# |NS1                     |               |NS4                |
-+# |       [0.1]            |               |                   |
-+# |    /-- hsr1 --\        |               |    [0.41]         |
-+# | ns1eth1     ns1eth2    |               |    ns4eth1 (SAN)  |
-+# |------------------------|               |-------------------|
-+#      |            |                                |
-+#      |            |                                |
-+#      |            |                                |
-+# |------------------------|   |-------------------------------|
-+# | ns2eth1     ns2eth2    |   |                  ns3eth2      |
-+# |    \-- hsr2 --/        |   |                 /             |
-+# |      [0.2] \           |   |                /              |  |------------|
-+# |             ns2eth3    |---| ns3eth1 -- ns3br1 -- ns3eth3--|--| ns5eth1    |
-+# |             (interlink)|   | [0.3]      [0.11]             |  | [0.51]     |
-+# |NS2 (RedBOX)            |   |NS3 (BR)                       |  | NS5 (SAN)  |
-+#
- #
- 	# Check if iproute2 supports adding interlink port to hsrX device
- 	ip link help hsr | grep -q INTERLINK
-@@ -59,7 +74,9 @@ setup_hsr_interfaces()
- 	# Create interfaces for name spaces
- 	ip link add ns1eth1 netns "${ns1}" type veth peer name ns2eth1 netns "${ns2}"
- 	ip link add ns1eth2 netns "${ns1}" type veth peer name ns2eth2 netns "${ns2}"
--	ip link add ns3eth1 netns "${ns3}" type veth peer name ns2eth3 netns "${ns2}"
-+	ip link add ns2eth3 netns "${ns2}" type veth peer name ns3eth1 netns "${ns3}"
-+	ip link add ns3eth2 netns "${ns3}" type veth peer name ns4eth1 netns "${ns4}"
-+	ip link add ns3eth3 netns "${ns3}" type veth peer name ns5eth1 netns "${ns5}"
- 
- 	sleep 1
- 
-@@ -70,21 +87,31 @@ setup_hsr_interfaces()
- 	ip -n "${ns2}" link set ns2eth2 up
- 	ip -n "${ns2}" link set ns2eth3 up
- 
--	ip -n "${ns3}" link set ns3eth1 up
-+	ip -n "${ns3}" link add name ns3br1 type bridge
-+	ip -n "${ns3}" link set ns3br1 up
-+	ip -n "${ns3}" link set ns3eth1 master ns3br1 up
-+	ip -n "${ns3}" link set ns3eth2 master ns3br1 up
-+	ip -n "${ns3}" link set ns3eth3 master ns3br1 up
-+
-+	ip -n "${ns4}" link set ns4eth1 up
-+	ip -n "${ns5}" link set ns5eth1 up
- 
- 	ip -net "${ns1}" link add name hsr1 type hsr slave1 ns1eth1 slave2 ns1eth2 supervision 45 version ${HSRv} proto 0
- 	ip -net "${ns2}" link add name hsr2 type hsr slave1 ns2eth1 slave2 ns2eth2 interlink ns2eth3 supervision 45 version ${HSRv} proto 0
- 
- 	ip -n "${ns1}" addr add 100.64.0.1/24 dev hsr1
- 	ip -n "${ns2}" addr add 100.64.0.2/24 dev hsr2
-+	ip -n "${ns3}" addr add 100.64.0.11/24 dev ns3br1
- 	ip -n "${ns3}" addr add 100.64.0.3/24 dev ns3eth1
-+	ip -n "${ns4}" addr add 100.64.0.41/24 dev ns4eth1
-+	ip -n "${ns5}" addr add 100.64.0.51/24 dev ns5eth1
- 
- 	ip -n "${ns1}" link set hsr1 up
- 	ip -n "${ns2}" link set hsr2 up
- }
- 
- check_prerequisites
--setup_ns ns1 ns2 ns3
-+setup_ns ns1 ns2 ns3 ns4 ns5
- 
- trap cleanup_all_ns EXIT
- 
--- 
-2.20.1
+> > 	kvm_vcpu_set_in_spin_loop(me, true);
+> > 
+> > 	start = READ_ONCE(kvm->last_boosted_vcpu) + 1;
+> > 	for (i = 0; i < nr_vcpus; i++) {
+> 
+> Why do you need to started at the last boosted vcpu? I.e, why not
+> starting at 0 and skipping me->vcpu_idx and kvm->last_boosted_vcpu?
 
+To provide round-robin style yielding in order to (hopefully) yield to the vCPU
+that is holding a spinlock (or some other asset that is causing a vCPU to spin
+in kernel mode).
+
+E.g. if there are 4 vCPUs all running on a single CPU, vCPU3 gets preempted while
+holding a spinlock, and all vCPUs are contented for said spinlock then starting
+at vCPU0 every time would result in vCPU1 yielding to vCPU0, and vCPU0 yielding
+back to vCPU1, indefinitely.
+
+Starting at the last boosted vCPU instead results in vCPU0 yielding to vCPU1,
+vCPU1 yielding to vCPU2, and vCPU2 yielding to vCPU3, thus getting back to the
+vCPU that holds the spinlock soon-ish.
+
+I'm sure more sophisticated/performant approaches are possible, but they would
+likely be more complex, require persistent state (a.k.a. memory usage), and/or
+need knowledge of the workload being run.
 
