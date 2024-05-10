@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-175864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AFD8C2657
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:07:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5878C2666
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:09:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E5C91F21BE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70C71F23E18
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A24170855;
-	Fri, 10 May 2024 14:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F465172BAA;
+	Fri, 10 May 2024 14:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="VAGbDnjO"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gOcPuPlZ"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F217312C81F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491D1172793
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715349981; cv=none; b=G+AHKd0AKKV8Re1Ud45Xz+br5fGboWbTDW8zwy1RWpakojssbdQObpZbVIo8jWQ09LEcfw/cIy+O1gVHLLHrCpAoDUMfpLAsB1ZhVJqveGAUCQMSYj6Gx142P0PicOgjpW0f4Yk5J4T7TWehmrCZ9MMBcXzHsbkZz5JLDohxb3g=
+	t=1715350035; cv=none; b=jUkf5QzoLOdVWlq/UzxI8q3PRtrcBR0M1XYdR3djxRgqdVnUMTNSu+uXdcoyNNh72AXdusrYmtAUz0CGcJCLx1PsoviNZ9HsUS4E9Y6FU7Ik/RG4Bf17Sbb3By4cs6/nr9/kCOOBaJBcVzARs9t9NxkWfkHr/D6R5nthucZB/oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715349981; c=relaxed/simple;
-	bh=3vrH3H0o028E+i3JWGWAvMc6RQs4IPDuJpZHn6s8NFo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DJeBtbieba8gwMs4kVniLnwVL8+U6euBFG/EOxHg/c2gM5l7xEJjJeBb4rE3qLyWuMneu8qHncx7yeYoozXYbSP2kLli36Nj4dLEjcYwTrqf18kamIvAmbi8itmMOhh5OFg49RMeATcSpfqPlNyYceZq4uU/MhxXS0turzSKsWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=VAGbDnjO; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-34f52fc2191so1065856f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:06:19 -0700 (PDT)
+	s=arc-20240116; t=1715350035; c=relaxed/simple;
+	bh=CIb9re05hOwtASAGaBhr5D9oxM0cSwxJ6I2jaSlRch8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Jel3lWqrKD5ovYI0HoIHoXrrD4azguZ+hskegirLTcXB/4u8dwZxlaTwwMsUzTOhd8b9G9IV6v/9NI1ZtDVZIi3fwsRZoI08BuSntAbyxqSKlSZkbtDniaAC5zRe+vPBXNtXz2Aa8QbC1xqSo8WOoOYpiuyzIvWKDO/sWzpMgo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gOcPuPlZ; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1edcfcaa2a4so20319405ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715349978; x=1715954778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oQi7BMvhKG60rFUGiXd360AqzfjgMdqrvJlRvRCCOMo=;
-        b=VAGbDnjOou2c/z0xBkoi7al/mREiaFjF0IfOHzAluXx2Pc7gwAF4Bach3HUkkbJJhm
-         H/JLHl9jMbDXKz03g00qIUWxnu5sPrCDECqyhZWejYud34j2Sd1J6skXEVUv5UK2vp6n
-         mSgQmo/uuNNIjaS3yt09rx5iueTFncE93cJ9PSGQCHScsSlSEJPHC0c/JHyOdrq0T1al
-         OSPyVCU6rmvg5hwxCTiR77kQ7dqXGn/+mgexoOAcGWjaNlgFgTtk7M7kuVp32R9OjLcb
-         trJyMM67pQF5/V2Xo5US2sPZxCqRNCihlQI4K5RfXR13mC69EYR0MBCTDUhqYleULYn4
-         AU3Q==
+        d=google.com; s=20230601; t=1715350033; x=1715954833; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkZxGT0ZfdKB+GEeESf4UtQYxmmTquZLaDxSfhLR3LM=;
+        b=gOcPuPlZPoc1rISquCUDrqpuaujYZPHdQ7/E0qPWTtVmRJwwFLK7wEAgIf9ogBlsYL
+         yrDg9iQ89Zlibg88MjGc8uSaqdjXhjz3tfNnhIaPSD+p7qB/VmRaOf7ZoI5DDLpRcTAw
+         sSWEIqlKnFrf3v89ihFOGbs6n8HdanK7qG4sZiYmfPBTz6Il1sDt7hJrb+oAGWGCh9wJ
+         PdHKBrU7EHYw0c07GUsA7x1rFZv/7GDTR+lYUCAPoti2iE9U5o1Vxv3m0M4UaGlKlWmz
+         sNvwhHxZlpM9lBcgLrgeXfWyVuO0pHWJ0JW47wnSBI3X5tZpLKPTEoUtQHV62U1wPeey
+         tl0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715349978; x=1715954778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oQi7BMvhKG60rFUGiXd360AqzfjgMdqrvJlRvRCCOMo=;
-        b=f4Kr0pAk3D7xg4gPrC+A3ld2DsUz8EDPEo6bk3vEtbryb7v0C78nX6BxGtWUd7APmX
-         UUA4F0Bn5fwYA4i9VT3ChXKcEtfUHeQ3W37BioMHoq106gewbkKxICyWutBQXd4NjDNP
-         0NuJAUZj2PjFelAhAdRB6rV90aiOhvxg1TrJFrmXsZk63cyBszaGIs0cTuODqUsNx3yT
-         rJA60FYoZU7e4lLjJkfnBaJ+JIayc+iubt98VfusugEYvutrIhHRvyXu+wv11uB+6qmt
-         5d3yJX3PgGn0ipBEMnkH3jt0MTAwhuwfLejOXpCxKGxlmQHvHRxv8cq9EtDU29LiOk7W
-         NEIA==
-X-Gm-Message-State: AOJu0Yy0pONeJPQxGZbTNc0Je3+1Nb0Q3ODGmPH6lQ6zZVk/xIx4PnSX
-	vDJcX+Ldci+SruRlJNMcJinA2NTG2UI1R0U62zKI8EM3jRsAmYDEuAhLPGDjjK6e59VXgQCZtxD
-	i
-X-Google-Smtp-Source: AGHT+IH1m0ioh+166tt0+TO7m0Pcg3Qvjn8XKbv4j315gWftYA9wukadlvqEapCbwIhs7MOcnvQ52A==
-X-Received: by 2002:a5d:6da8:0:b0:350:f6d3:4ad4 with SMTP id ffacd0b85a97d-350f6d34b63mr1251329f8f.44.1715349977896;
-        Fri, 10 May 2024 07:06:17 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:f6ed:a982:f92e:840c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a780fsm4620264f8f.59.2024.05.10.07.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 07:06:17 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	brgl@bgdev.pl,
-	linus.walleij@linaro.org,
-	Kent Gibson <warthog618@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpiolib: cdev: fix uninitialised kfifo
-Date: Fri, 10 May 2024 16:06:16 +0200
-Message-Id: <171534996897.34114.8159265536879918834.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240510065342.36191-1-warthog618@gmail.com>
-References: <20240510065342.36191-1-warthog618@gmail.com>
+        d=1e100.net; s=20230601; t=1715350033; x=1715954833;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkZxGT0ZfdKB+GEeESf4UtQYxmmTquZLaDxSfhLR3LM=;
+        b=AnIF+IojwV9cYwFmO4fFBVsIKpCz5KYtQS4Zy7h4GnHzTb5oORqcDUX4xWSEyd1Fg3
+         Upa38Yb099SeEDHzYJS1BdOv3VkOmUNltJrLh9SuX9bG5ralQNh41ctLRui9sTPqCX0x
+         M0CHJDXPji0foqgu5KaVOGgoDZB9zgTjJziuSbdzPQQ6ZcNupMJYAvZgbaJOAr+auJyr
+         RjKGjE/7hQGNDk2bYL0tAw/3F03nshdZo+oQkbNIBhUk1Qeh+mzcFoPzdfFUvK8IkzLp
+         qJ4TVKG/21MJb1zkAtliSbM4W2Jgddwg+4+G/uZ8nbDQw0w3x716cUYuquMussRzDNbD
+         ppDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUURiCGFibkLHFkuFfe0XFtSCK1rXUwDVL3XGrmIQtGJ+Wlv+iBwNsZbrzaxc4ElWM6N2PlzGQnGdLea08QkSKTi0cCueulatuWnYXR
+X-Gm-Message-State: AOJu0YyzlNaFrKDiTfaZKayV6/iSEQgaWULEAghmVIRv4InJkuhHdltO
+	6xr/mFu6G0RfN7WsblS103z1pdiFUtfZdnK1QjTwMAawXQfEmHr+/8+ZFiuo3r/penpw5e1OC2i
+	t1w==
+X-Google-Smtp-Source: AGHT+IH4Q71+QxPOqLwbE6nijnCgcIFRpwsBtSv+JFROxUNDyXFy49HhYX44+CC8Z7tY2rLekiRM4+Mqsuo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:ce90:b0:1e8:d157:2329 with SMTP id
+ d9443c01a7336-1ef43f4e4b7mr78265ad.9.1715350033435; Fri, 10 May 2024 07:07:13
+ -0700 (PDT)
+Date: Fri, 10 May 2024 07:07:12 -0700
+In-Reply-To: <20240510111822405PCAy6fW8F_-AfMPoCfT8u@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <Zjzkzu3gVUQt8gJG@google.com> <20240510111822405PCAy6fW8F_-AfMPoCfT8u@zte.com.cn>
+Message-ID: <Zj4qEG5QfbX4mo48@google.com>
+Subject: Re: [PATCH] KVM: introduce vm's max_halt_poll_ns to debugfs
+From: Sean Christopherson <seanjc@google.com>
+To: cheng.lin130@zte.com.cn
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jiang.yong5@zte.com.cn, wang.liang82@zte.com.cn, jiang.xuexin@zte.com.cn
+Content-Type: text/plain; charset="us-ascii"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, May 10, 2024, cheng.lin130@zte.com.cn wrote:
+> > > > From: seanjc <seanjc@google.com>
+> > > > > From: Cheng Lin <cheng.lin130@zte.com.cn>
+> > > > >
+> > > > > Introduce vm's max_halt_poll_ns and override_halt_poll_ns to
+> > > > > debugfs. Provide a way to check and modify them.
+> > > > Why?
+> > > If a vm's max_halt_poll_ns has been set using KVM_CAP_HALT_POLL,
+> > > the module parameter kvm.halt_poll.ns will no longer indicate the maximum
+> > > halt pooling interval for that vm. After introducing these two attributes into
+> > > debugfs, it can be used to check whether the individual configuration of the
+> > > vm is enabled and the working value.
+> > But why is max_halt_poll_ns special enough to warrant debugfs entries?  There is
+> > a _lot_ of state in KVM that is configurable per-VM, it simply isn't feasible to
+> > dump everything into debugfs.
+> If we want to provide a directly modification interface under /sys for per-vm
+> max_halt_poll_ns, like module parameter /sys/module/kvm/parameters/halt_poll_ns,
+> using debugfs may be worth.
 
+Yes, but _why_?  I know _what_ a debugs knob allows, but you have yet to explain
+why this
 
-On Fri, 10 May 2024 14:53:42 +0800, Kent Gibson wrote:
-> If a line is requested with debounce, and that results in debouncing
-> in software, and the line is subsequently reconfigured to enable edge
-> detection then the allocation of the kfifo to contain edge events is
-> overlooked.  This results in events being written to and read from an
-> unitialised kfifo.  Read events are returned to userspace.
+General speaking, functionality of any kind should not be routed through debugfs,
+it really is meant for debug.  E.g. it's typically root-only, is not guaranteed
+to exist, its population is best-effort, etc.
+
+> Further, if the override_halt_poll_ns under debugfs is set to be writable, it can even
+> achieve the setting of per-vm max_halt_poll_ns, as the KVM_CAP_HALL_POLL interface
+> does.
+> > I do think it would be reasonable to capture the max allowed polling time in
+> > the existing tracepoint though, e.g.
+> Yes, I agree it. 
+> It is sufficient to get per-vm max_halt_poll_ns through tracepoint if KVP_CAP_HALL_POLL
+> is used as the unique setting interface.
 > 
-> Initialise the kfifo in the case where the software debounce is
-> already active.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] gpiolib: cdev: fix uninitialised kfifo
-      commit: 3c1625fe5a2e0d68cd7b68156f02c1b5de09a161
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Do you consider it is worth to provide a setting interface other than KVP_CAP_HALL_POLL?
 
