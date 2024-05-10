@@ -1,76 +1,157 @@
-Return-Path: <linux-kernel+bounces-175691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278F18C23B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:38:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A6198C23BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:39:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A5AB25DCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:38:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5371C2370B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848F316EC06;
-	Fri, 10 May 2024 11:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A8B16EBEA;
+	Fri, 10 May 2024 11:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpkkZ62Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcF4nxlg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB21D21340;
-	Fri, 10 May 2024 11:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E04621340;
+	Fri, 10 May 2024 11:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341105; cv=none; b=F7zNiV9egLgiR2gR0HxcTNhJuQFeswdNMLMQzjC+vOE8la7he0VjbaDzkaF7jfAzO9IqNKPnGHeWO3Sq0L4te4+CMZ8GmdBCSFRn0sL/KkTRc3HHq3JyKIO4xrgoF4Wb2jE8Y+EaG5gN5kdmmiPqaS7gVAeEbh6TuFnfNfcSdv4=
+	t=1715341161; cv=none; b=ThLnPiIDqssLzxy5NeOHGGNnTjDPeo8yaLKsTgBW/+ccTOWB0z7chxzbVOKGMiQhV+1akY4yIrhM/prXYDJyR/qc+w7IWYVRWguts6+xCg1xXXWs3L+a9t2bMkpipSi58bAV1aFcETrnTXtuzTMRchiXvrAb2+2KfChN5ujX1tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341105; c=relaxed/simple;
-	bh=w3BI4D5JBPl2WXO21E0L6qbAIpFhZSt6nwXLcFPR5QI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IzobMuZRNka8JG/QG8UVkz+jhsFKh1r7BhW6RMzKSUV88u9seUZ+0xGyAgOZ5PA8qlRHlUlzPatRgdhI89EGVjibbES8mC3KEmXf1gWPn3wVb7jIBETe+nc91DSRfDKOWA7NbgwP6dchmaPogsz6so5WGPYJ/0yFz9YsSS+vhBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpkkZ62Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40505C113CC;
-	Fri, 10 May 2024 11:38:22 +0000 (UTC)
+	s=arc-20240116; t=1715341161; c=relaxed/simple;
+	bh=gBgODkg3DdI9NzHPa1K7qm2JszTbSglDjzlA/h4YKWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uDsiAw70Modtv15d8qJFMSt6cdvb9mjAqvYyiHcFK3BeerDj+AJw5ikNO5du27Q89cj4o2BvVoDrYI+AHEhXy4DU4eO/ovR0MYL+aSNewvyjt+oKtvlYWZqZSOOXrZ+PcizMxxNwSx+OrOMyOUa/WtwU4up3xa/QWe4MvQqy3kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tcF4nxlg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD37EC113CC;
+	Fri, 10 May 2024 11:39:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715341104;
-	bh=w3BI4D5JBPl2WXO21E0L6qbAIpFhZSt6nwXLcFPR5QI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CpkkZ62YAEEoEIAyF5eXcSUuk/m62T9XYGeBgMong1LMUDOuEOWgDuThCSVJaTEZk
-	 RAXjF9wpNp6SwmIXKtCfcZgEXZtrZMnLy5i5NSbLziB2oQlzxvJtOL6LtKI2C0bKl6
-	 SnwjXy99V53wWbaTtXWvU5ZFcQjtgfF82PEhHjAle7jUebtmV0SykQxsHX04xG6CHn
-	 hQbUkr5C61PkSqKlLMSTfUgsLS2L7lTr7caAYB1nFDYE9GV2sCrBkqaXdtXVJddgky
-	 wmgUYIOmZ7/LojmFQM413k1SE96WG0z+ZCC0F3o4WHmTgCAzgNMtV/uEBYaV9o2baF
-	 qqUwKvYSNQHeQ==
-Date: Fri, 10 May 2024 13:38:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, 
-	Max Kellermann <max.kellermann@ionos.com>, Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Don't reduce symlink i_mode by umask if no ACL
- support
-Message-ID: <20240510-golfball-tastsinn-d148a67476ea@brauner>
-References: <CAJfpegtJbDc=uqpP-KKKpP0da=vkxcCExpNDBHwOdGj-+MsowQ@mail.gmail.com>
- <1553599.1715262072@warthog.procyon.org.uk>
- <1554509.1715263637@warthog.procyon.org.uk>
+	s=k20201202; t=1715341160;
+	bh=gBgODkg3DdI9NzHPa1K7qm2JszTbSglDjzlA/h4YKWM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tcF4nxlg0QDEweWZwzWRCeVMhoRIu7J1gmdn73ynftzzX5dbSA1P4W8ujpGv0+jrm
+	 nbOzvPAqUbgaOYo/PdyUL81APw3bP5ZqUlEA1bv2v06ThVSZ+1EGMPEOkJGIiyfYGJ
+	 kCkxZxWZtBeI1+Ib7DROy4aZjp3wcPfVzFz4kwz+SAnlI9U2RPXX7ELddRRwyhmnGF
+	 djstVSRcMGs3bD5X3DNa8uPLVYL5h5TL6IyZsAv6NnYu8t3K0W+2r1dDyIki3R/AJK
+	 NVBFC0k1dteGFqP6NSb5O4MZkFfK9HiWqs8V/gqLo9ApsQQzr7m7Unm72abzdxhsLM
+	 EC1q/CFOAekrQ==
+Date: Fri, 10 May 2024 12:39:11 +0100
+From: Mauro Carvalho Chehab <mchehab@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jani Nikula <jani.nikula@intel.com>, Jonathan Corbet <corbet@lwn.net>,
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada
+ <masahiroy@kernel.org>, linux-arm-msm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, Jon
+ Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] docs: document python version used for compilation
+Message-ID: <20240510123911.34f050b5@sal.lan>
+In-Reply-To: <CAA8EJprcjDnpsriXOrRO4cVh5Sm9KDbHbsyKePru=6pn0-bfJA@mail.gmail.com>
+References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
+	<878r0ijdh5.fsf@intel.com>
+	<20240510102036.3ea40b37@sal.lan>
+	<87o79ehtbz.fsf@intel.com>
+	<CAA8EJprcjDnpsriXOrRO4cVh5Sm9KDbHbsyKePru=6pn0-bfJA@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1554509.1715263637@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 09, 2024 at 03:07:17PM +0100, David Howells wrote:
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
-> 
-> > I think this should just be removed unconditionally, since the VFS now
-> > takes care of mode masking in vfs_prepare_mode().
-> 
-> That works for symlinks because the symlink path doesn't call it?
+Em Fri, 10 May 2024 13:39:17 +0300
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> escreveu:
 
-All of the mode handling should now be done correctly in the VFS (see
-Miklos reply as well). In general the less fs specific mode handling we
-have, the better because we've been bitten by this before.
+> On Fri, 10 May 2024 at 13:09, Jani Nikula <jani.nikula@intel.com> wrote:
+> >
+> > On Fri, 10 May 2024, Mauro Carvalho Chehab <mchehab@kernel.org> wrote: =
+=20
+> > > Em Fri, 10 May 2024 11:08:38 +0300
+> > > Jani Nikula <jani.nikula@intel.com> escreveu:
+> > > =20
+> > >> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =
+wrote: =20
+> > >> > The drm/msm driver had adopted using Python3 script to generate re=
+gister
+> > >> > header files instead of shipping pre-generated header files. Docum=
+ent
+> > >> > the minimal Python version supported by the script.
+> > >> >
+> > >> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >> > ---
+> > >> >  Documentation/process/changes.rst | 1 +
+> > >> >  1 file changed, 1 insertion(+)
+> > >> >
+> > >> > diff --git a/Documentation/process/changes.rst b/Documentation/pro=
+cess/changes.rst
+> > >> > index 5685d7bfe4d0..8d225a9f65a2 100644
+> > >> > --- a/Documentation/process/changes.rst
+> > >> > +++ b/Documentation/process/changes.rst
+> > >> > @@ -63,6 +63,7 @@ cpio                   any              cpio --v=
+ersion
+> > >> >  GNU tar                1.28             tar --version
+> > >> >  gtags (optional)       6.6.5            gtags --version
+> > >> >  mkimage (optional)     2017.01          mkimage --version
+> > >> > +Python (optional)      3.5.x            python3 --version =20
+> > >>
+> > >> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the poi=
+nt in
+> > >> using anything older than the oldest supported version of Python,
+> > >> i.e. 3.8 at this time? =20
+> > >
+> > > What's the point of breaking compilation with on older distros?
+> > > The idea of minimal versions here is to specify the absolute minimum
+> > > version that it is required for the build to happen. If 3.5 is
+> > > the minimal one, then be it. =20
+> >
+> > AFAICT 3.5 was an arbitrary rather than a deliberate choice. We should
+> > at least be aware *why* we'd be sticking to old versions. =20
+>=20
+> From my side, the 3.5 was chosen basing on the previous feedback from
+> Jon Hunter: https://lore.kernel.org/dri-devel/20240412165407.42163-1-jona=
+thanh@nvidia.com/
+
+Patch there seems small/simple enough if it is all it takes for 3.5.
+
+Yet, it would be nice to hear from Jon Hunter about the rationale
+for 3.5 support (if any).
+
+> > Minimum versions here also means sticking to features available in said
+> > versions, for Python just as well as for GCC or any other tool. That's
+> > not zero cost.
+> >
+> > I guess there are two angles here too. The absolute minimum version
+> > currently required, and the, uh, maximum the minimum version can be
+> > safely bumped to. Say, you want to use a feature not available in the
+> > current minimum, how far up can you bump the version to?
+> >
+> > Could we define and document the criteria (e.g. based on distros as you
+> > suggest below) so we don't have to repeat the discussion?
+
+Agreed. While we should not bump version randomly, defining a
+criteria about when we should update the requirement sounds a great idea.
+
+For me, the criteria is:
+
+- the minimal version shall be at least the minimal one required for the
+  Kernel to build at the most used LTS distros that are not EOL, e. g.:=20
+  Debian, openSUSE/SUSE, CentOS/RHEL and Ubuntu LTS[1].
+
+[1] In practice, Ubuntu LTS usually has a python version newer than
+    Debian LTS, and CentOS versions are identical to RHEL ones, so
+    I guess checking for Debian, openSUSE, SUSE and RHEL should be
+    enough.
+
+Regards,
+Mauro
 
