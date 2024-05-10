@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-175792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1E88C2519
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DE68C2520
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08B371C220EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:51:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7E01F2597D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6BC128386;
-	Fri, 10 May 2024 12:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22BE127E25;
+	Fri, 10 May 2024 12:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RjoqKFIb"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OovjXAU7"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC823FB87
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD54D376;
+	Fri, 10 May 2024 12:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715345454; cv=none; b=I30gdK0sKsCWCkDHaAGUtgySweoFq3NxhvCGdIyeq+2nXvRoWGfHEjlUwcJUdFvmT2jTSGF6y24XEZIjyG86tmfU5pkvORam55ktOST1OfTN6S4y5aHiqzGFvoVhpvRdNrbbfZvgBT9IhmY7LFK0yCRWaIeNzI2+tBUvcV39lJk=
+	t=1715345557; cv=none; b=t+EbtiDWEXjjI349Rj+3H49tT4UUa2oTRuIQrDK4o8Z33HB6Yet6ywIyuO+8RR9mQQks4vUUNFMp9JZKXktp8WAP8pkTKJNNGT+8S6Vij2Vj1nQuSPLRCY8mdCrAtwLb3poLTx1hvOxy2SxrTbGFHMe7yW6bHB1maw5rGzXPMRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715345454; c=relaxed/simple;
-	bh=ko3uVA6VJm1NSJB8YRJHTV6RnbG8NXS2brijGf7c8Do=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=aPT0G9IcELCl0B86XRCmmUDG1apYVh0cBFGGDAzk0EcMOYN6LI5Uv//U2rsnjFvXv2KI3fkxW4omww9kgXOXZPLZANNabnI+8w0FHoiN0Q9vzgoJUHlhAQjq3DKRW6pAGocWi1umEVLoEyGA/o1SZzJnl2blRHfqP9PdhLIG5r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RjoqKFIb; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59ab4f60a6so442288166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:50:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715345451; x=1715950251; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LM/odI6j/fMx3udtCezmjdbmQwQqNuohmtxS/7GVXYY=;
-        b=RjoqKFIb+ypWZs2vOOmjq96n9WZETO0/+s0paF0ALSnhdSQP5YIoBBD9DMHq3rVMzK
-         YUOQt6icneD0DJEuZahSncPsHK23mjb9wE2HX5lAOLW/j/BzU45zfNqo3iayjdUHWisN
-         3zeLVJsL/Ygoe0HnzyMnLdpPC81KdFjJwEK3P+1KXBBwxsFr3kYsGwFzvNARdngyW7NZ
-         OpWLR6BgvlmWK+yy9276m3gF+DVXALevXZgxzflub3WQoe66hPEMKdib5FTerCMKzu8G
-         jnwPY10VMnqJKGcxRbffly7ajd8quzynBu8kOq5HdgSfdmKTmE/wMIi/hiDPMwNbIGEh
-         zd7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715345451; x=1715950251;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LM/odI6j/fMx3udtCezmjdbmQwQqNuohmtxS/7GVXYY=;
-        b=YPLFGPItvH694V/QQGzF03KWLcS4cXAjnUVyD6sajzTfuynhtdtx4gYDMq7hieHpuC
-         u4H6xueVkTNStcZyUsxiOOsDu413ojSb0Ymj0q1EWgbHREsdheEJcBGVVBVvyETxS4KT
-         nL88U76WbSKX0MDDxkwT0HW9QOV/NpOGCMahpr0ChlvSJ8f4gS8dVjUhzZdbZBsDDl4k
-         3SK0PIt9cYa5Ih0+8V0z4PhCVS790qKxA278i117cWpT/2cM1PI7bojzE7Koqicgi/i6
-         dM+uWwqkR+/mkmtOsljrV0b4xaqAheWzd86o2mjub82GFOlTv/KRpqG6EyzGOZWQBdBD
-         MBKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx8qJUwRhVJj94CSKhdtJEDSVis3+aD3HL9TqcSD/9c7XIhfcn6W9xKBJOrrZ0qYaN/VERMygOKrEFRrI+m0xC745GXjPEB4jlNBNG
-X-Gm-Message-State: AOJu0YwexVA2jafwgYdxXpKU6Td31Ap8fPh3tkdO4qxkMGalb0huvDAK
-	13kTiVzO3CrS9gvpMRJ8tabsoW26YE5M8q48U6tZvvv8TWYm0PXRxsfGjMT5T579+1YJUK3OrfJ
-	C
-X-Google-Smtp-Source: AGHT+IEp74LXPMOrN4jcdcnJvpP4z0aouu/s0LV8Wdwfhk/MAZjj1kgHFHoHWXY/x0HaMZmy3440fg==
-X-Received: by 2002:a17:906:80a:b0:a59:b784:ced3 with SMTP id a640c23a62f3a-a5a2d676b2emr194516266b.77.1715345450478;
-        Fri, 10 May 2024 05:50:50 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c814dsm180050666b.118.2024.05.10.05.50.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 05:50:50 -0700 (PDT)
-Date: Fri, 10 May 2024 15:50:45 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] virtio_net: Fix error code in
- __virtnet_get_hw_stats()
-Message-ID: <3762ac53-5911-4792-b277-1f1ead2e90a3@moroto.mountain>
+	s=arc-20240116; t=1715345557; c=relaxed/simple;
+	bh=pDwlZWiIXP/ed5ZKK47iOK1IxJybI7zmM6gq7+VyleA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2iAirbzvWVWeTWqUZqWGgfrvduogdEswF9MY5CKYzUmwAxjNwtH/qr+vooQeuPJg3YRgamZ7AWCJsqrz3cZA3HO+A4Mi5gx1BMWUynZVRc10A2qdSPlXLC+OQwEycJpxR7clzhbts47a4Fy4RkIXjRHX+0Dbmqgoq+MQnHp0Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OovjXAU7; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 53F7D40E024C;
+	Fri, 10 May 2024 12:52:31 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 2geoQ1AAp8Ho; Fri, 10 May 2024 12:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715345548; bh=vXXmcFqFduUzeShgTnzVQzbxh5p2i8qrDyrsMQmHWzc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OovjXAU7Fg8DyDHu6YjJN7KRin/dtzIfRaoaKpuXQ/vPijUDDJkjaMa5xs9UTsnf7
+	 +vHBIVa0kRqXkutRpOBjlNKq8shi9kLA1spCHWB9LQEyyF2fpWA9OoZ49sFq4j/e2A
+	 c3j3dinA5cFSC3zTdnNHDErwZepu1iwWo4UpzqDpcyKBAsXaNsKexKSXPhC38MXcc7
+	 uSRJtvoGLZLb+58Mnl3NLfu3VlHkLFA1xUh3uJ5xSPlXwHe1JBGQkjXgbb4Q6c5437
+	 cRrIOH3dUItgtlv58Y0piJKXGEEdvh97LkqNGyC/JJPX40kDkDyeqqW7njICYwdccI
+	 p8SBeti0ChQe1MRcjo8kJbjcOI5QhnY/1RWGyRJGtNQ8MHqxMs+B9DYFtFt4CJEvlx
+	 XKK0/6KKCVQacpx3nvj/3NkKuj+mWsZ0NPQTxQb5qzWpLKZjSoSaSehqhgTFc9f72l
+	 VZhLjFHAWnnwjMIXd51wuOR4SIUB0WPm7OWHfK8+IkmMpSFYzX376eV0BSMNuWKjrZ
+	 Vp/n/I5TzLa7Mx78oFkhN2jJ1vtaA4arKEkymaL4b63DCzlgoX7sJzjMAndgwzKl4M
+	 XHVzNKM1IIyMUNMQYqvOso4Hlw+1JaEpmgJ5QE9vUxIkSxT7FpZeY9ARiWjURsMkgc
+	 QmsLuWeC4dc87PhPGOkmwq/8=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1ED5B40E0187;
+	Fri, 10 May 2024 12:52:20 +0000 (UTC)
+Date: Fri, 10 May 2024 14:52:14 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC PATCH v2 3/3] ACPI: extlog: Make print_extlog_rcd() log
+ unconditionally
+Message-ID: <20240510125214.GCZj4YfluoP-mDz3_U@fat_crate.local>
+References: <20240510112740.667445-1-fabio.m.de.francesco@linux.intel.com>
+ <20240510112740.667445-4-fabio.m.de.francesco@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20240510112740.667445-4-fabio.m.de.francesco@linux.intel.com>
 
-The virtnet_send_command_reply() function returns true on success or
-false on failure.  The "ok" variable is true/false depending on whether
-it succeeds or not.  It's up to the caller to translate the true/false
-into -EINVAL on failure or zero for success.
+On Fri, May 10, 2024 at 01:21:47PM +0200, Fabio M. De Francesco wrote:
+> Make extlog_print_rcd() log unconditionally to report errors even if
+> userspace is not consuming trace events. Remove ras_userspace_consumers()
+> because it is not anymore used.
 
-The bug is that __virtnet_get_hw_stats() returns false for both
-errors and success.  It's not a bug, but it is confusing that the caller
-virtnet_get_hw_stats() uses an "ok" variable to store negative error
-codes.
+Did you do any git archeology before that?
 
-Fix the bug and clean things up so that it's clear that
-__virtnet_get_hw_stats() returns zero on success or negative error codes
-on failure.
+d6cae935ec5b ("trace, eMCA: Add a knob to adjust where to save event log")
 
-Fixes: 941168f8b40e ("virtio_net: support device stats")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/virtio_net.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I can't find in this commit message why this is needed... Do share pls.
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 218a446c4c27..4fc0fcdad259 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -4016,7 +4016,7 @@ static int __virtnet_get_hw_stats(struct virtnet_info *vi,
- 					&sgs_out, &sgs_in);
- 
- 	if (!ok)
--		return ok;
-+		return -EINVAL;
- 
- 	for (p = reply; p - reply < res_size; p += le16_to_cpu(hdr->size)) {
- 		hdr = p;
-@@ -4053,7 +4053,7 @@ static int virtnet_get_hw_stats(struct virtnet_info *vi,
- 	struct virtio_net_ctrl_queue_stats *req;
- 	bool enable_cvq;
- 	void *reply;
--	int ok;
-+	int err;
- 
- 	if (!virtio_has_feature(vi->vdev, VIRTIO_NET_F_DEVICE_STATS))
- 		return 0;
-@@ -4100,12 +4100,12 @@ static int virtnet_get_hw_stats(struct virtnet_info *vi,
- 	if (enable_cvq)
- 		virtnet_make_stat_req(vi, ctx, req, vi->max_queue_pairs * 2, &j);
- 
--	ok = __virtnet_get_hw_stats(vi, ctx, req, sizeof(*req) * j, reply, res_size);
-+	err = __virtnet_get_hw_stats(vi, ctx, req, sizeof(*req) * j, reply, res_size);
- 
- 	kfree(req);
- 	kfree(reply);
- 
--	return ok;
-+	return err;
- }
- 
- static void virtnet_get_strings(struct net_device *dev, u32 stringset, u8 *data)
+> This change makes extlog_print() (ELOG) log consistently with ghes_proc()
+> (GHES).
 
+Avoid having "This patch" or "This commit" in the commit message. It is
+tautologically useless.
+
+Also, do
+
+$ git grep 'This patch' Documentation/process
+
+for more details.
+
+Pls have a look at our documentation and check all your patches.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
