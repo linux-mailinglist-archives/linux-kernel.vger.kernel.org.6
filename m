@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-175795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C2F8C2526
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:57:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F4548C2528
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 458281F25C5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F4C328570D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88049127E27;
-	Fri, 10 May 2024 12:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3C8128362;
+	Fri, 10 May 2024 12:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="11+hxzAx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Sd3CLe9Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VEUJ17zg"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104445E099;
-	Fri, 10 May 2024 12:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3B74DA04
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715345852; cv=none; b=r4QOeIdPfdngmKGIBAgzNF56UhaaKpc05X0kGLPK5v8RjUZwSJuHRK30gJXLjXCeLSf9sCZqabda3WaaMMnOBjkxsUb5agQohh3pyk5kMveRQUuFzfExQn0gnDQH7zcCp/elkvmFXrkUi81W6hQJxpAG/gFBPVBRniaG5kJWJkQ=
+	t=1715345918; cv=none; b=e//uWmIA5twv0KwjjabWNVqnfqTdgIwOFBRKRRXXYtw251Ksf6qWAEh8huQMlrwFkDGae4qOa1hE3Y3IFyLKW4JfGohuJlR5TxgJCI10Jb6jZ7jtpfn/FMZytCkUpithWsu3fSL4KXEIl4uTweAHAwhLd6OLGfVasS6aIB+q4pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715345852; c=relaxed/simple;
-	bh=ZGRVqTFEMWYBCz+Ogsc0s7+4yPBz33VrTkzZV0AjK+k=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=bc+hdaasplAQXA3QZIH6f1r9+lXNo5yKk3jskzJW9rN1ApvvcJYhebvz4vqcLrFeZ30ui3vxA8lgKTwzA+lVnTBQzvop3uzWORKBYiqW7tSt9hVNsOfod6PSTPdBYeDGFoUvNpKbmgUZVtrvx4Cpk4z5orApidp6dCwnDdDAsLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=11+hxzAx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Sd3CLe9Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 10 May 2024 12:57:22 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715345843;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=klnU4Krnaqq3B9PMjPh3i/uHeBg3LoHeLkENz0/w5kk=;
-	b=11+hxzAxWVdrF6/nX+xSY63TyH3sdTv2twrpXawf06MUssc1+0tpHGYE3Bmfm79joDOTHv
-	m8qyfc3YEs++AuVNWXfxYTxfepsupotR7ybglQoI8areq6u/7orxLefHwdMo7gK7TOrexY
-	y1b/EFAllwFrFX6EAP+/U0efLN728ChU7GRt2OQhSPWa134LNiRHbXbzKJ3KlNkn35dJ6s
-	ipwCevn6QRf2InLbbuD3PS4m+v9xMZNIJZvNNGKuiHhDvwQ3YBckpDy4Qq5P0NqZg3wD6x
-	B6nYvM4UzeFvyS/Xnct93jyuvNeeAkwoybYkKGcC5CGqP28dqpC0YsF/YmV5VQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715345843;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=klnU4Krnaqq3B9PMjPh3i/uHeBg3LoHeLkENz0/w5kk=;
-	b=Sd3CLe9Y55aIl6oREpdq0LdbNByMIgQecORg5GdS1l9tC8AHPJCFKXUFIxv5W3ZqB16mvm
-	u2Ab03NsRk7EurBw==
-From: "tip-bot2 for Shyam Sundar S K" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/amd_nb: Add new PCI IDs for AMD family 0x1a
-Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240510111829.969501-1-Shyam-sundar.S-k@amd.com>
-References: <20240510111829.969501-1-Shyam-sundar.S-k@amd.com>
+	s=arc-20240116; t=1715345918; c=relaxed/simple;
+	bh=j6ZhT6JKQdpaQ4nF4OUVdMD6OZP1lkY+RwkwRCLgSkk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U1SGiOp+YGBmJ/GzASva3f64w4EA1hmCR46wcT5We17mN+v+pLasJX4pGQWTrrbMtrqmSKcybLa7X4y75JMN1R8Ry03j4haebQh43MyR3ljeyPdY/erR1Wcu3M9oyoCB53OaI9zgTtkPUd0IBuUAjskIx91xbVn/AVUGnNgbMKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VEUJ17zg; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so5570318a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:58:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715345915; x=1715950715; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1rF3Vk3nYg5uojFLwj6FcvaVgIkPrJFERDpx5/V2uZE=;
+        b=VEUJ17zgxxllVJf1mStUqQrCeuaj9hnBMkhlc9sreKPkSP+g6GbgRmwL6QqAf1CCIk
+         2VMOWQR6Jyx39S4Pd20DvMhUFTAZ215fz3I1+mlyo2nih6PHR3x083zphDoblpdFqTUG
+         BmW6cHZPBIUXl1HgZkOsqI3OV1KooajIivsBhocwGq4pYQJyQ7Ggi3gBAV0OSEASETXS
+         RQgFLjEg+vjbApZRAsFDPvzoI30z+MwubHo3ZTEceRl1hUFOl/0ee+jApD7o+AJ+Hobd
+         QzOxOEkuTd0BlMy9BqZkikV9z2MvgggAF5j07lfiis/DxuYoSsT5KCturmewxTFwMuzr
+         jXWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715345915; x=1715950715;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1rF3Vk3nYg5uojFLwj6FcvaVgIkPrJFERDpx5/V2uZE=;
+        b=m1xuws0I9Ez9vtRqFZ6tpaMgXlsE0H6bgGMLIvEDtKnNlxMeo5Z6NGmCnLKnwCyr4B
+         wuhRAFKdVEZRyyAuMgTVdQ6wBS8i37sQX0dvjl0kUpkJ/m2QADI06yL9lvglZQz/MsFP
+         HAV38tHccbh5JxcoPUTlDIUMtmMe+edKmhYCdem24PwmwEcxIs1FlMVkRf4xRHneHcq/
+         jHjA0tDBN8ufPFOF0o8vShWtSKFEfGuVie3eQ1ZN/U4hivqSt+aL7uIomXx0iVElP05h
+         E6SSeH98k/eYZ/rAg3BVa+T08UXDYn0HXQO836Twm06Y4cyuMHRBqW7DQVWehRYhbSXH
+         giHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoGQmeAfOvr9bkreb3ugCGOvxyJFopvMKvy4j1mGpQr2HJFMny0OzIdOYQ1yyexm8A7GwPdHZ/W46pvXPdYHU7fvpN2RtLZhmXFKbx
+X-Gm-Message-State: AOJu0YwfxRh5kPmOWF9nDxYiJ9ygW2SnPLEZlx67k0wdE6CE0UQtxql6
+	s0uoxxGgmb5WQ+3xAOzWAtmm6hsJEAY+doWLUoJHhZrKxsfA/fOZGVMgyosIwLk=
+X-Google-Smtp-Source: AGHT+IFEWwdsaPUn8ujKgl36DZHxd8effoxjsjwh1WmVFN9CjQrAIjGgg87VdiWkeAbd1uF1pjBf1w==
+X-Received: by 2002:a17:906:7748:b0:a59:92b0:e0d3 with SMTP id a640c23a62f3a-a5a118c5393mr399265666b.34.1715345915620;
+        Fri, 10 May 2024 05:58:35 -0700 (PDT)
+Received: from [127.0.1.1] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d6bfsm181857366b.31.2024.05.10.05.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 05:58:35 -0700 (PDT)
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Subject: [PATCH 00/12] Adreno cooling, take 2
+Date: Fri, 10 May 2024 14:58:29 +0200
+Message-Id: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171534584246.10875.17807164319702422561.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPYZPmYC/x3MTQqAIBBA4avErBMsiqSrREjoaAPhiPYH0d2Tl
+ t/ivQcyJsIMY/VAwpMycSho6grMugSPgmwxtLLtZN9IsXMkI3w8sl4SasO86cCXQKusMp3r3eC
+ g1DGho/s/T/P7fuPvbe5pAAAA
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan+linaro@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+X-Mailer: b4 0.14-dev
 
-The following commit has been merged into the x86/urgent branch of tip:
+For the thermal framework to cool devfreq-managed devices properly,
+it seems like the following conditions must be met:
 
-Commit-ID:     0e640f0a47d8426eab1fb9c03f0af898dfe810b8
-Gitweb:        https://git.kernel.org/tip/0e640f0a47d8426eab1fb9c03f0af898dfe810b8
-Author:        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-AuthorDate:    Fri, 10 May 2024 16:48:28 +05:30
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 10 May 2024 14:52:46 +02:00
+1. the devfreq device has a cooling device associated with it
+2. there exists some thermal zone provider
+3. the cooling device is referenced in a cooling map
+4. the cooling map is associated with a thermal trip point
+5. the thermal trip point is of the "passive" kind
+6. the "passive" trip point is being updated (via polling or otherwise)
+7. the trip point is being hit (i.e. the thing gets hot enough)
 
-x86/amd_nb: Add new PCI IDs for AMD family 0x1a
+Various QC DTs have various issues, mostly around 4, 5, 6 and 7.
+This series tries to amend the platforms that currently can't have
+Adreno throttled, without making much unnecessary/debatable mess,
+although sneaking in some configuration unification/standardization.
 
-Add the new PCI Device IDs to the MISC IDs list to support new
-generation of AMD 1Ah family 70h Models of processors.
+Further updates can be made in the future.
 
-  [ bp: Massage commit message. ]
+This was originally brought into attention by Daniel in [1], this
+series resolves the issues on a treewide scale.
 
-Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20240510111829.969501-1-Shyam-sundar.S-k@amd.com
+Developed atop (and thereby depends on) [2].
+
+[1] https://lore.kernel.org/linux-arm-msm/20240116115921.804185-1-daniel.lezcano@linaro.org/
+[2] https://lore.kernel.org/linux-arm-msm/b4dba1d5-448a-4a4b-94d5-f27c6ff0010d@linaro.org/T/#t
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/x86/kernel/amd_nb.c | 1 +
- include/linux/pci_ids.h  | 1 +
- 2 files changed, 2 insertions(+)
+Konrad Dybcio (12):
+      arm64: dts: qcom: sc8180x: Throttle the GPU when overheating
+      arm64: dts: qcom: sc8280xp: Throttle the GPU when overheating
+      arm64: dts: qcom: sdm630: Throttle the GPU when overheating
+      arm64: dts: qcom: sdm845: Throttle the GPU when overheating
+      arm64: dts: qcom: sm6115: Update GPU thermal zone settings
+      arm64: dts: qcom: sm6350: Update GPU thermal zone settings
+      arm64: dts: qcom: sm8150: Throttle the GPU when overheating
+      arm64: dts: qcom: sm8250: Throttle the GPU when overheating
+      arm64: dts: qcom: sm8350: Throttle the GPU when overheating
+      arm64: dts: qcom: sm8450: Throttle the GPU when overheating
+      arm64: dts: qcom: sm8550: Throttle the GPU when overheating
+      arm64: dts: qcom: sm8650: Throttle the GPU when overheating
 
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index 5bf5f9f..3cf156f 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -95,6 +95,7 @@ static const struct pci_device_id amd_nb_misc_ids[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_19H_M78H_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI200_DF_F3) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_AMD, PCI_DEVICE_ID_AMD_MI300_DF_F3) },
- 	{}
-diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-index a0c75e4..c547d1d 100644
---- a/include/linux/pci_ids.h
-+++ b/include/linux/pci_ids.h
-@@ -580,6 +580,7 @@
- #define PCI_DEVICE_ID_AMD_19H_M78H_DF_F3 0x12fb
- #define PCI_DEVICE_ID_AMD_1AH_M00H_DF_F3 0x12c3
- #define PCI_DEVICE_ID_AMD_1AH_M20H_DF_F3 0x16fb
-+#define PCI_DEVICE_ID_AMD_1AH_M70H_DF_F3 0x12bb
- #define PCI_DEVICE_ID_AMD_MI200_DF_F3	0x14d3
- #define PCI_DEVICE_ID_AMD_MI300_DF_F3	0x152b
- #define PCI_DEVICE_ID_AMD_VANGOGH_USB	0x163a
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi  |  28 ++++-
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi |  17 ++-
+ arch/arm64/boot/dts/qcom/sdm630.dtsi   |  12 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi   |  28 ++++-
+ arch/arm64/boot/dts/qcom/sm6115.dtsi   |   8 +-
+ arch/arm64/boot/dts/qcom/sm6350.dtsi   |  16 ++-
+ arch/arm64/boot/dts/qcom/sm8150.dtsi   |  28 ++++-
+ arch/arm64/boot/dts/qcom/sm8250.dtsi   |  28 ++++-
+ arch/arm64/boot/dts/qcom/sm8350.dtsi   |  24 ++++
+ arch/arm64/boot/dts/qcom/sm8450.dtsi   |  48 +++-----
+ arch/arm64/boot/dts/qcom/sm8550.dtsi   | 208 +++++++++++++--------------------
+ arch/arm64/boot/dts/qcom/sm8650.dtsi   | 169 ++++++++++++++++++++++-----
+ 12 files changed, 406 insertions(+), 208 deletions(-)
+---
+base-commit: 2adffd063e54f8790132eedfaf3019bfb6f62268
+change-id: 20240510-topic-gpus_are_cool_now-ed8d8c4f5f7f
+
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@linaro.org>
+
 
