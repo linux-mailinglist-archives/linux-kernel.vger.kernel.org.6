@@ -1,125 +1,447 @@
-Return-Path: <linux-kernel+bounces-176037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C198C2915
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:08:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634C08C2917
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4C7284867
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EE81C21228
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E52417C68;
-	Fri, 10 May 2024 17:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5834117C7F;
+	Fri, 10 May 2024 17:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEM0zyJe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZSVY8eX6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3F8168BD;
-	Fri, 10 May 2024 17:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CFF10965
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715360897; cv=none; b=uj3zB9LCtPuQdS2l4Vi/0oqNEiWmXn/+l62cWSloeEDIiQB3HdCRFM9uTdQszqlFu78RHDYciBfLLcIRAoOXI/J/ZtoS/61bxAFgsWBDYbtd1UfYnZFznzhpFXrOgdH9Rt2VDAZZVgnJA5X+2mbqZORcaxGpY75YJb8QoefE0iM=
+	t=1715360958; cv=none; b=i2KKaPdVtrmrXy/etHIWvAJABLQzNE89pa3fI85QpWeNHE/lWIJWEq8zQB8u1u6PA4aOMqR4kLNNE3/rGKKr7RorijHL+8dTsJ/n75ib4zrded34B4GWDQdneZhk5/Ip3XuJSTlLwMrcB7vU869PLRPkL7pXLz3Gtkcj5PT3TG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715360897; c=relaxed/simple;
-	bh=FeldaRg6tINYOeoeFmz/DOcrzlUptv3ygea75vJ6kSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKnHpv9PoC5yVorbAS+T/ILOmJRokB08no39ce2e7QqpD1OcGjR2caDYkSldJKWtGyEXpf2k/7Oq/LCcuraKR28Bv8jL5yHzzwYuWyDvVSaGIdhwU7emXmDbm8Oc97HyjQEB9v63oeM53AFn+kpeulhosBNUetSkkY0RzDOn5Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEM0zyJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99BFC113CC;
-	Fri, 10 May 2024 17:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715360897;
-	bh=FeldaRg6tINYOeoeFmz/DOcrzlUptv3ygea75vJ6kSY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=DEM0zyJe/j8AUmcUc1mKG2HoRzTBnZ3MRLZhztcGakB5xxz+/iYXoVzymrn8tmTHi
-	 Jnclldj4TFmUqzNZoZdouLKBq92Ul5hz5sXIQI5pNRzVtnHLjA+5vmGape1e6EFaOe
-	 B7Xh8/aV3u9kkkjLD6RdOsjAM0EHOMO1G/RGblzTV6QcfW7KBFasH0/rc0dxDTkvYl
-	 Fy3zgzYZOh7Td5qrP85zptpVf+aFPH4cj9xQuubw5pfpQV3efIeXdaxnviJFhqqkcf
-	 Fm4G78nkjQY1T2db0ffZO+59EXsY1q0aJCLBzywR57Ed8AO23x4wF5wKJd86y109h2
-	 w8uPMiIqN7lAw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8DC36CE094C; Fri, 10 May 2024 10:08:16 -0700 (PDT)
-Date: Fri, 10 May 2024 10:08:16 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>,
-	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
-Message-ID: <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240510141921.883231-1-leitao@debian.org>
- <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
- <de92101c-f9c4-4af4-95f4-19a6f59b636f@paulmck-laptop>
- <d037f37a-4722-4a1d-a282-63355a97a1a1@acm.org>
+	s=arc-20240116; t=1715360958; c=relaxed/simple;
+	bh=o3HzQiNDCwGit4QggZnMuI+ScqHocZvAJc6fOILdelI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UjRgbV2jjA2e4xg2BaeCXCNR366/hXCnaLTATzs4oqqkxb1G18BnIPwqGNn8h+vlCnAiJMaXk0kJBmBBVieDmjCIroqxeag4N4kSjK80Q0a8DTGDh55DLhJiksh5MKyL/xMJisIlnIG7u/8vfrwTPay58PfrMcSFKz8s30HzzVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZSVY8eX6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715360955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7p3PXm6krOSd+K8cPm+lYpKDJuTh76+T2MFZsxS42kQ=;
+	b=ZSVY8eX63hCu6O68NKr4Q/vMl5y+8xob8mpLIXUtB6z5R2fQjQyS5JzUiUQ1G8V+zfLpR0
+	JmOAx5umfDiSW01z+YsFeZGiLj4z93hojBH/6SnY4X0DGFrRRY7NTq589xdoDsYnjaGt1B
+	JiqrexFWMmYbT9JVDuRdptdPfmxsi9U=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-497-dK7Sqt0VMWKXVCcXyXxpyg-1; Fri, 10 May 2024 13:09:13 -0400
+X-MC-Unique: dK7Sqt0VMWKXVCcXyXxpyg-1
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a59eea00cafso156980866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:09:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715360952; x=1715965752;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7p3PXm6krOSd+K8cPm+lYpKDJuTh76+T2MFZsxS42kQ=;
+        b=RGJXbw0Tomf4gMS8KVG05lZS4NmMSIR08f3oB7PnOILsM8AEQK4xtRFMnjSQvLQ57l
+         LxRN43CMKe8pk7YiBfNmXjZFkR5De/yZgWDVyuLxEDCzrzC4ZIBVnTEM9tUb/XWHYvD6
+         BfWh6iHyK6f3Of+8RFataRgQjAwRp7eUh2jMuWmmqwx+2aIS7xVwNCJITcN0aHzlltiB
+         bQCa9iqaKqDcalz7jrkt8OQtQ808KBlIlxlr4teen71Hp20WcM7yIQua/BPIHCyRcvs/
+         kM1wClmEgqOTRkSdjdT8azgAQGBDUJIRw33RFDRsHAhVu85P+K9GQKmr2QozyZcCgnmy
+         eSIw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8i1OBKDNxLWJVNCr0HA81i2lmUZWMDz8uob5U3fIkxrXpYBHUNJ+xam4W4s90YojH4r3n5T5C/sGmRrVKn+4UHAY0pXezj21NVadR
+X-Gm-Message-State: AOJu0YyppekwQOEny2AdF2TO86Tm6B78dkrAOKTgSY+myASek8IsPmSv
+	U//AHm9tdE//usrpFx8JNsuQLi2Nc8yg5CB3LMoNC4IsyaWBloqiWUCv8p8w4vPjh5UsOPWUwPO
+	Y5x7t+6X+atazLp54MycuKKBrzv/Xfpo54nK7MacobuOYNB1iXsexMondeCbCfQ==
+X-Received: by 2002:a17:906:dd7:b0:a59:d5e4:1487 with SMTP id a640c23a62f3a-a5a2d5cb6ffmr296460066b.42.1715360952383;
+        Fri, 10 May 2024 10:09:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEM811MEkD14aLnO6nvhAkFbQgZ7sUPC3JmgKjoPSF+RTljS81r9GeaHQExLPjzmjW5n7F/Og==
+X-Received: by 2002:a17:906:dd7:b0:a59:d5e4:1487 with SMTP id a640c23a62f3a-a5a2d5cb6ffmr296457566b.42.1715360951811;
+        Fri, 10 May 2024 10:09:11 -0700 (PDT)
+Received: from [192.168.10.48] ([151.95.155.52])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a5a1781cf70sm204202566b.30.2024.05.10.10.09.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 10:09:10 -0700 (PDT)
+Message-ID: <fe5cc86b-43e0-4685-99e7-998e61db333f@redhat.com>
+Date: Fri, 10 May 2024 19:09:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d037f37a-4722-4a1d-a282-63355a97a1a1@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 23/23] KVM: SEV: Fix PSC handling for SMASH/UNSMASH
+ and partial update ops
+To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org
+Cc: linux-coco@lists.linux.dev, linux-mm@kvack.org,
+ linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, jroedel@suse.de,
+ thomas.lendacky@amd.com, hpa@zytor.com, ardb@kernel.org, seanjc@google.com,
+ vkuznets@redhat.com, jmattson@google.com, luto@kernel.org,
+ dave.hansen@linux.intel.com, slp@redhat.com, pgonda@google.com,
+ peterz@infradead.org, srinivas.pandruvada@linux.intel.com,
+ rientjes@google.com, dovmurik@linux.ibm.com, tobin@ibm.com, bp@alien8.de,
+ vbabka@suse.cz, kirill@shutemov.name, ak@linux.intel.com,
+ tony.luck@intel.com, sathyanarayanan.kuppuswamy@linux.intel.com,
+ alpergun@google.com, jarkko@kernel.org, ashish.kalra@amd.com,
+ nikunj.dadhania@amd.com, pankaj.gupta@amd.com, liam.merwick@oracle.com,
+ papaluri@amd.com
+References: <20240501085210.2213060-1-michael.roth@amd.com>
+ <20240510015822.503071-1-michael.roth@amd.com>
+ <20240510015822.503071-3-michael.roth@amd.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ xsEhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAc0j
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT7CwU0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSTOwE0EVEJx7gEIAMeHcVzuv2bp9HlWDp6+RkZe+vtl
+ KwAHplb/WH59j2wyG8V6i33+6MlSSJMOFnYUCCL77bucx9uImI5nX24PIlqT+zasVEEVGSRF
+ m8dgkcJDB7Tps0IkNrUi4yof3B3shR+vMY3i3Ip0e41zKx0CvlAhMOo6otaHmcxr35sWq1Jk
+ tLkbn3wG+fPQCVudJJECvVQ//UAthSSEklA50QtD2sBkmQ14ZryEyTHQ+E42K3j2IUmOLriF
+ dNr9NvE1QGmGyIcbw2NIVEBOK/GWxkS5+dmxM2iD4Jdaf2nSn3jlHjEXoPwpMs0KZsgdU0pP
+ JQzMUMwmB1wM8JxovFlPYrhNT9MAEQEAAcLBMwQYAQIACQUCVEJx7gIbDAAKCRB+FRAMzTZp
+ sadRDqCctLmYICZu4GSnie4lKXl+HqlLanpVMOoFNnWs9oRP47MbE2wv8OaYh5pNR9VVgyhD
+ OG0AU7oidG36OeUlrFDTfnPYYSF/mPCxHttosyt8O5kabxnIPv2URuAxDByz+iVbL+RjKaGM
+ GDph56ZTswlx75nZVtIukqzLAQ5fa8OALSGum0cFi4ptZUOhDNz1onz61klD6z3MODi0sBZN
+ Aj6guB2L/+2ZwElZEeRBERRd/uommlYuToAXfNRdUwrwl9gRMiA0WSyTb190zneRRDfpSK5d
+ usXnM/O+kr3Dm+Ui+UioPf6wgbn3T0o6I5BhVhs4h4hWmIW7iNhPjX1iybXfmb1gAFfjtHfL
+ xRUr64svXpyfJMScIQtBAm0ihWPltXkyITA92ngCmPdHa6M1hMh4RDX+Jf1fiWubzp1voAg0
+ JBrdmNZSQDz0iKmSrx8xkoXYfA3bgtFN8WJH2xgFL28XnqY4M6dLhJwV3z08tPSRqYFm4NMP
+ dRsn0/7oymhneL8RthIvjDDQ5ktUjMe8LtHr70OZE/TT88qvEdhiIVUogHdo4qBrk41+gGQh
+ b906Dudw5YhTJFU3nC6bbF2nrLlB4C/XSiH76ZvqzV0Z/cAMBo5NF/w=
+In-Reply-To: <20240510015822.503071-3-michael.roth@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 10, 2024 at 09:20:58AM -0700, Bart Van Assche wrote:
-> On 5/10/24 8:41 AM, Paul E. McKenney wrote:
-> > On Fri, May 10, 2024 at 07:28:41AM -0700, Bart Van Assche wrote:
-> > > On 5/10/24 07:19, Breno Leitao wrote:
-> > > > diff --git a/block/blk.h b/block/blk.h
-> > > > index d9f584984bc4..57a1d73a0718 100644
-> > > > --- a/block/blk.h
-> > > > +++ b/block/blk.h
-> > > > @@ -353,7 +353,8 @@ int blk_dev_init(void);
-> > > >     */
-> > > >    static inline bool blk_do_io_stat(struct request *rq)
-> > > >    {
-> > > > -	return (rq->rq_flags & RQF_IO_STAT) && !blk_rq_is_passthrough(rq);
-> > > > +	/* Disk stats reading isn’t critical, let it race */
-> > > > +	return (data_race(rq->rq_flags) & RQF_IO_STAT) && !blk_rq_is_passthrough(rq);
-> > > >    }
-> > > >    void update_io_ticks(struct block_device *part, unsigned long now, bool end);
-> > > 
-> > > Why to annotate this race with data_race() instead of READ_ONCE()? Are
-> > > there any cases in which it is better to use data_race() than
-> > > READ_ONCE()?
-> > 
-> > We use this pattern quite a bit in RCU.  For example, suppose that we
-> > have a variable that is accessed only under a given lock, except that it
-> > is also locklessly accessed for diagnostics or statistics.  Then having
-> > unmarked (normal C language) accesses under the lock and data_race()
-> > for that statistics enables KCSAN to flag other (buggy) lockless accesses.
+On 5/10/24 03:58, Michael Roth wrote:
+> There are a few edge-cases that the current processing for GHCB PSC
+> requests doesn't handle properly:
 > 
-> Can using data_race() instead of READ_ONCE() result in incorrect code
-> generation, e.g. the compiler emitting a read twice and reading two
-> different values?
+>   - KVM properly ignores SMASH/UNSMASH ops when they are embedded in a
+>     PSC request buffer which contains other PSC operations, but
+>     inadvertantly forwards them to userspace as private->shared PSC
+>     requests if they appear at the end of the buffer. Make sure these are
+>     ignored instead, just like cases where they are not at the end of the
+>     request buffer.
+> 
+>   - Current code handles non-zero 'cur_page' fields when they are at the
+>     beginning of a new GPA range, but it is not handling properly when
+>     iterating through subsequent entries which are otherwise part of a
+>     contiguous range. Fix up the handling so that these entries are not
+>     combined into a larger contiguous range that include unintended GPA
+>     ranges and are instead processed later as the start of a new
+>     contiguous range.
+> 
+>   - The page size variable used to track 2M entries in KVM for inflight PSCs
+>     might be artifically set to a different value, which can lead to
+>     unexpected values in the entry's final 'cur_page' update. Use the
+>     entry's 'pagesize' field instead to determine what the value of
+>     'cur_page' should be upon completion of processing.
+> 
+> While here, also add a small helper for clearing in-flight PSCs
+> variables and fix up comments for better readability.
+> 
+> Fixes: 266205d810d2 ("KVM: SEV: Add support to handle Page State Change VMGEXIT")
+> Signed-off-by: Michael Roth <michael.roth@amd.com>
 
-It could.
+There are some more improvements that can be made to the readability of
+the code... this one is already better than the patch is fixing up, but I
+don't like the code that is in the loop even though it is unconditionally
+followed by "break".
 
-And if that was a big enough problem, you might want READ_ONCE() there.
-The cases in Linux-kernel RCU involve quantities that rarely change,
-so even if the compiler does something counterproductive, the odds of
-output being affected are low.
+Here's my attempt at replacing this patch, which is really more of a
+rewrite of the whole function...  Untested beyond compilation.
 
-So why not just always use READ_ONCE() for debugging/statistical accesses?
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 35f0bd91f92e..6e612789c35f 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3555,23 +3555,25 @@ struct psc_buffer {
+  
+  static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc);
+  
+-static int snp_complete_psc(struct kvm_vcpu *vcpu)
++static void snp_complete_psc(struct vcpu_svm *svm, u64 psc_ret)
++{
++	svm->sev_es.psc_inflight = 0;
++	svm->sev_es.psc_idx = 0;
++	svm->sev_es.psc_2m = 0;
++	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
++}
++
++static void __snp_complete_one_psc(struct vcpu_svm *svm)
+  {
+-	struct vcpu_svm *svm = to_svm(vcpu);
+  	struct psc_buffer *psc = svm->sev_es.ghcb_sa;
+  	struct psc_entry *entries = psc->entries;
+  	struct psc_hdr *hdr = &psc->hdr;
+-	__u64 psc_ret;
+  	__u16 idx;
+  
+-	if (vcpu->run->hypercall.ret) {
+-		psc_ret = VMGEXIT_PSC_ERROR_GENERIC;
+-		goto out_resume;
+-	}
+-
+  	/*
+  	 * Everything in-flight has been processed successfully. Update the
+-	 * corresponding entries in the guest's PSC buffer.
++	 * corresponding entries in the guest's PSC buffer and zero out the
++	 * count of in-flight PSC entries.
+  	 */
+  	for (idx = svm->sev_es.psc_idx; svm->sev_es.psc_inflight;
+  	     svm->sev_es.psc_inflight--, idx++) {
+@@ -3581,17 +3583,22 @@ static int snp_complete_psc(struct kvm_vcpu *vcpu)
+  	}
+  
+  	hdr->cur_entry = idx;
++}
++
++static int snp_complete_one_psc(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_svm *svm = to_svm(vcpu);
++	struct psc_buffer *psc = svm->sev_es.ghcb_sa;
++
++	if (vcpu->run->hypercall.ret) {
++		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
++		return 1; /* resume guest */
++	}
++
++	__snp_complete_one_psc(svm);
+  
+  	/* Handle the next range (if any). */
+  	return snp_begin_psc(svm, psc);
+-
+-out_resume:
+-	svm->sev_es.psc_idx = 0;
+-	svm->sev_es.psc_inflight = 0;
+-	svm->sev_es.psc_2m = false;
+-	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
+-
+-	return 1; /* resume guest */
+  }
+  
+  static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+@@ -3601,18 +3608,20 @@ static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+  	struct psc_hdr *hdr = &psc->hdr;
+  	struct psc_entry entry_start;
+  	u16 idx, idx_start, idx_end;
+-	__u64 psc_ret, gpa;
++	u64 gfn;
+  	int npages;
+-
+-	/* There should be no other PSCs in-flight at this point. */
+-	if (WARN_ON_ONCE(svm->sev_es.psc_inflight)) {
+-		psc_ret = VMGEXIT_PSC_ERROR_GENERIC;
+-		goto out_resume;
+-	}
++	bool huge;
+  
+  	if (!(vcpu->kvm->arch.hypercall_exit_enabled & (1 << KVM_HC_MAP_GPA_RANGE))) {
+-		psc_ret = VMGEXIT_PSC_ERROR_GENERIC;
+-		goto out_resume;
++		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
++		return 1;
++	}
++
++next_range:
++	/* There should be no other PSCs in-flight at this point. */
++	if (WARN_ON_ONCE(svm->sev_es.psc_inflight)) {
++		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_GENERIC);
++		return 1;
+  	}
+  
+  	/*
+@@ -3624,97 +3633,99 @@ static int snp_begin_psc(struct vcpu_svm *svm, struct psc_buffer *psc)
+  	idx_end = hdr->end_entry;
+  
+  	if (idx_end >= VMGEXIT_PSC_MAX_COUNT) {
+-		psc_ret = VMGEXIT_PSC_ERROR_INVALID_HDR;
+-		goto out_resume;
+-	}
+-
+-	/* Nothing more to process. */
+-	if (idx_start > idx_end) {
+-		psc_ret = 0;
+-		goto out_resume;
++		snp_complete_psc(svm, VMGEXIT_PSC_ERROR_INVALID_HDR);
++		return 1;
+  	}
+  
+  	/* Find the start of the next range which needs processing. */
+  	for (idx = idx_start; idx <= idx_end; idx++, hdr->cur_entry++) {
+-		__u16 cur_page;
+-		gfn_t gfn;
+-		bool huge;
+-
+  		entry_start = entries[idx];
+-
+-		/* Only private/shared conversions are currently supported. */
+-		if (entry_start.operation != VMGEXIT_PSC_OP_PRIVATE &&
+-		    entry_start.operation != VMGEXIT_PSC_OP_SHARED)
+-			continue;
+-
+  		gfn = entry_start.gfn;
+-		cur_page = entry_start.cur_page;
+  		huge = entry_start.pagesize;
++		npages = huge ? 512 : 1;
+  
+-		if ((huge && (cur_page > 512 || !IS_ALIGNED(gfn, 512))) ||
+-		    (!huge && cur_page > 1)) {
+-			psc_ret = VMGEXIT_PSC_ERROR_INVALID_ENTRY;
+-			goto out_resume;
++		if (entry_start.cur_page > npages || !IS_ALIGNED(gfn, npages)) {
++			snp_complete_psc(svm, VMGEXIT_PSC_ERROR_INVALID_ENTRY);
++			return 1;
+  		}
+  
++		if (entry_start.cur_page) {
++			/*
++			 * If this is a partially-completed 2M range, force 4K
++			 * handling for the remaining pages since they're effectively
++			 * split at this point. Subsequent code should ensure this
++			 * doesn't get combined with adjacent PSC entries where 2M
++			 * handling is still possible.
++			 */
++			npages -= entry_start.cur_page;
++			gfn += entry_start.cur_page;
++			huge = false;
++		}
++		if (npages)
++			break;
++
+  		/* All sub-pages already processed. */
+-		if ((huge && cur_page == 512) || (!huge && cur_page == 1))
+-			continue;
+-
+-		/*
+-		 * If this is a partially-completed 2M range, force 4K handling
+-		 * for the remaining pages since they're effectively split at
+-		 * this point. Subsequent code should ensure this doesn't get
+-		 * combined with adjacent PSC entries where 2M handling is still
+-		 * possible.
+-		 */
+-		svm->sev_es.psc_2m = cur_page ? false : huge;
+-		svm->sev_es.psc_idx = idx;
+-		svm->sev_es.psc_inflight = 1;
+-
+-		gpa = gfn_to_gpa(gfn + cur_page);
+-		npages = huge ? 512 - cur_page : 1;
+-		break;
+  	}
+  
++	if (idx > idx_end) {
++		/* Nothing more to process. */
++		snp_complete_psc(svm, 0);
++		return 1;
++	}
++
++	svm->sev_es.psc_2m = huge;
++	svm->sev_es.psc_idx = idx;
++	svm->sev_es.psc_inflight = 1;
++
+  	/*
+  	 * Find all subsequent PSC entries that contain adjacent GPA
+  	 * ranges/operations and can be combined into a single
+  	 * KVM_HC_MAP_GPA_RANGE exit.
+  	 */
+-	for (idx = svm->sev_es.psc_idx + 1; idx <= idx_end; idx++) {
++	while (++idx <= idx_end) {
+  		struct psc_entry entry = entries[idx];
+  
+  		if (entry.operation != entry_start.operation ||
+-		    entry.gfn != entry_start.gfn + npages ||
+-		    !!entry.pagesize != svm->sev_es.psc_2m)
++		    entry.gfn != gfn + npages ||
++		    entry.cur_page ||
++		    !!entry.pagesize != huge)
+  			break;
+  
+  		svm->sev_es.psc_inflight++;
+-		npages += entry_start.pagesize ? 512 : 1;
++		npages += huge ? 512 : 1;
+  	}
+  
+-	vcpu->run->exit_reason = KVM_EXIT_HYPERCALL;
+-	vcpu->run->hypercall.nr = KVM_HC_MAP_GPA_RANGE;
+-	vcpu->run->hypercall.args[0] = gpa;
+-	vcpu->run->hypercall.args[1] = npages;
+-	vcpu->run->hypercall.args[2] = entry_start.operation == VMGEXIT_PSC_OP_PRIVATE
+-				       ? KVM_MAP_GPA_RANGE_ENCRYPTED
+-				       : KVM_MAP_GPA_RANGE_DECRYPTED;
+-	vcpu->run->hypercall.args[2] |= entry_start.pagesize
+-					? KVM_MAP_GPA_RANGE_PAGE_SZ_2M
+-					: KVM_MAP_GPA_RANGE_PAGE_SZ_4K;
+-	vcpu->arch.complete_userspace_io = snp_complete_psc;
++	switch (entry_start.operation) {
++	case VMGEXIT_PSC_OP_PRIVATE:
++	case VMGEXIT_PSC_OP_SHARED:
++		vcpu->run->exit_reason = KVM_EXIT_HYPERCALL;
++		vcpu->run->hypercall.nr = KVM_HC_MAP_GPA_RANGE;
++		vcpu->run->hypercall.args[0] = gfn_to_gpa(gfn);
++		vcpu->run->hypercall.args[1] = npages;
++		vcpu->run->hypercall.args[2] = entry_start.operation == VMGEXIT_PSC_OP_PRIVATE
++			? KVM_MAP_GPA_RANGE_ENCRYPTED
++			: KVM_MAP_GPA_RANGE_DECRYPTED;
++		vcpu->run->hypercall.args[2] |= huge
++			? KVM_MAP_GPA_RANGE_PAGE_SZ_2M
++			: KVM_MAP_GPA_RANGE_PAGE_SZ_4K;
++		vcpu->arch.complete_userspace_io = snp_complete_one_psc;
+  
+-	return 0; /* forward request to userspace */
++		return 0; /* forward request to userspace */
+  
+-out_resume:
+-	svm->sev_es.psc_idx = 0;
+-	svm->sev_es.psc_inflight = 0;
+-	svm->sev_es.psc_2m = false;
+-	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, psc_ret);
++	default:
++		/*
++		 * Only shared/private PSC operations are currently supported, so if the
++		 * entire range consists of unsupported operations (e.g. SMASH/UNSMASH),
++		 * then consider the entire range completed and avoid exiting to
++		 * userspace. In theory snp_complete_psc() can be called directly
++		 * at this point to complete the current range and start the next one,
++		 * but that could lead to unexpected levels of recursion.
++		 */
++		__snp_complete_one_psc(svm);
++		goto next_range;
++	}
+  
+-	return 1; /* resume guest */
++	unreachable();
+  }
+  
+  static int __sev_snp_update_protected_guest_state(struct kvm_vcpu *vcpu)
 
-To see that, consider a variable that is supposed to be accessed only
-under a lock (aside from the debugging/statistical access).  Under RCU's
-KCSAN rules, marking those debugging/statistical accesses with READ_ONCE()
-would require all the updates to be marked with WRITE_ONCE().  Which would
-prevent KCSAN from noticing a buggy lockless WRITE_ONCE() update of
-that variable.
-
-In contrast, if we use data_race() for the debugging/statistical accesses
-and leave the normal lock-protected accesses unmarked (as normal
-C-language accesses), then KCSAN will complain about buggy lockless
-accesses, even if they are marked with READ_ONCE() or WRITE_ONCE().
-
-Does that help, or am I missing your point?
-
-							Thanx, Paul
 
