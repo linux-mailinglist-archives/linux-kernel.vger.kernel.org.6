@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-175611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F558C2295
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:55:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C84348C2298
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B46EBB22BD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D116B22A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E8616EC0B;
-	Fri, 10 May 2024 10:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0160C16D4E5;
+	Fri, 10 May 2024 10:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZ16glye"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="iAhuMrqN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B1816C873;
-	Fri, 10 May 2024 10:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27375168AF4;
+	Fri, 10 May 2024 10:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715338516; cv=none; b=oFW/2uqlF31qhqaTAVzLSV3zXhA7nB51FUe+hd+Zio44ILnmnA6GycruOXbL3GPxsCLbAPLsxILspB4OY1tkWF7INY0D/Qt6MzZdaRs+64V4grlSDRe6ZKP9sFTSiO1m45g+v8tC73Qg5pY/ubl8oTG3gA6BtUpJTKHtRpwPbe0=
+	t=1715338539; cv=none; b=IPduIAFRpJLngrPDfbbclm2WgmXD0oLrsLrUbO5VL1MaqbPbbav+xy+XVQ1DiXInVvK18qSGY1L+K7X9sw4jYXrQ1s6lR1U52hoJwgtriLygoHz2L0GWU1+p9NH4FXEdu6UOoYPKD7y0EcrqUfpddhrYs+tanK6hyg4szp+DhNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715338516; c=relaxed/simple;
-	bh=Yg72rzmx+bcTPUq2wGuL/cZ1uSAABSmBZuLsh72n3GA=;
+	s=arc-20240116; t=1715338539; c=relaxed/simple;
+	bh=3RLAuGF0/SkubgGqr81HXENZp8CeEDdU7Is1crZ3K9E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJ6niPS+Eq0pQiIUq74vSRKqb0qeL404ZcAOFD2jb+VrQuSsKA2pYtJQekpwhvB3nrKhzWF/mG5MaHYirs/MybyFRdh7qVBQwWS6reoAyFwBYCtrIYEbbkrmcCd2AwDGytkLENRg4+H9MqnvoZWtU3ilkpDWiDDTSnY2lNoceJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZ16glye; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA6CBC113CC;
-	Fri, 10 May 2024 10:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715338514;
-	bh=Yg72rzmx+bcTPUq2wGuL/cZ1uSAABSmBZuLsh72n3GA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEYURWeGJ/q41JwWF69GncWy9YqroUh2C5JX7n6LXCMhFNtVnuy3lRlGf6Er30AJrEaAGXeydd34z+NvG4MkoujJjqIJCz02WQS9kcz4gPsed6x0Y3fdM7ti2qyZ7km2sAqUTYgLKblZN1R7es0eeHOFmyyA46IvYjmcpJLuzuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=iAhuMrqN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F142DC2BD11;
+	Fri, 10 May 2024 10:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715338538;
+	bh=3RLAuGF0/SkubgGqr81HXENZp8CeEDdU7Is1crZ3K9E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IZ16glyeUoEcw9bvLXvZyE6xpgHtADMx321GfnN0BHALFchlZSBq/fK4KF9b5Vq7h
-	 MN1lPeoAgCcojfCacXEZ3oUgkHjP6AqL7aJIiKfq7nArCv1Sqzay+3peXRW7zvHLED
-	 uBTZDCEcefInuP73Npox6kTo4di4WbMnD/NRY9011QMdLz34aE3feX0I2oQs+3g0h+
-	 m5kSagyGxw5VAGQdLCVlWKPi99HWJrGP46LMxQdj2jdhdDOctRZFpDeEzSulU05vzm
-	 V5x9L3RjmbW0zGRujXz0ojFm3N/C5Yh7q5TejagGWpEkhrrJhRtOpwxw/cmKQW7iqG
-	 9vrh1c5+2TFVw==
-Date: Fri, 10 May 2024 12:55:07 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@zeniv.linux.org.uk>, keescook@chromium.org, 
-	axboe@kernel.dk, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, 
-	io-uring@vger.kernel.org, jack@suse.cz, laura@labbott.name, linaro-mm-sig@lists.linaro.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	minhquangbui99@gmail.com, sumit.semwal@linaro.org, 
-	syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
- about file lifetimes
-Message-ID: <20240510-duzen-uhrmacher-141c9331f1bf@brauner>
-References: <202405031110.6F47982593@keescook>
- <20240503211129.679762-2-torvalds@linux-foundation.org>
- <20240503212428.GY2118490@ZenIV>
- <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
- <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
- <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
- <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
- <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
- <20240508-risse-fehlpass-895202f594fd@brauner>
- <ZjueITUy0K8TP1WO@phenom.ffwll.local>
+	b=iAhuMrqNrc8yn5jVWXFn7GPRrBN8y7V/vwv8h2mY/wXj3euox2C4isv05myPDDV5q
+	 og6nQb+CIEuHNLZLFoOgncqL6lIaUSLtTevSdZ7+KO8wvZ2wdD7IN8NUOA7KtaBwLS
+	 8+DDn5ftDCGo4fdlbW6fUVVzV52a7V9c5MUrFX7I=
+Date: Fri, 10 May 2024 11:55:30 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Thomas Huth <thuth@redhat.com>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Thorsten Winkler <twinkler@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>, netdev@vger.kernel.org,
+	llvm@lists.linux.dev, patches@lists.linux.dev,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH 5/6] tty: hvc-iucv: Make use of iucv_alloc_device()
+Message-ID: <2024051023-tapeless-hardener-593d@gregkh>
+References: <20240506194454.1160315-1-hca@linux.ibm.com>
+ <20240506194454.1160315-6-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZjueITUy0K8TP1WO@phenom.ffwll.local>
+In-Reply-To: <20240506194454.1160315-6-hca@linux.ibm.com>
 
-> For the uapi issue you describe below my take would be that we should just
-> try, and hope that everyone's been dutifully using O_CLOEXEC. But maybe
-> I'm biased from the gpu world, where we've been hammering it in that
-> "O_CLOEXEC or bust" mantra since well over a decade. Really the only valid
+On Mon, May 06, 2024 at 09:44:53PM +0200, Heiko Carstens wrote:
+> Make use of iucv_alloc_device() to get rid of quite some code.
+> 
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
+> ---
+>  drivers/tty/hvc/hvc_iucv.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
 
-Oh, we're very much on the same page. All new file descriptor types that
-I've added over the years are O_CLOEXEC by default. IOW, you need to
-remove O_CLOEXEC explicitly (see pidfd as an example). And imho, any new
-fd type that's added should just be O_CLOEXEC by default.
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
