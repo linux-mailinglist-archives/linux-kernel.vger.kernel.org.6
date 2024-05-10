@@ -1,166 +1,177 @@
-Return-Path: <linux-kernel+bounces-175766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687A68C2493
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:11:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D64FF8C2495
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93FDE1C20954
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888222823F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BD816F0DA;
-	Fri, 10 May 2024 12:11:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B5E16F0E2;
+	Fri, 10 May 2024 12:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AuN1cc7P"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC6016E894
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F7C21340;
+	Fri, 10 May 2024 12:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715343094; cv=none; b=cduasNLzAQFZHvZ6cwsLMzBzT4bkR/IA/d0IF3Q9tSDu37J1/GGKpOQ3KXspuVs38s+xymeODqggtmVIFdy6lmaHhu+153Esn+DqLQeGbHlN9bixXAEsuljMkS7Go1NaUiOwTU+Oq0bdoAS7s4HuxC6vZH9fk35L+xLCiCFn9hM=
+	t=1715343175; cv=none; b=QGr2145De/9gwvIEA7IRD7hbhrMBznv2GYAT3I7k7/DHRhzWeLOPNq2GxjchrtALu9jNCR3UlHQByOjAKcFRcn/u2dDOV6ndpQMGWMUpYIgKvnLG32xBgFX9y73h65EHfOZ691lmxX0ms4PHMF/RnC1Dod4vSaj60YkN8JXtuu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715343094; c=relaxed/simple;
-	bh=2eN1chDHuxk2s8CGL9ekbuCvXjRVXTjl0Qr8rBzv0Fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zoc9cTGwTFhnz3BT1ckW8699526zYYpnuzbVv4h1Zq2UX2POz5S8OxjTyqLsjIBEWumXWns/TFXVJW2anPGqlPcZ0rxec3pqgQJz5LlvrS+O74wKDEDLKNfG3+1MhhIbcOroXEhsEDe2puIWryyCymw28kkcziNzhuHNCDP9EQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB2A2C113CC;
-	Fri, 10 May 2024 12:11:32 +0000 (UTC)
-Date: Fri, 10 May 2024 13:11:30 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yang Shi <yang@os.amperecomputing.com>
-Cc: will@kernel.org, scott@os.amperecomputing.com, cl@gentwo.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW instructions
-Message-ID: <Zj4O8q9-bliXE435@arm.com>
-References: <20240507223558.3039562-1-yang@os.amperecomputing.com>
+	s=arc-20240116; t=1715343175; c=relaxed/simple;
+	bh=kpZQw+P2vcgkj+W1Iz5jlQU7T5p0A1MbKo7EuUSjcAY=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iiBcsOgK/awgGBT+AZFTIjV7mVUX0CkCScewlS/Xf7Mnbwf87mu3s2qypO931DRCviABwkoBQTvyOKZAGtWgqTGKes3R2lqB2WDT/3fk9knxl4BDehQbY/bRak4ndZOSs+ZOycNL8x821bDh3Z8aE/LrospC7yT+ThCaqubI5fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AuN1cc7P; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715343174; x=1746879174;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=kpZQw+P2vcgkj+W1Iz5jlQU7T5p0A1MbKo7EuUSjcAY=;
+  b=AuN1cc7PbX8KxaaG+KseWAoHl2I1l7iUTIQoRHfo+rz8P7FRzgXsKa0O
+   jD4RrrCCmGolrfHh38tm2/ifd1s9SjCRBTi/Opb3enhXxH4FkIX7odmXi
+   2n67tsWBIPMtXZ4JGfJaGhm2cJIGAirJELSHBQrv/0gIkVTqhaAJmfvsI
+   G+sX9K1DQqhsjArllyZwYVUWo3KMRLIqP3X8/1rvnS1f1s9E2eKRaU9Jn
+   jJp1BnZ6ZW601MglTlHYxtho7DIU9g36otnWWax4udpZhFcb9IyhhOA0v
+   pZTiXueC6/huQfVUvgBuxWqXdmsLFSls2cnYLXS3FKCQo9NcxmBaTxWyp
+   A==;
+X-CSE-ConnectionGUID: TlSi32ayQb6yPJd9Ds6agA==
+X-CSE-MsgGUID: MA8gz5jmQ9m6fIk0PiJ9PQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="33832756"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="33832756"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 05:12:54 -0700
+X-CSE-ConnectionGUID: 0utjR1UFRM63Xx1lpDbLTw==
+X-CSE-MsgGUID: Ogl5fA/MQ0uTVQyLsYV8Vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="29546609"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.85])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 05:12:51 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 10 May 2024 15:12:47 +0300 (EEST)
+To: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
+cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, Lukas Wunner <lukas@wunner.de>, 
+    LKML <linux-kernel@vger.kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v4 6/7] PCI: Add TLP Prefix reading into
+ pcie_read_tlp_log()
+In-Reply-To: <20240510100730.18805-7-ilpo.jarvinen@linux.intel.com>
+Message-ID: <7d69ae9f-9d2f-2482-eaa7-d3e31037c8d1@linux.intel.com>
+References: <20240510100730.18805-1-ilpo.jarvinen@linux.intel.com> <20240510100730.18805-7-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507223558.3039562-1-yang@os.amperecomputing.com>
+Content-Type: multipart/mixed; boundary="8323328-204770702-1715343167=:1562"
 
-On Tue, May 07, 2024 at 03:35:58PM -0700, Yang Shi wrote:
-> The atomic RMW instructions, for example, ldadd, actually does load +
-> add + store in one instruction, it may trigger two page faults, the
-> first fault is a read fault, the second fault is a write fault.
-> 
-> Some applications use atomic RMW instructions to populate memory, for
-> example, openjdk uses atomic-add-0 to do pretouch (populate heap memory
-> at launch time) between v18 and v22.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-I'd also argue that this should be optimised in openjdk. Is an LDADD
-more efficient on your hardware than a plain STR? I hope it only does
-one operation per page rather than per long. There's also MAP_POPULATE
-that openjdk can use to pre-fault the pages with no additional fault.
-This would be even more efficient than any store or atomic operation.
+--8323328-204770702-1715343167=:1562
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Not sure the reason for the architecture to report a read fault only on
-atomics. Looking at the pseudocode, it checks for both but the read
-permission takes priority. Also in case of a translation fault (which is
-what we get on the first fault), I think the syndrome write bit is
-populated as (!read && write), so 0 since 'read' is 1 for atomics.
+On Fri, 10 May 2024, Ilpo J=C3=A4rvinen wrote:
 
-> But the double page fault has some problems:
-> 
-> 1. Noticeable TLB overhead.  The kernel actually installs zero page with
->    readonly PTE for the read fault.  The write fault will trigger a
->    write-protection fault (CoW).  The CoW will allocate a new page and
->    make the PTE point to the new page, this needs TLB invalidations.  The
->    tlb invalidation and the mandatory memory barriers may incur
->    significant overhead, particularly on the machines with many cores.
-
-I can see why the current behaviour is not ideal but I can't tell why
-openjdk does it this way either.
-
-A bigger hammer would be to implement mm_forbids_zeropage() but this may
-affect some workloads that rely on sparsely populated large arrays.
-
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
-> index db1aeacd4cd9..5d5a3fbeecc0 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -319,6 +319,7 @@ static __always_inline u32 aarch64_insn_get_##abbr##_value(void)	\
->   * "-" means "don't care"
->   */
->  __AARCH64_INSN_FUNCS(class_branch_sys,	0x1c000000, 0x14000000)
-> +__AARCH64_INSN_FUNCS(class_atomic,	0x3b200c00, 0x38200000)
-
-This looks correct, it covers the LDADD and SWP instructions. However,
-one concern is whether future architecture versions will add some
-instructions in this space that are allowed to do a read only operation
-(e.g. skip writing if the value is the same or fails some comparison).
-
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 8251e2fea9c7..f7bceedf5ef3 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -529,6 +529,7 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  	unsigned int mm_flags = FAULT_FLAG_DEFAULT;
->  	unsigned long addr = untagged_addr(far);
->  	struct vm_area_struct *vma;
-> +	unsigned int insn;
->  
->  	if (kprobe_page_fault(regs, esr))
->  		return 0;
-> @@ -586,6 +587,24 @@ static int __kprobes do_page_fault(unsigned long far, unsigned long esr,
->  	if (!vma)
->  		goto lock_mmap;
->  
-> +	if (mm_flags & (FAULT_FLAG_WRITE | FAULT_FLAG_INSTRUCTION))
-> +		goto continue_fault;
-
-I'd avoid the goto if possible. Even better, move this higher up into
-the block of if/else statements building the vm_flags and mm_flags.
-Factor out the checks into a different function - is_el0_atomic_instr()
-or something.
-
+> pcie_read_tlp_log() handles only 4 Header Log DWORDs but TLP Prefix Log
+> (PCIe r6.1 secs 7.8.4.12 & 7.9.14.13) may also be present.
+>=20
+> Generalize pcie_read_tlp_log() and struct pcie_tlp_log to handle also
+> TLP Prefix Log. The relevant registers are formatted identically in AER
+> and DPC Capability, but has these variations:
+>=20
+> a) The offsets of TLP Prefix Log registers vary.
+> b) DPC RP PIO TLP Prefix Log register can be < 4 DWORDs.
+>=20
+> Therefore callers must pass the offset of the TLP Prefix Log register
+> and the entire length to pcie_read_tlp_log() to be able to read the
+> correct number of TLP Prefix DWORDs from the correct offset.
+>=20
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+>  drivers/pci/pci.h             |  5 +++-
+>  drivers/pci/pcie/aer.c        |  4 ++-
+>  drivers/pci/pcie/dpc.c        | 13 +++++-----
+>  drivers/pci/pcie/tlp.c        | 47 +++++++++++++++++++++++++++++++----
+>  include/linux/aer.h           |  1 +
+>  include/uapi/linux/pci_regs.h |  1 +
+>  6 files changed, 57 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 0e9917f8bf3f..3d9034d89be8 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -420,7 +420,10 @@ struct aer_err_info {
+>  int aer_get_device_error_info(struct pci_dev *dev, struct aer_err_info *=
+info);
+>  void aer_print_error(struct pci_dev *dev, struct aer_err_info *info);
+> =20
+> -int pcie_read_tlp_log(struct pci_dev *dev, int where, struct pcie_tlp_lo=
+g *log);
+> +int pcie_read_tlp_log(struct pci_dev *dev, int where, int where2,
+> +=09=09      unsigned int tlp_len, struct pcie_tlp_log *log);
+> +unsigned int aer_tlp_log_len(struct pci_dev *dev);
+> +unsigned int dpc_tlp_log_len(struct pci_dev *dev);
+>  #endif=09/* CONFIG_PCIEAER */
+> =20
+>  #ifdef CONFIG_PCIEPORTBUS
+> diff --git a/drivers/pci/pcie/tlp.c b/drivers/pci/pcie/tlp.c
+> index 65ac7b5d8a87..3615ca520c9a 100644
+> --- a/drivers/pci/pcie/tlp.c
+> +++ b/drivers/pci/pcie/tlp.c
+> @@ -11,26 +11,63 @@
+> =20
+>  #include "../pci.h"
+> =20
+> +/**
+> + * aer_tlp_log_len - Calculates AER Capability TLP Header/Prefix Log len=
+gth
+> + * @dev: PCIe device
+> + *
+> + * Return: TLP Header/Prefix Log length
+> + */
+> +unsigned int aer_tlp_log_len(struct pci_dev *dev)
+> +{
+> +=09return 4 + dev->eetlp_prefix_max;
+> +}
 > +
-> +	pagefault_disable();
+> +/**
+> + * dpc_tlp_log_len - Calculates DPC RP PIO TLP Header/Prefix Log length
+> + * @dev: PCIe device
+> + *
+> + * Return: TLP Header/Prefix Log length
+> + */
+> +unsigned int dpc_tlp_log_len(struct pci_dev *pdev)
+> +{
+> +=09/* Remove ImpSpec Log register from the count */
+> +=09if (pdev->dpc_rp_log_size >=3D 5)
 
-This prevents recursively entering do_page_fault() but it may be worth
-testing it with an execute-only permission.
+Scratch this. LKP's randconfig build seems to have caught this failing to=
+=20
+build when AER is enabled but DPC is not because this member doesn't exist=
+=20
+w/o DPC.
 
+> +=09=09return pdev->dpc_rp_log_size - 1;
 > +
-> +	if (get_user(insn, (unsigned int __user *) instruction_pointer(regs))) {
-> +		pagefault_enable();
-> +		goto continue_fault;
-> +	}
-> +
-> +	if (aarch64_insn_is_class_atomic(insn)) {
-> +		vm_flags = VM_WRITE;
-> +		mm_flags |= FAULT_FLAG_WRITE;
-> +	}
+> +=09return pdev->dpc_rp_log_size;
+> +}
 
-The above would need to check if the fault is coming from a 64-bit user
-mode, otherwise the decoding wouldn't make sense:
 
-	if (!user_mode(regs) || compat_user_mode(regs))
-		return false;
+--=20
+ i.
 
-(assuming a separate function that checks the above and returns a bool;
-you'd need to re-enable the page faults)
-
-You also need to take care of endianness since the instructions are
-always little-endian. We use a similar pattern in user_insn_read():
-
-	u32 instr;
-	__le32 instr_le;
-	if (get_user(instr_le, (__le32 __user *)instruction_pointer(regs)))
-		return false;
-	instr = le32_to_cpu(instr_le);
-	...
-
-That said, I'm not keen on this kernel workaround. If openjdk decides to
-improve some security and goes for PROT_EXEC-only mappings of its text
-sections, the above trick will no longer work.
-
--- 
-Catalin
+--8323328-204770702-1715343167=:1562--
 
