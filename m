@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-175375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296058C1EA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E24AA8C1EAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 952651F21CC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86C151F21CE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B126115ECC1;
-	Fri, 10 May 2024 07:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685A815EFB4;
+	Fri, 10 May 2024 07:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mif1VYEC"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jbLIvdc+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667F914F9DB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A74E15217A;
 	Fri, 10 May 2024 07:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715324911; cv=none; b=hwCGeKkhZMMohOzO42vemzQNbdiyssV+8buCtG3BFgzJAO2+tYYe15ZUOzRNdia/QuClxuv0JOmbEWWEtF1XDFrM6aMifkSQL9V59gyvvygu8umHPruAQSgJhChIIYhSlfxNsxwuwGl0DMF79w+tbuLat+MlGpjAmG87dYWqO00=
+	t=1715324912; cv=none; b=G1EC5UWHPn7/FZi6MQQjGvnXTt9u3Utg2hpJ7oqE8Z/V5TXyrxgQf5gpZLEYAglrh++tTknfxubUMgGkTXuXl5tLlxvmitcOfgzL5R5AOLvvCIohToCETY+UDxFRXp1hMFaMf3Og/m20m/8Y3BtBh8BjD2qcURkmUD2KEqJz1+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715324911; c=relaxed/simple;
-	bh=w5prwPVj6Yc48Ni3OyBglPrfbJeekzkh9RlT7isx9bo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a922MaJm9GuW1a6nNQwo4XQ7f4WCmY9UzAte6ahCNN2tmq1dBiFM9R1vtm6r+/KUUhIcJTpExWHL2VpDY97QAv3tVjrlVlqDjhTSY6s8wEWce4m8r2zpDI11Uvk1WFR4gnKPVrAcqpqPcDN5O1FUhdT02r0OWbkZk2xT+8+zYHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mif1VYEC; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so21631251fa.0;
-        Fri, 10 May 2024 00:08:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715324907; x=1715929707; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQpYhVWiwVE8cmCno40oEMnygIoEgCFHvNbUd5F1nhQ=;
-        b=mif1VYEC9vA8bP/MqqMmj9rWCdvrEzcN44+eE9eyVcv0wfZtyaGBXpfFynnbxajAH9
-         urYQ7WE3lkhinQXYn+IABOusr1RH9sWfX4Lyerxh2FX3W3/fS9ei9am8ss1SJ7Lj6B5S
-         cuKcUmTCSbIX9yU/DqmkbPnijHZMpb4/ilPUejsdf2gAIWmKFqKBrnkPhfKosM1iHnHy
-         b+45NvxqkGTwcLKDtWtwxtkgOyG3EC+PG4jcklCENJ6OaoGcFjI4RCOmB2k14Dm7U+pu
-         iVEXOVt+taW7AzQCcAUg4mcmpLS9iygcucWzuFlCNv9eBvTquk5Q66Qrb2MFHl4cdppD
-         dN+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715324907; x=1715929707;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kQpYhVWiwVE8cmCno40oEMnygIoEgCFHvNbUd5F1nhQ=;
-        b=pQqWWPk1oMmRx33X9sWc7tJrZeKO8KUQ7C6Y8e+7zo+o3xnYZ4i17yjdMNg3jACav4
-         x0+oRM2JlKvU58xwkRe4z1oFEzZxM9eoDJ4JhHDhj8LfcFCaMO213eoHEih40Jv23hvL
-         G4Ai3KNCSTElrtWwAN0YCQQoNHOt6v4/HbSyP22Bw6qV62mPhZJ86Q6AODCYRsyutHxz
-         ofD/aTdJ9o9kP+CHgK/oTwewx2c4gXs+lPLuSITC6ZKMpu3WfidFSVfMO4lmKmCqjeqD
-         PjgDZ8cSkkXxP7BfCAaIkQR2IwviMwxeizM9ovlzdipydstoD/mGEX5O082eD/jX/5Wv
-         jVOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1CxC64ql0Up6XFoBrn2AKFv2jHa98BNq3huEIu1U2zAPy+rUmI6kUHGJJMqU/r/v1M4bC2e4ro4MkXUfUzwM9EoPsQaiwFxv6zJqe+EhlM3R/SvRtUgnCW93b28UOnIg5X0UA5pedEtQIEOyplMHNW9eiO1wULhl/RmU5p3QVlmzO
-X-Gm-Message-State: AOJu0YwcjC6pEWE9Niuujap0DYO0Gi15ec2F4BTfROQ/rsiBfD8csYX8
-	RTQr+UQ2/RZTI/yj2eVjg2/mMcNe2wW1U8aLIReMXOPgKu1YgPFMGzGJaDkiqruIYMjXqkE0N/T
-	qjO7f6aKfMqmJnLb/CSl81nCOvxSDoA==
-X-Google-Smtp-Source: AGHT+IHOZth7N0KOc57ZvmrChBT08+2DaHHt8hsfG1urm59128I1YZ+hCNdlQAGG18kUtdLjuDrukcvmGv0T1jIhxQ0=
-X-Received: by 2002:ac2:4c85:0:b0:51d:1c86:a274 with SMTP id
- 2adb3069b0e04-5221017775amr973568e87.34.1715324907267; Fri, 10 May 2024
- 00:08:27 -0700 (PDT)
+	s=arc-20240116; t=1715324912; c=relaxed/simple;
+	bh=3MrBVyxp1+vrcSn+LlVGY7ra+MZGFnx/12p7qpY0AKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZLjeAZ5UaYMYOz+yg+F7glHpWhJwt7qy2E+A4l00xumLtEsYdoZjNvLPG6W+6vwq+/geWHhBuZrxAMTFLgjRLDtIpmOU10nYXLHHAwq7M9EmB5ieUzyCnTUvByu/GB05pELSQF0OCwEy6l/Rk5tduEc0NzjO2ZMnscZnOoHz/9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jbLIvdc+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715324908;
+	bh=3MrBVyxp1+vrcSn+LlVGY7ra+MZGFnx/12p7qpY0AKI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jbLIvdc+VhxhQWH1nvaMiVGvpIRa5vJ8rzGW8X5HVi7Fsu6RzQsmx2BSWqAOMz3CX
+	 V03bVB2NvdapuNuHirnp4X8Z9vdXyOCmZQzkIok8rcw3YL1F4IwnUqMbVJf2FHRPCB
+	 ggSXJ4DU/B2vqqpTx3/iw2hxKz1nEaZRhq6TYR7VTA+MzQCjA2c8onyhxjwPsGPRDC
+	 OifDqLp4X/lF0jcKmP1Y6hozdsUfMpqED8PnQUuH0ssXWS92/Bx9pCifA70rjuEGCM
+	 LY8MBgNGn0A96EU8Qla8tn+VhWkzG8zA6gCIAXh6nsX04iA0CtepUC7CSWriebB/KX
+	 rkN1+nNgfnpqw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VbKjR53kyz4wd3;
+	Fri, 10 May 2024 17:08:27 +1000 (AEST)
+Date: Fri, 10 May 2024 17:08:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the gpio-brgl tree with the
+ gpio-brgl-fixes tree
+Message-ID: <20240510170827.2b655636@canb.auug.org.au>
+In-Reply-To: <CACMJSev6EDeLdQ0e7A7f6AMhh08FznA67x5ONG+vSseC5QLt6A@mail.gmail.com>
+References: <20240510153212.246fbf31@canb.auug.org.au>
+	<CACMJSev6EDeLdQ0e7A7f6AMhh08FznA67x5ONG+vSseC5QLt6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
- <20240509023937.1090421-3-zhaoyang.huang@unisoc.com> <ZjzEH5fFGHgnqbLj@infradead.org>
- <CAGWkznG4xodugVdbKZCn99UiQT5Z3oHYLhTsvOCoe_VNxUVvnw@mail.gmail.com> <Zj2fEo_YiW7NeDT8@casper.infradead.org>
-In-Reply-To: <Zj2fEo_YiW7NeDT8@casper.infradead.org>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Fri, 10 May 2024 15:08:16 +0800
-Message-ID: <CAGWkznFa9zQy5XzYeinG-xFEGKUPcxLL6bRNQaGa9Wo-tM0vWg@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Christoph Hellwig <hch@infradead.org>, "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/If2HvKBjlQgYGda+h0=Ozeu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/If2HvKBjlQgYGda+h0=Ozeu
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 12:14=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
-g> wrote:
+Hi Bartosz,
+
+On Fri, 10 May 2024 08:33:37 +0200 Bartosz Golaszewski <bartosz.golaszewski=
+@linaro.org> wrote:
 >
-> On Fri, May 10, 2024 at 11:06:14AM +0800, Zhaoyang Huang wrote:
-> > On Thu, May 9, 2024 at 8:40=E2=80=AFPM Christoph Hellwig <hch@infradead=
-org> wrote:
-> > >
-> > > > +     unsigned long budgt =3D inode->i_sb->s_bdev ?
-> > > > +                     blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
-> > >
-> > > The readahead code is used for all file systems, you can't just call
-> > > into block layer code here.
-> > >
-> > ok. I would like to know any suggestions on introducing throttle
-> > budget control into readahead which actually works as a negative
-> > feedback path. IMO, negative feedback is a good methodology which has
-> > been used in scheduler(EAS) and thermal control(IPA) and
-> > memory(MGLRU). I would like to suggest to have a try on have it work
-> > cross the boundary of memory and block layer.
-> >
-> > vfs_read / page fault
-> > |
-> > readahead  <---------|
-> > |                               |
-> > aops->readpages    |
-> > |                               |
-> > block_layer------------
->
-> what you could do is have blk-throttle fail bios that are tagged as
-> readahead if we've hit the threshold?
-Actually, blk throttle will postpone the over-size bio's launch by
-adding it to the throttle group's private queue which this idea aims
-at. The delay here could be avoidable by some means to have the bio
-meet the max ability of the throttle blkcg. Furthermore, we may get a
-totally non over-sized readahead mechanism if we do this well.
+> Thanks! I will send the fixes upstream today and then pull v6.9 into
+> my tree before the merge window PR to fix this conflict.
+
+Or you could just merge your for-current branch into your for-next
+branch and avoid possible issues with all the rest of v6.9 ...
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/If2HvKBjlQgYGda+h0=Ozeu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmY9x+sACgkQAVBC80lX
+0Gy8ZQf9FAnF+zrtqEl5VDDNEEgG3oO86YrcCHI7IiTakoztkUR0QEGONjqySWNo
+WFe+9IH9RPtY9u47/gX8qlFN4r9NQaD1G+Gmvvog/A7vASCpWdMqlyXi44NlZtp9
+UfAwU4t8kiKG+bLAk4Pc3sKvKmhcQOXiVIkYLRvu3HwhzxlxC1KXtDfAMC8dimts
+W6oFbsDuAtXJCRqtuz5XePwYUPNJQuzD+mUe4x/e6franP6VbrnPD3Ud/3zNPTrO
+8YCyfo/OBaSzH4BbWcd5kIA/mUnDx7qMQQHOYXi9162lKGJVhYSLwhBDapkkTsCu
+s4FGvi7gpwCiQchM1b5MNkPYddACFA==
+=moAU
+-----END PGP SIGNATURE-----
+
+--Sig_/If2HvKBjlQgYGda+h0=Ozeu--
 
