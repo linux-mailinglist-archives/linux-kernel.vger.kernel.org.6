@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-176091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A178C29CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C237A8C29CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43C3DB2270D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:24:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDA311C21081
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8387381D5;
-	Fri, 10 May 2024 18:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC682C683;
+	Fri, 10 May 2024 18:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b="AQClqLbh"
-Received: from mail.ptr1337.dev (mail.ptr1337.dev [202.61.224.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UBrzni0G"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8778F1BDD3;
-	Fri, 10 May 2024 18:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.61.224.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371D225779
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 18:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715365475; cv=none; b=oU/BxZky7fPoxoZl+WYWtFMEvgjBUsurABUvumzv9fEyCz+tjQ7pqCF1jrOZ/Fx5jlf7aGh3tbWdUUFy184mAz212pkdGGJLcsluBCKDGfp/CNaf+rtlWOIq324aYyu5vFKokXSbIStRv8WgfZ9WxvmwkrpdgKtmDt/+Wf5bVCw=
+	t=1715365606; cv=none; b=Ct2Y5J2fe3ufjDy9nhfnHMG91XrWYUiuutJKALlzmrvj4ds35n3mrPmQ0GTSkXQGQZBO/5ebg65GxHt3esFsITl3b96g0fYXlN0fnq9CNURUTrscd5GLYru8gFxqs5iiHlRORVzRHd2EcinvFjSNhYnC6a6dmA6u171CaF+Lxs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715365475; c=relaxed/simple;
-	bh=Sodupjyz/UTgYwBl3W3Y82c8ysbojClXP6VQyeeJH6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DBb6di0zDd2ohgTkzUPyPHlb+/3PsrMVt3GESEo8p6wD8uJ97/YlJ9Zv2HEWdawlQ4qkq45TKNTHKxCE4cfeMBree7eKcfxH6NMUSgz1Fbk04/lmUeJWwEIFMOQjnKxet+4ebbi8yerfQ2841Tuv+tw3kBA8M8tJYANa6mVPrT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org; spf=pass smtp.mailfrom=cachyos.org; dkim=pass (2048-bit key) header.d=cachyos.org header.i=@cachyos.org header.b=AQClqLbh; arc=none smtp.client-ip=202.61.224.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cachyos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cachyos.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 66FB0281218;
-	Fri, 10 May 2024 20:24:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cachyos.org; s=dkim;
-	t=1715365470; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=ybmvvQyExEwEgsu2RTsdpAgQWSkXrD6bkqceyhjyk3k=;
-	b=AQClqLbhftsrsi/Sui+eXyyuxaFbm7Jy7wpyx53OqD7Mt+jHHF63RTUDBfJz2VCGOHwztX
-	eUKagC8zsDpojQRGCy/8oto2Zio/+6BqsXaVG473Ub7G8Xkw25LBuBlktMBqhNtHjGYsPb
-	KTUYW7bAj23aNNnQY8Kzdg5k+scytXM237fwpXrrrlMEHdFfRfrFwPgErpJ3WWr1H1Fwvk
-	h09rCWApQFn1JpuGEB1LAzKX8HWkBuTJwGGftsHLlTtFVs4G35K7i1pHJYc7NL02/6al4K
-	wKlIL0dP9cm5aFYpUAsPzEKU8cDtsPVRmCZaUAE5JuC/FUkMWOM6fc5v04vf1A==
-Message-ID: <e14eb023-e309-4647-9c6b-d6a81cb20ade@cachyos.org>
-Date: Fri, 10 May 2024 20:24:26 +0200
+	s=arc-20240116; t=1715365606; c=relaxed/simple;
+	bh=MhTpSYlniw09ynrGEPyV5q2Agl9hNAli8lBhN6J7RRg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=O3JKay00SytLzxirliqHIVFoPQOI+gmACt/TyJpKHAxhaL8vzEf9EIiFsiDbassRWr/oWWxojoZ/8+K6yphoq4BP00E+mk3zygFJZh5AdVKY0Y2GiD0GSpdlBuOYOy5+6kBdcajFbaCIGPU5AtgJjrp73TSEIF1gMbZ5DXiiF7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UBrzni0G; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-350513d2c6aso776915f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1715365603; x=1715970403; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3QEkrlUEm+5W5lnp6HukD9LF+vny0h09LkKwSRX06UI=;
+        b=UBrzni0G85wytcUfSXcnGCHf0H+AdUN+jfDwzItNR+6xb3qCMAvhPtrpGDQpmG0V+t
+         JIVBThQkIUgl7gO7WXxHxZYLmYjJpxqFY+i65+ll20yIHcFm4YWXln15k0tHfglurPg7
+         XyT3WUApoz7TZcoQ7X9W3TEC5NZngjCE5d3R4n3isgmP5j/XATbrRGYpSDqSPGDeCbuD
+         fEpCzmu5HVZzW3kDy3SrgEiFrEghLeeaq+j7a3kjXbUe1LzxKC0gG+jcH8ZSGhUIix1D
+         FMSqgCwfh/IT+z70rE9998iThzQCUA2EviI3wfy5FoBPQbYLMF11W7Xns4AR4u0hID0f
+         /w+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715365603; x=1715970403;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3QEkrlUEm+5W5lnp6HukD9LF+vny0h09LkKwSRX06UI=;
+        b=fBzbUjmbFEj6Bx6BxxfFxJAYdpygnVlf2l8gV81xUltY/CulPkQ27QJn8c/niGooIW
+         U/c6aVm8k96UsG/gmzFyUfT++l/qTJlgl0GvoJREc9c89A0ziRofeBk3d+Ec1cCGZ1Nw
+         Xwnt3Xgp1pGvGZwl8RyY5Os/KJ0XM/WNyjhBqI86ZpVliFtOOf3zwnjZrQ3KXPFxZBsc
+         F7htmTU8yOLDaAnnmijJMRICiGlCjlUotZsPAhExt4OxOduEM0w1gLRRQ5JXSXmPHqpy
+         3ey9BdwH1fDb3Z05aVqEUBAdW9ni9aZ8NeN6FhVfuWaoyUT52c+NTWTrZMe5LslXIFd/
+         p+HA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjZEgoZdc4e7CKJFIBw5Uzj6bd0BkTuzcE2E/GOmCmJxuLXx+OjB2xhvVB/UInU6AT0J3xWA4wWQHubqQEU9e+WXGhsvUJj4RWrd2T
+X-Gm-Message-State: AOJu0YzWPan1t97gQne1fNTLM7E5hf0EF+wbiTfZ8wzKR8zcToDEC/RJ
+	5GF0AJ1ZnKAm9oBV2PLSa+5cjQtd7hi/QhqkZBzvLvWIqOddNW0nxyLCCF74gi0=
+X-Google-Smtp-Source: AGHT+IFeLwkav5v4iPuh0Gz6pchGRbm+soi1ErYGVONkn6HlYK04px73Z1UuB08Vyrm3T8na5XY68A==
+X-Received: by 2002:adf:f60d:0:b0:34e:aef7:4ff9 with SMTP id ffacd0b85a97d-3504aa62e64mr2798361f8f.61.1715365603515;
+        Fri, 10 May 2024 11:26:43 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:75a:e000:f6ed:a982:f92e:840c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a789asm5184745f8f.51.2024.05.10.11.26.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 11:26:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio: fixes for v6.9
+Date: Fri, 10 May 2024 20:26:40 +0200
+Message-Id: <20240510182640.44486-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-To: Tejun Heo <tj@kernel.org>, torvalds@linux-foundation.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@kernel.org, joshdon@google.com,
- brho@google.com, pjt@google.com, derkling@google.com, haoluo@google.com,
- dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
- riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
- andrea.righi@canonical.com, joel@joelfernandes.org
-Cc: linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
-References: <20240501151312.635565-1-tj@kernel.org>
-Content-Language: en-US
-From: Peter Jung <ptr1337@cachyos.org>
-Organization: CachyOS
-In-Reply-To: <20240501151312.635565-1-tj@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Hi everyone,
+Linus,
 
-We (CachyOS [0]) want to support to proposal of sched_ext.
-CachyOS is an archlinux based distribution, which improves the performance,
-throughput and interactivity for the desktop but also on servers. We 
-have a big
-community, which likes testing new features on the kernel, GPU drivers,
-frequency drivers, new locking technologies and schedulers.
+Here are some last-minute fixes for this release from the GPIO subsystem.
 
-[0]: https://cachyos.org/
+The first two address a regression in performance reported to me after the
+conversion to using SRCU in GPIOLIB that was merged during the v6.9 merge
+window. The second patch is not technically a fix but since after the
+first one we no longer need to use a per-descriptor SRCU struct, I think
+it's worth to simplify the code before it gets released on Sunday.
 
-For CachyOS, schedulers have always been a key matter. We have numerous
-variants of kernels with different schedulers so that everyone can be
-satisfied. So far, schedulers in the kernel have faced one problem, 
-namely: 1
-kernel = 1 scheduler. It was impossible to change the CPU scheduler without
-restarting the computer and booting another kernel. scx-scheduler simply and
-extremely successfully changes this approach and allows you to change
-schedulers at runtime. The approach with a single default scheduler in the
-kernel also leads to a problematic situation, because in our opinion it is
-impossible to develop a single scheduler that is the optimal solution 
-for all
-possible tasks. Again, and in this case, scx-scheds makes this problem
-obsolete.
+The next two commits fix two memory issues: one use-after-free bug and
+one instance of possibly leaking kernel stack memory to user-space.
 
-The EEVDF Scheduler gives a good overall experience, but it currently lacks
-good interactivity under load, specific scenarios like gaming and also the
-latency. Rusty gives CachyOS currently a very good replacement for desktop
-usage. We are planning to provide the Rusty Scheduler in the future as 
-default.
-The interactivity of Rusty is dramatically better than EEVDF, especially 
-when a
-heavy workload is running in the background, e.g. during compilation. 
-Using the
-desktop under such a workload can be very challenging for the default 
-scheduler
-and at rusty it is not even noticeable that during compilation is 
-running. Also
-in gaming scenarios rusty seems to provide excellent performance.
+Please pull,
+Bartosz
 
-The LAVD Scheduler is integrated as default in our handheld variant and 
-shows
-very good impressive results in frame times as well as 1% lows. This 
-gives our
-user on the Handheld Edition a better experience.
+The following changes since commit e67572cd2204894179d89bd7b984072f19313b03:
 
-It is also worth mentioning that our community takes an active part in
-sched-ext testing and regularly reports bugs and suggestions for changes.
-Cooperation with developers is also perfect - they immediately make 
-corrections
-if there are any regressions.
+  Linux 6.9-rc6 (2024-04-28 13:47:24 -0700)
 
-Regards,
+are available in the Git repository at:
 
-Peter Jung
-CachyOS
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.9
+
+for you to fetch changes up to ee0166b637a5e376118e9659e5b4148080f1d27e:
+
+  gpiolib: cdev: fix uninitialised kfifo (2024-05-10 16:38:27 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.9
+
+- fix a performance regression in GPIO requesting and releasing after
+  the conversion to SRCU
+- fix a use-after-free bug due to a race-condition
+- fix leaking stack memory to user-space in a GPIO uABI corner case
+
+----------------------------------------------------------------
+Bartosz Golaszewski (2):
+      gpiolib: fix the speed of descriptor label setting with SRCU
+      gpiolib: use a single SRCU struct for all GPIO descriptors
+
+Kent Gibson (1):
+      gpiolib: cdev: fix uninitialised kfifo
+
+Zhongqiu Han (1):
+      gpiolib: cdev: Fix use after free in lineinfo_changed_notify
+
+ drivers/gpio/gpiolib-cdev.c | 18 ++++++++++++--
+ drivers/gpio/gpiolib.c      | 58 ++++++++++++++++++++++++++++-----------------
+ drivers/gpio/gpiolib.h      | 17 ++++++++-----
+ 3 files changed, 63 insertions(+), 30 deletions(-)
 
