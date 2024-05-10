@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-175251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9365A8C1D0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:35:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031EC8C1D11
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49111283EBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:35:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771CBB20C8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14613149C4E;
-	Fri, 10 May 2024 03:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6866149DF0;
+	Fri, 10 May 2024 03:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqoTGhxT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mT3hSPVg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A8A1311A0;
-	Fri, 10 May 2024 03:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03396149C51;
+	Fri, 10 May 2024 03:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715312102; cv=none; b=W456SW/JxbvU88/YYvIef9EQ1/SIQbIEo0iYTcDmHzWuF5ppR5zraleniuL6V9H4DLPM+jgDTfosAwU527RcFbioap9036QcitsH4M8dTPckQeklcK/XeWE0rRS9oz0s2FCvV1uPnTfP8CYvOg8g7rv2YJOofAmrAKb+2GtE40w=
+	t=1715312159; cv=none; b=DYx9jioGZL2VvIU1Fw5VubwEe3w3gA8tjyM4n6iC4Hn5vZbmjk4Ui/p1Fwy2kUNk04X3s+zZCsMdx7yQXVSONYZqFnpa2FPINWuWUJEp+x0P+pWGRrj3Es4pu9OpHvyKTINkoT6RG1gcfI3JVt7rdHbyclIG6qo1byWXCbpcK/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715312102; c=relaxed/simple;
-	bh=+Ta6Pwu8WoR4FFGhzCqVCvFxwKMS/hKwRzp3wA+8sCg=;
+	s=arc-20240116; t=1715312159; c=relaxed/simple;
+	bh=sN0U/LdBaquLs+NEyynzcCHXuCbNgCo7vj4mzB4lDMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A0Lp/4FoJPtudygGS/V9JYIL1tvGjei0bf5HIL3MunHyzb+ZKt5LM9FUqVm36wdsR3Dpt5NbnWRDfy7Ky/qfVuHnFqqrI4fmJ7EuANsE1NSvOIMTf0fbjrM1Sw86u2Q873z2Ce2Lg65z8ng6ua38nwNVp6sBHVMRflqTKv+TPnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqoTGhxT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D97C113CC;
-	Fri, 10 May 2024 03:35:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Wjz5G536nhOgXTuKgdBCxpUf5tzdHbXl6T3u0BGtGTv1B2VDSHHDbao206vEZiBhTtga8RNx9/Q6fgo3O8OZiSV4yMKoAuBATXDERYFmyavxdu1XJ4qDWMc2x9yLdjOwiPAr37pWg44WeeJOO8nMdETR7WZCtMtKenli7oyRtSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mT3hSPVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 247EFC2BD10;
+	Fri, 10 May 2024 03:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715312102;
-	bh=+Ta6Pwu8WoR4FFGhzCqVCvFxwKMS/hKwRzp3wA+8sCg=;
+	s=k20201202; t=1715312158;
+	bh=sN0U/LdBaquLs+NEyynzcCHXuCbNgCo7vj4mzB4lDMc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eqoTGhxTNKp+V7lKHBn6M0UcIfkoUIfXnytVptwE6KnEgFtlHWhaB7ETTvCualcdq
-	 vbM3ZeF/UlnhazK6UIlxFJoiHJket82X0c2GtSbhIqRd5LV5Se6E7IzFf4k2FpQHpY
-	 pmO/KdOE1xiFip8hCf6U53kv7mmd7kNDEa3E+PO36fdDwB8mfYHGqJz32Fq76cl4ff
-	 gOLqNfU7Q7axkKGiSkPw4fjqX/UduhiUWzPCvgxCd8zZUaVvZkXKpNrcSQByNmYeUM
-	 1HMEKK0KF5Rx6CQwE6Dy959YE5n6Vb08RUDxYa90D/bhYWxEbmealZjPk6B61VrcTl
-	 jjMnZ++Jiqeog==
-Date: Thu, 9 May 2024 20:35:00 -0700
+	b=mT3hSPVgD8mHH6/CQNCiaLfuIzsjsqQwlzH1e2J4Y4BWopi4kvBUthHN5n7a364oX
+	 Y5/ZQVAUou/AMBLnWXueexvY5G4daoBgkoPMquJdy8qYMaIcaziH8VJOAhayd+Hb6W
+	 WayzsxeyzGwTthNGxvQBBRlsbmwYONn3j9tLRhoATzn0g4GASdCeS4yVMedxg0zjJm
+	 F0MdMgk3Hn+9xJiB0Xi/czWpzjs/2aiE8fQ1PLslBAuT8gztbavy/PXgoNVrAcsVX2
+	 sy+GpR41OlNHMXLzAixLbEh1rOt3kCs5CfySbSVB5+jU58b4jzASInstvym8pbVPTb
+	 jwNZCC5JBmisg==
+Date: Thu, 9 May 2024 20:35:57 -0700
 From: Jakub Kicinski <kuba@kernel.org>
 To: Geetha sowjanya <gakula@marvell.com>
 Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
  <davem@davemloft.net>, <pabeni@redhat.com>, <edumazet@google.com>,
  <sgoutham@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: Re: [net-next PATCH v4 02/10] octeontx2-pf: RVU representor driver
-Message-ID: <20240509203500.706e446e@kernel.org>
-In-Reply-To: <20240507163921.29683-3-gakula@marvell.com>
+Subject: Re: [net-next PATCH v4 00/10] Introduce RVU representors
+Message-ID: <20240509203557.61841c70@kernel.org>
+In-Reply-To: <20240507163921.29683-1-gakula@marvell.com>
 References: <20240507163921.29683-1-gakula@marvell.com>
-	<20240507163921.29683-3-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,17 +59,13 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 7 May 2024 22:09:13 +0530 Geetha sowjanya wrote:
-> This patch adds basic driver for the RVU representor.
-> Driver on probe does pci specific initialization and does hw
-> resources configuration.
-> Introduces RVU_ESWITCH kernel config to enable/disable
-> this driver. Representor and NIC shares the code but representors
-> netdev support subset of NIC functionality. Hence "otx2_rep_dev"
-> api helps to skip the features initialization that are not supported
-> by the representors.
+On Tue, 7 May 2024 22:09:11 +0530 Geetha sowjanya wrote:
+> ~# devlink port
+> pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcivf controller 0 pfnum 1 vfnum 0 external false splittable false
+> pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
+> pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
+> pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
 
-It's quite unusual to have a separate PCI device for representors.
-Why not extend the existing PF driver?
-This driver spawns no netdevs by default?
+There are only VFs on the device? How does one install egress rules
+towards uplink?
 
