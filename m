@@ -1,138 +1,139 @@
-Return-Path: <linux-kernel+bounces-175579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B016A8C21C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:11:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1F78C2197
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506E41F23E17
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA1281C20B1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10753165FCB;
-	Fri, 10 May 2024 10:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115F0168AE4;
+	Fri, 10 May 2024 10:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2IQqdwqP"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="u8uF0CBu"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC248161935
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B1E165FA1;
+	Fri, 10 May 2024 10:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335912; cv=none; b=KTU+ce3VzpiuKGFP2s/A4MkXz1dkdckxq/TrE8FiTrNJMFYHX8jtQ1/vFWfK9x/i5g4MLfPXp5v3BO219pzwAoA05nf2j9fOtR4bwLOB3uhgJLteKcVzJO3Vj+9NkD6UhyLe681gMoVJ3X/pQ3NrZuXpfv7l8V1zxt9En8UPeKM=
+	t=1715335641; cv=none; b=bB1ROzI4dfQL0U4edS1Qxwg45C7JViyl64cNCUx+amD/mYDmJby2Do3b3LDp/yZ7+/RdH9UxlZV/Jl8dlH5TqMCIxxnAkbIVlDwalRp8bIDnadTxn+i382ez770oEwSZBPse/ja0Av6+9o/kJcBTKWRv/79USlViMGOfRNMabos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335912; c=relaxed/simple;
-	bh=vtrYm/vQSHim3jgRX04nOQj9guH68BZEvaolheL2Xv0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FCld/bIsCvzycnUiIRUqeFyS/3Gc5LJOKtVXIcOOnS1a8MHrv/xkN504wCl2nOtLBDJTisTU06bZik7f9a+teqmXqIGPPlb7/3/W+3DPr9gByCi/iafXzjKH5zALR0WxANg9t9nXGuKy/A/Rvaene0TP6d+ME61ryJpxlyDIzQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2IQqdwqP; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715335550;
-	bh=vtrYm/vQSHim3jgRX04nOQj9guH68BZEvaolheL2Xv0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=2IQqdwqPtoZkkk19USWWt8xgqlcwa+gPD66JC9VAEpwOYIPtXk4CcL340IG3zLdxP
-	 nzVp/rwU70UIPRcxvhfHIAobSvLl++PUysKOpB++6Q2BiGJvL4zoPGhKuK52g3RbCJ
-	 sUcfDpqiOIe43x1vzTgceS5gGHgqIdDsvw1WuhyHTjzO8LQJRL3MdvPT8U5xiYubn/
-	 l7/HEJNl93y2U8hJN0yc7i6GMo1sFCkhbR2EQJA8v4P7sMAAZyG1tVvGCrU5ew6Ew/
-	 WxdygCOQ+rLS/K6NZCU7LvPUAHPqq/v+4+UKcbchzpBVRKRbRfkdTqHhcvOm39v6x9
-	 olb7rHKz8B05g==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 92DD6378217A;
-	Fri, 10 May 2024 10:05:49 +0000 (UTC)
-Message-ID: <8d624845-7450-485c-8000-0194bcf56458@collabora.com>
-Date: Fri, 10 May 2024 12:05:49 +0200
+	s=arc-20240116; t=1715335641; c=relaxed/simple;
+	bh=ifYU/c+8V7OWSd9aaCKHF7gpCqv7cSdHzl7rv5oFs0w=;
+	h=MIME-Version:Content-Type:Date:Message-ID:Subject:From:To:CC:
+	 References:In-Reply-To; b=YhNoo8dTXzI9xhXo434xheWu7y4cS7i46GNXu0iiHxPXUSUY7ZXD0de3TW9tkr0v2CS3bUfmEbWOQgbzdg///Smde2sdMBcVKDhNw0j4Q5ULgB9mgbi2QCG+V48aYCICsRfil+6CRAIL8DIgaVtQRfEBNgL8imKn3XwtEtAVSUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=u8uF0CBu; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1715335639; x=1746871639;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   subject:from:to:cc:references:in-reply-to;
+  bh=ODj1UcfgLsilkOJ93AaBzpY+nLn2txKitmtJHEr2EDY=;
+  b=u8uF0CBug7c8zCvsxafKEvq0CDaBFQOMRdoDAtvAPf0o9JmSmUYIrbcd
+   8TMqV3Ny4NIBTlnCoa1vEds+0gHqP9iuyEqAQUw1JfywNJof5GxrLbPYe
+   iCLegTlVnHLZbVrZQVmWEj9Hxdln8O6Wz8aY2aLdaYMWupiifYGtj3XcQ
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.08,150,1712620800"; 
+   d="scan'208";a="88359429"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:07:15 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:54770]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.131:2525] with esmtp (Farcaster)
+ id 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5; Fri, 10 May 2024 10:07:14 +0000 (UTC)
+X-Farcaster-Flow-ID: 0c298036-b7a6-49e7-b4ba-4e0b449ad4e5
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUC002.ant.amazon.com (10.252.51.245) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 10 May 2024 10:07:13 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.28; Fri, 10 May
+ 2024 10:07:03 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] Support YUV422 for DPTX.
-To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- matthias.bgg@gmail.com, jitao.shi@mediatek.com, mac.shen@mediatek.com
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240510021810.19302-1-liankun.yang@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240510021810.19302-1-liankun.yang@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 10 May 2024 10:07:00 +0000
+Message-ID: <D15VQ97L5M8J.1TDNQE6KLW6JO@amazon.com>
+Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
+ configuration and violation
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+To: Sean Christopherson <seanjc@google.com>,
+	=?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+CC: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kees
+ Cook" <keescook@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, "Thomas
+ Gleixner" <tglx@linutronix.de>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>, Rick P Edgecombe
+	<rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, Angelina Vu
+	<angelinavu@linux.microsoft.com>, Anna Trikalinou
+	<atrikalinou@microsoft.com>, Chao Peng <chao.p.peng@linux.intel.com>,
+	"Forrest Yuan Yu" <yuanyu@google.com>, James Gowans <jgowans@amazon.com>,
+	James Morris <jamorris@linux.microsoft.com>, John Andersen
+	<john.s.andersen@intel.com>, "Madhavan T . Venkataraman"
+	<madvenka@linux.microsoft.com>, Marian Rotariu <marian.c.rotariu@gmail.com>,
+	=?utf-8?q?Mihai_Don=C8=9Bu?= <mdontu@bitdefender.com>,
+	=?utf-8?q?Nicu=C8=99or_C=C3=AE=C8=9Bu?= <nicu.citu@icloud.com>, Thara
+ Gopinath <tgopinath@microsoft.com>, "Trilok Soni" <quic_tsoni@quicinc.com>,
+	Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, Yu Zhang
+	<yu.c.zhang@linux.intel.com>, =?utf-8?q?=C8=98tefan_=C8=98icleru?=
+	<ssicleru@bitdefender.com>, <dev@lists.cloudhypervisor.org>,
+	<kvm@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+	<linux-hyperv@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <qemu-devel@nongnu.org>,
+	<virtualization@lists.linux-foundation.org>, <x86@kernel.org>,
+	<xen-devel@lists.xenproject.org>
+X-Mailer: aerc 0.16.0-127-gec0f4a50cf77
+References: <20240503131910.307630-1-mic@digikod.net>
+ <20240503131910.307630-4-mic@digikod.net> <ZjTuqV-AxQQRWwUW@google.com>
+ <20240506.ohwe7eewu0oB@digikod.net> <ZjmFPZd5q_hEBdBz@google.com>
+ <20240507.ieghomae0UoC@digikod.net> <ZjpTxt-Bxia3bRwB@google.com>
+In-Reply-To: <ZjpTxt-Bxia3bRwB@google.com>
+X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-Il 10/05/24 04:15, Liankun Yang ha scritto:
-> Adjust the training sequence.Detects the actual link condition
-> and calculates the bandwidth where the relevant resolution resides.
-> 
-> The bandwidth is recalculated and modes that exceed the bandwidth are
-> filtered.
-> 
-> Example Modify bandwidth filtering requirements.
-> 
-> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
-> ---
->   drivers/gpu/drm/mediatek/mtk_dp.c | 81 ++++++++++++++++++-------------
->   1 file changed, 46 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
-> index 2136a596efa1..3e645bd6fe27 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
-> @@ -66,6 +66,13 @@ enum {
->   	MTK_DP_CAL_MAX,
->   };
->   
-> +enum mtk_dp_color_format {
-> +	MTK_DP_COLOR_FORMAT_RGB = 0,
-> +	MTK_DP_COLOR_FORMAT_YUV422 = 0x1,
-> +	MTK_DP_COLOR_FORMAT_YUV444 = 0x2,
-> +	MTK_DP_COLOR_FORMAT_YUV420 = 0x3,
-> +};
+On Tue May 7, 2024 at 4:16 PM UTC, Sean Christopherson wrote:
+> > If yes, that would indeed require a *lot* of work for something we're n=
+ot
+> > sure will be accepted later on.
+>
+> Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM=
+ support
+> is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible=
+ to
+> design KVM support such that much of the development load can be shared b=
+etween
+> the projects.  And having 2+ use cases for a feature (set) makes it _much=
+_ more
+> likely that the feature(s) will be accepted.
 
-This is giving the same values as drm_dp.h, hence unneeded.
+Since Sean mentioned our VSM efforts, a small update. We were able to
+validate the concept of one KVM VM per VTL as discussed in LPC. Right
+now only for single CPU guests, but are in the late stages of bringing
+up MP support. The resulting KVM code is small, and most will be
+uncontroversial (I hope). If other obligations allow it, we plan on
+having something suitable for review in the coming months.
 
-> +
->   struct mtk_dp_train_info {
->   	bool sink_ssc;
->   	bool cable_plugged_in;
-> @@ -84,7 +91,7 @@ struct mtk_dp_audio_cfg {
->   };
->   
->   struct mtk_dp_info {
-> -	enum dp_pixelformat format;
-> +	enum mtk_dp_color_format format;
->   	struct videomode vm;
->   	struct mtk_dp_audio_cfg audio_cur_cfg;
->   };
-> @@ -457,7 +464,7 @@ static void mtk_dp_set_msa(struct mtk_dp *mtk_dp)
+Our implementation aims to implement all the VSM spec necessary to run
+with Microsoft Credential Guard. But note that some aspects necessary
+for HVCI are not covered, especially the ones that depend on MBEC
+support, or some categories of secure intercepts.
 
-.snip..
+Development happens
+https://github.com/vianpl/{linux,qemu,kvm-unit-tests} and the vsm-next
+branch, but I'd advice against looking into it until we add some order
+to the rework. Regardless, feel free to get in touch.
 
-> @@ -1888,9 +1896,28 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
->   			memset(&mtk_dp->info.audio_cur_cfg, 0,
->   			       sizeof(mtk_dp->info.audio_cur_cfg));
->   
-> +			mtk_dp->enabled = false;
-> +			/* power off aux */
-> +			mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
-> +			       DP_PWR_STATE_BANDGAP_TPLL,
-> +			       DP_PWR_STATE_MASK);
-> +
-
-This commit is not even based on upstream, so you haven't even tested it upstream.
-
-Don't send untested commits.
-There's nothing to review here.
-
-Regards,
-Angelo
+Nicolas
 
