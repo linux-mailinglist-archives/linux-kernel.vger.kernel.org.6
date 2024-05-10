@@ -1,116 +1,149 @@
-Return-Path: <linux-kernel+bounces-175985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A648C284D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:56:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 605F58C2852
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215A3287CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83FB31C22644
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C84172777;
-	Fri, 10 May 2024 15:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074DD171E76;
+	Fri, 10 May 2024 15:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="j2TqeLIG"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="LLi2EZKL"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA8212C49A;
-	Fri, 10 May 2024 15:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687CF12C49A;
+	Fri, 10 May 2024 15:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356552; cv=none; b=MdUrzuUrOHsuqosYU4xyZmYRA+UfpwZ6Sv/7CyR+z8wG/pkak7NJeO9tFCgimv64O4hW/inW6vBhJgHpTAcmdgA+XVotbeBy0cpumGjK63XAB11O35lnuXmZ1rwcGDc3F6fnHtBYRRQprRWxJSdd7I8+6rcgsWHyDsRDnqxxDhk=
+	t=1715356702; cv=none; b=IGm+jmrUS6q9YHwtFBBHM815EWt8u8bXDpSQlBjiXyMuyrtG+G8qFMZ/9mChQuy6e2Gw+u/op1sUJANl7loScMUFVaQ2boi7RW1zHPBWuYdSA4hx/F/PKXgIqGzvy0cTb0BBkjPeO5vyWzIF1DyKwe0iTtAz9T1+vKXD/FWzXhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356552; c=relaxed/simple;
-	bh=IBLZr/tGroMZp0lVjQIUbjuvOt/Nd1d3apRv1DjPoXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5MBER0OKGQyfqx3QZ1DdhVvjlR0SVvPlYTA05yw3eIcUM6RfiQ+7OBcevy+d1IcD7gHOK3EXSVbH6wtZduwW/9IAQ04DHOZvMwaai+on8Kh4DogWQyMikDmTMxL74gPndfjCjAiv+cgSJyFQdAYyaSwx5VHdpPbiuBJFy8SqHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=j2TqeLIG; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dy8lSBZHGbHQucNhRUnmeh0rwb1O8iiwSESw+dcfU8A=; b=j2TqeLIGRT+ss1rjOoJ2nVsQgo
-	8wXrn3qFtsaVTL35D/EoE1B/D3oVEMpSXUgYDR42dPQEMAwNi6EmP+RKs6DNvbpiNyoBv+utI+Rde
-	4XDlVZFI659lKYxs9nW+Wmwk18TRd0FxdzkO0Zm8HZfFzzsWyBBvvj8+CIhz2wfplqG6Yaoe57IkF
-	ef/yIA1z0C6ZtKKI8/JpZyttM7s2DcorU6JCY0AmWJvmmXFno9Qv3dMpYwOZmbRN5VekXeC83terg
-	YrAjAuovYMSRQ6cyZK4bIz8trOfi3914NvnzuXM8q6W2AS+yB0WBgdyY13YR9eIIQo1AWbXIMVkRX
-	jgVRTthQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42354)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s5Sar-0007b1-0E;
-	Fri, 10 May 2024 16:55:33 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s5Sar-0003R6-5s; Fri, 10 May 2024 16:55:33 +0100
-Date: Fri, 10 May 2024 16:55:33 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next v6 3/7] net: stmmac: Make stmmac_xpcs_setup()
- generic to all PCS devices
-Message-ID: <Zj5DddF4nl/B4zZM@shell.armlinux.org.uk>
-References: <20240510-rzn1-gmac1-v6-0-b63942be334c@bootlin.com>
- <20240510-rzn1-gmac1-v6-3-b63942be334c@bootlin.com>
+	s=arc-20240116; t=1715356702; c=relaxed/simple;
+	bh=Hwe326E8935ZNJYnxxoQqAlJkhlmJgJLfvrF7b5k4gc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hyl/pr5H103Z9hXA915UJZuCx7fFg9tI9tKI/xTRyXV04mFbZfTaj5rslPazrf0NlunOFyu2jE5GM1KZHhEY4QaRkqUl7xPIuIGDIEOpJEl2wKcI1Vu/keqpAP/OZMnky/jwADeUe7+4qnI0n3VNkj/NHmbdx8WDvlAwMj+kcMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=LLi2EZKL; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [10.8.193.2] (unknown [50.39.103.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id EF28640ECA;
+	Fri, 10 May 2024 15:58:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715356697;
+	bh=ViFi4HxWbpqfMxysdikD00ETw3UnUCRAI9fPcedKST8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=LLi2EZKLcfw2dON0LQHGZk+Eb8VEw2RtxLiJ7xNDib1Jw/d+YZTVAS3t3QAFzNCkM
+	 MsGxpTqaJ6aLN30EJqsiAEwKKOdmlWluVDMB4UNNqnWIbgkQ//hthQEpHgV7LrSagk
+	 pvDxopcsKUnnKRpROLcUMZGSJs6nDEh6t7cYhnvKObi5z74GaaN5a3wa/Yuw5WEuFZ
+	 vJXIf7Jt0ZL+uxKYaG7IHQEIx4iPs3WWpReG1mi5Ysz0azTA+bEh3cP2+SGmsa4otn
+	 BMExuCanRo/VIuRa8feHGx5Jixf/vi+UB3+ryDvh+KUKH4+sPm5eYYC6ex5wPIqAqX
+	 atncwXQ95n+4Q==
+Message-ID: <00107f4f-9a14-43b0-8204-45978a487e33@canonical.com>
+Date: Fri, 10 May 2024 08:58:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-rzn1-gmac1-v6-3-b63942be334c@bootlin.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] apparmor: fix apparmor_socket_post_create() kernel-doc
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240505-apparmor_socket_post_create-kdoc-v1-1-1fd88e546e92@quicinc.com>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20240505-apparmor_socket_post_create-kdoc-v1-1-1fd88e546e92@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 10, 2024 at 09:38:10AM +0200, Romain Gantois wrote:
-> From: Serge Semin <fancer.lancer@gmail.com>
+On 5/5/24 15:39, Jeff Johnson wrote:
+> make C=1 reports:
 > 
-> A pcs_init() callback will be introduced to stmmac in a future patch. This
-> new function will be called during the hardware initialization phase.
-> Instead of separately initializing XPCS and PCS components, let's group all
-> PCS-related hardware initialization logic in the current
-> stmmac_xpcs_setup() function.
+> security/apparmor/lsm.c:1138: warning: Function parameter or struct member 'protocol' not described in 'apparmor_socket_post_create'
 > 
-> Rename stmmac_xpcs_setup() to stmmac_pcs_setup() and move the conditional
-> call to stmmac_xpcs_setup() inside the function itself.
+> Fix this by correcting the misspelling of 'protocol'.
 > 
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-stmmac_pcs_init() looks weird in this patch, but the reason is set out
-here. So:
+Hey Jeff, thanks for the patch, unfortunately Christian Göttsche version of the patch came in before yours so that is the one I committed
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> ---
+>   security/apparmor/lsm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index cef8c466af80..d0485fb0ed63 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -1124,7 +1124,7 @@ static int apparmor_socket_create(int family, int type, int protocol, int kern)
+>    * @sock: socket that is being setup
+>    * @family: family of socket being created
+>    * @type: type of the socket
+> - * @ptotocol: protocol of the socket
+> + * @protocol: protocol of the socket
+>    * @kern: socket is a special kernel socket
+>    *
+>    * Note:
+> 
+> ---
+> base-commit: 2c4d8e19cf060744a9db466ffbaea13ab37f25ca
+> change-id: 20240505-apparmor_socket_post_create-kdoc-897c7ad5d007
+> 
 
-Thanks!
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
