@@ -1,113 +1,325 @@
-Return-Path: <linux-kernel+bounces-175462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46428C2007
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:48:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4B58C200A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7F21F2220D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:48:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C75D21C20F10
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97903160884;
-	Fri, 10 May 2024 08:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351FF15ECFA;
+	Fri, 10 May 2024 08:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R7KdH4hj"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ReQpeFur"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6198215FD03;
-	Fri, 10 May 2024 08:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EB413C827
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715330896; cv=none; b=mQe+V81HqvkNyV6zn5xr5CQceW7jxEIZUjFiqWW7H2Blik1ZK1k4v0LRtr4mB6l3n93mobD18AhyBU8x5w+ViD//9IJjYj8m/mEkAiPV1P5U05WbBViq5Vu52L2cmWrIcER5qO7wwvX1V9S/0JsSXv0Mu0g1Mhdwc66NFqi+dDA=
+	t=1715331046; cv=none; b=VjOIgGhBUA7gYZ5U3yzGjK66BNk6Ti2INeZgSHbbsHZxVX1Mhapr7w1ZJvyFS47WEFVYGaE4bI9SLoPn6ONcTFc1Dignwy4X0M4ACsy/0oSYtWN8OdXf91/kTvM2ElaFyNs3ehiCKLmxPj7szE7uUHal9iVD5XI4G/3sakkcowk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715330896; c=relaxed/simple;
-	bh=YwWoSGlLIoFU199bT7cNXYZ8yB+nQBY+wMA4w6hUZu8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Pr6F3lssa2/yDQ2QQ2e/wUQ882mY5jTiXCRxj8cvyWWontV3I960WUJC5LPIzCqeeu2rC7JK0YsPO0lvEOn1mbBSfePaP+lPnBLYYuVf+7ukM9UzsigAcKyJuGbbL/f9dMf+4DKvakIsoccTKSCfEQJq8lTsvvUM1yqJPrc++Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R7KdH4hj; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-41ffad2426eso2721745e9.3;
-        Fri, 10 May 2024 01:48:15 -0700 (PDT)
+	s=arc-20240116; t=1715331046; c=relaxed/simple;
+	bh=fUYFMJTn/xwLDtzOO8LGAkAPbJhIkNihSEEy3mUjT/Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mos1hU8OgAEZE7T3nzXBKQ4T+Hn0QXboHUP+fyq/+THmIVd5xYnkhpHTvYFIEXcZqjA4xBd2/RCrqRtkc/ZLaPeAO9zwXLfZRJN/XRF0XJ4gYzeSvGg+UzqkAcso7Fvjfb/9mSfbiQbSY9mIIEskb2yc5AbEZeQC4y2CucxEHZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ReQpeFur; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e1fa2ff499so27345061fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 01:50:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715330894; x=1715935694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VolhuYhozBmZNG1Kf46/MgpdEY1r+F/GHz7XyCKXqc0=;
-        b=R7KdH4hjS+jcwpHN4dGOujfKNjKDz/aJ8RkmawaWX24ft+nJ6pnPe2wkvISdrrk4my
-         p1ROj6RCED5eL9mzJlxIZ3Qci06Tdh2Lkx/qkU2HtrBfgMk/z5KQJZ1vKLm2gm2y32WU
-         u57J4qjvYk9KIsaGVlOGwPvVw336iBauXtndxZ50NY8xz3e+zhEDAFoDTk39kk5nO1y6
-         PoLwfPZLnne6L5nAhk1tiC2VhOt126PvO8+HSfQzCQ3tZKGFppdvCBS5fHSFkJcKq1lP
-         yzd2KxguARyogtx8EpIVKhSo9YpnU9/2N3G3CTnGM+bheC2NEAb5lW5Kw9RNJYzVnlMZ
-         v/Jg==
+        d=chromium.org; s=google; t=1715331042; x=1715935842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4H4zSaH1+2LfQXPbu6vq5YgIN9MeKhusXvXCXm1EKAo=;
+        b=ReQpeFurEepn7/fteGWq4lmVc7Bd0PAHauSKmndm/jBgZdMEMmywgr3knkswX4dF+H
+         WUhlhAQc8aSeH4PRJpFvGGTYcf0vA8bcq880SewEcJ0u1RyAyMy5ketomIz5FGTLX/y0
+         Wl2AqRV74Gp1LGcUzXJ8wnvUbCgHCag1mp5Rk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715330894; x=1715935694;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VolhuYhozBmZNG1Kf46/MgpdEY1r+F/GHz7XyCKXqc0=;
-        b=bBd4Gy8Rieoeg2cPbhaNHTpqMFIZfh6pdncVFLdGVFVrobQrfFuZE0lK+sDqCEjID+
-         CpVW7B0UEKWOLThIjr+a2//FyUEio0ZUaqJq0sIpeMYm+YwqDf02FG0SznYShgfYN8hQ
-         MVN6A1RC9SH5VNMX+56hNfeyo5SZQNTI/9weM0xmkTahue02oyywRJp3G4APcHAZDicv
-         8b6ZTgBlAglQjbPoD1Zqe7iOdYsA6oYslLDRJRmuEm3IqFyzaFky3w9JMNc/QepKIa/H
-         TxPVuSFKDx0JE2hGO4VUFyhrMiGTh4SD7/UJorA5cQjfRhhaXyn0OoXR+SJcJcev8Ahy
-         r7lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWGZ5lcx9bBkZ9fwRHEF7dC/U83RwS4NwWdT1hHQxeGQWXQRIsOgW2GgLGL3AYVoGaqAOl8yT5uMH+zV1F0OZF6egl/WFS8L72wPbas7RTPxJf+aeBH7BoZklcFtNy9S/GCVhp5GrkGhlwNJr5gufLHWJsSr5r3SB0LleURk4GsN7xGfbe/
-X-Gm-Message-State: AOJu0YwFS8YOFvHZDxKnL82tWfPIcJp6N7pWtlkWsJwITGNyAmbW0sM8
-	9ElQquin+EMowzRMYPtxOgBXqY16mmnU0iNnxO6iDSbfI0xDNYzY
-X-Google-Smtp-Source: AGHT+IFylAv7LOFuzY145nB/4IYG4/bbhSBLCA1Eg1Scf4HzbayFRvNarWugAMyAu0IKfah1845XwQ==
-X-Received: by 2002:a05:600c:3508:b0:41b:f116:8868 with SMTP id 5b1f17b1804b1-41feaa38a79mr21592845e9.12.1715330893439;
-        Fri, 10 May 2024 01:48:13 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccbe8e3csm55952055e9.1.2024.05.10.01.48.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 01:48:12 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] selftest: epoll_busy_poll: Fix spelling mistake "couldnt" -> "couldn't"
-Date: Fri, 10 May 2024 09:48:11 +0100
-Message-Id: <20240510084811.3299685-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        d=1e100.net; s=20230601; t=1715331042; x=1715935842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4H4zSaH1+2LfQXPbu6vq5YgIN9MeKhusXvXCXm1EKAo=;
+        b=SKoBOj80KpMzYJAohOwuGRYhJF7W5kdZ5rY+z+T7iOxLuvThTl0SUIlo3vd/SifPCX
+         A35+h7EUhunGghbUzcDsrMATEuyiwoOEjgIdRVhkz5JLRLo8XtoJO+xvxhMa51nAzsuW
+         kYCSm5yHXXt11GhYfaRc4pGLx/RG1YDIAH/UwOJr6yv5IYdT853CEVujflOrycor6EGL
+         Ygma1i5kuxRC9V3hfDsSwSyKnXljQXs/Q6ZlD7rqIgPssoS4aF8IZrUUyQa7Rdxe5Arr
+         vIqSlAFxq1Ee30qwOTLC5toMXsEBmVE7+OzP0CZv1KYUny07golT4PZ+eV+sq6vfnVwf
+         HJNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVGt9QfKcFoCVqzUiYT9X2cCuhRNpfwGkPiPKaeT8hhlkKbkDkT7WABRUOwMBMi1JcjabCt5fMLE3QIoknK8tNhs7oncbfMmisrcux2
+X-Gm-Message-State: AOJu0YwtQeOzIjKGuG/epSoVlanaG7BJ7ntXjUiB31roFuspoZg7pGmK
+	hFW/cyAMxNCbSYHmhBPzUPZpWhi539MGeM55Gb70+1m/QQXffyoN7gIiZk+TjBVea0cIV0mbdbZ
+	lhJAs/kA7paik4b/beDdTWTddUkkLY+h2gBce
+X-Google-Smtp-Source: AGHT+IHoqXPYriqoOjzwKba9mnAyqCjY4tEq1xZu6FGMe9IQm/CXombW/wNWaZZgnXyDpDVvRkpUNWA0vcpy1+Zj2TY=
+X-Received: by 2002:a2e:e09:0:b0:2e2:ab69:d0fa with SMTP id
+ 38308e7fff4ca-2e51a84e200mr6593961fa.5.1715331042430; Fri, 10 May 2024
+ 01:50:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20240510083549.1279670-1-devarsht@ti.com>
+In-Reply-To: <20240510083549.1279670-1-devarsht@ti.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 10 May 2024 16:50:31 +0800
+Message-ID: <CAGXv+5Ggm=fXH=SBjROM_=kHsy-YW8CWeR8dYpPS4Y=VU6J4cA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v7 5/8] media: verisilcon : Use exported tables
+ from v4l2-jpeg for hantro codec
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com, 
+	sebastian.fricke@collabora.com, ezequiel@vanguardiasur.com.ar, 
+	p.zabel@pengutronix.de, linux-rockchip@lists.infradead.org, 
+	laurent.pinchart@ideasonboard.com, praneeth@ti.com, nm@ti.com, 
+	vigneshr@ti.com, a-bhatia1@ti.com, j-luthra@ti.com, b-brnich@ti.com, 
+	detheridge@ti.com, p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com, 
+	nicolas@ndufresne.ca
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a spelling mistake in a TH_LOG message. Fix it.
+On Fri, May 10, 2024 at 4:36=E2=80=AFPM Devarsh Thakkar <devarsht@ti.com> w=
+rote:
+>
+> Use v4l2-jpeg core API to import reference quantization and huffman table=
+s
+> used for JPEG Encoding.
+>
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- tools/testing/selftests/net/epoll_busy_poll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-diff --git a/tools/testing/selftests/net/epoll_busy_poll.c b/tools/testing/selftests/net/epoll_busy_poll.c
-index 9dd2830fd67c..16e457c2f877 100644
---- a/tools/testing/selftests/net/epoll_busy_poll.c
-+++ b/tools/testing/selftests/net/epoll_busy_poll.c
-@@ -232,7 +232,7 @@ TEST_F(epoll_busy_poll, test_set_invalid)
- 
- 	ret = cap_set_flag(self->caps, CAP_EFFECTIVE, 1, net_admin, CAP_CLEAR);
- 	EXPECT_EQ(0, ret)
--		TH_LOG("couldnt clear CAP_NET_ADMIN");
-+		TH_LOG("couldn't clear CAP_NET_ADMIN");
- 
- 	ret = cap_set_proc(self->caps);
- 	EXPECT_EQ(0, ret)
--- 
-2.39.2
+Code looks OK. This was probably very overdue.
 
+> ---
+> V1->V6 (No change, patch introduced in V7)
+> ---
+>  .../media/platform/verisilicon/hantro_jpeg.c  | 128 ++----------------
+>  1 file changed, 14 insertions(+), 114 deletions(-)
+>
+> diff --git a/drivers/media/platform/verisilicon/hantro_jpeg.c b/drivers/m=
+edia/platform/verisilicon/hantro_jpeg.c
+> index d07b1b449b61..fa4e8ee92c05 100644
+> --- a/drivers/media/platform/verisilicon/hantro_jpeg.c
+> +++ b/drivers/media/platform/verisilicon/hantro_jpeg.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/build_bug.h>
+>  #include <linux/kernel.h>
+>  #include <linux/string.h>
+> +#include <media/v4l2-jpeg.h>
+>  #include "hantro_jpeg.h"
+>  #include "hantro.h"
+>
+> @@ -24,42 +25,6 @@
+>  #define HUFF_CHROMA_DC_OFF     394
+>  #define HUFF_CHROMA_AC_OFF     427
+>
+> -/* Default tables from JPEG ITU-T.81
+> - * (ISO/IEC 10918-1) Annex K, tables K.1 and K.2
+> - */
+> -static const unsigned char luma_q_table[] =3D {
+> -       0x10, 0x0b, 0x0a, 0x10, 0x18, 0x28, 0x33, 0x3d,
+> -       0x0c, 0x0c, 0x0e, 0x13, 0x1a, 0x3a, 0x3c, 0x37,
+> -       0x0e, 0x0d, 0x10, 0x18, 0x28, 0x39, 0x45, 0x38,
+> -       0x0e, 0x11, 0x16, 0x1d, 0x33, 0x57, 0x50, 0x3e,
+> -       0x12, 0x16, 0x25, 0x38, 0x44, 0x6d, 0x67, 0x4d,
+> -       0x18, 0x23, 0x37, 0x40, 0x51, 0x68, 0x71, 0x5c,
+> -       0x31, 0x40, 0x4e, 0x57, 0x67, 0x79, 0x78, 0x65,
+> -       0x48, 0x5c, 0x5f, 0x62, 0x70, 0x64, 0x67, 0x63
+> -};
+> -
+> -static const unsigned char chroma_q_table[] =3D {
+> -       0x11, 0x12, 0x18, 0x2f, 0x63, 0x63, 0x63, 0x63,
+> -       0x12, 0x15, 0x1a, 0x42, 0x63, 0x63, 0x63, 0x63,
+> -       0x18, 0x1a, 0x38, 0x63, 0x63, 0x63, 0x63, 0x63,
+> -       0x2f, 0x42, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+> -       0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+> -       0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+> -       0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63,
+> -       0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63
+> -};
+> -
+> -static const unsigned char zigzag[] =3D {
+> -        0,  1,  8, 16,  9,  2,  3, 10,
+> -       17, 24, 32, 25, 18, 11,  4,  5,
+> -       12, 19, 26, 33, 40, 48, 41, 34,
+> -       27, 20, 13,  6,  7, 14, 21, 28,
+> -       35, 42, 49, 56, 57, 50, 43, 36,
+> -       29, 22, 15, 23, 30, 37, 44, 51,
+> -       58, 59, 52, 45, 38, 31, 39, 46,
+> -       53, 60, 61, 54, 47, 55, 62, 63
+> -};
+> -
+>  static const u32 hw_reorder[] =3D {
+>          0,  8, 16, 24,  1,  9, 17, 25,
+>         32, 40, 48, 56, 33, 41, 49, 57,
+> @@ -71,73 +36,6 @@ static const u32 hw_reorder[] =3D {
+>         38, 46, 54, 62, 39, 47, 55, 63
+>  };
+>
+> -/* Huffman tables are shared with CODA */
+> -static const unsigned char luma_dc_table[] =3D {
+> -       0x00, 0x01, 0x05, 0x01, 0x01, 0x01, 0x01, 0x01,
+> -       0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> -       0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> -       0x08, 0x09, 0x0a, 0x0b,
+> -};
+> -
+> -static const unsigned char chroma_dc_table[] =3D {
+> -       0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
+> -       0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+> -       0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+> -       0x08, 0x09, 0x0a, 0x0b,
+> -};
+> -
+> -static const unsigned char luma_ac_table[] =3D {
+> -       0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 0x04, 0x03,
+> -       0x05, 0x05, 0x04, 0x04, 0x00, 0x00, 0x01, 0x7d,
+> -       0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12,
+> -       0x21, 0x31, 0x41, 0x06, 0x13, 0x51, 0x61, 0x07,
+> -       0x22, 0x71, 0x14, 0x32, 0x81, 0x91, 0xa1, 0x08,
+> -       0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 0xd1, 0xf0,
+> -       0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0a, 0x16,
+> -       0x17, 0x18, 0x19, 0x1a, 0x25, 0x26, 0x27, 0x28,
+> -       0x29, 0x2a, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39,
+> -       0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+> -       0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59,
+> -       0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
+> -       0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79,
+> -       0x7a, 0x83, 0x84, 0x85, 0x86, 0x87, 0x88, 0x89,
+> -       0x8a, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, 0x98,
+> -       0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7,
+> -       0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6,
+> -       0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5,
+> -       0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4,
+> -       0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xe1, 0xe2,
+> -       0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea,
+> -       0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
+> -       0xf9, 0xfa,
+> -};
+> -
+> -static const unsigned char chroma_ac_table[] =3D {
+> -       0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04,
+> -       0x07, 0x05, 0x04, 0x04, 0x00, 0x01, 0x02, 0x77,
+> -       0x00, 0x01, 0x02, 0x03, 0x11, 0x04, 0x05, 0x21,
+> -       0x31, 0x06, 0x12, 0x41, 0x51, 0x07, 0x61, 0x71,
+> -       0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 0x42, 0x91,
+> -       0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0,
+> -       0x15, 0x62, 0x72, 0xd1, 0x0a, 0x16, 0x24, 0x34,
+> -       0xe1, 0x25, 0xf1, 0x17, 0x18, 0x19, 0x1a, 0x26,
+> -       0x27, 0x28, 0x29, 0x2a, 0x35, 0x36, 0x37, 0x38,
+> -       0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48,
+> -       0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58,
+> -       0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,
+> -       0x69, 0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78,
+> -       0x79, 0x7a, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87,
+> -       0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 0x95, 0x96,
+> -       0x97, 0x98, 0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5,
+> -       0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4,
+> -       0xb5, 0xb6, 0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3,
+> -       0xc4, 0xc5, 0xc6, 0xc7, 0xc8, 0xc9, 0xca, 0xd2,
+> -       0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda,
+> -       0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9,
+> -       0xea, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8,
+> -       0xf9, 0xfa,
+> -};
+> -
+>  /* For simplicity, we keep a pre-formatted JPEG header,
+>   * and we'll use fixed offsets to change the width, height
+>   * quantization tables, etc.
+> @@ -291,10 +189,11 @@ jpeg_scale_quant_table(unsigned char *file_q_tab,
+>                        const unsigned char *tab, int scale)
+>  {
+>         int i;
+> +       const u8 *zigzag;
+>
+> -       BUILD_BUG_ON(ARRAY_SIZE(zigzag) !=3D JPEG_QUANT_SIZE);
+>         BUILD_BUG_ON(ARRAY_SIZE(hw_reorder) !=3D JPEG_QUANT_SIZE);
+>
+> +       v4l2_jpeg_get_zig_zag_scan(&zigzag);
+>         for (i =3D 0; i < JPEG_QUANT_SIZE; i++) {
+>                 file_q_tab[i] =3D jpeg_scale_qp(tab[zigzag[i]], scale);
+>                 reordered_q_tab[i] =3D jpeg_scale_qp(tab[hw_reorder[i]], =
+scale);
+> @@ -304,6 +203,7 @@ jpeg_scale_quant_table(unsigned char *file_q_tab,
+>  static void jpeg_set_quality(struct hantro_jpeg_ctx *ctx)
+>  {
+>         int scale;
+> +       const u8 *luma_q_table, *chroma_q_table;
+>
+>         /*
+>          * Non-linear scaling factor:
+> @@ -314,21 +214,23 @@ static void jpeg_set_quality(struct hantro_jpeg_ctx=
+ *ctx)
+>         else
+>                 scale =3D 200 - 2 * ctx->quality;
+>
+> -       BUILD_BUG_ON(ARRAY_SIZE(luma_q_table) !=3D JPEG_QUANT_SIZE);
+> -       BUILD_BUG_ON(ARRAY_SIZE(chroma_q_table) !=3D JPEG_QUANT_SIZE);
+>         BUILD_BUG_ON(ARRAY_SIZE(ctx->hw_luma_qtable) !=3D JPEG_QUANT_SIZE=
+);
+>         BUILD_BUG_ON(ARRAY_SIZE(ctx->hw_chroma_qtable) !=3D JPEG_QUANT_SI=
+ZE);
+>
+> +       v4l2_jpeg_get_reference_quantization_tables(&luma_q_table, &chrom=
+a_q_table);
+>         jpeg_scale_quant_table(ctx->buffer + LUMA_QUANT_OFF,
+> -                              ctx->hw_luma_qtable, luma_q_table, scale);
+> +                              ctx->hw_luma_qtable, (const unsigned char =
+*)luma_q_table, scale);
+>         jpeg_scale_quant_table(ctx->buffer + CHROMA_QUANT_OFF,
+> -                              ctx->hw_chroma_qtable, chroma_q_table, sca=
+le);
+> +                              ctx->hw_chroma_qtable, (const unsigned cha=
+r *)chroma_q_table, scale);
+>  }
+>
+>  void hantro_jpeg_header_assemble(struct hantro_jpeg_ctx *ctx)
+>  {
+>         char *buf =3D ctx->buffer;
+> +       const u8 *luma_dc_table, *chroma_dc_table, *luma_ac_table, *chrom=
+a_ac_table;
+>
+> +       v4l2_jpeg_get_reference_huffman_tables(&luma_dc_table,  &luma_ac_=
+table, &chroma_dc_table,
+> +                                              &chroma_ac_table);
+>         memcpy(buf, hantro_jpeg_header,
+>                sizeof(hantro_jpeg_header));
+>
+> @@ -337,12 +239,10 @@ void hantro_jpeg_header_assemble(struct hantro_jpeg=
+_ctx *ctx)
+>         buf[WIDTH_OFF + 0] =3D ctx->width >> 8;
+>         buf[WIDTH_OFF + 1] =3D ctx->width;
+>
+> -       memcpy(buf + HUFF_LUMA_DC_OFF, luma_dc_table, sizeof(luma_dc_tabl=
+e));
+> -       memcpy(buf + HUFF_LUMA_AC_OFF, luma_ac_table, sizeof(luma_ac_tabl=
+e));
+> -       memcpy(buf + HUFF_CHROMA_DC_OFF, chroma_dc_table,
+> -              sizeof(chroma_dc_table));
+> -       memcpy(buf + HUFF_CHROMA_AC_OFF, chroma_ac_table,
+> -              sizeof(chroma_ac_table));
+> +       memcpy(buf + HUFF_LUMA_DC_OFF, luma_dc_table, V4L2_JPEG_REF_HT_DC=
+_LEN);
+> +       memcpy(buf + HUFF_LUMA_AC_OFF, luma_ac_table, V4L2_JPEG_REF_HT_AC=
+_LEN);
+> +       memcpy(buf + HUFF_CHROMA_DC_OFF, chroma_dc_table, V4L2_JPEG_REF_H=
+T_DC_LEN);
+> +       memcpy(buf + HUFF_CHROMA_AC_OFF, chroma_ac_table, V4L2_JPEG_REF_H=
+T_AC_LEN);
+>
+>         jpeg_set_quality(ctx);
+>  }
+> --
+> 2.39.1
+>
+>
 
