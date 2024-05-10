@@ -1,711 +1,243 @@
-Return-Path: <linux-kernel+bounces-175561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EAC8C2184
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54888C2186
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761FA1F227ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:00:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D939C1C20C21
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41D1165FC8;
-	Fri, 10 May 2024 10:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D581D165FB0;
+	Fri, 10 May 2024 10:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rGMjbu71";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RrOdBIM8";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rGMjbu71";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RrOdBIM8"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="jkhq5wjO"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2043.outbound.protection.outlook.com [40.107.117.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08563160877;
-	Fri, 10 May 2024 10:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335249; cv=none; b=tVYvP3Jr4x7ASTrn4y81dxuxo42Y+XutjcTrA1W/9lPV8nc4i9tkXwxCk7Kd5j1AHbPspcRYn+DIVnlQKt+mk1mIPlJKETKMxu2KqudZlj+wSHUpN2cbY1kGG4fqy+SAqA0l/tMOPaTInPQXgAlwibcPJGBSziQy5gN4G7+5hsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335249; c=relaxed/simple;
-	bh=4tkE/uUO7JerfYk9E7TKu5fMIm+S566FSontiRbwTdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XX31m+Wpl4QtWdSgpG30jEDkn8AI5AqotAZrkxazGKNd4RhFtOWi9mhCTtUfKXIGcNW4P30GBadzySoehzH0QlG2iS9fit+j9SkMRl/7t8E8ymAuMMsANI2lUauDhdfb1vobtSuXfT+Yb8mAxgAW6jGh63i6mtxlrsmQMlYK/g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rGMjbu71; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RrOdBIM8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rGMjbu71; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RrOdBIM8; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C41D7612F1;
-	Fri, 10 May 2024 10:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715335242; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsnlpHisn2LVBrtgwUkcvK5ygd1x8Soj8GBmzkC+y5I=;
-	b=rGMjbu71UyRBmBGUiNPTnvPTzgOgzHis5IS8mHLqo8n0hnHVOTMZLI652Mqf5I5cbwC6Ly
-	Fpd9c9Q2+nf8w0Q2ESEQnG22JvnRhHSTzxmaboQeGMUrnPuJB4fe6AtJF5enBUb1/ASIqb
-	KcJR7QshkuJqSUVpPYD/0wR00YeAj4E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715335242;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsnlpHisn2LVBrtgwUkcvK5ygd1x8Soj8GBmzkC+y5I=;
-	b=RrOdBIM8Yk9BZovAb6jaMn6Rr0K7/q3xNQYfkPiMIUsyzEPa63TOAzeTVi87IHWi7z5PAD
-	p3rGk0JmBwZGO4Cw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715335242; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsnlpHisn2LVBrtgwUkcvK5ygd1x8Soj8GBmzkC+y5I=;
-	b=rGMjbu71UyRBmBGUiNPTnvPTzgOgzHis5IS8mHLqo8n0hnHVOTMZLI652Mqf5I5cbwC6Ly
-	Fpd9c9Q2+nf8w0Q2ESEQnG22JvnRhHSTzxmaboQeGMUrnPuJB4fe6AtJF5enBUb1/ASIqb
-	KcJR7QshkuJqSUVpPYD/0wR00YeAj4E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715335242;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsnlpHisn2LVBrtgwUkcvK5ygd1x8Soj8GBmzkC+y5I=;
-	b=RrOdBIM8Yk9BZovAb6jaMn6Rr0K7/q3xNQYfkPiMIUsyzEPa63TOAzeTVi87IHWi7z5PAD
-	p3rGk0JmBwZGO4Cw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DA941386E;
-	Fri, 10 May 2024 10:00:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZRmkCErwPWaLQAAAD6G6ig
-	(envelope-from <hare@suse.de>); Fri, 10 May 2024 10:00:42 +0000
-Message-ID: <8a35512c-e3d3-476d-b539-847ddc284155@suse.de>
-Date: Fri, 10 May 2024 12:00:33 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B577F4AEFA;
+	Fri, 10 May 2024 10:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715335314; cv=fail; b=a/DiTRMtkEGVVkYgqxQvUMa0s6y+XJfdRPaj1cqMLS3OHuCrk/badRkVIw5NT91wY3llsiWVUxMeMvsbbIrDBb5QvQ5kUxaPxl62ApeReLDM6S4RjWtKiIWiHmpzjG4r2j7y8l7/57juxjKmh4L+8WBgTLmDe4khGxuDZ5AS5rQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715335314; c=relaxed/simple;
+	bh=JGXVP3NkGWZ8c53BS/ygyeWVONyrdRcIEzpgczXEeg4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=koaxZfze5cBSpIBhV0viXkvbJQ5bmDtugpm5JqkQkk5oiFS56ou3TUIiqeQlxrNnvVFdJ+4lVNHX5TkHz2Us45ioNFXxvoPujb40zV7rMnalgHYl25qHnp08HWEMuFSyMJQzINoq9QQZ6eaYIHGXncbLV+O4LZ3NANIarjfhYDQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=jkhq5wjO; arc=fail smtp.client-ip=40.107.117.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XuTDO2qLskf141dEw6aN0mplcGa/HezeVoWvZsoXKBlEqrEssKfDeBnT4mHSRLLpR13dSQDYSNo5hiKu2RI5nIWCjkptfaU8X7I+qhRX4vPECyopWB2YFTuIkmMN5cCCSJ0TmAaRYHUOF4Pa/zLlOiLZB7LrlLQKoh5gv0uApe6T+mi+6jw210Cz5ncX59LjMhmcvGNPUB5YXOepoFTUh6jlLqPLskVlr85ZfwmDnyjbbDMcu7Cf9iEuJqTSzgmGvZPSUIHOQkXsJ8Cunls80DIFrlube8/BBd34H/q37g4AoGBHx4ESRLJr5StgmzYaXSgmMEyD5ihDNAFWVCUPFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uKLdzosIdGgv2QIDSek4xu8G6B6eszpULhk2vpR/8V0=;
+ b=Z8+WEyMbCn79JRO4vKTr9J7A0mSB5HKjUzcm0ZDRZciocnHynlGORayS0+bFLT18PzNV+T8qeWXCsN0gdZo0kTCwQgPOxjq0Oa/9IyZ6rbE59PXFeeKuGKGH9jlHMvqPD+vcWm7zZ4Mi9T1P8LF7LbhHyc9QX8rVkNNM2oB+dNxxgwDpDtFaFLIjGVrcLQ7WulMFbhe90Sq2HI8AD6TKESBR+GEB3MtYQ7Tk3DYxcvqcT9FNXtlZq8oTyKMIDdiOfAAQy8EE/nJqVuFhEB2ae5mrEzwx9MWXSrdIg8zOfIhZqCKqf6aLcVk8alcGt5sltFrcRrBkX5MzUijEZkaO5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=oppo.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uKLdzosIdGgv2QIDSek4xu8G6B6eszpULhk2vpR/8V0=;
+ b=jkhq5wjOc3FA9o0JSljxEXySM2DKNRLDdgd7t0RywNs7kj6aXd/IUq6sdNn2uHdrYfTklQP57KVTNIg2cqvaIwUs/lCq3wZnqny04zHMTIZ3tYHh+acLA9gAE+MA3I+I6klmF609MVy9ZWp0qsh7rBhOeJjvt7w1AYlqQ+dbN2g=
+Received: from SI2PR06CA0011.apcprd06.prod.outlook.com (2603:1096:4:186::16)
+ by PUZPR02MB6307.apcprd02.prod.outlook.com (2603:1096:301:f9::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.45; Fri, 10 May
+ 2024 10:01:47 +0000
+Received: from SG1PEPF000082E8.apcprd02.prod.outlook.com
+ (2603:1096:4:186:cafe::3b) by SI2PR06CA0011.outlook.office365.com
+ (2603:1096:4:186::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49 via Frontend
+ Transport; Fri, 10 May 2024 10:01:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ SG1PEPF000082E8.mail.protection.outlook.com (10.167.240.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Fri, 10 May 2024 10:01:46 +0000
+Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
+ (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 10 May
+ 2024 18:01:46 +0800
+From: <hailong.liu@oppo.com>
+To: <akpm@linux-foundation.org>
+CC: <urezki@gmail.com>, <hch@infradead.org>, <lstoakes@gmail.com>,
+	<21cnbao@gmail.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
+	<xiang@kernel.org>, <chao@kernel.org>, <mhocko@suse.com>, Hailong.Liu
+	<hailong.liu@oppo.com>, <stable@vger.kernel.org>, Oven
+	<liyangouwen1@oppo.com>
+Subject: [PATCH v2] mm/vmalloc: fix vmalloc which may return null if called with __GFP_NOFAIL
+Date: Fri, 10 May 2024 18:01:31 +0800
+Message-ID: <20240510100131.1865-1-hailong.liu@oppo.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] block: track per-node I/O latency
-To: Damien Le Moal <dlemoal@kernel.org>, John Meneghini
- <jmeneghi@redhat.com>, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
- kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, emilne@redhat.com,
- hare@kernel.org
-Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- jrani@purestorage.com, randyj@purestorage.com, aviv.coro@ibm.com
-References: <20240403141756.88233-1-hare@kernel.org>
- <20240509204324.832846-2-jmeneghi@redhat.com>
- <fcda2351-9ba7-4121-a993-184a4c02f9a6@kernel.org>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <fcda2351-9ba7-4121-a993-184a4c02f9a6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Flag: NO
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MID_RHS_MATCH_FROM(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+Content-Type: text/plain
+X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E8:EE_|PUZPR02MB6307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23494940-940c-4c52-9147-08dc70d83426
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|82310400017|36860700004|7416005|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DwffEpv7IPxFQp9+odnMvj11TR7agAqakRvnRVBODm+sP3jNqLNFNmfsWPv3?=
+ =?us-ascii?Q?taWsxU3tSwxUHmtRgKwoMKnrxMqKMQ2FmKmAdMwg+0FT1fsaf8NluNiqVNu9?=
+ =?us-ascii?Q?5aHEK16pRHFMS2zCO7yYGfsj8NMpniX3+Ei1VVO4zFdD3bH36uICuP16EPig?=
+ =?us-ascii?Q?PkCD36dTtZqmlqMIAtka4HlR5wNyCYrM9G6/iGQQadU2VPM2CS6d+t1zjnym?=
+ =?us-ascii?Q?6goZvZ9owT2CwW4W0/t11t5jUa4HKnp/qtAZ9pKS81gK7zDLk1PpVT57h4Ul?=
+ =?us-ascii?Q?8jEfyC1/JDsVfIAmT74BFat3hgVyaO5yIFJufgH9dGT1vgA6X5MGV2jA+ShZ?=
+ =?us-ascii?Q?FLkZ7WlozqFu3R7U6NO2eZdBopcZpanOoGZ4aNq86BXk0kZj+HFukZyTHO7S?=
+ =?us-ascii?Q?eL+rKgL3DjA64HFp+igEVCMaAs34HMF1r5JxzOtEgepPHcgBfr/jndkcjNjs?=
+ =?us-ascii?Q?G17lCcAMtuQojR51jcYUP84y8e1/xcjURANu/WJZcRjLFCn6qYcr4+3XXIEF?=
+ =?us-ascii?Q?GT2G4GuHJRluik7dEjKX1bU5S9uF91yuSjg1kSLUxKRjZt/6Lxd23Nk/EyRy?=
+ =?us-ascii?Q?oAWodcpsFRumrh17+ABnSGfcFNr3w+gQ+tL7TW119W+3C6xjiDNgtE0fM7gV?=
+ =?us-ascii?Q?1fFNHC8kq/YfhQ5Rf5aZhPFhCmpy9IzKHoAHyWtfhGD2lzhLutLCtt/OreoA?=
+ =?us-ascii?Q?094/ZUP0dVOIcNM9iPpctwuLnRVizDIe/yH+3HdoHMH00ixVOlZDx77GbEEO?=
+ =?us-ascii?Q?3eqALR6d2PZha+KabuhpOW8ZpH5DQZy5QAcN8gzhBox2UjKTY9tf0nVUrmz5?=
+ =?us-ascii?Q?QcxdrBhnN6u9CCojw2oURy5h9GewJn4tIg6zBYxdL0c0NzaQ3/RVkF5AV2aS?=
+ =?us-ascii?Q?dsvChOmfhbD2GdGIw2cCjNzlWcZSGlh90fBLogg3e6VI0vBuo2DKFRpN1DdY?=
+ =?us-ascii?Q?f4aSB1zOzybgTjkL1stXcGmSj58NMeRHUjrKA3pamWRyz5Zd1Qqh3N1Pq2g9?=
+ =?us-ascii?Q?NfKZmfHINbvFOcmkUHnn7XhIVzHX9WMdcVHqaLB/YKcq90jwPkjUXrc2miLu?=
+ =?us-ascii?Q?s0EwEVHvYHhUnvjzbbpz3gW0gMY2XcpJpYqPyukb0lPBnr2G3XZKCaF0rQeg?=
+ =?us-ascii?Q?bRRKW27wOoT1c4MjyLz5jyBbkcaBJPae7wejmguGc4bbb5PCNGN67NvywIiH?=
+ =?us-ascii?Q?BL5iPkWFFprUyyLuUXFunfYVfF9WBHpdSxM/gI8C2IeCBI6CrK/XdZbQ05/N?=
+ =?us-ascii?Q?XIhK7cyECvP9gWI/5IQEufXgXvkL3vH3+D2QifevBuI9E+XNVUQ3q62C+nVV?=
+ =?us-ascii?Q?4dEkw7VQq8/3vgjlLUc+U0MQ?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(82310400017)(36860700004)(7416005)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 10:01:46.9019
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23494940-940c-4c52-9147-08dc70d83426
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SG1PEPF000082E8.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR02MB6307
 
-On 5/10/24 09:11, Damien Le Moal wrote:
-> On 5/10/24 05:43, John Meneghini wrote:
->> From: Hannes Reinecke <hare@kernel.org>
->>
->> Add a new option 'BLK_NODE_LATENCY' to track per-node I/O latency.
->> This can be used by I/O schedulers to determine the 'best' queue
->> to send I/O to.
->>
->> Signed-off-by: Hannes Reinecke <hare@kernel.org>
->>
->> Cleaned up checkpatch warnings and updated MAINTAINERS.
-> 
-> This note should be before Hannes SoB. E.g:
-> 
-> [John] Fixed checkpatch warnings and updated MAINTAINERS.
-> 
->>
->> Signed-off-by: John Meneghini <jmeneghi@redhat.com>
->> ---
->>   MAINTAINERS            |   1 +
->>   block/Kconfig          |   9 +
->>   block/Makefile         |   1 +
->>   block/blk-mq-debugfs.c |   2 +
->>   block/blk-nlatency.c   | 389 +++++++++++++++++++++++++++++++++++++++++
->>   block/blk-rq-qos.h     |   6 +
->>   include/linux/blk-mq.h |  11 ++
->>   7 files changed, 419 insertions(+)
->>   create mode 100644 block/blk-nlatency.c
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 7c121493f43d..a4634365c82f 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -5405,6 +5405,7 @@ F:	block/bfq-cgroup.c
->>   F:	block/blk-cgroup.c
->>   F:	block/blk-iocost.c
->>   F:	block/blk-iolatency.c
->> +F:	block/blk-nlatency.c
->>   F:	block/blk-throttle.c
->>   F:	include/linux/blk-cgroup.h
->>   
->> diff --git a/block/Kconfig b/block/Kconfig
->> index 1de4682d48cc..641ed39d609c 100644
->> --- a/block/Kconfig
->> +++ b/block/Kconfig
->> @@ -186,6 +186,15 @@ config BLK_CGROUP_IOPRIO
->>   	scheduler and block devices process requests. Only some I/O schedulers
->>   	and some block devices support I/O priorities.
->>   
->> +config BLK_NODE_LATENCY
->> +	bool "Track per-node I/O latency"
->> +	help
->> +	Enable per-node I/O latency tracking for multipathing. This uses the
->> +	blk-nodelat latency tracker to provide latencies for each node, and schedules
->> +	I/O on the path with the least latency for the submitting node. This can be
->> +	used by I/O schedulers to determine the node with the least latency. Currently
->> +	only supports nvme over fabrics devices.
->> +
->>   config BLK_DEBUG_FS
->>   	bool "Block layer debugging information in debugfs"
->>   	default y
->> diff --git a/block/Makefile b/block/Makefile
->> index 46ada9dc8bbf..9d2e71a3e36f 100644
->> --- a/block/Makefile
->> +++ b/block/Makefile
->> @@ -21,6 +21,7 @@ obj-$(CONFIG_BLK_DEV_THROTTLING)	+= blk-throttle.o
->>   obj-$(CONFIG_BLK_CGROUP_IOPRIO)	+= blk-ioprio.o
->>   obj-$(CONFIG_BLK_CGROUP_IOLATENCY)	+= blk-iolatency.o
->>   obj-$(CONFIG_BLK_CGROUP_IOCOST)	+= blk-iocost.o
->> +obj-$(CONFIG_BLK_NODE_LATENCY) += blk-nlatency.o
-> 
-> Let's keep the alignment please.
-> 
->>   obj-$(CONFIG_MQ_IOSCHED_DEADLINE)	+= mq-deadline.o
->>   obj-$(CONFIG_MQ_IOSCHED_KYBER)	+= kyber-iosched.o
->>   bfq-y				:= bfq-iosched.o bfq-wf2q.o bfq-cgroup.o
->> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
->> index 94668e72ab09..cb38228b95d8 100644
->> --- a/block/blk-mq-debugfs.c
->> +++ b/block/blk-mq-debugfs.c
->> @@ -762,6 +762,8 @@ static const char *rq_qos_id_to_name(enum rq_qos_id id)
->>   		return "latency";
->>   	case RQ_QOS_COST:
->>   		return "cost";
->> +	case RQ_QOS_NLAT:
->> +		return "node-latency";
->>   	}
->>   	return "unknown";
->>   }
->> diff --git a/block/blk-nlatency.c b/block/blk-nlatency.c
->> new file mode 100644
->> index 000000000000..219c3f636d76
->> --- /dev/null
->> +++ b/block/blk-nlatency.c
->> @@ -0,0 +1,389 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Per-node request latency tracking.
->> + *
->> + * Copyright (C) 2023 Hannes Reinecke
->> + *
->> + * A simple per-node latency tracker for use by I/O scheduler.
->> + * Latencies are measures over 'win_usec' microseconds and stored per node.
->> + * If the number of measurements falls below 'lowat' the measurement is
->> + * assumed to be unreliable and will become 'stale'.
->> + * These 'stale' latencies can be 'decayed', where during each measurement
->> + * interval the 'stale' latency value is decreased by 'decay' percent.
->> + * Once the 'stale' latency reaches zero it will be updated by the
->> + * measured latency.
->> + */
->> +#include <linux/kernel.h>
->> +#include <linux/blk_types.h>
->> +#include <linux/slab.h>
->> +
->> +#include "blk-stat.h"
->> +#include "blk-rq-qos.h"
->> +#include "blk.h"
->> +
->> +#define NLAT_DEFAULT_LOWAT 2
->> +#define NLAT_DEFAULT_DECAY 50
->> +
->> +struct rq_nlat {
->> +	struct rq_qos rqos;
->> +
->> +	u64 win_usec;		/* latency measurement window in microseconds */
-> 
-> Using microseconds forces you to do costly multiplications and divisions by
-> 1000. Why not keep things in nanoseconds ?
-> 
-I wanted to keep the user interface simple; entering nanoseconds values
-is tedious. But sure, I can change it.
+From: "Hailong.Liu" <hailong.liu@oppo.com>
 
->> +	unsigned int lowat;	/* Low Watermark latency measurement */
->> +	unsigned int decay;	/* Percentage for 'decaying' latencies */
->> +	bool enabled;
->> +
->> +	struct blk_stat_callback *cb;
->> +
->> +	unsigned int num;
->> +	u64 *latency;
->> +	unsigned int *samples;
->> +};
->> +
->> +static inline struct rq_nlat *RQNLAT(struct rq_qos *rqos)
->> +{
->> +	return container_of(rqos, struct rq_nlat, rqos);
->> +}
->> +
->> +static u64 nlat_default_latency_usec(struct request_queue *q)
->> +{
->> +	/*
->> +	 * We default to 2msec for non-rotational storage, and 75msec
->> +	 * for rotational storage.
->> +	 */
->> +	if (blk_queue_nonrot(q))
->> +		return 2000ULL;
->> +	else
-> 
-> No need for this else.
-> 
-OK.
+commit a421ef303008 ("mm: allow !GFP_KERNEL allocations for kvmalloc")
+includes support for __GFP_NOFAIL, but it presents a conflict with
+commit dd544141b9eb ("vmalloc: back off when the current task is
+OOM-killed"). A possible scenario is as follows:
 
->> +		return 75000ULL;
->> +}
->> +
->> +static void nlat_timer_fn(struct blk_stat_callback *cb)
->> +{
->> +	struct rq_nlat *nlat = cb->data;
->> +	int n;
->> +
->> +	for (n = 0; n < cb->buckets; n++) {
->> +		if (cb->stat[n].nr_samples < nlat->lowat) {
->> +			/*
->> +			 * 'decay' the latency by the specified
->> +			 * percentage to ensure the queues are
->> +			 * being tested to balance out temporary
->> +			 * latency spikes.
->> +			 */
->> +			nlat->latency[n] =
->> +				div64_u64(nlat->latency[n] * nlat->decay, 100);
->> +		} else
->> +			nlat->latency[n] = cb->stat[n].mean;
-> 
-> Missing the curly brackets around the else block.
-> Nit: n is a rather unusual name for a loop index. Why not the usual "i" ? Does
-> notmatter much though.
-> 
-There was a reason once ... but yeah, let's move to 'i'.
+process-a
+__vmalloc_node_range(GFP_KERNEL | __GFP_NOFAIL)
+    __vmalloc_area_node()
+        vm_area_alloc_pages()
+		--> oom-killer send SIGKILL to process-a
+        if (fatal_signal_pending(current)) break;
+--> return NULL;
 
->> +		nlat->samples[n] = cb->stat[n].nr_samples;
->> +	}
->> +	if (nlat->enabled)
->> +		blk_stat_activate_nsecs(nlat->cb, nlat->win_usec * 1000);
->> +}
->> +
->> +static int nlat_bucket_node(const struct request *rq)
->> +{
->> +	if (!rq->mq_ctx)
->> +		return -1;
->> +	return cpu_to_node(blk_mq_rq_cpu((struct request *)rq));
->> +}
->> +
->> +static void nlat_exit(struct rq_qos *rqos)
->> +{
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +
->> +	blk_stat_remove_callback(nlat->rqos.disk->queue, nlat->cb);
->> +	blk_stat_free_callback(nlat->cb);
->> +	kfree(nlat->samples);
->> +	kfree(nlat->latency);
->> +	kfree(nlat);
->> +}
->> +
->> +#ifdef CONFIG_BLK_DEBUG_FS
->> +static int nlat_win_usec_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +
->> +	seq_printf(m, "%llu\n", nlat->win_usec);
->> +	return 0;
->> +}
->> +
->> +static ssize_t nlat_win_usec_write(void *data, const char __user *buf,
->> +			size_t count, loff_t *ppos)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +	char val[16] = { };
->> +	u64 usec;
->> +	int err;
->> +
->> +	if (blk_queue_dying(nlat->rqos.disk->queue))
->> +		return -ENOENT;
->> +
->> +	if (count >= sizeof(val))
->> +		return -EINVAL;
->> +
->> +	if (copy_from_user(val, buf, count))
->> +		return -EFAULT;
->> +
->> +	err = kstrtoull(val, 10, &usec);
->> +	if (err)
->> +		return err;
->> +	blk_stat_deactivate(nlat->cb);
->> +	nlat->win_usec = usec;
->> +	blk_stat_activate_nsecs(nlat->cb, nlat->win_usec * 1000);
->> +
->> +	return count;
->> +}
->> +
->> +static int nlat_lowat_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +
->> +	seq_printf(m, "%u\n", nlat->lowat);
->> +	return 0;
->> +}
->> +
->> +static ssize_t nlat_lowat_write(void *data, const char __user *buf,
->> +			size_t count, loff_t *ppos)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +	char val[16] = { };
->> +	unsigned int lowat;
->> +	int err;
->> +
->> +	if (blk_queue_dying(nlat->rqos.disk->queue))
->> +		return -ENOENT;
->> +
->> +	if (count >= sizeof(val))
->> +		return -EINVAL;
->> +
->> +	if (copy_from_user(val, buf, count))
->> +		return -EFAULT;
->> +
->> +	err = kstrtouint(val, 10, &lowat);
->> +	if (err)
->> +		return err;
->> +	blk_stat_deactivate(nlat->cb);
->> +	nlat->lowat = lowat;
->> +	blk_stat_activate_nsecs(nlat->cb, nlat->win_usec * 1000);
->> +
->> +	return count;
->> +}
->> +
->> +static int nlat_decay_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +
->> +	seq_printf(m, "%u\n", nlat->decay);
->> +	return 0;
->> +}
->> +
->> +static ssize_t nlat_decay_write(void *data, const char __user *buf,
->> +			size_t count, loff_t *ppos)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +	char val[16] = { };
->> +	unsigned int decay;
->> +	int err;
->> +
->> +	if (blk_queue_dying(nlat->rqos.disk->queue))
->> +		return -ENOENT;
->> +
->> +	if (count >= sizeof(val))
->> +		return -EINVAL;
->> +
->> +	if (copy_from_user(val, buf, count))
->> +		return -EFAULT;
->> +
->> +	err = kstrtouint(val, 10, &decay);
->> +	if (err)
->> +		return err;
->> +	if (decay > 100)
->> +		return -EINVAL;
->> +	blk_stat_deactivate(nlat->cb);
->> +	nlat->decay = decay;
->> +	blk_stat_activate_nsecs(nlat->cb, nlat->win_usec * 1000);
->> +
->> +	return count;
->> +}
->> +
->> +static int nlat_enabled_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +
->> +	seq_printf(m, "%d\n", nlat->enabled);
->> +	return 0;
->> +}
->> +
->> +static int nlat_id_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +
->> +	seq_printf(m, "%u\n", rqos->id);
->> +	return 0;
->> +}
->> +
->> +static int nlat_latency_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +	int n;
->> +
->> +	if (!nlat->enabled)
->> +		return 0;
->> +
->> +	for (n = 0; n < nlat->num; n++) {
->> +		if (n > 0)
->> +			seq_puts(m, " ");
->> +		seq_printf(m, "%llu", nlat->latency[n]);
->> +	}
->> +	seq_puts(m, "\n");
->> +	return 0;
->> +}
->> +
->> +static int nlat_samples_show(void *data, struct seq_file *m)
->> +{
->> +	struct rq_qos *rqos = data;
->> +	struct rq_nlat *nlat = RQNLAT(rqos);
->> +	int n;
->> +
->> +	if (!nlat->enabled)
->> +		return 0;
->> +
->> +	for (n = 0; n < nlat->num; n++) {
->> +		if (n > 0)
->> +			seq_puts(m, " ");
->> +		seq_printf(m, "%u", nlat->samples[n]);
->> +	}
->> +	seq_puts(m, "\n");
->> +	return 0;
->> +}
->> +
->> +static const struct blk_mq_debugfs_attr nlat_debugfs_attrs[] = {
->> +	{"win_usec", 0600, nlat_win_usec_show, nlat_win_usec_write},
->> +	{"lowat", 0600, nlat_lowat_show, nlat_lowat_write},
->> +	{"decay", 0600, nlat_decay_show, nlat_decay_write},
->> +	{"enabled", 0400, nlat_enabled_show},
->> +	{"id", 0400, nlat_id_show},
->> +	{"latency", 0400, nlat_latency_show},
->> +	{"samples", 0400, nlat_samples_show},
->> +	{},
->> +};
->> +#endif
->> +
->> +static const struct rq_qos_ops nlat_rqos_ops = {
->> +	.exit = nlat_exit,
->> +#ifdef CONFIG_BLK_DEBUG_FS
->> +	.debugfs_attrs = nlat_debugfs_attrs,
->> +#endif
->> +};
->> +
->> +u64 blk_nlat_latency(struct gendisk *disk, int node)
->> +{
->> +	struct rq_qos *rqos;
->> +	struct rq_nlat *nlat;
->> +
->> +	rqos = nlat_rq_qos(disk->queue);
->> +	if (!rqos)
->> +		return 0;
->> +	nlat = RQNLAT(rqos);
->> +	if (node > nlat->num)
->> +		return 0;
->> +
->> +	return div64_u64(nlat->latency[node], 1000);
-> 
-> See comment at the top. Why not keep everything in nanoseconds to avoid this
-> costly division ?
-> 
-Agreed.
+To fix this, do not check fatal_signal_pending() in vm_area_alloc_pages()
+if __GFP_NOFAIL set.
 
->> +}
->> +EXPORT_SYMBOL_GPL(blk_nlat_latency);
->> +
->> +int blk_nlat_enable(struct gendisk *disk)
->> +{
->> +	struct rq_qos *rqos;
->> +	struct rq_nlat *nlat;
->> +
->> +	/* Latency tracking not enabled? */
->> +	rqos = nlat_rq_qos(disk->queue);
->> +	if (!rqos)
->> +		return -EINVAL;
->> +	nlat = RQNLAT(rqos);
->> +	if (nlat->enabled)
->> +		return 0;
->> +
->> +	/* Queue not registered? Maybe shutting down... */
->> +	if (!blk_queue_registered(disk->queue))
->> +		return -EAGAIN;
->> +
->> +	nlat->enabled = true;
->> +	memset(nlat->latency, 0, sizeof(u64) * nlat->num);
->> +	memset(nlat->samples, 0, sizeof(unsigned int) * nlat->num);
->> +	blk_stat_activate_nsecs(nlat->cb, nlat->win_usec * 1000);
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(blk_nlat_enable);
->> +
->> +void blk_nlat_disable(struct gendisk *disk)
->> +{
->> +	struct rq_qos *rqos = nlat_rq_qos(disk->queue);
->> +	struct rq_nlat *nlat;
->> +
->> +	if (!rqos)
->> +		return;
->> +	nlat = RQNLAT(rqos);
->> +	if (nlat->enabled) {
->> +		blk_stat_deactivate(nlat->cb);
->> +		nlat->enabled = false;
->> +	}
->> +}
->> +EXPORT_SYMBOL_GPL(blk_nlat_disable);
->> +
->> +int blk_nlat_init(struct gendisk *disk)
->> +{
->> +	struct rq_nlat *nlat;
->> +	int ret = -ENOMEM;
->> +
->> +	nlat = kzalloc(sizeof(*nlat), GFP_KERNEL);
->> +	if (!nlat)
->> +		return -ENOMEM;
->> +
->> +	nlat->num = num_possible_nodes();
->> +	nlat->lowat = NLAT_DEFAULT_LOWAT;
->> +	nlat->decay = NLAT_DEFAULT_DECAY;
->> +	nlat->win_usec = nlat_default_latency_usec(disk->queue);
->> +
->> +	nlat->latency = kcalloc(nlat->num, sizeof(u64), GFP_KERNEL);
->> +	if (!nlat->latency)
->> +		goto err_free;
->> +	nlat->samples = kcalloc(nlat->num, sizeof(unsigned int), GFP_KERNEL);
->> +	if (!nlat->samples)
->> +		goto err_free;
->> +	nlat->cb = blk_stat_alloc_callback(nlat_timer_fn, nlat_bucket_node,
->> +					   nlat->num, nlat);
->> +	if (!nlat->cb)
->> +		goto err_free;
->> +
->> +	/*
->> +	 * Assign rwb and add the stats callback.
->> +	 */
-> 
-> This can be a single line comment.
-> 
-Ok.
+Fixes: 9376130c390a ("mm/vmalloc: add support for __GFP_NOFAIL")
+Cc: <stable@vger.kernel.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Suggested-by: Barry Song <21cnbao@gmail.com>
+Reported-by: Oven <liyangouwen1@oppo.com>
+Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
+---
+ mm/vmalloc.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
->> +	mutex_lock(&disk->queue->rq_qos_mutex);
->> +	ret = rq_qos_add(&nlat->rqos, disk, RQ_QOS_NLAT, &nlat_rqos_ops);
->> +	mutex_unlock(&disk->queue->rq_qos_mutex);
->> +	if (ret)
->> +		goto err_free_cb;
->> +
->> +	blk_stat_add_callback(disk->queue, nlat->cb);
->> +
->> +	return 0;
->> +
->> +err_free_cb:
->> +	blk_stat_free_callback(nlat->cb);
->> +err_free:
->> +	kfree(nlat->samples);
->> +	kfree(nlat->latency);
->> +	kfree(nlat);
->> +	return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(blk_nlat_init);
->> diff --git a/block/blk-rq-qos.h b/block/blk-rq-qos.h
->> index 37245c97ee61..2fc11ced0c00 100644
->> --- a/block/blk-rq-qos.h
->> +++ b/block/blk-rq-qos.h
->> @@ -17,6 +17,7 @@ enum rq_qos_id {
->>   	RQ_QOS_WBT,
->>   	RQ_QOS_LATENCY,
->>   	RQ_QOS_COST,
->> +	RQ_QOS_NLAT,
->>   };
->>   
->>   struct rq_wait {
->> @@ -79,6 +80,11 @@ static inline struct rq_qos *iolat_rq_qos(struct request_queue *q)
->>   	return rq_qos_id(q, RQ_QOS_LATENCY);
->>   }
->>   
->> +static inline struct rq_qos *nlat_rq_qos(struct request_queue *q)
->> +{
->> +	return rq_qos_id(q, RQ_QOS_NLAT);
->> +}
->> +
->>   static inline void rq_wait_init(struct rq_wait *rq_wait)
->>   {
->>   	atomic_set(&rq_wait->inflight, 0);
->> diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
->> index d3d8fd8e229b..1f3829627f1b 100644
->> --- a/include/linux/blk-mq.h
->> +++ b/include/linux/blk-mq.h
->> @@ -1231,4 +1231,15 @@ static inline bool blk_req_can_dispatch_to_zone(struct request *rq)
->>   }
->>   #endif /* CONFIG_BLK_DEV_ZONED */
->>   
->> +#ifdef CONFIG_BLK_NODE_LATENCY
->> +int blk_nlat_enable(struct gendisk *disk);
->> +void blk_nlat_disable(struct gendisk *disk);
->> +u64 blk_nlat_latency(struct gendisk *disk, int node);
->> +int blk_nlat_init(struct gendisk *disk);
->> +#else
->> +static inline int blk_nlat_enable(struct gendisk *disk) { return 0; }
->> +static inline void blk_nlat_disable(struct gendisk *disk) {}
->> +static inline u64 blk_nlat_latency(struct gendisk *disk, int node) { return 0; }
->> +static inline int blk_nlat_init(struct gendisk *disk) { return -EOPNOTSUPP; }
->> +#endif
->>   #endif /* BLK_MQ_H */
-> 
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 125427cbdb87..109272b8ee2e 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -3492,7 +3492,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+ {
+ 	unsigned int nr_allocated = 0;
+ 	gfp_t alloc_gfp = gfp;
+-	bool nofail = false;
++	bool nofail = gfp & __GFP_NOFAIL;
+ 	struct page *page;
+ 	int i;
 
-Thanks for the review!
+@@ -3549,12 +3549,11 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+ 		 * and compaction etc.
+ 		 */
+ 		alloc_gfp &= ~__GFP_NOFAIL;
+-		nofail = true;
+ 	}
 
-Cheers,
+ 	/* High-order pages or fallback path if "bulk" fails. */
+ 	while (nr_allocated < nr_pages) {
+-		if (fatal_signal_pending(current))
++		if (!nofail && fatal_signal_pending(current))
+ 			break;
 
-Hannes
--- 
-Dr. Hannes Reinecke                Kernel Storage Architect
-hare@suse.de                              +49 911 74053 688
-SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
-HRB 36809 (AG Nürnberg), GF: Ivo Totev, Andrew McDonald,
-Werner Knoblich
+ 		if (nid == NUMA_NO_NODE)
+---
+Changes since RFC v1 [1]:
+- Remove RFC tag
+- Add fixes, per Michal
+- Use nofail instead of gfp & __GFP_NOFAIL, per Barry & Michal
+- Modify commit log, per Barry
+
+[1] https://lore.kernel.org/all/20240508125808.28882-1-hailong.liu@oppo.com/
+
+This issue occurred during OPLUS KASAN TEST. Below is part of the log
+-> oom-killer sends signal to process
+[65731.222840] [ T1308] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/apps/uid_10198,task=gs.intelligence,pid=32454,uid=10198
+
+[65731.259685] [T32454] Call trace:
+[65731.259698] [T32454]  dump_backtrace+0xf4/0x118
+[65731.259734] [T32454]  show_stack+0x18/0x24
+[65731.259756] [T32454]  dump_stack_lvl+0x60/0x7c
+[65731.259781] [T32454]  dump_stack+0x18/0x38
+[65731.259800] [T32454]  mrdump_common_die+0x250/0x39c [mrdump]
+[65731.259936] [T32454]  ipanic_die+0x20/0x34 [mrdump]
+[65731.260019] [T32454]  atomic_notifier_call_chain+0xb4/0xfc
+[65731.260047] [T32454]  notify_die+0x114/0x198
+[65731.260073] [T32454]  die+0xf4/0x5b4
+[65731.260098] [T32454]  die_kernel_fault+0x80/0x98
+[65731.260124] [T32454]  __do_kernel_fault+0x160/0x2a8
+[65731.260146] [T32454]  do_bad_area+0x68/0x148
+[65731.260174] [T32454]  do_mem_abort+0x151c/0x1b34
+[65731.260204] [T32454]  el1_abort+0x3c/0x5c
+[65731.260227] [T32454]  el1h_64_sync_handler+0x54/0x90
+[65731.260248] [T32454]  el1h_64_sync+0x68/0x6c
+
+[65731.260269] [T32454]  z_erofs_decompress_queue+0x7f0/0x2258
+--> be->decompressed_pages = kvcalloc(be->nr_pages, sizeof(struct page *), GFP_KERNEL | __GFP_NOFAIL);
+	kernel panic by NULL pointer dereference.
+	erofs assume kvmalloc with __GFP_NOFAIL never return NULL.
+[65731.260293] [T32454]  z_erofs_runqueue+0xf30/0x104c
+[65731.260314] [T32454]  z_erofs_readahead+0x4f0/0x968
+[65731.260339] [T32454]  read_pages+0x170/0xadc
+[65731.260364] [T32454]  page_cache_ra_unbounded+0x874/0xf30
+[65731.260388] [T32454]  page_cache_ra_order+0x24c/0x714
+[65731.260411] [T32454]  filemap_fault+0xbf0/0x1a74
+[65731.260437] [T32454]  __do_fault+0xd0/0x33c
+[65731.260462] [T32454]  handle_mm_fault+0xf74/0x3fe0
+[65731.260486] [T32454]  do_mem_abort+0x54c/0x1b34
+[65731.260509] [T32454]  el0_da+0x44/0x94
+[65731.260531] [T32454]  el0t_64_sync_handler+0x98/0xb4
+[65731.260553] [T32454]  el0t_64_sync+0x198/0x19c
+--
+2.34.1
 
 
