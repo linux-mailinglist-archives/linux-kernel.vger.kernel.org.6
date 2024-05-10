@@ -1,97 +1,66 @@
-Return-Path: <linux-kernel+bounces-175909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C808C26F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955368C2702
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C5462868BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E531D2869DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CA5170842;
-	Fri, 10 May 2024 14:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AA21708B5;
+	Fri, 10 May 2024 14:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Ppm33PYA"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ZYCSRI7v"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B9F17109E
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AF412C526;
+	Fri, 10 May 2024 14:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351733; cv=none; b=YsnqepStD0x2+vK6rlkIu2e/qwoXb7rB6mHfnRgqTAlHWLUaz8xsOZ95H+zULGINPQXS5n6C5Wy0RcPChDlYXOmWZSVn2yUUDBERJecViVv6A+Lu8GpPR6TD4ne+Q0soUo6HtNOB9jV3+wbQAwsVbr45m7o4rlNCA+iNZBBSRYQ=
+	t=1715351856; cv=none; b=MUzpAFqgd+R7Msxwr+wW2thWyF47Fg6F61Hb+pNZbVctxG7Vt54t47vwbbv1DSZ/GA63ghQfclGOMEdXESTYlcitgcr9J3KOIn5qrm3EyS3PFuHsqNdv6swn6q0AgBug9MT6SY0v9S8S+00QVPH7qgBH6D4tWTOluAdwSG6XRlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351733; c=relaxed/simple;
-	bh=a/Zm1aOtoF6fTgbVv22pEtGFt0o9J0gPOzdoRW/np7U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OSIprJJqkXQk4vpn7VjtNaixTb1C6Tuo/gLstenwSOskvk/9uFtHjbq0TNCx3kkTjX+6jkJzTchBY6AreS639Ct7MIruGzHjYPzcRAC8yhqq3YaTWe1na6lSE4Am8XhHPW6fxqALbEFkctBIk2Eo6XkIXsizgos2qRa/nsRuKmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Ppm33PYA; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a0168c75so557295166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 07:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1715351729; x=1715956529; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kj/cLDfzxXevCwWbwB3QfsabvjhH4BWkNchBa5h63Sc=;
-        b=Ppm33PYAUhtE0jpwWC2Lp2OEyzjllzZ6qyTJRDGBjxQnHjleXBah1j51OWQId1f8+q
-         h3Umz0yg70XKeVD71qysdj67UHFRn17NCyQ6KKDMdMwKBn+bEcIBp/F2t4aH+lcLUcTn
-         7+ft1lzYEHzWBFZs6ZY/5Evy9TsD1LGdBFGhI44ItiHO5YhYlpFJjMJIecQYogMzugN+
-         uDA9BfKMmEL26RU720VGtFWpSCKG7O5TybqpIEviBDIcRYMGgdQQkVXEAfgHcnKUkYt5
-         62bx3CpF9uodqFOmGaGB4/iaw6K78wLElANQ74KLxnufLRUFbXsYTtq+lzrZZjVGMbg/
-         B9GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715351729; x=1715956529;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kj/cLDfzxXevCwWbwB3QfsabvjhH4BWkNchBa5h63Sc=;
-        b=Nv7B7hdvRcKw1qPe7HkyFW5bzKarhqiW14OpgdAJikn5mGWqRSsTAK/aWDotfPtE7E
-         ePCOOljyhQxHv0xj8SFA1mTMfnPiZCeAnwzDzaPjCN/0vQWJHv4DDHBK4q8TOuwQGMCW
-         0XUO/qOVIqLV6aVOVgjVLMKpcPBglsO0d80ouislFHtQDm336zaz9812xEb0Xvzj9Xop
-         KfEctAgOyQhDnJU+0zL9BE/Z088athEo3SNKs81dTsJnF/Lrt1+j32KDQnKvJbDhKLTI
-         onaGD/thTuWqmw37/buW9zKhNLBcOW3wUugFxGtPpp0sSWnsVBunzdjYbGMQg/smsurF
-         yg3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXWQ/16xYliz8wGkrdhE5ONuSwcVKZIJ3Tjmb+O6mrkcd5znJ9YTOb/QXDKkbBq1xMm1OTB+71g/0bSJ9CS9XpsbUHvegYv/NeP5OGP
-X-Gm-Message-State: AOJu0Yw+Nvwcj/bJAWjjuWUhWWKal1PBqyPHGsGmZ+Uy9tQjQuYF4iPN
-	mdzRkNCpIMZdFg2xUn4pd/8XTFGHEkr5rvOXLtaeRGeoreSuodYG+cWYinFN8Ys=
-X-Google-Smtp-Source: AGHT+IHmjCuzjfxjIj9Ldhj8nwcB0t4f8y+uTj99CA3VJX1i4r7PXdGY26CcC0kfylVSjXZC5GzWjA==
-X-Received: by 2002:a17:906:7fd6:b0:a59:c7d7:8b18 with SMTP id a640c23a62f3a-a5a2d57a3a6mr174201766b.30.1715351729267;
-        Fri, 10 May 2024 07:35:29 -0700 (PDT)
-Received: from localhost (host-95-235-217-160.retail.telecomitalia.it. [95.235.217.160])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c822fsm189865966b.138.2024.05.10.07.35.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 07:35:28 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>,
-	Eric Anholt <eric@anholt.net>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1715351856; c=relaxed/simple;
+	bh=Rs8unjHuGUxifVY/9+LC+KIT6hLlUWyGTvZnyD5tKSI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ioGODtkzXU5uiO9h5ZkU8Nx66tIUQQivomZ0aC2dszG/XYW2laIUhFSJl3HdMdiWbWihR3ehC7J64DsjbECaX8pnuyCCw2U2n1qiz6yVr7OWbFyNZYDiFyKBTAYsIkOGQgulnGvcvc8oy4dFbNjOsbX79Vln4m5PYRl7JKe2tbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ZYCSRI7v; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: lukma@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 36EF688122;
+	Fri, 10 May 2024 16:37:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715351846;
+	bh=jOpOKeXB26MZGG5tc6iWhny1B4Ybi73lxsddx0Swstw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZYCSRI7vYaB9EJXXMJidQqjnmSwNoVkIWGX4FrOSw/9Re8XKPS0fZTBUMumBo/BdT
+	 JRGLaqKHk30YJZBbsU1veZ4D7yeJwn4AGPqLSlADSbKED+7L765V7aoaMP//g5dkmw
+	 UhavJevqRi+k4JszuQEWCS5oPf8IuxJhVgnQvmzc27QrmKdJCOHil92PqC0pd48hnL
+	 acAagRV3kTW1V7vL86Fh30wRxcjO0/eyr7myB4EjBye5MEafwP7dqQXcqNxGy1bMqj
+	 RyQx7GJOmlU8RsYhQGnj3lL1a4YwxHwLCM99zPGFYA/9BZth6FoRMOjCp/5bqM+5LZ
+	 pdIXc9cMimREA==
+From: Lukasz Majewski <lukma@denx.de>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Casper Andersson <casper.casan@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org
-Cc: Andrea della Porta <andrea.porta@suse.com>
-Subject: [PATCH v2 4/4] arm64: dts: broadcom: Add support for BCM2712
-Date: Fri, 10 May 2024 16:35:30 +0200
-Message-ID: <59a3015c3a6f2f0b70a38c030274a163773e7757.1715332922.git.andrea.porta@suse.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <cover.1715332922.git.andrea.porta@suse.com>
-References: <cover.1715332922.git.andrea.porta@suse.com>
+	Lukasz Majewski <lukma@denx.de>
+Subject: [net-next PATCH] test: hsr: Extend the hsr_redbox.sh to have more SAN devices connected
+Date: Fri, 10 May 2024 16:37:10 +0200
+Message-Id: <20240510143710.3916631-1-lukma@denx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,409 +68,149 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-The BCM2712 SoC family can be found on Raspberry Pi 5.
-Add minimal SoC and board (Rpi5 specific) dts file to be able to
-boot from SD card and use console on debug UART.
+After this change the single SAN device (ns3eth1) is now replaced with
+two SAN devices - respectively ns4eth1 and ns5eth1.
 
-Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+It is possible to extend this script to have more SAN devices connected
+by adding them to ns3br1 bridge.
+
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
 ---
- arch/arm64/boot/dts/broadcom/Makefile         |   1 +
- .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  62 ++++
- arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 302 ++++++++++++++++++
- 3 files changed, 365 insertions(+)
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
- create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+ tools/testing/selftests/net/hsr/hsr_redbox.sh | 71 +++++++++++++------
+ 1 file changed, 49 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
-index 8b4591ddd27c..92565e9781ad 100644
---- a/arch/arm64/boot/dts/broadcom/Makefile
-+++ b/arch/arm64/boot/dts/broadcom/Makefile
-@@ -6,6 +6,7 @@ DTC_FLAGS := -@
- dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
- 			      bcm2711-rpi-4-b.dtb \
- 			      bcm2711-rpi-cm4-io.dtb \
-+			      bcm2712-rpi-5-b.dtb \
- 			      bcm2837-rpi-3-a-plus.dtb \
- 			      bcm2837-rpi-3-b.dtb \
- 			      bcm2837-rpi-3-b-plus.dtb \
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-new file mode 100644
-index 000000000000..b5921437e09f
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
-@@ -0,0 +1,62 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
+diff --git a/tools/testing/selftests/net/hsr/hsr_redbox.sh b/tools/testing/selftests/net/hsr/hsr_redbox.sh
+index db69be95ecb3..1f36785347c0 100755
+--- a/tools/testing/selftests/net/hsr/hsr_redbox.sh
++++ b/tools/testing/selftests/net/hsr/hsr_redbox.sh
+@@ -8,12 +8,19 @@ source ./hsr_common.sh
+ do_complete_ping_test()
+ {
+ 	echo "INFO: Initial validation ping (HSR-SAN/RedBox)."
+-	# Each node has to be able each one.
++	# Each node has to be able to reach each one.
+ 	do_ping "${ns1}" 100.64.0.2
+ 	do_ping "${ns2}" 100.64.0.1
+-	# Ping from SAN to hsr1 (via hsr2)
++	# Ping between SANs (test bridge)
++	do_ping "${ns4}" 100.64.0.51
++	do_ping "${ns5}" 100.64.0.41
++	# Ping from SANs to hsr1 (via hsr2) (and opposite)
+ 	do_ping "${ns3}" 100.64.0.1
+ 	do_ping "${ns1}" 100.64.0.3
++	do_ping "${ns1}" 100.64.0.41
++	do_ping "${ns4}" 100.64.0.1
++	do_ping "${ns1}" 100.64.0.51
++	do_ping "${ns5}" 100.64.0.1
+ 	stop_if_error "Initial validation failed."
+ 
+ 	# Wait for MGNT HSR frames being received and nodes being
+@@ -23,8 +30,12 @@ do_complete_ping_test()
+ 	echo "INFO: Longer ping test (HSR-SAN/RedBox)."
+ 	# Ping from SAN to hsr1 (via hsr2)
+ 	do_ping_long "${ns3}" 100.64.0.1
+-	# Ping from hsr1 (via hsr2) to SAN
++	# Ping from hsr1 (via hsr2) to SANs (and opposite)
+ 	do_ping_long "${ns1}" 100.64.0.3
++	do_ping_long "${ns1}" 100.64.0.41
++	do_ping_long "${ns4}" 100.64.0.1
++	do_ping_long "${ns1}" 100.64.0.51
++	do_ping_long "${ns5}" 100.64.0.1
+ 	stop_if_error "Longer ping test failed."
+ 
+ 	echo "INFO: All good."
+@@ -35,22 +46,26 @@ setup_hsr_interfaces()
+ 	local HSRv="$1"
+ 
+ 	echo "INFO: preparing interfaces for HSRv${HSRv} (HSR-SAN/RedBox)."
+-
+-#       |NS1                     |
+-#       |                        |
+-#       |    /-- hsr1 --\        |
+-#       | ns1eth1     ns1eth2    |
+-#       |------------------------|
+-#            |            |
+-#            |            |
+-#            |            |
+-#       |------------------------|        |-----------|
+-#       | ns2eth1     ns2eth2    |        |           |
+-#       |    \-- hsr2 --/        |        |           |
+-#       |            \           |        |           |
+-#       |             ns2eth3    |--------| ns3eth1   |
+-#       |             (interlink)|        |           |
+-#       |NS2 (RedBOX)            |        |NS3 (SAN)  |
++#
++# IPv4 addresses (100.64.X.Y/24), and [X.Y] is presented on below diagram:
++#
++#
++# |NS1                     |               |NS4                |
++# |       [0.1]            |               |                   |
++# |    /-- hsr1 --\        |               |    [0.41]         |
++# | ns1eth1     ns1eth2    |               |    ns4eth1 (SAN)  |
++# |------------------------|               |-------------------|
++#      |            |                                |
++#      |            |                                |
++#      |            |                                |
++# |------------------------|   |-------------------------------|
++# | ns2eth1     ns2eth2    |   |                  ns3eth2      |
++# |    \-- hsr2 --/        |   |                 /             |
++# |      [0.2] \           |   |                /              |  |------------|
++# |             ns2eth3    |---| ns3eth1 -- ns3br1 -- ns3eth3--|--| ns5eth1    |
++# |             (interlink)|   | [0.3]      [0.11]             |  | [0.51]     |
++# |NS2 (RedBOX)            |   |NS3 (BR)                       |  | NS5 (SAN)  |
++#
+ #
+ 	# Check if iproute2 supports adding interlink port to hsrX device
+ 	ip link help hsr | grep -q INTERLINK
+@@ -59,7 +74,9 @@ setup_hsr_interfaces()
+ 	# Create interfaces for name spaces
+ 	ip link add ns1eth1 netns "${ns1}" type veth peer name ns2eth1 netns "${ns2}"
+ 	ip link add ns1eth2 netns "${ns1}" type veth peer name ns2eth2 netns "${ns2}"
+-	ip link add ns3eth1 netns "${ns3}" type veth peer name ns2eth3 netns "${ns2}"
++	ip link add ns2eth3 netns "${ns2}" type veth peer name ns3eth1 netns "${ns3}"
++	ip link add ns3eth2 netns "${ns3}" type veth peer name ns4eth1 netns "${ns4}"
++	ip link add ns3eth3 netns "${ns3}" type veth peer name ns5eth1 netns "${ns5}"
+ 
+ 	sleep 1
+ 
+@@ -70,21 +87,31 @@ setup_hsr_interfaces()
+ 	ip -n "${ns2}" link set ns2eth2 up
+ 	ip -n "${ns2}" link set ns2eth3 up
+ 
+-	ip -n "${ns3}" link set ns3eth1 up
++	ip -n "${ns3}" link add name ns3br1 type bridge
++	ip -n "${ns3}" link set ns3br1 up
++	ip -n "${ns3}" link set ns3eth1 master ns3br1 up
++	ip -n "${ns3}" link set ns3eth2 master ns3br1 up
++	ip -n "${ns3}" link set ns3eth3 master ns3br1 up
 +
-+#include <dt-bindings/gpio/gpio.h>
-+#include "bcm2712.dtsi"
-+
-+/ {
-+	compatible = "raspberrypi,5-model-b", "brcm,bcm2712";
-+	model = "Raspberry Pi 5";
-+
-+	aliases {
-+		serial10 = &uart0;
-+	};
-+
-+	chosen: chosen {
-+		stdout-path = "serial10:115200n8";
-+	};
-+
-+	/* Will be filled by the bootloader */
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0 0 0x28000000>;
-+	};
-+
-+	sd_io_1v8_reg: sd-io-1v8-reg {
-+		compatible = "regulator-gpio";
-+		regulator-name = "vdd-sd-io";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		regulator-settling-time-us = <5000>;
-+		gpios = <&gio_aon 3 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x1>,
-+			 <3300000 0x0>;
-+	};
-+
-+	sd_vcc_reg: sd-vcc-reg {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc-sd";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		gpios = <&gio_aon 4 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-+
-+/* The system UART */
-+&uart0 {
-+	status = "okay";
-+};
-+
-+/* SDIO1 is used to drive the SD card */
-+&sdio1 {
-+	vqmmc-supply = <&sd_io_1v8_reg>;
-+	vmmc-supply = <&sd_vcc_reg>;
-+	bus-width = <4>;
-+	sd-uhs-sdr50;
-+	sd-uhs-ddr50;
-+	sd-uhs-sdr104;
-+};
-diff --git a/arch/arm64/boot/dts/broadcom/bcm2712.dtsi b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-new file mode 100644
-index 000000000000..398df13148bd
---- /dev/null
-+++ b/arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-@@ -0,0 +1,302 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "brcm,bcm2712";
-+
-+	#address-cells = <2>;
-+	#size-cells = <1>;
-+
-+	interrupt-parent = <&gicv2>;
-+
-+	axi: axi {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		sdio1: mmc@1000fff000 {
-+			compatible = "brcm,bcm2712-sdhci",
-+				     "brcm,sdhci-brcmstb";
-+			reg = <0x10 0x00fff000  0x260>,
-+			      <0x10 0x00fff400  0x200>;
-+			reg-names = "host", "cfg";
-+			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_emmc2>;
-+			clock-names = "sw_sdio";
-+			mmc-ddr-3_3v;
-+		};
-+
-+		gicv2: interrupt-controller@107fff9000 {
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			compatible = "arm,gic-400";
-+			reg = <0x10 0x7fff9000  0x1000>,
-+			      <0x10 0x7fffa000  0x2000>,
-+			      <0x10 0x7fffc000  0x2000>,
-+			      <0x10 0x7fffe000  0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) |
-+				      IRQ_TYPE_LEVEL_HIGH)>;
-+		};
-+	};
-+
-+	clocks {
-+		/* The oscillator is the root of the clock tree. */
-+		clk_osc: clk-osc {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-output-names = "osc";
-+			clock-frequency = <54000000>;
-+		};
-+
-+		clk_vpu: clk-vpu {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <750000000>;
-+			clock-output-names = "vpu-clock";
-+		};
-+
-+		clk_uart: clk-uart {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <9216000>;
-+			clock-output-names = "uart-clock";
-+		};
-+
-+		clk_emmc2: clk-emmc2 {
-+			#clock-cells = <0>;
-+			compatible = "fixed-clock";
-+			clock-frequency = <200000000>;
-+			clock-output-names = "emmc2-clock";
-+		};
-+	};
-+
-+	cpus: cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Source for d/i cache-line-size, cache-sets, cache-size
-+		 * https://developer.arm.com/documentation/100798/0401
-+		 * /L1-memory-system/About-the-L1-memory-system?lang=en
-+		 */
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x000>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l0>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x100>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l1>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x200>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l2>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a76";
-+			reg = <0x300>;
-+			enable-method = "psci";
-+			d-cache-size = <0x10000>;
-+			d-cache-line-size = <64>;
-+			d-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			i-cache-size = <0x10000>;
-+			i-cache-line-size = <64>;
-+			i-cache-sets = <256>; // 64KiB(size)/64(line-size)=1024ways/4-way set
-+			next-level-cache = <&l2_cache_l3>;
-+		};
-+
-+		/* Source for cache-line-size and cache-sets:
-+		 * https://developer.arm.com/documentation/100798/0401
-+		 * /L2-memory-system/About-the-L2-memory-system?lang=en
-+		 * and for cache-size:
-+		 * https://www.raspberrypi.com/documentation/computers
-+		 * /processors.html#bcm2712
-+		 */
-+		l2_cache_l0: l2-cache-l0 {
-+			compatible = "cache";
-+			cache-size = <0x80000>;
-+			cache-line-size = <128>;
-+			cache-sets = <1024>; // 512KiB(size)/64(line-size)=8192ways/8-way set
-+			cache-level = <2>;
-+			cache-unified;
-+			next-level-cache = <&l3_cache>;
-+		};
-+
-+		l2_cache_l1: l2-cache-l1 {
-+			compatible = "cache";
-+			cache-size = <0x80000>;
-+			cache-line-size = <128>;
-+			cache-sets = <1024>; // 512KiB(size)/64(line-size)=8192ways/8-way set
-+			cache-level = <2>;
-+			cache-unified;
-+			next-level-cache = <&l3_cache>;
-+		};
-+
-+		l2_cache_l2: l2-cache-l2 {
-+			compatible = "cache";
-+			cache-size = <0x80000>;
-+			cache-line-size = <128>;
-+			cache-sets = <1024>; // 512KiB(size)/64(line-size)=8192ways/8-way set
-+			cache-level = <2>;
-+			cache-unified;
-+			next-level-cache = <&l3_cache>;
-+		};
-+
-+		l2_cache_l3: l2-cache-l3 {
-+			compatible = "cache";
-+			cache-size = <0x80000>;
-+			cache-line-size = <128>;
-+			cache-sets = <1024>; // 512KiB(size)/64(line-size)=8192ways/8-way set
-+			cache-level = <2>;
-+			cache-unified;
-+			next-level-cache = <&l3_cache>;
-+		};
-+
-+		/* Source for cache-line-size and cache-sets:
-+		 * https://developer.arm.com/documentation/100453/0401/L3-cache?lang=en
-+		 * Source for cache-size:
-+		 * https://www.raspberrypi.com/documentation/computers/processors.html#bcm2712
-+		 */
-+		l3_cache: l3-cache {
-+			compatible = "cache";
-+			cache-size = <0x200000>;
-+			cache-line-size = <64>;
-+			cache-sets = <2048>; // 2MiB(size)/64(line-size)=32768ways/16-way set
-+			cache-level = <3>;
-+			cache-unified;
-+		};
-+	};
-+
-+	psci {
-+		method = "smc";
-+		compatible = "arm,psci-1.0", "arm,psci-0.2", "arm,psci";
-+		cpu_on = <0xc4000003>;
-+		cpu_suspend = <0xc4000001>;
-+		cpu_off = <0x84000002>;
-+	};
-+
-+	rmem: reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		atf@0 {
-+			reg = <0x0 0x0 0x80000>;
-+			no-map;
-+		};
-+
-+		cma: linux,cma {
-+			compatible = "shared-dma-pool";
-+			size = <0x4000000>; /* 64MB */
-+			reusable;
-+			linux,cma-default;
-+			alloc-ranges = <0x0 0x00000000 0x40000000>;
-+		};
-+	};
-+
-+	soc: soc@107c000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		ranges     = <0x7c000000  0x10 0x7c000000  0x04000000>;
-+		/* Emulate a contiguous 30-bit address range for DMA */
-+		dma-ranges = <0xc0000000  0x00 0x00000000  0x40000000>,
-+			     <0x7c000000  0x10 0x7c000000  0x04000000>;
-+
-+		system_timer: timer@7c003000 {
-+			compatible = "brcm,bcm2835-system-timer";
-+			reg = <0x7c003000 0x1000>;
-+			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-frequency = <1000000>;
-+		};
-+
-+		mailbox: mailbox@7c013880 {
-+			compatible = "brcm,bcm2835-mbox";
-+			reg = <0x7c013880 0x40>;
-+			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+			#mbox-cells = <0>;
-+		};
-+
-+		local_intc: local-intc@7cd00000 {
-+			compatible = "brcm,bcm2836-l1-intc";
-+			reg = <0x7cd00000 0x100>;
-+		};
-+
-+		uart0: serial@7d001000 {
-+			compatible = "arm,pl011", "arm,primecell";
-+			reg = <0x7d001000 0x200>;
-+			interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&clk_uart>, <&clk_vpu>;
-+			clock-names = "uartclk", "apb_pclk";
-+			arm,primecell-periphid = <0x00241011>;
-+			status = "disabled";
-+		};
-+
-+		interrupt-controller@7d517000 {
-+			compatible = "brcm,bcm7271-l2-intc";
-+			reg = <0x7d517000 0x10>;
-+			interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			status = "disabled";
-+		};
-+
-+		gio_aon: gpio@7d517c00 {
-+			compatible = "brcm,bcm7445-gpio", "brcm,brcmstb-gpio";
-+			reg = <0x7d517c00 0x40>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			// Don't use GIO_AON as an interrupt controller because it will
-+			// clash with the firmware monitoring the PMIC interrupt via the VPU.
-+			brcm,gpio-bank-widths = <17 6>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) |
-+					  IRQ_TYPE_LEVEL_LOW)>;
-+		/* This only applies to the ARMv7 stub */
-+		arm,cpu-registers-not-fw-configured;
-+	};
-+};
++	ip -n "${ns4}" link set ns4eth1 up
++	ip -n "${ns5}" link set ns5eth1 up
+ 
+ 	ip -net "${ns1}" link add name hsr1 type hsr slave1 ns1eth1 slave2 ns1eth2 supervision 45 version ${HSRv} proto 0
+ 	ip -net "${ns2}" link add name hsr2 type hsr slave1 ns2eth1 slave2 ns2eth2 interlink ns2eth3 supervision 45 version ${HSRv} proto 0
+ 
+ 	ip -n "${ns1}" addr add 100.64.0.1/24 dev hsr1
+ 	ip -n "${ns2}" addr add 100.64.0.2/24 dev hsr2
++	ip -n "${ns3}" addr add 100.64.0.11/24 dev ns3br1
+ 	ip -n "${ns3}" addr add 100.64.0.3/24 dev ns3eth1
++	ip -n "${ns4}" addr add 100.64.0.41/24 dev ns4eth1
++	ip -n "${ns5}" addr add 100.64.0.51/24 dev ns5eth1
+ 
+ 	ip -n "${ns1}" link set hsr1 up
+ 	ip -n "${ns2}" link set hsr2 up
+ }
+ 
+ check_prerequisites
+-setup_ns ns1 ns2 ns3
++setup_ns ns1 ns2 ns3 ns4 ns5
+ 
+ trap cleanup_all_ns EXIT
+ 
 -- 
-2.35.3
+2.20.1
 
 
