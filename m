@@ -1,134 +1,192 @@
-Return-Path: <linux-kernel+bounces-175476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34E58C2032
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:05:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D3298C2033
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D1C328221E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 603741C21114
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F61915FA9E;
-	Fri, 10 May 2024 09:05:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C0915F31F
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AA61607B2;
+	Fri, 10 May 2024 09:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G80e5Oqq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46A415F3FA;
+	Fri, 10 May 2024 09:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715331943; cv=none; b=JoBB21FfDCF3pIHV5ZXq80pXSBH4papopJfQ0dEFe0lcNaMu3+55P8gLrYOhoohx4ekafO5uYPS/o8hGESAlfNPLwDB1JXODTPuUFN8QgBoKO39bSQrjZVOubprqtjzq5tuF3C4fhnuxkdUsYeMJBgYUprW+TZAed2ARnIPZyzI=
+	t=1715331973; cv=none; b=NVqVBS09cjuLBzk6qe20frcs6wz1JxWfBxfmbDcR8OrPeWeRMO183M6c3t3gKRdzZjjHexLPONDktTifiqtwRe/tHnHQdlS21aReC2y1lOzLjUVtpwvSKQGuDW8LE2kqjNYnKGEFj5Ir8YQXWAd5cMOKTTz1HNOB5BdAkRn24B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715331943; c=relaxed/simple;
-	bh=i/NcnzjW+6NOTL/D83aSrla/ItONUS0hG37UNHK/HsE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rW9T6+dI51qlozcbqHTezNLhFIVA5jhlAEyte058eYfCyWR73xFcX2rT7rTCWgdcQ6fb/sF0yQ2WwDwEJjXupbrbWlXsHVjVpm0/QuTDsTgSU00S8Xb9yCDh6eH4jLGO3rCMEPEAEFkOPc5HZpOEPONsxlNt/8m9l4ymf7atzLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 67B2B106F;
-	Fri, 10 May 2024 02:06:02 -0700 (PDT)
-Received: from [10.57.65.1] (unknown [10.57.65.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E08003F762;
-	Fri, 10 May 2024 02:05:34 -0700 (PDT)
-Message-ID: <eb41fcb3-7207-40a8-9b49-0825a2e74e86@arm.com>
-Date: Fri, 10 May 2024 10:05:33 +0100
+	s=arc-20240116; t=1715331973; c=relaxed/simple;
+	bh=tyOpBmlZ85nCkdfKTZECuSTS0sZ3YHanLOh3xffjebU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jiDs2nWK278e7YX/q1lwJxSLJKycTi0YpJjNGIuANxJodGt+n5thrMmrUWz/UMUub69nHEm+p88N1D26di1FKTbdi+fkEmrVv8hP5xRlYUmk3oT3ZKSK6yoZmkpiAYyVU/TKTQhEiCGGIm19BuoPSobFmr4QiBFZoVAUyf34qRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G80e5Oqq; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715331972; x=1746867972;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=tyOpBmlZ85nCkdfKTZECuSTS0sZ3YHanLOh3xffjebU=;
+  b=G80e5OqquGOiabDwQcV1Ko1KWdZDbJukPzwUffB0Nvuw4d6WuokNgMxc
+   B4HL9XPGFs03o5Ex11SZ8dRaPdSp9gw8ksHx3GriAMYpv13CpGnusgnfE
+   kiS2zJlLsVWXy8Lu6DYeu7K+9Xlvw7oULrjGGp0SDaVOpiAFa7dBRyePc
+   6NhkTd0eKlPIqxO3Bh5qoE0IzPn1LRHJV0HYa0HJBZwS76rBEU64hmw6A
+   gWMjIDov164jlfvSLO7IvMYJDVbhKcDwu+i6iqQM8kA1OGtevTT1h7GNr
+   n4aS9OTg4jua6ZKpL39SArTvCyIrOATlbW4cEtuUpg65QVWDBz1e3kOfi
+   g==;
+X-CSE-ConnectionGUID: KlByoO9qTFai4siKmh5pHA==
+X-CSE-MsgGUID: eXbAVDKbQY2VgkdCxeEY1g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="28787495"
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="28787495"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 02:06:11 -0700
+X-CSE-ConnectionGUID: 8dhvWpM1RzesBRtyYX+qZw==
+X-CSE-MsgGUID: zCuMT0YoSkORMG+6wyH4og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
+   d="scan'208";a="34067748"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.85])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 02:06:07 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Fri, 10 May 2024 12:06:02 +0300 (EEST)
+To: John Hubbard <jhubbard@nvidia.com>
+cc: Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+    Nick Desaulniers <ndesaulniers@google.com>, 
+    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+    Fenghua Yu <fenghua.yu@intel.com>, 
+    Reinette Chatre <reinette.chatre@intel.com>, 
+    Valentin Obst <kernel@valentinobst.de>, linux-kselftest@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, llvm@lists.linux.dev
+Subject: Re: [PATCH] selftests/resctrl: fix clang build warnings related to
+ abs(), labs() calls
+In-Reply-To: <20240508190254.266892-1-jhubbard@nvidia.com>
+Message-ID: <c1e834d6-266d-d8bb-4e85-cdc440ddcb31@linux.intel.com>
+References: <20240508190254.266892-1-jhubbard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] mm: Add update_mmu_tlb_range()
-Content-Language: en-GB
-To: Bang Li <libang.li@antgroup.com>, akpm@linux-foundation.org,
- chenhuacai@kernel.org, tsbogend@alpha.franken.de, paul.walmsley@sifive.com,
- palmer@dabbelt.com, chris@zankel.net, jcmvbkbc@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- david@redhat.com, ioworker0@gmail.com, libang.linux@gmail.com
-References: <20240506155120.83105-1-libang.li@antgroup.com>
- <20240506155120.83105-6-libang.li@antgroup.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240506155120.83105-6-libang.li@antgroup.com>
+Content-Type: multipart/mixed; boundary="8323328-1600665862-1715331962=:1562"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-1600665862-1715331962=:1562
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 06/05/2024 16:51, Bang Li wrote:
-> After the commit 19eaf44954df ("mm: thp: support allocation of anonymous
-> multi-size THP"), it may need to batch update tlb of an address range
-> through the update_mmu_tlb function. We can simplify this operation by
-> adding the update_mmu_tlb_range function, which may also reduce the
-> execution of some unnecessary code in some architectures.
-> 
-> Signed-off-by: Bang Li <libang.li@antgroup.com>
+On Wed, 8 May 2024, John Hubbard wrote:
+
+> When building with clang, via:
+>=20
+>     make LLVM=3D1 -C tools/testing/selftests
+>=20
+> ...two types of warnings occur:
+>=20
+>     warning: absolute value function 'abs' given an argument of type
+>     'long' but has parameter of type 'int' which may cause truncation of
+>     value
+>=20
+>     warning: taking the absolute value of unsigned type 'unsigned long'
+>     has no effect
+>=20
+> Fix these by:
+>=20
+> a) using labs() in place of abs(), when long integers are involved, and
+>=20
+> b) Change to use signed integer data types, in places where subtraction
+>    is used (and could end up with negative values).
+>=20
+> c) Remove a duplicate abs() call in cmt_test.c.
+
+In general, instead of filename, it's better to refer to the actual=20
+function in this kind of description. And in this particular case,=20
+cmt_test.c could be replaced with "the CMT selftest" which is more=20
+descriptive and still unambiguous.
+
+> Cc: Reinette Chatre <reinette.chatre@intel.com>
+> Cc: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+
+Thank you.
+
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
 > ---
->  include/linux/pgtable.h | 8 ++++++++
->  mm/memory.c             | 4 +---
->  2 files changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index 18019f037bae..869bfe6054f1 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -737,6 +737,14 @@ static inline void update_mmu_tlb(struct vm_area_struct *vma,
->  #define __HAVE_ARCH_UPDATE_MMU_TLB
->  #endif
-
-Given you are implementing update_mmu_tlb_range() in all the arches that
-currently override update_mmu_tlb() I wonder if it would be cleaner to remove
-update_mmu_tlb() from all those arches, and define generically, removing the
-ability for arches to override it:
-
-static inline void update_mmu_tlb(struct vm_area_struct *vma,
-				unsigned long address, pte_t *ptep)
-{
-	update_mmu_tlb_range(vma, address, ptep, 1);
-}
-
->  
-> +#ifndef __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
-> +static inline void update_mmu_tlb_range(struct vm_area_struct *vma,
-> +				unsigned long address, pte_t *ptep, unsigned int nr)
-> +{
-> +}
-> +#define __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
-> +#endif
-
-Then you could use the modern override scheme as Lance suggested and you won't
-have any confusion with __HAVE_ARCH_UPDATE_MMU_TLB because it won't exist anymore.
-
-> +
->  /*
->   * Some architectures may be able to avoid expensive synchronization
->   * primitives when modifications are made to PTE's which are already
-> diff --git a/mm/memory.c b/mm/memory.c
-> index eea6e4984eae..2d53e29cf76e 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4421,7 +4421,6 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
->  	vm_fault_t ret = 0;
->  	int nr_pages = 1;
->  	pte_t entry;
-> -	int i;
->  
->  	/* File mapping without ->vm_ops ? */
->  	if (vma->vm_flags & VM_SHARED)
-> @@ -4491,8 +4490,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
->  		update_mmu_tlb(vma, addr, vmf->pte);
->  		goto release;
->  	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-> -		for (i = 0; i < nr_pages; i++)
-> -			update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pte + i);
-> +		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
-
-I certainly agree that this will be a useful helper to have. I expect there will
-be more users in future.
-
->  		goto release;
->  	}
->  
-
+>  tools/testing/selftests/resctrl/cmt_test.c | 4 ++--
+>  tools/testing/selftests/resctrl/mba_test.c | 2 +-
+>  tools/testing/selftests/resctrl/mbm_test.c | 2 +-
+>  3 files changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/s=
+elftests/resctrl/cmt_test.c
+> index a81f91222a89..05a241519ae8 100644
+> --- a/tools/testing/selftests/resctrl/cmt_test.c
+> +++ b/tools/testing/selftests/resctrl/cmt_test.c
+> @@ -40,11 +40,11 @@ static int show_results_info(unsigned long sum_llc_va=
+l, int no_of_bits,
+>  =09int ret;
+> =20
+>  =09avg_llc_val =3D sum_llc_val / num_of_runs;
+> -=09avg_diff =3D (long)abs(cache_span - avg_llc_val);
+> +=09avg_diff =3D (long)(cache_span - avg_llc_val);
+>  =09diff_percent =3D ((float)cache_span - avg_llc_val) / cache_span * 100=
+;
+> =20
+>  =09ret =3D platform && abs((int)diff_percent) > max_diff_percent &&
+> -=09      abs(avg_diff) > max_diff;
+> +=09      labs(avg_diff) > max_diff;
+> =20
+>  =09ksft_print_msg("%s Check cache miss rate within %lu%%\n",
+>  =09=09       ret ? "Fail:" : "Pass:", max_diff_percent);
+> diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/s=
+elftests/resctrl/mba_test.c
+> index 7946e32e85c8..5fffbc9ff6a4 100644
+> --- a/tools/testing/selftests/resctrl/mba_test.c
+> +++ b/tools/testing/selftests/resctrl/mba_test.c
+> @@ -60,7 +60,7 @@ static bool show_mba_info(unsigned long *bw_imc, unsign=
+ed long *bw_resc)
+>  =09/* Memory bandwidth from 100% down to 10% */
+>  =09for (allocation =3D 0; allocation < ALLOCATION_MAX / ALLOCATION_STEP;
+>  =09     allocation++) {
+> -=09=09unsigned long avg_bw_imc, avg_bw_resc;
+> +=09=09long avg_bw_imc, avg_bw_resc;
+>  =09=09unsigned long sum_bw_imc =3D 0, sum_bw_resc =3D 0;
+>  =09=09int avg_diff_per;
+>  =09=09float avg_diff;
+> diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/s=
+elftests/resctrl/mbm_test.c
+> index d67ffa3ec63a..a4c3ea49b0e8 100644
+> --- a/tools/testing/selftests/resctrl/mbm_test.c
+> +++ b/tools/testing/selftests/resctrl/mbm_test.c
+> @@ -17,7 +17,7 @@
+>  static int
+>  show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, size_t span)
+>  {
+> -=09unsigned long avg_bw_imc =3D 0, avg_bw_resc =3D 0;
+> +=09long avg_bw_imc =3D 0, avg_bw_resc =3D 0;
+>  =09unsigned long sum_bw_imc =3D 0, sum_bw_resc =3D 0;
+>  =09int runs, ret, avg_diff_per;
+>  =09float avg_diff =3D 0;
+>=20
+> base-commit: 45db3ab70092637967967bfd8e6144017638563c
+> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
+> prerequisite-patch-id: 8d96c4b8c3ed6d9ea2588ef7f594ae0f9f83c279
+>=20
+--8323328-1600665862-1715331962=:1562--
 
