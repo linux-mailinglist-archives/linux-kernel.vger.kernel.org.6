@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-175902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DF98C26DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7688F8C26DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:29:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38CD286634
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EEB1F23FB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50A517082B;
-	Fri, 10 May 2024 14:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD47F170883;
+	Fri, 10 May 2024 14:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="0kQPzbPd"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFsB9Tf9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEB9168BE;
-	Fri, 10 May 2024 14:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A1616E898;
+	Fri, 10 May 2024 14:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715351328; cv=none; b=CNo/stBi57ItRdLLmX+xOe77+3cNSPXy97FmdskImZ7Mj0Cuz0cN+LibRzpT78gk77V53hRdPfSf8iodcNiv/72a6vj1b/sA3e95Pqk491TiCkQ0tzUhMl3iwwqMNzDlipop9S8jzfUXI8l8uo5z6r9VaQtK6hfU2eBwCbj29Bg=
+	t=1715351342; cv=none; b=dOo2xdoE5/INSWiyTDqQ6c7o3OUZBy9UVVpc5i5Hi6qnEoxvhvgLeOXbJeUloKmdfjwKSge+tjApYomg3iVNIVFFGWi0n3QFEzMZgkwvfnKpwSRbv4eRymfKIHtTW5wYxuXoGgb86Nt+ff17vdDZ06jU8TTgTrAPii32Y4hvB2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715351328; c=relaxed/simple;
-	bh=BFrpAMtQ6hOgNZP36CFmr/GFU+yNvcmCFe8r40i8/6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EwuRD8uzURJMTJa4YpjD3qxy0x5gJd1BTK9fIBTDeG/KOhadDqDfKLnTwNixQmSJmTwDA8ZwbSdIc5KmsjvFF6HNnXfONICA3InAbt/VSUkHci67joFpKveXCb4iQpmrDZrq1U3xMP9hPQF3PDewO87clE9g8BxRO9kNjaicNwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=0kQPzbPd; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VbWTT6PHrz6Cnk8y;
-	Fri, 10 May 2024 14:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1715351324; x=1717943325; bh=38xXDqKoToM9frMHkxcYxnC8
-	M11PgrzwbYFH289Fa7w=; b=0kQPzbPdtgdB6+UuGEQxlXjVWB6JY7mHizLjuAdj
-	l48EeEF17HPQLYWXnLzcIkbZs/gOZEFzoDgdfERoa+HcV8+6UMENa5UXW+BhOq0i
-	V17ULYPyOoUe28K/CrjDRVvvY8kN/Hi811GhPX77H/drR1Reb29LkkutfIhiSK+1
-	5Ll0dupCiUe7M4Cfk7jjQyUIHsoFIaT+9w6HuCwYnns9tGJ9o6RhbphLNYr3IQ2M
-	ThY7xzgNOOITsjYhD1jiEYBYTEI9CiaUXPoBKv6OQGLBDHKRe+9jHbjoLGw0a4Kw
-	DiwzBnFZMyq6PmRSVApMKlVf/hN+bpjh2WaW5SdY/ixiWQ==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id UJMy_NOPQQXI; Fri, 10 May 2024 14:28:44 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VbWTR1F1Rz6Cnk8t;
-	Fri, 10 May 2024 14:28:43 +0000 (UTC)
-Message-ID: <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
-Date: Fri, 10 May 2024 07:28:41 -0700
+	s=arc-20240116; t=1715351342; c=relaxed/simple;
+	bh=bkyDcW4SzquH0cCfq7aZdUGB8FDuymzITPFrA/FnaYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+i0VRJ4tyoXnziZ/va+Lx6+oAmP1rDS/lG3UFPV9qkxZrCI3E9XtifKL0SMTb6SkbwqY86b4+womLKx9TxGjAZEx37OueID2kC2eYTrzLijl76gKjLoklGdOZGk+0Ts35J8XBCEddcbF8+B/tM2Ka+3bDC0F5oiYUOkQMvjIcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFsB9Tf9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6DAC113CC;
+	Fri, 10 May 2024 14:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715351341;
+	bh=bkyDcW4SzquH0cCfq7aZdUGB8FDuymzITPFrA/FnaYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PFsB9Tf9/uP6IFQZ2dJapq18nQUgwgPKUNV1ASDadJQTo/IymTBjSckwJusU92T3m
+	 nYm23NT9VA9nOwADhFrc6u6gWHfdpvU/RWfEB9AVCXbsMnCs3iodzVs0XnwY7BEROg
+	 ylGMqGg3ClHRvD1u3Ts+zee9kY83KZ4OvKwNSVR6v3/5xes+a631N5wpPmR8jyvAvn
+	 +SgZuegx7KDsnNk1WJzkZdeonf90Ev6+Y/usDmf7xm7+QZDu9Ge1BqH0nyuo+YuGpe
+	 vqgJfk+w1Ih8ZGxBaDroiyUtHpUpEE44e6v5sdqgp/lJ2r2qZIbZjnEDovjzvtaWHj
+	 +7t7aEQV6GQCQ==
+Date: Fri, 10 May 2024 11:28:58 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
+Cc: namhyung@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] perf daemon: Fix file leak in
+ daemon_session__control
+Message-ID: <Zj4vKps94GwVBwQ5@x1>
+References: <20240510003424.2016914-1-samasth.norway.ananda@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
-To: Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>
-Cc: paulmck@kernel.org, "open list:BLOCK LAYER"
- <linux-block@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240510141921.883231-1-leitao@debian.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240510141921.883231-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510003424.2016914-1-samasth.norway.ananda@oracle.com>
 
-On 5/10/24 07:19, Breno Leitao wrote:
-> diff --git a/block/blk.h b/block/blk.h
-> index d9f584984bc4..57a1d73a0718 100644
-> --- a/block/blk.h
-> +++ b/block/blk.h
-> @@ -353,7 +353,8 @@ int blk_dev_init(void);
->    */
->   static inline bool blk_do_io_stat(struct request *rq)
->   {
-> -	return (rq->rq_flags & RQF_IO_STAT) && !blk_rq_is_passthrough(rq);
-> +	/* Disk stats reading isn=E2=80=99t critical, let it race */
-> +	return (data_race(rq->rq_flags) & RQF_IO_STAT) && !blk_rq_is_passthro=
-ugh(rq);
->   }
->  =20
->   void update_io_ticks(struct block_device *part, unsigned long now, bo=
-ol end);
+On Thu, May 09, 2024 at 05:34:24PM -0700, Samasth Norway Ananda wrote:
+> The open() function returns -1 on error.
+> 'control' and 'ack' both initialized with open() and further
+> validated with 'if' statement. 'if (!control)' would evaluate
+> to 'true' if returned value on error were '0' but it is actually '-1'.
+> 
+> Fixes: edcaa47958c7 ("perf daemon: Add 'ping' command")
+> Signed-off-by: Samasth Norway Ananda <samasth.norway.ananda@oracle.com>
 
-Why to annotate this race with data_race() instead of READ_ONCE()? Are
-there any cases in which it is better to use data_race() than
-READ_ONCE()?
+Thanks, applied to perf-tools-next,
 
-Thanks,
+- Arnaldo
 
-Bart.
+> ---
+> Found this error through static analysis. This has only been compile
+> tested.
+> ---
+>  tools/perf/builtin-daemon.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-daemon.c b/tools/perf/builtin-daemon.c
+> index 83954af36753..de76bbc50bfb 100644
+> --- a/tools/perf/builtin-daemon.c
+> +++ b/tools/perf/builtin-daemon.c
+> @@ -523,7 +523,7 @@ static int daemon_session__control(struct daemon_session *session,
+>  		  session->base, SESSION_CONTROL);
+>  
+>  	control = open(control_path, O_WRONLY|O_NONBLOCK);
+> -	if (!control)
+> +	if (control < 0)
+>  		return -1;
+>  
+>  	if (do_ack) {
+> @@ -532,7 +532,7 @@ static int daemon_session__control(struct daemon_session *session,
+>  			  session->base, SESSION_ACK);
+>  
+>  		ack = open(ack_path, O_RDONLY, O_NONBLOCK);
+> -		if (!ack) {
+> +		if (ack < 0) {
+>  			close(control);
+>  			return -1;
+>  		}
+> -- 
+> 2.42.0
 
