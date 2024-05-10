@@ -1,159 +1,98 @@
-Return-Path: <linux-kernel+bounces-175976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5448C2823
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:46:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4388C282E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D971828178A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:46:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8968AB249F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:49:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3A1171E52;
-	Fri, 10 May 2024 15:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WRelRGEX"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DA5171679;
+	Fri, 10 May 2024 15:48:59 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8A0171670;
-	Fri, 10 May 2024 15:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F8812D219;
+	Fri, 10 May 2024 15:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715356004; cv=none; b=uy0735e1JnCBbkruIHQf15IxniNKQMKigChB8N13ncAVq1NU3cw7KcPclOtSxqbIWXpgBY09i1sPHkqYlf7tyPBth+r3VJJ0jmqnM6Nan/mH+fjaIa7SjOEmBz84vAraO9HRglcRhZhgae1W8A8ywhBDO1S84H5ZoZKgeciCVro=
+	t=1715356138; cv=none; b=KsPJZ4ZOVUcRuhcYBmMwcRTnqMHq6RG34HfSvE7R+5wo5syuyHNfwgrj8dIafQunx8F0d8uxHjNcXpJcUlSMQ0N2qdDTkTthqXLATjFB8FmEWSAEqvGPHUAq+yayYRFMtI1vUD7pV0Lyd3zu+vF+MctK+iEKEMg51qPXglayH/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715356004; c=relaxed/simple;
-	bh=5mXhnCqJ2AHPpTx22stP2AT18mivdzg6/hVWBtafrx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SSza75xwrWTzGV1RisEitppi80RRMmXzRL+NpeFJYpCJiBMJaoNuUCPQ+e93fAEuymxtgEBVUz8nZJ66hFUg0wGWsKvbbO2fopPRe4gjoa3iUL/u9XZQ7YkVe+OsgW0QMhTMuIOsrf7yn47RNed99ygbWYI84V9tyYPyCPtjLRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WRelRGEX; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.8.193.2] (unknown [50.39.103.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id C236F4113A;
-	Fri, 10 May 2024 15:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715355992;
-	bh=h2pF02eYY0Wz11xpxaBf2EA2zHqbk7efV7XetK4ocVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=WRelRGEX+uRRfdNqHPs+onuWy1HucK7ZuhhwzlPelgo/0N4O800IhzFV7ITUqNUOh
-	 ysf2vOuwcYwHL5BxhY97q64zUE9mYvcEoscZndRAuqBi73Ouk2CBFiNMt7C1JmURnz
-	 XuDUbKzO+WMpteaP59Q5YcUSVNhH+AzO4z9AebZHn8+tY//AvoXxrPGR/oWRSSoxI8
-	 gMNsN+nD0gXgx7T+f40utUfvsVIWJpHTjXu7AlOT7NXXZgXjbMTMjGgj3z3lh8ueBT
-	 4fyDJ2owKXHLxqSBZV+ZyHJDNmb1Rb8zou0OiQzPNLCNtFDUHMFhNL981Bf6pBTsjQ
-	 SIw6T+OGD7f7A==
-Message-ID: <6200bc6e-6903-4a01-a3d9-74f90c6de2b7@canonical.com>
-Date: Fri, 10 May 2024 08:46:25 -0700
+	s=arc-20240116; t=1715356138; c=relaxed/simple;
+	bh=157rns0KwSvPY8qQwBR79GlFobjNiJMs15dOemoDj1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pmEdrfZWKjH+jyYLhgX4RaGWKVs1m60N1QIIBFBxWtBOsVAeanPFDFpCh35ig4GeEkTVzJ3arbAWZspUrdnl+Ul3O4gAjdw3bPr+yxnkPUSdPokutLDEtzEhu6wwvnTIy64GG9Dx4GRlOc2SDgNdj0zflZ60cgyURCjLfr4alRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: ITsg9IDzTteg1QcYg6n80w==
+X-CSE-MsgGUID: vcKOEboLRme0XBIDJU3pSQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="15136663"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="15136663"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:48:57 -0700
+X-CSE-ConnectionGUID: EiQpYrHlTu2oO5bnPtsz0g==
+X-CSE-MsgGUID: Ef9QlqFkTamT1CqQPl1fEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="34095432"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:48:55 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1s5SUO-000000069SJ-2Z4w;
+	Fri, 10 May 2024 18:48:52 +0300
+Date: Fri, 10 May 2024 18:48:52 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] gpiolib: Return label, if set, for IRQ only line
+Message-ID: <Zj5B5ONDI7DB86on@smile.fi.intel.com>
+References: <20240508144741.1270912-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=Me3XOy6HfqjxDQBwnSW9pOCtK_Ry7keJ2LiXGFB88t4nA@mail.gmail.com>
+ <ZjzWlNdDVVBRD-Ma@surfacebook.localdomain>
+ <CAMRc=MeuAQgos+=GmYr0X+5Pi+foJaRNwuNM0D3b4-FwxoD2mg@mail.gmail.com>
+ <Zj5AZMycTCPUoT-l@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] apparmor: remove useless static inline function
- is_deleted
-To: Colin Ian King <colin.i.king@gmail.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240304163655.771616-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20240304163655.771616-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zj5AZMycTCPUoT-l@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 3/4/24 08:36, Colin Ian King wrote:
-> The inlined function is_deleted is redundant, it is not called at all
-> from any function in security/apparmor/file.c and so it can be removed.
+On Fri, May 10, 2024 at 06:42:28PM +0300, Andy Shevchenko wrote:
+> On Thu, May 09, 2024 at 04:23:07PM +0200, Bartosz Golaszewski wrote:
+> > On Thu, May 9, 2024 at 3:58 PM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+
+..
+
+> > Fair enough but I would like to know what your bigger plan is before
+> > picking this up.
 > 
-> Cleans up clang scan build warning:
-> security/apparmor/file.c:153:20: warning: unused function
-> 'is_deleted' [-Wunused-function]
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> I stand corrected, this patch has an immediate effect on the generic
+> gpiolib_dbg_show() which does *not* use the above mentioned call..
 
-Acked-by: John Johansen <john.johanse@canonical.com>
+Ah, but it doesn't use gpiod_get_label() in the else branch either...
 
-I have pulled this into my tree
+I want to amend the else branch there to print similar or reuse the main one.
+For the latter I have locally a patch to modify gpiolib_dbg_show() to show
+the interrupt lines as well even if they are not requested.
 
-> ---
->   security/apparmor/file.c | 13 -------------
->   1 file changed, 13 deletions(-)
-> 
-> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index c03eb7c19f16..d52a5b14dad4 100644
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -144,19 +144,6 @@ int aa_audit_file(const struct cred *subj_cred,
->   	return aa_audit(type, profile, &ad, file_audit_cb);
->   }
->   
-> -/**
-> - * is_deleted - test if a file has been completely unlinked
-> - * @dentry: dentry of file to test for deletion  (NOT NULL)
-> - *
-> - * Returns: true if deleted else false
-> - */
-> -static inline bool is_deleted(struct dentry *dentry)
-> -{
-> -	if (d_unlinked(dentry) && d_backing_inode(dentry)->i_nlink == 0)
-> -		return true;
-> -	return false;
-> -}
-> -
->   static int path_name(const char *op, const struct cred *subj_cred,
->   		     struct aa_label *label,
->   		     const struct path *path, int flags, char *buffer,
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
