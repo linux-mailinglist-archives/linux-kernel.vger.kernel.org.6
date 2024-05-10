@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-175565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14F98C2193
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:05:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B016A8C21C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 12:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19E01C2114E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506E41F23E17
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D175165FD1;
-	Fri, 10 May 2024 10:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10753165FCB;
+	Fri, 10 May 2024 10:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHzdP4Vw"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2IQqdwqP"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B80D1635B5;
-	Fri, 10 May 2024 10:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC248161935
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715335538; cv=none; b=Lf+G9gfyG6ca2eu5ox6S60yvJlg1AuR4YGNRiZZX+GMeMoWhzeDfgQTcTZWHv/XUB3g1o6C5JCiXoZ+1PFa2nkA8VOm7RsqNm32zoOkbpCFJ/eqIll4eAflo8y51VJuxN+vZVm4QQJAZXlu7gXK2khO/Ob6J4w2Oebnt1vu+mRw=
+	t=1715335912; cv=none; b=KTU+ce3VzpiuKGFP2s/A4MkXz1dkdckxq/TrE8FiTrNJMFYHX8jtQ1/vFWfK9x/i5g4MLfPXp5v3BO219pzwAoA05nf2j9fOtR4bwLOB3uhgJLteKcVzJO3Vj+9NkD6UhyLe681gMoVJ3X/pQ3NrZuXpfv7l8V1zxt9En8UPeKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715335538; c=relaxed/simple;
-	bh=bNxY+o7w/EluTDohpX6Vmx9RgZAOBzGsaVfZ2SgYTKc=;
+	s=arc-20240116; t=1715335912; c=relaxed/simple;
+	bh=vtrYm/vQSHim3jgRX04nOQj9guH68BZEvaolheL2Xv0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OehfXSDRRPIuM+7JEJXWc1Y5jwavGKT1RBoY1/efh3xjI5OJy8RWufd7KyMF800dGbH+i0ow7Rtz/6k/MYkXsVviBoCX0yBKzMa04C2rVR1xNrnFHCSsJfz+qM16cQPIGGeB05Lt62Yi+zHxu64nAUjtuEEDfqL0lkyCqB1qfbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHzdP4Vw; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a64db066so464919266b.3;
-        Fri, 10 May 2024 03:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715335535; x=1715940335; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jvyJt6mXT3ke3TNec2g3jJkXUKl8h7wFAhJ349b/sWE=;
-        b=DHzdP4VwUq5QXS9O4PdsB9psOZy1DfGXfKm+JVu/tL/rDHeJcLNHChP8JhDL8+fExC
-         /bct8r71jAK/zQ2hAw6S/EfNvQ749sA/HvtZUekCrGudhWX73SJGDbWLTrCC/ceBxKQl
-         gPeD9CzaApk/ZyOtvIvUyuzdXTGnHxIIxt4T1aOCa8oTRy+infabTgSu8+OvBzzGBwwq
-         YJdM41qk669eP0kidZQzvqVHltt6jCJcGwx0T9vYgBy4sWx0pbk2SzVWXAFcPmSQ8BfX
-         lSZhOxSqJwdTNR+1SRNlkw7VG3AFNtN1L+DNrWWcggmnv2pcloIbJe383snBZii6roZF
-         mssg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715335535; x=1715940335;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jvyJt6mXT3ke3TNec2g3jJkXUKl8h7wFAhJ349b/sWE=;
-        b=H7OSC55fj4Iz5bPicXkwabwU/puzti0jXeSPDG9nMqAiH+BWRPppQvN5typyjfpvpS
-         S4NCnZkT2/xHWzaP1i5VDhjv/hG8DdncD4wjbuV2RMtTS0a+by7yH6s3Tyen1A2jP6ql
-         r8L0I8Pdac3OvrV2Ge2MjsrtKT+fMu4VNQj0XJTBDs/iVnS9KlWuQbt7f0zzLWWE+Zd5
-         uUEdFrTzCEpYDt3vVyDof+dfc0/plIN/zid9j7HL3HV0a9Agg95Bj9dtWtmWYDiE24uJ
-         sggeSarWyw/TmMHh9s1VXLWY7XDmoWlOoCAxKSJo7YARMRsEb6nWgs2Z0j94u92xY7PH
-         s/dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUz/Ml2JKHiw5Fq7x/CEHPr+UJZ5ECedWfp/Cp3sTHzfJ4KIDT0e6Xs4E/8Yw0n+B0Fbkxk/Xf2moGeJ7IGo1wR+S261lKegEF6AOWAqqmhaPjTTb9qhBzrIuPu4wy0rzRXXIhSo65QcB4wDxScqmdNnCaxe0IoCcT8XOgkcfpW5GZ+7w==
-X-Gm-Message-State: AOJu0YzCZsfegC3w0ZPGnN2Yfl5P6PlCfvV0mMH4YyhZ/IW9q6Dpx6V3
-	Q6tZeXmNDOByl+e/Yp3ZpMS3zq90GcOOOlX1iQiLBFPgbgE5GOuP
-X-Google-Smtp-Source: AGHT+IGa90M9SKT4W839DqYKUjMyqadXlmKJvXXAnlyhf9gjRGzZ+Yt9tUAVrfALpDcuKwCII9ApPw==
-X-Received: by 2002:a50:baeb:0:b0:56e:2ebc:5c4 with SMTP id 4fb4d7f45d1cf-5734d5ceae0mr1478379a12.20.1715335535307;
-        Fri, 10 May 2024 03:05:35 -0700 (PDT)
-Received: from [192.168.0.105] (c7.campus.utcluj.ro. [193.226.6.226])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7d3esm1655178a12.73.2024.05.10.03.05.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 03:05:34 -0700 (PDT)
-Message-ID: <73365049-670b-4068-a159-fbdd0539f5a9@gmail.com>
-Date: Fri, 10 May 2024 13:05:32 +0300
+	 In-Reply-To:Content-Type; b=FCld/bIsCvzycnUiIRUqeFyS/3Gc5LJOKtVXIcOOnS1a8MHrv/xkN504wCl2nOtLBDJTisTU06bZik7f9a+teqmXqIGPPlb7/3/W+3DPr9gByCi/iafXzjKH5zALR0WxANg9t9nXGuKy/A/Rvaene0TP6d+ME61ryJpxlyDIzQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2IQqdwqP; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715335550;
+	bh=vtrYm/vQSHim3jgRX04nOQj9guH68BZEvaolheL2Xv0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=2IQqdwqPtoZkkk19USWWt8xgqlcwa+gPD66JC9VAEpwOYIPtXk4CcL340IG3zLdxP
+	 nzVp/rwU70UIPRcxvhfHIAobSvLl++PUysKOpB++6Q2BiGJvL4zoPGhKuK52g3RbCJ
+	 sUcfDpqiOIe43x1vzTgceS5gGHgqIdDsvw1WuhyHTjzO8LQJRL3MdvPT8U5xiYubn/
+	 l7/HEJNl93y2U8hJN0yc7i6GMo1sFCkhbR2EQJA8v4P7sMAAZyG1tVvGCrU5ew6Ew/
+	 WxdygCOQ+rLS/K6NZCU7LvPUAHPqq/v+4+UKcbchzpBVRKRbRfkdTqHhcvOm39v6x9
+	 olb7rHKz8B05g==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 92DD6378217A;
+	Fri, 10 May 2024 10:05:49 +0000 (UTC)
+Message-ID: <8d624845-7450-485c-8000-0194bcf56458@collabora.com>
+Date: Fri, 10 May 2024 12:05:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,59 +56,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 5/6] dt-bindings: iio: adc: ad7192: Add AD7194 support
-To: Conor Dooley <conor@kernel.org>
-Cc: michael.hennerich@analog.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- alexandru.tachici@analog.com, lars@metafoo.de, jic23@kernel.org,
- robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- lgirdwood@gmail.com, broonie@kernel.org, andy@kernel.org,
- nuno.sa@analog.com, marcelo.schmitt@analog.com, bigunclemax@gmail.com,
- dlechner@baylibre.com, okan.sahin@analog.com, fr0st61te@gmail.com,
- alisa.roman@analog.com, marcus.folkesson@gmail.com, schnelle@linux.ibm.com,
- liambeguin@gmail.com
-References: <20240430162946.589423-1-alisa.roman@analog.com>
- <20240430162946.589423-6-alisa.roman@analog.com>
- <20240430-winnings-wrongness-32328ccfe3b5@spud>
+Subject: Re: [PATCH v1 1/1] Support YUV422 for DPTX.
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ matthias.bgg@gmail.com, jitao.shi@mediatek.com, mac.shen@mediatek.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240510021810.19302-1-liankun.yang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Alisa-Dariana Roman <alisadariana@gmail.com>
-In-Reply-To: <20240430-winnings-wrongness-32328ccfe3b5@spud>
+In-Reply-To: <20240510021810.19302-1-liankun.yang@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 30.04.2024 20:21, Conor Dooley wrote:
-> On Tue, Apr 30, 2024 at 07:29:45PM +0300, Alisa-Dariana Roman wrote:
->> +      diff-channels:
->> +        description:
->> +          Both inputs can be connected to pins AIN1 to AIN16 by choosing the
->> +          appropriate value from 1 to 16.
->> +        items:
->> +          minimum: 1
->> +          maximum: 16
->> +
->> +      single-channel:
->> +        description:
->> +          Positive input can be connected to pins AIN1 to AIN16 by choosing the
->> +          appropriate value from 1 to 16. Negative input is connected to AINCOM.
->> +        items:
->> +          minimum: 1
->> +          maximum: 16
+Il 10/05/24 04:15, Liankun Yang ha scritto:
+> Adjust the training sequence.Detects the actual link condition
+> and calculates the bandwidth where the relevant resolution resides.
 > 
-> Up to 16 differential channels and 16 single-ended channels, but only 16
-> pins? Would the number of differential channels not max out at 8?
+> The bandwidth is recalculated and modes that exceed the bandwidth are
+> filtered.
+> 
+> Example Modify bandwidth filtering requirements.
+> 
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+> ---
+>   drivers/gpu/drm/mediatek/mtk_dp.c | 81 ++++++++++++++++++-------------
+>   1 file changed, 46 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek/mtk_dp.c
+> index 2136a596efa1..3e645bd6fe27 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -66,6 +66,13 @@ enum {
+>   	MTK_DP_CAL_MAX,
+>   };
+>   
+> +enum mtk_dp_color_format {
+> +	MTK_DP_COLOR_FORMAT_RGB = 0,
+> +	MTK_DP_COLOR_FORMAT_YUV422 = 0x1,
+> +	MTK_DP_COLOR_FORMAT_YUV444 = 0x2,
+> +	MTK_DP_COLOR_FORMAT_YUV420 = 0x3,
+> +};
 
-Hello, Conor! I really appreciate the feedback!
+This is giving the same values as drm_dp.h, hence unneeded.
 
-The way I thought about it, the only thing constraining the number of 
-channels is the reg number (minimum: 0, maximum: 271). 272 channels 
-cover all possible combinations (16*16 differential and 16 single ended) 
-and I thought there is no need for anything stricter. I added items: 
-minimum:1 maximum:16 to make sure the numbers are from 1 to 16, 
-corresponding to AIN1-AIN16.
+> +
+>   struct mtk_dp_train_info {
+>   	bool sink_ssc;
+>   	bool cable_plugged_in;
+> @@ -84,7 +91,7 @@ struct mtk_dp_audio_cfg {
+>   };
+>   
+>   struct mtk_dp_info {
+> -	enum dp_pixelformat format;
+> +	enum mtk_dp_color_format format;
+>   	struct videomode vm;
+>   	struct mtk_dp_audio_cfg audio_cur_cfg;
+>   };
+> @@ -457,7 +464,7 @@ static void mtk_dp_set_msa(struct mtk_dp *mtk_dp)
 
-Please let me know what should be improved!
+.snip..
 
-Kind regards,
-Alisa-Dariana Roman.
+> @@ -1888,9 +1896,28 @@ static irqreturn_t mtk_dp_hpd_event_thread(int hpd, void *dev)
+>   			memset(&mtk_dp->info.audio_cur_cfg, 0,
+>   			       sizeof(mtk_dp->info.audio_cur_cfg));
+>   
+> +			mtk_dp->enabled = false;
+> +			/* power off aux */
+> +			mtk_dp_update_bits(mtk_dp, MTK_DP_TOP_PWR_STATE,
+> +			       DP_PWR_STATE_BANDGAP_TPLL,
+> +			       DP_PWR_STATE_MASK);
+> +
 
+This commit is not even based on upstream, so you haven't even tested it upstream.
+
+Don't send untested commits.
+There's nothing to review here.
+
+Regards,
+Angelo
 
