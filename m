@@ -1,294 +1,164 @@
-Return-Path: <linux-kernel+bounces-176018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E0D8C28CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:36:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE588C28D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6A8B21724
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:36:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A78E0B2393D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E0A134CC;
-	Fri, 10 May 2024 16:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4B710965;
+	Fri, 10 May 2024 16:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2AsaBUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="nNyGn9BI"
+Received: from out0-212.mail.aliyun.com (out0-212.mail.aliyun.com [140.205.0.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8111FB4;
-	Fri, 10 May 2024 16:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6BD17BA2
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715358987; cv=none; b=Mbkk/G2F8x8hVVxf9koxmnXyJeXIWeJHktuK7dUPqz2NTbQbZA9jnsw9EU0YAZX7jOEY2FvkK3QRSpxAu7RkxcsYu9S538dSoxXJnuI19Izqf4qCugm5sT7qwZK7K4EAZqVGIIf+g8W7limCv6MRM7MxVjkuvUYWDfr1IVXLirc=
+	t=1715359012; cv=none; b=VJPHm73YGrkW0ZlevY00rd72x40Pcra2gfPDuntuSx6lyAzqIVZEBBUKiIL7D+DqoizVIEtrN0Sgx95e6qzQoYMB+UeKib3QA3W3FPIpzN4y5WwpnHsvPt59sN6HrcMIO41TbVYVyM3kK/n0LuhuVAGWeM/hNVuLUYa9n+9Z3lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715358987; c=relaxed/simple;
-	bh=mp8a9uWEDeM5bKN7SHl84RssnBPGlObtm24gPhRFHUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n15zxKvdoT68WHwAG+4EI3SngIxEic/6nGhdHIaU42KQ5kdmv8+TCpnKSlgggZidsZXtD5FDiVfzQNae3NaS3rTq1hV9X6B+D8k5L+snnnDVaQ9E9c7shI2Wc5nWXdSoefhFWDFsvK50/HfjzAy32VJCv+i7OHwv4Sg58XyLPeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2AsaBUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 274A5C113CC;
-	Fri, 10 May 2024 16:36:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715358987;
-	bh=mp8a9uWEDeM5bKN7SHl84RssnBPGlObtm24gPhRFHUg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m2AsaBUrxreYIiBe0A32CZ3MTKcLJCo9Rj9nW3hXruyJ+nhC86BrpGZEXzGTsjbwL
-	 upPL/8AP+WNkxiC+/D3eJ3/11S8yubJ4VHtTevDB5nmQ23Xda0DuTHCuOyKXzBwPYX
-	 EuhFyWgAfVvqDTGH8pBCBWyg4LyefgwzDCDGZ+AT1nZhtlMDZvGKXlw/JXQy3LbAz5
-	 1/gecTuHz4aurtGdS/08PzwuhN6NHLx/7clihXAz7811hy7C0p5/BnQxvG9AynxeOw
-	 5oenUYnapIH6RFiaf8XZ8hMinWIH9j72tpiMwEXV9V8ucRRDzQa4tSRLvskUVNDIsw
-	 QpT3RwCefBSCg==
-Date: Fri, 10 May 2024 11:36:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Paul Kocialkowski <contact@paulk.fr>,
-	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: connector: add GE SUNH hotplug addon
- connector
-Message-ID: <20240510163625.GA336987-robh@kernel.org>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
- <20240510-hotplug-drm-bridge-v2-1-ec32f2c66d56@bootlin.com>
+	s=arc-20240116; t=1715359012; c=relaxed/simple;
+	bh=ah2f+flPhjMWjq/tYuVImg54uB8bO07DeCFS0hFQSh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FNK4wcOn+hVozg/W+U5mLRLVD2gIPNg5PGlx+EJZ8NdvbqH0oqbvUJWr7T5ICaPUOH7pk4oaOwFmq91pNw5YcOuquJevUeGn7iwtZle610SkMCgKnlznPXTW/m4l6y0B9tpTShKwLgunruYnp2xcm7BZZbsKEe97H9XDQ42h9PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=nNyGn9BI; arc=none smtp.client-ip=140.205.0.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1715359000; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=qtTzD4p4/mI5FQfHMAQ4AseA2ZJSqFbFGgw9hxpmGnA=;
+	b=nNyGn9BIS8D5zP3Gq9ppUd+vsT4Gi844ONso3HSs1XSXLLwEhmfwYoO8YVQkeulSbzSvGzVqCCB5Gqvp4mSlJAo9IwWY6TL6QffHJ/vL098TkmO5H3hS3Pn7xb+o4yCOrqOaukyv5YpWgmQ2UiwE5zQ6+BWascjP2Rb29Zr0h18=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047212;MF=libang.li@antgroup.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---.XYAMMf6_1715358997;
+Received: from 30.39.184.43(mailfrom:libang.li@antgroup.com fp:SMTPD_---.XYAMMf6_1715358997)
+          by smtp.aliyun-inc.com;
+          Sat, 11 May 2024 00:36:38 +0800
+Message-ID: <41acfd35-69b4-41bc-a45b-4426d5110077@antgroup.com>
+Date: Sat, 11 May 2024 00:36:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-hotplug-drm-bridge-v2-1-ec32f2c66d56@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] mm: Add update_mmu_tlb_range()
+To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
+ chenhuacai@kernel.org, tsbogend@alpha.franken.de, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, chris@zankel.net, jcmvbkbc@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+ david@redhat.com, ioworker0@gmail.com, libang.linux@gmail.com,
+ baolin.wang@linux.alibaba.com
+References: <20240506155120.83105-1-libang.li@antgroup.com>
+ <20240506155120.83105-6-libang.li@antgroup.com>
+ <eb41fcb3-7207-40a8-9b49-0825a2e74e86@arm.com>
+Content-Language: en-US
+From: "Bang Li" <libang.li@antgroup.com>
+In-Reply-To: <eb41fcb3-7207-40a8-9b49-0825a2e74e86@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 10, 2024 at 09:10:37AM +0200, Luca Ceresoli wrote:
-> Add bindings for the GE SUNH add-on connector. This is a physical,
-> hot-pluggable connector that allows to attach and detach at runtime an
-> add-on adding peripherals on non-discoverable busses.
+Hi Ryan,
+
+Thanks for you review!
+
+On 2024/5/10 17:05, Ryan Roberts wrote:
+> On 06/05/2024 16:51, Bang Li wrote:
+>> After the commit 19eaf44954df ("mm: thp: support allocation of anonymous
+>> multi-size THP"), it may need to batch update tlb of an address range
+>> through the update_mmu_tlb function. We can simplify this operation by
+>> adding the update_mmu_tlb_range function, which may also reduce the
+>> execution of some unnecessary code in some architectures.
+>>
+>> Signed-off-by: Bang Li <libang.li@antgroup.com>
+>> ---
+>>   include/linux/pgtable.h | 8 ++++++++
+>>   mm/memory.c             | 4 +---
+>>   2 files changed, 9 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+>> index 18019f037bae..869bfe6054f1 100644
+>> --- a/include/linux/pgtable.h
+>> +++ b/include/linux/pgtable.h
+>> @@ -737,6 +737,14 @@ static inline void update_mmu_tlb(struct vm_area_struct *vma,
+>>   #define __HAVE_ARCH_UPDATE_MMU_TLB
+>>   #endif
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Given you are implementing update_mmu_tlb_range() in all the arches that
+> currently override update_mmu_tlb() I wonder if it would be cleaner to remove
+> update_mmu_tlb() from all those arches, and define generically, removing the
+> ability for arches to override it:
 > 
-> ---
+> static inline void update_mmu_tlb(struct vm_area_struct *vma,
+> 				unsigned long address, pte_t *ptep)
+> {
+> 	update_mmu_tlb_range(vma, address, ptep, 1);
+> }
+
+Agreed! Thank you for your suggestion, I will modify it in the next version.
+
 > 
-> NOTE: the second and third examples fail 'make dt_binding_check' because
->       they are example of DT overlay code -- I'm not aware of a way to
->       validate overlay examples as of now
+>>   
+>> +#ifndef __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
+>> +static inline void update_mmu_tlb_range(struct vm_area_struct *vma,
+>> +				unsigned long address, pte_t *ptep, unsigned int nr)
+>> +{
+>> +}
+>> +#define __HAVE_ARCH_UPDATE_MMU_TLB_RANGE
+>> +#endif
 > 
-> This patch is new in v2.
-> ---
->  .../connector/ge,sunh-addon-connector.yaml         | 197 +++++++++++++++++++++
->  MAINTAINERS                                        |   5 +
->  2 files changed, 202 insertions(+)
+> Then you could use the modern override scheme as Lance suggested and you won't
+> have any confusion with __HAVE_ARCH_UPDATE_MMU_TLB because it won't exist anymore.
+
+Yes, use update_mmu_tlb_range to implement update_mmu_tlb, we only need 
+to define the update_mmu_tlb_range macro.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.yaml b/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.yaml
-> new file mode 100644
-> index 000000000000..c7ac62e5f2c9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/connector/ge,sunh-addon-connector.yaml
-> @@ -0,0 +1,197 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/connector/ge,sunh-addon-connector.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: GE SUNH hotplug add-on connector
-> +
-> +maintainers:
-> +  - Luca Ceresoli <luca.ceresoli@bootlin.com>
-> +
-> +description:
-> +  Represent the physical connector present on GE SUNH devices that allows
-> +  to attach and detach at runtime an add-on adding peripherals on
-> +  non-discoverable busses.
-> +
-> +  This connector has status GPIOs to notify the connection status to the
-> +  CPU and a reset GPIO to allow the CPU to reset all the peripherals on the
-> +  add-on. It also has a 4-lane MIPI DSI bus.
-> +
-> +  Add-on removal can happen at any moment under user control and without
-> +  prior notice to the CPU, making all of its components not usable
-> +  anymore. Later on, the same or a different add-on model can be connected.
+>> +
+>>   /*
+>>    * Some architectures may be able to avoid expensive synchronization
+>>    * primitives when modifications are made to PTE's which are already
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index eea6e4984eae..2d53e29cf76e 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -4421,7 +4421,6 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
+>>   	vm_fault_t ret = 0;
+>>   	int nr_pages = 1;
+>>   	pte_t entry;
+>> -	int i;
+>>   
+>>   	/* File mapping without ->vm_ops ? */
+>>   	if (vma->vm_flags & VM_SHARED)
+>> @@ -4491,8 +4490,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
+>>   		update_mmu_tlb(vma, addr, vmf->pte);
+>>   		goto release;
+>>   	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
+>> -		for (i = 0; i < nr_pages; i++)
+>> -			update_mmu_tlb(vma, addr + PAGE_SIZE * i, vmf->pte + i);
+>> +		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
+> 
+> I certainly agree that this will be a useful helper to have. I expect there will
+> be more users in future.
 
-Is there any documentation for this connector?
+Thank you for your affirmation. Baolin’s "add mTHP support for anonymous 
+shmem" series[1] can also use this function to simplify the code.
 
-Is the connector supposed to be generic in that any board with any SoC 
-could have it? If so, the connector needs to be able to remap things so 
-overlays aren't tied to the base dts, but only the connector. If not, 
-then doing that isn't required, but still a good idea IMO.
+[1] 
+https://lore.kernel.org/linux-mm/cover.1714978902.git.baolin.wang@linux.alibaba.com/
 
-> +
-> +properties:
-> +  compatible:
-> +    const: ge,sunh-addon-connector
-> +
-> +  reset-gpios:
-> +    description: An output GPIO to reset the peripherals on the add-on.
-> +    maxItems: 1
-> +
-> +  plugged-gpios:
-> +    description: An input GPIO that is asserted if and only if an add-on is
-> +      physically connected.
-> +    maxItems: 1
-> +
-> +  powergood-gpios:
-> +    description: An input GPIO that is asserted if and only if power rails
-> +      on the add-on are stable.
-> +    maxItems: 1
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    description: OF graph bindings modeling the MIPI DSI bus across the
-> +      connector. The connector splits the video pipeline in a fixed part
-> +      and a removable part.
-> +
-> +      The fixed part of the video pipeline includes all components up to
-> +      the display controller and 0 or more bridges. The removable part
-> +      includes any bridges and any other components up to the panel.
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: The MIPI DSI bus line from the CPU to the connector.
-> +          The remote-endpoint sub-node must point to the last non-removable
-> +          component of the video pipeline.
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +        description: The MIPI DSI bus line from the connector to the
-> +          add-on. The remote-endpoint sub-node must point to the first
-> +          add-on component of the video pipeline. As it describes the
-> +          hot-pluggable hardware, the endpoint node cannot be filled until
-> +          an add-on is detected, so this needs to be done by a device tree
-> +          overlay at runtime.
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +required:
-> +  - compatible
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  # Main DTS describing the "main" board up to the connector
-> +  - |
-> +    / {
-> +        #include <dt-bindings/gpio/gpio.h>
-> +
-> +        addon_connector: addon-connector {
+Thanks,
+Bang
 
-Just 'connector' for the node name.
-
-> +            compatible = "ge,sunh-addon-connector";
-> +            reset-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
-> +            plugged-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
-> +            powergood-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +
-> +                    hotplug_conn_dsi_in: endpoint {
-> +                        remote-endpoint = <&previous_bridge_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +
-> +                    hotplug_conn_dsi_out: endpoint {
-> +                        // remote-endpoint to be added by overlay
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +  # "base" overlay describing the common components on every add-on that
-> +  # are required to read the model ID
-
-This is located on the add-on board, right?
-
-Is it really any better to have this as a separate overlay rather than 
-just making it an include? Better to have just 1 overlay per board 
-applied atomically than splitting it up.
-
-> +  - |
-> +    &i2c1 {
-
-Generally, I think everything on an add-on board should be underneath 
-the connector node. For starters, that makes controlling probing and 
-removal of devices easier. For example, you'll want to handle 
-reset-gpios and powergood-gpios before any devices 'appear'. Otherwise, 
-you add devices on i2c1, start probing them, and then reset them at some 
-async time?
-
-For i2c, it could look something like this:
-
-connector {
-  i2c {
-	i2c-parent = <&i2c1>;
-
-	eeprom@50 {...};
-  };
-};
-
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        eeprom@50 {
-> +            compatible = "atmel,24c64";
-> +            reg = <0x50>;
-> +
-> +            nvmem-layout {
-> +                compatible = "fixed-layout";
-> +                #address-cells = <1>;
-> +                #size-cells = <1>;
-> +
-> +                addon_model_id: addon-model-id@400 {
-> +                    reg = <0x400 0x1>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +    &addon_connector {
-> +        nvmem-cells = <&addon_model_id>;
-> +        nvmem-cell-names = "id";
-> +    };
-
-It's kind of sad that an addon board has an eeprom to identify it, but 
-it's not itself discoverable...
-
-Do you load the first overlay and then from it decide which 
-specific overlay to apply?
-
-Rob
+> 
+>>   		goto release;
+>>   	}
+>>   
 
