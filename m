@@ -1,103 +1,113 @@
-Return-Path: <linux-kernel+bounces-176128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249458C2A55
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:09:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C907A8C2A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:10:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D00291F2491A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:09:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02E5D1C21EDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:10:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7D745C10;
-	Fri, 10 May 2024 19:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8F045023;
+	Fri, 10 May 2024 19:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AriWi0Pn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvydJ7Sg"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973E3446A2;
-	Fri, 10 May 2024 19:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02251446A2;
+	Fri, 10 May 2024 19:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715368143; cv=none; b=XDQ5N8x3lT1QiA0nbw1r0rE3WQvQJsyhInnfQFIpLQmD3w9hkOOsQrfvvUl9vGH5Riti1+jSJoxgPXawUddPrqmRyMWeSoe7/4DDwP2KzyxKPF5LQBPv7KPrNQI4972LMggi4qbPfeBQvOdEp5HML/g7W7adfYbYMNTVklUKtm8=
+	t=1715368204; cv=none; b=ERyexcGFMeuqUG5RcQYiGKdwkIN5eMJl8qQ4iIxvFOc6wTqwFO1J92ebwhMYivIy2e+EfPLpX58rLsIgMsJcSbwNC5Tk76gSuPQ2iaAGUql/NieRdadAOCCW0dcMcRrBWpfoPRO8EQ/8HOP1URkF7jU2JRmAd1HWIY07TehYOlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715368143; c=relaxed/simple;
-	bh=4d4FPzlG/14LXvcQZFsMO/vCafAekLxTYuyoBpzdTOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4gdR5zuvkunF1Q07A3apLWEg4U6V9B8LuYAwIXT1q8jNdbpIVkn1bLwtudNVaZ2+dkJhQB0HbL60sfAbyctsh6HZ61kfi/uns4B2bpdwxwx1GZ13n5UFUUZMumndzUwrtGcLK0YTZaOQ7IcYredTBm3R14qskbfMngZVEWDfUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AriWi0Pn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0287AC113CC;
-	Fri, 10 May 2024 19:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715368143;
-	bh=4d4FPzlG/14LXvcQZFsMO/vCafAekLxTYuyoBpzdTOo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=AriWi0PnTrc5Rah5N74KFrkWzv+SXY8gX4UJ0cr/IUsjEI/nnSpGgijmK81LvxojS
-	 6sFjydisY6H7iCv2nxknyB5JQ5J5S0Co8VHYNYJHd+n0j6JkMMSUtN7QerI+QRTq1g
-	 //l9IMJMc0+7JrTZRXNdiGD8u9NYCuWDm1iaXovJduZ5P05e8hhaSdJmw19cPsX/Sr
-	 jNsp3GRLh2Me83wxGAUV5zMJG41KqIlKLmRo9LhTW22GgZQ3YvXkRkOVFaXDrszrKr
-	 mSepjHl2/0u0k86bX82tJg5P69LFdLqVUHLnDjBgyaeCb/tyr5biDRBqWQ2/h2vmWE
-	 28Z0IkWaENCwQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9F36CCE094C; Fri, 10 May 2024 12:09:02 -0700 (PDT)
-Date: Fri, 10 May 2024 12:09:02 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>
-Subject: Re: ERROR: modpost: vmlinux: local symbol
- 'rcu_set_jiffies_lazy_flush' was exported
-Message-ID: <965221ae-620a-497a-9a80-5725e3fe3f7b@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <202405110230.vcpgN5vz-lkp@intel.com>
+	s=arc-20240116; t=1715368204; c=relaxed/simple;
+	bh=DIJ0WHV6ZUBw+5ZA71iAYdpvZWGtbxrBxN4GoBr2w+I=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=MNqF+XNymfHYyrEusg9dvFlkjSN0Vx7nDfUZuGCDrcMqKOeiSuosEeBFLHFZY2S5p9Wr+Nc1rXZ3Cz5k4UKZp8EVnGeBKA9bE7ZYV3E+2KY4cFL+oKhLNgAtsrsH+aiur12177UIDdiQRzd6fqH5uyKrI03xO5Pfaq3H79HVNws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NvydJ7Sg; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-23f29434da2so1464229fac.3;
+        Fri, 10 May 2024 12:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715368202; x=1715973002; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DIJ0WHV6ZUBw+5ZA71iAYdpvZWGtbxrBxN4GoBr2w+I=;
+        b=NvydJ7SgPYpaZkNeAATn2GSD9NTR5p28upThnlKIUVb7wqYfM7y8rfb898MEsbL6vM
+         do7Az72nt5wLdP9mkgQxpyPvWeDPs9RgtqBfbxeDTJzFMq9aVIFmwYgPIyrOegMbhuLc
+         5/Jgd6YSH+32udned71Mx0wxz9OpD/huVx0LJprgNpz+F1gzxX/Wk8cnwFZblkwN9lxH
+         08MZ9g1znYFAm2NJj2poBEpPTEd4Bfm60tCNjrgSqKLHZSOqbtuxDzfIAyHBE3yDyMz9
+         UTxgASKBliuckDWDAE2yHXzQIgf6K5FydgtQP9s27CpmflJ/CYBEaO05U5sLhZ14vteY
+         PWtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715368202; x=1715973002;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DIJ0WHV6ZUBw+5ZA71iAYdpvZWGtbxrBxN4GoBr2w+I=;
+        b=QdB/X3xGAVVKVR3A4nfRXbznT/aKcj0NZrDnwEEDbdQGpK0jbisKHVKULVetnoDkzH
+         uLfeyS5zC0rKty5LMGrikQkDx1iul1vSGvffFNrLSoW4RGsC7RHydZGQiPjIr2W5SnoV
+         wyXNxHEScly2DlRf4DWjaOrAXTjSJ/E8g/j9D40Y4VNn7e/WXXJpTT7cwFzWrLXCEjLN
+         bHEeULjK8Zd+0y2N9Aj5ogJ42I1qTO0/3XBzCc9vCUlIHBmupeNkh2loFyL5+LwsgnB+
+         kXnJBNVeYtiZghOrij+VhEUYhJikCXFx6ExMLKtTSvPBZA7RaYYdmn3oHy6RZP/pqWn4
+         HqhQ==
+X-Gm-Message-State: AOJu0Yzx+ZAvHDDU2/qf9qaR0MveQbXXKelvl95nVVtg2U3+qHFd01p3
+	z37AZoydW1ZYD6pYGsuiFAOjxrG3/gSEoFSocFEETxOxSKbH1YAFXC2pnFUAUzdTE5t/FDUjmEI
+	RzAS/VJLaQYRPLTsAwYGyBG13QrTcmlpS
+X-Google-Smtp-Source: AGHT+IF+szmBBVUba7RzxePCr44DpW8585Dvt4A2QMasC25IDJ4mu1ISE4MTPhAMxe7XbhSBN3tfd911H5N0OeZRn34=
+X-Received: by 2002:a05:6870:808e:b0:23c:ad86:9933 with SMTP id
+ 586e51a60fabf-241726f5b28mr3961061fac.3.1715368201745; Fri, 10 May 2024
+ 12:10:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202405110230.vcpgN5vz-lkp@intel.com>
+From: Subhashini Rao Beerisetty <subhashbeerisetty@gmail.com>
+Date: Sat, 11 May 2024 00:39:50 +0530
+Message-ID: <CAPY=qRQR-wJ70gQfxxQ8m6r9XCKbQK5tWL9u=MNGbjb58=_huQ@mail.gmail.com>
+Subject: spi: Inquiry Regarding Linux Kernel SPI Subsystem device drivers
+To: linux-spi@vger.kernel.org, kernelnewbies <kernelnewbies@kernelnewbies.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 11, 2024 at 02:53:06AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   f4345f05c0dfc73c617e66f3b809edb8ddd41075
-> commit: 499d7e7e83d25fcf0fa1a8c0be6857a84cbf6a4a rcu: Rename jiffies_till_flush to jiffies_lazy_flush
-> date:   3 months ago
-> config: riscv-randconfig-r021-20230817 (https://download.01.org/0day-ci/archive/20240511/202405110230.vcpgN5vz-lkp@intel.com/config)
-> compiler: riscv32-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240511/202405110230.vcpgN5vz-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202405110230.vcpgN5vz-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
-> 
-> >> ERROR: modpost: vmlinux: local symbol 'rcu_set_jiffies_lazy_flush' was exported
-> >> ERROR: modpost: vmlinux: local symbol 'rcu_get_jiffies_lazy_flush' was exported
+Hi all,
 
-These do not look to me to be local:
+I hope this email finds you well. I am new to the Linux kernel SPI
+subsystem, I am currently in the process of learning about its
+functionalities and intricacies. I have a few doubts and questions
+that I would like to clarify, and I am hoping you could provide some
+assistance.
 
-	void rcu_set_jiffies_lazy_flush(unsigned long jif)
-	{
-		jiffies_lazy_flush = jif;
-	}
-	EXPORT_SYMBOL(rcu_set_jiffies_lazy_flush);
+As I understand it, the Linux kernel SPI subsystem supports two main
+types of SPI drivers: SPI controller drivers and SPI protocol drivers.
+Much like the USB Skeleton driver (drivers/usb/usb-skeleton.c) serves
+as an excellent reference example for new engineers developing USB
+device drivers, I am wondering if there exists a similar skeleton
+driver for both SPI controller and SPI protocol drivers within the
+Linux kernel tree. Would it be possible for you to share any reference
+code or examples for these drivers?
 
-	unsigned long rcu_get_jiffies_lazy_flush(void)
-	{
-		return jiffies_lazy_flush;
-	}
-	EXPORT_SYMBOL(rcu_get_jiffies_lazy_flush);
+Additionally, I am curious about the interaction between user space
+applications and SPI hardware devices on the target side through the
+SPI protocol driver. Could you please clarify if user space
+applications communicate with the hardware device on the target side
+via the SPI protocol driver running on the host side?
 
-What am I missing here?
+Furthermore, I would like to inquire about the availability of an SPI
+library for user space applications, similar to libusb for USB
+communication. Does the SPI subsystem provide any such library, or do
+user space applications communicate directly with the SPI protocol or
+controller driver through system call?
 
-							Thanx, Paul
+Your insights into these matters would be immensely helpful for my
+understanding of the Linux kernel SPI subsystem. Thank you very much
+for your time and consideration.
+
+
+
+Thank You!
 
