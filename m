@@ -1,78 +1,160 @@
-Return-Path: <linux-kernel+bounces-176046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABE58C293F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:29:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6118C2946
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FAAE284F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB5328854D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07119182C3;
-	Fri, 10 May 2024 17:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381571E878;
+	Fri, 10 May 2024 17:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elmAeG5A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nu1ZwXKF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8951CFB6
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2331803E;
+	Fri, 10 May 2024 17:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715362156; cv=none; b=Kqe/wcS2p/Z/sAsCVhY3quqU0bR9YiRyCF7tHjzrh6H9rV4UvTsc9IuJZeKyIXGr5/he1JTv1ROiyV5nlswT4/pjuENsszV27UCg3ANmVwqakP4xmHbrUoACryKIi0z9giiIVSTM1DTDx0Lsb6ojTmUMtApP1Y5WR2ZXhWtCsI0=
+	t=1715362192; cv=none; b=b1oDGQyZAv5QahBwluUWI5tthWqFw0HwJXM1Icm2NTs/Hh5ycT5EirC8/N8KP4sKHVl6ke/LHOBGlclkoLNkuvapmQhvzHTDDEqKs1UsYd03ikePU84RXUC1er6tiMTCol+wLIb2i4UHj1TcpyIAokY6x3nKwm3hi3XWklu5hQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715362156; c=relaxed/simple;
-	bh=lwgopdSUq/NVZKumDeHBrpw5t0Dug8sTguzl8hyUu+I=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Zl4NQCaXHSFXF5qicJr583DGQrR45xmj1JYT9AINM2gIDRnbcpojzBir9SawVcXenPT2HZJkKJBo26is4HyEYhpkpBsaTo8Qd78wTMvwMg9SUrXQ5RsMhOroH9MWNVvwgUeoeoumMxmenmtGvwot3esUWypM+LoUIH/RMJkilKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elmAeG5A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2D1EDC2BBFC;
-	Fri, 10 May 2024 17:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715362156;
-	bh=lwgopdSUq/NVZKumDeHBrpw5t0Dug8sTguzl8hyUu+I=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=elmAeG5AvlJYZqA115cqrf9ZzFDZZMdtgR6MZZu/U2f8iQLIL5MwBh8Jf8ZCHz/+i
-	 2gCvWR483655eajEOifE/wwl9LN8d7LGP7bVWyWBHjb75rv/GPIHLWmIK4WNtqU395
-	 Q718kgG57/+O/76fVZEi4A0vXoPUD3UYg3BzKdJ2rfWoac++wuIph9aO5Y4dEMJ5gh
-	 ZSWTHtuPC3A8BDcqEW1OQ3CLiXgD0TioNPdjnKxbj13pct37uv0deuC0w81quq3On+
-	 YUmMbg52gy/KG64/o6nPsGlQgEJTE75NkJkzeZRNljqmTqF20zOji4bUdPWPaYYTRl
-	 WEMbCdwS2JSBw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 252F9E7C112;
-	Fri, 10 May 2024 17:29:16 +0000 (UTC)
-Subject: Re: [GIT PULL] timer fix
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zj4BMV2Cf9s0X/mn@gmail.com>
-References: <Zj4BMV2Cf9s0X/mn@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zj4BMV2Cf9s0X/mn@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2024-05-10
-X-PR-Tracked-Commit-Id: d7ad05c86e2191bd66e5b62fca8da53c4a53484f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 92d503011f2fa2c85624dde43429cd0c6a25ef6a
-Message-Id: <171536215614.32093.1396884435488040913.pr-tracker-bot@kernel.org>
-Date: Fri, 10 May 2024 17:29:16 +0000
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
+	s=arc-20240116; t=1715362192; c=relaxed/simple;
+	bh=IM62IdPqbbrlf+47zTF5+ZxS3VRQFBoG3MfekHn4a/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GE9s0fSk6DbgCQvfBD6P+4i9nkh+cvQ9dExOikUCPBiT5P+ZMJXQ9t9VGY1wRFVotud5iHwjxpext6djoBX85T/HmzCV5PnIMa0E3UiUCnLY9ToCnCmrUeouaDj4Jd/v5LPr0MsaLcum1i/nm8NZMqXdOieDt4vuGyJKeVECZtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nu1ZwXKF; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715362191; x=1746898191;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=IM62IdPqbbrlf+47zTF5+ZxS3VRQFBoG3MfekHn4a/U=;
+  b=nu1ZwXKFFAJO3TKJTw931isF9e4QymDjViqY+YPU8kkYSbpGqkjJAvl0
+   Y4eSD/XhTU5o8mYaWlGn/UFSW1hVtA6yyQkG3kj6XpZAnqP7Jj4oIYjkF
+   4x0dc/8ae7thRs/lKwUyXWbg0RryVeoWRq2PwU5Uyqc+ODffL8Bar34i8
+   D03W69x7zAnpXM/0TS3eRqLwdpYMsojEOhr1rQZJxlsFXLP0uAjH+SLC4
+   XiXAQD7FrpH7EOvRLcBSKpgCIsQIylsy+Z8iACdSFR+vFoSiIBkWNN0JO
+   pKgV7FUH+F8iY+kJpTLdOulMmOh6ESuKkk1pROumTi4H59GgoCSOJo7KP
+   A==;
+X-CSE-ConnectionGUID: 80blKQsbS66pvmy0u/ApAw==
+X-CSE-MsgGUID: Mnm9o9LIQj2JWfh3MBuipQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="22027872"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="22027872"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:29:31 -0700
+X-CSE-ConnectionGUID: sDHCGTWoTJmE9w8BfTRgNQ==
+X-CSE-MsgGUID: eVUVpjMgSY+xnt7w2pOhVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="30066357"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 10:29:29 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5U3i-00000006C8e-0vd6;
+	Fri, 10 May 2024 20:29:26 +0300
+Date: Fri, 10 May 2024 20:29:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux ACPI <linux-acpi@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
+ namespace root
+Message-ID: <Zj5ZdcQeaTo9ImT4@smile.fi.intel.com>
+References: <5787281.DvuYhMxLoT@kreacher>
+ <4926735.31r3eYUQgx@kreacher>
+ <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
+ <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
+ <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The pull request you sent on Fri, 10 May 2024 13:12:49 +0200:
+On Fri, May 10, 2024 at 06:52:41PM +0200, Armin Wolf wrote:
+> Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
+> > On Fri, May 10, 2024 at 6:10 PM Armin Wolf <W_Armin@gmx.de> wrote:
+> > > Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
+> > > 
+> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > 
+> > > > It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
+> > > > IdeaPad Pro 5 due to a missing address space handler for the EC address
+> > > > space:
+> > > > 
+> > > >    ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [EmbeddedControl] (20230628/evregion-130)
+> > > > 
+> > > > This happens because the EC driver only registers the EC address space
+> > > > handler for operation regions defined in the EC device scope of the
+> > > > ACPI namespace while the operation region being accessed by the _DSM
+> > > > in question is located beyond that scope.
+> > > > 
+> > > > To address this, modify the ACPI EC driver to install the EC address
+> > > > space handler at the root of the ACPI namespace.
+> > > > 
+> > > > Note that this change is consistent with some examples in the ACPI
+> > > > specification in which EC operation regions located outside the EC
+> > > > device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
+> > > > so the current behavior of the EC driver is arguably questionable.
+> > > Hi,
+> > > 
+> > > the patch itself looks good to me, but i wonder what happens if multiple
+> > > ACPI EC devices are present. How would we handle such a situation?
+> > I'm wondering if this is a theoretical question or do you have any
+> > existing or planned systems in mind?
+> > 
+> > ec_read(), ec_write() and ec_transaction() use only the first EC that
+> > has been found anyway.
+> 
+> Its a theoretical question, i do not know of any systems which have more than
+> one ACPI EC device.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-2024-05-10
+The specification is clear about this case in the "ACPI Embedded Controller
+Interface Specification":
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/92d503011f2fa2c85624dde43429cd0c6a25ef6a
+ "The ACPI standard supports multiple embedded controllers in a system,
+  each with its own resources. Each embedded controller has a flat
+  byte-addressable I/O space, currently defined as 256 bytes."
 
-Thank you!
+However, I haven't checked deeper, so it might be a leftover in the documentation.
+
+The OperationRegion() has no reference to the EC (or in general, device) which
+we need to speak to. The only possibility to declare OpRegion() for the second+
+EC is to use vendor specific RegionSpace, AFAIU. So, even if ACPI specification
+supports 2+ ECs, it doesn't support OpRegion():s for them under the same
+RegionSpace.
+
+That said, the commit message might be extended to summarize this, but at
+the same time I see no way how this series can break anything even in 2+ ECs
+environments.
+
+> This patch would prevent any ACPI ECs other than the first one from probing,
+> since they would fail to register their address space handler.
+> I am just curious if/how we want to handle such situations.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+With Best Regards,
+Andy Shevchenko
+
+
 
