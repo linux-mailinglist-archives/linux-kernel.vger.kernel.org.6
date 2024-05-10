@@ -1,237 +1,78 @@
-Return-Path: <linux-kernel+bounces-176044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E628C293A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:28:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC418C293D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 19:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95FF92872A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:28:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE01528720D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5368118637;
-	Fri, 10 May 2024 17:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0202D18059;
+	Fri, 10 May 2024 17:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NwdxzvCv"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8AtDk65"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E9017579
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A3B18030;
+	Fri, 10 May 2024 17:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715362115; cv=none; b=J1opuhBckWnH+YS97VI1V6dewaPvwKu9c9Qmob+3wAiXhP9wJFBBrlFW77kpEeZ3AmE73jwO/3uciPG/KUoz57ntTaDzankirFXmwq3RCMW5pQ2gTPpQS2wH66RwEWkhQhDXYBebiq7WHyObVyekTr3P19+CBifnmGnCX+dAC7g=
+	t=1715362148; cv=none; b=N3icIqSHTLzkEaNLwss99EEWxwdGmxg0UE/8N5A/QvgvuAEO7IPsHCCAOnHR5um0/shO4FodwoU1hM6RvdFhI2JHjuP4mp42NtsenDEJ7SKuU88njsdbTOGMegsQ8T+CzmyIx+3Uwl+naNUWbGYfnCPdQg7NRuNYRuijswtwrqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715362115; c=relaxed/simple;
-	bh=qf8oKr6WwamfpnpYFNCQqPVeWG4DFXu0MVvhKXbSr5Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mo/Rfgi8nnya0Bkli5LDnYjskxiLOvH2U9eloMOXC0yvxJbe/+1JRAW4wZurESQyMVxtDkZVh/EDkRf/eTh+70w/q5+lDZXRLsZNV6J6mRIZRecOUbFxfIhe79NwSkJO/KQWqnmoEaH9no/pcfXpeVw3YiPp7LVJg739LnTY6iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NwdxzvCv; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e3e18c23f9so28820231fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 10:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715362111; x=1715966911; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T3rbohNuOg29gHEbrkJJS5rW7/8AkwQEBcxPdlAaH+o=;
-        b=NwdxzvCvSYkZWtXUm1h0wXCioq734I5bnshzbtHQLyjiHJtWgejmrinMFOqZFPCkKW
-         7FB4QKCLbu/8Q+ZgWCVpO41NoPRhu0+K4M8tizRhuG4A10Z7HtxZJztObzsjaTV+fO/m
-         n2O84BWhFYG+VU3wJ0gvVOOF1UPnHIYnsyf2j2d8RT0QuzL4cXay2iKuBeumQsCMA7iT
-         yjj9YtsYoz53ZLMZ/9Ov+4md3zDariQNcs95/LzGREo7bC67Et9E/vU+iZzwpS8cQ7Fx
-         C3zXv0Tb1zAnzA1aQkregal1bAZeG6ShN1SRz6nQa2AazBbkN2f4kPlQWrv0Tb7ZqVct
-         EBaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715362111; x=1715966911;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T3rbohNuOg29gHEbrkJJS5rW7/8AkwQEBcxPdlAaH+o=;
-        b=IFzmqnyaanQFpC0U0OHBMqZJZXPULu0Ycwptg79iYlT+xKdbqH370/zSQztlvRiiTC
-         i9Jqy4yExt89Hg6t4/7ZJx3D48abw3qxebFxROMh2EUwrXB4lwMriiqEQkhNmmwT+iqC
-         z/ABlwAG7UD0vjYBquBBa/ZgDdkLe8lZoJ5cgpLBmMXIl6td5Pp0ytv7q2kRLbmWAc9l
-         YGd+ehhV+bVyXM0vDKBgyMCjp4SXdHHHeIw+WMG3XXUIu2l1zLUXVbeQ808Dj0yDC7qD
-         E806nI3Cjm1Ig3MiD5arqTG3gOU/VAR95eANhZgf0zCE13A1zRFMWFwIynDls8TdhM19
-         12XA==
-X-Forwarded-Encrypted: i=1; AJvYcCVKr6qHIsFwIWgY15uz9+Z+fYcZ+M4R69merqdPsSYZj86qhKlzuzyiNMUr4Dt6N5uaw+yUSEfMkTu1tepB4fy7c9xEBZLUpWh52GNM
-X-Gm-Message-State: AOJu0YwqeKM4ofFRiqkTAfp+oJ2yhFiBm10+B8LJIIFewbBjIAbC+sPm
-	Kb6kBb3DFCnk2sA670+hlQmTc/blPvm6Qd0cMXRtkRDWi0uT4tFvAz0QZavOrTnsrdw5eJvJveu
-	V4c7JtISPc2/YxcvABBjCH03oGyFDjbjyqu9CAPmhtngMwy8M2vI=
-X-Google-Smtp-Source: AGHT+IFMvUPgTMGdHDvPMkxljT5mGM8cFkPuvoW6GLn0zBzdmPBKzcNovEPni24+gskmvrblYDYdOBqIoJzuri6qSfk=
-X-Received: by 2002:a2e:8847:0:b0:2e2:2791:983e with SMTP id
- 38308e7fff4ca-2e51fd451femr20534891fa.13.1715362110805; Fri, 10 May 2024
- 10:28:30 -0700 (PDT)
+	s=arc-20240116; t=1715362148; c=relaxed/simple;
+	bh=e1S1GMOez5jI9J8BQm7ogkHt9qf03HSbbIfGytjuXVw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ri9mXqQcxylRGtuhUz7rUQ7gfVT9Zv5qn+FCDLhuASjVUjXVPTPEPYuKRhnuoc2b7vQ9PincfSIH4qfq61CM4L+B7+ePIyTiEZmO4EMCXjPeL/QT8hythb/ZecFFrTre4JQqT4y+Sn0tFXQDH8WhGPDtf4fu+THs1KGnkPj1SBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8AtDk65; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C9A3C113CC;
+	Fri, 10 May 2024 17:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715362148;
+	bh=e1S1GMOez5jI9J8BQm7ogkHt9qf03HSbbIfGytjuXVw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=o8AtDk65c+UrCGm+2+7jko1ETU6lvEMkyRL3ApzwlXjE/2w85nTEvDGIypaxt9aEQ
+	 XhKVWqbq+u77YZaJU2UmsTCr9kEtlguquPAAamJf92GiMsb+sspN5+kqq+wgoQq1g8
+	 M2JeNO2cdyzsDz2IN3VGiakx5HCMdLhTuXbh+PmZnZNXa4GuAUyK2gaTPrQ/9tamvX
+	 rzKmCjgRJN0eD8TYy24W+Cumu0YPxec5lMD2L5yB/Yi23EmpGtoItjdTBk7eaPPrIz
+	 eFmeCislOo5jFLGNISCEDN7VG5+vdWLb9RRtdZQANCyyyzu+qRXXKk7wsyEpcp1ugP
+	 2coJ5c9MxqnGQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0CC6EC395FD;
+	Fri, 10 May 2024 17:29:08 +0000 (UTC)
+Subject: Re: [GIT PULL] SPI fixes for v6.9-rc7
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <275b918bbf12753d81537f9697615900.broonie@kernel.org>
+References: <275b918bbf12753d81537f9697615900.broonie@kernel.org>
+X-PR-Tracked-List-Id: <linux-spi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <275b918bbf12753d81537f9697615900.broonie@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.9-rc7
+X-PR-Tracked-Commit-Id: ef13561d2b163ac0ae6befa53bca58a26dc3320b
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ed44935c330a2633440e8d2660db3c7538eeaf10
+Message-Id: <171536214804.32093.13039464225232443615.pr-tracker-bot@kernel.org>
+Date: Fri, 10 May 2024 17:29:08 +0000
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240510064053.278257-1-Mariel.Tinaco@analog.com> <20240510064053.278257-2-Mariel.Tinaco@analog.com>
-In-Reply-To: <20240510064053.278257-2-Mariel.Tinaco@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 10 May 2024 12:28:19 -0500
-Message-ID: <CAMknhBFXk07HbP_pPg5wkW-9Ah2-66kGzZFvcvBNrbjfguHb4g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: dac: add docs for ad8460
-To: Mariel Tinaco <Mariel.Tinaco@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Marcelo Schmitt <marcelo.schmitt1@gmail.com>, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>, Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 1:42=E2=80=AFAM Mariel Tinaco <Mariel.Tinaco@analog=
-com> wrote:
->
-> This adds the bindings documentation for the 14-bit
-> High Voltage, High Current, Waveform Generator
-> Digital-to-Analog converter.
->
-> Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
-> ---
->  .../bindings/iio/dac/adi,ad8460.yaml          | 67 +++++++++++++++++++
->  MAINTAINERS                                   |  7 ++
->  2 files changed, 74 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/dac/adi,ad8460.=
-yaml
->
-> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml b/=
-Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
-> new file mode 100644
-> index 000000000..924f76209
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright 2024 Analog Devices Inc.
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/dac/adi,ad8460.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices AD8460 DAC
-> +
-> +maintainers:
-> +  - Mariel Tinaco <mariel.tinaco@analog.com>
-> +
-> +description: |
-> +  Analog Devices AD8460 110 V High Voltage, 1 A High Current,
-> +  Arbitrary Waveform Generator with Integrated 14-Bit High Speed DAC
-> +  https://www.analog.com/media/en/technical-documentation/data-sheets/ad=
-8460.pdf
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - adi,ad8460
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  spi-max-frequency:
-> +    maximum: 20000000
-> +
-> +  vref-supply:
+The pull request you sent on Fri, 10 May 2024 12:58:26 +0100:
 
-It would be nice to make the property name match the pin name since
-there is more than one reference voltage input.
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.9-rc7
 
-refio-1p2v-supply:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ed44935c330a2633440e8d2660db3c7538eeaf10
 
-> +    description: Drive voltage in the range of 1.2V maximum to as low as
-> +      low as 0.12V through the REF_IO pin to adjust full scale output sp=
-an
+Thank you!
 
-I don't seen anything in the datasheet named REF_IO. Is this a typo
-and it should be REFIO_1P2V?
-
-> +
-> +  clocks:
-> +    description: The clock for the DAC. This is the sync clock
-> +
-> +  adi,rset-ohms:
-> +    description: Specify value of external resistor connected to FS_ADJ =
-pin
-> +      to establish internal HVDAC's reference current I_REF
-> +    minimum: 2000
-> +    maximum: 20000
-> +
-
-I see lots more pins on the datasheet, many of which should be trivial
-to add bindings for (we prefer to have the bindings as complete as
-possible even if the driver doesn't implement everything). Potential
-candidates:
-
-sdn-reset-gpios: (active high)
-reset-gpios: (active low)
-sdn-io-gpios: (active high)
-
-hvcc-supply:
-hvee-supply:
-vcc-5v-supply:
-vref-5v-supply:
-dvdd-3p3v-supply:
-avdd-3p3v-supply:
-
-It also looks like there is a parallel interface for data, so I would
-expect to see an io-backends property that links to the PHY used for
-handling that.
-
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    spi {
-> +        dac@0 {
-> +            compatible =3D "adi,ad8460";
-> +            reg =3D <0>;
-> +            spi-max-frequency =3D <8000000>;
-> +            adi,rset-ohms =3D <2000>;
-> +
-> +            vref-supply =3D <&vrefio>;
-> +            clocks =3D <&sync_ext_clk>;
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 758c202ec..dae93df2a 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1234,6 +1234,13 @@ W:       https://ez.analog.com/linux-software-driv=
-ers
->  F:     Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
->  F:     drivers/iio/adc/ad7780.c
->
-> +ANALOG DEVICES INC AD8460 DRIVER
-> +M:     Mariel Tinaco <Mariel.Tinaco@analog.com>
-> +L:     linux-iio@vger.kernel.org
-> +S:     Supported
-> +W:     https://ez.analog.com/linux-software-drivers
-> +F:     Documentation/devicetree/bindings/iio/dac/adi,ad8460.yaml
-> +
->  ANALOG DEVICES INC AD9739a DRIVER
->  M:     Nuno Sa <nuno.sa@analog.com>
->  M:     Dragos Bogdan <dragos.bogdan@analog.com>
-> --
-> 2.34.1
->
->
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
