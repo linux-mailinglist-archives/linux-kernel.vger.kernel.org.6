@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-176027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709E78C28E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:45:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E828C28EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:46:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F07121F272CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCB9282D89
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9A817548;
-	Fri, 10 May 2024 16:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE941798C;
+	Fri, 10 May 2024 16:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iwHTst/P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WxUwDIpQ"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6920910957;
-	Fri, 10 May 2024 16:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602E710957
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715359492; cv=none; b=Zebg1p5gJrCIaD5cR79TPCnaJu23GqujLzhvBXiKE9zUaF5BXqQ2s7OYo/SM71wSRVhGKd3oJedIS61s3T/fKkN5lum3h1LrzPl9ZlW8h4iMWJLDLNPOeT6DoyoeompYkwAMz4k43uCzBlFUJ4pSpbjxUktwLktU9VFt+BHtrc4=
+	t=1715359553; cv=none; b=MNSMqGGcEWm2o2LZjDkAnVujp49TWxutC4y+l/jhZW18BUVbycUZGhBGhsBrNR4yse9MRTQkeXFIF6+svmS5+S/evrisjxN3RGIhObfFb36k09herr+OqDLqAeqHdlKMF3ST20wq5Vvy2dGoakk+b6en+y479BfurenGQ7rOF/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715359492; c=relaxed/simple;
-	bh=AKsuHfdNxYnH+Bp33dxu23hQYlBdH9/kq/GhGgLGp4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMFJmVW+xA9EUphCK9kAuSVArvBzYTq6atOBg5o00tII99OVhbc896rcTq7xd0L/h4/tGckfOm01x+sbR0nTwoVqa8YAdDi/aex1OiwkG1XgaQJyDCpJnsIU4FCJporAzb6/Zm2MPoE6UIlzH9lHIL+mXKQ23mQ/TAgU1ODWWZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iwHTst/P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3646C113CC;
-	Fri, 10 May 2024 16:44:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715359492;
-	bh=AKsuHfdNxYnH+Bp33dxu23hQYlBdH9/kq/GhGgLGp4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iwHTst/PUBaIDeL/0I7NTk6xdKrE2X80x2nY/g63GwvfMQVE1XEAa5PIKamvPjV1w
-	 VzjanQL9YWSBgknLqj26H5/YGRB9ZpqfJFHSGV6wD1ewNvxq6GJ+toQkC+TfU14C/L
-	 IsbH/tSPax7zc+RF5X48zbJ8c96raFp0f0qYon0mY2yQ9YxBHOpwQL+lTZH+/sR3kK
-	 v5BjCblwT1wySlwrB7BwFo+/EPQGeFMEZJRvFZpTWUD0ocC1SuCfaq5v+YNRzz8efF
-	 DELIcPiCsxkxSHeQUEugE64fp389T9nMEWUCoHKmaM2zRP2Nz0r659xkK2aQC8w7b9
-	 aD+YspMtBolAw==
-Date: Fri, 10 May 2024 11:44:49 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Paul Kocialkowski <contact@paulk.fr>,
-	=?iso-8859-1?Q?Herv=E9?= Codina <herve.codina@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v2 0/5] Add support for GE SUNH hot-pluggable connector
- (was: "drm: add support for hot-pluggable bridges")
-Message-ID: <20240510164449.GB336987-robh@kernel.org>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
+	s=arc-20240116; t=1715359553; c=relaxed/simple;
+	bh=IO/tJZ68RvBtGtUdjhyK/eRCWJdPd5uxAzWx2KRBods=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IDxVma6+AZDmfvtEyJR0Z5VBTLNR63oZm7PZDIbxrrwPA2Ju9THWrTYZT42P5Hk+wT6qeAK7zrU+tXVHO8oIXhE6qA3J+cPc+nTTticct50mfpoRIzSxHg4tp8mQc3asFAwe7MTUdoBMGDr6wSiHfgz7uENTz/KzzPN8/Ixjs4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WxUwDIpQ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-34f7d8bfaa0so1644835f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715359550; x=1715964350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IaxtUnOJmP45P1JGNrV/UVX05M43+pCoWlRSHcvYUFs=;
+        b=WxUwDIpQVxw83ailAoc9QvC3yFHVEJo33CGc3+zLoSftPQ50uS1/NjwiEI6Hy24SMy
+         voxUq5Vqhay0Pa2zSozgAIexhI4zuok2/bOcxfKG9u972pmYCXefBYkhm4XOUCPOm+cp
+         wX85s2pRZ5s2wUeTkTghkh+bTRAUFhleAk9KNDJbItALLG1ME2Qq/m+NvjkWQNJoMzZ8
+         ttMl3ktrSpcpOa/SkQtbTMhm90Wr+DIVbE4nLq0epAa6lFns0+K/XxNe0KsciOlyfvq2
+         EOm1DT7ENAaIu0FM8esOVvS2gKgOx650XNsYymz2WFf5ZCYdNmAAZ3aN4H7jyF3vFab9
+         x/Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715359550; x=1715964350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IaxtUnOJmP45P1JGNrV/UVX05M43+pCoWlRSHcvYUFs=;
+        b=ISD/2EBuPpF2zHhu8ahkHrQk26o82FwTK3qWRR2Qrwk7gk1I9WlwyubyQuJuUKJQT2
+         GYXecLNIdn09tmNIOydDk0rVIP0DopG2E16PtWS+jLaRMTlZWe3RUm5YpmoA4XcOn5li
+         b9ZpaPAslYOVwCmqLS8nBwjJxPaH8Pf4Np48RIzUDwPjoVVXlWgTolf1uf0MlQUCkPG2
+         UyY/mU6QrkzZwT0aSZWZulDuhVYK8saeKqJKsyxtd2C1RLSd2gZXGWQINxxpBuM1AH7b
+         utgnS4RwWx5YIye5RWDhxj9+l5RKccj0A+7DmRl/B94y8jye8xTGFbcPsyfWMgl1u4fB
+         agCA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Ku1e0MVjLqozbQo/iz/k/DBBfZQ6zWrZff9/+svki/+xeWYUPo9F9D3G9SM+gDLpzOPPrtDdPV6IVL/P9O9UE1+qGhrXuFcCBpze
+X-Gm-Message-State: AOJu0YwIEfbWpBykevKlySjZYZzoQiGZjr9xr5u+e5nwrtSaK+m5j0O+
+	eqrZ+xtePgyBi+EQ+43D0UEgv5M1bEUbIyT9BrgFnh80phnGHOnCPFk2SuowMb7Dpfo/s2XKk2Z
+	0YiBERF2yeiwUWh4FsG+tKTXrhm1Ajcdb7dPq
+X-Google-Smtp-Source: AGHT+IEDr+l7KFhftKmNc/alZdq8t4AOx+lDWsT4CH9fPSrDCOWD9OWtX2TXZbJvbsHhfIg3qWFVvcOGyd+MvQBNtPs=
+X-Received: by 2002:a05:6000:12d0:b0:34d:b284:9c65 with SMTP id
+ ffacd0b85a97d-3504a969198mr2248659f8f.45.1715359549525; Fri, 10 May 2024
+ 09:45:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
+References: <20240502211047.2240237-1-maheshb@google.com> <ZjsDJ-adNCBQIbG1@hoboy.vegasvil.org>
+ <87cypwpxbh.ffs@tglx> <Zj2dZJAfOdag-M1H@hoboy.vegasvil.org> <878r0inm1c.ffs@tglx>
+In-Reply-To: <878r0inm1c.ffs@tglx>
+From: =?UTF-8?B?TWFoZXNoIEJhbmRld2FyICjgpK7gpLngpYfgpLYg4KSs4KSC4KSh4KWH4KS14KS+4KSwKQ==?= <maheshb@google.com>
+Date: Fri, 10 May 2024 09:45:23 -0700
+Message-ID: <CAF2d9jjnB7hkjzAdynSMOWwiy9OZEbTrfSQxsVxhF8wwatW9_g@mail.gmail.com>
+Subject: Re: [PATCHv4 net-next] ptp/ioctl: support MONOTONIC_RAW timestamps
+ for PTP_SYS_OFFSET_EXTENDED
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Richard Cochran <richardcochran@gmail.com>, Netdev <netdev@vger.kernel.org>, 
+	Linux <linux-kernel@vger.kernel.org>, David Miller <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Sagi Maimon <maimon.sagi@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	John Stultz <jstultz@google.com>, Mahesh Bandewar <mahesh@bandewar.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 09:10:36AM +0200, Luca Ceresoli wrote:
-> Hello,
-> 
-> this series aims at supporting a Linux device with a connector to
-> physically add and remove an add-on to/from the main device to augment its
-> features at runtime, using device tree overlays.
-> 
-> This is the v2 of "drm: add support for hot-pluggable bridges" [0] which
-> was however more limited in scope, covering only the DRM aspects. This new
-> series also takes a different approach to the DRM bridge instantiation.
-> 
-> [0] https://lore.kernel.org/all/20240326-hotplug-drm-bridge-v1-0-4b51b5eb75d5@bootlin.com/
-> 
-> Use case
-> ========
-> 
-> This series targets a professional product (GE SUNH) that is composed of a
-> "main" part running on battery, with the main SoC and able to work
-> autonomously with limited features, and an optional "add-on" that enables
-> more features by adding more hardware peripherals, some of which are on
-> non-discoverable busses such as I2C and MIPI DSI.
-> 
-> The add-on can be connected and disconnected at runtime at any moment by
-> the end user, and add-on features need to be enabled and disabled
-> automatically at runtime.
-> 
-> The add-on has status pins that are connected to GPIOs on the main board,
-> allowing the CPU to detect add-on insertion and removal. It also has a
-> reset GPIO allowign to reset all peripherals on the add-on at once.
-> 
-> The features provided by the add-on include a display and a battery charger
-> to recharge the battery of the main part. The display on the add-on has an
-> LVDS input but the connector between the base and the add-on has a MIPI DSI
-> bus, so a DSI-to-LVDS bridge is present on the add-on.
-> 
-> Different add-on models can be connected to the main part, and for this a
-> model ID is stored in the add-on itself so the software running on the CPU
-> on the main part knows which non-discoverable hardware to probe.
-> 
-> Overall approach
-> ================
-> 
-> Device tree overlays appear as the most natural solution to support the
-> addition and removal of devices from a running system.
-> 
-> Several features are missing from the mainline Linux kernel in order to
-> support this use case:
-> 
->  1. runtime (un)loading of device tree overlays is not supported
+On Fri, May 10, 2024 at 12:50=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
+e> wrote:
+>
+> On Thu, May 09 2024 at 21:07, Richard Cochran wrote:
+>
+> > Thomas,
+> >
+> > On Wed, May 08, 2024 at 09:38:58AM +0200, Thomas Gleixner wrote:
+> >> On Tue, May 07 2024 at 21:44, Richard Cochran wrote:
+> >> > On Thu, May 02, 2024 at 02:10:47PM -0700, Mahesh Bandewar wrote:
+> >> >> + * History:
+> >> >> + * v1: Initial implementation.
+> >> >> + *
+> >> >> + * v2: Use the first word of the reserved-field for @clockid. That=
+'s
+> >> >> + *     backward compatible since v1 expects all three reserved wor=
+ds
+> >> >> + *     (@rsv[3]) to be 0 while the clockid (first word in v2) for
+> >> >> + *     CLOCK_REALTIME is '0'.
+> >
+> > ..
+> >
+> >> I agree that it wants to be in the commit message, but having the
+> >> version information in the kernel-doc which describes the UAPI is
+> >> sensible and useful. That's where I'd look first and asking a user to
+> >> dig up this information on lore is not really helpful.
+> >
+> > But writing "v1, v2" doesn't make sense for this code.  There never
+> > was a "v1" for this ioctl.  At the very least, the change should be
+> > identified by kernel version (or git SHA).
+>
+> Adding the git SHA before committing the change is going to be
+> challenging :)
 
-Not true. Device specific applying of overlays has been supported 
-since we merged DT overlay support. What's not supported is a general 
-purpose interface to userspace to change any part of the DT at any point 
-in time.
-
->  2. if enabled, overlay (un)loading exposes several bugs
-
-Hence why there is no general purpose interface.
-
->  3. the DRM subsystem assumes video bridges are non-removable
-
-Rob
+Instead of v1/v2, how about I can make it 'prior to kernel 6.10' and
+'from 6.10 onwards' etc. (as Richard proposed)?
 
