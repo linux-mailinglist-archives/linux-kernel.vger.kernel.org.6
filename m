@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-176180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E9318C2B4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:50:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A708C2B4F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:50:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC9B1C237D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:50:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B10A1B24EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB92502B4;
-	Fri, 10 May 2024 20:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848285028B;
+	Fri, 10 May 2024 20:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VH1hnD/E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2Rz0POx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B06502A4;
-	Fri, 10 May 2024 20:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3090FC0B;
+	Fri, 10 May 2024 20:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715374197; cv=none; b=J1KwfbV1UK3vSvQ7X2HI+qI0M8FamDMwN/LtjGng2hvrGP2U1apscH5GEo+gB6npp79eEc2i8WkHo/KSm2rI9RxTQAvYSBdJdKV/Z64+/eI347cbUKujaIwaq0NyOUw24qAkdj8ByOLg+oDc3u2pBlQKevC44dNq7+iSQhkucuc=
+	t=1715374239; cv=none; b=EYuqq/gBhK/I9vE/aQzMFnWGczuhuHJ5aX5eBju251ph3Bm2lUeRNuQjzyoNJYNq2SbS/Doq3yWUUuJN1pqeek7wQDxdNAkG8J/Q16nI2Bycd/l5QluKI/Qaz+KFOFTQsnth8l4mqtwsfPeDrI1Bfd7E8EZ1eaEUq0kKpx+KPPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715374197; c=relaxed/simple;
-	bh=Yoxu8R4D5J5wOW5Ijg3h7ziEYhdhvaInl9RinJXk/io=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PSY2oUKIW/8yT2h7UcSmzFl348tf6iE5lISJ+ERyR8S9ISOBZAl4g0VP/7dRqpy3zHxgG/OqXlThzcDB1NE88t798qdaTBKkBLAbRY+6LilOWs/Kry5RNaKhLSJ5R6+SGYKogdlYSldFDbirTqqXTtG4NNhHQCZyeAnUPtKPxKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VH1hnD/E; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715374196; x=1746910196;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Yoxu8R4D5J5wOW5Ijg3h7ziEYhdhvaInl9RinJXk/io=;
-  b=VH1hnD/ERE7f+BK4/jvHbKocIw/e9d9JEYPU+XlwqoX7LIrdlaVukcX3
-   XTvmTyDkMfaXsHwGo+ERbdcAub28hbZVsaXnuFDrL4XS0l1DdeeJxfr9P
-   jDrQq2IceAPimfvfd/B3Y3VZuvyFycwGUNnQQnIGvPcKQIHAs94qhU0H7
-   sHj+/L67Jr2c0xVePHFo84rXT767i6R07WmN2YTGvIEqo0BTspMIAl4JX
-   wETr0OTVTzaQZU8nDInardlRK37igR5O2h0AbzK7m4k1wPJ+nYQ6+x2B/
-   T3LQ8gWekl85IJlWRXcUDgnDqoE33YnFHgZdOjSCUhnLTBIbEm02C+KVJ
-   g==;
-X-CSE-ConnectionGUID: jAfaQIF4RMqPkT445wR37g==
-X-CSE-MsgGUID: LEBCyp7HSmSI0X+/5vZeMQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="15208008"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="15208008"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 13:49:56 -0700
-X-CSE-ConnectionGUID: PMZnT4agQo+msyYF5DyFCA==
-X-CSE-MsgGUID: aIxpdFNVSjORdayIO6dZzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="30292540"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 10 May 2024 13:49:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 11E0B1AC; Fri, 10 May 2024 23:49:53 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] spi: Replace custom code with device_match_acpi_handle()
-Date: Fri, 10 May 2024 23:49:52 +0300
-Message-ID: <20240510204952.2582093-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1715374239; c=relaxed/simple;
+	bh=+9uY+3QS/KU4LqGvBa9PuWhKX14BfkblrVKzdImHbHE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dl7eZNy30el480yxO5o+c2TmjmZXH7FPDDUyJcwCxKmFyabIEMEl3ZLmcE1jrRFC+ONCYCjHT6S14t9MfjJL77k5ecoIeDsxTM1AQAXZ6OvUq5KnxYqD/TPxwtIPs8QEz/aTmTPY+o4IR0/JSN9koVqLDsBm0emssYXPa4dKhzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2Rz0POx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF4BC32781;
+	Fri, 10 May 2024 20:50:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715374239;
+	bh=+9uY+3QS/KU4LqGvBa9PuWhKX14BfkblrVKzdImHbHE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B2Rz0POxy4nvsZ9o7IKxVQPe6AU1Y5raSL2PH5Oq3Rmz9k8KRtPC1aeUKTzmOEOmB
+	 n71lEqdV6eRXzZanUG2D7rEuULiSpRFrDJ9IO9Vz10Bl16Bfwfq85+pXyM6rMFmlI4
+	 +Lhh0FZaryAI5Zv7h6a3CUH7A/zjs8HOEOz89ULFAlJpiSafjizZPyECELU1b07WSD
+	 vywqr+1jWnM0GTV1UaDeTW3gA1enGAqHExtiEYv222nusjRmFleW9jG7We53M7KEdE
+	 jPbZtVtERRLHwRgUbNclnBiRcRtw07M2GPeESJZlrhzrvk3zn1KHFhgmw34EUO6mby
+	 R7ylxUW7WiWbQ==
+Date: Fri, 10 May 2024 21:50:32 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Evan Green <evan@rivosinc.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v6 06/17] riscv: Add vendor extensions to /proc/cpuinfo
+Message-ID: <20240510-childcare-outlook-d18e3cc5ccb3@spud>
+References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
+ <20240503-dev-charlie-support_thead_vector_6_9-v6-6-cb7624e65d82@rivosinc.com>
+ <20240507-divisive-swoop-c2737a2d9a9f@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BHMvR13gFgTG0XBs"
+Content-Disposition: inline
+In-Reply-To: <20240507-divisive-swoop-c2737a2d9a9f@spud>
 
-Since driver core provides a generic device_match_acpi_handle()
-we may replace the custom code with it.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/spi/spi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--BHMvR13gFgTG0XBs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index ef0027b9cae5..b2efd4964f7c 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2712,7 +2712,7 @@ static int acpi_spi_add_resource(struct acpi_resource *ares, void *data)
- 				return -ENODEV;
- 
- 			if (ctlr) {
--				if (ACPI_HANDLE(ctlr->dev.parent) != parent_handle)
-+				if (!device_match_acpi_handle(ctlr->dev.parent, parent_handle))
- 					return -ENODEV;
- 			} else {
- 				struct acpi_device *adev;
-@@ -2811,7 +2811,7 @@ struct spi_device *acpi_spi_device_alloc(struct spi_controller *ctlr,
- 
- 	if (!lookup.max_speed_hz &&
- 	    ACPI_SUCCESS(acpi_get_parent(adev->handle, &parent_handle)) &&
--	    ACPI_HANDLE(lookup.ctlr->dev.parent) == parent_handle) {
-+	    device_match_acpi_handle(lookup.ctlr->dev.parent, parent_handle)) {
- 		/* Apple does not use _CRS but nested devices for SPI slaves */
- 		acpi_spi_parse_apple_properties(adev, &lookup);
- 	}
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+On Tue, May 07, 2024 at 06:03:19PM +0100, Conor Dooley wrote:
+> On Fri, May 03, 2024 at 11:18:21AM -0700, Charlie Jenkins wrote:
+> > All of the supported vendor extensions that have been listed in
+> > riscv_isa_vendor_ext_list can be exported through /proc/cpuinfo.
+> >=20
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+>=20
+> This seems fine, thanks for updating this interface :)
+>=20
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
+Hmm, actually the automation on patchwork is complaining a bunch about
+the series, but I think that's mostly false positives except for this
+patch. The nommu defconfigs are prob the easiest way to reproduce this:
+  /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:41:55: error:=
+ 'struct riscv_isa_vendor_ext_data_list' has no member named 'vendor_bitmap'
+  /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:42:60: error:=
+ 'struct riscv_isa_vendor_ext_data_list' has no member named 'per_hart_vend=
+or_bitmap'; did you mean 'per_hart_isa_bitmap'?
+  /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:43:60: error:=
+ 'struct riscv_isa_vendor_ext_data_list' has no member named 'bitmap_size'
+
+Cheers,
+Conor.
+
+--BHMvR13gFgTG0XBs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj6ImAAKCRB4tDGHoIJi
+0v5GAQDz/COSUgwYOrRhiE95HyXWBcrE7N78mp8pUkk9m/hrFgEAxmMo1xhXO2iP
+tU7a1ZH2VRD826Ot6whFO6eC88ci1wU=
+=8S+4
+-----END PGP SIGNATURE-----
+
+--BHMvR13gFgTG0XBs--
 
