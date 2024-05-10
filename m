@@ -1,154 +1,84 @@
-Return-Path: <linux-kernel+bounces-175427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870A78C1F83
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63EB88C1F89
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:12:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423472834CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:10:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6B582835D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8199115F411;
-	Fri, 10 May 2024 08:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVZ9F3Gr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343D015FA80;
+	Fri, 10 May 2024 08:12:45 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE7E131192;
-	Fri, 10 May 2024 08:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B59131192;
+	Fri, 10 May 2024 08:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715328651; cv=none; b=orNP6AtHHKL7uDRaHLBrmmGUVj7fn7WpET0yFV2KvFqxZewppAafUNu8Til6bmMh4DA14ff1YZuOP/7iVl6o7g+IZ8fxAtpxF+yx1bzlXqTf07TzABtqPqVPj9maO4pIV5OzRlFvOjsLtonICdsIzNU2SxCtQAB2ypG1V/W5FBI=
+	t=1715328764; cv=none; b=FjVWntseeUEqeZhwFMsOixsznqRZpe6OKub4kPDi2t9+YSheq5zI6rLuDKC0Zu1+ly7kQGOFYcAuNZ6XW483ab+dMepgUlLznWriE1gBZTiiUBwR8lkUgu4TXhpM06M4Z4CcIgPQ6qErhvB6THhb5UcY+WsjEXOElt9RJTUjNj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715328651; c=relaxed/simple;
-	bh=ssf9Iev4stgbN7TAdwZopVFc09VyaC1stjJzZv6XHi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=EbHNmkjzr3DlQzUAa7zALFABUSxNWuWEXTjGU5aMP+2XBa1I5MqBBcTAdeGEZ7Zgb2U3yxUiyVl2kXZHV6NYGvS3fjvVkDkFdPmrHAmbNLrdlkp0xseMje+OtzmMzsmwgZ3OXbSSfbJ4E4XWBJg0c4fMCHfgj+UhcT+znpuu4R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVZ9F3Gr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8184C113CC;
-	Fri, 10 May 2024 08:10:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715328651;
-	bh=ssf9Iev4stgbN7TAdwZopVFc09VyaC1stjJzZv6XHi8=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=tVZ9F3Grp/f0quLHZq8e5wKEvMEIANtDPBzPn3iGEeocJHnT4tC4FB+7Y2waDQDsi
-	 NMAeydiMdfeT5/FbUA3v2sKWm3182DekxVbSer/5lcmJPxjyu1VUqMp89WgIUv5jO3
-	 2FKcJpoZMgwLZ8gdGb7ttA07Vyq26S6xlKOEGGk0fUo/zUjjRkhnEmPvom259BNDCe
-	 dzSMai9vqfVERa2WP9251MTlMBeeRY7LWFJdT6bqHno2m3FMCPiB6VDFq6KXa/NPk6
-	 dWOVGHmes4x8Op9RW9J/uDoa77xXdTEqgEFDkcVDsn9XmFw/CKkqIBXgLIpi9H1d1I
-	 hoKxVuiY0/63A==
-Message-ID: <bb4232d6-2387-425f-9b10-811163e74329@kernel.org>
-Date: Fri, 10 May 2024 10:10:48 +0200
+	s=arc-20240116; t=1715328764; c=relaxed/simple;
+	bh=/oP7Bpr10/EZ8eMNvRVeS4AOS3RDhZayb83Of5+S7Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9yku/uoKKqjFe917098zQAQzIx3d+2hTaXgA24z95vdjoaqIZioq7LW7c/jGjisMrHbk6AGzc1843WZyJNLonB+pHR4JYc18esbqtPn8EZuXF/+u1htL6V+M0Cd0jppKoLhVfqR9Dn2K9PCFK9qpE3zIOclzPrFjXjg0oQ8+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1s5LMh-00DHkn-1Q;
+	Fri, 10 May 2024 16:12:28 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 10 May 2024 16:12:28 +0800
+Date: Fri, 10 May 2024 16:12:28 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCHv3 00/19] zram: convert to custom compression API and
+ allow algorithms tuning
+Message-ID: <Zj3W7OK9kDpneKXR@gondor.apana.org.au>
+References: <20240508074223.652784-1-senozhatsky@chromium.org>
+ <ZjzFB2CzCh1NKlfw@infradead.org>
+ <20240510051509.GI8623@google.com>
+ <Zj3PXKcpqUPuFJRu@gondor.apana.org.au>
+ <20240510080827.GB950946@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtla: Fix -t/--trace[=file]
-To: John Kacur <jkacur@redhat.com>
-References: <20240508212155.71946-1-jkacur@redhat.com>
-Content-Language: en-US, pt-BR, it-IT
-From: Daniel Bristot de Oliveira <bristot@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-devel@vger.kernel.org,
- lkml <linux-kernel@vger.kernel.org>
-In-Reply-To: <20240508212155.71946-1-jkacur@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510080827.GB950946@google.com>
 
-On 5/8/24 23:21, John Kacur wrote:
-> Normally with a short option we don't provide an equals sign like this
-> -tfile.txt
-> -t file.txt
-> 
-> But we do provide an equals sign with the long option like this
-> --trace=file.txt
-> 
-> Also, a good parser should work with a space instead of an equals sign
-> --trace file.txt
-> 
-> Most of these are broken!
+On Fri, May 10, 2024 at 05:08:27PM +0900, Sergey Senozhatsky wrote:
+>
+> For some algorithms params needs to be set before ctx is created.
+> For example zstd, crypto/zstd calls zstd_get_params(ZSTD_DEF_LEVEL, 0)
+> to estimate workspace size, which misses the opportunity to configure
+> it an way zram/zswap can benefit from, because those work with PAGE_SIZE
+> source buffer.  So for zram zstd_get_params(ZSTD_DEF_LEVEL, PAGE_SIZE)
+> is much better (it saves 1.2MB per ctx, which is per-CPU in zram).  Not
+> to mention that zstd_get_params(param->level, 0) is what we need at the
+> end.
 
-So, it is set to work _only_ with =file. It would be better to have
-it more robust... yes.
+For these algorithms where the overhead of allocating a default
+set of parameters and then changing them on a setparam call is
+too high, we could stipulate that the tfm can only be used after
+a setparam call (just as we require a setkey before cipher ops).
 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
-> Saving trace to ile.txt
-> File name truncated
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
-> Saving trace to timerlat_trace.txt
-> Default file name used instead of the requested one.
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
-> Saving trace to file.txt
-> This works, but people normally don't use '=' with a short option
-> 
-> /rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
-> Saving trace to ile.txt
-> File name truncated
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
-> timerlat_trace.txt
-> Default file name used instead of the requested one.
-> 
-> After the fix
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -tfile.txt
-> Saving trace to file.txt
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t file.txt
-> Saving trace to file.txt
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t=file.txt
-> Saving trace to file.txt
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace=file.txt
-> Saving trace to file.txt
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace file.txt
-> Saving trace to file.txt
-> 
-> I also tested -t and --trace without providing a file name both as the
-> last requested option and with a following long and short option
-> 
-> For example
-> 
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t -u
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace -u
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 -t
-> ./rtla timerlat hist -P f:95 -u -c0-11 -E3500 -T50 --trace
-> 
-> And all correctly do Saving trace to timerlat_trace.txt as expected
-> 
-> This fix is applied to both timerlat top and hist
-> and to osnoise top and hist.
-
-Ok, code wise it is fine. But it is still missing the changes for the --help
-messages and man pages. Would you mind addressing them?
-
-For instance, removing the need for the =...
-
-s/
--t/--trace[=file]: save the stopped trace to [file|timerlat_trace.txt]
-/
--t/--trace [file]: save the stopped trace to [file|timerlat_trace.txt]
-/
-
-Also, for the man page we will have to move the -t option from common_options.rst
-to common_timerlat_options.rst and common_osnoise_options.rst to fix this in
-man rtla-timerlat-top:
-
-       -t, --trace[=file]
-          Save the stopped trace to [file|osnoise_trace.txt].
-
-(it is pointing to the wrong file)
-
-Thanks!
--- Daniel
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
