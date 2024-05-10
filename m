@@ -1,201 +1,194 @@
-Return-Path: <linux-kernel+bounces-175256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54998C1D17
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:37:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4398D8C1D1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72741C20D1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89F11F215D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA27149E06;
-	Fri, 10 May 2024 03:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OI7yOx0T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30354149DE7;
+	Fri, 10 May 2024 03:39:58 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FC4524C4
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96AF149005;
+	Fri, 10 May 2024 03:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715312220; cv=none; b=a6hOLW98+MPJswm3BqqrKnhXIfNA/xtuRHmx/iowxmsO1c1vvdyhXnv0lGIwIH5y2w6ivkFBL2hcHXR+A8Ol2dSEEDHI+rK9IkcIVFM0byUni/phkyPmvoTJd8Ke4EBNgGRhehmzCMcuFRM71xCgvH6oHkrVjC4cbjY1aMf6swY=
+	t=1715312397; cv=none; b=DS6UVCg9f/DaNrQ6PRioa1GbvAsLOHwbrqoOVgKAI7cgzfIBB7Hdjvm/GLuKFEb7PL5CSBKJeQ1U6h6BUnljYZZjz5FRxpaPNjuhYqSe0hxUN6X3Slj6GDBobv7ziHO2CQ4Sb7XXMBjIOmkBaYPHHb5tmFORIubmhVB8DkRnVGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715312220; c=relaxed/simple;
-	bh=bmveony39CMa25FCZXSkYDZL0nL3DNLv+Xv3RlFohoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Le+Ig2TXsPtYfanH22NRmaCwNIf+nGj6J6YKtgkbMvYcW61e0OgG3ish+UC4dduh4nJi0FoYXqXzfaFe+WZoB8rf7gwSTotnzIl6dSad7HOcwEI836pq03bUZH3FBnYvG5EhOBv1gTLYZTWAC2Nh1p0un9yLZaedsIulLXHupwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OI7yOx0T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84BBFC2BBFC;
-	Fri, 10 May 2024 03:37:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715312220;
-	bh=bmveony39CMa25FCZXSkYDZL0nL3DNLv+Xv3RlFohoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OI7yOx0TT1hkxx9leCibqOQiWLpaOk+wR/xGfuRJ9qxMXewLUK4fSLQUoL63y1bjL
-	 R+wsTCybkLT4fqoamN018cstiHsVtYuVrF4aYavF9xM2WvO+2GFg5X//ZjHH50wDHf
-	 d0UK8F6JmsdvR8k6pJXruX7thFDtYWBa5Q/PI47XGCx7Lhr91xYMgjhcD3LWzSz3ms
-	 8GkF1GxtDhxX9jsFhRgLufOPtJy6CILLAopcCWDzOq0l4F9i4/x1tKFQ7SlKTnhMqH
-	 oYLTSgpFq9C+Y1JaebwDEhO3U8+ppfBn/NLyYGgdE2JIhJ+OVs1Hdjcd/AkurK5LNc
-	 nb4K63bO/2XAg==
-Date: Fri, 10 May 2024 03:36:58 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for
- inline_data inode
-Message-ID: <Zj2WWpHmHaWKbDgG@google.com>
-References: <20240506103313.773503-1-chao@kernel.org>
- <20240506103313.773503-3-chao@kernel.org>
- <ZjzxWp4-wmpCzBeB@google.com>
- <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
+	s=arc-20240116; t=1715312397; c=relaxed/simple;
+	bh=MzGKN2htNtSO7ZY5plDbnHZ7Vi7jZ4+VgzmNjhBrdLk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=mD3sUB8CE4Yl6vDEh+Plu9wbXJlHC7hvj0laxMS4nx+r5WWHiHp15UYcYBh/8QmZq0D0QEbF0KiGas3ndPkWfa+JgN+ReexQsNwYkMguONOqGVJoBehFMw066rPWZCj6Cqf9UXrb7soOzixbQAAJ4QqxVr7DSHnmM1HD/qCwl44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VbF4Z2tlKz4f3kpL;
+	Fri, 10 May 2024 11:39:42 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id C12281A0901;
+	Fri, 10 May 2024 11:39:50 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgAnmAsElz1m8DcpMg--.16051S3;
+	Fri, 10 May 2024 11:39:50 +0800 (CST)
+Subject: Re: [PATCH v3 03/26] ext4: correct the hole length returned by
+ ext4_map_blocks()
+To: Luis Henriques <luis.henriques@linux.dev>, Theodore Ts'o <tytso@mit.edu>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ willy@infradead.org, zokeefe@google.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
+ <20240127015825.1608160-4-yi.zhang@huaweicloud.com>
+ <87zfszuib1.fsf@brahms.olymp> <20240509163953.GI3620298@mit.edu>
+ <87h6f6vqzj.fsf@brahms.olymp>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <b9b93ad2-2253-6850-da38-afc42370303e@huaweicloud.com>
+Date: Fri, 10 May 2024 11:39:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
+In-Reply-To: <87h6f6vqzj.fsf@brahms.olymp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgAnmAsElz1m8DcpMg--.16051S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFyxGw15KFWfuF4DAF4Dtwb_yoWrCw48pF
+	WfAa1Utr1kG340krZ7Aw1rX3WS9w45C3y3ArWfWryfAas8ur1kGFyxKFWY9F97ur48u3ya
+	qayjqFy7KF1qvFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 05/10, Chao Yu wrote:
-> On 2024/5/9 23:52, Jaegeuk Kim wrote:
-> > On 05/06, Chao Yu wrote:
-> > > syzbot reports a f2fs bug as below:
-> > > 
-> > > ------------[ cut here ]------------
-> > > kernel BUG at fs/f2fs/inline.c:258!
-> > > CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
-> > > RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
-> > > Call Trace:
-> > >   f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
-> > >   f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
-> > >   __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
-> > >   f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
-> > >   do_writepages+0x35b/0x870 mm/page-writeback.c:2612
-> > >   __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
-> > >   writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
-> > >   wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
-> > >   wb_do_writeback fs/fs-writeback.c:2264 [inline]
-> > >   wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
-> > >   process_one_work kernel/workqueue.c:3254 [inline]
-> > >   process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
-> > >   worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
-> > >   kthread+0x2f2/0x390 kernel/kthread.c:388
-> > >   ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-> > >   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> > > 
-> > > The root cause is: inline_data inode can be fuzzed, so that there may
-> > > be valid blkaddr in its direct node, once f2fs triggers background GC
-> > > to migrate the block, it will hit f2fs_bug_on() during dirty page
-> > > writeback.
-> > > 
-> > > Let's add sanity check on i_nid field for inline_data inode, meanwhile,
-> > > forbid to migrate inline_data inode's data block to fix this issue.
-> > > 
-> > > Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-> > > Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
-> > > Signed-off-by: Chao Yu <chao@kernel.org>
-> > > ---
-> > >   fs/f2fs/f2fs.h   |  2 +-
-> > >   fs/f2fs/gc.c     |  6 ++++++
-> > >   fs/f2fs/inline.c | 17 ++++++++++++++++-
-> > >   fs/f2fs/inode.c  |  2 +-
-> > >   4 files changed, 24 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> > > index fced2b7652f4..c876813b5532 100644
-> > > --- a/fs/f2fs/f2fs.h
-> > > +++ b/fs/f2fs/f2fs.h
-> > > @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
-> > >    * inline.c
-> > >    */
-> > >   bool f2fs_may_inline_data(struct inode *inode);
-> > > -bool f2fs_sanity_check_inline_data(struct inode *inode);
-> > > +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
-> > >   bool f2fs_may_inline_dentry(struct inode *inode);
-> > >   void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
-> > >   void f2fs_truncate_inline_inode(struct inode *inode,
-> > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> > > index e86c7f01539a..041957750478 100644
-> > > --- a/fs/f2fs/gc.c
-> > > +++ b/fs/f2fs/gc.c
-> > > @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
-> > >   				continue;
-> > >   			}
-> > > +			if (f2fs_has_inline_data(inode)) {
-> > > +				iput(inode);
-> > > +				set_sbi_flag(sbi, SBI_NEED_FSCK);
-> > > +				continue;
-> > 
-> > Any race condtion to get this as false alarm?
+On 2024/5/10 1:23, Luis Henriques wrote:
+> On Thu 09 May 2024 12:39:53 PM -04, Theodore Ts'o wrote;
 > 
-> Since there is no reproducer for the bug, I doubt it was caused by metadata
-> fuzzing, something like this:
+>> On Thu, May 09, 2024 at 04:16:34PM +0100, Luis Henriques wrote:
+>>>
+>>> It's looks like it's easy to trigger an infinite loop here using fstest
+>>> generic/039.  If I understand it correctly (which doesn't happen as often
+>>> as I'd like), this is due to an integer overflow in the 'if' condition,
+>>> and should be fixed with the patch below.
+>>
+>> Thanks for the report.  However, I can't reproduce the failure, and
+>> looking at generic/039, I don't see how it could be relevant to the
+>> code path in question.  Generic/039 creates a test symlink with two
+>> hard links in the same directory, syncs the file system, and then
+>> removes one of the hard links, and then drops access to the block
+>> device using dmflakey.  So I don't see how the extent code would be
+>> involved at all.  Are you sure that you have the correct test listed?
 > 
-> - inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
-> - SIT/SSA entry of the block is valid;
-> - background GC migrates the block;
-> - kworker writeback it, and trigger the bug_on().
+> Yep, I just retested and it's definitely generic/039.  I'm using a simple
+> test environment, with virtme-ng.
+> 
+>> Looking at the code in question in fs/ext4/extents.c:
+>>
+>> again:
+>> 	ext4_es_find_extent_range(inode, &ext4_es_is_delayed, hole_start,
+>> 				  hole_start + len - 1, &es);
+>> 	if (!es.es_len)
+>> 		goto insert_hole;
+>>
+>>   	 * There's a delalloc extent in the hole, handle it if the delalloc
+>>   	 * extent is in front of, behind and straddle the queried range.
+>>   	 */
+>>  -	if (lblk >= es.es_lblk + es.es_len) {
+>>  +	if (lblk >= ((__u64) es.es_lblk) + es.es_len) {
+>>   		/*
+>>   		 * The delalloc extent is in front of the queried range,
+>>   		 * find again from the queried start block.
+>> 		len -= lblk - hole_start;
+>> 		hole_start = lblk;
+>> 		goto again;
+>>
+>> lblk and es.es_lblk are both __u32.  So the infinite loop is
+>> presumably because es.es_lblk + es.es_len has overflowed.  This should
+>> never happen(tm), and in fact we have a test for this case which
+> 
+> If I instrument the code, I can see that es.es_len is definitely set to
+> EXT_MAX_BLOCKS, which will overflow.
+> 
 
-Wasn't detected by sanity_check_inode?
+Thanks for the report. After looking at the code, I think the root
+cause of this issue is the variable es was not initialized on replaying
+fast commit. ext4_es_find_extent_range() will return directly when
+EXT4_FC_REPLAY flag is set, and then the es.len becomes stall.
 
+I can always reproduce this issue on generic/039 with
+MKFS_OPTIONS="-O fast_commit".
+
+This uninitialization problem originally existed in the old
+ext4_ext_put_gap_in_cache(), but it didn't trigger any real problem
+since we never check and use extent cache when replaying fast commit.
+So I suppose the correct fix would be to unconditionally initialize
+the es variable.
+
+Thanks,
+Yi.
+
+>> *should* have gotten tripped when ext4_es_find_extent_range() calls
+>> __es_tree_search() in fs/ext4/extents_status.c:
+>>
+>> static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
+>> {
+>> 	BUG_ON(es->es_lblk + es->es_len < es->es_lblk);
+>> 	return es->es_lblk + es->es_len - 1;
+>> }
+>>
+>> So the patch is harmless, and I can see how it might fix what you were
+>> seeing --- but I'm a bit nervous that I can't reproduce it and the
+>> commit description claims that it reproduces easily; and we should
+>> have never allowed the entry to have gotten introduced into the
+>> extents status tree in the first place, and if it had been introduced,
+>> it should have been caught before it was returned by
+>> ext4_es_find_extent_range().
+>>
+>> Can you give more details about the reproducer; can you double check
+>> the test id, and how easily you can trigger the failure, and what is
+>> the hardware you used to run the test?
 > 
-> Thoughts?
+> So, here's few more details that may clarify, and that I should have added
+> to the commit description:
 > 
-> Thanks,
+> When the test hangs, the test is blocked mounting the flakey device:
 > 
-> > 
-> > > +			}
-> > > +
-> > >   			err = f2fs_gc_pinned_control(inode, gc_type, segno);
-> > >   			if (err == -EAGAIN) {
-> > >   				iput(inode);
-> > > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> > > index ac00423f117b..067600fed3d4 100644
-> > > --- a/fs/f2fs/inline.c
-> > > +++ b/fs/f2fs/inline.c
-> > > @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
-> > >   	return !f2fs_post_read_required(inode);
-> > >   }
-> > > -bool f2fs_sanity_check_inline_data(struct inode *inode)
-> > > +static bool has_node_blocks(struct inode *inode, struct page *ipage)
-> > > +{
-> > > +	struct f2fs_inode *ri = F2FS_INODE(ipage);
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
-> > > +		if (ri->i_nid[i])
-> > > +			return true;
-> > > +	}
-> > > +	return false;
-> > > +}
-> > > +
-> > > +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
-> > >   {
-> > >   	if (!f2fs_has_inline_data(inode))
-> > >   		return false;
-> > > +	if (has_node_blocks(inode, ipage))
-> > > +		return false;
-> > > +
-> > >   	if (!support_inline_data(inode))
-> > >   		return true;
-> > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> > > index c26effdce9aa..1423cd27a477 100644
-> > > --- a/fs/f2fs/inode.c
-> > > +++ b/fs/f2fs/inode.c
-> > > @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
-> > >   		}
-> > >   	}
-> > > -	if (f2fs_sanity_check_inline_data(inode)) {
-> > > +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
-> > >   		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
-> > >   			  __func__, inode->i_ino, inode->i_mode);
-> > >   		return false;
-> > > -- 
-> > > 2.40.1
+>    mount -t ext4 -o acl,user_xattr /dev/mapper/flakey-test /mnt/scratch
+> 
+> which will eventually call into ext4_ext_map_blocks(), triggering the bug.
+> 
+> Also, some more code instrumentation shows that after the call to
+> ext4_ext_find_hole(), the 'hole_start' will be set to '1' and 'len' to
+> '0xfffffffe'.  This '0xfffffffe' value is a bit odd, but it comes from the
+> fact that, in ext4_ext_find_hole(), the call to
+> ext4_ext_next_allocated_block() will return EXT_MAX_BLOCKS and 'len' will
+> thus be set to 'EXT_MAX_BLOCKS - 1'.
+> 
+> Does this make sense?
+> 
+> Cheers,
+> 
+
 
