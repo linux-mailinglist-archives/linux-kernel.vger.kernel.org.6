@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-175969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE868C2806
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:41:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BD38C2808
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E29B230FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:41:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2437C281A89
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7A8172780;
-	Fri, 10 May 2024 15:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILH92WRG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1AE171666;
+	Fri, 10 May 2024 15:42:35 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA91A171E72;
-	Fri, 10 May 2024 15:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE74CBA41;
+	Fri, 10 May 2024 15:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715355668; cv=none; b=RtkkuzSBSlIuMIpI6tchId00mFiNp1ixdEn3DWkp2RDkfJoolQpSdgDMOmycidDTxSVu19/q72LtUgQxOevMbaCsEvQPcgRLYxhmZZr/2gY/nLL+VgbdvQWh+pqsjvUHVWm7mWP7NXIzFsBkeiwlEjL3/PQFg11qU/1rX9UOkdw=
+	t=1715355755; cv=none; b=cYn89BFaFA8yvoi08NhAPyNVcP5eExKIoGKTOmaJ0bt0p+q17J3NGjL+9vMXBNpfy0UUw7UKoNOND3EWGO6/K0tXVnFgzg09eY23ElwTWIydWSdJ4PUmpixtfv07/czg4oN+P+D5DA2D3bvQDIFnkrRo7pkui8HhC4yV5/Sz9fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715355668; c=relaxed/simple;
-	bh=LTm7mVVSrXVQxGvjvWX4FzLddQuu5y9GagjAYFS7UnE=;
+	s=arc-20240116; t=1715355755; c=relaxed/simple;
+	bh=DOULkx4h22h/VqRsJyrl3vvBDlAXKnRKrhh6K/8+QwE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwOKQP0F8a8dhhYYm3KR1xfjTahdhKkvY578dUTJANDkhyqWMddBm2MGlEEH/kXtoHvqx9ZxtaDUrmGynMz93Qwo5yby4lQKdM9oJBnq5lseOKLZWs7xFuqyi5MvzIzBchBrvWcsEoPxshaHEYzXbdTRckFp7ZdFAtVY591qEAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILH92WRG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53594C113CC;
-	Fri, 10 May 2024 15:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715355668;
-	bh=LTm7mVVSrXVQxGvjvWX4FzLddQuu5y9GagjAYFS7UnE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=ILH92WRGpndE4x0yfGD4wnPfYZ4rTISC0GlbkmceAWhVMsME2gQOqcgf/ilW0nt+w
-	 v3PgRBbqDB1BUfYWtw4vw13qLuy9/2fLBPsaEzd9sUusQNPTTnNxgc3SOBUpcbvk0w
-	 n4Wqru7CY/SKzBi29lMdglgHeGz3ZcGK88QSoEv3w38yOC0VsTEVdYBeGK+YpxRE/H
-	 gWeFh8QBdLUUo094YR0v+wlW6y3GKeVYYeYOhcE+e6jKMee4NpEsPyLY2Lfp/85BMB
-	 lkCGIXTA+fs89uOlcmGe1j1PkK+CYgLA9DbH7XR1KGdrd80DgfkFce1b7v+8cg1Txx
-	 c/ev8CR31bDKQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 0576BCE08A1; Fri, 10 May 2024 08:41:08 -0700 (PDT)
-Date: Fri, 10 May 2024 08:41:07 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>,
-	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
-Message-ID: <de92101c-f9c4-4af4-95f4-19a6f59b636f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240510141921.883231-1-leitao@debian.org>
- <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y1OFbE1+vR/uPpRckBjTVC3wIfAFiEa9rIsvqm+9Lj/p3b0usSm4Yv6lToPZoB0Hb9b/vArFhmqSmFJ7/01GxRiytuK57Sq/AwgvZDqgBwKV6W9edVmRpcDmYG3jZ2Em3ifhIHJL6tLbJZBrxI0xjvjaQ1dr0ui62EUslF+H4Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: lzz7vI7xRQ+Lsi3bskvw8A==
+X-CSE-MsgGUID: EwSaGLI2S7GdhCYPD+Oc0g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="28827257"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="28827257"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:42:32 -0700
+X-CSE-ConnectionGUID: kXf6+rPrTDmcA/d6/cuUfg==
+X-CSE-MsgGUID: hH8xDzBwQl2Z+ol7FiK8DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="29760609"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:42:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1s5SOC-000000069Lt-2MIH;
+	Fri, 10 May 2024 18:42:28 +0300
+Date: Fri, 10 May 2024 18:42:28 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] gpiolib: Return label, if set, for IRQ only line
+Message-ID: <Zj5AZMycTCPUoT-l@smile.fi.intel.com>
+References: <20240508144741.1270912-1-andriy.shevchenko@linux.intel.com>
+ <CAMRc=Me3XOy6HfqjxDQBwnSW9pOCtK_Ry7keJ2LiXGFB88t4nA@mail.gmail.com>
+ <ZjzWlNdDVVBRD-Ma@surfacebook.localdomain>
+ <CAMRc=MeuAQgos+=GmYr0X+5Pi+foJaRNwuNM0D3b4-FwxoD2mg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,33 +67,71 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
+In-Reply-To: <CAMRc=MeuAQgos+=GmYr0X+5Pi+foJaRNwuNM0D3b4-FwxoD2mg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, May 10, 2024 at 07:28:41AM -0700, Bart Van Assche wrote:
-> On 5/10/24 07:19, Breno Leitao wrote:
-> > diff --git a/block/blk.h b/block/blk.h
-> > index d9f584984bc4..57a1d73a0718 100644
-> > --- a/block/blk.h
-> > +++ b/block/blk.h
-> > @@ -353,7 +353,8 @@ int blk_dev_init(void);
-> >    */
-> >   static inline bool blk_do_io_stat(struct request *rq)
-> >   {
-> > -	return (rq->rq_flags & RQF_IO_STAT) && !blk_rq_is_passthrough(rq);
-> > +	/* Disk stats reading isn’t critical, let it race */
-> > +	return (data_race(rq->rq_flags) & RQF_IO_STAT) && !blk_rq_is_passthrough(rq);
-> >   }
-> >   void update_io_ticks(struct block_device *part, unsigned long now, bool end);
+On Thu, May 09, 2024 at 04:23:07PM +0200, Bartosz Golaszewski wrote:
+> On Thu, May 9, 2024 at 3:58 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > Thu, May 09, 2024 at 03:15:05PM +0200, Bartosz Golaszewski kirjoitti:
+> > > On Wed, May 8, 2024 at 4:47 PM Andy Shevchenko
+> > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > >
+> > > > If line has been locked as IRQ without requesting,
+> > > > still check its label and return it, if not NULL.
+> > > >
+> > > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > > ---
+> > > >  drivers/gpio/gpiolib.c | 12 ++++++------
+> > > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> > > > index db536ec9734d..1f1673552767 100644
+> > > > --- a/drivers/gpio/gpiolib.c
+> > > > +++ b/drivers/gpio/gpiolib.c
+> > > > @@ -105,16 +105,16 @@ const char *gpiod_get_label(struct gpio_desc *desc)
+> > > >         unsigned long flags;
+> > > >
+> > > >         flags = READ_ONCE(desc->flags);
+> > > > -       if (test_bit(FLAG_USED_AS_IRQ, &flags) &&
+> > > > -           !test_bit(FLAG_REQUESTED, &flags))
+> > > > -               return "interrupt";
+> > > > -
+> > > > -       if (!test_bit(FLAG_REQUESTED, &flags))
+> > > > -               return NULL;
+> > > >
+> > > >         label = srcu_dereference_check(desc->label, &desc->srcu,
+> > > >                                        srcu_read_lock_held(&desc->srcu));
+> > > >
+> > > > +       if (test_bit(FLAG_USED_AS_IRQ, &flags))
+> > > > +               return label->str ?: "interrupt";
+> > > > +
+> > > > +       if (!test_bit(FLAG_REQUESTED, &flags))
+> > > > +               return NULL;
+> > > > +
+> > > >         return label->str;
+> > > >  }
+> > >
+> > > What good would it be if gpiochip_dup_line_label() returns NULL for
+> > > unrequested lines anyway?
+> >
+> > Then it should be handled differently in those cases. So, consider it as
+> > a preparatory patch which doesn't change current behaviour.
+> >
+> > (Yes, I have some hack patches locally which do something useful, but they are
+> > not ready. In any case this one looks to me as a good cleanup on its own for
+> > the sake of readability of the code and reduced amount of checks.)
+> >
 > 
-> Why to annotate this race with data_race() instead of READ_ONCE()? Are
-> there any cases in which it is better to use data_race() than
-> READ_ONCE()?
+> Fair enough but I would like to know what your bigger plan is before
+> picking this up.
 
-We use this pattern quite a bit in RCU.  For example, suppose that we
-have a variable that is accessed only under a given lock, except that it
-is also locklessly accessed for diagnostics or statistics.  Then having
-unmarked (normal C language) accesses under the lock and data_race()
-for that statistics enables KCSAN to flag other (buggy) lockless accesses.
+I stand corrected, this patch has an immediate effect on the generic
+gpiolib_dbg_show() which does *not* use the above mentioned call..
 
-							Thanx, Paul
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
