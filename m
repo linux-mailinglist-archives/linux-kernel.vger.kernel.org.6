@@ -1,201 +1,243 @@
-Return-Path: <linux-kernel+bounces-175206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819898C1C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:04:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC66A8C1C72
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD9B282548
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:04:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835551F21A93
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06B913BAC6;
-	Fri, 10 May 2024 02:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7FA14830C;
+	Fri, 10 May 2024 02:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsaMpkKi"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wpApFz8i"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6960F29CE1;
-	Fri, 10 May 2024 02:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715306679; cv=none; b=J20L6H2jbbnGsiLLPOm5rrfATLTkRKM9SMjhFwKQIO0FiWhe3gYfjKbytVYqTsKzKsMVhWNTzdfJQ/tQ37KAPbE5LSpkBOeRV101F2yY3130+6web+8HM7aMH70dmunbzrqOpO6AKDf43qOOISjfVY5CengAoNimc+gpsl0Mz8o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715306679; c=relaxed/simple;
-	bh=Wt5NjcQsRy6vXuKFt+dzg0rWl480IGdBGm0rPEQXqIE=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ApPKcjsg4nXbuCNLjMwv1SUri0cY9sQQ8OTRwy0HWk7MVLgl5UpcyZ1ev4ao5sV8ylLLk5ZHrqfKLFd0GWPRQtGH2QU8Dtu9SMhoALp7aOtSvuBp6WwoUMFWgPlUC98MkFX4tErDwME8eGVIL21qbZec8+mEJL7g8Vsr1eewXEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsaMpkKi; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59c0a6415fso422903266b.1;
-        Thu, 09 May 2024 19:04:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715306676; x=1715911476; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BI5tyqymmN9gGbJ6fagCaRykBg1tbmyzeV+T0zeBy6M=;
-        b=LsaMpkKiUrke9UHG/PL+f9HgcQRSqapYJVK2RCIu3Vx3V00gxiMJS9hC4rzxf8dlYC
-         x6oIcXrZ2B9Lx/x8wWUllD0xgUPnN1IdJA9xlVbSHDPEThP7w7O9B4xcs4hTM3yct0+W
-         I8s4GWrI/WviZKmSt82Y0TFF1DFiyQoDd66ScauXv3XWv2p5fCICTHvwzSWXTIr2lVu5
-         aIT9t/9yqUCHnUxWtzeixIpZOPn1xpwJLREi14E1rpZA+Q5ntomvm93WQW5J2BceiD6u
-         +Fl2qbcjukrvl+5XAC6MRnwL1C1tZh3no5RAr8C4nWejxmSIZpjJ4WMP4fsqC/BXg3hZ
-         RPJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715306676; x=1715911476;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BI5tyqymmN9gGbJ6fagCaRykBg1tbmyzeV+T0zeBy6M=;
-        b=umcFnLoT3HlyY7XWxZnUUywWlAnDC5d6ze+6PUNT3ziTir2yMevF+QXvhRotZrJFSY
-         UHwaDpvtP+01ELpvVZm80J+21oszRIQL8ujiYV2oJDsc47L0Vaa0b3ssfld1FkcHIwdJ
-         qOtw+n1wUZwrePvLl3+fujFnHksvQP3BQZ8CecQtLfwjk82E5YCHVnyHUYIgIPveq3Xv
-         5EYFao8TL8y4pY43hdh+qfNkX7eKgRIRoNNKCjeSHK0R42f8fli4+QTDI8mcM7Q7izrZ
-         uHtWedwarpb65dCL3JqMBZgo+6kGz69YB8Uiyx+5ZQHOzyNsFNYxjbmGHjsYCxQkCUC1
-         SCgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaZbS3JV3F9sHS5iIK2JnYUmUBJPfWHzrjFh40EWJjdxQAOCIUuiowyyXuw7gvpRf8xjnZpXf8LGBMB5jgk0tr2xJl1FFkjfgAAtyzH4i7W02Z34u10kAfdYaFE+4dFMBqDqQ/YNI4Kg==
-X-Gm-Message-State: AOJu0YxChRBg23aDeDqQNGtaKnKbVwBVkjuMdPEuHz9+R/3LUUADEQum
-	w90KF67gwAtXooFmGooKqzXN/HjSe5ulO15buJ1PEi8Lsrone0zQ3WQH0z9D
-X-Google-Smtp-Source: AGHT+IF2QDguCK8rTieenO0F4aGJLfLKKE/VD2hKk7gSUjMQEBdHmWN/fJPbugbyh1hN9Y/Vir1/Ug==
-X-Received: by 2002:a17:906:3c57:b0:a59:2e45:f528 with SMTP id a640c23a62f3a-a5a2d5c96b5mr71148666b.38.1715306675648;
-        Thu, 09 May 2024 19:04:35 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d553sm133706966b.43.2024.05.09.19.04.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 09 May 2024 19:04:34 -0700 (PDT)
-From: Wei Yang <richard.weiyang@gmail.com>
-To: mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	aneesh.kumar@kernel.org,
-	naveen.n.rao@linux.ibm.com,
-	arnd@arndb.de,
-	rppt@kernel.org,
-	anshuman.khandual@arm.com
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	Wei Yang <richard.weiyang@gmail.com>
-Subject: [Patch v2] mm/memblock: discard .text/.data if CONFIG_ARCH_KEEP_MEMBLOCK not set
-Date: Fri, 10 May 2024 02:04:22 +0000
-Message-Id: <20240510020422.8038-1-richard.weiyang@gmail.com>
-X-Mailer: git-send-email 2.11.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5DB1148FEB;
+	Fri, 10 May 2024 02:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715308602; cv=fail; b=LUwTY/y7nwdBQNBDBgXvs+mjiQSTd9Db9JpGv1VQ72V9SNdIC22Q2p185xUVVYtYR4y3lnu2wFTNWJRHObfOur/RCAyrkXRPgdp4UJuXiTAHBJyGPwFKmrLyVruxGrgePFDcJbe1f+YjiCkVV2Tr+WHoz2jszcLIj5pkDgVO2/4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715308602; c=relaxed/simple;
+	bh=55rOGSOSrcRZM3UtM+oxDWtePaOWhJq7An03Nsz/miU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rR5wgk/lwtQHGGusljRawIYa7P3HDzZ/QQIBsunh4S8o3bAXNFZ2gynEw35ESPgNaPTgQsbv71xa0hdlGRcO9OP8gwDrvS7SxLm1YWeSH1Uz2SFq5M83vZUJVyGsEqU/OqFCy3YeS4c1EWSCL8RdZuCJAmw6apMlcPMNY7F0tW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wpApFz8i; arc=fail smtp.client-ip=40.107.237.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jvUJ2uQLt5PVmBLnGtBqYs6HYo4SbN01xFxHcMlfRpMHmVlSyvlhwR5HJvfHnGLgu5PejxDGEgL6EUmdGCrn0cLF+MZbLr+HY95j3C5Xtobq9wxpC6V3eXgr23X/F7cykl2cPDfWYx5dX/RwpVrFM5Uqf+o6IpHFqbgfts1yiSSJjvtYoIjfPlW862o7AUT2mcFo7HDmpiVAZ5tp+rBgUbCnQNN/iDnP41u/wl2mK2gXDmCXL9ZLzhpkSmwlbXAZmLF+fCmhRz+ylDeXTa6dQ2T/tPFc9Eel0kMcolEmEyG6vog4BBEEu4HG8HD/69ME9WfyFwcqrr93MOoWwUJ4MQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zvSZolCBykKdQtTZaILW7FQXukMYbhMEQkcghT+tDNw=;
+ b=gqnSKT629gQzl3bOWgWoA6NQ8Kk8nNcc9QaenPmK3em5Qx1v2aEVKQqveewzcI5k24jVcyJUjGopvYAHruM5iOm83fdHdF3uw1Yl1QczLUtNWu3vPNtu1zzkqJVX3dZNUIX3wcQL0jsnuIaAoVBl91s4fkJrpoEGryUY1JGhu2YBPVqTNO1B5R+RiVwJMPwD/VVD4yWFq/YFUq49QNQBKmiktYrQscrke1esN0OXkzNfcUcLTZGverbowNPQCafD4BKKdCQOAcUWbCo8Ssu3zr6e69M23CWRG7ZYh9WWVIpkWFqj7I7RBbgSoyQlmjNQJ1zCMgkBX/WhaxwD/DbbVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zvSZolCBykKdQtTZaILW7FQXukMYbhMEQkcghT+tDNw=;
+ b=wpApFz8iNOpST/ptOBC9jf9MLZ3qXtQowrhszTUfU7ORQRopZHPywvNrq3R34WRFMqHD2zyB52yMBWY176+a0qsF2hCFHJF4dg+HK056ZIy64gJKsNPNVNgaGQE3dod1V6YW8MExwjf8ZvOOwwQ77qkFubmLvupGTCTDT36ir9M=
+Received: from MN2PR11CA0023.namprd11.prod.outlook.com (2603:10b6:208:23b::28)
+ by CH2PR12MB4149.namprd12.prod.outlook.com (2603:10b6:610:7c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48; Fri, 10 May
+ 2024 02:36:32 +0000
+Received: from MN1PEPF0000ECD7.namprd02.prod.outlook.com
+ (2603:10b6:208:23b:cafe::bd) by MN2PR11CA0023.outlook.office365.com
+ (2603:10b6:208:23b::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49 via Frontend
+ Transport; Fri, 10 May 2024 02:36:32 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MN1PEPF0000ECD7.mail.protection.outlook.com (10.167.242.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Fri, 10 May 2024 02:36:32 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 9 May
+ 2024 21:36:30 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: <kvm@vger.kernel.org>
+CC: <linux-coco@lists.linux.dev>, <linux-mm@kvack.org>,
+	<linux-crypto@vger.kernel.org>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<jroedel@suse.de>, <thomas.lendacky@amd.com>, <hpa@zytor.com>,
+	<ardb@kernel.org>, <pbonzini@redhat.com>, <seanjc@google.com>,
+	<vkuznets@redhat.com>, <jmattson@google.com>, <luto@kernel.org>,
+	<dave.hansen@linux.intel.com>, <slp@redhat.com>, <pgonda@google.com>,
+	<peterz@infradead.org>, <srinivas.pandruvada@linux.intel.com>,
+	<rientjes@google.com>, <dovmurik@linux.ibm.com>, <tobin@ibm.com>,
+	<bp@alien8.de>, <vbabka@suse.cz>, <kirill@shutemov.name>,
+	<ak@linux.intel.com>, <tony.luck@intel.com>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <alpergun@google.com>,
+	<jarkko@kernel.org>, <ashish.kalra@amd.com>, <nikunj.dadhania@amd.com>,
+	<pankaj.gupta@amd.com>, <liam.merwick@oracle.com>, <papaluri@amd.com>, "Isaku
+ Yamahata" <isaku.yamahata@intel.com>
+Subject: [PATCH v15 21/23] KVM: MMU: Disable fast path for private memslots
+Date: Thu, 9 May 2024 20:58:20 -0500
+Message-ID: <20240510015822.503071-1-michael.roth@amd.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240501085210.2213060-1-michael.roth@amd.com>
+References: <20240501085210.2213060-1-michael.roth@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD7:EE_|CH2PR12MB4149:EE_
+X-MS-Office365-Filtering-Correlation-Id: 097b6ffb-7c53-4761-2923-08dc709a00d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|7416005|36860700004|376005|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Jcc013T/TnDlncSxcKTAre8nd9XjAKVnDK5/eAD2XzDjCUJY3vEZP4Yb+39O?=
+ =?us-ascii?Q?QKek7B7rYKlQPfXOZAbBfWQieYUOIxNsxt77KDQsGQlyepMOZJzuPKvgycRn?=
+ =?us-ascii?Q?8bcQvDACipdY3J+AxyXxYFyNkUUQthz8ERUW54uh/pXNxW2cB1tl8zb82Li1?=
+ =?us-ascii?Q?TAuzQ6fdwF0sYFNiS03Z7cTpMNAZ+YTTYXJBYWIC1IamzR7r3/ElN0iHmK9H?=
+ =?us-ascii?Q?hpP0xay7f9WbfueybKuA10IzERtAGikLYjpVhMpq6fOAJc83Z+pJLmfGD8/+?=
+ =?us-ascii?Q?lFC1aZhndbzS4hVsaGAI1GHqRrLgQNG2FZ4PWsOvGb8BLRPx86yQ80F6w29I?=
+ =?us-ascii?Q?7dS5+MZ8+HpoXBjf4zcqSMtJfKQF8sDyt8YB7E5GT/uxTqkPgMfGRzJceLaf?=
+ =?us-ascii?Q?zFUu827Oa7P8KQ4uYtD1+csWTKgupWB5jAV2gVjbwH90YLGlmlHmW1C99Mrr?=
+ =?us-ascii?Q?f81IKDLWtXFfwsWdFkV0YphLH6Tlqqf7Q4AkPJfTPdGhkJcgN7BjrIO4yOtd?=
+ =?us-ascii?Q?5PMjmjZTRqAXfnXWfST5r3oDCqRVg0rQktG2XxnL8Cl+pKMaoCYbw/rdvIXe?=
+ =?us-ascii?Q?q6AB9NQ29h2wndTl+RCY+FqGpcyTyFnub61ZhZlgri3uV8AaUrNEBlshvHsV?=
+ =?us-ascii?Q?ZbKrZTG/KWY42rWtSrkttqwvoKNybqevOq117EbG2PkAnM/5mYChfuYTJI6a?=
+ =?us-ascii?Q?6psqv7PgtVVHfPPUslNfUGNpFHwqHZRiBEz1iUHuk0I/vDnNdlzh4TkJCLbt?=
+ =?us-ascii?Q?eqA+q4D7JHQenHhMr1KYbR/PNhDp6igSpw/x7EpKFQgHU7sE3ao7vel7whjO?=
+ =?us-ascii?Q?UjY/ndHzg3NDDQKIShfGJ5sQwJX72nDf/jf9exh+Tyc2iGzHTVXgmbLjjdmG?=
+ =?us-ascii?Q?uapnyskwWqe+Mq6vycId2gLu3PPK4yBwaT1KYzuhBh4lIUk6GZtwnNGyNLUw?=
+ =?us-ascii?Q?RDvHIHCzn4hOKIpAH5Y5Qx4S2M/2y8tWdS0gfM7sPD5XYBTDHIy8lZzxmmVP?=
+ =?us-ascii?Q?t0p7vcIGCNlIknxkjLYWuVqRCiMYa3UJ/rhDmv9gwFuQwybUyJR9DPHTCGZf?=
+ =?us-ascii?Q?+zxtTsySV5sre8+DP6sypPjmueACiexuDLt+n7QO20XD1lF+LpdmZqTecHGy?=
+ =?us-ascii?Q?ofULqIJUXeKe/lee+PnJVVoxcamdHIeJo9/vPRZEPaA6MVvaHm6FTj1aJ4Tk?=
+ =?us-ascii?Q?BFEB7R80fFLmymevZFrQjmA6QjsqdVCABoFNPwkHwADQ6ZrYpcDF5R4DS0Bw?=
+ =?us-ascii?Q?wPLO9J6bQfkshOmvtPD0LoPNz3y+q3yZIP7sjqMMrn0Mp7lm++fHhVnphP88?=
+ =?us-ascii?Q?rysocejpT+vfRdVzXL68uL/QlTy/tLkV67n6yPXL4iUrUncUgrVWfwgwEoGN?=
+ =?us-ascii?Q?olojh8t1cX3d+ZZYrQnn+Usn1mSW?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(36860700004)(376005)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 02:36:32.0255
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 097b6ffb-7c53-4761-2923-08dc709a00d3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000ECD7.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4149
 
-When CONFIG_ARCH_KEEP_MEMBLOCK not set, we expect to discard related
-code and data. But it doesn't until CONFIG_MEMORY_HOTPLUG not set
-neither.
+For hardware-protected VMs like SEV-SNP guests, certain conditions like
+attempting to perform a write to a page which is not in the state that
+the guest expects it to be in can result in a nested/extended #PF which
+can only be satisfied by the host performing an implicit page state
+change to transition the page into the expected shared/private state.
+This is generally handled by generating a KVM_EXIT_MEMORY_FAULT event
+that gets forwarded to userspace to handle via
+KVM_SET_MEMORY_ATTRIBUTES.
 
-This patch puts memblock's .text/.data into its own section, so that it
-only depends on CONFIG_ARCH_KEEP_MEMBLOCK to discard related code and
-data.
+However, the fast_page_fault() code might misconstrue this situation as
+being the result of a write-protected access, and treat it as a spurious
+case when it sees that writes are already allowed for the sPTE. This
+results in the KVM MMU trying to resume the guest rather than taking any
+action to satisfy the real source of the #PF such as generating a
+KVM_EXIT_MEMORY_FAULT, resulting in the guest spinning on nested #PFs.
 
-After this, from the log message in mem_init_print_info(), init size
-increase from 2420K to 2432K on arch x86.
+For now, just skip the fast path for hardware-protected VMs since they
+don't currently utilize any of this access-tracking machinery anyway. In
+the future, these considerations will need to be taken into account if
+there's any need/desire to re-enable the fast path for
+hardware-protected VMs.
 
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+Since software-protected VMs don't have a notion of a shared vs. private
+that's separate from what KVM is tracking, the above
+KVM_EXIT_MEMORY_FAULT condition wouldn't occur, so avoid the special
+handling for that case for now.
 
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>
+Signed-off-by: Michael Roth <michael.roth@amd.com>
 ---
-v2: fix orphan section for powerpc
----
- arch/powerpc/kernel/vmlinux.lds.S |  1 +
- include/asm-generic/vmlinux.lds.h | 14 +++++++++++++-
- include/linux/memblock.h          |  8 ++++----
- 3 files changed, 18 insertions(+), 5 deletions(-)
+ arch/x86/kvm/mmu/mmu.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
-index f420df7888a7..d6d33bec597a 100644
---- a/arch/powerpc/kernel/vmlinux.lds.S
-+++ b/arch/powerpc/kernel/vmlinux.lds.S
-@@ -125,6 +125,7 @@ SECTIONS
- 		*(.text.asan.* .text.tsan.*)
- 		MEM_KEEP(init.text)
- 		MEM_KEEP(exit.text)
-+		MEMBLOCK_KEEP(init.text)
- 	} :text
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 62ad38b2a8c9..cecd8360378f 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -3296,7 +3296,7 @@ static int kvm_handle_noslot_fault(struct kvm_vcpu *vcpu,
+ 	return RET_PF_CONTINUE;
+ }
  
- 	. = ALIGN(PAGE_SIZE);
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index f7749d0f2562..775c5eedb9e6 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -147,6 +147,14 @@
- #define MEM_DISCARD(sec) *(.mem##sec)
- #endif
+-static bool page_fault_can_be_fast(struct kvm_page_fault *fault)
++static bool page_fault_can_be_fast(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ {
+ 	/*
+ 	 * Page faults with reserved bits set, i.e. faults on MMIO SPTEs, only
+@@ -3307,6 +3307,32 @@ static bool page_fault_can_be_fast(struct kvm_page_fault *fault)
+ 	if (fault->rsvd)
+ 		return false;
  
-+#if defined(CONFIG_ARCH_KEEP_MEMBLOCK)
-+#define MEMBLOCK_KEEP(sec)    *(.mb##sec)
-+#define MEMBLOCK_DISCARD(sec)
-+#else
-+#define MEMBLOCK_KEEP(sec)
-+#define MEMBLOCK_DISCARD(sec) *(.mb##sec)
-+#endif
++	/*
++	 * For hardware-protected VMs, certain conditions like attempting to
++	 * perform a write to a page which is not in the state that the guest
++	 * expects it to be in can result in a nested/extended #PF. In this
++	 * case, the below code might misconstrue this situation as being the
++	 * result of a write-protected access, and treat it as a spurious case
++	 * rather than taking any action to satisfy the real source of the #PF
++	 * such as generating a KVM_EXIT_MEMORY_FAULT. This can lead to the
++	 * guest spinning on a #PF indefinitely.
++	 *
++	 * For now, just skip the fast path for hardware-protected VMs since
++	 * they don't currently utilize any of this machinery anyway. In the
++	 * future, these considerations will need to be taken into account if
++	 * there's any need/desire to re-enable the fast path for
++	 * hardware-protected VMs.
++	 *
++	 * Since software-protected VMs don't have a notion of a shared vs.
++	 * private that's separate from what KVM is tracking, the above
++	 * KVM_EXIT_MEMORY_FAULT condition wouldn't occur, so avoid the
++	 * special handling for that case for now.
++	 */
++	if (kvm_slot_can_be_private(fault->slot) &&
++	    !(IS_ENABLED(CONFIG_KVM_SW_PROTECTED_VM) &&
++	      vcpu->kvm->arch.vm_type == KVM_X86_SW_PROTECTED_VM))
++		return false;
 +
- #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
- #define KEEP_PATCHABLE		KEEP(*(__patchable_function_entries))
- #define PATCHABLE_DISCARDS
-@@ -356,6 +364,7 @@
- 	*(.ref.data)							\
- 	*(.data..shared_aligned) /* percpu related */			\
- 	MEM_KEEP(init.data*)						\
-+	MEMBLOCK_KEEP(init.data*)					\
- 	*(.data.unlikely)						\
- 	__start_once = .;						\
- 	*(.data.once)							\
-@@ -573,6 +582,7 @@
- 		*(.ref.text)						\
- 		*(.text.asan.* .text.tsan.*)				\
- 	MEM_KEEP(init.text*)						\
-+	MEMBLOCK_KEEP(init.text*)					\
+ 	/*
+ 	 * #PF can be fast if:
+ 	 *
+@@ -3407,7 +3433,7 @@ static int fast_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+ 	u64 *sptep;
+ 	uint retry_count = 0;
  
+-	if (!page_fault_can_be_fast(fault))
++	if (!page_fault_can_be_fast(vcpu, fault))
+ 		return ret;
  
- /* sched.text is aling to function alignment to secure we have same
-@@ -680,6 +690,7 @@
- 	KEEP(*(SORT(___kentry+*)))					\
- 	*(.init.data .init.data.*)					\
- 	MEM_DISCARD(init.data*)						\
-+	MEMBLOCK_DISCARD(init.data*)					\
- 	KERNEL_CTORS()							\
- 	MCOUNT_REC()							\
- 	*(.init.rodata .init.rodata.*)					\
-@@ -706,7 +717,8 @@
- #define INIT_TEXT							\
- 	*(.init.text .init.text.*)					\
- 	*(.text.startup)						\
--	MEM_DISCARD(init.text*)
-+	MEM_DISCARD(init.text*)						\
-+	MEMBLOCK_DISCARD(init.text*)
- 
- #define EXIT_DATA							\
- 	*(.exit.data .exit.data.*)					\
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index e2082240586d..3e1f1d42dde7 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -100,13 +100,13 @@ struct memblock {
- 
- extern struct memblock memblock;
- 
-+#define __init_memblock        __section(".mbinit.text") __cold notrace \
-+						  __latent_entropy
-+#define __initdata_memblock    __section(".mbinit.data")
-+
- #ifndef CONFIG_ARCH_KEEP_MEMBLOCK
--#define __init_memblock __meminit
--#define __initdata_memblock __meminitdata
- void memblock_discard(void);
- #else
--#define __init_memblock
--#define __initdata_memblock
- static inline void memblock_discard(void) {}
- #endif
- 
+ 	walk_shadow_page_lockless_begin(vcpu);
 -- 
-2.34.1
+2.25.1
 
 
