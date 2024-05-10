@@ -1,108 +1,123 @@
-Return-Path: <linux-kernel+bounces-175941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E14C8C27A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:26:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A0D8C27BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 17:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F47A1C211D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:26:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C5F1C20C26
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C14B17165B;
-	Fri, 10 May 2024 15:26:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B416C171E45;
+	Fri, 10 May 2024 15:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZ7AYfwW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="faBOMB8o"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5754D17109E;
-	Fri, 10 May 2024 15:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10528172BCF
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715354809; cv=none; b=SlkrscntGegJHlEuaQolJVjnqwDrCObko2FHA0W79g6la2GatO9iF+AV172vdB/9ROyS417Wkuh0vBLv0S2IEPjGw9rfR+5nsrhpmDi5H2pZrYHMYMWN5YUsr+YaWciHEFPA/ZvtNJsOk8p/cinlVnq3SiGRPzK2PlxlE+lLOy4=
+	t=1715354864; cv=none; b=QR1HLQZ4P0uO/frO3Fd7qyRb/JnhWgk7Z0bKoVUNrpU+v5C7YwvtZ5uDOwoAY4wlMypB+e4wQHLNSikh2IfnR8CBHwkJLapf1BYqmg70xmeOXW3WDYFozLBVCM6gM0uIaSggJVB/t1Qks1fKr50PcVK1vmAvXSe9rLKdMoH5xjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715354809; c=relaxed/simple;
-	bh=WZ4TGuN2dW7cNy4EbwRGnB4/IoAEcv+5igcpsXySV48=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V3PNZjQcGu7ED5tkKH8DCLD3gA9+F+rrQz+NyRTDGsDPh+LT2j6l/nmK0z+ratKjPzIMHPfsXIeSuA0La346uJIGK7HOlSrAumV8IRDJB1Frp/8aJDslXnDBcJ7+mt+xifAY7Vu/G684DswuIzlzobSPl62wzIwUrOANm+IDeeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZ7AYfwW; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715354809; x=1746890809;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=WZ4TGuN2dW7cNy4EbwRGnB4/IoAEcv+5igcpsXySV48=;
-  b=fZ7AYfwWK3TVftVQrfys77GJpWfMjD2cvVi69J8Q2n/ooBr7WGBnlxFZ
-   kNxkFUt0sxn1qfEnjEJHqR0n9Dz8GUnIyqxpsrhQKDQQY4bJPrQvJeCI1
-   5fQB6qsLOnphAVGJd6jYejWmaqTxhNMKq7SMjLWrFvPd1EfRepM+M6+ij
-   omPbg9xDtI1z41sbPndhuJ6MlNVf6oX0FKu5p2E8DQtXGQ5xUXCkDRSqN
-   yvDiVFPfitRvdGZQ5vGlQxvknatsfglCHsmPpb6eiy3bx2Am+/lfas5GH
-   Eue6WA10QLDGUME0ehh6JLB+lxqfZtW2S1pfJlzbM3oCeddYqR630vPEd
-   g==;
-X-CSE-ConnectionGUID: AwWSGOIBS5eTk4LgV/5YTA==
-X-CSE-MsgGUID: bmlaT52yRBysECpAh3zkrg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="33853116"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="33853116"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 08:26:48 -0700
-X-CSE-ConnectionGUID: /fs8JJapR6CHsb9uccIbLA==
-X-CSE-MsgGUID: ojovpLzbRRSLkx7ziSC9pQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="29655034"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 10 May 2024 08:26:45 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 3B4441AC; Fri, 10 May 2024 18:26:43 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 1/1] usb: fotg210: Add missing kernel doc description
-Date: Fri, 10 May 2024 18:26:22 +0300
-Message-ID: <20240510152641.2421298-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1715354864; c=relaxed/simple;
+	bh=Jzdc2H2hNULa1a9dJybZhyaGjAWp+NC8/yUTJ8Z3H5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qAZflcr487HSxwP3FfAuNkdGeZXksVCDA0RD2tgrEPSOFUCOZnl8bDpetxaYWO5jK2tCIV9nbh94pbqLgInQpD+Bn88u0ZxOoZz7EraoBIELYIYPhKTGnfLIbpywUZB/P/ceUdUS+tMjZUbeENsRuTfWFW5/cH3SxLYzjRcyg78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=faBOMB8o; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51fb14816f6so2688761e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715354854; x=1715959654; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a5FOttH9EQLp2QP0x59iAJre7V/D35J8XRWRgV60AP8=;
+        b=faBOMB8o6QE81pOcKmx0/FRnSBMxxpDIhA0Wq/pd5m8P6lNAVaMjIL6AD0jAFA6FHS
+         hiP6IcpyjBUdLL0qg6Bd3liXJ8yZrUpQba38xyf3jXZ15YWgtjH35imQPJJOItmXXb88
+         UHW5TRX0b3HtZPDNBIcn5GKMYC01FUfXdpKdZ4qRMR7yrH93LALT369PYJF4nvsSvatX
+         mvt2bCzP6Td172qdgBNG1Q92K0Di4rORIWuCi0Ea2ox4iXhJJhT7NmIVEAWkcGDOoa7P
+         Rr1t5ObpwJ/egOVxY2cVbQU8510scxMk1xS+MRY60A1u4EJaYp48+v/Y0WJCG3DpgWGi
+         HoNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715354854; x=1715959654;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a5FOttH9EQLp2QP0x59iAJre7V/D35J8XRWRgV60AP8=;
+        b=uRAvH4bhhyLCj+YP4DzeexZuP8ppMdrBx8L15buX+TvSjq1pakx/aI+92PjhPOJR1M
+         /EYeKCldbUcY649Z4KfJ37c0YE3mxUhCfIxsEcQGude2/pVBV2sZ5EiXTptJryny1Yok
+         97E6w2tO0z5DGqG5Vw+jv4TIUyDGrHPv5ugc2t/th+svLWRSqJZyjU7ZUxhy6j8tDcx1
+         Wlh3HbhXn6hy5tY+1SknmVj+cK8aC0TNUJmztvE9NIsf2atQJ9EPMBuWuOIcy+LuDfts
+         M1GBsS28U77LVujC2HSXhMrmMsJIBEdWuRfWvF0i83dFZZD5qYlGUl/7e3U0nr2O67mQ
+         UjZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjIS5LDGu4Yqi5qmOhpso9JQS3vFNgm5yZPT+hBcWWd8SZChIJn39L4h37ghRScyx7URaXh1d3MXI+x933dYIZtNwHKN1ZyVyD91Lx
+X-Gm-Message-State: AOJu0YynmwI6e+emvkDk4plkxOC+AYeqYlEqWyCrCc+OmGQDBQX6jlxp
+	npT3w9PCx4IKbNDlWJK0ToTlViAoZCaoGCGvZLSt/7nZQg5S4J1Nmu3DMYGMhnA=
+X-Google-Smtp-Source: AGHT+IEMgujKR3JXFlI9/r1eu8jHtRxxNrK/qiE+3cimxYuBLDPv4NYPwk0taMgIyW3VjMHaTPlVFA==
+X-Received: by 2002:a19:a40f:0:b0:522:f6:9268 with SMTP id 2adb3069b0e04-5220fc7eed8mr1735865e87.31.1715354853669;
+        Fri, 10 May 2024 08:27:33 -0700 (PDT)
+Received: from localhost ([102.222.70.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d553sm195973166b.43.2024.05.10.08.27.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 08:27:33 -0700 (PDT)
+Date: Fri, 10 May 2024 18:27:30 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bingbu Cao <bingbu.cao@intel.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Daniel Scally <dan.scally@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] media: ipu-bridge: fix error code in ipu_bridge_init()
+Message-ID: <4ade89f8-cbd3-4dbf-81fb-0e9a4269dc0f@moroto.mountain>
+References: <71dad56e-0e2f-48ba-90bc-75096112a1ba@moroto.mountain>
+ <Zj46vpwTbfde4YX2@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zj46vpwTbfde4YX2@smile.fi.intel.com>
 
-kernel-doc validator is not happy:
+On Fri, May 10, 2024 at 06:18:22PM +0300, Andy Shevchenko wrote:
+> On Fri, May 10, 2024 at 06:10:37PM +0300, Dan Carpenter wrote:
+> > Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
+> 
+> ...
+> 
+> >  	ret = ipu_bridge_connect_sensors(bridge);
+> > -	if (ret || bridge->n_sensors == 0)
+> > +	if (ret || bridge->n_sensors == 0) {
+> > +		ret = ret ?: -EINVAL;
+> >  		goto err_unregister_ipu;
+> > +	}
+> 
+> I would split:
+> 
+> 	ret = ipu_bridge_connect_sensors(bridge);
+> 	if (ret)
+> 		goto err_unregister_ipu;
+> 
+> 	if (bridge->n_sensors == 0) {
+> 		ret = -EINVAL;
+> 		goto err_unregister_ipu;
+> 	}
 
-  warning: Function parameter or struct member 'fotg' not described in 'fotg210_vbus'
+It's always hard to know which way to go on these...  I wrote it that
+way in my first draft.  It's my prefered way as well but not everyone
+agrees.  I'll resend.
 
-Add missing description.
-
-Fixes: 3e679bde529e ("usb: fotg210-udc: Implement VBUS session")
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v2: fixed typo (LKP, Greg)
- drivers/usb/fotg210/fotg210-core.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/usb/fotg210/fotg210-core.c b/drivers/usb/fotg210/fotg210-core.c
-index 958fc40eae86..0655afe7f977 100644
---- a/drivers/usb/fotg210/fotg210-core.c
-+++ b/drivers/usb/fotg210/fotg210-core.c
-@@ -95,6 +95,7 @@ static int fotg210_gemini_init(struct fotg210 *fotg, struct resource *res,
- 
- /**
-  * fotg210_vbus() - Called by gadget driver to enable/disable VBUS
-+ * @fotg: pointer to a private fotg210 object
-  * @enable: true to enable VBUS, false to disable VBUS
-  */
- void fotg210_vbus(struct fotg210 *fotg, bool enable)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+regards,
+dan carpenter
 
 
