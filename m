@@ -1,138 +1,73 @@
-Return-Path: <linux-kernel+bounces-175247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B90E8C1CFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:27:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 917E28C1D01
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B481C21E20
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:27:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E6C6B23097
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD8F1494D0;
-	Fri, 10 May 2024 03:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31664149C43;
+	Fri, 10 May 2024 03:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Jm0m7fbP"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80F1148FE0;
-	Fri, 10 May 2024 03:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvTXeUL0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3A1142E66;
+	Fri, 10 May 2024 03:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715311651; cv=none; b=YrU+XhHcnVNevkjJ3jpsDc81CXelbsnXfEjVFVCAQzYkfffrumVz1bjkPpevXDQQiSAJ0hQvQxaX5ZNxEk8BHbqOuuA6pjVebu+nVwbDrFKCwEGEx5FEIiSwM1XRnEyY4jBYBcdOAGZEmZUvUK1yTO1d41dEmGWALj1grvxfvUY=
+	t=1715311690; cv=none; b=HBvIg9H20PKcN9i3h+o+RcK4lL5AaSRSRMMPTp/oo0SpQzcjOTwuenNu9Y3mORskPfV17X1WcQZBZ0+/D3TI6CSphMnDtQ16GHb4wRMuw3Ng/55ZmB0CJ6MUSHqwfRIvhBnNm5ODa1blP/8itNcKD77WTGhLZ7KMH7VmRbWRunk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715311651; c=relaxed/simple;
-	bh=Z7MPoeMmZKPqqjt1uSdl2xiWuJE7dBoYnnwX8FfM10I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fNtIEsqemEcMjNNLPexHjZ4QD+0tdyv0V+exF6HbmQve1Mr/KUHNu6RPtP7Jwp41TgXkQyQQ/9fbgstrsf/zcAEGR7bBsObPBYRVB/RjCSsWi2dnsaG6LVRSuhRpDLd0qJtYjZ7glVuK61jdYgXC/KkJ8jOn4nLMI7Lr1PklYgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Jm0m7fbP; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=jmv/e
-	Z0oj6B9M++CEv1uezXK3yVeNwJfrJ1xXJUCHHw=; b=Jm0m7fbPXu0lXqMbkZT9w
-	IKXhJc7PNi/cQY/OTENlzVL6iZ7cXI0yh8O5Wk+32uWHQhi9swJPOx/cICXEq0Fw
-	kPrGqbiOFhG7Pu/FXV1c48TADth5GCueSh/KOqndlFDFoa4bBdmv9z4hcwOzsYy4
-	GAiih1dCm64MfJXbDJX8xo=
-Received: from localhost.localdomain (unknown [223.160.225.215])
-	by gzga-smtp-mta-g2-5 (Coremail) with SMTP id _____wD3H9EDlD1mCPkAAQ--.22491S2;
-	Fri, 10 May 2024 11:27:00 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: manivannan.sadhasivam@linaro.org,
-	loic.poulain@linaro.org
-Cc: mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH] bus: mhi: host: Add Foxconn SDX72 related support
-Date: Fri, 10 May 2024 11:26:57 +0800
-Message-Id: <20240510032657.789629-1-slark_xiao@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715311690; c=relaxed/simple;
+	bh=zv7wDs/nnXwMvb+49prRA6w+/tTmLN/Hqx57aSJhUj8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dnFL7baVLaM1IW3Fagcc3Z/S2rb46A0ejPNzHZ2+Um8wUKFzSHAIrmZwVH4W6k6uVZmiuwwtjatp21/PMmLOWrgH98TO6UEAOr/Ai8kPCaCQ9dbSCOGand9ekQvNuBqfepjt6Y2n45GXxNktDB7ASQNyuhUwJpuo5NmegVwDt/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvTXeUL0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEE0C116B1;
+	Fri, 10 May 2024 03:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715311690;
+	bh=zv7wDs/nnXwMvb+49prRA6w+/tTmLN/Hqx57aSJhUj8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CvTXeUL0wgteyS/oezeQSAB5lrWBL5ObWRn9+YeeQwKOUMKmBFFJVQO3N1lLph73X
+	 N6+t5hIPjlOYzOEIC9GKBLRRxhNpzOAZENK0u9TCnRcG+2BiggiOGo0hSE/Vy1ZA27
+	 fOCX0XjMs7KNRYGPblMQv96dCKGZXKDhtCHKQ6T17kjSZM3l3kz+MhSWdD4JMAq2oy
+	 Mkf05h9516GLZJsvn4yQRimb7NjonFWsHHVMWJ8d4vhJ2CXHJUdvjNa6y7DuWrnspj
+	 AlG2OBs7hWStHI2b9VcCauQGnKQP9IIgrbk2JBPa744RRqguy8cFq/e9f0/JRefMjR
+	 VsoJkPUbItZBw==
+Date: Thu, 9 May 2024 20:28:08 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <davem@davemloft.net>, <pabeni@redhat.com>, <edumazet@google.com>,
+ <sgoutham@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: Re: [net-next PATCH v4 03/10] octeontx2-pf: Create representor
+ netdev
+Message-ID: <20240509202808.26e960a7@kernel.org>
+In-Reply-To: <20240507163921.29683-4-gakula@marvell.com>
+References: <20240507163921.29683-1-gakula@marvell.com>
+	<20240507163921.29683-4-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H9EDlD1mCPkAAQ--.22491S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCFW3JFy7Xr4rGr4UZr45Awb_yoW5CrWUpF
-	4fZ3y5taykJrWFgFW8A34DGas5Jan3Cr9xKFnrKw1I9w1Fy3yYqFWkK342gFyYy34qqFyS
-	yFykWa4a93WDJr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRHlkcUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiowXaZGVODTtkoAAAsB
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Align with Qcom SDX72, add ready timeout item for Foxconn SDX72.
-And also, add firehose support since SDX72.
+On Tue, 7 May 2024 22:09:14 +0530 Geetha sowjanya wrote:
+> +	priv->reps = devm_kcalloc(priv->dev, rep_cnt, sizeof(struct rep_dev *),
+> +				  GFP_KERNEL);
+> +	if (!priv->reps)
+> +		return -ENOMEM;
 
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
----
- drivers/bus/mhi/host/pci_generic.c | 31 ++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 08844ee79654..0fd94c193fc6 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -399,6 +399,8 @@ static const struct mhi_channel_config mhi_foxconn_sdx55_channels[] = {
- 	MHI_CHANNEL_CONFIG_DL(13, "MBIM", 32, 0),
- 	MHI_CHANNEL_CONFIG_UL(32, "DUN", 32, 0),
- 	MHI_CHANNEL_CONFIG_DL(33, "DUN", 32, 0),
-+	MHI_CHANNEL_CONFIG_UL_FP(34, "FIREHOSE", 32, 0),
-+	MHI_CHANNEL_CONFIG_DL_FP(35, "FIREHOSE", 32, 0),
- 	MHI_CHANNEL_CONFIG_HW_UL(100, "IP_HW0_MBIM", 128, 2),
- 	MHI_CHANNEL_CONFIG_HW_DL(101, "IP_HW0_MBIM", 128, 3),
- };
-@@ -419,6 +421,16 @@ static const struct mhi_controller_config modem_foxconn_sdx55_config = {
- 	.event_cfg = mhi_foxconn_sdx55_events,
- };
- 
-+static const struct mhi_controller_config modem_foxconn_sdx72_config = {
-+	.max_channels = 128,
-+	.timeout_ms = 20000,
-+	.ready_timeout_ms = 50000,
-+	.num_channels = ARRAY_SIZE(mhi_foxconn_sdx55_channels),
-+	.ch_cfg = mhi_foxconn_sdx55_channels,
-+	.num_events = ARRAY_SIZE(mhi_foxconn_sdx55_events),
-+	.event_cfg = mhi_foxconn_sdx55_events,
-+};
-+
- static const struct mhi_pci_dev_info mhi_foxconn_sdx24_info = {
- 	.name = "foxconn-sdx24",
- 	.config = &modem_foxconn_sdx55_config,
-@@ -448,6 +460,16 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx65_info = {
- 	.sideband_wake = false,
- };
- 
-+static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
-+	.name = "foxconn-sdx72",
-+	.edl = "qcom/sdx72m/xbl_s_devprg_ns.melf",
-+	.config = &modem_foxconn_sdx72_config,
-+	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-+	.dma_data_width = 32,
-+	.mru_default = 32768,
-+	.sideband_wake = false,
-+};
-+
- static const struct mhi_channel_config mhi_mv3x_channels[] = {
- 	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 64, 0),
- 	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 64, 0),
-@@ -680,6 +702,15 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 	/* DW5932e (sdx62), Non-eSIM */
- 	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe0f9),
- 		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx65_info },
-+	/* T99W515 (sdx72) */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe118),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
-+	/* DW5934e(sdx72), With eSIM */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11d),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
-+	/* DW5934e(sdx72), Non-eSIM */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FOXCONN, 0xe11e),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_sdx72_info },
- 	/* MV31-W (Cinterion) */
- 	{ PCI_DEVICE(PCI_VENDOR_ID_THALES, 0x00b3),
- 		.driver_data = (kernel_ulong_t) &mhi_mv31_info },
--- 
-2.25.1
-
+using devm_ here is pointless, the objects are not tied to the lifetime
+of the device (there can be created multiple times) and you have to
+unregister the netdevs manually, anyway.
 
