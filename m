@@ -1,365 +1,169 @@
-Return-Path: <linux-kernel+bounces-175437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2698C1FB5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:29:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691B88C1FBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65C20B21580
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:29:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650151C213DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE88D1649D9;
-	Fri, 10 May 2024 08:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F0714A0AD;
+	Fri, 10 May 2024 08:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VMDeqtdJ"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t0w2zPD9"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B191635B2;
-	Fri, 10 May 2024 08:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BA616191B
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715329760; cv=none; b=YrLIy+ao6LIgSByyuhaJ12yaOzlftbu/MOhX+8n+//iO33fqfFbsloab5smQ2TcvJ+TpT+v2IljrKxa1bTxtQwduom6Kbb3qhnIpq06YTDWVwgaZrFyg2nyux9UczKvbB98ppdpgq4fvg7mNbZvIfhQAN+AdgmEJFKTLoTLwfSs=
+	t=1715329786; cv=none; b=liOoocmrGwUlT4OkEhcCFt2cIK0BCpdtsiqi+Y9A+LqPZZk7Ryws+utJOMfTvtx8XFs2a0LeK0QUYoYd55nHgaexiPsPJwr4K1QADnqAADpGjhMmYxObiGQUnXE1EVwtuzev2Jgq4l6VgY3jAkAgHcebyYDh0ZW1HDkuVuh7Jhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715329760; c=relaxed/simple;
-	bh=L7tsgP4f2XeNjNvOA0n4h6Xu9Jd9jlvwcZ6tHLK50o8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDZFtvqpujC/wIJ1Tr6/CPFRu/L0bs+oCRC+hXjOV95LfjKI9AgQa9X0HvdZ4BWRUzcdjWZeSXk/Abb1nrKoqQpJXkr7SUv7oydENkut/H+8ST9+6tU02HptirWuMrpv7PbDmRiy3d2aLyxeFv78gHhzDtJNZOReTJ6hUbZL4to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VMDeqtdJ; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715329743;
-	bh=L7tsgP4f2XeNjNvOA0n4h6Xu9Jd9jlvwcZ6tHLK50o8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VMDeqtdJm3FmXXUXynoHc4lDyG7dzqMFYc5GANHuwAD4AO8a/9tAC3IwkU87/zdJj
-	 9PksU3gGsjYEn/5dMufV6Bi18OIZYFD/6A1od40Cidj1mMrTw+T79G86pdHyaHDvKX
-	 cXu/czJCQsub6nEWVeVk/jpL4NYOrTfWFgrEjdc401M7HS17/dMXlf0gJIwAsOFEL7
-	 nbBCb78bIWJd1B8o0k18iqhRNppM7oMt/vNAcvTcWWAgNPThbFOWtgXOGAMW2vSvsy
-	 78O7B7Kxk5zYXQ3GSgv4tQcd26TmMibyhmrOckCjgKvDGTMLEBw9rxr1RQXj3xjDJJ
-	 wHmlzMvf0LDUw==
-Received: from [100.95.196.182] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: andrzej.p)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 80AE13782009;
-	Fri, 10 May 2024 08:29:02 +0000 (UTC)
-Message-ID: <e1c8cc99-47e3-4780-87c8-9f4da370ac4b@collabora.com>
-Date: Fri, 10 May 2024 10:29:02 +0200
+	s=arc-20240116; t=1715329786; c=relaxed/simple;
+	bh=7cev1urkkriXH1Kz2Kjf4vy0a3n4geUSsLoRNQ3CwIw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=T9J9R1VFkVFK493P+q7MW7BM1soSuypCxz6f5ITnOVdMnGp8L1TLrcj53fZA/8iQWIK4egoS7mwRP/EUPqz9SqquduXxXTIrIDRA9yQ9K7yQuUJpIJqFfNAnC6GvVe1RZiIjMRdgDe8bqG8EGre2+c6UqJQkT/QMIyTh+1M9F5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t0w2zPD9; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joychakr.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de610854b8bso3015558276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 01:29:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715329776; x=1715934576; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dnr78Drl0hwy8QosBN5FMiEeANWK1Ml2Xi29sDzFrpE=;
+        b=t0w2zPD9iw89N23PVRmDREsXj/Ma/C5dMdEP2G6CTrq3mlaxwmX7fxcZyuFflqoFGp
+         9hbdj0l+vvqKuYdGZZOnMExqBVEnNlhJH6CLh38D3UWs6/8iTYWZxNXZOPkcyMcjkimY
+         QQ8mMq9sWQ9mkCKfVMPrBs+Xti3PLgLVI7uI9g1ygsFVKTEz/DKlVOrAH0KOcd5v/p5g
+         O/ipwtybSsLBz286LncqhZ5IMnC47oZ0wKSobq+3rbBvrauIQK2LY2J7YgH7IP73dVdD
+         0DhBqxfkbot6LV6zIJRi3Ic+9BTdZeHKSuZAutinuv5eKajfSaRFH4P3Q6ux0J8eF5nk
+         xk4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715329776; x=1715934576;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dnr78Drl0hwy8QosBN5FMiEeANWK1Ml2Xi29sDzFrpE=;
+        b=esOgYVDhky75p6DTUbZHTGv9bsG7GwlFspIBRC7jkiXvrmjJcweHWRkN978QOvcLD1
+         85a5kGtaCLujDD6fZVz4+XwoDaeaeC3UZt0ANwBVCGiYZuLEUBPD2iR6VMbj03ZqWvon
+         qn1Uf8Mot6p4WmKviT5aDnZjOUd4gofQC/7e//K8nROFMlFn9UZfuDHqpBJW8Nqf8Zy/
+         tdKEe4LLPS37sW4mg6n0yqyVQSsGL/86chnJmdUiQIAwI+tnEte2mvfRc1NUCwi2AGk8
+         KmJWIDcP/nkmmSjhXrn+Dh29pAyOC9ZAlgx2Ul1P8WnmfbQyO2htNtGvs46uISZIDYpm
+         Wphg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXcXiAa03mbDTGxs0jMfZfvY4rsVfj7oCeyLBq1iCJsu6INEVNPd+b+oMJXYMCh5UX2QhgsUKjsYu/qriEsYJ5qQ4ThMABIjXwwpec
+X-Gm-Message-State: AOJu0YxiRr0oquKBlcziHDyI25nvfuOHunl7gpWvS7/Q31iTjQ6+75Dy
+	QEorwlo/nAkA4tDonqFobPigbJfkT0RIFAhLD7ZLDil9C2oaeXWKK+oAKVLPFfyHRMC1BNs+S6s
+	iOfHrtT+I9w==
+X-Google-Smtp-Source: AGHT+IEiknRtBHdrQ2HgiFa5pD74L/Ye3Nv3Q0grhoikyts9vAUMehW+Dt9fd3K3/ZrjmNUP76nhD8GAX7HaoA==
+X-Received: from joychakr.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:6ea])
+ (user=joychakr job=sendgmr) by 2002:a05:6902:c09:b0:de5:5304:3206 with SMTP
+ id 3f1490d57ef6-dee4f52d715mr180759276.11.1715329776091; Fri, 10 May 2024
+ 01:29:36 -0700 (PDT)
+Date: Fri, 10 May 2024 08:29:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/3] tools: usb: p9_fwd: add usb gadget packet
- forwarder script
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- kernel@pengutronix.de
-References: <20240116-ml-topic-u9p-v4-0-722ed28b0ade@pengutronix.de>
- <20240116-ml-topic-u9p-v4-3-722ed28b0ade@pengutronix.de>
-Content-Language: en-US
-From: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-In-Reply-To: <20240116-ml-topic-u9p-v4-3-722ed28b0ade@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
+Message-ID: <20240510082929.3792559-1-joychakr@google.com>
+Subject: [PATCH v3 0/1] nvmem: Handle actual amount of data read/written by suppliers
+From: Joy Chakraborty <joychakr@google.com>
+To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	NXP Linux Team <linux-imx@nxp.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vincent Shih <vincent.sunplus@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Rafal Milecki <rafal@milecki.pl>, Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Michal Simek <michal.simek@amd.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-amlogic@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev, 
+	manugautam@google.com, Joy Chakraborty <joychakr@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Michael,
+This Patch series stems from discussions in patchset,
+"[PATCH v2] nvmem: rmem: Fix return value of rmem_read()"
+(https://lore.kernel.org/all/20240206042408.224138-1-joychakr@google.com/).
+Where we come across the fact that currently the nvmem suppliers do not
+actually let the core know how much data has been actually read or written.
+Instead they are expected to return 0 for success and the core assumes that
+the amount of data written is equal to what the core has requested.
 
-W dniu 30.04.2024 o 01:33, Michael Grzeschik pisze:
-> This patch is adding an small python tool to forward 9pfs requests
-> from the USB gadget to an existing 9pfs TCP server. Since currently all
-> 9pfs servers lack support for the usb transport this tool is an useful
-> helper to get started.
-> 
-> Refer the Documentation section "USBG Example" in
-> Documentation/filesystems/9p.rst on how to use it.
-> 
-> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> 
-> ---
-> v3 -> v4: -
-> v2 -> v3: -
-> v1 -> v2:
->    - added usbg 9pfs detailed instructions to 9p.rst doc
-> ---
->   Documentation/filesystems/9p.rst |  32 +++++++
->   tools/usb/p9_fwd.py              | 194 +++++++++++++++++++++++++++++++++++++++
->   2 files changed, 226 insertions(+)
-> 
-> diff --git a/Documentation/filesystems/9p.rst b/Documentation/filesystems/9p.rst
-> index 10cf79dc287f8..2467f1ea4a150 100644
-> --- a/Documentation/filesystems/9p.rst
-> +++ b/Documentation/filesystems/9p.rst
-> @@ -67,6 +67,38 @@ To mount a 9p FS on a USB Host accessible via the gadget as root filesystem::
->   where <device> is the tag associated by the usb gadget transport.
->   It is defined by the configfs instance name.
->   
-> +USBG Example
-> +============
-> +
-> +The USB host exports a filesystem, while the gadget on the USB device
-> +side makes it mountable.
-> +
-> +Diod (9pfs server) and the forwarder are on the development host, where
-> +the root filesystem is actually stored. The gadget is initialized during
-> +boot (or later) on the embedded board. Then the forwarder will find it
-> +on the USB bus and start forwarding requests.
-> +
-> +In this case the 9p requests come from the device and are handled by the
-> +host. The reason is that USB device ports are normally not available on
-> +PCs, so a connection in the other direction would not work.
-> +
-> +When using the usbg transport, for now there is no native usb host
-> +service capable to handle the requests from the gadget driver. For
-> +this we have to use the extra python tool p9_fwd.py from tools/usb.
-> +
-> +Just start the 9pfs capable network server like diod/nfs-ganesha e.g.:
-> +
-> +	$ diod -f -n -d 0 -S -l 0.0.0.0:9999 -e $PWD
-> +
-> +Then start the python transport:
-> +
-> +	$ python $kernel_dir/tools/usb/p9_fwd.py -p 9999
-> +
-> +After that the gadget driver can be used as described above.
-> +
-> +One use-case is to use it as an alternative to NFS root booting during
-> +the development of embedded Linux devices.
-> +
->   Options
->   =======
->   
-> diff --git a/tools/usb/p9_fwd.py b/tools/usb/p9_fwd.py
-> new file mode 100755
-> index 0000000000000..95208df11abef
-> --- /dev/null
-> +++ b/tools/usb/p9_fwd.py
-> @@ -0,0 +1,194 @@
-> +#!/usr/bin/env python3
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +import argparse
-> +import errno
-> +import logging
-> +import socket
-> +import struct
-> +import sys
-> +import time
-> +
-> +import usb.core
-> +import usb.util
-> +
-> +
-> +class Forwarder:
-> +    HEXDUMP_FILTER = (
-> +        "".join(chr(x).isprintable() and chr(x) or "." for x in range(128)) + "." * 128
-> +    )
-> +
-> +    @staticmethod
-> +    def _log_hexdump(data):
-> +        if not logging.root.isEnabledFor(logging.TRACE):
-> +            return
-> +        L = 16
-> +        for c in range(0, len(data), L):
-> +            chars = data[c : c + L]
-> +            dump = " ".join(f"{x:02x}" for x in chars)
-> +            printable = "".join(HEXDUMP_FILTER[x] for x in chars)
-> +            line = f"{c:08x}  {dump:{L*3}s} |{printable:{L}s}|"
-> +            logging.root.log(logging.TRACE, "%s", line)
-> +
-> +    def __init__(self, server):
-> +        self.stats = {
-> +            "c2s packets": 0,
-> +            "c2s bytes": 0,
-> +            "s2c packets": 0,
-> +            "s2c bytes": 0,
-> +        }
-> +        self.stats_logged = time.monotonic()
-> +
-> +        dev = usb.core.find(idVendor=0x1D6B, idProduct=0x0109)
+On addition this patchset will also add some guards and checks based on the
+count of data returned by the nvmem supplier.
+---
+V3 Changes : Fix return value of reg_read in sunxi_sid.c driver
+---
+V2 Changes : Rebase on for-next.
+---
+V1 Changes : Change read/write callback prototype to ssize_t and
+supplier changes to accomodate the same with core checks and bounds.
+---
 
-Is this idProduct an assigned number? I can't find it in
-http://www.linux-usb.org/usb.ids. The "9" is obviously a pun on 9pfs,
-a nice trick and it would make sense.
+Joy Chakraborty (1):
+  nvmem: Change return type of reg read/write to ssize_t
 
-However, given composition with configfs there's no guarantee that 9pfs will be
-the only USB gadget function present, and so it is not quite clear that Linux
-Foundation's vendor and product ids are always appropriate. What's more, when
-you are not going to the market with products you can use whatever ids you
-please for your own use.
+ drivers/nvmem/apple-efuses.c        |  7 +--
+ drivers/nvmem/bcm-ocotp.c           | 12 ++---
+ drivers/nvmem/brcm_nvram.c          | 10 ++--
+ drivers/nvmem/core.c                | 83 +++++++++++++----------------
+ drivers/nvmem/imx-iim.c             |  6 +--
+ drivers/nvmem/imx-ocotp-ele.c       |  4 +-
+ drivers/nvmem/imx-ocotp-scu.c       | 12 ++---
+ drivers/nvmem/imx-ocotp.c           | 10 ++--
+ drivers/nvmem/jz4780-efuse.c        |  7 +--
+ drivers/nvmem/lan9662-otpc.c        | 12 ++---
+ drivers/nvmem/layerscape-sfp.c      | 11 ++--
+ drivers/nvmem/lpc18xx_eeprom.c      | 14 ++---
+ drivers/nvmem/lpc18xx_otp.c         |  6 +--
+ drivers/nvmem/meson-efuse.c         | 22 +++++---
+ drivers/nvmem/meson-mx-efuse.c      |  6 +--
+ drivers/nvmem/microchip-otpc.c      |  6 +--
+ drivers/nvmem/mtk-efuse.c           |  6 +--
+ drivers/nvmem/mxs-ocotp.c           |  7 +--
+ drivers/nvmem/nintendo-otp.c        |  6 +--
+ drivers/nvmem/qcom-spmi-sdam.c      | 12 ++---
+ drivers/nvmem/qfprom.c              | 14 ++---
+ drivers/nvmem/qoriq-efuse.c         |  6 +--
+ drivers/nvmem/rave-sp-eeprom.c      | 18 +++----
+ drivers/nvmem/rmem.c                |  4 +-
+ drivers/nvmem/rockchip-efuse.c      | 19 +++----
+ drivers/nvmem/rockchip-otp.c        | 19 +++----
+ drivers/nvmem/sc27xx-efuse.c        |  3 +-
+ drivers/nvmem/sec-qfprom.c          |  4 +-
+ drivers/nvmem/snvs_lpgpr.c          | 17 +++---
+ drivers/nvmem/sprd-efuse.c          |  8 +--
+ drivers/nvmem/stm32-bsec-optee-ta.c | 12 ++---
+ drivers/nvmem/stm32-bsec-optee-ta.h | 20 +++----
+ drivers/nvmem/stm32-romem.c         | 26 ++++-----
+ drivers/nvmem/sunplus-ocotp.c       |  4 +-
+ drivers/nvmem/sunxi_sid.c           | 18 ++++---
+ drivers/nvmem/u-boot-env.c          |  6 +--
+ drivers/nvmem/uniphier-efuse.c      |  6 +--
+ drivers/nvmem/vf610-ocotp.c         |  7 +--
+ drivers/nvmem/zynqmp_nvmem.c        | 13 ++---
+ include/linux/nvmem-provider.h      |  4 +-
+ 40 files changed, 255 insertions(+), 232 deletions(-)
 
-Given the above, I'd love these two (idVendor and idProduct) to be commandline
-parameters of this script. My user story: whenever I created a gadget with
-configfs it had different ids than the above and this script wouldn't work.
-
-Regards,
-
-Andrzej
-
-> +        if dev is None:
-> +            raise ValueError("Device not found")
-> +
-> +        logging.info(f"found device: {dev.bus}/{dev.address}")
-> +
-> +        # dev.set_configuration() is not necessary since g_multi has only one
-> +        usb9pfs = None
-> +        # g_multi adds 9pfs as last interface
-> +        cfg = dev.get_active_configuration()
-> +        for intf in cfg:
-> +            # we have to detach the usb-storage driver from multi gadget since
-> +            # stall option could be set, which will lead to spontaneous port
-> +            # resets and our transfers will run dead
-> +            if intf.bInterfaceClass == 0x08:
-> +                if dev.is_kernel_driver_active(intf.bInterfaceNumber):
-> +                    dev.detach_kernel_driver(intf.bInterfaceNumber)
-> +
-> +            if (
-> +                intf.bInterfaceClass == 0xFF
-> +                and intf.bInterfaceSubClass == 0xFF
-> +                and intf.bInterfaceProtocol == 0x09
-> +            ):
-> +                usb9pfs = intf
-> +        if usb9pfs is None:
-> +            raise ValueError("Interface not found")
-> +
-> +        logging.info(f"claiming interface:\n{usb9pfs}")
-> +        usb.util.claim_interface(dev, usb9pfs.bInterfaceNumber)
-> +        ep_out = usb.util.find_descriptor(
-> +            usb9pfs,
-> +            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress)
-> +            == usb.util.ENDPOINT_OUT,
-> +        )
-> +        assert ep_out is not None
-> +        ep_in = usb.util.find_descriptor(
-> +            usb9pfs,
-> +            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress)
-> +            == usb.util.ENDPOINT_IN,
-> +        )
-> +        assert ep_in is not None
-> +        logging.info(f"interface claimed")
-> +
-> +        self.ep_out = ep_out
-> +        self.ep_in = ep_in
-> +        self.dev = dev
-> +
-> +        # create and connect socket
-> +        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-> +        self.s.connect(server)
-> +
-> +        logging.info(f"connected to server")
-> +
-> +    def c2s(self):
-> +        """forward a request from the USB client to the TCP server"""
-> +        data = None
-> +        while data is None:
-> +            try:
-> +                logging.log(logging.TRACE, "c2s: reading")
-> +                data = self.ep_in.read(self.ep_in.wMaxPacketSize)
-> +            except usb.core.USBTimeoutError:
-> +                logging.log(logging.TRACE, "c2s: reading timed out")
-> +                continue
-> +            except usb.core.USBError as e:
-> +                if e.errno == errno.EIO:
-> +                    logging.debug("c2s: reading failed with %s, retrying", repr(e))
-> +                    time.sleep(0.5)
-> +                    continue
-> +                else:
-> +                    logging.error("c2s: reading failed with %s, aborting", repr(e))
-> +                    raise
-> +        size = struct.unpack("<I", data[:4])[0]
-> +        while len(data) < size:
-> +            data += self.ep_in.read(size - len(data))
-> +        logging.log(logging.TRACE, "c2s: writing")
-> +        self._log_hexdump(data)
-> +        self.s.send(data)
-> +        logging.debug("c2s: forwarded %i bytes", size)
-> +        self.stats["c2s packets"] += 1
-> +        self.stats["c2s bytes"] += size
-> +
-> +    def s2c(self):
-> +        """forward a response from the TCP server to the USB client"""
-> +        logging.log(logging.TRACE, "s2c: reading")
-> +        data = self.s.recv(4)
-> +        size = struct.unpack("<I", data[:4])[0]
-> +        while len(data) < size:
-> +            data += self.s.recv(size - len(data))
-> +        logging.log(logging.TRACE, "s2c: writing")
-> +        self._log_hexdump(data)
-> +        while data:
-> +            written = self.ep_out.write(data)
-> +            assert written > 0
-> +            data = data[written:]
-> +        if size % self.ep_out.wMaxPacketSize == 0:
-> +            logging.log(logging.TRACE, "sending zero length packet")
-> +            self.ep_out.write(b"")
-> +        logging.debug("s2c: forwarded %i bytes", size)
-> +        self.stats["s2c packets"] += 1
-> +        self.stats["s2c bytes"] += size
-> +
-> +    def log_stats(self):
-> +        logging.info("statistics:")
-> +        for k, v in self.stats.items():
-> +            logging.info(f"  {k+':':14s} {v}")
-> +
-> +    def log_stats_interval(self, interval=5):
-> +        if (time.monotonic() - self.stats_logged) < interval:
-> +            return
-> +
-> +        self.log_stats()
-> +        self.stats_logged = time.monotonic()
-> +
-> +
-> +def main():
-> +    parser = argparse.ArgumentParser(
-> +        description="Forward 9PFS requests from USB to TCP",
-> +    )
-> +
-> +    parser.add_argument(
-> +        "-s", "--server", type=str, default="127.0.0.1", help="server hostname"
-> +    )
-> +    parser.add_argument("-p", "--port", type=int, default=564, help="server port")
-> +    parser.add_argument("-v", "--verbose", action="count", default=0)
-> +
-> +    args = parser.parse_args()
-> +
-> +    logging.TRACE = logging.DEBUG - 5
-> +    logging.addLevelName(logging.TRACE, "TRACE")
-> +
-> +    if args.verbose >= 2:
-> +        level = logging.TRACE
-> +    elif args.verbose:
-> +        level = logging.DEBUG
-> +    else:
-> +        level = logging.INFO
-> +    logging.basicConfig(
-> +        level=level, format="%(asctime)-15s %(levelname)-8s %(message)s"
-> +    )
-> +
-> +    f = Forwarder(server=(args.server, args.port))
-> +
-> +    try:
-> +        while True:
-> +            f.c2s()
-> +            f.s2c()
-> +            f.log_stats_interval()
-> +    finally:
-> +        f.log_stats()
-> +
-> +
-> +if __name__ == "__main__":
-> +    main()
-> 
+-- 
+2.45.0.118.g7fe29c98d7-goog
 
 
