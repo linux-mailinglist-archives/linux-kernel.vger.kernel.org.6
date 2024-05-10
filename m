@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-175245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D7B8C1CF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:25:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E67798C1CFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D3E4B2287E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CBAA283FDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8360F149005;
-	Fri, 10 May 2024 03:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FE7149C4A;
+	Fri, 10 May 2024 03:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0DLyvda"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="UC37spjJ"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77209148FE0
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB15A148FE0
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715311534; cv=none; b=VxA7Y+bKpNc8e/n5DinKBb/LdmkiMbaA9IkM5bJRZ8h5kvFTCAubNaE6UXUOzD6QmUbGhZMTJi3vXl4O0xk8Q+zsf5a8GiM5e5wq1Lstyg46NXP16HWVGxexHR2DtYdVvGARc+2oUn0hiz3ID+FWMvjJDiVCNLk+MAkOJCwQ94E=
+	t=1715311575; cv=none; b=a168aUwE3rcHD6FaYkEhYXsJdXNAQn6IHxorv2Nw8fLZZezE43aKqhsHX+iX/fm1nnQ9X54EaEn5Tp5LQgq+jwO4eIIDbO5zLi2qPrDu/WIpo9LAgdI5aThBMVvZs+0jcBvnjZmgMGOOCch55Y43iJBDmUd64jLoX9VtbDRK4O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715311534; c=relaxed/simple;
-	bh=+60/R6ZelmCn2D21Wc5U/v/CxzPMEwJYHz3a+CsKrH0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qenDHWXdDKTaC2+A6GyMRkfWggNeEecLzgFrEFUo3vw9UePYkc9USrQ8nchvuX7SacCqN0TzVl7oI0KajnIlmboU+zQ5+If1wPyK9+9IQwOa38bPiP2ujD/eNNfaGRh+7v5lIv2pVcIddsdbLESAgej9+cslazf5Dy9Q+gjShHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0DLyvda; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715311533; x=1746847533;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=+60/R6ZelmCn2D21Wc5U/v/CxzPMEwJYHz3a+CsKrH0=;
-  b=P0DLyvdaWHmnUz18kcZymcrjW3y6yekJ9mxMw/Y6f96r+/2hwiuLyAV1
-   lrheaQRsgN8IBjdqqI3fHC84x+XpGVX4UzwazhN/s+0q2TSaV1nRz78J4
-   YvX3jH3IyBPe8bVsj1iU/tW4VkdfbjIWWUDNQcBruryyFWgFY8qTLUiqM
-   DJ5mr/RkZVA4OvshJjqjCg+VN2aApRbwrdjnfISgl0Txdyr0J5X1GfGk3
-   ZUHrpoIJ/5IyZ4KYiuLwca7MUvq3Q4xN/XPRXxd9AW1efszuBmbsfCedh
-   e45TvhmR/LTDiQHdxukrXXTUcs8DmSjNumoHcZ592T0qYfgfEn534hSg0
-   Q==;
-X-CSE-ConnectionGUID: lkmCLm4jTwiQE5Z3fKko4w==
-X-CSE-MsgGUID: sk43OkI0RMO2AnBmEBC9mA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11439967"
-X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
-   d="scan'208";a="11439967"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2024 20:25:33 -0700
-X-CSE-ConnectionGUID: 4+6y3HM2QO+Ic3I0KZ0M1Q==
-X-CSE-MsgGUID: cZN55lAqTSaJNzDeu+BCvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,149,1712646000"; 
-   d="scan'208";a="66919206"
-Received: from unknown (HELO [10.239.159.127]) ([10.239.159.127])
-  by orviesa001.jf.intel.com with ESMTP; 09 May 2024 20:25:29 -0700
-Message-ID: <134825df-bbf7-4666-b4e7-cbadf9c2b27e@linux.intel.com>
-Date: Fri, 10 May 2024 11:23:49 +0800
+	s=arc-20240116; t=1715311575; c=relaxed/simple;
+	bh=KR9+aZtQF0/pSAuWezxC9nZ37UK13y4iod1lyaoIAd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z41t7vIb3ktfwNak1hwyTnqIoOkbLPV9Aa+YhlwKRWpOD4aGxF2msE74TR4e+5BKiuQBj8qferob6Sol29OjM34CrVt16e2YH8Ph2m/0/9utBimBJQ80b4iwajB+QFy8kTpBfpA8VKvAkKgiqOyG2+zQ63Yd2HK9fM75R57KfMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UC37spjJ; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-7da37436e36so67381639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 20:26:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715311573; x=1715916373; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zGxG2e2VKN3u+G1wPMCaUsbNuE8sBdNRV0fq8NAvdDA=;
+        b=UC37spjJSrJeRTnQpVFya+6hKbRsXS/cfRfD/wpp6qOH24VVtVLgzP8dxiKXJc4nU+
+         /3dU90BPG5soeMQKIhuIf+9zBX8VNMvBY54Vyoim+V9xlMKFoTrE2h1EopZrH5en+fgm
+         R/ByOuHcudp2VoiOpIRiU4TKfywizobTDEj9Q2f5zbkRp+K9bTr10M4/jy3MwV//Wctr
+         btQKqyTuV84+0a+QFXsfm5AG/N6dyfRZg9hS6fAhjb+KYdAgbosrY5CSFeHvXCz4mdKi
+         CS+mNf5YVE7ysNj1KXTyO3Uhh+9YBT/YlVsz5xpfVAl56TDqdvE5MjsB1MgCI0GSTpdy
+         /uZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715311573; x=1715916373;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zGxG2e2VKN3u+G1wPMCaUsbNuE8sBdNRV0fq8NAvdDA=;
+        b=X2LDEDA7Pp+4a1dECfXRPeDnNyM9EkvV4c5EqvpGlwnxXTLMeEwiyVbE8in8PRfUfq
+         +mb/57+GpnyLfO/RwDI2WPosvOh04v2BVk70lKGIoh9ImqeAHkRhdxLEXFPnzUEXvsLh
+         wME8L8+kecnsIuN4jjEttCSzIX4XIRvNVNnPUM8mc4w948nSXxr0CM2aakgMYOyC/pGi
+         gOXgfj4ONIoPta7TNvoshy44Nnc1apW4afotL2bfDFUg7raWZedNB5cTHZ6ayMDfqIYU
+         XtwldG7IYEUYaOtM9hZm9pyi4lWlENTemRIjHMmNGeIq1yAb7LewoytBS+jGieK2Sl2F
+         ubcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxgWw3Lw8OOhn6OaC3M0lAkI+d0nZOULl1IXswCi6XzH2BYCRP+04j/1mXOa0moE78Z3jtqSBntqRNFVpPJ6o9ulTrAp+mrVtdIiLm
+X-Gm-Message-State: AOJu0Yx9jM7zzBidhAoyHWPX7rYFiaoDb9+Z+0mc0Rw9bAi7O16gKBHS
+	RBRdZIuCeTRjbcRuF7Nr8TSYcrBsa5VP3W+FeCNmp+6gv8v2ukZel+B2B16t/w==
+X-Google-Smtp-Source: AGHT+IFjs2Y7MUqk7i3aTHdpOsTi/0KqnFICd1YQCAkvu8AdXH/Iyxc228RpFccF4GUU9d3ijbo4fw==
+X-Received: by 2002:a05:6e02:168c:b0:36a:2538:d70d with SMTP id e9e14a558f8ab-36cc14eca55mr17036045ab.28.1715311572814;
+        Thu, 09 May 2024 20:26:12 -0700 (PDT)
+Received: from google.com (195.121.66.34.bc.googleusercontent.com. [34.66.121.195])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489375c13f9sm710317173.97.2024.05.09.20.26.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 20:26:12 -0700 (PDT)
+Date: Fri, 10 May 2024 03:26:08 +0000
+From: Justin Stitt <justinstitt@google.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] libfs: fix accidental overflow in offset calculation
+Message-ID: <6oq7du4gkj3mvgzgnmqn7x44ccd3go2d22agay36chzvuv3zyt@4fktkazj4cvw>
+References: <20240510-b4-sio-libfs-v1-1-e747affb1da7@google.com>
+ <20240510004906.GU2118490@ZenIV>
+ <20240510010451.GV2118490@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Kevin Tian <kevin.tian@intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Nicolin Chen <nicolinc@nvidia.com>, Yi Liu <yi.l.liu@intel.com>,
- Jacob Pan <jacob.jun.pan@linux.intel.com>,
- Joel Granados <j.granados@samsung.com>, iommu@lists.linux.dev,
- virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 7/9] iommufd: Associate fault object with
- iommufd_hw_pgtable
-To: Jason Gunthorpe <jgg@ziepe.ca>
-References: <20240430145710.68112-1-baolu.lu@linux.intel.com>
- <20240430145710.68112-8-baolu.lu@linux.intel.com>
- <20240508002508.GQ4718@ziepe.ca>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20240508002508.GQ4718@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510010451.GV2118490@ZenIV>
 
-On 5/8/24 8:25 AM, Jason Gunthorpe wrote:
-> On Tue, Apr 30, 2024 at 10:57:08PM +0800, Lu Baolu wrote:
->>   /**
->> @@ -412,6 +415,9 @@ enum iommu_hwpt_data_type {
->>    * @data_type: One of enum iommu_hwpt_data_type
->>    * @data_len: Length of the type specific data
->>    * @data_uptr: User pointer to the type specific data
->> + * @fault_id: The ID of IOMMUFD_FAULT object. Valid only if flags field of
->> + *            IOMMU_HWPT_FAULT_ID_VALID is set.
->> + * @__reserved2: Padding to 64-bit alignment. Must be 0.
->>    *
->>    * Explicitly allocate a hardware page table object. This is the same object
->>    * type that is returned by iommufd_device_attach() and represents the
->> @@ -442,6 +448,8 @@ struct iommu_hwpt_alloc {
->>   	__u32 data_type;
->>   	__u32 data_len;
->>   	__aligned_u64 data_uptr;
->> +	__u32 fault_id;
->> +	__u32 __reserved2;
->>   };
->>   #define IOMMU_HWPT_ALLOC _IO(IOMMUFD_TYPE, IOMMUFD_CMD_HWPT_ALLOC)
-> [..]
+Hi,
+
+On Fri, May 10, 2024 at 02:04:51AM +0100, Al Viro wrote:
+> On Fri, May 10, 2024 at 01:49:06AM +0100, Al Viro wrote:
+> > On Fri, May 10, 2024 at 12:35:51AM +0000, Justin Stitt wrote:
+> > > @@ -147,7 +147,9 @@ loff_t dcache_dir_lseek(struct file *file, loff_t offset, int whence)
+> > >  	struct dentry *dentry = file->f_path.dentry;
+> > >  	switch (whence) {
+> > >  		case 1:
+> > > -			offset += file->f_pos;
+> > > +			/* cannot represent offset with loff_t */
+> > > +			if (check_add_overflow(offset, file->f_pos, &offset))
+> > > +				return -EOVERFLOW;
+> > 
+> > Instead of -EINVAL it correctly returns in such cases?  Why?
 > 
->> @@ -359,7 +359,7 @@ static const struct iommufd_ioctl_op iommufd_ioctl_ops[] = {
->>   	IOCTL_OP(IOMMU_GET_HW_INFO, iommufd_get_hw_info, struct iommu_hw_info,
->>   		 __reserved),
->>   	IOCTL_OP(IOMMU_HWPT_ALLOC, iommufd_hwpt_alloc, struct iommu_hwpt_alloc,
->> -		 __reserved),
->> +		 __reserved2),
-> This is now how the back compat mechanism works. The value here is the
-> absolute minimum size, it should never increase. The first __reserved
-> is always the right value.
+> We have file->f_pos in range 0..LLONG_MAX.  We are adding a value in
+> range LLONG_MIN..LLONG_MAX.  The sum (in $\Bbb Z$) cannot be below
+> LLONG_MIN or above 2 * LLONG_MAX, so if it can't be represented by loff_t,
+> it must have been in range LLONG_MAX + 1 .. 2 * LLONG_MAX.  Result of
+> wraparound would be equal to that sum - 2 * LLONG_MAX - 2, which is going
+> to be in no greater than -2.  We will run
+> 			fallthrough;
+> 		case 0:
+> 			if (offset >= 0)
+> 				break;
+> 			fallthrough;
+> 		default:
+> 			return -EINVAL;
+> and fail with -EINVAL.
+
+This feels like a case of accidental correctness. You demonstrated that
+even with overflow we end up going down a control path that returns an
+error code so all is good. However, I think finding the solution
+shouldn't require as much mental gymnastics. We clearly don't want our
+file offsets to wraparound and a plain-and-simple check for that lets
+readers of the code understand this.
+
 > 
-> If you change it then old userspace that doesn't include the fault_id
-> will stop working.
+> Could you explain why would -EOVERFLOW be preferable and why should we
+> engage in that bit of cargo cult?
 
-Yeah! I will remove this change.
+I noticed some patterns in fs/ regarding -EOVERFLOW and thought this was
+a good application of this particular error code.
 
-Best regards,
-baolu
+Some examples:
+
+read_write.c::do_sendfile()
+  ...
+	if (unlikely(pos + count > max)) {
+		retval = -EOVERFLOW;
+		if (pos >= max)
+			goto fput_out;
+		count = max - pos;
+	}
+
+read_write.c::generic_copy_file_checks()
+  ...
+	/* Ensure offsets don't wrap. */
+	if (pos_in + count < pos_in || pos_out + count < pos_out)
+		return -EOVERFLOW;
+
+.. amongst others.
+
+So to answer your question, I don't have strong feelings about what the
+error code should be; I was just attempting to match patterns I had seen
+within this section of the codebase when handling overflow/wraparound.
+
+If -EOVERFLOW is technically incorrect or if it is just bad style, I'm
+happy to send a new version swapping it over to -EINVAL
+
+Thanks
+Justin
 
