@@ -1,162 +1,211 @@
-Return-Path: <linux-kernel+bounces-175218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418F28C1C81
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:38:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 191A98C1C82
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFCC21F21B0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B2A31C213FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDDA14884D;
-	Fri, 10 May 2024 02:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5191442F1;
+	Fri, 10 May 2024 02:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXZ7yQLv"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DqMOeopC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B43F3308A;
-	Fri, 10 May 2024 02:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78693308A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715308724; cv=none; b=nUOyJIq3BapdxtjQWqNuU/7xHxbptEvsGJ66Ku8m8elvjS2b9uaa2k7knQJpuzn5pQ0zcINDZSNyz4IJnGmfRX6BTJwMjfPBZ1o8iMnTHxjbNmVYJwjTGNNThK8ahoRDmAPAdgu0wQD2fkVoZj0EbU7rjNc5N4RK4OjLoOX0TWE=
+	t=1715308754; cv=none; b=DOW9j8/xanDcKJucGcwDd2J+1whaW7/9Cx+KjCrgURLdpNZAcdbhHKDyaNJBPHG2rG2Fe8rLD8tx9VGzGa04RrIuLimyZbPKZF4BFo0ibAdW+YpaWJEPHanlNm+Vqldfvn38ERObF8j+p8bsuz5giOPxHcUSEr+9n4L1Y/qDM78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715308724; c=relaxed/simple;
-	bh=jddQeaqQrXTs71+YmSJw9dqzVBsK8JP9xHEAhWEFVmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CeAz37py6fsd9VuH9EOghlgtrbxJ70YzTF0HxQgFzgdwXLgcv4H8UcEbEvkt81Z8EUB/TAlPFUtIJC7i3f8fTULiQisleVqe+nzNIsstETsP8QhBFkGbIsl0tMRH/ONodUyqJLXicUiUHYc7R9hv93AAfaEAIR2xqs+nT9t+N2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXZ7yQLv; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-36c846689d1so7046825ab.0;
-        Thu, 09 May 2024 19:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715308721; x=1715913521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6+FQEvC344Cq4qFk7Z5iGhz/jJmHyyWFQPf8LCbmeGM=;
-        b=BXZ7yQLvRQQ+AdQbx6C4SUGhS4ctmMsFAjFrxaE5l+FLfSWTfXP9kP4M94O1nV+eZt
-         er0PYWLx2HIsgFzn0d0dkRMOtj+HrF8Lngo737UVvg3glh8ymW4RYzgYrhlV4bjdzI44
-         B5u5aLHzzgt4b+ZdACtCdw1sBWru/ydTXqnNcULwwYeq5G/CzbzoCB44U+uaYFXQ4TeM
-         tgID6R0m0PGDYxMAmwKRxnCtQnV4kneTYNVefo1a7jsRWb6cbZVw81x3mt4OBNCzKgS9
-         fwCh1pUftgi1oOLulC/iYL+0YpmaNJo3LGYK9P1Nid7pQMnPrKtdVUbJmc51Wm1UQPtj
-         CQgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715308721; x=1715913521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6+FQEvC344Cq4qFk7Z5iGhz/jJmHyyWFQPf8LCbmeGM=;
-        b=e09UF7vQTjlvp54mCZeWlKq/4yuS8hrrMZNTBu2xJjOCGx/mVFANsba6Vw5hNtF54Q
-         f+YZWSgQ6Nawf6kxeNT8r54J9qpaX89zrgoV3I8uyYzCSPLXaRRuvrqCiY690qJVlA/d
-         Gn/kSp7XU+gnztyzBhZph20d3RJN8uH7AQWbhT9XsPxT2LGAFPZMi/+Sp5OIItgGTGeg
-         Z74qVuC6n8yUZ3HH+LHDi+eF1yFRlsGIYgRhX20F4tkUNFv333Oz5y0c9oxnj6IJEk96
-         gAozbQryrRY+oO8+SmKO1A8t0THIj2F0HWj2ywftru3n3R3NvdSmWGRDme8dwnlZVTqe
-         4tyw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/neL0rn57Sjy9ngfPdoC29UtlDdO+wjoDYkdMc0d2RK+xGeJSe/Oj1nfC+rtKymL4xgO/oGZfDOn6W6KtdWHbu4DaSWcrx7Y1Bd9yQDYgMk9Smx2GHwHfYrT4Ix+sfyEnyr0ulDrmhQI3fhXftcOac48EBpjgOwaDYQ/YG/EhbO8c03rC
-X-Gm-Message-State: AOJu0YyIJztk1GZjJqzn2TvqPiLkBpC433NY0jh8uhDunWKIAsBRKoji
-	xLjkF/rdqAHkJIT1KLfP/w7WJIl8mnEEQUww7ZjAPaI1pi6FYDR4DJVwiory3VZ1O6LKB+2m3ur
-	9Qqwv5jize1uK+bTmEAKUfoaoI+h9GsvQ
-X-Google-Smtp-Source: AGHT+IFA5hOZHgUdtXLvvH+1m+oDwQZM9Yg+0AcRzMwCh6Ow6b69t1K2O1QS7dF85eTT8GVCCff9RckTga5FTH0HhIE=
-X-Received: by 2002:a05:6e02:12ce:b0:36a:2a57:9393 with SMTP id
- e9e14a558f8ab-36cc144b65dmr16566235ab.3.1715308721696; Thu, 09 May 2024
- 19:38:41 -0700 (PDT)
+	s=arc-20240116; t=1715308754; c=relaxed/simple;
+	bh=M3iK44q4XaDBGfbEx+OpWbmqokN+nvYknGFBDDBsslM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fSIQBXPJpyeOTpQw63Vy00I6hBK++O8gIeIjvIiCE2smZ4Hbsl++WaaEhbmzL7DBJ+L8L+gD1vT9AfRajbw6uA2a8D/wPXdYkBbdM2AO6bZseYXzmp/+1c1bwVYh1Jr9cnFpaiOds+G62nviRxgJj0WMHj3xIG/h/BUvMB5hQzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DqMOeopC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD39C116B1;
+	Fri, 10 May 2024 02:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715308754;
+	bh=M3iK44q4XaDBGfbEx+OpWbmqokN+nvYknGFBDDBsslM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DqMOeopC5rR16hKDZK7Cd4bMFWFhJs8c2volLMTdFdL3rj5urU9Vo36UaR0n9B2sP
+	 bBe9S9+Ra4i160s7SEsY/+aiO1BeGFPNiJt5TNsHVYuYKoFM5vc+PjfOjCLnjqBItb
+	 BGh3SFIxjtVkQuc8XoTZZwokVMR0+ximqKniJNBMQeOJBHkcBbbLviEvANx0jHFmdS
+	 RiT1vtHW+c+hOw/Totn4leoaPkqacGkkS2Brr2Gg9qhcJEEqvyhqbciRyk9VPtyaxo
+	 bQpNI23maOeAe4EckcnGqQ/kj/cup3zsut0L68wCJcxCyteWyRqUrtmW9gYq9hk/yG
+	 UMO2tAUptA+3A==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: fix to avoid racing in between read and OPU dio write
+Date: Fri, 10 May 2024 10:39:06 +0800
+Message-Id: <20240510023906.281700-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1715223460-32662-1-git-send-email-shengjiu.wang@nxp.com>
- <1715223460-32662-3-git-send-email-shengjiu.wang@nxp.com> <20240509-repurpose-dumping-156b57c25960@spud>
- <CAA+D8AOkDbj_QsF9VescuAfFjKcB8FnOXqwjXVrrBM1Ck4ut4Q@mail.gmail.com>
-In-Reply-To: <CAA+D8AOkDbj_QsF9VescuAfFjKcB8FnOXqwjXVrrBM1Ck4ut4Q@mail.gmail.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 10 May 2024 10:38:30 +0800
-Message-ID: <CAA+D8AOQtwHTLsQcqh_LCvVP5CWXqiHc3-at8jv3B-kA8ORR_w@mail.gmail.com>
-Subject: Re: [PATCH 2/4] ASoC: dt-bindings: fsl,xcvr: Add two PLL clock sources
-To: Conor Dooley <conor@kernel.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, lgirdwood@gmail.com, broonie@kernel.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
-	nicoleotsuka@gmail.com, perex@perex.cz, tiwai@suse.com, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 10, 2024 at 10:27=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gmail=
-com> wrote:
->
-> On Fri, May 10, 2024 at 1:14=E2=80=AFAM Conor Dooley <conor@kernel.org> w=
-rote:
-> >
-> > On Thu, May 09, 2024 at 10:57:38AM +0800, Shengjiu Wang wrote:
-> > > Add two PLL clock sources, they are the parent clocks of the root clo=
-ck
-> > > one is for 8kHz series rates, named as 'pll8k', another one is for
-> > > 11kHz series rates, named as 'pll11k'. They are optional clocks,
-> > > if there are such clocks, then the driver can switch between them to
-> > > support more accurate sample rates.
-> > >
-> > > As 'pll8k' and 'pll11k' are optional, then add 'minItems: 4' for
-> > > clocks and clock-names properties.
-> >
-> > Despite the detail given here in the commit message, the series this is
-> > appearing in and one of the driver patches makes me a bit "suspicious"
-> > of this patch. Are these newly added clocks available on all devices, o=
-r
-> > just on the imx95, or?
->
-> These newly added clocks are only available for the imx95 XCVR.
->
+If lfs mode is on, buffered read may race w/ OPU dio write as below,
+it may cause buffered read hits unwritten data unexpectly, and for
+dio read, the race condition exists as well.
 
-Looks like I should merge patch1 & 2 together, patch 3 & 3 together. right?
+Thread A			Thread B
+- f2fs_file_write_iter
+ - f2fs_dio_write_iter
+  - __iomap_dio_rw
+   - f2fs_iomap_begin
+    - f2fs_map_blocks
+     - __allocate_data_block
+      - allocated blkaddr #x
+       - iomap_dio_submit_bio
+				- f2fs_file_read_iter
+				 - filemap_read
+				  - f2fs_read_data_folio
+				   - f2fs_mpage_readpages
+				    - f2fs_map_blocks
+				     : get blkaddr #x
+				    - f2fs_submit_read_bio
+				IRQ
+				- f2fs_read_end_io
+				 : read IO on blkaddr #x complete
+IRQ
+- iomap_dio_bio_end_io
+ : direct write IO on blkaddr #x complete
 
-Best regards
-Shengjiu Wang
+This patch introduces a new per-inode i_opu_rwsem lock to avoid
+such race condition.
 
-> Best regards
-> Shengjiu Wang
-> >
-> > Thanks,
-> > Conor.
-> >
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > ---
-> > >  Documentation/devicetree/bindings/sound/fsl,xcvr.yaml | 6 ++++++
-> > >  1 file changed, 6 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml b/=
-Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
-> > > index 1c74a32def09..c4660faed404 100644
-> > > --- a/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
-> > > +++ b/Documentation/devicetree/bindings/sound/fsl,xcvr.yaml
-> > > @@ -50,6 +50,9 @@ properties:
-> > >        - description: PHY clock
-> > >        - description: SPBA clock
-> > >        - description: PLL clock
-> > > +      - description: PLL clock source for 8kHz series
-> > > +      - description: PLL clock source for 11kHz series
-> > > +    minItems: 4
-> > >
-> > >    clock-names:
-> > >      items:
-> > > @@ -57,6 +60,9 @@ properties:
-> > >        - const: phy
-> > >        - const: spba
-> > >        - const: pll_ipg
-> > > +      - const: pll8k
-> > > +      - const: pll11k
-> > > +    minItems: 4
-> > >
-> > >    dmas:
-> > >      items:
-> > > --
-> > > 2.34.1
-> > >
+Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS mode")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- fix to cover dio read path w/ i_opu_rwsem as well.
+ fs/f2fs/f2fs.h  |  1 +
+ fs/f2fs/file.c  | 28 ++++++++++++++++++++++++++--
+ fs/f2fs/super.c |  1 +
+ 3 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 30058e16a5d0..91cf4b3d6bc6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -847,6 +847,7 @@ struct f2fs_inode_info {
+ 	/* avoid racing between foreground op and gc */
+ 	struct f2fs_rwsem i_gc_rwsem[2];
+ 	struct f2fs_rwsem i_xattr_sem; /* avoid racing between reading and changing EAs */
++	struct f2fs_rwsem i_opu_rwsem;	/* avoid racing between buf read and opu dio write */
+ 
+ 	int i_extra_isize;		/* size of extra space located in i_addr */
+ 	kprojid_t i_projid;		/* id for project quota */
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 72ce1a522fb2..4ec260af321f 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4445,6 +4445,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	const loff_t pos = iocb->ki_pos;
+ 	const size_t count = iov_iter_count(to);
+ 	struct iomap_dio *dio;
++	bool do_opu = f2fs_lfs_mode(sbi);
+ 	ssize_t ret;
+ 
+ 	if (count == 0)
+@@ -4457,8 +4458,14 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			ret = -EAGAIN;
+ 			goto out;
+ 		}
++		if (do_opu && !f2fs_down_read_trylock(&fi->i_opu_rwsem)) {
++			f2fs_up_read(&fi->i_gc_rwsem[READ]);
++			ret = -EAGAIN;
++			goto out;
++		}
+ 	} else {
+ 		f2fs_down_read(&fi->i_gc_rwsem[READ]);
++		f2fs_down_read(&fi->i_opu_rwsem);
+ 	}
+ 
+ 	/*
+@@ -4477,6 +4484,7 @@ static ssize_t f2fs_dio_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 		ret = iomap_dio_complete(dio);
+ 	}
+ 
++	f2fs_up_read(&fi->i_opu_rwsem);
+ 	f2fs_up_read(&fi->i_gc_rwsem[READ]);
+ 
+ 	file_accessed(file);
+@@ -4523,7 +4531,13 @@ static ssize_t f2fs_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (f2fs_should_use_dio(inode, iocb, to)) {
+ 		ret = f2fs_dio_read_iter(iocb, to);
+ 	} else {
++		bool do_opu = f2fs_lfs_mode(F2FS_I_SB(inode));
++
++		if (do_opu)
++			f2fs_down_read(&F2FS_I(inode)->i_opu_rwsem);
+ 		ret = filemap_read(iocb, to, 0);
++		if (do_opu)
++			f2fs_up_read(&F2FS_I(inode)->i_opu_rwsem);
+ 		if (ret > 0)
+ 			f2fs_update_iostat(F2FS_I_SB(inode), inode,
+ 						APP_BUFFERED_READ_IO, ret);
+@@ -4748,14 +4762,22 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 			ret = -EAGAIN;
+ 			goto out;
+ 		}
++		if (do_opu && !f2fs_down_write_trylock(&fi->i_opu_rwsem)) {
++			f2fs_up_read(&fi->i_gc_rwsem[READ]);
++			f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
++			ret = -EAGAIN;
++			goto out;
++		}
+ 	} else {
+ 		ret = f2fs_convert_inline_inode(inode);
+ 		if (ret)
+ 			goto out;
+ 
+ 		f2fs_down_read(&fi->i_gc_rwsem[WRITE]);
+-		if (do_opu)
++		if (do_opu) {
+ 			f2fs_down_read(&fi->i_gc_rwsem[READ]);
++			f2fs_down_write(&fi->i_opu_rwsem);
++		}
+ 	}
+ 
+ 	/*
+@@ -4779,8 +4801,10 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 		ret = iomap_dio_complete(dio);
+ 	}
+ 
+-	if (do_opu)
++	if (do_opu) {
++		f2fs_up_write(&fi->i_opu_rwsem);
+ 		f2fs_up_read(&fi->i_gc_rwsem[READ]);
++	}
+ 	f2fs_up_read(&fi->i_gc_rwsem[WRITE]);
+ 
+ 	if (ret < 0)
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index daf2c4dbe150..b4ed3b094366 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1428,6 +1428,7 @@ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ 	init_f2fs_rwsem(&fi->i_gc_rwsem[READ]);
+ 	init_f2fs_rwsem(&fi->i_gc_rwsem[WRITE]);
+ 	init_f2fs_rwsem(&fi->i_xattr_sem);
++	init_f2fs_rwsem(&fi->i_opu_rwsem);
+ 
+ 	/* Will be used by directory only */
+ 	fi->i_dir_level = F2FS_SB(sb)->dir_level;
+-- 
+2.40.1
+
 
