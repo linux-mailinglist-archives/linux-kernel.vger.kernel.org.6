@@ -1,150 +1,97 @@
-Return-Path: <linux-kernel+bounces-175265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F108C1D38
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:53:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D98D8C1D32
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C455283C87
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B042E1F21888
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3919149DE9;
-	Fri, 10 May 2024 03:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67600149E12;
+	Fri, 10 May 2024 03:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mm12.xyz header.i=@mm12.xyz header.b="ihVippyL"
-Received: from elcheapo.mm12.xyz (elcheapo.mm12.xyz [148.135.104.117])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wa0Akm7t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA23171A7;
-	Fri, 10 May 2024 03:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.104.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C658149C56;
+	Fri, 10 May 2024 03:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715313226; cv=none; b=qzGWwzkQuq3yDjUQWqhhND2pRWoy4OAmouOgsy1R81YMuZNoJ/VKNJPkgMXLT9sPouVtFIg0rMPblu+GbPXNY/v7nqQHF0R33fhtzzpJmA8LQq6EV8a8P5TtgtRe+/NNcRr9xHHzMZ0Zc1u22kZnxz7r4PRsMnTNbAzY31Pkdq8=
+	t=1715313029; cv=none; b=ba+FqkA7mmCxYUmBfQOvxArJRW/Qt10yxRcGwxDQMXTmER3pCfdb8r7sx8F01guBDzjjqx2l7iqDWCvUS4VS2ABGaBEHGhNfY8OZfhAenl47+CH41S/DoCXL9QghkdiKCouToEvfsU/sq2v+XTaNmDzkL7l6/d/zF6/HnoNgcIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715313226; c=relaxed/simple;
-	bh=y7BXUOx/dAVhQLguT838TRDZl0y8vZ5eIRRG8rxR2/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBt8Lk6/3i3foqKlYccKTtYO3RVLjJocr0GezF8u08RnZ4jDFb4BmZkSR6NUg75pXnwdwh3zWyn15G7Lc9Z2ufwFWxgBSTPy/gDLRmkEMzG0WZdvmqsy7Bedh+mAV0LC0RY6p4Bh+D6pBHUiGxQ/jPU6thTdzga72IneP49jSCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mm12.xyz; spf=pass smtp.mailfrom=mm12.xyz; dkim=pass (2048-bit key) header.d=mm12.xyz header.i=@mm12.xyz header.b=ihVippyL; arc=none smtp.client-ip=148.135.104.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mm12.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mm12.xyz
-Received: from scala.mm12.xyz by elcheapo.mm12.xyz (Postfix) with ESMTPSA id 672C31F46E;
-	Thu,  9 May 2024 23:46:20 -0400 (EDT)
-Received: by scala.mm12.xyz (Postfix, from userid 1000)
-	id 61AD4180437; Thu,  9 May 2024 23:46:18 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mm12.xyz; s=mail;
-	t=1715312778; bh=y7BXUOx/dAVhQLguT838TRDZl0y8vZ5eIRRG8rxR2/k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ihVippyLA5SdmGURV5AfqHgDxPYz0rsg1xW6miwecMyyZwh11gmKB3LFS0jKIn6kF
-	 3pYD+g3uAtWJCIgxpl4eOLDcyNHgp8TlFVVLXyBzAyPkTucgRk5sjV6H4JldRHV0Yl
-	 tYD7Lc9RJeb5NTdHQ9sBzdLEwgwz6tQIkRf8OU6c+LdRDdqJOD2zIfC1f22AW861po
-	 wsFERbhND+1dJmyPjy7q/iRqH/dOtacE/vog8+kM2m4VNwxmOLqc40h4ZRQyU7JJF9
-	 ctzvbW0ze5eXkLYORxKlBcLdhDxReLQl7dDa+OqNmhYvSv1flbblSGZ0UiTYMutTir
-	 MkKEs62uT3xLQ==
-Date: Thu, 9 May 2024 23:46:18 -0400
-From: Matthew Mirvish <matthew@mm12.xyz>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Coly Li <colyli@suse.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the refactor-heap tree with the
- block tree
-Message-ID: <20240510034618.GA3161190@mm12.xyz>
-References: <20240509152745.08af752f@canb.auug.org.au>
- <te64v6zwwor6jkco6uiu2zz7ern6ijhyu5okfvdz3bmj3w5qfp@mx4zdniwymqj>
- <Zj1RzZdtfL7UQax1@visitorckw-System-Product-Name>
- <buehluxvo234sj7onzl6wwjmuslmnkh7g6vnpru23kpti6qmpp@7nqak2ser7mw>
- <Zj2PX6Fy3BEnQc50@visitorckw-System-Product-Name>
+	s=arc-20240116; t=1715313029; c=relaxed/simple;
+	bh=C1NpNQNzHoIUVzTEPwGGLtvW9WG1e3A/c3cr3VQ/BlI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=DmyoZ8v4Sxl42PS0qJRC+IhYOQ26AX7syGCFCqlth947/9gW/9EacIxOluumqcSQv2ryvm6K0I2ErY/iv1rXasLIFNngdi6O5UgAQy4speGdg9vLioxEnBwoD09+IdILSZlkWrjj3La5yw7AszfkGwr1/+NiQCZ+2c8noCG15IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wa0Akm7t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 2190CC4AF07;
+	Fri, 10 May 2024 03:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715313029;
+	bh=C1NpNQNzHoIUVzTEPwGGLtvW9WG1e3A/c3cr3VQ/BlI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Wa0Akm7tRiiLzSJW9Gt/FsJpB7FcPyqSN5zrM9K7bpTZA8OJlGk2tM/xOJ4QMAJ8p
+	 4LZM19YvUxOgNyBw5KbkCsl051sU14iuRqB++OcIcSDVDYCe8VgJJHv3kk9K1NTmkG
+	 gmQlPHsI1LUjNNLRhZ/P7UyPjTUy4GcqqUpElMFnicSlOH5ToUZk2WovEKQ9maDWRR
+	 l+CQAOPYsSkVZLfAiu55Wz6QvkAzYfXj4Qgb5/Wf4SUvwr/up+ppW28SngnlInjlcP
+	 z5w5JjXnYdvYsfnqbXP8S4cM7nW0T1v79/gxMDD+/qebCiyB5Vftq30osCgvXJICmQ
+	 +R3houJRtgCKA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 16C26C433F2;
+	Fri, 10 May 2024 03:50:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zj2PX6Fy3BEnQc50@visitorckw-System-Product-Name>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3] net/sched: adjust device watchdog timer to detect stopped
+ queue at right time
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <171531302908.29493.4828668571674176286.git-patchwork-notify@kernel.org>
+Date: Fri, 10 May 2024 03:50:29 +0000
+References: <20240508133617.4424-1-praveen.kannoju@oracle.com>
+In-Reply-To: <20240508133617.4424-1-praveen.kannoju@oracle.com>
+To: Praveen Kumar Kannoju <praveen.kannoju@oracle.com>
+Cc: jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+ davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ rajesh.sivaramasubramaniom@oracle.com, rama.nichanamatlu@oracle.com,
+ manjunath.b.patil@oracle.com
 
-On Fri, May 10, 2024 at 11:07:11AM +0800, Kuan-Wei Chiu wrote:
-> On Thu, May 09, 2024 at 07:16:31PM -0400, Kent Overstreet wrote:
-> > On Fri, May 10, 2024 at 06:44:29AM +0800, Kuan-Wei Chiu wrote:
-> > > On Thu, May 09, 2024 at 03:58:57PM -0400, Kent Overstreet wrote:
-> > > > On Thu, May 09, 2024 at 03:27:45PM +1000, Stephen Rothwell wrote:
-> > > > > Hi all,
-> > > > > 
-> > > > > Today's linux-next merge of the refactor-heap tree got conflicts in:
-> > > > > 
-> > > > >   drivers/md/bcache/bset.c
-> > > > >   drivers/md/bcache/bset.h
-> > > > >   drivers/md/bcache/btree.c
-> > > > >   drivers/md/bcache/writeback.c
-> > > > > 
-> > > > > between commit:
-> > > > > 
-> > > > >   3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter")
-> > > > > 
-> > > > > from the block tree and commit:
-> > > > > 
-> > > > >   afa5721abaaa ("bcache: Remove heap-related macros and switch to generic min_heap")
-> > > > > 
-> > > > > from the refactor-heap tree.
-> > > > > 
-> > > > > Ok, these conflicts are too extensive, so I am dropping the refactor-heap
-> > > > > tree for today.  I suggest you all get together and sort something out.
-> > > > 
-> > > > Coli and Kuan, you guys will need to get this sorted out quick if we
-> > > > want refactor-heap to make the merge window
-> > > 
-> > > Hi Coli and Kent,
-> > > 
-> > > If I understand correctly, the reported bug is because we attempted to
-> > > point (heap)->data to a dynamically allocated memory , but at that time
-> > > (heap)->data was not a regular pointer but a fixed size array with a
-> > > length of MAX_BSETS.
-> > > 
-> > > In my refactor heap patch series, I introduced a preallocated array and
-> > > decided in min_heap_init() whether the data pointer should point to an
-> > > incoming pointer or to the preallocated array. Therefore, I am
-> > > wondering if my patch might have unintentionally fixed this bug?
-> > > 
-> > > I am unsure how to reproduce the reported issue. Could you assist me in
-> > > verifying whether my assumption is correct?
-> > 
-> > This is a merge conflict, not a runtime. Can you rebase onto Coli's
-> > tree? We'll have to retest.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed,  8 May 2024 19:06:17 +0530 you wrote:
+> Applications are sensitive to long network latency, particularly
+> heartbeat monitoring ones. Longer the tx timeout recovery higher the
+> risk with such applications on a production machines. This patch
+> remedies, yet honoring device set tx timeout.
 > 
-> Oh, sorry for the misunderstanding I caused. When I mentioned "bug" [1]
-> earlier, I was referring to the bug addressed in
-> 3a861560ccb3 ("bcache: fix variable length array abuse in btree_iter"),
-> not a merge conflict.
+> Modify watchdog next timeout to be shorter than the device specified.
+> Compute the next timeout be equal to device watchdog timeout less the
+> how long ago queue stop had been done. At next watchdog timeout tx
+> timeout handler is called into if still in stopped state. Either called
+> or not called, restore the watchdog timeout back to device specified.
 > 
-> Here are the results after the rebase:
-> https://github.com/visitorckw/linux.git refactor-heap
-> 
-> [1]: https://bugs.launchpad.net/ubuntu/+source/linux/+bug/2039368
+> [...]
 
-The ubuntu kernels build with UBSAN now, and the bug reported is just a
-UBSAN warning. The original implementation's iterator has a fixed size
-sets array that is indexed out of bounds when the iterator is allocated
-on the heap with more space -- the patch restructures it a bit to have a
-single iterator type with a flexible array and then a larger "stack"
-type which embeds the iterator along with the preallocated region.
+Here is the summary with links:
+  - [v3] net/sched: adjust device watchdog timer to detect stopped queue at right time
+    https://git.kernel.org/netdev/net-next/c/33fb988b6705
 
-I took a brief look at the refactor-heap branch but I'm not entirely
-sure what's going on with the new min heaps: in the one place where the
-larger iterators are used (in bch_btree_node_read_done) it doesn't look
-like the heap is ever initialized (perhaps since the old iter_init
-wasn't used here because of the special case it got missed in the
-refactor?) With the new heaps it should be fairly easy to fix though;
-just change the fill_iter mempool to be allocating only the minheap data
-arrays and setup iter->heap.data properly with that instead.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Hope that helps,
-Matthew Mirvish
 
-> 
-> Regards,
-> Kuan-Wei
 
