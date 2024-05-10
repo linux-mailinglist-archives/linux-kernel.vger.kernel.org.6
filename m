@@ -1,135 +1,113 @@
-Return-Path: <linux-kernel+bounces-175200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB37D8C1C27
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:33:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390E98C1C2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84A452832E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25A81F2355C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 01:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD44513BAC8;
-	Fri, 10 May 2024 01:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F0A13C8E6;
+	Fri, 10 May 2024 01:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRFtePo+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ob/HyBld"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA3B13A3E3;
-	Fri, 10 May 2024 01:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D7E13B7A9;
+	Fri, 10 May 2024 01:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715304813; cv=none; b=OoYqYZVoNHuI5QYq+oVd+GD2B0dNrnWptEM4c+METKIP+gC/myJS5+to4QAUIES+7HymgswcaHUL0N5hLoQj2H/IrRtOn8h0kVqlbCGhAbTu0frrCbcpkeQcG3chqbZaJmtUpbL8S91nGOD5ZLKsxRYUbZzwRvDfTmCB7HFKZCA=
+	t=1715305490; cv=none; b=A5anhp5c9di4r+AR0EBiVLqpzAZUOkUjrzK4dQ/VFHqQFOHtBRc5D4OZlsLBjJsPSvTWsb62WgC/yteGOADLuAV3/t5b88zMErNmseRZSFywpnDbvG6v4tkdgc8a5kKggtnrKvFHG/9gphrW3Hd9WCli7O05P8wZY68zG+NAM/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715304813; c=relaxed/simple;
-	bh=jo2BzBRrRJMYVX1EgU8hOrka+kTaZZ2coGuJC5mSa9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PGrRIXOCyKL+4cbTE23qyRfQw1JqK/q2bl3BJNtoStJewSJYdMmzbr8tjyH2MkZF4jl9hLuRAhqacDXUEPVlrITVGvbDwYFl9N2M3VUXwgDYlemx++TqfrG+9Bp0OoT4HacSsRMRdP3NVDHf00cPqpKOfri0qokWM//+/N+s7aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRFtePo+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EFD6C116B1;
-	Fri, 10 May 2024 01:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715304812;
-	bh=jo2BzBRrRJMYVX1EgU8hOrka+kTaZZ2coGuJC5mSa9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RRFtePo+YEyD+qy4sC1+JJSrwUxDTsPjzlaO3jKndejZOJKx/aJJvzEK229uFiy5r
-	 zjP6IgPuO5eGIO8vwen7wRlIpgsHXvcW8nQHIhGNf7JzZI+qONSq/V9C92aIHQ/lcn
-	 3CsQwh48LMQTeq3SUn55svpVcdB9Vi4zPgotqsH4uiWl8oplnSOszq7OgE3F8Ot2tF
-	 dYLTbEe40bOu/MU0h9kKqxJQYhOM1X5KckOHHPYdAKXzOOPNmfoQWE7DbnGPyIYP0U
-	 hY0Vu3F+R5lzHTINSZhJp8UaM+KFOYr5IfnbST0QAOaLpBWb2DDBxrUeMkvtEKMGjB
-	 o0/qGQVDs1iOQ==
-Date: Fri, 10 May 2024 01:33:30 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	jaegeuk@kernel.org, chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, krisman@suse.de,
-	Gabriel Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v16 3/9] libfs: Introduce case-insensitive string
- comparison helper
-Message-ID: <20240510013330.GI1110919@google.com>
-References: <20240405121332.689228-1-eugen.hristev@collabora.com>
- <20240405121332.689228-4-eugen.hristev@collabora.com>
+	s=arc-20240116; t=1715305490; c=relaxed/simple;
+	bh=Z5zOkeaCJzSf4qW8zcrMf+qzgg5FfZa15nOgZLkWxwk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=iBHhprqVnK1lrM+mZuEN+ycHTreX9t16Y78gFdPmspMKEN4XuZmybAyqGUOUBA/vKks38qtCnljZqSAtMheOuva7AdBnWB7YM0yAuwKzgBAqZRq20Wc3Lw1jlQYXQoBbgYjoHSZtRSsM1MvRPKzUfpbujsck853ecfpRHxH+vAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ob/HyBld; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44A1B9U5023950;
+	Fri, 10 May 2024 01:44:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:date:subject:mime-version:content-type
+	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=WEr
+	kBehGRZvL1gta8obGebWnnhjP+Z4r5zimA1rTDBE=; b=ob/HyBldpq82e4aLxrQ
+	g972I+8tmz3V+3cCJAR0qQBI6FtF+eTTurmGB2RhA1/rE4/nqQYdssRr+zb8fgnm
+	D1iBeYxEYtsXzbUWtnFxZv87epDe/DH5g0XdrNScajLdVano9DDscr5KCdJYXQEc
+	q/w8jN0hc92dmclY4iJN3YfmhXhBs6FjAgUNNrtyOO4zcljOvjr6CmvmnjCs7sGZ
+	23W0Oo/BfLvBHWWRipqf7THcgCrQZeWFaSvssIRrl0J/0g5m1Sn4IImr/HHo1be6
+	GrFF43myBwxiGVaaTHXIxY3P0tYpHElblpuvk+Y79NTX0uC14wDIU5c7VGeX9P1X
+	2Kw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w0raf4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 01:44:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44A1igge024784
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 10 May 2024 01:44:42 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 9 May 2024
+ 18:44:41 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 9 May 2024 18:44:41 -0700
+Subject: [PATCH] platform/goldfish: goldfish_pipe: add MODULE_DESCRIPTION()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240405121332.689228-4-eugen.hristev@collabora.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240509-goldfish_pipe-md-v1-1-acb513276263@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAAh8PWYC/x3MTQrCQAxA4auUrA2koy7qVURkftJOoJ0OiUqh9
+ O6OLr/FezsYq7DBrdtB+SMma2noTx3E7MvEKKkZHLkLXWnAaZ3TKJafVSrjkrBPHB2FdPYDQcu
+ q8ijbf3l/NAdvjEF9ifk3mqW8N1y8vVjhOL5vIsFJgQAAAA==
+To: <kernel-janitors@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cBNx5G4JhF4Y5uckTK5biZKp5u8HlQnO
+X-Proofpoint-ORIG-GUID: cBNx5G4JhF4Y5uckTK5biZKp5u8HlQnO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-09_12,2024-05-09_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ mlxlogscore=999 clxscore=1011 suspectscore=0 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405100011
 
-On Fri, Apr 05, 2024 at 03:13:26PM +0300, Eugen Hristev wrote:
-> +/**
-> + * generic_ci_match() - Match a name (case-insensitively) with a dirent.
-> + * This is a filesystem helper for comparison with directory entries.
-> + * generic_ci_d_compare should be used in VFS' ->d_compare instead.
-> + *
-> + * @parent: Inode of the parent of the dirent under comparison
-> + * @name: name under lookup.
-> + * @folded_name: Optional pre-folded name under lookup
-> + * @de_name: Dirent name.
-> + * @de_name_len: dirent name length.
-> + *
-> + * Test whether a case-insensitive directory entry matches the filename
-> + * being searched.  If @folded_name is provided, it is used instead of
-> + * recalculating the casefold of @name.
-> + *
-> + * Return: > 0 if the directory entry matches, 0 if it doesn't match, or
-> + * < 0 on error.
-> + */
-> +int generic_ci_match(const struct inode *parent,
-> +		     const struct qstr *name,
-> +		     const struct qstr *folded_name,
-> +		     const u8 *de_name, u32 de_name_len)
-> +{
-> +	const struct super_block *sb = parent->i_sb;
-> +	const struct unicode_map *um = sb->s_encoding;
-> +	struct fscrypt_str decrypted_name = FSTR_INIT(NULL, de_name_len);
-> +	struct qstr dirent = QSTR_INIT(de_name, de_name_len);
-> +	int res = 0;
-> +
-> +	if (IS_ENCRYPTED(parent)) {
-> +		const struct fscrypt_str encrypted_name =
-> +			FSTR_INIT((u8 *) de_name, de_name_len);
-> +
-> +		if (WARN_ON_ONCE(!fscrypt_has_encryption_key(parent)))
-> +			return -EINVAL;
-> +
-> +		decrypted_name.name = kmalloc(de_name_len, GFP_KERNEL);
-> +		if (!decrypted_name.name)
-> +			return -ENOMEM;
-> +		res = fscrypt_fname_disk_to_usr(parent, 0, 0, &encrypted_name,
-> +						&decrypted_name);
-> +		if (res < 0)
-> +			goto out;
+Fix the make W=1 warning:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
 
-If fscrypt_fname_disk_to_usr() returns an error and !sb_has_strict_encoding(sb),
-then this function returns 0 (indicating no match) instead of the error code
-(indicating an error).  Is that the correct behavior?  I would think that
-strict_encoding should only have an effect on the actual name comparison.
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/platform/goldfish/goldfish_pipe.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +	/*
-> +	 * Attempt a case-sensitive match first. It is cheaper and
-> +	 * should cover most lookups, including all the sane
-> +	 * applications that expect a case-sensitive filesystem.
-> +	 */
-> +	if (folded_name->name) {
-> +		if (dirent.len == folded_name->len &&
-> +		    !memcmp(folded_name->name, dirent.name, dirent.len))
-> +			goto out;
-> +		res = utf8_strncasecmp_folded(um, folded_name, &dirent);
+diff --git a/drivers/platform/goldfish/goldfish_pipe.c b/drivers/platform/goldfish/goldfish_pipe.c
+index 061aa9647c19..c2aab0cfab33 100644
+--- a/drivers/platform/goldfish/goldfish_pipe.c
++++ b/drivers/platform/goldfish/goldfish_pipe.c
+@@ -946,4 +946,5 @@ static struct platform_driver goldfish_pipe_driver = {
+ 
+ module_platform_driver(goldfish_pipe_driver);
+ MODULE_AUTHOR("David Turner <digit@google.com>");
++MODULE_DESCRIPTION("Goldfish virtual device for QEMU pipes");
+ MODULE_LICENSE("GPL v2");
 
-Shouldn't the memcmp be done with the original user-specified name, not the
-casefolded name?  I would think that the user-specified name is the one that's
-more likely to match the on-disk name, because of case preservation.  In most
-cases users will specify the same case on both file creation and later access.
+---
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+change-id: 20240509-goldfish_pipe-md-1dec20bd3a90
 
-- Eric
 
