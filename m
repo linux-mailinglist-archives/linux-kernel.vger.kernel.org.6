@@ -1,76 +1,75 @@
-Return-Path: <linux-kernel+bounces-175802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455B38C253C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:00:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23C338C2540
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E2F286FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:00:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558C01C21BE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2B170844;
-	Fri, 10 May 2024 12:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEFFC17089E;
+	Fri, 10 May 2024 12:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bRh6CPD4"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d9eMkWgt"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1231311B9
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A8816F8E9
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 12:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715345927; cv=none; b=t8PdJdUxgQ/wXwYGheR3dI8UEKpXcUpi+Tzs9I6OKN98FkzAaWiRDptEcBrDQedOO5qNiJy2RsCDwqVgvLK6msZqxIee1+kMS9i1oEzj6PSJInrBYR7hyZw2suaUUAUiaFxRwFLDcV9ssbivK6b1/8SMvQvOLDVqNWvDvKXHXmk=
+	t=1715345928; cv=none; b=dYEiTLh2mGrYehbq9/dV9HVy8dHzATWtZNxYUl1ZLjlZv0FisLEGX5sj3CSxqUii/oWYGCRYzVK5XZ8nKukhzRtl8DVpMYUidkk3TTQce0GyzjBc+xnOOKKbqZ2QIrcFHHBMBPXzXY/PdvKKQ/gqthqtngPfxvF8diJBQ8lwa4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715345927; c=relaxed/simple;
-	bh=bRUdpwvsxjVEA+bEIQiwaB+/SrBiEO/590bU96RlLgI=;
+	s=arc-20240116; t=1715345928; c=relaxed/simple;
+	bh=N7Z1UTqSXat0Px8O9Bf8HVTVlZ48y7r+JK1PVbiHrJU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hFdc2vjameUQ0iebK8Wv09UN+tqzWSt/t/RxzjLAp9Tp1eumWpFobWanGptisssXGI5NYupQizaUj96dKHSfFOQpyKFwROL6ml6aXkCsgDWJGXLjBCjuBoV2JqalclKaK7exjZnTzIbo8Z5MahV9+9OXZ1xyhsJn/4utkaoWdb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bRh6CPD4; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:To:Cc; b=lfrzKHkPsT7W0v1Q9xU0R/bU3jSzwZ/ue4V2j8c3gqzwksIpe3RgZWvKyAv80k2rTWpKN93ZBb1oT3NZ3doBPjsfeSSFk1+dnJ090QTZDsADOxOmZKbiJUkmvGI80bsaOEkrBlfvD2EZjzV43XUnmZM1C+HCSDOC2NXj0zxSh1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d9eMkWgt; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59b097b202so467324866b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:58:45 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5a1054cf61so506313966b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:58:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715345924; x=1715950724; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715345926; x=1715950726; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Tv5Or4RfPJ0awNc1s7KQ9nHBJpQAMX0v2SVx0hn6YRI=;
-        b=bRh6CPD4nhn8Q+FjDTxNcSuUg1zKmgfSdqStowhgu0YH9MPfXu+Av8EhcaZKxlwTU9
-         ZVcSs1GBIVP8fYcyv0cTGvhMORTymYbz0PDLaNsRGqIRtZFMgy/NQ+ZXfz/ab5fDeNmx
-         iogriMiCGMszOJlOnA5aSdtuEl5F90nN24/82pgeiNMFZ/ayONV5L7CsnVMn5Lqg5flU
-         vCxOzGfg2NagcMktkdws0r9wtQ76a4ozOt8vHtyoDraH+v0xZOoqbAL0zWfpEwBoMsZT
-         kwiKtT6fTkFVxyqSaf6bSTYUlK3EErEbcqWKvcbbe4c+dX4RJ097gfZgpwNGpRfiApud
-         rlYw==
+        bh=+kvJ0NjI9lgZVfze2m0LNfaiMKZki2itDXIFFMMddwA=;
+        b=d9eMkWgtaoLPS6D8rTcxMY2AykfIJ2xWB6ndeQ/srWHyVgzmO3oNdQljJOfdL7uPZy
+         RkylE7JqD4Z/gFS3AixhvLxpRSE6gs26gPdFyKb6djl+Oz2V7T1eWlUxMCpGYluRcNgQ
+         Q8IFtiYXsM8kLwlmKbKwnW4ihyXr9vbwL8DDXcSgvGxhx5iqLLmxRAi3yzEY8uv4m7D9
+         bvZo1LfD9VyRg4QLJXuvmX1Pt7Q4anR0LkpY4F2HZHg9b2Qa+mLrjva1Q+qoWS0BuSm4
+         fvDcP+FRErRyUXvet91/dGDcjymLrcNloclZc16vJxigbCkANHKwUP9GBwMwG4Ifz0Em
+         iluQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715345924; x=1715950724;
+        d=1e100.net; s=20230601; t=1715345926; x=1715950726;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tv5Or4RfPJ0awNc1s7KQ9nHBJpQAMX0v2SVx0hn6YRI=;
-        b=UICbubH9b9FCWfaQBjofqIWPxriVQDE1qlHfykO3/V2UQhBvoTPbEba9QIV+XcWE1P
-         wax9T8qI8spTurXck2PaHpnGy+M8xqT7uc939r4dGLskmcgV/wiTXldhnwqsHnysxAsT
-         OlE+Nzb5yEABtUfqSFL5/1jg4NM5PrsslN5Uvo1qOBZr/RRkPdt3xdzsn/mDTAm/AOyN
-         jXNXmLxL2PPQZNfNFr8oYF0Faib1w1Pelgbg2HYO7h8fCCVxXP8jv9U5qvaaQ/ItNxnl
-         GcN2NVXBV+nbFJ1iAbj0kuzYuXlb5eZ7gJK0FHK+nM1W9rwPI4BULFWGdE66sgoKTY0J
-         4AEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXevt0Tm2z2wF5TNa1mGZ56UBfVYq3Rz8zYzzFIWGkBeIZ/y0eQz0los7lncY0yoW3fouROw732gbzWkioFf2Hj4cjWSXQJFyqAZll8
-X-Gm-Message-State: AOJu0YwVAPETGdrfiAb+ZqingaPsvRnW2xRWJYO7DRj1TgxObGGorPiP
-	a/GMZ7mnGGvb5px+0iiXZL0VmF+9zLQ8eTCVUEy9TweD9XoQcygaOnNJn0KQjRizd+eW8ikvpJZ
-	TZgQ=
-X-Google-Smtp-Source: AGHT+IHD0lGCCIKmW6BWOHjW9Nj61cGVsLD6S57fVLRbgBMQdAoeu+mJwyfD2wrtNtlC6lofYf/JBQ==
-X-Received: by 2002:a17:907:7f94:b0:a59:ab57:741e with SMTP id a640c23a62f3a-a5a2d675779mr221351466b.76.1715345924587;
-        Fri, 10 May 2024 05:58:44 -0700 (PDT)
+        bh=+kvJ0NjI9lgZVfze2m0LNfaiMKZki2itDXIFFMMddwA=;
+        b=cG9NPHIArzxVtYn9L5NmIH88rSCQ48bhhOumcMGnhjj8mup5OpoHIj9uMUZUoKl/Sm
+         g2IKAspwRZ8PeePQpXhgFZzUHewUfn0hbFDPFsRRzURWzdGZr+GsEH3ua53NFnJImkpx
+         snhtCrhQGBZxoW6T3nVkIFLXgxc7UKxa9Hm3ZMTJMtY2JhbrLwqp1BQY4CQ6OhokUC42
+         zVrc39HcSQcAdB0KO/MCFJBf+Ny6h8uZWDd1UXkLG6zJyf3s2qiPUXn0Bdh3I4V/cBYy
+         G2NmuoFHWGeL9+0lMJ3DpUiV4FtbC5LPsrFp7K1gucZzuscN22CCmxA+H8bjEG5SsWaH
+         ix8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwSmVvFCYE5OZFwr2+oDpoZZVsaRqu080g0yK3QJRxhvzguPirVUgv8gL0Tw4uoapFmxViWifg6ZE9Ev9sdJq3Y4XXda1lBCVbJFVw
+X-Gm-Message-State: AOJu0YwaPeaPbluspVCoCVpmJrb4zDx7FIDrP2x6sQ133k5VL9+l4VHI
+	R7bUHgSnDQcxRV7r18k4XmdmjoCHYNczSH+E2ZzJ9P2DxrNlj6Mi0R7xHAOY7VA=
+X-Google-Smtp-Source: AGHT+IGalolyTJ0z7eOceIS7ntIwx3MY/OTBAactA6M5X3a/KbMMqJ+6bB9q1BJKjSHRmADdQNoQBA==
+X-Received: by 2002:a17:906:1992:b0:a5a:15f6:157e with SMTP id a640c23a62f3a-a5a2d53adcamr235167766b.11.1715345925757;
+        Fri, 10 May 2024 05:58:45 -0700 (PDT)
 Received: from [127.0.1.1] (078088045141.garwolin.vectranet.pl. [78.88.45.141])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d6bfsm181857366b.31.2024.05.10.05.58.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d6bfsm181857366b.31.2024.05.10.05.58.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 05:58:44 -0700 (PDT)
+        Fri, 10 May 2024 05:58:45 -0700 (PDT)
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Date: Fri, 10 May 2024 14:58:35 +0200
-Subject: [PATCH 06/12] arm64: dts: qcom: sm6350: Update GPU thermal zone
- settings
+Date: Fri, 10 May 2024 14:58:36 +0200
+Subject: [PATCH 07/12] arm64: dts: qcom: sm8150: Throttle the GPU when
+ overheating
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240510-topic-gpus_are_cool_now-v1-6-ababc269a438@linaro.org>
+Message-Id: <20240510-topic-gpus_are_cool_now-v1-7-ababc269a438@linaro.org>
 References: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
 In-Reply-To: <20240510-topic-gpus_are_cool_now-v1-0-ababc269a438@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
@@ -90,67 +89,67 @@ Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  Konrad Dybcio <konrad.dybcio@linaro.org>
 X-Mailer: b4 0.14-dev
 
-Lower the thresholds to something more reasonable and introduce a
-passive polling delay to make sure more than one "passive" thermal point
-is taken into account when throttling.
+Add an 85C passive trip point to ensure the thermal framework takes
+sufficient action to prevent reaching junction temperature and a
+110C critical point to help avoid hw damage.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm6350.dtsi | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/qcom/sm8150.dtsi | 28 ++++++++++++++++++++++++++--
+ 1 file changed, 26 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index abfaa1178a39..99813f380df0 100644
---- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -3177,18 +3177,20 @@ ddr-crit {
- 		};
- 
- 		gpuss0-thermal {
-+			polling-delay-passive = <250>;
-+
- 			thermal-sensors = <&tsens0 13>;
+diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+index 1f597f03107b..8e9194051283 100644
+--- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+@@ -5157,10 +5157,22 @@ map0 {
  
  			trips {
- 				gpuss0_alert0: trip-point0 {
--					temperature = <95000>;
+ 				gpu_top_alert0: trip-point0 {
 +					temperature = <85000>;
- 					hysteresis = <2000>;
- 					type = "passive";
++					hysteresis = <1000>;
++					type = "passive";
++				};
++
++				trip-point1 {
+ 					temperature = <90000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "hot";
  				};
- 
- 				gpuss0-crit {
--					temperature = <115000>;
--					hysteresis = <0>;
++
++				trip-point2 {
 +					temperature = <110000>;
 +					hysteresis = <1000>;
- 					type = "critical";
- 				};
++					type = "critical";
++				};
  			};
-@@ -3202,18 +3204,20 @@ map0 {
  		};
  
- 		gpuss1-thermal {
-+			polling-delay-passive = <250>;
-+
- 			thermal-sensors = <&tsens0 14>;
+@@ -5332,10 +5344,22 @@ map0 {
  
  			trips {
- 				gpuss1_alert0: trip-point0 {
--					temperature = <95000>;
+ 				gpu_bottom_alert0: trip-point0 {
 +					temperature = <85000>;
- 					hysteresis = <2000>;
- 					type = "passive";
++					hysteresis = <1000>;
++					type = "passive";
++				};
++
++				trip-point1 {
+ 					temperature = <90000>;
+-					hysteresis = <2000>;
++					hysteresis = <1000>;
+ 					type = "hot";
  				};
- 
- 				gpuss1-crit {
--					temperature = <115000>;
--					hysteresis = <0>;
++
++				trip-point2 {
 +					temperature = <110000>;
 +					hysteresis = <1000>;
- 					type = "critical";
- 				};
++					type = "critical";
++				};
  			};
+ 		};
+ 	};
 
 -- 
 2.40.1
