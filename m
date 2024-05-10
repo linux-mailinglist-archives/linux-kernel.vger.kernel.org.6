@@ -1,139 +1,164 @@
-Return-Path: <linux-kernel+bounces-176274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65738C2C9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:28:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BC38C2CA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E728C1C21719
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:28:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 648EAB23BBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E076C13D25A;
-	Fri, 10 May 2024 22:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30B3171E4C;
+	Fri, 10 May 2024 22:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WEYG0ggp"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="o8hi3s3l"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA9613D249
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 22:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3E71474D0
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 22:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715380104; cv=none; b=lxguYLje3nd/L1V4zEUqzwspVSGwAPBYEzZ0v7px0GfZ5XV7SRGW7d5ub2DTQ34J3fZP2DSaGI+xvRv6x8z7ImALfVSA5uPQEnhiK5k+zHaNvR6GANtvcbYKM5Tg96Z2LlFzh0ZbXgUCwqFtv7/1ed+wgyYvubs4nTAek/nUWQY=
+	t=1715380423; cv=none; b=rprgFeKbr2W0iiapF1i2UOMJNPWdV7y0PuiPAvljB6pyK96ht3CM58iiHTUAv//IG4VV1TEXik4DvgB1KRszQNcmcdDzszPwyh8hnA5VWPvGIqQvW7U0SE5kNJYRNx64D7ynKNscjdr69xFJoYDiFZe3OvYd/9B7yuGnElYP048=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715380104; c=relaxed/simple;
-	bh=QUvkzr2l/uiy5GlxGfNfCrbyjBH0No4JLdD4lgoUp/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PU0zK0tWVfqNr8oL1YsGrkD8Q4TNtGrMWWxM4hZ+uTp3NVBOvmaB8E7zlofjTRsmBV2d/iSnz243Rm+d8Uya/1sL5LzWauhivx3OsrPCzPgMLLkSyOhh1hmN06ewA5gVrzvCOB+VkWDFkzmES8sksdU17gqVcfpEgzqGM2iaTMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WEYG0ggp; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-792bae4137bso223965285a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:28:22 -0700 (PDT)
+	s=arc-20240116; t=1715380423; c=relaxed/simple;
+	bh=cFsqolC03whbOXne5XKlbHEqaO9KmgRG1wEiBKh9mPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CPaEy+trgEtIqC3XjlEXlWKIXxbMwF1MwM4brjl7OcsWY5LjHJTzhzP9OpFK+wUWz4TjSw66hG7aGRBchT+7YCKgWeqgeroxHdKTIOkpKU95LazZ6HrrTWeyB3deWjcO/75l5Jd0l4Kqc9tvjEVKCjBUUf/THXc/p2UtTL8Z/BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=o8hi3s3l; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1edfc57ac0cso21008915ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:33:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715380100; x=1715984900; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NVisxd1xtcmhvxdpqTGyNvzYQwpGM+4jeLB5LKdcrvQ=;
-        b=WEYG0ggpgGb6MHdfspMq5cKeBS6Eon4lvoXeCY023umEJuxB3nwg5onwmt30OpbDtO
-         lAM4xa4cKlneXNlB9XD/sbRyjh770raec8aNMIbhz8ctiLKj6H7Vg5vjCAm7cYrXpK4a
-         oRofxmOxVnL9tt8f4rqCExcyYBDtTcRH+auc0=
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715380421; x=1715985221; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rx86BKf20oqqJvvyTkwVjgHBFBglkui4kaaauK5EOTw=;
+        b=o8hi3s3lmX2YqQnd9C/rkwE38e0hHuJfKp8+ForFPhNh+16MvZrxNZyMWKWUzl9QrB
+         qlM2my0i+vefxi2fxXAVQoi4gWsYKvYDmT5fAB+SGucJSMbN1UluiHj9pUcBpXgy33+X
+         qu9dvsIF8CyhUcZAYtkEAiydou6AoPPlrY5W4+RnREg1kl0L9O2V43w+yFFYlU4ECd02
+         WS4SdsP5pB3hlxXuMMdwyycHVavdp9uXnIMc66BPCJ3ksWiSHr4xm4WqYCAcT2HvCYWG
+         5WCWKybQQtsyp5j3rQ3xRwEIQbZahlYP1htzOFpK/TTIifibLzJseyY+oZi+asW3gRb4
+         dyvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715380100; x=1715984900;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NVisxd1xtcmhvxdpqTGyNvzYQwpGM+4jeLB5LKdcrvQ=;
-        b=TuKziV+3mNtLAfZ76p+4lxekmK3LTevMk13Hh55wtBCwxFREfAGcjWlM9nf3UXsPUO
-         SDq4F4LMow5jsGs8hfVSoACL/ByGRY32YbWVRjaV12LHSbrbuaC/ARDslyblC+cjrAuF
-         dPD5TYgEhWYFUnYmekyke9ZzHDtN+uVXIMiYvKMVQKme63YFFd4rzDNlasiHPArrDm2q
-         mEvZSyWcOAGErAvS8CgdIpNrEQCZgGtXuAR/llVOMd4Hqskvwt5fY79zEF1yW2Qtv5UZ
-         y0HP1kTLyXiTNa2Rc9svaMnnoXPjxkCjf6BnuyWyyAMkizD8cfwFpihtHYrOCQ7Vm0rQ
-         JYCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrqJKp6kmtGNOVzPbr53YtAKTApeKvuldu90gOtE8uqN5mUEgwNgKjIjcqOwnmlpERCKOVyzWs9Ot+PdSlnydsPQvAZb9my33v43s6
-X-Gm-Message-State: AOJu0Yx9k53N+zWRm4YCOmpOGg3aVrF9yGzoVsGPi76cbmcSNDnYJKF5
-	DVkfOy2UFlX3JJgsVpfNou2ZZsFxx7Y7X9OrYcD/YADXIlyLC7a3OyAx08DtFibIHXF3XfysKf0
-	=
-X-Google-Smtp-Source: AGHT+IGU7j9lSGWZmyyn0qDAVrEWHa9nw4aNupTkilc8h9HkOreVJ9bZLJXlb7xzldtrz8ReryPrvw==
-X-Received: by 2002:a05:620a:390e:b0:792:bcb1:7308 with SMTP id af79cd13be357-792c7598bdbmr503306385a.20.1715380100456;
-        Fri, 10 May 2024 15:28:20 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf32e705sm220108685a.124.2024.05.10.15.28.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 15:28:19 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-43dfa9a98d2so23241cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 15:28:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJ8jMC44aTa9GSAuFcnjpE+bMj2383UMl8s/FenohvB6At6iFu1nPtlOWsOVsJviISQjCxpMje5VTzFO3UTS9s4ft/Dhmv0XZLklc5
-X-Received: by 2002:a05:622a:1c15:b0:43a:f42f:f0b4 with SMTP id
- d75a77b69052e-43e0a22b948mr305931cf.13.1715380098995; Fri, 10 May 2024
- 15:28:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715380421; x=1715985221;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rx86BKf20oqqJvvyTkwVjgHBFBglkui4kaaauK5EOTw=;
+        b=oviEfLwc4cMGEgsYMGrpft0u/6Dd8MCeoKm2sSd4plpw9ty57QkoUztNYUPeh6IDKp
+         VEO3y8hSHDs6NeG/EexVTCJSlnme+r+rdbTjY1hWBVNSbKOBzD6+rCtgrfTxnh7+qkVe
+         DBQfpivHGz9lCxAN2aeVQiCN5y4RwBiBqgOf9279z04qTbMqtSJusfzQoqzHy4rIJnAG
+         D9D3Jicc2ZCwXXZfc5YdcmhA3NzCGFQ4Yt8vtBwpR+ZYYoxiBWVzBMUhf0Kb8beheqhN
+         13v7xuNTMQNa38NCqg0KPjOBYdulskCiaAaBPgYlGpYpGY2c7gP5C6zR8koUeixeDkw3
+         z+Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSgNx6x/XXTr9G6z0QO2Awn8FTlyOOO31CtshIZXhBQr3LppJkVnh8xfBJoAzAu9FxNDxcKZzbfZ/qLkM4vezOYZ7OxBoFcmXxhIps
+X-Gm-Message-State: AOJu0YzWEiVim5ZG9B9uMsXYYRUSlr8/uAv+Uap+6mD9kWV/Jt1+7IU4
+	hbSmEKC+nkA21pKqpSByjLoke+QAp6NUXlQD95MCpjlq/clae+PBL0g7cCk9nPQ=
+X-Google-Smtp-Source: AGHT+IHCbIPqYj/CMVX+dpcmx2/ThEVPaXPHBWvK+JEhPYkGjzop6fsJUs8nt4PjI1Rtz6v88FXlIQ==
+X-Received: by 2002:a17:902:d483:b0:1eb:57cb:4c69 with SMTP id d9443c01a7336-1ef43f4d1ebmr53974765ad.45.1715380420958;
+        Fri, 10 May 2024 15:33:40 -0700 (PDT)
+Received: from ghost ([2601:647:5700:6860:629e:3f2:f321:6c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c16093fsm37221825ad.281.2024.05.10.15.33.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 15:33:40 -0700 (PDT)
+Date: Fri, 10 May 2024 15:33:36 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 02/29] riscv: define default value for envcfg for task
+Message-ID: <Zj6gwFvj2gA04NJq@ghost>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-3-debug@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510-dsi-panels-upd-api-v1-0-317c78a0dcc8@linaro.org>
- <20240510-dsi-panels-upd-api-v1-6-317c78a0dcc8@linaro.org>
- <CAD=FV=Uu2=6c_3Q44BK384cgSLX=++_bBbg6=CCqBaXnqcEK=g@mail.gmail.com> <hf7u3rxard7yg2z3fkmntemhnnmwnsgmhmfhpt74modswg7nj4@7kwyba55x6o7>
-In-Reply-To: <hf7u3rxard7yg2z3fkmntemhnnmwnsgmhmfhpt74modswg7nj4@7kwyba55x6o7>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 10 May 2024 15:28:03 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Ukk2JGV5jP_WUVFKfOsK2z=FUbUDDG5pnOumw0S-9CjQ@mail.gmail.com>
-Message-ID: <CAD=FV=Ukk2JGV5jP_WUVFKfOsK2z=FUbUDDG5pnOumw0S-9CjQ@mail.gmail.com>
-Subject: Re: [PATCH RFC 6/7] drm/panel: lg-sw43408: add missing error handling
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Vinod Koul <vkoul@kernel.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, 
-	cong yang <yangcong5@huaqin.corp-partner.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240403234054.2020347-3-debug@rivosinc.com>
 
-Hi,
+On Wed, Apr 03, 2024 at 04:34:50PM -0700, Deepak Gupta wrote:
+> Defines a base default value for envcfg per task. By default all tasks
+> should have cache zeroing capability. Any future base capabilities that
+> apply to all tasks can be turned on same way.
+> 
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  arch/riscv/include/asm/csr.h | 2 ++
+>  arch/riscv/kernel/process.c  | 6 ++++++
+>  2 files changed, 8 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
+> index 2468c55933cd..bbd2207adb39 100644
+> --- a/arch/riscv/include/asm/csr.h
+> +++ b/arch/riscv/include/asm/csr.h
+> @@ -202,6 +202,8 @@
+>  #define ENVCFG_CBIE_FLUSH		_AC(0x1, UL)
+>  #define ENVCFG_CBIE_INV			_AC(0x3, UL)
+>  #define ENVCFG_FIOM			_AC(0x1, UL)
+> +/* by default all threads should be able to zero cache */
+> +#define ENVCFG_BASE			ENVCFG_CBZE
+>  
+>  /* Smstateen bits */
+>  #define SMSTATEEN0_AIA_IMSIC_SHIFT	58
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index 92922dbd5b5c..d3109557f951 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -152,6 +152,12 @@ void start_thread(struct pt_regs *regs, unsigned long pc,
+>  	else
+>  		regs->status |= SR_UXL_64;
+>  #endif
+> +	/*
+> +	 * read current envcfg settings, AND it with base settings applicable
+> +	 * for all the tasks. Base settings should've been set up during CPU
+> +	 * bring up.
+> +	 */
+> +	current->thread_info.envcfg = csr_read(CSR_ENVCFG) & ENVCFG_BASE;
 
-On Fri, May 10, 2024 at 3:25=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Fri, May 10, 2024 at 02:47:05PM -0700, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Thu, May 9, 2024 at 3:37=E2=80=AFPM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > >
-> > > Add missing error handling for the mipi_dsi_ functions that actually
-> > > return error code instead of silently ignoring it.
-> > >
-> > > Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/panel/panel-lg-sw43408.c | 33 ++++++++++++++++++++++=
-++++------
-> > >  1 file changed, 27 insertions(+), 6 deletions(-)
-> >
-> > Looks right to me. Only slight nit would be that I'd put this as the
-> > first patch in the series to make it obvious to anyone backporting it
-> > to older kernels that it doesn't have any dependencies on the earlier
-> > patches in the series. It's fairly obvious so this isn't a huge deal,
-> > but still could be nice.
->
-> Yes. I wanted to emphasise the _multi stuff rather than this fix. I'll
-> reorder patches for v2. Maybe I should also rebase the series on top of
-> patches by Cong Yang. WDYT?
+This needs to be gated on xlinuxenvcfg.
 
-Sounds good. I think Cong is planning on a V6 to fix the last nit I
-had on his patch series [1] but otherwise this plan sounds fine to me.
+- Charlie
 
-[1] https://lore.kernel.org/r/CAHwB_NKtw0AyMgFb4rMFNgr4WF10o9_0pYvbKpnDM45a=
-Yma9zg@mail.gmail.com
-
--Doug
+>  }
+>  
+>  void flush_thread(void)
+> -- 
+> 2.43.2
+> 
 
