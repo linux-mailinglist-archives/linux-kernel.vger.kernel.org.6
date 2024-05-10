@@ -1,152 +1,103 @@
-Return-Path: <linux-kernel+bounces-176239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9778C2BEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:32:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009B48C2BEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:32:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F981F21ECE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:32:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F2331C221C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC9613BC06;
-	Fri, 10 May 2024 21:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367D613BADA;
+	Fri, 10 May 2024 21:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PW0loYjB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fppYAeQb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2897613BAD8;
-	Fri, 10 May 2024 21:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B30313B789;
+	Fri, 10 May 2024 21:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715376747; cv=none; b=DmIn9xt0IszqhYShyfEdJcYWGkAI0f0FLnUimkOhl5V9X5w6a6dUCqWoExSfjN6qYDONhmvc8Shikhg+/QZr/fRtNNfcj0PUr7x2UN/kSnwV+pScFC0DxqU3ANq4eSSsQ4SHg9MsIXft85RwX5wb36Z7RGXO5VTlE+0pXk2g+kk=
+	t=1715376761; cv=none; b=PyfZ06Pw7C0NGZI/03v2BmG0nWdPhTlapp3angw5LCrabm4B9BhBRm5q/HS7PGmvEQ+VaqU97X6GaOXI4MLE7fTlCYouvLVzcu8BiF9HZdO+lRyT0pY8brqAb5F0tFaihUM0FySf67pVXlH9eazCj5/UVjaEwJ51eVGL4MbMlNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715376747; c=relaxed/simple;
-	bh=HaAF5YLZNnHFDlTcRRRh1aLznDIBDt54LRmZro1kBkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dp+3ehmoTkn87EdalLDWPcTq7n6ySKF67kUaRLd2LvYWqJKBQSBVL2vyuj7Qog2EcOT5onvnONzXZEqyIiB8xah4Mky+o/COyefHpr07KbcrpeLRcS6fytUFCFyuRaoL2YQYuChDqL2XDZJsmxCLC6fJMUqi+HDuVSzcwN9L6Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PW0loYjB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4010FC2BD11;
-	Fri, 10 May 2024 21:32:21 +0000 (UTC)
+	s=arc-20240116; t=1715376761; c=relaxed/simple;
+	bh=YHUkn0DBgRxNFkE5O93KhO8NvrS0xHwlSDnVGFKOBN4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OdArvvpAb+GRUPAV6QapH4zwCLxOr3AS2yGpsvkTHAbTbc1eWglqdd5ArUpVZmNqzSSqRE7JyclMpKdYZJCZlgFDTBU9pD0Anmkp8p19OZdvkR/uJUYZGyQm3Dg25y5lXnuORIK1bI8XdkfEmGy46inBj/FDPoJrqltlTzMJkyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fppYAeQb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A8CBC113CC;
+	Fri, 10 May 2024 21:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715376745;
-	bh=HaAF5YLZNnHFDlTcRRRh1aLznDIBDt54LRmZro1kBkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PW0loYjBa6QcXh8gmikKKdFQ+JniYLnMAwVmZvGkjTJ0rDFzoJZbvYtI56baJyF+I
-	 gc2m1x1XG5f/Df6pBje4TguN/vGK8UrmL+3rV64DotR+AG/+iwJMfgQx78wYWNpv6X
-	 kb1gvVD0w4RjMFvfoE1zDAPMNGRkLXkcCJ6AcvZPHLmFJkW5zLMyZoTpIuQOf++BXu
-	 5cqXNmgNIDj8OhwCxbZDyuQ34sZWdpai2kLZHn/qPXBqevODaevVM4e+5E8A8fWiYw
-	 7ZqOFAvSOJLpZR1pveFlSDZhpQyySDjVqIbFXdbrunnUNYO+a9bnZBV0h32zvviK8d
-	 T/Or0mgVLdhXQ==
-Date: Fri, 10 May 2024 22:32:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Evan Green <evan@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v6 06/17] riscv: Add vendor extensions to /proc/cpuinfo
-Message-ID: <20240510-unexposed-desecrate-e30674d4530b@spud>
-References: <20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com>
- <20240503-dev-charlie-support_thead_vector_6_9-v6-6-cb7624e65d82@rivosinc.com>
- <20240507-divisive-swoop-c2737a2d9a9f@spud>
- <20240510-childcare-outlook-d18e3cc5ccb3@spud>
- <Zj6QxisrBZSWq7ax@ghost>
+	s=k20201202; t=1715376761;
+	bh=YHUkn0DBgRxNFkE5O93KhO8NvrS0xHwlSDnVGFKOBN4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fppYAeQbXB2EgJQKx9pxYFna2I03KFz39P7YCUvkBadoTP1+qt6vXnznE3DAj9mYK
+	 SQ+XaYqOteb3jqtYsuGc8No1ty8swNYYP6YsOfU26/HY66vaycABJvOyl/Cbp/mK4J
+	 FnzCjxiS3Z63Wf+6VFMGAFJFPVx7JIrwgsL40T7ykscfYjd61eG9koTnu5o+gFW5/O
+	 OqU8a9ha8IR3jW302KCktxOtekhSqip7pj/gFSUf8GotvSVeSCl4bJ9tq6DXGAu5Wp
+	 La7jjhkr5XS4Ubsn4dqQsw3EP2fhjHpuhc5MbpwLghIGU1BGR1wJQDWL2APvhbxqB1
+	 bjsZSKbnWsQug==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] DAMON Updates and Plans: Automation of DAMON tuning, tiering, and VM guest scaling
+Date: Fri, 10 May 2024 14:32:37 -0700
+Message-Id: <20240510213237.83479-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240510212132.83346-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a4gruBJ406lMx+Li"
-Content-Disposition: inline
-In-Reply-To: <Zj6QxisrBZSWq7ax@ghost>
+Content-Transfer-Encoding: 8bit
+
+On Fri, 10 May 2024 14:21:32 -0700 SeongJae Park <sj@kernel.org> wrote:
+
+> Hello,
+> 
+> 
+> On Mon, 29 Jan 2024 12:47:49 -0800 SeongJae Park <sj@kernel.org> wrote:
+> 
+> > Hi all,
+> > 
+> > 
+> > Thanks to the discussions and feedback that we received last year from the
+> > LSF/MM/BPF 2023's DAMON updates and future plans session[1], DAMON made many
+> > advances and yet more future plans.  I'd like to again share/discuss the
+> > followup changes and status we made so far after the last year's session, and
+> > the future development plans on LSF/MM/BPF 2024.
+> 
+> The session is now scheduled for 2024-01-13 10:30[1].  A draft of the slides is
+
+Urgh, sorry for the typo.  s/01/05/ please.
+
+That is, it is scheduled for 2024-05-13 (Mon) 10:30 AM Mountain time (UTC-6).
 
 
---a4gruBJ406lMx+Li
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks,
+SJ
 
-On Fri, May 10, 2024 at 02:25:26PM -0700, Charlie Jenkins wrote:
-> On Fri, May 10, 2024 at 09:50:32PM +0100, Conor Dooley wrote:
-> > On Tue, May 07, 2024 at 06:03:19PM +0100, Conor Dooley wrote:
-> > > On Fri, May 03, 2024 at 11:18:21AM -0700, Charlie Jenkins wrote:
-> > > > All of the supported vendor extensions that have been listed in
-> > > > riscv_isa_vendor_ext_list can be exported through /proc/cpuinfo.
-> > > >=20
-> > > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > >=20
-> > > This seems fine, thanks for updating this interface :)
-> > >=20
-> > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
-> > Hmm, actually the automation on patchwork is complaining a bunch about
-> > the series, but I think that's mostly false positives except for this
-> > patch. The nommu defconfigs are prob the easiest way to reproduce this:
-> >   /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:41:55: er=
-ror: 'struct riscv_isa_vendor_ext_data_list' has no member named 'vendor_bi=
-tmap'
-> >   /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:42:60: er=
-ror: 'struct riscv_isa_vendor_ext_data_list' has no member named 'per_hart_=
-vendor_bitmap'; did you mean 'per_hart_isa_bitmap'?
-> >   /build/tmp.QPMRM3oUNu/arch/riscv/kernel/vendor_extensions.c:43:60: er=
-ror: 'struct riscv_isa_vendor_ext_data_list' has no member named 'bitmap_si=
-ze'
-> >=20
-> > Cheers,
-> > Conor.
->=20
-> The false negatives always throw me off.
-
-Aye, it's pretty frustrating for me trying to report anything. Any time
-a bunch of headers change produces a bunch of file rebuilds and
-therefore warnings. That should in theory be caught by the fact that we
-apply the patch & build, jump back to HEAD~1, build that & grab the
-"before" warning state and then jump forward, rebuild the patch and
-gather the "after" state. The idea is that that is an apples:apples
-comparison as the same files will need to be rebuilt for both but it is
-falling over somewhere. Maybe I'll have time to look into that soonTM.
-
-> The errors are also offset by
-> one patch.
-
-Ye, that's my bad I think. In a rush off to another patch before the
-thought I had on it left my brain and just pressed reply on the wrong
-email. Sorry bout that :)
-
-> This was actually introduced in the following patch "riscv:
-> Introduce vendor variants of extension helpers" because I accidentally
-> fixed this issue in the patch "riscv: cpufeature: Extract common
-> elements from extension checking" instead of the one it was introduced
-> in.
-
-
---a4gruBJ406lMx+Li
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj6SYwAKCRB4tDGHoIJi
-0qSAAP9DtyG6cFxATpySce/LDWJjuSKIYinHHmeKGVGjDvqZkAEAkXi4b5NHBscV
-XEmApTynzq59bPinnFytkPxtGEnfKAw=
-=Z9vu
------END PGP SIGNATURE-----
-
---a4gruBJ406lMx+Li--
+> also now available at DAMON slides repository[2].  Please note that the slides
+> are only a draft.  Those may be (significantly) updated until the beginning of
+> the session.
+> 
+> Looking forward to see you all at Salt Lake City!
+> 
+> [1] https://docs.google.com/spreadsheets/d/176LXLys9Uh6A-Eal2flrzcbUSJMUXGkGwyihr9jAAaQ/edit?usp=sharing
+> [2] https://github.com/damonitor/talks/blob/master/2024/lsfmmbpf/damon_lsfmmbpf_2024.pdf
+> 
+> 
+> Thanks,
+> SJ
+> 
+> [...]
 
