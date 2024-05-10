@@ -1,152 +1,115 @@
-Return-Path: <linux-kernel+bounces-175922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D72508C2733
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:54:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363D58C2736
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F3841F257DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:54:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5194284568
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 14:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7975171644;
-	Fri, 10 May 2024 14:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32533171646;
+	Fri, 10 May 2024 14:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xfq057j7"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MaRxi373"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7606D17106B;
-	Fri, 10 May 2024 14:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A1817106E;
+	Fri, 10 May 2024 14:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715352886; cv=none; b=eHKaSBDX7hniZT0Km6Brr2p7/bofP2fChBPIFEMlUX+OK3VY6IsJ+IlT54if87tOmx5Xp5DgSmanpxW9q1DFigD79A1uKxr0BzMT5ArSbLoydlY6Y0KMFNG4gqm1aX0kxt5SWNyewGFJC3ExczyRgnT75AK9Fe7ek4rEgeGG0lU=
+	t=1715352922; cv=none; b=kMN8RX2UIDCrN64cGNf4AXZuTVF3Hu9ioRXD4jR2WwoVxu8jWWxjjCikiX0q71icnZhi7gYeswB5dLd/vCfB7lTBoyDnfChTaLdtnozPmjLVfb1YwpvQtgfsC/5F9I9zncoaQ7e4TADdyDLq3wNgU26wPt9IMS3dUjasZ/xzhNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715352886; c=relaxed/simple;
-	bh=QiKKY9PSdLFE28M/Q7BzO99YFAu8REW5hZxTDsCrPWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=t+qKyWOo/dDr6en7iDDdVe4fO69qfp7VMHKcXPKZLL15oWZb0Mv0YUw2x7byI/1fqmXcy0bHcoX7mtwT1qB0HpN1unwfVsxvUhX7SeJzVz/uAM3uT5LESJD3WJiBYde7YDide/rHc/kT+tHZJSYUhnB5qjMbxqldwI1gd4ggcUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xfq057j7; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44ADBST1019386;
-	Fri, 10 May 2024 14:54:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=3ug0KQ5oaG2qwKoniCU5R5E+xTRuNofmc/DcAotezNQ=; b=Xf
-	q057j7MdmmGyrv/9L9F9UdHeRtQKFgVWNKxEBao/eurTy/ww7vMei8NPrwboMkoS
-	slTbkntwIcOcNO5niOS5Z/H61YUbtGx27oczCtWDfkPXdPusIU8Dh8y6tdx1EHj3
-	uLz7ILD9il3JM0Lne9QL+klznLt2GbSqT2y7kxGx1Dm+PLPET/nzmzuvtlJC8CjO
-	ubJjRRR7DswpI5xQFYD662eLgE0g62YrHMuMa1FJK7RisxDfbMkSWxbNmbJlHX5a
-	ncrx26mHZ5h3khEoJYaZ+Pzm7N0/wHdYTOrde06KQC9AOfPfiZ9dhcQ84SKwaMwb
-	PGOJTy+NNZ95XxKWIZWw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y16w1hs4t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 14:54:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44AEsOAQ005361
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 May 2024 14:54:24 GMT
-Received: from [10.110.100.57] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 10 May
- 2024 07:54:23 -0700
-Message-ID: <a56bd4f9-d76b-4924-a901-554d71ea17bd@quicinc.com>
-Date: Fri, 10 May 2024 07:54:23 -0700
+	s=arc-20240116; t=1715352922; c=relaxed/simple;
+	bh=bpcTd66QCrqPbkU8DpdDZoGNAxlz51z4EqF2NnOZKrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rio0qnnRG6Cwyp71XJ/PtVRrvyg5xwDkWqbGdt0yUJEoDEWvGSCTbpWbKe8SB5wQck3LW6Fz3hVn+CHOkDdaDgeTPd2bJUX8F+Ed6cduk+QDsilhyrZ0eEyA0hWDK6SmdfPBqqm3V1kcoQBBYx7Hkk65XcCJYZjgbZtIqpR8L/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MaRxi373; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715352922; x=1746888922;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bpcTd66QCrqPbkU8DpdDZoGNAxlz51z4EqF2NnOZKrc=;
+  b=MaRxi373Xj+T+ENi86sw5nmH6CjoMDD0Cobk9crTgKv+Puo3j08O6A82
+   WoZ0ar/W7djC/MBZjq5wjrc/kwBH1paJSDW+KBq33PwtGi0/HlQ7hRZmg
+   zsL8ZzDm8EvEmbhdFws8CVuSEWSus14jqYkPtB1hUrOWSy1yrc3Zr1FIZ
+   Eqpdn8N+fPRMpf2HE3NJpc0SfSxUg10G0Nm0+dOsd3c6d3qyJz+3zu2MX
+   IaVg5MHA1+XW79G7bzsdMmIb4OMRq6Eh8E2+lKPAZCiK1HEQ6tXuFXd2c
+   V0IASZs4UtV1XSduUSKHmSqY633jlhPqU92bxQtASSfOd7vEAEv8wYJg8
+   A==;
+X-CSE-ConnectionGUID: nWc46PdOSPOjeOFhyoQQhA==
+X-CSE-MsgGUID: hGeimp1QQeCFCWCdAVxcOA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="15170026"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="15170026"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:55:21 -0700
+X-CSE-ConnectionGUID: s50Lh8JFRIGHTT0f+bQ46Q==
+X-CSE-MsgGUID: 1fYDxZKuRv+WCeOt5FRj5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="34078575"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 07:55:13 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s5ReP-000000068S4-2BgO;
+	Fri, 10 May 2024 17:55:09 +0300
+Date: Fri, 10 May 2024 17:55:09 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: mchehab@kernel.org, robh@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, hverkuil-cisco@xs4all.nl,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
+	sebastian.fricke@collabora.com, laurent.pinchart@ideasonboard.com,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
+	nicolas@ndufresne.ca, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, adobriyan@gmail.com,
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+	jani.nikula@intel.com, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v7 0/8] [PATCH v7 0/8] Add V4L2 M2M Driver for E5010 JPEG
+ Encoder
+Message-ID: <Zj41TZllCRvEdYsW@smile.fi.intel.com>
+References: <20240509183849.4060521-1-devarsht@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
- various chipsets
-Content-Language: en-US
-To: Christian Marangi <ansuelsmth@gmail.com>
-CC: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>,
-        Sebastian Gottschall <s.gottschall@dd-wrt.com>,
-        Steve deRosier <derosier@cal-sierra.com>,
-        Stefan Lippers-Hollmann
-	<s.l-h@gmx.de>
-References: <20230611080505.17393-1-ansuelsmth@gmail.com>
- <878rcjbaqs.fsf@kernel.org> <648cdebb.5d0a0220.be7f8.a096@mx.google.com>
- <648ded2a.df0a0220.b78de.4603@mx.google.com>
- <CA+_ehUzzVq_sVTgVCM+r=oLp=GNn-6nJRBG=bndJjrRDhCodaw@mail.gmail.com>
- <87v83nlhb3.fsf@kernel.org>
- <7585e7c3-8be6-45a6-96b3-ecb4b98b12d8@quicinc.com>
- <cce2700c-e54f-4a50-b3f0-0b8a82b961a4@quicinc.com>
- <663e2bd9.5d0a0220.d970d.cbf8@mx.google.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <663e2bd9.5d0a0220.d970d.cbf8@mx.google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: qVnK9dRRwg18lc-CZ3pWZOj82YORCYY7
-X-Proofpoint-GUID: qVnK9dRRwg18lc-CZ3pWZOj82YORCYY7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-10_10,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- mlxlogscore=827 mlxscore=0 impostorscore=0 clxscore=1015 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405100107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509183849.4060521-1-devarsht@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 5/10/2024 7:14 AM, Christian Marangi wrote:
-> On Thu, May 09, 2024 at 09:48:08AM -0700, Jeff Johnson wrote:
->> On 5/9/2024 9:37 AM, Jeff Johnson wrote:
->>> On 5/8/2024 9:50 PM, Kalle Valo wrote:
->>>> Sorry for the delay but finally I looked at this again. I decided to
->>>> just remove the fixme and otherwise it looks good for me. Please check
->>>> my changes:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=688130a66ed49f20ca0ce02c3987f6a474f7c93a
->>>>
->>>
->>> I have a question about the copyrights in the two new files:
->>> + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
->>>
->>> My understanding is that Qualcomm's affiliation with Linux Foundation via Code
->>> Aurora ended in December 2021, and hence any contributions in 2022-2023 should
->>> be the copyright of Qualcomm Innovation Center, Inc.
->>>
->>>
->>
->> ok it seems like Kalle's v13 had:
->>  + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->>
->> and Ansuel's v14 has:
->>  + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
->>
->> So Ansuel, is your work on behalf of The Linux Foundation?
->>
+On Fri, May 10, 2024 at 12:08:49AM +0530, Devarsh Thakkar wrote:
+> This adds support for V4L2 M2M based driver for E5010 JPEG Encoder
+> which is a stateful JPEG encoder from Imagination technologies
+> and is present in TI AM62A SoC.
 > 
-> When I resubmitted this at times, I just updated the copyright to the
-> current year so I guess it was wrong doing that?
-> 
-> As you can see from the copyright header this patch went all around and
-> I think at the end (around 2018) the Linux copyright was added as it was
-> submitted upstream. (can't remember if maintainers were asking that)
-> 
-> So me watching the old year and resubmitting it, just updated the date.
-> 
-> Soo I think we should revert to 2018?
-> 
+> While adding support for it, following additional framework changes were
+> made:
+>  - Moved reference quantization and huffman tables provided in
+>    ITU-T-REC-T.81 to v4l2-jpeg.c as suggested in mailing list [1].
+>  - Add macros to round to closest integer (either higher or lower) while
+>    rounding in order of 2.
 
-Yes, in this case changing the Linux Foundation copyright back to 2018 is correct.
+You have a problem with your emails. Either you missed --thread when preparing
+the series, or something wrong with your email setup / email servers you are
+using.
 
-/jeff
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
