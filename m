@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-175521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E26B8C20C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:21:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765F58C20C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EAA51C21FA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:21:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A641F1C2209E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 09:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9911E1635A9;
-	Fri, 10 May 2024 09:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FA815FA9E;
+	Fri, 10 May 2024 09:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhD7eivR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="A3u2ykTA"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2CC1607A3;
-	Fri, 10 May 2024 09:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A3B8BE8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715332853; cv=none; b=GjxIV7UiQ3GBWU9B/vIniV3a8zphzVRU1ZBn1oQr4QGzkVI7xSSqsJu0a5rcVGvc0o5ztyLTEfWeOJYPpR8BHAJDeglV+p7w1yH98JPyX5Z4spzSfTLwyxxP/fZDsU8cIYixHHlC891ukHUFL8pRoP33IF1JS0oHptnCmtOgLYI=
+	t=1715332894; cv=none; b=fvWfcEcF94Yg65Ahc8DQxnuZ9OiKpnpVPGHvQB7zH2JuvTpfpExWXiQUiTo8r63QWsmiXVobsjzppjuXDdPZpyrrqUltgcQyNi6BI+gZXOfm5JmLt0PsHvanHsOHlY/iBvLgRkosY12y0Ob5hd6g0l1B7YEuyM3aAgjEmSfFIH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715332853; c=relaxed/simple;
-	bh=AxwApNMrl0If02f8zgxWuzVZRRdNUt9GnNFM8XGVwGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BUDw8W8H5kO4tUvZj21CM8Chbl8nEw+vRvU1zO6+BnIPtA5rczEBRypaDuDNn0Ne60anh/3P9EVFJz+AM6im+ayRulJdKLi90cYMWaHSVZgxhqejdDQXkEBIzfxiZCqFRcAFXtCf2OjkCETWrludEcd2ueiqDKILLLCVSme/j/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhD7eivR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAE08C2BD11;
-	Fri, 10 May 2024 09:20:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715332853;
-	bh=AxwApNMrl0If02f8zgxWuzVZRRdNUt9GnNFM8XGVwGE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=HhD7eivRAHbJ3IYYPaM5LFruHmwMlsw66b4VN+OkyMT7k05DneC7BwsD/+ZCASNZM
-	 H5C4sl6cp23hvujJoJck5jF9/+WNJrsx8yHhFoxUJqvhmKIrn3mM+Uu4cxSU+luwrX
-	 DeQwKp/wiku5eg1u6nHC2hgYhxt54/P3KrSbRUxFweMO+nvH1J2F68YGFKrWeGl9BX
-	 LpvINgXg9f9Wuvx4zy0CfI2Ud3V9LkrQJWXTbcLVMeD8ZIw3djcDaMxHTyAzEhA482
-	 Du7npEWQ7r2vww0gblMOR32u2hUpIUO/BPqEfpkeIg9xN4svfNzVrush3wPUtnnQlK
-	 6s3SE8oWPYeMg==
-Date: Fri, 10 May 2024 10:20:44 +0100
-From: Mauro Carvalho Chehab <mchehab@kernel.org>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Jonathan Corbet
- <corbet@lwn.net>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
- <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
- <marijn.suijten@somainline.org>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Masahiro Yamada
- <masahiroy@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: Re: [PATCH] docs: document python version used for compilation
-Message-ID: <20240510102036.3ea40b37@sal.lan>
-In-Reply-To: <878r0ijdh5.fsf@intel.com>
-References: <20240509-python-version-v1-1-a7dda3a95b5f@linaro.org>
-	<878r0ijdh5.fsf@intel.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715332894; c=relaxed/simple;
+	bh=kc4GbU1nJuP5rf8sWY3kjEhTD6HDa5dyZKuLq3c/7BE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GoYBdecghEPTvOJx8aMfdxq4B/nx+apKb2/kVcix9xaSJXWQuz08O66m1LYWlLxUWCGjDbtVPAsadkPamHOtS2/xkk56UtmqAaPWfkH51kQo/qxkZ2cdlc0J/8Nys/HCQ5fBlQr7yHrKu+BdvT06BpKItuXlyboxwaTn/TlX2pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=A3u2ykTA; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a5a2d0d8644so207949666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:21:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1715332891; x=1715937691; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kc4GbU1nJuP5rf8sWY3kjEhTD6HDa5dyZKuLq3c/7BE=;
+        b=A3u2ykTAyXAyeRKw9MkBuXrG1DJBwEmkSQbKLpEAxx4v2grUnD+TIBjoawonlokfKt
+         7IPM/f/RbJ4vWA9QfMNa5kewBHgQCS75NObixZ9FMH8UjTF3EyPn6UnGiAVhdaQ1555r
+         7wgwvof883UPBnOjly7BQLUaaKEWu8//twh+A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715332891; x=1715937691;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kc4GbU1nJuP5rf8sWY3kjEhTD6HDa5dyZKuLq3c/7BE=;
+        b=CVkgH9lYXUMP1+Ldp+c8866LcsY1mu0AeV0Izt88Ah7GcusgR5t2uLiezZR4fiELYr
+         6ajFUy3hU2CxArasZc0poa4GOO4VKQ0iqU+luPY9PmxbZe1cnDnK4Hg1hT5JYks1xAy3
+         7QoAKFczBEqUM5J2izAnx/Hg+Npodd02F0pxV3UBGw/2yxlfqG53rXMogHU5gnJH0gBn
+         8hOU56mtM9tJRBtzRc47DRI43Tnfslk2fRb+aCCZ526xG07pJ5YS5AoeJqpq1x51jspj
+         KpyJ7yq65n5/JFlnaQ0S5miUEfmDUrIubBX3lcKxlXEjNZt5yWphcwDRjAfUeHZ5aWIo
+         UZmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqBa5Op5pDAoTknJk60u5HsnxDaSbywyhVI7BGpXkpqvs2rmxOD0LG3vxulOMZFHsUN6H2CHCACbrxt9PYcedPIAHpcf7uxW3IlYPt
+X-Gm-Message-State: AOJu0YzOFR9Jf+z0SJjZoyyB0RoCM8c0M8B6bDfU8aaLnyz6e8SYGV0d
+	+h4WFMOEWS0Z5svrT8FHEmAPGXfXzJtvXl4b0TSKQcto2NT5TYmo0AJ9BT7rfeDELpFPXbwFBur
+	JtGwIKBqbieatg4kg11vQxlbUCDI/tfDY9Jn9hw==
+X-Google-Smtp-Source: AGHT+IHoNg2wt+6Y3ymJG8oVFpFmmomjuz4lHKnzzbQ6LgbHb/LqMAAY75w6GRVowCoL8xUng0HBItGtzaV8OwenIdU=
+X-Received: by 2002:a17:907:1707:b0:a59:c577:c5cb with SMTP id
+ a640c23a62f3a-a5a2d55a749mr146034566b.10.1715332890702; Fri, 10 May 2024
+ 02:21:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <20240509125716.1268016-1-leitao@debian.org>
+In-Reply-To: <20240509125716.1268016-1-leitao@debian.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 10 May 2024 11:21:19 +0200
+Message-ID: <CAJfpeguh9upC5uqcb3uetoMm1W7difC86+-BxZZPjkXa-bNqLg@mail.gmail.com>
+Subject: Re: [PATCH] fuse: annotate potential data-race in num_background
+To: Breno Leitao <leitao@debian.org>
+Cc: paulmck@kernel.org, 
+	"open list:FUSE: FILESYSTEM IN USERSPACE" <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Em Fri, 10 May 2024 11:08:38 +0300
-Jani Nikula <jani.nikula@intel.com> escreveu:
+On Thu, 9 May 2024 at 14:57, Breno Leitao <leitao@debian.org> wrote:
 
-> On Thu, 09 May 2024, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
-> > The drm/msm driver had adopted using Python3 script to generate register
-> > header files instead of shipping pre-generated header files. Document
-> > the minimal Python version supported by the script.
-> >
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >  Documentation/process/changes.rst | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/process/changes.rst b/Documentation/process/=
-changes.rst
-> > index 5685d7bfe4d0..8d225a9f65a2 100644
-> > --- a/Documentation/process/changes.rst
-> > +++ b/Documentation/process/changes.rst
-> > @@ -63,6 +63,7 @@ cpio                   any              cpio --version
-> >  GNU tar                1.28             tar --version
-> >  gtags (optional)       6.6.5            gtags --version
-> >  mkimage (optional)     2017.01          mkimage --version
-> > +Python (optional)      3.5.x            python3 --version =20
->=20
-> Python 3.5 reached end-of-life 3=C2=BD years ago [1]. What's the point in
-> using anything older than the oldest supported version of Python,
-> i.e. 3.8 at this time?
+> Annotated the reader with READ_ONCE() and the writer with WRITE_ONCE()
+> to avoid such complaint from KCSAN.
 
-What's the point of breaking compilation with on older distros?
-The idea of minimal versions here is to specify the absolute minimum
-version that it is required for the build to happen. If 3.5 is
-the minimal one, then be it.
+I'm not sure the write side part is really needed, since the lock is
+properly protecting against concurrent readers/writers within the
+locked region.
 
--
+Does KCSAN still complain if you just add the READ_ONCE() to fuse_readahead()?
 
-Now, a criteria is needed to raise the minimal version. IMO, the
-minimal version shall be at least the minimal one present on most
-used LTS distros that are not EOL.
-
-I would look for at least 4 such distros:
-
-- Debian
-
-  Looking at https://wiki.debian.org/LTS, Debian 10 EOL will be on
-  June, 2024.
-
-  Looking at:
-
-	https://distrowatch.com/table.php?distribution=3Ddebian
-
-  Debian 10 uses python 3.7.3.
-
-- Looking at Distrowatch for openSUSE Leap 15.5, it uses Python
-  3.6.15 and has an EOL schedule for Dec, 2024.
-
-- RHEL 8.9 uses a bigger version than those two - 3.11.5 - again
-  looking at Distrowatch to check it.
-
-- SLES 15 SP4 and above uses Python 3.11, according with:
-  https://www.suse.com/c/python-3-11-stack-for-suse-linux-enterprise-15/
-
-=46rom the above, IMO kernel shall support building with Python 3.6=20
-at least until the end of this year.
-
-Regards,
-Mauro
+Thanks,
+Miklos
 
