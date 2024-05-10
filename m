@@ -1,140 +1,138 @@
-Return-Path: <linux-kernel+bounces-175718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026058C2404
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:53:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91758C2409
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A57991F22A8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:53:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C86628A9E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA9B16F0EE;
-	Fri, 10 May 2024 11:52:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C05A16F0C6;
-	Fri, 10 May 2024 11:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C5F170884;
+	Fri, 10 May 2024 11:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xv87/W2m"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C26B16F0E5
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 11:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715341949; cv=none; b=OvE6e6+UB5Av39hsZm1IzPe6ep6849FJYIcEh9IJg/kO3IGOW+eew3BHkZ5BS/S6LbxeYqUI0CV/kdUc8eSv9mz0KooF1vFD6lUUJeR2FXVqSnYH/DZFxSCYhXJoMNzpitHlHgv4HMFE0PICR3SvEP7+OoNSUdnDnXcusx3nFnc=
+	t=1715341979; cv=none; b=om1cgrshkLCslgrfAuEFGjypSqEbjemO0ujOZJ9wrbu9bOnT9Q2G4eHCkhPaVFT2Umzgq8lx9aqe2IAojeWbqsIOLCMJTi/KMLVyUrE8A3iZeUez2FNRFvKArOiDJsX4V4Oej+9506OYspRCHArJ9LjdYPJdA78qW5a/17WeWHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715341949; c=relaxed/simple;
-	bh=4L0SL06v1cpIz5eQUAyvbTAjNvRgK+vbaYhy/1joG/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YULHi4TNITrUwPWUN8OSDtdYmi51atHQMjrl9m5QMFT7BF1QWlNI4pggFquH61HcSgJ3I7Y3Gq/+gLOLOT9msLRwI8fxSqEP+TJ4tTaDWz9rMAiUGYSo8lGJHMjy4z3LMBCjw14rZoHnYpz8Qn0bQqlVJSA6PvkoaRrRjbKHriQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE4F6106F;
-	Fri, 10 May 2024 04:52:46 -0700 (PDT)
-Received: from [10.57.65.1] (unknown [10.57.65.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92B2F3F6A8;
-	Fri, 10 May 2024 04:52:19 -0700 (PDT)
-Message-ID: <c406383d-e08a-4a12-9e25-1c987b0d678f@arm.com>
-Date: Fri, 10 May 2024 12:52:18 +0100
+	s=arc-20240116; t=1715341979; c=relaxed/simple;
+	bh=XT/MGGf6FqoaFBbWz/kB4SnUy6ZwYybEOphKp8bB/sc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XZcx+aft2bZyh2uXLxCCMwWeVfrOBYzHNqKnJ4GwATBZR8PYXJrdrHhQ84PGhPzIkg7CEBkgeaMY2up3MRqmLkZHMWnuP+oHwpvZKURausbveuduu7f/G0wZl7tY+TC5CDFvb/rd5oEAEqBwbnVnawVxxZIjZ2TEiXwhUnTArjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xv87/W2m; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715341976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Sn5xOAgv1svZ21tOX1itCUqNjVaJTe3E3Ka7POAje4c=;
+	b=xv87/W2mVBIZxUvRcC43sR2bcohwTQIjuNvnLpv6icr6FDrxnP32YVaIitfZxYPFlxqr81
+	sN2GuV6bXniKaXL5vsqjbbYlK6iIhhnFfiGvAT9Gn31cFtl2lNHU7pabZLes5mPvuH16sl
+	ozV01DWLApGkG3sG+vha3K5ZDWW67IU=
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Zhang Yi <yi.zhang@huaweicloud.com>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [PATCH] ext4: fix infinite loop when replaying fast_commit
+Date: Fri, 10 May 2024 12:52:52 +0100
+Message-ID: <20240510115252.11850-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
- -static-libasan, LOCAL_HDRS
-Content-Language: en-GB
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
- Christian Brauner <brauner@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
- linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- llvm@lists.linux.dev
-References: <20240504044336.14411-1-jhubbard@nvidia.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240504044336.14411-1-jhubbard@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 04/05/2024 05:43, John Hubbard wrote:
-> When building with clang via:
-> 
->     make LLVM=1 -C tools/testing/selftests
-> 
-> two distinct failures occur:
-> 
-> 1) gcc requires -static-libasan in order to ensure that Address
-> Sanitizer's library is the first one loaded. However, this leads to
-> build failures on clang, when building via:
-> 
->        make LLVM=1 -C tools/testing/selftests
-> 
-> However, clang already does the right thing by default: it statically
-> links the Address Sanitizer if -fsanitize is specified. Therefore, fix
-> this by simply omitting -static-libasan for clang builds. And leave
-> behind a comment, because the whole reason for static linking might not
-> be obvious.
-> 
-> 2) clang won't accept invocations of this form, but gcc will:
-> 
->     $(CC) file1.c header2.h
-> 
-> Fix this by using selftests/lib.mk facilities for tracking local header
-> file dependencies: add them to LOCAL_HDRS, leaving only the .c files to
-> be passed to the compiler.
-> 
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  tools/testing/selftests/openat2/Makefile | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/openat2/Makefile b/tools/testing/selftests/openat2/Makefile
-> index 254d676a2689..185dc76ebb5f 100644
-> --- a/tools/testing/selftests/openat2/Makefile
-> +++ b/tools/testing/selftests/openat2/Makefile
-> @@ -1,8 +1,18 @@
->  # SPDX-License-Identifier: GPL-2.0-or-later
->  
-> -CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined -static-libasan
-> +CFLAGS += -Wall -O2 -g -fsanitize=address -fsanitize=undefined
->  TEST_GEN_PROGS := openat2_test resolve_test rename_attack_test
->  
-> +# gcc requires -static-libasan in order to ensure that Address Sanitizer's
-> +# library is the first one loaded. However, clang already statically links the
-> +# Address Sanitizer if -fsanitize is specified. Therefore, simply omit
-> +# -static-libasan for clang builds.
-> +ifeq ($(LLVM),)
-> +    CFLAGS += -static-libasan
-> +endif
+When doing fast_commit replay an infinite loop may occur due to an
+uninitialized extent_status struct.  ext4_ext_determine_insert_hole() does
+not detect the replay and calls ext4_es_find_extent_range(), which will
+return immediately without initializing the 'es' variable.
 
-It just occured to me that the bug report I was fixing with my attempt was
-invoking make like this (see [1]):
+Because 'es' contains garbage, an integer overflow may happen causing an
+infinite loop in this function, easily reproducible using fstest generic/039.
 
-# tools/testing/selftests/fchmodat2$ make CC=clang
-# tools/testing/selftests/openat2$ make CC=clang
+This commit fixes this issue by detecting the replay in function
+ext4_ext_determine_insert_hole().  It also adds initialization code to the
+error path in function ext4_es_find_extent_range().
 
-So LLVM is not set in this case. Perhaps my approach [2] (suggested by Arnd) of
-using cc-option is more robust? (cc-option is alredy used by other selftests).
+Thanks to Zhang Yi, for figuring out the real problem!
 
+Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
+Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+---
+Hi!
 
-[1] https://lore.kernel.org/all/202404141807.LgsqXPY5-lkp@intel.com/
-[2]
-https://lore.kernel.org/linux-kselftest/20240417160740.2019530-1-ryan.roberts@arm.com/
+Two comments:
+1) The change in ext4_ext_map_blocks() could probably use the min_not_zero
+   macro instead.  I decided not to do so simply because I wasn't sure if
+   that would be safe, but I'm fine changing that if you think it is.
 
+2) I thought about returning 'EXT_MAX_BLOCKS' instead of '0' in
+   ext4_lblk_t ext4_ext_determine_insert_hole(), which would then avoid
+   the extra change to ext4_ext_map_blocks().  '0' sounds like the right
+   value to return, but I'm also OK using 'EXT_MAX_BLOCKS' instead.
 
-> +
-> +LOCAL_HDRS += helpers.h
-> +
->  include ../lib.mk
->  
-> -$(TEST_GEN_PROGS): helpers.c helpers.h
-> +$(TEST_GEN_PROGS): helpers.c
-> 
-> base-commit: ddb4c3f25b7b95df3d6932db0b379d768a6ebdf7
-> prerequisite-patch-id: b901ece2a5b78503e2fb5480f20e304d36a0ea27
+And again thanks to Zhang Yi for pointing me the *real* problem!
 
+ fs/ext4/extents.c        | 6 +++++-
+ fs/ext4/extents_status.c | 5 ++++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index e57054bdc5fd..b5bfcb6c18a0 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4052,6 +4052,9 @@ static ext4_lblk_t ext4_ext_determine_insert_hole(struct inode *inode,
+ 	ext4_lblk_t hole_start, len;
+ 	struct extent_status es;
+ 
++	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
++		return 0;
++
+ 	hole_start = lblk;
+ 	len = ext4_ext_find_hole(inode, path, &hole_start);
+ again:
+@@ -4226,7 +4229,8 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+ 		len = ext4_ext_determine_insert_hole(inode, path, map->m_lblk);
+ 
+ 		map->m_pblk = 0;
+-		map->m_len = min_t(unsigned int, map->m_len, len);
++		if (len > 0)
++			map->m_len = min_t(unsigned int, map->m_len, len);
+ 		goto out;
+ 	}
+ 
+diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+index 4a00e2f019d9..acb9616ca119 100644
+--- a/fs/ext4/extents_status.c
++++ b/fs/ext4/extents_status.c
+@@ -310,8 +310,11 @@ void ext4_es_find_extent_range(struct inode *inode,
+ 			       ext4_lblk_t lblk, ext4_lblk_t end,
+ 			       struct extent_status *es)
+ {
+-	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
++	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) {
++		/* Initialize extent to zero */
++		es->es_lblk = es->es_len = es->es_pblk = 0;
+ 		return;
++	}
+ 
+ 	trace_ext4_es_find_extent_range_enter(inode, lblk);
+ 
 
