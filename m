@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-175660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462438C2349
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54D928C234D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84E8B2232B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:26:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A4C285073
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 11:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E3E16FF49;
-	Fri, 10 May 2024 11:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A3E171E57;
+	Fri, 10 May 2024 11:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KQdR1rZy"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khaIeUmp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57B9716F0C6;
-	Fri, 10 May 2024 11:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450816DED7;
+	Fri, 10 May 2024 11:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715340258; cv=none; b=jmqbw/DP3JKjwWV35e+ZgRGbSXa+dJVBGdV8e9dmabU8X8khVt4swc89I7KVWG7sahwaU7gJ5/SlkrwN5F/yVdZbXMnbNsYSgsU7NX3p3oYR2cGj8vsoTmWRtrF5tj8GnIUJw+W6iaYif3eoXdTOTfBcztppbjmVH+CwCN2IzZg=
+	t=1715340317; cv=none; b=I58yYs/Ullb6iLCgP1bYMgOlqjd1NFeb5W/7cuNbiPE4OiYnfzOmfR3w4A9oB3zWlC581sPk1VMDGYgs4j6D/5rMdM7vPoH4ousKeg92C0TgzLksA67bW91h1YC8roEzYcGFUutc5IyHM3BX4mCVUjxAh6qKt3j7tx2Ce89dbWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715340258; c=relaxed/simple;
-	bh=MuOQCmUzXNyKWcjxb84KgDM7bo5qL9Sff9/5cgSTgyQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=S55zchHKqOKTuBdW2l0TqHhQIsotbaKRdwZN4Mc2gpy/4jqE4XqhsFOkJIz0Ym0x4nEVZYDz9cQRgLrdQ/k2XdZlOKfzqr5of/umb4211DLZ5O3063WGyZQxhfIrULO4moScGK27qQ18wKwgZbjh8e7owFMdBAE9u/Y5jR8eigc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KQdR1rZy; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715340254;
-	bh=MuOQCmUzXNyKWcjxb84KgDM7bo5qL9Sff9/5cgSTgyQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=KQdR1rZyH79i9HPkv0ze2lsOUVn2BdiLTVYRsF1zHKTkchSG3t1PBrTXH3G4QZjLm
-	 coour17sQx6x8JqSy2Vq5deh+PBtF94+9NUJ8e+F0cZhY8dZYV7G5POGBAgWdsmWtJ
-	 CgffO67gYdlgsz9t0v0jyUf2y4ILIjgVHFGpOufGZiOnv26N2/YqnnIFHMRWossONs
-	 20DRPqgUbNQ2Fl9Pq24kvJ10ntF7dgHAAHBdz6IZt5K7Df0/iQtk9Nx4bS4B3vTK2M
-	 uDE8dF67X0GA+7LppCMMLqRnPfXabyF4huJgl9ecG12ZJGxvCKO6qsqfnG2o51XDD8
-	 Oz17qnxfMlvrA==
-Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: usama.anjum)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E8BA63782185;
-	Fri, 10 May 2024 11:24:07 +0000 (UTC)
-Message-ID: <ebad1587-3016-4eb7-8cfa-4d2e1e60b95a@collabora.com>
-Date: Fri, 10 May 2024 16:24:32 +0500
+	s=arc-20240116; t=1715340317; c=relaxed/simple;
+	bh=WG+BHitREva4mvWqnkP0ffB4OiWqF5eUwg3pXCEUjvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ugZkxZzs0TgN3VeLYPaSkph2/t+O+SG/7S+pqJqbkzcrbFnBe7oU8F4d57pq5l1nu3EAMrq9aeuVR1CRQSeokRrwtJ+NvADROqD1KP9JvstGx5j78wbyqKKpMP2/xrfoO9akhhM7Znc2E7GS7fRYyDPKdD+Rg7OE2wki4MPVl28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khaIeUmp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF058C113CC;
+	Fri, 10 May 2024 11:25:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715340317;
+	bh=WG+BHitREva4mvWqnkP0ffB4OiWqF5eUwg3pXCEUjvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=khaIeUmp735MpQM7gD5I0uij1D5Eq+UvCjqDAKL17wDtVeCAbQh5a2nQZcVZAcanE
+	 7eTy21WcNpMeCm5EFAaIweoRCu9xJcAy8IL8mYjHsGOOODHtWcW/1NtXmBEtgibk7Z
+	 cBHVC7K5C2H3rjhfUTXnGaazncKGkfxzZY8S8xqIWid5RB7oMgM2fbJI4KKplAu+G0
+	 xbUK+o7WcJ6LBkRNUeOLQ5PQGzs7sgj/Gtd+UayLxgPb01wKVkP7Dakz4Mc7kLouBE
+	 DLRIqPeXl7BnIrzdPZfZ8z5VLHIz/HuzL05KQvL0vUQhijcQ2UTrcXaJf/Z+olhSNc
+	 gHptO59JM3gGA==
+Date: Fri, 10 May 2024 12:25:11 +0100
+From: Simon Horman <horms@kernel.org>
+To: =?utf-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Subject: Re: [PATCH net-next v2 00/14] net: qede: convert filter code to use
+ extack
+Message-ID: <20240510112511.GC2347895@kernel.org>
+References: <20240508143404.95901-1-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kunwu Chan <chentao@kylinos.cn>
-Subject: Re: [PATCH bpf-next v2 4/4] selftests/bpf: Add a null pointer check
- for the serial_test_tp_attach_query
-To: kunwu.chan@linux.dev, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, kunwu.chan@hotmail.com
-References: <20240510095803.472840-1-kunwu.chan@linux.dev>
- <20240510095803.472840-5-kunwu.chan@linux.dev>
-Content-Language: en-US
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <20240510095803.472840-5-kunwu.chan@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240508143404.95901-1-ast@fiberby.net>
 
-On 5/10/24 2:58 PM, kunwu.chan@linux.dev wrote:
-> From: Kunwu Chan <chentao@kylinos.cn>
+On Wed, May 08, 2024 at 02:33:48PM +0000, Asbjørn Sloth Tønnesen wrote:
+> This series converts the filter code in the qede driver
+> to use NL_SET_ERR_MSG_*(extack, ...) for error handling.
 > 
-> There is a 'malloc' call, which can be unsuccessful.
-> Add the malloc failure checking to avoid possible null
-> dereference.
+> Patch 1-12 converts qede_parse_flow_attr() to use extack,
+> along with all it's static helper functions.
 > 
-> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
-> Suggested-by: Daniel Borkmann <daniel@iogearbox.net>
-> ---
-> Changes in v2:
-> 	- Use ASSERT* instead of CHECK
-> 	- Add suggested-by tag
-> ---
->  tools/testing/selftests/bpf/prog_tests/tp_attach_query.c | 3 +++
->  1 file changed, 3 insertions(+)
+> qede_parse_flow_attr() is used in two places:
+> - qede_add_tc_flower_fltr()
+> - qede_flow_spec_to_rule()
 > 
-> diff --git a/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c b/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
-> index 655d69f0ff0b..a5ebfc172ad8 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
-> @@ -39,6 +39,9 @@ void serial_test_tp_attach_query(void)
->  	attr.wakeup_events = 1;
->  
->  	query = malloc(sizeof(*query) + sizeof(__u32) * num_progs);
-> +	if (!ASSERT_OK_PTR(query, "malloc"))
-> +		return;
-> +
-LGTM
-Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> In the latter call site extack is faked in the same way as
+> is done in mlxsw (patch 12).
+> 
+> While the conversion is going on, some error messages are silenced
+> in between patch 1-12. If wanted could squash patch 1-12 in a v3, but
+> I felt that it would be easier to review as 12 more trivial patches.
 
->  	for (i = 0; i < num_progs; i++) {
->  		err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, &obj[i],
->  				    &prog_fd[i]);
+FWIIW, I like the easy to review approach taken here :)
 
--- 
-BR,
-Muhammad Usama Anjum
+> Patch 13 and 14, finishes up by converting qede_parse_actions(),
+> and ensures that extack is propagated to it, in both call contexts.
+
+..
 
