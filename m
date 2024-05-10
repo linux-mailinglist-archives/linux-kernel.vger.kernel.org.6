@@ -1,184 +1,146 @@
-Return-Path: <linux-kernel+bounces-176178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E138C2B46
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:47:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190248C2B49
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 22:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C82B285706
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3D51C23475
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218D95024E;
-	Fri, 10 May 2024 20:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A5E5024E;
+	Fri, 10 May 2024 20:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RI6SwIoQ"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PuG6E/fO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2606FC0B;
-	Fri, 10 May 2024 20:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AE1FC0B;
+	Fri, 10 May 2024 20:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715374012; cv=none; b=geQVrchc+AfvYzzclQOQQ+TErlcBV+Tix/hs6oBTrtt6ocWMwssU/TpM+JEXokX7guMrE0g0RcxuD8S8aCuRXRvgoVZVZxv5cht7pVJnnVmsTiSo10u2nZ/LYr1q951RaRLJq6eA/ZMQ7eHKN4SwXdjT/dMOhKQpuNT8lgDx9jk=
+	t=1715374192; cv=none; b=UNvnpJJhRW54FUaugJTwi1cVpLC0OW7SgsE3NLc1j20Ng8IJXwEWMNUac9yE26He4AJW5qIGYqqKNI84ijqLtvIwhpOM2vWn2OGSAZkPt/rIQ5cPM07/6jC8GWkFvwyCEu7K+V7wi0zfgfVFur6RLIm/1WXoT0+SLnSkJS5l8fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715374012; c=relaxed/simple;
-	bh=fdvro2SMQFvU7C5zN+OrfigUP0qDunUUywy2/UNF0SA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=pNuIvWyJY4Cla8ZWAfvCCrB5XnoNXadkBWS1sGg9j1yxhgVwEVttETVs3ssONoupWe4rK18L+XK3RsyANQS8G7MVsCEhhERNnMMGU5YMzzhYfqW1aLpIJgPpa5/sInOdU9AxYRQNJb2iNLyO5H3286nyDxqvRzRgw3STzxPj5dQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RI6SwIoQ; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a934ad50so590931866b.1;
-        Fri, 10 May 2024 13:46:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715374009; x=1715978809; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WMEM98RiYUq0hdtm/YdPk4weUn162VqCwHj8usxBrh0=;
-        b=RI6SwIoQ9Xd8SElEE0YLXfSxnD6ywvuE2ooSIO2EMIGmUUB0i/vGXS43DhD6AaewDO
-         2hDJyBGS8qdC89/DtfK84b0+166Mn+h8IjW8aTVW/bC5Zmp9rTHwM6BqPUil15uVMRCn
-         M3ppPam+KC9GFwShtQdJr98XUC5a1Ebigkg+w0I0bAj3O7l9KUZXMd07RtpJJ9f6qls8
-         exZQLg/NE+F79UTK15op2D6I4ya5ZusUWe4xOXb3Wum6imwuWPNe3HhgZcx4qL/6FXsE
-         fVnND1ONmlS6Xgk82gAZV8iOjlayyqbsUK5BB17wfhnn9UaP6/ZNNiHb001LQVsyath1
-         VMfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715374009; x=1715978809;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WMEM98RiYUq0hdtm/YdPk4weUn162VqCwHj8usxBrh0=;
-        b=TWvGP0oII2/thL9pgBPv6ZrSB0UujbqrJXopQkVBp6+s2M9c37bd0F/a5BEHLdI7cQ
-         1E+dDuOxsH4l6576A5ReD5Iu4nAJdjmY7x9a0val6etYqhA6F9bYcAVS7Uz0lZ59IFI+
-         Tr8TNoWsrg4kQ26hHSuxARihLwbhjUgYx/cVRuYc569nOaRn+Z1nitRPUlchCBZjYxuL
-         ztuffZRF3eBFWYRGDlwSzLC+4iriv8xJg4CfE6QvMUqweptUJMN3wUmvHBl6BOydhrBR
-         TOY7LdEXqBnDBFbPyiRYAi4Zv7gcImUzUfO7uEW1MtfB3w6CtA26W8ZXrNAibZKXvrn+
-         o2/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWMzCWMzx+n4vv//+EGG85CoDHG14jHljd97psyrqqUGhHGwVV72M/tvB6japZJxX+atEHKGs7iSvXeAlDGF28DQsxTZ/09PsKg/7VRNGiX/esfyex43FKm/P+Q5uw8FkhzVfi+1F8W
-X-Gm-Message-State: AOJu0Yy7+/pB/j8xr9NVlnqeboI/YJ5kF8p7nnTemc52jlWeN8CECgve
-	/tX+P5t0BsawPjPzi9LiLVLS85uk7D9vfEwJfL5cG4KjRGaPGLZ/s61yRH3L
-X-Google-Smtp-Source: AGHT+IEdoRgVqcTVs95ruV6D74mUnZI1UyKgszD5KL5X4ahLlK5JkYVuQ4kebfo/LFj3lkuKsI5Vww==
-X-Received: by 2002:a50:c349:0:b0:56d:faa2:789b with SMTP id 4fb4d7f45d1cf-5734d6df1dcmr2213346a12.40.1715374008474;
-        Fri, 10 May 2024 13:46:48 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-221.xnet.hr. [88.207.42.221])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733becfb83sm2206598a12.46.2024.05.10.13.46.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 13:46:48 -0700 (PDT)
-Message-ID: <150006c9-18c9-459d-9e38-58e83d6653ae@gmail.com>
-Date: Fri, 10 May 2024 22:46:47 +0200
+	s=arc-20240116; t=1715374192; c=relaxed/simple;
+	bh=DjoTVfyC5WSEOMG6PqhyMYiCD5IbgfUCuXjFw0GOKgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NlY3H9fFj/yKtQvSi4YME6AeJeBs82cHQb2FL7sAtY+jTlNBTujbIAuUx2e5W+t3d5nsp4M5PAMyERSvlob9hKk66aPpyAU7E0YkrMudgA9QoGAqmu8jX3DhSKhmwbmrEb8L1e7KVK0Pj6K3m/NyMLvETyGYGv0tzjkhsAyTOTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PuG6E/fO; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715374191; x=1746910191;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=DjoTVfyC5WSEOMG6PqhyMYiCD5IbgfUCuXjFw0GOKgg=;
+  b=PuG6E/fOVIJhgaw/AabnCFO0bh7f76xI2mNSkG8O6Ygls/r8IG5WdC+O
+   KB8Dq06F1CZyl4ZazE1ZozTteY0+zUoc1IO0CRhnb3UmJIQlqjmQZ/yMM
+   JiFrveLMPgV53ajUIVm1doKaZKSFvVoNCV4kV4djmyTihZxKl+thQOLeP
+   uDyHt8GxcdIZ5YtMr7vdhjwTF2XyDgSC1X5fbejGSDtn6Y9pZ5Y5bihv4
+   ysNpR4hoWs86vRii8sfVs0zXwDwI277FTb+G7sxDPaShFZE03zbU8Pa6H
+   dxFOYweXgPBbetys4GNNXx6Ewyzh91fgGuZjndF2u/VXwZn8jvDjQXr0o
+   Q==;
+X-CSE-ConnectionGUID: 6VfdvIWmRGyHpIakTXX4DA==
+X-CSE-MsgGUID: mnxd1ouERsak+TOObA3j6g==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11227154"
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="11227154"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 13:49:50 -0700
+X-CSE-ConnectionGUID: BShvMiHdQOyczc20M1dwJg==
+X-CSE-MsgGUID: hIwmhA1VS0SJWFbOaAfG5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
+   d="scan'208";a="34404486"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 10 May 2024 13:49:48 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 11FBB1AC; Fri, 10 May 2024 23:49:46 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] spi: Refactor spi_stop_queue()
+Date: Fri, 10 May 2024 23:49:45 +0300
+Message-ID: <20240510204945.2581944-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: linux-kselftest@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Shuah Khan <shuah@kernel.org>,
- linux-sgx@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Subject: [PATCH v1 1/1] selftests/sgx: Fix the implicit declaration of
- asprintf() compiler error
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The selftest/sgx/main.c didn't compile with [-Werror=implicit-function-declaration]
-[edited]:
+The refactoring makes code less verbose and easier to read.
+Besides that the binary size is also reduced, which sounds
+like a win-win case:
 
-make[3]: Entering directory 'tools/testing/selftests/sgx'
-gcc -Wall -Werror -g -Itools/testing/selftests/../../../tools/include -fPIC -c main.c \
-        -o tools/testing/selftests/sgx/main.o
-In file included from main.c:21:
-./kselftest_harness.h: In function ‘__run_test’:
-./kselftest_harness.h:1169:13: error: implicit declaration of function ‘asprintf’; \
-        did you mean ‘vsprintf’? [-Werror=implicit-function-declaration]
- 1169 |         if (asprintf(&test_name, "%s%s%s.%s", f->name,
-      |             ^~~~~~~~
-      |             vsprintf
-cc1: all warnings being treated as errors
-make[3]: *** [Makefile:36: tools/testing/selftests/sgx/main.o] Error 1
+  add/remove: 0/1 grow/shrink: 2/2 up/down: 210/-226 (-16)
+  Function                            old     new   delta
+  spi_destroy_queue                    42     156    +114
+  spi_controller_suspend              101     197     +96
+  spi_unregister_controller           346     319     -27
+  spi_register_controller            1834    1794     -40
+  spi_stop_queue                      159       -    -159
+  Total: Before=49230, After=49214, chg -0.03%
 
-The cause is in the included <stdio.h> on Ubuntu 22.04 LTS:
-
- 19 /*
- 20  *      ISO C99 Standard: 7.19 Input/output     <stdio.h>
- 21  */
-.
-.
-.
-387 #if __GLIBC_USE (LIB_EXT2)
-388 /* Write formatted output to a string dynamically allocated with `malloc'.
-389    Store the address of the string in *PTR.  */
-390 extern int vasprintf (char **__restrict __ptr, const char *__restrict __f,
-391                       __gnuc_va_list __arg)
-392      __THROWNL __attribute__ ((__format__ (__printf__, 2, 0))) __wur;
-393 extern int __asprintf (char **__restrict __ptr,
-394                        const char *__restrict __fmt, ...)
-395      __THROWNL __attribute__ ((__format__ (__printf__, 2, 3))) __wur;
-396 extern int asprintf (char **__restrict __ptr,
-397                      const char *__restrict __fmt, ...)
-398      __THROWNL __attribute__ ((__format__ (__printf__, 2, 3))) __wur;
-399 #endif
-
-__GLIBC_USE (LIB_EXT2) expands into __GLIBC_USE_LIB_EXT2 as defined here:
-
-/usr/include/features.h:186:#define __GLIBC_USE(F)      __GLIBC_USE_ ## F
-
-Now, what is unobvious is that <stdio.h> includes
-
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-------------------------------------------------------
- 35 /* ISO/IEC TR 24731-2:2010 defines the __STDC_WANT_LIB_EXT2__
- 36    macro.  */
- 37 #undef __GLIBC_USE_LIB_EXT2
- 38 #if (defined __USE_GNU                                                  \
- 39      || (defined __STDC_WANT_LIB_EXT2__ && __STDC_WANT_LIB_EXT2__ > 0))
- 40 # define __GLIBC_USE_LIB_EXT2 1
- 41 #else
- 42 # define __GLIBC_USE_LIB_EXT2 0
- 43 #endif
-
-This makes <stdio.h> exclude line 396 and asprintf() prototype from normal
-include file processing.
-
-The fix defines __USE_GNU before including <stdio.h> in case it isn't already
-defined. After this intervention the module compiles OK.
-
-Converting snprintf() to asprintf() in selftests/kselftest_harness.h:1169
-created this new dependency and the implicit declaration broke the compilation.
-
-Fixes: 809216233555 ("selftests/harness: remove use of LINE_MAX")
-Cc: Edward Liaw <edliaw@google.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-sgx@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mirsad Todorovac <mtodorov69@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- tools/testing/selftests/sgx/main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/spi/spi.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
-diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selftests/sgx/main.c
-index 9820b3809c69..f5cb426bd797 100644
---- a/tools/testing/selftests/sgx/main.c
-+++ b/tools/testing/selftests/sgx/main.c
-@@ -6,6 +6,9 @@
- #include <errno.h>
- #include <fcntl.h>
- #include <stdbool.h>
-+#ifndef __USE_GNU
-+#define __USE_GNU
-+#endif
- #include <stdio.h>
- #include <stdint.h>
- #include <stdlib.h>
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 289feccca376..ef0027b9cae5 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -2207,11 +2207,8 @@ static int spi_start_queue(struct spi_controller *ctlr)
+ 
+ static int spi_stop_queue(struct spi_controller *ctlr)
+ {
++	unsigned int limit = 500;
+ 	unsigned long flags;
+-	unsigned limit = 500;
+-	int ret = 0;
+-
+-	spin_lock_irqsave(&ctlr->queue_lock, flags);
+ 
+ 	/*
+ 	 * This is a bit lame, but is optimized for the common execution path.
+@@ -2219,20 +2216,18 @@ static int spi_stop_queue(struct spi_controller *ctlr)
+ 	 * execution path (pump_messages) would be required to call wake_up or
+ 	 * friends on every SPI message. Do this instead.
+ 	 */
+-	while ((!list_empty(&ctlr->queue) || ctlr->busy) && limit--) {
++	do {
++		spin_lock_irqsave(&ctlr->queue_lock, flags);
++		if (list_empty(&ctlr->queue) && !ctlr->busy) {
++			ctlr->running = false;
++			spin_unlock_irqrestore(&ctlr->queue_lock, flags);
++			return 0;
++		}
+ 		spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+ 		usleep_range(10000, 11000);
+-		spin_lock_irqsave(&ctlr->queue_lock, flags);
+-	}
++	} while (--limit);
+ 
+-	if (!list_empty(&ctlr->queue) || ctlr->busy)
+-		ret = -EBUSY;
+-	else
+-		ctlr->running = false;
+-
+-	spin_unlock_irqrestore(&ctlr->queue_lock, flags);
+-
+-	return ret;
++	return -EBUSY;
+ }
+ 
+ static int spi_destroy_queue(struct spi_controller *ctlr)
 -- 
-2.34.1
+2.43.0.rc1.1336.g36b5255a03ac
 
 
