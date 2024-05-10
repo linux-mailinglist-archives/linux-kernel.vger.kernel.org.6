@@ -1,130 +1,149 @@
-Return-Path: <linux-kernel+bounces-175284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321AE8C1D9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:15:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204F78C1D9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 07:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B30AAB21BD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:15:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C474C28370B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02E91527AC;
-	Fri, 10 May 2024 05:14:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317AF15E5C4;
+	Fri, 10 May 2024 05:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4+7Ho6L"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jAYtvQCS"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4AA152791;
-	Fri, 10 May 2024 05:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3183C152786
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 05:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715318096; cv=none; b=aU/VYNqkj+e66ZITuLVD/9vI0G18cQOSpGgFDBFtqLcfN4KiZwbXyhcNKN78POge1d6g1ef1gm3X5w40k1MOzpgsoAu+wLS8CUMmEWFEh8P87kyBLqcocLAA18FX3RmiqB57cVT8fGCpPMaJ3Yszy8VZxz7sxJMqDCtLLsiQiGc=
+	t=1715318118; cv=none; b=G1/yTGliJLT639kXHlnXzNA05RhbVR8Yr5iODl3g/PwK6eYdzhtqyRBinKiQaksNcB3QqnunDmKQLrOY7o5anagz88wtj4HD4B6xC8/aFSkTvrbHvYoOfZBz1TtuaDXTxSwpP/HI2jAMdhBTVAmfLwyokIayDtM2GTxJM6c2tbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715318096; c=relaxed/simple;
-	bh=/wfp+sYuMpBKf4KLIPDyeRLT2GchQIx68TR8jcU6d3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLROMU/3ht3Zx40qEdkxn3Ux/7bWm8+DcaDeTxL6Gp+mjedqjEgqfzHiH5dDjN/UMeWFAABmwlSCbziJ9Kdw5/lGEZMaq7NXks00psCUsd8jk446LlU06S0z36EQgCCQNUPijQw+1RDmx6sCkk0pZ3GpGg9qqIDMp832PGzHvYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4+7Ho6L; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51fea3031c3so2181297e87.0;
-        Thu, 09 May 2024 22:14:54 -0700 (PDT)
+	s=arc-20240116; t=1715318118; c=relaxed/simple;
+	bh=5g9aqIrd/CSisewRoD5xcikITn2+u3Jq5S9fr5CZlsU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcsfYZw69ahyqeXrJcBvlleBA/GCXMW768K18MxgI65c4I3yrbYUMogMAZ8BbOwO1xbRo8Hxmet3gJA1D1dZJyTNTNmXn0CIkd2TF6OWXQGYfAxzEycWX6ZHnflb3SC5EZSxNZgpE/Tc1QNq3ZxtLnPqIaPGR6P/TQ5bdd0qg5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jAYtvQCS; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1ee38966529so19511665ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 May 2024 22:15:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715318093; x=1715922893; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KD972YGs70ELqEUYYLAB1LZ0CP+hOI5m8/hTJEXwF4s=;
-        b=T4+7Ho6LrbWNm6aq8/Hrepv35Lhr+0YcJ1z6wpYfM3IKYqHhLs7Q365gcATTBJqOWr
-         7BZhZp9NJMe3Fui6S2j2jN/t26yK3U+AQB6/WSzfIecp+iOPqqPLKg135duS1YYbhVvX
-         HjVNWd+ekFeFBQOqftl3hdNe0WdRGoo9I/AfBolx7NTR8Jggt8SQGMo6Fa/VWy6mHt8i
-         o6XqHgGYyK4cLjIbPe10Aa3tPdQY/uHn8GXyWyFnPpLOSqlRSUpZmJkP0eJzxIR4QG7i
-         yUPc6jg2GX5hGyI8tyIfABOa22e1AnjMhLSXSariNCh7iRNmDoRwaz7nyiE2bJkToxUr
-         W8TQ==
+        d=chromium.org; s=google; t=1715318114; x=1715922914; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wgyaaXbsvqD2LsppPxdAFhGM87M6tpgqLYTXW/9G1I0=;
+        b=jAYtvQCSKlJWdnaFqFm4oNeLQoEAzIowF/acMcKaHs4OpQBRIWGiZJUEeH+ZvjeJgB
+         xYZpWOX60x7zP9W/IenR4AthpIH/GQJ1zjGLFM5iA/87NR1MUNmphfBYMNWUVOI4cP5h
+         fYgF1do73z6V0w0IBpWiaBUOKMzkB0Fgx61IU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715318093; x=1715922893;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KD972YGs70ELqEUYYLAB1LZ0CP+hOI5m8/hTJEXwF4s=;
-        b=hJ2CJHFxW38RL1SU4rlzjam2GeN82I+73HzDwiPfF6JPLWn9SvS+GUesYCivj8oHyI
-         5Ditfk6jInt6zFB6GMPQEiH29V9MM7OtMQClfSpbvEfvOrWNBnd3HtsQejVuqPBhZP6w
-         l1PBx64s42KfmXOhfOAZCuyTZdAgP76KFoz9BktQYnXSc84DNu6luGxqWEZqjVK2A6FG
-         gg1ENh2KA/e3tOQd0IL5BKCv+qMFtByAR+HMgxjlTYpDGLX++5mBLiWEdiQ0+mDWmWal
-         MGG1eX+ZLkXeqrbL1uDqufZ+iPtkcC5hkZyoYwbKW0RWW6R937OumZderzlmAzs6VJ/d
-         zpQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwXba4b+6KU2Q1UYH57rIb78NDVisW6tQhn2zjq52wgIJazHUdbBHpmixJphcMjgMCC0PCDpftRDCkC2vFQh5gI78mqth8s9yNQacux3BPtKVITCwXUFQcDr3+bQiO9NITgOhA1Y3x
-X-Gm-Message-State: AOJu0Yxf1WnwwXSCr85N/icGjUtZyOkgeenCQHRsX7rTtaK6C9S1jzOT
-	MvarsA1FBdMxekH6uMoVcpnWdIajzKL+MJoZuFqpkeX6+TnMPpXi
-X-Google-Smtp-Source: AGHT+IFHx/96hoTIyI75AZqjemK+UNHjFKK+dmJI3+TYhsrWFPWlOzyU/lEWFr7GNDYwmMtvxDjThg==
-X-Received: by 2002:a05:6512:ea0:b0:520:676a:7322 with SMTP id 2adb3069b0e04-52210278595mr1383667e87.46.1715318092969;
-        Thu, 09 May 2024 22:14:52 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba59bsm558063e87.65.2024.05.09.22.14.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 May 2024 22:14:52 -0700 (PDT)
-Message-ID: <f9c59545-6816-4e45-9098-a52b2688a22a@gmail.com>
-Date: Fri, 10 May 2024 08:14:51 +0300
+        d=1e100.net; s=20230601; t=1715318114; x=1715922914;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wgyaaXbsvqD2LsppPxdAFhGM87M6tpgqLYTXW/9G1I0=;
+        b=vROSHe8tRE5cj2Xq9TBqq3iSaoAz7NWBlXK+L222GELBFhAFeJjGBwtTNKKU1V/q3O
+         15O8Fu9H/ZEMwPYp1fqJcqwo43HL40r6hdoaHu4s+M01AxpweOG4B/6WtF9hrMTV/CO8
+         mte2yeBvwfcRfEcvOONdPYejV/lr22mpKOjyFsQDHChzFWm6z4GvwDzorgj9QOALG/ut
+         4hlAga8MOWCT3C47P/kBSYxeMdS9u/Fv+NCgiDhmpwSETFhCtQm1kMXrP5uiBVQ7Iz7I
+         vzPaZMSpgb6235osWB+NPlsy1e0H3mc7A3yTJDqP5GlFO4w7bEQgsmCQ0jprodJiGXmC
+         /9Sw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/FoKAnUQl20DPMlfiz3JTcHklC5ITCjkRnj/5a55BINYDLUQTd8bYIdd0g6QaATb2Gu7a/OqTS7OhDqwKNuWVwak3p+iK/lzv4sQz
+X-Gm-Message-State: AOJu0YxP9P23RLDtIO87nRgl5sn2Ir0heEkQ3FEIDqgEXJ7hAMxgLO/F
+	TEfbQJ5i7RxB7F4Sr+H94TMGbSZBqKLQHK0veZPt6410xCTh80HOpTR3BF5dQw==
+X-Google-Smtp-Source: AGHT+IH7Hm/lOPljffiTQlTyKmy5eyFByNf3HR9v7FBg8O8DcfEkdnc1sFp0c5lqNAE+UzNDn6j1fQ==
+X-Received: by 2002:a17:902:f68f:b0:1e0:9964:76f4 with SMTP id d9443c01a7336-1ef42e6e646mr25664035ad.14.1715318114238;
+        Thu, 09 May 2024 22:15:14 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:de58:3aa6:b644:b8e9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c136b2fsm23433415ad.241.2024.05.09.22.15.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 22:15:13 -0700 (PDT)
+Date: Fri, 10 May 2024 14:15:09 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org
+Subject: Re: [PATCHv3 00/19] zram: convert to custom compression API and
+ allow algorithms tuning
+Message-ID: <20240510051509.GI8623@google.com>
+References: <20240508074223.652784-1-senozhatsky@chromium.org>
+ <ZjzFB2CzCh1NKlfw@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Fix the iio-gts-helpers available times table
- sorting
-Content-Language: en-US, en-GB
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, Chenyuan Yang <chenyuan0y@gmail.com>
-References: <cover.1714480171.git.mazziesaccount@gmail.com>
- <20240505185027.18809bfd@jic23-huawei>
- <11a16488-7f5f-4d53-a091-9cedcab76dc8@gmail.com>
- <20240506135356.7babe20f@jic23-huawei>
- <f5215081-c993-4147-8c50-fba1f56279b4@gmail.com>
- <20240509131516.000049d4@Huawei.com>
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240509131516.000049d4@Huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZjzFB2CzCh1NKlfw@infradead.org>
 
-On 5/9/24 15:15, Jonathan Cameron wrote:
-> On Tue, 7 May 2024 09:14:15 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->> On 5/6/24 15:53, Jonathan Cameron wrote:
->>> On Mon, 6 May 2024 08:09:27 +0300
->>> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->>>> On 5/5/24 20:50, Jonathan Cameron wrote:
->>>>> On Tue, 30 Apr 2024 15:44:26 +0300
->>>>> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
->>>>>        >>> For now I'll leave it queued for 6.11 on the basis there are a lot 
-of ways
->>> a driver writer can cause similar out of bounds accesses and they should
->>> notice it not working during testing.  So it 'should' not be a problem to
->>> not rush this in.
->>>    
->>
->> I guess this means the 6.10 won't have the fix? I believe this is fine -
->> assuming the 6.10 is not going to be an LTS. Thanks for taking care of
->> this! :)
-> It may well get backported anyway, but after 6.11 merge window.
+On (24/05/09 05:43), Christoph Hellwig wrote:
+> On Wed, May 08, 2024 at 04:41:53PM +0900, Sergey Senozhatsky wrote:
+> > 	This patch set moves zram from crypto API to a custom compression
+> > API which allows us to tune and configure compression algorithms,
+> > something that crypto API, unfortunately, doesn't support.
+> 
+> [...]
+> 
+> >  21 files changed, 1203 insertions(+), 111 deletions(-)
+> 
+> Why can't it?
 
-This sounds good. Thanks for clarifying!
+Well, I asked crypto folks if that's doable and the only reply was
+"did you try using compression libs directly".  And that's not a
+bad response, I take it.
 
-Yours,
-	-- Matti
+The handling of parameters becomes quite intrusive very quickly.
+It's not as simple as just passing a new "struct crypto_tfm" to all
+sort of API abstractions that crypto has, it's a little more than that.
 
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
+Just as an example.  For zstd we can work in two modes
+1) load the dictionary by_copy
+2) load the dictionary by_ref
 
-~~ When things go utterly wrong vim users can always type :help! ~~
+In (2) we need to guarantee that the dictionary memory outlives any
+comp contexts, so cyrpto_tfm-s now begin to have "external" dependency.
+But if we load the dictionary by_ref then what we can do is a
+pre-processing of the dictionary buffer - we get CDict and DDict
+pointers (specific only to zstd backend) which all contexts now can
+share (contexts access C/D Dict in read-only mode).  For this we need
+to have a pre-processing stage somewhere in the API and keep the
+"compression's backend private data" somewhere, then somehow pass it to
+context cra_init and release that memory when all context were destroyed.
+In zram I just went with "we do only by_ref" and handle all the
+dependencies/guarantees, it's very simple because all of this stays
+in zram.
 
+But in general case, a typical crypto API usage
+
+	tfm = crypto_alloc_comp(comp->name, 0, 0);
+
+should become much more complex.  I'd say that, probably, developing
+an entirely new sub-set of API would be simpler.
+
+So I implemented a simple zram comp API.  I can't tell how much effort
+it'll be to handle all of this in crypto, I'm not really familiar with
+crypto, and I'm not sure if crypto API folks are even interested.
+
+> This is an awful lot of crazy code duplication just
+> to pass a few parameters.
+
+I see what you mean, but the majority of the code is unique, there
+isn't too much code duplication in fact.  Params handling is unique,
+dictionary handling is unique, zstd implementation is entirely
+different and pretty much specific to zram (we don't handle all sort
+of cases that zstd API support, we focus on things that we need),
+lz4/lz4hc implementations are also different, etc. etc.  Things like
+lzo/lzorle may count as code duplication, but those are like 20 lines
+of code or maybe even less (which isn't that crazy).
 
