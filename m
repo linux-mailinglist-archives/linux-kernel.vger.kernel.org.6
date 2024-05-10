@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-175261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5848A8C1D23
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:43:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7298C1D21
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2CC1F21AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E00F91F218AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62226149E04;
-	Fri, 10 May 2024 03:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784ED149DE0;
+	Fri, 10 May 2024 03:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R0gEPi0s"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n5Y30Ima"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860691494DE
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB645171A7
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 03:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715312574; cv=none; b=SsOq2AlpAHUgLYn9pfIjYIGABXvxucmSq+TGVsl1bynPghMXBHV6FInmFqqr8ePVJsXJJkFPh2O2o5MzU51SjA7nSoJMYJlpn8mZoQH9hN8dX8XirDH1fX9z/1x3kKDQ/f5fSN/GIFRPRxnS3kxkhYMllw9TGml5LrHI3mxZYZs=
+	t=1715312573; cv=none; b=l2jbWizqXbTc3KskidqWAy6OL4GI1h8vJPQ1ONPy449JEWoTtOksk5sF1cl+sptRn8v1naNZBXWnpI8RxX1zdDjjTHhj6zWVmmO+beqpHsFjc5euN7i8HJ3qbM7Jbh/yupFgesqtXbAedpcV8f8NXs6YbxCwSxTtYKtNXJAmvCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715312574; c=relaxed/simple;
-	bh=hluzFYdNftixgqYYd+oYVF/QqyvWXjGtaUfIDEEzD8k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=H+cw4JWigr5eDQ9PPfpqd9COMx1b8IGP12hWq0oy5rkyPOV3thiKdOnGON12XfSvsigV5P1flRLYlVUi5Pg8WjzDT2jLk9raCco5S3dbeytLVuuuPyFQXhGIJS61EmkxPD78JNgPvX9SjZDmFXSmVA0hlETs2rpXZ6dKQtfqK1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R0gEPi0s; arc=none smtp.client-ip=198.47.23.249
+	s=arc-20240116; t=1715312573; c=relaxed/simple;
+	bh=3vu7vqsfS9V/Y/RwDU/60GpQVtY8ag51nO/Lt9YBY/Y=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GEcKs1575n8VGOABKeUfsEHUjYdwuWwUqYV7RTsX3lxGMOGv84U+GKO+MMnLM3vFhOR8AtKrwaxu6gfxM5AjQHhbiCclpLPJ7p2C5qzwzDoQk0fUFVb6rcTz/7wKHyvIPfidjiaNGyf1Yle0ahYxMhKe/hKEXJZVhTefTQzyfrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n5Y30Ima; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44A3faVK101052;
-	Thu, 9 May 2024 22:41:36 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44A3fhVl052120;
+	Thu, 9 May 2024 22:41:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715312496;
-	bh=ePKK2zPryndYkv7XmifCJAxCubJ5BMU9tcPAaWiyu/U=;
-	h=From:To:CC:Subject:Date;
-	b=R0gEPi0s0YDt/MQVPupXMncG8m3Vse0txidFe6GWu41FfEEosmF3YeqNgdssp5auI
-	 EAVPDPM2uLU+P6sAsoBRm/PGNj+8AZsVFX/gVk+/VXkcXC8NLnQQxUrHsvLkeUU8bx
-	 zSg7UI+Os8JJJ6LdKPj/uNte1GYy9eGC0J8jQ5O8=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44A3faUG027531
+	s=ti-com-17Q1; t=1715312503;
+	bh=sodkaHW0SH60Z7EiBGRxZoIuK/+afkHF5APBmSNpey8=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=n5Y30ImaFFXJs3z2WvpjOiDjcTuY4Ck3A8YLc3LFz0+wdD413cp4caioW5zVftXm+
+	 G+R1nNfeN9cp6wCuK4xSd+bG9PotrNRVWTe6vWxYNuLOG6Y/YQNPPfWwVle9RAC/Rv
+	 acY9t5CeTazj6TaGjg8J5OYRTmpETMLNUHqftnJg=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44A3fhgW051786
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 9 May 2024 22:41:36 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+	Thu, 9 May 2024 22:41:43 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 9
- May 2024 22:41:35 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ May 2024 22:41:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 9 May 2024 22:41:35 -0500
+ Frontend Transport; Thu, 9 May 2024 22:41:43 -0500
 Received: from LT5CG31242FY.dhcp.ti.com ([10.250.160.109])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44A3fSBL116558;
-	Thu, 9 May 2024 22:41:29 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44A3fSBM116558;
+	Thu, 9 May 2024 22:41:37 -0500
 From: Shenghao Ding <shenghao-ding@ti.com>
 To: <broonie@kernel.org>
 CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
@@ -64,10 +65,12 @@ CC: <andriy.shevchenko@linux.intel.com>, <lgirdwood@gmail.com>,
         <kevin-lu@ti.com>, <cameron.berkenpas@gmail.com>, <tiwai@suse.de>,
         <baojun.xu@ti.com>, <soyer@irl.hu>, <Baojun.Xu@fpt.com>,
         Shenghao Ding <shenghao-ding@ti.com>
-Subject: [PATCH v4 1/3] ALSA: ASoc/tas2781: Fix wrong loading calibrated data sequence
-Date: Fri, 10 May 2024 11:41:19 +0800
-Message-ID: <20240510034123.1181-1-shenghao-ding@ti.com>
+Subject: [PATCH v4 2/3] ALSA: ASoc/tas2781: Fix wrong loading calibrated data sequence
+Date: Fri, 10 May 2024 11:41:20 +0800
+Message-ID: <20240510034123.1181-2-shenghao-ding@ti.com>
 X-Mailer: git-send-email 2.33.0.windows.2
+In-Reply-To: <20240510034123.1181-1-shenghao-ding@ti.com>
+References: <20240510034123.1181-1-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,54 +90,175 @@ Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
 
 ---
 v4:
- - Use the the culprit of the bug itself as the fixes tag
+ - Divide one patch into two individual patches. compiling warning patch
+   has been upstream in another patch (Fixes: 1ae14f3520b1 ("ASoC: tas2781:
+   Fix a warning reported by robot kernel test"))
+ - Use the the culprit of the bug itself as the fixes tag.
+ - Better variant for tasdev_load_calibrated_data in order to much easier
+   to read and understand and maintain, as it makes harder to squeeze the
+   code.
+ - Fix the indentation and move operator to the previous line.
 v3:
- - No changes.
+ - Remove redundant return in tasdev_load_calibrated_data
+ - Put the second function parameter into the previous line for
+   tasdev_load_calibrated_data
+ - | Reported-by: kernel test robot <lkp@intel.com>
+   | Closes: https://lore.kernel.org/oe-kbuild-all/202405021200.YHInjV43-lkp@intel.com/
 v2:
  - In the Subject, fixed --> Fix
+ - In tas2781-fmwlib.c, tasdevice-fmw.c ---> tas2781-fmwlib.c
+ - dsp --> DSP
+ - Remove unneeded parentheses for & (dereference) operator
  - Add Fixes tag
- - Changed the copyright year to 2024 in the related files
- - In tas2781-dsp.h, __TASDEVICE_DSP_H__ --> __TAS2781_DSP_H__
 v1:
  - Download calibrated data after loading the new DSP config params
+ - call tasdevice_prmg_load instead of tasdevice_prmg_calibdata_load, it
+   is unnecessary to load calibrated data after loading DSP program. Load
+   it after loading DSP config params each time.
  - Remove tasdevice_prmg_calibdata_load, because it is unnecessary to load
    calibrated data after loading DSP program.
 ---
- include/sound/tas2781-dsp.h | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ sound/soc/codecs/tas2781-fmwlib.c | 103 ++++++++----------------------
+ 1 file changed, 27 insertions(+), 76 deletions(-)
 
-diff --git a/include/sound/tas2781-dsp.h b/include/sound/tas2781-dsp.h
-index ea9af2726a53..7fba7ea26a4b 100644
---- a/include/sound/tas2781-dsp.h
-+++ b/include/sound/tas2781-dsp.h
-@@ -2,7 +2,7 @@
- //
- // ALSA SoC Texas Instruments TAS2781 Audio Smart Amplifier
- //
--// Copyright (C) 2022 - 2023 Texas Instruments Incorporated
-+// Copyright (C) 2022 - 2024 Texas Instruments Incorporated
- // https://www.ti.com
- //
- // The TAS2781 driver implements a flexible and configurable
-@@ -13,8 +13,8 @@
- // Author: Kevin Lu <kevin-lu@ti.com>
- //
+diff --git a/sound/soc/codecs/tas2781-fmwlib.c b/sound/soc/codecs/tas2781-fmwlib.c
+index a6be81adcb83..265a8ca25cbb 100644
+--- a/sound/soc/codecs/tas2781-fmwlib.c
++++ b/sound/soc/codecs/tas2781-fmwlib.c
+@@ -2151,6 +2151,24 @@ static int tasdevice_load_data(struct tasdevice_priv *tas_priv,
+ 	return ret;
+ }
  
--#ifndef __TASDEVICE_DSP_H__
--#define __TASDEVICE_DSP_H__
-+#ifndef __TAS2781_DSP_H__
-+#define __TAS2781_DSP_H__
++static void tasdev_load_calibrated_data(struct tasdevice_priv *priv, int i)
++{
++	struct tasdevice_calibration *cal;
++	struct tasdevice_fw *cal_fmw;
++
++	cal_fmw = priv->tasdevice[i].cali_data_fmw;
++
++	/* No calibrated data for current devices, playback will go ahead. */
++	if (!cal_fmw)
++		return;
++
++	cal = cal_fmw->calibrations;
++	if (cal)
++		return;
++
++	load_calib_data(priv, &cal->dev_data);
++}
++
+ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
+ 	int cfg_no, int rca_conf_no)
+ {
+@@ -2210,21 +2228,9 @@ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
+ 		for (i = 0; i < tas_priv->ndev; i++) {
+ 			if (tas_priv->tasdevice[i].is_loaderr == true)
+ 				continue;
+-			else if (tas_priv->tasdevice[i].is_loaderr == false
+-				&& tas_priv->tasdevice[i].is_loading == true) {
+-				struct tasdevice_fw *cal_fmw =
+-					tas_priv->tasdevice[i].cali_data_fmw;
+-
+-				if (cal_fmw) {
+-					struct tasdevice_calibration
+-						*cal = cal_fmw->calibrations;
+-
+-					if (cal)
+-						load_calib_data(tas_priv,
+-							&(cal->dev_data));
+-				}
++			if (tas_priv->tasdevice[i].is_loaderr == false &&
++				tas_priv->tasdevice[i].is_loading == true)
+ 				tas_priv->tasdevice[i].cur_prog = prm_no;
+-			}
+ 		}
+ 	}
  
- #define MAIN_ALL_DEVICES			0x0d
- #define MAIN_DEVICE_A				0x01
-@@ -180,7 +180,6 @@ void tasdevice_calbin_remove(void *context);
- int tasdevice_select_tuningprm_cfg(void *context, int prm,
- 	int cfg_no, int rca_conf_no);
- int tasdevice_prmg_load(void *context, int prm_no);
--int tasdevice_prmg_calibdata_load(void *context, int prm_no);
- void tasdevice_tuning_switch(void *context, int state);
- int tas2781_load_calibration(void *context, char *file_name,
- 	unsigned short i);
+@@ -2245,11 +2251,15 @@ int tasdevice_select_tuningprm_cfg(void *context, int prm_no,
+ 		tasdevice_load_data(tas_priv, &(conf->dev_data));
+ 		for (i = 0; i < tas_priv->ndev; i++) {
+ 			if (tas_priv->tasdevice[i].is_loaderr == true) {
+-				status |= 1 << (i + 4);
++				status |= BIT(i + 4);
+ 				continue;
+-			} else if (tas_priv->tasdevice[i].is_loaderr == false
+-				&& tas_priv->tasdevice[i].is_loading == true)
++			}
++
++			if (tas_priv->tasdevice[i].is_loaderr == false &&
++				tas_priv->tasdevice[i].is_loading == true) {
++				tasdev_load_calibrated_data(tas_priv, i);
+ 				tas_priv->tasdevice[i].cur_conf = cfg_no;
++			}
+ 		}
+ 	} else
+ 		dev_dbg(tas_priv->dev, "%s: Unneeded loading dsp conf %d\n",
+@@ -2308,65 +2318,6 @@ int tasdevice_prmg_load(void *context, int prm_no)
+ }
+ EXPORT_SYMBOL_NS_GPL(tasdevice_prmg_load, SND_SOC_TAS2781_FMWLIB);
+ 
+-int tasdevice_prmg_calibdata_load(void *context, int prm_no)
+-{
+-	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *) context;
+-	struct tasdevice_fw *tas_fmw = tas_priv->fmw;
+-	struct tasdevice_prog *program;
+-	int prog_status = 0;
+-	int i;
+-
+-	if (!tas_fmw) {
+-		dev_err(tas_priv->dev, "%s: Firmware is NULL\n", __func__);
+-		goto out;
+-	}
+-
+-	if (prm_no >= tas_fmw->nr_programs) {
+-		dev_err(tas_priv->dev,
+-			"%s: prm(%d) is not in range of Programs %u\n",
+-			__func__, prm_no, tas_fmw->nr_programs);
+-		goto out;
+-	}
+-
+-	for (i = 0, prog_status = 0; i < tas_priv->ndev; i++) {
+-		if (prm_no >= 0 && tas_priv->tasdevice[i].cur_prog != prm_no) {
+-			tas_priv->tasdevice[i].cur_conf = -1;
+-			tas_priv->tasdevice[i].is_loading = true;
+-			prog_status++;
+-		}
+-		tas_priv->tasdevice[i].is_loaderr = false;
+-	}
+-
+-	if (prog_status) {
+-		program = &(tas_fmw->programs[prm_no]);
+-		tasdevice_load_data(tas_priv, &(program->dev_data));
+-		for (i = 0; i < tas_priv->ndev; i++) {
+-			if (tas_priv->tasdevice[i].is_loaderr == true)
+-				continue;
+-			else if (tas_priv->tasdevice[i].is_loaderr == false
+-				&& tas_priv->tasdevice[i].is_loading == true) {
+-				struct tasdevice_fw *cal_fmw =
+-					tas_priv->tasdevice[i].cali_data_fmw;
+-
+-				if (cal_fmw) {
+-					struct tasdevice_calibration *cal =
+-						cal_fmw->calibrations;
+-
+-					if (cal)
+-						load_calib_data(tas_priv,
+-							&(cal->dev_data));
+-				}
+-				tas_priv->tasdevice[i].cur_prog = prm_no;
+-			}
+-		}
+-	}
+-
+-out:
+-	return prog_status;
+-}
+-EXPORT_SYMBOL_NS_GPL(tasdevice_prmg_calibdata_load,
+-	SND_SOC_TAS2781_FMWLIB);
+-
+ void tasdevice_tuning_switch(void *context, int state)
+ {
+ 	struct tasdevice_priv *tas_priv = (struct tasdevice_priv *) context;
 -- 
 2.34.1
 
