@@ -1,196 +1,224 @@
-Return-Path: <linux-kernel+bounces-176201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A4D8C2B95
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:15:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D54EA8C2B94
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 815891F21B75
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C64C1F223DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285CA13B7B2;
-	Fri, 10 May 2024 21:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="isrf+GGa";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J80B271F"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0662013B5A8;
+	Fri, 10 May 2024 21:15:09 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1613B5A6
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD5213B597
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715375726; cv=none; b=fbHqIPbY6Uyw7UstlFf2xKhgHJihuuBe++C3vA8rS5dAz4gyyNgMPLYip8fjltHXLd2rcC5gUuoy9n+2gjlVnP5r1evIOnVfbXBEo520APgbnbIhkWFmM5pL80nAsQvF6a+U2h2l1Z6cyN1ZzSb6mOW5XnJmAJl9jnBGOR2Pe3c=
+	t=1715375708; cv=none; b=I16msPVZNvC3smEnilcQ/zx9sqBJFfjTpYRDIZKj4NGvwzE/m/WQEkdByEw4IY9CNnO4/LDLQ8+XDbFKMdJzSCq/xBRFg4Ew7QYzWFG/aN1yX2dy8P6bQ3FAc5VgnvGsz4fOQdovxsTwr0F//6x8qqdtB1KAXgN4XXduUILrt44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715375726; c=relaxed/simple;
-	bh=auGTu7esIT0vw90kFpXiYWwKZeOL11cQbE8q4dBOikw=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=HqKnuhBJEZpUF09ys2JC+EeHTQgjBHhavl89X3FP+A1GG1Tdsl/3Thu6oTlsgawyQEB0boDaegUWHaK13vQJiJNRVtqLbhvnePRaLaSfziXXjBsGn+28z/kuLaazGTzOAcgdGvAP3LQ4JBy8LKcq7ngmTIl8cmfY8mx5hIt3cbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=isrf+GGa; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J80B271F; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id DE3A91380396;
-	Fri, 10 May 2024 17:15:22 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 10 May 2024 17:15:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1715375722; x=1715462122; bh=iMO1GaEnJx
-	wMSjVKJ+hpYFQaPPqa58048TbbEanpKyU=; b=isrf+GGaYho24FMdfxDvFyungK
-	SH4mZVvw0DFDx0yo5evVdTa+PWzi5IZdwgSeq3ah3uur7A1z8tzy4loxmv0U2/QK
-	na7lFAHt/Mt+fjAKnH8MOOXMSXPpm2MG3xlwlhmqhkeuzxPbIxLjK3mIRlmZlHrx
-	uGEzITHD/nYaHES1M6cctPWPQjq26nARkBmyhJxxGucRfReIFytYrjkEaUrkXo7Z
-	Sh7OEZwzRDhN7dFMH5c0pJrDRD2G6314kktZmg3BZZqNpW/P5/+pqM1dJYu2vF9R
-	7T0HtO9JBOWYNN3iWVE57u1NBbQJvtA+jJrsH4iDShKJAxPElNDacGnV30mg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715375722; x=1715462122; bh=iMO1GaEnJxwMSjVKJ+hpYFQaPPqa
-	58048TbbEanpKyU=; b=J80B271FB6bIcSkTDOudg98EiUQsHbpuzDiTlS0bucmn
-	Tha4xYU7VVjiygMxZP2cARMPRxiOJFMrePjpWgxuZzWoEvACtU8vQ6FvedCeRzzW
-	R91INPTFpBg0IY7h9MLKXZiUJKqUGDwDD4ehhr4OKVa4iCySDUfUB5Tzzu7dlo63
-	pXnRTwAmERyvL97s+rOW+fonq2TtDJbKf2ovAXVwr6BjUGRfiMaIsHXpbljpg75C
-	yY86pEGH/Xdd1rXDjlV19frl/Z2LOP1TUa7jg5aFzJ2HWE8zxo8jU34aoob+5E2O
-	SWkYXQmDxoyTJcyxfExqCrr8dB015tBqRFp+N27TvA==
-X-ME-Sender: <xms:ao4-Zj-X9vgF6iMRwkwIMBLM7KepEgKuLm3offI2tUbLcL8JZBijqQ>
-    <xme:ao4-Zvsb6-QbQAVgKeJHhb99cXQVac0pJHzOF-dNsp5ckgSACcsLqiZ4eV9O5F2bq
-    toWh_wZDpP7sTfoJNo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdefkedgudehkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeeigeeuvdekheevudeiteegudfgjeehuefghfettddvteeuteekhfehudfh
-    tefgvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdhgihhthhhusgdrtghomhenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
-    rghrnhgusgdruggv
-X-ME-Proxy: <xmx:ao4-ZhDEAiAjcWCOdfuhuJqu2OjOFveYHVe_MrYQ_4JIwBXaoKia0Q>
-    <xmx:ao4-ZvdG9wD01AxiiGK80pI-qhihS70gdmtM_mGQD2B0oA7czcKjOA>
-    <xmx:ao4-ZoPlAm3mk8RF6DNuGwKPPDI032IEdj-rrdMHo4ZUtHHXzaTenw>
-    <xmx:ao4-ZhkHGrQPTM3z_-ppzaIwXD3XDyFpNGoZqcNXzDDOsLDa7QUiGw>
-    <xmx:ao4-ZtrWCNXOE2whJXg_kOtwAuUFaEYfNMMMsykdsPDWE6bIZxFicBsO>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 947EBB6008D; Fri, 10 May 2024 17:15:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715375708; c=relaxed/simple;
+	bh=CfRgQ4O3FLma9WD+HWpo6N4bagp3UwWFygtTgB2J2Es=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rx/JyeAMVuGJkPfoh6zEm2J4jNgkFJC+Xbf4gVS1+AEqu5FcmZqFP2IMJzzp8rc3MbFw0fvKYL+Aw1A61t9wfv6sf1uglVtarK3vqyWDZ8MIVfKpEXlAnURACcIQip5mz5MoW1FBw+N9SQvkwOipFad9oya7dNgBreyIcHI+cio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s5Xa2-0005b4-Hi; Fri, 10 May 2024 23:15:02 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s5Xa2-000hLJ-3k; Fri, 10 May 2024 23:15:02 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s5Xa2-002H8M-06;
+	Fri, 10 May 2024 23:15:02 +0200
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH] eeprom: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+Date: Fri, 10 May 2024 23:14:54 +0200
+Message-ID: <20240510211454.2274614-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
-In-Reply-To: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com>
-References: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com>
-Date: Fri, 10 May 2024 23:13:38 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc: soc@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 4/4] soc: defconfig updates for 6.10
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4368; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=CfRgQ4O3FLma9WD+HWpo6N4bagp3UwWFygtTgB2J2Es=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmPo5P7Y593d6ajJj3oGKxDcBmxQMC3TvrnLOB0 qFf3YoCadKJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZj6OTwAKCRCPgPtYfRL+ Ts32B/4k4lqap2GqDeTq+ngKtfcQ9irLerPCFaeeUjxnjC3djBycQ5RGcRa+BJqR+OUp9bZg7nG S1W77+E4vobGM7JyCtL9JQNbK/N2a2PEOYu6RhBXr6qyE1EejfrbuhiZsbNc52G6VTcidm/WRtp VGcecYSdASeKVNL3Fb8okFewdxe8cKUsxmDs8TyDQjjqf+zHITki7zY+zOinafhvbjrJ7DpIZel RH8Dn9viCNOfkfSTXtwf5cerT+LX6mnAOnkWWWEzA/ZddyGdQRDElbTCnwB+KZe5zwx5jFSdTib GHXnpIZU0fus4HNsuF6xd2cUT9Y8XlOf+CcefazQfKWmcNT6
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
+These drivers don't use the driver_data member of struct i2c_device_id,
+so don't explicitly initialize this member.
 
-  Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
+This prepares putting driver_data in an anonymous union which requires
+either no initialization or named designators. But it's also a nice
+cleanup on its own.
 
-are available in the Git repository at:
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/misc/eeprom/ee1004.c      |  2 +-
+ drivers/misc/eeprom/idt_89hpesx.c | 96 +++++++++++++++----------------
+ drivers/misc/eeprom/max6875.c     |  2 +-
+ 3 files changed, 50 insertions(+), 50 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.10
+diff --git a/drivers/misc/eeprom/ee1004.c b/drivers/misc/eeprom/ee1004.c
+index 21feebc3044c..bf4f65dc6d9a 100644
+--- a/drivers/misc/eeprom/ee1004.c
++++ b/drivers/misc/eeprom/ee1004.c
+@@ -52,7 +52,7 @@ static struct ee1004_bus_data {
+ } ee1004_bus_data[EE1004_MAX_BUSSES];
+ 
+ static const struct i2c_device_id ee1004_ids[] = {
+-	{ "ee1004", 0 },
++	{ "ee1004" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, ee1004_ids);
+diff --git a/drivers/misc/eeprom/idt_89hpesx.c b/drivers/misc/eeprom/idt_89hpesx.c
+index 327afb866b21..43421fe37d33 100644
+--- a/drivers/misc/eeprom/idt_89hpesx.c
++++ b/drivers/misc/eeprom/idt_89hpesx.c
+@@ -1426,58 +1426,58 @@ MODULE_DEVICE_TABLE(i2c, ee_ids);
+  * idt_ids - supported IDT 89HPESx devices
+  */
+ static const struct i2c_device_id idt_ids[] = {
+-	{ "89hpes8nt2", 0 },
+-	{ "89hpes12nt3", 0 },
++	{ "89hpes8nt2" },
++	{ "89hpes12nt3" },
+ 
+-	{ "89hpes24nt6ag2", 0 },
+-	{ "89hpes32nt8ag2", 0 },
+-	{ "89hpes32nt8bg2", 0 },
+-	{ "89hpes12nt12g2", 0 },
+-	{ "89hpes16nt16g2", 0 },
+-	{ "89hpes24nt24g2", 0 },
+-	{ "89hpes32nt24ag2", 0 },
+-	{ "89hpes32nt24bg2", 0 },
++	{ "89hpes24nt6ag2" },
++	{ "89hpes32nt8ag2" },
++	{ "89hpes32nt8bg2" },
++	{ "89hpes12nt12g2" },
++	{ "89hpes16nt16g2" },
++	{ "89hpes24nt24g2" },
++	{ "89hpes32nt24ag2" },
++	{ "89hpes32nt24bg2" },
+ 
+-	{ "89hpes12n3", 0 },
+-	{ "89hpes12n3a", 0 },
+-	{ "89hpes24n3", 0 },
+-	{ "89hpes24n3a", 0 },
++	{ "89hpes12n3" },
++	{ "89hpes12n3a" },
++	{ "89hpes24n3" },
++	{ "89hpes24n3a" },
+ 
+-	{ "89hpes32h8", 0 },
+-	{ "89hpes32h8g2", 0 },
+-	{ "89hpes48h12", 0 },
+-	{ "89hpes48h12g2", 0 },
+-	{ "89hpes48h12ag2", 0 },
+-	{ "89hpes16h16", 0 },
+-	{ "89hpes22h16", 0 },
+-	{ "89hpes22h16g2", 0 },
+-	{ "89hpes34h16", 0 },
+-	{ "89hpes34h16g2", 0 },
+-	{ "89hpes64h16", 0 },
+-	{ "89hpes64h16g2", 0 },
+-	{ "89hpes64h16ag2", 0 },
++	{ "89hpes32h8" },
++	{ "89hpes32h8g2" },
++	{ "89hpes48h12" },
++	{ "89hpes48h12g2" },
++	{ "89hpes48h12ag2" },
++	{ "89hpes16h16" },
++	{ "89hpes22h16" },
++	{ "89hpes22h16g2" },
++	{ "89hpes34h16" },
++	{ "89hpes34h16g2" },
++	{ "89hpes64h16" },
++	{ "89hpes64h16g2" },
++	{ "89hpes64h16ag2" },
+ 
+-	/* { "89hpes3t3", 0 }, // No SMBus-slave iface */
+-	{ "89hpes12t3g2", 0 },
+-	{ "89hpes24t3g2", 0 },
+-	/* { "89hpes4t4", 0 }, // No SMBus-slave iface */
+-	{ "89hpes16t4", 0 },
+-	{ "89hpes4t4g2", 0 },
+-	{ "89hpes10t4g2", 0 },
+-	{ "89hpes16t4g2", 0 },
+-	{ "89hpes16t4ag2", 0 },
+-	{ "89hpes5t5", 0 },
+-	{ "89hpes6t5", 0 },
+-	{ "89hpes8t5", 0 },
+-	{ "89hpes8t5a", 0 },
+-	{ "89hpes24t6", 0 },
+-	{ "89hpes6t6g2", 0 },
+-	{ "89hpes24t6g2", 0 },
+-	{ "89hpes16t7", 0 },
+-	{ "89hpes32t8", 0 },
+-	{ "89hpes32t8g2", 0 },
+-	{ "89hpes48t12", 0 },
+-	{ "89hpes48t12g2", 0 },
++	/* { "89hpes3t3" }, // No SMBus-slave iface */
++	{ "89hpes12t3g2" },
++	{ "89hpes24t3g2" },
++	/* { "89hpes4t4" }, // No SMBus-slave iface */
++	{ "89hpes16t4" },
++	{ "89hpes4t4g2" },
++	{ "89hpes10t4g2" },
++	{ "89hpes16t4g2" },
++	{ "89hpes16t4ag2" },
++	{ "89hpes5t5" },
++	{ "89hpes6t5" },
++	{ "89hpes8t5" },
++	{ "89hpes8t5a" },
++	{ "89hpes24t6" },
++	{ "89hpes6t6g2" },
++	{ "89hpes24t6g2" },
++	{ "89hpes16t7" },
++	{ "89hpes32t8" },
++	{ "89hpes32t8g2" },
++	{ "89hpes48t12" },
++	{ "89hpes48t12g2" },
+ 	{ /* END OF LIST */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, idt_ids);
+diff --git a/drivers/misc/eeprom/max6875.c b/drivers/misc/eeprom/max6875.c
+index cb6b1efeafe0..6fab2ffa736b 100644
+--- a/drivers/misc/eeprom/max6875.c
++++ b/drivers/misc/eeprom/max6875.c
+@@ -183,7 +183,7 @@ static void max6875_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id max6875_id[] = {
+-	{ "max6875", 0 },
++	{ "max6875" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max6875_id);
 
-for you to fetch changes up to 78b08cf6313061499948126aebdf00e1079e4d21:
+base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
+-- 
+2.43.0
 
-  arm64: defconfig: enable Airoha platform (2024-05-10 15:56:33 +0200)
-
-----------------------------------------------------------------
-soc: defconfig updates for 6.10
-
-Most of the changes enable additional device driver modules and arm64
-platforms. In addition, the usb onboard-device support and ext4 security
-labels are turned on.
-
-----------------------------------------------------------------
-Adam Ford (1):
-      arm64: defconfig: Enable DRM_IMX8MP_DW_HDMI_BRIDGE as module
-
-Akhil R (1):
-      arm64: defconfig: Enable Tegra Security Engine
-
-Arnd Bergmann (9):
-      Merge tag 'v6.10-rockchip-defconfig64' of git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip into soc/defconfig
-      Merge tag 'sunxi-config-for-6.10-1' of https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux into soc/defconfig
-      Merge tag 'tegra-for-6.10-arm64-defconfig' of git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux into soc/defconfig
-      Merge tag 'qcom-arm64-defconfig-for-6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
-      Merge tag 'imx-defconfig-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into soc/defconfig
-      Merge tag 'renesas-arm-defconfig-for-v6.10-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/defconfig
-      Merge tag 'arm-soc/for-6.10/defconfig-arm64' of https://github.com/Broadcom/stblinux into soc/defconfig
-      Merge tag 'amlogic-defconfig-for-v6.10' of https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux into soc/defconfig
-      Merge tag 'qcom-arm64-defconfig-for-6.10-2' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into soc/defconfig
-
-Bartosz Golaszewski (1):
-      arm64: defconfig: build ath12k as a module
-
-Biju Das (2):
-      arm64: defconfig: Enable Renesas RZ/G2L display unit DRM driver
-      arm64: defconfig: Enable Renesas DA9062 PMIC
-
-Bjorn Andersson (2):
-      Merge branch 'arm64-defconfig-for-6.10' onto 'v6.9-rc1'
-      arm64: defconfig: Enable sc7280 display and gpu clock controllers
-
-Daniel Danzberger (1):
-      arm64: defconfig: enable Airoha platform
-
-Dmitry Baryshkov (2):
-      arm64: defconfig: enable REGULATOR_QCOM_USB_VBUS
-      arm64: defconfig: select INTERCONNECT_QCOM_SM6115 as built-in
-
-Fabio Estevam (2):
-      ARM: imx_v6_v7_defconfig: Select CONFIG_USB_ONBOARD_HUB
-      ARM: imx_v6_v7_defconfig: Update ONBOARD_USB_HUB to ONBOAD_USB_DEV
-
-Geert Uytterhoeven (1):
-      ARM: shmobile: defconfig: Refresh for v6.9-rc1
-
-Johan Hovold (1):
-      arm64: defconfig: enable ext4 security labels
-
-Krzysztof Kozlowski (2):
-      arm64: defconfig: enable reset-gpio driver as module
-      arm64: defconfig: qcom: enable X1E80100 sound card
-
-Lad Prabhakar (1):
-      arm64: defconfig: Enable R9A09G057 SoC
-
-Luca Ceresoli (1):
-      arm64: defconfig: enable Rockchip RK3308 internal audio codec driver
-
-Maxime Ripard (1):
-      ARM: configs: sunxi: Enable DRM_DW_HDMI
-
-Neil Armstrong (1):
-      arm64: defconfig: enable Khadas TS050 panel as module
-
-Ritesh Kumar (1):
-      arm64: defconfig: enable Novatek NT36672E DSI Panel driver
-
-Sebastian Reichel (2):
-      arm64: defconfig: support Mali CSF-based GPUs
-      arm64: defconfig: enable Rockchip Samsung USBDP PHY
-
-Stefan Wahren (1):
-      arm64: defconfig: build snd_bcm2835 as module
-
- arch/arm/configs/imx_v6_v7_defconfig |  1 +
- arch/arm/configs/shmobile_defconfig  |  3 ++-
- arch/arm/configs/sunxi_defconfig     |  1 +
- arch/arm64/configs/defconfig         | 23 +++++++++++++++++++++++
- 4 files changed, 27 insertions(+), 1 deletion(-)
 
