@@ -1,194 +1,187 @@
-Return-Path: <linux-kernel+bounces-176088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2164E8C29C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71298C29C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 20:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAB97283F2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:17:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39CCAB23BE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B87A29CF4;
-	Fri, 10 May 2024 18:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C7918EA1;
+	Fri, 10 May 2024 18:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n18zncT8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="QhK+yB3h"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazolkn19011002.outbound.protection.outlook.com [52.103.2.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D80208B6;
-	Fri, 10 May 2024 18:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715365049; cv=none; b=Kg+tKbl+5JGhrHKuZzzTTPnYHOfXwvjemmxgrQClzkURGrBAMyOcA3pst+5WMnFMUBKZtE0qELld5EMP/ziZaQBu38jsyZ8oZoXNwETakMHo+/uNpxmlJSc38HkSTlCci8QcvnQ9aiqT7bShyfQs0eSFVMtVxQd2/3PHs5C6KUE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715365049; c=relaxed/simple;
-	bh=82edhdM9zJGPnwaQI49iZK5qejVGqXEpbziYfMdrOh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDKJlkaj3WN/L56BMdJLT3m4B3DiMM5ya2xIn3oRVdODsfMAtkElyrH7ROo/psMeWBuzLiBfY1Y0M8o9TZLRoiD/rQec9Zh6rCCkKk057o4+irGye8diXS5Np4SaKmKqZsrOGqDklkk+zkBkuQzysPSEDClmTJZWSjk34U4hl6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n18zncT8; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715365048; x=1746901048;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=82edhdM9zJGPnwaQI49iZK5qejVGqXEpbziYfMdrOh4=;
-  b=n18zncT8y7jiBgNUS0tyJrVGD22ELWtzc0uj7yBD4bbZOScK/EmCVpI8
-   Tj0hbzj5cRn6qZEfIy2R60JKWALkZCoUP50iiYfHEkPxxMg8EpoT5Ix2c
-   nbzz9ZH+4J8cgPUf0H2PPGSkAzRqB89WXRI9x3KEBu0flUb6/7P6YjbgL
-   Lp/BvWhK3gsentiMeiK+b6X798uidPrwwPByP7R1jEocHUeRoNGl1/Ptr
-   A/nFpWIQpkI/0hWDWFtJUZog1gsT90INn049yw/ZxSIQ9HMcMcKsKJLKh
-   ubI2cwhMGP7eXtCrbjKgVRuHHvp66MTdzH6obFWOLc7DQKSabClRBr++0
-   Q==;
-X-CSE-ConnectionGUID: acMC0syhSx+CotKoHkrXaw==
-X-CSE-MsgGUID: uuXXv1FSQjCPu2C1qt1Hbw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="28845655"
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="28845655"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 11:17:27 -0700
-X-CSE-ConnectionGUID: Usd77N0wQbmu4BCB6hjg+w==
-X-CSE-MsgGUID: R6TJp3ZcQ4yn3Tde2JPziw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,151,1712646000"; 
-   d="scan'208";a="60545626"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 11:17:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s5Uo6-00000006DJA-07o7;
-	Fri, 10 May 2024 21:17:22 +0300
-Date: Fri, 10 May 2024 21:17:21 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Mario Limonciello <mario.limonciello@amd.com>,
-	Armin Wolf <W_Armin@gmx.de>,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux ACPI <linux-acpi@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
- namespace root
-Message-ID: <Zj5ksaCzhSGN2FpE@smile.fi.intel.com>
-References: <5787281.DvuYhMxLoT@kreacher>
- <4926735.31r3eYUQgx@kreacher>
- <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
- <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
- <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
- <Zj5ZdcQeaTo9ImT4@smile.fi.intel.com>
- <0cdf0af6-851b-4781-83fe-99320c35544f@amd.com>
- <Zj5eZKgpg3LFpne8@smile.fi.intel.com>
- <CAJZ5v0geYUx6G_ZnTX7+BjEbkqdSovdwriMHBoBXMyvrPjqFmg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA1F1BDD3;
+	Fri, 10 May 2024 18:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.2.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715365269; cv=fail; b=X3rHcRmqpYb6oPP7LvaxgsmAoQMjN9Ih6IXsLQVny4cljvd6p89gjqqcpJ4su3rmtuboD5T9syUS0xh8oTNaSBmoOl3eEZRSq1H5adZGfgfPad6Aw7JwTqEWtpxIMIZwqEQHwV0n5GvM9USgeXSAr4TnITA9FzJojpDn7MaZXIo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715365269; c=relaxed/simple;
+	bh=izQ+3SHSAvEkkQ6kmETc3BbyN8ULfSsS8KABZkcGmiI=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tAnKH5poBRwt3FXC2cW1O8P7Y6s6DANYzlr9ZWTnE4+tJAAJ+dME/LtMk79t7My5J3uiczdxRK2a9cEcI12KOYHhEm+eYPpHDMJYg6PF28NoPauG/gNLZ0pQOwSUVZPiW7Ig2+mRABoibX+IhDDvRp01ylxX8n3k/4A/P76pYHY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=QhK+yB3h; arc=fail smtp.client-ip=52.103.2.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l23sIO48vnuz9qwJf7PB1jpvCQIKaMlpA1gLf4A188ySmJXs1Vou5j0NACXRzQoPO6kcEYLbSYqp7x990JdTquMqrcCMIIhNX1z7CLuCytQIKvhCc7CTFvXf7kQCCTCwupjMFtAqd9G0UC6JM0pstxlaAOrmOAAXhWtjmYHiwRESGxmANNSCmKnXTEcs6bbAxME23DTviJbMfO7zW4AcQxTLKGLYFGdj8mVen1B2eU30OWxC0hHYJCvtYdlXK9JdpCayyfdYFmwvKWrnzPpsHCv6oLSC7UlwcIFdJGKafpz+WvIjtltU3Ncea/1tx0svaU86HGS2/EECJfGxqxRkfw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=izQ+3SHSAvEkkQ6kmETc3BbyN8ULfSsS8KABZkcGmiI=;
+ b=MiSiqzKOsOZFF6k3D0po1bnTKrapmrDO9+gkyXrl5DexmD656rbHpfKOouT6bbmCcoS4AJXOJEzVx4FWjVeuyJkB1QgkusMRV4WfKAYicAopqV/8HKU/F5HeoFi2woNjPJwQ+miBmDgLRa5IyTF/4ZOnkSG6wUKuWzlwQzhOKx8PkYfXCpIk3ZcvKcchXfuvY6QRwHu7Ulu48NOyM0VeiqyoLgaVav2gOe1x0oJ1vl64Jak7iRtEXIogL80zsgj4nKkwY1RRremPwgC/k5ardjLQOyw69nuUQRY9BuoiSgWw14SPLWCZdeHpw0DYp6EE1i8OSmT8yCMgt3utbCY4FA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=izQ+3SHSAvEkkQ6kmETc3BbyN8ULfSsS8KABZkcGmiI=;
+ b=QhK+yB3hbF48Ps1LjAWTOk8gn/FLwEOQWxTDFptqGAof4d6hWWrgkjF/t7sXGn+s2hTCDfV8wknzCRkJ4NyCsw2xFAEkWaZINW8JWajwdMpzggwioVy+iijKWpJ1yyD7Fx/lY9AXNXN5Fz6e1A88oUhONhQzvVlJNxVgj98PHa2UWB6jh7q9dxAz6Us5yfCkb7fZz5wf7kJoGXMtLKEx5Odtt6jzg5b9/i/C8DwYkDl315CwKh5POjsH2V7QgmuKY/aI2MsLPIp/lyPJMNoQTxuOEwNc+oPFCms2ZwsehAPa9AbpU7ZoOmJX0ZFpeSXTza5oHjxfWNAIPlFZE3TAWA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CH3PR02MB9211.namprd02.prod.outlook.com (2603:10b6:610:152::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 18:21:01 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7544.049; Fri, 10 May 2024
+ 18:21:00 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "kys@microsoft.com"
+	<kys@microsoft.com>, "corbet@lwn.net" <corbet@lwn.net>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] Documentation: hyperv: Improve synic and interrupt
+ handling description
+Thread-Topic: [PATCH 2/2] Documentation: hyperv: Improve synic and interrupt
+ handling description
+Thread-Index: AQHaoIDgY9GGmMH6V0OmZTWGQSxNcLGQxUuAgAAF9KA=
+Date: Fri, 10 May 2024 18:21:00 +0000
+Message-ID:
+ <SN6PR02MB415748967556A7BD7FD59738D4E72@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240507131607.367571-1-mhklinux@outlook.com>
+ <20240507131607.367571-2-mhklinux@outlook.com>
+ <807443f4-2442-4925-becc-6eb20887acf6@linux.microsoft.com>
+In-Reply-To: <807443f4-2442-4925-becc-6eb20887acf6@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [pl0YN+2DQLsPQPSefU7fv1JSW7aUMiKt]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CH3PR02MB9211:EE_
+x-ms-office365-filtering-correlation-id: 6c163e5f-eef8-4aaa-7b05-08dc711df1dc
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199019|102099023|440099019|3412199016|56899024;
+x-microsoft-antispam-message-info:
+ PtuZsNV/d+TkFM9BDhMLJI4g+WetZ0dI/W/HJpJR8fI9IjmPkyZLeGrVZORNbFxnoXqWrRTwq50SWOi5x4kdFDUvPHrtiyOXghJ2KGPpDMLKFnrkUeDqRjfaSreH2/JB0HuZDnOY+nccbpFkdrT/LlNX8Yw5Yv4qhddaouvGjeBgkT23qjUxI4Gcjyf7/8Gi7uJ9OwHjuJDoPJ5laCZubo63Bv4TQhKxRJ7TUo67siuH4ZuT7iZvXvURTQIBRjc+DtUEIXLcq0HUmk831ai8/ihxTymszHFGLih7ib4ZFWNZnFLKbgND+eoooOnOy1wwH2kyHutoIdWLGtP/9pyNfJYfd9KrjCaqZVVOAUMLDcnhbKwQA0eS/iUpmmflRjp4g45VqgjQ5slU/5JQ3mHom1tibwkUI9LLrkIScXVzfIhXQcF0F5MrQBSOPPRll3ZwCFKM38EAr+oh4QvMpP9miPqVY7WwaqC4+tNyBqxh+eg6wxnqxQM9Wv55Umozgpg68NZcNt++zaLsow7jBV/u3naOomR4YpxgPv+yC319Lwrld+VvRW4ks903pbqZk2Ea
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?d3l4Kyt4Mzk2N0VnN0QvY1liRnhPOWtreVA1c2lqUFNIZmpTenhnVFEzOERI?=
+ =?utf-8?B?K2hwZjRKWW8ydUdFSEdYYjBYdHNGeVorOVZmcFVCL1FoWXZiTjVVWG05S2d3?=
+ =?utf-8?B?cG44YVF5VTlHczF2bDdyMXZsdnFFYjR0ZSsxWmZLNjhsWmU1bzRSSlFIM2VK?=
+ =?utf-8?B?TTRxK1dvbU4xWXN0VDQ3UGxEekhkbWNJOEE2bUY4QmlDVHdZbC96QVhEQlkz?=
+ =?utf-8?B?a3k4SklYUXJ6T1VXbzlQVzU4dkVPZlY0ZnM1eVB3RzBtZExrR1Z5MXM4SGMy?=
+ =?utf-8?B?TUM4T0RtV3gzYXg1eEtJNmFNdDMwRzB2L2RzL1RYQXJ3NlZQOXp6QmY2Zjkw?=
+ =?utf-8?B?QUVac3p5aTNiZjYrSHFPdGRQelpWZGp1YlV1Q2hYaC9mZVVvNTVHc1lLTWc5?=
+ =?utf-8?B?REpWVjFvZUJsbFNGcytjVTB2cFRIdk82R2prbU03UHQrU09MUmlPby8xMTNX?=
+ =?utf-8?B?aHpNdjF3MzEwWGZuRTVlSmdKQnY2WUVkdWdjZ2VLTXdjcUtDNXczYU0yMHBn?=
+ =?utf-8?B?Mm9wTU9HWWRjeUNLN2Q1YVlyV3ViM2J3KzMrN1JMMzZKY09aVTdVcFJhSlNW?=
+ =?utf-8?B?WkI4dkcxZk1haXFtR3MwZHIyN3dlTE1ZMXYvUlV3WENXTEJmdFpGK0lPOXVx?=
+ =?utf-8?B?SUJoS3o1MVN2V0NuUi9LQk9SNGpnMlFJZnFnZEZuWGtBZXlyR21rS2NxakZ3?=
+ =?utf-8?B?UVI5THdhZXJHRFhGQkNCMCs1YjMyT21ZSXlHdHZseGpHYyt0bTZMbnZNanZ2?=
+ =?utf-8?B?RHVtc01EeFdJbFVuVFQrTUM1cmd4TGV6dXVRZW9vdG5xY0VnUVdSQnhSdDBL?=
+ =?utf-8?B?NE1Xc2lJWEUwS3p0QmZSa1NtMitCdnQxU1ROT0dmVklGSWxCRUk3c0czSXRl?=
+ =?utf-8?B?ZnpzZ2lEYlFqejQzU0h6SGdJRU5SSTRYUC9IUFNLRnpWQTN4NjBmWW1EVEV0?=
+ =?utf-8?B?aHNBS3Y1Y3E2VCtFbEduRVlqQ0E0V2xlZk96Sjcycm56WEVMbTZpcU4zdE4x?=
+ =?utf-8?B?WDBzWG92dkVIQlJNcmM2K0I1TUM1c2F3TkduK0E3YVJaeElTalp2UFpscTBh?=
+ =?utf-8?B?S1BteW42UVQrajkvUGsxcE5PdEpLbnZsNGpTOFJGWUdZc0dSOWsxeWJja2tM?=
+ =?utf-8?B?YURPcjJiRThpblk1aiszbUNkNDEwQWQ5TzJRSVlCK0FXMk1KdkxDdFQzcERO?=
+ =?utf-8?B?ZGlSUGgxOEVJL3V2MVVCaW5jbTd6S2ZKeXA4OHlBS3N5RWtBcjVtY1E1LzNW?=
+ =?utf-8?B?ajI0ZTA5aWdWaFZMWVR3dkZhWmhsSlM5NVY5YWF5QzVpMkJ3U1RGQ2dBTWs2?=
+ =?utf-8?B?alBqd2lvSEUyczFFRTJEOU00ZHVMNGhPOEQwVlNncHN2cmxmWDJGRmQyRkJz?=
+ =?utf-8?B?emZaTTBWQis3T2pzODNqRWY4Sk8rejAyTzBCWkNGU3JnOVIyL2pyWEJ3Vlgy?=
+ =?utf-8?B?V2J0SXpLOUVDU0ZJVi8vU3ZjRnpwR2lKOElrdWVuTVNUdFNIUjVlSnNBWXEx?=
+ =?utf-8?B?dGQ5ZnJpQWY5WEtBOU1Zb2s2alZZb0Q4akJzQm5XQksxdTJZbDA3bDU3T24v?=
+ =?utf-8?B?NFNEVWtPWXI1cm50WmlUNG43U2Q0TlpKelFyWDNzS3crU2dqOUVTajhOWHcz?=
+ =?utf-8?Q?61mG9X03oJVxnb6ndqIBV8iqHHy6xxS1XA+UrikZSaKg=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0geYUx6G_ZnTX7+BjEbkqdSovdwriMHBoBXMyvrPjqFmg@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c163e5f-eef8-4aaa-7b05-08dc711df1dc
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 May 2024 18:21:00.4967
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR02MB9211
 
-On Fri, May 10, 2024 at 08:06:11PM +0200, Rafael J. Wysocki wrote:
-> On Fri, May 10, 2024 at 7:50 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, May 10, 2024 at 12:40:05PM -0500, Mario Limonciello wrote:
-> > > On 5/10/2024 12:29, Andy Shevchenko wrote:
-> > > > On Fri, May 10, 2024 at 06:52:41PM +0200, Armin Wolf wrote:
-> > > > > Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
-> > > > > > On Fri, May 10, 2024 at 6:10 PM Armin Wolf <W_Armin@gmx.de> wrote:
-> > > > > > > Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
-> > > > > > >
-> > > > > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > > > > >
-> > > > > > > > It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
-> > > > > > > > IdeaPad Pro 5 due to a missing address space handler for the EC address
-> > > > > > > > space:
-> > > > > > > >
-> > > > > > > >     ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [EmbeddedControl] (20230628/evregion-130)
-> > > > > > > >
-> > > > > > > > This happens because the EC driver only registers the EC address space
-> > > > > > > > handler for operation regions defined in the EC device scope of the
-> > > > > > > > ACPI namespace while the operation region being accessed by the _DSM
-> > > > > > > > in question is located beyond that scope.
-> > > > > > > >
-> > > > > > > > To address this, modify the ACPI EC driver to install the EC address
-> > > > > > > > space handler at the root of the ACPI namespace.
-> > > > > > > >
-> > > > > > > > Note that this change is consistent with some examples in the ACPI
-> > > > > > > > specification in which EC operation regions located outside the EC
-> > > > > > > > device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
-> > > > > > > > so the current behavior of the EC driver is arguably questionable.
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > the patch itself looks good to me, but i wonder what happens if multiple
-> > > > > > > ACPI EC devices are present. How would we handle such a situation?
-> > > > > > I'm wondering if this is a theoretical question or do you have any
-> > > > > > existing or planned systems in mind?
-> > > > > >
-> > > > > > ec_read(), ec_write() and ec_transaction() use only the first EC that
-> > > > > > has been found anyway.
-> > > > >
-> > > > > Its a theoretical question, i do not know of any systems which have more than
-> > > > > one ACPI EC device.
-> > > >
-> > > > The specification is clear about this case in the "ACPI Embedded Controller
-> > > > Interface Specification":
-> > > >
-> > > >   "The ACPI standard supports multiple embedded controllers in a system,
-> > > >    each with its own resources. Each embedded controller has a flat
-> > > >    byte-addressable I/O space, currently defined as 256 bytes."
-> > > >
-> > > > However, I haven't checked deeper, so it might be a leftover in the documentation.
-> > > >
-> > > > The OperationRegion() has no reference to the EC (or in general, device) which
-> > > > we need to speak to. The only possibility to declare OpRegion() for the second+
-> > > > EC is to use vendor specific RegionSpace, AFAIU. So, even if ACPI specification
-> > > > supports 2+ ECs, it doesn't support OpRegion():s for them under the same
-> > > > RegionSpace.
-> > > >
-> > > > That said, the commit message might be extended to summarize this, but at
-> > > > the same time I see no way how this series can break anything even in 2+ ECs
-> > > > environments.
-> > >
-> > > It's deviating from the patch, but in practice /why/ would you even want to
-> > > have a design with two ECs?  In general that is going to mean a much more
-> > > complex state machine with synchronizing the interaction between both of
-> > > them and the host.
-> > >
-> > > Understanding the benefit of such a design might make it easier to
-> > > hypothesize impacts.
-> >
-> > First that comes to my mind (but hypothetical), is the separate CPU/EC add-on
-> > cards. If the main firmware somehow supports all of these add-on platforms,
-> > it might need to handle 2+ ECs.
-> >
-> > Again, it might be ACPI specification issue. For instance, the cited piece
-> > doesn't tell about 16-bit EC accesses.
-> 
-> IMV this is a matter of what is testable.
-> 
-> We can only seriously say that we support 1 EC in the system, because
-> that's what we can test.
-> 
-> Now, the specification allows (theoretically) multiple ECs to be
-> supported which does not mean that it will ever be done in practice
-> and it also does not mean that this is a good idea.
-
-I briefly read the all mentions of the "Embedded Controller" in the
-specification and like 98% implies that the only one is per system. I believe
-the specification may be corrected to remove ambiguous plural forms in a couple
-(or a few) places. In any case it's a question to ASWG.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+RnJvbTogRWFzd2FyIEhhcmloYXJhbiA8ZWFoYXJpaGFAbGludXgubWljcm9zb2Z0LmNvbT4gU2Vu
+dDogRnJpZGF5LCBNYXkgMTAsIDIwMjQgMTA6NTUgQU0NCj4gDQo+IE9uIDUvNy8yMDI0IDY6MTYg
+QU0sIG1oa2VsbGV5NThAZ21haWwuY29tIHdyb3RlOg0KPiA+IEZyb206IE1pY2hhZWwgS2VsbGV5
+IDxtaGtsaW51eEBvdXRsb29rLmNvbT4NCj4gPg0KPiA+IEN1cnJlbnQgZG9jdW1lbnRhdGlvbiBk
+b2VzIG5vdCBkZXNjcmliZSBob3cgTGludXggaGFuZGxlcyB0aGUgc3ludGhldGljDQo+ID4gaW50
+ZXJydXB0IGNvbnRyb2xsZXIgKHN5bmljKSB0aGF0IEh5cGVyLVYgcHJvdmlkZXMgdG8gZ3Vlc3Qg
+Vk1zLCBub3IgaG93DQo+ID4gVk1CdXMgb3IgdGltZXIgaW50ZXJydXB0cyBhcmUgaGFuZGxlZC4g
+QWRkIHRleHQgZGVzY3JpYmluZyB0aGUgc3luaWMgYW5kDQo+ID4gcmVvcmdhbml6ZSBleGlzdGlu
+ZyB0ZXh0IHRvIG1ha2UgdGhpcyBtb3JlIGNsZWFyLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+TWljaGFlbCBLZWxsZXkgPG1oa2xpbnV4QG91dGxvb2suY29tPg0KPiA+IC0tLQ0KPiA+ICBEb2N1
+bWVudGF0aW9uL3ZpcnQvaHlwZXJ2L2Nsb2Nrcy5yc3QgfCAyMSArKysrKy0tLQ0KPiA+ICBEb2N1
+bWVudGF0aW9uL3ZpcnQvaHlwZXJ2L3ZtYnVzLnJzdCAgfCA3OSArKysrKysrKysrKysrKysrKyst
+LS0tLS0tLS0tDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNjYgaW5zZXJ0aW9ucygrKSwgMzQgZGVs
+ZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi92aXJ0L2h5cGVy
+di9jbG9ja3MucnN0IGIvRG9jdW1lbnRhdGlvbi92aXJ0L2h5cGVydi9jbG9ja3MucnN0DQo+ID4g
+aW5kZXggYTU2ZjQ4MzdkNDQzLi45MTliYjkyZDZkOWQgMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1l
+bnRhdGlvbi92aXJ0L2h5cGVydi9jbG9ja3MucnN0DQo+ID4gKysrIGIvRG9jdW1lbnRhdGlvbi92
+aXJ0L2h5cGVydi9jbG9ja3MucnN0DQo+ID4gQEAgLTYyLDEyICs2MiwyMSBAQCBzaGFyZWQgcGFn
+ZSB3aXRoIHNjYWxlIGFuZCBvZmZzZXQgdmFsdWVzIGludG8gdXNlciBzcGFjZS4gVXNlcg0KPiA+
+ICBzcGFjZSBjb2RlIHBlcmZvcm1zIHRoZSBzYW1lIGFsZ29yaXRobSBvZiByZWFkaW5nIHRoZSBU
+U0MgYW5kDQo+ID4gIGFwcGx5aW5nIHRoZSBzY2FsZSBhbmQgb2Zmc2V0IHRvIGdldCB0aGUgY29u
+c3RhbnQgMTAgTUh6IGNsb2NrLg0KPiA+DQo+ID4gLUxpbnV4IGNsb2NrZXZlbnRzIGFyZSBiYXNl
+ZCBvbiBIeXBlci1WIHN5bnRoZXRpYyB0aW1lciAwLiBXaGlsZQ0KPiA+IC1IeXBlci1WIG9mZmVy
+cyA0IHN5bnRoZXRpYyB0aW1lcnMgZm9yIGVhY2ggQ1BVLCBMaW51eCBvbmx5IHVzZXMNCj4gPiAt
+dGltZXIgMC4gSW50ZXJydXB0cyBmcm9tIHN0aW1lcjAgYXJlIHJlY29yZGVkIG9uIHRoZSAiSFZT
+IiBsaW5lIGluDQo+ID4gLS9wcm9jL2ludGVycnVwdHMuICBDbG9ja2V2ZW50cyBiYXNlZCBvbiB0
+aGUgdmlydHVhbGl6ZWQgUElUIGFuZA0KPiA+IC1sb2NhbCBBUElDIHRpbWVyIGFsc28gd29yaywg
+YnV0IHRoZSBIeXBlci1WIHN5bnRoZXRpYyB0aW1lciBpcw0KPiA+IC1wcmVmZXJyZWQuDQo+ID4g
+K0xpbnV4IGNsb2NrZXZlbnRzIGFyZSBiYXNlZCBvbiBIeXBlci1WIHN5bnRoZXRpYyB0aW1lciAw
+IChzdGltZXIwKS4NCj4gPiArV2hpbGUgSHlwZXItViBvZmZlcnMgNCBzeW50aGV0aWMgdGltZXJz
+IGZvciBlYWNoIENQVSwgTGludXggb25seSB1c2VzDQo+ID4gK3RpbWVyIDAuIEluIG9sZGVyIHZl
+cnNpb25zIG9mIEh5cGVyLVYsIGFuIGludGVycnVwdCBmcm9tIHN0aW1lcjANCj4gPiArcmVzdWx0
+cyBpbiBhIFZNQnVzIGNvbnRyb2wgbWVzc2FnZSB0aGF0IGlzIGRlbXVsdGlwbGV4ZWQgYnkNCj4g
+PiArdm1idXNfaXNyKCkgYXMgZGVzY3JpYmVkIGluIHRoZSBWTUJ1cyBkb2N1bWVudGF0aW9uLg0K
+PiANCj4gSXMgVk1CdXMgZG9jdW1lbnRhdGlvbiBoZXJlIHJlZmVycmluZyB0byBEb2N1bWVudGF0
+aW9uL3ZpcnQvaHlwZXJ2L3ZtYnVzLnJzdD8NCj4gSWYgc28sIGNvdWxkIHlvdSBwbGVhc2UgYWRk
+IGludGVybmFsIGxpbmtzIHdpdGggOnJlZjo/IFNlZSBmb3IgZXhhbXBsZSBpbg0KPiBEb2N1bWVu
+dGF0aW9uL3Byb2Nlc3MvMS5JbnRyby5yc3QuIA0KDQpZb3UgYXJlIHJpZ2h0LiAgVGhlIHJlZmVy
+ZW5jZSBpcyB0byB2bWJ1cy5yc3QuICBJJ2xsIG1ha2UgaXQgYSBsaW5rLCB0aG91Z2ggdGhlDQpn
+dWlkZWxpbmVzIHVuZGVyICJDcm9zcy1yZWZlcmVuY2luZyIgaW4gIlVzaW5nIFNwaGlueCBmb3Ig
+a2VybmVsIGRvY3VtZW50YXRpb24iDQpwcmVmZXIganVzdCB1c2luZyB0aGUgcGF0aCB0byB0aGUg
+ZG9jdW1lbnRhdGlvbiBmaWxlIHdpdGggbm8gc3BlY2lhbCBhbm5vdGF0aW9uDQpsaWtlIDpkb2M6
+IG9yIDpyZWY6LiAgU28gaXQgd291bGQganVzdCBiZSAiRG9jdW1lbnRhdGlvbi92aXJ0L2h5cGVy
+di92bWJ1cy5yc3QiLg0KSSdsbCB0cnkgdGhpcyBhbmQgbWFrZSBzdXJlIGl0IGNvbWVzIG91dCBy
+aWdodC4NCg0KTWljaGFlbA0KDQo+IElmIHJlZmVycmluZyB0byBNaWNyb3NvZnQgZG9jdW1lbnRh
+dGlvbiwgcGxlYXNlDQo+IHByb3ZpZGUgYSBwZXJtYWxpbmsuIFBsZWFzZSBkbyBhbHNvIGxvb2sg
+Zm9yIG90aGVyIG9wcG9ydHVuaXRpZXMgdG8gY3Jvc3MtbGluayB3aXRoaW4NCj4gRG9jdW1lbnRh
+dGlvbiBvciB0byBleHRlcm5hbCByZXNvdXJjZXMuDQo+IA0KPiBUaGFua3MgZm9yIHRoZSBpbXBy
+b3ZlbWVudHMhDQo+IA0KPiBFYXN3YXINCg0K
 
