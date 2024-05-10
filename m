@@ -1,151 +1,163 @@
-Return-Path: <linux-kernel+bounces-176251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BA98C2C07
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:44:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1004D8C2C0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 23:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E75DA1F219CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:44:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9F352845E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 21:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B76013CF92;
-	Fri, 10 May 2024 21:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D11713CF95;
+	Fri, 10 May 2024 21:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DISYDo9z"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G5H0K81Q"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4052913C3D6
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9585013CABA
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715377439; cv=none; b=mmOVqUh5jyllYyEmqHDwvJ6v3eV6i5YDL80d2vy5Ak5SPYaqfyTqwiKxUeYpaggVJ+nE02vCmMAnA2VH0sd4GaZyEUDO6YQq6AHaN2wOR9r3i3Tz3caTF6Kdca13ZClz4ClxOAGfqrNNFJGhgBNAuErUvm12eY+28DvOeGJBbCo=
+	t=1715377570; cv=none; b=Fe48mBFInucL23eT7746NLCppm/D6jt22qPRikRWkp2gpLgzUnTV/AkXjhpJ5W1bPJKBVlpTiFSMv5mY07tzyUiXF47yoI96q4Yx1QLwK6QEFxUud/ibf4HqHzDIM9LGDw0SDN8F/BoIrLuDDGp/c+7ljzZdVrnH5Yrkf+2IIw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715377439; c=relaxed/simple;
-	bh=kO9ED7trCjjUAJJ/nuxp2R0+BPsrK8QM3ynp21RToMw=;
+	s=arc-20240116; t=1715377570; c=relaxed/simple;
+	bh=8hyhtvYTwN5czgZGq8pHp5LFD/yan+Y00HMkOubB6Ow=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pun3QMa4niRqWyhKw3I/G897+/w7VG6KCcdVqko7kxX6Qx7+1iWsYamUrjd3Wp+G/VI3C+9qv2dk2kGPv5p7RKsYjiL3CGRq/n8JlZYKcNUUS5oMJRScC2lCF8OnqOHRIiCrpjnl2NXOzaL/pijVs6g137K6HxExWNAgI5p2e80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DISYDo9z; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5e42b4bbfa4so1469915a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:43:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=kx3O+aNH0flSvxU7di1Zw99va1SStClOVFBUw0sGLnqHEbgOLvMyVC1ah6lpacjLpV/7ltVEFdOQ4a6ngzK0CMxkLoKRoXf9g51BkhGF4jgHCrW8BNbhLUC/i+W18h/vFxE3+oueRc/uqzgDqt/k2HdjjAhM8KU/WLIIXcQ08k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G5H0K81Q; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-78f05341128so161074285a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715377437; x=1715982237; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1715377563; x=1715982363; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rbj0m2f2QYfPFhMHqFk4yDca0m9jJq1tkTFZyZAwwvE=;
-        b=DISYDo9zeYB83q8GQXbnnvEQFMc4eMUiQEew1TBEOfYkpKJxiS3ctZdLY/2pUJBUR/
-         KGt3GLGmn3ns3rz3qpk/wsco/FFFR0iN26F0/MQlLH+prHgmSJj7Ye5yL/lkv5yQ425f
-         pX3J9q1LxUeXk3M9lbuP6yujXmlYGCb2vciKvQSca1prSJdtIkbm5fv7as+Op6bxpnGa
-         XhdL4H/VExmfOsyl1MgKRjtgRAzMYA1RoSSj8/iyEmKt4P6t27E5mETvUz4FvuF4fHSn
-         JepBejMbYTrZnQQrHPREYU/88n+44W1gLvrj6R6E3PCZRsErmCv0TxHbksWHi4zN4kF8
-         3H/A==
+        bh=2bvvrDFDvWHbWDsL+5kPsJMRg9ZQU9jFtg6oP+9eLyU=;
+        b=G5H0K81Qpy4ad+UCaeAVoOcKXjQgo6WejIHSkBPyjDPxw7rmwpSMinF6eEd+4EgYNn
+         kG7kKRWo3Ha0kRYbZ8TbqQlhYOym574yR2++sW+gbqDR1qCYR4+tqmW05grBJq1MfP/X
+         IbU40LzFz4MuOV4vG41D7UxhRwmQ7lYJamI6Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715377437; x=1715982237;
+        d=1e100.net; s=20230601; t=1715377563; x=1715982363;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rbj0m2f2QYfPFhMHqFk4yDca0m9jJq1tkTFZyZAwwvE=;
-        b=Ch0PZiW0QzswF7Hcq2se9kteiPtgPrG5S17eXVbZ8IFdDv6e42kT2MjJ3CP0gFFVyD
-         wm2FGzM2ACqD5jYYiFJLlzOj+trRbKz0KA/bCV4TjUxDKfKBzahROj4+jo8jVwg/Md6Z
-         S8S9glS831OxsvbDCg+4L+HrdNSfdnh08v6nlrI5kYYUpZTAXk+X2DltPMrIO/KAetvP
-         5Y63n4e61I6tBOrWLArhjrPyTiJJrYwHeo4WMbtNA1q+0TQNRPlzeewLyxvpHdbbf8/f
-         e/l9KfcZCQGlkTtrgZtkQ5w3fu6Uuef1y3uV8IJs8s1eDMttp0uHkbWsMkX8ZUNDznK5
-         /T9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWuOK09aOXGzZWdTB4RUsnvcPuLtzBG+q9LV1UobiS81MjsHgzTjQHp47Tu8xmvwBXj9J5l+XxsY/jq0B1D92OTGg5JXo0LzezOIYv7
-X-Gm-Message-State: AOJu0YyxuqGE2MJNExAmV8RmZFml0l1ldWDUyESKUD3Ff7iSogq3Ubbp
-	My73iOm6qVutXIZvjJBtrpX8fnfqOCd/M8b2mnNY9rhO7mrwv3jcc1a0rihyKaOgWT/Ge1EYNIq
-	/XjQ8HHpvAhIWT/6FBj2s/XO3AsQ=
-X-Google-Smtp-Source: AGHT+IFfVrozGM2vaadK9UrpFrP98qUXh8WZsCiQVseBOTtYFa9DnTxKekjuHfLQLMXqDnFeT0efYO/0Pnjwmn0R8Zg=
-X-Received: by 2002:a05:6300:808c:b0:1af:af86:ce44 with SMTP id
- adf61e73a8af0-1afde1b7259mr4352990637.40.1715377437527; Fri, 10 May 2024
- 14:43:57 -0700 (PDT)
+        bh=2bvvrDFDvWHbWDsL+5kPsJMRg9ZQU9jFtg6oP+9eLyU=;
+        b=AfNXEoEYX7xuxi5HEv3gW7vadXpPhMk3hhyAGcCfn3BxikG/glyxh2Aqk5AfTWty5T
+         QEwgX4Je/BRX3gLczV7uBc0AQg41sIfW4+D+ivyCNba3/Lj38z0mYuT5XFHS9dsxHcO/
+         qDqNoFR3nwt80jItIg7P0M1b3l8dfWPb61RNrhsBgl3sFcPsPhxf1HZGKl62vLBWIA96
+         4KaClVgOGLL5AJq9a3ArFm+Vy+1TczVq/1nyTx2AkOtIwsrawKi1HYzg9mgaifd2rQqV
+         0r8w0C9t8QTDTEq/tDVZ5qZyQyOnY4X18VrDjNAnp8v3D1MguUg0BRp8Aw7MuznnC6Iv
+         eVzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWmEgcetBC0LlOpxpiXJ9AoE9L02p7ocXDjrbXmXv++fr4eDKoSP7if8nAhJd36nnUrYokGU4PDgrY5syntIcptOJM3ppmdOZvnAJk
+X-Gm-Message-State: AOJu0Yx9AildMzokgxW0DmbVMAN5LSYom0wCHJUIvUKVs1DraHT4mxgu
+	jT3jW/XL+g5J+hVXNBxuJmmrwDfDW3VZ5Gp/P1oPY+W/KYOOt9hWbVDzs8Gi3OwZKARZFljH6po
+	=
+X-Google-Smtp-Source: AGHT+IFKfBpDiM3ItIAuMtpS4e+3OYiNq+ESvII6JPDMO4oH8G3JDGWsIo08n06OK8bmE+5EqCBTMA==
+X-Received: by 2002:a05:620a:cee:b0:792:8dc3:d714 with SMTP id af79cd13be357-792c7610931mr339947385a.76.1715377563372;
+        Fri, 10 May 2024 14:46:03 -0700 (PDT)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com. [209.85.160.176])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf315009sm217860685a.118.2024.05.10.14.46.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 May 2024 14:46:02 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-43df9ac3ebcso97221cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 14:46:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvJqmavHtt5ZEWJ9KtQenvKQ4UnEMGqQ17cQfWjwB8xegmxprWDhivP/hi/ApX6hfDDeQPmrap/wI0UjVn1eDan1iUzyepKhQ3m5ho
+X-Received: by 2002:a05:622a:5407:b0:43d:e9ce:63ad with SMTP id
+ d75a77b69052e-43e09222ee6mr1021081cf.0.1715377561384; Fri, 10 May 2024
+ 14:46:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509-jdi-use-disable-v1-1-5c175b2ea1ee@gmail.com>
- <rpita5o6za64p7tamasssb2fja6h6ipr5cibh6gs7klkijyk6r@mausrcet2ycx>
- <CAGsSOWWAotJPz+o8HSYTrXtq6H7Vrw9KXZX1jDZLgqfudKsnyg@mail.gmail.com>
- <CAGsSOWX9YcuBpxQZ5kPm6zbMbM6iZqPK3bk=dgKyUZPjq++GXQ@mail.gmail.com> <kjlcqkfipct4d54hrtmwdsrifxvuq3qocv5bcmwsufrbxtvvq2@52grw5ijqx4k>
-In-Reply-To: <kjlcqkfipct4d54hrtmwdsrifxvuq3qocv5bcmwsufrbxtvvq2@52grw5ijqx4k>
-From: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
-Date: Fri, 10 May 2024 23:43:46 +0200
-Message-ID: <CAGsSOWU=NopJmDK09vLFXa1Riq=8-Rn=U3ZsXqE-8vnL28nTkA@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: jdi-fhd-r63452: move DCS off commands to disable
+References: <20240510-dsi-panels-upd-api-v1-0-317c78a0dcc8@linaro.org> <20240510-dsi-panels-upd-api-v1-1-317c78a0dcc8@linaro.org>
+In-Reply-To: <20240510-dsi-panels-upd-api-v1-1-317c78a0dcc8@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 10 May 2024 14:45:45 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UuJF5Nv6qLzH8SK8NPfHa6Qwp4XOwkLUYt2Rv8ACjfeQ@mail.gmail.com>
+Message-ID: <CAD=FV=UuJF5Nv6qLzH8SK8NPfHa6Qwp4XOwkLUYt2Rv8ACjfeQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/7] drm/mipi-dsi: wrap more functions for streamline handling
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Caleb Connolly <caleb.connolly@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	Vinod Koul <vkoul@kernel.org>, dri-devel@lists.freedesktop.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 8:02=E2=80=AFPM Dmitry Baryshkov
+Hi,
+
+On Thu, May 9, 2024 at 3:37=E2=80=AFPM Dmitry Baryshkov
 <dmitry.baryshkov@linaro.org> wrote:
 >
-> On Fri, May 10, 2024 at 09:10:34AM +0200, Barnab=C3=A1s Cz=C3=A9m=C3=A1n =
-wrote:
-> > On Fri, May 10, 2024 at 8:46=E2=80=AFAM Barnab=C3=A1s Cz=C3=A9m=C3=A1n =
-<trabarni@gmail.com> wrote:
-> > >
-> > > On Fri, May 10, 2024 at 2:56=E2=80=AFAM Dmitry Baryshkov
-> > > <dmitry.baryshkov@linaro.org> wrote:
-> > > >
-> > > > On Thu, May 09, 2024 at 08:14:07PM +0200, Barnab=C3=A1s Cz=C3=A9m=
-=C3=A1n wrote:
-> > > > > Move DCS off commands from .unprepare to .disable so that they
-> > > > > actually reach the DSI host.
-> > > > >
-> > > > > Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <trabarni@gmail.com=
+> +/**
+> + * mipi_dsi_compression_mode_ext() - enable/disable DSC on the periphera=
+l
+> + * @ctx: Context for multiple DSI transactions
+> + * @enable: Whether to enable or disable the DSC
+> + * @algo: Selected compression algorithm
+> + * @pps_selector: Select PPS from the table of pre-stored or uploaded PP=
+S entries
+> + *
+> + * Like mipi_dsi_compression_mode_ext_multi() but deals with errors in a=
+ way that
+> + * makes it convenient to make several calls in a row.
+
+Your comment is backward. The name of the function is
+mipi_dsi_compression_mode_ext_multi() not
+mipi_dsi_compression_mode_ext(). ...and it's like
+mipi_dsi_compression_mode_ext() not like
+mipi_dsi_compression_mode_ext_multi().
+
+
+> @@ -338,6 +345,18 @@ int mipi_dsi_dcs_set_display_brightness_large(struct=
+ mipi_dsi_device *dsi,
+>  int mipi_dsi_dcs_get_display_brightness_large(struct mipi_dsi_device *ds=
+i,
+>                                              u16 *brightness);
 >
-> > > > > ---
-> > > > >  drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c | 12 ++++++++++--
-> > > > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > > >
-> > > > I don't think this is correct. If the driver sends enable commands =
-in
-> > > > prepare, it should be able to send commands during unprepare too.
-> > > >
-> > > It cannot send commands in unprepare, there are multiple panel driver=
-s
-> > > what do the same.
-> > > Every panel drivers which have DCS commands to be sent in unprepare
-> > > has similar error messages with mdp5/dpu.
-> > >
-> > > [   92.322564] panel-td4320-boeplus c994000.dsi.0: sending command
-> > > 0x28 failed: -22
-> > > [   92.322635] panel-td4320-boeplus c994000.dsi.0: Failed to
-> > > un-initialize panel: -22
-> > >
-> > >
-> > Here is the error messages, these are comes from unprepare by every pan=
-el off:
-> > [  121.295290] panel-jdi-fhd-r63452 994000.dsi.0: transmit data failed:=
- -22
-> > [  121.295368] panel-jdi-fhd-r63452 994000.dsi.0: Failed to
-> > un-initialize panel: -22
-> > [  184.783019] panel-jdi-fhd-r63452 994000.dsi.0: transmit data failed:=
- -22
-> > [  184.783066] panel-jdi-fhd-r63452 994000.dsi.0: Failed to
-> > un-initialize panel: -22
-> > with this patch these errors no more.
-> > .prepare works because of this flag ctx->panel.prepare_prev_first =3D t=
-rue;
->
-> The flag should also invert the order of post_disable chain. It well
-> might be that the drm/msm/dsi driver shuts down the DSI link too soon.
-> Please consider fixing the MSM DSI driver instead.
->
-Ok, thank you i look forward to it.
-> --
-> With best wishes
-> Dmitry
+> +void mipi_dsi_dcs_nop_multi(struct mipi_dsi_multi_context *ctx);
+> +void mipi_dsi_dcs_enter_sleep_mode_multi(struct mipi_dsi_multi_context *=
+ctx);
+> +void mipi_dsi_dcs_exit_sleep_mode_multi(struct mipi_dsi_multi_context *c=
+tx);
+> +void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *c=
+tx);
+> +void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ct=
+x);
+> +void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
+> +                                   enum mipi_dsi_dcs_tear_mode mode);
+> +
+> +#define mipi_dsi_msleep(ctx, delay)    \
+> +       if (!ctx.accum_err)             \
+> +               msleep(delay)           \
+
+Please enclose the above in a "do { ... } while (0)" as typical for
+macros. Otherwise you could possibly get some very surprising
+behavior:
+
+if (needs_big_delay)
+  mipi_dsi_msleep(ctx, 50)
+else
+  mipi_dsi_msleep(ctx, 10)
+
+..with your macro as it is I think the "else" will match up against
+the "if !(ctx.accum_err)" inside the macro and not against the "if
+(needs_big_delay)"
+
+Also: nit that the mipi_dsi_msleep() should probably be defined above
+the "mipi_dsi_dcs" section.
+
+
+-Doug
 
