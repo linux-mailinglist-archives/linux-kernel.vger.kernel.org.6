@@ -1,184 +1,160 @@
-Return-Path: <linux-kernel+bounces-175432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F35B8C1F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:21:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A688A8C1FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 10:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3675A282ED5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6DEC1C21823
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 08:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF60915FA9D;
-	Fri, 10 May 2024 08:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AFA15FA7D;
+	Fri, 10 May 2024 08:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="gihc3W53"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2052.outbound.protection.outlook.com [40.92.42.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvX2y8ZJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60067C136;
-	Fri, 10 May 2024 08:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715329276; cv=fail; b=Cg9KOCQGXbyRgsLo3Wd5h9VRyOOoEu6ZXVup4E8prHvBMeAJCrUjlj1GFjM5pUrJw5GycNo2PxaYzs/s0bzmrZ1+BXxFrxk826tQqlydTjrjB4auX2V610rz/Bs8SNLttJT/3+s7rQ/VkTCq1yXLt751Jx75U5CYVAvBV5fd6TQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715329276; c=relaxed/simple;
-	bh=EV8opBmuJwe07HUysARMr35wijimlzlTAqOloAejvNY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iMVQcnz5Xo2LF3epCSCYeKx18+r7j5ucsU+h9c9XDK2friRJCx2ve6AxebH5+aus/IJ/5uILUf+H1ZIwgmvoyIr+rrd3eybXONroIX9EAf3tSSs3WFYsSbCeoxKiNOAFnoV39tS34jXnLhQdNecSZ7VWKr8cbB3SYTbV92SWn5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=gihc3W53; arc=fail smtp.client-ip=40.92.42.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fxROBGDr/bgR9gdKgT25UQWveF3Mi2wmeSTL7HpV/7hr6jPlK9jF9l01CHYZLo7p5veHJ+rrXFm+3Xb+HEeyZNq/MNfMZQI82H7eEYtxUYklHHOiR56NNoChQPFxiTcgzHtv+UMlTjfvMSrHnJkzFYz2cmuoEgxUJN1q+yrzCg/a+IW1oJwfecwU8tDTExBforIdfDIU/xlihv6UXCZU4xK2jCsruO1yqxEWLGUyoT/JIkuWWa1uUbWFcrrKag2M9YsiD9+TjVISs5fRyYIZO4WHiDxbToLRodBMPLFkdZmOSnV4ytL0ui9S1Vrna1Bddonlq41wSfNAOxJhishzMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l22nGYKAGTdZiw2acRkW3debv5c2gpAmpPK6I/XiLqw=;
- b=kFN8wWHdCPK4phsry4452rFDpPeds5jWpgiTb/rXXnK3sBJXyyhMUhY+5aUipMUQnHQjUKhG1sqy4LPgF3cXo9nBkLj6F66onTHmJW0XRJBMXn8wfRDVxxWwsrPmUOOhGhAfleql3+zYmcnrjz3ktR8358wc/mXmrbpStZpirmUqrZLdMCpm3/ujZBp6ciNISTi9R2/Ats6dvFR0nkREjemfD2TgzfGIEAWE9eXH1wWYyJ28uJGD3cFcqcefUr+QaXC0t8sttPE7SiTNeeiWBN2GxwkDB/sJcrablTKlgavQxj3Or8CwnpqaCBWHkvTmN1wY9ctlDlNJljPHLlArsA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l22nGYKAGTdZiw2acRkW3debv5c2gpAmpPK6I/XiLqw=;
- b=gihc3W53ONRT+cAGzYDgdoGHnBGE44U8gG8FJWlX6Jb/1Wccphg/rUrIIRTiN1kjv7ClBeKGzs6Nq885+E1H+EnL2pH899POAZRNS94ydNwxTXjK+mR+Dg+A4eRynm9iQ7TsGG5cleaup0tu6wht5w76YmegSYOzOJNDFZY7zux13InwsiiaA1kFAncsEweUeGuPJq5ezE8Sjp/tK+ccvqhEIpXeMCfvV+2cmU08jQv09osdKdAZmi0JiGdhrRzQFA1M/mF3XT85SGD7rWqk9N/s2+oJN6amFWREQgJQPZeGDsVsnpv95WKthwlnUXR65NGiZmz31ltsWI1sD4AEYQ==
-Received: from CY8PR11MB7779.namprd11.prod.outlook.com (2603:10b6:930:77::22)
- by SA3PR11MB7487.namprd11.prod.outlook.com (2603:10b6:806:317::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48; Fri, 10 May
- 2024 08:21:12 +0000
-Received: from CY8PR11MB7779.namprd11.prod.outlook.com
- ([fe80::9aa5:422d:f716:1402]) by CY8PR11MB7779.namprd11.prod.outlook.com
- ([fe80::9aa5:422d:f716:1402%4]) with mapi id 15.20.7544.048; Fri, 10 May 2024
- 08:21:12 +0000
-Message-ID:
- <CY8PR11MB777932FEDD8F24325A236B8197E72@CY8PR11MB7779.namprd11.prod.outlook.com>
-Date: Fri, 10 May 2024 16:21:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 4/4] selftests/bpf: Add a null pointer check for
- the serial_test_tp_attach_query
-Content-Language: en-US
-To: Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
- shuah@kernel.org, kunwu.chan@hotmail.com
-Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240424020444.2375773-1-chentao@kylinos.cn>
- <20240424020444.2375773-5-chentao@kylinos.cn>
- <79df3541-5557-05fa-a81e-84728d509bfc@iogearbox.net>
-From: Kunwu Chan <kunwu.chan@hotmail.com>
-In-Reply-To: <79df3541-5557-05fa-a81e-84728d509bfc@iogearbox.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [p0vTF+9R9RwnSu3w9DxWdTUPv3ALc66V8P9VTI4gDLA=]
-X-ClientProxiedBy: TYWP286CA0027.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:262::11) To CY8PR11MB7779.namprd11.prod.outlook.com
- (2603:10b6:930:77::22)
-X-Microsoft-Original-Message-ID:
- <65b07425-1871-487f-a000-a5b1e6b8d195@hotmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380821BC2A
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 08:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715329542; cv=none; b=ozlqIVcZLqAhoK3Osm9dR90JdFYwr+zf6f65LnhCX7/t7qLmzVjGe7P2alkvEcMzhU5N2nhCzxa1DQfjclfBG9gXyuk7FDO9Sv75Jh9MiRr1W42ow8wDy1s9Na/08th4GpJa95D7iJBivPhF3fp1oan8CgMDps9pbjDkCp9YMUI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715329542; c=relaxed/simple;
+	bh=x7eOLArKZlJ6Jjdv6wdjIvSJbMgG4/RroQBS+sVq94A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hf23Amt0vwnUQ3aEdMLPdh9fv6Pb8IUS7JlYgSOuPlcf4uA7yZ4djAHR6kCs2FsHn+y6ryWaQE0XLc5izcdo6pscoKSwI5IJ/DKje3urDUVX/v4l0b6U36MJLiDuZiMvFFyFEmaFilGnPU+Kv0Sry/SaGC/IZcaBqCi+N8Dzcv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvX2y8ZJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 210FFC113CC;
+	Fri, 10 May 2024 08:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715329541;
+	bh=x7eOLArKZlJ6Jjdv6wdjIvSJbMgG4/RroQBS+sVq94A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IvX2y8ZJLu3RkYqJQvbbcfiofmJLuXo21dv+0w1PP6AlhjElmbUmTWBcJJrFwvX6z
+	 TYbMWTxPHVB8/qwTRmfUfsOakuPE3H+qCB1swBQKz+6VrAfxpixQbMvDODiGu2BD2v
+	 /neuwXES6X9NQfx/fbQ5dRuJFrULKWHh1ixC4xcQVOZZV7DNzvZlLJ/hQq8DovubR5
+	 Y6Nui23vJGpF4M5ZixJVHqGUfQlFqkl0sjFvf+vh2dWrk90McnfW5e8TOGvekx5xhB
+	 7K7lFembeD4k211WzPEYLmn/CE22TvH62rysGn/qy4qK1m2aJv6bZeVkPtnRq/Bx1p
+	 4UdPP3KDnzRcQ==
+Date: Fri, 10 May 2024 09:25:37 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Song Liu <song@kernel.org>, Xi Wang <xi.wang@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Jessica Clarke <jrtc27@jrtc27.com>,
+	Andy Chiu <andy.chiu@sifive.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/8] riscv: Support compiling the kernel with more
+ extensions
+Message-ID: <20240510-okay-trade-8826cb134979@spud>
+References: <20240507-compile_kernel_with_extensions-v2-0-722c21c328c6@rivosinc.com>
+ <20240509-uptown-aging-5bdec4730d70@spud>
+ <Zj09IUE5k1EJL08X@ghost>
+ <20240509-google-passing-3e7577235c44@spud>
+ <Zj1UUIY8RYV1kJLM@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7779:EE_|SA3PR11MB7487:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12162b60-578f-4ef3-ae4d-08dc70ca2750
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3412199016|440099019|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	1cznWz3OFch9QTCzJvj/bSDStvPbUAI57wuk5K0/9yiTiUIUAV9JPXxuu+JaSU5kgGz/ciTDKsxxZWnC1XC+a5+VIRb8wuFJAo7OtwKYDIgOk9kJXkLd0s4L0UWu5r0LS65M/TKKvvwpxmMiU7VyMIah/IRqUYUF/l7Qtbozou0oV+pD6SxZTFM+m5tnDtFqkgtycO36AKJfOIfhsCxn4Uo/ZmF7y9csTZXp1teRLJgZ/6240d3HPjm3uQ7ohORjmUB3cyehrObbetQD13LPMMLLonXXpctI9LIgfDcDekUiljBLIsKdZKVomPH1SOELNkPnZ6dRWa1C+PPtEoZC9KwWGUDHGZwdLn5ZaNOxALGYit3JHmfVGq10GUQscY/TVUG9i38nTvUPONCmk0H2BX6FzVhi7l3SkRvXN8M9W+TSXmClYUBI3BWNDx2qGFaY8XCrCAa+MUMDekWlKZgZDJiePDNPFVibRKm5YsY+zzOuOSVsqI0A8ydfJM7SjIfAmrU0DZ1DuMTixcqkOXjr5u6XcK7//ir7/Wq9daW+vbcVdZuparwYCUX7YxjLkwazPuG4nuJumAiBZSS6SEOjqELdXqaoPOPRISY9TfZnguVtl472uTqBNfdnwsBcbJSK
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z0VabHc4QnJycW42RjI3SjVqN1c5UmxrNkF2Mi9WaHlPRWgycVFtcnduUTJO?=
- =?utf-8?B?bmRPVVVNSUJRMHIxQjliKzZGU1ZLQ203Wm1NamZRWUVuaUpJbUwwTXpqVE9y?=
- =?utf-8?B?dkFuLzNzU1NNYjUwZjlXWktLa29Td3RTcG5mY0tqZXYxcXVMc3pFcVFKK2o4?=
- =?utf-8?B?RkN3UFdFYWUrLzVPcnkwekRkSkpKMWMyc1lwcWJQL25OQWVhYkxLYXFXanJv?=
- =?utf-8?B?cm9pWUk2b2NPN2x4OWtOYXhNOTdtSzFvNGdneVZDYk9peHYzb1RuZHlCS1Ur?=
- =?utf-8?B?OW55cCtydk5TbDVoYlM4a2V2eHF1UVJyenZmR1ZzSGdZYzFXRUNmeTA2TzJJ?=
- =?utf-8?B?UHJkT2tTeHJUVHRkRlNYc1F0UUREb3o1SGpHNHJxZ3ZNWEF4QlNRekJGZW5Q?=
- =?utf-8?B?eERVWVJGdzhRTE43SDRadVIxMW5RMFNYLzFQQyt1WlZzT3dqYXRaSmtUczBM?=
- =?utf-8?B?RjdHemdZMm9FRlN1OC9RbXo5bmc2dW1jcXN3Vkp6UzlaS2FWK1RQb0hRZjlX?=
- =?utf-8?B?OVJmd1ZlbnVOSXV6VmF5eDhnOGdXMGg2YUVGa1kwYUVQZUY4RFNiakxoTWNm?=
- =?utf-8?B?QTVJc0IyRDRXek1mUWpIdlJHTldnZGdENHg3TDRJVWM4dzdFR1hCOTJ0czN1?=
- =?utf-8?B?ZG1BLzlDY0VoV2cvREVJNnhiTGdwZlptb1l4cXg0Uk9kaVBmdTJuWDgxV0lj?=
- =?utf-8?B?U1RTNGFIWHdLdnpGZ0NQNlJDV0NmSWtDWGhkWHUwVWloZEN5blI1a09WaG45?=
- =?utf-8?B?K3hYNERaNTRPWjkzUTFPRnlhNno0cWtqZ0JFd0NiMnVDU1QxUkJoZi9pN1c3?=
- =?utf-8?B?Q2lUNjJMQ3JZZlIySFU5b3p5Ry8rUFNxcUNWYTRUU2tKV25WVWZlVEN2amJx?=
- =?utf-8?B?STc1a3hQQjVVcnRHZ1FDamllM2ptUEEvOHpFUVJqdTFCMHR5aUNJMW4vZWg2?=
- =?utf-8?B?ek42V1ZWcEdJRHBxOG4vNlNBclR3eWRRSzN4NDI5dXE1bHBlM0NRZDA0VlpV?=
- =?utf-8?B?Q1o4aSs5R2dtNVRvZXNuRmVYNUY4Ym4zVlpuNVJTUDFuYngvN0FNWXBQam9j?=
- =?utf-8?B?VXh1d3RvR044dnZ4aUo3V1lFNWtMTVZuZGJPRUM3QTd5N3ZYTUI3MEMwbWtF?=
- =?utf-8?B?NXl2RUtTUnhscXIxRGRsMlRLQXJpUEtkRjRFOWs3SlBBVnhaTXNTMWhZb0RP?=
- =?utf-8?B?MWxxQjQyaU5vZ2FtOFkxcU5YZFdUbmNBbTYrQ0hZWkJDZzJiWTU5TlFmdTdI?=
- =?utf-8?B?R3oxaVY2VldzY05OMnBtazJRN0FiaG5LWW52YlB4RmJQL1lRcHhmdDB5SzZs?=
- =?utf-8?B?dlBnb24xTjRMQ3JkWVNQZkFtZ25Sb2liZzh3dU9qL213NDArUzNsc013bTR2?=
- =?utf-8?B?TEh2dFNqY2JqTGxaZUk0OVBKR1RzSjVwdVV1bk9FMjVWUVNiR0t0ZHJzWWFD?=
- =?utf-8?B?QStIVEhKT3BJZkhXUEp2dVhJMjRJMUdtRUJxblZVZXNzOHc1akdyeTdDQmJJ?=
- =?utf-8?B?dm5JdkowSWR1dDZkMndyQlJjS0xFSzhOaGoxN1NiL2JFV3ZqVnZDc1JZc2hX?=
- =?utf-8?B?U1dFUXVCbndITEtUTVo0Vkg2S0t6Rk1uelIwejlsYlRhQXJEcmE1QTcrMnpT?=
- =?utf-8?B?OEsxOFNtR2Z0M3l6YzRFQU00SEdCZWhTbGxPc2xpdEs2MkZJS0tLenhRODFK?=
- =?utf-8?Q?Mk2e3gVFgu4rH+lqw4EW?=
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-e8f36.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12162b60-578f-4ef3-ae4d-08dc70ca2750
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7779.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 08:21:12.7070
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7487
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EwfUi93w0+FmVOuD"
+Content-Disposition: inline
+In-Reply-To: <Zj1UUIY8RYV1kJLM@ghost>
 
-Thanks all for your reply.
 
-On 2024/5/3 23:47, Daniel Borkmann wrote:
-> On 4/24/24 4:04 AM, Kunwu Chan wrote:
->> There is a 'malloc' call, which can be unsuccessful.
->> Add the malloc failure checking to avoid possible null
->> dereference.
->>
->> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
->> ---
->>   tools/testing/selftests/bpf/prog_tests/tp_attach_query.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c 
->> b/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
->> index 655d69f0ff0b..302b25408a53 100644
->> --- a/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
->> +++ b/tools/testing/selftests/bpf/prog_tests/tp_attach_query.c
->> @@ -39,6 +39,9 @@ void serial_test_tp_attach_query(void)
->>       attr.wakeup_events = 1;
->>         query = malloc(sizeof(*query) + sizeof(__u32) * num_progs);
->> +    if (CHECK(!query, "malloc()", "error:%s\n", strerror(errno)))
->
-> Series looks reasonable, small nit on CHECK() : Lets use ASSERT*() 
-> macros given they are
-> preferred over the latter :
->
-> if (!ASSERT_OK_PTR(buf, "malloc"))
+--EwfUi93w0+FmVOuD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks, I'll update it in v2:
+On Thu, May 09, 2024 at 03:55:12PM -0700, Charlie Jenkins wrote:
+> On Thu, May 09, 2024 at 11:08:34PM +0100, Conor Dooley wrote:
 
-1: Use ASSERT_OK_PTR instead of CHECK
+> > Maybe if you read what I wrote you'd see what I was getting at, or maybe
+> > not as I might not have been sufficiently clear. I'm not saying that th=
+is
+> > particular optimisation is not worth having, but rather than I wanted to
+>=20
+> I seem to frequently give you the impression that I don't read what you
+> say before responding.
 
-2: Add a suggested-by tag for you
+Does it happen frequently? I don't really recall it annoying me before.
 
->
->> +        return;
->> +
->>       for (i = 0; i < num_progs; i++) {
->>           err = bpf_prog_test_load(file, BPF_PROG_TYPE_TRACEPOINT, 
->> &obj[i],
->>                       &prog_fd[i]);
->>
->
+> What we each view as "important" in the kernel is
+> different so we come from different places when approaching a problem. I
+> respond in the way that I do not because I am not listening to you, but
+> simply because I have a different opinion and I am not explaining that
+> properly.
+
+If you're trying to describe a different opinion, responding to the bit
+I was talking about, as you do below in your latest response is ideal.
+Responding inline but not actually addressing the points I was making
+did make me think you were [un]intentionally ignoring what I was trying
+to say.
+
+> > see why this particular optimisation was worth maintaining 3 code paths
+>=20
+> I interpreted the "3 code paths" as with Zbb + 64 bit, with Zbb + 32
+> bit, and without Zbb. I directly responded to that by saying that we
+> could eliminate all of the code paths that are not Zbb + 64 bit could be
+> eliminated. I should have given performance numbers for these alternate
+> cases too, and somebody should have asked. I agree that performance
+> needs justification, and I understand that I did not provide ample
+> justification in this patch. All other architectures optimized these
+> code paths so I figured that was sufficient justification for riscv to
+> do the same, but I understand that it is not.
+
+And hey, if you look at the commit in question, who acked it? I'm just
+saying that I think we should have a higher standard going forwards.
+
+> > for but the commit message does not detail any of the benefits, and
+> > looking at the cover I discovered that it was not tested in hardware nor
+> > seemingly with a real test case.
+>=20
+> It's hard when riscv currently is very focused on microcontrollers.
+
+Zbb is actually implemented in hardware, so testing it in the real world
+is not a barrier. Palmer probably has a JH7110 board that someone gave
+to him is not using...
+
+> These changes are in order to help future hardware that is more focused
+> about performance.
+
+I'm not replying to most of your response rn, got other stuff to do, but
+what I was trying to say is that I think the point at which optimisations
+for future hardware/extensions should be merged is the point at which
+those extensions are no longer future.
+
+> That's why I contribute this upstream with the hope
+> that other people, like me, care about performance.
+
+Heh, that could be read to mean that I do not care about performance,
+which wouldn't be true.
+
+Cheers,
+Conor.
+
+--EwfUi93w0+FmVOuD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj3aAAAKCRB4tDGHoIJi
+0nK5AQCoDMSe9DzUyhpQR58HC2BsiABcEwTWZgGhSBBKbfG+FgD+LfsnoPklGhGT
+eJ6+WpbCfqceocD7hR5oKi+JaTKMMAs=
+=9cVI
+-----END PGP SIGNATURE-----
+
+--EwfUi93w0+FmVOuD--
 
