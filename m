@@ -1,169 +1,112 @@
-Return-Path: <linux-kernel+bounces-175226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9AB58C1CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 04:59:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72EB98C1CC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 05:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD83E1C210D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 02:59:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E1C1C21447
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 03:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D986148840;
-	Fri, 10 May 2024 02:59:52 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9246148FE0;
+	Fri, 10 May 2024 03:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWDbgxfh"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23FF56757
-	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 02:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8827729CE1;
+	Fri, 10 May 2024 03:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715309991; cv=none; b=AJXE2+FFfHDxMuVMWDPJtEyAHjx+cECsGCIVpjLi3lGcuzFS1s+qqPE+m8vJvmsN7xptCFDnQWcNDafgOP8x0EhS3YkjVm6vlWHOve/M717OguMl0Kt5g3VODdnTOnbslF///Vu6D2u2QZJMsHrBwzC69WUkqVeDs8pgV1RvVNc=
+	t=1715310389; cv=none; b=GPmnWiP3ZcuaTdXDE/zyrFh6XJ2+cOoM8TOCv+q8fz9Y4HNJ3UX0fxSGyuNdB/LViEqm6SWCYUUFfOAekd9x5eK67h5FhJ4c65sfvRvnlCST3tmr31aAgK6s+KO5+s9MsWk4VL454bM2zJOEjV5A1OjisSmvVI4QDpilVnRrneQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715309991; c=relaxed/simple;
-	bh=E35cDS4QnQB/w8COj0/DibA2uyG84mOHHN09JXoYD84=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VirX1iyYo2AwU7XJQQ3bXUyvudAAgLKggsWZdR7lU6FcKtg45Usf9nh+/6m71c1D+fyGMlP4G0h+EcRQXMnb09fbphaMG7nRF68EH0DeGVRZHhQ1+t7runCvBoogi9yG5NvzaxPNaPTxC0DSx1IHagkEjq+1vg5tXXG3n2TkoD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VbD8z6YMKzCrR4;
-	Fri, 10 May 2024 10:58:27 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id C64A014038F;
-	Fri, 10 May 2024 10:59:39 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 10 May 2024 10:59:39 +0800
-Subject: Re: [PATCH 3/3] mm/memory-failure: send SIGBUS in the event of thp
- split fail
-To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240501232458.3919593-1-jane.chu@oracle.com>
- <20240501232458.3919593-4-jane.chu@oracle.com>
- <038cffc0-e027-b518-460f-40099819c588@huawei.com>
- <c172fa3d-d4a4-4605-8f39-df0536718bd5@oracle.com>
- <b6c1b513-4470-4721-120c-1b1c813b2680@huawei.com>
- <1b4c50b6-2371-4e1b-aef3-d70c32888054@oracle.com>
- <30d4d249-e3b1-79d5-3501-0ccb9c529110@huawei.com>
- <7a292357-8515-4ea6-b4d1-6ca6fa407e72@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <32b88a87-8edc-12eb-1fd7-2a028b8f9fb3@huawei.com>
-Date: Fri, 10 May 2024 10:59:38 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715310389; c=relaxed/simple;
+	bh=8xtk44jSOd8araYzrVz2AKcFhCesWZbEvqWPEiUg80I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kn3tabKTSLycPjjUaLTiFD6VMywmLwNwi475Bi3H3W4NCFruUMXEr2oGPhDA/1Me6JgSCR9xdzObfIFV2T3WnGtehjv/p0oz9jPUJ6SEsn537h37dFe2HnlFbD+IjnNb3thJiab3UNBCBMjKP6QwoiJy1LNDXBR9QqY0SgEOtEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fWDbgxfh; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51fcb7dc722so1435792e87.1;
+        Thu, 09 May 2024 20:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715310386; x=1715915186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OpvuySBIeO4vzs2xHm0aakYIlKfoDjkApIsuTSeBQbM=;
+        b=fWDbgxfhhAkT/woi6by21c+ITLZVKI9aoCAxK6gd21ruazKH1sAfjgpDSsxhpOtcSX
+         EEX9c+ibb+1dQ2OTxxKe6cQZ6qOUvsWXZa5nzJQu8MGmB7QO1Tjam6tWxGi4BnHMeL58
+         wgZMD/M0PeHm3EG+a/nr9VGX25GmTxBxcCTcuC7qgWchbirOywvlBRO3/a4LAQOBvgZ8
+         pNNWmcGNkpedgS8DfOEVbMJFAu8xqOiXTVpQDvl/2xOrUzCL9LQ3maFgkub2PDGJLdtm
+         LE2y41VzQq9n4W4jfNo5Ws1eNQiJm2yxp3OexsO5IUYLavjazwfD1eW9f24Gac/BCcTG
+         9gKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715310386; x=1715915186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OpvuySBIeO4vzs2xHm0aakYIlKfoDjkApIsuTSeBQbM=;
+        b=BVJ3en4mtGo7eS4JKdmCnohMkzVivU/VV+LSnUwU5A+PxjU+jLr1HVDATpjxAeR4vD
+         MWX+hkbpPAmgCgOMUeXlnp8cv6QahyzBrAHthfeDDeE5khShW+dGleDiLegqSte5UmpB
+         p5W00+9lulkdhG3elp50wT3JF7lNalMkdQYSghGwLJljEAGNYXIBEzZvuFj1uQNoh1DU
+         P7eCxE5kvJo+5lWHefLNN/mzxrQ3a+waKZjMJvIHvlJOmkMlKY6BaG99o2QTD/r68gXd
+         2d23RyhvfpywlFMnGLfvG0K6//4UPZyVbLT8DWqRIVjgr2QAJKgBNFtLaAEFVo+jCaLo
+         eQSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHAkR4evRgC+iXDEm3Dxf5//wsiaG4pO98MbEXrDtqePkttatuwOakH/NgacJBhBaqI0b1+awafItJFFBVJSgSP5vWBBxCm5jYqK90754Z1dgxbmXQPo8WCnVBcmfUAXxDwYxo1ekfYEoJTrWlGZQn17i4KK+SjjdtKczGlBu4SPG9
+X-Gm-Message-State: AOJu0YzIFWg1fLg96a5DwmhZ1rO1IqfDObq+n4FtnUOpg+7OHk79NL/V
+	EtVmbwGPEmVUqEAcyziWeFnZ0xyMx9NJxFa6Aove7/+yZnoR9+SFys1psx5KQK/Q15gQAfjkEBC
+	TD2Jx531+OkHwqiAwuQmfjlJ5wxM=
+X-Google-Smtp-Source: AGHT+IFEAo7JXInCUEDzKmhn9ExTdgovAuIzNcL9oD/qeIwarBnvFXlJaxHzph8F5vyLFGOC6JR5iidAyppUu3Me2hs=
+X-Received: by 2002:a05:6512:684:b0:51c:590f:4305 with SMTP id
+ 2adb3069b0e04-5220e3736c2mr404774e87.8.1715310385488; Thu, 09 May 2024
+ 20:06:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <7a292357-8515-4ea6-b4d1-6ca6fa407e72@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- canpemm500002.china.huawei.com (7.192.104.244)
+References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
+ <20240509023937.1090421-3-zhaoyang.huang@unisoc.com> <ZjzEH5fFGHgnqbLj@infradead.org>
+In-Reply-To: <ZjzEH5fFGHgnqbLj@infradead.org>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Fri, 10 May 2024 11:06:14 +0800
+Message-ID: <CAGWkznG4xodugVdbKZCn99UiQT5Z3oHYLhTsvOCoe_VNxUVvnw@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/9 23:34, Jane Chu wrote:
-> 
-> On 5/9/2024 1:30 AM, Miaohe Lin wrote:
->> On 2024/5/9 1:45, Jane Chu wrote:
->>> On 5/8/2024 1:08 AM, Miaohe Lin wrote:
->>>
->>>> On 2024/5/7 4:26, Jane Chu wrote:
->>>>> On 5/5/2024 12:00 AM, Miaohe Lin wrote:
->>>>>
->>>>>> On 2024/5/2 7:24, Jane Chu wrote:
->>>>>>> When handle hwpoison in a GUP longterm pin'ed thp page,
->>>>>>> try_to_split_thp_page() will fail. And at this point, there is little else
->>>>>>> the kernel could do except sending a SIGBUS to the user process, thus
->>>>>>> give it a chance to recover.
->>>>>>>
->>>>>>> Signed-off-by: Jane Chu <jane.chu@oracle.com>
->>>>>> Thanks for your patch. Some comments below.
->>>>>>
->>>>>>> ---
->>>>>>>     mm/memory-failure.c | 36 ++++++++++++++++++++++++++++++++++++
->>>>>>>     1 file changed, 36 insertions(+)
->>>>>>>
->>>>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>>>>> index 7fcf182abb96..67f4d24a98e7 100644
->>>>>>> --- a/mm/memory-failure.c
->>>>>>> +++ b/mm/memory-failure.c
->>>>>>> @@ -2168,6 +2168,37 @@ static int memory_failure_dev_pagemap(unsigned long pfn, int flags,
->>>>>>>         return rc;
->>>>>>>     }
->>>>>>>     +/*
->>>>>>> + * The calling condition is as such: thp split failed, page might have
->>>>>>> + * been GUP longterm pinned, not much can be done for recovery.
->>>>>>> + * But a SIGBUS should be delivered with vaddr provided so that the user
->>>>>>> + * application has a chance to recover. Also, application processes'
->>>>>>> + * election for MCE early killed will be honored.
->>>>>>> + */
->>>>>>> +static int kill_procs_now(struct page *p, unsigned long pfn, int flags,
->>>>>>> +            struct page *hpage)
->>>>>>> +{
->>>>>>> +    struct folio *folio = page_folio(hpage);
->>>>>>> +    LIST_HEAD(tokill);
->>>>>>> +    int res = -EHWPOISON;
->>>>>>> +
->>>>>>> +    /* deal with user pages only */
->>>>>>> +    if (PageReserved(p) || PageSlab(p) || PageTable(p) || PageOffline(p))
->>>>>>> +        res = -EBUSY;
->>>>>>> +    if (!(PageLRU(hpage) || PageHuge(p)))
->>>>>>> +        res = -EBUSY;
->>>>>> Above checks seems unneeded. We already know it's thp?
->>>>> Agreed.
->>>>>
->>>>> I  lifted these checks from hwpoison_user_mapping() with a hope to make kill_procs_now() more generic,
->>>>>
->>>>> such as, potentially replacing kill_accessing_processes() for re-accessing hwpoisoned page.
->>>>>
->>>>> But I backed out at last, due to concerns that my tests might not have covered sufficient number of scenarios.
->>>>>
->>>>>>> +
->>>>>>> +    if (res == -EHWPOISON) {
->>>>>>> +        collect_procs(folio, p, &tokill, flags & MF_ACTION_REQUIRED);
->>>>>>> +        kill_procs(&tokill, true, pfn, flags);
->>>>>>> +    }
->>>>>>> +
->>>>>>> +    if (flags & MF_COUNT_INCREASED)
->>>>>>> +        put_page(p);
->>>>>> This if block is broken. put_page() has been done when try_to_split_thp_page() fails?
->>>>> put_page() has not been done if try_to_split_thp_page() fails, and I think it should.
->>>> In try_to_split_thp_page(), if split_huge_page fails, i.e. ret != 0, put_page() is called. See below:
->>>>
->>>> static int try_to_split_thp_page(struct page *page)
->>>> {
->>>>      int ret;
->>>>
->>>>      lock_page(page);
->>>>      ret = split_huge_page(page);
->>>>      unlock_page(page);
->>>>
->>>>      if (unlikely(ret))
->>>>          put_page(page);
->>>>      ^^^^^^^^^^^^^^^^^^^^^^^
->>>>      return ret;
->>>> }
->>>>
->>>> Or am I miss something?
->>> I think you caught a bug in my code, thanks!
->>>
->>> How about moving put_page() outside try_to_split_thp_page() ?
->> If you want to send SIGBUS in the event of thp split fail, it might be required to do so.
->> I think kill_procs_now() needs extra thp refcnt to do its work.
-> 
-> Agreed.  I added an boolean to try_to_split_thp_page(),the boolean indicates whether to put_page().
+On Thu, May 9, 2024 at 8:40=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
+> wrote:
+>
+> > +     unsigned long budgt =3D inode->i_sb->s_bdev ?
+> > +                     blk_throttle_budgt(inode->i_sb->s_bdev) : 0;
+>
+> The readahead code is used for all file systems, you can't just call
+> into block layer code here.
+>
+ok. I would like to know any suggestions on introducing throttle
+budget control into readahead which actually works as a negative
+feedback path. IMO, negative feedback is a good methodology which has
+been used in scheduler(EAS) and thermal control(IPA) and
+memory(MGLRU). I would like to suggest to have a try on have it work
+cross the boundary of memory and block layer.
 
-IMHO, it might be too complicated to add an extra boolean to indicate whether to put_page(). It might be
-more straightforward to always put_page outside try_to_split_thp_page?
-Thanks.
-.
-
+vfs_read / page fault
+|
+readahead  <---------|
+|                               |
+aops->readpages    |
+|                               |
+block_layer------------
 
