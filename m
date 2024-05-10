@@ -1,148 +1,429 @@
-Return-Path: <linux-kernel+bounces-176032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FBC8C28F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:53:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0562E8C28FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 18:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 777B61C225A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:53:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AF13B23D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 16:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDB91798C;
-	Fri, 10 May 2024 16:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2B818030;
+	Fri, 10 May 2024 16:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="CpeLNlie"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q/cVrIeY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079631429A;
-	Fri, 10 May 2024 16:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D65C17548
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715359980; cv=none; b=DmGDD0ZJPUixzs9L1snRpWttTtrDvzac0CUqMzT8xsWQjxHHDy0a2lsKIc296sHCTC0NH8NXm7YFDDjjFBoBZEvFSMcXjv+Wu8nBj2jZaXLiIvEwgB7dvk/LQ/F4Bal69VRwIhcSNlZ91oXqcbS6BBVLjnf7TRof3y9L+vFmxy0=
+	t=1715360266; cv=none; b=Lj83SPr2swooYyciclpo6MUzUzPj7oVoOvCKGJOshcQPzJgv0DnIbkV7/AqRPc+hhYOHiPwq7OdKZTgFRAm91b8e1Zgxdb5RxQkm8n/neKbV+yX7XpHbYYaYZygPPdC4RmGGMacPfkPmXI8paPH6WHNkYffKg+jEI5AZIBZLtEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715359980; c=relaxed/simple;
-	bh=wobM+EUBnTvnR3c74kJs6/+/i326MO182y/6299O00s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N9ZP90/Tk1aeg8EA70OaNVUdGSVdLPC48GvhjnLd9n4Fp2/cuQJkKM3z/qpyaXUoKXA7OR3reM+DUxHxRcB1+0DpX8BHYcl7rch+ZszzSJuEPSopv2J7GblGXQNlF/wZk39mF6b/cPLppfgc4CBD3wdJm+hwhvxAhu271PVBNQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=CpeLNlie; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1715359963; x=1715964763; i=w_armin@gmx.de;
-	bh=mhQkjxX4w4Mf8leWb3/CRafMDhGUNfdMTpC/gKigdVs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CpeLNlieKIKBy+RC7bHVnYTvjxkaEwilqq14lnD8zAGJDvhsjFj0pfFPlCZDC0jJ
-	 TC1U4g66lFDNRzBwj+V45eAj8MFxtI3wV7Y/v4pZvdWy/JddpXGhtvomwQ7ttRC7S
-	 NcJUJllFJfMRGzTFpDpW8x+RxMCj4PxYITHVwas8xbrKWit+gl05akzS0xc1ZxCcW
-	 NXPYKu5sms4dizQfBkrdH6RCFe96ybVfr+AJkfLzRaAykUOFiGfrQfUBVsaE2avvD
-	 yGVTo3zWR34QWicWJYggT55V2/Tx6ExdkcPDB4PVrJz6JDnOylLHzGk55FBW84BKg
-	 4nBYbzBUyM/l7UqMDQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mof9P-1sPiDK0iXB-00o0FB; Fri, 10
- May 2024 18:52:43 +0200
-Message-ID: <568291fc-fd79-4f08-9eb7-aed7f5a32345@gmx.de>
-Date: Fri, 10 May 2024 18:52:41 +0200
+	s=arc-20240116; t=1715360266; c=relaxed/simple;
+	bh=hwePChklJEl36IhwVADIHL8Cj67wO7qs0V1bQB+udz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kzmiKwy7N42Rq9UNMVXhPiABXz0uQHpXvh6WfwutX0u7v5acMUM4zOJkuUUMWpO3YwepoTWeG2lHcKPATgYKbrvaPl5ENGpeJ7BccdRAkyEMK8cfI7BT9JjTcjckOcSnpINXX5D0D4TgEEO21iaEGYL4A8NJfu8N0y0fLkR6CkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q/cVrIeY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715360261;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fVKx385pzhtCTZ1An9PUMKGEfU4EWzsKCOtQMS5AmwM=;
+	b=Q/cVrIeYUnto1shDbgPSQ2rLe9pogN7EsffB25v+/EV5WM+5Xb75wssRbMChUlbO0rSfj8
+	4Sif/fha0CdzYjZ57ps1Sbq6RKe41X+rlHLCIATWzJtIDwHWUvro1brbSJI+7xMebS9M2o
+	DiG13rwysHARdkf94cLYVch1PZLUe8g=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-364-AbxWL7aTOmmKpKdKKJfzRg-1; Fri, 10 May 2024 12:57:34 -0400
+X-MC-Unique: AbxWL7aTOmmKpKdKKJfzRg-1
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1ba5714efso63115539f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 09:57:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715360253; x=1715965053;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fVKx385pzhtCTZ1An9PUMKGEfU4EWzsKCOtQMS5AmwM=;
+        b=J7RkRQIttrDz/Kfc41B84nyI0iLaF0IO1E81VGHr/SF153DplY/jZ6hjGPnsIDlLMj
+         3zNFBifGTfVvlHEz9a5cnrQUNcBgirjhUAN3MnFuCRKKjC8E6jeOY4JBqBZjLcgns6Ik
+         6CDLs99jbJ3H92Xu9bXK4y97JnbMlLg9zDnm22GKWGJaXxiZ/voGSMW0772S4ziesdyz
+         COO/faME/IFGzaXxELtHI7u6STdQfwlOPoc4wRSigZ2/lo9CycNjuRoTobeUo1Qt0j2P
+         btiQo0jturNYq77nDM3F9sMUCTdXE1zDV6l6d01qCjxwkP5sNEh5Uo6J3ssLaufnxW/Q
+         YREg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ+khUeJ13gW2iPqLVDkGdeeOwDg3ogX0oPz/UuZYouCZkgCjkubq0S4S0XjssrTTjzYVRdjUu0c+Dz9weKDC7T5YhqGyPzhWxkeri
+X-Gm-Message-State: AOJu0YwOBA5s2XPVObC6ibMDGCo6/9HLuVBNF1CCqooXyCNVasOeTtin
+	s4KfC2HWzBMEsU7GaHTLZH7Y5qtGZ5jCYzMUb3ZwxLTa+oyp7LZMI0s68ZUOQDC4cUYE3EuIngc
+	YcD4oDHb+TTgmUTVpqx+ZRyWfGNCRKmbar5IDp/xi/A2DP+oBwmkFaLHeBgKpkA==
+X-Received: by 2002:a6b:d90d:0:b0:7e1:c17d:d3c0 with SMTP id ca18e2360f4ac-7e1c17dd436mr89014239f.8.1715360253162;
+        Fri, 10 May 2024 09:57:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGMon+t3cyHeP+eOa5osZa69R66FFmhi5XyHknEh0/6queVz7q5jBAl/wrhAprTc/1U4wxEw==
+X-Received: by 2002:a6b:d90d:0:b0:7e1:c17d:d3c0 with SMTP id ca18e2360f4ac-7e1c17dd436mr89011239f.8.1715360252730;
+        Fri, 10 May 2024 09:57:32 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-7e1ba9bf8c7sm36315439f.20.2024.05.10.09.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 09:57:32 -0700 (PDT)
+Date: Fri, 10 May 2024 10:57:28 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+ <jgg@nvidia.com>, <kevin.tian@intel.com>, <iommu@lists.linux.dev>,
+ <pbonzini@redhat.com>, <seanjc@google.com>, <dave.hansen@linux.intel.com>,
+ <luto@kernel.org>, <peterz@infradead.org>, <tglx@linutronix.de>,
+ <mingo@redhat.com>, <bp@alien8.de>, <hpa@zytor.com>, <corbet@lwn.net>,
+ <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
+ <baolu.lu@linux.intel.com>, <yi.l.liu@intel.com>
+Subject: Re: [PATCH 4/5] vfio/type1: Flush CPU caches on DMA pages in
+ non-coherent domains
+Message-ID: <20240510105728.76d97bbb.alex.williamson@redhat.com>
+In-Reply-To: <Zj33cUe7HYOIfj5N@yzhao56-desk.sh.intel.com>
+References: <20240507061802.20184-1-yan.y.zhao@intel.com>
+	<20240507062138.20465-1-yan.y.zhao@intel.com>
+	<20240509121049.58238a6f.alex.williamson@redhat.com>
+	<Zj33cUe7HYOIfj5N@yzhao56-desk.sh.intel.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] ACPI: EC: Install address space handler at the
- namespace root
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux ACPI <linux-acpi@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>
-References: <5787281.DvuYhMxLoT@kreacher> <4926735.31r3eYUQgx@kreacher>
- <ac04c433-b0ac-4b82-b8eb-98ac16f872d8@gmx.de>
- <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CAJZ5v0g_NjGHRvhm-N5vQFnOsqnxExSq99v8n_B_6ANoaCga0w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:65zII5bXn7iGnNlKowCzVpQpphVdt6/gLiy+9vE9bdqUagLeE1+
- 8DYZyTLyqHq+vPT6WDRAwUdkfBRjzNzBuFl/y5BJgEC/asgrKEx1Zqp0VDYaosVcjneCsb3
- AYnkGLG6PzXyrU3mbUdN8dbeOE5iuVaMx+jJ7SAokboSK6CADSsFNPPjHmLu7jE0GG6YWbS
- BKtIY333VN27THAkvZbEA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:MxWBLCHTiOE=;zivxnuFUWIO8ZckWjLUWROWykZ7
- IviydntdKeRc4kvo42JvpZniPyQ3yS1z09840MYgFJLdbIP1Mg6AVJxPCw7aqd9yhU+WOtdD5
- /mhk2FSOTEhJTRyRc+U3BoUbKhcZ1IAqtcW/8GzDLOtVgfM5ieRcFFfP1phuT6G5Cb0X9NyVp
- iYiFFlTdhO+ZubE4uVRnFLTkOZ+VfcmFOJBl1hjoG3mDO1/ZOzcD10eNuvrYzmTIePKqczDkI
- wj5AnqXkdGSFqisiGUvdVphQBAkmCAeU/s8kfc1LRDOEIh+dTE//S7gvTkO4dkPGyEW0SSqJN
- 5BZUBlZobNkWKK9fcH1XC5cCrfu6U7BtrSad7TYKf5sE0dS8KCdJPE5jMxUN+BjJz24xwsww2
- 6u0fUBoDXhuh0XxSJxmokVgASvGKwPm06yECSKkvvGcoDcKQ23ygKoKrPSPh7K/13ijtP9mJb
- k7KgkuASAH9hvG7H4b4t/SM8Rikip6Sqe5NJHuypG/UL07aTJFbEkcLqCv3jxFexc/knej5Gx
- Z1C7LkheHRnalqP0JLXC/5jKgFcr3SVCMx59I26vKy8pCME/h+88IgGRyYLnKWRi1f8BAvuYL
- YnqVkswQOKtT+V4EZlaNA85DcijA5uU0njnpXOMr/lQbuwhPjBxJsBUGxDkatSZNrYxJszkL6
- 9aODojqTgiw3j5UFnub+M/hyEMEkSS8yikQx9y8ivwJ++oeBMqr2hSfmWk51TVq4dZT5A5msl
- HjmM/ZYI8Vr8hfgSVhxPtc/C8ZTSvwPy3B+bjS1PFOz1C+HHSWfs0egr9h8AU+G3gpdq1JrvD
- MuBjemZsfc5oAjYpKpWqHHXLVVysmNLrZdh4XdSizzORM=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am 10.05.24 um 18:41 schrieb Rafael J. Wysocki:
+On Fri, 10 May 2024 18:31:13 +0800
+Yan Zhao <yan.y.zhao@intel.com> wrote:
 
-> On Fri, May 10, 2024 at 6:10=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrot=
-e:
->> Am 10.05.24 um 16:03 schrieb Rafael J. Wysocki:
->>
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> It is reported that _DSM evaluation fails in ucsi_acpi_dsm() on Lenovo
->>> IdeaPad Pro 5 due to a missing address space handler for the EC addres=
-s
->>> space:
->>>
->>>    ACPI Error: No handler for Region [ECSI] (000000007b8176ee) [Embedd=
-edControl] (20230628/evregion-130)
->>>
->>> This happens because the EC driver only registers the EC address space
->>> handler for operation regions defined in the EC device scope of the
->>> ACPI namespace while the operation region being accessed by the _DSM
->>> in question is located beyond that scope.
->>>
->>> To address this, modify the ACPI EC driver to install the EC address
->>> space handler at the root of the ACPI namespace.
->>>
->>> Note that this change is consistent with some examples in the ACPI
->>> specification in which EC operation regions located outside the EC
->>> device scope are used (for example, see Section 9.17.15 in ACPI 6.5),
->>> so the current behavior of the EC driver is arguably questionable.
->> Hi,
->>
->> the patch itself looks good to me, but i wonder what happens if multipl=
-e
->> ACPI EC devices are present. How would we handle such a situation?
-> I'm wondering if this is a theoretical question or do you have any
-> existing or planned systems in mind?
->
-> ec_read(), ec_write() and ec_transaction() use only the first EC that
-> has been found anyway.
+> On Thu, May 09, 2024 at 12:10:49PM -0600, Alex Williamson wrote:
+> > On Tue,  7 May 2024 14:21:38 +0800
+> > Yan Zhao <yan.y.zhao@intel.com> wrote:  
+> ... 
+> > >  drivers/vfio/vfio_iommu_type1.c | 51 +++++++++++++++++++++++++++++++++
+> > >  1 file changed, 51 insertions(+)
+> > > 
+> > > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > > index b5c15fe8f9fc..ce873f4220bf 100644
+> > > --- a/drivers/vfio/vfio_iommu_type1.c
+> > > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > > @@ -74,6 +74,7 @@ struct vfio_iommu {
+> > >  	bool			v2;
+> > >  	bool			nesting;
+> > >  	bool			dirty_page_tracking;
+> > > +	bool			has_noncoherent_domain;
+> > >  	struct list_head	emulated_iommu_groups;
+> > >  };
+> > >  
+> > > @@ -99,6 +100,7 @@ struct vfio_dma {
+> > >  	unsigned long		*bitmap;
+> > >  	struct mm_struct	*mm;
+> > >  	size_t			locked_vm;
+> > > +	bool			cache_flush_required; /* For noncoherent domain */  
+> > 
+> > Poor packing, minimally this should be grouped with the other bools in
+> > the structure, longer term they should likely all be converted to
+> > bit fields.  
+> Yes. Will do!
+> 
+> >   
+> > >  };
+> > >  
+> > >  struct vfio_batch {
+> > > @@ -716,6 +718,9 @@ static long vfio_unpin_pages_remote(struct vfio_dma *dma, dma_addr_t iova,
+> > >  	long unlocked = 0, locked = 0;
+> > >  	long i;
+> > >  
+> > > +	if (dma->cache_flush_required)
+> > > +		arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT, npage << PAGE_SHIFT);
+> > > +
+> > >  	for (i = 0; i < npage; i++, iova += PAGE_SIZE) {
+> > >  		if (put_pfn(pfn++, dma->prot)) {
+> > >  			unlocked++;
+> > > @@ -1099,6 +1104,8 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> > >  					    &iotlb_gather);
+> > >  	}
+> > >  
+> > > +	dma->cache_flush_required = false;
+> > > +
+> > >  	if (do_accounting) {
+> > >  		vfio_lock_acct(dma, -unlocked, true);
+> > >  		return 0;
+> > > @@ -1120,6 +1127,21 @@ static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
+> > >  	iommu->dma_avail++;
+> > >  }
+> > >  
+> > > +static void vfio_update_noncoherent_domain_state(struct vfio_iommu *iommu)
+> > > +{
+> > > +	struct vfio_domain *domain;
+> > > +	bool has_noncoherent = false;
+> > > +
+> > > +	list_for_each_entry(domain, &iommu->domain_list, next) {
+> > > +		if (domain->enforce_cache_coherency)
+> > > +			continue;
+> > > +
+> > > +		has_noncoherent = true;
+> > > +		break;
+> > > +	}
+> > > +	iommu->has_noncoherent_domain = has_noncoherent;
+> > > +}  
+> > 
+> > This should be merged with vfio_domains_have_enforce_cache_coherency()
+> > and the VFIO_DMA_CC_IOMMU extension (if we keep it, see below).  
+> Will convert it to a counter and do the merge.
+> Thanks for pointing it out!
+> 
+> >   
+> > > +
+> > >  static void vfio_update_pgsize_bitmap(struct vfio_iommu *iommu)
+> > >  {
+> > >  	struct vfio_domain *domain;
+> > > @@ -1455,6 +1477,12 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> > >  
+> > >  	vfio_batch_init(&batch);
+> > >  
+> > > +	/*
+> > > +	 * Record necessity to flush CPU cache to make sure CPU cache is flushed
+> > > +	 * for both pin & map and unmap & unpin (for unwind) paths.
+> > > +	 */
+> > > +	dma->cache_flush_required = iommu->has_noncoherent_domain;
+> > > +
+> > >  	while (size) {
+> > >  		/* Pin a contiguous chunk of memory */
+> > >  		npage = vfio_pin_pages_remote(dma, vaddr + dma->size,
+> > > @@ -1466,6 +1494,10 @@ static int vfio_pin_map_dma(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> > >  			break;
+> > >  		}
+> > >  
+> > > +		if (dma->cache_flush_required)
+> > > +			arch_clean_nonsnoop_dma(pfn << PAGE_SHIFT,
+> > > +						npage << PAGE_SHIFT);
+> > > +
+> > >  		/* Map it! */
+> > >  		ret = vfio_iommu_map(iommu, iova + dma->size, pfn, npage,
+> > >  				     dma->prot);
+> > > @@ -1683,9 +1715,14 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+> > >  	for (; n; n = rb_next(n)) {
+> > >  		struct vfio_dma *dma;
+> > >  		dma_addr_t iova;
+> > > +		bool cache_flush_required;
+> > >  
+> > >  		dma = rb_entry(n, struct vfio_dma, node);
+> > >  		iova = dma->iova;
+> > > +		cache_flush_required = !domain->enforce_cache_coherency &&
+> > > +				       !dma->cache_flush_required;
+> > > +		if (cache_flush_required)
+> > > +			dma->cache_flush_required = true;  
+> > 
+> > The variable name here isn't accurate and the logic is confusing.  If
+> > the domain does not enforce coherency and the mapping is not tagged as
+> > requiring a cache flush, then we need to mark the mapping as requiring
+> > a cache flush.  So the variable state is something more akin to
+> > set_cache_flush_required.  But all we're saving with this is a
+> > redundant set if the mapping is already tagged as requiring a cache
+> > flush, so it could really be simplified to:
+> > 
+> > 		dma->cache_flush_required = !domain->enforce_cache_coherency;  
+> Sorry about the confusion.
+> 
+> If dma->cache_flush_required is set to true by a domain not enforcing cache
+> coherency, we hope it will not be reset to false by a later attaching to domain 
+> enforcing cache coherency due to the lazily flushing design.
 
-Its a theoretical question, i do not know of any systems which have more t=
-han
-one ACPI EC device.
+Right, ok, the vfio_dma objects are shared between domains so we never
+want to set 'dma->cache_flush_required = false' due to the addition of a
+'domain->enforce_cache_coherent == true'.  So this could be:
 
-This patch would prevent any ACPI ECs other than the first one from probin=
-g,
-since they would fail to register their address space handler.
-I am just curious if/how we want to handle such situations.
+	if (!dma->cache_flush_required)
+		dma->cache_flush_required = !domain->enforce_cache_coherency;
 
-Thanks,
-Armin Wolf
+> > It might add more clarity to just name the mapping flag
+> > dma->mapped_noncoherent.  
+> 
+> The dma->cache_flush_required is to mark whether pages in a vfio_dma requires
+> cache flush in the subsequence mapping into the first non-coherent domain
+> and page unpinning.
+
+How do we arrive at a sequence where we have dma->cache_flush_required
+that isn't the result of being mapped into a domain with
+!domain->enforce_cache_coherency?
+
+It seems to me that we only get 'dma->cache_flush_required == true' as
+a result of being mapped into a 'domain->enforce_cache_coherency ==
+false' domain.  In that case the flush-on-map is handled at the time
+we're setting dma->cache_flush_required and what we're actually
+tracking with the flag is that the dma object has been mapped into a
+noncoherent domain.
+
+> So, mapped_noncoherent may not be accurate.
+> Do you think it's better to put a comment for explanation? 
+> 
+> struct vfio_dma {
+>         ...    
+>         bool                    iommu_mapped;
+>         bool                    lock_cap;       /* capable(CAP_IPC_LOCK) */
+>         bool                    vaddr_invalid;
+>         /*
+>          *  Mark whether it is required to flush CPU caches when mapping pages
+>          *  of the vfio_dma to the first non-coherent domain and when unpinning
+>          *  pages of the vfio_dma
+>          */
+>         bool                    cache_flush_required;
+>         ...    
+> };
+> >   
+> > >  
+> > >  		while (iova < dma->iova + dma->size) {
+> > >  			phys_addr_t phys;
+> > > @@ -1737,6 +1774,9 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+> > >  				size = npage << PAGE_SHIFT;
+> > >  			}
+> > >  
+> > > +			if (cache_flush_required)
+> > > +				arch_clean_nonsnoop_dma(phys, size);
+> > > +  
+> > 
+> > I agree with others as well that this arch callback should be named
+> > something relative to the cache-flush/write-back operation that it
+> > actually performs instead of the overall reason for us requiring it.
+> >  
+> Ok. If there are no objections, I'll rename it to arch_flush_cache_phys() as
+> suggested by Kevin.
+
+Yes, better.
+
+> > >  			ret = iommu_map(domain->domain, iova, phys, size,
+> > >  					dma->prot | IOMMU_CACHE,
+> > >  					GFP_KERNEL_ACCOUNT);
+> > > @@ -1801,6 +1841,7 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
+> > >  			vfio_unpin_pages_remote(dma, iova, phys >> PAGE_SHIFT,
+> > >  						size >> PAGE_SHIFT, true);
+> > >  		}
+> > > +		dma->cache_flush_required = false;
+> > >  	}
+> > >  
+> > >  	vfio_batch_fini(&batch);
+> > > @@ -1828,6 +1869,9 @@ static void vfio_test_domain_fgsp(struct vfio_domain *domain, struct list_head *
+> > >  	if (!pages)
+> > >  		return;
+> > >  
+> > > +	if (!domain->enforce_cache_coherency)
+> > > +		arch_clean_nonsnoop_dma(page_to_phys(pages), PAGE_SIZE * 2);
+> > > +
+> > >  	list_for_each_entry(region, regions, list) {
+> > >  		start = ALIGN(region->start, PAGE_SIZE * 2);
+> > >  		if (start >= region->end || (region->end - start < PAGE_SIZE * 2))
+> > > @@ -1847,6 +1891,9 @@ static void vfio_test_domain_fgsp(struct vfio_domain *domain, struct list_head *
+> > >  		break;
+> > >  	}
+> > >  
+> > > +	if (!domain->enforce_cache_coherency)
+> > > +		arch_clean_nonsnoop_dma(page_to_phys(pages), PAGE_SIZE * 2);
+> > > +  
+> > 
+> > Seems like this use case isn't subject to the unmap aspect since these
+> > are kernel allocated and freed pages rather than userspace pages.
+> > There's not an "ongoing use of the page" concern.
+> > 
+> > The window of opportunity for a device to discover and exploit the
+> > mapping side issue appears almost impossibly small.
+> >  
+> The concern is for a malicious device attempting DMAs automatically.
+> Do you think this concern is valid?
+> As there're only extra flushes for 4 pages, what about keeping it for safety?
+
+Userspace doesn't know anything about these mappings, so to exploit
+them the device would somehow need to discover and interact with the
+mapping in the split second that the mapping exists, without exposing
+itself with mapping faults at the IOMMU.
+
+I don't mind keeping the flush before map so that infinitesimal gap
+where previous data in physical memory exposed to the device is closed,
+but I have a much harder time seeing that the flush on unmap to
+synchronize physical memory is required.
+
+For example, the potential KSM use case doesn't exist since the pages
+are not owned by the user.  Any subsequent use of the pages would be
+subject to the same condition we assumed after allocation, where the
+physical data may be inconsistent with the cached data.  It's easy to
+flush 2 pages, but I think it obscures the function of the flush if we
+can't articulate the value in this case.
+
+
+> > >  	__free_pages(pages, order);
+> > >  }
+> > >  
+> > > @@ -2308,6 +2355,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
+> > >  
+> > >  	list_add(&domain->next, &iommu->domain_list);
+> > >  	vfio_update_pgsize_bitmap(iommu);
+> > > +	if (!domain->enforce_cache_coherency)
+> > > +		vfio_update_noncoherent_domain_state(iommu);  
+> > 
+> > Why isn't this simply:
+> > 
+> > 	if (!domain->enforce_cache_coherency)
+> > 		iommu->has_noncoherent_domain = true;  
+> Yes, it's simpler during attach.
+> 
+> > Or maybe:
+> > 
+> > 	if (!domain->enforce_cache_coherency)
+> > 		iommu->noncoherent_domains++;  
+> Yes, this counter is better.
+> I previously thought a bool can save some space.
+> 
+> > >  done:
+> > >  	/* Delete the old one and insert new iova list */
+> > >  	vfio_iommu_iova_insert_copy(iommu, &iova_copy);
+> > > @@ -2508,6 +2557,8 @@ static void vfio_iommu_type1_detach_group(void *iommu_data,
+> > >  			}
+> > >  			iommu_domain_free(domain->domain);
+> > >  			list_del(&domain->next);
+> > > +			if (!domain->enforce_cache_coherency)
+> > > +				vfio_update_noncoherent_domain_state(iommu);  
+> > 
+> > If we were to just track the number of noncoherent domains, this could
+> > simply be iommu->noncoherent_domains-- and VFIO_DMA_CC_DMA could be:
+> > 
+> > 	return iommu->noncoherent_domains ? 1 : 0;
+> > 
+> > Maybe there should be wrappers for list_add() and list_del() relative
+> > to the iommu domain list to make it just be a counter.  Thanks,  
+> 
+> Do you think we can skip the "iommu->noncoherent_domains--" in
+> vfio_iommu_type1_release() when iommu is about to be freed.
+> 
+> Asking that is also because it's hard for me to find a good name for the wrapper
+> around list_del().  :)
+
+vfio_iommu_link_domain(), vfio_iommu_unlink_domain()?
+
+> 
+> It follows vfio_release_domain() in vfio_iommu_type1_release(), but not in
+> vfio_iommu_type1_detach_group().
+
+I'm not sure I understand the concern here, detach_group is performed
+under the iommu->lock where the value of iommu->noncohernet_domains is
+only guaranteed while this lock is held.  In the release callback the
+iommu->lock is not held, but we have no external users at this point.
+It's not strictly required that we decrement each domain, but it's also
+not a bad sanity test that iommu->noncoherent_domains should be zero
+after unlinking the domains.  Thanks,
+
+Alex
+ 
+> > >  			kfree(domain);
+> > >  			vfio_iommu_aper_expand(iommu,
+> > > &iova_copy); vfio_update_pgsize_bitmap(iommu);  
+> >   
+> 
 
 
