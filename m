@@ -1,134 +1,160 @@
-Return-Path: <linux-kernel+bounces-175829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-175830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A338C25CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:31:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D0A18C25D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 15:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364D31F25DF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90B5A1C217D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 May 2024 13:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4035C12C48E;
-	Fri, 10 May 2024 13:31:50 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8132D12C467;
+	Fri, 10 May 2024 13:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LWA3yB3n";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="LWA3yB3n"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA173127E18;
-	Fri, 10 May 2024 13:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88D75339E
+	for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 13:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715347909; cv=none; b=XbBiuOYDBvftRKYTEsQM7xrRtcR+zcibP8keAHltVmx5Jf/k9QSRHgXPzqrQ8rVL/KlM4u3AWZd0HyB1TlA69PsTbKIAdp7lDM98vdtutHMUQiRvnjP0YhZeoflpxJX7wiBgbL2dIsxqQCfZiHrZZOmKrFdFa8nhCchOx7X9N2s=
+	t=1715348019; cv=none; b=fUotG4ksyNXOGoOcvw2h4Mvh1eUF8COVY4apg5/cF0oWHZRPEhf+1zqRG3VvDDYm9fgOm4LREO/7EJLB+rXfY6NjkiMj3q6ONMaZO3fCuq7EQ9tSW9QIswJcGAHvXl4OPZF7GkPbGswxcn/ATqr16bH91mpu2P/AdzD9JGuD254=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715347909; c=relaxed/simple;
-	bh=QDeUIilVTn4GdjQ9ikQzbhB+jiyiep3X6WCQDzncYZI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VWHJSuyLO1MdCu0b3cKrfeWJwIMB0gC4PKH+Qi/AjqVPm1m7JpFC1JwTnr0lD2pFtrgs/Rv0LGkDvrdPhr49tQ0LxoMa5JKJIBvp2klOgSO1mi22SS9OQq44YG9C3W93xYOXRr4RFMSskk1eHFsfDcQBjWWw0lVB6ppJ/mbpT0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VbV7z4xFKz6K5ks;
-	Fri, 10 May 2024 21:28:31 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id C21D61400D4;
-	Fri, 10 May 2024 21:31:43 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 10 May
- 2024 14:31:42 +0100
-Date: Fri, 10 May 2024 14:31:41 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Borislav Petkov <bp@alien8.de>
-CC: Shiju Jose <shiju.jose@huawei.com>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
-	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
-	<ira.weiny@intel.com>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "leo.duran@amd.com"
-	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>, "jiaqiyan@google.com"
-	<jiaqiyan@google.com>, "tony.luck@intel.com" <tony.luck@intel.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
-	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "mike.malvestuto@intel.com"
-	<mike.malvestuto@intel.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
-	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>, wanghuiqiang
-	<wanghuiqiang@huawei.com>, Linuxarm <linuxarm@huawei.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Jean Delvare
-	<jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, Dmitry Torokhov
-	<dmitry.torokhov@gmail.com>
-Subject: Re: [RFC PATCH v8 01/10] ras: scrub: Add scrub subsystem
-Message-ID: <20240510143141.000042da@Huawei.com>
-In-Reply-To: <D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
-References: <20240419164720.1765-1-shiju.jose@huawei.com>
-	<20240419164720.1765-2-shiju.jose@huawei.com>
-	<20240425101542.GAZiotThrq7bOE9Ieb@fat_crate.local>
-	<63fdbe26b51f4b7c859bfb30287c8673@huawei.com>
-	<20240506103014.GHZjixNhhFkgkMhDg_@fat_crate.local>
-	<e0ce36eb80054440ab877ccee4e606de@huawei.com>
-	<20240508172002.GGZju0QvNfjB7Xm6qL@fat_crate.local>
-	<4ceb38897d854cc095fca1220d49a4d2@huawei.com>
-	<20240508192546.GHZjvRuvtu0XSJbkmz@fat_crate.local>
-	<20240509101939.0000263a@Huawei.com>
-	<D9511DC1-1566-473A-A426-111BB1F7F9F0@alien8.de>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1715348019; c=relaxed/simple;
+	bh=uDOukQ73ZJHi76qm9+oS4eVsH62iJdBg7hMZoNnyZ58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLPiABk9yeaGUvsPFsgYDPhFqDbkXGCvF+wFNHqAeZKjgz3iCfNph+tCqUfkm7PEVja6v7Ya9patv8kX2pYAIaRAkINeGc8u0kZFHebFnDSxNY9wTAvBgx3mUmzdmzBqGHGTlUFUANWT96hxwafGU6DbyTCztbQnrguJbL3rSTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=LWA3yB3n; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=LWA3yB3n; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A8834670C0;
+	Fri, 10 May 2024 13:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715348009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H7flCeeu/RqHijW2rCZbgRalVKYx9U95MIGkT6wJRF4=;
+	b=LWA3yB3n2h6A9F2zfs3K64ygwUTdGdLCEbzkEnqgEOHn6X/33t/f2M427FkntTdPcwULTA
+	TtV8ASS341OFDlmQkyZ9CwiSknvBxIHm2zOk5DeV43IRxOIzHvIwQ9ArLN34SpvWOiiE2z
+	wkCul0JoEamzw6mF/E/vYxPHLaQhqRw=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=LWA3yB3n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715348009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=H7flCeeu/RqHijW2rCZbgRalVKYx9U95MIGkT6wJRF4=;
+	b=LWA3yB3n2h6A9F2zfs3K64ygwUTdGdLCEbzkEnqgEOHn6X/33t/f2M427FkntTdPcwULTA
+	TtV8ASS341OFDlmQkyZ9CwiSknvBxIHm2zOk5DeV43IRxOIzHvIwQ9ArLN34SpvWOiiE2z
+	wkCul0JoEamzw6mF/E/vYxPHLaQhqRw=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A3B7139AA;
+	Fri, 10 May 2024 13:33:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bKHNHikiPmZpBwAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Fri, 10 May 2024 13:33:29 +0000
+Date: Fri, 10 May 2024 15:33:28 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rfc 0/9] mm: memcg: separate legacy cgroup v1 code and
+ put under config option
+Message-ID: <Zj4iKJnp5wU6NkCf@tiehlicka>
+References: <20240509034138.2207186-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509034138.2207186-1-roman.gushchin@linux.dev>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A8834670C0
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-
-> How hard is that "jump through hoops" thing anyway?
-
-I'd conservatively estimate 500 lines of duplicated code from the CXL
-subsystem just to handle the setup and discovery of the mailbox, plus
-all the checks needed to establish the device is in a state to reply.
-Also locking or module load ordering constraints because we need
-to ensure mutual exclusion on that mailbox between this module and the CXL
-core. So it would approximately triple the size of this driver to
-check for CXL scrub support. Not to mention hotplug - which could
-possibly be solved with appropriate udev rules to try loading this again
-whenever a CXL memory device gets plugged in.
-
-Alternative would be to make this ras class driver dependent on the CXL
-driver stack running first. Thus if you wanted RAS2 ACPI table support, you'd
-need to load a whole bunch of CXL stuff.
-
-Add another similar driver in future and we get another few 100 lines of code
-or another dependency. To me those numbers make it unsustainable.
-
+On Wed 08-05-24 20:41:29, Roman Gushchin wrote:
+> Cgroups v2 have been around for a while and many users have fully adopted them,
+> so they never use cgroups v1 features and functionality. Yet they have to "pay"
+> for the cgroup v1 support anyway:
+> 1) the kernel binary contains useless cgroup v1 code,
+> 2) some common structures like task_struct and mem_cgroup have never used
+>    cgroup v1-specific members,
+> 3) some code paths have additional checks which are not needed.
 > 
-> You mean it should load so that when booting an allmodconfig kernel there are not enough modules which are loading so lemme load one more. And then I need to go and rmmod them all before I need to do localmodconfig and build a tailored kernel for the machine.
+> Cgroup v1's memory controller has a number of features that are not supported
+> by cgroup v2 and their implementation is pretty much self contained.
+> Most notably, these features are: soft limit reclaim, oom handling in userspace,
+> complicated event notification system, charge migration.
 > 
-> Or is there some other reason to load silly modules, use up resources for no good reason whatsoever and bloat the machine?
+> Cgroup v1-specific code in memcontrol.c is close to 4k lines in size and it's
+> intervened with generic and cgroup v2-specific code. It's a burden on
+> developers and maintainers.
+> 
+> This patchset aims to solve these problems by:
+> 1) moving cgroup v1-specific memcg code to the new mm/memcontrol-v1.c file,
+> 2) putting definitions shared by memcontrol.c and memcontrol-v1.c into the
+>    mm/internal.h header
+> 3) introducing the CONFIG_MEMCG_V1 config option, turned on by default
+> 4) making memcontrol-v1.c to compile only if CONFIG_MEMCG_V1 is set
+> 5) putting unused struct memory_cgroup and task_struct members under
+>    CONFIG_MEMCG_V1 as well.
 
-As Dan, Shiju and I observed (and Shiju tested to be sure we weren't
-getting it wrong), normal setups including your allmodconfig
-build would not even load the driver.  What are we missing?
-
-Jonathan
+This makes sense and I have to admit I didn't think this was so much
+code to move. It will make the code base much esier to follow. I do not
+think we can drop that code anytime soon as there is still quite a lot
+of use of v1 out there. From my experience there is no good reason for
+many other than inertia and those are just waiting for somebody to move
+them to v2. There are some workloads which depend on v1 only features
+and we should discuss what to do about those.
+-- 
+Michal Hocko
+SUSE Labs
 
