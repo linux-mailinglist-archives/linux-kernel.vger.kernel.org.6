@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-176522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01AC8C3121
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E98E8C3124
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AB88B21147
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745B21F217D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338AC55E43;
-	Sat, 11 May 2024 11:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B5655C2A;
+	Sat, 11 May 2024 12:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aay+PLzq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="J6fmmoPZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6358F2F26;
-	Sat, 11 May 2024 11:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4870E53370
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 12:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715428763; cv=none; b=mxvAJWBAcbHZe26vsbPbiD1x9pDwliYIoI0QwWZLoGesk6vRjNm1DlsQ+xaqTF3qb/I8HpJC2Os0s5t4bEQbRS6fGQSbjdS9itgmzBD3NGBvfWKk2zrjUzJLqIcGq/61uPbuSaXf5SxFONqhJ7+m1mQsWqGyNNFoQ4wlLFXnGXc=
+	t=1715429010; cv=none; b=egBXDVkiiEdAw59K6Mnu5+gTlRs75dOWfEnSJflX17l2vmxmC/hk/ptJoPdHUMxVrde784LLhiOd5qBXlVQDnPJRAW2RazSSPOB/3oQ/pN4SB0i8AVrgBm6o7DOG6jYnsB1VIQIO4VQ1MwkfT02ZtbFXSB3yc7ieV+EGL7QJP0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715428763; c=relaxed/simple;
-	bh=ewewQeHMxrtOWqA/HQOi5zrRUH//pG5ayxcyfM2myGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cj49vWK8yl7AYk6FRyWPLtEekCe6tEd/rVOjg8KA4zV1rOiZCceiT/YY2fpGQ4bhie+5eSeFk1lQIupCkCPzk1Ba9bfsQgThJUCvYyl43b535cUUJjF1+oWbbdNh/VnoEl0KLfdgW/n0ep6GKoMdzNg3lJ8Cfrl6T2fbgT6dlwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aay+PLzq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F830C2BBFC;
-	Sat, 11 May 2024 11:59:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715428762;
-	bh=ewewQeHMxrtOWqA/HQOi5zrRUH//pG5ayxcyfM2myGQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aay+PLzqN9AOAKa5kSJmgKxh3pCYgtHWOpK0jF5l3SUAWofElY4pLrThFlW/BPxeq
-	 6Nholz9eM4457oAomxiP61F6J+81IzZnWcB9WroRh4Zwx5CYz1F6UEIJ3+sQT9Ld+c
-	 mf7ZE3US00rSsUTJnrqIkC+lDxFsl00nFjHein2MoEX6AZxToR1kNT0D9aRcAHUeGb
-	 wVS2ms1bq4kafEzgng4ZBLPL6RJKIsENA1SziUGkkCHHv/KKhFwHCa10px3Qq3hLuA
-	 qBJUHdLLz5g/MUp5WmMz9CJ8lsFuc3fr0geKKeDg0ek5Y80giO5FXJEzXauEqVMPR9
-	 Lc1ehBkKWdbXw==
-Date: Sat, 11 May 2024 12:59:10 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, Lars-Peter
- Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Danila Tikhonov <danila@jiaxyga.com>
-Subject: Re: [PATCH v2 1/2] iio: imu: bmi160: add support for bmi120
-Message-ID: <20240511125910.18e874cf@jic23-huawei>
-In-Reply-To: <20240511125436.520e3ff4@jic23-huawei>
-References: <20240504-bmi120-v2-0-3b3ce6e1c3c6@gmail.com>
-	<20240504-bmi120-v2-1-3b3ce6e1c3c6@gmail.com>
-	<CAMknhBFUOUy+TVi+baCN-FoLT8N=G4vOD5CgVgaKzvsu502CDQ@mail.gmail.com>
-	<20240511125436.520e3ff4@jic23-huawei>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715429010; c=relaxed/simple;
+	bh=4ei6JyB9sEad3jWzdL3h33UZe4MpMw6WQVfgiX7aMEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r/slcvbdiAFSp93rJ9jmb9lEUmsO12L5fr38pbNViYDLzBvihOrDzxBMD/w4Mnh+wIeCras141KYj6FLlrfSYMk4BSLdkmCfZPvLG0RRLlpUmkfe6DgEYK5raHqVRogGRm6KMVdwlAnACv/ULo/EjbGvS7fqnWegxIK1Qc5EKfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=J6fmmoPZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174B2C2BBFC;
+	Sat, 11 May 2024 12:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1715429009;
+	bh=4ei6JyB9sEad3jWzdL3h33UZe4MpMw6WQVfgiX7aMEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J6fmmoPZEe/ReoNG8ROrbV1gTiyQxFLRF4zyINbbTCjuxwHhryTrWp+ilsGexw9SX
+	 1RLch2qS27OWz+8WyZ3623TVHsQZOW3dUShB3YlMunxa8uWH7S+RelfyMqr0+0t96i
+	 n3WocTWRNC6suqD5MCHcwgCzSGWkmkDXL2xqzAYI=
+Date: Sat, 11 May 2024 12:59:23 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: CVE-2022-48655: firmware: arm_scmi: Harden accesses to the reset
+ domains
+Message-ID: <2024051148-fervor-aloft-43a3@gregkh>
+References: <2024042859-CVE-2022-48655-5feb@gregkh>
+ <Zj2Qrt6_kJzqA0-S@codewreck.org>
+ <2024051041-resisting-chatroom-32c8@gregkh>
+ <Zj4t4q_w6gqzdvhz@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zj4t4q_w6gqzdvhz@codewreck.org>
 
-
-> >   
-> > > +       }
-> > > +
-> > > +       return -ENODEV;
-> > > +}
-> > > +
-> > >  static int bmi160_chip_init(struct bmi160_data *data, bool use_spi)
-> > >  {
-> > >         int ret;
-> > > @@ -737,12 +753,10 @@ static int bmi160_chip_init(struct bmi160_data *data, bool use_spi)
-> > >                 dev_err(dev, "Error reading chip id\n");
-> > >                 goto disable_regulator;
-> > >         }
-> > > -       if (val != BMI160_CHIP_ID_VAL) {
-> > > -               dev_err(dev, "Wrong chip id, got %x expected %x\n",
-> > > -                       val, BMI160_CHIP_ID_VAL);
-> > > -               ret = -ENODEV;
-> > > -               goto disable_regulator;
-> > > -       }
-> > > +
-> > > +       ret = bmi160_check_chip_id(val);
-> > > +       if (ret)
-> > > +               dev_warn(dev, "Chip id not found: %x\n", val);    
+On Fri, May 10, 2024 at 11:23:30PM +0900, Dominique Martinet wrote:
+> Greg Kroah-Hartman wrote on Fri, May 10, 2024 at 09:55:15AM +0100:
+> > > I can submit an edit as a patch to vulns.git json, but this doesn't seem
+> > > overly important so for now a mail will probably do.
 > > 
-> > This changes the error with probe failure to a warning, but the commit
-> > message doesn't explain why. We always want to know why changes were
-> > made. :-)
-> > 
-> > Should also probably be in a separate patch since changing the
-> > behavior here is a separate change from adding support for a new chip.  
-> True, separate patch would be ideal as maybe someone will backport this change and
-> not the rest.
-
-Given I'd already picked up v3, I added a note on this to the commit rather
-than splitting it.
-
-I doubt anyone will care about dragging in bmi120 IDs along with the relaxation
-of matching if they just want the relaxation.
-
-Jonathan
-
-> >   
-> > >
-> > >         ret = bmi160_set_mode(data, BMI160_ACCEL, true);
-> > >         if (ret)    
-> > 
-> > ...  
+> > the json and mbox files are generated by tools, so patches to them is
+> > not a good idea as they will be overwritten the next time the scripts
+> > are run.
 > 
+> Just let me know what's the most convenient; if mail it is I won't
+> bother :)
 > 
+> > > >From a quick look it would seem it fixes arm_scmi from the addition of
+> > > scmi_domain_reset() in 95a15d80aa0d ("firmware: arm_scmi: Add RESET
+> > > protocol in SCMI v2.0"), which first appeared in v5.4-rc1, and does not
+> > > appear to have been backported to older kernels, so v5.4+ can be added
+> > > as a requirement.
+> > 
+> > We can add a "this is where the problem showed up" if you know it, so
+> > that would be 95a15d80aa0d ("firmware: arm_scmi: Add RESET protocol in
+> > SCMI v2.0"), correct?
+> 
+> Yes; this commit adds the out of bound access.
 
+Great, I'll mark the cve as having that as the "vulnerable" commit id,
+and then re-run the scripts and update the .json file and push it to
+cve.org when I get back to a better network connection.
+
+> > > This means the current 5.4/5.10 trees are affected; the commit doesn't
+> > > backport cleanly because of a trivial context conflict so if that helps
+> > > I can send a couple of stable patch if that helps even if our systems
+> > > are not using arm_scmi (CVEs also don't have any way of expressing
+> > > whether the affected driver is used (or even built) at all, so I guess
+> > > people with affected versions will have to check that themselves...)
+> > 
+> > As everyone has different configurations, yes, everyone needs to check
+> > themselves, there is no way for us to determine this at all.  But we do
+> > list the files affected, so that should help you out in determining this
+> > automatically on your end.
+> 
+> I didn't see hte list of files anywhere for this, does it depend on the
+> commit?
+> (not that it's a problem to look at the commits referenced, I don't
+> think we'll automate anything for the forseeable future)
+
+Yes, it depeneds on the commit that fixes the issue, and the mail
+message for the CVE record says:
+
+	The file(s) affected by this issue are:
+		drivers/firmware/arm_scmi/reset.c
+
+Note that we can not include this in the json record format because,
+while cve has a field for this, it does not actually work properly for
+file names (it wants a url for a filename, strange but true...)  This is
+a bug on the cve.org end and hopefully will be fixed one day so that we
+can provide the file name information in a machine-parsable format.
+
+> > And yes, backported patches would be always appreciated for older
+> > kernels if you have them.
+> 
+> Sure, I'll take a min to finish the patches and send them on Monday;
+> might as well use work time when I've got an excuse to do kernel stuff.
+
+Wonderful, thanks!
+
+greg k-h
 
