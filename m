@@ -1,126 +1,164 @@
-Return-Path: <linux-kernel+bounces-176555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B508C318F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:08:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449E68C318C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A987228174A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D22331F21901
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B16B5103E;
-	Sat, 11 May 2024 13:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1CD51034;
+	Sat, 11 May 2024 13:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QMDxiaPP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMBV/L0R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BAD50A6E;
-	Sat, 11 May 2024 13:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C374F5ED;
+	Sat, 11 May 2024 13:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715432904; cv=none; b=rHk1q07MMCI4PCXyVVEkRi/o8GLI2COYaYJKfK6xExhFn7aWzBqRKfuWfn5lSkibPTh0CW9187VgxL1gxS112O0bOM9ty/RpZVgrFFAzjdlQPhISwuJFjscqjWeXbUmz9+6jimycRqQSyh+2Tk/nNursw2fpeBnayJ4VbZffA4M=
+	t=1715432889; cv=none; b=S+eWDeuwZTI4d/ZdAqG9pzWRqfnCFYHvGnW7Wm91w48JWi9c7mSWAZPVQ3QiTp/e8xP9EvYoIuLKjO0LhpGMkg5GGWTm3de9Gwlufzlwz8NTJHtf2hzgaKosGIIi0YY0lvxPK1LvNg+ip9ywAH2AoLWGvNz6wHswXU+JOxa3/0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715432904; c=relaxed/simple;
-	bh=VkukmLqoNf0vM3tHlbUPLF8zbaFjlYyVWkV0/NzvKko=;
+	s=arc-20240116; t=1715432889; c=relaxed/simple;
+	bh=nn5CCGqDXRDW0kal5/Z0nExGsCcCmd7RqOdWPQZZ+Fs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=anp1xxXAWXtZkjGPiGHeLuRIMDlrckBXTgvz9Yy5H7jzMX8YHcwR4k6b2L3rIU68XxzYzPRt/z0e28cfhXXE3fVfWrY540GS02I5bils7Sj03pqaffs3RO6XS6p3QWx/YTaSKTPXYQMSlOSmz3yvk4YtjsXMmTgPsZZ6HP4qopI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QMDxiaPP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9919F40E01A1;
-	Sat, 11 May 2024 13:08:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WVSMvkQIl5QV; Sat, 11 May 2024 13:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715432896; bh=ecSaKsp0uVZzm2MoFq8UJY3XN8cj8gw46icOK5RxnC8=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=GJzxrj/c/3RFCbTChuRcPipoaQ2OHONumAUyXR1FkzqSALYbslUSfGdh8z8XSMTk/uNu2rYeZAMjfgirBz7S73XSHg04xtC7Qra1GdHn/mTPM77fSHj/oob6m4rQic4/O55AEaS/dffk5C5MFc/ySlyKmbl/JW2B2YO4VcMEiuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMBV/L0R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08707C2BBFC;
+	Sat, 11 May 2024 13:08:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715432889;
+	bh=nn5CCGqDXRDW0kal5/Z0nExGsCcCmd7RqOdWPQZZ+Fs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QMDxiaPP5ldgNbHz0TcicT+aWjo9iMRpVOxy/Jt+df/CSgJ/rfgha2rjhA/zxR4fQ
-	 4Zt6gKISfh8yfkkC2Kbj8E8gbQ03UINJ5PDAW8E5nEVosS0NQogiFLH/s06eh15GO9
-	 S39VSeMyJ+Q/CZDBIOh6sHwYxu1m9EM9DF41b4qYVnyhXCi3HV9+SsnWD6MBvQSILa
-	 3iYhgCJrwF7xtRVpGIh/9DlgVNfX+G1NPPwvmrZ2sr3wCCegR6FBpEKt89WOnc+VgD
-	 EGkVfBx7QcXWxAhsthIrSlTvnPY50noaiIpiSUpRlTt5dgY1/D2EzO/GkZRVxXf3SB
-	 J5JDsKJE5GT1IlNiIZRAVVWybTR0KUFWoObU9wa/jSsR93zFzvRpqUnefFngRpMsVv
-	 MkJ//z3m7gXzXEYqEcfVf/n+xSZvH10H81KVi70CwT60F+h2Q3BpaH5OGDWUd8+gSP
-	 hk6L7xS4nZVPwqPuBRoOWZDbcHS16TDHGZYy6QJ1byxpb81wb4I/Zg7muN3LTnv+0k
-	 RtG7EseYgemaHnVqgfd814Tx2vJOBlphh/SIPzXQ9p2Oqvd8czfTv2mm3lKBCnlZDC
-	 ollKHiKh+F7AE/88PJ41jlaqCkuQzbzrGuET+n50w9nPHbntOqC0TVNcDoBkMYw/V1
-	 S3RIVy5joi4VMSmnfYctgMog=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4FE6D40E016A;
-	Sat, 11 May 2024 13:08:08 +0000 (UTC)
-Date: Sat, 11 May 2024 15:08:01 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/3] ACPI: extlog: Make print_extlog_rcd() log
- unconditionally
-Message-ID: <20240511130801.GBZj9tsenZ5SKXgRTm@fat_crate.local>
-References: <20240510112740.667445-1-fabio.m.de.francesco@linux.intel.com>
- <7009544.jJDZkT8p0M@fdefranc-mobl3>
- <20240510192556.GDZj50xFIWSqK2gzQR@fat_crate.local>
- <2881368.Ex9A2HvPv6@fdefranc-mobl3>
- <663e9bd4c2525_db82d29451@dwillia2-xfh.jf.intel.com.notmuch>
+	b=DMBV/L0Rf02+pxMLC/ZTNs8StcL5fKgQTU5ppq5oaWJDipa8ukbCHuu/An38u5vZU
+	 NnvuNdjhyXgdTFMGWo8KlgW8zLJmi3r7tGype6lRozJK8NjdT6VfopQtHp/fe1MEnX
+	 SNlppIGviW72sy/N86tNc1o4u9AfAZcoo4x96htViPYEdUyh/egQzsQtT/0S6IIlND
+	 TFqDsQ2KaXVatNx1bFwXu6QFyGvbnmYHwoV42p57DbnAQdI7Hri0K8vHJzciBLqfvz
+	 +CRGOg8oJbrFXEHKBNvNDKDvLyF8imNkO+DwfSnPqPPxj4sWLcOAAAymdDRm15AbLo
+	 LZgR1LdLH6XtQ==
+Date: Sat, 11 May 2024 14:08:03 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Cc: neil.armstrong@linaro.org, jbrunet@baylibre.com,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+	martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
+	kernel@sberdevices.ru, rockosov@gmail.com,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new
+ syspll bindings
+Message-ID: <20240511-secret-barcode-e25c722ddf1d@spud>
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+ <20240510090933.19464-3-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BapyMlBTqqZEbUPF"
 Content-Disposition: inline
-In-Reply-To: <663e9bd4c2525_db82d29451@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <20240510090933.19464-3-ddrokosov@salutedevices.com>
 
-On Fri, May 10, 2024 at 03:12:36PM -0700, Dan Williams wrote:
-> I had asked Fabio to take a look at whether it made sense to continue
-> with the concept of ras_userspace_consumers() especially since it seems
-> limited to the EXTLOG case.
-> 
-> In general I am finding that between OS Native and Firmware First error
-> reporting the logging approaches are inconsistent.
-> 
-> As far I can see rasdaemon would not even notice is the "daemon_active"
-> debugfs file went away [1],
 
-It tells the kernel that it is consuming the error info from the
-tracepoints.
+--BapyMlBTqqZEbUPF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> and it should be the case that the tracepoints always fire whether
-> daemon_active is open or not.
->
-> So I was expecting this removal to be a conversation starter on the
-> wider topic of error reporting consistency.
+On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
+> The 'syspll' PLL is a general-purpose PLL designed specifically for the
+> CPU clock. It is capable of producing output frequencies within the
+> range of 768MHz to 1536MHz.
+>=20
+> The clock source sys_pll_div16, being one of the GEN clock parents,
+> plays a crucial role and cannot be tagged as "optional". Unfortunately,
+> it was not implemented earlier due to the cpu clock ctrl driver's
+> pending status on the TODO list.
 
-Yeah, and then they'll come and say: ew, we're getting error duplicates
-- once logged in dmesg and once through the tracepoints.
+It's fine to not mark it optional in the binding, but it should be
+optional in the driver as otherwise backwards compatibility will be
+broken. Given this is an integral clock driver, sounds like it would
+quite likely break booting on these devices if the driver doesn't treat
+syspll_in as optional.
+A lesson perhaps in describing the hardware entirely, even if the
+drivers don't make use of all the information yet?
 
-So just like with the other thread, we have to figure out what our
-scheme will be wrt hw error logging, agree on it and then make it
-consistent.
+Cheers,
+Conor.
 
-Do we want to have both? Should it be configurable? Probably...
+>=20
+> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> ---
+>  .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml     | 7 +++++--
+>  include/dt-bindings/clock/amlogic,a1-pll-clkc.h            | 2 ++
+>  2 files changed, 7 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.=
+yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> index a59b188a8bf5..fbba57031278 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> @@ -26,11 +26,13 @@ properties:
+>      items:
+>        - description: input fixpll_in
+>        - description: input hifipll_in
+> +      - description: input syspll_in
+> =20
+>    clock-names:
+>      items:
+>        - const: fixpll_in
+>        - const: hifipll_in
+> +      - const: syspll_in
+> =20
+>  required:
+>    - compatible
+> @@ -53,7 +55,8 @@ examples:
+>              reg =3D <0 0x7c80 0 0x18c>;
+>              #clock-cells =3D <1>;
+>              clocks =3D <&clkc_periphs CLKID_FIXPLL_IN>,
+> -                     <&clkc_periphs CLKID_HIFIPLL_IN>;
+> -            clock-names =3D "fixpll_in", "hifipll_in";
+> +                     <&clkc_periphs CLKID_HIFIPLL_IN>,
+> +                     <&clkc_periphs CLKID_SYSPLL_IN>;
+> +            clock-names =3D "fixpll_in", "hifipll_in", "syspll_in";
+>          };
+>      };
+> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt=
+-bindings/clock/amlogic,a1-pll-clkc.h
+> index 2b660c0f2c9f..a702d610589c 100644
+> --- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+> @@ -21,5 +21,7 @@
+>  #define CLKID_FCLK_DIV5		8
+>  #define CLKID_FCLK_DIV7		9
+>  #define CLKID_HIFI_PLL		10
+> +#define CLKID_SYS_PLL		11
+> +#define CLKID_SYS_PLL_DIV16	12
+> =20
+>  #endif /* __A1_PLL_CLKC_H */
+> --=20
+> 2.43.0
+>=20
+>=20
 
-Anything else...?
+--BapyMlBTqqZEbUPF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thx.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Regards/Gruss,
-    Boris.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9tswAKCRB4tDGHoIJi
+0pj2AP9o4HZKD5fAbbwEJlMifsTMl/7hSOmkyRbcNK3IJjs/IwEAovKPd0n+svw5
+TYMMJ7Bah8z91bGRNWgo/Zn/yyRxdw8=
+=ohus
+-----END PGP SIGNATURE-----
 
-https://people.kernel.org/tglx/notes-about-netiquette
+--BapyMlBTqqZEbUPF--
 
