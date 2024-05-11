@@ -1,100 +1,121 @@
-Return-Path: <linux-kernel+bounces-176575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31EE8C31D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:23:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C16A8C31D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 756C72820B1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F71A1C20B9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1785381A;
-	Sat, 11 May 2024 14:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8783A53E36;
+	Sat, 11 May 2024 14:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oh3oh/Uv"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnu+PfEJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C9F5674D
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:23:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68686FC6;
+	Sat, 11 May 2024 14:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715437398; cv=none; b=heeUa2oTwIEHP+1ivR/r1bKxI5B5xxXIw0lfrSQRj4KALA1d7u8gRMqfHcfE0H5WGkxhjTI7E6BwbDdx+Ro1WPwu2MHFxKGbd+wZfJZLhxy0WcFvoBFKQ6o68X4XFHrwPyVrzLYBzo9lrKENWuiHtT0HYQpXloUks0RwDlc7uVY=
+	t=1715437728; cv=none; b=qZO2hJaz+b5oRFL7/0lMHEbz5Kny+afMc9RRQLRLfDyN6ET5Wn4TjwK9iClW+Cv1JCys87x05pzGUU9T2IEf5L1ewK3DuGjT/SU5kpYce2zPbsc2FdMBU66YcP5MbOlBusX6D9qwmOGIaoMjG97kLOgB4vKVrBgw7yEgXhWu/fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715437398; c=relaxed/simple;
-	bh=c7fqYBpE6QvcP0bozISJLly85HHN5z+I+0WYEQzIpt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q3M4ou9sFC6EDg9iCaEsE9bQMQM362KGOASIJtdyKO0AqtLcKcE2+C8Zr0blFHUWgCb84VaBgiup8R8rZWUPiXzVUOSFcKYq/wIIu2XDSlOiAs9pL3cqD8XejpLV/SECB9l8hZXtYZp/hDanfclJwu/vT58yHK483C8rScucI0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oh3oh/Uv; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715437394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zcYhP9OjsZHGRPynpEjy4cHU+TvGSKNPfAx6ChvpYtU=;
-	b=oh3oh/UvEZf9JxPeVrdZ69ZtvLqamC5Pm46sS650b3AqCwuqXt1Jk9Uwfz/bpMkH93VS2E
-	lhy9bF+FNiwa0GGlre15fkSw/jKqkOiLkuBNbROyBZX/fceJkFHzdcq3uBGgvNtlahmKab
-	04/wkN0zlowYz1seGuhBL+mM5JhKoTs=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/bridge: adv7511: Remove a redundant check on existence of bridge->encoder
-Date: Sat, 11 May 2024 22:23:08 +0800
-Message-ID: <20240511142308.319541-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1715437728; c=relaxed/simple;
+	bh=hVfcUB6YKy1TPaPObfF0ZH0LYE3QeixYLkT+X70y2W8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XOL1Fb1MXA0fCTzLRCiS4J7Oc4dGiOjxn/GmpjGwSiyuNY6vV8/El1JnC3FL29XFSWhHllrMTYxWeAI9FhjNAaQSrmkKnut+vrAHG9CioQS3xRcofebtpM3N8gCBahhfIUtOvSlckBo7G1Offyv1EhASb7OPc/W2lJ1wQTlczZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnu+PfEJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB00C2BBFC;
+	Sat, 11 May 2024 14:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715437728;
+	bh=hVfcUB6YKy1TPaPObfF0ZH0LYE3QeixYLkT+X70y2W8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nnu+PfEJGjGmGgBroc5jGVFnyvQpbNL2PUvAjMk38AWUWnIaN1HGd+UJ0eMgNDNSc
+	 P2psasTiG4tcFU6QstXSouDzgyTesp7HArJCxBbMtZzNfYDO/S+XN376hKfRncU5o4
+	 dIHPSiZV5TdcZ4+pnLZNbikd4463oZ/R5rhgBQxdwbMGUW8aNUYjettwu3AwF+0RhR
+	 LJx+1Lqtj5vr9j74vpu75PsGPbBErDCNNImXB05ejRU5lGI0prmRrt/zclERizUkqj
+	 2fthMVQhKlDev4TPCt+8/2MWChc4Q//y2ImJQH/4WpiizTxniHKO9YX3sM6KdDxwmW
+	 B0EcJaYNqWDDQ==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a387fbc9so767600066b.1;
+        Sat, 11 May 2024 07:28:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUmMmbUQCL2nYjHNB54mUQQXQ5/+Nrf8Kt/XAMzttmo9CycKuliP8eDL0Re5qjpWj48NQzqC70QLoRI5itlrVb+KeefBNUsluu9TJ/ErdF15L1yLYv9CwToYaYtMXy5U21SNVg7oUF1+adH3+MCf5PWPBkDT0Em/l/VePIfmSgpCw==
+X-Gm-Message-State: AOJu0YxSjy43d++nIAO8rFctShXaksuLnI+jY+7iTixLalWdRHUDFzD5
+	+4giTvv6Ar7JYvjOZYaGeSXtMb9tdGLR8pEjnoJ46W50InczuVXj71n+BLDzdRDQAjqPI9uwdp3
+	7apVzbq1OzEbldUTYAHl7l9A/vSk=
+X-Google-Smtp-Source: AGHT+IFcDqRIXjIuKbUG9WiRrS4MwBW3gLgvFZbjFjbtR5/V1z73E6frqocpLZRKTfsXevGcTIzd6ty66lSctEvFB7k=
+X-Received: by 2002:a17:906:1c10:b0:a59:9b75:b84 with SMTP id
+ a640c23a62f3a-a5a2d5d4492mr330834966b.35.1715437726856; Sat, 11 May 2024
+ 07:28:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240511100157.2334539-1-chenhuacai@loongson.cn> <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
+In-Reply-To: <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sat, 11 May 2024 22:28:37 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+Message-ID: <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Huacai Chen <chenhuacai@loongson.cn>, loongarch@lists.linux.dev, 
+	Linux-Arch <linux-arch@vger.kernel.org>, Xuefeng Li <lixuefeng@loongson.cn>, 
+	guoren <guoren@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org, 
+	loongson-kernel@lists.loongnix.cn, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the adv7511_connector_init() function, the check on the existence
-of bridge->encoder is not necessary, as it has already been done in the
-drm_bridge_attach() function. And the check on the drm bridge core
-happens before check in the implementation. Hence, it is guaranteed that
-the .encoder member of the struct drm_bridge is not NULL when
-adv7511_bridge_attach() function is called.
+Hi, Arnd,
 
-Remove the redundant checking codes "if (!bridge->encoder) { ... }".
+On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Sat, May 11, 2024, at 12:01, Huacai Chen wrote:
+> > Chromium sandbox apparently wants to deny statx [1] so it could properl=
+y
+> > inspect arguments after the sandboxed process later falls back to fstat=
+.
+> > Because there's currently not a "fd-only" version of statx, so that the
+> > sandbox has no way to ensure the path argument is empty without being
+> > able to peek into the sandboxed process's memory. For architectures abl=
+e
+> > to do newfstatat though, glibc falls back to newfstatat after getting
+> > -ENOSYS for statx, then the respective SIGSYS handler [2] takes care of
+> > inspecting the path argument, transforming allowed newfstatat's into
+> > fstat instead which is allowed and has the same type of return value.
+> >
+> > But, as LoongArch is the first architecture to not have fstat nor
+> > newfstatat, the LoongArch glibc does not attempt falling back at all
+> > when it gets -ENOSYS for statx -- and you see the problem there!
+>
+> My main objection here is that this is inconsistent with 32-bit
+> architectures: we normally have newfstatat() on 64-bit
+> architectures but fstatat64() on 32-bit ones. While loongarch64
+> is the first 64-bit one that is missing newfstatat(), we have
+> riscv32 already without fstatat64().
+Then how to move forward? Xuerui said that he wants to improve
+seccomp, but a long time has already passed. And I think we should
+solve this problem before Debian loong64 ports become usable.
 
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 5 -----
- 1 file changed, 5 deletions(-)
+>
+> Importantly, we can't just add fstatat64() on riscv32 because
+> there is no time64 version for it other than statx(), and I don't
+> want the architectures to diverge more than necessary.
+> I would not mind adding a variant of statx() that works for
+> both riscv32 and loongarch64 though, if it gets added to all
+> architectures.
+As far as I know, Ren Guo is trying to implement riscv64 kernel +
+riscv32 userspace, so I think riscv32 kernel won't be widely used?
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index b5518ff97165..1a0e614e0fd3 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -871,11 +871,6 @@ static int adv7511_connector_init(struct adv7511 *adv)
- 	struct drm_bridge *bridge = &adv->bridge;
- 	int ret;
- 
--	if (!bridge->encoder) {
--		DRM_ERROR("Parent encoder object not found");
--		return -ENODEV;
--	}
--
- 	if (adv->i2c_main->irq)
- 		adv->connector.polled = DRM_CONNECTOR_POLL_HPD;
- 	else
--- 
-2.43.0
-
+Huacai
+>
+>       Arnd
+>
 
