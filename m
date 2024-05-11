@@ -1,268 +1,119 @@
-Return-Path: <linux-kernel+bounces-176448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0628C300E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:31:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465368C3012
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863561C21B9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91E8DB21759
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA5DE56C;
-	Sat, 11 May 2024 07:31:24 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2284ADDC5;
+	Sat, 11 May 2024 07:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVoAdqTG"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65543746E
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90D3522A;
+	Sat, 11 May 2024 07:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715412684; cv=none; b=MPIkNc1p5T5/rjW1fNr3j12vp+aL1BFu3EmYb1E7YzJjtJ2OiWx1q5dEI0/zfQkZLcgQ9mgap5VKkFxKZrqDgqnJaUx1pIVEidjrbUpQlBUS2SwsIXYxWjHS7nDLcqmC0RMoHS2MqZUcdqV1MMasg7qp85+m1G8ekfDF81BScKw=
+	t=1715412924; cv=none; b=n//LUOi99TLMfQYzANLPA9EOihFAjoHVtqgIHoaxEkCwPzX5/GNYMxT/jLqpurU+7a/7JpdkiWxGIFOGdVmp6uA/yE3OPUxAJFAvvu0YLO1SukrbxPLOV6vpks9L6shK8t7kWoTgP/hhU8jBR3/phfHEXnHqnbEnRxWxiZk7NW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715412684; c=relaxed/simple;
-	bh=UBQWQ6I/sUhgEl48zUHpWpDSy/ONCK+e9qW3MQ9tG0M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=g71PpNbpCGGCS5kNMc/K+P1HfcvphG0USRjYT7wPJnk+Nhg9TByw1Hg0gc4V0inj9PyzoOSy4YTxePLv1wmvtz8VFxbFzi0pcJmvxahonyP3G33NHiUX6l486COpd9QzqY1lQU0Qx6v/lmSC4BzTxprhI9StWzKI9vQ/Pu+zPsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1c3c98401so60633839f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:31:22 -0700 (PDT)
+	s=arc-20240116; t=1715412924; c=relaxed/simple;
+	bh=RCnR/Narod92mFqDOefmW4qo56aOWbIqph2R20YVQuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sbnKWih/uJbfgWPVzNIadFZLcxZ3X72Pn2jl/iN7gY61eqlTi9w5mraj7UetLteMfq1a7kmZmprzMaDKItR+jDgFBGWL/fJLZuejPO0Ia1MXcjjlyaLEHfPgGqrghDfTx5ccNcS3r9uR/Fkm4HqQxMLfZAd39lKLt7QjbDDC94o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVoAdqTG; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51f1bf83f06so3266029e87.1;
+        Sat, 11 May 2024 00:35:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715412921; x=1716017721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=onldwQIzp78LG59n3NFElPNcsr9m2UJ7FD1wkPedMlM=;
+        b=CVoAdqTG7Nz4W5HmK6Hov3YAsmJWnHzP9cZKnywWoDXkUlQYN5E0ZyviXAKFFYgbpn
+         5A9Bn9I5ZFzWzm8WCwcxFWeGsOzNC2Xw79xljYTYAHCPRRcn9XXPtHF1PcuMJr3Ob7LL
+         LQr6oGntS7dr5Faia9Cv49ryhrMftZ7VRRK7f/K+5QRLQRIzi46H9ENcKGPXaY/K+VxI
+         Vvacm7wo2eiPi/sL8iW5u0uozMEfkpYcesA62fgsR4+EWcExuUri3rDxxUXStBa7NkrK
+         YJDT4Uvfqk2G8evVuWreHxe+NB32Ki+JmVhNdwo2YxljOWL7G1qMoTCusyz8HDDDVOv2
+         sUaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715412681; x=1716017481;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yBBeotwzoiTXU/b7t2lIcAInQUnhSMX5oUXUu76x1nw=;
-        b=FioT7yvGUK/elgvbamUPPBDVI8KXD8Jmi18ZL25Yh+egebiNigfBl4SqfBwKx23Z4J
-         6JHPPh+yh0QA2jbCi154BI18KwThgkuxXr7FSYQxOf6d1sNXtxOfO92Hi45z8WRkEXQn
-         lhPTGe7lqa4PslbFfKk39RJTgXN5p914YPqFDTrcqAdxxeKbKb639Lw3j0SLLuW+r0KW
-         mEua5yJKRE1zcbnb0C7Pz1guiHQS6fGFMg/t/mrxaNoLxUb/0+iIiIgyMGM02qz3IUM+
-         aHalNRoec/RnN3DX9h7YUtqR+aApRuYZODMTUN+Td/s8//CU68AJPLzc+Kwn3nxGjpYd
-         7BiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0zYaImTe1PEYTttJfVe9JuonIi83Jjeitw0Si+doMy4oVQi96UXKP/I3pyH8eG9k/o8vH6z22l53pWBEQtyLkGGNaepkflVUfMNHy
-X-Gm-Message-State: AOJu0Yy7F1Dnmoeby9gEGWl3mMYrHp/gIjNFTYUzsY/j6cttbCrSs8fz
-	hrUNeM9+vSJcBaRquhN6FoFxvKhhiaZSGK4cRCPoIxGQhZr80tBX2i481YbXCbdp4NiTqyVUQx0
-	VfdbS9bPaSjgkTMoYmHv7QE21C8GT6vMaPPM7Eo5CMvRGDkIZkw+AGw4=
-X-Google-Smtp-Source: AGHT+IFJW+3xqgQOufMxV8L9Th/abXFpuwPGXVqUmlnw97471Lbki9WX436tYYgii0lI0JaPSbCsGxHVozIlukWnBAv1zP9KPOm7
+        d=1e100.net; s=20230601; t=1715412921; x=1716017721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=onldwQIzp78LG59n3NFElPNcsr9m2UJ7FD1wkPedMlM=;
+        b=XPVQKa5f1r5/kKo9UUlW0+UKjrV9SotbyzCpDlMuzsxcJLIZnyr5ZSNvMxreVR57sG
+         N3pESC5ZE7luja6weNIL1DVbDUoc3GKofMwUp/e2bNEw4rY6eq7r/h44Rg6sP/Op1d/x
+         SMyc0NU+dlWGWXeUGUcqt5EOnwIxx5trrN3nwQQJVwyO4/Uz2hk7yB4Sm4+1I2Rv8Lgs
+         NMt8DThPdCxIqCxpnswDL5mCEsuhnAx1laj2pQU0N3UmWTM0cj7qtJII7oWSWT9xK492
+         zGDYxmKFYQ/rReBzvaQNLOo5mGjopqyi28YRo4uSdvlSa6wUgFW0jWhrNFj0mvLcY+tW
+         J2kA==
+X-Forwarded-Encrypted: i=1; AJvYcCURf+1644oYoT+1Zz8xihTN+sL1BWumctP0MdWzCjS2kRE8fb8tUoN7+6cEYEf9J0o5wgck3P45KIUFx2I0UHKg4oIvqphNxKNYFNI+vAB1l8KtSQ9yNfGzYns1Z7PPP8HWrmrfr8ZPZZ6jQKoev+KUzb42xiuHVi8rR9XSceQeLGET
+X-Gm-Message-State: AOJu0YzIrvd1tMaeE/2MOfst0ivHWsY0BxGGQg4Ll3NNoPie+yxwrN5/
+	F0fmtKRUdA5jr9jkCYqE5z2XrVSZ8aeioVT/GE7NTENdCaNAK2W6GLEeoptqO+u7AZz1hLDZmey
+	lQI6de4LlYivXzZML6+mSzuyiOfA9lVIv
+X-Google-Smtp-Source: AGHT+IGwYg82We3uLuR2mZ/xbiWuGjRpwEPg+Yy/6af9O3ukcvNdq4tIg71vISFu90ZIh+8muwTg9jg1Bla+rXCh2xI=
+X-Received: by 2002:a05:6512:38d1:b0:51f:1853:25f with SMTP id
+ 2adb3069b0e04-5220fc79467mr2836408e87.19.1715412920609; Sat, 11 May 2024
+ 00:35:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:608c:b0:7de:3f44:a6fe with SMTP id
- ca18e2360f4ac-7e1b519cfb4mr15320339f.1.1715412681541; Sat, 11 May 2024
- 00:31:21 -0700 (PDT)
-Date: Sat, 11 May 2024 00:31:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000086d9cb061828a317@google.com>
-Subject: [syzbot] [bpf?] [net?] INFO: rcu detected stall in handle_softirqs
-From: syzbot <syzbot+afcbef13b9fa6ae41f9a@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net, 
-	eddyz87@gmail.com, edumazet@google.com, haoluo@google.com, hawk@kernel.org, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kerneljasonxing@gmail.com, 
-	kpsingh@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	martin.lau@linux.dev, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de, yhs@fb.com, yonghong.song@linux.dev
+References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
+ <20240509023937.1090421-3-zhaoyang.huang@unisoc.com> <Zjw_0UPKvGkPfKFO@casper.infradead.org>
+ <CAGWkznGZP3KUBN2M6syrjTmVOdSM0zx23hcJ6+hqE8Drgz2f-A@mail.gmail.com> <Zj2R_UH0JMspexp5@casper.infradead.org>
+In-Reply-To: <Zj2R_UH0JMspexp5@casper.infradead.org>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Sat, 11 May 2024 15:35:09 +0800
+Message-ID: <CAGWkznHX3OBeMh7-jvAP1HyVaT=TN6Fs2ArUCkUHtE3nVadaDA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	cgroups@vger.kernel.org, steve.kang@unisoc.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, May 10, 2024 at 11:18=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
+g> wrote:
+>
+> On Fri, May 10, 2024 at 10:43:20AM +0800, Zhaoyang Huang wrote:
+> > Thanks for the prompt. I did some basic research on soft RAID and
+> > wonder if applying the bps limit on /dev/md0 like below could make
+> > this work.
+>
+> No.  Look at btrfs' raid support, for example.  it doesn't use md0.
+If I understand the below command correctly, btrfs uses one of the
+volumes within RAID as the mount block device, not /dev/md0. However,
+I think this is a problem of blkio.throttle rather than this commit
+which means this readahead budget control will work accordingly as
+long as blkio.throttle's parameter is configured correctly(eg. 50/50
+on sdb and sdc)
 
-syzbot found the following issue on:
-
-HEAD commit:    ee5b455b0ada Merge tag 'slab-for-6.9-rc7-fixes' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=151c534b180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7144b4fe7fbf5900
-dashboard link: https://syzkaller.appspot.com/bug?extid=afcbef13b9fa6ae41f9a
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12618698980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105fcb4b180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b58fa6d8c032/disk-ee5b455b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fe2cdcfb1b25/vmlinux-ee5b455b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9347ec3b62cf/bzImage-ee5b455b.xz
-
-The issue was bisected to:
-
-commit d15121be7485655129101f3960ae6add40204463
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Mon May 8 06:17:44 2023 +0000
-
-    Revert "softirq: Let ksoftirqd do its job"
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1693d03f180000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1593d03f180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1193d03f180000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+afcbef13b9fa6ae41f9a@syzkaller.appspotmail.com
-Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
-
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5144
-rcu: 	(detected by 1, t=10503 jiffies, g=11073, q=192 ncpus=2)
-task:syz-executor172 state:R  running task     stack:27056 pid:5144  tgid:5144  ppid:5099   flags:0x00004002
-Call Trace:
- <IRQ>
- sched_show_task kernel/sched/core.c:9192 [inline]
- sched_show_task+0x42e/0x650 kernel/sched/core.c:9166
- rcu_print_detail_task_stall_rnp kernel/rcu/tree_stall.h:262 [inline]
- print_other_cpu_stall kernel/rcu/tree_stall.h:637 [inline]
- check_cpu_stall kernel/rcu/tree_stall.h:796 [inline]
- rcu_pending kernel/rcu/tree.c:3934 [inline]
- rcu_sched_clock_irq+0x2613/0x3100 kernel/rcu/tree.c:2297
- update_process_times+0x175/0x220 kernel/time/timer.c:2486
- tick_sched_handle kernel/time/tick-sched.c:276 [inline]
- tick_nohz_handler+0x376/0x530 kernel/time/tick-sched.c:297
- __run_hrtimer kernel/time/hrtimer.c:1692 [inline]
- __hrtimer_run_queues+0x657/0xcc0 kernel/time/hrtimer.c:1756
- hrtimer_interrupt+0x31b/0x800 kernel/time/hrtimer.c:1818
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
- __sysvec_apic_timer_interrupt+0x10f/0x450 arch/x86/kernel/apic/apic.c:1049
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x43/0xb0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
-RIP: 0010:_raw_spin_unlock_irq+0x29/0x50 kernel/locking/spinlock.c:202
-Code: 90 f3 0f 1e fa 53 48 8b 74 24 08 48 89 fb 48 83 c7 18 e8 6a 98 8c f6 48 89 df e8 c2 14 8d f6 e8 ed 98 b5 f6 fb bf 01 00 00 00 <e8> b2 4f 7e f6 65 8b 05 b3 88 24 75 85 c0 74 06 5b c3 cc cc cc cc
-RSP: 0018:ffffc90000a08d18 EFLAGS: 00000202
-RAX: 000000000184d5fe RBX: ffff8880b95401d0 RCX: 1ffffffff1f3e269
-RDX: 0000000000000000 RSI: ffffffff8b0cae00 RDI: 0000000000000001
-RBP: ffff8880b9540210 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8f9f55d7 R11: 0000000000000001 R12: dffffc0000000000
-R13: 0000000000000001 R14: 0000000000000040 R15: ffff8880b95401b8
- spin_unlock_irq include/linux/spinlock.h:401 [inline]
- rps_unlock_irq_enable net/core/dev.c:229 [inline]
- process_backlog+0x3e7/0x6f0 net/core/dev.c:6011
- __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6638
- napi_poll net/core/dev.c:6707 [inline]
- net_rx_action+0x9ad/0xf10 net/core/dev.c:6822
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- do_softirq kernel/softirq.c:455 [inline]
- do_softirq+0xb2/0xf0 kernel/softirq.c:442
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- bpf_test_run+0x335/0x9e0 net/bpf/test_run.c:426
- bpf_prog_test_run_skb+0xb17/0x1db0 net/bpf/test_run.c:1058
- bpf_prog_test_run kernel/bpf/syscall.c:4269 [inline]
- __sys_bpf+0xd56/0x4b40 kernel/bpf/syscall.c:5678
- __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
- __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:5765
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2466eba819
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc5f447668 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2466eba819
-RDX: 0000000000000050 RSI: 0000000020000080 RDI: 000000000000000a
-RBP: 0000000000000000 R08: 0000000100000000 R09: 0000000100000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-rcu: rcu_preempt kthread starved for 10546 jiffies! g11073 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:28736 pid:16    tgid:16    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5409 [inline]
- __schedule+0xf15/0x5d00 kernel/sched/core.c:6746
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6838
- schedule_timeout+0x136/0x2a0 kernel/time/timer.c:2582
- rcu_gp_fqs_loop+0x1eb/0xb00 kernel/rcu/tree.c:1663
- rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:1862
- kthread+0x2c1/0x3a0 kernel/kthread.c:388
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 1 PID: 5144 Comm: syz-executor172 Not tainted 6.9.0-rc7-syzkaller-00008-gee5b455b0ada #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
-RIP: 0010:_raw_spin_unlock_irq+0x29/0x50 kernel/locking/spinlock.c:202
-Code: 90 f3 0f 1e fa 53 48 8b 74 24 08 48 89 fb 48 83 c7 18 e8 6a 98 8c f6 48 89 df e8 c2 14 8d f6 e8 ed 98 b5 f6 fb bf 01 00 00 00 <e8> b2 4f 7e f6 65 8b 05 b3 88 24 75 85 c0 74 06 5b c3 cc cc cc cc
-RSP: 0018:ffffc90000a08d18 EFLAGS: 00000202
-RAX: 000000000184d5fe RBX: ffff8880b95401d0 RCX: 1ffffffff1f3e269
-RDX: 0000000000000000 RSI: ffffffff8b0cae00 RDI: 0000000000000001
-RBP: ffff8880b9540210 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8f9f55d7 R11: 0000000000000001 R12: dffffc0000000000
-R13: 0000000000000001 R14: 0000000000000040 R15: ffff8880b95401b8
-FS:  00005555756a8380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2466f370f0 CR3: 000000007c110000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- spin_unlock_irq include/linux/spinlock.h:401 [inline]
- rps_unlock_irq_enable net/core/dev.c:229 [inline]
- process_backlog+0x3e7/0x6f0 net/core/dev.c:6011
- __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6638
- napi_poll net/core/dev.c:6707 [inline]
- net_rx_action+0x9ad/0xf10 net/core/dev.c:6822
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- do_softirq kernel/softirq.c:455 [inline]
- do_softirq+0xb2/0xf0 kernel/softirq.c:442
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- bpf_test_run+0x335/0x9e0 net/bpf/test_run.c:426
- bpf_prog_test_run_skb+0xb17/0x1db0 net/bpf/test_run.c:1058
- bpf_prog_test_run kernel/bpf/syscall.c:4269 [inline]
- __sys_bpf+0xd56/0x4b40 kernel/bpf/syscall.c:5678
- __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
- __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:5765
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2466eba819
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc5f447668 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2466eba819
-RDX: 0000000000000050 RSI: 0000000020000080 RDI: 000000000000000a
-RBP: 0000000000000000 R08: 0000000100000000 R09: 0000000100000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-sched: RT throttling activated
+mkfs.btrfs -m raid0 -d raid0 /dev/sdb /dev/sdc
+mount -t btrfs /dev/sdb /mnt/btr
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> > I didn't find information about 'RAID internally'. Could we set the
+> > limit on the root device(the one used for mount) to manage the whole
+> > partition without caring about where the bio finally goes? Or ask the
+> > user to decide if to use by making sure the device they apply will not
+> > do RAID?
+>
+> No.
 
