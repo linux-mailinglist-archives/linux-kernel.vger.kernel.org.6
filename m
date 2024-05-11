@@ -1,254 +1,141 @@
-Return-Path: <linux-kernel+bounces-176518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C39C8C3100
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:40:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF4568C30D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:27:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F5261C20D3B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE09B1C20A64
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 861D457C9E;
-	Sat, 11 May 2024 11:37:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB08E5577C;
+	Sat, 11 May 2024 11:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2GkE73F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02895677C;
-	Sat, 11 May 2024 11:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14822F26;
+	Sat, 11 May 2024 11:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715427434; cv=none; b=oba27AEmNlWXbsImLl5QBz6Z+qLAW/EqAL3VmDAWnZ7gkDRBhR8h5LGiWRvQK66PVTZtmyZ3TiPj998phJRNQrIHBHYI8xVtsWCum98vyhDiPDZIy2xy2rNLQGqh98Yvs/DyO8sM+ermNDDEz6QwlJ5+CSJ3v/l8YzpCk0QsEW0=
+	t=1715426844; cv=none; b=t0eCiPscx7b/kAAJRhM3nUtC1YWMa4dwNLjI4hWzBL4QHZo/iaWsAlu3P6PkpgnT6v8x31m9F+cEoJZzOVuO08m7lVQzUhgBw4Vt+onS3oJYwG0mKczBolYrWSbs8cTv+L16lAOr2raO6DV1yMdRgMXylilC8tTcbdNfWQmE7zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715427434; c=relaxed/simple;
-	bh=Mj6BnHzrxInqGSNem33jYFs8lPS6YifOhW/IZyrskjY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jHqmlbSg9VEJzdyJIcBmXu5X3FsiQn06RD9z5h9r45vsxPrhQDgYeqCw1bAiW21Q9U+cRqO3BQKA3paS1zIB0XpllMzb+5/zuJcpDYiUnxBlJhMOavnT0BfaBnoW6Y26hXXXdUunJrZcG6jxnH4zL1CZLeHvOmERfFHasCaM3GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vc3cr250Yz4f3jd5;
-	Sat, 11 May 2024 19:37:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B79B71A016E;
-	Sat, 11 May 2024 19:37:08 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgDHlxA+WD9mG0B4MQ--.22689S14;
-	Sat, 11 May 2024 19:37:08 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v4 10/10] ext4: make ext4_da_map_blocks() buffer_head unaware
-Date: Sat, 11 May 2024 19:26:19 +0800
-Message-Id: <20240511112619.3656450-11-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240511112619.3656450-1-yi.zhang@huaweicloud.com>
-References: <20240511112619.3656450-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1715426844; c=relaxed/simple;
+	bh=cLCZ4jToTqkciTsy8QBqqHWI/zM1DZ9FtzabW+MzE48=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qL5rti8acOoyG3ujyEu7SDFkIzXzTg90EOBBTwm/1YiqRujrhwdW4VNfPW2Jza4bVun90hsMDRDWnDZEX+PQVdOlzFuGs/bELZ4SS8/QKczlwipVYSxDvAlEV3n94+L4o0mjiUJRZTpsg6sC/ltSDt8OWSUiK23jSmMRYL2HF7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2GkE73F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FC6BC2BBFC;
+	Sat, 11 May 2024 11:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715426843;
+	bh=cLCZ4jToTqkciTsy8QBqqHWI/zM1DZ9FtzabW+MzE48=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o2GkE73FrAa/+XpTYJt769JLx61wNiPupSK/TSVabLktm7Y1yWVICyXwKBuWRZFEB
+	 Gvuh7khf85hCHpGHrhiM9idlCTh8gXErvNGRw/tXNzKwVh4RTEzaE5vfNuAYMGhBWd
+	 2XQ5y3yPydVXdH+W6dLNMnKQxojBHGrS34FKfzks5QWrsaJEmgGkgpP82EWjsk2/qf
+	 KoRWzeytA0mIIAphSCuxi1hfow9NEMRQtmcd1tg1pkrpkhf9e5QY/VYnzi3Noe4lEH
+	 fiv3MqYSislw5yrsWsvp4G7g3gZ1QQtLxxCxSJzX+JlKd3zihZUwygJcITMS0zhKd6
+	 87fiD6Sx9Cdxw==
+Date: Sat, 11 May 2024 12:27:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Ramona Gradinariu <ramona.bolboaca13@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, conor+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, robh@kernel.org, nuno.sa@analog.com
+Subject: Re: [PATCH 7/7] drivers: iio: imu: Add support for adis1657x family
+Message-ID: <20240511122708.68fac075@jic23-huawei>
+In-Reply-To: <9f0a8fdb-dd34-4a53-948d-d4ed0410de6f@gmail.com>
+References: <20240426135339.185602-1-ramona.bolboaca13@gmail.com>
+	<20240426135339.185602-8-ramona.bolboaca13@gmail.com>
+	<20240428154523.17b27fa8@jic23-huawei>
+	<9f0a8fdb-dd34-4a53-948d-d4ed0410de6f@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDHlxA+WD9mG0B4MQ--.22689S14
-X-Coremail-Antispam: 1UD129KBjvJXoW3WF4kCw4rGr1fuFWxKFykXwb_yoW7Zw4Upr
-	Z3AF1rGr15Ww18ua1ftr15ZF1fK3WjyFW7Kr93GryrA34DCrn3tF1UJF1avas8trZ7Wr1r
-	XF4jqry8ua1IkrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E
-	14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIx
-	kGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAF
-	wI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr
-	0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUA
-	rcfUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On Wed, 8 May 2024 17:32:34 +0300
+Ramona Gradinariu <ramona.bolboaca13@gmail.com> wrote:
 
-After calling the ext4_da_map_blocks(), a delalloc extent state could
-be identified through the EXT4_MAP_DELAYED flag in map. So factor out
-buffer_head related handles in ext4_da_map_blocks(), make this function
-buffer_head unaware and becomes a common helper, and also update the
-stale function commtents, preparing for the iomap da write path in the
-future.
+> Hello Jonathan,
+> 
+> Some explanations from my side.
+> 
+> >> @@ -437,6 +467,130 @@ static int adis16475_set_filter(struct adis16475 *st, const u32 filter)
+> >>  	return 0;
+> >>  }
+> >>  
+> >> +static ssize_t adis16475_get_fifo_enabled(struct device *dev,
+> >> +					  struct device_attribute *attr,
+> >> +					  char *buf)
+> >> +{
+> >> +	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+> >> +	struct adis16475 *st = iio_priv(indio_dev);
+> >> +	int ret;
+> >> +	u16 val;
+> >> +
+> >> +	ret = adis_read_reg_16(&st->adis, ADIS16475_REG_FIFO_CTRL, &val);
+> >> +	if (ret)
+> >> +		return ret;
+> >> +	val = FIELD_GET(ADIS16475_FIFO_EN_MASK, val);
+> >> +
+> >> +	return sysfs_emit(buf, "%d\n", val);  
+> > As below, might as well put the FIELD_GET() in the sysfs_emit rather than
+> > writing the local parameter.  
+> 
+> In all instances where I did, I did it to avoid casting. v2 inlines the values and
+> the cast is needed to avoid compilation errors.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c | 63 ++++++++++++++++++++++++-------------------------
- 1 file changed, 31 insertions(+), 32 deletions(-)
+I'd guess that is because the type in the sysfs_emit isn't the same as FIELD_GET()
+returns?  That will correspond to the type of the ADIS16475_FIFO_EN_MASK
+which is defined as UL I think. So just use %lu here instead and need to cast goes
+away. 
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index c56386d1b10d..1dba5337382a 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1745,36 +1745,32 @@ static int ext4_insert_delayed_blocks(struct inode *inode, ext4_lblk_t lblk,
- }
- 
- /*
-- * This function is grabs code from the very beginning of
-- * ext4_map_blocks, but assumes that the caller is from delayed write
-- * time. This function looks up the requested blocks and sets the
-- * buffer delay bit under the protection of i_data_sem.
-+ * Looks up the requested blocks and sets the delalloc extent map.
-+ * First try to look up for the extent entry that contains the requested
-+ * blocks in the extent status tree without i_data_sem, then try to look
-+ * up for the ondisk extent mapping with i_data_sem in read mode,
-+ * finally hold i_data_sem in write mode, looks up again and add a
-+ * delalloc extent entry if it still couldn't find any extent. Pass out
-+ * the mapped extent through @map and return 0 on success.
-  */
--static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
--			      struct buffer_head *bh)
-+static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
- {
- 	struct extent_status es;
- 	int retval;
--	sector_t invalid_block = ~((sector_t) 0xffff);
- #ifdef ES_AGGRESSIVE_TEST
- 	struct ext4_map_blocks orig_map;
- 
- 	memcpy(&orig_map, map, sizeof(*map));
- #endif
- 
--	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
--		invalid_block = ~0;
--
- 	map->m_flags = 0;
- 	ext_debug(inode, "max_blocks %u, logical block %lu\n", map->m_len,
- 		  (unsigned long) map->m_lblk);
- 
- 	/* Lookup extent status tree firstly */
- 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
--		retval = es.es_len - (map->m_lblk - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
-+		map->m_len = min_t(unsigned int, map->m_len,
-+				   es.es_len - (map->m_lblk - es.es_lblk));
- 
- 		if (ext4_es_is_hole(&es))
- 			goto add_delayed;
-@@ -1784,10 +1780,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		 * Delayed extent could be allocated by fallocate.
- 		 * So we need to check it.
- 		 */
--		if (ext4_es_is_delayed(&es) && !ext4_es_is_unwritten(&es)) {
--			map_bh(bh, inode->i_sb, invalid_block);
--			set_buffer_new(bh);
--			set_buffer_delay(bh);
-+		if (ext4_es_is_delonly(&es)) {
-+			map->m_flags |= EXT4_MAP_DELAYED;
- 			return 0;
- 		}
- 
-@@ -1802,7 +1796,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- #ifdef ES_AGGRESSIVE_TEST
- 		ext4_map_blocks_es_recheck(NULL, inode, map, &orig_map, 0);
- #endif
--		return retval;
-+		return 0;
- 	}
- 
- 	/*
-@@ -1816,7 +1810,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		retval = ext4_map_query_blocks(NULL, inode, map);
- 	up_read(&EXT4_I(inode)->i_data_sem);
- 	if (retval)
--		return retval;
-+		return retval < 0 ? retval : 0;
- 
- add_delayed:
- 	down_write(&EXT4_I(inode)->i_data_sem);
-@@ -1828,10 +1822,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 	 * the extent status tree.
- 	 */
- 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
--		retval = es.es_len - (map->m_lblk - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
-+		map->m_len = min_t(unsigned int, map->m_len,
-+				   es.es_len - (map->m_lblk - es.es_lblk));
- 
- 		if (!ext4_es_is_hole(&es)) {
- 			up_write(&EXT4_I(inode)->i_data_sem);
-@@ -1841,18 +1833,14 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map,
- 		retval = ext4_map_query_blocks(NULL, inode, map);
- 		if (retval) {
- 			up_write(&EXT4_I(inode)->i_data_sem);
--			return retval;
-+			return retval < 0 ? retval : 0;
- 		}
- 	}
- 
-+	map->m_flags |= EXT4_MAP_DELAYED;
- 	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
- 	up_write(&EXT4_I(inode)->i_data_sem);
--	if (retval)
--		return retval;
- 
--	map_bh(bh, inode->i_sb, invalid_block);
--	set_buffer_new(bh);
--	set_buffer_delay(bh);
- 	return retval;
- }
- 
-@@ -1872,11 +1860,15 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 			   struct buffer_head *bh, int create)
- {
- 	struct ext4_map_blocks map;
-+	sector_t invalid_block = ~((sector_t) 0xffff);
- 	int ret = 0;
- 
- 	BUG_ON(create == 0);
- 	BUG_ON(bh->b_size != inode->i_sb->s_blocksize);
- 
-+	if (invalid_block < ext4_blocks_count(EXT4_SB(inode->i_sb)->s_es))
-+		invalid_block = ~0;
-+
- 	map.m_lblk = iblock;
- 	map.m_len = 1;
- 
-@@ -1885,10 +1877,17 @@ int ext4_da_get_block_prep(struct inode *inode, sector_t iblock,
- 	 * preallocated blocks are unmapped but should treated
- 	 * the same as allocated blocks.
- 	 */
--	ret = ext4_da_map_blocks(inode, &map, bh);
--	if (ret <= 0)
-+	ret = ext4_da_map_blocks(inode, &map);
-+	if (ret < 0)
- 		return ret;
- 
-+	if (map.m_flags & EXT4_MAP_DELAYED) {
-+		map_bh(bh, inode->i_sb, invalid_block);
-+		set_buffer_new(bh);
-+		set_buffer_delay(bh);
-+		return 0;
-+	}
-+
- 	map_bh(bh, inode->i_sb, map.m_pblk);
- 	ext4_update_bh_state(bh, map.m_flags);
- 
--- 
-2.39.2
+> 
+> > 	  
+> >> +	if (adis->data->burst_max_len)
+> >> +		burst_max_length = adis->data->burst_max_len;
+> >> +	else
+> >> +		burst_max_length = burst_length;
+> >> +
+> >> +	tx = adis->buffer + burst_max_length;
+> >> +	tx[0] = ADIS_READ_REG(burst_req);
+> >> +
+> >> +	if (burst_req)  
+> > If !burst_req does the rest of this do anything at all?
+> > If so flip the logic as
+> > 	if (!burst_req)
+> > 		return adis16475_push_single_sample(pf);
+> >
+> > 	the rest...
+> > 	return spi_sync(adis->spi, &adis->msg);  
+> 
+> The update is needed even if burst_req is false. The adis message has to be updated
+> based on the burst request value, which is then used either in 
+> adis16475_push_single_sample or in spi_sync call.
 
+Which update?  The content of tx[0]?  If so that is non obvious so definitely
+need a comment. Perhaps even wrap up the update in a function with a name
+that makes it clear it's changing the adis->msg.
+
+adis_update_msg_burst() or something like that.
+> 
+> > 		
+> >  
+> >> +		return spi_sync(adis->spi, &adis->msg);
+> >> +
+> >> +	return adis16475_push_single_sample(pf);
+> >> +}
+> >> +
+
+Jonathan
 
