@@ -1,100 +1,190 @@
-Return-Path: <linux-kernel+bounces-176591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469138C31FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:56:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E64D8C31F8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D90571F217D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9E01F21967
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD5756B7C;
-	Sat, 11 May 2024 14:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFE156446;
+	Sat, 11 May 2024 14:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F04Q+4K1"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtnLedF1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BACD56773
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D051E526;
+	Sat, 11 May 2024 14:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715439362; cv=none; b=DmXE62HLgXptoQFk1Vqxmmu/yL3oZA6Xy3a/LLvWsfboni5mwraea2eWQeQDonnmTC70LeX8QFq76/NTcEvpUBZF9Xb38rDHjxWK7hFbPl01Drm54ISsvuCKxN5/ojNY4zaMVf21yCegVj79LlyVB9Wc9BJbSkqbEuOcD6g8n2s=
+	t=1715439356; cv=none; b=JurrWZECkNLrBiuqhjIDnn4SROBdSuuzLbJl95J208h59z/cqN4VladiDzl0o1t6tG/83P/PJtORnsbohNh8ywQ/3UXvk1mnKP8I8T4JbGbfBpffH1q5PeQPyGzAEt3xTFQiL4+4EyuKkU0RjoVu6nG8M5thcsNEYYYSM0Z8OYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715439362; c=relaxed/simple;
-	bh=SVQMqa2r/6vMx/PrKmXTy9Z/bnq/aQVKbgm1YzdvXUs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IA4P+QsIrjqfsom6SdN++W3J3fde1ln7TsRbcCO0r7Bcvdct1HJnxIjOLuAiuw8Hv5pnSMBLOYNdwlmsOTENmvfEwTR+yhWUgJC45BxVV06ItOtZKPOUQphlLe/6pOARFI94M5onBcXT0xdq5kJsW4CWBvD8kLKiiCqQ/4yvKP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F04Q+4K1; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715439358;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=fLoNj1TdFzof77QtMBY2FlaBpFNEQWVn75IC8HxaP3o=;
-	b=F04Q+4K1f8y3k4yMDVAKeGMfPgpAZNodhB7eRwQ9ieT+62zs0QcKeUakgZSvGCjKHry1l5
-	+fNjggxspxAtog+lUihviY8Zek920ATjlGIqwpZ3LtlL4UoNhoN5ufEGS1D2E6r2qRFwBE
-	WypcdHnmW+h7CwPlmhutGgX9aV94UI8=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/bridge: lt9611uxc: Remove a redundant check on existence of bridge->encoder
-Date: Sat, 11 May 2024 22:55:49 +0800
-Message-ID: <20240511145549.325852-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1715439356; c=relaxed/simple;
+	bh=6DaDv/aTgU/LZfJ58oDLB7kdos+gFtmzwvnoGqwfpIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0fvAOSg7AXs0/dh0RGnv0N036DARCRNmVLPbZynpJw4JVWXyGuopaHNzzOft6VRSxmm2/I6Sl51AnKb0MKrMp2fdlkeXo1h77TQS7NW5/WkyMF/r7+VTuEbuQ7yD34meSWcPqrtUQ9aPxDoFJtDSbpSY4uaZCvd+eWisZ8o5GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtnLedF1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21487C2BD11;
+	Sat, 11 May 2024 14:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715439356;
+	bh=6DaDv/aTgU/LZfJ58oDLB7kdos+gFtmzwvnoGqwfpIA=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=UtnLedF1ycLpwyfLm9aXe0rro8YcpWVqtOydbHroNV3uMetv/7QUqr6trC1JwysyI
+	 wdmx+WUWMgIdLaTGWacx9L9XHop1frC8AYexeE4mVwVkzj6QPz8INx84yVNaHNVPzO
+	 5svWuehf9w5QsiMqkRkJkSJAmwNbgzUlWq3alZ2oziE1vkHPBm8cPJ2xadmeWGdcHv
+	 T2GmPV1pwgc07EQN0p6j0Bzy7pvsTyl5G4P5YtohmaCAbrrLUwkWXhgz34vTB57YBb
+	 r7A2sCTvdIXsG31yGmCBpv1xxuaOqWwkB9SsMMJ5ywB0NBlg31sJ4+5eWycP5Yn6Xk
+	 GNahXig56Du0g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C01D1CE0F8E; Sat, 11 May 2024 07:55:55 -0700 (PDT)
+Date: Sat, 11 May 2024 07:55:55 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+Message-ID: <e6e42572-f73b-4217-871a-37c439ec8552@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240511020557.1198200-1-leobras@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511020557.1198200-1-leobras@redhat.com>
 
-In the lt9611uxc_connector_init() function, the check on the existence
-of bridge->encoder is not necessary, as it has already been done in the
-drm_bridge_attach() function. And the check on the drm bridge core
-happens before check in the implementation. Hence, it is guaranteed that
-the .encoder member of the struct drm_bridge is not NULL when
-lt9611uxc_connector_init() function gets called.
+On Fri, May 10, 2024 at 11:05:56PM -0300, Leonardo Bras wrote:
+> As of today, KVM notes a quiescent state only in guest entry, which is good
+> as it avoids the guest being interrupted for current RCU operations.
+> 
+> While the guest vcpu runs, it can be interrupted by a timer IRQ that will
+> check for any RCU operations waiting for this CPU. In case there are any of
+> such, it invokes rcu_core() in order to sched-out the current thread and
+> note a quiescent state.
+> 
+> This occasional schedule work will introduce tens of microsseconds of
+> latency, which is really bad for vcpus running latency-sensitive
+> applications, such as real-time workloads.
+> 
+> So, note a quiescent state in guest exit, so the interrupted guests is able
+> to deal with any pending RCU operations before being required to invoke
+> rcu_core(), and thus avoid the overhead of related scheduler work.
+> 
+> Signed-off-by: Leonardo Bras <leobras@redhat.com>
 
-Remove the redundant checking codes "if (!bridge->encoder) { ... }".
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
 
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
-index f4f593ad8f79..f1fccfe6c534 100644
---- a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
-+++ b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
-@@ -339,11 +339,6 @@ static int lt9611uxc_connector_init(struct drm_bridge *bridge, struct lt9611uxc
- {
- 	int ret;
- 
--	if (!bridge->encoder) {
--		DRM_ERROR("Parent encoder object not found");
--		return -ENODEV;
--	}
--
- 	lt9611uxc->connector.polled = DRM_CONNECTOR_POLL_HPD;
- 
- 	drm_connector_helper_add(&lt9611uxc->connector,
--- 
-2.43.0
-
+> ---
+> 
+> ps: A patch fixing this same issue was discussed in this thread:
+> https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> 
+> Also, this can be paired with a new RCU option (rcutree.nocb_patience_delay)
+> to avoid having invoke_rcu() being called on grace-periods starting between
+> guest exit and the timer IRQ. This RCU option is being discussed in a
+> sub-thread of this message:
+> https://lore.kernel.org/all/5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop/
+> 
+> 
+>  include/linux/context_tracking.h |  6 ++++--
+>  include/linux/kvm_host.h         | 10 +++++++++-
+>  2 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
+> index 6e76b9dba00e..8a78fabeafc3 100644
+> --- a/include/linux/context_tracking.h
+> +++ b/include/linux/context_tracking.h
+> @@ -73,39 +73,41 @@ static inline void exception_exit(enum ctx_state prev_ctx)
+>  }
+>  
+>  static __always_inline bool context_tracking_guest_enter(void)
+>  {
+>  	if (context_tracking_enabled())
+>  		__ct_user_enter(CONTEXT_GUEST);
+>  
+>  	return context_tracking_enabled_this_cpu();
+>  }
+>  
+> -static __always_inline void context_tracking_guest_exit(void)
+> +static __always_inline bool context_tracking_guest_exit(void)
+>  {
+>  	if (context_tracking_enabled())
+>  		__ct_user_exit(CONTEXT_GUEST);
+> +
+> +	return context_tracking_enabled_this_cpu();
+>  }
+>  
+>  #define CT_WARN_ON(cond) WARN_ON(context_tracking_enabled() && (cond))
+>  
+>  #else
+>  static inline void user_enter(void) { }
+>  static inline void user_exit(void) { }
+>  static inline void user_enter_irqoff(void) { }
+>  static inline void user_exit_irqoff(void) { }
+>  static inline int exception_enter(void) { return 0; }
+>  static inline void exception_exit(enum ctx_state prev_ctx) { }
+>  static inline int ct_state(void) { return -1; }
+>  static inline int __ct_state(void) { return -1; }
+>  static __always_inline bool context_tracking_guest_enter(void) { return false; }
+> -static __always_inline void context_tracking_guest_exit(void) { }
+> +static __always_inline bool context_tracking_guest_exit(void) { return false; }
+>  #define CT_WARN_ON(cond) do { } while (0)
+>  #endif /* !CONFIG_CONTEXT_TRACKING_USER */
+>  
+>  #ifdef CONFIG_CONTEXT_TRACKING_USER_FORCE
+>  extern void context_tracking_init(void);
+>  #else
+>  static inline void context_tracking_init(void) { }
+>  #endif /* CONFIG_CONTEXT_TRACKING_USER_FORCE */
+>  
+>  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 48f31dcd318a..e37724c44843 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -480,21 +480,29 @@ static __always_inline void guest_state_enter_irqoff(void)
+>  /*
+>   * Exit guest context and exit an RCU extended quiescent state.
+>   *
+>   * Between guest_context_enter_irqoff() and guest_context_exit_irqoff() it is
+>   * unsafe to use any code which may directly or indirectly use RCU, tracing
+>   * (including IRQ flag tracing), or lockdep. All code in this period must be
+>   * non-instrumentable.
+>   */
+>  static __always_inline void guest_context_exit_irqoff(void)
+>  {
+> -	context_tracking_guest_exit();
+> +	/*
+> +	 * Guest mode is treated as a quiescent state, see
+> +	 * guest_context_enter_irqoff() for more details.
+> +	 */
+> +	if (!context_tracking_guest_exit()) {
+> +		instrumentation_begin();
+> +		rcu_virt_note_context_switch();
+> +		instrumentation_end();
+> +	}
+>  }
+>  
+>  /*
+>   * Stop accounting time towards a guest.
+>   * Must be called after exiting guest context.
+>   */
+>  static __always_inline void guest_timing_exit_irqoff(void)
+>  {
+>  	instrumentation_begin();
+>  	/* Flush the guest cputime we spent on the guest */
+> -- 
+> 2.45.0
+> 
 
