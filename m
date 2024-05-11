@@ -1,161 +1,100 @@
-Return-Path: <linux-kernel+bounces-176723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD698C33B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:16:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4BB28C33BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7CE1C20E08
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1016F1C20899
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE524208CB;
-	Sat, 11 May 2024 20:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715BA20B12;
+	Sat, 11 May 2024 20:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hO8RqGiS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAII72gg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181143C2D;
-	Sat, 11 May 2024 20:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF39C17588;
+	Sat, 11 May 2024 20:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715458583; cv=none; b=WiEaO1IXeig/R+Mk/Hb5dXIfILEXaWUNc9VSnx6Ks4Bjue5Iv6hHfINOkizxwjYj6dnvsLHL4lclLMlmxUj6pNE1g5VDgfgpSVsAGU3EMsMw4VXWzIT1Uy9UfJC+9aNKjryEs1KgwKgiBuYD3GyLc9/BBn0W/kws7mUH+GeByb4=
+	t=1715459214; cv=none; b=uzutWNHILB8TNQVTWpodr5r2DFuLkazBU++1Rh4hRVaiX+nPHEmNe4vVNkVU/OI2ogBcLoOl/RSGt07WhaZfTAPMbxpL3dV8q8pEH4apP4LSvI16Y2TfZy9EdhP9MDFVZfpNoGElHtv0z/FdtW0ZHMXkyKCZ92H675L/jHqPjgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715458583; c=relaxed/simple;
-	bh=+LpkdgC+Wz7IOQEvnu/ilSBedx9vD5FOuP4V+JSN3Ys=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C9GKE94qc5D8Iu25YVKWOnhIZQSFbzX2UuMaoovtTDiqstPVrbZU6gi38YoA4GnXPs5AiVT89KYaMm+uIjffT/VKD1rE5yBk9HhGhk2qql1Bhg2FlSm/T7jz/25p5ECxEfLremw+vLpZt3giWkncTsUV7UosN5bFwLpqDVhiR7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hO8RqGiS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B66C2BBFC;
-	Sat, 11 May 2024 20:16:20 +0000 (UTC)
+	s=arc-20240116; t=1715459214; c=relaxed/simple;
+	bh=5xvvB0fPX+qfaMVaLVDZwsVQhtJBPvVdJUhRNhQEjOs=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=Jyx0fECLDSbJzhQnV8RC5I84DwTDyeJYHF/5Di8WjGNF6b8vzRaBj6k25lDERBWV+6qxj7hlhHiULq/UO80n994HPU3dPtvZplUUllcsfwPSt8KFiE7ENbtEcDQoxc2gsuHonadWaf8LDzZGaQ8K76nHY7X0DmzHiLCEYOHXM9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAII72gg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 102ABC2BBFC;
+	Sat, 11 May 2024 20:26:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715458582;
-	bh=+LpkdgC+Wz7IOQEvnu/ilSBedx9vD5FOuP4V+JSN3Ys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hO8RqGiSiGIdbzIQNIjJaqd4zgy6EslWUiMHUweZkfie3pxeLyxEAbjda0l+zUC6o
-	 Y58knSk9QRMq1/ZpO5GNaHVu59Vk9UxEQO6pXmTE2CMF5VBcB27rPgKPVZJVf0ivSO
-	 nLZ8PHLf5xzaW3JshPYmUELWfhUi91dKzMHj5XQL3TZ8qjL7YXziEI3qwHQGKQoWED
-	 kWraXXxWAX4Qrwcpkd/tZESwllbjt2dPY/NeBsJ82iBUc7OAlyUxMhdQUz0OBUERxV
-	 UIpw/+wgG3IzoRjtgFoANMcgM81urgQNdnz1E1ZaoeTi5xgftjJOf17eEW2JPSUjU4
-	 1nB2HyEV7YBew==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Honggyu Kim <honggyu.kim@sk.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	akpm@linux-foundation.org,
-	apopple@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	dave.jiang@intel.com,
-	hyeongtak.ji@sk.com,
-	kernel_team@skhynix.com,
-	linmiaohe@huawei.com,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	mathieu.desnoyers@efficios.com,
-	mhiramat@kernel.org,
-	rakie.kim@sk.com,
-	rostedt@goodmis.org,
-	surenb@google.com,
-	yangx.jy@fujitsu.com,
-	ying.huang@intel.com,
-	ziy@nvidia.com,
-	42.hyeyoo@gmail.com,
-	art.jeongseob@gmail.com
-Subject: Re: [RFC PATCH v3 1/7] mm/damon/paddr: refactor DAMOS_PAGEOUT with migration_mode
-Date: Sat, 11 May 2024 13:16:17 -0700
-Message-Id: <20240511201617.292811-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240405191907.66958-1-sj@kernel.org>
-References: 
+	s=k20201202; t=1715459214;
+	bh=5xvvB0fPX+qfaMVaLVDZwsVQhtJBPvVdJUhRNhQEjOs=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=HAII72ggPAnsWui9ENdsgbejSCkKXvusZa1lGVA5uIC/yHu0AEKTJAO+QSFsEjYQs
+	 5XVzSx1x6YAlq43ry3VCYxvMr9hGydVKY+XoyK3cf0//C7QLc9telG8+5CYRIL5N2G
+	 +g1S4QKKr9bU/fd72C3gP4VMIY3zmbkq3nzaNyitwPDzRQDy6xr4U35AtLbyRhDVeb
+	 88/iaTELTAYgFX51zQRnAvUFf7ycuk/p9qJdtjzajgeVgCn4vT3xHCS4d686wZ9ezx
+	 4EJ55F56Q0JtiXD6fVDhC5yXwDyI2+mRDqK+ktIAS/ZYvC318mEOKgDj/OBpmHWSy8
+	 DABRQtVB3as0g==
+From: Kalle Valo <kvalo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
+  Dave Hansen <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  x86@kernel.org,  linux-pm@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  regressions@lists.linux.dev,  Jeff Johnson
+ <quic_jjohnson@quicinc.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+References: <87o79cjjik.fsf@kernel.org>
+	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+Date: Sat, 11 May 2024 23:26:49 +0300
+In-Reply-To: <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local> (Borislav
+	Petkov's message of "Sat, 11 May 2024 20:49:45 +0200")
+Message-ID: <87h6f4jdrq.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri,  5 Apr 2024 12:19:07 -0700 SeongJae Park <sj@kernel.org> wrote:
+Borislav Petkov <bp@alien8.de> writes:
 
-> On Fri,  5 Apr 2024 15:08:50 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
-> 
-> > This is a preparation patch that introduces migration modes.
-> > 
-> > The damon_pa_pageout is renamed to damon_pa_migrate and it receives an
-> > extra argument for migration_mode.
-> 
-> I personally think keeping damon_pa_pageout() as is and adding a new function
-> (damon_pa_migrate()) with some duplicated code is also ok, but this approach
-> also looks fine to me.  So I have no strong opinion here, but just letting you
-> know I would have no objection at both approaches.
+> On Sat, May 11, 2024 at 08:48:47PM +0200, Borislav Petkov wrote:
+>> On Sat, May 11, 2024 at 09:22:43PM +0300, Kalle Valo wrote:
+>> > Here's the diff between broken and working .config:
+>> > 
+>> > $ diffconfig broken.config works.config 
+>> > -CALL_PADDING y
+>> > -CALL_THUNKS y
+>> > -CALL_THUNKS_DEBUG n
+>> > -HAVE_CALL_THUNKS y
+>> > -MITIGATION_CALL_DEPTH_TRACKING y
+>> > -MITIGATION_GDS_FORCE y
+>> > -MITIGATION_IBPB_ENTRY y
+>> > -MITIGATION_IBRS_ENTRY y
+>> > -MITIGATION_PAGE_TABLE_ISOLATION y
+>> > -MITIGATION_RETHUNK y
+>> > -MITIGATION_RETPOLINE y
+>> > -MITIGATION_RFDS y
+>> > -MITIGATION_SLS y
+>> > -MITIGATION_SPECTRE_BHI y
+>
+> ... and if it started with -rc4, I'd try this one first.
 
-Meanwhile, we added one more logic in damon_pa_pageout() for doing page
-idleness double check on its own[1].  It makes reusing damon_pa_pageout() for
-multiple reason a bit complex.  I think the complexity added a problem in this
-patch that I also missed before due to the complexity.  Show below comment in
-line.  Hence now I think it would be better to do the suggested way.
+I'm not sure if this bug started with -rc4, let's say somewhere between
+-rc3 and -rc6. I'll start with disabling MITIGATION_SPECTRE_BHI and then
+I'll disable them one by one. But that has to wait next week, tomorrow
+is Mother's Day in Finland.
 
-If we use the approach, this patch is no more necessary, and therefore can be
-dropped.
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-[1] https://lore.kernel.org/20240426195247.100306-1-sj@kernel.org
-
-
-Thanks,
-SJ
-
-[...]
-> 
-> > 
-> > No functional changes applied.
-> > 
-> > Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-> > ---
-> >  mm/damon/paddr.c | 18 +++++++++++++++---
-> >  1 file changed, 15 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-> > index 081e2a325778..277a1c4d833c 100644
-> > --- a/mm/damon/paddr.c
-> > +++ b/mm/damon/paddr.c
-> > @@ -224,7 +224,12 @@ static bool damos_pa_filter_out(struct damos *scheme, struct folio *folio)
-> >  	return false;
-> >  }
-> >  
-> > -static unsigned long damon_pa_pageout(struct damon_region *r, struct damos *s)
-> > +enum migration_mode {
-> > +	MIG_PAGEOUT,
-> > +};
-> 
-> To avoid name conflicts, what about renaming to 'damos_migration_mode' and
-> 'DAMOS_MIG_PAGEOUT'?
-> 
-> > +
-> > +static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
-> > +				      enum migration_mode mm)
-> 
-> My poor brain has a bit confused with the name.  What about calling it 'mode'?
-> 
-> >  {
-> >  	unsigned long addr, applied;
-> >  	LIST_HEAD(folio_list);
-> > @@ -249,7 +254,14 @@ static unsigned long damon_pa_pageout(struct damon_region *r, struct damos *s)
-
-Before this line, damon_pa_pageout() calls folio_clear_referenced() and
-folio_test_clear_young() for the folio, because this is pageout code.  Changed
-function, damon_pa_migrate() is not only for cold pages but general migrations.
-Hence it should also be handled based on the migration mode, but not handled.
-
-I think this problem came from the increased complexity of this function.
-Hence I think it is better to keep damon_pa_pageout() as is and adding a new
-function for migration.
-
-
-Thanks,
-SJ
-
-[...]
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
