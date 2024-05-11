@@ -1,77 +1,60 @@
-Return-Path: <linux-kernel+bounces-176538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6628C3154
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:43:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D7A8C3156
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3737E281FB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:43:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD781C20C9C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BAA5027B;
-	Sat, 11 May 2024 12:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78FB4F5ED;
+	Sat, 11 May 2024 12:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMvdel0D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PvlxNuzJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79230468E;
-	Sat, 11 May 2024 12:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2768843AC3;
+	Sat, 11 May 2024 12:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715431412; cv=none; b=RCfBZr9Wh0YAdungpsm1S00PqTffF261sDQLE7+yWXrc9xkChC0EtEJsKjEFdiemIaR/SthR4aQoVxJNzeG7ypGFi6L65+slBSF0cx6pkTKGobEBv0z2ztMxec2Y2OtNmIReX5xFZaDncPZQ3xb7tt3OusM6c5q01idMYhewt3Q=
+	t=1715431438; cv=none; b=alIEUon/TBWAAB/b7dUbOpAxJqzY5or0nOReS3Yw7rdy4++R9bMFAHnluhdq0UpZ0M21SiYLAO1vU1OhVEJltWaTOIM8E6o6RKF3SNqB5j2Dwy2KzyQHVk0FfC/Y5lzZecKg8dzgADOVJP5DXryGw+NoFNMX0yeosg02dt7P9Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715431412; c=relaxed/simple;
-	bh=d4VKieaSxJD4O9fan0sp4G+844Bs3wrwI3hZbLLfkXY=;
+	s=arc-20240116; t=1715431438; c=relaxed/simple;
+	bh=Heqxbaz7IRkaiOkEqwlaEs6UMSLxPs//aTSXpSJAoyU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ci4kpOEEZJtIfJQZ8sT9HDcavImR/WksHjECoj4RwABuRB3XQhGkDTnMw2+KJVLYDU8BYVntKE3KQBAnNSejVje6zWUG+/x/DCP2mEabMnBBmw4R+GlhFQQ9UNboFmTcYzyShnGZEpHwVykXk8XwV/YxLqeDQXJwbfXyqwyqQcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMvdel0D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56CA8C2BBFC;
-	Sat, 11 May 2024 12:43:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpAOGt3eh9uaQHIdcWCd3uBI+e+u56PAkU/oOCmwmp4yzUaeK1W3jlMvv8/eZNEY0jVakP9T2dVvw0La1iJRfITywFe1IF2WL4Qhci1y8U+Dd97YAl/JuzahkR6yg650C8rt6Qsi5VzIClkrWgRXttSRjd4818Oqq0Xvwu26aqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PvlxNuzJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 688E4C2BBFC;
+	Sat, 11 May 2024 12:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715431412;
-	bh=d4VKieaSxJD4O9fan0sp4G+844Bs3wrwI3hZbLLfkXY=;
+	s=k20201202; t=1715431437;
+	bh=Heqxbaz7IRkaiOkEqwlaEs6UMSLxPs//aTSXpSJAoyU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IMvdel0DY2pBVYj1A7coO/B+rMIO47XYcatES8h6dp3q/a0wHnEdYkkQhKc0kHM6F
-	 R5siUi5TNnYhyvsFZ3ct4vYXvIO//GNTkmIVazERoyp2vZdrDSPeZwuFlzD5viOLZF
-	 qu51GpXkvw7//RsxRf0s+wfmt9GuzAx/faZwnoCK0QODpe4erqsiy51Fu8KCroI9Er
-	 SXWB3N9Bzm3bkRLX+vpX3xIb+298XdKui2spF938GLhwbl3bb8edtYKBLnA8JzMxcc
-	 nXEESPNyPUFg8xwI6zZxJpcq4fhBlUvadsbA95jMtmYdMdcaijYUFF6T1DLpx9XJ8q
-	 tOTHuogfZFawA==
-Date: Sat, 11 May 2024 13:43:24 +0100
+	b=PvlxNuzJxnNxHmnVUQTfZ/5WiD4NdTPU593BfTO7dAE5AgZLRbuU+Cs8tkknUIBHQ
+	 JsZ8j11OunGHPhl9y/fNuzCpGHYUM5h5Dg9jiYtB3e/ud90Pk51bxJzeCo873jvSIP
+	 YpVheCugpfdIRypsxVv4WOj0To7QcSe1PIOEKy3LpaMKbyxsO5QgXEAh1uo1ba+DL2
+	 9hOvQFnA2HJ2ZWFkTiU+GooUBAFwKt/SSuQTgQCM4VTO6KciUvUXqliCNoOo8pYEu3
+	 zyTUWwDeSN7T7fLjVp5bzEVUwXXD6izQYf02mAPz6rtwznHlBdhGoUZY0AV8g3F+Rw
+	 HQW3AEH7XTX3g==
+Date: Sat, 11 May 2024 13:43:53 +0100
 From: Conor Dooley <conor@kernel.org>
 To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+Cc: Russell King <linux@armlinux.org.uk>, Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
-	UNGLinuxDriver@microchip.com,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-Message-ID: <20240511-trailing-confiding-93e4c97f2adf@spud>
-References: <20240510123018.3902184-1-robh@kernel.org>
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: arm: Remove obsolete RTSM DCSCB binding
+Message-ID: <20240511-tactless-detract-fcdd54175849@spud>
+References: <20240510123238.3904779-1-robh@kernel.org>
+ <20240510123238.3904779-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,40 +62,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BSbcBdeN2vnKatp0"
+	protocol="application/pgp-signature"; boundary="Go3BzI9BedJnqz4Y"
 Content-Disposition: inline
-In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
+In-Reply-To: <20240510123238.3904779-2-robh@kernel.org>
 
 
---BSbcBdeN2vnKatp0
+--Go3BzI9BedJnqz4Y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 07:30:14AM -0500, Rob Herring (Arm) wrote:
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
+On Fri, May 10, 2024 at 07:32:36AM -0500, Rob Herring (Arm) wrote:
+> The Arm VExpress DCSCB binding is unused and was only ever used on a s/w
+> model over 10 years ago. Remove it.
 >=20
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> This batch is mostly from arm32 platforms.
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Cheers,
 Conor.
 
---BSbcBdeN2vnKatp0
+--Go3BzI9BedJnqz4Y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9n7AAKCRB4tDGHoIJi
-0gG1AP47sdu3A8RqntUv+sHeomfUnc/kOanj3aHZojsdbapUpAD0DOQrlhFkp8Gc
-XbFn8V4hiQpWfuV/HoEcegLy+fB9DQ==
-=jck4
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9oCQAKCRB4tDGHoIJi
+0rV7AP4jv8IXL3lwmDUHag/Rpo/TuIOclNafawCydHVzOLwZUgD8CcykhNVt+vnF
+VhEFjC+BiXIEajmc1HWbAyiOy+kyqQk=
+=BERQ
 -----END PGP SIGNATURE-----
 
---BSbcBdeN2vnKatp0--
+--Go3BzI9BedJnqz4Y--
 
