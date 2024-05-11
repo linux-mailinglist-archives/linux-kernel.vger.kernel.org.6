@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-176667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837428C32F0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:27:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC298C32F4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:38:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EEA1C209F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 227212822B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB4F1C290;
-	Sat, 11 May 2024 17:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A771C2AF;
+	Sat, 11 May 2024 17:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="leBQbhMF"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEGU9xUq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7318F1CA80;
-	Sat, 11 May 2024 17:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7090E17588;
+	Sat, 11 May 2024 17:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715448422; cv=none; b=idNn1x8b7p+6zABGsYkWKWhGOdUkV9fG9kLuSCWljZVnXaBBCuvNLoI1g456IO+F2JzYg+N1g4cZKI6Wwy9tbHYJ5yxK1fvurVndeVzITN1NQhUVLwPM9PQ5QoYRHh6anRD7+8vycEIZblDBI1M5ta4O1tuXIpsnX58wlfTx/SI=
+	t=1715449075; cv=none; b=PwucxD/sUgZTiHBqKl/n5s+L7oWnD0nLEJR12uuADfDO8T5080mLEDoWE31DoDA4ZsIReBcjkA56FFzZYPnCAUJWxxalj/IICAA5xaQE8EnXtJtpkPD87VeuqWbR9TxPplQw/eUO1B6trQw2SEZi1jde1UO13GF9APnUetF67LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715448422; c=relaxed/simple;
-	bh=vaVInwXwR/E0yMJbauCvVRv14QOu3xmBUd2260ucV5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rySg5ubE8fhR0e6FU06vbIKoacJoV8whUKMtrDc/d9pdNvLg0LmE1dAy+jWDZjicAOa5OuR41NXxh/BXMrrOWiOUGLi5X20y9nZiX+wpTuxkt/KMi5aHdN0WEV7JkP3Kw501RlKojn5TG8qWYGlNOrRQtvFb4GqWgQ1HnY+Mq+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=leBQbhMF; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44BHQg4Z027197;
-	Sat, 11 May 2024 12:26:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715448402;
-	bh=6K8Nz8BB11B/MMWfWwV1JBB5EmA0ZBK0yGA1FoNg3Dg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=leBQbhMFjAOfW+sqINXw6MXfsHCNBMTxzzaSDo+u411Je0bVsLGalDgDfZmjKPoUU
-	 TvlGKYTMcCpfH9/dmKzUUBg3IwynDRwYm12ZctAWNNy5tARp9r0LK2pbkzN3/wVzcy
-	 Y449/faFuo/sgya/ZDhIGzby+qXsSU/79+icgwks=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44BHQgWG118711
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 11 May 2024 12:26:42 -0500
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 11
- May 2024 12:26:42 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 11 May 2024 12:26:42 -0500
-Received: from [10.249.130.181] ([10.249.130.181])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44BHQVPB112101;
-	Sat, 11 May 2024 12:26:32 -0500
-Message-ID: <7214a8b5-16d4-42a1-868e-9574c506be85@ti.com>
-Date: Sat, 11 May 2024 22:56:31 +0530
+	s=arc-20240116; t=1715449075; c=relaxed/simple;
+	bh=BGoqZZQFriY3a7wWUduAqOnPoWp4JxonZw5g6JsApNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahTqzOj264x/2HRwGc3Siblm7GZSHXeVbI8CPybv2pAV9kFJWHesqhcdQk4vQbWwGXDWXJT5mPgdJTvi3qG4O9gTNFJePi29tKMMrWkZvhkLtCQLRQNDD41vrICRw12j2W0hcea9TFdC8sZSBDyvjijNoSwqUKbNlX95KT0EMOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEGU9xUq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FDF7C2BBFC;
+	Sat, 11 May 2024 17:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715449075;
+	bh=BGoqZZQFriY3a7wWUduAqOnPoWp4JxonZw5g6JsApNk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GEGU9xUq+FIoL3XpwI99cZHx559LFo8SePVjnznht6sr4Nhm7f1dKJV33onL2RrnO
+	 kYedeEbz7WP6YorCYObPvbr5IKEHUnbLWbiWI1WkaAkG897nDxqRw/0up3NmzAbtiK
+	 AzN0aD/IS0Yf5xC78fOfLcU2jYxoZ4CwU6yDkfbR38uhrdDFV7vPKJT0UUyc2e/5LS
+	 iXfsetsvv7LlHHmCtSx+j3WqBxQhGs+Qnqnk4MlZRmHY0C+M5bx2XV3YphH7GRD597
+	 dWZjdY+S3W4SlMk4wyW1tyDxAUTq5m/JgdlDXRtf6UuYALveuw073xVcBB5Uw0tG1Q
+	 qpCynCAdPxi3w==
+Date: Sat, 11 May 2024 18:37:48 +0100
+From: Simon Horman <horms@kernel.org>
+To: Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+	bartosz.golaszewski@linaro.org, rohan.g.thomas@intel.com,
+	rmk+kernel@armlinux.org.uk, fancer.lancer@gmail.com,
+	ahalaney@redhat.com, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [net PATCH v5 1/2] net: stmmac: move the EST lock to struct
+ stmmac_priv
+Message-ID: <20240511173748.GR2347895@kernel.org>
+References: <20240510122155.3394723-1-xiaolei.wang@windriver.com>
+ <20240510122155.3394723-2-xiaolei.wang@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/8] math.h Add macros to round to closest specified
- power of 2
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
-        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
-        <adobriyan@gmail.com>, <jani.nikula@intel.com>,
-        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
-        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
-        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>
-References: <20240509183952.4064331-1-devarsht@ti.com>
- <Zj42vTpyH71TWeTk@smile.fi.intel.com>
-Content-Language: en-US
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <Zj42vTpyH71TWeTk@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510122155.3394723-2-xiaolei.wang@windriver.com>
 
-Hi Andy,
-
-Thanks for the quick review.
-
-On 10/05/24 20:31, Andy Shevchenko wrote:
-> On Fri, May 10, 2024 at 12:09:52AM +0530, Devarsh Thakkar wrote:
->> Add macros to round to nearest specified power of 2.
+On Fri, May 10, 2024 at 08:21:54PM +0800, Xiaolei Wang wrote:
+> Reinitialize the whole EST structure would also reset the mutex
+> lock which is embedded in the EST structure, and then trigger
+> the following warning. To address this, move the lock to struct
+> stmmac_priv. We also need to reacquire the mutex lock when doing
+> this initialization.
 > 
-> This is not what they are doing. For the above we already have macros defined.
+> DEBUG_LOCKS_WARN_ON(lock->magic != lock)
+> WARNING: CPU: 3 PID: 505 at kernel/locking/mutex.c:587 __mutex_lock+0xd84/0x1068
+>  Modules linked in:
+>  CPU: 3 PID: 505 Comm: tc Not tainted 6.9.0-rc6-00053-g0106679839f7-dirty #29
+>  Hardware name: NXP i.MX8MPlus EVK board (DT)
+>  pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>  pc : __mutex_lock+0xd84/0x1068
+>  lr : __mutex_lock+0xd84/0x1068
+>  sp : ffffffc0864e3570
+>  x29: ffffffc0864e3570 x28: ffffffc0817bdc78 x27: 0000000000000003
+>  x26: ffffff80c54f1808 x25: ffffff80c9164080 x24: ffffffc080d723ac
+>  x23: 0000000000000000 x22: 0000000000000002 x21: 0000000000000000
+>  x20: 0000000000000000 x19: ffffffc083bc3000 x18: ffffffffffffffff
+>  x17: ffffffc08117b080 x16: 0000000000000002 x15: ffffff80d2d40000
+>  x14: 00000000000002da x13: ffffff80d2d404b8 x12: ffffffc082b5a5c8
+>  x11: ffffffc082bca680 x10: ffffffc082bb2640 x9 : ffffffc082bb2698
+>  x8 : 0000000000017fe8 x7 : c0000000ffffefff x6 : 0000000000000001
+>  x5 : ffffff8178fe0d48 x4 : 0000000000000000 x3 : 0000000000000027
+>  x2 : ffffff8178fe0d50 x1 : 0000000000000000 x0 : 0000000000000000
+>  Call trace:
+>   __mutex_lock+0xd84/0x1068
+>   mutex_lock_nested+0x28/0x34
+>   tc_setup_taprio+0x118/0x68c
+>   stmmac_setup_tc+0x50/0xf0
+>   taprio_change+0x868/0xc9c
 > 
+> Fixes: b2aae654a479 ("net: stmmac: add mutex lock to protect est parameters")
+> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
 
-Sorry I did not understand this comment, if you are talking about
-existing macros round_up & round_down they either round "up" and round
-"down" to specified power of 2 as specified here [1].
-whereas the macros introduced in this patch round to "nearest" specified
-power of 2.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
->> Two macros are added :
-> 
-> (Yes, after I wrapped to comment this line looks better on its own,
->  so whatever will be the first sentence, this line should be separated
->  from.)
-> 
-
-Agreed.
-
->> round_closest_up and round_closest_down which round up to nearest multiple
-> 
-> round_closest_up() and round_closest_down()
-> 
-> 
->> of 2 with a preference to round up or round down respectively if there are
->> two possible nearest values to the given number.
-> 
-> You should reformulate, because AFAICS there is the crucial difference
-> from these and existing round_*_pow_of_two().
-> 
-
-In math.h, we already have round_up/round_down macros which rounded
-up/down to next specified power of 2. Then we had the DIV_ROUND_CLOSEST
-which used the suffix _CLOSEST to imply the meaning that divided value
-will be rounded to nearest/closest int value either by rounding up or
-rounding down.
-
-So inspired from naming convention of this macros given developers are
-already familiar with them, I used round_closest for specifying the
-rounded value to nearest/closest value which can be achieved either by
-rounding up/down. And I also wanted user to have finer control for the
-scenarios where there are two possible nearest values :
-
-For e.g round(160, 64) can be either 192 and 128 and both are 32 away
-from 160.
-
-And that's the reason I went ahead with two macros instead i.e
-round_closest_up, round_closest_down so that developers can choose
-exactly what they want.
-
-Regards
-Devarsh
 
