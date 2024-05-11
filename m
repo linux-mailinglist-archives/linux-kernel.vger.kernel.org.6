@@ -1,49 +1,54 @@
-Return-Path: <linux-kernel+bounces-176395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AEB8C2F1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:40:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A768C2F1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6E121C210E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:40:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5B61F22214
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19BA24205;
-	Sat, 11 May 2024 02:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74EA125C0;
+	Sat, 11 May 2024 02:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ellYEkRS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t+IT6lO6"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B17D8462;
-	Sat, 11 May 2024 02:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6251CD3D
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 02:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715395234; cv=none; b=EVS+gJdtmzKDY3DZFWDZ9p226qcmsSFcJtt4mv2bbo/EJWp4ZRyEiadEBk/rduPNkL632b0jRpikrca4jDD3rpqVpKH9E4bEToMd0H/SMOmqPctY47bhUsW1JWyjBpYK9QeJBy/Dy+G89GGRDpVAN+6n7zHO/B+t+WcL4vi1T9A=
+	t=1715395388; cv=none; b=uOLsGIeMe909hXSlg6r0NmgSNITiMYclWNTR92oHWatHQXEYN9+DXVAgRJRUs0uGsHweI1qgIE2YYLH53qmI6wsz0kmFC12QDybYkISRbq0U2Eu2q9JeORmV7ePvQqJvzJReULP0kmeq/8kNUeadDDXc3RkW+SMWMWt77QWjkrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715395234; c=relaxed/simple;
-	bh=7/s6vD+y/7k4WVPD7xgH8TVamYoeEI7TfVwC3jGXrcI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mWThPIbMUaCL25gSYc8nspqDo3jmApCyG8kIcOuvUYvbFyVC8kqUlcSqeuzjum1/FileJaH1PnncMgFM5pWkzEGeot+VnqJW/PYSIOlr52kjYe7ea1yACCh8JXnptECn+gY724sR/qryzoWzrRHs+ea2Y5swKwEjY8Szpis5C/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ellYEkRS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7FD26C2BD10;
-	Sat, 11 May 2024 02:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715395233;
-	bh=7/s6vD+y/7k4WVPD7xgH8TVamYoeEI7TfVwC3jGXrcI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ellYEkRSAxRyQuDc2UBhjpC+3+6d2L7iSIegIk+kBsJp7GRF7Pp4Iwzg5pI+77Gna
-	 oJfeMsq3ku7uLqSeCUc1qrz/E4RzsCplqoRWD/0ivw6/5HhOxzE9dUJWdFLiudFhW1
-	 8h+DMF01bcFZ2bhC2lbVmvJ1QxNjfgr4BohlNPh05UwK60DpOXnm6XAuZuNAQ+ifZ4
-	 k7fZ6ZDE5YJJrIiJXV0p7eIjXGfysQnd01dhJwJa/B6uBCh8bbYBu+jtgKlFLU39Zf
-	 Njvhekx0WP1tNZvEfVuk1nej1dV/nKj6axIb0H+Wazx3UBWs0GM5/Mzm9uuD3WZWNL
-	 Gdn19t3D0Ds3Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6F63FE7C114;
-	Sat, 11 May 2024 02:40:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715395388; c=relaxed/simple;
+	bh=aVM2BRnQlnNGD4WDElILAHnMRMMEy3roS1X2ykcKQRo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VwMOyZRtSdCzIhBRT55n41Pa7FVzelZOoQpXhTyNkMZAtp9P9ntmqQfx6vN69zxLOOHNCZHf7Ta6d/AeGcD9z/Gi3igmWlwF6jBoU/6hFqOD7YLkVwR6S0IKZqkDIyNSS6vVWXOpno7OrmuQyJrzZCObfb2CiGUcYE03kRq3cQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t+IT6lO6; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715395383;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wIEjlQgisqNyAdK0Zq/MUd7B7cc7IeoVa5W0hNSvWvg=;
+	b=t+IT6lO6wKsDsb8glv3smdyEDEI0zfyuXqpVzjWVoknRcVTE93tlYbj+D13hSGOdN31Eb0
+	Z4Db2r3e42SedjaVV1ubdq8yxCrzloM+3/gzwQalRMyv+gK8KvecYP6D9dyMxJG9RE9Um1
+	MsQaWrMJIj2fCZ/Jom9/SD1wtHsDE24=
+From: hao.ge@linux.dev
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH] eventfs: Directly return NULL to avoid null point dereferenced
+Date: Sat, 11 May 2024 10:42:55 +0800
+Message-Id: <20240511024255.34767-1-hao.ge@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,71 +56,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2 00/14] net: qede: convert filter code to use
- extack
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171539523345.2430.17083493506076122601.git-patchwork-notify@kernel.org>
-Date: Sat, 11 May 2024 02:40:33 +0000
-References: <20240508143404.95901-1-ast@fiberby.net>
-In-Reply-To: <20240508143404.95901-1-ast@fiberby.net>
-To: =?utf-8?b?QXNiasO4cm4gU2xvdGggVMO4bm5lc2VuIDxhc3RAZmliZXJieS5uZXQ+?=@codeaurora.org
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, manishc@marvell.com,
- przemyslaw.kitszel@intel.com
+X-Migadu-Flow: FLOW_OUT
 
-Hello:
+From: Hao Ge <gehao@kylinos.cn>
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+When the condition ei->is_free holds,we return NULL directly to
+avoid update_events_attr to use NULL point about ei.
 
-On Wed,  8 May 2024 14:33:48 +0000 you wrote:
-> This series converts the filter code in the qede driver
-> to use NL_SET_ERR_MSG_*(extack, ...) for error handling.
-> 
-> Patch 1-12 converts qede_parse_flow_attr() to use extack,
-> along with all it's static helper functions.
-> 
-> qede_parse_flow_attr() is used in two places:
-> - qede_add_tc_flower_fltr()
-> - qede_flow_spec_to_rule()
-> 
-> [...]
+Fixes: 8186fff7ab64 ("tracefs/eventfs: Use root and instance inodes as default ownership")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+---
+ fs/tracefs/event_inode.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Here is the summary with links:
-  - [net-next,v2,01/14] net: qede: use extack in qede_flow_parse_ports()
-    https://git.kernel.org/netdev/net-next/c/a7c9540e967b
-  - [net-next,v2,02/14] net: qede: use extack in qede_set_v6_tuple_to_profile()
-    https://git.kernel.org/netdev/net-next/c/6f88f1257a40
-  - [net-next,v2,03/14] net: qede: use extack in qede_set_v4_tuple_to_profile()
-    https://git.kernel.org/netdev/net-next/c/f63a9dc507f9
-  - [net-next,v2,04/14] net: qede: use extack in qede_flow_parse_v6_common()
-    https://git.kernel.org/netdev/net-next/c/a62944d11ae1
-  - [net-next,v2,05/14] net: qede: use extack in qede_flow_parse_v4_common()
-    https://git.kernel.org/netdev/net-next/c/f2f993835b26
-  - [net-next,v2,06/14] net: qede: use extack in qede_flow_parse_tcp_v6()
-    https://git.kernel.org/netdev/net-next/c/b1a18d5781d4
-  - [net-next,v2,07/14] net: qede: use extack in qede_flow_parse_tcp_v4()
-    https://git.kernel.org/netdev/net-next/c/f84d52776ccf
-  - [net-next,v2,08/14] net: qede: use extack in qede_flow_parse_udp_v6()
-    https://git.kernel.org/netdev/net-next/c/b73ad5c7a72e
-  - [net-next,v2,09/14] net: qede: use extack in qede_flow_parse_udp_v4()
-    https://git.kernel.org/netdev/net-next/c/9c8f5ed8849c
-  - [net-next,v2,10/14] net: qede: add extack in qede_add_tc_flower_fltr()
-    https://git.kernel.org/netdev/net-next/c/f833a6555e9e
-  - [net-next,v2,11/14] net: qede: use extack in qede_parse_flow_attr()
-    https://git.kernel.org/netdev/net-next/c/d6883bceb254
-  - [net-next,v2,12/14] net: qede: use faked extack in qede_flow_spec_to_rule()
-    https://git.kernel.org/netdev/net-next/c/eb705d734525
-  - [net-next,v2,13/14] net: qede: propagate extack through qede_flow_spec_validate()
-    https://git.kernel.org/netdev/net-next/c/d2a437efd017
-  - [net-next,v2,14/14] net: qede: use extack in qede_parse_actions()
-    https://git.kernel.org/netdev/net-next/c/841548793bd6
-
-You are awesome, thank you!
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index a878cea70f4c..da2827c6acc2 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -346,8 +346,7 @@ static struct eventfs_inode *eventfs_find_events(struct dentry *dentry)
+ 		 * doesn't matter.
+ 		 */
+ 		if (ei->is_freed) {
+-			ei = NULL;
+-			break;
++			return NULL;
+ 		}
+ 		// Walk upwards until you find the events inode
+ 	} while (!ei->is_events);
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
