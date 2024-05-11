@@ -1,75 +1,67 @@
-Return-Path: <linux-kernel+bounces-176712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DC28C3390
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:36:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C458C3393
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93401B21327
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:36:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 033F6B21178
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1AE208A5;
-	Sat, 11 May 2024 19:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24FD200C7;
+	Sat, 11 May 2024 19:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oyssqWJV"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DA6Tl/Nu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B740322EF2;
-	Sat, 11 May 2024 19:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07BAD28E8;
+	Sat, 11 May 2024 19:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715456174; cv=none; b=RTf6lUj8h41SgHX8p+bfTx6DTzvjqikX9Cf4PNhfmLQW3mLcCrXl8TjDk4P25Okb+UsooP8ksVTNpCSqwDmfdb4Lwv81CaZEt76cd6zrYUqBEqf07+f8Kegq7vtKkZJyizQcIfKmVq6L6GLvt9BM47dsc7FuCySOBHm5wx8GJ20=
+	t=1715456221; cv=none; b=dvbGWp0rJYMfI8iZKhGo3ebiIjr5ccKAibOc6BFznhR1ePUjuOxKXbyBvIs431kBAp2BzlbrFPeXHl92Q3XeNkJAhBRLNzOIx9Nabgp1vdtAn/7ISDNX2R8lOdWIjkhOJjUjVUh7e/eGwofKU0vnUXrRsxkfe9vuDelfRJJIaaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715456174; c=relaxed/simple;
-	bh=wMJUi+PdPrEvDZsHqJBjhH22jQJVIEnVe/PE9a7184s=;
+	s=arc-20240116; t=1715456221; c=relaxed/simple;
+	bh=Q5o5JneIswt/b5UG0phWcTLBa6olOmJH1BlimYH1Ifk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOxpqdZZdxsSYjz44YqP6cxniF66fp7+MVZdqyojNbC3ry1NhTifMXg//M/gZxHKRN5oK6u+Byn5J5mTIGu1pVbjFzbI4DvhKjIIbxdBU6L7MktQzjb/JI7b45yYhw8sKL7MNZi0Lz2r0COc40015qbgxlXoLTKzpi62Vn4ftlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=oyssqWJV; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=UhzC2A5F+60yg0XstH3Un8KpZ2vRh/COyryc8bX0waQ=; b=oyssqWJVeI5Ri0T49GLxy0iG/X
-	3+CF8s1rSfsaI4Gly7VlZ4jCM5gZEyxPBvHjsK+85sOHVvrn/k7hJLbrSZk4GyY1Iyou6cZzzirbE
-	zN260LiOw52OaMTBKxTdmuO78um56s2V6PV2mz9sKKR8rwM4JJkvMFE9jhM77so/WS7rdLgBodsp5
-	PevmfYcKunputGrn8mBCkEsNgwh7u2HWJcP+XxR8R2qj5/SWJZ7ED46F01VAAdR0Ok/CteWOZ4zoO
-	Y96f9dzpHM4yvcBc8uU+2ayTynAZZZFoXrjXBrRiCDMw1FFVyCBy+x7ts041yIjKO1w+GeOBb3EI8
-	DV4yZT5w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50740)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s5sVq-0000Bo-1J;
-	Sat, 11 May 2024 20:36:06 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s5sVq-0004Vb-LV; Sat, 11 May 2024 20:36:06 +0100
-Date: Sat, 11 May 2024 20:36:06 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>,
-	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com,
-	bcm-kernel-feedback-list@broadcom.com, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	richardcochran@gmail.com, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2, net-next, 2/2] net: stmmac: PCI driver for BCM8958X
- SoC
-Message-ID: <Zj/IpqjWCD9fOMBM@shell.armlinux.org.uk>
-References: <20240510000331.154486-3-jitendra.vegiraju@broadcom.com>
- <20240511015924.41457-1-jitendra.vegiraju@broadcom.com>
- <4ede8911-827d-4fad-b327-52c9aa7ed957@lunn.ch>
- <Zj+nBpQn1cqTMJxQ@shell.armlinux.org.uk>
- <08b9be81-52c9-449d-898f-61aa24a7b276@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbZupsX0fWPpLGcpAX7cGb2lHVVwU4y0tT2cGWjEC6m9ehjuAuI7eRAm9uvoHO9XO5iFpt4Yo8CipZA1gnwFz0Mo9Ag6JzEOo4E787tXW9bHPlVYhe6/OjA6iCvSLRf23IA4jNHkApnTU9vYAB21Ts1HyNcpTA6jNMp1XTzbomA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DA6Tl/Nu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99552C2BBFC;
+	Sat, 11 May 2024 19:37:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715456220;
+	bh=Q5o5JneIswt/b5UG0phWcTLBa6olOmJH1BlimYH1Ifk=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=DA6Tl/NuOz2EnzJYJD3Ep5ZlKfD3Wv6fQ/B2Vh062w5//j2v2OtK0MTsTUkfBDd5J
+	 VPMZxfDDZHlCVHVKFm8Ai5hiaIEy67iwINn4Olhs/22v8Xh9WVjfP4EDZqFfdUNu3v
+	 TiGXdCTswfjaAzDUayna7uESDZ5pBf/k7wgjMuFpOfSlvp4R4Z345O74wAwcqn4ucQ
+	 7Rrgu1o52AQ/pTE6jVBIdStN2v7ir9PVcXn5hHYhj5wkcxe+9TD0T1s2GsZ1iFbDd7
+	 eB6ueqv6YiP0OkAUMsDgTgP8uDqmAoSKrJrYleUjd4J1yKOe8Ymaae6myJrTG/wx8F
+	 0vVCks6xbsqNQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0610BCE02E9; Sat, 11 May 2024 12:37:00 -0700 (PDT)
+Date: Sat, 11 May 2024 12:37:00 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-alpha@vger.kernel.org,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+Message-ID: <a1331c86-dc07-4635-b169-623fcdd11824@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+ <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+ <6e6dae45ffbf7a6ab54175695a3e21207c6f5126.camel@physik.fu-berlin.de>
+ <46543a98-4767-471a-91be-20fb60ab138b@paulmck-laptop>
+ <7432d241b538819b603194bfb3a306faf360d4b1.camel@physik.fu-berlin.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,21 +70,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <08b9be81-52c9-449d-898f-61aa24a7b276@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <7432d241b538819b603194bfb3a306faf360d4b1.camel@physik.fu-berlin.de>
 
-On Sat, May 11, 2024 at 07:50:03PM +0200, Andrew Lunn wrote:
-> And now you mentions legacy Fixed link:
+On Sat, May 11, 2024 at 08:49:08PM +0200, John Paul Adrian Glaubitz wrote:
+> Hi Paul,
 > 
-> +MODULE_DESCRIPTION("Broadcom 10G Automotive Ethernet PCIe driver");
+> On Fri, 2024-05-10 at 15:28 -0700, Paul E. McKenney wrote:
+> > > I'm still against dropping pre-EV56 so quickly without a proper phaseout period.
+> > > Why not wait for the next LTS release? AFAIK pre-EV56 support is not broken, is
+> > > it?
+> > 
+> > Sadly, yes, it is, and it has been broken in mainline for almost two
+> > years.
 > 
-> This claims it is a 10G device. You cannot represent 10G using legacy
-> fixed link.
+> Could you elaborate what exactly is broken? I'm just trying to understand the reasoning.
 
-While it may be a 10G device, it seems the fixed-link specification
-in the driver is set to 1G !
+First, let's make sure that I completely and correctly understand the
+situation.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+The pre-EV56 Alphas have no byte store instruction, correct?
+
+If that is in fact correct, what code is generated for a volatile store
+to a single byte for those CPUs?  For example, for this example?
+
+	char c;
+
+	...
+
+	WRITE_ONCE(c, 3);
+
+The rumor I heard is that the compilers will generate a non-atomic
+read-modify-write instruction sequence in this case, first reading the
+32-bit word containing that byte into a register, then substituting the
+value to be stored into corresponding byte of that register, and finally
+doing a 32-bit store from that register.
+
+Is that the case, or am I confused?
+
+							Thanx, Paul
+
+PS:  Or, if you prefer, this example is equivalent:
+
+	volatile char c;
+
+	...
+
+	c = 3;
 
