@@ -1,138 +1,123 @@
-Return-Path: <linux-kernel+bounces-176412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765AE8C2F72
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:57:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7FE8C2F84
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7624E1C20E76
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:57:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE0D8B22C67
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:32:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B063BB21;
-	Sat, 11 May 2024 03:57:37 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C89945BF1;
+	Sat, 11 May 2024 04:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kyZudwWW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE451843
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEF828689;
+	Sat, 11 May 2024 04:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715399857; cv=none; b=cVHfW+x95fMbR2rk4bXGPqOw1iuGBE5iZmYE0y4EWEmTRjio9jPk1RKhWSfWibELboeslhYA7KRlfzmQoug5pwJ8b7mBc9OZU5UdxWv+KinMzvDAALBxT9PV68l2asQlcn1zQXLHiswz+FaevE/epU/2ZO2UNVKRCNM+7PR+AHo=
+	t=1715401918; cv=none; b=IUFARE9snkzPDvJIVmPcNluKUDS0WicDFxtk1vlEhdDiAJZIBdcSJov64B6W/tDLGZR6jN3cR9ScLwAxnc+ADKBCQkW+K9L+va4inJiILsN9GEa44ev+4siQo9qfRsjrgXu0UwoIwbcAKZVloHr4imVvTejjd1BIF/tGsxvH+u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715399857; c=relaxed/simple;
-	bh=wvYnG2ycuD0gKu/eJyMnceyhlmHuWAk1dIxkZ4/QVQM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y8u6xdTd2mBaXmI0H9eu5ONJJup0HbRkcwBIM2h9+g4ikafleIFTwe08+m0upsB5u0McGkz09XKMndxL1bamMhi5OkFQQCFbQlGW7zT+vXTqL+BtmsWqCobt2AQNLM3jHU/ABP7/nQiXShELCjnRTajtRAtImNod0vML8S5Hb2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VbsPG2hv8zCrVc;
-	Sat, 11 May 2024 11:56:18 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5FD0140428;
-	Sat, 11 May 2024 11:57:30 +0800 (CST)
-Received: from huawei.com (10.173.135.154) by canpemm500002.china.huawei.com
- (7.192.104.244) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Sat, 11 May
- 2024 11:57:30 +0800
-From: Miaohe Lin <linmiaohe@huawei.com>
-To: <akpm@linux-foundation.org>
-CC: <shy828301@gmail.com>, <nao.horiguchi@gmail.com>,
-	<xuyu@linux.alibaba.com>, <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
-Date: Sat, 11 May 2024 11:54:35 +0800
-Message-ID: <20240511035435.1477004-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1715401918; c=relaxed/simple;
+	bh=pOHd2qw5bf9nP0s8s0oQXvG+Jy9rv8Fsa9Dig9FNGJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVGAzUo5afYwL1xX4rOFMWMQhgTwmv11/sOZXK4a+/97fipLpyEVA367s/QA0HOoDn1bhw8hVh7589VlCJo1BV4tbolLlqH++P6ewx333zFJwQYwVQjmHNAhe7UBKK7/xc1gjRmjukTFQ0Ku5vFFuExdGzYze+xTtX1TcJL0r8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kyZudwWW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39CCBC2BD10;
+	Sat, 11 May 2024 04:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715401918;
+	bh=pOHd2qw5bf9nP0s8s0oQXvG+Jy9rv8Fsa9Dig9FNGJ0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=kyZudwWWrULxP1VkiwQ47rlUiQTtFT+LQbY6yxz3H8XUhL5qC3/ZZN5M1UG/97SB5
+	 F06sypVkvR9aL+O6FmfWicTnB3ePyNfCecj/hVa5DNkuzKGZ2R8uJK4p25BwIM8vEd
+	 muAq17+/2mXjMgayZWTnAvGe1X7kevbw7200KChyR/93EOwpQCFSrInXkeTgepsXFS
+	 PZ8hGr6ghumgXO2/k2a8J2ZMrw+aLyFrFz074hhLE482XiOc3hZ7bQU+Cxm55c7wPr
+	 Iy08VkCMV6SHq7f2Gsrpv9dVs1WHFyEHmjCQp296tYN/0IbsM5ZUuu8O8H3PyoUUxH
+	 g7sdTsbNhHr6g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D6839CE094C; Fri, 10 May 2024 21:31:57 -0700 (PDT)
+Date: Fri, 10 May 2024 21:31:57 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	David Riley <davidriley@chromium.org>, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] time: add MODULE_DESCRIPTION() to time test modules
+Message-ID: <779507fe-8794-47f8-9c9c-9dbd5cbe899f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240510-time-md-v1-1-44a8a36ac4b0@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500002.china.huawei.com (7.192.104.244)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510-time-md-v1-1-44a8a36ac4b0@quicinc.com>
 
-When I did memory failure tests recently, below panic occurs:
+On Fri, May 10, 2024 at 05:24:25PM -0700, Jeff Johnson wrote:
+> Fix the make W=1 warnings:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/clocksource-wdtest.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/test_udelay.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
- kernel BUG at include/linux/mm.h:1135!
- invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
- CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-dirty #14
- RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
- RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
- RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
- RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
- RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
- R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
- R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
- FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
- Call Trace:
-  <TASK>
-  do_shrink_slab+0x14f/0x6a0
-  shrink_slab+0xca/0x8c0
-  shrink_node+0x2d0/0x7d0
-  balance_pgdat+0x33a/0x720
-  kswapd+0x1f3/0x410
-  kthread+0xd5/0x100
-  ret_from_fork+0x2f/0x50
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
- Modules linked in: mce_inject hwpoison_inject
- ---[ end trace 0000000000000000 ]---
- RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
- RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
- RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
- RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
- RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
- R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
- R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
- FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+From a clocksource-watchdog-test perspective:
 
-The root cause is that HWPoison flag will be set for huge_zero_page
-without increasing the page refcnt. But then unpoison_memory() will
-decrease the page refcnt unexpectly as it appears like a successfully
-hwpoisoned page leading to VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-when releasing huge_zero_page.
+Acked-by: Paul E. McKenney <paulmck@kernel.org>
 
-Fix this issue by marking huge_zero_page reserved. So unpoison_memory()
-will skip this page. This will make it consistent with ZERO_PAGE case too.
-
-Fixes: 478d134e9506 ("mm/huge_memory: do not overkill when splitting huge_zero_page")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Cc: <stable@vger.kernel.org>
----
- mm/huge_memory.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 89f58c7603b2..a605bc0437cd 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -208,6 +208,7 @@ static bool get_huge_zero_page(void)
- 		__free_pages(zero_page, compound_order(zero_page));
- 		goto retry;
- 	}
-+	__SetPageReserved(zero_page);
- 	WRITE_ONCE(huge_zero_pfn, page_to_pfn(zero_page));
- 
- 	/* We take additional reference here. It will be put back by shrinker */
-@@ -260,6 +261,7 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
- 		struct page *zero_page = xchg(&huge_zero_page, NULL);
- 		BUG_ON(zero_page == NULL);
- 		WRITE_ONCE(huge_zero_pfn, ~0UL);
-+		__ClearPageReserved(zero_page);
- 		__free_pages(zero_page, compound_order(zero_page));
- 		return HPAGE_PMD_NR;
- 	}
--- 
-2.33.0
-
+> ---
+>  kernel/time/clocksource-wdtest.c | 1 +
+>  kernel/time/test_udelay.c        | 1 +
+>  kernel/time/time_test.c          | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> diff --git a/kernel/time/clocksource-wdtest.c b/kernel/time/clocksource-wdtest.c
+> index d06185e054ea..62e73444ffe4 100644
+> --- a/kernel/time/clocksource-wdtest.c
+> +++ b/kernel/time/clocksource-wdtest.c
+> @@ -22,6 +22,7 @@
+>  #include "tick-internal.h"
+>  
+>  MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("Clocksource watchdog unit test");
+>  MODULE_AUTHOR("Paul E. McKenney <paulmck@kernel.org>");
+>  
+>  static int holdoff = IS_BUILTIN(CONFIG_TEST_CLOCKSOURCE_WATCHDOG) ? 10 : 0;
+> diff --git a/kernel/time/test_udelay.c b/kernel/time/test_udelay.c
+> index 20d5df631570..783f2297111b 100644
+> --- a/kernel/time/test_udelay.c
+> +++ b/kernel/time/test_udelay.c
+> @@ -155,5 +155,6 @@ static void __exit udelay_test_exit(void)
+>  
+>  module_exit(udelay_test_exit);
+>  
+> +MODULE_DESCRIPTION("udelay test module");
+>  MODULE_AUTHOR("David Riley <davidriley@chromium.org>");
+>  MODULE_LICENSE("GPL");
+> diff --git a/kernel/time/time_test.c b/kernel/time/time_test.c
+> index 3e5d422dd15c..2889763165e5 100644
+> --- a/kernel/time/time_test.c
+> +++ b/kernel/time/time_test.c
+> @@ -96,4 +96,5 @@ static struct kunit_suite time_test_suite = {
+>  };
+>  
+>  kunit_test_suite(time_test_suite);
+> +MODULE_DESCRIPTION("time unit test suite");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+> change-id: 20240510-time-md-0f1514019230
+> 
 
