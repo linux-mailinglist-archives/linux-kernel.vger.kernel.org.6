@@ -1,146 +1,106 @@
-Return-Path: <linux-kernel+bounces-176730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16618C33CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 23:10:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB6A8C33D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 23:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E101F2171C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A7DF1F21562
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD85A225DD;
-	Sat, 11 May 2024 21:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E13B224FA;
+	Sat, 11 May 2024 21:34:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EwgJIpsT"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="CRRocr1W"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF69F1BC44;
-	Sat, 11 May 2024 21:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4C1CD11
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 21:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715461794; cv=none; b=YGbuCIs8JyLj/wEm1kRYCQWqFeQ1V0VHmaMJ/tldh3pcYB2MUdQNRS4lGtcvJIngmU5aoqQONwBoAkXHD2s4sMGvGuUPEw/gpv9e8n27mXX3KfXAFxt1GKGglX+NwaygnvqIeThkez99+CMBg35xHIMNpwp2u0YRk56LQ8C2HYM=
+	t=1715463250; cv=none; b=MwkQDrv1EYGSwn8gj+cuhPmgq5uH9WCHni/CA8adfAo6Lgo7IhwNU/ZjsVNjEai9j9hym8HMjRjsKxyyrF8LtKN95tHtkQDN2WS6/Ru2hvTmUTsEhCXHKLmIB74lJp2Tfpr8A3GrOYmjBlaYGctkdJTK4+78QeK0iN39EellTLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715461794; c=relaxed/simple;
-	bh=awyMliQSjbUNmHImBj3im/6MAmRLZaXBovw6qI33SIk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1Bjh10QIkfp+b1jG7kKHmTh1bTqedkKosxEOdP89vtuxhjAH4NIqKGoWPIiTemLpIR3NFefKZALwHyMspYKWZTB13q4HpkBzxl8+xSKdUvKBM2hqP6WAnPuWKkJm5aIEygqHhK2cGXNzgb5UxZZs3sLcjAN/nRy+HSb2SyN18I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EwgJIpsT; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ed835f3c3cso28434355ad.3;
-        Sat, 11 May 2024 14:09:52 -0700 (PDT)
+	s=arc-20240116; t=1715463250; c=relaxed/simple;
+	bh=NvjFLOuyZcKwSs83kgKRguywNOQb45rJ6TDp8yFSFkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P999odjFICFOjwzhW+qqsiUupW8nfh5bWtP+T/juGe2YKVJNULzxFQ0tE6PzTStf8PpEC7P6fWyHLOASYkn7m2qOe42VzbxmwjecSzZF/Fr4kssMQRk6ZGhr4ps9gBS9aJJ6UErNDfDikT3ONU3vNcFtGFogeznaKOXZWjL2i68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=CRRocr1W; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34f7d8bfaa0so2197829f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:34:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715461792; x=1716066592; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fhGglJZ+b8g6GXzg1Ll6IIdz99ZTq4GAj4YEaMs8Mvw=;
-        b=EwgJIpsTzH4OkgLZBVo4ouzRadD8+NqZY4U4PWYqdHpx2X23MXCuQ05TBfBwF6U8gW
-         LQH7Wp0GjXY4Ka28s3/nSyaNd4P8QyQannKor0vPmml+NeXNO0nY0mx60MYqMIi8eA0Z
-         YSCPc2hyI+GIqSPPXSCWOcsIApyjgHw1WHgpegd6rZ1cA6aROkxBKmMTmG3NK3GUP4yh
-         Y+MXxvTTeC+WTREBoi7RdCwZnxTvtjkAdtrmvZP+ZEszJq8OTjUc0AKHdA8tQhlpHa4N
-         dFPTKpwo5sVqBqp4qBZdoOfv/KMyiJ8V1jXrTP20mOm6PpWGFxgYmepgLdq0XU7552+3
-         XQWg==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715463247; x=1716068047; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9emgUyAJtwAbObZGlwkz1l4VNKCq8tIChis3cCxIwiE=;
+        b=CRRocr1WjR3uNYe7men9jti9VtgPoGEZF3EBKnD51PNPzKxBMha8bs0HcqoodzqDH/
+         dJQJE/ovlnGghqkqpE7ZYi+5G0Djq8HjNBo1dHZ18qIj0QqHXVfiR2IpX80vMLyDG6YL
+         /VLbVRVulaUofi996IG+vLaOhBgBqFTdvkkma3vnz3JdxZZGUfDOu7QrtNDOtf0Uy02Z
+         YO/3Nxx/ijhyeXDgCmuVwKw+CxBsMc1d6fL28Ludou9jleVp0syr4qMsk4DXk6gjzsQB
+         HQEiXPXMVLq+lnoX0413k06CtrJEJRolpPCJRj2qyHK7aNDliAbnZ2LjAHlcOZpXtifg
+         JVcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715461792; x=1716066592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fhGglJZ+b8g6GXzg1Ll6IIdz99ZTq4GAj4YEaMs8Mvw=;
-        b=BMFTKLvxEZnVlDb152oocQtcALWqGYBaVp4tluPrK4SOd+MR11S2E/t56t4cqHegA7
-         4MI2c634enpvFwm8mZKJ23T59madS05IHA9RD0n7bCIbIcqpo8Oalq+u4rLEz7gNrn/H
-         0F1oLpVEj/8KZ8hxFiLZOgy6RE3Q3hwYRwM0l1nAWPde8E4pbW+OUyXIVxa2+GcFCXTw
-         L4Av4F1KdGRfx2NwJXkEat/PcgapRxKo+pQ3sC3GbgE3qhw9Q2lETU6A8oSq9kUyvCbx
-         hqQz36bdv6h4jsgE4/9vFveiaHM57s2lOVJsVpAjUfZ857U5iJWp4duWqOanHAgurciq
-         GmIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7be1Hzc+FAQBcBrQzPngzwbWsPoSIhQlVxYLx6M+WqLqN+hxabNjy1C6G3k2VbfMpYoHG3tzppAaHsFI/DgwYuR0ibUUZRDVZNo5h6IRedwH0+7yW4L4P0W84ArF3qj6rebW2c6PFUOfNQIRMmhAurUsnI1IZcT49jBP4n/tAqjuj02EpKN/+AZByGSKMQygYRgG0jClIocKoHjE9oLjhoeSMVzYScv7mx48lx8nbPulk1nQWszwJ1pRM
-X-Gm-Message-State: AOJu0Yya3bLLR9QbdMt1BaCejySBhYPzNQXjiNKdn+bbDbByek+g3QqY
-	TejS8kRzTLYEHRFL1BaphqgGgSqKYyQwcoJlSf8MhkBIHie88lPU
-X-Google-Smtp-Source: AGHT+IFjDvMTXnhobln5jKNDQ2P6dQWSaGgkS/7twQcL+UsiDkVCy53zVtZ0UlohXhd71LvKm8ZPcA==
-X-Received: by 2002:a17:902:82ca:b0:1e6:116b:b0d3 with SMTP id d9443c01a7336-1ef43d2ec00mr73548335ad.28.1715461791943;
-        Sat, 11 May 2024 14:09:51 -0700 (PDT)
-Received: from krava ([204.113.88.211])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30c7asm52841025ad.171.2024.05.11.14.09.49
+        d=1e100.net; s=20230601; t=1715463247; x=1716068047;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9emgUyAJtwAbObZGlwkz1l4VNKCq8tIChis3cCxIwiE=;
+        b=X1ac6MInZuQW8C7PbKgLEUI5g2BrBh6qosBCgvAjWtb4SSwynT1gLGqmx1bnnga0u+
+         ++h6NTH8ph4oxmAdB6AsA7q7awUwyPScoTE6IeLhv6jABNlBbzcoxDjGZ2ykkHplMnfp
+         Dr5QEnsK5iBmuOPcFwRAI6LyLVGUFfWiX/+WOYNZtneyVFWTClQoUuhHln4+xEs29vMu
+         j/YLHQJCcPJdVmRwtcRGQGdGxMMSd0zJQdwXt2dPbx6cat9nsG6RmEckCpFz8QoWiz7o
+         g+2zWPN/VgoRBxK5jifeus5HJDsNrX+tK7OVsCUL2xAzsoAqwflDPLuSwuK50EC25ZJF
+         ovhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+lXl0k/BMk/8IsjyMrI8KOgcK9Obe5BcLAzYHzLnp9DQ0MDX0CM6OH/Rsyt2h93j0D7H9cNAns9+qGN2N5R+qO2MSynoCL8xzfus3
+X-Gm-Message-State: AOJu0YzJ3fdUlGNwv67kh+u++2yOJ2CveAvIPwQ/PigZOc9U22KgUM03
+	OdQpv/vPLim02p/Aou0bO/Pn/8hODrjryjP2hHVQiGhnYMJJ0U4iIt9z5UAIlfA=
+X-Google-Smtp-Source: AGHT+IFztmk98Zb+aKIGHwMouWlthssEhoVtuZRe3Rfhc6jFzedwa/wWeKjRwuFycvz/95KxyNHiJA==
+X-Received: by 2002:adf:cd8a:0:b0:34d:a0b5:3c57 with SMTP id ffacd0b85a97d-3504a73648dmr4183219f8f.23.1715463246862;
+        Sat, 11 May 2024 14:34:06 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b896b00sm7573613f8f.45.2024.05.11.14.34.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 14:09:51 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 11 May 2024 15:09:48 -0600
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "olsajiri@gmail.com" <olsajiri@gmail.com>,
-	"songliubraving@fb.com" <songliubraving@fb.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"mhiramat@kernel.org" <mhiramat@kernel.org>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"yhs@fb.com" <yhs@fb.com>, "oleg@redhat.com" <oleg@redhat.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCHv5 bpf-next 6/8] x86/shstk: Add return uprobe support
-Message-ID: <Zj_enIB_J6pGJ6Nu@krava>
-References: <20240507105321.71524-1-jolsa@kernel.org>
- <20240507105321.71524-7-jolsa@kernel.org>
- <a08a955c74682e9dc6eb6d49b91c6968c9b62f75.camel@intel.com>
- <ZjyJsl_u_FmYHrki@krava>
- <a8b7be15e6dbb1e8f2acaee7dae21fec7775194c.camel@intel.com>
+        Sat, 11 May 2024 14:34:06 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>
+Cc: cocci@inria.fr,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] Coccinelle: pm_runtime: Fix grammar in comment
+Date: Sat, 11 May 2024 23:31:19 +0200
+Message-ID: <20240511213117.2710-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a8b7be15e6dbb1e8f2acaee7dae21fec7775194c.camel@intel.com>
 
-On Thu, May 09, 2024 at 04:24:37PM +0000, Edgecombe, Rick P wrote:
-> On Thu, 2024-05-09 at 10:30 +0200, Jiri Olsa wrote:
-> > > Per the earlier discussion, this cannot be reached unless uretprobes are in
-> > > use,
-> > > which cannot happen without something with privileges taking an action. But
-> > > are
-> > > uretprobes ever used for monitoring applications where security is
-> > > important? Or
-> > > is it strictly a debug-time thing?
-> > 
-> > sorry, I don't have that level of detail, but we do have customers
-> > that use uprobes in general or want to use it and complain about
-> > the speed
-> > 
-> > there are several tools in bcc [1] that use uretprobes in scripts,
-> > like:
-> >   memleak, sslsniff, trace, bashreadline, gethostlatency, argdist,
-> >   funclatency
-> 
-> Is it possible to have shadow stack only use the non-syscall solution? It seems
-> it exposes a more limited compatibility in that it only allows writing the
-> specific trampoline address. (IIRC) Then shadow stack users could still use
-> uretprobes, but just not the new optimized solution. There are already
-> operations that are slower with shadow stack, like longjmp(), so this could be
-> ok maybe.
+s/does not use unnecessary/do not unnecessarily use/
 
-I guess it's doable, we'd need to keep both trampolines around, because
-shadow stack is enabled by app dynamically and use one based on the
-state of shadow stack when uretprobe is installed
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ scripts/coccinelle/api/pm_runtime.cocci | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-so you're worried the optimized syscall path could be somehow exploited
-to add data on shadow stack?
+diff --git a/scripts/coccinelle/api/pm_runtime.cocci b/scripts/coccinelle/api/pm_runtime.cocci
+index 4b9778874453..2c931e748dda 100644
+--- a/scripts/coccinelle/api/pm_runtime.cocci
++++ b/scripts/coccinelle/api/pm_runtime.cocci
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-/// Make sure pm_runtime_* calls does not use unnecessary IS_ERR_VALUE
++/// Make sure pm_runtime_* calls do not unnecessarily use IS_ERR_VALUE
+ ///
+ // Keywords: pm_runtime
+ // Confidence: Medium
+-- 
+2.45.0
 
-jirka
 
