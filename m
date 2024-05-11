@@ -1,149 +1,258 @@
-Return-Path: <linux-kernel+bounces-176503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF6028C30D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:19:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F48D8C30D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76A96281A2B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544FB1C20B19
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAD43BB21;
-	Sat, 11 May 2024 11:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225954BFE;
+	Sat, 11 May 2024 11:22:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="jsooCApb"
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04olkn2045.outbound.protection.outlook.com [40.92.73.45])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="mdg5YGSn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gl/UHAZT"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F29953390;
-	Sat, 11 May 2024 11:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.73.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715426339; cv=fail; b=Dt2rkwEf5MM5SVQ3u/0Tqc3Wr6QE3XHhtsCDztKC4GjiTEpIkgL7aYW+XBb/RCuGbVRFWOELAM9ADCnDvx74w8uzRXbJrfANPNckR/qRtaGh6jZIspJzkw3OZ7mUOHmC06jhEDma/j+YxkoDhgtD39PC8DEtMh9L41t1pRrlvDg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715426339; c=relaxed/simple;
-	bh=uMZZVQ3kPsHlN3AIfE0bR21QsKcbOzVSCcDf+vuUbOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oqWDMXvDjHjWxtTZSjaE9Z0F066cV3ZCIMOSWdAk2j/aEL9OQ907qTcs9m60k1nDNYXFACV38SqbyYjoIK5SBTGKuhq2G/fHXQlm9rdyjeyS62tkl0Z5QbFxjk+l1Y+gC9OE3yldNdo0wyq+smcYUVkE79UGy7+Q7uyxqgnt9x0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=jsooCApb; arc=fail smtp.client-ip=40.92.73.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BfU/8l80TJQu5xRHfM5vWdzQw6eKYsdcAYctvTzgk6couZc46KFDOT83kqr11SvkZnUCjT4ho+HsaCOGwmrJq1WgVVpCui366GmhF5QyRUwRRlZOXiqYyEmWU3X0enPTUoC8mrbHfKIpWmoVH6h85qKJxJKHRzklTgLLnrKD3m0O+7XyTJgfkY0LOedM330P2whaLy4f3lgE7zNOai6c/lnFRxqa+ZSHtYUiI+pB4+N5BEXehefqno7OZfSz8bVMZ/fEwqq3de34ZP2oBOPr8FCjy4bIbZ9qLJIy8dzza+JFmybGqjPRTLO/XDAEriPW3dP2SKgwe2HFocwp1yGDqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=02prNc+2KpAXKIDg3UuXVJGJ7t636sA/5HsJ8IMfbjU=;
- b=afEbVsQTy9EOPtmTaW02vai6Y9Y3f6aV6aoPz+bV/CbAKNOzoX5UBKpY6rKrFz46SzJ32fjJSHtjh0GEk4Jf4c1dG5L8HAZmCTgUTkDWP/Ca6fyQohrATCVeV38v9bFS9cAO5RaFb13sBnDM1FkPL+KItCpa4IzW8+Pviu8iX7DpapJ3e2V6BWkahdIihF/ZqWWcPb9IRsF9BSRkfi0RJgO27J0r7/U4lf5LmNh4k7/qP73z8dWjA4ZaJnBRL8CuagHdlMFARA/OfODOURJZukIKqQD921EKfJ+ZBviSmkbtOQiSfMsHD1zaRFU5UqKnAAaIFFFbQWiyeBXzjbCmwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=02prNc+2KpAXKIDg3UuXVJGJ7t636sA/5HsJ8IMfbjU=;
- b=jsooCApb1GRsnxKoPvZIX7TVuFUGbvgf9rxdx/fMWZ5taZ3l7AJ28w89IEZ7qy5SV5lynspOsqH88qax0faByqd7KC9ILZ1a7c1cWDutIwnRkYVkqOnw4DfRocyOk2HQw8FAI/mfw0siKkpl4I+tZM6LTzg78Pui9wlgZsAbY+ntw3YeQ0D+hUqaLsXgccVv9kARIw1VKk+qPP00UkfOtXwkqERFxhiaDDNBeDMwU0KZg46lNMPQqSvNB9w57KIcfJP4wSoPOqsXHqKhsKdJIPHL2NobO28JrDOGXigW/Yz8xZsq1uq5oL7cwB8xvvy+66tO3Qut8mlLJQb0swIm0A==
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
- by AM7PR02MB6068.eurprd02.prod.outlook.com (2603:10a6:20b:1a1::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sat, 11 May
- 2024 11:18:49 +0000
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7544.052; Sat, 11 May 2024
- 11:18:49 +0000
-Date: Sat, 11 May 2024 13:18:46 +0200
-From: Erick Archer <erick.archer@outlook.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>,
-	Kees Cook <keescook@chromium.org>,
-	Finn Thain <fthain@linux-m68k.org>
-Cc: Erick Archer <erick.archer@outlook.com>,
-	"James E.J. Bottomley" <jejb@linux.ibm.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v3] scsi: csiostor: Use kcalloc() instead of kzalloc()
-Message-ID:
- <AS8PR02MB72370EC6DA36600475300FC28BE02@AS8PR02MB7237.eurprd02.prod.outlook.com>
-References: <AS8PR02MB7237BA2BBAA646DFDB21C63B8B392@AS8PR02MB7237.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR02MB7237BA2BBAA646DFDB21C63B8B392@AS8PR02MB7237.eurprd02.prod.outlook.com>
-X-TMN: [f52T9AcyEzrRgDldOA0aInv1ESLIrKUV]
-X-ClientProxiedBy: MA4P292CA0006.ESPP292.PROD.OUTLOOK.COM
- (2603:10a6:250:2d::16) To AS8PR02MB7237.eurprd02.prod.outlook.com
- (2603:10a6:20b:3f1::10)
-X-Microsoft-Original-Message-ID: <20240511111846.GB3139@titan>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432DE2F26;
+	Sat, 11 May 2024 11:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715426523; cv=none; b=mqZX2nbebwdM/38h5xaaz9U/UFTENoqwKet1CmaePwapm+w/pE/HYYfiYY+/1o5TS9ApbifVx4BwCVVCOoCrYQO55+s2NRucc/XMKhYnfj181SGpca373NjbiNkzDFSz0bILgERhOmSOfB4zJp4vuq2yxsk5ztD0we7rWh2beFo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715426523; c=relaxed/simple;
+	bh=hkf4rEOCgdFntx/Mu1+PPXNkVUuEi+F6I9iRdoIj6vw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L1vreo7RYL91luht5a9UJWCfgJ2h1Fqg8/cty4VuPTeAONbo6adJzYUKi4fdbX0aEf0eDuAFpImu8NqDbrgE3oNYdKmbNeBv/3CSByPPCH1yLXhbnBp0DO2CiSQXrX+NQdDWTe+Nf0vmcLVGF9pgNYlVBpft6F9WKVSfARomJLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=mdg5YGSn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gl/UHAZT; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 45A2F1380234;
+	Sat, 11 May 2024 07:22:00 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute7.internal (MEProxy); Sat, 11 May 2024 07:22:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1715426520; x=1715512920; bh=uw
+	KqFrzk6W2ITMOqoowChbKdFFtrKD3DJW7TgtnFfqg=; b=mdg5YGSnDWeuUJmnmt
+	prow9YFbdnNaWFWnQSMbYIEpSTzV3Zn3Scjc+TJ7Ykpx3fdebA/6sRpjyCSZr8cd
+	jZAUyZk3G3Kxgr9UaT6ljxw1kkiTJ1aKa7Yrft2hLc7NBvSg6MI+HKHoTCp+Rt6P
+	9SUHT9fsopB6TgGXMfz7F1LM0/dBh7RBYRsdEG2Q7ppe9FqpKBrTUsiQyJnHonJJ
+	99PIUkD3c4kYNAylNhOqj7HNg+s7xMSrkOKeC/qlZSUVpbqaHUxA1KkiR2vKuJzo
+	8yNb2rZmdGS9lkc5osNw5AXPrv5HjCP9+Kr7TCInP/TMjxA2nir4g6SjlHs9bg5L
+	kpfA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1715426520; x=1715512920; bh=uwKqFrzk6W2IT
+	MOqoowChbKdFFtrKD3DJW7TgtnFfqg=; b=Gl/UHAZTdShA5IbCKHIscCv3CwCir
+	gsPIayApKSUMmWx0awY6mAPuJQfPcOfC9/A0YNNXg3F7Vm2pNroOkubjQcNaY53G
+	3Xz5tAVBOE9IePzimX3whHQezg1FGB6KrnfmDANMkjihfE5nwT3Cn98CFhjjGeOk
+	dqNgGQhm9/gUx0hcpbLVPOqFVFvUATBEf368biRP9Ey+lK/mK3nXIVCgWQ7eeMsf
+	j31Hko+3kIn0+DX/wQZSfKC4V9F4ns14P3H3OVgaUcRwyLXTJv/NO7tafAIUq5/G
+	z9lYe0EuZ2iVQkZV7gsaTHZFvCdRoX/7pWrn144G8zv8AjpNpfPHaNgyQ==
+X-ME-Sender: <xms:11Q_ZjkoMaQ1n56Jh1v7_7vV0hYpVB0ZY8F4BEBPeVvL0cdWzwa-Lg>
+    <xme:11Q_Zm1yk90UqUtMYbejIZW3k5xOdpJx7rz2cWRhv2la9mgCVE_mSmuhZT6tCnmD3
+    r8ErwX2R8gd9cYTHnU>
+X-ME-Received: <xmr:11Q_Zpr-ccqLSXxiEItWLL2ozsrNOE_9fmoF68myYEBteSxKsxxXyxY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegtddgfeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpeflihgrgihu
+    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
+    ftrfgrthhtvghrnhephfffgeejgfejieeugffgudegvdekffevgeeuteetgeejveeiteei
+    vedvffehlefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehf
+    lhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:11Q_ZrkvIyRK-dOO6FRcJB-InV-sfEvy56BJ8aFnUo6M1mzBE1cSEg>
+    <xmx:11Q_Zh1Mq6gvcwYizl82NL27piKmlMQW0vko8cOFpoaXEbyMfwo2Aw>
+    <xmx:11Q_ZqsS9IjEspYMcGuMaLgmltLT-gVf2lTyY8SFmoFWC3PMaKaziQ>
+    <xmx:11Q_ZlUm84rrK9r4mwLUHoBQIiaMb1OOQXL23--Bf3k3v_8-SoZVZA>
+    <xmx:2FQ_ZroNDVgtBEWH1iDVsUspeItog0N8sd-ecQ2Yzk5jMxqMQYRCR2hV>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 11 May 2024 07:21:58 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Sat, 11 May 2024 12:21:54 +0100
+Subject: [PATCH v2] MIPS: Implement ieee754 NAN2008 emulation mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|AM7PR02MB6068:EE_
-X-MS-Office365-Filtering-Correlation-Id: 754762f1-d637-4ea1-2d17-08dc71ac2157
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3412199016|440099019|1602099003|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	x4IFrhVBC8rQx1qujeoD/qyYb5C1GJmQQwasxYeAPMzhbuvQA7FvXoJZFPAdB0TfooUUBt/mtQaZlA5L438/yiNVIX/X7lcpL66KA9QBpt/R0Y7mG3gwPHj9cihPM9ooOsVJN1xhGuse8zySBNtbFAobwhmSo3qemxPDnZyYijyzFXf/OXGU1WFQb7IEt583cClX55PavlqjG24NPsIRHVygC5fTCoCp9GHBu3cCCIu+dzQnekBl2lJ2srf+4CA0ttEkKgAgm6Ml3ys8dbX99ladmFi7vyIv4V6g6ybZbzP4QHT95+IyjhdGPChYzuXyUkoju9qcap3XWai+U/cBaXijZvyNQW18ddX1sN7+dOt4FFSUTMKtFKbJB7Oyqk9U2h+CeM4ndyKvkSF+/XeTSFH+FsUWWfRQTvPor4EyspETu/Lnpyee1X+v+O5wsd/rgGQAZC5ZOgIGB6+zoNUnyeTiOUmPXY2lTkr0r44U1gzRkdo+uIbelirDBYCy/3OfiQcOwS+/J+MHeheIrIebglAkrMUIAStXfNtDTf4S5H8z6LqT3h98AgZ7d4Huy2vtKVZKUWq6O0qVnrhC4Rwg7Zx1MUe6DoYGhvOE4Ks6rbJSW6txs7yo9SXnr803ruKUsMaeS4Ul805nzAGpDXiWXXh6BhYaUZdyMOPnyyiyFA8bQzf7bqlQYy/3Bjqh35cn
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lXoqp6Eq+oLh5vmzumgOCtOcgumCgu9cNgoRHjS9a3bD4CDRbOq6dpVV77RC?=
- =?us-ascii?Q?YZOXzHLo0ITS2zk0DYAURa2QG5DNOYxSRfBq/84EqQ7fEqs6n/M8Xi8CNiTP?=
- =?us-ascii?Q?s8pGE9zYpFt/xfBHL7iL3tvcszjbid0MVxy62TKSLQMAfNHfOFcm+I90i/ds?=
- =?us-ascii?Q?ov82dAmkqJSpLnVkzKEws64hsGMLRZGcf2awN5/mBRPtKo8tVuGarFOwFXiA?=
- =?us-ascii?Q?wrPivya6JnASr8yRmGys03s+ibAueOhTok2TdOGaC48m4NKWLvhzRpeP3jxY?=
- =?us-ascii?Q?c4VCpUfZpeFiQ+OgINV3xyjVe0/tCtJ1PWFukMTpSDvEEVV2jIB4SRYVtjh6?=
- =?us-ascii?Q?uPB/sFBoso092CFo7eWAZhQ289T2SFJeieyrd8NcrYxoG3+k0TBBqnfDgDgN?=
- =?us-ascii?Q?Wb0BuVqLWTgvhfP7YIG2VVZ9RFvYtCFvwsnHwe/5coKTIXA9qCy1uil4/Uvg?=
- =?us-ascii?Q?dDMRRk8wKGD9ZASJpca+zaFZWi+f3qIWjINEcSyBr0uYTSuBSyY1fT1ojY9b?=
- =?us-ascii?Q?DxoJN+CSwITwAmOZUOSDXuOCDo+/D12Tmk5qQx1uzwQPfPRImJXReBsPhvl2?=
- =?us-ascii?Q?zxtLykE1fJByB0StMxISBsekkjEUBUAnC3mjS6qWT3/Ho436a7vsEKFP1E0O?=
- =?us-ascii?Q?LQf/35HjHL+K4BGowgFqp7nmTCOvMz9MYJ7L6KyYOoE6tI6oWyq+kqQxxuP7?=
- =?us-ascii?Q?4uSQ5GdY6ECSuME2Z8slnChjd/dg3Pn3lujRZzbNIuPKr8NABiWAE+emgRcW?=
- =?us-ascii?Q?O1h/8+TBdVW2SbbqSbYyeaSLMzQk3xeFBdgvFtlfyRwBfxxvZNIe+Sw/sUcE?=
- =?us-ascii?Q?KZQLl7sGHDPKgJA0B254mzACmIoB2OT0SSYuGQj8DUEuMV2ZGP7tmesgez4g?=
- =?us-ascii?Q?PvJdA6MNjbYcPjo+NtuY+vW0E5n3i9VgD6EjrqkfxI+mba2z7tJYwdC11EKl?=
- =?us-ascii?Q?Yl68qKfunCfzF1HIF/T1WPzfpuQnsE+cWFhOxyjcNK8VW9q2uLX4CscVwpI5?=
- =?us-ascii?Q?qFqYqx4SUgUeQw0+/jEpZD0z+pOUfaU3pHJPfF8GTocT2yoAUzItLzMkCU9U?=
- =?us-ascii?Q?vdEA6GY0LKJEQeuyL6g59/+AI6csejQah1Z3wLoHyMlpV10JwAK2MiZ2qGe3?=
- =?us-ascii?Q?qxEIh8MwUNkgkKorSB/6gTssUrZKnRU7hMUxYUYEqxyTAcNOPU+SF8AKsNIK?=
- =?us-ascii?Q?P5YY+mQb0+5h4YiIE/oljifeiriHRqOe3Oc4Mlf0Ls/j7adMyVgjZcuYVkqh?=
- =?us-ascii?Q?2hCRHyPYs8JzuEjJCDxr?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 754762f1-d637-4ea1-2d17-08dc71ac2157
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 11:18:48.9155
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6068
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240511-mips_ieee754_emul-v2-1-af796ea21ef0@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIANFUP2YC/32NUQqDMBBEryL73ZQk1cb61XsUkbBZdUGNJFYq4
+ t2beoAyX29g3uwQKTBFqLIdAq0c2U8J9CUD7O3UkWCXGLTUuSykESPPsWEiMkXe0PgehFOmvBe
+ te5RGQtrNgVr+nM5XnbjnuPiwnRer+rX/bKsSKQ4NSqduaPHZDlvn7XJFP0J9HMcXGvFFl7QAA
+ AA=
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5105;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=hkf4rEOCgdFntx/Mu1+PPXNkVUuEi+F6I9iRdoIj6vw=;
+ b=owGbwMvMwCHmXMhTe71c8zDjabUkhjT7kOtTLj09yXBucUdUmm/czEsXMy9N3x1TtbLzkrvM4
+ Yibl+P0OkpZGMQ4GGTFFFlCBJT6NjReXHD9QdYfmDmsTCBDGLg4BWAiz2sZGfrlrOM5FZfvnP9X
+ /1+gyQWD7PrJN/tm6JWeXXPUhSWGNZ/hf/a5C3rX7DrCV0X6SV8wEVn/3MJQd/ZRnegZ1ikc+wp
+ L2AE=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Hi Martin, Kees and Finn,
+Implement ieee754 NAN2008 emulation mode.
 
-On Sat, Mar 30, 2024 at 05:17:53PM +0100, Erick Archer wrote:
-> Use 2-factor multiplication argument form kcalloc() instead
-> of kzalloc().
-> 
-> Also, it is preferred to use sizeof(*pointer) instead of
-> sizeof(type) due to the type of the variable can change and
-> one needs not change the former (unlike the latter).
-> 
-> Link: https://github.com/KSPP/linux/issues/162
-> Reviewed-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> Signed-off-by: Erick Archer <erick.archer@outlook.com>
-> ---
-> 
-Thank you very much for the reviews and comments.
+When this mode is enabled, kernel will accept ELF file
+compiled for both NaN 2008 and NaN legacy, but if hardware
+does not have capability to match ELF's NaN mode, __own_fpu
+will fail for corresponding thread and fpuemu will then kick
+in.
 
-Regards,
-Erick
+This mode trade performance for corretness, while maintaining
+support for both NaN mode regardless of hardware capability.
+It is useful for multilib installation that have both types
+of binary exist in system.
+
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Changes in v2:
+- Fix a typo
+- Link to v1: https://lore.kernel.org/r/20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com
+---
+ Documentation/admin-guide/kernel-parameters.txt |  4 +++-
+ arch/mips/include/asm/fpu.h                     | 15 +++++++++++++++
+ arch/mips/kernel/elf.c                          |  4 ++++
+ arch/mips/kernel/fpu-probe.c                    |  9 ++++++++-
+ 4 files changed, 30 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 500cfa776225..dee487b03c9d 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2000,7 +2000,7 @@
+ 			for the device. By default it is set to false (0).
+ 
+ 	ieee754=	[MIPS] Select IEEE Std 754 conformance mode
+-			Format: { strict | legacy | 2008 | relaxed }
++			Format: { strict | legacy | 2008 | relaxed | emulated }
+ 			Default: strict
+ 
+ 			Choose which programs will be accepted for execution
+@@ -2020,6 +2020,8 @@
+ 				by the FPU
+ 			relaxed	accept any binaries regardless of whether
+ 				supported by the FPU
++			emulated accept any binaries but enable FPU emulator
++				if binary mode is unsupported by the FPU.
+ 
+ 			The FPU emulator is always able to support both NaN
+ 			encodings, so if no FPU hardware is present or it has
+diff --git a/arch/mips/include/asm/fpu.h b/arch/mips/include/asm/fpu.h
+index 86310d6e1035..bc5ac9887d09 100644
+--- a/arch/mips/include/asm/fpu.h
++++ b/arch/mips/include/asm/fpu.h
+@@ -129,6 +129,18 @@ static inline int __own_fpu(void)
+ 	if (ret)
+ 		return ret;
+ 
++	if (current->thread.fpu.fcr31 & FPU_CSR_NAN2008) {
++		if (!cpu_has_nan_2008) {
++			ret = SIGFPE;
++			goto failed;
++		}
++	} else {
++		if (!cpu_has_nan_legacy) {
++			ret = SIGFPE;
++			goto failed;
++		}
++	}
++
+ 	KSTK_STATUS(current) |= ST0_CU1;
+ 	if (mode == FPU_64BIT || mode == FPU_HYBRID)
+ 		KSTK_STATUS(current) |= ST0_FR;
+@@ -137,6 +149,9 @@ static inline int __own_fpu(void)
+ 
+ 	set_thread_flag(TIF_USEDFPU);
+ 	return 0;
++failed:
++	__disable_fpu();
++	return ret;
+ }
+ 
+ static inline int own_fpu_inatomic(int restore)
+diff --git a/arch/mips/kernel/elf.c b/arch/mips/kernel/elf.c
+index 7aa2c2360ff6..f0e7fe85a42a 100644
+--- a/arch/mips/kernel/elf.c
++++ b/arch/mips/kernel/elf.c
+@@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
+ 	t->thread.fpu.fcr31 = c->fpu_csr31;
+ 	switch (state->nan_2008) {
+ 	case 0:
++		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
++			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
++		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
++			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
+ 		break;
+ 	case 1:
+ 		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
+diff --git a/arch/mips/kernel/fpu-probe.c b/arch/mips/kernel/fpu-probe.c
+index e689d6a83234..6bf3f19b1c33 100644
+--- a/arch/mips/kernel/fpu-probe.c
++++ b/arch/mips/kernel/fpu-probe.c
+@@ -144,7 +144,7 @@ static void cpu_set_fpu_2008(struct cpuinfo_mips *c)
+  * IEEE 754 conformance mode to use.  Affects the NaN encoding and the
+  * ABS.fmt/NEG.fmt execution mode.
+  */
+-static enum { STRICT, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
++static enum { STRICT, EMULATED, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
+ 
+ /*
+  * Set the IEEE 754 NaN encodings and the ABS.fmt/NEG.fmt execution modes
+@@ -160,6 +160,7 @@ static void cpu_set_nofpu_2008(struct cpuinfo_mips *c)
+ 
+ 	switch (ieee754) {
+ 	case STRICT:
++	case EMULATED:
+ 		if (c->isa_level & (MIPS_CPU_ISA_M32R1 | MIPS_CPU_ISA_M64R1 |
+ 				    MIPS_CPU_ISA_M32R2 | MIPS_CPU_ISA_M64R2 |
+ 				    MIPS_CPU_ISA_M32R5 | MIPS_CPU_ISA_M64R5 |
+@@ -204,6 +205,10 @@ static void cpu_set_nan_2008(struct cpuinfo_mips *c)
+ 		mips_use_nan_legacy = !cpu_has_nan_2008;
+ 		mips_use_nan_2008 = !!cpu_has_nan_2008;
+ 		break;
++	case EMULATED:
++		/* Pretend ABS2008/NAN2008 options are dynamic */
++		c->fpu_msk31 &= ~(FPU_CSR_NAN2008 | FPU_CSR_ABS2008);
++		fallthrough;
+ 	case RELAXED:
+ 		mips_use_nan_legacy = true;
+ 		mips_use_nan_2008 = true;
+@@ -226,6 +231,8 @@ static int __init ieee754_setup(char *s)
+ 		return -1;
+ 	else if (!strcmp(s, "strict"))
+ 		ieee754 = STRICT;
++	else if (!strcmp(s, "emulated"))
++		ieee754 = EMULATED;
+ 	else if (!strcmp(s, "legacy"))
+ 		ieee754 = LEGACY;
+ 	else if (!strcmp(s, "2008"))
+
+---
+base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
+change-id: 20240507-mips_ieee754_emul-d17865fd9870
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+
 
