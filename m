@@ -1,381 +1,255 @@
-Return-Path: <linux-kernel+bounces-176331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72ED58C2E2E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:52:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6D08C2E3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 966701C213D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:52:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3831C21205
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D90208B8;
-	Sat, 11 May 2024 00:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6608A12B87;
+	Sat, 11 May 2024 00:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JXcOWyD8"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ORbM1vOT"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012E31BC3F
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4195677C
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715388607; cv=none; b=thIvKNXL1o7yIDx0iJ2xWM3KoR0mH7OD6xRuvwPAQVIJmLW12YiNc/MXobT5cJU/wRQhiCcNtnXth1dl4avXFCNFRWTFTKZ7i8c+poL8v6JQMYpdWBtK5uW3006LtQFkX7lNIR+2QxPPtmm1zHkN6TnbOHWKBNtiFhxTfWtS0x4=
+	t=1715388645; cv=none; b=kKbbCJO18DQ/Qsg5IXaCWbiifdHKUEMgayGQVtmV5xK1N/aRdaXN5i0RPrdtjOnZiYLw4c1AR/qDhibYuotZza3RtdSrlRjrK6TEPzfYdo7nXfWZlzfjTDYbGxq4NA6fYJ8oV6YAO0wHgCvumXXjdOzwOu/tXAOreKiqZOLfG20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715388607; c=relaxed/simple;
-	bh=qfovg8GPkCrYv+M58MvC1AwOylMJYvN79Ny2UrHzdtM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lbuCdC/oO3+8EWsBT4k22YVsquuuaUMKKIQxMhVsHE17c/oesyiDmreJOHcIgEKdQEICh12DIx1+L4TjNxg80WeE8ETmiBbbeXUSsL7RUd0Wlvfdc3VGkGomHZbcsgHCe/xpp5IuDDnvLaTwTOzqEzVDIeit/k//Fi4CvMoW1c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JXcOWyD8; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5b277e17e15so1232228eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:50:04 -0700 (PDT)
+	s=arc-20240116; t=1715388645; c=relaxed/simple;
+	bh=29H2ZkSMqUh1NQ71nR4QuJZPnSHhxyUdN/R3ZAzv+1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hMSuzydAjk0LbMnuCgD17t9/3y6hggk9OkeNhkAqhbl3A2j8vPp6069h4k19ghUP5dPmawccIqV6TWaz5+icMlAF7YBxjwT7Fhi7Qk34QBYNeNnNXvFcJAnaNerCzY4P8bQyetSudKgC5TwJx4DVgz3WZVUvjJETNKIErPQRSFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ORbM1vOT; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ee0ccf9c2fso63215ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715388604; x=1715993404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1715388643; x=1715993443; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sef0yxj3M0McfXOWyYuZh5QNVIS4E8ybwIxSMPcOtQk=;
-        b=JXcOWyD8VBvKnYW77q19opIK1vz4yClDsHyCvB/utsUPEdO5Mr3R39PJR0/oEAbYcl
-         kRviy2Kc2QENOgs/R/0n8vfpVSKhaazqNdkght3zIY+CDWkj99Mj1NNanFdfDdHAPqVC
-         FX4K8EJPdTWfYltaAHNSPWg4LysuT7tfgPNhhlv+6MhHXSn199YjNx0wkqmTD1nUOqdv
-         o7xXLsZJXsMqrWd4Fia5EPtoMEtxhptNowK7IofVxdaAIuMzZLEOzAw6aLkzs2pz8Sq5
-         KApBEZVm6pufbasNL/la4BRiH6YW9OQsKeYQYvpLtt8GGMqaGm8VXFZUd6pg22pMJViR
-         fQ6g==
+        bh=IpkRXiISMgxYRyuOPXk0L2m29umqlNK9saYU4NgbZio=;
+        b=ORbM1vOTcuBEwUq19USCMObHIovAN0Q1ZSiXVGHEHcmMgllH3vczMCgVCRS2AT1S1r
+         wKg5n4zADa9Sr6PAzTdWU7rrxUKKjQ7qEeqdqhQyJPDjwO+zs+A8mWO1B0D2+d9SNWf1
+         U3pbN+gfBBu9YQBLlDJ112V0Hv74dTWwaTjYJ45chEQgi+hRb+rhrdcNAzwqjAYIFIhZ
+         Xq1qzFGer4tRG4IJKLVVJ7JTSKbjgJ9lllEaIRVRyxOnv4D4boSkj7An4YO2tVWyzCtG
+         guKjoQbFlLBr/Y1zbvnwAT/I5RvminqsZah7hNSddTz4hsSBpDIULSrAPb5azrYad8/G
+         AHmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715388604; x=1715993404;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715388643; x=1715993443;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sef0yxj3M0McfXOWyYuZh5QNVIS4E8ybwIxSMPcOtQk=;
-        b=DqH6XRhdDn/Vs838nUNviVWTvrK4Rer7rpReXXSXXQBfRJm6tKDlLVNPErU5nIvruO
-         0bqgX0e7XVXnJzO9v3GBFnhQjKRU/YI3dAiMm1QFYcIiWi4+fDPilfPLJlHyElqNm5iW
-         iSZeDjnm0i3wb1wEBV7YY6gOEqSfJjf8JRt4zoyocs4RWWFuB5Fp6X9fzrrduHWUi40K
-         sTFJHHPCH9XCAnMhZqLEXTow2W2fLs0KdLnbU8C5WD1zKrgTsHIxErlBVw5hNBb2q3OL
-         jwd9wgH4ro/8/1Y8129zppWVev8u3KuWHQlsp+os9w2GHXsb/15cwsWXvDhhc6wXsn7C
-         sV5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWxugaOOI4+VUH4a9xeFLUgKMhJsnkUIV4PY849uPhm95cPOFDAZS8VonSDtkcHfN63gWZYBM6Z+z+EPE09CSlD1tWDxesFEG0wuVjk
-X-Gm-Message-State: AOJu0YxD1OGEoQNu2hRfxpolmGaiK1LsIWzoF/0TtCMwbkUBO0rZ3V1W
-	kOnsiVjtvZ+o/C+D2GBqkMIfJ1GLaCC3tFCmQgULqNcU/i0Mvh0vcZ8oyao7zP0=
-X-Google-Smtp-Source: AGHT+IFISSd56LKo6PC65Rb6v16dDvY0nToNpJBuoPHdhJJv2V9+3eeHEwn6BehsohvwaWKdMXJowQ==
-X-Received: by 2002:a4a:8c21:0:b0:5b1:b8a4:bce4 with SMTP id 006d021491bc7-5b281a1b6a7mr4188517eaf.8.1715388604085;
-        Fri, 10 May 2024 17:50:04 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5b29015a3dbsm321132eaf.46.2024.05.10.17.50.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 17:50:03 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: [PATCH RFC v2 8/8] iio: adc: ad7944: add support for SPI offload
-Date: Fri, 10 May 2024 19:44:31 -0500
-Message-ID: <20240510-dlech-mainline-spi-engine-offload-2-v2-8-8707a870c435@baylibre.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
-References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+        bh=IpkRXiISMgxYRyuOPXk0L2m29umqlNK9saYU4NgbZio=;
+        b=MaPKpVxTb2xxiJcAj34g+Kdw4oknPw8y7MB31qyeIY2Fk20nCLZWacL5msctfcZtAg
+         Hxt6t2djX18L3rwWSCGSMfDDYnZakQ/Lx229wOgKJPdiKD0orAigLLvvkrWVIe+LeDNk
+         3NuStPzBHaKMFZPRJApkbtaNbQYSK7045QekrLhvlinkgprwpV+8b2lwD7kLPuNpZJJX
+         EDl3C95/sOjgB6UjSFQmHL3oPX/VGhqtuk72E6mYmXqHUOV/dO83DOJeB/qkJbGs4r1S
+         fwzHqpRtu383pXUJHOivi9FL14agtkHXxmNVYGUGMtr/s5A+39JdyOcUlLRLGUkbTfHg
+         D/AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMX/G+7kfNrvQ8yqr0fpuShBBTvIi02cZPu9sH4PXPkuYd34zKXLgF03KPyz0bgS7GMZ6b05RNH4lQUE3wsY1DM3FZl7sicOfIW4tr
+X-Gm-Message-State: AOJu0YxHCzL9euGTjgZ3NlFMpmBjopZsQhF05zRKB2EvHRiwUcjFtpUr
+	KWtdusnIgTNSCValav01NZucOLbzK1MuOni1WTz1hPr9NPIdrWTt4fyMgD5QA5OwJVNmGnlyHYA
+	J+tzq9jXX+dcQPfvlZbIPiAVC4QgORiwh9P0F
+X-Google-Smtp-Source: AGHT+IGcOv4CX/F79iCXQC7gbanIkG/guRxkNZwIoCLpaLG+RFa9IbRJ1e/Fc1r3KeEPT54+/eCX4VqJgF3btD61+AA=
+X-Received: by 2002:a17:903:124b:b0:1e8:6551:e83c with SMTP id
+ d9443c01a7336-1f060bba9c6mr501885ad.25.1715388642768; Fri, 10 May 2024
+ 17:50:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: 8bit
+References: <20240510024729.1075732-1-justin.he@arm.com> <20240510024729.1075732-3-justin.he@arm.com>
+ <CAP-5=fVGD-pK1igABj0wiq6-KVM+Z4i7rnRhM=Vy7bFHW4pLQA@mail.gmail.com>
+ <DBBPR08MB4538A157B81F2BBD2DD9E40DF7E72@DBBPR08MB4538.eurprd08.prod.outlook.com>
+ <CAP-5=fWgGOWi_YedpQgdK2DnBvtRk-79GEhKMsTehcfOVtxLNA@mail.gmail.com>
+In-Reply-To: <CAP-5=fWgGOWi_YedpQgdK2DnBvtRk-79GEhKMsTehcfOVtxLNA@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 10 May 2024 17:50:29 -0700
+Message-ID: <CAP-5=fULL0KNWA_O0B3r4Q0DA2_FMk=rARhb=z8ySKzFyVwFyw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf pmu: Fix num_events calculation
+To: Justin He <Justin.He@arm.com>, John Garry <john.g.garry@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <Mark.Rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <James.Clark@arm.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, nd <nd@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This adds support for SPI offload to the ad7944 driver. This allows
-reading data at the max sample rate of 2.5 MSPS.
+On Fri, May 10, 2024 at 1:41=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
+te:
+>
+> On Thu, May 9, 2024 at 11:52=E2=80=AFPM Justin He <Justin.He@arm.com> wro=
+te:
+> >
+> > Hi, Ian
+> >
+> > > -----Original Message-----
+> > > From: Ian Rogers <irogers@google.com>
+> > > Sent: Friday, May 10, 2024 2:17 PM
+> > > To: Justin He <Justin.He@arm.com>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>; Ingo Molnar <mingo@redhat.=
+com>;
+> > > Arnaldo Carvalho de Melo <acme@kernel.org>; Namhyung Kim
+> > > <namhyung@kernel.org>; Mark Rutland <Mark.Rutland@arm.com>; Alexander
+> > > Shishkin <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kerne=
+l.org>;
+> > > Adrian Hunter <adrian.hunter@intel.com>; Kan Liang
+> > > <kan.liang@linux.intel.com>; James Clark <James.Clark@arm.com>;
+> > > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org
+> > > Subject: Re: [PATCH 2/2] perf pmu: Fix num_events calculation
+> > >
+> > > On Thu, May 9, 2024 at 7:47=E2=80=AFPM Jia He <justin.he@arm.com> wro=
+te:
+> > > >
+> > > > When pe is NULL in the function perf_pmu__new_alias(), the total
+> > > > number of events is added to loaded_json_aliases. However, if
+> > > > pmu->events_table is NULL and cpu_aliases_added is false, the
+> > > > calculation for the events number in perf_pmu__num_events() is inco=
+rrect.
+> > > >
+> > > > Then cause the error report after "perf list":
+> > > > Unexpected event
+> > > smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
+> > > >
+> > > > Fix it by adding loaded_json_aliases in the calculation under the
+> > > > mentioned conditions.
+> > > >
+> > > > Test it also with "perf bench internals pmu-scan" and there is no
+> > > > regression.
+> > > >
+> > > > Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
+> > > > Signed-off-by: Jia He <justin.he@arm.com>
+> > > > ---
+> > > >  tools/perf/util/pmu.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c index
+> > > > a1eef7b2e389..a53224e2ce7e 100644
+> > > > --- a/tools/perf/util/pmu.c
+> > > > +++ b/tools/perf/util/pmu.c
+> > > > @@ -1639,6 +1639,8 @@ size_t perf_pmu__num_events(struct perf_pmu
+> > > *pmu)
+> > > >                  nr +=3D pmu->loaded_json_aliases;
+> > > >         else if (pmu->events_table)
+> > > >                 nr +=3D
+> > > pmu_events_table__num_events(pmu->events_table,
+> > > > pmu) - pmu->loaded_json_aliases;
+> > > > +       else
+> > > > +               nr +=3D pmu->loaded_json_aliases;
+> > >
+> > > Thanks for working on this! The "struct pmu_event *pe" in new_alias i=
+s an entry
+> > > from the json data, and "pmu->events_table" should NULL if there is n=
+o json
+> > > data. I believe the code is assuming that these lines aren't necessar=
+y as it
+> > > shouldn't be possible to load json data if the json events table does=
+n't exist for
+> > > the PMU - if there is no json data then loaded_json_aliases should be=
+ 0 and no
+> > > addition is necessary. I'm wondering why this case isn't true for you=
+.
+> > On my Armv8a N2 server, "pmu->events_table" is NULL because perf_pmu__f=
+ind_events_table()
+> > return NULL.
+> >
+> > I also noticed that pmu->loaded_json_aliases is *not* 0. The missing ad=
+ding calculation will cause
+> > perf_pmu__num_events() less than normal case and will trigger latter ch=
+eck failure in
+> > perf_pmus__print_pmu_events__callback().
+> > At last, perf list will report many lines similar as:
+> > Unexpected event smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
+>
+> The issue is the sys events which currently are ARM only. Here is an
+> lldb stack trace:
+> ```
+>     frame #6: 0x0000aaaaabc9b49c
+> perf`__assert_fail(assertion=3D"pmu->events_table",
+> file=3D"tools/perf/util/pmu.c", line=3D522, function=3D"int
+> perf_pmu__new_alias(struct perf_pmu *, const char *, const char *,
+> const char *, FILE *, const struct pmu_event *)")
+>     frame #7: 0x0000aaaaab41e018
+> perf`perf_pmu__new_alias(pmu=3D0x00007377e7e09b40,
+> name=3D"hnf_brd_snoops_sent", desc=3D"Counts number of multicast snoops
+> sent (not including SF back invalidation)", val=3D"eventid=3D9,type=3D5",
+> val_fd=3D0x0000000000000000, pe=3D0x0000ffffffffde88) at pmu.c:522:3
+>     frame #8: 0x0000aaaaab4175cc
+> perf`pmu_add_sys_aliases_iter_fn(pe=3D0x0000ffffffffde88,
+> table=3D0x0000aaaaac299bb0, vdata=3D0x00007377e7e09b40) at pmu.c:939:3
+>     frame #9: 0x0000aaaaaaf6d000
+> perf`pmu_events_table__for_each_event_pmu(table=3D0x0000aaaaac299bb0,
+> pmu=3D0x0000aaaaac299238, fn=3D(perf`pmu_add_sys_aliases_iter_fn at
+> pmu.c:931), data=3D0x00007377e7e09b40) at pmu-events.c:5994:23
+>     frame #10: 0x0000aaaaaaf6cd78
+> perf`pmu_events_table__for_each_event(table=3D0x0000aaaaac299bb0,
+> pmu=3D0x0000000000000000, fn=3D(perf`pmu_add_sys_aliases_iter_fn at
+> pmu.c:931), data=3D0x00007377e7e09b40) at pmu-events.c:6057:23
+>     frame #11: 0x0000aaaaaaf6ec44
+> perf`pmu_for_each_sys_event(fn=3D(perf`pmu_add_sys_aliases_iter_fn at
+> pmu.c:931), data=3D0x00007377e7e09b40) at pmu-events.c:6295:27
+>     frame #12: 0x0000aaaaab41738c
+> perf`pmu_add_sys_aliases(pmu=3D0x00007377e7e09b40) at pmu.c:955:2
+>     frame #13: 0x0000aaaaab4179fc
+> perf`perf_pmu__lookup(pmus=3D0x0000aaaaac500970, dirfd=3D34,
+> name=3D"arm_cmn_0") at pmu.c:1037:2
+>     frame #14: 0x0000aaaaab4242d0 perf`perf_pmu__find2(dirfd=3D34,
+> name=3D"arm_cmn_0") at pmus.c:161:9
+>     frame #15: 0x0000aaaaab421614 perf`pmu_read_sysfs(core_only=3Dfalse)
+> at pmus.c:209:3
+>     frame #16: 0x0000aaaaab42278c
+> perf`perf_pmus__scan_skip_duplicates(pmu=3D0x0000000000000000) at
+> pmus.c:297:3
+>     frame #17: 0x0000aaaaab422078
+> perf`perf_pmus__print_pmu_events(print_cb=3D0x0000ffffffffec68,
+> print_state=3D0x0000ffffffffecd0) at pmus.c:462:16
+>     frame #18: 0x0000aaaaab425d9c
+> perf`print_events(print_cb=3D0x0000ffffffffec68,
+> print_state=3D0x0000ffffffffecd0) at print-events.c:409:2
+>     frame #19: 0x0000aaaaab093ef0 perf`cmd_list(argc=3D0,
+> argv=3D0x0000fffffffff340) at builtin-list.c:592:3
+>     frame #20: 0x0000aaaaaaf5b490
+> perf`run_builtin(p=3D0x0000aaaaac4e8220, argc=3D1,
+> argv=3D0x0000fffffffff340) at perf.c:349:11
+>     frame #21: 0x0000aaaaaaf5a3e0 perf`handle_internal_command(argc=3D1,
+> argv=3D0x0000fffffffff340) at perf.c:402:8
+>     frame #22: 0x0000aaaaaaf5b1a0
+> perf`run_argv(argcp=3D0x0000fffffffff1c8, argv=3D0x0000fffffffff1c0) at
+> perf.c:446:2
+>     frame #23: 0x0000aaaaaaf59f44 perf`main(argc=3D1,
+> argv=3D0x0000fffffffff340) at perf.c:562:3
+> ```
+>
+> As such the fix here is incomplete. There may be both sys json events
+> (detected by PMU/id name) and CPU json events (detected by CPUID). I'm
+> looking into a fix.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
+Patch sent:
+https://lore.kernel.org/lkml/20240511003601.2666907-1-irogers@google.com/
 
-v2 changes:
+Thanks,
+Ian
 
-In the previous version, there was a new separate driver for the PWM
-trigger and DMA hardware buffer. This was deemed too complex so they
-are moved into the ad7944 driver.
-
-It has also been reworked to accommodate for the changes described in
-the other patches.
-
-RFC: This isn't very polished yet, just FYI. A few things to sort out:
-
-Rather than making the buffer either triggered buffer or hardware buffer,
-I'm considering allowing both, e.g. buffer0 will always be the triggered
-buffer and buffer1 will will be the hardware buffer if connected to a SPI
-controller with offload support, otherwise buffer1 is absent. But since
-multiple buffers haven't been used much so far, more investigation is
-needed to see how that would work in practice. If we do that though, then
-we would always have the sampling_frequency attribute though even though
-it only applies to one buffer.
----
- drivers/iio/adc/ad7944.c | 147 +++++++++++++++++++++++++++++++++++------------
- 1 file changed, 111 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
-index 4602ab5ed2a6..6724d6c92778 100644
---- a/drivers/iio/adc/ad7944.c
-+++ b/drivers/iio/adc/ad7944.c
-@@ -9,6 +9,7 @@
- #include <linux/align.h>
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -21,6 +22,7 @@
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-+#include <linux/iio/buffer-dmaengine.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
- 
-@@ -65,6 +67,8 @@ struct ad7944_adc {
- 	bool always_turbo;
- 	/* Reference voltage (millivolts). */
- 	unsigned int ref_mv;
-+	/* Clock that triggers SPI offload. */
-+	struct clk *trigger_clk;
- 
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the
-@@ -123,6 +127,7 @@ static const struct ad7944_chip_info _name##_chip_info = {		\
- 			.scan_type.endianness = IIO_CPU,		\
- 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW)	\
- 					| BIT(IIO_CHAN_INFO_SCALE),	\
-+			.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
- 		},							\
- 		IIO_CHAN_SOFT_TIMESTAMP(1),				\
- 	},								\
-@@ -134,18 +139,12 @@ AD7944_DEFINE_CHIP_INFO(ad7985, ad7944, 16, 0);
- /* fully differential */
- AD7944_DEFINE_CHIP_INFO(ad7986, ad7986, 18, 1);
- 
--static void ad7944_unoptimize_msg(void *msg)
--{
--	spi_unoptimize_message(msg);
--}
--
--static int ad7944_3wire_cs_mode_init_msg(struct device *dev, struct ad7944_adc *adc,
--					 const struct iio_chan_spec *chan)
-+static void ad7944_3wire_cs_mode_init_msg(struct device *dev, struct ad7944_adc *adc,
-+					  const struct iio_chan_spec *chan)
- {
- 	unsigned int t_conv_ns = adc->always_turbo ? adc->timing_spec->turbo_conv_ns
- 						   : adc->timing_spec->conv_ns;
- 	struct spi_transfer *xfers = adc->xfers;
--	int ret;
- 
- 	/*
- 	 * NB: can get better performance from some SPI controllers if we use
-@@ -174,21 +173,14 @@ static int ad7944_3wire_cs_mode_init_msg(struct device *dev, struct ad7944_adc *
- 	xfers[2].bits_per_word = chan->scan_type.realbits;
- 
- 	spi_message_init_with_transfers(&adc->msg, xfers, 3);
--
--	ret = spi_optimize_message(adc->spi, &adc->msg);
--	if (ret)
--		return ret;
--
--	return devm_add_action_or_reset(dev, ad7944_unoptimize_msg, &adc->msg);
- }
- 
--static int ad7944_4wire_mode_init_msg(struct device *dev, struct ad7944_adc *adc,
--				      const struct iio_chan_spec *chan)
-+static void ad7944_4wire_mode_init_msg(struct device *dev, struct ad7944_adc *adc,
-+				       const struct iio_chan_spec *chan)
- {
- 	unsigned int t_conv_ns = adc->always_turbo ? adc->timing_spec->turbo_conv_ns
- 						   : adc->timing_spec->conv_ns;
- 	struct spi_transfer *xfers = adc->xfers;
--	int ret;
- 
- 	/*
- 	 * NB: can get better performance from some SPI controllers if we use
-@@ -208,12 +200,6 @@ static int ad7944_4wire_mode_init_msg(struct device *dev, struct ad7944_adc *adc
- 	xfers[1].bits_per_word = chan->scan_type.realbits;
- 
- 	spi_message_init_with_transfers(&adc->msg, xfers, 2);
--
--	ret = spi_optimize_message(adc->spi, &adc->msg);
--	if (ret)
--		return ret;
--
--	return devm_add_action_or_reset(dev, ad7944_unoptimize_msg, &adc->msg);
- }
- 
- static int ad7944_chain_mode_init_msg(struct device *dev, struct ad7944_adc *adc,
-@@ -345,6 +331,30 @@ static int ad7944_read_raw(struct iio_dev *indio_dev,
- 			return -EINVAL;
- 		}
- 
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (!adc->trigger_clk)
-+			return -EOPNOTSUPP;
-+
-+		*val = clk_get_rate(adc->trigger_clk);
-+		return IIO_VAL_INT;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad7944_write_raw(struct iio_dev *indio_dev,
-+			    const struct iio_chan_spec *chan,
-+			    int val, int val2, long info)
-+{
-+	struct ad7944_adc *adc = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (!adc->trigger_clk)
-+			return -EOPNOTSUPP;
-+
-+		return clk_set_rate(adc->trigger_clk, val);
- 	default:
- 		return -EINVAL;
- 	}
-@@ -352,6 +362,28 @@ static int ad7944_read_raw(struct iio_dev *indio_dev,
- 
- static const struct iio_info ad7944_iio_info = {
- 	.read_raw = &ad7944_read_raw,
-+	.write_raw = &ad7944_write_raw,
-+};
-+
-+static int ad7944_offload_ex_buffer_postenable(struct iio_dev *indio_dev)
-+{
-+	struct ad7944_adc *adc = iio_priv(indio_dev);
-+
-+	return spi_offload_hw_trigger_enable(adc->spi, 0);
-+}
-+
-+static int ad7944_offload_ex_buffer_predisable(struct iio_dev *indio_dev)
-+{
-+	struct ad7944_adc *adc = iio_priv(indio_dev);
-+
-+	spi_offload_hw_trigger_disable(adc->spi, 0);
-+
-+	return 0;
-+}
-+
-+static const struct iio_buffer_setup_ops ad7944_offload_ex_buffer_setup_ops = {
-+	.postenable = &ad7944_offload_ex_buffer_postenable,
-+	.predisable = &ad7944_offload_ex_buffer_predisable,
- };
- 
- static irqreturn_t ad7944_trigger_handler(int irq, void *p)
-@@ -471,6 +503,18 @@ static void ad7944_ref_disable(void *ref)
- 	regulator_disable(ref);
- }
- 
-+static void ad7944_offload_unprepare(void *p)
-+{
-+	struct ad7944_adc *adc = p;
-+
-+	spi_offload_unprepare(adc->spi, 0, &adc->msg);
-+}
-+
-+static void ad7944_unoptimize_msg(void *msg)
-+{
-+	spi_unoptimize_message(msg);
-+}
-+
- static int ad7944_probe(struct spi_device *spi)
- {
- 	const struct ad7944_chip_info *chip_info;
-@@ -603,16 +647,10 @@ static int ad7944_probe(struct spi_device *spi)
- 
- 	switch (adc->spi_mode) {
- 	case AD7944_SPI_MODE_DEFAULT:
--		ret = ad7944_4wire_mode_init_msg(dev, adc, &chip_info->channels[0]);
--		if (ret)
--			return ret;
--
-+		ad7944_4wire_mode_init_msg(dev, adc, &chip_info->channels[0]);
- 		break;
- 	case AD7944_SPI_MODE_SINGLE:
--		ret = ad7944_3wire_cs_mode_init_msg(dev, adc, &chip_info->channels[0]);
--		if (ret)
--			return ret;
--
-+		ad7944_3wire_cs_mode_init_msg(dev, adc, &chip_info->channels[0]);
- 		break;
- 	case AD7944_SPI_MODE_CHAIN:
- 		ret = device_property_read_u32(dev, "#daisy-chained-devices",
-@@ -649,11 +687,48 @@ static int ad7944_probe(struct spi_device *spi)
- 		indio_dev->num_channels = ARRAY_SIZE(chip_info->channels);
- 	}
- 
--	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
--					      iio_pollfunc_store_time,
--					      ad7944_trigger_handler, NULL);
--	if (ret)
--		return ret;
-+	if (device_property_present(dev, "spi-offloads")) {
-+		/* TODO: make this a parameter to ad7944_3wire_cs_mode_init_msg() */
-+		/* FIXME: wrong index for 4-wire mode */
-+		adc->xfers[2].rx_buf = NULL;
-+		adc->xfers[2].offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
-+
-+		ret = spi_offload_prepare(adc->spi, 0, &adc->msg);
-+		if (ret)
-+			return dev_err_probe(dev, ret, "failed to prepare offload\n");
-+
-+		ret = devm_add_action_or_reset(dev, ad7944_offload_unprepare, adc);
-+		if (ret)
-+			return ret;
-+
-+		adc->trigger_clk = devm_clk_get_enabled(dev, "trigger");
-+		if (IS_ERR(adc->trigger_clk))
-+			return dev_err_probe(dev, PTR_ERR(adc->trigger_clk),
-+					     "failed to get trigger clk\n");
-+
-+		ret = devm_iio_dmaengine_buffer_setup(dev, indio_dev, "rx");
-+		if (ret)
-+			return ret;
-+
-+		indio_dev->setup_ops = &ad7944_offload_ex_buffer_setup_ops;
-+		/* offload can't have soft timestamp */
-+		indio_dev->num_channels--;
-+	} else {
-+		ret = spi_optimize_message(adc->spi, &adc->msg);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_add_action_or_reset(dev, ad7944_unoptimize_msg, &adc->msg);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-+						      iio_pollfunc_store_time,
-+						      ad7944_trigger_handler,
-+						      NULL);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return devm_iio_device_register(dev, indio_dev);
- }
-
--- 
-2.43.2
-
+> Thanks,
+> Ian
+>
+> > --
+> > Cheers,
+> > Justin (Jia He)
 
