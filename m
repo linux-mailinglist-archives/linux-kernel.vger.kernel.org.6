@@ -1,80 +1,126 @@
-Return-Path: <linux-kernel+bounces-176403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC93C8C2F3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:13:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110CB8C2F34
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2945B1F228FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65E1AB22E4A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898D335894;
-	Sat, 11 May 2024 03:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBC02E859;
+	Sat, 11 May 2024 03:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IP7hit/z"
-Received: from EUR04-HE1-obe.outbound.protection.outlook.com (mail-he1eur04on2088.outbound.protection.outlook.com [40.107.7.88])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrtRSc5R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF0824205;
-	Sat, 11 May 2024 03:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.7.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E84C17991;
+	Sat, 11 May 2024 03:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715397224; cv=fail; b=AwG1ijHh3SQKWTiAg4tls5wlpAAh5ml49f/gEmfwB8WAJnwLuhOyACsevE6eGUibA1sK5LAaU9FW0yq9BKHJbWh22e7sKP+z98bxmuqqyxNQg58x/KPUZmaw0XAsxGcHJDqxDw5DX5tHjZf6JksC3BqK8hPiMzP958YKAdDeq/g=
+	t=1715396626; cv=fail; b=fCjZ4VNJh1j3fTAvqhkU45P2nC/3zdzJeAowi1fzXwUTNbTyF+GgYrN3Pxlr7FM7Pj/EMUekI+w0yrRMqINCtPNf4JnRr/pnOmT+gzvTuOShCDfp/nrRSZ0QPwrXaBIqSmeHl9Sw7Zc4MNtz7ymvwsN0HDPvxU88ZAm1lGTKNQc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715397224; c=relaxed/simple;
-	bh=H2/jmSpj3Y6alagG8Aq7JZcCh7RLiKS4pVGYP5mWWpk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=kNe100VIr9wzLtsBClUNYAcUKSAKdLreudto10g7WLjs6y8AHegeOufA8/7BS2r6ic6mMYkPQffan3Jzot5miaTZLIVgAuR+p8Oz+8x4KlSf0kTFRVz4xsko1psYjCChEHUtDjuUgOR8Wdbt2YuzPkVbKjUsDg8+dpeu2N3Hmpw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=IP7hit/z; arc=fail smtp.client-ip=40.107.7.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1715396626; c=relaxed/simple;
+	bh=KEu9KPruJS7aILqBRpJCouKhzSPNi9LQmjahLrsAN5s=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Z2ylFTiqD20pw85qRxh5YO2Y4ufMipp85+XPpF//MTf0x37+yIr8Z45KEj6rW4Sui/o9tUSO73CwWCZl+r9bIpWPF9DSAwv938S42NwCanytbWXDwU24f9ZtpE2IMgFrgn+GJy7dT35uNb3wLxSMwBHntMj1YvlqShejUjnuBUo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrtRSc5R; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715396624; x=1746932624;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=KEu9KPruJS7aILqBRpJCouKhzSPNi9LQmjahLrsAN5s=;
+  b=TrtRSc5RoVWZjU/2qSNOBQnFKhVpVyZ7mJqwIpW3v33DwhurT/Mq1jNR
+   xoDNw/xIv7AQSbwR721TU+0ZJtoQ/PMleUGuJ8kfb1GkICd6yMQhGm8K0
+   F5Wf1g9G+l+xhiiqV6pqYjven7q/UzLjAVBiO1/pr+LrTL6Ui8g4qTsPY
+   qMREVFKZ3CdOVmvbceft6pUzjp8+9CRguiWvNGZHz5SvC5eErAT7R51zT
+   KiNcCyJxNVSDKy/uwdDoltLSLJ7tTdcg9WP1llSjwXRu95wa+g6uLe6oc
+   gz6hcJLoY0hG4vSDePv19RWtX6u/KUvA+da4LlWj7Vb/9lXrDBGtB/8f/
+   A==;
+X-CSE-ConnectionGUID: VOGWP5rcQ/uxolBCSDxpRg==
+X-CSE-MsgGUID: U0Bk6jmDRPWElPHT3KYTDA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="15210565"
+X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
+   d="scan'208";a="15210565"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 20:03:43 -0700
+X-CSE-ConnectionGUID: RbxzKIwlScG3WaTbHuyWxA==
+X-CSE-MsgGUID: cft/hT7mTNSAJv9GzgVOaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
+   d="scan'208";a="34244226"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 May 2024 20:03:42 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 10 May 2024 20:03:42 -0700
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 10 May 2024 20:03:41 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Fri, 10 May 2024 20:03:41 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 10 May 2024 20:03:41 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=OgX8AOxHPWEhWMjySzJT2YCMGGXI+e0gbJuOwOPhN+sLWCE0AHe8b7GAJpxOU0aPG1702tVezQ32OgziQoBClOF1rhPtWpzVoOzeGSrsn4MlAY/RbkgVuXnUWLB5TFZDZfBdp6hFAfjtGSYfH9EciCt6kLAkK7jp1QuQRSPyNo8L7nIwzuV3jlSbWIYJ5zvsb9pICf5r5UXr+Izsrz2LzfkjmzgNb0PXzkRAET0O3KC4px2GgIeGBE+oLfnWGQ++GgKEdDJ6461cnB7wF7Abaa5H66YXWkoHag5dp8+9CvXQaA3+WJQF4e4RWH1XlVbJVPsX3lXTHnaJOt09EC+J1w==
+ b=Ihq3/HfA3M/yLXMf/V7ALqB7/GFXRiGHWiYPrS540vWtaILHxIypeaOeU2/9DpA2oAvew38EdvMxSPYcgGsgk951sAeIeLjQM5YQFs4HMApAxonEzhe4s2YpO9PO28JZrzuqxSEx69gFkNDT6EyZqAof4dh4S4c9dOqhq4kaHphraDLiF/wovyUNPfjYvpnPF2RG4qeWho7UW47LkLmJkLUe859oDErQuTlhUwqOG8oEN1GZ5YlmHsZYHqFr+lT0JrA1RoBMoIr5KITH7WFeJZqBnAB7Zvkc0gJQEY7n77I8E4aOdTd/1A3aAdGsXb5K4gBvEyJfij6YNCTBDoNDLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aURlTuFR/GgtbC2cctXbJC72dg0lfvJkyvdmlUxZlVk=;
- b=ibO//c8zzZTGglzABXdJXnObk7EglI3z4bz1j/HWfjy5i5fbVyNUgU8fV7nLoQEd3ub+fc5hv2v9vCm7Elj/SzfhyTcXs+hd2awPnbeYk99Pd7B6mIhmHAKqJ1+MvuYvx1TdmM6OwBps+q4ebyOUfk05DehKnYgq9EByTGVy3TmSl2MHjGCGh8rraL0dNIKMvGQ22v+zZaJbonWF33poA0qm66yv6608pnNQyknkh7MSWXyRmX2cVVXClX2dy+HgsAPTLZOf230jtpX+xNA/VbXcReCJKvHHB9tbg+HLI1nL6un7ttejrbNQz4Ll7tV53zvTKZrJo/5uZymAE8Sj3A==
+ bh=oqy1IOOM+qrmIBLqN8Apo4DdPnVHyw10T6N5tx22puQ=;
+ b=mInQVKykCEA4w2M/kK9UfK+APjpoXmV45KTB4pkOXXxvi72P8ej4yAWg1gO3AwAOda9bV8riyE8z+pc9g7aT/tZMOnTCseW3zoW7JF8WWDiXrcbOqURymuMC+f36V3vueRyaZoF5EbecGUw7Wa3W21F6Bq+gN3X4z5jCCFvfVpY25+/BblxUkMUrWqzFw00cJXTkuS3LHMfLVduopKRKq00A8QkNTY7L52OzCB9cKYMnlQFOzCq8NcjEaVRmrY7Ld4kDriba4gqnDljFsABKLoIrLxBH020Kx6+KhoNBuvVO9HMOXt6a88TDbGqxqTeAqGdKX97O01HaswMrO0p+fQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aURlTuFR/GgtbC2cctXbJC72dg0lfvJkyvdmlUxZlVk=;
- b=IP7hit/z59eECJ3tsApIHGY4W8HMrZHFcGjb3m2DU9ilHqQ4aUMpAv8F1QBLa3HMU0CYhWSgA1nyviffLoEVB/3FEX4ES5EnMmPYZZvmLuQUujRkfsENv5ztG0S7QKpJqeuhlKFohAnvUnk1MLSJ4j208plN5NrjyxAJUytv1Vg=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM0PR0402MB3891.eurprd04.prod.outlook.com (2603:10a6:208:f::23)
- by AM9PR04MB8129.eurprd04.prod.outlook.com (2603:10a6:20b:3ea::12) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by DM4PR11MB6093.namprd11.prod.outlook.com (2603:10b6:8:b0::22) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Sat, 11 May
- 2024 03:13:38 +0000
-Received: from AM0PR0402MB3891.eurprd04.prod.outlook.com
- ([fe80::6562:65a4:3e00:d0ed]) by AM0PR0402MB3891.eurprd04.prod.outlook.com
- ([fe80::6562:65a4:3e00:d0ed%7]) with mapi id 15.20.7544.052; Sat, 11 May 2024
- 03:13:38 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shenwei.wang@nxp.com,
-	xiaoning.wang@nxp.com,
-	richardcochran@gmail.com,
-	andrew@lunn.ch,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH v2 net-next] net: fec: Convert fec driver to use lock guards
-Date: Sat, 11 May 2024 11:02:29 +0800
-Message-Id: <20240511030229.628287-1-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:4:194::6) To AM0PR0402MB3891.eurprd04.prod.outlook.com
- (2603:10a6:208:f::23)
+ 2024 03:03:32 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::5135:2255:52ba:c64e]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::5135:2255:52ba:c64e%4]) with mapi id 15.20.7544.049; Sat, 11 May 2024
+ 03:03:32 +0000
+Date: Sat, 11 May 2024 11:03:20 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: "Li, Xin3" <xin3.li@intel.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
+	<corbet@lwn.net>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"peterz@infradead.org" <peterz@infradead.org>, "Shankar, Ravi V"
+	<ravi.v.shankar@intel.com>, "xin@zytor.com" <xin@zytor.com>
+Subject: Re: [PATCH v2 12/25] KVM: VMX: Handle FRED event data
+Message-ID: <Zj7f+JWbVfIBIK8h@chao-email>
+References: <20240207172646.3981-1-xin3.li@intel.com>
+ <20240207172646.3981-13-xin3.li@intel.com>
+ <ZjBiLDJ4SdQ0p5xm@chao-email>
+ <SA1PR11MB6734740F9B6085E0997A4179A8E72@SA1PR11MB6734.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <SA1PR11MB6734740F9B6085E0997A4179A8E72@SA1PR11MB6734.namprd11.prod.outlook.com>
+X-ClientProxiedBy: KL1PR01CA0120.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:3::36) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,424 +128,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0PR0402MB3891:EE_|AM9PR04MB8129:EE_
-X-MS-Office365-Filtering-Correlation-Id: 066ec02e-1c98-4c93-6d28-08dc716859e5
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|DM4PR11MB6093:EE_
+X-MS-Office365-Filtering-Correlation-Id: f6ccdc53-9d5d-4d37-685b-08dc7166f109
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|376005|52116005|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5F2VIwcAKeejay7s/UWFtnqD6Oh96t7nYyIUWsaUqGEydlBJLRhQggo/Z4So?=
- =?us-ascii?Q?uhA/irXhPA350tC2ujvKRIhTs1zs3W+f+V2p4eMqCSEflrBn7SOYsuxIJE4G?=
- =?us-ascii?Q?VG4jFI/IdDByvql4CpB4HEQpzaU36MTMU5oSMdz6RUwIyTVzeTxBCIyu/wSC?=
- =?us-ascii?Q?BavkiSsG3PQUdi4wcFJGtYWr3Z2ONx+aV9JMImecbFOpbEedyTcyBfXBwbNd?=
- =?us-ascii?Q?0BAvkme65QwiVd1zlBUeTAHjHJLmP2tYnvDLFDQV4TzmLaIUbCF7vpfmHYCD?=
- =?us-ascii?Q?6lpVDg5/Xun3rsEBd78V0SHjx8YCfQYX4LQajipLrKL6HwuupbbbilB9mceB?=
- =?us-ascii?Q?W3gQTOs2rZqmQmSQlsW3u9LIazBntARXVgu0M2KtOG2KMzJik3Gk9GmUF+D/?=
- =?us-ascii?Q?LyVkH9ByBTzv78fbqNpBUQpGu5kLPm7C5e71iZVU5e97i+0xHlvoTv7JEIRv?=
- =?us-ascii?Q?IFO5lwFnwxTjJMAmL8mZA/Obo6/XpWQzYaPX6eGFuSYL9Y9Rb9Ezeji5UOiG?=
- =?us-ascii?Q?gbiBIcB3FMCnKxTRDYca6s1JTLqc/Gnqh0KpP9SjCxT/yzWZZ9bEm7+jyCMH?=
- =?us-ascii?Q?DCN6ztBc5mGabJzwdS0kjrg16TSuuHJcK6OSZQLR9pH9batgFm9XlR8FX778?=
- =?us-ascii?Q?2zo3Iyl90A687dA098vOKEKw087bVeS7cw6zcrb77a+fucYjKJ8uRXPtKBzN?=
- =?us-ascii?Q?2BXJ8usvrmrBJVzVKmjgnQT4qJk9PWF0c20VhvgmkktyejGyYA8hC2Bk9FNP?=
- =?us-ascii?Q?Ku/qOo5/SDv9Ha0GG3UUPmaNKckLg66TjYA/XEiWaEcy0RGwCiTa0e3jIXYF?=
- =?us-ascii?Q?QoqAV4xdF6a+G7AoF8mi45mIm8IcyxL9uMzW8qjCIuyGTy4fyQxfLkKh8lks?=
- =?us-ascii?Q?ZaVYvHKf+nv7Wwbz1tewqXOxTxH2gXKLjkCT/yINmlveBwQNTrZm0UYSz37/?=
- =?us-ascii?Q?iMFTn5IdEXX3Fa1z+cKlQ7Aiv6yl3BhgrHgOF8s9kODkiA22RpW0B7ai9oZj?=
- =?us-ascii?Q?uEiUBF9n0rIYIkI4kdUL9RisBg4vWSdnB/bXUMrqPsbuPcuGZ2iya0odnHYS?=
- =?us-ascii?Q?ys7Wdfs/MYenYIKQyOWtlvn3eAh1t69uqFO7ZlFuA7WRhk0Yr3QIwWh8+mJD?=
- =?us-ascii?Q?Qy5DMk0cvXh/lgTDrt2jmcLGyrvzheWZZ/uhafDuvC7SqALlt6gFb8vJUtlj?=
- =?us-ascii?Q?JzDcRHDS82ahbaVc+9u95CL/zFnnr+8vFx9NxnsmX3r9YJwDGQNuRmoBAWVl?=
- =?us-ascii?Q?QVxN0zkrK3+bnBOEHKfTe1RhydAvDJ/Rh1k2OjWsbfkXuUvVQ46Y79hGcGg8?=
- =?us-ascii?Q?t5jmTDiJ2NaZ6lkIa3f+DD8G/oAhCqY7WdMdtA3kxfRtGw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3891.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(52116005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007|7416005;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bg8jt4b9mvDHld9qnpRgEI/KJASmV2xDXEm65J8j+jIxXigF+ZFbwbC8j8BY?=
+ =?us-ascii?Q?Fq+XJ9iRibKyCFTe7REeEBboArIdxRcKDpth5/SyUljAFgrGltMSiJmpCB96?=
+ =?us-ascii?Q?d0wj3rcQ1zw4aKWhoF6HNl615XWBSZ9os391DSsl/0Y5CMGQJjxGwYKe8ppQ?=
+ =?us-ascii?Q?uqjPgB/39w/njVJz2sqwc9Sv0YwjXGXbNlViV0EON9Y/KDUd3dvLxndZKxsj?=
+ =?us-ascii?Q?ziLDJEn4PHiyPd9E8dQuiy8EGC7MwYtIbaLhncwlV/J+dYx3mKW0YAMp+kbw?=
+ =?us-ascii?Q?qq6dnzehXRvdHMAmHd2myIDumg5SvmDI1Vk8yBaIRRSMrhyOt6x69DxJPVFB?=
+ =?us-ascii?Q?eMr41ldDQl9XlOT8a8k6QRBxBf6Y5N2mLgaYsos2HfDkvcV8RlnLtpLszPi6?=
+ =?us-ascii?Q?/ocBruf+uejW7qfpB0mcWPE6ukQrpC+Z+t0Q0eH2YYy4pdmvbU4xoUU1bvPr?=
+ =?us-ascii?Q?3ulnc6Roj4hTd1wbwpRhDmcSEomCCg4dMbi7hiqZ62VzN2abeRlDND0i/DOn?=
+ =?us-ascii?Q?9NsMR14a9N0WGM1zAz7cTjs8N2jNl48LKq2hwTEkliF88pqhKQOhPeY3GK6h?=
+ =?us-ascii?Q?YEGcGtddPiE7tm7gyPKmAe0svs8KUzc3mfwNg64PUg4EwVa5L14kfo1bo8lR?=
+ =?us-ascii?Q?o1gJC4Jtj7GMFWQTZ895yeLt4UqhWC5aTjNLKrbdxsASbsSQNDqhHzXYx7OF?=
+ =?us-ascii?Q?b2GIxLCekpN/ryBapn8jzcD+vuICt89LbAASSSVWB6sJQuuTx+dr6Ml1zpEG?=
+ =?us-ascii?Q?7uWkNwFDOY6ivmmvJVGiQe7qGJa9t7HX8H7ruQknitV0QmoLaS4Eqi6jwhS3?=
+ =?us-ascii?Q?8StrBtHfUsAYZyzsV9r+jsMi9rvPztqnprtDwgpwlu80FlkbgJHH8NloG0PF?=
+ =?us-ascii?Q?kpsKU8usV7eTZzYpZeelGxIw2Bp1qp25l0U3cPuxzT8vjF0mLOEr4S0iCiSd?=
+ =?us-ascii?Q?jelMlAiaGspw2w0yqkbDq1vsTdm8OpIT4CAdsWiTtThCJImYJT/psXKQPSXd?=
+ =?us-ascii?Q?uKTiVUutq2NDVLZzrB4kwOOAyDNOYAW3Z7fDZt/iWmuim0j3xjue3Lsb4nVG?=
+ =?us-ascii?Q?hqPj9eceXGTvBIs73LTogUuIBOi0MaNhBeq1UjlhDSA4CUG03iLogPvRiCf/?=
+ =?us-ascii?Q?9oWcVsJNjmnsNmEz4ZiBqBgoi9yya1gUYZJow38bV/oaYSKWteiw4ZpTMgBr?=
+ =?us-ascii?Q?z5sDU21ogKuLy+94NrBMBzDnV+glMEy5o4FP9AQvLZTEmsbNM5D8/5EFTUo5?=
+ =?us-ascii?Q?7CFr0ptLu3oYsG0ieqRdOMtV61qnHb1azK2RH1cHqg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(7416005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?zi4Px9c7C1KKOjMJUMCkuoX4YNhfWFGYQecixXzqRqvjt0hBaPlTWCqGlUi+?=
- =?us-ascii?Q?3oYYmojZ4d55H4eRe5szAuvMy7RJxRj5lGh2/hnRvp8OWbEXBAxA9XyUr8a5?=
- =?us-ascii?Q?hscvGGCLfzs8qtdilHZBETk9WTBfmhbICWz6H3hGHaaLNtXVrg2++/TsBqi2?=
- =?us-ascii?Q?MUjnborLbPvqbQc+56gdELlOJkObhLyOttzagPszUsHabkeqIZ3/KsYu/V5g?=
- =?us-ascii?Q?3Yx4e5a8TMCTVV9N4mvm3r07P6nTBagndy+8WkJPE+u9DcHvGBfA6xRs5Kmi?=
- =?us-ascii?Q?w7pL1ehlY7dKcpObof2kMwL/gOmssU6G1qNSSulRm91E1tzu9TeKOc0RfDCE?=
- =?us-ascii?Q?ruk3LDalqxb6QK2IBKg3Jm5IheZAgviai2+sa+DEAOSjZtZPcQL/Osg8bgC7?=
- =?us-ascii?Q?z8osfdmDzH6/hr8SVKbHNsJRCnHb5UEJ+mmoM/AGy3jfdYgcxypqcJMbCMZD?=
- =?us-ascii?Q?gnWoIDIIa4NIoxsvGEMojhxuE/nTJ2JCiffO9VcXjrd/mcyFdcc9cIw3imQa?=
- =?us-ascii?Q?6YJGgyaJUPMbE/2qOga/V8nPIPjwNWBDuYqOkfsviqJQPXMQEtuwHH2RnFuP?=
- =?us-ascii?Q?uWtyK1EXpsG+GObVbBAbHqXsf9/gr+VmTHkNOzBkraVcVgJM/KThs7gRgloE?=
- =?us-ascii?Q?UUzxFoWA4pkGLYWZLcN7VTrCKP6kAda6bik1xB5KHFUp4OdgV98UIpslNr4v?=
- =?us-ascii?Q?pPGNhUmmtPGrJui5gFSZhvWsh7FD+kwB+dP5w9kOdUMPZJQZWGKAz6j0RMGW?=
- =?us-ascii?Q?gFFnBxxcToFbsUdHni0AdctrgvyDyWdLbleYSKqmxajZBggpaly9OWR3XFQL?=
- =?us-ascii?Q?nuhzdeTgm7xmSWsRK0FtTPU2m60xapYoxlFOnlO8qmtyc8r7ALScfjsvRMyh?=
- =?us-ascii?Q?QahxD0ZFDBXDH6uyrTkKFe20o9iYI3ZlWM6nmkv3v46Bxa7qQbIyiEhovK85?=
- =?us-ascii?Q?1xHwvhwPUXAWsey+W0bqFRP1kTsuXM+NbLpIjq+t8m0AwcqkqlQAIewxEfqy?=
- =?us-ascii?Q?Sb2AKHXoDn4tl8X+imvCUVhN+5bxFh7RnATzV/gsnp9llWJyS7hZMUgzW/Ai?=
- =?us-ascii?Q?7T4sR7piFUbTcrG73v8L1Eex3lpIjJZkLOS36+ZTMsgmH7nCOHogup7HhjNc?=
- =?us-ascii?Q?I5JsYpP4uFMeUWC+jyOLVCZyGIJenVxJAT/IHc8sDX5jOeN4Nk34hhoegnQR?=
- =?us-ascii?Q?qd67TAUZ6KtwyKY4kkGuqCMXmuPXlzvZjY5EpaCLYpInjIPW7fs3s/XxQkbZ?=
- =?us-ascii?Q?gKOS6sO+DHkemn08ZmT8LRCR66RPoYh2qsVMkXLKKlzU1sPcrVgvWmsXTQB1?=
- =?us-ascii?Q?1s206OKYHObNtlxSRxhhU2DXTQdEpJu59okUYHAoeH+4X98RdTww2iVE/YvJ?=
- =?us-ascii?Q?BpU5uSeucMK3CgivlcjvMw6218k3Ds9Wg/atBG0JDmEv8KyjfECr1Jb2NMzs?=
- =?us-ascii?Q?xZBuvN3B1emwqIZTp9JNwsoAoVRjBkLjmNuCD2JtajoMhGQeQZEUY+NS35Ic?=
- =?us-ascii?Q?zmTKw8v1YODumLG/arDEBP/zBrBOoV8yghFDCAIw8JKUFGlNq1AWo5ZjL3oN?=
- =?us-ascii?Q?Do40qg4B1VyrVIQEOevVSKHiLEynE4HfxjsuVuYp?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 066ec02e-1c98-4c93-6d28-08dc716859e5
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR0402MB3891.eurprd04.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AURRhxvqiFQOes+Ow/n/IoalxFlF38nYWSE2X2pRYmOIS2JWuVxfNkWO6nob?=
+ =?us-ascii?Q?ZM+QXtOipQ5b17765gHAwwgJz4D85nIzXcLUdSpB8zHBJ+E8NP9dbG9my/FB?=
+ =?us-ascii?Q?Sl6oU41574Wpe+ZsJpP/tdm5HIMI+V7oLPQ3mvus8kgh9eI6mms+KCyjrpnZ?=
+ =?us-ascii?Q?UlPWnfuVE8WJWPsGQ7hVzbyJ7eFmfSrmf2PP2yjDKxOAATPk6hevH4mwdtyL?=
+ =?us-ascii?Q?jHHTWoYzdWkUt4+6hMEuCe7Jli1mepzsjYR3Vul16rFOb6+dd5XkB9Dm5XN6?=
+ =?us-ascii?Q?+C0/pT8DM2y+VBYXABPVfAj9rLwGF91nSXXD/g0yw3XpuVfBcEOySN41c65x?=
+ =?us-ascii?Q?ewCvO9gWJMp76svOtA+LGgdBtxf36Ysu9z0w9Qos9cbpXGwKUnqGMUOkfyYu?=
+ =?us-ascii?Q?wy2YhTXQ+g18VRiwoVqmMrSESvLtxyk8x0GODrJjiOm45hYXmy6xrmdbFuw0?=
+ =?us-ascii?Q?V+Sdty9wnYIHkwME2Gp0wPLdrIxUreOrPzu/iaffR9IfGF00rgwuufHhCCpJ?=
+ =?us-ascii?Q?sdxmB60+ne4aUq199C2P2Z8FUdmM8DZ4l3M73nG86ROzLpDUbcHa7VX1+uBA?=
+ =?us-ascii?Q?TZXfVNhT8EkIlCWrcafzJQPLuftJApQ2BirnRaQfLUKeNV4dNDLqSZ/ocWu3?=
+ =?us-ascii?Q?fKtxS1Of9bB1Mq8hFZqwR6twYg3UebSh6IlkAynhoZnXa5R/hy24cUveBUt0?=
+ =?us-ascii?Q?gQaowR6+USdXlk+aWWYkm0bdAtE4qEqNi5/atmnd1bqH8o6+6iBFDrbAa5+S?=
+ =?us-ascii?Q?QtYQRK9vvDSqNoqYzFJy+T5/DVivsqBAnRCgafiuRZvnSOXX8xkQpx+M5yYp?=
+ =?us-ascii?Q?iWUkloo2EX+9GF/UiBEBxJABmECFSYFTUdmx583NEDdnaWPyYCBjEjBsA6WC?=
+ =?us-ascii?Q?HG2uQdu2wP9YYyYvRZZYB2uPrXZHxRnVQK6J3XyySB0eUhe1tOsf0BPbOHqK?=
+ =?us-ascii?Q?aTHZ3b3EqqDzsD2CRIaYQ3ZtC2KcRE0GgIhQgcVBG9p5uddTC3W9DsVlW57K?=
+ =?us-ascii?Q?xkAjyWZoniDg8ixAjPIFL+GbNcB4vMQKV4p2YHNOSPIMTotkMZSgZFIY9lQ5?=
+ =?us-ascii?Q?DbZuBq/MQwLFG14f8Tv6oKygZoFePKKmuE0uA6BWe7eEUaHtTwZMcxYkXcMu?=
+ =?us-ascii?Q?mNzFKChc9tMq/SuS14h1IkxOPsSEz7Scf2Sh4d76AIdDGNOBQ+R6luS7VyI8?=
+ =?us-ascii?Q?R8+QiJUn2WMU3Lzv1NugrvDolcfiAw1X47ovZnW9BBmI7jLC33Vdzw86GlZc?=
+ =?us-ascii?Q?VkyHjq1jeWwQR7728CH8En6k9FhnYsuQae3AKEb3sl0hAGQbQvJYBokuCgQ+?=
+ =?us-ascii?Q?ukqBBT8pRQ3kO7JJiiyh7NCOaLUkn00CunSXdDzL45AfXj+NDwBzRJAwruI8?=
+ =?us-ascii?Q?PP/twalpL4VLq1iE7aBIVHn02yZA/9UyzYQzqvOcFEid6SJXeTh9+71GxNmA?=
+ =?us-ascii?Q?lzaP3UVRrkJK2hFZuQjwUwLFznWXoVMYeX6o1FrUmC5zeGGE9EpQnPbCD/3n?=
+ =?us-ascii?Q?GMy2KB55Nr1s6LQ7rl4Eme/SVJh9FNwI477cuF2stglxt6PRvbFjtf25K3LS?=
+ =?us-ascii?Q?PEY/+FVB5nlKxhPcRmmh8zHpb8YpxHWunMFPFi/X?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f6ccdc53-9d5d-4d37-685b-08dc7166f109
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 03:13:38.2000
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 03:03:32.6382
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GJ6aymGQ3CJZxmyErlbtdhiPWvRpPP75Vx1EueOC41j0QmldRFVweKxwkUbSNW3GAeY23lX5gYgTUlxkOK4EsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8129
+X-MS-Exchange-CrossTenant-UserPrincipalName: ///kLhseuTSQ0RPy/moUnXDJ6iRiKrBnqVOAohLQnGAgxcKdBWLWU3cbKGtfyQH2UiShUe8yQOWK3ueZ1D+1Mw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6093
+X-OriginatorOrg: intel.com
 
-The Scope-based resource management mechanism has been introduced into
-kernel since the commit 54da6a092431 ("locking: Introduce __cleanup()
-based infrastructure"). The mechanism leverages the 'cleanup' attribute
-provided by GCC and Clang, which allows resources to be automatically
-released when they go out of scope.
-Therefore, convert the fec driver to use guard() and scoped_guard()
-defined in linux/cleanup.h to automate lock lifetime control in the
-fec driver.
+On Fri, May 10, 2024 at 05:36:03PM +0800, Li, Xin3 wrote:
+>> >+               if (kvm_is_fred_enabled(vcpu)) {
+>> >+                       u64 event_data = 0;
+>> >+
+>> >+                       if (is_debug(intr_info))
+>> >+                               /*
+>> >+                                * Compared to DR6, FRED #DB event data saved on
+>> >+                                * the stack frame have bits 4 ~ 11 and 16 ~ 31
+>> >+                                * inverted, i.e.,
+>> >+                                *   fred_db_event_data = dr6 ^ 0xFFFF0FF0UL
+>> >+                                */
+>> >+                               event_data = vcpu->arch.dr6 ^ DR6_RESERVED;
+>> >+                       else if (is_page_fault(intr_info))
+>> >+                               event_data = vcpu->arch.cr2;
+>> >+                       else if (is_nm_fault(intr_info))
+>> >+                               event_data =
+>> >+ to_vmx(vcpu)->fred_xfd_event_data;
+>> >+
+>> 
+>> IMO, deriving an event_data from CR2/DR6 is a little short-sighted because the
+>> event_data and CR2/DR6 __can__ be different, e.g., L1 VMM __can__ set CR2 to A
+>> and event_data field to B (!=A) when injecting #PF.
+>
+>VMM should guarantee a FRED guest _sees_ consistent values in CR6/DR6
+>and event data. If not it's just a VMM bug that we need to fix.
 
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
----
-V2 changes:
-1. Rephrase the commit message
-2. Remove unnecessary '{}' if the scope of scoped_guard() is single line
----
- drivers/net/ethernet/freescale/fec_main.c |  36 ++++----
- drivers/net/ethernet/freescale/fec_ptp.c  | 101 ++++++++--------------
- 2 files changed, 54 insertions(+), 83 deletions(-)
+I don't get why VMM should.
 
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 8bd213da8fb6..8bf1490c07e1 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1397,12 +1397,10 @@ static void
- fec_enet_hwtstamp(struct fec_enet_private *fep, unsigned ts,
- 	struct skb_shared_hwtstamps *hwtstamps)
- {
--	unsigned long flags;
- 	u64 ns;
- 
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
--	ns = timecounter_cyc2time(&fep->tc, ts);
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
-+	scoped_guard(spinlock_irqsave, &fep->tmreg_lock)
-+		ns = timecounter_cyc2time(&fep->tc, ts);
- 
- 	memset(hwtstamps, 0, sizeof(*hwtstamps));
- 	hwtstamps->hwtstamp = ns_to_ktime(ns);
-@@ -2313,15 +2311,13 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
- 			return ret;
- 
- 		if (fep->clk_ptp) {
--			mutex_lock(&fep->ptp_clk_mutex);
--			ret = clk_prepare_enable(fep->clk_ptp);
--			if (ret) {
--				mutex_unlock(&fep->ptp_clk_mutex);
--				goto failed_clk_ptp;
--			} else {
--				fep->ptp_clk_on = true;
-+			scoped_guard(mutex, &fep->ptp_clk_mutex) {
-+				ret = clk_prepare_enable(fep->clk_ptp);
-+				if (ret)
-+					goto failed_clk_ptp;
-+				else
-+					fep->ptp_clk_on = true;
- 			}
--			mutex_unlock(&fep->ptp_clk_mutex);
- 		}
- 
- 		ret = clk_prepare_enable(fep->clk_ref);
-@@ -2336,10 +2332,10 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
- 	} else {
- 		clk_disable_unprepare(fep->clk_enet_out);
- 		if (fep->clk_ptp) {
--			mutex_lock(&fep->ptp_clk_mutex);
--			clk_disable_unprepare(fep->clk_ptp);
--			fep->ptp_clk_on = false;
--			mutex_unlock(&fep->ptp_clk_mutex);
-+			scoped_guard(mutex, &fep->ptp_clk_mutex) {
-+				clk_disable_unprepare(fep->clk_ptp);
-+				fep->ptp_clk_on = false;
-+			}
- 		}
- 		clk_disable_unprepare(fep->clk_ref);
- 		clk_disable_unprepare(fep->clk_2x_txclk);
-@@ -2352,10 +2348,10 @@ static int fec_enet_clk_enable(struct net_device *ndev, bool enable)
- 		clk_disable_unprepare(fep->clk_ref);
- failed_clk_ref:
- 	if (fep->clk_ptp) {
--		mutex_lock(&fep->ptp_clk_mutex);
--		clk_disable_unprepare(fep->clk_ptp);
--		fep->ptp_clk_on = false;
--		mutex_unlock(&fep->ptp_clk_mutex);
-+		scoped_guard(mutex, &fep->ptp_clk_mutex) {
-+			clk_disable_unprepare(fep->clk_ptp);
-+			fep->ptp_clk_on = false;
-+		}
- 	}
- failed_clk_ptp:
- 	clk_disable_unprepare(fep->clk_enet_out);
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index 181d9bfbee22..0b447795734a 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -99,18 +99,17 @@
-  */
- static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint enable)
- {
--	unsigned long flags;
- 	u32 val, tempval;
- 	struct timespec64 ts;
- 	u64 ns;
- 
--	if (fep->pps_enable == enable)
--		return 0;
--
- 	fep->pps_channel = DEFAULT_PPS_CHANNEL;
- 	fep->reload_period = PPS_OUPUT_RELOAD_PERIOD;
- 
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+	guard(spinlock_irqsave)(&fep->tmreg_lock);
-+
-+	if (fep->pps_enable == enable)
-+		return 0;
- 
- 	if (enable) {
- 		/* clear capture or output compare interrupt status if have.
-@@ -195,7 +194,6 @@ static int fec_ptp_enable_pps(struct fec_enet_private *fep, uint enable)
- 	}
- 
- 	fep->pps_enable = enable;
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- 
- 	return 0;
- }
-@@ -204,9 +202,8 @@ static int fec_ptp_pps_perout(struct fec_enet_private *fep)
- {
- 	u32 compare_val, ptp_hc, temp_val;
- 	u64 curr_time;
--	unsigned long flags;
- 
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+	guard(spinlock_irqsave)(&fep->tmreg_lock);
- 
- 	/* Update time counter */
- 	timecounter_read(&fep->tc);
-@@ -229,7 +226,6 @@ static int fec_ptp_pps_perout(struct fec_enet_private *fep)
- 	 */
- 	if (fep->perout_stime < curr_time + 100 * NSEC_PER_MSEC) {
- 		dev_err(&fep->pdev->dev, "Current time is too close to the start time!\n");
--		spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- 		return -1;
- 	}
- 
-@@ -257,7 +253,6 @@ static int fec_ptp_pps_perout(struct fec_enet_private *fep)
- 	 */
- 	writel(fep->next_counter, fep->hwp + FEC_TCCR(fep->pps_channel));
- 	fep->next_counter = (fep->next_counter + fep->reload_period) & fep->cc.mask;
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- 
- 	return 0;
- }
-@@ -307,13 +302,12 @@ static u64 fec_ptp_read(const struct cyclecounter *cc)
- void fec_ptp_start_cyclecounter(struct net_device *ndev)
- {
- 	struct fec_enet_private *fep = netdev_priv(ndev);
--	unsigned long flags;
- 	int inc;
- 
- 	inc = 1000000000 / fep->cycle_speed;
- 
- 	/* grab the ptp lock */
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+	guard(spinlock_irqsave)(&fep->tmreg_lock);
- 
- 	/* 1ns counter */
- 	writel(inc << FEC_T_INC_OFFSET, fep->hwp + FEC_ATIME_INC);
-@@ -332,8 +326,6 @@ void fec_ptp_start_cyclecounter(struct net_device *ndev)
- 
- 	/* reset the ns time counter */
- 	timecounter_init(&fep->tc, &fep->cc, 0);
--
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- }
- 
- /**
-@@ -352,7 +344,6 @@ void fec_ptp_start_cyclecounter(struct net_device *ndev)
- static int fec_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- {
- 	s32 ppb = scaled_ppm_to_ppb(scaled_ppm);
--	unsigned long flags;
- 	int neg_adj = 0;
- 	u32 i, tmp;
- 	u32 corr_inc, corr_period;
-@@ -397,7 +388,7 @@ static int fec_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- 	else
- 		corr_ns = fep->ptp_inc + corr_inc;
- 
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+	guard(spinlock_irqsave)(&fep->tmreg_lock);
- 
- 	tmp = readl(fep->hwp + FEC_ATIME_INC) & FEC_T_INC_MASK;
- 	tmp |= corr_ns << FEC_T_INC_CORR_OFFSET;
-@@ -407,8 +398,6 @@ static int fec_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
- 	/* dummy read to update the timer. */
- 	timecounter_read(&fep->tc);
- 
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
--
- 	return 0;
- }
- 
-@@ -423,11 +412,9 @@ static int fec_ptp_adjtime(struct ptp_clock_info *ptp, s64 delta)
- {
- 	struct fec_enet_private *fep =
- 	    container_of(ptp, struct fec_enet_private, ptp_caps);
--	unsigned long flags;
- 
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+	guard(spinlock_irqsave)(&fep->tmreg_lock);
- 	timecounter_adjtime(&fep->tc, delta);
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- 
- 	return 0;
- }
-@@ -445,18 +432,15 @@ static int fec_ptp_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
- 	struct fec_enet_private *fep =
- 	    container_of(ptp, struct fec_enet_private, ptp_caps);
- 	u64 ns;
--	unsigned long flags;
- 
--	mutex_lock(&fep->ptp_clk_mutex);
--	/* Check the ptp clock */
--	if (!fep->ptp_clk_on) {
--		mutex_unlock(&fep->ptp_clk_mutex);
--		return -EINVAL;
-+	scoped_guard(mutex, &fep->ptp_clk_mutex) {
-+		/* Check the ptp clock */
-+		if (!fep->ptp_clk_on)
-+			return -EINVAL;
-+
-+		scoped_guard(spinlock_irqsave, &fep->tmreg_lock)
-+			ns = timecounter_read(&fep->tc);
- 	}
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
--	ns = timecounter_read(&fep->tc);
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
--	mutex_unlock(&fep->ptp_clk_mutex);
- 
- 	*ts = ns_to_timespec64(ns);
- 
-@@ -478,15 +462,12 @@ static int fec_ptp_settime(struct ptp_clock_info *ptp,
- 	    container_of(ptp, struct fec_enet_private, ptp_caps);
- 
- 	u64 ns;
--	unsigned long flags;
- 	u32 counter;
- 
--	mutex_lock(&fep->ptp_clk_mutex);
-+	guard(mutex)(&fep->ptp_clk_mutex);
- 	/* Check the ptp clock */
--	if (!fep->ptp_clk_on) {
--		mutex_unlock(&fep->ptp_clk_mutex);
-+	if (!fep->ptp_clk_on)
- 		return -EINVAL;
--	}
- 
- 	ns = timespec64_to_ns(ts);
- 	/* Get the timer value based on timestamp.
-@@ -494,21 +475,18 @@ static int fec_ptp_settime(struct ptp_clock_info *ptp,
- 	 */
- 	counter = ns & fep->cc.mask;
- 
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
--	writel(counter, fep->hwp + FEC_ATIME);
--	timecounter_init(&fep->tc, &fep->cc, ns);
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
--	mutex_unlock(&fep->ptp_clk_mutex);
-+	scoped_guard(spinlock_irqsave, &fep->tmreg_lock) {
-+		writel(counter, fep->hwp + FEC_ATIME);
-+		timecounter_init(&fep->tc, &fep->cc, ns);
-+	}
-+
- 	return 0;
- }
- 
- static int fec_ptp_pps_disable(struct fec_enet_private *fep, uint channel)
- {
--	unsigned long flags;
--
--	spin_lock_irqsave(&fep->tmreg_lock, flags);
-+	guard(spinlock_irqsave)(&fep->tmreg_lock);
- 	writel(0, fep->hwp + FEC_TCSR(channel));
--	spin_unlock_irqrestore(&fep->tmreg_lock, flags);
- 
- 	return 0;
- }
-@@ -528,7 +506,6 @@ static int fec_ptp_enable(struct ptp_clock_info *ptp,
- 	ktime_t timeout;
- 	struct timespec64 start_time, period;
- 	u64 curr_time, delta, period_ns;
--	unsigned long flags;
- 	int ret = 0;
- 
- 	if (rq->type == PTP_CLK_REQ_PPS) {
-@@ -563,17 +540,17 @@ static int fec_ptp_enable(struct ptp_clock_info *ptp,
- 			start_time.tv_nsec = rq->perout.start.nsec;
- 			fep->perout_stime = timespec64_to_ns(&start_time);
- 
--			mutex_lock(&fep->ptp_clk_mutex);
--			if (!fep->ptp_clk_on) {
--				dev_err(&fep->pdev->dev, "Error: PTP clock is closed!\n");
--				mutex_unlock(&fep->ptp_clk_mutex);
--				return -EOPNOTSUPP;
-+			scoped_guard(mutex, &fep->ptp_clk_mutex) {
-+				if (!fep->ptp_clk_on) {
-+					dev_err(&fep->pdev->dev,
-+						"Error: PTP clock is closed!\n");
-+					return -EOPNOTSUPP;
-+				}
-+
-+				scoped_guard(spinlock_irqsave, &fep->tmreg_lock)
-+					/* Read current timestamp */
-+					curr_time = timecounter_read(&fep->tc);
- 			}
--			spin_lock_irqsave(&fep->tmreg_lock, flags);
--			/* Read current timestamp */
--			curr_time = timecounter_read(&fep->tc);
--			spin_unlock_irqrestore(&fep->tmreg_lock, flags);
--			mutex_unlock(&fep->ptp_clk_mutex);
- 
- 			/* Calculate time difference */
- 			delta = fep->perout_stime - curr_time;
-@@ -653,15 +630,13 @@ static void fec_time_keep(struct work_struct *work)
- {
- 	struct delayed_work *dwork = to_delayed_work(work);
- 	struct fec_enet_private *fep = container_of(dwork, struct fec_enet_private, time_keep);
--	unsigned long flags;
- 
--	mutex_lock(&fep->ptp_clk_mutex);
--	if (fep->ptp_clk_on) {
--		spin_lock_irqsave(&fep->tmreg_lock, flags);
--		timecounter_read(&fep->tc);
--		spin_unlock_irqrestore(&fep->tmreg_lock, flags);
-+	scoped_guard(mutex, &fep->ptp_clk_mutex) {
-+		if (fep->ptp_clk_on) {
-+			scoped_guard(spinlock_irqsave, &fep->tmreg_lock)
-+				timecounter_read(&fep->tc);
-+		}
- 	}
--	mutex_unlock(&fep->ptp_clk_mutex);
- 
- 	schedule_delayed_work(&fep->time_keep, HZ);
- }
--- 
-2.34.1
-
+I know the hardware will guarantee this. And likely KVM will also do this.
+but I don't think it is necessary for KVM to assume L1 VMM will guarantee
+this. because as long as L2 guest is enlightened to read event_data from stack
+only, the ABI between L1 VMM and L2 guest can be: CR2/DR6 may be out of sync
+with the event_data. I am not saying it is good that L1 VMM deviates from the
+real hardware behavior. But how L1 VMM defines this ABI with L2 has nothing to
+do with KVM as L0. KVM shouldn't make assumptions on that.
 
