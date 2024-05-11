@@ -1,139 +1,281 @@
-Return-Path: <linux-kernel+bounces-176636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DE68C3263
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:06:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B1D8C3264
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D36B1C20DF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8561C20DE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E3E56B89;
-	Sat, 11 May 2024 16:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDE356B7C;
+	Sat, 11 May 2024 16:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbJCldCR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAvKm+n2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF3356B63;
-	Sat, 11 May 2024 16:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D11154BFE;
+	Sat, 11 May 2024 16:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715443562; cv=none; b=NSMgg6f6IGV8T2zd7SAIETXs+Sy3re9yia0LPRHq+5B3xssYg4uXvuQvLwaAFUvXq4xB/UORN5LzdvXlFyYtimH3ZxY22mcUDtx98eYiKslZGKD0oLj2UJBzoVf8iDJtb1UfuXOQQ7YZ8IeLOVdHqB7aZMeBAMnkplm2rjrkF0E=
+	t=1715443609; cv=none; b=HBre84QBSsEZyYSbxV4fNH622aKM9t7ZH/xMPD+hoTI424XVHQphOWASF497pvKIZLoPNNmhhKevxa6JmgFJB11M+p8VRZb9lQPIYLVXOzrgUUlr7cqvUd3MbFX1dcAksWmTc27fcLshXL322Ial8NrSjc/ffpfWnj8HvqDGRWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715443562; c=relaxed/simple;
-	bh=/A2yW0GWCa0BY2qKORT6qVkFEJQCUjFJUdsF2eSvF5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=myzkXI5C5qj5rXMsdGCT/FK+xX2/UJP4YTSOGCUJtnqME1pifgG8Sx1/rsfQF+hZwVJKgjLYDxuW7EfPZddIOIL0R0Jglr7VP/MEjYjsw8cbaWeBPYBS3/NjMpqkSGLUTbVWaIR6gRmClAV/hD1t6WyVKyokSZz8JI73KrydzYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbJCldCR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64D6C2BD11;
-	Sat, 11 May 2024 16:05:58 +0000 (UTC)
+	s=arc-20240116; t=1715443609; c=relaxed/simple;
+	bh=TDN0gBCpCl5l12uhlNFfdynTxX1nZiCCsDe3asGgAEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsmlagNdCfuZDWZMW1cJSGapej16ZSFalnAsAXlh9hc1Tp8gwmplrRQtcNeiKTBOel4EdUZdqK1OCr0wNfT/0zZ6s8F7yb8GZp1hpL0sK5E+lRk2vgYe0QPPNB+2v2Tej7L1C4wy7t87u7l3lCqNN9puNA3vRXggaJjKvoyTbm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAvKm+n2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB18CC2BBFC;
+	Sat, 11 May 2024 16:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715443562;
-	bh=/A2yW0GWCa0BY2qKORT6qVkFEJQCUjFJUdsF2eSvF5s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nbJCldCRTNrcdTE/yiVppJZOg7XEMEoULI4ul6/3uawlMO4XTYl8qbp9PaqQO2K35
-	 W1cUYlebjibwpGMjATexf8hj9NRWlC0du+yDag2AkMIzL6KH96rHaEbGbk9+vk9//9
-	 0ZBqEAcYQzX4Pn56R/QtClOFIbxk6XwFvTbNhPiBcqsysibkiH8MAdD6AFmDfkBzqH
-	 rjAoTCCiLwUx7gbuCLleoYR5Ga+vPdlECqKwarTTN1NGwc129xPNlpd9w5QUC/F9an
-	 DOL2zxOKyplIdShljROtqAlVMe5ehDyMmZh1Evf4OycPktDi69uRySDXb/OK+mtkHJ
-	 C1SiebxGNVUfw==
-Date: Sat, 11 May 2024 17:05:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Angelo Dureghello <adureghello@baylibre.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
- lars@metafoo.de, Michael.Hennerich@analog.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: iio: dac: add ad35xxr single output
- variants
-Message-ID: <20240511170529.742e6e6f@jic23-huawei>
-In-Reply-To: <CAMknhBFUUCvxbuHz0pPKd-KBcG3zfXNr8wu=AnrZx0C495RKOQ@mail.gmail.com>
-References: <20240510141836.1624009-1-adureghello@baylibre.org>
-	<CAMknhBFUUCvxbuHz0pPKd-KBcG3zfXNr8wu=AnrZx0C495RKOQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=k20201202; t=1715443609;
+	bh=TDN0gBCpCl5l12uhlNFfdynTxX1nZiCCsDe3asGgAEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KAvKm+n2URP351N9lqaqGfa0fExPFxy1kp5KSrSm9xlqvIJ52AN5G1BP1Dp0RbBDp
+	 003U5em2FnqKWjZPWdOoE0j3esJS4eLvvxCs0nb8VYVeWc8oYMtGRTSV8JM4NwzH5s
+	 vrOqeAGQOhBxbCuwfLgnWIHHKInG6a4h7y2xeCKIJbVQfVgjVhHeZLN9l2DCQfuoID
+	 n982JW6OOtTbeM35F+7Qgj7yIKhvP6Z/6EQgVFDIeXQnGic9AKgIgvd4Fz2VUmqtwg
+	 jMl7rro0fXJj+jrDPnFbzRt5CaKWq3etgZ/lJidU61f7yYkGXe974DKlrtGL8SePvb
+	 egPYafHdZBNaw==
+Date: Sat, 11 May 2024 13:06:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>,
+	Bhaskara Budiredla <bbudiredla@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@arm.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Will Deacon <will@kernel.org>,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v3 1/2] perf pmus: Sort/merge/aggregate PMUs like
+ mrvl_ddr_pmu
+Message-ID: <Zj-Xlj-hIRAv_EZL@x1>
+References: <20240505031624.299361-1-irogers@google.com>
+ <20240505031624.299361-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240505031624.299361-2-irogers@google.com>
 
-On Fri, 10 May 2024 10:39:31 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sat, May 04, 2024 at 08:16:23PM -0700, Ian Rogers wrote:
+> The mrvl_ddr_pmu is uncore and has a hexadecimal address suffix while
+> the previous PMU sorting/merging code assumes uncore PMU names start
+> with uncore_ and have a decimal suffix. Because of the previous
+> assumption it isn't possible to wildcard the mrvl_ddr_pmu.
+> 
+> Modify pmu_name_len_no_suffix but also remove the suffix number out
+> argument, this is because we don't know if a suffix number of say 10
+> is in hexadecimal or decimal. As the only use of the suffix number is
+> in comparisons, it is safe there to compare the values as hexadecimal.
 
-> On Fri, May 10, 2024 at 9:19=E2=80=AFAM Angelo Dureghello
-> <adureghello@baylibre.com> wrote:
-> >
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> >
-> > Add support for ad3541r and ad3551r single output variants.
-> >
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> >  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml       | 10 ++++++++--
-> >  1 file changed, 8 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml=
- b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> > index 8265d709094d..17442cdfbe27 100644
-> > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml =20
->=20
-> It would be nice to also add the datasheet links in the description.
->=20
-> > @@ -19,7 +19,9 @@ description: |
-> >  properties:
-> >    compatible:
-> >      enum:
-> > +      - adi,ad3541r
-> >        - adi,ad3542r
-> > +      - adi,ad3551r
-> >        - adi,ad3552r
-> >
-> >    reg:
-> > @@ -128,7 +130,9 @@ allOf:
-> >        properties:
-> >          compatible:
-> >            contains:
-> > -            const: adi,ad3542r
-> > +            enum:
-> > +              - adi,ad3541r
-> > +              - adi,ad3542r
-> >      then:
-> >        patternProperties:
-> >          "^channel@([0-1])$":
-> > @@ -158,7 +162,9 @@ allOf:
-> >        properties:
-> >          compatible:
-> >            contains:
-> > -            const: adi,ad3552r
-> > +            enum:
-> > +              - adi,ad3551r
-> > +              - adi,ad3552r
-> >      then:
-> >        patternProperties:
-> >          "^channel@([0-1])$":
-> > --
-> > 2.45.0.rc1
-> >
-> > =20
->=20
-> Since these are single channel, it would not hurt to restrict the
-> `reg` property of of the `channel@` nodes to 1.
-Ah. I missed David's email because threading goes weird without a cover let=
-ter
-and hence duplicated his comment.
-Please add a cover letter with a brief description of the series to
-your v2.  Means we get a nice title in patchwork as well!
+Removed these patches due to:
+ 
+util/pmus.c: In function ‘pmu_name_cmp’:
+util/pmus.c:67:19: error: ‘strncmp’ specified bound [18446744071562067968, 18446744073709551615] exceeds maximum object size 9223372036854775807 [-Werror=stringop-overread]
+   67 |         int ret = strncmp(lhs_pmu_name, rhs_pmu_name,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   68 |                         lhs_pmu_name_len < rhs_pmu_name_len ? lhs_pmu_name_len : rhs_pmu_name_len);
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make[4]: *** [/tmp/perf-6.9.0-rc5/tools/build/Makefile.build:105: util/pmus.o] Error 1
 
-Thanks,
+Noticed while doing a 'make -C tools/perf build-test', the tarbz test.
 
-Jonathan
-=20
+acme@x1:~/git/perf-tools-next$ head /etc/os-release 
+NAME="Fedora Linux"
+VERSION="39 (Workstation Edition)"
+ID=fedora
+VERSION_ID=39
+VERSION_CODENAME=""
+PLATFORM_ID="platform:f39"
+PRETTY_NAME="Fedora Linux 39 (Workstation Edition)"
+ANSI_COLOR="0;38;2;60;110;180"
+LOGO=fedora-logo-icon
+CPE_NAME="cpe:/o:fedoraproject:fedora:39"
+acme@x1:~/git/perf-tools-next$
 
+- Arnaldo
+
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/pmu.c  |  4 ++--
+>  tools/perf/util/pmus.c | 53 ++++++++++++++++++++++--------------------
+>  tools/perf/util/pmus.h |  7 +++++-
+>  3 files changed, 36 insertions(+), 28 deletions(-)
+> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index b3b072feef02..32e5a73273d7 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1761,7 +1761,7 @@ static char *format_alias(char *buf, int len, const struct perf_pmu *pmu,
+>  {
+>  	struct parse_events_term *term;
+>  	int pmu_name_len = skip_duplicate_pmus
+> -		? pmu_name_len_no_suffix(pmu->name, /*num=*/NULL)
+> +		? pmu_name_len_no_suffix(pmu->name)
+>  		: (int)strlen(pmu->name);
+>  	int used = snprintf(buf, len, "%.*s/%s", pmu_name_len, pmu->name, alias->name);
+>  
+> @@ -1805,7 +1805,7 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
+>  
+>  		info.pmu_name = event->pmu_name ?: pmu->name;
+>  		pmu_name_len = skip_duplicate_pmus
+> -			? pmu_name_len_no_suffix(info.pmu_name, /*num=*/NULL)
+> +			? pmu_name_len_no_suffix(info.pmu_name)
+>  			: (int)strlen(info.pmu_name);
+>  		info.alias = NULL;
+>  		if (event->desc) {
+> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
+> index b9b4c5eb5002..28cfa7adbfd7 100644
+> --- a/tools/perf/util/pmus.c
+> +++ b/tools/perf/util/pmus.c
+> @@ -40,31 +40,44 @@ static bool read_sysfs_all_pmus;
+>  
+>  static void pmu_read_sysfs(bool core_only);
+>  
+> -int pmu_name_len_no_suffix(const char *str, unsigned long *num)
+> +int pmu_name_len_no_suffix(const char *str)
+>  {
+>  	int orig_len, len;
+>  
+>  	orig_len = len = strlen(str);
+>  
+> -	/* Non-uncore PMUs have their full length, for example, i915. */
+> -	if (!strstarts(str, "uncore_"))
+> -		return len;
+> -
+>  	/*
+>  	 * Count trailing digits and '_', if '_{num}' suffix isn't present use
+>  	 * the full length.
+>  	 */
+> -	while (len > 0 && isdigit(str[len - 1]))
+> +	while (len > 0 && isxdigit(str[len - 1]))
+>  		len--;
+>  
+> -	if (len > 0 && len != orig_len && str[len - 1] == '_') {
+> -		if (num)
+> -			*num = strtoul(&str[len], NULL, 10);
+> +	if (len > 0 && len != orig_len && str[len - 1] == '_')
+>  		return len - 1;
+> -	}
+> +
+>  	return orig_len;
+>  }
+>  
+> +int pmu_name_cmp(const char *lhs_pmu_name, const char *rhs_pmu_name)
+> +{
+> +	unsigned long lhs_num = 0, rhs_num = 0;
+> +	int lhs_pmu_name_len = pmu_name_len_no_suffix(lhs_pmu_name);
+> +	int rhs_pmu_name_len = pmu_name_len_no_suffix(rhs_pmu_name);
+> +	int ret = strncmp(lhs_pmu_name, rhs_pmu_name,
+> +			lhs_pmu_name_len < rhs_pmu_name_len ? lhs_pmu_name_len : rhs_pmu_name_len);
+> +
+> +	if (lhs_pmu_name_len != rhs_pmu_name_len || ret != 0 || lhs_pmu_name_len == 0)
+> +		return ret;
+> +
+> +	if (lhs_pmu_name_len + 1 < (int)strlen(lhs_pmu_name))
+> +		lhs_num = strtoul(&lhs_pmu_name[lhs_pmu_name_len + 1], NULL, 16);
+> +	if (rhs_pmu_name_len + 1 < (int)strlen(rhs_pmu_name))
+> +		rhs_num = strtoul(&rhs_pmu_name[rhs_pmu_name_len + 1], NULL, 16);
+> +
+> +	return lhs_num < rhs_num ? -1 : (lhs_num > rhs_num ? 1 : 0);
+> +}
+> +
+>  void perf_pmus__destroy(void)
+>  {
+>  	struct perf_pmu *pmu, *tmp;
+> @@ -167,20 +180,10 @@ static struct perf_pmu *perf_pmu__find2(int dirfd, const char *name)
+>  static int pmus_cmp(void *priv __maybe_unused,
+>  		    const struct list_head *lhs, const struct list_head *rhs)
+>  {
+> -	unsigned long lhs_num = 0, rhs_num = 0;
+>  	struct perf_pmu *lhs_pmu = container_of(lhs, struct perf_pmu, list);
+>  	struct perf_pmu *rhs_pmu = container_of(rhs, struct perf_pmu, list);
+> -	const char *lhs_pmu_name = lhs_pmu->name ?: "";
+> -	const char *rhs_pmu_name = rhs_pmu->name ?: "";
+> -	int lhs_pmu_name_len = pmu_name_len_no_suffix(lhs_pmu_name, &lhs_num);
+> -	int rhs_pmu_name_len = pmu_name_len_no_suffix(rhs_pmu_name, &rhs_num);
+> -	int ret = strncmp(lhs_pmu_name, rhs_pmu_name,
+> -			lhs_pmu_name_len < rhs_pmu_name_len ? lhs_pmu_name_len : rhs_pmu_name_len);
+>  
+> -	if (lhs_pmu_name_len != rhs_pmu_name_len || ret != 0 || lhs_pmu_name_len == 0)
+> -		return ret;
+> -
+> -	return lhs_num < rhs_num ? -1 : (lhs_num > rhs_num ? 1 : 0);
+> +	return pmu_name_cmp(lhs_pmu->name ?: "", rhs_pmu->name ?: "");
+>  }
+>  
+>  /* Add all pmus in sysfs to pmu list: */
+> @@ -300,11 +303,11 @@ static struct perf_pmu *perf_pmus__scan_skip_duplicates(struct perf_pmu *pmu)
+>  		pmu_read_sysfs(/*core_only=*/false);
+>  		pmu = list_prepare_entry(pmu, &core_pmus, list);
+>  	} else
+> -		last_pmu_name_len = pmu_name_len_no_suffix(pmu->name ?: "", NULL);
+> +		last_pmu_name_len = pmu_name_len_no_suffix(pmu->name ?: "");
+>  
+>  	if (use_core_pmus) {
+>  		list_for_each_entry_continue(pmu, &core_pmus, list) {
+> -			int pmu_name_len = pmu_name_len_no_suffix(pmu->name ?: "", /*num=*/NULL);
+> +			int pmu_name_len = pmu_name_len_no_suffix(pmu->name ?: "");
+>  
+>  			if (last_pmu_name_len == pmu_name_len &&
+>  			    !strncmp(last_pmu_name, pmu->name ?: "", pmu_name_len))
+> @@ -316,7 +319,7 @@ static struct perf_pmu *perf_pmus__scan_skip_duplicates(struct perf_pmu *pmu)
+>  		pmu = list_prepare_entry(pmu, &other_pmus, list);
+>  	}
+>  	list_for_each_entry_continue(pmu, &other_pmus, list) {
+> -		int pmu_name_len = pmu_name_len_no_suffix(pmu->name ?: "", /*num=*/NULL);
+> +		int pmu_name_len = pmu_name_len_no_suffix(pmu->name ?: "");
+>  
+>  		if (last_pmu_name_len == pmu_name_len &&
+>  		    !strncmp(last_pmu_name, pmu->name ?: "", pmu_name_len))
+> @@ -566,7 +569,7 @@ void perf_pmus__print_raw_pmu_events(const struct print_callbacks *print_cb, voi
+>  			.long_string = STRBUF_INIT,
+>  			.num_formats = 0,
+>  		};
+> -		int len = pmu_name_len_no_suffix(pmu->name, /*num=*/NULL);
+> +		int len = pmu_name_len_no_suffix(pmu->name);
+>  		const char *desc = "(see 'man perf-list' or 'man perf-record' on how to encode it)";
+>  
+>  		if (!pmu->is_core)
+> diff --git a/tools/perf/util/pmus.h b/tools/perf/util/pmus.h
+> index 9d4ded80b8e9..69d64fbd4259 100644
+> --- a/tools/perf/util/pmus.h
+> +++ b/tools/perf/util/pmus.h
+> @@ -2,10 +2,15 @@
+>  #ifndef __PMUS_H
+>  #define __PMUS_H
+>  
+> +#include <stdbool.h>
+> +#include <linux/list.h>
+> +
+>  struct perf_pmu;
+>  struct print_callbacks;
+>  
+> -int pmu_name_len_no_suffix(const char *str, unsigned long *num);
+> +int pmu_name_len_no_suffix(const char *str);
+> +/* Exposed for testing only. */
+> +int pmu_name_cmp(const char *lhs_pmu_name, const char *rhs_pmu_name);
+>  
+>  void perf_pmus__destroy(void);
+>  
+> -- 
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
 
