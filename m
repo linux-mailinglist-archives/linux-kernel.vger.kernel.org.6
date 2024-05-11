@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-176616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B308C3234
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:43:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5D68C3238
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D47C1C20CA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:43:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928AF282058
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774DB56754;
-	Sat, 11 May 2024 15:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D5A56766;
+	Sat, 11 May 2024 15:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTQfWTS1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="JmuVYyDg"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2105.outbound.protection.outlook.com [40.92.19.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B424E38DD3;
-	Sat, 11 May 2024 15:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715442188; cv=none; b=P8WBgg+ljqDwHmbhPpC7cOHkizefJf6qn7TJtNAoEQZvtPrXnMfs8sg/sG3zmHw9UXWyhl/Ae1eo8hyn2DxYF1xWfD32eAqhekone6kaL5tnJ36MVSOi46wM78tB5DTqO4v7EwnZEDqz1whu0nknoJfQRCzk4xrQwqYy6qngLEc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715442188; c=relaxed/simple;
-	bh=XXaqHCJAzABGwZ2wMv/Kt7MKG+X9S9a1FPy02FlWTAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XbQFjgYd/Ym0rD5vl5ygpNrmbiUruHFWWC5AfVhU1YbE3kh3zO2bQD1/WgX5TTu71RPneL9H1xh1Jtc7q/58/HeuBC25UGjP2xNdghHx8t2mMfyC5p5MiyynhK4+YCZfMyH16Sb/5MJy/ncRCZ9Thu7Pz90FD2GLSZhti5krgOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTQfWTS1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E861BC2BBFC;
-	Sat, 11 May 2024 15:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715442188;
-	bh=XXaqHCJAzABGwZ2wMv/Kt7MKG+X9S9a1FPy02FlWTAY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iTQfWTS1WL8RtJn8ViiE9QQ33xfj0QEUahYMpeiAdrn5gN7J6oTZ+1nwHs9jbKXTK
-	 Q5Pc0BOLu/E7ybOfETp1byuTaoIbVKEFcHzLKSp0+52U+rPem/VxWy4UAy6/3PlMud
-	 TtpDlKrpe7TdxGaJFabq9G37EuC4wvgrJScAU75hoQr1uAfydZqH0Ee/NvR2JU2/i3
-	 JUPfRDyM7ZQGj7ZONiUBZgXK9gJwLzVvaw1F73BAN1e8Whq1tV4IxFKHKz3+2Q5tf0
-	 cTUf0RwQEvBd/KxmRvAP66rFHmDJqpPj+UUOvnFXyvdD87xsRH+vtyP7jqF0d2y44G
-	 lvPFQ9PkgvBCw==
-Date: Sat, 11 May 2024 12:43:04 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/2] perf annotate-data: Ensure the number of type
- histograms
-Message-ID: <Zj-SCPBJn673kgbr@x1>
-References: <CAM9d7ci6Y98hkiN1+=Q=YgLQLL-GN+pTxQ1JjqA+Q1EMEi52+g@mail.gmail.com>
- <20240510210452.2449944-1-namhyung@kernel.org>
- <20240510210452.2449944-2-namhyung@kernel.org>
- <CAP-5=fUBQ=GdeQdB25GNtS_ijRxu42W+uz4p6kuykG-8iC1DdA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CFE5674D
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.105
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715442550; cv=fail; b=Iz/14hhq9FA2HOQt+CXDfWFfVTHqKzMuUclD9AQ4xjd8CI0Zbqy7cUyEkO614rQH7sRH7fBiyxWco5zlX6WPRBnY/BiIhmp+C68t5luRtE8f4joqgqkeQBCcCePzKc3goLNTHERSZFglrnrZ9KkfoNwJaRu6nMpS41f6YJLLx5Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715442550; c=relaxed/simple;
+	bh=bgwj2wILC3N+WTBbZKsexDsAKFtxn0EauDjqnaoJw64=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=s9O0PSe0+D01Nnaaiw3YAxMVTai9O1vhpG3JhQLFugRzjmLsvD/HuomvBWRSI9qrclLiTCRYAmlqKIQUFf7byj4lgps/46BS1N7YiydwiLpQoyAvG3np/W2mHe/w+6KNldHRP9iVFw5WVhNMwZCEyy5bzFEjSGKotwefA8kLfYg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=JmuVYyDg; arc=fail smtp.client-ip=40.92.19.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=knOGoEl02/vewa4dVsX9l/UoU+T1uOKUd9Y5c0muQinlhZKaR3k1ZSjxCJobWcr+f+DvQvx+5MRL6m/AFDYsO/RwGYnTY+DPj+O9+UW3utgoVcbHbbjwM1tbU7WfiKeOiws66/sQUoL4PvaxckAPs3Kqs1dI0K/elbDXhim59W4ZaZ8IFLVJ/8eoMLpZZlMSvlXJVM5Q9U6AQQVspjTkgpecQPzSwLqnSZzYJG8T8IGhTZyFhMEGsRomBffTy1ExgWXD5vvO4+9QH91hURJGbzfrvAVncy3hE1e/z24Z7aTR0kLyg2S3rv9cGppQi1r5RPECkc1hnhWlyo4T6Wefww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ntTtdvmO/G84hYBYkD9gR6i3brkublwEgV/fCstZalA=;
+ b=C+4yVnoYg+jFa6mjy7hFFpSqusIA7+QT1ioygCCzeBmcGgh8tkAmv1upzd/ujmM5N1SjLm/7CE68vgRCArg6xNOVwSTM+09wTvR3ztEHLfPxhTsf9Bs9sX+O0nkOw7zvI857TJI4wuhxU42gdoYVuvZkPZkp0oXV4Qt6LGANLW6OBmBOMxC6nNz4g/Db4B1g5kFfj4XXA0yoRBA6ll7dOeAUWAEiw4yI0TAni2NM4rtpo96BO50C+d9nB23OksVepv+bBkxSNE7TflxcVvIHokEJZKAL9wzeqB+qM8cLWc9Lbo3tLZJeP8oO+X5qgj2u16co+drPGl3e8N6EbkhyOg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ntTtdvmO/G84hYBYkD9gR6i3brkublwEgV/fCstZalA=;
+ b=JmuVYyDgG4a/JsrygEx3bqKXhN3QEiRXGL53EDoTGjDPz4WW+WD69RPdM0Og5C7jyL7c8O09gFOj9GbxSCkbXvCEB1oN4FnRfOiqE4n4j+ItWSHracSmnTsQBmmXq9ZiL9llomJdkdXjBmH21pqCyFSCxhBImLgKJCTDtN0whJ3UqVm4ocpOd8sQvf8zjVlWO1Bj/Jv3vZ84yf0hLZjRi5LGsO9VU7lzfMW/0emnogRvTtgGf2Q1/zhevmPe3srsDM7sJUsrvyHuOukAVIfzezkmrx1U+RfKoj7vkKVOQM2cY/8srNCYunO2mD0fvkBVk4zCLG0ezHLWS8D7xEy8ug==
+Received: from BYAPR03MB4168.namprd03.prod.outlook.com (2603:10b6:a03:78::23)
+ by MW4PR03MB6540.namprd03.prod.outlook.com (2603:10b6:303:127::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sat, 11 May
+ 2024 15:48:58 +0000
+Received: from BYAPR03MB4168.namprd03.prod.outlook.com
+ ([fe80::b8b1:7fdc:95d4:238a]) by BYAPR03MB4168.namprd03.prod.outlook.com
+ ([fe80::b8b1:7fdc:95d4:238a%6]) with mapi id 15.20.7544.052; Sat, 11 May 2024
+ 15:48:57 +0000
+From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	chris@chris-wilson.co.uk
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@outlook.com>
+Subject: [PATCH] drm/i915: Correct error handler
+Date: Sat, 11 May 2024 15:48:48 +0000
+Message-ID:
+ <BYAPR03MB41680146FAD88A8F26C3827BADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [/Jk6qVychFBa9zPV1HzyuO5GGLdH0GQ/]
+X-ClientProxiedBy: CH0PR03CA0392.namprd03.prod.outlook.com
+ (2603:10b6:610:11b::31) To BYAPR03MB4168.namprd03.prod.outlook.com
+ (2603:10b6:a03:78::23)
+X-Microsoft-Original-Message-ID:
+ <20240511154848.39492-1-jiashengjiangcool@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUBQ=GdeQdB25GNtS_ijRxu42W+uz4p6kuykG-8iC1DdA@mail.gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR03MB4168:EE_|MW4PR03MB6540:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e1a62d1-a73d-40e7-2f73-08dc71d1de08
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|3420499023|440099019|3430499023|3412199016|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	sk0rCforVT/htuuf443BClFV4OIzQW1Al+5frb9PWdlOrQabj6YRPaNfJriLXC2tdzKcFQVcoj0jQFo1tgHWqaCkonLK54oA1EQpwSQuaTVdQi10282Byzb8r9RnYnemY3yIWIQIP1wSuPS6fOnCCJjuLjI3g8tSuFTfOGQs6OChC3m35mvavemWqo1bSISALxH7IK1Aa0MGwXmhlnltQEN7IVexJscQWjkbwxBEgmQB6i9NusiQxgQZh0ZOWfyhLZvSCZo1FuxsLtkS01Xz0qLRww+TxImAsRnvHM0pO+8n5jPtzSJ7y9aUy0zK03sIh1lbswnPai+aOezvwlju2+Y7l5g0C5sV5h6/ixINiE5WYBdBmQ+oKxcU9EOH+EQvkndVuVHqTqpJ4f8er9nwgQLtBhpX7ELy1J17+QTHh+ak4cfeI4dDrDr42VC5GmGJ+9Jh7odm0ZEI+vJmhZtaVceYd4z9XAEAcKGuY+nPy16imJmJldWUuEaw8HXGaF23xgT+fsr8bd+Mx3KjoHNjXjB8MXNHx37rfE0bPGSwCuNMOrzwxJZzSWBHlb01Rhc5rNnCTjFJj5gtur56fjwmVrUSIdE8QzPviqaXGtZYFm65buUFB5JUjRyq3b0U3ZWL
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yEr6VPBax8czFmUWzFzi/XrIubkEJ5wfEeEtHu5+EgBgYqJg8HFS8MwrbwFA?=
+ =?us-ascii?Q?TLI6hr0nFJoWwZjNAUn24etMW+KfhAiOE116KkW2CJJS0WuD2LuGPaoNBYN0?=
+ =?us-ascii?Q?VYe/8pbAGYhGNr2KN1+y/H3LNWSmJtEHZ3+YftxBInLODO5ruC7YkHbJUxJm?=
+ =?us-ascii?Q?jLT0LYFmSwL89fyeW5Zos+THRxaz+UfkEpWVCe13REjvpO2AnYCZQxx4NfNR?=
+ =?us-ascii?Q?RkqHeWh+GR9bJpDXKmiEWAx/3iCOiZZSwoDrtRbXSgfUufNc5Gz7vnXVutMS?=
+ =?us-ascii?Q?RYfIbQdexZ1FoX4Zh0BztGbluBRi4Uy272eInkjAO/1heaApsiZiFgaPDmth?=
+ =?us-ascii?Q?3d4XfZFbTWetorNv4W9KoBebOdVkhnIrxqAzyeSV1wFgVwyy/vrAGrxoc1tl?=
+ =?us-ascii?Q?UGGUaAqHMBLvFksMkvOmyR6Iuvu763FdH3u7aDfZRvhWvKHYA9FJKjAa4Kly?=
+ =?us-ascii?Q?r5D3mFufl9FjtPv6Rd4XSCARRkY1fMSTYOIfJkYxvuk/NvdU3KdlAjX2G4sb?=
+ =?us-ascii?Q?KGtckbsjasH3XGCYON9jYfy3aIMp1TmcvwykfPu5MgPQzD9LHbAixiNzhM5G?=
+ =?us-ascii?Q?DITr37Z6l5++nRqpBXSctePJFeCeCReKgrgRRl+hYcsBKzk6m5Yx+bX1aeQS?=
+ =?us-ascii?Q?sZE6SskGbQcsOy3JEk0FosVur2UVPORSxobovsfilQXoZ9dbvM//YiR86QFT?=
+ =?us-ascii?Q?vlrgNAfiHGnBbc+F88tIIdNnBJsf1IERyuM51Lg5gbggiUokaxD7ZYP/D4hZ?=
+ =?us-ascii?Q?7QoSCYZdXsfAmhrRZ6fLwYflwoHTqsWu0Hn3CsTJJGOnWVdjOj1SFb+XGyLQ?=
+ =?us-ascii?Q?TeHgwcUxqJOH7NTw/DTqf9HEHrh0xzEDH491EAOBk6LjygdnMHvRS50klqI1?=
+ =?us-ascii?Q?/L6mKfcwk64feE4kVHRduZlwLBduCGT9gIcCR582rTM2zljtnLZ+m/yjDzHD?=
+ =?us-ascii?Q?jnY3M+7mvhwk61S/u/Ej9BjD1qzepHft6i+CN6/kauUamU9GoYOFS5wycRNP?=
+ =?us-ascii?Q?+nEOpknFXIDKIwEoYUcSELItm8JCh0+mKsdAIASWDkQX2ETwBsHDn9OJmpvS?=
+ =?us-ascii?Q?iRM8+aFVgng5v83t5l5wvItmXyZ/bu8EUFVmHbLWWDiY+MVYM8pLIaZpFoMM?=
+ =?us-ascii?Q?gm25sxbcfB2QHzK9nb1nhBrJiP/5HS1/eBOdzeie1GBEVbjdFfpVqUUgbHVN?=
+ =?us-ascii?Q?b2aKT8R+1wFaJV+GkYIrJF/dzMCrfmHPSww4ibTK7rU1mKPYa0AcyYA5IPFO?=
+ =?us-ascii?Q?A/nLxcu3B04smv62yVvg?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e1a62d1-a73d-40e7-2f73-08dc71d1de08
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB4168.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 15:48:57.5259
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR03MB6540
 
-On Fri, May 10, 2024 at 02:27:36PM -0700, Ian Rogers wrote:
-> On Fri, May 10, 2024 at 2:04 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Arnaldo reported that there is a case where nr_histograms and histograms
-> > don't agree each other.  It ended up in a segfault trying to access NULL
-> > histograms array.  Let's make sure to update the nr_histograms when the
-> > histograms array is changed.
-> >
-> > Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> Reviewed-by: Ian Rogers <irogers@google.com>
+Replace "slab_priorities" with "slab_dependencies" in the error handler to avoid memory leak.
 
-Thanks, applied to perf-tools-next,
+Fixes: 32eb6bcfdda9 ("drm/i915: Make request allocation caches global")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+---
+ drivers/gpu/drm/i915/i915_scheduler.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Arnaldo
+diff --git a/drivers/gpu/drm/i915/i915_scheduler.c b/drivers/gpu/drm/i915/i915_scheduler.c
+index 762127dd56c5..70a854557e6e 100644
+--- a/drivers/gpu/drm/i915/i915_scheduler.c
++++ b/drivers/gpu/drm/i915/i915_scheduler.c
+@@ -506,6 +506,6 @@ int __init i915_scheduler_module_init(void)
+ 	return 0;
  
-> Thanks,
-> Ian
-> 
-> > ---
-> >  tools/perf/util/annotate-data.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
-> > index 57e7d4b3550b..965da6c0b542 100644
-> > --- a/tools/perf/util/annotate-data.c
-> > +++ b/tools/perf/util/annotate-data.c
-> > @@ -1800,7 +1800,6 @@ static int alloc_data_type_histograms(struct annotated_data_type *adt, int nr_en
-> >         sz += sizeof(struct type_hist_entry) * adt->self.size;
-> >
-> >         /* Allocate a table of pointers for each event */
-> > -       adt->nr_histograms = nr_entries;
-> >         adt->histograms = calloc(nr_entries, sizeof(*adt->histograms));
-> >         if (adt->histograms == NULL)
-> >                 return -ENOMEM;
-> > @@ -1814,6 +1813,8 @@ static int alloc_data_type_histograms(struct annotated_data_type *adt, int nr_en
-> >                 if (adt->histograms[i] == NULL)
-> >                         goto err;
-> >         }
-> > +
-> > +       adt->nr_histograms = nr_entries;
-> >         return 0;
-> >
-> >  err:
-> > @@ -1827,7 +1828,9 @@ static void delete_data_type_histograms(struct annotated_data_type *adt)
-> >  {
-> >         for (int i = 0; i < adt->nr_histograms; i++)
-> >                 zfree(&(adt->histograms[i]));
-> > +
-> >         zfree(&adt->histograms);
-> > +       adt->nr_histograms = 0;
-> >  }
-> >
-> >  void annotated_data_type__tree_delete(struct rb_root *root)
-> > --
-> > 2.45.0.118.g7fe29c98d7-goog
-> >
+ err_priorities:
+-	kmem_cache_destroy(slab_priorities);
++	kmem_cache_destroy(slab_dependencies);
+ 	return -ENOMEM;
+ }
+-- 
+2.25.1
+
 
