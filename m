@@ -1,49 +1,84 @@
-Return-Path: <linux-kernel+bounces-176346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAB128C2E3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CCE8C2E41
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767092842E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E73285424
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3428745008;
-	Sat, 11 May 2024 00:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228E1101E6;
+	Sat, 11 May 2024 00:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DG2PIQND"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="t4xBbzlh"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2050.outbound.protection.outlook.com [40.107.93.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893CD12E40
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715388634; cv=none; b=TtxGPRKAXwmqZLreC5HhEemXxk56SZR+LfFSqbl3q6I1SBNQPqonBGgRMxOR7SSlWOHlY/zceSigSwlHu64wMKuqtQiXYBVzhvp1AXvJjeIoSo3b52qAYtdU6Ag0aoYiQJBn/izwhrAngd29GNbAu0k+YhD96w1oS/1ZkLjwn/4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715388634; c=relaxed/simple;
-	bh=umpzRfqIbQjf2cQ3pWh/DFx/YMizin6Bv2YlZ01qB7w=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Qwpwqm/WK+E0VGdMrpJBD0S0XQXD91v586iDrTrFoXKEBItupJYBr7dwTLGCTnVxv2NnVNWwi167gdUTnLMMS+vIiExsjdEh+RZZbtzCCoAqExwn9bvM7y7lA5X+DeSXF2Fr58Pao50euaDi4FQU6B//I4FnzGZQAPOFbtOKSWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DG2PIQND; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 345FBC4DDE7;
-	Sat, 11 May 2024 00:50:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715388634;
-	bh=umpzRfqIbQjf2cQ3pWh/DFx/YMizin6Bv2YlZ01qB7w=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DG2PIQNDZ2WQ5knTaNMQofd+vFkrj/8Lk4AJ9Ilohrc1wSrcsxtGnOUGfmqiNU+Ij
-	 btandg8l9XvpWW4uEQzEB7DHlsFnDpyt8D52GzjfJ+aO4U+EBbjjCjNyWo3Hem5Tvu
-	 DRd54W2RradldTUZvEu01KhbnsxSupD0dpHA17zFtYME7I8/6HJJhA0xSfQkQzvjWZ
-	 C6hk1cv9FDBcRMzimQYMpSkLOu0hxwVphDjargyZg/P5XxtPo4cpO3j5YhVrvR7gAV
-	 tSxAtlifxSR+rYrQVN46TQam5xBSZc2glLvUcbq1GXF4KKa51RSRvesIU9GVUXo9aY
-	 da3/cqXB4otNg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2A88FE7C114;
-	Sat, 11 May 2024 00:50:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9603E1B7E9;
+	Sat, 11 May 2024 00:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715388699; cv=fail; b=dqywOgCJ6lBpBkYkf8QLUEPPN3AFvD/1QoR3XTep3MkhBRWFEoM0A7RJSXV1ec5KRiGP3pG5YaO5amapahO3QJDB5rX4lZJiCZs3xg8nwbfQETRjT84W9vbQpXteAvwVuUlPxlnAtBGIcE5dcITJ9wZtAvy+GE/853fkuMf+AZM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715388699; c=relaxed/simple;
+	bh=9qkcSuIbFuZTlEsL1iwwWYbDZxX3vd9VWkdoUo+thHo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TbtzZ6GEKp3+DxB2tm4jmafEwv7+zG3VYtQ/tt38uif0VUy9kKV+wRgUdNx6H70BVkcQRIsc1EdQRORzHUM4ZCbr/rGhWAwziQj6vLKs7/XY4d64OMnz0ZKjlPBvApZxTS97yM0/JkJOIpIdSj+LtOPgqd+6cOCcbgOwh4iVDr4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=t4xBbzlh; arc=fail smtp.client-ip=40.107.93.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QE0bFF8oEZmbz5Ge49pIMwSFiR2la1fcwfM1nOA+7LemH0o5M0Mu/2mfcChb13DJTgETg92ASun90rNkRWn614hj2gSxSHqo+NzOwD6F3xov/pob6XhlfoFi0p1Vg2NCktqDFynXmwzn734QVPAkExL/r1buorbzlgco1MSz99gHA03veN32VxMn4+iHUA6OLNknIwHQKB7Vaa4p7WvHdT4xUCF3HY4Cuaa8TpWVxxQJKk0sa72+y0mmLHq6UEPUY1cHuPO/LCF1bjOZ9kPnQPUd3fakyyWNyUBa+ER0BhG6G5WS8Q9htJ7e8astKHiTH4ABeqZOkmIP8dVP+U1MvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZE8lhGUfRKARCrEYdO+HJ2L+qCSe7dZhpBPvf7aLCC0=;
+ b=S8CSoxJ5gy38J/Rl5OmoOZOEQCbbfcN/Su6bGozjHIRCc9fIHih4B/Ul7SbL0ymIuymedONRLaJYpCMai+ETOlxJGuyZ/wc3CcLpaN6bBbtEy0hxY7XHuVbyJ4pgYN+eIlXKUwET8sN+G6YDn03reLOrtepTfH5K9hJYZUkK8jPwOjBiJoolGiL13kj+ERjUD6P0GhvmmlBbe/GBTh0UemvxvJZVSVaaRnDRdPIEJ5prVLn54uDSJ00Hw8u2V44x6yCyjWxHf3REY3lERtLYZlSZKIaiKKX5+7ZVDjSOEhbO3OVu1m4oKpwM2zeOf6yCEbAX3We8xnwQv5WJYn3PFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZE8lhGUfRKARCrEYdO+HJ2L+qCSe7dZhpBPvf7aLCC0=;
+ b=t4xBbzlh7BggZv23j7oS4bmQm5Pr7/IujcAK6eEeunfsJoEXJVJibk5invXoA+uiGHvy5BO2FedkXsr/qsZlbP6IFWwQ+J41W8whOao3wO/KorFuMTmDEXDCeXcr6W1+CzNNZJxnLQtk4G+5AJEQNF7U1EtiPqdEWMmM+9zs7Fs=
+Received: from DS7PR03CA0246.namprd03.prod.outlook.com (2603:10b6:5:3b3::11)
+ by PH0PR12MB8127.namprd12.prod.outlook.com (2603:10b6:510:292::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.48; Sat, 11 May
+ 2024 00:51:35 +0000
+Received: from DS1PEPF00017096.namprd05.prod.outlook.com
+ (2603:10b6:5:3b3:cafe::e4) by DS7PR03CA0246.outlook.office365.com
+ (2603:10b6:5:3b3::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.42 via Frontend
+ Transport; Sat, 11 May 2024 00:51:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF00017096.mail.protection.outlook.com (10.167.18.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7544.18 via Frontend Transport; Sat, 11 May 2024 00:51:34 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 10 May
+ 2024 19:51:34 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Fri, 10 May 2024 19:51:34 -0500
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	"Tanmay Shah" <tanmay.shah@amd.com>
+Subject: [PATCH v2 0/2] remoteproc: xlnx: Add attach detach ops and sram support
+Date: Fri, 10 May 2024 17:51:24 -0700
+Message-ID: <20240511005126.1240430-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,45 +86,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH v2 5/5] f2fs: compress: don't allow unaligned
- truncation on released compress inode
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <171538863417.11229.16140970709452072250.git-patchwork-notify@kernel.org>
-Date: Sat, 11 May 2024 00:50:34 +0000
-References: <20240507062019.1097683-1-chao@kernel.org>
-In-Reply-To: <20240507062019.1097683-1-chao@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: tanmay.shah@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017096:EE_|PH0PR12MB8127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 077eff45-8a91-494d-b772-08dc715481ea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|36860700004|82310400017|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TD//BkmJeeQZ4LOgiuiovn2m3jaWzoRM4KxI9IttAPETAuIriTosxlYcmgIN?=
+ =?us-ascii?Q?3qyq3PZwcL83/xPtg2q8QOAAMA/wEPpRAksvTHitnsx4f/skfK36oy7sWf9H?=
+ =?us-ascii?Q?Jrc2OfH8qg6Bf5iqL/sO1KVgGINpMnHM/YdCUoQ3F9ydodvl9GeDT/HT2X4A?=
+ =?us-ascii?Q?0jmxVqGy2NRI6RH7g7oePeVIG2nhyTPrpzlpIbo1e1o6qGIRUXMezLlmQEAW?=
+ =?us-ascii?Q?70cNdPLa+r0FJCyrzaxGC+LPJtclDaZptrR9uKIlpuG0EaFgSU16yAPIkbWY?=
+ =?us-ascii?Q?LrgeVmq6tsMWKBj7eUUV+sXcR5ygjVUW3V415kLxwHtru+FKYiWLdWSP4rCi?=
+ =?us-ascii?Q?/bN0xh0OsmNYLEbOQ7nU1XR2xLXFMUbQE87LCWgqzeTl1DtQ7eQpmZ2afql7?=
+ =?us-ascii?Q?ZMk8NkfEAfC7Tuf4Kf/IaSY/SGwqTVyRbk4/IFR0/geaVVnUfNWkL4mLCsKo?=
+ =?us-ascii?Q?gkebj7751MOV+hsejXJM30nmhKsWU72nZcoy7fweaiwn9ui3RYxWLu2EyVza?=
+ =?us-ascii?Q?3mM72ZPOgxtqsWg1QIdUo5nlfCUQn+33qiHzjK9JT1e/YF6eWT7x+hH4+KE1?=
+ =?us-ascii?Q?dSZ1QLVYyJH3gbibqpTp2vpCdHe+GxZA9b05qHBYxpqNW1RjmQ4WN/a0F9L5?=
+ =?us-ascii?Q?YgXaVgTWeAFs500jlnk8OKbF+haLTsIWE3IMGpcfgSZ99yeZrsfR/kPJhm0K?=
+ =?us-ascii?Q?D/49eOf60Q+lHWi5t7CBrCLjz9ZCZ5B5o00pLCzo4u33shGGWZKNPC/3epDZ?=
+ =?us-ascii?Q?sobCrjBQxFnU64vNn+alUvg1FyWJxiGyo/yrI2uM8nyakCm8IDfq9YJ1delx?=
+ =?us-ascii?Q?PTO1HL3GbyNebIrmxm7Wp5vdvmrLMMyEiwIJCTyt7J3UJhCCwAuAtNmmBJJQ?=
+ =?us-ascii?Q?EcJGO12kDJ7JIxfNLb7XbCDYEI8+KtbyoOpfFPT4xS7GlBlkpQZEi8imXNuY?=
+ =?us-ascii?Q?jF8dlPta9T76qxOjeO6aap7gD0qtC2OdH2s7XSsiV/iaoILEAk4XQs+yWoOV?=
+ =?us-ascii?Q?+m0MSdfdXi12GC4xvjK3PTkgKGqyTQxgFiJ4tt4fduy78FqiS3yA3oTAvYzS?=
+ =?us-ascii?Q?vjmwSomuHvxO4wrpK+G6lx9tIu5G/Y9IZI+fSFxZfohC+yRVfll0ePCUv826?=
+ =?us-ascii?Q?NqMHBFOdkZx/4A1nuhLn9DBDR3721ZtiJ0+VonN5ZamVoJVtcO7te7MAtdYn?=
+ =?us-ascii?Q?dETwT0pWAWx09Iis59EcAVKC/bW3siilWhjcjPY+f+Hukp3FL8YfwjZVBtiA?=
+ =?us-ascii?Q?owqxtmQjTVMlOXzG1H13SyznIMvs4lsfvJu8trbxiO4d3pnBl/wZU9eThbTO?=
+ =?us-ascii?Q?AOgtico39sWVf9mnCVt80VMgyu40ELjM5XnPZkAECKn1iln/DuBbqk5yvRpb?=
+ =?us-ascii?Q?fu7w2FrpoxdM4Vu4H56gGcxgLIMs?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400017)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 00:51:34.9665
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 077eff45-8a91-494d-b772-08dc715481ea
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017096.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8127
 
-Hello:
+Attach detach ops are needed to connect to remote processor that is
+running before remoteproc driver is probed. Implement remoteproc
+framework ops that enables such use case on AMD-Xilinx platforms.
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
+Remote processor can also use On Chip sram Memory (OCM) for various
+purpose. For example, for fast code execution or data access compare
+to DDR memory. Such sram region is made available to remoteproc nodes
+via "sram" property. Add support in driver to parse and use OCM memory
+via sram property.
 
-On Tue,  7 May 2024 14:20:19 +0800 you wrote:
-> f2fs image may be corrupted after below testcase:
-> - mkfs.f2fs -O extra_attr,compression -f /dev/vdb
-> - mount /dev/vdb /mnt/f2fs
-> - touch /mnt/f2fs/file
-> - f2fs_io setflags compression /mnt/f2fs/file
-> - dd if=/dev/zero of=/mnt/f2fs/file bs=4k count=4
-> - f2fs_io release_cblocks /mnt/f2fs/file
-> - truncate -s 8192 /mnt/f2fs/file
-> - umount /mnt/f2fs
-> - fsck.f2fs /dev/vdb
-> 
-> [...]
+Changes in v2:
+  - Fix following sparse warnings
 
-Here is the summary with links:
-  - [f2fs-dev,v2,5/5] f2fs: compress: don't allow unaligned truncation on released compress inode
-    https://git.kernel.org/jaegeuk/f2fs/c/29ed2b5dd521
+drivers/remoteproc/xlnx_r5_remoteproc.c:827:21: sparse:    expected struct rsc_tbl_data *rsc_data_va
+drivers/remoteproc/xlnx_r5_remoteproc.c:844:18: sparse:    expected struct resource_table *rsc_addr
+drivers/remoteproc/xlnx_r5_remoteproc.c:898:24: sparse:    expected void volatile [noderef] __iomem *addr
+drivers/remoteproc/xlnx_r5_remoteproc.c:995:26: sparse: warning: Using plain integer as NULL pointer
 
-You are awesome, thank you!
+Tanmay Shah (2):
+  drivers: remoteproc: xlnx: add attach detach support
+  drivers: remoteproc: xlnx: add sram support
+
+ drivers/remoteproc/xlnx_r5_remoteproc.c | 385 +++++++++++++++++++++++-
+ 1 file changed, 380 insertions(+), 5 deletions(-)
+
+
+base-commit: c8d8f841e95bcc07ac8c5621fc171a24f1fd5cdb
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.25.1
 
 
