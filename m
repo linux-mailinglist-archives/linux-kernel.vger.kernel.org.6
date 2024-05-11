@@ -1,316 +1,146 @@
-Return-Path: <linux-kernel+bounces-176640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A340A8C326E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:20:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C04C8C3272
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D64A1F21C43
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:20:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDD331C20D78
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C17256B99;
-	Sat, 11 May 2024 16:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84745731B;
+	Sat, 11 May 2024 16:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mG7LGQl4"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUia6/GJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B84B56B65
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 16:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C0E56B7F;
+	Sat, 11 May 2024 16:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715444399; cv=none; b=LGhwzN051oxtC3mh+EEOunuoc1ArOm8LnQfrOSmrQSxVjwciMWa2B0k40p2nOQpuOz+K4QTgeTgXpY5jrnMDNizc/qbigV+raRvn/VnEb0vHw8IavnTJvYiw1dEN8EUsCISeY7v1vfH+DlOUjhqsAZBbESCaB7bM8ETeL60dxZc=
+	t=1715444529; cv=none; b=gwhRZYwCO+aLOD94Bqiv1+SevTRoEiGh3aKUcmBA0J8LDcdQJb1Fherjf3TeN1JyJfG7ESPZT0+PTkJOb6WJ9G0hQL7HWf9tX/I02mS1f4hfUPqkUN+KcoPAW9eVs3vSWRJHzzsDpeiZwNfcAnHfAZrX9Tcucuv75y58bxcqDtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715444399; c=relaxed/simple;
-	bh=RuuS8zpxoRmHVqAdrZe0CD6SBD46zm4h+foC06fQHu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLAGdZIEvQMiWpSfknNJO4h9Ri/Er04T/NJM3/wWOnhslvo3EUngnP3emOmh1w86Nq/YhNitywVkkbXduz083GsjAx2+23KcCPBgMFbfu/syeYPSBBvZPRZ4z/jbH8RQUjmgHA3kodJQ17CaAj/oqQCtGnH2O/g1D0v01m4G1cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mG7LGQl4; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so763990266b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 09:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715444395; x=1716049195; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vbUMTEX6m3rt+3OY+OFWA/VbtbWKAOJ+KgCixGrtPtw=;
-        b=mG7LGQl4E9yX51sYmRp55iyXP9G8ju3oi+5RYq2Y+upiOX3asHlZ0+WzugJ1MAvAkN
-         ccE7wcbxbzDYJ7zJM0h32dyK7EWPWUQ7JxMuNyrJd8zYvNZ/go7mbTrSaif0ZWWOo/Tt
-         800hWf3hIor4A3GIdZlIYmH2XAp8uBc2oViwyJzk/kTeFL8mP/1rqWD2dUsISRRazQG9
-         j6zIvuVtdn9rknlFS+bF3TAHOIHy9min4CclM6tVmnDRMbAnFo1afP9sAH4VHJnWiFbG
-         8jVVeLKAzeNFRW7kRXIUT4xc/aApU9BkCK3FyOWq6g82LTdGfjSzMn/AJ3jQF+jdEu0w
-         Idiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715444395; x=1716049195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vbUMTEX6m3rt+3OY+OFWA/VbtbWKAOJ+KgCixGrtPtw=;
-        b=SfAhDKsqEZzBu9QSXImQEaHhDuiESSvXL2e4AKBz0lzOSCvik8fdHAWg2SU1tnHc6G
-         0adMnsWKLfMzpjDcJn3wvR0YaVmgfLixKP+5Qd6MdZuei8Jd3zEb95nGNFLvuQsSlioT
-         up3RlB+U9SN4IhmS+on4rdrSbmK+LK2qh51I/IGNidf2YMoSJECZZN+0O8slNUr+ARQG
-         /L9SDpUy5inwEZILgeA1sog883Xlpa8Dedq4GC1GAa1Z1/63I3iqm43trw/k6WVVpEQ8
-         eXGPcDDYz3IhnF+4uEHai+7Oko/behWE+Tg+P0j0/uR7LmbgaGCFAEsH399Ju07L9Vdk
-         W85g==
-X-Forwarded-Encrypted: i=1; AJvYcCWI5v2Yn3vmL7Kk8PWL46bYIyIjDRB29VXwD/zgujTGBVXS40aCiyvpsjiSCDgegEkjU2iAqtNHZaNOmazRulRqysBR5i7S6frMNELC
-X-Gm-Message-State: AOJu0YzXbTZVFdbPG4rn4tQEvm+akNwUT6W2tW7aI2qFsnx8uchQ25RA
-	w4r5CizGoKfvPEbxA/3859Y17zGqOKr2cPU8EtCJD7SWr/zGPlhJyzHJfwdDdHlFrx3wst8V8Rj
-	F
-X-Google-Smtp-Source: AGHT+IGxMl5HSfr0i2j6HMDDHTyIAdFvrzQjk8AYeajhDnujdnlmNHPXsgc2fOM/6TTiXKM9gq/v/w==
-X-Received: by 2002:a17:906:3542:b0:a58:5ee1:db43 with SMTP id a640c23a62f3a-a5a2d57a3b1mr348282766b.23.1715444395024;
-        Sat, 11 May 2024 09:19:55 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17844sm344129566b.190.2024.05.11.09.19.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 09:19:54 -0700 (PDT)
-Date: Sat, 11 May 2024 19:19:49 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Justin Stitt <justinstitt@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <039d54d6-8aa2-4e5b-829b-69002cff35d3@moroto.mountain>
-References: <202404291502.612E0A10@keescook>
+	s=arc-20240116; t=1715444529; c=relaxed/simple;
+	bh=waGZCjYc4EYoDlFRXsZRE3LgBvKQnnMdiOCAiz2Or9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mejdGM30sOG99Ug6TMlkY7SxEepquNmmuVNjynWMPCdijv/E2hw1t4rW6e+HlWwU/powyEWwV/cVeJ7XuS+k6YbTjKqIiAd3ykwM7ICOZ21AE1dB95op0E0UpzPh1M9owv9yim3ftiNfJukWxddf+2ke7+x/3dI6MyN0CxKTsMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUia6/GJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E07C2BBFC;
+	Sat, 11 May 2024 16:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715444528;
+	bh=waGZCjYc4EYoDlFRXsZRE3LgBvKQnnMdiOCAiz2Or9o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pUia6/GJ/XPK9APwp4JYfbzEwt6LAl7RDFE9bwqBx4kaRYlMBJmpZGh0cErFE0whr
+	 wLOnsBUedJuhU2GH1arbv4VJdwvX6xIU8AgrrZ3iOjY1qyVgeFl0tmCaark/jNfnX9
+	 RLanF+02PGK9ZE1youvcLMirMEGHCMxqVs9MnKiNsDVyzY32ORJ98s7gNM5LdQefZB
+	 3V+RmGqPXgCzrTFB402Obtar39ONhwy7hSkuLnNHvyae9msA4p3d4NFA/gQFAYJlde
+	 XbuSCJOqYlq4Xn901LC9hT/8yPtR7s9gzYNroAPIFEOKVLsDoZuu8vZsYSZrT5eQwK
+	 DVVz57QgPFa5Q==
+Date: Sat, 11 May 2024 17:21:55 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mariel Tinaco <Mariel.Tinaco@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter
+ Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Marcelo Schmitt
+ <marcelo.schmitt1@gmail.com>, Dimitri Fedrau <dima.fedrau@gmail.com>,
+ Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 0/2] add AD8460 DAC driver
+Message-ID: <20240511172155.08bc0987@jic23-huawei>
+In-Reply-To: <CAMknhBHd2XCJH4rgYDq=vbCL5E_tM3FxFPWbNy9PvxLCJL4tcA@mail.gmail.com>
+References: <20240510064053.278257-1-Mariel.Tinaco@analog.com>
+	<CAMknhBHd2XCJH4rgYDq=vbCL5E_tM3FxFPWbNy9PvxLCJL4tcA@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202404291502.612E0A10@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-I'm pretty sure we've tried using a sanitizer before and it had too many
-false positives.  So your solution is to annotate all the false
-positives?
+On Fri, 10 May 2024 12:30:46 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-There are two main issue which make integer overflows complicated from
-a static analysis perspective.  1)  Places where it's intentional or
-we don't care.  2)  Places where the integer overflow is harmless for
-one reason or another.  Btw, integer overflows are a lot more common on
-32 bit CPUs because obviously it's easier to overflow 4 billion than
-whatever number U64_MAX is.
+> On Fri, May 10, 2024 at 1:42=E2=80=AFAM Mariel Tinaco <Mariel.Tinaco@anal=
+og.com> wrote:
+> >
+> > The AD8460 is a 14-bit, high power +-40V 1A, high-speed DAC,
+> > with dual digital input modes, programmable supply current and
+> > fault monitoring and protection settings for output current,
+> > output voltage and junction temperature.
+> >
+> > The fault monitoring and shutdown protection features were
+> > supported in the earlier versions of the IIO driver but was
+> > scrapped due to uncertainties if the functionalities belong to
+> > the IIO driver. However, it would be best to implement it for
+> > the device's quality of life. I'd like to know if it's better
+> > suited as a stand-alone HWMON driver.
 
-Here are is a sample of ten integer overflows that the user can trigger.
-Maybe pick a couple and walk us through how they would be annotated?
+That probably doesn't make sense.  This reply btw is based on the
+text here. I haven't yet looked in detail at the datasheet.
 
-drivers/usb/dwc3/gadget.c:3064 dwc3_gadget_vbus_draw() warn: potential integer overflow from user '1000 * mA'
-  3052  static int dwc3_gadget_vbus_draw(struct usb_gadget *g, unsigned int mA)
-  3053  {
-  3054          struct dwc3             *dwc = gadget_to_dwc(g);
-  3055          union power_supply_propval      val = {0};
-  3056          int                             ret;
-  3057  
-  3058          if (dwc->usb2_phy)
-  3059                  return usb_phy_set_power(dwc->usb2_phy, mA);
-  3060  
-  3061          if (!dwc->usb_psy)
-  3062                  return -EOPNOTSUPP;
-  3063  
-  3064          val.intval = 1000 * mA;
-                             ^^^^^^^^^^
-mA comes from the user and we only know that it's a multiple of 2.
-So here we would annotate that val.intval can store integer overflows?
-Or we'd annotate mA?
+Some fault conditions are relatively easy to map to threshold events
+on an input channel.  The ones that are harder are things
+like short circuit detectors where it's hard to know what the
+actual threshold is.
 
-  3065          ret = power_supply_set_property(dwc->usb_psy, POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT, &val);
-  3066  
-  3067          return ret;
-  3068  }
+The other place we are limited is in multiple levels for the
+same thing.  So warning and fault levels. That stuff is handled
+much better by hwmon where these things are more common.
+The issue we have is that the event encoding is a bit tight
+but we could see if there is a way to add these.
 
+> >
+> > The following are the configurable and readable parameters
+> > through SPI that could be implemented on the HWMON driver:
+> >   * An enable bit to arm/protect the device on overcurrent,
+> > overvoltage or overtemperature events. The device is shut down
+> > upon detection.
 
-drivers/usb/class/usbtmc.c:852 usbtmc_generic_read() warn: potential integer overflow from user 'max_transfer_size + 1'
-   842                   * wMaxPacketSize – 1) to avoid sending a zero-length
-   843                   * packet
-   844                   */
-   845                  remaining = transfer_size;
-   846                  if ((max_transfer_size % data->wMaxPacketSize) == 0)
-   847                          max_transfer_size += (data->wMaxPacketSize - 1);
-   848          } else {
-   849                  /* round down to bufsize to avoid truncated data left */
-   850                  if (max_transfer_size > bufsize) {
-   851                          max_transfer_size =
-   852                                  roundup(max_transfer_size + 1 - bufsize,
-                                                ^^^^^^^^^^^^^^^^^^^^^
-This can overflow.  We should make it a rule that all size variables
-have to be unsigned long.  That would have made this safe on 64 bit
-systems.
+We don't have a good way to handle restarting from shutdown, but
+perhaps we could use another action to signal that - maybe even
+going as far as saying that the driver should be reloaded.
 
-   853                                          bufsize);
-   854                  }
-   855                  remaining = max_transfer_size;
+As for the thresholds, they sound like the map to IIO events
+reasonably well. =20
 
-drivers/usb/misc/usbtest.c:1994 iso_alloc_urb() warn: potential integer overflow from user 'bytes + maxp'
-  1974  static struct urb *iso_alloc_urb(
-  1975          struct usb_device       *udev,
-  1976          int                     pipe,
-  1977          struct usb_endpoint_descriptor  *desc,
-  1978          long                    bytes,
-  1979          unsigned offset
-  1980  )
-  1981  {
-  1982          struct urb              *urb;
-  1983          unsigned                i, maxp, packets;
-  1984  
-  1985          if (bytes < 0 || !desc)
-  1986                  return NULL;
-  1987  
-  1988          maxp = usb_endpoint_maxp(desc);
-  1989          if (udev->speed >= USB_SPEED_SUPER)
-  1990                  maxp *= ss_isoc_get_packet_num(udev, pipe);
-  1991          else
-  1992                  maxp *= usb_endpoint_maxp_mult(desc);
-  1993  
-  1994          packets = DIV_ROUND_UP(bytes, maxp);
-                                       ^^^^^
-The issue here is on a 32 bit system when bytes is INT_MAX.
+> >   * A configurable range/threshold for voltage, current and
+> > temperature that raises alarm when exceeded while the device is
+> > armed.
 
-  1995  
-  1996          urb = usb_alloc_urb(packets, GFP_KERNEL);
-  1997          if (!urb)
-  1998                  return urb;
+That maps fine to the IIO event threshold controls.
+
+> >   * Flags that can be polled to raise alarm upon detection of
+> > overcurrent, overvoltage or overtemperature events, and apply
+> > additional protective measures.
+The specific need to poll is awkward but you could do it easily
+enough in driver and use the IIO event stuff to signal any
+events detected.
 
 
-drivers/usb/storage/uas.c:324 uas_stat_cmplt() warn: potential integer overflow from user 'idx + 1'
-   322          idx = be16_to_cpup(&iu->tag) - 1;
+> >   * Programmable quiescent current (optional)
+Could probably figure out a suitable control for this, but I'm not
+entirely sure what it is :)
 
-The "- 1" makes this UINT_MAX
+> >   * Thermal monitoring is done by measuring voltage on TMP pin
+> > (unlikely to be included)
 
-   323          if (idx >= MAX_CMNDS || !devinfo->cmnd[idx]) {
-   324                  dev_err(&urb->dev->dev,
-   325                          "stat urb: no pending cmd for uas-tag %d\n", idx + 1);
-                                                                             ^^^^^^^
-Harmless integer overflow in printk.
+If you did want to, the usual trick for these is to include
+an optional use as a consumer of an IIO provider which would be
+a separate ADC.=20
 
-   326                  goto out;
-   327          }
+> > =20
+>=20
+> Adding myself to the cc: here since I'm interested to see what
+> Jonathan (or anyone else) has to say about the fault monitoring.
 
-
-drivers/mtd/parsers/tplink_safeloader.c:101 mtd_parser_tplink_safeloader_parse() warn: potential integer overflow from user 'bytes + 1'
-    97          for (idx = 0, offset = TPLINK_SAFELOADER_DATA_OFFSET;
-    98               idx < TPLINK_SAFELOADER_MAX_PARTS &&
-    99               sscanf(buf + offset, "partition %64s base 0x%llx size 0x%llx%zn\n",
-   100                      name, &parts[idx].offset, &parts[idx].size, &bytes) == 3;
-
-I think this buffer comes from the partition table?
-
-   101               idx++, offset += bytes + 1) {
-                                      ^^^^^^^^^
-
-   102                  parts[idx].name = kstrdup(name, GFP_KERNEL);
-   103                  if (!parts[idx].name) {
-   104                          err = -ENOMEM;
-
-
-drivers/char/ppdev.c:344 pp_set_timeout() warn: potential integer overflow from user 'tv_sec * 100'
-   343  static int pp_set_timeout(struct pardevice *pdev, long tv_sec, int tv_usec)
-   344  {
-   345          long to_jiffies;
-   346  
-   347          if ((tv_sec < 0) || (tv_usec < 0))
-   348                  return -EINVAL;
-   349  
-   350          to_jiffies = usecs_to_jiffies(tv_usec);
-                                              ^^^^^^^
-
-   351          to_jiffies += tv_sec * HZ;
-                              ^^^^^^^^^^^
-Both of these can overflow
-
-   352          if (to_jiffies <= 0)
-                    ^^^^^^^^^^^^^^^
-But they're checked here.
-
-   353                  return -EINVAL;
-   354  
-   355          pdev->timeout = to_jiffies;
-   356          return 0;
-   357  }
-
-drivers/char/ipmi/ipmi_plat_data.c:70 ipmi_platform_add() warn: potential integer overflow from user 'r[0]->start + p->regsize'
-    69          r[0].start = p->addr;
-    70          r[0].end = r[0].start + p->regsize - 1;
-                           ^^^^^^^^^^^^^^^^^^^^^^^
-I think this is root only so it's safe?  Or it could be a false
-positive.
-
-    71          r[0].name = "IPMI Address 1";
-    72          r[0].flags = flags;
-
-
-drivers/i2c/i2c-dev.c:485 i2cdev_ioctl() warn: potential integer overflow from user (local copy) 'arg * 10'
-   478          case I2C_TIMEOUT:
-   479                  if (arg > INT_MAX)
-   480                          return -EINVAL;
-   481  
-   482                  /* For historical reasons, user-space sets the timeout
-   483                   * value in units of 10 ms.
-   484                   */
-   485                  client->adapter->timeout = msecs_to_jiffies(arg * 10);
-                                                                    ^^^^^^^^^
-This can overflow and then the msecs_to_jiffies() conversion also has
-an integer overflow in it.
-
-   486                  break;
-
-
-drivers/i2c/busses/i2c-bcm2835.c:93 clk_bcm2835_i2c_calc_divider() warn: potential integer overflow from user 'parent_rate + rate'
-    90  static int clk_bcm2835_i2c_calc_divider(unsigned long rate,
-    91                                  unsigned long parent_rate)
-    92  {
-    93          u32 divider = DIV_ROUND_UP(parent_rate, rate);
-    94  
-    95          /*
-    96           * Per the datasheet, the register is always interpreted as an even
-    97           * number, by rounding down. In other words, the LSB is ignored. So,
-    98           * if the LSB is set, increment the divider to avoid any issue.
-    99           */
-   100          if (divider & 1)
-   101                  divider++;
-   102          if ((divider < BCM2835_I2C_CDIV_MIN) ||
-   103              (divider > BCM2835_I2C_CDIV_MAX))
-   104                  return -EINVAL;
-
-Again, math first then check the result later.  Integer overflow is
-basically harmless.
-
-   105  
-   106          return divider;
-   107  }
-
-
-drivers/hwmon/nct6775-core.c:2265 store_temp_offset() warn: potential integer overflow from user '__x + (__d / 2)'
-  2251  static ssize_t
-  2252  store_temp_offset(struct device *dev, struct device_attribute *attr,
-  2253                    const char *buf, size_t count)
-  2254  {
-  2255          struct nct6775_data *data = dev_get_drvdata(dev);
-  2256          struct sensor_device_attribute *sattr = to_sensor_dev_attr(attr);
-  2257          int nr = sattr->index;
-  2258          long val;
-  2259          int err;
-  2260  
-  2261          err = kstrtol(buf, 10, &val);
-  2262          if (err < 0)
-  2263                  return err;
-  2264  
-  2265          val = clamp_val(DIV_ROUND_CLOSEST(val, 1000), -128, 127);
-                                                  ^^^^^^^^^^
-Overflow and then clamp.
-
-  2266  
-  2267          mutex_lock(&data->update_lock);
-
-regards,
-dan carpenter
+Jonathan
 
