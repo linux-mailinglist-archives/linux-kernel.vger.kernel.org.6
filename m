@@ -1,128 +1,100 @@
-Return-Path: <linux-kernel+bounces-176568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED6C8C31C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:10:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F4E38C31C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C1728200D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C168C1C20C31
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868CD5381B;
-	Sat, 11 May 2024 14:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0275A535D4;
+	Sat, 11 May 2024 14:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLImxu8A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M/Vq35uZ"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0A06FC6;
-	Sat, 11 May 2024 14:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9159B51034
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715436642; cv=none; b=ewJWrk/1bjPHlKoe3QdPWpCKGsissrwq1MSUcm+RWtnbcXeQZ8enjkY1Zqh7a3oRCQCpIUx2/J1yb7zOWsf5ES44zB2QWH7bziOCpg28zZnMb5S7zFy0wSVy5uoEQzrcQkaLHhOo9rxoI5VlFyIRQeWfSnj9mlEJUYAXlxWOq5I=
+	t=1715436669; cv=none; b=KIL5rbz+Ewo2ByNSVVAYPKnX2xr0K5cUnTAac4SYxMv3mxIzTPTZsj8aNl9wObTAfbB5h6DcAcZxfMHe5T7lUYZUOP52xGQsyYC8UFr274NHXaZ8Q3kc+1CUlRa7Y/musHVv9Sziby3KOwkz86dbeFc4nTLgaXiZ4Su4t/VSn5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715436642; c=relaxed/simple;
-	bh=zD5fChJ3hY7Vmh3mn4DutQ/zNAJcBuVvGUeGdpCzZ5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0XmCQIT447QCXYMTcIUgwgsqTG5/kFawHmK1UadCKI+YT27JXE3EqDAB5a3A7YK9BPomZpVuR58G5/C6+sS3MJA0Vc4GmqkF5c6m3cFMHy/8z5HFLg2iKvVHsGmvS4OjkwVQG9LM0134Ltm6eR+ar868zVFpTmgZ00KusL0aHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLImxu8A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C47DC2BBFC;
-	Sat, 11 May 2024 14:10:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715436642;
-	bh=zD5fChJ3hY7Vmh3mn4DutQ/zNAJcBuVvGUeGdpCzZ5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aLImxu8ACnlb783mu9dsXGyEYmPsjqZH2+9wZnUrkFcH5PSKNwPGXtMcf40Ty6jDC
-	 3WMfMAhe0s4E/hArSsdoSvTIk2jSWAxAqAKUEzH8Gge1Ey1V566lINOFPPzzyidBRW
-	 9iQoWWLL7/UzAJajSWNhYynl/yExAP8f/rfWBLrHdUtjWtORtt2caYH/C0Wndn65vk
-	 C/vNe69SwXUt7orpUHNtSyR4fjyTVPbHWyDOsu7G/siDPgyA9qPnZZNqZAkwpxyjJf
-	 UquyN/e05Ple1A3vfLpdu2Jn4NAR5KBWJmuY8Ivk9qJ2BLoBJpLOZgaPeiByjHP8n5
-	 5Nrub4l79alvw==
-Date: Sat, 11 May 2024 15:10:36 +0100
-From: Simon Horman <horms@kernel.org>
-To: Geetha sowjanya <gakula@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
-	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
-	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
-Subject: Re: [net-next PATCH v4 03/10] octeontx2-pf: Create representor netdev
-Message-ID: <20240511141036.GG2347895@kernel.org>
-References: <20240507163921.29683-1-gakula@marvell.com>
- <20240507163921.29683-4-gakula@marvell.com>
+	s=arc-20240116; t=1715436669; c=relaxed/simple;
+	bh=SClFnaNaoUPwOLdLRJZQWQoVTWwBBrMs120hgkj+3CM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gmr534ypEjokRcPy0nrmrT0xZc7S+aGkCSEYj3eilyQnxQDf7xpWaBypUt3dpce2l7CsTJUDk1pX3+u/V9KHtH6xn8sYc/nn5Lc3ess5JqIIl4sgWgfMB1YCFH7bi4y0tV/Z6Dp9H+g/2oBT2hShKhD2C8MnY226V671bLlcXJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M/Vq35uZ; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715436664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=a8dPyaiCOoPY+Q3gecWjt41rdV234ZLMDok9YAx2su8=;
+	b=M/Vq35uZifBgcnTC/F4xsKyYQDfznva+NcK89//UhM+bURMQYzJ7aA92POckzjBp8cNQjZ
+	UTw51PJgIczbbzktCRAQpzXbG4gTEQbjKtoKWIJKOf2KdIsop22c5I1QQJZen2WDaHyNEI
+	dbYZVXTIjyiIQ8Ofv7YSaM3RAVI9ExY=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/bridge: it6505: Remove a redundant check on existence of bridge->encoder
+Date: Sat, 11 May 2024 22:10:56 +0800
+Message-ID: <20240511141056.318679-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507163921.29683-4-gakula@marvell.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 07, 2024 at 10:09:14PM +0530, Geetha sowjanya wrote:
-> Adds initial devlink support to set/get the switchdev mode.
-> Representor netdevs are created for each rvu devices when
-> the switch mode is set to 'switchdev'. These netdevs are
-> be used to control and configure VFs.
-> 
-> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+In it6505_bridge_attach(), the check on the existence of bridge->encoder
+has already been done in the implementation of drm_bridge_attach(). And
+it is done before the bridge->funcs->attach function hook is called. Hence,
+it is guaranteed that the .encoder member of the struct drm_bridge is not
+NULL when the panel_bridge_attach() is called.
 
-..
+There is no need to check the existence of bridge->encoder another time,
+remove the redundant checking codes "if (!bridge->encoder) { ... }".
 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-> index 33ebbcb223e1..ff4318f414f8 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
-> @@ -28,6 +28,157 @@ MODULE_DESCRIPTION(DRV_STRING);
->  MODULE_LICENSE("GPL");
->  MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
->  
-> +static int rvu_rep_napi_init(struct otx2_nic *priv, struct netlink_ext_ack *extack)
-> +{
-> +	struct otx2_cq_poll *cq_poll = NULL;
-> +	struct otx2_qset *qset = &priv->qset;
-> +	struct otx2_hw *hw = &priv->hw;
-> +	int err = 0, qidx, vec;
-> +	char *irq_name;
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+---
+ drivers/gpu/drm/bridge/ite-it6505.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Please consider using reverse xmas tree - longest line to shortest -
-for local variable declarations in new Networking code.
+diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
+index 27334173e911..494030a75dba 100644
+--- a/drivers/gpu/drm/bridge/ite-it6505.c
++++ b/drivers/gpu/drm/bridge/ite-it6505.c
+@@ -2881,11 +2881,6 @@ static int it6505_bridge_attach(struct drm_bridge *bridge,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (!bridge->encoder) {
+-		dev_err(dev, "Parent encoder object not found");
+-		return -ENODEV;
+-	}
+-
+ 	/* Register aux channel */
+ 	it6505->aux.drm_dev = bridge->dev;
+ 
+-- 
+2.43.0
 
-This tool can be helpful: https://github.com/ecree-solarflare/xmastree
-
-..
-
-> +int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
-> +{
-> +	int rep_cnt = priv->rep_cnt;
-> +	struct net_device *ndev;
-> +	struct rep_dev *rep;
-> +	int rep_id, err;
-> +	u16 pcifunc;
-> +
-> +	priv->reps = devm_kcalloc(priv->dev, rep_cnt, sizeof(struct rep_dev *),
-> +				  GFP_KERNEL);
-> +	if (!priv->reps)
-> +		return -ENOMEM;
-> +
-> +	for (rep_id = 0; rep_id < rep_cnt; rep_id++) {
-> +		ndev = alloc_etherdev(sizeof(*rep));
-> +		if (!ndev) {
-> +			NL_SET_ERR_MSG_FMT_MOD(extack, "PFVF representor:%d
-> +					       creation failed", rep_id);
-
-gcc-13 seems unhappy with a string spanning multiple lines.
-I suggest living with a line longer than 80 columns in this case.
-Maybe:
-
-			NL_SET_ERR_MSG_FMT_MOD(extack,
-					       "PFVF representor:%d creation failed",
-					       rep_id);
-
-> +			err = -ENOMEM;
-> +			goto exit;
-> +		}
-
-..
 
