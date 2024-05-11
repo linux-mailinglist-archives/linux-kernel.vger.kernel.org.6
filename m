@@ -1,258 +1,146 @@
-Return-Path: <linux-kernel+bounces-176504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F48D8C30D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:22:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035458C30F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544FB1C20B19
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9819A1F217D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 11:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225954BFE;
-	Sat, 11 May 2024 11:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="mdg5YGSn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gl/UHAZT"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FB065189;
+	Sat, 11 May 2024 11:37:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432DE2F26;
-	Sat, 11 May 2024 11:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D69626286;
+	Sat, 11 May 2024 11:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715426523; cv=none; b=mqZX2nbebwdM/38h5xaaz9U/UFTENoqwKet1CmaePwapm+w/pE/HYYfiYY+/1o5TS9ApbifVx4BwCVVCOoCrYQO55+s2NRucc/XMKhYnfj181SGpca373NjbiNkzDFSz0bILgERhOmSOfB4zJp4vuq2yxsk5ztD0we7rWh2beFo=
+	t=1715427433; cv=none; b=p+r2nNc0cK6DQ82R+V0if+ZiKiyKuZ/gCFH5Mi52Jis2Hlp1FI2cY+TYhr5u8hJDtBxsuY4KZMjCzjKDvIvQoEvAuRt+rv1yIqkS1/ip2JWVxGSsR6rqG6wVlNr1WxvxIoX0KoqAV9W/soc0GBf/XgcFNAVEdnEfHuyQf6oMJXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715426523; c=relaxed/simple;
-	bh=hkf4rEOCgdFntx/Mu1+PPXNkVUuEi+F6I9iRdoIj6vw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L1vreo7RYL91luht5a9UJWCfgJ2h1Fqg8/cty4VuPTeAONbo6adJzYUKi4fdbX0aEf0eDuAFpImu8NqDbrgE3oNYdKmbNeBv/3CSByPPCH1yLXhbnBp0DO2CiSQXrX+NQdDWTe+Nf0vmcLVGF9pgNYlVBpft6F9WKVSfARomJLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=mdg5YGSn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gl/UHAZT; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 45A2F1380234;
-	Sat, 11 May 2024 07:22:00 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Sat, 11 May 2024 07:22:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1715426520; x=1715512920; bh=uw
-	KqFrzk6W2ITMOqoowChbKdFFtrKD3DJW7TgtnFfqg=; b=mdg5YGSnDWeuUJmnmt
-	prow9YFbdnNaWFWnQSMbYIEpSTzV3Zn3Scjc+TJ7Ykpx3fdebA/6sRpjyCSZr8cd
-	jZAUyZk3G3Kxgr9UaT6ljxw1kkiTJ1aKa7Yrft2hLc7NBvSg6MI+HKHoTCp+Rt6P
-	9SUHT9fsopB6TgGXMfz7F1LM0/dBh7RBYRsdEG2Q7ppe9FqpKBrTUsiQyJnHonJJ
-	99PIUkD3c4kYNAylNhOqj7HNg+s7xMSrkOKeC/qlZSUVpbqaHUxA1KkiR2vKuJzo
-	8yNb2rZmdGS9lkc5osNw5AXPrv5HjCP9+Kr7TCInP/TMjxA2nir4g6SjlHs9bg5L
-	kpfA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1715426520; x=1715512920; bh=uwKqFrzk6W2IT
-	MOqoowChbKdFFtrKD3DJW7TgtnFfqg=; b=Gl/UHAZTdShA5IbCKHIscCv3CwCir
-	gsPIayApKSUMmWx0awY6mAPuJQfPcOfC9/A0YNNXg3F7Vm2pNroOkubjQcNaY53G
-	3Xz5tAVBOE9IePzimX3whHQezg1FGB6KrnfmDANMkjihfE5nwT3Cn98CFhjjGeOk
-	dqNgGQhm9/gUx0hcpbLVPOqFVFvUATBEf368biRP9Ey+lK/mK3nXIVCgWQ7eeMsf
-	j31Hko+3kIn0+DX/wQZSfKC4V9F4ns14P3H3OVgaUcRwyLXTJv/NO7tafAIUq5/G
-	z9lYe0EuZ2iVQkZV7gsaTHZFvCdRoX/7pWrn144G8zv8AjpNpfPHaNgyQ==
-X-ME-Sender: <xms:11Q_ZjkoMaQ1n56Jh1v7_7vV0hYpVB0ZY8F4BEBPeVvL0cdWzwa-Lg>
-    <xme:11Q_Zm1yk90UqUtMYbejIZW3k5xOdpJx7rz2cWRhv2la9mgCVE_mSmuhZT6tCnmD3
-    r8ErwX2R8gd9cYTHnU>
-X-ME-Received: <xmr:11Q_Zpr-ccqLSXxiEItWLL2ozsrNOE_9fmoF68myYEBteSxKsxxXyxY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegtddgfeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpeflihgrgihu
-    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
-    ftrfgrthhtvghrnhephfffgeejgfejieeugffgudegvdekffevgeeuteetgeejveeiteei
-    vedvffehlefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghruf
-    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehf
-    lhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:11Q_ZrkvIyRK-dOO6FRcJB-InV-sfEvy56BJ8aFnUo6M1mzBE1cSEg>
-    <xmx:11Q_Zh1Mq6gvcwYizl82NL27piKmlMQW0vko8cOFpoaXEbyMfwo2Aw>
-    <xmx:11Q_ZqsS9IjEspYMcGuMaLgmltLT-gVf2lTyY8SFmoFWC3PMaKaziQ>
-    <xmx:11Q_ZlUm84rrK9r4mwLUHoBQIiaMb1OOQXL23--Bf3k3v_8-SoZVZA>
-    <xmx:2FQ_ZroNDVgtBEWH1iDVsUspeItog0N8sd-ecQ2Yzk5jMxqMQYRCR2hV>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 11 May 2024 07:21:58 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Sat, 11 May 2024 12:21:54 +0100
-Subject: [PATCH v2] MIPS: Implement ieee754 NAN2008 emulation mode
+	s=arc-20240116; t=1715427433; c=relaxed/simple;
+	bh=PjouId2AzqErjWZkW13lZDsDZdGjcpMDFIcPFajXrX0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aU1Px0dONuSC+PFZtrr9ojGOmANjXEh+ScEexw5CWjCpzXtqxZcvIFTuVz5RYyoyM8Rab/XAKUnqArw5sLKuF9QHJgCiTH3RQu01Q4cVMFIL2NeIHzz4rwHGg4KxKY5Pfp2z9bkJf13Ny85BsFlgdV0cWdSmnzsR7ZGBKoxF49k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vc3ck24rkz4f3lVh;
+	Sat, 11 May 2024 19:36:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 46E4B1A0C48;
+	Sat, 11 May 2024 19:37:04 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxA+WD9mG0B4MQ--.22689S4;
+	Sat, 11 May 2024 19:36:59 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ritesh.list@gmail.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v4 00/10] ext4: support adding multi-delalloc blocks
+Date: Sat, 11 May 2024 19:26:09 +0800
+Message-Id: <20240511112619.3656450-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240511-mips_ieee754_emul-v2-1-af796ea21ef0@flygoat.com>
-X-B4-Tracking: v=1; b=H4sIANFUP2YC/32NUQqDMBBEryL73ZQk1cb61XsUkbBZdUGNJFYq4
- t2beoAyX29g3uwQKTBFqLIdAq0c2U8J9CUD7O3UkWCXGLTUuSykESPPsWEiMkXe0PgehFOmvBe
- te5RGQtrNgVr+nM5XnbjnuPiwnRer+rX/bKsSKQ4NSqduaPHZDlvn7XJFP0J9HMcXGvFFl7QAA
- AA=
-To: Jonathan Corbet <corbet@lwn.net>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5105;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=hkf4rEOCgdFntx/Mu1+PPXNkVUuEi+F6I9iRdoIj6vw=;
- b=owGbwMvMwCHmXMhTe71c8zDjabUkhjT7kOtTLj09yXBucUdUmm/czEsXMy9N3x1TtbLzkrvM4
- Yibl+P0OkpZGMQ4GGTFFFlCBJT6NjReXHD9QdYfmDmsTCBDGLg4BWAiz2sZGfrlrOM5FZfvnP9X
- /1+gyQWD7PrJN/tm6JWeXXPUhSWGNZ/hf/a5C3rX7DrCV0X6SV8wEVn/3MJQd/ZRnegZ1ikc+wp
- L2AE=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgDHlxA+WD9mG0B4MQ--.22689S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr1xtw15ArW8KryfAF1fJFb_yoW5GF48pF
+	WSka15Jr4UGr17Wa93Aw47GF1rXa1fGFWUG34fJw1UuFWUZFyfXFsrKF1Y9FWkXrZ3W3W5
+	XF17tr18u3Wqka7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1
+	a9aPUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Implement ieee754 NAN2008 emulation mode.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-When this mode is enabled, kernel will accept ELF file
-compiled for both NaN 2008 and NaN legacy, but if hardware
-does not have capability to match ELF's NaN mode, __own_fpu
-will fail for corresponding thread and fpuemu will then kick
-in.
+Changes since v3:
+ - Fix two commit message grammatical issues in patch 2 and 4.
 
-This mode trade performance for corretness, while maintaining
-support for both NaN mode regardless of hardware capability.
-It is useful for multilib installation that have both types
-of binary exist in system.
+Changes since v2:
+ - Improve the commit message in patch 2,4,6 as Ritesh and Jan
+   suggested, makes the changes more clear.
+ - Add patch 3, add a warning if the delalloc counters are still not
+   zero on inactive.
+ - In patch 6, add a WARN in ext4_es_insert_delayed_extent(), strictly
+   requires the end_allocated parameter to be set to false if the
+   inserting extent belongs to one cluster.
+ - In patch 9, modify the reserve blocks math formula as Jan suggested,
+   prevent the count going to be negative.
+ - In patch 10, update the stale ext4_da_map_blocks() function comments.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
-Changes in v2:
-- Fix a typo
-- Link to v1: https://lore.kernel.org/r/20240507-mips_ieee754_emul-v1-1-1dc7c0d13cac@flygoat.com
----
- Documentation/admin-guide/kernel-parameters.txt |  4 +++-
- arch/mips/include/asm/fpu.h                     | 15 +++++++++++++++
- arch/mips/kernel/elf.c                          |  4 ++++
- arch/mips/kernel/fpu-probe.c                    |  9 ++++++++-
- 4 files changed, 30 insertions(+), 2 deletions(-)
+Hello!
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 500cfa776225..dee487b03c9d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2000,7 +2000,7 @@
- 			for the device. By default it is set to false (0).
- 
- 	ieee754=	[MIPS] Select IEEE Std 754 conformance mode
--			Format: { strict | legacy | 2008 | relaxed }
-+			Format: { strict | legacy | 2008 | relaxed | emulated }
- 			Default: strict
- 
- 			Choose which programs will be accepted for execution
-@@ -2020,6 +2020,8 @@
- 				by the FPU
- 			relaxed	accept any binaries regardless of whether
- 				supported by the FPU
-+			emulated accept any binaries but enable FPU emulator
-+				if binary mode is unsupported by the FPU.
- 
- 			The FPU emulator is always able to support both NaN
- 			encodings, so if no FPU hardware is present or it has
-diff --git a/arch/mips/include/asm/fpu.h b/arch/mips/include/asm/fpu.h
-index 86310d6e1035..bc5ac9887d09 100644
---- a/arch/mips/include/asm/fpu.h
-+++ b/arch/mips/include/asm/fpu.h
-@@ -129,6 +129,18 @@ static inline int __own_fpu(void)
- 	if (ret)
- 		return ret;
- 
-+	if (current->thread.fpu.fcr31 & FPU_CSR_NAN2008) {
-+		if (!cpu_has_nan_2008) {
-+			ret = SIGFPE;
-+			goto failed;
-+		}
-+	} else {
-+		if (!cpu_has_nan_legacy) {
-+			ret = SIGFPE;
-+			goto failed;
-+		}
-+	}
-+
- 	KSTK_STATUS(current) |= ST0_CU1;
- 	if (mode == FPU_64BIT || mode == FPU_HYBRID)
- 		KSTK_STATUS(current) |= ST0_FR;
-@@ -137,6 +149,9 @@ static inline int __own_fpu(void)
- 
- 	set_thread_flag(TIF_USEDFPU);
- 	return 0;
-+failed:
-+	__disable_fpu();
-+	return ret;
- }
- 
- static inline int own_fpu_inatomic(int restore)
-diff --git a/arch/mips/kernel/elf.c b/arch/mips/kernel/elf.c
-index 7aa2c2360ff6..f0e7fe85a42a 100644
---- a/arch/mips/kernel/elf.c
-+++ b/arch/mips/kernel/elf.c
-@@ -318,6 +318,10 @@ void mips_set_personality_nan(struct arch_elf_state *state)
- 	t->thread.fpu.fcr31 = c->fpu_csr31;
- 	switch (state->nan_2008) {
- 	case 0:
-+		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
-+			t->thread.fpu.fcr31 &= ~FPU_CSR_NAN2008;
-+		if (!(c->fpu_msk31 & FPU_CSR_ABS2008))
-+			t->thread.fpu.fcr31 &= ~FPU_CSR_ABS2008;
- 		break;
- 	case 1:
- 		if (!(c->fpu_msk31 & FPU_CSR_NAN2008))
-diff --git a/arch/mips/kernel/fpu-probe.c b/arch/mips/kernel/fpu-probe.c
-index e689d6a83234..6bf3f19b1c33 100644
---- a/arch/mips/kernel/fpu-probe.c
-+++ b/arch/mips/kernel/fpu-probe.c
-@@ -144,7 +144,7 @@ static void cpu_set_fpu_2008(struct cpuinfo_mips *c)
-  * IEEE 754 conformance mode to use.  Affects the NaN encoding and the
-  * ABS.fmt/NEG.fmt execution mode.
-  */
--static enum { STRICT, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
-+static enum { STRICT, EMULATED, LEGACY, STD2008, RELAXED } ieee754 = STRICT;
- 
- /*
-  * Set the IEEE 754 NaN encodings and the ABS.fmt/NEG.fmt execution modes
-@@ -160,6 +160,7 @@ static void cpu_set_nofpu_2008(struct cpuinfo_mips *c)
- 
- 	switch (ieee754) {
- 	case STRICT:
-+	case EMULATED:
- 		if (c->isa_level & (MIPS_CPU_ISA_M32R1 | MIPS_CPU_ISA_M64R1 |
- 				    MIPS_CPU_ISA_M32R2 | MIPS_CPU_ISA_M64R2 |
- 				    MIPS_CPU_ISA_M32R5 | MIPS_CPU_ISA_M64R5 |
-@@ -204,6 +205,10 @@ static void cpu_set_nan_2008(struct cpuinfo_mips *c)
- 		mips_use_nan_legacy = !cpu_has_nan_2008;
- 		mips_use_nan_2008 = !!cpu_has_nan_2008;
- 		break;
-+	case EMULATED:
-+		/* Pretend ABS2008/NAN2008 options are dynamic */
-+		c->fpu_msk31 &= ~(FPU_CSR_NAN2008 | FPU_CSR_ABS2008);
-+		fallthrough;
- 	case RELAXED:
- 		mips_use_nan_legacy = true;
- 		mips_use_nan_2008 = true;
-@@ -226,6 +231,8 @@ static int __init ieee754_setup(char *s)
- 		return -1;
- 	else if (!strcmp(s, "strict"))
- 		ieee754 = STRICT;
-+	else if (!strcmp(s, "emulated"))
-+		ieee754 = EMULATED;
- 	else if (!strcmp(s, "legacy"))
- 		ieee754 = LEGACY;
- 	else if (!strcmp(s, "2008"))
+This patch series is the part 2 prepartory changes of the buffered IO
+iomap conversion, I picked them out from my buffered IO iomap conversion
+RFC series v3[1], add a fix for an issue found in current ext4 code, and
+also add bigalloc feature support. Please look the following patches for
+details.
+
+The first 3 patches fix an incorrect delalloc reserved blocks count
+issue and add a warning to make it easy to detect, the second 6 patches
+make ext4_insert_delayed_block() call path support inserting
+multi-delalloc blocks once a time, and the last patch makes
+ext4_da_map_blocks() buffer_head unaware, prepared for iomap.
+
+This patch set has been passed 'kvm-xfstests -g auto' tests, I hope it
+could be reviewed and merged first.
+
+[1] https://lore.kernel.org/linux-ext4/20240127015825.1608160-1-yi.zhang@huaweicloud.com/
+
+Thanks,
+Yi.
 
 ---
-base-commit: 93a39e4766083050ca0ecd6a3548093a3b9eb60c
-change-id: 20240507-mips_ieee754_emul-d17865fd9870
+v2: https://lore.kernel.org/linux-ext4/20240410034203.2188357-1-yi.zhang@huaweicloud.com/
+v3: https://lore.kernel.org/linux-ext4/20240508061220.967970-1-yi.zhang@huaweicloud.com/
 
-Best regards,
+Zhang Yi (10):
+  ext4: factor out a common helper to query extent map
+  ext4: check the extent status again before inserting delalloc block
+  ext4: warn if delalloc counters are not zero on inactive
+  ext4: trim delalloc extent
+  ext4: drop iblock parameter
+  ext4: make ext4_es_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_reserve_space() reserve multi-clusters
+  ext4: factor out check for whether a cluster is allocated
+  ext4: make ext4_insert_delayed_block() insert multi-blocks
+  ext4: make ext4_da_map_blocks() buffer_head unaware
+
+ fs/ext4/extents_status.c    |  70 +++++++---
+ fs/ext4/extents_status.h    |   5 +-
+ fs/ext4/inode.c             | 248 +++++++++++++++++++++++-------------
+ fs/ext4/super.c             |   6 +-
+ include/trace/events/ext4.h |  26 ++--
+ 5 files changed, 231 insertions(+), 124 deletions(-)
+
 -- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
+2.39.2
 
 
