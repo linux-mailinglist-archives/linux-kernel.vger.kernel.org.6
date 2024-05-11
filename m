@@ -1,107 +1,114 @@
-Return-Path: <linux-kernel+bounces-176685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56888C3344
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:49:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF128C3346
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548A71F21961
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:49:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03DE1F219D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B01A1D554;
-	Sat, 11 May 2024 18:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10D01CD2C;
+	Sat, 11 May 2024 18:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="O4LTdbdz"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="EB7y1MY1"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14361C698;
-	Sat, 11 May 2024 18:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823B01CA85;
+	Sat, 11 May 2024 18:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715453354; cv=none; b=T+t/tow3FNX+HypYKX8lOhbp5MxBW9VnLm9FyUx182YGkf12B8FBQxj9DPKLTTtt9i0ooIRBrmnvWB+W+dqxV6hdB9ytl35sfcRjlYNs18xV5xZTHlg01LxCdfVfGP8XCySfkbpm63QlUf4MryrVvSYZxRnLfLiy5Kp79SqpzCU=
+	t=1715453404; cv=none; b=X8LUCMFBZuUy6rpBO+WHRDUniKDe/etD6vc+OK07n8I/ErStjcf3W1mKa172Yrz9iM18eEZB5awryrI+rldXXSZOX7yhA///cyDvLbCd1uwQ8hvyaZXrw0mRJyonnUxHROU/OCWV+K56bo7oJDH7J03OPHYD+c9T/nI54kjqVE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715453354; c=relaxed/simple;
-	bh=BuB70vFvE1UbtXbQ9MYZpxeNrNANcHpq7by0jZ/F0dY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ccl+e+BIFpsexh6jAS+/DPadrOBVV5vMY69s7xLMix+y9VHEeu57U0M2hTPCPoiHAlNgQiRj/Q8Ib9eZ3GnhjGU87T/h9sbLCjDlMV36Yiam2qnBat82ZS3PS0a0LFvNSqnGmpWEzbtyurX1+yBBRybgPOu6NiYGr2LVe0L6yhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=O4LTdbdz; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=+C5DKYAlg3cMiKtrMKxk4T7Nydf3Ps1wF3CouTFVjJw=; t=1715453351; x=1716058151; 
-	b=O4LTdbdzXTb5M44NDlmzpcs19iSOZ1wtAKogBQ+Ih7YYMYZJBtFRP5GhkiDwSn/PIW820kjvvgS
-	vO5Q2iItsbANz4GYiszeEMl1eUE+zjFBn0cDgWuEMQ170O+LtUGyInz80Z/y5FJRwEmpjMK++0YpO
-	OFdDUq9ntSsVURym5BGdlh6G9I1/kkxWrlKToib4MBPBSNwhRn5gWXMgNV5bcWc1HEPcJ4ZV1hy7+
-	dArZpRx0NK4Ijq6coQQCYVuTcv2tNXwOc9lQhvjCuZ/F39ZUgxdfL+9YIpEfwvQkoczUIt/JkS9Dd
-	7/e+OJkFBNsbuMRJeO1ickYUYO3hbQXSPbgg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1s5rmO-00000003WCk-3IU3; Sat, 11 May 2024 20:49:08 +0200
-Received: from dynamic-078-055-008-036.78.55.pool.telefonica.de ([78.55.8.36] helo=suse-laptop.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1s5rmO-00000002cPb-2NbP; Sat, 11 May 2024 20:49:08 +0200
-Message-ID: <7432d241b538819b603194bfb3a306faf360d4b1.camel@physik.fu-berlin.de>
-Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: paulmck@kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Linux-Arch
- <linux-arch@vger.kernel.org>, linux-alpha@vger.kernel.org, Richard
- Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>,  Matt Turner <mattst88@gmail.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>
-Date: Sat, 11 May 2024 20:49:08 +0200
-In-Reply-To: <46543a98-4767-471a-91be-20fb60ab138b@paulmck-laptop>
-References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
-	 <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
-	 <6e6dae45ffbf7a6ab54175695a3e21207c6f5126.camel@physik.fu-berlin.de>
-	 <46543a98-4767-471a-91be-20fb60ab138b@paulmck-laptop>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	s=arc-20240116; t=1715453404; c=relaxed/simple;
+	bh=XQlJ52Gjcwh0/eoXO2kRS0oPJSJxuVoBs9NjXyQ9Q3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWmCiKnB2WIIV6EpJcMnzXnj3z44uoM9NWhT+6CrTWJo3ErLpBOkcxK9av0QDXCZ8/UGfAnRt6p5Po/tRdIhTgFhbmz6zjK3pjbRCiaI8aVtDU/ZUor299Ue+iirR2BaIulKCN/MPwQ7mpG+iIkiprtCO+jfAZgonbw0I1Qfs3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=EB7y1MY1; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7DA0540E022F;
+	Sat, 11 May 2024 18:50:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id qw6eaHcV0NBl; Sat, 11 May 2024 18:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715453396; bh=S/8c399LYuUKjA05XuJD8JszHUQnKzGlwFbNREX7vvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EB7y1MY1FRIovRwF3y9CS33rMNBhBH9oEUuKYGrH2/k8U4EgmbiRFWWMyoN78jia4
+	 5xR2nI3wA/ubstiw45s5VbdtGmsKw3Nd8sf5COvj0C0poixjoEHFeBS07CN6yNJ9ku
+	 2wZdD9BkJzTR8dIyzG0UN6GvWdurozETXlVr+rbDcC0Lx6htOVajUOPa4oO/L7Mj9C
+	 mJNvj+1fyH4vllUY4dEjv7P8OJqEOpA3l7iG+yt5g4hYLahQZM+Q8HOGAO2dV+VLHb
+	 mdXhqQVtEbiiI/tvJKQWSpHDw91bQd4Ax6xqcyLT8tI5fEzG4AAgms5IY5OlJ2tVyH
+	 acqfjve3FRWX26Q1bJNh7Sjp8OaStNUwGHyBkLWUXH+DVsg0y/rl6+8sNxfsG+LqcN
+	 u44LOtdyoOS6yNBxj31jc8w3r7SDyD/O1adtJDsOq3EWRy1KOYEHq2cfEI1eBgyl0/
+	 FLr8EPLwq07crfTqWYz9kyMtEXvXiik1P6rEOpDorX2CmUn1SFHZ+Ts4EApSFa/JUz
+	 +08W4vXVgI1haJ9JE8sKy4zOv48GWoet1aYIvCwyyjKI4W4kPDeLqwTHAcCyrqXMPL
+	 YvCD8EXcHfhkAhitZFxvUmgi7NiQ1DF8fbGfWokdzdvKfTVVCM+iTeUJ+szEv3nfF0
+	 ez43qIHn8R60KR1UOZqBa4nk=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 659FB40E01A1;
+	Sat, 11 May 2024 18:49:46 +0000 (UTC)
+Date: Sat, 11 May 2024 20:49:45 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Jeff Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+Message-ID: <20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+References: <87o79cjjik.fsf@kernel.org>
+ <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
 
-Hi Paul,
+On Sat, May 11, 2024 at 08:48:47PM +0200, Borislav Petkov wrote:
+> On Sat, May 11, 2024 at 09:22:43PM +0300, Kalle Valo wrote:
+> > Here's the diff between broken and working .config:
+> > 
+> > $ diffconfig broken.config works.config 
+> > -CALL_PADDING y
+> > -CALL_THUNKS y
+> > -CALL_THUNKS_DEBUG n
+> > -HAVE_CALL_THUNKS y
+> > -MITIGATION_CALL_DEPTH_TRACKING y
+> > -MITIGATION_GDS_FORCE y
+> > -MITIGATION_IBPB_ENTRY y
+> > -MITIGATION_IBRS_ENTRY y
+> > -MITIGATION_PAGE_TABLE_ISOLATION y
+> > -MITIGATION_RETHUNK y
+> > -MITIGATION_RETPOLINE y
+> > -MITIGATION_RFDS y
+> > -MITIGATION_SLS y
+> > -MITIGATION_SPECTRE_BHI y
 
-On Fri, 2024-05-10 at 15:28 -0700, Paul E. McKenney wrote:
-> > I'm still against dropping pre-EV56 so quickly without a proper phaseou=
-t period.
-> > Why not wait for the next LTS release? AFAIK pre-EV56 support is not br=
-oken, is
-> > it?
->=20
-> Sadly, yes, it is, and it has been broken in mainline for almost two
-> years.
+.. and if it started with -rc4, I'd try this one first.
 
-Could you elaborate what exactly is broken? I'm just trying to understand t=
-he reasoning.
+HTH.
 
-Adrian
+-- 
+Regards/Gruss,
+    Boris.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+https://people.kernel.org/tglx/notes-about-netiquette
 
