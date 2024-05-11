@@ -1,86 +1,185 @@
-Return-Path: <linux-kernel+bounces-176442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00708C2FF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:01:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65388C2FFB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:13:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C8EC1C21A65
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F250128324E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1752522A;
-	Sat, 11 May 2024 07:01:29 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8917AC136;
+	Sat, 11 May 2024 07:13:37 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAF11C01
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6826623DE;
+	Sat, 11 May 2024 07:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715410889; cv=none; b=mFedSiAWQ3w071G1Vhhf52LTosPkTXNEuwvTGHzGI6mSeKwg9lzL6pZIBwers6wmM36WJyhEFHOrfyxTaD1XTUldQGTOOHSJX4JWuVoyfMzsZsrvOiTYjnOvnurc15yy3eQkqBapn/+EpWELZDvl3ANR7b7IAlZ2Aic2gwDXEjo=
+	t=1715411617; cv=none; b=NhYBy96+pd7ssC3i6GwsVsHCy6AGK60M4xE9MCLZ7yQ/G0pUIkGsq+9HQEFNmNYehzSibIOG8plXtUqLwRU9vYovxDTP9LH5C0eqJbkWJCo9W6xZ6BEJpCCHjv483Gk5LuYDeeLDSWHfpzWYOsXx0ykD+DGb79zRQS7yUTHoP8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715410889; c=relaxed/simple;
-	bh=hFlGXqO0EmzU9X3MNoUf5RRWsvR8Dm8tkO3dbjntPyU=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hhJxtancOEdys+9aipI1hHwRT9AIOKzTok3DpCAIFxAu9G6BsTPGBDBE+R+4wl7xY3bPygoORc8qmzipwq21GUttyTdn2way+IZGDwOBw7rDTeXmiK9GmfA1MS4WkFdVqc+IFudp39iYtGzqWvRCUxPaUSUyoe6OmFId66V1fyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VbxQJ1npYzgYtK;
-	Sat, 11 May 2024 14:57:28 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48F941800C7;
-	Sat, 11 May 2024 15:01:23 +0800 (CST)
-Received: from [10.173.135.154] (10.173.135.154) by
- canpemm500002.china.huawei.com (7.192.104.244) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Sat, 11 May 2024 15:01:22 +0800
-Subject: Re: [PATCH v2 1/5] mm/memory-failure: try to send SIGBUS even if
- unmap failed
-To: Jane Chu <jane.chu@oracle.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <osalvador@suse.de>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240510062602.901510-1-jane.chu@oracle.com>
- <20240510062602.901510-2-jane.chu@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <1c03e22a-2f8e-5bfb-1b02-3992fd9173a7@huawei.com>
-Date: Sat, 11 May 2024 15:01:22 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1715411617; c=relaxed/simple;
+	bh=W02rN6+dmjgQHK0sw+P6S03XnBULSaYsnfI6rN3LyVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQ+2LPNzyv2vvypcW7CwNSdfGYEBznDlqtkEy3aZ+2Q3GRd+yuFFFhYDZd0Np/BIDGTMRqen69RRujuBAF71hSr4qmY/4QeUlzHOIdx0K2U99hiJaGe/tmew0oqW1GqTLHpWR5MRDxJeRMrM39X+YYmKp5Vf6rDANv2adBfzFCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vbxmh1NHtz4f3jZ8;
+	Sat, 11 May 2024 15:13:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 942C81A016E;
+	Sat, 11 May 2024 15:13:29 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g6XGj9mhzZnMQ--.38080S4;
+	Sat, 11 May 2024 15:13:29 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH md-6.10] md: remove parameter check_seq for stop_sync_thread()
+Date: Sat, 11 May 2024 15:03:17 +0800
+Message-Id: <20240511070317.3008687-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240510062602.901510-2-jane.chu@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- canpemm500002.china.huawei.com (7.192.104.244)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAX5g6XGj9mhzZnMQ--.38080S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1ftw18tFW5Cw45GrWDXFb_yoWrJr4rpr
+	WfXF98Ar4UArWfZrW7Ka4DZay5Zrn2qa4DtFy3u3yfJ3Z3trsrGFyY93WUAFykGa4rX3Zx
+	AayrJF43Za4xGr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
+	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 2024/5/10 14:25, Jane Chu wrote:
-> For years when it comes down to kill a process due to hwpoison,
-> a SIGBUS is delivered only if unmap has been successful.
-> Otherwise, a SIGKILL is delivered. And the reason for that is
-> to prevent the involved process from accessing the hwpoisoned
-> page again.
-> 
-> Since then a lot has changed, a hwpoisoned page is marked and
-> upon being re-accessed, the memory-failure handler invokes
-> kill_accessing_process() to kill the process immediately.
-> So let's take out the '!unmap_success' factor and try to deliver
-> SIGBUS if possible.
-> 
-> Signed-off-by: Jane Chu <jane.chu@oracle.com>
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+From: Yu Kuai <yukuai3@huawei.com>
 
-LGTM. Thanks.
-Acked-by: Miaohe Lin <linmiaohe@huawei.com>
-Thanks.
-.
+Caller will always set MD_RECOVERY_FROZEN if check_seq is true, and
+always clear MD_RECOVERY_FROZEN if check_seq is false, hence replace
+the parameter with test_bit() to make code cleaner.
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/md/md.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 95b0f9642137..d94899621cbf 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -4945,15 +4945,10 @@ action_show(struct mddev *mddev, char *page)
+  * @locked:	if set, reconfig_mutex will still be held after this function
+  *		return; if not set, reconfig_mutex will be released after this
+  *		function return.
+- * @check_seq:	if set, only wait for curent running sync_thread to stop, noted
+- *		that new sync_thread can still start.
+  */
+-static void stop_sync_thread(struct mddev *mddev, bool locked, bool check_seq)
++static void stop_sync_thread(struct mddev *mddev, bool locked)
+ {
+-	int sync_seq;
+-
+-	if (check_seq)
+-		sync_seq = atomic_read(&mddev->sync_seq);
++	int sync_seq = atomic_read(&mddev->sync_seq);
+ 
+ 	if (!test_bit(MD_RECOVERY_RUNNING, &mddev->recovery)) {
+ 		if (!locked)
+@@ -4974,7 +4969,8 @@ static void stop_sync_thread(struct mddev *mddev, bool locked, bool check_seq)
+ 
+ 	wait_event(resync_wait,
+ 		   !test_bit(MD_RECOVERY_RUNNING, &mddev->recovery) ||
+-		   (check_seq && sync_seq != atomic_read(&mddev->sync_seq)));
++		   (!test_bit(MD_RECOVERY_FROZEN, &mddev->recovery) &&
++		    sync_seq != atomic_read(&mddev->sync_seq)));
+ 
+ 	if (locked)
+ 		mddev_lock_nointr(mddev);
+@@ -4985,7 +4981,7 @@ void md_idle_sync_thread(struct mddev *mddev)
+ 	lockdep_assert_held(&mddev->reconfig_mutex);
+ 
+ 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+-	stop_sync_thread(mddev, true, true);
++	stop_sync_thread(mddev, true);
+ }
+ EXPORT_SYMBOL_GPL(md_idle_sync_thread);
+ 
+@@ -4994,7 +4990,7 @@ void md_frozen_sync_thread(struct mddev *mddev)
+ 	lockdep_assert_held(&mddev->reconfig_mutex);
+ 
+ 	set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+-	stop_sync_thread(mddev, true, false);
++	stop_sync_thread(mddev, true);
+ }
+ EXPORT_SYMBOL_GPL(md_frozen_sync_thread);
+ 
+@@ -5019,7 +5015,7 @@ static void idle_sync_thread(struct mddev *mddev)
+ 		return;
+ 	}
+ 
+-	stop_sync_thread(mddev, false, true);
++	stop_sync_thread(mddev, false);
+ 	mutex_unlock(&mddev->sync_mutex);
+ }
+ 
+@@ -5033,7 +5029,7 @@ static void frozen_sync_thread(struct mddev *mddev)
+ 		return;
+ 	}
+ 
+-	stop_sync_thread(mddev, false, false);
++	stop_sync_thread(mddev, false);
+ 	mutex_unlock(&mddev->sync_mutex);
+ }
+ 
+@@ -6529,7 +6525,7 @@ void md_stop_writes(struct mddev *mddev)
+ {
+ 	mddev_lock_nointr(mddev);
+ 	set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+-	stop_sync_thread(mddev, true, false);
++	stop_sync_thread(mddev, true);
+ 	__md_stop_writes(mddev);
+ 	mddev_unlock(mddev);
+ }
+@@ -6597,7 +6593,7 @@ static int md_set_readonly(struct mddev *mddev)
+ 		set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+ 	}
+ 
+-	stop_sync_thread(mddev, false, false);
++	stop_sync_thread(mddev, false);
+ 	wait_event(mddev->sb_wait,
+ 		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags));
+ 	mddev_lock_nointr(mddev);
+@@ -6643,7 +6639,7 @@ static int do_md_stop(struct mddev *mddev, int mode)
+ 		set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+ 	}
+ 
+-	stop_sync_thread(mddev, true, false);
++	stop_sync_thread(mddev, true);
+ 
+ 	if (mddev->sysfs_active ||
+ 	    test_bit(MD_RECOVERY_RUNNING, &mddev->recovery)) {
+-- 
+2.39.2
+
 
