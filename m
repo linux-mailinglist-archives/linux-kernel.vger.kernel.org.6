@@ -1,97 +1,139 @@
-Return-Path: <linux-kernel+bounces-176414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0426A8C2F86
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:34:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808168C2F8E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED1E7B22BE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:33:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 272CDB22DBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2313CF65;
-	Sat, 11 May 2024 04:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB8F335C0;
+	Sat, 11 May 2024 04:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z1a/pyhb"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZC2qgs7E"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B67818AF4
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 04:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C14802;
+	Sat, 11 May 2024 04:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715402028; cv=none; b=T9jkQkv15uSc5lELtQE0QGj4qdYXGqAvk6MFRcsvQBGxP2URLIopcg+eChMpQNRBAVZdTzWOINsnivDrn+TaWtzbnrnpm1xQqaqY/Y7cGdqWYDkgn41yVpQfrXGBORivJ5yc6HzjEyLyicJZk3PPwR5dTD844PAef/oxi112pA0=
+	t=1715402318; cv=none; b=V7hGH3UFBQX/VB7TRivrAesVCBsA4ddMFbIbZo+GRY1uuhlw0rFFRdR8MfnoJ3/SZGshsBXkbAn5x/QA7ek5kTPueDLOdT7I2uer8SxEyKKConWN/7gAtzXobeChTGqilgrjuHP93NTC0uCgNxhBjfVi/LTmnRt9xxS86iXjLUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715402028; c=relaxed/simple;
-	bh=iR0XyjTDqqc4Wjjno2PBiK6F4GzoKq4vOnOceQyaYl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZaTHWeEbQosLvyeLzYIu1yoE+J8zzWT/ocgT/lNdrO2p9yjWlzyscBSvmiqFC97v7zyQFy1udv0oYDuhLosM6aKN9QU4mPduWHjf8GNpwnuKVElta8qY58N+7tQuSt5iSCjmXdAmIRukgPTTfqiXk2e7aDTwcen6LvPviGBe1LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z1a/pyhb; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59cdf7cd78so676796166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 21:33:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715402025; x=1716006825; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iR0XyjTDqqc4Wjjno2PBiK6F4GzoKq4vOnOceQyaYl8=;
-        b=z1a/pyhbKByCLHpA2wu6VNPnaa+Qi13AdMPwcS6pTEzWhvroq4Y6uU1xvEwXo0qrFc
-         F1O87gPYoHEeV3bLlgeTSMeaJ3LyZm49JJjHI7ZrJY/7YlLPVJkzrlWfwN3YkMk83GPw
-         IyXDj69JD6Jud5UPDUVK5D0uA1hErCyWePP0W2kq4NJprvjFnn3N/V7sNXIN3ubd0on6
-         nNnXJL8mOd9ooS6ATQienkQqRYAojYhCknuKhTfX//SPm9cX2lhN2LRSUICKbI7OO3Ap
-         I0lWxGfRR1yw7tBzwWi4hLPt7ezNufm9iSbI1cS9gD/8A7uGPhttAUjyhxWppallzCHw
-         FHxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715402025; x=1716006825;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iR0XyjTDqqc4Wjjno2PBiK6F4GzoKq4vOnOceQyaYl8=;
-        b=VPTI9dwaCdiHv5Vj0C7qILvGGh16U2GK24NRGT/fxKpK7CT8aMh0UMDZSnDCj1Bd8r
-         KSoPJaJbHQR/VFCuZMIEQK0SiMwjNE6z084QnyugAvZAqHqMu6kh76Aivkm1Lw3fAqWZ
-         RExxCQV1WwCJLnNs2DzOvTGgqefn3EQ81RRafpRTPIqyZIn4BxKOqfZcSEVHrARJv2+p
-         nxjx0Fs/70Cf77+tpmgXfky4y9OKLPUAj8317nsYiGeQQzJiVdIZ/Pv+lCpZV38qHhsr
-         EJPPNlBvoVz//mOdhRXyURvqU0MLJo73J6z+rXO0XVEjDpMbyyTqM5I8Aezs7Oq63mM6
-         lsFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUL75NfgSpFKojr5Bnnac5iA2IXZafRRFOujnfRCy/UBkP61Kq4zwmcoCboV0X9y1PSgeDpxfzmoL6r1CmfMSH+zrb9eY8WQfgT1YyA
-X-Gm-Message-State: AOJu0YyPC266I2K42j+xRpBTSusgRMBv+3ijiNFl2B7dVTBD3dBBtP+l
-	aeqa9U41HYQ0hM8Hbl5AoPfG2V2r+Ld0suRN4KbnQl9l9l2RJP6CHOOibNaRfDkejvwJjPMaK2m
-	Kci74aa0QCf5ws1EcVpcNve/kk++NY0g4PBlclA==
-X-Google-Smtp-Source: AGHT+IEcfSlcjly2piGh73gfy+/TpqxiTmB3jyv23ofh2Ef+M8gbCZem3TQII8uGWq0wSZKXW4p616cTMjJVi9MfduM=
-X-Received: by 2002:a17:906:dac3:b0:a59:b6a8:4d74 with SMTP id
- a640c23a62f3a-a5a2d3bebeemr350201066b.0.1715402024326; Fri, 10 May 2024
- 21:33:44 -0700 (PDT)
+	s=arc-20240116; t=1715402318; c=relaxed/simple;
+	bh=D097T7KeQGj0egkwFaBZUMJcAfmdFRgqPt+llN0sCiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqN9YnIbfBEdikFJi/oMqi+xDBe0EK+TI0Up1/KaKDJWtQuJCuqYb7Ql6PP/hiY7a69RHB/nZIkNkeZjhgXH5xV9JOlq1SeZh10NIYrvsotSByijW1bgWfZmdcwRtnHeUjy15QU6iMZ/xa+KprUa1eyZ40oBUboFEI5c51NuSa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZC2qgs7E; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715402316; x=1746938316;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D097T7KeQGj0egkwFaBZUMJcAfmdFRgqPt+llN0sCiQ=;
+  b=ZC2qgs7E2E4VdQZJ5OG7CX2TCjafuXGnXBSTRr0nvSUd+UXvtOts18mz
+   StBdf9aAwATmBnqt+xzxXYpzSJTuZjBIg1tqLXjL2ljff0gnXz1fII9h7
+   lp4VnxyNNMIBT6bqoPjer08Ce9l+Zz9xttfdCL405P6TgWoQHh06NKcSG
+   qwJ7L9cTylQFkbAOEWpW+PiVvtxeSiF7/7K60kKDVz3a1UpalvZbHbCOT
+   ok17aSbB3so65l3r2CXIOtJQR0sxfuwOcFaaOmma2L+xCDA4FnJsF0tvc
+   Jyy1OyyfiYxNnGREUevc41H0blaoHuGAEPfWsPYbwxA5FV6aIHSugVqo9
+   A==;
+X-CSE-ConnectionGUID: 76ZgFiMaTv2XUQ82w+3VpA==
+X-CSE-MsgGUID: nxaZhaclTFesCzta8JrhgQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11563670"
+X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
+   d="scan'208";a="11563670"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 21:38:35 -0700
+X-CSE-ConnectionGUID: iIFkOrjpSPeRKh0WmN5AWg==
+X-CSE-MsgGUID: xTCZ96exT/uOfTUumPxtGg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
+   d="scan'208";a="34498979"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa003.jf.intel.com with ESMTP; 10 May 2024 21:38:33 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 992DE142; Sat, 11 May 2024 07:38:32 +0300 (EEST)
+Date: Sat, 11 May 2024 07:38:32 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Esther Shimanovich <eshimanovich@chromium.org>
+Cc: Lukas Wunner <lukas@wunner.de>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rajat Jain <rajatja@google.com>
+Subject: Re: [PATCH v4] PCI: Relabel JHL6540 on Lenovo X1 Carbon 7,8
+Message-ID: <20240511043832.GD4162345@black.fi.intel.com>
+References: <7d68a112-0f48-46bf-9f6d-d99b88828761@amd.com>
+ <20240423053312.GY112498@black.fi.intel.com>
+ <7197b2ce-f815-48a1-a78e-9e139de796b7@amd.com>
+ <20240424085608.GE112498@black.fi.intel.com>
+ <CA+Y6NJFyi6e7ype6dTAjxsy5aC80NdVOt+Vg-a0O0y_JsfwSGg@mail.gmail.com>
+ <Zi0VLrvUWH6P1_or@wunner.de>
+ <CA+Y6NJE8hA+wt+auW1wJBWA6EGMc6CGpmdExr3475E_Yys-Zdw@mail.gmail.com>
+ <ZjsKPSgV39SF0gdX@wunner.de>
+ <20240510052616.GC4162345@black.fi.intel.com>
+ <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2eb72832e852c80e5c11cd69e7d2f14cefd8b1cb.1712903998.git.viresh.kumar@linaro.org>
- <e6fc06eb-fe52-4cb3-b412-a602369ee875@leemhuis.info> <CAPDyKFoHoKK-RZsGwnZhbW9_ZRQtL1MFZBuVVLMx-MxL2cQQbw@mail.gmail.com>
- <7c6df194-fce1-401a-98c5-c903d78627c4@leemhuis.info> <CAPDyKFqKRy6zJdBpK3bNTvkvAjty691-Vi_HV3E5CeqgRAWGmA@mail.gmail.com>
-In-Reply-To: <CAPDyKFqKRy6zJdBpK3bNTvkvAjty691-Vi_HV3E5CeqgRAWGmA@mail.gmail.com>
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Date: Sat, 11 May 2024 10:03:33 +0530
-Message-ID: <CAKohpomKbhdXRgFxxbg-_hG5EFZT0LrvfQcrwjQPon6AZNbGag@mail.gmail.com>
-Subject: Re: [PATCH V2] OPP: Fix required_opp_tables for multiple genpds using
- same table
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, Viresh Kumar <vireshk@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Vladimir Lypak <vladimir.lypak@gmail.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+Y6NJF2Ex6Rwxw0a5V1aMY2OH4=MP5KTtat9x9Ge7y-JBdapw@mail.gmail.com>
 
-On Fri, 10 May 2024 at 16:14, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> I wasn't sure of the level of urgency in this case, as I don't think
-> we have that many DTSes upstream that could hit this case.
->
-> But nevermind, it should be easy to revert/replace the change when we
-> have something better to take over. Viresh, feel pick this up - or let
-> me know if you prefer me to pick it.
+Hi,
 
-Please apply, while I enjoy my holidays :)
+On Fri, May 10, 2024 at 11:44:12AM -0400, Esther Shimanovich wrote:
+> Thank you Lukas and Mika!
+> This is very useful and helpful!
+> I am setting up two alternative builds with both of your suggested
+> approaches and will test on devices once I get back into the office,
+> hopefully around next week.
+> 
+> > +       /*
+> > +        * Any integrated Thunderbolt 3/4 PCIe root ports from Intel
+> > +        * before Alder Lake do not have the above device property so we
+> > +        * use their PCI IDs instead. All these are tunneled. This list
+> > +        * is not expected to grow.
+> > +        */
+> > +       if (pdev->vendor == PCI_VENDOR_ID_INTEL) {
+> > +               switch (pdev->device) {
+> > +               /* Ice Lake Thunderbolt 3 PCIe Root Ports */
+> > +               case 0x8a1d:
+> > +               case 0x8a1f:
+> > +               case 0x8a21:
+> > +               case 0x8a23:
+> > +               /* Tiger Lake-LP Thunderbolt 4 PCIe Root Ports */
+> > +               case 0x9a23:
+> > +               case 0x9a25:
+> > +               case 0x9a27:
+> > +               case 0x9a29:
+> > +               /* Tiger Lake-H Thunderbolt 4 PCIe Root Ports */
+> > +               case 0x9a2b:
+> > +               case 0x9a2d:
+> > +               case 0x9a2f:
+> > +               case 0x9a31:
+> > +                       return true;
+> > +               }
+> > +       }
+> > +
+> 
+> Something I noticed is that the list of root ports you have there does
+> not include [8086:02b4] or [8086:9db4], the  Comet Lake and
+> Whiskey/Cannon Point root ports that I saw on the laptops I tested on.
+> Those laptops do not have the usb4-host-interface property. This makes
+> me think that the patch won't work as is.
+
+They are not integrated Thunderbolt PCIe root ports.
+
+They should be "matched" with the second "rule" that looks for a
+discrete controller directly behind an ExternalFacing PCIe root port.
 
