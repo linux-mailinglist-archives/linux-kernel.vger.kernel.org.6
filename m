@@ -1,59 +1,51 @@
-Return-Path: <linux-kernel+bounces-176411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE88C2F6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:46:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765AE8C2F72
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142451F22911
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7624E1C20E76
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CDD3D57A;
-	Sat, 11 May 2024 03:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="IkF1OcpO"
-Received: from out0-212.mail.aliyun.com (out0-212.mail.aliyun.com [140.205.0.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B063BB21;
+	Sat, 11 May 2024 03:57:37 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC941843;
-	Sat, 11 May 2024 03:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE451843
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715399206; cv=none; b=gOt08WsRbWbxINGExO+q4ooGF6KThYcZ/EsYYffQ8DWOJ0FiST87UvZ4Np2T8WI8c0Q8LQjQSrUWJu9miZvpP0fPTuZi9kn6orfaxG7A7jfOWF0iZ47yUFH/X/PORLJlTgBZTUzESiidR2wh1s94HG5FXO79mjaPPWEbpldGOqI=
+	t=1715399857; cv=none; b=cVHfW+x95fMbR2rk4bXGPqOw1iuGBE5iZmYE0y4EWEmTRjio9jPk1RKhWSfWibELboeslhYA7KRlfzmQoug5pwJ8b7mBc9OZU5UdxWv+KinMzvDAALBxT9PV68l2asQlcn1zQXLHiswz+FaevE/epU/2ZO2UNVKRCNM+7PR+AHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715399206; c=relaxed/simple;
-	bh=hZ03FoXZ1F+HCTHSptsV5XuAZGqY5U010SnORP5VsWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AM3XBXVWly+PPgp1i0k06f7t2Iye+Ail4tTnMtYn7vVaG1Af8uHBERJlm3kj27ZKkKshCOiqWEVy0J97zJTwX57BVajNLYcYQAvuPsQFgQVpIeDbMP/h7yKryKuQJCPJCeYi2py5sgYcmgSrz0j0DddWibidBC7jdQybsHswzAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=IkF1OcpO; arc=none smtp.client-ip=140.205.0.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1715399199; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=/oQPtMgHD8rA3njQCT4IplE8E+0JmO4poKrpVU3HxCw=;
-	b=IkF1OcpOqrZOX8gHWEO4Ay8znEZHzAnY+dLaEd3Y6LbM3jWMasIFN0RRhY0o+BeA/kY/b8s+a6u6rlgqlMulbxWcCW1s6u/vS5u9EuSPHLR+meeEgl9+B+/WBGM50FZmiY/5jdw6ItPYHthFVAurHxE1tnGJfeHFqKivsUX2/7Y=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R311e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047205;MF=houwenlong.hwl@antgroup.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---.XYYlGFt_1715399198;
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.XYYlGFt_1715399198)
-          by smtp.aliyun-inc.com;
-          Sat, 11 May 2024 11:46:39 +0800
-From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
-To: kvm@vger.kernel.org
-Cc: "Lai Jiangshan" <jiangshan.ljs@antgroup.com>,
-  "Sean Christopherson" <seanjc@google.com>,
-  "Paolo Bonzini" <pbonzini@redhat.com>,
-  "Thomas Gleixner" <tglx@linutronix.de>,
-  "Ingo Molnar" <mingo@redhat.com>,
-  "Borislav Petkov" <bp@alien8.de>,
-  "Dave Hansen" <dave.hansen@linux.intel.com>,
-   <x86@kernel.org>,
-  "H. Peter Anvin" <hpa@zytor.com>,
-   <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] KVM: x86/mmu: Only allocate shadowed translation cache for sp->role.level <= KVM_MAX_HUGEPAGE_LEVEL
-Date: Sat, 11 May 2024 11:46:37 +0800
-Message-Id: <5b0cda8a7456cda476b14fca36414a56f921dd52.1715398655.git.houwenlong.hwl@antgroup.com>
-X-Mailer: git-send-email 2.31.1
+	s=arc-20240116; t=1715399857; c=relaxed/simple;
+	bh=wvYnG2ycuD0gKu/eJyMnceyhlmHuWAk1dIxkZ4/QVQM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y8u6xdTd2mBaXmI0H9eu5ONJJup0HbRkcwBIM2h9+g4ikafleIFTwe08+m0upsB5u0McGkz09XKMndxL1bamMhi5OkFQQCFbQlGW7zT+vXTqL+BtmsWqCobt2AQNLM3jHU/ABP7/nQiXShELCjnRTajtRAtImNod0vML8S5Hb2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4VbsPG2hv8zCrVc;
+	Sat, 11 May 2024 11:56:18 +0800 (CST)
+Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
+	by mail.maildlp.com (Postfix) with ESMTPS id B5FD0140428;
+	Sat, 11 May 2024 11:57:30 +0800 (CST)
+Received: from huawei.com (10.173.135.154) by canpemm500002.china.huawei.com
+ (7.192.104.244) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Sat, 11 May
+ 2024 11:57:30 +0800
+From: Miaohe Lin <linmiaohe@huawei.com>
+To: <akpm@linux-foundation.org>
+CC: <shy828301@gmail.com>, <nao.horiguchi@gmail.com>,
+	<xuyu@linux.alibaba.com>, <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
+Date: Sat, 11 May 2024 11:54:35 +0800
+Message-ID: <20240511035435.1477004-1-linmiaohe@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,91 +53,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ canpemm500002.china.huawei.com (7.192.104.244)
 
-Only the indirect SP with sp->role.level <= KVM_MAX_HUGEPAGE_LEVEL might
-have leaf gptes, so allocation of shadowed translation cache is needed
-only for it. Then, it can use sp->shadowed_translation to determine
-whether to use the information in the shadowed translation cache or not.
-Also, extend the WARN in FNAME(sync_spte)() to ensure that this won't
-break shadow_mmu_get_sp_for_split().
+When I did memory failure tests recently, below panic occurs:
 
-Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
-Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+ kernel BUG at include/linux/mm.h:1135!
+ invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+ CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-dirty #14
+ RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+ RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+ RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+ RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+ RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+ R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+ FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+ Call Trace:
+  <TASK>
+  do_shrink_slab+0x14f/0x6a0
+  shrink_slab+0xca/0x8c0
+  shrink_node+0x2d0/0x7d0
+  balance_pgdat+0x33a/0x720
+  kswapd+0x1f3/0x410
+  kthread+0xd5/0x100
+  ret_from_fork+0x2f/0x50
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
+ Modules linked in: mce_inject hwpoison_inject
+ ---[ end trace 0000000000000000 ]---
+ RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
+ RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
+ RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
+ RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
+ RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
+ R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
+ R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
+ FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
+
+The root cause is that HWPoison flag will be set for huge_zero_page
+without increasing the page refcnt. But then unpoison_memory() will
+decrease the page refcnt unexpectly as it appears like a successfully
+hwpoisoned page leading to VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+when releasing huge_zero_page.
+
+Fix this issue by marking huge_zero_page reserved. So unpoison_memory()
+will skip this page. This will make it consistent with ZERO_PAGE case too.
+
+Fixes: 478d134e9506 ("mm/huge_memory: do not overkill when splitting huge_zero_page")
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Cc: <stable@vger.kernel.org>
 ---
-v1->v2:
-- Remove the order change in kvm_mmu_page_get_gfn() to keep smallest
-  diff.
-- Drop the helper.
-- Extend the WARN in FNAME(sync_spte).
+ mm/huge_memory.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- arch/x86/kvm/mmu/mmu.c         | 11 +++++------
- arch/x86/kvm/mmu/paging_tmpl.h |  2 +-
- 2 files changed, 6 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index fc3b59b59ee1..dc6f6a272e98 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -719,7 +719,7 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
- 	if (sp->role.passthrough)
- 		return sp->gfn;
-
--	if (!sp->role.direct)
-+	if (sp->shadowed_translation)
- 		return sp->shadowed_translation[index] >> PAGE_SHIFT;
-
- 	return sp->gfn + (index << ((sp->role.level - 1) * SPTE_LEVEL_BITS));
-@@ -733,7 +733,7 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
-  */
- static u32 kvm_mmu_page_get_access(struct kvm_mmu_page *sp, int index)
- {
--	if (sp_has_gptes(sp))
-+	if (sp->shadowed_translation)
- 		return sp->shadowed_translation[index] & ACC_ALL;
-
- 	/*
-@@ -754,7 +754,7 @@ static u32 kvm_mmu_page_get_access(struct kvm_mmu_page *sp, int index)
- static void kvm_mmu_page_set_translation(struct kvm_mmu_page *sp, int index,
- 					 gfn_t gfn, unsigned int access)
- {
--	if (sp_has_gptes(sp)) {
-+	if (sp->shadowed_translation) {
- 		sp->shadowed_translation[index] = (gfn << PAGE_SHIFT) | access;
- 		return;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 89f58c7603b2..a605bc0437cd 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -208,6 +208,7 @@ static bool get_huge_zero_page(void)
+ 		__free_pages(zero_page, compound_order(zero_page));
+ 		goto retry;
  	}
-@@ -1697,8 +1697,7 @@ static void kvm_mmu_free_shadow_page(struct kvm_mmu_page *sp)
- 	hlist_del(&sp->hash_link);
- 	list_del(&sp->link);
- 	free_page((unsigned long)sp->spt);
--	if (!sp->role.direct)
--		free_page((unsigned long)sp->shadowed_translation);
-+	free_page((unsigned long)sp->shadowed_translation);
- 	kmem_cache_free(mmu_page_header_cache, sp);
- }
-
-@@ -2199,7 +2198,7 @@ static struct kvm_mmu_page *kvm_mmu_alloc_shadow_page(struct kvm *kvm,
-
- 	sp = kvm_mmu_memory_cache_alloc(caches->page_header_cache);
- 	sp->spt = kvm_mmu_memory_cache_alloc(caches->shadow_page_cache);
--	if (!role.direct)
-+	if (!role.direct && role.level <= KVM_MAX_HUGEPAGE_LEVEL)
- 		sp->shadowed_translation = kvm_mmu_memory_cache_alloc(caches->shadowed_info_cache);
-
- 	set_page_private(virt_to_page(sp->spt), (unsigned long)sp);
-diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
-index 7a87097cb45b..89b5d73e9e3c 100644
---- a/arch/x86/kvm/mmu/paging_tmpl.h
-+++ b/arch/x86/kvm/mmu/paging_tmpl.h
-@@ -911,7 +911,7 @@ static int FNAME(sync_spte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp, int
- 	gpa_t pte_gpa;
- 	gfn_t gfn;
-
--	if (WARN_ON_ONCE(!sp->spt[i]))
-+	if (WARN_ON_ONCE(!sp->spt[i] || !sp->shadowed_translation))
- 		return 0;
-
- 	first_pte_gpa = FNAME(get_level1_sp_gpa)(sp);
---
-2.31.1
++	__SetPageReserved(zero_page);
+ 	WRITE_ONCE(huge_zero_pfn, page_to_pfn(zero_page));
+ 
+ 	/* We take additional reference here. It will be put back by shrinker */
+@@ -260,6 +261,7 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
+ 		struct page *zero_page = xchg(&huge_zero_page, NULL);
+ 		BUG_ON(zero_page == NULL);
+ 		WRITE_ONCE(huge_zero_pfn, ~0UL);
++		__ClearPageReserved(zero_page);
+ 		__free_pages(zero_page, compound_order(zero_page));
+ 		return HPAGE_PMD_NR;
+ 	}
+-- 
+2.33.0
 
 
