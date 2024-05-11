@@ -1,89 +1,128 @@
-Return-Path: <linux-kernel+bounces-176567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3FE8C31C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:10:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED6C8C31C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3771F217A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:10:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C1728200D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91715380F;
-	Sat, 11 May 2024 14:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868CD5381B;
+	Sat, 11 May 2024 14:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="j6cyjYav"
-Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLImxu8A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BB66FC6;
-	Sat, 11 May 2024 14:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0A06FC6;
+	Sat, 11 May 2024 14:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715436620; cv=none; b=nyYu/4Mzi/Q7NFPulHFuUolQYaYHebjVyP//gyZWhxpYLrwTZjCDo1To3EAOd9FoiBM4Ng/FriW2zeGbKwlcdyNzP2yoG5FcQTGLDs1mcRlxqFDYGhniidseYLdE6osE5UjRes8B+ijBCSvPTttqFvIC7aHdTTI6IQ0zy49Xqi0=
+	t=1715436642; cv=none; b=ewJWrk/1bjPHlKoe3QdPWpCKGsissrwq1MSUcm+RWtnbcXeQZ8enjkY1Zqh7a3oRCQCpIUx2/J1yb7zOWsf5ES44zB2QWH7bziOCpg28zZnMb5S7zFy0wSVy5uoEQzrcQkaLHhOo9rxoI5VlFyIRQeWfSnj9mlEJUYAXlxWOq5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715436620; c=relaxed/simple;
-	bh=jECW67JfmZiMBxrkGH4agBSZVxmhlLrAoq+T6zEv7WI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g9Xy7RCVGi3xQZe2ktUw8taI0a1Y6QlIqyvuYVwUJ2+2xW0trdFuT434cjNA6+aUv5871lAOQunTSoEUaTpnxuS8/xZeW+8/c2sft7LFlUNvI8G1vEAuJ8O2UB4Tx+ucceRe54kda2xSbocc2cGE1G/5sLlLmaF4E8NFvJrmpgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=j6cyjYav; arc=none smtp.client-ip=54.39.219.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C77CC005F;
-	Sat, 11 May 2024 10:10:35 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
-	t=1715436639; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=YkB7lTD5TwqOheDl5UhhEZ5s95fLONe3G1Q+9ddrNhI=;
-	b=j6cyjYav5tpIesRKpl0/ZUmiuQpEvWQHLlD8Hkdh5ulpFDPk/nhjLu48feW+rCpXxZ/e82
-	CH9zW9ye3RQ5WBNrLgxXwhmRoW0Bw0jEWuCBl7+oRTtosJqWFxxtZTb4o3w3TIyV1cLs0R
-	gA33XEGTTm47kfJw/RxDBsEBxAw7cck=
-Message-ID: <dab1dddd-57ae-445e-bce7-879e8d73d809@kaechele.ca>
-Date: Sat, 11 May 2024 10:10:08 -0400
+	s=arc-20240116; t=1715436642; c=relaxed/simple;
+	bh=zD5fChJ3hY7Vmh3mn4DutQ/zNAJcBuVvGUeGdpCzZ5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0XmCQIT447QCXYMTcIUgwgsqTG5/kFawHmK1UadCKI+YT27JXE3EqDAB5a3A7YK9BPomZpVuR58G5/C6+sS3MJA0Vc4GmqkF5c6m3cFMHy/8z5HFLg2iKvVHsGmvS4OjkwVQG9LM0134Ltm6eR+ar868zVFpTmgZ00KusL0aHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLImxu8A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C47DC2BBFC;
+	Sat, 11 May 2024 14:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715436642;
+	bh=zD5fChJ3hY7Vmh3mn4DutQ/zNAJcBuVvGUeGdpCzZ5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aLImxu8ACnlb783mu9dsXGyEYmPsjqZH2+9wZnUrkFcH5PSKNwPGXtMcf40Ty6jDC
+	 3WMfMAhe0s4E/hArSsdoSvTIk2jSWAxAqAKUEzH8Gge1Ey1V566lINOFPPzzyidBRW
+	 9iQoWWLL7/UzAJajSWNhYynl/yExAP8f/rfWBLrHdUtjWtORtt2caYH/C0Wndn65vk
+	 C/vNe69SwXUt7orpUHNtSyR4fjyTVPbHWyDOsu7G/siDPgyA9qPnZZNqZAkwpxyjJf
+	 UquyN/e05Ple1A3vfLpdu2Jn4NAR5KBWJmuY8Ivk9qJ2BLoBJpLOZgaPeiByjHP8n5
+	 5Nrub4l79alvw==
+Date: Sat, 11 May 2024 15:10:36 +0100
+From: Simon Horman <horms@kernel.org>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, pabeni@redhat.com, edumazet@google.com,
+	sgoutham@marvell.com, sbhatta@marvell.com, hkelam@marvell.com
+Subject: Re: [net-next PATCH v4 03/10] octeontx2-pf: Create representor netdev
+Message-ID: <20240511141036.GG2347895@kernel.org>
+References: <20240507163921.29683-1-gakula@marvell.com>
+ <20240507163921.29683-4-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] dt-bindings: input: touchscreen: himax,hx83112b:
- add HX83100A
-To: Conor Dooley <conor@kernel.org>
-Cc: Job Noorman <job@noorman.info>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240511121245.109644-1-felix@kaechele.ca>
- <20240511121245.109644-2-felix@kaechele.ca>
- <20240511-passage-obstruct-70e4c3b37dbd@spud>
-Content-Language: en-US
-From: Felix Kaechele <felix@kaechele.ca>
-In-Reply-To: <20240511-passage-obstruct-70e4c3b37dbd@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507163921.29683-4-gakula@marvell.com>
 
-On 2024-05-11 08:38, Conor Dooley wrote:
-> On Sat, May 11, 2024 at 08:12:22AM -0400, Felix Kaechele wrote:
->> Add a compatible string for the Himax HX83100A touch controller.
->>
->> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+On Tue, May 07, 2024 at 10:09:14PM +0530, Geetha sowjanya wrote:
+> Adds initial devlink support to set/get the switchdev mode.
+> Representor netdevs are created for each rvu devices when
+> the switch mode is set to 'switchdev'. These netdevs are
+> be used to control and configure VFs.
 > 
-> Commit message should mention what makes this device incompatible with
-> the existing device.
+> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
 
-Thanks!
+..
 
-I have added this note in the commit message which will be part of a v3, 
-coming after I hopefully receive a few more comments on the other parts 
-of this change:
+> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> index 33ebbcb223e1..ff4318f414f8 100644
+> --- a/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> +++ b/drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+> @@ -28,6 +28,157 @@ MODULE_DESCRIPTION(DRV_STRING);
+>  MODULE_LICENSE("GPL");
+>  MODULE_DEVICE_TABLE(pci, rvu_rep_id_table);
+>  
+> +static int rvu_rep_napi_init(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+> +{
+> +	struct otx2_cq_poll *cq_poll = NULL;
+> +	struct otx2_qset *qset = &priv->qset;
+> +	struct otx2_hw *hw = &priv->hw;
+> +	int err = 0, qidx, vec;
+> +	char *irq_name;
 
-The HX83100A presents touch events on its internal bus rather than 
-offering a dedicated event register like the other chips in this family do.
+Please consider using reverse xmas tree - longest line to shortest -
+for local variable declarations in new Networking code.
 
-Felix
+This tool can be helpful: https://github.com/ecree-solarflare/xmastree
+
+..
+
+> +int rvu_rep_create(struct otx2_nic *priv, struct netlink_ext_ack *extack)
+> +{
+> +	int rep_cnt = priv->rep_cnt;
+> +	struct net_device *ndev;
+> +	struct rep_dev *rep;
+> +	int rep_id, err;
+> +	u16 pcifunc;
+> +
+> +	priv->reps = devm_kcalloc(priv->dev, rep_cnt, sizeof(struct rep_dev *),
+> +				  GFP_KERNEL);
+> +	if (!priv->reps)
+> +		return -ENOMEM;
+> +
+> +	for (rep_id = 0; rep_id < rep_cnt; rep_id++) {
+> +		ndev = alloc_etherdev(sizeof(*rep));
+> +		if (!ndev) {
+> +			NL_SET_ERR_MSG_FMT_MOD(extack, "PFVF representor:%d
+> +					       creation failed", rep_id);
+
+gcc-13 seems unhappy with a string spanning multiple lines.
+I suggest living with a line longer than 80 columns in this case.
+Maybe:
+
+			NL_SET_ERR_MSG_FMT_MOD(extack,
+					       "PFVF representor:%d creation failed",
+					       rep_id);
+
+> +			err = -ENOMEM;
+> +			goto exit;
+> +		}
+
+..
 
