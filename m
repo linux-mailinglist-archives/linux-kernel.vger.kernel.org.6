@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-176613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1B38C322C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:38:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528FF8C322F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8921B20E4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849931C20CE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094135674A;
-	Sat, 11 May 2024 15:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B9F56760;
+	Sat, 11 May 2024 15:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMf6etTW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="W3xYMTQ8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L9s0hzG7"
+Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472A217F5;
-	Sat, 11 May 2024 15:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2985645E;
+	Sat, 11 May 2024 15:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715441897; cv=none; b=n05ljSDPKCIm3gCMFVKfnQmM2CUu4AsIU5j83OpUxz2XXi/+GzK/vAqKx+GszKBXsifGgwiRiuQ7TVPbxlk6VcLt8tIHFyaOIL7c42v0BMIZBkePTDE/O2KRfOtpR0TIIRJJrzjaw1jvlkibpWeQl+t1U2FL4fY7b4XvOweQS7w=
+	t=1715441941; cv=none; b=kt5IyfwGvscpDR8TWevSPBA3DK0Bw3a2QmnS9zk1t7uDguK+UPn0NDAycCT0fjW7R6BlQzdWFuUaSOLFJLxNIyadPD42W/jBGXCVQ+XFUdCQ7fOAivXiF4GfVwWTMucujzpPGHICYvJD79ZaowniynLhhhWoz6eeK4iybjx3JcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715441897; c=relaxed/simple;
-	bh=O6CUJ7TOMBM6nLZ7+njB2Nz7V2IHmW5Y3v8WGwbEwHo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=moPfokdpTecDPIwjVLYDhLGaPAPoy1OEd/cgyoQgMUsWz5KEFYSH7mrVRGH//2EUn19xsPJQMIBeucJdtyBM0iATlTEZhCOnRzh5JKhAWKUHa1cj6eemle0PcNGXq+uS2D1DAt3vP6DF9Wlu+5N5y5HGxNPUIrp76fTfqMYT+DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMf6etTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30548C2BBFC;
-	Sat, 11 May 2024 15:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715441896;
-	bh=O6CUJ7TOMBM6nLZ7+njB2Nz7V2IHmW5Y3v8WGwbEwHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMf6etTWOYFVHj/iu2S9B9jk1r6hufK4+X4Yan2uD0jc8PAiKhmvxpWQDx/4c7J8X
-	 3okgT+AYEdtrZbYNYNS4G1lZtsKaDW+B4JsQ6F0AQA+XrY5DbSCrQVVP+/oMCY5h1D
-	 p3QApLz/85FCs+dgkzm4S/0GBaXBMkt99cSaakGiXXhF7EV3nyKzbxB2sDKUoaA0s/
-	 gMtdok43NknCwFfArcW0RF61FES/F8enwgw7C4UGGQ+tkj6V/QKRfjqepik/mAKUFH
-	 0QS1RMl4634UudGuFhYjyph89WDnUxPvW82hi81DyuL/ttxa/kmtK8LiFNSxyNppE8
-	 T4DvQyKblHsLw==
-Date: Sat, 11 May 2024 12:38:13 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>,
-	Bhaskara Budiredla <bbudiredla@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@arm.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Will Deacon <will@kernel.org>,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v3 0/2] perf pmus: Sort/merge/aggregate PMUs like
- mrvl_ddr_pmu
-Message-ID: <Zj-Q5W13muoNlqxh@x1>
-References: <20240505031624.299361-1-irogers@google.com>
- <CAP-5=fVSAQOXbSfpSLTVkWcZKGx+LqiuC_ZkCxnc0iPtyfrzvQ@mail.gmail.com>
+	s=arc-20240116; t=1715441941; c=relaxed/simple;
+	bh=VjHyt4PxjoG0E9okA2UFHhBH4xk5VAMX/pgWQymeuBA=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=dBLMc/E8Qs4EFGmwxQER6z//PZAJ9Gj5r1bJaH0LF8rfW1ZfYaQmGC0XuC6fs18c84EHmqWVfI/gCuw/0LoWBo/h6AUlFPh07yJrLpQOKIyDco9hHShlb3gYVHEc1tgBNQpAtoiqnXYzwmXNRW3lyZ9/8idFZaus5uWn32/hx5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=W3xYMTQ8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L9s0hzG7; arc=none smtp.client-ip=64.147.123.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 8A7821800132;
+	Sat, 11 May 2024 11:38:57 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Sat, 11 May 2024 11:38:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1715441937;
+	 x=1715528337; bh=8b8AVLMPdkUb+D8MVCXQcH/74dxje6vo4/P3A1sCtUY=; b=
+	W3xYMTQ8Cu6R/MGafIQnLV63habC+ESIvbsmHH2yv1D921mzlAQcWjsCfrRrBTz4
+	Iwz1pG6MZ5xF+/00K25sblSah+NR7xgHcoKIjjwyVR7JnqffYXG/LdSdbARppVcy
+	YcPs+lu8D3937lyK+P+Skhy9m8EaZH+oszDqMZz7eye82ks51kKhX3CK/tAa7lT2
+	HlPYhWL7kg6gSMg35L4XvfNaMi3wb6BbrHmTudMBRLuUyiCLhpJmMQfNDKk4YQAa
+	grSXPyGl6nIW1HSZDFfKX1kUNaHch1GrOTIKiOmMurzUWVLGuE1m7X37I7srjOv6
+	Ve1Vju6g6vjU0B2QMklCDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715441937; x=
+	1715528337; bh=8b8AVLMPdkUb+D8MVCXQcH/74dxje6vo4/P3A1sCtUY=; b=L
+	9s0hzG7qX7xl6mtn/ErqXc2WlD9Tw1tOe5z+ih5mad3pUPpu2KqCEG0dNQOkLjJI
+	AFSIOzg0xM5Zv0ktX6NcFoSpogUcvolpdwZbBCZ7HRB51cezuiIbbcqYiSqoyXyM
+	fFJsxd3nSK/okbyuEEHQ/WGcUGuy7llvZwIP30T19J9xCyuWxSrEWRAJOr41lGwu
+	AOoUEge1eHP+PYxZLm1G6d8nWAnMxYG/scJbHdCx7SdV/4EJzrEGzFSNsYF1A9J/
+	5DRDNkKJWhVEMWWSxFihS0k6pskANMEsd1AMfd7XUfcxQtzLq4AaSpUtxu9lxH5O
+	JK0VOOPIJu0TKGkPd51Pg==
+X-ME-Sender: <xms:D5E_ZkW5aNg6cbgExq6yeXV-nz6s_gF3nYkDE3cC2ByOrn3EXayklw>
+    <xme:D5E_Zon8nCSUsrV47b89x1rqiO5zUIKvMMQMH1B3xtupdw5bytoVbve8jPj2N2WXQ
+    lHA-B-1a04Z_8YdpCA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegtddgledtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
+    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:D5E_Zob0ZjV8-6kjefM-s2_--mSstfXe0jNLdYD7asSr-F7EclvBsA>
+    <xmx:D5E_ZjXt8SBJiO8SGgszIQu-26WYAofPGMycAbf6wLl6JNtcdaKFTQ>
+    <xmx:D5E_ZulhP0E0e2d9kwwYkMr7wj1PBKdtrtXsZBBJ0bh-HHy8345IGg>
+    <xmx:D5E_ZoeipotAVfkg_RP02iG_yw-cFZXqrVjXuP16bWKTE2sJLSL8Tw>
+    <xmx:EZE_ZndA1l2C30DLVL-c_8_tv19OHNYF-xbwQ0TsD_RfQq0KYNyKIUbN>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id CE5DEB6008D; Sat, 11 May 2024 11:38:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVSAQOXbSfpSLTVkWcZKGx+LqiuC_ZkCxnc0iPtyfrzvQ@mail.gmail.com>
+Message-Id: <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
+ <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
+ <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
+Date: Sat, 11 May 2024 17:38:35 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "Huacai Chen" <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "Xuefeng Li" <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
+ "WANG Xuerui" <kernel@xen0n.name>, "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
+ linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 11:13:36AM -0700, Ian Rogers wrote:
-> On Sat, May 4, 2024 at 8:16 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > The mrvl_ddr_pmu is uncore and has a hexadecimal address
-> > suffix. Current PMU sorting/merging code assumes uncore PMU names
-> > start with uncore_ and have a decimal suffix. Add support for
-> > hexadecimal suffixes and add tests.
-> >
-> > v3. Rebase and move tests from pmus.c to the existing pmu.c.
-> >
-> > Ian Rogers (2):
-> >   perf pmus: Sort/merge/aggregate PMUs like mrvl_ddr_pmu
-> >   perf tests: Add some pmu core functionality tests
-> 
-> Hi, these patches have been hanging around since March [1], it would
-> be nice to either be landing them or getting feedback on what to fix.
+On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
+> On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
+wrote:
 
-Thanks, applied to perf-tools-next,
+>> Importantly, we can't just add fstatat64() on riscv32 because
+>> there is no time64 version for it other than statx(), and I don't
+>> want the architectures to diverge more than necessary.
+>> I would not mind adding a variant of statx() that works for
+>> both riscv32 and loongarch64 though, if it gets added to all
+>> architectures.
+>
+> As far as I know, Ren Guo is trying to implement riscv64 kernel +
+> riscv32 userspace, so I think riscv32 kernel won't be widely used?
 
-- Arnaldo
- 
-> Thanks,
-> Ian
-> 
-> [1] https://lore.kernel.org/lkml/20240329064803.3058900-1-irogers@google.com/
-> 
-> >  tools/perf/tests/pmu.c | 95 ++++++++++++++++++++++++++++++++++++++++++
-> >  tools/perf/util/pmu.c  |  4 +-
-> >  tools/perf/util/pmus.c | 53 ++++++++++++-----------
-> >  tools/perf/util/pmus.h |  7 +++-
-> >  4 files changed, 131 insertions(+), 28 deletions(-)
-> >
-> > --
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> >
+I was talking about the ABI, so it doesn't actually matter
+what the kernel is: any userspace ABI without
+CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
+this is the only allowed configuration, while on others (arm32
+or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
+both 32-bit kernel and on 64-bit kernels with compat mode.
+
+     Arnd
 
