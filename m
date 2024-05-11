@@ -1,151 +1,120 @@
-Return-Path: <linux-kernel+bounces-176677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E136C8C331D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:22:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F768C3323
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5653281E04
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43E7281E93
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF41CABA;
-	Sat, 11 May 2024 18:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgajwqdw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261C71CF96;
+	Sat, 11 May 2024 18:25:47 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778051C6B2;
-	Sat, 11 May 2024 18:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159AB1CA80
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 18:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715451768; cv=none; b=GR/b+zJ7tC+jMXEmYlI3P9i01KSMVdRGQ8pJm1ncPBx3VxrbROBbmNpZHYGfJXhXSgT+QlYhTMUdfl85KY8PzGG6uuAD/nwXKRcRVUK/iLNXAAYMzvAK26K16u/h8uPVtmaVBVSaUXDZ1VZuldGCf/SP/lnyf4qHrJgxHJOLy2M=
+	t=1715451946; cv=none; b=Te4oYg34085t37icb+Oi9jQNjhpl1f6J8n6HTrr6uXLcy3snETcd3FCOctIXXSlepqO75kxFXQqDouFv6+9TuSBBb5pZaexUi4ZCZjmZpOf1F8ughe59T1addZHEOXsN92idkuAuTyHRR4ST+Seo4zq36fP8kNG9Yh7dDRXc3yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715451768; c=relaxed/simple;
-	bh=waBiqpVY4okCKgPx8H2XpUP16xIzo+kJ+6F408ry6sE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m4haQW0jxQCtCN4S8y/7gf9g/OqLZKoVJOtBbvr2wuC1lo1NrzeR6yzijeQs7c9pR1AsL5ZMvxnOntodUgRzqi4btYL/6YxwS0wNW/1y127JIRGIeJHccdgo5OOSQlG+tc7lRf6TTDReK5gvgy+RrhgZziRpECt5+q4jU91IS64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgajwqdw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0933C2BBFC;
-	Sat, 11 May 2024 18:22:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715451768;
-	bh=waBiqpVY4okCKgPx8H2XpUP16xIzo+kJ+6F408ry6sE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jgajwqdwi1eAbcu6oEbQMP9Mq1f4RrxQn3fEwRiVXmtZKvIoxC0NB+F6rP9LpkzBT
-	 PC0ONMoHPA8QEG1AvwlNoEgR3Q4crw58gYsue/UEljBRpuCGf0hC42e+JVmMYuiSmF
-	 CaGLxMIjoO0ADqdF7gpL8LsnTn/7YqruDJLZXt6ZRbwt1/iFXA39rmmZ+HPf5MCkvO
-	 ZPadjKeg/t2iGY5CFL532ofkPs5DbFiDa2Cly60cd9iZ7/Bnwq3IjIvMIaBB+wI0nC
-	 1Z/SiZRsKn3WAKVBA1pohVq0ROLxx3rqM+oXyP/8Wbp/KnjE+a8BXmdm24aUdhoZmI
-	 ijklolw36X3wg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: x86@kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-    regressions@lists.linux.dev,
-    Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: [regression] suspend stress test stalls within 30 minutes
-Date: Sat, 11 May 2024 21:22:43 +0300
-Message-ID: <87o79cjjik.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1715451946; c=relaxed/simple;
+	bh=SQkRJ+POEYNpmaLKC5bXQukzr7BtcJy8mua2DhWEbtA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=aacA3K/sDwHXiOQQKYFdfRu5sCKtg9FsXY8Q/uPn3tG+lEeSXMGMqg+5sQBExfaDHo7dQqwZezmeD+qwP+iFH45sKeksgRCNesNKyjniCKVBa3RxlGrhYDcD+QH4txHJfuBXt9Dh/gxi1c9+C1lZc74mTkr4ePGY/S8KWvhA7nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-7-hlD-hTv5PSKv4xd1znQCwQ-1; Sat, 11 May 2024 19:25:35 +0100
+X-MC-Unique: hlD-hTv5PSKv4xd1znQCwQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 11 May
+ 2024 19:25:02 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 11 May 2024 19:25:02 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Christian Brauner' <brauner@kernel.org>, Daniel Vetter <daniel@ffwll.ch>
+CC: =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <ckoenig.leichtzumerken@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro
+	<viro@zeniv.linux.org.uk>, "keescook@chromium.org" <keescook@chromium.org>,
+	"axboe@kernel.dk" <axboe@kernel.dk>, "christian.koenig@amd.com"
+	<christian.koenig@amd.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "io-uring@vger.kernel.org"
+	<io-uring@vger.kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+	"laura@labbott.name" <laura@labbott.name>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "minhquangbui99@gmail.com"
+	<minhquangbui99@gmail.com>, "sumit.semwal@linaro.org"
+	<sumit.semwal@linaro.org>,
+	"syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com"
+	<syzbot+045b454ab35fd82a35fb@syzkaller.appspotmail.com>,
+	"syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+Subject: RE: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better about
+ file lifetimes
+Thread-Topic: [Linaro-mm-sig] Re: [PATCH] epoll: try to be a _bit_ better
+ about file lifetimes
+Thread-Index: AQHaosiO/bmWtIycWUWbxqLWgzPstbGSV1Yw
+Date: Sat, 11 May 2024 18:25:02 +0000
+Message-ID: <b3e869996b554b57bf59a66cc10ac810@AcuMS.aculab.com>
+References: <202405031110.6F47982593@keescook>
+ <20240503211129.679762-2-torvalds@linux-foundation.org>
+ <20240503212428.GY2118490@ZenIV>
+ <CAHk-=wjpsTEkHgo1uev3xGJ2bQXYShaRf3GPEqDWNgUuKx0JFw@mail.gmail.com>
+ <20240504-wohngebiet-restwert-6c3c94fddbdd@brauner>
+ <CAHk-=wj_Fu1FkMFrjivQ=MGkwkKXZBuh0f4BEhcZHD5WCvHesw@mail.gmail.com>
+ <CAHk-=wj6XL9MGCd_nUzRj6SaKeN0TsyTTZDFpGdW34R+zMZaSg@mail.gmail.com>
+ <b1728d20-047c-4e28-8458-bf3206a1c97c@gmail.com>
+ <20240508-risse-fehlpass-895202f594fd@brauner>
+ <ZjueITUy0K8TP1WO@phenom.ffwll.local>
+ <20240510-duzen-uhrmacher-141c9331f1bf@brauner>
+In-Reply-To: <20240510-duzen-uhrmacher-141c9331f1bf@brauner>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-Hi,
+RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMTAgTWF5IDIwMjQgMTE6NTUNCj4gDQo+
+ID4gRm9yIHRoZSB1YXBpIGlzc3VlIHlvdSBkZXNjcmliZSBiZWxvdyBteSB0YWtlIHdvdWxkIGJl
+IHRoYXQgd2Ugc2hvdWxkIGp1c3QNCj4gPiB0cnksIGFuZCBob3BlIHRoYXQgZXZlcnlvbmUncyBi
+ZWVuIGR1dGlmdWxseSB1c2luZyBPX0NMT0VYRUMuIEJ1dCBtYXliZQ0KPiA+IEknbSBiaWFzZWQg
+ZnJvbSB0aGUgZ3B1IHdvcmxkLCB3aGVyZSB3ZSd2ZSBiZWVuIGhhbW1lcmluZyBpdCBpbiB0aGF0
+DQo+ID4gIk9fQ0xPRVhFQyBvciBidXN0IiBtYW50cmEgc2luY2Ugd2VsbCBvdmVyIGEgZGVjYWRl
+LiBSZWFsbHkgdGhlIG9ubHkgdmFsaWQNCj4gDQo+IE9oLCB3ZSdyZSB2ZXJ5IG11Y2ggb24gdGhl
+IHNhbWUgcGFnZS4gQWxsIG5ldyBmaWxlIGRlc2NyaXB0b3IgdHlwZXMgdGhhdA0KPiBJJ3ZlIGFk
+ZGVkIG92ZXIgdGhlIHllYXJzIGFyZSBPX0NMT0VYRUMgYnkgZGVmYXVsdC4gSU9XLCB5b3UgbmVl
+ZCB0bw0KPiByZW1vdmUgT19DTE9FWEVDIGV4cGxpY2l0bHkgKHNlZSBwaWRmZCBhcyBhbiBleGFt
+cGxlKS4gQW5kIGltaG8sIGFueSBuZXcNCj4gZmQgdHlwZSB0aGF0J3MgYWRkZWQgc2hvdWxkIGp1
+c3QgYmUgT19DTE9FWEVDIGJ5IGRlZmF1bHQuDQoNCkZvciBmZCBhIHNoZWxsIHJlZGlyZWN0IGNy
+ZWF0ZXMgeW91IG1heSB3YW50IHNvIGJlIGFibGUgdG8gc2F5DQondGhpcyBmZCB3aWxsIGhhdmUg
+T19DTE9FWEVDIHNldCBhZnRlciB0aGUgbmV4dCBleGVjJy4NCkFsc28gKHBvc3NpYmx5KSBhIGZs
+YWcgdGhhdCBjYW4ndCBiZSBjbGVhcmVkIG9uY2Ugc2V0IGFuZCB0aGF0DQpnZXRzIGtlcHQgYnkg
+ZHVwKCkgZXRjLg0KQnV0IG1heWJlIHRoYXQgaXMgZXhjZXNzaXZlPw0KDQpJJ3ZlIGNlcnRhaW5s
+eSB1c2VkOg0KIyBpcCBuZXRucyBleGVjIG5zIGNvbW1hbmQgMzwvc3lzL2NsYXNzL25ldA0KaW4g
+b3JkZXIgdG8gYmUgYWJsZSB0byAoZWFzaWx5KSByZWFkIHN0YXR1cyBmb3IgaW50ZXJmYWNlcyBp
+biB0aGUNCmRlZmF1bHQgbmFtZXNwYWNlIGFuZCBhIHNwZWNpZmljIG5hbWVzcGFjZS4NClRoZSB3
+b3VsZCBiZSBoYXJkIGlmIHRoZSBPX0NMT0VYRUMgZmxhZyBoYWQgZ290IHNldCBieSBkZWZhdWx0
+Lg0KKEVzcGVjaWFsbHkgd2l0aG91dCBhIHNoZWxsIGJ1aWx0aW4gdG8gY2xlYXIgaXQuKQ0KDQoJ
+RGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
+dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
+OTczODYgKFdhbGVzKQ0K
 
-I have a weird problem with suspend. Somewhere around v6.9-rc4 or so (not sure
-exactly) I started seeing that our ath11k Wi-Fi driver suspend tests to
-randomly fail. I have been investigating this for some time and now it
-looks like it's somehow related to CPU_MITIGATIONS Kconfig option and
-nothing to do with wireless.
-
-The simplified test case I have is to run suspend and resume in loop
-like this (Wi-Fi modules are not loaded):
-
-for i in {1..400}; do echo "rtcwake test $i" > /dev/kmsg; rtcwake -m mem -s 10; sleep 10; done
-
-If CPU_MITIGATIONS is enabled I usually see suspend stalling within 30
-minutes. If I disable CPU_MITIGATIONS using menuconfig I don't see the bug.
-
-When the bug happens in the kernel.log I see this and suspend stalls:
-
-[  361.716546] PM: suspend entry (deep)
-[  361.722558] Filesystems sync: 0.005 seconds
-[  624.222721] kworker/dying (2519) used greatest stack depth: 22240 bytes left
-[  633.897857] loop0: detected capacity change from 0 to 8
-
-And if I don't do anything for several minutes nothing happens. What is
-really strange is that once I run 'sudo shutdown -h now' then suspend
-somehow immediately unstalls and continues with suspend, like this:
-
-[  847.631147] Freezing user space processes
-[  847.649590] Freezing user space processes completed (elapsed 0.016 seconds)
-[  847.650710] OOM killer disabled.
-[  847.651799] Freezing remaining freezable tasks
-[  847.654618] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
-[  847.663757] printk: Suspending console(s) (use no_console_suspend to debug)
-[  847.710060] e1000e: EEE TX LPI TIMER: 00000011
-[  847.852370] ACPI: EC: interrupt blocked
-[  847.899416] ACPI: PM: Preparing to enter system sleep state S3
-[  847.933433] ACPI: EC: event blocked
-[  847.933437] ACPI: EC: EC stopped
-[  847.933441] ACPI: PM: Saving platform NVS memory
-[  847.933817] Disabling non-boot CPUs ...
-
-And now the system goes into suspend state as it should. And if I press
-the power button on the device then the system resumes and after that
-shuts down (as expected because I run the shutdown command). This
-behaviour is consistent, I see it every time the suspend bug happens.
-
-The test setup is a several years old Intel NUC x86 system, more info
-below.
-
-Any recommendations how should I debug this further? I tried to bisect
-this earlier but that failed, most likely because I hadn't yet realised
-that this is related to CPU_MITIGATIONS and might have messed up the
-config settings during bisect.
-
-Kalle
-
-DMI: Intel(R) Client Systems NUC8i7HVK/NUC8i7HVB, BIOS HNKBLi70.86A.0067.2021.0528.1339 05/28/2021
-
-Ubuntu 20.04.6 LTS (GNU/Linux 6.9.0-rc7+ x86_64)
-
-systemd 245.4-4ubuntu3.23 running in system mode. (+PAM +AUDIT +SELINUX
-+IMA +APPARMOR +SMACK +SYSVINIT +UTMP +LIBCRYPTSETUP +GCRYPT +GNUTLS
-+ACL +XZ +LZ4 +SECCOMP +BLKID +ELFUTILS +KMOD +IDN2 -IDN +PCRE2
-default-hierarchy=hybrid)
-
-I verified that I see this on latest commit from Linus' tree:
-
-cf87f46fd34d Merge tag 'drm-fixes-2024-05-11' of https://gitlab.freedesktop.org/drm/kernel
-
-Here's the diff between broken and working .config:
-
-$ diffconfig broken.config works.config 
--CALL_PADDING y
--CALL_THUNKS y
--CALL_THUNKS_DEBUG n
--HAVE_CALL_THUNKS y
--MITIGATION_CALL_DEPTH_TRACKING y
--MITIGATION_GDS_FORCE y
--MITIGATION_IBPB_ENTRY y
--MITIGATION_IBRS_ENTRY y
--MITIGATION_PAGE_TABLE_ISOLATION y
--MITIGATION_RETHUNK y
--MITIGATION_RETPOLINE y
--MITIGATION_RFDS y
--MITIGATION_SLS y
--MITIGATION_SPECTRE_BHI y
--MITIGATION_SRSO y
--MITIGATION_UNRET_ENTRY y
--PREFIX_SYMBOLS y
- CPU_MITIGATIONS y -> n
 
