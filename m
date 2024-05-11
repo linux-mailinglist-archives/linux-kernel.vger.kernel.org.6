@@ -1,141 +1,92 @@
-Return-Path: <linux-kernel+bounces-176493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C29A8C30BB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AC68C30BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8931C224A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 10:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC6A1F2323F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 10:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05B754BD4;
-	Sat, 11 May 2024 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Og4bmphZ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEAD5466C;
+	Sat, 11 May 2024 10:54:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529DB41C60
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 10:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD23B28E7
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 10:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715424604; cv=none; b=Ga/n+mgtcxiGQEksWsp1XkC4vJjuhuT0OdZwlxuJ4mfDFQCMlBZH4MN9iItTEUFxDohlTdIVR9rSluMIM8bjRPwwEwrUGTMgSEtyvR5Jg/jL/uD8vrBhW0wMwjWdMvfv64/Fuo+EUmhe4m1+Y81Zl1SRdX8RS6ytHL+MI2coWt4=
+	t=1715424846; cv=none; b=elw+PZTNE57i2RZkNFn7r5bL3g28fQeNOm4vX3Ascc8KhRnuA588XPp/li8rimhBOgIsYtYIwlFX13kXKqcl+KiMUDG+XfqBmAAWeXW1x4viADdR5NGBFSzBAOh/KccdbFtAVBx8yfKVZ85Cg5TkAR1DnKFW0qoB7AmIfdcFMlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715424604; c=relaxed/simple;
-	bh=4y7Qf+jN6LlUE0OdF/F/rEDDNHszeU8elr9PJ2tH+iE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KeGJC0r1zZCMIypy8DoCiV1fPmEmLg6Qbwlq6L77TtsAx2pWpn3xFplOWMaqQY/ppKuJbMYGp6Lw7effbnXDyfPPgKCr2FS16FsFlkVXdllWtz2yB7biZVxV5fcwiptudqunVCJPQmcQR1fpDlZh4mgHpLl/SUR62cOiXOZYqqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Og4bmphZ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-51f3a49ff7dso3653237e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:50:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715424600; x=1716029400; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9tzUVfN0KhpYmc4a0OVLANN4g1WHLu0Epz797hO85s=;
-        b=Og4bmphZI9rr20GWN+Xl33+7kr0bo1eHMhH8/WMLCX1m7yfQFoMvmrdVErqxZc6739
-         k+c0rxYPTlo3mhs7dDcZM0bzrIrTY4PZvu1hmowPEV9JrWQvaUrFuOspqJVF8JqPoncu
-         6u+3baLS5w/uaoFVWRThu0NuqREOkB36aCr8CrEDmom49J4fgzE5VJ4ztsCX1OMjBMf0
-         Mo0UODSVunHYlhbFKxf3n7HjcmBTxT65+Vp4tJXxeXgq9g9cxXosMHUV7a2jeueEnJPh
-         P/k3Ogn4fttby8MYzl8ymVbbXDlgz3PG+Shj3sucMiwfs0WS/JtZDXj0ejJTZ41DTOdi
-         dW2g==
+	s=arc-20240116; t=1715424846; c=relaxed/simple;
+	bh=zb349U9QPT2D10/jxISpwmT3+Euyi+U2Pa4hgTHoEm4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Mv0u6Ncf3a/k7AI/dpq7MRi6+C7+Nc80I6kjW5UCkJMwUzYJnuWrzt8hdVlv6ByYxwTBZG3HXqs00oIcaMMFIzLzqyvM8Qv/Q5jJ4CtRxJXEVtn5kqWISp5Rwyt3yYbibbm6DClwjiAqoBwwKr3vQSia/OXetJWiVRpflVm3cA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7da52a99cbdso293707239f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:54:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715424600; x=1716029400;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x9tzUVfN0KhpYmc4a0OVLANN4g1WHLu0Epz797hO85s=;
-        b=pAcVGM637siQtnfOL9ceNL+KuLHySiDFkT1KRpc8GskekLSso02stQK4ZFCplK91Ri
-         lExrJJLiFenvsARNF+bVlXd6LFRodfdV22L1mMg1eslYmaAtZyC+6oOU5ccT1ro/TZhO
-         TmNDYMJ+PKu6Ry43R6yC7/pOoW4ZH/hh5ncrc41wiVDuMlQR7tAHUBSzic7FL9pGu/Hi
-         3Ciqr4enkEX+jDXsaPbRAIc7+yqICrp3jLzLNdqpPkeJhtsKr+AMvjBAhLsaLknzu4dL
-         e5fR0BRoj54aaeUYCAaUlro9N/zxPfyHA53c7Oo81zwBFJSDW0VzmKIog1QTSceiB8P7
-         3kww==
-X-Forwarded-Encrypted: i=1; AJvYcCW6GKJpNU2p2drkdj+Gm9Uvl4u7n6rXd5d/AINfV9qvLIl9ZVTd2xM8xTb9iAQHRNf9AkcRZxHPuPXyhzuapNCDIcDbN1rBVIikwCSW
-X-Gm-Message-State: AOJu0YymNFpUmFTxGyA2UZ2qxfN6r4gVErwpK7tMgua9ACvxI3rlVzl3
-	9OEVHZfwEu3nGsyyxLL3lOlNEwmzjY0yQibE383VRWAf//gLrDVUGusXcatu1t25uAOwmZ3fLzr
-	M
-X-Google-Smtp-Source: AGHT+IGg+LWGczogLtLGUqJNhxQs6r274MI2gwKo2vyNt3nMaj1fq1HgKXfUA3uoPSWXwMPjRHzuzQ==
-X-Received: by 2002:ac2:4d84:0:b0:517:87ba:aff3 with SMTP id 2adb3069b0e04-5221016e7f3mr3060938e87.43.1715424600467;
-        Sat, 11 May 2024 03:50:00 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ad59asm996021e87.45.2024.05.11.03.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 03:49:59 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sat, 11 May 2024 13:49:59 +0300
-Subject: [PATCH] wifi: ath10k: fix QCOM_RPROC_COMMON dependency
+        d=1e100.net; s=20230601; t=1715424844; x=1716029644;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KISKyqi/eiZaHE3ia0a9T8f1/amBnbC/bDbbjPBZ1os=;
+        b=EDmH0jYyqPB6/1od86OpIUeZBgXI4RLHybFy922KtrKTmkXYJM9mENlS16Nlg8Kc35
+         8rwhj70ckn63eY8euiih+JwdhVOfKciPZBBV/9SuC0B+xE4byajDLYSjjR9irVRwj2Xo
+         cU2P8f8gIea4BXktDaai6YKRD35aQWdSmaza7EkOLHIyYOIc5ugZhYkUu4nk8fdYzeLS
+         4nKp8MCVwNEeVscwGjgYKHeM7jyEjFla0rW6iPx1DXFid6lF+iaX8K5zM95EJKVcI5Uq
+         33dvPGa0darFd3dyf3FnROUQM6Dm2SVEjLXZe8TrSr1gcdWVjlycxgQdqdBcsYUsTUUw
+         iCdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJkSbK3uRswEwHRWfyVd2afCuaxmS0pZ9DN7B1V7tOk/4v5AabaWdNgjodHAqUpKQRK/YUKNK9t01mDnZ75R99ayiXYiZasaavht5i
+X-Gm-Message-State: AOJu0Yy2w/dDquqUHerBCc+CTR6Dst+rsF2hbS0dIrj6CfmlY9hfhCwg
+	GmlKs/F5DA9fyZyzko2j9BsyhVV2l9RMHtRzIlkpTFk5lpn2xluVGGEzahK+iEyteIFRq1bPx7h
+	eTS6g9h+c0CHQjIwCB/QTzn4fqUQn7pgD6h0QIjDJ8Msrdpmsxt4TF70=
+X-Google-Smtp-Source: AGHT+IEUc3VD15+b4Lcg217hTyTdseP2djSh0eM1/oo92Ok0Sb9LIay4074m/vXQoBrhF/WIlEnCr5yTBcR0TD2m6n0XUa+LSIjR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240511-ath10k-snoc-dep-v1-1-9666e3af5c27@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAFZNP2YC/x3MTQqAIBBA4avErBtQqaiuEi38mXIINDQiCO+et
- PwW772QKTFlmJsXEt2cOYYK2TZgvQ47IbtqUEJ1opcS9eWlODCHaNHRieOg9OS0osEYqNWZaOP
- nPy5rKR8f52+UYQAAAA==
-To: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>, 
- Stephen Boyd <swboyd@chromium.org>, 
- Rakesh Pillai <quic_pillair@quicinc.com>
-Cc: linux-wireless@vger.kernel.org, ath10k@lists.infradead.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1558;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=4y7Qf+jN6LlUE0OdF/F/rEDDNHszeU8elr9PJ2tH+iE=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmP01XglM6PDpJ5FKRfpGy+Q6xENazUhdYgRoDQ
- //KWcLhheaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj9NVwAKCRCLPIo+Aiko
- 1UIQB/49CRde93czh84lwUe7x1+pSFX90yrLwvtSOJXkI28HtFMfoiuu1exAppUo1eypZPewm0V
- MbiceretlnNrsNuh2ac19xj2SWWJjhxLwGVsUzP7BPuqk+u1o5Dg9nTGIBD9gMqt8VrYJodpFBf
- 3TjBdR/HjcZRPAXteOsDXzLNU3DWZC3w3blS3jlXOIJ9tihUQq29OHqIDlrTYhkx6DE04Jaavm2
- bOLwrClPDvn3VTK/Yh7DZnQBFRtnNQQ8F/czV+oTxF8EO03m1/QgJSOjRTBP8XJtNmSurL4SlcF
- LHCnykEkypVGalLOetMDKiKiQNom/6J2fWakD55YJc86mMAO
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Received: by 2002:a05:6602:608c:b0:7de:3f44:a6fe with SMTP id
+ ca18e2360f4ac-7e1b519cfb4mr17149439f.1.1715424844008; Sat, 11 May 2024
+ 03:54:04 -0700 (PDT)
+Date: Sat, 11 May 2024 03:54:03 -0700
+In-Reply-To: <00000000000090ebe40618212a25@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000077652906182b783f@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_prt_printf
+From: syzbot <syzbot+4e41a25632658c77b441@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-If ath10k_snoc is built-in, while Qualcomm remoteprocs are built as
-modules, compilation fails with:
+syzbot has bisected this issue to:
 
-/usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_init':
-drivers/net/wireless/ath/ath10k/snoc.c:1534: undefined reference to `qcom_register_ssr_notifier'
-/usr/bin/aarch64-linux-gnu-ld: drivers/net/wireless/ath/ath10k/snoc.o: in function `ath10k_modem_deinit':
-drivers/net/wireless/ath/ath10k/snoc.c:1551: undefined reference to `qcom_unregister_ssr_notifier'
+commit f39055220f6f98a180e3503fe05bbf9921c425c8
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Mon May 6 02:28:00 2024 +0000
 
-Add corresponding dependency to ATH10K_SNOC Kconfig entry so that it's
-built as module if QCOM_RPROC_COMMON is built as module too.
+    bcachefs: Add missing validation for superblock section clean
 
-Fixes: 747ff7d3d742 ("ath10k: Don't always treat modem stop events as crashes")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/net/wireless/ath/ath10k/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17a16504980000
+start commit:   75fa778d74b7 Add linux-next specific files for 20240510
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=14616504980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=10616504980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccdd3ebd6715749a
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e41a25632658c77b441
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15f5ec3f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=126cdfc0980000
 
-diff --git a/drivers/net/wireless/ath/ath10k/Kconfig b/drivers/net/wireless/ath/ath10k/Kconfig
-index e6ea884cafc1..4f385f4a8cef 100644
---- a/drivers/net/wireless/ath/ath10k/Kconfig
-+++ b/drivers/net/wireless/ath/ath10k/Kconfig
-@@ -45,6 +45,7 @@ config ATH10K_SNOC
- 	depends on ATH10K
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on QCOM_SMEM
-+	depends on QCOM_RPROC_COMMON || QCOM_RPROC_COMMON=n
- 	select QCOM_SCM
- 	select QCOM_QMI_HELPERS
- 	help
+Reported-by: syzbot+4e41a25632658c77b441@syzkaller.appspotmail.com
+Fixes: f39055220f6f ("bcachefs: Add missing validation for superblock section clean")
 
----
-base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
-change-id: 20240511-ath10k-snoc-dep-862a9da2e6bb
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
