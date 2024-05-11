@@ -1,234 +1,241 @@
-Return-Path: <linux-kernel+bounces-176400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 110CB8C2F34
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:04:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6958C2F35
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65E1AB22E4A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C701DB22CE3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBC02E859;
-	Sat, 11 May 2024 03:03:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C522421D;
+	Sat, 11 May 2024 03:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TrtRSc5R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8h3e0jt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E84C17991;
-	Sat, 11 May 2024 03:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715396626; cv=fail; b=fCjZ4VNJh1j3fTAvqhkU45P2nC/3zdzJeAowi1fzXwUTNbTyF+GgYrN3Pxlr7FM7Pj/EMUekI+w0yrRMqINCtPNf4JnRr/pnOmT+gzvTuOShCDfp/nrRSZ0QPwrXaBIqSmeHl9Sw7Zc4MNtz7ymvwsN0HDPvxU88ZAm1lGTKNQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715396626; c=relaxed/simple;
-	bh=KEu9KPruJS7aILqBRpJCouKhzSPNi9LQmjahLrsAN5s=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Z2ylFTiqD20pw85qRxh5YO2Y4ufMipp85+XPpF//MTf0x37+yIr8Z45KEj6rW4Sui/o9tUSO73CwWCZl+r9bIpWPF9DSAwv938S42NwCanytbWXDwU24f9ZtpE2IMgFrgn+GJy7dT35uNb3wLxSMwBHntMj1YvlqShejUjnuBUo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TrtRSc5R; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715396624; x=1746932624;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=KEu9KPruJS7aILqBRpJCouKhzSPNi9LQmjahLrsAN5s=;
-  b=TrtRSc5RoVWZjU/2qSNOBQnFKhVpVyZ7mJqwIpW3v33DwhurT/Mq1jNR
-   xoDNw/xIv7AQSbwR721TU+0ZJtoQ/PMleUGuJ8kfb1GkICd6yMQhGm8K0
-   F5Wf1g9G+l+xhiiqV6pqYjven7q/UzLjAVBiO1/pr+LrTL6Ui8g4qTsPY
-   qMREVFKZ3CdOVmvbceft6pUzjp8+9CRguiWvNGZHz5SvC5eErAT7R51zT
-   KiNcCyJxNVSDKy/uwdDoltLSLJ7tTdcg9WP1llSjwXRu95wa+g6uLe6oc
-   gz6hcJLoY0hG4vSDePv19RWtX6u/KUvA+da4LlWj7Vb/9lXrDBGtB/8f/
-   A==;
-X-CSE-ConnectionGUID: VOGWP5rcQ/uxolBCSDxpRg==
-X-CSE-MsgGUID: U0Bk6jmDRPWElPHT3KYTDA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="15210565"
-X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
-   d="scan'208";a="15210565"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 20:03:43 -0700
-X-CSE-ConnectionGUID: RbxzKIwlScG3WaTbHuyWxA==
-X-CSE-MsgGUID: cft/hT7mTNSAJv9GzgVOaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,152,1712646000"; 
-   d="scan'208";a="34244226"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 May 2024 20:03:42 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 10 May 2024 20:03:42 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 10 May 2024 20:03:41 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Fri, 10 May 2024 20:03:41 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.169)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 10 May 2024 20:03:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ihq3/HfA3M/yLXMf/V7ALqB7/GFXRiGHWiYPrS540vWtaILHxIypeaOeU2/9DpA2oAvew38EdvMxSPYcgGsgk951sAeIeLjQM5YQFs4HMApAxonEzhe4s2YpO9PO28JZrzuqxSEx69gFkNDT6EyZqAof4dh4S4c9dOqhq4kaHphraDLiF/wovyUNPfjYvpnPF2RG4qeWho7UW47LkLmJkLUe859oDErQuTlhUwqOG8oEN1GZ5YlmHsZYHqFr+lT0JrA1RoBMoIr5KITH7WFeJZqBnAB7Zvkc0gJQEY7n77I8E4aOdTd/1A3aAdGsXb5K4gBvEyJfij6YNCTBDoNDLQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oqy1IOOM+qrmIBLqN8Apo4DdPnVHyw10T6N5tx22puQ=;
- b=mInQVKykCEA4w2M/kK9UfK+APjpoXmV45KTB4pkOXXxvi72P8ej4yAWg1gO3AwAOda9bV8riyE8z+pc9g7aT/tZMOnTCseW3zoW7JF8WWDiXrcbOqURymuMC+f36V3vueRyaZoF5EbecGUw7Wa3W21F6Bq+gN3X4z5jCCFvfVpY25+/BblxUkMUrWqzFw00cJXTkuS3LHMfLVduopKRKq00A8QkNTY7L52OzCB9cKYMnlQFOzCq8NcjEaVRmrY7Ld4kDriba4gqnDljFsABKLoIrLxBH020Kx6+KhoNBuvVO9HMOXt6a88TDbGqxqTeAqGdKX97O01HaswMrO0p+fQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by DM4PR11MB6093.namprd11.prod.outlook.com (2603:10b6:8:b0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Sat, 11 May
- 2024 03:03:32 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::5135:2255:52ba:c64e]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::5135:2255:52ba:c64e%4]) with mapi id 15.20.7544.049; Sat, 11 May 2024
- 03:03:32 +0000
-Date: Sat, 11 May 2024 11:03:20 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: "Li, Xin3" <xin3.li@intel.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
-	<linux-kselftest@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "corbet@lwn.net"
-	<corbet@lwn.net>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"peterz@infradead.org" <peterz@infradead.org>, "Shankar, Ravi V"
-	<ravi.v.shankar@intel.com>, "xin@zytor.com" <xin@zytor.com>
-Subject: Re: [PATCH v2 12/25] KVM: VMX: Handle FRED event data
-Message-ID: <Zj7f+JWbVfIBIK8h@chao-email>
-References: <20240207172646.3981-1-xin3.li@intel.com>
- <20240207172646.3981-13-xin3.li@intel.com>
- <ZjBiLDJ4SdQ0p5xm@chao-email>
- <SA1PR11MB6734740F9B6085E0997A4179A8E72@SA1PR11MB6734.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <SA1PR11MB6734740F9B6085E0997A4179A8E72@SA1PR11MB6734.namprd11.prod.outlook.com>
-X-ClientProxiedBy: KL1PR01CA0120.apcprd01.prod.exchangelabs.com
- (2603:1096:820:3::36) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4D112B95
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715396841; cv=none; b=qLVXjbTXqHRxFKxQxX/A3UCUEqmmEoWAq1pS4YIRDFOjn4DA9V0GFq0U8RlLo0U/37xcE7Tmtkn5HD4JPc7DftXHCO6Pr0QADReZDTychpPwzAZgbV5PV9/zT+mKx+FgFhK8hZiNs7PFQ0n2Swc/QqKTbp8I7S/u8BSr5vSLbD4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715396841; c=relaxed/simple;
+	bh=tUeUKCC+BkSiygOzJE+EPuwly0aTyMTDrm5LYkAqvWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=neZEAGvubm4PDHwVosQTeshEE0T9+FvLVvy1a0W8dL5AURwepYmV3Xh4stDc17O5OGqLRzqCoNAkJnQEKFE28rZQzgdjuO5LsdjnQvkagzGbU+FjbEaHhyB30zWiGjLlOaK/a2/mazd9MEPZjCIq+qJNJsI4ISj0QK64+4nxy4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8h3e0jt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309C9C113CC;
+	Sat, 11 May 2024 03:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715396841;
+	bh=tUeUKCC+BkSiygOzJE+EPuwly0aTyMTDrm5LYkAqvWQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V8h3e0jtRgzKJdaC4yEIYUqNETVyMAr8trAIbZSSOSvsCMa4TnOnhHB72sWMMcwzg
+	 7hIBpdHQVB/mMCxDVijc2JDYihUcHlFkAb0mGQddTpN6R9kp7Z99hdeAoUrV0ufK/X
+	 3imq6XDSOXCelX74vL20KR3FrgFzKiu4R+dq1tpfdS5ynDIhI+pXoXKrZxB4NY3FDb
+	 /YJ8FtKKF7kVexhvlsWKjuot++gUd5tXqFVAWI7AuVKaqTYHAwHpJQzcMvcIEDA/uF
+	 oWnxOTZQBnxj6PzCTT+CawEZVh41W5s+4TLOI+KnJhsxv+VSGhj5/MTq3jhIcZuVUW
+	 /NH7CGjEzmn5w==
+Message-ID: <02a4e80f-a146-4862-8399-3db42979b8fb@kernel.org>
+Date: Sat, 11 May 2024 11:07:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|DM4PR11MB6093:EE_
-X-MS-Office365-Filtering-Correlation-Id: f6ccdc53-9d5d-4d37-685b-08dc7166f109
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|376005|366007|7416005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?bg8jt4b9mvDHld9qnpRgEI/KJASmV2xDXEm65J8j+jIxXigF+ZFbwbC8j8BY?=
- =?us-ascii?Q?Fq+XJ9iRibKyCFTe7REeEBboArIdxRcKDpth5/SyUljAFgrGltMSiJmpCB96?=
- =?us-ascii?Q?d0wj3rcQ1zw4aKWhoF6HNl615XWBSZ9os391DSsl/0Y5CMGQJjxGwYKe8ppQ?=
- =?us-ascii?Q?uqjPgB/39w/njVJz2sqwc9Sv0YwjXGXbNlViV0EON9Y/KDUd3dvLxndZKxsj?=
- =?us-ascii?Q?ziLDJEn4PHiyPd9E8dQuiy8EGC7MwYtIbaLhncwlV/J+dYx3mKW0YAMp+kbw?=
- =?us-ascii?Q?qq6dnzehXRvdHMAmHd2myIDumg5SvmDI1Vk8yBaIRRSMrhyOt6x69DxJPVFB?=
- =?us-ascii?Q?eMr41ldDQl9XlOT8a8k6QRBxBf6Y5N2mLgaYsos2HfDkvcV8RlnLtpLszPi6?=
- =?us-ascii?Q?/ocBruf+uejW7qfpB0mcWPE6ukQrpC+Z+t0Q0eH2YYy4pdmvbU4xoUU1bvPr?=
- =?us-ascii?Q?3ulnc6Roj4hTd1wbwpRhDmcSEomCCg4dMbi7hiqZ62VzN2abeRlDND0i/DOn?=
- =?us-ascii?Q?9NsMR14a9N0WGM1zAz7cTjs8N2jNl48LKq2hwTEkliF88pqhKQOhPeY3GK6h?=
- =?us-ascii?Q?YEGcGtddPiE7tm7gyPKmAe0svs8KUzc3mfwNg64PUg4EwVa5L14kfo1bo8lR?=
- =?us-ascii?Q?o1gJC4Jtj7GMFWQTZ895yeLt4UqhWC5aTjNLKrbdxsASbsSQNDqhHzXYx7OF?=
- =?us-ascii?Q?b2GIxLCekpN/ryBapn8jzcD+vuICt89LbAASSSVWB6sJQuuTx+dr6Ml1zpEG?=
- =?us-ascii?Q?7uWkNwFDOY6ivmmvJVGiQe7qGJa9t7HX8H7ruQknitV0QmoLaS4Eqi6jwhS3?=
- =?us-ascii?Q?8StrBtHfUsAYZyzsV9r+jsMi9rvPztqnprtDwgpwlu80FlkbgJHH8NloG0PF?=
- =?us-ascii?Q?kpsKU8usV7eTZzYpZeelGxIw2Bp1qp25l0U3cPuxzT8vjF0mLOEr4S0iCiSd?=
- =?us-ascii?Q?jelMlAiaGspw2w0yqkbDq1vsTdm8OpIT4CAdsWiTtThCJImYJT/psXKQPSXd?=
- =?us-ascii?Q?uKTiVUutq2NDVLZzrB4kwOOAyDNOYAW3Z7fDZt/iWmuim0j3xjue3Lsb4nVG?=
- =?us-ascii?Q?hqPj9eceXGTvBIs73LTogUuIBOi0MaNhBeq1UjlhDSA4CUG03iLogPvRiCf/?=
- =?us-ascii?Q?9oWcVsJNjmnsNmEz4ZiBqBgoi9yya1gUYZJow38bV/oaYSKWteiw4ZpTMgBr?=
- =?us-ascii?Q?z5sDU21ogKuLy+94NrBMBzDnV+glMEy5o4FP9AQvLZTEmsbNM5D8/5EFTUo5?=
- =?us-ascii?Q?7CFr0ptLu3oYsG0ieqRdOMtV61qnHb1azK2RH1cHqg=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(376005)(366007)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AURRhxvqiFQOes+Ow/n/IoalxFlF38nYWSE2X2pRYmOIS2JWuVxfNkWO6nob?=
- =?us-ascii?Q?ZM+QXtOipQ5b17765gHAwwgJz4D85nIzXcLUdSpB8zHBJ+E8NP9dbG9my/FB?=
- =?us-ascii?Q?Sl6oU41574Wpe+ZsJpP/tdm5HIMI+V7oLPQ3mvus8kgh9eI6mms+KCyjrpnZ?=
- =?us-ascii?Q?UlPWnfuVE8WJWPsGQ7hVzbyJ7eFmfSrmf2PP2yjDKxOAATPk6hevH4mwdtyL?=
- =?us-ascii?Q?jHHTWoYzdWkUt4+6hMEuCe7Jli1mepzsjYR3Vul16rFOb6+dd5XkB9Dm5XN6?=
- =?us-ascii?Q?+C0/pT8DM2y+VBYXABPVfAj9rLwGF91nSXXD/g0yw3XpuVfBcEOySN41c65x?=
- =?us-ascii?Q?ewCvO9gWJMp76svOtA+LGgdBtxf36Ysu9z0w9Qos9cbpXGwKUnqGMUOkfyYu?=
- =?us-ascii?Q?wy2YhTXQ+g18VRiwoVqmMrSESvLtxyk8x0GODrJjiOm45hYXmy6xrmdbFuw0?=
- =?us-ascii?Q?V+Sdty9wnYIHkwME2Gp0wPLdrIxUreOrPzu/iaffR9IfGF00rgwuufHhCCpJ?=
- =?us-ascii?Q?sdxmB60+ne4aUq199C2P2Z8FUdmM8DZ4l3M73nG86ROzLpDUbcHa7VX1+uBA?=
- =?us-ascii?Q?TZXfVNhT8EkIlCWrcafzJQPLuftJApQ2BirnRaQfLUKeNV4dNDLqSZ/ocWu3?=
- =?us-ascii?Q?fKtxS1Of9bB1Mq8hFZqwR6twYg3UebSh6IlkAynhoZnXa5R/hy24cUveBUt0?=
- =?us-ascii?Q?gQaowR6+USdXlk+aWWYkm0bdAtE4qEqNi5/atmnd1bqH8o6+6iBFDrbAa5+S?=
- =?us-ascii?Q?QtYQRK9vvDSqNoqYzFJy+T5/DVivsqBAnRCgafiuRZvnSOXX8xkQpx+M5yYp?=
- =?us-ascii?Q?iWUkloo2EX+9GF/UiBEBxJABmECFSYFTUdmx583NEDdnaWPyYCBjEjBsA6WC?=
- =?us-ascii?Q?HG2uQdu2wP9YYyYvRZZYB2uPrXZHxRnVQK6J3XyySB0eUhe1tOsf0BPbOHqK?=
- =?us-ascii?Q?aTHZ3b3EqqDzsD2CRIaYQ3ZtC2KcRE0GgIhQgcVBG9p5uddTC3W9DsVlW57K?=
- =?us-ascii?Q?xkAjyWZoniDg8ixAjPIFL+GbNcB4vMQKV4p2YHNOSPIMTotkMZSgZFIY9lQ5?=
- =?us-ascii?Q?DbZuBq/MQwLFG14f8Tv6oKygZoFePKKmuE0uA6BWe7eEUaHtTwZMcxYkXcMu?=
- =?us-ascii?Q?mNzFKChc9tMq/SuS14h1IkxOPsSEz7Scf2Sh4d76AIdDGNOBQ+R6luS7VyI8?=
- =?us-ascii?Q?R8+QiJUn2WMU3Lzv1NugrvDolcfiAw1X47ovZnW9BBmI7jLC33Vdzw86GlZc?=
- =?us-ascii?Q?VkyHjq1jeWwQR7728CH8En6k9FhnYsuQae3AKEb3sl0hAGQbQvJYBokuCgQ+?=
- =?us-ascii?Q?ukqBBT8pRQ3kO7JJiiyh7NCOaLUkn00CunSXdDzL45AfXj+NDwBzRJAwruI8?=
- =?us-ascii?Q?PP/twalpL4VLq1iE7aBIVHn02yZA/9UyzYQzqvOcFEid6SJXeTh9+71GxNmA?=
- =?us-ascii?Q?lzaP3UVRrkJK2hFZuQjwUwLFznWXoVMYeX6o1FrUmC5zeGGE9EpQnPbCD/3n?=
- =?us-ascii?Q?GMy2KB55Nr1s6LQ7rl4Eme/SVJh9FNwI477cuF2stglxt6PRvbFjtf25K3LS?=
- =?us-ascii?Q?PEY/+FVB5nlKxhPcRmmh8zHpb8YpxHWunMFPFi/X?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6ccdc53-9d5d-4d37-685b-08dc7166f109
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 03:03:32.6382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ///kLhseuTSQ0RPy/moUnXDJ6iRiKrBnqVOAohLQnGAgxcKdBWLWU3cbKGtfyQH2UiShUe8yQOWK3ueZ1D+1Mw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6093
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for inline_data
+ inode
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+ syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+References: <20240506103313.773503-1-chao@kernel.org>
+ <20240506103313.773503-3-chao@kernel.org> <ZjzxWp4-wmpCzBeB@google.com>
+ <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
+ <Zj2WWpHmHaWKbDgG@google.com>
+ <948ecc86-63f5-48bb-b71c-61d57cbf446c@kernel.org>
+ <Zj6-Fl5OQrHyg0g_@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <Zj6-Fl5OQrHyg0g_@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 10, 2024 at 05:36:03PM +0800, Li, Xin3 wrote:
->> >+               if (kvm_is_fred_enabled(vcpu)) {
->> >+                       u64 event_data = 0;
->> >+
->> >+                       if (is_debug(intr_info))
->> >+                               /*
->> >+                                * Compared to DR6, FRED #DB event data saved on
->> >+                                * the stack frame have bits 4 ~ 11 and 16 ~ 31
->> >+                                * inverted, i.e.,
->> >+                                *   fred_db_event_data = dr6 ^ 0xFFFF0FF0UL
->> >+                                */
->> >+                               event_data = vcpu->arch.dr6 ^ DR6_RESERVED;
->> >+                       else if (is_page_fault(intr_info))
->> >+                               event_data = vcpu->arch.cr2;
->> >+                       else if (is_nm_fault(intr_info))
->> >+                               event_data =
->> >+ to_vmx(vcpu)->fred_xfd_event_data;
->> >+
->> 
->> IMO, deriving an event_data from CR2/DR6 is a little short-sighted because the
->> event_data and CR2/DR6 __can__ be different, e.g., L1 VMM __can__ set CR2 to A
->> and event_data field to B (!=A) when injecting #PF.
->
->VMM should guarantee a FRED guest _sees_ consistent values in CR6/DR6
->and event data. If not it's just a VMM bug that we need to fix.
+On 2024/5/11 8:38, Jaegeuk Kim wrote:
+> On 05/10, Chao Yu wrote:
+>> On 2024/5/10 11:36, Jaegeuk Kim wrote:
+>>> On 05/10, Chao Yu wrote:
+>>>> On 2024/5/9 23:52, Jaegeuk Kim wrote:
+>>>>> On 05/06, Chao Yu wrote:
+>>>>>> syzbot reports a f2fs bug as below:
+>>>>>>
+>>>>>> ------------[ cut here ]------------
+>>>>>> kernel BUG at fs/f2fs/inline.c:258!
+>>>>>> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
+>>>>>> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
+>>>>>> Call Trace:
+>>>>>>     f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
+>>>>>>     f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
+>>>>>>     __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
+>>>>>>     f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
+>>>>>>     do_writepages+0x35b/0x870 mm/page-writeback.c:2612
+>>>>>>     __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
+>>>>>>     writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
+>>>>>>     wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
+>>>>>>     wb_do_writeback fs/fs-writeback.c:2264 [inline]
+>>>>>>     wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
+>>>>>>     process_one_work kernel/workqueue.c:3254 [inline]
+>>>>>>     process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
+>>>>>>     worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
+>>>>>>     kthread+0x2f2/0x390 kernel/kthread.c:388
+>>>>>>     ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+>>>>>>     ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>>>>>>
+>>>>>> The root cause is: inline_data inode can be fuzzed, so that there may
+>>>>>> be valid blkaddr in its direct node, once f2fs triggers background GC
+>>>>>> to migrate the block, it will hit f2fs_bug_on() during dirty page
+>>>>>> writeback.
+>>>>>>
+>>>>>> Let's add sanity check on i_nid field for inline_data inode, meanwhile,
+>>>>>> forbid to migrate inline_data inode's data block to fix this issue.
+>>>>>>
+>>>>>> Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+>>>>>> Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
+>>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
+>>>>>> ---
+>>>>>>     fs/f2fs/f2fs.h   |  2 +-
+>>>>>>     fs/f2fs/gc.c     |  6 ++++++
+>>>>>>     fs/f2fs/inline.c | 17 ++++++++++++++++-
+>>>>>>     fs/f2fs/inode.c  |  2 +-
+>>>>>>     4 files changed, 24 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>>> index fced2b7652f4..c876813b5532 100644
+>>>>>> --- a/fs/f2fs/f2fs.h
+>>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>>> @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
+>>>>>>      * inline.c
+>>>>>>      */
+>>>>>>     bool f2fs_may_inline_data(struct inode *inode);
+>>>>>> -bool f2fs_sanity_check_inline_data(struct inode *inode);
+>>>>>> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
+>>>>>>     bool f2fs_may_inline_dentry(struct inode *inode);
+>>>>>>     void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
+>>>>>>     void f2fs_truncate_inline_inode(struct inode *inode,
+>>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+>>>>>> index e86c7f01539a..041957750478 100644
+>>>>>> --- a/fs/f2fs/gc.c
+>>>>>> +++ b/fs/f2fs/gc.c
+>>>>>> @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+>>>>>>     				continue;
+>>>>>>     			}
+>>>>>> +			if (f2fs_has_inline_data(inode)) {
+>>>>>> +				iput(inode);
+>>>>>> +				set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>>>> +				continue;
+>>>>>
+>>>>> Any race condtion to get this as false alarm?
+>>>>
+>>>> Since there is no reproducer for the bug, I doubt it was caused by metadata
+>>>> fuzzing, something like this:
+>>>>
+>>>> - inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
+>>>> - SIT/SSA entry of the block is valid;
+>>>> - background GC migrates the block;
+>>>> - kworker writeback it, and trigger the bug_on().
+>>>
+>>> Wasn't detected by sanity_check_inode?
+>>
+>> I fuzzed non-inline inode w/ below metadata fields:
+>> - i_blocks = 1
+>> - i_size = 2048
+>> - i_inline |= 0x02
+>>
+>> sanity_check_inode() doesn't complain.
+> 
+> I mean, the below sanity_check_inode() can cover the fuzzed case? I'm wondering
 
-I don't get why VMM should.
+I didn't figure out a generic way in sanity_check_inode() to catch all fuzzed cases.
 
-I know the hardware will guarantee this. And likely KVM will also do this.
-but I don't think it is necessary for KVM to assume L1 VMM will guarantee
-this. because as long as L2 guest is enlightened to read event_data from stack
-only, the ABI between L1 VMM and L2 guest can be: CR2/DR6 may be out of sync
-with the event_data. I am not saying it is good that L1 VMM deviates from the
-real hardware behavior. But how L1 VMM defines this ABI with L2 has nothing to
-do with KVM as L0. KVM shouldn't make assumptions on that.
+e.g.
+case #1
+- blkaddr, its dnode, SSA and SIT are consistent
+- dnode.footer.ino points to inline inode
+- inline inode doesn't link to the donde
+
+Something like fuzzed special file, please check details in below commit:
+
+9056d6489f5a ("f2fs: fix to do sanity check on inode type during garbage collection")
+
+case #2
+- blkaddr, its dnode, SSA and SIT are consistent
+- blkaddr locates in inline inode's i_addr
+
+Thanks,
+
+> whether we really need to check it in the gc path.
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thoughts?
+>>>>
+>>>> Thanks,
+>>>>
+>>>>>
+>>>>>> +			}
+>>>>>> +
+>>>>>>     			err = f2fs_gc_pinned_control(inode, gc_type, segno);
+>>>>>>     			if (err == -EAGAIN) {
+>>>>>>     				iput(inode);
+>>>>>> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+>>>>>> index ac00423f117b..067600fed3d4 100644
+>>>>>> --- a/fs/f2fs/inline.c
+>>>>>> +++ b/fs/f2fs/inline.c
+>>>>>> @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
+>>>>>>     	return !f2fs_post_read_required(inode);
+>>>>>>     }
+>>>>>> -bool f2fs_sanity_check_inline_data(struct inode *inode)
+>>>>>> +static bool has_node_blocks(struct inode *inode, struct page *ipage)
+>>>>>> +{
+>>>>>> +	struct f2fs_inode *ri = F2FS_INODE(ipage);
+>>>>>> +	int i;
+>>>>>> +
+>>>>>> +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
+>>>>>> +		if (ri->i_nid[i])
+>>>>>> +			return true;
+>>>>>> +	}
+>>>>>> +	return false;
+>>>>>> +}
+>>>>>> +
+>>>>>> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
+>>>>>>     {
+>>>>>>     	if (!f2fs_has_inline_data(inode))
+>>>>>>     		return false;
+>>>>>> +	if (has_node_blocks(inode, ipage))
+>>>>>> +		return false;
+>>>>>> +
+>>>>>>     	if (!support_inline_data(inode))
+>>>>>>     		return true;
+>>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+>>>>>> index c26effdce9aa..1423cd27a477 100644
+>>>>>> --- a/fs/f2fs/inode.c
+>>>>>> +++ b/fs/f2fs/inode.c
+>>>>>> @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+>>>>>>     		}
+>>>>>>     	}
+>>>>>> -	if (f2fs_sanity_check_inline_data(inode)) {
+>>>>>> +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
+>>>>>>     		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
+>>>>>>     			  __func__, inode->i_ino, inode->i_mode);
+>>>>>>     		return false;
+>>>>>> -- 
+>>>>>> 2.40.1
 
