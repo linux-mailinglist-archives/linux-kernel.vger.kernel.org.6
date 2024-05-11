@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-176592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECD68C31FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:56:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D06C68C3202
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:02:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53D031C20CF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61601281F09
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9DE57C9C;
-	Sat, 11 May 2024 14:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753C65645E;
+	Sat, 11 May 2024 15:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oR+a8CX1"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOQJlBLk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAED57C85;
-	Sat, 11 May 2024 14:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE69E1E526;
+	Sat, 11 May 2024 15:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715439389; cv=none; b=ojXdovRyNQFzitv6fx0fG+xdAn1DZl2HJlTA2Vp5g+r1+iKIcKjd1gR7Y01b6HuXn2i53KQ2lF2xLoYzR9Mze6Or2TmnIpFVkkY+7kqWf/Eqh5haID1VAP9KsumBONU38Lxt6Q4CCzsQ/OwRYH4NGNyLS46XZkc/rh4O0AfmIOE=
+	t=1715439754; cv=none; b=e7LkEEJ0wcJSg0laD0ZmwFYAlLfEoU6Bkx5D6ytqKI10QWKay0rHY9ZfI3QRRTyr67EZ/14Oyixq/LuYHq3HgzuKJiIqaAWWtSXbS+ZExpvB5nMFfMR/Pvu7e1YJNII3t4qkhG5Jpe7H3dekyD6vfDY1eQzPP7qk2K2WUa/Fcl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715439389; c=relaxed/simple;
-	bh=ostRkU80NQtZiyg93ykwl5RgPPchPg2q6wou11iXOtc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gu1HadmmjcZE1dt7vKjC9W3x6Afx+INpbqo/YV7aIDbh4t1tAa6UyuQ79SzDvzvk5BlbAFfj0qDu805HeAfVPMFbdhJz+G5nuZew13nRaswm4nHgPaenqlCXU8waOdUAoQpX7m8Ba8my5SN6t3NWdrc+6O6reEnPhoyrLZ3alzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oR+a8CX1; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=NLOqo6x1lRGOC08LgTPWzckycmCY5FTFMVeKS/Maf0w=; b=oR+a8CX1aiXBGqEE
-	CNtnNku7sUs5iR+oR4PfOOo/u/RJ8YnixBZ4DIJpTptjy89mErnQhhWFVAY4Y68aOOq0gIDO+pEUk
-	vQCPgthuWa7uBUVL+IdrB2z4HrvWxodv2+vMWvMneGuUp2DwAmQOFu5isdnzp4UmEqVmae7U/F1bS
-	f/DOXvm9dbh8K6ndjZLYvTNgnP8URNf2mIo2jAqsdUCmDN8AC7siSwMVvUgPGquGM6Pv5RWsd9rcz
-	RDthkp+gfzIT8fHszGgVWvtG6hTV6tXhXKSg5neazb5YrZppcrMZZxjWd9EYT4UvPukG13o9nuACN
-	2wTTaqMQZfc4hgKHcA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1s5o96-000W7o-2I;
-	Sat, 11 May 2024 14:56:21 +0000
-From: linux@treblig.org
-To: herbert@gondor.apana.org.au,
-	davem@davemloft.net
-Cc: linux-crypto@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	andreas@gaisler.com,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] crypto: niagara2: Remove unused struct 'n2_skcipher_request_context'
-Date: Sat, 11 May 2024 15:56:20 +0100
-Message-ID: <20240511145620.226548-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715439754; c=relaxed/simple;
+	bh=MZAWv/ScyEBJVD21IicPp5L10HCN0chmKIi6qdoF9E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/FqEOB2h9+y2JbrfE++4TC5aeN6EWiTWUSWNvAJD7/cQk3TdjfVoGPVROkABlS0El6R9Hu6mxHMaMjY/MH32af3HL0vUhJOxwJOMaaUaJWp/325UCNsZtqch/qGVPpUSAEMAEqxMWxeH0+ZPhOuG7NN/Vp4gFvNcZMipkISiKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOQJlBLk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CCBCC2BBFC;
+	Sat, 11 May 2024 15:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715439754;
+	bh=MZAWv/ScyEBJVD21IicPp5L10HCN0chmKIi6qdoF9E0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EOQJlBLkU83hwtxIzoRrpInNyQTz0MO/2OhNMD2dLwkHCxFfjmMQ5NiQmctLMLTWk
+	 Il6ktAJwEbqlKLiSm3cUHjNhMTy/XdqXbtUMFW2Umkx9EpwkBrkN+EVdeW+O6qXEAq
+	 vqK6X61CaKrd2Z3hruLVZy4nU+9MyLljT7j4Qc5Zy/4i4FhOcEXXyNBpkJiZ5vMLON
+	 vAjOzytqc+LdsIBpL9Hcd+ORNqxpTDuUe0y596Dd9TKtRNuuGwQtEkfB3LVFOmCp+n
+	 PlpZuRVhpeVaCcWF5ta1lHDGzebwXWHQ5graYzlNckH2mcii1gkgJPNWDb5/Tg14hg
+	 OaHIGXKF2hJQQ==
+Date: Sat, 11 May 2024 16:02:25 +0100
+From: Simon Horman <horms@kernel.org>
+To: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	mingo@redhat.com, tglx@linutronix.de, x86@kernel.org,
+	netdev@vger.kernel.org, richardcochran@gmail.com,
+	linux-input@vger.kernel.org, dmitry.torokhov@gmail.com,
+	zackr@vmware.com, linux-graphics-maintainer@vmware.com,
+	pv-drivers@vmware.com, timothym@vmware.com, akaher@vmware.com,
+	dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com,
+	tzimmermann@suse.de, mripard@kernel.org,
+	maarten.lankhorst@linux.intel.com, kirill.shutemov@linux.intel.com,
+	Nadav Amit <nadav.amit@gmail.com>, Jeff Sipek <jsipek@vmware.com>
+Subject: Re: [PATCH v9 3/8] x86/vmware: Introduce VMware hypercall API
+Message-ID: <20240511150225.GK2347895@kernel.org>
+References: <20240505182829.GBZjfPzeEijTsBUth5@fat_crate.local>
+ <20240506215305.30756-1-alexey.makhalov@broadcom.com>
+ <20240506215305.30756-4-alexey.makhalov@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240506215305.30756-4-alexey.makhalov@broadcom.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, May 06, 2024 at 02:53:00PM -0700, Alexey Makhalov wrote:
+> Introduce vmware_hypercall family of functions. It is a common
+> implementation to be used by the VMware guest code and virtual
+> device drivers in architecture independent manner.
+> 
+> The API consists of vmware_hypercallX and vmware_hypercall_hb_{out,in}
+> set of functions by analogy with KVM hypercall API. Architecture
+> specific implementation is hidden inside.
+> 
+> It will simplify future enhancements in VMware hypercalls such
+> as SEV-ES and TDX related changes without needs to modify a
+> caller in device drivers code.
+> 
+> Current implementation extends an idea from commit bac7b4e84323
+> ("x86/vmware: Update platform detection code for VMCALL/VMMCALL
+> hypercalls") to have a slow, but safe path in VMWARE_HYPERCALL
+> earlier during the boot when alternatives are not yet applied.
+> This logic was inherited from VMWARE_CMD from the commit mentioned
+> above. Default alternative code was optimized by size to reduce
+> excessive nop alignment once alternatives are applied. Total
+> default code size is 26 bytes, in worse case (3 bytes alternative)
+> remaining 23 bytes will be aligned by only 3 long NOP instructions.
+> 
+> Signed-off-by: Alexey Makhalov <alexey.makhalov@broadcom.com>
+> Reviewed-by: Nadav Amit <nadav.amit@gmail.com>
+> Reviewed-by: Jeff Sipek <jsipek@vmware.com>
 
-'n2_skcipher_request_context' was added in
-commit 23a6564a6b51 ("crypto: niagara2 - switch to skcipher API")
-but never used.
-Remove it.
+..
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/crypto/n2_core.c | 4 ----
- 1 file changed, 4 deletions(-)
+> diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
 
-diff --git a/drivers/crypto/n2_core.c b/drivers/crypto/n2_core.c
-index 59d472cb11e75..251e088a53dff 100644
---- a/drivers/crypto/n2_core.c
-+++ b/drivers/crypto/n2_core.c
-@@ -720,10 +720,6 @@ static inline struct n2_skcipher_alg *n2_skcipher_alg(struct crypto_skcipher *tf
- 	return container_of(alg, struct n2_skcipher_alg, skcipher);
- }
- 
--struct n2_skcipher_request_context {
--	struct skcipher_walk	walk;
--};
--
- static int n2_aes_setkey(struct crypto_skcipher *skcipher, const u8 *key,
- 			 unsigned int keylen)
- {
--- 
-2.45.0
+..
 
+> +static inline
+> +unsigned long vmware_hypercall3(unsigned long cmd, unsigned long in1,
+> +				uint32_t *out1, uint32_t *out2)
+
+nit: u32 is preferred over uint32_t.
+     Likewise elsewhere in this patch-set.
+..
+
+>  /*
+> - * The high bandwidth in call. The low word of edx is presumed to have the
+> - * HB bit set.
+> + * High bandwidth calls are not supported on encrypted memory guests.
+> + * The caller should check cc_platform_has(CC_ATTR_MEM_ENCRYPT) and use
+> + * low bandwidth hypercall it memory encryption is set.
+> + * This assumption simplifies HB hypercall impementation to just I/O port
+
+nit: implementation
+
+     checkpatch.pl --codespell is your friend
+
+> + * based approach without alternative patching.
+>   */
+
+..
 
