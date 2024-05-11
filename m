@@ -1,140 +1,216 @@
-Return-Path: <linux-kernel+bounces-176755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703FD8C3475
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:06:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8128C3477
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34B5281415
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0294A281983
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFC160269;
-	Sat, 11 May 2024 22:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBC322EF2;
+	Sat, 11 May 2024 22:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KMyAb/Rk"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nwFlluMP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6263358AA3
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 22:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377362E85A;
+	Sat, 11 May 2024 22:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715465061; cv=none; b=CbQL7Lj6dln4YOmXkv97by4bcakNe5hKQTt6A6cTFN4avJuLQi/iXE+9rHxw7snNbgk1hGQy4HRzXAVO1EtQa2nUPWac/Z0bz4LKZwm4uOqMte2C0I1yxKBLLuMMleWWgYAzFISH2gvDSecxSEbh75yKIje2HL+IGv6/2n1MQME=
+	t=1715465731; cv=none; b=GJGMqybAQPrHjPC2jZ4tJa456V981H8qImZLoqkVRUCTmUwKAiRo9qXhe8fwueDF5VmzB5Pl+rMAp4OPMIuANXCk7s5c5ZVNWkcn57W2c9PGsexy9BWdzwmsBmtP3Jg5v/zwcOR+mUpcknhk+VArRElKoKp1l3RTHf10u87/XIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715465061; c=relaxed/simple;
-	bh=2X9TSF9mpPgpbniBtbr3RQy14gET4Nt7uQSs8F1H82k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Nwo1RMUUA1aIkj6vRt+B53JE8CavjAlXmmVrNczlrOEvof932mpvwLXC//YiyYMRnfZ9N70YpsVUb9A0Mko07upNNouaiWpjjI0TEydkRr+b00ti3EXiDWgAp5T7oEBfSoYSk20O982jee9xJ91WRSQ7QNed5XyuJ8hXkpkNDyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KMyAb/Rk; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51f17ac14daso3688466e87.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715465058; x=1716069858; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=etPGlhDWRxy2MUXfAs4NBOjvIGN4vsVr90R24B7wpPM=;
-        b=KMyAb/Rk548umUTkhXlOMk9BG78XQCAxKV0ddXiPE13EOX+EtSyPs1w3TI13c9qMzo
-         +rbhooUOlu2c0B4+g6B+U1wUD1++U3RLPGP2Iz7eGAhLWrIgmDDTL7756SXtLkj6CN4Q
-         RCEE4dQIll8+4BRYR7T6/HJCY0KskO7ZpZU7C8/IrN5hztPLANUQf86RPL1bKHvpJjwX
-         raUPOLnp8mg6b2+KxuMnifEYmiKGmEueRUMpDyM/MZ+VxBzJoo5EkzoNUHdGD7s6SH9l
-         +ozB/qxPw2XZNFcRYSovKbsK4T2dAW5QIhB/TVd/skOIm8mm5vuKRl/BmARaDdnDEDN1
-         hY0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715465058; x=1716069858;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=etPGlhDWRxy2MUXfAs4NBOjvIGN4vsVr90R24B7wpPM=;
-        b=cY2naSixi4szU2RdXcR0GiKcFz4josmJMck0SLs+BdkjSo2JIiswvr99crSKNF8cAg
-         8DX3lAkVWl9UAbQmU8NQ/BqW5tWJSQdVS/kY1p8gGVe/K2JqLOP9OpGm18RzXpbwaEU6
-         EgfSvhtSSbtevg/GJSuURPo0MyPzFAgQFmLVAoiZ7qBzdWY297w+YohL+jeaAbrR/+hO
-         Fj9lNXaEZBFzSnm6BzOTftXfGi6YRUPw75DIPkEY1Oe6+zdGOcc+xD/saBj6A1gvWlCo
-         ov+536HZ9sG1+Nxxn53ziUyC+EeZDNm10Em1wC2pUvuklp9dC2QWfVOoUJlpb08QMM5N
-         sKPw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1vwSRq4q6/4Zl5rZrrsHdVjPOxmw0xWwqsNuqIq2wFYmUavlRUzHAuotNdmqrWfDjxfOPHO9UxfTnTRHQFivfW6wGqPof6m30XOF7
-X-Gm-Message-State: AOJu0YzRAZEZflMAcVDnzaQCfwEROFmUXZjmz7kg7AesuZACgwbezkJU
-	U7t74faVnUXxy7ZkJz13v7kunK3UNX5VEHjDJ/Fm+K5/mv1FaajPA35x0vzFagw=
-X-Google-Smtp-Source: AGHT+IG2XsjgS4cbuPJ5ppeA0B7bDqDs6E/McKESaridVAwjhdDKZYdJpZJGBOy7q71GzuMotnquEA==
-X-Received: by 2002:ac2:4309:0:b0:518:bc7c:413a with SMTP id 2adb3069b0e04-52210276505mr3128424e87.69.1715465057806;
-        Sat, 11 May 2024 15:04:17 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d878fsm1123875e87.206.2024.05.11.15.04.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 15:04:17 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 12 May 2024 01:04:15 +0300
-Subject: [PATCH v4 9/9] arm64: dts: qcom: sm8150-hdk: rename Type-C HS
- endpoints
+	s=arc-20240116; t=1715465731; c=relaxed/simple;
+	bh=fWkfTdz9ljMv0xK4m8ELhVsSKdUHNfe1G5YlviGXlpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KqBA5lfgNucvl3RQVL3OTLkOZLt0mcUMfyRpWiIMDjqf9PXnBU5GsAIiXu9pK3HstZR8EXEEXhEE1ifWFaTiDjcDRuSDiC63JquxcV4NJc/ccyzSTbdNWXLx8crZmaHgvMzA/AOPBY4mS+Z+bPj2YTM+Q0hXEyMT1dWW6kZxpxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nwFlluMP; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715465729; x=1747001729;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fWkfTdz9ljMv0xK4m8ELhVsSKdUHNfe1G5YlviGXlpo=;
+  b=nwFlluMPP6D55q0o+o/SvYePAQ1DPpsCPL5qVhMkU7U9+A7LihZEm1HM
+   Cp1sw4LTJOtWYae3ftZCnohpOjd11rGPRoPDJGGDL0aaks9innnn6bNA6
+   96sqEE1OUikIgEiexLarJo/YqRZxyYI/LmcmbGvtUdPXxKRIh8NDFbHyw
+   2Mq+Qa8W6WOwBO5zWjv+0O9VHSDCmWjC0jnF1JnuGYQS0OA/pJPsbXPUS
+   zJGSF280KQmY3N4WsM9xQ6KEc9E84rt7/Yw0BkQ1+kE4rJQ4st/fmuVVQ
+   +LHo/KmEcGh4L0iAPzjF4m7FXhvM2BiFFE31fjk9NllwvQL5tOlPFYYX7
+   g==;
+X-CSE-ConnectionGUID: jzT8KrurRwejWHx0ig90fA==
+X-CSE-MsgGUID: tLCZOwZ+R/qQxspH4yFsTQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11070"; a="11314324"
+X-IronPort-AV: E=Sophos;i="6.08,155,1712646000"; 
+   d="scan'208";a="11314324"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2024 15:15:28 -0700
+X-CSE-ConnectionGUID: b9jwbXNUSx2qEN7mkgf1wQ==
+X-CSE-MsgGUID: Wmf0h0oXTjeZ2FQGwMtWSA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,155,1712646000"; 
+   d="scan'208";a="29937174"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 11 May 2024 15:15:25 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s5uzz-0007t5-0w;
+	Sat, 11 May 2024 22:15:23 +0000
+Date: Sun, 12 May 2024 06:14:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, lars@metafoo.de, swboyd@chromium.org,
+	nuno.a@analog.com, andy.shevchenko@gmail.com,
+	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yasin.lee.x@gmail.com,
+	yasin.lee.x@outlook.com
+Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor
+ driver
+Message-ID: <202405120555.YC05dspc-lkp@intel.com>
+References: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240512-typec-fix-sm8250-v4-9-ad153c747a97@linaro.org>
-References: <20240512-typec-fix-sm8250-v4-0-ad153c747a97@linaro.org>
-In-Reply-To: <20240512-typec-fix-sm8250-v4-0-ad153c747a97@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=948;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=2X9TSF9mpPgpbniBtbr3RQy14gET4Nt7uQSs8F1H82k=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmP+tYCqjWTMqYT9C9MzILCW2xppEsFrszHxcGD
- 9qoZpVEtyCJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj/rWAAKCRCLPIo+Aiko
- 1bJeB/9dYlm2ImAAYIpoDO3azYyYwVLOLaqOX/SDTnE4+gwhzOpuEqtbY5JiqriY60KKW9ij7/a
- 1mxB0aOSWJt2Ky3k53n27tKZ1Crys9glIyen8SE0QNwxhf6Brl7GbxNgW7kMi+i4J93b36eps5J
- FZ8qFpj1BwynxQCkhoU4rbQvJ1TXWGhDTbjRX1+nBhENSy5lY2j5dbgawc74H0qAG6RbUzUM3MJ
- h5enTm7NSR+G40BziJa9JNIQXfPsqwoWX28LRRn5PDx8auXoNhHOtJIhVkykOAdnFv7nCCEvxXs
- Y/fuJLyIAIIueu01Gxgaojt3fl34BbpnN6ohh32m2RW9ZVe3
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
 
-Follow other Qualcomm platforms and rename pm8150b_role_switch_in to
-pm8150_hs_in. Corresponding port is described as HS port rather than
-role switching.
+Hi Yasin,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8150-hdk.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
-index 6cb6f503fdac..e9b9abc18746 100644
---- a/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8150-hdk.dts
-@@ -556,7 +556,7 @@ ports {
- 
- 			port@0 {
- 				reg = <0>;
--				pm8150b_role_switch_in: endpoint {
-+				pm8150b_hs_in: endpoint {
- 					remote-endpoint = <&usb_1_dwc3_hs>;
- 				};
- 			};
-@@ -708,7 +708,7 @@ &usb_1_dwc3 {
- };
- 
- &usb_1_dwc3_hs {
--	remote-endpoint = <&pm8150b_role_switch_in>;
-+	remote-endpoint = <&pm8150b_hs_in>;
- };
- 
- &usb_1_dwc3_ss {
+[auto build test ERROR on jic23-iio/togreg]
+[also build test ERROR on linus/master v6.9-rc7 next-20240510]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9031as-Add-TYHX-HX9031AS-HX9023S-sensor-driver/20240510-173839
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/SN7PR12MB8101EDFA7F91A59761095A28A4E72%40SN7PR12MB8101.namprd12.prod.outlook.com
+patch subject: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor driver
+config: i386-randconfig-054-20240512 (https://download.01.org/0day-ci/archive/20240512/202405120555.YC05dspc-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240512/202405120555.YC05dspc-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405120555.YC05dspc-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_cp1255.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_iso8859-14.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-gaelic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-romanian.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/mac-roman.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nls/nls_ucs2_utils.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/trusted-keys/trusted.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/keys/encrypted-keys/encrypted-keys.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_hexdump.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/find_bit_benchmark.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_firmware.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_ida.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_scanf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_bitmap.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_xarray.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_memcat_p.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_meminit.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_objpool.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpio/gpio-mc33880.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pci/pci-stub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/matrox/matroxfb_accel.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/matrox/matroxfb_DAC1064.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/matrox/matroxfb_Ti3026.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/video/fbdev/vfb.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/da9121-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/max20411-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/goldfish.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/ati-agp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/amd-k7-agp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/intel-agp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/intel-gtt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/nvidia-agp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/sis-agp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/agp/sworks-agp.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/dtlk.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/base/regmap/regmap-w1.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/timberdale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spi/spi-altera-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/touchscreen/cyttsp_i2c_common.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rtc/rtc-goldfish.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/rc/rc-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/menz69_wdt.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/cbmem.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-a4tech.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-apple.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-aureal.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-belkin.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cherry.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-cypress.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-dr.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-emsff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-elecom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-evision.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gyration.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-ite.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kensington.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-kye.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lcpower.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-lenovo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-maltron.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-mf.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-microsoft.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-monterey.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-pl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-petalynx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-primax.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-semitek.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-speedlink.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-gaff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-tivo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-topseed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-twinhan.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-zpff.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/hid/hid-viewsonic.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/platform/goldfish/goldfish_pipe.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_simpleondemand.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/perf/cxl_pmu.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/chips/cfi_util.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mtd/maps/map_funcs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_cif.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_aec.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_netx.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/uio/uio_mf624.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
+>> ERROR: modpost: "__udivdi3" [drivers/iio/proximity/hx9031as.ko] undefined!
 
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
