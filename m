@@ -1,241 +1,304 @@
-Return-Path: <linux-kernel+bounces-176401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6958C2F35
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:07:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E3CB8C2F38
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C701DB22CE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:07:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D014FB22D16
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C522421D;
-	Sat, 11 May 2024 03:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C8924B4A;
+	Sat, 11 May 2024 03:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8h3e0jt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2H2/E7/"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4D112B95
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B19C021345;
+	Sat, 11 May 2024 03:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715396841; cv=none; b=qLVXjbTXqHRxFKxQxX/A3UCUEqmmEoWAq1pS4YIRDFOjn4DA9V0GFq0U8RlLo0U/37xcE7Tmtkn5HD4JPc7DftXHCO6Pr0QADReZDTychpPwzAZgbV5PV9/zT+mKx+FgFhK8hZiNs7PFQ0n2Swc/QqKTbp8I7S/u8BSr5vSLbD4=
+	t=1715396988; cv=none; b=bZReWEv5gZS17o3VZQ/IyLPA5lnZM8b7KDq8fV/bsqEHGNss2YmlgFItieE6tvGkPKwZFGHgR9gAb3Fg3qKTDWuyMcRjG/53oaPmwUUqRQXxjezz22HuGwpHpaUQWDds/EN39nbvFCcLXweU2HYQCVZwY2I95+l7kkStoVUBI5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715396841; c=relaxed/simple;
-	bh=tUeUKCC+BkSiygOzJE+EPuwly0aTyMTDrm5LYkAqvWQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=neZEAGvubm4PDHwVosQTeshEE0T9+FvLVvy1a0W8dL5AURwepYmV3Xh4stDc17O5OGqLRzqCoNAkJnQEKFE28rZQzgdjuO5LsdjnQvkagzGbU+FjbEaHhyB30zWiGjLlOaK/a2/mazd9MEPZjCIq+qJNJsI4ISj0QK64+4nxy4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8h3e0jt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309C9C113CC;
-	Sat, 11 May 2024 03:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715396841;
-	bh=tUeUKCC+BkSiygOzJE+EPuwly0aTyMTDrm5LYkAqvWQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V8h3e0jtRgzKJdaC4yEIYUqNETVyMAr8trAIbZSSOSvsCMa4TnOnhHB72sWMMcwzg
-	 7hIBpdHQVB/mMCxDVijc2JDYihUcHlFkAb0mGQddTpN6R9kp7Z99hdeAoUrV0ufK/X
-	 3imq6XDSOXCelX74vL20KR3FrgFzKiu4R+dq1tpfdS5ynDIhI+pXoXKrZxB4NY3FDb
-	 /YJ8FtKKF7kVexhvlsWKjuot++gUd5tXqFVAWI7AuVKaqTYHAwHpJQzcMvcIEDA/uF
-	 oWnxOTZQBnxj6PzCTT+CawEZVh41W5s+4TLOI+KnJhsxv+VSGhj5/MTq3jhIcZuVUW
-	 /NH7CGjEzmn5w==
-Message-ID: <02a4e80f-a146-4862-8399-3db42979b8fb@kernel.org>
-Date: Sat, 11 May 2024 11:07:12 +0800
+	s=arc-20240116; t=1715396988; c=relaxed/simple;
+	bh=6foHhr0TW03dqZnZz4QwEWuvDSFW4bvHJil6jrBMqYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TineHVPCYoMoxIIprZjugbGQVUEjctaUosZv1Y5VXyVaqR8bqANeb5K3BAWgSDSEJjOTqsOWBaAuOqszPGs3+HZLfWH9H6YT+OI9GCwqT2kOuIqHdZB/yANoW/SieCn3j2WrqLilWybGT8VSUx+jxL9LEPtGasJBUcSXA8Lqbfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2H2/E7/; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-36c90b7f4c8so12425395ab.2;
+        Fri, 10 May 2024 20:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715396986; x=1716001786; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SBy4V17h0PUaZteQlrBkOjrENzi/JrQGSd8HxxR/cEs=;
+        b=D2H2/E7/LCdNVOBodwzjI/AkP7QllTo2OKqin73FLXrzdaZ1MWxN5ochqtIJLiELC5
+         No9UvtPAd8vaJG6RHN4hI/97yxfi7Pk89yaZbKd/e6HrLpML2R9aMDKzVr5ovJOO8ALU
+         9RyXf2RRwzUyIQdoNNu4b9kgG+8wlvkW/QFm2+3eNPNT1nCnFEvDSLzC+1QWfxCAKyvP
+         FIwkm3lRWFC1G1+bTXp5xcGmqBGgIMty8wqlsMrHsQb+JQflYnBnjO4JTB/yND3jpZfW
+         SWJ8muPGf+XxKAm/MDHPMnx09V3au+n9SsKg1bJF03FBKB/CIPJC8WBiDhLxqG8XyroD
+         W2Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715396986; x=1716001786;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SBy4V17h0PUaZteQlrBkOjrENzi/JrQGSd8HxxR/cEs=;
+        b=f8lHPyFVAIWcaQiHmUIsdbbr53P9VZitOBVmFESNpvglFuFSOn9g5SwwMaA1cR6rmE
+         u3Erq80sxzBAQoLB7vE3dCwkKZ/4Xh9NxCLSA3Lqx6uIAHJWouQq/rRGmxUqvfT9F9vT
+         CSqExOl4gBMKD/5Zaxv1G0LSTRI70+hbngjBBC/wqv0kfYI9varwaynd8jUflRyFvXqL
+         mPLs+GY1ty2gAajdI98UhDK416tVnSe+cih8vrzELBD1nXujpZVgqGzLiCGjBbf6u6YD
+         0xZJyM5MKVUjG7kGnu7ftx3JtMAZ1BkdW13b435h8nAWk6DUS+yDR/nS29+x2ne77jut
+         MKqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDMJ8LbcXDIE8FC/32ZxyXefZc1qIGQ6rYdo+qHN1Nzh1XAyK+GrHFPyM4wLv5OfUVBoJ1efWsTlHne4aYshZkP/C7h/6zPwxONEWl3+DiyJWQL2ziL5W5b9nokGNYZPhKNnIie8uq
+X-Gm-Message-State: AOJu0Yx6eVGNkxZY0wucP5qmJYDqQ2RRm0V2bTGR0se3gSlgXi8fRp7v
+	B0PUEh5CscIyAchB5HgJy64ie2twIY2i69UDT6lLPK1zKx6BIrc7sfqZMIeXIH6oIbtD0Mf60W1
+	08MXDQRVBnswQT/bA5VyMYqs3HrHpXXkL
+X-Google-Smtp-Source: AGHT+IFAl8Imeh2Cw6mt8rj29u6mx+HsiO9rMvuNvGJtkcayPcGmWUCclun7KpkAcN/gXqB1rbwV1dvJxtod4qYA7Yw=
+X-Received: by 2002:a05:6e02:1aa7:b0:369:bdb3:4f62 with SMTP id
+ e9e14a558f8ab-36cc1465e31mr55488195ab.18.1715396985801; Fri, 10 May 2024
+ 20:09:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for inline_data
- inode
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
-References: <20240506103313.773503-1-chao@kernel.org>
- <20240506103313.773503-3-chao@kernel.org> <ZjzxWp4-wmpCzBeB@google.com>
- <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
- <Zj2WWpHmHaWKbDgG@google.com>
- <948ecc86-63f5-48bb-b71c-61d57cbf446c@kernel.org>
- <Zj6-Fl5OQrHyg0g_@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <Zj6-Fl5OQrHyg0g_@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1714966502-27784-1-git-send-email-shengjiu.wang@nxp.com>
+ <Zjkftwr4/6KV39sD@lizhi-Precision-Tower-5810> <CAA+D8AN9kFdgojkrR0ORUyrtOW=JOn0AfbXFTJ70RE7JxgA2pA@mail.gmail.com>
+ <Zjmi4Qc3C3OYJU5n@lizhi-Precision-Tower-5810> <CAA+D8AMC41oUEWLuHb-f=U9pEzqWYon22McvT4MucYK=ajNuFQ@mail.gmail.com>
+ <Zjmn1jRW2E2kpSlI@lizhi-Precision-Tower-5810> <CAA+D8ANuNtaC90fHtGoYiofPTLQHcyCm0p_dcsYTVgT7gsKtMg@mail.gmail.com>
+ <Zj5psV6ZIFZ/OPth@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zj5psV6ZIFZ/OPth@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Sat, 11 May 2024 11:09:34 +0800
+Message-ID: <CAA+D8ANgev0o0Z9HkmOnNuw5hACU7FgCDHFF6sbvXLd6Vd2T3w@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: imx: imx8mp: Add delay after power up
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	imx@lists.linux.dev, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/5/11 8:38, Jaegeuk Kim wrote:
-> On 05/10, Chao Yu wrote:
->> On 2024/5/10 11:36, Jaegeuk Kim wrote:
->>> On 05/10, Chao Yu wrote:
->>>> On 2024/5/9 23:52, Jaegeuk Kim wrote:
->>>>> On 05/06, Chao Yu wrote:
->>>>>> syzbot reports a f2fs bug as below:
->>>>>>
->>>>>> ------------[ cut here ]------------
->>>>>> kernel BUG at fs/f2fs/inline.c:258!
->>>>>> CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
->>>>>> RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
->>>>>> Call Trace:
->>>>>>     f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
->>>>>>     f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
->>>>>>     __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
->>>>>>     f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
->>>>>>     do_writepages+0x35b/0x870 mm/page-writeback.c:2612
->>>>>>     __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
->>>>>>     writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
->>>>>>     wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
->>>>>>     wb_do_writeback fs/fs-writeback.c:2264 [inline]
->>>>>>     wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
->>>>>>     process_one_work kernel/workqueue.c:3254 [inline]
->>>>>>     process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
->>>>>>     worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
->>>>>>     kthread+0x2f2/0x390 kernel/kthread.c:388
->>>>>>     ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->>>>>>     ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->>>>>>
->>>>>> The root cause is: inline_data inode can be fuzzed, so that there may
->>>>>> be valid blkaddr in its direct node, once f2fs triggers background GC
->>>>>> to migrate the block, it will hit f2fs_bug_on() during dirty page
->>>>>> writeback.
->>>>>>
->>>>>> Let's add sanity check on i_nid field for inline_data inode, meanwhile,
->>>>>> forbid to migrate inline_data inode's data block to fix this issue.
->>>>>>
->>>>>> Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
->>>>>> Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
->>>>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>>>> ---
->>>>>>     fs/f2fs/f2fs.h   |  2 +-
->>>>>>     fs/f2fs/gc.c     |  6 ++++++
->>>>>>     fs/f2fs/inline.c | 17 ++++++++++++++++-
->>>>>>     fs/f2fs/inode.c  |  2 +-
->>>>>>     4 files changed, 24 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>> index fced2b7652f4..c876813b5532 100644
->>>>>> --- a/fs/f2fs/f2fs.h
->>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>> @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
->>>>>>      * inline.c
->>>>>>      */
->>>>>>     bool f2fs_may_inline_data(struct inode *inode);
->>>>>> -bool f2fs_sanity_check_inline_data(struct inode *inode);
->>>>>> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
->>>>>>     bool f2fs_may_inline_dentry(struct inode *inode);
->>>>>>     void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
->>>>>>     void f2fs_truncate_inline_inode(struct inode *inode,
->>>>>> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
->>>>>> index e86c7f01539a..041957750478 100644
->>>>>> --- a/fs/f2fs/gc.c
->>>>>> +++ b/fs/f2fs/gc.c
->>>>>> @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
->>>>>>     				continue;
->>>>>>     			}
->>>>>> +			if (f2fs_has_inline_data(inode)) {
->>>>>> +				iput(inode);
->>>>>> +				set_sbi_flag(sbi, SBI_NEED_FSCK);
->>>>>> +				continue;
->>>>>
->>>>> Any race condtion to get this as false alarm?
->>>>
->>>> Since there is no reproducer for the bug, I doubt it was caused by metadata
->>>> fuzzing, something like this:
->>>>
->>>> - inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
->>>> - SIT/SSA entry of the block is valid;
->>>> - background GC migrates the block;
->>>> - kworker writeback it, and trigger the bug_on().
->>>
->>> Wasn't detected by sanity_check_inode?
->>
->> I fuzzed non-inline inode w/ below metadata fields:
->> - i_blocks = 1
->> - i_size = 2048
->> - i_inline |= 0x02
->>
->> sanity_check_inode() doesn't complain.
-> 
-> I mean, the below sanity_check_inode() can cover the fuzzed case? I'm wondering
+On Sat, May 11, 2024 at 2:38=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Tue, May 07, 2024 at 04:04:14PM +0800, Shengjiu Wang wrote:
+> > On Tue, May 7, 2024 at 12:02=E2=80=AFPM Frank Li <Frank.li@nxp.com> wro=
+te:
+> > >
+> > > On Tue, May 07, 2024 at 11:44:32AM +0800, Shengjiu Wang wrote:
+> > > > On Tue, May 7, 2024 at 11:41=E2=80=AFAM Frank Li <Frank.li@nxp.com>=
+ wrote:
+> > > > >
+> > > > > On Tue, May 07, 2024 at 09:44:19AM +0800, Shengjiu Wang wrote:
+> > > > > > On Tue, May 7, 2024 at 2:22=E2=80=AFAM Frank Li <Frank.li@nxp.c=
+om> wrote:
+> > > > > > >
+> > > > > > > On Mon, May 06, 2024 at 11:35:02AM +0800, Shengjiu Wang wrote=
+:
+> > > > > > > > According to comments in drivers/pmdomain/imx/gpcv2.c:
+> > > > > > > >
+> > > > > > > >       /* request the ADB400 to power up */
+> > > > > > > >       if (domain->bits.hskreq) {
+> > > > > > > >               regmap_update_bits(domain->regmap, domain->re=
+gs->hsk,
+> > > > > > > >                                  domain->bits.hskreq, domai=
+n->bits.hskreq);
+> > > > > > > >
+> > > > > > > >               /*
+> > > > > > > >                * ret =3D regmap_read_poll_timeout(domain->r=
+egmap, domain->regs->hsk, reg_val,
+> > > > > > > >                *                                (reg_val & =
+domain->bits.hskack), 0,
+> > > > > > > >                *                                USEC_PER_MS=
+EC);
+> > > > > > > >                * Technically we need the commented code to =
+wait handshake. But that needs
+> > > > > > > >                * the BLK-CTL module BUS clk-en bit being se=
+t.
+> > > > > > > >                *
+> > > > > > > >                * There is a separate BLK-CTL module and we =
+will have such a driver for it,
+> > > > > > > >                * that driver will set the BUS clk-en bit an=
+d handshake will be triggered
+> > > > > > > >                * automatically there. Just add a delay and =
+suppose the handshake finish
+> > > > > > > >                * after that.
+> > > > > > > >                */
+> > > > > > > >       }
+> > > > > > > >
+> > > > > > > > The BLK-CTL module needs to add delay to wait for a handsha=
+ke request finished
+> > > > > > > > before accessing registers, which is just after the enablin=
+g of the power domain.
+> > > > > > > >
+> > > > > > > > Otherwise there is error:
+> > > > > > > >
+> > > > > > > > [    2.181035] Kernel panic - not syncing: Asynchronous SEr=
+ror Interrupt
+> > > > > > > > [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not taint=
+ed 6.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
+> > > > > > > > [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
+> > > > > > > > [    2.181050] Workqueue: events_unbound deferred_probe_wor=
+k_func
+> > > > > > > > [    2.181064] Call trace:
+> > > > > > > > [...]
+> > > > > > > > [    2.181142]  arm64_serror_panic+0x6c/0x78
+> > > > > > > > [    2.181149]  do_serror+0x3c/0x70
+> > > > > > > > [    2.181157]  el1h_64_error_handler+0x30/0x48
+> > > > > > > > [    2.181164]  el1h_64_error+0x64/0x68
+> > > > > > > > [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x4=
+4
+> > > > > > > > [    2.181183]  __genpd_runtime_resume+0x30/0x80
+> > > > > > > > [    2.181195]  genpd_runtime_resume+0x110/0x244
+> > > > > > > > [    2.181205]  __rpm_callback+0x48/0x1d8
+> > > > > > > > [    2.181213]  rpm_callback+0x68/0x74
+> > > > > > > > [    2.181224]  rpm_resume+0x468/0x6c0
+> > > > > > > > [    2.181234]  __pm_runtime_resume+0x50/0x94
+> > > > > > > > [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
+> > > > > > > > [    2.181258]  __driver_probe_device+0x48/0x12c
+> > > > > > > > [    2.181268]  driver_probe_device+0xd8/0x15c
+> > > > > > > > [    2.181278]  __device_attach_driver+0xb8/0x134
+> > > > > > > > [    2.181290]  bus_for_each_drv+0x84/0xe0
+> > > > > > > > [    2.181302]  __device_attach+0x9c/0x188
+> > > > > > > > [    2.181312]  device_initial_probe+0x14/0x20
+> > > > > > > > [    2.181323]  bus_probe_device+0xac/0xb0
+> > > > > > > > [    2.181334]  deferred_probe_work_func+0x88/0xc0
+> > > > > > > > [    2.181344]  process_one_work+0x150/0x290
+> > > > > > > > [    2.181357]  worker_thread+0x2f8/0x408
+> > > > > > > > [    2.181370]  kthread+0x110/0x114
+> > > > > > > > [    2.181381]  ret_from_fork+0x10/0x20
+> > > > > > > > [    2.181391] SMP: stopping secondary CPUs
+> > > > > > > >
+> > > > > > > > Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime supp=
+ort for power saving")
+> > > > > > > > Reported-by: Francesco Dolcini <francesco@dolcini.it>
+> > > > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > > > > > Revewied-by: Peng Fan <peng.fan@nxp.com>
+> > > > > > > > ---
+> > > > > > > > changes in v2:
+> > > > > > > > - reduce size of panic log in commit message
+> > > > > > > >
+> > > > > > > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 7 +++++++
+> > > > > > > >  1 file changed, 7 insertions(+)
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/driver=
+s/clk/imx/clk-imx8mp-audiomix.c
+> > > > > > > > index b381d6f784c8..ae2c0f254225 100644
+> > > > > > > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > > > > > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > > > > > > @@ -6,6 +6,7 @@
+> > > > > > > >   */
+> > > > > > > >
+> > > > > > > >  #include <linux/clk-provider.h>
+> > > > > > > > +#include <linux/delay.h>
+> > > > > > > >  #include <linux/device.h>
+> > > > > > > >  #include <linux/io.h>
+> > > > > > > >  #include <linux/mod_devicetable.h>
+> > > > > > > > @@ -360,6 +361,12 @@ static int clk_imx8mp_audiomix_runtime=
+_suspend(struct device *dev)
+> > > > > > > >
+> > > > > > > >  static int clk_imx8mp_audiomix_runtime_resume(struct devic=
+e *dev)
+> > > > > > > >  {
+> > > > > > > > +     /*
+> > > > > > > > +      * According to the drivers/pmdomain/imx/gpcv2.c
+> > > > > > > > +      * need to wait for handshake request to propagate
+> > > > > > > > +      */
+> > > > > > > > +     udelay(5);
+> > > > > > > > +
+> > > > > > >
+> > > > > > > Did you address the issue I comments at v1?
+> > > > > > > It should not fix at here, I think it should be gpcv2.c to de=
+lay 5us.
+> > > > > >
+> > > > > > Other BLK CTRL drivers already delay 5us in its own drivers, if
+> > > > > > add delay in gpcv2.c, for these drivers, it will delay 10us tot=
+ally.
+> > > > >
+> > > > > We should go forward as correct direction. If udelay should be gp=
+cv2.c,
+> > > > > it should be there and remove other udelay in BLK CTRL drivers gr=
+adually.
+> > > > >
+> > > > With Peng's reply:
+> > > >
+> > > > "No. Because BLK CTRL enable BUS_EN, before enable BUS_EN, udelay d=
+oes
+> > > > not help. For the audiomix, move to gpcv2 would work, but gpcv2 is
+> > > > not only for i.MX8MP audiomix. For mixes, default not enable BUS_EN
+> > > > after power on, the udelay must be in blk ctrl driver."
+> > > >
+> > > > So gpcv2.c is not correct place for all BLK CTRL drivers.
+> > >
+> > > where BLK-CTRL driver source code?
+> >
+> > drivers/pmdomain/imx/imx8m-blk-ctrl.c
+> > drivers/pmdomain/imx/imx8mp-blk-ctrl.c
+> > drivers/pmdomain/imx/imx93-blk-ctrl.c
+>
+> I still think it should put in gpcv2.c. Call power_on/off happen at very
+> low frequency. Even there are additional 5us delay for other BLK-CTRL
+> drivers, it will tiny impact to system performance. It is not worth to ad=
+d
+> additonal software check to disingiush these two cases.
+>
+> But correct power on is more important.
+>
+> So readl() follow a udelay(5) is more important then additional 5us delay
+> for other BLK-CTRL driver since there are many 5us delay already in gpcv2=
+.
+>
 
-I didn't figure out a generic way in sanity_check_inode() to catch all fuzzed cases.
+I will send another v3 to gpcv2.c.  Let more people to review.
 
-e.g.
-case #1
-- blkaddr, its dnode, SSA and SIT are consistent
-- dnode.footer.ino points to inline inode
-- inline inode doesn't link to the donde
-
-Something like fuzzed special file, please check details in below commit:
-
-9056d6489f5a ("f2fs: fix to do sanity check on inode type during garbage collection")
-
-case #2
-- blkaddr, its dnode, SSA and SIT are consistent
-- blkaddr locates in inline inode's i_addr
-
-Thanks,
-
-> whether we really need to check it in the gc path.
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thoughts?
->>>>
->>>> Thanks,
->>>>
->>>>>
->>>>>> +			}
->>>>>> +
->>>>>>     			err = f2fs_gc_pinned_control(inode, gc_type, segno);
->>>>>>     			if (err == -EAGAIN) {
->>>>>>     				iput(inode);
->>>>>> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
->>>>>> index ac00423f117b..067600fed3d4 100644
->>>>>> --- a/fs/f2fs/inline.c
->>>>>> +++ b/fs/f2fs/inline.c
->>>>>> @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
->>>>>>     	return !f2fs_post_read_required(inode);
->>>>>>     }
->>>>>> -bool f2fs_sanity_check_inline_data(struct inode *inode)
->>>>>> +static bool has_node_blocks(struct inode *inode, struct page *ipage)
->>>>>> +{
->>>>>> +	struct f2fs_inode *ri = F2FS_INODE(ipage);
->>>>>> +	int i;
->>>>>> +
->>>>>> +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
->>>>>> +		if (ri->i_nid[i])
->>>>>> +			return true;
->>>>>> +	}
->>>>>> +	return false;
->>>>>> +}
->>>>>> +
->>>>>> +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
->>>>>>     {
->>>>>>     	if (!f2fs_has_inline_data(inode))
->>>>>>     		return false;
->>>>>> +	if (has_node_blocks(inode, ipage))
->>>>>> +		return false;
->>>>>> +
->>>>>>     	if (!support_inline_data(inode))
->>>>>>     		return true;
->>>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>>>> index c26effdce9aa..1423cd27a477 100644
->>>>>> --- a/fs/f2fs/inode.c
->>>>>> +++ b/fs/f2fs/inode.c
->>>>>> @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->>>>>>     		}
->>>>>>     	}
->>>>>> -	if (f2fs_sanity_check_inline_data(inode)) {
->>>>>> +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
->>>>>>     		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
->>>>>>     			  __func__, inode->i_ino, inode->i_mode);
->>>>>>     		return false;
->>>>>> -- 
->>>>>> 2.40.1
+best regards
+Shengjiu Wang
+> Frank
+>
+> >
+> > Best regards
+> > Shengjiu Wang
+> > >
+> > > even if put clk_imx8mp_audiomix_runtime_resume(), it need read any
+> > > register before udelay. all regiser read and write is strong ordered.
+> > > when get value from a register, all previous write must be done.
+> > >
+> > > all udelay (5) in gpcv2 may not delay 5us at all.
+> > >
+> > > Frank
+> > > >
+> > > > Best regards
+> > > > Shengjiu Wang
+> > > >
+> > > > > If sometime found 5us is not enough, need change to 6us, we just =
+need
+> > > > > change at one place.
+> > > > >
+> > > > > Frank
+> > > > >
+> > > > > >
+> > > > > > Best regards
+> > > > > > Shengjiu Wang
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > >
+> > > > > > > Frank
+> > > > > > >
+> > > > > > > >       clk_imx8mp_audiomix_save_restore(dev, false);
+> > > > > > > >
+> > > > > > > >       return 0;
+> > > > > > > > --
+> > > > > > > > 2.34.1
+> > > > > > > >
 
