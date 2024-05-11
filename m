@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-176342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562CD8C2E38
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:54:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6938C2E2F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:52:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFA31F2211F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19AFD1C2123B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27AD144C86;
-	Sat, 11 May 2024 00:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78221643A;
+	Sat, 11 May 2024 00:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKfmjuB/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgQp9IR+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AED212B87
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A3EE576
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715388634; cv=none; b=Ah4yb95qlVop25++lBGw4Hz+T35O8lL6ALuMrj0mo4O/lWbW8Ave9hRIxCZvPoQ8nowTnZLjjY+YG9PwnNVFIoKIsmPNURjUKBOEMBi9CV9cGx64QxVJeDcsAFletc6ggtkau0k5vPY+haE4Oo/yYtwE3YkWskyXL+fbQSV4hX4=
+	t=1715388634; cv=none; b=I0a1EJPiS9dsoRYMeuTW56DaehgVnN8fSy+97/bZWA6jIxKPVmIaF4K2XvKt8CS+6f7NGifBwZ6RteH9zsPwSRTYFZHjf4dnhdTp2yG5upcm3bWeyJzJBsQz+b4tYp99vdNdKU0e5mv+tRcOZ2CcFF8Yurooq6cTxyEez7J9wI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715388634; c=relaxed/simple;
-	bh=f/QziGJMQfc3AVEjvIb2SXkPaytTiSIZVj8Z4dQuuV0=;
+	bh=UKEe94oVWtgpVuykgNAFFHHsNeG3y+btMC3fbZTqcSE=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XaigbC5L4UiHDHwLEq+iqk2DGwck/P+jiykUIockD+Z4JG4jVHbBD7xtVM6heUxJnEKOx735fJ53QKBDO0MOt0kWT1Mg11YGa6TBtmOfZxMlUuNAgd/WvES/d/rggh1vQd8v35d0ued+wysFxQlxk91+LIKDfJB4hqUFHZa21Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKfmjuB/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 01859C4AF10;
-	Sat, 11 May 2024 00:50:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=Wx/yZaI7aVQ5ffnR+r+VUODdDJCl1FM84UZ9xe7kh1/6LPIGF2XT3WAnAMHUtkjsnMduL/V+SEY4nSZpEEHZ3ZgVFnvB0ZGmA8YipJBcfrmKJWT70SXL27qGwv+iBpjuqvAoVfyMMUF4zfpFjAUFZtR9HEPsDatT8Bvngab6dMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgQp9IR+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C473AC32781;
+	Sat, 11 May 2024 00:50:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715388634;
-	bh=f/QziGJMQfc3AVEjvIb2SXkPaytTiSIZVj8Z4dQuuV0=;
+	s=k20201202; t=1715388633;
+	bh=UKEe94oVWtgpVuykgNAFFHHsNeG3y+btMC3fbZTqcSE=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=LKfmjuB/FrMY9Dza4ye4K5aty+xxhteXPrObXZ3zFb8GSxQwcVRPCiXY/TgiQ8kJC
-	 8y366RjZt6V2H4CsMAuY5Xntjgb7UcEnJJ4uNsPMh1uEwBV/Nh1teQhBY2xtF3cKIg
-	 qKblRdK+aRqjeetDfVLWXyo8Krqm0HTTEXfn71sF9p5oGybqt9jQiLQbSnKyX1OxBH
-	 9F1ckx4Won3+N4cuB57k/HRsm0jDPc4/DC1Iex/ckldSmhK8Sb5BMwnTjlidIRO36D
-	 urGIiMx0d6bVh2ioFgkqAt1LUpXjiPuiXGeuNcghcJOGjyCHcdpXEnNQvVNw8yrjy/
-	 0CuraQo5Lw7iA==
+	b=kgQp9IR+Juw1eQWt1C2pVudkxlg2safWvJve6KWaG4JbnOc/ZcpnYik10EJfTXZJv
+	 EMdZOxIvNN9kUPJFlUwwus83Cwh3nu+zOC+nUTISVuvfBdVuLR78f3MkiqQ91qD8ZS
+	 CmCfhCULoVGJOuNLtTmZVadiaj1g1j6mjZ3W5J1wGMU9A1xZ4UVA9qbRWYFZ3mZ9bX
+	 v+IaEWYPko8jhOUDteuXagZgf6D2oSiN8bWuVU9oc7IMDRJpCO0Tnwt8P7aSkmA66Z
+	 ajcd2oW3ZSQi/3+xlIaQurGTIc54SJQQkS6aJIorjDkS/xyFGM85fz4eSTgC907I4s
+	 HxxpLFJLmwuag==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E7716C32759;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AB1B1C32759;
 	Sat, 11 May 2024 00:50:33 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,34 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: remove redundant parameter in
- is_next_segment_free()
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on i_xattr_nid in
+ sanity_check_inode()
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <171538863394.11229.6682600182078372745.git-patchwork-notify@kernel.org>
+ <171538863369.11229.7576182573841260398.git-patchwork-notify@kernel.org>
 Date: Sat, 11 May 2024 00:50:33 +0000
-References: <20240425145528.2925372-1-zhaoyifan@sjtu.edu.cn>
-In-Reply-To: <20240425145528.2925372-1-zhaoyifan@sjtu.edu.cn>
-To: Yifan Zhao <zhaoyifan@sjtu.edu.cn>
-Cc: jaegeuk@kernel.org, chao@kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+References: <20240425085838.4032657-1-chao@kernel.org>
+In-Reply-To: <20240425085838.4032657-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, syzbot+3694e283cf5c40df6d14@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Thu, 25 Apr 2024 22:55:28 +0800 you wrote:
-> is_next_segment_free() takes a redundant `type` parameter. Remove it.
+On Thu, 25 Apr 2024 16:58:38 +0800 you wrote:
+> syzbot reports a kernel bug as below:
 > 
-> Signed-off-by: Yifan Zhao <zhaoyifan@sjtu.edu.cn>
-> ---
->  fs/f2fs/segment.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+> F2FS-fs (loop0): Mounted with checkpoint version = 48b305e4
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in f2fs_test_bit fs/f2fs/f2fs.h:2933 [inline]
+> BUG: KASAN: slab-out-of-bounds in current_nat_addr fs/f2fs/node.h:213 [inline]
+> BUG: KASAN: slab-out-of-bounds in f2fs_get_node_info+0xece/0x1200 fs/f2fs/node.c:600
+> Read of size 1 at addr ffff88807a58c76c by task syz-executor280/5076
+> 
+> [...]
 
 Here is the summary with links:
-  - [f2fs-dev] f2fs: remove redundant parameter in is_next_segment_free()
-    https://git.kernel.org/jaegeuk/f2fs/c/ecd69be71aad
+  - [f2fs-dev] f2fs: fix to do sanity check on i_xattr_nid in sanity_check_inode()
+    https://git.kernel.org/jaegeuk/f2fs/c/20faaf30e555
 
 You are awesome, thank you!
 -- 
