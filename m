@@ -1,174 +1,268 @@
-Return-Path: <linux-kernel+bounces-176445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE298C2FFF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:15:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0628C300E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95B6B22F1C
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:15:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 863561C21B9A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B93C136;
-	Sat, 11 May 2024 07:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQ8Umm6z"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA5DE56C;
+	Sat, 11 May 2024 07:31:24 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B9D5C89
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65543746E
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715411739; cv=none; b=Ry2ffvJN+YZ6pNApdHv6Sg7996tpCpJUmRIsI/A7RON94ZVKFOxoP+PHImlRPm5jC/nyYIlGz+EZtjJfzGHl1HkLyMGUP/v3LB040yFE1cdutlExVXQhN/Dca2QBzJrJIL7KKBRBwHFU9P5ZP2Z3VXBV6crrzzViPo5hgVhDFT0=
+	t=1715412684; cv=none; b=MPIkNc1p5T5/rjW1fNr3j12vp+aL1BFu3EmYb1E7YzJjtJ2OiWx1q5dEI0/zfQkZLcgQ9mgap5VKkFxKZrqDgqnJaUx1pIVEidjrbUpQlBUS2SwsIXYxWjHS7nDLcqmC0RMoHS2MqZUcdqV1MMasg7qp85+m1G8ekfDF81BScKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715411739; c=relaxed/simple;
-	bh=kP1V+EtzTHOEEdN5Tn2jtj1uoNnrhiy0O47cc8AcxA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0e43rQjw4UK/8FRIufuJfyJt4IAhLdMwYt0RcPmp4gHFlzC+bN3BnLAuc8j6wO8p4hBk1vTB+aT6fjcyhOMnLWbYI37gncW7U3lOpEq4Vk30bQqbwQxoJJrlEVVYOwPKhJkIiFO+FaJ5QPqZREmFoc7LQdE4vqjLY8CO3L73XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQ8Umm6z; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1eb24e3a2d9so25170175ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:15:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715411737; x=1716016537; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pN7vTSTZWouaFkH6aSeXVb/sXxzlUMYk7HqIZeYevwQ=;
-        b=bQ8Umm6zvhdZEy8vmaUvU2Iw+3U4Exz8vwTgIRHmU1+T2F04dp0en5kuEIdr+5tQzo
-         +k7bGjYcwQfTPZoIoQwrmCUzxfUwE54ypPLh4dgQhVYk48QK4F873xf5Sm6kzyHrMbqv
-         Xvrhfeuu2zU+u1viYA5UESzip+io/i7WdnsN38JPvgdV8fr5YrCJzqOJS5SguRw1843M
-         l9MTBCHS6/LZfI+Ql9sEZUvtDsJi1e8k9f5tb+R9ZdsX5s/pcFGLoLSNABEVUvClSFot
-         fbpKjfaCo6BLb9yjTEhJHdbRompR68Fx+q88r9bt3BTpcaiuPSAJfO1kteIcRVkkvWsI
-         9Jzw==
+	s=arc-20240116; t=1715412684; c=relaxed/simple;
+	bh=UBQWQ6I/sUhgEl48zUHpWpDSy/ONCK+e9qW3MQ9tG0M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=g71PpNbpCGGCS5kNMc/K+P1HfcvphG0USRjYT7wPJnk+Nhg9TByw1Hg0gc4V0inj9PyzoOSy4YTxePLv1wmvtz8VFxbFzi0pcJmvxahonyP3G33NHiUX6l486COpd9QzqY1lQU0Qx6v/lmSC4BzTxprhI9StWzKI9vQ/Pu+zPsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1c3c98401so60633839f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:31:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715411737; x=1716016537;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pN7vTSTZWouaFkH6aSeXVb/sXxzlUMYk7HqIZeYevwQ=;
-        b=od79fUjbrDryQYDB4nWwgr09JtbC4mbUx0cakGZ49fOpnJrPKSZPOJVO7Sil9VlkTq
-         qnxYIHb5u53f2hgXe+3vArapZB6JRy6Ve9gEVilGBVU+BeByAbnCcvBGlTJymEUjRnpr
-         6h2UVe0CRTfk4lCe9nB4KsRzGoeBAxde6X5QzNO53VnuFfhoqJJFsV5O1yKzywcqzjLf
-         e6/UwozkW1SKFVOLtL5pWzV3ItCwekpTkDxRF6PRkdWV6thsmdo2TpBihoaVguxCuS6A
-         ODUOqvLSs0QYTnc8hBpnoPH7Cx/JZvsaztl0AWwKbbpGIQdCBbVqouwZWqtqYKj6yKH/
-         7Z6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVa8LXw2gc938MK8NXRxhNKjPfQPhuWgE0+pIrYhiXmdseeRZ19IhYOBtCnYARaC4l/+L30rChhevWJImBwt77UGJ/UnNePwsPXY8Wv
-X-Gm-Message-State: AOJu0YzS8lP6syL+DWiksXqrvIx7PknE1xRyuCNnV+lMJ1Stbj93qY2m
-	i00m/27dJr6hWvgF/6aqXTWkFcLnc4kGzsdP7xSeyw2d/oDvWpi72Bw4sVj/7g==
-X-Google-Smtp-Source: AGHT+IEY+B1BkjgUqaJCKTMhy5yVKUSG7mNrjc92+kUQaGR7pn2oJDp9knykubItipbI04Y4Mn3Nog==
-X-Received: by 2002:a17:902:6542:b0:1eb:1240:1aea with SMTP id d9443c01a7336-1ef43d12749mr52124555ad.20.1715411736886;
-        Sat, 11 May 2024 00:15:36 -0700 (PDT)
-Received: from thinkpad ([220.158.156.38])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c0369f1sm43017055ad.185.2024.05.11.00.15.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 00:15:36 -0700 (PDT)
-Date: Sat, 11 May 2024 12:45:32 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, lukas@wunner.de,
-	mika.westerberg@linux.intel.com, Bjorn Helgaas <helgaas@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>
-Subject: Re: [PATCH v4 0/4] PCI: Allow D3Hot for PCI bridges in Devicetree
- based platforms
-Message-ID: <20240511071532.GC6672@thinkpad>
-References: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org>
+        d=1e100.net; s=20230601; t=1715412681; x=1716017481;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yBBeotwzoiTXU/b7t2lIcAInQUnhSMX5oUXUu76x1nw=;
+        b=FioT7yvGUK/elgvbamUPPBDVI8KXD8Jmi18ZL25Yh+egebiNigfBl4SqfBwKx23Z4J
+         6JHPPh+yh0QA2jbCi154BI18KwThgkuxXr7FSYQxOf6d1sNXtxOfO92Hi45z8WRkEXQn
+         lhPTGe7lqa4PslbFfKk39RJTgXN5p914YPqFDTrcqAdxxeKbKb639Lw3j0SLLuW+r0KW
+         mEua5yJKRE1zcbnb0C7Pz1guiHQS6fGFMg/t/mrxaNoLxUb/0+iIiIgyMGM02qz3IUM+
+         aHalNRoec/RnN3DX9h7YUtqR+aApRuYZODMTUN+Td/s8//CU68AJPLzc+Kwn3nxGjpYd
+         7BiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0zYaImTe1PEYTttJfVe9JuonIi83Jjeitw0Si+doMy4oVQi96UXKP/I3pyH8eG9k/o8vH6z22l53pWBEQtyLkGGNaepkflVUfMNHy
+X-Gm-Message-State: AOJu0Yy7F1Dnmoeby9gEGWl3mMYrHp/gIjNFTYUzsY/j6cttbCrSs8fz
+	hrUNeM9+vSJcBaRquhN6FoFxvKhhiaZSGK4cRCPoIxGQhZr80tBX2i481YbXCbdp4NiTqyVUQx0
+	VfdbS9bPaSjgkTMoYmHv7QE21C8GT6vMaPPM7Eo5CMvRGDkIZkw+AGw4=
+X-Google-Smtp-Source: AGHT+IFJW+3xqgQOufMxV8L9Th/abXFpuwPGXVqUmlnw97471Lbki9WX436tYYgii0lI0JaPSbCsGxHVozIlukWnBAv1zP9KPOm7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org>
+X-Received: by 2002:a05:6602:608c:b0:7de:3f44:a6fe with SMTP id
+ ca18e2360f4ac-7e1b519cfb4mr15320339f.1.1715412681541; Sat, 11 May 2024
+ 00:31:21 -0700 (PDT)
+Date: Sat, 11 May 2024 00:31:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000086d9cb061828a317@google.com>
+Subject: [syzbot] [bpf?] [net?] INFO: rcu detected stall in handle_softirqs
+From: syzbot <syzbot+afcbef13b9fa6ae41f9a@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bigeasy@linutronix.de, 
+	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net, 
+	eddyz87@gmail.com, edumazet@google.com, haoluo@google.com, hawk@kernel.org, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kerneljasonxing@gmail.com, 
+	kpsingh@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	martin.lau@linux.dev, netdev@vger.kernel.org, pabeni@redhat.com, 
+	sdf@google.com, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, yhs@fb.com, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Mar 26, 2024 at 04:18:16PM +0530, Manivannan Sadhasivam wrote:
-> Hi,
-> 
-> This series allows D3Hot for PCI bridges in Devicetree based platforms.
-> Even though most of the bridges in Devicetree platforms support D3Hot, PCI
-> core will allow D3Hot only when one of the following conditions are met:
-> 
-> 1. Platform is ACPI based
-> 2. Thunderbolt controller is used
-> 3. pcie_port_pm=force passed in cmdline
-> 
-> While options 1 and 2 do not apply to most of the DT based platforms,
-> option 3 will make the life harder for distro maintainers.
-> 
-> Initially, I tried to fix this issue by using a Devicetree property [1], but
-> that was rejected by Bjorn and it was concluded that D3Hot should be allowed by
-> default for all the Devicetree based platforms.
-> 
-> During the review of v3 series, Bjorn noted several shortcomings of the
-> pci_bridge_d3_possible() API [2] and I tried to address them in this series as
-> well.
-> 
-> But please note that the patches 2 and 3 needs closer review from ACPI and x86
-> folks since I've splitted the D3Hot and D3Cold handling based on my little
-> understanding of the code.
-> 
-> Testing
-> =======
-> 
-> This series is tested on SM8450 based development board on top of [3].
-> 
+Hello,
 
-Bjorn, a gently ping on this series.
+syzbot found the following issue on:
 
-- Mani
+HEAD commit:    ee5b455b0ada Merge tag 'slab-for-6.9-rc7-fixes' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=151c534b180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7144b4fe7fbf5900
+dashboard link: https://syzkaller.appspot.com/bug?extid=afcbef13b9fa6ae41f9a
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12618698980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=105fcb4b180000
 
-> - Mani
-> 
-> [1] https://lore.kernel.org/linux-pci/20240214-pcie-qcom-bridge-v3-1-3a713bbc1fd7@linaro.org/
-> [2] https://lore.kernel.org/linux-pci/20240305175107.GA539676@bhelgaas/
-> [3] https://lore.kernel.org/linux-arm-msm/20240321-pcie-qcom-bridge-dts-v2-0-1eb790c53e43@linaro.org/
-> 
-> Changes in v4:
-> - Added pci_bridge_d3_possible() rework based on comments from Bjorn
-> - Got rid of the DT property and allowed D3Hot by default on all DT platforms
-> 
-> Changes in v3:
-> - Fixed kdoc, used of_property_present() and dev_of_node() (Lukas)
-> - Link to v2: https://lore.kernel.org/r/20240214-pcie-qcom-bridge-v2-1-9dd6dbb1b817@linaro.org
-> 
-> Changes in v2:
-> - Switched to DT based approach as suggested by Lukas.
-> - Link to v1: https://lore.kernel.org/r/20240202-pcie-qcom-bridge-v1-0-46d7789836c0@linaro.org
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> Manivannan Sadhasivam (4):
->       PCI/portdrv: Make use of pci_dev::bridge_d3 for checking the D3 possibility
->       PCI: Rename pci_bridge_d3_possible() to pci_bridge_d3_allowed()
->       PCI: Decouple D3Hot and D3Cold handling for bridges
->       PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
-> 
->  drivers/pci/bus.c          |  2 +-
->  drivers/pci/pci-acpi.c     |  9 ++---
->  drivers/pci/pci-sysfs.c    |  2 +-
->  drivers/pci/pci.c          | 90 ++++++++++++++++++++++++++++++++--------------
->  drivers/pci/pci.h          | 12 ++++---
->  drivers/pci/pcie/portdrv.c | 16 ++++-----
->  drivers/pci/remove.c       |  2 +-
->  include/linux/pci.h        |  3 +-
->  8 files changed, 89 insertions(+), 47 deletions(-)
-> ---
-> base-commit: 705c1da8fa4816fb0159b5602fef1df5946a3ee2
-> change-id: 20240320-pci-bridge-d3-092e2beac438
-> 
-> Best regards,
-> -- 
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b58fa6d8c032/disk-ee5b455b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fe2cdcfb1b25/vmlinux-ee5b455b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9347ec3b62cf/bzImage-ee5b455b.xz
 
--- 
-மணிவண்ணன் சதாசிவம்
+The issue was bisected to:
+
+commit d15121be7485655129101f3960ae6add40204463
+Author: Paolo Abeni <pabeni@redhat.com>
+Date:   Mon May 8 06:17:44 2023 +0000
+
+    Revert "softirq: Let ksoftirqd do its job"
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1693d03f180000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1593d03f180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1193d03f180000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+afcbef13b9fa6ae41f9a@syzkaller.appspotmail.com
+Fixes: d15121be7485 ("Revert "softirq: Let ksoftirqd do its job"")
+
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5144
+rcu: 	(detected by 1, t=10503 jiffies, g=11073, q=192 ncpus=2)
+task:syz-executor172 state:R  running task     stack:27056 pid:5144  tgid:5144  ppid:5099   flags:0x00004002
+Call Trace:
+ <IRQ>
+ sched_show_task kernel/sched/core.c:9192 [inline]
+ sched_show_task+0x42e/0x650 kernel/sched/core.c:9166
+ rcu_print_detail_task_stall_rnp kernel/rcu/tree_stall.h:262 [inline]
+ print_other_cpu_stall kernel/rcu/tree_stall.h:637 [inline]
+ check_cpu_stall kernel/rcu/tree_stall.h:796 [inline]
+ rcu_pending kernel/rcu/tree.c:3934 [inline]
+ rcu_sched_clock_irq+0x2613/0x3100 kernel/rcu/tree.c:2297
+ update_process_times+0x175/0x220 kernel/time/timer.c:2486
+ tick_sched_handle kernel/time/tick-sched.c:276 [inline]
+ tick_nohz_handler+0x376/0x530 kernel/time/tick-sched.c:297
+ __run_hrtimer kernel/time/hrtimer.c:1692 [inline]
+ __hrtimer_run_queues+0x657/0xcc0 kernel/time/hrtimer.c:1756
+ hrtimer_interrupt+0x31b/0x800 kernel/time/hrtimer.c:1818
+ local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
+ __sysvec_apic_timer_interrupt+0x10f/0x450 arch/x86/kernel/apic/apic.c:1049
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x43/0xb0 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
+RIP: 0010:_raw_spin_unlock_irq+0x29/0x50 kernel/locking/spinlock.c:202
+Code: 90 f3 0f 1e fa 53 48 8b 74 24 08 48 89 fb 48 83 c7 18 e8 6a 98 8c f6 48 89 df e8 c2 14 8d f6 e8 ed 98 b5 f6 fb bf 01 00 00 00 <e8> b2 4f 7e f6 65 8b 05 b3 88 24 75 85 c0 74 06 5b c3 cc cc cc cc
+RSP: 0018:ffffc90000a08d18 EFLAGS: 00000202
+RAX: 000000000184d5fe RBX: ffff8880b95401d0 RCX: 1ffffffff1f3e269
+RDX: 0000000000000000 RSI: ffffffff8b0cae00 RDI: 0000000000000001
+RBP: ffff8880b9540210 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8f9f55d7 R11: 0000000000000001 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000040 R15: ffff8880b95401b8
+ spin_unlock_irq include/linux/spinlock.h:401 [inline]
+ rps_unlock_irq_enable net/core/dev.c:229 [inline]
+ process_backlog+0x3e7/0x6f0 net/core/dev.c:6011
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6638
+ napi_poll net/core/dev.c:6707 [inline]
+ net_rx_action+0x9ad/0xf10 net/core/dev.c:6822
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ bpf_test_run+0x335/0x9e0 net/bpf/test_run.c:426
+ bpf_prog_test_run_skb+0xb17/0x1db0 net/bpf/test_run.c:1058
+ bpf_prog_test_run kernel/bpf/syscall.c:4269 [inline]
+ __sys_bpf+0xd56/0x4b40 kernel/bpf/syscall.c:5678
+ __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
+ __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:5765
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2466eba819
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5f447668 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2466eba819
+RDX: 0000000000000050 RSI: 0000000020000080 RDI: 000000000000000a
+RBP: 0000000000000000 R08: 0000000100000000 R09: 0000000100000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+rcu: rcu_preempt kthread starved for 10546 jiffies! g11073 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
+rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+rcu: RCU grace-period kthread stack dump:
+task:rcu_preempt     state:R  running task     stack:28736 pid:16    tgid:16    ppid:2      flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5409 [inline]
+ __schedule+0xf15/0x5d00 kernel/sched/core.c:6746
+ __schedule_loop kernel/sched/core.c:6823 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6838
+ schedule_timeout+0x136/0x2a0 kernel/time/timer.c:2582
+ rcu_gp_fqs_loop+0x1eb/0xb00 kernel/rcu/tree.c:1663
+ rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:1862
+ kthread+0x2c1/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+rcu: Stack dump where RCU GP kthread last ran:
+CPU: 1 PID: 5144 Comm: syz-executor172 Not tainted 6.9.0-rc7-syzkaller-00008-gee5b455b0ada #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:__raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
+RIP: 0010:_raw_spin_unlock_irq+0x29/0x50 kernel/locking/spinlock.c:202
+Code: 90 f3 0f 1e fa 53 48 8b 74 24 08 48 89 fb 48 83 c7 18 e8 6a 98 8c f6 48 89 df e8 c2 14 8d f6 e8 ed 98 b5 f6 fb bf 01 00 00 00 <e8> b2 4f 7e f6 65 8b 05 b3 88 24 75 85 c0 74 06 5b c3 cc cc cc cc
+RSP: 0018:ffffc90000a08d18 EFLAGS: 00000202
+RAX: 000000000184d5fe RBX: ffff8880b95401d0 RCX: 1ffffffff1f3e269
+RDX: 0000000000000000 RSI: ffffffff8b0cae00 RDI: 0000000000000001
+RBP: ffff8880b9540210 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8f9f55d7 R11: 0000000000000001 R12: dffffc0000000000
+R13: 0000000000000001 R14: 0000000000000040 R15: ffff8880b95401b8
+FS:  00005555756a8380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2466f370f0 CR3: 000000007c110000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ spin_unlock_irq include/linux/spinlock.h:401 [inline]
+ rps_unlock_irq_enable net/core/dev.c:229 [inline]
+ process_backlog+0x3e7/0x6f0 net/core/dev.c:6011
+ __napi_poll.constprop.0+0xb7/0x550 net/core/dev.c:6638
+ napi_poll net/core/dev.c:6707 [inline]
+ net_rx_action+0x9ad/0xf10 net/core/dev.c:6822
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ bpf_test_run+0x335/0x9e0 net/bpf/test_run.c:426
+ bpf_prog_test_run_skb+0xb17/0x1db0 net/bpf/test_run.c:1058
+ bpf_prog_test_run kernel/bpf/syscall.c:4269 [inline]
+ __sys_bpf+0xd56/0x4b40 kernel/bpf/syscall.c:5678
+ __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
+ __x64_sys_bpf+0x78/0xc0 kernel/bpf/syscall.c:5765
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2466eba819
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5f447668 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f2466eba819
+RDX: 0000000000000050 RSI: 0000000020000080 RDI: 000000000000000a
+RBP: 0000000000000000 R08: 0000000100000000 R09: 0000000100000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+sched: RT throttling activated
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
