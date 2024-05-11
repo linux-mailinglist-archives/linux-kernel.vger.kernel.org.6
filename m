@@ -1,63 +1,73 @@
-Return-Path: <linux-kernel+bounces-176542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101228C3160
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:52:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF858C3164
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916981F213EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 687DA281AA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB395028C;
-	Sat, 11 May 2024 12:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC76D5028C;
+	Sat, 11 May 2024 12:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOELNPOd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4dZTZ4N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1D28F6E;
-	Sat, 11 May 2024 12:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043A817C8;
+	Sat, 11 May 2024 12:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715431941; cv=none; b=mjpzUJTUhI2IwEiw0v28j953UCJIrHs43flN1CsvsfANLiEcmQ00Nrbsbsu2rt/jSUEabv/o5xZuWxY8UZ5Lm3PERMGrw4rQXXfSktsT8dv0+i5Hf7G0ALdqK6yWMr+f+wZCyNhLUTERRvBF7U4LCPt6D9rALtxO/vuvVaOLeYM=
+	t=1715432250; cv=none; b=L7N8xxnpPdMGpUnQp5LbCd+EIy3AFJbQzNsadXXhsDnCJnuVOSHA+ZUjp3sRcIKOsWmqA58+Pw4K3mgL7QPHPgWdEmpKklCdW1v34UMk8UhA2JITh/UL0ZspIT4QyBgnZYbVEPah05k3GWXzCdOeCHRJhqZuxtAiWHvZcHxb1Qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715431941; c=relaxed/simple;
-	bh=YJRfqmKQd6lGzj5EKLiRngfVUGj4xvtMtKPTFfitnjM=;
+	s=arc-20240116; t=1715432250; c=relaxed/simple;
+	bh=RWNbN/njK6wiOv9OAhu8J3IBvFOEIPFY4gNdL026NKk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwtmxSZrfbCnB+S0IE/oWUmA7XwzBpwiRdmESeCMw4yF+zbvDEoEYzWxq6BjfFm+dssSCzfpYkHIIJMyki056OPIpGdbAGrTKNV6pIin31cLyEzHW5VcSTtwRReOiI1tJX8GnOvNJiN5OyIKpPvk/mlm/wngJkj6yBavkcJn+zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOELNPOd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE868C2BBFC;
-	Sat, 11 May 2024 12:52:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Edun6qCY67ysiwi2Sk0bM9dUuZT0ejwvdxjHSKoJj9bRlJ4+nC4GRb62SProXbdB/y6PkVb8ph1dG6EiBIikQHWInQjpNIarGjFYa+yiPu6jx/h9ew2FOYq1JyDRFKpifEZl80hXxeS+BB66QRp9zvXXnpUHYshJR3RGUsdvyBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4dZTZ4N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 301DEC2BBFC;
+	Sat, 11 May 2024 12:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715431941;
-	bh=YJRfqmKQd6lGzj5EKLiRngfVUGj4xvtMtKPTFfitnjM=;
+	s=k20201202; t=1715432249;
+	bh=RWNbN/njK6wiOv9OAhu8J3IBvFOEIPFY4gNdL026NKk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KOELNPOdZKpZzvudiMZO5lxZnQpCzbtXr3zunS0M18GlKyQGGvZzwdOW7fm2euH3v
-	 Qb8mvx52NL9uXzXxoFYfcoo9kwEnFFEMpr8SvT+VDkbNytvcZaiTWPpvza0U/c5mAU
-	 VYDMwbGSiJ8jxtQhDmTrpfdcYvEw7KujhlOr+nGzX7gUtxZcM2nwnExclYM1I5luZ7
-	 2yOCYOlGYaxh0Ao7Eu1QbbexuNN847TRNlPY4k4Lj7jqlka93v0zxWy75yA08YCYZR
-	 sTGmbGZmYbvcTYLgLj2LtVTlrdmOF13/eNYwaJoCNxlcERA3TP5G/MCRmDBnVEPKMl
-	 cteUuxeS8fVCA==
-Date: Sat, 11 May 2024 13:52:16 +0100
+	b=f4dZTZ4NkC2yeKdkHWoLB3uKpvLzNYJZM7/Dmn7TtZlctDYUb9g4POSi770fEpVQl
+	 umghgzNJRejcHjMog/GvLP3uz++uB0MPmllpzy+g2ioCNhOmHrO54Iqx1S9YL2YjxU
+	 5BUnTjWh9xhpTGnLRklf5zxcEMNK5x7gThOQqc1fJiV9rM7yjXZUQ2lsz/34JLpoXX
+	 YHUCrztvC+nUwscpBuI9ZrfPPaP45xFfEZJHoOTldvBtNtBXlRWi27zJ9QzdofFYa4
+	 1N1AlYJLbXHhdNCQ/thTahSxqV68OHVxzbE/ZzDWjM6dMlphc+e9H2Qc2AS+KTOL2R
+	 1l7VvQZpUIPlA==
+Date: Sat, 11 May 2024 13:57:23 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] dt-bindings: mips: brcm: Document
- brcm,bmips-cbr-reg property
-Message-ID: <20240511-headset-self-dc2501b38a71@spud>
-References: <20240509204750.1538-1-ansuelsmth@gmail.com>
- <20240509204750.1538-3-ansuelsmth@gmail.com>
+	Chris Morgan <macromorgan@hotmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Konrad Dybcio <konradybcio@gmail.com>,
+	Del Regno <angelogioacchino.delregno@somainline.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Luca Weiss <luca.weiss@fairphone.com>,
+	Dmitry Baryskov <dmitry.baryshkov@linaro.org>,
+	Shawn Guo <shawn.guo@linaro.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: display: panel: constrain 'reg' in DSI
+ panels
+Message-ID: <20240511-unturned-bubbling-fc90b310c5f1@spud>
+References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org>
+ <20240509-dt-bindings-dsi-panel-reg-v1-3-8b2443705be0@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,103 +75,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sQaAowGBPlZjH5aG"
+	protocol="application/pgp-signature"; boundary="HTAa7j2IxMwfD4P2"
 Content-Disposition: inline
-In-Reply-To: <20240509204750.1538-3-ansuelsmth@gmail.com>
+In-Reply-To: <20240509-dt-bindings-dsi-panel-reg-v1-3-8b2443705be0@linaro.org>
 
 
---sQaAowGBPlZjH5aG
+--HTAa7j2IxMwfD4P2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 09, 2024 at 10:47:46PM +0200, Christian Marangi wrote:
-> Document brcm,bmips-cbr-reg property.
+On Thu, May 09, 2024 at 11:42:53AM +0200, Krzysztof Kozlowski wrote:
+> DSI-attached devices could respond to more than one virtual channel
+> number, thus their bindings are supposed to constrain the 'reg' property
+> to match hardware.  Add missing 'reg' constrain for DSI-attached display
+> panels, based on DTS sources in Linux kernel (assume all devices take
+> only one channel number).
 >=20
-> Some SoC suffer from a BUG where CBR(Core Base Register)
-> address might badly/never inizialized by the Bootloader or
-> reaching it from co-processor registers if the system
-> boots from secondary CPU results in invalid address.
->=20
-> The CBR address is always the same on the SoC.
->=20
-> Usage of this property is to give an address also in these broken
-> configuration/bootloader.
->=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../devicetree/bindings/mips/brcm/soc.yaml    | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/mips/brcm/soc.yaml b/Docum=
-entation/devicetree/bindings/mips/brcm/soc.yaml
-> index 975945ca2888..6b961b62aff2 100644
-> --- a/Documentation/devicetree/bindings/mips/brcm/soc.yaml
-> +++ b/Documentation/devicetree/bindings/mips/brcm/soc.yaml
-> @@ -55,6 +55,16 @@ properties:
->           under the "cpus" node.
->          $ref: /schemas/types.yaml#/definitions/uint32
-> =20
-> +      brcm,bmips-cbr-reg:
-> +        description: Reference address of the CBR.
-> +          Some SoC suffer from a BUG where CBR(Core Base Register)
-> +          address might badly/never inizialized by the Bootloader or
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-"be badly or never initialized"
-
-> +          reaching it from co-processor registers if the system
-
-"reading"?
-
-Otherwise,
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Cheers,
+Thanks,
 Conor.
 
-> +          boots from secondary CPU results in invalid address.
-> +          The CBR address is always the same on the SoC hence it
-> +          can be provided in DT to handle these broken case.
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +
->      patternProperties:
->        "^cpu@[0-9]$":
->          type: object
-> @@ -64,6 +74,20 @@ properties:
->      required:
->        - mips-hpt-frequency
-> =20
-> +if:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - brcm,bcm6358
-> +          - brcm,bcm6368
-> +
-> +then:
-> +  properties:
-> +    cpus:
-> +      required:
-> +        - brcm,bmips-cbr-reg
-> +
->  additionalProperties: true
-> =20
->  examples:
-> --=20
-> 2.43.0
->=20
-
---sQaAowGBPlZjH5aG
+--HTAa7j2IxMwfD4P2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9qAAAKCRB4tDGHoIJi
-0ovkAP9Wm2e/+UCnn4NvMtSAun5L6Cg/3H/9CP5QeIzfGa9z7gEAuMjsZsdC4gli
-Bh51+UOTgKQ8XRIRmMptXN7aQPbthQM=
-=uGJl
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9rMgAKCRB4tDGHoIJi
+0rD/AP9+Gs0oiRtbfQUrh44iaHJuc/JQaNQ+Wy4jwt0yI2XP5QD/cRuuA4zX971s
+PPQqGvSsOiXgR7eOBgd8Xob8Gg8ZFwY=
+=TLGw
 -----END PGP SIGNATURE-----
 
---sQaAowGBPlZjH5aG--
+--HTAa7j2IxMwfD4P2--
 
