@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-176604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237A98C3220
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:31:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 871218C3224
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8961F21879
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:31:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C4CA1F213BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017E25647B;
-	Sat, 11 May 2024 15:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D67556772;
+	Sat, 11 May 2024 15:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NUHlM+Le"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B0oG7SBz"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38B61E526
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDC31E526
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715441488; cv=none; b=T51Bk42qaBWi8XdGH3rnaoqWFGEd3FP3LEZX5w8DutqsOXVUkb4gwkbr6ziGl75b1NGbgpfmqve7rBSRyqPsvBsMxlkq3k7EdEFBwv4ybOV6sTPdAb4U6qx5CvZifo9bM4380AiiVXEQR0V8ara2W5yHDieH5RzW7y9gybs6j1Y=
+	t=1715441500; cv=none; b=qjBCNAhCKlqqt0apdtYkEK4On4Wf2+n7PR8UdZU43P+tpZtxfR39ccZQGbM+EgDDAr5+wHkfeu04C+HUHv+d1O3B/w15aXZvbSXQj6XkNxrzvlT+ew0AjJuBOq+ejq3pDkZdR+QC0DW9oabzGe3GFnUU6yzlNzur/Ks/hN63qDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715441488; c=relaxed/simple;
-	bh=5bPKUIefG+SidF/ytOOZmWgXAJbR8a44r8C9bst2cXU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D1rknC2D9jTkhWVv5EPWk8A8c2RHX7Cm1d09D+zPtnR9kENNL9E1FjNoT4yQJVKF4MQck+PpDWNuCMUFDanWAZqYCRgdkhWzFIQz8qRpe5/5jex6a6mrWvhPy0Vlw81YAbbJhbxRD27SVyRE8i/O2rG19WT6wmeMRkYMU5S62xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NUHlM+Le; arc=none smtp.client-ip=198.47.23.249
+	s=arc-20240116; t=1715441500; c=relaxed/simple;
+	bh=IX7XsOyOVzCtA2UY/f7d1R1xikEA08HJCbxKjGBTF5s=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oM9TOzIuNzeNqnI5ZqewJOuUNNRr+OK76hiIZdtOzNCLBSkFn+Dxf0s72UYXjEznbCzDhd1AXsZJVLVpoE4dusDAkcrV5gafCBUziOtoAb6l0SvjPfUnqysJrjyFLI9vLZplrclrk+LU20nRviuIPAlio5/o6Gc0ptugJrxINMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B0oG7SBz; arc=none smtp.client-ip=198.47.23.248
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44BFUrIa024638;
-	Sat, 11 May 2024 10:30:53 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44BFUsiL014460;
+	Sat, 11 May 2024 10:30:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715441453;
-	bh=fgSiUiyv+xpJe+wBVVFMUseyZYSFfR7/ITsPxN9R9DI=;
-	h=From:To:CC:Subject:Date;
-	b=NUHlM+LeTfbGoqpC5jccAxMyGXILJhzrA4BCxQYnkpw8eiTw+0itb/gfyg3E7SrFa
-	 QNCMm7qGfd/JhF6KGO3zYZPHms+Y2LTnNO62uxQRa/c/+GwEY70vgSiTL7hjfVNVBm
-	 lmwZttqUSx6S0hg6iZfRUjOYcen2tT/LunIZcprU=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44BFUrcp017845
+	s=ti-com-17Q1; t=1715441454;
+	bh=rTTLXewRMxGRuVDb1qnoAQIUWX9dew+c+9tpW5wzk78=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=B0oG7SBz+v35Te5KAiaNyOQiFGuJp9B1yIpJOIoXaCwdWj1vEUPjYk5iGdUiSGfcM
+	 Wcvs6amqo66AvQgNRPyP3lIRFApNpngx+UIrEmopyFfVGFC4O5+Gh1S3n9nSdOGVhe
+	 UfLy7Iie+Qez+ao+PBcMOGnLpUByuq64R6BryiHI=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44BFUsOk032982
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sat, 11 May 2024 10:30:53 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+	Sat, 11 May 2024 10:30:54 -0500
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 11
- May 2024 10:30:52 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ May 2024 10:30:54 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Sat, 11 May 2024 10:30:52 -0500
+ Frontend Transport; Sat, 11 May 2024 10:30:54 -0500
 Received: from localhost (uda0496377.dhcp.ti.com [172.24.227.31])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44BFUqUO074704;
-	Sat, 11 May 2024 10:30:52 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44BFUr1f043147;
+	Sat, 11 May 2024 10:30:54 -0500
 From: Aradhya Bhatia <a-bhatia1@ti.com>
 To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
         Andrzej Hajda
@@ -91,10 +92,12 @@ CC: DRI Development List <dri-devel@lists.freedesktop.org>,
 	<j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>,
         Aradhya Bhatia
 	<a-bhatia1@ti.com>
-Subject: [PATCH 0/7] drm/bridge: cdns-dsi: Fix the color-shift issue
-Date: Sat, 11 May 2024 21:00:44 +0530
-Message-ID: <20240511153051.1355825-1-a-bhatia1@ti.com>
+Subject: [PATCH 1/7] drm/tidss: Add CRTC mode_fixup
+Date: Sat, 11 May 2024 21:00:45 +0530
+Message-ID: <20240511153051.1355825-2-a-bhatia1@ti.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240511153051.1355825-1-a-bhatia1@ti.com>
+References: <20240511153051.1355825-1-a-bhatia1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,68 +108,46 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello all,
+Add support for mode_fixup for the tidss CRTC.
 
-This series provides some crucial fixes and improvements for the Cadence's DSI
-TX (cdns-dsi) controller found commonly in Texas Instruments' J7 family of SoCs
-as well as in AM62P.
+Some bridges like the cdns-dsi consume the crtc_* timing parameters for
+programming the blanking values. Allow for the normal timing parameters
+to get copied to crtc_* timing params.
 
-The cdns-dsi bridge consumes the crtc_* timing parameters for programming the
-timing parameters. A patch has been added in tidss to make sure the crtc_*
-timings get populated.
+Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+---
+ drivers/gpu/drm/tidss/tidss_crtc.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-It further adds support for "early_enable" and "late_disable" DRM bridge hooks.
-These hooks are same as the existing "(pre_)enable" and "(post_)disable" hooks,
-except that the early_enable hook gets called before the CRTC is even enabled in
-the display pipeline and the late_disable hook gets called after the CRTC is
-disabled.
-The cdns-dsi controller requires to be enabled before the previous entity
-enables its stream[0]. It's a strict requirement which, if not followed, causes
-the colors to "shift" on the display. Since the previous entity is TIDSS in this
-case, which gets enabled via the tidss_crtc hooks, early_enable/late_disable API
-in the cdns-dsi bridge is the way to solve the issue.
-The early_enable/late_disable APIs also help with the OLDI TXes available on the
-AM62/AM62P SoCs, which will be a part of separate series.
-
-This spec also requires the Clock and Data Lanes be ready before the DSI TX
-enables its stream[0]. A patch has been added to make the code wait for that to
-happen. Going ahead with further DSI (and DSS configuration), while the lanes
-are not ready, has been found as another reason for shift in colors.
-
-All these patches have been tested on TI's vendor tree kernel with more devices,
-but for the mainline, these patches have been tested with J721E based
-BeagleboneAI64 along with a RaspberryPi 7" DSI panel. The extra patches can be
-found in the "next_dsi_finals-v1-test_rpi" branch of my github fork[1] for
-anyone who would like to test them.
-
-Thanks,
-Aradhya
-
-
-[0]: Section 12.6.5.7.3: Start-up Procesure [For DSI TX controller]
-     in TDA4VM Technical Reference Manual https://www.ti.com/lit/zip/spruil1
-
-[1]: https://github.com/aradhya07/linux-ab/tree/next_dsi_finals-v1-test_rpi
-
-
-Aradhya Bhatia (7):
-  drm/tidss: Add CRTC mode_fixup
-  drm/bridge: cdns-dsi: Fix minor bugs
-  drm/bridge: cdns-dsi: Wait for Clk and Data Lanes to be ready
-  drm/bridge: cdns-dsi: Reset the DCS write FIFO
-  drm/bridge: cdns-dsi: Support atomic bridge APIs
-  drm/bridge: Introduce early_enable and late disable
-  drm/bridge: cdns-dsi: Implement early_enable and late_disable
-
- .../gpu/drm/bridge/cadence/cdns-dsi-core.c    | 91 ++++++++++++++-----
- drivers/gpu/drm/drm_atomic_helper.c           | 67 ++++++++++++++
- drivers/gpu/drm/drm_bridge.c                  | 84 +++++++++++++++++
- drivers/gpu/drm/tidss/tidss_crtc.c            | 11 +++
- include/drm/drm_bridge.h                      | 73 +++++++++++++++
- 5 files changed, 303 insertions(+), 23 deletions(-)
-
-
-base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
+diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+index 94f8e3178df5..797ef53d9ad2 100644
+--- a/drivers/gpu/drm/tidss/tidss_crtc.c
++++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+@@ -309,12 +309,23 @@ enum drm_mode_status tidss_crtc_mode_valid(struct drm_crtc *crtc,
+ 	return dispc_vp_mode_valid(tidss->dispc, tcrtc->hw_videoport, mode);
+ }
+ 
++static
++bool tidss_crtc_mode_fixup(struct drm_crtc *crtc,
++			   const struct drm_display_mode *mode,
++			   struct drm_display_mode *adjusted_mode)
++{
++	drm_mode_set_crtcinfo(adjusted_mode, 0);
++
++	return true;
++}
++
+ static const struct drm_crtc_helper_funcs tidss_crtc_helper_funcs = {
+ 	.atomic_check = tidss_crtc_atomic_check,
+ 	.atomic_flush = tidss_crtc_atomic_flush,
+ 	.atomic_enable = tidss_crtc_atomic_enable,
+ 	.atomic_disable = tidss_crtc_atomic_disable,
+ 
++	.mode_fixup = tidss_crtc_mode_fixup,
+ 	.mode_valid = tidss_crtc_mode_valid,
+ };
+ 
 -- 
 2.34.1
+
 
