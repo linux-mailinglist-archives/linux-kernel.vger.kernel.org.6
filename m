@@ -1,265 +1,219 @@
-Return-Path: <linux-kernel+bounces-176319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3485E8C2DF4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:36:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092B68C2DF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:38:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1671F22EED
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF82128514E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 00:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE648831;
-	Sat, 11 May 2024 00:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A963FEC;
+	Sat, 11 May 2024 00:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CndgaZ7A"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Olqbo45W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A068A48
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFEBA48
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715387777; cv=none; b=hG5dStHFzOjF/26gsQojs2r3Zq+X1g0ychlK33QjL8SMDe4SQyEy2pfPqFnSgnMdi12NeX6nTm/dqfeXdFHqCV5/9BvYMe5CpjjSRtqq/lmli8OsizX+hoyzu+4W+H5r592Byi8U7u0thJzHJhQ+V2Y1e+Q5bD//GcCQTCv5bZg=
+	t=1715387929; cv=none; b=PDXKQpN0bJtq3JOI2Qi/hUof1ZMjC81S/A2WIY3zm+tARqaUyN2Hsfp17ujCrsoIdvkL14PVCfOFUy0AIp2eyvlI/32oHh7Kzi+Sjd5J1VC1T+u8/1fWrbrAh5iZJWRjMevD9gmluu/OqXQmSCB9sOLSMtwCxAxwUETuFe8aw8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715387777; c=relaxed/simple;
-	bh=jPulCMae9SCrPdsTA41izc3f8UO4kFtkVT4jNnB2tJ0=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=YqPd8OP/3gGHT1ijaKdLL1ct45VP4chTVQrNis+E4DwKq4ghu74hoC3B4Vypzfy50Pbo1FgiJoTzBHUJZgHsU/HyZaw5weYw7KN/KK6jlV1m/cuoixGLXx+hrevd4eHl/9RHP17OrHpPvEWiJ2XUCuJVpEncZqjCUCXXAKbKO/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CndgaZ7A; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-61be4601434so48285357b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 17:36:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715387774; x=1715992574; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0MNib63AMsNXJf0LXOww7d6a7tjn4YDbXl6LrsheYYI=;
-        b=CndgaZ7AQ88IdG9ctFefowx9IvOWU+y83OLZVsi3VoVr1JxDriKrSQRsDzgooxEl2j
-         lNpTtjtoJd9OXBg4eJg8Boy6MnSfk53sqlEsHOS1SG/ElrIiA7UFBxOeN/WhP6+2tEJn
-         OaUJjdmIDTh+qkkHdUbZQj00T2z7EqO4pmYkK1D8VQXRlvbKS+3+7k7ZYPApt29CCe6x
-         BVePrCBWiFP7EUN65dl/DhxFzOFUck28R6TFWlsrdsY0lUByX+u4UI/Y4xXd3LMRwEtL
-         AqNGc0/radUSlcoorfkwvRye/2LT9xHPF6yuMlRuU2ip2nJHqrBWlNx8DNXB5QEKO+mz
-         C5rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715387774; x=1715992574;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0MNib63AMsNXJf0LXOww7d6a7tjn4YDbXl6LrsheYYI=;
-        b=lT5xxGgByGsWTbSPdg2zb3cXVay2p5Bybx1CNuVp0eIggNtC47uMwjVNq6KVQgyul7
-         H6tPD5ukPoHIooJWDQIx9AgIuTQB/JfLcZtbgaHJwlApS3L2tqqZ8p/TtAKQL6cE7oof
-         LtfoIrwvXiky9Vj4GY22kI+UFga60dR6STwJIU3vQS40UFux+DQgX2PMbftvZarVuTDq
-         cqSuMsUJF4nLHziw/MPxD/OFGj+0tYRCHhzEvVUCzJrLr2ogExg+TqbxwdSAz43a8rAK
-         VWjp3EaU++p9IDvNt1l0vLVmgjYTmuX9OMTScIuuKi6XqAU297ijxZ7bOWEvE3dd4uDq
-         bmIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIqxoYSl7qjEmt5AJfL6FXWAvdgSiWDyiMITRUHXHAWYXGWCHt37jyzSw1hjcO6riMFIunEef1zPQALkK51FUBGvXWawPtPTkw5qGC
-X-Gm-Message-State: AOJu0YyWCmkx37U/1cLJC99CxBUqP9qP5zZeyB2dYoCPyCKWSp+p9/QR
-	H4yQSpt7em+NsT4j1d4EoIT9ZSqt5TCV4G61iAgbboOLwfYKX68lC4FbxYGOBVP9o37jyjAOfAR
-	YSwQ5PQ==
-X-Google-Smtp-Source: AGHT+IFRbkoPxRq0h2QRrKQoPRlb4mlkwVOd0SFEvJm/9Y0Bdm49gtd5DvNiA0aJ+7ryyw6AOYbDgdcLEPZt
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:351a:2e3e:f5b0:df31])
- (user=irogers job=sendgmr) by 2002:a25:d80e:0:b0:dc2:466a:23c4 with SMTP id
- 3f1490d57ef6-dee4f362fe5mr1026945276.4.1715387774159; Fri, 10 May 2024
- 17:36:14 -0700 (PDT)
-Date: Fri, 10 May 2024 17:36:01 -0700
-Message-Id: <20240511003601.2666907-1-irogers@google.com>
+	s=arc-20240116; t=1715387929; c=relaxed/simple;
+	bh=NcAHTRhhg/0TnN7kehtimSIF4oaTT7FE1sH7QJjCp7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r6FOrWg4VPWP59RLrZ+v39/zL9EIxiV/ukfchxXuzGUAh7/p+/Vv4zYIPUGYz8JojMsogynG5OOGaeTCYerGJwQu9dl+Bbo2f3sNmxe933G+vSMwgAuiMKtdR9mZQdc2bzqY/LtAcot51tTAeGBzfrj8VdQ8w46GZDln05YjRYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Olqbo45W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A6CCC113CC;
+	Sat, 11 May 2024 00:38:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715387928;
+	bh=NcAHTRhhg/0TnN7kehtimSIF4oaTT7FE1sH7QJjCp7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Olqbo45WuhbeHGWts2/i8soDAleq/bbmAxkK17Y6f57Bxnn+htFnMveY8cBfWEyxR
+	 BFMiTluG+poZOosZdSh+Lkbty21wCBDGOEPynlhPujw08g69ol2Gg9EHS2JTIBa4WB
+	 kJFCRPsltwWvdZM87OKbvLI6qB9gAKo0ai+foBFq/7dAKD4nHs0REI2VwTplAQOvVj
+	 5PtrsklrZCFlMXQRbRG2xJvhvX0CZP6dvWFcsdOV2hWU7AYXV0JRhNte1d2ebmpvvf
+	 joSm7B7fjfnY6m6p7qbDM8gk59kHsKOnu2j/udoEgf4/7RPuvrgNcrZyiFzCQetlLa
+	 57J0AJy6Qjq6w==
+Date: Sat, 11 May 2024 00:38:46 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+Subject: Re: [PATCH 3/3] f2fs: fix to do sanity check on i_nid for
+ inline_data inode
+Message-ID: <Zj6-Fl5OQrHyg0g_@google.com>
+References: <20240506103313.773503-1-chao@kernel.org>
+ <20240506103313.773503-3-chao@kernel.org>
+ <ZjzxWp4-wmpCzBeB@google.com>
+ <b58d0a62-9491-4b77-a3be-70331f849bb8@kernel.org>
+ <Zj2WWpHmHaWKbDgG@google.com>
+ <948ecc86-63f5-48bb-b71c-61d57cbf446c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.0.118.g7fe29c98d7-goog
-Subject: [PATCH v1] perf pmu: Count sys and cpuid json events separately
-From: Ian Rogers <irogers@google.com>
-To: Jia He <justin.he@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	John Garry <john.g.garry@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <948ecc86-63f5-48bb-b71c-61d57cbf446c@kernel.org>
 
-Sys events are eagerly loaded as each event has a compat option that
-may mean the event is or isn't associated with the PMU. These
-shouldn't be counted as loaded_json_events as that is used for json
-events matching the CPUID that may or may not have been loaded. The
-mismatch causes issues on ARM64 that uses sys events.
+On 05/10, Chao Yu wrote:
+> On 2024/5/10 11:36, Jaegeuk Kim wrote:
+> > On 05/10, Chao Yu wrote:
+> > > On 2024/5/9 23:52, Jaegeuk Kim wrote:
+> > > > On 05/06, Chao Yu wrote:
+> > > > > syzbot reports a f2fs bug as below:
+> > > > > 
+> > > > > ------------[ cut here ]------------
+> > > > > kernel BUG at fs/f2fs/inline.c:258!
+> > > > > CPU: 1 PID: 34 Comm: kworker/u8:2 Not tainted 6.9.0-rc6-syzkaller-00012-g9e4bc4bcae01 #0
+> > > > > RIP: 0010:f2fs_write_inline_data+0x781/0x790 fs/f2fs/inline.c:258
+> > > > > Call Trace:
+> > > > >    f2fs_write_single_data_page+0xb65/0x1d60 fs/f2fs/data.c:2834
+> > > > >    f2fs_write_cache_pages fs/f2fs/data.c:3133 [inline]
+> > > > >    __f2fs_write_data_pages fs/f2fs/data.c:3288 [inline]
+> > > > >    f2fs_write_data_pages+0x1efe/0x3a90 fs/f2fs/data.c:3315
+> > > > >    do_writepages+0x35b/0x870 mm/page-writeback.c:2612
+> > > > >    __writeback_single_inode+0x165/0x10b0 fs/fs-writeback.c:1650
+> > > > >    writeback_sb_inodes+0x905/0x1260 fs/fs-writeback.c:1941
+> > > > >    wb_writeback+0x457/0xce0 fs/fs-writeback.c:2117
+> > > > >    wb_do_writeback fs/fs-writeback.c:2264 [inline]
+> > > > >    wb_workfn+0x410/0x1090 fs/fs-writeback.c:2304
+> > > > >    process_one_work kernel/workqueue.c:3254 [inline]
+> > > > >    process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3335
+> > > > >    worker_thread+0x86d/0xd70 kernel/workqueue.c:3416
+> > > > >    kthread+0x2f2/0x390 kernel/kthread.c:388
+> > > > >    ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+> > > > >    ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> > > > > 
+> > > > > The root cause is: inline_data inode can be fuzzed, so that there may
+> > > > > be valid blkaddr in its direct node, once f2fs triggers background GC
+> > > > > to migrate the block, it will hit f2fs_bug_on() during dirty page
+> > > > > writeback.
+> > > > > 
+> > > > > Let's add sanity check on i_nid field for inline_data inode, meanwhile,
+> > > > > forbid to migrate inline_data inode's data block to fix this issue.
+> > > > > 
+> > > > > Reported-by: syzbot+848062ba19c8782ca5c8@syzkaller.appspotmail.com
+> > > > > Closes: https://lore.kernel.org/linux-f2fs-devel/000000000000d103ce06174d7ec3@google.com
+> > > > > Signed-off-by: Chao Yu <chao@kernel.org>
+> > > > > ---
+> > > > >    fs/f2fs/f2fs.h   |  2 +-
+> > > > >    fs/f2fs/gc.c     |  6 ++++++
+> > > > >    fs/f2fs/inline.c | 17 ++++++++++++++++-
+> > > > >    fs/f2fs/inode.c  |  2 +-
+> > > > >    4 files changed, 24 insertions(+), 3 deletions(-)
+> > > > > 
+> > > > > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > > > > index fced2b7652f4..c876813b5532 100644
+> > > > > --- a/fs/f2fs/f2fs.h
+> > > > > +++ b/fs/f2fs/f2fs.h
+> > > > > @@ -4146,7 +4146,7 @@ extern struct kmem_cache *f2fs_inode_entry_slab;
+> > > > >     * inline.c
+> > > > >     */
+> > > > >    bool f2fs_may_inline_data(struct inode *inode);
+> > > > > -bool f2fs_sanity_check_inline_data(struct inode *inode);
+> > > > > +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage);
+> > > > >    bool f2fs_may_inline_dentry(struct inode *inode);
+> > > > >    void f2fs_do_read_inline_data(struct page *page, struct page *ipage);
+> > > > >    void f2fs_truncate_inline_inode(struct inode *inode,
+> > > > > diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> > > > > index e86c7f01539a..041957750478 100644
+> > > > > --- a/fs/f2fs/gc.c
+> > > > > +++ b/fs/f2fs/gc.c
+> > > > > @@ -1563,6 +1563,12 @@ static int gc_data_segment(struct f2fs_sb_info *sbi, struct f2fs_summary *sum,
+> > > > >    				continue;
+> > > > >    			}
+> > > > > +			if (f2fs_has_inline_data(inode)) {
+> > > > > +				iput(inode);
+> > > > > +				set_sbi_flag(sbi, SBI_NEED_FSCK);
+> > > > > +				continue;
+> > > > 
+> > > > Any race condtion to get this as false alarm?
+> > > 
+> > > Since there is no reproducer for the bug, I doubt it was caused by metadata
+> > > fuzzing, something like this:
+> > > 
+> > > - inline inode has one valid blkaddr in i_addr or in dnode reference by i_nid;
+> > > - SIT/SSA entry of the block is valid;
+> > > - background GC migrates the block;
+> > > - kworker writeback it, and trigger the bug_on().
+> > 
+> > Wasn't detected by sanity_check_inode?
+> 
+> I fuzzed non-inline inode w/ below metadata fields:
+> - i_blocks = 1
+> - i_size = 2048
+> - i_inline |= 0x02
+> 
+> sanity_check_inode() doesn't complain.
 
-Reported-by: Jia He <justin.he@arm.com>
-Closes: https://lore.kernel.org/lkml/20240510024729.1075732-1-justin.he@arm.com/
-Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/pmu.c | 70 ++++++++++++++++++++++++++++++-------------
- tools/perf/util/pmu.h |  6 ++--
- 2 files changed, 53 insertions(+), 23 deletions(-)
+I mean, the below sanity_check_inode() can cover the fuzzed case? I'm wondering
+whether we really need to check it in the gc path.
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index b3b072feef02..888ce9912275 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -36,6 +36,18 @@ struct perf_pmu perf_pmu__fake = {
- 
- #define UNIT_MAX_LEN	31 /* max length for event unit name */
- 
-+enum event_source {
-+	/* An event loaded from /sys/devices/<pmu>/events. */
-+	EVENT_SRC_SYSFS,
-+	/* An event loaded from a CPUID matched json file. */
-+	EVENT_SRC_CPU_JSON,
-+	/*
-+	 * An event loaded from a /sys/devices/<pmu>/identifier matched json
-+	 * file.
-+	 */
-+	EVENT_SRC_SYS_JSON,
-+};
-+
- /**
-  * struct perf_pmu_alias - An event either read from sysfs or builtin in
-  * pmu-events.c, created by parsing the pmu-events json files.
-@@ -521,7 +533,7 @@ static int update_alias(const struct pmu_event *pe,
- 
- static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
- 				const char *desc, const char *val, FILE *val_fd,
--				const struct pmu_event *pe)
-+			        const struct pmu_event *pe, enum event_source src)
- {
- 	struct perf_pmu_alias *alias;
- 	int ret;
-@@ -574,25 +586,30 @@ static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
- 		}
- 		snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
- 	}
--	if (!pe) {
--		/* Update an event from sysfs with json data. */
--		struct update_alias_data data = {
--			.pmu = pmu,
--			.alias = alias,
--		};
--
-+	switch (src) {
-+	default:
-+	case EVENT_SRC_SYSFS:
- 		alias->from_sysfs = true;
- 		if (pmu->events_table) {
-+			/* Update an event from sysfs with json data. */
-+			struct update_alias_data data = {
-+				.pmu = pmu,
-+				.alias = alias,
-+			};
- 			if (pmu_events_table__find_event(pmu->events_table, pmu, name,
- 							 update_alias, &data) == 0)
--				pmu->loaded_json_aliases++;
-+				pmu->cpu_json_aliases++;
- 		}
--	}
--
--	if (!pe)
- 		pmu->sysfs_aliases++;
--	else
--		pmu->loaded_json_aliases++;
-+		break;
-+	case  EVENT_SRC_CPU_JSON:
-+		pmu->cpu_json_aliases++;
-+		break;
-+	case  EVENT_SRC_SYS_JSON:
-+		pmu->sys_json_aliases++;
-+		break;
-+
-+	}
- 	list_add_tail(&alias->list, &pmu->aliases);
- 	return 0;
- }
-@@ -653,7 +670,8 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu, int events_dir_fd)
- 		}
- 
- 		if (perf_pmu__new_alias(pmu, name, /*desc=*/ NULL,
--					/*val=*/ NULL, file, /*pe=*/ NULL) < 0)
-+					/*val=*/ NULL, file, /*pe=*/ NULL,
-+					EVENT_SRC_SYSFS) < 0)
- 			pr_debug("Cannot set up %s\n", name);
- 		fclose(file);
- 	}
-@@ -946,7 +964,8 @@ static int pmu_add_cpu_aliases_map_callback(const struct pmu_event *pe,
- {
- 	struct perf_pmu *pmu = vdata;
- 
--	perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=*/ NULL, pe);
-+	perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=*/ NULL,
-+			    pe, EVENT_SRC_CPU_JSON);
- 	return 0;
- }
- 
-@@ -981,13 +1000,14 @@ static int pmu_add_sys_aliases_iter_fn(const struct pmu_event *pe,
- 		return 0;
- 
- 	if (pmu_uncore_alias_match(pe->pmu, pmu->name) &&
--			pmu_uncore_identifier_match(pe->compat, pmu->id)) {
-+	    pmu_uncore_identifier_match(pe->compat, pmu->id)) {
- 		perf_pmu__new_alias(pmu,
- 				pe->name,
- 				pe->desc,
- 				pe->event,
- 				/*val_fd=*/ NULL,
--				pe);
-+				pe,
-+				EVENT_SRC_SYS_JSON);
- 	}
- 
- 	return 0;
-@@ -1082,6 +1102,12 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *pmus, int dirfd, const char
- 	pmu->max_precise = pmu_max_precise(dirfd, pmu);
- 	pmu->alias_name = pmu_find_alias_name(pmu, dirfd);
- 	pmu->events_table = perf_pmu__find_events_table(pmu);
-+	/*
-+	 * Load the sys json events/aliases when loading the PMU as each event
-+	 * may have a different compat regular expression. We therefore can't
-+	 * know the number of sys json events/aliases without computing the
-+	 * regular expressions for them all.
-+	 */
- 	pmu_add_sys_aliases(pmu);
- 	list_add_tail(&pmu->list, pmus);
- 
-@@ -1739,12 +1765,14 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
- 	size_t nr;
- 
- 	pmu_aliases_parse(pmu);
--	nr = pmu->sysfs_aliases;
-+	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;;
- 
- 	if (pmu->cpu_aliases_added)
--		 nr += pmu->loaded_json_aliases;
-+		 nr += pmu->cpu_json_aliases;
- 	else if (pmu->events_table)
--		nr += pmu_events_table__num_events(pmu->events_table, pmu) - pmu->loaded_json_aliases;
-+		nr += pmu_events_table__num_events(pmu->events_table, pmu) - pmu->cpu_json_aliases;
-+	else
-+		assert(pmu->cpu_json_aliases == 0);
- 
- 	return pmu->selectable ? nr + 1 : nr;
- }
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 561716aa2b25..b2d3fd291f02 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -123,8 +123,10 @@ struct perf_pmu {
- 	const struct pmu_events_table *events_table;
- 	/** @sysfs_aliases: Number of sysfs aliases loaded. */
- 	uint32_t sysfs_aliases;
--	/** @sysfs_aliases: Number of json event aliases loaded. */
--	uint32_t loaded_json_aliases;
-+	/** @cpu_json_aliases: Number of json event aliases loaded specific to the CPUID. */
-+	uint32_t cpu_json_aliases;
-+	/** @sys_json_aliases: Number of json event aliases loaded matching the PMU's identifier. */
-+	uint32_t sys_json_aliases;
- 	/** @sysfs_aliases_loaded: Are sysfs aliases loaded from disk? */
- 	bool sysfs_aliases_loaded;
- 	/**
--- 
-2.45.0.118.g7fe29c98d7-goog
-
+> 
+> Thanks,
+> 
+> > 
+> > > 
+> > > Thoughts?
+> > > 
+> > > Thanks,
+> > > 
+> > > > 
+> > > > > +			}
+> > > > > +
+> > > > >    			err = f2fs_gc_pinned_control(inode, gc_type, segno);
+> > > > >    			if (err == -EAGAIN) {
+> > > > >    				iput(inode);
+> > > > > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> > > > > index ac00423f117b..067600fed3d4 100644
+> > > > > --- a/fs/f2fs/inline.c
+> > > > > +++ b/fs/f2fs/inline.c
+> > > > > @@ -33,11 +33,26 @@ bool f2fs_may_inline_data(struct inode *inode)
+> > > > >    	return !f2fs_post_read_required(inode);
+> > > > >    }
+> > > > > -bool f2fs_sanity_check_inline_data(struct inode *inode)
+> > > > > +static bool has_node_blocks(struct inode *inode, struct page *ipage)
+> > > > > +{
+> > > > > +	struct f2fs_inode *ri = F2FS_INODE(ipage);
+> > > > > +	int i;
+> > > > > +
+> > > > > +	for (i = 0; i < DEF_NIDS_PER_INODE; i++) {
+> > > > > +		if (ri->i_nid[i])
+> > > > > +			return true;
+> > > > > +	}
+> > > > > +	return false;
+> > > > > +}
+> > > > > +
+> > > > > +bool f2fs_sanity_check_inline_data(struct inode *inode, struct page *ipage)
+> > > > >    {
+> > > > >    	if (!f2fs_has_inline_data(inode))
+> > > > >    		return false;
+> > > > > +	if (has_node_blocks(inode, ipage))
+> > > > > +		return false;
+> > > > > +
+> > > > >    	if (!support_inline_data(inode))
+> > > > >    		return true;
+> > > > > diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> > > > > index c26effdce9aa..1423cd27a477 100644
+> > > > > --- a/fs/f2fs/inode.c
+> > > > > +++ b/fs/f2fs/inode.c
+> > > > > @@ -343,7 +343,7 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
+> > > > >    		}
+> > > > >    	}
+> > > > > -	if (f2fs_sanity_check_inline_data(inode)) {
+> > > > > +	if (f2fs_sanity_check_inline_data(inode, node_page)) {
+> > > > >    		f2fs_warn(sbi, "%s: inode (ino=%lx, mode=%u) should not have inline_data, run fsck to fix",
+> > > > >    			  __func__, inode->i_ino, inode->i_mode);
+> > > > >    		return false;
+> > > > > -- 
+> > > > > 2.40.1
 
