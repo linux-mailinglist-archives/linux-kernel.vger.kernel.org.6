@@ -1,164 +1,93 @@
-Return-Path: <linux-kernel+bounces-176437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F2A8C2FEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:42:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE108C2FEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4630EB213B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D93A1F2278D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3301D4C65;
-	Sat, 11 May 2024 06:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/laxnxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC93F1847;
+	Sat, 11 May 2024 06:44:48 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D00CA55;
-	Sat, 11 May 2024 06:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351F1EC2
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715409751; cv=none; b=AmdcY6NFKY4pLUpW/x5wvh/ayUO3qCY6wHVpU83dO8mBLjrmiROmj3IEVAgwHoV0gAbtl9Yl1aO/+/TrkYQ8CPjZr5GHyKvx860xSSZDdtevZFDbWJeeF7Bwnteup87kcWkNidBygL3Iqd4oUK2to7GBSZGZv9n+K67/sMCiorQ=
+	t=1715409888; cv=none; b=MEqZTs7nXAeDvzv3um7EcNfhojlxydTNre3u7mHV8eJw9+BTnv6eaLpteuMvpdvB2hqevEHenZdeRC7Wv36uaNOBx0SVGi3GM10nBxJXXRM3aUA0Pfk3mGwOooVI9AmPUaAhsG/33+cPMeN0yACTK08ej4OJcLH5OAa/dGQ09UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715409751; c=relaxed/simple;
-	bh=Bbk0MO4IQHx0Mq4jWRtOutLf8k7zDUzhGEHWx1oJTEk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GZi3G1gcq5BnvBIKJRpl+j/0zO3w8QJ4dWTE+ZixtrjcmQS1YCS/pFyNIYDesuxs9C20xuOtFd7+fL6ImZP489pAuoJN/D7HifSBTlKOM8cGRG9R3MbLdWOV40RxuRM8aVtoVFDqWpuCIqq5Hu+2Af+x02sYaTnIu7ND5GRf1tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/laxnxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBBAC2BD10;
-	Sat, 11 May 2024 06:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715409751;
-	bh=Bbk0MO4IQHx0Mq4jWRtOutLf8k7zDUzhGEHWx1oJTEk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Q/laxnxhX4hVWz1A7lEXCoI5z5pTZW6ssvLDeH/WFj9Xqlyfarsh53vjDUjT60n0S
-	 SEjzxfcWMJRBOUs1l30dj1o2caIvGD4dq6n94plsd2kBppWByjcSAez/Cz9B1F7qKJ
-	 YD8xVIYY1gibvnt/h1hVz/+BdTLDm3hTHiGaqGuGnLeKNfIpE0Y9JKVAr+T6ARtrmj
-	 P3NmAcAGsmMrejPyOb5dBGNSk1AlMq7jo4QiahaOAJ+nt61EFt7Jn1llh5xt4pHRVA
-	 KAZI/8DiAnbxo8ElnsWa64RTbWcLB3rX39gW+ZMB/LNScUsEbG5Cd77+hr17W2jUaR
-	 oU6HKnMulY3Cw==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e44d32a480so43306441fa.0;
-        Fri, 10 May 2024 23:42:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfjwmiXZpoiqYApTw+A0wOE0msQDypZH/FmBJa2VhdRMR64SK8/qncrvqzTHU6RgA9lSPugOcaFDsk8Qngd28hXaSsswjOKc0a30ym2trJSMQRWQlYlDpl0/8WKOpa5EkYLxjqM3J9tw==
-X-Gm-Message-State: AOJu0Yxa0S10wpqsrJu+4BLl0fDPUB5t5oIjRK13fLNz3qHwH4BUWwmA
-	dLfilmpbmBd9btrS+9FNqdz3BQxI28C3yvBJ00YtP+kAPf7XpgbP4psmOW6/ZUx7cg04JIx80VL
-	jCHCHVNksZuYNA11IwaflAUHLw4k=
-X-Google-Smtp-Source: AGHT+IERM7qQjT9YJWZw+5E7S/UqSr34zrWEE+BgSAtY6nslHgZnNp5h1mVpEXM+pQpr7/8EEfeQljbZzn7pYGnd+rQ=
-X-Received: by 2002:a05:6512:48d7:b0:51c:c63c:c2af with SMTP id
- 2adb3069b0e04-5220fb74b85mr2551238e87.28.1715409749331; Fri, 10 May 2024
- 23:42:29 -0700 (PDT)
+	s=arc-20240116; t=1715409888; c=relaxed/simple;
+	bh=WsNHsd+jz9I274qS7nFlFQWVmYolB0GcoLoyQbUvVMo=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=ueDMxoqDPDVVkcbZ+mEUawr5hcY99X9Dn3UNxJqUh8Uc2cgatOW7Me4kRUnSkiXQqUImBhfwd2MEiz/1L0IgM7s/nDhO77814rhjJ5C3I1cTVACfZh1A1MQo6mHijCzTU8pVnhb/90wuRz7QCUtp9JUof5r5BZJF4ms1f2qqh+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Vbx7X5tphz8XrXG;
+	Sat, 11 May 2024 14:44:40 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 44B6iY3k075463;
+	Sat, 11 May 2024 14:44:34 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp03[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Sat, 11 May 2024 14:44:36 +0800 (CST)
+Date: Sat, 11 May 2024 14:44:36 +0800 (CST)
+X-Zmail-TransId: 2afb663f13d40bb-06f01
+X-Mailer: Zmail v1.0
+Message-ID: <20240511144436754EiKfJM4xjMSTyCbEExwcL@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <b67e79d4-06cb-4a45-a906-b9e0fbae22c5@paulmck-laptop> <20240501230130.1111603-11-paulmck@kernel.org>
-In-Reply-To: <20240501230130.1111603-11-paulmck@kernel.org>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 11 May 2024 14:42:17 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQb1qW_GUiQBWiogBLX2geNGMFhOJK55ZKWJYyFqu-SSQ@mail.gmail.com>
-Message-ID: <CAJF2gTQb1qW_GUiQBWiogBLX2geNGMFhOJK55ZKWJYyFqu-SSQ@mail.gmail.com>
-Subject: Re: [PATCH v2 cmpxchg 11/13] csky: Emulate one-byte cmpxchg
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, elver@google.com, 
-	akpm@linux-foundation.org, tglx@linutronix.de, peterz@infradead.org, 
-	dianders@chromium.org, pmladek@suse.com, arnd@arndb.de, 
-	torvalds@linux-foundation.org, kernel-team@meta.com, 
-	Yujie Liu <yujie.liu@intel.com>, linux-csky@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <akpm@linux-foundation.org>
+Cc: <david@redhat.com>, <willy@infradead.org>, <shy828301@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <ziy@nvidia.com>
+Subject: =?UTF-8?B?wqBbUEFUQ0ggbGludXgtbmV4dF0gbW0vaHVnZV9tZW1vcnk6IG1hcmsgcmFjeSBhY2Nlc3Mgb27CoGh1Z2VfYW5vbl9vcmRlcnNfYWx3YXlz?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 44B6iY3k075463
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 663F13D8.001/4Vbx7X5tphz8XrXG
 
-On Thu, May 2, 2024 at 7:01=E2=80=AFAM Paul E. McKenney <paulmck@kernel.org=
-> wrote:
->
-> Use the new cmpxchg_emu_u8() to emulate one-byte cmpxchg() on csky.
->
-> [ paulmck: Apply kernel test robot feedback. ]
-> [ paulmck: Drop two-byte support per Arnd Bergmann feedback. ]
->
-> Co-developed-by: Yujie Liu <yujie.liu@intel.com>
-> Signed-off-by: Yujie Liu <yujie.liu@intel.com>
-> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> Tested-by: Yujie Liu <yujie.liu@intel.com>
-> Cc: Guo Ren <guoren@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: <linux-csky@vger.kernel.org>
-> ---
->  arch/csky/Kconfig               |  1 +
->  arch/csky/include/asm/cmpxchg.h | 10 ++++++++++
->  2 files changed, 11 insertions(+)
->
-> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-> index d3ac36751ad1f..5479707eb5d10 100644
-> --- a/arch/csky/Kconfig
-> +++ b/arch/csky/Kconfig
-> @@ -37,6 +37,7 @@ config CSKY
->         select ARCH_INLINE_SPIN_UNLOCK_BH if !PREEMPTION
->         select ARCH_INLINE_SPIN_UNLOCK_IRQ if !PREEMPTION
->         select ARCH_INLINE_SPIN_UNLOCK_IRQRESTORE if !PREEMPTION
-> +       select ARCH_NEED_CMPXCHG_1_EMU
->         select ARCH_WANT_FRAME_POINTERS if !CPU_CK610 && $(cc-option,-mba=
-cktrace)
->         select ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
->         select COMMON_CLK
-> diff --git a/arch/csky/include/asm/cmpxchg.h b/arch/csky/include/asm/cmpx=
-chg.h
-> index 916043b845f14..db6dda47184e4 100644
-> --- a/arch/csky/include/asm/cmpxchg.h
-> +++ b/arch/csky/include/asm/cmpxchg.h
-> @@ -6,6 +6,7 @@
->  #ifdef CONFIG_SMP
->  #include <linux/bug.h>
->  #include <asm/barrier.h>
-> +#include <linux/cmpxchg-emu.h>
->
->  #define __xchg_relaxed(new, ptr, size)                         \
->  ({                                                             \
-> @@ -61,6 +62,9 @@
->         __typeof__(old) __old =3D (old);                          \
->         __typeof__(*(ptr)) __ret;                               \
->         switch (size) {                                         \
-> +       case 1:                                                 \
-> +               __ret =3D (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8=
- *)__ptr, (uintptr_t)__old, (uintptr_t)__new); \
-> +               break;                                          \
->         case 4:                                                 \
->                 asm volatile (                                  \
->                 "1:     ldex.w          %0, (%3) \n"            \
-> @@ -91,6 +95,9 @@
->         __typeof__(old) __old =3D (old);                          \
->         __typeof__(*(ptr)) __ret;                               \
->         switch (size) {                                         \
-> +       case 1:                                                 \
-> +               __ret =3D (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8=
- *)__ptr, (uintptr_t)__old, (uintptr_t)__new); \
-> +               break;                                          \
->         case 4:                                                 \
->                 asm volatile (                                  \
->                 "1:     ldex.w          %0, (%3) \n"            \
-> @@ -122,6 +129,9 @@
->         __typeof__(old) __old =3D (old);                          \
->         __typeof__(*(ptr)) __ret;                               \
->         switch (size) {                                         \
-> +       case 1:                                                 \
-> +               __ret =3D (__typeof__(*(ptr)))cmpxchg_emu_u8((volatile u8=
- *)__ptr, (uintptr_t)__old, (uintptr_t)__new); \
-> +               break;                                          \
->         case 4:                                                 \
->                 asm volatile (                                  \
->                 RELEASE_FENCE                                   \
-> --
-> 2.40.1
->
-Reviewed-by: Guo Ren <guoren@kernel.org>
+From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-I will optimize it after ARCH_NEED_CMPXCHG_1_EMU is merged.
+huge_anon_orders_always and huge_anon_orders_always are accessed
+lockless, it is better to use the READ_ONCE() wrapper.
+This is not fixing any visible bug, hopefully this can cease some
+KCSAN complains in the future.
+Also do that for huge_anon_orders_madvise.
 
---=20
-Best Regards
- Guo Ren
+Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+---
+ include/linux/huge_mm.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index de0c89105076..6573430ea600 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -122,8 +122,8 @@ static inline bool hugepage_flags_enabled(void)
+ 	 * So we don't need to look at huge_anon_orders_inherit.
+ 	 */
+ 	return hugepage_global_enabled() ||
+-	       huge_anon_orders_always ||
+-	       huge_anon_orders_madvise;
++			READ_ONCE(huge_anon_orders_always) ||
++			READ_ONCE(huge_anon_orders_madvise);
+ }
+
+ static inline int highest_order(unsigned long orders)
+-- 
+2.15.2
 
