@@ -1,96 +1,99 @@
-Return-Path: <linux-kernel+bounces-176664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248F88C32E4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F40C48C32E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:19:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDA741F21D19
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:19:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC0B281360
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B971BDDC;
-	Sat, 11 May 2024 17:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="xDGCoYOq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A5C1C286;
-	Sat, 11 May 2024 17:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8541CA9E;
+	Sat, 11 May 2024 17:19:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991741C69C;
+	Sat, 11 May 2024 17:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715447965; cv=none; b=KPSTwGvIJ60tv5/GcjviLVns++jhwIfkYABheS6UZARUIMS0JNmlEb2QaLu/rnaP0ehMWaCfj2Z7gKHsFjFGqECrXLN0s8ydECd57hjbMpQY5tPDVeHOcmebvRQCniU0pGDBeVb5/g6YTdeyEljyaGb+afcg4YX1DEJqe8Wvdhw=
+	t=1715447966; cv=none; b=C6SaR2QHt7lxJfuuacLs/d767FbR5DyFIJQfOO5/U9c9pEOcpR4RU1Dl23GW8iJWTaCCZLgkrHNj/N16SaQWdxhtx+7FAzBZtQ7h/jKfgxLTEeTyLDi636/n0KZJyv0dX+50SvzUMVOSTG+8o+pHfTc9NWfeH3mDYGmvRPGEoVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715447965; c=relaxed/simple;
-	bh=JtxrfXquorAq2bYCxyWwuvOZACiGSKXrqHZI31bJbrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYljZr0CS9R/sIobF7hEjqcURfEjqzpeeF/JXeZIpqDt8oiUemA4C3fei17T9ezrENuSBqQVs25z1O8V4e/SZQKiWj/ffu3NUZO/a9x7i22VydHEwwlECSDc/9bZEUj5xSQabwq74T+sxApDCuVeJgh+Bg96/3PhWtIORi6wjbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=xDGCoYOq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=59ogc1letU28eIr+Nqtw/+iuMiLVkRN/Xzvbe5jpoVo=; b=xDGCoYOqA3ZePLHzgyyNU8baNs
-	cMh46enKLDcmsupbkSUaxNCYBv3dbLF3DYISeVT9gQXO7TlumS8YV5niIOTjDNE+aVQ1K/ThimNzB
-	eqFr1Z1IbYywhZernKUwrz8hMWtj+6rrejvhxbntgZd6YA62cGxNdvX4/2tN1ro3Dc4g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s5qNH-00FCtF-Gz; Sat, 11 May 2024 19:19:07 +0200
-Date: Sat, 11 May 2024 19:19:07 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>,
-	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com,
-	bcm-kernel-feedback-list@broadcom.com, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
-	richardcochran@gmail.com, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2, net-next, 2/2] net: stmmac: PCI driver for BCM8958X
- SoC
-Message-ID: <63c3efa6-94a2-40c7-b47d-876ff330d261@lunn.ch>
-References: <20240510000331.154486-3-jitendra.vegiraju@broadcom.com>
- <20240511015924.41457-1-jitendra.vegiraju@broadcom.com>
- <4ede8911-827d-4fad-b327-52c9aa7ed957@lunn.ch>
- <Zj+nBpQn1cqTMJxQ@shell.armlinux.org.uk>
+	s=arc-20240116; t=1715447966; c=relaxed/simple;
+	bh=pgsGnygtsFDYBZVmkmNEae+IbcuJAAlPGbGMWWujjy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BwPXAsS2gC3hYu4tvCXJFTVG5uh5EJlWSwqpUsq9SBMMMTElZjNkh5Dj1vhDTDVEtVADoAH6JDaXBnY7S4epLxNzjAREmySxPW3ku+CT4kHGoBgk0CaleQRz08j/YamLZkuhi5pYssuqxr07Gz2rLLj90eydAB3PF6HhQt1tbSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A84D113E;
+	Sat, 11 May 2024 10:19:44 -0700 (PDT)
+Received: from [10.57.65.1] (unknown [10.57.65.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D0C53F641;
+	Sat, 11 May 2024 10:19:16 -0700 (PDT)
+Message-ID: <3022c21b-a34d-4592-a0da-79e047372eef@arm.com>
+Date: Sat, 11 May 2024 18:19:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zj+nBpQn1cqTMJxQ@shell.armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
+ -static-libasan, LOCAL_HDRS
+Content-Language: en-GB
+To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+ Christian Brauner <brauner@kernel.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
+ linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ llvm@lists.linux.dev
+References: <20240504044336.14411-1-jhubbard@nvidia.com>
+ <c406383d-e08a-4a12-9e25-1c987b0d678f@arm.com>
+ <f715719a-c835-496c-9e99-d249e5607a0b@nvidia.com>
+ <b28e6bcb-dde2-4ac0-ac0d-dfddb42c4426@nvidia.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <b28e6bcb-dde2-4ac0-ac0d-dfddb42c4426@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 11, 2024 at 06:12:38PM +0100, Russell King (Oracle) wrote:
-> On Sat, May 11, 2024 at 06:16:52PM +0200, Andrew Lunn wrote:
-> > > +	/* This device interface is directly attached to the switch chip on
-> > > +	 *  the SoC. Since no MDIO is present, register fixed_phy.
-> > > +	 */
-> > > +	brcm_priv->phy_dev =
-> > > +		 fixed_phy_register(PHY_POLL,
-> > > +				    &dwxgmac_brcm_fixed_phy_status, NULL);
-> > > +	if (IS_ERR(brcm_priv->phy_dev)) {
-> > > +		dev_err(&pdev->dev, "%s\tNo PHY/fixed_PHY found\n", __func__);
-> > > +		return -ENODEV;
-> > > +	}
-> > > +	phy_attached_info(brcm_priv->phy_dev);
-> > 
-> > What switch is it? Will there be patches to extend SF2?
+On 10/05/2024 19:22, John Hubbard wrote:
+> On 5/10/24 10:56 AM, John Hubbard wrote:
+>> On 5/10/24 4:52 AM, Ryan Roberts wrote:
+>>> On 04/05/2024 05:43, John Hubbard wrote:
+>> ...
+>>> It just occured to me that the bug report I was fixing with my attempt was
+>>> invoking make like this (see [1]):
+>>>
+>>> # tools/testing/selftests/fchmodat2$ make CC=clang
+>>> # tools/testing/selftests/openat2$ make CC=clang
+>>>
+>>> So LLVM is not set in this case. Perhaps my approach [2] (suggested by Arnd) of
+>>> using cc-option is more robust? (cc-option is alredy used by other selftests).
+>>>
+>>
+>> Yes, I think that would better handle the two cases: setting LLVM,
+>> and/or setting CC (!).
+>>
+>> For that, some nits, but only worth fussing over if the patch hasn't
+>> gone in yet, or if you're changing it for some other reason:
+>>
 > 
-> ... and why is this legacy fixed_phy even necessary when stmmac uses
-> phylink which supports fixed links, including with custom fixed status?
+> I just remembered it needs the LOCAL_HDRS approach as well. Did your
+> patch already go in? Should I fix up this one here to use cc-option,
+> or go with yours? Either way is fine with me.
 
-It might be because it is a PCI device, and they are trying to avoid
-DT? Maybe because they have not figured out how to add DT properties
-to a PCI device. It is possible.
+I don't think my patch has been taken into any branch - I didn't see a
+notification anyway. So it would be great if you are happy to take ownership of
+it? - I'm on Paternity leave for the next 3 weeks so wouldn't get it done until
+I get back.
 
-	Andrew
+> 
+> thanks,
+
 
