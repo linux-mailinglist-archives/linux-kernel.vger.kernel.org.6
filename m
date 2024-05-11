@@ -1,296 +1,202 @@
-Return-Path: <linux-kernel+bounces-176429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 329528C2FC5
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:07:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741578C2FCB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C90E1C21468
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:07:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAE55B23457
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484764EB3F;
-	Sat, 11 May 2024 06:07:01 +0000 (UTC)
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11D150249;
+	Sat, 11 May 2024 06:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSGut5CK"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FEBC1847
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACD44F217;
+	Sat, 11 May 2024 06:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715407620; cv=none; b=hATvQD7GBHekefi3CJ0pOd0343ONKXVAUlzbXUl8qHokthBrT31Fp2h9bBVVr11wlBlP3RLONcxjBsbefEuCJdYAhzdY+H1+W6QYnixb+0DrsQmFT1lYMNPO75BeTbSXzf5s2k5/JFShPxDR9ck4kWvE3PQEDA2RE8nWzAC3buE=
+	t=1715408129; cv=none; b=Wo7UtyhX0GnApSyG50WWf/4XeYoAB5zhdGK5dVEQtTKNGV3scPSa/Z3vykNjdzl2Wd5/I7+7K9zxFyE72q/CHkf7S1q7wBCR2zeg124eLst39/xTrytPEToM5sJc/vUqhdiyp5qO11SiR/1d64vzghb16z8li6Dm0LNRSBP6ICQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715407620; c=relaxed/simple;
-	bh=sbg6rBMGKw1d+kOMGipAdO0cMJaV2maaCccu41bPDPQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/4I9+OCpJxcqVNJd++ZpGllFwbq0bqj8gqQiaHl19pBesKBErGmaPSg2weT/5cUyeZXIRwtCF/WPDiQbDOK519SgMDhE7h8HmU0qX2K1ggUP/niflKybE2qPzYuzXlP+z9wEBLJoMQ0mUTLEwJ7GAw0wgMMOi6QBWW+SR5HXss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw22.mail.saunalahti.fi (Halon) with ESMTP
-	id ab27d1fa-0f5c-11ef-a9de-005056bdf889;
-	Sat, 11 May 2024 09:06:56 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 11 May 2024 09:06:55 +0300
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
+	s=arc-20240116; t=1715408129; c=relaxed/simple;
+	bh=T302qFdGYt9upY98yaaB7NGOiDO4dKh58ZsZOKVG+68=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XK2FP5usF82AcAi8lfHOfDKDwQuJQgfFfeqqgleVGjHjbBVyKy+BCyYqXtKFG9n/OBd0T3XLUFNY1bS9QWdGPKQgC98o3PInD+WOxn0zZ7F6KYCG0b7u/741tLvusIcnIjmHCub2uShajJx2ViuWXlCkGIJeyXqkEKBMxv0g5Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSGut5CK; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1e4bf0b3e06so25539585ad.1;
+        Fri, 10 May 2024 23:15:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715408127; x=1716012927; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mk1p9NsMzvwBrXgYJqVUrzqhtMjz3H+uq2RwIwI5Iro=;
+        b=OSGut5CKt3B/CkLdVEt+ozOsmCxzVnUX7ZAy7+B5qzvwgmeCV0sFy5Wg6GUVQkyN+V
+         beBS4Ejq0gywDqTJ8XnYc5UkrG8DWqYvMh2Brb752o0Gp4u0qFQeEjPWzIWP5sEs8JZG
+         zI27JhYLAU+XI9ipZXhh7HQo6nJSg0QEre2Qgp42rIlHOrTy9HzTvaijB5mB9IpVvL08
+         xXEoqdbMX331lrHOpJpzjWNOb2NtI4X56nJR1UNklC6zosgark56MuuZ9moQhlYv+TpO
+         M9cYNC/twRt4d/dIOhQ1mytwsT/ljV40YkBjU6Sw/r1YkHFVGuLiCjiJ1kI5VXNHp5oC
+         QQrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715408127; x=1716012927;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mk1p9NsMzvwBrXgYJqVUrzqhtMjz3H+uq2RwIwI5Iro=;
+        b=Hw4daIh61ZyQaMYy1mlpIbgHoOfOLPgjp8v1f0dGuvGZoK38As7qd/l6DMYlMCOhyM
+         o/+RNTvoGyeyizYiAAjmw3tqdHNX9pvNq07Mw9WL6W+E6L/kuoWtnunAnJJ792FhTWrI
+         Xf0nr3o3EqVS8toUUCcRs2CbYuSMSQDZl33MHtDKMUEq6Ny+zn/pXm63o7wTf0JD1yHd
+         BjGnftVtnYZwDZ4sCJPz/8O6oR1O1oSLxGDEBcHxMQyIUWMxrzRLONsjyqSuBeUFc5QM
+         RzFplQwm6/hgwvTWtsF51q34oVgGHTUeh1sH4H8p3U+TkZHpzz7ZSSioZl3FtgCyJo1O
+         Vrtw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgwjZ5oFeIUi/x7ynuR/rmPD+tWXR6+ma/jvWCff49n9G11FgYVUCAB8fgmzJ+UUFffUEa5dxYIAvp74AjmThdOa1i7JAgEUfhwoD+nzqIdghY0gxfylXPivy72TLee8OsAegi6GDavPg0eXHe+2yjQoVGGE46FFvtLF5GjTD/+zE3HQ==
+X-Gm-Message-State: AOJu0Yx2es86olCz4uWILjrV9Yuw64uMAKTbuY47b8h0Lxbme/d4gFnI
+	1navbpeek9ayyl6pTeOA5wF+fi4GgD0Xe6cUwaSWAVjeEAcTc5iZ
+X-Google-Smtp-Source: AGHT+IE/5w+T17713VvVQvihpBps/gl8gaAUn7yc0SAhP030RjyD/9WHrSttR/cH4OahChBLKer4zA==
+X-Received: by 2002:a17:902:7082:b0:1e2:1805:52c5 with SMTP id d9443c01a7336-1ef43d28349mr49186255ad.16.1715408126567;
+        Fri, 10 May 2024 23:15:26 -0700 (PDT)
+Received: from localhost.localdomain ([223.178.81.214])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0c15a8fcsm42249005ad.278.2024.05.10.23.15.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 23:15:26 -0700 (PDT)
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+To: 
+Cc: wahrenst@gmx.net,
+	Kanak Shilledar <kanakshilledar@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Drew Fustini <dfustini@baylibre.com>
-Subject: Re: [PATCH v2 2/8] pinctrl: Add driver for the T-Head TH1520 SoC
-Message-ID: <Zj8K_0zpI_IAY66R@surfacebook.localdomain>
-References: <20240103132852.298964-1-emil.renner.berthing@canonical.com>
- <20240103132852.298964-3-emil.renner.berthing@canonical.com>
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Kanak Shilledar <kanakshilledar111@protonmail.com>,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: spi: brcm,bcm2835-spi: convert to dtschema
+Date: Sat, 11 May 2024 11:44:56 +0530
+Message-Id: <20240511061457.8363-1-kanakshilledar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240103132852.298964-3-emil.renner.berthing@canonical.com>
+Content-Transfer-Encoding: 8bit
 
-Wed, Jan 03, 2024 at 02:28:39PM +0100, Emil Renner Berthing kirjoitti:
-> Add pinctrl driver for the T-Head TH1520 RISC-V SoC.
+Convert the Broadcom BCM2835 SPI0 controller to newer DT
+schema. Created DT schema based on the .txt file which had
+`comaptible`, `reg`, `interrupts`, `clocks` as required
+properties.
+Added GPL-2.0 OR BSD-2-Clause License
 
-..
+Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+---
+Changes in v2:
+- Updated the maintainers
+---
+ .../bindings/spi/brcm,bcm2835-spi.txt         | 23 ---------
+ .../bindings/spi/brcm,bcm2835-spi.yaml        | 50 +++++++++++++++++++
+ 2 files changed, 50 insertions(+), 23 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
 
-> +#include <linux/array_size.h>
-> +#include <linux/bits.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/clk.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/seq_file.h>
-> +#include <linux/spinlock.h>
-
-+ types.h
-
-..
-
-> +#define TH1520_PAD(_nr, _name, m0, m1, m2, m3, m4, m5, _flags) \
-> +	{ .number = _nr, .name = #_name, .drv_data = (void *)((_flags) | \
-> +		(TH1520_MUX_##m0 <<  0) | (TH1520_MUX_##m1 <<  5) | (TH1520_MUX_##m2 << 10) | \
-> +		(TH1520_MUX_##m3 << 15) | (TH1520_MUX_##m4 << 20) | (TH1520_MUX_##m5 << 25)) }
-
-It's better to read in a form of
-
-#define TH1520_PAD(_nr, _name, m0, m1, m2, m3, m4, m5, _flags)					\
-{												\
-	.number = _nr,										\
-	.name = #_name,										\
-	.drv_data = (void *)((_flags) |								\
-		(TH1520_MUX_##m0 <<  0) | (TH1520_MUX_##m1 <<  5) | (TH1520_MUX_##m2 << 10) |	\
-		(TH1520_MUX_##m3 << 15) | (TH1520_MUX_##m4 << 20) | (TH1520_MUX_##m5 << 25))	\
-}
-
-..
-
-> +static void th1520_pin_dbg_show(struct pinctrl_dev *pctldev,
-> +				struct seq_file *s, unsigned int pin)
-
-static void th1520_pin_dbg_show(struct pinctrl_dev *pctldev, struct seq_file *s,
-				unsigned int pin)
-
-(it even satisfies 80 characters limit)
-
-..
-
-> +	nmaps = 0;
-> +	for_each_available_child_of_node(np, child) {
-
-You want to use _scoped() variant.
-
-> +		int npins = of_property_count_strings(child, "pins");
-> +
-> +		if (npins <= 0) {
-
-Better to decouple definition and assignment
-
-		int npins;
-
-		npins = of_property_count_strings(child, "pins");
-		if (npins <= 0) {
-
-Besides that, if npins can hold an error code...
-
-
-> +			of_node_put(child);
-> +			dev_err(thp->pctl->dev, "no pins selected for %pOFn.%pOFn\n",
-> +				np, child);
-
-> +			return -EINVAL;
-
-..why is it being shadowed?
-
-> +		}
-> +		nmaps += npins;
-> +		if (of_property_present(child, "function"))
-> +			nmaps += npins;
-> +	}
-
-> +	map = kcalloc(nmaps, sizeof(*map), GFP_KERNEL);
-> +	if (!map)
-> +		return -ENOMEM;
-> +
-> +	nmaps = 0;
-> +	mutex_lock(&thp->mutex);
-> +	for_each_available_child_of_node(np, child) {
-
-You want to use _scoped() variant.
-
-> +		unsigned int rollback = nmaps;
-> +		enum th1520_muxtype muxtype;
-> +		struct property *prop;
-> +		const char *funcname;
-> +		const char **pgnames;
-> +		const char *pinname;
-> +		int npins;
-> +
-> +		ret = pinconf_generic_parse_dt_config(child, pctldev, &configs, &nconfigs);
-> +		if (ret) {
-> +			dev_err(thp->pctl->dev, "%pOFn.%pOFn: error parsing pin config\n",
-> +				np, child);
-> +			goto put_child;
-> +		}
-
-> +		if (!of_property_read_string(child, "function", &funcname)) {
-
-Why not traditional pattern, i.e. "errors first"?
-
-		if (of_property_read_string(child, "function", &funcname)) {
-			funcname = NULL;
-		} else {
-			...
-		}
-
-> +			muxtype = th1520_muxtype_get(funcname);
-> +			if (!muxtype) {
-> +				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown function '%s'\n",
-> +					np, child, funcname);
-> +				ret = -EINVAL;
-> +				goto free_configs;
-> +			}
-> +
-> +			funcname = devm_kasprintf(thp->pctl->dev, GFP_KERNEL, "%pOFn.%pOFn",
-> +						  np, child);
-
-With help of
-
-	struct device *dev = thp->pctl->dev;
-
-this and other lines in this function become shorter and easier to read.
-
-> +			if (!funcname) {
-> +				ret = -ENOMEM;
-> +				goto free_configs;
-> +			}
-> +
-> +			npins = of_property_count_strings(child, "pins");
-> +			pgnames = devm_kcalloc(thp->pctl->dev, npins, sizeof(*pgnames), GFP_KERNEL);
-> +			if (!pgnames) {
-> +				ret = -ENOMEM;
-> +				goto free_configs;
-> +			}
-> +		} else {
-> +			funcname = NULL;
-> +		}
-> +
-> +		npins = 0;
-> +		of_property_for_each_string(child, "pins", prop, pinname) {
-> +			unsigned int i;
-> +
-> +			for (i = 0; i < thp->desc.npins; i++) {
-> +				if (!strcmp(pinname, thp->desc.pins[i].name))
-> +					break;
-> +			}
-> +			if (i == thp->desc.npins) {
-> +				nmaps = rollback;
-> +				dev_err(thp->pctl->dev, "%pOFn.%pOFn: unknown pin '%s'\n",
-> +					np, child, pinname);
-> +				goto free_configs;
-> +			}
-> +
-> +			if (nconfigs) {
-> +				map[nmaps].type = PIN_MAP_TYPE_CONFIGS_PIN;
-> +				map[nmaps].data.configs.group_or_pin = thp->desc.pins[i].name;
-> +				map[nmaps].data.configs.configs = configs;
-> +				map[nmaps].data.configs.num_configs = nconfigs;
-> +				nmaps += 1;
-
-++ ?
-
-> +			}
-> +			if (funcname) {
-> +				pgnames[npins++] = thp->desc.pins[i].name;
-> +				map[nmaps].type = PIN_MAP_TYPE_MUX_GROUP;
-> +				map[nmaps].data.mux.function = funcname;
-> +				map[nmaps].data.mux.group = thp->desc.pins[i].name;
-> +				nmaps += 1;
-
-++ ?
-
-> +			}
-> +		}
-> +
-> +		if (funcname) {
-> +			ret = pinmux_generic_add_function(pctldev, funcname, pgnames,
-> +							  npins, (void *)muxtype);
-> +			if (ret < 0) {
-> +				dev_err(thp->pctl->dev, "error adding function %s\n", funcname);
-> +				goto put_child;
-> +			}
-> +		}
-> +	}
-> +
-> +	*maps = map;
-> +	*num_maps = nmaps;
-> +	mutex_unlock(&thp->mutex);
-> +	return 0;
-> +
-> +free_configs:
-> +	kfree(configs);
-> +put_child:
-> +	of_node_put(child);
-> +	th1520_pinctrl_dt_free_map(pctldev, map, nmaps);
-> +	mutex_unlock(&thp->mutex);
-> +	return ret;
-> +}
-
-..
-
-> +	if ((uintptr_t)desc->drv_data & TH1520_PAD_NO_PADCFG)
-
-You have a lot of explicit castings here and there, can you reduce the usage
-count of them?
-
-> +		return -ENOTSUPP;
-
-..
-
-> +	if ((uintptr_t)desc->drv_data & TH1520_PAD_NO_PADCFG)
-
-At least this one can be moved to a helper (macro?).
-
-> +		return -ENOTSUPP;
-
+diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
+deleted file mode 100644
+index 3d55dd64b1be..000000000000
+--- a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
++++ /dev/null
+@@ -1,23 +0,0 @@
+-Broadcom BCM2835 SPI0 controller
+-
+-The BCM2835 contains two forms of SPI master controller, one known simply as
+-SPI0, and the other known as the "Universal SPI Master"; part of the
+-auxiliary block. This binding applies to the SPI0 controller.
+-
+-Required properties:
+-- compatible: Should be one of "brcm,bcm2835-spi" for BCM2835/2836/2837 or
+-  "brcm,bcm2711-spi" for BCM2711 or "brcm,bcm7211-spi" for BCM7211.
+-- reg: Should contain register location and length.
+-- interrupts: Should contain interrupt.
+-- clocks: The clock feeding the SPI controller.
+-
+-Example:
+-
+-spi@20204000 {
+-	compatible = "brcm,bcm2835-spi";
+-	reg = <0x7e204000 0x1000>;
+-	interrupts = <2 22>;
+-	clocks = <&clk_spi>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-};
+diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+new file mode 100644
+index 000000000000..94da68792194
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/brcm,bcm2835-spi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Broadcom BCM2835 SPI0 controller
++
++maintainers:
++  - Florian Fainelli <florian.fainelli@broadcom.com>
++  - Kanak Shilledar <kanakshilledar111@protonmail.com>
++  - Stefan Wahren <wahrenst@gmx.net>
++
++allOf:
++  - $ref: spi-controller.yaml#
++
++properties:
++  compatible:
++    enum:
++      - brcm,bcm2835-spi
++      - brcm,bcm2711-spi
++      - brcm,bcm7211-spi
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    spi@20204000 {
++        compatible = "brcm,bcm2835-spi";
++        reg = <0x7e204000 0x1000>;
++        interrupts = <2 22>;
++        clocks = <&clk_spi>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
