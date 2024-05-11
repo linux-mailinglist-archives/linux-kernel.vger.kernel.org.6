@@ -1,127 +1,102 @@
-Return-Path: <linux-kernel+bounces-176523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E98E8C3124
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:03:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942708C3129
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 745B21F217D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AE1282182
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B5655C2A;
-	Sat, 11 May 2024 12:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A556450;
+	Sat, 11 May 2024 12:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="J6fmmoPZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="Cz5wt15h"
+Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4870E53370
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 12:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E1F5029D;
+	Sat, 11 May 2024 12:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715429010; cv=none; b=egBXDVkiiEdAw59K6Mnu5+gTlRs75dOWfEnSJflX17l2vmxmC/hk/ptJoPdHUMxVrde784LLhiOd5qBXlVQDnPJRAW2RazSSPOB/3oQ/pN4SB0i8AVrgBm6o7DOG6jYnsB1VIQIO4VQ1MwkfT02ZtbFXSB3yc7ieV+EGL7QJP0w=
+	t=1715429573; cv=none; b=Khm7ZYB/SkQLwqxbScjNhn5VHPNb+AitbqQpcd+ZwARTvIYUoPKyssrX4XS9pKnkowZ8qjK8Rh9rU/mC8BbCvXQ0/BeJc6DEvC31+qXgucgXZ8+hrQJ4omzlmDJn5pyLv3H/Jfp/D7SBNLVA0GTj40T0TamLmoIIG0Xw8C5Lzwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715429010; c=relaxed/simple;
-	bh=4ei6JyB9sEad3jWzdL3h33UZe4MpMw6WQVfgiX7aMEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/slcvbdiAFSp93rJ9jmb9lEUmsO12L5fr38pbNViYDLzBvihOrDzxBMD/w4Mnh+wIeCras141KYj6FLlrfSYMk4BSLdkmCfZPvLG0RRLlpUmkfe6DgEYK5raHqVRogGRm6KMVdwlAnACv/ULo/EjbGvS7fqnWegxIK1Qc5EKfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=J6fmmoPZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174B2C2BBFC;
-	Sat, 11 May 2024 12:03:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715429009;
-	bh=4ei6JyB9sEad3jWzdL3h33UZe4MpMw6WQVfgiX7aMEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J6fmmoPZEe/ReoNG8ROrbV1gTiyQxFLRF4zyINbbTCjuxwHhryTrWp+ilsGexw9SX
-	 1RLch2qS27OWz+8WyZ3623TVHsQZOW3dUShB3YlMunxa8uWH7S+RelfyMqr0+0t96i
-	 n3WocTWRNC6suqD5MCHcwgCzSGWkmkDXL2xqzAYI=
-Date: Sat, 11 May 2024 12:59:23 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CVE-2022-48655: firmware: arm_scmi: Harden accesses to the reset
- domains
-Message-ID: <2024051148-fervor-aloft-43a3@gregkh>
-References: <2024042859-CVE-2022-48655-5feb@gregkh>
- <Zj2Qrt6_kJzqA0-S@codewreck.org>
- <2024051041-resisting-chatroom-32c8@gregkh>
- <Zj4t4q_w6gqzdvhz@codewreck.org>
+	s=arc-20240116; t=1715429573; c=relaxed/simple;
+	bh=pJpbGrQRG17NW9RV6ENNzhtPKpgKqYX/WnTPi5BdlNo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=f/00AdgUrXMdyJ+FcCkLYSulGe4MDc3My2QL1c6qutYtXawjWI1on8TLHeUDxm2aAEXfM05fdq3l9ycmTdHMYt12sWwm+KaiV1ndjD04XHq9M7m3xvzRl76bPeCqnMlCc+vddTbHiekxP+1u4bvYDz7T0MaJddUp3DIt3e3T85k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=Cz5wt15h; arc=none smtp.client-ip=54.39.219.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B7847C005F;
+	Sat, 11 May 2024 08:13:13 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
+	t=1715429596; h=from:subject:date:message-id:to:mime-version:
+	 content-transfer-encoding; bh=81OK4Xej261w31VG4fWH+nxZNCaTDpeVyDYRMtjGIE4=;
+	b=Cz5wt15hncUJfpyninoSqs9LgxIHrYREy4yfrKJT77cne0/22ZVqjbEgkHt9YwvdkGmD0e
+	Flfab51wUCELiwlYdkBtNh/YCNhFIUCoh7ODYVMPxrhPyHZuVqjPN1cn0jbu93pGQw8NSZ
+	3sF5Z/LrMw6q4u9C0tSS1NDKiOcrpvg=
+From: Felix Kaechele <felix@kaechele.ca>
+To: Job Noorman <job@noorman.info>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] input: himax_hx83112b: add support for HX83100A
+Date: Sat, 11 May 2024 08:12:21 -0400
+Message-ID: <20240511121245.109644-1-felix@kaechele.ca>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zj4t4q_w6gqzdvhz@codewreck.org>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, May 10, 2024 at 11:23:30PM +0900, Dominique Martinet wrote:
-> Greg Kroah-Hartman wrote on Fri, May 10, 2024 at 09:55:15AM +0100:
-> > > I can submit an edit as a patch to vulns.git json, but this doesn't seem
-> > > overly important so for now a mail will probably do.
-> > 
-> > the json and mbox files are generated by tools, so patches to them is
-> > not a good idea as they will be overwritten the next time the scripts
-> > are run.
-> 
-> Just let me know what's the most convenient; if mail it is I won't
-> bother :)
-> 
-> > > >From a quick look it would seem it fixes arm_scmi from the addition of
-> > > scmi_domain_reset() in 95a15d80aa0d ("firmware: arm_scmi: Add RESET
-> > > protocol in SCMI v2.0"), which first appeared in v5.4-rc1, and does not
-> > > appear to have been backported to older kernels, so v5.4+ can be added
-> > > as a requirement.
-> > 
-> > We can add a "this is where the problem showed up" if you know it, so
-> > that would be 95a15d80aa0d ("firmware: arm_scmi: Add RESET protocol in
-> > SCMI v2.0"), correct?
-> 
-> Yes; this commit adds the out of bound access.
+Resent, due to being caught in the spam filter.
 
-Great, I'll mark the cve as having that as the "vulnerable" commit id,
-and then re-run the scripts and update the .json file and push it to
-cve.org when I get back to a better network connection.
+This set of patches brings support for the Himax HX83100A touch
+controller.
 
-> > > This means the current 5.4/5.10 trees are affected; the commit doesn't
-> > > backport cleanly because of a trivial context conflict so if that helps
-> > > I can send a couple of stable patch if that helps even if our systems
-> > > are not using arm_scmi (CVEs also don't have any way of expressing
-> > > whether the affected driver is used (or even built) at all, so I guess
-> > > people with affected versions will have to check that themselves...)
-> > 
-> > As everyone has different configurations, yes, everyone needs to check
-> > themselves, there is no way for us to determine this at all.  But we do
-> > list the files affected, so that should help you out in determining this
-> > automatically on your end.
-> 
-> I didn't see hte list of files anywhere for this, does it depend on the
-> commit?
-> (not that it's a problem to look at the commits referenced, I don't
-> think we'll automate anything for the forseeable future)
+I have no access to datasheets. So, like the original driver code
+that's being extended here, this code is mostly based on the quite
+convoluted, GPLv2 licensed manufacturer drivers for Android.
+I included links to sources and references where appropriate.
 
-Yes, it depeneds on the commit that fixes the issue, and the mail
-message for the CVE record says:
+A number of people tested this patch set on Lenovo ThinkSmart View
+(CD-18781Y) devices. That device has a variant utilizing a Innolux
+P080DDD-AB2 LCM. This LCM comes with the HX83100A.
 
-	The file(s) affected by this issue are:
-		drivers/firmware/arm_scmi/reset.c
+I would really appreciate if people using HX83112B chips could give this
+set a run to ensure nothing broke.
 
-Note that we can not include this in the json record format because,
-while cve has a field for this, it does not actually work properly for
-file names (it wants a url for a filename, strange but true...)  This is
-a bug on the cve.org end and hopefully will be fixed one day so that we
-can provide the file name information in a machine-parsable format.
+Thanks,
+Felix
 
-> > And yes, backported patches would be always appreciated for older
-> > kernels if you have them.
-> 
-> Sure, I'll take a min to finish the patches and send them on Monday;
-> might as well use work time when I've got an excuse to do kernel stuff.
+Changes in v2:
+- removed regulator handling, my test device works fine without it
+- some minor formatting fixes
 
-Wonderful, thanks!
+Felix Kaechele (5):
+  dt-bindings: input: touchscreen: himax,hx83112b: add HX83100A
+  input: himax_hx83112b: use more descriptive register defines
+  input: himax_hx83112b: implement MCU register reading
+  input: himax_hx83112b: add himax_chip struct for multi-chip support
+  input: himax_hx83112b: add support for HX83100A
 
-greg k-h
+ .../input/touchscreen/himax,hx83112b.yaml     |   1 +
+ drivers/input/touchscreen/himax_hx83112b.c    | 135 ++++++++++++++----
+ 2 files changed, 110 insertions(+), 26 deletions(-)
+
+
+base-commit: 5128de84d8fc849400d00f7a6982711f129699ea
+-- 
+2.45.0
+
 
