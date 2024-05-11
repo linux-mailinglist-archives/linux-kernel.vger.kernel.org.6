@@ -1,185 +1,494 @@
-Return-Path: <linux-kernel+bounces-176439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56118C2FEF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:50:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 417328C2FF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C70A6B20FAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44E9F1C21AD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504974C65;
-	Sat, 11 May 2024 06:50:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849754C83;
+	Sat, 11 May 2024 06:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGkVoDnU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OvCcqrgM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B388A55
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3131C01
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715410219; cv=none; b=H6xccpi6riu4CD6CG7aR3t9aSQ2OSu1BbjoSN91aNWcTN9XjsLDub/uaMpR9kwEEYp96FqlpdkeNVHEYGszA1mpq9br29gYXSQvKhD9PwWtZ84Y6OvVSRgkR8MPLD8vhAzLdTpLVLXBEttwhDW1rtbIY4OrW5nPZ68CbX1g7PZo=
+	t=1715410611; cv=none; b=fQecvEBLwu6S7Md7i1fu+/6HFMy/5hFpFuSsPPPmkt4ztfJMT1Yu0ij5jtMMdNH7izPZcjkmLCjCx2quphajmNR9fWWcDp9ry/7k+wocxkjVU4LDsMT+JGvevCFGKClEO7UCT6ySbJm7KCY8MrIPonpeOTI9HNhzd0c8Mprm40w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715410219; c=relaxed/simple;
-	bh=lblVBvZuddzuH51cR8bOvxbCQSkyGJaGFeuYszSiyVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZaPrPTTpwj3qlpHh6SMyuXplx5Hz67eFRd3AssXVPkBga4iusei5nzbgMSue70u9y0XWUeIkoOYm6rfYVH9eoyNq/LSTtO8otPGPiMc9I6Q+fAcI2SnQR/PNvMwGrNLogWW8Wb7Bm98DS0qPgZtBhIJV0Gtb3jf65eEycmIaCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGkVoDnU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270FEC2BD10;
-	Sat, 11 May 2024 06:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715410219;
-	bh=lblVBvZuddzuH51cR8bOvxbCQSkyGJaGFeuYszSiyVI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IGkVoDnUyxFEG56w7+HuB2jpgmBVaJMMe6Fv4rXtMdyTjoVePK7lwdsQN6/yRI4zC
-	 fF4GtCGRoWEI/y6eom0/Wx6eUsQj02VA/s2biezFods6BpGUs3nhJn8hghTDmbwNyx
-	 LI5kuaTCMtvLNluAbzC/eXJQ+BZlLiN2xA6BN0NeHkJWQZuJEwlDqqVELHU0Yo84nR
-	 mH0ezWfY9CbT7B88ziN7GTsrLuyIc3kZSBaAfKUvy9oJKWFJvxcae0sh+qXNshrPJB
-	 3sZ7Q/YFs+qD2RCS0xMjl2sTQMbMj+7st0WeeiDdKyGVu+CElQu48tpS9lXWUY4ioY
-	 gMMhUwb5yMsSQ==
-Date: Sat, 11 May 2024 02:50:13 -0400
-From: Guo Ren <guoren@kernel.org>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: paulmck@kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	andi.shyti@linux.intel.com, andrzej.hajda@intel.com,
-	linux-riscv@lists.infradead.org, palmer@dabbelt.com
-Subject: Re: [PATCH RFC cmpxchg 8/8] riscv: Emulate one-byte and two-byte
- cmpxchg
-Message-ID: <Zj8VJZmQC7hRzDdz@gmail.com>
-References: <20240401213950.3910531-8-paulmck@kernel.org>
- <mhng-d6a8a972-5054-4c48-a903-5a53a31da9ad@palmer-ri-x1c9a>
+	s=arc-20240116; t=1715410611; c=relaxed/simple;
+	bh=Tw9GdLH0x8UaRYiCZPWx/D+dO79BPWpUuq0Q5QOsMos=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AioU/5xqoXo+c9wzFDDfzpBydyqFrKH/u5vhoiUdnf+lXqCD0eyv4xizqSkFi2DeJF00SmtFe+SB9ST+j0egPttzlvKyJKIw+3qja8Nmap2rVhWNZjpMf1jPU+m07egv9SIWa3USZdiH2leRaRMAR1LZkmPvPD7vdfWMfW7V1BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OvCcqrgM; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715410608; x=1746946608;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Tw9GdLH0x8UaRYiCZPWx/D+dO79BPWpUuq0Q5QOsMos=;
+  b=OvCcqrgMve8Nlo0WH7YJL0JAYfpnu8KZgMMZqbSmAHUh9ZjWr2B0lXe0
+   jSwkYLJb/juwTAdaXk+YFO3byOU8XZGkDMNqgYanUBbIt253SED1na79G
+   iX80CH5SWycfPDRKGS1deyG38O9p4rvRsfT7cHftjOuw9A9yPHIXbGM1B
+   OQ8tiJu74vYfusd16j7O87PwP2XMDvoD+4+1/5LrucXZIQlKz68FMbc72
+   2ggGF+E91YAOKnI/GEWSkNW+8dL0I84aEyh9jm8xX+WpsnkCJ7QOmkcT3
+   ryk/BOuPcBQ2f9i9tB6XlVNY8POm0+ovGjxGJ2RupuPlIViNRlSTC7yxl
+   g==;
+X-CSE-ConnectionGUID: RLCWHD2GRjezqzxqopBWrA==
+X-CSE-MsgGUID: Rs2PAB0PTAOEwrrMHj7mXw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="28924486"
+X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
+   d="scan'208";a="28924486"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 23:56:47 -0700
+X-CSE-ConnectionGUID: 9gBgQQ6WSb6arC/viaeTQw==
+X-CSE-MsgGUID: 8z5WsUzrQMGuP2Sirucm5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
+   d="scan'208";a="29873818"
+Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 23:56:43 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <kernel_team@skhynix.com>,  <akpm@linux-foundation.org>,
+  <vernhao@tencent.com>,  <mgorman@techsingularity.net>,
+  <hughd@google.com>,  <willy@infradead.org>,  <david@redhat.com>,
+  <peterz@infradead.org>,  <luto@kernel.org>,  <tglx@linutronix.de>,
+  <mingo@redhat.com>,  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,
+  <rjgolo@gmail.com>
+Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
+ over 90%
+In-Reply-To: <20240510065206.76078-1-byungchul@sk.com> (Byungchul Park's
+	message of "Fri, 10 May 2024 15:51:54 +0900")
+References: <20240510065206.76078-1-byungchul@sk.com>
+Date: Sat, 11 May 2024 14:54:51 +0800
+Message-ID: <87ikzkg7no.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-d6a8a972-5054-4c48-a903-5a53a31da9ad@palmer-ri-x1c9a>
+Content-Type: text/plain; charset=ascii
 
-On Thu, Apr 04, 2024 at 07:15:40AM -0700, Palmer Dabbelt wrote:
-> On Mon, 01 Apr 2024 14:39:50 PDT (-0700), paulmck@kernel.org wrote:
-> > Use the new cmpxchg_emu_u8() and cmpxchg_emu_u16() to emulate one-byte
-> > and two-byte cmpxchg() on riscv.
-> > 
-> > [ paulmck: Apply kernel test robot feedback. ]
-> 
-> I'm not entirely following the thread, but sounds like there's going to be
-> generic kernel users of this now?  Before we'd said "no" to the byte/half
-> atomic emulation routines beacuse they weren't used, but if it's a generic
-> thing then I'm find adding them.
-> 
-> There's a patch set over here
-> <https://lore.kernel.org/all/20240103163203.72768-2-leobras@redhat.com/>
-> that implements these more directly using LR/SC.  I was sort of on the fence
-> about just taking it even with no direct users right now, as the byte/half
-> atomic extension is working its way through the spec process so we'll have
-> them for real soon.  I stopped right there for the last merge window,
-> though, as I figured it was too late to be messing with the atomics...
-> 
-> So
-> 
-> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-F.Y.I Leonardo Bras <leobras@redhat.com>
+Byungchul Park <byungchul@sk.com> writes:
 
-> 
-> if you guys want to take some sort of tree-wide change to make the byte/half
-> stuff be required everywhere.  We'll eventually end up with arch routines
-> for the extension, so at that point we might as well also have the more
-> direct LR/SC flavors.
-> 
-> If you want I can go review/merge that RISC-V patch set and then it'll have
-> time to bake for a shared tag you can pick up for all this stuff?  No rush
-> on my end, just LMK.
-> 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Andi Shyti <andi.shyti@linux.intel.com>
-> > Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> > Cc: <linux-riscv@lists.infradead.org>
-> > ---
-> >  arch/riscv/Kconfig               |  1 +
-> >  arch/riscv/include/asm/cmpxchg.h | 25 +++++++++++++++++++++++++
-> >  2 files changed, 26 insertions(+)
-> > 
-> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > index be09c8836d56b..4eaf40d0a52ec 100644
-> > --- a/arch/riscv/Kconfig
-> > +++ b/arch/riscv/Kconfig
-> > @@ -44,6 +44,7 @@ config RISCV
-> >  	select ARCH_HAS_UBSAN
-> >  	select ARCH_HAS_VDSO_DATA
-> >  	select ARCH_KEEP_MEMBLOCK if ACPI
-> > +	select ARCH_NEED_CMPXCHG_1_2_EMU
-> >  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-> >  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
-> >  	select ARCH_STACKWALK
-> > diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> > index 2fee65cc84432..a5b377481785c 100644
-> > --- a/arch/riscv/include/asm/cmpxchg.h
-> > +++ b/arch/riscv/include/asm/cmpxchg.h
-> > @@ -9,6 +9,7 @@
-> >  #include <linux/bug.h>
-> > 
-> >  #include <asm/fence.h>
-> > +#include <linux/cmpxchg-emu.h>
-> > 
-> >  #define __xchg_relaxed(ptr, new, size)					\
-> >  ({									\
-> > @@ -170,6 +171,12 @@
-> >  	__typeof__(*(ptr)) __ret;					\
-> >  	register unsigned int __rc;					\
-> >  	switch (size) {							\
-> > +	case 1:								\
-> > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > +		break;							\
-> > +	case 2:								\
-> > +		break;							\
-> > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> >  	case 4:								\
-> >  		__asm__ __volatile__ (					\
-> >  			"0:	lr.w %0, %2\n"				\
-> > @@ -214,6 +221,12 @@
-> >  	__typeof__(*(ptr)) __ret;					\
-> >  	register unsigned int __rc;					\
-> >  	switch (size) {							\
-> > +	case 1:								\
-> > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > +		break;							\
-> > +	case 2:								\
-> > +		break;							\
-> > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> >  	case 4:								\
-> >  		__asm__ __volatile__ (					\
-> >  			"0:	lr.w %0, %2\n"				\
-> > @@ -260,6 +273,12 @@
-> >  	__typeof__(*(ptr)) __ret;					\
-> >  	register unsigned int __rc;					\
-> >  	switch (size) {							\
-> > +	case 1:								\
-> > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > +		break;							\
-> > +	case 2:								\
-> > +		break;							\
-> > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> >  	case 4:								\
-> >  		__asm__ __volatile__ (					\
-> >  			RISCV_RELEASE_BARRIER				\
-> > @@ -306,6 +325,12 @@
-> >  	__typeof__(*(ptr)) __ret;					\
-> >  	register unsigned int __rc;					\
-> >  	switch (size) {							\
-> > +	case 1:								\
-> > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > +		break;							\
-> > +	case 2:								\
-> > +		break;							\
-> > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> >  	case 4:								\
-> >  		__asm__ __volatile__ (					\
-> >  			"0:	lr.w %0, %2\n"				\
-> 
+> Hi everyone,
+>
+> While I'm working with a tiered memory system e.g. CXL memory, I have
+> been facing migration overhead esp. tlb shootdown on promotion or
+> demotion between different tiers.  Yeah..  most tlb shootdowns on
+> migration through hinting fault can be avoided thanks to Huang Ying's
+> work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
+> is inaccessible").  See the following link for more information:
+>
+> https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
+>
+> However, it's only for migration through hinting fault.  I thought it'd
+> be much better if we have a general mechanism to reduce all the tlb
+> numbers that we can apply to any unmap code, that we normally believe
+> tlb flush should be followed.
+>
+> I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), defers tlb flush
+> until folios that have been unmapped and freed, eventually get allocated
+> again.  It's safe for folios that had been mapped read-only and were
+> unmapped, since the contents of the folios don't change while staying in
+> pcp or buddy so we can still read the data through the stale tlb entries.
+>
+> tlb flush can be defered when folios get unmapped as long as it
+> guarantees to perform tlb flush needed, before the folios actually
+> become used, of course, only if all the corresponding ptes don't have
+> write permission.  Otherwise, the system will get messed up.
+>
+> To achieve that:
+>
+>    1. For the folios that map only to non-writable tlb entries, prevent
+>       tlb flush during unmapping but perform it just before the folios
+>       actually become used, out of buddy or pcp.
+>
+>    2. When any non-writable ptes change to writable e.g. through fault
+>       handler, give up luf mechanism and perform tlb flush required
+>       right away.
+>
+>    3. When a writable mapping is created e.g. through mmap(), give up
+>       luf mechanism and perform tlb flush required right away.
+>
+> No matter what type of workload is used for performance evaluation, the
+> result would be positive thanks to the unconditional reduction of tlb
+> flushes, tlb misses and interrupts.
+
+Are there any downsides of the optimization?  Will it cause regression
+for workloads with almost no read-only mappings?  Will it cause
+regression for page allocation?
+
+> For the test, I picked up one of
+> the most popular and heavy workload, llama.cpp that is a
+> LLM(Large Language Model) inference engine.
+
+IIUC, llama.cpp is a workload with huge read-only mapping.
+
+> The result would depend on memory latency and how often reclaim runs,
+> which implies tlb miss overhead and how many times unmapping happens.
+> In my system, the result shows:
+>
+>    1. tlb flushes are reduced about 95%.
+>    2. tlb misses(itlb) are reduced about 80%.
+>    3. tlb misses(dtlb store) are reduced about 57%.
+>    4. tlb misses(dtlb load) are reduced about 24%.
+>    5. tlb shootdown interrupts are reduced about 95%.
+>    6. The test program runtime is reduced about 5%.
+>
+> The test environment and the result is like:
+>
+>    Machine: bare metal, x86_64, Intel(R) Xeon(R) Gold 6430
+>    CPU: 1 socket 64 core with hyper thread on
+>    Numa: 2 nodes (64 CPUs DRAM 42GB, no CPUs CXL expander 98GB)
+>    Config: swap off, numa balancing tiering on, demotion enabled
+>
+>    The test set:
+>
+>       llama.cpp/main -m $(70G_model1) -p "who are you?" -s 1 -t 15 -n 20 &
+>       llama.cpp/main -m $(70G_model2) -p "who are you?" -s 1 -t 15 -n 20 &
+>       llama.cpp/main -m $(70G_model3) -p "who are you?" -s 1 -t 15 -n 20 &
+>       wait
+>
+>       where -t: nr of threads, -s: seed used to make the runtime stable,
+>       -n: nr of tokens that determines the runtime, -p: prompt to ask,
+>       -m: LLM model to use.
+>
+>    Run the test set 10 times successively with caches dropped every run
+>    via 'echo 3 > /proc/sys/vm/drop_caches'.  Each inference prints its
+>    runtime at the end of each.
+>
+>    1. Runtime from the output of llama.cpp:
+>
+>    BEFORE
+>    ------
+>    llama_print_timings:       total time = 1002461.95 ms /    24 tokens
+>    llama_print_timings:       total time = 1044978.38 ms /    24 tokens
+>    llama_print_timings:       total time = 1000653.09 ms /    24 tokens
+>    llama_print_timings:       total time = 1047104.80 ms /    24 tokens
+>    llama_print_timings:       total time = 1069430.36 ms /    24 tokens
+>    llama_print_timings:       total time = 1068201.16 ms /    24 tokens
+>    llama_print_timings:       total time = 1078092.59 ms /    24 tokens
+>    llama_print_timings:       total time = 1073200.45 ms /    24 tokens
+>    llama_print_timings:       total time = 1067136.00 ms /    24 tokens
+>    llama_print_timings:       total time = 1076442.56 ms /    24 tokens
+>    llama_print_timings:       total time = 1004142.64 ms /    24 tokens
+>    llama_print_timings:       total time = 1042942.65 ms /    24 tokens
+>    llama_print_timings:       total time =  999933.76 ms /    24 tokens
+>    llama_print_timings:       total time = 1046548.83 ms /    24 tokens
+>    llama_print_timings:       total time = 1068671.48 ms /    24 tokens
+>    llama_print_timings:       total time = 1068285.76 ms /    24 tokens
+>    llama_print_timings:       total time = 1077789.63 ms /    24 tokens
+>    llama_print_timings:       total time = 1071558.93 ms /    24 tokens
+>    llama_print_timings:       total time = 1066181.55 ms /    24 tokens
+>    llama_print_timings:       total time = 1076767.53 ms /    24 tokens
+>    llama_print_timings:       total time = 1004065.63 ms /    24 tokens
+>    llama_print_timings:       total time = 1044522.13 ms /    24 tokens
+>    llama_print_timings:       total time =  999725.33 ms /    24 tokens
+>    llama_print_timings:       total time = 1047510.77 ms /    24 tokens
+>    llama_print_timings:       total time = 1068010.27 ms /    24 tokens
+>    llama_print_timings:       total time = 1068999.31 ms /    24 tokens
+>    llama_print_timings:       total time = 1077648.05 ms /    24 tokens
+>    llama_print_timings:       total time = 1071378.96 ms /    24 tokens
+>    llama_print_timings:       total time = 1066326.32 ms /    24 tokens
+>    llama_print_timings:       total time = 1077088.92 ms /    24 tokens
+>
+>    AFTER
+>    -----
+>    llama_print_timings:       total time =  988522.03 ms /    24 tokens
+>    llama_print_timings:       total time =  997204.52 ms /    24 tokens
+>    llama_print_timings:       total time =  996605.86 ms /    24 tokens
+>    llama_print_timings:       total time =  991985.50 ms /    24 tokens
+>    llama_print_timings:       total time = 1035143.31 ms /    24 tokens
+>    llama_print_timings:       total time =  993660.18 ms /    24 tokens
+>    llama_print_timings:       total time =  983082.14 ms /    24 tokens
+>    llama_print_timings:       total time =  990431.36 ms /    24 tokens
+>    llama_print_timings:       total time =  992707.09 ms /    24 tokens
+>    llama_print_timings:       total time =  992673.27 ms /    24 tokens
+>    llama_print_timings:       total time =  989285.43 ms /    24 tokens
+>    llama_print_timings:       total time =  996710.06 ms /    24 tokens
+>    llama_print_timings:       total time =  996534.64 ms /    24 tokens
+>    llama_print_timings:       total time =  991344.17 ms /    24 tokens
+>    llama_print_timings:       total time = 1035210.84 ms /    24 tokens
+>    llama_print_timings:       total time =  994714.13 ms /    24 tokens
+>    llama_print_timings:       total time =  984184.15 ms /    24 tokens
+>    llama_print_timings:       total time =  990909.45 ms /    24 tokens
+>    llama_print_timings:       total time =  991881.48 ms /    24 tokens
+>    llama_print_timings:       total time =  993918.03 ms /    24 tokens
+>    llama_print_timings:       total time =  990061.34 ms /    24 tokens
+>    llama_print_timings:       total time =  998076.69 ms /    24 tokens
+>    llama_print_timings:       total time =  997082.59 ms /    24 tokens
+>    llama_print_timings:       total time =  990677.58 ms /    24 tokens
+>    llama_print_timings:       total time = 1036054.94 ms /    24 tokens
+>    llama_print_timings:       total time =  994125.93 ms /    24 tokens
+>    llama_print_timings:       total time =  982467.01 ms /    24 tokens
+>    llama_print_timings:       total time =  990191.60 ms /    24 tokens
+>    llama_print_timings:       total time =  993319.24 ms /    24 tokens
+>    llama_print_timings:       total time =  992540.57 ms /    24 tokens
+>
+>    2. tlb shootdowns from 'cat /proc/interrupts':
+>
+>    BEFORE
+>    ------
+>    TLB:
+>    125553646  141418810  161932620  176853972  186655697  190399283
+>    192143823  196414038  192872439  193313658  193395617  192521416
+>    190788161  195067598  198016061  193607347  194293972  190786732
+>    191545637  194856822  191801931  189634535  190399803  196365922
+>    195268398  190115840  188050050  193194908  195317617  190820190
+>    190164820  185556071  226797214  229592631  216112464  209909495
+>    205575979  205950252  204948111  197999795  198892232  205287952
+>    199344631  195015158  195869844  198858745  195692876  200961904
+>    203463252  205921722  199850838  206145986  199613202  199961345
+>    200129577  203020521  207873649  203697671  197093386  204243803
+>    205993323  200934664  204193128  194435376  TLB shootdowns
+>
+>    AFTER
+>    -----
+>    TLB:
+>      5648092    6610142    7032849    7882308    8088518    8352310
+>      8656536    8705136    8647426    8905583    8985408    8704522
+>      8884344    9026261    8929974    8869066    8877575    8810096
+>      8770984    8754503    8801694    8865925    8787524    8656432
+>      8755912    8682034    8773935    8832925    8797997    8515777
+>      8481240    8891258   10595243   10285973    9756935    9573681
+>      9398968    9069244    9242984    8899009    9310690    9029095
+>      9069758    9105825    9092703    9270202    9460287    9258546
+>      9180415    9232723    9270611    9175020    9490420    9360316
+>      9420818    9057663    9525631    9310152    9152242    8654483
+>      9181804    9050847    8919916    8883856  TLB shootdowns
+>
+>    3. tlb numbers from 'perf stat' per test set:
+>
+>    BEFORE
+>    ------
+>    3163679332	dTLB-load-misses
+>    2017751856	dTLB-store-misses
+>    327092903	iTLB-load-misses
+>    1357543886	tlb:tlb_flush
+>
+>    AFTER
+>    -----
+>    2394694609	dTLB-load-misses
+>    861144167	dTLB-store-misses
+>    64055579	iTLB-load-misses
+>    69175002	tlb:tlb_flush
+>
+> ---
+>
+> Changes from v9:
+>
+> 	1. Expand the candidate to apply this mechanism:
+>
+> 	   BEFORE - The souce folios at any type of migration.
+> 	   AFTER  - Any folios that have been unmapped and freed.
+>
+> 	2. Change the workload for test:
+>
+> 	   BEFORE - XSBench
+> 	   AFTER  - llama.cpp (one of the most popluar real workload)
+>
+> 	3. Change the test environment:
+>
+> 	   BEFORE - qemu machine, too small DRAM(1GB), large remote mem
+> 	   AFTER  - bare metal, real CXL memory, practical memory size
+>
+> 	4. Rename the mechanism from MIGRC(Migration Read Copy) to
+> 	   LUF(Lazy Unmap Flush) to reflect the current version of the
+> 	   mechanism can be applied not only to unmap during migration
+> 	   but any unmap code e.g. unmap in shrink_folio_list().
+>
+> 	5. Fix build error for riscv. (feedbacked by kernel test bot)
+>
+> 	6. Supplement commit messages to describe what this mechanism is
+> 	   for, especially in the patches for arch code. (feedbacked by
+> 	   Thomas Gleixner)
+>
+> 	7. Clean up some trivial things.
+>
+> Changes from v8:
+>
+> 	1. Rebase on akpm/mm.git mm-unstable as of April 18, 2024.
+> 	2. Supplement comments and commit message.
+> 	3. Change the candidate to apply migrc mechanism:
+>
+> 	   BEFORE - The source folios at demotion and promotion.
+> 	   AFTER  - The souce folios at any type of migration.
+>
+> 	4. Change how migrc mechanism works:
+>
+> 	   BEFORE - Reduce tlb flushes by deferring folio_free() for
+> 	            source folios during demotion and promotion.
+> 	   AFTER  - Reduce tlb flushes by deferring tlb flush until they
+> 	            actually become used, out of pcp or buddy. The
+> 		    current version of migrc does *not* defer calling
+> 	            folio_free() but let it go as it is as the same as
+> 		    vanilla kernel, with the folios marked kind of 'need
+> 		    to tlb flush'. And then handle the flush when the
+> 		    page exits from pcp or buddy so as to prevent
+> 		    changing vm stats e.g. free pages.
+>
+> Changes from v7:
+>
+> 	1. Rewrite cover letter to explain what 'migrc' mechasism is.
+> 	   (feedbacked by Andrew Morton)
+> 	2. Supplement the commit message of a patch 'mm: Add APIs to
+> 	   free a folio directly to the buddy bypassing pcp'.
+> 	   (feedbacked by Andrew Morton)
+>
+> Changes from v6:
+>
+> 	1. Fix build errors in case of
+> 	   CONFIG_ARCH_WANT_BATCHED_UNMAP_tlb_FLUSH disabled by moving
+> 	   migrc_flush_{start,end}() calls from arch code to
+> 	   try_to_unmap_flush() in mm/rmap.c.
+>
+> Changes from v5:
+>
+> 	1. Fix build errors in case of CONFIG_MIGRATION disabled or
+> 	   CONFIG_HWPOISON_INJECT moduled. (feedbacked by kernel test
+> 	   bot and Raymond Jay Golo)
+> 	2. Organize migrc code with two kconfigs, CONFIG_MIGRATION and
+> 	   CONFIG_ARCH_WANT_BATCHED_UNMAP_tlb_FLUSH.
+>
+> Changes from v4:
+>
+> 	1. Rebase on v6.7.
+> 	2. Fix build errors in arm64 that is doing nothing for tlb flush
+> 	   but has CONFIG_ARCH_WANT_BATCHED_UNMAP_tlb_FLUSH. (reported
+> 	   by kernel test robot)
+> 	3. Don't use any page flag. So the system would give up migrc
+> 	   mechanism more often but it's okay. The final improvement is
+> 	   good enough.
+> 	4. Instead, optimize full tlb flush(arch_tlbbatch_flush()) by
+> 	   avoiding redundant CPUs from tlb flush.
+>
+> Changes from v3:
+>
+> 	1. Don't use the kconfig, CONFIG_MIGRC, and remove sysctl knob,
+> 	   migrc_enable. (feedbacked by Nadav)
+> 	2. Remove the optimization skipping CPUs that have already
+> 	   performed tlb flushes needed by any reason when performing
+> 	   tlb flushes by migrc because I can't tell the performance
+> 	   difference between w/ the optimization and w/o that.
+> 	   (feedbacked by Nadav)
+> 	3. Minimize arch-specific code. While at it, move all the migrc
+>            declarations and inline functions from include/linux/mm.h to
+>            mm/internal.h (feedbacked by Dave Hansen, Nadav)
+> 	4. Separate a part making migrc paused when the system is in
+> 	   high memory pressure to another patch. (feedbacked by Nadav)
+> 	5. Rename:
+> 	      a. arch_tlbbatch_clean() to arch_tlbbatch_clear(),
+> 	      b. tlb_ubc_nowr to tlb_ubc_ro,
+> 	      c. migrc_try_flush_free_folios() to migrc_flush_free_folios(),
+> 	      d. migrc_stop to migrc_pause.
+> 	   (feedbacked by Nadav)
+> 	6. Use ->lru list_head instead of introducing a new llist_head.
+> 	   (feedbacked by Nadav)
+> 	7. Use non-atomic operations of page-flag when it's safe.
+> 	   (feedbacked by Nadav)
+> 	8. Use stack instead of keeping a pointer of 'struct migrc_req'
+> 	   in struct task, which is for manipulating it locally.
+> 	   (feedbacked by Nadav)
+> 	9. Replace a lot of simple functions to inline functions placed
+> 	   in a header, mm/internal.h. (feedbacked by Nadav)
+> 	10. Add additional sufficient comments. (feedbacked by Nadav)
+> 	11. Remove a lot of wrapper functions. (feedbacked by Nadav)
+>
+> Changes from RFC v2:
+>
+> 	1. Remove additional occupation in struct page. To do that,
+> 	   unioned with lru field for migrc's list and added a page
+> 	   flag. I know page flag is a thing that we don't like to add
+> 	   but no choice because migrc should distinguish folios under
+> 	   migrc's control from others. Instead, I force migrc to be
+> 	   used only on 64 bit system to mitigate you guys from getting
+> 	   angry.
+> 	2. Remove meaningless internal object allocator that I
+> 	   introduced to minimize impact onto the system. However, a ton
+> 	   of tests showed there was no difference.
+> 	3. Stop migrc from working when the system is in high memory
+> 	   pressure like about to perform direct reclaim. At the
+> 	   condition where the swap mechanism is heavily used, I found
+> 	   the system suffered from regression without this control.
+> 	4. Exclude folios that pte_dirty() == true from migrc's interest
+> 	   so that migrc can work simpler.
+> 	5. Combine several patches that work tightly coupled to one.
+> 	6. Add sufficient comments for better review.
+> 	7. Manage migrc's request in per-node manner (from globally).
+> 	8. Add tlb miss improvement in commit message.
+> 	9. Test with more CPUs(4 -> 16) to see bigger improvement.
+>
+> Changes from RFC:
+>
+> 	1. Fix a bug triggered when a destination folio at the previous
+> 	   migration becomes a source folio at the next migration,
+> 	   before the folio gets handled properly so that the folio can
+> 	   play with another migration. There was inconsistency in the
+> 	   folio's state. Fixed it.
+> 	2. Split the patch set into more pieces so that the folks can
+> 	   review better. (Feedbacked by Nadav Amit)
+> 	3. Fix a wrong usage of barrier e.g. smp_mb__after_atomic().
+> 	   (Feedbacked by Nadav Amit)
+> 	4. Tried to add sufficient comments to explain the patch set
+> 	   better. (Feedbacked by Nadav Amit)
+>
+> Byungchul Park (12):
+>   x86/tlb: add APIs manipulating tlb batch's arch data
+>   arm64: tlbflush: add APIs manipulating tlb batch's arch data
+>   riscv, tlb: add APIs manipulating tlb batch's arch data
+>   x86/tlb, riscv/tlb, mm/rmap: separate arch_tlbbatch_clear() out of
+>     arch_tlbbatch_flush()
+>   mm: buddy: make room for a new variable, ugen, in struct page
+>   mm: add folio_put_ugen() to deliver unmap generation number to pcp or
+>     buddy
+>   mm: add a parameter, unmap generation number, to free_unref_folios()
+>   mm/rmap: recognize read-only tlb entries during batched tlb flush
+>   mm: implement LUF(Lazy Unmap Flush) defering tlb flush when folios get
+>     unmapped
+>   mm: separate move/undo parts from migrate_pages_batch()
+>   mm, migrate: apply luf mechanism to unmapping during migration
+>   mm, vmscan: apply luf mechanism to unmapping during folio reclaim
+>
+>  arch/arm64/include/asm/tlbflush.h |  18 ++
+>  arch/riscv/include/asm/tlbflush.h |  21 ++
+>  arch/riscv/mm/tlbflush.c          |   1 -
+>  arch/x86/include/asm/tlbflush.h   |  18 ++
+>  arch/x86/mm/tlb.c                 |   2 -
+>  include/linux/mm.h                |  22 ++
+>  include/linux/mm_types.h          |  40 +++-
+>  include/linux/rmap.h              |   7 +-
+>  include/linux/sched.h             |  11 +
+>  mm/compaction.c                   |  10 +
+>  mm/internal.h                     | 115 +++++++++-
+>  mm/memory.c                       |   8 +
+>  mm/migrate.c                      | 184 ++++++++++------
+>  mm/mmap.c                         |   8 +
+>  mm/page_alloc.c                   | 157 +++++++++++---
+>  mm/page_isolation.c               |   6 +
+>  mm/page_reporting.c               |  10 +
+>  mm/rmap.c                         | 345 +++++++++++++++++++++++++++++-
+>  mm/swap.c                         |  18 +-
+>  mm/vmscan.c                       |  29 ++-
+>  20 files changed, 904 insertions(+), 126 deletions(-)
+>
+>
+> base-commit: f52bcd4a9f6058704a6f6b6b50418f579defd4fe
+
+--
+Best Regards,
+Huang, Ying
 
