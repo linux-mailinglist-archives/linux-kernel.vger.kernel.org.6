@@ -1,282 +1,335 @@
-Return-Path: <linux-kernel+bounces-176361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DB698C2E7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:40:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1778C2E7E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8DD928482B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B1A3284876
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 01:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABF21172C;
-	Sat, 11 May 2024 01:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C665914A8E;
+	Sat, 11 May 2024 01:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="u9I842+0"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2041.outbound.protection.outlook.com [40.107.93.41])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPI+OgTg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9738C13;
-	Sat, 11 May 2024 01:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715391645; cv=fail; b=cxNLBVP0ChYn32jKRfPI4gEbvVUVIyUlbkzrf9HOo8tKLa1BenFew0um7vsnCChPEc/abZJciqXVu/IwCG9WZjGUGXXGoDjT1QjqXpbza1SCXPLmbn343Qfkb1ALgan08KtWzcIr5C2j899S7MiM8ZVs2axB01m+tLGgczR6R4k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715391645; c=relaxed/simple;
-	bh=XNBb5CSulnodZZpUNycsVoG+A9ACU5jlUVx4i37C2SA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IFL5u5im4YT/9QjrvLShYN0R4KSUDsvQMYcr1JJubbyMGajB2HJAs5v8lS5cXFYXBouCClPjculKFvhg0Qlvmjd3gSy9wL4RWZM0FiWwhfLIQh3lg3FGpkn49CjvDpU3HCIY0K+LXe0Nt0UCs4qGsIAcWi+xncVzbmt1BJJaBfw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=u9I842+0; arc=fail smtp.client-ip=40.107.93.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n5gusDOGggjpxGbxAHzuLAayFVq8RzcHq4qy7QM84CfSZVX2uxegeExeT6hIMD1zuAoEk7aC/remU/igxWFFmxVxiuUOXLpGRks6WQo9/uzksiqyj/ylt8PgwAnBQ3hwfP6gIRITjQi9kyDZDFDKJJOlNcwGXUMoihxgj0B5SGWb8W+PaBr4hUL37Lg+ZsbLbxAmhwVwV/4mIhahLWp434EiO4xIG7GPjeoNAMv6tXr65YBHKq6wXk6HN3/lfVUsdUIjY+4p1qFtdjjAugNyg4dQ0l8tQd3EC9civuiCH58E/QOG/azf8oWhx/igybCFhHdZgQEwqd+EfmcUzybT7A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aMsiec7Dvs8a8ibjmRHvEoRDeaelTvbbs8l8rntLUcA=;
- b=hLBf4yKtqyJAsMf5CmjveEH3uNIKf8pFsSzBKDyyOOYDUT7nvWEit6Iz5BezG7E6DrcaaMsGw/xQiZwxBuBgWB3cWx0xVi6+iC8v3aMkzRGE0lAXsv/nCMNjauW5M2zyJZgeZskv2IqQPUneFUiFx+zNJxj4AAWLIKlCcxgcKmwqUEB4HLeY2L54QL4ybCHaufWYX4gFihJmr7Y3RSbu2ny/W0jpBkyyBGhb6irZsGDanhJs1jMUgQ9bJ93iLvXeqPivz1Y7eksaRpR/bJMNNH4bHROS4btF8dhggirlQL9AyRhc/PInzZ8EHKZ1Y6/VrQdvtot3RPncix1m9zMPLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aMsiec7Dvs8a8ibjmRHvEoRDeaelTvbbs8l8rntLUcA=;
- b=u9I842+0Geu56mAJ8pGZOOz+9ITEBOxmIJguTJHUfEiwtcNAHytMNb1Y/JXfGU/ikCw108y/Aqfp6uc8S4p8V6vOffJ216FUe/sxONNHemCEHU9y/KiYZQrL7dIha/O/KKdWWXMnRSTWuCWCtmtiSW/as4uLwQhbAR4bXHR3mFo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com (2603:10b6:303:2c::19)
- by DM4PR12MB5820.namprd12.prod.outlook.com (2603:10b6:8:64::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.49; Sat, 11 May 2024 01:40:39 +0000
-Received: from MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87]) by MW3PR12MB4553.namprd12.prod.outlook.com
- ([fe80::b0ef:2936:fec1:3a87%4]) with mapi id 15.20.7544.047; Sat, 11 May 2024
- 01:40:38 +0000
-Message-ID: <356a6c8c-2c42-a321-4f8a-6d052945bc8d@amd.com>
-Date: Fri, 10 May 2024 20:40:32 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Reply-To: babu.moger@amd.com
-Subject: Re: [RFC PATCH v3 03/17] x86/resctrl: Detect Assignable Bandwidth
- Monitoring feature details
-Content-Language: en-US
-To: Reinette Chatre <reinette.chatre@intel.com>, babu.moger@amd.com,
- corbet@lwn.net, fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, rdunlap@infradead.org,
- tj@kernel.org, peterz@infradead.org, yanjiewtw@gmail.com,
- kim.phillips@amd.com, lukas.bulwahn@gmail.com, seanjc@google.com,
- jmattson@google.com, leitao@debian.org, jpoimboe@kernel.org,
- rick.p.edgecombe@intel.com, kirill.shutemov@linux.intel.com,
- jithu.joseph@intel.com, kai.huang@intel.com, kan.liang@linux.intel.com,
- daniel.sneddon@linux.intel.com, pbonzini@redhat.com, sandipan.das@amd.com,
- ilpo.jarvinen@linux.intel.com, peternewman@google.com,
- maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
-References: <cover.1711674410.git.babu.moger@amd.com>
- <63134ddf18208bbd11bcec0ec75c33ef6e5635b2.1711674410.git.babu.moger@amd.com>
- <ac22b96d-c4bb-42d9-bac8-22b9e032b59e@intel.com>
- <80b33bc6-7b70-4853-92a0-718c2d8728d3@amd.com>
- <753844b6-b68d-4b05-89b0-3ac36e1c8564@intel.com>
- <be20ffe1-ef8c-41fa-b359-9ebfaa326ebc@amd.com>
- <50d006e0-8488-4579-ab4e-701e1a8f410a@intel.com>
- <4363899d-2203-5829-9074-beb6c0e583b6@amd.com>
- <51af9362-ccb5-4393-9dfd-8615138df217@intel.com>
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <51af9362-ccb5-4393-9dfd-8615138df217@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: DM6PR08CA0039.namprd08.prod.outlook.com
- (2603:10b6:5:1e0::13) To MW3PR12MB4553.namprd12.prod.outlook.com
- (2603:10b6:303:2c::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B75B8C13;
+	Sat, 11 May 2024 01:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715391762; cv=none; b=adsZB4ZGYucLSIBtSF2SYyjempEXWNb90j7QFMOBG8rwldHm4Cbe0o1sk4M9lbzv4yzyIjcVg2eEQRmfKG+0EgBG4rvYCvLfebDrJH3xwZLnZSvRRE/Auh0zwOO4pI9dFupWRfXyK6RCThwVB4Cvu2Y6HmCy0qsfr1pOg/zQXxs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715391762; c=relaxed/simple;
+	bh=B98QXwaMAkRfgO2gYmiRCq3L4jfQpvnIuCNjwrmLHLM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rjz7FQ1cqclUvD4C/nakIEHQrFddFROJlPME+N3UjGebc95DeCyS3s04OaWgg7fL/1DU9kBPchlyjkJMBnK1sm3bH2G9kLi08b8Rj+/lzYtw5FUfY0eKhpmWU0X4EbJWRu1efIT+ZQeUCRSktxSvHWtRboqvMYj3trRN83ayqgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPI+OgTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F53DC113CC;
+	Sat, 11 May 2024 01:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715391762;
+	bh=B98QXwaMAkRfgO2gYmiRCq3L4jfQpvnIuCNjwrmLHLM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BPI+OgTglWOHm/ORkzJT4reyKD78QnaHWRbN7umgcuTaM2SCoF4FNGPlyenp7GZcy
+	 mv21GgnXmircxJy9G+WoEQICqELkVPOHhJNDB4g72U0vmZpSK8mcIZUYjBn2+MjgGF
+	 TGja5L4vSNsphrFTlW/vY1YhzQ6peTFFOPEwshYEtxqTvtGW/8BlJgDj5aWJ1CYW+B
+	 tqmX4/6E6ZC6PdS+Crf3n/wdoJn/Txj+DSA51/s/ZHfWdhaUYO2JUBxWyeuIWIznQW
+	 qo2rmhSMoQQCJyeFusm7eGMyTVtaccmvQQFA29dykIne8r/4B4L/4CALBslW2buvXI
+	 iWQDBCrG90+ig==
+Message-ID: <d1361cc9104390c1d5971e4618934dbe942fae92.camel@kernel.org>
+Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: Add RUN_MPTCP_TEST macro
+From: Geliang Tang <geliang@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matthieu Baerts
+	 <matttbe@kernel.org>
+Cc: MPTCP Upstream <mptcp@lists.linux.dev>, Mat Martineau
+ <martineau@kernel.org>,  Andrii Nakryiko <andrii@kernel.org>, Eduard
+ Zingerman <eddyz87@gmail.com>, Mykola Lysenko <mykolal@fb.com>,  Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,  LKML
+ <linux-kernel@vger.kernel.org>, Network Development
+ <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, "open list:KERNEL
+ SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Geliang Tang
+ <tanggeliang@kylinos.cn>
+Date: Sat, 11 May 2024 09:42:30 +0800
+In-Reply-To: <CAADnVQJM73g9gTq3GxR-RMmpJPK3DGgzUTQiJXjz_B1G_4JAAw@mail.gmail.com>
+References: 
+	<20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-0-e2bcbdf49857@kernel.org>
+	 <20240507-upstream-bpf-next-20240506-mptcp-subflow-test-v1-2-e2bcbdf49857@kernel.org>
+	 <CAADnVQJ5-APFxMeGsUDSWBsiAbhJGivs=fBUapgYEFNHgnEVeA@mail.gmail.com>
+	 <d28dec16-9029-42f5-b979-a0f11656a991@kernel.org>
+	 <CAADnVQJM73g9gTq3GxR-RMmpJPK3DGgzUTQiJXjz_B1G_4JAAw@mail.gmail.com>
+Autocrypt: addr=geliang@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ TO0tfEdfAX7IENcV87h2yAFBZkaA==
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.52.0-1build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW3PR12MB4553:EE_|DM4PR12MB5820:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb96650d-247e-4217-13ce-08dc715b5c57
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015|7416005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Qi9LNFFXL0lmdTNkaTNiaWdQcVNlOFdZMjA4TktVbFUzSXE4anI0WTNzOE5X?=
- =?utf-8?B?bWhGbjJlVEFXVXZMZ3NtbnF3UGhwazliZFBjdXZWTzZjcS9HYnN6cnBsRFZr?=
- =?utf-8?B?T3ZhWXNtd0U0cnNxUXc5YlRnT3UweEVSNEVDa0lHOXVtbzY0WkRFb3pPamVU?=
- =?utf-8?B?RVdyZ1IvQlF2RWRGY1dPaU94cll5R0NIa0RDd0Uwc0pZY3QxYU1VakMwZmt3?=
- =?utf-8?B?b0cxR0hYMlB4aGhJMWFNbURPYjRHUnNjUDdHN3U4MUJvakdDbE5JZDIzb3ZH?=
- =?utf-8?B?L25rTWhUbTJYOGpaMDh6MHJSSkFKQjZUUVRodHppYTJKdm01NGp3TVIycUVx?=
- =?utf-8?B?SXdzMjNUS2xSalB0NnFXRFJCSkpjNTZJeDE4TDFqeDJwbjJzcXFQZmtTRVRx?=
- =?utf-8?B?NDlWVkFoMnY0MEd6dUpzeHlLdjBVaW0ybXowVVFKNkwvODBEdzAxbVRURWxs?=
- =?utf-8?B?ZWF3K2Y1S3hLRlR1cXJmays2d0FWckp5UHNPWlRNNWEyUlhEQ0h5ZlczNSts?=
- =?utf-8?B?Y24wTk9STFRXNmZPR2gvMHNKcnpIN2NYNEEwWStwMU13aE9kSkNHNlFXNWEx?=
- =?utf-8?B?N05HdDZpSFRURkpyaFNZY2lPSzg0S1Q3T1ozZndYK05qMnZ3c0VSRXRSWjYv?=
- =?utf-8?B?REEybmI1OGthWlF6SVFKbFd5cW1IMXR2TWwyTnllWXpjTGNsT3pQdHJ3OXFS?=
- =?utf-8?B?UHVuUTFCaFYrYW5hQmx0SmFzNktnZTZGME9tMkVDbm04dTVicGdwbWhaZzNX?=
- =?utf-8?B?Z25ycXlqMFJHbVc2cHBvcHlkMzRsL0dURGMrUlBGaDUzUGNSTW5BbFNPcmtH?=
- =?utf-8?B?blZyU3NaUUpGSUNJNkF6VTFZaUkrdHNQVXdDeGg5SHdsK2Q5T0ZhSGk1QTRZ?=
- =?utf-8?B?Y3ZFRTRiTWhlZXlvemlpdllHTEhtRDk5bzcxTndRZ2hMQkxwc0RZZG1SdDlZ?=
- =?utf-8?B?TnlPVEVOM09rNGc5V0VrKzBRMzZNYWtIelk4M2lZSUZ4bHpNQnRkYzQ4OTJy?=
- =?utf-8?B?U1E4RW9SUGJkSGp1MW05MEM5VkZUM1NDWERvNGxTZktHRnFqbXhNS1Nld1Ew?=
- =?utf-8?B?S01US3pzWjRGd0xzNUJPOUljcGhiNlk3dis4LyszaTJtTDlvZGRhcllIVHU3?=
- =?utf-8?B?dDRxTzhQeGZkY0p5VVpNNUhkdm5LSU0wRU5xbEVXeCt4bEsxKzM4VHhVUDBs?=
- =?utf-8?B?ZVZ6bGxZQU5mcEZvN052ekJyWmxYZHhuZFN6Rk9RWVVRL0N3ZkoxaUdWUVJY?=
- =?utf-8?B?L2tsaWU4MnBRY29mU2RKVnJxUHoxbW01MW1aaWd2UTduSVlRb2ltUGE2RVhn?=
- =?utf-8?B?Ti94MFcwZHhuRkpkY0ZsWGo1N2tDTW9vWit0NFJxdVcrYm1Vc1o1V2EyWTRw?=
- =?utf-8?B?NG15aFJtempITWVORUpTYm0wMmw3TXFmVm9HVjJoajJVazZjSzlKTkxUcVdY?=
- =?utf-8?B?MlBiZ1ZiTSt5bzVkVHlHN2RXU21JZ2JwZlpGUTlhWmsyM3lNTkZlYkVKdEFV?=
- =?utf-8?B?R01KbWRQZC9HVGxMTWdwdnJoU2dCOWh6SkIyanF6UGxPcGgvTlBTclVKUGxs?=
- =?utf-8?B?VnJ1SDlNU081M3hNekNIV0dGYkdRVkl5UzJ2WjFSdnNVQ3gxSnhhVEc0NUVx?=
- =?utf-8?Q?ZZy2hyCyVCQNXrDXPGU2N7/DUP716BH+lkmWzbhHwKCk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW3PR12MB4553.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015)(7416005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bXdsd3RmQVFoZDBidEcxSUpsVXFVSjlqQngzVnhhV0lBWEE4dTFGNFpVTzVz?=
- =?utf-8?B?Q2F5UEpDVndud05mZ0djcU9WSGs3TCtQazRmMnFWYkJVN2RzQlRwekhaU3lu?=
- =?utf-8?B?MHZ2N3BLSWN1ZWFwanh1NVBtMGlYZk9YaitrUFB1TEVRK09oK1BtS0VGcHNr?=
- =?utf-8?B?QWVNYU9SdFFnOUxBOGNGWXJTYmE5K3J1TmJrVmJCVFFzUzBJN2VHeURSNldQ?=
- =?utf-8?B?M1h6cXpUSGswOGJqNzdHdUhFcTh3QWxkQWI2ZW5xdFEyZ2dreU5PWm1QOW40?=
- =?utf-8?B?VmhjVDZ4aUZWZjlrVGd3OGNhSGZmSWNNWE5jOXZyYS9zbWRUZG5weElQaTdx?=
- =?utf-8?B?TjlJdU9kVFpKZlBIby8zN2k4L0JIUXIzNFZQYjE2bWN3bWJOM01Dd21oM1Uy?=
- =?utf-8?B?a0x1c2R0aEQ5bHBRaGhrVnl4eGxQNGhqZTltaFdLZGpLRUk5czIwTGM1N0FF?=
- =?utf-8?B?aksyRXFkMFFkc2hRL3UvdmFvRFBiRFhRM0ZpUUdUOHAvUjdiZ2ZSUGY2UTF3?=
- =?utf-8?B?UzZVaU1vS2JRWjZ4aWtBVG54aWFhVXNLbjJMdG9vSlZJMHlSbjFNYmR5UkI2?=
- =?utf-8?B?UWM4Yk80Nlk4RDJIWngvS09SaDVPd2paMTlldkpJSXlvSTV3eGNIc0JiOFpp?=
- =?utf-8?B?a0xrQTJRZ0RmdUtlUlNMeWZKbEFPRUxlV3lCV3UzeHJ1UEtEQjJZYlR6cEZE?=
- =?utf-8?B?UWxabFN5VGxEV0NTN0VrRzZlN1ZDSiswZituT3A1ZlpGVUpISHY1RkRQU3du?=
- =?utf-8?B?b3ZZOWRRNmRJZzliNUgyODNZajN3MnZsMFg4bEo2bkY5VUd0eW5PQlhlNnpm?=
- =?utf-8?B?UjE0ZzVReEhUc2RLcFoyWlpaanI2SEZ0dlpESVUzWXBVYjlacGhIUEQrOGhQ?=
- =?utf-8?B?dFR3T0tiQkR2NlJHc2RTS0Z5TW9nTWczbVpxNGdXNnVGMjVHMkZ2cU1URFY5?=
- =?utf-8?B?S05uZXJiQW1BcFd6cFZQQW1pZzhHQ05lQmIrWGZHakxiN3FOVGptaXd2THhp?=
- =?utf-8?B?Ym53eVVHSi9tYkI4enA2eUpYeGxCN1k4eUpFVG5mbDI3VUVpMkZ4OWVlcXZn?=
- =?utf-8?B?MkdTamFBOU5ES3B5ZlU0WDc5SjhHbDdNZnFuRkVDOXZNVllDYjVFenZadE1D?=
- =?utf-8?B?MHdJQXRNUEpUM1c3NnRUbi9QYWVBbzFWTU5EeG1kSXVyVVgxajEvaDFqRkhD?=
- =?utf-8?B?ZzBvQ3UxSmdGYk85M2sxYWlyQUlZVTJTMDY3QlBPUTNFbmxBaGxjeDBrZExQ?=
- =?utf-8?B?VnkvYkt3ZGxBZjkxZTdkS3RROEswTXdLTVVLOHZCak5LejNmQVA4dHBBNDBz?=
- =?utf-8?B?dTlpa0x1NXlXUm5EUmJ6Q3FSbUFPQkUvY0hIQTRuMnNYa0N6akNxUEVCYk5D?=
- =?utf-8?B?dlZNaXF6Nkw2b3NKd0svUmdYc2dFek0xY3dlM3RiNFEzS1huVlpNU1IrM1pp?=
- =?utf-8?B?VlQ5SkhoNmFQbGE2dzJvUnR1MG83SzJEVUZTSFpCNEJJNnNsSUdTVkZzYlIy?=
- =?utf-8?B?WnAvUThJcURCM3dtTm1PYXpqUTlEQ2p5ZUYxOXFQcDFxZHNwRmZwd3d3WFpZ?=
- =?utf-8?B?S0hseW1ILzlnWVB6ZzdtMkJDMnpJNys3cDQ0TDN4dDJ1Nm5BcGwrTERDV1Ja?=
- =?utf-8?B?RVNTWXZyMDBrNnVLcWxMOFZPNmRRd3V5ckh3RFJ4K2Mrd01hWWpkbDBXYm9T?=
- =?utf-8?B?ZGFjVmNkdHBFbjZPa1VsdnhPaVNhQ1U4VXBJenFPME9aVnlIQ3Q5STBzZG42?=
- =?utf-8?B?a1FCVUtKV2NIZHdwY2xYSnF3SFpoMVJQMEJmVFRONkppUzBBMnI4aHF4MzJR?=
- =?utf-8?B?TzBEVFl1bmttZ1dRdVdGQnp1dXpuMDBRVFdzS1k3UTdEbWVGNFlMQ0U1QzF5?=
- =?utf-8?B?aVk1RUZMUXN3Mzk5MTF0ckkwbE1DbEJ4djlselViSXhWekdoMnpyYWJSaE0x?=
- =?utf-8?B?YVJsUlZHckxCVENyYUlaaEVHK2Q5ck9QaTdBM0YzZmQxYWdCaFVwS2ttbG1m?=
- =?utf-8?B?dEczTFVoeXpITmtXNVFoNHlHOFpKVUFCVG14REpIUElZN1plVk5VdUZlZElS?=
- =?utf-8?B?RU9SMUJleHBpeFZyMXJzMmsrZ2pRVXcrTXlEbUVLVDQ5M3cwSHd5R0FIUUls?=
- =?utf-8?Q?obNFXe3KqbFy4TFA1V6zd+/2U?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb96650d-247e-4217-13ce-08dc715b5c57
-X-MS-Exchange-CrossTenant-AuthSource: MW3PR12MB4553.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 01:40:38.6839
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NDHRB/j010K2hET6r2I+8hwpzcaBjk4lgXph5q4XtVqdwdrb9lALi7XPDTipmc8U
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5820
+Content-Transfer-Encoding: 8bit
 
-Hi Reinette,
-
-
-On 5/10/2024 1:34 PM, Reinette Chatre wrote:
-> Hi Babu,
+On Tue, 2024-05-07 at 13:51 -0700, Alexei Starovoitov wrote:
+> On Tue, May 7, 2024 at 9:02 AM Matthieu Baerts <matttbe@kernel.org>
+> wrote:
+> > 
+> > Hi Alexei,
+> > 
+> > Thank you for the review!
+> > 
+> > On 07/05/2024 16:44, Alexei Starovoitov wrote:
+> > > On Tue, May 7, 2024 at 3:53 AM Matthieu Baerts (NGI0)
+> > > <matttbe@kernel.org> wrote:
+> > > > 
+> > > > From: Geliang Tang <tanggeliang@kylinos.cn>
+> > > > 
+> > > > Each MPTCP subtest tests test__start_subtest(suffix), then
+> > > > invokes
+> > > > test_suffix(). It makes sense to add a new macro RUN_MPTCP_TEST
+> > > > to
+> > > > simpolify the code.
+> > > > 
+> > > > Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+> > > > Reviewed-by: Mat Martineau <martineau@kernel.org>
+> > > > Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> > > > ---
+> > > >  tools/testing/selftests/bpf/prog_tests/mptcp.c | 12 ++++++++--
+> > > > --
+> > > >  1 file changed, 8 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> > > > b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> > > > index baf976a7a1dd..9d1b255bb654 100644
+> > > > --- a/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> > > > +++ b/tools/testing/selftests/bpf/prog_tests/mptcp.c
+> > > > @@ -347,10 +347,14 @@ static void test_mptcpify(void)
+> > > >         close(cgroup_fd);
+> > > >  }
+> > > > 
+> > > > +#define RUN_MPTCP_TEST(suffix)                                
+> > > > \
+> > > > +do {                                                          
+> > > > \
+> > > > +       if (test__start_subtest(#suffix))                      
+> > > > \
+> > > > +               test_##suffix();                               
+> > > > \
+> > > > +} while (0)
+> > > 
+> > > Please no.
+> > > Don't hide it behind macros.
+> > 
+> > I understand, I'm personally not a big fan of hiding code being a
+> > macro
+> > too. This one saves only one line. Geliang added a few more tests
+> > in our
+> > tree [1], for a total of 9, so that's only saving 9 lines.
+> > 
+> > Related to that, if you don't mind, Geliang also added another
+> > macro --
+> > MPTCP_SCHED_TEST -- for tests that are currently only in our tree
+> > [2]
+> > (not ready yet). We asked him to reduce the size of this macro to
+> > the
+> > minimum. We accepted it because it removed quite a lot of similar
+> > code
+> > with very small differences [3]. Do you think we should revert this
+> > modification too?
 > 
-> On 5/10/2024 10:01 AM, Moger, Babu wrote:
->> On 5/9/2024 10:18 PM, Reinette Chatre wrote:
->>> On 5/9/2024 3:34 PM, Moger, Babu wrote:
->>>> On 5/7/24 15:27, Reinette Chatre wrote:
->>>>> On 5/6/2024 12:09 PM, Moger, Babu wrote:
->>>>>> On 5/3/24 18:26, Reinette Chatre wrote:
->>>>>>> On 3/28/2024 6:06 PM, Babu Moger wrote:
->>>>>
->>>>> ...
->>>>>
->>>>>>>> + * @mbm_assign_cntrs:    Maximum number of assignable counters
->>>>>>>>     */
->>>>>>>>    struct rdt_resource {
->>>>>>>>        int            rid;
->>>>>>>> @@ -188,6 +198,8 @@ struct rdt_resource {
->>>>>>>>        struct list_head    evt_list;
->>>>>>>>        unsigned long        fflags;
->>>>>>>>        bool            cdp_capable;
->>>>>>>> +    bool            mbm_assign_capable;
->>>>>>>> +    u32                     mbm_assign_cntrs;
->>>>>>>>    };
->>>>>>>
->>>>>>> Please check tabs vs spaces (in this whole series please).
->>>>>>
->>>>>> Sure. Will do.
->>>>>>
->>>>>>>
->>>>>>> I'm thinking that a new "MBM specific" struct within
->>>>>>> struct rdt_resource will be helpful to clearly separate the MBM related
->>>>>>> data. This will be similar to struct resctrl_cache for
->>>>>>> cache allocation and struct resctrl_membw for memory bandwidth
->>>>>>> allocation.
->>>>>>
->>>>>> Did you mean to move all the fields for monitoring to move to new struct?
->>>>>>
->>>>>> Struct resctrl_mbm {
->>>>>>             int                     num_rmid;
->>>>>>             bool                    mbm_assign_capable;
->>>>>>             u32                     mbm_assign_cntrs;
->>>>>> }:
->>>>>>
->>>>>
->>>>> Indeed, so not actually MBM specific but monitoring specific as you state (with
->>>>> appropriate naming?). This is purely to help organize data within struct rdt_resource
->>>>> and (similar to struct resctrl_cache and struct resctrl_membw) not a new
->>>>> structure expected to be passed around. I think evt_list can also be a member.
->>>>
->>>> How about this?
->>>>
->>>> Lets keep assign_capable in main structure(like we have mon_capable) and
->>>> move rest of them into new structure.
->>>>
->>>> Struct resctrl_mon {
->>>>              int                     num_rmid;
->>>>         struct list_head        evt_list;
->>>>              u32                     num_assign_cntrs;
->>>> }:
->>>
->>> This looks like a good start. It certainly supports ABMC. I do not yet
->>> have a clear understanding about how this will support MPAM and soft-RMID/ABMC
->>> since the current implementation has an implicit scope of one counter per event per
->>> monitor group. It thus seem reasonable to have a new generic name of "cntrs".
->>
->> How about renaming it to "assignable_counters"?
->>
-> 
-> As I mentioned in [1] the "assign" concept is not clear (just to me perhaps?). It
-> really seems to be the marketing name percolating into the implementation. Why is
-> "assignable" needed to be in a "counter" variable name? Is a variable not by definition
-> "assignable"? Why not just, for example, "num_cntrs"? I believe that things to be
-> as simple and obvious as possible ... this just helps to reduce confusion.
+> Yeah. Pls don't hide such things in macros.
+> Refactor into helper function in normal C.
 
-Ok. That sounds fine to me.
-> 
-> My previous comment regarding counter scope is not addressed by a rename though and
-> I do not expect you to have the answer but I would like us to keep in mind how these
-> "counters" could end up getting used. We may just later, when soft-RMID/ABMC and MPAM
-> is understood, need to add a "counter scope" as well.
+I do agree to remove this RUN_MPTCP_TEST macro. But MPTCP_SCHED_TEST
+macro is different. I know this type of macro is unwelcome. But it's
+indeed a perfect place to use macro in MPTCP bpf sched tests.
 
-Sure.
+From
+
+'''
+static void test_first(void)
+{
+	struct mptcp_bpf_first *skel;
+
+	skel = mptcp_bpf_first__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "open_and_load: first"))
+		return;
+
+	test_bpf_sched(skel->obj, "first", WITH_DATA, WITHOUT_DATA);
+	mptcp_bpf_first__destroy(skel);
+}
+
+static void test_bkup(void)
+{
+	struct mptcp_bpf_bkup *skel;
+
+	skel = mptcp_bpf_bkup__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "open_and_load: bkup"))
+		return;
+
+	test_bpf_sched(skel->obj, "bkup", WITH_DATA, WITHOUT_DATA);
+	mptcp_bpf_bkup__destroy(skel);
+}
+
+static void test_rr(void)
+{
+	struct mptcp_bpf_rr *skel;
+
+	skel = mptcp_bpf_rr__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "open_and_load: rr"))
+		return;
+
+	test_bpf_sched(skel->obj, "rr", WITH_DATA, WITH_DATA);
+	mptcp_bpf_rr__destroy(skel);
+}
+
+static void test_red(void)
+{
+	struct mptcp_bpf_red *skel;
+
+	skel = mptcp_bpf_red__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "open_and_load: red"))
+		return;
+
+	test_bpf_sched(skel->obj, "red", WITH_DATA, WITH_DATA);
+	mptcp_bpf_red__destroy(skel);
+}
+
+static void test_burst(void)
+{
+	struct mptcp_bpf_burst *skel;
+
+	skel = mptcp_bpf_burst__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "open_and_load: burst"))
+		return;
+
+	test_bpf_sched(skel->obj, "burst", WITH_DATA, WITH_DATA);
+	mptcp_bpf_burst__destroy(skel);
+}
+
+static void test_stale(void)
+{
+	struct mptcp_bpf_stale *skel;
+
+	skel = mptcp_bpf_stale__open_and_load();
+	if (!ASSERT_OK_PTR(skel, "open_and_load: stale"))
+		return;
+
+	test_bpf_sched(skel->obj, "stale", WITH_DATA, WITHOUT_DATA);
+	mptcp_bpf_stale__destroy(skel);
+}
+'''
+
+to
+
+'''
+#define MPTCP_SCHED_TEST(sched, addr1, addr2)                   \
+static void test_##sched(void)                                  \
+{                                                               \
+        struct mptcp_bpf_##sched *skel;                         \
+                                                                \
+        skel = mptcp_bpf_##sched##__open_and_load();            \
+        if (!ASSERT_OK_PTR(skel, "open_and_load:" #sched))      \
+                return;                                         \
+                                                                \
+        test_bpf_sched(skel->obj, #sched, addr1, addr2);        \
+        mptcp_bpf_##sched##__destroy(skel);                     \
+}
+
+MPTCP_SCHED_TEST(first, WITH_DATA, WITHOUT_DATA);
+MPTCP_SCHED_TEST(bkup, WITH_DATA, WITHOUT_DATA);
+MPTCP_SCHED_TEST(rr, WITH_DATA, WITH_DATA);
+MPTCP_SCHED_TEST(red, WITH_DATA, WITH_DATA);
+MPTCP_SCHED_TEST(burst, WITH_DATA, WITH_DATA);
+MPTCP_SCHED_TEST(stale, WITH_DATA, WITHOUT_DATA);
+'''
+
+We can save so many code, and perfectly use BPF test skeleton template.
+It's small enough, and be difficult to refactor with a helper function
+in normal C.
+
+Please reconsider whether to delete it, or at least keep it until the
+day it is officially sent to BPF mail list for review.
+
+Thanks,
+-Geliang
 
 > 
-> Reinette
+> But, what do you mean "in your tree" ?
+> That's your development tree and you plan to send all that
+> properly as patches to bpf-next someday?
 > 
-> [1] https://lore.kernel.org/lkml/0d94849c-828c-4f10-a6f8-e26cc4554909@intel.com/
-> 
-
-Thanks
-- Babu Moger
+> > 
+> > [1]
+> > https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961ac0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L578-L595
+> > 
+> > [2]
+> > https://github.com/multipath-tcp/mptcp_net-next/blob/4369d9cbd752e166961ac0db7f85886111606301/tools/testing/selftests/bpf/prog_tests/mptcp.c#L559-L576
+> > 
+> > [3]
+> > https://lore.kernel.org/mptcp/cover.1713321357.git.tanggeliang@kylinos.cn/T/#m0b9c14f1cbae8653c6fd119f6b71d1797961d6ba
+> > 
+> > Cheers,
+> > Matt
+> > --
+> > Sponsored by the NGI0 Core fund.
+> > 
 
