@@ -1,99 +1,206 @@
-Return-Path: <linux-kernel+bounces-176665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F40C48C32E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:19:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCA78C32ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EC0B281360
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A2C1F21B1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8541CA9E;
-	Sat, 11 May 2024 17:19:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991741C69C;
-	Sat, 11 May 2024 17:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D691C2A3;
+	Sat, 11 May 2024 17:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KGzbM93d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAE31B7F7;
+	Sat, 11 May 2024 17:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715447966; cv=none; b=C6SaR2QHt7lxJfuuacLs/d767FbR5DyFIJQfOO5/U9c9pEOcpR4RU1Dl23GW8iJWTaCCZLgkrHNj/N16SaQWdxhtx+7FAzBZtQ7h/jKfgxLTEeTyLDi636/n0KZJyv0dX+50SvzUMVOSTG+8o+pHfTc9NWfeH3mDYGmvRPGEoVQ=
+	t=1715448357; cv=none; b=EXVVkkaDjwGB+uOCLhLNd5SMRJfSCMcW3H7k94fBQD04gqCE2+C2Y//UTskp0aYVPf2jHzBXztPJtBf+WNElMHInWehSGLSVTKLpoUAWiFtqLYMtT/DUZb4Ny8rfHLqil9sqsvvQBeYVkujY3ef6jER46PX56jIgc7Uv9+nxA1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715447966; c=relaxed/simple;
-	bh=pgsGnygtsFDYBZVmkmNEae+IbcuJAAlPGbGMWWujjy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BwPXAsS2gC3hYu4tvCXJFTVG5uh5EJlWSwqpUsq9SBMMMTElZjNkh5Dj1vhDTDVEtVADoAH6JDaXBnY7S4epLxNzjAREmySxPW3ku+CT4kHGoBgk0CaleQRz08j/YamLZkuhi5pYssuqxr07Gz2rLLj90eydAB3PF6HhQt1tbSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A84D113E;
-	Sat, 11 May 2024 10:19:44 -0700 (PDT)
-Received: from [10.57.65.1] (unknown [10.57.65.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D0C53F641;
-	Sat, 11 May 2024 10:19:16 -0700 (PDT)
-Message-ID: <3022c21b-a34d-4592-a0da-79e047372eef@arm.com>
-Date: Sat, 11 May 2024 18:19:14 +0100
+	s=arc-20240116; t=1715448357; c=relaxed/simple;
+	bh=aL3mmxLvwuw3oHrq+8iQZnMxFxtXlmbmE4RA55WoXDM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+sC77DuSO5mtNeu53Nyn/Np3M71RfekcKAGPL502Exz3yNnQf6Z8+GrAoxFYAFhucKfAKSEj/50Ge6WmIWSHLUv9rSaFK+b2jXSWynhtpE+064Mr8oeVqQB3zoQrY0EMyfpAauIo73OgmNvD7CACaxkYrLE3TPOXNqK4BlUta8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KGzbM93d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B339C2BBFC;
+	Sat, 11 May 2024 17:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715448356;
+	bh=aL3mmxLvwuw3oHrq+8iQZnMxFxtXlmbmE4RA55WoXDM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KGzbM93dmJZR2TWr8nOkCBNZitkkYBjMoKdW4a97qEilIP512QlirK7SKk7vi6mAj
+	 +5fwPi9IhOldE2siZVmd+Kszu7lxzMGELuCEVmua2XfjGSzoxagEUxSceu0/1LPw1B
+	 wvP4hgTCgbgYhfG8n4J1wEa7n+gRYT+iqpZbA4COdIGhECvkN2Ko3lXZYrSBil8g3O
+	 pX1izWtx7M+a2/c1TzPtA7kVIauaS1+yseDUvagmNHTgqTPy6XM5XZk+ZPkJCUthl0
+	 ailMD7XN0d6K2bMT3Dw3YJ9xH9dUCxcp7NWPKiz2hA8/rC7UUk5hOsDSG3beyLh7NO
+	 mT/MeFTfD4yog==
+Date: Sat, 11 May 2024 14:25:53 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Breno Leitao <leitao@debian.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf list: Fix the --no-desc option
+Message-ID: <Zj-qIbUN2XFBnvP8@x1>
+References: <20240508133518.3204221-1-leitao@debian.org>
+ <Zj-WE1aG7ihtevG3@x1>
+ <CAP-5=fXXYVgb4rnftaiTZTEniGOr5NnpfXJFNqX96GXP6=oTiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] selftests/openat2: fix clang build failures:
- -static-libasan, LOCAL_HDRS
-Content-Language: en-GB
-To: John Hubbard <jhubbard@nvidia.com>, Shuah Khan <shuah@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
- Christian Brauner <brauner@kernel.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Alexey Gladkov <legion@kernel.org>, Valentin Obst <kernel@valentinobst.de>,
- linux-kselftest@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- llvm@lists.linux.dev
-References: <20240504044336.14411-1-jhubbard@nvidia.com>
- <c406383d-e08a-4a12-9e25-1c987b0d678f@arm.com>
- <f715719a-c835-496c-9e99-d249e5607a0b@nvidia.com>
- <b28e6bcb-dde2-4ac0-ac0d-dfddb42c4426@nvidia.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <b28e6bcb-dde2-4ac0-ac0d-dfddb42c4426@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXXYVgb4rnftaiTZTEniGOr5NnpfXJFNqX96GXP6=oTiA@mail.gmail.com>
 
-On 10/05/2024 19:22, John Hubbard wrote:
-> On 5/10/24 10:56 AM, John Hubbard wrote:
->> On 5/10/24 4:52 AM, Ryan Roberts wrote:
->>> On 04/05/2024 05:43, John Hubbard wrote:
->> ...
->>> It just occured to me that the bug report I was fixing with my attempt was
->>> invoking make like this (see [1]):
->>>
->>> # tools/testing/selftests/fchmodat2$ make CC=clang
->>> # tools/testing/selftests/openat2$ make CC=clang
->>>
->>> So LLVM is not set in this case. Perhaps my approach [2] (suggested by Arnd) of
->>> using cc-option is more robust? (cc-option is alredy used by other selftests).
->>>
->>
->> Yes, I think that would better handle the two cases: setting LLVM,
->> and/or setting CC (!).
->>
->> For that, some nits, but only worth fussing over if the patch hasn't
->> gone in yet, or if you're changing it for some other reason:
->>
+On Sat, May 11, 2024 at 09:11:00AM -0700, Ian Rogers wrote:
+>    On Sat, May 11, 2024, 9:00 AM Arnaldo Carvalho de Melo
+>    <[1]acme@kernel.org> wrote:
 > 
-> I just remembered it needs the LOCAL_HDRS approach as well. Did your
-> patch already go in? Should I fix up this one here to use cc-option,
-> or go with yours? Either way is fine with me.
-
-I don't think my patch has been taken into any branch - I didn't see a
-notification anyway. So it would be great if you are happy to take ownership of
-it? - I'm on Paternity leave for the next 3 weeks so wouldn't get it done until
-I get back.
-
+>      On Wed, May 08, 2024 at 06:35:17AM -0700, Breno Leitao wrote:
+>      > Currently, the --no-desc option in perf list isn't functioning as
+>      > intended.
+>      >
+>      > This issue arises from the overwriting of struct option->desc with
+>      the
+>      > opposite value of struct option->long_desc. Consequently, whatever
+>      > parse_options() returns at struct option->desc gets overridden
+>      later,
+>      > rendering the --desc or --no-desc arguments ineffective.
+>      >
+>      > To resolve this, set ->desc as true by default and allow
+>      parse_options()
+>      > to adjust it accordingly. This adjustment will fix the --no-desc
+>      > option while preserving the functionality of the other parameters.
 > 
-> thanks,
+>      Thanks, applied to perf-tools-next, and added this:
+> 
+>          Committer testing:
+> 
+>          Before:
+> 
+>            $ perf list --no-desc
+>            <SNIP>
+>            cache:
+>              longest_lat_cache.miss
+>                   [Counts the number of cacheable memory requests that
+>      miss in the LLC. Counts on a per core basis. Unit: cpu_atom]
+>              longest_lat_cache.reference
+>                   [Counts the number of cacheable memory requests that
+>      access the LLC. Counts on a per core basis. Unit: cpu_atom]
+>              mem_bound_stalls.ifetch
+>                   [Counts the number of cycles the core is stalled due to
+>      an instruction cache or TLB miss which hit in the L2,LLC,DRAM or
+>      MMIO (Non-DRAM). Unit: cpu_atom]
+>              mem_bound_stalls.ifetch_dram_hit
+>                   [Counts the number of cycles the core is stalled due to
+>      an instruction cache or TLB miss which hit in DRAM or MMIO
+>      (Non-DRAM). Unit: cpu_atom]
+>              mem_bound_stalls.ifetch_l2_hit
+>                   [Counts the number of cycles the core is stalled due to
+>      an instruction cache or TLB miss which hit in the L2 cache. Unit:
+>      cpu_atom]
+>              mem_bound_stalls.ifetch_llc_hit
+>                   [Counts the number of cycles the core is stalled due to
+>      an instruction cache or TLB miss which hit in the LLC or other core
+>      with HITE/F/M. Unit: cpu_atom]
+>            <SNIP>
+> 
+>          After:
+> 
+>            $ perf list --no-desc
+>            <SNIP>
+>              cache:
+>              longest_lat_cache.miss
+>              longest_lat_cache.reference
+>              mem_bound_stalls.ifetch
+>              mem_bound_stalls.ifetch_dram_hit
+>              mem_bound_stalls.ifetch_l2_hit
+>              mem_bound_stalls.ifetch_llc_hit
+>            <SNIP>
+> 
+>          Signed-off-by: Breno Leitao <[2]leitao@debian.org>
+>          Tested-by: Arnaldo Carvalho de Melo <[3]acme@redhat.com>
+> 
+>      - Arnaldo
+> 
+>      > Signed-off-by: Breno Leitao <[4]leitao@debian.org>
+>      > ---
+>      >  tools/perf/builtin-list.c | 2 +-
+>      >  1 file changed, 1 insertion(+), 1 deletion(-)
+>      >
+>      > diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+>      > index 02bf608d585e..58589f67e800 100644
+>      > --- a/tools/perf/builtin-list.c
+>      > +++ b/tools/perf/builtin-list.c
+>      > @@ -491,6 +491,7 @@ int cmd_list(int argc, const char **argv)
+>      >       int i, ret = 0;
+>      >       struct print_state default_ps = {
+>      >               .fp = stdout,
+>      > +             .desc = true,
+>      >       };
+>      >       struct print_state json_ps = {
+>      >               .fp = stdout,
+>      > @@ -563,7 +564,6 @@ int cmd_list(int argc, const char **argv)
+>      >               };
+>      >               ps = &json_ps;
+>      >       } else {
+>      > -             default_ps.desc = !default_ps.long_desc;
+> 
+>    Given this, did you test the long description behavior?
 
+So, without the patch:
+
+perf list
+<SNIP>
+cache:
+  longest_lat_cache.miss
+       [Counts the number of cacheable memory requests that miss in the LLC. Counts on a per core basis. Unit: cpu_atom]
+<SNIP>
+
+perf list --long-desc
+<SNIP>
+cache:
+  longest_lat_cache.miss
+       [Counts the number of cacheable memory requests that miss in the Last Level Cache (LLC). Requests include demand loads,reads for ownership (RFO),instruction fetches and L1 HW
+        prefetches. If the platform has an L3 cache,the LLC is the L3 cache,otherwise it is the L2 cache. Counts on a per core basis]
+<SNIP>
+
+perf list --no-desc
+<SNIP>
+cache:
+  longest_lat_cache.miss
+       [Counts the number of cacheable memory requests that miss in the LLC. Counts on a per core basis. Unit: cpu_atom]
+<SNIP>
+
+With Breno's patch the default doesn't change, --no-desc gets fixed but
+--long-desc is broken:
+
+perf list --long-desc
+<SNIP>
+cache:
+  longest_lat_cache.miss
+       [Counts the number of cacheable memory requests that miss in the LLC. Counts on a per core basis. Unit: cpu_atom]
+       [Counts the number of cacheable memory requests that miss in the Last Level Cache (LLC). Requests include demand loads,reads for ownership (RFO),instruction fetches and L1 HW
+        prefetches. If the platform has an L3 cache,the LLC is the L3 cache,otherwise it is the L2 cache. Counts on a per core basis]
+<SNIP>
+
+Thanks for asking the question, I'm dropping the patch, Breno, can you
+try again?
+
+- Arnaldo
 
