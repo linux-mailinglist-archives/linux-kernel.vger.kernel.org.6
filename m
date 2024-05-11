@@ -1,142 +1,183 @@
-Return-Path: <linux-kernel+bounces-176409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 530C08C2F62
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2C48C2F69
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F58E2849C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7C72849AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAF838382;
-	Sat, 11 May 2024 03:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D7F3D57A;
+	Sat, 11 May 2024 03:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PFFEzATc"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOhZIMiC"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C1A21A04
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F661843;
+	Sat, 11 May 2024 03:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715398601; cv=none; b=tiJsaRRgQtdTI8+64ewEh0jfHrk6ZKzAaUlsG7i6dEYXu+C3HGS1aERYK1+BWA5Kl+BGx7cBzEV34VJlJFCN8UblwCjngYjsSOQ9Q0rkPcCHywBALRJgEu3U6gbmXrYveszGGBbX1t6U5gFsKJZ3CXhyrdFjOYyjMJ/feiYZ9yQ=
+	t=1715398968; cv=none; b=NNjTQkBck8giUg6yppmlxK2+tH4LewRmtC+VyGtef+frR4862B2lUbWnHP169r+JYsbTiYD/z/aPXfdlVEZ1CvDsHPboAB6Bdic/8KC+XwKUXhjWY0+MRxasij8kbCHiNliMit1+M9lQ98DRc7uJmd2Yn62WYKcz74v0DLyUSA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715398601; c=relaxed/simple;
-	bh=AA1unVw2ciTmVVxsDufx+gzlvLjzZ65wMzQFo4Qrwwo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ds4GdGlt0peAZVsVhXrF759sWqzJm4rFEqRzF2CBiJpxfu4BM7FO0ySYWFoYhwGmlC1MbMxuvf4gLvN6dpVVHyt6ut8fSg5GhslnhFxm5q44HBbzIGVMd/15+HBCfIiv0UpafWL/U4LPuXK1V6yPU8Gru5QHoLTX4sbX88rlPQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PFFEzATc; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44B3Z6SR006522;
-	Fri, 10 May 2024 22:35:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715398506;
-	bh=AA1unVw2ciTmVVxsDufx+gzlvLjzZ65wMzQFo4Qrwwo=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To;
-	b=PFFEzATclSBdFoPu06hM0QzuvvWVhKI6QbV8FTEQ8RaSNUYGgMku8ytbhTSPhU6Co
-	 OOcbbhqZZi4Ugb1hDTnuSINkLfCHFwfahj7sTDvJP6uWxaTLgvGkVJ245gHoJ6N93X
-	 wuTLP4k1GZ9inW8PPHRqyMwm2gzEaYMPDAXPRnFE=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44B3Z68u120359
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 10 May 2024 22:35:06 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 10
- May 2024 22:35:05 -0500
-Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
- DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
- 15.01.2507.023; Fri, 10 May 2024 22:35:05 -0500
-From: "Ding, Shenghao" <shenghao-ding@ti.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: "broonie@kernel.org" <broonie@kernel.org>,
-        "lgirdwood@gmail.com"
-	<lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "pierre-louis.bossart@linux.intel.com"
-	<pierre-louis.bossart@linux.intel.com>,
-        "13916275206@139.com"
-	<13916275206@139.com>,
-        "alsa-devel@alsa-project.org"
-	<alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "liam.r.girdwood@intel.com"
-	<liam.r.girdwood@intel.com>,
-        "bard.liao@intel.com" <bard.liao@intel.com>,
-        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
-        "Lu,
- Kevin" <kevin-lu@ti.com>,
-        "cameron.berkenpas@gmail.com"
-	<cameron.berkenpas@gmail.com>,
-        "tiwai@suse.de" <tiwai@suse.de>, "Xu, Baojun"
-	<baojun.xu@ti.com>,
-        "soyer@irl.hu" <soyer@irl.hu>,
-        "Baojun.Xu@fpt.com"
-	<Baojun.Xu@fpt.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v4 1/3] ALSA: ASoc/tas2781: Fix wrong
- loading calibrated data sequence
-Thread-Topic: [EXTERNAL] Re: [PATCH v4 1/3] ALSA: ASoc/tas2781: Fix wrong
- loading calibrated data sequence
-Thread-Index: AQHaoov156yUMPIK20SW0JBHF04Q6LGQ57+AgAB57pA=
-Date: Sat, 11 May 2024 03:35:05 +0000
-Message-ID: <efb9d840f44c477d88f06e3f03d06f7b@ti.com>
-References: <20240510034123.1181-1-shenghao-ding@ti.com>
- <Zj45bfx4twerXKwc@smile.fi.intel.com>
-In-Reply-To: <Zj45bfx4twerXKwc@smile.fi.intel.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1715398968; c=relaxed/simple;
+	bh=5RBPaYqcgbMTvo83mnVNrHazxn1LC+THVRiz93bfQcE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ps7jOJ9aO0cnqeENLNYxx0kzeO0XEOrxNVAqhxYmF9Zg5WL86D4zGdG50LMUVrBbjo6Fa973qkGhxfTAZCaC+71oBxsAr/03cZjGYzFckTNgmUmoIRM/k/HWcPiz3+BoUZ99ZZfwPWovQpl4wPdu9ThnoO+HdscNzmEYAZYsmt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOhZIMiC; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-792b8bca915so219846985a.2;
+        Fri, 10 May 2024 20:42:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715398966; x=1716003766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uf95gvKfqdQwvRWi4ct7+6exb7i4hQQ3hGupiWKjZHs=;
+        b=QOhZIMiCAVtHRR2U6WYUEcj6bY/5AhMQ/rDS5zXBYsE+FijqZx9TeuaZYmzvQnHNaO
+         cV9Rc701J613rXCznPGiIfG0h6wnySoS6qUki8AeIfdJcnqm4g5lqCs2ta/HmYESv7wo
+         ZLQ1czKYYwx803T7rJ+iL9hfFCOVHzQq4itU9k2c94Yl+pqdDaVoeMegH+BZIwrxdo9L
+         dWPfyx4QH5gSYaWRQODnxl/132UCY0uYEemD2mBh/bv8ePJvOfia5PL11VDQXRaYSxSc
+         /rUce2Gbj27il6HXSvtYmfL31lx+Pj23hUAcdujUEfQNveTGy4HoKi66rw0RmOoKATb/
+         KmaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715398966; x=1716003766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uf95gvKfqdQwvRWi4ct7+6exb7i4hQQ3hGupiWKjZHs=;
+        b=Ko48YWbf2ijwZwFHzLRBeeEKeGmP4j4F889V5Cyn2WaN61jmBDkk/E49tIbvXBgOKj
+         zs0pgmhT8DO7wSDsyr/JFVzMJnkwk1EApgjJdF5z0pCwfP1cDxj0ykgzmoHrWQHSIcTm
+         j0+wfZ+Du2Pha4r/X54NgnlAy+KqfIW7CuDpQS5lUWPo0efYLCW7PKYlbck6HCw85y/d
+         Zr9x8l+j9b3nS8vfFenqk4tqa4x4zQlqlGUAS1h/gQw1eHyCYo/i4mU22ibD4KDDp+Bp
+         cd5Zw2EFI2fmuBTJUk/DZVNW+F9Pgzzl1i9FJZ7qvFkgEeYu3UDAHFK6cXAkGOomugQd
+         y6ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ9X66WtKakvf1wPXu+wV2cNHWPeENnNqOv9I0LIQ4Lb9oApg4tCGkdiTOxc4IzHJOMhZs21cVunIOg/yux98/zYoMbv4Eib+hQuDrYBiUc6AiOUWSMlVh34Cy0RgZPJnK9HlCYHuCj1g7rA==
+X-Gm-Message-State: AOJu0YwAM+Wt5QfAd731Lt5L/p1zJgqWXRvmh5y4cet8lWOSUuvwvpuT
+	dac+VxlGdjSbzFPe1Ysg4NIhepLqdYg+RVHOmP6L9V4i8iJVIKAXw6JJ5K8eAdqrmH7QzPfO01n
+	DdoeX/AGSoVCqV5d5W7LpYiwQd3M=
+X-Google-Smtp-Source: AGHT+IFMW/1UdqP9wdNRX8wg6K/79HM35/5Mrje26SXpJ4+agrOp1OcVxTCgNhpKUzYij37LvC2YaTr0SaWlconA1tM=
+X-Received: by 2002:a05:6214:3993:b0:6a0:991b:ecf1 with SMTP id
+ 6a1803df08f44-6a168142dcfmr47596236d6.5.1715398965893; Fri, 10 May 2024
+ 20:42:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
+In-Reply-To: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 10 May 2024 23:42:34 -0400
+Message-ID: <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
+Subject: Re: [PATCH 0/1] fsnotify: clear PARENT_WATCHED flags lazily
+To: Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
-IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+DQo+IFNlbnQ6IEZyaWRheSwgTWF5
-IDEwLCAyMDI0IDExOjEzIFBNDQo+IFRvOiBEaW5nLCBTaGVuZ2hhbyA8c2hlbmdoYW8tZGluZ0B0
-aS5jb20+DQo+IENjOiBicm9vbmllQGtlcm5lbC5vcmc7IGxnaXJkd29vZEBnbWFpbC5jb207IHBl
-cmV4QHBlcmV4LmN6OyBwaWVycmUtDQo+IGxvdWlzLmJvc3NhcnRAbGludXguaW50ZWwuY29tOyAx
-MzkxNjI3NTIwNkAxMzkuY29tOyBhbHNhLWRldmVsQGFsc2EtDQo+IHByb2plY3Qub3JnOyBsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaWFtLnIuZ2lyZHdvb2RAaW50ZWwuY29tOw0KPiBi
-YXJkLmxpYW9AaW50ZWwuY29tOyB5dW5nLWNodWFuLmxpYW9AbGludXguaW50ZWwuY29tOyBMdSwg
-S2V2aW4gPGtldmluLQ0KPiBsdUB0aS5jb20+OyBjYW1lcm9uLmJlcmtlbnBhc0BnbWFpbC5jb207
-IHRpd2FpQHN1c2UuZGU7IFh1LCBCYW9qdW4NCj4gPGJhb2p1bi54dUB0aS5jb20+OyBzb3llckBp
-cmwuaHU7IEJhb2p1bi5YdUBmcHQuY29tDQo+IFN1YmplY3Q6IFtFWFRFUk5BTF0gUmU6IFtQQVRD
-SCB2NCAxLzNdIEFMU0E6IEFTb2MvdGFzMjc4MTogRml4IHdyb25nIGxvYWRpbmcNCj4gY2FsaWJy
-YXRlZCBkYXRhIHNlcXVlbmNlDQo+IA0KPiBPbiBGcmksIE1heSAxMCwgMjAyNCBhdCAxMTrigIo0
-MTrigIoxOUFNICswODAwLCBTaGVuZ2hhbyBEaW5nIHdyb3RlOiA+IENhbGlicmF0ZWQNCj4gZGF0
-YSB3aWxsIGJlIHNldCB0byBkZWZhdWx0IGFmdGVyIGxvYWRpbmcgRFNQIGNvbmZpZyBwYXJhbXMs
-ID4gd2hpY2ggd2lsbCBjYXVzZQ0KPiBzcGVha2VyIHByb3RlY3Rpb24gd29yayBhYm5vcm1hbGx5
-LiBSZWxvYWQgY2FsaWJyYXRlZCA+IGRhdGEgYWZ0ZXIgbG9hZGluZw0KPiBaalFjbVFSWUZwZnB0
-QmFubmVyU3RhcnQgVGhpcyBtZXNzYWdlIHdhcyBzZW50IGZyb20gb3V0c2lkZSBvZiBUZXhhcw0K
-PiBJbnN0cnVtZW50cy4NCj4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMg
-dW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNvdXJjZSBvZiB0aGlzDQo+IGVtYWlsIGFuZCBrbm93
-IHRoZSBjb250ZW50IGlzIHNhZmUuIElmIHlvdSB3aXNoIHRvIHJlcG9ydCB0aGlzIG1lc3NhZ2Ug
-dG8gSVQNCj4gU2VjdXJpdHksIHBsZWFzZSBmb3J3YXJkIHRoZSBtZXNzYWdlIGFzIGFuIGF0dGFj
-aG1lbnQgdG8gcGhpc2hpbmdAbGlzdC50aS5jb20NCj4gDQo+IFpqUWNtUVJZRnBmcHRCYW5uZXJF
-bmQNCj4gT24gRnJpLCBNYXkgMTAsIDIwMjQgYXQgMTE6NDE6MTlBTSArMDgwMCwgU2hlbmdoYW8g
-RGluZyB3cm90ZToNCj4gPiBDYWxpYnJhdGVkIGRhdGEgd2lsbCBiZSBzZXQgdG8gZGVmYXVsdCBh
-ZnRlciBsb2FkaW5nIERTUCBjb25maWcNCj4gPiBwYXJhbXMsIHdoaWNoIHdpbGwgY2F1c2Ugc3Bl
-YWtlciBwcm90ZWN0aW9uIHdvcmsgYWJub3JtYWxseS4gUmVsb2FkDQo+ID4gY2FsaWJyYXRlZCBk
-YXRhIGFmdGVyIGxvYWRpbmcgRFNQIGNvbmZpZyBwYXJhbXMuDQo+ID4NCj4gPiBGaXhlczogZWYz
-YmNkZTc1ZDA2ICgiQVNvYzogdGFzMjc4MTogQWRkIHRhczI3ODEgZHJpdmVyIikNCj4gDQo+IEhv
-dyBvbiBlYXJ0aCB0aGlzIGNhbiBiZSBhIGZpeD8uLg0KUmVtb3ZpbmcgdGhlIGRlY2xhcmF0aW9u
-IG9mIHRhc2RldmljZV9wcm1nX2NhbGliZGF0YV9sb2FkIGlzIGEgcGFydCBvZiBmaXguDQpMb2Fk
-aW5nIGNhbGlicmF0ZWQgZGF0YSBhZnRlciBsb2FkaW5nIGRzcCBwcm9ncmFtIGJlY29tZSBhIHJl
-ZHVuZGFuY2UuDQo+IA0KPiA+IC0vLyBDb3B5cmlnaHQgKEMpIDIwMjIgLSAyMDIzIFRleGFzIElu
-c3RydW1lbnRzIEluY29ycG9yYXRlZA0KPiA+ICsvLyBDb3B5cmlnaHQgKEMpIDIwMjIgLSAyMDI0
-IFRleGFzIEluc3RydW1lbnRzIEluY29ycG9yYXRlZA0KPiANCi4uLg0KPiA+IC1pbnQgdGFzZGV2
-aWNlX3BybWdfY2FsaWJkYXRhX2xvYWQodm9pZCAqY29udGV4dCwgaW50IHBybV9ubyk7DQo+IA0K
-PiAtLQ0KPiBXaXRoIEJlc3QgUmVnYXJkcywNCj4gQW5keSBTaGV2Y2hlbmtvDQo+IA0KDQo=
+On Fri, May 10, 2024 at 6:21=E2=80=AFPM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
+>
+> Hi Amir, Jan, et al,
+
+Hi Stephen,
+
+>
+> It's been a while since I worked with you on the patch series[1] that aim=
+ed to
+> make __fsnotify_update_child_dentry_flags() a sleepable function. That wo=
+rk got
+> to a point that it was close to ready, but there were some locking issues=
+ which
+> Jan found, and the kernel test robot reported, and I didn't find myself a=
+ble to
+> tackle them in the amount of time I had.
+>
+> But looking back on that series, I think I threw out the baby with the
+> bathwater. While I may not have resolved the locking issues associated wi=
+th the
+> larger change, there was one patch which Amir shared, that probably resol=
+ves
+> more than 90% of the issues that people may see. I'm sending that here, s=
+ince it
+> still applies to the latest master branch, and I think it's a very good i=
+dea.
+>
+> To refresh you, the underlying issue I was trying to resolve was when
+> directories have many dentries (frequently, a ton of negative dentries), =
+the
+> __fsnotify_update_child_dentry_flags() operation can take a while, and it
+> happens under spinlock.
+>
+> Case #1 - if the directory has tens of millions of dentries, then you cou=
+ld get
+> a soft lockup from a single call to this function. I have seen some cases=
+ where
+> a single directory had this many dentries, but it's pretty rare.
+>
+> Case #2 - suppose you have a system with many CPUs and a busy directory. =
+Suppose
+> the directory watch is removed. The caller will begin executing
+> __fsnotify_update_child_dentry_flags() to clear the PARENT_WATCHED flag, =
+but in
+> parallel, many other CPUs could wind up in __fsnotify_parent() and decide=
+ that
+> they, too, must call __fsnotify_update_child_dentry_flags() to clear the =
+flags.
+> These CPUs will all spin waiting their turn, at which point they'll re-do=
+ the
+> long (and likely, useless) call. Even if the original call only took a se=
+cond or
+> two, if you have a dozen or so CPUs that end up in that call, some CPUs w=
+ill
+> spin a long time.
+>
+> Amir's patch to clear PARENT_WATCHED flags lazily resolves that easily. I=
+n
+> __fsnotify_parent(), if callers notice that the parent is no longer watch=
+ing,
+> they merely update the flags for the current dentry (not all the other
+> children). The __fsnotify_recalc_mask() function further avoids excess ca=
+lls by
+> only updating children if the parent started watching. This easily handle=
+s case
+> #2 above. Perhaps case #1 could still cause issues, for the cases of trul=
+y huge
+> dentry counts, but we shouldn't let "perfect" get in the way of "good eno=
+ugh" :)
+>
+
+The story sounds good :)
+Only thing I am worried about is: was case #2 tested to prove that
+the patch really imploves in practice and not only in theory?
+
+I am not asking that you write a test for this or even a reproducer
+just evidence that you collected from a case where improvement is observed
+and measurable.
+
+Thanks,
+Amir.
+
+> [1]: https://lore.kernel.org/all/20221013222719.277923-1-stephen.s.brenna=
+n@oracle.com/
+>
+> Amir Goldstein (1):
+>   fsnotify: clear PARENT_WATCHED flags lazily
+>
+>  fs/notify/fsnotify.c             | 26 ++++++++++++++++++++------
+>  fs/notify/fsnotify.h             |  3 ++-
+>  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
+>  include/linux/fsnotify_backend.h |  8 +++++---
+>  4 files changed, 56 insertions(+), 13 deletions(-)
+>
+> --
+> 2.43.0
+>
 
