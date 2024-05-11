@@ -1,145 +1,157 @@
-Return-Path: <linux-kernel+bounces-176700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D798C336E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:28:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D888C3372
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20146B210CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:28:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CACE1F218B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6F41CD2D;
-	Sat, 11 May 2024 19:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jcNEqXsK"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD331D554;
+	Sat, 11 May 2024 19:29:33 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3911A1C2AF
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 19:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B011CD0C
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 19:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715455701; cv=none; b=koOsDYqDoGuOSSpJkSS27kgPDleJkAMyeushJi83rK3ZIf3bUSkyeoA7lGmyPwtyOUmUFnsRe8KvUeKJhZ7nEszRIWWLWE6WkY2cnyDMFR6WxZnbRlJIs49oP8QRZ4FcVOPTklRia/HhovwVB1SL13j7ihpwh91yaiLzgnUevHg=
+	t=1715455773; cv=none; b=rt5trtj79DCqPch/atpGJCeYS8byWWj1mNSWigM0d5K2MctPG3eAahU+4bEpN7UozCGKx697KFU4zQPBGWMG1zroT3CaGOaP3opzBCLUBTsL3pgt9VUwbDdoKK2KWGqX2ElW6htAdPY4POJm//oRz8lMtEyCmg1Ie8WDBEv2HuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715455701; c=relaxed/simple;
-	bh=SgKxXa6mqbN5ukWsVqTXTS575TJrw64ZeSxfAyYN3Wg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=U6IXk2SXsbiJ+sY5T+jTw5xIsYem0lqwHoIV7OSDTf/b3RnIJbQcynT2LIo1kBWKuue3fzfAMbFoZluGpWWMt30i+9QKs1e+GfXyplxbgkBybM0AQJhKuQzgwGtm/lulGgz2xSRAjFxAI8mTbrflJZS388UH1PI9OYg3cAKk6Lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jcNEqXsK; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715455694;
-	bh=SgKxXa6mqbN5ukWsVqTXTS575TJrw64ZeSxfAyYN3Wg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=jcNEqXsK47oX7Sw3INC1VGA/jaRQZxxXSip114BgCq2HdJIXtIJnlWI9p1HrYiNQz
-	 WKtqVthQunspX2LY+/5MnuytIoJkaZNK2E34JTOioSHDQvdWYulFoT331fxjb9b5Rf
-	 9I87W00zwC2O7ItNZVH/v0904lBvDUU+T/DnVoz0=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Sat, 11 May 2024 21:28:10 +0200
-Subject: [PATCH] ucounts: constify usage of ctl_table_header::ctl_table_arg
+	s=arc-20240116; t=1715455773; c=relaxed/simple;
+	bh=4lsE2Se8vXaMMEIsPzHa9RIlcRpOCsASJLMGgVYbVfc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nUbNvZ1oz+Z01r8gKEXjHYemeMxnqp/avPNDA5KuERuuAeyj459HjKkbPZ19aYqNlgQvrEq3kn32Z0mHfSJBY2umaXEfECyhVaVghg6TeKaIhvrLsnQyI40X8PMWa6d9J6eW5Usobc+3m0wWtlH7Wegquy9dzy606j0VSeCQlPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id c822eb82-0fcc-11ef-abf4-005056bdd08f;
+	Sat, 11 May 2024 22:29:28 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 11 May 2024 22:29:27 +0300
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v4 3/3] pinctrl: imx: support SCMI pinctrl protocol for
+ i.MX95
+Message-ID: <Zj_HFxHMV57EXfYm@surfacebook.localdomain>
+References: <20240505-pinctrl-scmi-oem-v3-v4-0-7c99f989e9ba@nxp.com>
+ <20240505-pinctrl-scmi-oem-v3-v4-3-7c99f989e9ba@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240511-sysctl-const-table-arg-ucount-v1-1-a00ad8f6f233@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAMnGP2YC/x3MwQqDMAwA0F+RnA20VRH2K+KhZqkLSCtNlQ3x3
- y07vsu7QDkLK7yaCzKfopJihW0boI+PK6O8q8EZ15vBWtSfUtmQUtSCxS8bo88rHpSOWHAcjBu
- ZurCEHuqxZw7y/f/TfN8P65Kiom8AAAA=
-To: linux-kernel@vger.kernel.org
-Cc: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- Joel Granados <j.granados@samsung.com>, 
- Luis Chamberlain <mcgrof@kernel.org>, 
- "Eric W. Biederman" <ebiederm@xmission.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715455694; l=2859;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=SgKxXa6mqbN5ukWsVqTXTS575TJrw64ZeSxfAyYN3Wg=;
- b=IwKeUruqM/0hN2erb0tF9ZLZ/oP8tl6kVN8SmiJWTO5WbabTuDHdZ/vcCsVqPt80iDb6VrROl
- nWrCawWCcQlAkuIgiDC5soxbVoYnhrOWB5BcswS8Lu1D4tvifDW4yTB
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240505-pinctrl-scmi-oem-v3-v4-3-7c99f989e9ba@nxp.com>
 
-The sysctl core is preparing to only expose instances of
-struct ctl_table as "const".
-This will also affect the member
-ctl_table_header::ctl_table_arg.
+Sun, May 05, 2024 at 11:47:19AM +0800, Peng Fan (OSS) kirjoitti:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> The generic pinctrl-scmi.c driver could not be used for i.MX95 because
+> i.MX95 SCMI firmware not supports functions, groups or generic
+> 'Pin Configuration Type and Enumerations' listed in SCMI Specification.
+> 
+> i.MX95 System Control Management Interface(SCMI) firmware only supports
+> below pin configuration types which are OEM specific types:
+>     192: PIN MUX
+>     193: PIN CONF
+>     194: DAISY ID
+>     195: DAISY VAL
+> 
+> To support Linux generic pinctrl properties(pinmux, bias-pull-[up,
+> down], and etc), need extract the value from the property and map
+> them to the format that i.MX95 SCMI pinctrl protocol understands,
+> so add this driver.
 
-Prepare for that change to "struct ctl_table_header",
-and already constify the usage of ctl_table_arg.
+..
 
-No functional change.
+> +struct imx_pin_group {
+> +	struct pingroup data;
+> +};
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Motivation
-==========
+I don't see the necessity of having this wrapper structure. Can't you simply
+use struct pingroup directly?
 
-Moving structures containing function pointers into unmodifiable .rodata
-prevents attackers or bugs from corrupting and diverting those pointers.
+..
 
-Also the "struct ctl_table" exposed by the sysctl core were never meant
-to be mutated by users.
+> +static int scmi_pinctrl_imx_probe(struct scmi_device *sdev)
+> +{
+> +	int ret;
+> +	struct device *dev = &sdev->dev;
+> +	struct scmi_pinctrl_imx *pmx;
+> +	const struct scmi_handle *handle;
+> +	struct scmi_protocol_handle *ph;
+> +	struct device_node *np __free(device_node) = of_find_node_by_path("/");
+> +	const struct scmi_pinctrl_proto_ops *pinctrl_ops;
 
-Process
-=======
+> +	if (!sdev->handle)
+> +		return -EINVAL;
 
-* Drop ctl_table modifications from the sysctl core ([0], in -next)
-* Constify arguments to ctl_table_root::{set_ownership,permissions}
-  ([1], in -next)
-* Migrate users of "ctl_table_header::ctl_table_arg" to "const".
-  (in progress, this patch)
-* Afterwards convert "ctl_table_header::ctl_table_arg" itself to const.
-  (to be done)
-* Prepare helpers used to implement proc_handlers throughout the tree to
-  use "const struct ctl_table *". ([2], in progress)
-* Afterwards switch over all proc_handlers callbacks to use
-  "const struct ctl_table *" in one commit. ([2], in progress)
-  Only custom handlers will be affected, the big commit avoids a
-  disruptive and messy transition phase.
-* Switch over the internals of the sysctl core to "const struct ctl_table *" (to be done)
-* Switch include/linux/sysctl.h to "const struct ctl_table *" (to be done)
-* Transition instances of "struct ctl_table" through the tree to const (to be done)
+When this conditional can be true?
 
-A work-in-progress view containging all the outlined changes can be found at
-https://git.sr.ht/~t-8ch/linux sysctl-constfy
+> +	if (!of_match_node(scmi_pinctrl_imx_allowlist, np))
+> +		return -ENODEV;
 
-[0] https://lore.kernel.org/lkml/20240322-sysctl-empty-dir-v2-0-e559cf8ec7c0@weissschuh.net/
-[1] https://lore.kernel.org/lkml/20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net/
-[2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
+> +	handle = sdev->handle;
 
-Cc: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
----
- kernel/ucount.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It's even better to assign first and then check if the above check is needed at all.
 
-diff --git a/kernel/ucount.c b/kernel/ucount.c
-index 4aa6166cb856..d9e283600f5c 100644
---- a/kernel/ucount.c
-+++ b/kernel/ucount.c
-@@ -119,7 +119,7 @@ bool setup_userns_sysctls(struct user_namespace *ns)
- void retire_userns_sysctls(struct user_namespace *ns)
- {
- #ifdef CONFIG_SYSCTL
--	struct ctl_table *tbl;
-+	const struct ctl_table *tbl;
- 
- 	tbl = ns->sysctls->ctl_table_arg;
- 	unregister_sysctl_table(ns->sysctls);
+> +	pinctrl_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_PINCTRL, &ph);
+> +	if (IS_ERR(pinctrl_ops))
+> +		return PTR_ERR(pinctrl_ops);
+> +
+> +	pmx = devm_kzalloc(dev, sizeof(*pmx), GFP_KERNEL);
+> +	if (!pmx)
+> +		return -ENOMEM;
+> +
+> +	pmx->ph = ph;
+> +	pmx->ops = pinctrl_ops;
+> +
+> +	pmx->dev = dev;
+> +	pmx->pctl_desc.name = DRV_NAME;
+> +	pmx->pctl_desc.owner = THIS_MODULE;
+> +	pmx->pctl_desc.pctlops = &pinctrl_scmi_imx_pinctrl_ops;
+> +	pmx->pctl_desc.pmxops = &pinctrl_scmi_imx_pinmux_ops;
+> +	pmx->pctl_desc.confops = &pinctrl_scmi_imx_pinconf_ops;
+> +
+> +	ret = scmi_pinctrl_imx_get_pins(pmx, &pmx->pctl_desc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = scmi_pinctrl_imx_probe_dt(sdev, pmx);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_pinctrl_register_and_init(dev, &pmx->pctl_desc, pmx,
+> +					     &pmx->pctldev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to register pinctrl\n");
+> +
+> +	return pinctrl_enable(pmx->pctldev);
+> +}
 
----
-base-commit: cf87f46fd34d6c19283d9625a7822f20d90b64a4
-change-id: 20240511-sysctl-const-table-arg-ucount-75027ec3fbf4
-
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+With Best Regards,
+Andy Shevchenko
+
 
 
