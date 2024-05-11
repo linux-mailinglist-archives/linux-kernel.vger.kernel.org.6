@@ -1,236 +1,160 @@
-Return-Path: <linux-kernel+bounces-176765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601C68C3495
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3939E8C34A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 01:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5927BB21320
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:46:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8AE1281E9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 23:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C5636AF8;
-	Sat, 11 May 2024 22:46:26 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189FC3D97D;
+	Sat, 11 May 2024 23:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NUatmsiV"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7632286BD
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 22:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F4F17BA8
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 23:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715467585; cv=none; b=QBLd5ZW0oVoYTITX2uAvf5i2CBu1zC7hWEgiffTiU6gSzVkMpcpJ/tbXn3pLJ9R7EN5ft8yqenDb6sblQQqYu7RDXi+EdBmliBbXh+Fe+D5RCp97EumeOWdSK+wJ2F7NE+IzA4I0eEq/gRP/7FcWbDchpWANB4/0Wh00Oi+DiGw=
+	t=1715468430; cv=none; b=sfJ5ia7TC4STjj3m41R/7Fd3aMFtBejqhdgw1UzbK669gkhfPI2Ez7BHS+IRPTZ/gZBBprkv9nIFCk7gckqSwPISQq6D+YbNCRIaDqIe8cpbVHoo4kRJy/o8sXvlobfzRbKcg0OwcTn1d3FfZ4RIdRJ4ivxiMT+n9T6lNHRDdEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715467585; c=relaxed/simple;
-	bh=0/RLWK/Ne/VTSVkLzpsEdHoOVmbIOq2hnbTWA1OyjbA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f6eaL5DCtI3WKHVignfZJZrDCjoQ2o73KSm+0U1TDXYQBllpQelUJJQqUZRWk60SiZKboR7RHhKxl+IDzU2IOv2ELMqIXjjCZZu5IOJNx1aglSaCtW0+kwP2B/iIV0qZOuq+UJsnpH/7Ghit3ySWDq64hpfvSKjllgLWu5bl42M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1d807cfbaso46789539f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:46:23 -0700 (PDT)
+	s=arc-20240116; t=1715468430; c=relaxed/simple;
+	bh=GhJMJKGVASCLWmDBvP3xUjiHWJu10Z7FtTbPQeRjNs4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lsvryZdyEJbcwj4UBGMk3DKW2o5wIRUm+f2250SmBpwpcrco5FdXbiwMj1cYxJOPnN9h6I1IOtHTjfzEUWkuUNQuuwkxm86uFvoqg+19P6StjtHTbufNF8QWaES9wQhRB50ZYxIDzAT4VUKrtRzxbik4Mf9SNqbwWPLDP2qPZA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NUatmsiV; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f3a49ff7dso4125163e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 16:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715468426; x=1716073226; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w1crgjrJgHOKBr+imw+Nt/0ShicbgCAQX722QtzGop8=;
+        b=NUatmsiV9nV+m2InMwShyaXHc/10BqvBYeZh4YCO9toq+KvQiPNnIKARc/+IykvWBl
+         vUk3dzXBqsEAOY4FjpLFincZgzcReMaaD9Hq6tUHcWZiWyF+7Rz9IBpcoBSoRwAMYMlT
+         NqLhgpBpAMLLuIx7MHvPh9z3cRSOYKgaZt0x91DvW+D6hB835pP2kY0j4/M3V7+DHlgM
+         Wpiq0YqYv2LMKvd1XWRcZgUZtgCxzSkcyB4Ky+hBJcV8GkKNIlhPzHGEg/YifQfMI7A9
+         n8pvXRtUGrBvzCbp5VWOn9F0zftyfq/VtFt4xOhHnwQu5lFJvYAnfjtGEgWcNB2gmYsI
+         2CXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715467583; x=1716072383;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xinKgrj9cHjxMWFP4jMSh2ZpHyLjEx/GfcFiRmDQ03U=;
-        b=JMajHtR+vMfv1FZowBzCoDcvE0iRY54ZGwTwA7Tv9drySv2EH2shcfedwll7kDXVZu
-         9jDBpteNmNnt8zQRCmCi9kZTW7N0ORsSI6ZMoACiK60tTfzHHbTXw0jUBWTV9FX2cYGF
-         2KJXQDh6UeB0rORIWO2C3Fr2g8s2xgJaGG+zVQ5JzK8BwxzKNLu5A4Z+SxVg0skRwKel
-         uVx2GSf9l2x8m2UMY7hzQm5VXhuBHVy+AfQwVvEQ6NqA3Qshw+AYlRGmhZH6WhyTcpTU
-         NvhV3pRqY6vAKla4lc/ZVb68LM9Qdsvv5xvN+d51Ii6Z+sAbkifYbnMqvIU2FfzudZEW
-         vUsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlW1O5lMr5yNRCSo3NRDnHEmFV3HX23gaEuTohwecr+qdGr3xbYqwM+zvux8Y+VXgy+rf9XZpUH3Ak5kGgFsyWYMOKJmjZbKGCkaeL
-X-Gm-Message-State: AOJu0Yy1EDBjEKFOabNNzRMxrAwqsHUG5TjuOHlHs4Qb69ljJORVJU4C
-	LfeF4G31rg7sKV99xNGai90bsSQOun9vBNKI48TiuA8KGhybN4K49+loQOjO/ip3BIPwVRQ/wrV
-	h9FCcYeEBvW3JTsYUaN34s6ZXnuiszaw4/CIeFIIic4Ke1vdn6kE4yHM=
-X-Google-Smtp-Source: AGHT+IEy+5UramUsNGV4STb7GAAgkxo/OJsFZHyqQToyQTWQkjUPPcSu6Tp0vNzsVrsa2YgrkNqG6ESi978QDfvmn73rPj4UsJCm
+        d=1e100.net; s=20230601; t=1715468426; x=1716073226;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w1crgjrJgHOKBr+imw+Nt/0ShicbgCAQX722QtzGop8=;
+        b=SEruCELkRiAFk1C3WFKAO1gWxOcO+3/RKjEkGZzHR0jf4w7GHZG/qnXXJd/durljFc
+         zNOC0FF2n/hxE6dRQqZwdNUOECXjxf1MrmyPbqkquj1laH/P0tarV/DrWLFiKeOtr5JT
+         ubUnpWv32YZaHrrI5j6wJ1FQfkqIp4ksPesh31ASiTsKTP+u2UDNRVk/q1bCeO//1Rpd
+         bCk7P/v/SDVaLwxbTG7A4PYomfen5x8NBblf90FTkoskWKL6Ut1YQDlDJ8MOJoWDUJzF
+         yts+xlyqoD8H0WInh1we2+55TZckAL+Qkhc1eX3C1dsUA4qFh35/2FpplOxZsSTxXSV6
+         GrWw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0qFavempquPHrsaTIUXZuze1K2u5iiGTdGcsh3Ix1NVRRZ/ORfTXbyVWQF8XvvqvqO9WzxgL6OwiL8TP3rYuG+BGCym9wfG3ZQYlK
+X-Gm-Message-State: AOJu0YxvSFbP3kjD5Tgtq6CLY2CngVmLXKQ9n3pyHySTsRi9pnTTEI/u
+	13VJdYXQKdIdIp11XNq2bBqVOvw9akp3gnjSVs6yWzjneys66qXGNuKAjGDzhzk=
+X-Google-Smtp-Source: AGHT+IHOGC+XRG2Kq/VfByDdZEWx08N/OcEscIp/vQc/nukNXhNojPs9d+F3zg4lu3WjZRcCkjlBRg==
+X-Received: by 2002:ac2:55a4:0:b0:521:533d:6367 with SMTP id 2adb3069b0e04-5221027bad5mr3264708e87.63.1715468426639;
+        Sat, 11 May 2024 16:00:26 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d3717sm1134222e87.173.2024.05.11.16.00.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 May 2024 16:00:26 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/7] drm/mipi-dsi: simplify MIPI DSI init/cleanup even
+ more
+Date: Sun, 12 May 2024 02:00:17 +0300
+Message-Id: <20240512-dsi-panels-upd-api-v2-0-e31ca14d102e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8625:b0:488:59cc:eb54 with SMTP id
- 8926c6da1cb9f-48958c05b8emr516637173.3.1715467583071; Sat, 11 May 2024
- 15:46:23 -0700 (PDT)
-Date: Sat, 11 May 2024 15:46:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e9b6ff0618356b26@google.com>
-Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work
-From: syzbot <syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIH4P2YC/32NQQrCMBBFr1Jm7cgkVlpdeQ/pIk3GdqAkIdGil
+ Nzd2AO4fA/++xtkTsIZrs0GiVfJEnwFfWjAzsZPjOIqgybd0lkRuiwYjecl4ys6NFGw7S7GjXo
+ kJgV1GBM/5L1H70PlWfIzpM/+saqf/ZtbFRKeVGe73pCztr8t4k0Kx5AmGEopX6G9Al21AAAA
+To: Douglas Anderson <dianders@chromium.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ Caleb Connolly <caleb.connolly@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Vinod Koul <vkoul@kernel.org>
+Cc: Cong Yang <yangcong5@huaqin.corp-partner.google.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2256;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=GhJMJKGVASCLWmDBvP3xUjiHWJu10Z7FtTbPQeRjNs4=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmP/iIfiL837D5WZQ2bWaZtrjxYgMPZDItB4OxM
+ ojSbdARTaaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj/4iAAKCRCLPIo+Aiko
+ 1fdiB/9+QLRt7ECfH3CzlQmvUmSg5waLTJLqtQvSjUmr71DqTi+fKsZbgXnf33KmfC2IABElpwm
+ Nj0WJzND7JoeSolP8g+ww3fpHOj+xHWIQNgOkrB3WSEKxwuTtkA8p0gvNbqquU84NNnMcjqDTGk
+ oq+kQ7GAK5TQn1Zlc4/P/n5TeJVsY4GUGysPLZ2KNXJdcw4TzxBB2hwYFL99SASG6i84ZaGtgsp
+ Q1VFderVjXIFu4ubx8f2ODnvN2GA11XXXbWgloZ9/mdsr9AdNAbOT0P6q8Po6Tx6Mc8HC4OfX1E
+ WYTgEnI+ndySL2JorOGx7F94j1j+WOxttx193ePxlQCf4D6r
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hello,
+Follow the example of mipi_dsi_generic_write_multi(),
+mipi_dsi_dcs_write_buffer_multi(), mipi_dsi_generic_write_seq_multi()
+and mipi_dsi_dcs_write_seq_multi(). Define _multi variants for several
+other common MIPI DSI functions and use these functions in the panel
+code.
 
-syzbot found the following issue on:
+This series also includes a fix for the LG SW43408. If the proposed
+approach is declined, the fix will be submitted separately.
 
-HEAD commit:    cf87f46fd34d Merge tag 'drm-fixes-2024-05-11' of https://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c8766c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
-dashboard link: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Depends:
+- https://lore.kernel.org/dri-devel/20240508205222.2251854-1-dianders@chromium.org/
+- https://lore.kernel.org/dri-devel/20240511021326.288728-1-yangcong5@huaqin.corp-partner.google.com/
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1aa5ad92dfce/disk-cf87f46f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/67c336f7c1c7/vmlinux-cf87f46f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bb5b717bd2b8/bzImage-cf87f46f.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
-
-INFO: task kworker/0:5:19779 blocked for more than 143 seconds.
-      Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:5     state:D stack:28464 pid:19779 tgid:19779 ppid:2      flags:0x00004000
-Workqueue: events_long bch2_fs_read_only_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5409 [inline]
- __schedule+0x17e8/0x4a50 kernel/sched/core.c:6746
- __schedule_loop kernel/sched/core.c:6823 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6838
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6895
- rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
- __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
- bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:393
- process_one_work kernel/workqueue.c:3267 [inline]
- process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3348
- worker_thread+0x86d/0xd70 kernel/workqueue.c:3429
- kthread+0x2f2/0x390 kernel/kthread.c:388
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/29:
- #0: ffffffff8e334da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e334da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #0: ffffffff8e334da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-2 locks held by kworker/u8:6/1095:
-2 locks held by getty/4840:
- #0: ffff88802cc100a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-1 lock held by syz-fuzzer/5098:
-5 locks held by syz-executor.4/19737:
-3 locks held by kworker/0:5/19779:
- #0: ffff888015079148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
- #0: ffff888015079148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
- #1: ffffc9000cf67d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
- #1: ffffc9000cf67d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
- #2: ffff88803de00278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:393
-6 locks held by kworker/1:15/19807:
- #0: ffff88801beda548 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
- #0: ffff88801beda548 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
- #1: ffffc9000dfb7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
- #1: ffffc9000dfb7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
- #2: ffff88802374b190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:990 [inline]
- #2: ffff88802374b190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5850
- #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_lock_port drivers/usb/core/hub.c:3207 [inline]
- #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5419 [inline]
- #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5662 [inline]
- #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5822 [inline]
- #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_event+0x25b6/0x5150 drivers/usb/core/hub.c:5904
- #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5420 [inline]
- #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5662 [inline]
- #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5822 [inline]
- #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_event+0x25f4/0x5150 drivers/usb/core/hub.c:5904
- #5: ffffffff8ef0a6b0 (ehci_cf_port_reset_rwsem){.+.+}-{3:3}, at: hub_port_reset+0x1f8/0x1b30 drivers/usb/core/hub.c:3022
-2 locks held by syz-executor.3/21870:
-2 locks held by syz-executor.5/21874:
-2 locks held by syz-executor.1/21881:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfde/0x1020 kernel/hung_task.c:380
- kthread+0x2f2/0x390 kernel/kthread.c:388
- ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 21874 Comm: syz-executor.5 Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:32 [inline]
-RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:67 [inline]
-RIP: 0010:arch_local_irq_save arch/x86/include/asm/irqflags.h:103 [inline]
-RIP: 0010:lock_release+0x16d/0x9f0 kernel/locking/lockdep.c:5770
-Code: eb 03 42 80 3c 3b 00 74 08 4c 89 f7 e8 ac 09 88 00 4c 89 6c 24 50 48 c7 84 24 b0 00 00 00 00 00 00 00 9c 8f 84 24 b0 00 00 00 <42> 80 3c 3b 00 74 08 4c 89 f7 e8 94 08 88 00 48 8b 9c 24 b0 00 00
-RSP: 0018:ffffc9000bb0f680 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: 1ffff92001761ee6 RCX: ffffffff8172abb0
-RDX: 0000000000000000 RSI: ffffffff8c1f8240 RDI: ffffffff8c1f8200
-RBP: ffffc9000bb0f7b0 R08: ffffffff8fa8f92f R09: 1ffffffff1f51f25
-R10: dffffc0000000000 R11: fffffbfff1f51f26 R12: 1ffff92001761edc
-R13: ffffffff81cbece7 R14: ffffc9000bb0f730 R15: dffffc0000000000
-FS:  00007f5fc8c356c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fadd80ffe00 CR3: 00000000553c2000 CR4: 0000000000350ef0
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- rcu_lock_release include/linux/rcupdate.h:339 [inline]
- rcu_read_unlock include/linux/rcupdate.h:814 [inline]
- filemap_get_entry+0x457/0x4e0 mm/filemap.c:1834
- shmem_get_folio_gfp+0x2a8/0x1f50 mm/shmem.c:1982
- shmem_get_folio mm/shmem.c:2160 [inline]
- shmem_write_begin+0x170/0x4d0 mm/shmem.c:2744
- generic_perform_write+0x324/0x640 mm/filemap.c:3974
- shmem_file_write_iter+0xfc/0x120 mm/shmem.c:2920
- call_write_iter include/linux/fs.h:2110 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa86/0xcb0 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5fc7e7caaf
-Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 b9 80 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c 81 02 00 48
-RSP: 002b:00007f5fc8c34e80 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000001000000 RCX: 00007f5fc7e7caaf
-RDX: 0000000001000000 RSI: 00007f5fbdc00000 RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000009855
-R10: 0000000000000002 R11: 0000000000000293 R12: 0000000000000004
-R13: 00007f5fc8c34f80 R14: 00007f5fc8c34f40 R15: 00007f5fbdc00000
- </TASK>
-
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Rebased on top of Cong's series
+- Fixed mipi_dsi_compression_mode_ext_multi() docs (Doug)
+- Added do/while(0) wrapping to mipi_dsi_msleep() macro (Doug)
+- Inlined boe_panel_enter_sleep_mode(), ili9882t_enter_sleep_mode()
+  (Doug)
+- Dropped error prints around nt36672e_on() and nt36672e_off() (Doug)
+- Link to v1: https://lore.kernel.org/r/20240510-dsi-panels-upd-api-v1-0-317c78a0dcc8@linaro.org
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Dmitry Baryshkov (7):
+      drm/panel: lg-sw43408: add missing error handling
+      drm/mipi-dsi: wrap more functions for streamline handling
+      drm/panel: boe-tv101wum-nl6: use wrapped MIPI DCS functions
+      drm/panel: ilitek-ili9882t: use wrapped MIPI DCS functions
+      drm/panel: innolux-p079zca: use mipi_dsi_dcs_nop_multi()
+      drm/panel: novatek-nt36672e: use wrapped MIPI DCS functions
+      drm/panel: lg-sw43408: use new streamlined MIPI DSI API
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ drivers/gpu/drm/drm_mipi_dsi.c                 | 210 +++++++++
+ drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c |  81 +---
+ drivers/gpu/drm/panel/panel-ilitek-ili9882t.c  |  48 +-
+ drivers/gpu/drm/panel/panel-innolux-p079zca.c  |   9 +-
+ drivers/gpu/drm/panel/panel-lg-sw43408.c       |  74 +--
+ drivers/gpu/drm/panel/panel-novatek-nt36672e.c | 597 ++++++++++++-------------
+ include/drm/drm_mipi_dsi.h                     |  21 +
+ 7 files changed, 583 insertions(+), 457 deletions(-)
+---
+base-commit: 7dd7a948b03724e4c63271bd96830059bc62a1ef
+change-id: 20240510-dsi-panels-upd-api-479adb2b0e01
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
