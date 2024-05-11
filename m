@@ -1,190 +1,95 @@
-Return-Path: <linux-kernel+bounces-176590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E64D8C31F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:56:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECD68C31FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9E01F21967
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53D031C20CF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFE156446;
-	Sat, 11 May 2024 14:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9DE57C9C;
+	Sat, 11 May 2024 14:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtnLedF1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oR+a8CX1"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D051E526;
-	Sat, 11 May 2024 14:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAED57C85;
+	Sat, 11 May 2024 14:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715439356; cv=none; b=JurrWZECkNLrBiuqhjIDnn4SROBdSuuzLbJl95J208h59z/cqN4VladiDzl0o1t6tG/83P/PJtORnsbohNh8ywQ/3UXvk1mnKP8I8T4JbGbfBpffH1q5PeQPyGzAEt3xTFQiL4+4EyuKkU0RjoVu6nG8M5thcsNEYYYSM0Z8OYE=
+	t=1715439389; cv=none; b=ojXdovRyNQFzitv6fx0fG+xdAn1DZl2HJlTA2Vp5g+r1+iKIcKjd1gR7Y01b6HuXn2i53KQ2lF2xLoYzR9Mze6Or2TmnIpFVkkY+7kqWf/Eqh5haID1VAP9KsumBONU38Lxt6Q4CCzsQ/OwRYH4NGNyLS46XZkc/rh4O0AfmIOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715439356; c=relaxed/simple;
-	bh=6DaDv/aTgU/LZfJ58oDLB7kdos+gFtmzwvnoGqwfpIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0fvAOSg7AXs0/dh0RGnv0N036DARCRNmVLPbZynpJw4JVWXyGuopaHNzzOft6VRSxmm2/I6Sl51AnKb0MKrMp2fdlkeXo1h77TQS7NW5/WkyMF/r7+VTuEbuQ7yD34meSWcPqrtUQ9aPxDoFJtDSbpSY4uaZCvd+eWisZ8o5GU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtnLedF1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21487C2BD11;
-	Sat, 11 May 2024 14:55:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715439356;
-	bh=6DaDv/aTgU/LZfJ58oDLB7kdos+gFtmzwvnoGqwfpIA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=UtnLedF1ycLpwyfLm9aXe0rro8YcpWVqtOydbHroNV3uMetv/7QUqr6trC1JwysyI
-	 wdmx+WUWMgIdLaTGWacx9L9XHop1frC8AYexeE4mVwVkzj6QPz8INx84yVNaHNVPzO
-	 5svWuehf9w5QsiMqkRkJkSJAmwNbgzUlWq3alZ2oziE1vkHPBm8cPJ2xadmeWGdcHv
-	 T2GmPV1pwgc07EQN0p6j0Bzy7pvsTyl5G4P5YtohmaCAbrrLUwkWXhgz34vTB57YBb
-	 r7A2sCTvdIXsG31yGmCBpv1xxuaOqWwkB9SsMMJ5ywB0NBlg31sJ4+5eWycP5Yn6Xk
-	 GNahXig56Du0g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C01D1CE0F8E; Sat, 11 May 2024 07:55:55 -0700 (PDT)
-Date: Sat, 11 May 2024 07:55:55 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-Message-ID: <e6e42572-f73b-4217-871a-37c439ec8552@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240511020557.1198200-1-leobras@redhat.com>
+	s=arc-20240116; t=1715439389; c=relaxed/simple;
+	bh=ostRkU80NQtZiyg93ykwl5RgPPchPg2q6wou11iXOtc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gu1HadmmjcZE1dt7vKjC9W3x6Afx+INpbqo/YV7aIDbh4t1tAa6UyuQ79SzDvzvk5BlbAFfj0qDu805HeAfVPMFbdhJz+G5nuZew13nRaswm4nHgPaenqlCXU8waOdUAoQpX7m8Ba8my5SN6t3NWdrc+6O6reEnPhoyrLZ3alzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oR+a8CX1; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=NLOqo6x1lRGOC08LgTPWzckycmCY5FTFMVeKS/Maf0w=; b=oR+a8CX1aiXBGqEE
+	CNtnNku7sUs5iR+oR4PfOOo/u/RJ8YnixBZ4DIJpTptjy89mErnQhhWFVAY4Y68aOOq0gIDO+pEUk
+	vQCPgthuWa7uBUVL+IdrB2z4HrvWxodv2+vMWvMneGuUp2DwAmQOFu5isdnzp4UmEqVmae7U/F1bS
+	f/DOXvm9dbh8K6ndjZLYvTNgnP8URNf2mIo2jAqsdUCmDN8AC7siSwMVvUgPGquGM6Pv5RWsd9rcz
+	RDthkp+gfzIT8fHszGgVWvtG6hTV6tXhXKSg5neazb5YrZppcrMZZxjWd9EYT4UvPukG13o9nuACN
+	2wTTaqMQZfc4hgKHcA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s5o96-000W7o-2I;
+	Sat, 11 May 2024 14:56:21 +0000
+From: linux@treblig.org
+To: herbert@gondor.apana.org.au,
+	davem@davemloft.net
+Cc: linux-crypto@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	andreas@gaisler.com,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] crypto: niagara2: Remove unused struct 'n2_skcipher_request_context'
+Date: Sat, 11 May 2024 15:56:20 +0100
+Message-ID: <20240511145620.226548-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240511020557.1198200-1-leobras@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 10, 2024 at 11:05:56PM -0300, Leonardo Bras wrote:
-> As of today, KVM notes a quiescent state only in guest entry, which is good
-> as it avoids the guest being interrupted for current RCU operations.
-> 
-> While the guest vcpu runs, it can be interrupted by a timer IRQ that will
-> check for any RCU operations waiting for this CPU. In case there are any of
-> such, it invokes rcu_core() in order to sched-out the current thread and
-> note a quiescent state.
-> 
-> This occasional schedule work will introduce tens of microsseconds of
-> latency, which is really bad for vcpus running latency-sensitive
-> applications, such as real-time workloads.
-> 
-> So, note a quiescent state in guest exit, so the interrupted guests is able
-> to deal with any pending RCU operations before being required to invoke
-> rcu_core(), and thus avoid the overhead of related scheduler work.
-> 
-> Signed-off-by: Leonardo Bras <leobras@redhat.com>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Acked-by: Paul E. McKenney <paulmck@kernel.org>
+'n2_skcipher_request_context' was added in
+commit 23a6564a6b51 ("crypto: niagara2 - switch to skcipher API")
+but never used.
+Remove it.
 
-> ---
-> 
-> ps: A patch fixing this same issue was discussed in this thread:
-> https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
-> 
-> Also, this can be paired with a new RCU option (rcutree.nocb_patience_delay)
-> to avoid having invoke_rcu() being called on grace-periods starting between
-> guest exit and the timer IRQ. This RCU option is being discussed in a
-> sub-thread of this message:
-> https://lore.kernel.org/all/5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop/
-> 
-> 
->  include/linux/context_tracking.h |  6 ++++--
->  include/linux/kvm_host.h         | 10 +++++++++-
->  2 files changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
-> index 6e76b9dba00e..8a78fabeafc3 100644
-> --- a/include/linux/context_tracking.h
-> +++ b/include/linux/context_tracking.h
-> @@ -73,39 +73,41 @@ static inline void exception_exit(enum ctx_state prev_ctx)
->  }
->  
->  static __always_inline bool context_tracking_guest_enter(void)
->  {
->  	if (context_tracking_enabled())
->  		__ct_user_enter(CONTEXT_GUEST);
->  
->  	return context_tracking_enabled_this_cpu();
->  }
->  
-> -static __always_inline void context_tracking_guest_exit(void)
-> +static __always_inline bool context_tracking_guest_exit(void)
->  {
->  	if (context_tracking_enabled())
->  		__ct_user_exit(CONTEXT_GUEST);
-> +
-> +	return context_tracking_enabled_this_cpu();
->  }
->  
->  #define CT_WARN_ON(cond) WARN_ON(context_tracking_enabled() && (cond))
->  
->  #else
->  static inline void user_enter(void) { }
->  static inline void user_exit(void) { }
->  static inline void user_enter_irqoff(void) { }
->  static inline void user_exit_irqoff(void) { }
->  static inline int exception_enter(void) { return 0; }
->  static inline void exception_exit(enum ctx_state prev_ctx) { }
->  static inline int ct_state(void) { return -1; }
->  static inline int __ct_state(void) { return -1; }
->  static __always_inline bool context_tracking_guest_enter(void) { return false; }
-> -static __always_inline void context_tracking_guest_exit(void) { }
-> +static __always_inline bool context_tracking_guest_exit(void) { return false; }
->  #define CT_WARN_ON(cond) do { } while (0)
->  #endif /* !CONFIG_CONTEXT_TRACKING_USER */
->  
->  #ifdef CONFIG_CONTEXT_TRACKING_USER_FORCE
->  extern void context_tracking_init(void);
->  #else
->  static inline void context_tracking_init(void) { }
->  #endif /* CONFIG_CONTEXT_TRACKING_USER_FORCE */
->  
->  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 48f31dcd318a..e37724c44843 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -480,21 +480,29 @@ static __always_inline void guest_state_enter_irqoff(void)
->  /*
->   * Exit guest context and exit an RCU extended quiescent state.
->   *
->   * Between guest_context_enter_irqoff() and guest_context_exit_irqoff() it is
->   * unsafe to use any code which may directly or indirectly use RCU, tracing
->   * (including IRQ flag tracing), or lockdep. All code in this period must be
->   * non-instrumentable.
->   */
->  static __always_inline void guest_context_exit_irqoff(void)
->  {
-> -	context_tracking_guest_exit();
-> +	/*
-> +	 * Guest mode is treated as a quiescent state, see
-> +	 * guest_context_enter_irqoff() for more details.
-> +	 */
-> +	if (!context_tracking_guest_exit()) {
-> +		instrumentation_begin();
-> +		rcu_virt_note_context_switch();
-> +		instrumentation_end();
-> +	}
->  }
->  
->  /*
->   * Stop accounting time towards a guest.
->   * Must be called after exiting guest context.
->   */
->  static __always_inline void guest_timing_exit_irqoff(void)
->  {
->  	instrumentation_begin();
->  	/* Flush the guest cputime we spent on the guest */
-> -- 
-> 2.45.0
-> 
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/crypto/n2_core.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/crypto/n2_core.c b/drivers/crypto/n2_core.c
+index 59d472cb11e75..251e088a53dff 100644
+--- a/drivers/crypto/n2_core.c
++++ b/drivers/crypto/n2_core.c
+@@ -720,10 +720,6 @@ static inline struct n2_skcipher_alg *n2_skcipher_alg(struct crypto_skcipher *tf
+ 	return container_of(alg, struct n2_skcipher_alg, skcipher);
+ }
+ 
+-struct n2_skcipher_request_context {
+-	struct skcipher_walk	walk;
+-};
+-
+ static int n2_aes_setkey(struct crypto_skcipher *skcipher, const u8 *key,
+ 			 unsigned int keylen)
+ {
+-- 
+2.45.0
+
 
