@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-176694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07228C3364
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:19:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2C58C3367
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3AF41C20D59
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA67D280F9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFBF41B974;
-	Sat, 11 May 2024 19:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eLOe74gS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4884208D7;
+	Sat, 11 May 2024 19:20:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806631CABF;
-	Sat, 11 May 2024 19:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B7A01F945
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 19:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715455166; cv=none; b=sBnpzmDErtgtkO5cJhqqb1G/OTu140N+1TtVl56w4LzXRkgqR21C/kdgOBWWWxTH0jMYbbUNL1ktv8eGL98Xd+K2Y+/R+Cd/+0gfgC/EYkBDOqr4WZZZKqQPK2I1/A87pKPKIlpllY64beFVGCABfgXMV9e8iiS9UI4+PPrB5JM=
+	t=1715455207; cv=none; b=eWKk3efI3gsFLbm5s5guYIEnbrzxW8OPR3NUJaM8lbyg5xtLOKkkVkX4xS70OhfcKKDFkA3e6MXVjRk0Wn0OV6NmhVh8wQEmM2821OJAI7p/IkjHDpttVVqqMrVKFyN6UMVn+J/tLRa8KG3j6+1ayHUX9WR4JCol2Pa9gG51Jn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715455166; c=relaxed/simple;
-	bh=10Sr8/r4vsQLBHs2eT8Nl5dyWcbWgKeqIXysLkPRiIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JDnNXww4Bc5FE2ohUEw10BBX7E0SDiPwRO0+6Y6kBasAfSZ17OxDlfZMi6iL7vCmFXx0i+5IrXHP6ayrYIMVtcuSLyNvkm+/rOKwlLsdXC81LTLKJLJjGXV5rwIgvs9Tc64Ylr1tQWtYd3CjpAIKH9bkeCoNwzJc7Qhx5IPFp60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eLOe74gS; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715455165; x=1746991165;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=10Sr8/r4vsQLBHs2eT8Nl5dyWcbWgKeqIXysLkPRiIA=;
-  b=eLOe74gSCWnS3UmxJ3mMlYMWvP9YnlpS8l6jAVgMTnfZYK02sJTHut7W
-   JSkQpevetCkEjRqi1qfBJERXJp+bfcjxpoYFsr21OKj5B0PsCu/KBXYYQ
-   2JCkLu2WEzltHRv2zdt6vnPCzilofT8WJoCyVMR7ic95PUrAPs+t7MMzl
-   Fbzzoy14ZEw8jAQcm0Xv18HLVgWdI8RlC1bc7oIYHMrp9fQ+AbQtghRk5
-   wGekVDQiUXGYO3VtVNfc+f/vfYLY2aBaSHtnfASAYPwENUWbmyXlTytOd
-   ezst0TAZmjuqRO+zv8eVIUrxVIkIqWxqFf6vdQNqUd2ExpS0q43ONvwTX
-   Q==;
-X-CSE-ConnectionGUID: p876ahm+TFi8HQlWLvCIaA==
-X-CSE-MsgGUID: 85e6NXFKS7e/3IQiUmgjnA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11070"; a="11285586"
-X-IronPort-AV: E=Sophos;i="6.08,154,1712646000"; 
-   d="scan'208";a="11285586"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2024 12:19:24 -0700
-X-CSE-ConnectionGUID: nJLrBFAPTESYQUS/7keCKg==
-X-CSE-MsgGUID: scCr+n+1QH+j+OT+k7ebsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,154,1712646000"; 
-   d="scan'208";a="30342419"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 11 May 2024 12:19:22 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s5sFa-0007l3-1N;
-	Sat, 11 May 2024 19:19:18 +0000
-Date: Sun, 12 May 2024 03:18:40 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yasin Lee <yasin.lee.x@outlook.com>, jic23@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, lars@metafoo.de, swboyd@chromium.org,
-	nuno.a@analog.com, andy.shevchenko@gmail.com,
-	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yasin.lee.x@gmail.com,
-	yasin.lee.x@outlook.com
-Subject: Re: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor
- driver
-Message-ID: <202405120334.eHnXGJwn-lkp@intel.com>
-References: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1715455207; c=relaxed/simple;
+	bh=+qv5reRo74cVbtPewf0lBZ2jqRG2ETEiX81GoJk+c40=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EgTrGFCMw3QNHvCiD+ravj5mZBMrlMZFJBwzDl16fYFiC1iA4HIsmswe1PxIIkpi6bBz3D+9E7+To/40EeqtewjTZpvFI2cApIjHrN031lehXeUGU/vPCXYn5nz09NUN5mnMuvQGwjRYTQQR/HGsmdpmyqL6BF20zrG2ndd+Enk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1be009e6eso219623639f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 12:20:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715455205; x=1716060005;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TU8kylx5Gi7UfPvHnXW2cq5h56a8jRhWapkflJkHeLA=;
+        b=lyCQ9VJpu1y0yfS6T3/D9iAW/+fXOJsCbc2Kuzs0FasZP1tJY/r5hrWdqI3p7iWNmv
+         NKRMfKIyiQymEXt4htwaECGTQ7Dt3jzQlge6QO7M3Ti6gz0hsIrTOuynoJFNzPeLBbpI
+         nI81Jx1egv80tGadbxt/OLJxKiwqwKMNriPwi2oLcom8e6j+KzNOlNqnS3V5IJPwRNyA
+         fL3wSDHGXUczrSJjZ4v7js/T8OvC/fF0ijgCwuzBo2ya70GUUkd3TozNgsi0MOEELRkT
+         vPVvaz5mnfmOShpF9NehY0f1W73JxqIYeBP+4J9QRqo/S4Ox65wubVfIMfnwwQuEjfSO
+         Bomw==
+X-Forwarded-Encrypted: i=1; AJvYcCVB1DZy0bjJ1fZ8YAow31m3M3poIMWFGxXswamzJDHSjEeZedcCdOLdbh4zTWdCi9J8qwbrldkMcMFoDfDVRMR8q4uqTCNbUV36FAp7
+X-Gm-Message-State: AOJu0YzzkAO54OHy3R4Khl/up2+qhPOAs4YyUMb4f8xj31IIm1swuGlE
+	cguhbfD9eR4GIyGkbkQ39TCnzHvF3VS+99C1YepZMKCKGor/kIlALQvk0wGAijQGpaAhlw58N1K
+	/uX46MX821Oa4X6+yjZLNNhBaWwchgj2FTs+rpL2bjV6tbeipcKsvJzo=
+X-Google-Smtp-Source: AGHT+IFQoLKTR0PomMsJmuoyW7oc8rG6EF2EtPkrDu6jPAscIBpu+Im9GhsGHH7rjpezK+/RJ84N2PgFrVl1yUwIXBxs170Q4cH4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN7PR12MB8101EDFA7F91A59761095A28A4E72@SN7PR12MB8101.namprd12.prod.outlook.com>
+X-Received: by 2002:a05:6638:8305:b0:488:e81f:845d with SMTP id
+ 8926c6da1cb9f-48958e18e34mr397992173.4.1715455205110; Sat, 11 May 2024
+ 12:20:05 -0700 (PDT)
+Date: Sat, 11 May 2024 12:20:05 -0700
+In-Reply-To: <000000000000bc3c710617da7605@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002104c60618328a78@google.com>
+Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_fs_usage_read_one
+From: syzbot <syzbot+b68fa126ff948672f1fd@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Yasin,
+syzbot has bisected this issue to:
 
-kernel test robot noticed the following build warnings:
+commit 03ef80b469d5d83530ce1ce15be78a40e5300f9b
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sat Sep 23 22:41:51 2023 +0000
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on linus/master v6.9-rc7 next-20240510]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+    bcachefs: Ignore unknown mount options
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yasin-Lee/iio-proximity-hx9031as-Add-TYHX-HX9031AS-HX9023S-sensor-driver/20240510-173839
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/SN7PR12MB8101EDFA7F91A59761095A28A4E72%40SN7PR12MB8101.namprd12.prod.outlook.com
-patch subject: [PATCH] iio:proximity:hx9031as: Add TYHX HX9031AS/HX9023S sensor driver
-config: arc-randconfig-r133-20240512 (https://download.01.org/0day-ci/archive/20240512/202405120334.eHnXGJwn-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240512/202405120334.eHnXGJwn-lkp@intel.com/reproduce)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154e823f180000
+start commit:   2b84edefcad1 Add linux-next specific files for 20240506
+git tree:       linux-next
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=174e823f180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=134e823f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b499929e4aaba1af
+dashboard link: https://syzkaller.appspot.com/bug?extid=b68fa126ff948672f1fd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155c109f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=136e52b8980000
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405120334.eHnXGJwn-lkp@intel.com/
+Reported-by: syzbot+b68fa126ff948672f1fd@syzkaller.appspotmail.com
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/iio/proximity/hx9031as.c:1919:21: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __be16 [usertype] val @@     got signed int @@
-   drivers/iio/proximity/hx9031as.c:1919:21: sparse:     expected restricted __be16 [usertype] val
-   drivers/iio/proximity/hx9031as.c:1919:21: sparse:     got signed int
-   drivers/iio/proximity/hx9031as.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/umh.h, include/linux/kmod.h, ...):
-   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:242:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +1919 drivers/iio/proximity/hx9031as.c
-
-  1902	
-  1903	static irqreturn_t hx9031as_trigger_handler(int irq, void *private)
-  1904	{
-  1905		struct iio_poll_func *pf = private;
-  1906		struct iio_dev *indio_dev = pf->indio_dev;
-  1907		struct hx9031as_data *data = iio_priv(indio_dev);
-  1908		__be16 val;
-  1909		int bit = 0;
-  1910		int ii = 0;
-  1911	
-  1912		ENTER;
-  1913		mutex_lock(&data->mutex);
-  1914	
-  1915		hx9031as_sample();
-  1916		hx9031as_get_prox_state();
-  1917	
-  1918		for_each_set_bit(bit, indio_dev->active_scan_mask, indio_dev->masklength) {
-> 1919			val = hx9031as_pdata.diff[indio_dev->channels[bit].channel];
-  1920			data->buffer.channels[ii++] = val;
-  1921			PRINT_INF("bit=%d, ii=%d, val=%d\n", bit, ii - 1, val);
-  1922		}
-  1923	
-  1924		iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer, pf->timestamp);
-  1925		mutex_unlock(&data->mutex);
-  1926	
-  1927		iio_trigger_notify_done(indio_dev->trig);
-  1928		return IRQ_HANDLED;
-  1929	}
-  1930	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
