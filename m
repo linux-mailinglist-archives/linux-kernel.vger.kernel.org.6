@@ -1,159 +1,161 @@
-Return-Path: <linux-kernel+bounces-176722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91D68C33B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD698C33B7
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAF9A1C20CA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:16:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7CE1C20E08
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B0720DD2;
-	Sat, 11 May 2024 20:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE524208CB;
+	Sat, 11 May 2024 20:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DymBGjiZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hO8RqGiS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD9E3C2D;
-	Sat, 11 May 2024 20:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181143C2D;
+	Sat, 11 May 2024 20:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715458560; cv=none; b=GXVJ0o/NZiqd/e3E2h0mDX7MxXcXD74jh6eqjOj7bQF4KS5MMflAutqprkOaoXeHNIfwSyBfYBXCGoMC4qhEduyC2E4n466hjuxfteBuqb5K7exaQe7vN7V7PP9MJmUP52/etO4qGLTXB7cjF3O1iBLUDTZik7rgAraJLLyZ1w8=
+	t=1715458583; cv=none; b=WiEaO1IXeig/R+Mk/Hb5dXIfILEXaWUNc9VSnx6Ks4Bjue5Iv6hHfINOkizxwjYj6dnvsLHL4lclLMlmxUj6pNE1g5VDgfgpSVsAGU3EMsMw4VXWzIT1Uy9UfJC+9aNKjryEs1KgwKgiBuYD3GyLc9/BBn0W/kws7mUH+GeByb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715458560; c=relaxed/simple;
-	bh=1IjAiNYUYctqDc35nFzL2DbzK5lYGMO8OblnXldLPxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e78/789EpAKfXlzjhKb79+giW1wUFsFRq92oaH55ItGTShcGCTytsNv9npJi/EcjqoGEABoDk+W+N4gdW0s37FQZw2wu0as7eT1J0+0K7NBatxRv03vNup2T1OebeFPcTWxMaOmNUrIT81UhgteaaSldfOZtmbrXzPt2wNS/T7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DymBGjiZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC3FCC2BBFC;
-	Sat, 11 May 2024 20:15:56 +0000 (UTC)
+	s=arc-20240116; t=1715458583; c=relaxed/simple;
+	bh=+LpkdgC+Wz7IOQEvnu/ilSBedx9vD5FOuP4V+JSN3Ys=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=C9GKE94qc5D8Iu25YVKWOnhIZQSFbzX2UuMaoovtTDiqstPVrbZU6gi38YoA4GnXPs5AiVT89KYaMm+uIjffT/VKD1rE5yBk9HhGhk2qql1Bhg2FlSm/T7jz/25p5ECxEfLremw+vLpZt3giWkncTsUV7UosN5bFwLpqDVhiR7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hO8RqGiS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0B66C2BBFC;
+	Sat, 11 May 2024 20:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715458560;
-	bh=1IjAiNYUYctqDc35nFzL2DbzK5lYGMO8OblnXldLPxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DymBGjiZNPVCIetlZ/T6O+8Es8jsNNxDZN+q+kXLRewWQeEKehHcdopzx8pQqOIzA
-	 pjtj7wBSii/hrlGiOdR9OhsPUVCq/wXhe0qUXSFWdM6hqYccgyzTubuTz8cZef9l9J
-	 YjAYjBdhjczWyFJUvnz6IR8gNhUAro1JitTuci2FwDVKhqrNoLaQp1zggr2WzcoisD
-	 SS9aDlZ+UYCfGRG1MUVBkoWvsN9R5gMvqXJgwkJh1vmnLkpYVLXVzoEiBxUU2ykppJ
-	 wV6AAFu2pHlrY+byJ2wEBKi9r2vJa9ysz2BL8rTALsjbI1iiG513k0SW7HgTrx3gpD
-	 6+89gGMUYOISg==
-Date: Sat, 11 May 2024 21:15:54 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	bhelgaas@google.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com
-Subject: Re: [PATCH V1 5/9] PCI/TPH: Introduce API functions to get/set
- steering tags
-Message-ID: <20240511201554.GV2347895@kernel.org>
-References: <20240509162741.1937586-1-wei.huang2@amd.com>
- <20240509162741.1937586-6-wei.huang2@amd.com>
+	s=k20201202; t=1715458582;
+	bh=+LpkdgC+Wz7IOQEvnu/ilSBedx9vD5FOuP4V+JSN3Ys=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=hO8RqGiSiGIdbzIQNIjJaqd4zgy6EslWUiMHUweZkfie3pxeLyxEAbjda0l+zUC6o
+	 Y58knSk9QRMq1/ZpO5GNaHVu59Vk9UxEQO6pXmTE2CMF5VBcB27rPgKPVZJVf0ivSO
+	 nLZ8PHLf5xzaW3JshPYmUELWfhUi91dKzMHj5XQL3TZ8qjL7YXziEI3qwHQGKQoWED
+	 kWraXXxWAX4Qrwcpkd/tZESwllbjt2dPY/NeBsJ82iBUc7OAlyUxMhdQUz0OBUERxV
+	 UIpw/+wgG3IzoRjtgFoANMcgM81urgQNdnz1E1ZaoeTi5xgftjJOf17eEW2JPSUjU4
+	 1nB2HyEV7YBew==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Honggyu Kim <honggyu.kim@sk.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	apopple@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	dave.jiang@intel.com,
+	hyeongtak.ji@sk.com,
+	kernel_team@skhynix.com,
+	linmiaohe@huawei.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	mathieu.desnoyers@efficios.com,
+	mhiramat@kernel.org,
+	rakie.kim@sk.com,
+	rostedt@goodmis.org,
+	surenb@google.com,
+	yangx.jy@fujitsu.com,
+	ying.huang@intel.com,
+	ziy@nvidia.com,
+	42.hyeyoo@gmail.com,
+	art.jeongseob@gmail.com
+Subject: Re: [RFC PATCH v3 1/7] mm/damon/paddr: refactor DAMOS_PAGEOUT with migration_mode
+Date: Sat, 11 May 2024 13:16:17 -0700
+Message-Id: <20240511201617.292811-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240405191907.66958-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509162741.1937586-6-wei.huang2@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 11:27:37AM -0500, Wei Huang wrote:
-> This patch introduces two API functions, pcie_tph_get_st() and
-> pcie_tph_set_st(), for a driver to retrieve or configure device's
-> steering tags. There are two possible locations for steering tag
-> table and the code automatically figure out the right location to
-> set the tags if pcie_tph_set_st() is called. Note the tag value is
-> always zero currently and will be extended in the follow-up patches.
+On Fri,  5 Apr 2024 12:19:07 -0700 SeongJae Park <sj@kernel.org> wrote:
+
+> On Fri,  5 Apr 2024 15:08:50 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
 > 
-> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-
-Hi Eric and Wei,
-
-I noticed a few minor problems flagged by Sparse
-which I'd like to bring to your attention.
-
-> ---
->  drivers/pci/pcie/tph.c  | 383 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/pci-tph.h |  19 ++
->  2 files changed, 402 insertions(+)
+> > This is a preparation patch that introduces migration modes.
+> > 
+> > The damon_pa_pageout is renamed to damon_pa_migrate and it receives an
+> > extra argument for migration_mode.
 > 
-> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
+> I personally think keeping damon_pa_pageout() as is and adding a new function
+> (damon_pa_migrate()) with some duplicated code is also ok, but this approach
+> also looks fine to me.  So I have no strong opinion here, but just letting you
+> know I would have no objection at both approaches.
 
-..
+Meanwhile, we added one more logic in damon_pa_pageout() for doing page
+idleness double check on its own[1].  It makes reusing damon_pa_pageout() for
+multiple reason a bit complex.  I think the complexity added a problem in this
+patch that I also missed before due to the complexity.  Show below comment in
+line.  Hence now I think it would be better to do the suggested way.
 
-> +/*
-> + * For a given device, return a pointer to the MSI table entry at msi_index.
-> + */
-> +static void __iomem *tph_msix_table_entry(struct pci_dev *dev,
-> +					  __le16 msi_index)
-> +{
-> +	void *entry;
-> +	u16 tbl_sz;
-> +	int ret;
-> +
-> +	ret = tph_get_table_size(dev, &tbl_sz);
-> +	if (ret || msi_index > tbl_sz)
+If we use the approach, this patch is no more necessary, and therefore can be
+dropped.
 
-While tbl_sz is a host-byte order integer value, msi_index is little endian.
-So maths operations involving the latter doesn't seem right.
+[1] https://lore.kernel.org/20240426195247.100306-1-sj@kernel.org
 
-Flagged by Sparse.
 
-> +		return NULL;
-> +
-> +	entry = dev->msix_base + msi_index * PCI_MSIX_ENTRY_SIZE;
+Thanks,
+SJ
 
-Likewise, there seem to be endian problems here here.
+[...]
+> 
+> > 
+> > No functional changes applied.
+> > 
+> > Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
+> > ---
+> >  mm/damon/paddr.c | 18 +++++++++++++++---
+> >  1 file changed, 15 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+> > index 081e2a325778..277a1c4d833c 100644
+> > --- a/mm/damon/paddr.c
+> > +++ b/mm/damon/paddr.c
+> > @@ -224,7 +224,12 @@ static bool damos_pa_filter_out(struct damos *scheme, struct folio *folio)
+> >  	return false;
+> >  }
+> >  
+> > -static unsigned long damon_pa_pageout(struct damon_region *r, struct damos *s)
+> > +enum migration_mode {
+> > +	MIG_PAGEOUT,
+> > +};
+> 
+> To avoid name conflicts, what about renaming to 'damos_migration_mode' and
+> 'DAMOS_MIG_PAGEOUT'?
+> 
+> > +
+> > +static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
+> > +				      enum migration_mode mm)
+> 
+> My poor brain has a bit confused with the name.  What about calling it 'mode'?
+> 
+> >  {
+> >  	unsigned long addr, applied;
+> >  	LIST_HEAD(folio_list);
+> > @@ -249,7 +254,14 @@ static unsigned long damon_pa_pageout(struct damon_region *r, struct damos *s)
 
-Also, entry is used on the line above and below in a way
-where an __iomem annotation is expected, but entry doesn't have one.
+Before this line, damon_pa_pageout() calls folio_clear_referenced() and
+folio_test_clear_young() for the folio, because this is pageout code.  Changed
+function, damon_pa_migrate() is not only for cold pages but general migrations.
+Hence it should also be handled based on the migration mode, but not handled.
 
-Also flagged by Sparse.
+I think this problem came from the increased complexity of this function.
+Hence I think it is better to keep damon_pa_pageout() as is and adding a new
+function for migration.
 
-> +
-> +	return entry;
-> +}
 
-..
+Thanks,
+SJ
 
-> +/* Write the steering tag to MSI-X vector control register */
-> +static void tph_write_tag_to_msix(struct pci_dev *dev, int msix_nr, u16 tag)
-> +{
-> +	u32 val;
-> +	void __iomem *vec_ctrl;
-> +	struct msi_desc *msi_desc;
-> +
-> +	msi_desc = tph_msix_index_to_desc(dev, msix_nr);
-> +	if (!msi_desc) {
-> +		pr_err("MSI-X descriptor for #%d not found\n", msix_nr);
-> +		return;
-> +	}
-> +
-> +	vec_ctrl = tph_msix_vector_control(dev, msi_desc->msi_index);
-
-According to Sparse, the type of msi_desc->msi_index is unsigned short.
-But tph_msix_vector_control expects it's second argument to be __le16.
-
-> +
-> +	val = readl(vec_ctrl);
-> +	val &= 0xffff;
-> +	val |= (tag << 16);
-> +	writel(val, vec_ctrl);
-> +
-> +	/* read back to flush the update */
-> +	val = readl(vec_ctrl);
-> +	msi_unlock_descs(&dev->dev);
-> +}
-
-..
+[...]
 
