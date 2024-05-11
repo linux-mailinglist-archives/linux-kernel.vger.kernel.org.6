@@ -1,114 +1,86 @@
-Return-Path: <linux-kernel+bounces-176545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB898C3170
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:59:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0382D8C3171
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:00:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53749B2126F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C341C20A51
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 13:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1A150292;
-	Sat, 11 May 2024 12:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8359fNt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03C575028B;
+	Sat, 11 May 2024 13:00:10 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9985028B;
-	Sat, 11 May 2024 12:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6AE50267
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 13:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715432350; cv=none; b=Q+14zYlMo63fz0udV5ICgkwGXaCm486u5AijZvrs9K/IsQUugOm+WcIWQZRE6u+ZiMVk5ChoB+AnKGH+G5ZZztWEqCQmNcmPNBjr1hA6HSZaKn3WmnM13dd3Vi0SNZ5znrpZ3Gy0Kd/RlFWgswBKnC3LbnjOohNCOFyJY/5VZ/I=
+	t=1715432409; cv=none; b=iAmoXqdsPcbbOL6s5QDT91p6RZTnEIsXNQralTBJaxdWFS0nhpHhjrbvaD0PdxtKSq2Ur3NF7v85lpyKERNxQEGWn+SfILdp2oTsGy39FN+Gdk1ogkIb+U4l099qLtnK00io4b1DcaHaukDF/emRQDIgaOiY7WpmI0PDz7yf35c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715432350; c=relaxed/simple;
-	bh=7mUFrYFasyg0D5ghmubzeb0I1JT+OGqiTqWUaMx3Vtc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aXdKAitwRI5W1P+WrpWr5NC50Pktxaz9NsdIwrbp7vP9jne+KjJNmoGplEo7YDA8PMXctKB/HYGAWSiw3jYhlWN8OpiO+LRnLbWvfG8sHiTA8XxpgU97nOxwJiXz0fNy207/d+5YaJYrOfK7oe3O79zM/yZ1Cm8+kt6rNoDAjxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8359fNt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD9B1C2BBFC;
-	Sat, 11 May 2024 12:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715432350;
-	bh=7mUFrYFasyg0D5ghmubzeb0I1JT+OGqiTqWUaMx3Vtc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R8359fNtDMDkH1bx2UfEwjgmDVuwhVScnjOQ71LQoqai9NM7zhfOMXFNls917FrM8
-	 4xZQUKNO9+KGpkwaoR/2fsY1rYK/9eaPrniD5HplavmmPmZXP59G9N24Vw7VugghxJ
-	 VN6CLwqcji+N3mFRkEtJ1Wx9l4U2jwqDauOyzG8Y2eZjqzbWtq40dGVPYa6S+kJqVb
-	 AaAdqDCc+a2Sx8OFcIpOJfNH6/94rgdCE9Oqwn/L7Oft1qgI35cPAREvZyAfm7GSg8
-	 VdvKlXALzWQ/kG4wdTkgDChfKCVT8WDaYPOv5idjpfBWwBXl5Ej7Yhk1yuhlvurH2b
-	 vlHv4eXI+J8hA==
-Date: Sat, 11 May 2024 13:59:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Konrad Dybcio <konradybcio@gmail.com>,
-	Del Regno <angelogioacchino.delregno@somainline.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Dmitry Baryskov <dmitry.baryshkov@linaro.org>,
-	Shawn Guo <shawn.guo@linaro.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: display: samsung,ams495qa01: add
- missing SPI properties ref
-Message-ID: <20240511-lid-depth-f29664519bd7@spud>
-References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org>
- <20240509-dt-bindings-dsi-panel-reg-v1-1-8b2443705be0@linaro.org>
+	s=arc-20240116; t=1715432409; c=relaxed/simple;
+	bh=cJNnrBvhQhCn54k9WSkt7txsXGoxKzwyeDesonlcFBA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KgJUES1Cs7xJwX5WtehZ2qlor2VfoFkZ/9v6hQJFdQI9gqICZQBO7EdBB06u693ggMhjFT5P8EMPCcXuObbY9tlO/INtQEuVGD9OirEPXCt8w+maSMh8LaNqRxJ0bH6tnOeqThPsBi5CURo1lLeumHopkYlvSsJ0lQ1s53ZW4Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7ddf08e17e4so244436939f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:00:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715432407; x=1716037207;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4tYpl1GB+i++ozmm7DOHgb8qgYnR+fc1u86B88XYzD8=;
+        b=jyAgcEWnfeM8D+E1o5NKHnkYj0SkwIqu8Jwl61NKFSwGK5/xv1cSkqI0TVZLyVjaZx
+         b8FpxYPVP1QvdHq1D/EVc4Vf2D9mZ/M3CMM/19Kxl9iEqzhTB4hRvCsHqg6OQlpZcqpL
+         Gmy/CoxcgW8fYcaCQn/2ii4AxD8z0mkYFszaK9u+mllZxR+o3EnBmOe4gOQDgCnpkxr8
+         DZIeb5+KgJbVMN9t6z+hC05bqZJZqnLvIiUCTWPeU9YFhQGw6KdZOjqaw2EWJ85sUINT
+         C0SpHlA4Sp36lhh+/BQgdWKJbdbHigFFXVWJMbSo19NaIRBZStEcPj6Awy5px25+SWIB
+         f/uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz1ely3Fd2AR6oIQYC0u2LGSFekvPPAeRBLJgTs98yEEUFtb4n8h6k0fXrUDQIK/MoqXdguK0CxEIh8SaMGiLN7LmoVd/VcXKj3MBY
+X-Gm-Message-State: AOJu0YwtwGxX5poRTb5a9xcvW/nCL/tJ/ojjtL+bJUY5T16rvhSWqLF2
+	WMcrf+OmwoenPm9RdkMyFn3Dke6dD1z/Moi7pU3rqAC2czOanD1epX3GFwJmSxAbOC/vjlqgyy4
+	a7bnnkYcc0EOUrOVapNEBl1DA5GEZM9YpNKzPhjpQXEC9yuCYDb579RA=
+X-Google-Smtp-Source: AGHT+IFOEoFTqyoyApbGxBkkoFtYS95bfhcK7rTS+uulMWdwFvTgBtDqqFq+LhEUXjmUft8YU1VWqHpNbWz+4ozR4siXgHte3PQw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2/wI+SpQ0UgMlFs6"
-Content-Disposition: inline
-In-Reply-To: <20240509-dt-bindings-dsi-panel-reg-v1-1-8b2443705be0@linaro.org>
+X-Received: by 2002:a05:6602:2b02:b0:7d9:b860:3e54 with SMTP id
+ ca18e2360f4ac-7e1b52080cdmr34895739f.2.1715432405967; Sat, 11 May 2024
+ 06:00:05 -0700 (PDT)
+Date: Sat, 11 May 2024 06:00:05 -0700
+In-Reply-To: <20240511123655.2700-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000031b7fe06182d3bc1@google.com>
+Subject: Re: [syzbot] [fuse?] WARNING in fuse_request_end
+From: syzbot <syzbot+da4ed53f6a834e1bf57f@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---2/wI+SpQ0UgMlFs6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Thu, May 09, 2024 at 11:42:51AM +0200, Krzysztof Kozlowski wrote:
-> Samsung AMS495QA01 panel is a SPI device, so it should reference
-> spi-peripheral-props.yaml schema to allow and validate the SPI device
-> properties.
->=20
-> Fixes: 92be07c65b22 ("dt-bindings: display: panel: Add Samsung AMS495QA01=
-")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reported-and-tested-by: syzbot+da4ed53f6a834e1bf57f@syzkaller.appspotmail.com
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Tested on:
 
-Cheers,
-Conor.
+commit:         dccb07f2 Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=15865b70980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+dashboard link: https://syzkaller.appspot.com/bug?extid=da4ed53f6a834e1bf57f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1475125c980000
 
---2/wI+SpQ0UgMlFs6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9rlwAKCRB4tDGHoIJi
-0iA7AP4z/SpXYwQc+M1q8GGrK9XnK29OfT3DTaXJVMuASjZnkAEA9Vbey58W1Nsl
-v/4W+TsdYBNh0T8/Omb/K3yj7+yiAwE=
-=Tmx3
------END PGP SIGNATURE-----
-
---2/wI+SpQ0UgMlFs6--
+Note: testing is done by a robot and is best-effort only.
 
