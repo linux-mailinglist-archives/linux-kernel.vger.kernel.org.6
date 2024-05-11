@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-176768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D235A8C34A3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 01:00:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA788C34A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 01:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8844C281EB8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 23:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6425281EA5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 23:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D9845008;
-	Sat, 11 May 2024 23:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555844D5B0;
+	Sat, 11 May 2024 23:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a/J+m04T"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oytTqnv0"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E421DDEA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F06F2A8C1
 	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 23:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715468431; cv=none; b=F0zR/SWGpXRXrWWMH8zlMm6HptHxrUVXUD81F3bbcJunoCIh3mIL4Z0/aAyuNuRy4jzHBt/OuC3yAlZB2MCS8MyPoUsIu4GsY4ggR6bQGumw43JxmaiFXLLiD4ZEPbsqa2m5Gl21UnxbXLvz0Ft9y+OJJknRuvJaqv+825sctbI=
+	t=1715468432; cv=none; b=c2dp8j8D30Zfr/6ezXhn2rEexSVqLYiieXTPwzx85uCxPm7L4xb+QLgypZrTNHGMRz66yX9BcEv8AgTZK106ZXycul1QorpwbNkHLP6aG6qKAmLaHHXSuBOy/2R/cq+LypvQjru98OjP9Tpg3a50liYhWeUhmgWhPb12vl1+rqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715468431; c=relaxed/simple;
-	bh=sjNwNWt1lktWQrmL6beKWmXl2L8FICi4sYx1xY8LX/4=;
+	s=arc-20240116; t=1715468432; c=relaxed/simple;
+	bh=xi5U71kz8T87h4VViIeLZOLRoolhq+/AdfXL3EWovWo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Byov1hTxDcTeiusBjjHUNfuWnAt/DbUtQnOajXOuh8MfThCGm4DFdLpKOdCPo1kORBJdJgG2OmMXy3VKjzR1bC3baowO+x5R7Jnd8zsMKgmdyOpq5m+8AZgIwyEZ5POZKonWCqgZcTarVRsUVX4du2lgSGqR6j6GiojGbMXvY1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a/J+m04T; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=J2Vb2xJGYudyxSPMKQkJlfIvHbH3Xd739pSOjfNg4Kco0SFbicQPOTy24j/2jzlvQeuz/PcWnz6ziOqif9vemu0NU0cPj+rzHiBjI31Dr4lWSQP9dMbmCGJIb59sZw6PjkHEFGhsPW6zug1fRInKIapro8fgZVG+t/e5sM1V2Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oytTqnv0; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-522297f91bcso1886468e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 16:00:28 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51f4d2676d1so3245806e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 16:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715468427; x=1716073227; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1715468428; x=1716073228; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7ItR8Il0wZKComYTOQXyrvGGchY2JbpvV93y+cdGZEE=;
-        b=a/J+m04TXFA5XouTQXUXbz5zSz6RwapsgTu4cDtae7GzjZpfJzQIl6EDiyBU0DQiAe
-         LWueIRx6IcqAoN3k0PyJSN8nXj0Jz2mlAMA9RQsPOsRPZ75qDfLtTelqFSWjcxSo6Stm
-         9A+sU+P46zkrno2IU0se6ihPDFQKDtrloetsrkz6CED09EWLKM6J4zVtAteJ4Io9Vsa8
-         cWq0nkMAmAfUyrbrc0tlnSMdVymoocDBSSClcx8vVqLNJcfHIr4OlTW5k9dxo/WYhjKI
-         eQXtdo4bNHM1oHZcrWM47LClzdm9ot6kn55haOOvw3UzaUWW8QD52CVDickBisPIfO+0
-         NNsQ==
+        bh=4BS3LNsIzlA8pD9hWWnKhxqZdHat5J4SEHWcVJTYiOg=;
+        b=oytTqnv0oeV3cvtk91AgPEpWJCgmLqPC+4CFEQl7/yVZn5ebJPbzlpzIpYbhm5EQ+D
+         94dnQ0vcp38oc6rcaSKmVvt5LKRYTQpLKMiPgnBaeSRveC5oAOJAEkyjQHp0BmEIm0F/
+         6fb8XC3e4ADuzp6Vfd59frAef4wkTMM7qh86/Yxy6s5sL6P05Ab8Z5tYcjT4SWr8wAEd
+         V+qIB9mnvRK+bRhDisSVqQH99mB5/NiMPSYK2DrcksztNJ3sTJXxG1jfGDMFgxXFd9NI
+         KXcPOq4FlMvFNG/NQ/J3LzkF3mHfQd9rljJHzrKaCYW3ne1FkGa+emDqa3cc2kmpiJuk
+         nqIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715468427; x=1716073227;
+        d=1e100.net; s=20230601; t=1715468428; x=1716073228;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7ItR8Il0wZKComYTOQXyrvGGchY2JbpvV93y+cdGZEE=;
-        b=m6XdLXdBnEwhpkKwujccpy3VZ0Svrx9K+djwmJtl8jw3vj2BsWgdnU5mEbUI1snxTY
-         YE5YT8ML/FXYO5GCZf0hCrcLLV0DCMndrnArzJ54jgL18SGZIDpQ1J4akenXtmuLl/Vu
-         zfI2QyN7Uieotfuhqq+9K07azjYPm1KgN1aRN1Z9RImmhVgA3gz/Yo0/WujXAsZcU22m
-         ipsZEWEf9JHYrhis+SvxkQlnc+lTZazwjIqIdb6r8XH7Gd5Kd8MpQO+KIviRwmhuvWVh
-         rxn0n/q/Ck7Np85taIlamhrrhpAsHl5UQo03eqblF1DR9smcbaDn8DTAGjKsA9mGJdZJ
-         Fnxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUslRwHzjMRcqkk307Nd9yYfL6rX7vNaPgSL+J0JR2NFIgWjvRoZ5Ug6zO3oo6DJK0JLnS6597DGsS9dqyb/ebXicnu9KFg74setVRH
-X-Gm-Message-State: AOJu0YzbM1aQrt0upJSEz9rG1SNgPhhBfKZaSzInU9jq9Ja2M3ZvLN2R
-	Dflalb58UMZkff9eFxM4aGEEATrQZnUHQnuf5/Rvzh9ff44NauLk4HWjGpNo+Fc=
-X-Google-Smtp-Source: AGHT+IGupD6xSF5z3LDxw5fpnNiXEVPwrXMtCUrN+VFBtOrmIH4ipNMQ9NazLPourMk+7YDo207urw==
-X-Received: by 2002:a05:6512:ba3:b0:518:8d15:8810 with SMTP id 2adb3069b0e04-5220fc7354cmr5061661e87.14.1715468427451;
-        Sat, 11 May 2024 16:00:27 -0700 (PDT)
+        bh=4BS3LNsIzlA8pD9hWWnKhxqZdHat5J4SEHWcVJTYiOg=;
+        b=Dp6r3pkTMvHYXoaliOAbBSv+NAk6OiU16SGiV21rY/ZPJNi1B/2EIKZMztjFMgHr6c
+         0KamnGWdz8ROc1r+kunGxYr3lqobWQ84R/qRpH8RwAaB5xsi7HVLv8yZveSetkRtnFT/
+         KuJU/+WETdshNEec7XAVS7bRshETTSt+16lMdF21a4tov0ltF/yxur3SgRgXVBhhrWD7
+         +/87jyERsl5wkT/36EanXna5PVgt3tT5uzhovIPEpvhD+ElTipcz4O/+vrGrCM89kyRV
+         lhfj0iVF1pQLvM9ujEDpN/gCIBwq/aTHahYkZPSYM9ChqAmlCgXZXouzftgsNyqVgTj0
+         XhvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXsC//oMfP8dmTraZM3rbwbvZ76Jthuljyr/NQqnm1JLuBAlYIJY/qMpNuOvF+LxAcoLiGAK07J5LmemNJVnpJHTg8tJodmMmmNmhS
+X-Gm-Message-State: AOJu0YyNOT+QdXqpHWQ682Bw/11fXVGPFOwjCz4FpDRsdAeUi5Oy3TUe
+	f/fFPk9yt+tgIwVRTNEF8Wlr+9d+zLZgzCfRWcRDyAzCNPzjvac4E5jN+wVBDso=
+X-Google-Smtp-Source: AGHT+IGq3Q77PQC8pmuzZ6UbAb6S/DSxzj2GbGKSeMaal6d2Z8qeLT1e0EII0XLJJoahQXmtJxYm6w==
+X-Received: by 2002:a05:6512:33c5:b0:522:2a2c:759e with SMTP id 2adb3069b0e04-5222a2c76c2mr3462466e87.6.1715468428300;
+        Sat, 11 May 2024 16:00:28 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d3717sm1134222e87.173.2024.05.11.16.00.26
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d3717sm1134222e87.173.2024.05.11.16.00.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 16:00:26 -0700 (PDT)
+        Sat, 11 May 2024 16:00:27 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 12 May 2024 02:00:18 +0300
-Subject: [PATCH v2 1/7] drm/panel: lg-sw43408: add missing error handling
+Date: Sun, 12 May 2024 02:00:19 +0300
+Subject: [PATCH v2 2/7] drm/mipi-dsi: wrap more functions for streamline
+ handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240512-dsi-panels-upd-api-v2-1-e31ca14d102e@linaro.org>
+Message-Id: <20240512-dsi-panels-upd-api-v2-2-e31ca14d102e@linaro.org>
 References: <20240512-dsi-panels-upd-api-v2-0-e31ca14d102e@linaro.org>
 In-Reply-To: <20240512-dsi-panels-upd-api-v2-0-e31ca14d102e@linaro.org>
 To: Douglas Anderson <dianders@chromium.org>, 
@@ -94,101 +95,299 @@ Cc: Cong Yang <yangcong5@huaqin.corp-partner.google.com>,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2884;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9508;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=sjNwNWt1lktWQrmL6beKWmXl2L8FICi4sYx1xY8LX/4=;
- b=owEBbAGT/pANAwAKAYs8ij4CKSjVAcsmYgBmP/iIq2PSj7Y1vez6Rc2QseG7HDNb8trfZ6GFD
- fbOLvZ4cmeJATIEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj/4iAAKCRCLPIo+Aiko
- 1RPRB/iPkeSgZV6o0AQqVNOnA/LGZ26CD5knxYfdT6mUpksmIdzNgz51P7eJqFplreJORm+ki18
- Ak5BJgGG1G/Le90JBUp2AAfXsWY8Qyc4blaMEuaiR7idSxNgE3dIMdrdKAxvV+Y8Km3qAquwJXw
- XX1uW/CIGcFwAkWYummz3BUUcQvximQ8c1502Q2MWhPeH/LD/Eb3qLSn9gzcXWL90IZXsQqaMrd
- TADER+4+U8OhlF9N29/espaXx4aqOR7cgeJ812G0t+TXDhqUA/nD2ptzrzxANloKyaGOrI1Qnfm
- fPGdECpiiVL/ErgtxppPVEIEBME0FKNDHgTZbbRHeR1R0T4=
+ bh=xi5U71kz8T87h4VViIeLZOLRoolhq+/AdfXL3EWovWo=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmP/iILRHsslbO7N+jkxp9j4cFntTv96XBqLvLi
+ sJVcR2kvcaJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj/4iAAKCRCLPIo+Aiko
+ 1Z9DB/0SiooYtozFy/Si/1cRF+TFzLyCUNPoKFTkvKu71M6eLqaVvGWGYZRJ5Djj2A2Wr6dh5OJ
+ 04lXqSIRYYlGMZJn0TZ4gByg2Ta3ZQafWiYOCAQSt92HyF8sk0JMCDHrSDOVwgnxElRgrwpC+vm
+ QhGAijjacI42OHeCidtyTb+1exey8sb5eYYkve013ZUe1uzDA2EUgSp+Os/rRoVCpv++MsBdT7R
+ 9GJ18MvwTzNpQUC7EL/i8aTAXUgccXL1laDgdkFu7QN9xG3HSj1h901jpKDsCBdFVPZi810GmwF
+ 6JonyQp5VKjq0WcXTE1IZyH7DpnkaXVeUZeYzASgXZYNbB+y
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Add missing error handling for the mipi_dsi_ functions that actually
-return error code instead of silently ignoring it.
+Follow the pattern of mipi_dsi_dcs_*_multi() and wrap several existing
+MIPI DSI functions to use the context for processing. This simplifies
+and streamlines driver code to use simpler code pattern.
 
-Fixes: 069a6c0e94f9 ("drm: panel: Add LG sw43408 panel driver")
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Note, msleep function is also wrapped in this way as it is frequently
+called inbetween other mipi_dsi_dcs_*() functions.
+
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/gpu/drm/panel/panel-lg-sw43408.c | 33 ++++++++++++++++++++++++++------
- 1 file changed, 27 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/drm_mipi_dsi.c | 210 +++++++++++++++++++++++++++++++++++++++++
+ include/drm/drm_mipi_dsi.h     |  21 +++++
+ 2 files changed, 231 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-lg-sw43408.c b/drivers/gpu/drm/panel/panel-lg-sw43408.c
-index 2b3a73696dce..67a98ac508f8 100644
---- a/drivers/gpu/drm/panel/panel-lg-sw43408.c
-+++ b/drivers/gpu/drm/panel/panel-lg-sw43408.c
-@@ -62,16 +62,25 @@ static int sw43408_program(struct drm_panel *panel)
- {
- 	struct sw43408_panel *ctx = to_panel_info(panel);
- 	struct drm_dsc_picture_parameter_set pps;
-+	int ret;
- 
- 	mipi_dsi_dcs_write_seq(ctx->link, MIPI_DCS_SET_GAMMA_CURVE, 0x02);
- 
--	mipi_dsi_dcs_set_tear_on(ctx->link, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-+	ret = mipi_dsi_dcs_set_tear_on(ctx->link, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "Failed to set tearing: %d\n", ret);
-+		return ret;
-+	}
- 
- 	mipi_dsi_dcs_write_seq(ctx->link, 0x53, 0x0c, 0x30);
- 	mipi_dsi_dcs_write_seq(ctx->link, 0x55, 0x00, 0x70, 0xdf, 0x00, 0x70, 0xdf);
- 	mipi_dsi_dcs_write_seq(ctx->link, 0xf7, 0x01, 0x49, 0x0c);
- 
--	mipi_dsi_dcs_exit_sleep_mode(ctx->link);
-+	ret = mipi_dsi_dcs_exit_sleep_mode(ctx->link);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "Failed to exit sleep mode: %d\n", ret);
-+		return ret;
-+	}
- 
- 	msleep(135);
- 
-@@ -97,14 +106,22 @@ static int sw43408_program(struct drm_panel *panel)
- 	mipi_dsi_dcs_write_seq(ctx->link, 0x55, 0x04, 0x61, 0xdb, 0x04, 0x70, 0xdb);
- 	mipi_dsi_dcs_write_seq(ctx->link, 0xb0, 0xca);
- 
--	mipi_dsi_dcs_set_display_on(ctx->link);
-+	ret = mipi_dsi_dcs_set_display_on(ctx->link);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "Failed to set display on: %d\n", ret);
-+		return ret;
-+	}
- 
- 	msleep(50);
- 
- 	ctx->link->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
- 	drm_dsc_pps_payload_pack(&pps, ctx->link->dsc);
--	mipi_dsi_picture_parameter_set(ctx->link, &pps);
-+	ret = mipi_dsi_picture_parameter_set(ctx->link, &pps);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "Failed to set PPS: %d\n", ret);
-+		return ret;
-+	}
- 
- 	ctx->link->mode_flags |= MIPI_DSI_MODE_LPM;
- 
-@@ -113,8 +130,12 @@ static int sw43408_program(struct drm_panel *panel)
- 	 * PPS 1 if pps_identifier is 0
- 	 * PPS 2 if pps_identifier is 1
- 	 */
--	mipi_dsi_compression_mode_ext(ctx->link, true,
--				      MIPI_DSI_COMPRESSION_DSC, 1);
-+	ret = mipi_dsi_compression_mode_ext(ctx->link, true,
-+					    MIPI_DSI_COMPRESSION_DSC, 1);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "Failed to set compression mode: %d\n", ret);
-+		return ret;
-+	}
- 
- 	return 0;
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index d2957cb692d3..8721edd06c06 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -1429,6 +1429,216 @@ int mipi_dsi_dcs_get_display_brightness_large(struct mipi_dsi_device *dsi,
  }
+ EXPORT_SYMBOL(mipi_dsi_dcs_get_display_brightness_large);
+ 
++/**
++ * mipi_dsi_picture_parameter_set_multi() - transmit the DSC PPS to the peripheral
++ * @ctx: Context for multiple DSI transactions
++ * @pps: VESA DSC 1.1 Picture Parameter Set
++ *
++ * Like mipi_dsi_picture_parameter_set() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
++				   const struct drm_dsc_picture_parameter_set *pps)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_picture_parameter_set(dsi, pps);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending PPS failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_picture_parameter_set_multi);
++
++/**
++ * mipi_dsi_compression_mode_ext_multi() - enable/disable DSC on the peripheral
++ * @ctx: Context for multiple DSI transactions
++ * @enable: Whether to enable or disable the DSC
++ * @algo: Selected compression algorithm
++ * @pps_selector: Select PPS from the table of pre-stored or uploaded PPS entries
++ *
++ * Like mipi_dsi_compression_mode_ext() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
++					 bool enable,
++					 enum mipi_dsi_compression_algo algo,
++					 unsigned int pps_selector)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_compression_mode_ext(dsi, enable, algo, pps_selector);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending COMPRESSION_MODE failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_compression_mode_ext_multi);
++
++/**
++ * mipi_dsi_dcs_nop_multi() - send DCS NOP packet
++ * @ctx: Context for multiple DSI transactions
++ *
++ * Like mipi_dsi_dcs_nop() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_dcs_nop_multi(struct mipi_dsi_multi_context *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_dcs_nop(dsi);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending DCS NOP failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_nop_multi);
++
++/**
++ * mipi_dsi_dcs_enter_sleep_mode_multi() - send DCS ENTER_SLEEP_MODE  packet
++ * @ctx: Context for multiple DSI transactions
++ *
++ * Like mipi_dsi_dcs_enter_sleep_mode() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_dcs_enter_sleep_mode_multi(struct mipi_dsi_multi_context *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending DCS ENTER_SLEEP_MODE failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_enter_sleep_mode_multi);
++
++/**
++ * mipi_dsi_dcs_exit_sleep_mode_multi() - send DCS EXIT_SLEEP_MODE packet
++ * @ctx: Context for multiple DSI transactions
++ *
++ * Like mipi_dsi_dcs_exit_sleep_mode() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_dcs_exit_sleep_mode_multi(struct mipi_dsi_multi_context *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending DCS EXIT_SLEEP_MODE failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_exit_sleep_mode_multi);
++
++/**
++ * mipi_dsi_dcs_set_display_off_multi() - send DCS SET_DISPLAY_OFF packet
++ * @ctx: Context for multiple DSI transactions
++ *
++ * Like mipi_dsi_dcs_set_display_off() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_dcs_set_display_off(dsi);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending DCS SET_DISPLAY_OFF failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_set_display_off_multi);
++
++/**
++ * mipi_dsi_dcs_set_display_on_multi() - send DCS SET_DISPLAY_ON packet
++ * @ctx: Context for multiple DSI transactions
++ *
++ * Like mipi_dsi_dcs_set_display_on() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_dcs_set_display_on(dsi);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending DCS SET_DISPLAY_ON failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_set_display_on_multi);
++
++/**
++ * mipi_dsi_dcs_set_tear_on_multi() - send DCS SET_TEAR_ON packet
++ * @ctx: Context for multiple DSI transactions
++ * @mode: the Tearing Effect Output Line mode
++ *
++ * Like mipi_dsi_dcs_set_tear_on() but deals with errors in a way that
++ * makes it convenient to make several calls in a row.
++ */
++void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
++				    enum mipi_dsi_dcs_tear_mode mode)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct device *dev = &dsi->dev;
++	ssize_t ret;
++
++	if (ctx->accum_err)
++		return;
++
++	ret = mipi_dsi_dcs_set_tear_on(dsi, mode);
++	if (ret < 0) {
++		ctx->accum_err = ret;
++		dev_err(dev, "sending DCS SET_TEAR_ON failed: %d\n",
++			ctx->accum_err);
++	}
++}
++EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
++
+ static int mipi_dsi_drv_probe(struct device *dev)
+ {
+ 	struct mipi_dsi_driver *drv = to_mipi_dsi_driver(dev->driver);
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 5e9cad541bd6..bd5a0b6d0711 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -275,6 +275,13 @@ int mipi_dsi_compression_mode_ext(struct mipi_dsi_device *dsi, bool enable,
+ int mipi_dsi_picture_parameter_set(struct mipi_dsi_device *dsi,
+ 				   const struct drm_dsc_picture_parameter_set *pps);
+ 
++void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
++					 bool enable,
++					 enum mipi_dsi_compression_algo algo,
++					 unsigned int pps_selector);
++void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
++					  const struct drm_dsc_picture_parameter_set *pps);
++
+ ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *dsi, const void *payload,
+ 			       size_t size);
+ int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *dsi,
+@@ -284,6 +291,12 @@ void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
+ ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *dsi, const void *params,
+ 			      size_t num_params, void *data, size_t size);
+ 
++#define mipi_dsi_msleep(ctx, delay)	\
++	do {				\
++		if (!ctx.accum_err)	\
++			msleep(delay);	\
++	} while (0)
++
+ /**
+  * enum mipi_dsi_dcs_tear_mode - Tearing Effect Output Line mode
+  * @MIPI_DSI_DCS_TEAR_MODE_VBLANK: the TE output line consists of V-Blanking
+@@ -338,6 +351,14 @@ int mipi_dsi_dcs_set_display_brightness_large(struct mipi_dsi_device *dsi,
+ int mipi_dsi_dcs_get_display_brightness_large(struct mipi_dsi_device *dsi,
+ 					     u16 *brightness);
+ 
++void mipi_dsi_dcs_nop_multi(struct mipi_dsi_multi_context *ctx);
++void mipi_dsi_dcs_enter_sleep_mode_multi(struct mipi_dsi_multi_context *ctx);
++void mipi_dsi_dcs_exit_sleep_mode_multi(struct mipi_dsi_multi_context *ctx);
++void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx);
++void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx);
++void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
++				    enum mipi_dsi_dcs_tear_mode mode);
++
+ /**
+  * mipi_dsi_generic_write_seq - transmit data using a generic write packet
+  *
 
 -- 
 2.39.2
