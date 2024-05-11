@@ -1,203 +1,134 @@
-Return-Path: <linux-kernel+bounces-176690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7F58C335B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:07:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5444D8C335D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0992B1C20D73
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E771F2199D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954551CA9E;
-	Sat, 11 May 2024 19:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6BA1CF96;
+	Sat, 11 May 2024 19:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3h/p2T6"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ftJpnVCV"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D19D366;
-	Sat, 11 May 2024 19:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4C428E8;
+	Sat, 11 May 2024 19:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715454423; cv=none; b=Tw/ugTKcJa22s3NLyLHjAk+rTzLdXZvVHF7dfti1Ukr/AMKJ/XG5nI7DzqmCUfiGISTe7Bg7F3FoI5tL1b8bnvwlznBEb2iGKs7zn/kXMqMhnyQasDkc7nqIEMMDddxhELzz4/+p1tUjMFHvVw1/e1w/XsLYlj6C1oMiNmeo5Ic=
+	t=1715454577; cv=none; b=lHYy60EmgLTemc3VXkZMeaMtz5z/A7Nb2wFTRJVX/DvxLRrAYBJetIT06JTBNrzT47737BJ0wqI6Jy9ODYJFhPOl1eAm96m/qyUeCEUUERueS6wlfuyLwSWcopepkV3HU7ntpDrJhFFGQYVbYLn2Lav+/6xnJDmXXrO6iY/S0LU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715454423; c=relaxed/simple;
-	bh=hHRqAUoBRH82pJuymk4l5g2SstMzMc4ea1ZkfNBzjC8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=PN+m0O2aeolQokhjeKXPJzWhKjWxS62c0A29GMkDX1J8S/INRjl26vUUGucegBYKthw6ZbaTYMZ1Tt5W3YFhbatym0Z5QMMupQa5HNrz2aekGNIGN8jAd+byQHzmYIkzUvAxZD0GG8JYMQZjP5ydw2JgmOsPM3Ebc3VdhgEXf0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3h/p2T6; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-6f44881ad9eso2603267b3a.3;
-        Sat, 11 May 2024 12:07:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715454421; x=1716059221; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKFpB0RxiHeU9h9LrzBPuEHdR23O3Fp1vgl2G/bmm/Y=;
-        b=j3h/p2T6IKUYLsCGEaV8qo44dgPmQxiD7RykXf0EWABlWpYDuSXISSdQktvxUNJSJ4
-         qWOrUsuRF6uYWBszLiMBjEb9ldNHM9OlJbqSerKp0jibE/vpuOPV5U6dO/X3xYHMz0Zx
-         D+6fpNqufz51b6cfA1WSR83uNsSH0cWAx6L8Tpm4OQrcn1CLuoNyob0GPxFA24JVC8ZC
-         E+XNCvWqxFF3Chdv1Xjs4wabgn7v85MA+Qc5bQTW4J9HfUaotd4oI1xHlbZFEKrQzZJs
-         +12S9hZRH6CZ5MPLAW5obggGRZbmkHPXFS1LKwHRUyeV4iL6sIMqhakrYRpOEs7NDxnL
-         Oy1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715454421; x=1716059221;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kKFpB0RxiHeU9h9LrzBPuEHdR23O3Fp1vgl2G/bmm/Y=;
-        b=AeoM6HKxBawhGL5Pj1pgQCnMBZEK0A12g/2MXmmtP9yp3blAfKGOKpzKzyZHb4DtST
-         W+fFu/RIctEPaG7J9SgwF/ysBg7IArjpKW2DjEpmUts8FZURkqTXf+9h5+y/Vldjpli0
-         mTvMEzT3bPxA/0yTl/T2RUe6u/Vq9XtdwsbAZ8BdIQcmQ9eKiCm2g7H1LEZv/kNmm30n
-         SnQG6o+x5wWTWE0UbnPY15THpTxjBPDhJ7PvFipD0HF6+4+SO540YmZ98Q8Ic26UU4Hi
-         V0JFFJz2GmXmmLuPSdRsqLNBwF9GYHJhE/RzYLFIjmrl9qhe02ToPVkmQTkw/PWp/uao
-         p/Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRNlu0sHLqzRk8qqojEX0pK/YwmF/B06XwjmsuBlBJAeITOtrYhF46CqYy1MuKJdnUMFvp24Lh1BKTyQGoamG/mV10VImyYvP66B5uywI2+bop8Nlujuc0BLWHSZY+M63pq/cVZ81Q260tz9zkw6bLMF1eUIPewEAIbpG15a3F76wM
-X-Gm-Message-State: AOJu0YxPeigPN39aA9wlGFsc2RNRi4u1e1A4pMn9lWEJ0B3a0bXsx/aB
-	WotWvSsX7QFf7K2JEeak23gtI3wixp/8+o0kRlnfACJbJWch4NTg
-X-Google-Smtp-Source: AGHT+IGmo2f78jWcqywMtYZHpVsGSJ2APhbQt+bMScxXaLDUI2+mPESa9uh0vzNCj3GOlsrEu3zlxg==
-X-Received: by 2002:a05:6a21:2709:b0:1af:d240:2c14 with SMTP id adf61e73a8af0-1afde0a9c02mr6414939637.6.1715454421184;
-        Sat, 11 May 2024 12:07:01 -0700 (PDT)
-Received: from paran-QEMU-Virtual-Machine.. ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62863a22dsm7093588a91.3.2024.05.11.12.06.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 12:07:00 -0700 (PDT)
-From: yskelg@gmail.com
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Austin Kim <austindh.kim@gmail.com>,
-	shjy180909@gmail.com,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: [PATCH] Documentation: security-bugs Korean translation
-Date: Sun, 12 May 2024 04:06:40 +0900
-Message-Id: <20240511190639.20235-1-yskelg@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715454577; c=relaxed/simple;
+	bh=O5knfMimufzf45RWMUVmIYUOJjDJ+9Mmy+EmmGf9XEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cL+bN2G88iHBv+tnf2tL9fsrIZReeSYShk/efQqSEoi2qvx5S2nEo2WiNuG9AirxjUzHqMF5vNMSziG3u99/RTymUs9+eMSujT11OM4kidM1YO4IqxbWDDaBQPYYToT7gbx6k0z21QRgI8KDYH4QJsv760UhgAYsgadvCrxlvsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ftJpnVCV; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AA09A114D;
+	Sat, 11 May 2024 21:09:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715454562;
+	bh=O5knfMimufzf45RWMUVmIYUOJjDJ+9Mmy+EmmGf9XEY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ftJpnVCV022EtyvdyVYIFaxhhe05xfhFcY69SSZLyOOFBPCZCnAUnpDsSzCgQszxx
+	 q2LhZaOHoJf8UPRedByFtj7PbQsTlHHIqBhs/JbKvcg/FnH5ViEyc9RSj5fxFrwqgj
+	 CmIwkY0hQRr00ZUJ09aeVHl5jWxyOzBP09JGyMIQ=
+Date: Sat, 11 May 2024 22:09:19 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: hi846: Fix V4L2_SUBDEV_FORMAT_TRY
+ get_selection()
+Message-ID: <20240511190919.GD17158@pendragon.ideasonboard.com>
+References: <20240509-fix-hi846-v1-1-1e19dc517be1@chromium.org>
+ <20240509193900.GA32013@pendragon.ideasonboard.com>
+ <CANiDSCsv8S68x7z+aV1PhbZ+5Ktr=86nYUXaNpb1w4q4y1v38Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CANiDSCsv8S68x7z+aV1PhbZ+5Ktr=86nYUXaNpb1w4q4y1v38Q@mail.gmail.com>
 
-From: Yunseong Kim <yskelg@gmail.com>
+Hi Ricardo,
 
-This is a Documentation/process/security-bugs korean version.
+On Sat, May 11, 2024 at 09:47:47AM +0200, Ricardo Ribalda wrote:
+> On Thu, 9 May 2024 at 21:39, Laurent Pinchart wrote:
+> > On Thu, May 09, 2024 at 05:05:55PM +0000, Ricardo Ribalda wrote:
+> > > The current code does not return anything to the user.
+> > >
+> > > Although the code looks a bit dangerous (using a pointer without
+> > > checking if it is valid), it should be fine. The code validates that
+> >
+> > I think you meant s/code/core/
+> 
+> Yes, sorry, fatty fingers :)
+> 
+> If you are planning to send a v5 of this
+> https://patchwork.linuxtv.org/project/linux-media/patch/20240508214045.24716-4-laurent.pinchart+renesas@ideasonboard.com/
+> 
+> Maybe you could include this patch there?
 
-Signed-off-by: Yunseong Kim <yskelg@gmail.com>
----
- .../ko_KR/process/security-bugs.rst           | 96 +++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 Documentation/translations/ko_KR/process/security-bugs.rst
+Yes, I've already taken the patch in my tree. If Hans merges it to the
+stage tree I'll drop it, otherwise I'll include it in the pull request
+to avoid breaking CI.
 
-diff --git a/Documentation/translations/ko_KR/process/security-bugs.rst b/Documentation/translations/ko_KR/process/security-bugs.rst
-new file mode 100644
-index 000000000000..b8f16fe846ac
---- /dev/null
-+++ b/Documentation/translations/ko_KR/process/security-bugs.rst
-@@ -0,0 +1,96 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:Original: Documentation/process/security-bugs.rst
-+:Translator: Yunseong Kim <yskelg@gmail.com>
-+
-+보안 버그
-+=========
-+
-+Linux 커널 개발자는 보안을 매우 중요하게 생각합니다.
-+따라서 보안 버그를 발견하면 가능한 한 빨리 수정하고 공개할 수 있도록
-+알려주시기 바랍니다. 보안 버그를 Linux 커널 보안 팀에 신고해 주세요.
-+
-+제보하기
-+--------
-+
-+Linux 커널 보안팀은 <security@kernel.org> 이메일로 연락할 수 있습니다.
-+버그 신고를 확인하고 수정 사항을 개발 및 릴리스하는 데 도움을 줄 보안 담당자의
-+비공개 목록입니다. 이미 수정 사항이 있는 경우 신고에 포함하면 처리 속도가
-+상당히 빨라질 수 있습니다. 보안팀이 보안 취약점을 파악하고 수정하기 위해
-+영역 관리자의 도움을 추가로 받을 수도 있습니다.
-+
-+모든 버그가 그렇듯이 더 많은 정보를 제공할수록 진단과 수정이 더 쉬워집니다.
-+어떤 정보가 도움이 될지 잘 모르겠다면
-+'Documentation/admin-guide/reporting-issues.rst'에
-+나와있는 문제 신고하기 절차를 검토해 주세요. 모든 보안 취약점 공격 코드는
-+매우 유용하며 이미 공개되어 있지 않은 한 신고자의 동의 없이 공개되지 않습니다.
-+
-+가능한 경우 첨부 파일 없이 일반 텍스트 이메일을 보내주세요.
-+첨부 파일에 모든 세부 사항이 숨겨져 있으면 복잡한 문제에 대해 맥락에 맞는
-+토론을 하기가 훨씬 더 어렵습니다. (아직 패치가 없는 경우라도) :doc:`일반적인
-+패치 제출<../../../process/submitting-patches>`과 마찬가지로 문제와 영향을
-+설명하고, 재현 단계를 나열하고, 제안된 수정 사항을 모두 일반 텍스트로
-+작성하세요.
-+
-+공개 및 엠바고 정보
-+-------------------
-+
-+보안 목록은 공개 채널이 아닙니다. 이에 대해서는 아래의 조정 사항을 참조하세요.
-+강력한 수정이 개발되면 릴리스 프로세스가 시작됩니다. 공개적으로 알려진 버그에
-+대한 수정 사항은 즉시 릴리스됩니다.
-+
-+공개적으로 알려지지 않은 버그에 대한 수정 사항이 제공되는 즉시 공개하는 것을
-+선호하지만, 신고자 또는 영향을 받는 당사자의 요청에 따라 공개 프로세스
-+시작일로부터 최대 7일 동안 연기될 수 있으며, 버그의 중요도에 따라 시간이 더
-+필요하다는 데 동의하는 경우 예외적으로 14일까지 연장될 수 있습니다.
-+수정 사항 공개를 연기할 수 있는 유일한 유효한 이유는 릴리스 조율이 필요한 QA
-+및 대규모 롤아웃의 복잡한 실행 계획을 수용하기 위해서입니다.
-+
-+엠바고된 정보는 수정 개발을 위해 신뢰할 수 있는 개인과 공유할 수 있지만,
-+신고자의 허가 없이 수정 사항과 함께 또는 다른 공개 채널에 게시할 수 없습니다.
-+여기에는 원래의 버그 보고서와 후속 논의(있는 경우), 보안 취약점 공격 코드,
-+CVE 정보 또는 신고자의 신원이 포함되지만 이에 국한되지 않습니다.
-+
-+다시 말해, 저희의 유일한 관심사는 버그 수정입니다. 보안 목록에 제출된 기타
-+모든 정보와 보고에 대한 후속 논의는 엠바고가 해제된 후에도 영구적으로 기밀로
-+취급됩니다.
-+
-+다른 그룹과의 협력
-+------------------
-+
-+커널 보안팀은 버그 수정에만 집중하는 반면, 다른 그룹은 배포판의 문제를
-+해결하고 운영 체제 공급업체 간의 공개를 조율하는 데 중점을 둡니다.
-+조율은 일반적으로 "리눅스 배포판" 메일링 리스트에서 처리하고 공개는
-+공공의 "oss-security" 메일링 리스트에서 처리하며, 이 둘은 서로 밀접하게
-+관련되어 있으며 리눅스 배포판 위키에 제시되어 있습니다:
-+<https://oss-security.openwall.org/wiki/mailing-lists/distros>
-+
-+세 가지 목록들이 추구하는 목표가 다르기 때문에 각각의 정책과 규칙이 다르다는
-+점에 유의하세요. 커널 보안 팀과 다른 팀 간의 조율이 어려운 이유는
-+커널 보안 팀의 경우 간혹 엠바고(최대 허용 일수에 따라)는 수정이 가능한
-+시점부터 시작하지만, "리눅스 배포판"의 경우 수정 가능 여부와 관계없이 초기
-+게시물부터 목록에 올라오기 때문입니다.
-+
-+따라서 커널 보안팀은 잠재적인 보안 문제를 신고하는 경우 해당 코드의
-+메인테이너가 수정 사항을 수락하고 위의 배포판 위키 페이지를 읽었으며
-+"리눅스 배포판" 메일링 리스트에 연락하는 것이 자신과 커널 커뮤니티에 부과되는
-+요구 사항임을 완벽히 이해할 때까지 "리눅스 배포판"에 연락하지 않을 것을
-+강력히 권장합니다. 이는 또한 일반적으로 수락된 수정 사항이 아직 병합되지 않은
-+상태에서 조정을 위한 경우를 제외하고는 두 목록을 한 번에 참조하는 것이
-+합리적이지 않다는 것을 의미합니다. 즉, 수정 사항이 수락될 때까지는
-+"리눅스 배포판"을 메일에 참조하지 말고, 병합된 후에는 커널 보안 팀을 메일에
-+참조하지 마세요.
-+
-+CVE 할당
-+--------
-+
-+보안팀은 불필요하게 프로세스를 복잡하게 만들고 버그 처리를 지연시킬 수
-+있으므로 보고나 수정에 대해 CVE를 할당하지 않으며, 이를 요구하지도 않습니다.
-+보고자가 확인된 문제에 대해 CVE 식별자를 할당받고자 하는 경우 :doc:`커널 CVE
-+할당팀<../../../process/cve>`에 연락하여 할당받을 수 있습니다.
-+
-+비공개 계약서
-+-------------
-+
-+Linux 커널 보안 팀은 공식적인 기관이 아니므로 기밀 유지 계약을 체결할 수
-+없습니다.
+> I found the issue when the CI tested your series (eventhough it is not
+> caused by your series)
+> 
+> > > sel->pad has a valid value.
+> > >
+> > > Fix the following smatch error:
+> > > drivers/media/i2c/hi846.c:1854 hi846_get_selection() warn: statement has no effect 31
+> > >
+> > > Fixes: e8c0882685f9 ("media: i2c: add driver for the SK Hynix Hi-846 8M pixel camera")
+> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> >
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >
+> > > ---
+> > > While running media-ci on the last patches there was a new sparse
+> > > warning:
+> > > https://gitlab.freedesktop.org/linux-media/users/patchwork/-/jobs/58524338/artifacts/external_file/junit/test-smatch.log.txt
+> > > ---
+> > >  drivers/media/i2c/hi846.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/media/i2c/hi846.c b/drivers/media/i2c/hi846.c
+> > > index 9c565ec033d4..52d9ca68a86c 100644
+> > > --- a/drivers/media/i2c/hi846.c
+> > > +++ b/drivers/media/i2c/hi846.c
+> > > @@ -1851,7 +1851,7 @@ static int hi846_get_selection(struct v4l2_subdev *sd,
+> > >               mutex_lock(&hi846->mutex);
+> > >               switch (sel->which) {
+> > >               case V4L2_SUBDEV_FORMAT_TRY:
+> > > -                     v4l2_subdev_state_get_crop(sd_state, sel->pad);
+> > > +                     sel->r = *v4l2_subdev_state_get_crop(sd_state, sel->pad);
+> > >                       break;
+> > >               case V4L2_SUBDEV_FORMAT_ACTIVE:
+> > >                       sel->r = hi846->cur_mode->crop;
+> > >
+> > > ---
+> > > base-commit: 48259b90973718d2277db27b5e510f0fe957eaa0
+> > > change-id: 20240509-fix-hi846-c3d77768622e
+
 -- 
-2.34.1
+Regards,
 
+Laurent Pinchart
 
