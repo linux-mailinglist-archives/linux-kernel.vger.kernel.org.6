@@ -1,112 +1,174 @@
-Return-Path: <linux-kernel+bounces-176447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3748C3004
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:17:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DE298C2FFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B4CB1C213F9
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:17:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C95B6B22F1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946F38F6E;
-	Sat, 11 May 2024 07:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B93C136;
+	Sat, 11 May 2024 07:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XMGcyLe7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bQ8Umm6z"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA16610B
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B9D5C89
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715411819; cv=none; b=jWFxQow8d6spSBGfY54sMfzGM4g/9gTxBtMizK3KFawmNpR60wRfIamRH30jXUDO/9w5CBIDiPGtvB9BMkE7tqiVKl2mc5f+YIcsvgWfhG2ONa1/TXexpCn7z0auRQw9lota8wdubGJrp25nm2sw28F/K310Ic5vPjEO0SmX7IM=
+	t=1715411739; cv=none; b=Ry2ffvJN+YZ6pNApdHv6Sg7996tpCpJUmRIsI/A7RON94ZVKFOxoP+PHImlRPm5jC/nyYIlGz+EZtjJfzGHl1HkLyMGUP/v3LB040yFE1cdutlExVXQhN/Dca2QBzJrJIL7KKBRBwHFU9P5ZP2Z3VXBV6crrzzViPo5hgVhDFT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715411819; c=relaxed/simple;
-	bh=UjfcOdQ7YlJbwrIn5Z1f6LDu4xcSH4SHVETdeCZ97fg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rdtNOB2texBlrXn3OA/JBZeTOEfftKmqoH9+kjKqrtENZ8NSs7xawA11umVHYJQKNlI3mdZB5JR187V93MoxvC36C9xGTUquIyO4HDldj0ZyoH9ePw+hQswTNn/j1r2U8u0eP6GYHlSB51ZVex7maqXPR/MdOB6tu1u+P57iJrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XMGcyLe7; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715411818; x=1746947818;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=UjfcOdQ7YlJbwrIn5Z1f6LDu4xcSH4SHVETdeCZ97fg=;
-  b=XMGcyLe7VxCG/7vghUV3scXpMZPqQ6HZVXXhn/QD5HKx+Gvl3NxAluS5
-   aBxVvrlaN3NbI/hwT8zSwUR4LXbWiIaO2uo27fWe5i40eM1KsGTChSC/3
-   UMCYOEg7aFg1wCHWoNf+MpP+IzmjFiRtLEPthPHfjCOdljvabomJVEj5Z
-   bhALj+ZIcH2AnnmxOBqMsz+sqSuSHFSTjtibYC/f5vhJiXpg0cLwpZ4xG
-   wYjCQaf/uOGGYm3iUlKP0Aqp5ikB+6331OaRnUZSax6uqPUjwABLI9bnb
-   hM00M2k5gYUl8IaH9YuHxN2tsQmljF30uyGVDWDDbV/Q/Sf3mcuMtcFnz
-   g==;
-X-CSE-ConnectionGUID: hVUr0lRTR5aCZyEd2Pmbcw==
-X-CSE-MsgGUID: 5DoTwajiR/ux+OE4QUEt5g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11275291"
-X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
-   d="scan'208";a="11275291"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2024 00:16:57 -0700
-X-CSE-ConnectionGUID: B3atYuulRImHw5DRnz8icA==
-X-CSE-MsgGUID: 8qNNcdoaQ/iVPMV/UUScwQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
-   d="scan'208";a="30409213"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2024 00:16:53 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Byungchul Park <byungchul@sk.com>
-Cc: <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
-  <kernel_team@skhynix.com>,  <akpm@linux-foundation.org>,
-  <vernhao@tencent.com>,  <mgorman@techsingularity.net>,
-  <hughd@google.com>,  <willy@infradead.org>,  <david@redhat.com>,
-  <peterz@infradead.org>,  <luto@kernel.org>,  <tglx@linutronix.de>,
-  <mingo@redhat.com>,  <bp@alien8.de>,  <dave.hansen@linux.intel.com>,
-  <rjgolo@gmail.com>
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-In-Reply-To: <20240510065206.76078-1-byungchul@sk.com> (Byungchul Park's
-	message of "Fri, 10 May 2024 15:51:54 +0900")
-References: <20240510065206.76078-1-byungchul@sk.com>
-Date: Sat, 11 May 2024 15:15:01 +0800
-Message-ID: <87eda8g6q2.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1715411739; c=relaxed/simple;
+	bh=kP1V+EtzTHOEEdN5Tn2jtj1uoNnrhiy0O47cc8AcxA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0e43rQjw4UK/8FRIufuJfyJt4IAhLdMwYt0RcPmp4gHFlzC+bN3BnLAuc8j6wO8p4hBk1vTB+aT6fjcyhOMnLWbYI37gncW7U3lOpEq4Vk30bQqbwQxoJJrlEVVYOwPKhJkIiFO+FaJ5QPqZREmFoc7LQdE4vqjLY8CO3L73XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bQ8Umm6z; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1eb24e3a2d9so25170175ad.1
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:15:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715411737; x=1716016537; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pN7vTSTZWouaFkH6aSeXVb/sXxzlUMYk7HqIZeYevwQ=;
+        b=bQ8Umm6zvhdZEy8vmaUvU2Iw+3U4Exz8vwTgIRHmU1+T2F04dp0en5kuEIdr+5tQzo
+         +k7bGjYcwQfTPZoIoQwrmCUzxfUwE54ypPLh4dgQhVYk48QK4F873xf5Sm6kzyHrMbqv
+         Xvrhfeuu2zU+u1viYA5UESzip+io/i7WdnsN38JPvgdV8fr5YrCJzqOJS5SguRw1843M
+         l9MTBCHS6/LZfI+Ql9sEZUvtDsJi1e8k9f5tb+R9ZdsX5s/pcFGLoLSNABEVUvClSFot
+         fbpKjfaCo6BLb9yjTEhJHdbRompR68Fx+q88r9bt3BTpcaiuPSAJfO1kteIcRVkkvWsI
+         9Jzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715411737; x=1716016537;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pN7vTSTZWouaFkH6aSeXVb/sXxzlUMYk7HqIZeYevwQ=;
+        b=od79fUjbrDryQYDB4nWwgr09JtbC4mbUx0cakGZ49fOpnJrPKSZPOJVO7Sil9VlkTq
+         qnxYIHb5u53f2hgXe+3vArapZB6JRy6Ve9gEVilGBVU+BeByAbnCcvBGlTJymEUjRnpr
+         6h2UVe0CRTfk4lCe9nB4KsRzGoeBAxde6X5QzNO53VnuFfhoqJJFsV5O1yKzywcqzjLf
+         e6/UwozkW1SKFVOLtL5pWzV3ItCwekpTkDxRF6PRkdWV6thsmdo2TpBihoaVguxCuS6A
+         ODUOqvLSs0QYTnc8hBpnoPH7Cx/JZvsaztl0AWwKbbpGIQdCBbVqouwZWqtqYKj6yKH/
+         7Z6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVa8LXw2gc938MK8NXRxhNKjPfQPhuWgE0+pIrYhiXmdseeRZ19IhYOBtCnYARaC4l/+L30rChhevWJImBwt77UGJ/UnNePwsPXY8Wv
+X-Gm-Message-State: AOJu0YzS8lP6syL+DWiksXqrvIx7PknE1xRyuCNnV+lMJ1Stbj93qY2m
+	i00m/27dJr6hWvgF/6aqXTWkFcLnc4kGzsdP7xSeyw2d/oDvWpi72Bw4sVj/7g==
+X-Google-Smtp-Source: AGHT+IEY+B1BkjgUqaJCKTMhy5yVKUSG7mNrjc92+kUQaGR7pn2oJDp9knykubItipbI04Y4Mn3Nog==
+X-Received: by 2002:a17:902:6542:b0:1eb:1240:1aea with SMTP id d9443c01a7336-1ef43d12749mr52124555ad.20.1715411736886;
+        Sat, 11 May 2024 00:15:36 -0700 (PDT)
+Received: from thinkpad ([220.158.156.38])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c0369f1sm43017055ad.185.2024.05.11.00.15.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 May 2024 00:15:36 -0700 (PDT)
+Date: Sat, 11 May 2024 12:45:32 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, lukas@wunner.de,
+	mika.westerberg@linux.intel.com, Bjorn Helgaas <helgaas@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>
+Subject: Re: [PATCH v4 0/4] PCI: Allow D3Hot for PCI bridges in Devicetree
+ based platforms
+Message-ID: <20240511071532.GC6672@thinkpad>
+References: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org>
 
-Byungchul Park <byungchul@sk.com> writes:
+On Tue, Mar 26, 2024 at 04:18:16PM +0530, Manivannan Sadhasivam wrote:
+> Hi,
+> 
+> This series allows D3Hot for PCI bridges in Devicetree based platforms.
+> Even though most of the bridges in Devicetree platforms support D3Hot, PCI
+> core will allow D3Hot only when one of the following conditions are met:
+> 
+> 1. Platform is ACPI based
+> 2. Thunderbolt controller is used
+> 3. pcie_port_pm=force passed in cmdline
+> 
+> While options 1 and 2 do not apply to most of the DT based platforms,
+> option 3 will make the life harder for distro maintainers.
+> 
+> Initially, I tried to fix this issue by using a Devicetree property [1], but
+> that was rejected by Bjorn and it was concluded that D3Hot should be allowed by
+> default for all the Devicetree based platforms.
+> 
+> During the review of v3 series, Bjorn noted several shortcomings of the
+> pci_bridge_d3_possible() API [2] and I tried to address them in this series as
+> well.
+> 
+> But please note that the patches 2 and 3 needs closer review from ACPI and x86
+> folks since I've splitted the D3Hot and D3Cold handling based on my little
+> understanding of the code.
+> 
+> Testing
+> =======
+> 
+> This series is tested on SM8450 based development board on top of [3].
+> 
 
-> Hi everyone,
->
-> While I'm working with a tiered memory system e.g. CXL memory, I have
-> been facing migration overhead esp. tlb shootdown on promotion or
-> demotion between different tiers.  Yeah..  most tlb shootdowns on
-> migration through hinting fault can be avoided thanks to Huang Ying's
-> work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
-> is inaccessible").  See the following link for more information:
->
-> https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
+Bjorn, a gently ping on this series.
 
-And, I still have interest of the performance impact of commit
-7e12beb8ca2a ("migrate_pages: batch flushing TLB").  In the email above,
-you said that the performance of v6.5-rc5 + 7e12beb8ca2a reverted has
-better performance than v6.5-rc5.  Can you provide more details?  For
-example, the number of TLB flushing IPI for two kernels?
+- Mani
 
-I should have followed up the above email.  Sorry about that.  Anyway,
-we should try to fix issue of that commit too.
+> - Mani
+> 
+> [1] https://lore.kernel.org/linux-pci/20240214-pcie-qcom-bridge-v3-1-3a713bbc1fd7@linaro.org/
+> [2] https://lore.kernel.org/linux-pci/20240305175107.GA539676@bhelgaas/
+> [3] https://lore.kernel.org/linux-arm-msm/20240321-pcie-qcom-bridge-dts-v2-0-1eb790c53e43@linaro.org/
+> 
+> Changes in v4:
+> - Added pci_bridge_d3_possible() rework based on comments from Bjorn
+> - Got rid of the DT property and allowed D3Hot by default on all DT platforms
+> 
+> Changes in v3:
+> - Fixed kdoc, used of_property_present() and dev_of_node() (Lukas)
+> - Link to v2: https://lore.kernel.org/r/20240214-pcie-qcom-bridge-v2-1-9dd6dbb1b817@linaro.org
+> 
+> Changes in v2:
+> - Switched to DT based approach as suggested by Lukas.
+> - Link to v1: https://lore.kernel.org/r/20240202-pcie-qcom-bridge-v1-0-46d7789836c0@linaro.org
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+> Manivannan Sadhasivam (4):
+>       PCI/portdrv: Make use of pci_dev::bridge_d3 for checking the D3 possibility
+>       PCI: Rename pci_bridge_d3_possible() to pci_bridge_d3_allowed()
+>       PCI: Decouple D3Hot and D3Cold handling for bridges
+>       PCI: Allow PCI bridges to go to D3Hot on all Devicetree based platforms
+> 
+>  drivers/pci/bus.c          |  2 +-
+>  drivers/pci/pci-acpi.c     |  9 ++---
+>  drivers/pci/pci-sysfs.c    |  2 +-
+>  drivers/pci/pci.c          | 90 ++++++++++++++++++++++++++++++++--------------
+>  drivers/pci/pci.h          | 12 ++++---
+>  drivers/pci/pcie/portdrv.c | 16 ++++-----
+>  drivers/pci/remove.c       |  2 +-
+>  include/linux/pci.h        |  3 +-
+>  8 files changed, 89 insertions(+), 47 deletions(-)
+> ---
+> base-commit: 705c1da8fa4816fb0159b5602fef1df5946a3ee2
+> change-id: 20240320-pci-bridge-d3-092e2beac438
+> 
+> Best regards,
+> -- 
+> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
 
---
-Best Regards,
-Huang, Ying
-
-[snip]
+-- 
+மணிவண்ணன் சதாசிவம்
 
