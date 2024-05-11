@@ -1,183 +1,151 @@
-Return-Path: <linux-kernel+bounces-176410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2C48C2F69
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE88C2F6F
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7C72849AE
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142451F22911
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D7F3D57A;
-	Sat, 11 May 2024 03:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CDD3D57A;
+	Sat, 11 May 2024 03:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOhZIMiC"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="IkF1OcpO"
+Received: from out0-212.mail.aliyun.com (out0-212.mail.aliyun.com [140.205.0.212])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F661843;
-	Sat, 11 May 2024 03:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC941843;
+	Sat, 11 May 2024 03:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715398968; cv=none; b=NNjTQkBck8giUg6yppmlxK2+tH4LewRmtC+VyGtef+frR4862B2lUbWnHP169r+JYsbTiYD/z/aPXfdlVEZ1CvDsHPboAB6Bdic/8KC+XwKUXhjWY0+MRxasij8kbCHiNliMit1+M9lQ98DRc7uJmd2Yn62WYKcz74v0DLyUSA8=
+	t=1715399206; cv=none; b=gOt08WsRbWbxINGExO+q4ooGF6KThYcZ/EsYYffQ8DWOJ0FiST87UvZ4Np2T8WI8c0Q8LQjQSrUWJu9miZvpP0fPTuZi9kn6orfaxG7A7jfOWF0iZ47yUFH/X/PORLJlTgBZTUzESiidR2wh1s94HG5FXO79mjaPPWEbpldGOqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715398968; c=relaxed/simple;
-	bh=5RBPaYqcgbMTvo83mnVNrHazxn1LC+THVRiz93bfQcE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ps7jOJ9aO0cnqeENLNYxx0kzeO0XEOrxNVAqhxYmF9Zg5WL86D4zGdG50LMUVrBbjo6Fa973qkGhxfTAZCaC+71oBxsAr/03cZjGYzFckTNgmUmoIRM/k/HWcPiz3+BoUZ99ZZfwPWovQpl4wPdu9ThnoO+HdscNzmEYAZYsmt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOhZIMiC; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-792b8bca915so219846985a.2;
-        Fri, 10 May 2024 20:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715398966; x=1716003766; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uf95gvKfqdQwvRWi4ct7+6exb7i4hQQ3hGupiWKjZHs=;
-        b=QOhZIMiCAVtHRR2U6WYUEcj6bY/5AhMQ/rDS5zXBYsE+FijqZx9TeuaZYmzvQnHNaO
-         cV9Rc701J613rXCznPGiIfG0h6wnySoS6qUki8AeIfdJcnqm4g5lqCs2ta/HmYESv7wo
-         ZLQ1czKYYwx803T7rJ+iL9hfFCOVHzQq4itU9k2c94Yl+pqdDaVoeMegH+BZIwrxdo9L
-         dWPfyx4QH5gSYaWRQODnxl/132UCY0uYEemD2mBh/bv8ePJvOfia5PL11VDQXRaYSxSc
-         /rUce2Gbj27il6HXSvtYmfL31lx+Pj23hUAcdujUEfQNveTGy4HoKi66rw0RmOoKATb/
-         KmaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715398966; x=1716003766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uf95gvKfqdQwvRWi4ct7+6exb7i4hQQ3hGupiWKjZHs=;
-        b=Ko48YWbf2ijwZwFHzLRBeeEKeGmP4j4F889V5Cyn2WaN61jmBDkk/E49tIbvXBgOKj
-         zs0pgmhT8DO7wSDsyr/JFVzMJnkwk1EApgjJdF5z0pCwfP1cDxj0ykgzmoHrWQHSIcTm
-         j0+wfZ+Du2Pha4r/X54NgnlAy+KqfIW7CuDpQS5lUWPo0efYLCW7PKYlbck6HCw85y/d
-         Zr9x8l+j9b3nS8vfFenqk4tqa4x4zQlqlGUAS1h/gQw1eHyCYo/i4mU22ibD4KDDp+Bp
-         cd5Zw2EFI2fmuBTJUk/DZVNW+F9Pgzzl1i9FJZ7qvFkgEeYu3UDAHFK6cXAkGOomugQd
-         y6ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ9X66WtKakvf1wPXu+wV2cNHWPeENnNqOv9I0LIQ4Lb9oApg4tCGkdiTOxc4IzHJOMhZs21cVunIOg/yux98/zYoMbv4Eib+hQuDrYBiUc6AiOUWSMlVh34Cy0RgZPJnK9HlCYHuCj1g7rA==
-X-Gm-Message-State: AOJu0YwAM+Wt5QfAd731Lt5L/p1zJgqWXRvmh5y4cet8lWOSUuvwvpuT
-	dac+VxlGdjSbzFPe1Ysg4NIhepLqdYg+RVHOmP6L9V4i8iJVIKAXw6JJ5K8eAdqrmH7QzPfO01n
-	DdoeX/AGSoVCqV5d5W7LpYiwQd3M=
-X-Google-Smtp-Source: AGHT+IFMW/1UdqP9wdNRX8wg6K/79HM35/5Mrje26SXpJ4+agrOp1OcVxTCgNhpKUzYij37LvC2YaTr0SaWlconA1tM=
-X-Received: by 2002:a05:6214:3993:b0:6a0:991b:ecf1 with SMTP id
- 6a1803df08f44-6a168142dcfmr47596236d6.5.1715398965893; Fri, 10 May 2024
- 20:42:45 -0700 (PDT)
+	s=arc-20240116; t=1715399206; c=relaxed/simple;
+	bh=hZ03FoXZ1F+HCTHSptsV5XuAZGqY5U010SnORP5VsWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AM3XBXVWly+PPgp1i0k06f7t2Iye+Ail4tTnMtYn7vVaG1Af8uHBERJlm3kj27ZKkKshCOiqWEVy0J97zJTwX57BVajNLYcYQAvuPsQFgQVpIeDbMP/h7yKryKuQJCPJCeYi2py5sgYcmgSrz0j0DddWibidBC7jdQybsHswzAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=IkF1OcpO; arc=none smtp.client-ip=140.205.0.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1715399199; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=/oQPtMgHD8rA3njQCT4IplE8E+0JmO4poKrpVU3HxCw=;
+	b=IkF1OcpOqrZOX8gHWEO4Ay8znEZHzAnY+dLaEd3Y6LbM3jWMasIFN0RRhY0o+BeA/kY/b8s+a6u6rlgqlMulbxWcCW1s6u/vS5u9EuSPHLR+meeEgl9+B+/WBGM50FZmiY/5jdw6ItPYHthFVAurHxE1tnGJfeHFqKivsUX2/7Y=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R311e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018047205;MF=houwenlong.hwl@antgroup.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---.XYYlGFt_1715399198;
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.XYYlGFt_1715399198)
+          by smtp.aliyun-inc.com;
+          Sat, 11 May 2024 11:46:39 +0800
+From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
+To: kvm@vger.kernel.org
+Cc: "Lai Jiangshan" <jiangshan.ljs@antgroup.com>,
+  "Sean Christopherson" <seanjc@google.com>,
+  "Paolo Bonzini" <pbonzini@redhat.com>,
+  "Thomas Gleixner" <tglx@linutronix.de>,
+  "Ingo Molnar" <mingo@redhat.com>,
+  "Borislav Petkov" <bp@alien8.de>,
+  "Dave Hansen" <dave.hansen@linux.intel.com>,
+   <x86@kernel.org>,
+  "H. Peter Anvin" <hpa@zytor.com>,
+   <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] KVM: x86/mmu: Only allocate shadowed translation cache for sp->role.level <= KVM_MAX_HUGEPAGE_LEVEL
+Date: Sat, 11 May 2024 11:46:37 +0800
+Message-Id: <5b0cda8a7456cda476b14fca36414a56f921dd52.1715398655.git.houwenlong.hwl@antgroup.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
-In-Reply-To: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 10 May 2024 23:42:34 -0400
-Message-ID: <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
-Subject: Re: [PATCH 0/1] fsnotify: clear PARENT_WATCHED flags lazily
-To: Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 10, 2024 at 6:21=E2=80=AFPM Stephen Brennan
-<stephen.s.brennan@oracle.com> wrote:
->
-> Hi Amir, Jan, et al,
+Only the indirect SP with sp->role.level <= KVM_MAX_HUGEPAGE_LEVEL might
+have leaf gptes, so allocation of shadowed translation cache is needed
+only for it. Then, it can use sp->shadowed_translation to determine
+whether to use the information in the shadowed translation cache or not.
+Also, extend the WARN in FNAME(sync_spte)() to ensure that this won't
+break shadow_mmu_get_sp_for_split().
 
-Hi Stephen,
+Suggested-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+---
+v1->v2:
+- Remove the order change in kvm_mmu_page_get_gfn() to keep smallest
+  diff.
+- Drop the helper.
+- Extend the WARN in FNAME(sync_spte).
 
->
-> It's been a while since I worked with you on the patch series[1] that aim=
-ed to
-> make __fsnotify_update_child_dentry_flags() a sleepable function. That wo=
-rk got
-> to a point that it was close to ready, but there were some locking issues=
- which
-> Jan found, and the kernel test robot reported, and I didn't find myself a=
-ble to
-> tackle them in the amount of time I had.
->
-> But looking back on that series, I think I threw out the baby with the
-> bathwater. While I may not have resolved the locking issues associated wi=
-th the
-> larger change, there was one patch which Amir shared, that probably resol=
-ves
-> more than 90% of the issues that people may see. I'm sending that here, s=
-ince it
-> still applies to the latest master branch, and I think it's a very good i=
-dea.
->
-> To refresh you, the underlying issue I was trying to resolve was when
-> directories have many dentries (frequently, a ton of negative dentries), =
-the
-> __fsnotify_update_child_dentry_flags() operation can take a while, and it
-> happens under spinlock.
->
-> Case #1 - if the directory has tens of millions of dentries, then you cou=
-ld get
-> a soft lockup from a single call to this function. I have seen some cases=
- where
-> a single directory had this many dentries, but it's pretty rare.
->
-> Case #2 - suppose you have a system with many CPUs and a busy directory. =
-Suppose
-> the directory watch is removed. The caller will begin executing
-> __fsnotify_update_child_dentry_flags() to clear the PARENT_WATCHED flag, =
-but in
-> parallel, many other CPUs could wind up in __fsnotify_parent() and decide=
- that
-> they, too, must call __fsnotify_update_child_dentry_flags() to clear the =
-flags.
-> These CPUs will all spin waiting their turn, at which point they'll re-do=
- the
-> long (and likely, useless) call. Even if the original call only took a se=
-cond or
-> two, if you have a dozen or so CPUs that end up in that call, some CPUs w=
-ill
-> spin a long time.
->
-> Amir's patch to clear PARENT_WATCHED flags lazily resolves that easily. I=
-n
-> __fsnotify_parent(), if callers notice that the parent is no longer watch=
-ing,
-> they merely update the flags for the current dentry (not all the other
-> children). The __fsnotify_recalc_mask() function further avoids excess ca=
-lls by
-> only updating children if the parent started watching. This easily handle=
-s case
-> #2 above. Perhaps case #1 could still cause issues, for the cases of trul=
-y huge
-> dentry counts, but we shouldn't let "perfect" get in the way of "good eno=
-ugh" :)
->
+ arch/x86/kvm/mmu/mmu.c         | 11 +++++------
+ arch/x86/kvm/mmu/paging_tmpl.h |  2 +-
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-The story sounds good :)
-Only thing I am worried about is: was case #2 tested to prove that
-the patch really imploves in practice and not only in theory?
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index fc3b59b59ee1..dc6f6a272e98 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -719,7 +719,7 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
+ 	if (sp->role.passthrough)
+ 		return sp->gfn;
 
-I am not asking that you write a test for this or even a reproducer
-just evidence that you collected from a case where improvement is observed
-and measurable.
+-	if (!sp->role.direct)
++	if (sp->shadowed_translation)
+ 		return sp->shadowed_translation[index] >> PAGE_SHIFT;
 
-Thanks,
-Amir.
+ 	return sp->gfn + (index << ((sp->role.level - 1) * SPTE_LEVEL_BITS));
+@@ -733,7 +733,7 @@ static gfn_t kvm_mmu_page_get_gfn(struct kvm_mmu_page *sp, int index)
+  */
+ static u32 kvm_mmu_page_get_access(struct kvm_mmu_page *sp, int index)
+ {
+-	if (sp_has_gptes(sp))
++	if (sp->shadowed_translation)
+ 		return sp->shadowed_translation[index] & ACC_ALL;
 
-> [1]: https://lore.kernel.org/all/20221013222719.277923-1-stephen.s.brenna=
-n@oracle.com/
->
-> Amir Goldstein (1):
->   fsnotify: clear PARENT_WATCHED flags lazily
->
->  fs/notify/fsnotify.c             | 26 ++++++++++++++++++++------
->  fs/notify/fsnotify.h             |  3 ++-
->  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
->  include/linux/fsnotify_backend.h |  8 +++++---
->  4 files changed, 56 insertions(+), 13 deletions(-)
->
-> --
-> 2.43.0
->
+ 	/*
+@@ -754,7 +754,7 @@ static u32 kvm_mmu_page_get_access(struct kvm_mmu_page *sp, int index)
+ static void kvm_mmu_page_set_translation(struct kvm_mmu_page *sp, int index,
+ 					 gfn_t gfn, unsigned int access)
+ {
+-	if (sp_has_gptes(sp)) {
++	if (sp->shadowed_translation) {
+ 		sp->shadowed_translation[index] = (gfn << PAGE_SHIFT) | access;
+ 		return;
+ 	}
+@@ -1697,8 +1697,7 @@ static void kvm_mmu_free_shadow_page(struct kvm_mmu_page *sp)
+ 	hlist_del(&sp->hash_link);
+ 	list_del(&sp->link);
+ 	free_page((unsigned long)sp->spt);
+-	if (!sp->role.direct)
+-		free_page((unsigned long)sp->shadowed_translation);
++	free_page((unsigned long)sp->shadowed_translation);
+ 	kmem_cache_free(mmu_page_header_cache, sp);
+ }
+
+@@ -2199,7 +2198,7 @@ static struct kvm_mmu_page *kvm_mmu_alloc_shadow_page(struct kvm *kvm,
+
+ 	sp = kvm_mmu_memory_cache_alloc(caches->page_header_cache);
+ 	sp->spt = kvm_mmu_memory_cache_alloc(caches->shadow_page_cache);
+-	if (!role.direct)
++	if (!role.direct && role.level <= KVM_MAX_HUGEPAGE_LEVEL)
+ 		sp->shadowed_translation = kvm_mmu_memory_cache_alloc(caches->shadowed_info_cache);
+
+ 	set_page_private(virt_to_page(sp->spt), (unsigned long)sp);
+diff --git a/arch/x86/kvm/mmu/paging_tmpl.h b/arch/x86/kvm/mmu/paging_tmpl.h
+index 7a87097cb45b..89b5d73e9e3c 100644
+--- a/arch/x86/kvm/mmu/paging_tmpl.h
++++ b/arch/x86/kvm/mmu/paging_tmpl.h
+@@ -911,7 +911,7 @@ static int FNAME(sync_spte)(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp, int
+ 	gpa_t pte_gpa;
+ 	gfn_t gfn;
+
+-	if (WARN_ON_ONCE(!sp->spt[i]))
++	if (WARN_ON_ONCE(!sp->spt[i] || !sp->shadowed_translation))
+ 		return 0;
+
+ 	first_pte_gpa = FNAME(get_level1_sp_gpa)(sp);
+--
+2.31.1
+
 
