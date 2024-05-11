@@ -1,131 +1,156 @@
-Return-Path: <linux-kernel+bounces-176614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528FF8C322F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5EB8C3233
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849931C20CE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFB81F21AE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 15:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B9F56760;
-	Sat, 11 May 2024 15:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFEB5647E;
+	Sat, 11 May 2024 15:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="W3xYMTQ8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L9s0hzG7"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="JTudANMZ"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2048.outbound.protection.outlook.com [40.92.20.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2985645E;
-	Sat, 11 May 2024 15:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715441941; cv=none; b=kt5IyfwGvscpDR8TWevSPBA3DK0Bw3a2QmnS9zk1t7uDguK+UPn0NDAycCT0fjW7R6BlQzdWFuUaSOLFJLxNIyadPD42W/jBGXCVQ+XFUdCQ7fOAivXiF4GfVwWTMucujzpPGHICYvJD79ZaowniynLhhhWoz6eeK4iybjx3JcQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715441941; c=relaxed/simple;
-	bh=VjHyt4PxjoG0E9okA2UFHhBH4xk5VAMX/pgWQymeuBA=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=dBLMc/E8Qs4EFGmwxQER6z//PZAJ9Gj5r1bJaH0LF8rfW1ZfYaQmGC0XuC6fs18c84EHmqWVfI/gCuw/0LoWBo/h6AUlFPh07yJrLpQOKIyDco9hHShlb3gYVHEc1tgBNQpAtoiqnXYzwmXNRW3lyZ9/8idFZaus5uWn32/hx5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=W3xYMTQ8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=L9s0hzG7; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 8A7821800132;
-	Sat, 11 May 2024 11:38:57 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sat, 11 May 2024 11:38:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1715441937;
-	 x=1715528337; bh=8b8AVLMPdkUb+D8MVCXQcH/74dxje6vo4/P3A1sCtUY=; b=
-	W3xYMTQ8Cu6R/MGafIQnLV63habC+ESIvbsmHH2yv1D921mzlAQcWjsCfrRrBTz4
-	Iwz1pG6MZ5xF+/00K25sblSah+NR7xgHcoKIjjwyVR7JnqffYXG/LdSdbARppVcy
-	YcPs+lu8D3937lyK+P+Skhy9m8EaZH+oszDqMZz7eye82ks51kKhX3CK/tAa7lT2
-	HlPYhWL7kg6gSMg35L4XvfNaMi3wb6BbrHmTudMBRLuUyiCLhpJmMQfNDKk4YQAa
-	grSXPyGl6nIW1HSZDFfKX1kUNaHch1GrOTIKiOmMurzUWVLGuE1m7X37I7srjOv6
-	Ve1Vju6g6vjU0B2QMklCDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715441937; x=
-	1715528337; bh=8b8AVLMPdkUb+D8MVCXQcH/74dxje6vo4/P3A1sCtUY=; b=L
-	9s0hzG7qX7xl6mtn/ErqXc2WlD9Tw1tOe5z+ih5mad3pUPpu2KqCEG0dNQOkLjJI
-	AFSIOzg0xM5Zv0ktX6NcFoSpogUcvolpdwZbBCZ7HRB51cezuiIbbcqYiSqoyXyM
-	fFJsxd3nSK/okbyuEEHQ/WGcUGuy7llvZwIP30T19J9xCyuWxSrEWRAJOr41lGwu
-	AOoUEge1eHP+PYxZLm1G6d8nWAnMxYG/scJbHdCx7SdV/4EJzrEGzFSNsYF1A9J/
-	5DRDNkKJWhVEMWWSxFihS0k6pskANMEsd1AMfd7XUfcxQtzLq4AaSpUtxu9lxH5O
-	JK0VOOPIJu0TKGkPd51Pg==
-X-ME-Sender: <xms:D5E_ZkW5aNg6cbgExq6yeXV-nz6s_gF3nYkDE3cC2ByOrn3EXayklw>
-    <xme:D5E_Zon8nCSUsrV47b89x1rqiO5zUIKvMMQMH1B3xtupdw5bytoVbve8jPj2N2WXQ
-    lHA-B-1a04Z_8YdpCA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegtddgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeegfeejhedvledvffeijeeijeeivddvhfeliedvleevheejleetgedukedt
-    gfejveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    grrhhnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:D5E_Zob0ZjV8-6kjefM-s2_--mSstfXe0jNLdYD7asSr-F7EclvBsA>
-    <xmx:D5E_ZjXt8SBJiO8SGgszIQu-26WYAofPGMycAbf6wLl6JNtcdaKFTQ>
-    <xmx:D5E_ZulhP0E0e2d9kwwYkMr7wj1PBKdtrtXsZBBJ0bh-HHy8345IGg>
-    <xmx:D5E_ZoeipotAVfkg_RP02iG_yw-cFZXqrVjXuP16bWKTE2sJLSL8Tw>
-    <xmx:EZE_ZndA1l2C30DLVL-c_8_tv19OHNYF-xbwQ0TsD_RfQq0KYNyKIUbN>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id CE5DEB6008D; Sat, 11 May 2024 11:38:55 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1761758B
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715442003; cv=fail; b=fjdVEuvKlDkAvEzr0oCbzVx6+YhBMeLzY5G30mmUuwGGSbSfypprNvKuW6la2bEvD5fzj0UNufs8aPzfyMjsRbRKowE4hOnafdPEdFxFy8lxqHE9EOXe7rv3AOcd4sfpAC8faUpcJ+QBf7qxMhaAf2RApWXNpKFdXXGfcXKy+hM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715442003; c=relaxed/simple;
+	bh=dCLcl7KP5BA5YVreic23nJSp7Kfm/yf55It9YTyirqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=uYOGjHKAdXJKREQSSX+z9AsSvEXnW0yRaoSxPCkiRt/JQ8vTWfjndnAjPY5VYxEQPy8KNl+Wjj5WUullhQxl/Bbaazidam51WYADgq5xtT6/necIjNZOLl0U4APv45InkyVaoRTwsPhjSXj75k952f7QjXe7erFOMuSdiirX1XY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=JTudANMZ; arc=fail smtp.client-ip=40.92.20.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mUzyGfFwYVR9EOHj9ibv4JMpJw6qPvVYAJBlhHOZBZFfxK7QI/RhkiWGdBdt+dF63GUf9kVCiqFLazr91c1GgLUBFLpPl8/q1xurHPVOJSXHHGlo44fTuJXe8RZ43Fje+pGo4wtwjXlYgTZXx7s+uD8pvV/7NytTRTOMwNKgjvucvoInvdFUbk3H8U5uMVE579apOhgy6n4oAxX+h8fWB0ke7Mv1lRfDHmEKTgNTQe2YEWuph6Fyqm3UHORBQu+qUOJQz3DYzPXyXnyb8s6XcbOKLgtaEak1uXQw1bpHBX495P/bNmPx5Thth4M5ylLG8RQeltq6yfy5gNwok/G1LA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x7f4uynIvVYErYvRnMWtwNPO4N7vH+ouVjoYTZddoEA=;
+ b=ayIyJGSc+9x1nfn6kvPcXw0Jdsc1xLZhwB1wIBUtrshuDRT5sKAGdyLxPsKpz7dWr92rqQpjLa1/2PPllOjegP+mqbYkVxOj1bNBZ7z5y8+QA6G7ZZEGXAJYN8tpB88DbKJ16XcyP9KqAvy0tzXL9SgVDqpbADEJuNwHF/sVBrbjrX07YMC5Zs+nZ+Le1tzSypiU9JQX81WlYcusWcZK2mBRUMs10tI7gL/TIOLDCXkbaoABHcknU9yQvWxflYBKoDjXepRwUenP8ANCFfvxR2bNFkuJiuwq4ONZFh3plfJF3H71uMSKFv0NUZcaIo3QPD4W8fAdKzzTkClwCL+Tjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x7f4uynIvVYErYvRnMWtwNPO4N7vH+ouVjoYTZddoEA=;
+ b=JTudANMZyJyttrBN3jBgINB6lV1jHwRrlyYhAs0Ej3tK5eV+PtVZnEklohHCq1v1995n2LJyTuNKFzn1FTbjRK5y9vnIUpDVezCTewCTrzz3+pVCmMpskURhmoM/2hakdKWqB7pMmCtq3QHw1wMgQLIH1WpWdyDGxQklgQLSSf/Q4kR3VFd7ZYgQT9Ct6eM0m1V33cQ2O/8TlB+wjLY79UONd+PTwdvftuxp/vSB3IVYn+g0eJBESxcmm/gPnRRtcNHkn8uZ3OvAIEwt5S/l96stLdHErJaj/5has+1BwVVAILNjpScLepCcPeqv9iVBQnjEhDfzdzYKh5TlmWGCyA==
+Received: from BYAPR03MB4168.namprd03.prod.outlook.com (2603:10b6:a03:78::23)
+ by SA1PR03MB6500.namprd03.prod.outlook.com (2603:10b6:806:1c7::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.54; Sat, 11 May
+ 2024 15:39:53 +0000
+Received: from BYAPR03MB4168.namprd03.prod.outlook.com
+ ([fe80::b8b1:7fdc:95d4:238a]) by BYAPR03MB4168.namprd03.prod.outlook.com
+ ([fe80::b8b1:7fdc:95d4:238a%6]) with mapi id 15.20.7544.052; Sat, 11 May 2024
+ 15:39:53 +0000
+From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	chris@chris-wilson.co.uk
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiasheng@purdue.edu>
+Subject: [PATCH] drm/i915: Correct error handler
+Date: Sat, 11 May 2024 15:39:44 +0000
+Message-ID:
+ <BYAPR03MB4168128CFE29DF3ECB029EC7ADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [u03Cg56Kyiw0k4AYqB1HkbCyxfSX9Xk7]
+X-ClientProxiedBy: CH2PR07CA0043.namprd07.prod.outlook.com
+ (2603:10b6:610:5b::17) To BYAPR03MB4168.namprd03.prod.outlook.com
+ (2603:10b6:a03:78::23)
+X-Microsoft-Original-Message-ID:
+ <20240511153944.38442-1-jiashengjiangcool@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
-References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
- <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
- <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
-Date: Sat, 11 May 2024 17:38:35 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Huacai Chen" <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Xuefeng Li" <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>, "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
- stable@vger.kernel.org
-Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR03MB4168:EE_|SA1PR03MB6500:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d862075-b8c1-4ab2-50a5-08dc71d09990
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|440099019|3412199016|3430499023|3420499023;
+X-Microsoft-Antispam-Message-Info:
+	rlA+cyiDyZD6kn5UooEhG41vlmK60EX+E62rGvrDYZ/QYGFuAGAAzBMdkPNr2ok+m0GBPWgQW9PE4TNv8dQnjv+uluciPoWw4jafnKWMCRUooIGKt/SQTvmXp33Q+0flTFwH4jN+9WvdDmbcqhm43wThkDOR84XOSgy5F980IbusvX2GjWlSvfKvAi2kwuthPkpcBthY7PQU5OgbNUHnW0NzDFZnnIFPkGA4lFN2YltDdxqNYe6fKsNeC+kj6ST6ANmrkzNF7td7cCxilS8c9kppQRWkbPtpSh5p4CZAbBI6eR0Ym41qoKj8v1LjlQJVI1KIOrGumGpnh6XIHtJiQgaq5KiNOGIUavizeqji28GBZZovQ8/0OQReudt7BkyoXAnWCmqyjvsFgUtmdxFaGx+yJ543NHk+dpC1X8JMA/G5wtcrFP7YKx9WrQPNXUjEUpWNysalLgNYtJM/ZpA8khdA5yNGuSmhO7YmvIqyLugTEcdZZs5BN16FlucZ1J6UW/zn2FU5ph43P9sRaPW3mugCZ4gplWpaN0xQE6njcoGPL+zfvWRZSvbOcbbgYDF1
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wqdTzo2iJTbcJAGi49+uO/RMqBKuhBp1RKy2SNX5wrB+VciyQMT2FEas2w/P?=
+ =?us-ascii?Q?NGOrzZ9KyKxWWs52Gqh4ftumANJ3pEd8jkH4+VuJxAQ5ReAYS6/CUPi2amjg?=
+ =?us-ascii?Q?reBW9puynwTg9O0AhTa/30QPYY3NL3Q9Fi3Y3/Ms+Z+NOYQEcF0RI3dpwPKl?=
+ =?us-ascii?Q?62oGc1Nq22h2E3UQngH88jnV3hI9Ubx+20ShRvINuuzN9XPQjUUX4citM09V?=
+ =?us-ascii?Q?9gFiB8Xk1KSSgMj6F+AvRytLdrVhfUSD++mJ0fqCgxYqvmFjhd206F5cnItP?=
+ =?us-ascii?Q?yfriBb3eA9fBX8eQnzvYj9HrD/LN9uCsTa+5tw9Okq9cTfvixqRdiXz0QttK?=
+ =?us-ascii?Q?Inde3s1MChVqCuh/tPtIC3XKktVEu6DftxleG8S9tP+z4G0e6pYfYep6jZsf?=
+ =?us-ascii?Q?uqAR9ZzrZtKV5ejfgpc0YdgZpUqgSOaY6dotZD9TJ9awEKKdxV/JOexb2QLw?=
+ =?us-ascii?Q?0TjWaRIK4soFG/E5jDa1egS0sL8gEBxUrMW1mNv3Qp9upAOkTFG2ZtnUtbV9?=
+ =?us-ascii?Q?uIhnb+A5F+AyFjOw2GdsI4Qd61uocljPCo9kdkLAunxjAnG4olDu7VkKAzQP?=
+ =?us-ascii?Q?qcRlkLs8YZG8X3rlh1pGlzApoWtY18itgA0gEjMcyZbDuDZMlB9g0RelGReE?=
+ =?us-ascii?Q?0m/2/foxqm35y8cbb9jFN02T/bo6RpsWdGo1Irjb95xT5CcMYLAw3gXiKU5T?=
+ =?us-ascii?Q?Ww4CClCP6LjOe080T614g6hZ/4LEbmAYdG1Z+NlQWtV+Wv+v8Y7Gi69+KCwO?=
+ =?us-ascii?Q?9aG74QIO4xZ1RxhH5XEI2iLUHwxILUYv++MQu3v5xgUjoWBX2O13YfoT3vSI?=
+ =?us-ascii?Q?ZyEmxUteDRBgBNRC4DFVwzNn6vi4UCHBkD5MTsCNZW/Ay0EqbamgXHWn7Cmg?=
+ =?us-ascii?Q?i3QDI8i0jC4N9EB2rEg6ECZFJj6Z8sK0XCbMP2aHg8m9thNcmKi451w10Au9?=
+ =?us-ascii?Q?dCzKCNGU1XCHVvzZAdFznq7hPQC+lBdl40nlEIh/+ojzp9gjvClrC48kcdhU?=
+ =?us-ascii?Q?HnC982slVKv8XD/6lcN1u6zKgB4IKzn77VkrdDbrwCdYGH4A9jzXTsbuKVl9?=
+ =?us-ascii?Q?QKgiZhzwQZddw4B+SW4UTKswKe+uc9SObGIUdqxNXdES9CGdz6rjb4zwhjKo?=
+ =?us-ascii?Q?iOImu2ZsFvK0gRO0y7NEdUXUYcXSf3uN4pDxErB1Ie7eocmcaqieY3CddNrM?=
+ =?us-ascii?Q?7VRPY1PRhBj7S3mvzkRqwz+SvQFZfh2V2bbxmVmjjON+HrvIinrmyJdWSUj2?=
+ =?us-ascii?Q?nlCuidjLMLTOJQ60Aoib?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d862075-b8c1-4ab2-50a5-08dc71d09990
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB4168.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 15:39:52.5385
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR03MB6500
 
-On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
-> On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> =
-wrote:
+From: Jiasheng Jiang <jiasheng@purdue.edu>
 
->> Importantly, we can't just add fstatat64() on riscv32 because
->> there is no time64 version for it other than statx(), and I don't
->> want the architectures to diverge more than necessary.
->> I would not mind adding a variant of statx() that works for
->> both riscv32 and loongarch64 though, if it gets added to all
->> architectures.
->
-> As far as I know, Ren Guo is trying to implement riscv64 kernel +
-> riscv32 userspace, so I think riscv32 kernel won't be widely used?
+Replace "slab_priorities" with "slab_dependencies" in the error handler
+to avoid memory leak.
 
-I was talking about the ABI, so it doesn't actually matter
-what the kernel is: any userspace ABI without
-CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
-this is the only allowed configuration, while on others (arm32
-or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
-both 32-bit kernel and on 64-bit kernels with compat mode.
+Fixes: 32eb6bcfdda9 ("drm/i915: Make request allocation caches global")
+Signed-off-by: Jiasheng Jiang <jiasheng@purdue.edu>
+---
+ drivers/gpu/drm/i915/i915_scheduler.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-     Arnd
+diff --git a/drivers/gpu/drm/i915/i915_scheduler.c b/drivers/gpu/drm/i915/i915_scheduler.c
+index 762127dd56c5..70a854557e6e 100644
+--- a/drivers/gpu/drm/i915/i915_scheduler.c
++++ b/drivers/gpu/drm/i915/i915_scheduler.c
+@@ -506,6 +506,6 @@ int __init i915_scheduler_module_init(void)
+ 	return 0;
+ 
+ err_priorities:
+-	kmem_cache_destroy(slab_priorities);
++	kmem_cache_destroy(slab_dependencies);
+ 	return -ENOMEM;
+ }
+-- 
+2.25.1
+
 
