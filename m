@@ -1,101 +1,89 @@
-Return-Path: <linux-kernel+bounces-176566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB6D8C31BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3FE8C31C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530062820A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F3771F217A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EE3535B8;
-	Sat, 11 May 2024 14:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91715380F;
+	Sat, 11 May 2024 14:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DFtm7vDf"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b="j6cyjYav"
+Received: from mail.kaechele.ca (mail.kaechele.ca [54.39.219.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FB57F6
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BB66FC6;
+	Sat, 11 May 2024 14:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.39.219.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715436211; cv=none; b=miNLtkxppDN8zrHv54FgczznMkRf98Rw0TrssgRHOWyrDiubR7P5clvitNVkI6Fe8uzgssg80fNEnC1SYiRDjQGwHuY7ThNEpMcUBpXTyyOwOUAmnAkIMBQcgyGAWwJc/XIpZI92Z7ZUo8y2Uup6L771M91rspzDNaNIwfxHQIc=
+	t=1715436620; cv=none; b=nyYu/4Mzi/Q7NFPulHFuUolQYaYHebjVyP//gyZWhxpYLrwTZjCDo1To3EAOd9FoiBM4Ng/FriW2zeGbKwlcdyNzP2yoG5FcQTGLDs1mcRlxqFDYGhniidseYLdE6osE5UjRes8B+ijBCSvPTttqFvIC7aHdTTI6IQ0zy49Xqi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715436211; c=relaxed/simple;
-	bh=mhTRt8JHohS8YFer2Eja+AGnHgG9LVArYakcCH9pRfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ej63Ios8Y0RECdmRaAKFL927JBjtPzcCkbXglamBQynzMZbt2Luh0NHyw2w9hlfiU2dufxuu4CTWvhQHq/ZD2yJOXHlFCWQirKJerASa3gH7Aap/IMvQwaNF/xh2ruLg4d2ttjJXbNuDRpPf11LIP5ft5JJVMvO/b3u2xYH1MSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DFtm7vDf; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715436207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HWeNl4C384y+wMABXUhvSGBiKKDCfnTUzIRZ136IUcI=;
-	b=DFtm7vDf8lNIht/QmjfZvuC4N/u5fJgQDjAqudEH6C3mQxWai1Nn/iPTUFf1qNO6LXLHe+
-	VwMw0C8MytTgYLFVt4qR+d1P+5MDyY9PEPzWR88f54AsOxIDLnm3Uust1uoGQHTry1fDUp
-	leK8W8MK1yENnGDO9v0LAzDtxjnd9YQ=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH] drm/bridge: panel: Remove a redundant check on existence of bridge->encoder
-Date: Sat, 11 May 2024 22:03:16 +0800
-Message-ID: <20240511140316.318080-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1715436620; c=relaxed/simple;
+	bh=jECW67JfmZiMBxrkGH4agBSZVxmhlLrAoq+T6zEv7WI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g9Xy7RCVGi3xQZe2ktUw8taI0a1Y6QlIqyvuYVwUJ2+2xW0trdFuT434cjNA6+aUv5871lAOQunTSoEUaTpnxuS8/xZeW+8/c2sft7LFlUNvI8G1vEAuJ8O2UB4Tx+ucceRe54kda2xSbocc2cGE1G/5sLlLmaF4E8NFvJrmpgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca; spf=pass smtp.mailfrom=kaechele.ca; dkim=pass (1024-bit key) header.d=kaechele.ca header.i=@kaechele.ca header.b=j6cyjYav; arc=none smtp.client-ip=54.39.219.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaechele.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaechele.ca
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1C77CC005F;
+	Sat, 11 May 2024 10:10:35 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaechele.ca; s=201907;
+	t=1715436639; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=YkB7lTD5TwqOheDl5UhhEZ5s95fLONe3G1Q+9ddrNhI=;
+	b=j6cyjYav5tpIesRKpl0/ZUmiuQpEvWQHLlD8Hkdh5ulpFDPk/nhjLu48feW+rCpXxZ/e82
+	CH9zW9ye3RQ5WBNrLgxXwhmRoW0Bw0jEWuCBl7+oRTtosJqWFxxtZTb4o3w3TIyV1cLs0R
+	gA33XEGTTm47kfJw/RxDBsEBxAw7cck=
+Message-ID: <dab1dddd-57ae-445e-bce7-879e8d73d809@kaechele.ca>
+Date: Sat, 11 May 2024 10:10:08 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: input: touchscreen: himax,hx83112b:
+ add HX83100A
+To: Conor Dooley <conor@kernel.org>
+Cc: Job Noorman <job@noorman.info>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240511121245.109644-1-felix@kaechele.ca>
+ <20240511121245.109644-2-felix@kaechele.ca>
+ <20240511-passage-obstruct-70e4c3b37dbd@spud>
+Content-Language: en-US
+From: Felix Kaechele <felix@kaechele.ca>
+In-Reply-To: <20240511-passage-obstruct-70e4c3b37dbd@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-In panel_bridge_attach(), the check on the existence of bridge->encoder
-has already been done in the implementation of drm_bridge_attach(). And
-it is done before the bridge->funcs->attach hook is called. Hence, it is
-guaranteed that the .encoder member of the struct drm_bridge is not NULL
-when the panel_bridge_attach() is called.
+On 2024-05-11 08:38, Conor Dooley wrote:
+> On Sat, May 11, 2024 at 08:12:22AM -0400, Felix Kaechele wrote:
+>> Add a compatible string for the Himax HX83100A touch controller.
+>>
+>> Signed-off-by: Felix Kaechele <felix@kaechele.ca>
+> 
+> Commit message should mention what makes this device incompatible with
+> the existing device.
 
-There is no need to check the existence of bridge->encoder another time
-at the implementation layer, therefore remove the redundant checking codes
-"if (!bridge->encoder) { ... }".
+Thanks!
 
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/bridge/panel.c | 5 -----
- 1 file changed, 5 deletions(-)
+I have added this note in the commit message which will be part of a v3, 
+coming after I hopefully receive a few more comments on the other parts 
+of this change:
 
-diff --git a/drivers/gpu/drm/bridge/panel.c b/drivers/gpu/drm/bridge/panel.c
-index 7f41525f7a6e..762402dca6dd 100644
---- a/drivers/gpu/drm/bridge/panel.c
-+++ b/drivers/gpu/drm/bridge/panel.c
-@@ -65,11 +65,6 @@ static int panel_bridge_attach(struct drm_bridge *bridge,
- 	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
- 		return 0;
- 
--	if (!bridge->encoder) {
--		DRM_ERROR("Missing encoder\n");
--		return -ENODEV;
--	}
--
- 	drm_connector_helper_add(connector,
- 				 &panel_bridge_connector_helper_funcs);
- 
--- 
-2.43.0
+The HX83100A presents touch events on its internal bus rather than 
+offering a dedicated event register like the other chips in this family do.
 
+Felix
 
