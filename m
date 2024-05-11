@@ -1,169 +1,98 @@
-Return-Path: <linux-kernel+bounces-176711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9088C338D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:36:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14DC28C3390
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2173C2821A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:36:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93401B21327
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B9021350;
-	Sat, 11 May 2024 19:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1AE208A5;
+	Sat, 11 May 2024 19:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MNgjzpo2"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2053.outbound.protection.outlook.com [40.92.42.53])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="oyssqWJV"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFD120B04;
-	Sat, 11 May 2024 19:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715456166; cv=fail; b=VbFF63+r0B3c72QbPkNAFiuhvi4QwlBl0m5w5RsMtZPUw3GuR9xC6hfC8g1OsG4CTvJ3gdVX0zLvAZTidnMufo5AdLH0G55uiE04X34hz1tBVsSa6ldxWpqq9BQv72QBo6U6H14YZh6gvz2ePheMI27SPNatGBe0IQBE+pchgCk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715456166; c=relaxed/simple;
-	bh=oi/JtqXrq4yZJOxNcygVxUeWyKjjGvrFdFGtQpW5Ojo=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VW5Yj/JfVVxcsQBIbABTT2p43HKLC9o/3j0aJhF8hsStskS25OEToR+abDVqAxiRtbaLYqEvrXbh0/2A1GmySt6RTVvYKKZT1PotfYMU1iNHb0BwHQLWgLyymyWr7NBHjSmoni7svqNxJgPvVi+u7cF9W+5iM/RL25x9UEfprQM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MNgjzpo2; arc=fail smtp.client-ip=40.92.42.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=BchJ0LYROhrhiBjnHClnCT88/6aUIjHM7mCoA7lyE4J8HgL0xaOaANgokhDyS+vz+pMKLWDaCGzZS/86aQcXd3Ih8oVxb+7X4Dq7A/onRSVFK+le9Di/2p2gEniOLdFrqTgw3qRgmOHwc6sBKdkacA5pz2fqobG6/+2jqnV3O/j9HX7mnlDOo4ZkxvIgrtQrrzHCoqoKlEvkzpg6Mf6Gp+TiNPW8Ki2KniwsF0jbAzkGf3B6y1wmhRFDMbcmRrl2gNW0JGzwPzK+Bd2teM42nIbYJf2TBOJKc6YmGAXrlwwOeHdaAkkwWH6Z+GAvvLrkHIygcW1p/PvNg44xtCUbxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wTEHevXtBALILTvZFXdYnRGQwap0ECBwbib+9ZL11qs=;
- b=cFWfQhVakATiVNm4i8vbuBeLIbL7+QpF6XrYQb9P8HVS+T/9vkUYLpBQnygArbiEp6hmqlhUHYHYTzjV5TWpEhsnGomx+RAyn56a8aY2HJGmtpWvsyyVQci/vDqPZf6FrvJLjigNhsouycsy+KNQ2DOGskUWmzhUyXhL+DEmmBoRzpEH6aGF6qJIr6VFiEpRhjWBrRgnK40MxAFWx8hi6Ool9diRKy2N5aYodXE1uCvllWL8NZX6tuks4Rq8x7LDmw0QFa4z8nYRRG+LWGZmfVF44VhQBIMDnKT2tcHoLzsLZhjeuXffDLPwvXQNcqIxSDjCTK+B+zyj9/pctWfObw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wTEHevXtBALILTvZFXdYnRGQwap0ECBwbib+9ZL11qs=;
- b=MNgjzpo2DkV3G2A2zs+mYGG+c9DSBy5+mb4UM94GOrHuAYlAHaKPxcj3ejWRqatQ/6R3H2fp4OV78zLSpcgVfYeDpGa0ibA6aluYeUgyWTHvpmjTzQwv7ls4uuN+fTX3XBqkMtFefm2NRhx2iQR8Qaio9vZiJZys4eoCsFi7CD39k2hUOeq4ZeCqxVmT0bpzC9iu1xTbk1bZuxqEzwU+MZd5VL1qXV0s7107LHo6KUodfyIUfRjhfV2enWre+ae4aOZ0MLuoSpJARyN/219f51NHvh6A+jsus+JnEd4BqVavg5kPzAsA+5hqohzQVbfqwbx/OvUzMJMiIDqwSRh7lQ==
-Received: from BYAPR03MB4168.namprd03.prod.outlook.com (2603:10b6:a03:78::23)
- by SA2PR03MB5817.namprd03.prod.outlook.com (2603:10b6:806:11d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sat, 11 May
- 2024 19:36:01 +0000
-Received: from BYAPR03MB4168.namprd03.prod.outlook.com
- ([fe80::b8b1:7fdc:95d4:238a]) by BYAPR03MB4168.namprd03.prod.outlook.com
- ([fe80::b8b1:7fdc:95d4:238a%6]) with mapi id 15.20.7544.052; Sat, 11 May 2024
- 19:36:01 +0000
-From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
-To: rafael@kernel.org,
-	lenb@kernel.org,
-	lv.zheng@intel.com,
-	rui.zhang@intel.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@outlook.com>
-Subject: [PATCH] ACPI: scan: Add missing check for kstrdup()
-Date: Sat, 11 May 2024 19:35:53 +0000
-Message-ID:
- <BYAPR03MB4168E7E5A2616EB82D3883E8ADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [Jmn7bo0UqbPoR9JU8HOsHK2e9uh/CRwq]
-X-ClientProxiedBy: CH0P223CA0014.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:610:116::18) To BYAPR03MB4168.namprd03.prod.outlook.com
- (2603:10b6:a03:78::23)
-X-Microsoft-Original-Message-ID:
- <20240511193553.47448-1-jiashengjiangcool@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B740322EF2;
+	Sat, 11 May 2024 19:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715456174; cv=none; b=RTf6lUj8h41SgHX8p+bfTx6DTzvjqikX9Cf4PNhfmLQW3mLcCrXl8TjDk4P25Okb+UsooP8ksVTNpCSqwDmfdb4Lwv81CaZEt76cd6zrYUqBEqf07+f8Kegq7vtKkZJyizQcIfKmVq6L6GLvt9BM47dsc7FuCySOBHm5wx8GJ20=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715456174; c=relaxed/simple;
+	bh=wMJUi+PdPrEvDZsHqJBjhH22jQJVIEnVe/PE9a7184s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOxpqdZZdxsSYjz44YqP6cxniF66fp7+MVZdqyojNbC3ry1NhTifMXg//M/gZxHKRN5oK6u+Byn5J5mTIGu1pVbjFzbI4DvhKjIIbxdBU6L7MktQzjb/JI7b45yYhw8sKL7MNZi0Lz2r0COc40015qbgxlXoLTKzpi62Vn4ftlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=oyssqWJV; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=UhzC2A5F+60yg0XstH3Un8KpZ2vRh/COyryc8bX0waQ=; b=oyssqWJVeI5Ri0T49GLxy0iG/X
+	3+CF8s1rSfsaI4Gly7VlZ4jCM5gZEyxPBvHjsK+85sOHVvrn/k7hJLbrSZk4GyY1Iyou6cZzzirbE
+	zN260LiOw52OaMTBKxTdmuO78um56s2V6PV2mz9sKKR8rwM4JJkvMFE9jhM77so/WS7rdLgBodsp5
+	PevmfYcKunputGrn8mBCkEsNgwh7u2HWJcP+XxR8R2qj5/SWJZ7ED46F01VAAdR0Ok/CteWOZ4zoO
+	Y96f9dzpHM4yvcBc8uU+2ayTynAZZZFoXrjXBrRiCDMw1FFVyCBy+x7ts041yIjKO1w+GeOBb3EI8
+	DV4yZT5w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50740)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s5sVq-0000Bo-1J;
+	Sat, 11 May 2024 20:36:06 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s5sVq-0004Vb-LV; Sat, 11 May 2024 20:36:06 +0100
+Date: Sat, 11 May 2024 20:36:06 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>,
+	netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com,
+	bcm-kernel-feedback-list@broadcom.com, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, mcoquelin.stm32@gmail.com,
+	richardcochran@gmail.com, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2, net-next, 2/2] net: stmmac: PCI driver for BCM8958X
+ SoC
+Message-ID: <Zj/IpqjWCD9fOMBM@shell.armlinux.org.uk>
+References: <20240510000331.154486-3-jitendra.vegiraju@broadcom.com>
+ <20240511015924.41457-1-jitendra.vegiraju@broadcom.com>
+ <4ede8911-827d-4fad-b327-52c9aa7ed957@lunn.ch>
+ <Zj+nBpQn1cqTMJxQ@shell.armlinux.org.uk>
+ <08b9be81-52c9-449d-898f-61aa24a7b276@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR03MB4168:EE_|SA2PR03MB5817:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd1bceef-bb9d-4e15-a208-08dc71f196a9
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|3420499023|3430499023|440099019|3412199016|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	dIMjw1Z28Vha15pwWKSP12uHYX7/ITtvZHXT6VRCDGslC+gSj6Rg7BYNSSqWOW4GztniQjUpGRjQAQdqdJ9wmV+mYU7E5gA7YXq3Iy/Y82quzOmIHNYi2PpZTuq/mwiPZXipADhPQL7YSUhRDw2MOJr7vpMBEYJ3WFz05xI+5niV28ZUjsEh1/maoTwjg/9PmxhNujfyx4qxoEujLiT0TlLspfio4OIDIVdzC2QfLhPjgJl8WQ5Av5w8xgDoYE261SuJDwEC5w6aD1SQbYonEZIdXbdGvi1z6LRki98OkG3PVRgbFvmsU1Ou7kHnI646KlJkvPtehyHHKTBpBHrOOMl3qemRBcMSPR19bhRE9STfg1g/z97gGK2ULPpMPQp80oT+TJ8NMGXeGODXWITNvjVdXdI7OYgsYPqOEn02DMooOmImcuVXp5kKg8oQW0szpi3jcPYPS6wH5pCME17HBid1sb/1KPjoDbHDqzzQLdNuvDDV6v1Vum3Tn6fEH7hvqxZA0I0yZsIXIsmCBPDyxPe5MNkxDY7hkjvbSU8u1kdz9MOsFyQtKe6N2ZpjnRYcMwbxfRdWjb38YO1zNRRQnjhmqqhEXRuFA15ENcZ0JzKcf8sWiKddxbup6eEbN8n4
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wYzHVad8Ym3keRM4aTePZu1HWb7QLy8fPIfQsXHt7753mW/19mV/9xHcZtHQ?=
- =?us-ascii?Q?09y+3W5Mjd05F2eQ03HPqhtHC0iVKbBJziVGUWI7KnwDGv4tyhoNcOuHLpow?=
- =?us-ascii?Q?62uBDkxjYdOaoDDHmQ/VgEV9f8ie2N8XCkn15H9ulWtXCtGrQXKa8UtDE8yM?=
- =?us-ascii?Q?blOCu0SPmc9xpMsD+cdeUkG28rymV6rSy4IBxOucJ+4f/gdSyhqgE3X0XISs?=
- =?us-ascii?Q?MK+ybYd5YqPt51NPg+lo0ZbPL9StDe5UTz9u92ZcTMl7aWiOMkukFRA0y6mk?=
- =?us-ascii?Q?Pawpoyg2ra8jQPdtnhapeaw7JzOW5ixthRAHoG0OT7ime8hdKfHlsfu5Erae?=
- =?us-ascii?Q?o9lsyaGR2mMXPw9dyJ0HYbz5/sHOzZ3HCbVyqbFvQcQjw1OFQ1zgtlFinFiC?=
- =?us-ascii?Q?2PYQ9XQKAg1IjbDey6Cttz8LoZqhznyIIBw1JoURakURsVDPRbuo6EBwXhCy?=
- =?us-ascii?Q?AvbeqfF1LqEQYRaKMHshcVZKhFmB0K1b+gVA7h6UF7ndUqetU2I53gVh0VEs?=
- =?us-ascii?Q?5+lwn/EKBrM3G4XIiZiyypiZXgFRqzBtrOU3TZZzeY7MRNX0mTN5nAOQpA23?=
- =?us-ascii?Q?79yJc1Dj003OeipUzTFAvodV/E22ujPlXczG8Dea17NNAT1dcu29Pe1Lrez6?=
- =?us-ascii?Q?nUJpzAKY6EvuY1/Ic7kwjLl4y5Cw/o3FIoSi3q8xZ6XMOHdZ3IXzBVEx5tbA?=
- =?us-ascii?Q?xq1tRkTFA7Ve67tOhW4MY6M6azQ3vt76lFlDGt/m0NSy0yrCi5uolLjPhnA4?=
- =?us-ascii?Q?s1exIoqwBMz9kGEq5evE8bc8/eGptQ8Ov9E+/IN8Cpff9MEqVqftFX75Z9xi?=
- =?us-ascii?Q?/+PaxndlX59hrqh9yddDvSEAPSJw/NpXL2tCqg91CWkm4xT4ZD8t2Mlcj3tG?=
- =?us-ascii?Q?QyeQLkrnNTxo6b0j31kBvbuIkmEKa1E7+2hhzRtbWSG5oRV2vi2D8GLD1P9J?=
- =?us-ascii?Q?yL831ssI4MjgGjLfkAEl3Dy1yDPCICKIFIAfDViYFuGvLCZrb1E1tY1SdJUK?=
- =?us-ascii?Q?KkM8S28e/up8yv096thqGfH6PfM6pN0te/twnI/wd32Ryb/NgBkKsJ8+hOoj?=
- =?us-ascii?Q?mI1hsXbwdhHqvbqWjtTeoTKFZXM1Uy/tD+9FuecheJlWvsAg3pzOLFyTCldL?=
- =?us-ascii?Q?xKfJ3Cdkn0uilpaSbixc6+pFhIIGlR1zAUPXD65Im59CuKBFpDjX2UBGN6gp?=
- =?us-ascii?Q?GXqo4I4an0cmZFalM2LHYNuHCBR9IsBQBK5MlOkZrQjeiozoPsTUdFNLhqGU?=
- =?us-ascii?Q?y34Rl1SqIBnvInNsLX/X?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd1bceef-bb9d-4e15-a208-08dc71f196a9
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB4168.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 19:36:00.9992
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR03MB5817
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <08b9be81-52c9-449d-898f-61aa24a7b276@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add check for the return value of kstrdup() in order to gurantee
-the success of allocation.
-Moreover, move the code forward to simplify the error handling.
+On Sat, May 11, 2024 at 07:50:03PM +0200, Andrew Lunn wrote:
+> And now you mentions legacy Fixed link:
+> 
+> +MODULE_DESCRIPTION("Broadcom 10G Automotive Ethernet PCIe driver");
+> 
+> This claims it is a 10G device. You cannot represent 10G using legacy
+> fixed link.
 
-Fixes: ccf78040265b ("ACPI: Add _UID support for ACPI devices.")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
----
- drivers/acpi/scan.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+While it may be a 10G device, it seems the fixed-link specification
+in the driver is set to 1G !
 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index d1464324de95..59246757a207 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1385,6 +1385,15 @@ static void acpi_set_pnp_ids(acpi_handle handle, struct acpi_device_pnp *pnp,
- 			return;
- 		}
- 
-+		if (info->valid & ACPI_VALID_UID) {
-+			pnp->unique_id = kstrdup(info->unique_id.string,
-+							GFP_KERNEL);
-+			if (!pnp->unique_id) {
-+				kfree(info);
-+				return;
-+			}
-+		}
-+
- 		if (info->valid & ACPI_VALID_HID) {
- 			acpi_add_id(pnp, info->hardware_id.string);
- 			pnp->type.platform_id = 1;
-@@ -1398,9 +1407,6 @@ static void acpi_set_pnp_ids(acpi_handle handle, struct acpi_device_pnp *pnp,
- 			pnp->bus_address = info->address;
- 			pnp->type.bus_address = 1;
- 		}
--		if (info->valid & ACPI_VALID_UID)
--			pnp->unique_id = kstrdup(info->unique_id.string,
--							GFP_KERNEL);
- 		if (info->valid & ACPI_VALID_CLS)
- 			acpi_add_id(pnp, info->class_code.string);
- 
 -- 
-2.25.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
