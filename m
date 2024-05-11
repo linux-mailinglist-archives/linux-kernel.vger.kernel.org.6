@@ -1,214 +1,399 @@
-Return-Path: <linux-kernel+bounces-176719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B789A8C33A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613968C33BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E389E1C20E07
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F95281F5A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246562032D;
-	Sat, 11 May 2024 20:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C8720DF4;
+	Sat, 11 May 2024 20:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FXbF3Mt4"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Y3VJ7XTV"
+Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0ECB28E8;
-	Sat, 11 May 2024 20:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3911D54F;
+	Sat, 11 May 2024 20:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715457615; cv=none; b=s42pCvllqCRL1CFzgarLi8Hl4lcJStFjVW3KYPmDU9gABR/dVIaJK153XUGBUDfrkNIfuy+/ZUkXEwtBtYVrA7EHLI2KVFpEAew617d3t8hwEbcDD18NFg1TA6mfxVZoi4729nCpyplIkSTB7xOrgn9J6VMUlfL2vOgtx+FGnNk=
+	t=1715459205; cv=none; b=rO+kZdiaUTUcbsIruT3mpghPQjQADVtRIKprzn7nfq9N4QOmp3cIt5aBtBO1FWBGr10vV8q6HCOzHZM06sR8zvh7TTAB7zUHhrHQHeanno0SP/VNWWVL15//kaYZ7D65MdCb9b0CLrK/6GvQLHNInQSDN98CNNbqVpR5KrZ4LqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715457615; c=relaxed/simple;
-	bh=8AoB+QJaCTHc+PAR6r0F/plPz1JFeuwN72FCY/yvCJM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=AiwxQ183qqS2fXdRlM1TSXw0jhDRWIVMMkCRjkYFJAXPSCrVJdFoD2ynUj+QatyQneMCDqMWaGDAjE3/1HP34DFSlKKkdWAjhiPij7uvpbSLZDJwHYdiCQ0pRW19OPymYqHRcoylMPH7eKUK294mZHHvqUJu5lf8Gqs2Kq7sq6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FXbF3Mt4; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-6f4302187c0so2905274b3a.1;
-        Sat, 11 May 2024 13:00:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715457613; x=1716062413; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=AuGYQ/onCGtqixyYcMDAegdVw322p/wRYzHUOtlbYEc=;
-        b=FXbF3Mt4g2pMq8wfn+LlP+/jkCFOUk7khzAsrZMi2mZuzWp989yfTiuCmqA9/y+CBQ
-         Vf/m4BzUq1M5b5LFZlNPrCrtefSald6ihAH7A8bhUoRxc9ikKJ6OEvzERRnzmur2P+uQ
-         gF0MOF+JuBO5LqLS+0X+uh++jbHD6IoAT8wJ/gPzsDxPEDQecerQ6yz0tmaedDsbZHmC
-         EMQFCNAoH/FEfSHUU35H9dQvDRcuJ5MnCkm5ilsxnsp6WNreANffQIjj+0T7CQz5Yf9z
-         YfBrNQaxsY9m2t19Gq/xNPaMQJLTpOPWm8M7mJU7v23M/icyR0lg3MnqaThF6M01/L6a
-         y5kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715457613; x=1716062413;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AuGYQ/onCGtqixyYcMDAegdVw322p/wRYzHUOtlbYEc=;
-        b=H3J57tWy5f//Eff6DoKftuWasoq6faOZiK3bA/bJnrYmpmOzSRtVoZ/3EmLnHI7crn
-         f/j11weT1FyvWq1d0KSLkDA/Wdwz9QqgW53L8M21ufl75al9z5N/NsjWYC4jaqMMkynX
-         y2yuYswQ/8U/pwTmq9W/8jKwGGvDrg7XZyKvbNlIqGWxhCB6vtdeHlS4I3UJTEtGd3vj
-         4mZIMJkYvqzTjmmiPjhyFOC0dCrpkvOmKEumNqYZf0xRPcNLydNpsFr3OUK5JrgKAZVN
-         /RCrc+4dykMNtEh7qKs3gscmHM64rvKYOqTUy/lcVzqyfDTz2ANmd+mljS5FU4nK6DqM
-         GWsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXO2aIXTpgOJ55AWfn7npFKZrOPhF1iEERVpSWCqy+9NH3F4hU7lmvh0DkhKueRH+qTmzOSNcRYvAukKfXSotopCoK0KweaNLFIW4JB4Qd+MY3oOeHxeljoBkPI+0WX+q6czNur7OWXYOlZpIZ0+nJo4qheDhIVqxvduldTqZtkfXq
-X-Gm-Message-State: AOJu0YwV5zYTjY3kSQfP0yHJf7Zh1hHiPnO8BecC8kBCy9+K2UOM7VC+
-	ScADjVrY/DiX1TcQ3r1jifjYrA8i63Dfs8VwGmAog2hNxcgVe1sToe8LBT5zoSjs6g==
-X-Google-Smtp-Source: AGHT+IFmYMBq4uZFK2kyPjNqULWBZdYAvLhRlpXOfeGOhQm/QpEiUJ9nwQWGSAHB0dSzN8LijhYwuA==
-X-Received: by 2002:a05:6a20:a122:b0:1aa:965d:1332 with SMTP id adf61e73a8af0-1afde1c0455mr10443683637.26.1715457612077;
-        Sat, 11 May 2024 13:00:12 -0700 (PDT)
-Received: from paran-QEMU-Virtual-Machine.. ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a86a4fsm4827586b3a.63.2024.05.11.13.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 13:00:11 -0700 (PDT)
-From: yskelg@gmail.com
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Austin Kim <austindh.kim@gmail.com>,
-	shjy180909@gmail.com,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: [PATCH] Documentation: cve Korean translation
-Date: Sun, 12 May 2024 04:59:43 +0900
-Message-Id: <20240511195942.30857-1-yskelg@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715459205; c=relaxed/simple;
+	bh=QRhuwChDYHfSPQDVxVEglvM+ecX/SMlFXeAYPZHFFd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZAUNHKWwqZHxuMgQNvl8JlNde0QmM7O8xQk9TofkyYOEvb7+r4hQSzNsoth8LVsTGrWrUernMTw2az96CtvlOUHSVt/8GlnhSWkitS3UdKx1fZ6tYcbdbDUzaFZiJB7FxLlBZ595q3xohYN4d16QnCpeKGHbksLR4vcanMuzrSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Y3VJ7XTV; arc=none smtp.client-ip=193.252.22.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from localhost.localdomain ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 5rfsszsjshrFP5rftsVhsx; Sat, 11 May 2024 20:42:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1715452948;
+	bh=yubBFbXCfuOJIrYbX5F8iTYSJEFdBYtURyEVumq/GbQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Y3VJ7XTVwLs4HI8QEKT7vp28VPD2tciEdbe1dR3qBt7yP0ehdWVg0gTZl5cFCiJ1X
+	 iprGBZmJ+EdMSvlN1dcxTPc+FkjiCgF/Xaasod8a7xNw03v796knNnWdrBMT9cWKTJ
+	 bN5W3BJlgDVg3MEihuy3QBuwL1Y2aOMd8GZhs+z5WkxTizBtxG8VRfpjMWZhcUe1Ka
+	 P2mIvNYWsTHFUzDLbGy2AXXiQ9es8iKmoDuV/jy2D8ijvZWP8UU5ximsVn7CCmy6jL
+	 Oj4e3P3qKooQt9xj/f/Z9VpvEkZl5k1Gn9vcsrRAaug6Dkzh10IL0UGDPkQc56QmKa
+	 ch3bZxwu/ZfvQ==
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 11 May 2024 20:42:28 +0200
+X-ME-IP: 86.243.17.157
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Cezary Rojewski <cezary.rojewski@intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH] ASoC: intel: Constify struct snd_soc_ops
+Date: Sat, 11 May 2024 20:42:06 +0200
+Message-ID: <242aef53b5b9533ae4cca78148622f5fe752b7ee.1715452901.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Yunseong Kim <yskelg@gmail.com>
+Constifying "struct snd_soc_ops" moves some data to a read-only section, so
+increase overall security.
 
-This is a Documentation/process/cve korean version.
+This structure is also part of scripts/const_structs.checkpatch.
 
-Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+As an example, on a x86_64, with allmodconfig:
+Before:
+   text	   data	    bss	    dec	    hex	filename
+   6315	   3696	      0	  10011	   271b	sound/soc/intel/boards/ehl_rt5660.o
+
+After:
+   text	   data	    bss	    dec	    hex	filename
+   6379	   3648	      0	  10027	   272b	sound/soc/intel/boards/ehl_rt5660.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../translations/ko_KR/process/cve.rst        | 107 ++++++++++++++++++
- 1 file changed, 107 insertions(+)
- create mode 100644 Documentation/translations/ko_KR/process/cve.rst
+Compile tested only.
 
-diff --git a/Documentation/translations/ko_KR/process/cve.rst b/Documentation/translations/ko_KR/process/cve.rst
-new file mode 100644
-index 000000000000..26682969b2b7
---- /dev/null
-+++ b/Documentation/translations/ko_KR/process/cve.rst
-@@ -0,0 +1,107 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+:Original: Documentation/process/cve.rst
-+:Translator: Yunseong Kim <yskelg@gmail.com>
-+
-+==========
-+CVE 항목들
-+==========
-+
-+공통 취약점 및 노출(CVE®) 번호는 공개적으로 발표된 보안 취약점을 식별, 정의 및
-+목록화하기 위한 명확한 방법으로 개발되었습니다. 시간이 지남에 따라 커널
-+프로젝트와 관련하여서는 그 유용성이 감소했으며, CVE 번호는 부적절한 방식과
-+부적절한 이유로 할당되는 경우가 매우 많았습니다. 이로 인하여 커널 개발
-+커뮤니티에서는 이를 기피하는 경향이 있었습니다. 그러나 커널 커뮤니티 외부의
-+개인과 회사가 CVE 및 기타 형태의 보안 식별자를 할당하라는 지속적인 압박과
-+지속적인 남용이 결합되면서 커널 커뮤니티가 이러한 할당에 대한 통제권을 가져야
-+한다는 것이 분명해졌습니다.
-+
-+Linux 커널 개발자 팀은 잠재적인 Linux 커널 보안 문제에 대해 CVE를 할당할 수
-+있는 권한이 있습니다. 여기서 할당은 :doc:`일반 Linux 커널 보안 버그 보고
-+절차<../process/security-bugs>`와는 별개입니다.
-+
-+Linux 커널에 할당된 모든 CVE 목록은
-+https://lore.kernel.org/linux-cve-announce/ 에 있는 Linux-CVE 메일링 리스트의
-+아카이브에서 확인할 수 있습니다. 할당된 CVE에 대한 알림을 받으려면 해당
-+메일링 리스트에 `구독
-+<https://subspace.kernel.org/subscribing.html>`_ 하세요.
-+
-+절차
-+====
-+
-+일반적인 안정 릴리스 절차의 일부로, 잠재적으로 보안 문제가 될 수 있는 커널
-+변경 사항은 CVE 번호 할당을 담당하는 개발자가 식별하여 CVE 번호를 자동으로
-+할당합니다. 이러한 할당은 linux-cve-announce 메일링 리스트에 공지사항으로
-+수시로 게시됩니다.
-+
-+리눅스 커널이 시스템에 있는 계층으로 인해 거의 모든 버그가 커널의 보안을
-+손상시키는 데 악용될 수 있지만 버그가 수정되면 악용 가능성이 명확하게 드러나지
-+않는 경우가 많습니다. 이 때문에 CVE 할당 팀은 지나치게 조심스럽게 버그 수정이
-+확인되는 모든 버그에 CVE 번호를 할당합니다.
-+이것이 리눅스 커널 팀에서 발행하는 겉으로 보기에 많은 수의 CVE를 설명합니다.
-+
-+사용자가 CVE를 지정해야 한다고 생각하는 특정 수정 사항을 CVE 할당 팀이 놓친
-+경우 <cve@kernel.org>로 이메일을 보내 주시면 해당 팀에서 함께 작업할 것입니다.
-+이 별칭은 이미 릴리스된 커널 트리에 있는 수정 사항에 대한 CVE 할당 전용이므로
-+잠재적인 보안 문제는 이 별칭으로 보내서는 안 됩니다.
-+수정되지 않은 보안 문제를 발견했다고 생각되면 :doc:`일반 Linux 커널 보안
-+버그 보고 절차<../process/security-bugs>`를 따르세요.
-+
-+Linux 커널에서 수정되지 않은 보안 이슈에 대해서는 CVE가 자동으로 할당되지
-+않으며, 수정이 제공되고 안정적인 커널 트리에 적용된 후에만 자동으로 할당되며,
-+기존 수정의 git 커밋 ID로 추적할 수 있습니다. 커밋으로 문제가 해결되기 전에
-+CVE를 할당받고자 하는 사람은 커널 CVE 할당 팀<cve@kernel.org>에 문의하여
-+예약된 식별자 항목들에서 식별자를 할당받으시기 바랍니다.
-+
-+현재 Stable/LTS 커널 팀에서 적극적으로 지원하지 않는 커널 버전에서 발견된
-+문제에 대해서는 CVE가 할당되지 않습니다.
-+현재 지원되는 커널 브랜치 목록은 https://kernel.org/releases.html 에서 확인할
-+수 있습니다.
-+
-+할당된 CVE 항목들의 분쟁
-+=========================
-+
-+특정 커널 변경에 대해 할당된 CVE에 대해 이의를 제기하거나 수정할 권한은
-+전적으로 영향을 받는 관련 하위 시스템의 유지 관리자에게 있습니다.
-+이 원칙은 취약점 보고에 있어 높은 수준의 정확성과 책임성을 보장합니다.
-+하위 시스템에 대한 깊은 전문 지식과 친밀한 지식을 갖춘 사람만이 보고된
-+취약점의 유효성과 범위를 효과적으로 평가하고 적절한 CVE 지정을 결정할 수
-+있습니다. 이 지정된 기관 외부에서 CVE를 수정하거나 이의를 제기하려는 시도는
-+혼란, 부정확한 보고, 궁극적으로 시스템 손상으로 이어질 수 있습니다.
-+
-+잘못된 CVE 항목들
-+=================
-+
-+해당 배포판에서 변경된 사항으로 인해 또는 해당 배포판이 더 이상 kernel.org
-+지원 릴리스가 아닌 커널 버전을 지원하기 때문에 Linux 배포판에서만 지원되는
-+Linux 커널에서 보안 문제가 발견되는 경우 Linux 커널 CVE 팀에서 CVE를 할당할 수
-+없으며 해당 Linux 배포판 자체에서 요청해야 합니다.
-+
-+커널 할당 CVE 팀이 아닌 다른 그룹에서 적극적으로 지원되는 커널 버전에 대해
-+Linux 커널에 대해 할당된 CVE는 유효한 CVE로 취급해서는 안 됩니다.
-+CNA 수정 절차를 통해 해당 항목을 무효화할 수 있도록 커널 CVE 할당 팀에
-+<cve@kernel.org>로 알려주시기 바랍니다.
-+
-+특정 CVE의 적용 가능성
-+======================
-+
-+Linux 커널은 외부 사용자가 다양한 방법으로 접근하거나 전혀 접근하지 않는
-+등 다양한 방식으로 사용될 수 있으므로 특정 CVE의 적용 여부는 Linux 사용자가
-+결정할 사항이며 CVE 할당 팀의 권한이 아닙니다. 특정 CVE의 적용 가능성을
-+판단하기 위해 우리에게 문의하지 마시기 바랍니다.
-+
-+또한 소스 트리가 매우 방대하고 어떤 시스템도 소스 트리의 작은 하위 집합만
-+사용하므로 Linux 사용자는 할당된 많은 수의 CVE가 자신의 시스템과 관련이 없다는
-+사실을 알고 인지해야 합니다.
-+
-+즉, 우리는 사용자의 사용 사례를 알지 못하며 사용자가 커널의 어떤 부분을
-+사용하는지 알 수 없으므로 특정 CVE가 사용자의 시스템과 관련이 있는지 판단할 수
-+있는 방법이 없습니다.
-+
-+항상 그렇듯이 커널 변경 사항은 개별적으로 선별된 변경 사항이 아니라 많은
-+커뮤니티 구성원이 통합된 전체에서 함께 테스트하는 것이므로 릴리스된 모든 커널
-+변경 사항을 적용하는 것이 가장 좋습니다. 또한 많은 버그의 경우 전체 문제에
-+대한 해결책은 단일 변경 사항이 아니라 여러 수정 사항을 모아놓고 보아야 찾을 수
-+있다는 점에 유의하세요. 이상적으로는 모든 문제에 대한 모든 수정 사항에 CVE가
-+할당되지만, 때로는 수정 사항을 발견하지 못하는 경우가 있으므로 CVE가 할당되지
-+않은 일부 변경 사항이 관련성이 있을 수 있다고 가정합니다.
+I hope that it can be applied with this single patch because all files are
+in sound/soc/intel/boards/
+---
+ sound/soc/intel/boards/bdw-rt5650.c                 | 2 +-
+ sound/soc/intel/boards/ehl_rt5660.c                 | 2 +-
+ sound/soc/intel/boards/kbl_da7219_max98357a.c       | 4 ++--
+ sound/soc/intel/boards/kbl_da7219_max98927.c        | 6 +++---
+ sound/soc/intel/boards/kbl_rt5660.c                 | 2 +-
+ sound/soc/intel/boards/kbl_rt5663_max98927.c        | 8 ++++----
+ sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c | 6 +++---
+ sound/soc/intel/boards/sof_es8336.c                 | 2 +-
+ sound/soc/intel/boards/sof_maxim_common.c           | 2 +-
+ sound/soc/intel/boards/sof_maxim_common.h           | 2 +-
+ sound/soc/intel/boards/sof_nau8825.c                | 2 +-
+ sound/soc/intel/boards/sof_realtek_common.c         | 2 +-
+ sound/soc/intel/boards/sof_rt5682.c                 | 2 +-
+ sound/soc/intel/boards/sof_sdw_common.h             | 2 +-
+ sound/soc/intel/boards/sof_sdw_rt_amp.c             | 2 +-
+ sound/soc/intel/boards/sof_wm8804.c                 | 2 +-
+ 16 files changed, 24 insertions(+), 24 deletions(-)
+
+diff --git a/sound/soc/intel/boards/bdw-rt5650.c b/sound/soc/intel/boards/bdw-rt5650.c
+index 3ae26f21458f..3c7cee03a02e 100644
+--- a/sound/soc/intel/boards/bdw-rt5650.c
++++ b/sound/soc/intel/boards/bdw-rt5650.c
+@@ -131,7 +131,7 @@ static int bdw_rt5650_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops bdw_rt5650_ops = {
++static const struct snd_soc_ops bdw_rt5650_ops = {
+ 	.hw_params = bdw_rt5650_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/ehl_rt5660.c b/sound/soc/intel/boards/ehl_rt5660.c
+index 686e60321224..26289e8fdd87 100644
+--- a/sound/soc/intel/boards/ehl_rt5660.c
++++ b/sound/soc/intel/boards/ehl_rt5660.c
+@@ -132,7 +132,7 @@ static int rt5660_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops rt5660_ops = {
++static const struct snd_soc_ops rt5660_ops = {
+ 	.hw_params = rt5660_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/kbl_da7219_max98357a.c b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+index 9dbc15f9d1c9..154f6a74ed15 100644
+--- a/sound/soc/intel/boards/kbl_da7219_max98357a.c
++++ b/sound/soc/intel/boards/kbl_da7219_max98357a.c
+@@ -354,7 +354,7 @@ static int kabylake_dmic_startup(struct snd_pcm_substream *substream)
+ 			SNDRV_PCM_HW_PARAM_RATE, &constraints_rates);
+ }
+ 
+-static struct snd_soc_ops kabylake_dmic_ops = {
++static const struct snd_soc_ops kabylake_dmic_ops = {
+ 	.startup = kabylake_dmic_startup,
+ };
+ 
+@@ -388,7 +388,7 @@ static int kabylake_refcap_startup(struct snd_pcm_substream *substream)
+ 					&constraints_16000);
+ }
+ 
+-static struct snd_soc_ops skylake_refcap_ops = {
++static const struct snd_soc_ops skylake_refcap_ops = {
+ 	.startup = kabylake_refcap_startup,
+ };
+ 
+diff --git a/sound/soc/intel/boards/kbl_da7219_max98927.c b/sound/soc/intel/boards/kbl_da7219_max98927.c
+index e662da5af83b..02ed77a07e23 100644
+--- a/sound/soc/intel/boards/kbl_da7219_max98927.c
++++ b/sound/soc/intel/boards/kbl_da7219_max98927.c
+@@ -288,7 +288,7 @@ static int kabylake_ssp0_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	return 0;
+ }
+ 
+-static struct snd_soc_ops kabylake_ssp0_ops = {
++static const struct snd_soc_ops kabylake_ssp0_ops = {
+ 	.hw_params = kabylake_ssp0_hw_params,
+ 	.trigger = kabylake_ssp0_trigger,
+ };
+@@ -535,7 +535,7 @@ static int kabylake_dmic_startup(struct snd_pcm_substream *substream)
+ 			SNDRV_PCM_HW_PARAM_RATE, &constraints_rates);
+ }
+ 
+-static struct snd_soc_ops kabylake_dmic_ops = {
++static const struct snd_soc_ops kabylake_dmic_ops = {
+ 	.startup = kabylake_dmic_startup,
+ };
+ 
+@@ -569,7 +569,7 @@ static int kabylake_refcap_startup(struct snd_pcm_substream *substream)
+ }
+ 
+ 
+-static struct snd_soc_ops skylake_refcap_ops = {
++static const struct snd_soc_ops skylake_refcap_ops = {
+ 	.startup = kabylake_refcap_startup,
+ };
+ 
+diff --git a/sound/soc/intel/boards/kbl_rt5660.c b/sound/soc/intel/boards/kbl_rt5660.c
+index 894d127c482a..66885cb36f24 100644
+--- a/sound/soc/intel/boards/kbl_rt5660.c
++++ b/sound/soc/intel/boards/kbl_rt5660.c
+@@ -277,7 +277,7 @@ static int kabylake_rt5660_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops kabylake_rt5660_ops = {
++static const struct snd_soc_ops kabylake_rt5660_ops = {
+ 	.hw_params = kabylake_rt5660_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/kbl_rt5663_max98927.c b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+index e16c42e81eca..9da89436a917 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_max98927.c
+@@ -489,7 +489,7 @@ static int kabylake_rt5663_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops kabylake_rt5663_ops = {
++static const struct snd_soc_ops kabylake_rt5663_ops = {
+ 	.hw_params = kabylake_rt5663_hw_params,
+ };
+ 
+@@ -539,7 +539,7 @@ static int kabylake_ssp0_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops kabylake_ssp0_ops = {
++static const struct snd_soc_ops kabylake_ssp0_ops = {
+ 	.hw_params = kabylake_ssp0_hw_params,
+ };
+ 
+@@ -575,7 +575,7 @@ static int kabylake_dmic_startup(struct snd_pcm_substream *substream)
+ 			SNDRV_PCM_HW_PARAM_RATE, &constraints_rates);
+ }
+ 
+-static struct snd_soc_ops kabylake_dmic_ops = {
++static const struct snd_soc_ops kabylake_dmic_ops = {
+ 	.startup = kabylake_dmic_startup,
+ };
+ 
+@@ -609,7 +609,7 @@ static int kabylake_refcap_startup(struct snd_pcm_substream *substream)
+ 				&constraints_16000);
+ }
+ 
+-static struct snd_soc_ops skylake_refcap_ops = {
++static const struct snd_soc_ops skylake_refcap_ops = {
+ 	.startup = kabylake_refcap_startup,
+ };
+ 
+diff --git a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+index a9501cd106ff..a32ce8f972f3 100644
+--- a/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
++++ b/sound/soc/intel/boards/kbl_rt5663_rt5514_max98927.c
+@@ -424,7 +424,7 @@ static int kabylake_rt5663_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops kabylake_rt5663_ops = {
++static const struct snd_soc_ops kabylake_rt5663_ops = {
+ 	.hw_params = kabylake_rt5663_hw_params,
+ };
+ 
+@@ -469,7 +469,7 @@ static int kabylake_ssp0_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops kabylake_ssp0_ops = {
++static const struct snd_soc_ops kabylake_ssp0_ops = {
+ 	.hw_params = kabylake_ssp0_hw_params,
+ };
+ 
+@@ -508,7 +508,7 @@ static int kabylake_dmic_startup(struct snd_pcm_substream *substream)
+ 			SNDRV_PCM_HW_PARAM_RATE, &constraints_rates);
+ }
+ 
+-static struct snd_soc_ops kabylake_dmic_ops = {
++static const struct snd_soc_ops kabylake_dmic_ops = {
+ 	.startup = kabylake_dmic_startup,
+ };
+ 
+diff --git a/sound/soc/intel/boards/sof_es8336.c b/sound/soc/intel/boards/sof_es8336.c
+index c1fcc156a575..2a88efaa6d26 100644
+--- a/sound/soc/intel/boards/sof_es8336.c
++++ b/sound/soc/intel/boards/sof_es8336.c
+@@ -371,7 +371,7 @@ static int sof_es8336_hw_params(struct snd_pcm_substream *substream,
+ }
+ 
+ /* machine stream operations */
+-static struct snd_soc_ops sof_es8336_ops = {
++static const struct snd_soc_ops sof_es8336_ops = {
+ 	.hw_params = sof_es8336_hw_params,
+ 	.trigger = sof_8336_trigger,
+ };
+diff --git a/sound/soc/intel/boards/sof_maxim_common.c b/sound/soc/intel/boards/sof_maxim_common.c
+index 7e1f485dce7a..f49354193f13 100644
+--- a/sound/soc/intel/boards/sof_maxim_common.c
++++ b/sound/soc/intel/boards/sof_maxim_common.c
+@@ -141,7 +141,7 @@ int max_98373_trigger(struct snd_pcm_substream *substream, int cmd)
+ }
+ EXPORT_SYMBOL_NS(max_98373_trigger, SND_SOC_INTEL_SOF_MAXIM_COMMON);
+ 
+-struct snd_soc_ops max_98373_ops = {
++const struct snd_soc_ops max_98373_ops = {
+ 	.hw_params = max_98373_hw_params,
+ 	.trigger = max_98373_trigger,
+ };
+diff --git a/sound/soc/intel/boards/sof_maxim_common.h b/sound/soc/intel/boards/sof_maxim_common.h
+index 8886f985de68..638fba0b43bc 100644
+--- a/sound/soc/intel/boards/sof_maxim_common.h
++++ b/sound/soc/intel/boards/sof_maxim_common.h
+@@ -21,7 +21,7 @@
+ #define MAX_98373_DEV1_NAME	"i2c-" MAX_98373_ACPI_HID ":01"
+ 
+ extern struct snd_soc_dai_link_component max_98373_components[2];
+-extern struct snd_soc_ops max_98373_ops;
++extern const struct snd_soc_ops max_98373_ops;
+ extern const struct snd_soc_dapm_route max_98373_dapm_routes[];
+ 
+ int max_98373_spk_codec_init(struct snd_soc_pcm_runtime *rtd);
+diff --git a/sound/soc/intel/boards/sof_nau8825.c b/sound/soc/intel/boards/sof_nau8825.c
+index dd4dc4ec4255..5e781c45d51a 100644
+--- a/sound/soc/intel/boards/sof_nau8825.c
++++ b/sound/soc/intel/boards/sof_nau8825.c
+@@ -115,7 +115,7 @@ static int sof_nau8825_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops sof_nau8825_ops = {
++static const struct snd_soc_ops sof_nau8825_ops = {
+ 	.hw_params = sof_nau8825_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/sof_realtek_common.c b/sound/soc/intel/boards/sof_realtek_common.c
+index 6915ff8b8716..af1654f6d551 100644
+--- a/sound/soc/intel/boards/sof_realtek_common.c
++++ b/sound/soc/intel/boards/sof_realtek_common.c
+@@ -499,7 +499,7 @@ static int rt1015_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops rt1015_ops = {
++static const struct snd_soc_ops rt1015_ops = {
+ 	.hw_params = rt1015_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/sof_rt5682.c b/sound/soc/intel/boards/sof_rt5682.c
+index e3a2ec6b4c7c..ced5661d882a 100644
+--- a/sound/soc/intel/boards/sof_rt5682.c
++++ b/sound/soc/intel/boards/sof_rt5682.c
+@@ -406,7 +406,7 @@ static int sof_rt5682_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
+ }
+ 
+-static struct snd_soc_ops sof_rt5682_ops = {
++static const struct snd_soc_ops sof_rt5682_ops = {
+ 	.hw_params = sof_rt5682_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/sof_sdw_common.h b/sound/soc/intel/boards/sof_sdw_common.h
+index 94657dd210f5..cc749c8becc0 100644
+--- a/sound/soc/intel/boards/sof_sdw_common.h
++++ b/sound/soc/intel/boards/sof_sdw_common.h
+@@ -165,7 +165,7 @@ int sof_sdw_rt_sdca_jack_init(struct snd_soc_card *card,
+ int sof_sdw_rt_sdca_jack_exit(struct snd_soc_card *card, struct snd_soc_dai_link *dai_link);
+ 
+ /* RT1308 I2S support */
+-extern struct snd_soc_ops sof_sdw_rt1308_i2s_ops;
++extern const struct snd_soc_ops sof_sdw_rt1308_i2s_ops;
+ 
+ /* generic amp support */
+ int sof_sdw_rt_amp_init(struct snd_soc_card *card,
+diff --git a/sound/soc/intel/boards/sof_sdw_rt_amp.c b/sound/soc/intel/boards/sof_sdw_rt_amp.c
+index 1b415708500e..434e59624f69 100644
+--- a/sound/soc/intel/boards/sof_sdw_rt_amp.c
++++ b/sound/soc/intel/boards/sof_sdw_rt_amp.c
+@@ -259,7 +259,7 @@ static int rt1308_i2s_hw_params(struct snd_pcm_substream *substream,
+ }
+ 
+ /* machine stream operations */
+-struct snd_soc_ops sof_sdw_rt1308_i2s_ops = {
++const struct snd_soc_ops sof_sdw_rt1308_i2s_ops = {
+ 	.hw_params = rt1308_i2s_hw_params,
+ };
+ 
+diff --git a/sound/soc/intel/boards/sof_wm8804.c b/sound/soc/intel/boards/sof_wm8804.c
+index 4cb0d463bf40..b2d02cc92a6a 100644
+--- a/sound/soc/intel/boards/sof_wm8804.c
++++ b/sound/soc/intel/boards/sof_wm8804.c
+@@ -148,7 +148,7 @@ static int sof_wm8804_hw_params(struct snd_pcm_substream *substream,
+ }
+ 
+ /* machine stream operations */
+-static struct snd_soc_ops sof_wm8804_ops = {
++static const struct snd_soc_ops sof_wm8804_ops = {
+ 	.hw_params = sof_wm8804_hw_params,
+ };
+ 
 -- 
-2.34.1
+2.45.0
 
 
