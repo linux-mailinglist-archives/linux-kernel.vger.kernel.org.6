@@ -1,166 +1,169 @@
-Return-Path: <linux-kernel+bounces-176710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA66F8C338B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A9088C338D
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BC89B2117E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2173C2821A6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10FC1F94D;
-	Sat, 11 May 2024 19:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B9021350;
+	Sat, 11 May 2024 19:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTJpUNBK"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MNgjzpo2"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2053.outbound.protection.outlook.com [40.92.42.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751E21CD37;
-	Sat, 11 May 2024 19:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715456162; cv=none; b=sL3Frr9z1qGMZuaDV40jTSBhzgi+jSewrAaubfTRO3NBH+iNRNjN57DI7m/j/+RFkqzf3plyZTH+RNlfWRX0IhuFqaMdOvXIa4qWgMcA9d7WxyKqFKlXMu6sFDM9x1nBIt0rizMN/XjSwMlH9u0SAYbKUS4lpHoHn1dJ+OHAw14=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715456162; c=relaxed/simple;
-	bh=OiMNVneXw39Z/+zBoGpu2bdamhnv48eIjRCJNeLqROs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xi0m/7uhdpIZZHO9Vd13ZmwGkDImOiKZ5Cuuipj5rGAb6F6Q68qBNoTKHadsK7/3dI6CiaGTfAkoNFai/NMHNSaFH4UtXdpTPKigQXsZF9DMB/3a2E7Tzn2kcvmPqFoITggo6zMlOdKukSm8I+O8G687Y6eIQ8szWiO3WyaGq6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTJpUNBK; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-41fd5dc04e2so17000235e9.3;
-        Sat, 11 May 2024 12:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715456159; x=1716060959; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rk1GGf5u2kjIs5FRwMwrvHf3FLz3D5a84ZblldMBK6I=;
-        b=OTJpUNBKD9U4dVi3/Vssorx+4z8wGiZsl9SLvzaiPPh6wzVtkPr00QnheM6AbZSIQG
-         WVjDkqsMckdoUP97n4+8Osv4pLKp4xXhekI4FnSiRFNKWxylB9tPcIQWwOKTDLydgk10
-         hdkF70zTI12fPftET76mVHRdkIUivqOFlr/AqTPs6eThPv94OSenR5bUi1GiO9z5epFn
-         weEq4Vnwl3LrUwFL7lUhWb8Pc5vpLIEJGGttRzMRIuCnRZAiT8+yp4DVZ3Et7nF0S6jK
-         LjZ3zvd7v9MfD3AwlJJQg0R8qQNlL7TSYJDtB1C6qQlnERxTgzi0b0DuOcPVmD1cik9E
-         R+qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715456159; x=1716060959;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rk1GGf5u2kjIs5FRwMwrvHf3FLz3D5a84ZblldMBK6I=;
-        b=mW3eH4bnONdfE6wpq1CmOviDlh51xc0sKYmKjcrOPJdRgKtDFHILZg+hxASIr0RKuc
-         qPeU68luepFw/zmTq46GlJ45dzTc1FxeSPASpS7HLxTvqFZXmojwB42O6sMym2wU0Ubs
-         x5WEevZdmXI2uBaqYIZH1oAC++gTAgEVD9pfoXvMb4/Xjsztt63SPbF6RNfIWD6jcNTV
-         zD8qGyz1ug7B8iUDiFfmztj5lJ1PJ4jFtQ+zDc7CIl6VaViVDqiTyKiXwsBCuRCguNUE
-         Y2bwjrOpR5mUZ4IWCGi86a6iV11K6MDAUQRen+bRHFfEAzAYIwQFGaN5xOOjY4SMOl5A
-         FvqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcsE4Is3UNvK3DyKrh+tCOEMaobfxjRd20BPLyrRbayK91sQ+NEwnVZH1rylzWFEWgIZq0Hstx9RhibhaO8I4qgsWJjKl2RMOKZea9
-X-Gm-Message-State: AOJu0Yy1ePiO6lOvhc/myr7Z9s/eEJyNDvWN+RRabaVrzX9XWQ9HLG7A
-	x9Dp9w/iRhHUWHYI20Ma2KPXUkSL4m7qQm6iK8WiVE0YX4SN7DGs
-X-Google-Smtp-Source: AGHT+IHNZr5UOEOlj4LbyMiTffRVh/9Js+pHnWyuPyA8+dZpJwtYVgCLefI1MHZuCCqZvCMlnJBUJQ==
-X-Received: by 2002:a05:600c:4686:b0:419:d5cd:5ba with SMTP id 5b1f17b1804b1-41feaa2f45cmr37412975e9.7.1715456158673;
-        Sat, 11 May 2024 12:35:58 -0700 (PDT)
-Received: from kali.localhost ([5.208.232.15])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41facbd295fsm125245835e9.36.2024.05.11.12.35.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 12:35:58 -0700 (PDT)
-From: Kiarash Hajian <kiarash8112hajian@gmail.com>
-Date: Sat, 11 May 2024 15:35:41 -0400
-Subject: [PATCH] drm/msm/adreno: request memory region
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFD120B04;
+	Sat, 11 May 2024 19:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715456166; cv=fail; b=VbFF63+r0B3c72QbPkNAFiuhvi4QwlBl0m5w5RsMtZPUw3GuR9xC6hfC8g1OsG4CTvJ3gdVX0zLvAZTidnMufo5AdLH0G55uiE04X34hz1tBVsSa6ldxWpqq9BQv72QBo6U6H14YZh6gvz2ePheMI27SPNatGBe0IQBE+pchgCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715456166; c=relaxed/simple;
+	bh=oi/JtqXrq4yZJOxNcygVxUeWyKjjGvrFdFGtQpW5Ojo=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VW5Yj/JfVVxcsQBIbABTT2p43HKLC9o/3j0aJhF8hsStskS25OEToR+abDVqAxiRtbaLYqEvrXbh0/2A1GmySt6RTVvYKKZT1PotfYMU1iNHb0BwHQLWgLyymyWr7NBHjSmoni7svqNxJgPvVi+u7cF9W+5iM/RL25x9UEfprQM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MNgjzpo2; arc=fail smtp.client-ip=40.92.42.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BchJ0LYROhrhiBjnHClnCT88/6aUIjHM7mCoA7lyE4J8HgL0xaOaANgokhDyS+vz+pMKLWDaCGzZS/86aQcXd3Ih8oVxb+7X4Dq7A/onRSVFK+le9Di/2p2gEniOLdFrqTgw3qRgmOHwc6sBKdkacA5pz2fqobG6/+2jqnV3O/j9HX7mnlDOo4ZkxvIgrtQrrzHCoqoKlEvkzpg6Mf6Gp+TiNPW8Ki2KniwsF0jbAzkGf3B6y1wmhRFDMbcmRrl2gNW0JGzwPzK+Bd2teM42nIbYJf2TBOJKc6YmGAXrlwwOeHdaAkkwWH6Z+GAvvLrkHIygcW1p/PvNg44xtCUbxg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wTEHevXtBALILTvZFXdYnRGQwap0ECBwbib+9ZL11qs=;
+ b=cFWfQhVakATiVNm4i8vbuBeLIbL7+QpF6XrYQb9P8HVS+T/9vkUYLpBQnygArbiEp6hmqlhUHYHYTzjV5TWpEhsnGomx+RAyn56a8aY2HJGmtpWvsyyVQci/vDqPZf6FrvJLjigNhsouycsy+KNQ2DOGskUWmzhUyXhL+DEmmBoRzpEH6aGF6qJIr6VFiEpRhjWBrRgnK40MxAFWx8hi6Ool9diRKy2N5aYodXE1uCvllWL8NZX6tuks4Rq8x7LDmw0QFa4z8nYRRG+LWGZmfVF44VhQBIMDnKT2tcHoLzsLZhjeuXffDLPwvXQNcqIxSDjCTK+B+zyj9/pctWfObw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wTEHevXtBALILTvZFXdYnRGQwap0ECBwbib+9ZL11qs=;
+ b=MNgjzpo2DkV3G2A2zs+mYGG+c9DSBy5+mb4UM94GOrHuAYlAHaKPxcj3ejWRqatQ/6R3H2fp4OV78zLSpcgVfYeDpGa0ibA6aluYeUgyWTHvpmjTzQwv7ls4uuN+fTX3XBqkMtFefm2NRhx2iQR8Qaio9vZiJZys4eoCsFi7CD39k2hUOeq4ZeCqxVmT0bpzC9iu1xTbk1bZuxqEzwU+MZd5VL1qXV0s7107LHo6KUodfyIUfRjhfV2enWre+ae4aOZ0MLuoSpJARyN/219f51NHvh6A+jsus+JnEd4BqVavg5kPzAsA+5hqohzQVbfqwbx/OvUzMJMiIDqwSRh7lQ==
+Received: from BYAPR03MB4168.namprd03.prod.outlook.com (2603:10b6:a03:78::23)
+ by SA2PR03MB5817.namprd03.prod.outlook.com (2603:10b6:806:11d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sat, 11 May
+ 2024 19:36:01 +0000
+Received: from BYAPR03MB4168.namprd03.prod.outlook.com
+ ([fe80::b8b1:7fdc:95d4:238a]) by BYAPR03MB4168.namprd03.prod.outlook.com
+ ([fe80::b8b1:7fdc:95d4:238a%6]) with mapi id 15.20.7544.052; Sat, 11 May 2024
+ 19:36:01 +0000
+From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	lv.zheng@intel.com,
+	rui.zhang@intel.com
+Cc: linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@outlook.com>
+Subject: [PATCH] ACPI: scan: Add missing check for kstrdup()
+Date: Sat, 11 May 2024 19:35:53 +0000
+Message-ID:
+ <BYAPR03MB4168E7E5A2616EB82D3883E8ADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [Jmn7bo0UqbPoR9JU8HOsHK2e9uh/CRwq]
+X-ClientProxiedBy: CH0P223CA0014.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:610:116::18) To BYAPR03MB4168.namprd03.prod.outlook.com
+ (2603:10b6:a03:78::23)
+X-Microsoft-Original-Message-ID:
+ <20240511193553.47448-1-jiashengjiangcool@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240511-msm-adreno-memory-region-v1-1-d73970717d42@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAIzIP2YC/x3MMQqAMAxA0atIZgOmqKhXEYdao2ZoKymIIt7d4
- viH9x9IrMIJhuIB5VOSxJCDygLcbsPGKEtuMJWpq4YIffJoF+UQ0bOPeqPylhGa2c3k+qZrDUH
- mh/Iq178ep/f9AM1XAQFqAAAA
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Kiarash Hajian <kiarash8112hajian@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715456155; l=2175;
- i=kiarash8112hajian@gmail.com; s=20240409; h=from:subject:message-id;
- bh=OiMNVneXw39Z/+zBoGpu2bdamhnv48eIjRCJNeLqROs=;
- b=5UKYF4UqI69vJ0gbgJ/UKLd1lWu7EAUd4vrov1D/sQ4sogduWXDoZtBc4Xe9+JFyIxEhXz98m
- UO9OpHAI4ZWAUuRZuUFQjs2dSfE+hSH/g2IdcyRFdHq2yswd9yXJjd6
-X-Developer-Key: i=kiarash8112hajian@gmail.com; a=ed25519;
- pk=ehVBr28gPcA8cMB/wneVh0Mj6WGkqZoyYRdRNi5+aI0=
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR03MB4168:EE_|SA2PR03MB5817:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd1bceef-bb9d-4e15-a208-08dc71f196a9
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|3420499023|3430499023|440099019|3412199016|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	dIMjw1Z28Vha15pwWKSP12uHYX7/ITtvZHXT6VRCDGslC+gSj6Rg7BYNSSqWOW4GztniQjUpGRjQAQdqdJ9wmV+mYU7E5gA7YXq3Iy/Y82quzOmIHNYi2PpZTuq/mwiPZXipADhPQL7YSUhRDw2MOJr7vpMBEYJ3WFz05xI+5niV28ZUjsEh1/maoTwjg/9PmxhNujfyx4qxoEujLiT0TlLspfio4OIDIVdzC2QfLhPjgJl8WQ5Av5w8xgDoYE261SuJDwEC5w6aD1SQbYonEZIdXbdGvi1z6LRki98OkG3PVRgbFvmsU1Ou7kHnI646KlJkvPtehyHHKTBpBHrOOMl3qemRBcMSPR19bhRE9STfg1g/z97gGK2ULPpMPQp80oT+TJ8NMGXeGODXWITNvjVdXdI7OYgsYPqOEn02DMooOmImcuVXp5kKg8oQW0szpi3jcPYPS6wH5pCME17HBid1sb/1KPjoDbHDqzzQLdNuvDDV6v1Vum3Tn6fEH7hvqxZA0I0yZsIXIsmCBPDyxPe5MNkxDY7hkjvbSU8u1kdz9MOsFyQtKe6N2ZpjnRYcMwbxfRdWjb38YO1zNRRQnjhmqqhEXRuFA15ENcZ0JzKcf8sWiKddxbup6eEbN8n4
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?wYzHVad8Ym3keRM4aTePZu1HWb7QLy8fPIfQsXHt7753mW/19mV/9xHcZtHQ?=
+ =?us-ascii?Q?09y+3W5Mjd05F2eQ03HPqhtHC0iVKbBJziVGUWI7KnwDGv4tyhoNcOuHLpow?=
+ =?us-ascii?Q?62uBDkxjYdOaoDDHmQ/VgEV9f8ie2N8XCkn15H9ulWtXCtGrQXKa8UtDE8yM?=
+ =?us-ascii?Q?blOCu0SPmc9xpMsD+cdeUkG28rymV6rSy4IBxOucJ+4f/gdSyhqgE3X0XISs?=
+ =?us-ascii?Q?MK+ybYd5YqPt51NPg+lo0ZbPL9StDe5UTz9u92ZcTMl7aWiOMkukFRA0y6mk?=
+ =?us-ascii?Q?Pawpoyg2ra8jQPdtnhapeaw7JzOW5ixthRAHoG0OT7ime8hdKfHlsfu5Erae?=
+ =?us-ascii?Q?o9lsyaGR2mMXPw9dyJ0HYbz5/sHOzZ3HCbVyqbFvQcQjw1OFQ1zgtlFinFiC?=
+ =?us-ascii?Q?2PYQ9XQKAg1IjbDey6Cttz8LoZqhznyIIBw1JoURakURsVDPRbuo6EBwXhCy?=
+ =?us-ascii?Q?AvbeqfF1LqEQYRaKMHshcVZKhFmB0K1b+gVA7h6UF7ndUqetU2I53gVh0VEs?=
+ =?us-ascii?Q?5+lwn/EKBrM3G4XIiZiyypiZXgFRqzBtrOU3TZZzeY7MRNX0mTN5nAOQpA23?=
+ =?us-ascii?Q?79yJc1Dj003OeipUzTFAvodV/E22ujPlXczG8Dea17NNAT1dcu29Pe1Lrez6?=
+ =?us-ascii?Q?nUJpzAKY6EvuY1/Ic7kwjLl4y5Cw/o3FIoSi3q8xZ6XMOHdZ3IXzBVEx5tbA?=
+ =?us-ascii?Q?xq1tRkTFA7Ve67tOhW4MY6M6azQ3vt76lFlDGt/m0NSy0yrCi5uolLjPhnA4?=
+ =?us-ascii?Q?s1exIoqwBMz9kGEq5evE8bc8/eGptQ8Ov9E+/IN8Cpff9MEqVqftFX75Z9xi?=
+ =?us-ascii?Q?/+PaxndlX59hrqh9yddDvSEAPSJw/NpXL2tCqg91CWkm4xT4ZD8t2Mlcj3tG?=
+ =?us-ascii?Q?QyeQLkrnNTxo6b0j31kBvbuIkmEKa1E7+2hhzRtbWSG5oRV2vi2D8GLD1P9J?=
+ =?us-ascii?Q?yL831ssI4MjgGjLfkAEl3Dy1yDPCICKIFIAfDViYFuGvLCZrb1E1tY1SdJUK?=
+ =?us-ascii?Q?KkM8S28e/up8yv096thqGfH6PfM6pN0te/twnI/wd32Ryb/NgBkKsJ8+hOoj?=
+ =?us-ascii?Q?mI1hsXbwdhHqvbqWjtTeoTKFZXM1Uy/tD+9FuecheJlWvsAg3pzOLFyTCldL?=
+ =?us-ascii?Q?xKfJ3Cdkn0uilpaSbixc6+pFhIIGlR1zAUPXD65Im59CuKBFpDjX2UBGN6gp?=
+ =?us-ascii?Q?GXqo4I4an0cmZFalM2LHYNuHCBR9IsBQBK5MlOkZrQjeiozoPsTUdFNLhqGU?=
+ =?us-ascii?Q?y34Rl1SqIBnvInNsLX/X?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd1bceef-bb9d-4e15-a208-08dc71f196a9
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB4168.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 19:36:00.9992
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR03MB5817
 
-The driver's memory regions are currently just ioremap()ed, but not
-reserved through a request. That's not a bug, but having the request is
-a little more robust.
+Add check for the return value of kstrdup() in order to gurantee
+the success of allocation.
+Moreover, move the code forward to simplify the error handling.
 
-Implement the region-request through the corresponding managed
-devres-function.
-
-Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
+Fixes: ccf78040265b ("ACPI: Add _UID support for ACPI devices.")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
 ---
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/acpi/scan.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-index 8bea8ef26f77..aa83cb461a75 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-@@ -636,9 +636,9 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index d1464324de95..59246757a207 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1385,6 +1385,15 @@ static void acpi_set_pnp_ids(acpi_handle handle, struct acpi_device_pnp *pnp,
+ 			return;
+ 		}
  
- err:
- 	if (!IS_ERR_OR_NULL(pdcptr))
--		iounmap(pdcptr);
-+		devm_iounmap(&pdev->dev,pdcptr);
- 	if (!IS_ERR_OR_NULL(seqptr))
--		iounmap(seqptr);
-+		devm_iounmap(&pdev->dev,seqptr);
- }
++		if (info->valid & ACPI_VALID_UID) {
++			pnp->unique_id = kstrdup(info->unique_id.string,
++							GFP_KERNEL);
++			if (!pnp->unique_id) {
++				kfree(info);
++				return;
++			}
++		}
++
+ 		if (info->valid & ACPI_VALID_HID) {
+ 			acpi_add_id(pnp, info->hardware_id.string);
+ 			pnp->type.platform_id = 1;
+@@ -1398,9 +1407,6 @@ static void acpi_set_pnp_ids(acpi_handle handle, struct acpi_device_pnp *pnp,
+ 			pnp->bus_address = info->address;
+ 			pnp->type.bus_address = 1;
+ 		}
+-		if (info->valid & ACPI_VALID_UID)
+-			pnp->unique_id = kstrdup(info->unique_id.string,
+-							GFP_KERNEL);
+ 		if (info->valid & ACPI_VALID_CLS)
+ 			acpi_add_id(pnp, info->class_code.string);
  
- /*
-@@ -1503,7 +1503,7 @@ static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	ret = ioremap(res->start, resource_size(res));
-+	ret = devm_ioremap_resource(&pdev->dev, res);
- 	if (!ret) {
- 		DRM_DEV_ERROR(&pdev->dev, "Unable to map the %s registers\n", name);
- 		return ERR_PTR(-EINVAL);
-@@ -1646,7 +1646,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 	dev_pm_domain_detach(gmu->cxpd, false);
- 
- err_mmio:
--	iounmap(gmu->mmio);
-+	devm_iounmap(gmu->dev ,gmu->mmio);
- 
- 	/* Drop reference taken in of_find_device_by_node */
- 	put_device(gmu->dev);
-@@ -1825,9 +1825,9 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
- 	dev_pm_domain_detach(gmu->cxpd, false);
- 
- err_mmio:
--	iounmap(gmu->mmio);
-+	devm_iounmap(gmu->dev ,gmu->mmio);
- 	if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
--		iounmap(gmu->rscc);
-+		devm_iounmap(gmu->dev ,gmu->rscc);
- 	free_irq(gmu->gmu_irq, gmu);
- 	free_irq(gmu->hfi_irq, gmu);
- 
-
----
-base-commit: cf87f46fd34d6c19283d9625a7822f20d90b64a4
-change-id: 20240511-msm-adreno-memory-region-2bcb1c958621
-
-Best regards,
 -- 
-Kiarash Hajian <kiarash8112hajian@gmail.com>
+2.25.1
 
 
