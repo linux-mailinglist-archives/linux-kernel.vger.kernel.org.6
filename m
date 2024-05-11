@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-176577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D910C8C31D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:30:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED148C31DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52DCFB21140
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:30:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A383A1F2195A
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05E556448;
-	Sat, 11 May 2024 14:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34B01E526;
+	Sat, 11 May 2024 14:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Hf91AIkh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bceFpgC6"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6C154675;
-	Sat, 11 May 2024 14:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E60079DC
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715437811; cv=none; b=nUPAtKUVRuD6YDNuQ7W97UFqoevfRp0WXDr4e6yk+z7lbj/xN/QTuSofqSEzuJv2i5F0Q/kz9WZ2EvLVdL/vlIeeNVHvoOjIrukyZ6+xC/UJpB59YVd71T3X9MmZ1aflBG8MB0+sz6VawVeHNk3e9Z24R4x81+2bXHCKFSd+PZs=
+	t=1715437838; cv=none; b=Y0Cftuu/xUzav5n1dWr4ZUbVjdt+ir5CI8B2g1EOeGW9NlfzEHwDyyfsDHFG4kUxIiL25m9L2igIiqvAtLUfANWUQq16KAgSupijZt12AMzl9dn5fMoyfFSNlS+pAfnl9f/MHBi6l8UMqtcMZAouXcf5ulaNnxDTC8w9R0naQKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715437811; c=relaxed/simple;
-	bh=Ljf9kyd52InGJKqfdBuV4Ah4NYoQ0uueOOS0D+QxAlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adqaZeZsj6mMgDAnpUzMQIPcG31zWbBvKuhTn34Eyyb5adj76feXHhYieb8/BCDgb2uZqGfdEwa93YUmBQLZsCEwJz5KOKL35LWGH4slrp+otQCrapX8uYn77HmBR8NgDUjDGK8sS/PhtF6kb9C/bOQXMIQW8SbDIdjYsmUqnV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Hf91AIkh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5MHosLGyMfOMQTFlE11a37ZDMCC9zCbFJQj+2H5rwUU=; b=Hf91AIkhkaSC/B2WvhNWfwFnWf
-	Kq/EjgoDVI6qd9M6wXYFCYedTgtUun6AbuF8yvyUPI32/G6ilEsrdkmELeZYD1x4pyjh33PZ++2ok
-	xa0UUy15UX1uZDoqYtGX2wzPl4ea9Pyie9+77E5Iu29n/yCdXDzpTH2O/k/0BGTruXz0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s5njP-00FCTL-Pz; Sat, 11 May 2024 16:29:47 +0200
-Date: Sat, 11 May 2024 16:29:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shenwei.wang@nxp.com, xiaoning.wang@nxp.com,
-	richardcochran@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH v2 net-next] net: fec: Convert fec driver to use lock
- guards
-Message-ID: <b96822ea-4373-415d-8397-d8bc5da88120@lunn.ch>
-References: <20240511030229.628287-1-wei.fang@nxp.com>
+	s=arc-20240116; t=1715437838; c=relaxed/simple;
+	bh=6JX9U5QXTQM+ymSkQwIVScF/Sz2ugLRJCrrSvRtA14Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jnFyyJ/+yzS4CHbhKsuGuFASK45ek4NyvDmion8FTqHVfd9pnrRANSErGZSAsQMCRSKcR2v7gicjpJll9xfjYp94jdSONOV6mmnAsZFSJ/UEUdElbVFBrHUlyYz0/PgLIhJj8gXESQaZg6sFtdr4vcCIhCb6u644tU4My8hCsCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bceFpgC6; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715437834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8lCE5BMQPZQrEu+DdqUQa+ciyt6sV2leU46hmIRgywE=;
+	b=bceFpgC62YkDbNS/v2cATnJkVcA3lhWGkOE64zqb3ABgk66VZE1un2/0/5lGMwOrHOZMML
+	xlgBFzdKYFpXs5ZNvidF/AEFeVKT+EBD0xAsIAGY74R2Ubxdjtnx5CsjRfKjjAumwqaEhX
+	xgU3ugvwy7yZX+bCEpvXipXhwqkqTjg=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/bridge: cdns-mhdp8546: Remove a redundant check on existence of bridge->encoder
+Date: Sat, 11 May 2024 22:30:27 +0800
+Message-ID: <20240511143027.320180-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240511030229.628287-1-wei.fang@nxp.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, May 11, 2024 at 11:02:29AM +0800, Wei Fang wrote:
-> The Scope-based resource management mechanism has been introduced into
-> kernel since the commit 54da6a092431 ("locking: Introduce __cleanup()
-> based infrastructure"). The mechanism leverages the 'cleanup' attribute
-> provided by GCC and Clang, which allows resources to be automatically
-> released when they go out of scope.
-> Therefore, convert the fec driver to use guard() and scoped_guard()
-> defined in linux/cleanup.h to automate lock lifetime control in the
-> fec driver.
+In the cdns_mhdp_connector_init() function, the check on the existence
+of bridge->encoder is not necessary, as it has already been done in the
+drm_bridge_attach() function. And the check on the drm bridge core
+happens before check in the implementation. Hence, it is guaranteed that
+the .encoder member of the struct drm_bridge is not NULL when
+adv7511_bridge_attach() function gets called.
 
-Sorry, it has been decided for netdev we don't want these sort of
-conversions, at least not yet. The main worry is backporting fixes. It
-is likely such bcakports are going to be harder, and also more error
-prone, since the context is quite different.
+Remove the redundant checking codes "if (!bridge->encoder) { ... }".
 
-If done correctly, scoped_guard() {} could be useful, and avoid
-issues. So we are O.K. with that in new code. That will also allow us
-to get some experience with it over the next few years. Maybe we will
-then re-evaluate this decision about converting existing code.
-
-    Andrew
-
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
 ---
-pw-bot: cr
-     
+ drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+index e226acc5c15e..16b58a7dcc54 100644
+--- a/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
++++ b/drivers/gpu/drm/bridge/cadence/cdns-mhdp8546-core.c
+@@ -1697,11 +1697,6 @@ static int cdns_mhdp_connector_init(struct cdns_mhdp_device *mhdp)
+ 	struct drm_bridge *bridge = &mhdp->bridge;
+ 	int ret;
+ 
+-	if (!bridge->encoder) {
+-		dev_err(mhdp->dev, "Parent encoder object not found");
+-		return -ENODEV;
+-	}
+-
+ 	conn->polled = DRM_CONNECTOR_POLL_HPD;
+ 
+ 	ret = drm_connector_init(bridge->dev, conn, &cdns_mhdp_conn_funcs,
+-- 
+2.43.0
+
 
