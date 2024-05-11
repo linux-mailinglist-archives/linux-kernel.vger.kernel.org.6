@@ -1,185 +1,244 @@
-Return-Path: <linux-kernel+bounces-176444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B65388C2FFB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35BE18C2FF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:11:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F250128324E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEAAC2831D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8917AC136;
-	Sat, 11 May 2024 07:13:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1648E610D;
+	Sat, 11 May 2024 07:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nU6KhbGo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6826623DE;
-	Sat, 11 May 2024 07:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC7223DE
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715411617; cv=none; b=NhYBy96+pd7ssC3i6GwsVsHCy6AGK60M4xE9MCLZ7yQ/G0pUIkGsq+9HQEFNmNYehzSibIOG8plXtUqLwRU9vYovxDTP9LH5C0eqJbkWJCo9W6xZ6BEJpCCHjv483Gk5LuYDeeLDSWHfpzWYOsXx0ykD+DGb79zRQS7yUTHoP8s=
+	t=1715411455; cv=none; b=HH+65npWFD5vTMyHqWWlBqWtRE3d6MDinUoFMof8RZvMtnbE/wEuxngFyZT4DDJA10nU/OLSZKjUXxqbbQ6kuFemlwgY1FlpW3kyZ/P72Yqvuxz0x8KbxvU9dPUL/FfpaXXsWrc+k3owT4ooyknCNFrRP3LVfxDvZvAeiGSRulo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715411617; c=relaxed/simple;
-	bh=W02rN6+dmjgQHK0sw+P6S03XnBULSaYsnfI6rN3LyVg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rQ+2LPNzyv2vvypcW7CwNSdfGYEBznDlqtkEy3aZ+2Q3GRd+yuFFFhYDZd0Np/BIDGTMRqen69RRujuBAF71hSr4qmY/4QeUlzHOIdx0K2U99hiJaGe/tmew0oqW1GqTLHpWR5MRDxJeRMrM39X+YYmKp5Vf6rDANv2adBfzFCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vbxmh1NHtz4f3jZ8;
-	Sat, 11 May 2024 15:13:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 942C81A016E;
-	Sat, 11 May 2024 15:13:29 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g6XGj9mhzZnMQ--.38080S4;
-	Sat, 11 May 2024 15:13:29 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH md-6.10] md: remove parameter check_seq for stop_sync_thread()
-Date: Sat, 11 May 2024 15:03:17 +0800
-Message-Id: <20240511070317.3008687-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715411455; c=relaxed/simple;
+	bh=oyDUWqLDwbK+E8ae5PQEQM36NHlDvJ0aoPYAs4uKaoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=qDquweBExsi3WXUjpXw/OO6rCCYAORUjlXHN38RSi+fOT6LGn9BPgg4ooRKUnFOg6rn+3wG/8bKBcKTwQ3lD36BSiUijiQXCHwZU+89mXpsg0v0trRMEQdOpzyj3PlY72d1H5do+tzmKcbKLGHxlwukw4AgTFFAVhCbY4hEkjKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nU6KhbGo; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715411453; x=1746947453;
+  h=date:from:to:cc:subject:message-id;
+  bh=oyDUWqLDwbK+E8ae5PQEQM36NHlDvJ0aoPYAs4uKaoQ=;
+  b=nU6KhbGoSazgqUOE7Bh0VYVBYUeUHT577nNd99UNFp1xJtWgUV7LYUJY
+   u334WadYzqdYDk7hy1JAn1wwcr5ZE59KYfJwzRZx53ml+OvPcXcH4MiKN
+   9dZ6fUDeYPmw+1JmmczvPgbimmIVTIE8O4e9SYQeeSMJCRhrdjq8JLOKE
+   EZ3+NYHx7yfU5AZFAXq+Ajhay8GRrXohjCPn3DJko0Hvm/SACninua7mY
+   piKSvoTWMLJXZ+aRB/IeRHxJ5cHYtny7tV0ncUcyBWjY18AfjUyXs0Kqs
+   iXEEJb6c8SHOokHiw/B0lMRMHx29cVzjyQfj0VHaCKCsfT23pjvxwFRA8
+   Q==;
+X-CSE-ConnectionGUID: VU/JHvgeQYiCRXI4CtKj9A==
+X-CSE-MsgGUID: FYVClWcHSe20ThTNoEk/uA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11630030"
+X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
+   d="scan'208";a="11630030"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2024 00:10:53 -0700
+X-CSE-ConnectionGUID: YAguFicwRNqbO6aKWSyb+g==
+X-CSE-MsgGUID: 7CHkUwXAT56uli8Eu0jZxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
+   d="scan'208";a="29913058"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 11 May 2024 00:10:53 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s5gsb-00074Q-2Y;
+	Sat, 11 May 2024 07:10:49 +0000
+Date: Sat, 11 May 2024 15:10:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:timers/core] BUILD SUCCESS
+ a3825a7691585485e960cec04ce6667d176b7c67
+Message-ID: <202405111506.t22tDJav-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX5g6XGj9mhzZnMQ--.38080S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF1ftw18tFW5Cw45GrWDXFb_yoWrJr4rpr
-	WfXF98Ar4UArWfZrW7Ka4DZay5Zrn2qa4DtFy3u3yfJ3Z3trsrGFyY93WUAFykGa4rX3Zx
-	AayrJF43Za4xGr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7Cj
-	xVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+branch HEAD: a3825a7691585485e960cec04ce6667d176b7c67  Merge tag 'timers-v6.10-rc1' of https://git.linaro.org/people/daniel.lezcano/linux into timers/core
 
-Caller will always set MD_RECOVERY_FROZEN if check_seq is true, and
-always clear MD_RECOVERY_FROZEN if check_seq is false, hence replace
-the parameter with test_bit() to make code cleaner.
+elapsed time: 1179m
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+configs tested: 152
+configs skipped: 3
 
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 95b0f9642137..d94899621cbf 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4945,15 +4945,10 @@ action_show(struct mddev *mddev, char *page)
-  * @locked:	if set, reconfig_mutex will still be held after this function
-  *		return; if not set, reconfig_mutex will be released after this
-  *		function return.
-- * @check_seq:	if set, only wait for curent running sync_thread to stop, noted
-- *		that new sync_thread can still start.
-  */
--static void stop_sync_thread(struct mddev *mddev, bool locked, bool check_seq)
-+static void stop_sync_thread(struct mddev *mddev, bool locked)
- {
--	int sync_seq;
--
--	if (check_seq)
--		sync_seq = atomic_read(&mddev->sync_seq);
-+	int sync_seq = atomic_read(&mddev->sync_seq);
- 
- 	if (!test_bit(MD_RECOVERY_RUNNING, &mddev->recovery)) {
- 		if (!locked)
-@@ -4974,7 +4969,8 @@ static void stop_sync_thread(struct mddev *mddev, bool locked, bool check_seq)
- 
- 	wait_event(resync_wait,
- 		   !test_bit(MD_RECOVERY_RUNNING, &mddev->recovery) ||
--		   (check_seq && sync_seq != atomic_read(&mddev->sync_seq)));
-+		   (!test_bit(MD_RECOVERY_FROZEN, &mddev->recovery) &&
-+		    sync_seq != atomic_read(&mddev->sync_seq)));
- 
- 	if (locked)
- 		mddev_lock_nointr(mddev);
-@@ -4985,7 +4981,7 @@ void md_idle_sync_thread(struct mddev *mddev)
- 	lockdep_assert_held(&mddev->reconfig_mutex);
- 
- 	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
--	stop_sync_thread(mddev, true, true);
-+	stop_sync_thread(mddev, true);
- }
- EXPORT_SYMBOL_GPL(md_idle_sync_thread);
- 
-@@ -4994,7 +4990,7 @@ void md_frozen_sync_thread(struct mddev *mddev)
- 	lockdep_assert_held(&mddev->reconfig_mutex);
- 
- 	set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
--	stop_sync_thread(mddev, true, false);
-+	stop_sync_thread(mddev, true);
- }
- EXPORT_SYMBOL_GPL(md_frozen_sync_thread);
- 
-@@ -5019,7 +5015,7 @@ static void idle_sync_thread(struct mddev *mddev)
- 		return;
- 	}
- 
--	stop_sync_thread(mddev, false, true);
-+	stop_sync_thread(mddev, false);
- 	mutex_unlock(&mddev->sync_mutex);
- }
- 
-@@ -5033,7 +5029,7 @@ static void frozen_sync_thread(struct mddev *mddev)
- 		return;
- 	}
- 
--	stop_sync_thread(mddev, false, false);
-+	stop_sync_thread(mddev, false);
- 	mutex_unlock(&mddev->sync_mutex);
- }
- 
-@@ -6529,7 +6525,7 @@ void md_stop_writes(struct mddev *mddev)
- {
- 	mddev_lock_nointr(mddev);
- 	set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
--	stop_sync_thread(mddev, true, false);
-+	stop_sync_thread(mddev, true);
- 	__md_stop_writes(mddev);
- 	mddev_unlock(mddev);
- }
-@@ -6597,7 +6593,7 @@ static int md_set_readonly(struct mddev *mddev)
- 		set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
- 	}
- 
--	stop_sync_thread(mddev, false, false);
-+	stop_sync_thread(mddev, false);
- 	wait_event(mddev->sb_wait,
- 		   !test_bit(MD_SB_CHANGE_PENDING, &mddev->sb_flags));
- 	mddev_lock_nointr(mddev);
-@@ -6643,7 +6639,7 @@ static int do_md_stop(struct mddev *mddev, int mode)
- 		set_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
- 	}
- 
--	stop_sync_thread(mddev, true, false);
-+	stop_sync_thread(mddev, true);
- 
- 	if (mddev->sysfs_active ||
- 	    test_bit(MD_RECOVERY_RUNNING, &mddev->recovery)) {
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                             allnoconfig   gcc  
+alpha                            allyesconfig   gcc  
+alpha                               defconfig   gcc  
+arc                              allmodconfig   gcc  
+arc                               allnoconfig   gcc  
+arc                              allyesconfig   gcc  
+arc                                 defconfig   gcc  
+arc                   randconfig-001-20240511   gcc  
+arc                   randconfig-002-20240511   gcc  
+arm                              allmodconfig   gcc  
+arm                               allnoconfig   clang
+arm                              allyesconfig   gcc  
+arm                                 defconfig   clang
+arm                   randconfig-001-20240511   clang
+arm                   randconfig-002-20240511   clang
+arm                   randconfig-003-20240511   gcc  
+arm                   randconfig-004-20240511   gcc  
+arm64                            allmodconfig   clang
+arm64                             allnoconfig   gcc  
+arm64                               defconfig   gcc  
+arm64                 randconfig-001-20240511   gcc  
+arm64                 randconfig-002-20240511   clang
+arm64                 randconfig-003-20240511   gcc  
+arm64                 randconfig-004-20240511   clang
+csky                             allmodconfig   gcc  
+csky                              allnoconfig   gcc  
+csky                             allyesconfig   gcc  
+csky                                defconfig   gcc  
+csky                  randconfig-001-20240511   gcc  
+csky                  randconfig-002-20240511   gcc  
+hexagon                          allmodconfig   clang
+hexagon                           allnoconfig   clang
+hexagon                          allyesconfig   clang
+hexagon                             defconfig   clang
+hexagon               randconfig-001-20240511   clang
+hexagon               randconfig-002-20240511   clang
+i386                             allmodconfig   gcc  
+i386                              allnoconfig   gcc  
+i386                             allyesconfig   gcc  
+i386         buildonly-randconfig-001-20240511   gcc  
+i386         buildonly-randconfig-002-20240511   clang
+i386         buildonly-randconfig-003-20240511   gcc  
+i386         buildonly-randconfig-004-20240511   clang
+i386         buildonly-randconfig-005-20240511   gcc  
+i386         buildonly-randconfig-006-20240511   gcc  
+i386                                defconfig   clang
+i386                  randconfig-001-20240511   gcc  
+i386                  randconfig-002-20240511   clang
+i386                  randconfig-003-20240511   gcc  
+i386                  randconfig-004-20240511   clang
+i386                  randconfig-005-20240511   gcc  
+i386                  randconfig-006-20240511   gcc  
+i386                  randconfig-011-20240511   clang
+i386                  randconfig-012-20240511   gcc  
+i386                  randconfig-013-20240511   clang
+i386                  randconfig-014-20240511   clang
+i386                  randconfig-015-20240511   clang
+i386                  randconfig-016-20240511   gcc  
+loongarch                        allmodconfig   gcc  
+loongarch                         allnoconfig   gcc  
+loongarch                           defconfig   gcc  
+loongarch             randconfig-001-20240511   gcc  
+loongarch             randconfig-002-20240511   gcc  
+m68k                             allmodconfig   gcc  
+m68k                              allnoconfig   gcc  
+m68k                             allyesconfig   gcc  
+m68k                                defconfig   gcc  
+microblaze                       allmodconfig   gcc  
+microblaze                        allnoconfig   gcc  
+microblaze                       allyesconfig   gcc  
+microblaze                          defconfig   gcc  
+mips                              allnoconfig   gcc  
+mips                             allyesconfig   gcc  
+nios2                            allmodconfig   gcc  
+nios2                             allnoconfig   gcc  
+nios2                            allyesconfig   gcc  
+nios2                               defconfig   gcc  
+nios2                 randconfig-001-20240511   gcc  
+nios2                 randconfig-002-20240511   gcc  
+openrisc                          allnoconfig   gcc  
+openrisc                         allyesconfig   gcc  
+openrisc                            defconfig   gcc  
+parisc                           allmodconfig   gcc  
+parisc                            allnoconfig   gcc  
+parisc                           allyesconfig   gcc  
+parisc                              defconfig   gcc  
+parisc                randconfig-001-20240511   gcc  
+parisc                randconfig-002-20240511   gcc  
+parisc64                            defconfig   gcc  
+powerpc                          allmodconfig   gcc  
+powerpc                           allnoconfig   gcc  
+powerpc                          allyesconfig   clang
+powerpc               randconfig-001-20240511   gcc  
+powerpc               randconfig-002-20240511   clang
+powerpc               randconfig-003-20240511   gcc  
+powerpc64             randconfig-001-20240511   gcc  
+powerpc64             randconfig-002-20240511   gcc  
+powerpc64             randconfig-003-20240511   gcc  
+riscv                            allmodconfig   clang
+riscv                             allnoconfig   gcc  
+riscv                            allyesconfig   clang
+riscv                               defconfig   clang
+riscv                 randconfig-001-20240511   gcc  
+s390                             allmodconfig   clang
+s390                              allnoconfig   clang
+s390                             allyesconfig   gcc  
+s390                                defconfig   clang
+sh                               allmodconfig   gcc  
+sh                                allnoconfig   gcc  
+sh                               allyesconfig   gcc  
+sh                                  defconfig   gcc  
+sparc                            allmodconfig   gcc  
+sparc                             allnoconfig   gcc  
+sparc                               defconfig   gcc  
+sparc64                          allmodconfig   gcc  
+sparc64                          allyesconfig   gcc  
+sparc64                             defconfig   gcc  
+um                               allmodconfig   clang
+um                                allnoconfig   clang
+um                               allyesconfig   gcc  
+um                                  defconfig   clang
+um                             i386_defconfig   gcc  
+um                           x86_64_defconfig   clang
+x86_64                            allnoconfig   clang
+x86_64                           allyesconfig   clang
+x86_64       buildonly-randconfig-001-20240511   gcc  
+x86_64       buildonly-randconfig-002-20240511   gcc  
+x86_64       buildonly-randconfig-003-20240511   gcc  
+x86_64       buildonly-randconfig-004-20240511   gcc  
+x86_64       buildonly-randconfig-005-20240511   clang
+x86_64       buildonly-randconfig-006-20240511   clang
+x86_64                              defconfig   gcc  
+x86_64                randconfig-001-20240511   clang
+x86_64                randconfig-002-20240511   clang
+x86_64                randconfig-003-20240511   clang
+x86_64                randconfig-004-20240511   gcc  
+x86_64                randconfig-005-20240511   gcc  
+x86_64                randconfig-006-20240511   clang
+x86_64                randconfig-011-20240511   clang
+x86_64                randconfig-012-20240511   gcc  
+x86_64                randconfig-013-20240511   gcc  
+x86_64                randconfig-014-20240511   gcc  
+x86_64                randconfig-015-20240511   gcc  
+x86_64                randconfig-016-20240511   gcc  
+x86_64                randconfig-071-20240511   gcc  
+x86_64                randconfig-072-20240511   gcc  
+x86_64                randconfig-073-20240511   clang
+x86_64                randconfig-074-20240511   gcc  
+x86_64                randconfig-075-20240511   gcc  
+x86_64                randconfig-076-20240511   gcc  
+x86_64                          rhel-8.3-rust   clang
+xtensa                            allnoconfig   gcc  
+
 -- 
-2.39.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
