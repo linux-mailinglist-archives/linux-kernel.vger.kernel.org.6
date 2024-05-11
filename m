@@ -1,201 +1,218 @@
-Return-Path: <linux-kernel+bounces-176430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 741578C2FCB
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:15:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE8D8C2FDB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAE55B23457
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:15:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F60E1F22F04
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C11D150249;
-	Sat, 11 May 2024 06:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB5D4C66;
+	Sat, 11 May 2024 06:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSGut5CK"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HOYV7EDJ"
+Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04on2050.outbound.protection.outlook.com [40.107.8.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACD44F217;
-	Sat, 11 May 2024 06:15:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715408129; cv=none; b=Wo7UtyhX0GnApSyG50WWf/4XeYoAB5zhdGK5dVEQtTKNGV3scPSa/Z3vykNjdzl2Wd5/I7+7K9zxFyE72q/CHkf7S1q7wBCR2zeg124eLst39/xTrytPEToM5sJc/vUqhdiyp5qO11SiR/1d64vzghb16z8li6Dm0LNRSBP6ICQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715408129; c=relaxed/simple;
-	bh=T302qFdGYt9upY98yaaB7NGOiDO4dKh58ZsZOKVG+68=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XK2FP5usF82AcAi8lfHOfDKDwQuJQgfFfeqqgleVGjHjbBVyKy+BCyYqXtKFG9n/OBd0T3XLUFNY1bS9QWdGPKQgC98o3PInD+WOxn0zZ7F6KYCG0b7u/741tLvusIcnIjmHCub2uShajJx2ViuWXlCkGIJeyXqkEKBMxv0g5Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSGut5CK; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1e4bf0b3e06so25539585ad.1;
-        Fri, 10 May 2024 23:15:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715408127; x=1716012927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mk1p9NsMzvwBrXgYJqVUrzqhtMjz3H+uq2RwIwI5Iro=;
-        b=OSGut5CKt3B/CkLdVEt+ozOsmCxzVnUX7ZAy7+B5qzvwgmeCV0sFy5Wg6GUVQkyN+V
-         beBS4Ejq0gywDqTJ8XnYc5UkrG8DWqYvMh2Brb752o0Gp4u0qFQeEjPWzIWP5sEs8JZG
-         zI27JhYLAU+XI9ipZXhh7HQo6nJSg0QEre2Qgp42rIlHOrTy9HzTvaijB5mB9IpVvL08
-         xXEoqdbMX331lrHOpJpzjWNOb2NtI4X56nJR1UNklC6zosgark56MuuZ9moQhlYv+TpO
-         M9cYNC/twRt4d/dIOhQ1mytwsT/ljV40YkBjU6Sw/r1YkHFVGuLiCjiJ1kI5VXNHp5oC
-         QQrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715408127; x=1716012927;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mk1p9NsMzvwBrXgYJqVUrzqhtMjz3H+uq2RwIwI5Iro=;
-        b=Hw4daIh61ZyQaMYy1mlpIbgHoOfOLPgjp8v1f0dGuvGZoK38As7qd/l6DMYlMCOhyM
-         o/+RNTvoGyeyizYiAAjmw3tqdHNX9pvNq07Mw9WL6W+E6L/kuoWtnunAnJJ792FhTWrI
-         Xf0nr3o3EqVS8toUUCcRs2CbYuSMSQDZl33MHtDKMUEq6Ny+zn/pXm63o7wTf0JD1yHd
-         BjGnftVtnYZwDZ4sCJPz/8O6oR1O1oSLxGDEBcHxMQyIUWMxrzRLONsjyqSuBeUFc5QM
-         RzFplQwm6/hgwvTWtsF51q34oVgGHTUeh1sH4H8p3U+TkZHpzz7ZSSioZl3FtgCyJo1O
-         Vrtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgwjZ5oFeIUi/x7ynuR/rmPD+tWXR6+ma/jvWCff49n9G11FgYVUCAB8fgmzJ+UUFffUEa5dxYIAvp74AjmThdOa1i7JAgEUfhwoD+nzqIdghY0gxfylXPivy72TLee8OsAegi6GDavPg0eXHe+2yjQoVGGE46FFvtLF5GjTD/+zE3HQ==
-X-Gm-Message-State: AOJu0Yx2es86olCz4uWILjrV9Yuw64uMAKTbuY47b8h0Lxbme/d4gFnI
-	1navbpeek9ayyl6pTeOA5wF+fi4GgD0Xe6cUwaSWAVjeEAcTc5iZ
-X-Google-Smtp-Source: AGHT+IE/5w+T17713VvVQvihpBps/gl8gaAUn7yc0SAhP030RjyD/9WHrSttR/cH4OahChBLKer4zA==
-X-Received: by 2002:a17:902:7082:b0:1e2:1805:52c5 with SMTP id d9443c01a7336-1ef43d28349mr49186255ad.16.1715408126567;
-        Fri, 10 May 2024 23:15:26 -0700 (PDT)
-Received: from localhost.localdomain ([223.178.81.214])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0c15a8fcsm42249005ad.278.2024.05.10.23.15.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 23:15:26 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: wahrenst@gmx.net,
-	Kanak Shilledar <kanakshilledar@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>,
-	Kanak Shilledar <kanakshilledar111@protonmail.com>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: spi: brcm,bcm2835-spi: convert to dtschema
-Date: Sat, 11 May 2024 11:44:56 +0530
-Message-Id: <20240511061457.8363-1-kanakshilledar@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63ACD380;
+	Sat, 11 May 2024 06:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.8.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715409083; cv=fail; b=lFblFghi90gfPpDuV2TOMPzLGCQ30atr5qYlqcoDIvb2FoMb9V19gcJ/GAkg7ElgKhx8DF+X6/mt6fTiCXkawzS1jh2ciq4uVa/GLBRinB7MRGgYOcBd29Tmke/FpcNYSs7oEqJ/p173nQMmdeJji7pumQurSFCO8WRw11F2SMU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715409083; c=relaxed/simple;
+	bh=BUDFgpg+nYEFNgcv5M0PQZH5XdKcv+4AI5+Aj5dJris=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pkwnOP7GbV7N8tS06Ju55aPs5I8wFWjgRKoBnHgkrngogXkyciiVhSRvenY9qfJhNbqZkQ8UuheG0ivQqZgTiz6oZ1S+h0Vb11M6KXZUsPb8P0Oc9yDtnkET2fw5E+CgKwtkYVPxZTJkGQM4IbJXM7krHfdkLJlM17g3NMcxyhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=HOYV7EDJ; arc=fail smtp.client-ip=40.107.8.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oXaLUeX4bmofbi+ks88beROSrNizbwMOQ3INELzB9aBvkIjHcpLfxh/85uG+2RcHeVVRaBE41Jkpe7oSNjSpFTgNKb6gBgOyrNeiwdW7vcPkBdRZiOQCo4Yd04xrxd7RhoWHjBDzdb0ESCOfdvHbKIXON/VJO6geRJaQaG8pEuRpjxAs8WsYvZTpNB4XYlK63yAYXXgmHX8PwTwsfCQTqX4aSE4cmgjQ+th5aV/X+Z9OFs7co0YoH5xQPvKR0ccF0++hsu1jZJ7MhxhFHQoR0OtTA8mO9pdLexjofzfqG6yEcvYyD3sTZtNOh52lMo+eWiG7sTUsu3vh0rBIN0qq/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UKoUWpdmUUawbUL+N8U9sNlZrRisggBQ4JyNY/Iwu0M=;
+ b=RLfDwAzpBd1aZRpKcROW5TDXPNv8KaAdfA1VC0a8yz4trAcB7WnRdQBh4dVOZA0UgyKKjEXZG4mkCGXqwXRQEeGAUHMWmb/gjS1kJlVMcFjAx2n/MUcHqFqssOZA4j0mBKa73fM+lOJPdQWHLyPyMwJOBbmVS1rn7n8GDmIlTu4mlXmtOASHkV/CvAQqb4Nw+3sK3FHwTXJ0PX8VUfTT0tvBGZ7BkJs7O1uTiF79JG+oVtezQZjG6S3jAkNczjSPofdSnaVtULaqyAkWzpniF2/GSLWAyD69B3lFgZkjqWFALansIdqdJ1xmmM51dL/gJJPfQfcshlVQaHNMJGr5Wg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UKoUWpdmUUawbUL+N8U9sNlZrRisggBQ4JyNY/Iwu0M=;
+ b=HOYV7EDJqewdRh9mJ/yCEN1dm2DQzNsNHbELT2JK5fOLNjMdmMbEkc4K6sZRAnWuIMXW4YnqpkjS1H247CndG6Pvgu4hR8+wvPgZMwTRVdQVezorN4GzltTJGUUbqJYg+Tce7bAUp8KllHNyZ0Pr9vQMiHr5AA2RxPO50zMQT5o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM0PR0402MB3891.eurprd04.prod.outlook.com (2603:10a6:208:f::23)
+ by PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Sat, 11 May
+ 2024 06:31:17 +0000
+Received: from AM0PR0402MB3891.eurprd04.prod.outlook.com
+ ([fe80::6562:65a4:3e00:d0ed]) by AM0PR0402MB3891.eurprd04.prod.outlook.com
+ ([fe80::6562:65a4:3e00:d0ed%7]) with mapi id 15.20.7544.052; Sat, 11 May 2024
+ 06:31:16 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shenwei.wang@nxp.com,
+	xiaoning.wang@nxp.com,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH net] net: fec: remove .ndo_poll_controller to avoid deadlocks
+Date: Sat, 11 May 2024 14:20:09 +0800
+Message-Id: <20240511062009.652918-1-wei.fang@nxp.com>
 X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI1PR02CA0058.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::9) To AM0PR0402MB3891.eurprd04.prod.outlook.com
+ (2603:10a6:208:f::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM0PR0402MB3891:EE_|PAXPR04MB9642:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86f166e3-5c4d-44fb-5438-08dc7183f640
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|366007|376005|1800799015|52116005|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?R28UeCxIbX0ntuGn+qWrZeeAk21ZeglGWrOjcrPdvg8GoIoaGWpPsn9EUS8Y?=
+ =?us-ascii?Q?HMPF8Df8LsVoQ2CzbrjT7IU0LoNPYWOj8+8BWBeHPAGlyFQoZnOixrVJJaUj?=
+ =?us-ascii?Q?+rESLJ1f9+aUdycB3sLZNdBhFR0Mm7KmxWJPWx/PzwR63+s8uW4kRSy3Ay6y?=
+ =?us-ascii?Q?rg7eqe8DtCQjsnK3K2QGXnv95CoUhellgf8JglOcbZard2+9UefcVj0NcAZ3?=
+ =?us-ascii?Q?9QeaWklGUtQ32WGkM3eGzSf7A2mqI/NZHzQx6fZgOQaryzZMfepIhY46hIiu?=
+ =?us-ascii?Q?5CMYo8VP4nUXFM4z4BCa6GQHQk79njDcYVVEkK+RK7abOsr0O2WScD7zBJcc?=
+ =?us-ascii?Q?WeLXYRZBvFFK3efXEPUN4plrzZpHmpFWKFHYC/GPe7NPL7VvwTG5pFuKJYLo?=
+ =?us-ascii?Q?73/DH1F5SMjdQd66KEY1wGZ6x7TyHxPf5wDWU2SPX8K7iMrcFV3oXZcLBkLw?=
+ =?us-ascii?Q?lRRzPxesUtanMI9W3hIHQTPQOgSaf7ginmSqSP0WnEoSa0z6feMHLJKztUr7?=
+ =?us-ascii?Q?rm+8HtdZvenD8HeJGST7M+tY0I64tREWAC9UANLYoZstae7hLRCVsjjVKtXj?=
+ =?us-ascii?Q?V60s1dfLKXUUWDqydirjIi2j1ak8kAOk4Mc2fH1hs1QtK7gLOVOE51ozYKS2?=
+ =?us-ascii?Q?2QUMr9op+QwZeGAJBHjjYCXUegC92GBcI93kjchkjjp6So1uGP7tuB8ofeRY?=
+ =?us-ascii?Q?Fux+YYhNDHqPZ9jhM7jt25DquaREScuVYJF+o0bZI+bnrD4MfOaBz1YNyhen?=
+ =?us-ascii?Q?z1EJyG22dfjerLMoHW5PTC7oapGYnQXyer3tqMPy4jObymqx3Yc0NcmrImYy?=
+ =?us-ascii?Q?zrcM4gdUtJ+xhRYhGactSa89NpU/ydIFM+Jv2Rgm+etecflDXOf/i02G0cnD?=
+ =?us-ascii?Q?+E7PqzoxzAAQBQ55/cXAN+zrvSRHoBNk5FGfFpzme5OseAR4YdVSxZ+gNVox?=
+ =?us-ascii?Q?934V52JH4YZWpWxXC/9Tzp1zsnHXYV9tDP935Ct3VgYR3hVFEkuUFhPKYOYj?=
+ =?us-ascii?Q?vMl1kCR5yoV4nSKGFUzPmT5q1659VLv0uRLJHuFHr7I/gMX51SHLyhfGGn/I?=
+ =?us-ascii?Q?f5W//jzKgInFZ4xatLUcoEn6kLGpHmzwFOZv0gu8j6nZ/ZA7hQEEbwjuZf+V?=
+ =?us-ascii?Q?OfExwXSo1l23wGj8zk4TlVNKtkHNccX0nqA4v/ZJiwyN7EJLSigwyCxOVNm2?=
+ =?us-ascii?Q?2T0Mx4YsK4AwGBOEcmlxfgGYDknj3RHHfeFe4V+TcQnsCSGNubFZ+ZS+sYQ+?=
+ =?us-ascii?Q?uOgUxkW3TSbh0/iNQ/0KEqXx1rg1QFB3IMAEmcJqbpupFG46T+8P0jmVINu3?=
+ =?us-ascii?Q?IrX3OLxirkDEhtnLr06U+JULnf/A2K5N6LHuknBOG7rWvQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR0402MB3891.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(1800799015)(52116005)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?8hAY+UWobnl78QdNQOF1nNao+CQ63b4flseRlYmFwG74hMJWv01/TG6hRc26?=
+ =?us-ascii?Q?OTskYMokSHJwdyK5Er2sRyqvIXgZNLF//4CM6TaG6rIW47GyTTTLMz95I0g3?=
+ =?us-ascii?Q?pfrRcHu6LG3grGpes/wrd432Gl1mz7tplU2sudVzEqLrwEbig0BrpFzVf9I1?=
+ =?us-ascii?Q?i8bBYx+D9ZEUyJPwkLpFf4TTXpmSC8p7ECzB27bxKOo90/kWB6M8PUCOuYq6?=
+ =?us-ascii?Q?wLo00vPTA3qewT3g78LLNiXYpeK4goLOYl9RCZGs+08n65YesSgaSXKufXEt?=
+ =?us-ascii?Q?XD3smJzBu80TmEJcVxBmJtwau/AWWM0jiK/BSUBp5NSJxp2YM7WiZgzCqQoZ?=
+ =?us-ascii?Q?c5oO/zJhaKb5cuP9h3+xgzpC2l+PUYeZoYGiOY0M6D0/E/zOXwNBwSBLaMIa?=
+ =?us-ascii?Q?gI3nzXom79YWPZUj61C/OlIaiAiUm710nT+YZDzZ0TWQ4pHfZdxBsp+/aaqp?=
+ =?us-ascii?Q?d5U4amcytX2qWMQ/L0ugWPlPOgn8hY7Pmej25nSZ7/4TloVo25haES4g8yJU?=
+ =?us-ascii?Q?Ldxdldy7Q2xKjT0iRjMcyEefKhkbCaZZYyBu5eFVBmLv4Qma80TiDkZBc/QL?=
+ =?us-ascii?Q?BGqY35KCSlqrdn0NdmUnGyXjsXhQlJj3CoheDdEW3x/o9+uqEiLZciB5LX7x?=
+ =?us-ascii?Q?Arfh/3a1J+w1oI06uLRnDPP4d8bdXiUfizkEcTwIB1XdR1Z/UJnE8HntPlRS?=
+ =?us-ascii?Q?pq3dEqwiTQ0lqDMHOclK2ts7pBvnXsdITf/buUDXqnC4vtkryCSbARDjmNJm?=
+ =?us-ascii?Q?/ML3Zmm2vbNA9y9PpXQxtYqOx5F/jrFZYc2Ia31D1uAhu0Qzx4401oBYbxq6?=
+ =?us-ascii?Q?eFXPo+7vq028dihSv2Wcn1s1YUH3hqQAuHGgDufxTRCnnIQkS6SAf5USMv1j?=
+ =?us-ascii?Q?DQyY5LJtyKVZvBK24ejSImb/6+AzKvaosbtHa1M1lbTt8jRXqxAyk/TJ61fH?=
+ =?us-ascii?Q?2W/8T/pbeheWRC9Rb2KhjbItCWCXuA95DN5EZ4E7jN/AQjwvTGlKvvYxGN/o?=
+ =?us-ascii?Q?le909D44SttztVn1XiPbf2HDYE0jk+GSKcJ7b0Z9/e2+r2Gf3BZkXBJUSV9Y?=
+ =?us-ascii?Q?aqPV3cbS2rtMVAeGjQIRWOkWLDvgLbgZQeDPwzz5Bu6kvBcvOjzd6SIGC2BJ?=
+ =?us-ascii?Q?edkn+z1k1XKKj3zNZoddEDWrbQDXo5lvQwIYXQ73jRZkT6qTtWurLaRLFNcg?=
+ =?us-ascii?Q?5jkEh8y0V3hbnqabHgRpuIeymD/vvj8Hhr35hP1wV2g2qQutj8Klc8nqqYg3?=
+ =?us-ascii?Q?ZX2gJigmbUI76aV7rFJt9Z9lkPr+178y7FNWyLsLYCGa0BksimIuS/u4qtk7?=
+ =?us-ascii?Q?O5SFMbGf+om9NDtXR3JvFb3iuPVgqes1PWhP7Umtj1oNRG60exJrIeWsnq1b?=
+ =?us-ascii?Q?fp8Ci6+XxSSh2ER+kqLZq2XZqteFvwd+8hrhikLl4wCPyc975VSmokAIvBpr?=
+ =?us-ascii?Q?0Ppru1Ec0KHR1tDrxKhqaH3MZPXTA9tmNB5qT5t3glvAFVz/Z/ZnLIyHPr+8?=
+ =?us-ascii?Q?3bA7mGUDd6Cviy02xXcq0Rkl9cPaqkTJ4Y6gzkt/h3jmUnxFEdlLnOX2lR+R?=
+ =?us-ascii?Q?qKrtxg707O0fWSa5EGtL9WJHT+eW43TZnsThQxQb?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86f166e3-5c4d-44fb-5438-08dc7183f640
+X-MS-Exchange-CrossTenant-AuthSource: AM0PR0402MB3891.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 06:31:16.8328
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: C3mc3rRhFOB1008RJj/a0hXqxpXti1fZhIN1JCIpBaaTykcnt4ADBOnBVLNfkAS6utaD8k3hOgxGlo5JckLurg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9642
 
-Convert the Broadcom BCM2835 SPI0 controller to newer DT
-schema. Created DT schema based on the .txt file which had
-`comaptible`, `reg`, `interrupts`, `clocks` as required
-properties.
-Added GPL-2.0 OR BSD-2-Clause License
+There is a deadlock issue found in sungem driver, please refer to the
+commit ac0a230f719b ("eth: sungem: remove .ndo_poll_controller to avoid
+deadlocks"). The root cause of the issue is that netpoll is in atomic
+context and disable_irq() is called by .ndo_poll_controller interface
+of sungem driver, however, disable_irq() might sleep. After analyzing
+the implementation of fec_poll_controller(), the fec driver should have
+the same issue. Due to the fec driver uses NAPI for TX completions, the
+ndo_poll_controller is unnecessary to be implemented in the fec driver,
+so fec_poll_controller() can be safely removed.
 
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+Fixes: 7f5c6addcdc0 ("net/fec: add poll controller function for fec nic")
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
 ---
-Changes in v2:
-- Updated the maintainers
----
- .../bindings/spi/brcm,bcm2835-spi.txt         | 23 ---------
- .../bindings/spi/brcm,bcm2835-spi.yaml        | 50 +++++++++++++++++++
- 2 files changed, 50 insertions(+), 23 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
- create mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+ drivers/net/ethernet/freescale/fec_main.c | 26 -----------------------
+ 1 file changed, 26 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
-deleted file mode 100644
-index 3d55dd64b1be..000000000000
---- a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--Broadcom BCM2835 SPI0 controller
+diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
+index 8bd213da8fb6..a72d8a2eb0b3 100644
+--- a/drivers/net/ethernet/freescale/fec_main.c
++++ b/drivers/net/ethernet/freescale/fec_main.c
+@@ -3674,29 +3674,6 @@ fec_set_mac_address(struct net_device *ndev, void *p)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_NET_POLL_CONTROLLER
+-/**
+- * fec_poll_controller - FEC Poll controller function
+- * @dev: The FEC network adapter
+- *
+- * Polled functionality used by netconsole and others in non interrupt mode
+- *
+- */
+-static void fec_poll_controller(struct net_device *dev)
+-{
+-	int i;
+-	struct fec_enet_private *fep = netdev_priv(dev);
 -
--The BCM2835 contains two forms of SPI master controller, one known simply as
--SPI0, and the other known as the "Universal SPI Master"; part of the
--auxiliary block. This binding applies to the SPI0 controller.
+-	for (i = 0; i < FEC_IRQ_NUM; i++) {
+-		if (fep->irq[i] > 0) {
+-			disable_irq(fep->irq[i]);
+-			fec_enet_interrupt(fep->irq[i], dev);
+-			enable_irq(fep->irq[i]);
+-		}
+-	}
+-}
+-#endif
 -
--Required properties:
--- compatible: Should be one of "brcm,bcm2835-spi" for BCM2835/2836/2837 or
--  "brcm,bcm2711-spi" for BCM2711 or "brcm,bcm7211-spi" for BCM7211.
--- reg: Should contain register location and length.
--- interrupts: Should contain interrupt.
--- clocks: The clock feeding the SPI controller.
--
--Example:
--
--spi@20204000 {
--	compatible = "brcm,bcm2835-spi";
--	reg = <0x7e204000 0x1000>;
--	interrupts = <2 22>;
--	clocks = <&clk_spi>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--};
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
-new file mode 100644
-index 000000000000..94da68792194
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
-@@ -0,0 +1,50 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/brcm,bcm2835-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM2835 SPI0 controller
-+
-+maintainers:
-+  - Florian Fainelli <florian.fainelli@broadcom.com>
-+  - Kanak Shilledar <kanakshilledar111@protonmail.com>
-+  - Stefan Wahren <wahrenst@gmx.net>
-+
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm2835-spi
-+      - brcm,bcm2711-spi
-+      - brcm,bcm7211-spi
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    spi@20204000 {
-+        compatible = "brcm,bcm2835-spi";
-+        reg = <0x7e204000 0x1000>;
-+        interrupts = <2 22>;
-+        clocks = <&clk_spi>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
+ static inline void fec_enet_set_netdev_features(struct net_device *netdev,
+ 	netdev_features_t features)
+ {
+@@ -4003,9 +3980,6 @@ static const struct net_device_ops fec_netdev_ops = {
+ 	.ndo_tx_timeout		= fec_timeout,
+ 	.ndo_set_mac_address	= fec_set_mac_address,
+ 	.ndo_eth_ioctl		= phy_do_ioctl_running,
+-#ifdef CONFIG_NET_POLL_CONTROLLER
+-	.ndo_poll_controller	= fec_poll_controller,
+-#endif
+ 	.ndo_set_features	= fec_set_features,
+ 	.ndo_bpf		= fec_enet_bpf,
+ 	.ndo_xdp_xmit		= fec_enet_xdp_xmit,
 -- 
 2.34.1
 
