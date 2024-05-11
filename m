@@ -1,64 +1,63 @@
-Return-Path: <linux-kernel+bounces-176541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D6E8C315A
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101228C3160
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D24511C20BE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 916981F213EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 12:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1773A5028B;
-	Sat, 11 May 2024 12:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB395028C;
+	Sat, 11 May 2024 12:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vzmo7KOP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOELNPOd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FBB17C8;
-	Sat, 11 May 2024 12:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1D28F6E;
+	Sat, 11 May 2024 12:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715431683; cv=none; b=shbPVdxMAFVv7X+vckKlczlSNegq0+k0iuixhEhJinfrzqqS+BiiYi7ihSV0fbMHhjCiavLXgHaeP+FjWtHWbjq+UK1vY/RjkSqSoLVKs9t5nWa8JhTqmXFD8l9soFxG5UjTGixtCzqbKDduoth2NoKTgJJHkXB9V4GL03cgBXk=
+	t=1715431941; cv=none; b=mjpzUJTUhI2IwEiw0v28j953UCJIrHs43flN1CsvsfANLiEcmQ00Nrbsbsu2rt/jSUEabv/o5xZuWxY8UZ5Lm3PERMGrw4rQXXfSktsT8dv0+i5Hf7G0ALdqK6yWMr+f+wZCyNhLUTERRvBF7U4LCPt6D9rALtxO/vuvVaOLeYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715431683; c=relaxed/simple;
-	bh=L6GEnWbRFIUnTLp5ZBj1nZe8npzW7+LcYnKnNImrCg8=;
+	s=arc-20240116; t=1715431941; c=relaxed/simple;
+	bh=YJRfqmKQd6lGzj5EKLiRngfVUGj4xvtMtKPTFfitnjM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JE9ix+TcJKwqOxEjkdp7z6g+77xZiLLXCsQzOdBJUugdu91PHMCNnkayWjDY1ElZ+FggQPqEw0ASKTLUxjc3pb9svSEwBdtdXVYK8zOw3eyu3UM56QC+auAGq1Lqs2/Da50zZW1HI/gkq6Ralv96ipcWh+Aodd0IH7BivlqlyH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vzmo7KOP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F7CC2BBFC;
-	Sat, 11 May 2024 12:47:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwtmxSZrfbCnB+S0IE/oWUmA7XwzBpwiRdmESeCMw4yF+zbvDEoEYzWxq6BjfFm+dssSCzfpYkHIIJMyki056OPIpGdbAGrTKNV6pIin31cLyEzHW5VcSTtwRReOiI1tJX8GnOvNJiN5OyIKpPvk/mlm/wngJkj6yBavkcJn+zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOELNPOd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE868C2BBFC;
+	Sat, 11 May 2024 12:52:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715431682;
-	bh=L6GEnWbRFIUnTLp5ZBj1nZe8npzW7+LcYnKnNImrCg8=;
+	s=k20201202; t=1715431941;
+	bh=YJRfqmKQd6lGzj5EKLiRngfVUGj4xvtMtKPTFfitnjM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vzmo7KOP8imYYP9EUREB9SqsQ0mVwP4UlBMEmp4UUI9JrhCFszuETUr+sobW5mIqI
-	 cNOFhl6Jr0CCjYfCZ36yW53o4k7WeW3ndW5DxN0JJe+cuW+MKWrBEZu4iVj2wec7Eb
-	 Vd3ENik62UjGkZ7q1vX4C/iwqHwMdyW3QeV3PtKHHBtAddUzcU3BBTcO82g6H5GP1O
-	 2yjAkBV8ME6uOst13YEmtCMTSrwvl2RCLxCyYq4SYjp02uqr6cFGhpsCzCp1lOvHhx
-	 sFTXvHK90OM0SsClnWIOnKbefDJC2G1pIVeNCrriMYfitCiDZX/Iqe0yJUg7JJe601
-	 sTr+bFiqVJKMw==
-Date: Sat, 11 May 2024 13:47:57 +0100
+	b=KOELNPOdZKpZzvudiMZO5lxZnQpCzbtXr3zunS0M18GlKyQGGvZzwdOW7fm2euH3v
+	 Qb8mvx52NL9uXzXxoFYfcoo9kwEnFFEMpr8SvT+VDkbNytvcZaiTWPpvza0U/c5mAU
+	 VYDMwbGSiJ8jxtQhDmTrpfdcYvEw7KujhlOr+nGzX7gUtxZcM2nwnExclYM1I5luZ7
+	 2yOCYOlGYaxh0Ao7Eu1QbbexuNN847TRNlPY4k4Lj7jqlka93v0zxWy75yA08YCYZR
+	 sTGmbGZmYbvcTYLgLj2LtVTlrdmOF13/eNYwaJoCNxlcERA3TP5G/MCRmDBnVEPKMl
+	 cteUuxeS8fVCA==
+Date: Sat, 11 May 2024 13:52:16 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, lgirdwood@gmail.com,
-	broonie@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com,
-	festevam@gmail.com, nicoleotsuka@gmail.com, perex@perex.cz,
-	tiwai@suse.com, alsa-devel@alsa-project.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/4] ASoC: dt-bindings: fsl,xcvr: Add two PLL clock
- sources
-Message-ID: <20240511-catwalk-ipod-98f3e636360e@spud>
-References: <1715223460-32662-1-git-send-email-shengjiu.wang@nxp.com>
- <1715223460-32662-3-git-send-email-shengjiu.wang@nxp.com>
- <20240509-repurpose-dumping-156b57c25960@spud>
- <CAA+D8AOkDbj_QsF9VescuAfFjKcB8FnOXqwjXVrrBM1Ck4ut4Q@mail.gmail.com>
- <CAA+D8AOQtwHTLsQcqh_LCvVP5CWXqiHc3-at8jv3B-kA8ORR_w@mail.gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] dt-bindings: mips: brcm: Document
+ brcm,bmips-cbr-reg property
+Message-ID: <20240511-headset-self-dc2501b38a71@spud>
+References: <20240509204750.1538-1-ansuelsmth@gmail.com>
+ <20240509204750.1538-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,63 +65,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BhobfpOXM1U4v7Qe"
+	protocol="application/pgp-signature"; boundary="sQaAowGBPlZjH5aG"
 Content-Disposition: inline
-In-Reply-To: <CAA+D8AOQtwHTLsQcqh_LCvVP5CWXqiHc3-at8jv3B-kA8ORR_w@mail.gmail.com>
+In-Reply-To: <20240509204750.1538-3-ansuelsmth@gmail.com>
 
 
---BhobfpOXM1U4v7Qe
-Content-Type: text/plain; charset=utf-8
+--sQaAowGBPlZjH5aG
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 10:38:30AM +0800, Shengjiu Wang wrote:
-> On Fri, May 10, 2024 at 10:27=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gma=
-il.com> wrote:
-> >
-> > On Fri, May 10, 2024 at 1:14=E2=80=AFAM Conor Dooley <conor@kernel.org>=
- wrote:
-> > >
-> > > On Thu, May 09, 2024 at 10:57:38AM +0800, Shengjiu Wang wrote:
-> > > > Add two PLL clock sources, they are the parent clocks of the root c=
-lock
-> > > > one is for 8kHz series rates, named as 'pll8k', another one is for
-> > > > 11kHz series rates, named as 'pll11k'. They are optional clocks,
-> > > > if there are such clocks, then the driver can switch between them to
-> > > > support more accurate sample rates.
-> > > >
-> > > > As 'pll8k' and 'pll11k' are optional, then add 'minItems: 4' for
-> > > > clocks and clock-names properties.
-> > >
-> > > Despite the detail given here in the commit message, the series this =
-is
-> > > appearing in and one of the driver patches makes me a bit "suspicious"
-> > > of this patch. Are these newly added clocks available on all devices,=
- or
-> > > just on the imx95, or?
-> >
-> > These newly added clocks are only available for the imx95 XCVR.
-> >
+On Thu, May 09, 2024 at 10:47:46PM +0200, Christian Marangi wrote:
+> Document brcm,bmips-cbr-reg property.
 >=20
-> Looks like I should merge patch1 & 2 together, patch 3 & 3 together. righ=
-t?
+> Some SoC suffer from a BUG where CBR(Core Base Register)
+> address might badly/never inizialized by the Bootloader or
+> reaching it from co-processor registers if the system
+> boots from secondary CPU results in invalid address.
+>=20
+> The CBR address is always the same on the SoC.
+>=20
+> Usage of this property is to give an address also in these broken
+> configuration/bootloader.
+>=20
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../devicetree/bindings/mips/brcm/soc.yaml    | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mips/brcm/soc.yaml b/Docum=
+entation/devicetree/bindings/mips/brcm/soc.yaml
+> index 975945ca2888..6b961b62aff2 100644
+> --- a/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+> +++ b/Documentation/devicetree/bindings/mips/brcm/soc.yaml
+> @@ -55,6 +55,16 @@ properties:
+>           under the "cpus" node.
+>          $ref: /schemas/types.yaml#/definitions/uint32
+> =20
+> +      brcm,bmips-cbr-reg:
+> +        description: Reference address of the CBR.
+> +          Some SoC suffer from a BUG where CBR(Core Base Register)
+> +          address might badly/never inizialized by the Bootloader or
 
-Please, and also add constraints so that the newly added clocks are only
-allowed on the imx95.
+"be badly or never initialized"
 
-Thanks,
+> +          reaching it from co-processor registers if the system
+
+"reading"?
+
+Otherwise,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
 Conor.
 
---BhobfpOXM1U4v7Qe
+> +          boots from secondary CPU results in invalid address.
+> +          The CBR address is always the same on the SoC hence it
+> +          can be provided in DT to handle these broken case.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +
+>      patternProperties:
+>        "^cpu@[0-9]$":
+>          type: object
+> @@ -64,6 +74,20 @@ properties:
+>      required:
+>        - mips-hpt-frequency
+> =20
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - brcm,bcm6358
+> +          - brcm,bcm6368
+> +
+> +then:
+> +  properties:
+> +    cpus:
+> +      required:
+> +        - brcm,bmips-cbr-reg
+> +
+>  additionalProperties: true
+> =20
+>  examples:
+> --=20
+> 2.43.0
+>=20
+
+--sQaAowGBPlZjH5aG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9o/QAKCRB4tDGHoIJi
-0hihAQCXLcY+nll7YEK6/Ko2DGZ15ldjwMy8rI2F7y5rjxW/cwD9G3UV60KNhoRE
-ivzxxabhzsz8cc1NzjnzrR0RpqNhCgw=
-=I79W
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9qAAAKCRB4tDGHoIJi
+0ovkAP9Wm2e/+UCnn4NvMtSAun5L6Cg/3H/9CP5QeIzfGa9z7gEAuMjsZsdC4gli
+Bh51+UOTgKQ8XRIRmMptXN7aQPbthQM=
+=uGJl
 -----END PGP SIGNATURE-----
 
---BhobfpOXM1U4v7Qe--
+--sQaAowGBPlZjH5aG--
 
