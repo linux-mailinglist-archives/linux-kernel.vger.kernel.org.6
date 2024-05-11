@@ -1,253 +1,239 @@
-Return-Path: <linux-kernel+bounces-176728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A3A8C33C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:45:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 969C88C33CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E1FC1C20A83
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 951D71C208BE
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:52:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD25F2230F;
-	Sat, 11 May 2024 20:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fVFBlu4o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B411A21A19;
+	Sat, 11 May 2024 20:52:33 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F021CA82
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 20:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D9D1CD11
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 20:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715460327; cv=none; b=l7KHYsH0dAMwoBjEDxjxbzQyAr58XMLk1x0j4AU2Prq/VTJ7Iyn9RkY1TcPT3LNfH47q8KHuDy4WtdfaVsvOfI7dXt0e+7RUqHLIOZEheIKhkdW/iP4MaEPIm2Bg9VqE6kCWiDXfFo9YG7sQljvhBfPK7lpLTs3ILCrggDKJbB8=
+	t=1715460753; cv=none; b=EipV6VGdI7IqLZ/u/N3pI8ksaPpuM9ryzht8m7zpGhEQsUCWIU104S65IWxoM2FmGkmMJe0vGEBEj1j909fJD5fqnxFnRKbjmnjUOaaiVd4a0T2oiNVZ6ToSX2T/0RG/9jbJG8YWUX5XWH8Cdc3/xf4o3UPoAcc5pRtCdyGqw9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715460327; c=relaxed/simple;
-	bh=UUBRpIxqzJzv8CLrX7S/rTo83oADo+b3z/j9k+7/saI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=HjRORbJCUDdHeha82IHoPkXzm5GxB+BRud1S3jOtlrPsBtG1wazK3ztErQL+OJUmN4fO6vhDg77DFEmkFCGCIyt90z42fkD1HCNgZqtMaDQ6TmtFMneWiZ/MRfrsZdN5wH8l+wzyh1L27t/DiFO4O2jTctN7t1DIMpZEg7x+UBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fVFBlu4o; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715460323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Aytntv1qSTgscf/fVVlEX6NWoKqZCFoCqwsJ0PcuQPc=;
-	b=fVFBlu4oLLpm50+Rhb+dnBVQh7K4LBG1MJROdsGafzgWM2y7XpNsowYuLQUyZ4Wl5VYAJc
-	lDxoGhlBp3X63nlYL83hvIXIadk2HYA+GtKxdiWpANOz4lr8bwHCadrJo3dB/QUwolL41o
-	pVfBbkZROI075g5BeBUBetUFfcqw/u0=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-553-iwQYYHgmO02SN70ELjtrCQ-1; Sat, 11 May 2024 16:45:08 -0400
-X-MC-Unique: iwQYYHgmO02SN70ELjtrCQ-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1ec5ce555f6so29836225ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 13:45:08 -0700 (PDT)
+	s=arc-20240116; t=1715460753; c=relaxed/simple;
+	bh=OQMWT/XESL2wSq3PMkPSKjQjIph6lO8ZBN4q383E4YY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hZiK3o89yMdIrUmwn4NRnqc8KQby1Yu2PqUssrr0DX3YoNwPwadK0lq8RedwuvpMvjp3e12NtV/HGuhKmNP2PR3vlw4umV9MdMUwFX+knWYu1bfSajrmrv0R88pJ1FvkN+zDeU/M7dph9QFr0jejLCF0Ta9NmpdtuSQVp0fNq0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7da41da873bso511837139f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 13:52:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715460307; x=1716065107;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Aytntv1qSTgscf/fVVlEX6NWoKqZCFoCqwsJ0PcuQPc=;
-        b=t9u+2TVr21SLVKchvCRzWk8QbLAHxaeVdpyLtRsVmyh8OrlHLVTHNsl3+XL5p/mHr5
-         QAJ8BjRHbFoptR+fWhKpl6q+r5DNFr0jC3oFDnV9cHBczY+Il4XulARLe/tv2AIEJLR5
-         Txug/LxpWeH8kVVaP65orPFm31/osyPj41EwsfOaYvNQhie6je1ENHV1fIrfrsTIvyvK
-         8u6mJZy3EL7uWc1c34CYVpN6JTiqgiXe1pkZezMzO7X1PKjYILh9bEhkd2dPKUQ9LXHD
-         4d8joIvvYKSHijReYXp+QkteT57vewOjib/mJjKOo/I4nESGaEv2GihjCYbZi2heYX2z
-         zO0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXIUHX2IDANux6smpDgZZOMpOrbJ3upmdDBd56/1noJJDP3/QIUSKwQVY50gDck5z+gfhHHi1wbgjtbltd2GPIxxDtJxzei27tJ9VEm
-X-Gm-Message-State: AOJu0YxXNljzfDIYegd/C8ZRoEPpyEmqRImv5tcqDimkt+1goA0iUACo
-	aTLpirufSAigMRVPLZdKuVY/+/HFeppYWLDIHoRd0I7TDdVFgw4z0EjrOOPYjWpu46JGLaO1WPB
-	FyccguMvTULpWM5w6KwQNxId/wHvc3Vd6N6c55wuIgMgnSCE0ONjay7aKUQZpmA==
-X-Received: by 2002:a17:903:11c3:b0:1e1:a54:1fe8 with SMTP id d9443c01a7336-1ef4404fbf7mr74832685ad.53.1715460307056;
-        Sat, 11 May 2024 13:45:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHd5kExNw6uk9rCQMxKchlCbKxofARlkPukmoGeSmHapRj2YEf/B/7sssUzviPfVwRSzUk8w==
-X-Received: by 2002:a17:903:11c3:b0:1e1:a54:1fe8 with SMTP id d9443c01a7336-1ef4404fbf7mr74832535ad.53.1715460306663;
-        Sat, 11 May 2024 13:45:06 -0700 (PDT)
-Received: from localhost.localdomain ([2804:1b3:a800:a9e8:e01f:c640:3398:ffe5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c2555casm52362025ad.284.2024.05.11.13.45.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 13:45:05 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Guo Ren <guoren@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	andi.shyti@linux.intel.com,
-	andrzej.hajda@intel.com,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com
-Subject: Re: [PATCH RFC cmpxchg 8/8] riscv: Emulate one-byte and two-byte cmpxchg
-Date: Sat, 11 May 2024 17:44:46 -0300
-Message-ID: <Zj_YvmjROzW6NAog@LeoBras>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <9a84b94c-34ff-4c3a-ab2b-2741a5755db9@paulmck-laptop>
-References: <20240401213950.3910531-8-paulmck@kernel.org> <mhng-d6a8a972-5054-4c48-a903-5a53a31da9ad@palmer-ri-x1c9a> <Zj8VJZmQC7hRzDdz@gmail.com> <9a84b94c-34ff-4c3a-ab2b-2741a5755db9@paulmck-laptop>
+        d=1e100.net; s=20230601; t=1715460750; x=1716065550;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cGlFPamomYKWgAnIGl/Xy02h1wXcQK7YvJmmB63k8/E=;
+        b=hddrpUnyWQIOn/uOXY8QiEBKTGwVodSP7YDl5C3SCfVT9eEAiQGF9SYzDq85BEDU3g
+         aXHLfNcW1hbNRR8dqzPpXjSgKZ7BSYAfJhxcY0l95d80yfeyoIS/krLkVT+X6efSHyHr
+         JeyLoji+WiHhDfd9nlhwuDQ9j3oWbFoSkl+qAgUPPL7PvnFMHGyEC72I8nS7LPLRvhke
+         LCVkP43tCl3bsmfgt8gN14xauDClmYpjrm7y4q+5hkxsuzFYKsJeh6Jyl7d49g9TDJnO
+         HMAEnY8d98+oBVvePitYRMeh47elOMtKpwHDHHMj/sVLqT7BanVh9NbSyUOLd/cbV68b
+         bMmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAIdSFmw2PEcA/eYP16lJ4iERB+aS60TkD+7HCav4HXFSkfPBAWL8RqYr+Fe390Up2oXAckmClE7i2TQwo5hmATrTesry46I1qP6eJ
+X-Gm-Message-State: AOJu0YyC+g3Q3PjYnZ+xZwOzQ3A1Sy/o2oxXVgE5b2TmO51gCTBEkupS
+	TgjB//oby00EoO2jnDeR9/mV+UN4DfJMyXy87b/B8zUw5Vw/pF5sn+uS8RfmR4O29Vp00AVdsnF
+	obaU07QYZDnNX8UDwp+Sn6UojHQeSGmouTdYkbA/S7sn7v72axIgOAz4=
+X-Google-Smtp-Source: AGHT+IE39naJmXdDPa4XsacMJ/EyJlY+cjaAQws4yG++xeMrRw0RpBu6a9WHbcSd0nH55UawhSuhsh7hcvJ/tl7ejIRHjMWa7dy7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8506:b0:488:9082:8dd0 with SMTP id
+ 8926c6da1cb9f-48957cb32aemr423993173.0.1715460749885; Sat, 11 May 2024
+ 13:52:29 -0700 (PDT)
+Date: Sat, 11 May 2024 13:52:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009f9447061833d477@google.com>
+Subject: [syzbot] [bcachefs?] KMSAN: uninit-value in bch2_extent_update_i_size_sectors
+From: syzbot <syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, May 11, 2024 at 07:54:34AM -0700, Paul E. McKenney wrote:
-> On Sat, May 11, 2024 at 02:50:13AM -0400, Guo Ren wrote:
-> > On Thu, Apr 04, 2024 at 07:15:40AM -0700, Palmer Dabbelt wrote:
-> > > On Mon, 01 Apr 2024 14:39:50 PDT (-0700), paulmck@kernel.org wrote:
-> > > > Use the new cmpxchg_emu_u8() and cmpxchg_emu_u16() to emulate one-byte
-> > > > and two-byte cmpxchg() on riscv.
-> > > > 
-> > > > [ paulmck: Apply kernel test robot feedback. ]
-> > > 
-> > > I'm not entirely following the thread, but sounds like there's going to be
-> > > generic kernel users of this now?  Before we'd said "no" to the byte/half
-> > > atomic emulation routines beacuse they weren't used, but if it's a generic
-> > > thing then I'm find adding them.
-> > > 
-> > > There's a patch set over here
-> > > <https://lore.kernel.org/all/20240103163203.72768-2-leobras@redhat.com/>
-> > > that implements these more directly using LR/SC.  I was sort of on the fence
-> > > about just taking it even with no direct users right now, as the byte/half
-> > > atomic extension is working its way through the spec process so we'll have
-> > > them for real soon.  I stopped right there for the last merge window,
-> > > though, as I figured it was too late to be messing with the atomics...
-> > > 
-> > > So
-> > > 
-> > > Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
-> > F.Y.I Leonardo Bras <leobras@redhat.com>
+Hello,
 
-Hi Guo Ren, thanks for bringing it to my attention.
+syzbot found the following issue on:
 
-I am quite excited about the inclusion of my patchset on riscv/cmpxchg, and 
-I hope it can be useful both to your qspinlock implementation and on Paul's 
-RCU improvement.
+HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c66e24980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=617171361dd3cd47
+dashboard link: https://syzkaller.appspot.com/bug?extid=eceea46e8838baeeba67
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> 
-> I am carrying this in -rcu, but only for testing purposes, not for
-> inclusion into mainline.  Not that I know of anyone testing -rcu on
-> RISC-V, but still, I wouldn't want to do anything do discourage such
-> testing.
-> 
-> The reason that this patch is no longer intended for inclusion is that it
-> has been obsoleted by a patch that provides native support for one-byte
-> and two-byte cmpxchg() operations.  Which is even better!  ;-)
-> 
-> 							Thanx, Paul
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks Paul!
-Months ago I have reworked cmpxchg and added those 1-byte and 2-byte 
-{cmp,}xchg asm implementations using lr/sc, as they would be useful to Guo 
-Ren's qspinlock, and I am thankful that you provided another use case, 
-because it provides more proof of it's usefulness.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fdbc7be30633/disk-dccb07f2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a9e4c11aa835/vmlinux-dccb07f2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/43c3a343ea93/bzImage-dccb07f2.xz
 
-Thanks!
-Leo
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+eceea46e8838baeeba67@syzkaller.appspotmail.com
 
-> 
-> > > if you guys want to take some sort of tree-wide change to make the byte/half
-> > > stuff be required everywhere.  We'll eventually end up with arch routines
-> > > for the extension, so at that point we might as well also have the more
-> > > direct LR/SC flavors.
-> > > 
-> > > If you want I can go review/merge that RISC-V patch set and then it'll have
-> > > time to bake for a shared tag you can pick up for all this stuff?  No rush
-> > > on my end, just LMK.
-> > > 
-> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > > > Cc: Andi Shyti <andi.shyti@linux.intel.com>
-> > > > Cc: Andrzej Hajda <andrzej.hajda@intel.com>
-> > > > Cc: <linux-riscv@lists.infradead.org>
-> > > > ---
-> > > >  arch/riscv/Kconfig               |  1 +
-> > > >  arch/riscv/include/asm/cmpxchg.h | 25 +++++++++++++++++++++++++
-> > > >  2 files changed, 26 insertions(+)
-> > > > 
-> > > > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> > > > index be09c8836d56b..4eaf40d0a52ec 100644
-> > > > --- a/arch/riscv/Kconfig
-> > > > +++ b/arch/riscv/Kconfig
-> > > > @@ -44,6 +44,7 @@ config RISCV
-> > > >  	select ARCH_HAS_UBSAN
-> > > >  	select ARCH_HAS_VDSO_DATA
-> > > >  	select ARCH_KEEP_MEMBLOCK if ACPI
-> > > > +	select ARCH_NEED_CMPXCHG_1_2_EMU
-> > > >  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
-> > > >  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT
-> > > >  	select ARCH_STACKWALK
-> > > > diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> > > > index 2fee65cc84432..a5b377481785c 100644
-> > > > --- a/arch/riscv/include/asm/cmpxchg.h
-> > > > +++ b/arch/riscv/include/asm/cmpxchg.h
-> > > > @@ -9,6 +9,7 @@
-> > > >  #include <linux/bug.h>
-> > > > 
-> > > >  #include <asm/fence.h>
-> > > > +#include <linux/cmpxchg-emu.h>
-> > > > 
-> > > >  #define __xchg_relaxed(ptr, new, size)					\
-> > > >  ({									\
-> > > > @@ -170,6 +171,12 @@
-> > > >  	__typeof__(*(ptr)) __ret;					\
-> > > >  	register unsigned int __rc;					\
-> > > >  	switch (size) {							\
-> > > > +	case 1:								\
-> > > > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > > > +		break;							\
-> > > > +	case 2:								\
-> > > > +		break;							\
-> > > > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> > > >  	case 4:								\
-> > > >  		__asm__ __volatile__ (					\
-> > > >  			"0:	lr.w %0, %2\n"				\
-> > > > @@ -214,6 +221,12 @@
-> > > >  	__typeof__(*(ptr)) __ret;					\
-> > > >  	register unsigned int __rc;					\
-> > > >  	switch (size) {							\
-> > > > +	case 1:								\
-> > > > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > > > +		break;							\
-> > > > +	case 2:								\
-> > > > +		break;							\
-> > > > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> > > >  	case 4:								\
-> > > >  		__asm__ __volatile__ (					\
-> > > >  			"0:	lr.w %0, %2\n"				\
-> > > > @@ -260,6 +273,12 @@
-> > > >  	__typeof__(*(ptr)) __ret;					\
-> > > >  	register unsigned int __rc;					\
-> > > >  	switch (size) {							\
-> > > > +	case 1:								\
-> > > > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > > > +		break;							\
-> > > > +	case 2:								\
-> > > > +		break;							\
-> > > > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> > > >  	case 4:								\
-> > > >  		__asm__ __volatile__ (					\
-> > > >  			RISCV_RELEASE_BARRIER				\
-> > > > @@ -306,6 +325,12 @@
-> > > >  	__typeof__(*(ptr)) __ret;					\
-> > > >  	register unsigned int __rc;					\
-> > > >  	switch (size) {							\
-> > > > +	case 1:								\
-> > > > +		__ret = cmpxchg_emu_u8((volatile u8 *)__ptr, __old, __new); \
-> > > > +		break;							\
-> > > > +	case 2:								\
-> > > > +		break;							\
-> > > > +		__ret = cmpxchg_emu_u16((volatile u16 *)__ptr, __old, __new); \
-> > > >  	case 4:								\
-> > > >  		__asm__ __volatile__ (					\
-> > > >  			"0:	lr.w %0, %2\n"				\
-> > > 
-> 
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): journal_replay... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): going read-write
+bcachefs (loop0): done starting filesystem
+=====================================================
+BUG: KMSAN: uninit-value in bch2_extent_update_i_size_sectors+0x140f/0x17d0 fs/bcachefs/io_write.c:237
+ bch2_extent_update_i_size_sectors+0x140f/0x17d0 fs/bcachefs/io_write.c:237
+ bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+ bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+ __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+ bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+ bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+ closure_queue include/linux/closure.h:257 [inline]
+ closure_call include/linux/closure.h:390 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+ bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+ __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+ sync_file_range+0x316/0x450 fs/sync.c:292
+ ksys_sync_file_range fs/sync.c:364 [inline]
+ __do_sys_sync_file_range fs/sync.c:373 [inline]
+ __se_sys_sync_file_range fs/sync.c:370 [inline]
+ __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+ x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:278
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+Uninit was stored to memory at:
+ memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
+ bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
+ __bch2_bkey_make_mut_noupdate fs/bcachefs/btree_update.h:225 [inline]
+ __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:282 [inline]
+ bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
+ bch2_extent_update_i_size_sectors+0x9a9/0x17d0 fs/bcachefs/io_write.c:219
+ bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+ bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+ __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+ bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+ bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+ closure_queue include/linux/closure.h:257 [inline]
+ closure_call include/linux/closure.h:390 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+ bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+ __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+ sync_file_range+0x316/0x450 fs/sync.c:292
+ ksys_sync_file_range fs/sync.c:364 [inline]
+ __do_sys_sync_file_range fs/sync.c:373 [inline]
+ __se_sys_sync_file_range fs/sync.c:370 [inline]
+ __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+ x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:278
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ memcpy_u64s_small fs/bcachefs/util.h:511 [inline]
+ bkey_reassemble fs/bcachefs/bkey.h:505 [inline]
+ btree_key_cache_fill fs/bcachefs/btree_key_cache.c:454 [inline]
+ bch2_btree_path_traverse_cached_slowpath+0x5f02/0x79f0 fs/bcachefs/btree_key_cache.c:530
+ bch2_btree_path_traverse_cached+0xd1a/0x1140
+ bch2_btree_path_traverse_one+0x737/0x5290 fs/bcachefs/btree_iter.c:1155
+ bch2_btree_path_traverse fs/bcachefs/btree_iter.h:225 [inline]
+ bch2_btree_iter_peek_slot+0x128c/0x3840 fs/bcachefs/btree_iter.c:2473
+ __bch2_bkey_get_iter fs/bcachefs/btree_iter.h:549 [inline]
+ __bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:278 [inline]
+ bch2_bkey_get_mut_noupdate fs/bcachefs/btree_update.h:293 [inline]
+ bch2_extent_update_i_size_sectors+0x404/0x17d0 fs/bcachefs/io_write.c:219
+ bch2_extent_update+0x4f5/0xac0 fs/bcachefs/io_write.c:314
+ bch2_write_index_default fs/bcachefs/io_write.c:366 [inline]
+ __bch2_write_index+0x1653/0x2bd0 fs/bcachefs/io_write.c:520
+ bch2_write_data_inline fs/bcachefs/io_write.c:1538 [inline]
+ bch2_write+0x1a13/0x1b40 fs/bcachefs/io_write.c:1606
+ closure_queue include/linux/closure.h:257 [inline]
+ closure_call include/linux/closure.h:390 [inline]
+ bch2_writepage_do_io fs/bcachefs/fs-io-buffered.c:468 [inline]
+ bch2_writepages+0x24a/0x3c0 fs/bcachefs/fs-io-buffered.c:660
+ do_writepages+0x427/0xc30 mm/page-writeback.c:2612
+ filemap_fdatawrite_wbc+0x1d8/0x270 mm/filemap.c:397
+ __filemap_fdatawrite_range+0xe3/0x120 mm/filemap.c:430
+ sync_file_range+0x316/0x450 fs/sync.c:292
+ ksys_sync_file_range fs/sync.c:364 [inline]
+ __do_sys_sync_file_range fs/sync.c:373 [inline]
+ __se_sys_sync_file_range fs/sync.c:370 [inline]
+ __x64_sys_sync_file_range+0x15a/0x2a0 fs/sync.c:370
+ x64_sys_call+0xc90/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:278
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __kmalloc_large_node+0x231/0x370 mm/slub.c:3927
+ __do_kmalloc_node mm/slub.c:3960 [inline]
+ __kmalloc_node+0xb10/0x10c0 mm/slub.c:3979
+ kmalloc_node include/linux/slab.h:648 [inline]
+ kvmalloc_node+0xc0/0x2d0 mm/util.c:634
+ kvmalloc include/linux/slab.h:766 [inline]
+ btree_bounce_alloc fs/bcachefs/btree_io.c:118 [inline]
+ bch2_btree_node_read_done+0x4e68/0x75e0 fs/bcachefs/btree_io.c:1185
+ btree_node_read_work+0x8a5/0x1eb0 fs/bcachefs/btree_io.c:1324
+ bch2_btree_node_read+0x3d42/0x4b50
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1748 [inline]
+ bch2_btree_root_read+0xa6c/0x13d0 fs/bcachefs/btree_io.c:1772
+ read_btree_roots+0x454/0xee0 fs/bcachefs/recovery.c:457
+ bch2_fs_recovery+0x7adb/0x9310 fs/bcachefs/recovery.c:785
+ bch2_fs_start+0x7b2/0xbd0 fs/bcachefs/super.c:1043
+ bch2_fs_open+0x135f/0x1670 fs/bcachefs/super.c:2102
+ bch2_mount+0x90d/0x1d90 fs/bcachefs/fs.c:1903
+ legacy_get_tree+0x114/0x290 fs/fs_context.c:662
+ vfs_get_tree+0xa7/0x570 fs/super.c:1779
+ do_new_mount+0x71f/0x15e0 fs/namespace.c:3352
+ path_mount+0x742/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x725/0x810 fs/namespace.c:3875
+ __x64_sys_mount+0xe4/0x150 fs/namespace.c:3875
+ x64_sys_call+0x2bf4/0x3b50 arch/x86/include/generated/asm/syscalls_64.h:166
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 6218 Comm: syz-executor.0 Not tainted 6.9.0-rc7-syzkaller-00012-gdccb07f2914c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
