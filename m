@@ -1,157 +1,138 @@
-Return-Path: <linux-kernel+bounces-176701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D888C3372
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:29:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13148C3374
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 21:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CACE1F218B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:29:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719031F215B9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD331D554;
-	Sat, 11 May 2024 19:29:33 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9723C1CF96;
+	Sat, 11 May 2024 19:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="DfqLIEV3"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B011CD0C
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 19:29:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4981C6B7;
+	Sat, 11 May 2024 19:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715455773; cv=none; b=rt5trtj79DCqPch/atpGJCeYS8byWWj1mNSWigM0d5K2MctPG3eAahU+4bEpN7UozCGKx697KFU4zQPBGWMG1zroT3CaGOaP3opzBCLUBTsL3pgt9VUwbDdoKK2KWGqX2ElW6htAdPY4POJm//oRz8lMtEyCmg1Ie8WDBEv2HuI=
+	t=1715455823; cv=none; b=YbzzJO1Jt1uXm7c1f8toY8JOISTYX8oqBU6UXU7B6y5HOMjlxQMV9BVbtrtftpaIn4Eh2GF/lPSWHxTT7kZAMDEdH6Ze9Q/p7UDTCEhLHwFPtfEiyQYNGGxRcNOlka8v7RHH+ShQcxvE8LKSPMD5/89IblznNjkB/7+9G5LyEPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715455773; c=relaxed/simple;
-	bh=4lsE2Se8vXaMMEIsPzHa9RIlcRpOCsASJLMGgVYbVfc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nUbNvZ1oz+Z01r8gKEXjHYemeMxnqp/avPNDA5KuERuuAeyj459HjKkbPZ19aYqNlgQvrEq3kn32Z0mHfSJBY2umaXEfECyhVaVghg6TeKaIhvrLsnQyI40X8PMWa6d9J6eW5Usobc+3m0wWtlH7Wegquy9dzy606j0VSeCQlPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id c822eb82-0fcc-11ef-abf4-005056bdd08f;
-	Sat, 11 May 2024 22:29:28 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 11 May 2024 22:29:27 +0300
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v4 3/3] pinctrl: imx: support SCMI pinctrl protocol for
- i.MX95
-Message-ID: <Zj_HFxHMV57EXfYm@surfacebook.localdomain>
-References: <20240505-pinctrl-scmi-oem-v3-v4-0-7c99f989e9ba@nxp.com>
- <20240505-pinctrl-scmi-oem-v3-v4-3-7c99f989e9ba@nxp.com>
+	s=arc-20240116; t=1715455823; c=relaxed/simple;
+	bh=UMiHuXovsO9jrvFr2B88I117qzdlRC9jsvRcXVd5ueM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UyiLQAoucSjlWG5ZJcnihnwHnCQ2UB83rVZIfng05YXPrgHPJYYk0r6oB6riKWKwlorbpzfRH1HrJkMsKrDO0CiaAXeWOg9+MjJOGa8LJeyCgnrAAl9GGiOxAZZHnMGP9tSsqD5VUJeTkY0Aq0fHyfvDV8PpTyFsDwtYNpBAw7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=DfqLIEV3; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rd4X6oeIsPEko/YtXGb2SSHu5VdimYDlh48ZOg06U2g=; t=1715455820; x=1716060620; 
+	b=DfqLIEV3FcWSFhoxvVhGLxfX4UjFrKpMlhaVYfEBcW0QlWNq1hnNzaRaACQmjjd2YFDAmkV6vsP
+	5y3twb6N7iKGSoc9KkoMWmM6glULtxtBXw1wcyLRzm/G8KVcjLRqa6hQ9S2deRMvy4n+qlXHUGN4L
+	W8AMQhp7zwayzYxOolPK5wrjKj5BGDkh9HNZ+utA3U6Ml2+lmRyAjM1+Sqywb2F2hCkCXFKQPKu0E
+	xkIQfY7dF0OBx/T5fkaPh+yTz3D8uyZBEU3F4VGU9BVMac6DI7SSl6BXNh4fPg/ihL7GY6snBm2Yu
+	DJsCw+//J2uaInvFZfznHaQty2vMJKj7wkag==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s5sQC-00000003bGP-1019; Sat, 11 May 2024 21:30:16 +0200
+Received: from dynamic-078-055-008-036.78.55.pool.telefonica.de ([78.55.8.36] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s5sQC-00000002jBD-08vM; Sat, 11 May 2024 21:30:16 +0200
+Message-ID: <1ba5bbc958e6e5e1e442d942d490aeea9cfda602.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH 1/1] sh: dreamcast: Fix GAPS PCI bridge addressing
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Artur Rojek <contact@artur-rojek.eu>, Yoshinori Sato
+	 <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, Paul Cercueil
+	 <paul@crapouillou.net>
+Cc: linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sat, 11 May 2024 21:30:15 +0200
+In-Reply-To: <20240511191614.68561-2-contact@artur-rojek.eu>
+References: <20240511191614.68561-1-contact@artur-rojek.eu>
+	 <20240511191614.68561-2-contact@artur-rojek.eu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240505-pinctrl-scmi-oem-v3-v4-3-7c99f989e9ba@nxp.com>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Sun, May 05, 2024 at 11:47:19AM +0800, Peng Fan (OSS) kirjoitti:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The generic pinctrl-scmi.c driver could not be used for i.MX95 because
-> i.MX95 SCMI firmware not supports functions, groups or generic
-> 'Pin Configuration Type and Enumerations' listed in SCMI Specification.
-> 
-> i.MX95 System Control Management Interface(SCMI) firmware only supports
-> below pin configuration types which are OEM specific types:
->     192: PIN MUX
->     193: PIN CONF
->     194: DAISY ID
->     195: DAISY VAL
-> 
-> To support Linux generic pinctrl properties(pinmux, bias-pull-[up,
-> down], and etc), need extract the value from the property and map
-> them to the format that i.MX95 SCMI pinctrl protocol understands,
-> so add this driver.
+Hi,
 
-..
+On Sat, 2024-05-11 at 21:16 +0200, Artur Rojek wrote:
+> The G2-to-PCI bridge chip found in SEGA Dreamcast assumes P2 area
+> relative addresses.
+>=20
+> Set the appropriate IOPORT base offset.
+>=20
+> Tested-by: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> ---
+>  arch/sh/Kconfig                       | 3 ++-
+>  arch/sh/boards/mach-dreamcast/setup.c | 3 +++
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 217bdc4d0201..f723e2256c9c 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -126,7 +126,8 @@ config ARCH_HAS_ILOG2_U64
+> =20
+>  config NO_IOPORT_MAP
+>  	def_bool !PCI
+> -	depends on !SH_SHMIN && !SH_HP6XX && !SH_SOLUTION_ENGINE
+> +	depends on !SH_SHMIN && !SH_HP6XX && !SH_SOLUTION_ENGINE && \
+> +		   !SH_DREAMCAST
+> =20
+>  config IO_TRAPPED
+>  	bool
+> diff --git a/arch/sh/boards/mach-dreamcast/setup.c b/arch/sh/boards/mach-=
+dreamcast/setup.c
+> index 2d966c1c2cc1..daa8455549fa 100644
+> --- a/arch/sh/boards/mach-dreamcast/setup.c
+> +++ b/arch/sh/boards/mach-dreamcast/setup.c
+> @@ -25,10 +25,13 @@
+>  #include <asm/irq.h>
+>  #include <asm/rtc.h>
+>  #include <asm/machvec.h>
+> +#include <cpu/addrspace.h>
+>  #include <mach/sysasic.h>
+> =20
+>  static void __init dreamcast_setup(char **cmdline_p)
+>  {
+> +	/* GAPS PCI bridge assumes P2 area relative addresses. */
+> +	__set_io_port_base(P2SEG);
+>  }
+> =20
+>  static struct sh_machine_vector mv_dreamcast __initmv =3D {
 
-> +struct imx_pin_group {
-> +	struct pingroup data;
-> +};
+Reviewed-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
 
-I don't see the necessity of having this wrapper structure. Can't you simply
-use struct pingroup directly?
+Adrian
 
-..
-
-> +static int scmi_pinctrl_imx_probe(struct scmi_device *sdev)
-> +{
-> +	int ret;
-> +	struct device *dev = &sdev->dev;
-> +	struct scmi_pinctrl_imx *pmx;
-> +	const struct scmi_handle *handle;
-> +	struct scmi_protocol_handle *ph;
-> +	struct device_node *np __free(device_node) = of_find_node_by_path("/");
-> +	const struct scmi_pinctrl_proto_ops *pinctrl_ops;
-
-> +	if (!sdev->handle)
-> +		return -EINVAL;
-
-When this conditional can be true?
-
-> +	if (!of_match_node(scmi_pinctrl_imx_allowlist, np))
-> +		return -ENODEV;
-
-> +	handle = sdev->handle;
-
-It's even better to assign first and then check if the above check is needed at all.
-
-> +	pinctrl_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_PINCTRL, &ph);
-> +	if (IS_ERR(pinctrl_ops))
-> +		return PTR_ERR(pinctrl_ops);
-> +
-> +	pmx = devm_kzalloc(dev, sizeof(*pmx), GFP_KERNEL);
-> +	if (!pmx)
-> +		return -ENOMEM;
-> +
-> +	pmx->ph = ph;
-> +	pmx->ops = pinctrl_ops;
-> +
-> +	pmx->dev = dev;
-> +	pmx->pctl_desc.name = DRV_NAME;
-> +	pmx->pctl_desc.owner = THIS_MODULE;
-> +	pmx->pctl_desc.pctlops = &pinctrl_scmi_imx_pinctrl_ops;
-> +	pmx->pctl_desc.pmxops = &pinctrl_scmi_imx_pinmux_ops;
-> +	pmx->pctl_desc.confops = &pinctrl_scmi_imx_pinconf_ops;
-> +
-> +	ret = scmi_pinctrl_imx_get_pins(pmx, &pmx->pctl_desc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = scmi_pinctrl_imx_probe_dt(sdev, pmx);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = devm_pinctrl_register_and_init(dev, &pmx->pctl_desc, pmx,
-> +					     &pmx->pctldev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to register pinctrl\n");
-> +
-> +	return pinctrl_enable(pmx->pctldev);
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
