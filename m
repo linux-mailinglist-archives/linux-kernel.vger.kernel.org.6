@@ -1,160 +1,263 @@
-Return-Path: <linux-kernel+bounces-176757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A57B8C347E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:33:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DC78C3485
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D10D1C20DFA
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B5EA1C2121E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D69620B04;
-	Sat, 11 May 2024 22:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF82C1AE;
+	Sat, 11 May 2024 22:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5l1mY+B"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AKBUp4Hl";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="af6IbFI+"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC5A12E7E
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 22:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715466770; cv=none; b=fHNnSsNRVdD0CA8JUkRN8rvb3LWqr6KBO0gZFi65DxYU7szQk8zzDiJ+jf9YebOMunf+baMRwfN1wCLTewrZA+HQQhEjz7QQhPOnL81TlGqOoSB/jDpqYeDalepBpf0Z4a4ocXCUN+ZwLsJRogjlG3sB3ErdLwQykcLYn0B+cTk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715466770; c=relaxed/simple;
-	bh=9+jNicSIoeudc+F3EPpKSthDjra2W3jAMeqKdhOWTK4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LdvaLnKmhwQL/rqq0InlypiKSwHDjjawIpi4hzImSEsPtM+l5HUdXA3UE50Q02WYZC5MnS+FbCJVBNnOs9R8VfzYzAyj+V9sMG16cWQzhrbY4qUfEnL9JCvQ5+Yq7rSX5OPaMyfmCj0TxFG3Qngo6d9Yucnk3dnbjk8z0OIPUeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L5l1mY+B; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e576057c06so7287111fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:32:48 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4661740BF5;
+	Sat, 11 May 2024 22:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715467337; cv=fail; b=R8L5yApD4rMI8BmJgsGgnrdn0nyE6ZLdksQCwjoAhjYcMSwEzoLO7mGTCq7ShqCa3vQ9J80BVI34vwMR0cS6fg6q2ovQHi0H6UF85e1z4yu+iYmJtXSmhriHcfJFc+C6DYNEJr8yVnm4/ZFXIh0W8Nu94NVKpGxfJIatCeDzY9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715467337; c=relaxed/simple;
+	bh=dOYArRarqYueLAXqGvXK89lq/WZASxUg7A+hdrDbS2Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=TRTD9S4pZks+saNrX6dLlZdrYBwDZ97xcq8E9HxTA2PBfHJAQvMbO9CEp6suSmFvaS+BwxM+SFRcwjrM4+kGWvW3thHsTIqAc52rIXL9XcUdqU6+lDowa1qjpoIIPr8kD0dyHsk7Jjep7xnpLbRfUQOUnifXYWLKJ84jPQRMMbk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AKBUp4Hl; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=af6IbFI+; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44BMf5Z3028700;
+	Sat, 11 May 2024 22:41:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : content-transfer-encoding : content-type :
+ mime-version; s=corp-2023-11-20;
+ bh=biPwrc8xFkVMaWyEuzwqQ4cfiE/DQAdIJH0qVCZcelQ=;
+ b=AKBUp4HlRCN6FdS7a4jPRNrHS/R8OrzelL4l5VncnZ7g+BuML5m6OU0BqwRT8VW7o7vt
+ eRtbhv71gW6NTDT/xJHELA+cPUETwZd8V6MS+y0qYNGSkbM/o57B0tW6d0CGSVVAEtEa
+ yKFuHtH04OKNBS0o7+40Otu+FUMgyy6XHLxyHG9iX2b7661fieRO1asw6FpzDXM/qIj5
+ 8uOKd96X/g1evVBGfcXPiUspRpsuAogK7ur9y7hT6mwG479RzVirVvccnPT1Yx+iFD39
+ X6x67leEWF0VT2DipRFE1OQiCXFXtTToEUi9WD+OvBcTRAYPezZnwZZn7+EQdpV/WmXj fQ== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y2hjeg03f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 11 May 2024 22:41:21 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44BGpU4v031282;
+	Sat, 11 May 2024 22:41:20 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y1y44heqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 11 May 2024 22:41:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=al+zJCWi7xhnztr10gzNpR7tWi4F/S2BhG83AGBRevpugi8qhChqFAbMty73TZpTLvCZjMo+p8wzcHZ8aQ3sNJ1xXKEBBSWwtBoDHXK25MgpTnBAimHgAbiqIZjw8bbcP/4c6xGEfkWCMpe1MmhjKX6utU5Hu2CTg8J9q00Z6YDXhoUFjr5f1OMiEMT7fo1P/c0ev5pcFKCoKyv5COcNchy/NzGwY4/dWrqm4/H0WZg+XTWLm3eeXVYgumy48gil/vZr6ftYrGK//OtJNV23jgPYu1T6X52/jdkLNrkAei7h1at6dnoN3mkWUgkOFR6wxqF5LgHbDZHNtX7pS/oUvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=biPwrc8xFkVMaWyEuzwqQ4cfiE/DQAdIJH0qVCZcelQ=;
+ b=eiuInvWTwFCZBa9ugFT3R34HYKblnYPlPqTgpCsxVLHe003Hs4jh2EXYYze07muxu5QUAph8hWiphkyFIqZBje9ONWAyJAndiqj83gBvcnSzGjv1BQHYSxqU8T4fXwKrQK7CyMLRYfNE0mIvP1SxaAWs4ZAJ3dnuknHk89IuTMtQpUdL3s6I3y7XHCjL9EuQMgqqshlbs2h8bmUwrfjZuwxODr139tuniDz9a3+EeTKoPYr8abmfNCZOxqKJDfPTx4eZabXnhI7lMd1xBlI9Lxh4v+rzPjO2ZxeItMVaQ+IhDB2Jk9DGfoh3ZVZs/Vp48ZuD0kqrSHPO+q7AT/HOMg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715466767; x=1716071567; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ayQkPZ/+Ja6xRaXyLxW87mdfZ/SJLfKA5C9uQsxLStw=;
-        b=L5l1mY+BI+Zk0KHL782h7eHBQnL8sPUQkdEdnDBTg5DqnHPBGzHaTWsmtY6/inYV+o
-         t82nKKBGcpabosBtvAjAzx6cC17o3DBIHuCeV4YNdNx2fnqz5m79amzD8KWZOVhSJpaL
-         BHl/7Z0bbvZ77GXEcz/MICgHKerz41cpDf8wyNzzBOiNJHIyOqLN2Zz/NLcoQflkPBRR
-         8hWYHJlWmFpmNcbhwazBAu0pvfseoUHQtUonZdpXPMMRFVuu7JNHbyN0EGgpiSX15MWp
-         Vtwq5hpZX8PocaQJQV+/VCPSAgokavx8pGc/AuMPV2XmZ5PX0tdI1KnymuZOuHjMpt3V
-         HpBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715466767; x=1716071567;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ayQkPZ/+Ja6xRaXyLxW87mdfZ/SJLfKA5C9uQsxLStw=;
-        b=AxdyTaRs+YQ+SLotTRQX8yLKRIBaLqdkSB0SK7M1/nVCu2EJQSfhFAGP/r5WgYU+h3
-         b1YWgyxQqcLKuYs+jODqes1VAck7oXfA1+VroG1vgpphtRCanpfvAAwKdvUTRPg6AOlW
-         7ElCxiy/5nNpGXbEgm1CSMwSRUSJtykPqu0JcUnamJkHDZxoCdK/7tMIedd7wSBhbSZ5
-         DYgvYLYUV+8PFGAw3ovVpjCsXjhbwBKDmTkncqWa/ASM7JxqVdeeJn3vW1lmYPu2UbNH
-         iq49aMRjOO8ePAgR1Ix221kf4JUPEreDVVrH/k/FjBz+u0GrK5SVTND/ZRZ1fTozWn15
-         HqqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPxUd5NxuHiWvwe4ErheZbCS0MpQy783Es7jWa1sS0Ed++7m01zupxPLJzYuQog5G3Tx3fkACQHGxu5z0Op5JvhiXVfquprR3xffY6
-X-Gm-Message-State: AOJu0YzuP7w+0HGnrY4EyiVp1oc8P/UET0eb2gylpT89ygLtTFIKL/xA
-	hykZF49Q09eZcaIr84A++PNMzF3aEqGkaKaINQR9EzfmdRvpNzQa/mO1nFQtMflYZ2dyGqbq4+F
-	J
-X-Google-Smtp-Source: AGHT+IHIZPF1F7rpdmiB8zVjvs9j63L4ySis6WkHrE1pCnC9pnyXQKMMTw9kUd9VUQgA/K9/tkLJUQ==
-X-Received: by 2002:a05:6512:785:b0:51e:11d5:bca3 with SMTP id 2adb3069b0e04-5221006e61amr3469492e87.18.1715466766866;
-        Sat, 11 May 2024 15:32:46 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f35ba81fsm1127956e87.100.2024.05.11.15.32.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 15:32:45 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 12 May 2024 01:32:45 +0300
-Subject: [PATCH v2] docs: document python version used for compilation
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=biPwrc8xFkVMaWyEuzwqQ4cfiE/DQAdIJH0qVCZcelQ=;
+ b=af6IbFI+l8ylf8ANSSD3soS7eYflcHLed0bkA4hE66qJU/PxsGoV1RBN70SAXLPjnTnukcblexc6deUtTlyw7/wqRl8hdCBWOYxIPxijIA3IvvsQMXAvwMy1nv31lmqT8qFbqmNzhAkRF0d/25rJLiaA+3pyDZoHd3be0U0PyFM=
+Received: from SN7PR10MB6287.namprd10.prod.outlook.com (2603:10b6:806:26d::14)
+ by DS7PR10MB5184.namprd10.prod.outlook.com (2603:10b6:5:38e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sat, 11 May
+ 2024 22:41:17 +0000
+Received: from SN7PR10MB6287.namprd10.prod.outlook.com
+ ([fe80::6c60:5db4:7058:1440]) by SN7PR10MB6287.namprd10.prod.outlook.com
+ ([fe80::6c60:5db4:7058:1440%6]) with mapi id 15.20.7544.052; Sat, 11 May 2024
+ 22:41:17 +0000
+From: Kris Van Hees <kris.van.hees@oracle.com>
+To: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Cc: Kris Van Hees <kris.van.hees@oracle.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Jiri Olsa <olsajiri@gmail.com>,
+        Elena Zannoni <elena.zannoni@oracle.com>
+Subject: [PATCH v2 0/6] Generate address range data for built-in modules
+Date: Sat, 11 May 2024 18:40:29 -0400
+Message-ID: <20240511224035.27775-1-kris.van.hees@oracle.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MN2PR18CA0013.namprd18.prod.outlook.com
+ (2603:10b6:208:23c::18) To SN7PR10MB6287.namprd10.prod.outlook.com
+ (2603:10b6:806:26d::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240512-python-version-v2-1-382870a1fa1d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAAzyP2YC/3WMQQ7CIBBFr9LMWgygqHXlPUwX0wLtJAaaoSE2D
- XeXdu/y/fz3NkiOySV4Nhuwy5Qohgr61MAwYRidIFsZtNRXaWQr5nWZYhDZ8X4V+OhvA2qljfd
- QpZmdp+8RfHeVJ0pL5PXoZ7Wvf1NZCSXwbi1esDW98a8PBeR4jjxCV0r5AfO3uyWtAAAA
-To: Jonathan Corbet <corbet@lwn.net>, Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>
-Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2264;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=9+jNicSIoeudc+F3EPpKSthDjra2W3jAMeqKdhOWTK4=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmP/IN6moNPSkS5RdVGvLI1pvK47IdjjvwevOEi
- H2N8KH5JNiJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZj/yDQAKCRCLPIo+Aiko
- 1b7/B/90NPkOoZ8qSWRYxnXABQCgT9LTVkXhfbbO7/Pc+dOo3/3TONJGInxKeUn490eaRHwHeuz
- 9vE/piFYctiN3nBqMCPgU1wdwSXkpXG7aO9uzxVYZFda4T5iH2sg9LNMPG9vd66Y4MPRE5UShNJ
- jIpW2um9X15VUVS0GLR7oExe3jVHOeBe/vsDVyejvXnNd3Y5oHdKUkjX9DqJzfDulLMqZU1Lm5A
- Kf5du4NmIlp3XZvESVP9Xu0jkrLiVubjYMnd1ZmlmcuriIwkRqRtGpkSMcvPn/76OfkfYf6gqV1
- cCpzDfuZXB8BAxj27gFWTe6ZxmgVGDu7p0QYa2hoioSCMCOB
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR10MB6287:EE_|DS7PR10MB5184:EE_
+X-MS-Office365-Filtering-Correlation-Id: db3b2e8e-630d-44aa-29f1-08dc720b78eb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?Q31gGJKv7hTOMuufkHNSmSqNr1i5qwI5RL5ai0yRmx41F/JsJXJu+2BmnBhk?=
+ =?us-ascii?Q?+z42SjQNFr7S2nam0XOxeLQbsgbTVUwO02B8SiYN4LoSI2vTGKw0BWWbTIFI?=
+ =?us-ascii?Q?TDn4HpLe611H2ZNxTMff6UQN9e/a7nk1dG2bNQ5z4xNYvn1lseRzUnXYqWJa?=
+ =?us-ascii?Q?Xpvp9u3JwMYKFJkzSScc1Ek9LenflQVXPI4/IiBXJrfYGvEhkFDaODMyFGso?=
+ =?us-ascii?Q?XjudANWstoOzYZzpdyiALD+yNZygL6tRNesmtDT520PL45Jb0vtVxqucG8qk?=
+ =?us-ascii?Q?YJfzzvQOvjlK+ZaB1Crm9dVB1g5b455pfyH4gUmnjyLDktms9/aevX7nvdWP?=
+ =?us-ascii?Q?yBP9oT0mLwzf24DrCsd9a4DjhVsDzlN+U1Jp+vBhyv9//Ct+NKdRU9sqydce?=
+ =?us-ascii?Q?DtXUg4vdkFD8S9Q0ZLmLMymaehzzaZkHNBgZgzBON12Q2VNpNAXeUTjAxMqS?=
+ =?us-ascii?Q?sNeF5AkmNzHVPIgh3WpVAfAl2sbUbX+4IeVGeCCwAiWv/ph87flkvkbNgXeP?=
+ =?us-ascii?Q?DYPb5EnyZIpqg7rwRvuzMQ80F2q1/cNvXvW7HwENL6K7tbryaVynTfa7lGZR?=
+ =?us-ascii?Q?/hXEU+ZKJDAkfzhn9C4ZuPKpY4gfA9vzLDnAO5qRcZem+WBnDqCI/Czwu6/H?=
+ =?us-ascii?Q?i9pxk3yCGTI1OeDyLvqbIqymfRpDOAzAPlE/X0jpOdACR54IflSz+YhQS9Ms?=
+ =?us-ascii?Q?9wxzDGECcUcFz8QNItgwCjbwre6A7xdlYkwQEtAGIO0yUsBgrjwSdsWptQ8G?=
+ =?us-ascii?Q?usnnryEvb2bv7Ci1wz4uJHUBzq2hhEfm9dU85F2nvOABe9JVzRF3KcB6e/pM?=
+ =?us-ascii?Q?U6AjZhkVeYrAvsMmBxpYITbhig0XvnFbyTHvlzbtI9v865q0OkytV57LocQL?=
+ =?us-ascii?Q?xBE1PcQGOufV3buNn84/KHeYmpkPXN3eBL+2/hZV/ZXxDP0wytm8eB3VOrWp?=
+ =?us-ascii?Q?URPQEpGjY+wCQqa/uRffz1hY5iOyryU5ThzSo9FDq2AMthI1q6fjCYA2z10P?=
+ =?us-ascii?Q?W3Dvr9CElgyUhG7HLqZkVFD/EDaz8ywd2d4kBF+ByfDz4hkQwacl0TwSkYax?=
+ =?us-ascii?Q?R+Go+nqXhxAKG1oohyHdDHXSOKqlviW3LVOviLKNzROP/1sTZ3NXi8TjLsiA?=
+ =?us-ascii?Q?ptNnmH/uo8Fz8C4yfRDNWP+6xfmGGVERU3vT77lOLH6HlXyjj8T6v+KwxGBI?=
+ =?us-ascii?Q?43ZQLuIdiJrzevrPpVyZaLCy2j+wFemxaTixGLYc4Slh2+hegUOirJY+tO6T?=
+ =?us-ascii?Q?38vfKGN7vvwBBAlx1SZfk3lmAWqKtuCkCiF2V69DmQ=3D=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR10MB6287.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?oEE3HYbeDhTt7ZjUaWYqRl3wDCFWmaZUP99rLc+hLMDBwxm2NBlGPzHdjshD?=
+ =?us-ascii?Q?Hc3+AVA6IiEqScdtBU0dLcxY6T9tgEkHmC8nw0fsI7HhrGVjry3GCexpazBP?=
+ =?us-ascii?Q?VoUDbQLz14bErT9c9mWzJm1BOfNDfB4qKfJv2eO1aFxxm/GveWiubECubLzd?=
+ =?us-ascii?Q?7eLiLQg9Pt6YvUzP5GynmCz2sZasMRRUeKdKQ0naOen6cV/UaLP9QMWzoMWA?=
+ =?us-ascii?Q?NaTEHs7l/ZL3i73eLhf8m5sez4PIAROjaXxir8pD1hGs0S3NrKpIQFe/tYrO?=
+ =?us-ascii?Q?SIVIMI/a1QULS2wRX904pb44Idxw8z88++/2cpRAZhriyxtATyaBW4N39N2c?=
+ =?us-ascii?Q?D7T2Jd5ov2YUyPNVwfm7hisNGH6By+SgZg0F8V9qjJ1WU6FUikOcXC9RZSMs?=
+ =?us-ascii?Q?P0DgjYnx/9lsBEb5uO1k3Q7rgXdl0pYRbUqZKaVP5imdK7om5ktAKN9H34eN?=
+ =?us-ascii?Q?sqNnfJ/LSU/o4Veh1aVMQq7cHdrXB3+awnG4JG1l2VIdJdq32Br/8Gz6cafk?=
+ =?us-ascii?Q?kERf76336YHVPPGeg83nMBaMxyISkhTZHjItzd7va27ekcgiT+w1h4SQ+/aL?=
+ =?us-ascii?Q?c9l+S+Wiuh0LcajA4FhQQLx8HVygybWbaB2bhExMbVD5hHRSEoMB1NYEw7jg?=
+ =?us-ascii?Q?4C51dbw0YUtdgIXuTp/0pK4w1mML8vDXjM3nDMJYrSQlFTQ5ry0Ocp8x7oV2?=
+ =?us-ascii?Q?VlqLYJomXvK0pPvCEdLekwHVXpTSYhi1wv189IUAwz5Kk//vGeeny/Qjd3GF?=
+ =?us-ascii?Q?MjbiUwbpDu0objQqaGdT/HJJAH/DEXXYd8ouxh7d3Znr+7DR3WG29ATSibb5?=
+ =?us-ascii?Q?NN+0Q+apkw0YgtUIphGpE3CP14vzrumKJMhmK5YE6xm6pDKHx6lgU9XrijOR?=
+ =?us-ascii?Q?yihHjOk6/6EJMN5iOGNXucxbCyIugskH6IGH0UA1DPSIztPfjTKmk+4lQSD3?=
+ =?us-ascii?Q?dXVqxiVfbxxahTOns6EXqLh7SYwhpRcjFwFWku9v6i2FDNMjds51G+zjRnRf?=
+ =?us-ascii?Q?J3fE9PMlnnKjbb9T0I5xjDL5WsPYXTO0ZqbZcSSpg5oJFxJJwNKZoxx78rJO?=
+ =?us-ascii?Q?IQC6UEGdfDdD7d2PhMvUnDwx5oorV8NKkx2Iw7IrnbYdiSYQ26XHOszQRFwu?=
+ =?us-ascii?Q?G8YLRsr0BAcqR4YwsmNr69Qh2J3TTOCKqHzBSU6a3JsO4xPpuHBaL7ADXws/?=
+ =?us-ascii?Q?1RaN4lkGnrFGsyQG6JBc2UGdtoHb1/JR1BZ67i8Jviy9tGnskczxl7t/U7dR?=
+ =?us-ascii?Q?InLWBlJ5FH5vRWbX5mKDtFJWMe98kuD2C7GzMcUQQ6kEQN3tbmir6u8ryd72?=
+ =?us-ascii?Q?ykZLaUrD3dB0GghWMI6T2WwhBp85ZntDMMaXjQq9f7Cu7ykB9GzXwhmFDvcG?=
+ =?us-ascii?Q?q6ZbjZvz8Kt94hyKu+5v3/bF+aU0R2CJbD3tLjUUZTmgQoRENuh0jeLhb+rO?=
+ =?us-ascii?Q?cp3CcxRymRn1jc7i1I+LfVvwhsE/21kXt1m8cAzlUuEj+Qdf8lZ1oL6MbYuZ?=
+ =?us-ascii?Q?5/ZnAlPMU4V5EmczXX9HgExp33JbS98VjaLrPvgz7RcoYqiKMQ3C6rMqpxrN?=
+ =?us-ascii?Q?OhA0rOUZNLETWBpkR/IlJJV19g9N/j4PauVfsisBrd2EFx0rJ521zEZhEgr2?=
+ =?us-ascii?Q?Rw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	XEMO6zTZPX5ZodirH87HquMhC2/ANb2weGPldOdSA3GHv048lK1iH7qmoJoOjn36nUFNch1Fj4Sm5OdpnVSlIOw9wup2apnbtHfrCt3VQCp2RS3hqow/MVVD+000DNxiNoh7RPKs6lkcr+EAHYtxDoonYX1+qmF3Dq0OPWMoKmq4H8qHjgGoyVbBKKsPpXaaVhJ/l8UtFaKMeZropti3DVHSsL4RzUcXr3q93e53s8MvfCCHlompqeZEwUeFfVLqELIXQyLKz50muL+BsGDXxp71LUB8IY9LN8HSUjey9cG7wCcCHwrtg/O3B+jei+idkR101qXEfnwWPuw0eeCuoqdNSViQ58lzY67YCcQ2lzfZ5dtPA5R4W90gaMB1hVIq8fx+RoB7h4uxMvnMd3wgKMVXmiNE8zeuien5H7X5Cbywn4hrhPLaf779XyTzrtCbEDWZowLIIZP+wjeg2yEHHnjxRkB9bCyE+RqnlF/AAV6YVPosk5F2uqXpgzI9EWp0HGWet/azRgwuZZRNeE+9JflZ+4Z6uH6SznQtHvupTWxfTpaqHHXZ8Ga7YLplvwNL/7U7c8hNgVyRJhDp4YQZPSFSQZJHNw4rCPVBMHBmDxM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db3b2e8e-630d-44aa-29f1-08dc720b78eb
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR10MB6287.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 May 2024 22:41:17.9362
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +X1T1OfzIziAltqFLtSHGqOsma5D+fRCjzr3YgzCllLpsYefxs463l/rH74hY5FIAHpxpxHtUDze22msvrtB200PbbH2gTnfPjVh54YQaQ0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5184
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-11_06,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 phishscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405110171
+X-Proofpoint-GUID: 77_nOWvCApU5DkrqUM0Wi-5lurJTH5Bm
+X-Proofpoint-ORIG-GUID: 77_nOWvCApU5DkrqUM0Wi-5lurJTH5Bm
 
-The drm/msm driver had adopted using Python3 script to generate register
-header files instead of shipping pre-generated header files. Document
-the minimal Python version supported by the script. Per request by Jon
-Hunter, the script is required to be compatible with Python 3.5.
+Especially for tracing applications, it is convenient to be able to
+refer to a symbol using a <module name, symbol name> pair and to be able
+to translate an address into a <nodule mname, symbol name> pair.  But
+that does not work if the module is built into the kernel because the
+object files that comprise the built-in module implementation are simply
+linked into the kernel image along with all other kernel object files.
 
-Python is documented as an optional dependency, as it is required only
-in a limited set of kernel configurations (following the example of
-other optional dependencies).
+This is especially visible when providing tracing scripts for support
+purposes, where the developer of the script targets a particular kernel
+version, but does not have control over whether the target system has
+a particular module as loadable module or built-in module.  When tracing
+symbols within a module, referring them by <module name, symbol name>
+pairs is both convenient and aids symbol lookup.  But that naming will
+not work if the module name information is lost if the module is built
+into the kernel on the target system.
 
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Depends: https://lore.kernel.org/dri-devel/20240507230440.3384949-1-quic_abhinavk@quicinc.com/
----
-Changes in v2:
-- Expanded documentation for the Python usage.
-- Link to v1: https://lore.kernel.org/r/20240509-python-version-v1-1-a7dda3a95b5f@linaro.org
----
- Documentation/process/changes.rst | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Earlier work addressing this loss of information for built-in modules
+involved adding module name information to the kallsyms data, but that
+required more invasive code in the kernel proper.  This work never did
+get merged into the kernel tree.
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 5685d7bfe4d0..30f17e3f954f 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -63,6 +63,7 @@ cpio                   any              cpio --version
- GNU tar                1.28             tar --version
- gtags (optional)       6.6.5            gtags --version
- mkimage (optional)     2017.01          mkimage --version
-+Python (optional)      3.5.x            python3 --version
- ====================== ===============  ========================================
- 
- .. [#f1] Sphinx is needed only to build the Kernel documentation
-@@ -198,6 +199,13 @@ platforms. The tool is available via the ``u-boot-tools`` package or can be
- built from the U-Boot source code. See the instructions at
- https://docs.u-boot.org/en/latest/build/tools.html#building-tools-for-linux
- 
-+Python
-+------
-+
-+Python is required to generate register headers for the drm/msm driver or to
-+build the linker script if the kernel is built using Clang compiler if LTO
-+(Link Time Optimisation) is enabled.
-+
- System utilities
- ****************
- 
+All that is really needed is knowing whether a given address belongs to
+a particular module (or multiple modules if they share an object file).
+Or in other words, whether that address falls within an address range
+that is associated with one or more modules.
 
----
-base-commit: e8bd80985f8ed4c04e36209228163fcf06496763
-change-id: 20240509-python-version-a8b6ca2125ff
+This patch series is baaed on Luis Chamberlain's patch to generate
+modules.builtin.objs, associating built-in modules with their object
+files.  Using this data, vmlinux.o.map and vmlinux.map can be parsed in
+a single pass to generate a modules.buitin.ranges file with offset range
+information (relative to the base address of the associated section) for
+built-in modules.  The file gets installed along with the other
+modules.builtin.* files.
 
-Best regards,
+The impact on the kernel build is minimal because everything is done
+using a single-pass AWK script.  The generated data size is minimal as
+well, (depending on the exact kernel configuration) usually in the range
+of 500-700 lines, with a file size of 20-40KB.
+
+Changes since v1:
+ - Renamed CONFIG_BUILTIN_RANGES to CONFIG_BUILTIN_MODULE_RANGES
+ - Moved the config option to the tracers section
+ - 2nd arg to generate_builtin_ranges.awk should be vmlinux.map
+
+Kris Van Hees (5):
+  trace: add CONFIG_BUILTIN_MODULE_RANGES option
+  kbuild: generate a linker map for vmlinux.o
+  module: script to generate offset ranges for builtin modules
+  kbuild: generate modules.builtin.ranges when linking the kernel
+  module: add install target for modules.builtin.ranges
+
+Luis Chamberlain (1):
+  kbuild: add modules.builtin.objs
+
+ .gitignore                          |   2 +-
+ Documentation/dontdiff              |   2 +-
+ Documentation/kbuild/kbuild.rst     |   5 ++
+ Makefile                            |   8 +-
+ include/linux/module.h              |   4 +-
+ kernel/trace/Kconfig                |  17 ++++
+ scripts/Makefile.lib                |   5 +-
+ scripts/Makefile.modinst            |  11 ++-
+ scripts/Makefile.vmlinux            |  17 ++++
+ scripts/Makefile.vmlinux_o          |  18 ++++-
+ scripts/generate_builtin_ranges.awk | 149 ++++++++++++++++++++++++++++++++++++
+ 11 files changed, 228 insertions(+), 10 deletions(-)
+ create mode 100755 scripts/generate_builtin_ranges.awk
+
+
+base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.42.0
 
 
