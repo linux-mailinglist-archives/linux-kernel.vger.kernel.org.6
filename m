@@ -1,181 +1,138 @@
-Return-Path: <linux-kernel+bounces-176424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14BC88C2FB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D69A28C2FB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB733B22F0B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:41:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DD0DB23692
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D18547F5D;
-	Sat, 11 May 2024 05:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNF6AtDt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCE547F58;
+	Sat, 11 May 2024 05:42:59 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06DA8C13;
-	Sat, 11 May 2024 05:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8F73F8F7
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 05:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715406108; cv=none; b=uyR6WmMwq7DY9QdNHGC6GqmbRCHIePFMZTsGZcFobz0ugmlqkKM3lHF+Y0WJZtgBP9wh8/42YxL8VqOqYQ39RCdVn4vZZjITTT8fNwk2cXYyqK6EeJCvttqG/x3ExrFM9mWU5+h0PynKv6QOAqdc93R5wo9pWBBdmd4jWdw+Vi0=
+	t=1715406178; cv=none; b=qEZIcE6v+QXzXIE0spu7zq8aQSJKgwAvHRPSwlAFtlkuwRb9vkjOdZzeuhB1rGAt/TSb/5Oco4fXNzV0dUOFFeBTI2M8yiHP9xOua9Gxi0kc8OIYzBOlY8yFykBS66TXcA9gx4bAsJH84z6gnN7ueK6cVb+P8ghu2S1b0YZ2JbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715406108; c=relaxed/simple;
-	bh=vKgo1rxMrX85fnLlODxarqhoWbgiR3+i3AwVqY8M3Uc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZgO+8La6Nrj6/Axu35sP86tXxrvPaTfAeVqbcjax0jvxaCK/wG7utXmNfvRE8qzeFt/G2wKSUggMAer5qzYbs3uhL/S2KvQdjGw6Ij/aiq2dZnL7BXft3dNpkyh3jpAaD5xjqYvnSDmGOhwaBzqf0wcD2jyao5cX9UYAfQodPAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNF6AtDt; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715406106; x=1746942106;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=vKgo1rxMrX85fnLlODxarqhoWbgiR3+i3AwVqY8M3Uc=;
-  b=mNF6AtDtUTv7DFSiFLl/jFu6zGI3dmHBhFEKndl3UFrq9TUWaFU5q4tw
-   RwQXUlaHsTLwbxtiyvOlRNpO8zeHhN1hwYh9dcz3dCttsqKGSrHfLODjq
-   Es58Bs9ABuvmpRFsMbksPan5l+yNMIFJLlWPz4IbBhoAPBuyuhQpb02Co
-   X4cIEMH3vvPM4GzQflBqbZdyWBd5G4oxcETibJEo8crPenIcTThoAbw61
-   0CB+eq+T/K494vy5PT+z65Vx9tfGAA/cdDKrOCKCFGdhHSf+Kohhbc2f7
-   xXsJFEdGZxlHsHx4supjPjzGCA1/8sRWM7ic4ibwnale+M0dTq0XVAA+8
-   A==;
-X-CSE-ConnectionGUID: xu5Es2VXT2CaGAT5ZctXFQ==
-X-CSE-MsgGUID: G/eWI42GTNiu4qHkC4Sxsg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="33918552"
-X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
-   d="scan'208";a="33918552"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 22:41:46 -0700
-X-CSE-ConnectionGUID: gzzJlJ0sRvGdkdKmgarTug==
-X-CSE-MsgGUID: HSnXpZt5TO6cQtBRG/rGqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
-   d="scan'208";a="34702998"
-Received: from unknown (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 22:41:42 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org,  Kairui Song <kasong@tencent.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Matthew Wilcox <willy@infradead.org>,  Chris
- Li <chrisl@kernel.org>,  Barry Song <v-songbaohua@oppo.com>,  Ryan Roberts
- <ryan.roberts@arm.com>,  Neil Brown <neilb@suse.de>,  Minchan Kim
- <minchan@kernel.org>,  David Hildenbrand <david@redhat.com>,  Hugh Dickins
- <hughd@google.com>,  Yosry Ahmed <yosryahmed@google.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 11/12] mm: drop page_index and simplify folio_index
-In-Reply-To: <20240510114747.21548-12-ryncsn@gmail.com> (Kairui Song's message
-	of "Fri, 10 May 2024 19:47:46 +0800")
-References: <20240510114747.21548-1-ryncsn@gmail.com>
-	<20240510114747.21548-12-ryncsn@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Sat, 11 May 2024 13:39:50 +0800
-Message-ID: <87o79chpp5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	s=arc-20240116; t=1715406178; c=relaxed/simple;
+	bh=1o7ioJ8Y/BMDSiq6H389bvf2c/5X0KY3SpNtki0o8fk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wv938cWofnOATnARy+M3pz3ZoMlY1wnLgXojp7BTuxahmsqXeFOHNkhSIgRGyu9skfPK1h4M8RVvgceFFzOO0lSZZdSdiYI8MoLyo7NoseDAnmKNXlijlxf8bhb4gJVQxfW+CeDqPin8u2sVui/pOP3A9iTWzh3ntGZWvtLFOnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-208.elisa-laajakaista.fi [88.113.25.208])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id 4b7fdbe9-0f59-11ef-abf4-005056bdd08f;
+	Sat, 11 May 2024 08:42:48 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 11 May 2024 08:42:46 +0300
+To: Krishna Kumar <krishnak@linux.ibm.com>
+Cc: mpe@ellerman.id.au, npiggin@gmail.com, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	brking@linux.vnet.ibm.com, gbatra@linux.ibm.com,
+	aneesh.kumar@kernel.org, christophe.leroy@csgroup.eu,
+	nathanl@linux.ibm.com, bhelgaas@google.com, oohall@gmail.com,
+	tpearson@raptorengineering.com, mahesh.salgaonkar@in.ibm.com
+Subject: Re: [PATCH 2/2] arch/powerpc: hotplug driver bridge support
+Message-ID: <Zj8FVva9G9_r6-cZ@surfacebook.localdomain>
+References: <20240509120644.653577-1-krishnak@linux.ibm.com>
+ <20240509120644.653577-3-krishnak@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509120644.653577-3-krishnak@linux.ibm.com>
 
-Kairui Song <ryncsn@gmail.com> writes:
+Thu, May 09, 2024 at 05:35:54PM +0530, Krishna Kumar kirjoitti:
+> There is an issue with the hotplug operation when it's done on the
+> bridge/switch slot. The bridge-port and devices behind the bridge, which
+> become offline by hot-unplug operation, don't get hot-plugged/enabled by
+> doing hot-plug operation on that slot. Only the first port of the bridge
+> gets enabled and the remaining port/devices remain unplugged. The hot
+> plug/unplug operation is done by the hotplug driver
+> (drivers/pci/hotplug/pnv_php.c).
+> 
+> Root Cause Analysis: This behavior is due to missing code for the DPC
+> switch/bridge. The existing driver depends on pci_hp_add_devices()
+> function for device enablement. This function calls pci_scan_slot() on
+> only one device-node/port of the bridge, not on all the siblings'
+> device-node/port.
+> 
+> The missing code needs to be added which will find all the sibling
+> device-nodes/bridge-ports and will run explicit pci_scan_slot() on
+> those.  A new function has been added for this purpose which gets
+> invoked from pci_hp_add_devices(). This new function
+> pci_traverse_sibling_nodes_and_scan_slot() gets all the sibling
+> bridge-ports by traversal and explicitly invokes pci_scan_slot on them.
+> 
+> 
 
-> From: Kairui Song <kasong@tencent.com>
->
-> There are two helpers for retrieving the index within address space
-> for mixed usage of swap cache and page cache:
->
-> - page_index
-> - folio_index
->
-> This commit drops page_index, as we have eliminated all users, and
-> converts folio_index's helper __page_file_index to use folio to avoid
-> the page convertion.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+One blank line is enough here.
 
-LGTM, Thanks!
+> Signed-off-by: Krishna Kumar <krishnak@linux.ibm.com>
 
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+..
 
-> ---
->  include/linux/mm.h      | 13 -------------
->  include/linux/pagemap.h |  8 ++++----
->  mm/swapfile.c           |  7 +++----
->  3 files changed, 7 insertions(+), 21 deletions(-)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 9849dfda44d4..e2718cac0fda 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2290,19 +2290,6 @@ static inline void *folio_address(const struct folio *folio)
->  	return page_address(&folio->page);
->  }
->  
-> -extern pgoff_t __page_file_index(struct page *page);
-> -
-> -/*
-> - * Return the pagecache index of the passed page.  Regular pagecache pages
-> - * use ->index whereas swapcache pages use swp_offset(->private)
-> - */
-> -static inline pgoff_t page_index(struct page *page)
-> -{
-> -	if (unlikely(PageSwapCache(page)))
-> -		return __page_file_index(page);
-> -	return page->index;
-> -}
-> -
->  /*
->   * Return true only if the page has been allocated with
->   * ALLOC_NO_WATERMARKS and the low watermark was not
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index a324582ea702..0cfa5810cde3 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -778,7 +778,7 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
->  			mapping_gfp_mask(mapping));
->  }
->  
-> -#define swapcache_index(folio)	__page_file_index(&(folio)->page)
-> +extern pgoff_t __folio_swap_cache_index(struct folio *folio);
->  
->  /**
->   * folio_index - File index of a folio.
-> @@ -793,9 +793,9 @@ static inline struct page *grab_cache_page_nowait(struct address_space *mapping,
->   */
->  static inline pgoff_t folio_index(struct folio *folio)
->  {
-> -        if (unlikely(folio_test_swapcache(folio)))
-> -                return swapcache_index(folio);
-> -        return folio->index;
-> +	if (unlikely(folio_test_swapcache(folio)))
-> +		return __folio_swap_cache_index(folio);
-> +	return folio->index;
->  }
->  
->  /**
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index f6ca215fb92f..0b0ae6e8c764 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -3474,12 +3474,11 @@ struct address_space *swapcache_mapping(struct folio *folio)
->  }
->  EXPORT_SYMBOL_GPL(swapcache_mapping);
->  
-> -pgoff_t __page_file_index(struct page *page)
-> +pgoff_t __folio_swap_cache_index(struct folio *folio)
->  {
-> -	swp_entry_t swap = page_swap_entry(page);
-> -	return swp_offset(swap);
-> +	return swp_offset(folio->swap);
->  }
-> -EXPORT_SYMBOL_GPL(__page_file_index);
-> +EXPORT_SYMBOL_GPL(__folio_swap_cache_index);
->  
->  /*
->   * add_swap_count_continuation - called when a swap count is duplicated
+> +void *pci_traverse_sibling_nodes_and_scan_slot(struct device_node *start, struct pci_bus *bus)
+> +{
+> +	struct device_node *dn;
+> +	struct device_node *parent;
+> +	int slotno;
+> +
+> +	const __be32 *classp1;
+> +	u32 class1 = 0;
+
+> +	classp1 = of_get_property(start->child, "class-code", NULL);
+> +	if (classp1)
+> +		class1 = of_read_number(classp1, 1);
+
+What's wrong with of_property_read_u32()?
+
+
+> +	/* Call of pci_scan_slot for non-bridge/EP case */
+> +	if (!((class1 >> 8) == PCI_CLASS_BRIDGE_PCI)) {
+> +		slotno = PCI_SLOT(PCI_DN(start->child)->devfn);
+> +		pci_scan_slot(bus, PCI_DEVFN(slotno, 0));
+> +		return NULL;
+> +	}
+> +
+> +	/* Iterate all siblings */
+> +	parent = start;
+> +	for_each_child_of_node(parent, dn) {
+> +		const __be32 *classp;
+> +		u32 class = 0;
+> +
+> +		classp = of_get_property(dn, "class-code", NULL);
+> +		if (classp)
+> +			class = of_read_number(classp, 1);
+
+Ditto.
+
+> +		/* Call of pci_scan_slot on each sibling-nodes/bridge-ports */
+> +		if ((class >> 8) == PCI_CLASS_BRIDGE_PCI) {
+> +			slotno = PCI_SLOT(PCI_DN(dn)->devfn);
+> +			pci_scan_slot(bus, PCI_DEVFN(slotno, 0));
+> +		}
+> +	}
+> +
+> +	return NULL;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
