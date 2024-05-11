@@ -1,119 +1,100 @@
-Return-Path: <linux-kernel+bounces-176579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D308C31DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905098C31DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01297B210BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 900961C20B4E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 14:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6068056448;
-	Sat, 11 May 2024 14:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C15454F83;
+	Sat, 11 May 2024 14:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0bWchKX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Oclv2g5M"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACCA1E526;
-	Sat, 11 May 2024 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93C451034
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 14:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715437951; cv=none; b=RgtW4wNRP/SAtYZ7h6iQwHmrh7wBm2NmgG9kWM1LGMq9xLSvfYKSX4+3n/w2I0WThihBVA2WnTLQv/SDy5irltcvbUAnboyyzo43cxMYolEW8JWgcUgPHhxdmlX5wf5LCkUQbakRWdTtnbN3klfDMDs2lxWkJJ8ZW30j8BfF45g=
+	t=1715438310; cv=none; b=HM8S0fZuVSLVI0flcZnSukid0/+25sq/0Tu39aOIZi+Nu8CWzdq7ut8OcSeN43eedU3IGapfjLq9lmRz09XXfe7q5v6JHLnoatUyDeBvgTs+IOx3dZ9+SupETdXd7MzlScuAFQWAvmkGV0KsB8km0mC9chrtPppdDRYncGHat64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715437951; c=relaxed/simple;
-	bh=ZiuHNDka16x6oIRNSgu5bdFvGzb9OB9POj/J0eopbA4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EslHj+f5MkKJv/UJJghbqjsqekn/PyKNVeERKpVOmWVxdv0Qyhqfup8ttqNWCheY2amUXQGJmYMX79Rp8l4SIKU95KHfyNbwqG8SIj0Pxj8FPakgdSN30Jgzx3uYI+hxXV1Wr50VtSMsQBcqIoLVTpjX83Sr2pTBDwO6SnHmsfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0bWchKX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48370C2BBFC;
-	Sat, 11 May 2024 14:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715437950;
-	bh=ZiuHNDka16x6oIRNSgu5bdFvGzb9OB9POj/J0eopbA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d0bWchKX2n3tp0qqQQkUGfAHsvrDiQfGK+GpEpjfyT8ONkKHP+s+VIQf8zZnFx4zT
-	 eRk6VnfVMci2xt7lW512fbrQ+zHG7DJsy/EOd1Cvpq8sakvnjblj7EEUjmPRXkwgBG
-	 yse4AWeU88txnktKaECxVhj5pH6dP5zlDMCc6vVz4BPJpA5y9MU+M+/uvCfvSaTnl8
-	 fYy6axkHJZhgSd6sRq61ULRV1+6Ir2LxHlFHgIkLNV79MnjG1d5NRaTnhNlQ6pjOam
-	 ZeU/vVyhJhJVoiROSLpHbmkHBQ9IAZtBwdFBzwsgtXqGUkiCGEx+7fkqcE/cLdb+ad
-	 lqHRbO/zVyrug==
-Date: Sat, 11 May 2024 15:32:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Ziwei Xiao <ziweixiao@google.com>
-Cc: netdev@vger.kernel.org, jeroendb@google.com, pkaligineedi@google.com,
-	shailend@google.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, willemb@google.com,
-	hramamurthy@google.com, rushilg@google.com, jfraker@google.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/5] gve: Add adminq extended command
-Message-ID: <20240511143224.GI2347895@kernel.org>
-References: <20240507225945.1408516-1-ziweixiao@google.com>
- <20240507225945.1408516-3-ziweixiao@google.com>
+	s=arc-20240116; t=1715438310; c=relaxed/simple;
+	bh=ARN1LqUaqN185QT2ahXkPm1gs9oNTPlneGEV9vazkcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TtxgXLZ1zCdjnALAWI6ajaP/UCVOtqqYkDVCdSTc1QdZAtcSAI0m5jwNjrxHD/SlqJXdGkQaq1TjmLB/lodtLJ3vsyJSraXwrisUZu2l3oqY5fgArPdRCi3Vgb5C+ji++u2eXSLNxZ1D6HV6okFH03T+h264HksTS37wcTQVU3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Oclv2g5M; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715438306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7oYbAK6V3PMtAQPp3g/jPrpGniPO9Da3WJamUNyoSGs=;
+	b=Oclv2g5M1gH3fwibfFPG3GLpshvJyT1MiFS5oK9R/F4GPl1j1/YTizCaga0maO6i5NFvS5
+	y86vOIBu/ffajTAm6v6AkUUOKGgkyoSwCyjboNxcj4LNXkWYvQas6zBl5iGyS/DT3ilvnY
+	/YEJWW3pKt7Yib3YrHH4fEOB12s0Xck=
+From: Sui Jingfeng <sui.jingfeng@linux.dev>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Sui Jingfeng <sui.jingfeng@linux.dev>
+Subject: [PATCH] drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: Remove a redundant check on existence of bridge->encoder
+Date: Sat, 11 May 2024 22:38:20 +0800
+Message-ID: <20240511143820.324369-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507225945.1408516-3-ziweixiao@google.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 07, 2024 at 10:59:42PM +0000, Ziwei Xiao wrote:
-> From: Jeroen de Borst <jeroendb@google.com>
-> 
-> The adminq command is limited to 64 bytes per entry and it's 56 bytes
-> for the command itself at maximum. To support larger commands, we need
-> to dma_alloc a separate memory to put the command in that memory and
-> send the dma memory address instead of the actual command.
-> 
-> This change introduces an extended adminq command to wrap the real
-> command with the inner opcode and the allocated dma memory address
-> specified. Once the device receives it, it can get the real command from
-> the given dma memory address. As designed with the device, all the
-> extended commands will use inner opcode larger than 0xFF.
-> 
-> Signed-off-by: Jeroen de Borst <jeroendb@google.com>
-> Co-developed-by: Ziwei Xiao <ziweixiao@google.com>
-> Signed-off-by: Ziwei Xiao <ziweixiao@google.com>
-> Reviewed-by: Praveen Kaligineedi <pkaligineedi@google.com>
-> Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
-> Reviewed-by: Willem de Bruijn <willemb@google.com>
-> ---
->  drivers/net/ethernet/google/gve/gve_adminq.c | 31 ++++++++++++++++++++
->  drivers/net/ethernet/google/gve/gve_adminq.h | 12 ++++++++
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/google/gve/gve_adminq.c b/drivers/net/ethernet/google/gve/gve_adminq.c
-> index 2c3ec5c3b114..514641b3ccc7 100644
-> --- a/drivers/net/ethernet/google/gve/gve_adminq.c
-> +++ b/drivers/net/ethernet/google/gve/gve_adminq.c
-> @@ -461,6 +461,8 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
->  
->  	memcpy(cmd, cmd_orig, sizeof(*cmd_orig));
->  	opcode = be32_to_cpu(READ_ONCE(cmd->opcode));
-> +	if (opcode == GVE_ADMINQ_EXTENDED_COMMAND)
-> +		opcode = be32_to_cpu(cmd->extended_command.inner_opcode);
->  
->  	switch (opcode) {
->  	case GVE_ADMINQ_DESCRIBE_DEVICE:
-> @@ -537,6 +539,35 @@ static int gve_adminq_execute_cmd(struct gve_priv *priv,
->  	return err;
->  }
->  
-> +static int gve_adminq_execute_extended_cmd(struct gve_priv *priv, u32 opcode,
-> +					   size_t cmd_size, void *cmd_orig)
+In the ge_b850v3_lvds_create_connector function, the check on the existence
+of bridge->encoder is not necessary, as it has already been done in the
+drm_bridge_attach() function. And the check on the drm bridge core
+happens before check in the implementation. Hence, it is guaranteed that
+the .encoder member of the struct drm_bridge is not NULL when
+ge_b850v3_lvds_attach() function gets called.
 
-Hi Ziewi Xiaoi and Jeroen,
+Remove the redundant checking codes "if (!bridge->encoder) { ... }".
 
-As of this patch, gve_adminq_execute_extended_cmd is defined but unused.
-Which causes an error when compiling with W=1 using gcc-13 or clang-18.
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+---
+ drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-Perhaps it would be better to squash this patch into the patch that
-uses gve_adminq_execute_extended_cmd.
+diff --git a/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c b/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
+index 4480523244e4..37f1acf5c0f8 100644
+--- a/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
++++ b/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
+@@ -165,11 +165,6 @@ static int ge_b850v3_lvds_create_connector(struct drm_bridge *bridge)
+ 	struct drm_connector *connector = &ge_b850v3_lvds_ptr->connector;
+ 	int ret;
+ 
+-	if (!bridge->encoder) {
+-		DRM_ERROR("Parent encoder object not found");
+-		return -ENODEV;
+-	}
+-
+ 	connector->polled = DRM_CONNECTOR_POLL_HPD;
+ 
+ 	drm_connector_helper_add(connector,
+-- 
+2.43.0
 
-..
 
