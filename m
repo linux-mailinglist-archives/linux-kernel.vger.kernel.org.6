@@ -1,102 +1,133 @@
-Return-Path: <linux-kernel+bounces-176669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2B268C32F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:41:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC638C32FB
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 19:41:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C5EDB20CF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972C91F213D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 17:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD001C693;
-	Sat, 11 May 2024 17:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5F01C69C;
+	Sat, 11 May 2024 17:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEeFkol3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JJmAY7o4"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DFDF7F;
-	Sat, 11 May 2024 17:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856C81BC57;
+	Sat, 11 May 2024 17:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715449281; cv=none; b=K7ie/K7WS+IXvpAOEzUSwZlRqNC66GohNYAZbafs/CRsp7cnHusX1KMUqQUT9C6bFE8STteCQDMIUn9twty8ovSZPuLEVR7uBNWbTUbnk/oOWM+tlGp4TM+wXSuXjK2REj/r3N5EAIXbY8o447ODpksM80L25h7J0GQqzMqWEeQ=
+	t=1715449305; cv=none; b=uUAxh/CyfdpVZPmkRj9dLyAw9VvqNARR8kyxSs5PZi3JnGGEdOmaEMngZ0oPN73wA8wSvoHiHS/+roFT8OR9zGEzBzyvBAay2/qjMqFEXL0Of/6fGCo1mJ4dS7jW2Xb8BKOGl4gz1s5CLOqQWaVJ2AATAXJCoWWUiHAoteZAwko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715449281; c=relaxed/simple;
-	bh=Dlo88TYjJ2dqpMbh1XVRqvHEvnVqfca8m0hFFGpWvgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRaE+A/9uG+K+nYz0f9AnB91oHkdXQFBKi4CvvLgkgVYr2/wkSUv1nfrXyZgIyoWxB0ByKI/OK/ugR0wvE2EC7udBaB8x9ftoM5GgSYmLhRBmDvXsrjc3ftyHrlZR0FMfWrqKKdG3Zrl8GTV+FlSejEfSiYBSMfYZReK3UWKkSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEeFkol3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80238C2BBFC;
-	Sat, 11 May 2024 17:41:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715449280;
-	bh=Dlo88TYjJ2dqpMbh1XVRqvHEvnVqfca8m0hFFGpWvgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEeFkol3mXfZbArM4ITEYgwWMmg7Z6pFFK8e0IQqzNP0sCFg9u3/pIwrZBWBAYdXS
-	 5YMDxVVF7OWz40LLpfVEv6D9TXoJzxf1qWJysoWgJjgrasdtG9ULu50TxYjc8uL3Hx
-	 7uHepVIOL4zkj9bfM1s9MisdLQrGjJpGOVa69fqz4wUq4UISYVIwjFwM4EPO8a2X91
-	 XVLq1kJX8yC0GeWWrODGAdBWZ22gIuWM5v84v4WiMTLXr90GKcLZ736o5ksBC4E1AN
-	 uj0hP3khmqYOLNwKDlz4odl0JrptzAqcWHsANlZnrgzvOqMrmKHmkfGyWqLjT2hMkT
-	 WsnL8dZE68vIA==
-Date: Sat, 11 May 2024 18:41:12 +0100
-From: Simon Horman <horms@kernel.org>
-To: Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
-	bartosz.golaszewski@linaro.org, rohan.g.thomas@intel.com,
-	rmk+kernel@armlinux.org.uk, fancer.lancer@gmail.com,
-	ahalaney@redhat.com, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [net PATCH v5 2/2] net: stmmac: move the EST structure to struct
- stmmac_priv
-Message-ID: <20240511174112.GS2347895@kernel.org>
-References: <20240510122155.3394723-1-xiaolei.wang@windriver.com>
- <20240510122155.3394723-3-xiaolei.wang@windriver.com>
+	s=arc-20240116; t=1715449305; c=relaxed/simple;
+	bh=6KRvLIQLEzzBK+9haokroz6XdoCynKq4pJiaIZPv1sE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A66Lm25jc55BwXseOD8Ero+hf6/aI7gRe0BPcKwlgDQs5XK0ccax77n2MeRPNvFaW3MEGFtDZU/m5GeszTm4BVObKvB6I74TG8iZY2qcxRgJbBlg5iD6loo1xW7bV1ZJuHw79octhi+7uwE3NUQFqfiPQIadPuLBEtYO6h9gmKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JJmAY7o4; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44BHfOVn046086;
+	Sat, 11 May 2024 12:41:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715449284;
+	bh=pw+ZLlwg2gEIAOR81RylenKik2gTI8uK/0afhU0qznI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=JJmAY7o4ILxTILk9xDc/hAw5+rKI0inDe3EPepH4qYO9pFQDa6cURdbY3LiK7g+ph
+	 TKVhquIVNyXeaqtHiYjxwhqjZfgjLYSS7xQ/MC3NmdEAWbf7Gkbl7lSsrk/L7Z4L1H
+	 CyTxYAP91Q+Rkdfnalzkev+px1YvmgYFGGu86qFc=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44BHfOMP025733
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sat, 11 May 2024 12:41:24 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sat, 11
+ May 2024 12:41:24 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sat, 11 May 2024 12:41:24 -0500
+Received: from [10.249.130.181] ([10.249.130.181])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44BHfEjI022895;
+	Sat, 11 May 2024 12:41:15 -0500
+Message-ID: <5ebcf480-81c6-4c2d-96e8-727d44f21ca9@ti.com>
+Date: Sat, 11 May 2024 23:11:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510122155.3394723-3-xiaolei.wang@windriver.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 6/8] math.h Add macros to round to closest specified
+ power of 2
+To: Jani Nikula <jani.nikula@intel.com>,
+        Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>
+CC: <mchehab@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <benjamin.gaignard@collabora.com>, <sebastian.fricke@collabora.com>,
+        <akpm@linux-foundation.org>, <gregkh@linuxfoundation.org>,
+        <adobriyan@gmail.com>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <dri-devel@lists.freedesktop.org>,
+        <laurent.pinchart@ideasonboard.com>, <praneeth@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>, <andrzej.p@collabora.com>, <nicolas@ndufresne.ca>
+References: <20240509183952.4064331-1-devarsht@ti.com>
+ <Zj42vTpyH71TWeTk@smile.fi.intel.com> <87fruphf55.fsf@intel.com>
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <87fruphf55.fsf@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 10, 2024 at 08:21:55PM +0800, Xiaolei Wang wrote:
-> Move the EST structure to struct stmmac_priv, because the
-> EST configs don't look like platform config, but EST is
-> enabled in runtime with the settings retrieved for the TC
-> TAPRIO feature also in runtime. So it's better to have the
-> EST-data preserved in the driver private data instead of
-> the platform data storage.
+Hi Jani,
+
+Thanks for the quick review.
+
+On 10/05/24 20:45, Jani Nikula wrote:
+
+[...]
+> Moreover, I think the naming of round_up() and round_down() should have
+> reflected the fact that they operate on powers of 2. It's unfortunate
+> that the difference to roundup() and rounddown() is just the underscore!
+> That's just a trap.
 > 
-> Signed-off-by: Xiaolei Wang <xiaolei.wang@windriver.com>
+> So let's perhaps not repeat the same with round_closest_up() and
+> round_closest_down()?
+> 
 
-Patch 1/2 of this series is a fix for net, with a Fixes tag.
-IMHO, it looks good.
+Yes the naming is inspired by existing macros i.e. round_up, round_down
+(which round up/down to next pow of 2) and DIV_ROUND_CLOSEST (which
+round the divided value to closest value) and there are already a lot of
+users for these API's :
 
-This patch, however, is a clean-up/enhancement.
-It doesn't have a Fixes tag, which is good.
-But I think it should be targeted at net-next
-(once patch 1/2 has been accepted into net, and
-net has been merged into net-next; also, given the timing,
-once net-next reopens as It's likely to close rather soon
-for the merge window).
+  linux-next git:(heads/next-20240509) ✗ grep -nr round_up drivers | wc
+    730    4261   74775
 
-Perhaps it is possible for the maintainers to pick up
-patch 1/2, leaving this patch as follow-up.
+  linux-next git:(heads/next-20240509) ✗ grep -nr round_down drivers | wc
+    226    1293   22194
 
-The above notwithstanding, this patch looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
--- 
-pw-bot: under-review
+ linux-next git:(heads/next-20240509) ✗ grep -nr DIV_ROUND_CLOSEST
+drivers | wc
+   1207    7461  111822
 
 
+so I thought to align with existing naming convention assuming
+developers are already familiar with this.
 
+But if a wider consensus is to go with a newer naming convention then I
+am open to it, although a challenge there would be to keep it short. For
+e.g. this one is already 3 words, if we go with more explicit
+"round_closest_up_pow_2" it looks quite long in my opinion :) .
+
+Regards
+Devarsh
 
