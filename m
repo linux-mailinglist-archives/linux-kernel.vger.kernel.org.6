@@ -1,99 +1,236 @@
-Return-Path: <linux-kernel+bounces-176758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39F78C347F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:42:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601C68C3495
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 00:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA44281C29
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:42:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5927BB21320
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6671F5F6;
-	Sat, 11 May 2024 22:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EeNmwkY1"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C5636AF8;
+	Sat, 11 May 2024 22:46:26 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15EB1CAB5;
-	Sat, 11 May 2024 22:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7632286BD
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 22:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715467322; cv=none; b=hDGDvX2ZCGqtnARA3HizMhVIIC0i87tU0IErUVKODUXe49JjbosSyEfXgVbYFjlbdYBpTlOi4hBz+KfMxzJ0BZpGynE2R/xeTQDQSW70Nvo9pKrBTZBjrXa6sgpx1DnEtBjHd7nHWXKPEmxqkBCn5Emkusify4a/Eot3XGXJbmg=
+	t=1715467585; cv=none; b=QBLd5ZW0oVoYTITX2uAvf5i2CBu1zC7hWEgiffTiU6gSzVkMpcpJ/tbXn3pLJ9R7EN5ft8yqenDb6sblQQqYu7RDXi+EdBmliBbXh+Fe+D5RCp97EumeOWdSK+wJ2F7NE+IzA4I0eEq/gRP/7FcWbDchpWANB4/0Wh00Oi+DiGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715467322; c=relaxed/simple;
-	bh=ImT+zG46hw75vkYt5VczaukzYwC+i9ZZIbn292nmwbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uIimumnSLhukwj+5MMALgznBMd1PnL+Ac0kBnigJSGJhldPQ4MpyIxqcg8Lypz6Pzw2/Ra3l93rddrh4gTofa4sl3cjXD9PjZ9UNoqgIrFBDLQv2cYgNU2sfiI4WfGn1M2wfdvVujWW9ZHeWm+pwIDGmrV0rHrfvD9N7DFLy1Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EeNmwkY1; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qAHFM88/yKEIIWcahJngYsB9RtXSWKVbO/YNrJK1KEE=; b=EeNmwkY1RBzj2ofjbPzXHiZB4X
-	9Z7b7O8YHs5P87z08Mux3zlmyjmZfhq78sCJBuFmpVzbE/HMF8UrC6+4TpiDTlFhHkoq6dflzufKp
-	w1jYdQxwvPtdmbDBuKDkM2Fptwjb2ynEk24Xm8A/gAI0bV0NGzV00WDC9KyrnKI5ROrOVRhOHD0Tk
-	Ub38CUkDUzFjez18TSWHNgK3hqOK+b1Y7yyFssWtjko5DIpJvPHZjIWN7vyQgu1z2ZMR1pSS9ljWz
-	4ZtP5U1fXs669lCqKOEFJ5lAZJWUGDSifWYTmWQt6vAycIVZE55NrLgLl07jrr/TzOyb6hosrJz6a
-	j5aCQSwg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s5vPZ-00000008qCI-2kct;
-	Sat, 11 May 2024 22:41:52 +0000
-Date: Sat, 11 May 2024 15:41:45 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: wangyao@lemote.com, Masahiro Yamada <masahiroy@kernel.org>
-Cc: masahiroy@kernel.org, ainux.wang@gmail.com,
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] modules: Drop the .export_symbol section from the final
- modules
-Message-ID: <Zj_0KU2cInEUbsW3@bombadil.infradead.org>
-References: <20240417053530.30995-1-wangyao@lemote.com>
+	s=arc-20240116; t=1715467585; c=relaxed/simple;
+	bh=0/RLWK/Ne/VTSVkLzpsEdHoOVmbIOq2hnbTWA1OyjbA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f6eaL5DCtI3WKHVignfZJZrDCjoQ2o73KSm+0U1TDXYQBllpQelUJJQqUZRWk60SiZKboR7RHhKxl+IDzU2IOv2ELMqIXjjCZZu5IOJNx1aglSaCtW0+kwP2B/iIV0qZOuq+UJsnpH/7Ghit3ySWDq64hpfvSKjllgLWu5bl42M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7e1d807cfbaso46789539f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 15:46:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715467583; x=1716072383;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xinKgrj9cHjxMWFP4jMSh2ZpHyLjEx/GfcFiRmDQ03U=;
+        b=JMajHtR+vMfv1FZowBzCoDcvE0iRY54ZGwTwA7Tv9drySv2EH2shcfedwll7kDXVZu
+         9jDBpteNmNnt8zQRCmCi9kZTW7N0ORsSI6ZMoACiK60tTfzHHbTXw0jUBWTV9FX2cYGF
+         2KJXQDh6UeB0rORIWO2C3Fr2g8s2xgJaGG+zVQ5JzK8BwxzKNLu5A4Z+SxVg0skRwKel
+         uVx2GSf9l2x8m2UMY7hzQm5VXhuBHVy+AfQwVvEQ6NqA3Qshw+AYlRGmhZH6WhyTcpTU
+         NvhV3pRqY6vAKla4lc/ZVb68LM9Qdsvv5xvN+d51Ii6Z+sAbkifYbnMqvIU2FfzudZEW
+         vUsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlW1O5lMr5yNRCSo3NRDnHEmFV3HX23gaEuTohwecr+qdGr3xbYqwM+zvux8Y+VXgy+rf9XZpUH3Ak5kGgFsyWYMOKJmjZbKGCkaeL
+X-Gm-Message-State: AOJu0Yy1EDBjEKFOabNNzRMxrAwqsHUG5TjuOHlHs4Qb69ljJORVJU4C
+	LfeF4G31rg7sKV99xNGai90bsSQOun9vBNKI48TiuA8KGhybN4K49+loQOjO/ip3BIPwVRQ/wrV
+	h9FCcYeEBvW3JTsYUaN34s6ZXnuiszaw4/CIeFIIic4Ke1vdn6kE4yHM=
+X-Google-Smtp-Source: AGHT+IEy+5UramUsNGV4STb7GAAgkxo/OJsFZHyqQToyQTWQkjUPPcSu6Tp0vNzsVrsa2YgrkNqG6ESi978QDfvmn73rPj4UsJCm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240417053530.30995-1-wangyao@lemote.com>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+X-Received: by 2002:a05:6638:8625:b0:488:59cc:eb54 with SMTP id
+ 8926c6da1cb9f-48958c05b8emr516637173.3.1715467583071; Sat, 11 May 2024
+ 15:46:23 -0700 (PDT)
+Date: Sat, 11 May 2024 15:46:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e9b6ff0618356b26@google.com>
+Subject: [syzbot] [bcachefs?] INFO: task hung in bch2_fs_read_only_work
+From: syzbot <syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Apr 17, 2024 at 01:35:30PM +0800, wangyao@lemote.com wrote:
-> From: Wang Yao <wangyao@lemote.com>
-> 
-> Commit ddb5cdbafaaa ("kbuild: generate KSYMTAB entries by modpost")
-> forget drop the .export_symbol section from the final modules.
-> 
-> Signed-off-by: Wang Yao <wangyao@lemote.com>
+Hello,
 
-Masahiro, commit ddb5cdbafaaa ("kbuild: generate KSYMTAB entries by
-modpost") was your change, wanna address / take it through your
-tree? It makes sense to me though.
+syzbot found the following issue on:
 
-  Luis
+HEAD commit:    cf87f46fd34d Merge tag 'drm-fixes-2024-05-11' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c8766c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+dashboard link: https://syzkaller.appspot.com/bug?extid=8996d8f176cf946ef641
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-> ---
->  scripts/module.lds.S | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/scripts/module.lds.S b/scripts/module.lds.S
-> index bf5bcf2836d8..89ff01a22634 100644
-> --- a/scripts/module.lds.S
-> +++ b/scripts/module.lds.S
-> @@ -13,6 +13,7 @@ SECTIONS {
->  	/DISCARD/ : {
->  		*(.discard)
->  		*(.discard.*)
-> +		*(.export_symbol)
->  	}
->  
->  	__ksymtab		0 : { *(SORT(___ksymtab+*)) }
-> -- 
-> 2.27.0
-> 
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1aa5ad92dfce/disk-cf87f46f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/67c336f7c1c7/vmlinux-cf87f46f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bb5b717bd2b8/bzImage-cf87f46f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8996d8f176cf946ef641@syzkaller.appspotmail.com
+
+INFO: task kworker/0:5:19779 blocked for more than 143 seconds.
+      Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/0:5     state:D stack:28464 pid:19779 tgid:19779 ppid:2      flags:0x00004000
+Workqueue: events_long bch2_fs_read_only_work
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5409 [inline]
+ __schedule+0x17e8/0x4a50 kernel/sched/core.c:6746
+ __schedule_loop kernel/sched/core.c:6823 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6838
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6895
+ rwsem_down_write_slowpath+0xeeb/0x13b0 kernel/locking/rwsem.c:1178
+ __down_write_common+0x1af/0x200 kernel/locking/rwsem.c:1306
+ bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:393
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0xa12/0x17c0 kernel/workqueue.c:3348
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3429
+ kthread+0x2f2/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/29:
+ #0: ffffffff8e334da0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #0: ffffffff8e334da0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #0: ffffffff8e334da0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
+2 locks held by kworker/u8:6/1095:
+2 locks held by getty/4840:
+ #0: ffff88802cc100a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900031332f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
+1 lock held by syz-fuzzer/5098:
+5 locks held by syz-executor.4/19737:
+3 locks held by kworker/0:5/19779:
+ #0: ffff888015079148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff888015079148 ((wq_completion)events_long){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc9000cf67d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc9000cf67d00 ((work_completion)(&c->read_only_work)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+ #2: ffff88803de00278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_read_only_work+0x25/0x40 fs/bcachefs/super.c:393
+6 locks held by kworker/1:15/19807:
+ #0: ffff88801beda548 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3242 [inline]
+ #0: ffff88801beda548 ((wq_completion)usb_hub_wq){+.+.}-{0:0}, at: process_scheduled_works+0x8e0/0x17c0 kernel/workqueue.c:3348
+ #1: ffffc9000dfb7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3243 [inline]
+ #1: ffffc9000dfb7d00 ((work_completion)(&hub->events)){+.+.}-{0:0}, at: process_scheduled_works+0x91b/0x17c0 kernel/workqueue.c:3348
+ #2: ffff88802374b190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:990 [inline]
+ #2: ffff88802374b190 (&dev->mutex){....}-{3:3}, at: hub_event+0x1fe/0x5150 drivers/usb/core/hub.c:5850
+ #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: usb_lock_port drivers/usb/core/hub.c:3207 [inline]
+ #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5419 [inline]
+ #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5662 [inline]
+ #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5822 [inline]
+ #3: ffff88802374e518 (&port_dev->status_lock){+.+.}-{3:3}, at: hub_event+0x25b6/0x5150 drivers/usb/core/hub.c:5904
+ #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect drivers/usb/core/hub.c:5420 [inline]
+ #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_port_connect_change drivers/usb/core/hub.c:5662 [inline]
+ #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: port_event drivers/usb/core/hub.c:5822 [inline]
+ #4: ffff888022fb6568 (hcd->address0_mutex){+.+.}-{3:3}, at: hub_event+0x25f4/0x5150 drivers/usb/core/hub.c:5904
+ #5: ffffffff8ef0a6b0 (ehci_cf_port_reset_rwsem){.+.+}-{3:3}, at: hub_port_reset+0x1f8/0x1b30 drivers/usb/core/hub.c:3022
+2 locks held by syz-executor.3/21870:
+2 locks held by syz-executor.5/21874:
+2 locks held by syz-executor.1/21881:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xfde/0x1020 kernel/hung_task.c:380
+ kthread+0x2f2/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 PID: 21874 Comm: syz-executor.5 Not tainted 6.9.0-rc7-syzkaller-00183-gcf87f46fd34d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:native_save_fl arch/x86/include/asm/irqflags.h:32 [inline]
+RIP: 0010:arch_local_save_flags arch/x86/include/asm/irqflags.h:67 [inline]
+RIP: 0010:arch_local_irq_save arch/x86/include/asm/irqflags.h:103 [inline]
+RIP: 0010:lock_release+0x16d/0x9f0 kernel/locking/lockdep.c:5770
+Code: eb 03 42 80 3c 3b 00 74 08 4c 89 f7 e8 ac 09 88 00 4c 89 6c 24 50 48 c7 84 24 b0 00 00 00 00 00 00 00 9c 8f 84 24 b0 00 00 00 <42> 80 3c 3b 00 74 08 4c 89 f7 e8 94 08 88 00 48 8b 9c 24 b0 00 00
+RSP: 0018:ffffc9000bb0f680 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: 1ffff92001761ee6 RCX: ffffffff8172abb0
+RDX: 0000000000000000 RSI: ffffffff8c1f8240 RDI: ffffffff8c1f8200
+RBP: ffffc9000bb0f7b0 R08: ffffffff8fa8f92f R09: 1ffffffff1f51f25
+R10: dffffc0000000000 R11: fffffbfff1f51f26 R12: 1ffff92001761edc
+R13: ffffffff81cbece7 R14: ffffc9000bb0f730 R15: dffffc0000000000
+FS:  00007f5fc8c356c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fadd80ffe00 CR3: 00000000553c2000 CR4: 0000000000350ef0
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ rcu_lock_release include/linux/rcupdate.h:339 [inline]
+ rcu_read_unlock include/linux/rcupdate.h:814 [inline]
+ filemap_get_entry+0x457/0x4e0 mm/filemap.c:1834
+ shmem_get_folio_gfp+0x2a8/0x1f50 mm/shmem.c:1982
+ shmem_get_folio mm/shmem.c:2160 [inline]
+ shmem_write_begin+0x170/0x4d0 mm/shmem.c:2744
+ generic_perform_write+0x324/0x640 mm/filemap.c:3974
+ shmem_file_write_iter+0xfc/0x120 mm/shmem.c:2920
+ call_write_iter include/linux/fs.h:2110 [inline]
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xa86/0xcb0 fs/read_write.c:590
+ ksys_write+0x1a0/0x2c0 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5fc7e7caaf
+Code: 89 54 24 18 48 89 74 24 10 89 7c 24 08 e8 b9 80 02 00 48 8b 54 24 18 48 8b 74 24 10 41 89 c0 8b 7c 24 08 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 31 44 89 c7 48 89 44 24 08 e8 0c 81 02 00 48
+RSP: 002b:00007f5fc8c34e80 EFLAGS: 00000293 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000001000000 RCX: 00007f5fc7e7caaf
+RDX: 0000000001000000 RSI: 00007f5fbdc00000 RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000009855
+R10: 0000000000000002 R11: 0000000000000293 R12: 0000000000000004
+R13: 00007f5fc8c34f80 R14: 00007f5fc8c34f40 R15: 00007f5fbdc00000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
