@@ -1,138 +1,142 @@
-Return-Path: <linux-kernel+bounces-176408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5B2C8C2F5D
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:31:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 530C08C2F62
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 05:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA4A21C2162B
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:31:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F58E2849C3
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 03:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05C6364D6;
-	Sat, 11 May 2024 03:31:09 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAF838382;
+	Sat, 11 May 2024 03:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="PFFEzATc"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122171843
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C1A21A04
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 03:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715398269; cv=none; b=Qa4pj0h+yAx4uaKhkW5j1nW1NE7b+e/xuVDhuHh68Q9l4QyJxh1woVcR7T4swlSsWehqFsJLxyB1B8a8I+lAQp6I8Wow+mH+JQ8NG871Xe9hD5e7neSkOOVlXk61S/rURNPchgTNVPe3U79i4Z7JFnAhKo6Du/usDJW7gIdngWc=
+	t=1715398601; cv=none; b=tiJsaRRgQtdTI8+64ewEh0jfHrk6ZKzAaUlsG7i6dEYXu+C3HGS1aERYK1+BWA5Kl+BGx7cBzEV34VJlJFCN8UblwCjngYjsSOQ9Q0rkPcCHywBALRJgEu3U6gbmXrYveszGGBbX1t6U5gFsKJZ3CXhyrdFjOYyjMJ/feiYZ9yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715398269; c=relaxed/simple;
-	bh=4/UgLr+ucXXQUJU++VxYrGUr+IeEP0s+MrOyacvIdss=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P8AYH3rtqCpJ9chrbe1ihD2FGc8DO05k6nGQV2bNPY0H4NWPOUD/bCVWpkZqOkqnrX63ebx2qKCRTi2JalJ9Rz1soq2805W+OAQ8b9PM4emtVdxtmueiWTxQ6HZird6avFp1hD4+tG7B61Eug7e1aMq/gJ82R6qhDaeoKsp3sK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Vbrm64nmTz1S4sJ;
-	Sat, 11 May 2024 11:27:34 +0800 (CST)
-Received: from canpemm500002.china.huawei.com (unknown [7.192.104.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id F1CB518007F;
-	Sat, 11 May 2024 11:30:57 +0800 (CST)
-Received: from huawei.com (10.173.135.154) by canpemm500002.china.huawei.com
- (7.192.104.244) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Sat, 11 May
- 2024 11:30:57 +0800
-From: Miaohe Lin <linmiaohe@huawei.com>
-To: <akpm@linux-foundation.org>
-CC: <shy828301@gmail.com>, <nao.horiguchi@gmail.com>,
-	<xuyu@linux.alibaba.com>, <linmiaohe@huawei.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm/huge_memory: mark huge_zero_folio reserved
-Date: Sat, 11 May 2024 11:28:01 +0800
-Message-ID: <20240511032801.1295023-1-linmiaohe@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1715398601; c=relaxed/simple;
+	bh=AA1unVw2ciTmVVxsDufx+gzlvLjzZ65wMzQFo4Qrwwo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ds4GdGlt0peAZVsVhXrF759sWqzJm4rFEqRzF2CBiJpxfu4BM7FO0ySYWFoYhwGmlC1MbMxuvf4gLvN6dpVVHyt6ut8fSg5GhslnhFxm5q44HBbzIGVMd/15+HBCfIiv0UpafWL/U4LPuXK1V6yPU8Gru5QHoLTX4sbX88rlPQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=PFFEzATc; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44B3Z6SR006522;
+	Fri, 10 May 2024 22:35:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715398506;
+	bh=AA1unVw2ciTmVVxsDufx+gzlvLjzZ65wMzQFo4Qrwwo=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=PFFEzATclSBdFoPu06hM0QzuvvWVhKI6QbV8FTEQ8RaSNUYGgMku8ytbhTSPhU6Co
+	 OOcbbhqZZi4Ugb1hDTnuSINkLfCHFwfahj7sTDvJP6uWxaTLgvGkVJ245gHoJ6N93X
+	 wuTLP4k1GZ9inW8PPHRqyMwm2gzEaYMPDAXPRnFE=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44B3Z68u120359
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 10 May 2024 22:35:06 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 10
+ May 2024 22:35:05 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.023; Fri, 10 May 2024 22:35:05 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "broonie@kernel.org" <broonie@kernel.org>,
+        "lgirdwood@gmail.com"
+	<lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "pierre-louis.bossart@linux.intel.com"
+	<pierre-louis.bossart@linux.intel.com>,
+        "13916275206@139.com"
+	<13916275206@139.com>,
+        "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "liam.r.girdwood@intel.com"
+	<liam.r.girdwood@intel.com>,
+        "bard.liao@intel.com" <bard.liao@intel.com>,
+        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+        "Lu,
+ Kevin" <kevin-lu@ti.com>,
+        "cameron.berkenpas@gmail.com"
+	<cameron.berkenpas@gmail.com>,
+        "tiwai@suse.de" <tiwai@suse.de>, "Xu, Baojun"
+	<baojun.xu@ti.com>,
+        "soyer@irl.hu" <soyer@irl.hu>,
+        "Baojun.Xu@fpt.com"
+	<Baojun.Xu@fpt.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v4 1/3] ALSA: ASoc/tas2781: Fix wrong
+ loading calibrated data sequence
+Thread-Topic: [EXTERNAL] Re: [PATCH v4 1/3] ALSA: ASoc/tas2781: Fix wrong
+ loading calibrated data sequence
+Thread-Index: AQHaoov156yUMPIK20SW0JBHF04Q6LGQ57+AgAB57pA=
+Date: Sat, 11 May 2024 03:35:05 +0000
+Message-ID: <efb9d840f44c477d88f06e3f03d06f7b@ti.com>
+References: <20240510034123.1181-1-shenghao-ding@ti.com>
+ <Zj45bfx4twerXKwc@smile.fi.intel.com>
+In-Reply-To: <Zj45bfx4twerXKwc@smile.fi.intel.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- canpemm500002.china.huawei.com (7.192.104.244)
 
-When I did memory failure tests recently, below panic occurs:
-
- kernel BUG at include/linux/mm.h:1135!
- invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
- CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f156fe-dirty #14
- RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
- RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
- RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
- RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
- RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
- R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
- R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
- FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
- Call Trace:
-  <TASK>
-  do_shrink_slab+0x14f/0x6a0
-  shrink_slab+0xca/0x8c0
-  shrink_node+0x2d0/0x7d0
-  balance_pgdat+0x33a/0x720
-  kswapd+0x1f3/0x410
-  kthread+0xd5/0x100
-  ret_from_fork+0x2f/0x50
-  ret_from_fork_asm+0x1a/0x30
-  </TASK>
- Modules linked in: mce_inject hwpoison_inject
- ---[ end trace 0000000000000000 ]---
- RIP: 0010:shrink_huge_zero_page_scan+0x168/0x1a0
- RSP: 0018:ffff9933c6c57bd0 EFLAGS: 00000246
- RAX: 000000000000003e RBX: 0000000000000000 RCX: ffff88f61fc5c9c8
- RDX: 0000000000000000 RSI: 0000000000000027 RDI: ffff88f61fc5c9c0
- RBP: ffffcd7c446b0000 R08: ffffffff9a9405f0 R09: 0000000000005492
- R10: 00000000000030ea R11: ffffffff9a9405f0 R12: 0000000000000000
- R13: 0000000000000000 R14: 0000000000000000 R15: ffff88e703c4ac00
- FS:  0000000000000000(0000) GS:ffff88f61fc40000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 000055f4da6e9878 CR3: 0000000c71048000 CR4: 00000000000006f0
-
-The root cause is that HWPoison flag will be set for huge_zero_folio
-without increasing the folio refcnt. But then unpoison_memory() will
-decrease the folio refcnt unexpectly as it appears like a successfully
-hwpoisoned folio leading to VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-when releasing huge_zero_folio.
-
-Fix this issue by marking huge_zero_folio reserved. So unpoison_memory()
-will skip this page. This will make it consistent with ZERO_PAGE case too.
-
-Fixes: 478d134e9506 ("mm/huge_memory: do not overkill when splitting huge_zero_page")
-Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
-Cc: <stable@vger.kernel.org>
----
- mm/huge_memory.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 317de2afd371..d508ff793145 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -212,6 +212,7 @@ static bool get_huge_zero_page(void)
- 		folio_put(zero_folio);
- 		goto retry;
- 	}
-+	__folio_set_reserved(zero_folio);
- 	WRITE_ONCE(huge_zero_pfn, folio_pfn(zero_folio));
- 
- 	/* We take additional reference here. It will be put back by shrinker */
-@@ -264,6 +265,7 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
- 		struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
- 		BUG_ON(zero_folio == NULL);
- 		WRITE_ONCE(huge_zero_pfn, ~0UL);
-+		__folio_clear_reserved(zero_folio);
- 		folio_put(zero_folio);
- 		return HPAGE_PMD_NR;
- 	}
--- 
-2.33.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtv
+IDxhbmRyaXkuc2hldmNoZW5rb0BsaW51eC5pbnRlbC5jb20+DQo+IFNlbnQ6IEZyaWRheSwgTWF5
+IDEwLCAyMDI0IDExOjEzIFBNDQo+IFRvOiBEaW5nLCBTaGVuZ2hhbyA8c2hlbmdoYW8tZGluZ0B0
+aS5jb20+DQo+IENjOiBicm9vbmllQGtlcm5lbC5vcmc7IGxnaXJkd29vZEBnbWFpbC5jb207IHBl
+cmV4QHBlcmV4LmN6OyBwaWVycmUtDQo+IGxvdWlzLmJvc3NhcnRAbGludXguaW50ZWwuY29tOyAx
+MzkxNjI3NTIwNkAxMzkuY29tOyBhbHNhLWRldmVsQGFsc2EtDQo+IHByb2plY3Qub3JnOyBsaW51
+eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaWFtLnIuZ2lyZHdvb2RAaW50ZWwuY29tOw0KPiBi
+YXJkLmxpYW9AaW50ZWwuY29tOyB5dW5nLWNodWFuLmxpYW9AbGludXguaW50ZWwuY29tOyBMdSwg
+S2V2aW4gPGtldmluLQ0KPiBsdUB0aS5jb20+OyBjYW1lcm9uLmJlcmtlbnBhc0BnbWFpbC5jb207
+IHRpd2FpQHN1c2UuZGU7IFh1LCBCYW9qdW4NCj4gPGJhb2p1bi54dUB0aS5jb20+OyBzb3llckBp
+cmwuaHU7IEJhb2p1bi5YdUBmcHQuY29tDQo+IFN1YmplY3Q6IFtFWFRFUk5BTF0gUmU6IFtQQVRD
+SCB2NCAxLzNdIEFMU0E6IEFTb2MvdGFzMjc4MTogRml4IHdyb25nIGxvYWRpbmcNCj4gY2FsaWJy
+YXRlZCBkYXRhIHNlcXVlbmNlDQo+IA0KPiBPbiBGcmksIE1heSAxMCwgMjAyNCBhdCAxMTrigIo0
+MTrigIoxOUFNICswODAwLCBTaGVuZ2hhbyBEaW5nIHdyb3RlOiA+IENhbGlicmF0ZWQNCj4gZGF0
+YSB3aWxsIGJlIHNldCB0byBkZWZhdWx0IGFmdGVyIGxvYWRpbmcgRFNQIGNvbmZpZyBwYXJhbXMs
+ID4gd2hpY2ggd2lsbCBjYXVzZQ0KPiBzcGVha2VyIHByb3RlY3Rpb24gd29yayBhYm5vcm1hbGx5
+LiBSZWxvYWQgY2FsaWJyYXRlZCA+IGRhdGEgYWZ0ZXIgbG9hZGluZw0KPiBaalFjbVFSWUZwZnB0
+QmFubmVyU3RhcnQgVGhpcyBtZXNzYWdlIHdhcyBzZW50IGZyb20gb3V0c2lkZSBvZiBUZXhhcw0K
+PiBJbnN0cnVtZW50cy4NCj4gRG8gbm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMg
+dW5sZXNzIHlvdSByZWNvZ25pemUgdGhlIHNvdXJjZSBvZiB0aGlzDQo+IGVtYWlsIGFuZCBrbm93
+IHRoZSBjb250ZW50IGlzIHNhZmUuIElmIHlvdSB3aXNoIHRvIHJlcG9ydCB0aGlzIG1lc3NhZ2Ug
+dG8gSVQNCj4gU2VjdXJpdHksIHBsZWFzZSBmb3J3YXJkIHRoZSBtZXNzYWdlIGFzIGFuIGF0dGFj
+aG1lbnQgdG8gcGhpc2hpbmdAbGlzdC50aS5jb20NCj4gDQo+IFpqUWNtUVJZRnBmcHRCYW5uZXJF
+bmQNCj4gT24gRnJpLCBNYXkgMTAsIDIwMjQgYXQgMTE6NDE6MTlBTSArMDgwMCwgU2hlbmdoYW8g
+RGluZyB3cm90ZToNCj4gPiBDYWxpYnJhdGVkIGRhdGEgd2lsbCBiZSBzZXQgdG8gZGVmYXVsdCBh
+ZnRlciBsb2FkaW5nIERTUCBjb25maWcNCj4gPiBwYXJhbXMsIHdoaWNoIHdpbGwgY2F1c2Ugc3Bl
+YWtlciBwcm90ZWN0aW9uIHdvcmsgYWJub3JtYWxseS4gUmVsb2FkDQo+ID4gY2FsaWJyYXRlZCBk
+YXRhIGFmdGVyIGxvYWRpbmcgRFNQIGNvbmZpZyBwYXJhbXMuDQo+ID4NCj4gPiBGaXhlczogZWYz
+YmNkZTc1ZDA2ICgiQVNvYzogdGFzMjc4MTogQWRkIHRhczI3ODEgZHJpdmVyIikNCj4gDQo+IEhv
+dyBvbiBlYXJ0aCB0aGlzIGNhbiBiZSBhIGZpeD8uLg0KUmVtb3ZpbmcgdGhlIGRlY2xhcmF0aW9u
+IG9mIHRhc2RldmljZV9wcm1nX2NhbGliZGF0YV9sb2FkIGlzIGEgcGFydCBvZiBmaXguDQpMb2Fk
+aW5nIGNhbGlicmF0ZWQgZGF0YSBhZnRlciBsb2FkaW5nIGRzcCBwcm9ncmFtIGJlY29tZSBhIHJl
+ZHVuZGFuY2UuDQo+IA0KPiA+IC0vLyBDb3B5cmlnaHQgKEMpIDIwMjIgLSAyMDIzIFRleGFzIElu
+c3RydW1lbnRzIEluY29ycG9yYXRlZA0KPiA+ICsvLyBDb3B5cmlnaHQgKEMpIDIwMjIgLSAyMDI0
+IFRleGFzIEluc3RydW1lbnRzIEluY29ycG9yYXRlZA0KPiANCi4uLg0KPiA+IC1pbnQgdGFzZGV2
+aWNlX3BybWdfY2FsaWJkYXRhX2xvYWQodm9pZCAqY29udGV4dCwgaW50IHBybV9ubyk7DQo+IA0K
+PiAtLQ0KPiBXaXRoIEJlc3QgUmVnYXJkcywNCj4gQW5keSBTaGV2Y2hlbmtvDQo+IA0KDQo=
 
