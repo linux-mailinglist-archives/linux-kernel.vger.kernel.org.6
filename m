@@ -1,168 +1,141 @@
-Return-Path: <linux-kernel+bounces-176456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B5298C3028
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 09:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A8A8C3031
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 10:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBB01F22A5E
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 07:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5AA51C213E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A99912E7E;
-	Sat, 11 May 2024 07:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D24529CF7;
+	Sat, 11 May 2024 08:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z+0mO1Z3"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3wXGJNL"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63F2FBE8
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 07:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A653611190;
+	Sat, 11 May 2024 08:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715413685; cv=none; b=a0qM3f3Pz368i7oQ+mxOSU2MZGX9SUmBZQFLPDOlknoaq9DyKNBl5D3DRSpX93louVPp45nNvPgHusbAeSt0876UXUlIJXsDjA3J5ut14UpWk70h6s3no2af9e2CpVyzgobLpDsSUSokVaOZuiHIxmzE0SPImTMnSXRqCnDZjG0=
+	t=1715415149; cv=none; b=I4Ixya/QWfuXcqQQ0jM5Qsegq4BMK49vcWg5H2GaUFGHyCYyl6InUUkspgvimNU3Ko2CKZ4xg56mOGpuyDkQsnSbYh7KJkz929ALDTzt2T6ln/qPNBFwNskC3pcyAOu3n3sAvZo4CUrj8qV2teNxPmrqNAnsTvwzTzVLIaJpKNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715413685; c=relaxed/simple;
-	bh=meEYPUOj/04dXwOusDQMM9xj3Jdxdafr9sQJyUHw6mY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JJIrsgXL5k1xtW469c3GxTw373CEEJcKMEWydMrMha6rIys/U559/aTZNpBIXL/dZsosZGEVQcBxvg3nLIIFaKdrna+YeXVR6M+cdTg+XFXnnV8AnFDh+AeZ93pgwyXCeIwFgMtSxZF1kBQI1yWCX1UFdp/W/1UwM3DYM09bUkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z+0mO1Z3; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-792ba098eccso209502585a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:48:02 -0700 (PDT)
+	s=arc-20240116; t=1715415149; c=relaxed/simple;
+	bh=+5Xg93Nnj+GcdyudDCY16biOFb/0HIlATV7kqqR0IP8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Q7GG93dvDbFHLdGtvVUqlw1Bxrr3XJk6NVy6YgYoI8UBST612Zm99AFRBi9shSMNlhhdKrAa0U+q3atUBqz9hidBj9lQulloWcRqUcKsuJhnpxSiBo+2Kllxj6aKvPUEazQO462SsCt0RRgHstmIQ8qsipjzbCkLkmYQKLHHWKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I3wXGJNL; arc=none smtp.client-ip=209.85.215.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-5ff57410ebbso2285528a12.1;
+        Sat, 11 May 2024 01:12:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715413681; x=1716018481; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3jrMWE928Q6BhVEHep/QBR94dnpPtsG7+6WCG1J7Ms=;
-        b=Z+0mO1Z3EV9/NLnjERPm+2uU9Te7K9r6557Zzk+HU+ZIQxpuHzh3vPNV3g6TkvN040
-         tSI6p241QpyNDhLM+X4VEOAYNs5oCRTmyDYOsaQwPnb919kZHG74yENP6zTLmiMwdl+7
-         3+YPAbKcWc8AhUg6rBuK/VnaE80/lFQou1roI=
+        d=gmail.com; s=20230601; t=1715415148; x=1716019948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9qBbsDAPUy5FGaDuBuioErI1+pT2h8H+WItqDsVZoLo=;
+        b=I3wXGJNLjX1Dr8vRIrA5dUKKjZ2tT+lKamvd9TdKzoiJVa2QB9+W/3SLp5x9rh4G+A
+         xq9ZtEqkzOV25/oOGDsqFR7l65gbcazgE04km9LiLA1hxSnPiwzw/kXtwdD2M5NbM1lO
+         5j5SKqkowPOLmAfARsPXfS4j8cNwkSCEKrhDcb/tdKQtohF6rE2XXyKzpqXCDyWeBEuO
+         P1QYMs753KKjCAav/u0KgTHE5I+k7yGkmTlfuqdn6eH5PXR/XK9EIe/AxUofI/a1k3U5
+         w2LIdjU8z7IQgVmlld46as+hzADzlTb3q3JTEGeR5N55ROZbsT1G2UeLncpe9loVIh55
+         BNFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715413681; x=1716018481;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z3jrMWE928Q6BhVEHep/QBR94dnpPtsG7+6WCG1J7Ms=;
-        b=NQ6Og1vqvAJ11Vo2R8VYZwu94L7pfrhAocZCcupa2M+CXYdRPDegMrHncGwh8YzVyr
-         42f6+/gYTLrBj9vzVWnXIJx5Ferg+9DCjEyT94drUDmBCAtPlak0GZn478QJUE+d5gxB
-         N5iCLQp4BYCnpltcEKoPJDPylUTFQHe9eHkvvod+gVZJHyDLp/mQNykc4NVVu8GEJery
-         ENeYe9Kq+OAOTre2VlFro58aj/ElldIHa6snRD5gZ4uRbhTeYN+knrJZTTGpaE6zpcI/
-         A3bzpAVfG5ATcATHeFOuOZkX5SyHgFCVEJJNBvhfClDa5bBi6y+cfynY7ra8V0sQdrHk
-         JSlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSFYhj+ADYuKQvanA8uwXunfIOtwlw8eECuiDAwHZsnzwqq3tTMpJnfKnUJo7AlVfDSWzIL7FitWa4F7KzvH3uvP7FUUnGKSZsDV+J
-X-Gm-Message-State: AOJu0YxJyYJRx07OppdGIw9W2zOlrX6JFhqz9h5n0dut27cD4tFQKsy/
-	hv+n+twtc/hqnQNxFf584HjBV1XtdsD7S4W6cpKyUnriPG/3oDcN3hV5vbha5NU7MGmwBICahI4
-	=
-X-Google-Smtp-Source: AGHT+IHAFj3xZEIXHiJT9gOcF1tz/+Suqh0TIm0oQL7Bwfg96gtsHnkYNVFjiPfJWyXyEd8/SxY11w==
-X-Received: by 2002:a05:620a:815:b0:792:b91b:3588 with SMTP id af79cd13be357-792c75763a5mr504323985a.7.1715413680923;
-        Sat, 11 May 2024 00:48:00 -0700 (PDT)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com. [209.85.219.47])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2a401bsm254997585a.71.2024.05.11.00.47.59
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 May 2024 00:48:00 -0700 (PDT)
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6a073f10e8eso12766456d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 00:47:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWxgMDnbDjK/XlHFzJEcOEQpBUL9jYrtJ4bIebMOVtEIb6hTremQ+rCl0L5LBqVjJkbDYvhoVBmtQBjA55V/g/pqrBJef87Z8YjQwe+
-X-Received: by 2002:a05:6214:398f:b0:6a0:ada7:1ffa with SMTP id
- 6a1803df08f44-6a16815f8eamr48583366d6.17.1715413679256; Sat, 11 May 2024
- 00:47:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715415148; x=1716019948;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9qBbsDAPUy5FGaDuBuioErI1+pT2h8H+WItqDsVZoLo=;
+        b=Wg865X0Vcfyr6+tb6/x+zpof6vWVTeykeen1uwsXFAFQwFDRai2ImZGWNfD4Iar6w3
+         TxB3X9L3b801jl/Y26oc3mD+VzIGA+Hx+C89NeFepOmxi6cBDbQYsXt1W0puv0iaRcH/
+         jr2GovWWXyWoqSIibRHYdVGkWm9Q4bRZ5/kBNj+A4FWqtxiElx5+LAfwrP99GKffpVC8
+         V26p8k3bastdY82H6YBEHcYxzbjF38SHBMyqWfC7owqxBaZmoMhhjFPCJBQFt5V+yGUH
+         8ragWmkYoAJfaaq4fYzrvGLo5A3bSaaCQx1JyBBVLBkxZLvqfDeg8HT/JwC9sVFrl/RT
+         4+WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2XHd98f6SHWviT8b1pFRo458bmk5x8K7/zsenl4g7Z88rxfkq43cTWMgPoK6oRpHh3EnkPZcN30NWJZPF+ei541Ho8pkEcsGpZLJb62mCv+3djh20U9Ne70bHOYH8BHOCv275h1Dab/jUfw==
+X-Gm-Message-State: AOJu0YyXL7H62lIBZPpZrxU+pQt/FFV8u0vynQa80h2+l0WJDjevkzLw
+	pBgjk3kk+I+xXu/famtf260TF18G426yumnJEbypEKwp/ZycHX/d
+X-Google-Smtp-Source: AGHT+IFj+AmbXoyzrs6SOrS6H+WnWeXXP/GUqlgiCSGr386jfk1YJXVZaW5eQKEoDtjjDUf9EKr++A==
+X-Received: by 2002:a17:903:22cc:b0:1e5:4f00:3751 with SMTP id d9443c01a7336-1ef43c0cf2amr62507595ad.3.1715415147903;
+        Sat, 11 May 2024 01:12:27 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c256a0csm43968605ad.306.2024.05.11.01.12.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 11 May 2024 01:12:27 -0700 (PDT)
+From: xu xin <xu.xin.sc@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To: david@redhat.com
+Cc: akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shr@devkernel.io,
+	si.hao@zte.com.cn,
+	xu.xin16@zte.com.cn
+Subject: Re: [PATCH linux-next v2] ksm: add ksm involvement information for each process
+Date: Sat, 11 May 2024 08:12:24 +0000
+Message-Id: <20240511081224.637842-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <bc0e1cdd-2d9d-437c-8fc9-4df0e13c48c0@redhat.com>
+References: <bc0e1cdd-2d9d-437c-8fc9-4df0e13c48c0@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509-fix-hi846-v1-1-1e19dc517be1@chromium.org> <20240509193900.GA32013@pendragon.ideasonboard.com>
-In-Reply-To: <20240509193900.GA32013@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Sat, 11 May 2024 09:47:47 +0200
-X-Gmail-Original-Message-ID: <CANiDSCsv8S68x7z+aV1PhbZ+5Ktr=86nYUXaNpb1w4q4y1v38Q@mail.gmail.com>
-Message-ID: <CANiDSCsv8S68x7z+aV1PhbZ+5Ktr=86nYUXaNpb1w4q4y1v38Q@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: hi846: Fix V4L2_SUBDEV_FORMAT_TRY get_selection()
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, Martin Kepplinger <martink@posteo.de>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Laurent
-
-On Thu, 9 May 2024 at 21:39, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+>> @@ -3217,6 +3217,10 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+>>   		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
+>>   		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+>>   		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
+>> +		seq_printf(m, "KSM_mergeable: %s\n",
+>> +				test_bit(MMF_VM_MERGEABLE, &mm->flags) ? "yes" : "no");
 >
-> Hi Ricardo,
+>All it *currently* means is "we called __ksm_enter()" once. It does not 
+>mean that KSM is still enabled for that process and that any VMA would 
+>be considered for merging.
 >
-> Thank you for the patch.
+>I don't think we should expose this.
 >
-> On Thu, May 09, 2024 at 05:05:55PM +0000, Ricardo Ribalda wrote:
-> > The current code does not return anything to the user.
-> >
-> > Although the code looks a bit dangerous (using a pointer without
-> > checking if it is valid), it should be fine. The code validates that
+>That information can be more reliably had by looking at
 >
-> I think you meant s/code/core/
-
-Yes, sorry, fatty fingers :)
-
-If you are planning to send a v5 of this
-https://patchwork.linuxtv.org/project/linux-media/patch/20240508214045.24716-4-laurent.pinchart+renesas@ideasonboard.com/
-
-Maybe you could include this patch there?
-
-I found the issue when the CI tested your series (eventhough it is not
-caused by your series)
-
-Regards!
-
+>"/proc/pid/smaps" and looking for "mg".
 >
-> > sel->pad has a valid value.
-> >
-> > Fix the following smatch error:
-> > drivers/media/i2c/hi846.c:1854 hi846_get_selection() warn: statement has no effect 31
-> >
-> > Fixes: e8c0882685f9 ("media: i2c: add driver for the SK Hynix Hi-846 8M pixel camera")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>Which tells you exactly if any VMA (and which) is currently applicable 
+>to KSM.
 >
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 >
-> > ---
-> > While running media-ci on the last patches there was a new sparse
-> > warning:
-> > https://gitlab.freedesktop.org/linux-media/users/patchwork/-/jobs/58524338/artifacts/external_file/junit/test-smatch.log.txt
-> > ---
-> >  drivers/media/i2c/hi846.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/media/i2c/hi846.c b/drivers/media/i2c/hi846.c
-> > index 9c565ec033d4..52d9ca68a86c 100644
-> > --- a/drivers/media/i2c/hi846.c
-> > +++ b/drivers/media/i2c/hi846.c
-> > @@ -1851,7 +1851,7 @@ static int hi846_get_selection(struct v4l2_subdev *sd,
-> >               mutex_lock(&hi846->mutex);
-> >               switch (sel->which) {
-> >               case V4L2_SUBDEV_FORMAT_TRY:
-> > -                     v4l2_subdev_state_get_crop(sd_state, sel->pad);
-> > +                     sel->r = *v4l2_subdev_state_get_crop(sd_state, sel->pad);
-> >                       break;
-> >               case V4L2_SUBDEV_FORMAT_ACTIVE:
-> >                       sel->r = hi846->cur_mode->crop;
-> >
-> > ---
-> > base-commit: 48259b90973718d2277db27b5e510f0fe957eaa0
-> > change-id: 20240509-fix-hi846-c3d77768622e
+>> +		seq_printf(m, "KSM_merge_any: %s\n",
+>> +				test_bit(MMF_VM_MERGE_ANY, &mm->flags) ? "yes" : "no");
 >
-> --
-> Regards,
+>This makes more sense to export. It's the same as reading 
+>prctl(PR_GET_MEMORY_MERGE).
 >
-> Laurent Pinchart
+>The man page [1] calls it simply "KSM has been enabled for this 
+>process", so process-wide KSM compared to per-VMA KSM.
+>
+>"KSM_enabled:"
+>
+>*might* be more reasonable in the context of PR_SET_MEMORY_MERGE.
+>
+>It wouldn't tell though if KSM is enabled on the system, though.
+>
 
+I agree it. But I hope admistrators can tell if the process enabled KSM-scan
+by madvise or prctl. At this point, only "/proc/pid/smaps"  is not enough.
 
+So can we add a item "KSM_enabled" which has three value as follows?
 
--- 
-Ricardo Ribalda
+1) "prctl": KSM has been fully enabled for this process.
+
+2) "madvise": KSM has been enabled on parts of VMA for this process.
+
+3) "never": KSM has been never enabled for this process.
+
+Just refer to the semantics of '/sys/kernel/mm/transparent_hugepage/enabled' 
 
