@@ -1,138 +1,111 @@
-Return-Path: <linux-kernel+bounces-176646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EE468C3288
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A3048C328C
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 18:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF92E280E76
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EEC41F21DB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 16:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1E421A02;
-	Sat, 11 May 2024 16:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857FB18054;
+	Sat, 11 May 2024 16:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LYtIxpYv"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKfptXyB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160221865A;
-	Sat, 11 May 2024 16:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62DF1B7E9;
+	Sat, 11 May 2024 16:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715445262; cv=none; b=GA6/xe33fNwNsF9g5rQuUkPH5DrjW/ROXk7Va4GHO7svZvbGmBdTj1gCOw1qH4zYxpp9T6eX0fn4dzkGDFXwunvIV/h/Q9W0PuvdjiKbFqIcrtV0b1gbNayWDGl0m70ry+G4eiQ/dNVd8LGNpAjTkZGDQK3cB+uMI5BXs4DnWdA=
+	t=1715445496; cv=none; b=L7eZPIEEVQ/THMDHF8rElVU78QM2dXY0r3dO6YAOJLDeBj6vFa/tvvl0s5FR638HqdDm9/xJcapTbBjc6uiZ2DxSfxKypRydKo32ww4J4CdxXcc1ljsyKaX7bi8UaD87mYsb5mju6SeSttgEYToTO/0GlQY5A8/w8zSCe/XgnPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715445262; c=relaxed/simple;
-	bh=E/NeqwYMuReaGCRnYcp3vdJpyEggLPpb2HSYcSmn0H0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r+4Wa64TENSZ0T3AUaSq0zifgIwW9rG3TV/nCysmkmdT5W2LHi1tpI+q5vEiHLYeB0pufkR49dSCc5uuddMaWBwBUPclOoICOPkdDgTbWOMFCEx4OcOveYw+x69LqI+TPDktEmrmqHA3+l7x/7e/7jeeXwFd3csdQOo73+cSWQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LYtIxpYv; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 5peUsjqa5MXQT5pepssoaT; Sat, 11 May 2024 18:33:15 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715445195;
-	bh=/+Vnyk4wWnOEN53vv8Rub/cXhWL4Rx9rMTvs0vfgDg0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=LYtIxpYvbz0/6xuqRvbNnYxPfEUX0OJnpc+WarLHOIXk+rgQV+sckBP6q8m5YzYgt
-	 gfcmJetuB4jp0695j3qD803csDTnoHRQtdAs55qpbd5UQQqna1HTBRP3a4wu82j9em
-	 2cmARqZF4kgIgEVzUsuAcuywo9vZRCqtV0GKH7C4I84TIUCYiCStO9OycjS6inr3D/
-	 yQeSVkxIZEmuP4L5Q7ItBPkqyEJrS/JUX3Vuiig5tRcAqozV0FBoHQgaYfVU8YpkI1
-	 8LFxtKxurjxwIPHXhY0Pav68lyiunnsBmFldKJET770kIEnf6K1H8WXXURZdPr9K16
-	 CmPufTyU2+Jhg==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 11 May 2024 18:33:15 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: gregkh@linuxfoundation.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	johannes@sipsolutions.net,
-	philipp.g.hortmann@gmail.com,
-	tdavies@darkphysics.net,
-	garyrookard@fastmail.org,
-	straube.linux@gmail.com
-Cc: linux-staging@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/3] staging: rtl8192e: Constify struct lib80211_crypto_ops
-Date: Sat, 11 May 2024 18:32:40 +0200
-Message-ID: <81be9eb42a2339eaa7466578773945a48904d3b5.1715443223.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1715445496; c=relaxed/simple;
+	bh=e94BgLcLEdR+T6CinJz6xb5bntXFyDdNlBr4TIoWFHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fllR+wKqAGWsliTNUSTTWb2q0IzXWx0kq0UvdObSXyYEpBfAE+eam559bfeuqHKLtNEWUT61NCo42t+KMdYYUThb2cuiC3S9WgSkMd8vdNMUwNLlw47ASedunECBQYK7PdjXKRRup0+bnFwo9S4gBhl7T55/xNfKSpBCaaVwwA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKfptXyB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22C5AC2BBFC;
+	Sat, 11 May 2024 16:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715445496;
+	bh=e94BgLcLEdR+T6CinJz6xb5bntXFyDdNlBr4TIoWFHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BKfptXyBYmoClepdP/CjknBDwgtvv7FtGgfdpmQKpJSA8mp1gTDxw7zJEq1CPE+lP
+	 EQ+LzPPY6INJ6SyEqNngj5VixGphDfyn6Wlg3Wn+Dk22GlOggjq/oTiYnEg5lCU/fP
+	 Am7B+lRaSGxZC+8NU0FE3ia80oI/tgR9/mcJ+nznzHpnD8AyRMolsQg5fxz1UFC0Gg
+	 sWEUC0BgONbmRKBdifda+X66NiBZJw8u5JRvdqw8ggSrfmE0wv8Id/f1KwQw7HhVtm
+	 S+lkesdmCXnOMZEtGQOKotoXYZ6lM1zY5Qqi46qx01VZS0UmNV1AUIKHqmKLpT+tlf
+	 AhnTPdext5dGA==
+Date: Sat, 11 May 2024 17:38:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Larysa Zaremba <larysa.zaremba@intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, alan.brady@intel.com,
+	maciej.fijalkowski@intel.com, jesse.brandeburg@intel.com,
+	Emil Tantilov <emil.s.tantilov@intel.com>,
+	Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
+	joshua.a.hay@intel.com,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Igor Bagnucki <igor.bagnucki@intel.com>
+Subject: Re: [PATCH iwl-net] idpf: Interpret .set_channels() input differently
+Message-ID: <20240511163810.GN2347895@kernel.org>
+References: <20240426154125.235977-1-larysa.zaremba@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240426154125.235977-1-larysa.zaremba@intel.com>
 
-Now that functions in lib80211 handle "const struct lib80211_crypto_ops",
-some structure can be constify as well.
+On Fri, Apr 26, 2024 at 05:41:22PM +0200, Larysa Zaremba wrote:
+> Unlike ice, idpf does not check, if user has requested at least 1 combined
+> channel. Instead, it relies on a check in the core code. Unfortunately, the
+> check does not trigger for us because of the hacky .set_channels()
+> interpretation logic that is not consistent with the core code.
+> 
+> This naturally leads to user being able to trigger a crash with an invalid
+> input. This is how:
+> 
+> 1. ethtool -l <IFNAME> -> combined: 40
+> 2. ethtool -L <IFNAME> rx 0 tx 0
+>    combined number is not specified, so command becomes {rx_count = 0,
+>    tx_count = 0, combined_count = 40}.
+> 3. ethnl_set_channels checks, if there is at least 1 RX and 1 TX channel,
+>    comparing (combined_count + rx_count) and (combined_count + tx_count)
+>    to zero. Obviously, (40 + 0) is greater than zero, so the core code
+>    deems the input OK.
+> 4. idpf interprets `rx 0 tx 0` as 0 channels and tries to proceed with such
+>    configuration.
+> 
+> The issue has to be solved fundamentally, as current logic is also known to
+> cause AF_XDP problems in ice [0].
+> 
+> Interpret the command in a way that is more consistent with ethtool
+> manual [1] (--show-channels and --set-channels) and new ice logic.
+> 
+> Considering that in the idpf driver only the difference between RX and TX
+> queues forms dedicated channels, change the correct way to set number of
+> channels to:
+> 
+> ethtool -L <IFNAME> combined 10 /* For symmetric queues */
+> ethtool -L <IFNAME> combined 8 tx 2 rx 0 /* For asymmetric queues */
+> 
+> [0] https://lore.kernel.org/netdev/20240418095857.2827-1-larysa.zaremba@intel.com/
+> [1] https://man7.org/linux/man-pages/man8/ethtool.8.html
+> 
+> Fixes: 02cbfba1add5 ("idpf: add ethtool callbacks")
+> Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+> Reviewed-by: Igor Bagnucki <igor.bagnucki@intel.com>
+> Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
 
-Constifying these structures moves some data to a read-only section, so
-increase overall security.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
----
- drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 2 +-
- drivers/staging/rtl8192e/rtllib_crypt_tkip.c | 2 +-
- drivers/staging/rtl8192e/rtllib_crypt_wep.c  | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-index cbb8c8dbe9b0..ce02204ac1ba 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
-@@ -378,7 +378,7 @@ static void rtllib_ccmp_print_stats(struct seq_file *m, void *priv)
- 		   ccmp->dot11rsna_stats_ccmp_decrypt_errors);
- }
- 
--static struct lib80211_crypto_ops rtllib_crypt_ccmp = {
-+static const struct lib80211_crypto_ops rtllib_crypt_ccmp = {
- 	.name			= "R-CCMP",
- 	.init			= rtllib_ccmp_init,
- 	.deinit			= rtllib_ccmp_deinit,
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-index 0244b524a7d4..be8060ecaecd 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_tkip.c
-@@ -678,7 +678,7 @@ static void rtllib_tkip_print_stats(struct seq_file *m, void *priv)
- 		   tkip->dot11RSNAStatsTKIPLocalMICFailures);
- }
- 
--static struct lib80211_crypto_ops rtllib_crypt_tkip = {
-+static const struct lib80211_crypto_ops rtllib_crypt_tkip = {
- 	.name			= "R-TKIP",
- 	.init			= rtllib_tkip_init,
- 	.deinit			= rtllib_tkip_deinit,
-diff --git a/drivers/staging/rtl8192e/rtllib_crypt_wep.c b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-index 21c2b7666d6f..55c5199a25ea 100644
---- a/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-+++ b/drivers/staging/rtl8192e/rtllib_crypt_wep.c
-@@ -209,7 +209,7 @@ static void prism2_wep_print_stats(struct seq_file *m, void *priv)
- 	seq_printf(m, "key[%d] alg=WEP len=%d\n", wep->key_idx, wep->key_len);
- }
- 
--static struct lib80211_crypto_ops rtllib_crypt_wep = {
-+static const struct lib80211_crypto_ops rtllib_crypt_wep = {
- 	.name			= "R-WEP",
- 	.init			= prism2_wep_init,
- 	.deinit			= prism2_wep_deinit,
--- 
-2.45.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
