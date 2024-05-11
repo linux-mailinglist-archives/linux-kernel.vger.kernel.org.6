@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-176720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED7F58C33AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:05:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCDAA8C33B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 22:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29DBC1C20DC4
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:05:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300331F2175B
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 20:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880A6208A9;
-	Sat, 11 May 2024 20:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33525208B8;
+	Sat, 11 May 2024 20:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZDgbCTEl"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lcBk53jC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S1+cFDux"
+Received: from wfhigh6-smtp.messagingengine.com (wfhigh6-smtp.messagingengine.com [64.147.123.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151661C290
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 20:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06DA200C1;
+	Sat, 11 May 2024 20:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715457895; cv=none; b=ncvO4iS1IGMaP0KUC2cdVKijOQ9Q1Of4Z1GVUTWMi2yBweZxam1AUzdzMkfBYs2QvLMnsgk1Kfcuf6Pp/GF3be7xihv+AWMVjEXLXwmvxiAJX+W/I15SZR8w7FngArc7OBzEeDA+jBRMBYNDXgww4q39DLcoFqtFAYdddsnE7Ak=
+	t=1715458166; cv=none; b=BvtZ/eVwvN5bZTHUK2hTTXGqTttlW/iBAQ4O/olXPt3esWdbjAhOCEsW+v8ciA4n2pwaC5FN+fXN3r4ftpzwxjW5juhBQOXbb3g3cDkcsAJFM1GEF/VOY+eLXuuM/ucgEFEA5+oUXxjmbb2SpLQw5luZ0uCb9aoZiwkZrJlhLUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715457895; c=relaxed/simple;
-	bh=m0PmhIZfGfLGxB7MdP6Q++k4AXvc2nOplWPxUyw2VLU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gF5izX9HhDFVlzQYGF0/RlPJykfh+B5IwhSmo7ebwUXAAkORUaQTqsui5yOq0ck+WnZAhp4Bx9u2SkWaDHaGctdJLs/hwkPjTGe7zo5G9IC+1WQv245ruE0FMtQ2RIEYJJcNf1E5YGEXua6G42YHVgmbOH4IOjKaGCGZos6cUZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZDgbCTEl; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5ce2aada130so2222267a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 13:04:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715457892; x=1716062692; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bAxRPnoHPzaMqkCmlI5pbJkR9qG9/zkm1emY09MZiz8=;
-        b=ZDgbCTEl5MhaSUfST1waVCnlPi8WVwFpmMJY3cuHXP+W0Q+fVNBcanSOgyrum5uVi0
-         CLQ8ZrwK693xxvMu5UotmQ3baCfpZYhNFT5hRswwT88UYj5h12g+J/jRPjAitul0UqFE
-         Uj2eGeJ9B/PnR3aMXb+xzCZIS9XLV4FyUxVGI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715457892; x=1716062692;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bAxRPnoHPzaMqkCmlI5pbJkR9qG9/zkm1emY09MZiz8=;
-        b=wfkINpqQ3e233z6Jj7h1xVzsSP23xg8V/4mBDnFmRVMSWSQlkr7VX5+NGeLFV1jXma
-         Dni9aECmVGgi15a5lKSiUDYXr79CZIqH3YTMSaciqf+GjUWdPNhAGb2JupRdzTi0a/eC
-         T/SYgjZJYyL/cSWxo6lFF1Le1k04ps0GlSwOnOEq+gVZFfFDw5P8ur1uOKIqOQDjyBC5
-         as0t40T0XivvuvrRSy+fnGQ2wIUOmuP6m7Y57i/x/vxTPuA40ioSCZvc48lhjY/B/3v9
-         Pf9oYosnk8eeobFl71FkQh2L0TRbSYHfsGpdr3GMEQNlRP2EsyKcU/VUAzt2n+zNjCWa
-         p53A==
-X-Forwarded-Encrypted: i=1; AJvYcCWtZ4oXeOj2syhcS/T5IZ2M+OyePCyKUd3yOSX53W6upO/lwMosAdNUyp94h4F2xavH5J7nBU8UGi2WVkutmAbj3I/ZunPMjWcvBgY+
-X-Gm-Message-State: AOJu0YwjjQPFkGRdrPOYkANsw0EV0b+Ik3qIaYIevbFgFaNF6LhzJ2pl
-	ht+gMKlmwtSqMBu3mofp6SrERb+JXlqdCeqkefAswEbxWv8a25lXMoULfYPdGQ==
-X-Google-Smtp-Source: AGHT+IEH64K5jd6mjFYb931Me09tBfbrb15HesgvKj7DyqJhBJRz3ZGnEZ6lTZAV58PL9Yzco/fyPA==
-X-Received: by 2002:a05:6a20:da83:b0:1ad:8755:976 with SMTP id adf61e73a8af0-1afde0b5aa7mr6858922637.13.1715457892419;
-        Sat, 11 May 2024 13:04:52 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b6d0b8c887sm3496640a91.21.2024.05.11.13.04.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 13:04:51 -0700 (PDT)
-Date: Sat, 11 May 2024 13:04:51 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Erick Archer <erick.archer@outlook.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Justin Stitt <justinstitt@google.com>, x86@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] perf/x86/amd/uncore: Add flex array to struct
- amd_uncore_ctx
-Message-ID: <202405111304.6A390B9D@keescook>
-References: <AS8PR02MB7237E4848B44A5226BD3551C8BE02@AS8PR02MB7237.eurprd02.prod.outlook.com>
+	s=arc-20240116; t=1715458166; c=relaxed/simple;
+	bh=wgbkZOngIgE+nsdfV9G/puBvKYsmjScbDDIwPrE+KsI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=suQmr7i6thdtXMaB9G6zLK0oIyo+QYrnjw4UMf+Ej8aBl1Y3r2Rg/3zYXEFqrObuLP8a3KA+jAf/unWmRf9kiifO2EQxE7vbAiG0iwwOLZ9qa2zBGJjxyBTAU7MmMJoKiSWrTIIjIUPOwozUT+kUYHXQzDgstoVJTVZ/iPMP7yA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lcBk53jC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S1+cFDux; arc=none smtp.client-ip=64.147.123.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 15F7D18000F6;
+	Sat, 11 May 2024 16:09:22 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Sat, 11 May 2024 16:09:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1715458161; x=1715544561; bh=HPItATo5fx
+	8l5WFkFOeYczqSjME8h6efh0zZWmdoRF4=; b=lcBk53jCOF2+k/udzhE5d+j8Yy
+	UTO9UYQqHGvmZ4W7oHim4+rSOuEWnwnTGmggF5b+qzg0Sav1/lRrF68Kejrx7w21
+	YIhCp61jso33ua95WDRkcqQGQIntJn2Y/1GXFeRxX4H3o9LG3QjVQ6Y4NNFbITaa
+	3n1tSK+m2mQLZEZ5tJqmCjD9QNrff0iGp2VBkId/BmXHx2UF/tioJQW6qNinXN8C
+	ygMJNWtf4IuE7Z75Jgcn9Id/DFWhaHSGC30IUA3zoQjJ9ySOdVCHSWYMMK6rmJtA
+	gjqgzX98afev9mI6YDcXBC0nAxyQhxMnuPHZswUu5Ilx79XrofD8YFCi1tZg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715458161; x=1715544561; bh=HPItATo5fx8l5WFkFOeYczqSjME8
+	h6efh0zZWmdoRF4=; b=S1+cFDuxjUirv18s+Y7mRUSPhU/wMjYf7igtpXaM4mkH
+	ksHg/ZjSUmY4b1ciOm3UaS+ik+IJtakDA1qzxa+XlH1/YOC4Z/tPghntGIzQAYOl
+	v1zh8RBNDpe6nn4Hp2Pl8Vy8NApaJxr/PiUiRDEIIoPc1jBrscxhP11IKbB1NPF3
+	o1kTdYm86G/2B8vkbHe2t7h0tqmqFJ46R9Ot6mQ2OstTORRH6IL61CN4LDRhE8yK
+	HzWXiuAnNMdIYhN5TMyVg4aQUTN61nuvmvUQoW+cjHYTH5PjSRSC/TFxz1CRfmW1
+	J4vqTqtulCCD46pc//q+7nvRK1j3piaCCywULv3phw==
+X-ME-Sender: <xms:cNA_ZgzQ7m2qRSKp7wiBz3da-tHi_Axg6FsUbf1gEKnfaefauS9fhg>
+    <xme:cNA_ZkR5n9hh5FTWx_AwPSlXAHPnXH5YF5nGmJMRf195f9Z6FQ6wVuYqmwFKZUNq3
+    -trPuZAjcTH3e__ybM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegtddgudeghecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:cNA_ZiUS6jxwzpKYQDyldzqtrwFJffvUYUN3EV5-5pY9SFDxK3Cg_w>
+    <xmx:cNA_Zuhj9lCHE7UNwvDMkrMvIEWpMC7zqTYTEw3atDXxbOKkHqi-Ig>
+    <xmx:cNA_ZiC-zlxi0RWwt79vA0g-FKPi3Un2bMnhZ9_xdVxHdjn3Lod2vg>
+    <xmx:cNA_ZvJPPsl_3Y1js_C_DD1Gpf12K9kcE32JU0SQAYogCCE5dIOOVA>
+    <xmx:cdA_ZqtOjN34gO8_apgMuOhjEIiitTau6HgswL2H4PGFF-Le0g7jppDy>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id AE36AB6008D; Sat, 11 May 2024 16:09:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR02MB7237E4848B44A5226BD3551C8BE02@AS8PR02MB7237.eurprd02.prod.outlook.com>
+Message-Id: <8dd1c466-54e3-45c1-a19f-f81dd9dbf243@app.fastmail.com>
+In-Reply-To: <a1331c86-dc07-4635-b169-623fcdd11824@paulmck-laptop>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+ <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+ <6e6dae45ffbf7a6ab54175695a3e21207c6f5126.camel@physik.fu-berlin.de>
+ <46543a98-4767-471a-91be-20fb60ab138b@paulmck-laptop>
+ <7432d241b538819b603194bfb3a306faf360d4b1.camel@physik.fu-berlin.de>
+ <a1331c86-dc07-4635-b169-623fcdd11824@paulmck-laptop>
+Date: Sat, 11 May 2024 22:08:50 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Paul E. McKenney" <paulmck@kernel.org>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-alpha@vger.kernel.org,
+ "Richard Henderson" <richard.henderson@linaro.org>,
+ "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
+ "Matt Turner" <mattst88@gmail.com>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+Content-Type: text/plain
 
-On Sat, May 11, 2024 at 04:51:54PM +0200, Erick Archer wrote:
-> This is an effort to get rid of all multiplications from allocation
-> functions in order to prevent integer overflows [1][2].
-> 
-> The "struct amd_uncore_ctx" can be refactored to use a flex array for
-> the "events" member. This way, the allocation/freeing of the memory can
-> be simplified.
-> 
-> Specifically, as the "curr" variable is a pointer to the amd_uncore_ctx
-> structure and it now ends up in a flexible array:
-> 
-> struct amd_uncore_ctx {
->         [...]
->         struct perf_event *events[];
-> };
-> 
-> the two-step allocation can be simplifief by using just one kzalloc_node
-> function and the struct_size() helper to do the arithmetic calculation
-> for the memory to be allocated.
-> 
-> This way, the code is more readable and safer.
-> 
-> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
-> Link: https://github.com/KSPP/linux/issues/160 [2]
-> Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Signed-off-by: Erick Archer <erick.archer@outlook.com>
-> ---
-> Hi,
-> 
-> This patch can be considered v4 of this other one [1]. However, since
-> the patch has completely changed due to the addition of the flex array,
-> I have decided to make a new series and remove the "Reviewed-by:" tag
-> by Gustavo A. R. Silva and Kees cook.
-> 
-> [1] https://lore.kernel.org/linux-hardening/PAXPR02MB7248F46DEFA47E79677481B18B152@PAXPR02MB7248.eurprd02.prod.outlook.com/
-> 
-> Thanks,
-> Erick
-> ---
->  arch/x86/events/amd/uncore.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
+On Sat, May 11, 2024, at 21:37, Paul E. McKenney wrote:
+> On Sat, May 11, 2024 at 08:49:08PM +0200, John Paul Adrian Glaubitz wrote:
+>
+> The pre-EV56 Alphas have no byte store instruction, correct?
+>
+> If that is in fact correct, what code is generated for a volatile store
+> to a single byte for those CPUs?  For example, for this example?
+>
+> 	char c;
+>
+> 	...
+>
+> 	WRITE_ONCE(c, 3);
+>
+> The rumor I heard is that the compilers will generate a non-atomic
+> read-modify-write instruction sequence in this case, first reading the
+> 32-bit word containing that byte into a register, then substituting the
+> value to be stored into corresponding byte of that register, and finally
+> doing a 32-bit store from that register.
+>
+> Is that the case, or am I confused?
 
-My favorite kind of patch: fewer lines, clearer code.
+I think it's slightly worse: gcc will actually do a 64-bit
+read-modify-write rather than a 32-bit one, and it doesn't
+use atomic ll/sc when storing into an _Atomic struct member:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+echo '#include <stdatomic.h>^M struct s { _Atomic char c; _Atomic char s[7]; long l; }; void f(struct s *s) { atomic_store(&s->c, 3); }' | alpha-linux-gcc-14  -xc - -S -o- -O2 -mcpu=ev5
 
--Kees
+f:
+	.frame $30,0,$26,0
+$LFB0:
+	.cfi_startproc
+	.prologue 0
+	mb
+	lda $1,3($31)
+	insbl $1,$16,$1
+	ldq_u $2,0($16)
+	mskbl $2,$16,$2
+	bis $1,$2,$1
+	stq_u $1,0($16)
+	bis $31,$31,$31
+	mb
+	ret $31,($26),1
+	.cfi_endproc
+$LFE0:
+	.end f
 
--- 
-Kees Cook
+compared to -mcpu=ev56:
+
+f:
+	.frame $30,0,$26,0
+$LFB0:
+	.cfi_startproc
+	.prologue 0
+	mb
+	lda $1,3($31)
+	stb $1,0($16)
+	bis $31,$31,$31
+	mb
+	ret $31,($26),1
+	.cfi_endproc
+$LFE0:
+	.end f
+
+      Arnd
 
