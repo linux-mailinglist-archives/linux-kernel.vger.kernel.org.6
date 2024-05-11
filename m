@@ -1,272 +1,538 @@
-Return-Path: <linux-kernel+bounces-176433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C799E8C2FDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:33:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE64A8C2FE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 08:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B953283F6F
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599FE1F2325E
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 06:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A089917C8;
-	Sat, 11 May 2024 06:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52533522A;
+	Sat, 11 May 2024 06:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aXZbCAYE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7/iHKNE"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A1C380
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFED6A41
+	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 06:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715409174; cv=none; b=hQBZSl8iYFFo0G/gVyeqGnpI5Tg9jVjSKIDJDnfkFSJxqguJNkDCmGG+URpE4aOGnzU/d+WkY81oLrppVvVez5cXQX7TnzO0N409KGMQX/pyaNjrKEd11CMbPIFoo27kE/PADhKxW9r+QgMsFWPssp9DaLg+HUIpDUCDqM0HcQE=
+	t=1715409362; cv=none; b=eUNHAKr2azUSWo7qkGPevgFT4ywxBv0N3LcO5RsWWn1Twv0I2J1i7Q1ZBMHUPFOrgGLKIKAy1FNxqjZ3oBJXWTlhIOoNbvqPxBzwZv8ssOoQzyCTy5WUG88txfFlopi7GZ0X2EyKXLFQydBICl8FhT4b/15hstfdueTxwbsrGcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715409174; c=relaxed/simple;
-	bh=x2NXg246qNH7wtEWMLuyyFdCXqMpeOZA5css5pgVgrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=eCE8I4Yc4Cg/f5COu6zAOk5SrroMdiH9L2/UNf2rVteejg5g87snmqEW2zNr7DGOaToWXEngPUGHZvc+Qc6jfbxouf/+ROzLinm7j4oLl16Apt+/4DHeAW/jum7qF8BOu5K3jRFJI+xMnHEU09lhhH964ZGq0nKQIDzrZp2R2gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aXZbCAYE; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715409172; x=1746945172;
-  h=date:from:to:cc:subject:message-id;
-  bh=x2NXg246qNH7wtEWMLuyyFdCXqMpeOZA5css5pgVgrQ=;
-  b=aXZbCAYEF4tNMgE1uoIx/x6FZEZSGex+MS6XriMSGfj1jSLLgBCsq7Gd
-   U75aE53LaQYBlWPpqW7F7WhvPjgBlZyT4jXOy3gye1i1JEXakLj+HjbCK
-   j9BFjT4lr1iNa/1ZrQmG/fVNRvJo2OldJT4jiC+NAZEQwJ4o7fDT9KHd4
-   Mush3YfTGEys5kT/HfJU84WSNprYVxDE404ab8Q0DSIb6kR0YwR1mqPUM
-   ++VwJkdkxF/lKfJFzIRey7pZXEoMvXOkfB3zvAVR8oQKF1aCYUczivHUy
-   34TRUeWx+2VpU9EqJhmpeJo7XBV1QXMFXrcU/sFbfMj65vh+JQpP8vlPi
-   Q==;
-X-CSE-ConnectionGUID: 10xHkoF1Qvy8wlSD7WKWSA==
-X-CSE-MsgGUID: N4qD3UQyTFqxhzAkzMU27w==
-X-IronPort-AV: E=McAfee;i="6600,9927,11069"; a="11567788"
-X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
-   d="scan'208";a="11567788"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 23:32:52 -0700
-X-CSE-ConnectionGUID: nTSJWChqSymM3H3PxoMUoA==
-X-CSE-MsgGUID: JpNFIrHjTMS/BeX1B7mKFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,153,1712646000"; 
-   d="scan'208";a="61012535"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 10 May 2024 23:32:50 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s5gHo-00072F-0x;
-	Sat, 11 May 2024 06:32:48 +0000
-Date: Sat, 11 May 2024 14:32:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 283cde9845c3b6478166a2e4c6faba2a9c734c69
-Message-ID: <202405111404.zDg1bazs-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1715409362; c=relaxed/simple;
+	bh=S2Rizmni55siQoYqWFg3KywGcQ0H1eZ7U1vrbP5TTb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxBJz+U4U6k2aq/csvArelUGrZGGLYlhoH6XPb5oQx1cGM3pSJOmgBe7Kaqn4q/6IU87xpLBjl+sW9VZLzBxF+Bc8O0/cMav/H4hDnN5AVKzYOfiWWz5xj670w1GH03u1/72fuPBASllAW7zB+D7YofRFt7SvJGRAzClJuWiXLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a7/iHKNE; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ecd9a81966so27177535ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 23:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715409358; x=1716014158; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IqIfpOLwqxPWanvAjHeCvfxgD+z2mm62/kCYisTKI8U=;
+        b=a7/iHKNEcbxOcEgOfNK93UNAWMEUaGcszKOJws5rT744GZousHBXQgqOcE7k9aVtt2
+         I36kGV+1uOUg36TlIA1G36cegFfEJkxqclCFfOp+2NU5F2vOh/lO7hycXRG3rRss6vYg
+         iQjBrjqSPJysWmUYxRrHv2j3tEhoM4sYYqIFP3gTpPWo/SzYQHFWm1WjawNjehpwO73q
+         sDmcVad7MLwLzdutNP2B0l61/CoXXUR2hbRHBkgUzREMhtsYPgRAxL5VuxKgVw8upV8t
+         5/YwcxvyF5o0ik932wB/uBYL8jLLuExdVpxTd7sM7Xr59WSqpieMEKFnYNrvbJjtBsbv
+         zayg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715409358; x=1716014158;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqIfpOLwqxPWanvAjHeCvfxgD+z2mm62/kCYisTKI8U=;
+        b=oW1RBg34EuJTorZ2DleE3/feIATzVnv5fTBrVlDSY9m5MQ9Aix5phZh+mG7zG1LJEl
+         sUv2WhjYPVB8luaakqoCSXA2h6Z5DIOqFWUbclE7t14q9sL8zN9kdgo7IJMigHBOCYWI
+         pf29euv6mPRfZTG2XnhTT9ZKshGXM+1FB9y4ClKtFweZMuuTiDkbAqJib+w8S4ziForX
+         1Ma46cAAes0X5KDkzNcpXZtzvvc+gFdlf8aAbogQjhXDR4mIoBjQ9fBKh2mJtTc6tx+w
+         57h4UHUqzaxFmF8FB1ro6XWPSPI4iTfanM8wtwpDiXS1ixc73GZ7zNCFR9L07qNPXU3/
+         84CA==
+X-Forwarded-Encrypted: i=1; AJvYcCXM/ugXkP7m8k65jJwZ92ZwAyJcwc/xA2R2IqM76KcmNgRZV5o/mLFH2ZOfblDcVFavNzLfrwXnladSKK5vgxnC3Utif4TC7yUnVR4k
+X-Gm-Message-State: AOJu0YyHBFPyjZFUoXh0Hg0azNWi9VpzwTKJwswZ6DR14WXI5PEQ+fM0
+	E2/ePnSbzwnDNEXYUUAUpbXWDrSQB8lMoWFsgWsZRVka7CbinvWERjzMQfzppg==
+X-Google-Smtp-Source: AGHT+IHHyqUI4TfbPefohtbqZ9ixiRB6pTcvG2f7w+LQvX0WdsliXOh0O0HjCpE95r6EWK0cWtHvNA==
+X-Received: by 2002:a17:902:f68f:b0:1e0:9964:76f4 with SMTP id d9443c01a7336-1ef42e6e646mr68429675ad.14.1715409357941;
+        Fri, 10 May 2024 23:35:57 -0700 (PDT)
+Received: from thinkpad ([220.158.156.38])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad819csm42528305ad.84.2024.05.10.23.35.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 May 2024 23:35:57 -0700 (PDT)
+Date: Sat, 11 May 2024 12:05:50 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND 4/8] PCI: qcom: Switch to
+ devm_clk_bulk_get_all() API to get the clocks from Devicetree
+Message-ID: <20240511063550.GA6672@thinkpad>
+References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+ <20240501042847.1545145-5-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240501042847.1545145-5-mr.nuke.me@gmail.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 283cde9845c3b6478166a2e4c6faba2a9c734c69  Merge branch into tip/master: 'x86/timers'
+On Tue, Apr 30, 2024 at 11:28:43PM -0500, Alexandru Gagniuc wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> There is no need for the device drivers to validate the clocks defined in
+> Devicetree. The validation should be performed by the DT schema and the
+> drivers should just get all the clocks from DT. Right now the driver
+> hardcodes the clock info and validates them against DT which is redundant.
+> 
+> So use devm_clk_bulk_get_all() that just gets all the clocks defined in DT
+> and get rid of all static clocks info from the driver. This simplifies the
+> driver.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> [moved clks to struct qcom_pcie to reduce code duplication]
 
-elapsed time: 1352m
+Can you please revert to my original patch? Even though moving the
+devm_clk_bulk_get_all() API to probe saves few LOC, it also makes the resource
+handling code scattered across the driver. So I'd like to keep all the resource
+handling within the get_resources() callback.
 
-configs tested: 180
-configs skipped: 3
+- Mani
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                      axs103_smp_defconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240511   gcc  
-arc                   randconfig-002-20240511   gcc  
-arc                    vdk_hs38_smp_defconfig   gcc  
-arm                              alldefconfig   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                          collie_defconfig   gcc  
-arm                                 defconfig   clang
-arm                          ep93xx_defconfig   clang
-arm                            mmp2_defconfig   gcc  
-arm                   randconfig-001-20240511   clang
-arm                   randconfig-002-20240511   clang
-arm                   randconfig-003-20240511   gcc  
-arm                   randconfig-004-20240511   gcc  
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240511   gcc  
-arm64                 randconfig-002-20240511   clang
-arm64                 randconfig-003-20240511   gcc  
-arm64                 randconfig-004-20240511   clang
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240511   gcc  
-csky                  randconfig-002-20240511   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20240511   clang
-hexagon               randconfig-002-20240511   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240510   clang
-i386         buildonly-randconfig-002-20240510   gcc  
-i386         buildonly-randconfig-003-20240510   clang
-i386         buildonly-randconfig-004-20240510   clang
-i386         buildonly-randconfig-005-20240510   clang
-i386         buildonly-randconfig-006-20240510   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240510   clang
-i386                  randconfig-002-20240510   clang
-i386                  randconfig-003-20240510   gcc  
-i386                  randconfig-004-20240510   gcc  
-i386                  randconfig-005-20240510   clang
-i386                  randconfig-006-20240510   clang
-i386                  randconfig-011-20240510   clang
-i386                  randconfig-012-20240510   clang
-i386                  randconfig-013-20240510   gcc  
-i386                  randconfig-014-20240510   clang
-i386                  randconfig-015-20240510   gcc  
-i386                  randconfig-016-20240510   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240511   gcc  
-loongarch             randconfig-002-20240511   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240511   gcc  
-nios2                 randconfig-002-20240511   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-openrisc                 simple_smp_defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240511   gcc  
-parisc                randconfig-002-20240511   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc                      chrp32_defconfig   clang
-powerpc                    klondike_defconfig   gcc  
-powerpc                     mpc512x_defconfig   clang
-powerpc               randconfig-001-20240511   gcc  
-powerpc               randconfig-002-20240511   clang
-powerpc               randconfig-003-20240511   gcc  
-powerpc                 xes_mpc85xx_defconfig   gcc  
-powerpc64             randconfig-001-20240511   gcc  
-powerpc64             randconfig-002-20240511   gcc  
-powerpc64             randconfig-003-20240511   gcc  
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240511   gcc  
-riscv                 randconfig-002-20240511   clang
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240511   clang
-s390                  randconfig-002-20240511   gcc  
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                ecovec24-romimage_defconfig   gcc  
-sh                 kfr2r09-romimage_defconfig   gcc  
-sh                    randconfig-001-20240511   gcc  
-sh                    randconfig-002-20240511   gcc  
-sh                   rts7751r2dplus_defconfig   gcc  
-sh                           se7722_defconfig   gcc  
-sh                           se7724_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240511   gcc  
-sparc64               randconfig-002-20240511   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                             i386_defconfig   gcc  
-um                    randconfig-001-20240511   gcc  
-um                    randconfig-002-20240511   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240511   gcc  
-x86_64       buildonly-randconfig-002-20240511   gcc  
-x86_64       buildonly-randconfig-003-20240511   gcc  
-x86_64       buildonly-randconfig-004-20240511   gcc  
-x86_64       buildonly-randconfig-005-20240511   clang
-x86_64       buildonly-randconfig-006-20240511   clang
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240511   clang
-x86_64                randconfig-002-20240511   clang
-x86_64                randconfig-003-20240511   clang
-x86_64                randconfig-004-20240511   gcc  
-x86_64                randconfig-005-20240511   gcc  
-x86_64                randconfig-006-20240511   clang
-x86_64                randconfig-011-20240511   clang
-x86_64                randconfig-012-20240511   gcc  
-x86_64                randconfig-013-20240511   gcc  
-x86_64                randconfig-014-20240511   gcc  
-x86_64                randconfig-015-20240511   gcc  
-x86_64                randconfig-016-20240511   gcc  
-x86_64                randconfig-071-20240511   gcc  
-x86_64                randconfig-072-20240511   gcc  
-x86_64                randconfig-073-20240511   clang
-x86_64                randconfig-074-20240511   gcc  
-x86_64                randconfig-075-20240511   gcc  
-x86_64                randconfig-076-20240511   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                            allnoconfig   gcc  
-xtensa                          iss_defconfig   gcc  
-xtensa                randconfig-001-20240511   gcc  
-xtensa                randconfig-002-20240511   gcc  
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 163 ++++---------------------
+>  1 file changed, 25 insertions(+), 138 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 14772edcf0d3..ea81ff68d433 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -154,58 +154,42 @@
+>  #define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
+>  		Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
+>  
+> -#define QCOM_PCIE_1_0_0_MAX_CLOCKS		4
+>  struct qcom_pcie_resources_1_0_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_1_0_0_MAX_CLOCKS];
+>  	struct reset_control *core;
+>  	struct regulator *vdda;
+>  };
+>  
+> -#define QCOM_PCIE_2_1_0_MAX_CLOCKS		5
+>  #define QCOM_PCIE_2_1_0_MAX_RESETS		6
+>  #define QCOM_PCIE_2_1_0_MAX_SUPPLY		3
+>  struct qcom_pcie_resources_2_1_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_1_0_MAX_CLOCKS];
+>  	struct reset_control_bulk_data resets[QCOM_PCIE_2_1_0_MAX_RESETS];
+>  	int num_resets;
+>  	struct regulator_bulk_data supplies[QCOM_PCIE_2_1_0_MAX_SUPPLY];
+>  };
+>  
+> -#define QCOM_PCIE_2_3_2_MAX_CLOCKS		4
+>  #define QCOM_PCIE_2_3_2_MAX_SUPPLY		2
+>  struct qcom_pcie_resources_2_3_2 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_3_2_MAX_CLOCKS];
+>  	struct regulator_bulk_data supplies[QCOM_PCIE_2_3_2_MAX_SUPPLY];
+>  };
+>  
+> -#define QCOM_PCIE_2_3_3_MAX_CLOCKS		5
+>  #define QCOM_PCIE_2_3_3_MAX_RESETS		7
+>  struct qcom_pcie_resources_2_3_3 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_3_3_MAX_CLOCKS];
+>  	struct reset_control_bulk_data rst[QCOM_PCIE_2_3_3_MAX_RESETS];
+>  };
+>  
+> -#define QCOM_PCIE_2_4_0_MAX_CLOCKS		4
+>  #define QCOM_PCIE_2_4_0_MAX_RESETS		12
+>  struct qcom_pcie_resources_2_4_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_4_0_MAX_CLOCKS];
+> -	int num_clks;
+>  	struct reset_control_bulk_data resets[QCOM_PCIE_2_4_0_MAX_RESETS];
+>  	int num_resets;
+>  };
+>  
+> -#define QCOM_PCIE_2_7_0_MAX_CLOCKS		15
+>  #define QCOM_PCIE_2_7_0_MAX_SUPPLIES		2
+>  struct qcom_pcie_resources_2_7_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_7_0_MAX_CLOCKS];
+> -	int num_clks;
+>  	struct regulator_bulk_data supplies[QCOM_PCIE_2_7_0_MAX_SUPPLIES];
+>  	struct reset_control *rst;
+>  };
+>  
+> -#define QCOM_PCIE_2_9_0_MAX_CLOCKS		5
+>  struct qcom_pcie_resources_2_9_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_9_0_MAX_CLOCKS];
+>  	struct reset_control *rst;
+>  };
+>  
+> @@ -247,6 +231,8 @@ struct qcom_pcie {
+>  	struct icc_path *icc_mem;
+>  	const struct qcom_pcie_cfg *cfg;
+>  	struct dentry *debugfs;
+> +	struct clk_bulk_data *clks;
+> +	int num_clks;
+>  	bool suspended;
+>  };
+>  
+> @@ -337,22 +323,6 @@ static int qcom_pcie_get_resources_2_1_0(struct qcom_pcie *pcie)
+>  	if (ret)
+>  		return ret;
+>  
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "core";
+> -	res->clks[2].id = "phy";
+> -	res->clks[3].id = "aux";
+> -	res->clks[4].id = "ref";
+> -
+> -	/* iface, core, phy are required */
+> -	ret = devm_clk_bulk_get(dev, 3, res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	/* aux, ref are optional */
+> -	ret = devm_clk_bulk_get_optional(dev, 2, res->clks + 3);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->resets[0].id = "pci";
+>  	res->resets[1].id = "axi";
+>  	res->resets[2].id = "ahb";
+> @@ -373,7 +343,7 @@ static void qcom_pcie_deinit_2_1_0(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_1_0 *res = &pcie->res.v2_1_0;
+>  
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  	reset_control_bulk_assert(res->num_resets, res->resets);
+>  
+>  	writel(1, pcie->parf + PARF_PHY_CTRL);
+> @@ -413,7 +383,6 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
+>  
+>  static int qcom_pcie_post_init_2_1_0(struct qcom_pcie *pcie)
+>  {
+> -	struct qcom_pcie_resources_2_1_0 *res = &pcie->res.v2_1_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+>  	struct device_node *node = dev->of_node;
+> @@ -425,7 +394,7 @@ static int qcom_pcie_post_init_2_1_0(struct qcom_pcie *pcie)
+>  	val &= ~PHY_TEST_PWR_DOWN;
+>  	writel(val, pcie->parf + PARF_PHY_CTRL);
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -476,21 +445,11 @@ static int qcom_pcie_get_resources_1_0_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_1_0_0 *res = &pcie->res.v1_0_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	int ret;
+>  
+>  	res->vdda = devm_regulator_get(dev, "vdda");
+>  	if (IS_ERR(res->vdda))
+>  		return PTR_ERR(res->vdda);
+>  
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "aux";
+> -	res->clks[2].id = "master_bus";
+> -	res->clks[3].id = "slave_bus";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->core = devm_reset_control_get_exclusive(dev, "core");
+>  	return PTR_ERR_OR_ZERO(res->core);
+>  }
+> @@ -500,7 +459,7 @@ static void qcom_pcie_deinit_1_0_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_1_0_0 *res = &pcie->res.v1_0_0;
+>  
+>  	reset_control_assert(res->core);
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  	regulator_disable(res->vdda);
+>  }
+>  
+> @@ -517,7 +476,7 @@ static int qcom_pcie_init_1_0_0(struct qcom_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable clocks\n");
+>  		goto err_assert_reset;
+> @@ -532,7 +491,7 @@ static int qcom_pcie_init_1_0_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  
+>  err_disable_clks:
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  err_assert_reset:
+>  	reset_control_assert(res->core);
+>  
+> @@ -580,15 +539,6 @@ static int qcom_pcie_get_resources_2_3_2(struct qcom_pcie *pcie)
+>  	if (ret)
+>  		return ret;
+>  
+> -	res->clks[0].id = "aux";
+> -	res->clks[1].id = "cfg";
+> -	res->clks[2].id = "bus_master";
+> -	res->clks[3].id = "bus_slave";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -596,7 +546,7 @@ static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
+>  
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  }
+>  
+> @@ -613,7 +563,7 @@ static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable clocks\n");
+>  		regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+> @@ -661,18 +611,6 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
+>  	bool is_ipq = of_device_is_compatible(dev->of_node, "qcom,pcie-ipq4019");
+>  	int ret;
+>  
+> -	res->clks[0].id = "aux";
+> -	res->clks[1].id = "master_bus";
+> -	res->clks[2].id = "slave_bus";
+> -	res->clks[3].id = "iface";
+> -
+> -	/* qcom,pcie-ipq4019 is defined without "iface" */
+> -	res->num_clks = is_ipq ? 3 : 4;
+> -
+> -	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->resets[0].id = "axi_m";
+>  	res->resets[1].id = "axi_s";
+>  	res->resets[2].id = "axi_m_sticky";
+> @@ -700,7 +638,7 @@ static void qcom_pcie_deinit_2_4_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
+>  
+>  	reset_control_bulk_assert(res->num_resets, res->resets);
+> -	clk_bulk_disable_unprepare(res->num_clks, res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
+> @@ -726,7 +664,7 @@ static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
+>  
+>  	usleep_range(10000, 12000);
+>  
+> -	ret = clk_bulk_prepare_enable(res->num_clks, res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		reset_control_bulk_assert(res->num_resets, res->resets);
+>  		return ret;
+> @@ -742,16 +680,6 @@ static int qcom_pcie_get_resources_2_3_3(struct qcom_pcie *pcie)
+>  	struct device *dev = pci->dev;
+>  	int ret;
+>  
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "axi_m";
+> -	res->clks[2].id = "axi_s";
+> -	res->clks[3].id = "ahb";
+> -	res->clks[4].id = "aux";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->rst[0].id = "axi_m";
+>  	res->rst[1].id = "axi_s";
+>  	res->rst[2].id = "pipe";
+> @@ -769,9 +697,7 @@ static int qcom_pcie_get_resources_2_3_3(struct qcom_pcie *pcie)
+>  
+>  static void qcom_pcie_deinit_2_3_3(struct qcom_pcie *pcie)
+>  {
+> -	struct qcom_pcie_resources_2_3_3 *res = &pcie->res.v2_3_3;
+> -
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
+> @@ -801,7 +727,7 @@ static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
+>  	 */
+>  	usleep_range(2000, 2500);
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable clocks\n");
+>  		goto err_assert_resets;
+> @@ -862,8 +788,6 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	unsigned int num_clks, num_opt_clks;
+> -	unsigned int idx;
+>  	int ret;
+>  
+>  	res->rst = devm_reset_control_array_get_exclusive(dev);
+> @@ -877,37 +801,6 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
+>  	if (ret)
+>  		return ret;
+>  
+> -	idx = 0;
+> -	res->clks[idx++].id = "aux";
+> -	res->clks[idx++].id = "cfg";
+> -	res->clks[idx++].id = "bus_master";
+> -	res->clks[idx++].id = "bus_slave";
+> -	res->clks[idx++].id = "slave_q2a";
+> -
+> -	num_clks = idx;
+> -
+> -	ret = devm_clk_bulk_get(dev, num_clks, res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	res->clks[idx++].id = "tbu";
+> -	res->clks[idx++].id = "ddrss_sf_tbu";
+> -	res->clks[idx++].id = "aggre0";
+> -	res->clks[idx++].id = "aggre1";
+> -	res->clks[idx++].id = "noc_aggr";
+> -	res->clks[idx++].id = "noc_aggr_4";
+> -	res->clks[idx++].id = "noc_aggr_south_sf";
+> -	res->clks[idx++].id = "cnoc_qx";
+> -	res->clks[idx++].id = "sleep";
+> -	res->clks[idx++].id = "cnoc_sf_axi";
+> -
+> -	num_opt_clks = idx - num_clks;
+> -	res->num_clks = idx;
+> -
+> -	ret = devm_clk_bulk_get_optional(dev, num_opt_clks, res->clks + num_clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -925,7 +818,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> -	ret = clk_bulk_prepare_enable(res->num_clks, res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret < 0)
+>  		goto err_disable_regulators;
+>  
+> @@ -977,7 +870,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>  
+>  	return 0;
+>  err_disable_clocks:
+> -	clk_bulk_disable_unprepare(res->num_clks, res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  err_disable_regulators:
+>  	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  
+> @@ -1015,7 +908,7 @@ static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+>  
+> -	clk_bulk_disable_unprepare(res->num_clks, res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  
+>  	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  }
+> @@ -1101,17 +994,6 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	int ret;
+> -
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "axi_m";
+> -	res->clks[2].id = "axi_s";
+> -	res->clks[3].id = "axi_bridge";
+> -	res->clks[4].id = "rchng";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+>  
+>  	res->rst = devm_reset_control_array_get_exclusive(dev);
+>  	if (IS_ERR(res->rst))
+> @@ -1122,9 +1004,7 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>  
+>  static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
+>  {
+> -	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> -
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+> @@ -1153,7 +1033,7 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>  
+>  	usleep_range(2000, 2500);
+>  
+> -	return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	return clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> @@ -1561,6 +1441,13 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  		goto err_pm_runtime_put;
+>  	}
+>  
+> +	pcie->num_clks = devm_clk_bulk_get_all(dev, &pcie->clks);
+> +	if (pcie->num_clks < 0) {
+> +		ret = pcie->num_clks;
+> +		dev_err(dev, "Failed to get clocks\n");
+> +		goto err_pm_runtime_put;
+> +	}
+> +
+>  	ret = qcom_pcie_icc_init(pcie);
+>  	if (ret)
+>  		goto err_pm_runtime_put;
+> -- 
+> 2.40.1
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+மணிவண்ணன் சதாசிவம்
 
