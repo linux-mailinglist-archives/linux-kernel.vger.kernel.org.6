@@ -1,93 +1,57 @@
-Return-Path: <linux-kernel+bounces-176384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3609E8C2EF2
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:15:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933658C2EF4
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 04:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0BF282B18
-	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:15:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EDA1C21502
+	for <lists+linux-kernel@lfdr.de>; Sat, 11 May 2024 02:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07997182D8;
-	Sat, 11 May 2024 02:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB69225D6;
+	Sat, 11 May 2024 02:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="lETCRilt"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Wh5jWAj6"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4502575B
-	for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 02:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358D147A57;
+	Sat, 11 May 2024 02:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715393649; cv=none; b=t5HC3ljcON8tv/EgHTgdAQZDuAJDGsYd7H816T+SXYZ/+wvhTIQ6Fcno8e+D37VW9NPABHHiOWSVAGfHRKsKdgUIqn29xU20baEw4svK6QHPSEebo0/5tTP1dnuDIOPAodzGvT4FLsLx543O7ViXHfCj8RsuGC1KXFq1Bd5IJBg=
+	t=1715393726; cv=none; b=O2s0Z3diVWUChJ7p21t/j2cvQGXYiGRMjZMaLPmmfWT+aXhuGbBQBJ5zUXNCdfV7wF5JrhKYXjGKG5UglyRcBh524wjtZ6SGk+LTcJLwviW4kjkInBwuTd2cGZ7YYwTlosGywTwC1aaeXQnvhXAxPv5w2deQ05vRDN2VGx0HugA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715393649; c=relaxed/simple;
-	bh=+CgC1/6mZUu9Yq7sfeULQgPJCHtRF77agBdxOHEbhMQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ipANanX02BlK9eCIPgDWC9vvJB2ITkoEBrJ9hyyiqFH+JiNhnSeykRlo4Ldm/tWZX1edStde/qqx4rpqeNCeA7ZyDP3OhRDAzL8rL8uRvYiJIcAWxc4s6VPms8DOeA5SgIZEEsT7W+6ZWAna1UTeh3meSTYM/HjJfRuBp9C03a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=lETCRilt; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f45f1179c3so2647331b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 10 May 2024 19:14:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1715393640; x=1715998440; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hmq0817Vprwao9AhZz+2kpPOT6znnCX0Xkc1suXQYLU=;
-        b=lETCRiltmWZUXxxdT08YuvgYpgLA2oPTaebBBCXGo66cs+ib10Ou1TVBL6PIgm3vjn
-         8iWhYwhfckdDGakEeLfY/7ASfm9IajLVad75KtQvlX4pSH0qNWp3m3eLYOgtfpzYDD3B
-         EwgILNk9/1K39Ai4Zxt06fW1OqNqsBKLi7UIhTUGHyoSQBUWJ1ho7bAfN41TFelR1mLN
-         1jRN4Vdjp9qBYPl6cUCt6/7qADyFQ6kb+aT81EU/1KCDFZodSyAUPlpkQlOMo+o9xJKq
-         mqBKWb6JMqctT563et3KKltlODo3eixp12TGktzvdqkJ+eG5hfyy6pUBXu2Q5G9gIWzm
-         47oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715393640; x=1715998440;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hmq0817Vprwao9AhZz+2kpPOT6znnCX0Xkc1suXQYLU=;
-        b=egB6UlixPJinr1y0xyR4lF0MRWbjf2rb0tUBTRh6L1gB5RpfUGvGO/TY8XCcsKXWow
-         wabs0SgLXWUrLEUe4D0Fa9RK0GUAn36dPb2iKG49Lrq0T1PLqcNE+InmdHIQGMQsuTrJ
-         ZbT4VdXe6Z8E4paS6q1GjrO2ckl4is0uiEpu3yeZc1GroFT8lNubLjuKL8g10RL108q2
-         gbkh//czlgMywzk0CbApydbeZ2xY7KdIK49c/H4q3CPCebdtAcnYuy1N0BK5NuqUMhWW
-         6WIEQ64hPka9swMYXiaTvra4nTq3fR18Az55yiVFBB89NyZ0YMTOd7H3bGJ655uc1SBs
-         JHYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/6p9950WjT/tZdWJOmxg9+xbk8Ia9PAxf/w1Vj3TOfjuT3hohMLy0yuZB6HvyFLSefyQ+tu0AzNZS4WOcbuERXX/ShxKH7YjBq20s
-X-Gm-Message-State: AOJu0Yw9hjVgEF2viObsYITeNuGjooxpcy8FfszlZ6dWKYgUNi8nwvEv
-	lu0x+ghopU2sRuzUOlRqIMUwEkl+9bsCTzwQp4Hu2ofoYXi9wwaDMa95IrAXqYU=
-X-Google-Smtp-Source: AGHT+IEiy2xQwsNQZ6Uhh9NFQFUCdvrVhk0TKJBLWjna9Ks6nJ7jd0oNFQlzmpQdgfbDHpP6X62c3w==
-X-Received: by 2002:a05:6a00:4645:b0:6ec:d76b:6fac with SMTP id d2e1a72fcca58-6f4e02ad046mr4104333b3a.12.1715393640233;
-        Fri, 10 May 2024 19:14:00 -0700 (PDT)
-Received: from localhost.localdomain ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a9d9acsm3680340b3a.90.2024.05.10.19.13.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 19:13:59 -0700 (PDT)
-From: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-To: sam@ravnborg.org,
-	neil.armstrong@linaro.org,
-	daniel@ffwll.ch,
-	dianders@chromium.org,
-	linus.walleij@linaro.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	robh+dt@kernel.org,
-	conor+dt@kernel.org,
-	airlied@gmail.com
-Cc: dmitry.baryshkov@linaro.org,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1715393726; c=relaxed/simple;
+	bh=l8+FFc5NYXSgcU89nPC2vhD5HSbSxYtsotzn+MbScqw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SwqcKfuvb6w9aIrF9PeJMRT+qRKYQHqtfcE8vo7n0Gim6dA/ZmUveb6XTZPjD34EVMx+/2+jPGNCjJXKp9Q+2Nf7YVQzon/XbeHYxLB968lEufbrv+VDW3ayqsUcfgGzW3bGzlzgK+96HSXfXuNTrCu/FMw/5Xe4vfBgbh4ewd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Wh5jWAj6; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715393699; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=J0RjhF8artoRsEJWmf6wYLdXWqFxXMkVDUuaSefLKSw=;
+	b=Wh5jWAj6najeqZyu/dPQJxchDtjji+NzQNnD3HwRq3sHaCw4MYcmxCwzrEERhZa0+x03l9X11/8BYihDJ7VBVuB8+R36ICsRANbyN4xcnYjsI6n6l+FlCNItS1v1WUwzwCP0yebHT23utNlehe8FUddIRT2NFEXQCDQmNwBdQYc=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033022160150;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W6Bjjv3_1715393690;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W6Bjjv3_1715393690)
+          by smtp.aliyun-inc.com;
+          Sat, 11 May 2024 10:14:58 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: davem@davemloft.net
+Cc: edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	xuxinxiong@huaqin.corp-partner.google.com,
-	Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Subject: [PATCH v6 7/7] drm/panel: himax-hx83102: Support for IVO t109nw41 MIPI-DSI panel
-Date: Sat, 11 May 2024 10:13:26 +0800
-Message-Id: <20240511021326.288728-8-yangcong5@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240511021326.288728-1-yangcong5@huaqin.corp-partner.google.com>
-References: <20240511021326.288728-1-yangcong5@huaqin.corp-partner.google.com>
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] tulip: eeprom: clean up some inconsistent indenting
+Date: Sat, 11 May 2024 10:14:48 +0800
+Message-Id: <20240511021448.80526-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,200 +60,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The IVO t109nw41 is a 11.0" WUXGA TFT LCD panel, use hx83102 controller
-which fits in nicely with the existing panel-himax-hx83102 driver. Hence,
-we add a new compatible with panel specific config.
+No functional modification involved.
 
-Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+drivers/net/ethernet/dec/tulip/eeprom.c:179 tulip_parse_eeprom() warn: inconsistent indenting.
+
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9001
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
-Chage since V6:
+ drivers/net/ethernet/dec/tulip/eeprom.c | 37 +++++++++++++------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
-- Add hx83102_enable_extended_cmds(&dsi_ctx, false) at end of inital cmds.
-
-V5: https://lore.kernel.org/all/20240509015207.3271370-8-yangcong5@huaqin.corp-partner.google.com
-
-Chage since V5:
-
-- Adjust inital cmds indentation and check accum_err before calling mdelay in init().
-- Adjust somes inital cmds to Optimize gamma.
-
-V4: https://lore.kernel.org/all/20240507135234.1356855-8-yangcong5@huaqin.corp-partner.google.com
-
-Chage since V4:
-
-- inital cmds use lowercasehex.
-
-V3: https://lore.kernel.org/all/20240424023010.2099949-8-yangcong5@huaqin.corp-partner.google.com
-
-Chage since V3:
-
-- Depend Dous'series [1].
-[1]: https://lore.kernel.org/all/20240501154251.3302887-1-dianders@chromium.org
-
-V2: https://lore.kernel.org/all/20240422090310.3311429-8-yangcong5@huaqin.corp-partner.google.com
-
----
- drivers/gpu/drm/panel/panel-himax-hx83102.c | 131 ++++++++++++++++++++
- 1 file changed, 131 insertions(+)
-
-diff --git a/drivers/gpu/drm/panel/panel-himax-hx83102.c b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-index 0496e39ca5b8..37b2f04bc13a 100644
---- a/drivers/gpu/drm/panel/panel-himax-hx83102.c
-+++ b/drivers/gpu/drm/panel/panel-himax-hx83102.c
-@@ -293,6 +293,113 @@ static int boe_nv110wum_init(struct hx83102 *ctx)
- 	return 0;
- };
+diff --git a/drivers/net/ethernet/dec/tulip/eeprom.c b/drivers/net/ethernet/dec/tulip/eeprom.c
+index d5657ff15e3c..738c01d859cf 100644
+--- a/drivers/net/ethernet/dec/tulip/eeprom.c
++++ b/drivers/net/ethernet/dec/tulip/eeprom.c
+@@ -175,25 +175,26 @@ void tulip_parse_eeprom(struct net_device *dev)
+ 					dev->name);
+ 			return;
+ 		}
+-	  /* Do a fix-up based on the vendor half of the station address prefix. */
+-	  for (i = 0; eeprom_fixups[i].name; i++) {
+-		  if (dev->dev_addr[0] == eeprom_fixups[i].addr0 &&
+-		      dev->dev_addr[1] == eeprom_fixups[i].addr1 &&
+-		      dev->dev_addr[2] == eeprom_fixups[i].addr2) {
+-		  if (dev->dev_addr[2] == 0xE8 && ee_data[0x1a] == 0x55)
+-			  i++;			/* An Accton EN1207, not an outlaw Maxtech. */
+-		  memcpy(ee_data + 26, eeprom_fixups[i].newtable,
+-				 sizeof(eeprom_fixups[i].newtable));
+-		  pr_info("%s: Old format EEPROM on '%s' board.  Using substitute media control info\n",
+-			  dev->name, eeprom_fixups[i].name);
+-		  break;
++		/* Do a fix-up based on the vendor half of the station address prefix. */
++		for (i = 0; eeprom_fixups[i].name; i++) {
++			if (dev->dev_addr[0] == eeprom_fixups[i].addr0 &&
++			    dev->dev_addr[1] == eeprom_fixups[i].addr1 &&
++			    dev->dev_addr[2] == eeprom_fixups[i].addr2) {
++				if (dev->dev_addr[2] == 0xE8 && ee_data[0x1a] == 0x55)
++					i++; /* An Accton EN1207, not an outlaw Maxtech. */
++				memcpy(ee_data + 26, eeprom_fixups[i].newtable,
++				       sizeof(eeprom_fixups[i].newtable));
++				pr_info("%s: Old format EEPROM on '%s' board.  Using substitute media control info\n",
++					dev->name, eeprom_fixups[i].name);
++				break;
++			}
++		}
++		/* No fixup found. */
++		if (!eeprom_fixups[i].name) {
++			pr_info("%s: Old style EEPROM with no media selection information\n",
++				dev->name);
++			return;
+ 		}
+-	  }
+-	  if (eeprom_fixups[i].name == NULL) { /* No fixup found. */
+-		  pr_info("%s: Old style EEPROM with no media selection information\n",
+-			  dev->name);
+-		return;
+-	  }
+ 	}
  
-+static int ivo_t109nw41_init(struct hx83102 *ctx)
-+{
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
-+
-+	msleep(60);
-+
-+	hx83102_enable_extended_cmds(&dsi_ctx, true);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x2c, 0xed, 0xed, 0x0f, 0xcf, 0x42,
-+				     0xf5, 0x39, 0x36, 0x36, 0x36, 0x36, 0x32, 0x8b, 0x11, 0x65, 0x00, 0x88,
-+				     0xfa, 0xff, 0xff, 0x8f, 0xff, 0x08, 0xd6, 0x33);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETDISP, 0x00, 0x47, 0xb0, 0x80, 0x00, 0x12,
-+				     0x71, 0x3c, 0xa3, 0x22, 0x20, 0x00, 0x00, 0x88, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x35, 0x35, 0x43, 0x43, 0x35, 0x35,
-+				     0x30, 0x7a, 0x30, 0x7a, 0x01, 0x9d);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xcd);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x84);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETVDC, 0x1b, 0x04);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_BE, 0x20);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xfc, 0xc4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSTBA, 0x34, 0x34, 0x22, 0x11, 0x22, 0xa0,
-+				     0x31, 0x08, 0xf5, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xcc);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x80);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xd3);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTCON, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc6);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETRAMDMY, 0x97);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPWM, 0x00, 0x1e, 0x13, 0x88, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x08, 0x13, 0x07, 0x00, 0x0f, 0x34);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPANEL, 0x02, 0x03, 0x44);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCASCADE, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPCTRL, 0x07, 0x06, 0x00, 0x02, 0x04, 0x2c,
-+				     0xff);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x06, 0x00, 0x00, 0x00, 0x00, 0x08,
-+				     0x08, 0x08, 0x08, 0x37, 0x07, 0x64, 0x7c, 0x11, 0x11, 0x03, 0x03, 0x32,
-+				     0x10, 0x0e, 0x00, 0x0e, 0x32, 0x17, 0x97, 0x07, 0x97, 0x32, 0x00, 0x02,
-+				     0x00, 0x02, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP1, 0x25, 0x24, 0x25, 0x24, 0x18, 0x18,
-+				     0x18, 0x18, 0x07, 0x06, 0x07, 0x06, 0x05, 0x04, 0x05, 0x04, 0x03, 0x02,
-+				     0x03, 0x02, 0x01, 0x00, 0x01, 0x00, 0x1e, 0x1e, 0x1e, 0x1e, 0x1f, 0x1f,
-+				     0x1f, 0x1f, 0x21, 0x20, 0x21, 0x20, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18,
-+				     0x18, 0x18);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-+				     0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGMA, 0x04, 0x04, 0x06, 0x0a, 0x0a, 0x05,
-+				     0x12, 0x14, 0x17, 0x13, 0x2c, 0x33, 0x39, 0x4b, 0x4c, 0x56, 0x61, 0x78,
-+				     0x7a, 0x41, 0x50, 0x68, 0x73, 0x04, 0x04, 0x06, 0x0a, 0x0a, 0x05, 0x12,
-+				     0x14, 0x17, 0x13, 0x2c, 0x33, 0x39, 0x4b, 0x4c, 0x56, 0x61, 0x78, 0x7a,
-+				     0x41, 0x50, 0x68, 0x73);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x07, 0x10, 0x10, 0x1a, 0x26, 0x9e,
-+				     0x00, 0x4f, 0xa0, 0x14, 0x14, 0x00, 0x00, 0x00, 0x00, 0x12, 0x0a, 0x02,
-+				     0x02, 0x00, 0x33, 0x02, 0x04, 0x18, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPOWER, 0x01, 0x7f, 0x11, 0xfd);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x86);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP0, 0x00, 0x00, 0x04, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-+				     0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0x02, 0x00, 0x2b, 0x01, 0x7e, 0x0f,
-+				     0x7e, 0x10, 0xa0, 0x00, 0x00, 0x77, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETPTBA, 0xf2);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCLOCK, 0x03, 0x07, 0x00, 0x10, 0x79);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETGIP3, 0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0,
-+				     0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETTP1, 0xfe, 0x01, 0xfe, 0x01, 0xfe, 0x01,
-+				     0x00, 0x00, 0x00, 0x23, 0x00, 0x23, 0x81, 0x02, 0x40, 0x00, 0x20, 0x6e,
-+				     0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-+				     0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0, 0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0,
-+				     0xff, 0xff, 0xff, 0xff, 0xfa, 0xa0, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0,
-+				     0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc6);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETCYC, 0x03, 0xff, 0xf8);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_E1, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_UNKNOWN_D2, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc4);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x96);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0xc5);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETMIPI, 0x4f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETSPCCMD, 0x3f);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, HX83102_SETBANK, 0x00);
-+	hx83102_enable_extended_cmds(&dsi_ctx, false);
-+	if (dsi_ctx.accum_err)
-+		return dsi_ctx.accum_err;
-+
-+	msleep(60);
-+
-+	return 0;
-+};
-+
- static const struct drm_display_mode starry_mode = {
- 	.clock = 162680,
- 	.hdisplay = 1200,
-@@ -337,6 +444,28 @@ static const struct hx83102_panel_desc boe_nv110wum_desc = {
- 	.init = boe_nv110wum_init,
- };
- 
-+static const struct drm_display_mode ivo_t109nw41_default_mode = {
-+	.clock = 166400,
-+	.hdisplay = 1200,
-+	.hsync_start = 1200 + 75,
-+	.hsync_end = 1200 + 75 + 20,
-+	.htotal = 1200 + 75 + 20 + 55,
-+	.vdisplay = 1920,
-+	.vsync_start = 1920 + 115,
-+	.vsync_end = 1920 + 115 + 8,
-+	.vtotal = 1920 + 115 + 8 + 12,
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
-+
-+static const struct hx83102_panel_desc ivo_t109nw41_desc = {
-+	.modes = &ivo_t109nw41_default_mode,
-+	.size = {
-+		.width_mm = 147,
-+		.height_mm = 235,
-+	},
-+	.init = ivo_t109nw41_init,
-+};
-+
- static int hx83102_enable(struct drm_panel *panel)
- {
- 	msleep(130);
-@@ -584,6 +713,9 @@ static const struct of_device_id hx83102_of_match[] = {
- 	{ .compatible = "boe,nv110wum-l60",
- 	.data = &boe_nv110wum_desc
- 	},
-+	{ .compatible = "ivo,t109nw41",
-+	  .data = &ivo_t109nw41_desc
-+	},
- 	{ .compatible = "starry,himax83102-j02",
- 	  .data = &starry_desc
- 	},
+ 	controller_index = 0;
 -- 
-2.25.1
+2.20.1.7.g153144c
 
 
