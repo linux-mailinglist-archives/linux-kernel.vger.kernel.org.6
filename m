@@ -1,79 +1,111 @@
-Return-Path: <linux-kernel+bounces-176868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6ABF8C3659
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:11:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F828C3660
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D791C1C20A75
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C9128163D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EEA20B0F;
-	Sun, 12 May 2024 12:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF0E25634;
+	Sun, 12 May 2024 12:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aYNC7Fq/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7Yot5SR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3BBF9F7;
-	Sun, 12 May 2024 12:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C58C20323;
+	Sun, 12 May 2024 12:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715515894; cv=none; b=B+4FJpdGAMRzghVRYtHdSwTn5rNj9LQdyOt6qBBwcyrDovNMr/L8vuQUj/H+4uSGALrRf0aqMBTCL73HDsWL59sZWPpBr6FOVYuEA5VvcJGk9JAwEAcvOoWZAMWGPL17G+PjIpBmm+lrQtH/cvLisFjwSqpXdQRc0kYOA7Q7EZQ=
+	t=1715515938; cv=none; b=PjKBDAgsUSCt5lEmlEl0XWfnY2oQQpjoP2R4V/6QdW6pIoQ01+P7Ne5E7ZJxQIEnzV+khCVe739GtSpLcyUIt2g9BNlhvsxEvmRfHSJ1c5EovHRTHfJLZuBNq8zEtbtDcJ0GM/NyQze9yIWPLDLVQEMqAZ+62gNYACYY8RPyCIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715515894; c=relaxed/simple;
-	bh=u0MxQHi2aW59U0yVeUT6H8+tdanS6j5VOG+chvjIJ8g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ATOBO7XHHm5w5cRpA3DTXTIo1gflZifQvjdoRcORv2hoOd+Y43u09pzS22ALlPr/SD1VLCSBKGpSn6kihj/4G8A9MBr7fNXnC3fqO3lhTSZaNO2Nkl7NRfKMm7K+mrDComVzqa5pKPHoHuXwOfI2W+kW0qK7vCFcJXwNUA9W/i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aYNC7Fq/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E96C116B1;
-	Sun, 12 May 2024 12:11:28 +0000 (UTC)
+	s=arc-20240116; t=1715515938; c=relaxed/simple;
+	bh=lOIv9CYGdaM8Wpum8P1i2gOjEdfKKm5DnGLmgvog6Z4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=j0dDIDyKql0tIQFC0f7S/NnZlTb0ezyFJjOI21bDxZVIVHuhiq5cmVSWjCgkRT6t7fCfbf91u4fKBY0DFRxaJgkcuNjMcJ2zUOgH0YuQjLxc9zoa6tqHlfd+BAniC4eQVQAyDip7R+OWSrC9SM2rJsfK0aVi+KHv5Nmtq7oSk4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7Yot5SR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C52D2C116B1;
+	Sun, 12 May 2024 12:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715515893;
-	bh=u0MxQHi2aW59U0yVeUT6H8+tdanS6j5VOG+chvjIJ8g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aYNC7Fq/rFRw6svjUNCmJIcWBvymenu01cpCMGq1PEIr2HzjRM7+VicVQMVib/ATn
-	 OwWGuaOpekSJUro9dInH9XkL3niCBVYU584YoMkQYOxCpIUM7BU+kebbVfmXgUGb6e
-	 YviRRSP/AwqzzQ5RcX3c7LZFfm1lmG6YJDKANnC8qQGdYCxlFM5gyFMhqNDLx4vrYq
-	 /owWq8/JpCH+eK232a8oa8wzVkqqbHPSndgTqqO5yGC5PQZFmfWTbNnsjaJpASMBpV
-	 YDPWJ8yCPBglBnmpbXxmf6fXulagZk8rs9bzssXT7tAlGh6GCBzWwyU6xdhKcSOptQ
-	 cmPpQL2RLm4eg==
-Date: Sun, 12 May 2024 13:11:20 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
- petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
- linus.walleij@linaro.org, semen.protsenko@linaro.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 3/9] iio: pressure: bmp280: Make error checks
- consistent
-Message-ID: <20240512131120.28d0cc7a@jic23-huawei>
-In-Reply-To: <20240508165207.145554-4-vassilisamir@gmail.com>
-References: <20240508165207.145554-1-vassilisamir@gmail.com>
-	<20240508165207.145554-4-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=k20201202; t=1715515937;
+	bh=lOIv9CYGdaM8Wpum8P1i2gOjEdfKKm5DnGLmgvog6Z4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=H7Yot5SR7bM+tEik8pWRwqRAEyzVhl04jbeFEwCIQqEXeLkHpk527/AIfSY9F9QGs
+	 TpTeDUeh3Us2zNuLhth8jqK7+PBM0v5fi4GtvkkRF1rfPCSRHmCJazFGgRAVwxT3yU
+	 um5ty7Py1qzlgp2fubDrq8YqvSuSXP5XOo7+hCRbv1l5lo1aktw5Nq8iPSdCrZ+DT/
+	 uaR1ecJOh98ZGq9lpRI0v4DOVmsf+g+z4LnT5rGWYHW6t0dxIyiCphEaV05BkzyCkd
+	 zBTKtUA+PF7efPJiMQBPb0kAuPJ08dJFkCu2MfgRBeXuE1rQqhJY5ultxNqJLkEhRi
+	 VGtXZj5q85e3Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA205C25B5F;
+	Sun, 12 May 2024 12:12:17 +0000 (UTC)
+From: Sven Peter via B4 Relay <devnull+sven.svenpeter.dev@kernel.org>
+Subject: [PATCH 0/2] Bluetooth: hci_bcm4377 fixes
+Date: Sun, 12 May 2024 12:12:06 +0000
+Message-Id: <20240512-btfix-msgid-v1-0-ab1bd938a7f4@svenpeter.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABayQGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDU0Mj3aSStMwK3dzi9MwU3RRzMwMjy0TzFEtDcyWgjoKiVKAk2LTo2Np
+ aAC/1v5RdAAAA
+To: Hector Martin <marcan@marcan.st>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
+ Marcel Holtmann <marcel@holtmann.org>, 
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sven Peter <sven@svenpeter.dev>, stable@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715515936; l=990;
+ i=sven@svenpeter.dev; s=20240512; h=from:subject:message-id;
+ bh=lOIv9CYGdaM8Wpum8P1i2gOjEdfKKm5DnGLmgvog6Z4=;
+ b=jo+i34A8NOxsam6xXuE0fOchQDV91L+Thb8dJuNz0ff62D+4IpNSyLKnSj5jHwq69S1kkNjWn
+ LBUq4GIaVAvCemQrrixNxdXViAjDxtvuELGEqQxzUC16YPHvmWJTjQy
+X-Developer-Key: i=sven@svenpeter.dev; a=ed25519;
+ pk=jIiCK29HFM4fFOT2YTiA6N+4N7W+xZYQDGiO0E37bNU=
+X-Endpoint-Received: by B4 Relay for sven@svenpeter.dev/20240512 with
+ auth_id=159
+X-Original-From: Sven Peter <sven@svenpeter.dev>
+Reply-To: sven@svenpeter.dev
 
-On Wed,  8 May 2024 18:52:01 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+Hi,
 
-> The form 'if (ret)' is used in this driver in order to check
-> for returned error values. There are also some places that
-> 'if (ret < 0)' is used but for no specific reason. Change
-> them to 'if (ret)' to make the driver more consistent.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Applied.
+There are just two minor fixes from Hector that we've been carrying downstream
+for a while now. One increases the timeout while waiting for the firmware to
+boot which is optional for the controller already supported upstream but
+required for a newer 4388 board for which we'll also submit support soon.
+It also fixes the units for the timeouts which is why I've already included it
+here. The other one fixes a call to bitmap_release_region where we only wanted
+to release a single bit but are actually releasing much more.
 
-Thanks,
+Best,
+
+Sven
+
+Signed-off-by: Sven Peter <sven@svenpeter.dev>
+---
+Hector Martin (2):
+      Bluetooth: hci_bcm4377: Increase boot timeout
+      Bluetooth: hci_bcm4377: Fix msgid release
+
+ drivers/bluetooth/hci_bcm4377.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+---
+base-commit: cf87f46fd34d6c19283d9625a7822f20d90b64a4
+change-id: 20240512-btfix-msgid-d76029a7d917
+
+Best regards,
+-- 
+Sven Peter <sven@svenpeter.dev>
+
+
 
