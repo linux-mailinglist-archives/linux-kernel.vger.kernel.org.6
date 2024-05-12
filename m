@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-176915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CA18C36FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:25:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D128C3709
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28887B20BD9
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:25:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 844C7B20D44
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205573D0D5;
-	Sun, 12 May 2024 15:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A944778C;
+	Sun, 12 May 2024 15:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g8LK7RAx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gq3PPCkn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74AF2F873
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 15:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2AA2F873;
+	Sun, 12 May 2024 15:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715527533; cv=none; b=D68PbvN2JoO8QdnZ5rf2sCIzugEUwVcbVKG2COBofAnm6f5Ld7Lf5UEeD+dDSUG9NVnEe0wivFex/+iS7E1c30tophsTGcLBnVqs7rjsjOgs1CnyGyOJpUa732hfW8wl0Vd6uHc3hHUrNkIR6ci+4touDhEdQlV79hofcSO7iXM=
+	t=1715527547; cv=none; b=YA4RvQpolwTRps5J+fvVHoyXhKxy32MSfAFPHCay/QijKkotO8R5J0KNq/YWOwAbDlblOHa58JIZLARWCrnaGHzk0xSFwCWJ5Q3o24zU+m1I8J7xldlxzvhQiKADLTCvteWBIbvhkcjLmIEHaRgeSdrd8KreABwbSQA+8SPoZp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715527533; c=relaxed/simple;
-	bh=RfLwX01/3WZpELU+1hMwbX8ioZ2ZPB6T+yvhcOFTJ/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dbkVr3K46/tR7tgYmAq0slbqC/szzC9lI9Po9jS6T59hdcvwCpCKNiQvExuH3wpvQx5pn5zx3uN9od+GkIAhUQBgA495EviPkPXSlppxbTOlUtl//osyYksFZX1LFv3GaJNl+kKQJGfPiNV8ylwIrju8GwMP2phLOzgnbosQxbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g8LK7RAx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715527530;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=REXEqRClpHRev0wKw6MM0lA0UZQFaO1XDkvWqjxKpSs=;
-	b=g8LK7RAxZpvRfntHzY2dzxx+axNF6cG9h0rq+OyihpFfRxyziFtnhDV3z0T8ZuGPY0VjDv
-	df1fAwnnyNSRQjWQ3aDoqOECosLMB+SeTI8rZU2P/Fs0E/1KdmjiFAAmfu7fDhoiwvJdLo
-	boqjUjrw5zbllIy6EEuBp7OhVm+8XTA=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-e0P-NwfsMNatY8NEcNg4XQ-1; Sun, 12 May 2024 11:25:24 -0400
-X-MC-Unique: e0P-NwfsMNatY8NEcNg4XQ-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5206ef0d6fdso3108370e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 08:25:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715527522; x=1716132322;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=REXEqRClpHRev0wKw6MM0lA0UZQFaO1XDkvWqjxKpSs=;
-        b=TpCI/Uz2IC/1M42/PHwONSPZ9gVjUOKt9Cx+HuUyRU5bE+WYQxpnqoQwO9DXnGUbfn
-         mVBKqJWIaBmG//IoQDCL9v/elQaSUv5FNL0lIKZ9kZmS+QjoSANdMclJNfnzVl6oCLMH
-         XtprI00iPRk6pacvWaeQyFcHJa3Au++w+d0afKqM9jDnIzqIheTj2kC367cbqCDI7TcD
-         qbemSbVzvBWR8Nh94VkUvxYryGekOEt/wwDgiiui8mEQz8uXWfGs22fCZ9eq6uwTfOco
-         EkYV6PTZ/I7zLQ13A8KCmf6ONSMDQfqrr+5ZRXi9QovpSDzQ75WYG0B/fS46cIAlquIj
-         5j0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNDynMIlZTJhFjNq4nOPnabf32ZkBHXGN7KA1JV+mYrz3Vdc2StAEbaEhXoSFhB/cUig1y650vG88VbydZBUBYfZV8vtE+pjw+uLRR
-X-Gm-Message-State: AOJu0YzRMESB3/bR/n0jNxNSt1QRSZ326ufHQ/eJPD72A7c9y7una+DU
-	42tZ3CGES1snkrbovR1k+Mvl6R597XG8/qxwy/b1C8MCxLmhqJM7L9IXylAS7Oq/LG9mhvYFXVX
-	ZeKLKZAoZt2pSuFxiTBluC1Nlh0Laqxy5XsZE0ojNfP++MdWtc3jTWLmbqES7VQ==
-X-Received: by 2002:a05:6512:310f:b0:51d:6660:e43 with SMTP id 2adb3069b0e04-5220ff746c8mr4705597e87.59.1715527522604;
-        Sun, 12 May 2024 08:25:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFL4+5i84D+bxhz3X4VH1waOivUquTPnysBNjyifN3WMq3+4sJUxIXZ9K4Rbsv97lME5t88Qg==
-X-Received: by 2002:a05:6512:310f:b0:51d:6660:e43 with SMTP id 2adb3069b0e04-5220ff746c8mr4705584e87.59.1715527522075;
-        Sun, 12 May 2024 08:25:22 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01647sm467000666b.160.2024.05.12.08.25.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 May 2024 08:25:21 -0700 (PDT)
-Message-ID: <d12713a2-3b1a-47f1-8173-ec4d675021ec@redhat.com>
-Date: Sun, 12 May 2024 17:25:20 +0200
+	s=arc-20240116; t=1715527547; c=relaxed/simple;
+	bh=lhIYri0VaZW515AxkaDskA2UPG8MGvocYjopSK7g3Pw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wp4Zg/0GQGdprXN8CGvZ63y9bs+ZZ5mhPDTegQ5oNWLrDLUE7aDe2LYLIhy0mLPnn4NzZjJmIHM2BK/XcJWqX9PLLhWIQ2bDjwel1DeK6Hd0A3jrM/lmiltnX/487sik4Y9kfw8IXpFe8Ibr1KoDJAl8flXPW/LEOXJlKNodDZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gq3PPCkn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id F2A7CC116B1;
+	Sun, 12 May 2024 15:25:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715527547;
+	bh=lhIYri0VaZW515AxkaDskA2UPG8MGvocYjopSK7g3Pw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=Gq3PPCknLgA5jRAf2hAjvhbDQR8eP+RHIBtSjyfWrvDO41JA0H5TX2Cz0bMmJvz05
+	 0ecBsVtNeQuQtwNK9M6SZlyM1CQ5DI8/FjZe+yTNebM+d4DOnNcVoq6VzNc1rKFeiL
+	 Sg0JSj0JTze6vkkJKrIOYrAPY57+nwts3x29L/WrIWSxyk0ysEOt+PA0bf0RkffT0z
+	 +ppAXmeLTCvgiahefVpPFCopa/rgpPwfWgxfHZmrmNBD1VNyuWuQmyDPTF9ptIIii9
+	 bIOT+hA4jasTfcDFvhaRqnzhYyfO/x8PDV9f5VCwSo7PBL/DQbYIIj+3IF8aNEl2fD
+	 g5iC/pIhFr/mg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BA9C10F1A;
+	Sun, 12 May 2024 15:25:46 +0000 (UTC)
+From: =?utf-8?q?Noralf_Tr=C3=B8nnes_via_B4_Relay?= <devnull+noralf.tronnes.org@kernel.org>
+Subject: [PATCH v2 0/5] drm/tiny: panel-mipi-dbi: Support 18 bits per color
+ RGB666
+Date: Sun, 12 May 2024 17:25:37 +0200
+Message-Id: <20240512-panel-mipi-dbi-rgb666-v2-0-49dd266328a0@tronnes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] platform/x86: dell-laptop: Implement
- platform_profile
-To: "Limonciello, Mario" <mario.limonciello@amd.com>,
- Lyndon Sanche <lsanche@lyndeno.ca>
-Cc: pali@kernel.org, W_Armin@gmx.de, srinivas.pandruvada@linux.intel.com,
- ilpo.jarvinen@linux.intel.com, lkp@intel.com, Yijun.Shen@dell.com,
- Matthew Garrett <mjg59@srcf.ucam.org>, Heiner Kallweit
- <hkallweit1@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
- Jonathan Corbet <corbet@lwn.net>, Vegard Nossum <vegard.nossum@oracle.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dell.Client.Kernel@dell.com
-References: <20240425172758.67831-1-lsanche@lyndeno.ca>
- <20240511023726.7408-4-lsanche@lyndeno.ca>
- <9ba4a500-9d88-4630-bd94-99f07dd51abe@amd.com>
- <B3AA4333-03DC-47D6-9519-7FA9496220E5@lyndeno.ca>
- <48JCDS.E4RT1F9DTKFU1@lyndeno.ca>
- <9b652a48-4107-4b68-9aea-6cfdf1e0e4fa@amd.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <9b652a48-4107-4b68-9aea-6cfdf1e0e4fa@amd.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHHfQGYC/3WNQQ6CMBBFr0Jm7ZjSllZceQ/DosAAk2hLWkI0h
+ Ltbce3yveS/v0GiyJTgWmwQaeXEwWeQpwK6yfmRkPvMIIXUQosKZ+fpgU+eGfuWMY6tMQY1CaX
+ sxfamqyFv50gDv47uvck8cVpCfB83a/m1v2Il7J/iWqJAY+taKu0Gp+i2xOA9pXOIIzT7vn8Ap
+ iCUF7wAAAA=
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Kamlesh Gurudasani <kamlesh.gurudasani@gmail.com>, 
+ Tommaso Merciai <tommaso.merciai@amarulasolutions.com>, 
+ =?utf-8?q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715527545; l=3424;
+ i=noralf@tronnes.org; s=20221122; h=from:subject:message-id;
+ bh=lhIYri0VaZW515AxkaDskA2UPG8MGvocYjopSK7g3Pw=;
+ b=Hm7kK0xxbaHX6CQpob3kWLmmM048BNaVDwi2knrix2FxbeJoZxjXsSRUnypwyVUXKTOCovlmY
+ oRHFC4Nzee1BvJjgEbiEMaaHLBG3uwcHZSoW+9S4D5M4ekFc3q45eLW
+X-Developer-Key: i=noralf@tronnes.org; a=ed25519;
+ pk=0o9is4iddvvlrY3yON5SVtAbgPnVs0LfQsjfqR2Hvz8=
+X-Endpoint-Received: by B4 Relay for noralf@tronnes.org/20221122 with
+ auth_id=8
+X-Original-From: =?utf-8?q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Reply-To: noralf@tronnes.org
 
 Hi,
 
-On 5/12/24 3:43 AM, Limonciello, Mario wrote:
-> 
-> 
-> On 5/11/2024 7:12 PM, Lyndon Sanche wrote:
->>
->>
->> On Sat, May 11 2024 at 09:59:17 AM -06:00:00, Lyndon Sanche <lsanche@lyndeno.ca> wrote:
->>> On May 11, 2024 9:16:56 a.m. MDT, "Limonciello, Mario" <mario.limonciello@amd.com <mailto:mario.limonciello@amd.com>> wrote:
->>>
->>>     On 5/10/2024 9:36 PM, Lyndon Sanche wrote:
->>>
->>>         index 6ae09d7f76fb..387fa5618f7a 100644 ---
->>>         a/drivers/platform/x86/dell/dell-smbios-base.c +++
->>>         b/drivers/platform/x86/dell/dell-smbios-base.c @@ -71,6 +71,7
->>>         @@ static struct smbios_call call_blacklist[] = { /* handled
->>>         by kernel: dell-laptop */ {0x0000, CLASS_INFO, SELECT_RFKILL},
->>>         {0x0000, CLASS_KBD_BACKLIGHT, SELECT_KBD_BACKLIGHT}, +
->>>         {0x0000, CLASS_INFO, SELECT_THERMAL_MANAGEMENT}, };
->>>     So when Alex checked on v5 that this doesn't load on workstations,
->>>     it has made me realize that doing this will block the interface
->>>     totally even on workstations. So I think there are a few ways to
->>>     go to handle this: 1) Rename dell-laptop to dell-client or dell-pc
->>>     and let dell-laptop load on more form factors. This would require
->>>     some internal handling in the module for which features make sense
->>>     for different form factors. 2) Add a new module just for the
->>>     thermal handling and put all this code into it instead. I don't
->>>     have a strong opinion, but I do think one of them should be done
->>>     to ensure there aren't problems on workstations losing access to
->>>     thermal control.
->>> A dell-client/laptop separation makes more sense IMO. I don't think keyboard control would belong in a the dell-client module either. Separating just thermal control would be easier, but not as clean I think. Thanks, Lyndon
->>
->> Thinking about it more, we can leave dell-laptop as-is and create a common dell-pc module that does not check for specific form-factors, assuming that is possible. Thermal management can be the first function to go in there.
->>
->> We will still block the calls from userspace regardless of which modules are loaded. If dell-pc fails because thermal management is not supported, we aren't losing anything by blocking that call anyway.
->>
->> Thoughts?
-> 
-> Sounds good by me.  So basically laptops will load both dell-pc and dell-laptop and workstations would load dell-pc.
+To my suprise I have discovered that the MIPI DBI specification does only
+list RGB111 as a pixel format for the Serial Interface (Type C).
 
-Ack this sounds good to me too.
+For the parallel interface type (Type A and B) it lists: RGB332, RGB444,
+RGB565, RGB666 and RGB888.
 
-Regards,
+I have never read the specification closely enough to discover this always
+assuming that the datasheets for the various MIPI DBI compatible
+controllers I've looked at over the years did follow the specification
+when they supported RGB565 and RGB666 on the serial interface.
 
-Hans
+So it is quite clear that the industry has chosen to extend the standard
+and provide support for more pixel formats over the serial interface.
 
+drm_mipi_dbi and its predecessor fbtft support only RGB565 over SPI since
+RGB666 uses 3 bytes per pixel instead of 2 bytes, severly impacting the
+framerate.
+
+The reason I started to look at this is that there seem to be an increase
+in cheap SPI displays that is based on the ILI9488 controller. The
+datasheet for this controller states that it supports RGB565, but
+experience[1] shows that this is not true and that the controller only
+supports RGB666 over SPI.
+
+I have known for some time that the ILI9486 controller does not support
+RGB565 over SPI, it only supports RGB111 and RGB666. Some display
+breakoutboard manufacturers have solved this by putting a shift register
+in front of the parallel bus on this controller in order to support
+RGB565. This requires some custom code when writing to the SPI bus as
+shown in the tiny/ili9486.c driver. The downside is that these displays
+are really slow due to the slow shift registers used.
+
+This patchset documents the defacto industry standard wrt pixel formats
+over SPI and adds support for RGB666 in the panel-mipi-dbi driver.
+
+There have been two previous attempts to add a DRM driver for
+ili9488[2][3]. The panel-mipi-dbi driver is a generic MIPI DBI driver
+supporting controller initialization via a firmware file and with the help
+of this patchset it will support ILI9488 based SPI displays.
+
+[1] https://github.com/notro/panel-mipi-dbi/issues/2#issuecomment-2016857690
+[2] https://lore.kernel.org/dri-devel/cover.1592055494.git.kamlesh.gurudasani@gmail.com/
+[3] https://lore.kernel.org/dri-devel/20221018164532.1705215-1-tommaso.merciai@amarulasolutions.com/
+
+Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+---
+Changes in v2:
+- binding: Use 'default: r5g6b5' (Rob)
+- Link to v1: https://lore.kernel.org/r/20240507-panel-mipi-dbi-rgb666-v1-0-6799234afa3e@tronnes.org
+
+---
+Noralf Trønnes (5):
+      dt-bindings: display: panel: mipi-dbi-spi: Add a pixel format property
+      drm/mipi-dbi: Remove mipi_dbi_machine_little_endian()
+      drm/mipi-dbi: Make bits per word configurable for pixel transfers
+      drm/mipi-dbi: Add support for DRM_FORMAT_RGB888
+      drm/tiny: panel-mipi-dbi: Support the pixel format property
+
+ .../bindings/display/panel/panel-mipi-dbi-spi.yaml | 30 +++++++++
+ drivers/gpu/drm/drm_mipi_dbi.c                     | 76 +++++++++++++++-------
+ drivers/gpu/drm/tiny/panel-mipi-dbi.c              | 55 +++++++++++++++-
+ include/drm/drm_mipi_dbi.h                         | 10 +++
+ 4 files changed, 147 insertions(+), 24 deletions(-)
+---
+base-commit: 0209df3b4731516fe77638bfc52ba2e9629c67cd
+change-id: 20240405-panel-mipi-dbi-rgb666-4e033787d6c9
+
+Best regards,
+-- 
+Noralf Trønnes <noralf@tronnes.org>
 
 
 
