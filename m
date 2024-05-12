@@ -1,168 +1,92 @@
-Return-Path: <linux-kernel+bounces-176912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C68368C36F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:20:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632A18C36F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D632B20CF6
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 689691C2089C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2333E47E;
-	Sun, 12 May 2024 15:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lo1gSMre"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACA639AF9;
+	Sun, 12 May 2024 15:21:16 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B773636122;
-	Sun, 12 May 2024 15:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AB71E488
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 15:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715527207; cv=none; b=YN8bfd9RgjlW8DD3oGLNpOTwCkE3w68LgICT4WXyIim3K2RXS/TQXfUwSo5pWmgE6dc+mcSWpfWzcQYIQTY+xBSPdoZ2TAwvYgL6xeDJGLY1TN/UKi5QJCOlBfSoaTtNLBPu+tbOPRpA0oDScvyyqTxPYQReaL9BARi+2+4FRNs=
+	t=1715527276; cv=none; b=b18b2/qHU0YRcgcYm0wFzcL/ZhexSiGlz2TazKesSTKhLI+nMolErFqS9tOIndhPJQvwfWz9zKHdj7SvXL6/ukV7mBQwa3rZymnB6Qk3LAFCR/KRTlvhf6cJ/JI9vgpSy/3Y54qFuXYA1cQdQMKVoSQCukTyD/+vnILtupqR6BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715527207; c=relaxed/simple;
-	bh=sKz/vCxOFcJztSXUN0nrES3JoaGgin/w+NBH5KDpWD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CvvrumdOWBs/NHqDA27P0/hm+iRy3MOxnjzBP9kUmxHYtsWZVEVUzFGD0L9SlpisToDJk66bUuieYpmcnRcsNtxXqyiFDe03cR3WV5CCuvOCvUM//t5Egp66QuIAqs+1j/aN2BwkyjZoRLNiG0t5pelfQAJCvRCs5Zcop1pH7Gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lo1gSMre; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1ec41d82b8bso33926895ad.2;
-        Sun, 12 May 2024 08:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715527205; x=1716132005; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=cIa1eL5zjqrgZiK7tQDMfCMELbeJgMi/BExOPYfa0vc=;
-        b=lo1gSMrekMPvH+qtj+VTKtABKBgKoCLCr5dli9amyx0+RDpClOdFUtzBp3qfqYn5dH
-         59CdvfMGnR2Vpn0t51NEYietGST0t5CpiiAiiHAcLvy1n3LQGakYkc7Mo8nxE7erJa/4
-         shOx014HcxmJDX8y5/57JGqB+KiesnAIptP9C7Rx/jq03OA45hdjaWZOFC7pWiBRFUHr
-         LuCi0pW0MyB/hYNoSXspWEzYobZJLu5cN8ZcXg6fvLykXy6O4lP881tR+rW9JjRMrQxJ
-         67ffFmrTl8jjnOr3P8m0wXivWn/xqzG5XK/qm1+Xo8TjRz2EZG1WHI7KOaDab8YkHAM+
-         hGng==
+	s=arc-20240116; t=1715527276; c=relaxed/simple;
+	bh=elmrxKgW0hKaxkMC0fP+b+IajaE8KGVrpSPp05jxx2I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rlepk/krsRY111KY+e3oITHExCb8hPMUtT0zzjeh5QzxQ6DKbkVHhJ9PEgNRW6qokl2XeDZZRkFjdznOUFGNWGdpewYAHbxuQqxuZf8ETG/v+TN3pXTesDGLWJtNybcM7hLqRQNTcjISC48kBAR//Q4Dnbn3dJ1qgzDI5SyhZbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7d9fde69c43so414598139f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 08:21:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715527205; x=1716132005;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cIa1eL5zjqrgZiK7tQDMfCMELbeJgMi/BExOPYfa0vc=;
-        b=RrsxjG+iXKIY/O8nViS20sS8nOQRSuuomTkwM5tKxw483/sU2YIJ+8eAmDcF5Jxjbt
-         K9s4oGqWAk57b1UWrx/QLpGVRJUVSNVbZSnKVggPlYZqYpIuN8JDBPQkTSoP7tpN4M/R
-         WIW516+qHwUELVCjLMCW6m7FvHjm5V87GIWVcuNhyesdGHbXTf9r8m0fdYKnB+sBEjq+
-         k3VpTYosPlJqmqOLX4mFq11dQlccARX13jA9SKCsie1xGKfZK4fIAxdIxavKF8uwxKC9
-         0q1V4M6PVpPZHAAj2wuwtJ2MvDtfGLEFKW/fgwK6XXDNOr3SIJK40jYSUL4FqDL8jvyw
-         Nr+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXbUhUaWmSSjrWDOToisqOGbggL9IdPYCfwbDQJ2D9xPko5HbaPuUQJjvwVSC/NSNxbVBIILhqV6XyxaGcm/YEOxqeFR3BH0eVkgAaOQHi+0Le+zf7L/F+qYy3UfWR7A8REB59r7Iqc3YGzecgccfxu5DIl1nk+ZdNrkKGo13at4THv0g83ifjSZ3rqoPCxoFhmfMYoALDLsTgWuWGPDnZIExadKjCPe48N3g==
-X-Gm-Message-State: AOJu0YxebhZs6a8KL7JGQCf7MsDAIRBg1keowEGMA/T5F7ozzNO5qgF2
-	iZc1LAdH8Wz5J7ndRQoZxHutmONE66Fzc/CzbR9eRCA4hDsLNQL2
-X-Google-Smtp-Source: AGHT+IEq84hbL5SBxGGFkfTufGVxF7SnIK9nZyyyCSYzCCnVKLiyiavy7v5hrdblFYWv4sdZtmoiDQ==
-X-Received: by 2002:a17:902:ed89:b0:1de:e47e:116c with SMTP id d9443c01a7336-1ef43e26e66mr72697085ad.39.1715527204849;
-        Sun, 12 May 2024 08:20:04 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d166esm63128815ad.36.2024.05.12.08.20.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 May 2024 08:20:03 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <9f6ed1f0-3615-43ce-8d0a-23d1f6a23669@roeck-us.net>
-Date: Sun, 12 May 2024 08:20:01 -0700
+        d=1e100.net; s=20230601; t=1715527274; x=1716132074;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IoS4jnpTBQZakglqbSVS4edXPZosbzQzuVKYSBONQRc=;
+        b=GQsLAjbRGMk5yiIhfKXu8MslXRlS7DoYTuI2UT2ySDA7jc2/sVUmlL7chNf1p+sCFp
+         rzpmDaR1gcGVjgA4pap2eV20/BiKMAGizzECV8Hocqf0527SJJ+dy+fVNPchk/d4udif
+         7WRV54OK8a4HMbi4UNojbrEYmFPWWui7KgGCmKhFaRXQqPuL8Vzu6IaGPtUeh9806sgU
+         ET11pi29an0T6umknLL5vGRt2hcY+aj7ESizpTSAI0+OsHIgc0kCKiREOkFbr0cPSu/z
+         3+zfit65jiuFrFRpA+cO5Xqwf6co6iU3Bas4NcZhGY9R1bOl7e+rthbEoZwhsRd/+LjX
+         S0GQ==
+X-Gm-Message-State: AOJu0YynZVj1XAqqppGoCs1cLRsuYY9MSaLpZB4m7fvp1ObaITQ8OmXb
+	XE4TGlC+UwIsO3PfYiM8LIXGdIt/pAw/sjEJtaZw4CrvM6Y7rj541Hrxei7B3567PIWDaSu9ClJ
+	CV5ZUr13fQfoljSoBn7hu/b9UCVkEqadJRgCdSSooKST6DhbWfHTCp6Q=
+X-Google-Smtp-Source: AGHT+IFS+nZOZ4a1iPKBwKvPMi9y6R6UKo3ShCBqMvOtCA+x03FKCadtRtgRGfbeMzy6n8GiPlPCo0AGdbNEM7V4uOmpPv9/4JZM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] ACPI: fan: Add hwmon support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>, Armin Wolf <W_Armin@gmx.de>
-Cc: mlj@danelec.com, rafael.j.wysocki@intel.com, lenb@kernel.org,
- jdelvare@suse.com, linux@weissschuh.net, ilpo.jarvinen@linux.intel.com,
- linux-acpi@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20240509221947.3118-1-W_Armin@gmx.de>
- <CAHp75Vd9JZxuDGYm2drSYun+h2CAU+Lb4BEFq3LnQYBKpOfyMA@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CAHp75Vd9JZxuDGYm2drSYun+h2CAU+Lb4BEFq3LnQYBKpOfyMA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:2b8e:b0:7de:e16b:4b81 with SMTP id
+ ca18e2360f4ac-7e1b5209a83mr74857739f.2.1715527273867; Sun, 12 May 2024
+ 08:21:13 -0700 (PDT)
+Date: Sun, 12 May 2024 08:21:13 -0700
+In-Reply-To: <0000000000007e4a2e0616fdde23@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c2fd68061843519d@google.com>
+Subject: Re: [syzbot] Test for 5681e40d297b30f5b513
+From: syzbot <syzbot+5681e40d297b30f5b513@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/10/24 06:30, Andy Shevchenko wrote:
-> On Fri, May 10, 2024 at 1:19 AM Armin Wolf <W_Armin@gmx.de> wrote:
->>
->> Currently, the driver does only support a custom sysfs
->> interface to allow userspace to read the fan speed.
->> Add support for the standard hwmon interface so users
->> can read the fan speed with standard tools like "sensors".
-> 
->> Tested with a custom ACPI SSDT.
-> 
-> This most likely fits the comment/changelog area and not the commit
-> message. Also would be good to put there the link to this custom SSDT
-> (like one of zillion of pastebin sites, or GitHub, or ...).
-> 
-> I was under the impression that Guenter gave a tag, which is missing,
-> but no, he just said it's okay to go. Guenter, maybe a formal
-> Acked-by?
-> 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-I said
+***
 
-It all seems odd, and I returning -ENODATA doesn't seem right,
-but then I don't understand the specification or the logic behind it, and
-I don't have the time to read and understand it. No objection from my side
-against moving forward.
+Subject: Test for 5681e40d297b30f5b513
+Author: syoshida@redhat.com
 
-This isn't sufficient for anything formal. Just go ahead.
+#syz test
 
-Thanks,
-Guenter
+diff --git a/net/can/j1939/main.c b/net/can/j1939/main.c
+index a6fb89fa6278..df01628c6509 100644
+--- a/net/can/j1939/main.c
++++ b/net/can/j1939/main.c
+@@ -344,6 +344,9 @@ int j1939_send_one(struct j1939_priv *priv, struct sk_buff *skb)
+ 	/* make it a full can frame again */
+ 	skb_put(skb, J1939_CAN_FTR + (8 - dlc));
+ 
++	/* initialize unused data  */
++	memset(cf->data + dlc, 0, 8 - dlc);
++
+ 	canid = CAN_EFF_FLAG |
+ 		(skcb->priority << 26) |
+ 		(skcb->addr.pgn << 8) |
 
 
