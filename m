@@ -1,105 +1,209 @@
-Return-Path: <linux-kernel+bounces-177057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE1B8C397F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:00:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519118C39C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B393B2813D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:00:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA900B20E87
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A045A7AB;
-	Mon, 13 May 2024 00:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5A5107A8;
+	Mon, 13 May 2024 01:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F6zZX02F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L4tqIkJN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1542AD11;
-	Mon, 13 May 2024 00:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A7CE541
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715558430; cv=none; b=FMYTLMkHTbAOyyl+5ztbW2DL0Jnj+HqP0+988EdQoskkwjjldjY/+2LatDGS6sRf7MG8amdzvfNWvVO+Seju2fKjE2DHP0Vzu/dJEyIpAaoc/u81GbrhtNo1idQDi/QMdWXDJScSVmma4qPSpMOYQq3c2rFTxrnQc/+wEpdpNNo=
+	t=1715562437; cv=none; b=hnntb6OdF0a5IRN6BmLyPVTuCiyTmQXy89uyXN/5xfCu7FZw2yUunnIoZZx10ptg1nXVyWLKCIbUsqGyFERTzy669LE9fj2r8YcCvfJt7T69hqyiDdSfbFfbhOepLW/zHd980gavV2gnrCOSYpERUBu90pk02yTbAurfRBvbSMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715558430; c=relaxed/simple;
-	bh=eO6sFEl5M7WFZuUj5gBLKwD35udWKP6eAoJ2iuvpeOg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TCk3teBTKjQJNO8mnxhehrP18ZSk68rwnxueuCnJebddqUqj+oYPzWht4Qix6/V0OZC23wDets5F7cp0YtFRASw0IfRJMtTYG7eeYv+wM2XlKdicWHXW03Bzw7dGAkTXpSJ6KmOwjsuVvzGW9AlInOTXcZ5D0rBAkGUGUbPxuXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F6zZX02F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C25A7C32782;
-	Mon, 13 May 2024 00:00:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715558429;
-	bh=eO6sFEl5M7WFZuUj5gBLKwD35udWKP6eAoJ2iuvpeOg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=F6zZX02FcPQotnOy85Fv/Y+zJ69/PF0J/2LyjADRYsLH7KtiYm9YF32v0uuQCYJWK
-	 xykadcmOrjnUMs0Nsdgf3hLws4jmQzG74s7D4ilvW4UcLF1WYtOaSx08JI+/DEJhcv
-	 S7qgk5YhSOqieH3OHu/WCOypGZ5JWQL79lNuZkuBGOZ3uKJWB83Md+B2BZtotGSQd/
-	 pRW2SdQCwR3klmjohMtKYIt/79L7Z2ruSarP/l8iUdXqv53t/4Oj0WT0vKdGnc5X5E
-	 yYuUjda8a7XRxYBdrhNZZrilh5HO78Kq22OLtjme/tXPrIwJ5RsfDLgv1QWZnP4SmT
-	 qHM597QbUh7Og==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B03C3C43336;
-	Mon, 13 May 2024 00:00:29 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715562437; c=relaxed/simple;
+	bh=z5mJ1/5uug7AEPGBHrwQP1RnsDF46AQ6CEpaPD25I/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hMXKYZ5jCj7np9pYSA0qtLC+xQxNO3HbpiPPtWYv+rM2rFrc0XSD8TSyfPLKIQ0nUIUDsI0Vji3qZeHgUggqmVu8thoTit19Lxu4+PUaqvTtYkaAJsD5pZQ6qe39UY/L1UlJ0iJeJHN8dMMXmmlDOMzHB+PXl+IwtGD0Y6yWR4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L4tqIkJN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715562434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4m6P5DzqA8so+cu7rXtxZX9zRgtX/pSS/kHNFecXgEU=;
+	b=L4tqIkJNEYIt4j0p/7aaNZFErLQ+LLPSzvKM/AolAg5Zk3aBvt8q7K6y2cg+C6DfPtAkmy
+	14pUwrx1TqScUyHGC1DNU8IatzXgmqQ9amjaXbmti4KUlVlRrsFOfCc4yyT+Bjx4DxAi3j
+	vAZozs0hOJL5PEK+lpuaucuCXYUzkO0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-A_bfeSZ0NhqbI3YTU8cf1A-1; Sun, 12 May 2024 21:06:36 -0400
+X-MC-Unique: A_bfeSZ0NhqbI3YTU8cf1A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 22CE485A58C;
+	Mon, 13 May 2024 01:06:36 +0000 (UTC)
+Received: from tpad.localdomain (unknown [10.96.133.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C112103A3AA;
+	Mon, 13 May 2024 01:06:35 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+	id 16E0F400DF40C; Sun, 12 May 2024 18:44:23 -0300 (-03)
+Date: Sun, 12 May 2024 18:44:23 -0300
+From: Marcelo Tosatti <mtosatti@redhat.com>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+Message-ID: <ZkE4N1X0wglygt75@tpad>
+References: <20240511020557.1198200-1-leobras@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v6 0/4] bpf: Inline helpers in arm64 and riscv JITs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171555842971.18024.5994245773855857236.git-patchwork-notify@kernel.org>
-Date: Mon, 13 May 2024 00:00:29 +0000
-References: <20240502151854.9810-1-puranjay@kernel.org>
-In-Reply-To: <20240502151854.9810-1-puranjay@kernel.org>
-To: Puranjay Mohan <puranjay@kernel.org>
-Cc: catalin.marinas@arm.com, will@kernel.org, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
- haoluo@google.com, jolsa@kernel.org, zlim.lnx@gmail.com, xukuohai@huawei.com,
- revest@chromium.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, memxor@gmail.com,
- bjorn@kernel.org, puranjay12@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511020557.1198200-1-leobras@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Thu,  2 May 2024 15:18:50 +0000 you wrote:
-> Changes in v5 -> v6:
-> arm64 v5: https://lore.kernel.org/all/20240430234739.79185-1-puranjay@kernel.org/
-> riscv v2: https://lore.kernel.org/all/20240430175834.33152-1-puranjay@kernel.org/
-> - Combine riscv and arm64 changes in single series
-> - Some coding style fixes
+On Fri, May 10, 2024 at 11:05:56PM -0300, Leonardo Bras wrote:
+> As of today, KVM notes a quiescent state only in guest entry, which is good
+> as it avoids the guest being interrupted for current RCU operations.
 > 
-> Changes in v4 -> v5:
-> v4: https://lore.kernel.org/all/20240429131647.50165-1-puranjay@kernel.org/
-> - Implement the inlining of the bpf_get_smp_processor_id() in the JIT.
+> While the guest vcpu runs, it can be interrupted by a timer IRQ that will
+> check for any RCU operations waiting for this CPU. In case there are any of
+> such, it invokes rcu_core() in order to sched-out the current thread and
+> note a quiescent state.
 > 
-> [...]
+> This occasional schedule work will introduce tens of microsseconds of
+> latency, which is really bad for vcpus running latency-sensitive
+> applications, such as real-time workloads.
+> 
+> So, note a quiescent state in guest exit, so the interrupted guests is able
+> to deal with any pending RCU operations before being required to invoke
+> rcu_core(), and thus avoid the overhead of related scheduler work.
 
-Here is the summary with links:
-  - [bpf-next,v6,1/4] riscv, bpf: add internal-only MOV instruction to resolve per-CPU addrs
-    https://git.kernel.org/bpf/bpf-next/c/19c56d4e5be1
-  - [bpf-next,v6,2/4] riscv, bpf: inline bpf_get_smp_processor_id()
-    https://git.kernel.org/bpf/bpf-next/c/2ddec2c80b44
-  - [bpf-next,v6,3/4] arm64, bpf: add internal-only MOV instruction to resolve per-CPU addrs
-    https://git.kernel.org/bpf/bpf-next/c/7a4c32222b0e
-  - [bpf-next,v6,4/4] bpf, arm64: inline bpf_get_smp_processor_id() helper
-    https://git.kernel.org/bpf/bpf-next/c/75fe4c0b3e18
+This does not properly fix the current problem, as RCU work might be
+scheduled after the VM exit, followed by a timer interrupt.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Correct?
 
+> 
+> Signed-off-by: Leonardo Bras <leobras@redhat.com>
+> ---
+> 
+> ps: A patch fixing this same issue was discussed in this thread:
+> https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> 
+> Also, this can be paired with a new RCU option (rcutree.nocb_patience_delay)
+> to avoid having invoke_rcu() being called on grace-periods starting between
+> guest exit and the timer IRQ. This RCU option is being discussed in a
+> sub-thread of this message:
+> https://lore.kernel.org/all/5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop/
+> 
+> 
+>  include/linux/context_tracking.h |  6 ++++--
+>  include/linux/kvm_host.h         | 10 +++++++++-
+>  2 files changed, 13 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
+> index 6e76b9dba00e..8a78fabeafc3 100644
+> --- a/include/linux/context_tracking.h
+> +++ b/include/linux/context_tracking.h
+> @@ -73,39 +73,41 @@ static inline void exception_exit(enum ctx_state prev_ctx)
+>  }
+>  
+>  static __always_inline bool context_tracking_guest_enter(void)
+>  {
+>  	if (context_tracking_enabled())
+>  		__ct_user_enter(CONTEXT_GUEST);
+>  
+>  	return context_tracking_enabled_this_cpu();
+>  }
+>  
+> -static __always_inline void context_tracking_guest_exit(void)
+> +static __always_inline bool context_tracking_guest_exit(void)
+>  {
+>  	if (context_tracking_enabled())
+>  		__ct_user_exit(CONTEXT_GUEST);
+> +
+> +	return context_tracking_enabled_this_cpu();
+>  }
+>  
+>  #define CT_WARN_ON(cond) WARN_ON(context_tracking_enabled() && (cond))
+>  
+>  #else
+>  static inline void user_enter(void) { }
+>  static inline void user_exit(void) { }
+>  static inline void user_enter_irqoff(void) { }
+>  static inline void user_exit_irqoff(void) { }
+>  static inline int exception_enter(void) { return 0; }
+>  static inline void exception_exit(enum ctx_state prev_ctx) { }
+>  static inline int ct_state(void) { return -1; }
+>  static inline int __ct_state(void) { return -1; }
+>  static __always_inline bool context_tracking_guest_enter(void) { return false; }
+> -static __always_inline void context_tracking_guest_exit(void) { }
+> +static __always_inline bool context_tracking_guest_exit(void) { return false; }
+>  #define CT_WARN_ON(cond) do { } while (0)
+>  #endif /* !CONFIG_CONTEXT_TRACKING_USER */
+>  
+>  #ifdef CONFIG_CONTEXT_TRACKING_USER_FORCE
+>  extern void context_tracking_init(void);
+>  #else
+>  static inline void context_tracking_init(void) { }
+>  #endif /* CONFIG_CONTEXT_TRACKING_USER_FORCE */
+>  
+>  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 48f31dcd318a..e37724c44843 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -480,21 +480,29 @@ static __always_inline void guest_state_enter_irqoff(void)
+>  /*
+>   * Exit guest context and exit an RCU extended quiescent state.
+>   *
+>   * Between guest_context_enter_irqoff() and guest_context_exit_irqoff() it is
+>   * unsafe to use any code which may directly or indirectly use RCU, tracing
+>   * (including IRQ flag tracing), or lockdep. All code in this period must be
+>   * non-instrumentable.
+>   */
+>  static __always_inline void guest_context_exit_irqoff(void)
+>  {
+> -	context_tracking_guest_exit();
+> +	/*
+> +	 * Guest mode is treated as a quiescent state, see
+> +	 * guest_context_enter_irqoff() for more details.
+> +	 */
+> +	if (!context_tracking_guest_exit()) {
+> +		instrumentation_begin();
+> +		rcu_virt_note_context_switch();
+> +		instrumentation_end();
+> +	}
+>  }
+>  
+>  /*
+>   * Stop accounting time towards a guest.
+>   * Must be called after exiting guest context.
+>   */
+>  static __always_inline void guest_timing_exit_irqoff(void)
+>  {
+>  	instrumentation_begin();
+>  	/* Flush the guest cputime we spent on the guest */
+> -- 
+> 2.45.0
+> 
+> 
+> 
 
 
