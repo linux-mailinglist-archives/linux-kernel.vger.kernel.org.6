@@ -1,140 +1,194 @@
-Return-Path: <linux-kernel+bounces-177005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38878C3862
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:50:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02E768C3864
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 427DEB21455
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 20:50:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 154FAB21117
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 20:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F405E2209F;
-	Sun, 12 May 2024 20:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4DA44437C;
+	Sun, 12 May 2024 20:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="slWq8uBA"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Sj46oIxO"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2044.outbound.protection.outlook.com [40.107.236.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE76380
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 20:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715547036; cv=none; b=Tm24+P9Y+dluvSC2leEf/rkXFPiJI8attvTZSq0BO6cYw8wHTG9J/5xjufmGUuWax7E2VxFrBeJqStfBL1oTug0Hez6a6Y259ce68QB/NbSJX4IuYC328ZMBNvsz1B99Jmfhm6QeR/8uylL5G0snrrTXJ/tUX5mVrqkwRt3L+C4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715547036; c=relaxed/simple;
-	bh=R82jH/CTzlPxLDQ6HiMBIPXQURxxCmUDu8oOAGiCJ1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iXcjxD07SymSH2CT8GloqfiRCRz+j0a7hwMU3I4/ABRzEE/+Nx224fk7tvlrXTuNb1TOSGAcCt8QlA29evMlFWhOZCS0/giBk2AerGqQwaMALokIp/nNOSArVQZKAb0QG/9HXErDsRB2YouEmqriQ21IFy59DxV3GxdpSq48YUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=slWq8uBA; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=bCl1PyZjFro/Rm4AJnAJ16YD5mtSBLN9tWzUw4P6UJk=; b=slWq8uBAkTUH6YqI
-	PthKskQ9dsu83sTwxjyTTMnaHflfKDG2o7JhYQxS6rHqdyhmwx7+Za+7vSIRWTekVAY3446oGag9a
-	1ty2LpN0DJH0gvk5y9l6x0UGnii4nVnPBaek3V2z7OG/4yFG5sM5KMx1//9AYjj75efoTlXKlON8Y
-	QxzasnxhsYZ2InZoMSEg1PXuGjaUkuaXvhYohNEXGbERdqdeYPXCjGphXFNe/IMnAcnwXJRpHjOTT
-	fOGmPSFfvQq9ImvahV9MbYoOcDyU7styOmr+t9hWda1q/q6MSnIbTuJZ+TkPwqSgXfY8kJ+HTHrDO
-	wgKz6EXFMC+Jf0WYow==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1s6G9I-000cZr-1J;
-	Sun, 12 May 2024 20:50:24 +0000
-Date: Sun, 12 May 2024 20:50:24 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Muni Sekhar <munisekharrms@gmail.com>
-Cc: kernelnewbies <kernelnewbies@kernelnewbies.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: Inquiry Regarding Handling of Kernel Crashes
-Message-ID: <ZkErkG77vLkcVaUZ@gallifrey>
-References: <CAHhAz+hcVRU8=SkkoHGRDN5zRvB2HY1-1Y2NQmNwR=07ObSFrQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468301E877;
+	Sun, 12 May 2024 20:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715547412; cv=fail; b=f2tl7QaR7o2BxXP3RaQbL5J9OlyOqLZbfBqbLfdt2tDBkbQqfmRY61U9SkoNGhrm0b+5wB6EDZlE0uHoHYJJy4nxGK1Mude/xaNzJ9hT9XjFpIxl3vW7nuQmC+CJQDbj6CM4XTdPfbLhy2y4N5/bktrW1dcJ5pUf0LZnDbVY4a0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715547412; c=relaxed/simple;
+	bh=m0SJCm5mgIfVMNQG50AMrHv8GI6ZeQramc3WcVsD8ZA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D594u9w2BkikSrKiBWKyrltn66ZbmAnUorqyai82//wMzzW+iW5z1e+DoOULTXA7jNzKu1aV/rGFrwQBLMhcZx+OeqNT+vql1X2TwPSq0NMr20ViRxt/3pXu+PjQ48KXsTITWscRAlqmk+jq55aJVWfrLlFf1HZ1W4eh3wMnSOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Sj46oIxO; arc=fail smtp.client-ip=40.107.236.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hfat5JQ9skC0yMteCbQ53NCVU8mNKlXkIAd61GgYfV0rRoCLegBvQ5tPG+4QArU4Tp2Aq5ogzWQGpH6PWvHgsUVbD9AH664W7SsEn+l82PFeVgwMMsPm6SlOyHlFg6C+vf0LFeNW+BP3tLWkJOoHGe6jVzWYjWQrlTtuPc0rXeea31by3CH/zW8yerx06wifJ+/7BfkIijVesEx4O2L1GSibbEL0XkV05RsIFRajrDSW0TE8kLQ9uecjc9jIRU84mRhskBvV4Jn7776Jm3fQtBPBrifz6e8OkQtb+djY2KQsX5h1tqX19pTXiYi2ALmPU/NkE9s6U3NLK8JjIFQ6zA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G/K1edEBhguOAXCRdt8a0QIokcOYUXiuU7wQAIiRpf0=;
+ b=hQ45FTxim61VRmebwv0oHe7YdU2+eUupTPITyycG+ZqU0YpT0//TEzZ0njMCWEtf4CVgjfJH7i/G2Oa+eAuRMZ/gKCSvtZJ7cmDzRL3z0sEF8JMyyLfet8/7+8TTjkMeSpwUnkyNW35B0StQv4Vm7Z0j1jk7c/M8/E9PPAnQAMA0PhPrk2ST8hTF7Y5RWvxxqBZwM6RM10hmEJBU7p8fjNIt9tqSdvpEGVGTx11OJCWqCOv6XbtasjCUefKG2J1c5YPKJmRaw6xDozzqG3fw1Cm1AXNvEtY6NsNhYRO8wr0jO3nbyQNsnbrm2RlUroSvYmV/0bT6lFWFL4zJnYoJEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G/K1edEBhguOAXCRdt8a0QIokcOYUXiuU7wQAIiRpf0=;
+ b=Sj46oIxOCVsZ98hBHcNTNjHyvmm6+c01OoMu38Rwl9QVy11Lq+U/r1yZDC6GYoHKTTwxjex5a8rloKGHyXthLwbP/oCN8+pdk5wX1D5sqVODS7zFxYQ/ZGzm2M5RFfByq0SNlv03NyFXsxjMV5p8tiyLyjuLaPKPsPzT9Di3e+IAWPXdz1IZA8+8cNoMvjI0hhnw3gnpoesrSUQc48ScX5geXt6glyC+FOAwUxG6EL5M63mzOJnUqj9iEcY/vFfYOreYcU2ojfNckearGUJvSj/OlACIt3NZsYcVeqDZJ9JgUgXXYHM+qzl7TVkHw+s+sEDWwZ4o6XGiQ7CmSxMmRg==
+Received: from SA1P222CA0152.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c3::20)
+ by SA1PR12MB6702.namprd12.prod.outlook.com (2603:10b6:806:252::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sun, 12 May
+ 2024 20:56:46 +0000
+Received: from SN1PEPF00026368.namprd02.prod.outlook.com
+ (2603:10b6:806:3c3:cafe::77) by SA1P222CA0152.outlook.office365.com
+ (2603:10b6:806:3c3::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55 via Frontend
+ Transport; Sun, 12 May 2024 20:56:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SN1PEPF00026368.mail.protection.outlook.com (10.167.241.133) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.21 via Frontend Transport; Sun, 12 May 2024 20:56:45 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
+ 2024 13:56:45 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 12 May 2024 13:56:45 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Sun, 12 May 2024 13:56:42 -0700
+Date: Sun, 12 May 2024 13:56:40 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
+	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v7 3/6] iommu/arm-smmu-v3: Enforce
+ arm_smmu_cmdq_build_sync_cmd
+Message-ID: <ZkEtCNrJHTTAJ2Mf@nvidia.com>
+References: <cover.1715147377.git.nicolinc@nvidia.com>
+ <52845c9fdfdd7f38a694e7727f3eabbd10e9f8ee.1715147377.git.nicolinc@nvidia.com>
+ <ZkDiv10JYCjNblv/@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAHhAz+hcVRU8=SkkoHGRDN5zRvB2HY1-1Y2NQmNwR=07ObSFrQ@mail.gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 20:42:25 up 4 days,  7:56,  1 user,  load average: 0.09, 0.03, 0.01
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <ZkDiv10JYCjNblv/@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF00026368:EE_|SA1PR12MB6702:EE_
+X-MS-Office365-Filtering-Correlation-Id: 639649b3-89eb-40e8-8e60-08dc72c60912
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|36860700004|82310400017|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gSi1sr1Sl2nEt//zZz6oCmfelJOquZ03P3mQg4AXNG2djIypYN9kcvfIx8rz?=
+ =?us-ascii?Q?Uzzf3KFIyps6f+qs5GZ/2Z/aBINzv271xSEMpxDNDVpcni0lweJKeeKhPiDL?=
+ =?us-ascii?Q?i18LivZErkcYauk5YTs8yWaQsI60p90DQ4oooWhtuasGJ9IOHyw/XawEtcaK?=
+ =?us-ascii?Q?OujIr2yYRdwi5AW7q0ZZcK/+PNN9AakLPPCFB6JD0B4CvLc6u8yD2PgUfd7j?=
+ =?us-ascii?Q?55ZhlhPWqMA+J8Oez3cprXyz8N7QCrOkhXUJ2dUpD/UOxfA9pvdo5Q/dMM6j?=
+ =?us-ascii?Q?GdpsZEzbFbYR9ITkpu7Gc1qT96oeDN42nsLJVieA3Dbu46d8tOHG8b85fimb?=
+ =?us-ascii?Q?KcVlmEf2/hEE/ShTTV/7nLxIza7ZbyaaFNDHhrNQSgR9Kyt/t5btqkTA1CYv?=
+ =?us-ascii?Q?sX3vIuTTgrPBKqJXxizlj4Rzv8ifwnQhzbYEVCTUdEWh9zeXdd1Xe+isvGd3?=
+ =?us-ascii?Q?Oqp0SDvZcFMS6goi92mU1W4XqrWVY7+wPqT+LZZqw3XxqgG8nPl+MBKc78Zy?=
+ =?us-ascii?Q?UcSj4Y24WNn35wyYDtBz5jE9pd3LLEt2Sep1O36jGygLtYpib6bN0MBQ13Nz?=
+ =?us-ascii?Q?TLbgT71VT2/J+IsJa1ogs+EeDDc3PM7cwgnsBILzFviGTC6gx07eij9d22dB?=
+ =?us-ascii?Q?tKGh+7hwlWT77axVL1zaMKVqTXI5N5ChSa5V5/zg78lLHLUDc1P2Asgl2K/S?=
+ =?us-ascii?Q?5NTyTjnvI7taEtE+V1Z9i0rXMFOQK0g+AwgGoW7lwjOFto6Ye2QLQk6qSxEV?=
+ =?us-ascii?Q?0634clmrVey0J8GImer8zNhj8Ts/M64lhw2gfUt1aZutN042+kwshOTa153S?=
+ =?us-ascii?Q?D3ccaN/uo2QZZ/cOlyxIqF3iDctPX5PWOX8fOJWsgumfSCFNsoNNiYmAzeI/?=
+ =?us-ascii?Q?MOqg3MfYPFJpF/Kx3IpLgHmWS/6UfrBYTkLJeHfldIcJcvCzFl7nbmX9Te8F?=
+ =?us-ascii?Q?WdDJ9YiiQwQDechH/YyMZtKJzm9HrRJjLXYpZMDJoQs2l3mx8SCrLokdTL5Q?=
+ =?us-ascii?Q?7t8hjVoM0T3sFY6KzNPmGmzdBuGzrn3cEG+FVJTUl3z8Qk7xscRvNc8uBdDd?=
+ =?us-ascii?Q?OhN5mBs0Xo31Ucb9l+ECBx0gWNww2Uxq1qMO+a7OgeHCYGpPX6wsY78qd4PZ?=
+ =?us-ascii?Q?DMQuxq10dt4HhUWy70w9dsG00XGax6zYhVxxJ4uTdCe3UqsVctgJMXboiJz6?=
+ =?us-ascii?Q?d5iw+BOvUbSCcUSe4k+gj0sXAAvUeJ7UmKkQD2kuXwR2UVkXABWA4CgZc7LS?=
+ =?us-ascii?Q?cIB6x495XkE7MaKu5laKPIEeyXDY9z906kIFse8nc/eOhU23VnjDpRO2SC/Z?=
+ =?us-ascii?Q?EHPi6YoxX84Gm5JUn2TJK3stWzFnxZ7fZV8F+5YPQdbEhMINJxKRYLHI39aR?=
+ =?us-ascii?Q?gO6pD1kyMwhIsw9nvWLg5HUdrU6f?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(36860700004)(82310400017)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2024 20:56:45.9663
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 639649b3-89eb-40e8-8e60-08dc72c60912
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF00026368.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6702
 
-* Muni Sekhar (munisekharrms@gmail.com) wrote:
-> Dear Linux Kernel Community,
-
-Hi,
-
-> I hope this email finds you well. I am currently engaged in testing
-> device drivers in Linux kernel mode, and I have encountered various
-> types of kernel crashes during my testing process.
+On Sun, May 12, 2024 at 12:39:43PM -0300, Jason Gunthorpe wrote:
+> On Tue, May 07, 2024 at 10:56:51PM -0700, Nicolin Chen wrote:
+> > There is an existing arm_smmu_cmdq_build_sync_cmd() so the driver should
+> > call it at all places other than going through arm_smmu_cmdq_build_cmd()
+> > separately. This helps the following patch that adds a CS_NONE quirk for
+> > tegra241-cmdqv driver.
+> > 
+> > Note that this changes the type of CMD_SYNC in __arm_smmu_cmdq_skip_err,
+> > for ARM_SMMU_OPT_MSIPOLL=true cases, from previously a non-MSI one to an
+> > MSI one that is proven to still work by a hacking test:
+> >   nvme: Adding to iommu group 10
+> >   nvme: --------hacking-----------
+> >   arm-smmu-v3: unexpected global error reported (0x00000001),
+> >                this could be serious
+> >   arm-smmu-v3: CMDQ error (cons 0x01000022): Illegal command
+> >   arm-smmu-v3: skipping command in error state:
+> >   arm-smmu-v3:  0x0000000000000000
+> >   arm-smmu-v3:  0x0000000000000000
+> >   nvme: -------recovered----------
+> >   nvme nvme0: 72/0/0 default/read/poll queues
+> >    nvme0n1: p1 p2
 > 
-> Among these, some examples of kernel crashes include OOPS, lockups and others.
+> Nice
+>  
+> > @@ -350,20 +340,23 @@ static struct arm_smmu_cmdq *arm_smmu_get_cmdq(struct arm_smmu_device *smmu)
+> >  static void arm_smmu_cmdq_build_sync_cmd(u64 *cmd, struct arm_smmu_device *smmu,
+> >  					 struct arm_smmu_queue *q, u32 prod)
+> >  {
+> > -	struct arm_smmu_cmdq_ent ent = {
+> > -		.opcode = CMDQ_OP_CMD_SYNC,
+> > -	};
+> > +	memset(cmd, 0, 1 << CMDQ_ENT_SZ_SHIFT);
 > 
-> I have a few questions regarding the handling of kernel crashes during testing:
+> The command would also benifit from its own type someday :\
 > 
-> When encountering a kernel crash during testing, is it advisable to
-> continue testing without rebooting the system? Or is it preferable to
-> reboot the system after each kernel crash and then resume testing?
+> Maybe this should just be cmd[1] = 0 ?
 
-Rebooting is best.
+Yes. I will add that.
 
-> Can the first kernel crash, whether it is an OOPS,  or any other type
-> crash, potentially lead to subsequent crashes of the same or different
-> types? If so, should debugging efforts focus only on the first kernel
-> crash, or should all subsequent crashes also be considered and
-> addressed?
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-Yes - not all failures do that, but some will cause follow on crashes;
-looking at the first crash normally gives the most reliable idea
-of what went wrong. But keep all the logs, anything might help you figure
-it out.
-
-> In the event that the system needs to be rebooted after a kernel
-> crash, how can user space test utilities be informed that a kernel
-> crash has occurred? Additionally, how can the system be configured to
-> automatically reboot in the event of a kernel crash?
-
-See Documentation/admin-guide/kernel-parameters.txt  there are 
-quite a few useful ones, in particular:
-     oops=panic   will cause a panic after an oops
-which when you combine it with
-     panic=30
-
-   means an oops will then cause a panic which causes a reboot.
-
-You could also consider using a 'crash kernel' - on a panic
-that lands in a fresh kernel that just saves a memory snapshot
-that you can then try and debug.
-
-Turning on a watchdog as well is good; some kernel bugs just hang
-rather than giving a nice oops.
-
-> I would greatly appreciate any insights or best practices you can
-> share regarding the handling of kernel crashes during testing. Your
-> expertise and guidance on this matter would be invaluable to my
-> testing efforts.
-> 
-> Thank you very much for your time and assistance. I look forward to
-> your response.
-
-Good luck!
-
-Dave
-
-> 
-> 
-> -- 
-> Thanks,
-> Sekhar
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+Thanks!
+Nicolin
 
