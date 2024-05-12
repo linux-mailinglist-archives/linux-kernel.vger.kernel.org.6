@@ -1,137 +1,168 @@
-Return-Path: <linux-kernel+bounces-176882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28ED8C3692
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:55:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A438C3694
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67A61F21F63
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B08E1F21CDB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEC8224DC;
-	Sun, 12 May 2024 12:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B8D224D4;
+	Sun, 12 May 2024 13:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="pYi6gSZT"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n5xQhY38"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6D0200C1;
-	Sun, 12 May 2024 12:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7785210FB;
+	Sun, 12 May 2024 13:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715518513; cv=none; b=IEKq+bZ8n84FkCH4WNc0RPzggQePz7xUXgMbOkiQVf4+dZhafraSkxoBQWvqPVXXVzUbc6m0BzsiAIXNbcZWXiulxzwHEO6KUcwhCvHjYJ2kR06V4ih97n/+CLZSefcdsaOeIxVC3WXwdK9/L/UMGOnD5DuqRRsNRmaA60fJOVk=
+	t=1715519098; cv=none; b=RJWGAQBnqO7amA/Lh5A6yjpamnApjHQzff4dmbjE3s95iZr1nXZlmeOCGlxVouRpSQFCLUparwvg86MJRK3qemMyqhzx3IrzUiDNMb/7cMjd7sA63lsZYBePJmJ75C6iQ0NGjIe7YNvLK2Ai2CjcuUdo39d9T6hKeqpCLKcFmjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715518513; c=relaxed/simple;
-	bh=mIt63qw212cpAShNPP9LQYJ12C7+kTwiUZQ8TsN9/Jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H2XSSnhWniNnfaZZ+VpWT+5FeFv0aWhMut3c6gBSj7iFom752ow0MJTR4TRGfmXz2PNngyDxvw762NPOIrNxJSuFmI0lxojioT72iDyAWFqkGzXrqt4SjcRQyeQm2u8a+EyDgQi2LeiFCipE3ZlgSrtuMlumRQjRtaxWsb+enxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=pYi6gSZT; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1715518485; x=1716123285; i=wahrenst@gmx.net;
-	bh=65uydMKsXwdgGvElxFGsQ1IHZwcsbe/Z1F22WVwwxT0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pYi6gSZTWWr2qGxXXW2TzarxCiS/2CI3jUqS5o3E/cceGdSdyem4AlUKrrxklPyz
-	 mVkOtv/8mrzQdn8V+m13DX0IAHnt6UYmYSzQ3MH1NulJR3ONJRdNRGaoCPmVvmMpE
-	 rEST+QqmDTRIU8ulpdB8ULhPt+/TdP0df20Fb4i4kruY6XGsTyKds/OQcfOuDti8c
-	 ugZfWfZAeP2U3n+Ls9GkY9AqB4VWat1ANsmUsee9ThmgdoYk5z0drXTD+Sqvp9ELZ
-	 zrl9rX4B8Aq0jworPAm5cDuAQk8ZqZdOx/BxOXZ8fyRoVD8p8TkhW4/ndA4HmvBJp
-	 GYcwUGmhBxGmF6/bZA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.126] ([37.4.248.43]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5wLZ-1sDXe347L9-007UP2; Sun, 12
- May 2024 14:54:45 +0200
-Message-ID: <3ddebd00-4c3e-4b80-88a8-50906e86b6fa@gmx.net>
-Date: Sun, 12 May 2024 14:54:42 +0200
+	s=arc-20240116; t=1715519098; c=relaxed/simple;
+	bh=iKxuRfjzkLsbnpQNvycMUdmiI0SkGYOUjoOFJAsqVcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CbEHW6gN1Pn0ev1nCecW7G2AtjLFWSFDtYkjEf2U+gQdrgOUG4hQ2qLVvc9Z2tu4L7sf9NqJj1/hrzO5eka/Ca+Ak6kedrfZ0s9wEPzTXHnL3U0ZpV139xNajcC5qxd1tuoU2BULFt9kEgp7WOrQDTlDoCwh3k1yrLZseo2WN7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n5xQhY38; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C8B4C32783;
+	Sun, 12 May 2024 13:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715519097;
+	bh=iKxuRfjzkLsbnpQNvycMUdmiI0SkGYOUjoOFJAsqVcQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=n5xQhY38Z5lPtgyv2CpBDoR7/ahRWgPIfZbKe/SJwvVb3SiuFLz0yjaYiZDHk0VgQ
+	 0zNckxk+LJCCKRv//HwbIzZQcvnlZ0by/FYrXP5JDLgKBdZ6m6W87It0gCxXgsqhrJ
+	 wWiOna4WyH9sYoWmRS1Nbeq8ELVE915my8bjokWCjN31neyGhW/j84vg78BFO7d5G2
+	 NF+nMeLtrJPObOYxMXJV8T+0yS2G3CuaPiCd4ZF39oQhVLkC/PFxrDrytj9RbOljKy
+	 rkScLedcfFw+o2qozOYsREMHZgsogVinXv0SZtB1MjlfEbv7E5UE8073qPohfKPruU
+	 wYj9xQOwW4JYw==
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-51f2ebbd8a7so3665003e87.2;
+        Sun, 12 May 2024 06:04:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX+D7cSpKrjf9GNx4QYcKOE0G107dvsZUd8OjK5EHEVBCmCPIjyiAH8DsaDFnme3GrE9c4GHHlnjqrcybdX/oKHnD7ChUKm4xfKFbCw
+X-Gm-Message-State: AOJu0YwRE6EUl9DH+Lp4b9t5cW1IXWR6jIt56SGeZW8C60Gan60lHdew
+	R9gzXQsh6Y2G036RIko+OOQbHQ0E3rBv1FmV1TwkbEp06uQzsGjNB2XWxnVK/mUMMjdHNNix9JG
+	2LCIkwCO7gz+YvleWFln+9xxY0xU=
+X-Google-Smtp-Source: AGHT+IFNnhU6eqmBLwSU4lQDj8SidTmBQq3quXULwJeg3ppDjlpTI1G3mbJnX6jJ4LplhtKBJ27tICppo9mq4+yxe+4=
+X-Received: by 2002:ac2:4e8d:0:b0:51f:c8f:630e with SMTP id
+ 2adb3069b0e04-5220fc734e1mr4239936e87.35.1715519095959; Sun, 12 May 2024
+ 06:04:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] Bluetooth: hci_bcm4377: Increase boot timeout
-To: sven@svenpeter.dev, Hector Martin <marcan@marcan.st>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Marcel Holtmann <marcel@holtmann.org>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240512-btfix-msgid-v1-0-ab1bd938a7f4@svenpeter.dev>
- <20240512-btfix-msgid-v1-1-ab1bd938a7f4@svenpeter.dev>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240512-btfix-msgid-v1-1-ab1bd938a7f4@svenpeter.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <Zj9UDiAHqX3noTsy@archie.me>
+In-Reply-To: <Zj9UDiAHqX3noTsy@archie.me>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sun, 12 May 2024 22:04:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARrG0u2pSzAkdbzrcf_i7ByhEnDwHH=4LtaE_H7OgL=0A@mail.gmail.com>
+Message-ID: <CAK7LNARrG0u2pSzAkdbzrcf_i7ByhEnDwHH=4LtaE_H7OgL=0A@mail.gmail.com>
+Subject: Re: Incorrect thinlto cache directory path in Makefile
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Kernel Build System <linux-kbuild@vger.kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Kees Cook <keescook@chromium.org>, Xu Zhen <xuzhen@fastmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:wDNzp1FdFaP8gPWjqAL6qQ4hYViTop2O8vxFQiURhUFUphGZ+9s
- HPLuU49yKlTKVdBFV4x2MT+drPg9BYCn7XTddd6imZEQhnZgSL+sLN2rEJTeAK+yhKw05H8
- zgociRAj2my2NMbTqHoaUlZSpFqes3W+OHFvUlcVzMiwWUUjeH6YtiFjgyeqwAgWC9dL9st
- BLtUecVkhAJDhKi3nyjqw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:L5PpRHjVWwU=;MmaKHzK0c2w6z2F2Xbl+MQcS+I+
- t8a6zhJ1uNNpmLKnQysMceeuJvuFZj1dHMMTGCkkD9Js7mqW8uJPTQZN4gGYQTVr3FCi30j3I
- b64NBN8LN4MWqMIwwCilGswYq8AAaEz7Ofaa/Nxq0ZO44pvEafATCHJZOLhwaRhAakDWgskPe
- fRv62VHsVJi+PMLl/2fkXLY3UJvxuHzojmHNOfzWQPyB91o5oL2Nq79896/XWlvHjrhVfBWCn
- b/ATnSBhZ7rk5UQUiI0fRS2NpOb39XvdmzWtW78GKbUaM7Fgt29akObIlNRx1vWrnaF0Jzk58
- R7rZkym18p1AkFXkn1nua3lj5cpFF882dWksMNvnDvU1bwqMwqLbchvp78RDmO8gs4V48ZOTC
- IdokiThSNZ/crKfogDl/AhoEHD3afBYJhkDZtvwtxZ0TlaOA+FcbWWwMqEshUYgpbpHUlcmrE
- tsxxlHBUftwj6ITx+HXvL8TALHAGDPZyJhBozN0mm63K/HCzsEGmI4xQFP6otx6SxveRcv711
- hmC7L0z89gmQ7SCFzVWVCfrswFjnrBlr/5wVdO6GhHrpNghU5SS5lVtwp6oxwnVIpvkTuj43u
- fTyn1+35IvHnOBkf81m1aBUR8rt3nSRBzpWjmQIHc4yoW0EPrir4Eb+mznq9H8CvBcQ4nWwip
- 1BUQAPE23BVavG4a/YciN9onBDI+5zO6FKFaW7YRFoVgPbxg5dJnuzCk4hCwSPIYY3M67ClLb
- FgrEXcej523oXrODx6QNAK9uTb1zja/oiAt5P0z2EUxhYKLIGzzFxr1RHFY+jQiMlHqPsL8eV
- hrE5bt/8Ju2SfbgE58zDvVTPBW3sFNNF3e2GKX+lPgWtQ=
 
-Hi Sven,
++CC: Nathan
 
-Am 12.05.24 um 14:12 schrieb Sven Peter via B4 Relay:
-> From: Hector Martin <marcan@marcan.st>
->
-> BCM4388 takes over 2 seconds to boot, so increase the timeout (and also
-> fix the units while we're here).
->
-> Signed-off-by: Hector Martin <marcan@marcan.st>
-> Reviewed-by: Sven Peter <sven@svenpeter.dev>
-> Signed-off-by: Sven Peter <sven@svenpeter.dev>
-> ---
->   drivers/bluetooth/hci_bcm4377.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/bluetooth/hci_bcm4377.c b/drivers/bluetooth/hci_bcm=
-4377.c
-> index 9a7243d5db71..5b818a0e33d6 100644
-> --- a/drivers/bluetooth/hci_bcm4377.c
-> +++ b/drivers/bluetooth/hci_bcm4377.c
-> @@ -32,7 +32,8 @@ enum bcm4377_chip {
->   #define BCM4378_DEVICE_ID 0x5f69
->   #define BCM4387_DEVICE_ID 0x5f71
->
-> -#define BCM4377_TIMEOUT 1000
-> +#define BCM4377_TIMEOUT msecs_to_jiffies(1000)
-this change affect all timeouts not just the boot timeout, so i would
-prefer to split this.
-> +#define BCM4377_BOOT_TIMEOUT msecs_to_jiffies(5000)
->
->   /*
->    * These devices only support DMA transactions inside a 32bit window
-> @@ -1857,7 +1858,7 @@ static int bcm4377_boot(struct bcm4377_data *bcm43=
-77)
->   	dev_dbg(&bcm4377->pdev->dev, "waiting for firmware to boot\n");
->
->   	ret =3D wait_for_completion_interruptible_timeout(&bcm4377->event,
-> -							BCM4377_TIMEOUT);
-> +							BCM4377_BOOT_TIMEOUT);
->   	if (ret =3D=3D 0) {
->   		ret =3D -ETIMEDOUT;
->   		goto out_dma_free;
->
 
+On Sat, May 11, 2024 at 8:18=E2=80=AFPM Bagas Sanjaya <bagasdotme@gmail.com=
+> wrote:
+>
+> Hi,
+>
+> Xu Zhen <xuzhen@fastmail.com> reported on Bugzilla (https://bugzilla.kern=
+el.org/show_bug.cgi?id=3D218825) thinlto build directory problem (especiall=
+y on
+> DKMS modules). He wrote:
+>
+> > In Makefile, the ld flag `--thinlto-cache-dir' is set to
+> > `$(extmod_prefix).thinlto-cache'. But at that time, the variable extmod=
+_prefix
+> > had not been assigned yet. Therefore, the thinlto cache dir is always c=
+reated
+> > in the current directory.
+> >
+> > Even worse, the cache dir cannot be deleted when executing `make clean'=
+ This
+> > is because its path was written as `$(KBUILD_EXTMOD)/.thinlto-cache' in=
+ the
+> > clean: target.
+> >
+> > Some users have been troubled by it: https://github.com/dell/dkms/issue=
+s/292
+> >
+> > This bug was introduced by commit dc5723b02e523b2c4a68667f7e28c65018f72=
+02f
+
+
+I agree this is a bug.
+
+
+
+
+line 945:
+  KBUILD_LDFLAGS  +=3D --thinlto-cache-dir=3D$(extmod_prefix).thinlto-cache
+
+
+line 1034:
+  KBUILD_LDFLAGS  +=3D $(call ld-option,--no-warn-rwx-segments)
+
+
+line 1095:
+  export extmod_prefix =3D $(if $(KBUILD_EXTMOD),$(KBUILD_EXTMOD)/)
+
+
+
+
+
+
+
+$(call ld-option ) at line 1034 adds --thinlto-cache-dir=3D.thinlto-cache
+because --thinlto-cache-dir=3D$(extmod_prefix).thinlto-cache was added
+at line 945, but $(extmod_prefix) is empty until it is defined
+at line 1095.
+
+
+
+However, the offending line was already removed for another issue.
+
+See the following in linux-next:
+
+
+Author: Nathan Chancellor <nathan@kernel.org>
+Date:   Wed May 1 15:55:25 2024 -0700
+
+    kbuild: Remove support for Clang's ThinLTO caching
+
+
+
+
+If --thinlto-cache-dir comes back,
+I hope Nathan will take care of this issue.
+
+
+
+
+
+
+
+> Thanks.
+>
+> --
+> An old man doll... just what I always wanted! - Clara
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
