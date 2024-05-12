@@ -1,225 +1,125 @@
-Return-Path: <linux-kernel+bounces-177031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80B668C38A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43E68C38F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A9C1F21804
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:41:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF4D1C20D62
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D7C548E7;
-	Sun, 12 May 2024 21:40:58 +0000 (UTC)
-Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD3C54FB5;
+	Sun, 12 May 2024 22:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k30hwl3R"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78F76FDC;
-	Sun, 12 May 2024 21:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3B542A8B;
+	Sun, 12 May 2024 22:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715550057; cv=none; b=u4rTD/uHQQWYh3mxwdgL7jBqtocAzhrkul6xhbZNm9LvKsRj+Xn8ZAbXjVgqxSNuAS+8aV2oEkf/4CEAXBdzOUjeSqssbcuNQW8PNLfqFy7nrw6SOpel4LeCnldpewNZYJoxx7BPTNJmh8c4XvMllGI0ao7epW+Pj1BYC9yKIFU=
+	t=1715551721; cv=none; b=GASLGExKnVYpxOZjsOjN2UseDXQXzS9GdIS5EK4h8TEM1Id1xqnf7h8yOcp9oypTsrh3xwgVubg4oKUKLt+8cGGVWrKA2c4iJQXnnfgUGd51Z5AXUxmRig7BjOAxYDZlErgdsNmuM0ZLPvCtjznD1uHBXjeP+Hf+K3z27pmPVo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715550057; c=relaxed/simple;
-	bh=EeARFm8bOP6d++/dKVBQqGylNANAc9Nh3viD5ijSmI8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o9IV2cE793R2BOSv4tWeCB4flEf/bjlz/O8WKOTX0UGIP83sKeuvAQl+M5qFZNOTtYx6K12YroV96E9oUM3wLgthaSp63M4i44uH0nBsO+GQ8mg9em6UabXOv1ei1KWdSRAVKw8ILFHNna+K3xSf6dfYP510KQYqA+0cooLvKFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; arc=none smtp.client-ip=178.254.4.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
-Received: from [2.211.228.80] (helo=marius.fritz.box)
-	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <mail@mariuszachmann.de>)
-	id 1s6Gw4-0053Wk-Pq;
-	Sun, 12 May 2024 23:40:48 +0200
-From: Marius Zachmann <mail@mariuszachmann.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Marius Zachmann <mail@mariuszachmann.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Add firmware and bootloader information
-Date: Sun, 12 May 2024 23:40:34 +0200
-Message-ID: <20240512214035.43161-1-mail@mariuszachmann.de>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715551721; c=relaxed/simple;
+	bh=saSiuNCox8WE/j7MV0S3IglJSFOms36rEidWeYmFR6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=iXmyZaNx8DNCXUEZv0DNv8d40/9aaaqACxlU71vZ9ScZHs9v7ZyhorO3p8IDKRfhYQc8aKD35Hjwn5pQLJhQMpeVPclwyu3SFzrFIG6SYRSLuH2VmMvcDE8+OEb3jR+guBbaR39ej3J7xArE54o/7RRxQkAr27wlzkr63TPgIfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k30hwl3R; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=yFDzHR2BS8U20l3vvwYMeNLYCXMXMPHJ0iTX2uhbBPc=; b=k30hwl3R35fB6PdAne5xNyCYvD
+	LKbNIihBVvAvkrMvCX6YcV1hFypEvOmwNXmtaN7Fdo5S5bo92ysfDcJEerHllDR5uId4nsmomJ9eW
+	865no5ALTtnmSw851AQMoQvM6e5BQAjRK19Ptmz6/vYheLXI+9Bzo/mUMPdmX5xiMEb7LU/SMBtAD
+	XYhnlX+HbBNuYzaKXXRgrrQ3Ew5HIP0P8Q6q+K81vrm6ifviJcmv1RLhC0L6QpfgAKc1iP2wDgJ4H
+	fhRvwblJSuJ7a/34+yyIpf0ytHAbF0MHw2JmZKDcw4CsGaHaRobzqYu6a4VA3zAMqhRd7mAi5PFj7
+	gxebKkug==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s6HMs-0000000Av8y-2DOl;
+	Sun, 12 May 2024 22:08:30 +0000
+Message-ID: <fe41f9a7-5726-49d5-9bc6-70102d9680a1@infradead.org>
+Date: Sun, 12 May 2024 15:08:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Con-Id: 241080
-X-Con-U: 0-mail
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/6] perf Document: Sysfs event names must be lower or
+ upper case
+To: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jing Zhang <renyu.zj@linux.alibaba.com>,
+ James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+References: <20240502213507.2339733-1-irogers@google.com>
+ <20240502213507.2339733-3-irogers@google.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240502213507.2339733-3-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This patch adds:
-- Reading the firmware and bootloader version of the device
-- Debugfs entries: firmware_version and bootloader_version
-- Updated documentation
+Hi,
 
-Signed-off-by: Marius Zachmann <mail@mariuszachmann.de>
----
- Documentation/hwmon/corsair-cpro.rst |  8 +++
- drivers/hwmon/corsair-cpro.c         | 80 ++++++++++++++++++++++++++++
- 2 files changed, 88 insertions(+)
+On 5/2/24 2:35 PM, Ian Rogers wrote:
+> To avoid directory scans in perf it is going to be assumed that sysfs
+> event names are either lower or upper case.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  .../ABI/testing/sysfs-bus-event_source-devices-events       | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
+> index 77de58d03822..e7efeab2ee83 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
+> +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
+> @@ -37,6 +37,12 @@ Description:	Per-pmu performance monitoring events specific to the running syste
+>  		performance monitoring event supported by the <pmu>. The name
+>  		of the file is the name of the event.
+>  
+> +		As performance monitoring event names are case
+> +		insensitive in the perf tool, the perf tool only looks
+> +		for lower or upper case event names in sysfs to avoid
+> +		scanning the directory. It is therefore required the
+> +		name of the event here is either lower or upper case.
+> +
 
-diff --git a/Documentation/hwmon/corsair-cpro.rst b/Documentation/hwmon/corsair-cpro.rst
-index 751f95476b57..11135d7ec6b9 100644
---- a/Documentation/hwmon/corsair-cpro.rst
-+++ b/Documentation/hwmon/corsair-cpro.rst
-@@ -39,3 +39,11 @@ fan[1-6]_target		Sets fan speed target rpm.
- pwm[1-6]		Sets the fan speed. Values from 0-255. Can only be read if pwm
- 			was set directly.
- ======================= =====================================================================
-+
-+Debugfs entries
-+---------------
-+
-+======================= ===========================
-+firmware_version	Version of the firmware
-+bootloader_version	Version of the bootloader
-+======================= ===========================
-diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-index 3e63666a61bd..4be8a98250a9 100644
---- a/drivers/hwmon/corsair-cpro.c
-+++ b/drivers/hwmon/corsair-cpro.c
-@@ -10,11 +10,13 @@
- 
- #include <linux/bitops.h>
- #include <linux/completion.h>
-+#include <linux/debugfs.h>
- #include <linux/hid.h>
- #include <linux/hwmon.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -28,6 +30,8 @@
- #define LABEL_LENGTH		11
- #define REQ_TIMEOUT		300
- 
-+#define CTL_GET_FW_VER		0x02	/* returns the firmware version in bytes 1-3 */
-+#define CTL_GET_BL_VER		0x06	/* returns the bootloader version in bytes 1-2 */
- #define CTL_GET_TMP_CNCT	0x10	/*
- 					 * returns in bytes 1-4 for each temp sensor:
- 					 * 0 not connected
-@@ -78,6 +82,7 @@
- struct ccp_device {
- 	struct hid_device *hdev;
- 	struct device *hwmon_dev;
-+	struct dentry *debugfs;
- 	/* For reinitializing the completion below */
- 	spinlock_t wait_input_report_lock;
- 	struct completion wait_input_report;
-@@ -88,6 +93,8 @@ struct ccp_device {
- 	DECLARE_BITMAP(temp_cnct, NUM_TEMP_SENSORS);
- 	DECLARE_BITMAP(fan_cnct, NUM_FANS);
- 	char fan_label[6][LABEL_LENGTH];
-+	u8 firmware_ver[3];
-+	u8 bootloader_ver[2];
- };
- 
- /* converts response error in buffer to errno */
-@@ -496,6 +503,71 @@ static int get_temp_cnct(struct ccp_device *ccp)
- 	return 0;
- }
- 
-+/* read firmware and bootloader version */
-+static int get_fw_version(struct ccp_device *ccp)
-+{
-+	int ret;
-+
-+	ret = send_usb_cmd(ccp, CTL_GET_FW_VER, 0, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	ccp->firmware_ver[0] = ccp->buffer[1];
-+	ccp->firmware_ver[1] = ccp->buffer[2];
-+	ccp->firmware_ver[2] = ccp->buffer[3];
-+
-+	ret = send_usb_cmd(ccp, CTL_GET_BL_VER, 0, 0, 0);
-+	if (ret)
-+		return ret;
-+
-+	ccp->bootloader_ver[0] = ccp->buffer[1];
-+	ccp->bootloader_ver[1] = ccp->buffer[2];
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_DEBUG_FS
-+
-+static int firmware_show(struct seq_file *seqf, void *unused)
-+{
-+	struct ccp_device *ccp = seqf->private;
-+
-+	seq_printf(seqf, "%d.%d.%d\n",
-+		   ccp->firmware_ver[0],
-+		   ccp->firmware_ver[1],
-+		   ccp->firmware_ver[2]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(firmware);
-+
-+static int bootloader_show(struct seq_file *seqf, void *unused)
-+{
-+	struct ccp_device *ccp = seqf->private;
-+
-+	seq_printf(seqf, "%d.%d\n",
-+		   ccp->bootloader_ver[0],
-+		   ccp->bootloader_ver[1]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(bootloader);
-+
-+static void ccp_debugfs_init(struct ccp_device *ccp)
-+{
-+	ccp->debugfs = debugfs_create_dir("corsaircpro", NULL);
-+	debugfs_create_file("firmware_version", 0444, ccp->debugfs, ccp, &firmware_fops);
-+	debugfs_create_file("bootloader_version", 0444, ccp->debugfs, ccp, &bootloader_fops);
-+}
-+
-+#else
-+
-+static void ccp_debugfs_init(struct ccp_device *ccp)
-+{
-+}
-+
-+#endif
-+
- static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- {
- 	struct ccp_device *ccp;
-@@ -542,6 +614,13 @@ static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	ret = get_fan_cnct(ccp);
- 	if (ret)
- 		goto out_hw_close;
-+
-+	ret = get_fw_version(ccp);
-+	if (ret)
-+		goto out_hw_close;
-+
-+	ccp_debugfs_init(ccp);
-+
- 	ccp->hwmon_dev = hwmon_device_register_with_info(&hdev->dev, "corsaircpro",
- 							 ccp, &ccp_chip_info, NULL);
- 	if (IS_ERR(ccp->hwmon_dev)) {
-@@ -562,6 +641,7 @@ static void ccp_remove(struct hid_device *hdev)
- {
- 	struct ccp_device *ccp = hid_get_drvdata(hdev);
- 
-+	debugfs_remove_recursive(ccp->debugfs);
- 	hwmon_device_unregister(ccp->hwmon_dev);
- 	hid_hw_close(hdev);
- 	hid_hw_stop(hdev);
+This is ambiguous to me. Is it clear to everyone else?
+
+"for lower or upper case event names":
+
+Is that a logical OR or an exclusive OR?
+"AbC" contains lower case or upper case characters. :)
+
+I think the code [static bool permitted_event_name()]
+implements an exclusive OR.
+The code also allows event names to contain numbers AFAICT.
+The documentation doesn't mention this.
+
+HTH.
+
+>  		File contents:
+>  
+>  			<term>[=<value>][,<term>[=<value>]]...
+
 -- 
-2.45.0
-
+#Randy
+https://people.kernel.org/tglx/notes-about-netiquette
+https://subspace.kernel.org/etiquette.html
 
