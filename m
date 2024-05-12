@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-176812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381398C354E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8A08C3553
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D65281B67
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:22:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59931281BE4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E627168B8;
-	Sun, 12 May 2024 07:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883E415EA2;
+	Sun, 12 May 2024 07:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="sWF2dRQo"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ltzOaz+m"
+Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150F914265
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 07:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28240B64B;
+	Sun, 12 May 2024 07:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715498540; cv=none; b=UpFSAQqHBI65wJuTY/mw1JOH3yOjAFhb+moYtyE7o4F4Ul9Ei2cgIGpvjhIAUAMJXrVVItuHFM9TbX5dYClCR6Zr7tRSmrsoyH5QM4u9wN73wmCPOr8hY++f9jjmKbXdz0N3aEwd3uv7lB+NHFD02V/81SEYLPpkuqYW9A+IXfE=
+	t=1715498748; cv=none; b=XYEgfe2gvUjqG6DQzNnbo8gjOzqAPruAQIkcNsReoSsU08YkNO5WL/eCdFJvDB6OOPNYFugu5OaNLGW3efaJMwz2uJi4tkLPgH4ZbiTlINBopkNnIbguxis31Ji6cmmuo/Yleu9olaNznoaKDaHahSn4I+FQEBYgvdjyKxuq95c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715498540; c=relaxed/simple;
-	bh=9ioxjcM/LgA4IkV8XhTL6DxF8jZt95CIPT9t08Xev7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RTo6ncjyNcPLlAm6YxT4/gsITDzca0Uc3czB9m0/Yoi33qW1lWf/oIRAcxuu6DcSDVLe9OxE0NgcwWUkLs67X3laEkZdo0gfgXHoVGgoA6sqpLB1mvrDqE3gfrLY582S6jedX2k6KZXmcPmQu1745B7nrcX28X8WRlsKiParyxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=sWF2dRQo; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1715498534;
-	bh=9ioxjcM/LgA4IkV8XhTL6DxF8jZt95CIPT9t08Xev7k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sWF2dRQoLhbcsauQ5Dt8C5bj0ol9Xy0i7+eGP0/uVDcI9dDDLQIYD24wgrUgxHEwJ
-	 KVh9Mbg/XEUfdk0INhTwPIsEhei46xkJZ2JXPIg5QzhJxkBZzMTpSE0lf3cSCxGwK8
-	 gqCS7Wf1Pc93cZ6XChOZxIuwlkVp2hb1sVgShlEU=
-Date: Sun, 12 May 2024 09:22:13 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: linux-kernel@vger.kernel.org
-Cc: Joel Granados <j.granados@samsung.com>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH] ucounts: constify usage of
- ctl_table_header::ctl_table_arg
-Message-ID: <dbd64d52-977f-4229-9f36-82a45d65fbe7@t-8ch.de>
-References: <20240511-sysctl-const-table-arg-ucount-v1-1-a00ad8f6f233@weissschuh.net>
+	s=arc-20240116; t=1715498748; c=relaxed/simple;
+	bh=PPOMNBV3Glw3iN++/hQQpbxp0F4wKqd1XkP6JbbUKcY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LcBsDFjhGODUZdbw6etwUQtZIlQK/cPxLd+bMtZWwveUMlXpakm8pkoQIebqPkacfx8BCVALpoZgzeT0CArEebPwCE/dL9/Fr/Cg8whUKcT9rEqInNqqpmX1ATFM0wq8reqdVBfQUDNE60yZExQBwDO18cmwpb+cosSjAdPpRPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ltzOaz+m; arc=none smtp.client-ip=193.252.22.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([86.243.17.157])
+	by smtp.orange.fr with ESMTPA
+	id 63aWscRyh5iYZ63aWsqXbh; Sun, 12 May 2024 09:25:44 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1715498744;
+	bh=RtPvSUrEN3BQtMhBvVSB3q+A6lvRVAHJyIYgMiIAyuA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=ltzOaz+mHuccNQ8uLvFrW8QIw/2+AI910JD6hnDR0t7mSWSePkhzjJhHCf04FjjDc
+	 GB1RxrMy1mk+wtP5VzJ9FR9yLKC5+GiaNtPwm1w52FE09HWTIbgfF7ofgHVIbKS1xa
+	 8gZa8zWHMyAo4QV7QfjkYwLYIDAtf/g64Blpoz/uVg1+MD9rzSlJgwZoVUv3v0cUmG
+	 opuqrjsWyx1j8lCmRn5BF6ygtl8Vgn6VP8Sqn9Ok7wjDN7jrZI/q1jZiaKTftvNe5t
+	 DvlVTDSgycQrNobLKdSOCuzsaOV7vvGFShjShTj3/tKsQxBmQ5j1w3yVNjQ8kjLKPY
+	 bXSso4icrIOtg==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 12 May 2024 09:25:44 +0200
+X-ME-IP: 86.243.17.157
+Message-ID: <5dd2eceb-4108-4071-b7b5-1fcac0a9d2ef@wanadoo.fr>
+Date: Sun, 12 May 2024 09:25:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] lib80211: Handle const struct lib80211_crypto_ops in
+ lib80211
+From: Marion & Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Simon Horman <horms@kernel.org>
+Cc: gregkh@linuxfoundation.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, johannes@sipsolutions.net,
+ philipp.g.hortmann@gmail.com, tdavies@darkphysics.net,
+ garyrookard@fastmail.org, straube.linux@gmail.com,
+ linux-staging@lists.linux.dev, netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org
+References: <cover.1715443223.git.christophe.jaillet@wanadoo.fr>
+ <d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr>
+ <20240511203104.GW2347895@kernel.org>
+ <b6042eae-88cd-4f95-88d8-d1812c2930de@wanadoo.fr>
+Content-Language: en-MW
+In-Reply-To: <b6042eae-88cd-4f95-88d8-d1812c2930de@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240511-sysctl-const-table-arg-ucount-v1-1-a00ad8f6f233@weissschuh.net>
 
-On 2024-05-11 21:28:10+0000, Thomas Weißschuh wrote:
-> The sysctl core is preparing to only expose instances of
-> struct ctl_table as "const".
-> This will also affect the member
-> ctl_table_header::ctl_table_arg.
-> 
-> Prepare for that change to "struct ctl_table_header",
-> and already constify the usage of ctl_table_arg.
 
-Please disregard this patch.
-Apparently Dave already picked it up as part of [0] through the
-net-next tree, which makes sense the ctl_table_arg changes are in net/
-for the largest part.
 
-See commit bfa858f220ab ("sysctl: treewide: constify ctl_table_header::ctl_table_arg").
+Le 11/05/2024 à 23:47, Christophe JAILLET a écrit :
+> Le 11/05/2024 à 22:31, Simon Horman a écrit :
+>> On Sat, May 11, 2024 at 06:32:38PM +0200, Christophe JAILLET wrote:
+>>> lib80211_register_crypto_ops() and lib80211_unregister_crypto_ops() 
+>>> don't
+>>> modify their "struct lib80211_crypto_ops *ops" argument. So, it can be
+>>> declared as const.
+>>>
+>>> Doing so, some adjustments are needed to also constify some date in
+>>> "struct lib80211_crypt_data", "struct lib80211_crypto_alg" and the
+>>> return value of lib80211_get_crypto_ops().
+>>>
+>>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>>> ---
+>>> Compile tested only.
+>>
+>> Hi Christophe,
+>>
+>> Unfortunately allmodconfig W=1 build on x86_64 with Clang says:
+>>
+>> .../libipw_wx.c:587:6: error: assigning to 'struct lib80211_crypto_ops 
+>> *' from 'const struct lib80211_crypto_ops *' discards qualifiers 
+>> [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>>   587 |         ops = lib80211_get_crypto_ops(alg);
+>>       |             ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> .../libipw_wx.c:590:7: error: assigning to 'struct lib80211_crypto_ops 
+>> *' from 'const struct lib80211_crypto_ops *' discards qualifiers 
+>> [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+>>   590 |                 ops = lib80211_get_crypto_ops(alg);
+>>       |                     ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+> 
+> Hi,
+> 
+> I'll dig more tomorrow, but I don't see this error (with gcc), even with 
+> W=1.
+> 
+> The following part of the patch is here to avoid the exact compilation 
+> error that you see.
+> 
+> Strange.
+> 
+> CJ
+> 
 
-[0] https://lore.kernel.org/lkml/20240418-sysctl-const-table-arg-v2-1-4012abc31311@weissschuh.net/
-> 
-> No functional change.
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
-> Motivation
-> ==========
-> 
-> Moving structures containing function pointers into unmodifiable .rodata
-> prevents attackers or bugs from corrupting and diverting those pointers.
-> 
-> Also the "struct ctl_table" exposed by the sysctl core were never meant
-> to be mutated by users.
-> 
-> Process
-> =======
-> 
-> * Drop ctl_table modifications from the sysctl core ([0], in -next)
-> * Constify arguments to ctl_table_root::{set_ownership,permissions}
->   ([1], in -next)
-> * Migrate users of "ctl_table_header::ctl_table_arg" to "const".
->   (in progress, this patch)
-> * Afterwards convert "ctl_table_header::ctl_table_arg" itself to const.
->   (to be done)
-> * Prepare helpers used to implement proc_handlers throughout the tree to
->   use "const struct ctl_table *". ([2], in progress)
-> * Afterwards switch over all proc_handlers callbacks to use
->   "const struct ctl_table *" in one commit. ([2], in progress)
->   Only custom handlers will be affected, the big commit avoids a
->   disruptive and messy transition phase.
-> * Switch over the internals of the sysctl core to "const struct ctl_table *" (to be done)
-> * Switch include/linux/sysctl.h to "const struct ctl_table *" (to be done)
-> * Transition instances of "struct ctl_table" through the tree to const (to be done)
-> 
-> A work-in-progress view containging all the outlined changes can be found at
-> https://git.sr.ht/~t-8ch/linux sysctl-constfy
-> 
-> [0] https://lore.kernel.org/lkml/20240322-sysctl-empty-dir-v2-0-e559cf8ec7c0@weissschuh.net/
-> [1] https://lore.kernel.org/lkml/20240315-sysctl-const-ownership-v3-0-b86680eae02e@weissschuh.net/
-> [2] https://lore.kernel.org/lkml/20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net/
-> 
-> Cc: Joel Granados <j.granados@samsung.com>
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> ---
->  kernel/ucount.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/ucount.c b/kernel/ucount.c
-> index 4aa6166cb856..d9e283600f5c 100644
-> --- a/kernel/ucount.c
-> +++ b/kernel/ucount.c
-> @@ -119,7 +119,7 @@ bool setup_userns_sysctls(struct user_namespace *ns)
->  void retire_userns_sysctls(struct user_namespace *ns)
->  {
->  #ifdef CONFIG_SYSCTL
-> -	struct ctl_table *tbl;
-> +	const struct ctl_table *tbl;
->  
->  	tbl = ns->sysctls->ctl_table_arg;
->  	unregister_sysctl_table(ns->sysctls);
-> 
-> ---
-> base-commit: cf87f46fd34d6c19283d9625a7822f20d90b64a4
-> change-id: 20240511-sysctl-const-table-arg-ucount-75027ec3fbf4
-> 
-> Best regards,
-> -- 
-> Thomas Weißschuh <linux@weissschuh.net>
-> 
+Ok, got it.
+Thanks for the pointer.
+
+I don't know how I missed this one. :(
+
+I'll send a v2.
+
+CJ
 
