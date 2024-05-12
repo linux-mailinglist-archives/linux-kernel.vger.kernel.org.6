@@ -1,280 +1,317 @@
-Return-Path: <linux-kernel+bounces-176976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A51C8C3809
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 20:43:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C92A8C380B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 20:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD03E1C2137C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:43:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4517282405
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D4924DA0C;
-	Sun, 12 May 2024 18:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FAE4EB31;
+	Sun, 12 May 2024 18:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMb9F+pY"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="MqsURCuu"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CACBF134AC;
-	Sun, 12 May 2024 18:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA5DF510;
+	Sun, 12 May 2024 18:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715539376; cv=none; b=FKZgX1riJH7hGoorIxH0h8cr5yJuPJdXYRZ+clCmunwusnvvgtQ+uVqkOEFJB3HEUULRJYE+8ZgqANwvuof6w63OSSDn78f9m6DfT1ee52Cgg2lN6jSn4U9XH8+xq+6NErNuPntmvk6Br9LWbnW4xksAxqvP9NKl0AF3IfVBiKQ=
+	t=1715539716; cv=none; b=r91oyiQK2sN6TSuC4pUnTqvvDCekWa2S0OKfD/blJ3ZF2/DNrE1Y+E8rBWvA8mwgU12uGCWPESYpMTHGOm3MVPnkLFucmbIAZRomSfcSLIjocym/F5jTapS/5AtHPlbQXg6xaS3LfTpt5vKKTfZz8vdkIgETjQLobnY2bGrhW3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715539376; c=relaxed/simple;
-	bh=2Aowy+0Dh1NCr451QxQds3RyzTAecA3csen5IePe5t8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=daaz9mVz/cQrBYyeIt7bl6ek0EXrd0wyXxC10rMnrYVDtceWa6QYXhYIeMuy9ueJgRbCeeady2nbZg75Epqo9weg7NQ/IOTe75HMEAww3/vGexPm7mW8kx8heSW8uJWAb60kXoTKeP2V9e7QCkB4TOu41w8QRObCTAK1uHVkVRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMb9F+pY; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41ffad242c8so14455165e9.3;
-        Sun, 12 May 2024 11:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715539373; x=1716144173; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8iSdY4IAt1rjl81SkB6DZ1/llfE2KLF2W//U478tz9U=;
-        b=gMb9F+pY1lp7+n54DMEn6Ke1QHdFwHAeQLA74gjtolDdz3GrBbIzHMBu7749ooc1Dt
-         vda+z+D9To+rrsDYIvyFY4NEPe7CRY24dNJafGta9qby6iY7M9NcdTHOXOP80563+Jke
-         6e7Mg0AJjOAVYfHfEH+TSU/4A/0dxQCK2UP3zb8klyLfzJwy4SKVHMk64xIJ0L7dL1Qb
-         q3iFCQoP4CTt+YkNNX1IiBayPLjBJKP2EsUXUXCRQFOvWvQG0jZ5lGtcVcXg5Td12lfe
-         VG/1zDMeQTYDeeRa5L0iGiAbxFIASgQtkUOloKOGDv/bIDlusdk/qORd97Ey0Q0dgF2Q
-         amxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715539373; x=1716144173;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8iSdY4IAt1rjl81SkB6DZ1/llfE2KLF2W//U478tz9U=;
-        b=WKm4nvZtAdenfsQ/6NusnCUXZjpCO0DLYvoMLzPQttO/Eq5dMnTHvp6AMtFU4fYuqI
-         ZSa1Ux0/g8I+zE6LXbJChU/YnN9ZDoYi9DEeCAG1S5SaZjtk/XbU+ZcXteABWtFFMvoD
-         mRHxpaIbeSwF8iU41Cc1Jt0yQT0gxKZ7NI9bb1+pe0VCsRk0TzhQrzEw0bDhqKwVm7Ej
-         021zgZFqceNX7TzdclWzvvWvtAeI0e3NM85j+7NYJ1g0z6Rq6rOORMoN/F8ChdtVPmgF
-         eppLZQhSL8xG1a6DejUOLxifftLXPTjJB0ixcmRm6Mt16joLhc3FZKniFZbwR60WL8pB
-         wdEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlRT6NPpTRYOTtxjdLHah2W/yByOAkkbvQSoqHB6Ijjo/WndkL75pLP65zz3YiosZuWeRjd7pPd4SytG+I0yiEQHR8AG8whIw8uqUfPDWsvX8bN7GcO7i8bs1BSBjUJAACO/FZZdX5
-X-Gm-Message-State: AOJu0YxfFDvykOqv632Gtz93s3Q2GBvhMJX6pYq0gBhEKozeVoQwUUx0
-	RaPcki6i1OmlWCJuYteMqWTywY97fZjB2ovtcbW/zTRWZTNJhxJynNYRQW52
-X-Google-Smtp-Source: AGHT+IHfuYkd+AVcicKGuZEBbgZMTPjFoHnmP8R4CMugArGJbVF4iOt1TQptzX4QoTgbmKArCjnX0g==
-X-Received: by 2002:a05:600c:444c:b0:41b:b39c:603 with SMTP id 5b1f17b1804b1-41fea53833cmr83349525e9.0.1715539372810;
-        Sun, 12 May 2024 11:42:52 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:ce14:864c:436e:5c6d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbf20sm9328904f8f.93.2024.05.12.11.42.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 11:42:52 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Sun, 12 May 2024 20:42:50 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	mazziesaccount@gmail.com, ak@it-klinger.de,
-	petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
-	linus.walleij@linaro.org, semen.protsenko@linaro.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v6 5/9] iio: pressure: bmp280: Refactorize reading
- functions
-Message-ID: <20240512184250.GA24095@vamoiridPC>
-References: <20240508165207.145554-1-vassilisamir@gmail.com>
- <20240508165207.145554-6-vassilisamir@gmail.com>
- <20240512132412.35d8fe36@jic23-huawei>
+	s=arc-20240116; t=1715539716; c=relaxed/simple;
+	bh=lkb7RsDU4hipYYXRUKzjxf8mSYCs3vJ54tdgYhn8+KA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gVrG57nubE//QIiw75bTEHQKzsVX1Hhta3LYFU/RYFD6MSlHWPG3xzxkvFvuJnyhQ9QeMkwSkYIx+0jL5nUj94oooso9qIjlH225ZQxqZgOxk8imdrSA05ElegfOeOGzSy2CjSumXAxMBHjVBcd30rYA09dMsQGxkQ1cCJmlLKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=MqsURCuu; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1715539680; x=1716144480; i=w_armin@gmx.de;
+	bh=lkb7RsDU4hipYYXRUKzjxf8mSYCs3vJ54tdgYhn8+KA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MqsURCuuOIA5xncfoJEDH/MvhYqfoVWuwrsY/QY88ALW74pTOnqR/1i29jFf+SJi
+	 Io3ReU3mjwPYV4Z4JMLwB4ormqHznoqqUtunMxpY9lUlBvig83o7JWGmfHz4wqLj3
+	 YZbdYjRot7QEhFVULgrdypocn4djcriwoTcL+NfczUnUwmEUC1oNGEw3f7vyD6lvb
+	 Uy9WdOj7dFI36KSxtuuhoi0ilppaX37bO8EJHYwgvtdDu/Im5WG8Y5kB7Y8eFPBmW
+	 XE2ecc69MyqHTe8FD0Fv7hziP+QUl0npevljOt4bodZ0AYNtIWeUP7sHJQkpY6nJz
+	 3oSFUFzhHjbO1OcKwg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1N7R1T-1seISD1cE9-014RsA; Sun, 12
+ May 2024 20:48:00 +0200
+Message-ID: <e583ccb0-b0be-4fb6-8e70-e4cd6921d77d@gmx.de>
+Date: Sun, 12 May 2024 20:47:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240512132412.35d8fe36@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] platform/x86: dell-laptop: Implement platform_profile
+To: "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Shen, Yijun" <Yijun.Shen@dell.com>, Lyndon Sanche <lsanche@lyndeno.ca>
+Cc: "pali@kernel.org" <pali@kernel.org>,
+ "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
+ "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
+ "lkp@intel.com" <lkp@intel.com>, Hans de Goede <hdegoede@redhat.com>,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Jonathan Corbet <corbet@lwn.net>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dell Client Kernel <Dell.Client.Kernel@dell.com>
+References: <20240425172758.67831-1-lsanche@lyndeno.ca>
+ <20240501215829.4991-2-lsanche@lyndeno.ca>
+ <BY5PR19MB392256C65661E76FC292C0889AE52@BY5PR19MB3922.namprd19.prod.outlook.com>
+ <63894ef1-c482-4646-8351-4d6cfc6c528f@amd.com>
+ <BY5PR19MB392299916A85FF06387DC9C19AE02@BY5PR19MB3922.namprd19.prod.outlook.com>
+ <a1306ffa-c0ea-4ce6-8692-76bf37850e8a@amd.com>
+ <BY5PR19MB3922A117E489A55C3C7FAC789AE02@BY5PR19MB3922.namprd19.prod.outlook.com>
+ <4d8de625-9018-4926-9519-37f5a90a96e5@gmx.de>
+ <d38043cd-7fc2-4255-a795-23e64ee4a8c2@amd.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <d38043cd-7fc2-4255-a795-23e64ee4a8c2@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:CkL1BEDOMO6DojLjzd7txmE6jyfcZ0r8RvJ+3Wm2YBQ/uKfVDII
+ B04nC/c9rLdFj5U4OSCjxsTkN8vd7So+BaHYAeY7g9ahUst2/+ClPXhhGEn0PlOArGGUjag
+ MP5S11nMtyRc2QZVaj6S7RMvgPJ1tI/6ZYSOl7Jn+0VQ1PrhToS9aGiD469Ac+pegB/bv9o
+ rLJYysBHqnKpBGSvjA7Eg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:32doWJtV08w=;nNkHNMhFZmu2M8TJPJsHjOQorcZ
+ Yihj2CBzfPWkoLvrrmZ6r8bp/3koFk5Et5e//pqh86S+L95TiP2gyt9vS9NtxJrEUuTAJB0iA
+ yK4ZTi47zxVWQ1rxyw8uEqXh9feCw6B+Gy23RY9gGjgWZJTWp+YfcCny+1IPEGhqAJUpDXxP2
+ FPYrkDbhe00p70sqdJDATYeFx5dIVPnuqE73z0NvQcu5gbJuth7Si7W0HnbwQ1h37qrnIN+Ly
+ ZPrDgVmNxxN5k4UOjZS0e1jBugy3GpT+SN3tYdIDeYrIMobAOe5aiEVv4C2lYzyuUR57yxHlA
+ OVkhpKxglWMV+MyYdkLavSWXK1VQOZ+nLJuhhk7hlN+5/TqjH9vY9Kuui1+gzJw1BoVjschNF
+ mfQi6YZkKL/327jM52+wIzHOs3TTvT63JxuiEL0GiIm5nrJwRGdx4P7WtBZk87U8v1NpNyYJf
+ zN1LZyb1bDYObyU80v35cl0UvUcQc5J+aGaaW+oPAuyp8YZqa63mOAuka0r3ah9ipHqbMEvY2
+ ldfYYEYF5D8orhaGhq71amgxmZzL03/KLi+CfUe6bekSuXEpl4JskLish7/bCWF3wVRbgRwvc
+ DFU7qKIE4rusqQqWwOq4KqK1Nxev7Hw23fQRnGqQ9jbhr7Wj+449Dv2bzF/y5ZD0NkwTndTYR
+ S7t6Fy3l9I6UyinGfmW+ixSoXnV7RHXptuvuqyeYbKXLRPXmcOLDFOYIWcoI0Eb9qYvlmNn4E
+ di2m8TGij1X2xDCPN1O+rzSdPKHGs0X+GXN3I061rbrEdL5QQWT32LHRoQAm7Q4Lxry5/78FP
+ rzpQfCQq/Gr9LGynKc9mk52x/ksBAR8ejGoRS5rpVCLCU=
 
-On Sun, May 12, 2024 at 01:24:12PM +0100, Jonathan Cameron wrote:
-> On Wed,  8 May 2024 18:52:03 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > For BMP18x, BMP28x, BME280, BMP38x the reading of the pressure
-> > value requires an update of the t_fine variable which happens
-> > through reading the temperature value.
-> > 
-> > So all the bmpxxx_read_press() functions of the above sensors
-> > are internally calling the equivalent bmpxxx_read_temp() function
-> > in order to update the t_fine value. By just looking at the code
-> > this functionality is a bit hidden and is not easy to understand
-> > why those channels are not independent.
-> > 
-> > This commit tries to clear these things a bit by splitting the
-> > bmpxxx_{read/compensate}_{temp/press/humid}() to the following:
-> > 
-> > i. bmpxxx_read_{temp/press/humid}_adc(): read the raw value from
-> > the sensor.
-> > 
-> > ii. bmpxx_calc_t_fine(): calculate the t_fine variable.
-> > 
-> > iii. bmpxxx_get_t_fine(): get the t_fine variable.
-> > 
-> > iv. bmpxxx_compensate_{temp/press/humid}(): compensate the adc
-> > values and return the calculated value.
-> > 
-> > v. bmpxxx_read_{temp/press/humid}(): combine calls of the
-> > aforementioned functions to return the requested value.
-> > 
-> > Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> A few minor things inline.  Given I've picked up the 1st 4 patches,
-> please base your v7 on top of those.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> >  drivers/iio/pressure/bmp280-core.c | 361 ++++++++++++++++++-----------
-> >  drivers/iio/pressure/bmp280.h      |   6 -
-> >  2 files changed, 232 insertions(+), 135 deletions(-)
-> > 
-> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > index dd5c526dacbd..a864f8db8e24 100644
-> > --- a/drivers/iio/pressure/bmp280-core.c
-> > +++ b/drivers/iio/pressure/bmp280-core.c
-> > @@ -288,13 +288,35 @@ static int bme280_read_calib(struct bmp280_data *data)
-> >   *
-> >   * Taken from BME280 datasheet, Section 4.2.3, "Compensation formula".
-> >   */
-> 
-> Seems this comment should probably follow the maths which has moved.
-> 
-> > +static int bme280_read_humid_adc(struct bmp280_data *data, u16 *adc_humidity)
-> > +{
-> > +	u16 value_humidity;
-> > +	int ret;
-> > +
-> > +	ret = regmap_bulk_read(data->regmap, BME280_REG_HUMIDITY_MSB,
-> > +			       &data->be16, sizeof(data->be16));
-> > +	if (ret) {
-> > +		dev_err(data->dev, "failed to read humidity\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	value_humidity = be16_to_cpu(data->be16);
-> > +	if (value_humidity == BMP280_HUMIDITY_SKIPPED) {
-> > +		dev_err(data->dev, "reading humidity skipped\n");
-> > +		return -EIO;
-> > +	}
-> > +	*adc_humidity = value_humidity;
-> > +
-> > +	return 0;
-> > +}
-> 
-> ...
-> > @@ -313,8 +335,29 @@ static u32 bme280_compensate_humidity(struct bmp280_data *data,
-> >   *
-> >   * Taken from datasheet, Section 3.11.3, "Compensation formula".
-> >   */
-> Is this comment still relevant here? Seems it should probably move to follow
-> that maths.
-> 
-> > -static s32 bmp280_compensate_temp(struct bmp280_data *data,
-> > -				  u32 adc_temp)
-> > +static int bmp280_read_temp_adc(struct bmp280_data *data, u32 *adc_temp)
-> > +{
-> 
-> >  
-> >  static int bmp380_read_press(struct bmp280_data *data, int *val, int *val2)
-> >  {
-> > -	u32 adc_press, comp_press;
-> > +	u32 adc_press, comp_press, t_fine;
-> >  	int ret;
-> >  
-> > -	/* Read and compensate for temperature so we get a reading of t_fine */
-> > -	ret = bmp380_read_temp(data, NULL, NULL);
-> > +	ret = bmp380_get_t_fine(data, &t_fine);
-> >  	if (ret)
-> >  		return ret;
-> >  
-> > -	ret = regmap_bulk_read(data->regmap, BMP380_REG_PRESS_XLSB,
-> > -			       data->buf, sizeof(data->buf));
-> > -	if (ret) {
-> > -		dev_err(data->dev, "failed to read pressure\n");
-> > +	ret = bmp380_read_press_adc(data, &adc_press);
-> > +	if (ret)
-> >  		return ret;
-> > -	}
-> >  
-> > -	adc_press = get_unaligned_le24(data->buf);
-> > -	if (adc_press == BMP380_PRESS_SKIPPED) {
-> > -		dev_err(data->dev, "reading pressure skipped\n");
-> > -		return -EIO;
-> > -	}
-> > -	comp_press = bmp380_compensate_press(data, adc_press);
-> > +	comp_press = bmp380_compensate_press(data, adc_press, t_fine);
-> >  
-> > +	/* IIO units are in kPa */
-> 
-> Probably worth keeping the reference to what the unit of the
-> datasheet maths is around.
-> 
-> >  	*val = comp_press;
-> > -	/* Compensated pressure is in cPa (centipascals) */
-> >  	*val2 = 100000;
-> >  
-> >  	return IIO_VAL_FRACTIONAL;
-> > @@ -1825,7 +1916,7 @@ static int bmp180_wait_for_eoc(struct bmp280_data *data, u8 ctrl_meas)
-> >  	return 0;
-> >  }
-> 
-> 
-> > -static u32 bmp180_compensate_press(struct bmp280_data *data, u32 adc_press)
-> > +static u32 bmp180_compensate_press(struct bmp280_data *data, u32 adc_press,
-> > +				   s32 t_fine)
-> >  {
-> >  	struct bmp180_calib *calib = &data->calib.bmp180;
-> >  	s32 oss = data->oversampling_press;
-> > @@ -1965,7 +2068,7 @@ static u32 bmp180_compensate_press(struct bmp280_data *data, u32 adc_press)
-> >  	s32 b3, b6;
-> >  	u32 b4, b7;
-> >  
-> > -	b6 = data->t_fine - 4000;
-> > +	b6 = t_fine - 4000;
-> >  	x1 = (calib->B2 * (b6 * b6 >> 12)) >> 11;
-> >  	x2 = calib->AC2 * b6 >> 11;
-> >  	x3 = x1 + x2;
-> > @@ -1974,7 +2077,7 @@ static u32 bmp180_compensate_press(struct bmp280_data *data, u32 adc_press)
-> >  	x2 = (calib->B1 * ((b6 * b6) >> 12)) >> 16;
-> >  	x3 = (x1 + x2 + 2) >> 2;
-> >  	b4 = calib->AC4 * (u32)(x3 + 32768) >> 15;
-> > -	b7 = (adc_press - b3) * (50000 >> oss);
-> > +	b7 = (((u32)adc_press) - b3) * (50000 >> oss);
-> 
-> Casting from u32 to u32?
-> 
-> >  	if (b7 < 0x80000000)
-> >  		p = (b7 * 2) / b4;
-> >  	else
-> > @@ -1990,19 +2093,19 @@ static u32 bmp180_compensate_press(struct bmp280_data *data, u32 adc_press)
-> >  static int bmp180_read_press(struct bmp280_data *data, int *val, int *val2)
-> 
-> > +	/* IIO units are in kPa */
-> 
-> I think this is an unrelated improvement as original code doesn't have such a comment.
-> So shouldn't really be in this patch. If you want to keep it here rather than pushing it
-> into an additional patch, mention it in the commit message. "additional comments on base
-> units added for consistency" or something like that.
-> >  	*val = comp_press;
-> >  	*val2 = 1000;
+Am 12.05.24 um 19:58 schrieb Limonciello, Mario:
 
-Hi Jonathan!
+>
+>
+> On 5/12/2024 12:53 PM, Armin Wolf wrote:
+>> Am 11.05.24 um 17:56 schrieb Shen, Yijun:
+>>
+>>> Internal Use - Confidential
+>>>> -----Original Message-----
+>>>> From: Limonciello, Mario <mario.limonciello@amd.com>
+>>>> Sent: Saturday, May 11, 2024 11:13 PM
+>>>> To: Shen, Yijun <Yijun_Shen@Dell.com>; Lyndon Sanche
+>>>> <lsanche@lyndeno.ca>
+>>>> Cc: pali@kernel.org; W_Armin@gmx.de;
+>>>> srinivas.pandruvada@linux.intel.com; ilpo.jarvinen@linux.intel.com;
+>>>> lkp@intel.com; Hans de Goede <hdegoede@redhat.com>; Matthew Garrett
+>>>> <mjg59@srcf.ucam.org>; Jonathan Corbet <corbet@lwn.net>; Heiner
+>>>> Kallweit
+>>>> <hkallweit1@gmail.com>; Vegard Nossum <vegard.nossum@oracle.com>;
+>>>> platform-driver-x86@vger.kernel.org; linux-kernel@vger.kernel.org;
+>>>> Dell Client
+>>>> Kernel <Dell.Client.Kernel@dell.com>
+>>>> Subject: Re: [PATCH v5] platform/x86: dell-laptop: Implement
+>>>> platform_profile
+>>>>
+>>>>
+>>>> [EXTERNAL EMAIL]
+>>>>
+>>>>
+>>>>
+>>>> On 5/11/2024 10:05 AM, Shen, Yijun wrote:
+>>>>> Internal Use - Confidential
+>>>>>> -----Original Message-----
+>>>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>>> Sent: Wednesday, May 8, 2024 11:53 PM
+>>>>>> To: Shen, Yijun <Yijun_Shen@Dell.com>; Lyndon Sanche
+>>>>>> <lsanche@lyndeno.ca>
+>>>>>> Cc: pali@kernel.org; W_Armin@gmx.de;
+>>>>>> srinivas.pandruvada@linux.intel.com; ilpo.jarvinen@linux.intel.com;
+>>>>>> lkp@intel.com; Hans de Goede <hdegoede@redhat.com>; Matthew
+>>>> Garrett
+>>>>>> <mjg59@srcf.ucam.org>; Jonathan Corbet <corbet@lwn.net>; Heiner
+>>>>>> Kallweit <hkallweit1@gmail.com>; Vegard Nossum
+>>>>>> <vegard.nossum@oracle.com>; platform-driver-x86@vger.kernel.org;
+>>>>>> linux-kernel@vger.kernel.org; Dell Client Kernel
+>>>>>> <Dell.Client.Kernel@dell.com>
+>>>>>> Subject: Re: RE: [PATCH v5] platform/x86: dell-laptop: Implement
+>>>>>> platform_profile
+>>>>>>
+>>>>>>
+>>>>>> [EXTERNAL EMAIL]
+>>>>>>
+>>>>>> On 5/8/2024 09:24, Shen, Yijun wrote:
+>>>>>>> Hi Lyndon,
+>>>>>>>
+>>>>>>> =C2=A0=C2=A0=C2=A0 Thanks for working on this patch.
+>>>>>>>
+>>>>>>> =C2=A0=C2=A0=C2=A0 Dell side has an initial testing with this patc=
+h on some
+>>>>>>> laptops,
+>>>>>>> it looks
+>>>>>> good. While changing the platform profile:
+>>>>>>> 1. The corresponding USTT option in BIOS will be changed.
+>>>>>>> 2. thermald will not be impacted. The related PSVT and ITMT will b=
+e
+>>>> loaded.
+>>>>>>> =C2=A0=C2=A0=C2=A0 Some Dell DTs does not have the USTT, Dell'll h=
+ave a check if
+>>>>>>> nothing is
+>>>>>> broken.
+>>>>>>
+>>>>>> Hi Alex!
+>>>>>>
+>>>>>> Have you had a check both on both your AMD laptops and workstations
+>>>>>> too, or just the Intel ones?=C2=A0 I think it would be good to make=
+ sure
+>>>>>> it's getting the correct experience in both cases.
+>>>>>>
+>>>>> Hi Mario,
+>>>>>
+>>>>> =C2=A0=C2=A0 I've a check for this, for both laptop and workstation,=
+ the
+>>>>> dell_laptop
+>>>> module will not be loaded. So, AMD platform will not be impacted by
+>>>> this
+>>>> patch series.
+>>>>> Follow is one example output with workstation.
+>>>>> =C2=A0=C2=A0 #lsmod | grep dell
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 dell_wmi=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 28672=C2=A0 0
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 dell_smbios=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 32768=C2=A0 1 dell_wmi
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 dcdbas=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 20480=C2=A0 1=
+ dell_smbios
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 dell_wmi_descriptor=C2=A0=C2=A0=C2=A0 20480=
+=C2=A0 2 dell_wmi,dell_smbios
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 sparse_keymap=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 12288=C2=A0 1 dell_wmi
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 ledtrig_audio=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 12288=C2=A0 3
+>>>>> snd_ctl_led,snd_hda_codec_generic,dell_wmi
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 video=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 73728=
+=C2=A0 2 dell_wmi,nvidia_modeset
+>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 wmi=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 40960=C2=A0 5
+>>>> video,dell_wmi,wmi_bmof,dell_smbios,dell_wmi_descriptor
+>>>> Ah; right that makes sense.=C2=A0 In that case, is dell-laptop even t=
+he
+>>>> right place for
+>>>> this patch series?=C2=A0 I would think the same policies for the
+>>>> platform profile
+>>>> should be able to apply to desktop/workstation.
+>>>>
+>>>> The v6 of this series would block smbios-thermal-ctl from working on =
+a
+>>>> workstation too.
+>>>>
+>>>>>>> =C2=A0=C2=A0=C2=A0=C2=A0 Additional, with this patch, follow behav=
+ior is found:
+>>>>>>> =C2=A0=C2=A0=C2=A0 1. For example, the platform profile is quiet.
+>>>>>>> =C2=A0=C2=A0=C2=A0 2. Reboot the system and change the USTT to per=
+formance.
+>>>>>>> =C2=A0=C2=A0=C2=A0 3. Boot to desktop, the platform profile is "qu=
+iet", the USTT
+>>>>>>> will be
+>>>>>> changed back to "quiet".
+>>>>>>> =C2=A0=C2=A0=C2=A0 This looks like not a proper user experience. T=
+he platform
+>>>>>>> profile should
+>>>>>> honor the BIOS setting, aka, the platform profile should be switche=
+d
+>>>>>> to "performance".
+>>>>>> I agree, this sounds like the initial profile needs to be read from
+>>>>>> the BIOS settings too.
+>>>>>>
+>>>>>> Furthermore I wanted to ask is there also a WMI setting that
+>>>>>> corresponds to this that dell-wmi-sysman offers?
+>>>>> =C2=A0=C2=A0 Yes, Mario, you're right. This thermal setting could al=
+so be
+>>>>> toggled by dell-
+>>>> wmi-sysman.
+>>>>> But, for the Dell consumer AMD laptops, like Alienware, the BIOS
+>>>>> is another
+>>>> variant which is different with the workstation one.
+>>>>> With this variant BIOS, there is no USTT and also no
+>>>>> dell_wmi/dell-wmi-
+>>>> sysman.
+>>>>>> I'm wondering if both should be probed in case the SMBIOS one goes
+>>>> away one day.
+>>>>> =C2=A0=C2=A0 Yep, I think this is a good suggestion.
+>>>>>
+>>>> Great! Although something I wonder is if the policy when changed
+>>>> with dell-
+>>>> wmi-sysman is immediate or requires a reboot.=C2=A0 A lot of the
+>>>> settings in there
+>>>> aren't effective until after a reboot.
+>>>>
+>>>> If this is one of them then it might not be a good idea to make it
+>>>> work for
+>>>> both.
+>>> Hi Mario,
+>>>
+>>> =C2=A0 Just have a check, the check steps are:
+>>> 1. stop the thermald
+>>> 2. run the stress test
+>>> 3. Toggle the thermal setting between UltraPerformance and Quiet via
+>>> dell-wmi-sysman
+>>> 4. Check the CPU FAN speed
+>>> =C2=A0 The system reboot is not needed, the CPU fan speed changes
+>>> immediately.
+>>> =C2=A0 A screen recorder here:
+>>> https://dell.box.com/s/p2bhd2b6cv8z5buk9eao3bosgrrp1lf9
+>>>
+>>> Thanks
+>>>
+>> Hi,
+>>
+>> i believe it should be the responsibility of the manufacturer (in
+>> this case Dell) that
+>> the thermal state remains consistent across both interfaces.
+>>
+>> I think that the official Windows utility only checks the thermal
+>> state reported by
+>> the USTT interface, so we should match this behavior.
+>>
+>> Thanks,
+>> Armin Wolf
+>>
+>
+> Why?=C2=A0 Windows also does ACPI-WMI differently than Linux.=C2=A0 It's=
+ not as
+> easy to check both from a Windows utility due to that.
 
-Thank you very much once again for the amazing feedback!
+Actually, it is quite easy to check both interfaces from a Windows utility=
+ Both ACPI-WMI objects can be accessed by
+Windows applications, the utility just has to interact with an additional =
+WMI object, but they decided to not do it.
 
-As it looks like, I changed the code but I forgot to move the
-comments accordingly. Thank you very much for pointing this out.
-The extra comments are indeed not necessary, they don't add some
-specific value so I can drop them.
+Also the original smbios-thermal-ctl utility was created by Dell itself (i=
+ think?), so they likely would have implemented this
+if it really was necessary.
 
-Cheers,
-Vasilis
+As Dell likely only tests their machines with Windows (if at all), i propo=
+se that we try to match the Windows behavior.
+
+Thanks,
+Armin Wolf
+
 
