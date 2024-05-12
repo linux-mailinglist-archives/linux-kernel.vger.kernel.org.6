@@ -1,456 +1,217 @@
-Return-Path: <linux-kernel+bounces-177035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C228C38F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:10:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2758C38FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3420FB20FF4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:10:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3D0281663
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B1E55C3A;
-	Sun, 12 May 2024 22:10:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3294C55C1A;
+	Sun, 12 May 2024 22:14:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="exAZ4nR/"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2064.outbound.protection.outlook.com [40.107.236.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF5256750
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 22:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715551819; cv=none; b=SsJEX4uacgepP+0xRNd7+Lwkik26a/u2ZvY//Leb7AFFQc3Hj7+Yy5xPq3m8AMkGiE5AYI2mwfAsT1uuPHxe7g1ShZ4/XRbpMCMbKPnbd4cA9vknMPPPnuPmw70x58324utfAIyG4fw77CMF5YOk4sky7rNHU8FE31wehn8VTuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715551819; c=relaxed/simple;
-	bh=7GNiHiyJMCc14BEJmu617PiZxyGP2KecnFrx009A7Pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLNqmKkgOrZMUG/FJ8Ua6V25q9oDueZLXx5x0sb5q+whTjo3z3FrqEQkT2cVeuH7O9bxkkM7zfyAyJHwcWUlFOJTCH+pYssbB1MhfjTmxuoo87NjpBuquY5zZ+lB7pL2ABQnz3kYSBQ0ztkZGoCIe42DmvrXAqnSfWnf3awczdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s6HOP-0002QD-CV; Mon, 13 May 2024 00:10:05 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s6HON-0013DH-S3; Mon, 13 May 2024 00:10:03 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1s6HON-007ltE-2S;
-	Mon, 13 May 2024 00:10:03 +0200
-Date: Mon, 13 May 2024 00:10:03 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Avichal Rakesh <arakesh@google.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jayant Chowdhary <jchowdhary@google.com>,
-	"etalvala@google.com" <etalvala@google.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] usb: gadget: uvc: allocate requests based on frame
- interval length and buffersize
-Message-ID: <ZkE-O0yJ33T9hWa0@pengutronix.de>
-References: <ZiWga5Kqno1ICv97@pengutronix.de>
- <dcad0089-4105-44bc-a2b4-3cfc6f44164b@google.com>
- <ZifEvUi9-E8M4dp8@pengutronix.de>
- <17192e0f-7f18-49ae-96fc-71054d46f74a@google.com>
- <20240424022806.uo73nwpeg63vexiv@synopsys.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9880B381DA;
+	Sun, 12 May 2024 22:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715552088; cv=fail; b=V1FAC6q62S8PtfQL3Dcsfz1IxmI2oNeN5iM7/7uqBG1QziH9D4SKTLcs4ASxDdyV3WiUXuaOnGz+IeSzTxCkG2ety3/ul0ohaQlGwCCALC9Id86IJ+XnwpO4jPy31TFL7u4aL6FaEzj8z+vs4XbmC/4JeLAnsbYBDblfCwNG0eE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715552088; c=relaxed/simple;
+	bh=Ch8ssiVIffVEGHVT9pyoYkudr4PqYXQ0zpBwZBbEfS0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bTkRzZ03A8k9czxRs56epKAxxnopGgHWwY4+lcPme1hvvbAMhccrkn3tQSP4wO7nFkPmDARZ1IOvtaVrUrfhEPd28GqmipBt9bbZ2WfQfTlJqmkhLogNCgCVZxVNIGhial6qhihe1kASen+kiDzDGWD0i1Hqu8k8MI+jQ8PWLdg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=exAZ4nR/; arc=fail smtp.client-ip=40.107.236.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gsrnWG3dRFinzh0A3F4ePWgD1pHeMZjPwFJyuqJ4ukDk4ta2Lvj49dNJz9UH1bbY6y5syTwMokHDNFUNMEtqNeLKC/8HAHyh2ho3HKe5ieFoOZ8Eqv5AL1g63VIgp0xgF9SPkTNpjnonODkZzZV3e6BW3juDKGXjlupgFNXboBNxz/qejBxXIyPw0gd2aqJdAG0/0rxYgE8YcMNsJly6FL29ZyTKuMasy6upslIr0+cjXe/qlxip4W6P8fVrjzahOxNMZ2mDdAVQgV8A8IB2Y3XhtFkeh6RVjg5E0ZbeHmFIWSCcQPdvf3jbQq6KCG5RDTKzeUlpl6+hd44So1zuMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+OHREHkZu/9FryuqS8AdNnC3XpDCeSBwJ3aRdpCqegA=;
+ b=V/OP7buQoIowMhbEjjJX+P0gZ15++NWd9e6E6GIg07lF8Hre6uMfqDaauXHdteY0AsR/xRi4Jad3yFenqjcW3lGI3qsjDb0CDDlCbOiwVyzHczJZ3+mx7QMiklFvdU/pqieNZb1I4QpgjObtvO6f/FV0YBMn4BuPj989sFbDTTOzVckZt3vFrQHdIBprtMthQXoCpImwcRTiY3vqRtrjFm8BeZkMXkhu+8KtJ9bBVASIDzxkSkI4SGiPETjWrTYpAMioEU0fzWH+NPzedKXtyeYE9XL3Z+mT/jKDc3amwVe7mmHNgmTf0RxIlHwZE0C4zfJSFwZjSIbdnf6Csnxt7g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+OHREHkZu/9FryuqS8AdNnC3XpDCeSBwJ3aRdpCqegA=;
+ b=exAZ4nR/qAcmxwwoSEnRLLN0f3Wg/H9LKP8na1nw3WSv0CyZztyG8yUxLmIrCDVOm2doLM6EMBrPBzPr897pTQUB6gDGoGMnjRBoxsVM9ZB5EKVqxXo/P7W8KQcxWkbql2r/FshEbMKL04xbA7RRwS58BkcZM2rCa6pIby0iB5o=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by LV8PR12MB9406.namprd12.prod.outlook.com (2603:10b6:408:20b::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sun, 12 May
+ 2024 22:14:44 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.7544.052; Sun, 12 May 2024
+ 22:14:44 +0000
+Message-ID: <24fa8cdd-4c7b-4ec2-bffd-ff80e190f5fa@amd.com>
+Date: Sun, 12 May 2024 17:14:40 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5] platform/x86: dell-laptop: Implement platform_profile
+To: Armin Wolf <W_Armin@gmx.de>, "Shen, Yijun" <Yijun.Shen@dell.com>,
+ Lyndon Sanche <lsanche@lyndeno.ca>
+Cc: "pali@kernel.org" <pali@kernel.org>,
+ "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
+ "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
+ "lkp@intel.com" <lkp@intel.com>, Hans de Goede <hdegoede@redhat.com>,
+ Matthew Garrett <mjg59@srcf.ucam.org>, Jonathan Corbet <corbet@lwn.net>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dell Client Kernel <Dell.Client.Kernel@dell.com>
+References: <20240425172758.67831-1-lsanche@lyndeno.ca>
+ <20240501215829.4991-2-lsanche@lyndeno.ca>
+ <BY5PR19MB392256C65661E76FC292C0889AE52@BY5PR19MB3922.namprd19.prod.outlook.com>
+ <63894ef1-c482-4646-8351-4d6cfc6c528f@amd.com>
+ <BY5PR19MB392299916A85FF06387DC9C19AE02@BY5PR19MB3922.namprd19.prod.outlook.com>
+ <a1306ffa-c0ea-4ce6-8692-76bf37850e8a@amd.com>
+ <BY5PR19MB3922A117E489A55C3C7FAC789AE02@BY5PR19MB3922.namprd19.prod.outlook.com>
+ <4d8de625-9018-4926-9519-37f5a90a96e5@gmx.de>
+ <d38043cd-7fc2-4255-a795-23e64ee4a8c2@amd.com>
+ <e583ccb0-b0be-4fb6-8e70-e4cd6921d77d@gmx.de>
+Content-Language: en-US
+From: "Limonciello, Mario" <mario.limonciello@amd.com>
+In-Reply-To: <e583ccb0-b0be-4fb6-8e70-e4cd6921d77d@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CH0PR03CA0213.namprd03.prod.outlook.com
+ (2603:10b6:610:e7::8) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xJdUWAcFD0bnMbji"
-Content-Disposition: inline
-In-Reply-To: <20240424022806.uo73nwpeg63vexiv@synopsys.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|LV8PR12MB9406:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5e1083d9-b5a3-46f7-2c02-08dc72d0ed33
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dkx2TnJydjF1RWJac3lTdk1kc3JDazhxd1ROM0p3RjlBUVlvSzNhaDloeFo1?=
+ =?utf-8?B?V2lQT0MraTVlVGRhcml5RVo1N2FaRWpDUDJ5N0k5RmtSK1dVYkRwKzRxUXpq?=
+ =?utf-8?B?SUZPYTc0eDlhQnc2b1ZlMG1rTmlrSXJUb1lhRmgyRm1zSE5PWE5HMU5ZclMr?=
+ =?utf-8?B?b1VVVHlQS3g0M1k0dEJMMHBoZ3ozSTA2T1dhSFRmWWNFcU1qcVpzelFUMWJa?=
+ =?utf-8?B?RmQvVmtEbFkvSVhZeTVyZ1JaMlYvRmY3eVhoSTE2WHBUNUd3K3lsTDkrTXhn?=
+ =?utf-8?B?L1hYLzl6L0VMSTFDUklsNDBKVkFOajZ5bktnWlNEQkc3djdWcTRIWmEzOHZh?=
+ =?utf-8?B?eVEybXZGZDI5MGVtMCtkb3pnWUduN3dGamZzVU5XcEVWUXlKNTRVdTROeTBC?=
+ =?utf-8?B?YW8yS1lMdEo0ZFVtT2pLSlZHVG5NcjdVUFFUd1d5aWZ4QzRBMlFEbC9RVjl2?=
+ =?utf-8?B?SFFIMGNjU2JmOUd2amFTN1dUcmdDbHRXb2VqWkY1TnJ0ZlRyUWtna2tSYTFY?=
+ =?utf-8?B?V291bS9sWEx3a29ZT1BwSGNzR0Z3YzI1anJEaE91V29DYlpkck0yOGFrL1RX?=
+ =?utf-8?B?c2pxOXc3VWEzR2ZNODNpVjVtUFo2a0JhWDdlSXdzdis5bGg1Q1h3dlMyKzNJ?=
+ =?utf-8?B?MHV6MWpXNWlsRFJQZThpcnIzSzM3aVpaOUxtZlY2UXRzREF3NnJoWDNrUnI1?=
+ =?utf-8?B?cG1obmRTVVE4R0wzOEJDQ1NueWZMZDdPZmNiSEgxbXUyOVgxYThiUkphSGtM?=
+ =?utf-8?B?OWxFVlFQL2VETnlqTklEZEtZeHFvZGNDSnJNZ3pLWDVERWczYjZPeEF3U04y?=
+ =?utf-8?B?a0lxakZQeTYxRHA5RkpXQ0RBMHhXTXFUdGlYbmg3a1UyY2VNdlJDelQ4ZlZr?=
+ =?utf-8?B?YW1Cd3VyZVZqSkJnV1RFSlo0OS9xS3R5TjBKKzEwVTUxc0JyYW8va2FHZVZP?=
+ =?utf-8?B?ZFJNeW5BMVgxbS9jbW1BcXdSWkZ0RjZlRDNqbzBWUTQxRUlQc2pzdnVlbjIw?=
+ =?utf-8?B?MW5FdDcyMG83ZS9qeTVuV2JWK05XRi92Wk1MeE5leWV2SUUwLzEvWFJvNkVy?=
+ =?utf-8?B?bmMwaFFacTE4dEp5NDVYeW81QVhIcmJpVVhXQVcwN090QXlrL1l5ZXlTSEFq?=
+ =?utf-8?B?ZnBQWGdiVGh3Ym5WeEMyZGRmRDVXSGFhZThJOHVHUEQvSXFya2hZQnd0MENC?=
+ =?utf-8?B?YkRndXFpYlhiRjVYaUV5QW94VXRscWV2dUZqZ1F1R0R2Y1FsYnVkcTBBbFA5?=
+ =?utf-8?B?REthS1dqOUZFeEF6OThMRmpUcUMrK0dCR3QzZmgrYjZVY3F1a2paNk5BU09n?=
+ =?utf-8?B?T01YYm5SUmtsSXZxc2FjaWpPVE5IMDg2cDhwWTFYd3lEdXgrbTZsMW00UG5T?=
+ =?utf-8?B?M0RZVTExU0k4WUtRTXYyUmdoTXdOZW1jUmdlMU80aXFJeGoya3NKVVlKeWRS?=
+ =?utf-8?B?dEtEWk1GVmJoTTRtR0lOUmFSc2Z4NlJ4YXMrRFRGZXN4VzU2OGY5RUg2SFFm?=
+ =?utf-8?B?OGZwUjhMV1lCUURGNTZRcmlRcDZtTnlWK1NBaTB0bTA3bVRGMi9MV1l5dVBz?=
+ =?utf-8?B?M3pTZFB5Rk51TDNRSndTUjZaQ0NkRFhFMk02OTJCd2pkQlBuNmJXWEZVNjUx?=
+ =?utf-8?B?d0F3QnoxV1BBZ2hoMGFtQUVMczZOaStUT05WZFlxZGxjSHBRR2RWaDd0ODAv?=
+ =?utf-8?B?SCtjYzN5ZkVxTnJTOG40WEJnYzVCNzZZNWIyaThpQW5CUm0vVFVaZWJ3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RXFYSVJZN1RGcCsxTzF1Qy9ralhtb0RtVzJhYjNuK3c2K0p0bGhadkhCUlg1?=
+ =?utf-8?B?QjBTNUJkWW5MWW5XV2VTTkN1ME9odS9xdHJ1TWhXYmtWdERnTzRwVTBRTkpX?=
+ =?utf-8?B?OE56WlRkbzBVR1FXVmFTOCtaU1ZMdXFlSGJDNkRyWndDa01YTFpySk00alJp?=
+ =?utf-8?B?Z2o1ekZ2ay9WSnpydlFkUzcxa2ZaZ2lEQ2c0N2dpZ2VRZjdWb2p6V1lGT0Rm?=
+ =?utf-8?B?aG5pSjBqWkZFTVN1QkRhbHFHdnkwZituMG9neG1jYlltbTJFSXNJa3BrdFRC?=
+ =?utf-8?B?TmZESmp4bmJkcUl5QzQzd2lsOHBCM1c1R1B2T1BKZm9aNlpGai9oUEwveUxk?=
+ =?utf-8?B?dzdtUlQ3N1ZLcDNXMEtHOVV5RkFaaDc5bEQ4aG9XSmFxT0h0NzhsQkRiZVB2?=
+ =?utf-8?B?d0lxN0pmdEw0Q3U1TnBBVUFadVduWE1VK0FCUE9xOVRucTlWbVJsQWpnQysr?=
+ =?utf-8?B?K1hEWHpHQkNMc2l2NVp5Ylp6bmNVY3lSWUllUklZZ0x6anEyOUd6VDdPMlgz?=
+ =?utf-8?B?RFdvYVU4TFQyV3I5ZFd0emxNV1BWV2NuMkdlaWFOV09rZUVQZVJrOW9xbnRH?=
+ =?utf-8?B?QkUwZVJqRzlBcFcwRVZBMkJHOXVGUzNsM2ozclFFZnU1K3JWT1kyU0pkVDZx?=
+ =?utf-8?B?RVp4RVUzdjBIaGlpMEFmNVdZeUZoUGtHTGJvcUsrWHl2TUhVQ3R2a3Bia09l?=
+ =?utf-8?B?czJwYmUrTFp2dmZtdS9IaTFBU1EvZmx3TUVPbm8zOVlGV0JONXQ5TFhnOERn?=
+ =?utf-8?B?SHZGempXVDJzdGpmcWtsVFE2bkhQWXRjdnFNalNsU0ZmWVJLQ1N2eTF2aUlT?=
+ =?utf-8?B?VnYxVGNlVk83cGVZaXYxcys2a2JzaWhCQkhIRUJuRGMvYUV2TkdMeFNQYjFT?=
+ =?utf-8?B?RXN5MXFPMUt3Y29pM3poRmZZVGNSQVNJWWs3bHR5RGErZjhvMUMxSnNLT1Jh?=
+ =?utf-8?B?RHdpRDJwakdNT1V1Q3F1aGd2dExuQmN1RndqTEUyVDY1WDhNSk92MjQ3bGpk?=
+ =?utf-8?B?RGdXYU9hL0ZLb2FrNzBNOGJlSHhBZjBpU0JJOUZhY3hXaUZ2RnQ1K04vcjJM?=
+ =?utf-8?B?ZW5SQ3JrU09SbUI2MWd6bnNtNm5UNjdLQjlNYm1kSnY1Y254d1RaVlAzc1lO?=
+ =?utf-8?B?MnBzV1J1dUNBb0YvTTlXbnJseWxqWCtEWnZLRE00dnJwVVNCM2JGazFXSWlr?=
+ =?utf-8?B?TWQxWmdxYUp1ZTFFQWI4SGZ5VXBOQlA5TkdkanBxK1VLRWV6RVRPcm5UUjM5?=
+ =?utf-8?B?eWRpS2hlV1krMmFTVmVlTSt3dkxiRDVIQ2ZVcnIvOGlUSFlnVlg1ZnptcGpH?=
+ =?utf-8?B?M3dvMjJJOFZHYjAra0UwKysyaWowVEVneHRCOUhvTWhUWEVJRUtIQVk0TVlw?=
+ =?utf-8?B?NGJkRHRwdnFha2FZWktmTVU1RnVLaGtrY2wzdzlmalVqQXNxUHY2RWRWZ3l2?=
+ =?utf-8?B?UlIwc0xEai9Vd2k2ZktzSFFzcENaYXo3ak9jdXNtdVg5WCt4ZVlRSGxqVG12?=
+ =?utf-8?B?dFFjN2hFZkNIZWNHMmdsajM2QXBVVnhPN3llendsYzZqdzRpZzROZy9SZG5E?=
+ =?utf-8?B?bHd3SGhGWVkvdzNXQWw2dXA3czVBQmNwMm5mb0hxZG95cFNsU0dMOGcvTXRP?=
+ =?utf-8?B?T3hhbFFXbks1RERzd1RBNE5JdmhMU3BYa2xWQ0hZN1hBMFpXbnBIQVFxKzBh?=
+ =?utf-8?B?ZGhtMHRCdnhUT0hUVDI0aVUxUGpDVkQvdU1tVUtleUVWM3hhd1YrNFF0Zkt3?=
+ =?utf-8?B?M1BvNVpySE1NN2xUK2NXRmsxVXQ2Uy9tODZYb05weE5ydmxRKzFZdHR5bHJt?=
+ =?utf-8?B?MnZHeUxsMTliY1pzVENZUnBFYm5DNVdDZEJCejU2Sm9JZUhjWVI2VVZCdGxU?=
+ =?utf-8?B?SjZOMWRVczBQcnpjY0RiR3hNc0xodktMeTFMN3BTUHZwMHNiUUttRjFwR1d0?=
+ =?utf-8?B?eHZ1NFdhMmd1REd6RkZ2cnpiMm5VelROTVZJMHFObjBENktmY0crOEdtdXN0?=
+ =?utf-8?B?dm8rNjF4K0dvcnpXQy9wa3B6d1BMMjlxQjRIREhaVUsyNExtUHN6ak5rRHZN?=
+ =?utf-8?B?Vjc3SDcxYXBrY3B0eFdDcnhIaGFVS2QyU0RXV1B3OWVRUTFtYXlMUWt0cG0w?=
+ =?utf-8?Q?bsRX0yduXy3DBMTWWRJfaFuxw?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e1083d9-b5a3-46f7-2c02-08dc72d0ed33
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2024 22:14:43.9569
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HkW0enjMDpkv1rWqgfTTwrKaRlmAhTsagK/hDpA7DxdlGm1wUBPILhvQNwYzOoJ+dhCh+7YocVhnOE9MB2VxeQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9406
 
+On 5/12/2024 1:47 PM, Armin Wolf wrote:
+>> Why?  Windows also does ACPI-WMI differently than Linux.  It's not as
+>> easy to check both from a Windows utility due to that.
+> 
+> Actually, it is quite easy to check both interfaces from a Windows 
+> utility. Both ACPI-WMI objects can be accessed by
+> Windows applications, the utility just has to interact with an 
+> additional WMI object, but they decided to not do it.
+> 
 
---xJdUWAcFD0bnMbji
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah I didn't realize that they're actually instanciable from the WMI 
+repository in an application, but that makes perfect sense with how easy 
+it is to do from PowerShell.
 
-On Wed, Apr 24, 2024 at 02:28:10AM +0000, Thinh Nguyen wrote:
->On Tue, Apr 23, 2024, Avichal Rakesh wrote:
->>
->>
->> On 4/23/24 07:25, Michael Grzeschik wrote:
->> > Ccing:
->> >
->> > Michael Riesch <michael.riesch@wolfvision.net>
->> > Thinh Nguyen <Thinh.Nguyen@synopsys.com>
->> >
->> > On Mon, Apr 22, 2024 at 05:21:09PM -0700, Avichal Rakesh wrote:
->> >> On 4/21/24 16:25, Michael Grzeschik wrote:
->> >>> On Tue, Apr 09, 2024 at 11:24:56PM +0200, Michael Grzeschik wrote:
->> >>>> This patch series is improving the size calculation and allocation
->> >>>> of the uvc requests. Using the currenlty setup frame duration of the
->> >>>> stream it is possible to calculate the number of requests based on =
-the
->> >>>> interval length.
->> >>>
->> >>> The basic concept here is right. But unfortunatly we found out that
->> >>> together with Patch [1] and the current zero length request pump
->> >>> mechanism [2] and [3] this is not working as expected.
->> >>>
->> >>> The conclusion that we can not queue more than one frame at once into
->> >>> the hw led to [1]. The current implementation of zero length reqeusts
->> >>> which will be queued while we are waiting for the frame to finish
->> >>> transferring will enlarge the frame duration. Since every zero-length
->> >>> request is still taking up at least one frame interval of 125 us.
->> >>
->> >> I haven't taken a super close look at your patches, so please feel fr=
-ee
->> >> to correct me if I am misunderstanding something.
->> >>
->> >> It looks like the goal of the patches is to determine a better number
->> >> and size of usb_requests from the given framerate such that we send e=
-xactly
->> >> nreqs requests per frame where nreqs is determined to be the exact nu=
-mber
->> >> of requests that can be sent in one frame interval?
->> >
->> > It does not need to be the exact time, actually it may not be exact.
->> > Scattering the data over all requests would not leave any headroom for
->> > any latencies or overhead.
->>
->> IIUC, patch 3/3 sets the number of requests to frameinterval / 125 us,
->> which gives us the number of requests we can send in exactly one frame i=
-nterval,
->> and then sets the size of the request as max framesize / nreq, which mea=
-ns the
->> frames will be evenly divided up into all available requests (with a lit=
-tle
->> fuzz factor here and there).
->>
->> This effectively means that (assuming no other delays) one frame will ta=
-ke
->> ~one frameinterval to be transmitted?
->>
->> >
->> >> As the logic stands, we need some 0-length requests to be circulating=
- to
->> >> ensure that we don't miss ISOC deadlines. The current logic unconditi=
-onally
->> >> sends half of all allocated requests to be circulated.
->> >>
->> >> With those two things in mind, this means than video_pump can at enco=
-de
->> >> at most half a frame in one go, and then has to wait for complete
->> >> callbacks to come in. In such cases, the theoretical worst case for
->> >> encode time is
->> >> 125us * (number of requests needed per frame / 2) + scheduling delays
->> >> as after the first half of the frame has been encoded, the video_pump
->> >> thread will have to wait 125us for each of the zero length requests to
->> >> be returned.
->> >>
->> >> The underlying assumption behind the "queue 0-length requests" approa=
-ch
->> >> was that video_pump encodes the frames in as few requests as possible
->> >> and that there are spare requests to maintain a pressure on the
->> >> ISOC queue without hindering the video_pump thread, and unfortunately
->> >> it seems like patch 3/3 is breaking both of them?
->> >
->> > Right.
->> >
->> >> Assuming my understanding of your patches is correct, my question
->> >> is: Why do we want to spread the frame uniformly over the requests
->> >> instead of encoding it in as few requests as possible. Spreading
->> >> the frame over more requests artificially increases the encode time
->> >> required by video_pump, and AFAICT there is no real benefit to it?
->> >
->> > Thinh gave me the advise that it is better to use the isoc stream
->> > constantly filled. Rather then streaming big amounts of data in the
->> > beginning of an frameinterval and having then a lot of spare time
->> > where the bandwidth is completely unsused.
->> >
->> > In our reallife scenario streaming big requests had the impact, that
->> > the dwc3 core could not keep up with reading the amount of data
->> > from the memory bus, as the bus is already under heavy load. When the
->> > HW was then not able to transfer the requested and actually available
->> > amount of data in the interval, the hw did give us the usual missed
->> > interrupt answer.
->> >
->> > Using smaller requests solved the problem here, as it really was
->> > unnecessary to stress the memory and usb bus in the beginning as
->> > we had enough headroom in the temporal domain.
->>
->> Ah, I see. This was not a consideration, and it makes sense if USB
->> bus is under contention from a few different streams. So the solution
->> seems to be to spread the frame of as many requests as we can transmit
->> in one frameinterval?
->>
->> As an experiment, while we wait for others to respond, could you try
->> doubling (or 2.5x'ing to be extra safe) the number of requests allocated
->> by patch 3/3 without changing the request's buffer size?
->>
->> It won't help with the error reporting but should help with ensuring
->> that frames are sent out in one frameinterval with little to no
->> 0-length requests between them.
->>
->> The idea is that video_pump will have enough requests available to fully
->> encode the frame in one burst, and another frame's worth of request will=
- be
->> re-added to req_free list for video_pump to fill up in the time that the=
- next
->> frame comes in.
->>
->> >
->> > Which then led to the conclusion that the number of needed requests
->> > per image frame interval is calculatable since we know the usb
->> > interval length.
->> >
->> > @Thinh: Correct me if I am saying something wrong here.
->
->Right, if you max out the data rate per uframe, there's less opportunity
->for the host to schedule everything for that interval (e.g. affected
->from other endpoint/device traffics, link commands etc). It also
->increases the latency of DMA. In many cases, many other vendor hosts
->can't handle 48KB/uframe for SuperSpeed and 96KB/uframe for SuperSpeed
->Plus. So, you'd need to test your platform find the optimal request size
->so it can work for most hosts.
->
->> >
->> >>> Therefor to properly make those patches work, we will have to get ri=
-d of
->
->Sorry if I may have missed the explaination, but why do we need to rid
->of this?
+> Also the original smbios-thermal-ctl utility was created by Dell itself 
+> (i think?), so they likely would have implemented this
+> if it really was necessary.
+> 
 
+It was created at a time that the ACPI WMI BIOS attributes interface 
+didn't exist.  I've understood that the general direction is to use the 
+WMI BIOS attributes interface in the future.
 
-The uvc_video gadget is queueing requests with ep_queue whenever they
-are prepared. However for uvc we may not send EOF to the host until
-we know that the frame was transmitted correct or wrong.
+That's why I was suggesting using both, if such a transition happens 
+then this driver would be ready for it.
 
-To ensure this the gadget is waiting for the last request to be
-completed from dwc3. Until this request was not received, the current
-workflow is to enqueue zero-length requests into the dwc3 hw. With that,
-the final EOF request for the frame will be transmitted after the
-zero-length requests have passed the hw. (They have no data, but they
-still take one frameinterval durtion). This sparsed frame with
-zero-requests inbetween will interfere with the precalculation for
-request data we fill every request with based on the expected frame
-duration.
+> As Dell likely only tests their machines with Windows (if at all), i 
+> propose that we try to match the Windows behavior.
 
-I know this seems very interlocked. It is very complex indeed. Tell
-me if you still have questions and I will come up with some more
-details to the current uvc_video driver.
-
->> >>> the zero length pump mechanism again and make sure that the whole
->> >>> business logic of what to be queued and when will only be done in the
->> >>> pump worker. It is possible to let the dwc3 udc run dry, as we are
->> >>> actively waiting for the frame to finish, the last request in the
->> >>> prepared and started list will stop the current dwc3 stream and=A0 f=
-or
->> >>> no underruns will occur with the next ep_queue.
->> >>
->> >> One thing to note here: The reason we moved to queuing 0-length reque=
-sts
->> >> from complete callback was because even with realtime priority, video=
-_pump
->> >> thread doesn't always meet the ISOC queueing cadence. I think stoppin=
-g and
->> >> starting the stream was briefly discussed in our initial discussion in
->> >> https://urldefense.com/v3/__https://lore.kernel.org/all/2023041900114=
-3.pdxflhzyecf4kvee@synopsys.com/__;!!A4F2R9G_pg!ZmfvrPq4rs7MIhxNrrEqmgGrlYT=
-J12WgdzaqQhfEehKfjKqxPr2bC1RzUqaa9tvdBtAvXdyK2GpxYzvslpV6$
->> >> and Thinh mentioned that dwc3 controller does it if it detects an und=
-errun,
->> >> but I am not sure if starting and stopping an ISOC stream is good pra=
-ctice.
->
->There's a workaround specific for UVC in dwc3 to "guess" when underrun
->happen. It's not foolproof. dwc3 should not need to do that.
->
->Isoc data is periodic and continuous. We should not expect this
->unconventional re-synchronization.
-
-I think we have to discuss what is ment by resynchronization here. If
-the trb ring buffer did run dry and the software is aware of this
-(elemnt in the started and prepared list) then the interrupt handler
-already is calling End Stream Command.
-
-When the stream is stopped, what implications does this have on the bus?
-
-When the Endpoint is enabled, will the hardware then send zero-length
-requests on its own?
-
-With the next ep_queue we start another stream and when we keep up with
-this stream there is no underruns, right?
-
-I picture this scenario in my mind:
-
-thread 1: uvc->queue_buf is called:
-   - we encode the frame buffer data into all available requests
-     and put them into the per uvc_buffer perpared list
-     (as we precalculated the amount of requests properly to the expected
-      frame duration and buffer size there will be enough requests
-      available)
-   - wake up the pump thread
-
-thread 2: pump_worker is triggered
-   - take all requests from the prepared available buffer and enqueue them
-     into the hardware
-     (The pump worker is running with while(1) while it finds requests in
-      the per buffer prepared list) and therefor will have a high chance
-      to finish the pumping for one complete frame.
-   - check for any errors reported from the complete handlers
-     - on error
-       - stop enqueing new requests from current frame
-       - wait for the last request from errornous frame has returned
-   - only start pumping new requests from the next buffer when the last
-     request from the active frame has finished
-   - In the beginning of the next frame send one extra request with
-     EOF/ERR tag so the host knows that the last one was ok or not.
-
-thread 3: complete handler (interrupt)
-   - give back the requests into the empty_list
-   - report EXDEV and errors
-   - wake up the pump thread
-
-With this method we will continously drain the hw trb stream of the dwc3
-controller per frame and therefor will not shoot into one window where
-the current stream could be missed. With the data spreading over the
-many requests we also avoid the missed requests when the DMA was to
-slow.
-
->> > The realtime latency aspect is not an issue anymore if we ensure that =
-we
->> > always keep only one frame in the hw ring buffer. When the pump worker
->> > ensure that it will always run through one full frame the scheduler has
->> > no chance to break our running dwc3 stream. Since the pump is running
->> > under a while(1) this should be possible.
->>
->> I'll wait for your patch to see, but are you saying that we should have =
-the
->> pump worker busy spinning  when there are no frames available? Cameras c=
-annot
->> produce frames fast enough for video_pump to be constantly encoding fram=
-es.
->> IIRC, "encoding" a frame to usb_requests took less than a ms or two on my
->> device, and frame interval is 33ms for a 30fps stream, so the CPU would =
-be
->> busy spinning for ~30ms which is an unreasonable time for a CPU to be
->> idling.
->>
->> >
->> > Also with the request amount precalculation we can always encode the
->> > whole frame into all available requests and don't have to wait for
->> > requests to be available again.
->> >
->> > Together with the latest knowladge about the underlying hw we even nee=
-d to only
->> > keep one frame in the HW ring buffer. Since we have some interrupt lat=
-ency,
->> > keeping more frames in the ring buffer, would mean that we are not abl=
-e to tag
->> > the currently streamed frame properly as errornous if the dwc3 hw ring=
- buffer
->> > is already telling the host some data about the next frame. And as we =
-already
->> > need to wait for the end of the frame to finish, based on the assumpti=
-on that
->> > only one frame is enqueued in the ring buffer the hw will stop the str=
-eam and
->> > the next requst will start a new stream. So there will no missed under=
-runs be
->> > happening.
->> >
->> > So the main fact here is, that telling the host some status about a
->> > frame in the past is impossible! Therefor the first request of the next
->> > hw stream need to be the one that is telling the Host if the previous =
-frame
->> > is ment to be drawn or not.
->>
->> This is a fair point, but the timing on this becomes a little difficult =
-if
->> the frame is sent over the entire frameinterval. If we wait for the enti=
-re
->> frame to be transmitted, then we have 125us between the last request of a
->> frame being transmitted and the first request of the next frame being
->> queued. The userspace app producing the frames will have timing variatio=
-ns
->> larger than 125us, so we cannot rely on a frame being available exactly =
-as
->> one frame is fully transmitted, or of us being notified of transmission
->> status by the time the next frame comes in.
->>
->> >
->> >> Someone better versed in USB protocol can probably confirm, but it se=
-ems
->> >> somewhat hacky to stop the ISOC stream at the end of the frame and re=
-start
->> >> with the next frame.
->> >
->> > All I know is that the HW mechanism that is reading from the trb ring =
-buffer is
->> > started or stopped I don't know if really the ISOC stream is stopped a=
-nd
->> > restarted here or what that means on the real wire. And if so, I am un=
-sure if
->> > that is really a problem or not. Thinh?
->
->For isoc IN endpoint, if the host requests for data while there's no TRB
->prepared, the controller would respond with 0-length data. When we stop
->and start again, we reschedule the prepared isoc data to go out on a new
->interval.
->
->>
->> Oh? That's great! If the controller can keep the ISOC stream from underr=
-uning
->> without the gadget feeding it 0-length requests, then we can simplify the
->> gadget side implementation quite a bit!
-
->I'm not entirely clear on why we cannot use 0-length requests now. I
->hope we can resolve this from UVC function driver as it seems to be a
->proper place to handle this issue.
-
-See above.
-
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---xJdUWAcFD0bnMbji
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAmZBPjgACgkQC+njFXoe
-LGSwQxAAyEgYBlFxoGm2DV3b2VJymfpvQeJARVMZE+Nqcx4ZMsO1/idEFvoY1RQR
-d9yEI1Xy8ANihpFliloKZJhp7rw8U6g9VGBNY/RkpZCiCaJnaBtoniVd1qD1A/+1
-s3AL8Vh9SJlMNeuIF8Naf7h9er1x29hNRxD3rHRm9g2VMfJmUBkhhZuTVhIzba07
-T8B89SBR47qkar/JieuuHtekaeBBtNCyqUqFx6YS7+7RoX63BGAZ7d14SVpi9LO8
-pkeos9RLqi4vrAWoidk6nv619HgsxcwW0aOJVvPt35ozARseq2KinRispiPyKl9p
-SgIo5R1u2YYV9PqASDo46ZVRY7g4wIqBvH3wxakuDLZf5apaWD96bJDpg1hEjnWy
-1AIthgMgf8zszxDlZAdLF2h/i9jA9ZXjTJZCm8Q2vcPph076eOOJqN2gKd6TFutq
-SCXxQXhaaLnxL0YSKP39PGh5rj9TKO6uJ513SqaItrjXuV/0QvMfs0kL/hlgAXnv
-q8nz511FDXa6XXun0HwPUSxGpeQ2VmXF9a1eXEkZKxBM4lscOUUWG5IfsVfJOMEe
-z1y9E9ouDhxPScD3sXFVzBXaDJdTy7PvVhFTo04+qI8nC22x943x9wGCSs6dAcFW
-KCk4A02rdJb3ph6+7H8cp35I3125m/Sv48bMLXQsHXl8tS4Qyqs=
-=XoCa
------END PGP SIGNATURE-----
-
---xJdUWAcFD0bnMbji--
+I don't have a strong horse in this game, but I see what you mean in 
+terms of general compatibility.
 
