@@ -1,246 +1,78 @@
-Return-Path: <linux-kernel+bounces-176934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 170DD8C3744
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:11:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E77C8C373F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82738B20FE5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:11:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FCB91C20938
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26C246421;
-	Sun, 12 May 2024 16:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E63D46441;
+	Sun, 12 May 2024 16:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S3dgf7wN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AigWMD+x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E75D4B5AE;
-	Sun, 12 May 2024 16:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B93F4500C;
+	Sun, 12 May 2024 16:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715530291; cv=none; b=tjgimkT0UfDzkBrRu+IPGjEtaXj1/jB9pqv6H9DtRBcRzFyRarpc8HYZGwR2J+BWQ2qiiU+PoGoiUORwMFdFS48TBijq8jI+Betw3ocUrpxLkyTpFOry7td4BPqwLj3J5eKeYEowgeg3Hn9qE8FkNlluM9doOzsBR0coQc/urvs=
+	t=1715530280; cv=none; b=jXLq2Z0yk4f4NxKA0w4BT9M24T11cEsdaJ/Z+ixRF9hVOwQvjoFQExi/X5GtrcxPJLoNCfTH89Sh8CUWCw7xZv1bVABe0zNkdZh+T76zL9QJu4oTEXCqdI5ZpbUZ9K5j0ObhRXfQy8y91h+oGJjqpDNaS7e6DHT/9ikNE0ONK04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715530291; c=relaxed/simple;
-	bh=z6P+mS/l0S7hWWQ+krwdaqTCWeyYjiFrKAW/ITNlUzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Tg/SlWBzqTxhPYucaXUe/QC0x9KvZFYDLfWxDNMu/ujcMDQdqvWWOcn34xw/93U2M4TZjQYqQnKpcpxqMrpIdM1+/w0jad0ddVOm0JjWmAwlggpjOqPjMTnyTJVmvMkL/ZdrAK7FdpHwCHHewC9q/72Oc4ArIUxF+lvItq7MnNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S3dgf7wN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44CFjsfZ008978;
-	Sun, 12 May 2024 16:11:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=la6rV0NKorvKyL6sLrf655P9A2HtwgNO+jzNz69HBkw=;
- b=S3dgf7wN+jkfn9S2avR3FgvMyX65oWC5zSyhzByxrH8dAjvSOQw+7kqD/07b07vb6P+/
- S7a2mZm8EpadHwPBr1raITx2raHmiOY8PHtmBF/FMTqWOg2uOPeIGn4L/xbItm9t4qkn
- lbGqHX/yCSCKUPOyMxTIkawFD+BlUyhI4qAlU8GA/rfsof5MpocFyViUqsHYIzOIvmbZ
- 8dSMkBrPncLNQrTxqR1j2PG8fLFicO9p/waFvDB0v2ts/eSab0kGndYezoHiM4OdqPXF
- WVn7xi8lUtMSgDEDbX7/XOsXa9bRX46Tt6zmY6zcVWhvlIncgOgtEUkxinzvzj1SZb/e Jw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y2uk98h1p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 16:11:08 +0000
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44CGB7J1014668;
-	Sun, 12 May 2024 16:11:07 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y2uk98h1k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 16:11:07 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44CCeChr018810;
-	Sun, 12 May 2024 16:11:07 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2k0t3a3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 16:11:06 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44CGB4NB40567304
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 12 May 2024 16:11:06 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DF34258055;
-	Sun, 12 May 2024 16:11:03 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A234758043;
-	Sun, 12 May 2024 16:10:55 +0000 (GMT)
-Received: from [9.43.63.99] (unknown [9.43.63.99])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 12 May 2024 16:10:55 +0000 (GMT)
-Message-ID: <50a50ac9-3797-4e7a-be21-ea3b01d64ec4@linux.ibm.com>
-Date: Sun, 12 May 2024 21:40:52 +0530
+	s=arc-20240116; t=1715530280; c=relaxed/simple;
+	bh=69jzUin/rmNDnbKvGfeDq9UoffkPNXUKBy0SLY7QC/E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=tZT5AOoQ72p8gsUWg5hDjTB9uFZ28tC5FQR7vCNegTNHpZGnTWMX61NKDBqlcUtworSIL6stu+0UpD2mKKumnXb73lcs1GMW3VdHgwN1qkOMfLaaJ5dl1LP59YtyyFDPh0GCBMEDydu6xTOhgGEl4CLd7KD7UzpkWf7DGA1XWpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AigWMD+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7C0DEC32783;
+	Sun, 12 May 2024 16:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715530280;
+	bh=69jzUin/rmNDnbKvGfeDq9UoffkPNXUKBy0SLY7QC/E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=AigWMD+xPjSBuxXTy4w+O8eYnhkyU7EoKnBK6yRYthZxPNlChidaSPwOoZq9Wd4Z3
+	 Q9AIjc6h7OovicUiwStVfa1HWEjSVnYSErHS5JOwdSA5QSPco7iFdD7ZJ9ROIEsFAj
+	 fKICX+vSVbW7wVWy0YX3Hqiys5db6yia7mlBghmZVMdrr4fk7XLCiMBjTswjh3yqzc
+	 UnBVUGr+dRwjCF97DyqS1cjNJee83ZWFTw7jCDX6tDqyqVk2C3OFhzMRdY7abZEii4
+	 r3hUaDzY+kK0foRhm5FnwZobMGYpLnyS8Kyag1MwuTov23DK0pn+k2VQ4mwzqCxk2c
+	 oJD4kXPJNMisg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6B744E7C0E2;
+	Sun, 12 May 2024 16:11:20 +0000 (UTC)
+Subject: Re: [GIT PULL] EDAC/urgent for v6.9
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240512075732.GAZkB2bMH9QL7i1eZS@fat_crate.local>
+References: <20240512075732.GAZkB2bMH9QL7i1eZS@fat_crate.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240512075732.GAZkB2bMH9QL7i1eZS@fat_crate.local>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.9
+X-PR-Tracked-Commit-Id: 591c946675d88dcc0ae9ff54be9d5caaee8ce1e3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: ba16c1cf11c9f264b5455cb7d57267b39925409a
+Message-Id: <171553028043.9930.10769346949516796843.pr-tracker-bot@kernel.org>
+Date: Sun, 12 May 2024 16:11:20 +0000
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-edac <linux-edac@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf sched map: Add command-name option to filter the
- output map
-To: acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
-        acme@redhat.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
-        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240417152521.80340-1-vineethr@linux.ibm.com>
-Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20240417152521.80340-1-vineethr@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JaTpy5YKEc53aHaz9ElckGf3AslPyRnV
-X-Proofpoint-GUID: hoEzRcayGguIDjf17gxV2yGdrMRrAN3L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-12_11,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
- adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 clxscore=1011 bulkscore=0 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405120120
 
-On 17/04/24 20:55, Madadi Vineeth Reddy wrote:
-> By default, perf sched map prints sched-in events for all the tasks
-> which may not be required all the time as it prints lot of symbols
-> and rows to the terminal.
-> 
-> With --command-name option, one could specify the specific command
-> for which the map has to be shown. This would help in analyzing the
-> CPU usage patterns easier for that specific command. Since multiple
-> PID's might have the same command name, using command-name filter
-> would be more useful for debugging.
-> 
-> For other tasks, instead of printing the symbol, ** is printed and
-> the same . is used to represent idle. ** is used instead of symbol
-> for other tasks because it helps in clear visualization of command
-> of interest and secondly the symbol itself doesn't mean anything
-> because the sched-in of that symbol will not be printed(first sched-in
-> contains pid and the corresponding symbol).
-> 
-> 6.8.0
-> ======
->   *A0                   213864.670142 secs A0 => migration/0:18
->   *.                    213864.670148 secs .  => swapper:0
->    .  *B0               213864.670217 secs B0 => migration/1:21
->    .  *.                213864.670223 secs
->    .   .  *C0           213864.670247 secs C0 => migration/2:26
->    .   .  *.            213864.670252 secs
-> 
-> 6.8.0 + patch (--command-name = schbench)
-> =============
->    **  .   ** *A0       213864.671055 secs A0 => schbench:104834
->   *B0  .   .   A0       213864.671156 secs B0 => schbench:104835
->   *C0  .   .   A0       213864.671187 secs C0 => schbench:104836
->   *D0  .   .   A0       213864.671219 secs D0 => schbench:104837
->   *E0  .   .   A0       213864.671250 secs E0 => schbench:104838
->    E0  .  *D0  A0
-> 
-> This helps in visualizing how a benchmark like schbench is spread over
-> the available cpus while also knowing which cpus are idle(.) and which
-> are not(**). This will be more useful as number of CPUs increase.
-> 
-> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-> ---
->  tools/perf/Documentation/perf-sched.txt |  4 ++++
->  tools/perf/builtin-sched.c              | 17 ++++++++++++++---
->  2 files changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
-> index 5fbe42bd599b..b04a37560935 100644
-> --- a/tools/perf/Documentation/perf-sched.txt
-> +++ b/tools/perf/Documentation/perf-sched.txt
-> @@ -94,6 +94,10 @@ OPTIONS for 'perf sched map'
->  --color-pids::
->  	Highlight the given pids.
->  
-> +--command-name::
-> +	Map output only for the given command name.
-> +	(** indicates other tasks while . is idle).
-> +
->  OPTIONS for 'perf sched timehist'
->  ---------------------------------
->  -k::
-> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-> index 0fce7d8986c0..e60836da53e5 100644
-> --- a/tools/perf/builtin-sched.c
-> +++ b/tools/perf/builtin-sched.c
-> @@ -156,6 +156,7 @@ struct perf_sched_map {
->  	const char		*color_pids_str;
->  	struct perf_cpu_map	*color_cpus;
->  	const char		*color_cpus_str;
-> +	const char		*command;
->  	struct perf_cpu_map	*cpus;
->  	const char		*cpus_str;
->  };
-> @@ -1594,8 +1595,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  
->  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
->  
-> -	printf("  ");
-> -
->  	new_shortname = 0;
->  	if (!tr->shortname[0]) {
->  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
-> @@ -1605,7 +1604,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  			 */
->  			tr->shortname[0] = '.';
->  			tr->shortname[1] = ' ';
-> -		} else {
-> +		} else if (!sched->map.command || !strcmp(thread__comm_str(sched_in),
-> +								sched->map.command)) {
->  			tr->shortname[0] = sched->next_shortname1;
->  			tr->shortname[1] = sched->next_shortname2;
->  
-> @@ -1618,10 +1618,18 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  				else
->  					sched->next_shortname2 = '0';
->  			}
-> +		} else {
-> +			tr->shortname[0] = '*';
-> +			tr->shortname[1] = '*';
->  		}
->  		new_shortname = 1;
->  	}
->  
-> +	if (sched->map.command && strcmp(thread__comm_str(sched_in), sched->map.command))
-> +		goto skip;
-> +
-> +	printf("  ");
-> +
->  	for (i = 0; i < cpus_nr; i++) {
->  		struct perf_cpu cpu = {
->  			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
-> @@ -1678,6 +1686,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
->  out:
->  	color_fprintf(stdout, color, "\n");
->  
-> +skip:
->  	thread__put(sched_in);
->  
->  	return 0;
-> @@ -3560,6 +3569,8 @@ int cmd_sched(int argc, const char **argv)
->                      "highlight given CPUs in map"),
->  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
->                      "display given CPUs in map"),
-> +	OPT_STRING(0, "command-name", &sched.map.command, "command",
-> +		"map output only for the given command name"),
->  	OPT_PARENT(sched_options)
->  	};
->  	const struct option timehist_options[] = {
+The pull request you sent on Sun, 12 May 2024 09:57:32 +0200:
 
-Ping.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.9
 
-Hi all, any comments on this patch?
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/ba16c1cf11c9f264b5455cb7d57267b39925409a
 
-Thanks and Regards
-Madadi Vineeth Reddy
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
