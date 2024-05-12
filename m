@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-176951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FF58C37C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:28:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6E28C37CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D11A2813BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:28:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD971C20910
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C2B4D5B0;
-	Sun, 12 May 2024 17:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328EB4D131;
+	Sun, 12 May 2024 17:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0KyCyDK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maKwvppI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE71C46430;
-	Sun, 12 May 2024 17:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F025634
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 17:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715534915; cv=none; b=giX0ih8IjUnLkktoPmj09lizOhGrpJL6sc1EZbsUmeqqcOrC0UdvMn1GjX6zhCI6FA5z8rd2Krsvvkjw0z5G8My9Inh25eZ18fYWyAMNMldjoNWKmrUeVHZLZfxdDyYNdzCKkZsswOoQev0/rTzgO1P5V9jNvWIbKdZWy5bgwj0=
+	t=1715535189; cv=none; b=q4TeRZ+XZL7nmsxVhXwnV4qVasKK5mxxATVdNaYSTzMMuK4CyWtUXNXvJMO83L9jRRNpGrRmXl/ZEv9GusrcsPAClsqHcB3ah2WKNnsgIoT2y9CkIctePcd6ZCpkGRdyMTuC3FmnqKpqFWH1n0eehIwQag+UiP/4jXeA67dTets=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715534915; c=relaxed/simple;
-	bh=yoD3v95RGwummZEVUok+lA5erasx7wbDTMozE5Oaj3Y=;
+	s=arc-20240116; t=1715535189; c=relaxed/simple;
+	bh=ttF1rtgT590tJUdomS3tSkw0x6qe5M+vjYWjqrkv3M8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DAK8Htapvqn7zdIgNwDxjPVzm0dKwSmH55BhmnO/phsXw7Holhi+MwmyQKA9lO5r9b1mZ9nJnODw4vShY0p4J0bKzMZNaCns6Zh8Xq3EXBzg2Xwly45/w1f43Uq/zS2/klhDl22wMtOh1dQ7E7W+nmBar5aoVjiYpiCdGK1lNWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0KyCyDK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55A47C116B1;
-	Sun, 12 May 2024 17:28:34 +0000 (UTC)
+	 Content-Disposition; b=ArkSd+ceBeDXIXxiK9bsoG5nA6nNFNAqCPSi3oHUHk50ZHXGFIjbGN0vTpzzNWl1ufoEdnZHvuwfkFTWQs569V5ZoQcltLPVe7c8aN6AEhwqRVhdCMat4DFANnOlbkJ3RhcMz+j1gEOUVrX3v2mhFuumcb8QtuVtWquTU9XB7L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maKwvppI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EA5C116B1;
+	Sun, 12 May 2024 17:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715534914;
-	bh=yoD3v95RGwummZEVUok+lA5erasx7wbDTMozE5Oaj3Y=;
+	s=k20201202; t=1715535188;
+	bh=ttF1rtgT590tJUdomS3tSkw0x6qe5M+vjYWjqrkv3M8=;
 	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=P0KyCyDKaU8O9AlnA1PLjeK92G0I4K0q1u/Uj08VU2XQSGnNQ1GT7g4fIcd3n0Kai
-	 D0eIJg/O3XOXWD2MR4zs8+0T+GaVul08+B5NsJgIKgh4djYrb+l0r2eZ+Ac9kNbI/e
-	 +sMlKnGgWtgZ5X4wVX8Y5jGQL9Xt3xsI4Gc3soxdIGUtxjaAKo9yPLKxqntjdYM0B8
-	 x/Vtx0n5sd5oIQIzkuv8trjn+w+o5XaoX00L9vYS6smr7hXXPuqYZTJIsQAZ8tYRaH
-	 K3E/+hVSy8cRxaUubCWeuWiSw9LvyjWX3w4Pwzt+ok+8PpPLKd8jasTjxNCfmXC4zj
-	 43xHDByEu6lcA==
+	b=maKwvppIQ4gcdMO1RUIRMQbZrA2lCm2xKc83sTqkJW1TPPo3EfLK0IRp+gNMxGuDF
+	 8FDyx1wSpcwXUxS4J04qOaCF21Z2aVLdXiM452kugSamFLZp0dQGlvCqd2qb+Fc1hv
+	 glVgi37qIVxnTVfrL2ZPwJ/wf6S80AbyzSZ/sP7RXMi6Qf7TKKQXvp5Ot/eqwV4BIB
+	 Ie6tcXbnNkXIixoyzPwEI9H6V/SXZQAUSjFiFiOzc2EW0CKoEW6vj6iWevByMOZylM
+	 iBgmzPH9gPEBljb98wa9Ey08MZV9cFquXLqVOgnphTtZ3dXeXVMVCFL6D7JFLJRDTG
+	 8n9lv/zzaqSYA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A10ADCE105C; Sun, 12 May 2024 10:28:33 -0700 (PDT)
-Date: Sun, 12 May 2024 10:28:33 -0700
+	id 4BA5CCE105C; Sun, 12 May 2024 10:33:08 -0700 (PDT)
+Date: Sun, 12 May 2024 10:33:08 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-csky@vger.kernel.org, kernel-team@meta.com,
-	viro@zeniv.linux.org.uk, elver@google.com,
-	akpm@linux-foundation.org, tglx@linutronix.de, peterz@infradead.org,
-	dianders@chromium.org, pmladek@suse.com, arnd@arndb.de,
-	yujie.liu@intel.com, guoren@kernel.org
-Subject: [GIT PULL] Native and emulated one-byte cmpxcha()g for v6.10
-Message-ID: <a03cbcce-ac01-46e7-9fd5-c4f0b782c8df@paulmck-laptop>
+Cc: linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	kernel-team@meta.com, elver@google.com,
+	penguin-kernel@i-love.sakura.ne.jp
+Subject: [GIT PULL] KCSAN changes for v6.10
+Message-ID: <ccdfb04f-9d2c-4033-a29c-bb9677fcbea5@paulmck-laptop>
 Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,62 +62,32 @@ Content-Disposition: inline
 
 Hello, Linus,
 
-Please pull the following cmpxchg()-related changes:
+Once the v6.4 merge window opens, please pull the latest KCSAN git
+commit from:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/cmpxchg.2024.05.11a
-  # HEAD: 5800e77d88c0cd98bc10460df148631afa7b5e4d: csky: Emulate one-byte cmpxchg (2024-05-11 07:07:07 -0700)
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/kcsan.2024.05.10a
 
-Please note that the commit and tag are quite recent.  However, the
-only change was to add the architecture maintainer'a ack.  The exact
-same change (other than the ack) has been in -next for quite some time.
-
-Of course, if you would prefer that this exact commit be in -next for a
-decent interval, please let me know and I will be happy to re-send this
-pull request after a few days in -next.
+  # HEAD: 31f605a308e627f06e4e6ab77254473f1c90f0bf: kcsan, compiler_types: Introduce __data_racy type qualifier (2024-05-07 11:39:50 -0700)
 
 ----------------------------------------------------------------
-sparc32,parisc,csky: Provide one-byte and two-byte cmpxchg() support
+kcsan: Introduce __data_racy type qualifier
 
-This series provides native one-byte and two-byte cmpxchg() support
-for sparc32 and parisc, courtesy of Al Viro.  This support is provided
-by the same hashed-array-of-locks technique used for the other atomic
-operations provided for these two platforms.
-
-This series also provides emulated one-byte cmpxchg() support for csky
-using a new cmpxchg_emu_u8() function that uses a four-byte cmpxchg()
-to emulate the one-byte variant.
-
-Similar patches for emulation of one-byte cmpxchg() for arc, sh, and
-xtensa have not yet received maintainer acks, so they are slated for
-the v6.11 merge window.
+This commit adds a __data_racy type qualifier that enables kernel
+developers to inform KCSAN that a given variable is a shared variable
+without needing to mark each and every access.  This allows pre-KCSAN
+code to be correctly (if approximately) instrumented withh very little
+effort, and also provides people reading the code a clear indication that
+the variable is in fact shared.  In addition, it permits incremental
+transition to per-access KCSAN marking, so that (for example) a given
+subsystem can be transitioned one variable at a time, while avoiding
+large numbers of KCSAN warnings during this transition.
 
 ----------------------------------------------------------------
-Al Viro (8):
-      sparc32: make __cmpxchg_u32() return u32
-      sparc32: make the first argument of __cmpxchg_u64() volatile u64 *
-      sparc32: unify __cmpxchg_u{32,64}
-      sparc32: add __cmpxchg_u{8,16}() and teach __cmpxchg() to handle those sizes
-      parisc: __cmpxchg_u32(): lift conversion into the callers
-      parisc: unify implementations of __cmpxchg_u{8,32,64}
-      parisc: add missing export of __cmpxchg_u8()
-      parisc: add u16 support to cmpxchg()
+Marco Elver (1):
+      kcsan, compiler_types: Introduce __data_racy type qualifier
 
-Paul E. McKenney (2):
-      lib: Add one-byte emulation function
-      csky: Emulate one-byte cmpxchg
-
- arch/Kconfig                        |  3 +++
- arch/csky/Kconfig                   |  1 +
- arch/csky/include/asm/cmpxchg.h     | 10 +++++++
- arch/parisc/include/asm/cmpxchg.h   | 22 +++++++---------
- arch/parisc/kernel/parisc_ksyms.c   |  2 ++
- arch/parisc/lib/bitops.c            | 52 ++++++++++++-------------------------
- arch/sparc/include/asm/cmpxchg_32.h | 20 +++++++-------
- arch/sparc/lib/atomic32.c           | 45 ++++++++++++++------------------
- include/linux/cmpxchg-emu.h         | 15 +++++++++++
- lib/Makefile                        |  1 +
- lib/cmpxchg-emu.c                   | 45 ++++++++++++++++++++++++++++++++
- 11 files changed, 133 insertions(+), 83 deletions(-)
- create mode 100644 include/linux/cmpxchg-emu.h
- create mode 100644 lib/cmpxchg-emu.c
+ Documentation/dev-tools/kcsan.rst | 10 ++++++++++
+ include/linux/compiler_types.h    |  7 +++++++
+ kernel/kcsan/kcsan_test.c         | 17 +++++++++++++++++
+ 3 files changed, 34 insertions(+)
 
