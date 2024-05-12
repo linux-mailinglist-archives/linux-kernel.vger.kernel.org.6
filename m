@@ -1,98 +1,150 @@
-Return-Path: <linux-kernel+bounces-176810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37738C354A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:19:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD5418C354B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E50621C209B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:19:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7E71F2153E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438EC17758;
-	Sun, 12 May 2024 07:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bIKGaQuz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E7F101EC;
+	Sun, 12 May 2024 07:21:49 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5B417583
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 07:19:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907CAE556
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 07:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715498374; cv=none; b=WCDUe3cOdpH7WYhBVM38ax2rrIZh99qPknQmop74t6vvNa+cl112oMNZNd3BSwJNE/hUd+T/mj1Vqog92hwGfwF++vIxQTCopn9bdoqIbFKGzz3TziaSMvKawsmnF68DB0+Op50ahYOn8IdqnYEViEmiaWswIAnunpeLK1sHUyo=
+	t=1715498509; cv=none; b=Ed0h9+MI3dt+9FLLZMwhBU90pzrpXJiAbRh32A8+KblDH3wPL3mLa84U1odgwnxsQX6TP4SJeIvCe0xfQVMzioK9gvkmd7Fi3d1lME/ZOBCPoZQshoGX90omkqr6n5vOIsXVoTm/Y8Z2J3yUFgpuKOb+jrIjt1lUPZVTVaUnsjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715498374; c=relaxed/simple;
-	bh=SjhuRfJMuyO7GM96jJNtrPoACgPadZ8CofQaX4mKANM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kn2ARskJ0gnQXeDlcfQ1qth0QahqSxq42E1dQvn43YXTGWUEA03q5hx7rJVqThlyStlt7WjV7NvxFwq0QH5Jxtg3GZHF1jxYbqbyPNkskuU02AjmNRN8VpuSec+FRjHHxUsYu6AbK+umQ/UF1QNsa96kx7H9g3/+UfJoFMD75x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bIKGaQuz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715498372;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SjhuRfJMuyO7GM96jJNtrPoACgPadZ8CofQaX4mKANM=;
-	b=bIKGaQuzwq825FEUOwZ2/xVG83Pzr3qZ8EkTskcttFOmFqq2kW1ufNT7ZvWbErWAv0SNGe
-	YNY3WRdAd5uaZfcGIuM9aug3z2/AwROa6QsaDHzEfa9DxZQxnb+/tvDednUPDlx5WXWpuS
-	+0H+8cAWbSOaQRi6+gqkJQeE09VCUBs=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-154-twruZD_lO9KAWHwjmqGuEQ-1; Sun, 12 May 2024 03:19:30 -0400
-X-MC-Unique: twruZD_lO9KAWHwjmqGuEQ-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-5206ef0d6fdso2927899e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 00:19:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715498369; x=1716103169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SjhuRfJMuyO7GM96jJNtrPoACgPadZ8CofQaX4mKANM=;
-        b=oCQyzAru6HNpO8v2QQcfoX3x3/h+vNNGygJvpxRTTfc52E/+ncIvWcrxAt3eI4GCPn
-         R9u2Ee1o+3T+zVftlZ4RvOaZ/ekO8O7b73h5EPsLptidgDEufpux2uOknrd92EPsRl75
-         GTvyKYTfStEUM9XNAlAz91jRj6zJleFhUR3f/DFScw1fEjhy65tyWrPvSfMrRrNgvaUz
-         0Zflk6J28mEZ8oHt0ddsM8/wO7neTP4LoKbIDbd/ClAvtAe0qHMP9au3Gmngh08euN1R
-         xGwgF0VNykJHzEzOrm9wgw336sO6oiDhrxEggG1hJDDH8Otib0pPQ6dazhGOBoMrH7/I
-         zHbA==
-X-Forwarded-Encrypted: i=1; AJvYcCU92W5+FBSesXO1IDc6gzCRoyDSk831YI5cq017gCjHOwYqQ7gOqYRdg/wVnrbhH/qOtQZBqlQ8kVSNMd4FenaVNX4oJBhVtEI1YBZ/
-X-Gm-Message-State: AOJu0YxqsurPDKSsLXPiCKdWOBOO+5Ozo3eFRk3lTjhvXboE4LQiTxzV
-	CD3wIHbI5EF39Z58BJRzBdHPIWTHhcCcJwjW1MSO2z8nSoWKDKmUT9k1itlQJ5Nn3K8bAAFjT57
-	IkhsNoVW2iCUngQXA5y60XwgWqIX/6DuP/hFYVcQ86EKhJtdCO3ctInJ0gtPlk0lkIGn8bHtmZH
-	D/ehBvDfAPSiwYDxCOpoyJ3TMM7z/Isv88m9kG
-X-Received: by 2002:a19:770b:0:b0:51e:f8ae:db35 with SMTP id 2adb3069b0e04-5220fe798b9mr4043007e87.43.1715498368840;
-        Sun, 12 May 2024 00:19:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzsEg1aJ25kKXmalZ4iS95ClJKdZVZF8uHKMumVpfk3l28kpvTcd6c9CIHX58M/zdIrqZBVfHzmNsuYtTNFMA=
-X-Received: by 2002:a19:770b:0:b0:51e:f8ae:db35 with SMTP id
- 2adb3069b0e04-5220fe798b9mr4043000e87.43.1715498368440; Sun, 12 May 2024
- 00:19:28 -0700 (PDT)
+	s=arc-20240116; t=1715498509; c=relaxed/simple;
+	bh=66Jqedg9cXpHoydTVuNznaoG+hIkMQD7XMiOtPkepiU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=uZvM32iR5x/rYW5m/FJ4HQhhPxfbea07IfWRg3QRs2tqa437iV6qdz/HRSqokAux1IVRvFApGj7EmALY1xB9zsQDrvIHbMiwx9rsMRXr8P0RsLDcPVlOmO/c54Xo+/IxX+z45lQnhJ3Ei34yQYuEGxc8TROZRl0KmLYzN70slX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav116.sakura.ne.jp (fsav116.sakura.ne.jp [27.133.134.243])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44C7LiBq058242;
+	Sun, 12 May 2024 16:21:44 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav116.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp);
+ Sun, 12 May 2024 16:21:44 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav116.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44C7Li58058238
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 12 May 2024 16:21:44 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <838e7959-a360-4ac1-b36a-a3469236129b@I-love.SAKURA.ne.jp>
+Date: Sun, 12 May 2024 16:21:44 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510235055.2811352-1-seanjc@google.com>
-In-Reply-To: <20240510235055.2811352-1-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Sun, 12 May 2024 09:19:17 +0200
-Message-ID: <CABgObfauP2zPdhK65uVJb92kwp7TBve_8n7AE2Hhe9sQf+iNZw@mail.gmail.com>
-Subject: Re: KVM: x86 pull requests for 6.10
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: John Fastabend <john.fastabend@gmail.com>,
+        Jakub Sitnicki <jakub@cloudflare.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Network Development
+ <netdev@vger.kernel.org>,
+        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] bpf, sockmap: defer sk_psock_free_link() using RCU
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, May 11, 2024 at 1:51=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
-> Nothing notable to say here, this mail exits purely to be the parent.
+If a BPF program is attached to kfree() event, calling kfree()
+with psock->link_lock held triggers lockdep warning.
 
-Pulled all of them, thanks.
+Defer kfree() using RCU so that the attached BPF program runs
+without holding psock->link_lock.
 
-Paolo
+Reported-by: syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ec941d6e24f633a59172
+Tested-by: syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com
+Reported-by: syzbot+a4ed4041b9bea8177ac3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a4ed4041b9bea8177ac3
+Tested-by: syzbot+a4ed4041b9bea8177ac3@syzkaller.appspotmail.com
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ include/linux/skmsg.h | 7 +++++--
+ net/core/skmsg.c      | 2 ++
+ net/core/sock_map.c   | 2 ++
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
+diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
+index a509caf823d6..66590f20b777 100644
+--- a/include/linux/skmsg.h
++++ b/include/linux/skmsg.h
+@@ -66,7 +66,10 @@ enum sk_psock_state_bits {
+ };
+ 
+ struct sk_psock_link {
+-	struct list_head		list;
++	union {
++		struct list_head	list;
++		struct rcu_head		rcu;
++	};
+ 	struct bpf_map			*map;
+ 	void				*link_raw;
+ };
+@@ -418,7 +421,7 @@ static inline struct sk_psock_link *sk_psock_init_link(void)
+ 
+ static inline void sk_psock_free_link(struct sk_psock_link *link)
+ {
+-	kfree(link);
++	kfree_rcu(link, rcu);
+ }
+ 
+ struct sk_psock_link *sk_psock_link_pop(struct sk_psock *psock);
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index fd20aae30be2..9cebfeecd3c9 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -791,10 +791,12 @@ static void sk_psock_link_destroy(struct sk_psock *psock)
+ {
+ 	struct sk_psock_link *link, *tmp;
+ 
++	rcu_read_lock();
+ 	list_for_each_entry_safe(link, tmp, &psock->link, list) {
+ 		list_del(&link->list);
+ 		sk_psock_free_link(link);
+ 	}
++	rcu_read_unlock();
+ }
+ 
+ void sk_psock_stop(struct sk_psock *psock)
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index 8598466a3805..8bec4b7a8ec7 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
+ 	bool strp_stop = false, verdict_stop = false;
+ 	struct sk_psock_link *link, *tmp;
+ 
++	rcu_read_lock();
+ 	spin_lock_bh(&psock->link_lock);
+ 	list_for_each_entry_safe(link, tmp, &psock->link, list) {
+ 		if (link->link_raw == link_raw) {
+@@ -159,6 +160,7 @@ static void sock_map_del_link(struct sock *sk,
+ 		}
+ 	}
+ 	spin_unlock_bh(&psock->link_lock);
++	rcu_read_unlock();
+ 	if (strp_stop || verdict_stop) {
+ 		write_lock_bh(&sk->sk_callback_lock);
+ 		if (strp_stop)
+-- 
+2.34.1
 
