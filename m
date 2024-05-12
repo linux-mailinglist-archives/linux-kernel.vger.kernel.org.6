@@ -1,164 +1,306 @@
-Return-Path: <linux-kernel+bounces-176939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BFC8C379C
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:44:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810008C37A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:51:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41014281334
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6531C20896
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65FC47784;
-	Sun, 12 May 2024 16:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="xiS8wpMG"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0404B5AE;
+	Sun, 12 May 2024 16:51:45 +0000 (UTC)
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD8233985;
-	Sun, 12 May 2024 16:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49535DDD7;
+	Sun, 12 May 2024 16:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715532286; cv=none; b=fZOukxGsyWKNu9KWViFd28toZS958tGE2Xl16NW0PqVeo4Q1Nw7B+3YOD/+bQLBr6XjhFIR04sHHYOWnA1KD1Hs7LhIjiOcp/prD9IdHInft8GLkj1nQaosVL/kEWxsvbZW5qjgsXkihDxnYUDKoVkzbUyoIetwSeUCUHPPaMS4=
+	t=1715532704; cv=none; b=FtSkCyiOFpBH8fWe+f9+c0Lr7y4Z9AP014sFNZPssWKn9zf3BBGX5jLG2m0+OyTuyO/enVMq0KpnaDk6edwUBI6ksk28xIQr39qpfmL7VJLkK+owmgOT+wfOmY9V57pxoMHcfhL6Dh31Nzs4+BUC3KU4XYn+Sc2HT9qGrUKXI4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715532286; c=relaxed/simple;
-	bh=c56SAsIRlV6GLObSq1hH1Rvq8m0Fmhd1QaC7JH93tCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMXls7maCSOVkHgWxbXdwefg7RlZw4zLyW4R4V0qCt9HObT6QiqFxpqQYi7hfuaJYbe4MyRQMGnOOLW3l36dH1bs/VOk5xikGf5Iy2UfEayAE9LJKoqSXagIMnQ988SkUMrPupm8tZ1GBvWXV6VZGxnVe6biAGIFjOw8MK0PMhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=xiS8wpMG; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 940691FC1D;
-	Sun, 12 May 2024 18:44:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1715532279;
-	bh=y8g4w0GWcQosP0yLlaIzTp7hrfG0+IeoYR8ymAM4Vxo=;
-	h=Received:From:To:Subject;
-	b=xiS8wpMGPkUeYKLKwocNyJlF6WEEYRBVZbItYRlLNVqh4a1OerBOWHoOVmUuZN+p1
-	 2vn8Rbmkx0jxnA93kuwApaqQZhV2jbrjnwCfySKjCcxvGa1R7Ey5Jyyse7lPsa1Xzj
-	 YiGhVauggOe3xV63kePyF0s6kWsfhrlu/NiRPkSen3eKEPxS077LalvY/Cuw9v1TVL
-	 H+cyX+tvk1LfM4pXaDWCHveaMMxDXfs5LJ4w4g9UVo1t6uxU0WKwu6eALYcm30Pz/C
-	 3AB/b88rRfmr+GpGYGBz2UoqOe8y31y0JXfeHgKILtU+ekeRNz1DRi73YjYmBh/z/J
-	 Y51gbgNmln/WQ==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 3FBF97F9B8; Sun, 12 May 2024 18:44:39 +0200 (CEST)
-Date: Sun, 12 May 2024 18:44:39 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH 4/4] drm/tidss: Add OLDI bridge support
-Message-ID: <ZkDx94qEVv65FquF@gaggiata.pivistrello.it>
-References: <20240511193055.1686149-1-a-bhatia1@ti.com>
- <20240511193055.1686149-5-a-bhatia1@ti.com>
- <ZkCsfH1qeSsXyQz4@gaggiata.pivistrello.it>
- <e34dc434-7922-4b47-bc41-c06f13366194@ti.com>
+	s=arc-20240116; t=1715532704; c=relaxed/simple;
+	bh=u+mTLviAtKqkjVwjm67/CPoAoh0BegY5v8YMcgwh08k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AkUUoXl8KP4lxQb2r1xY3A/G4egOa41N6ahy3ZMXszxIHMMP6mIHMgfO3VtyivmAKViovCf82tKoi+wXswBZyWQtc3u+VAkmf3wbZNYwFtiaA+YzjztMDrVk0LHRjep0TEdQMTYtgXNMTk5ca9TPnGQ7GfuGhbb0sUev4+J2NpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 28326240003;
+	Sun, 12 May 2024 16:50:22 +0000 (UTC)
+Message-ID: <d0e2d1a5-110a-40be-8662-7c78afe22446@ghiti.fr>
+Date: Sun, 12 May 2024 18:50:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e34dc434-7922-4b47-bc41-c06f13366194@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 14/29] riscv/mm: Implement map_shadow_stack() syscall
+Content-Language: en-US
+To: Deepak Gupta <debug@rivosinc.com>, paul.walmsley@sifive.com,
+ rick.p.edgecombe@intel.com, broonie@kernel.org, Szabolcs.Nagy@arm.com,
+ kito.cheng@sifive.com, keescook@chromium.org, ajones@ventanamicro.com,
+ conor.dooley@microchip.com, cleger@rivosinc.com, atishp@atishpatra.org,
+ bjorn@rivosinc.com, alexghiti@rivosinc.com, samuel.holland@sifive.com,
+ conor@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+ akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+ shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+ jerry.shih@sifive.com, hankuan.chen@sifive.com, greentime.hu@sifive.com,
+ evan@rivosinc.com, xiao.w.wang@intel.com, charlie@rivosinc.com,
+ apatel@ventanamicro.com, mchitale@ventanamicro.com,
+ dbarboza@ventanamicro.com, sameo@rivosinc.com, shikemeng@huaweicloud.com,
+ willy@infradead.org, vincent.chen@sifive.com, guoren@kernel.org,
+ samitolvanen@google.com, songshuaishuai@tinylab.org, gerg@kernel.org,
+ heiko@sntech.de, bhe@redhat.com, jeeheng.sia@starfivetech.com,
+ cyy@cyyself.name, maskray@google.com, ancientmodern4@gmail.com,
+ mathis.salmen@matsal.de, cuiyunhui@bytedance.com, bgray@linux.ibm.com,
+ mpe@ellerman.id.au, baruch@tkos.co.il, alx@kernel.org, david@redhat.com,
+ catalin.marinas@arm.com, revest@chromium.org, josh@joshtriplett.org,
+ shr@devkernel.io, deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+ jhubbard@nvidia.com
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-15-debug@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240403234054.2020347-15-debug@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Hello Aradhya,
 
-On Sun, May 12, 2024 at 08:53:12PM +0530, Aradhya Bhatia wrote:
-> On 12/05/24 17:18, Francesco Dolcini wrote:
-> > On Sun, May 12, 2024 at 01:00:55AM +0530, Aradhya Bhatia wrote:
-> >> Up till now, the OLDI support in tidss was integrated within the tidss dispc.
-> >> This was fine till the OLDI was one-to-mapped with the DSS video-port (VP).
-> >> The AM62 and AM62P SoCs have 2 OLDI TXes that can support dual-lvds / lvds-clone
-> >> modes.
-> >>
-> >> Add OLDI TXes as separate DRM bridge entities to better support the new LVDS
-> >> configurations.
-> >>
-> >> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> >> ---
-> >>  drivers/gpu/drm/tidss/Makefile      |   3 +-
-> >>  drivers/gpu/drm/tidss/tidss_dispc.c |  11 +-
-> >>  drivers/gpu/drm/tidss/tidss_dispc.h |   4 +
-> >>  drivers/gpu/drm/tidss/tidss_drv.c   |  13 +-
-> >>  drivers/gpu/drm/tidss/tidss_drv.h   |   4 +
-> >>  drivers/gpu/drm/tidss/tidss_oldi.c  | 568 ++++++++++++++++++++++++++++
-> >>  drivers/gpu/drm/tidss/tidss_oldi.h  |  73 ++++
-> >>  7 files changed, 673 insertions(+), 3 deletions(-)
-> >>  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
-> >>  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
-> >>
-> >> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.h b/drivers/gpu/drm/tidss/tidss_oldi.h
-> >> new file mode 100644
-> >> index 000000000000..5ad02ddea11a
-> >> --- /dev/null
-> >> +++ b/drivers/gpu/drm/tidss/tidss_oldi.h
-> >> @@ -0,0 +1,73 @@
-> >> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> >> +/*
-> >> + * Copyright (C) 2023 - Texas Instruments Incorporated
-> >> + *
-> >> + * Aradhya Bhatia <a-bhati1@ti.com>
-> >> + */
-> >> +
-> >> +#ifndef __TIDSS_OLDI_H__
-> >> +#define __TIDSS_OLDI_H__
-> >> +
-> >> +#include <linux/media-bus-format.h>
-> >> +
-> >> +#include "tidss_drv.h"
-> >> +#include "tidss_dispc.h"
-> >> +
-> >> +struct tidss_oldi;
-> > 
-> > why do you need this here? 
-> 
-> So that struct tidss_device can store pointers to struct tidss_oldi
-> instances.
+On 04/04/2024 01:35, Deepak Gupta wrote:
+> As discussed extensively in the changelog for the addition of this
+> syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+> existing mmap() and madvise() syscalls do not map entirely well onto the
+> security requirements for shadow stack memory since they lead to windows
+> where memory is allocated but not yet protected or stacks which are not
+> properly and safely initialised. Instead a new syscall map_shadow_stack()
+> has been defined which allocates and initialises a shadow stack page.
+>
+> This patch implements this syscall for riscv. riscv doesn't require token
+> to be setup by kernel because user mode can do that by itself. However to
+> provide compatibility and portability with other architectues, user mode
+> can specify token set flag.
+>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>   arch/riscv/kernel/Makefile      |   2 +
+>   arch/riscv/kernel/usercfi.c     | 149 ++++++++++++++++++++++++++++++++
+>   include/uapi/asm-generic/mman.h |   1 +
+>   3 files changed, 152 insertions(+)
+>   create mode 100644 arch/riscv/kernel/usercfi.c
+>
+> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+> index 604d6bf7e476..3bec82f4e94c 100644
+> --- a/arch/riscv/kernel/Makefile
+> +++ b/arch/riscv/kernel/Makefile
+> @@ -107,3 +107,5 @@ obj-$(CONFIG_COMPAT)		+= compat_vdso/
+>   
+>   obj-$(CONFIG_64BIT)		+= pi/
+>   obj-$(CONFIG_ACPI)		+= acpi.o
+> +
+> +obj-$(CONFIG_RISCV_USER_CFI) += usercfi.o
+> diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+> new file mode 100644
+> index 000000000000..c4ed0d4e33d6
+> --- /dev/null
+> +++ b/arch/riscv/kernel/usercfi.c
+> @@ -0,0 +1,149 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2024 Rivos, Inc.
+> + * Deepak Gupta <debug@rivosinc.com>
+> + */
+> +
+> +#include <linux/sched.h>
+> +#include <linux/bitops.h>
+> +#include <linux/types.h>
+> +#include <linux/mm.h>
+> +#include <linux/mman.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/sizes.h>
+> +#include <linux/user.h>
+> +#include <linux/syscalls.h>
+> +#include <linux/prctl.h>
+> +#include <asm/csr.h>
+> +#include <asm/usercfi.h>
+> +
+> +#define SHSTK_ENTRY_SIZE sizeof(void *)
+> +
+> +/*
+> + * Writes on shadow stack can either be `sspush` or `ssamoswap`. `sspush` can happen
+> + * implicitly on current shadow stack pointed to by CSR_SSP. `ssamoswap` takes pointer to
+> + * shadow stack. To keep it simple, we plan to use `ssamoswap` to perform writes on shadow
+> + * stack.
+> + */
+> +static noinline unsigned long amo_user_shstk(unsigned long *addr, unsigned long val)
+> +{
+> +	/*
+> +	 * Since shadow stack is supported only in 64bit configuration,
+> +	 * ssamoswap.d is used below.
 
-on this and ...
+> *        * CONFIG_RISCV_USER_CFI is dependent
+> +	 * on 64BIT and compile of this file is dependent on CONFIG_RISCV_USER_CFI
+> +	 * In case ssamoswap faults, return -1.
 
-> >> +#define OLDI_IDLE_CLK_HZ	25000000 /*25 MHz */
-> > this is used only on a single C files, move it there?
-> > 
-> > I would consider this comment in general for this header file,
-> > from a quick check most of this is used only in tidss_oldi.c.
-> 
-> Apart from struct tidss_device being able to access struct tidss_oldi,
-> there is no direct access to any of the above.
-> 
-> Perhaps I can move the idle clock definition into the C file.
-> 
-> However, before tidss_oldi.h, all the register definitions have been
-> stored in tidss_dispc_regs.h. It just seemed right to keep them out in
-> the header file and maintain the status quo.
 
-.. this they are probably more of a personal taste topic, just go
-for whatever you and the actual maintainer (tomi?) prefer.
+To me, this part of the comment is not needed.
 
-Thanks,
-Francesco
+
+> +	 * Never expect -1 on shadow stack. Expect return addresses and zero
+
+
+In that case, should we BUG() instead?
+
+
+> +	 */
+> +	unsigned long swap = -1;
+> +
+> +	__enable_user_access();
+> +	asm goto(
+> +				".option push\n"
+> +				".option arch, +zicfiss\n"
+> +				"1: ssamoswap.d %[swap], %[val], %[addr]\n"
+> +				_ASM_EXTABLE(1b, %l[fault])
+> +				RISCV_ACQUIRE_BARRIER
+> +				".option pop\n"
+> +				: [swap] "=r" (swap), [addr] "+A" (*addr)
+> +				: [val] "r" (val)
+> +				: "memory"
+> +				: fault
+> +			);
+> +	__disable_user_access();
+> +	return swap;
+> +fault:
+> +	__disable_user_access();
+> +	return -1;
+> +}
+> +
+> +/*
+> + * Create a restore token on the shadow stack.  A token is always XLEN wide
+> + * and aligned to XLEN.
+> + */
+> +static int create_rstor_token(unsigned long ssp, unsigned long *token_addr)
+> +{
+> +	unsigned long addr;
+> +
+> +	/* Token must be aligned */
+> +	if (!IS_ALIGNED(ssp, SHSTK_ENTRY_SIZE))
+> +		return -EINVAL;
+> +
+> +	/* On RISC-V we're constructing token to be function of address itself */
+> +	addr = ssp - SHSTK_ENTRY_SIZE;
+> +
+> +	if (amo_user_shstk((unsigned long __user *)addr, (unsigned long) ssp) == -1)
+> +		return -EFAULT;
+> +
+> +	if (token_addr)
+> +		*token_addr = addr;
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long allocate_shadow_stack(unsigned long addr, unsigned long size,
+> +				unsigned long token_offset,
+> +				bool set_tok)
+> +{
+> +	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
+> +	struct mm_struct *mm = current->mm;
+> +	unsigned long populate, tok_loc = 0;
+> +
+> +	if (addr)
+> +		flags |= MAP_FIXED_NOREPLACE;
+> +
+> +	mmap_write_lock(mm);
+> +	addr = do_mmap(NULL, addr, size, PROT_READ, flags,
+
+
+Hmmm why do you map the shadow stack as PROT_READ here?
+
+
+> +				VM_SHADOW_STACK | VM_WRITE, 0, &populate, NULL);
+> +	mmap_write_unlock(mm);
+> +
+> +	if (!set_tok || IS_ERR_VALUE(addr))
+> +		goto out;
+> +
+> +	if (create_rstor_token(addr + token_offset, &tok_loc)) {
+> +		vm_munmap(addr, size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	addr = tok_loc;
+> +
+> +out:
+> +	return addr;
+> +}
+> +
+> +SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, size, unsigned int, flags)
+> +{
+> +	bool set_tok = flags & SHADOW_STACK_SET_TOKEN;
+> +	unsigned long aligned_size = 0;
+> +
+> +	if (!cpu_supports_shadow_stack())
+> +		return -EOPNOTSUPP;
+> +
+> +	/* Anything other than set token should result in invalid param */
+> +	if (flags & ~SHADOW_STACK_SET_TOKEN)
+> +		return -EINVAL;
+> +
+> +	/*
+> +	 * Unlike other architectures, on RISC-V, SSP pointer is held in CSR_SSP and is available
+> +	 * CSR in all modes. CSR accesses are performed using 12bit index programmed in instruction
+> +	 * itself. This provides static property on register programming and writes to CSR can't
+> +	 * be unintentional from programmer's perspective. As long as programmer has guarded areas
+> +	 * which perform writes to CSR_SSP properly, shadow stack pivoting is not possible. Since
+> +	 * CSR_SSP is writeable by user mode, it itself can setup a shadow stack token subsequent
+> +	 * to allocation. Although in order to provide portablity with other architecture (because
+> +	 * `map_shadow_stack` is arch agnostic syscall), RISC-V will follow expectation of a token
+> +	 * flag in flags and if provided in flags, setup a token at the base.
+> +	 */
+> +
+> +	/* If there isn't space for a token */
+> +	if (set_tok && size < SHSTK_ENTRY_SIZE)
+> +		return -ENOSPC;
+> +
+> +	if (addr && (addr % PAGE_SIZE))
+
+
+I would use:
+
+if (addr && (addr & (PAGE_SIZE - 1))
+
+
+> +		return -EINVAL;
+> +
+> +	aligned_size = PAGE_ALIGN(size);
+> +	if (aligned_size < size)
+> +		return -EOVERFLOW;
+> +
+> +	return allocate_shadow_stack(addr, aligned_size, size, set_tok);
+> +}
+> diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
+> index 57e8195d0b53..0c0ac6214de6 100644
+> --- a/include/uapi/asm-generic/mman.h
+> +++ b/include/uapi/asm-generic/mman.h
+> @@ -19,4 +19,5 @@
+>   #define MCL_FUTURE	2		/* lock all future mappings */
+>   #define MCL_ONFAULT	4		/* lock all pages that are faulted in */
+>   
+> +#define SHADOW_STACK_SET_TOKEN (1ULL << 0)     /* Set up a restore token in the shadow stack */
+>   #endif /* __ASM_GENERIC_MMAN_H */
+
+
+Don't we need to advertise this new syscall to the man pages?
 
 
