@@ -1,160 +1,85 @@
-Return-Path: <linux-kernel+bounces-176803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC338C3536
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:17:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 555598C3537
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 511E8281E10
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 06:17:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8E84B20FB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 06:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B53AFC0C;
-	Sun, 12 May 2024 06:17:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="GfsUTb9P"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E2A17758;
+	Sun, 12 May 2024 06:20:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B991EEC5;
-	Sun, 12 May 2024 06:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C725417583
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 06:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715494654; cv=none; b=HStyOOZ/KMZLEkSnxIgg+GEBafXmSVsCEvjoNKY93RzSA8Z5zUzG5AebnqeWWpywcMAfaryBjCaLbZQIuOnJ/pbnW/6d+tgNceLHuWjOOss5mhPgaJmot3bfLmqqA0CfTdBvpVfmwHhTTP7GwqkT54yO8Klq/cdB6TMSzz3ig2A=
+	t=1715494806; cv=none; b=nZt7QgzxWeMTeR57Wt8BXXNzklgzFz8LZet/+//EB2XTjFtDiLz+Tz32KtA4XweQLUto0JfrPi87b9aGwooGLMWdn0DkBCLQ8ZziFvxTXqrNgxTDbUXKPIs8AL3Sm3UKS3J7hsgXVgsFUjuOLbt0TDnj2546SlulI0sr8z9MYHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715494654; c=relaxed/simple;
-	bh=gG9qtwz6AEuVBpuUnwTRmnEVW/awSwMFOyXg9NXDvmg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Mg8DJD9lKtjsw4rP8BZDMweZnPPyuJ3dNPGBPT8Z9GKrp3EEuxcEYAR+DIafy9Qe2bbrdeNOCmk+Ld7zXncEaTni7JtLGw6bNQk+YjjujoUraO/L0gFmRYkfF6tGc7oWOViT78qEQ+jThvyn3FvbfCBSSJQc4F01FEEOP/bwPHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=GfsUTb9P; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=c/JXHF58umbTfPCiNG8MlHUsPoWqk2CyfMoD1L/vcWA=; t=1715494652; x=1716099452; 
-	b=GfsUTb9PLmuFTMhgTTJNnYU4A7iNqK+GwEpPnJj6OuwNgpKME6cOAtmViWEgUYK2eTCBIjH+CQh
-	I8ckjmfACW1Y8900tUjWrL5y3ZZqwtf4oA0sWqBCD7dcmxaAQfwhltEx0oPR/QZiVXMHVbIiYRup/
-	UcNYIf1qcHQr8lABC36Z0pgme4Z9faxCImJl4Vadxluwrq8DwQ1gCfsZcXkuWHMs5C8EbjArIthP0
-	hCDMERcfplFIGUdM/uHCzELV5L2G++ElUoJ2o0Upg9ryO2uGsr1m5QQ377TUEOCv9uhjsmbjOl7Fg
-	YMnTR0L7pbG/Il8F30uOlUtcFFuY/Csx+drA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1s62WX-00000000gmh-1SPg; Sun, 12 May 2024 08:17:29 +0200
-Received: from dynamic-077-191-174-180.77.191.pool.telefonica.de ([77.191.174.180] helo=suse-laptop.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1s62WX-00000000HLf-0Uxm; Sun, 12 May 2024 08:17:29 +0200
-Message-ID: <b4adb884e4c1014ecce7d1857adb7feb48ba837f.camel@physik.fu-berlin.de>
-Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: Ulrich Teichert <krypton@ulrich-teichert.org>, 
- debian-alpha@lists.debian.org, linux-kernel@vger.kernel.org, Linux-Arch
- <linux-arch@vger.kernel.org>, linux-alpha@vger.kernel.org, Richard
- Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
- <ink@jurassic.park.msu.ru>,  Matt Turner <mattst88@gmail.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>, "Paul E. McKenney" <paulmck@kernel.org>
-Date: Sun, 12 May 2024 08:17:28 +0200
-In-Reply-To: <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
-References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
-	 <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	s=arc-20240116; t=1715494806; c=relaxed/simple;
+	bh=J1SI6EdYucnv0q3AP6p42MgackM0eTN77ebVd1+DTgM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AYw+w3nloaT00UvwH1n1+zspec5/MEY3FsZMc1nH55bbSz49qzx8+qx4HHwKJLHS1rEGgaAEoI4G8KQEHxKiFEmWsAtMTd+0SEG3esZDP5YKvnAbAa8xLsSlv188X8t1fjVScHCIq4CRWXDDuzwGzRHfBnroAKKYY3EHasixSK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7e1bdfff102so250427539f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 23:20:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715494804; x=1716099604;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMXSFsMXrSmCUinUnv1WPnQZZpoIToALPjNtYggTyPw=;
+        b=WaK3LwYGHIjyT6UmvIEayiz5J1OezKREh8pniYf7qbnTfHFY/XORCJqDkTyeV0DT0f
+         Tphl+d4CMy+nN1hApX5FXXFDNJuZHQVgjXLxLLF/mCsMJO9uuXGIAOcziZ/gBSN1NYmg
+         140AU/Oe0HNlnfeiph2YJyI+8bHqgyjYZtkKIjhXq9yjXbQKh+DVednKz1lLGvhjdGjE
+         Xc7ZLLikYC73kuVjUYqVhKSZhrVyUSZUnpUzbwXHNdYeuz3JBBTNGHp8HSrf9vP6XuBU
+         M1bSdSZp6xUOTJtzzH6lqXRiY31adzt7ujjZ1aLgM3llerIocn7tmPE9rbUHm5uYDFaN
+         eS1g==
+X-Gm-Message-State: AOJu0YyA08NZglLzwfrJECpesBaZ0UfyCGGo5VYRTsg0lVPFZ3KKsNvr
+	cut0oultK2pH3aWdrPjnygi/0XO1G3jGKm/uVwAmsOVk2n+m+uQIGGbIK1CAMvcMk2Soix3a8RS
+	bxDpYrxSvfHywtAsctbGJMfsy5aRv09ayQAmgwu866zJj4O84BIW0xLA=
+X-Google-Smtp-Source: AGHT+IEWr1ysjAVsqPzSdk5BAgNIUuBusuGVFwD7JQlqm0Jg1zukqS331IytDPt0d6GIZClhdFr+4u4XIZ4kJ8pCJC+89nWMY0SM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-Received: by 2002:a05:6e02:4cf:b0:36a:276e:4fe with SMTP id
+ e9e14a558f8ab-36cc14e48famr902975ab.4.1715494803965; Sat, 11 May 2024
+ 23:20:03 -0700 (PDT)
+Date: Sat, 11 May 2024 23:20:03 -0700
+In-Reply-To: <8ef9e988-7eb1-4020-80d4-c9594c95e88c@I-love.SAKURA.ne.jp>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000679dc006183bc216@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] possible deadlock in __sock_map_delete
+From: syzbot <syzbot+a4ed4041b9bea8177ac3@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ulrich,
+Hello,
 
-On Fri, 2024-05-10 at 23:19 +0200, Arnd Bergmann wrote:
-> The following changes since commit fec50db7033ea478773b159e0e2efb135270e3=
-b7:
->=20
->   Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git ta=
-gs/asm-generic-alpha
->=20
-> for you to fetch changes up to a4184174be36369c3af8d937e165f28a43ef1e02:
->=20
->   alpha: drop pre-EV56 support (2024-05-06 12:05:00 +0200)
->=20
-> ----------------------------------------------------------------
-> alpha: cleanups and build fixes
->=20
-> I had investigated dropping support for alpha EV5 and earlier a while
-> ago after noticing that this is the only supported CPU family
-> in the kernel without native byte access and that Debian has already
-> dropped support for this generation last year [1] in order to
-> improve performance for the newer machines.
->=20
-> This topic came up again when Paul E. McKenney noticed that
-> parts of the RCU code already rely on byte access and do not
-> work on alpha EV5 reliably, so we decided on using my series to
-> avoid the problem entirely.
->=20
-> Al Viro did another series for alpha to address all the known build
-> issues. I rebased his patches without any further changes and included
-> it as a baseline for my work here to avoid conflicts and allow
-> backporting the fixes to stable kernels for the now removed hardware
-> support as well.
->=20
-> ----------------------------------------------------------------
-> Al Viro (9):
->       alpha: sort scr_mem{cpy,move}w() out
->       alpha: fix modversions for strcpy() et.al.
->       alpha: add clone3() support
->       alpha: don't make functions public without a reason
->       alpha: sys_sio: fix misspelled ifdefs
->       alpha: missing includes
->       alpha: core_lca: take the unused functions out
->       alpha: jensen, t2 - make __EXTERN_INLINE same as for the rest
->       alpha: trim the unused stuff from asm-offsets.c
->=20
-> Arnd Bergmann (5):
->       alpha: remove DECpc AXP150 (Jensen) support
->       alpha: sable: remove early machine support
->       alpha: remove LCA and APECS based machines
->       alpha: cabriolet: remove EV5 CPU support
->       alpha: drop pre-EV56 support
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-There are currently efforts to remove kernel support for older Alpha machin=
-es
-before EV56 such as the Jensen machines and I was wondering what the curren=
-t
-status of the Linux kernel on your machine was.
+Reported-and-tested-by: syzbot+a4ed4041b9bea8177ac3@syzkaller.appspotmail.com
 
-Arnd and Paul claim it's broken and no longer works, but not too long ago y=
-ou
-confirmed that Linux 5.14 booted fine on your machine.
+Tested on:
 
-Do you have any current data?
+commit:         cf87f46f Merge tag 'drm-fixes-2024-05-11' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a8185c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7144b4fe7fbf5900
+dashboard link: https://syzkaller.appspot.com/bug?extid=a4ed4041b9bea8177ac3
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=149d0cd0980000
 
-Thanks,
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Note: testing is done by a robot and is best-effort only.
 
