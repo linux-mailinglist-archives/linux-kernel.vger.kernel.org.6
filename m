@@ -1,149 +1,394 @@
-Return-Path: <linux-kernel+bounces-176891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17238C36B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:37:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2418C36BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738431F215C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:37:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E85FB21106
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B012556E;
-	Sun, 12 May 2024 13:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R87KG4lr"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711C028DA0;
+	Sun, 12 May 2024 13:46:13 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E0A1DFFB
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 13:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ADF17F3;
+	Sun, 12 May 2024 13:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715521031; cv=none; b=K4GGnx5WdAjpm861IArmestD2C+GyU8C2aqjln4HNku2YhLGYZSTZv/mlOf7Gaiam1YIMFrXFX9pGBy1orEjKgvvmu00JplBJQYqGLc74pjCEwvumnnDI3RlZbk1IlIW79inOHLIh8mosCEXgIULwJMTVc8/XKIrA/3mJ+cZAfE=
+	t=1715521572; cv=none; b=u2Yp77GIPzJqO2TQx4FX/N4b2+ap4fDzaRjOUsqQ2PmZh+enT5AQIchqkGJsRVD2HiWJVbieGfGfC/ryzxpmcrP6x6VdGllIiOuyp5uJykbY0p0Mpaf4LAnW/+nK5Y/13bIUIpD5Dz+QdECfizvDlaGoHMvtSGavA/VNXT5UytY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715521031; c=relaxed/simple;
-	bh=cv755/TBUy+eK17z1DpA1aIpCDafC0jFVSJwC9bv8CQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fSr7u1JLZJb7vw5LcU8u1DMlGk8y/ei2yhKlq/LrnlsUSnl5HcHr7nuRq0h25nCdzWfWmAyaULBkB0xlm8l9fppuKbo3y07kl/Aptj747gydk4kg9O1C3j0VokJF4/bWwRXurVI8RYTqGCQMBRWmDXCWAHXTuejHAFW8cP7fO6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R87KG4lr; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f467fb2e66so3141764b3a.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 06:37:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715521030; x=1716125830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cv755/TBUy+eK17z1DpA1aIpCDafC0jFVSJwC9bv8CQ=;
-        b=R87KG4lr9abcHAoyJrIawfaBLNFweq9xv4y7eusMPRoa01L4QlV0hior+nsqKxwfJL
-         IRo0uJHYyYLdupNXnbE6QFIsbHiW6ad/kvtQdfi0NKBtzJhYU+PhXi22T/6VH/IRdD4K
-         Hv8pXiGp1QDb6yZXgauYdUyyGQN8u3tKOjqs8aAA5BNDtQSZAfU6xKbymjEHF7WhBSdq
-         psHNz4BGrhuLMIrlTT6BVWEJRdt6FE/q2FEho2LZNFJ2dtGXVdqQKL0pSzIqQbaoRtZl
-         QoLe7zPw9IdUgK/boY+Mj7kExhWU6un4VYkE6zfY55oCJLRrYggUvsRvd8amxCkQ7bH4
-         6FPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715521030; x=1716125830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cv755/TBUy+eK17z1DpA1aIpCDafC0jFVSJwC9bv8CQ=;
-        b=EW0wEo5WXybqIMCGfe4L/seKYU9JNrnAHSH2PwWs77+aFSDDju2w9vGUOmJc2wcQHX
-         RDhdVaKHFAAgxjpoXv6dOGTP8HTU8B95mD5Osr1FNI0O963s4xTZ0c8OQK0zqfIwgNQh
-         1Q1XCfSNFvOhF3zAeJAIfgzujZES347/0n3gCPiotNszCFH0dKNZLTZiCEq7py+cTwW/
-         4dYrXT9nsHzbIlBJs88vOygeSwOaKuDqW8xsVIDbexeLNuEbmV3uyvm1Vwxhtm/Qb/8E
-         vqGjHEs6FV1UsPKtV8Ysvhsk4E4c0Q3jE5sc3+MhaWpgk3Bvpl802WFjIZtD6UBG12Mz
-         HBsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgdWAclpL+hnP7OZ4BiPncLa6QGP/tn/UfhiBmXBv8ZvrMIV5i3Y9irjKuACm6G3a8qCOTR0om8QaGOsDAaUT1pL+a4XwsubYgwKin
-X-Gm-Message-State: AOJu0Yy8f01hrC1ziSQhm2t4nx0xDH0LeqyTiYfD3iQ5sHt/m4E5ZBAM
-	JGY6RgiAjA/xzikxTZNHpNmFDp5mWxwdOV360Sq9Yo5mGlYaEcK5OhvHTM3uRunRxEdQu3ftprf
-	muuh5Tu6BohQEh5Fq3qGjcSJY5Uc=
-X-Google-Smtp-Source: AGHT+IHeuxTGA/nGPZugFEXjFB1ya07zjfdJI1He4tlnyA23RjGJu9znXaXAFw27t0wdWgk49v101gjuNZseqmacdnY=
-X-Received: by 2002:a05:6a21:c92:b0:1af:881c:e924 with SMTP id
- adf61e73a8af0-1afde20dfd8mr7821651637.62.1715521029528; Sun, 12 May 2024
- 06:37:09 -0700 (PDT)
+	s=arc-20240116; t=1715521572; c=relaxed/simple;
+	bh=FJD0Krw+OCM6lmu/gFtLC4n26kTN+Ci25jvOIpx8y+s=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=AZCj9ozvk6kTiqqgiMsWOy9KUWP8uuuZie+vVExi2r9OiWo8lvFIr9qzBM54TrRKYDilxevCTUCjKIwYGZY2/8FGitXi6aAVJvy5lfmCQON1Ex1KLtP3bIMy7W5IZnoyCF0Q1tgK8QsmtTa8R1/O/VRSxdDxYRmhRYG5qI6yaGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav111.sakura.ne.jp (fsav111.sakura.ne.jp [27.133.134.238])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44CDjmL1030377;
+	Sun, 12 May 2024 22:45:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav111.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp);
+ Sun, 12 May 2024 22:45:48 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav111.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44CDjmfI030374
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sun, 12 May 2024 22:45:48 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <b221d2cf-7dc0-4624-a040-85c131ed72a1@I-love.SAKURA.ne.jp>
+Date: Sun, 12 May 2024 22:45:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABOYnLy5WHJBjk33pzr12w5e7CDGb43LhQ5zQow0on4pCYusjw@mail.gmail.com>
- <20240511233404.2764-1-hdanton@sina.com> <CABOYnLzuu=i42tX-VSbTKJBfU=orsXa3Q5kCELOCsOFZCSdAaQ@mail.gmail.com>
-In-Reply-To: <CABOYnLzuu=i42tX-VSbTKJBfU=orsXa3Q5kCELOCsOFZCSdAaQ@mail.gmail.com>
-From: lee bruce <xrivendell7@gmail.com>
-Date: Sun, 12 May 2024 21:36:56 +0800
-Message-ID: <CABOYnLxHfNwD_9WthyVS+9xhczUxFYkpAhRQ0mNugwzqwzZwiw@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] KASAN: slab-use-after-free Read in
- kill_orphaned_pgrp (2)
-To: Hillf Danton <hdanton@sina.com>
-Cc: syzbot+68619f9e9e69accd8e0a@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	Edward Adam Davis <eadavis@qq.com>, clf700383@gmail.com, michael.christie@oracle.com, 
-	mst@redhat.com, luto@kernel.org, peterz@infradead.org, 
-	Thomas Gleixner <tglx@linutronix.de>, ebiederm@xmission.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Marco Elver <elver@google.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [fs] Are you OK with updating "struct file"->f_op value dynamically?
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi.
+Hello.
 
-2024=E5=B9=B45=E6=9C=8812=E6=97=A5 09:40=EF=BC=8Clee bruce <xrivendell7@gma=
-il.com> =E5=86=99=E9=81=93=EF=BC=9A
-
-Hi.
-
-Hillf Danton <hdanton@sina.com> =E4=BA=8E2024=E5=B9=B45=E6=9C=8812=E6=97=A5=
-=E5=91=A8=E6=97=A5 07:34=E5=86=99=E9=81=93=EF=BC=9A
+This is a broadcast for making sure that nobody (especially filesystems
+including out-of-tree proprietary modules) gets trouble with this change.
 
 
-On Sat, 11 May 2024 22:45:06 +0800 lee bruce <xrivendell7@gmail.com>
 
-Hello, I found a reproducer for this bug.
+syzbot is reporting data race between __tty_hangup() and __fput() [1], and
+Dmitry Vyukov mentioned that this race has possibility of NULL pointer
+dereference, for tty_fops implements e.g. splice_read callback whereas
+hung_up_tty_fops does not.
 
-Thanks for your report.
+  CPU0                                  CPU1
+  ----                                  ----
+  do_splice_read() {
+                                        __tty_hangup() {
+    // f_op->splice_read was copy_splice_read
+    if (unlikely(!in->f_op->splice_read))
+      return warn_unsupported(in, "read");
+                                          filp->f_op = &hung_up_tty_fops;
+    // f_op->splice_read is now NULL
+    return in->f_op->splice_read(in, ppos, pipe, len, flags);
+                                        }
+  }
 
-If you fix this issue, please add the following tag to the commit:
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Reported-by: lingfei cheng <clf700383@gmail.com>
+Therefore, I was proposing a patch that avoids updating
+"struct file"->f_op after "struct file" became visible to others.
 
-I use the same kernel as syzbot instance
-Kernel Commit: upstream dccb07f2914cdab2ac3a5b6c98406f765acab803
-Kernel Config: https://syzkaller.appspot.com/text?tag=3D3DKernelConfig&x=3D=
-3D6d14c12b661fb43
-with KASAN enabled
+ drivers/tty/tty_io.c | 46 +++++++++++++++++++++-----------------------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 24 deletions(-)
 
-Since the same title bug is triggered in
-https://syzkaller.appspot.com/bug?id=3D3D70492b96ff47ff70cfc433be1005861193=
-10670b.
-I make a simple RCA.
-In the old-syzbot instance the bug still trigger the title "KASAN:
-slab-use-after-free Read in kill_orphaned_pgrp=3DE2=3D80=3D9D and in the la=
-stest
-syzbot the bug report as
+ (patch body is shown bottom of this post)
 
-TITLE: WARNING in signal_wake_up_state
-------------[ cut here ]------------
-WARNING: CPU: 3 PID: 8591 at kernel/signal.c:762
-signal_wake_up_state+0xf8/0x130 kernel/signal.c:762
-Modules linked in:
-CPU: 3 PID: 8591 Comm: file0 Not tainted 6.9.0-rc7-00012-gdccb07f2914c #6
+During the discussion, Linus Torvalds commented that we don't want to add
+data_race() annotation for reading "struct file"->f_op value [2], and
+Marco Elver proposed __data_racy qualifier [3] so that we don't need to
+scatter data_race() annotation to "struct file"->f_op readers/updaters.
+
+And now, Linus is expecting a patch that updates "struct file"->f_op
+value dynamically [4].
+
+ drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/fs.h   |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
+ (patch body is shown bottom of this post)
+
+But I want a confirmation before going that way. If someone is assuming that
+"struct file"->f_op does not change as long as "struct file" is visible to
+others, going that way can break that someone's code. Therefore, if you have
+an assumption that "struct file"->f_op does not change, please be sure to
+respond.
 
 
-Could you reproduce it in the next tree, because of d558664602d3 ("vhost_ta=
-sk:
-Handle SIGKILL by flushing work and exiting") adding reaction to signal?
+Link: https://syzkaller.appspot.com/bug?extid=b7c3ba8cdc2f6cf83c21 [1]
+Link: https://lkml.kernel.org/r/CAHk-=wi3iondeh_9V2g3Qz5oHTRjLsOpoy83hb58MVh=nRZe0A@mail.gmail.com [2]
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=31f605a308e627f06e4e6ab77254473f1c90f0bf [3]
+Link: https://lkml.kernel.org/r/CAHk-=wgSOa_g+bxjNi+HQpC=6sHK2yKeoW-xOhb0-FVGMTDWjg@mail.gmail.com [4]
 
-I test the kernel linux-next: d558664602d3906866e604a618dcf67f66d79967
-and comfired reproducer and didn=E2=80=99t trigger any crashes.
-I notice maybe this bug is duplicated with
-https://syzkaller.appspot.com/bug?extid=3D98edc2df894917b3431f and
-https://syzkaller.appspot.com/bug?extid=3Dc6d438f2d77f96cae7c2.
-Should we need to close or tag duplicated or fix to them?
 
-Ok, I'll try.
 
-Best Regards,
-xingwei lee
+A patch that avoids updating "struct file"->f_op after "struct file"
+became visible to others:
+
+------------------------------------------------------------
+ drivers/tty/tty_io.c | 46 +++++++++++++++++++++-----------------------
+ include/linux/tty.h  |  1 +
+ 2 files changed, 23 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 407b0d87b7c10..aeea5eb13f48c 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -187,6 +187,7 @@ int tty_alloc_file(struct file *file)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	priv->hung = false;
+ 	file->private_data = priv;
+ 
+ 	return 0;
+@@ -420,35 +421,35 @@ struct tty_driver *tty_find_polling_driver(char *name, int *line)
+ EXPORT_SYMBOL_GPL(tty_find_polling_driver);
+ #endif
+ 
+-static ssize_t hung_up_tty_read(struct kiocb *iocb, struct iov_iter *to)
++static inline ssize_t hung_up_tty_read(struct kiocb *iocb, struct iov_iter *to)
+ {
+ 	return 0;
+ }
+ 
+-static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
++static inline ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	return -EIO;
+ }
+ 
+ /* No kernel lock held - none needed ;) */
+-static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
++static inline __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
+ {
+ 	return EPOLLIN | EPOLLOUT | EPOLLERR | EPOLLHUP | EPOLLRDNORM | EPOLLWRNORM;
+ }
+ 
+-static long hung_up_tty_ioctl(struct file *file, unsigned int cmd,
++static inline long hung_up_tty_ioctl(struct file *file, unsigned int cmd,
+ 		unsigned long arg)
+ {
+ 	return cmd == TIOCSPGRP ? -ENOTTY : -EIO;
+ }
+ 
+-static long hung_up_tty_compat_ioctl(struct file *file,
++static inline long hung_up_tty_compat_ioctl(struct file *file,
+ 				     unsigned int cmd, unsigned long arg)
+ {
+ 	return cmd == TIOCSPGRP ? -ENOTTY : -EIO;
+ }
+ 
+-static int hung_up_tty_fasync(int fd, struct file *file, int on)
++static inline int hung_up_tty_fasync(int fd, struct file *file, int on)
+ {
+ 	return -ENOTTY;
+ }
+@@ -490,17 +491,6 @@ static const struct file_operations console_fops = {
+ 	.fasync		= tty_fasync,
+ };
+ 
+-static const struct file_operations hung_up_tty_fops = {
+-	.llseek		= no_llseek,
+-	.read_iter	= hung_up_tty_read,
+-	.write_iter	= hung_up_tty_write,
+-	.poll		= hung_up_tty_poll,
+-	.unlocked_ioctl	= hung_up_tty_ioctl,
+-	.compat_ioctl	= hung_up_tty_compat_ioctl,
+-	.release	= tty_release,
+-	.fasync		= hung_up_tty_fasync,
+-};
+-
+ static DEFINE_SPINLOCK(redirect_lock);
+ static struct file *redirect;
+ 
+@@ -618,7 +608,7 @@ static void __tty_hangup(struct tty_struct *tty, int exit_session)
+ 			continue;
+ 		closecount++;
+ 		__tty_fasync(-1, filp, 0);	/* can't block */
+-		filp->f_op = &hung_up_tty_fops;
++		priv->hung = true;
+ 	}
+ 	spin_unlock(&tty->files_lock);
+ 
+@@ -742,7 +732,8 @@ void tty_vhangup_session(struct tty_struct *tty)
+  */
+ int tty_hung_up_p(struct file *filp)
+ {
+-	return (filp && filp->f_op == &hung_up_tty_fops);
++	return filp && filp->f_op == &tty_fops &&
++		((struct tty_file_private *) filp->private_data)->hung;
+ }
+ EXPORT_SYMBOL(tty_hung_up_p);
+ 
+@@ -921,6 +912,8 @@ static ssize_t tty_read(struct kiocb *iocb, struct iov_iter *to)
+ 	struct tty_ldisc *ld;
+ 	ssize_t ret;
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_read(iocb, to);
+ 	if (tty_paranoia_check(tty, inode, "tty_read"))
+ 		return -EIO;
+ 	if (!tty || tty_io_error(tty))
+@@ -1080,6 +1073,8 @@ static ssize_t file_tty_write(struct file *file, struct kiocb *iocb, struct iov_
+ 	struct tty_ldisc *ld;
+ 	ssize_t ret;
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_write(iocb, from);
+ 	if (tty_paranoia_check(tty, file_inode(file), "tty_write"))
+ 		return -EIO;
+ 	if (!tty || !tty->ops->write ||	tty_io_error(tty))
+@@ -2166,11 +2161,6 @@ static int tty_open(struct inode *inode, struct file *filp)
+ 			return retval;
+ 
+ 		schedule();
+-		/*
+-		 * Need to reset f_op in case a hangup happened.
+-		 */
+-		if (tty_hung_up_p(filp))
+-			filp->f_op = &tty_fops;
+ 		goto retry_open;
+ 	}
+ 	clear_bit(TTY_HUPPED, &tty->flags);
+@@ -2204,6 +2194,8 @@ static __poll_t tty_poll(struct file *filp, poll_table *wait)
+ 	struct tty_ldisc *ld;
+ 	__poll_t ret = 0;
+ 
++	if (tty_hung_up_p(filp))
++		return hung_up_tty_poll(filp, wait);
+ 	if (tty_paranoia_check(tty, file_inode(filp), "tty_poll"))
+ 		return 0;
+ 
+@@ -2256,6 +2248,8 @@ static int tty_fasync(int fd, struct file *filp, int on)
+ 	struct tty_struct *tty = file_tty(filp);
+ 	int retval = -ENOTTY;
+ 
++	if (tty_hung_up_p(filp))
++		return hung_up_tty_fasync(fd, filp, on);
+ 	tty_lock(tty);
+ 	if (!tty_hung_up_p(filp))
+ 		retval = __tty_fasync(fd, filp, on);
+@@ -2684,6 +2678,8 @@ long tty_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	int retval;
+ 	struct tty_ldisc *ld;
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_ioctl(file, cmd, arg);
+ 	if (tty_paranoia_check(tty, file_inode(file), "tty_ioctl"))
+ 		return -EINVAL;
+ 
+@@ -2969,6 +2965,8 @@ static long tty_compat_ioctl(struct file *file, unsigned int cmd,
+ 		return tty_ioctl(file, cmd, arg);
+ 	}
+ 
++	if (tty_hung_up_p(file))
++		return hung_up_tty_compat_ioctl(file, cmd, arg);
+ 	if (tty_paranoia_check(tty, file_inode(file), "tty_ioctl"))
+ 		return -EINVAL;
+ 
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index 2372f9357240d..56c250247df9b 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -248,6 +248,7 @@ struct tty_file_private {
+ 	struct tty_struct *tty;
+ 	struct file *file;
+ 	struct list_head list;
++	bool __data_racy hung; /* Whether __tty_hangup() was called or not. */
+ };
+ 
+ /**
+------------------------------------------------------------
+
+A patch that updates "struct file"->f_op value dynamically:
+
+------------------------------------------------------------
+ drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/fs.h   |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 407b0d87b7c10..16e135687226a 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -430,6 +430,24 @@ static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
+ 	return -EIO;
+ }
+ 
++static ssize_t hung_up_copy_splice_read(struct file *in, loff_t *ppos,
++					struct pipe_inode_info *pipe,
++					size_t len, unsigned int flags)
++{
++	return -EINVAL;
++}
++
++static ssize_t hung_up_iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
++					      loff_t *ppos, size_t len, unsigned int flags)
++{
++	return -EINVAL;
++}
++
++static int hung_up_no_open(struct inode *inode, struct file *file)
++{
++	return -ENXIO;
++}
++
+ /* No kernel lock held - none needed ;) */
+ static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
+ {
+@@ -462,6 +480,12 @@ static void tty_show_fdinfo(struct seq_file *m, struct file *file)
+ }
+ 
+ static const struct file_operations tty_fops = {
++	/*
++	 * WARNING: You must implement all callbacks defined in tty_fops in
++	 * hung_up_tty_fops, for tty_fops and hung_up_tty_fops are toggled
++	 * after "struct file" is published. Failure to synchronize has a risk
++	 * of NULL pointer dereference bug.
++	 */
+ 	.llseek		= no_llseek,
+ 	.read_iter	= tty_read,
+ 	.write_iter	= tty_write,
+@@ -491,14 +515,24 @@ static const struct file_operations console_fops = {
+ };
+ 
+ static const struct file_operations hung_up_tty_fops = {
++	/*
++	 * WARNING: You must implement all callbacks defined in hung_up_tty_fops
++	 * in tty_fops, for tty_fops and hung_up_tty_fops are toggled after
++	 * "struct file" is published. Failure to synchronize has a risk of
++	 * NULL pointer dereference bug.
++	 */
+ 	.llseek		= no_llseek,
+ 	.read_iter	= hung_up_tty_read,
+ 	.write_iter	= hung_up_tty_write,
++	.splice_read    = hung_up_copy_splice_read,
++	.splice_write   = hung_up_iter_file_splice_write,
+ 	.poll		= hung_up_tty_poll,
+ 	.unlocked_ioctl	= hung_up_tty_ioctl,
+ 	.compat_ioctl	= hung_up_tty_compat_ioctl,
++	.open           = hung_up_no_open,
+ 	.release	= tty_release,
+ 	.fasync		= hung_up_tty_fasync,
++	.show_fdinfo    = tty_show_fdinfo,
+ };
+ 
+ static DEFINE_SPINLOCK(redirect_lock);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 1394347b4fda5..2d14b26ace792 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1008,7 +1008,7 @@ struct file {
+ 	struct file_ra_state	f_ra;
+ 	struct path		f_path;
+ 	struct inode		*f_inode;	/* cached value */
+-	const struct file_operations	*f_op;
++	const struct file_operations	*__data_racy f_op;
+ 
+ 	u64			f_version;
+ #ifdef CONFIG_SECURITY
+------------------------------------------------------------
 
