@@ -1,131 +1,145 @@
-Return-Path: <linux-kernel+bounces-176823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8568C3578
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 10:17:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580F78C3577
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 10:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2649328185B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:17:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68751F21212
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:17:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D3E31757E;
-	Sun, 12 May 2024 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FEC17BB5;
+	Sun, 12 May 2024 08:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUTkl5V+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h4fZLsuq"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D98E1C683
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 08:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D183D6A;
+	Sun, 12 May 2024 08:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715501844; cv=none; b=Xd0Wqbg6aaeeJSDrrcx7wGomLcmkdy7N4tWltfyeL8SSkiFv5tMR3Y6n54pTOZLAQtNMIUto0VeRej7u2HEI9nYUKvxFWjkP0QWxEXwkxbGnvW5CXxNYnXVOrh8skau86HJEYL3K1Xm/4hAVkejRZJCXzkvcdVvIZGCLfI47oYI=
+	t=1715501836; cv=none; b=bJY6URcaAGlWNXSBYh3nALVOeG4uihpDl6LJAFTYzZ2SHWmtk/JdqAGq6z/SNjX5WEBIAtJUWoqwiq5WME2zKrgxiyuSdZ0Gmuh7O5pY7SJnLhs4o3UfSK1l10Q0lhUCIe+aOcM+ClN235aXokrIMfUEGjxbAI9GkiN+z7ME7Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715501844; c=relaxed/simple;
-	bh=gy1fqqrNliFvIEA/4j3QrSKFmukTGVMtOxoq+znsGwA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cz2LbwSI6/9KXo+tPIPtlH0LiAqRaT+pWqM5dkKcVUNrcv3K3bLXy2XUB30fzbmrdzju8AMyrh+yoTOyyzn8U9GYD5qAVxMjGFb94V+qGngflItY84mBcDewkmXQhfOcMXj3QMit2ud3nwWQh0dJeb1ZRwcU0rHOAvXkA93nm2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUTkl5V+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715501842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QUSDVa+t4AWwqTmRuepudvFoykXU2aaVqb2V4N5FOvo=;
-	b=FUTkl5V+jie1bCvRqx2dUQwMOvkUIOfFvj0Amc+yuchwABgTBYKR/fqLQptVX7kNLe0uUM
-	yolVWZ2j845xeemeSAkzUqCG6Y7ODMOC+xtJOOc6uj7xkXiGpTDij04q7Z8DOU1h9sS8i8
-	9rvuP6vdeDdTw5kV70NBb+GTy3SHuko=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-227-e35_CeI_PtKk1J3Uwom6nw-1; Sun, 12 May 2024 04:17:20 -0400
-X-MC-Unique: e35_CeI_PtKk1J3Uwom6nw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-34eb54c888cso2692275f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 01:17:20 -0700 (PDT)
+	s=arc-20240116; t=1715501836; c=relaxed/simple;
+	bh=SxRgOz9FrW2nOJVIYf9MsvTis9bo2V8NngiZT8z0rTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AUArncCdoX82+ACqCSPuxDIOSmKy1kB1y8822Q8noci8rhlegrbMFA1WvrplaSS6ObcocYbkNi7TR+a6JXPkY8x4ILH1ts8zsJepWRvuFiyrOmwxBD8/tdc08W5bi5JSmvG9z48f2x94mSCXcixummPerBylNjMCgcWaZEKXQ+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h4fZLsuq; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41fd5dc0480so19753155e9.1;
+        Sun, 12 May 2024 01:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715501833; x=1716106633; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xXlhXUYBz2j7T8no4wkelMyXb8COeQGHIUfPVvUbzMs=;
+        b=h4fZLsuqvgItmXZzEhyMv3Zu2i8hPCgebsBP7OEHB6rqRwlJuyp4tgBCf5TxUqD0cO
+         dbYLvtLpSUCVU5auEW+Mnuew6ewuy73/1ISp8GmI2EE0C4tAcdl67CVoNmEl6ulJEdL9
+         55GCQIvxG35iEiC/fvRM4XhObASXNkFlgqtCbzciWfRsAqMPYCoaayThGY+V4pyG9JhI
+         OGyRB7tHZEoMzVIconxZgaPh3g7spxoOZGcnrhpxsBB4caHUHZRnnfXAvu1ooWNKUfis
+         WO7Q1R2xq6TZVARXSd850XIaQB5kGmwNVQnzyHxCxupEX/cwJygSNLsU+9TWNSi+WQhG
+         /Ukg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715501839; x=1716106639;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QUSDVa+t4AWwqTmRuepudvFoykXU2aaVqb2V4N5FOvo=;
-        b=vYS3kha+5VEKvSuxdTEhC2XN2INB0zLcO47/MLkYILyCP2deLbbLB6PQPmcpWIYbv7
-         OwJx+048kQt6y9XszV600nQY+rlt3vGM4r1VuWn1GHSRQGSmdU60bEMAtYBGP3wbklEC
-         oZ0fv63QtIHsoXFTq+ANju6U+fZuF7JDpQ0XuVZhA5+shfg/TC08uOcXuGPK5Pse4/Nf
-         LTLWZhDuEAOEK5+x5oUVvUjaBk3o5rjI4szycr1FzqiM6VrVVhPkzV3bx/wOGXI+xNgM
-         oGTT/++zfGgxAkFQnNwnw0Qey8PSymkBlCppUG+Ij3wT6jD7MfCQTLxVydcKCt2E8aPb
-         fXYw==
-X-Forwarded-Encrypted: i=1; AJvYcCV35CmEvqArFQMVEB0Kxp7dPh04LucLMim6b7HOt5GBad5/qhX7H3NWVmkx5d9T3ZGX4C1WndO1vD/3Aofk4y2SxeVu9vBXvytgFLRv
-X-Gm-Message-State: AOJu0YzO8nHO2v9wTyqNwVW5ak0Yb0+hc5SKhQr4HmRcgn21EtcCVFXt
-	LEM4V7wiB8QcFddCL/eXmuTO/Tx9LdedEKp7leNi0ZA2lBzkabVxxhGcfNPZ5yjMeA86ilqbCwi
-	f55kAgP+HGFgVXMFwIH5blewVQ8aZ+z72Z89cMN/LzZ83vnAn+cX/E2mrCkstmpNWZ1xX6Er0dW
-	7fBIueJQ1ptIyj0L5remyEDHhReJtOjA6wTfB8
-X-Received: by 2002:a05:6000:a88:b0:34c:e62a:db70 with SMTP id ffacd0b85a97d-3504aa63447mr6802446f8f.67.1715501839315;
-        Sun, 12 May 2024 01:17:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKCS7P8m0E2FzwUMTNi7Ql+HIEI6NbkihSJrrDNgDeVBjsAxZChtVoPCY2m8yJvJpjjb/lbmUnz6gptq1HRKA=
-X-Received: by 2002:a05:6000:a88:b0:34c:e62a:db70 with SMTP id
- ffacd0b85a97d-3504aa63447mr6802413f8f.67.1715501838935; Sun, 12 May 2024
- 01:17:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715501833; x=1716106633;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xXlhXUYBz2j7T8no4wkelMyXb8COeQGHIUfPVvUbzMs=;
+        b=qnQSE6ahOl10+UDuwlA6dHAeBg81MCWLeu+w4Gbh1PfTjz2pqI56Yokr4Dz5qtKmsg
+         I6NlYn2dQNsdkHRlvLblZbSYBk5UvPgZ/VJwdS2QFB8/BFSj5rcDpwwwQLX34YZfdAs0
+         FKyTa5HmoYI3lpQPpwikro69qQzRddr57plEDiQmknShjoURFMhsyv3V5sRJTr3z+2WT
+         ZeEXyoxw3fd3IFZOIw1uMOCVHynJskY5PP26KgoyVbuPebFCSlbflZRorCPOGv7Eyv0u
+         JM2wMcRVFOYj8G1J/sBhJChISfw3Jntz1VbZIfXDYSMNlLtNMOGhKiMtFp/aRxHH1Cvg
+         4R6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV2JF30/84kyraR9Rq4mNU+7BuqL+Xq3rtO3KQaB6HqaSBJrmATVaorlSMrCfhmBG9QYYVTrAM1o879BYNdr4DBy7H+zlNXKwYf/R0f1Af2AP6ALKVNv+ZY5p37Je4tNcuoF6gORpWWWRjoX8jHgCjz5Ac0C1oIlc8F7mWzkpLrvA==
+X-Gm-Message-State: AOJu0Yw9gLj6/HLZeMFtLd3HE6+OCeNMSY2Zwtny/jcuU1ncemc0OVqP
+	lRmfec3BHYwv2SWWupY6KjL1WizhQn4Vl/8LCUT8+LTuQEWts6oL
+X-Google-Smtp-Source: AGHT+IEOalB+778r4CqlSVXIAWe1JPzos5Do/QR+Dve78YpSIk5eyo9JJnTF5MDxO8/0sqUEO1y2aQ==
+X-Received: by 2002:a05:600c:3582:b0:418:29d4:1964 with SMTP id 5b1f17b1804b1-41fea539b5amr50417525e9.0.1715501833128;
+        Sun, 12 May 2024 01:17:13 -0700 (PDT)
+Received: from [172.27.21.17] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce25casm120049505e9.20.2024.05.12.01.17.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 12 May 2024 01:17:12 -0700 (PDT)
+Message-ID: <a4efd162-5dc0-4ed1-b875-de12521a6618@gmail.com>
+Date: Sun, 12 May 2024 11:17:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510211024.556136-1-michael.roth@amd.com> <CABgObfZxeqfNB4tETpH4PqPTnTi0C4pGmCST73a5cTdRWLO9Yw@mail.gmail.com>
-In-Reply-To: <CABgObfZxeqfNB4tETpH4PqPTnTi0C4pGmCST73a5cTdRWLO9Yw@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Sun, 12 May 2024 10:17:06 +0200
-Message-ID: <CABgObfZ=FcDdX=2kT-JZTq=5aYeEAkRQaS4A8Wew44ytQPCS7Q@mail.gmail.com>
-Subject: Re: [PULL 00/19] KVM: Add AMD Secure Nested Paging (SEV-SNP)
- Hypervisor Support
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, linux-coco@lists.linux.dev, jroedel@suse.de, 
-	thomas.lendacky@amd.com, vkuznets@redhat.com, pgonda@google.com, 
-	rientjes@google.com, tobin@ibm.com, bp@alien8.de, vbabka@suse.cz, 
-	alpergun@google.com, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
-	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, May 12, 2024 at 9:14=E2=80=AFAM Paolo Bonzini <pbonzini@redhat.com>=
- wrote:
->
-> On Fri, May 10, 2024 at 11:17=E2=80=AFPM Michael Roth <michael.roth@amd.c=
-om> wrote:
-> >
-> > Hi Paolo,
-> >
-> > This pull request contains v15 of the KVM SNP support patchset[1] along
-> > with fixes and feedback from you and Sean regarding PSC request process=
-ing,
-> > fast_page_fault() handling for SNP/TDX, and avoiding uncessary
-> > PSMASH/zapping for KVM_EXIT_MEMORY_FAULT events. It's also been rebased
-> > on top of kvm/queue (commit 1451476151e0), and re-tested with/without
-> > 2MB gmem pages enabled.
->
-> Pulled into kvm-coco-queue, thanks (and sorry for the sev_complete_psc
-> mess up - it seemed too good to be true that the PSC changes were all
-> fine...).
-
-.. and there was a missing signoff in "KVM: SVM: Add module parameter
-to enable SEV-SNP" so I ended up not using the pull request. But it
-was still good to have it because it made it simpler to double check
-what you tested vs. what I applied.
-
-Also I have already received the full set of pull requests for
-submaintainers, so I put it in kvm/next.  It's not impossible that it
-ends up in the 6.10 merge window, so I might as well give it a week or
-two in linux-next.
-
-Paolo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v4 1/3] net/mlx4: Track RX allocation failures in
+ a stat
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, nalramli@fastly.com,
+ Tariq Toukan <tariqt@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20240509205057.246191-1-jdamato@fastly.com>
+ <20240509205057.246191-2-jdamato@fastly.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240509205057.246191-2-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-Paolo
 
+On 09/05/2024 23:50, Joe Damato wrote:
+> mlx4_en_alloc_frags currently returns -ENOMEM when mlx4_alloc_page
+> fails but does not increment a stat field when this occurs.
+> 
+> A new field called alloc_fail has been added to struct mlx4_en_rx_ring
+> which is now incremented in mlx4_en_rx_ring when -ENOMEM occurs.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> ---
+>   drivers/net/ethernet/mellanox/mlx4/en_rx.c   | 4 +++-
+>   drivers/net/ethernet/mellanox/mlx4/mlx4_en.h | 1 +
+>   2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx4/en_rx.c b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+> index 8328df8645d5..15c57e9517e9 100644
+> --- a/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+> +++ b/drivers/net/ethernet/mellanox/mlx4/en_rx.c
+> @@ -82,8 +82,10 @@ static int mlx4_en_alloc_frags(struct mlx4_en_priv *priv,
+>   
+>   	for (i = 0; i < priv->num_frags; i++, frags++) {
+>   		if (!frags->page) {
+> -			if (mlx4_alloc_page(priv, frags, gfp))
+> +			if (mlx4_alloc_page(priv, frags, gfp)) {
+> +				ring->alloc_fail++;
+>   				return -ENOMEM;
+> +			}
+>   			ring->rx_alloc_pages++;
+>   		}
+>   		rx_desc->data[i].addr = cpu_to_be64(frags->dma +
+> diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
+> index efe3f97b874f..cd70df22724b 100644
+> --- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
+> +++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
+> @@ -355,6 +355,7 @@ struct mlx4_en_rx_ring {
+>   	unsigned long xdp_tx;
+>   	unsigned long xdp_tx_full;
+>   	unsigned long dropped;
+> +	unsigned long alloc_fail;
+>   	int hwtstamp_rx_filter;
+>   	cpumask_var_t affinity_mask;
+>   	struct xdp_rxq_info xdp_rxq;
+
+Counter should be reset in mlx4_en_clear_stats().
+
+BTW, there are existing counters that are missing there already.
+We should add them as well, not related to your series though...
 
