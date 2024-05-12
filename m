@@ -1,150 +1,182 @@
-Return-Path: <linux-kernel+bounces-176902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94D828C36DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A928C36DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B431C20F29
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13C94281399
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12542943F;
-	Sun, 12 May 2024 14:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2247D2D045;
+	Sun, 12 May 2024 14:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FfddMqHP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G6qtsV1p"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2065.outbound.protection.outlook.com [40.107.236.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6001E488;
-	Sun, 12 May 2024 14:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715525067; cv=none; b=TevPGTdXF8ogsVR+zKeTdzKXcHFC4Ue1qOZRMc/yW3zCCXdM4xupgspeU/hJPjP759HQgfwviOlI25pcIUrRacHSVXJyO0U3dq+EIky7a0k2uKUKeweaUWe/WpO9ad5z/Dz2Gp7fraG5NxCoJHuwQDkYXlYhzu92nYBj4dhxYK8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715525067; c=relaxed/simple;
-	bh=AwROLrxn0F0wXRVR180mb+2UZ4gIn9nj8gcQQDhqnQo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qK71SJ8/olT+3OIfVp6s1DOQVFfgTp40vu41eUL+S9cwvqEjirdJwzQmkxcEoV9rp9E9UzkYZrsOHoJGRsL5K0Geg0hkMSONxgSsL1eCcDt6+pfKl0Iw3+5NMQPd5sUCinspdjkBvze+tFRkIX6mrfcZUdMDOdbRDcCcdzy+i3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FfddMqHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A33CFC116B1;
-	Sun, 12 May 2024 14:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715525066;
-	bh=AwROLrxn0F0wXRVR180mb+2UZ4gIn9nj8gcQQDhqnQo=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FfddMqHP66LJZ6mmAUxW5AywjFk8GWsCfeWpNLxdh70aZfm5Cdv53ZDXRzpxvUv0M
-	 x/M7CxnPf3FFf+LslcQnMYtptVn4fpc4vEjikg7NWeZ8f4HwVjwotz9tVFZLdQKqLa
-	 beW1PEHStVpIbnqrV5EoAocQXlUtys6lhBqhFp4bDl5lYQvYjR4WQNbinxu7Y01+FV
-	 7CXjjUOBQwphlmHC6hy8P5mYZ9sqkHJU6wjmmmz7gSrTKy1obxAvmY1SpzwIjmVKzd
-	 jQFf4QsteHIsot2ieSbDnsxbU/7VkIvjzhZ81PracAe58Wfv2B3I0g3wZTPKheOhAR
-	 2w9EcD7dbZ14g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 873B0CE105C; Sun, 12 May 2024 07:44:25 -0700 (PDT)
-Date: Sun, 12 May 2024 07:44:25 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-alpha@vger.kernel.org,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
-Message-ID: <a8241a71-2b7d-4be0-8772-5c3b40fb5302@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
- <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
- <6e6dae45ffbf7a6ab54175695a3e21207c6f5126.camel@physik.fu-berlin.de>
- <46543a98-4767-471a-91be-20fb60ab138b@paulmck-laptop>
- <7432d241b538819b603194bfb3a306faf360d4b1.camel@physik.fu-berlin.de>
- <a1331c86-dc07-4635-b169-623fcdd11824@paulmck-laptop>
- <8dd1c466-54e3-45c1-a19f-f81dd9dbf243@app.fastmail.com>
- <f01d9eb2-9ab8-4e82-99d2-467385ebce2b@paulmck-laptop>
- <975442500864e4f30a830afb4ffd09a9bedb65d6.camel@physik.fu-berlin.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913231DDE9;
+	Sun, 12 May 2024 14:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715525228; cv=fail; b=hcp36seaRwhe6D9C2Wd1Wl9hURU4jcBNh7HWulBGIvVE5YqXOmhVZKlH3UkryugClsDOlm5QRrudJnHHr1G7iwSftSK044iUW13L+cBOMzaTJOMNnb5w+8y8RPr6YcsMmiNjSX4egcw2XglAhCdmw1GMbyZTKrmf0dwP8Q7lSiE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715525228; c=relaxed/simple;
+	bh=yIvkkR/kA57Rg2B2FIJPloyG06Sj6JCt4aHGQsKYMLA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=W0ZSKa+xuIgb9lmPUdV8cLTeXxsA4Hc/JmzQ6RTdVpn9fICTyC7od3byO0FOeHXAYNDQYMxofdF58KbHiKxxTWTetCL01dM+lfgjDyJoqJVh/uNvOOx/bO2gqvCcogt9kntkU5UVGe+spytVESIeN4jYJ5PQEQXUQ44ygF706+w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G6qtsV1p; arc=fail smtp.client-ip=40.107.236.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i5QrYCwTouiGMm2OE4gyBueRIaHZJ+BMGf/JvPcN4FufYkniU+zTihEtrk3AgrtDr6OzhfKtMYFb4n9L1GQwrYydF6ElOAF2ih8XGF5AgIWq76loU12xIT5gnvUDZV4NcoNu+DCX1Q07/HTlRahWjHx0uynVrpp9AwN7v972pXn3UT8+aU9PhVICT06Gid8mZ6TDhhxQCi8JOsO3hmKgeZ0+etTqwIb7qIUP7YSi6rMoXObgY7wnqn46qu2zusaxovH1nQ+eEu5jS8ah4i0kNzO0waxGHVWdGkshjaaOMP4lQwM78jBiIGWWAlLSFrFhv5ZLGPaSzFvwVaiZTLQqvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FoOuPDWVs9XAGzF2YjvsrDtP/fV2ta3YQMfgJgExx6Y=;
+ b=JjPHaM99sJ++RA7Un4OkscQqG9IB/bDdzLbHGAGqLKXM1m3y7d7ahnC2ONhsuiKESKjYC85pA5wsUhY0/1DERGCmnZ52RtBAKn8GW+R1wG11G7/ZCWUe4Dq50A1z1Vq5HysgdU9Q23ernv/cgcEPsmCKM6xmqggsIh7TT5CG/tji168pW/514j3xC9yrD55bzBW6sIEOJSQTebvRsjK6pecMb/cDcnqOW9RCN4/sIJ/dCDKHWQirDrmtNMZ+gTdGkBncuCq1hDYiPnMRGkrt4hTGIiwc//zpjJotDXlV2VZzRFRBDMt83DKhkm06a7QRWjNtQwxG0sclo0F7oIWajA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FoOuPDWVs9XAGzF2YjvsrDtP/fV2ta3YQMfgJgExx6Y=;
+ b=G6qtsV1pfl2RLUcOfnX69sDcXCsGyYTbCwkfO8o+xiXkY3A2tijiDJqldSq0CJgSPDyNOBaF6WlemnguOCT9ASWVUYjaQwNisvmb1R1aFsTQptDTgQ6FxZEcTcFd0qSzP4s/HuO/ma3HpwIYQO7k4536gqvGme4mdZ3M0lpmcnKaUm5sBs320dzJ1xB+Zvp35H/qvSImXfzCC7W8eGv3ocZKHXqSuBYN+3GfyXa6mGa65py9hu7GlfrUtYjA/pIuxFVH1X1OTbNlr5px2x/A2LYaP31MHyxzChynYIBDMmQfwMnXl9XtoM9mB+Q1B0xdBR5PXs0vSnswrfXGVq/wOw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by IA1PR12MB7615.namprd12.prod.outlook.com (2603:10b6:208:428::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.54; Sun, 12 May
+ 2024 14:47:03 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7544.052; Sun, 12 May 2024
+ 14:47:03 +0000
+Date: Sun, 12 May 2024 11:46:54 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, kevin.tian@intel.com,
+	suravee.suthikulpanit@amd.com, joro@8bytes.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	yi.l.liu@intel.com, eric.auger@redhat.com, vasant.hegde@amd.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, Dhaval.Giani@amd.com,
+	shameerali.kolothum.thodi@huawei.com
+Subject: Re: [PATCH RFCv1 07/14] iommufd: Add viommu set/unset_dev_id ops
+Message-ID: <ZkDWXnPW7CaX5TtA@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6e57d7b5aa1705bdd547b1cd2aca93d3bf70dfa4.1712978212.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BY5PR17CA0068.namprd17.prod.outlook.com
+ (2603:10b6:a03:167::45) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <975442500864e4f30a830afb4ffd09a9bedb65d6.camel@physik.fu-berlin.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|IA1PR12MB7615:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0cb26b04-7b5c-475e-e3b2-08dc729262fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|7416005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TjaRmefPxM2HBgNxvar1gxEh6353RGbXxdTKSW7tTEj8aH2hVKOlV6+hmC2A?=
+ =?us-ascii?Q?fQB1oCQLrX7NxFAqmYZZkgJwzrqX1ZdNhaSYWi7zO9TlwBFAKpL9Er5J8cP4?=
+ =?us-ascii?Q?8+oyVmtAse2QoquRp5Olp/dyrO25pZeJiXVxnP/zBzH8TxVy2etLGCF1EJEe?=
+ =?us-ascii?Q?84wb65DWhkLzTlT4nu/wV0nL9zYf+db/gecfZIGz4u4Fait41qzTsOKBQ1fv?=
+ =?us-ascii?Q?GSU05idQ/rsHfu0tP0QAHY4f609jA0Tr3crRL3/LdQeZVYVWVLaGIolGU4Mi?=
+ =?us-ascii?Q?Poh1xJRzoLyzQkAJfH39+S99JTihhvbRKZqeled6b+KoiH8ev+7K2cpVg5Cl?=
+ =?us-ascii?Q?tDq/2v5QQ7xLI/XnML1PO8GBa6cbf0dkNlPgfdtDc3Eyb33cYLOsEZ79BkV8?=
+ =?us-ascii?Q?4kcW7LQIQlHFwUJ6WUcvu0d0UeQnXZUMGCtzc2ANH5fn1ByLUTU7TQVIa8Bn?=
+ =?us-ascii?Q?vBH9/t3OpXbb6bZR+ZOqB41Z/2tqEZh6z8F8yNzfHOega3nMVLG2V3fK01pC?=
+ =?us-ascii?Q?GEoU3lOYcqrz7F9IJLBdss5XMfIWyG0J3EBLVsHL6sIkFhh9r94Iyhx4Avpn?=
+ =?us-ascii?Q?72zekEPp5sd7Y99HkethjddMxczumrmfLzmHhuQfkPiIRkyKsxfTLW59MLrC?=
+ =?us-ascii?Q?5pPhhL3m6C/SozLX4d1dEj3uXq946IRPrirPERa4tVUSBqPW3/7hqSfBi5bF?=
+ =?us-ascii?Q?MQF6UdR+b04GvdCtVGQ/oBVbXSqtVJmvJ/ONCDR+kWCqs1lPbbbmTC1UaE6D?=
+ =?us-ascii?Q?IHZ1hrRE20q8SAfghsOd9xkL7mX0/q1SnYBswx6gI6c/B3boGN7r+151jbHb?=
+ =?us-ascii?Q?0D41yyYMnfMUmWAOS4CEvDyaF6B4xWAOu0iL5A4ulVFynQmC8VHZVBK7n1CC?=
+ =?us-ascii?Q?IkbgNOLmXhTY8M3R7sXhGz3oIbelOYlWj+h+Lt2Ke19VpWdhtnz2mGZACjr5?=
+ =?us-ascii?Q?JnemVryl64QGpCTDU40kv93C8lptQZFOhmbq8MPBsF3iIPlnn0PdhYrUVyLO?=
+ =?us-ascii?Q?WNY5/d5VTnzNQY6fIDHI0w81XRs6Es1+E1Nw+MbeB42f6Yx1ulGZuPrtMlfN?=
+ =?us-ascii?Q?xQnQoAiq3nwJ+X2o2gYox8h5q4Gjvt0b9P9EIJYYgFjbNeyX0sOjE9K7QlS7?=
+ =?us-ascii?Q?x+eneMWVfOXxykNB+g/RW7UGHYJVYDnuvjHGtV9Z2Z3UaiFzmQdOrR/KY7Eb?=
+ =?us-ascii?Q?wqgYbSviuAysHH7VuYH+A3oYCQjw4MfG8QzuDsNNLRdmP2fqERgMDIoRIYSr?=
+ =?us-ascii?Q?8FE4OnP4OzoNe4AxZUQtCtN18pIVo6fIvjr5rmEibQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FqKxwfkGHsfKjxjO56C10NlARL5Zxg9WbfMkkcuybX2JTwumDBpIMUoRlW6U?=
+ =?us-ascii?Q?7MMYjPW+1PKOyaBtPm9w8KyiBdvdLLL03+SFbP/SjLA+QmR0lc/JM5IFR1gv?=
+ =?us-ascii?Q?4aai3jX6Vi1V6bB7jrPRV29cwWm8Z24OdZkYXm3RGmZ+FdCfTqhHdVWpT/BQ?=
+ =?us-ascii?Q?BURd/N/BACGhHqaZ/eU5/EaVvGXctnGWkdQg0TYZJDmp1K/MGPV+vYvyTWWj?=
+ =?us-ascii?Q?wsHlGe8r4DHmlrls4O2tSMMCaFjLPhOXZ5S27SSZenfaL8ASN+7vlaamAjYe?=
+ =?us-ascii?Q?r7xmZW7eC8osKIiFs/A2v+hsM63VzvVB2JQ1tNEr9aMklRjxYppsfQfVdD+3?=
+ =?us-ascii?Q?jErzzmMJJR2aQIcJ4cZ1EdtndkNGv5WtoapnPS/Jhv9D/0w4/GhbooGqPEsj?=
+ =?us-ascii?Q?h0W207EECWXyFVnHbIbqPZ4qPmsIW6okMXt1IEqzfcyXbjAUaJKuBr32n6U4?=
+ =?us-ascii?Q?T29zeNlwXOHV7oB39S+NS7nEjz3jVrNJQaQQsgbtyxkOI2LQYsafpSXePgad?=
+ =?us-ascii?Q?Lp0uU5Lb9f/u4WLFsshUcn7QaRbvTSS1G+QswntqDPeRnWAJuZstYuaONn5v?=
+ =?us-ascii?Q?e/tA5jUJIt9cOTVOW3OYHNUX6dAEazw+menvkpND4RSP4Mky5GHF1VWTIZ64?=
+ =?us-ascii?Q?SFvh7Qaw0DueljZ6HnHxXyB7cWqdZHTsVReIQmkvoej7hh74nPA73FSJ57kS?=
+ =?us-ascii?Q?VrahozVgXy9fj+KiPHaKEcykkYrk/LOToiw5nvknOESmPtVQKe929nGRMKda?=
+ =?us-ascii?Q?nDfpmETuCjdzwO0MenWLdri3qjkJQAhvh2StkrL0C3SBNRy5yptZYpOFSXzi?=
+ =?us-ascii?Q?FdYNBWEQFGXPs79e53xGnhQYmmjcuGtTisQCpnkVDoQ+16Hfteh6r3A3PEOW?=
+ =?us-ascii?Q?2vR1rvWq43oYbVOB9+4qgtbPOEr+oRnM9qtcEVpaeEZrjf+BYQ7Oh2bm+lkM?=
+ =?us-ascii?Q?oRv7IXOmp7czvjGL/wZXtK3JKV6S0GmnqJkDAtdzAxzcOpmDogCVMdC9/zR5?=
+ =?us-ascii?Q?+7SXVVehCK+lUfd855E/hSaGSltuFcuUovpsKhHJNuC2oBeNNf0XFlWsox3O?=
+ =?us-ascii?Q?sCiGVkooKpCMW14ml2njW+XG9UVdEJeNjXLOI8n3owuE6KIBpFZ8n96phIcZ?=
+ =?us-ascii?Q?CN0VuRYTfXEXbkXoafvlsmDLvrc3/76b1r+7U9VR5UVjqoaGXSlTUd0NYaxo?=
+ =?us-ascii?Q?Qwda0DiXWCvYn16wJUFQQt5KYkTpr5qX2IS4gsz/SqfkdrtZWXfx+DcCUb5a?=
+ =?us-ascii?Q?QtiQIQVjHZC7ISUvnSdFvR7onYJw7b/91fxY2NH/f0tcdUBVFMJelDgSXD5z?=
+ =?us-ascii?Q?3nc5yjIYzlQfVVaS9lB83BJaTpFBdG0tvWLpOcSeN1mp2A9BlXVQ9633phEC?=
+ =?us-ascii?Q?EdJ8xMqu3UdldOZCjRAZhmGbaNAi4lDG4LFfQI5rn9cjI9m9WxO4QpmcpSLn?=
+ =?us-ascii?Q?mDCKFEhlqmmU+StDRibyZL9DRPM9W+/+DihNiDO2mkSsVRpOnZ7ScWU+h5As?=
+ =?us-ascii?Q?AVqjsaBsPRNORry2UyV58+FpKyN4Q8t6gOdWejW/jX3CXqwdRgLsW+eYlIWi?=
+ =?us-ascii?Q?yEKIsrnx9vbrnhvPNmV/8XGQcz5KONPbbOKz+MJ6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cb26b04-7b5c-475e-e3b2-08dc729262fe
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2024 14:47:03.2472
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d3dLHrxErSk2Wdleca0WDz/Fp0Q/ciXhn41VtZm2zm7EeYiLp2jwHa8CCOwVpnva
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7615
 
-On Sun, May 12, 2024 at 08:02:59AM +0200, John Paul Adrian Glaubitz wrote:
-> On Sat, 2024-05-11 at 18:26 -0700, Paul E. McKenney wrote:
-> > And that breaks things because it can clobber concurrent stores to
-> > other bytes in that enclosing machine word.
+On Fri, Apr 12, 2024 at 08:47:04PM -0700, Nicolin Chen wrote:
+> Add a pair of ops to set and unet device's virtual ID that belongs to
+> a viommu object. They will be used, in the following patch, by iommufd
+> to support some HW-acceleration feature from the host level.
 > 
-> But pre-EV56 Alpha has always been like this. What makes it broken
-> all of a sudden?
+> For instance, every device behind an ARM SMMU has a Stream ID. The ID
+> is used by ATC invalidation commands so SMMU HW can direct invalidation
+> requests to the corresponding PCI device where the ID belongs to. In a
+> virtualization use case, a passthroughed device in the VM will have a
+> virtuail Stream ID, used by the ATC invalidation commands in the guest
+> system. NVIDIA's CMDQV extension for SMMUv3 provides a v-interface to
+> execute the guest-level ATC invalidation commands directly, yet needs
+> the HW to be aware of its virtual Stream ID so it can replace with its
+> physical Stream ID.
 
-I doubt if it was sudden.   Putting concurrently (but rarely) accessed
-small-value quantities into single bytes is a very natural thing to do,
-and I bet that there are quite a few places in the kernel where exactly
-this happens.  I happen to know of a specific instance that went into
-mainline about two years ago.
+I imagine using this as well for the ATC invalidation commands. It
+would be very easy and simplifying if the command fixup just extracted
+the vSID from the ATC invalidation and used an xarray to turn it into
+a pSID and then pushed the resulting command.
 
-So why didn't the people running current mainline on pre-EV56 Alpha
-systems notice?  One possibility is that they are upgrading their
-kernels only occasionally.  Another possibility is that they are seeing
-the failures, but are not tracing the obtuse failure modes back to the
-change(s) in question.  Yet another possibility is that the resulting
-failures are very low probability, with mean times to failure that are
-so long that you won't notice anything on a single system.
+Seems fine as is
 
-And the change of about two years ago would in fact have a very long
-mean time to failure, as in in decades, if not centuries.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-But it is still broken, and given a report of a bump-in-the-night failure
-on such a system, my response has to be to assume that the inability of
-that system to load and store individual bytes is a likely root cause.
-
-> My question was whether it actually stopped working, i.e. it's no
-> longer usable on these machines but that's not the case as far as
-> I know as not too long ago someone was actually running Debian on
-> a Jensen machine [1].
-
-The thing is that I know of one issue.  There are very likely many
-others, given that there apparently no checks for this sort of thing.
-And as the kernel accumulates (say) seven-decade issues of this sort,
-the reliability of your systems declines.
-
-In contrast, if I make the mistake of using the C-language "/" operator
-on 64-bit quantities, those affected do not suffer in silence.
-
-> We could actually ask Ulrich Teichert what the current state is
-> on his Jensen machine.
-
-Please feel free to do so.
-
-And if the ability to run current mainline reliably on these systems
-is so very important to you, please also feel free to look into ways of
-fixing this issue within the confines of the Alpha-specific code rather
-than attempting to continue placing this outdated constraint on the rest
-of the kernel.
-
-Yes, it is no longer the year 1973, but it still is the case that using
-four bytes (or, worse yet, per Arnd, eight bytes) where one byte will
-do is wasting a huge amount of resources across the billions of systems
-on which the Linux kernel runs.  So again, if running current mainline
-on these decades-old systems is so very important to you, please figure
-out a way to do so that isn't quite so wasteful of resources.
-
-							Thanx, Paul
-
-> Adrian
-> 
-> > [1] https://marc.info/?l=linux-alpha&m=163265555616841&w=2
-> 
-> -- 
->  .''`.  John Paul Adrian Glaubitz
-> : :' :  Debian Developer
-> `. `'   Physicist
->   `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Jason
 
