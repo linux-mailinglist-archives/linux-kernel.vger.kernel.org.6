@@ -1,181 +1,172 @@
-Return-Path: <linux-kernel+bounces-177645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F7F8C4258
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:45:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 483AA8C4231
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39051F21DFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:45:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB5D1C22E88
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568C0156C47;
-	Mon, 13 May 2024 13:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7110F15381E;
+	Mon, 13 May 2024 13:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gCM+EfKK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdyZ2uNi";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gCM+EfKK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mdyZ2uNi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0QC3sOm4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S42fgk9+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0QC3sOm4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S42fgk9+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9380C154429;
-	Mon, 13 May 2024 13:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6A6153500;
+	Mon, 13 May 2024 13:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715607701; cv=none; b=Zoca9JhV8Zp/sAl1PD+I3yjFx5vnWKnLd45CjTO7c3vmTxwoV8D3zpxdqNPhbrRuGwPMwckzOCZSacdTrChbzbAfxiQG/qaJ2QojChKHsKdb7GBhIVD9IJh+1E5U6GoDkOhv90SQ7P9j5ShpsD/feh23K36prwzgBFXc4JsQq/Q=
+	t=1715607697; cv=none; b=SaiokIV1blbYOU+ug78IEqHG16IqT00xVc571mhnzWl8F3hCcEIV8LF+BrIBEDJbnHx0jdWi4+RraPh8KskvecJQ/M6dE5mCFZVsSCEodK0XMNMoBtzDrm3ZvInNz9nWuIr92rDu1UpY5uYdCDfjYJMVQ7Rzeq3zxss/77wJGgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715607701; c=relaxed/simple;
-	bh=1vwhNLWQzWOw14LAEZi7EsnlB5e8SqSlplib0RuK460=;
+	s=arc-20240116; t=1715607697; c=relaxed/simple;
+	bh=trheXddaiEdfLrELnD3wTUNe0KrBMDYC+vggIcIMqB4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTzYvKtbDitg79oEKxgTPT+uoWZRmw3oWhwZZUnL95gj3fl12u+u7/oJzduCRcBR14RAtXi9oBXwx5ccSaeTE6ulOMQ1JVEKEHpZG5RUa0aeAQ+AJB4Dnj/wP5E0uL3QnB9bnH+rYe/KRdWUsnBC18m/F7BflByjuyN2tovrVbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gCM+EfKK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdyZ2uNi; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gCM+EfKK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mdyZ2uNi; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=By2nhmMdKp78e/7ffjmAQsb+UNyfR5crOmTiHuj6ZkaOTdbSGkM/Tr0QiNQszf/w0irhiAjOwBXROW3NP2c+y3bCfveYZ6x8ueFLJfKp+HjKRhKxoD3u0mKK5wdm8HD+nnxByjNPduMGVnkm9RtNwHefrCBU8X/U5fvrlEMettI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0QC3sOm4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S42fgk9+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0QC3sOm4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S42fgk9+; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 740D55C0E0;
-	Mon, 13 May 2024 13:41:37 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 47CDD34A04;
+	Mon, 13 May 2024 13:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715607697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1715607694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
-	b=gCM+EfKK1yd1U9Cibs0FoEYv8srOq28jiH6hSJ+QuuxUWBv9xgN13a6UByPu8WW8TLQjwU
-	sxhU7iki+aUAOqbjOomb+RMN2+gqNPdy6pzSGaboLushNkZXD9IPjVCVaC1IhIpd3KuAA4
-	Jxn73PG5O5eXCf3O6mwDQGtRCMQN+mg=
+	bh=Kd4DRq9qVstTu8IM1frFe8wCSYGv4REY+hKqbmhP4w4=;
+	b=0QC3sOm4rPnX9/xHC5xPWMpa7h9PVI2tC2nTEbzHwLbjbn1Q+IDy9jBm4/ph7H7ihbI2T8
+	WFLNP4usSduDAoGHS82NNF7KGOJ+myDAXs64VgKHdWSssg//fWqythsK0y7cLwmzxDOFnd
+	Qk1043UChA7jYSmzwLWqKV9/hY7mF8c=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715607697;
+	s=susede2_ed25519; t=1715607694;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
-	b=mdyZ2uNizmupVu8YQ6oQcqJdPVFtl1TN7WgfM4J7HlLXOvR47fENoOylA20z6vyY6hmNmQ
-	82XyVNcmcopduFCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=gCM+EfKK;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mdyZ2uNi
+	bh=Kd4DRq9qVstTu8IM1frFe8wCSYGv4REY+hKqbmhP4w4=;
+	b=S42fgk9+CR7qj0VQ6zjDgKNlLAs1BEoJjxZNlEhVfao6DeD9mqN4zvTYx140r/dqaIsXQ3
+	0pa6bL0yMD9pd2BQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0QC3sOm4;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=S42fgk9+
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715607697; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1715607694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
-	b=gCM+EfKK1yd1U9Cibs0FoEYv8srOq28jiH6hSJ+QuuxUWBv9xgN13a6UByPu8WW8TLQjwU
-	sxhU7iki+aUAOqbjOomb+RMN2+gqNPdy6pzSGaboLushNkZXD9IPjVCVaC1IhIpd3KuAA4
-	Jxn73PG5O5eXCf3O6mwDQGtRCMQN+mg=
+	bh=Kd4DRq9qVstTu8IM1frFe8wCSYGv4REY+hKqbmhP4w4=;
+	b=0QC3sOm4rPnX9/xHC5xPWMpa7h9PVI2tC2nTEbzHwLbjbn1Q+IDy9jBm4/ph7H7ihbI2T8
+	WFLNP4usSduDAoGHS82NNF7KGOJ+myDAXs64VgKHdWSssg//fWqythsK0y7cLwmzxDOFnd
+	Qk1043UChA7jYSmzwLWqKV9/hY7mF8c=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715607697;
+	s=susede2_ed25519; t=1715607694;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tsajR3jWLhoXAo1Db8WJHsrCg5uk4EqrkI1RB3AkQjQ=;
-	b=mdyZ2uNizmupVu8YQ6oQcqJdPVFtl1TN7WgfM4J7HlLXOvR47fENoOylA20z6vyY6hmNmQ
-	82XyVNcmcopduFCw==
+	bh=Kd4DRq9qVstTu8IM1frFe8wCSYGv4REY+hKqbmhP4w4=;
+	b=S42fgk9+CR7qj0VQ6zjDgKNlLAs1BEoJjxZNlEhVfao6DeD9mqN4zvTYx140r/dqaIsXQ3
+	0pa6bL0yMD9pd2BQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44F0E13A69;
-	Mon, 13 May 2024 13:41:37 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0D15A13A5D;
+	Mon, 13 May 2024 13:41:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iJXPEJEYQmabDwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 13 May 2024 13:41:37 +0000
+	id oa0nA44YQmYcDwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 13 May 2024 13:41:34 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2ACB1A089F; Sun, 12 May 2024 10:05:11 +0200 (CEST)
-Date: Sun, 12 May 2024 10:05:11 +0200
+	id 09ABFA08BF; Sun, 12 May 2024 12:09:31 +0200 (CEST)
+Date: Sun, 12 May 2024 12:09:30 +0200
 From: Jan Kara <jack@suse.cz>
-To: Justin Stitt <justinstitt@google.com>
-Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Bill Wendling <morbo@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] fs: remove accidental overflow during wraparound check
-Message-ID: <20240512080511.yotlypw35qowwjoh@quack3>
-References: <20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com>
- <20240509155356.w274h4blmcykxej6@quack3>
- <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] jbd2: avoid memleak in
+ jbd2_journal_write_metadata_buffer
+Message-ID: <20240512100930.7p5pylbazn5etw7k@quack3>
+References: <20240506141801.1165315-1-shikemeng@huaweicloud.com>
+ <20240506141801.1165315-2-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFhGd8opxHhTdZhDg_hq7XWQFxJ34nLDxTd-nBBgye9BLohnqw@mail.gmail.com>
+In-Reply-To: <20240506141801.1165315-2-shikemeng@huaweicloud.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 47CDD34A04
 X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
+	BAYES_HAM(-3.00)[99.99%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	DATE_IN_PAST(1.00)[29];
+	DATE_IN_PAST(1.00)[27];
 	MID_RHS_NOT_FQDN(0.50)[];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	ARC_NA(0.00)[];
 	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[10];
 	RCVD_COUNT_THREE(0.00)[3];
 	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 740D55C0E0
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -3.01
 
-On Thu 09-05-24 15:10:07, Justin Stitt wrote:
-> On Thu, May 9, 2024 at 8:53 AM Jan Kara <jack@suse.cz> wrote:
-> > > @@ -319,8 +320,12 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
-> > >       if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
-> > >               return -ENODEV;
-> > >
-> > > -     /* Check for wrap through zero too */
-> > > -     if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
-> > > +     /* Check for wraparound */
-> > > +     if (check_add_overflow(offset, len, &sum))
-> > > +             return -EFBIG;
-> > > +
-> > > +     /* Now, check bounds */
-> > > +     if (sum > inode->i_sb->s_maxbytes || sum < 0)
-> > >               return -EFBIG;
-> >
-> > But why do you check for sum < 0? We know from previous checks offset >= 0
-> > && len > 0 so unless we overflow, sum is guaranteed to be > 0.
+On Mon 06-05-24 22:17:53, Kemeng Shi wrote:
+> The new_bh is from alloc_buffer_head, we should call free_buffer_head to
+> free it in error case.
 > 
-> Fair enough. I suppose with the overflow check in place we can no
-> longer have a sum less than zero there. If nothing else, it tells
-> readers of this code what the domain of (offset+len) is. I don't mind
-> sending a new version, though.
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-Well, for normal readers offset+len is always a positive number. That's
-what you expect. If you see a check for offset+len < 0, you start wondering
-what are you missing... only to find you miss nothing and the check is
-pointless. So yes, please send a version without the pointless check.
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
+> ---
+>  fs/jbd2/journal.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index b6c114c11b97..207b24e12ce9 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -399,6 +399,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  		tmp = jbd2_alloc(bh_in->b_size, GFP_NOFS);
+>  		if (!tmp) {
+>  			brelse(new_bh);
+> +			free_buffer_head(new_bh);
+>  			return -ENOMEM;
+>  		}
+>  		spin_lock(&jh_in->b_state_lock);
+> -- 
+> 2.30.0
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
