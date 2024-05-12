@@ -1,108 +1,164 @@
-Return-Path: <linux-kernel+bounces-176940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98ADF8C379E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:45:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BFC8C379C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37AAE1F211F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:45:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41014281334
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE614BAA6;
-	Sun, 12 May 2024 16:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65FC47784;
+	Sun, 12 May 2024 16:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hiv8+BDC"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="xiS8wpMG"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05C036122;
-	Sun, 12 May 2024 16:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD8233985;
+	Sun, 12 May 2024 16:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715532314; cv=none; b=Pe+ayQGIlGyXSqsnlr1ngroLwGwGJXqGJrcTpPpj78qp+l/TYxeK/DRXbqDgoHhT3uFKZY0rA5Of78y8w1xq+ZpDhP40NhHiIvYl5avQCx5saLjQOuRmoH6Rl71XdJnlJAlWiNwyoaGI6Ej3vKjbu8c044FCqTzI3vO/a/PTRNo=
+	t=1715532286; cv=none; b=fZOukxGsyWKNu9KWViFd28toZS958tGE2Xl16NW0PqVeo4Q1Nw7B+3YOD/+bQLBr6XjhFIR04sHHYOWnA1KD1Hs7LhIjiOcp/prD9IdHInft8GLkj1nQaosVL/kEWxsvbZW5qjgsXkihDxnYUDKoVkzbUyoIetwSeUCUHPPaMS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715532314; c=relaxed/simple;
-	bh=2pMCaI4MkXE4JujOu1FunSQxYYUR19dMTcOI+61p814=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=WKB1GpQx6jb233+6kwT54mIqOai9JctF81+Sak9wIrjFv5qcg994iyPC++kovkWFPdlO+bXhjz0OO6dJ+oDagnrCi4j+7h8zq9wrDauGQ4gy2Z5ein++LDIZ2R6xcOoWp4K+quEfiY+MxvQ4/CIUxnmLAK+dx3S9Ihs96oVNLG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hiv8+BDC; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715532276; x=1716137076; i=markus.elfring@web.de;
-	bh=2pMCaI4MkXE4JujOu1FunSQxYYUR19dMTcOI+61p814=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=hiv8+BDCho8eaerxrk9gbUBGrwfpk1OgAKwZsI3SSn047xHfEEVLL4TzTgc1nYgq
-	 yJRzgLJ/Die/9xA/On08WM9R65UjtOcHTmo9LTj5oAKcPsj44norIkRR24X9zqco4
-	 0w4ZGbT6+U9zXgz3kWUNPl2PEuXqg1LtZ2AjNXZRB5QOVBZFBldp6VwvDCWrWuWhc
-	 mCAziTOkmvI27hiEDwODTbrVq8aXU5h89+b9q3cFw9QlgfWF3Zze75IDCPOqrIBiV
-	 3ToNqBUxjF7kcojt5qe9Zl0QKzL8OChHv+AZCYcwo6QFT2ID/5gqNAmu96syfTgHM
-	 I0tiJ8mrEI4azA7+IQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXocY-1s4zQe2Sfk-00YD9h; Sun, 12
- May 2024 18:44:36 +0200
-Message-ID: <749dde9d-d4a2-46f7-ae37-638b4cc95249@web.de>
-Date: Sun, 12 May 2024 18:44:32 +0200
+	s=arc-20240116; t=1715532286; c=relaxed/simple;
+	bh=c56SAsIRlV6GLObSq1hH1Rvq8m0Fmhd1QaC7JH93tCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMXls7maCSOVkHgWxbXdwefg7RlZw4zLyW4R4V0qCt9HObT6QiqFxpqQYi7hfuaJYbe4MyRQMGnOOLW3l36dH1bs/VOk5xikGf5Iy2UfEayAE9LJKoqSXagIMnQ988SkUMrPupm8tZ1GBvWXV6VZGxnVe6biAGIFjOw8MK0PMhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=xiS8wpMG; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 940691FC1D;
+	Sun, 12 May 2024 18:44:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1715532279;
+	bh=y8g4w0GWcQosP0yLlaIzTp7hrfG0+IeoYR8ymAM4Vxo=;
+	h=Received:From:To:Subject;
+	b=xiS8wpMGPkUeYKLKwocNyJlF6WEEYRBVZbItYRlLNVqh4a1OerBOWHoOVmUuZN+p1
+	 2vn8Rbmkx0jxnA93kuwApaqQZhV2jbrjnwCfySKjCcxvGa1R7Ey5Jyyse7lPsa1Xzj
+	 YiGhVauggOe3xV63kePyF0s6kWsfhrlu/NiRPkSen3eKEPxS077LalvY/Cuw9v1TVL
+	 H+cyX+tvk1LfM4pXaDWCHveaMMxDXfs5LJ4w4g9UVo1t6uxU0WKwu6eALYcm30Pz/C
+	 3AB/b88rRfmr+GpGYGBz2UoqOe8y31y0JXfeHgKILtU+ekeRNz1DRi73YjYmBh/z/J
+	 Y51gbgNmln/WQ==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 3FBF97F9B8; Sun, 12 May 2024 18:44:39 +0200 (CEST)
+Date: Sun, 12 May 2024 18:44:39 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Aradhya Bhatia <a-bhatia1@ti.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+Subject: Re: [PATCH 4/4] drm/tidss: Add OLDI bridge support
+Message-ID: <ZkDx94qEVv65FquF@gaggiata.pivistrello.it>
+References: <20240511193055.1686149-1-a-bhatia1@ti.com>
+ <20240511193055.1686149-5-a-bhatia1@ti.com>
+ <ZkCsfH1qeSsXyQz4@gaggiata.pivistrello.it>
+ <e34dc434-7922-4b47-bc41-c06f13366194@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Luis Henriques <luis.henriques@linux.dev>, linux-ext4@vger.kernel.org,
- kernel-janitors@vger.kernel.org, Andreas Dilger <adilger@dilger.ca>,
- Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
- Theodore Ts'o <tytso@mit.edu>, Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240510115252.11850-1-luis.henriques@linux.dev>
-Subject: Re: [PATCH] ext4: fix infinite loop when replaying fast_commit
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240510115252.11850-1-luis.henriques@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:enKyVoKCLTS3efop8Am9z49VzDdZsucJ+BPKQEBksbAMFQSZopr
- 8uZrRg5d70Cy4jxlquea/yhjH/yxxmhBAQs2YDiKqjWHXkLKUh4eeoNBo6vO+6Nntf5q6Au
- VxdECCUrvtSdXXXfdrHYyo5/lDvfU4bs64ty9H8ODkNGvLJtJa4D1tnTfRdp4Sp6BlL5gKS
- TmM8uekIaaF2XL7t3rleQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:eEZG2u069MY=;RSI28NTcb9VOEAnjioPKJ5VYxBh
- VSHAEavQgSsL33KeM1Arhv5I+HhbLth9QE8OPyw8tjDsdZee9uotWIhkIcjTidFM8ifUJErfT
- vO9FcdC1Hz2E5US1u/mB2LEDBZSaqjNdux0ddE1bk4Cb0jyL1+h3zNRqqXJWswD+eqso+zInc
- 6pEW8n44ApF/O+u0J4m4JG2cFSGWpdfBNibLy9qx1C9IqSwHvW8rBZ1M2kVApLeOmZgtry8fN
- 4PM4j3nRN5x6+Y1goyBK3qLyGsOfqwRx/HVcPuD7loLaPwlpln7kR+UzFbqvkH5cKG9EppIV4
- VNa3rov9LW5VfxtHntx1WqtkJkoiK7pwnYGTHj2jUktF0B97cBNVOh6totCy+dELruTFelWY3
- d1iHAGWD7yCDlqCodT3ddF3lurbFEFlnnZMfLjriLwjPCfeuXR15WJp/gMFp/GwJcJWWz7CgK
- wxWEleVNpkAfPxf/XGYfhlQ6PK9CpdNiwSZu5OaL6RP6eYGj4dwhHWQSEOjhBJYvF6l7AfWqC
- UpjiCJ5thtHiIg8kLL9bEWn+WB5Hz7YctP1TZIyheB2/RuFl0LKpia0MB0E2l/X6NbkRVNmj6
- qUaPMmiPmi98lI+B26IQByrIAC+vmYz8XYu9IGcv4aa2ukwmMeLOfkpgrfr+iMsA8g7SzV9ef
- cH6AsU1UHKWfUduR2/no5fa3Uvjw9Xa63YhG48iwgYp4vKA/DwQrobxaKGzcOElF7BC5pK9Sg
- LYReB9Jph+PMxjGRnWklF7iDFA2rRfQ//1znFEMaFK6cidEN+xFAP8z/71o9PHZMkbBZvagZt
- q0CAznhK5+q5H5nA6X//inb6nR5cXf3FZp+Twrq9lHxBA=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e34dc434-7922-4b47-bc41-c06f13366194@ti.com>
 
-=E2=80=A6
-> This commit fixes this issue by detecting the replay =E2=80=A6
+Hello Aradhya,
 
-Would corresponding imperative wordings be more desirable for such a chang=
-e description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
+On Sun, May 12, 2024 at 08:53:12PM +0530, Aradhya Bhatia wrote:
+> On 12/05/24 17:18, Francesco Dolcini wrote:
+> > On Sun, May 12, 2024 at 01:00:55AM +0530, Aradhya Bhatia wrote:
+> >> Up till now, the OLDI support in tidss was integrated within the tidss dispc.
+> >> This was fine till the OLDI was one-to-mapped with the DSS video-port (VP).
+> >> The AM62 and AM62P SoCs have 2 OLDI TXes that can support dual-lvds / lvds-clone
+> >> modes.
+> >>
+> >> Add OLDI TXes as separate DRM bridge entities to better support the new LVDS
+> >> configurations.
+> >>
+> >> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> >> ---
+> >>  drivers/gpu/drm/tidss/Makefile      |   3 +-
+> >>  drivers/gpu/drm/tidss/tidss_dispc.c |  11 +-
+> >>  drivers/gpu/drm/tidss/tidss_dispc.h |   4 +
+> >>  drivers/gpu/drm/tidss/tidss_drv.c   |  13 +-
+> >>  drivers/gpu/drm/tidss/tidss_drv.h   |   4 +
+> >>  drivers/gpu/drm/tidss/tidss_oldi.c  | 568 ++++++++++++++++++++++++++++
+> >>  drivers/gpu/drm/tidss/tidss_oldi.h  |  73 ++++
+> >>  7 files changed, 673 insertions(+), 3 deletions(-)
+> >>  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
+> >>  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
+> >>
+> >> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.h b/drivers/gpu/drm/tidss/tidss_oldi.h
+> >> new file mode 100644
+> >> index 000000000000..5ad02ddea11a
+> >> --- /dev/null
+> >> +++ b/drivers/gpu/drm/tidss/tidss_oldi.h
+> >> @@ -0,0 +1,73 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> >> +/*
+> >> + * Copyright (C) 2023 - Texas Instruments Incorporated
+> >> + *
+> >> + * Aradhya Bhatia <a-bhati1@ti.com>
+> >> + */
+> >> +
+> >> +#ifndef __TIDSS_OLDI_H__
+> >> +#define __TIDSS_OLDI_H__
+> >> +
+> >> +#include <linux/media-bus-format.h>
+> >> +
+> >> +#include "tidss_drv.h"
+> >> +#include "tidss_dispc.h"
+> >> +
+> >> +struct tidss_oldi;
+> > 
+> > why do you need this here? 
+> 
+> So that struct tidss_device can store pointers to struct tidss_oldi
+> instances.
 
+on this and ...
 
-> Thanks to Zhang Yi, for figuring out the real problem!
-=E2=80=A6
+> >> +#define OLDI_IDLE_CLK_HZ	25000000 /*25 MHz */
+> > this is used only on a single C files, move it there?
+> > 
+> > I would consider this comment in general for this header file,
+> > from a quick check most of this is used only in tidss_oldi.c.
+> 
+> Apart from struct tidss_device being able to access struct tidss_oldi,
+> there is no direct access to any of the above.
+> 
+> Perhaps I can move the idle clock definition into the C file.
+> 
+> However, before tidss_oldi.h, all the register definitions have been
+> stored in tidss_dispc_regs.h. It just seemed right to keep them out in
+> the header file and maintain the status quo.
 
-Will another tag become relevant here?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n527
+.. this they are probably more of a personal taste topic, just go
+for whatever you and the actual maintainer (tomi?) prefer.
 
-Regards,
-Markus
+Thanks,
+Francesco
+
 
