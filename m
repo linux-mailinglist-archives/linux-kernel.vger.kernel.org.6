@@ -1,367 +1,246 @@
-Return-Path: <linux-kernel+bounces-176931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 410168C373D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:11:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170DD8C3744
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9218CB20DFA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:11:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82738B20FE5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276AE46542;
-	Sun, 12 May 2024 16:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26C246421;
+	Sun, 12 May 2024 16:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="DtSVH2pH"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02olkn2010.outbound.protection.outlook.com [40.92.48.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S3dgf7wN"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F3C3E47E;
-	Sun, 12 May 2024 16:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.48.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715530248; cv=fail; b=dncuEdTmBRM6leUjrfxIzPsRCZaFEiBzVpoAfKfo2PIZUWGkbro2CcdUkPPJ02PS1kqNvG0wQajUhV8qlg8sck9e3jZGAr6Rhuhp8bwqwYDtwgY0sShG3UkFbAZu2LLm/wdEMFI4cNhZaL4VItE1NXU4g0exonTW+8CU+9vvv/Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715530248; c=relaxed/simple;
-	bh=cO0OyZ6+x05/ye7ybpX8g59fsXymBhI9Pxn7rRS1QF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dqSync6PfkVLYILnWQ+FuJdFpzrCMwOCTt3epAXa/e4sNfYj0ND9WNnTOnE1GfnvTWNcsBeo+PztnTOuamu7gdF9k1OhMGMip+zvPnvDfJhy9iubDgrMNvmX17/3AKK1pIphsvoJW4A9m9RYnX8jsLujWKZSlY8cMG8f2duc7ns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=DtSVH2pH; arc=fail smtp.client-ip=40.92.48.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HuPvDlZYjb+VGyzLmNv8cEsQOIRX3qhc1yyp1sSe61YElsqwiIhFPOkt19QWkQR0V3qp8T7EzEaNijUB8X+Q7tF915/HUcX0nVZsQMu3OO/FfUhcX918vK6kMH9wykstXr7aX7FAc9Z0m7zoSEPFtPVG/4bp/3fO3qO/IMpQrclKbioa4t2R2mOl1XLMMpfABXsiEO3xU/YZV6G3x7qt5FhOCbw1TQTAqU+qhx1JH/Y7DBRUELSj3klVF5eWItu6UlZ0djgoIqXbYTr9TaTBbjgs/dF0hb1tQPo71KacsVdbHBHggm9vj2kRbdjSBLWJ2PZLLFLxvObcPSgNz8DrnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r4nsGLQ3NqJBCm58S+OTDBjY6/TebElea7qWCeysBJE=;
- b=gKB/aXAme466YR3tk27fQxHm1KgdydaluVOeRo03qP9ijncoAIEwGTDGTakAxLnYiE1FRfRuexdwvQ+0b75eyDj1E/kyfmIWbcPOY7uGvckrjy1WYTMR1jTB5yWXAMy3dMlMYY/os81zcnNAEzG6GO5ZvQld5n4utFBQYJ6SzwCYwt9AueLeoxTNILW3j+iiyWTGx0TJkGy22LBpCwUM4JJ6k7K0P6fcnXFGBtZGAFIjkKlAyPTb7hP01brhmUzf8mCO3m+jZ6vBJEG++h1IKxEmnlV9KdP8ALgcDY7/HOscKTKR2Xnjod7fFEekE9lVeHG5suKeflSTvgq4du/cdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r4nsGLQ3NqJBCm58S+OTDBjY6/TebElea7qWCeysBJE=;
- b=DtSVH2pHvWvEDJqt4Y77jvtwjtI/eUNoHwvbCtULSp+9x8lBDyhsMSMFEhmtdUGWqEjET4x4B3w1a4pBmCgvXQ4QOz6Z6sIh7Ld1EsSOnTFRfx3rpbr0EbeqthWRP2V6v05yohyTuJdoWw7NVFrErwvgPDq51nciY6J4fcQL7GOLNm31/ii09RDdiz277eOMD5agXNVuiXk8W1YhJcV9rwF5j0fEVicbcU4sMmmzOjY88HeIPFYTC7IefLUdYzwlmNlBNvWW4sxkaTz6LPMDiZCoj0mtHc9OZwGr4rnuwwVtNgaz/iLaeP4nT1b0Lzwb6flb+RTL26s2i+S0Zzg4OQ==
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
- by DB8PR02MB5913.eurprd02.prod.outlook.com (2603:10a6:10:116::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sun, 12 May
- 2024 16:10:43 +0000
-Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
- ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7544.052; Sun, 12 May 2024
- 16:10:43 +0000
-From: Erick Archer <erick.archer@outlook.com>
-To: Taras Chornyi <taras.chornyi@plvision.eu>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kees Cook <keescook@chromium.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Cc: Erick Archer <erick.archer@outlook.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] net: prestera: Add flex arrays to some structs
-Date: Sun, 12 May 2024 18:10:27 +0200
-Message-ID:
- <AS8PR02MB7237E8469568A59795F1F0408BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [T1zVrY584MW8/ZGItUdUfhC6yAT54btB]
-X-ClientProxiedBy: MA4P292CA0013.ESPP292.PROD.OUTLOOK.COM
- (2603:10a6:250:2d::11) To AS8PR02MB7237.eurprd02.prod.outlook.com
- (2603:10a6:20b:3f1::10)
-X-Microsoft-Original-Message-ID:
- <20240512161027.12752-1-erick.archer@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E75D4B5AE;
+	Sun, 12 May 2024 16:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715530291; cv=none; b=tjgimkT0UfDzkBrRu+IPGjEtaXj1/jB9pqv6H9DtRBcRzFyRarpc8HYZGwR2J+BWQ2qiiU+PoGoiUORwMFdFS48TBijq8jI+Betw3ocUrpxLkyTpFOry7td4BPqwLj3J5eKeYEowgeg3Hn9qE8FkNlluM9doOzsBR0coQc/urvs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715530291; c=relaxed/simple;
+	bh=z6P+mS/l0S7hWWQ+krwdaqTCWeyYjiFrKAW/ITNlUzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Tg/SlWBzqTxhPYucaXUe/QC0x9KvZFYDLfWxDNMu/ujcMDQdqvWWOcn34xw/93U2M4TZjQYqQnKpcpxqMrpIdM1+/w0jad0ddVOm0JjWmAwlggpjOqPjMTnyTJVmvMkL/ZdrAK7FdpHwCHHewC9q/72Oc4ArIUxF+lvItq7MnNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S3dgf7wN; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44CFjsfZ008978;
+	Sun, 12 May 2024 16:11:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=la6rV0NKorvKyL6sLrf655P9A2HtwgNO+jzNz69HBkw=;
+ b=S3dgf7wN+jkfn9S2avR3FgvMyX65oWC5zSyhzByxrH8dAjvSOQw+7kqD/07b07vb6P+/
+ S7a2mZm8EpadHwPBr1raITx2raHmiOY8PHtmBF/FMTqWOg2uOPeIGn4L/xbItm9t4qkn
+ lbGqHX/yCSCKUPOyMxTIkawFD+BlUyhI4qAlU8GA/rfsof5MpocFyViUqsHYIzOIvmbZ
+ 8dSMkBrPncLNQrTxqR1j2PG8fLFicO9p/waFvDB0v2ts/eSab0kGndYezoHiM4OdqPXF
+ WVn7xi8lUtMSgDEDbX7/XOsXa9bRX46Tt6zmY6zcVWhvlIncgOgtEUkxinzvzj1SZb/e Jw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y2uk98h1p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 16:11:08 +0000
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44CGB7J1014668;
+	Sun, 12 May 2024 16:11:07 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y2uk98h1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 16:11:07 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44CCeChr018810;
+	Sun, 12 May 2024 16:11:07 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2k0t3a3q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 16:11:06 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44CGB4NB40567304
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 12 May 2024 16:11:06 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DF34258055;
+	Sun, 12 May 2024 16:11:03 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A234758043;
+	Sun, 12 May 2024 16:10:55 +0000 (GMT)
+Received: from [9.43.63.99] (unknown [9.43.63.99])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 12 May 2024 16:10:55 +0000 (GMT)
+Message-ID: <50a50ac9-3797-4e7a-be21-ea3b01d64ec4@linux.ibm.com>
+Date: Sun, 12 May 2024 21:40:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|DB8PR02MB5913:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6c97e6b-f8a7-4bb9-9502-08dc729e12e7
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|1602099003|3412199016|440099019|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	fymZMMKbw23gUFgVwPx1K2I6X8EHvueJO2ISRTy2B6iUdjC200qLPmP/+i3Z4PcpWdE7gDCKsqqeZTmM0IB2Rkou2/JocrPag77pizJNY4QBzvFIm9yEZiYDh+hoBW+h7fdFiRlDnv4ztjHLvUQNg8l8/jAZ5AVw5dbmWYF3rGn60pqfjaOmmIU/T7PZy/oZ0sAvZ5I6qOJ/FR4gNt9M3UgDW4171vueSoSGIbgHLz+PqYec85fpbAZdjhzPbR1n4dOK+g/rlL3EtIQRsNbK6r6CVpsr6qklbf6mSYxHkVnDOL5p+yjYWC7xZNt8HPtbDwOYiZBEIGe9SVa0GVbPehePGiTZq7nXmU4yHSdYlYJz0Te7wf/xw4KXsFTGnu8B1lJ6u93QTRPyYuG3PiOGrnIvF+i2hNrbMsql4z1sJOjjZ7OmSjWYopCfq/71I5C44phytvKZhtkUxNfLabpTEtOxoxm4XUGtQuyLGwKC/F5khwtPSEH2+7g0s9FLyXzooRQ+G7jWfCsNsMNNd+XCCtV40YD5OMjDBDvCqZKxGL05DDvVbfhc0bmfOqCEIgPO6lhCOeGP2ZQIufrd9Gt9zhp0+WKwFDeXpaf7QBrFnQ/mOHr3mZpyEK6Xtpnt33Sk54d6Zzp/ArUzNBSSN6moXPgvACRlNwh7Cyb9PC1GaNSZHlOBdvlr28uSsU1wgb2X0RINSQb7WUKSkSt8krx7wg==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VEvQHW0EciULOJGyFBygNoR6jHsG+ZLtw9YVNEKTulXJd3k+MgbjGBWpRedL?=
- =?us-ascii?Q?XGMxG+2rdqruuRv253+mBg38sz7CaBzkHCDlOS9m16b9PZyvmUjrnbCEjTFD?=
- =?us-ascii?Q?VBsBbUE66BV3U1yw/thSpe0nFl72Yk5f4Mw5K9tUavpATamuUty4QJ5ikF7p?=
- =?us-ascii?Q?zQFfHzPGYTzFGJ5d0J0HmQZucnt0y6W3F53wQb9fu6I5+GrMd/n04zpRx3xY?=
- =?us-ascii?Q?1k5qteKTYnBovQAW9zeZFe/0jehra0f/BQG5T3yPj7iC9+XakES4ycyu7/mW?=
- =?us-ascii?Q?npzWCoJ31d4HGgWYRL1Y7eF8IuNJLwJvObIlfiQVxZazJiyM8NmWj8UIUBoS?=
- =?us-ascii?Q?nQD/l/0EaTWJfL/HL3aPfbtkeu92VFiSprtsmJ8zm+erF0vKuhRR+jAB+z5P?=
- =?us-ascii?Q?0HqJfren/vYN5UJ4QTRVYG97y3jr7T3iSlD8GU1HP3o5qJWuw8pMZsTM+yYb?=
- =?us-ascii?Q?IpWGfV0EGRqf6bLqNgGgq8XzGHCVtFaYgqlhQMkWpxTUNhdDeqRNh3HU3/yU?=
- =?us-ascii?Q?+8y8MNbJRMB5FJkeoi8Javb8ivSq3g+eZv+WC3hXbjxBCA1hgUIXKYoM5D4m?=
- =?us-ascii?Q?HuWtuTmSFGz/qua1tEkVA9jM/zPMaVt1zOdq3tN/DFajirddMLgIpqvNzi3W?=
- =?us-ascii?Q?qu9M6BXKI5q1yqR+Xb/AmeNnHUitEmN6OzYX4IeLAD4IUaf05yEH3QQ6XsTS?=
- =?us-ascii?Q?/bYGvprld4bSriGEyNHLr1BHz0KGRXwSW7RhCNOixJRsXaf4cP0BJr1j0E4J?=
- =?us-ascii?Q?CbXFgit/rS3n5s/10dpgsacZ26eyBWBRZOkBmHQ519O35dE4ab2146GJAPgh?=
- =?us-ascii?Q?12vLuPAr4ChywBN8eLftme7ylONi2HPX2pinpIF1evayqjLie638zFMpslcN?=
- =?us-ascii?Q?LAkz3VNsu6Fa+Jz1wcyMgMIwt1jtpaXo0UUCEwWhYBh5wfpRpkqSIVvuWvCM?=
- =?us-ascii?Q?nz70PtrSnJ/Tt/4uer0c5kMu5+2aDkG/g/iwJinaKI28YhnPQ5B4w3g06gOF?=
- =?us-ascii?Q?Rv9J4Gr3msHIbwLtaMA39PSToiGEN3ANYY4AcTTbItr1q6MCHdANIN6a4PBn?=
- =?us-ascii?Q?hcx80XbGHDHYkvaHIj7uDNDEuhQsc2CAnHBnjbBW1djQbkiunCyQ6VaYx3ra?=
- =?us-ascii?Q?9zb6qjj2p0++GKVQptzMMjnP20dQGWqAK63PwsNvgS4ZDLT2h93UJSz4S5eK?=
- =?us-ascii?Q?PQTPNEGBZ1IcIVZdF6iD+T/aKPa6CAQ4iBoOvrl5kVtzVQlQZaZS83lTd+4Q?=
- =?us-ascii?Q?pxkt1/3sQgKGb2QLaa+I?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6c97e6b-f8a7-4bb9-9502-08dc729e12e7
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2024 16:10:42.9383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR02MB5913
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf sched map: Add command-name option to filter the
+ output map
+To: acme@kernel.org, peterz@infradead.org, mingo@redhat.com,
+        namhyung@kernel.org, mark.rutland@arm.com,
+        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+        acme@redhat.com, atrajeev@linux.vnet.ibm.com, kjain@linux.ibm.com,
+        linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240417152521.80340-1-vineethr@linux.ibm.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <20240417152521.80340-1-vineethr@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: JaTpy5YKEc53aHaz9ElckGf3AslPyRnV
+X-Proofpoint-GUID: hoEzRcayGguIDjf17gxV2yGdrMRrAN3L
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-12_11,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 spamscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 clxscore=1011 bulkscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405120120
 
-The "struct prestera_msg_vtcam_rule_add_req" uses a dynamically sized
-set of trailing elements. Specifically, it uses an array of structures
-of type "prestera_msg_acl_action actions_msg".
+On 17/04/24 20:55, Madadi Vineeth Reddy wrote:
+> By default, perf sched map prints sched-in events for all the tasks
+> which may not be required all the time as it prints lot of symbols
+> and rows to the terminal.
+> 
+> With --command-name option, one could specify the specific command
+> for which the map has to be shown. This would help in analyzing the
+> CPU usage patterns easier for that specific command. Since multiple
+> PID's might have the same command name, using command-name filter
+> would be more useful for debugging.
+> 
+> For other tasks, instead of printing the symbol, ** is printed and
+> the same . is used to represent idle. ** is used instead of symbol
+> for other tasks because it helps in clear visualization of command
+> of interest and secondly the symbol itself doesn't mean anything
+> because the sched-in of that symbol will not be printed(first sched-in
+> contains pid and the corresponding symbol).
+> 
+> 6.8.0
+> ======
+>   *A0                   213864.670142 secs A0 => migration/0:18
+>   *.                    213864.670148 secs .  => swapper:0
+>    .  *B0               213864.670217 secs B0 => migration/1:21
+>    .  *.                213864.670223 secs
+>    .   .  *C0           213864.670247 secs C0 => migration/2:26
+>    .   .  *.            213864.670252 secs
+> 
+> 6.8.0 + patch (--command-name = schbench)
+> =============
+>    **  .   ** *A0       213864.671055 secs A0 => schbench:104834
+>   *B0  .   .   A0       213864.671156 secs B0 => schbench:104835
+>   *C0  .   .   A0       213864.671187 secs C0 => schbench:104836
+>   *D0  .   .   A0       213864.671219 secs D0 => schbench:104837
+>   *E0  .   .   A0       213864.671250 secs E0 => schbench:104838
+>    E0  .  *D0  A0
+> 
+> This helps in visualizing how a benchmark like schbench is spread over
+> the available cpus while also knowing which cpus are idle(.) and which
+> are not(**). This will be more useful as number of CPUs increase.
+> 
+> Signed-off-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+> ---
+>  tools/perf/Documentation/perf-sched.txt |  4 ++++
+>  tools/perf/builtin-sched.c              | 17 ++++++++++++++---
+>  2 files changed, 18 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-sched.txt b/tools/perf/Documentation/perf-sched.txt
+> index 5fbe42bd599b..b04a37560935 100644
+> --- a/tools/perf/Documentation/perf-sched.txt
+> +++ b/tools/perf/Documentation/perf-sched.txt
+> @@ -94,6 +94,10 @@ OPTIONS for 'perf sched map'
+>  --color-pids::
+>  	Highlight the given pids.
+>  
+> +--command-name::
+> +	Map output only for the given command name.
+> +	(** indicates other tasks while . is idle).
+> +
+>  OPTIONS for 'perf sched timehist'
+>  ---------------------------------
+>  -k::
+> diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> index 0fce7d8986c0..e60836da53e5 100644
+> --- a/tools/perf/builtin-sched.c
+> +++ b/tools/perf/builtin-sched.c
+> @@ -156,6 +156,7 @@ struct perf_sched_map {
+>  	const char		*color_pids_str;
+>  	struct perf_cpu_map	*color_cpus;
+>  	const char		*color_cpus_str;
+> +	const char		*command;
+>  	struct perf_cpu_map	*cpus;
+>  	const char		*cpus_str;
+>  };
+> @@ -1594,8 +1595,6 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  
+>  	sched->curr_thread[this_cpu.cpu] = thread__get(sched_in);
+>  
+> -	printf("  ");
+> -
+>  	new_shortname = 0;
+>  	if (!tr->shortname[0]) {
+>  		if (!strcmp(thread__comm_str(sched_in), "swapper")) {
+> @@ -1605,7 +1604,8 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  			 */
+>  			tr->shortname[0] = '.';
+>  			tr->shortname[1] = ' ';
+> -		} else {
+> +		} else if (!sched->map.command || !strcmp(thread__comm_str(sched_in),
+> +								sched->map.command)) {
+>  			tr->shortname[0] = sched->next_shortname1;
+>  			tr->shortname[1] = sched->next_shortname2;
+>  
+> @@ -1618,10 +1618,18 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  				else
+>  					sched->next_shortname2 = '0';
+>  			}
+> +		} else {
+> +			tr->shortname[0] = '*';
+> +			tr->shortname[1] = '*';
+>  		}
+>  		new_shortname = 1;
+>  	}
+>  
+> +	if (sched->map.command && strcmp(thread__comm_str(sched_in), sched->map.command))
+> +		goto skip;
+> +
+> +	printf("  ");
+> +
+>  	for (i = 0; i < cpus_nr; i++) {
+>  		struct perf_cpu cpu = {
+>  			.cpu = sched->map.comp ? sched->map.comp_cpus[i].cpu : i,
+> @@ -1678,6 +1686,7 @@ static int map_switch_event(struct perf_sched *sched, struct evsel *evsel,
+>  out:
+>  	color_fprintf(stdout, color, "\n");
+>  
+> +skip:
+>  	thread__put(sched_in);
+>  
+>  	return 0;
+> @@ -3560,6 +3569,8 @@ int cmd_sched(int argc, const char **argv)
+>                      "highlight given CPUs in map"),
+>  	OPT_STRING(0, "cpus", &sched.map.cpus_str, "cpus",
+>                      "display given CPUs in map"),
+> +	OPT_STRING(0, "command-name", &sched.map.command, "command",
+> +		"map output only for the given command name"),
+>  	OPT_PARENT(sched_options)
+>  	};
+>  	const struct option timehist_options[] = {
 
-The "struct prestera_msg_flood_domain_ports_set_req" also uses a
-dynamically sized set of trailing elements. Specifically, it uses an
-array of structures of type "prestera_msg_acl_action actions_msg".
+Ping.
 
-So, use the preferred way in the kernel declaring flexible arrays [1].
+Hi all, any comments on this patch?
 
-At the same time, prepare for the coming implementation by GCC and Clang
-of the __counted_by attribute. Flexible array members annotated with
-__counted_by can have their accesses bounds-checked at run-time via
-CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
-strcpy/memcpy-family functions). In this case, it is important to note
-that the attribute used is specifically __counted_by_le since the
-counters are of type __le32.
-
-The logic does not need to change since the counters for the flexible
-arrays are asigned before any access to the arrays.
-
-The order in which the structure prestera_msg_vtcam_rule_add_req and the
-structure prestera_msg_flood_domain_ports_set_req are defined must be
-changed to avoid incomplete type errors.
-
-Also, avoid the open-coded arithmetic in memory allocator functions [2]
-using the "struct_size" macro.
-
-Moreover, the new structure members also allow us to avoid the open-
-coded arithmetic on pointers. So, take advantage of this refactoring
-accordingly.
-
-This code was detected with the help of Coccinelle, and audited and
-modified manually.
-
-Link: https://www.kernel.org/doc/html/next/process/deprecated.html#zero-length-and-one-element-arrays [1]
-Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [2]
-Signed-off-by: Erick Archer <erick.archer@outlook.com>
----
- .../ethernet/marvell/prestera/prestera_hw.c   | 83 +++++++++----------
- 1 file changed, 37 insertions(+), 46 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/prestera/prestera_hw.c b/drivers/net/ethernet/marvell/prestera/prestera_hw.c
-index fc6f7d2746e8..197198ba61b1 100644
---- a/drivers/net/ethernet/marvell/prestera/prestera_hw.c
-+++ b/drivers/net/ethernet/marvell/prestera/prestera_hw.c
-@@ -419,15 +419,6 @@ struct prestera_msg_vtcam_destroy_req {
- 	__le32 vtcam_id;
- };
- 
--struct prestera_msg_vtcam_rule_add_req {
--	struct prestera_msg_cmd cmd;
--	__le32 key[__PRESTERA_ACL_RULE_MATCH_TYPE_MAX];
--	__le32 keymask[__PRESTERA_ACL_RULE_MATCH_TYPE_MAX];
--	__le32 vtcam_id;
--	__le32 prio;
--	__le32 n_act;
--};
--
- struct prestera_msg_vtcam_rule_del_req {
- 	struct prestera_msg_cmd cmd;
- 	__le32 vtcam_id;
-@@ -471,6 +462,16 @@ struct prestera_msg_acl_action {
- 	};
- };
- 
-+struct prestera_msg_vtcam_rule_add_req {
-+	struct prestera_msg_cmd cmd;
-+	__le32 key[__PRESTERA_ACL_RULE_MATCH_TYPE_MAX];
-+	__le32 keymask[__PRESTERA_ACL_RULE_MATCH_TYPE_MAX];
-+	__le32 vtcam_id;
-+	__le32 prio;
-+	__le32 n_act;
-+	struct prestera_msg_acl_action actions_msg[] __counted_by_le(n_act);
-+};
-+
- struct prestera_msg_counter_req {
- 	struct prestera_msg_cmd cmd;
- 	__le32 client;
-@@ -702,12 +703,6 @@ struct prestera_msg_flood_domain_destroy_req {
- 	__le32 flood_domain_idx;
- };
- 
--struct prestera_msg_flood_domain_ports_set_req {
--	struct prestera_msg_cmd cmd;
--	__le32 flood_domain_idx;
--	__le32 ports_num;
--};
--
- struct prestera_msg_flood_domain_ports_reset_req {
- 	struct prestera_msg_cmd cmd;
- 	__le32 flood_domain_idx;
-@@ -725,6 +720,13 @@ struct prestera_msg_flood_domain_port {
- 	__le16 port_type;
- };
- 
-+struct prestera_msg_flood_domain_ports_set_req {
-+	struct prestera_msg_cmd cmd;
-+	__le32 flood_domain_idx;
-+	__le32 ports_num;
-+	struct prestera_msg_flood_domain_port ports[] __counted_by_le(ports_num);
-+};
-+
- struct prestera_msg_mdb_create_req {
- 	struct prestera_msg_cmd cmd;
- 	__le32 flood_domain_idx;
-@@ -1371,23 +1373,18 @@ int prestera_hw_vtcam_rule_add(struct prestera_switch *sw,
- 			       struct prestera_acl_hw_action_info *act,
- 			       u8 n_act, u32 *rule_id)
- {
--	struct prestera_msg_acl_action *actions_msg;
- 	struct prestera_msg_vtcam_rule_add_req *req;
- 	struct prestera_msg_vtcam_resp resp;
--	void *buff;
--	u32 size;
-+	size_t size;
- 	int err;
- 	u8 i;
- 
--	size = sizeof(*req) + sizeof(*actions_msg) * n_act;
--
--	buff = kzalloc(size, GFP_KERNEL);
--	if (!buff)
-+	size = struct_size(req, actions_msg, n_act);
-+	req = kzalloc(size, GFP_KERNEL);
-+	if (!req)
- 		return -ENOMEM;
- 
--	req = buff;
- 	req->n_act = __cpu_to_le32(n_act);
--	actions_msg = buff + sizeof(*req);
- 
- 	/* put acl matches into the message */
- 	memcpy(req->key, key, sizeof(req->key));
-@@ -1395,7 +1392,7 @@ int prestera_hw_vtcam_rule_add(struct prestera_switch *sw,
- 
- 	/* put acl actions into the message */
- 	for (i = 0; i < n_act; i++) {
--		err = prestera_acl_rule_add_put_action(&actions_msg[i],
-+		err = prestera_acl_rule_add_put_action(&req->actions_msg[i],
- 						       &act[i]);
- 		if (err)
- 			goto free_buff;
-@@ -1411,7 +1408,7 @@ int prestera_hw_vtcam_rule_add(struct prestera_switch *sw,
- 
- 	*rule_id = __le32_to_cpu(resp.rule_id);
- free_buff:
--	kfree(buff);
-+	kfree(req);
- 	return err;
- }
- 
-@@ -2461,14 +2458,13 @@ int prestera_hw_flood_domain_ports_set(struct prestera_flood_domain *domain)
- {
- 	struct prestera_flood_domain_port *flood_domain_port;
- 	struct prestera_msg_flood_domain_ports_set_req *req;
--	struct prestera_msg_flood_domain_port *ports;
- 	struct prestera_switch *sw = domain->sw;
- 	struct prestera_port *port;
- 	u32 ports_num = 0;
--	int buf_size;
--	void *buff;
-+	size_t buf_size;
- 	u16 lag_id;
- 	int err;
-+	int i = 0;
- 
- 	list_for_each_entry(flood_domain_port, &domain->flood_domain_port_list,
- 			    flood_domain_port_node)
-@@ -2477,15 +2473,11 @@ int prestera_hw_flood_domain_ports_set(struct prestera_flood_domain *domain)
- 	if (!ports_num)
- 		return -EINVAL;
- 
--	buf_size = sizeof(*req) + sizeof(*ports) * ports_num;
--
--	buff = kmalloc(buf_size, GFP_KERNEL);
--	if (!buff)
-+	buf_size = struct_size(req, ports, ports_num);
-+	req = kmalloc(buf_size, GFP_KERNEL);
-+	if (!req)
- 		return -ENOMEM;
- 
--	req = buff;
--	ports = buff + sizeof(*req);
--
- 	req->flood_domain_idx = __cpu_to_le32(domain->idx);
- 	req->ports_num = __cpu_to_le32(ports_num);
- 
-@@ -2494,31 +2486,30 @@ int prestera_hw_flood_domain_ports_set(struct prestera_flood_domain *domain)
- 		if (netif_is_lag_master(flood_domain_port->dev)) {
- 			if (prestera_lag_id(sw, flood_domain_port->dev,
- 					    &lag_id)) {
--				kfree(buff);
-+				kfree(req);
- 				return -EINVAL;
- 			}
- 
--			ports->port_type =
-+			req->ports[i].port_type =
- 				__cpu_to_le16(PRESTERA_HW_FLOOD_DOMAIN_PORT_TYPE_LAG);
--			ports->lag_id = __cpu_to_le16(lag_id);
-+			req->ports[i].lag_id = __cpu_to_le16(lag_id);
- 		} else {
- 			port = prestera_port_dev_lower_find(flood_domain_port->dev);
- 
--			ports->port_type =
-+			req->ports[i].port_type =
- 				__cpu_to_le16(PRESTERA_HW_FDB_ENTRY_TYPE_REG_PORT);
--			ports->dev_num = __cpu_to_le32(port->dev_id);
--			ports->port_num = __cpu_to_le32(port->hw_id);
-+			req->ports[i].dev_num = __cpu_to_le32(port->dev_id);
-+			req->ports[i].port_num = __cpu_to_le32(port->hw_id);
- 		}
- 
--		ports->vid = __cpu_to_le16(flood_domain_port->vid);
--
--		ports++;
-+		req->ports[i].vid = __cpu_to_le16(flood_domain_port->vid);
-+		i++;
- 	}
- 
- 	err = prestera_cmd(sw, PRESTERA_CMD_TYPE_FLOOD_DOMAIN_PORTS_SET,
- 			   &req->cmd, buf_size);
- 
--	kfree(buff);
-+	kfree(req);
- 
- 	return err;
- }
--- 
-2.25.1
-
+Thanks and Regards
+Madadi Vineeth Reddy
 
