@@ -1,144 +1,223 @@
-Return-Path: <linux-kernel+bounces-176981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4708C3816
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:07:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91DEF8C3824
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FC361C21331
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C522C281E12
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFE15028A;
-	Sun, 12 May 2024 19:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D43D54BF4;
+	Sun, 12 May 2024 19:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="k6xk3aN1"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OuZ7VBPm"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA855102E;
-	Sun, 12 May 2024 19:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844FA50277;
+	Sun, 12 May 2024 19:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715540855; cv=none; b=q5Cj0KuEQLp4NM8qgO1O2VZCCfeDFstTWU5FU4b2PeyDa318X/HvTxptUYKOLdJ9RM6rlwDaAYz+Ab6vafOst608+8bhYx5jnGHHaMsqb5acDP4aKhPA/TIhNDxAv5Ndu9/Z+C8pkOxDHM887XsG5IUGB/lJQgv5Z1qDXt7Bq2M=
+	t=1715541911; cv=none; b=mu1jsMGIlfef03aKJFPX76dLpdXH/7i1owvtaIRyoMyrEFmnxopzDOBbeVSQJAs/NqysPIKDTe1nNgSQJvecy4FgrIV10WAIORYTUpe1/P+hcz7JP+Gm+yt8/6g1z/ekZxYlEV7WkK0exie2qS/4JTi7yZp5RUZY97xX4wJZBrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715540855; c=relaxed/simple;
-	bh=to6jmO+EBhSNRP4yMtY2wwECbwS2E9PNoQd42aJjGrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VkCXVYuxQViRc5IW0eaey3juM5koLdTJza+3bz88m7UAAsM7W5Z3vaRlcFgGqPstmIUiKFoinOick9MCuCjzwaZVCaP7KaREr6ZKxRF8zreBPTBDYaF3TNX6OPXF1ALS9VYNzDAts2vO4bj+VFPiNaMoC+5PQjTqA8uCc1NPifo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=k6xk3aN1; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 84E37120003;
-	Sun, 12 May 2024 22:07:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 84E37120003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715540845;
-	bh=2rLH5TzP+km5UCLaOhbG3t3/0duKaiLCAy3iw53i790=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=k6xk3aN1sH9YnprLNrA0TrGzy+pVwxtShIrPAHyKUyGn5V7eBIURawthug715H4O8
-	 8bzbaLRl3JXui/ROukePFD3A/QHqUOIYGwhLbogg+gXGZ//ngX4gkghaWjP7YlONAr
-	 1FB+O2eSxFUGUfbZl8D2oTdVkAlEMTrKzJZK/drYvPP8YWDRPiOAVfMGbLyLPnj/cS
-	 TgnSI00sivc8BHlr/+L0uVgbTCQmc9R8xYJ0/2j67w7RwN/kB4pZ1jKOE4wYHbnxE2
-	 I2ptCygTTK9xfyNm7rpXTjV7BL+ve0n6qsSLP5rq8a1QbDLR8lMq6MIHVLlT8pvu5Y
-	 yphCnkiyFOg0A==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sun, 12 May 2024 22:07:25 +0300 (MSK)
-Received: from [172.28.66.92] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sun, 12 May 2024 22:07:24 +0300
-Message-ID: <3fa610c2-1f69-41d4-b06a-035980483b3c@salutedevices.com>
-Date: Sun, 12 May 2024 22:06:23 +0300
+	s=arc-20240116; t=1715541911; c=relaxed/simple;
+	bh=AhqJjtjzxCOMPbPhOlZJHNiQIPD1qhMc2zICfWrrYgw=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=qx2kapXrD63OSgc5pR8bfXbqXsvzDAZNozQEKQW7obRknRc/yCbz7cXYuRdOTQJxrrdfFL0rqLD+zb3ZEkminzlYvNnnwrxFFbEOif3FmdlaksM4gqKLOrHQGCULdN5PZIfINQ6wqIky17A90LOCxDYKsp4gRiE3ePEB0De7j9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OuZ7VBPm; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240512192459euoutp02821aac07226f8a2db5194d73dcf99b4e~O1ESVsCJR2437724377euoutp02b;
+	Sun, 12 May 2024 19:24:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240512192459euoutp02821aac07226f8a2db5194d73dcf99b4e~O1ESVsCJR2437724377euoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715541899;
+	bh=AhqJjtjzxCOMPbPhOlZJHNiQIPD1qhMc2zICfWrrYgw=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=OuZ7VBPmkb7GFFVnzlX4Xu3m7hSAa0rrviG0vbIWnIKgU+TJgw9zH8nxqiur/bL6o
+	 M7OMI4tz1/mWTWbqXXvIrwiyjKVk4zjtChcHQasIaqAhOS2cQTQAMVbVOIHdza6akW
+	 58y0JTV9EOsvNU8hQT438Y8v6wllbKKjS29Q7FR8=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240512192458eucas1p2eab8e039a414a72a34a339fbe5ca9e81~O1ER0VNb73073930739eucas1p2D;
+	Sun, 12 May 2024 19:24:58 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id EF.31.09875.A8711466; Sun, 12
+	May 2024 20:24:58 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240512192457eucas1p1c2e524298e130efc58f1e66cc0f38039~O1ERRMgkM1116711167eucas1p1G;
+	Sun, 12 May 2024 19:24:57 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240512192457eusmtrp17aafdb49baa334c3f4286e36fb7018cf~O1ERQYpCs2380323803eusmtrp1O;
+	Sun, 12 May 2024 19:24:57 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-6e-6641178a9d21
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id BF.A2.08810.98711466; Sun, 12
+	May 2024 20:24:57 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240512192457eusmtip1388a0eba49a1f62b378d13466cb997f2~O1EQ_bBsU2825928259eusmtip1W;
+	Sun, 12 May 2024 19:24:57 +0000 (GMT)
+Received: from localhost (106.210.248.15) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Sun, 12 May 2024 20:24:56 +0100
+Date: Sun, 12 May 2024 21:24:51 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Kees Cook <keescook@chromium.org>
+CC: Jakub Kicinski <kuba@kernel.org>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
+	<linux@weissschuh.net>, Luis Chamberlain <mcgrof@kernel.org>, Eric Dumazet
+	<edumazet@google.com>, Dave Chinner <david@fromorbit.com>,
+	<linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+	<linux-mm@kvack.org>, <linux-security-module@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-xfs@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<linux-perf-users@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<coreteam@netfilter.org>, <kexec@lists.infradead.org>,
+	<linux-hardening@vger.kernel.org>, <bridge@lists.linux.dev>,
+	<lvs-devel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+	<rds-devel@oss.oracle.com>, <linux-sctp@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>, <apparmor@lists.ubuntu.com>
+Subject: Re: [PATCH v3 00/11] sysctl: treewide: constify ctl_table argument
+ of sysctl handlers
+Message-ID: <20240512192451.wpswazhpualwvt63@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [APPROACH 2 1/2] arm64: dts: amlogic: list all slave clocks for
- audio clock controller
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome
- Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>
-References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
- <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
- <20240508175013.GA2244257-robh@kernel.org>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240508175013.GA2244257-robh@kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="3bxd2gyoppot6odw"
+Content-Disposition: inline
+In-Reply-To: <202405080959.104A73A914@keescook>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA2WSe0xTVxzHPbe395YmdZeKcAYbC+Ux2BTmHvHsIY/FmJtlf2CMMdsSZ5XL
+	SyistcBcjIUyQV5jQIQiw4IMCCDOUjsGKA6hDKjCEBjbSHXlIeE1nvIo1LXcupnsv8/ve77f
+	c76/5PA4wjHClRclOcNIJeIYEcHHdfr13r0ZLiHhb6xM7EbJejUXLbV3Ekh3NRNDWz+lcZBW
+	bwRoXG8ikSEzFjX3rGCoT5fDRZrRIS5qudWFo9Lr6wA9aCohkLHuKRf13enhooGb9TiaaMvG
+	kW4plUC5ZUoOGldPc9F8lolA7dfv4ahps5FE5rUJDJlXLVykvLLIQcO54wDp1c4ot74bR/cb
+	lrjB7vRlxa843V0OabVGTmtqLhK0ZjGPpBsqztOTDSpA9xaVAXpo+CFOz5p/wei+yhmCXtK4
+	099k6slQwaf8D8KYmKgERhoQeIIfqTIo8PgsmNRVs4orwGWnDODAg9Tb8PbjOSID8HlCqhrA
+	ztRmkh2WAayusAB2WAIw+eoc91nEMJoGbCykqgCsMYj/NRkKjPaEFsC1oRuYzYVT3rBFWbud
+	IKg9sHdmhGNjJ6u+2q/cZg7VR8KR7Agb76JOQO33+dt+ARUMU8bZlwWUI+xSjeGsPwnez6u2
+	3s+zshussvBssgMVAMfGp+xFRVCpzwIsn4Pd2j8wWzdIzfOh6cldkj04CEtqpu2BXXCqU2vX
+	X4I9+Vk4G8gHsNUyT7JDLYCVySsY63ofpg6M2RMhMN3Yz7E1gtROODzryBbdCfN0hXZZANMv
+	CFm3D6w1zuC5wLP4udWKn1ut+L/VWNkPfv2jmfyf/DqsLJvmsHwA1tf/jasBWQNcGLksNoKR
+	vSlhEv1l4liZXBLhfyouVgOsn7/H0rncCKqmFvzbAMYDbcDLGjb9UNsHXHFJnIQROQmCvwgK
+	FwrCxF+eZaRxn0vlMYysDbjxcJGLwDvsFUZIRYjPMKcZJp6RPjvFeA6uCmzHvqiU8FvYd96H
+	g8JPYh+fDD06VXDqiDzYmO3lEV2beExsuSJ8ITrvEwTvlW0dLowMyvnsnO+Fjeabfx6YLOrw
+	6Z289kCj9j7/qET5UbFh3dFXdWe01OP0UEvb/Ldp6BLY/2GIc3nZJc+6rT0p8e+ZWvyOuyx4
+	FokHkjbe2TscTYcOXiTdf08sFGrbl1s7DpW/vPXWJuocTvfFGnHzXGu4n/Pi/oQCv8SHhXfX
+	NmYrWr3cyh0bicEOadSGT96Nx90pHuan8oRWRWipOeNaw4uBC/Rt8ufN9jpw6N011Ygq4eyj
+	/h1bAYM5Ft7u40fmfvvKoTDIL9D4l3azaa4+RzGoffKqCJdFive9xpHKxP8Aj3WNUHcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLKsWRmVeSWpSXmKPExsVy+t/xu7qd4o5pBj2L9S0ajy1gtfh85Dib
+	xbbF3UwWf3e2M1tsOXaP0eLpsUfsFme6cy12n/7KZHFhWx+rxabH11gt9uw9yWIxb/1PRovL
+	u+awWdxb85/V4sKB06wWV7auY7F4dqiXxWLb5xY2iwkLm5ktni54zWrxoecRm8WR9WdZLHb9
+	2cFu8fvHMyaL39//sVo0z//EbHFjwlNGi2MLxCwmrDvFYnFu82dWBzmP2Q0XWTxOLZLwWLCp
+	1GPTqk42j02fJrF7bF5S7/Fi80xGj/MzFjJ6XLtxn8Xj7e8TTB4Xlr1h8/i8Sc6jv/sYewBv
+	lJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl7G+SuT
+	WAq6JCq+TbRsYJwp0sXIySEhYCJx5nE7I4gtJLCUUWLtCVOIuIzExi9XWSFsYYk/17rYuhi5
+	gGo+Mko8v3qDCcLZwijR3dzNDFLFIqAqsad5NdgkNgEdifNv7oDFRYDi3y81g9nMAhfYJe70
+	poPYwgIJEluWTgar5xVwkGh6+o4V4oo3jBJrpgRDxAUlTs58wgLRWyYx+9UX9i5GDiBbWmL5
+	Pw6QMKeAvsSTp6+gDlWSaD7Wwwhh10p8/vuMcQKj8Cwkk2YhmTQLYRKEqS6xfp4QiihIsbbE
+	soWvmSFsW4l1696zLGBkX8UoklpanJueW2yoV5yYW1yal66XnJ+7iRGY9rYd+7l5B+O8Vx/1
+	DjEycTAeYlQB6ny0YfUFRimWvPy8VCURXodC+zQh3pTEyqrUovz4otKc1OJDjKbAMJzILCWa
+	nA9MyHkl8YZmBqaGJmaWBqaWZsZK4ryeBR2JQgLpiSWp2ampBalFMH1MHJxSDUwn/0RUVR94
+	fP3czyXKa72Wtdg8WyUpw/jPdFXWjGqVA7+ni7V/3uQ5+96n7aLvdy47sltYLmPi/eVpYmtS
+	En2cZS4VW+8Wvv7b+vcNYRtFrl5tsZ+bJgS9/nY8MchyVwgnc9SMAxfyVz/rerUxunpq2bm0
+	KeINqm/b7ZzUbmTdaZvOJFS4Q810uv492alZjTvNQiW1JT6lXtyQYLcsY8N2BfFgs6q35wTc
+	ZDMncN/se/+wZtcGidvcZo1uiqm29/f+V5d6c3mq39SqXeKtX1/ZRbmcfWd1913vt7Zttfdv
+	LfKcZfPt/lI+91vX9nEzzq250ODdrsWzOy5BKDlYcc5j7p/MNXGrrp7UWiQQEjxfiaU4I9FQ
+	i7moOBEAd9JerBAEAAA=
+X-CMS-MailID: 20240512192457eucas1p1c2e524298e130efc58f1e66cc0f38039
+X-Msg-Generator: CA
+X-RootMTR: 20240508171141eucas1p24462cdbd31dc10d74c5c62478cd6a9e0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240508171141eucas1p24462cdbd31dc10d74c5c62478cd6a9e0
+References: <20240423-sysctl-const-handler-v3-0-e0beccb836e2@weissschuh.net>
+	<20240424201234.3cc2b509@kernel.org>
+	<CGME20240508171141eucas1p24462cdbd31dc10d74c5c62478cd6a9e0@eucas1p2.samsung.com>
+	<202405080959.104A73A914@keescook>
+
+--3bxd2gyoppot6odw
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185167 [May 11 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/12 16:13:00 #25178084
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, May 08, 2024 at 10:11:35AM -0700, Kees Cook wrote:
+> On Wed, Apr 24, 2024 at 08:12:34PM -0700, Jakub Kicinski wrote:
+> > On Tue, 23 Apr 2024 09:54:35 +0200 Thomas Wei=DFschuh wrote:
+> > > The series was split from my larger series sysctl-const series [0].
+> > > It only focusses on the proc_handlers but is an important step to be
+> > > able to move all static definitions of ctl_table into .rodata.
+> >=20
+> > Split this per subsystem, please.
+>=20
+Thx for stepping in to move this forward.
 
+> I've done a few painful API transitions before, and I don't think the
+> complexity of these changes needs a per-subsystem constification pass. I
+> think this series is the right approach, but that patch 11 will need
+> coordination with Linus. We regularly do system-wide prototype changes
+> like this right at the end of the merge window before -rc1 comes out.
+This would be more for 6.11, as I expect the other subsystems to freeze
+for the merge window.
 
-On 5/8/24 20:50, Rob Herring wrote:
-> On Wed, May 08, 2024 at 05:42:58PM +0300, Jan Dakinevich wrote:
->> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 27 ++++++++++++++++++++--
->>  arch/arm64/boot/dts/amlogic/meson-g12.dtsi | 26 +++++++++++++++++++--
->>  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 +++++++++++++++++++--
->>  3 files changed, 73 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> index 6d12b760b90f..28f4ec5f39b0 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> @@ -1342,7 +1342,9 @@ clkc_audio: clock-controller@0 {
->>  					 <&clkc CLKID_HIFI_PLL>,
->>  					 <&clkc CLKID_FCLK_DIV3>,
->>  					 <&clkc CLKID_FCLK_DIV4>,
->> -					 <&clkc CLKID_GP0_PLL>;
->> +					 <&clkc CLKID_GP0_PLL>,
->> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
->> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
-> 
-> All 3 cases are just unused clocks on the end. I suppose that's not 
-> always the case. You could just set 'minItems' in the binding to 
-> avoid needing to pad the end and the dts changes.
-> 
+>=20
+> The requirements are pretty simple: it needs to be a obvious changes
+> (this certainly is) and as close to 100% mechanical as possible. I think
+> patch 11 easily qualifies. Linus should be able to run the same Coccinelle
+> script and get nearly the same results, etc. And all the other changes
+The coccinelle script is not enough. But that patch 11 should still be
+trivial enough to go in before -rc1. right?
 
-You are right. I mistakenly thought that 'minItems' can not be
-redefined. But not, it is allowed to redefine it and it works. Thus,
-this patch is not needed for this approach.
+> need to have landed. This change also has no "silent failure" conditions:
+> anything mismatched will immediately stand out.
+>=20
+> So, have patches 1-10 go via their respective subsystems, and once all
+> of those are in Linus's tree, send patch 11 as a stand-alone PR.
+Thomas: I can take the sysctl subsystem related patches ("[PATCH v3
+10/11] sysctl: constify ctl_table arguments of utility function"), while
+you push the others to their respective subsystems (If you have not
+already)
 
-Anyway, what do you think about first approach? As for me, it is more
-simple and readable.
+>=20
+> (From patch 11, it looks like the seccomp read/write function changes
+> could be split out? I'll do that now...)
+I saw that that patch has the necessary reviews. Get back to me if you
+need me to take a quick look at it.
 
-> Rob
+--=20
 
--- 
-Best regards
-Jan Dakinevich
+Joel Granados
+
+--3bxd2gyoppot6odw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmZBF4IACgkQupfNUreW
+QU9xuQv/YFyBb9/xZK9W6ra0XdeKb8z3ZWpkNSHIv3kTsWlpjHIUGjL9mIouwgtX
+ucB2RAOEbwUG/wNKHsedhqti2gFMPnF80bZWiJkwVvBZRx4cuAugLBni1rZLceMm
+OTViVchXY8AlHpbOVVvxbIZDNSK+YVZh+Z4b9dhhmHYbQl/dj9vWFPNSRSH0wQp6
+hi9DrWsZPQ1eidi2uDK7d7VhOARS7U6VB6vL5UV4tjSVLueGaz3lNucP8HMoxa7Q
+jHEXeQelWtXg3jTaoIKF3q6FjulWqte8/D9DaKmbD7WvsHtrVfLeLYITADCwCmul
+yadKXGJy6kxxaEnPBB08M8jVy/o2c+VvWBpgyZlYRwSAShf5cPQOV5uGqBU9cdPf
+sPEZKG+UfmIEAUVTZYPrtvnha1nI4Nz6Ov4OlTz7PLJWAc0aiQKxBZMsnYdz9HMH
+hMZo0JyJNZ0UY4PfA43N223QFB8CD8SeGFCXl2aKBymtgrDOL3PV4IxLh4OsowVy
+pKdwnrKn
+=zOqJ
+-----END PGP SIGNATURE-----
+
+--3bxd2gyoppot6odw--
 
