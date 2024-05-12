@@ -1,124 +1,123 @@
-Return-Path: <linux-kernel+bounces-176797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39AB8C3524
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:43:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C9CF8C3528
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 526A8281DB8
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 05:43:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE891F219EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 05:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BE6EEC5;
-	Sun, 12 May 2024 05:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAAFEEDD;
+	Sun, 12 May 2024 05:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WlQPj66X"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qb5JcA0r"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672F6DDD7
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 05:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36331848A;
+	Sun, 12 May 2024 05:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715492629; cv=none; b=D0DmTe49q+l+e0RiIDKxQKB7s7pefPUEOPKw1AdmZm8ewrVAbsApjN36eF3Z4u7PzKj6N01Wem+RQVw2/hA9acQZSSlctGeuWyh7VBG4+5BzcaNhbYrW2+YLo8hK5lg7Ma+Dbn/ke9atiYNM+oBWYHDM9AecXN6iMHD+REofVkU=
+	t=1715493035; cv=none; b=BA+HeWUytolf9pNXDe00Q2QVslNaQltCNku7emYj+3pSPpxwbbqeeX5RaGYROkMFMot91V9+UqxeILx4eLnVPUyHQ00QXyrs0BBFAAAyh6CwiIr+TdcY+JUH772rlrii3FnigVAMKafoMqT63zuNQ9H5ibkaxph85kBdHrB3Vb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715492629; c=relaxed/simple;
-	bh=E+9laLy9ncR2FoTfsHxV8k8cs1shCthevxLq04fINJs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kNuUczFWTfOZRNMQxfFbzDgpLcGWsnX74N3177e+kcjhd360oyUXCvEquoHgLIVqTbyJRV/p6d1NNg1CLYgIUXRp4JOIgADV8BfO7s4z5adNNesYiU/vfK7WnEd83RmK7Vj9qIAlmZ0vGnYJSY/p0zktuXrcsuZ0Q8bU53Ijbz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WlQPj66X; arc=none smtp.client-ip=209.85.216.52
+	s=arc-20240116; t=1715493035; c=relaxed/simple;
+	bh=czuivthniXq3sVg2Xn9Ls6Qs0i3TnTjaQST9KemSo2w=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e6TKKUUuxwoIAC3sC5djjpIG1e6D9WCq83Ab8o94J7UpwesNJwt+xe2iNmy5IUEtRVvk39JK36cahE+JzVNun/0brBKZadcvtMIqUUqEOP75WNN0XTnk2uQopXVF1JTGFeyECD6Q4WmM0w+M/jjZZuNTaSM3tpw98bVveScdpFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qb5JcA0r; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2b27eec1eb1so2649606a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 11 May 2024 22:43:48 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-34d99ec52e1so2631142f8f.3;
+        Sat, 11 May 2024 22:50:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715492627; x=1716097427; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7W5FzDsqNNuPa7W+dhU1RB6HY7xI6xf4dtlomIXXh8=;
-        b=WlQPj66XY6JMKgqDjDUXMFaIHor3PJolS30mPsD9Ac/jqwi1VWQJa/Ov8hbrd2FM15
-         4g/18riXOHTuLyGo3iH8Qy7+MRD4xyxSI+3FlH3FyQqCfKejmbUvf6aqI0QaR4SYakEG
-         4WfXnw+4vYDgK0q4Di7UCUydvMKVKL9D8LQuFVkc4GQFDoAwFXOMmiDhkkiD2pQy4mc2
-         sGC6AUPVZ7d/kMXSrMpNRCfBGjDuQMmWCKg+9dgffbQij0UvHdO6Mw7mJiUbVhYKb3i8
-         qN8lQFKqx6MXvMTwoOQRcZFwwzV/WeXi/awHttSx8UJcjZBCEd1zOQL5OqDFae/rNaBb
-         wTig==
+        d=gmail.com; s=20230601; t=1715493032; x=1716097832; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gohhoHpvy9QQHX1FItVd+i6i5nE/fS3cmezBpj5puFQ=;
+        b=Qb5JcA0rGTb6IqBsoE5usG0dleElTXSgMbF5oJXIl5Evp2X1iztBp01bfEOkiihdm3
+         OJR9lWVNw4llcZN8BZ9jU1+WSiFQSfCqJ25NUUTs+1wgO6kNk3596OZ9cT/I7kPTQN+3
+         CP6CKZzx0hmZVZTycBh7ai9iEz1dax6FaSn3vkH/NmwGpOd0zr2di7nWDKl8MOzV7M0w
+         xmTxNdXcH37h2xiBGvXEkizlIahfXiRljSH2xJLDFwXYiGb8bG0tlrm3JQXBC/tLYtK5
+         C6Un57e4iTF8FQHs0Mot78FcsY2W3e5msLYUhXOYGfDi8PWsdOOLPjMz+ADijvUPtxlw
+         IC5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715492627; x=1716097427;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715493032; x=1716097832;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=C7W5FzDsqNNuPa7W+dhU1RB6HY7xI6xf4dtlomIXXh8=;
-        b=kYPn7WGazpOY4Oh0pvU5kINGjW8LMKMAy3IEVPRlDNFmBvtOy5OjDS5DOX2553P2Mh
-         VEeSi6UmSsAo1r0LZ/hwfx1GFKKPvwCxZIWWpGLh+PaWggLl9ychvJMYyyaBfEapswKr
-         fy0UUB2E0XWYr3oUKoJxlDZcl/16qGcYe5RC0APEjBTmQ62Khq2ycjEM4IC18L8m+Nq4
-         Y1zoii3qK6PzJprlx8OEtHf+4z02JfXIY0iBLa8voXyIxjtmPvZTicju+6LYhx4ucwl2
-         /ufUg+NUO6YqZSw0gcksbE1uROasovWo7ROqe6ATvuy79sxlFgxgs4MH0Piw736WUxXm
-         qKiw==
-X-Gm-Message-State: AOJu0YyaayF0JIHGoX4/8ZAGtTQSLody5JO7DW1qRNm2Fq4jWNY2G54j
-	A+cE+S1mpRUoeuJ+DTLipXDJgkinR4iVUAVQf9Z1Eba3qtMS3KeH3nRo2Q==
-X-Google-Smtp-Source: AGHT+IE4c4X4Tp3180BBWcRr4+bFDZSrBVDW3NE3Vqd6h+4iJF90D1DMg/v9m3mFGilbn3Ny6manjA==
-X-Received: by 2002:a17:902:e546:b0:1e2:6d57:c1bb with SMTP id d9443c01a7336-1ef43d1864dmr97866935ad.21.1715492627483;
-        Sat, 11 May 2024 22:43:47 -0700 (PDT)
-Received: from localhost.localdomain (111-254-41-215.dynamic-ip.hinet.net. [111.254.41.215])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad634asm57203135ad.87.2024.05.11.22.43.46
+        bh=gohhoHpvy9QQHX1FItVd+i6i5nE/fS3cmezBpj5puFQ=;
+        b=SSsRM3q2gSfel7ezbuYwVf+jqxeFUuH3Ud6CrDfRcslu+xyr8OZzp+6HVWeIMgkHdH
+         68IUMR860vGX97i2lW+W/M7M2xgRPfpJeEaI2MIuknRENnp3JRsoQkXH5qUOlTFJ/qVB
+         NUrcdE6r0Kl7OBsNBZW/NHOYGRJiytMVcJA5Cu+o73ui7CGa7Y7ASDn0hKKQQFBMSwSK
+         q9atjhi/br2QNWiQwTidMHcQkuCVglOTZ+09msg7iDMThJAFtj/19l/NpPSSOqm70F5k
+         TYHKtTeW8hFPdHtU9THVySbGISMZ+wdfWIGNluW548PDqjef23pnr57cZrKtr/ehUFr/
+         Ud4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWaBpha3Ae0fZ+NKfgDRMYdMzY6450SsawU/XFlwwzFuwUxDNxPZGkZFyRbZOyzCthOLHSa1dITbNp4pvXAI3dJjTienpwzGvFdE7IM
+X-Gm-Message-State: AOJu0YzyZ4k+npbK83cAihLGW7dfBbzLJCQhdm97oceI26YQthhPswNn
+	P+TpM5EQhNqJAwfWLt0UabphBZ40LBfsGuXNsnEorH2MFttZ/Nca
+X-Google-Smtp-Source: AGHT+IGS7lY3xkP1YgSRUKU3N4sAoFEL/X/Mdy0wQoiOJGzB0jybLGnY/4sYF/u9S4jmIeU0CWvUrw==
+X-Received: by 2002:a5d:6209:0:b0:34d:b75c:c7ec with SMTP id ffacd0b85a97d-3504a62ff0cmr4368127f8f.8.1715493032262;
+        Sat, 11 May 2024 22:50:32 -0700 (PDT)
+Received: from kali.localhost ([5.208.126.127])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbde1sm8233658f8f.97.2024.05.11.22.50.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 11 May 2024 22:43:47 -0700 (PDT)
-From: Wei-Hsin Yeh <weihsinyeh168@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Wei-Hsin Yeh <weihsinyeh168@gmail.com>
-Subject: [PATCH] tools: Fix typo
-Date: Sun, 12 May 2024 13:42:11 +0800
-Message-Id: <20240512054211.24726-1-weihsinyeh168@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Sat, 11 May 2024 22:50:31 -0700 (PDT)
+From: Kiarash Hajian <kiarash8112hajian@gmail.com>
+Subject: [PATCH v3 0/2] drm/msm/a6xx: request memory region
+Date: Sun, 12 May 2024 01:49:37 -0400
+Message-Id: <20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHFYQGYC/43NQQ6CMBAF0KuYrh3DTMFaV97DuIB2gCaWmtY0G
+ sLdLaxcsvw/89/MInF0nMT1MIvI2SUXphLk8SDM2E4Dg7MlC6qorhpE8MlDayNPATz7EL8QeSg
+ joM50aHRzOROKMn9F7t1no++PkkeX3uV8+5RxbXegGQHBKqlVpVDZmm6Db93zZIIXK5ppL0QF0
+ r2UfU2sOq3/oWVZfiPwC18JAQAA
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Kiarash Hajian <kiarash8112hajian@gmail.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715493029; l=711;
+ i=kiarash8112hajian@gmail.com; s=20240409; h=from:subject:message-id;
+ bh=czuivthniXq3sVg2Xn9Ls6Qs0i3TnTjaQST9KemSo2w=;
+ b=aaNsjtDTHT8Nd63JP7lgZQyW4HKsHKWJlmg6rj1ZQDn9uFrhxilviioxVtT0GWdqaC/76L+dG
+ CRBhah5VAGFD0cMkeAZ4IEyeDGAqAaBoUdDYO+O2ZiuKe0Na+70CmW+
+X-Developer-Key: i=kiarash8112hajian@gmail.com; a=ed25519;
+ pk=ehVBr28gPcA8cMB/wneVh0Mj6WGkqZoyYRdRNi5+aI0=
 
-Drop one '-' to adhere to coding style.
-Replace 'arbitray' with 'arbitrary'.
-
-Signed-off-by: Wei-Hsin Yeh <weihsinyeh168@gmail.com>
+Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
 ---
- include/linux/jhash.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Changes in v3:
+- Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
 
-diff --git a/include/linux/jhash.h b/include/linux/jhash.h
-index ab7f8c152..fa26a2dd3 100644
---- a/include/linux/jhash.h
-+++ b/include/linux/jhash.h
-@@ -31,7 +31,7 @@
- /* Mask the hash value, i.e (value & jhash_mask(n)) instead of (value % n) */
- #define jhash_mask(n)   (jhash_size(n)-1)
- 
--/* __jhash_mix -- mix 3 32-bit values reversibly. */
-+/* __jhash_mix - mix 3 32-bit values reversibly. */
- #define __jhash_mix(a, b, c)			\
- {						\
- 	a -= c;  a ^= rol32(c, 4);  c += b;	\
-@@ -60,7 +60,7 @@
- /* jhash - hash an arbitrary key
-  * @k: sequence of bytes as key
-  * @length: the length of the key
-- * @initval: the previous hash, or an arbitray value
-+ * @initval: the previous hash, or an arbitrary value
-  *
-  * The generic version, hashes an arbitrary sequence of bytes.
-  * No alignment or length assumptions are made about the input key.
-@@ -110,7 +110,7 @@ static inline u32 jhash(const void *key, u32 length, u32 initval)
- /* jhash2 - hash an array of u32's
-  * @k: the key which must be an array of u32's
-  * @length: the number of u32's in the key
-- * @initval: the previous hash, or an arbitray value
-+ * @initval: the previous hash, or an arbitrary value
-  *
-  * Returns the hash value of the key.
-  */
+Changes in v2:
+- update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
+
+---
+Kiarash Hajian (2):
+      drm/msm/a6xx: request memory region
+      drm/msm/a6xx: request memory region
+
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 20 +-------------------
+ 1 file changed, 1 insertion(+), 19 deletions(-)
+---
+base-commit: cf87f46fd34d6c19283d9625a7822f20d90b64a4
+change-id: 20240511-msm-adreno-memory-region-2bcb1c958621
+
+Best regards,
 -- 
-2.25.1
+Kiarash Hajian <kiarash8112hajian@gmail.com>
 
 
