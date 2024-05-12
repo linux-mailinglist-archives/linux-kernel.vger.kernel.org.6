@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-177014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3DC58C387B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628538C387D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB36281CFF
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:06:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73AC81C20C5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E11959173;
-	Sun, 12 May 2024 21:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C713C53E22;
+	Sun, 12 May 2024 21:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIe+0v7Z"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TRAw1oL2"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1096558AC1;
-	Sun, 12 May 2024 21:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9484E381DA
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 21:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715547922; cv=none; b=k1s9g+7/H2Vv6ZmSEy/Pr8ZxwfGLUuG1xPsRZKb8ihe6TEkX7SEtENlmJ5wtouydOG/Ne5KeA2cmNhid6FP3vJazBgMplni2mpBQKaLmny01+ZNy2gx2m3LCr1znJ/yRStIBr2JnXWotOQyxAnujbD2n+fIF8lcOX+9yE1zeBto=
+	t=1715548160; cv=none; b=W7JU9pr/nHBxtyPH9YVyMtfpKaPiZo9oiyJ0dBwGYzpklAzDGOIRIxWXA9Y38R1lAA6KFMNm8O6ffZXYqgcvjvyTBPx04J4H4d/cZp5dEBOA4r7y8bqKmnIuWSFBhoOkTV2IhtLZ879mGrzfmJ12+wjtROYxyEPujG3SqmWZFKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715547922; c=relaxed/simple;
-	bh=SH9oRQMjdWisKJzgNmlM9HRFY+ONAsdZowm1gdmvCvM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K9CuiHb0kkcqKPxCMrfyYllp9h2e7adPlwtaJBoJxJfgcwKBgv18mtVLG+1WsB4oH+PB04tO9LVEHDzpJw4nrJHsIfCjDpsOJl8kqU8KIsc+9BH8vkgdBSDJkyGe6r8x0s46fkpTGZZjVYd8RWcTnDsEFdVAKrgudpGjc61PqBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIe+0v7Z; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f472d550cbso2994943b3a.1;
-        Sun, 12 May 2024 14:05:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715547920; x=1716152720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MZxVl6V73Zt3zGRSEIH0bHVxMtSUe0uIzUK9Y3RzWb8=;
-        b=RIe+0v7Z/MH9HFxrLmXZGIbWF9MEqJ7j491itqXjtcv+zXYzTd+7AFrJw/+S8mbSD3
-         qqgIXcVjwI/SqDDQ4RBH6XaTfstfabS1rbEVc8rBHjKctIMiTMqC6HxAfVWgzxDK2DpA
-         a+1x7HDqqZ0SKO9YAw4kueonwKORvdxusbVcn/FjtSZR/6ZLdmXMOwgqjG9Tpj3eqDzj
-         7sZ3BclovB9DDHmcfN+VcZ4az3/MmXpTP1/X2YlvJxUX4R4/VspOV1A2Br5CPFZwhMms
-         oKbbWCAaFcJe6/YHdgzhb6QM8DefrfEUQs+ZxeZwFytvByP8p7zo3pHpD4FKlizZ0xaS
-         4tEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715547920; x=1716152720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MZxVl6V73Zt3zGRSEIH0bHVxMtSUe0uIzUK9Y3RzWb8=;
-        b=BS6f7MEEL4cy9pbjmraMXcqNXdXj3Pn/WWPfs7h5HucYyvzmkKGGb5oH2Oi2kEIRVr
-         DGaiHoorBEjC6I/Yep74Uqcc+4yIU8VNcW9Y26wC/UsOrXeLephFTvggs/DuVy/662gb
-         /UZT7cit1PjGrAg9i7JwpkAuQ0YJXAVpaQt6moegHyZBxBX/G5IHoHnT5M+W96UN+T7w
-         9iLxiWbxDbAR3f9ejpel5Uv2w9AL4yTjju+58rWj8QqN6g1ffWyODAYiTkyMWLONtcy7
-         woEWJQjf85j0AY9nWloFyB55IK0d5wjbijj5BvxUxmv65dubWobeuprIMLVy6tRKgyrZ
-         zfFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsDxPpopYqADzTFwezkEtlgAfRsotQcsAIJF4ko27Ir9JGDizlDrutyeyrzmzyt8JmYI6EglnGAsaZavReKJmsjNJ6uK+pAQQBM+npaYMYqlLwYsQ7ecWBw0LZeA/mngrHGguxQ0G575UrN9ohpqaWyT5vteae2Xhzf4/Ju4lwKRxkHA==
-X-Gm-Message-State: AOJu0Yyq+w8YO63W3R49JPgoKCvGO7EqMF3wzxcHcYBTzy9TyuZPH7kQ
-	3PGn3q3k6efingtnSbgHZv1zxhakZOFrfkB2+VNKrDj2cJdl0qfk
-X-Google-Smtp-Source: AGHT+IG5MvnYwIO6+AJazfOTBsF6M/uKIYOGmvv6fP7kAHEoITheedJ4UpwH2DZJX0Ai4cfEmr5S6Q==
-X-Received: by 2002:a05:6300:8085:b0:1af:cfe9:9221 with SMTP id adf61e73a8af0-1afde1c580fmr10890522637.54.1715547920408;
-        Sun, 12 May 2024 14:05:20 -0700 (PDT)
-Received: from localhost.localdomain ([189.101.162.253])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a447391sm6534865a12.3.2024.05.12.14.05.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 14:05:20 -0700 (PDT)
-From: Gustavo Silva <gustavograzs@gmail.com>
-To: jic23@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	lars@metafoo.de,
-	christophe.jaillet@wanadoo.fr,
-	gerald.loacker@wolfvision.net,
-	devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] MAINTAINERS: Add ScioSense ENS160
-Date: Sun, 12 May 2024 18:04:42 -0300
-Message-ID: <20240512210444.30824-7-gustavograzs@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240512210444.30824-1-gustavograzs@gmail.com>
-References: <20240512210444.30824-1-gustavograzs@gmail.com>
+	s=arc-20240116; t=1715548160; c=relaxed/simple;
+	bh=fCWAahIT/hAJe3k/y0iiyAVf9CH7viLpCUTVy233AxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAA5M27fzAwtoHE4qszDUoY/WG694ffpctX1fQp7TxUgVZ0T5IPNChaoml3pmALx5x/kg0tVrdzqnwMDTyF5dosXsNic2qHiBrPsKy2IuDvPOu0Fz98OL+dl5hLwdLW2PA4q5wKWvUFtr/wzpn4jOA9J/W7BLF2owx8InckYBEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=TRAw1oL2; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 58CE38BE;
+	Sun, 12 May 2024 23:09:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1715548150;
+	bh=fCWAahIT/hAJe3k/y0iiyAVf9CH7viLpCUTVy233AxU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TRAw1oL2FDVmkRCJkBG0UC1UZ0E7Ofluwevib+Yj9OVIqA8WrBz6hXvauu8LJMfhd
+	 5nQ3hZGgq+/hBLIBJ278QThc1H+LYWnJcBs9ALdcDM5MemCAb9wei1mM2Z8TigIatO
+	 lpT1WBSToTWeCc4nXJvbZeuhkmKG1K3ocNakGYk0=
+Date: Mon, 13 May 2024 00:09:07 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Maxime Ripard <mripard@kernel.org>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: Remove a small useless code snippet
+Message-ID: <20240512210907.GI17158@pendragon.ideasonboard.com>
+References: <20240511124238.297192-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240511124238.297192-1-sui.jingfeng@linux.dev>
 
-Add myself as maintainer for ScioSense ENS160 multi-gas sensor driver.
+Hi Sui,
 
-Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Thank you for the patch.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 304429f9b..92a130c8c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19660,6 +19660,14 @@ F:	include/linux/wait.h
- F:	include/uapi/linux/sched.h
- F:	kernel/sched/
- 
-+SCIOSENSE ENS160 MULTI-GAS SENSOR DRIVER
-+M:	Gustavo Silva <gustavograzs@gmail.com>
-+S:	Maintained
-+F:	drivers/iio/chemical/ens160_core.c
-+F:	drivers/iio/chemical/ens160_i2c.c
-+F:	drivers/iio/chemical/ens160_spi.c
-+F:	drivers/iio/chemical/ens160.h
-+
- SCSI LIBSAS SUBSYSTEM
- R:	John Garry <john.g.garry@oracle.com>
- R:	Jason Yan <yanaijie@huawei.com>
+On Sat, May 11, 2024 at 08:42:38PM +0800, Sui Jingfeng wrote:
+> Because the check on the non-existence (encoder == NULL) has already been
+> done in the implementation of drm_bridge_attach() function, and
+> drm_bridge_attach() is called earlier. The driver won't get to check point
+> even if drm_bridge_attach() fails for some reasons, as it will clear the
+> bridge->encoder to NULL and return a negective error code.
+
+s/negective/negative/
+
+> 
+> Therefore, there is no need to check another again. Remove the redundant
+> codes at the later.
+> 
+> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+If you end up sending a second version of this patch, please include all
+similar patches you have sent at the same time in a patch series,
+instead of sending them separately.
+
+> ---
+>  drivers/gpu/drm/bridge/simple-bridge.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
+> index 28376d0ecd09..3caa918ac2e0 100644
+> --- a/drivers/gpu/drm/bridge/simple-bridge.c
+> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
+> @@ -116,11 +116,6 @@ static int simple_bridge_attach(struct drm_bridge *bridge,
+>  	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
+>  		return 0;
+>  
+> -	if (!bridge->encoder) {
+> -		DRM_ERROR("Missing encoder\n");
+> -		return -ENODEV;
+> -	}
+> -
+>  	drm_connector_helper_add(&sbridge->connector,
+>  				 &simple_bridge_con_helper_funcs);
+>  	ret = drm_connector_init_with_ddc(bridge->dev, &sbridge->connector,
+
 -- 
-2.45.0
+Regards,
 
+Laurent Pinchart
 
