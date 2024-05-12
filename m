@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-176845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DED88C35DE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:36:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E4D8C35E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0141C2092A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:36:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62FF31C20442
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149751C6A7;
-	Sun, 12 May 2024 09:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA7B1C6A7;
+	Sun, 12 May 2024 09:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cW7ttcwT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XyB9mA2G"
+Received: from out203-205-221-210.mail.qq.com (out203-205-221-210.mail.qq.com [203.205.221.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A79E1865C;
-	Sun, 12 May 2024 09:35:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8946011CA9
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 09:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715506558; cv=none; b=P26ymH7sMXpLeV8xbgww59cD1f2Q9j6AsqenMLy/31iMRRzQroWdakiEMZwA42qwt7IZOGKrSSN9hnVmV4+si+sHSEH3Eqm4f4jX78oqNKANYqeu3gV8FMDpc/Hdu+TUyA8tBn+mK1Oy8uDEJvZpxHI1kTHn5SE5fsGPCP1jevY=
+	t=1715507252; cv=none; b=tub6XjpFbj6580JIGJ0XyOiWsSJS+8JUkxtYi5K6aPdsNxfLEOgIJSwInhsp7xU9I0036apy2j8DLOoyQZ/JtabK4Dn/VBjtS+mp0xRcuxISk0Lw/v3leJ78N/lSc3CUSaSfsPx5E5SfIlU2l8NcKQw39amiititTZmDJAqndQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715506558; c=relaxed/simple;
-	bh=PCHTMZ+fjytB5RLa9+V6lhUcpWrdVwb/2cnmNsA6uZM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QmP9kQDVNU3p5A/jGuR7fLYwmWGdvn+kTgqBfMXkJq5gfYoneybX0oMuXHX6nZAd7VAqblyfRXYBJRTGhijADNVi7snURGVeBj/k181Mu9I0oTfnAEMJavUZ/ddB7k8V/hwgPavNETaVpe0Uw1adDoK2RCDgEP3BRqSINjsxdc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cW7ttcwT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59AD6C116B1;
-	Sun, 12 May 2024 09:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715506557;
-	bh=PCHTMZ+fjytB5RLa9+V6lhUcpWrdVwb/2cnmNsA6uZM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cW7ttcwTY9xRSdzpXIxs2O4YBl5l2GAIBvvglHxMY7rLmM9ghHFqE6tbGUhFqDwJX
-	 2a2N9cUVoxrsaojqb2c5xYD5ZxoPusBURe1zITHJ39b1mZyG8Fhy0ZRb/rL2d+5eNm
-	 8h8PFyjifNczAc3j9nosoF1qVSHXgK4v1RzCcdfNFGDXHi49PLAF6ixvlRID9QPTtn
-	 8RCywZ0qojSitm/M4IO7mouYBVTkNCmpr1K6eAsRn75g6dR4bC2fO0IABVHkwCXiXk
-	 N58DI53GOzBwnxxqYecIVmzhv1QJqVAu6XmN3ESVFlrzwMADYrOL5cXos9u+7m+jmg
-	 uk9QHUq5gW8RQ==
-Date: Sun, 12 May 2024 12:35:53 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Konstantin Taranov <kotaranov@linux.microsoft.com>
-Cc: kotaranov@microsoft.com, sharmaajay@microsoft.com, longli@microsoft.com,
-	jgg@ziepe.ca, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH rdma-next 0/3] RDMA/mana_ib: Add support of RC QPs
-Message-ID: <20240512093553.GA11697@unreal>
-References: <1715075595-24470-1-git-send-email-kotaranov@linux.microsoft.com>
+	s=arc-20240116; t=1715507252; c=relaxed/simple;
+	bh=BtIoKk7QctKJrucwbHg1ijp0/3Ix36bC0jkLmCetR7Y=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=YqmnH2Gbk/6Xm+dTGHYOFfOsGxCQxKlfGx18xY05r3xjnwntEbTQRKk2/q3AU254BUn3DIc5mLSiRuDZDJqJ/f82KxMm9zobra5Fma1J5mIMd0sP++UPUGw1I615nf+B5M+E8iV9A7cqGGg2Ey2uqxirlM9UEHp3dGq80wit9SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XyB9mA2G; arc=none smtp.client-ip=203.205.221.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1715507241; bh=3DHUF7ltkFRCMBMMnA7sk08Cz4qv4ZUCjegKStZ5Jww=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=XyB9mA2GbprckxdRnuWQa22yX5xf4kiCuw/Zl7hq3iUF8c85J86Oh8Sx9OeYuaQcI
+	 QFbLl8HscFDTH9/9qTwc0hbiNiKO38ua632AZkZEJCyiBtPBQM5gX+YVEhGPLJH28Z
+	 OVEZULHGCNYwoR2hrmZnN8po+Wz96LK61uAs3Zww=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id 9B6084C9; Sun, 12 May 2024 17:38:54 +0800
+X-QQ-mid: xmsmtpt1715506734txco6kadc
+Message-ID: <tencent_6BDDD81904CFB50DA5A5BD0D9612535DE607@qq.com>
+X-QQ-XMAILINFO: MBjwNRQMz5zU6FmzQCNFwtIE/I12sqmXqAjPBUc2D4NuKPusnAFRjlPZMdHlss
+	 iH25s+Ul6gDqy4JqLlQYKnl05+/C6oyr10OnGFEjvBDO1Bq3WrLg04hm9jk31vUz/gyV88k79vLv
+	 hACPFLO0jo4SAdztn33VxOrQZauBKOg+Wu1PPSQxVyEsIiNWr3qsRSbmWAdTwa5s8fhCxjc47QjB
+	 h9aW1sPfEped1b+FU/MeLL3XcWrMd0h6AMJxJQZNI+xa28krvWKwUTbuwrEIBi9G9SwEP1+pRlh1
+	 y7pOgAqnusQ6MI3Elau596vMK6tCC62eR1MklqEZ4PUZJTTfQoPDiIBJYqRUHzB+BX31HMG4pDds
+	 YO1PfY7SvuDnqpNpaNpAUUagxfq2KN4/JbLXoLu2Hov5ooBltulgrROm42APRiTk5zBRUDrJWTj9
+	 X0dwV0fpslEqQ/bxMdHGJBzIdM8LuD6M6E5aSo7mqk20BcDKYWhT7eNYEzhKguw34ultQqbfI8ip
+	 +Obj4qJ8y1y+Hiw2V9ZJGP19Dy21E44+KSYka2q9L87nTQFGZsht5LV/7ytaJeLQjWx86JW9JyVe
+	 jCuxXOpUGTX43KQBjzata1BZo8DWF7SQWJG0U7MBkiPg7Wz0Qq2NIYQrp1t2ztH1TaRBBNDuObwd
+	 IQy1CfA5xlreR9M9CPPe8Eg5wv5O6iP2nhSzyGFOuP0kFlhwjdoiWoENlmL+8cuBZYboTLt+bIYF
+	 Y/tiVEldd4lz25Zxsb2nMJJX6tXpdfWi4cUjflL3yaJx3mMkZqE8kAO0mQ9S5iseJkCrivJzHszM
+	 r0EPcUSXQDsD/n/L3AJhTpSEaixXb3PeC7oqKFGe26dGRQRp7bcKXz/MJ2VHJYgISKndq69g+OF3
+	 VxGpHk8PsHNvgb3L6fjWe1poYp2qBF27lkOEj8FAldXCQI+Ye0CgDnXnUDk6K6gGedQJpHriWa
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+a63a1f6a062033cf0f40@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bridge?] KMSAN: uninit-value in br_dev_xmit (2)
+Date: Sun, 12 May 2024 17:38:54 +0800
+X-OQ-MSGID: <20240512093854.3012612-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000d4e70506183d374d@google.com>
+References: <000000000000d4e70506183d374d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1715075595-24470-1-git-send-email-kotaranov@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 07, 2024 at 02:53:12AM -0700, Konstantin Taranov wrote:
-> From: Konstantin Taranov <kotaranov@microsoft.com>
-> 
-> This patch series enables creation and destruction of RC QPs.
-> The RC QP can be transitioned to RTS and be used by rdma-core.
-> 
-> Later I will submit rdma-core patches with fully working RC QPs.
+please test uiv in br_dev_xmit
 
-Did it happen?
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git dccb07f2914c
 
-I want to remind that we are not merging UAPI changes without relevant
-userspace part.
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index b99127712e67..578590c83580 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -2247,6 +2247,7 @@ int pskb_expand_head(struct sk_buff *skb, int nhead, int ntail,
+ 		goto nodata;
+ 	size = SKB_WITH_OVERHEAD(size);
+ 
++	memset(data, 0, size);
+ 	/* Copy only real data... and, alas, header. This should be
+ 	 * optimized for the cases when header is void.
+ 	 */
 
-Thanks
-
-> 
-> Konstantin Taranov (3):
->   RDMA/mana_ib: Create and destroy RC QP
->   RDMA/mana_ib: Implement uapi to create and destroy RC QP
->   RDMA/mana_ib: Modify QP state
-> 
->  drivers/infiniband/hw/mana/main.c    |  59 ++++++++++
->  drivers/infiniband/hw/mana/mana_ib.h |  99 +++++++++++++++-
->  drivers/infiniband/hw/mana/qp.c      | 165 ++++++++++++++++++++++++++-
->  include/uapi/rdma/mana-abi.h         |   9 ++
->  4 files changed, 328 insertions(+), 4 deletions(-)
-> 
-> -- 
-> 2.43.0
-> 
 
