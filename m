@@ -1,148 +1,277 @@
-Return-Path: <linux-kernel+bounces-176860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658EB8C363D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:43:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDDE8C3640
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F79D28163E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:43:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84F13B20E6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D91D208D4;
-	Sun, 12 May 2024 11:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1427208CB;
+	Sun, 12 May 2024 11:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jNnTAm1p"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="0kmb2Owc"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85C51B299;
-	Sun, 12 May 2024 11:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D99E1C2AD;
+	Sun, 12 May 2024 11:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715514204; cv=none; b=BA27kReBWmNEOlUbCRZ+L+YM8nHIE7+08QuE49GnB46FyvkyeEH7D7qZKkfkwR8Ob/Cxq2q0+FfMn7su2sJTM92sLBqLJQYy/3z2YZWsBzHUDs4e5pUpzaf9zsEgT2dBkkkKOZjKPHTDuH1qWBqu3Tkf3do1PcMwePEd4xaBqB8=
+	t=1715514506; cv=none; b=K3FEtln6mvwrem7q/L/lFetuwEjp+FOSj6MRAJO+vaj3XVI1JuYYUqfu7D/+Zes8xYUrMYIjUZeKcenvC1kTXWiCm1spvred+eCr95NOGn5mOi6anfEOO9ieXK1/vptkRkhrD5ICjGNY1Se4FVj8yKW2eSAud1fxcJsy9xhGUEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715514204; c=relaxed/simple;
-	bh=qLj4gJFZ/7RuARyGAnZp84xT1mPl/8zeXxVZwa+jfd0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RJ1S9suzAPUGC7roTaw8uDiWx48FMsCaafrGK65LlGMzaezagZ2lv9lpKA7Wm9mK5ef27/4XjWLMb4Yr26nEHloVdI1ZWIIzLH/4jrldmEhO+J+KmRZd0P8fue9YspR0YWNxH4XUIMbcGJKppesa2JFLmGEGhfYlse7lRmSh9bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jNnTAm1p; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715514191; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zP98sGRL72gU8rZzmqd2nC7wYAJhh+7edu3Bc8oq2fM=;
-	b=jNnTAm1psYsmKrvWnYgLkmyZHjZ9i3MAlqgxmqFejqnz5lrEPhX8y1KTD1ZBY8OxEOTX0hXiXFFvZ40zE7eKEUdU4/aZZEh65aJpUFND/Yq/frz813xx1PB2/G5VQlKFuBPuljjrv59PHdpYoOanMPnJOhBMKBfFRe2DLFahokI=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W6FbEpK_1715514189;
-Received: from 30.236.12.8(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0W6FbEpK_1715514189)
-          by smtp.aliyun-inc.com;
-          Sun, 12 May 2024 19:43:10 +0800
-Message-ID: <8ba154e0-30cb-4bc4-9aa2-d4a02cb27545@linux.alibaba.com>
-Date: Sun, 12 May 2024 19:43:09 +0800
+	s=arc-20240116; t=1715514506; c=relaxed/simple;
+	bh=a5sdWUu/SAnXiIE5VHIWRL/RhaEuPx+jDaNkfSPfeoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctrEt3l1e2cxH619YDOrUZmDtxeeltkcO/u1WluuyYL2Bhc9shxoFCEhKjrk8HTftz1y4T17+gxkiVC4Oi+itMeBp+078N5eUjmedn5vhCWWir03KXKQyYANO9mt3L4QkwfpA+oGPgdsijiumlqaZksU8FZIBQXW+9cIx46gYeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=0kmb2Owc; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 7E6081FA0A;
+	Sun, 12 May 2024 13:48:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1715514493;
+	bh=h0z00hFgh4UUjW8xjsLXv7Y36CFzGdOnXABZK2z+T8E=;
+	h=Received:From:To:Subject;
+	b=0kmb2Owch7ccpjr4CzvDlwCyQcDbQL/navgz7mJJnrdKG6zWp+U2OcHP8I9gYZiYy
+	 /q2yQCEnsgM/wtoxjQTiK360leWExG3pE0/yLGsAv1VpkR/dVzOe1VC2ZGIjK32m11
+	 JBPuTgB+0/yKwNdozsIkoBOLM05koOpaPulZI0iADs5wUc3audNKGVhjiBZLuAhZQR
+	 EpMeqq1VlgthSjVSKusPRbgFemA4Li6y1ZSRAXL5J3g7VuR4LfP53suGUkUZ/D9eVu
+	 zxqwwsbvrU7fQLX0mFxmeR7yXYx4Gndej8IexOKFtIUC4Cb4WHYAETvp6m3btAKCv8
+	 XFbV5taFPx/CQ==
+Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
+	id 117787F95F; Sun, 12 May 2024 13:48:13 +0200 (CEST)
+Date: Sun, 12 May 2024 13:48:12 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Aradhya Bhatia <a-bhatia1@ti.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+Subject: Re: [PATCH 4/4] drm/tidss: Add OLDI bridge support
+Message-ID: <ZkCsfH1qeSsXyQz4@gaggiata.pivistrello.it>
+References: <20240511193055.1686149-1-a-bhatia1@ti.com>
+ <20240511193055.1686149-5-a-bhatia1@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: some questions about restrictions in SMC-R v2's implementation
-To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
- kgraul@linux.ibm.com
-Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
- <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
-Content-Language: en-US
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240511193055.1686149-5-a-bhatia1@ti.com>
 
+Hello Aradhya, thanks for you patch, I should be able to test your patch on my
+hardware in the coming days.
 
-
-On 2024/5/10 17:40, Wenjia Zhang wrote:
+On Sun, May 12, 2024 at 01:00:55AM +0530, Aradhya Bhatia wrote:
+> Up till now, the OLDI support in tidss was integrated within the tidss dispc.
+> This was fine till the OLDI was one-to-mapped with the DSS video-port (VP).
+> The AM62 and AM62P SoCs have 2 OLDI TXes that can support dual-lvds / lvds-clone
+> modes.
 > 
+> Add OLDI TXes as separate DRM bridge entities to better support the new LVDS
+> configurations.
 > 
-> On 07.05.24 07:54, Guangguan Wang wrote:
->> Hi, Wenjia and Jan,
->>
->> When testing SMC-R v2, I found some scenarios where SMC-R v2 should be worked, but due to some restrictions in SMC-R v2's implementation,
->> fallback happened. I want to know why these restrictions exist and what would happen if these restrictions were removed.
->>
->> The first is in the function smc_ib_determine_gid_rcu, where restricts the subnet matching between smcrv2->saddr and the RDMA related netdev.
->> codes here:
->> static int smc_ib_determine_gid_rcu(...)
->> {
->>      ...
->>          in_dev_for_each_ifa_rcu(ifa, in_dev) {
->>              if (!inet_ifa_match(smcrv2->saddr, ifa))
->>                  continue;
->>              subnet_match = true;
->>              break;
->>          }
->>          if (!subnet_match)
->>              goto out;
->>      ...
->> out:
->>      return -ENODEV;
->> }
->> In my testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth0 in netnamespace2. For the sake of clarity
->> in the following text, we will refer to eth0 in netnamespace1 as eth1, and eth0 in netnamespace2 as eth2. The eth1's ip is 192.168.0.3/32 and the
->> eth2's ip is 192.168.0.4/24. The netmask of eth1 must be 32 due to some reasons. The eth1 is a RDMA related netdev, which means the adaptor of eth1
->> has RDMA function. The eth2 has been associated to the eth1's RDMA device using smc_pnet. When testing connection in netnamespace2(using eth2 for
->> SMC-R connection), we got fallback connection, rsn is 0x03010000, due to the above subnet matching restriction. But in this scenario, I think
->> SMC-R should work.
->> In my another testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth1 in netnamespace1. The eth0's ip is
->> 192.168.0.3/24 and the eth1's ip is 192.168.1.4/24. The eth0 is a RDMA related netdev, which means the adaptor of eth0 has RDMA function. The eth1 has
->> been associated to the eth0's RDMA device using smc_pnet. When testing SMC-R connection through eth1, we got fallback connection, rsn is 0x03010000,
->> due to the above subnet matching restriction. In my environment, eth0 and eth1 have the same network connectivity even though they have different
->> subnet. I think SMC-R should work in this scenario.
->>
->> The other is in the function smc_connect_rdma_v2_prepare, where restricts the symmetric configuration of routing between client and server. codes here:
->> static int smc_connect_rdma_v2_prepare(...)
->> {
->>      ...
->>      if (fce->v2_direct) {
->>          memcpy(ini->smcrv2.nexthop_mac, &aclc->r0.lcl.mac, ETH_ALEN);
->>          ini->smcrv2.uses_gateway = false;
->>      } else {
->>          if (smc_ib_find_route(net, smc->clcsock->sk->sk_rcv_saddr,
->>                smc_ib_gid_to_ipv4(aclc->r0.lcl.gid),
->>                ini->smcrv2.nexthop_mac,
->>                &ini->smcrv2.uses_gateway))
->>              return SMC_CLC_DECL_NOROUTE;
->>          if (!ini->smcrv2.uses_gateway) {
->>              /* mismatch: peer claims indirect, but its direct */
->>              return SMC_CLC_DECL_NOINDIRECT;
->>          }
->>      }
->>      ...
->> }
->> In my testing environment, server's ip is 192.168.0.3/24, client's ip 192.168.0.4/24, regarding how many netdev in server or client. Server has special
->> route setting due to some other reasons, which results in indirect route from 192.168.0.3/24 to 192.168.0.4/24. Thus, when CLC handshake, client will
->> get fce->v2_direct==false, but client has no special routing setting and will find direct route from 192.168.0.4/24 to 192.168.0.3/24. Due to the above
->> symmetric configuration of routing restriction, we got fallback connection, rsn is 0x030f0000. But I think SMC-R should work in this scenario.
->> And more, why check the symmetric configuration of routing only when server is indirect route?
->>
->> Waiting for your reply.
->>
->> Thanks,
->> Guangguan Wang
->>
-> Hi Guangguan,
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> ---
+>  drivers/gpu/drm/tidss/Makefile      |   3 +-
+>  drivers/gpu/drm/tidss/tidss_dispc.c |  11 +-
+>  drivers/gpu/drm/tidss/tidss_dispc.h |   4 +
+>  drivers/gpu/drm/tidss/tidss_drv.c   |  13 +-
+>  drivers/gpu/drm/tidss/tidss_drv.h   |   4 +
+>  drivers/gpu/drm/tidss/tidss_oldi.c  | 568 ++++++++++++++++++++++++++++
+>  drivers/gpu/drm/tidss/tidss_oldi.h  |  73 ++++
+>  7 files changed, 673 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
+>  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
 > 
-> Thank you for the questions. We also asked ourselves the same questions a while ago, and also did some research on it. Unfortunately, it was not yet done and I had to delay it because of my vacation last month. Now it's time to pick it up again ;) I'll come back to you as soon as I can give a very certain answer.
-> 
-> Thanks,
-> Wenjia
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
+> index d15f836dca95..fd90e8498cc2 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.c
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.c
+> @@ -23,6 +23,7 @@
+>  #include "tidss_drv.h"
+>  #include "tidss_kms.h"
+>  #include "tidss_irq.h"
+> +#include "tidss_oldi.h"
+>  
+>  /* Power management */
+>  
+> @@ -140,10 +141,17 @@ static int tidss_probe(struct platform_device *pdev)
+>  
+>  	spin_lock_init(&tidss->wait_lock);
+>  
+> +	ret = tidss_oldi_init(tidss);
+> +	if (ret) {
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "failed to init OLDI (%d)\n", ret);
+> +		return ret;
+> +	}
 
-Hi, Wen Jia,
+return dev_err_probe()
 
-So glad to hear that these questions have also caught your attention, and I'm really looking forward to your answers.
+> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+> new file mode 100644
+> index 000000000000..fd96ca815542
+> --- /dev/null
+> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+> @@ -0,0 +1,568 @@
 
-Thanks,
-Guangguan Wang
+..
+
+> +		ret = drm_of_find_panel_or_bridge(child, OLDI_OURPUT_PORT, -1,
+> +						  &panel, &bridge);
+> +		if (ret) {
+> +			/*
+> +			 * Either there was no OLDI sink in the devicetree, or
+> +			 * the OLDI sink has not been added yet. In any case,
+> +			 * return.
+> +			 * We don't want to have an OLDI node connected to DSS
+> +			 * but not to any sink.
+> +			 */
+> +			if (ret != -EPROBE_DEFER)
+> +				dev_err(tidss->dev,
+> +					"no panel/bridge for OLDI%d. Error %d\n",
+> +					oldi_instance, ret);
+
+just dev_err_probe
+
+> +			goto err_put_node;
+> +		}
+
+..
+
+> +		if (IS_ERR(oldi->io_ctrl)) {
+> +			dev_err(oldi->dev,
+> +				"%s: oldi%d syscon_regmap_lookup_by_phandle failed %ld\n",
+> +			       __func__, oldi_instance, PTR_ERR(oldi->io_ctrl));
+> +			ret = PTR_ERR(oldi->io_ctrl);
+
+dev_err_probe 
+
+> +			goto err_put_node;
+> +		}
+> +
+> +		oldi->s_clk = of_clk_get_by_name(child, "s_clk");
+> +		if (IS_ERR(oldi->s_clk)) {
+> +			dev_err(oldi->dev,
+> +				"%s: oldi%d Failed to get s_clk: %ld\n",
+> +				__func__, oldi_instance, PTR_ERR(oldi->s_clk));
+> +			ret = PTR_ERR(oldi->s_clk);
+
+dev_err_probe
+
+In general, in this function, sometime you print an error and goto
+err_put_node, sometime you just goto err_put_node.  Not sure what's the
+rationale on this.
+
+> +			goto err_put_node;
+> +		}
+> +
+> +		/* Register the bridge. */
+> +		oldi->bridge.of_node = child;
+> +		oldi->bridge.driver_private = oldi;
+> +		oldi->bridge.funcs = &tidss_oldi_bridge_funcs;
+> +		oldi->bridge.timings = &default_tidss_oldi_timings;
+> +
+> +		tidss->oldis[tidss->num_oldis++] = oldi;
+> +		oldi->tidss = tidss;
+> +
+> +		drm_bridge_add(&oldi->bridge);
+> +	}
+> +
+> +err_put_node:
+> +	of_node_put(child);
+> +	of_node_put(oldi_parent);
+> +	return ret;
+> +}
+> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.h b/drivers/gpu/drm/tidss/tidss_oldi.h
+> new file mode 100644
+> index 000000000000..5ad02ddea11a
+> --- /dev/null
+> +++ b/drivers/gpu/drm/tidss/tidss_oldi.h
+> @@ -0,0 +1,73 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Copyright (C) 2023 - Texas Instruments Incorporated
+> + *
+> + * Aradhya Bhatia <a-bhati1@ti.com>
+> + */
+> +
+> +#ifndef __TIDSS_OLDI_H__
+> +#define __TIDSS_OLDI_H__
+> +
+> +#include <linux/media-bus-format.h>
+> +
+> +#include "tidss_drv.h"
+> +#include "tidss_dispc.h"
+> +
+> +struct tidss_oldi;
+
+why do you need this here? 
+
+> +
+> +/* OLDI Instances */
+> +#define OLDI(n)		n
+> +
+> +/* OLDI PORTS */
+> +#define OLDI_INPUT_PORT		0
+> +#define OLDI_OURPUT_PORT	1
+> +
+> +/* OLDI Config Bits */
+> +#define OLDI_ENABLE		BIT(0)
+> +#define OLDI_MAP		(BIT(1) | BIT(2) | BIT(3))
+> +#define OLDI_SRC		BIT(4)
+> +#define OLDI_CLONE_MODE		BIT(5)
+> +#define OLDI_MASTERSLAVE	BIT(6)
+> +#define OLDI_DEPOL		BIT(7)
+> +#define OLDI_MSB		BIT(8)
+> +#define OLDI_LBEN		BIT(9)
+> +#define OLDI_LBDATA		BIT(10)
+> +#define OLDI_DUALMODESYNC	BIT(11)
+> +#define OLDI_SOFTRST		BIT(12)
+> +#define OLDI_TPATCFG		BIT(13)
+> +
+> +/* Control MMR Register */
+> +
+> +/* Register offsets */
+> +#define OLDI_PD_CTRL            0x100
+> +#define OLDI_LB_CTRL            0x104
+> +
+> +/* Power control bits */
+> +#define OLDI_PWRDN_TX(n)	BIT(n)
+> +
+> +/* LVDS Bandgap reference Enable/Disable */
+> +#define OLDI_PWRDN_BG		BIT(8)
+> +
+> +#define OLDI_IDLE_CLK_HZ	25000000 /*25 MHz */
+this is used only on a single C files, move it there?
+
+I would consider this comment in general for this header file,
+from a quick check most of this is used only in tidss_oldi.c.
+
+Francesco
+
 
