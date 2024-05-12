@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-176953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6E28C37CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:33:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91A08C37CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD971C20910
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DD91F210BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328EB4D131;
-	Sun, 12 May 2024 17:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D354D5A5;
+	Sun, 12 May 2024 17:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maKwvppI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpJ/Yjye"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8F025634
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 17:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFF51E492;
+	Sun, 12 May 2024 17:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715535189; cv=none; b=q4TeRZ+XZL7nmsxVhXwnV4qVasKK5mxxATVdNaYSTzMMuK4CyWtUXNXvJMO83L9jRRNpGrRmXl/ZEv9GusrcsPAClsqHcB3ah2WKNnsgIoT2y9CkIctePcd6ZCpkGRdyMTuC3FmnqKpqFWH1n0eehIwQag+UiP/4jXeA67dTets=
+	t=1715535705; cv=none; b=Nxz++L6KJX5lHF2nYo53h/OmUEqjYdoeXRr1e1g/bF5KQ6CimmiEJRFgIMRkPEIfd+gwOtGLKdWsGUMTOSmnF93wB+gjdD1N787fvsII1aYAsZQLjNgoi/9tRyvTa2NpLKXsc9Uv/6Zu7PLlQR5XzgXV6E7jG2DZ0DTHqUhIbJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715535189; c=relaxed/simple;
-	bh=ttF1rtgT590tJUdomS3tSkw0x6qe5M+vjYWjqrkv3M8=;
+	s=arc-20240116; t=1715535705; c=relaxed/simple;
+	bh=fuKPbrNnpH9TtVLRuzB0G82KzbZ36uIiDLDfs/B8R6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ArkSd+ceBeDXIXxiK9bsoG5nA6nNFNAqCPSi3oHUHk50ZHXGFIjbGN0vTpzzNWl1ufoEdnZHvuwfkFTWQs569V5ZoQcltLPVe7c8aN6AEhwqRVhdCMat4DFANnOlbkJ3RhcMz+j1gEOUVrX3v2mhFuumcb8QtuVtWquTU9XB7L8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maKwvppI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EA5C116B1;
-	Sun, 12 May 2024 17:33:08 +0000 (UTC)
+	 Content-Disposition; b=IjXdKxyOYclFhKkmkDjNwz/oH8zqcVeK5oLi30tsDMNTeDOfY6fAD4kYEd3o0+xw78aFalxqbseCzP7KvuUevlZioftJfrda+cyv0Q8PfQOwYX20M8NcIND76QzFDNLkzmKt9tQF4KeW6y53ZR0nYaZS5CJb+PUIPK2JMcqRiNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpJ/Yjye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 590C1C116B1;
+	Sun, 12 May 2024 17:41:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715535188;
-	bh=ttF1rtgT590tJUdomS3tSkw0x6qe5M+vjYWjqrkv3M8=;
+	s=k20201202; t=1715535705;
+	bh=fuKPbrNnpH9TtVLRuzB0G82KzbZ36uIiDLDfs/B8R6c=;
 	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=maKwvppIQ4gcdMO1RUIRMQbZrA2lCm2xKc83sTqkJW1TPPo3EfLK0IRp+gNMxGuDF
-	 8FDyx1wSpcwXUxS4J04qOaCF21Z2aVLdXiM452kugSamFLZp0dQGlvCqd2qb+Fc1hv
-	 glVgi37qIVxnTVfrL2ZPwJ/wf6S80AbyzSZ/sP7RXMi6Qf7TKKQXvp5Ot/eqwV4BIB
-	 Ie6tcXbnNkXIixoyzPwEI9H6V/SXZQAUSjFiFiOzc2EW0CKoEW6vj6iWevByMOZylM
-	 iBgmzPH9gPEBljb98wa9Ey08MZV9cFquXLqVOgnphTtZ3dXeXVMVCFL6D7JFLJRDTG
-	 8n9lv/zzaqSYA==
+	b=TpJ/YjyemRoG0w6Id6VbCtSoE+HSpOthL9yjTeo7D1kYm4u+Iaub7sQv8NnQMJVkb
+	 DxFEjGyZ+7jOdFACbiqH0B/3H4fqDbkxKkfo/1qpjksSo8rnFwyVusDjCUdtrjovKe
+	 nWbHyRGJVwqL65e5Uu7kPnuuvdVhUv6FctGR8IpN2jKVfhi0DY7ddK8mxDWLOm562R
+	 RUA9rcqQW2kSgm+7bkp0aZp9X5kMIv64ASFFZchVDJ+O1m4X7Tc77O+1YwARwX2ckF
+	 dDTCSBfS582I3GDV0FXjqysjTOceww9V1x0xfdUmoHpEreTHsNaSbt8I7WkyH1y58B
+	 w8Togiy2p6vgg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4BA5CCE105C; Sun, 12 May 2024 10:33:08 -0700 (PDT)
-Date: Sun, 12 May 2024 10:33:08 -0700
+	id B30FFCE105C; Sun, 12 May 2024 10:41:44 -0700 (PDT)
+Date: Sun, 12 May 2024 10:41:44 -0700
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: torvalds@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	kernel-team@meta.com, elver@google.com,
-	penguin-kernel@i-love.sakura.ne.jp
-Subject: [GIT PULL] KCSAN changes for v6.10
-Message-ID: <ccdfb04f-9d2c-4033-a29c-bb9677fcbea5@paulmck-laptop>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
+	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+	akiyks@gmail.com, dlustig@nvidia.com, joel@joelfernandes.org,
+	mark.rutland@arm.com
+Subject: [GIT PULL] LKMM changes for v6.10
+Message-ID: <9a2178f8-a33a-4b0e-a867-30ea44761e8a@paulmck-laptop>
 Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -60,34 +63,36 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hello, Linus,
+Hello, Linux,
 
-Once the v6.4 merge window opens, please pull the latest KCSAN git
-commit from:
+When the merge window opens, please pull this LKMM update from:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/kcsan.2024.05.10a
-
-  # HEAD: 31f605a308e627f06e4e6ab77254473f1c90f0bf: kcsan, compiler_types: Introduce __data_racy type qualifier (2024-05-07 11:39:50 -0700)
+  git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/lkmm.2024.05.10a
+  HEAD: 2ba5b4130e3d5d05c95981e1d2e660d57e613fda: Documentation/litmus-tests: Make cmpxchg() tests safe for klitmus (2024-05-06 14:29:21 -0700)
 
 ----------------------------------------------------------------
-kcsan: Introduce __data_racy type qualifier
+lkmm: Upgrade LKMM documentation
 
-This commit adds a __data_racy type qualifier that enables kernel
-developers to inform KCSAN that a given variable is a shared variable
-without needing to mark each and every access.  This allows pre-KCSAN
-code to be correctly (if approximately) instrumented withh very little
-effort, and also provides people reading the code a clear indication that
-the variable is in fact shared.  In addition, it permits incremental
-transition to per-access KCSAN marking, so that (for example) a given
-subsystem can be transitioned one variable at a time, while avoiding
-large numbers of KCSAN warnings during this transition.
+This commit upgrades LKMM documentation, perhaps most notably adding
+a number of litmus tests illustrating cmpxchg() ordering properties.
+TL;DR: Failing cmpxchg() operations provide no ordering.
 
 ----------------------------------------------------------------
-Marco Elver (1):
-      kcsan, compiler_types: Introduce __data_racy type qualifier
+Paul E. McKenney (4):
+      Documentation/litmus-tests: Add locking tests to README
+      Documentation/litmus-tests: Demonstrate unordered failing cmpxchg
+      Documentation/atomic_t: Emphasize that failed atomic operations give no ordering
+      Documentation/litmus-tests: Make cmpxchg() tests safe for klitmus
 
- Documentation/dev-tools/kcsan.rst | 10 ++++++++++
- include/linux/compiler_types.h    |  7 +++++++
- kernel/kcsan/kcsan_test.c         | 17 +++++++++++++++++
- 3 files changed, 34 insertions(+)
+ Documentation/atomic_t.txt                         |  4 +-
+ Documentation/litmus-tests/README                  | 45 ++++++++++++++++++++++
+ .../atomic/cmpxchg-fail-ordered-1.litmus           | 35 +++++++++++++++++
+ .../atomic/cmpxchg-fail-ordered-2.litmus           | 30 +++++++++++++++
+ .../atomic/cmpxchg-fail-unordered-1.litmus         | 34 ++++++++++++++++
+ .../atomic/cmpxchg-fail-unordered-2.litmus         | 30 +++++++++++++++
+ 6 files changed, 176 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/litmus-tests/atomic/cmpxchg-fail-ordered-1.litmus
+ create mode 100644 Documentation/litmus-tests/atomic/cmpxchg-fail-ordered-2.litmus
+ create mode 100644 Documentation/litmus-tests/atomic/cmpxchg-fail-unordered-1.litmus
+ create mode 100644 Documentation/litmus-tests/atomic/cmpxchg-fail-unordered-2.litmus
 
