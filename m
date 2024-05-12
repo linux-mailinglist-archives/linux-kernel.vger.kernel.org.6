@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-176919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0E98C370B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:26:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84BE8C370C
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F99B20E3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:26:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FEC1F2155E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F08247A74;
-	Sun, 12 May 2024 15:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF7C52F6A;
+	Sun, 12 May 2024 15:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3ce5ziH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5tlIij+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C943D0D5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A2740879;
 	Sun, 12 May 2024 15:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715527547; cv=none; b=cOa83h69EtwjnBdITbk+BMYFQEtlYfOfG4nip7eUldtans+mvyjyhh2v657C7C/2vgNnJDLRsHsryZXjPd+MV6sxLbR528QXATdUEtDo6JvQmCq8HGUDZmI9vqCm7q+9LvqCz0oQ4xaRkuu0v3bK20pIasSaet2APqtt+zNRf/8=
+	t=1715527547; cv=none; b=OYEoH0cddImmHgl5YS5dfXP7LgyqPJPr1nFseO4zOdSQqFPBf2nuVOfViI5AvbE+mDfBPV+lIfkJZSXNSXhbx94txRmSWqirja37xo6r9Rqzaq2Sg4lyAlLPezS3r7oxlDpLL4CNvlFIslLowYqk3nOuzkQvyExjJ7Mp0NR8AQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715527547; c=relaxed/simple;
-	bh=pzTBdFsY2vgyd0djOYwWeG/Np5eTTYFhGJ8Nr6OdFJ4=;
+	bh=3dqNGvZkC+MMnGTynjmV0t4nfsy//bK88jV+fDke0Aw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eOIQpu3ef/sz+NX55SGcilJAVKCETLTQf8UMwy2N/VHnCXOBUWSCW8i4dlhnnNtL6kSvfXPsMxnfomqCensN8z5331k5daNvuW/exyKIEfs1xGge1IWmAQi/IMX65dteliU5fp6wWlbWa/8R3rDi5lfpCrqTrVbylLaLpudo9mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3ce5ziH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29795C4AF0C;
+	 In-Reply-To:To:Cc; b=icbhWa7PqmHAJczYY8L02iA+wf5MZuuZ0ZGxe8lXYdGOYI3y9uBMCMmxWRrqpiK3UCL50+Qr9f96ov80prZ+g1bL7Ax1z8GfEYehI2DXvRJMc99CP65jDB5HO1MKeSqls15duleyMhOzk3WqqRv/ZLh+3D5/n3Nrbxo/7iv1Zbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5tlIij+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3B51DC32786;
 	Sun, 12 May 2024 15:25:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715527547;
-	bh=pzTBdFsY2vgyd0djOYwWeG/Np5eTTYFhGJ8Nr6OdFJ4=;
+	bh=3dqNGvZkC+MMnGTynjmV0t4nfsy//bK88jV+fDke0Aw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=T3ce5ziHAazKs1K9z/PCZQ9PMx+0nbo7rimPK0mv23v0hOkU0U+ITfh0A9tSKMMeh
-	 DVsFSO3XnI1e3Z2KWo8pVXfTmCs2SutRDBnBiSUoLRn0bOiys31JcxmkC+5OX508Si
-	 AxtafWrWhPoU8OGCf/ZbvOu96FWQG4mt2AF7FeNAlqSxeyu84g6n4penMk7OrJcvuO
-	 QWFvyVacK51Gi0/hyBF4/94T2dAJuc7Hal7Q6541czYDpYyDj1Px1vMc7ieXtCzXDA
-	 JybemcPHlVTSAgBpmVvDV+V/QB3d87+7S2oUGtMoremXmmJNfzfPFcj0Cpfn7rCUgE
-	 TFsyio2xyWelg==
+	b=s5tlIij+stR1JggmcdjH85syZjmv6GX+Dt3VoKABm/JbSU2pGQCaWIKrT+ddcdDwQ
+	 9jS4vfTciYjB+sFfJIzOhxc7ampxvbZL00hdvfn6pMp0y1oq1wWbCRc1axGR6zDxnG
+	 GopK/fTxa2ERhaLHUxIACMEV4fimNYdn+LZE8NxWa2zZXhTaF+A4zeAc24xFmoxkJJ
+	 zk5i9Xj9GrKfhLxtxym5IhmAqcpKQILUIbNbbAl2ZScc5BTOnw2EYeT1Psoy6+o/GZ
+	 o6dsJtSMH898tkXbYCsDN8M2Xw44xTHRRNSxKOyopYkgUyfvVfH6b9n3wpHhlL0hrQ
+	 QvgCEOM+ladlA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D808C25B78;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DB7C25B4F;
 	Sun, 12 May 2024 15:25:47 +0000 (UTC)
 From: =?utf-8?q?Noralf_Tr=C3=B8nnes_via_B4_Relay?= <devnull+noralf.tronnes.org@kernel.org>
-Date: Sun, 12 May 2024 17:25:40 +0200
-Subject: [PATCH v2 3/5] drm/mipi-dbi: Make bits per word configurable for
- pixel transfers
+Date: Sun, 12 May 2024 17:25:41 +0200
+Subject: [PATCH v2 4/5] drm/mipi-dbi: Add support for DRM_FORMAT_RGB888
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240512-panel-mipi-dbi-rgb666-v2-3-49dd266328a0@tronnes.org>
+Message-Id: <20240512-panel-mipi-dbi-rgb666-v2-4-49dd266328a0@tronnes.org>
 References: <20240512-panel-mipi-dbi-rgb666-v2-0-49dd266328a0@tronnes.org>
 In-Reply-To: <20240512-panel-mipi-dbi-rgb666-v2-0-49dd266328a0@tronnes.org>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -72,11 +71,11 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  Tommaso Merciai <tommaso.merciai@amarulasolutions.com>, 
  =?utf-8?q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715527545; l=2428;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715527545; l=5004;
  i=noralf@tronnes.org; s=20221122; h=from:subject:message-id;
- bh=AmIGEMAdFZS+jdfkVlUhkfNHhhJJe5S4I+SgbI8FWNw=;
- b=JpIHKuXIFUzjCg+W8+Ng8gQ+C59kZRxPrueVKFUoVCdyZPsQPkHVeDCHh3YlC5tNx+sgS3mnO
- MFSlFEs4kAYC2mI9OTNli8uCUZIHJkfeC52MjHa1sOMBMBc3e3jDpxg
+ bh=W6oL0rQmok4cxorsnLB3NONNFaDQoJFHpq/k5uI9z9M=;
+ b=W40wPFxyCV22GVgWBzzdUAm6PP694Wn3d2OAV9DFwWt6ksL0Wxnpacxv7FSOuEs/ibZ2f9AIq
+ mAlCIniAkkKBtsL1hj0CG6fGVbqfNy4WIk6DEcJMdW6tTf6J4021ypQ
 X-Developer-Key: i=noralf@tronnes.org; a=ed25519;
  pk=0o9is4iddvvlrY3yON5SVtAbgPnVs0LfQsjfqR2Hvz8=
 X-Endpoint-Received: by B4 Relay for noralf@tronnes.org/20221122 with
@@ -86,80 +85,126 @@ Reply-To: noralf@tronnes.org
 
 From: Noralf Trønnes <noralf@tronnes.org>
 
-This prepares for supporting other pixel formats than RGB565.
+DRM_FORMAT_RGB888 is 24 bits per pixel and it would be natural to send it
+on the SPI bus using a 24 bits per word transfer. The problem with this
+is that not all SPI controllers support 24 bpw.
+
+Since DRM_FORMAT_RGB888 is stored in memory as little endian and the SPI
+bus is big endian we use 8 bpw to always get the same pixel format on the
+bus: b8g8r8.
+
+The MIPI DCS specification lists the standard commands that can be sent
+over the MIPI DBI interface. The set_address_mode (36h) command has one
+bit in the parameter that controls RGB/BGR order. This means that the
+controller can be configured to receive the pixel as BGR.
+
+RGB888 is rarely supported on these controllers but RGB666 is very common.
+All datasheets I have seen do at least support the pixel format option
+where each color is sent as one byte and the 6 MSB's are used.
+
+All this put together means that we can send each pixel as b8g8r8 and an
+RGB666 capable controller sees this as b6x2g6x2r6x2.
 
 Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
 ---
- drivers/gpu/drm/drm_mipi_dbi.c | 14 ++++++++++----
+ drivers/gpu/drm/drm_mipi_dbi.c | 29 +++++++++++++++++++++++++----
  include/drm/drm_mipi_dbi.h     |  5 +++++
- 2 files changed, 15 insertions(+), 4 deletions(-)
+ 2 files changed, 30 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
-index fa8aba6dc81c..77f8a828d6e0 100644
+index 77f8a828d6e0..eb330676857c 100644
 --- a/drivers/gpu/drm/drm_mipi_dbi.c
 +++ b/drivers/gpu/drm/drm_mipi_dbi.c
-@@ -1079,7 +1079,7 @@ static int mipi_dbi_typec1_command_read(struct mipi_dbi *dbi, u8 *cmd,
- static int mipi_dbi_typec1_command(struct mipi_dbi *dbi, u8 *cmd,
- 				   u8 *parameters, size_t num)
+@@ -206,6 +206,7 @@ int mipi_dbi_buf_copy(void *dst, struct iosys_map *src, struct drm_framebuffer *
+ 		      struct drm_rect *clip, bool swap,
+ 		      struct drm_format_conv_state *fmtcnv_state)
  {
--	unsigned int bpw = (*cmd == MIPI_DCS_WRITE_MEMORY_START) ? 16 : 8;
-+	unsigned int bpw = 8;
++	struct mipi_dbi_dev *dbidev = drm_to_mipi_dbi_dev(fb->dev);
+ 	struct drm_gem_object *gem = drm_gem_fb_get_obj(fb, 0);
+ 	struct iosys_map dst_map = IOSYS_MAP_INIT_VADDR(dst);
  	int ret;
- 
- 	if (mipi_dbi_command_is_read(dbi, *cmd))
-@@ -1091,6 +1091,9 @@ static int mipi_dbi_typec1_command(struct mipi_dbi *dbi, u8 *cmd,
- 	if (ret || !num)
- 		return ret;
- 
-+	if (*cmd == MIPI_DCS_WRITE_MEMORY_START)
-+		bpw = dbi->write_memory_bpw;
-+
- 	return mipi_dbi_spi1_transfer(dbi, 1, parameters, num, bpw);
- }
- 
-@@ -1184,8 +1187,8 @@ static int mipi_dbi_typec3_command(struct mipi_dbi *dbi, u8 *cmd,
- 	if (ret || !num)
- 		return ret;
- 
--	if (*cmd == MIPI_DCS_WRITE_MEMORY_START && !dbi->swap_bytes)
--		bpw = 16;
-+	if (*cmd == MIPI_DCS_WRITE_MEMORY_START)
-+		bpw = dbi->write_memory_bpw;
- 
- 	spi_bus_lock(spi->controller);
- 	gpiod_set_value_cansleep(dbi->dc, 1);
-@@ -1256,12 +1259,15 @@ int mipi_dbi_spi_init(struct spi_device *spi, struct mipi_dbi *dbi,
- 
- 	dbi->spi = spi;
- 	dbi->read_commands = mipi_dbi_dcs_read_commands;
-+	dbi->write_memory_bpw = 16;
- 
- 	if (dc) {
- 		dbi->command = mipi_dbi_typec3_command;
- 		dbi->dc = dc;
--		if (!spi_is_bpw_supported(spi, 16))
-+		if (!spi_is_bpw_supported(spi, 16)) {
-+			dbi->write_memory_bpw = 8;
- 			dbi->swap_bytes = true;
+@@ -222,8 +223,18 @@ int mipi_dbi_buf_copy(void *dst, struct iosys_map *src, struct drm_framebuffer *
+ 		else
+ 			drm_fb_memcpy(&dst_map, NULL, src, fb, clip);
+ 		break;
++	case DRM_FORMAT_RGB888:
++		drm_fb_memcpy(&dst_map, NULL, src, fb, clip);
++		break;
+ 	case DRM_FORMAT_XRGB8888:
+-		drm_fb_xrgb8888_to_rgb565(&dst_map, NULL, src, fb, clip, fmtcnv_state, swap);
++		switch (dbidev->emulation_format) {
++		case DRM_FORMAT_RGB565:
++			drm_fb_xrgb8888_to_rgb565(&dst_map, NULL, src, fb, clip, fmtcnv_state, swap);
++			break;
++		case DRM_FORMAT_RGB888:
++			drm_fb_xrgb8888_to_rgb888(&dst_map, NULL, src, fb, clip, fmtcnv_state);
++			break;
 +		}
- 	} else {
- 		dbi->command = mipi_dbi_typec1_command;
- 		dbi->tx_buf9_len = SZ_16K;
+ 		break;
+ 	default:
+ 		drm_err_once(fb->dev, "Format is not supported: %p4cc\n",
+@@ -260,9 +271,11 @@ static void mipi_dbi_fb_dirty(struct iosys_map *src, struct drm_framebuffer *fb,
+ 	struct mipi_dbi_dev *dbidev = drm_to_mipi_dbi_dev(fb->dev);
+ 	unsigned int height = rect->y2 - rect->y1;
+ 	unsigned int width = rect->x2 - rect->x1;
++	const struct drm_format_info *dst_format;
+ 	struct mipi_dbi *dbi = &dbidev->dbi;
+ 	bool swap = dbi->swap_bytes;
+ 	int ret = 0;
++	size_t len;
+ 	bool full;
+ 	void *tr;
+ 
+@@ -283,8 +296,13 @@ static void mipi_dbi_fb_dirty(struct iosys_map *src, struct drm_framebuffer *fb,
+ 	mipi_dbi_set_window_address(dbidev, rect->x1, rect->x2 - 1, rect->y1,
+ 				    rect->y2 - 1);
+ 
+-	ret = mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START, tr,
+-				   width * height * 2);
++	if (fb->format->format == DRM_FORMAT_XRGB8888)
++		dst_format = drm_format_info(dbidev->emulation_format);
++	else
++		dst_format = fb->format;
++	len = drm_format_info_min_pitch(dst_format, 0, width) * height;
++
++	ret = mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START, tr, len);
+ err_msg:
+ 	if (ret)
+ 		drm_err_once(fb->dev, "Failed to update display %d\n", ret);
+@@ -572,7 +590,7 @@ static const uint32_t mipi_dbi_formats[] = {
+  * has one fixed &drm_display_mode which is rotated according to @rotation.
+  * This mode is used to set the mode config min/max width/height properties.
+  *
+- * Use mipi_dbi_dev_init() if you don't need custom formats.
++ * Use mipi_dbi_dev_init() if you want native RGB565 and emulated XRGB8888 format.
+  *
+  * Note:
+  * Some of the helper functions expects RGB565 to be the default format and the
+@@ -631,6 +649,9 @@ int mipi_dbi_dev_init_with_formats(struct mipi_dbi_dev *dbidev,
+ 	drm->mode_config.min_height = dbidev->mode.vdisplay;
+ 	drm->mode_config.max_height = dbidev->mode.vdisplay;
+ 	dbidev->rotation = rotation;
++	dbidev->emulation_format = formats[0];
++	if (formats[0] == DRM_FORMAT_RGB888)
++		dbidev->dbi.write_memory_bpw = 8;
+ 
+ 	DRM_DEBUG_KMS("rotation = %u\n", rotation);
+ 
 diff --git a/include/drm/drm_mipi_dbi.h b/include/drm/drm_mipi_dbi.h
-index e8e0f8d39f3a..b36596efdcc3 100644
+index b36596efdcc3..85bf19b98cee 100644
 --- a/include/drm/drm_mipi_dbi.h
 +++ b/include/drm/drm_mipi_dbi.h
-@@ -56,6 +56,11 @@ struct mipi_dbi {
+@@ -101,6 +101,11 @@ struct mipi_dbi_dev {
  	 */
- 	struct spi_device *spi;
+ 	struct drm_display_mode mode;
  
 +	/**
-+	 * @write_memory_bpw: Bits per word used on a MIPI_DCS_WRITE_MEMORY_START transfer
++	 * @emulation_format: Pixel format to use when emulating XRGB8888
 +	 */
-+	unsigned int write_memory_bpw;
++	u32 emulation_format;
 +
  	/**
- 	 * @dc: Optional D/C gpio.
+ 	 * @tx_buf: Buffer used for transfer (copy clip rect area)
  	 */
 
 -- 
