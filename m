@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-176865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 657E48C3650
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:05:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA458C3652
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 14:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8BA281620
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B611C208F5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB59820DC3;
-	Sun, 12 May 2024 12:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501F320B28;
+	Sun, 12 May 2024 12:07:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ucv4hU31"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qOr9SS8n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9EAF9F7;
-	Sun, 12 May 2024 12:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90987200C1;
+	Sun, 12 May 2024 12:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715515495; cv=none; b=kbsSgVACrhaL2/Ci32IPWEY8FHM15JS7TxIO2BZl5JyMRhb1jIQLOCR2+K+3GhhGZsP+SHvYbSf51/XUJeHyOfz5i+4BdVMj30zwDhSVhAIRlUhMm+k79ZoUjblu8Z4h1XG2LytVNpGE0L3kfGdws0bYy9VJ07zOc2w8FrL/4GE=
+	t=1715515640; cv=none; b=cObU8pRQ5j10HuqgFyDE0uMZHIVOaKxUrF3nORv765+rT+UODyLEFPaZMdJPGyFd5Conj4zCMf9xb4y8Z1e80d5rhPqZNDak+a2RXUSF6OGZrlicRYONqtGrmYMolYwlfaky2aS47Ko2Zshymg2k3OW5OytueVFfvQkJeWRB0eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715515495; c=relaxed/simple;
-	bh=KJmHfyH6mlZJ/m0XwcieNIyf8Qx2hjId1Vn0YiHi4tY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6Oy+FgXJJyhGdo3BSY1/tf3v/GPgR85foeHB4TRzXHkKAjj/byNcQg5NIqHLUh4mklEhsh9xMTxw5FdcxlscjYNGJeUjhlxLUZY3N2GpOeXlcfa/Q9LPG3TbOPOAwA68KMSQT0v4QOZDOY7e9P9FlT1PZc5cs30uUoaUKg/N30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ucv4hU31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B179FC116B1;
-	Sun, 12 May 2024 12:04:52 +0000 (UTC)
+	s=arc-20240116; t=1715515640; c=relaxed/simple;
+	bh=H9fooofH8v7EdNtnyTSlW47/IHPiUXxb224cVnj5tck=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sc8/IBObXljGJGPqUSirqoBgNRC+AIzUcFbB16nixLQbSsLOLNLxSRmnTfZg5UXckChtPcK2+PfhNFdlmDYQvJE4u6tqBiMSUoD5QVRN8HfFDGjE4wcWvvZa0taOkMYRLs1Ctc1xBwMkafF91PKd4G9X4dBBu8rbXC61Dr9FLIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qOr9SS8n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 993CCC116B1;
+	Sun, 12 May 2024 12:07:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715515494;
-	bh=KJmHfyH6mlZJ/m0XwcieNIyf8Qx2hjId1Vn0YiHi4tY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ucv4hU319txPNUxw3tX8uYnMFOXqZ634eGAw6UzW3URMD2nFzveUY+gxIkPSkUuxd
-	 pT+BfLdAIokszleGFrDGkUTPfvUpGz24sn7I7MkHqY1T/l1dTAkinPJQHVsZuwX3hL
-	 1rF1pA7wEaCNJAoNjbkr9zTQ7azPjdJqpQTGyj1MCYHoOm4WQ2LxQLOJDeN6UHSuSe
-	 HPZbdEH0t73ZN62oYeZ8k1+eIcaTFMXyow1ArJ8C0IuL8JhsQdLGY/pNy/UA447cFa
-	 G56lWHkrpyg3wiJsUa4F2+ixU6hN5hUPm/DTWyzRX4ZrQke4KvZZvYfUjWU8yCZuZQ
-	 kv5umxncG0TrA==
-Date: Sun, 12 May 2024 13:04:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Felix Kaechele <felix@kaechele.ca>
-Cc: Job Noorman <job@noorman.info>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: input: touchscreen: himax,hx83112b:
- add HX83100A
-Message-ID: <20240512-trailing-wad-0b9553d03d30@spud>
-References: <20240511121245.109644-1-felix@kaechele.ca>
- <20240511121245.109644-2-felix@kaechele.ca>
- <20240511-passage-obstruct-70e4c3b37dbd@spud>
- <dab1dddd-57ae-445e-bce7-879e8d73d809@kaechele.ca>
+	s=k20201202; t=1715515640;
+	bh=H9fooofH8v7EdNtnyTSlW47/IHPiUXxb224cVnj5tck=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qOr9SS8n+16sJFjXJ46njugvpIr03iQvp+pRFgSx92ekyfLMbUAj442IPDcRyq9dN
+	 6+Ucvq+QxdVzwaV/n2UH3NSpqKcWsDNb8WnJhi9vdEQfc8hODL/zpFBpJTqu2ApgPQ
+	 0WEhXprBqvDj/W1S2dHJ4cPjg0iwoZcagIHxK25NJPdXctO5dL1HVp7Mjf0GJjC/wf
+	 j6WwJRkp/p9WM1o7JZzkWKEe4W8f6EUcWP0tQjE0zG1xQjNk137Syw7qF/jJ4dCnRD
+	 b5ocVlOeShejr30p+PrD9ZwJTkNiF7lZQnmvzQLYPNSGbAZ24rrT4AEIjKM8Jwemvt
+	 7BbIgujxHSAsw==
+Date: Sun, 12 May 2024 13:07:06 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, mazziesaccount@gmail.com, ak@it-klinger.de,
+ petre.rodan@subdimension.ro, phil@raspberrypi.com, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/9] iio: pressure: bmp280: Remove dead error checks
+Message-ID: <20240512130706.6a86c870@jic23-huawei>
+In-Reply-To: <20240508165207.145554-2-vassilisamir@gmail.com>
+References: <20240508165207.145554-1-vassilisamir@gmail.com>
+	<20240508165207.145554-2-vassilisamir@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1Zr+TJl8NhKVw3HF"
-Content-Disposition: inline
-In-Reply-To: <dab1dddd-57ae-445e-bce7-879e8d73d809@kaechele.ca>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed,  8 May 2024 18:51:59 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
---1Zr+TJl8NhKVw3HF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The ret value is being checked already in all the previous
+> paths which exit in case of error, so this path can never
+> become true.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+Applied to the togreg branch of iio.git, but only initially pushed out
+as testing because I'll be rebasing that branch on 6.10-rc1 in about 2 weeks
+time.
 
-On Sat, May 11, 2024 at 10:10:08AM -0400, Felix Kaechele wrote:
-> On 2024-05-11 08:38, Conor Dooley wrote:
-> > On Sat, May 11, 2024 at 08:12:22AM -0400, Felix Kaechele wrote:
-> > > Add a compatible string for the Himax HX83100A touch controller.
-> > >=20
-> > > Signed-off-by: Felix Kaechele <felix@kaechele.ca>
-> >=20
-> > Commit message should mention what makes this device incompatible with
-> > the existing device.
->=20
-> Thanks!
->=20
-> I have added this note in the commit message which will be part of a v3,
-> coming after I hopefully receive a few more comments on the other parts of
-> this change:
->=20
-> The HX83100A presents touch events on its internal bus rather than offeri=
-ng
-> a dedicated event register like the other chips in this family do.
+Jonathan
 
-Ye, that sounds good. W/ that,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+>  drivers/iio/pressure/bmp280-core.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index ed49e0779d41..311a011604da 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -1350,10 +1350,6 @@ static int bmp580_nvm_operation(struct bmp280_data *data, bool is_write)
+>  		poll = 50;
+>  		timeout = 400;
+>  	}
+> -	if (ret) {
+> -		dev_err(data->dev, "failed to write command sequence\n");
+> -		return -EIO;
+> -	}
+>  
+>  	/* Wait until NVM is ready again */
+>  	ret = regmap_read_poll_timeout(data->regmap, BMP580_REG_STATUS, reg,
+> 
+> base-commit: dccb07f2914cdab2ac3a5b6c98406f765acab803
+> prerequisite-patch-id: 97b99b1106cbfd65cef8d256e4dc1a3a9257511e
+> prerequisite-patch-id: c60e8ef6fae62417c3430b7598b1a3d2a551be79
+> prerequisite-patch-id: 6a49484a6d154ddcd1b45b71a6be2c3542ae0be6
+> prerequisite-patch-id: 5aae62fa92c719fb65a8701ec4e1c4284bef7fd9
+> prerequisite-patch-id: 6943297d5f70f74bfcf5d5b26198423e428773d9
 
-Cheers,
-Conor.
-
-
---1Zr+TJl8NhKVw3HF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkCwYgAKCRB4tDGHoIJi
-0ukQAP4tdPpHCiS+aYv9tr4OD64LFywGL9bFq4elfXmGBza0bgD/fr8b5baNVflq
-Fj62Y4D36caKcEeKcT6HFxA4nTFrRQ8=
-=WlBl
------END PGP SIGNATURE-----
-
---1Zr+TJl8NhKVw3HF--
 
