@@ -1,164 +1,177 @@
-Return-Path: <linux-kernel+bounces-176985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858408C3839
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:33:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0EF98C3827
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49FA3280EB9
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:33:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2318828233F
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE75151C52;
-	Sun, 12 May 2024 19:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D506551C5F;
+	Sun, 12 May 2024 19:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="toxcDMux"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="lB6ZKZjZ"
+Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF152E620;
-	Sun, 12 May 2024 19:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D5D2E620;
+	Sun, 12 May 2024 19:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715542426; cv=none; b=REaEtcgdnnHEG9iHEM2MvPeybRF9t0T1EqcnJI5Y9ITIUJLnnrxH7kNDM4eXdFkC9+P5VrXAzLODGxLuSKdghU+FqjaAwimuz+lAGkHWItI+5cQRd+suEUnr1ov5WhzFL6xERNncdOWMIRE9WnsseKw+zULKzWEBbo9TxQBohqU=
+	t=1715542172; cv=none; b=hzVr6fuPA3o5uab7U6KCNfWSzbZT4pixdg5zRbWVrObTjOmuiYYBsEGxcOBUkl0NMKW5MS69bfsg2PHidFAN4EjjYGvP+2tAuHvrg4EGgm9CrL+vJZIl2TAwvOeXakw+DWkvQJtBpy7AGQ/CgQpvbWGUtjihsPwYJqMMU6TsB8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715542426; c=relaxed/simple;
-	bh=mCXLCoD7lkfHW8+SFvwfQD7CB0s4KCH/rd7zLtP1+kM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axNlnEZNxqz9iktaoMx7qQvAHZrAy7sjarCmnoeFhWe3DkezGn0zG+zni2FZ5rZ1iki5vMkrlABez+K9eBdgRiC4AmweubUGwG5WAkDOWrpq1sIDVGwimqs3YbklnRwQFiqEHhBe9MBJfsfcrjvBCABXb7EwYZIF3J2eZjSLu8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=toxcDMux; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 130FE524;
-	Sun, 12 May 2024 21:25:21 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715541922;
-	bh=mCXLCoD7lkfHW8+SFvwfQD7CB0s4KCH/rd7zLtP1+kM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=toxcDMuxJDnt3n0vzJQaP5kh41rh6fmRG2M54q8+KC9L3d6MYNj4Dhfv3qA1fPWdF
-	 y9ljNB9PQKF1DB3GpvSH3PxlJyxCzgKv77PLcVxz54+Qlx06memJYLJD0ToO8Rphhx
-	 yAYbHKnJnAXrawKfI0rMSsBJjLcUt+Juzudp+iGI=
-Date: Sun, 12 May 2024 22:25:18 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH 1/4] dt-bindings: display: ti,am65x-dss: Minor Cleanup
-Message-ID: <20240512192518.GE17158@pendragon.ideasonboard.com>
-References: <20240511193055.1686149-1-a-bhatia1@ti.com>
- <20240511193055.1686149-2-a-bhatia1@ti.com>
+	s=arc-20240116; t=1715542172; c=relaxed/simple;
+	bh=0ExzLgblqzmDHiUjeSC2Nc/o1fm2eFgt9HoCEtCkHII=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dQjtTFFO6f72ONcuGFqDYXeMWuMepd9gjB4DvOw6NE7weaPAKd/wRj9RNsZ2YZciu2yp8XOEZkBoYxhEsId4Kf9Da4jps0OEegrIGssKJfImzuIRSXy1TQMmw3tH2QTB+6BZnyhHRFSZ/wVHuL3n84VT4s87BkwtwpFRvDC3FFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=lB6ZKZjZ; arc=none smtp.client-ip=129.27.2.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
+Received: from [192.168.0.221] (84-115-223-216.cable.dynamic.surfer.at [84.115.223.216])
+	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Vct3H6HvGz1LLyr;
+	Sun, 12 May 2024 21:29:15 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailrelay.tugraz.at 4Vct3H6HvGz1LLyr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
+	s=mailrelay; t=1715542157;
+	bh=2vPSVIunDDlKuMQTdFhwiPn7E9OmRNU/PnrIG9JkJSM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=lB6ZKZjZVcastT2NMUDE3JNMNIOzAOPsWlh2wGaecybw8km35qIhLEIv/ULB4kyRU
+	 qzGl3Ls59VKxAY5FEej1zci2qRO4X/CFiYAaTzTdhMfY4v+nBmfRBXa0hsjk4OOWxs
+	 AevH302tCWA99T+2LWUmpyasOEmuHV0NBe1XH2oQ=
+Message-ID: <bf7539e0ccb8f445984fe6dab0d7d8392a79880d.camel@tugraz.at>
+Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
+From: Martin Uecker <uecker@tugraz.at>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, Justin Stitt
+ <justinstitt@google.com>,  Peter Zijlstra <peterz@infradead.org>, Mark
+ Rutland <mark.rutland@arm.com>, linux-hardening@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Date: Sun, 12 May 2024 21:29:15 +0200
+In-Reply-To: <CAHk-=wjERv03yFU7-RUuqX1y89DYHcpdsuu++ako2nR41-EjYg@mail.gmail.com>
+References: <202404291502.612E0A10@keescook>
+	 <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
+	 <202405081144.D5FCC44A@keescook>
+	 <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
+	 <202405081354.B0A8194B3C@keescook>
+	 <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
+	 <59f731ab619673afec4956fce6832a1cd5324fb8.camel@tugraz.at>
+	 <CAHk-=wjERv03yFU7-RUuqX1y89DYHcpdsuu++ako2nR41-EjYg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240511193055.1686149-2-a-bhatia1@ti.com>
+X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
+X-Spam-Scanner: SpamAssassin 3.003001 
+X-Spam-Score-relay: -1.9
+X-Scanned-By: MIMEDefang 2.74 on 129.27.10.116
 
-Hi Aradhya,
+Am Sonntag, dem 12.05.2024 um 09:09 -0700 schrieb Linus Torvalds:
+> On Sun, 12 May 2024 at 01:03, Martin Uecker <uecker@tugraz.at> wrote:
+> >=20
+> > But I guess it still could be smarter. Or does it have to be a
+> > sanitizer because compile-time will always have too many false
+> > positives?
+>=20
+> Yes, there will be way too many false positives.
+>=20
+> I'm pretty sure there will be a ton of "intentional positives" too,
+> where we do drop bits, but it's very much intentional. I think
+> somebody already mentioned the "store little endian" kind of things
+> where code like
+>=20
+>         unsigned chat *p;
+>         u32 val;
+>=20
+>         p[0] =3D val;
+>         p[1] =3D val >> 8;
+>         p[2] =3D val >> 16;
+>         p[3] =3D val >> 24;
+>=20
+> kind of code is both traditional and correct, but obviously drops bits
+> very much intentionally on each of those assignments.
+>=20
+> Now, obviously, in a perfect world the compiler would see the above as
+> "not really dropping bits", but that's not the world we live in.
+>=20
+> So the whole "cast drops bits" is not easy to deal with.
+>=20
+> In the case of the above kind of byte-wise behavior, I do think that
+> we could easily make the byte masking explicit, and so in *some* cases
+> it might actually be a good thing to just make these things more
+> explicit, and write it as
+>=20
+>         p[0] =3D val & 0xff;
+>         p[1] =3D (val >> 8) & 0xff;
+>         ...
+>=20
+> and the above doesn't make the source code worse: it arguably just
+> makes things more explicit both for humans and for the compiler, with
+> that explicit bitwise 'and' operation making it very clear that we're
+> just picking a particular set of bits out of the value.
 
-Thank you for the patch.
+Adding versions of the -Wconversions warning which triggers only
+in very specific cases should not be too difficult, if something
+like this is useful, i.e. restricting the warning to assignments.
 
-On Sun, May 12, 2024 at 01:00:52AM +0530, Aradhya Bhatia wrote:
-> Reduce tab size from 8 spaces to 4 spaces to make the bindings
-> consistent, and easy to expand.
-> 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+>=20
+> But I do suspect the "implicit cast truncates value" is _so_ common
+> that it might be very very painful. Even with a run-time sanitizer
+> check.
+>=20
+> And statically I think it's entirely a lost cause - it's literally
+> impossible to avoid in C. Why? Because there are no bitfield
+> variables, only fields in structures/unions, so if you pass a value
+> around as an argument, and then end up finally assigning it to a
+> bitfield, there was literally no way to pass that value around as the
+> "right type" originally. The final assignment *will* drop bits from a
+> static compiler standpoint.
+>=20
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+If one wanted to, one could always pass bitfields inside a struct
 
-> ---
->  .../bindings/display/ti/ti,am65x-dss.yaml     | 54 +++++++++----------
->  1 file changed, 27 insertions(+), 27 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> index 55e3e490d0e6..399d68986326 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> @@ -142,32 +142,32 @@ examples:
->      #include <dt-bindings/soc/ti,sci_pm_domain.h>
->  
->      dss: dss@4a00000 {
-> -            compatible = "ti,am65x-dss";
-> -            reg =   <0x04a00000 0x1000>, /* common */
-> -                    <0x04a02000 0x1000>, /* vidl1 */
-> -                    <0x04a06000 0x1000>, /* vid */
-> -                    <0x04a07000 0x1000>, /* ovr1 */
-> -                    <0x04a08000 0x1000>, /* ovr2 */
-> -                    <0x04a0a000 0x1000>, /* vp1 */
-> -                    <0x04a0b000 0x1000>, /* vp2 */
-> -                    <0x04a01000 0x1000>; /* common1 */
-> -            reg-names = "common", "vidl1", "vid",
-> -                    "ovr1", "ovr2", "vp1", "vp2", "common1";
-> -            ti,am65x-oldi-io-ctrl = <&dss_oldi_io_ctrl>;
-> -            power-domains = <&k3_pds 67 TI_SCI_PD_EXCLUSIVE>;
-> -            clocks =        <&k3_clks 67 1>,
-> -                            <&k3_clks 216 1>,
-> -                            <&k3_clks 67 2>;
-> -            clock-names = "fck", "vp1", "vp2";
-> -            interrupts = <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>;
-> -            ports {
-> -                    #address-cells = <1>;
-> -                    #size-cells = <0>;
-> -                    port@0 {
-> -                            reg = <0>;
-> -                            oldi_out0: endpoint {
-> -                                    remote-endpoint = <&lcd_in0>;
-> -                            };
-> -                    };
-> +        compatible = "ti,am65x-dss";
-> +        reg = <0x04a00000 0x1000>, /* common */
-> +              <0x04a02000 0x1000>, /* vidl1 */
-> +              <0x04a06000 0x1000>, /* vid */
-> +              <0x04a07000 0x1000>, /* ovr1 */
-> +              <0x04a08000 0x1000>, /* ovr2 */
-> +              <0x04a0a000 0x1000>, /* vp1 */
-> +              <0x04a0b000 0x1000>, /* vp2 */
-> +              <0x04a01000 0x1000>; /* common1 */
-> +        reg-names = "common", "vidl1", "vid",
-> +                "ovr1", "ovr2", "vp1", "vp2", "common1";
-> +        ti,am65x-oldi-io-ctrl = <&dss_oldi_io_ctrl>;
-> +        power-domains = <&k3_pds 67 TI_SCI_PD_EXCLUSIVE>;
-> +        clocks =        <&k3_clks 67 1>,
-> +                        <&k3_clks 216 1>,
-> +                        <&k3_clks 67 2>;
-> +        clock-names = "fck", "vp1", "vp2";
-> +        interrupts = <GIC_SPI 166 IRQ_TYPE_EDGE_RISING>;
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            port@0 {
-> +                reg = <0>;
-> +                oldi_out0: endpoint {
-> +                    remote-endpoint = <&lcd_in0>;
-> +                };
->              };
-> +        };
->      };
+typedef struct { unsigned int v:12; } b12;
 
--- 
-Regards,
+int f(b12 x)
+{
+    int i =3D x.v;
+    return i & (1 << 13);
+}
 
-Laurent Pinchart
+the compiler is then smart enough to know how many bits are
+relevant and track this to some degree inside the function.
+
+
+https://godbolt.org/z/o8P3adnEK
+
+But using this information for warnings would be more difficult
+because the information is not computed in the front end. (but=C2=A0
+here also other warnings generated by the backend, so not
+impossible). And, of course, the=C2=A0additional wrapping and
+unwrapping makes the code more ugly (*)
+
+C23 then also has bit-precise integers.
+
+Martin
+
+(*) ...but compared to what some other languages require the
+programmer to write, even=C2=A0 this seems relatively benign.
+
+
+
+
+
+
+
+
+
+
+
 
