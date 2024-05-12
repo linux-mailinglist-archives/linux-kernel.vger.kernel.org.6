@@ -1,135 +1,115 @@
-Return-Path: <linux-kernel+bounces-176817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF1F8C3562
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:53:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A2E8C3564
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:57:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 486C32817DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4AB1C209E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC14817556;
-	Sun, 12 May 2024 07:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D5D168B8;
+	Sun, 12 May 2024 07:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IWHYpZkF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R528yBLu"
-Received: from wfout3-smtp.messagingengine.com (wfout3-smtp.messagingengine.com [64.147.123.146])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RcQV5buF"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D6FD3D6A;
-	Sun, 12 May 2024 07:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6541117547;
+	Sun, 12 May 2024 07:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715500400; cv=none; b=oLxdQMhO2kj5QmSxIa/DolEM/G6NC6qVV7YCYTqlcIqdk5OvTtOreVxr3b26OxzcgvhBKsTJHaVLkp9w6pAtvr255NsSpKrndXD7Qn79sjXjsENu4djvM6gSxIOICVUrcVb5v8//PLt02NHQqkTHKZtf6iXI51rowYfBgcT5/CM=
+	t=1715500669; cv=none; b=hvwvouN5Q5KrAr781yf0Vt1UoFvJEz60jDasdtde/0xo9Jv/E1TRCjWnsXW8r/4MbkRYZKzQKZAd1lh8/evsnX0ZKZvgiUu5xii9eV7jDN4g01g2FLkPnpY5AdzVy1VnAtTZ0xWjZ/jjWodELfBwWqFfheouNLyChL88qcJx2mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715500400; c=relaxed/simple;
-	bh=G32PthKcIMwHOlkSEv+ql7S5hSRmLbPeS6AmqWGaEG8=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=VVIWQd2i3DhxsP3g7bBA8gr+tRmBqPDCoJhGfL2FtnzmJ7guBT1YxSJj9EPFijVDJdue//kXIVATtwUHC9xfVIZQIM3EumLLKjStpsnsh02Afju2e5Dbxxu1Cf/PveoJvh/EOuWj6bRN0NRnQfnOyu+LJ+3JJZRvvO4c2AtMR/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IWHYpZkF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=R528yBLu; arc=none smtp.client-ip=64.147.123.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id CDF5C1C00195;
-	Sun, 12 May 2024 03:53:16 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Sun, 12 May 2024 03:53:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1715500396;
-	 x=1715586796; bh=qkvLE2hnnj9QTESFKiTg5ShrclNoU8nl5K0MOg/ShQU=; b=
-	IWHYpZkF9MbMCtAfW8nCtmSedLJaoK/FvVEPy543lIE81xa3hy7xqxVrDpk4sHcN
-	5opFJmE0ZjexrAiz6GJbIGYufpi/nUnPZnlj0/mUkBLdo7ty5pmKjVMSwHYstcYN
-	CASDsBjPuBwHQcpnGOTe3zX85DSG6AamySWPLD1h2HVGLaodFaoFoOclVriXEeNP
-	Hoh0IviCD5GBkIaFFEk6xlJxZWZWg3UNrhibDQWYZY4fum9QRfGHgFm+JgAo2c1x
-	zRX/xhhQpZW5+forrLnIl9Bj2ycuH/YvU2005Jo02HErXQmiB9wrabDrd1+7T5u+
-	xOCBh9AwfobZ6rr+FCrfdQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715500396; x=
-	1715586796; bh=qkvLE2hnnj9QTESFKiTg5ShrclNoU8nl5K0MOg/ShQU=; b=R
-	528yBLuuhm/CGTv8ufRb38zYxhAnYYur6J0CJB9pDiLZCbd2esi9e+l1gM5eDDWn
-	ygcjdytUJgQqWfUP/PrjnpGaPpvtJ9i3La2fWyBC7vBcFwznIQFbCiavFS23mrcm
-	rDvurobynOP6p8KgH3RQ+wYJTjjABFsYFLgqHiGbGt7LL1jdv9ifgFmfX9sLHUDR
-	GyqX7NYxR31EIPNzT7YynWHEE59o1o/XK89UEC27r3QfbIPEBopClhWQMeC21UA3
-	pqFdDPuWA90oPlFU5Q2iK6Gviy8qawBC5j5o88TS7EnDJEWWOMcHDLBaEi0GOEcI
-	e+8R4sUKLDWahXYIR7OeQ==
-X-ME-Sender: <xms:anVAZtgTwvuKQRm9GUStMLW5Ak-cAlj9HRki9p-c9L8rJOjlNTgF2g>
-    <xme:anVAZiCfjHJBqdNwUGy1gRx4ZUZuW6EySA1P2QAomLu3wMQZP9n6j2G3qf-P-LMgd
-    PDxmzA7hsEQjsQjFbs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeguddgudduudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedf
-    tehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrf
-    grthhtvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudek
-    tdfgjeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:anVAZtHYtoWzHifZAEStLM51wBHyvkDObwNmsV-jzRkXCfyTNTaZJQ>
-    <xmx:anVAZiSDNZlEo75dhzu5CrNkvt-rMPy-fJLwxU0Tcu35F-ptupNw-w>
-    <xmx:anVAZqzyDqn4ao1giOftgxEh_kl6x63Qb5DWJ6wZJrUEBBOTQ5Q7rw>
-    <xmx:anVAZo532shZbNuo-hw9Q_cTPo25Wze8FfCU3v2DMGTqb_Qy_f5TSg>
-    <xmx:bHVAZvqHBxEFTqAxp7llGHheMuEYb1ZqePt7x-EDAT7Ya6OC4z3V69xa>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 47EE9B6008D; Sun, 12 May 2024 03:53:14 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	s=arc-20240116; t=1715500669; c=relaxed/simple;
+	bh=QXHxJHGm8I7427Cx6l2zmM59WVrA9mo6FKgFwLvF5UI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ITXGYXQnd6hptsKqogTHCVPz0pdf9a/9bf05gulGbAnNZF65kRpX7D9Fvoidd9zC/w9yHq0UtdZLyt15KQ4kzAFCOjWj2TW9NfWGqfbVbvHVmtAFoBatRC0SSh8L3tbWj4AUlKNhrVLrb9/nI2hls2Qd0GDYAuqxC9WpLBx0eTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RcQV5buF; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7AEEA40E01E8;
+	Sun, 12 May 2024 07:57:45 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 42L-u38UhMtn; Sun, 12 May 2024 07:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715500662; bh=ZKOV/WDxVJbHkMSxsJUPe7uSTsZds0t2PFPid3HynrA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RcQV5buFtscUSrJSfHythi/VAPdYZ8cDlseST8SP+M3R9Mt+OwyYZ2qXmdlrL6keW
+	 VmGBJeBBRk0jiK3gY/+cX/ZxnU+1T4JAocfuSH34Rqaw0Av7BSjsZc5km7UL2WBaup
+	 r83EuFe/8G9girQkgZJY4nJQ+oipwdSJfubeHDjomLcuvvQUzs53Kbvppe7/ygrYFQ
+	 UnFBn/wrJrVcEb/O9UzukMYqPh7YyJuEJKEc3GyNYoprnFZFcvSpUyVrrO0gP8pcRN
+	 az4w8XjhyZ7ZFwrIXLroz5aaoRD1jA7SUWHVjQbeo1vYWwnUTjhCMvjuZ6kDxu81aN
+	 SGZQRMJTSSc6ARMlCbFJJIjblUM1B5fogmUdLRmpI/C//4CTKCvcKt/1GZCPkzBEAo
+	 QtSbK0f6RzyQpY+5h3xSGAHqP66MXnOWgPizeusF6BTDCf3UVqPRyJnM8JwC7JkX95
+	 eQfjC1uIuvI9NIVV8TAS8p0pogi1pQjETCilb78gbjJba76qvnUnN4UiYE0T74drNF
+	 OgsIMXcnwwiyk9QJk4M7I3oLrbtoKBpoHH3GVUVNJVv++7ichbSguZMzAQiE4P7fMP
+	 rKPT4HMyTco0VmiP7Q9tfYnbnS65vqln6muhrZAaO6UdVAgF7dTgzBED8GMRy7bPIL
+	 o7JeF3p2hEivzBd2HQE5ftP4=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B2AC40E016A;
+	Sun, 12 May 2024 07:57:39 +0000 (UTC)
+Date: Sun, 12 May 2024 09:57:32 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC/urgent for v6.9
+Message-ID: <20240512075732.GAZkB2bMH9QL7i1eZS@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a21a0878-021e-4990-a59d-b10f204a018b@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
-References: <20240511100157.2334539-1-chenhuacai@loongson.cn>
- <f92e23be-3f3f-4bc6-8711-3bcf6beb7fa2@app.fastmail.com>
- <CAAhV-H5kn2xPLqgop0iOyg-tc5kAYcuNo3cd+f3yCdkN=cJDug@mail.gmail.com>
- <fcdeb993-37d6-42e0-8737-3be41413f03d@app.fastmail.com>
- <CAAhV-H4s_utEOtFDwjPTqxnMWTVjWhmS7bEVRX+t8HK5QDA8Vg@mail.gmail.com>
-Date: Sun, 12 May 2024 09:52:53 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Huacai Chen" <chenhuacai@loongson.cn>, loongarch@lists.linux.dev,
- Linux-Arch <linux-arch@vger.kernel.org>,
- "Xuefeng Li" <lixuefeng@loongson.cn>, guoren <guoren@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>, "Jiaxun Yang" <jiaxun.yang@flygoat.com>,
- linux-kernel@vger.kernel.org, loongson-kernel@lists.loongnix.cn,
- stable@vger.kernel.org
-Subject: Re: [PATCH] LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Sun, May 12, 2024, at 05:11, Huacai Chen wrote:
-> On Sat, May 11, 2024 at 11:39=E2=80=AFPM Arnd Bergmann <arnd@arndb.de>=
- wrote:
->> On Sat, May 11, 2024, at 16:28, Huacai Chen wrote:
->> > On Sat, May 11, 2024 at 8:17=E2=80=AFPM Arnd Bergmann <arnd@arndb.d=
-e> wrote:
->> CONFIG_COMPAT_32BIT_TIME is equally affected here. On riscv32
->> this is the only allowed configuration, while on others (arm32
->> or x86-32 userland) you can turn off COMPAT_32BIT_TIME on
->> both 32-bit kernel and on 64-bit kernels with compat mode.
-> I don't know too much detail, but I think riscv32 can do something
-> similar to arm32 and x86-32, or we can wait for Xuerui to improve
-> seccomp. But there is no much time for loongarch because the Debian
-> loong64 port is coming soon.
+Hi Linus,
 
-What I meant is that the other architectures only work by
-accident if COMPAT_32BIT_TIME is enabled and statx() gets
-blocked, but then they truncate the timestamps to the tim32
-range, which is not acceptable behavior. Actually mips64 is
-in the same situation because it also only supports 32-bit
-timestamps in newstatat(), despite being a 64-bit
-architecture with a 64-bit time_t in all other syscalls.
+please pull a single urgent EDAC fix for v6.9.
 
-      Arnd
+Thx.
+
+---
+
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
+
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.9
+
+for you to fetch changes up to 591c946675d88dcc0ae9ff54be9d5caaee8ce1e3:
+
+  EDAC/synopsys: Fix ECC status and IRQ control race condition (2024-05-06 14:19:07 +0200)
+
+----------------------------------------------------------------
+- Fix a race condition when clearing error count bits and toggling
+  the error interrupt throug the same register, in synopsys_edac
+
+----------------------------------------------------------------
+Serge Semin (1):
+      EDAC/synopsys: Fix ECC status and IRQ control race condition
+
+ drivers/edac/synopsys_edac.c | 50 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 37 insertions(+), 13 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
