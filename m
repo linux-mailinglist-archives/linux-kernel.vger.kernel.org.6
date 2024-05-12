@@ -1,192 +1,119 @@
-Return-Path: <linux-kernel+bounces-176946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C278C37B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:11:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E2438C37BA
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96C01F2105A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F7C41C20BD1
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF14A4D9F2;
-	Sun, 12 May 2024 17:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A044CE1F;
+	Sun, 12 May 2024 17:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rd1+OPEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="U4cId8CD"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EDB4CDF9;
-	Sun, 12 May 2024 17:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFDB4B5A6;
+	Sun, 12 May 2024 17:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715533867; cv=none; b=q6Q1t+nySevKgGMUEkeesW6IcLWbvlmZ9RnfbOi2cZvwCHEh+3vd4dYdltflPVhZA7JGndA95pSy6a5mmpMMlLZajhrtym49FaOEWLh34SLPGqI5t1RLj3oBZ3Rve8OAQaqBt9GDAAn0DRzZ5+AJJqw43kzHqlwwlue5vHOxGxs=
+	t=1715533989; cv=none; b=dk7JGY05rLqJkq2ajnb8P2oMpdZ818N/fjSx49FVI0AGorQfuWxp/PcAv2Ul8bwA5e/Sv/xVpOoTfBtlYoWYPIEooAyqNSclwpFO1g4ycygh8netBBrvxxxoWY1zpo1g4tu9NlrWR240P2dygzGJyN36Ov93dKGreRMROVj5qXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715533867; c=relaxed/simple;
-	bh=VzGeKoslKNbw1gw65/BLyxBwwDzyJ5nPATxrOsC5LtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqbR7T56nrbw6JOdVA+SbZh7TGw1w7xT+l/Ieij7/zCZNgnOCntxfsSnnk7w329As6DYXShCxK/jX3c3qghyeT3dYLtaFJdYoL24bN9ZMebB+5oH4h9hfERHLLW8l/xLjkx/jsLtzLvokxpAhsbnFRSpe2/TGwRZ8x9JOQoZ3iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rd1+OPEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C38FC116B1;
-	Sun, 12 May 2024 17:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715533866;
-	bh=VzGeKoslKNbw1gw65/BLyxBwwDzyJ5nPATxrOsC5LtE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Rd1+OPEhC6k5RANKKZEX9xTvEs6L7vgAsmaHdJAcB1XdcN1szp9hN2FVUg+t0KIKc
-	 jv0llclutcC5JsWuSBkycpwuUTuPGhSUqo0N8vukvZkK0bMcUbCeI4YyL4OLFwXuJ+
-	 KmNQpGHp1Mdf8EaptC6zyYrywklLf+ZwlvU4QA92qNGG5YjiUlpX+tXaTba4ZuutD9
-	 Fo+wPPF3HT25LyuB3HfMZR4pvDxaRh4veF1mDTWQgEkk2F/6MNeYiyPr8hYuHp0h6l
-	 zJCY9fNPDnRizcIZpIA9hqKf8NoXK4c3JSFPVKDfzFpBf0fRh7CMm5ycvUpeswgT4/
-	 KuV+vz57Zhj0Q==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E05F7CE105C; Sun, 12 May 2024 10:11:05 -0700 (PDT)
-Date: Sun, 12 May 2024 10:11:05 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] rcu/sync: don't read rcu_sync->gp_count lockless
-Message-ID: <bbc3648c-0965-41d1-b245-3a4ca0c9629c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240507093530.3043-1-urezki@gmail.com>
- <20240507093530.3043-26-urezki@gmail.com>
- <20240512111948.GC7541@redhat.com>
- <550cf35c-4fb3-4f06-95b2-9206425d74cc@paulmck-laptop>
- <20240512165529.GD7541@redhat.com>
+	s=arc-20240116; t=1715533989; c=relaxed/simple;
+	bh=VDSb4DbMpc1FY1UtGk9RbyFh7cLMhvTk2YjT8OE06Y8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BrVfhOvL5DAVBOsyi6OA47uP1mxoBmJkF8n5tr2mbJNKHQPRC0NVbq43amqjOq/wZH15n3me6VAmNRpyWjrzw7pH9hzd3xGf4BnxcwPcrY50oVZCrxGc4kWfOcKJWNY4t647wIzWL3FpkXWDvC0B9usdGhtpajz8BpVN1wJEaMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=U4cId8CD; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715533956; x=1716138756; i=markus.elfring@web.de;
+	bh=qcThUF06zC9osZK76mN+mMVo2ws1e0dYwDrXjIgp0WM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=U4cId8CD2ANuydclzA3kWTobo8MZNoEhKBevF78ibF8GvlzR0re8dlKBhF9RsccS
+	 6WAheIhwudGMfjEAKOHEx2KvrA6mJeXVeIRk886k2Xs8RpwbIKrAX87zBGpPW6Oa8
+	 Cy2PhsG3IQzFjMmcaRTCm7vP2BJtwRZipKo4SOdt4CODUSHmJ5wxEdPKPO+s/bzk/
+	 kv5O5mhvAjuIF7rRE6TuUh+WGP5GgjX7abEV4SZY1tpHZMeF0Rpe+T9xgs2xmB2Y7
+	 fJx0H9wJl9CEx0aU7kbvEQrfz9ZjS08pCr4uTMJebmu6UK4EK1/RUGMLEAC5651HY
+	 nDJQ8FtFNir4XKxqUg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JAm-1s8wqE2Vq6-00H3K2; Sun, 12
+ May 2024 19:12:36 +0200
+Message-ID: <34c7ffeb-1fe9-4e89-a7b6-c6a8be17df90@web.de>
+Date: Sun, 12 May 2024 19:12:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240512165529.GD7541@redhat.com>
+User-Agent: Mozilla Thunderbird
+To: Hao Ge <gehao@kylinos.cn>, linux-trace-kernel@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Hao Ge <hao.ge@linux.dev>
+References: <20240511024255.34767-1-hao.ge@linux.dev>
+Subject: Re: [PATCH] eventfs: Directly return NULL to avoid null point
+ dereferenced
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240511024255.34767-1-hao.ge@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YJ0QvveAYIQ2kv+x3SshdYGgo8Z5AaQYcpxaqUcvLgas5BPC1+Q
+ yL6w/Ssrgbn4E/gxTyrx8lX777uQx2ISr4JB07wZBWRzZspOv9kJgDO99hMReE5nEwPYRbx
+ 6fw04kW3AU1eW5CEJtvSC6aYPAwgbz+PMKzqPy1Wur/qUurE/VBgt55f7riw+VNKWufO16K
+ 37cpFFPtfakxqrgMn3rDg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/rt3hg9wDxo=;lMiyN6KiDxzUuuT69+fJAMVnf69
+ 6NhqHDh+ChhgyGsipE/IzRwQyZ+no7qNzgzTF6rAMUQDE1q5DOvftZ1896ln/hbTx/MBqqF2i
+ TD1BQFGcx32XSDDd4INrLdHoEQzfZ5YCN2xRwYD+KldKLps4aRlFUv6ojCLy94GwvhxDr/oXI
+ MZIQGHsfw7dv/Z/z77OmRPUwyz49QpgQTq0I272LQxieeDZokRw0wQPhZSmGErJjHkYegvqAs
+ Pmh+GyNyUjavy/z/f5moUFys71gvJaOGgpwftsKDoKIXjzIW3G2JBDHyWcPFBz3OOfNK9KNdL
+ AXM3VOFYRDWBxyRGLFvpska64oTu7PN51ux55vh7Tz/tvhCnebeMYk3YtkvjAH5hP5AyGQAxr
+ sRxVJoEQokD/uJr8Sbi79TAgOiNtQXzMUq8FKXV1VMcKJUu8u83AEtJf9GWXNesvjPJ4FFYqH
+ 7CKy+RECraT/CXjZ1uQrLBDPMcRKuZj5M8Uk2TypRUsUo31pZ+o2V81BY20wiMNXD6aRDeNGX
+ KCK6KsF6/KKbMRAbK7hTP4PkkKaGZvRuDSDurHV+f8Kg75W6f4a1w6m8+ByIFpfglmkehYkoE
+ r+wzhUH0I0FLfAycC7q0D1kbfpwP2h2xsvNQ4CAvpsv5/LqXX3Go0ZCVbt2yH/n4iuBtZtRec
+ OHIwlfwyd2IwdvV1Ayn/ujtHKy+mVcD9MQklDYFhTRhj1Aw9oO+HHJcaLPqXF2eEfj/WKnCE1
+ V3NbU4pxV0wq3ibiso0Wp1Vn5LgjMQco52gHnJq79ToKgOMiAmSrXUSFWysqJ1VpsR3NBlIB/
+ 07uokY59xhAoCArWMFb2HN7l7RCUNhO0u9rVON7mM1YDk=
 
-On Sun, May 12, 2024 at 06:55:29PM +0200, Oleg Nesterov wrote:
-> On 05/12, Paul E. McKenney wrote:
-> >
-> > --- a/kernel/rcu/sync.c
-> > +++ b/kernel/rcu/sync.c
-> > @@ -151,15 +151,11 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-> >   */
-> >  void rcu_sync_exit(struct rcu_sync *rsp)
-> >  {
-> > -	int gpc;
-> > -
-> >  	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
-> > -	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
-> >
-> >  	spin_lock_irq(&rsp->rss_lock);
-> > -	gpc = rsp->gp_count - 1;
-> > -	WRITE_ONCE(rsp->gp_count, gpc);
-> > -	if (!gpc) {
-> > +	WARN_ON_ONCE(rsp->gp_count == 0);
-> > +	if (!--rsp->gp_count) {
-> >  		if (rsp->gp_state == GP_PASSED) {
-> >  			WRITE_ONCE(rsp->gp_state, GP_EXIT);
-> >  			rcu_sync_call(rsp);
-> > @@ -178,10 +174,10 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
-> >  {
-> >  	int gp_state;
-> >
-> > -	WARN_ON_ONCE(READ_ONCE(rsp->gp_count));
-> >  	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_PASSED);
-> >
-> >  	spin_lock_irq(&rsp->rss_lock);
-> > +	WARN_ON_ONCE(rsp->gp_count);
-> >  	if (rsp->gp_state == GP_REPLAY)
-> >  		WRITE_ONCE(rsp->gp_state, GP_EXIT);
-> >  	gp_state = rsp->gp_state;
-> 
-> Thanks Paul!
-> 
-> But then I think this change can also revert this chunk from the previous
-> patch:
-> 
-> 	@@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-> 			 * we are called at early boot time but this shouldn't happen.
-> 			 */
-> 		}
-> 	-	rsp->gp_count++;
-> 	+	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
-> 		spin_unlock_irq(&rsp->rss_lock);
-> 	 
-> 		if (gp_state == GP_IDLE) {
+> When the condition ei->is_free holds,we return NULL directly to
+> avoid update_events_attr to use NULL point about ei.
 
-Good catch, thank you!  How about like this?
+* Please avoid typos in the summary phrase and the commit message.
 
-							Thanx, Paul
+* Would you like to use an imperative wording for an improved change descr=
+iption?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
-------------------------------------------------------------------------
 
-commit 3e75ce9876396a770a0fcd8eecd83b9f6469f49c
-Author: Oleg Nesterov <oleg@redhat.com>
-Date:   Sun May 12 08:02:07 2024 -0700
+=E2=80=A6
+> +++ b/fs/tracefs/event_inode.c
+> @@ -346,8 +346,7 @@ static struct eventfs_inode *eventfs_find_events(str=
+uct dentry *dentry)
+>  		 * doesn't matter.
+>  		 */
+>  		if (ei->is_freed) {
+> -			ei =3D NULL;
+> -			break;
+> +			return NULL;
+>  		}
+=E2=80=A6
 
-    rcu: Eliminate lockless accesses to rcu_sync->gp_count
-    
-    The rcu_sync structure's ->gp_count field is always accessed under the
-    protection of that same structure's ->rss_lock field, with the exception
-    of a pair of WARN_ON_ONCE() calls just prior to acquiring that lock in
-    functions rcu_sync_exit() and rcu_sync_dtor().  These lockless accesses
-    are unnecessary and impair KCSAN's ability to catch bugs that might be
-    inserted via other lockless accesses.
-    
-    This commit therefore moves those WARN_ON_ONCE() calls under the lock.
-    
-    Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+How do you think about to omit curly brackets here?
 
-diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
-index 6c2bd9001adcd..da60a9947c005 100644
---- a/kernel/rcu/sync.c
-+++ b/kernel/rcu/sync.c
-@@ -122,7 +122,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- 		 * we are called at early boot time but this shouldn't happen.
- 		 */
- 	}
--	WRITE_ONCE(rsp->gp_count, rsp->gp_count + 1);
-+	rsp->gp_count++;
- 	spin_unlock_irq(&rsp->rss_lock);
- 
- 	if (gp_state == GP_IDLE) {
-@@ -151,15 +151,11 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-  */
- void rcu_sync_exit(struct rcu_sync *rsp)
- {
--	int gpc;
--
- 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
--	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
- 
- 	spin_lock_irq(&rsp->rss_lock);
--	gpc = rsp->gp_count - 1;
--	WRITE_ONCE(rsp->gp_count, gpc);
--	if (!gpc) {
-+	WARN_ON_ONCE(rsp->gp_count == 0);
-+	if (!--rsp->gp_count) {
- 		if (rsp->gp_state == GP_PASSED) {
- 			WRITE_ONCE(rsp->gp_state, GP_EXIT);
- 			rcu_sync_call(rsp);
-@@ -178,10 +174,10 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- {
- 	int gp_state;
- 
--	WARN_ON_ONCE(READ_ONCE(rsp->gp_count));
- 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_PASSED);
- 
- 	spin_lock_irq(&rsp->rss_lock);
-+	WARN_ON_ONCE(rsp->gp_count);
- 	if (rsp->gp_state == GP_REPLAY)
- 		WRITE_ONCE(rsp->gp_state, GP_EXIT);
- 	gp_state = rsp->gp_state;
+Regards,
+Markus
 
