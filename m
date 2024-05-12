@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-177007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015FD8C3866
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9798C3869
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCBC281C14
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E06E1F21E73
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B954E1CF;
-	Sun, 12 May 2024 21:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF3552F9E;
+	Sun, 12 May 2024 21:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TvPXbEGD"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqJRtDB7"
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B964D219EB;
-	Sun, 12 May 2024 21:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715547685; cv=fail; b=Rj84PAX60dO8QhFJVJxPkwfT0GdYlRg0Vc1RjlsWcFxU95PfD2JdF4gTlm1JNYlBbxYprFJHgg8f1Ra3jB2uCYaHtoPT1VJ3S6p8+j8hAJAQEbXeJsldJRjXXaT9cTT+dc9vX5DgIOowRc31fK341M7298+sfahG6uHs+/y7LMM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715547685; c=relaxed/simple;
-	bh=TbYiDJw+G+cpt1OfsgNvd8mITawC4DKcp9COU9NThVo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gh3eSDhdBl0/YzXTkypAGHkbyuK6om0cmo2SGzi107ahhHAa2mpIzQqw0BGkwY7KRYRjOghiNTDDfRdiDD6DshQNPWlHLbY2aseimrzhc30G6hPYsAgIWEfcVPrIKBCI6+GuOdmyJMeeSDBHHU5fDZ1WcBO9CWq107ddW2vktbs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TvPXbEGD; arc=fail smtp.client-ip=40.107.237.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c/y4UBxC8qBDK7940Sa26LVpgl4QQ4BN6CP1PWLoshLNiwB/NAT4YS29ZsuKRjyQF/8bOMBxbR+zTmpGDfMoh3BCP9JjAvLyjpA8f7cEswftskNQrEzlsN5cAUMHS4vAucoz7bHt6M7AYl4EDgc59nmttwVGvMZeGlGEBW6BfWl5x3yRIikdrbE8uX+TtpgsW1LKoRVvpRtxbdnaYmpkX2m3PjZJg4SN3lPWHcaH7ZNPgOeS7MMlNI0b9cOr6wsInTbD8sjf17clLuexF008Dx9KB9LIR9vdwkrL6w0s3r4VjL2I/XjDqqnwfdYWs1NvMuaxg/kI9GYo+mdt+4rPAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a3HUe2wIc8l0986Jk1fmLjaeSPYLdkcSwp1U90DXovE=;
- b=OdfYy2klyWTbnSGlw5JNPIrW1Mvc1bF01uNEIDtpssv4fxX4XPTt45NVvyZcU7i3Xt12w1b7iSl+R8tC0cozEsRpn+alDY2lsbaYk1ll5d1tgM1l3409EEei8tQ3aVpcDwp2IyA4nnzXc81mVqz+uAJ4ztcXVASJzQnbgWyO7VWnQj2v0hB1phAXl38M4uyoIC/mtXZQn5ECjoxfxzuvYXMbHE3wJaGJzCxFQy6Ieslg4KvsUFeHXrTq0LcA8GlgOMdGp2yIBaTg3eW7TmhdoviHz6NTuI6pQijG8bSynyw36DFDir+WNLRSaDO84N2HqklwYq4sBhFS52CcDhLGRw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a3HUe2wIc8l0986Jk1fmLjaeSPYLdkcSwp1U90DXovE=;
- b=TvPXbEGDEVIfrcK2kTzCevDnvPGi73mX61ayNkQ42HFypUsnLpl6cDc/lo8LLt5M/Oj1SPUV+BjLxu9wisc/aLPG2Yjjok8+X9lbn8RDEixZVkBGFjzIBdUOAH+75s+P9ANns/BXFDO/+vcWS0qj58LrNhqOTWt4WaYXeqC+Zg+KOvhH2wYsZKRaENFwJ4kuwjydWDOxDuOmBtojngi7R57FL1YDv4b3JkbBoHxxeoIxfItG9gzvlnIMRb6hB3wcnfMsKA6RV2PjOzq56Tl2LrFWw1SIPa8/lRRJG3krY05pQMyL0lsYjOeGeQB7kZL0RDaD/rx3Sef7Rzvd48RXHA==
-Received: from BYAPR08CA0040.namprd08.prod.outlook.com (2603:10b6:a03:117::17)
- by SJ2PR12MB7944.namprd12.prod.outlook.com (2603:10b6:a03:4c5::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sun, 12 May
- 2024 21:01:20 +0000
-Received: from SJ5PEPF000001D1.namprd05.prod.outlook.com
- (2603:10b6:a03:117:cafe::4e) by BYAPR08CA0040.outlook.office365.com
- (2603:10b6:a03:117::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55 via Frontend
- Transport; Sun, 12 May 2024 21:01:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ5PEPF000001D1.mail.protection.outlook.com (10.167.242.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.21 via Frontend Transport; Sun, 12 May 2024 21:01:20 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
- 2024 14:01:05 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
- 2024 14:01:05 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Sun, 12 May 2024 14:01:02 -0700
-Date: Sun, 12 May 2024 14:00:59 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <joro@8bytes.org>,
-	<thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <jonathanh@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v7 5/6] iommu/arm-smmu-v3: Add in-kernel support for
- NVIDIA Tegra241 (Grace) CMDQV
-Message-ID: <ZkEuC+EN1BzGzSg6@nvidia.com>
-References: <cover.1715147377.git.nicolinc@nvidia.com>
- <9cf877a464c359b44e87b375bdf2962d2670f0e2.1715147377.git.nicolinc@nvidia.com>
- <ZkDmSe5XPTbMb+q2@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F4B1DFD0;
+	Sun, 12 May 2024 21:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715547895; cv=none; b=dCLSURRcxP3Ym28a682zhNbZsGMrkTeaxUZ4xXuCXlBaSEBAvQaOeQETcgoR7O3Jm6XCCDy3as1odQbF8qZyPoMEXLQDKuBJxKiQ+T8ls7SqjgIgxw1/FwRYt+ct26qvXrbfdCQNNNrSmndYstMDFwOW4wqkfquVlH375KnPSco=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715547895; c=relaxed/simple;
+	bh=uWMyoS64M6BvRn+3IiwkbrlGwagXWlrWOlikPtGavgg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hsi7cz0PAe5EGYbT6nx8g9LhBkx/O8mA6+nXKIBc5VhTdT285xfyGHZg7Q6v24fth184CgbSMfJcMQfDlnA+sduZFN7yrssxUWuWxq3XL8oLaEUEuSnzZj0E2sjHXQmCf1H5TYJFqQViPziztRskTL1Dmcp16919kWBnEap0H6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bqJRtDB7; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ac61cf3fffso1822635eaf.3;
+        Sun, 12 May 2024 14:04:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715547893; x=1716152693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=49gp34vg08KM1Pui5A3dBoTwgYUqH7gz93G6LxNn9ds=;
+        b=bqJRtDB7tT+8xynmaz6XRLTsuFh2j0ulC/YBe/YDrqwLZ/vC4AAUk5Dr1+NI++TSEy
+         /+M/Xqff3vzzJR75uPjauam1YU/O82ILu8Wslb7Rvwj965fn3xMmxMbwX1JihffPCnWJ
+         ogH4cXPxaY8mHL6K5WAwokzY/8bgbB6YvAMQ+PKdxV+v+o1nE/LFPlhTfGUOZ2v8yyt3
+         XFfwS3QBLdfKSyJkrKJ3rWqrY32hec6hYskipYUpo5ol9xp+yRe/G8bqNWmVDooG74Jg
+         9TuQWt/6ZzaZ7lyLISmETLafyRSzG6fQunSbgKz49XKJ77H1H3updDjRkVJhWbbcUXK2
+         hyGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715547893; x=1716152693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=49gp34vg08KM1Pui5A3dBoTwgYUqH7gz93G6LxNn9ds=;
+        b=RHQxFRCbizpDmrnglu0NSljNI7jR3DEla3RvNVnOxSZEktf3BYfe06EQ5t4HmrPDQs
+         fT4BMr6D/3Dn0vEDXTQJ7z2PfQgl0iX5NWF1Wncm3Yl6fTJtPdAD9XWt/62uojCVuEWa
+         ukvpWrjHi05UHFFypeXNQdLmleU53WmiI5T13jZxov+HJdavhgY7ptOFtqmrFd4K6w46
+         9KJyZJBFZlGUepkFDdxtq7IowdMWLgBGQxN5L5NVrm9o6VrEoodr2tYOkX6Caiwb8VQJ
+         IJdIJCOE3gTvbEriFExPEE93nB/uEtPxe/9wmJYzukbgoceZAkMFlmYgbKdI+4+nfmdB
+         qXiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUlpn+8tGF7mhRO+X59xhtZnav2/A5br8ORR4H14C5vxeoltd8MLcbPTAKRR2mWMT2x6vslBWN8pfn5Nl8LY+7Y+X+0IVNgjo+5NjW3gBU/gcMGcWlGH/Hn3vTs7QknXFk1NUMKiSf2/rrAQxpueTMadhPi5DR7EJLlmRTf2Ewl9RV5Q==
+X-Gm-Message-State: AOJu0YzgSTrc/aQjmv1C1hVLCbsFgbMg1oX95eKpEqIIyYwSp2GcCz7d
+	3I2r/i5q1d6Or2JKYR++f5p8lTpwlyY9U/uJ1UeKeXSr/LeB6WYX
+X-Google-Smtp-Source: AGHT+IGaLzQtf8lEExRQHkXeBJWs+tj4uh3NdhXcCrZvn+xvs8ap41m82njn5QXF1jySL4urQ15lkA==
+X-Received: by 2002:a05:6358:7f9b:b0:18d:daac:f411 with SMTP id e5c5f4694b2df-193bd0005b6mr749382655d.31.1715547892974;
+        Sun, 12 May 2024 14:04:52 -0700 (PDT)
+Received: from localhost.localdomain ([189.101.162.253])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a447391sm6534865a12.3.2024.05.12.14.04.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 14:04:52 -0700 (PDT)
+From: Gustavo Silva <gustavograzs@gmail.com>
+To: jic23@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	lars@metafoo.de,
+	christophe.jaillet@wanadoo.fr,
+	gerald.loacker@wolfvision.net,
+	devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] Add driver for ENS160 sensor
+Date: Sun, 12 May 2024 18:04:36 -0300
+Message-ID: <20240512210444.30824-1-gustavograzs@gmail.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkDmSe5XPTbMb+q2@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D1:EE_|SJ2PR12MB7944:EE_
-X-MS-Office365-Filtering-Correlation-Id: d225ea60-cb5c-4b09-fb02-08dc72c6ac63
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|1800799015|36860700004|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KjsME56UGY75jwfFRj7t0xATantJt4RMIqOECklzkm+Yy9BVxjf14yYY9bu6?=
- =?us-ascii?Q?RwNx+FTTxmPZuEtovg+9qFxpkJwA7pDir7Z5RSN2s/TOEWiRjMLbwga1YkUy?=
- =?us-ascii?Q?d6ypPbLzLimnvSyj4vCF+7WaqbKtAFBp8SMLAGYIhmOVUS5O4I4Sn3GwWSOX?=
- =?us-ascii?Q?O96jAkuXUtVNPLgwYZ4Jcgofj3rOF1H75eppP0oDw9Dz5stsPwWqRAfCYrxi?=
- =?us-ascii?Q?MCmDUEBrozXZzT4tuk7a51hS40tosGxKy5+bRnUwCdI67yP3H6SJWef/Vql9?=
- =?us-ascii?Q?h01kznOKU0Xj5mhnsxqUMtezFtl0XhbV7SFtwR18y9o4XYV0fbNciMTRNzq9?=
- =?us-ascii?Q?BvYhzsx5IjJ6s50kgGvRmcRum+YswvCwwb7/pg7RiFxl157Nj6NssQW0Vj3/?=
- =?us-ascii?Q?s+Ah1Y8/sPBSjVeWteRtiXeD5XijoExiVXojPVIOzE1XJ8xecKbDUCuUm9o+?=
- =?us-ascii?Q?l9ASwzw4M239MfupMYuOBDad8Gy4B7zp7GY8wRL9DGbDhl02dBjjdoBII0TH?=
- =?us-ascii?Q?/FpR3cSWh8tv9d14JeiAwduyikVUolo8cHPsaePybNrYi2gc3q3Uzyr8CcqQ?=
- =?us-ascii?Q?rGSQwB4owqK018i3UM6+5zRzQibPYNyRGe+YmadK/UEXAyqHvNlG839tS5q2?=
- =?us-ascii?Q?BLhXAMUwHc+69xYnvG83tmXNVt+OKSH4vc2PVWs/VpxqhPXWncAyM4XTzbBX?=
- =?us-ascii?Q?KYgSqMfTVWevt9+ogJZG+FYst5CxYj800n27QV92HO8EdF1d24NHLYAFndnl?=
- =?us-ascii?Q?vGt4iDCmXWIXYEK7bI4R5ZRo0oveJ1p4XJ2RvSwKywROt7pA2cgjVyNBFfEe?=
- =?us-ascii?Q?TzlnJ2udakADWZPtsH25i+557qQpDXYDVF7P3dN0i8mpJBYanJJtQOaeNXkK?=
- =?us-ascii?Q?GgxDPcx6KQH3pVM9kNsZduMqTozT3dzKqLlgdgvFfj3aLuvsMD9WsapLjYPL?=
- =?us-ascii?Q?jcCB2R3OvN8qSknEWf0vBb529LIq+Hotq1efRMS/IFgs64PBNI4YlIWHLUrm?=
- =?us-ascii?Q?BdzUi6+hMYPdvEGm4gQZY+2msj+Hl22BCWxh/tzE58XQEdszsOEfNQTxb3Kn?=
- =?us-ascii?Q?YEN5BXZgKTs+Aq9iOUmS6Kd/zF7ntBCcONQynK51+MfaPJAEroM9TOQltQqu?=
- =?us-ascii?Q?B4Nycepl6p/pgrQjCZRo0QStDRdq2/GsncREKOanhFXx1KHymOpemHgxadoe?=
- =?us-ascii?Q?jDXHWHmIcU0YPcszmmrbhsyes9jNInmjdbmFYujXspxt8AMgdhMkxHpV+OON?=
- =?us-ascii?Q?yH6cJIeQKTDF0/GixPspFRuzQsSSuX1B7yZCyQ4uc5lqJot3smamSW6PjXoU?=
- =?us-ascii?Q?XSO54lb6EfAjv/2jFT1uUe2F7MRoXlcuIOGWWjHQeFb3TKDLlQgE9bBn04MT?=
- =?us-ascii?Q?fqN3laY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2024 21:01:20.0779
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d225ea60-cb5c-4b09-fb02-08dc72c6ac63
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7944
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 12, 2024 at 12:54:49PM -0300, Jason Gunthorpe wrote:
-> On Tue, May 07, 2024 at 10:56:53PM -0700, Nicolin Chen wrote:
-> > +#define vcmdq_page1_readl(_vcmdq, reg) \
-> > +	readl((_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> > +#define vcmdq_page1_readl_relaxed(_vcmdq, reg) \
-> > +	readl_relaxed((_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> > +#define vcmdq_page1_readq_relaxed(_vcmdq, reg) \
-> > +	readq_relaxed((_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> > +#define vcmdq_page1_writel(_vcmdq, val, reg) \
-> > +	writel((val), (_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> > +#define vcmdq_page1_writel_relaxed(_vcmdq, val, reg) \
-> > +	writel_relaxed((val), (_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> > +#define vcmdq_page1_writeq(_vcmdq, val, reg) \
-> > +	writeq((val), (_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> > +#define vcmdq_page1_writeq_relaxed(_vcmdq, val, reg) \
-> > +	writeq_relaxed((val), (_vcmdq)->page1 + TEGRA241_VCMDQ_##reg)
-> 
-> These still need to be trimmed to only the ones being used. I still
-> think it is a bad idea, maybe a middle ground is to wrapper the
-> regsiter coding
-> 
-> writeq_relaxed(val, REG_CMDQ_PAGE1(vcmdq, XXX));
-> 
-> Is still short enough and safe enough without creating so much obfuscation..
+This series of patches adds a driver for ScioSense ENS160 multi-gas
+sensor, designed for indoor air quality monitoring.
 
-I think that is a much better practice! Let me try with it.
+Gustavo Silva (6):
+  dt-bindings: vendor-prefixes: add ScioSense
+  dt-bindings: Add ENS160 as trivial device
+  iio: chemical: add driver for ENS160 sensor
+  iio: chemical: ens160: add triggered buffer support
+  iio: chemical: ens160: add power management support
+  MAINTAINERS: Add ScioSense ENS160
 
-Thanks!
-Nicolin
+ .../devicetree/bindings/trivial-devices.yaml  |   2 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   8 +
+ drivers/iio/chemical/Kconfig                  |  22 +
+ drivers/iio/chemical/Makefile                 |   3 +
+ drivers/iio/chemical/ens160.h                 |  11 +
+ drivers/iio/chemical/ens160_core.c            | 401 ++++++++++++++++++
+ drivers/iio/chemical/ens160_i2c.c             |  69 +++
+ drivers/iio/chemical/ens160_spi.c             |  70 +++
+ 9 files changed, 588 insertions(+)
+ create mode 100644 drivers/iio/chemical/ens160.h
+ create mode 100644 drivers/iio/chemical/ens160_core.c
+ create mode 100644 drivers/iio/chemical/ens160_i2c.c
+ create mode 100644 drivers/iio/chemical/ens160_spi.c
+
+
+base-commit: 084eeee1d8da6b4712719264b01cb27b41307f54
+-- 
+2.45.0
+
 
