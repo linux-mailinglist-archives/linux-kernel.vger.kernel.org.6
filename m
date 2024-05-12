@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-176859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7EBE8C3634
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:26:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 658EB8C363D
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535E6281724
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:26:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F79D28163E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3215200C1;
-	Sun, 12 May 2024 11:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D91D208D4;
+	Sun, 12 May 2024 11:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RC7wpxE3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jNnTAm1p"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A930BF9F7
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 11:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85C51B299;
+	Sun, 12 May 2024 11:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715513183; cv=none; b=oOal/Fb4CwmFoGblwwx0iDd/7eH6XBOypqOVJSQVBPYtLhDqDzQ8vV1xHFZb4O6klPHqMb1DDQEu5i+ITQPbe0dv8+Vx2EqEKFfJqiVcEBrRy/AJuGgoqYGaitAKvIeSzOraCxyG53dq5FPHem0LzP/6HS0kL2O/S/iIz/h6cjU=
+	t=1715514204; cv=none; b=BA27kReBWmNEOlUbCRZ+L+YM8nHIE7+08QuE49GnB46FyvkyeEH7D7qZKkfkwR8Ob/Cxq2q0+FfMn7su2sJTM92sLBqLJQYy/3z2YZWsBzHUDs4e5pUpzaf9zsEgT2dBkkkKOZjKPHTDuH1qWBqu3Tkf3do1PcMwePEd4xaBqB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715513183; c=relaxed/simple;
-	bh=oi4tXNBwdMWHpwao/JpAnY5vRdxyZ7Hdoa62eDg5XYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f8aD2SslRZ+y7bQF3w0Q55dNN65r2L/9o290TkKB4hMGZEFI+BWHbKAMXYz//AJJBip5TT8hruXIWJbPKi5r+RxdQtzReRXrlq+9xOqI456yyYsb/d5Gg1AmnqdtIGoXzjdS/G0g7tfipEjxJg/YZAV60PHoG5wW4q82eSVAh34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RC7wpxE3; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715513180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WUR0UZti1lE2smopgq2+r8fhUDTBOIVHzU3OV21Q2YA=;
-	b=RC7wpxE3jxJL7LeaMLP2ZzXVgSDFuJVV9M8qkgLMT2qgjlwsfTZJpfsEU86cWbRVuNLDmU
-	nVtUMd6MJkhjTLdUOQIhZkcY5Npswio4CdPojwBclSZoINWkXbd6czRYRFH+3ujhyXwMV8
-	1MN117zEjp0c1/mmWQfRXUrSf5lfecs=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-595-_QPEU4ZWM6-50bohXRkLWQ-1; Sun,
- 12 May 2024 07:21:18 -0400
-X-MC-Unique: _QPEU4ZWM6-50bohXRkLWQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2E278380008B;
-	Sun, 12 May 2024 11:21:18 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.31])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 4BB182026D68;
-	Sun, 12 May 2024 11:21:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 12 May 2024 13:19:52 +0200 (CEST)
-Date: Sun, 12 May 2024 13:19:48 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>
-Cc: RCU <rcu@vger.kernel.org>, Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH] rcu/sync: don't read rcu_sync->gp_count lockless
-Message-ID: <20240512111948.GC7541@redhat.com>
-References: <20240507093530.3043-1-urezki@gmail.com>
- <20240507093530.3043-26-urezki@gmail.com>
+	s=arc-20240116; t=1715514204; c=relaxed/simple;
+	bh=qLj4gJFZ/7RuARyGAnZp84xT1mPl/8zeXxVZwa+jfd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RJ1S9suzAPUGC7roTaw8uDiWx48FMsCaafrGK65LlGMzaezagZ2lv9lpKA7Wm9mK5ef27/4XjWLMb4Yr26nEHloVdI1ZWIIzLH/4jrldmEhO+J+KmRZd0P8fue9YspR0YWNxH4XUIMbcGJKppesa2JFLmGEGhfYlse7lRmSh9bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jNnTAm1p; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1715514191; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=zP98sGRL72gU8rZzmqd2nC7wYAJhh+7edu3Bc8oq2fM=;
+	b=jNnTAm1psYsmKrvWnYgLkmyZHjZ9i3MAlqgxmqFejqnz5lrEPhX8y1KTD1ZBY8OxEOTX0hXiXFFvZ40zE7eKEUdU4/aZZEh65aJpUFND/Yq/frz813xx1PB2/G5VQlKFuBPuljjrv59PHdpYoOanMPnJOhBMKBfFRe2DLFahokI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=guangguan.wang@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W6FbEpK_1715514189;
+Received: from 30.236.12.8(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0W6FbEpK_1715514189)
+          by smtp.aliyun-inc.com;
+          Sun, 12 May 2024 19:43:10 +0800
+Message-ID: <8ba154e0-30cb-4bc4-9aa2-d4a02cb27545@linux.alibaba.com>
+Date: Sun, 12 May 2024 19:43:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507093530.3043-26-urezki@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
-
-rcu_sync->gp_count is updated under the protection of ->rss_lock but read
-locklessly by the WARN_ON() checks, and KCSAN noted the data race.
-
-Move these WARN_ON_ONCE()'s under the lock and remove the no longer needed
-READ_ONCE().
-
-Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/rcu/sync.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
-index 86df878a2fee..b50fde082198 100644
---- a/kernel/rcu/sync.c
-+++ b/kernel/rcu/sync.c
-@@ -152,9 +152,9 @@ void rcu_sync_enter(struct rcu_sync *rsp)
- void rcu_sync_exit(struct rcu_sync *rsp)
- {
- 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_IDLE);
--	WARN_ON_ONCE(READ_ONCE(rsp->gp_count) == 0);
- 
- 	spin_lock_irq(&rsp->rss_lock);
-+	WARN_ON_ONCE(rsp->gp_count == 0);
- 	if (!--rsp->gp_count) {
- 		if (rsp->gp_state == GP_PASSED) {
- 			WRITE_ONCE(rsp->gp_state, GP_EXIT);
-@@ -174,10 +174,10 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
- {
- 	int gp_state;
- 
--	WARN_ON_ONCE(READ_ONCE(rsp->gp_count));
- 	WARN_ON_ONCE(READ_ONCE(rsp->gp_state) == GP_PASSED);
- 
- 	spin_lock_irq(&rsp->rss_lock);
-+	WARN_ON_ONCE(rsp->gp_count != 0);
- 	if (rsp->gp_state == GP_REPLAY)
- 		WRITE_ONCE(rsp->gp_state, GP_EXIT);
- 	gp_state = rsp->gp_state;
--- 
-2.25.1.362.g51ebf55
+User-Agent: Mozilla Thunderbird
+Subject: Re: some questions about restrictions in SMC-R v2's implementation
+To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
+ kgraul@linux.ibm.com
+Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <6d6e870a-3fbf-4802-9818-32ff46489448@linux.alibaba.com>
+ <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
+Content-Language: en-US
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <ba4c7916-d6c4-44b6-a649-1e17c65e87f9@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
+
+On 2024/5/10 17:40, Wenjia Zhang wrote:
+> 
+> 
+> On 07.05.24 07:54, Guangguan Wang wrote:
+>> Hi, Wenjia and Jan,
+>>
+>> When testing SMC-R v2, I found some scenarios where SMC-R v2 should be worked, but due to some restrictions in SMC-R v2's implementation,
+>> fallback happened. I want to know why these restrictions exist and what would happen if these restrictions were removed.
+>>
+>> The first is in the function smc_ib_determine_gid_rcu, where restricts the subnet matching between smcrv2->saddr and the RDMA related netdev.
+>> codes here:
+>> static int smc_ib_determine_gid_rcu(...)
+>> {
+>>      ...
+>>          in_dev_for_each_ifa_rcu(ifa, in_dev) {
+>>              if (!inet_ifa_match(smcrv2->saddr, ifa))
+>>                  continue;
+>>              subnet_match = true;
+>>              break;
+>>          }
+>>          if (!subnet_match)
+>>              goto out;
+>>      ...
+>> out:
+>>      return -ENODEV;
+>> }
+>> In my testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth0 in netnamespace2. For the sake of clarity
+>> in the following text, we will refer to eth0 in netnamespace1 as eth1, and eth0 in netnamespace2 as eth2. The eth1's ip is 192.168.0.3/32 and the
+>> eth2's ip is 192.168.0.4/24. The netmask of eth1 must be 32 due to some reasons. The eth1 is a RDMA related netdev, which means the adaptor of eth1
+>> has RDMA function. The eth2 has been associated to the eth1's RDMA device using smc_pnet. When testing connection in netnamespace2(using eth2 for
+>> SMC-R connection), we got fallback connection, rsn is 0x03010000, due to the above subnet matching restriction. But in this scenario, I think
+>> SMC-R should work.
+>> In my another testing environment, either server or client, exists two netdevs, eth0 in netnamespace1 and eth1 in netnamespace1. The eth0's ip is
+>> 192.168.0.3/24 and the eth1's ip is 192.168.1.4/24. The eth0 is a RDMA related netdev, which means the adaptor of eth0 has RDMA function. The eth1 has
+>> been associated to the eth0's RDMA device using smc_pnet. When testing SMC-R connection through eth1, we got fallback connection, rsn is 0x03010000,
+>> due to the above subnet matching restriction. In my environment, eth0 and eth1 have the same network connectivity even though they have different
+>> subnet. I think SMC-R should work in this scenario.
+>>
+>> The other is in the function smc_connect_rdma_v2_prepare, where restricts the symmetric configuration of routing between client and server. codes here:
+>> static int smc_connect_rdma_v2_prepare(...)
+>> {
+>>      ...
+>>      if (fce->v2_direct) {
+>>          memcpy(ini->smcrv2.nexthop_mac, &aclc->r0.lcl.mac, ETH_ALEN);
+>>          ini->smcrv2.uses_gateway = false;
+>>      } else {
+>>          if (smc_ib_find_route(net, smc->clcsock->sk->sk_rcv_saddr,
+>>                smc_ib_gid_to_ipv4(aclc->r0.lcl.gid),
+>>                ini->smcrv2.nexthop_mac,
+>>                &ini->smcrv2.uses_gateway))
+>>              return SMC_CLC_DECL_NOROUTE;
+>>          if (!ini->smcrv2.uses_gateway) {
+>>              /* mismatch: peer claims indirect, but its direct */
+>>              return SMC_CLC_DECL_NOINDIRECT;
+>>          }
+>>      }
+>>      ...
+>> }
+>> In my testing environment, server's ip is 192.168.0.3/24, client's ip 192.168.0.4/24, regarding how many netdev in server or client. Server has special
+>> route setting due to some other reasons, which results in indirect route from 192.168.0.3/24 to 192.168.0.4/24. Thus, when CLC handshake, client will
+>> get fce->v2_direct==false, but client has no special routing setting and will find direct route from 192.168.0.4/24 to 192.168.0.3/24. Due to the above
+>> symmetric configuration of routing restriction, we got fallback connection, rsn is 0x030f0000. But I think SMC-R should work in this scenario.
+>> And more, why check the symmetric configuration of routing only when server is indirect route?
+>>
+>> Waiting for your reply.
+>>
+>> Thanks,
+>> Guangguan Wang
+>>
+> Hi Guangguan,
+> 
+> Thank you for the questions. We also asked ourselves the same questions a while ago, and also did some research on it. Unfortunately, it was not yet done and I had to delay it because of my vacation last month. Now it's time to pick it up again ;) I'll come back to you as soon as I can give a very certain answer.
+> 
+> Thanks,
+> Wenjia
+
+Hi, Wen Jia,
+
+So glad to hear that these questions have also caught your attention, and I'm really looking forward to your answers.
+
+Thanks,
+Guangguan Wang
 
