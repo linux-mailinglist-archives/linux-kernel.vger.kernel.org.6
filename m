@@ -1,132 +1,115 @@
-Return-Path: <linux-kernel+bounces-176805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F888C3539
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:30:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AD88C353A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B60511C20E4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 06:30:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5AB1C20D84
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 06:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA9AFBE8;
-	Sun, 12 May 2024 06:29:59 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB445FBE8;
+	Sun, 12 May 2024 06:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gOcJeskN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="24AKP5h2"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21FE2F4E2
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 06:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E51E556
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 06:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715495399; cv=none; b=GqJiZhK351+zMwgXVk60rRiUC+FfbmUqtk7x0yVQTm1qeqcJWj8MWpMK+YyVTvq1D//T4h3zOyCCqleSpDaOrSE34rf+2LzdF0Sos4vLie8pOl4dpOt3aia0lkENWjkaMOJSrrsbdiA9gZpuQBOPrZRsecgZiEPMueYOKa8DSBE=
+	t=1715495768; cv=none; b=AMQMbsY1VtpNO51c2enCUsjO8KSaTJ3W6h7deFOhS+ipyXmSWuQkRe3lsWwBWfjMXkqkPt6AM6H7P+aNlCN6aJDaiJb2H3HVS3RyKH1gTqzKrgIa5i70PRFbIgZMvkdywYvYUKbwIR2eqZZZoafzBfTKymog8b/Qc81JXIlgbLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715495399; c=relaxed/simple;
-	bh=We4U4DI0hzgjmbjlN/VFCiTFbi1yTK1ImqqRGWmuzSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IxfTeT+DSFH+PYNZ+/iez6No2+C/aB6huyUSYSOKbgUOo5UrGJLiO27CDBDFUB3GmuQqMbtfE6x/gI60aPL0Mze9DuenXeEQLbcVpkAcuNQkNuks++QazV7GjApNky8nv4kndTAE5uF5QppF5+iMoX/kHafWknU8ZzNONbEA/ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav312.sakura.ne.jp (fsav312.sakura.ne.jp [153.120.85.143])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 44C6ToTK048144;
-	Sun, 12 May 2024 15:29:50 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav312.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp);
- Sun, 12 May 2024 15:29:50 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav312.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 44C6Tna1048139
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 12 May 2024 15:29:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <61335219-fbc4-4cd9-af8a-cf69f4c2c873@I-love.SAKURA.ne.jp>
-Date: Sun, 12 May 2024 15:29:49 +0900
+	s=arc-20240116; t=1715495768; c=relaxed/simple;
+	bh=jA+qK5hVsJOCZ/TVuc/fCxhMUa6r3N263i61oVDq9H4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uPPfuFRov9dDeN00RGfT2pO/KbD9Ycrpj6nt5FCt/S0a70/oE3rkIFvII460MRi5vhMYn5dzStsdrhoHJZ2Q78/dYsj/NqTNky2Ey/8yUiXEsYk7yJ4yjmbNfIhRI0207vAJflKZKAe0KzgqYAST9nd7YVz1oxdR2oiiAO3IJa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gOcJeskN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=24AKP5h2; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715495756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QJak6izOLdXcT5b2TZaAlyg3uKMUWQPMlJ+3t6Ownik=;
+	b=gOcJeskN/2y0z/zGSs1nmmCHx1/0DqBNDcf97/2kgXfnb2qnRUtv/jKClMYVJ4CLHQIQ6w
+	NDbGdHDbiYDAPft3fzwe1tS9RVC6/25qoIF3b80vsxHD1Vtmj3Lq2p1ZiDkyzg4anCftJP
+	QilpQgDSqctPPrOdgE3MFA6b5iB3Q3jICaYzLHrXM4szdzJ4kBnIbZtAvfzmj5xUuL78n0
+	Td+coWZRwtqCEzwv7/Wz0C0A5HW/b/SLTgfY2PmQDqwZyiKMFEZG6C+pCMcAsjF0ShocpD
+	jg0DBGik3J2PWbqw8VVKrORSamjUna9CL54lAzLvh9785m7glEYh1vpda+YnFQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715495756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QJak6izOLdXcT5b2TZaAlyg3uKMUWQPMlJ+3t6Ownik=;
+	b=24AKP5h2uBsPJidtVpL1o9LyJp+cc2J4nSHdY+ggiissoreeUu6SAxuSlPUGl8nI0cD3aM
+	1NE3YuiWVgmRIyBg==
+To: Keith Busch <kbusch@kernel.org>, Ming Lei <ming.lei@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] nvme-pci: allow unmanaged interrupts
+In-Reply-To: <Zj6-1sXvUNZWO1pB@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240510141459.3207725-1-kbusch@meta.com>
+ <20240510141459.3207725-2-kbusch@meta.com> <20240510151047.GA10486@lst.de>
+ <Zj5JMqWRY187PqnD@kbusch-mbp.dhcp.thefacebook.com>
+ <Zj6yvTxIpUnOXl7R@fedora>
+ <Zj6-1sXvUNZWO1pB@kbusch-mbp.dhcp.thefacebook.com>
+Date: Sun, 12 May 2024 08:35:55 +0200
+Message-ID: <87r0e7mt9w.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [net?] [bpf?] possible deadlock in sock_hash_delete_elem
- (2)
-To: syzbot <syzbot+ec941d6e24f633a59172@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <0000000000000d7c8f0614076733@google.com>
- <000000000000d0b87206170dd88f@google.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <000000000000d0b87206170dd88f@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+On Fri, May 10 2024 at 18:41, Keith Busch wrote:
+> On Sat, May 11, 2024 at 07:50:21AM +0800, Ming Lei wrote:
+>> Can you explain a bit why it is a no-op? If only isolated CPUs are
+>> spread on one queue, there will be no IO originated from these isolated
+>> CPUs, that is exactly what the isolation needs.
+>
+> The "isolcpus=managed_irq," option doesn't limit the dispatching CPUs.
+> It only limits where the managed irq will assign the effective_cpus as a
+> best effort.
+>
+> Example, I boot with a system with 4 threads, one nvme device, and
+> kernel parameter:
+>
+>   isolcpus=managed_irq,2-3
+>
+> Run this:
+>
+>   for i in $(seq 0 3); do taskset -c $i dd if=/dev/nvme0n1 of=/dev/null bs=4k count=1000 iflag=direct; done
+>
+> Check /proc/interrupts | grep nvme0:
+>
+>            CPU0       CPU1       CPU2       CPU3
+> ..
+>  26:       1000          0          0          0  PCI-MSIX-0000:00:05.0   1-edge      nvme0q1
+>  27:          0       1004          0          0  PCI-MSIX-0000:00:05.0   2-edge      nvme0q2
+>  28:          0          0       1000          0  PCI-MSIX-0000:00:05.0   3-edge      nvme0q3
+>  29:          0          0          0       1043  PCI-MSIX-0000:00:05.0   4-edge      nvme0q4
+>
+> The isolcpus did nothing becuase the each vector's mask had just one
+> cpu; there was no where else that the managed irq could send it. The
+> documentation seems to indicate that was by design as a "best effort".
 
-diff --git a/include/linux/skmsg.h b/include/linux/skmsg.h
-index a509caf823d6..66590f20b777 100644
---- a/include/linux/skmsg.h
-+++ b/include/linux/skmsg.h
-@@ -66,7 +66,10 @@ enum sk_psock_state_bits {
- };
- 
- struct sk_psock_link {
--	struct list_head		list;
-+	union {
-+		struct list_head	list;
-+		struct rcu_head		rcu;
-+	};
- 	struct bpf_map			*map;
- 	void				*link_raw;
- };
-@@ -418,7 +421,7 @@ static inline struct sk_psock_link *sk_psock_init_link(void)
- 
- static inline void sk_psock_free_link(struct sk_psock_link *link)
- {
--	kfree(link);
-+	kfree_rcu(link, rcu);
- }
- 
- struct sk_psock_link *sk_psock_link_pop(struct sk_psock *psock);
-diff --git a/net/core/skmsg.c b/net/core/skmsg.c
-index fd20aae30be2..9cebfeecd3c9 100644
---- a/net/core/skmsg.c
-+++ b/net/core/skmsg.c
-@@ -791,10 +791,12 @@ static void sk_psock_link_destroy(struct sk_psock *psock)
- {
- 	struct sk_psock_link *link, *tmp;
- 
-+	rcu_read_lock();
- 	list_for_each_entry_safe(link, tmp, &psock->link, list) {
- 		list_del(&link->list);
- 		sk_psock_free_link(link);
- 	}
-+	rcu_read_unlock();
- }
- 
- void sk_psock_stop(struct sk_psock *psock)
-diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-index 8598466a3805..8bec4b7a8ec7 100644
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -142,6 +142,7 @@ static void sock_map_del_link(struct sock *sk,
- 	bool strp_stop = false, verdict_stop = false;
- 	struct sk_psock_link *link, *tmp;
- 
-+	rcu_read_lock();
- 	spin_lock_bh(&psock->link_lock);
- 	list_for_each_entry_safe(link, tmp, &psock->link, list) {
- 		if (link->link_raw == link_raw) {
-@@ -159,6 +160,7 @@ static void sock_map_del_link(struct sock *sk,
- 		}
- 	}
- 	spin_unlock_bh(&psock->link_lock);
-+	rcu_read_unlock();
- 	if (strp_stop || verdict_stop) {
- 		write_lock_bh(&sk->sk_callback_lock);
- 		if (strp_stop)
+That's expected as you pin the I/O operation on the isolated CPUs which
+in turn makes them use the per CPU queue.
 
+The isolated CPUs are only excluded for device management interrupts,
+but not for the affinity spread of the queues.
 
+Thanks,
+
+        tglx
 
