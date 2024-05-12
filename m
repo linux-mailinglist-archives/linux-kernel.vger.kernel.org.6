@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-176889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA5D8C36B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:26:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27B98C36B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 15:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2041F21FC3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:26:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7621B211A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D616D47A6C;
-	Sun, 12 May 2024 13:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F22249FE;
+	Sun, 12 May 2024 13:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N29LfkAs"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="hsPOe+ht"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED4B383A9;
-	Sun, 12 May 2024 13:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A20EBA53;
+	Sun, 12 May 2024 13:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715520332; cv=none; b=luiZU7+6+CIuxgLXm5JU/KyGuqE++0XSjlPvKDu2vVlwmYzZz0BAMkUiy08CaE9DQAjwFGRtYeqVCUlGx6LpkEh8r6HS++aqiGppnI0nulbqLs+Yoo00w1gEM8j5YxH+jgiySjY8qD0hmbv29rx6Hu/NgsZ5rZKpuUQlQUA/MGk=
+	t=1715520380; cv=none; b=JrDphhhw+TliGc3DiMClzdJjF+6xVNcoZ8bqcO9sbc0B/d0+a1hTZMppwx0pdd+nYpYCoOMuWQC+zzYxvjKOgObQMUdTdQ88Zl8ZfzakDlu0syycUpHGm+vEUBXZ+Y04zfAM09m7fabjPnqEAL07CkGdNOeuwdeK/ahKMT7Hef8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715520332; c=relaxed/simple;
-	bh=J+g8IFFwy/vjVlcPhULbDtQ2VliUzl+7eSs2atsxppo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aBDECtxzE4A7Lqe9aKvLOC7RgS0UL9h828Cw7jJQXfuxULvpYroIQBjlMgULXPzWmI0+elJjDRHVn0OLgoVCWn1O3d+gvmhiaPSJHaVSHaEek660YBJsSh5GA9wkH78CDp8GX5KZ1CK4xBilHpqyEAsr4pQJeO/rv185SWZHivo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N29LfkAs; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-34da4d6f543so2474888f8f.3;
-        Sun, 12 May 2024 06:25:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715520329; x=1716125129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BVMmxV0x3lE9AAJXo4i0SZvZEcFwdqyDwVz0Ae897gs=;
-        b=N29LfkAsr/kAgpVCsgMQ7dMoFKgENWriyGYCSxUIWoRkyahowO9gnJqf2V/HuJstH6
-         /1xnaEZ2IDJ4eLp1a5PKUmPoX42MLwxUET1hvP/KIO5W4HJVFnm+uCqPmxml9XuASWGl
-         wCOx4aeRfBzDvJhnKfLyYwc8Md/y6Z25ftaBeCinc9KWLv0fbSYPzQvU/F/8+2zHXFkn
-         1srgbp2FvsyK5J9qPkWrm2n+bmhEZTynlEoF1W0LDcC/TquHM3iHRwmkd0O9G/OnVjLa
-         4I8ebT1lLNLPRWYoUgKkbtJ85C3JwwbspblA5UwhBtHmWxcbMWmq4Mv/mHFLw/21VGtx
-         sZoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715520329; x=1716125129;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BVMmxV0x3lE9AAJXo4i0SZvZEcFwdqyDwVz0Ae897gs=;
-        b=teKfkUNBtMOWYYLK/a4SHwbkcybFmQ17LsZDGrQPRIHX+50TGWZpvIiZ3Jtamky7Tn
-         K+pZ2XOW2iKGYdx7H3lVf507wYsOX4Zgfn1g7WmPqFyiav3a3N3HuuSb+RbfFgXYyPmp
-         sKwSCu5Dsfobs1TBKpa3Vo4oEEgGEd+T9tuZ4WKCQgD2DefSXGAcvOzi9OjffV7Vd7+B
-         iDPosJpMh4wQo5zvTNSmTfuXjzgcEnIeslfzbppDKEZaD7mW7QvRpaRo425Q+YRG4vrO
-         B0RvKVataEhot1yvcJqhldqTJuYo3poVsA4uMMhTVb6y3ztKQ6ROFzoethyOvzhUhMhh
-         kIRg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1PIDf54oKbuFex7hwmcOSiNzMbij543ZhHTLtaRUOtus4LSXxmHJeh/lClbS9GZFwIMbzMzUcbukAloViJ+Tv2nMzqzKgNPtS1Bp9B+Uw+wLGPzNf2C5mDvmEcVKYiC/AlIMIWPuQoG5J0eBiRa3dHnxgWiWVEdZvewrKDPB1OliimGc=
-X-Gm-Message-State: AOJu0Yz6JBG+63mReXg2mWty4IC2OHBYU5GcMVcDy+BOGDLVGAGqrTyW
-	/qEQAeCIOCBnyvAyyCy/0UUPiKx/DteLRxcolnqHoHE2CO+eqjsm
-X-Google-Smtp-Source: AGHT+IGPgmj9+HFj7ZmEj4HsMNnaUpkxl+HBirbu9OeF3UbYZa3LMM4sHMUqN7Itsxvn58XENpHmLg==
-X-Received: by 2002:a05:6000:12d0:b0:34d:bbaf:27cf with SMTP id ffacd0b85a97d-3504a96a4b7mr5028390f8f.51.1715520328598;
-        Sun, 12 May 2024 06:25:28 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3502b79bd09sm8822468f8f.14.2024.05.12.06.25.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 06:25:28 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Saravana Kannan <saravanak@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Helge Deller <deller@gmx.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Baoquan He <bhe@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	David Bauer <mail@david-bauer.net>,
-	Liviu Dudau <liviu@dudau.co.uk>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH 4/4] MIPS: add bootargs-override property
-Date: Sun, 12 May 2024 15:25:11 +0200
-Message-ID: <20240512132513.2831-5-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240512132513.2831-1-ansuelsmth@gmail.com>
-References: <20240512132513.2831-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1715520380; c=relaxed/simple;
+	bh=WDtKNNP3iXCZPyTUSEcychOvwEY13GFXVMSzd5aqpnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L2OwttNR9B9irsSPEfmhy7eWkNC2XDOH42YL9QO2MNOQt4e9sqC1AHfEg7kGDfrBFOvTUwuR6MNVDx19ayoBbE2+XwGE9R0MbPL+qBJc8/6t8q2caSYnbz4GGBdJ6JwtblIGlf0BLKfue6Cq0NSYU9qyCPNr2rJYtJhaEKJi05U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=hsPOe+ht; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id DB20D1FE14;
+	Sun, 12 May 2024 15:26:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1715520374;
+	bh=14xTlFZyyAwub1YHid74UWqP0unctpKmhBnSJ9rOl18=; h=From:To:Subject;
+	b=hsPOe+ht/lQmPxGcrmewU+3VwXIGIIVazsBpi17ROwIcRyauO6XJFUkt06waVCIHo
+	 SfGVGYsNQw1pIVN6F9Dcu/U55spv11fg6poH2U6kKKAfMwWRV5beXgTZO6CfZCLRp2
+	 YkURokHCC2i3Ry1S2wToOg0JPqaVykEh1c4X2dDNJPGTzAsYk7jxLhwk3KNroZJZ9l
+	 22WZP5vdPMFlBejrwdddTrrDtbpnFzvHYaJmKoAxMHHHtYTGHPF/88bQmSGSoTWmh7
+	 eLv3Ak0A8zgz+bVHC2JclQJXNiZ3jLOwSVWZ4kNpZL3BQWETLek4oGDvFbcmCI35/i
+	 k0L7oPfO4hn5A==
+Date: Sun, 12 May 2024 15:26:09 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-imx@nxp.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Shengjiu Wang <shengjiu.wang@nxp.com>
+Subject: Re: [PATCH 1/2] arm64: dts: imx8mp-evk: Add HDMI audio sound card
+ support
+Message-ID: <20240512132609.GA6026@francesco-nb>
+References: <1708675339-8180-1-git-send-email-shengjiu.wang@nxp.com>
+ <1786327.VLH7GnMWUR@steina-w>
+ <CAA+D8AMU69B1Bf3tbbvtkJz_pYY0VNaQMhBXxZvDYug=_DHxYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAA+D8AMU69B1Bf3tbbvtkJz_pYY0VNaQMhBXxZvDYug=_DHxYg@mail.gmail.com>
 
-From: David Bauer <mail@david-bauer.net>
+Hello Wang,
 
-Add support for the bootargs-override and bootargs-append property
-to the chosen node similar to the one used on ipq806x or mpc85xx.
+On Mon, Feb 26, 2024 at 11:06:48AM +0800, Shengjiu Wang wrote:
+> On Fri, Feb 23, 2024 at 5:06 PM Alexander Stein
+> <alexander.stein@ew.tq-group.com> wrote:
+> > Am Freitag, 23. Februar 2024, 09:02:18 CET schrieb Shengjiu Wang:
+> > > The AUD2HTX is a digital module that provides a bridge between
+> > > the Audio Subsystem and the HDMI RTX Subsystem. This
+> > > module includes intermediate storage to queue SDMA transactions
+> > > prior to being synchronized and passed to the HDMI
+> > > RTX Subsystem over the Audio Link.
+> > >
+> > > AUD2HTX works as the cpu dai in HDMI audio sound card.
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-This is necessary, as the U-Boot used on some boards, notably the
-Ubiquiti UniFi 6 Lite, overwrite the bootargs property of the chosen
-node leading to a kernel panic on kernel loading (hardcoded root path or
-other not compatible thing).
+..
 
-Signed-off-by: David Bauer <mail@david-bauer.net>
-[ rework and simplify implementation, add support for bootargs-append ]
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- arch/mips/kernel/setup.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+> > Don't you need to configure the PAI as well? See [1]
+> > for downstream implementation. I'm wondering because I had to hack something
+> > similar. Without I got no HDMI audio.
+> 
+> Yes, the PAI part is needed.
+> But this commit is just for sound card dts update.
 
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 12a1a4ffb602..725e3f19f342 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -538,11 +538,23 @@ static int __init bootcmdline_scan_chosen(unsigned long node, const char *uname,
- 	    (strcmp(uname, "chosen") != 0 && strcmp(uname, "chosen@0") != 0))
- 		return 0;
- 
--	p = of_get_flat_dt_prop(node, "bootargs", &l);
-+	/*
-+	 * Retrieve command line
-+	 * bootargs might be hardcoded and overwrite by bootloader on
-+	 * kernel load.
-+	 * Check if alternative bootargs-override is present instead
-+	 * first.
-+	 */
-+	p = of_get_flat_dt_prop(node, "bootargs-override", &l);
-+	if (p == NULL || l == 0)
-+		p = of_get_flat_dt_prop(node, "bootargs", &l);
- 	if (p != NULL && l > 0) {
- 		bootcmdline_append(p, min(l, COMMAND_LINE_SIZE));
- 		*dt_bootargs = true;
- 	}
-+	p = of_get_flat_dt_prop(node, "bootargs-append", &l);
-+	if (p != NULL && l > 0)
-+		bootcmdline_append(p, min_t(int, strlen(boot_command_line) + l, COMMAND_LINE_SIZE));
- 
- 	return 1;
- }
--- 
-2.43.0
+I did try this series (the v3, to be correct) and to me is not working.
+While I understand this is just the DTS update, did you got any chance
+to send patches for the remaining bits required to have the
+functionality working? Am I missing something?
+
+Thanks,
+Francesco
+
+
 
 
