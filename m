@@ -1,277 +1,142 @@
-Return-Path: <linux-kernel+bounces-176861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDDE8C3640
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F5318C3644
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 13:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84F13B20E6B
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:48:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331131C20A05
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 11:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1427208CB;
-	Sun, 12 May 2024 11:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D4F20B28;
+	Sun, 12 May 2024 11:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="0kmb2Owc"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljkF2R1x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D99E1C2AD;
-	Sun, 12 May 2024 11:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367C91C2AD;
+	Sun, 12 May 2024 11:52:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715514506; cv=none; b=K3FEtln6mvwrem7q/L/lFetuwEjp+FOSj6MRAJO+vaj3XVI1JuYYUqfu7D/+Zes8xYUrMYIjUZeKcenvC1kTXWiCm1spvred+eCr95NOGn5mOi6anfEOO9ieXK1/vptkRkhrD5ICjGNY1Se4FVj8yKW2eSAud1fxcJsy9xhGUEA=
+	t=1715514737; cv=none; b=bqMmhlSFF9qseTzqLeDDTw+XowVVfmq2DIxqVe2dQ5Zlur+DHIAWUkwJANSbKSridE2CfdRGYv8C0l8NrCRp/ZxQCIzKPEKbs+L9UoOHAmODGhezTMXSx6Vzof1X+ksAKVwgVK6pSmboJRpvoseMvxVrrMXjKABDGdX9wBDu7SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715514506; c=relaxed/simple;
-	bh=a5sdWUu/SAnXiIE5VHIWRL/RhaEuPx+jDaNkfSPfeoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ctrEt3l1e2cxH619YDOrUZmDtxeeltkcO/u1WluuyYL2Bhc9shxoFCEhKjrk8HTftz1y4T17+gxkiVC4Oi+itMeBp+078N5eUjmedn5vhCWWir03KXKQyYANO9mt3L4QkwfpA+oGPgdsijiumlqaZksU8FZIBQXW+9cIx46gYeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=0kmb2Owc; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 7E6081FA0A;
-	Sun, 12 May 2024 13:48:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1715514493;
-	bh=h0z00hFgh4UUjW8xjsLXv7Y36CFzGdOnXABZK2z+T8E=;
-	h=Received:From:To:Subject;
-	b=0kmb2Owch7ccpjr4CzvDlwCyQcDbQL/navgz7mJJnrdKG6zWp+U2OcHP8I9gYZiYy
-	 /q2yQCEnsgM/wtoxjQTiK360leWExG3pE0/yLGsAv1VpkR/dVzOe1VC2ZGIjK32m11
-	 JBPuTgB+0/yKwNdozsIkoBOLM05koOpaPulZI0iADs5wUc3audNKGVhjiBZLuAhZQR
-	 EpMeqq1VlgthSjVSKusPRbgFemA4Li6y1ZSRAXL5J3g7VuR4LfP53suGUkUZ/D9eVu
-	 zxqwwsbvrU7fQLX0mFxmeR7yXYx4Gndej8IexOKFtIUC4Cb4WHYAETvp6m3btAKCv8
-	 XFbV5taFPx/CQ==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 117787F95F; Sun, 12 May 2024 13:48:13 +0200 (CEST)
-Date: Sun, 12 May 2024 13:48:12 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH 4/4] drm/tidss: Add OLDI bridge support
-Message-ID: <ZkCsfH1qeSsXyQz4@gaggiata.pivistrello.it>
-References: <20240511193055.1686149-1-a-bhatia1@ti.com>
- <20240511193055.1686149-5-a-bhatia1@ti.com>
+	s=arc-20240116; t=1715514737; c=relaxed/simple;
+	bh=v15+8QTi7Lu1dvYp4AaC787advGK52IzzFq4cv1dswQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e1pRrEApb/EcUIgiSqm4uroKLfDAF8PahyxfaSVPzzCP/EhWKdcwKQWywDNC743qkEyscWy8gC4Mk9xb1VRkT3uicrYZuYidFZIFaV03RNKeHGUaB+l6lDl9J8Nr55RdIRSOKpMW6+uuQ5aThg0nzWpdqVXtAE41/65wqKtNBBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljkF2R1x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7829FC116B1;
+	Sun, 12 May 2024 11:52:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715514736;
+	bh=v15+8QTi7Lu1dvYp4AaC787advGK52IzzFq4cv1dswQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ljkF2R1xYfGxlIdUxblo0YdsP5cPZko4XbAiX7gXXIAJXmMiVLiY33Dc40mfeMf6Z
+	 xuh18XltQF2GRRNE3rpRfogp4/4PJiS0lhVfDqLZA9Hot34qtitUaHxBCtNsqBBmno
+	 G0QMqA6qtWjt+7XMn6vQGpPfe14mdnTSwisZ4I+luby2I3ul66pEaV34DKRttTBBPT
+	 rB564hmz8nJslNABoxIdkDg04TjKMTXL3fSDNObzv4kZWxBdy7WxuJbbR8/bOOTWrv
+	 I+ufFladUnlnP3sIQD6zLJd1KIqnoceU9PTLXnWrMbVPEkL/qMuHThAr2iRku7tca7
+	 X9JvTulSVR7Rg==
+Date: Sun, 12 May 2024 12:52:02 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+ <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v2 8/8] iio: adc: ad7944: add support for SPI
+ offload
+Message-ID: <20240512125202.312d0576@jic23-huawei>
+In-Reply-To: <CAMknhBGG9bYwzPw8woaR_YaVRW+wpT4W1KpHzG32nWj9Qi7fig@mail.gmail.com>
+References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+	<20240510-dlech-mainline-spi-engine-offload-2-v2-8-8707a870c435@baylibre.com>
+	<20240511175832.6c2f6517@jic23-huawei>
+	<CAMknhBGG9bYwzPw8woaR_YaVRW+wpT4W1KpHzG32nWj9Qi7fig@mail.gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240511193055.1686149-5-a-bhatia1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Aradhya, thanks for you patch, I should be able to test your patch on my
-hardware in the coming days.
+On Sat, 11 May 2024 13:41:09 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-On Sun, May 12, 2024 at 01:00:55AM +0530, Aradhya Bhatia wrote:
-> Up till now, the OLDI support in tidss was integrated within the tidss dispc.
-> This was fine till the OLDI was one-to-mapped with the DSS video-port (VP).
-> The AM62 and AM62P SoCs have 2 OLDI TXes that can support dual-lvds / lvds-clone
-> modes.
-> 
-> Add OLDI TXes as separate DRM bridge entities to better support the new LVDS
-> configurations.
-> 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->  drivers/gpu/drm/tidss/Makefile      |   3 +-
->  drivers/gpu/drm/tidss/tidss_dispc.c |  11 +-
->  drivers/gpu/drm/tidss/tidss_dispc.h |   4 +
->  drivers/gpu/drm/tidss/tidss_drv.c   |  13 +-
->  drivers/gpu/drm/tidss/tidss_drv.h   |   4 +
->  drivers/gpu/drm/tidss/tidss_oldi.c  | 568 ++++++++++++++++++++++++++++
->  drivers/gpu/drm/tidss/tidss_oldi.h  |  73 ++++
->  7 files changed, 673 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.c
->  create mode 100644 drivers/gpu/drm/tidss/tidss_oldi.h
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-> index d15f836dca95..fd90e8498cc2 100644
-> --- a/drivers/gpu/drm/tidss/tidss_drv.c
-> +++ b/drivers/gpu/drm/tidss/tidss_drv.c
-> @@ -23,6 +23,7 @@
->  #include "tidss_drv.h"
->  #include "tidss_kms.h"
->  #include "tidss_irq.h"
-> +#include "tidss_oldi.h"
->  
->  /* Power management */
->  
-> @@ -140,10 +141,17 @@ static int tidss_probe(struct platform_device *pdev)
->  
->  	spin_lock_init(&tidss->wait_lock);
->  
-> +	ret = tidss_oldi_init(tidss);
-> +	if (ret) {
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(dev, "failed to init OLDI (%d)\n", ret);
-> +		return ret;
-> +	}
+> On Sat, May 11, 2024 at 11:58=E2=80=AFAM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> >
+> > On Fri, 10 May 2024 19:44:31 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> > =20
+> > > This adds support for SPI offload to the ad7944 driver. This allows
+> > > reading data at the max sample rate of 2.5 MSPS.
+> > >
+> > > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > > ---
+> > >
+> > > v2 changes:
+> > >
+> > > In the previous version, there was a new separate driver for the PWM
+> > > trigger and DMA hardware buffer. This was deemed too complex so they
+> > > are moved into the ad7944 driver.
+> > >
+> > > It has also been reworked to accommodate for the changes described in
+> > > the other patches.
+> > >
+> > > RFC: This isn't very polished yet, just FYI. A few things to sort out:
+> > >
+> > > Rather than making the buffer either triggered buffer or hardware buf=
+fer,
+> > > I'm considering allowing both, e.g. buffer0 will always be the trigge=
+red
+> > > buffer and buffer1 will will be the hardware buffer if connected to a=
+ SPI
+> > > controller with offload support, otherwise buffer1 is absent. But sin=
+ce
+> > > multiple buffers haven't been used much so far, more investigation is
+> > > needed to see how that would work in practice. If we do that though, =
+then
+> > > we would always have the sampling_frequency attribute though even tho=
+ugh
+> > > it only applies to one buffer. =20
+> >
+> > Why would someone who has this nice IP in the path want the conventional
+> > triggered buffer?  I'm not against the two buffer option, but I'd like =
+to know
+> > the reasoning not to just provide the hardware buffer if this SPI offlo=
+ad
+> > is available.
+> >
+> > I can conjecture reasons but would like you to write them out for me :)
+> > This feels like if someone has paid for the expensive hardware they pro=
+bably
+> > only want the best performance.
+> > =20
+>=20
+> For me, it was more of a question of if we need to keep the userspace
+> interface consistent between both with or without offload support. But
+> if you are happy with it this way where we have only one or the other,
+> it is less work for me. :-)
 
-return dev_err_probe()
+So inconsistency in userspace interfaces can occur for many reasons like
+whether the interrupt is wired or not, but in this particularly
+case I guess we have ABI stability issue because there are boards out there
+today and people using the driver without this offload functionality.
+I'd not really thought that bit through, so I think you are correct that
+we need to maintain the triggered buffer interface and 'add' the new
+ABI for the offloaded case.  The multibuffer approach should work for this.
+Will be interesting if any problem surface from having two very different
+types of buffer on the same device.
 
-> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-> new file mode 100644
-> index 000000000000..fd96ca815542
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-> @@ -0,0 +1,568 @@
-
-..
-
-> +		ret = drm_of_find_panel_or_bridge(child, OLDI_OURPUT_PORT, -1,
-> +						  &panel, &bridge);
-> +		if (ret) {
-> +			/*
-> +			 * Either there was no OLDI sink in the devicetree, or
-> +			 * the OLDI sink has not been added yet. In any case,
-> +			 * return.
-> +			 * We don't want to have an OLDI node connected to DSS
-> +			 * but not to any sink.
-> +			 */
-> +			if (ret != -EPROBE_DEFER)
-> +				dev_err(tidss->dev,
-> +					"no panel/bridge for OLDI%d. Error %d\n",
-> +					oldi_instance, ret);
-
-just dev_err_probe
-
-> +			goto err_put_node;
-> +		}
-
-..
-
-> +		if (IS_ERR(oldi->io_ctrl)) {
-> +			dev_err(oldi->dev,
-> +				"%s: oldi%d syscon_regmap_lookup_by_phandle failed %ld\n",
-> +			       __func__, oldi_instance, PTR_ERR(oldi->io_ctrl));
-> +			ret = PTR_ERR(oldi->io_ctrl);
-
-dev_err_probe 
-
-> +			goto err_put_node;
-> +		}
-> +
-> +		oldi->s_clk = of_clk_get_by_name(child, "s_clk");
-> +		if (IS_ERR(oldi->s_clk)) {
-> +			dev_err(oldi->dev,
-> +				"%s: oldi%d Failed to get s_clk: %ld\n",
-> +				__func__, oldi_instance, PTR_ERR(oldi->s_clk));
-> +			ret = PTR_ERR(oldi->s_clk);
-
-dev_err_probe
-
-In general, in this function, sometime you print an error and goto
-err_put_node, sometime you just goto err_put_node.  Not sure what's the
-rationale on this.
-
-> +			goto err_put_node;
-> +		}
-> +
-> +		/* Register the bridge. */
-> +		oldi->bridge.of_node = child;
-> +		oldi->bridge.driver_private = oldi;
-> +		oldi->bridge.funcs = &tidss_oldi_bridge_funcs;
-> +		oldi->bridge.timings = &default_tidss_oldi_timings;
-> +
-> +		tidss->oldis[tidss->num_oldis++] = oldi;
-> +		oldi->tidss = tidss;
-> +
-> +		drm_bridge_add(&oldi->bridge);
-> +	}
-> +
-> +err_put_node:
-> +	of_node_put(child);
-> +	of_node_put(oldi_parent);
-> +	return ret;
-> +}
-> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.h b/drivers/gpu/drm/tidss/tidss_oldi.h
-> new file mode 100644
-> index 000000000000..5ad02ddea11a
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tidss/tidss_oldi.h
-> @@ -0,0 +1,73 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Copyright (C) 2023 - Texas Instruments Incorporated
-> + *
-> + * Aradhya Bhatia <a-bhati1@ti.com>
-> + */
-> +
-> +#ifndef __TIDSS_OLDI_H__
-> +#define __TIDSS_OLDI_H__
-> +
-> +#include <linux/media-bus-format.h>
-> +
-> +#include "tidss_drv.h"
-> +#include "tidss_dispc.h"
-> +
-> +struct tidss_oldi;
-
-why do you need this here? 
-
-> +
-> +/* OLDI Instances */
-> +#define OLDI(n)		n
-> +
-> +/* OLDI PORTS */
-> +#define OLDI_INPUT_PORT		0
-> +#define OLDI_OURPUT_PORT	1
-> +
-> +/* OLDI Config Bits */
-> +#define OLDI_ENABLE		BIT(0)
-> +#define OLDI_MAP		(BIT(1) | BIT(2) | BIT(3))
-> +#define OLDI_SRC		BIT(4)
-> +#define OLDI_CLONE_MODE		BIT(5)
-> +#define OLDI_MASTERSLAVE	BIT(6)
-> +#define OLDI_DEPOL		BIT(7)
-> +#define OLDI_MSB		BIT(8)
-> +#define OLDI_LBEN		BIT(9)
-> +#define OLDI_LBDATA		BIT(10)
-> +#define OLDI_DUALMODESYNC	BIT(11)
-> +#define OLDI_SOFTRST		BIT(12)
-> +#define OLDI_TPATCFG		BIT(13)
-> +
-> +/* Control MMR Register */
-> +
-> +/* Register offsets */
-> +#define OLDI_PD_CTRL            0x100
-> +#define OLDI_LB_CTRL            0x104
-> +
-> +/* Power control bits */
-> +#define OLDI_PWRDN_TX(n)	BIT(n)
-> +
-> +/* LVDS Bandgap reference Enable/Disable */
-> +#define OLDI_PWRDN_BG		BIT(8)
-> +
-> +#define OLDI_IDLE_CLK_HZ	25000000 /*25 MHz */
-this is used only on a single C files, move it there?
-
-I would consider this comment in general for this header file,
-from a quick check most of this is used only in tidss_oldi.c.
-
-Francesco
-
+Jonathan
 
