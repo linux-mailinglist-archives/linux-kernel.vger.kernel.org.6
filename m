@@ -1,183 +1,86 @@
-Return-Path: <linux-kernel+bounces-177052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C388C392A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:07:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BDB68C392B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7695B1C20D08
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:07:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D690828115E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 23:10:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F6459161;
-	Sun, 12 May 2024 23:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gPGdXFyu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A2958ADB;
+	Sun, 12 May 2024 23:10:09 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F14458AC1;
-	Sun, 12 May 2024 23:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E06228F5
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 23:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715555219; cv=none; b=UnHUooCV34Ju5QAaRP/NVDTN6FcF41MSAKv3SBsDRPazaH3RiRb4W9ZwqiNtCqhdVxS+oKV/qq0vTLX/UWVrsXXSBjcYfMcLCvia6ePVmNuKC4NbokCRWkGIQgO4bC05olHHlqMNhT4G8iKrJjNElX6RKFY0l5rvMx4gS9jHUsY=
+	t=1715555408; cv=none; b=iLVsi/27JPfH7azWHIULhcyHEhmwz4EHVR4pNdZ4me8hsbf5s7HJf/e1yFRUrBUZQmNMnRBIG4MSqPp+gMrT9iljPsKq8hgIRZjgr7ds8DzCm/4d3XM0SrPvWnCHicm6S/wAdb7OBtXO8zWpgs6cmcDGQ87ul/bbYu9eiH/oufQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715555219; c=relaxed/simple;
-	bh=iIroH5Y9NmxigOjMGmDqMn7BK8xc09nKaScH6g5IsMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KHiqr0ugGAppVLpynQi0HH9fWEmFAb95OVGwkkP0wCk88KbcYpSMCeaLRf98SVQj6agAgA5CpMUQVlyYBVl1JONfeTcqWB6AtjNtFOZmbgNVqwDRIAwFq9oznt4iqti+qdqq9GAR3ZyyyCJcduplej9D0wY0Qnk5qMJUE16IHIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gPGdXFyu; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715555217; x=1747091217;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iIroH5Y9NmxigOjMGmDqMn7BK8xc09nKaScH6g5IsMc=;
-  b=gPGdXFyu2tswU4E8dmK4r3/alwPuz10mMd5OZTTwRX5Y483AmaKb1CEV
-   nji5A/EFwA47rlf58Ob/rsRvhuQncgVjtJXa+WHACcxYuMSx3q9BwZ09T
-   RoP5Qt87aO02ZJOE9CABK7IWYmZGYFEZJsJuuc/6CD6X2avP19fNhOqfx
-   50zapSCIOBFW0aW5cekUmRvSKbiUx11CoXAZuZrO+b1kDgghz1CdmkUKt
-   XCg5ZwXvGJ4jfGbNiZTHlR9cWJjVc3IJllSWuPlZmBbeC0pkQxo1ClH2E
-   gcSBSRzG12w5wyGhTzuOl1eXwqw9dS3VkQ+6QpKKelswMTY+VCwh/KNv2
-   g==;
-X-CSE-ConnectionGUID: NXgLtap3TCSEchOfVid46A==
-X-CSE-MsgGUID: 71fELloMT9qSPjrIPPXnzg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="15286294"
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="15286294"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 16:06:56 -0700
-X-CSE-ConnectionGUID: Hi4M41MxT7CnFoyyZkt3fQ==
-X-CSE-MsgGUID: ikHENWtfSTW23qyf6SLTyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="53390460"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 12 May 2024 16:06:53 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s6IHL-0009H1-13;
-	Sun, 12 May 2024 23:06:51 +0000
-Date: Mon, 13 May 2024 07:06:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kiarash Hajian <kiarash8112hajian@gmail.com>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Kiarash Hajian <kiarash8112hajian@gmail.com>
-Subject: Re: [PATCH v3 2/2] drm/msm/a6xx: request memory region
-Message-ID: <202405130628.7LSM1hPA-lkp@intel.com>
-References: <20240512-msm-adreno-memory-region-v3-2-0a728ad45010@gmail.com>
+	s=arc-20240116; t=1715555408; c=relaxed/simple;
+	bh=zf3BLuSMfBe0PXkKF6N0/MiJ+8NR3KUdSMiyzBmJVRc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DoSFC979EU+Y8O5bguG5kvB8mHJw52rpKlqXxAx1UiOfowCDdwSCpJ8dTna1LRxQQ7b+5QfUiWAdvXqu4SdO1QZBFR31YRb8K4MJWsaC8Vv1Ag4ZgX+rgw1fnboTvSpbo2r7In//gXz9i7Y0StGPCKfvgIUXM06u70r13xXedUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1de4c052aso70508939f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 16:10:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715555406; x=1716160206;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GbrCsTKdvgH9uMmvs6/bxEAqYO1Q8tZzqKfBUT/UfMw=;
+        b=keu0DPeOppX9rsHL26JV7rw8sBGH7OnRc5l7XujTbC/PhapwmNOVxr04k9ZobftAfj
+         8qHzVphYA1Yn6FYQJEqHsFEekOx/gfhn+gnpB/zlK+DV5XhU8zg8bESKE7R+INj5+OEP
+         ioOBa9Syo9grjVNF0EMd9/eFboTrlzi4frusDelQnK2vZr7kqz7iqgM4IZZZOtm5lN/b
+         +zu98ov+9ucoy2ChUJD2APXgnefdyHVnkr4aF6JF4oSwEFBYXgD9oWHOr79v0PGX6Jp3
+         NPR1vhqDO1hD9XoeQ2znJjipBsuZSg2QEvnFagOhW0yf1lJAIgDV0MqYdetYD92k5kNM
+         wrJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJgF9AQPHh6Z69vXfVDIU1ijHF2kA43vUuypmzzVzOHGToiwdDR7UOSynmDN1i36tftxTXmUnPD/5GJmL1ZAdyMxr/8TLvJZn8r2fd
+X-Gm-Message-State: AOJu0YxQ/ZNgjlxZRWrmUyGZ4OVtz7q/67/Ax6PbyUzUtpNZ58x75Z2r
+	lFkmw7IU3bpDIwVYz5VaddKow41okwAwk/Ms2Wx1/Igeuaae/GB7iEW3+YQjnpgN0/dMPpb942r
+	Zrmr647dMSiR1EpfUd+xqjAlxiVC7l/LTY4wTDvdCduOsdgcrvyKy66A=
+X-Google-Smtp-Source: AGHT+IFbF6/1U4ZjkbPt7/Ku066DSsvtVjZ1b39GrokssKVuwlu+ImcsZt/JAv4BK84kKFieycM7bTPSqsktD5UBtmepeapXr9cO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240512-msm-adreno-memory-region-v3-2-0a728ad45010@gmail.com>
+X-Received: by 2002:a05:6638:2727:b0:488:b7c1:401b with SMTP id
+ 8926c6da1cb9f-48958e0d1e0mr729180173.4.1715555406365; Sun, 12 May 2024
+ 16:10:06 -0700 (PDT)
+Date: Sun, 12 May 2024 16:10:06 -0700
+In-Reply-To: <20240512223450.2890-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000096d570061849defe@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in __fput (2)
+From: syzbot <syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Kiarash,
+Hello,
 
-kernel test robot noticed the following build errors:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-[auto build test ERROR on cf87f46fd34d6c19283d9625a7822f20d90b64a4]
+Reported-and-tested-by: syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kiarash-Hajian/drm-msm-a6xx-request-memory-region/20240512-135215
-base:   cf87f46fd34d6c19283d9625a7822f20d90b64a4
-patch link:    https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-2-0a728ad45010%40gmail.com
-patch subject: [PATCH v3 2/2] drm/msm/a6xx: request memory region
-config: i386-buildonly-randconfig-003-20240513 (https://download.01.org/0day-ci/archive/20240513/202405130628.7LSM1hPA-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240513/202405130628.7LSM1hPA-lkp@intel.com/reproduce)
+Tested on:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405130628.7LSM1hPA-lkp@intel.com/
+commit:         a38297e3 Linux 6.9
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=175fec3f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3f2ffcdf236c8fc3
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d4cb6b4409edfd18646
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-All errors (new ones prefixed by >>):
-
-   drivers/gpu/drm/msm/adreno/a6xx_gmu.c: In function 'a6xx_gmu_wrapper_init':
->> drivers/gpu/drm/msm/adreno/a6xx_gmu.c:1611:17: error: label 'err_mmio' used but not defined
-    1611 |                 goto err_mmio;
-         |                 ^~~~
-
-
-vim +/err_mmio +1611 drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-
-c11fa1204fe940 Akhil P Oommen 2023-01-02  1582  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1583  int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-5a903a44a98471 Konrad Dybcio  2023-06-16  1584  {
-5a903a44a98471 Konrad Dybcio  2023-06-16  1585  	struct platform_device *pdev = of_find_device_by_node(node);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1586  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1587  	int ret;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1588  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1589  	if (!pdev)
-5a903a44a98471 Konrad Dybcio  2023-06-16  1590  		return -ENODEV;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1591  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1592  	gmu->dev = &pdev->dev;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1593  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1594  	of_dma_configure(gmu->dev, node, true);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1595  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1596  	pm_runtime_enable(gmu->dev);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1597  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1598  	/* Mark legacy for manual SPTPRAC control */
-5a903a44a98471 Konrad Dybcio  2023-06-16  1599  	gmu->legacy = true;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1600  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1601  	/* Map the GMU registers */
-5a903a44a98471 Konrad Dybcio  2023-06-16  1602  	gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
-5a903a44a98471 Konrad Dybcio  2023-06-16  1603  	if (IS_ERR(gmu->mmio)) {
-5a903a44a98471 Konrad Dybcio  2023-06-16  1604  		ret = PTR_ERR(gmu->mmio);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1605  		goto err_mmio;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1606  	}
-5a903a44a98471 Konrad Dybcio  2023-06-16  1607  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1608  	gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
-5a903a44a98471 Konrad Dybcio  2023-06-16  1609  	if (IS_ERR(gmu->cxpd)) {
-5a903a44a98471 Konrad Dybcio  2023-06-16  1610  		ret = PTR_ERR(gmu->cxpd);
-5a903a44a98471 Konrad Dybcio  2023-06-16 @1611  		goto err_mmio;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1612  	}
-5a903a44a98471 Konrad Dybcio  2023-06-16  1613  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1614  	if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME)) {
-5a903a44a98471 Konrad Dybcio  2023-06-16  1615  		ret = -ENODEV;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1616  		goto detach_cxpd;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1617  	}
-5a903a44a98471 Konrad Dybcio  2023-06-16  1618  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1619  	init_completion(&gmu->pd_gate);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1620  	complete_all(&gmu->pd_gate);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1621  	gmu->pd_nb.notifier_call = cxpd_notifier_cb;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1622  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1623  	/* Get a link to the GX power domain to reset the GPU */
-5a903a44a98471 Konrad Dybcio  2023-06-16  1624  	gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
-5a903a44a98471 Konrad Dybcio  2023-06-16  1625  	if (IS_ERR(gmu->gxpd)) {
-5a903a44a98471 Konrad Dybcio  2023-06-16  1626  		ret = PTR_ERR(gmu->gxpd);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1627  	}
-5a903a44a98471 Konrad Dybcio  2023-06-16  1628  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1629  	gmu->initialized = true;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1630  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1631  	return 0;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1632  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1633  detach_cxpd:
-5a903a44a98471 Konrad Dybcio  2023-06-16  1634  	dev_pm_domain_detach(gmu->cxpd, false);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1635  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1636  	/* Drop reference taken in of_find_device_by_node */
-5a903a44a98471 Konrad Dybcio  2023-06-16  1637  	put_device(gmu->dev);
-5a903a44a98471 Konrad Dybcio  2023-06-16  1638  
-5a903a44a98471 Konrad Dybcio  2023-06-16  1639  	return ret;
-5a903a44a98471 Konrad Dybcio  2023-06-16  1640  }
-5a903a44a98471 Konrad Dybcio  2023-06-16  1641  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
