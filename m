@@ -1,215 +1,110 @@
-Return-Path: <linux-kernel+bounces-176808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA79E8C3541
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:14:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738118C3549
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 09:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09D3F1C209EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:14:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089B41F2153E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 07:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6D9134A9;
-	Sun, 12 May 2024 07:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6369F10A1A;
+	Sun, 12 May 2024 07:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N5QloUeS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cGNoYfnY"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8994FBE8
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 07:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910AFE56C
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 07:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715498082; cv=none; b=ITDU0GlrCv/FFng+/kAikRHoI0jPUjNvHT5Kv1u7GvuArEqC/Gg1bhcxS5UF4AsaNwzVJOWKVzA20atHQFw964sIfve12X5NImZEP6q5drE5jCoNaCzPvcmyaMg8fLiNEpVpR7b/PmU6oFNH3Cax/0fd1OqY6mTA+/GYoisje5c=
+	t=1715498308; cv=none; b=mPWWaV8H8fnk17YC2P8h1u1GN+m5XxfTzLJ3fUtgzNqQN2cjh5CzQblQPmvdnIc9YwjuD1xd6xoeBbmQ06mjppImlOg2WPzvJBWte7mNwVKfue+GMxysVXeJOQZi7fk3p4huBdoPqjPpsA1SK0gjf+wqXnfgHPw9dHZ9qPgp0Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715498082; c=relaxed/simple;
-	bh=xmGK9+ltbB1dd+0WpcC/iVsOMU10rWtj6TTQRHJPdMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s1DweuVSYaNI2gzdptINjn5fj0fJ13Alp/zbqYyQOPSgRcW3vTNTXSPyfwDVsV+G/wzhzFWmwHHLokkm8A3Ea5ynxh45mB1dH4XK9vsky6j3q8pJzKnsJASwkNFJxu1oQ397N3qdGvMuXcmypF8JzgxkJvm60dxll1i5UiPZDRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N5QloUeS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715498078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z0Gt8ejjg+ir2Gwxhz9RzL//kwRLUT3dCdns47wQNqQ=;
-	b=N5QloUeS2IZN1YYUiAKJYip2+kNf7YA3XLEjc6DiqTRwzYBms4sbTI3PrW2sWR2YeCrcND
-	yV3MT/t9RO8R0wmHV/s2BdxFQ5AsJwnv/cEjVzzbh38u11njJwh/fV/qYfV1YUO8OdWyu9
-	3o/5ep2HpZlgedaYYz7/xCjuYKRGj5A=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-602-dBk2vPMdNziYKBEXFpurkA-1; Sun, 12 May 2024 03:14:36 -0400
-X-MC-Unique: dBk2vPMdNziYKBEXFpurkA-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-34db1830d7cso1283161f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 00:14:35 -0700 (PDT)
+	s=arc-20240116; t=1715498308; c=relaxed/simple;
+	bh=4tAha4vWh2sCmCdHIolv3tvIgyQgrDGI0NlsqXFoCHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nu+CGfOI5HbthlqO/9LtbdTStY0Db+NPX6Q7g+U9fCEUpJm7BtjJXPprKxk7aUYOICOwFSJHnSOUMYVG06aY2RTfuR4oXhomVfGUskCJqaTt6aNLxHlqGKxd458Wua98KLyVKXzjCcRhSd72jZ1x7A2xMn2jg97PsRH5zRRXTnM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cGNoYfnY; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e1fa1f1d9bso60024841fa.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 00:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715498304; x=1716103104; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Ho2M1HiQIdWbeZZb6QjJWcaSs+2rhcKJwgaqpenjTE=;
+        b=cGNoYfnYAOgNC11tr/culpQTyU+ABZNgvCvxq4YGCsZIWjrOh5GYq12DPqLdRogVXb
+         QdYgc4MG8A+wdjKs9KbRL14YVaHPVGobzWdPelTws1+xqah7sRZ/LZY56iFEZSROr457
+         dfTXNAryxgeW+6zRy97xZcl32YWSLUHF4yQ6/y+EjKOE1XNYGIiqvngZr/l9puMkIuxN
+         JUawD+0OLyTEsk0fA2u39VEKYUQNuBzZrhi1iYqvI5+XkNNdnhEBtOpACBOFLVePaTlV
+         NTGvlRG4ZOQNfgqdMqVPbouiqcZs9NLZD8/z4+uzzWbVig8tRFp5EXw35CxFPa57GbPD
+         5E7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715498075; x=1716102875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z0Gt8ejjg+ir2Gwxhz9RzL//kwRLUT3dCdns47wQNqQ=;
-        b=jwE3NqQIyUHY8XFzsjxHhxXjCH/DrttIfO1a5QXbewCNpMOudmDNvEOe8PGWcPywDL
-         kHs0kB0JHK7/8JAEV+Bt2RNDjLfgk62GVqIaQm07cJBxXGWiIhKUpAPYwwMt7bFYrHCp
-         4CR2XmziDp1SIhi4n4XsOa3kQG38D+CEfcIvKaroOphIIbRG6S5yjZOKulSbuU95RaAL
-         X+6lvwPlLVlsCFtC0mi84mYSMPW2JEaR7Taed81BToLLQrxBSumRlwjvj7QlhCHNuCEd
-         dyvoHVLQzFUVGAOvgrppKGB+xbKUlOT7Psi375fV0uxKvav/4OwTEV6gOla9IfclKXcF
-         Xxkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZv6zm6l8h1zwYs4wfseCI4DjG0qMcRD9sghO6Ayb/y7NN8eZD1pibNiEJD2ABMs23nvzM72Vzqb0xyWmt8Jl478+Dcc2aUzGpn4Hr
-X-Gm-Message-State: AOJu0YwMquG7B1n3gTwdqGkWWcutWfHuz5gy7ChywJiSbzoIpGyLuv2W
-	MisPMIQzS1vhYCLum03TbdKZQZzYjEUTnZC40e4Zm0JmiSckKyTAp6oOSUluP2dAgM3k6zdK7EN
-	1eqX2HFBsPO+7I1aLTQAL42JpK5+mefdI4us/kK6ewh9KNfN1I+fQ3/TClTET8PWJ6bY6YRlzs9
-	PDRg4DCt1S1gv6xFmZw3Mex4pRHnvdEM/D3oBb
-X-Received: by 2002:a05:6000:4ed:b0:34d:ae34:1c14 with SMTP id ffacd0b85a97d-35018285324mr8360770f8f.18.1715498074828;
-        Sun, 12 May 2024 00:14:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZC9mYAP3CAxXRAmZA1Z2rLfLZuScPs3Cpn0JZevBEpUmMfcCCjfCnWBDDJN8ySXSEqSQPGFZQ7gYTgsq9VTk=
-X-Received: by 2002:a05:6000:4ed:b0:34d:ae34:1c14 with SMTP id
- ffacd0b85a97d-35018285324mr8360755f8f.18.1715498074309; Sun, 12 May 2024
- 00:14:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715498304; x=1716103104;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Ho2M1HiQIdWbeZZb6QjJWcaSs+2rhcKJwgaqpenjTE=;
+        b=DIyMl+Jvkg27nUjjmSYW3DH8hvz1+uEE8zAskYsU2rpS9ZlFVoyvoMGfy8EA3qn6z3
+         dW5++l+kn+baEqTMyegItLvkmHoAFr75iFqW3R/Z+HKHErTC9QvBbVCOqSW/xEmjOLxI
+         prWOIF37HTjcFzQEpBifq1WDcwQ0N7N7+Rk2cpc6RTaXNfomGMmND6ei+s/v6g5d/Mkx
+         kZ06+tmRp+0r8cR3AO+WduL7j1mCYC/BggmoPQN7fHKWiI0UcilYin4fUi9nl4ptkR3a
+         584GJsPxpKKo6RFModowwkd5db+cBjeHyXzoMuWEOM+Az+glGxMR3KxI+Wsrp2yG9gWw
+         tVVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMtuxmCIC0C3vteJu3J0+sKkCTJW+EEgsWV9QFaN2cthmxJLeJkl6YukSN6+7Pi0+diF9wklsDHHF+tBuIMIZ7xwkrZQYHIh6YXZaZ
+X-Gm-Message-State: AOJu0YxWLNkbB9ynFs0uu5GexYkTIsIx6O+hGf56L20od8xoxGltuYFi
+	LpBcHlArO/KgV+c2pCmwxcXf7kueGE+k4I+DAleIV36s/kdSaqBlBwk4C3HN6Io=
+X-Google-Smtp-Source: AGHT+IHFq0ufNNWxWGNJhbjtEqg492vkkSDjHXTgvyYhd5RDqv8PEWr4+4kRdkTRVvckVFOTc9ZeNg==
+X-Received: by 2002:a2e:3c0c:0:b0:2dc:14d5:4621 with SMTP id 38308e7fff4ca-2e52028a8femr59741201fa.34.1715498303593;
+        Sun, 12 May 2024 00:18:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d151569bsm10126371fa.87.2024.05.12.00.18.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 00:18:23 -0700 (PDT)
+Date: Sun, 12 May 2024 10:18:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Kiarash Hajian <kiarash8112hajian@gmail.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] drm/msm/a6xx: request memory region
+Message-ID: <vwxnwf6um4vmazqfomx46w5hc7swf4boiaaqtta3tmytwbbazo@g3ey2d4jxknm>
+References: <20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com>
+ <20240512-msm-adreno-memory-region-v3-2-0a728ad45010@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510211024.556136-1-michael.roth@amd.com>
-In-Reply-To: <20240510211024.556136-1-michael.roth@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Sun, 12 May 2024 09:14:22 +0200
-Message-ID: <CABgObfZxeqfNB4tETpH4PqPTnTi0C4pGmCST73a5cTdRWLO9Yw@mail.gmail.com>
-Subject: Re: [PULL 00/19] KVM: Add AMD Secure Nested Paging (SEV-SNP)
- Hypervisor Support
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, linux-coco@lists.linux.dev, jroedel@suse.de, 
-	thomas.lendacky@amd.com, vkuznets@redhat.com, pgonda@google.com, 
-	rientjes@google.com, tobin@ibm.com, bp@alien8.de, vbabka@suse.cz, 
-	alpergun@google.com, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
-	pankaj.gupta@amd.com, liam.merwick@oracle.com, papaluri@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240512-msm-adreno-memory-region-v3-2-0a728ad45010@gmail.com>
 
-On Fri, May 10, 2024 at 11:17=E2=80=AFPM Michael Roth <michael.roth@amd.com=
-> wrote:
->
-> Hi Paolo,
->
-> This pull request contains v15 of the KVM SNP support patchset[1] along
-> with fixes and feedback from you and Sean regarding PSC request processin=
-g,
-> fast_page_fault() handling for SNP/TDX, and avoiding uncessary
-> PSMASH/zapping for KVM_EXIT_MEMORY_FAULT events. It's also been rebased
-> on top of kvm/queue (commit 1451476151e0), and re-tested with/without
-> 2MB gmem pages enabled.
+On Sun, May 12, 2024 at 01:49:39AM -0400, Kiarash Hajian wrote:
+> The devm_iounmap function is being used unnecessarily,
+> managed resource mechanisms (devres) are handling resource cleanup automatically
+> 
+> This commit removes the calls to devm_iounmap and relies on devres
+> 
+> Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 18 ------------------
+>  1 file changed, 18 deletions(-)
 
-Pulled into kvm-coco-queue, thanks (and sorry for the sev_complete_psc
-mess up - it seemed too good to be true that the PSC changes were all
-fine...).
+In my opinion, this patch is better be squashed into the first patch.
+Though I'd leave a final word here to Rob and Konrad.
 
-Paolo
+BTW: for some reason your patches don't appear on freedreno's patchwork,
+although they definitely hit the list and appear on lore.kernel.org.
 
-> Thanks!
->
-> -Mike
->
-> [1] https://lore.kernel.org/kvm/20240501085210.2213060-1-michael.roth@amd=
-com/
->
-> The following changes since commit 1451476151e08e1e83ff07ce69dd0d1d025e97=
-6e:
->
->   Merge commit 'kvm-coco-hooks' into HEAD (2024-05-10 13:20:42 -0400)
->
-> are available in the Git repository at:
->
->   https://github.com/mdroth/linux.git tags/tags/kvm-queue-snp
->
-> for you to fetch changes up to 4b3f0135f759bb1a54bb28d644c38a7780150eda:
->
->   crypto: ccp: Add the SNP_VLEK_LOAD command (2024-05-10 14:44:31 -0500)
->
-> ----------------------------------------------------------------
-> Base x86 KVM support for running SEV-SNP guests:
->
->  - add some basic infrastructure and introduces a new KVM_X86_SNP_VM
->    vm_type to handle differences versus the existing KVM_X86_SEV_VM and
->    KVM_X86_SEV_ES_VM types.
->
->  - implement the KVM API to handle the creation of a cryptographic
->    launch context, encrypt/measure the initial image into guest memory,
->    and finalize it before launching it.
->
->  - implement handling for various guest-generated events such as page
->    state changes, onlining of additional vCPUs, etc.
->
->  - implement the gmem/mmu hooks needed to prepare gmem-allocated pages
->    before mapping them into guest private memory ranges as well as
->    cleaning them up prior to returning them to the host for use as
->    normal memory. Because those cleanup hooks supplant certain
->    activities like issuing WBINVDs during KVM MMU invalidations, avoid
->    duplicating that work to avoid unecessary overhead.
->
->  - add support for the servicing of guest requests to handle things like
->    attestation, as well as some related host-management interfaces to
->    handle updating firmware's signing key for attestation requests
->
-> ----------------------------------------------------------------
-> Ashish Kalra (1):
->       KVM: SEV: Avoid WBINVD for HVA-based MMU notifications for SNP
->
-> Brijesh Singh (8):
->       KVM: SEV: Add initial SEV-SNP support
->       KVM: SEV: Add KVM_SEV_SNP_LAUNCH_START command
->       KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command
->       KVM: SEV: Add KVM_SEV_SNP_LAUNCH_FINISH command
->       KVM: SEV: Add support to handle GHCB GPA register VMGEXIT
->       KVM: SEV: Add support to handle RMP nested page faults
->       KVM: SVM: Add module parameter to enable SEV-SNP
->       KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event
->
-> Michael Roth (9):
->       KVM: MMU: Disable fast path if KVM_EXIT_MEMORY_FAULT is needed
->       KVM: SEV: Select KVM_GENERIC_PRIVATE_MEM when CONFIG_KVM_AMD_SEV=3D=
-y
->       KVM: SEV: Add support to handle MSR based Page State Change VMGEXIT
->       KVM: SEV: Add support to handle Page State Change VMGEXIT
->       KVM: SEV: Implement gmem hook for initializing private pages
->       KVM: SEV: Implement gmem hook for invalidating private pages
->       KVM: x86: Implement hook for determining max NPT mapping level
->       KVM: SEV: Provide support for SNP_EXTENDED_GUEST_REQUEST NAE event
->       crypto: ccp: Add the SNP_VLEK_LOAD command
->
-> Tom Lendacky (1):
->       KVM: SEV: Support SEV-SNP AP Creation NAE event
->
->  Documentation/virt/coco/sev-guest.rst              |   19 +
->  Documentation/virt/kvm/api.rst                     |   87 ++
->  .../virt/kvm/x86/amd-memory-encryption.rst         |  110 +-
->  arch/x86/include/asm/kvm_host.h                    |    2 +
->  arch/x86/include/asm/sev-common.h                  |   25 +
->  arch/x86/include/asm/sev.h                         |    3 +
->  arch/x86/include/asm/svm.h                         |    9 +-
->  arch/x86/include/uapi/asm/kvm.h                    |   48 +
->  arch/x86/kvm/Kconfig                               |    3 +
->  arch/x86/kvm/mmu.h                                 |    2 -
->  arch/x86/kvm/mmu/mmu.c                             |   25 +-
->  arch/x86/kvm/svm/sev.c                             | 1546 ++++++++++++++=
-+++++-
->  arch/x86/kvm/svm/svm.c                             |   37 +-
->  arch/x86/kvm/svm/svm.h                             |   52 +
->  arch/x86/kvm/trace.h                               |   31 +
->  arch/x86/kvm/x86.c                                 |   17 +
->  drivers/crypto/ccp/sev-dev.c                       |   36 +
->  include/linux/psp-sev.h                            |    4 +-
->  include/uapi/linux/kvm.h                           |   23 +
->  include/uapi/linux/psp-sev.h                       |   27 +
->  include/uapi/linux/sev-guest.h                     |    9 +
->  virt/kvm/guest_memfd.c                             |    4 +-
->  22 files changed, 2086 insertions(+), 33 deletions(-)
->
-
+-- 
+With best wishes
+Dmitry
 
