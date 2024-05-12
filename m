@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-176945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BCE18C37B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 464428C37B9
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CFC2813E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B31281398
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 17:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE674A99C;
-	Sun, 12 May 2024 17:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jN0tFug0"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3E04CE1F;
+	Sun, 12 May 2024 17:12:20 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8E017BA8
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 17:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5132B1CD1F;
+	Sun, 12 May 2024 17:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715533842; cv=none; b=foSUcK3SD9BBwDsDxyZjNICIurMW8ECyzzojDtcfM/5deap5w7LxBuZ61cdk7wlh+H7VbYKr+amxLuOVKjhvSbJarOp9wK1Dqs6AZuYw1CoJ+hmaYPbxf6dyHutQJo3R2jWlatspn7COY+vVCFPvF5Zg3BpeCuBJoLjxFhF4jXY=
+	t=1715533940; cv=none; b=pgyBHAb9TT6OKsq8DbPiK79fymyR9KZkeJJ06WNvzaEijuhm9pxlJjaLzz/odyyRihliK9sr3gEVyCp6K0MjSCefrBOBBg/h20lOmtav4XBLDztv9tCx24o6ml2/3Z+ac3oi7JxioT9uZmvIVRLj/qvHW5unPUM1zgsdmnFc4Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715533842; c=relaxed/simple;
-	bh=wg0YA5FfYfZ8HOevPWPvq2wELw/oMeox03SJfTjBQlE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=NgEwJHhDmklLYL6i7breKxo89E8QTJcuAMNanwXq3jV4WQkxlLnNx5sUoDXCHn9s/2ihw3HP6Dzg+N6t6y3lsvvIO0RC3pDIa0XES+RvWcPTTbLKfe87cvlE+79mBv1hBsIU8hBQEhrWvTsFpardw2NUXKRUzB7/UxjcRCrqmN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jN0tFug0; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-deb99fa47b6so4160947276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 10:10:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715533840; x=1716138640; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pLHWq8okXTT3owCXn5JBWfo9jEYt7ZAZy8OoSAdnKBQ=;
-        b=jN0tFug0QKBsK6cP/owzz4/rEuOWVs1oRH6naqlg10jDbYHnjVYWvG6bj4PjPrreTp
-         BW4XgTo8ioj9K7+e/ke2u87cibjecrnZxZfRnTBbdq00vTVkAT28fzKoA4dzVPfVaS2W
-         KACdGaqkLwIEP2+DwjFyyYW8PyMc73XXFNvELCCNEHsiSqpp5n0cgcHtkl0NYkmAMwIu
-         zR2134fHKj5RjVsCp6Ya63597G6pd375r1UnrgZSZf46iSI2pci8d9eVjAhOncQAKHic
-         vBYGRbNisWlFZ35Gw7GVXmqpp/Xzwub1X3oiI/VKDlRipfAgszScZvE1lxEbpDB8uWik
-         WIcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715533840; x=1716138640;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pLHWq8okXTT3owCXn5JBWfo9jEYt7ZAZy8OoSAdnKBQ=;
-        b=UyTShtaT22Vzhc5Q+5YP34nWHK4yQRhXmjEgOtmiCQlIoL8pAoOvqmBdo2ZqRDCt4o
-         Flzz7unryXg1bwn0yWjgvHFU3pmDs3XRsvvdQYhYALec/LPDw8XurCgFA55nLcjJneh7
-         1pIqk5IJKG7fLhpWx3A7uO/hBKLZZr6PRx9uWZULbtAsz4zyD0pCrcsu08zDtS+WSVvI
-         1CSv2ay0thT+g9KfLvd71yP9dAlPSs79msCE7lxfmY66RrLTlwWkAZZBphigpEExMoop
-         RYr+4LxNLIW4/uEcPti9Ig3f4nfQX5heS30w3cGKUbK7RMfNcdijRV2BQkPLrKenMRc4
-         LriQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbQsE5y3Dnq4+3MQl4rFF/6BRthzyWMytuEeIf+B5IFbdZ5AAZi2xW+qEN/cCZZGsZACvSHMMxJODdR9sRelGS+0gau6K4IuN5s2Sn
-X-Gm-Message-State: AOJu0YympZx3D1vzfQI1aVf3FN7X8hEss97xdSuA2fHY3PiZDSY87v2J
-	QE5uhd9WiSxR3zO7jp7ADpjS9tpks3rxGlGy4khjpW8rko8fclqHIhyhtvo+flKvVUl+gv5Ojko
-	uyN3J5qKZd5n0qCdC4CbAai03cOhbUkWB
-X-Google-Smtp-Source: AGHT+IEDpeH2dfC9SObBecr1zT8K8XIMs3o18jZrmqGxMDkioKgPjCFNyr2fTOudsRkmNhm3ncX7ibtkRCLblKRlouA=
-X-Received: by 2002:a25:8102:0:b0:dc2:41de:b744 with SMTP id
- 3f1490d57ef6-dee4f338307mr6344893276.32.1715533840227; Sun, 12 May 2024
- 10:10:40 -0700 (PDT)
+	s=arc-20240116; t=1715533940; c=relaxed/simple;
+	bh=w6NwSoOtMT0hnPgKaWCq1divH8ZZ5o+3MEIUab+wZAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SqnJyFofZcmy07XjMWGzHVkXHx2omAl9vm5FxkpgPeuP1IRHYvdxP+iBthgD1b6Z80wvtDPLSJ5NYWbN0SWgQrjwnN/WWK35dLn5X+xlYTnpFvkx43v19gLx4GRmxjj3ruykxW4/2RuMNNyIDqUEHGQ3sr72YXUsTciAoI0dQrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B9EE740007;
+	Sun, 12 May 2024 17:11:03 +0000 (UTC)
+Message-ID: <cbbb6e81-355b-4e07-b1e5-4b3ffe6c79ae@ghiti.fr>
+Date: Sun, 12 May 2024 19:10:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Muni Sekhar <munisekharrms@gmail.com>
-Date: Sun, 12 May 2024 22:40:29 +0530
-Message-ID: <CAHhAz+hcVRU8=SkkoHGRDN5zRvB2HY1-1Y2NQmNwR=07ObSFrQ@mail.gmail.com>
-Subject: Inquiry Regarding Handling of Kernel Crashes
-To: kernelnewbies <kernelnewbies@kernelnewbies.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 20/29] riscv/kernel: update __show_regs to print shadow
+ stack register
+Content-Language: en-US
+To: Deepak Gupta <debug@rivosinc.com>, paul.walmsley@sifive.com,
+ rick.p.edgecombe@intel.com, broonie@kernel.org, Szabolcs.Nagy@arm.com,
+ kito.cheng@sifive.com, keescook@chromium.org, ajones@ventanamicro.com,
+ conor.dooley@microchip.com, cleger@rivosinc.com, atishp@atishpatra.org,
+ bjorn@rivosinc.com, alexghiti@rivosinc.com, samuel.holland@sifive.com,
+ conor@kernel.org
+Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-mm@kvack.org, linux-arch@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+ akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+ shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+ jerry.shih@sifive.com, hankuan.chen@sifive.com, greentime.hu@sifive.com,
+ evan@rivosinc.com, xiao.w.wang@intel.com, charlie@rivosinc.com,
+ apatel@ventanamicro.com, mchitale@ventanamicro.com,
+ dbarboza@ventanamicro.com, sameo@rivosinc.com, shikemeng@huaweicloud.com,
+ willy@infradead.org, vincent.chen@sifive.com, guoren@kernel.org,
+ samitolvanen@google.com, songshuaishuai@tinylab.org, gerg@kernel.org,
+ heiko@sntech.de, bhe@redhat.com, jeeheng.sia@starfivetech.com,
+ cyy@cyyself.name, maskray@google.com, ancientmodern4@gmail.com,
+ mathis.salmen@matsal.de, cuiyunhui@bytedance.com, bgray@linux.ibm.com,
+ mpe@ellerman.id.au, baruch@tkos.co.il, alx@kernel.org, david@redhat.com,
+ catalin.marinas@arm.com, revest@chromium.org, josh@joshtriplett.org,
+ shr@devkernel.io, deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+ jhubbard@nvidia.com
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-21-debug@rivosinc.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240403234054.2020347-21-debug@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-Dear Linux Kernel Community,
-
-I hope this email finds you well. I am currently engaged in testing
-device drivers in Linux kernel mode, and I have encountered various
-types of kernel crashes during my testing process.
-
-Among these, some examples of kernel crashes include OOPS, lockups and others.
-
-I have a few questions regarding the handling of kernel crashes during testing:
-
-When encountering a kernel crash during testing, is it advisable to
-continue testing without rebooting the system? Or is it preferable to
-reboot the system after each kernel crash and then resume testing?
-
-Can the first kernel crash, whether it is an OOPS,  or any other type
-crash, potentially lead to subsequent crashes of the same or different
-types? If so, should debugging efforts focus only on the first kernel
-crash, or should all subsequent crashes also be considered and
-addressed?
-
-In the event that the system needs to be rebooted after a kernel
-crash, how can user space test utilities be informed that a kernel
-crash has occurred? Additionally, how can the system be configured to
-automatically reboot in the event of a kernel crash?
-
-I would greatly appreciate any insights or best practices you can
-share regarding the handling of kernel crashes during testing. Your
-expertise and guidance on this matter would be invaluable to my
-testing efforts.
-
-Thank you very much for your time and assistance. I look forward to
-your response.
+On 04/04/2024 01:35, Deepak Gupta wrote:
+> Updating __show_regs to print captured shadow stack pointer as well.
+> On tasks where shadow stack is disabled, it'll simply print 0.
+>
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>   arch/riscv/kernel/process.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index ebed7589c51a..079fd6cd6446 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -89,8 +89,8 @@ void __show_regs(struct pt_regs *regs)
+>   		regs->s8, regs->s9, regs->s10);
+>   	pr_cont(" s11: " REG_FMT " t3 : " REG_FMT " t4 : " REG_FMT "\n",
+>   		regs->s11, regs->t3, regs->t4);
+> -	pr_cont(" t5 : " REG_FMT " t6 : " REG_FMT "\n",
+> -		regs->t5, regs->t6);
+> +	pr_cont(" t5 : " REG_FMT " t6 : " REG_FMT " ssp : " REG_FMT "\n",
+> +		regs->t5, regs->t6, get_active_shstk(current));
+>   
+>   	pr_cont("status: " REG_FMT " badaddr: " REG_FMT " cause: " REG_FMT "\n",
+>   		regs->status, regs->badaddr, regs->cause);
 
 
--- 
-Thanks,
-Sekhar
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
 
