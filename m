@@ -1,647 +1,280 @@
-Return-Path: <linux-kernel+bounces-177002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4368C385D
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:40:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71828C385E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 22:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD1721F21D2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 20:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 136FA1C20E66
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 20:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E5F91EB2C;
-	Sun, 12 May 2024 20:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EF52E3F2;
+	Sun, 12 May 2024 20:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H0tttZHN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Q0Ygmhm2";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nHTP2OVI"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BE763CF
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 20:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715546436; cv=none; b=APxy43P3dYJyCmfE5c+XFMOheCQ25FysTYnfqJvqsAcBFrM7LizEhiEIm2noV3cvCrjgC91YD8wB4Hf/IjxKbGl3HQU5XlaH52Mk+2kzWM0scCyXsn1tB/FkK+r6WrX/HOzLq8sgHCK0ipiJpOtQy7NXs0tK5599bwmBgztV65o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715546436; c=relaxed/simple;
-	bh=CSdmr9miqK7i+nXGIaaPpBLu8c5ScZzHA02Nmk6FrY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCfZY01tzrrGjTkStls4Ngn6V8DU+SC9IQZy0mIk+AeRid6WxbTLV49MZ1vkuybXzWn254HXHWaicI9qWnY4WEVNJi4gLxvmiTOG28HV0bqbMhp03npO7zypRZoKvxnEjy1PKC2AdlRCmH+IGzCQ63p+2Tucb4nf1Mn5hOvuTNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H0tttZHN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715546433;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=AEtb7WBHVYzv+rgK6K8TMwlfD4WQXIPKSqispxlfbkQ=;
-	b=H0tttZHNhvV8G1oQ06Z3XHkupSLay2TgssraZlgNV7yT/WB3vr0znYidNO0E27sdzVVpou
-	LwVAO6fSs9GYMQB1XlDwVrLlSO+yw8o78h0TZ5IDYXQjZPmnLfsE7OwZGy3bH63mN+C+uS
-	FRwqOcvgRiKU51NX8x7HZlYtyUfnejE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-lTIiqy6WMWevl_nuLxt6-g-1; Sun, 12 May 2024 16:40:29 -0400
-X-MC-Unique: lTIiqy6WMWevl_nuLxt6-g-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6DCAD85A58C;
-	Sun, 12 May 2024 20:40:29 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.39.192.46])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id A5E8BC15BB1;
-	Sun, 12 May 2024 20:40:28 +0000 (UTC)
-From: Hans de Goede <hdegoede@redhat.com>
-To: MyungJoo Ham <myungjoo.ham@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] extcon: Add LC824206XA microUSB switch driver
-Date: Sun, 12 May 2024 22:40:19 +0200
-Message-ID: <20240512204019.58121-1-hdegoede@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591128F5
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 20:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715546498; cv=fail; b=bmI2dNE4BQbwqYEUDH/XJQYjCklarNIyXuiYDZr2Hd8mzmGoO4AocYRnmiJsOTFFY6QZ9ONotN9HS+Qku+WqluVafCCWoxwnkZ2VMEK2bOVozUSR3lA71bMtsgLtrYAa/iW416kjRFoz20YmOeHL8U3MzNnUE2IoIu/bTlrjOlA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715546498; c=relaxed/simple;
+	bh=UyS9erzTcQrfQIDIeqtuOD4uE2i9+naJOfOea5jJh8c=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=IP1Okh1GAksH/989etQ4Rq4uMGB7DlgyGyk0B04JTgqONRlnhgnjVEqSOQqxPy3L0c5McEK0piE9tYA0uhgiiO9s6IHeEvm8H8RZKb9gkgCw75TarDfCtBlEZQ2R9tKjjoXJB/jKXINal+uTVi0Y++sChq/aJCU8KzKvEbWhfNA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Q0Ygmhm2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nHTP2OVI; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44CKOE8P012469;
+	Sun, 12 May 2024 20:41:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=7TBQIGN4/1VyAdMPXB7jBAquEDkreAUqTZ6Nv3CaPiI=;
+ b=Q0Ygmhm2B7nAkPl5hF4NQwwr82VTAF7VtqBO8Ia+z/Tmtjut9NOrOORjQKEPyYI0A51P
+ fubeQVIF0zWLb3f0mbnWTRwEetdMXCwjKst8Cv+TJN1AuAI0j18p0uwnE1qPKCJa500O
+ y6pNilqzLmkCaNcC9a83oxVR3XlrPRhvYzjt3UpalCAa5+nnzJ84ziv5gsmp9d1fsMYB
+ go4weMrlK2BZRha4ZdJd1tFvkd2NgWTxpgZ1eSNxqTz2huJ4OWNFxHzu7p3qvo7bkORm
+ 0RsftTUd6GeIx79kwQo+qXrAq5GYa/i5GRPew6CWJAvO7as1EE+bY0mYRMc2kRj43RZn Hg== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3300r1wt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 12 May 2024 20:41:17 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44CFClRc002196;
+	Sun, 12 May 2024 20:41:16 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24ptxfdm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 12 May 2024 20:41:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GGyZzyGkRsI9Ix+nM0a17cKE4zFK7aIKw6zu8vX+y266bUsjTXauITWcDxgZhoWeLaU6a11WfiwCNX8c3Xh/rPyxt/NB0nVNP/qi7Mx1F6iCU3Vxu+fXMlilE9tCyledauTTJAibavZGRfxKmSTUT1fuTwfnW7FRdmtxBq24NlqizYYI36E8pwa0gVAw4gyt1qw4wpRK9NEbRm0Y1LpqWJIhl+7VE7yMk2JEgGAKzVPDZNVU+/u4wbDXTTh1NpRZDiJVycqfZqJy1oAf1mFLPS8tZHFGKh2texyCa33ZOSoHjV15m1WwQmFjBrZnZpeMPVbC7RezmX8gEWkd1NoPkg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7TBQIGN4/1VyAdMPXB7jBAquEDkreAUqTZ6Nv3CaPiI=;
+ b=ieVxfOBEHGNnatnHW+E5MubVh345tbxBnAkc9I/4FdryGh84+XhBjOji2NJTSgDo/R0/oPJr3HKJCal9TnlEKirV9yeyiZxcf55ez0S8QYFYSaNSHHXHIPHaHXNRgIReIgGsblxvSYRJ5kTQevlYTNxrFEYJoaVf5WnpMo62mo8ZXJ+f3vvNwnXkqast4p921TK4F5cdKLsxXHAcWyWxa4o7diJRhpBdvXYKOaUWVWVf1ZynFRyQoShisC3OqxxZ/COx+KN/k7LPHzGJYirb8nBXsTjrpgEjW/DKpby34hFNR3pChtHEMS8k7Hh82PSbweyAyJgHor4Q4vqp2E3lyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7TBQIGN4/1VyAdMPXB7jBAquEDkreAUqTZ6Nv3CaPiI=;
+ b=nHTP2OVI4kAJsK/d76VwniiKe2Szv/iiO39F1izVfc8HIUWPGXAgMlT//7J9g7XHtWwvf+sILZ0tPE3j7mDD9Ve504gw/uoZGWO0xb9oYzI0j6dHf61QnU+kxtUhzfPCqPGsZ7U6llj+ye0uzb48ADhVv+P2PAUndrCTHyusWXs=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by SJ0PR10MB5598.namprd10.prod.outlook.com (2603:10b6:a03:3d9::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Sun, 12 May
+ 2024 20:41:14 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.7544.052; Sun, 12 May 2024
+ 20:41:14 +0000
+Date: Sun, 12 May 2024 16:41:11 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: syzbot <syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, lstoakes@gmail.com,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in validate_mm (3)
+Message-ID: <bywi4rrt2iyjrpdxuyg4tqi3byrchydi42mkfpxsbv6n62inlz@xeswhf7ftekb>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	syzbot <syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, lstoakes@gmail.com, syzkaller-bugs@googlegroups.com, 
+	vbabka@suse.cz
+References: <0000000000000a13ee06183e4464@google.com>
+ <q7omtpah3byvo5p3szra7kln63gtas35ml3kksltgj525pyezl@cn7v2o6qf2vc>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <q7omtpah3byvo5p3szra7kln63gtas35ml3kksltgj525pyezl@cn7v2o6qf2vc>
+User-Agent: NeoMutt/20231103
+X-ClientProxiedBy: SJ0PR03CA0143.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::28) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SJ0PR10MB5598:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69f147aa-d00c-4476-8203-08dc72c3dd87
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?YUfDU3VmxLU+L4mehO5fSJUq1PNJkb77mRTKNKlXussdIS7iu3sFfSQja4DU?=
+ =?us-ascii?Q?SlAz1fRk5vTaoYxIZiwucFpyS4PeQnOfzXxFQr7hZuQn1VeRxpPHGwwcEfRM?=
+ =?us-ascii?Q?wDSn1ZimBCkRskRPtlEBhEWTw6emytqPWyhk01jfKAAsPk9RNeCaSjsSnu7W?=
+ =?us-ascii?Q?8emSeAfFGvl7ufcKeafxl2nof5kpwBJ27NsSpaPapQO5iN5Jx8pEZKDZpzQO?=
+ =?us-ascii?Q?hoGGbkPm3EzzfIX6/jrzxo7eKz2CBR+X6HdzPI7X34xjbI7LLwG8c/nSaIII?=
+ =?us-ascii?Q?njL/qa/gwC2gwIYrpkdfEvkO/KfI/4b+MryJU9A33DGGktagaoBINAYfy+lH?=
+ =?us-ascii?Q?cZlT1l9i90maACYUS2fb6KSl987+Pdgx0Bli0K+eOnu7GWJiUcSCz9uKGrzT?=
+ =?us-ascii?Q?xWvVANJREFNJCSh7GmNqWJOl+9q7PhItV1GbTFCDvHCyuDwW0dOw+77Wszwr?=
+ =?us-ascii?Q?tAF6d8DGZ5aFhSNGBbHDwp7/OZL+NPX5nh5vhKntoT0RcAVzQQPyRG1/Mgme?=
+ =?us-ascii?Q?VIDBZwthJG/vMs+KAeKSbEvg0D72i5o0IgXh1M4OoIFplmPsXmKlRxwL8TlZ?=
+ =?us-ascii?Q?FCmuZ0XP2TlX7qmYR2lIBcqzx4FcMoBPyV6Ob9Txow6mJSJ2ks9W0DMRFg8Y?=
+ =?us-ascii?Q?R7FjUUsZtTli5moNMQSeClHgg/nixPa7aX4zk5mQlNncaB5IgD8q+45BpYXa?=
+ =?us-ascii?Q?MV+S18xY21UkaNql4m1PmULAv5BJ4TXwmrNfUeheuM2ZK19GCwAtexoxeqPt?=
+ =?us-ascii?Q?LelNy1Go3R+MimkZkR3Co6V/EFtLljd4WxN/C82xf/LjHe278ir/kmr5v+jw?=
+ =?us-ascii?Q?j/VwhVl+YDklOuVc2S219qtcxyjDBAz1vCLTQBpZa1Lk+qlSfjwcsUKQsISx?=
+ =?us-ascii?Q?94X0eID45brm66lQp87bmikos0fB6IkUz8zezb9lCy2mFEN//FLrFkINqrSW?=
+ =?us-ascii?Q?N8UL0SEC8g/Poahwr6th3acRR/c3kHRWLUHHzmIQijcj7AV6/IWtJihvAWp0?=
+ =?us-ascii?Q?Yt7FoHWmKfLfsXE5X7W2x9mf4ME7xLqo8gPHMgiidRfkk0iO8CA1D0U4bzu9?=
+ =?us-ascii?Q?H1A+Y9PR3GBFVfJPY1pdv3q9fIYXuryn4fOq/WpiRdl0mPpJStU0K9qXep96?=
+ =?us-ascii?Q?lVYCxtQKokAzNDZqxoWj36OoPxSVVG69TRgacyN6+pmEQ51Wcst3EXRaIRDF?=
+ =?us-ascii?Q?GT7z4K/D++FqBxWImqU3MiFSqthemaekYGYvo7+OXJnq81VNEwfvfILLT4U?=
+ =?us-ascii?Q?=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?45hqmhhoTUlOys9k2vpEtQW5l1CxVphwzO0eHV+s9c+HG4ML6PzTJH0sGCxA?=
+ =?us-ascii?Q?2AcJsNF7R5XWN5TXnpYgUB3Y8UrkwggsQuBFGuKWsDBfZm0n+xsF412ve/pf?=
+ =?us-ascii?Q?7EgQpMokg/C+BrsbXfbW2QvTbPlWeYmdOsoBAZcfsjsWdv7FVm/Vl0Sumnb/?=
+ =?us-ascii?Q?RFVrtMkR79OnGmgCUD7tWQSwyoz5NAdqvqy7nm4e+ACtH1J5dg7bIeok1yS1?=
+ =?us-ascii?Q?IzYkLFnSimpM+OwWG1Y+XJ7FhexZm5q5mupyPC4OfKbrwqSnWlyQlgXJaCpL?=
+ =?us-ascii?Q?99O2ZrDDieSM+zWzzyXXY4ZeYhul8URBRmybENa8+QWZrApu7hzRnhpMarOG?=
+ =?us-ascii?Q?AJBayacyDT0XnQ1TlHnM+2TJK21VtgLga1Sf+IwSYCG2h3inLkjdYOFj1MPh?=
+ =?us-ascii?Q?cfdadaWQrHewgYAqlunel9OzHaJHAzLPOOTiCTiel5VbR6gWB8ZuO/LlyLkS?=
+ =?us-ascii?Q?aTZimqG1LQSiB9/StTT7QHtrUenWvVn4SZy0l5k1ug6ykZVrRMK4vqCXtvCN?=
+ =?us-ascii?Q?fm36QGHhSCCI6PW1FvfYKi+0C7m37Y7T+PQ6IGvKbokaK/WnmHQ3jpI2/Psc?=
+ =?us-ascii?Q?119re0L7DmRuRFr7eFlY5tuUOZbtVUGp7ThN6V/S1Is45W0g858UUKRHY54B?=
+ =?us-ascii?Q?8ssFSL6YhM3Cs2PxEeWyBmL6+6/KTgREj6LjNwv0j6dMZXqldOvM0oS/8MJF?=
+ =?us-ascii?Q?J+LFlyrd4nWl7uA6IFjgAomWNd+G3vGZPJ3/800scM0LJ32HvAKQIQXL38K4?=
+ =?us-ascii?Q?EvXsCzdMINR719py++yDHn3ikYAN7u45N1qFDtl179QAPoIZbSulVStQUWZb?=
+ =?us-ascii?Q?XImmeze5vpgCWKdU91+HX3Qsx5ddZIkW2FRNzRgKJz6PM9wijzl3berRUBN8?=
+ =?us-ascii?Q?xsylzWbcntofAOOin0KpSxwXLZVwRi5EqwRmOVsaVmccVRIab7gm942JbiPc?=
+ =?us-ascii?Q?I6Yicb4JEdK5OyHNlM0mjJ3TJBJA7dNWiTpOb6qvFRfc4zVYYOQ07yZ6QzeB?=
+ =?us-ascii?Q?Xt2BBDY3GyYMwePSUyamneweucO0lLtzywGeKlOB2ugW0oOaYiYyewKG20UD?=
+ =?us-ascii?Q?mMZ26D2uWnbh9V83n430+h98gAtxqLXPOWke9A5rKa03H9BoLurns7X3ESl7?=
+ =?us-ascii?Q?KgXE2S1/IP/oMpkkoV0MzFR7eIi18QFGotDMHZXK7Euz44wNdAqchim0nafF?=
+ =?us-ascii?Q?8P4VDwOr8qxFTs1NYO/d7TsepUoInQlTNXyxClEIR7F4Qfn/2+66RFovwdt/?=
+ =?us-ascii?Q?XYh5K4VGjHk4LJpdYwJQlSGuhKZzyhaHOQw3bgJuXmqwXzvyx5qTZ69OvZbh?=
+ =?us-ascii?Q?gUkf1KidkjCIbeXq6+Ri9BVCNr7BUE6CeGq8JHjcwdKRaYrborlxHYOCYzTX?=
+ =?us-ascii?Q?Hil/j4+wn/R4+mlmrB/pbiTQOh95tB4HIvpLjnBQyAIWS3ApPFVh5gDFqkvF?=
+ =?us-ascii?Q?1GngVKQyJJIwsUZCA6U8vbBaEMtp+3h4tpY214OFgrtnTKRsc1fmBigTPfS1?=
+ =?us-ascii?Q?6pzjcmZgsqY5IX+HcnFtzN+TmDvZe308/FtY+pkXpYBACqwn9wMpThJHG5Ki?=
+ =?us-ascii?Q?qX0UtUywdYOTX63PH7A0p4RUzwWHxe7jFSNmOQ/7?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	QCwX4XYeTjRM5TpYP2t215tH/Jf6YQfitxjJ28XQGTlGpKBuXrO8ye+GS28C0pBYIgFjvE/+841+Dl5cocR8cSS/npCEn6YzrmNDK4YnWegKjzyeP2/QCzlpy8HQuy9vi/aNuTXDOGPwt/t9OdJxNOGL2IFUYRKbuOywOiF/HiqchJxWjhs0mXVd4w4/Tjx6lyk+NayBafi2avtHP/AFC/b65Y1N0K1UJkY3OI5WEgM31Ezw5gsv4+hzd/vNGvO17hyOa9I0RmhQF/DxXyi37tTUo1tHIoOV4jZmVHCUXQnhh6PDcCKrR4HNlf1DzUcmQnthxQ7HnWMer/zzASFcgeOEg42v+qJpkqcvHYkaaFXLu6BOcO/snC0TH4/LWcpGHe5LbEtjd8pJJIXgJQ2b5QspoPHBOHd7p8cMwa+l53q0Hexpkktl7cfGp4By68RGbJamSeULv+rJhOEXe7HryYccPkhH0HrAKq9ILrJ7p03kAwCW6AlmuO3BGaZ5u7qfsFlG5LnFf0ApQqld2bSCMirTNSp6sIHWbOchEWDsFFPgWPr7q0MorTHp0/gGnqypUqGn50bYFVRuFYRMVOiPKpa5gUSSEiRlyQy6vA8oAHs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69f147aa-d00c-4476-8203-08dc72c3dd87
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 May 2024 20:41:14.2237
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ouVd9Td2CTRuR1nz+mEpceeYmt1Un9m5mKdIvaJhwFW+nIbsbrnkoh1V6t+B3AHR2jJ95mUWh2yd9ZeY8TvXKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB5598
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-12_15,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405120154
+X-Proofpoint-ORIG-GUID: lWzhkavAP-kRz4GscSTFUjQLrZrqrQuC
+X-Proofpoint-GUID: lWzhkavAP-kRz4GscSTFUjQLrZrqrQuC
 
-Add a new driver for the ON Semiconductor LC824206XA microUSB switch and
-accessory detector chip.
+* Liam R. Howlett <Liam.Howlett@oracle.com> [240512 13:28]:
+> * syzbot <syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com> [240512 05:19]:
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> 
+> First, excellent timing of this report - Sunday on an -rc7 release the
+> day before LSF/MM/BPF.
+> 
+> > 
+> > HEAD commit:    dccb07f2914c Merge tag 'for-6.9-rc7-tag' of git://git.kern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=13f6734c980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=7144b4fe7fbf5900
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=a941018a091f1a1f9546
+> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10306760980000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=138c8970980000
+> > 
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/e1fea5a49470/disk-dccb07f2.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/5f7d53577fef/vmlinux-dccb07f2.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/430b18473a18/bzImage-dccb07f2.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+a941018a091f1a1f9546@syzkaller.appspotmail.com
+> > 
+> > rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> > rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P17678/1:b..l
+> > rcu: 	(detected by 1, t=10502 jiffies, g=36541, q=38 ncpus=2)
+> > task:syz-executor952 state:R  running task     stack:28968 pid:17678 tgid:17678 ppid:5114   flags:0x00000002
+..
 
-ON Semiconductor has an "Advance Information" datasheet available
-(ENA2222-D.PDF), but no full datasheet. So there is no documentation
-available for the registers.
+> 
+> I cannot say that this isn't the maple tree in an infinite loop, but I
+> don't think it is given the information above.  Considering the infinite
+> loop scenario would produce the same crash on reproduction but this is
+> not what syzbot sees on the git bisect, I think it is not an issue in
+> the tree but an issue somewhere else - and probably a corruption issue
+> that wasn't detected by kasan (is this possible?).
 
-This driver is based on the register info from the extcon-fsa9285.c driver,
-from the Lollipop Android sources for the Lenovo Yoga Tablet 2 (Pro)
-830 / 1050 / 1380 models. Note despite the name this is actually a driver
-for the LC824206XA not the FSA9285.
+I was able to recreate this with the provided config and reproducer (but
+not my own config).  My trace has no maple tree calls at all:
 
-This has only been tested on a Lenovo Yoga Tablet 2 Pro 1380 and
-using the driver on other setups may require additional work.
+[  866.380945][    C1] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[  866.381464][    C1] rcu:     (detected by 1, t=10502 jiffies, g=161409, q=149 ncpus=2)
+[  866.382152][    C1] rcu: All QSes seen, last rcu_preempt kthread activity 10500 (4295023801-4295013301), jiffies_till_next_fqs=1, root ->qsmask 0x0
+[  866.383324][    C1] rcu: rcu_preempt kthread starved for 10500 jiffies! g161409 f0x2 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
+[  866.384952][    C1] rcu:     Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
+[  866.385972][    C1] rcu: RCU grace-period kthread stack dump:
+[  866.386582][    C1] task:rcu_preempt     state:R  running task     stack:27648 pid:16    tgid:16    ppid:2      flags:0x00004000
+[  866.387811][    C1] Call Trace:
+[  866.388164][    C1]  <TASK>
+[  866.388475][    C1]  __schedule+0xf06/0x5cb0
+[  866.388961][    C1]  ? __pfx___lock_acquire+0x10/0x10
+[  866.389528][    C1]  ? __pfx___schedule+0x10/0x10
+[  866.390065][    C1]  ? schedule+0x298/0x350
+[  866.390541][    C1]  ? __pfx_lock_release+0x10/0x10
+[  866.391090][    C1]  ? __pfx___mod_timer+0x10/0x10
+[  866.391633][    C1]  ? lock_acquire+0x1b1/0x560
+[  866.392133][    C1]  ? lockdep_init_map_type+0x16d/0x7e0
+[  866.392709][    C1]  schedule+0xe7/0x350
+[  866.393139][    C1]  schedule_timeout+0x136/0x2a0
+[  866.393654][    C1]  ? __pfx_schedule_timeout+0x10/0x10
+[  866.394142][    C1]  ? __pfx_process_timeout+0x10/0x10
+[  866.394596][    C1]  ? _raw_spin_unlock_irqrestore+0x3b/0x80
+[  866.395137][    C1]  ? prepare_to_swait_event+0xf0/0x470
+[  866.395714][    C1]  rcu_gp_fqs_loop+0x1ab/0xbd0
+[  866.396246][    C1]  ? __pfx_rcu_gp_fqs_loop+0x10/0x10
+[  866.396852][    C1]  ? rcu_gp_init+0xbdb/0x1480
+[  866.397393][    C1]  ? __pfx_rcu_gp_cleanup+0x10/0x10
+[  866.397988][    C1]  rcu_gp_kthread+0x271/0x380
+[  866.398493][    C1]  ? __pfx_rcu_gp_kthread+0x10/0x10
+[  866.399063][    C1]  ? lockdep_hardirqs_on+0x7c/0x110
+[  866.399570][    C1]  ? __kthread_parkme+0x143/0x220
+[  866.400045][    C1]  ? __pfx_rcu_gp_kthread+0x10/0x10
+[  866.400535][    C1]  kthread+0x2c1/0x3a0
+[  866.400916][    C1]  ? _raw_spin_unlock_irq+0x23/0x50
+[  866.401409][    C1]  ? __pfx_kthread+0x10/0x10
+[  866.401854][    C1]  ret_from_fork+0x45/0x80
+[  866.402284][    C1]  ? __pfx_kthread+0x10/0x10
+[  866.402718][    C1]  ret_from_fork_asm+0x1a/0x30
+[  866.403167][    C1]  </TASK>
 
-So far this driver is only used on x86/ACPI (non devicetree) devs.
-Therefor there is no devicetree bindings documentation for this driver's
-"onnn,enable-miclr-for-dcp" property since this is not used in actual
-devicetree files and the dt bindings maintainers have requested properties
-with no actual dt users to _not_ be added to the dt bindings.
+I'm going to see if I can hit the corrupted stack version with kasan enabled.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
-Changes in v2:
-- Fix whitespace issues reported by checkpatch
----
- drivers/extcon/Kconfig             |  11 +
- drivers/extcon/Makefile            |   1 +
- drivers/extcon/extcon-lc824206xa.c | 500 +++++++++++++++++++++++++++++
- 3 files changed, 512 insertions(+)
- create mode 100644 drivers/extcon/extcon-lc824206xa.c
-
-diff --git a/drivers/extcon/Kconfig b/drivers/extcon/Kconfig
-index 5f869eacd19a..10212a585142 100644
---- a/drivers/extcon/Kconfig
-+++ b/drivers/extcon/Kconfig
-@@ -75,6 +75,17 @@ config EXTCON_INTEL_MRFLD
- 	  Say Y here to enable extcon support for charger detection / control
- 	  on the Intel Merrifield Basin Cove PMIC.
- 
-+config EXTCON_LC824206XA
-+	tristate "LC824206XA extcon Support"
-+	depends on I2C
-+	depends on POWER_SUPPLY
-+	help
-+	  Say Y here to enable support for the ON Semiconductor LC824206XA
-+	  microUSB switch and accessory detector chip. The LC824206XA is a USB
-+	  port accessory detector and switch. The LC824206XA is fully controlled
-+	  using I2C and enables USB data, stereo and mono audio, video,
-+	  microphone and UART data to use a common connector port.
-+
- config EXTCON_MAX14577
- 	tristate "Maxim MAX14577/77836 EXTCON Support"
- 	depends on MFD_MAX14577
-diff --git a/drivers/extcon/Makefile b/drivers/extcon/Makefile
-index f779adb5e4c7..0d6d23faf748 100644
---- a/drivers/extcon/Makefile
-+++ b/drivers/extcon/Makefile
-@@ -12,6 +12,7 @@ obj-$(CONFIG_EXTCON_GPIO)	+= extcon-gpio.o
- obj-$(CONFIG_EXTCON_INTEL_INT3496) += extcon-intel-int3496.o
- obj-$(CONFIG_EXTCON_INTEL_CHT_WC) += extcon-intel-cht-wc.o
- obj-$(CONFIG_EXTCON_INTEL_MRFLD) += extcon-intel-mrfld.o
-+obj-$(CONFIG_EXTCON_LC824206XA)	+= extcon-lc824206xa.o
- obj-$(CONFIG_EXTCON_MAX14577)	+= extcon-max14577.o
- obj-$(CONFIG_EXTCON_MAX3355)	+= extcon-max3355.o
- obj-$(CONFIG_EXTCON_MAX77693)	+= extcon-max77693.o
-diff --git a/drivers/extcon/extcon-lc824206xa.c b/drivers/extcon/extcon-lc824206xa.c
-new file mode 100644
-index 000000000000..d58a2c369018
---- /dev/null
-+++ b/drivers/extcon/extcon-lc824206xa.c
-@@ -0,0 +1,500 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * ON Semiconductor LC824206XA Micro USB Switch driver
-+ *
-+ * Copyright (c) 2024 Hans de Goede <hansg@kernel.org>
-+ *
-+ * ON Semiconductor has an "Advance Information" datasheet available
-+ * (ENA2222-D.PDF), but no full datasheet. So there is no documentation
-+ * available for the registers.
-+ *
-+ * This driver is based on the register info from the extcon-fsa9285.c driver,
-+ * from the Lollipop Android sources for the Lenovo Yoga Tablet 2 (Pro)
-+ * 830 / 1050 / 1380 models. Note despite the name this is actually a driver
-+ * for the LC824206XA not the FSA9285. The Android sources can be downloaded
-+ * from Lenovo's support page for these tablets, filename:
-+ * yoga_tab_2_osc_android_to_lollipop_201505.rar.
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/extcon-provider.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/power_supply.h>
-+#include <linux/property.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/workqueue.h>
-+
-+/*
-+ * Register defines as mentioned above there is no datasheet with register
-+ * info, so this may not be 100% accurate.
-+ */
-+#define REG00				0x00
-+#define REG00_INIT_VALUE		0x01
-+
-+#define REG_STATUS			0x01
-+#define STATUS_OVP			BIT(0)
-+#define STATUS_DATA_SHORT		BIT(1)
-+#define STATUS_VBUS_PRESENT		BIT(2)
-+#define STATUS_USB_ID			GENMASK(7, 3)
-+#define STATUS_USB_ID_GND		0x80
-+#define STATUS_USB_ID_ACA		0xf0
-+#define STATUS_USB_ID_FLOAT		0xf8
-+
-+/*
-+ * This controls the DP/DM muxes + other switches,
-+ * meaning of individual bits is unknown.
-+ */
-+#define REG_SWITCH_CONTROL		0x02
-+#define SWITCH_STEREO_MIC		0xc8
-+#define SWITCH_USB_HOST			0xec
-+#define SWITCH_DISCONNECTED		0xf8
-+#define SWITCH_USB_DEVICE		0xfc
-+
-+/* 5 bits? ADC 0x10 GND, 0x1a-0x1f ACA, 0x1f float */
-+#define REG_ID_PIN_ADC_VALUE		0x03
-+
-+/* Masks for all 3 interrupt registers */
-+#define INTR_ID_PIN_CHANGE		BIT(0)
-+#define INTR_VBUS_CHANGE		BIT(1)
-+/* Both of these get set after a continuous mode ADC conversion */
-+#define INTR_ID_PIN_ADC_INT1		BIT(2)
-+#define INTR_ID_PIN_ADC_INT2		BIT(3)
-+/* Charger type available in reg 0x09 */
-+#define INTR_CHARGER_DET_DONE		BIT(4)
-+#define INTR_OVP			BIT(5)
-+
-+/* There are 7 interrupt sources, bit 6 use is unknown (OCP?) */
-+#define INTR_ALL			GENMASK(6, 0)
-+
-+/* Unmask interrupts this driver cares about */
-+#define INTR_MASK \
-+	(INTR_ALL & ~(INTR_ID_PIN_CHANGE | INTR_VBUS_CHANGE | INTR_CHARGER_DET_DONE))
-+
-+/* Active (event happened and not cleared yet) interrupts */
-+#define REG_INTR_STATUS			0x04
-+
-+/*
-+ * Writing a 1 to a bit here clears it in INTR_STATUS. These bits do NOT
-+ * auto-reset to 0, so these must be set to 0 manually after clearing.
-+ */
-+#define REG_INTR_CLEAR			0x05
-+
-+/* Interrupts which bit is set to 1 here will not raise the HW IRQ */
-+#define REG_INTR_MASK			0x06
-+
-+/* ID pin ADC control, meaning of individual bits is unknown */
-+#define REG_ID_PIN_ADC_CTRL		0x07
-+#define ID_PIN_ADC_AUTO			0x40
-+#define ID_PIN_ADC_CONTINUOUS		0x44
-+
-+#define REG_CHARGER_DET			0x08
-+#define CHARGER_DET_ON			BIT(0)
-+#define CHARGER_DET_CDP_ON		BIT(1)
-+#define CHARGER_DET_CDP_VAL		BIT(2)
-+
-+#define REG_CHARGER_TYPE		0x09
-+#define CHARGER_TYPE_UNKNOWN		0x00
-+#define CHARGER_TYPE_DCP		0x01
-+#define CHARGER_TYPE_SDP_OR_CDP		0x04
-+#define CHARGER_TYPE_QC			0x06
-+
-+#define REG10				0x10
-+#define REG10_INIT_VALUE		0x00
-+
-+struct lc824206xa_data {
-+	struct work_struct work;
-+	struct i2c_client *client;
-+	struct extcon_dev *edev;
-+	struct power_supply *psy;
-+	struct regulator *vbus_boost;
-+	unsigned int usb_type;
-+	unsigned int cable;
-+	unsigned int previous_cable;
-+	u8 switch_control;
-+	u8 previous_switch_control;
-+	bool vbus_ok;
-+	bool vbus_boost_enabled;
-+	bool fastcharge_over_miclr;
-+};
-+
-+static const unsigned int lc824206xa_cables[] = {
-+	EXTCON_USB_HOST,
-+	EXTCON_CHG_USB_SDP,
-+	EXTCON_CHG_USB_CDP,
-+	EXTCON_CHG_USB_DCP,
-+	EXTCON_CHG_USB_ACA,
-+	EXTCON_CHG_USB_FAST,
-+	EXTCON_NONE,
-+};
-+
-+/* read/write reg helpers to add error logging to smbus byte functions */
-+static int lc824206xa_read_reg(struct lc824206xa_data *data, u8 reg)
-+{
-+	int ret;
-+
-+	ret = i2c_smbus_read_byte_data(data->client, reg);
-+	if (ret < 0)
-+		dev_err(&data->client->dev, "Error %d reading reg 0x%02x\n", ret, reg);
-+
-+	return ret;
-+}
-+
-+static int lc824206xa_write_reg(struct lc824206xa_data *data, u8 reg, u8 val)
-+{
-+	int ret;
-+
-+	ret = i2c_smbus_write_byte_data(data->client, reg, val);
-+	if (ret < 0)
-+		dev_err(&data->client->dev, "Error %d writing reg 0x%02x\n", ret, reg);
-+
-+	return ret;
-+}
-+
-+static int lc824206xa_get_id(struct lc824206xa_data *data)
-+{
-+	int ret;
-+
-+	ret = lc824206xa_write_reg(data, REG_ID_PIN_ADC_CTRL, ID_PIN_ADC_CONTINUOUS);
-+	if (ret)
-+		return ret;
-+
-+	ret = lc824206xa_read_reg(data, REG_ID_PIN_ADC_VALUE);
-+
-+	lc824206xa_write_reg(data, REG_ID_PIN_ADC_CTRL, ID_PIN_ADC_AUTO);
-+
-+	return ret;
-+}
-+
-+static void lc824206xa_set_vbus_boost(struct lc824206xa_data *data, bool enable)
-+{
-+	int ret;
-+
-+	if (data->vbus_boost_enabled == enable)
-+		return;
-+
-+	if (enable)
-+		ret = regulator_enable(data->vbus_boost);
-+	else
-+		ret = regulator_disable(data->vbus_boost);
-+
-+	if (ret == 0)
-+		data->vbus_boost_enabled = enable;
-+	else
-+		dev_err(&data->client->dev, "Error updating Vbus boost regulator: %d\n", ret);
-+}
-+
-+static void lc824206xa_charger_detect(struct lc824206xa_data *data)
-+{
-+	int charger_type, ret;
-+
-+	charger_type = lc824206xa_read_reg(data, REG_CHARGER_TYPE);
-+	if (charger_type < 0)
-+		return;
-+
-+	dev_dbg(&data->client->dev, "charger type 0x%02x\n", charger_type);
-+
-+	switch (charger_type) {
-+	case CHARGER_TYPE_UNKNOWN:
-+		data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
-+		/* Treat as SDP */
-+		data->cable = EXTCON_CHG_USB_SDP;
-+		data->switch_control = SWITCH_USB_DEVICE;
-+		break;
-+	case CHARGER_TYPE_SDP_OR_CDP:
-+		data->usb_type = POWER_SUPPLY_USB_TYPE_SDP;
-+		data->cable = EXTCON_CHG_USB_SDP;
-+		data->switch_control = SWITCH_USB_DEVICE;
-+
-+		ret = lc824206xa_write_reg(data, REG_CHARGER_DET,
-+					   CHARGER_DET_CDP_ON | CHARGER_DET_ON);
-+		if (ret < 0)
-+			break;
-+
-+		msleep(100);
-+		ret = lc824206xa_read_reg(data, REG_CHARGER_DET);
-+		if (ret >= 0 && (ret & CHARGER_DET_CDP_VAL)) {
-+			data->usb_type = POWER_SUPPLY_USB_TYPE_CDP;
-+			data->cable = EXTCON_CHG_USB_CDP;
-+		}
-+
-+		lc824206xa_write_reg(data, REG_CHARGER_DET, CHARGER_DET_ON);
-+		break;
-+	case CHARGER_TYPE_DCP:
-+		data->usb_type = POWER_SUPPLY_USB_TYPE_DCP;
-+		data->cable = EXTCON_CHG_USB_DCP;
-+		if (data->fastcharge_over_miclr)
-+			data->switch_control = SWITCH_STEREO_MIC;
-+		else
-+			data->switch_control = SWITCH_DISCONNECTED;
-+		break;
-+	case CHARGER_TYPE_QC:
-+		data->usb_type = POWER_SUPPLY_USB_TYPE_DCP;
-+		data->cable = EXTCON_CHG_USB_DCP;
-+		data->switch_control = SWITCH_DISCONNECTED;
-+		break;
-+	default:
-+		dev_warn(&data->client->dev, "Unknown charger type: 0x%02x\n", charger_type);
-+		break;
-+	}
-+}
-+
-+static void lc824206xa_work(struct work_struct *work)
-+{
-+	struct lc824206xa_data *data = container_of(work, struct lc824206xa_data, work);
-+	bool vbus_boost_enable = false;
-+	int status, id;
-+
-+	status = lc824206xa_read_reg(data, REG_STATUS);
-+	if (status < 0)
-+		return;
-+
-+	dev_dbg(&data->client->dev, "status 0x%02x\n", status);
-+
-+	data->vbus_ok = (status & (STATUS_VBUS_PRESENT | STATUS_OVP)) == STATUS_VBUS_PRESENT;
-+
-+	/* Read id pin ADC if necessary */
-+	switch (status & STATUS_USB_ID) {
-+	case STATUS_USB_ID_GND:
-+	case STATUS_USB_ID_FLOAT:
-+		break;
-+	default:
-+		/* Happens when the connector is inserted slowly, log at dbg level */
-+		dev_dbg(&data->client->dev, "Unknown status 0x%02x\n", status);
-+		fallthrough;
-+	case STATUS_USB_ID_ACA:
-+		id = lc824206xa_get_id(data);
-+		dev_dbg(&data->client->dev, "RID 0x%02x\n", id);
-+		switch (id) {
-+		case 0x10:
-+			status = STATUS_USB_ID_GND;
-+			break;
-+		case 0x18 ... 0x1e:
-+			status = STATUS_USB_ID_ACA;
-+			break;
-+		case 0x1f:
-+			status = STATUS_USB_ID_FLOAT;
-+			break;
-+		default:
-+			dev_warn(&data->client->dev, "Unknown RID 0x%02x\n", id);
-+			return;
-+		}
-+	}
-+
-+	/* Check for out of spec OTG charging hubs, treat as ACA */
-+	if ((status & STATUS_USB_ID) == STATUS_USB_ID_GND &&
-+	    data->vbus_ok && !data->vbus_boost_enabled) {
-+		dev_info(&data->client->dev, "Out of spec USB host adapter with Vbus present, not enabling 5V output\n");
-+		status = STATUS_USB_ID_ACA;
-+	}
-+
-+	switch (status & STATUS_USB_ID) {
-+	case STATUS_USB_ID_ACA:
-+		data->usb_type = POWER_SUPPLY_USB_TYPE_ACA;
-+		data->cable = EXTCON_CHG_USB_ACA;
-+		data->switch_control = SWITCH_USB_HOST;
-+		break;
-+	case STATUS_USB_ID_GND:
-+		data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
-+		data->cable = EXTCON_USB_HOST;
-+		data->switch_control = SWITCH_USB_HOST;
-+		vbus_boost_enable = true;
-+		break;
-+	case STATUS_USB_ID_FLOAT:
-+		/* When fast charging with Vbus > 5V, OVP will be set */
-+		if (data->fastcharge_over_miclr &&
-+		    data->switch_control == SWITCH_STEREO_MIC &&
-+		    (status & STATUS_OVP)) {
-+			data->cable = EXTCON_CHG_USB_FAST;
-+			break;
-+		}
-+
-+		if (data->vbus_ok) {
-+			lc824206xa_charger_detect(data);
-+		} else {
-+			data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
-+			data->cable = EXTCON_NONE;
-+			data->switch_control = SWITCH_DISCONNECTED;
-+		}
-+		break;
-+	}
-+
-+	lc824206xa_set_vbus_boost(data, vbus_boost_enable);
-+
-+	if (data->switch_control != data->previous_switch_control) {
-+		lc824206xa_write_reg(data, REG_SWITCH_CONTROL, data->switch_control);
-+		data->previous_switch_control = data->switch_control;
-+	}
-+
-+	if (data->cable != data->previous_cable) {
-+		extcon_set_state_sync(data->edev, data->previous_cable, false);
-+		extcon_set_state_sync(data->edev, data->cable, true);
-+		data->previous_cable = data->cable;
-+	}
-+
-+	power_supply_changed(data->psy);
-+}
-+
-+static irqreturn_t lc824206xa_irq(int irq, void *_data)
-+{
-+	struct lc824206xa_data *data = _data;
-+	int intr_status;
-+
-+	intr_status = lc824206xa_read_reg(data, REG_INTR_STATUS);
-+	if (intr_status < 0)
-+		intr_status = INTR_ALL; /* Should never happen, clear all */
-+
-+	dev_dbg(&data->client->dev, "interrupt 0x%02x\n", intr_status);
-+
-+	lc824206xa_write_reg(data, REG_INTR_CLEAR, intr_status);
-+	lc824206xa_write_reg(data, REG_INTR_CLEAR, 0);
-+
-+	schedule_work(&data->work);
-+	return IRQ_HANDLED;
-+}
-+
-+/*
-+ * Newer charger (power_supply) drivers expect the max input current to be
-+ * provided by a parent power_supply device for the charger chip.
-+ */
-+static int lc824206xa_psy_get_prop(struct power_supply *psy,
-+				   enum power_supply_property psp,
-+				   union power_supply_propval *val)
-+{
-+	struct lc824206xa_data *data = power_supply_get_drvdata(psy);
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		val->intval = data->vbus_ok && !data->vbus_boost_enabled;
-+		break;
-+	case POWER_SUPPLY_PROP_USB_TYPE:
-+		val->intval = data->usb_type;
-+		break;
-+	case POWER_SUPPLY_PROP_CURRENT_MAX:
-+		switch (data->usb_type) {
-+		case POWER_SUPPLY_USB_TYPE_DCP:
-+		case POWER_SUPPLY_USB_TYPE_ACA:
-+			val->intval = 2000000;
-+			break;
-+		case POWER_SUPPLY_USB_TYPE_CDP:
-+			val->intval = 1500000;
-+			break;
-+		default:
-+			val->intval = 500000;
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const enum power_supply_usb_type lc824206xa_psy_usb_types[] = {
-+	POWER_SUPPLY_USB_TYPE_SDP,
-+	POWER_SUPPLY_USB_TYPE_CDP,
-+	POWER_SUPPLY_USB_TYPE_DCP,
-+	POWER_SUPPLY_USB_TYPE_ACA,
-+	POWER_SUPPLY_USB_TYPE_UNKNOWN,
-+};
-+
-+static const enum power_supply_property lc824206xa_psy_props[] = {
-+	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_USB_TYPE,
-+	POWER_SUPPLY_PROP_CURRENT_MAX,
-+};
-+
-+static const struct power_supply_desc lc824206xa_psy_desc = {
-+	.name = "lc824206xa-charger-detect",
-+	.type = POWER_SUPPLY_TYPE_USB,
-+	.usb_types = lc824206xa_psy_usb_types,
-+	.num_usb_types = ARRAY_SIZE(lc824206xa_psy_usb_types),
-+	.properties = lc824206xa_psy_props,
-+	.num_properties = ARRAY_SIZE(lc824206xa_psy_props),
-+	.get_property = lc824206xa_psy_get_prop,
-+};
-+
-+static int lc824206xa_probe(struct i2c_client *client)
-+{
-+	struct power_supply_config psy_cfg = { };
-+	struct device *dev = &client->dev;
-+	struct lc824206xa_data *data;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->client = client;
-+	INIT_WORK(&data->work, lc824206xa_work);
-+	data->cable = EXTCON_NONE;
-+	data->previous_cable = EXTCON_NONE;
-+	data->usb_type = POWER_SUPPLY_USB_TYPE_UNKNOWN;
-+	/* Some designs use a custom fast-charge protocol over the mic L/R inputs */
-+	data->fastcharge_over_miclr =
-+		device_property_read_bool(dev, "onnn,enable-miclr-for-dcp");
-+
-+	data->vbus_boost = devm_regulator_get(dev, "vbus");
-+	if (IS_ERR(data->vbus_boost))
-+		return dev_err_probe(dev, PTR_ERR(data->vbus_boost),
-+				     "getting regulator\n");
-+
-+	/* Init */
-+	ret = lc824206xa_write_reg(data, REG00, REG00_INIT_VALUE);
-+	ret |= lc824206xa_write_reg(data, REG10, REG10_INIT_VALUE);
-+	msleep(100);
-+	ret |= lc824206xa_write_reg(data, REG_INTR_CLEAR, INTR_ALL);
-+	ret |= lc824206xa_write_reg(data, REG_INTR_CLEAR, 0);
-+	ret |= lc824206xa_write_reg(data, REG_INTR_MASK, INTR_MASK);
-+	ret |= lc824206xa_write_reg(data, REG_ID_PIN_ADC_CTRL, ID_PIN_ADC_AUTO);
-+	ret |= lc824206xa_write_reg(data, REG_CHARGER_DET, CHARGER_DET_ON);
-+	if (ret)
-+		return -EIO;
-+
-+	/* Initialize extcon device */
-+	data->edev = devm_extcon_dev_allocate(dev, lc824206xa_cables);
-+	if (IS_ERR(data->edev))
-+		return PTR_ERR(data->edev);
-+
-+	ret = devm_extcon_dev_register(dev, data->edev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "registering extcon device\n");
-+
-+	psy_cfg.drv_data = data;
-+	data->psy = devm_power_supply_register(dev, &lc824206xa_psy_desc, &psy_cfg);
-+	if (IS_ERR(data->psy))
-+		return dev_err_probe(dev, PTR_ERR(data->psy), "registering power supply\n");
-+
-+	ret = devm_request_threaded_irq(dev, client->irq, NULL, lc824206xa_irq,
-+					IRQF_TRIGGER_LOW | IRQF_ONESHOT,
-+					KBUILD_MODNAME, data);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "requesting IRQ\n");
-+
-+	/* Sync initial state */
-+	schedule_work(&data->work);
-+	return 0;
-+}
-+
-+static const struct i2c_device_id lc824206xa_i2c_ids[] = {
-+	{ "lc824206xa" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, lc824206xa_i2c_ids);
-+
-+static struct i2c_driver lc824206xa_driver = {
-+	.driver = {
-+		.name = KBUILD_MODNAME,
-+	},
-+	.probe = lc824206xa_probe,
-+	.id_table = lc824206xa_i2c_ids,
-+};
-+
-+module_i2c_driver(lc824206xa_driver);
-+
-+MODULE_AUTHOR("Hans de Goede <hansg@kernel.org>");
-+MODULE_DESCRIPTION("LC824206XA Micro USB Switch driver");
-+MODULE_LICENSE("GPL");
--- 
-2.44.0
-
+Thanks,
+Liam
 
