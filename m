@@ -1,37 +1,54 @@
-Return-Path: <linux-kernel+bounces-176938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5448C3796
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98ADF8C379E
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 18:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 876332812A5
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37AAE1F211F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 16:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BF54D5A5;
-	Sun, 12 May 2024 16:32:37 +0000 (UTC)
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE614BAA6;
+	Sun, 12 May 2024 16:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hiv8+BDC"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DC246435;
-	Sun, 12 May 2024 16:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05C036122;
+	Sun, 12 May 2024 16:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715531557; cv=none; b=iOlizaY6Lh39MC7rxK6Nl4j+TMaOglhtmJDN+DsmT4qpuS2BOj7dXZgTiAagCulWyPL/LR7aeNRaHXt9nXTcwDOo42eZajLIOy55mpxDXqNj6baijZFfDW0aQ9IrBUoCHdvi/bbpW2iN0/DlxmtYWRWFnIBYYfqm2Epx2l8rDYM=
+	t=1715532314; cv=none; b=Pe+ayQGIlGyXSqsnlr1ngroLwGwGJXqGJrcTpPpj78qp+l/TYxeK/DRXbqDgoHhT3uFKZY0rA5Of78y8w1xq+ZpDhP40NhHiIvYl5avQCx5saLjQOuRmoH6Rl71XdJnlJAlWiNwyoaGI6Ej3vKjbu8c044FCqTzI3vO/a/PTRNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715531557; c=relaxed/simple;
-	bh=2fmYuzsF53sotwxXlB7hG9j2/QIAXITmWcD/TyP5X6I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEJHo4k6cYlS7JZbmn2dJxcuMAWrgAOmafrmA0Rsd01Sj3r/pq8q9VZv60XGKl1Mp6RtS3jlt6uZMgkt6qbMjOJBZA3u7MX57/1/sAD7qQk7ezqYm/kAHGCvxyHhA/spULKibS89pZu0rWyOZRnk6fb6oeoNly06C9IzDHKxEDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C83DD40004;
-	Sun, 12 May 2024 16:31:25 +0000 (UTC)
-Message-ID: <276fa17b-cd62-433d-b0ec-fa98c65a46ca@ghiti.fr>
-Date: Sun, 12 May 2024 18:31:24 +0200
+	s=arc-20240116; t=1715532314; c=relaxed/simple;
+	bh=2pMCaI4MkXE4JujOu1FunSQxYYUR19dMTcOI+61p814=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WKB1GpQx6jb233+6kwT54mIqOai9JctF81+Sak9wIrjFv5qcg994iyPC++kovkWFPdlO+bXhjz0OO6dJ+oDagnrCi4j+7h8zq9wrDauGQ4gy2Z5ein++LDIZ2R6xcOoWp4K+quEfiY+MxvQ4/CIUxnmLAK+dx3S9Ihs96oVNLG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hiv8+BDC; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715532276; x=1716137076; i=markus.elfring@web.de;
+	bh=2pMCaI4MkXE4JujOu1FunSQxYYUR19dMTcOI+61p814=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hiv8+BDCho8eaerxrk9gbUBGrwfpk1OgAKwZsI3SSn047xHfEEVLL4TzTgc1nYgq
+	 yJRzgLJ/Die/9xA/On08WM9R65UjtOcHTmo9LTj5oAKcPsj44norIkRR24X9zqco4
+	 0w4ZGbT6+U9zXgz3kWUNPl2PEuXqg1LtZ2AjNXZRB5QOVBZFBldp6VwvDCWrWuWhc
+	 mCAziTOkmvI27hiEDwODTbrVq8aXU5h89+b9q3cFw9QlgfWF3Zze75IDCPOqrIBiV
+	 3ToNqBUxjF7kcojt5qe9Zl0QKzL8OChHv+AZCYcwo6QFT2ID/5gqNAmu96syfTgHM
+	 I0tiJ8mrEI4azA7+IQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXocY-1s4zQe2Sfk-00YD9h; Sun, 12
+ May 2024 18:44:36 +0200
+Message-ID: <749dde9d-d4a2-46f7-ae37-638b4cc95249@web.de>
+Date: Sun, 12 May 2024 18:44:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,108 +56,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 13/29] riscv mmu: write protect and shadow stack
-To: Deepak Gupta <debug@rivosinc.com>, paul.walmsley@sifive.com,
- rick.p.edgecombe@intel.com, broonie@kernel.org, Szabolcs.Nagy@arm.com,
- kito.cheng@sifive.com, keescook@chromium.org, ajones@ventanamicro.com,
- conor.dooley@microchip.com, cleger@rivosinc.com, atishp@atishpatra.org,
- bjorn@rivosinc.com, alexghiti@rivosinc.com, samuel.holland@sifive.com,
- conor@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
- akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
- shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
- jerry.shih@sifive.com, hankuan.chen@sifive.com, greentime.hu@sifive.com,
- evan@rivosinc.com, xiao.w.wang@intel.com, charlie@rivosinc.com,
- apatel@ventanamicro.com, mchitale@ventanamicro.com,
- dbarboza@ventanamicro.com, sameo@rivosinc.com, shikemeng@huaweicloud.com,
- willy@infradead.org, vincent.chen@sifive.com, guoren@kernel.org,
- samitolvanen@google.com, songshuaishuai@tinylab.org, gerg@kernel.org,
- heiko@sntech.de, bhe@redhat.com, jeeheng.sia@starfivetech.com,
- cyy@cyyself.name, maskray@google.com, ancientmodern4@gmail.com,
- mathis.salmen@matsal.de, cuiyunhui@bytedance.com, bgray@linux.ibm.com,
- mpe@ellerman.id.au, baruch@tkos.co.il, alx@kernel.org, david@redhat.com,
- catalin.marinas@arm.com, revest@chromium.org, josh@joshtriplett.org,
- shr@devkernel.io, deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
- jhubbard@nvidia.com
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-14-debug@rivosinc.com>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240403234054.2020347-14-debug@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
+To: Luis Henriques <luis.henriques@linux.dev>, linux-ext4@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, Andreas Dilger <adilger@dilger.ca>,
+ Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+ Theodore Ts'o <tytso@mit.edu>, Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240510115252.11850-1-luis.henriques@linux.dev>
+Subject: Re: [PATCH] ext4: fix infinite loop when replaying fast_commit
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240510115252.11850-1-luis.henriques@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:enKyVoKCLTS3efop8Am9z49VzDdZsucJ+BPKQEBksbAMFQSZopr
+ 8uZrRg5d70Cy4jxlquea/yhjH/yxxmhBAQs2YDiKqjWHXkLKUh4eeoNBo6vO+6Nntf5q6Au
+ VxdECCUrvtSdXXXfdrHYyo5/lDvfU4bs64ty9H8ODkNGvLJtJa4D1tnTfRdp4Sp6BlL5gKS
+ TmM8uekIaaF2XL7t3rleQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:eEZG2u069MY=;RSI28NTcb9VOEAnjioPKJ5VYxBh
+ VSHAEavQgSsL33KeM1Arhv5I+HhbLth9QE8OPyw8tjDsdZee9uotWIhkIcjTidFM8ifUJErfT
+ vO9FcdC1Hz2E5US1u/mB2LEDBZSaqjNdux0ddE1bk4Cb0jyL1+h3zNRqqXJWswD+eqso+zInc
+ 6pEW8n44ApF/O+u0J4m4JG2cFSGWpdfBNibLy9qx1C9IqSwHvW8rBZ1M2kVApLeOmZgtry8fN
+ 4PM4j3nRN5x6+Y1goyBK3qLyGsOfqwRx/HVcPuD7loLaPwlpln7kR+UzFbqvkH5cKG9EppIV4
+ VNa3rov9LW5VfxtHntx1WqtkJkoiK7pwnYGTHj2jUktF0B97cBNVOh6totCy+dELruTFelWY3
+ d1iHAGWD7yCDlqCodT3ddF3lurbFEFlnnZMfLjriLwjPCfeuXR15WJp/gMFp/GwJcJWWz7CgK
+ wxWEleVNpkAfPxf/XGYfhlQ6PK9CpdNiwSZu5OaL6RP6eYGj4dwhHWQSEOjhBJYvF6l7AfWqC
+ UpjiCJ5thtHiIg8kLL9bEWn+WB5Hz7YctP1TZIyheB2/RuFl0LKpia0MB0E2l/X6NbkRVNmj6
+ qUaPMmiPmi98lI+B26IQByrIAC+vmYz8XYu9IGcv4aa2ukwmMeLOfkpgrfr+iMsA8g7SzV9ef
+ cH6AsU1UHKWfUduR2/no5fa3Uvjw9Xa63YhG48iwgYp4vKA/DwQrobxaKGzcOElF7BC5pK9Sg
+ LYReB9Jph+PMxjGRnWklF7iDFA2rRfQ//1znFEMaFK6cidEN+xFAP8z/71o9PHZMkbBZvagZt
+ q0CAznhK5+q5H5nA6X//inb6nR5cXf3FZp+Twrq9lHxBA=
 
-On 04/04/2024 01:35, Deepak Gupta wrote:
-> `fork` implements copy on write (COW) by making pages readonly in child
-> and parent both.
->
-> ptep_set_wrprotect and pte_wrprotect clears _PAGE_WRITE in PTE.
-> Assumption is that page is readable and on fault copy on write happens.
->
-> To implement COW on such pages,
+=E2=80=A6
+> This commit fixes this issue by detecting the replay =E2=80=A6
+
+Would corresponding imperative wordings be more desirable for such a chang=
+e description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n94
 
 
-I guess you mean "shadow stack pages" here.
+> Thanks to Zhang Yi, for figuring out the real problem!
+=E2=80=A6
 
+Will another tag become relevant here?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9-rc7#n527
 
->   clearing up W bit makes them XWR = 000.
-> This will result in wrong PTE setting which says no perms but V=1 and PFN
-> field pointing to final page. Instead desired behavior is to turn it into
-> a readable page, take an access (load/store) fault on sspush/sspop
-> (shadow stack) and then perform COW on such pages.
-> This way regular reads
-> would still be allowed and not lead to COW maintaining current behavior
-> of COW on non-shadow stack but writeable memory.
->
-> On the other hand it doesn't interfere with existing COW for read-write
-> memory. Assumption is always that _PAGE_READ must have been set and thus
-> setting _PAGE_READ is harmless.
->
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->   arch/riscv/include/asm/pgtable.h | 12 ++++++++++--
->   1 file changed, 10 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> index 9b837239d3e8..7a1c2a98d272 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -398,7 +398,7 @@ static inline int pte_special(pte_t pte)
->   
->   static inline pte_t pte_wrprotect(pte_t pte)
->   {
-> -	return __pte(pte_val(pte) & ~(_PAGE_WRITE));
-> +	return __pte((pte_val(pte) & ~(_PAGE_WRITE)) | (_PAGE_READ));
->   }
->   
->   /* static inline pte_t pte_mkread(pte_t pte) */
-> @@ -581,7 +581,15 @@ static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
->   static inline void ptep_set_wrprotect(struct mm_struct *mm,
->   				      unsigned long address, pte_t *ptep)
->   {
-> -	atomic_long_and(~(unsigned long)_PAGE_WRITE, (atomic_long_t *)ptep);
-> +	volatile pte_t read_pte = *ptep;
-> +	/*
-> +	 * ptep_set_wrprotect can be called for shadow stack ranges too.
-> +	 * shadow stack memory is XWR = 010 and thus clearing _PAGE_WRITE will lead to
-> +	 * encoding 000b which is wrong encoding with V = 1. This should lead to page fault
-> +	 * but we dont want this wrong configuration to be set in page tables.
-> +	 */
-> +	atomic_long_set((atomic_long_t *)ptep,
-> +			((pte_val(read_pte) & ~(unsigned long)_PAGE_WRITE) | _PAGE_READ));
->   }
->   
->   #define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
-
-
-Doesn't making the shadow stack page readable allow "normal" loads to 
-access the page? If it does, isn't that an issue (security-wise)?
-
+Regards,
+Markus
 
