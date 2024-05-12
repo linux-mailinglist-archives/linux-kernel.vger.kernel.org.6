@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-176993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8DC8C3847
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E349F8C384A
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 21:38:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBD91B215CD
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:38:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C648B21CAC
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 19:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1238A57C98;
-	Sun, 12 May 2024 19:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+J22fH/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4628159B4E;
+	Sun, 12 May 2024 19:37:08 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B85B56B77;
-	Sun, 12 May 2024 19:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D2B56B89
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 19:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715542626; cv=none; b=ayRICXZ+d0gPqYj0VnLTX+4IfLIRIhg2d+q+uAYPvVQATNfp/qArAr+9fc1NL52MRMAk2/5lWQvyDZkuSeWRemLc+QSLxN18r13rcLPjCd2qsTy8dt+fnBz4DRvYQYb6B/LikQykBBYpYvFOy69d3lc5NpxuSlQ+E9XhHMmFark=
+	t=1715542627; cv=none; b=NSn1+PNzC1LME4U1CdYLa9EeeohR+P308uR85MFjqVfpnnAtI5h9VedIMYxUwugsrH4cfPBIyP+O5j25wPRu373oA4rR7A/Bl79Lt3LTSwTXOikCrXXL0PoFcH/iMskReoeEXr4Rtry7Za276nYSeiWqIVVIX9DQjkpmvxpedC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715542626; c=relaxed/simple;
-	bh=qXYTRSugt7rwl/3A7n+cY924/FHphURhvhYWI9AMXzs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=C0voVWm4ciAjzFJCyEZj2amQXfZ0ORNwk8cFg/q6K+dh3646afWG6I1EnW/S8QEQglDAjzSNGTd8T4gjAazL1ZZeZBNWP2QUha9QZ4II8xSiU8ffVjIyHbVraVREUzEAocvhKW8cfQGt9ynyW8xbdsTJVk7ZGKo/9nYUTRFgUTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+J22fH/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 081B8C32783;
-	Sun, 12 May 2024 19:37:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715542625;
-	bh=qXYTRSugt7rwl/3A7n+cY924/FHphURhvhYWI9AMXzs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e+J22fH/4YnyP8x5FrAEpo47lsNbj13oV2jS+1bItSJLZScow+ISz0erPzyq51tDX
-	 omRw3NzuQiO1RBpqmHWxZkNdG/C3JpIBRCJRCbdigcjcQA99HuS1zHzIBjLEjyvLM/
-	 kwq3wZLGlKZW9tGsCgDmoFB0XF9ZVchI0zsqHmkv96mGBGcdzYb+wpO4wWv7zIZLUT
-	 e0crt2XhymhE1BsA7nONdVsfepGmV7Jk3FLLgaOEUqReDaQPf3eJt2SsfUKoYypJLN
-	 FXf9Xgi9xcMVJdrj3qSs3ai2k7adxPQmN4NKNo1MKgwJi/TTmrrNUkoh3eJ0gORigB
-	 +mWlKI7cGWgbg==
-From: SeongJae Park <sj@kernel.org>
-To: 
-Cc: SeongJae Park <sj@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org
-Subject: [RFC IDEA v2 6/6] drivers/virtio/virtio_balloon: integrate ACMA and ballooning
-Date: Sun, 12 May 2024 12:36:57 -0700
-Message-Id: <20240512193657.79298-7-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240512193657.79298-1-sj@kernel.org>
-References: <20240512193657.79298-1-sj@kernel.org>
+	s=arc-20240116; t=1715542627; c=relaxed/simple;
+	bh=kyd93mqSF82R8nszEN3nDKoKUXfQOeLHYtm9U0w+AYA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=O3s/bR/eqwIk2gGxTMLapEgJptTb/6rqFh2gELoj4Tg9fGEzUHIfU7CoUJW7IQVDxExwi98LezSQIj6fTt2By+XynBUNvTBQzac4E4jz8nmvobr4L2duFGzAwLJsm0qCZrDeannhTbX9nCZ2NzYUF5N/kgNr/4WB1V8T9ZrhJgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7e1be009e6eso296445439f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 12:37:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715542625; x=1716147425;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WVn/OxZZaVY2YhgVyRsBmiKCFaHKe7OYXMQofi/q71Q=;
+        b=krDMvsGWq4XsgJ1RnWf99LuX3sLmRM4mxTRXKff6sSO/YqyaUegqadipel1awoHViB
+         Tx6kow9pYb5s5qqVnyjKVf2w+FqYVB4qKv1OcSQPh8o5ZsQQUQNKNTDgoiWKQVTibVv8
+         e7Qmd3vg/0/o4kyWga87QPevMH8w4rvSdkDxTex0RBBS4GBhzDuLTJRJthc9YgOgf8NQ
+         7MZGRnp0B5AKCqUytp1IUs1jzW/rP0cLugJlqVEAyZe4QOpxiHY9kXjp6Mv5tnAohPQd
+         aLLpmbYDXNF3ZI60ok91DbIwLWc5Qn9WIRFnoeyg7IH8EMiRkxY0DmbDT/f18KVEYPrC
+         /8Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCWULW+pwqbTNqghMhvuiiNzmXjM0k7fPRN1o0Ro/Zj4fL6Tfd2BrFzV4e3lvUkgVxCX7iaBLawmHzkWhWTvQZqNnzoVTFV7yUhHUwcl
+X-Gm-Message-State: AOJu0Yxl0zV3OhdSxmJiuirGb4OIRn73KuVNoz2tRYZXbEEggvbHPhSa
+	4K9rSeVFFNq7iE/vBotzkW6Us6yd/BlHJnSbWCFcu/TXd1JzuG16PZCSZWIjsUHuL1HqAsivKdv
+	pE3UCknc3cQbQflNDkqVYOUqZ8c4m8CptHlknVjowPXTVOTvhMXYphNA=
+X-Google-Smtp-Source: AGHT+IGDS4MzOj5DR3HwqtSuhyI/oGt5Xu9CBnIDswORRMQ+lAMRu3qR2PZxLFcQnybLBtI0Q4Kjbto+VKB+6t/KDiLXjmW3OA5F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8506:b0:488:d9fb:b418 with SMTP id
+ 8926c6da1cb9f-4895933e5a1mr551182173.6.1715542625498; Sun, 12 May 2024
+ 12:37:05 -0700 (PDT)
+Date: Sun, 12 May 2024 12:37:05 -0700
+In-Reply-To: <000000000000898d010616c1fd03@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca4700061846e4e1@google.com>
+Subject: Re: [syzbot] [fs?] KASAN: slab-use-after-free Read in __fput (2)
+From: syzbot <syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com>
+To: brauner@kernel.org, christian.koenig@amd.com, daniel@ffwll.ch, 
+	dmantipov@yandex.ru, dri-devel@lists.freedesktop.org, jack@suse.cz, 
+	justinjiang@vivo.com, linaro-mm-sig@lists.linaro.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, lvc-project@linuxtesting.org, 
+	mdaenzer@redhat.com, pchelkin@ispras.ru, sumit.semwal@linaro.org, 
+	syzkaller-bugs@googlegroups.com, tjmercier@google.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Let the host effectively inflate the balloon in access/contiguity-aware
-way when the guest kernel is compiled with specific kernel config.  When
-the config is enabled and the host requests balloon size change,
-virtio-balloon adjusts ACMA's max-mem parameter instead of allocating
-guest pages and put it into the balloon.  As a result, the host can use
-the requested amount of guest memory, so from the host's perspective,
-the ballooning just works, but in transparent and
-access/contiguity-aware way.
+syzbot has bisected this issue to:
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- drivers/virtio/virtio_balloon.c | 26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+commit ff2d23843f7fb4f13055be5a4a9a20ddd04e6e9c
+Author: Michel D=C3=A4nzer <mdaenzer@redhat.com>
+Date:   Fri Jul 23 07:58:57 2021 +0000
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 1f5b3dd31fcf..a954d75789ae 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -472,6 +472,32 @@ static void virtballoon_changed(struct virtio_device *vdev)
- 	struct virtio_balloon *vb = vdev->priv;
- 	unsigned long flags;
- 
-+#ifdef CONFIG_ACMA_BALLOON
-+	s64 target;
-+	u32 num_pages;
-+
-+
-+	/* Legacy balloon config space is LE, unlike all other devices. */
-+	virtio_cread_le(vb->vdev, struct virtio_balloon_config, num_pages,
-+			&num_pages);
-+
-+	/*
-+	 * Aligned up to guest page size to avoid inflating and deflating
-+	 * balloon endlessly.
-+	 */
-+	target = ALIGN(num_pages, VIRTIO_BALLOON_PAGES_PER_PAGE);
-+
-+	/*
-+	 * If the given new max mem size is larger than current acma's max mem
-+	 * size, same to normal max mem adjustment.
-+	 * If the given new max mem size is smaller than current acma's max mem
-+	 * size, strong aggressiveness is applied while memory for meeting the
-+	 * new max mem is met is stolen.
-+	 */
-+	acma_set_max_mem_aggressive(totalram_pages() - target);
-+	return;
-+#endif
-+
- 	spin_lock_irqsave(&vb->stop_update_lock, flags);
- 	if (!vb->stop_update) {
- 		start_update_balloon_size(vb);
--- 
-2.39.2
+    dma-buf/poll: Get a file reference for outstanding fence callbacks
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17c1007c9800=
+00
+start commit:   5eb4573ea63d Merge tag 'soc-fixes-6.9-2' of git://git.kern.=
+.
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1421007c9800=
+00
+console output: https://syzkaller.appspot.com/x/log.txt?x=3D1021007c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9d985095f83428b=
+e
+dashboard link: https://syzkaller.appspot.com/bug?extid=3D5d4cb6b4409edfd18=
+646
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D11a13cf898000=
+0
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D15c4d2f8980000
+
+Reported-by: syzbot+5d4cb6b4409edfd18646@syzkaller.appspotmail.com
+Fixes: ff2d23843f7f ("dma-buf/poll: Get a file reference for outstanding fe=
+nce callbacks")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisectio=
+n
 
