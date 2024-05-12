@@ -1,192 +1,114 @@
-Return-Path: <linux-kernel+bounces-176852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B008C35FE
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:37:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4251E8C35FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 12:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB599B20E88
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 10:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C484C1F212B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 10:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA84E1CD11;
-	Sun, 12 May 2024 10:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F391CD24;
+	Sun, 12 May 2024 10:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="dxlTVxnJ"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MTmTlvW2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728671B966
-	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 10:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A721CAAF
+	for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 10:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715510213; cv=none; b=cgiYgYV6eY14H3pRdcS4/h43J+sxXeIoWBe8AlmwiqhZIuRFSVzMLi0b9Q5dO7afeD1eURrCtXF2nh7dtKT+UPJSIdaIUkjWNVB110MaW3XU33eSRDqGAbqJD8QUCGUNsEe4xCCNDACrz9drOXbhfqXu9yg5RumIypIrAM6TmtM=
+	t=1715510608; cv=none; b=hL10Bk8A5WXsTAhWoEnr5XYqjvFZdbqnU2xAXONtJQe8KmgYqM4emh/bcuGsVGqeBzFT+Tgo8y2apmtdM4zzPv9U6hklvfnQAJwr9Q3gpuFH8oehrqf5P4uo/9k7qqhiHuurpfeEUkDnirDObPr2TiEBBXcBrcyOmaUzI6uUkcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715510213; c=relaxed/simple;
-	bh=j30ddHpc932nEhD0I8IE5h30/grSJLRgARi76cpJ6M8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=XQcI3GR8Vg52DhoBJ+Nt25TQQ8mHNSU4ZkTYME9krZ422WiFJe+i5FQiLBHieSVUvOZNKYaFPcBJ/189l05Z7IIxltc5ZV2q1PQghIkksFKjeQhB6uL30lHoOuXj9dYcJAXZdCsShG3r61cpARgjYsd41X6+SAU2KdGj7k9Oy9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=dxlTVxnJ; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=CFrNgpT1Nwpx03uo6E/jHNM9dH4Al8QsEcPwh5BEXAY=;
-  b=dxlTVxnJTUY0dP9lttlkLJ3cyJL1u+DbDsbeG6z+nmQS1o7/bmovgH2P
-   8aKjVF+vrw4dW5xdOd2NdngZ/DQ/XzU3HwieUPMzjxBe7JgngPmEC5kjY
-   9OwOCKaZdfZ0dHzjbG05MPXFcYA3AdDsHO1Wd2q3A1QJZhb/Q3zqG7MfQ
-   A=;
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.08,155,1712613600"; 
-   d="scan'208";a="165237912"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 12:36:48 +0200
-Date: Sun, 12 May 2024 12:36:48 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-X-X-Sender: jll@hadrien
-To: Kousik Sanagavarapu <five231003@gmail.com>
-cc: kernel test robot <lkp@intel.com>, Nishanth Menon <nm@ti.com>, 
-    Santosh Shilimkar <ssantosh@kernel.org>, 
-    Julia Lawall <julia.lawall@inria.fr>, llvm@lists.linux.dev, 
-    oe-kbuild-all@lists.linux.dev, Shuah Khan <skhan@linuxfoundation.org>, 
-    Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
-    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] soc: ti: knav_qmss_queue: do device_node auto
- cleanup
-In-Reply-To: <ZkCZTv0Gci3xxKtw@five231003>
-Message-ID: <alpine.DEB.2.22.394.2405121235270.6747@hadrien>
-References: <20240510071432.62913-3-five231003@gmail.com> <202405111846.3m9z398l-lkp@intel.com> <ZkCZTv0Gci3xxKtw@five231003>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1715510608; c=relaxed/simple;
+	bh=0rdr5+9oRPkVDvU6kbrzwQtN/Z+LPqctRKzqAJ8FT6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khBrVenHodJnlEI1R9/ICKCteQR66KldH54yF1Y5tcpWkDv3NXtdANnmG9NZ2uwFcfiGZ9N+TDQ95JuQPWGQj5MQ/QpL/t86Al+ZzkFbc8iqZzn4QE1+zh56hFMHyh5ztWVdPOwCbybiefTcsaSOpMSjs+5T8OPrb4SzKTIa/oI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MTmTlvW2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715510606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oxrgodSSTuZswJnNY6k+AyI3wOxNGvPqyHgv829oWBs=;
+	b=MTmTlvW2txlpc8nQCGdMXtpYUsEiRTbAXx3m1ZLDX+Nbowdjd6+JhsmMLvzgFRiJ3Wl48u
+	MwGehcJ6CZzs0p77p1OtIZQUoCjdeS64/WKhS9Tf5mBn+ZMSKyLaXCulNMTxmqk0vswsZC
+	+gFgQV5WjWy4ygIZpMJc2+WHOVC3b4M=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-303-ckBUExiOMliF3DcwR5UIXw-1; Sun, 12 May 2024 06:43:22 -0400
+X-MC-Unique: ckBUExiOMliF3DcwR5UIXw-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CE33F8030A4;
+	Sun, 12 May 2024 10:43:21 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.31])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 0DEA7492BC6;
+	Sun, 12 May 2024 10:43:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 12 May 2024 12:41:55 +0200 (CEST)
+Date: Sun, 12 May 2024 12:41:52 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Message-ID: <20240512104151.GA7541@redhat.com>
+References: <20240507093530.3043-1-urezki@gmail.com>
+ <20240507093530.3043-26-urezki@gmail.com>
+ <ZjpAsYJIfzYSKgdA@redhat.com>
+ <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
+ <20240510131849.GB24764@redhat.com>
+ <20240510135057.GC24764@redhat.com>
+ <474ae55c-fe9e-4668-8f9b-23f819c76d10@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <474ae55c-fe9e-4668-8f9b-23f819c76d10@paulmck-laptop>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
+Sorry for another delay...
 
-
-On Sun, 12 May 2024, Kousik Sanagavarapu wrote:
-
-> On Sat, May 11, 2024 at 06:12:39PM +0800, kernel test robot wrote:
-> > Hi Kousik,
+On 05/10, Paul E. McKenney wrote:
+>
+> On Fri, May 10, 2024 at 03:50:57PM +0200, Oleg Nesterov wrote:
 > >
-> > kernel test robot noticed the following build errors:
-> >
+> > I can only find the strnstr(buf, "rcu") checks in skip_report(),
+> > but they only cover the KCSAN_REPORT_VALUE_CHANGE_ONLY case...
 >
-> [...]
+> Huh, new one on me!  When I run KCSAN, I set CONFIG_KCSAN_STRICT=y,
+> which implies CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n, which should
+> prevent skip_report() from even being invoked.
 >
-> > All errors (new ones prefixed by >>):
-> >
-> > >> drivers/soc/ti/knav_qmss_queue.c:1853:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1840:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1835:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1831:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1822:4: error: cannot jump from this goto statement to its label
-> >                            goto err;
-> >                            ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1818:4: error: cannot jump from this goto statement to its label
-> >                            goto err;
-> >                            ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1810:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1813:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *pdsps __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1806:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1813:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *pdsps __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1795:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1813:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *pdsps __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1801:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *qmgrs __free(device_node) =
-> >                                ^
-> >    9 errors generated.
->
-> Seems like gcc didn't catch this when I compiled locally.
->
-> Normally, this would be fixed if we placed braces around the individual
-> initialization blocks, that is, say
->
-> 	{
-> 		struct device_node *qmgrs __free(device_node) =
-> 			of_get_child_by_name(node, "qmgrs");
-> 		...
-> 	}
->
->
-> That would make the code look a lot more dirty though and is purely
-> unnecessary.  So I'd say I'd drop this patch and do a v2 with the
-> remaining two patches.  Thoughts?
->
-> There's also some stuff with classes but that too is not really worth
-> doing because the code will end up looking very ugly.
+> Which suggests that in the rest of the kernel, including "rcu_"
+> in your function name gets you stricter KCSAN checking.  ;-)
 
-Please include the patch in such a message so that one can see everything
-at once.  I'm not sure it's necessary to show all the error messages
-either.  Just a few that help illustrate the problem.
+Yes.
 
-julia
+And that is why I was very confused. I misinterpreted the "stricter
+data-race rules used in RCU code" as if there must be more "rcu-only"
+hacks in the kernel/kcsan/ code which I can't find ;)
+
+Oleg.
+
 
