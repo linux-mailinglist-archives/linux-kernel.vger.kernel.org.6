@@ -1,62 +1,78 @@
-Return-Path: <linux-kernel+bounces-176826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-176827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F158C3586
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 10:25:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410AE8C358B
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 10:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1045928184A
-	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:25:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72D1C1C209C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 12 May 2024 08:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC2117BA4;
-	Sun, 12 May 2024 08:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0942618B14;
+	Sun, 12 May 2024 08:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="aZb+cq2d"
-Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UR0cbRyX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAEEF4FB;
-	Sun, 12 May 2024 08:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FDDEEB3;
+	Sun, 12 May 2024 08:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715502334; cv=none; b=J4pJE8iU1um1MA2psYq+W+5ShQYUd0y1gPjz0hiCJhz4jW7RD45AXvBfhclhWNBpzp4gjkAEWHfWvZTf6ZZH9P536taL/ert1uRHdNokTyVt8RhKUyzfzlQtg8Zr7r5qce/J7oHC1JB2SXj0mNwsWYSBvPR+aLhrnIGDboxj/lc=
+	t=1715502367; cv=none; b=V5uqX1B/552bmXvUDiXZ/CXNfJdKIUtkUlvFmhQubxy5Ab3gVifB1qyPDFd4D0+3M7QE3D1nHz+9yOZPxp7zXqTyA7aEpplRgEHSZm1UKkIRN49enZvMTTgQc7ErfE1LjvebHq/FphVftCKzXMrb60OwdeBV9AxlJQEoVPKWG3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715502334; c=relaxed/simple;
-	bh=3bropaEuO+HDjP2gQM23pQyv3+GAl2eSHPXjLwrxc58=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ladg/YLoXBYsmOZGZQgOz92WB9tOCrBcr+1USq8JWmuqPg9bjKFQCdYjp9gojIpPIQUaBQ3ylrp7qerEPH1wzPcsyyZJbRsA+z3geqyboqX/otih8ttlZWD6w7w299gsk4X7QNHhmAcK25q2hxvOMlaTDsnoFJzlGvr1+Ql0DDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=aZb+cq2d; arc=none smtp.client-ip=193.252.22.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 64WPsyoweU2oV64WPsDA52; Sun, 12 May 2024 10:25:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715502330;
-	bh=56iz0oI+WX/kH2ILFWTh8WmhpFc2Q7uosN2/CPWH/4o=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=aZb+cq2d6zcgJbbWJcuq9i5bn94KbhTK7EHFkccvy1eN1gjkhFsMMY7BEB9X2k8/3
-	 h/Lb6wW2ELiCout1iNRuVP8/4MnIcb/BfaCG+x1Sbh79VX95cOhyn6jsooToNuI0dy
-	 30nxCjLMA30BejOOAM+oFS+A9UnGMC6YVN58opjS3NWJDM7wI2ePr7O8mVUX/ospVb
-	 QsmGzQ1VlSUJT92tETgv9GsixZ7Ry/ANrgdCE9qFxJci1W/J6+2sbRLvFPBGAIL0i3
-	 LKSxpSwUo8988LYo1K2mm+9zmheaTe/YvhG+3szhOu7xcg/i67XP6mxP2o9NbbCq38
-	 TnXGrfaUCsM5g==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 12 May 2024 10:25:29 +0200
-X-ME-IP: 86.243.17.157
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Hans de Goede <hdegoede@redhat.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-input@vger.kernel.org
-Subject: [PATCH] Input: chipone_icn8505 - remove an unused field in struct icn8505_data
-Date: Sun, 12 May 2024 10:25:17 +0200
-Message-ID: <37443a675ca07c91c5f0118ce255406e6e3c08f5.1715502304.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715502367; c=relaxed/simple;
+	bh=aHYIcQgRBEYtprmx6meR3etQZm/Z03qPUZ92mabg+Bg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r+smuFypxH+9biskm8ay2V/kfqLH5+iPdQ8t8wYtTdHF0b7AMVyxwcjFcRFNTmGrE3iC5AUW2sgYc/4BQY44UWbwAdBJNCl93OQqj9C07tpPfrCnRbmLOHSwzMHLqFgdaeGTMQjsYLRKNwPMWeTjodl/pqEbos0qrO3IlOdiH3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UR0cbRyX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44C7Pu5Q000483;
+	Sun, 12 May 2024 08:25:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=qcppdkim1; bh=KQBwbQ6FHPb9QLsOTZqr
+	JS/yEKzH5E6J0bAhscUnszQ=; b=UR0cbRyXiEMTZQxCSKjEDK5ytu5nuidwSJ0n
+	TPgxmCpymV0Nm2x6eJaosM2G34ucx61B/YUhK+c7abt9/2F5qx0SK7I0Sh0xv3yb
+	FOOCGwhCW4W79ePzcI3MXmRzcX93Nriys1CO+eU8cZpgRoS0drpcO0k78m07fyjP
+	bAp05vXLg26sQgLRcBtw0/1X43l6us4pnx2P0ZYq5KHL+j9XJXEEqPfTaMOzI9ND
+	/1hj/fh3fmZ8WQGlrwWDyeVyyhywr7eKNswnKUxGkSZA20kCT68XAB0u8k7B52Ul
+	UoR6SEdklR4F+tACN44rWrfd3suF2W7UQv4+zIyv++CuGmmbuA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y21y7sej5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 08:25:46 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44C8Pgpe005088;
+	Sun, 12 May 2024 08:25:42 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3y21rkn9uj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 08:25:42 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44C8Pgbe005072;
+	Sun, 12 May 2024 08:25:42 GMT
+Received: from hu-devc-blr-u22-a.qualcomm.com (hu-devipriy-blr.qualcomm.com [10.131.37.37])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 44C8PgmY005068
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 08:25:42 +0000
+Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 4059087)
+	id 5650740FAB; Sun, 12 May 2024 13:55:41 +0530 (+0530)
+From: devi priya <quic_devipriy@quicinc.com>
+To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, dmitry.baryshkov@linaro.org,
+        neil.armstrong@linaro.org, quic_msarkar@quicinc.com,
+        quic_qianyu@quicinc.com, abel.vesa@linaro.org, quic_cang@quicinc.com,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_devipriy@quicinc.com
+Subject: [PATCH V3 0/2] Add support for PCIe PHY in IPQ9574
+Date: Sun, 12 May 2024 13:55:39 +0530
+Message-Id: <20240512082541.1805335-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,38 +80,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: kgD1dCnPPJFxMCUv4mWc6HppYf7OQ4Gi
+X-Proofpoint-GUID: kgD1dCnPPJFxMCUv4mWc6HppYf7OQ4Gi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-12_05,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ impostorscore=0 malwarescore=0 phishscore=0 spamscore=0 bulkscore=0
+ priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1011
+ mlxlogscore=884 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405120063
 
-In "struct icn8505_data", the 'wake_gpio' field is unused.
-There is also nothing about gpio neither in this driver nor in the
-data-sheet.
+This series adds support for a single-lane and two-lane PCIe PHYs
+found on Qualcomm IPQ9574 platform.
 
-So, remove it.
+[V3]
+	Change logs are added to the respective patches.
+[V2]
+	https://lore.kernel.org/linux-arm-msm/20230519085723.15601-1-quic_devipriy@quicinc.com/
+[V1]
+	https://lore.kernel.org/linux-arm-msm/20230421124150.21190-1-quic_devipriy@quicinc.com/
 
-Found with cppcheck, unusedStructMember.
+devi priya (2):
+  dt-bindings: phy: qcom,ipq8074-qmp-pcie: Document the IPQ9574 QMP PCIe
+    PHYs
+  phy: qcom-qmp-pcie: Add support for IPQ9574 g3x1 and g3x2 PCIEs
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested only.
+ .../phy/qcom,ipq8074-qmp-pcie-phy.yaml        |   2 +
+ drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 309 ++++++++++++++++++
+ .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 +
+ .../phy/qualcomm/phy-qcom-qmp-qserdes-pll.h   |   3 +
+ 4 files changed, 328 insertions(+)
 
-It was added in the initial commit e7330fa032bb ("Input: add support for
-ChipOne icn8505 based touchscreens") but was never used.
----
- drivers/input/touchscreen/chipone_icn8505.c | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/input/touchscreen/chipone_icn8505.c b/drivers/input/touchscreen/chipone_icn8505.c
-index b56954830b33..c1b4fc28fa8d 100644
---- a/drivers/input/touchscreen/chipone_icn8505.c
-+++ b/drivers/input/touchscreen/chipone_icn8505.c
-@@ -68,7 +68,6 @@ struct icn8505_touch_data {
- struct icn8505_data {
- 	struct i2c_client *client;
- 	struct input_dev *input;
--	struct gpio_desc *wake_gpio;
- 	struct touchscreen_properties prop;
- 	char firmware_name[32];
- };
+base-commit: e7b4ef8fffaca247809337bb78daceb406659f2d
+prerequisite-patch-id: 513cb089a74b49996b46345595d1aacf60dcda64
+prerequisite-patch-id: ce7a8e9bac53fd5f02921bff6bc54149fb92f996
+prerequisite-patch-id: c26478e61e583eb879385598f26b42b8271036f5
+prerequisite-patch-id: a5c15da6a968e673737dc5aa962f31576903f8aa
+prerequisite-patch-id: 353eb53cd192489d5b0c4654a0b922f23e1f7217
+prerequisite-patch-id: d282ba7948460ae4d2f541c8c25ff5089ff6507e
+prerequisite-patch-id: 5141131d46f7789b50ac806f10b63869d15d709f
 -- 
-2.45.0
+2.34.1
 
 
