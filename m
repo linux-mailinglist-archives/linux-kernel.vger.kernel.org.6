@@ -1,194 +1,109 @@
-Return-Path: <linux-kernel+bounces-177408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD4B8C3E22
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:30:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70EEE8C3E26
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:31:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7233CB20B09
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:30:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF6E4B20E35
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF351487E8;
-	Mon, 13 May 2024 09:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD061487F2;
+	Mon, 13 May 2024 09:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3aIE0UI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="iGi0xfIm"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7F31474B1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5F71487E4
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715592602; cv=none; b=hHD+pXWe4Nd0Kdra3FXHO8gDJR7QGNP/kCdygbNBliHHDlPxc0I1RKWdx+E5hWSiMc3SRlNUWxNX4hNF221cXk+03cTEIORXJo2ZIX/u/QGHfdKgQAkvJMhI7CGL+h2kcv4qzb3llxZDrP4ujdTgdVfgYePz2TJ847o0m9O5bP0=
+	t=1715592658; cv=none; b=VqoamT8Uk7VnAP1qTFX2TOGJYwrqJDUXKk7N50AHLqOBH7i9kioL8Y53AXudRdpotXdOEO5WK/8yOQhWckjjKFO2umNcUxBVX0ZtZktK7OnayA2DBEHOgb4LQH2weyH1dIQf2bxWJ+W6u96vn5JFxzy5/kawThMXK84m1p+Yivs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715592602; c=relaxed/simple;
-	bh=SgD0haG+Licdrhd4sV75XBEAf7AIJuM4HFLb1qTh+Yo=;
+	s=arc-20240116; t=1715592658; c=relaxed/simple;
+	bh=BAF/xIb1E7qisRIyY6qauTrYxIU/5DRCX5f2FaV81Rc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T8Yvg3PgNohs9aOac+arB+LgQcUBZ/CcTL7kPRyPLobZFFmkBJJ6ThASOliGPA4bzhj1cOLVGzQbLl66+rnHxvHt7BXIOhaKlSZXVPywbgFeGmeudFo98uF4IbZuY8AFGyialtrgekQNnhEkQk5FFz8w07UTpwQwxgIbuvYeDag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q3aIE0UI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CBA3C32782;
-	Mon, 13 May 2024 09:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715592601;
-	bh=SgD0haG+Licdrhd4sV75XBEAf7AIJuM4HFLb1qTh+Yo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q3aIE0UIWqAIA8I+MAyr39jtZfjZM6dAhsRWYX9NlXVgRpSrcLpmKXzu1G+Oqn53N
-	 E9N9vUfOKytKJ3N4k+DiS5pA34dwHy1V9qzC17G7YA2OFPpxN22ynKvSe8GcFsdoEV
-	 lzwAWGW3dno95Db/dVZ7eR64cXPbcAOV1tAm6FM0JBGKiqqYtpz3BB1sgb/g74PZbT
-	 MKyJC+S1DO0/RMUa+ZEt7OfNXsF8DUqBb1DuHDAoLQGqN4zs7OHhPEXEgBUxfC4Rsk
-	 692uyI9EpObLGvVkfXNQzG6KpWtBO4wSRDNjiJbl5bvP2T+ZLhIOher3YtqFzR5Y4J
-	 HhjwVyt444hMA==
-Date: Mon, 13 May 2024 11:29:58 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, 
-	lvzhaoxiong@huaqin.corp-partner.google.com, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Hsin-Yi Wang <hsinyi@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Cong Yang <yangcong5@huaqin.corp-partner.google.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Joel Selvaraj <jo@jsfamily.in>, 
-	Brian Norris <briannorris@chromium.org>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/9] drm/mipi-dsi: Reduce driver bloat of
- mipi_dsi_*_write_seq()
-Message-ID: <20240513-solemn-yak-of-refinement-cb778a@penduick>
-References: <20240508205222.2251854-1-dianders@chromium.org>
- <20240508135148.v4.4.Id15fae80582bc74a0d4f1338987fa375738f45b9@changeid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJI/0xDFanf9lrw+Uhk/rJSvNUSUWz2Vize7s41dpVjgSwAExR7gXS7c2AfoO/d9ZMlDzE7nDpr/7CRaKPi8n4FM7TUPK1lXY5tt24UXoeE6cgHVoMCzXY4v5RKtinhhNW58Iy+yiFSmBMdvk/WT8ubxNzgcaylU+ETa96Nj8Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=iGi0xfIm; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=BcGz
+	rPlqRyCOwTa9nHvRCWonIpRGHhg98o8RAugUT30=; b=iGi0xfImngJdOA6htoCf
+	UN2G2VgSxklTU6dJ6DzaLxrf36e3gRwVamJe+JAd/AuVKH27R5R07OX6vwRzKfXQ
+	AW9a+GuETnUMX3auwk1/QmpG3ZOU8lR3wnhJP7wa9fU2COugQ14lmBiDkgi49SQG
+	SkjPHAHOL9VoYSCw0E3DSN3PQe56lPP1SsFqo4RTSMvEU9NB2MP3dCz3UX0I1qwz
+	n9dtCyJ6oRSCaVMqPJAwcJR5RdqJdE23H653oed9TXjbZdoB5x/E8cZKGC2Yv/1L
+	vk4gihy+R1QfuMriHAsnA9f6uvzxwwvtjpE5eUwaRkafrnTTVzVu22NeXEbOrdIG
+	EA==
+Received: (qmail 2085793 invoked from network); 13 May 2024 11:30:45 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 May 2024 11:30:45 +0200
+X-UD-Smtp-Session: l3s3148p1@UkgzilIYStVehhtP
+Date: Mon, 13 May 2024 11:30:45 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Wolfram Sang <wsa@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Sai Pavan Boddu <sai.pavan.boddu@amd.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.9-rc8
+Message-ID: <sadxp73tm5zhfgsv6ufroexcoq4cg4j4quljry4bsojkzniw4c@m5mhet2w5f5e>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, 
+	Sai Pavan Boddu <sai.pavan.boddu@amd.com>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+References: <pb7vi7igdvqo6jlyjrd2lhfgbrz2kx5nmmw36vcdy64ndwbs3r@e675jdrgq3lj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="fdnrbzflhblyceom"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ywwjpquvue527sft"
 Content-Disposition: inline
-In-Reply-To: <20240508135148.v4.4.Id15fae80582bc74a0d4f1338987fa375738f45b9@changeid>
+In-Reply-To: <pb7vi7igdvqo6jlyjrd2lhfgbrz2kx5nmmw36vcdy64ndwbs3r@e675jdrgq3lj>
 
 
---fdnrbzflhblyceom
+--ywwjpquvue527sft
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Andi,
 
-On Wed, May 08, 2024 at 01:51:46PM -0700, Douglas Anderson wrote:
-> Through a cooperative effort between Hsin-Yi Wang and Dmitry
-> Baryshkov, we have realized the dev_err() in the
-> mipi_dsi_*_write_seq() macros was causing quite a bit of bloat to the
-> kernel. Let's hoist this call into drm_mipi_dsi.c by adding a "chatty"
-> version of the functions that includes the print. While doing this,
-> add a bit more comments to these macros making it clear that they
-> print errors and also that they return out of _the caller's_ function.
->=20
-> Without any changes to clients this gives a nice savings. Specifically
-> the macro was inlined and thus the error report call was inlined into
-> every call to mipi_dsi_dcs_write_seq() and
-> mipi_dsi_generic_write_seq(). By using a call to a "chatty" function,
-> the usage is reduced to one call in the chatty function and a function
-> call at the invoking site.
->=20
-> Building with my build system shows one example:
->=20
-> $ scripts/bloat-o-meter \
->   .../before/panel-novatek-nt36672e.ko \
->   .../after/panel-novatek-nt36672e.ko
-> add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-4404 (-4404)
-> Function                                     old     new   delta
-> nt36672e_1080x2408_60hz_init               10640    6236   -4404
-> Total: Before=3D15055, After=3D10651, chg -29.25%
->=20
-> Note that given the change in location of the print it's harder to
-> include the "cmd" in the printout for mipi_dsi_dcs_write_seq() since,
-> theoretically, someone could call the new chatty function with a
-> zero-size array and it would be illegal to dereference data[0].
-> There's a printk format to print the whole buffer and this is probably
-> more useful for debugging anyway. Given that we're doing this for
-> mipi_dsi_dcs_write_seq(), let's also print the buffer for
-> mipi_dsi_generic_write_seq() in the error case.
->=20
-> It should be noted that the current consensus of DRM folks is that the
-> mipi_dsi_*_write_seq() should be deprecated due to the non-intuitive
-> return behavior. A future patch will formally mark them as deprecated
-> and provide an alternative.
->=20
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
->=20
-> Changes in v4:
-> - Update wording as per Linus W.
->=20
-> Changes in v3:
-> - Rebased upon patch to remove ratelimit of prints.
->=20
-> Changes in v2:
-> - Add some comments to the macros about printing and returning.
-> - Change the way err value is handled in prep for next patch.
-> - Modify commit message now that this is part of a series.
-> - Rebased upon patches to avoid theoretical int overflow.
->=20
->  drivers/gpu/drm/drm_mipi_dsi.c | 56 ++++++++++++++++++++++++++++++++++
->  include/drm/drm_mipi_dsi.h     | 47 +++++++++++++++-------------
->  2 files changed, 82 insertions(+), 21 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_ds=
-i.c
-> index 795001bb7ff1..8593d9ed5891 100644
-> --- a/drivers/gpu/drm/drm_mipi_dsi.c
-> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
-> @@ -764,6 +764,34 @@ ssize_t mipi_dsi_generic_write(struct mipi_dsi_devic=
-e *dsi, const void *payload,
->  }
->  EXPORT_SYMBOL(mipi_dsi_generic_write);
-> =20
-> +/**
-> + * mipi_dsi_generic_write_chatty() - mipi_dsi_generic_write() w/ an erro=
-r log
-> + * @dsi: DSI peripheral device
-> + * @payload: buffer containing the payload
-> + * @size: size of payload buffer
-> + *
-> + * Like mipi_dsi_generic_write() but includes a dev_err_ratelimited()
+> after a few weeks, we received to patches marked as fixes from
+> Christophe and Sai Pavan.
 
-You mention in both functions that it's calling dev_err_ratelimited() ...
+Sorry, I was away this weekend, so I couldn't get this into 6.9-final.
+Yet, I think pulling into 6.10-rc1 and backporting to 6.9 should work as
+well.
 
-> + * call for you and returns 0 upon success, not the number of bytes sent.
-> + *
-> + * Return: 0 on success or a negative error code on failure.
-> + */
-> +int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *dsi,
-> +				  const void *payload, size_t size)
-> +{
-> +	struct device *dev =3D &dsi->dev;
-> +	ssize_t ret;
-> +
-> +	ret =3D mipi_dsi_generic_write(dsi, payload, size);
-> +	if (ret < 0) {
-> +		dev_err(dev, "sending generic data %*ph failed: %zd\n",
-> +			(int)size, payload, ret);
+Thanks,
 
-=2E.. but it doesn't.
+   Wolfram
 
-Maxime
-
---fdnrbzflhblyceom
+--ywwjpquvue527sft
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkHdlQAKCRAnX84Zoj2+
-diZ2AX0ajvUjOrMjYhcEJ0oy4LnmXzL5YVKvIJSrsnbZiFstJ7Iu/29/qZDI+bj4
-2hLYzgwBf0LBOJ9ls41o8vJ+Ao1IEB+FzXCnQih+aw0fAA7GW1cexEJXpPuBunqS
-QQ2tpJtGdA==
-=rJ0G
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZB3cAACgkQFA3kzBSg
+KbZMjQ/+P59NY+oFi7WTaq1L1iyWSdALKo6Y4bovCkSdf/rBgRNqhpr4DfBRBAbs
+3+SPeEHIFjLfdBbEEqbw4vgt9d+RDHglMQb0rK8qMoWO6+RHTjp6FdzdlmaY/jiU
+sXtgTkb730ZDasAqn0jvfApj40FJi3Z6KdZPWdxonocShZ7oe5EKx2tflWjJeV2g
+L3I3DyP6iA30zs/MlBZtBm+2jCzB43QevLR62H9wrnE9X6ieMWEbD5J5iLq2yMjY
+lAX9RGGks89vIbMdEgfu9fm1YZGvjcpGDpfzcB90TrPdh1E5J1mP+aTfiApsreFj
+4TKZUEpcb5/iuREcsKNv7L48PjNV9WiV/KB+GYFGAdB4fG9/8ps1sRasL9VZKtNv
+g1MgJB0aB/IRhP3jt1BCXuMigZPWBBXRwRQOjw03vJ8E5TanHhG9cU8ECBMbB5zl
+E9HgUc1bdkSok92gRxncIaDwXJzoRm8SQT+q/cqm0LmzQ3fNlAQRW5LieEIbzOtF
+8SqW9xpkddazke9ucIci6NTaBmQiijbHb51VDLGN+nGTkAVnpuH12mi3aq36xHPo
+gDnFLlGpdjqYE0CmuoL1bf2QUL8mceq1uba7X9XMZaxG8JvvDxjNxG2XgJ6H6p+P
+LQEdQaTgHOr1mWLcGpA99URMxPnu3DP4gYIkKSm/7uHaATIHG78=
+=pbvK
 -----END PGP SIGNATURE-----
 
---fdnrbzflhblyceom--
+--ywwjpquvue527sft--
 
