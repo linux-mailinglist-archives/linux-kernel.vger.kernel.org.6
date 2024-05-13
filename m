@@ -1,170 +1,102 @@
-Return-Path: <linux-kernel+bounces-177844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2F98C453B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:46:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DCD98C453C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D557B211D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97F3D1C20D8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585421A716;
-	Mon, 13 May 2024 16:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843821CD15;
+	Mon, 13 May 2024 16:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJNrDZT8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbAhzog5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DE215C0;
-	Mon, 13 May 2024 16:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69141CA89;
+	Mon, 13 May 2024 16:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618770; cv=none; b=gDzJzlrPi9ymTSRiJiqtQnthPuVMC/BwV6uWyJFkggXMHiHbKuBeVfyzPIJGPbjTHI/ppnMjqYDjpXRt7F35Or9nqHsQuKemndt4XCBQv/zQ5NAIo1RfO+1tlIKKCjjdOzmQv+Bwcuub7SFnshm+hXLxQm1Ie1AeWCW0YBkQhYw=
+	t=1715618807; cv=none; b=nI4BNRiCmZ5Ziewxg4M/+lWInvTJpz3uTyghoMrd4sYC8sIFEN2mpVKMYkrye5ZcCBQ7MphECqqZi5jLNpXZ6U0rwp5mcXG6JlK1u8ZE13cRctk1e5gOO8d8jydPx54vNs7DBiBOcYa8VPKmiSDv8FZIJUhjfykoJW1A4gR4UGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618770; c=relaxed/simple;
-	bh=FPfAXVM12QYDyYflSy0vT9mflrQA7TObx9YGhJ3owMU=;
+	s=arc-20240116; t=1715618807; c=relaxed/simple;
+	bh=MkWI0eSVp+S5LEhfZiAhhvdMwAvSY+rnKHO51GHLaDs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ET4UCQMD5Go3w9giX4sX6vJbohzzVR6iDdKzB/nC2hS46TYUfJfIRLQG+Vo2Ftqo5u0hiKM2Lh99+K3C/e6uSeT7BSE8lgYR9Kbx+Ckqk1Mt0RDawHrCNHSJOQsyanujqaux9F9+K4fWMgT+vs413tYwuXiTXlWQRKJorX5xAyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJNrDZT8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF5DC113CC;
-	Mon, 13 May 2024 16:46:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gmCwHYrR33rL2vRyps4H74WhLYBqrn+qSQHFmWsJLMzfYqY0GNUBhsOpXoYdxhVLnHyxew4N9tclUYY7EenlOmNyF3x1A2X48UQCv6+YIJOiQDaw30L06A+QB4Gj7vuDSEtqbu3crcgb5D3v83XWsaNlRf+wXYDomnOyDVMKH7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbAhzog5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449A7C113CC;
+	Mon, 13 May 2024 16:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715618770;
-	bh=FPfAXVM12QYDyYflSy0vT9mflrQA7TObx9YGhJ3owMU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hJNrDZT8ki4t4Db9+DTa2OrP3Tn8kyMdH77y5inAKYCvKgARikHL3kUkh1MvqTQ2q
-	 LU5NT8OAG5Y+rW65PWWdgs5VeKGWvWr/g8k7duQ9eX89hOC24yCw6DVP8KeHsDvS6O
-	 BoGvuNGCPJMMA5v/RNmQnfp10rmv9JZyv2Ejl5BnutFeGOTMqIrfrFolzqHJ6ztzar
-	 MB5tRlJSPVjSYa5Yissa3/xuTmwejCHvZ/LbIqKgAD8yhlrm6rnmx7Q/aoVUED7hZU
-	 5e6MmBxgfPq/RzNW9xlfvypEGtRlWY0/PPDtY0wEYg7+fEhqmervzWrPErhrM9MWnm
-	 9F1dX2W8EaBfQ==
-Date: Mon, 13 May 2024 17:46:05 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-Message-ID: <20240513-headsman-hacking-d51fcc811695@spud>
-References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
- <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
+	s=k20201202; t=1715618807;
+	bh=MkWI0eSVp+S5LEhfZiAhhvdMwAvSY+rnKHO51GHLaDs=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=LbAhzog5jaflLHu4HNwazc1VclE3Tv/XMW70rUi15/HyQf0RCFv8uTnnHQPOPw1ye
+	 HHchU9WY1h7qBwDJypMB90uNAAbIQrjRyjCwKp+/CI+lIHB/fa/map64Yh5z8gKXkL
+	 PCCCKv6WbMG1QSWGUcQ/nSsV7OVKZ+guEoRyz/UB49D9AWGGwSyrTOrRUHy9KVwOy7
+	 Y883rhR5lHaS2E9MH/tzfbm0FfmvGVEYuym9pupC+PKx8fcqb1p+eU5ZiRRHg4IsJ0
+	 d3esvv17JzNgLhq48kEtrRBKUl6xpRnCUWBW5wg2G9qc9KMMZxv46jVuaYnAb8llvk
+	 kxIJ4VICPxOyQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3F7BFCE098A; Mon, 13 May 2024 09:46:45 -0700 (PDT)
+Date: Mon, 13 May 2024 09:46:45 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Nikita Kiryushin <kiryushin@ancud.ru>, linke li <lilinke99@qq.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Zenghui Yu <zenghui.yu@linux.dev>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [GIT PULL] RCU changes for v6.10
+Message-ID: <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240510183049.312477-1-urezki@gmail.com>
+ <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Btx5Xw/JNA0IyjcR"
-Content-Disposition: inline
-In-Reply-To: <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
-
-
---Btx5Xw/JNA0IyjcR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
 
-On Fri, May 10, 2024 at 07:44:24PM -0500, David Lechner wrote:
-> This adds a new property to the spi-peripheral-props binding for use
-> with peripherals connected to controllers that support offloading.
->=20
-> Here, offloading means that the controller has the ability to perform
-> complex SPI transactions without CPU intervention in some shape or form.
->=20
-> This property will be used to assign controller offload resources to
-> each peripheral that needs them. What these resources are will be
-> defined by each specific controller binding.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->=20
-> v2 changes:
->=20
-> In v1, instead of generic SPI bindings, there were only controller-
-> specific bindings, so this is a new patch.
->=20
-> In the previous version I also had an offloads object node that described
-> what the offload capabilities were but it was suggested that this was
-> not necessary/overcomplicated. So I've gone to the other extreme and
-> made it perhaps over-simplified now by requiring all information about
-> how each offload is used to be encoded in a single u32.
+On Mon, May 13, 2024 at 09:38:11AM -0700, Linus Torvalds wrote:
+> [ I should have reacted to this earlier, but I just put all the "for
+> 6.10" pull requests in the queue without looking closer ]
+> 
+> On Fri, 10 May 2024 at 11:30, Uladzislau Rezki (Sony) <urezki@gmail.com> wrote:
+> >
+> > Please pull the latest RCU git tree from:
+> >
+> > https://github.com/urezki/linux.git tags/rcu.next.v6.10
+> 
+> Hmm. I don't have your pgp key to check, but I do see that it's in the
+> kernel.org repo of pgp keys so I know where to get it.
+> 
+> HOWEVER - importantly - I also don't find any handoff emails from Paul
+> or Boqun giving a heads up that I should expect pull requests from
+> others.
+> 
+> Put another way: I really want to see proper heads-up and "yes, this
+> was all intentional, nothing odd going on" when seeing pull requests
+> from new people to core areas.
 
-The property is a u32-array, so I guess, not a single u32?
+My bad, and apologies!
 
-> We could of course consider using #spi-offload-cells instead for
-> allowing encoding multiple parameters for each offload instance if that
-> would be preferable.
+Yes, this is intentional, nothing odd is going on, and Uladzislau's pull
+request is legitimate.
 
-A -cells property was my gut reaction to what you'd written here and
-seems especially appropriate if there's any likelihood of some future
-device using some external resources for spi-offloading.
-However, -cells properties go in providers, not consumers, so it wouldn't
-end up in spi-periph-props.yaml, but rather in the controller binding,
-and instead there'd be a cell array type property in here. I think you
-know that though and I'm interpreting what's been written rather than
-what you meant.
-
-> I also considered adding spi-offload-names that could be used as sort
-> of a compatible string (more of an interface name really) in case some
-> peripherals may want to support more than 1 specialized type of offload.
-> ---
->  .../devicetree/bindings/spi/spi-peripheral-props.yaml          | 10 ++++=
-++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.y=
-aml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> index 15938f81fdce..32991a2d2264 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> @@ -113,6 +113,16 @@ properties:
->      minItems: 2
->      maxItems: 4
-> =20
-> +  spi-offloads:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    description:
-> +      Array of controller offload instances that are reserved for use by=
- the
-> +      peripheral device. The semantic meaning of the values of the array
-> +      elements is defined by the controller. For example, it could be a =
-simple
-> +      0-based index of the offload instance, or it could be a bitfield w=
-here
-> +      a few bits represent the assigned hardware trigger, a few bits rep=
-resent
-> +      the assigned RX stream, etc.
-> +
->    st,spi-midi-ns:
->      description: |
->        Only for STM32H7, (Master Inter-Data Idleness) minimum time
->=20
-> --=20
-> 2.43.2
->=20
-
---Btx5Xw/JNA0IyjcR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkJDzAAKCRB4tDGHoIJi
-0rxnAP46azYaoMSmeOfVGolpu43RRMkioH3BACCy3ZHbSEx66AEAsD8kvUpG4dCX
-dXN+O+jruTMFSscpBOTnGnv8/cH7cww=
-=am+m
------END PGP SIGNATURE-----
-
---Btx5Xw/JNA0IyjcR--
+							Thanx, Paul
 
