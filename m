@@ -1,97 +1,87 @@
-Return-Path: <linux-kernel+bounces-177983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D456C8C471E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:47:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2CA8C4726
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8486A1F22D73
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:47:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877B21C218A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580743BB23;
-	Mon, 13 May 2024 18:47:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCABB3C060;
+	Mon, 13 May 2024 18:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="GZha+N5Y"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kQv2VY3r"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868294207A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:47:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2D437153
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626023; cv=none; b=DB1SfcPkk9vYZJCKANlzHnOmICKIJbfxAgZdsdG76ROYM1nRFVnN3/zYluRxstLWQYKDZv2PfaqxxrflnBe5uTuoqA1Z6rdqEz1b5sAedCS+9Ke2jeZB782voyW0pvPgufgSu7HQkEX6ESwnRSWEEZcGgS+CsuSMQw6v+5wy6/M=
+	t=1715626098; cv=none; b=RHYofGHR0dJzsuAbRKps/oZFNaxjYh3Pbo3FVct0XmJfguD/4CCJu1KcbuMHk43WTVeNNlnXTYq9ExIcigRwGmlI9TX4+a4TESNIz7sUU90gNvIRTjZY5AEF5m3U3CnI3XDXgkxhfUsLZYhYWf2XDFYSg7wub5yMJmGK2H7/HL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626023; c=relaxed/simple;
-	bh=1u9/b9gk/Tl5ozsdOKNx/td/R95i1KBWjQylrJWvc1k=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2JzBlSf2k6Kvrl8Q8qbxGKShtogXKTfLuecymRGYZO8fTo975sFubL+qurSLzfVGJN/TFSYQqow7ilVZlJwMwa5k4vDxmduxjWnhLXckakUjtMMtA1BzoMF4oUK6cl4wHODSTrGpLQBqliaHZJ+HgpazjVD1UP7h8JJmsFBvzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=GZha+N5Y; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1eeabda8590so33661105ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:47:01 -0700 (PDT)
+	s=arc-20240116; t=1715626098; c=relaxed/simple;
+	bh=6YuPwQ/qKNz8HYBBy+q1ODXRn/TuSyAWfvhMnueWmI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/9ja/u1d2FXtwe/wbjv1jz4dntZls/WU4fUYGCX2TsQAe25rThKxAaUL5U9xDTwBHhdsMapZsfp+uH1xGsrl/yhYidsRBMnBhV9Ah/UzH7H0pby+YpOmdChfEE1emP5Nct+ACQsWpIxvR15BxwUrzdMafMNKSdk5sSQtfyp+fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kQv2VY3r; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f44b390d5fso4035203b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:48:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715626021; x=1716230821; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4/YpgsmxEh7NnZ1zRADZ2HbHM07VTZzuSca8drjzUhU=;
-        b=GZha+N5Yez+iTz/TJMB89wFfdlYKZVoMOL6XtCKFwXwvnC9bK+icU4rmf7z0o5xRtI
-         YJhwmdcng42I136HEmlU6AhQpa5HJHx/uJTPh20EewuS+/5YCurgrqQ8/2rGf53Blzup
-         15FMB9VxAHNF0PugoirJhF4ti2jn+lJP92tcw=
+        d=chromium.org; s=google; t=1715626096; x=1716230896; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YMCvolyyAMKqM2SEdNiyJ59O3X5pzLBrCG8ngReTAYg=;
+        b=kQv2VY3rQSya4uXDs+ROzi24zH2iLgT/DDvwH/Ce3mPbBzuN22DIV9mdtqws4mVnkF
+         P5sC+oDe+Ml5DxmUH4o3P8IJZgV/rJ+eG96FU7wXhtSXiDahLE59Dp8yFDbNyUmQd8y+
+         xxDUqgkheyCv22+fYmBxae2dszVx7POHu11TI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715626021; x=1716230821;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4/YpgsmxEh7NnZ1zRADZ2HbHM07VTZzuSca8drjzUhU=;
-        b=Tph4P03MXM3AMtT5N9vCOZBJiQrirKUCXWrN0THzzL+oGY8hqfxc+KmOvBJwA8lRwH
-         m0JQ5TZW9DXXUI5NsXlBF44536Qna8Hvqzy7B+G/a5REyjMofjOo/Ssv0kWmEBdVGTNv
-         4U6Cxjg5WA28pDskQ7cnhiKryTvfJGxpb0wx4S8yhUXBiuE53GCPX6rTefPK7v+jwXC8
-         kDp/wJXPM9p41RN9UF1Y1dIogPFVA/oGiqZo0Nr0VnuDdZNGGIxaGz3rc+tpLrPQPsfF
-         rKzuXAxo2E58u7//0CQbhlEQ2gTDqiNCvk4OIkAZgS60hDmYw/JURdPGdRDTznJme8DR
-         dEvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWbAVA+akgAp0XujdRh16bxteftWQ1yg2g+MizjggQqUvL5E7NE6F9b0gx/tXQR/PQuoMmF9hTe0x8EeeJEt9gvYFYwN2jw/PvoNJk
-X-Gm-Message-State: AOJu0Yx70KC5USDoB9pFbJkPv+xHaqsN7gzCExZHGeVNJ+YnbCicHitK
-	AtvUHVEatNA7FfpYSbpsta+43+zxojzpiLA1oRg97UaAS9aF2PSCwrqAoWUPiiI0DqX9s/q3XOy
-	kZac=
-X-Google-Smtp-Source: AGHT+IHbSrhUBqN1/ZWPPfyWlFBVdHyHLIR+khL/KKrN4dLXG5CPpLVAkZ3pgSvHmoFsy/dhzVKAsA==
-X-Received: by 2002:a17:902:f552:b0:1ed:1d37:267e with SMTP id d9443c01a7336-1ef43e281b0mr137384885ad.16.1715626020880;
-        Mon, 13 May 2024 11:47:00 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d168esm82664875ad.32.2024.05.13.11.46.59
+        d=1e100.net; s=20230601; t=1715626096; x=1716230896;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YMCvolyyAMKqM2SEdNiyJ59O3X5pzLBrCG8ngReTAYg=;
+        b=Y6HGeDhdJJjsL43/L7cex0gcH/pvj17b6ibHe87ccowIwnZcP/18VPshoWu+tlXYqF
+         ljJ32NuKf05MUZXLWhpEpuwlpyZU2DoV5dMOYwjBRtMWTgOIrtA118SzD1c5ccxZTg+D
+         9V0WmdvL5by9rsH4uepjm4NicoIyWJ2FnDWji8Wt6Qq93qkGrDpCM0Komw2KUj1Yr8n6
+         5C5WeAGtG7v7WMaod7cPPteEW7EaIr1EblfBai50CoXth1t4LHStfWWq3SpqlNiZ/p9Z
+         0AaCYjyZJBjot7Qvi49+FyJtVazf1A6j/SxFHFGfrA64KD4vmQZrWGM9iGX0c3uYTsFK
+         WlWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXv7g+70bpuBVzZsm71wgMVa7DDe5ZP42epU7ZR3hGPTEhMA0pVB+huYSiTjCCRDxluMg4z26S2dhD9qTu0Ns0iH9y68z1LoYcVXe5S
+X-Gm-Message-State: AOJu0YzQqYEuQ/kbgbll6vuXN/tdZIPy7WoxNkY1dIN7qw4n6yuB2/Ny
+	5VUZomNGJM7DxK+CsYly9FyBOmRHTRHKM+RcdIU+PAXEDEzy5ywr/2ZnPsuV0g==
+X-Google-Smtp-Source: AGHT+IHQwdGR35u5IXK+H3e3GlXqBLLrEy3u5cdZwt6vW+ynInQiPgDptXNWJrBmTpcuZ0bqtBY4aw==
+X-Received: by 2002:a05:6a21:983:b0:1a7:a6f3:1827 with SMTP id adf61e73a8af0-1afde1b719fmr11220335637.46.1715626096189;
+        Mon, 13 May 2024 11:48:16 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a87bb1sm7697326b3a.87.2024.05.13.11.48.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 11:47:00 -0700 (PDT)
-Date: Mon, 13 May 2024 11:46:57 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	zyjzyj2000@gmail.com, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
- stats
-Message-ID: <ZkJgIe71mz12qCe1@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	zyjzyj2000@gmail.com, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>
-References: <20240510041705.96453-1-jdamato@fastly.com>
- <20240510041705.96453-2-jdamato@fastly.com>
- <20240513075827.66d42cc1@kernel.org>
- <ZkJO6BIhor3VEJA2@LQ3V64L9R2>
+        Mon, 13 May 2024 11:48:15 -0700 (PDT)
+Date: Mon, 13 May 2024 11:48:14 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Marco Elver <elver@google.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Peter Oberparleiter <oberpar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 0/3] kbuild: remove many tool coverage variables
+Message-ID: <202405131136.73E766AA8@keescook>
+References: <20240506133544.2861555-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,59 +90,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkJO6BIhor3VEJA2@LQ3V64L9R2>
+In-Reply-To: <20240506133544.2861555-1-masahiroy@kernel.org>
 
-On Mon, May 13, 2024 at 10:33:28AM -0700, Joe Damato wrote:
-> On Mon, May 13, 2024 at 07:58:27AM -0700, Jakub Kicinski wrote:
-> > On Fri, 10 May 2024 04:17:04 +0000 Joe Damato wrote:
-> > > Add functions to support the netdev-genl per queue stats API.
-> > > 
-> > > ./cli.py --spec netlink/specs/netdev.yaml \
-> > > --dump qstats-get --json '{"scope": "queue"}'
-> > > 
-> > > ...snip
-> > > 
-> > >  {'ifindex': 7,
-> > >   'queue-id': 62,
-> > >   'queue-type': 'rx',
-> > >   'rx-alloc-fail': 0,
-> > >   'rx-bytes': 105965251,
-> > >   'rx-packets': 179790},
-> > >  {'ifindex': 7,
-> > >   'queue-id': 0,
-> > >   'queue-type': 'tx',
-> > >   'tx-bytes': 9402665,
-> > >   'tx-packets': 17551},
-> > > 
-> > > ...snip
-> > > 
-> > > Also tested with the script tools/testing/selftests/drivers/net/stats.py
-> > > in several scenarios to ensure stats tallying was correct:
-> > > 
-> > > - on boot (default queue counts)
-> > > - adjusting queue count up or down (ethtool -L eth0 combined ...)
-> > > - adding mqprio TCs
-> > > 
-> > > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > 
-> > Tariq, could you take a look? Is it good enough to make 6.10? 
-> > Would be great to have it..
+In the future can you CC the various maintainers of the affected
+tooling? :)
+
+On Mon, May 06, 2024 at 10:35:41PM +0900, Masahiro Yamada wrote:
 > 
-> Thanks Jakub.
+> This patch set removes many instances of the following variables:
 > 
-> FYI: I've also sent a v5 of the mlx4 patches which is only a very minor
-> change from the v4 as suggested by Tariq (see the changelog in that cover
-> letter).
+>   - OBJECT_FILES_NON_STANDARD
+>   - KASAN_SANITIZE
+>   - UBSAN_SANITIZE
+>   - KCSAN_SANITIZE
+>   - KMSAN_SANITIZE
+>   - GCOV_PROFILE
+>   - KCOV_INSTRUMENT
 > 
-> I am not trying to "rush" either in, to to speak, but if they both made it
-> to 6.10 it would be great to have the same support on both drivers in the
-> same kernel release :)
+> Such tools are intended only for kernel space objects, most of which
+> are listed in obj-y, lib-y, or obj-m.
 
-Err, sorry, just going through emails now and saw that net-next was closed
-just before I sent the v5.
+This is a reasonable assertion, and the changes really simplify things
+now and into the future. Thanks for finding such a clean solution! I
+note that it also immediately fixes the issue noticed and fixed here:
+https://lore.kernel.org/all/20240513122754.1282833-1-roberto.sassu@huaweicloud.com/
 
-My apologies for missing that announcement.
+> The best guess is, objects in $(obj-y), $(lib-y), $(obj-m) can opt in
+> such tools. Otherwise, not.
+> 
+> This works in most places.
 
-Do I need to re-send after net-next re-opens or will it automatically be in
-the queue for net-next?
+I am worried about the use of "guess" and "most", though. :) Before, we
+had some clear opt-out situations, and now it's more of a side-effect. I
+think this is okay, but I'd really like to know more about your testing.
+
+It seems like you did build testing comparing build flags, since you
+call out some of the explicit changes in patch 2, quoting:
+
+>  - include arch/mips/vdso/vdso-image.o into UBSAN, GCOV, KCOV
+>  - include arch/sparc/vdso/vdso-image-*.o into UBSAN
+>  - include arch/sparc/vdso/vma.o into UBSAN
+>  - include arch/x86/entry/vdso/extable.o into KASAN, KCSAN, UBSAN, GCOV, KCOV
+>  - include arch/x86/entry/vdso/vdso-image-*.o into KASAN, KCSAN, UBSAN, GCOV, KCOV
+>  - include arch/x86/entry/vdso/vdso32-setup.o into KASAN, KCSAN, UBSAN, GCOV, KCOV
+>  - include arch/x86/entry/vdso/vma.o into GCOV, KCOV
+>  - include arch/x86/um/vdso/vma.o into KASAN, GCOV, KCOV
+
+I would agree that these cases are all likely desirable.
+
+Did you find any cases where you found that instrumentation was _removed_
+where not expected?
+
+-Kees
+
+-- 
+Kees Cook
 
