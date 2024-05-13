@@ -1,78 +1,165 @@
-Return-Path: <linux-kernel+bounces-177625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8E28C41D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:24:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E548C41E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD95C1F21867
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:24:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04AF3B212BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD37B15219D;
-	Mon, 13 May 2024 13:24:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF751514E5;
-	Mon, 13 May 2024 13:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DE5152195;
+	Mon, 13 May 2024 13:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrjtQW9i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA3814C594;
+	Mon, 13 May 2024 13:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715606686; cv=none; b=Dyn1Z+ZlL8seiVX2A//Q+WaC7hfVfZaHoUOsEtAY+DGX6D6HME257LTqWC6CWMV+9QkbIn7iPEWLtOmsu6YYGglS2IyMQS33mKF1SiwOaJK33P7kqUS+BQ3TnmYpS+qQUfyvEFYTB4/g85sdaylh2r9UIfQiWYbcXCuRkhjFSOY=
+	t=1715606825; cv=none; b=X4Qf+XqMDWZLo/XdUhp9k8GLesvMZfa5De7CYhH6iyQXLzFAZ7YlWjwqiuPCRl1+6t1rFK88vbo8pIOOHOfiNrqUi9GFu+ORipVyJw/eaJ34JSvj6mYcnIhflHOg1oXveh5pOHtJev07LREaHfcB6Fb7rcW29X5AePHt5tBmVUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715606686; c=relaxed/simple;
-	bh=/0f/9NJPEz9XROE4twEmI/N9FBspLI3sqJzJ1VENxgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfF5SfQv9bewzbHjBgYgdwBqraYF2s7CL/BLUwfaHonaztBJBOLZ4g2Mj2yaczUZw75Fm375YHpPqLJQHG7gTpmuuPMKLN6RbGa8ASJnJi1KqqfF+Ot/xo1+C/qnQwWAhM1rWivGXV5oXao/kYS2TytIJWAjXg8He74NytfX1Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FAB91007;
-	Mon, 13 May 2024 06:25:09 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B8603F7A6;
-	Mon, 13 May 2024 06:24:42 -0700 (PDT)
-Date: Mon, 13 May 2024 14:24:39 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v6 0/3] pinctrl: scmi: support i.MX95 OEM extensions
-Message-ID: <ZkIUl2SoCICsZy7Z@bogus>
-References: <20240513-pinctrl-scmi-oem-v3-v6-0-904975c99cc4@nxp.com>
+	s=arc-20240116; t=1715606825; c=relaxed/simple;
+	bh=10lk38XyzErIUEli139gJKZDzm+Z8ZSe1J18NuIyxBY=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=KwzCGFXVonR5fLCFyifUasW3Gbf2G3JIGTs1w1N5F5lSHj8dnHPYLjPQyJ3/uKc1JEiTh0S9O/adKE7cibwdgfqccHwRmu1468KBYXBOc3DgUT5v/OZTR3gt4FqQcGaVVUkqsGsdVi0uhHUW5Il0jZU9WA885xTcO+854rXjz9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrjtQW9i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 452E2C32781;
+	Mon, 13 May 2024 13:27:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715606824;
+	bh=10lk38XyzErIUEli139gJKZDzm+Z8ZSe1J18NuIyxBY=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=YrjtQW9iczUk6tYsPzkrupLm9sjLXnQxc9ZhtcYH0JYWot5fYjYaM1aio/TBbPt6i
+	 O6ufYBh99bu6VnJCaUuqrw9XPFsV5ON2raukMLdtLABZqlzrXoLs/U0m/Keo5vxYa/
+	 SSYqR9BOx+nsoMFjN+r0Lt5o9orPqQvVYFNlx1jK/opiB3+ZYPvSqAYjm9h1vqYgAr
+	 iefdJ5vcEZeTjRQdkJwnAFWENZJ0upbjM6wNImtnqy2bEva1/EB/U1ebPrXJwcJHdU
+	 FJ9nvfJuuqtgJjytAZgO679PbCPfOs9UNuzKu2z/ELvjVgDQbqf5sqRnbaFMMHva2F
+	 gheNSCz+D0LPw==
+Date: Mon, 13 May 2024 08:27:02 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513-pinctrl-scmi-oem-v3-v6-0-904975c99cc4@nxp.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Kamal Dasu <kamal.dasu@broadcom.com>, Eric Anholt <eric@anholt.net>, 
+ Scott Branden <sbranden@broadcom.com>, linux-mmc@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Al Cooper <alcooperx@gmail.com>, Ray Jui <rjui@broadcom.com>, 
+ Ulf Hansson <ulf.hansson@linaro.org>, Stefan Wahren <wahrenst@gmx.net>, 
+ devicetree@vger.kernel.org, 
+ Florian Fainelli <florian.fainelli@broadcom.com>, 
+ linux-rpi-kernel@lists.infradead.org, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <cover.1715332922.git.andrea.porta@suse.com>
+References: <cover.1715332922.git.andrea.porta@suse.com>
+Message-Id: <171560671443.2464066.440073842827214763.robh@kernel.org>
+Subject: Re: [PATCH v2 0/4] Add minimal boot support for Raspberry Pi 5
 
-On Mon, May 13, 2024 at 07:45:23PM +0800, Peng Fan (OSS) wrote:
-> Hi Sudeep, Linus
->   Is it possible for you to pick up this patchset earlier if no major
->   comments?
->
 
-FYI, it is the start of the merge window for v6.10. Any new feature
-planned to be merged for v6.10 must be already in linux-next and anything
-else need to wait for v6.11.
+On Fri, 10 May 2024 16:35:26 +0200, Andrea della Porta wrote:
+> Hi,
+> 
+> This patchset adds minimal support for the Broadcom BCM2712 SoC and for
+> the on-board SDHCI controller on Broadcom BCM2712 in order to make it
+> possible to boot (particularly) a Raspberry Pi 5 from SD card and get a
+> console through uart.
+> Changes to arm64/defconfig are not needed since the actual options work
+> as they are.
+> This work is heavily based on downstream contributions.
+> 
+> Tested on Tumbleweed substituting the stock kernel with upstream one,
+> either chainloading uboot+grub+kernel or directly booting the kernel
+> from 1st stage bootloader. Steps to reproduce:
+> - prepare an SD card from a Raspberry enabled raw image, mount the first
+>   FAT partition.
+> - make sure the FAT partition is big enough to contain the kernel,
+>   anything bigger than 64Mb is usually enough, depending on your kernel
+>   config options.
+> - build the kernel and dtbs making sure that the support for your root
+>   fs type is compiled as builtin.
+> - copy the kernel image in your FAT partition overwriting the older one
+>   (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed).
+> - copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partition.
+> - make sure you have a cmdline.txt file in FAT partition with the
+>   following content:
+>   # cat /boot/efi/cmdline.txt
+>   root=/dev/mmcblk0p3 rootwait rw console=tty ignore_loglevel earlycon
+>   console=ttyAMA10,115200
+> - if you experience random SD issues during boot, try to set
+>   initial_turbo=0 in config.txt.
+> 
+> Changes in V2:
+> 
+> - the patchshet has been considerably simplified, both in terms of dts and
+>   driver code. Notably, the pinctrl/pinmux driver (and associated binding)
+>   was not strictly needed to use the SD card so it has been dropped.
+> - dropped the optional SD express support patch
+> - the patches order has been revisited
+> - pass all checks (binding, dtb, checkpatch)
+> 
+> Many thanks,
+> Andrea
+> 
+> References:
+> - Link to V1: https://lore.kernel.org/all/cover.1713036964.git.andrea.porta@suse.com/
+> 
+> Andrea della Porta (4):
+>   dt-bindings: arm: bcm: Add BCM2712 SoC support
+>   dt-bindings: mmc: Add support for BCM2712 SD host controller
+>   mmc: sdhci-brcmstb: Add BCM2712 support
+>   arm64: dts: broadcom: Add support for BCM2712
+> 
+>  .../devicetree/bindings/arm/bcm/bcm2835.yaml  |   6 +
+>  .../bindings/mmc/brcm,sdhci-brcmstb.yaml      |  23 ++
+>  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
+>  .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  62 ++++
+>  arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 302 ++++++++++++++++++
+>  drivers/mmc/host/sdhci-brcmstb.c              |  81 +++++
+>  6 files changed, 475 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
+>  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
+> 
+> --
+> 2.35.3
+> 
+> 
+> 
 
-In short, this is not a v6.10 material and please wait until -rc1.
 
---
-Regards,
-Sudeep
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y broadcom/bcm2712-rpi-5-b.dtb' for cover.1715332922.git.andrea.porta@suse.com:
+
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/timer@7c003000: failed to match any schema with compatible: ['brcm,bcm2835-system-timer']
+arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/local-intc@7cd00000: failed to match any schema with compatible: ['brcm,bcm2836-l1-intc']
+
+
+
+
+
 
