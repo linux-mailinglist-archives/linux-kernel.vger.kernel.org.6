@@ -1,116 +1,170 @@
-Return-Path: <linux-kernel+bounces-177843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E806E8C4536
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:41:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2F98C453B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F28286D8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:41:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D557B211D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1182918B14;
-	Mon, 13 May 2024 16:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585421A716;
+	Mon, 13 May 2024 16:46:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcR9JJ8m"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJNrDZT8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B5315AF6
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:41:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DE215C0;
+	Mon, 13 May 2024 16:46:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618512; cv=none; b=X2FiK8YAxPAFc9c41xx6YgMpyRl8THs0B9p6L4mJdhOzqdRM+Qg82EhD3pQSX2hSV8js1byyVGzIk5yMA6EbfZAySWwfRXAEE5fEQFNRGto98dOPs9OVqG3INVwhvoZP/VQw7No0IOxIHmLmVKBexquf5hmRHmicdGHqGN3YZLI=
+	t=1715618770; cv=none; b=gDzJzlrPi9ymTSRiJiqtQnthPuVMC/BwV6uWyJFkggXMHiHbKuBeVfyzPIJGPbjTHI/ppnMjqYDjpXRt7F35Or9nqHsQuKemndt4XCBQv/zQ5NAIo1RfO+1tlIKKCjjdOzmQv+Bwcuub7SFnshm+hXLxQm1Ie1AeWCW0YBkQhYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618512; c=relaxed/simple;
-	bh=8mSDe/ImppLgPkyTNhXsgjTCK1PmL1zw0+0a6l1PJL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4zmlWLParIryOWlt61gaQWFixvjS6XI23dWk3pKqXxwK6gz71USqqlAz6eXAnmmSicVcqAGsP5w/jhtKXqOVpSP1AfZfQFrJrIwiQ95sd/ifME/hHIH0R9uCWZTvDEXiTQcuHtBJOv0uaMPW90r8DS/GdlTpKp4ZfPhZS9j7OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcR9JJ8m; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcc71031680so4817936276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715618510; x=1716223310; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DH4khu6TurPS5qb0OEXIieAt+VWCVTM6kLpaEQH1DyY=;
-        b=xcR9JJ8mq6CGmXUmnNPv1Seo9swsZNYS7znOnC2h69UGt5wj++0/YL/qizbfyTlOue
-         kSVJ6y+0DqjqD0EK9p9n5nEvWhnKfnMbipvFDo6B0cYjG7RXmiF2VnFytyEA737ha/xC
-         cbQO3e1YfgjjiasfnqKYKkaFuFenfO5DTmlBtXP7O1Xt5TALIy61oOxXrVJQgCSKtGXq
-         RTHs2Lm+Zm9MPJd5zGOFQtGFHECuawzq5xPOIwgOm+v0iANuYQlpQotJfVer+mWp1N2T
-         bqJrw/qzQ360CWbd/PINiSslX5V1XoaTnCBp9UctThCQK4gabxUOBaqn2Fcm5UYrEFUl
-         Lk/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715618510; x=1716223310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DH4khu6TurPS5qb0OEXIieAt+VWCVTM6kLpaEQH1DyY=;
-        b=ZZLAty6oecV5jmYFsoNQmd6R1TErpEio9VqPKqlotCKI1NkuuzUNdxT4JAJewC3aUH
-         CFvECklcYDRoP1Wr41CxYzdpCoiKqlU2Zaei5Hpyfn5XzCu/BRSOgaWk3YTmLfB4MgcH
-         Svrfu6PvmsF5avcwRybPlotqa9kA0HZH+W4zohcR3hzQKGaiZJRWCURNZodbcOuAuYDS
-         zhYv1hxfhHUmtafDMFnxJ4o7DJ0M8M5zPXcPvbsLDeo6XfS9wsQZVliKLYxKfRmuh5lj
-         nHUVNgpVIJuiiukeA7p8sawHVvuyaGrV07MBP0KGHBwwnC+dK4UyBhPzgcsqdcoxLXJj
-         vZjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUd7SmKZgTHm6xdXZRsopKuQaj1VkfyC8oCYXnMHbM8DqbqAy0piwe2HorT/uMdWQQYh7dK00APyvm+rwZHtEVqkqxoRhhlZl6pACYM
-X-Gm-Message-State: AOJu0Yz/cRWV4kuxQzlWlVL0jCH0xjUIX16Gtzf/Fm46XI6c+6GGTzWx
-	xJqvmsmLhGbX43LfRZTI+3yJEBDQVZgWgTuonWhBj1XYtKZtCXptAZZ3yUJLX93TuKIK1Ah0MBH
-	a7aG4EWE0pwavDZFEVvql3pxTgddTZ2KfNaF32Q==
-X-Google-Smtp-Source: AGHT+IGq2C3XDhTaH0foAS493CYmJmGVWp1jeF0dF17vOTZlUltQhDhRhnjWctarnqxlh56yWFXuox8WxUwgr4RKcNc=
-X-Received: by 2002:a05:6902:2401:b0:de6:1645:499a with SMTP id
- 3f1490d57ef6-dee4f338380mr9928504276.30.1715618510038; Mon, 13 May 2024
- 09:41:50 -0700 (PDT)
+	s=arc-20240116; t=1715618770; c=relaxed/simple;
+	bh=FPfAXVM12QYDyYflSy0vT9mflrQA7TObx9YGhJ3owMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET4UCQMD5Go3w9giX4sX6vJbohzzVR6iDdKzB/nC2hS46TYUfJfIRLQG+Vo2Ftqo5u0hiKM2Lh99+K3C/e6uSeT7BSE8lgYR9Kbx+Ckqk1Mt0RDawHrCNHSJOQsyanujqaux9F9+K4fWMgT+vs413tYwuXiTXlWQRKJorX5xAyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJNrDZT8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF5DC113CC;
+	Mon, 13 May 2024 16:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715618770;
+	bh=FPfAXVM12QYDyYflSy0vT9mflrQA7TObx9YGhJ3owMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hJNrDZT8ki4t4Db9+DTa2OrP3Tn8kyMdH77y5inAKYCvKgARikHL3kUkh1MvqTQ2q
+	 LU5NT8OAG5Y+rW65PWWdgs5VeKGWvWr/g8k7duQ9eX89hOC24yCw6DVP8KeHsDvS6O
+	 BoGvuNGCPJMMA5v/RNmQnfp10rmv9JZyv2Ejl5BnutFeGOTMqIrfrFolzqHJ6ztzar
+	 MB5tRlJSPVjSYa5Yissa3/xuTmwejCHvZ/LbIqKgAD8yhlrm6rnmx7Q/aoVUED7hZU
+	 5e6MmBxgfPq/RzNW9xlfvypEGtRlWY0/PPDtY0wEYg7+fEhqmervzWrPErhrM9MWnm
+	 9F1dX2W8EaBfQ==
+Date: Mon, 13 May 2024 17:46:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+Message-ID: <20240513-headsman-hacking-d51fcc811695@spud>
+References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+ <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org> <20240513131711.GA2419451-robh@kernel.org>
-In-Reply-To: <20240513131711.GA2419451-robh@kernel.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 13 May 2024 19:41:39 +0300
-Message-ID: <CAA8EJppkJ9rukeUZ=1kAL3Y0WVhN5QFXnNU3tjv4yuXMjc++7w@mail.gmail.com>
-Subject: Re: [PATCH 0/3] dt-bindings: display: panel: constrain 'reg'
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Konrad Dybcio <konradybcio@gmail.com>, 
-	Del Regno <angelogioacchino.delregno@somainline.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Luca Weiss <luca.weiss@fairphone.com>, Shawn Guo <shawn.guo@linaro.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Btx5Xw/JNA0IyjcR"
+Content-Disposition: inline
+In-Reply-To: <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
 
-On Mon, 13 May 2024 at 16:17, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, May 09, 2024 at 11:42:50AM +0200, Krzysztof Kozlowski wrote:
-> > Hi,
-> >
-> > Cleanups for display panel bindings.
-> >
-> > Rob, maybe you could take entire set if it applies? I based it on
-> > linux-next, so letl me know if I need to rebase on your for-next.
->
-> Applied. These 2 don't exist in my tree:
 
-It's most likely fine, but was there an ack from drm-misc maintainers?
+--Btx5Xw/JNA0IyjcR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
-> Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
+On Fri, May 10, 2024 at 07:44:24PM -0500, David Lechner wrote:
+> This adds a new property to the spi-peripheral-props binding for use
+> with peripherals connected to controllers that support offloading.
+>=20
+> Here, offloading means that the controller has the ability to perform
+> complex SPI transactions without CPU intervention in some shape or form.
+>=20
+> This property will be used to assign controller offload resources to
+> each peripheral that needs them. What these resources are will be
+> defined by each specific controller binding.
+>=20
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>=20
+> v2 changes:
+>=20
+> In v1, instead of generic SPI bindings, there were only controller-
+> specific bindings, so this is a new patch.
+>=20
+> In the previous version I also had an offloads object node that described
+> what the offload capabilities were but it was suggested that this was
+> not necessary/overcomplicated. So I've gone to the other extreme and
+> made it perhaps over-simplified now by requiring all information about
+> how each offload is used to be encoded in a single u32.
 
-Because those were added to drm-misc during the last cycle. So ideally
-the patch should have gone through drm-misc.
+The property is a u32-array, so I guess, not a single u32?
 
--- 
-With best wishes
-Dmitry
+> We could of course consider using #spi-offload-cells instead for
+> allowing encoding multiple parameters for each offload instance if that
+> would be preferable.
+
+A -cells property was my gut reaction to what you'd written here and
+seems especially appropriate if there's any likelihood of some future
+device using some external resources for spi-offloading.
+However, -cells properties go in providers, not consumers, so it wouldn't
+end up in spi-periph-props.yaml, but rather in the controller binding,
+and instead there'd be a cell array type property in here. I think you
+know that though and I'm interpreting what's been written rather than
+what you meant.
+
+> I also considered adding spi-offload-names that could be used as sort
+> of a compatible string (more of an interface name really) in case some
+> peripherals may want to support more than 1 specialized type of offload.
+> ---
+>  .../devicetree/bindings/spi/spi-peripheral-props.yaml          | 10 ++++=
+++++++
+>  1 file changed, 10 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props.y=
+aml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> index 15938f81fdce..32991a2d2264 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> @@ -113,6 +113,16 @@ properties:
+>      minItems: 2
+>      maxItems: 4
+> =20
+> +  spi-offloads:
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> +    description:
+> +      Array of controller offload instances that are reserved for use by=
+ the
+> +      peripheral device. The semantic meaning of the values of the array
+> +      elements is defined by the controller. For example, it could be a =
+simple
+> +      0-based index of the offload instance, or it could be a bitfield w=
+here
+> +      a few bits represent the assigned hardware trigger, a few bits rep=
+resent
+> +      the assigned RX stream, etc.
+> +
+>    st,spi-midi-ns:
+>      description: |
+>        Only for STM32H7, (Master Inter-Data Idleness) minimum time
+>=20
+> --=20
+> 2.43.2
+>=20
+
+--Btx5Xw/JNA0IyjcR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkJDzAAKCRB4tDGHoIJi
+0rxnAP46azYaoMSmeOfVGolpu43RRMkioH3BACCy3ZHbSEx66AEAsD8kvUpG4dCX
+dXN+O+jruTMFSscpBOTnGnv8/cH7cww=
+=am+m
+-----END PGP SIGNATURE-----
+
+--Btx5Xw/JNA0IyjcR--
 
