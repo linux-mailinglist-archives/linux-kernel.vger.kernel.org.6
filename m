@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-177060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A804F8C398B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:13:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516518C398D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EBFE28130B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:13:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B056281186
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D21800;
-	Mon, 13 May 2024 00:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5E1290F;
+	Mon, 13 May 2024 00:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VPW/nhbX"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q9ZNveTR"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0590917E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933EC210D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715559225; cv=none; b=bJaaL96uhacPP1rYQcZAhGpNoW2UoiEUg0emPLc1+i2CYlv8TX5AFmQnJsv/hEeleFJWGt+/114MgeftNKeoqOZqGoCtSnBMabr5t+UJSC9p4ScTkNh9OYNBgdMAG+L0P5e6uEEAXyrrWaP6GlaDQf50Yg1oX/HplItjMWkg4TQ=
+	t=1715559236; cv=none; b=VqISJ3v6GGmKGRoKKg4PP+VjEJhwuEcLupulmA8t8hyn+bGYoZOsLElh/ixs38IcZDztCaEv7zF0ZEqbDoekek59FFk6GiEB5hglELOJYGtabaWfaUcsLIqdn2IfVykdPwaXmp0ZMX7dYSYFP/jQkxL4b7dsydmUf9dO8p4hvbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715559225; c=relaxed/simple;
-	bh=yBPp7S7yh6RT5LOFnsV1L929izvs98i6FjXz8rjKkyM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rjyVKCTPbVqfoJTRYPFjUmZ2jtKuvUwDNqvn1aOienLLgkq0mM6197uVaFnPKH2ICzXP15nOx3a/X3JofZ3W/PzjWW1yL1psCdxBYLti+dMgd8O0/tHD5/71OYtRugDB5XkuK/OpZo+ERAuTYUOGdtDk3Dib4wOIfr9VE+BZ5B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VPW/nhbX; arc=none smtp.client-ip=91.218.175.177
+	s=arc-20240116; t=1715559236; c=relaxed/simple;
+	bh=75IR+SDgGVMZc3p/WH0Rl8DpIbSB3xec2ffzUOQD+aI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DlbkcVw2RZm8JHpn8yzqgWZB+KnT5+1fsMelIOEPRfL5dl4A5kM080mq/PKD4wUMQ1Xrng6LFHEb0XMY8mOsm5kP1lpzR9gx61Rixkwmu39lK36cCUtdN0VEQT3KCBTAiI84DjDnajqfc0MGahWmlALwStVIG11JtkXHVpVk+v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q9ZNveTR; arc=none smtp.client-ip=91.218.175.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715559220;
+	t=1715559232;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=XJY1www0AxrnCm+16UJMjjPkfXJT0ujI5r+bchZsf1M=;
-	b=VPW/nhbX72YlHmO0ZRVZ7TioRdby1C6sMHM3Dd5CcuZx+1gprGSzmW39+/6rq6Rrfnepu9
-	PCv42jxiQkKTrvR9JHjuHyaNhUU1IrsxpDSlFJfMmwyqY2676uGt/j/o/+8bIPSh5IG7HU
-	1ecOjPtsP3k4Dfn8XoJOxtUh3bQeNCU=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e3pEj0WWodLS42WTaYGSsqEklXWqCa1MeU3yE8jdV00=;
+	b=q9ZNveTRce1txu2wT/QMCvQF8h05xke4kbajjOEKNMXEiMDEBn1GGbSb5PjWYwTuEv7mlg
+	MLsmTalfac1oB+TxkA4R3srQA8SWWIIkUowJBJJnh0MMounveE7o+UPxb17A3sG88aaSR4
+	CrM769A5sVoVqqeQWZJT5JjMY5RaAvk=
 From: Sui Jingfeng <sui.jingfeng@linux.dev>
 To: Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>
@@ -46,9 +48,11 @@ Cc: Sui Jingfeng <suijingfeng@loongson.cn>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org,
 	Sui Jingfeng <sui.jingfeng@linux.dev>
-Subject: [PATCH 0/3] drm/loongson: Introduce component framework support
-Date: Mon, 13 May 2024 08:12:40 +0800
-Message-Id: <20240513001243.1739336-1-sui.jingfeng@linux.dev>
+Subject: [PATCH 1/3] drm/loongson: Add helpers for creating subdevice
+Date: Mon, 13 May 2024 08:12:41 +0800
+Message-Id: <20240513001243.1739336-2-sui.jingfeng@linux.dev>
+In-Reply-To: <20240513001243.1739336-1-sui.jingfeng@linux.dev>
+References: <20240513001243.1739336-1-sui.jingfeng@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,47 +62,94 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Introduce the component framework to bind childs and siblings, for better
-modularity and paper over the deferral probe problems if it need to attach
-exterinal module someday. Hardware units come with PCI(e) are actually all
-ready to drive, but there has some board specific modules will return
--EPROBE_DEFER. We need all other submodules ready to attach before we can
-register the drm device to userspace.
+In some display subsystems, the functionality of a PCI(e) device may too
+complex for a single driver to be managed by a monolithic driver. A split
+of the functionality into child devices can helps to achieve better
+modularity, eaiser for understand and maintain.
 
-The idea is to devide the exterinal module dependent part and exterinal
-module independent part clearly, for example, the display controller and
-the builtin GPIO-I2C just belong to exterinal module independent part.
-While the output is belong to exterinal module dependent part.
+Add the loongson_create_platform_device() function to pove the way for the
+mentioned goals. Pure software method, no hardware operations involved.
 
-Also for better reflecting the hardware, we intend to abstract the output
-ports as child devices. The output ports may consists of encoder phy and
-level shift, while the GPU and VPU are standalone siblings. As those units
-are relative separate hardware units from display controller itself.
+Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+---
+ drivers/gpu/drm/loongson/loongson_device.c | 42 ++++++++++++++++++++++
+ drivers/gpu/drm/loongson/lsdc_drv.h        |  6 ++++
+ 2 files changed, 48 insertions(+)
 
-By design, the display controller PCI(e) is selected as the component
-master, gpio-i2c go with master. The manually created virtual child device
-are functional as agents for the master, it could return the -EPROBE_DEFER
-back to the component core. This allows the master don't have to tear down
-everything, the majority setups work can be preserved. The potential cyclic
-dependency problem can be solved with such framework.
-Sui Jingfeng (3):
-  drm/loongson: Add helpers for creating subdevice
-  drm/loongson: Introduce component framework support
-  drm/loongson: Refactor lsdc device initialize and the output port
-
- drivers/gpu/drm/loongson/Makefile             |   1 +
- drivers/gpu/drm/loongson/loongson_device.c    |  42 ++++
- drivers/gpu/drm/loongson/loongson_module.c    |  17 +-
- drivers/gpu/drm/loongson/loongson_module.h    |   1 +
- drivers/gpu/drm/loongson/lsdc_drv.c           | 208 +++++++++++-------
- drivers/gpu/drm/loongson/lsdc_drv.h           |  34 +--
- drivers/gpu/drm/loongson/lsdc_output.c        | 183 +++++++++++++++
- drivers/gpu/drm/loongson/lsdc_output.h        |  38 +++-
- drivers/gpu/drm/loongson/lsdc_output_7a1000.c |   3 +-
- drivers/gpu/drm/loongson/lsdc_output_7a2000.c |  15 +-
- 10 files changed, 422 insertions(+), 120 deletions(-)
- create mode 100644 drivers/gpu/drm/loongson/lsdc_output.c
-
+diff --git a/drivers/gpu/drm/loongson/loongson_device.c b/drivers/gpu/drm/loongson/loongson_device.c
+index 9986c8a2a255..b268549d643e 100644
+--- a/drivers/gpu/drm/loongson/loongson_device.c
++++ b/drivers/gpu/drm/loongson/loongson_device.c
+@@ -4,6 +4,7 @@
+  */
+ 
+ #include <linux/pci.h>
++#include <linux/platform_device.h>
+ 
+ #include "lsdc_drv.h"
+ 
+@@ -100,3 +101,44 @@ lsdc_device_probe(struct pci_dev *pdev, enum loongson_chip_id chip_id)
+ {
+ 	return __chip_id_desc_table[chip_id];
+ }
++
++int loongson_create_platform_device(struct device *parent,
++				    const char *name, int id,
++				    struct resource *pres,
++				    void *data,
++				    struct platform_device **ppdev)
++{
++	struct platform_device *pdev;
++	int ret;
++
++	pdev = platform_device_alloc(name, id);
++	if (!pdev)
++		return -ENOMEM;
++
++	pdev->dev.parent = parent;
++
++	if (pres) {
++		ret = platform_device_add_resources(pdev, pres, 1);
++		if (ret) {
++			platform_device_put(pdev);
++			return ret;
++		}
++	}
++
++	if (data) {
++		void *pdata = kmalloc(sizeof(void *), GFP_KERNEL);
++
++		*(void **)pdata = data;
++		pdev->dev.platform_data = pdata;
++	}
++
++	ret = platform_device_add(pdev);
++	if (ret) {
++		platform_device_put(pdev);
++		return ret;
++	}
++
++	*ppdev = pdev;
++
++	return 0;
++}
+diff --git a/drivers/gpu/drm/loongson/lsdc_drv.h b/drivers/gpu/drm/loongson/lsdc_drv.h
+index fbf2d760ef27..a2c6b496a69f 100644
+--- a/drivers/gpu/drm/loongson/lsdc_drv.h
++++ b/drivers/gpu/drm/loongson/lsdc_drv.h
+@@ -47,6 +47,12 @@ enum loongson_chip_id {
+ const struct lsdc_desc *
+ lsdc_device_probe(struct pci_dev *pdev, enum loongson_chip_id chip);
+ 
++int loongson_create_platform_device(struct device *parent,
++				    const char *name, int id,
++				    struct resource *pres,
++				    void *data,
++				    struct platform_device **ppdev);
++
+ struct lsdc_kms_funcs;
+ 
+ /* DC specific */
 -- 
 2.34.1
 
