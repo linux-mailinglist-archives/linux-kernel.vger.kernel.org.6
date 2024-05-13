@@ -1,70 +1,66 @@
-Return-Path: <linux-kernel+bounces-177616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DED98C41A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:17:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AA78C41B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C865B23C93
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C8C1C22F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC2B152194;
-	Mon, 13 May 2024 13:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83880152198;
+	Mon, 13 May 2024 13:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVOQ6J6q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjATwxOc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE5B1514CB;
-	Mon, 13 May 2024 13:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B693B59164;
+	Mon, 13 May 2024 13:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715606234; cv=none; b=aNXwZgXKPewn+I73PUwGw91uKy5ObUmgff3k0eBTs28llFoQiQuhxD8IAzYtFcWA/h1JY9c49CMuQn9Kq7slyEFhw4V0Qm62wFI9N0CwxxZajKXKWwDiOG84PoNyddjofLrvKiIq6WIngp99k0mU3vYtAhAcO3wc8I/yhOmFtQ8=
+	t=1715606403; cv=none; b=czBROKtje/w+TeToV4DWk/+WeqdZjTccw6zk76AgRyatuA+nA82m9MISmADM6CUijNWqPJTH58vkRFOpRxRw1ts4XqDWKk8QhyLGnrW0iGyBxzdh/ipY4xKWOxa60MPHTgXxbHyPnNF1Bnamn55/GmEIdRhkU+xSZrvSU+pM1wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715606234; c=relaxed/simple;
-	bh=sCQQdb5fu1AI/GGQpLevWmpW1G8ldkeo47pUNmNMP28=;
+	s=arc-20240116; t=1715606403; c=relaxed/simple;
+	bh=BjpNrBf8xUWY5HdIXv/CHqnmjNgz1AFEpMF+3oZD9OM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLfABpuy3HzoqDs2nERVx54QSuK8/rNWww1bpT5Zdhf+tCd1aXLlgGL5COeh//7f6rAZbhzAk7eu52aMkF6GAiRx8ovuY8TeKcO7KBJWXjVk/Rz3ii6II2bbCpacNS5yu1wseL7cdNNLb7cdpgk6uX5GKylSjdZmF7zY2tAzs8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVOQ6J6q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C88C32782;
-	Mon, 13 May 2024 13:17:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fj4mfUNWA846zvRnuT7CmAroO/j/0pgQc5rvEB74Y0YIJ+7NpjVDgHqZTGArMnz3lzNMADxTqcCX9bmaFAOO0pyQYE/6IhEqkUMym+WDOq2Y5sd5AxPKd2bMmmyL3HjLERlLe18bCTqRJHYOtv+Ssovfn6bv1tPqga6vzsWGujY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjATwxOc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E700C113CC;
+	Mon, 13 May 2024 13:20:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715606234;
-	bh=sCQQdb5fu1AI/GGQpLevWmpW1G8ldkeo47pUNmNMP28=;
+	s=k20201202; t=1715606403;
+	bh=BjpNrBf8xUWY5HdIXv/CHqnmjNgz1AFEpMF+3oZD9OM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GVOQ6J6qh9mPjnMq3qWXWlho7YHflOLaSR7O8ow4CyTYYKWE8VLxAuwgeNWUvnhbB
-	 lJHTadSnAkBn5dX3iQDDPYfwl8qEa253rLwbY80rMa6ltM8/CL90fDFQxsyO9WEIpV
-	 yIFYmDclZKObVEIt5Gc5FEtij2cLgxyKYBClMwdserwKoCcjhUapvYgMRGAbUWy/3I
-	 +V4XjklX7tXHR9liySEK4MtRskLrFbK5tDgx/bUnkD7AB0avM2xNxDR8vHg80WMof1
-	 YgwS3ipWEE7NYv9RmhOpWWmmnzg8S3tfOuQ3eJjWVhhxk36eiilob23X8S5/0yLHWw
-	 RxzmKIwNUU3Sw==
-Date: Mon, 13 May 2024 08:17:11 -0500
+	b=OjATwxOcxE557ut6FtoTfM6PpRJDPrRlPU/al+dv5Klyw2dNvIZvdyKHXSYYkXY0/
+	 8bhBMvZSPvuej0IPQCbZ5pzM+FfuN/bDVQKHUEA7/eE/FLv+QF//U3kyt2ArZj+0Eu
+	 dSPmZC+LcMxapYSlFC1OuR+iVjCC35fDZknl9C0ydmBw0vv2AZqfhSaVwpABfJBhxu
+	 6jahv5FmUlAHo7BeVD75z0KrFib4iaHHvamocBJVvlY0ppofqSe1cPn/vZit3+C2sg
+	 kl/00P294uoj+B0lPpQj8QH3arjHPY52k7iBo/IAkapUSLnTaQjPKFbUu+wMtRqSf3
+	 +ok8tYJNY3BJQ==
+Date: Mon, 13 May 2024 08:20:01 -0500
 From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Konrad Dybcio <konradybcio@gmail.com>,
-	Del Regno <angelogioacchino.delregno@somainline.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Dmitry Baryskov <dmitry.baryshkov@linaro.org>,
-	Shawn Guo <shawn.guo@linaro.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] dt-bindings: display: panel: constrain 'reg'
-Message-ID: <20240513131711.GA2419451-robh@kernel.org>
-References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org>
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: qcom: Add AHB clock for SM8150
+Message-ID: <20240513132001.GA2421461-robh@kernel.org>
+References: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
+ <20240509-videocc-sm8150-dt-node-v4-1-e9617f65e946@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,20 +69,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org>
+In-Reply-To: <20240509-videocc-sm8150-dt-node-v4-1-e9617f65e946@quicinc.com>
 
-On Thu, May 09, 2024 at 11:42:50AM +0200, Krzysztof Kozlowski wrote:
-> Hi,
+On Thu, May 09, 2024 at 03:54:03PM +0530, Satya Priya Kakitapalli wrote:
+> SM8150 videocc needs AHB clock, so update the bindings for sm8150
+> to add the AHB clock.
+
+Breaking the ABI is fine because ____.
+
 > 
-> Cleanups for display panel bindings.
+> Fixes: df3f61d2cdc9 ("dt-bindings: clock: add SM8150 QCOM video clock bindings")
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
 > 
-> Rob, maybe you could take entire set if it applies? I based it on
-> linux-next, so letl me know if I need to rebase on your for-next.
-
-Applied. These 2 don't exist in my tree:
-
-Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
-Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
-
-Rob
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> index 6999e36ace1b..68bac801adb0 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> @@ -75,7 +75,6 @@ allOf:
+>            enum:
+>              - qcom,sc7180-videocc
+>              - qcom,sdm845-videocc
+> -            - qcom,sm8150-videocc
+>      then:
+>        properties:
+>          clocks:
+> @@ -101,6 +100,22 @@ allOf:
+>              - const: bi_tcxo
+>              - const: bi_tcxo_ao
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sm8150-videocc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: AHB
+> +            - description: Board XO source
+> +        clock-names:
+> +          items:
+> +            - const: iface
+> +            - const: bi_tcxo
+> +
+>    - if:
+>        properties:
+>          compatible:
+> 
+> -- 
+> 2.25.1
+> 
 
