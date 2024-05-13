@@ -1,241 +1,155 @@
-Return-Path: <linux-kernel+bounces-177182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 705A48C3B1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:00:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1131F8C3B20
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B42B2815D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:00:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B52FB20D05
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584C414658F;
-	Mon, 13 May 2024 06:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8C0146596;
+	Mon, 13 May 2024 06:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BicIse0b"
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWXPryrZ"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2D44C81
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52D54C81
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715580036; cv=none; b=ljeHP2z2oxC+ETkBERXEbEd2zXNVjWGSYDBYjr2PfcgO0nvuzdG9dsIoSCdHwZz9kv6xWvxehTM2HvjWIX+iZj5hsfqM2YcgMWsv7PNh8NbTYQKzZhw6C4zx9j5T0LzR+6HbMigplgWoBx0wGRSaju+iuSqiZvohR9iq7kAEqCQ=
+	t=1715580251; cv=none; b=HeUIPgW6gYCtnBg11ferRGjbXOxvFGwDO+cYOfEEbfTTUXrLJdy5FIW9eBraqGuXfEki+0rYHCxWBHDvn3zS8VYdMZDBC7E1ZMvr32jguwbTkfKqf+EuT9xaMrH/aKSMe90outj7UHDmJjhTv1fRbTit9wiFmm44KiwoNzuttHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715580036; c=relaxed/simple;
-	bh=U6jyMIMYyMvRLZrQ+/DKHJ/d/UnO6SKxH0N3kkgzAGA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ihw7Gp/P3GwdFxnDRyoA3rqc1Wj5DWry6C5CMiZxUYgMO204NV8YcqfsqR7SAc+761oaWBmJYQgaM+EIK+Vr/VNzpT7/ZCCpFgHgNBQ8Bf6FGg8ckR4ocK/jlkDe9lWYJd0dXRyy/vae2sKWXjDfXvj1uWgnfAtyoGqTaiJDHg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BicIse0b; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1715580251; c=relaxed/simple;
+	bh=Xt9S8dlMCW3NtruodoS/LYAH8F0QezoIIzxVV2k5IBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=vFlTiTp0QENQeCz2w8/wz+EKbiEKEic2iI3QLdJ+eCVYL18deptDSyfztKLEoA0/NZ6CfFEc77vRhRxEwBfaaxBpUNnMwt6W2fOWARDRTx7jO0Q0Vr6H4+2YICFCbRPMns4SGhAGDngnZ7PREGS7tpI2hBCvcjheRLJPa67y4f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWXPryrZ; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-6f447260f9dso3095655b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 23:00:34 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a599eedc8eeso948134566b.1
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 23:04:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715580034; x=1716184834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A+UWE13EKJKc2jsx12DqNcqiTCBkf/xDYNgDW2I4NGM=;
-        b=BicIse0bv15L/OaAXm0fyxAHUrl8BG+j1uUsoQ5zXzv5lui5wM/WndKgWuT6S8PY6T
-         NbRYzXU3Np3BNvPy2pIb1aIxPVxKPzN+vlIVa9E76ikyH6o7IP+W23YxaA0FyRKU6fln
-         5sRgQEAJ6gYsC/Zpv7RypZj3DFBTDTdbj2Lk/ywexLe20PNqS7vIWPYRHVJiqsNgV9NK
-         THHZZDx/JCw2mbAEYhw+FzExraZP0U2qJaljV5jQiPzvNsIE1wjIUzGyjn+TkFAfzxAw
-         s8SWrf/tVDoNLfNHW/U+kYpYlhlQlJ0ujd9gXaeKpV5JBSLOi+bDCJx5Bycw9jyqt6Nw
-         Yr0w==
+        d=gmail.com; s=20230601; t=1715580248; x=1716185048; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=XSDmacJrSEsyXiAs3orP3K7bhFVWvidj4v4FY7X5UGk=;
+        b=AWXPryrZcW5pH16rJeAUWmvOxRkfPQJqm5zj2a7ISFpBVpDXJE5dOxiPaAJNeyvFSp
+         nnb5JDdbe++1msSDwGhj2AoIP+fBDzVzMRgD1FIQKmSq4CfrVv+KCjHO3np7kVjUQawt
+         o0GulS6Jzu/Bik1OS99PZ+PWFekA9fThokFZdVV5PJkhm8o8O+CDEVFifOHwJlwiJ3YU
+         /I2WCnQVc3MW3xyusTQ6YuWsh4/2xVC1ayD9PBZmavpt1glFhJ7BRIPAOtXDJ3zB43c7
+         IPSB+d3Z4a2iVkSmv5uBOLr61j2Xzllq66vp0Lubdj93ZVu8E+EGSoG70Ck5YVewZ85V
+         Ctdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715580034; x=1716184834;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A+UWE13EKJKc2jsx12DqNcqiTCBkf/xDYNgDW2I4NGM=;
-        b=EEksMoEBB4SW6PhrT7szzHEw+1EbcAWanKA9y89su08ZL3n5HJOfGgcT/YsS63qowA
-         UYPXmTB3MghI1NdL1RUwZbMjUpfnBEKk+c+JCbx7ReDwhLwbfoqTBNiUELIZlSTv8BIs
-         IoDpn+lagKHgSFd6K7zkWDv7tkL59l4Nfr/n1jf47CdvkEkFcvIt7rZR+aiWwrm1cqcB
-         mr1EkrV0NcipB8reUsYvu8HYfV5uKziHgMA7Mi0Ygebo9D8NzKoC8p1MX0qHxqNptDmJ
-         M3lK6jDojoBp1KQSuLvUWgxZ3TnxiSlbzRGEJm2ttm6Sq4BXZndXm71cc2oHfz3iEtlh
-         fFUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCSZXw41F7eAb3OOfWr2jNDIXp2ros3l8W6wBr/KF/GY+KEiIMV+9wPO8UCY4GZdD0DAkIGOa9km+pjEhDqCYs3mbHwy+BsS24pr1g
-X-Gm-Message-State: AOJu0Yyn9Y1f/6TcjtMs0wg9e6CBmlah6jKX+MQfUaKCzFDiFRZbp8t/
-	PABPAuOie2eB+JpI0h65Tt+H6USANwhFFoGmmeX1sYCG4hv/5rAn
-X-Google-Smtp-Source: AGHT+IFgXfG6zZft0seFQcj/0hGAntlM5b4QIRh98rM7ciwNpamlMxzfQnNQCIrlaVzeReaaX3tY9A==
-X-Received: by 2002:a05:6a20:12d4:b0:1a5:6a85:8ce9 with SMTP id adf61e73a8af0-1afde0a8da9mr9520068637.12.1715580034317;
-        Sun, 12 May 2024 23:00:34 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67105649fsm7106812a91.6.2024.05.12.23.00.32
+        d=1e100.net; s=20230601; t=1715580248; x=1716185048;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XSDmacJrSEsyXiAs3orP3K7bhFVWvidj4v4FY7X5UGk=;
+        b=h4ugGifK8zkRcVUkZngHCGoXJq4bP6/CPN8QY+Zms9bRdGotJUczWPZNrflrUmBXb7
+         2kHwg4FsDXzC8DmnptJB1nGZlDnfdS0DNGZZBlmWB8Amn6WSRJQzNKZnPLhDGlLdLycO
+         qArDkFC8MyaHiCs255tEqeTK6FblFtfTelEaHESX8ZTB5necw2I0cd5k4AJq+F1pT4lk
+         cd90jWHzV2JDlUkYqRT4iXfiIyjlYXLxsmW5AjE39GU5s181gbgq+KKE0g46tqZ59Jvx
+         9zVvucrCTAeK3ELQB0IhulSaEADGuDg+FGU4d8M1VhCMKvlfpujA/49ETs+uZ6M0+TtM
+         b/7w==
+X-Gm-Message-State: AOJu0Yx/cNFzaTHZ4JedmVN0gw67K/NqvhyKWQL44hBg7YGnU2c0MGX/
+	L0EnbEiWKvA9X2pmN5qJ9Jbb1lDJai2VlOBCwSdUiLfHQY+F0p72
+X-Google-Smtp-Source: AGHT+IHRGGUlO/uwMw3XoAWtzjqDPkkW1PpYK8cRCjzTAhgLeNEpTrRIdL1zIQRzzsIacky4WqteqA==
+X-Received: by 2002:a50:d69b:0:b0:572:7280:89db with SMTP id 4fb4d7f45d1cf-5734d6edcc1mr5316928a12.30.1715580247493;
+        Sun, 12 May 2024 23:04:07 -0700 (PDT)
+Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7d3esm5733817a12.73.2024.05.12.23.04.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 23:00:33 -0700 (PDT)
-From: xu xin <xu.xin.sc@gmail.com>
-X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
-To: chengming.zhou@linux.dev
-Cc: aarcange@redhat.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	hughd@google.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	shr@devkernel.io,
-	xu.xin16@zte.com.cn,
-	zhouchengming@bytedance.com,
-	si.hao@zte.com.cn
-Subject: Re: [PATCH v2 2/2] mm/ksm: fix ksm_zero_pages accounting
-Date: Mon, 13 May 2024 06:00:29 +0000
-Message-Id: <20240513060029.651050-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240513-b4-ksm-counters-v2-2-f2520183a8ca@linux.dev>
-References: <20240513-b4-ksm-counters-v2-2-f2520183a8ca@linux.dev>
+        Sun, 12 May 2024 23:04:06 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Mon, 13 May 2024 08:04:04 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Borislav Petkov <bp@alien8.de>
+Subject: [GIT PULL] locking changes for v6.10
+Message-ID: <ZkGtVO7uhcFXEeX6@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> We normally ksm_zero_pages++ in ksmd when page is merged with zero page,
-> but ksm_zero_pages-- is done from page tables side, which can't protected
-> by the ksmd mutex.
+Linus,
 
-  "cant protected" -> "can't be protected".
+Please pull the latest locking/core Git tree from:
 
-  But It's better to say  "where there is no any accessing protection of
-  ksm_zero_pages" because ksmd mutex is to protect the flag of ksm_run, not to
-  protect the counters of KSM.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-2024-05-13
+
+   # HEAD: 532453e7aa78f3962fb4d86caf40ff81ebf62160 locking/pvqspinlock/x86: Use _Q_LOCKED_VAL in PV_UNLOCK_ASM macro
+
+Locking changes for v6.10:
+
+ - Over a dozen code generation micro-optimizations for the atomic
+   and spinlock code.
+
+ - Add more __ro_after_init attributes
+
+ - Robustify the lockdevent_*() macros
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Peter Zijlstra (1):
+      jump_label,module: Don't alloc static_key_mod for __ro_after_init keys
+
+Uros Bizjak (15):
+      locking/atomic/x86: Correct the definition of __arch_try_cmpxchg128()
+      locking/atomic/x86: Modernize x86_32 arch_{,try_}_cmpxchg64{,_local}()
+      locking/atomic/x86: Introduce arch_try_cmpxchg64() for !CONFIG_X86_CMPXCHG64
+      locking/atomic/x86: Introduce arch_atomic64_try_cmpxchg() to x86_32
+      locking/atomic/x86: Introduce arch_atomic64_read_nonatomic() to x86_32
+      locking/atomic/x86: Rewrite x86_32 arch_atomic64_{,fetch}_{and,or,xor}() functions
+      locking/atomic/x86: Define arch_atomic_sub() family using arch_atomic_add() functions
+      locking/qspinlock: Use atomic_try_cmpxchg_relaxed() in xchg_tail()
+      locking/pvqspinlock: Use try_cmpxchg_acquire() in trylock_clear_pending()
+      locking/pvqspinlock: Use try_cmpxchg() in qspinlock_paravirt.h
+      locking/pvqspinlock/x86: Remove redundant CMP after CMPXCHG in __raw_callee_save___pv_queued_spin_unlock()
+      locking/atomic/x86: Introduce arch_try_cmpxchg64_local()
+      locking/atomic/x86: Merge __arch{,_try}_cmpxchg64_emu_local() with __arch{,_try}_cmpxchg64_emu()
+      locking/qspinlock/x86: Micro-optimize virt_spin_lock()
+      locking/pvqspinlock/x86: Use _Q_LOCKED_VAL in PV_UNLOCK_ASM macro
+
+Valentin Schneider (3):
+      context_tracking: Make context_tracking_key __ro_after_init
+      x86/kvm: Make kvm_async_pf_enabled __ro_after_init
+      x86/tsc: Make __use_tsc __ro_after_init
+
+Waiman Long (1):
+      locking/qspinlock: Always evaluate lockevent* non-event parameter once
 
 
-  Anyway, The following code looks OK to me.
-> 
-> So we can read very exceptional value of ksm_zero_pages in rare cases,
-> such as -1, which is very confusing to users.
-> 
-> Fix it by changing to use atomic_long_t, and the same case with the
-> mm->ksm_zero_pages.
-> 
-> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
-> Fixes: 6080d19f0704 ("ksm: add ksm zero pages for each process")
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
-> ---
->  fs/proc/base.c           |  2 +-
->  include/linux/ksm.h      | 17 ++++++++++++++---
->  include/linux/mm_types.h |  2 +-
->  mm/ksm.c                 | 11 +++++------
->  4 files changed, 21 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 18550c071d71..72a1acd03675 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3214,7 +3214,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
->  	mm = get_task_mm(task);
->  	if (mm) {
->  		seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
-> -		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
-> +		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
->  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
->  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
->  		mmput(mm);
-> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-> index 52c63a9c5a9c..11690dacd986 100644
-> --- a/include/linux/ksm.h
-> +++ b/include/linux/ksm.h
-> @@ -33,16 +33,27 @@ void __ksm_exit(struct mm_struct *mm);
->   */
->  #define is_ksm_zero_pte(pte)	(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte))
->  
-> -extern unsigned long ksm_zero_pages;
-> +extern atomic_long_t ksm_zero_pages;
-> +
-> +static inline void ksm_map_zero_page(struct mm_struct *mm)
-> +{
-> +	atomic_long_inc(&ksm_zero_pages);
-> +	atomic_long_inc(&mm->ksm_zero_pages);
-> +}
->  
->  static inline void ksm_might_unmap_zero_page(struct mm_struct *mm, pte_t pte)
->  {
->  	if (is_ksm_zero_pte(pte)) {
-> -		ksm_zero_pages--;
-> -		mm->ksm_zero_pages--;
-> +		atomic_long_dec(&ksm_zero_pages);
-> +		atomic_long_dec(&mm->ksm_zero_pages);
->  	}
->  }
->  
-> +static inline long mm_ksm_zero_pages(struct mm_struct *mm)
-> +{
-> +	return atomic_long_read(&mm->ksm_zero_pages);
-> +}
-> +
->  static inline int ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
->  {
->  	if (test_bit(MMF_VM_MERGEABLE, &oldmm->flags))
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 24323c7d0bd4..af3a0256fa93 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -985,7 +985,7 @@ struct mm_struct {
->  		 * Represent how many empty pages are merged with kernel zero
->  		 * pages when enabling KSM use_zero_pages.
->  		 */
-> -		unsigned long ksm_zero_pages;
-> +		atomic_long_t ksm_zero_pages;
->  #endif /* CONFIG_KSM */
->  #ifdef CONFIG_LRU_GEN_WALKS_MMU
->  		struct {
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index 0f9c491552ff..6f461411d070 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -296,7 +296,7 @@ static bool ksm_use_zero_pages __read_mostly;
->  static bool ksm_smart_scan = true;
->  
->  /* The number of zero pages which is placed by KSM */
-> -unsigned long ksm_zero_pages;
-> +atomic_long_t ksm_zero_pages = ATOMIC_LONG_INIT(0);
->  
->  /* The number of pages that have been skipped due to "smart scanning" */
->  static unsigned long ksm_pages_skipped;
-> @@ -1429,8 +1429,7 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
->  		 * the dirty bit in zero page's PTE is set.
->  		 */
->  		newpte = pte_mkdirty(pte_mkspecial(pfn_pte(page_to_pfn(kpage), vma->vm_page_prot)));
-> -		ksm_zero_pages++;
-> -		mm->ksm_zero_pages++;
-> +		ksm_map_zero_page(mm);
->  		/*
->  		 * We're replacing an anonymous page with a zero page, which is
->  		 * not anonymous. We need to do proper accounting otherwise we
-> @@ -3373,7 +3372,7 @@ static void wait_while_offlining(void)
->  #ifdef CONFIG_PROC_FS
->  long ksm_process_profit(struct mm_struct *mm)
->  {
-> -	return (long)(mm->ksm_merging_pages + mm->ksm_zero_pages) * PAGE_SIZE -
-> +	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
->  		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item);
->  }
->  #endif /* CONFIG_PROC_FS */
-> @@ -3662,7 +3661,7 @@ KSM_ATTR_RO(pages_skipped);
->  static ssize_t ksm_zero_pages_show(struct kobject *kobj,
->  				struct kobj_attribute *attr, char *buf)
->  {
-> -	return sysfs_emit(buf, "%ld\n", ksm_zero_pages);
-> +	return sysfs_emit(buf, "%ld\n", atomic_long_read(&ksm_zero_pages));
->  }
->  KSM_ATTR_RO(ksm_zero_pages);
->  
-> @@ -3671,7 +3670,7 @@ static ssize_t general_profit_show(struct kobject *kobj,
->  {
->  	long general_profit;
->  
-> -	general_profit = (ksm_pages_sharing + ksm_zero_pages) * PAGE_SIZE -
-> +	general_profit = (ksm_pages_sharing + atomic_long_read(&ksm_zero_pages)) * PAGE_SIZE -
->  				ksm_rmap_items * sizeof(struct ksm_rmap_item);
->  
->  	return sysfs_emit(buf, "%ld\n", general_profit);
-> 
-> -- 
-> 2.45.0
-> 
+ arch/x86/include/asm/atomic.h             |  12 +-
+ arch/x86/include/asm/atomic64_32.h        |  79 +++++++----
+ arch/x86/include/asm/atomic64_64.h        |  12 +-
+ arch/x86/include/asm/cmpxchg_32.h         | 209 ++++++++++++++++++------------
+ arch/x86/include/asm/cmpxchg_64.h         |   8 +-
+ arch/x86/include/asm/qspinlock.h          |  13 +-
+ arch/x86/include/asm/qspinlock_paravirt.h |   7 +-
+ arch/x86/kernel/kvm.c                     |   2 +-
+ arch/x86/kernel/tsc.c                     |   2 +-
+ include/asm-generic/sections.h            |   5 +
+ include/linux/jump_label.h                |   3 +
+ init/main.c                               |   1 +
+ kernel/context_tracking.c                 |   2 +-
+ kernel/jump_label.c                       |  53 ++++++++
+ kernel/locking/lock_events.h              |   4 +-
+ kernel/locking/qspinlock.c                |  13 +-
+ kernel/locking/qspinlock_paravirt.h       |  49 ++++---
+ 17 files changed, 297 insertions(+), 177 deletions(-)
 
