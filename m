@@ -1,162 +1,84 @@
-Return-Path: <linux-kernel+bounces-177718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F688C439B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:58:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B0F8C438F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1161F22299
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:58:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E9D28657F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D6C55C3E;
-	Mon, 13 May 2024 14:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC8F4C9D;
+	Mon, 13 May 2024 14:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xgcu5dnP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UD5AjcQG"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C4Dpco6P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 055724A1C;
-	Mon, 13 May 2024 14:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C2D4C62;
+	Mon, 13 May 2024 14:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715612244; cv=none; b=pOlQRdldHq6SNS5mtyra5XYjCWPsTkimgGEdTQHalU1ALz5RDG3DgT3HoRl5xSngnrmxYY2QDjsH7xsUYNXDivLHI+k/YE8AQsVidCS/yNJkjBLBvUtYrc0rvlVc++lblBJEuIaO1Bm2HGFCwNMuBSioIXnpm39A1FOWQr7ffF0=
+	t=1715612212; cv=none; b=Fj2COOVzTKulOdVHHnyZyGm+Rw23FsL1f8E0o04SwFtjaPi7TpqrFZPTd5ZFBJ8HpA5hmfRffcXoeZ+1xUcsF2bTogYrS+d3FkFpObk3uJzeG4dTzAkOtUhBB3N2tUrYBuyhWEhxuADWGl74enGosyj2yUmDCtjPOYQzCobE4cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715612244; c=relaxed/simple;
-	bh=XEREZ35Uhc3uIskZdwv721TDYFvOu/NDkvgClJxaqEc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UdBpov1NwwjkgCgTM+RFPMZODrFnbrTX/Ni83oz1EjPxH22strfUrsCNuNNoxi1CZWyNE5rynkoFTWYAneTQV3bk9z82m0YVIonppMiDwKAJE4ymftLxB/QhH7VGXPKtbIHOKpsN2qB4ezk2rxS3J91VgQQlWERw9jRNYkRxzC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xgcu5dnP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UD5AjcQG; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715612240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0RCGUSJnEEvoIoBGfG6eQzBHConnqHpnKZVi9tpii74=;
-	b=xgcu5dnPKahlDVsyF+A2OgzJ5UzGHtiFjYTZVeBDJ8yLpwTkWIZv3m3hiDRwL5Zokypkns
-	o/2B6qNJ+3iyUa5RzM6CWbgdOSIGxvIrFpHLDrWSd6IJKOKEVdLDHX/Xs8ssgiGYdO1c/d
-	3+KVQZIxXI9+Dc4u3RC8P4ZDuVpjeSYp+x94bsnZw4BjHQ7oLuCVpxBNcrAggzfru21EvB
-	GscSLZsfW9g0BC5U5rs+BZ7iFf0Rw0S64iHvYy3xqjCjKaCYsmrbshpelYaewvtUNrWmaH
-	0SqIfxUKJM5b4TI+feliTy2fbBc1JGjXMw2fG32S5qfTT3E7gqHokJcjOnQHbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715612240;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0RCGUSJnEEvoIoBGfG6eQzBHConnqHpnKZVi9tpii74=;
-	b=UD5AjcQGNYDg8BjXkDP9lt6qC1ww4GQ78rAoyRuO0WUyNLW62PfbakKIj+ToHPtHTXbW55
-	kO0kbUeJQwJ+OFAw==
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Yinghai Lu <yinghai@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Lukas Wunner <lukas@wunner.de>
-Cc: Nam Cao <namcao@linutronix.de>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 2/2] PCI: pciehp: Abort hot-plug if pci_hp_add_bridge() fails
-Date: Mon, 13 May 2024 16:56:47 +0200
-Message-Id: <adb9a81a2943502f105806f48b00e08e1a4e0da2.1715609848.git.namcao@linutronix.de>
-In-Reply-To: <cover.1715609848.git.namcao@linutronix.de>
-References: <cover.1715609848.git.namcao@linutronix.de>
+	s=arc-20240116; t=1715612212; c=relaxed/simple;
+	bh=rGiCLvhHEh+/H/8ISDwxe5vtFuzZZ3yJUHRruvrM/b4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzFJkMGrDJ4izWwzUzVZovUTs9UrPuOVqLAVRhUh2LxyV/5b3UsLeP9ujF1xDryDSWBf7BsHHIyOy9ib0C52FkAStwW9AEQnIlr4e9VZwu8US5xi2gNsGF2KS49QiC88VY9mvHyX/SaXvejSfef+ti22YRQNPmM2RCa05bJ38KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C4Dpco6P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9AE5C113CC;
+	Mon, 13 May 2024 14:56:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715612212;
+	bh=rGiCLvhHEh+/H/8ISDwxe5vtFuzZZ3yJUHRruvrM/b4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C4Dpco6PV3nzhhCiahoCIEl1yiz8vAQ1MSCzioNeX85ElySOJmV9/psFYCEABIdId
+	 ZFkaXDJm9opL3lPaos5t+tgB+OStyf+uPdFUTZoouOvDqCdArh7meQ/1YNwQbmEZ7K
+	 LfVs3rtL0ARv/EoiIJAEGxtgjzTRtWiLWRVMnufoWUjzxa7hEtmQLwOVuDUwXT8yLL
+	 Q5b8FpIllFhXrNPHd9Azx/GLL6gQZnocGR0zA2cuoX1GydoiCJ1G0L/wFI4vg5oklc
+	 zUfoTfn8RmZTJ41dzXjPc+5fdN3Q2ObuOqUx3FD7bN0oOJcz8csDYfjVC/1yLZI+bO
+	 cVjKEmGeS1TMg==
+Date: Mon, 13 May 2024 09:56:50 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>
+Cc: mchehab@kernel.org, airlied@gmail.com, mripard@kernel.org,
+	devicetree@vger.kernel.org, hverkuil-cisco@xs4all.nl,
+	daniel@ffwll.ch, akpm@linux-foundation.org, conor+dt@kernel.org,
+	robh+dt@kernel.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, dinguyen@kernel.org,
+	chromeos-krk-upstreaming@google.com,
+	maarten.lankhorst@linux.intel.com, linux-kernel@vger.kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, tzimmermann@suse.de
+Subject: Re: [PATCH v3 05/10] media: dt-bindings: video-interfaces: Support
+ DisplayPort MST
+Message-ID: <171561220843.2594407.9178563306645965147.robh@kernel.org>
+References: <20240507155413.266057-1-panikiel@google.com>
+ <20240507155413.266057-6-panikiel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240507155413.266057-6-panikiel@google.com>
 
-If a bridge is hot-added without any bus number available for its
-downstream bus, pci_hp_add_bridge() will fail. However, the driver
-proceeds regardless, and the kernel crashes.
 
-This crash can be reproduced with the QEMU command:
-    qemu-system-x86_64 -machine pc-q35-2.10 \
-        -kernel bzImage \
-        -drive "file=img,format=raw" \
-        -m 2048 -smp 2 -enable-kvm \
-        -append "console=ttyS0 root=/dev/sda" \
-        -nographic \
-        -device pcie-root-port,bus=pcie.0,id=rp1,slot=1,bus-reserve=0
+On Tue, 07 May 2024 15:54:08 +0000, Paweł Anikiel wrote:
+> Add a DisplayPort bus type and a multi-stream-support property
+> indicating whether the interface supports MST.
+> 
+> Signed-off-by: Paweł Anikiel <panikiel@google.com>
+> ---
+>  .../devicetree/bindings/media/video-interfaces.yaml        | 7 +++++++
+>  include/dt-bindings/media/video-interfaces.h               | 2 ++
+>  2 files changed, 9 insertions(+)
+> 
 
-then hot-plug a bridge at runtime with the QEMU command:
-    device_add pcie-pci-bridge,id=br1,bus=rp1
-
-and the kernel crashes:
-
-pcieport 0000:00:03.0: pciehp: Slot(1): Button press: will power on in 5 sec
-pcieport 0000:00:03.0: pciehp: Slot(1): Card present
-pcieport 0000:00:03.0: pciehp: Slot(1): Link Up
-pci 0000:01:00.0: [1b36:000e] type 01 class 0x060400 PCIe to PCI/PCI-X bridge
-pci 0000:01:00.0: BAR 0 [mem 0x00000000-0x000000ff 64bit]
-pci 0000:01:00.0: PCI bridge to [bus 00]
-pci 0000:01:00.0:   bridge window [io  0x0000-0x0fff]
-pci 0000:01:00.0:   bridge window [mem 0x00000000-0x000fffff]
-pci 0000:01:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
-pci 0000:01:00.0: No bus number available for hot-added bridge
-
-	(note: kernel should abort hot-plugging right here)
-
-pci 0000:01:00.0: BAR 0 [mem 0xfe800000-0xfe8000ff 64bit]: assigned
-pcieport 0000:00:03.0: PCI bridge to [bus 01]
-pcieport 0000:00:03.0:   bridge window [io  0x1000-0x1fff]
-pcieport 0000:00:03.0:   bridge window [mem 0xfe800000-0xfe9fffff]
-pcieport 0000:00:03.0:   bridge window [mem 0xfe000000-0xfe1fffff 64bit pref]
-shpchp 0000:01:00.0: HPC vendor_id 1b36 device_id e ss_vid 0 ss_did 0
-shpchp 0000:01:00.0: enabling device (0000 -> 0002)
-BUG: kernel NULL pointer dereference, address: 00000000000000da
-PGD 0 P4D 0
-Oops: 0002 [#1] PREEMPT SMP NOPTI
-CPU: 0 PID: 46 Comm: irq/24-pciehp Not tainted 6.9.0-rc1-00001-g2e0239d47d75 #33
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-RIP: 0010:shpc_init+0x3fb/0x9d0
-[stack dump and register dump cut out]
-
-Fix this by aborting the hot-plug if pci_hp_add_bridge() fails.
-
-Fixes: 0eb3bcfd088e ("[PATCH] pciehp: allow bridged card hotplug")
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Cc: <stable@vger.kernel.org>
----
-v3: revert back to the solution in v1 (calling
-pci_stop_and_remove_bus_device() and returning negative error code)
-
-v2:
-  - remove "Cc: Rajesh Shah <rajesh.shah@intel.com>" (this address bounce)
-  - add more information to commit message
-  - return 0 instead of -EINVAL
-
- drivers/pci/hotplug/pciehp_pci.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pci/hotplug/pciehp_pci.c b/drivers/pci/hotplug/pciehp_pci.c
-index ad12515a4a12..de783d7c8a16 100644
---- a/drivers/pci/hotplug/pciehp_pci.c
-+++ b/drivers/pci/hotplug/pciehp_pci.c
-@@ -59,7 +59,11 @@ int pciehp_configure_device(struct controller *ctrl)
- 	}
- 
- 	for_each_pci_bridge(dev, parent)
--		pci_hp_add_bridge(dev);
-+		if (pci_hp_add_bridge(dev)) {
-+			pci_stop_and_remove_bus_device(dev);
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 
- 	pci_assign_unassigned_bridge_resources(bridge);
- 	pcie_bus_configure_settings(parent);
--- 
-2.39.2
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
