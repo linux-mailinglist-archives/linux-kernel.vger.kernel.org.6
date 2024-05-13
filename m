@@ -1,143 +1,117 @@
-Return-Path: <linux-kernel+bounces-177981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FF88C4718
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:44:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB2728C4721
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:47:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1994B1F22F79
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90ED91F20B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67933BB48;
-	Mon, 13 May 2024 18:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19023F9D2;
+	Mon, 13 May 2024 18:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyfEyhzi"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Cj9/Cz8c"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E640849;
-	Mon, 13 May 2024 18:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875492EAF9;
+	Mon, 13 May 2024 18:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625881; cv=none; b=VbR+/GYF0cDqEk2hArXK/hFEFd71qycf9sfX/t53YZqr+iIaYR1dhWs5fKdMpKyBxxuutCTOwJ+yDXxJ5WrCxw3qM2QPUvc3Cse9XRhZIysttS0ADDw7WxIrVA3+zSLdalYpet0YSorrxBDByr/51giWe3BMvyWZ3Ngz3aKEE2A=
+	t=1715626040; cv=none; b=KbyotiAG55rq+kNPh9NQ8oRukyXaRb17hZrumGGu+ANqmb7mpSnjEjwcMlLzBFYwzm9y9VOP8Yys9J+tYqP487LJ1w9SUO5HRl02r9jgd5u/0qiU1SiZDNDA54xlOIILt3dLIjfd8pNVx8fEQwc5DTB49htC/lKHDLwcQGusEH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625881; c=relaxed/simple;
-	bh=V+isaCSZhCjRM6q/lNr4SqvHnAMAfUr4V2ylici215w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSMD2pjONzrSNSiZu3XTM+7E6eeEW4SsjfVkuzI/pCrkcSsMO+O/txjFTR6IcBR3kl9wLwdRR4Ag5gWzPTczPMyAsimQ73hH+JAJtW8zWSe+CjLkdPdhFy4lVqwTURmyOx75DJ7DzZpwxUL8Z3voxtpu8dz/JsyTWuLe4opi3og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyfEyhzi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41ff5e3dc3bso23688475e9.1;
-        Mon, 13 May 2024 11:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715625878; x=1716230678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
-        b=RyfEyhzi6T162kF8oQO6oZkO4QR1Z/28PfbiOYZ+FdawSp3rBctuTaA35YJ7DIucme
-         R4SJoitrZOP8eLswacgbjaBwC6UqLfkIdMgYP93UW3vzv9Jj6OvZ4/jTwYbG5obMcznc
-         csNM95D+gwE2jizptx4BHEdPndmbmaxUbtDEQcvYWgAgxpBgAfdQwz9gpiQ3tuiCNaQM
-         v6HufRExb3nm3/e5dEXOCPcQ8YYa2e9DRTGsYqeBo1VN+xjG3+I8H4sRc42EGi+WKRrZ
-         +RPnw8TdxPSnd/B5UiehH9UqSsfy1pdgE9Pbx4H7YQ6HPqwWRuEL/4wSIcSbqXwgxqAO
-         zevQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715625878; x=1716230678;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
-        b=wDBGYQSFnP3kudJBHSLddmb/p47tllG23ro6h3UqNobFwnsuExjrF2rV0NNqdVnY8f
-         1UTZh4FVqdv1rNdQLV7YSjM9Falal6tbHx2xXWh1TAb3gzwKeXOANLfZ1ipezshSw9QR
-         dau9MMCe+LoLReVsorOlfN3SCt7yovRGnQ9hC+rEO1PRdPQy4vOlTnWSWa8i1qqbAd0r
-         4VzIAPfNpcKGlxB4OBJqKdN2C4wgbLWgSQYfk2xGcDO107ImhrJ+Zbu/0Sv1OKL+RAIm
-         khJ2bIXDIgM46YQ65XHF8TZQMVcB156u3OAecW5edvSVn9v5+WeuY90mEnOMQFXW909/
-         Ug2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHFyGwgBWHg26G61L6L1bDy1QX+7IoD6By49rurb/N8kt0Ol0GXLyJ5jUw5wx2dKMGHAIRFvUjJomybEHNvgTiVFe6HhVVjd6SuTytXdFSPqWG/DYRlqUET5C4z6trMey4rcZvgqN2
-X-Gm-Message-State: AOJu0YyJysE+X1b9KJliNc8btvv7RKDiidqi0af5rsAD4YQMifc54slm
-	UWvxA06+8aX3r7hT2nCndwxy6mxuab+4vHpVeF0sUV1z1jZd87Am
-X-Google-Smtp-Source: AGHT+IF7zBTcIFLiTi46x3uVkADC+UX2XcNcYdPPZ8YgAghzbFRye/FiXNHlf9LviG5sOZkNNQzTbQ==
-X-Received: by 2002:a05:600c:1d21:b0:41b:97c5:ccc7 with SMTP id 5b1f17b1804b1-41fea9320bbmr69197895e9.8.1715625877429;
-        Mon, 13 May 2024 11:44:37 -0700 (PDT)
-Received: from [192.168.20.170] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce9426sm164700615e9.25.2024.05.13.11.44.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 11:44:36 -0700 (PDT)
-Message-ID: <01889053-bcf2-40cb-86ad-2f2bff56f24b@gmail.com>
-Date: Mon, 13 May 2024 20:44:33 +0200
+	s=arc-20240116; t=1715626040; c=relaxed/simple;
+	bh=vLa9r7gEYQHbvTWv5xGb15CT21heekDIFFUmT7aBdq4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qOl5jBjfpAFj8dcgafqi1VEq28Fe2z5HTbJvIsLUYfDJdTE11bSlMZmFeSFrMF55z8xd2dIwtBuxWhKG6YmmyvrxzQ0J42BHP+xPGrBmb9h+hKOfwRMPOCr0Qi63VOOd1CjyODcRU/1SjPBMdS75omkv/543wzi+JdeBhKtMLZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Cj9/Cz8c; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DHhYQA014344;
+	Mon, 13 May 2024 18:47:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=corp-2023-11-20; bh=ivk+y8EJmO2v0vPw4T0GwAz5Cxuq4eW7Wwl86rwxKb0=;
+ b=Cj9/Cz8cvtJTx1jUC1UsFHuKMtSyEbFS5trLOQHTrcQtEch8MKWJc1IZnohCEqhKx9pB
+ W43OIRAlZoSFZJGx776k0vuBsmieh2vgeNTX0hIcBn6sfrr5tLsuRLlxRIRfXvrA7UAS
+ a4WTpArbWS0xxFh2zlomHL20VF+ePZGBKVJh1G2QHgkHJGsfamXOhvJXobBhqpzOzb7C
+ JT1kbF+DmF4QBukc8x+mkJm4kvXeADhaA/9iTGXoM4VtN+10xRrA4McWQL8eIzUy5tW4
+ DADVoIsv36uYw/6Tk0kC+54La/+zxgxkJ5x8VOD02pXhycHZeJuzqgGxJQJ/RXWlHR4x wA== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3qgv051t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 May 2024 18:47:00 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44DI1lbr038367;
+	Mon, 13 May 2024 18:45:18 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24pv149k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 May 2024 18:45:18 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44DIjISH027732;
+	Mon, 13 May 2024 18:45:18 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 3y24pv148x-1;
+	Mon, 13 May 2024 18:45:18 +0000
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+To: Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com, harshit.m.mogalapalli@oracle.com
+Subject: [PATCH] iio: temperature: mlx90635: Fix ERR_PTR dereference in mlx90635_probe()
+Date: Mon, 13 May 2024 11:45:14 -0700
+Message-ID: <20240513184514.3200222-1-harshit.m.mogalapalli@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
- Stromer pll configs
-Content-Language: hu
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Varadarajan Narayanan
- <quic_varada@quicinc.com>,
- Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-References: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
- <baa81202-f129-4ec2-baca-6ca8b476a37d@linaro.org>
- <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_13,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405130126
+X-Proofpoint-GUID: bFDzWDMJpvIAmwyimUriWtgSZuMJkb_5
+X-Proofpoint-ORIG-GUID: bFDzWDMJpvIAmwyimUriWtgSZuMJkb_5
 
-2024. 05. 10. 18:25 keltezéssel, Kathiravan Thirumoorthy írta:
-> 
-> 
-> On 5/10/2024 12:23 AM, Konrad Dybcio wrote:
->> On 9.05.2024 10:08 AM, Gabor Juhos wrote:
->>> Since the CONFIG_CTL register is only 32 bits wide in the Stromer
->>> and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
->>> IPQ5018 and IPQ5332 configurations are not used so remove those.
->>>
->>> No functional changes.
->>>
->>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
->>> ---
->>
->> Hm, it sounds suspicious that we'd have these settings then.. Could somebody from
->> QC please confirm that everything's alright here?
-> 
-> 
-> I checked the HW doc and yes in both IPQ5018 and IPQ5332 CONFIG_CTL_U register
-> is not implemented. I see offset of CONFIG_CTL_U register is removed in the
-> change[1] by Gabor.
+When devm_regmap_init_i2c() fails, ragmap_ee could be error pointer,
+instead of checking for IS_ERR(ragmap_ee), regmap is checked which looks
+like a copy paste error.
 
-Thanks for confirming!
+Fixes: a1d1ba5e1c28 ("iio: temperature: mlx90635 MLX90635 IR Temperature sensor")
+Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+---
+This is found using smatch, only compile tested.
+---
+ drivers/iio/temperature/mlx90635.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Given that, should we also drop the pll_has_64bit_config() if block from
-> clk_stromer_pll_configure function?
+diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
+index 1f5c962c1818..2b61489d5ee0 100644
+--- a/drivers/iio/temperature/mlx90635.c
++++ b/drivers/iio/temperature/mlx90635.c
+@@ -947,8 +947,8 @@ static int mlx90635_probe(struct i2c_client *client)
+ 				     "failed to allocate regmap\n");
+ 
+ 	regmap_ee = devm_regmap_init_i2c(client, &mlx90635_regmap_ee);
+-	if (IS_ERR(regmap))
+-		return dev_err_probe(&client->dev, PTR_ERR(regmap),
++	if (IS_ERR(regmap_ee))
++		return dev_err_probe(&client->dev, PTR_ERR(regmap_ee),
+ 				     "failed to allocate regmap\n");
+ 
+ 	mlx90635 = iio_priv(indio_dev);
+-- 
+2.39.3
 
-If we can be sure, that there will be no Stromer PLLs which implements that
-register we can drop the check. Also, since the SUPPORTS_FSM_MODE flag is not
-set for any of the Stromer (Plus) Plls supported currently, the related check
-can be dropped as well.
-
-However I would keep that as is for now. I'm planning to remove the
-clk_stromer_pll_configure() function entirely but that needs a bunch of
-preparatory patches which I'm working on at the moment.
-
-> 
-> Nevertheless, for this patch
-> 
-> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-
-Thank you!
-
-Regards,
-Gabor
 
