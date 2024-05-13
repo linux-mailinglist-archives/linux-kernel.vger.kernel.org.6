@@ -1,137 +1,111 @@
-Return-Path: <linux-kernel+bounces-177444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276B88C3EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:16:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5A28C3EBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D205F1F225C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:16:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDEE2B210EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C34514A0A5;
-	Mon, 13 May 2024 10:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="amcaw6hN"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFC014A097;
+	Mon, 13 May 2024 10:19:31 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637CE149E0F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A003148833
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715595408; cv=none; b=hZVqs9XjFMriUvPMG9ekABp24tx7FswbPzTCP8L8ObjLrHNMvKeEaXDG2lO33LLV6P1t2NyEJjURbhLcO7cDwOTIC+Zsq/fGffnZQODSp8jId5mvE22uIWHO/MLfQ/CEzlN6cbJLW13QlD4s0rcf2JVQOZbj6ASYacrujYgS9nQ=
+	t=1715595571; cv=none; b=OnMKnnHyDXpI2fwsOUaHNGKaAOsMnln2XEYw9scYLzLVsR3YYW4YdJp+J/yLNoc4qY8hcvddMR26XHW2TtDyUSa47pm0hpUeUHDYDyKgkAbehpdLep+5xncgIc3kgMAFtgM2/beF03aAis0JSliCe9p084ezItU1efhgH76ZNOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715595408; c=relaxed/simple;
-	bh=w2J5OBBDrrWIOjx9hHEVak1hUfdidIUqnvnM42Q/rCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfJMj8Z9eavlbTh1W+PrRkm9gfDI2lHgL60WtdDFlbmXatraE+kus49u0WH24MNDiuhinDEKD/jjHyRtryshciZpYJLmToYE25/Aerb0Qyb2oFhvuBF4kq15Ja95E8Uc3jNpHuYRlhfT5XSaL11UMtqwyuCuBAeiL1p0kLozvcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=amcaw6hN; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-51ef64d051bso4675081e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715595404; x=1716200204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8qyuzqvqTWW6REM5MvsMGdLvS+oewzpA8TVBEHmp2uw=;
-        b=amcaw6hNvvJKk7nLW2XHg7QjY85edsMhzGw3XPrtGnIauQ7WtaLk063XptTH5gR3g3
-         zAy4l4MK5tauL+uMpgLEDfrFvX1ib9xBhwdu2E0Tp5H3I6NXObd5mCa/rLmESCuEIXhx
-         ZSqNDxqEZJNrPKmjn0Vv6tCWLMOj1SikPCvxiXh6tzEKY5WVFaUatvjuDJVHxCTmoPaE
-         I3PhA93soWZB4gNk36iOnRRPUg8FbyYfLlVvBtGbNFvYYh69SlS1GPrBqu6SLkzwaeTg
-         4fvUIgTyPnMRstI6MvnR5FvwaS0zIhUxKaDJ12Rq3n+vxd9mPM4TR28n4IfDBmRRjD57
-         TZJQ==
+	s=arc-20240116; t=1715595571; c=relaxed/simple;
+	bh=LgLvUqQFTlHdPf+eMHthlrcPpJOHVI3IkuBNpAkRH7A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=q4azdfyXaVUFhnuWYo3B9y/PHY40HyTKuFExXpHnS+cjv594Q2zrSdzoBV9Iy6R93GCpOfWmVgBTNiA1xqMjXgb3SwR/S4hfgU+G86KMdkUg2qAp2taV2zUWGW5p/a/5rv7Doc49Jr5tLcVSXDRQZ9EZnJKdPYY1CCfkUe6l5Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7da4360bbacso524577239f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:19:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715595404; x=1716200204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8qyuzqvqTWW6REM5MvsMGdLvS+oewzpA8TVBEHmp2uw=;
-        b=h/d/Z/H5kz9RTvF7Ij/tYPtuDvqEAhKUKNHsy29S5KuOcL4Q1s2w4nSbVGXE4gN5O/
-         XQTR6GMRasF94rWFLdlAl0PP793O8RJcnV4UDIS4ZLSlvSSR/OtkxA4sBRo+3AoEu4T7
-         TXYChnvJPFz06TSFt4S3UDuuwUqzlKOjMATL8oMqlk8ORgoHKXbCNjryByjl+M6LFQWu
-         vTc8pa4R+8D8LamvVqoz3XpEKrmT38KOs3lyTgkr1pEJtH+3q4igsA06CVniFMxKCMs4
-         TE4a0u4FWbBinIshuaZ6dJFRZbdJLSI/bOGIHF4+paThyonha2pfBzshDYhOrnluIt+6
-         UV/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ1Zu1UEB8/jKmU8ReEtQIaeW8FGRQdLNJ8lCi5/7dAkarPRz0ISuicpWvIwr0aAAIzBmVhmBmtNnAb+wlmlDHuFPQkKKNqd2oRxVB
-X-Gm-Message-State: AOJu0YytI2ZQMiZqDemu40IoEQ1ZhL1e08/yqD4IV7ie2+d1azInWpXX
-	Q8tQvO9xLkvSK1VLB55MKmpTeJSt2GJLVagfbEqRPahKKOS4S/xNY5vkRjGmIjU=
-X-Google-Smtp-Source: AGHT+IEoGJmlp8+IVb5iCgzv2JW8GXaqhiqx14ov/8u43xecwfEJyHh/E/EsbCinP88RKF/YGMWzQQ==
-X-Received: by 2002:a05:6512:201:b0:51d:3a99:f22e with SMTP id 2adb3069b0e04-5220ff72e3amr5329107e87.59.1715595404303;
-        Mon, 13 May 2024 03:16:44 -0700 (PDT)
-Received: from vermeer ([2a01:cb1d:81a9:dd00:b570:b34c:ffd4:c805])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad02csm10654926f8f.67.2024.05.13.03.16.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 03:16:43 -0700 (PDT)
-Date: Mon, 13 May 2024 12:16:41 +0200
-From: Samuel Ortiz <sameo@rivosinc.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Qinkun Bao <qinkun@google.com>,
-	"Yao, Jiewen" <jiewen.yao@intel.com>,
-	"Xing, Cedric" <cedric.xing@intel.com>,
-	Dionna Amalie Glaze <dionnaglaze@google.com>, biao.lu@intel.com,
-	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 4/4] tsm: Allow for extending and reading
- configured RTMRs
-Message-ID: <ZkHoiYMseU0XqEbR@vermeer>
-References: <20240128212532.2754325-1-sameo@rivosinc.com>
- <20240128212532.2754325-5-sameo@rivosinc.com>
- <ec7edddcf8c74e48cb392db0789b03243ab05692.camel@HansenPartnership.com>
+        d=1e100.net; s=20230601; t=1715595569; x=1716200369;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qetPokwS7CKawVpVrtieM2hQJFQt8OeOARGqckdkIAY=;
+        b=cAZYSM7yP/AKvHyTH38emHteIqH3FnbbzpRiEOW9MYe5ZehQSYQdLvHtcLgKdL8/M8
+         +bPGdjNPyBOXIPTtkPkf9PnjccMuIZ5PiSvOITL2P0pwdsZSbzgagjPy63RfIlKw6yw2
+         ilBU2xqnvogjr6nGKOcKD/QbO5lTMLGFwrn8IrxmJRc8CgUiH00O1nf3GBLjEkF2OHiK
+         DZI/ipzKykmVUYC0xz7Eb/BedUVue3GhP5lYfp98avisuFFMCeqpUmQrCuLA0Hdwv3Zx
+         6byRM1joskUkBNBWh7d7SEcKqCCMB22yesDfsqpvZm1oAwQgOUMZims2Da1lO79odtUr
+         h0mg==
+X-Gm-Message-State: AOJu0YwC7hhT3DpWnYubT5vncYJ6CEo/Cg1nvKQYy/50A9npF5ouEWoE
+	GOi4lF+uqqFkWE9gFDT8kjTFti1T4mZP685AZonNsLB5okK2v52Ktg7e5d/FnMFXJxiCWrVza6/
+	dJbtjNL2ngyxqZ4PqB+43pHe59e14kG7pbGqJEyp5nivYvoh+CEOmiHMsxA==
+X-Google-Smtp-Source: AGHT+IFKpmfatjP58VFWj2cgSFaBZ/fjLMzixR/YP2TaO4fjadBf8N8tAvaOb/df9+D4wyuUJdOTOtop8JrF2Bim6MJrEkgkAQQo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec7edddcf8c74e48cb392db0789b03243ab05692.camel@HansenPartnership.com>
+X-Received: by 2002:a05:6638:8404:b0:488:c345:73c4 with SMTP id
+ 8926c6da1cb9f-48958e13eb1mr840876173.5.1715595569138; Mon, 13 May 2024
+ 03:19:29 -0700 (PDT)
+Date: Mon, 13 May 2024 03:19:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007a211706185338b0@google.com>
+Subject: [syzbot] BUG: Bad rss-counter state (5)
+From: syzbot <syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, May 10, 2024 at 10:57:37PM -0400, James Bottomley wrote:
-> I'm not really sure where to hang this, since there's no posted agenda
-> or materials for the CCC meeting today.
+Hello,
 
-The agenda was posted on the linux-coco ml [1]. I sent a link to the
-presentation slides [2] to the thread.
+syzbot found the following issue on:
 
-> However, it struck me you missed a third option: use the ima log
-> format.  This has the advantage that we can define additional events
-> and have them published with a kernel patch (the IMA log format is
-> defined in the kernel).  Thanks to the TCG, it's also CEL compatible
-> but doesn't require any sort of TCG blessing of the events.  Plus we
-> also have existing kernel infrastructure to log to that format.
+HEAD commit:    cf87f46fd34d Merge tag 'drm-fixes-2024-05-11' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17e54084980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6d14c12b661fb43
+dashboard link: https://syzkaller.appspot.com/bug?extid=f2bbbb592debc978d46d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-That's an interesting idea. It may avoid having to extend the CEL spec
-with a new Content Type, but otoh the current spec defines which IMA
-events are supported. So adding new ones may require to also eventually
-extend the spec. But I guess since IMA is a Linux kernel subsystem,
-changing the kernel code and ABI would de-facto extend the TCG CEL IMA
-spec.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Here I assume you're talking about the IMA_TEMPLATE CEL specified
-format, which is designed to accomodate for the current kernel IMA log
-format. The main drawback of this format is that the digest does not
-include the whole content event, making the CEL content type, the IMA
-tag name and both lengths (for the content event and the IMA content)
-untrusted for event log verifiers.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1aa5ad92dfce/disk-cf87f46f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/67c336f7c1c7/vmlinux-cf87f46f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/bb5b717bd2b8/bzImage-cf87f46f.xz
 
-CEL defines another IMA format (IMA_TLV), that hashes the whole event
-content. I think we should at least use that format as our output ABI,
-if we want to use a TCG specified IMA content type.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f2bbbb592debc978d46d@syzkaller.appspotmail.com
 
-Cheers,
-Samuel.
+BUG: Bad rss-counter state mm:ffff888079dd9300 type:MM_SWAPENTS val:6
+loop2: detected capacity change from 0 to 256
+exFAT-fs (loop2): failed to load upcase table (idx : 0x00017f3e, chksum : 0x0b83170a, utbl_chksum : 0xe619d30d)
 
-[1] https://lore.kernel.org/linux-coco/61b65115-5945-4e27-89e4-bb6cba657f7f@linux.intel.com/
-[2] https://docs.google.com/presentation/d/1qMk-8TiMigVmVAEDWXqPu9Jd7OJ8AGvCR34Lp2WunhU/edit?usp=sharing
 
-> Regards,
-> 
-> James
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
