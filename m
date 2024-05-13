@@ -1,39 +1,39 @@
-Return-Path: <linux-kernel+bounces-177663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA50E8C42C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:01:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC928C42C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95733286C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A6351C22F93
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6BF153804;
-	Mon, 13 May 2024 14:01:42 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C40C153BC5;
+	Mon, 13 May 2024 14:01:47 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649C4153586
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420B9153586
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715608902; cv=none; b=SqRyiIqNGxkraSjmKbZHDY91/Q5d1BsNkiQiobk4aC5rEAk6OBOCwUwJLpCJ2Y5d6XxQpg2AhKRfb3V8sXGhGKjGTd/D5Q60/s2lLUETWow7pNLh31Poxg+T4Yy72kG7z2QPZD96xNUXYXJg2X2tdbTqK+59RWxcYwytsbY3mEI=
+	t=1715608907; cv=none; b=VJ0yffESzTpwJ4pLvLMQRQBUwHbKkRvfqf6OwuwxwIvnpFJ1KTZuwRntJNO1qIat5EIbRApD7akpobEz8gl7Z1ycrW6+3IMNv3a2FFEVrf3duQDmv9fC2ozhdyaIbAJafLP+bgcMkCb4DrynpNIQARDGx/PdEFDFxoebJRiBY4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715608902; c=relaxed/simple;
-	bh=HPa93/yyuhVjmfwRFTysZ4WvwSZHtZfjl7F3cX7WKp4=;
+	s=arc-20240116; t=1715608907; c=relaxed/simple;
+	bh=1YcYToi5JryAKQRSRBtTOb92FRyQycH6cd6PbcD9ong=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fh+PIKl31mtjrMJZ0D3JwaqCTuTku744jcBd3dtP9lzzsr9SKr9j946TZVZU+Yf7uxdhN8jBiwf3nTvTHeUFPtjpro+50CKs9HZ2Gqng9l5RzLX3n0m64TmQuwCWT5uykPncJj2MvbO6sPoM0r/NwYY8Ry1Rp8aNEEW9G24pf2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=LsrrAPXV0Lnv3NfUkBipcPxjID5bdyBnkGLvH0hx6RGvwB2Jzk3yO18cVGLkZuzM8NdO/gqnkEWr7PU73WKm4qpMMgPmcjfoDOUluzJlEt0MRcyXSku/6y8yCphjMThOSXMwIL022taVn2A0OS/6RjNACjJUx/SR2HIiJtHkp8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VdLfm25WKzvYHl;
-	Mon, 13 May 2024 21:58:08 +0800 (CST)
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4VdLgR1dffzPkNn;
+	Mon, 13 May 2024 21:58:43 +0800 (CST)
 Received: from kwepemm600012.china.huawei.com (unknown [7.193.23.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id E782D1800B8;
-	Mon, 13 May 2024 22:01:34 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 90CE01800B8;
+	Mon, 13 May 2024 22:01:35 +0800 (CST)
 Received: from build.huawei.com (10.175.101.6) by
  kwepemm600012.china.huawei.com (7.193.23.74) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -41,10 +41,11 @@ Received: from build.huawei.com (10.175.101.6) by
 From: Wenchao Hao <haowenchao2@huawei.com>
 To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, Aaron
  Tomlin <atomlin@atomlin.com>, <linux-kernel@vger.kernel.org>
-CC: Wenchao Hao <haowenchao22@gmail.com>, Wenchao Hao <haowenchao2@huawei.com>
-Subject: [PATCH v2 1/2] workqueue: Fix rescuer task's name truncated
-Date: Mon, 13 May 2024 22:01:14 +0800
-Message-ID: <20240513140115.3892827-2-haowenchao2@huawei.com>
+CC: Wenchao Hao <haowenchao22@gmail.com>, Wenchao Hao
+	<haowenchao2@huawei.com>, kernel test robot <lkp@intel.com>
+Subject: [PATCH v2 2/2] workqueue: Increase worker desc's length to 32
+Date: Mon, 13 May 2024 22:01:15 +0800
+Message-ID: <20240513140115.3892827-3-haowenchao2@huawei.com>
 X-Mailer: git-send-email 2.32.0
 In-Reply-To: <20240513140115.3892827-1-haowenchao2@huawei.com>
 References: <20240513140115.3892827-1-haowenchao2@huawei.com>
@@ -59,65 +60,33 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemm600012.china.huawei.com (7.193.23.74)
 
-Task comm of task is limitted to 16, prefix "kworker/R-" is added for
-rescuer worker's task, which cause most task name is truncated as
-following:
+Commit 31c89007285d ("workqueue.c: Increase workqueue name length")
+increased WQ_NAME_LEN from 24 to 32, but forget to increase
+WORKER_DESC_LEN, which would cause truncation when setting kworker's
+desc from workqueue_struct's name, such as usage in process_one_work().
 
-root   81  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-xprti]
-root   82  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-cfg80]
-root   85  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-nfsio]
-root   86  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-xfsal]
-root   87  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-xfs_m]
-root   88  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-acpi_]
-root   93  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-iscsi]
-root   95  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
-root   97  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
-root   99  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
+Fixes: 31c89007285d ("workqueue.c: Increase workqueue name length")
 
-Fix this issue by split rescuer name to 2 part like other kworker,
-the normal part is "kworker/R" which is set to task_struct's comm,
-another part is wq->name which is added to kworker's desc. These 2 parts
-would be merged in wq_worker_comm().
-
-Fixes: b6a46f7263bd ("workqueue: Rename rescuer kworker")
-
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202405131400.sEYZHYk2-lkp@intel.com/
 Signed-off-by: Wenchao Hao <haowenchao2@huawei.com>
-Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
 ---
- kernel/workqueue.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ include/linux/workqueue.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index d2dbe099286b..07c077a53f93 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5443,7 +5443,7 @@ static int init_rescuer(struct workqueue_struct *wq)
- 	}
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 158784dd189a..72031fa80414 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -92,7 +92,7 @@ enum wq_misc_consts {
+ 	WORK_BUSY_RUNNING	= 1 << 1,
  
- 	rescuer->rescue_wq = wq;
--	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R-%s", wq->name);
-+	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R");
- 	if (IS_ERR(rescuer->task)) {
- 		ret = PTR_ERR(rescuer->task);
- 		pr_err("workqueue: Failed to create a rescuer kthread for wq \"%s\": %pe",
-@@ -5452,6 +5452,8 @@ static int init_rescuer(struct workqueue_struct *wq)
- 		return ret;
- 	}
+ 	/* maximum string length for set_worker_desc() */
+-	WORKER_DESC_LEN		= 24,
++	WORKER_DESC_LEN		= 32,
+ };
  
-+	snprintf(rescuer->desc, sizeof(rescuer->desc), "%s", wq->name);
-+
- 	wq->rescuer = rescuer;
- 	if (wq->flags & WQ_UNBOUND)
- 		kthread_bind_mask(rescuer->task, wq_unbound_cpumask);
-@@ -6302,6 +6304,8 @@ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
- 						  worker->desc);
- 			}
- 			raw_spin_unlock_irq(&pool->lock);
-+		} else if (worker->desc[0] != '\0') {
-+			scnprintf(buf + off, size - off, "-%s", worker->desc);
- 		}
- 	}
- 
+ /* Convenience constants - of type 'unsigned long', not 'enum'! */
 -- 
 2.32.0
 
