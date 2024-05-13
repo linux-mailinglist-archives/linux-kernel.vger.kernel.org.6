@@ -1,129 +1,206 @@
-Return-Path: <linux-kernel+bounces-177107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17B58C3A2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:23:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB3B8C3A30
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883601F211DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:23:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08AB1C20CC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10A1304B9;
-	Mon, 13 May 2024 02:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301E71304B9;
+	Mon, 13 May 2024 02:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="M69832yQ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ASISNXpo"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D5769950;
-	Mon, 13 May 2024 02:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAFE2AD1C;
+	Mon, 13 May 2024 02:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715567023; cv=none; b=sENRL+HqkYD7NHPTQ5VxGJd2EbmceFKpOcFUg8IpV1eRptGjm9bpOi2xGxAcBLL0wG90mK4Dx/tqvhGNKXMAMetO7LGnGAFs8rcO1jvJwIxdZLssQTHjPlrzOuPZKcGfnKQBJtifAjxPmAc5vxfEVVY0LT21Au5Q5lLLGMYYNUM=
+	t=1715567083; cv=none; b=FEaWNvfB6QOFnmo65wJ7wvw7VgNbn+MOT06M24AJG6yZ3Kx8IA6wSfyVmvpHzlq2/XCYrqozN1BqISP0SCiexfjlGoooTrLAm+DSGZK//MW5IVxiKxbWkMZuDzH6KF4GfnLFppEQKfRAmXii3CvD2nrcJOTLW4yNXPk2ZxxVsMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715567023; c=relaxed/simple;
-	bh=AvfMQ+PwspxEgnsIBk+Zujy3wb35knGqIdpOQfFlWvA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Vmj0zgj+FalGl+0/FCM79HjWFZoXYUnzQMd2ZJIqcqLipy+vwJIbILi8rmBRlGKjRSRWMdFThIQy5BaxmjbWg9M+bKd6GjYfbabCjdISdOxN06gQjjxrLtE/zyjUshN/6u2G9nJ+1W0wq1h3A8nPET317fVo7UEa5Xdj1PNtb7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=M69832yQ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715567016;
-	bh=dvMSMciRDx93BTjaoQ6Vd2/mBWH/Rc/j2XkzvMbeLgU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=M69832yQOBnZUqfSCL9Du7lCXBwDIz5egF7VghZOf9jLlbegmRVA30P9U20vFWYDl
-	 HZB31bqGCvmIvCXX7Ojkx0/mTXi0WnHus3C6yZdBWmSPnsbC9DT+JNJgTGSvgbWETE
-	 xorxsof/kbOAlgVFoNRaLqccHXLpxeeKJO3PK07Sq5BTLrFc4ApV2L6nXHZ8sEl86f
-	 kIHbjBa0kMzvI+PUiDlsoUNuIgTUZ3wu+NOku5wL95seVDuNND2qpW+ko1Y8cX7rq7
-	 JqJeQH/Zixk7C4x59Cxi3fmxykF5XhfaJ9I1iTX7WQLBwkc6pToWeKCLYzmMX68PCM
-	 8U8lE3iSfTT8g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vd3FN1vWnz4wcR;
-	Mon, 13 May 2024 12:23:35 +1000 (AEST)
-Date: Mon, 13 May 2024 12:23:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Uday Shankar
- <ushankar@purestorage.com>
-Subject: linux-next: manual merge of the block tree with Linus' tree
-Message-ID: <20240513122334.135fef82@canb.auug.org.au>
+	s=arc-20240116; t=1715567083; c=relaxed/simple;
+	bh=k7y4LA9NwgfR3UusDwBwp4Yc4j/2B54YlpDjOAsXinU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FjU6b7jCEdqQQZ58PRNu9vndTmoRS8Puq6sp5OnRfvOVO2d2cLd08l/0gS/PRwzabDUOLrKf9toj68xPsvfeRS7hl68AzYKNAN6xWUaRdUA9UHt9/l9d3pFyLMNhkwbUukaknIt6SZ8xuVKs/s3hN0drpP89UEohDTWLPKDq+Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ASISNXpo; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f4302187c0so3308074b3a.1;
+        Sun, 12 May 2024 19:24:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715567081; x=1716171881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OnDDpIl73+VXVfz3/GJWrQTsKTk4hFyYoNOmEVSGsMA=;
+        b=ASISNXpoYjekyHwdzopkQNcR0EKVayXZ2JGcre6GrCw2SRRQlMkWpEJ3yd5750+Nr6
+         sLTBsL2lGKbgmELvkdyPEVjz2nS0qynFSeRDo3yTuByHWiu688ENID75NrV/yr6sGPyz
+         IZobO1KKdJaagqCWKaFkn/X/mhuz3im+uYEsn+nmk0w3mtOfRCA+qgcUyJadJaFXAexP
+         GvU+lw3qvvmtTIGxlI31jp/73UQzJBDGmRzkMgyi/xummZQtUdWDhqTSD/WNx7qxwNmr
+         1bYvZDLqlBdJ6BUs/w9sYGsreAsHI3LOT2mfU5/D291lOY4FCO7StdZbeaDQk9AIPJzc
+         FqOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715567081; x=1716171881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OnDDpIl73+VXVfz3/GJWrQTsKTk4hFyYoNOmEVSGsMA=;
+        b=ug50Ur1i2oKOYG4QEKztj7jqt0bVtp68K7rY3bcEZvIU2kSE/A4LbDleU4GnyIjYyT
+         02cVULYliwwKMMOtIj+CKvwGJlg8l3JuC6G0Yz0HMK+zskfods0W5rMCr41nmB5JcuMf
+         rFmjafg6NI624UBJdow/imWwE8lw0bStwZ+bWNPD4Vfi1K83fXceajRVZQcxcJ0vZb99
+         53K/xbEoZzH631CPHh+fDTeLsqBTNoW8CNIWLaeQkOcsuLjFo4COW8gLdQkEqAbC9e27
+         mfLYwI1mOvOtXOjGcp1zorTELr8yTfJYU2D2QX6Xr2ABa+1+8Dzz8X3rpAGwwOoSKeN9
+         x73Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWuh3zqIvUjn+LiktTTtSqn9bMw45SqoF8cWgmeH3CM3l6GyfAmGzTuuB2h8JGBJxbgjteQLqT47NeEcGfSJGgrHs/XdPURGkJ/bJQcnN1zEuytqurbtmPxqsZr3BjymoF2MjAfJHik
+X-Gm-Message-State: AOJu0YzqEnOHozGauRnUYRpwFOvDihX2Vf/Lnwrcz2lZf5T+peg/VpaJ
+	IjqALo6gbcOIZV0IQe0I866QTtVJbNGfXaV9lJtscClWbTuT8wAW
+X-Google-Smtp-Source: AGHT+IEQeErWPw8e6CNL90XgcM8c9kdJ2h1+HcN871wAwmIZ2GKuwNzXIaoc70FY6sXk7l938/oj1A==
+X-Received: by 2002:a05:6a20:9f99:b0:1ac:de57:b1e3 with SMTP id adf61e73a8af0-1afddeea5c9mr13259451637.0.1715567080965;
+        Sun, 12 May 2024 19:24:40 -0700 (PDT)
+Received: from localhost.members.linode.com ([2a01:7e04::f03c:94ff:fe95:abac])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae0b8bsm6289933b3a.131.2024.05.12.19.24.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 19:24:40 -0700 (PDT)
+From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+To: Shuah Khan <skhan@linuxfoundation.org>,
+	corbet@lwn.net
+Cc: Luis Felipe Hernandez <luis.hernandez093@gmail.com>,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Refactor phrasing for clarity
+Date: Mon, 13 May 2024 02:24:02 +0000
+Message-ID: <20240513022430.17626-1-luis.hernandez093@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/C9fpOpUrFYB=8e+qC/lc9HA";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/C9fpOpUrFYB=8e+qC/lc9HA
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+* Updated title capitalization for consistency
+* Fixed acronym capitalization (e.g. CPU, vCPU)
+* Added usage of hypenated compoud adjective
+(e.g. host-side polling, where host-side is modifying polling)
+* Added missing verb "as" in "basic logic is as follows"
+* Added missing articl "an" in "guest_halt_poll_ns when an event occurs"
+* Fixed parameter definition in 4, all previous examples started with
+  descibing the parameter in the first sentence followed by additional
+notes
+* Replaced C-terminology Bool in favor of formal form Boolean
+* Cleaned up phrasing in "Further Notes" section for clarity
 
-Hi all,
+Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+---
+ Documentation/virt/guest-halt-polling.rst | 47 +++++++++++------------
+ 1 file changed, 23 insertions(+), 24 deletions(-)
 
-Today's linux-next merge of the block tree got a conflict in:
+diff --git a/Documentation/virt/guest-halt-polling.rst b/Documentation/virt/guest-halt-polling.rst
+index 922291ddc40c..3e4e9d4099c5 100644
+--- a/Documentation/virt/guest-halt-polling.rst
++++ b/Documentation/virt/guest-halt-polling.rst
+@@ -1,12 +1,12 @@
+ ==================
+-Guest halt polling
++Guest Halt Polling
+ ==================
+ 
+-The cpuidle_haltpoll driver, with the haltpoll governor, allows
+-the guest vcpus to poll for a specified amount of time before
++The cpuidle_haltpoll driver, along with the haltpoll governor, allows
++the guest vCPUs to poll for a specified amount of time before
+ halting.
+ 
+-This provides the following benefits to host side polling:
++This provides the following benefits to host-side polling:
+ 
+ 	1) The POLL flag is set while polling is performed, which allows
+ 	   a remote vCPU to avoid sending an IPI (and the associated
+@@ -14,15 +14,15 @@ This provides the following benefits to host side polling:
+ 
+ 	2) The VM-exit cost can be avoided.
+ 
+-The downside of guest side polling is that polling is performed
+-even with other runnable tasks in the host.
++The downside of guest-side polling is that polling is performed
++even when other tasks are runnable on the host.
+ 
+-The basic logic as follows: A global value, guest_halt_poll_ns,
++The basic logic is as follows: A global value, guest_halt_poll_ns,
+ is configured by the user, indicating the maximum amount of
+ time polling is allowed. This value is fixed.
+ 
+-Each vcpu has an adjustable guest_halt_poll_ns
+-("per-cpu guest_halt_poll_ns"), which is adjusted by the algorithm
++Each vCPU has an adjustable guest_halt_poll_ns
++("per-CPU guest_halt_poll_ns"), which is adjusted by the algorithm
+ in response to events (explained below).
+ 
+ Module Parameters
+@@ -39,26 +39,25 @@ Default: 200000
+ 
+ 2) guest_halt_poll_shrink:
+ 
+-Division factor used to shrink per-cpu guest_halt_poll_ns when
+-wakeup event occurs after the global guest_halt_poll_ns.
++Division factor used to shrink per-CPU guest_halt_poll_ns when
++a wakeup event occurs after the global guest_halt_poll_ns.
+ 
+ Default: 2
+ 
+ 3) guest_halt_poll_grow:
+ 
+-Multiplication factor used to grow per-cpu guest_halt_poll_ns
+-when event occurs after per-cpu guest_halt_poll_ns
++Multiplication factor used to grow per-CPU guest_halt_poll_ns
++when an event occurs after per-CPU guest_halt_poll_ns
+ but before global guest_halt_poll_ns.
+ 
+ Default: 2
+ 
+ 4) guest_halt_poll_grow_start:
+ 
+-The per-cpu guest_halt_poll_ns eventually reaches zero
+-in case of an idle system. This value sets the initial
+-per-cpu guest_halt_poll_ns when growing. This can
+-be increased from 10000, to avoid misses during the initial
+-growth stage:
++The initial per-CPU guest_halt_poll_ns when growing. The per-CPU
++guest_halt_poll_ns eventually reaches zero in case of an idle
++system. This can be increased from 10000, to avoid misses
++during the initial growth stage:
+ 
+ 10k, 20k, 40k, ... (example assumes guest_halt_poll_grow=2).
+ 
+@@ -66,9 +65,9 @@ Default: 50000
+ 
+ 5) guest_halt_poll_allow_shrink:
+ 
+-Bool parameter which allows shrinking. Set to N
+-to avoid it (per-cpu guest_halt_poll_ns will remain
+-high once achieves global guest_halt_poll_ns value).
++Boolean parameter which allows shrinking. Set to N
++to avoid it (per-CPU guest_halt_poll_ns will remain
++high once it achieves global guest_halt_poll_ns value).
+ 
+ Default: Y
+ 
+@@ -79,6 +78,6 @@ The module parameters can be set from the sysfs files in::
+ Further Notes
+ =============
+ 
+-- Care should be taken when setting the guest_halt_poll_ns parameter as a
+-  large value has the potential to drive the cpu usage to 100% on a machine
+-  which would be almost entirely idle otherwise.
++- Care should be taken when setting the guest_halt_poll_ns parameter to a
++  large value, as this can potentially drive the CPU usage to 100% on an
++  otherwise mostly idle machine.
+-- 
+2.43.0
 
-  drivers/block/ublk_drv.c
-
-between commit:
-
-  eaf4a9b19b99 ("ublk: remove segment count and size limits")
-
-from Linus' tree and commit:
-
-  073341c3031b ("ublk_drv: set DMA alignment mask to 3")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/block/ublk_drv.c
-index 374e4efa8759,292fa2bdd77d..000000000000
---- a/drivers/block/ublk_drv.c
-+++ b/drivers/block/ublk_drv.c
-@@@ -2177,8 -2176,8 +2176,9 @@@ static int ublk_ctrl_start_dev(struct u
-  		.max_hw_sectors		=3D p->max_sectors,
-  		.chunk_sectors		=3D p->chunk_sectors,
-  		.virt_boundary_mask	=3D p->virt_boundary_mask,
- +		.max_segments		=3D USHRT_MAX,
- +		.max_segment_size	=3D UINT_MAX,
-+ 		.dma_alignment		=3D 3,
- -
-  	};
-  	struct gendisk *disk;
-  	int ret =3D -EINVAL;
-
---Sig_/C9fpOpUrFYB=8e+qC/lc9HA
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZBeaYACgkQAVBC80lX
-0GxvRgf9HqKvhrRFJLJwLrXkfwYIC0r7mUpWeUbx0ysfd4r/gGlv+7pXCAEFT7XI
-4GJGyzHIvBDIaCNvLVS6EY5a7crYtLMpgkVXeXVr8ELUonAWV10xjVvxkYeCesqt
-yxS4dMfQ2lSaRbhNDE9r1tbZyMs7icLMzuUvZZ2Vg9cx090Q5hzzosfT4gI8hpYN
-cJADI0LngXVCwvrEaVbLrInSKNyybSXisifiCBuYY34IIHBJc1wVjGPPpXmIkuzj
-TS6HVOrbwinYkyGlDDH/o1EqlXDVZXO/+zM2ys0FXsXc/zp1KA55xniicvAEgiI5
-1zBdIvvne4wiACOKLPE4BRRMZqMnjg==
-=up/E
------END PGP SIGNATURE-----
-
---Sig_/C9fpOpUrFYB=8e+qC/lc9HA--
 
