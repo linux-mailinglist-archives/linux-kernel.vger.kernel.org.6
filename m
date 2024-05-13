@@ -1,147 +1,105 @@
-Return-Path: <linux-kernel+bounces-177774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8989A8C447D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3AFB8C4483
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94B31C22C7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:43:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398981C20CD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E8915442F;
-	Mon, 13 May 2024 15:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906DD15442B;
+	Mon, 13 May 2024 15:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMKbzLPP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="WDMGE6gS"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31DA5695;
-	Mon, 13 May 2024 15:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EE457CA7
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715615022; cv=none; b=gG/gC62CJOrs5urX3JGjb8GxLhdoZfiIFRgC3Kfqvup3zX7Hz79s+Da4h7GPUYBi0epC20riu1GsLbbyMfbAYP91IfMXsEceKXQLhhNEbqr0Ntd9Gv24x8mAjt7guuJp1WeyMig8N6qjz/lpAcFT5EVCVHTyfT9YzlGZ2CvMJHs=
+	t=1715615201; cv=none; b=YQmH+CVYLuncCe3JUCATY4447LUqX3uWxWarx677anbEAltG3UlAhXtheq+5d2W3B9zlNKVcSd/ERCaCkYNMwLJWrG1aHvZFdXlwRPLaQ4sXjINncN/q2wWo2DCvbklvFOBRcfmlDlLclIi+u+8MbbFjNKNd9cWnz3m2xB2NRpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715615022; c=relaxed/simple;
-	bh=J5hQzjcurJJsGoxq8banr21Pa9wy7hpwCT+lAe7WOE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cs7a9rN+DKEjlb0COyBiIYjOQUw80SrFuZiWKsxptnYCxHcaNa/RzmgQ+8RyZoEk0wIwv3h6oMjD6itmJW5zPv46IAQi1/11zfYmGsKk7o5x2/DzO5LcV0t7Jaugb8jXsTK4lT3YqmsH68P4UhumGO4Sz+XSJUFhyIp9L8yS9Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMKbzLPP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFD3C113CC;
-	Mon, 13 May 2024 15:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715615022;
-	bh=J5hQzjcurJJsGoxq8banr21Pa9wy7hpwCT+lAe7WOE0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nMKbzLPPNsLi0Y8bkFTPWjaohdSK+zjR/LvuOiBHGWooKmEZhkO8GY5CGqx69n9SY
-	 gmUfcQnR/qlVBTtISjVkp1GIAEX62k9Xhy5MvfgYGpx738kE98QnYt6L4lh8D2UVvY
-	 njDTH1JHN7TLogXHGHglAmaOi+2EL6Fl7HL1evq0sj1Eg+m7KOniXC77KHE++f/xFr
-	 EmNYfasW0x5ush8kPti6vIYX2O0GXuxKaSCHTN+PV8z0wYb/ez5LtN0E7GW6dvX6vQ
-	 KVTiEDh+VA2pizGwAWFZY3iKFc66KeeAMxfYxtyR/K2OgZ5jAila5ho3auBdQSii6o
-	 H1+Y30X1MN4Uw==
-Date: Mon, 13 May 2024 17:43:37 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Devyn Liu <liudingyuan@huawei.com>, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, f.fangjian@huawei.com, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, linux-acpi@vger.kernel.org, 
-	jonathan.cameron@huawei.com, yangyicong@huawei.com, yisen.zhuang@huawei.com, 
-	kong.kongxinwei@hisilicon.com
-Subject: Re: [PATCH] gpiolib: acpi: Fix failed in acpi_gpiochip_find() by
- adding parent node match
-Message-ID: <crpbtmccglgf4mpyt4ogdiqztophoadx34llx6z6lmnbneufju@pwm5j3fwusle>
-References: <20240513075901.2030293-1-liudingyuan@huawei.com>
- <ZkHcniqCiLPEPN9o@smile.fi.intel.com>
+	s=arc-20240116; t=1715615201; c=relaxed/simple;
+	bh=c+2oQsWNq3Aqv4I7Lpotn6eMagm48oS8hV+rQgU/ngA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M66YTuLX8ywyH8OUHRxrVp/vHZuCi34zCahp1Vy/KZAysIpkI2Nf0F2+4HLkCx/z+ehE9EqzjL0CFclUbEDv/sNpkP4ZljtUhqYfWlv0TYa2V1ofh8EYiMUwFCe+Pbdjec0NcwfylZRFeeykLyhfKy261cDoa0oCqcusWac4YWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=WDMGE6gS; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e576057c2bso32360331fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:46:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715615198; x=1716219998; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yuVG90NynmI1kwhRkYjh8vkQweVo8xcJvLui61n/z84=;
+        b=WDMGE6gSOCRZE3Ch5PP7wF1IEl7GFtG+Z9XOjfotk5diWFKgxWXIAWEmblEspOwrWA
+         GnLe6p99UA9ugj3SK2Iy0e8vkzfOlAUxHlH7REPp2caHkIg0eFl/sXL/11RVVhcFHVA7
+         626HG1S8LTXLbjXvELwP2siqXyn75iuMPKml0lkWZP9OEEQs6S93T9tWx2vLykZ3drKu
+         gIVMG25Plg+k1Tx/1oHbEC+Xd5cQ+75BmPVQ42aTvrBrUIuA/Zjqnd323BZqV+M2KNvs
+         P+m3EuEpci80HD9fQivDsLXCvgFrzwHm2hC75FVIdG8PhTnc9SmLbLB2o3Hn+gZhan9n
+         jhfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715615198; x=1716219998;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yuVG90NynmI1kwhRkYjh8vkQweVo8xcJvLui61n/z84=;
+        b=HSUF6Krm74FppEl/o+5tEzQwd4ni0kk7RO1LcZsqRKOpTw/Y0WL6O26Xa/bA63Sdk9
+         GJvUOCHSStHh8q/VgMgHKCMFjUWlOiY8KRlDObcu4kuXPdKP1BLbIQ9dOldhdtVMoBTe
+         pX9xpIOsEVUqz57Nk6bQphIks9Q+78u+hCbLXUxoLQ7ALzpg1BTIXE7NabGIpHQ3gzUc
+         smQrtIhTgbLpSmftC4YxGUUgDLC4aCavJ5nt/eWarKg7dK7Htp5HmpDaw8A1Ojq02i5/
+         Lkwv49MTWd5m/CejIVU9AEqIwkkDEMv76JtdDIuScZG5N99rJqtK8vw/dEvWUmA9U4Td
+         IIEw==
+X-Gm-Message-State: AOJu0YwObKu3n02JKwN56u10rL3QbRfNAh8PVSWCMLG1Qlk6yAlRWEmw
+	d8n+jvG2fCu+djH0jvN9wC2MAqgHTCmcpsWaMoh6Y5aUkwFj/bZc3uhL7BP4wV4=
+X-Google-Smtp-Source: AGHT+IHox5zUZVsU5l4v1h5SltLOyIORY6g5v5FqoUKwpFMQjSqu8Ql3bjmUtKQSYqWeSRsyRa73lA==
+X-Received: by 2002:a2e:461a:0:b0:2e5:2414:a205 with SMTP id 38308e7fff4ca-2e52414a255mr70941681fa.27.1715615198036;
+        Mon, 13 May 2024 08:46:38 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5735a2490casm4923002a12.32.2024.05.13.08.46.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 08:46:37 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] w1: Fix number of bytes in error message
+Date: Mon, 13 May 2024 17:43:56 +0200
+Message-ID: <20240513154354.185974-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkHcniqCiLPEPN9o@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On May 13 2024, Andy Shevchenko wrote:
-> On Mon, May 13, 2024 at 03:59:01PM +0800, Devyn Liu wrote:
-> > Previous patch modified the standard used by acpi_gpiochip_find()
-> > to match device nodes. Using the device node set in gc->gpiodev->d-
-> > ev instead of gc->parent.
-> > 
-> > However, there is a situation in gpio-dwapb where the GPIO device
-> > driver will set gc->fwnode for each port corresponding to a child
-> > node under a GPIO device, so gc->gpiodev->dev will be assigned the
-> > value of each child node in gpiochip_add_data().
-> > 
-> > gpio-dwapb.c:
-> > 128,31 static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
-> > 			       struct dwapb_port_property *pp,
-> > 			       unsigned int offs);
-> > port->gc.fwnode = pp->fwnode;
-> > 
-> > 693,39 static int dwapb_gpio_probe;
-> > err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
-> > 
-> > When other drivers request GPIO pin resources through the GPIO device
-> > node provided by ACPI (corresponding to the parent node), the change
-> > of the matching object to gc->gpiodev->dev in acpi_gpiochip_find()
-> > only allows finding the value of each port (child node), resulting
-> > in a failed request.
-> > 
-> > Reapply the condition of using gc->parent for match in acpi_gpio-
-> > chip_find() in the code can compatible with the problem of gpio-dwapb,
-> > and will not affect the two cases mentioned in the patch:
-> > 1. There is no setting for gc->fwnode.
-> > 2. The case that depends on using gc->fwnode for match.
-> 
-> Thanks for the report, analysis, and patch.
-> 
-> ...
-> 
-> >  static int acpi_gpiochip_find(struct gpio_chip *gc, const void *data)
-> >  {
-> > -	return device_match_acpi_handle(&gc->gpiodev->dev, data);
-> > +	return device_match_acpi_handle(&gc->gpiodev->dev, data) ||
-> > +		(gc->parent && device_match_acpi_handle(gc->parent, data));
-> >  }
+Fix the number of bytes that failed to be allocated for a new w1 device.
 
-The original patch (from Devyn) is:
-Tested-by: Benjamin Tissoires <bentiss@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ drivers/w1/w1_int.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-For reference, a successful run can be seen at:
-https://gitlab.freedesktop.org/bentiss/hid/-/jobs/58661693
+diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
+index 3a71c5eb2f83..677e7167806c 100644
+--- a/drivers/w1/w1_int.c
++++ b/drivers/w1/w1_int.c
+@@ -34,7 +34,7 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
+ 	dev = kzalloc(sizeof(struct w1_master) + sizeof(struct w1_bus_master), GFP_KERNEL);
+ 	if (!dev) {
+ 		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
+-			sizeof(struct w1_master));
++			sizeof(struct w1_master) + sizeof(struct w1_bus_master));
+ 		return NULL;
+ 	}
+ 
+-- 
+2.45.0
 
-> 
-> I'm wondering if the below approach will work for all:
-> 
-> static int acpi_gpiochip_find(struct gpio_chip *gc, const void *data)
-> {
-> 	struct device *dev = acpi_get_first_physical_node(ACPI_COMPANION(&gc->gpiodev->dev));
-> 
-> 	return device_match_acpi_handle(dev, data);
-> }
-
-Looks like I get a bad dev pointer in this situation:
-https://gitlab.freedesktop.org/bentiss/hid/-/jobs/58662689#L704
-
-Not sure if this is because the not-yet-upstream patches I have in
-hid-cp2112 are doing something wrong or if there is a good reason for
-it...
-
-The patch that adds fwnode to hid-cp2112 are:
-https://gitlab.freedesktop.org/bentiss/gitlab-kernel-ci/-/blob/master/VM/0002-HID-usbhid-Share-USB-device-firmware-node-with-child.patch
-https://gitlab.freedesktop.org/bentiss/gitlab-kernel-ci/-/blob/master/VM/0003-HID-cp2112-Fwnode-Support.patch
-
-both of those patches are applied before compilation in the CI run from
-above.
-
-> 
-> Cc'ing to Benjamin for testing and commenting.
-
-TL;DR: initial patch is fine, yours will probably need a check on the
-dev return value, so not sure if we gain a lot...
-
-Cheers,
-Benjamin
 
