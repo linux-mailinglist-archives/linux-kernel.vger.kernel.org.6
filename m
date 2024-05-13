@@ -1,64 +1,39 @@
-Return-Path: <linux-kernel+bounces-177164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7988C3AF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:26:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7148C3AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08167281517
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DD2281067
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36506146580;
-	Mon, 13 May 2024 05:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E+h2s6kE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EE7146006;
-	Mon, 13 May 2024 05:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277DA146580;
+	Mon, 13 May 2024 05:28:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CA0146006
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715577964; cv=none; b=ZP1IfKGYWLEKnWXXznJB+qxsgqMHVjmayZKyCzQs7grMGi8ayTypAQ4OoEsqKvh+aeBp1uOrcwzoYW+mAA3t3i8Ax44U5Uw/1zSjJ5+cNp+VlYhBKk/hVVboP7uwLRyVAMiljqOWSakC9E0/cQvDU/9VGeKqfOBds++EveRgyWw=
+	t=1715578136; cv=none; b=AXsce7wfadxhu+cTCqXZz0FVKlEyfto3zcPkV04WlZknCMQXLvFvrqcEqhz8fJvvZ7PxK/WTPi53fDktRcB0EDpZLxIdEsYbZtUn9qrScFoAX7g/4vCXUHEAn8M8/wthTrW+0vTSRReHsIvdsvIJL+9HrcXz0SSQHMAnSLIe75Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715577964; c=relaxed/simple;
-	bh=1SNWQqlP+cDSQB765TNrbhmu/uVz6UANgzXoGbpiemk=;
+	s=arc-20240116; t=1715578136; c=relaxed/simple;
+	bh=VLqQIw9DxsfdiVNjqe2D3rzPWsmGB7eOKlY0suFaJa4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HPSC+iX85MW2Uumywt6vSztS4kDKG9WPIjcA1Yek4AYXV5qhb911UDG+zsw6SGFxHq5TVLt1M2Rrz34jXbmaH7jcX7g0HCe8M36v7tmrYyxJHm074kghWnGZCsfyfpgCwcwsXd4FFIVcaZBJIQhrdIa+byoXDEpQBjPTs4j0nOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E+h2s6kE; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715577962; x=1747113962;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1SNWQqlP+cDSQB765TNrbhmu/uVz6UANgzXoGbpiemk=;
-  b=E+h2s6kEr+CmQBJvlzXiX+miWV3T5uz03zxQDWEPb0v5nspCzYV9C1Xa
-   a3QdkiJJaaRyX9yPlO6dbZf82AnUo5Lj9f/WAuvctJRn2eXd5kG5JPaQ/
-   G4+jj9XUuV98WZhRcI/9GaWBcRdkR3I50/EZ5cyUcQtb9zIZPsD4ccLnm
-   DoShh41xH1kEurxt6Ed1xCz/q0rdHEKbgFZnpViyJUDUJ/e3MfIfSZq4/
-   E+x9INzlfQji9XXEnmn6uZSsBQ3bPlrsIRyWbDFR/+Gg/7SGFB+ZOzeVm
-   2gQiZxnXIK9Mwc0PF1rG3g9PJRGz90/MyqMxd2ohztwQnuugi6DOZB9BT
-   Q==;
-X-CSE-ConnectionGUID: IHCSgbyLROKrPBVE12qyZQ==
-X-CSE-MsgGUID: 4y6j8kWrQYOkdFsO82X0dw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11328929"
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="11328929"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 22:26:01 -0700
-X-CSE-ConnectionGUID: kFPvqhbUQt66tWlW4T7UlQ==
-X-CSE-MsgGUID: U8bLqxN8RMmwzw52KbN1cg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="34979067"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 22:26:00 -0700
-Message-ID: <89c9df54-1dcd-4acc-bd67-49d6a2bf2f5d@intel.com>
-Date: Mon, 13 May 2024 13:25:57 +0800
+	 In-Reply-To:Content-Type; b=cnBxROaW+hy73dLbNW3+RNM0NpaTFUDoLvGPX1f0se2t+tBm87Z1Pjsh604abddqbBz0dQRtqGanN3l+xLipXP+X/gXTZ48YiU+yMKRpiDPbI9a8MKEw5IeMLfdTh+G+3ltx2Z5VwVcjXQ4QX+2HYHrD66KbjTbj2IwFEELcfnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA4871007;
+	Sun, 12 May 2024 22:29:13 -0700 (PDT)
+Received: from [10.163.38.21] (unknown [10.163.38.21])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 254D13F762;
+	Sun, 12 May 2024 22:28:44 -0700 (PDT)
+Message-ID: <d571fb6c-a497-4710-bf10-0efb6a1d21fb@arm.com>
+Date: Mon, 13 May 2024 10:58:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,97 +41,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/17] KVM: x86/mmu: Exit to userspace with -EFAULT if
- private fault hits emulation
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>, Yan Zhao <yan.y.zhao@intel.com>
-References: <20240507155817.3951344-1-pbonzini@redhat.com>
- <20240507155817.3951344-2-pbonzini@redhat.com>
+Subject: Re: [PATCH 1/2] KVM: arm64: Replace custom macros with fields from
+ ID_AA64PFR0_EL1
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240507155817.3951344-2-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ catalin.marinas@arm.com, Oliver Upton <oliver.upton@linux.dev>,
+ Will Deacon <will@kernel.org>, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Fuad Tabba <tabba@google.com>
+References: <20240418053804.2573071-1-anshuman.khandual@arm.com>
+ <20240418053804.2573071-2-anshuman.khandual@arm.com>
+ <871q73rufi.wl-maz@kernel.org> <ab6466f2-023e-4b5f-bb60-aadb9eee089a@arm.com>
+ <Zj5i2x8Sh95YIfeq@J2N7QTR9R3>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Zj5i2x8Sh95YIfeq@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
-> From: Sean Christopherson <seanjc@google.com>
-> 
-> Exit to userspace with -EFAULT / KVM_EXIT_MEMORY_FAULT if a private fault
-> triggers emulation of any kind, as KVM doesn't currently support emulating
-> access to guest private memory.  Practically speaking, private faults and
-> emulation are already mutually exclusive, but there are many flow that
-> can result in KVM returning RET_PF_EMULATE, and adding one last check
-> to harden against weird, unexpected combinations and/or KVM bugs is
-> inexpensive.
-> 
-> Suggested-by: Yan Zhao <yan.y.zhao@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Message-ID: <20240228024147.41573-2-seanjc@google.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-> ---
->   arch/x86/kvm/mmu/mmu.c          |  8 --------
->   arch/x86/kvm/mmu/mmu_internal.h | 19 +++++++++++++++++++
->   2 files changed, 19 insertions(+), 8 deletions(-)
+On 5/10/24 23:39, Mark Rutland wrote:
+> On Mon, Apr 29, 2024 at 07:53:14AM +0530, Anshuman Khandual wrote:
+>> On 4/18/24 13:09, Marc Zyngier wrote:
+>>> On Thu, 18 Apr 2024 06:38:03 +0100,
+>>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+>>>>  #define PVM_ID_AA64PFR0_RESTRICT_UNSIGNED (\
+>>>> -	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL0), ID_AA64PFR0_EL1_ELx_64BIT_ONLY) | \
+>>>> -	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL1), ID_AA64PFR0_EL1_ELx_64BIT_ONLY) | \
+>>>> -	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL2), ID_AA64PFR0_EL1_ELx_64BIT_ONLY) | \
+>>>> -	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL3), ID_AA64PFR0_EL1_ELx_64BIT_ONLY) | \
+>>>> +	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL0), ID_AA64PFR0_EL1_EL0_IMP) | \
+>>>> +	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL1), ID_AA64PFR0_EL1_EL1_IMP) | \
+>>>> +	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL2), ID_AA64PFR0_EL1_EL2_IMP) | \
+>>>> +	FIELD_PREP(ARM64_FEATURE_MASK(ID_AA64PFR0_EL1_EL3), ID_AA64PFR0_EL1_EL3_IMP) | \
+>>>
+>>> If you are going to rework this, can we instead use something less
+>>> verbose such as SYS_FIELD_GET()?
+>>
+>> Just wondering, is not FIELD_PREP() and SYS_FIELD_GET() does the exact opposite thing.
+>> The earlier builds the entire register value from various constituents, where as the
+>> later extracts a single register field from a complete register value instead. Or did
+>> I just misunderstood something here.
+>  
+> He means use one of the SYS_FIELD_*() helpers, e.g. SYS_FIELD_PREP_ENUM(), with
+> which this can be:
 > 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 45b6d8f9e359..c72a2033ca96 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4257,14 +4257,6 @@ static inline u8 kvm_max_level_for_order(int order)
->   	return PG_LEVEL_4K;
->   }
->   
-> -static void kvm_mmu_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
-> -					      struct kvm_page_fault *fault)
-> -{
-> -	kvm_prepare_memory_fault_exit(vcpu, fault->gfn << PAGE_SHIFT,
-> -				      PAGE_SIZE, fault->write, fault->exec,
-> -				      fault->is_private);
-> -}
-> -
->   static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
->   				   struct kvm_page_fault *fault)
->   {
-> diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-> index 5390a591a571..61f49967047a 100644
-> --- a/arch/x86/kvm/mmu/mmu_internal.h
-> +++ b/arch/x86/kvm/mmu/mmu_internal.h
-> @@ -279,6 +279,14 @@ enum {
->   	RET_PF_SPURIOUS,
->   };
->   
-> +static inline void kvm_mmu_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
-> +						     struct kvm_page_fault *fault)
-> +{
-> +	kvm_prepare_memory_fault_exit(vcpu, fault->gfn << PAGE_SHIFT,
-> +				      PAGE_SIZE, fault->write, fault->exec,
-> +				      fault->is_private);
-> +}
-> +
->   static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->   					u32 err, bool prefetch, int *emulation_type)
->   {
-> @@ -320,6 +328,17 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->   	else
->   		r = vcpu->arch.mmu->page_fault(vcpu, &fault);
->   
-> +	/*
-> +	 * Not sure what's happening, but punt to userspace and hope that
-> +	 * they can fix it by changing memory to shared, or they can
-> +	 * provide a better error.
-> +	 */
-> +	if (r == RET_PF_EMULATE && fault.is_private) {
-> +		pr_warn_ratelimited("kvm: unexpected emulation request on private memory\n");
-> +		kvm_mmu_prepare_memory_fault_exit(vcpu, &fault);
-> +		return -EFAULT;
-> +	}
-> +
->   	if (fault.write_fault_to_shadow_pgtable && emulation_type)
->   		*emulation_type |= EMULTYPE_WRITE_PF_TO_SP;
->   
+> #define PVM_ID_AA64PFR0_RESTRICT_UNSIGNED (\
+>         SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, EL0, IMP) | \
+>         SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, EL1, IMP) | \
+>         SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, EL2, IMP) | \
+>         SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, EL3, IMP) | \
+>         SYS_FIELD_PREP_ENUM(ID_AA64PFR0_EL1, RAS, IMP) \
+>         )
+> 
+> ... which is far less verbose, and much easier to read.
 
+Got it, this makes sense, will fold in the above changes and respin
+after the merge window. Thanks for the clarification.
 
