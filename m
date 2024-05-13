@@ -1,281 +1,185 @@
-Return-Path: <linux-kernel+bounces-178091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B34668C4892
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EE68C488F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D76CA1C21455
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0751C21D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405888287E;
-	Mon, 13 May 2024 20:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D3481AC7;
+	Mon, 13 May 2024 20:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aZ2IfGIr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qde6JNI5"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929131DA24;
-	Mon, 13 May 2024 20:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B6980BE3
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715633995; cv=none; b=i2SYHcXbGioAIiNlAmcXjcpqRRNouzeAfr0Rh7WjXWezUPqye1shwE5G+3GRzYkMt5zkmLwBNr3RxdRmu4hQb5kEv69uSEcs+RuSY9cY88vSEz4pvuWJbdEcYu9cIP1k2NHe/iOTR5Kd10eh15rURzqLF7verTimg+0xvcJeSwo=
+	t=1715633984; cv=none; b=Lq/Di+3pWFArdMhAftPblxUNjdFWhu+rap0sJqTOWFw7sez6Nx4b9lv6wG7u/7djYq+tF2tk0Nf2oehUq9lCiDUZVKBkLI+EYR0XE4v8OYrgTi3e5zy+rPGBUrEU6kVaSyMNqU6vd/ecIQQJU55fk7DlfuvCKBCSntveG3S5/Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715633995; c=relaxed/simple;
-	bh=dkkEaZdlGlHT49ZU3NBORQGpKALXUwJ7ygaxgEkYyeE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vw7h+vy22haG97IRZ/I30OQYDdGHyVRQq3M3V4fN0OWExOjzVw7mEsL9+cKvPoe+QSMq/MYAh5fKvAk0GBH7aYVjIb90LVHKaAiEhIEeHFCMFxzSvwZpSMpYNuUap6VdtGqaLCyBpqZMV7JqrOdkBD8Mzv6ZIJtar//MRvxDdbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aZ2IfGIr; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715633994; x=1747169994;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=dkkEaZdlGlHT49ZU3NBORQGpKALXUwJ7ygaxgEkYyeE=;
-  b=aZ2IfGIrYEr8cE7vYZKrzfbnE4ou3d+OBtC8nNOtfwEiqN48TFAzWUwF
-   STQXP/b6y37zT7rVV75QHMkgW7WwRBZRUGf1OUcb+iBKZgTOlCrWohVjJ
-   TlIfgq97oj1jHAU7+uB2bZDk5y/Rpl/VUMcEDNXl1GbH1Bq51wStnit+t
-   Vb8FRDjUQLOEXaLZMDBrWNeGnL98OFol2+Vs8Bn09IGttPBLXt+9d3RZZ
-   XWX7mBCsbEJCpJTMKPw04URIjNIGfxjDgQkVBea6tS7ukcnFfZTG1zJyl
-   JPkR/VjSoJlmLJpLeHxTdMtz6l/whn7+92s63vCSHTb98txUl0uCuOqE5
-   A==;
-X-CSE-ConnectionGUID: xZ4e70j+QLqNqmOLAbTYww==
-X-CSE-MsgGUID: S/zfnvV6QJOIGleNcrCidw==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="22260139"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="22260139"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:59:52 -0700
-X-CSE-ConnectionGUID: MqTWVmp9RwygEqtnbLGWMQ==
-X-CSE-MsgGUID: oN8DMCwXREC2y98S/enIRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="30493213"
-Received: from test2-linux-lab.an.intel.com ([10.122.105.166])
-  by fmviesa006.fm.intel.com with ESMTP; 13 May 2024 13:59:50 -0700
-From: matthew.gerlach@linux.intel.com
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Subject: [PATCH v5] dt-bindings: PCI: altera: Convert to YAML
-Date: Mon, 13 May 2024 15:59:13 -0500
-Message-Id: <20240513205913.313592-1-matthew.gerlach@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715633984; c=relaxed/simple;
+	bh=4wo2azftFf1AIjEsDAwA4hFFTnEjmQzUBAW7KDvwLWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IuRnzThS9XABvjbLX2qzLce5KyALpKuJwKzjn1I7M7ck8G/OrmZh2QPix3WkBXC34WqTgp5Ha/wuX1D03FdrqqhwgjKMC1x0v/ML0BPTAyuOM47Vqwp5IbCsmBGi3smseait1ITL/MMpWKRya+FwBV4L8hp94Dw8CHQhyQ1G+nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qde6JNI5; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1eed90a926fso357145ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715633982; x=1716238782; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fxgwVwfcFfwC3FeF4jyUDShyy0fu5SAPtgvle3ae2Y=;
+        b=Qde6JNI5l75mLlMq0h4/tKtqSsacECJW7j6biT0K4JsxzRZBjg45dv+9dIHvbdrePW
+         5WUMfHBCj0j00LN7qTPn5BDsf500uP0DdJh1ETC8CmNRalyVRHRkb9q6MrhH5RbO6VXb
+         kOzXYz6ZN3/J7nhlBqwiqtQsgLDSnLOcdSayw70mna7e/wJs2kSJ2eOvC8U8n3em6hjr
+         ducaUsVwX2M3W0vG+x/0Sy9OgXglvz5cekIBePumy6y9BmXZiGUFZyrmSo/W3cbKdHy9
+         917GCy10/jiPe/mKv4zXlw3XXoAJfGL3DlQJy0U+rK7qmH2f7WKCA+ONiEOVUgyHD9Wg
+         l/Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715633982; x=1716238782;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fxgwVwfcFfwC3FeF4jyUDShyy0fu5SAPtgvle3ae2Y=;
+        b=U57RNcthapyjs/yq43DopSV5r4Bm/Oy2H2qB5GdRRKhw1UJvzqXr54H2r+LtFzKLtr
+         uzKXULBk1w4zMQ+tfr7v/0okKHsGqx0q1mONdv4Y6BKWlYx4Oxm0igyp/PrQxrnbzy2y
+         Egjy9dvfKKfdqVbu3uztWlqj25DR+gCTnG6yTmRJ9IEqKPIwi2wMHveP77lUtYfxrtze
+         4j5USY+GT2M5vdGd/aEvFFPIhS+uB9n52hNTGGlA4Ntfd0pR26oDmlbVSU82CQJTW4Jp
+         ggIwcCPmQzKeU2WyV4P1MF/OOtm4P5JYCnvSzdh0lmRPnWrB2JS0dpGXKyPFS45VXEyE
+         XG7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVndkVtB5Vl+qV85dkJzdGqG6RXHLiLu4hVK4T71npV5BDnxWkfusWvSZoFy63FPnv7qWmECyjRjJolsXMBM1yBfOI5n8T7HcQb/F8
+X-Gm-Message-State: AOJu0YxGcbDbYxNC4g92nbMH+dQrurgddxxKmiHrrjrtI0FI5xEtRGN1
+	zmKGb+sg/nUtKp6ZqHV8nkM980q7RSk3ovkoHCdmDmz7h2WTElLnHlYtN5/orSLUstDWa6pr5oe
+	IweZuIxMMTs0oTTC3+vCbkXZTCnDqqdddErcF
+X-Google-Smtp-Source: AGHT+IFTHeolzNMwmRJZtjMWXv5w5XuqCfwQMRNtovnU9kL/RTox7SZOsW7vxxFy5Elp/HRnGtmLFVsv3Er7sGo9+6U=
+X-Received: by 2002:a17:902:d4c6:b0:1e8:88b2:17cd with SMTP id
+ d9443c01a7336-1f05f651484mr4698595ad.12.1715633981812; Mon, 13 May 2024
+ 13:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240508133518.3204221-1-leitao@debian.org> <Zj-WE1aG7ihtevG3@x1>
+ <CAP-5=fXXYVgb4rnftaiTZTEniGOr5NnpfXJFNqX96GXP6=oTiA@mail.gmail.com>
+ <Zj-qIbUN2XFBnvP8@x1> <ZkJI6Q6KVKlzDgSQ@gmail.com> <CAP-5=fU=tG9Gk+OfO3TVfBONTc35oksNqi3xm6Y_hjc0oOK=dw@mail.gmail.com>
+ <ZkJ70SOeVPsLRuS1@gmail.com>
+In-Reply-To: <ZkJ70SOeVPsLRuS1@gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 13 May 2024 13:59:30 -0700
+Message-ID: <CAP-5=fX+HinGA9LX73XsvxCTqMwn+DRUzO4OxgrhzTz_fxOM6g@mail.gmail.com>
+Subject: Re: [PATCH] perf list: Fix the --no-desc option
+To: Breno Leitao <leitao@debian.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+On Mon, May 13, 2024 at 1:45=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> On Mon, May 13, 2024 at 10:13:01AM -0700, Ian Rogers wrote:
+> > On Mon, May 13, 2024 at 10:08=E2=80=AFAM Breno Leitao <leitao@debian.or=
+g> wrote:
+> > > On Sat, May 11, 2024 at 02:25:53PM -0300, Arnaldo Carvalho de Melo wr=
+ote:
+> > > > Thanks for asking the question, I'm dropping the patch, Breno, can =
+you
+> > > > try again?
+> > >
+> > > Sure, let me think about it and send a v2.
+> >
+> > Thanks Breno! My bug, thanks for digging into this.
+>
+> How about something like this:
 
-Convert the device tree bindings for the Altera Root Port PCIe controller
-from text to YAML.
+Looks good, could you send as a v2 and I can test.
 
-Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
----
-v5:
- - add interrupt-conntroller #interrupt-cells to required field
- - don't touch original example dts
+Thanks,
+Ian
 
-v4:
- - reorder reg-names to match original binding
- - move reg and reg-names to top level with limits.
-
-v3:
- - Added years to copyright
- - Correct order in file of allOf and unevaluatedProperties
- - remove items: in compatible field
- - fix reg and reg-names constraints
- - replace deprecated pci-bus.yaml with pci-host-bridge.yaml
- - fix entries in ranges property
- - remove device_type from required
-
-v2:
- - Move allOf: to bottom of file, just like example-schema is showing
- - add constraint for reg and reg-names
- - remove unneeded device_type
- - drop #address-cells and #size-cells
- - change minItems to maxItems for interrupts:
- - change msi-parent to just "msi-parent: true"
- - cleaned up required:
- - make subject consistent with other commits coverting to YAML
- - s/overt/onvert/g
----
- .../devicetree/bindings/pci/altera-pcie.txt   | 50 ----------
- .../bindings/pci/altr,pcie-root-port.yaml     | 93 +++++++++++++++++++
- 2 files changed, 93 insertions(+), 50 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
-
-diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
-deleted file mode 100644
-index 816b244a221e..000000000000
---- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
-+++ /dev/null
-@@ -1,50 +0,0 @@
--* Altera PCIe controller
--
--Required properties:
--- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
--- reg:		a list of physical base address and length for TXS and CRA.
--		For "altr,pcie-root-port-2.0", additional HIP base address and length.
--- reg-names:	must include the following entries:
--		"Txs": TX slave port region
--		"Cra": Control register access region
--		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
--- interrupts:	specifies the interrupt source of the parent interrupt
--		controller.  The format of the interrupt specifier depends
--		on the parent interrupt controller.
--- device_type:	must be "pci"
--- #address-cells:	set to <3>
--- #size-cells:		set to <2>
--- #interrupt-cells:	set to <1>
--- ranges:	describes the translation of addresses for root ports and
--		standard PCI regions.
--- interrupt-map-mask and interrupt-map: standard PCI properties to define the
--		mapping of the PCIe interface to interrupt numbers.
--
--Optional properties:
--- msi-parent:	Link to the hardware entity that serves as the MSI controller
--		for this PCIe controller.
--- bus-range:	PCI bus numbers covered
--
--Example
--	pcie_0: pcie@c00000000 {
--		compatible = "altr,pcie-root-port-1.0";
--		reg = <0xc0000000 0x20000000>,
--			<0xff220000 0x00004000>;
--		reg-names = "Txs", "Cra";
--		interrupt-parent = <&hps_0_arm_gic_0>;
--		interrupts = <0 40 4>;
--		interrupt-controller;
--		#interrupt-cells = <1>;
--		bus-range = <0x0 0xFF>;
--		device_type = "pci";
--		msi-parent = <&msi_to_gic_gen_0>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--		interrupt-map-mask = <0 0 0 7>;
--		interrupt-map = <0 0 0 1 &pcie_0 1>,
--			            <0 0 0 2 &pcie_0 2>,
--			            <0 0 0 3 &pcie_0 3>,
--			            <0 0 0 4 &pcie_0 4>;
--		ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000
--			  0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
--	};
-diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
-new file mode 100644
-index 000000000000..7f02e7fb33e1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
-@@ -0,0 +1,93 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+# Copyright (C) 2015, 2019, 2024, Intel Corporation
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Altera PCIe Root Port
-+
-+maintainers:
-+  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - altr,pcie-root-port-1.0
-+      - altr,pcie-root-port-2.0
-+
-+  reg:
-+    items:
-+      - description: TX slave port region
-+      - description: Control register access region
-+      - description: Hard IP region
-+    minItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: Txs
-+      - const: Cra
-+      - const: Hip
-+    minItems: 2
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-controller: true
-+
-+  interrupt-map-mask:
-+    items:
-+      - const: 0
-+      - const: 0
-+      - const: 0
-+      - const: 7
-+
-+  interrupt-map:
-+    maxItems: 4
-+
-+  "#interrupt-cells":
-+    const: 1
-+
-+  msi-parent: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - "#interrupt-cells"
-+  - interrupt-controller
-+  - interrupt-map
-+  - interrupt-map-mask
-+
-+allOf:
-+  - $ref: /schemas/pci/pci-host-bridge.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    pcie_0: pcie@c00000000 {
-+        compatible = "altr,pcie-root-port-1.0";
-+        reg = <0xc0000000 0x20000000>,
-+              <0xff220000 0x00004000>;
-+        reg-names = "Txs", "Cra";
-+        interrupt-parent = <&hps_0_arm_gic_0>;
-+        interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+        interrupt-controller;
-+        #interrupt-cells = <1>;
-+        bus-range = <0x0 0xff>;
-+        device_type = "pci";
-+        msi-parent = <&msi_to_gic_gen_0>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+        interrupt-map-mask = <0 0 0 7>;
-+        interrupt-map = <0 0 0 1 &pcie_0 1>,
-+                        <0 0 0 2 &pcie_0 2>,
-+                        <0 0 0 3 &pcie_0 3>,
-+                        <0 0 0 4 &pcie_0 4>;
-+        ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000>,
-+                 <0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
-+    };
--- 
-2.34.1
-
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Wed May 8 06:35:17 2024 -0700
+>
+>     perf list: Fix the --no-desc option
+>
+>     Currently, the --no-desc option in perf list isn't functioning as
+>     intended.
+>
+>     This issue arises from the overwriting of struct option->desc with th=
+e
+>     opposite value of struct option->long_desc. Consequently, whatever
+>     parse_options() returns at struct option->desc gets overridden later,
+>     rendering the --desc or --no-desc arguments ineffective.
+>
+>     To resolve this, set ->desc as true by default and allow parse_option=
+s()
+>     to adjust it accordingly. This adjustment will fix the --no-desc
+>     option while preserving the functionality of the other parameters.
+>
+>     Signed-off-by: Breno Leitao <leitao@debian.org>
+>
+> diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
+> index e27a1b1288c2..16186acdd301 100644
+> --- a/tools/perf/builtin-list.c
+> +++ b/tools/perf/builtin-list.c
+> @@ -149,7 +149,11 @@ static void default_print_event(void *ps, const char=
+ *pmu_name, const char *topi
+>         } else
+>                 fputc('\n', fp);
+>
+> -       if (desc && print_state->desc) {
+> +       if (long_desc && print_state->long_desc) {
+> +               fprintf(fp, "%*s", 8, "[");
+> +               wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
+> +               fprintf(fp, "]\n");
+> +       } else if (desc && print_state->desc) {
+>                 char *desc_with_unit =3D NULL;
+>                 int desc_len =3D -1;
+>
+> @@ -165,12 +169,6 @@ static void default_print_event(void *ps, const char=
+ *pmu_name, const char *topi
+>                 fprintf(fp, "]\n");
+>                 free(desc_with_unit);
+>         }
+> -       long_desc =3D long_desc ?: desc;
+> -       if (long_desc && print_state->long_desc) {
+> -               fprintf(fp, "%*s", 8, "[");
+> -               wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
+> -               fprintf(fp, "]\n");
+> -       }
+>
+>         if (print_state->detailed && encoding_desc) {
+>                 fprintf(fp, "%*s", 8, "");
+> @@ -484,6 +482,7 @@ int cmd_list(int argc, const char **argv)
+>         int i, ret =3D 0;
+>         struct print_state default_ps =3D {
+>                 .fp =3D stdout,
+> +               .desc =3D true,
+>         };
+>         struct print_state json_ps =3D {
+>                 .fp =3D stdout,
+> @@ -556,7 +555,6 @@ int cmd_list(int argc, const char **argv)
+>                 };
+>                 ps =3D &json_ps;
+>         } else {
+> -               default_ps.desc =3D !default_ps.long_desc;
+>                 default_ps.last_topic =3D strdup("");
+>                 assert(default_ps.last_topic);
+>                 default_ps.visited_metrics =3D strlist__new(NULL, NULL);
 
