@@ -1,80 +1,158 @@
-Return-Path: <linux-kernel+bounces-177783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DFBD8C4493
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:51:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2911F8C4499
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8451C231D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BACC1B227A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EE115443F;
-	Mon, 13 May 2024 15:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A00315445B;
+	Mon, 13 May 2024 15:51:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="XS6GmiYr"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5BdzkMv"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4746E148853
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536C2148853;
+	Mon, 13 May 2024 15:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715615469; cv=none; b=BXRw13UM5gQZCx2tI7v6rX4efVebopwfO0wlfq7ccd9SZUIHYKUxc28KHF29Xhg8jGXjl+A/Yx4xaZcWPZ49x+sAcLa0hfwGUhjhQPX1Hw/BhGyir6i+ecatmsPZMm6A8bOmkU3VlO/WuJFQAa6kUlAoK5ba6lZpCEhqe3EvAk4=
+	t=1715615516; cv=none; b=LYmFm9GumvL2fXkJUC4Om7Q9oJ1MyIrda76qTWi9Ro8xdR4qHIW7pk3ly92MWYuqpey3cuqmVCtMAS9yZhCVBTSGmlKuosyt13T+q7v0+bu6cAHLs4q2KO8Fv9ALEn6qtcNgriI+NR14A0WA4cezYWHLGXJ5a+p032Y7GC06ni0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715615469; c=relaxed/simple;
-	bh=JJ0bDpp+2ly0j+2Il/m94d5l8HG2ea22zr+ewOV5QO4=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=bj8l3Kq/PdRPXGNuXyifVyGIfno/TBFOd3ymYtg3gvAXVQTY1mgMU6iOb8B2m6dZKatX7CMA71WAAp8leaFhz1vxKlqwK31coaYpVW/VUqvxCWffgbb5X8PeIpT+ZsYwpP0Qe28FptpVfMoJL4NwVcJha9iBLyXHpnxyJlFZzQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=XS6GmiYr; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
-	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
-	MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=N6nQqbqCCZPPGxfo7Eb1u8KoyCt8cX5NxFd+vLRkf94=; b=XS6GmiYrBjKobOpmtDFKVrZN+2
-	BGUc83Fz5revGOIVbgX2aOPFpTMqLLU849UAYS+e4xQGNrLZOqT7Nze2LiaaTKXkit5SGe5M8R1WP
-	p1+U19lkz3ZyVEaAQCgeZyBAouelAdniwsN0VQrPBqMI6uJLI/drRt/7BY5UCWY3PCHY1ozJrRITV
-	G9q66VlduKanvbr0yU5QPj6GZdXZwwSgzPTd14Sc7RNF0Suzyl4ECLI0EAlZ1LqHpYfChld3HsHeP
-	NEl/fAl5dYU6QDRBPBcKYYaldkjBo2f0ux8Zeq9CrvEpqfd5TgZy8ZhwdqcW+z+671YMX4ZFBc+jr
-	SRhuyZwA==;
-Received: from [2a02:fe1:7001:f100:7cf7:209a:3d9a:a84d] (port=50684)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <ywe_caerlyn@bit-x.org>)
-	id 1s6Xx3-00AqQQ-Kg
-	for linux-kernel@vger.kernel.org;
-	Mon, 13 May 2024 17:50:57 +0200
-Message-ID: <2fc679a9-e3f8-4faa-a248-eaa45d722047@bit-x.org>
-Date: Mon, 13 May 2024 17:50:57 +0200
+	s=arc-20240116; t=1715615516; c=relaxed/simple;
+	bh=3imVNZ8J43hY3SgwUsbOPr7mp+hW498mREULCZekQPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jIPrT+Yg6bvxlcB0EVOS49enScBzfU5EX/SYH2hZoYlgKvippBekBkXeegDI6F1gn0zLuYGcHJ8XsUZDErj4gQVzAPsrsGzANHm6m+wx17trTmsHEk6fVJnq1clzpwY/DJdpvhi/M4wskF7WGVHvhDYtE/SVi1DuIk6/1crU8yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5BdzkMv; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f447976de7so3903326b3a.1;
+        Mon, 13 May 2024 08:51:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715615514; x=1716220314; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1wioqfQiuQuCuNYwlP+E5Wyu8F6jbMqAw/h0oL3eqU=;
+        b=E5BdzkMvItijxacNcTnQywLJQRhulPW/U18k+7mCsCFs/TRaR2d4S0ISuAC616Q7fY
+         /uKkANAOcAJQD7PJPqknoxwXOVoX2pjnRSCnaY2fX25ehE7ymzbOE9dv93mm9K0krfpX
+         UpAsX1JHodwqUvLA7eoWMkxRnw4X4zB+UOaudWml3J7ZmUZ7HBdPkzxx/ZxITOLyfzkh
+         xhHSBEcxqNnUn9Bahlr696fIOQ5SvS52woMbR9P3qsxoKNZHpEJ5uhqEFfa3rFmxkm6l
+         QJK4RiK5SvW7kqhFy/bEzmMGBGyIL7fLJ+cx6/Qk5J0jvu0NJ2ka2+Oc0XKZMYJ5Ocer
+         J3Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715615514; x=1716220314;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C1wioqfQiuQuCuNYwlP+E5Wyu8F6jbMqAw/h0oL3eqU=;
+        b=UKm/mLGR5UTZ63crCmM5hR+oJGqGPUgPS5mtv3hXf3DVUSctt4IzxKag4pK8Mszjlx
+         RzEVS9qnww8BFvvBWvc3TFgoy1ff+JBKXMVbGF4VUD5QjmqYnA3IyEPJ2wwCdRyaIe7h
+         MTt0ar2joumkf0RV7anXMbL9eK4RL6wiYHCQsQskSgfG3t9boeNn2oh9fBe2nUeIztZD
+         nybt+64kvx0BxVNYzlfYcsgbPB7OOwOOLFwdaXmKwYI2kdrXp05xYbvE27B89Xgvg0qX
+         70Ic0hkg1Kh2GIi91lnwwBxhrMoADHWtMzwkNqbptE5HoXdiZq+xhKshSSVwX2G4w/S1
+         OVPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzivmIuj7oXS5EHSwz1fBaqZ6f+G407ZkRrqXS4ZlM6wap5fQWx4CrTwnam3Im6ryv5xUqfDSIAi7mHjR1eMHa6PvqTlxWnhvLsIcD
+X-Gm-Message-State: AOJu0Yx+gltDMoEtICPnQN6ihKchyAWfIzTJ8mPCACOjHIuvN2eBNIDH
+	cPkRoB4XFG2r8P0fwa0abRyQVebZfNm2qIaiWRuki+flSKG3e1jbExSn7Q==
+X-Google-Smtp-Source: AGHT+IEDqMYogdWr3XOXh22OTvx+Uw4uVC3Zk4ODbviWxNXuhd9FThKOLXrM7kC6578pgduyhtA/Fw==
+X-Received: by 2002:a17:90a:d714:b0:2b8:f7c6:1581 with SMTP id 98e67ed59e1d1-2b8f7c615d5mr2619575a91.23.1715615514501;
+        Mon, 13 May 2024 08:51:54 -0700 (PDT)
+Received: from localhost ([2a00:79e1:2e00:1301:e1c5:6354:b45d:8ffc])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628ea6ae7sm9906113a91.51.2024.05.13.08.51.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 08:51:53 -0700 (PDT)
+From: Rob Clark <robdclark@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Rob Clark <robdclark@chromium.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Connor Abbott <cwabbott0@gmail.com>,
+	Ruan Jinjie <ruanjinjie@huawei.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] drm/msm: Add obj flags to gpu devcoredump
+Date: Mon, 13 May 2024 08:51:47 -0700
+Message-ID: <20240513155150.166924-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-kernel@vger.kernel.org
-From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
-Subject: The Vast X, a more intelligble name (was Bit X, Fair Pay, Low Jitter)
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-I found a name of The Deity, demystifying The Computer Bit, and making 
-it more accessible to common people: It is about The Vast.
+From: Rob Clark <robdclark@chromium.org>
 
-De-nerding things, and also encouraging an overall more intelligble 
-paradigm for the whole system.
+When debugging faults, it is useful to know how the BO is mapped (cached
+vs WC, gpu readonly, etc).
 
-So the system is now planned as The Vast X, everything can be designed 
-according to The Vast. I am also moving domains to the-vast-x.net
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ drivers/gpu/drm/msm/adreno/adreno_gpu.c | 1 +
+ drivers/gpu/drm/msm/msm_gpu.c           | 6 ++++--
+ drivers/gpu/drm/msm/msm_gpu.h           | 1 +
+ 3 files changed, 6 insertions(+), 2 deletions(-)
 
-Auf Wiedersehen,
-Ywe.
-
-
+diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+index b7bbef2eeff4..d9ea15994ae9 100644
+--- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
++++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+@@ -887,6 +887,7 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
+ 			drm_printf(p, "  - iova: 0x%016llx\n",
+ 				state->bos[i].iova);
+ 			drm_printf(p, "    size: %zd\n", state->bos[i].size);
++			drm_printf(p, "    flags: 0x%x\n", state->bos[i].flags);
+ 			drm_printf(p, "    name: %-32s\n", state->bos[i].name);
+ 
+ 			adreno_show_object(p, &state->bos[i].data,
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index d14ec058906f..ceaee23a4d22 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -222,14 +222,16 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
+ 		struct drm_gem_object *obj, u64 iova, bool full)
+ {
+ 	struct msm_gpu_state_bo *state_bo = &state->bos[state->nr_bos];
++	struct msm_gem_object *msm_obj = to_msm_bo(obj);
+ 
+ 	/* Don't record write only objects */
+ 	state_bo->size = obj->size;
++	state_bo->flags = msm_obj->flags;
+ 	state_bo->iova = iova;
+ 
+-	BUILD_BUG_ON(sizeof(state_bo->name) != sizeof(to_msm_bo(obj)->name));
++	BUILD_BUG_ON(sizeof(state_bo->name) != sizeof(msm_obj->name));
+ 
+-	memcpy(state_bo->name, to_msm_bo(obj)->name, sizeof(state_bo->name));
++	memcpy(state_bo->name, msm_obj->name, sizeof(state_bo->name));
+ 
+ 	if (full) {
+ 		void *ptr;
+diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+index 685470b84708..05bb247e7210 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.h
++++ b/drivers/gpu/drm/msm/msm_gpu.h
+@@ -527,6 +527,7 @@ struct msm_gpu_submitqueue {
+ struct msm_gpu_state_bo {
+ 	u64 iova;
+ 	size_t size;
++	u32 flags;
+ 	void *data;
+ 	bool encoded;
+ 	char name[32];
+-- 
+2.45.0
 
 
