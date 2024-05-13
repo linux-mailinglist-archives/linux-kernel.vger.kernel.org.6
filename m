@@ -1,49 +1,60 @@
-Return-Path: <linux-kernel+bounces-178173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B25BE8C49FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:20:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED278C4A03
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B9C1C21110
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CC8A283D7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3618564F;
-	Mon, 13 May 2024 23:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/y9ASq3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088E385635;
+	Mon, 13 May 2024 23:27:15 +0000 (UTC)
+Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C22185622;
-	Mon, 13 May 2024 23:20:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001BA446BD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 23:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715642432; cv=none; b=oMcIRlal1GUNp6p36Xj0nWULV9qLtpkJWmgvZcyT/oUkds1dTKtx7TUl2GfyMoqbblaRh0l+77GsYxM1ZfcHbNEIfBT4I2Bk79HdPr8eXUfA4N2VefwgzbvwPKPdIz8O6mWiVS0mgAGHlQP7b1tncD86db0NYo6brImpe1IOEo4=
+	t=1715642834; cv=none; b=pxBktJH7iTe+x8G08KukDXagZZyaKPpZAUdQ+lGCC3rC7XVLD/XdRBB68n2nRFpLHFHALx/ac7CBd76Dx8Ck9gwjEfMd8yoDIkCEjFwdE972+eti79c+jLQQlaoDATL06s4EAJtuR/opN11Uq/N/x11kb4XiQ7HIoCAeN8ezrGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715642432; c=relaxed/simple;
-	bh=LW7czoZwatdQXRO+YVercOrMx1lCPFkpDoEbGYPmtrM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AYAjXkge2mp5oz4OaxFPe9V0hhxWHUal4BS2jBhL6r4Sd9mHPX/2j9X4KNXHtHfNjHclymmjKMyF3lSLWA5L3Xkq3bZ33atOJf8p4HksP3clNvK5JEPA5qP+NOHkT79gLezQJ1NZuotpjcbxFC1tSjh7bcnC7MyMtanBjX1Zksc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/y9ASq3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C1C6C32781;
-	Mon, 13 May 2024 23:20:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715642431;
-	bh=LW7czoZwatdQXRO+YVercOrMx1lCPFkpDoEbGYPmtrM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=i/y9ASq3hC2V1cno1xImJ6wv49pyQRzknjuwdQyCQa/e2Z1Ghij1XOLmVAwM3CtYv
-	 p30vNPrMt1uaKkSSTzT4lNwTSMcnTnPyakJYGGkhWfW51IoyJ5a8A6yLmVgVwX1qy7
-	 NQNDeBVtrNUFeBL1z1WHjUO0+WGb3DfyCUKAm8yoBNqx3mIGxgIVmcJw58oP8ly6X9
-	 JHO9i6aqOuiBV3INyBR8ahkVzAR4AeVE95bpPLrGTdieeN3XYxYfXFHuMg6kQ4vVyi
-	 +wfQ9oGACH5IZWJ2YznX2/eTElJkLLGlvOO8vvQp4TYsrxqnbEVHp0bDhx6UrrlW4u
-	 StHBCUcPA0aXA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 82C47C43443;
-	Mon, 13 May 2024 23:20:31 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715642834; c=relaxed/simple;
+	bh=zMzkmfe/SImkrDD6F58Ahl/biyaLPosnlc2zhtCaLCo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cElcTaGOpxapTmIkjZ8DWW67aZCbmIS4lWLFFQ40UevL/+zIo2Du0fEAjCElIuTITWgMf1JqnMCCkIQoa4RQ54+FFjZzUHYTDaOQN+3ZZaSdPUKIbOKDZC67vIaxOv3XZk5NPuM1NtOenKxnL4DDS4Fm/Jfy1px4jcxr93inras=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.50.104])
+	by sina.com (172.16.235.25) with ESMTP
+	id 6642A1C600000526; Mon, 14 May 2024 07:27:04 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 60530034210354
+X-SMAIL-UIID: F7BD05331E194D2091A55FB4A3CBD377-20240514-072704-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+55cd5225f71c5cff7f6f@syzkaller.appspotmail.com>
+Cc: johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	luiz.dentz@gmail.com,
+	marcel@holtmann.org,
+	Takashi Iwai <tiwai@suse.de>,
+	Nicolai Stange <nstange@suse.de>,
+	syzkaller-bugs@googlegroups.com
+Subject: [syzbot] [bluetooth?] BUG: sleeping function called from invalid context in lock_sock_nested (3)
+Date: Tue, 14 May 2024 07:26:52 +0800
+Message-Id: <20240513232652.3080-1-hdanton@sina.com>
+In-Reply-To: <0000000000009f2fe006185570d8@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,49 +62,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v7 0/3] ax25: Fix issues of ax25_dev and net_device
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171564243153.13558.7234535622239803096.git-patchwork-notify@kernel.org>
-Date: Mon, 13 May 2024 23:20:31 +0000
-References: <cover.1715247018.git.duoming@zju.edu.cn>
-In-Reply-To: <cover.1715247018.git.duoming@zju.edu.cn>
-To: Duoming Zhou <duoming@zju.edu.cn>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hams@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org,
- edumazet@google.com, jreuter@yaina.de, dan.carpenter@linaro.org,
- rkannoth@marvell.com, davem@davemloft.net, lars@oddbit.com
 
-Hello:
-
-This series was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu,  9 May 2024 17:35:59 +0800 you wrote:
-> The first patch uses kernel universal linked list to implement
-> ax25_dev_list, which makes the operation of the list easier.
-> The second and third patch fix reference count leak issues of
-> the object "ax25_dev" and "net_device".
+On Mon, 13 May 2024 05:58:21 -0700
+> syzbot found the following issue on:
 > 
-> Duoming Zhou (3):
->   ax25: Use kernel universal linked list to implement ax25_dev_list
->   ax25: Fix reference count leak issues of ax25_dev
->   ax25: Fix reference count leak issue of net_device
+> HEAD commit:    1c9135d29e9e Merge branch 'for-next/core' into for-kernelci
+> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10df1ea8980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=7d2d53e64c7e6a4f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=55cd5225f71c5cff7f6f
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: arm64
 > 
-> [...]
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/52dd1b4921ab/disk-1c9135d2.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1a4f1788dc25/vmlinux-1c9135d2.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/b8d8ebd42a80/Image-1c9135d2.gz.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+55cd5225f71c5cff7f6f@syzkaller.appspotmail.com
+> 
+> BUG: sleeping function called from invalid context at net/core/sock.c:3537
+> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6274, name: kworker/u9:3
+> preempt_count: 1, expected: 0
+> RCU nest depth: 0, expected: 0
+> 6 locks held by kworker/u9:3/6274:
+>  #0: ffff0000d8c79948 ((wq_completion)hci0#2){+.+.}-{0:0}, at: process_one_work+0x668/0x15d4 kernel/workqueue.c:3241
+>  #1: ffff8000a9cb7c20 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: process_one_work+0x6b4/0x15d4 kernel/workqueue.c:3241
+>  #2: ffff0000e8294078 (&hdev->lock){+.+.}-{3:3}, at: hci_sync_conn_complete_evt+0xa4/0x870 net/bluetooth/hci_event.c:5061
+>  #3: ffff800091d51708 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:2010 [inline]
+>  #3: ffff800091d51708 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_sync_conn_complete_evt+0x3d4/0x870 net/bluetooth/hci_event.c:5144
+>  #4: ffff0000d0bf4420 (&conn->lock#2){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+>  #4: ffff0000d0bf4420 (&conn->lock#2){+.+.}-{2:2}, at: sco_conn_ready net/bluetooth/sco.c:1273 [inline]
+>  #4: ffff0000d0bf4420 (&conn->lock#2){+.+.}-{2:2}, at: sco_connect_cfm+0x260/0x94c net/bluetooth/sco.c:1358
+>  #5: ffff0000cd046258 (sk_lock-AF_BLUETOOTH-BTPROTO_SCO){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1673 [inline]
+>  #5: ffff0000cd046258 (sk_lock-AF_BLUETOOTH-BTPROTO_SCO){+.+.}-{0:0}, at: sco_conn_ready net/bluetooth/sco.c:1286 [inline]
+>  #5: ffff0000cd046258 (sk_lock-AF_BLUETOOTH-BTPROTO_SCO){+.+.}-{0:0}, at: sco_connect_cfm+0x3e8/0x94c net/bluetooth/sco.c:1358
+> Preemption disabled at:
+> [<ffff80008a0d70d4>] spin_lock include/linux/spinlock.h:351 [inline]
+> [<ffff80008a0d70d4>] sco_conn_ready net/bluetooth/sco.c:1273 [inline]
+> [<ffff80008a0d70d4>] sco_connect_cfm+0x260/0x94c net/bluetooth/sco.c:1358
 
-Here is the summary with links:
-  - [net,v7,1/3] ax25: Use kernel universal linked list to implement ax25_dev_list
-    https://git.kernel.org/netdev/net/c/a7d6e36b9ad0
-  - [net,v7,2/3] ax25: Fix reference count leak issues of ax25_dev
-    https://git.kernel.org/netdev/net/c/b505e0319852
-  - [net,v7,3/3] ax25: Fix reference count leak issue of net_device
-    https://git.kernel.org/netdev/net/c/36e56b1b002b
+A known issue in 2021 [1]
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+[1] Subject: Possible sleep-in-atomic in BT SCO code
+https://lore.kernel.org/lkml/s5hilz8n1an.wl-tiwai@suse.de/
 
-
+> CPU: 0 PID: 6274 Comm: kworker/u9:3 Not tainted 6.9.0-rc7-syzkaller-g1c9135d29e9e #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+> Workqueue: hci0 hci_rx_work
+> Call trace:
+>  dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
+>  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
+>  dump_stack+0x1c/0x28 lib/dump_stack.c:123
+>  __might_resched+0x374/0x4d0 kernel/sched/core.c:10197
+>  __might_sleep+0x90/0xe4 kernel/sched/core.c:10126
+>  lock_sock_nested+0x6c/0x11c net/core/sock.c:3537
+>  lock_sock include/net/sock.h:1673 [inline]
+>  sco_conn_ready net/bluetooth/sco.c:1286 [inline]
+>  sco_connect_cfm+0x3e8/0x94c net/bluetooth/sco.c:1358
+>  hci_connect_cfm include/net/bluetooth/hci_core.h:2013 [inline]
+>  hci_sync_conn_complete_evt+0x438/0x870 net/bluetooth/hci_event.c:5144
+>  hci_event_func net/bluetooth/hci_event.c:7545 [inline]
+>  hci_event_packet+0x740/0x1098 net/bluetooth/hci_event.c:7597
+>  hci_rx_work+0x318/0xa78 net/bluetooth/hci_core.c:4171
+>  process_one_work+0x7b8/0x15d4 kernel/workqueue.c:3267
+>  process_scheduled_works kernel/workqueue.c:3348 [inline]
+>  worker_thread+0x938/0xef4 kernel/workqueue.c:3429
+>  kthread+0x288/0x310 kernel/kthread.c:388
+>  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+> Bluetooth: hci0: command tx timeout
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
