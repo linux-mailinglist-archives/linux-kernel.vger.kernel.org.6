@@ -1,180 +1,80 @@
-Return-Path: <linux-kernel+bounces-177261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084298C3C19
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:32:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0522B8C3BD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3690281B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:32:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D7AE1C20FD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E5D146D44;
-	Mon, 13 May 2024 07:31:55 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E7E146A7E;
+	Mon, 13 May 2024 07:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b="K1NvL5WX"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB5E1465A7;
-	Mon, 13 May 2024 07:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245551FA1
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715585514; cv=none; b=sgk8SZYDtFFUusCza0+dsgLw4mQQgDbdbuyBTOtuuZM7CLe6acjZfqDyruK3HXzgmaXj/DpLYlH4qwngqR32dPXX4SLmW08VZJdPwj1+2LFMDzy9wBmEfxM03CgzjuIEGJ0xZHK41m2wKMDPtgPetCpr0h9NjJj9iWSHDJv3JZ0=
+	t=1715585005; cv=none; b=ehJmYisJx2R4GbrBLte1iUsZOj8S7xb2feo6FGiWF6mA2W4xG+6dQJhQ3QnShkddGy2XLVlxDGGEB276wG19WgLXHRg+AtdpNt87/QyEt62U1iY4+4crnzgQNsIqKstpVkWoBVnG9QQe9XY0ED9gLdMUAbv2QxcRuIiTBJyOH5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715585514; c=relaxed/simple;
-	bh=mP89frmnm1S7+Nm2icvcGrXsiMEAppOWG+koyBdlx9Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QKcl+i02hlq85xGz+0X/n5OhgSmGuOoTHDyd7cy26FOfhI0ZifXJbpWb6AwOF2EM0P39XfsJTB0frfIw/pwVpSGmZqoqNLHI6/fBUr7I0DoQqNzcOgCuOfpff+hElSjGeIEj0RREaNUYjgEP8jxGVY0dHoHgCu1qrCTDgv6c0fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4VdB4k24Pmz4f3jHV;
-	Mon, 13 May 2024 15:31:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id D000D1A0C87;
-	Mon, 13 May 2024 15:31:42 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBnOBHYwUFm_f0hMg--.51716S4;
-	Mon, 13 May 2024 15:31:40 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ritesh.list@gmail.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH] ext4/jbd2: drop jbd2_transaction_committed()
-Date: Mon, 13 May 2024 15:21:19 +0800
-Message-Id: <20240513072119.2335346-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1715585005; c=relaxed/simple;
+	bh=rQJujlGNHZ8JtOAZLkV2s1QCN6TXGMwoHchPCU8aLyo=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=S1YHB7ktxPCgDOnN2jZcnVpZzIFv2cuhh9eEba4JC4t95ATBJik0lqAjOGTlzHKfapRyYPgwuZCU4KrQXBQGP6xdOHkySuaToRmE0zq6JVVsAbIsNkV0EKCvXa5CJ2dpVyXm4foVMWzp27gPplYNOJ41Y5u+7TBEjlApZUDVkKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org; spf=pass smtp.mailfrom=bit-x.org; dkim=pass (2048-bit key) header.d=bit-x.org header.i=@bit-x.org header.b=K1NvL5WX; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-x.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-x.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-x.org;
+	s=ds202404; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6pnPQQmX7ZHdP6moaB8hDwI5scn9DEZ62685rUuHSCY=; b=K1NvL5WXoW0TmDLov5A5Gdzww8
+	xTTeOa2rgDhS82NuHV8isgegJkWePE1vhR3tRnDH992WxFubpOY4NYzmPd1YX2exzbri0feeTOrZs
+	jrnnPU6JKgaF+wD9EL6mJF+aZE7YfQozVTS4b+taIf5eXMC+82Ubw5BYn/hFyJnvi6K9S18Yqr9Lf
+	cTa24wJ2Cu7GW02mo6f8RV6ryL6bIctcGXghqklkBrYn4SR+tYw+Yq33DtzYp8n2wAMDlv5Z1obpW
+	IFQANf7dyK6TTYRipwUZf2uervMRlGScb177qdoWPltzg45ayTvJd+bjNx/0hc/z4uHctY93mzvmn
+	QxAjWAqg==;
+Received: from [2a02:fe1:7001:f100:5b8:9541:a8c0:9645] (port=60045)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <ywe_caerlyn@bit-x.org>)
+	id 1s6Q1o-006hsV-SH
+	for linux-kernel@vger.kernel.org;
+	Mon, 13 May 2024 09:23:20 +0200
+Message-ID: <664dd5bf-6bd8-42e7-98b8-eed814375884@bit-x.org>
+Date: Mon, 13 May 2024 09:23:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <ywe_caerlyn@bit-x.org>
+Subject: Bit X, Mormon Fair Pay Philosophy (Compatible with Shia, Ibadi, Quran
+ Alone)
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBnOBHYwUFm_f0hMg--.51716S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF4UKFW7Ww15Xw45uryDWrg_yoWrWryfpa
-	95Cr1xCryDZry8uw18Xr48ZFWjva18KayUWrWDC3Z3ta1UJwn2g3yUtw1avFyDtFZ5uw4U
-	XF1ruw4DG34jk37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
-	UZa9-UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Yes, the philosophical background is perfected, mormon based, and 
+compatible with Shia, Ibadi and Quran Alone.
 
-jbd2_transaction_committed() is used to check whether a transaction with
-the given tid has already committed, it hold j_state_lock in read mode
-and check the tid of current running transaction and committing
-transaction, but holding the j_state_lock is expensive.
+This is a wide basis for Fair Pay, and correct political measures.
 
-We have already stored the sequence number of the most recently
-committed transaction in journal t->j_commit_sequence, we could do this
-check by comparing it with the given tid instead. If the given tid isn't
-smaller than j_commit_sequence, we can ensure that the given transaction
-has been committed. That way we could drop the expensive lock and
-achieve about 10% ~ 20% performance gains in concurrent DIOs on may
-virtual machine with 100G ramdisk.
+Further refined my summary on https://bit-x.org/BIT/BIT.html
 
-fio -filename=/mnt/foo -direct=1 -iodepth=10 -rw=$rw -ioengine=libaio \
-    -bs=4k -size=10G -numjobs=10 -runtime=60 -overwrite=1 -name=test \
-    -group_reporting
+Hail Ol, The Grand, The Good.
 
-Before:
-  overwrite       IOPS=88.2k, BW=344MiB/s
-  read            IOPS=95.7k, BW=374MiB/s
-  rand overwrite  IOPS=98.7k, BW=386MiB/s
-  randread        IOPS=102k, BW=397MiB/s
+The Light Be With You.
 
-After:
-  verwrite:       IOPS=105k, BW=410MiB/s
-  read:           IOPS=112k, BW=436MiB/s
-  rand overwrite: IOPS=104k, BW=404MiB/s
-  randread:       IOPS=111k, BW=432MiB/s
-
-CC: Dave Chinner <david@fromorbit.com>
-Suggested-by: Dave Chinner <david@fromorbit.com>
-Link: https://lore.kernel.org/linux-ext4/493ab4c5-505c-a351-eefa-7d2677cdf800@huaweicloud.com/T/#m6a14df5d085527a188c5a151191e87a3252dc4e2
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/inode.c      |  4 ++--
- fs/jbd2/journal.c    | 17 -----------------
- include/linux/jbd2.h |  1 -
- 3 files changed, 2 insertions(+), 20 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 537803250ca9..e8e2865bf9ac 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3199,8 +3199,8 @@ static bool ext4_inode_datasync_dirty(struct inode *inode)
- 	journal_t *journal = EXT4_SB(inode->i_sb)->s_journal;
- 
- 	if (journal) {
--		if (jbd2_transaction_committed(journal,
--			EXT4_I(inode)->i_datasync_tid))
-+		if (tid_geq(journal->j_commit_sequence,
-+			    EXT4_I(inode)->i_datasync_tid))
- 			return false;
- 		if (test_opt2(inode->i_sb, JOURNAL_FAST_COMMIT))
- 			return !list_empty(&EXT4_I(inode)->i_fc_list);
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index b6c114c11b97..73737cd1106f 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -786,23 +786,6 @@ int jbd2_fc_end_commit_fallback(journal_t *journal)
- }
- EXPORT_SYMBOL(jbd2_fc_end_commit_fallback);
- 
--/* Return 1 when transaction with given tid has already committed. */
--int jbd2_transaction_committed(journal_t *journal, tid_t tid)
--{
--	int ret = 1;
--
--	read_lock(&journal->j_state_lock);
--	if (journal->j_running_transaction &&
--	    journal->j_running_transaction->t_tid == tid)
--		ret = 0;
--	if (journal->j_committing_transaction &&
--	    journal->j_committing_transaction->t_tid == tid)
--		ret = 0;
--	read_unlock(&journal->j_state_lock);
--	return ret;
--}
--EXPORT_SYMBOL(jbd2_transaction_committed);
--
- /*
-  * When this function returns the transaction corresponding to tid
-  * will be completed.  If the transaction has currently running, start
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 971f3e826e15..e15ae324169d 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -1643,7 +1643,6 @@ extern void	jbd2_clear_buffer_revoked_flags(journal_t *journal);
- int jbd2_log_start_commit(journal_t *journal, tid_t tid);
- int jbd2_journal_start_commit(journal_t *journal, tid_t *tid);
- int jbd2_log_wait_commit(journal_t *journal, tid_t tid);
--int jbd2_transaction_committed(journal_t *journal, tid_t tid);
- int jbd2_complete_transaction(journal_t *journal, tid_t tid);
- int jbd2_log_do_checkpoint(journal_t *journal);
- int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid);
--- 
-2.39.2
-
+Ruhban,
+Ywe Cærlyn.
 
