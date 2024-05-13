@@ -1,165 +1,172 @@
-Return-Path: <linux-kernel+bounces-177729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05B58C43D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 987B98C43D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B001F21FBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:09:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10BDA1F22484
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0A41DDF5;
-	Mon, 13 May 2024 15:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFE46AC0;
+	Mon, 13 May 2024 15:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ot2s94kg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="20jUb+OB"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E642746BF;
-	Mon, 13 May 2024 15:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3D74C7B;
+	Mon, 13 May 2024 15:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715612948; cv=none; b=mAC/7TFMZugcpoEwri+LSdRhAhMUvsFMNQ7BGQC9cjOUtEP/qV1RsI4kZoknbXCi6vNTcCsqfA/6gLpaiH1Uj6JXowXA/8g2sXZIL2m5zDPzmgB5ZqAf4RFLybZ+BUqXF44eRjJ4L4pQz3jfOOp0Q3sgUXhrbGzdKtdB8olkEhk=
+	t=1715613012; cv=none; b=NcH6nLpN66ZsA/b9Jc2ua6Iov7/UoolIgxGWnxzav8DaLTMuAxFg3TBHzAmGXQXLjqwASulRPulSnHSTEV6XyyLx4wduu4MEXYt9zRqaPakGLPl3BzrOCmIDdmyTFiYCw0K9Qe71MD2xdAfZT0qAxIdsPLy6RRn6H49R4BpeJZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715612948; c=relaxed/simple;
-	bh=ImN2q9/z9gWMEu16rbIbzzPAMPmRzbl4JRpfAmk7AiE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JQgbG63jOK5jym+vJkbEv4gyhLI+NTI3Ex25TYVu83v6l8xKZoONW+6OiVHT3pDgyh4BtzX5fvsBd3nVZ7rS4ogaP8fBp6wuliqlMdnfs2DhfOHR6K/6AzGqZTdU5/2EwoCVle9XV7awbs7KezGft0uirBneptAuJM/w1iEuqTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ot2s94kg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DBUkAn007037;
-	Mon, 13 May 2024 15:08:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=bsQVXHQhWcmCU6NOkodQMdmrvCdS8Y6ZYWpxSKXCq5k=; b=Ot
-	2s94kgxemLwA0C1ORnZVlYrsU4hNHoTC3atqoxeFML79O4bm19olYVpqllB6nVGb
-	3Hep4rdlTJq2NYb853/N1KBriosnWWkH5yg08nE2aHiPAUbraSuzYoi7uRy2f0s3
-	xjE3a6IjmVg4pd+t03QbhHkRi1QHPtuzlKfuTE9arTWefviC/0Tk9AcAce+GSY9o
-	XsS/7fxwZ5FFvWW7SDzEsAo552XQmQK4EapJT27Z21Y8wa+kef6GsRq5hKbI6Yo0
-	3nsE4StRJC3r0mWdcOZL+v1rK+fIUV8Uq99KN40AZV9tfuccOGxUHjxJZIPx7wut
-	A1PYpTgST3o5IqOYCX7w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y3j28ger0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 15:08:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44DF8jgx007751
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 15:08:45 GMT
-Received: from [10.110.0.4] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 13 May
- 2024 08:08:43 -0700
-Message-ID: <a3854bed-7229-47a9-a71b-72f5f68ec13e@quicinc.com>
-Date: Mon, 13 May 2024 08:08:42 -0700
+	s=arc-20240116; t=1715613012; c=relaxed/simple;
+	bh=2fye0wHuc/ux/aoME5fdHjKNLhC9VtAEvF2L4dmZ3qY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YmRuyW7LtjnQ2hStT651oODranldYpzRyvjSqZNIBi4GhrrYpRe7gbEnUeS658tj1/OQj0Iw0pYsW3BCb+TWwUm2EkkC0GVOSljdsDeIPhAU4R0lf7FMNVBS3Tf/xXTDm2OLTY0CSgcjBBzLGQ5AWTIfGDNiHItm1b3HFWQUd3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=20jUb+OB; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715613008;
+	bh=2fye0wHuc/ux/aoME5fdHjKNLhC9VtAEvF2L4dmZ3qY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=20jUb+OBwb36eRW8hNE0AnCZuWbUe4dpPF+rKvuY3zoHfluKLWVNTK6lqLJx3bjW3
+	 6h1eLEuWQ0cm7t8iDGra+nc7lrtPSosUIFx1Nfft674aVWIXSwzc7ZzH2Ot/fzekF+
+	 e+cYPf1HcE4TMsQoDsaDTHgIK/402+702v8RgeBmmOBHxqFhJbDIW5PFdQfdB86/p6
+	 tcLZ00tj6kJTyOfYJg8kYvr4ljF3iFVZM42iU7ijmcu+uccv6FBT32KH9SNJFRM5ey
+	 elkaPybAJhJ2I9GPtV/7WZKwlBEQhYfN9i8j1nRIj9dPY41IwXSV/N7k12HrcRz+sx
+	 RXcyDLhaUoRNA==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 06F99378216D;
+	Mon, 13 May 2024 15:10:05 +0000 (UTC)
+Message-ID: <c4db22ad94696ed22282bf8dad15088d94ade5d6.camel@collabora.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present
+ users (udev uaccess tag) ?
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Maxime Ripard
+	 <mripard@redhat.com>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Hans de Goede <hdegoede@redhat.com>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>,
+ John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Lennart
+ Poettering <mzxreary@0pointer.de>,  Robert Mader
+ <robert.mader@collabora.com>, Sebastien Bacher
+ <sebastien.bacher@canonical.com>, Linux Media Mailing List
+ <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>,  linaro-mm-sig@lists.linaro.org, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal
+ <mzamazal@redhat.com>, Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Date: Mon, 13 May 2024 11:10:00 -0400
+In-Reply-To: <20240513083417.GA18630@pendragon.ideasonboard.com>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+	 <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+	 <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+	 <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+	 <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+	 <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
+	 <20240507183613.GB20390@pendragon.ideasonboard.com>
+	 <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
+	 <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
+	 <20240513-heretic-didactic-newt-1d6daf@penduick>
+	 <20240513083417.GA18630@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14] ath10k: add LED and GPIO controlling support for
- various chipsets
-Content-Language: en-US
-To: Kalle Valo <kvalo@kernel.org>
-CC: Christian Marangi <ansuelsmth@gmail.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <ath10k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>,
-        Sebastian
- Gottschall <s.gottschall@dd-wrt.com>,
-        Steve deRosier
-	<derosier@cal-sierra.com>,
-        Stefan Lippers-Hollmann <s.l-h@gmx.de>
-References: <20230611080505.17393-1-ansuelsmth@gmail.com>
- <878rcjbaqs.fsf@kernel.org> <648cdebb.5d0a0220.be7f8.a096@mx.google.com>
- <648ded2a.df0a0220.b78de.4603@mx.google.com>
- <CA+_ehUzzVq_sVTgVCM+r=oLp=GNn-6nJRBG=bndJjrRDhCodaw@mail.gmail.com>
- <87v83nlhb3.fsf@kernel.org>
- <7585e7c3-8be6-45a6-96b3-ecb4b98b12d8@quicinc.com>
- <cce2700c-e54f-4a50-b3f0-0b8a82b961a4@quicinc.com>
- <663e2bd9.5d0a0220.d970d.cbf8@mx.google.com>
- <a56bd4f9-d76b-4924-a901-554d71ea17bd@quicinc.com>
- <87seyojuuq.fsf@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <87seyojuuq.fsf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: voR0tJwiuCbfgjHvs1Pyr62cWm_ZV8QO
-X-Proofpoint-GUID: voR0tJwiuCbfgjHvs1Pyr62cWm_ZV8QO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_10,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- impostorscore=0 malwarescore=0 phishscore=0 bulkscore=0 suspectscore=0
- mlxscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=848
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405130098
 
-On 5/11/2024 7:17 AM, Kalle Valo wrote:
-> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
-> 
->> On 5/10/2024 7:14 AM, Christian Marangi wrote:
->>
->>> On Thu, May 09, 2024 at 09:48:08AM -0700, Jeff Johnson wrote:
->>>> On 5/9/2024 9:37 AM, Jeff Johnson wrote:
->>>>> On 5/8/2024 9:50 PM, Kalle Valo wrote:
->>>>>> Sorry for the delay but finally I looked at this again. I decided to
->>>>>> just remove the fixme and otherwise it looks good for me. Please check
->>>>>> my changes:
->>>>>>
->>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=688130a66ed49f20ca0ce02c3987f6a474f7c93a
->>>>>>
->>>>>
->>>>> I have a question about the copyrights in the two new files:
->>>>> + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
->>>>>
->>>>> My understanding is that Qualcomm's affiliation with Linux Foundation via Code
->>>>> Aurora ended in December 2021, and hence any contributions in 2022-2023 should
->>>>> be the copyright of Qualcomm Innovation Center, Inc.
->>>>>
->>>>>
->>>>
->>>> ok it seems like Kalle's v13 had:
->>>>  + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
->>>>
->>>> and Ansuel's v14 has:
->>>>  + * Copyright (c) 2018-2023, The Linux Foundation. All rights reserved.
->>>>
->>>> So Ansuel, is your work on behalf of The Linux Foundation?
->>>>
->>>
->>> When I resubmitted this at times, I just updated the copyright to the
->>> current year so I guess it was wrong doing that?
->>>
->>> As you can see from the copyright header this patch went all around and
->>> I think at the end (around 2018) the Linux copyright was added as it was
->>> submitted upstream. (can't remember if maintainers were asking that)
->>>
->>> So me watching the old year and resubmitting it, just updated the date.
->>>
->>> Soo I think we should revert to 2018?
->>>
->>
->> Yes, in this case changing the Linux Foundation copyright back to 2018 is correct.
-> 
-> I changed it now back to 2018, please check:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git/commit/?h=pending&id=5eff06bef76b6d4e1553c2d4978025c329d8db35
-> 
-LGTM, thanks!
+Le lundi 13 mai 2024 =C3=A0 11:34 +0300, Laurent Pinchart a =C3=A9crit=C2=
+=A0:
+> On Mon, May 13, 2024 at 10:29:22AM +0200, Maxime Ripard wrote:
+> > On Wed, May 08, 2024 at 10:36:08AM +0200, Daniel Vetter wrote:
+> > > On Tue, May 07, 2024 at 04:07:39PM -0400, Nicolas Dufresne wrote:
+> > > > Hi,
+> > > >=20
+> > > > Le mardi 07 mai 2024 =C3=A0 21:36 +0300, Laurent Pinchart a =C3=A9c=
+rit=C2=A0:
+> > > > > Shorter term, we have a problem to solve, and the best option we =
+have
+> > > > > found so far is to rely on dma-buf heaps as a backend for the fra=
+me
+> > > > > buffer allocatro helper in libcamera for the use case described a=
+bove.
+> > > > > This won't work in 100% of the cases, clearly. It's a stop-gap me=
+asure
+> > > > > until we can do better.
+> > > >=20
+> > > > Considering the security concerned raised on this thread with dmabu=
+f heap
+> > > > allocation not be restricted by quotas, you'd get what you want qui=
+ckly with
+> > > > memfd + udmabuf instead (which is accounted already).
+> > > >=20
+> > > > It was raised that distro don't enable udmabuf, but as stated there=
+ by Hans, in
+> > > > any cases distro needs to take action to make the softISP works. Th=
+is
+> > > > alternative is easy and does not interfere in anyway with your futu=
+re plan or
+> > > > the libcamera API. You could even have both dmabuf heap (for Raspbi=
+an) and the
+> > > > safer memfd+udmabuf for the distro with security concerns.
+> > > >=20
+> > > > And for the long term plan, we can certainly get closer by fixing t=
+hat issue
+> > > > with accounting. This issue also applied to v4l2 io-ops, so it woul=
+d be nice to
+> > > > find common set of helpers to fix these exporters.
+> > >=20
+> > > Yeah if this is just for softisp, then memfd + udmabuf is also what I=
+ was
+> > > about to suggest. Not just as a stopgap, but as the real official thi=
+ng.
+> > >=20
+> > > udmabuf does kinda allow you to pin memory, but we can easily fix tha=
+t by
+> > > adding the right accounting and then either let mlock rlimits or cgro=
+ups
+> > > kernel memory limits enforce good behavior.
+> >=20
+> > I think the main drawback with memfd is that it'll be broken for device=
+s
+> > without an IOMMU, and while you said that it's uncommon for GPUs, it's
+> > definitely not for codecs and display engines.
+>=20
+> If the application wants to share buffers between the camera and a
+> display engine or codec, it should arguably not use the libcamera
+> FrameBufferAllocator, but allocate the buffers from the display or the
+> encoder. memfd wouldn't be used in that case.
+>=20
+> We need to eat our own dogfood though. If we want to push the
+> responsibility for buffer allocation in the buffer sharing case to the
+> application, we need to modify the cam application to do so when using
+> the KMS backend.
+>=20
+
+Agreed, and the new dmabuf feedback on wayland can also be used on top of t=
+his.
+
+You'll hit the same limitation as we hit in GStreamer, which is that KMS dr=
+iver
+only offer allocation for render buffers and most of them are missing alloc=
+ators
+for YUV buffers, even though they can import in these formats. (kms allocat=
+ors,
+except dumb, which has other issues, are format aware).
+
+Nicolas
 
