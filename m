@@ -1,182 +1,204 @@
-Return-Path: <linux-kernel+bounces-177574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B618C40F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:46:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A23D8C4106
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FE74281100
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC35C287C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9F9145B18;
-	Mon, 13 May 2024 12:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CE21514C4;
+	Mon, 13 May 2024 12:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="BLYwykK3"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6EM+wPBH"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F27014F9C9
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362A115099B;
+	Mon, 13 May 2024 12:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715604403; cv=none; b=ucFwHoCBgT+psDD7gK72y960oB8FPw6N9EXb52523G+nGv+Z/Fl58wumunR7ANfaCn1TYMZjoEIknzLobqDJISD6b6sBZRV3HpM9yNGvW1vGvYqJS7nDArpLCtQ69NY5/+1x10hWLrP7s8z3AQeIz0Avab1bLQqWZBEQfcnxC/A=
+	t=1715604635; cv=none; b=r8I6KMQJP15bax+M7VfTaTm62JGFrWaphpvwoH9pNEMRiLd8+J0tPzHY62i6HjIGZIRjPA2lFZkBnRb2dr1nwLE2T3c1IAjiBIPUBJ9/s7ZtD0fUL9gcBmpH1q+xRJACRFs4VzVAYrvGeN6GFZVQH39oOtZiucwvyH26FyPSWBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715604403; c=relaxed/simple;
-	bh=Org2FJgLfm0/aZY9b01qFaQVn7Zkl5ZHw8/lH4xw97w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UdbkDYCUEcVSxZ2MK0ch8MYav/0qg8rf8fv6k1EjCvCSQHfnAObqdurqWGt7NZuKJ2wsoDUY1ReR/9hcbH0NpibWqTR2VzI5E3HhBxkwL4eWTVWLaLTnrB0q8cWNkNfxE0H/S1NASQ9U6CCxOpL0Y43OQ+AnLE9IUkxdn/pfzVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=BLYwykK3; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso1310113b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1715604400; x=1716209200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=55W1fvphJjC21Z8InY3mGUMzMSfqk5dLM7shx8mdxtw=;
-        b=BLYwykK3NWRtCtcROiTyhL7QI+tCuUq1m+8HtLZiK/Gz+Ot5bA+uB/cdfkl8XiIAHw
-         P+vSR1HSNLkiU5ZcKqS3Ju3oEuB1UJf5gkLzilw7rpw3Wu5MQTVcc1LM9NXjB6xiBUcD
-         EdNNtEW2p8jaep6d4We1TBorEutnrNPIRPsn7ivSjS6zy0BKNAXhNRnC2mgeTLf5lRRh
-         KGkM7UwMTmVrx4w1VtmITd6wfCUIgzkzvCvhW5oJzZtRviNV9a9FA6tsUjfQhwz0dLUh
-         stqG3DFeEVZv3flVXLUPIxatV0IyfZ2aMgLNzE61lx2sLZwU+GspSxbkv4X80R9FdunL
-         78PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715604400; x=1716209200;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=55W1fvphJjC21Z8InY3mGUMzMSfqk5dLM7shx8mdxtw=;
-        b=LHWQHGjgUCAYi8L8zDlTsN1zOD2sRNN+/AXLsOQ1j9nrsWgNSnumC2xcibrZ9D9QGB
-         07D4UZT8d2C6stsXfLf9TYeAiaHS1HvDD9FJ3hA/ciNphxV0gU0ayNhhtZ84xTg9QeNw
-         dxM2xb6sPYW5oI6btlCeof5aHxqcJCvNfs4373thBlvakQkEtoNU5ebEsGQBYSUIC7oR
-         Mb2KwtsYTMvGPL8RvBOA6iZmlG1VWmnO3RXmIIN84qZFNSW+Zb5w8KAUokr36ZCYwEzS
-         DJKZmaXS/gc8zi/fVwJ5+2Xdn0fCSrqSYTFSGvokIQUWhB/R66NVW4/t7Gc1QVzm0B/Y
-         0LdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoEzAZ32M2fcOnUqWAdYYeE2ikMOQPdRMOhmRypOJNZfaIr1Yvpff4CvwkWuB0Fsm9HUaIjwchSxqKjY/UC/bRfUnVfR/zX1hIxg/5
-X-Gm-Message-State: AOJu0YyJr9j077dwDCYkUpoqjpi7Bxa0aE7AkZqJ2foix74VVa3o7476
-	wMGyxbIqwYR2DAQvgHqSxigPh7k5GEp3/I9ZdhUWu9H2cKdM4sk8JGruYhiYPGk=
-X-Google-Smtp-Source: AGHT+IFJVUA5v39CIxM2mlZS/97S02tS0y4Zn8AahDF18pyoIZeL1TPkTotSaHeHP2bSWdfWRitFog==
-X-Received: by 2002:a05:6a21:c91:b0:1a7:590e:279e with SMTP id adf61e73a8af0-1afde07d798mr15082234637.5.1715604400009;
-        Mon, 13 May 2024 05:46:40 -0700 (PDT)
-Received: from localhost ([50.204.89.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2fb8bsm7275179b3a.209.2024.05.13.05.46.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 05:46:39 -0700 (PDT)
-From: Andreas Hindborg <nmi@metaspace.dk>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Jens Axboe <axboe@kernel.dk>,  Christoph Hellwig <hch@lst.de>,  Keith
- Busch <kbusch@kernel.org>,  Damien Le Moal <Damien.LeMoal@wdc.com>,
-  Hannes Reinecke <hare@suse.de>,  Ming Lei <ming.lei@redhat.com>,
-  "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,  Andreas
- Hindborg <a.hindborg@samsung.com>,  Wedson Almeida Filho
- <wedsonaf@gmail.com>,  Greg KH <gregkh@linuxfoundation.org>,  Matthew
- Wilcox <willy@infradead.org>,  Miguel Ojeda <ojeda@kernel.org>,  Alex
- Gaynor <alex.gaynor@gmail.com>,  Boqun Feng <boqun.feng@gmail.com>,  Gary
- Guo <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  Benno Lossin <benno.lossin@proton.me>,  Alice Ryhl
- <aliceryhl@google.com>,  Chaitanya Kulkarni <chaitanyak@nvidia.com>,  Luis
- Chamberlain <mcgrof@kernel.org>,  Yexuan Yang <1182282462@bupt.edu.cn>,
-  Sergio =?utf-8?Q?Gonz=C3=A1lez?= Collado <sergio.collado@gmail.com>,  Joel
- Granados
- <j.granados@samsung.com>,  "Pankaj Raghav (Samsung)"
- <kernel@pankajraghav.com>,  Daniel Gomez <da.gomez@samsung.com>,  Niklas
- Cassel <Niklas.Cassel@wdc.com>,  Philipp Stanner <pstanner@redhat.com>,
-  Conor Dooley <conor@kernel.org>,  Johannes Thumshirn
- <Johannes.Thumshirn@wdc.com>,  Matias =?utf-8?Q?Bj=C3=B8rling?=
- <m@bjorling.me>,  open list
- <linux-kernel@vger.kernel.org>,  "rust-for-linux@vger.kernel.org"
- <rust-for-linux@vger.kernel.org>,  "lsf-pc@lists.linux-foundation.org"
- <lsf-pc@lists.linux-foundation.org>,  "gost.dev@samsung.com"
- <gost.dev@samsung.com>
-Subject: Re: [PATCH 1/3] rust: block: introduce `kernel::block::mq` module
-In-Reply-To: <1b618942-a0fe-45d9-90de-eede429e7284@acm.org> (Bart Van Assche's
-	message of "Mon, 13 May 2024 06:22:31 -0600")
-References: <20240512183950.1982353-1-nmi@metaspace.dk>
-	<20240512183950.1982353-2-nmi@metaspace.dk>
-	<1b618942-a0fe-45d9-90de-eede429e7284@acm.org>
-User-Agent: mu4e 1.12.4; emacs 29.3
-Date: Mon, 13 May 2024 06:48:18 -0600
-Message-ID: <87r0e5j2st.fsf@metaspace.dk>
+	s=arc-20240116; t=1715604635; c=relaxed/simple;
+	bh=FRB14+0j2v798cn6A5NFCMGFCYVwy17/xyTF2pSNCgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RJRX1dQ11389uFqWg0Q2Eo6KRMCaGJQiwvwqq43dR7FKuFpQHpwChNjy1mRHGx1chthkdqRCkoO2FgfpJy7JtVuX9N071Abpp0ZFJ3tNE2AtQJyLLGKaMc+1dueEJ0EWQ2aWMNGECJZ2DE+muDvMO9KvKHRak7ZFvyukvIgRzqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6EM+wPBH; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DBQd8F009156;
+	Mon, 13 May 2024 14:49:52 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=jULG4BPSUFaHm0SKRBaAKf82JzLF2ZXIL0z6ooA0hNg=; b=6E
+	M+wPBHTG9ST0T5Fws2x7VuO9e7bNBevGyZ2rVYrEKqwujVz2wJ+GaMRrP8wqj6Gx
+	VEIORBcsNTRAFY7Vul4OQCvrCNiNyFQLeuclTaloTVn+HZjfa3nP9j408Sy6eCff
+	Nza937rWANALuLSC/ii7BLd+uh1jgX5BM27P+iRckhH6wNU2kbQwRGrpbKBsQSoV
+	8XA/x63SrdOTBjQIdui63HSWvAibBwxIoBi3T11R1SMo5157fqR0Ms+q7K8cnoPv
+	AyqzxHAe9FVJpyPn0K70sXDWMXvkQ6nqQ9GQhY62qT7qJzhPuf7vnvVFTfBogCSR
+	oYbFIP1yx4pk2WmsmQKA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2kmhmbyf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 14:49:52 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1F9694002D;
+	Mon, 13 May 2024 14:49:45 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7AA2121B519;
+	Mon, 13 May 2024 14:48:28 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
+ 2024 14:48:26 +0200
+Message-ID: <4da0ce80-2120-4d67-aaaa-7dbf13b1da73@foss.st.com>
+Date: Mon, 13 May 2024 14:48:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/11] net: stmmac: dwmac-stm32: rework glue to
+ simplify management
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
+ <20240426125707.585269-4-christophe.roullier@foss.st.com>
+ <56f2d023-82d5-4910-8c4e-68e9d62bd1fe@denx.de>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <56f2d023-82d5-4910-8c4e-68e9d62bd1fe@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_08,2024-05-10_02,2023-05-22_02
 
+Hi
 
-Hi Bart,
-
-Bart Van Assche <bvanassche@acm.org> writes:
-
-> On 5/12/24 11:39, Andreas Hindborg wrote:
->> +    /// Set the logical block size of the device.
->> +    ///
->> +    /// This is the smallest unit the storage device can address. It is
->> +    /// typically 512 bytes.
+On 4/26/24 16:53, Marek Vasut wrote:
+> On 4/26/24 2:56 PM, Christophe Roullier wrote:
+>> Change glue to be more generic and manage easily next stm32 products.
+>> The goal of this commit is to have one stm32mp1_set_mode function which
+>> can manage different STM32 SOC. SOC can have different SYSCFG register
+>> bitfields. so in pmcsetr we defined the bitfields corresponding to 
+>> the SOC.
+>>
+>> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+>> ---
+>>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 76 +++++++++++++------
+>>   1 file changed, 51 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c 
+>> b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+>> index c92dfc4ecf57..68a02de25ac7 100644
+>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+>> @@ -23,10 +23,6 @@
+>>     #define SYSCFG_MCU_ETH_MASK        BIT(23)
+>>   #define SYSCFG_MP1_ETH_MASK        GENMASK(23, 16)
+>> -#define SYSCFG_PMCCLRR_OFFSET        0x40
+>> -
+>> -#define SYSCFG_PMCR_ETH_CLK_SEL        BIT(16)
+>> -#define SYSCFG_PMCR_ETH_REF_CLK_SEL    BIT(17)
+>>     /* CLOCK feed to PHY*/
+>>   #define ETH_CK_F_25M    25000000
+>> @@ -46,9 +42,6 @@
+>>    * RMII  |   1     |   0      |   0       |  n/a  |
+>>    *------------------------------------------
+>>    */
+>> -#define SYSCFG_PMCR_ETH_SEL_MII        BIT(20)
+>> -#define SYSCFG_PMCR_ETH_SEL_RGMII    BIT(21)
+>> -#define SYSCFG_PMCR_ETH_SEL_RMII    BIT(23)
+>>   #define SYSCFG_PMCR_ETH_SEL_GMII    0
+>>   #define SYSCFG_MCU_ETH_SEL_MII        0
+>>   #define SYSCFG_MCU_ETH_SEL_RMII        1
+>> @@ -90,19 +83,33 @@ struct stm32_dwmac {
+>>       int eth_ref_clk_sel_reg;
+>>       int irq_pwr_wakeup;
+>>       u32 mode_reg;         /* MAC glue-logic mode register */
+>> +    u32 mode_mask;
+>>       struct regmap *regmap;
+>>       u32 speed;
+>>       const struct stm32_ops *ops;
+>>       struct device *dev;
+>>   };
+>>   +struct stm32_syscfg_pmcsetr {
+>> +    u32 eth1_clk_sel;
+>> +    u32 eth1_ref_clk_sel;
+>> +    u32 eth1_selmii;
+>> +    u32 eth1_sel_rgmii;
+>> +    u32 eth1_sel_rmii;
+>> +    u32 eth2_clk_sel;
+>> +    u32 eth2_ref_clk_sel;
+>> +    u32 eth2_sel_rgmii;
+>> +    u32 eth2_sel_rmii;
+>> +};
 >
-> Hmm ... all block devices that I have encountered recently have a
-> logical block size of 4096 bytes. Isn't this the preferred logical
-> block size for SSDs and for SMR hard disks?
-
-Yes, that is probably true. This text was lifted from the entry on the
-sysfs attribute in `Documentation/ABI/stable/sysfs-block`, but maybe
-that needs to be updated as well.
-
+> [...]
 >
->> +    /// Set the physical block size of the device.
->> +    ///
->> +    /// This is the smallest unit a physical storage device can write
->> +    /// atomically. It is usually the same as the logical block size bu=
-t may be
->> +    /// bigger. One example is SATA drives with 4KB sectors that expose=
- a
->> +    /// 512-byte logical block size to the operating system.
+>> @@ -487,8 +502,19 @@ static struct stm32_ops stm32mp1_dwmac_data = {
+>>       .suspend = stm32mp1_suspend,
+>>       .resume = stm32mp1_resume,
+>>       .parse_data = stm32mp1_parse_data,
+>> -    .syscfg_eth_mask = SYSCFG_MP1_ETH_MASK,
+>> -    .clk_rx_enable_in_suspend = true
+>> +    .clk_rx_enable_in_suspend = true,
+>> +    .syscfg_clr_off = 0x44,
+>> +    .pmcsetr = {
+>> +        .eth1_clk_sel        = BIT(16),
+>> +        .eth1_ref_clk_sel    = BIT(17),
+>> +        .eth1_selmii        = BIT(20),
+>> +        .eth1_sel_rgmii        = BIT(21),
+>> +        .eth1_sel_rmii        = BIT(23),
+>> +        .eth2_clk_sel        = 0,
+>> +        .eth2_ref_clk_sel    = 0,
+>> +        .eth2_sel_rgmii        = 0,
+>> +        .eth2_sel_rmii        = 0
+>> +    }
+>>   };
 >
-> Please be consistent and change "4 KB sectors" into "4 KB physical block
-> size".
-
-OK, I will. I can CC the changes to
-`Documentation/ABI/stable/sysfs-block` then'
-
+> Is this structure really necessary ?
 >
-> I think that the physical block size can also be smaller than the
-> logical block size. From the SCSI SBC standard:
+I prefer to keep this implementation for the moment, as it is working 
+fine. Maybe at a later stage, I will send some optimizations.
+
+> It seems the MP15 single ethernet config bitfield is at offset 16.
+> MP13 has two bitfields, one at offset 16, the other at offset 24 .
 >
-> Table 91 =E2=80=94 LOGICAL BLOCKS PER PHYSICAL BLOCK EXPONENT field
-> -----  ------------------------------------------------------------
-> Code   Description
-> -----  ------------------------------------------------------------
-> 0      One or more physical blocks per logical block (the number of
->        physical blocks per logical block is not reported).
-> n > 0  2**n logical blocks per physical block
-> -----  ------------------------------------------------------------
-
-How does that work? Would the drive do a read/modify/write internally?
-Would that not make the physical block size as seen from the OS equal to
-the smaller logical block size?
-
+> All you need to do is figure out which of the two MACs you are 
+> configuring, and then shift the bitfield mask by 16 or 24, since the 
+> bits are at the same offset for both bitfields.
 >
->> +impl<T: Operations, S: GenDiskState> GenDisk<T, S> {
->> +    /// Call to tell the block layer the capacity of the device in sect=
-ors (512B).
+> See the matching upstream U-Boot commit for how this shift can be done:
+> a440d19c6c91 ("net: dwc_eth_qos: Add DT parsing for STM32MP13xx 
+> platform")
 >
-> Why to use any other unit than bytes in Rust block::mq APIs? sector_t
-> was introduced before 64-bit CPUs became available to reduce the number
-> of bytes required to represent offsets. I don't think that this is still
-> a concern today. Hence my proposal to be consistent in the Rust block::mq=
- API
-> and to use bytes as the unit in all APIs.
-
-I think that is very good idea. How do others feel about this?
-
-BR Andreas
-
 
