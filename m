@@ -1,126 +1,92 @@
-Return-Path: <linux-kernel+bounces-177618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15AA78C41B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8E138C41B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:21:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28C8C1C22F8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:20:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05FFE1C22DD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83880152198;
-	Mon, 13 May 2024 13:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjATwxOc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C68A1534EE;
+	Mon, 13 May 2024 13:21:10 +0000 (UTC)
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B693B59164;
-	Mon, 13 May 2024 13:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D2159164
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715606403; cv=none; b=czBROKtje/w+TeToV4DWk/+WeqdZjTccw6zk76AgRyatuA+nA82m9MISmADM6CUijNWqPJTH58vkRFOpRxRw1ts4XqDWKk8QhyLGnrW0iGyBxzdh/ipY4xKWOxa60MPHTgXxbHyPnNF1Bnamn55/GmEIdRhkU+xSZrvSU+pM1wA=
+	t=1715606470; cv=none; b=KkK5Oovw6ih9uB2RQVj3nLZzlLO8o+JWsInIfljH7lM3TKeItICXW7GGoKHEtljTPmnZGf0uhjiJZ8lgYGJ7fDCT4ySYsug4USy6PG1yizgy53X+59kSqlmXRXBJN6Hkro0FyR1Wkd0P1HLQG1nLxUwjEwiNxjH2auiymnRg6sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715606403; c=relaxed/simple;
-	bh=BjpNrBf8xUWY5HdIXv/CHqnmjNgz1AFEpMF+3oZD9OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fj4mfUNWA846zvRnuT7CmAroO/j/0pgQc5rvEB74Y0YIJ+7NpjVDgHqZTGArMnz3lzNMADxTqcCX9bmaFAOO0pyQYE/6IhEqkUMym+WDOq2Y5sd5AxPKd2bMmmyL3HjLERlLe18bCTqRJHYOtv+Ssovfn6bv1tPqga6vzsWGujY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjATwxOc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E700C113CC;
-	Mon, 13 May 2024 13:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715606403;
-	bh=BjpNrBf8xUWY5HdIXv/CHqnmjNgz1AFEpMF+3oZD9OM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OjATwxOcxE557ut6FtoTfM6PpRJDPrRlPU/al+dv5Klyw2dNvIZvdyKHXSYYkXY0/
-	 8bhBMvZSPvuej0IPQCbZ5pzM+FfuN/bDVQKHUEA7/eE/FLv+QF//U3kyt2ArZj+0Eu
-	 dSPmZC+LcMxapYSlFC1OuR+iVjCC35fDZknl9C0ydmBw0vv2AZqfhSaVwpABfJBhxu
-	 6jahv5FmUlAHo7BeVD75z0KrFib4iaHHvamocBJVvlY0ppofqSe1cPn/vZit3+C2sg
-	 kl/00P294uoj+B0lPpQj8QH3arjHPY52k7iBo/IAkapUSLnTaQjPKFbUu+wMtRqSf3
-	 +ok8tYJNY3BJQ==
-Date: Mon, 13 May 2024 08:20:01 -0500
-From: Rob Herring <robh@kernel.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	s=arc-20240116; t=1715606470; c=relaxed/simple;
+	bh=p8vL6YoySFXtH7yBUGU4yZJWG0hMGXiTflCKpNQf50I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fFWS7UFxud1FNF61wSk8HvGAjyr370EFPlZjIxH6ETmnKYRub+m2gf5tKT3XgP5OTO04jGJQrJ6qI6H0qe/xFH9Z4pLSB4lK2bv/H97QzFkQjIUc7iMaTj+Mol+MLg+nRiw9JfCR97VWqOEFBNPKchwjrf6Am+3m3HXu5ivKRRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c85e:4b6d:1f91:1410])
+	by baptiste.telenet-ops.be with bizsmtp
+	id NdM02C0065V4kqY01dM0nt; Mon, 13 May 2024 15:21:00 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1s6Vb7-00399h-RK;
+	Mon, 13 May 2024 15:21:00 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1s6Vbv-008tqO-U0;
+	Mon, 13 May 2024 15:20:59 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: linux-sh@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: clock: qcom: Add AHB clock for SM8150
-Message-ID: <20240513132001.GA2421461-robh@kernel.org>
-References: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
- <20240509-videocc-sm8150-dt-node-v4-1-e9617f65e946@quicinc.com>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] sh: Fix missing prototypes (part three)
+Date: Mon, 13 May 2024 15:20:52 +0200
+Message-Id: <cover.1715606232.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509-videocc-sm8150-dt-node-v4-1-e9617f65e946@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 09, 2024 at 03:54:03PM +0530, Satya Priya Kakitapalli wrote:
-> SM8150 videocc needs AHB clock, so update the bindings for sm8150
-> to add the AHB clock.
+	Hi all,
 
-Breaking the ABI is fine because ____.
+This patch series fixes more "no previous prototype for <foo>" warnings
+when building a kernel for SuperH, namely when building j2_defconfig.
 
-> 
-> Fixes: df3f61d2cdc9 ("dt-bindings: clock: add SM8150 QCOM video clock bindings")
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> index 6999e36ace1b..68bac801adb0 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> @@ -75,7 +75,6 @@ allOf:
->            enum:
->              - qcom,sc7180-videocc
->              - qcom,sdm845-videocc
-> -            - qcom,sm8150-videocc
->      then:
->        properties:
->          clocks:
-> @@ -101,6 +100,22 @@ allOf:
->              - const: bi_tcxo
->              - const: bi_tcxo_ao
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sm8150-videocc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          items:
-> +            - description: AHB
-> +            - description: Board XO source
-> +        clock-names:
-> +          items:
-> +            - const: iface
-> +            - const: bi_tcxo
-> +
->    - if:
->        properties:
->          compatible:
-> 
-> -- 
-> 2.25.1
-> 
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  sh: of-generic: Add missing #include <asm/clock.h>
+  sh: smp: Protect setup_profiling_timer() by CONFIG_PROFILING
+  sh: setup: Add missing forward declaration for sh_fdt_init()
+
+ arch/sh/boards/of-generic.c | 2 ++
+ arch/sh/include/asm/setup.h | 1 +
+ arch/sh/kernel/smp.c        | 2 ++
+ 3 files changed, 5 insertions(+)
+
+-- 
+2.34.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
