@@ -1,105 +1,303 @@
-Return-Path: <linux-kernel+bounces-177777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AFB8C4483
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:46:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCF38C447E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 398981C20CD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:46:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 967F5B2130F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906DD15442B;
-	Mon, 13 May 2024 15:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="WDMGE6gS"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CFB15442B;
+	Mon, 13 May 2024 15:44:39 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EE457CA7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0C45695
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715615201; cv=none; b=YQmH+CVYLuncCe3JUCATY4447LUqX3uWxWarx677anbEAltG3UlAhXtheq+5d2W3B9zlNKVcSd/ERCaCkYNMwLJWrG1aHvZFdXlwRPLaQ4sXjINncN/q2wWo2DCvbklvFOBRcfmlDlLclIi+u+8MbbFjNKNd9cWnz3m2xB2NRpQ=
+	t=1715615078; cv=none; b=nC+euR/dCVQYzeNhRFkHWHKtDWQ7n3fvBcs5ozv7+9O7dhhledYS+MRvy1aaKspQHl8r7WFXXI8bKth6YFh6Hk1PCXChuMSyauRAn6FVA9TCHkIQ6E6ijc6/vAK14tLQz0MRTIL1OfSOyDnekZX5wqu7/YMQi7JfQqr3UcCdDfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715615201; c=relaxed/simple;
-	bh=c+2oQsWNq3Aqv4I7Lpotn6eMagm48oS8hV+rQgU/ngA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M66YTuLX8ywyH8OUHRxrVp/vHZuCi34zCahp1Vy/KZAysIpkI2Nf0F2+4HLkCx/z+ehE9EqzjL0CFclUbEDv/sNpkP4ZljtUhqYfWlv0TYa2V1ofh8EYiMUwFCe+Pbdjec0NcwfylZRFeeykLyhfKy261cDoa0oCqcusWac4YWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=WDMGE6gS; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e576057c2bso32360331fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:46:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715615198; x=1716219998; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yuVG90NynmI1kwhRkYjh8vkQweVo8xcJvLui61n/z84=;
-        b=WDMGE6gSOCRZE3Ch5PP7wF1IEl7GFtG+Z9XOjfotk5diWFKgxWXIAWEmblEspOwrWA
-         GnLe6p99UA9ugj3SK2Iy0e8vkzfOlAUxHlH7REPp2caHkIg0eFl/sXL/11RVVhcFHVA7
-         626HG1S8LTXLbjXvELwP2siqXyn75iuMPKml0lkWZP9OEEQs6S93T9tWx2vLykZ3drKu
-         gIVMG25Plg+k1Tx/1oHbEC+Xd5cQ+75BmPVQ42aTvrBrUIuA/Zjqnd323BZqV+M2KNvs
-         P+m3EuEpci80HD9fQivDsLXCvgFrzwHm2hC75FVIdG8PhTnc9SmLbLB2o3Hn+gZhan9n
-         jhfg==
+	s=arc-20240116; t=1715615078; c=relaxed/simple;
+	bh=oN7MiawutG+tZggdKrfi4N1qCXAosAyMjr/Gecqlkus=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EP0cM5I5lI/BqJAyl3t9Y/YWyrbyYEh94eIuY1TVwwQMOkv06697kGUxsT4wkkzTDxnCSxdhFirwC/hZSnPMTSf6M/ZFhho4wyWptS7s9Tit6Ogyjyyl3uf9IuSVe4/4gjuFfzZfoM8jY3FbBLNzqW9S0l+10urCYECIjXLH/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7da7d4ccb67so540616239f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:44:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715615198; x=1716219998;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yuVG90NynmI1kwhRkYjh8vkQweVo8xcJvLui61n/z84=;
-        b=HSUF6Krm74FppEl/o+5tEzQwd4ni0kk7RO1LcZsqRKOpTw/Y0WL6O26Xa/bA63Sdk9
-         GJvUOCHSStHh8q/VgMgHKCMFjUWlOiY8KRlDObcu4kuXPdKP1BLbIQ9dOldhdtVMoBTe
-         pX9xpIOsEVUqz57Nk6bQphIks9Q+78u+hCbLXUxoLQ7ALzpg1BTIXE7NabGIpHQ3gzUc
-         smQrtIhTgbLpSmftC4YxGUUgDLC4aCavJ5nt/eWarKg7dK7Htp5HmpDaw8A1Ojq02i5/
-         Lkwv49MTWd5m/CejIVU9AEqIwkkDEMv76JtdDIuScZG5N99rJqtK8vw/dEvWUmA9U4Td
-         IIEw==
-X-Gm-Message-State: AOJu0YwObKu3n02JKwN56u10rL3QbRfNAh8PVSWCMLG1Qlk6yAlRWEmw
-	d8n+jvG2fCu+djH0jvN9wC2MAqgHTCmcpsWaMoh6Y5aUkwFj/bZc3uhL7BP4wV4=
-X-Google-Smtp-Source: AGHT+IHox5zUZVsU5l4v1h5SltLOyIORY6g5v5FqoUKwpFMQjSqu8Ql3bjmUtKQSYqWeSRsyRa73lA==
-X-Received: by 2002:a2e:461a:0:b0:2e5:2414:a205 with SMTP id 38308e7fff4ca-2e52414a255mr70941681fa.27.1715615198036;
-        Mon, 13 May 2024 08:46:38 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5735a2490casm4923002a12.32.2024.05.13.08.46.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 08:46:37 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] w1: Fix number of bytes in error message
-Date: Mon, 13 May 2024 17:43:56 +0200
-Message-ID: <20240513154354.185974-3-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.0
+        d=1e100.net; s=20230601; t=1715615076; x=1716219876;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qH88/LeYj5rknwBoEorXZk9LfonpI3muGMGrSqroB90=;
+        b=X5so82cdP+XBC+yx19FNsiSARjrNGCTZu+dcoLKtw0PvQiHRbnoamMu7h+MMMGSrnD
+         HsmU+WdVtZUF1ZRvciPDgqvkihRUD8WjAvjMXqxonbspHMKmEBWE4WZ3VIP2sUJ6DBoK
+         F2gJd9+61NLRXmm65wbfsnDPdtqmhre0THKLsKEsMywmBRQjFK4po8OjitkaKc1qXd1+
+         /5Xctk5vHuJo73SMT7SqhDehrqesHHMFKGnlqwT/ExwFeqbPMPD0Sa00lSM1TZfFUNK3
+         ahlqWXrQ7VeGD8dQ8UbPSsIJxg0oGJrsKuaB/T8e9Bbr9wxJA5JZVVEbbtggotSwh/X1
+         dtsA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjUamZ7I3G2kCBGoBvDRXZBQz9Ia7ZkO4PmzoTgSrhYvZWaY8Zx9/+7j3j7Z4g/jmSh9l9Drq0CpgH/tQOSkvzgMUTxc4Xxzx6EFTH
+X-Gm-Message-State: AOJu0Yy2OdZ7w7wHXiDgUKKLJH5Z0BRtcl7mMnwYkzVjX+1Uois+rd/q
+	0DF3oIb0H+Aj8wvtCalMB9/H5FJ7lHoGsI3mVJz/EiP1fZ3vn6RkYI0bDjYVD4S0+CpufWPS0LD
+	GnrIhiLdVusUojEe+6Jnq8odQk4UjKcNunDYhY3sg3X8rwqOfnCSWC6I=
+X-Google-Smtp-Source: AGHT+IH78Wr5497hpciecnJMG+jB/pG0aBCThkmbFNJMvkBpvi3SlAX4SiX9IcaA8sYbxrSfGQwBxiKAoGa1Jr4PaGlS2EGVYeRl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:482:b0:7de:e506:e54a with SMTP id
+ ca18e2360f4ac-7e1b520d32dmr51582039f.3.1715615076148; Mon, 13 May 2024
+ 08:44:36 -0700 (PDT)
+Date: Mon, 13 May 2024 08:44:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002f75db061857c3db@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in evict_inodes
+From: syzbot <syzbot+a0ddc9873c280a4cb18f@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Fix the number of bytes that failed to be allocated for a new w1 device.
+Hello,
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+syzbot found the following issue on:
+
+HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10a6583f180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
+dashboard link: https://syzkaller.appspot.com/bug?extid=a0ddc9873c280a4cb18f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134a63bc980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151501b8980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c89213fc1e8d/disk-45db3ab7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b52e3a7a65ea/vmlinux-45db3ab7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a871fa10f977/bzImage-45db3ab7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1b9088f19946/mount_0.gz
+
+The issue was bisected to:
+
+commit 0e42f381193d7f9b47922f1c4308e7729a45ba13
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Sun Apr 21 02:26:47 2024 +0000
+
+    bcachefs: Fix inode early destruction path
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16cdf3bc980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=15cdf3bc980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11cdf3bc980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a0ddc9873c280a4cb18f@syzkaller.appspotmail.com
+Fixes: 0e42f381193d ("bcachefs: Fix inode early destruction path")
+
+==================================================================
+BUG: KASAN: slab-use-after-free in evict_inodes+0x111/0x690
+Read of size 8 at addr ffff888075cc70e0 by task syz-executor647/5099
+
+CPU: 0 PID: 5099 Comm: syz-executor647 Not tainted 6.9.0-rc7-syzkaller-00056-g45db3ab70092 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ evict_inodes+0x111/0x690
+ generic_shutdown_super+0x9d/0x2d0 fs/super.c:626
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2012
+ deactivate_locked_super+0xc4/0x130 fs/super.c:472
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x102/0x240 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9d14a95cb7
+Code: 09 00 48 83 c4 08 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 b8
+RSP: 002b:00007ffd534829a8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f9d14a95cb7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffd53482a60
+RBP: 00007ffd53482a60 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000202 R12: 00007ffd53483b20
+R13: 0000555567b26700 R14: 431bde82d7b634db R15: 00007ffd53483ac4
+ </TASK>
+
+Allocated by task 8194:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3804 [inline]
+ slab_alloc_node mm/slub.c:3851 [inline]
+ kmem_cache_alloc+0x174/0x350 mm/slub.c:3858
+ bch2_alloc_inode+0x1f/0x130 fs/bcachefs/fs.c:1494
+ alloc_inode fs/inode.c:261 [inline]
+ new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
+ new_inode+0x22/0x1d0 fs/inode.c:1033
+ bch2_new_inode+0xa7/0x1a0 fs/bcachefs/fs.c:224
+ bch2_lookup_trans fs/bcachefs/fs.c:408 [inline]
+ bch2_lookup+0xc44/0x1330 fs/bcachefs/fs.c:437
+ lookup_open fs/namei.c:3475 [inline]
+ open_last_lookups fs/namei.c:3566 [inline]
+ path_openat+0x1033/0x3240 fs/namei.c:3796
+ do_filp_open+0x235/0x490 fs/namei.c:3826
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+ do_sys_open fs/open.c:1421 [inline]
+ __do_sys_openat fs/open.c:1437 [inline]
+ __se_sys_openat fs/open.c:1432 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 8194:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xa6/0xe0 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2111 [inline]
+ slab_free mm/slub.c:4286 [inline]
+ kmem_cache_free+0x10b/0x2d0 mm/slub.c:4350
+ bch2_inode_insert+0x339/0x3a0 fs/bcachefs/fs.c:192
+ bch2_lookup_trans fs/bcachefs/fs.c:420 [inline]
+ bch2_lookup+0xdf0/0x1330 fs/bcachefs/fs.c:437
+ lookup_open fs/namei.c:3475 [inline]
+ open_last_lookups fs/namei.c:3566 [inline]
+ path_openat+0x1033/0x3240 fs/namei.c:3796
+ do_filp_open+0x235/0x490 fs/namei.c:3826
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+ do_sys_open fs/open.c:1421 [inline]
+ __do_sys_openat fs/open.c:1437 [inline]
+ __se_sys_openat fs/open.c:1432 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888075cc6f18
+ which belongs to the cache bch_inode_info of size 1768
+The buggy address is located 456 bytes inside of
+ freed 1768-byte region [ffff888075cc6f18, ffff888075cc7600)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff888075cc0768 pfn:0x75cc0
+head: order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000840(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xffffffff()
+raw: 00fff00000000840 ffff88801af46c80 ffffea0001da0c00 0000000000000002
+raw: ffff888075cc0768 0000000080110010 00000001ffffffff 0000000000000000
+head: 00fff00000000840 ffff88801af46c80 ffffea0001da0c00 0000000000000002
+head: ffff888075cc0768 0000000080110010 00000001ffffffff 0000000000000000
+head: 00fff00000000003 ffffea0001d73001 dead000000000122 00000000ffffffff
+head: 0000000800000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0xd2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_RECLAIMABLE), pid 5468, tgid -1659749701 (syz-executor647), ts 5469, free_ts 597295756743
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1534
+ prep_new_page mm/page_alloc.c:1541 [inline]
+ get_page_from_freelist+0x3410/0x35b0 mm/page_alloc.c:3317
+ __alloc_pages+0x256/0x6c0 mm/page_alloc.c:4575
+ __alloc_pages_node include/linux/gfp.h:238 [inline]
+ alloc_pages_node include/linux/gfp.h:261 [inline]
+ alloc_slab_page+0x5f/0x160 mm/slub.c:2180
+ allocate_slab mm/slub.c:2343 [inline]
+ new_slab+0x84/0x2f0 mm/slub.c:2396
+ ___slab_alloc+0xc73/0x1260 mm/slub.c:3530
+ __slab_alloc mm/slub.c:3615 [inline]
+ __slab_alloc_node mm/slub.c:3668 [inline]
+ slab_alloc_node mm/slub.c:3841 [inline]
+ kmem_cache_alloc+0x252/0x350 mm/slub.c:3858
+ bch2_alloc_inode+0x1f/0x130 fs/bcachefs/fs.c:1494
+ alloc_inode fs/inode.c:261 [inline]
+ new_inode_pseudo+0x69/0x1e0 fs/inode.c:1007
+ new_inode+0x22/0x1d0 fs/inode.c:1033
+ bch2_new_inode+0xa7/0x1a0 fs/bcachefs/fs.c:224
+ bch2_lookup_trans fs/bcachefs/fs.c:408 [inline]
+ bch2_lookup+0xc44/0x1330 fs/bcachefs/fs.c:437
+ lookup_open fs/namei.c:3475 [inline]
+ open_last_lookups fs/namei.c:3566 [inline]
+ path_openat+0x1033/0x3240 fs/namei.c:3796
+ do_filp_open+0x235/0x490 fs/namei.c:3826
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1406
+ do_sys_open fs/open.c:1421 [inline]
+ __do_sys_openat fs/open.c:1437 [inline]
+ __se_sys_openat fs/open.c:1432 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1432
+page last free pid 5099 tgid 5099 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1141 [inline]
+ free_unref_page_prepare+0x97b/0xaa0 mm/page_alloc.c:2347
+ free_unref_page+0x37/0x3f0 mm/page_alloc.c:2487
+ vfree+0x186/0x2e0 mm/vmalloc.c:3340
+ bch2_fs_btree_write_buffer_exit+0x140/0x1b0 fs/bcachefs/btree_write_buffer.c:652
+ __bch2_fs_free fs/bcachefs/super.c:573 [inline]
+ bch2_fs_release+0x2c7/0x5a0 fs/bcachefs/super.c:610
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22f/0x480 lib/kobject.c:737
+ deactivate_locked_super+0xc4/0x130 fs/super.c:472
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x102/0x240 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888075cc6f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888075cc7000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888075cc7080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                       ^
+ ffff888075cc7100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888075cc7180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/w1/w1_int.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
-index 3a71c5eb2f83..677e7167806c 100644
---- a/drivers/w1/w1_int.c
-+++ b/drivers/w1/w1_int.c
-@@ -34,7 +34,7 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
- 	dev = kzalloc(sizeof(struct w1_master) + sizeof(struct w1_bus_master), GFP_KERNEL);
- 	if (!dev) {
- 		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
--			sizeof(struct w1_master));
-+			sizeof(struct w1_master) + sizeof(struct w1_bus_master));
- 		return NULL;
- 	}
- 
--- 
-2.45.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
