@@ -1,77 +1,75 @@
-Return-Path: <linux-kernel+bounces-177265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4598C3C27
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:35:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630868C3C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3B11F21A4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:35:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E42B8B20CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDF0146A96;
-	Mon, 13 May 2024 07:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E914D146A99;
+	Mon, 13 May 2024 07:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoSll/2l"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eXznmglX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F1B52F9B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E452146A85
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715585714; cv=none; b=MS5R9cgY5LrIHhtvA/fhBNBsWYkU+sChOFr0IJJqliCIr6OuKgorVKB2FqoCpOpY8UzWZCCnyBJX0PwFn1UjwLz0RRRkpFMFppEi1D1rDeSCAxQlbRDJSSl4X3sza/VIVlCxOje5Lwp6Pvio/9ZwGWZD9IrHJwZVUqzA1g3UJqw=
+	t=1715585772; cv=none; b=hbb9chvoWMRxPqJ22RRg/4EsvnQcV3Wd+Pk6XQZ/VZnjdQUrlGhYFPYVUo70YBahTTgZwZhJVHzAJ5PKeuHixBOuC0PINGlCde2817V+Nz3rAvTy02yiNujDo8KxlZ4uJaEkfkuKMrIMLFpaN9eesHHELwBvr2ZgL8QqOdVExGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715585714; c=relaxed/simple;
-	bh=s8eVM+TDS1k56D3VmNLq31/MNPVBkY+NNnsrIQj5sfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZYgRRdS9EfBYeRaoY/ilaloLjmw02iH+nv9ukZujV7RVpRN9/pvPUdf944Y41ZaSaGAfMq2I8VuYDR5uhdvmyW5ZEtderADJ9US4VYdRv8jBkMwCkFQvpfTjr80fCi8ZXDp4x1gsqhgF4aLRmXCBIkrNh4xuyKJviaIGhI0kkMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoSll/2l; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51f45104ef0so4177721e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:35:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715585711; x=1716190511; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ac8lTq57pXwm0vrxrk5jAgEuyndIlwiqKJ59qUYGLwI=;
-        b=MoSll/2lmFNaW9OXYwWOSzWJlDPotFc4hkCe4nRy3kOM019et0wwbRJkajy8FOAphX
-         D0wrD+Q0SW9vIGQNNYKbPejus2kYAUmMjZlli4b3x4OzIWdlpZumj3FA++sDe6xeP3bD
-         btsTy3qi+BDxxbnTymoTE6o363XbWG75PofAUS0K3fXQOwF+rzj9iUacUIyFW/jKSBCN
-         hWEn/21Kjhe7AonwzmAUQR34aVqWMoIPc3gk3EL8ntpgf5wRjzKelcMlelOZESJ+kVYx
-         muIK0+ZRzuAu7jf2Ir9fw4Gftlv7lyATFgQWK/TgJUH7DMTvA4+SY5rjOt8rFFZhLrYd
-         OAzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715585711; x=1716190511;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ac8lTq57pXwm0vrxrk5jAgEuyndIlwiqKJ59qUYGLwI=;
-        b=BSPPZeCvw2cJjAkfrsf68biAi9MrWJjdFCZeauvFasaThSoZkHrKzwNDU2GBXOmClo
-         Cc9myiBbNJTBnKRpYkuNHomjtIW+E7XL+mN8mIb0BBt7UdjU4zW8RZZlVjdJjm70RPaw
-         ob7aVLc+TIbrKZWu88ABnQIJI31hLoBFcNpoiEAcMI7ZkwvYEgSjaEBLkBT26g79joyi
-         uLsLvMoIydNKehHCjuGmAFr4mN1C90vHptHTa7LoFgbRB5Ni66JZSdy3+n6epP5gel8M
-         LPyNFdBw1Hbrq/cbquVN0MjIKzfw254xnTyjV5KlA7whQ6ALkR67GBgadx6AkFd0kGpQ
-         h1GA==
-X-Gm-Message-State: AOJu0Yx+Jd7QXGLuWPlnDr0mbsYTM0KJe9H8DHbL+7E7cj8mwYvWAoSK
-	b1IkdxCX9nhSjR9S3cN7j9OAINYC3NVimMe2zpbAqAKOHuuh1a1qL4x3rBoQ
-X-Google-Smtp-Source: AGHT+IEWRx6/HUIUQKjfBkAjNojPpnvP6RBczo2JgHs/0ldEIcOS7bI4HQM9AQgiCclezwx74sPpIA==
-X-Received: by 2002:ac2:57c7:0:b0:516:d692:5e0b with SMTP id 2adb3069b0e04-5220fe7997fmr4001004e87.54.1715585710926;
-        Mon, 13 May 2024 00:35:10 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7e25sm5771212a12.61.2024.05.13.00.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 00:35:10 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 09:35:08 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: [GIT PULL] x86/entry change for v6.10
-Message-ID: <ZkHCrJYrQuGMh3PS@gmail.com>
+	s=arc-20240116; t=1715585772; c=relaxed/simple;
+	bh=QpJvNoqDIWl1lGZ8AoZF48u1/Yk2s6UlkJe9sxEZlrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gEXXgCIp84AhHS+tbu/fU+WnH3ljuFN65tSizOp6SrZ72QH7n9X1GYaN3H8m0zBAX4bqHUqCQbUbZQuQYd94pT1JmmJnHDeSdoWDYQkAUom4qJG+2shKHJ2P7huWttCH30CiDV/3gzE7M0CT6uc/CIZZHFiyz2NskUjX9KLD8r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eXznmglX; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715585769; x=1747121769;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QpJvNoqDIWl1lGZ8AoZF48u1/Yk2s6UlkJe9sxEZlrE=;
+  b=eXznmglXbQLdjzj47LERcenRqTLVglKJM2Zhx4EV7L9DkC/CeQQxkouu
+   q3udvJQ2C3ksi81dTtQxTKzCaANOO/ULWjlpzlrcaevIGn7JnDVxz4xxl
+   FZee4Q2JjkEuL2zEfP4OxOqGaLCQ1zDhT+UhGr5nkSqQJsMz4iu8zEw9f
+   GguGX8Jd1QdITrNA5i/WORvDW/JHWNRtNZy5dpvAL5NESvzqf0YrV4nsg
+   pvuKY2v3TNMYahtYZhdTWRWzoYA71nGy2C59h2kt+Gy/YVLUEYd21Dac9
+   I+4fjiyMAWjCN83NzMTOoBDl1mGoOnLNXYvH+eUwbQSwrtHEmtNXy/ab1
+   w==;
+X-CSE-ConnectionGUID: FFbiAn3MTkOjSJk4YMYtPQ==
+X-CSE-MsgGUID: xHdvcyiEQkKZ5Pyllsv6Pw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11681657"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="11681657"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 00:36:08 -0700
+X-CSE-ConnectionGUID: L/mWtxCzT5OjKqKwljDvlg==
+X-CSE-MsgGUID: xeDGiTTzRvqsAuN+1TOh5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="34946294"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 13 May 2024 00:36:06 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6QE7-0009dv-38;
+	Mon, 13 May 2024 07:36:03 +0000
+Date: Mon, 13 May 2024 15:35:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wenchao Hao <haowenchao2@huawei.com>, Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Aaron Tomlin <atomlin@atomlin.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Wenchao Hao <haowenchao22@gmail.com>
+Subject: Re: [PATCH] workqueue: Fix rescuer task's name truncated
+Message-ID: <202405131400.sEYZHYk2-lkp@intel.com>
+References: <20240513030639.3772468-1-haowenchao2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,30 +78,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240513030639.3772468-1-haowenchao2@huawei.com>
 
-Linus,
+Hi Wenchao,
 
-Please pull the latest x86/entry Git tree from:
+kernel test robot noticed the following build warnings:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-entry-2024-05-13
+[auto build test WARNING on tj-wq/for-next]
+[also build test WARNING on linus/master v6.9 next-20240510]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-   # HEAD: b767fe5de0b4a5057b070d8cdefdcf6740733d6e x86/entry: Merge thunk_64.S and thunk_32.S into thunk.S
+url:    https://github.com/intel-lab-lkp/linux/commits/Wenchao-Hao/workqueue-Fix-rescuer-task-s-name-truncated/20240513-110849
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-next
+patch link:    https://lore.kernel.org/r/20240513030639.3772468-1-haowenchao2%40huawei.com
+patch subject: [PATCH] workqueue: Fix rescuer task's name truncated
+config: openrisc-allnoconfig (https://download.01.org/0day-ci/archive/20240513/202405131400.sEYZHYk2-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240513/202405131400.sEYZHYk2-lkp@intel.com/reproduce)
 
-Merge thunk_64.S and thunk_32.S into thunk.S.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405131400.sEYZHYk2-lkp@intel.com/
 
- Thanks,
+All warnings (new ones prefixed by >>):
 
-	Ingo
+   kernel/workqueue.c: In function 'init_rescuer':
+>> kernel/workqueue.c:5558:57: warning: '%s' directive output may be truncated writing up to 31 bytes into a region of size 24 [-Wformat-truncation=]
+    5558 |         snprintf(rescuer->desc, sizeof(rescuer->desc), "%s", wq->name);
+         |                                                         ^~
+   kernel/workqueue.c:5558:9: note: 'snprintf' output between 1 and 32 bytes into a destination of size 24
+    5558 |         snprintf(rescuer->desc, sizeof(rescuer->desc), "%s", wq->name);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
------------------->
-Lai Jiangshan (1):
-      x86/entry: Merge thunk_64.S and thunk_32.S into thunk.S
 
+vim +5558 kernel/workqueue.c
 
- arch/x86/entry/Makefile                |  2 +-
- arch/x86/entry/{thunk_64.S => thunk.S} |  0
- arch/x86/entry/thunk_32.S              | 18 ------------------
- 3 files changed, 1 insertion(+), 19 deletions(-)
- rename arch/x86/entry/{thunk_64.S => thunk.S} (100%)
- delete mode 100644 arch/x86/entry/thunk_32.S
+  5528	
+  5529	/*
+  5530	 * Workqueues which may be used during memory reclaim should have a rescuer
+  5531	 * to guarantee forward progress.
+  5532	 */
+  5533	static int init_rescuer(struct workqueue_struct *wq)
+  5534	{
+  5535		struct worker *rescuer;
+  5536		int ret;
+  5537	
+  5538		if (!(wq->flags & WQ_MEM_RECLAIM))
+  5539			return 0;
+  5540	
+  5541		rescuer = alloc_worker(NUMA_NO_NODE);
+  5542		if (!rescuer) {
+  5543			pr_err("workqueue: Failed to allocate a rescuer for wq \"%s\"\n",
+  5544			       wq->name);
+  5545			return -ENOMEM;
+  5546		}
+  5547	
+  5548		rescuer->rescue_wq = wq;
+  5549		rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R");
+  5550		if (IS_ERR(rescuer->task)) {
+  5551			ret = PTR_ERR(rescuer->task);
+  5552			pr_err("workqueue: Failed to create a rescuer kthread for wq \"%s\": %pe",
+  5553			       wq->name, ERR_PTR(ret));
+  5554			kfree(rescuer);
+  5555			return ret;
+  5556		}
+  5557	
+> 5558		snprintf(rescuer->desc, sizeof(rescuer->desc), "%s", wq->name);
+  5559	
+  5560		wq->rescuer = rescuer;
+  5561		if (wq->flags & WQ_UNBOUND)
+  5562			kthread_bind_mask(rescuer->task, wq_unbound_cpumask);
+  5563		else
+  5564			kthread_bind_mask(rescuer->task, cpu_possible_mask);
+  5565		wake_up_process(rescuer->task);
+  5566	
+  5567		return 0;
+  5568	}
+  5569	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
