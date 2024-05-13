@@ -1,107 +1,164 @@
-Return-Path: <linux-kernel+bounces-177891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF548C45E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8845E8C45EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 186EAB20914
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABABB1C22539
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E3E20DC4;
-	Mon, 13 May 2024 17:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD46210EC;
+	Mon, 13 May 2024 17:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Px+H+TfI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lxxhERDL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A521CA89
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3394F20310;
+	Mon, 13 May 2024 17:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715620869; cv=none; b=b7hh4q5eUmfInyCG4xtp/EoKC+nmkC0sdz3lU+30qQ+keBdXLn2KJYlHEaFjP5IapqJAXK0otQHyL2L+3moihyl0ASnfq+OLO53q0Pkmve25jTNRx1pxFr5mXFtSftJ/rdK+OnCYXbUfbRZJW0cUBBi3xf4jmZ/jzZtQxIMK2/o=
+	t=1715620972; cv=none; b=oWsqUTaVR8O2K52UQOCrOgRYTAv+/HcJq4iglaaNw5I4PbJ+cs1//aTjYo12U4zBG5rfuN/EQatUHLubL2ulwPhYIQHhq9TYKuh0KVFicGclop9eOx9CpI152VPr9yZjRxgxqhcmIW8jC0OQX1Cia9KfplC1fJ1Arxi9OEpQKD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715620869; c=relaxed/simple;
-	bh=4cY9MtXU2I4telm66R69VUj9RASu9tfSf8B/kojAaNg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M/UC90nLytgPeDRlOs6IjvJdoPeDz+kR/SlscuKC2QNf06sbHQXy9vNeimPGtKBigg3gMgLeIJnSWlVFmv1ZFfX1TWESFNQ4flHrVYHulBY0vPRBGKOme+7GwYjdqVD5LvxacQLKyijLzTIJ/2QNmBU1ax3g9KmpVYODFcG5OfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Px+H+TfI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715620866;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFetHttmrSPEk8iB/RIqp6UII+/zXMI6LYRqsBUqiFc=;
-	b=Px+H+TfI7JfxYy49DEOWW+wlPuuZ/z3UurkwmjUA59rZgi4UpUx/AjucL+Sn1dp0QrAJx9
-	H37k44ttod0onK8+Eq0Pr/a6ua9/wTj0TGdqa54qpcmeuXnMlMigYcSflA9PpKiZjm/tJc
-	xv6jy5cs9H/0EMA4QnsFaGNjvWwacQg=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-hycillBbMBaKK8yez8_kZA-1; Mon, 13 May 2024 13:21:04 -0400
-X-MC-Unique: hycillBbMBaKK8yez8_kZA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-41fe329e720so21947535e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:21:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715620863; x=1716225663;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lFetHttmrSPEk8iB/RIqp6UII+/zXMI6LYRqsBUqiFc=;
-        b=HQQFVPLyyZ5u1k2mpLqRKyoz6B2Y3JyWrZrQP8/0ALTbJ4kqavqgowJWeSEKJzI3l3
-         mvsFoo+pYfBtsIr/+D1v1MwTjQZoQguy6g0JuWdNzCCZ8tpveTFpK4Q48J6O+qVIj2eA
-         NDGKg9RrqLYwJJ8Up1jvKvvAAw7dpFaBcjHQISF1HPDCYkYfBa902/MSw3siCHT6h5TA
-         1izJA5yKiknkTgnmsX0XJGa0R8CaCoYG6/NqRhcmppG5pj7FtKHdC+U1q5gNhMq+D5aU
-         4SjwNEktFj70yA2zI68+u1vFxtcft89+Rm1HSyG/j3s0frRiJ4RIZPiPr0+2FcAMAZXP
-         vBxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUutapAca4rQSdynJPtJJsk+Hlv2193rBahM8fY2dlXtrr86ORUNFO9zr6WSFP73BuU1nhiORwNl3t9seGUmXrM/7R/UVuw5wuCvt/Q
-X-Gm-Message-State: AOJu0Yyij4Wi8ditZoyLCvlr3XiJHMlKKBnbjvFpMlTO79pUj7I730wK
-	4/ZNMmMDwslVm1V0u5s61+IBWqgbnXSrDPSQU/8E3br3FwRI6hMCEeg95dLOOsnn6d7jaoGZmEJ
-	N7HkOBwaKt01s2EatN05whATh2OTF7ZFh26Bo1MqnXmOMM5ditc/QKYqkEgxr8l05MIMP5f2eT3
-	Wo3kEauzKduAMEp36+PbbW1xoBSJsLnJEgJuoo
-X-Received: by 2002:a05:600c:3582:b0:41b:143b:5c2d with SMTP id 5b1f17b1804b1-41feac55195mr86486935e9.28.1715620863689;
-        Mon, 13 May 2024 10:21:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+7klRRXayuHxgQuN4xrnk2PibSO57rwQTkXNO9jJpJsh5eowNn5cZ4BTWrNPZBX2tLF3nvF6BA/OvQNnQl1w=
-X-Received: by 2002:a05:600c:3582:b0:41b:143b:5c2d with SMTP id
- 5b1f17b1804b1-41feac55195mr86486845e9.28.1715620863376; Mon, 13 May 2024
- 10:21:03 -0700 (PDT)
+	s=arc-20240116; t=1715620972; c=relaxed/simple;
+	bh=tyn7cuWnJ6Md4cnRgbwQWBGpdzeCwPyjaPP8SzCMlOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lR0Vf7WWqcWTH0Lm+a0pcwfmgWL+Z5akupV3CMo5dER2wtnIge0EyawRI33w8/QafmUaFgLsy69Rj1JmXsL1z2sPq5Pm1cQs0PKRzFNEJ53E9zfz36fAHj+SlBulHNVjXlGaUvD7CNbOQRuUw78L/fNW40xK3T51j3Pluvdpki0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lxxhERDL; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715620970; x=1747156970;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tyn7cuWnJ6Md4cnRgbwQWBGpdzeCwPyjaPP8SzCMlOI=;
+  b=lxxhERDLnkJBgD5mGWDKJ9k2raOmnxPsWrHTt+IVNZQcnkI0YCWVKzom
+   PL8GBIh2ebDHeepe+fSP0g9qkQx2dizw3XE0LHCxP7Dxl4bqCpWkN35hD
+   BUmUffUBFdoW4m5JStGVVeKR3BM3c8jyOGdtd+eH/A/2m6AKlvCQKY2Mf
+   M/z6biV23lcS+3w1LDTIayzuLyxx7G9R8ljtcQ1oon3TffHcCqxI0J8rC
+   l+8klW75Li9WYiOJ/jC324Ym5i+umcfVdMc4+h4iuENT5Uk/P/lrBwNh6
+   V6e9kfrypnGF3ipF9rKiYhUDV+AFGT7d2OGZFZPYmOkcdMk+imwQJrjbr
+   w==;
+X-CSE-ConnectionGUID: 1fUyRp+PSHmXROSYpbLo0A==
+X-CSE-MsgGUID: 2l/YLp5VQFS4HlZFfRO+TA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11515361"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11515361"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 10:22:48 -0700
+X-CSE-ConnectionGUID: svXuqNxNRXyAQU2rJ9v06Q==
+X-CSE-MsgGUID: 5OviWa7LTgyubePSx02tYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35156592"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 13 May 2024 10:22:45 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6ZNq-000AUP-1M;
+	Mon, 13 May 2024 17:22:42 +0000
+Date: Tue, 14 May 2024 01:21:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Perry Yuan <perry.yuan@amd.com>, Mario.Limonciello@amd.com,
+	gautham.shenoy@amd.com, Ray.Huang@amd.com, Borislav.Petkov@amd.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	rafael.j.wysocki@intel.com, Alexander.Deucher@amd.com,
+	Xinmei.Huang@amd.com, Xiaojian.Du@amd.com, Li.Meng@amd.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] cpufreq: amd-pstate: add debug message while
+ CPPC is supported and disabled by SBIOS
+Message-ID: <202405140103.onvXHkqE-lkp@intel.com>
+References: <94ad4bca2d8e44a5e53082959220a184c0222e1e.1715356532.git.perry.yuan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510211024.556136-1-michael.roth@amd.com> <20240510211024.556136-19-michael.roth@amd.com>
- <20240513151920.GA3061950@thelio-3990X> <0ceafce9-0e08-4d47-813d-6b3f52ac5fd6@redhat.com>
- <20240513170535.je74yhujxpogijga@amd.com>
-In-Reply-To: <20240513170535.je74yhujxpogijga@amd.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 13 May 2024 19:20:52 +0200
-Message-ID: <CABgObfY0SEjdnNbXqeFyht4FWSf8joW8-zVS1qJ8HrxR5D5AGQ@mail.gmail.com>
-Subject: Re: [PULL 18/19] KVM: SEV: Provide support for SNP_EXTENDED_GUEST_REQUEST
- NAE event
-To: Michael Roth <michael.roth@amd.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <94ad4bca2d8e44a5e53082959220a184c0222e1e.1715356532.git.perry.yuan@amd.com>
 
-On Mon, May 13, 2024 at 7:11=E2=80=AFPM Michael Roth <michael.roth@amd.com>=
- wrote:
-> Hi Paolo,
->
-> Yes, I was just about to submit a patch that does just that:
->
->   https://github.com/mdroth/linux/commit/df55e9c5b97542fe037f5b5293c11a49=
-f7c658ef
+Hi Perry,
 
-Go ahead then!
+kernel test robot noticed the following build warnings:
 
-Paolo
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge next-20240513]
+[cannot apply to tip/x86/core linus/master v6.9]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Perry-Yuan/cpufreq-amd-pstate-optimize-the-initial-frequency-values-verification/20240513-101217
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/94ad4bca2d8e44a5e53082959220a184c0222e1e.1715356532.git.perry.yuan%40amd.com
+patch subject: [PATCH v2 04/10] cpufreq: amd-pstate: add debug message while CPPC is supported and disabled by SBIOS
+config: i386-randconfig-013-20240513 (https://download.01.org/0day-ci/archive/20240514/202405140103.onvXHkqE-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405140103.onvXHkqE-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405140103.onvXHkqE-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/cpufreq/amd-pstate.c:1727:26: warning: overlapping comparisons always evaluate to false [-Wtautological-overlap-compare]
+    1727 |                                 (c->x86_model > 0x1f && c->x86_model < 0x1f)) {
+         |                                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +1727 drivers/cpufreq/amd-pstate.c
+
+  1703	
+  1704	/**
+  1705	 * CPPC function is not supported for family ID 17H with model_ID ranging from 0x10 to 0x2F.
+  1706	 * show the debug message that helps to check if the CPU has CPPC support for loading issue.
+  1707	 */
+  1708	static bool amd_cppc_supported(void)
+  1709	{
+  1710		struct cpuinfo_x86 *c = &cpu_data(0);
+  1711	
+  1712		if ((boot_cpu_data.x86 == 0x17) && (boot_cpu_data.x86_model < 0x30)) {
+  1713			pr_debug_once("CPPC feature is not supported by the processor\n");
+  1714			return false;
+  1715		}
+  1716	
+  1717		/*
+  1718		 * If the CPPC flag is disabled in the BIOS for processors that support MSR-based CPPC
+  1719		 * the AMD Pstate driver may not function correctly.
+  1720		 */
+  1721		if (!cpu_feature_enabled(X86_FEATURE_CPPC)) {
+  1722			if (cpu_feature_enabled(X86_FEATURE_ZEN1) || cpu_feature_enabled(X86_FEATURE_ZEN2)) {
+  1723				if (c->x86_model > 0x60 && c->x86_model < 0xaf)
+  1724					goto warn;
+  1725			} else if (cpu_feature_enabled(X86_FEATURE_ZEN3) || cpu_feature_enabled(X86_FEATURE_ZEN4)) {
+  1726				if ((c->x86_model > 0x00 && c->x86_model < 0x0F) || (c->x86_model > 0x2f && c->x86_model < 0xaf) ||
+> 1727					(c->x86_model > 0x1f && c->x86_model < 0x1f)) {
+  1728					goto warn;
+  1729				}
+  1730			} else {
+  1731				goto warn;
+  1732			}
+  1733		}
+  1734	
+  1735		return true;
+  1736	
+  1737	warn:
+  1738		pr_debug_once("The CPPC feature is supported but currently disabled by the BIOS.\n"
+  1739						"Please enable it if your BIOS supports the CPPC option.\n");
+  1740		return false;
+  1741	}
+  1742	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
