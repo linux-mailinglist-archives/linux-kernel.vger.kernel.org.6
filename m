@@ -1,115 +1,135 @@
-Return-Path: <linux-kernel+bounces-177084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D4258C39E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:44:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118AE8C39F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F81A1C209EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99328281594
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3471F9CC;
-	Mon, 13 May 2024 01:44:39 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DCCE541
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C6312F368;
+	Mon, 13 May 2024 01:47:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Gs63Nzl7"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16631CD3C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715564679; cv=none; b=SjSKRlp4hjDxGJ7uDpFWGsVmC9d634MbYw169CP2jQ1hmcMsunCaRAjTvrdNjzIWqN8xczu62scEzj4O+DczWLCu6u2M+cmA6JyKGx3Ysi+L4Jd7BklLaGQqOF09VxRZhpFUin9Unn2GVtpPhktTaA4bxkrtfXTN5MCe7QdKzMY=
+	t=1715564839; cv=none; b=maAOkbKhQ6mPYE6/a956+/UQstST7KZTjYywndJ5W30K8D3d0FTcc/Tj6Q59e/VHm8CqbPV0WVykOIN44JI0U3mQqczGUalNOOyTziin9ImiIOzr1wbyR/RHeLMxOxuK3eo+Ar0dFkwhW5SNPq3A0O1UAoor1VeU2cOj4vU8rso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715564679; c=relaxed/simple;
-	bh=zxyPelvY/Imn1+ZX+DOanZkQ1iX7PGydqSCP2eHX2uA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APMOidHo4fa/6aFl1AALDtnM4CIy2ijlOnw/dSgKQmPLFlNPYGZZhnl20QR5OFLMtW4lamQqMkArySma7FpGZd8Kse1hBVVwm6j0YhliLOGhAOlxBbVIk9J9XrivFcF7Z8d5ESgbcvtbaUq9UUFKKCGgizUn/ufVy8m4hbfv9gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-ae-66417082ef79
-Date: Mon, 13 May 2024 10:44:29 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
-	willy@infradead.org, david@redhat.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240513014428.GB38851@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <87eda8g6q2.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	s=arc-20240116; t=1715564839; c=relaxed/simple;
+	bh=XvuUPqe4jrK1ygXuzWnjCNK2+al04GnacvOZK6Njt3c=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=hfDAPUAO6t5WRdQ+Iv14GX1y+5FzbRYUCz5io99WE80owKNHQ23FCGYfHt8g7ZO4G5iCv8K2z+NCm/0EZbjXzqViUbQ65WP8lORlQckqzdKdxIIaM3sYuF4dL+yU6C5ZkGb+Ppe7x3XQbXujteDeZcpRR0EIWS2pfLwlJPF1hPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Gs63Nzl7; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715564833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XvuUPqe4jrK1ygXuzWnjCNK2+al04GnacvOZK6Njt3c=;
+	b=Gs63Nzl7EFtz+ZdI1WGhk//6KAWCpYBCZDTwyLRG8+mLJOkOXGQyDNDKU8ycSlIi9pHVCA
+	GZ7Nzrtnb2UySOOlc1MjjszZHnvGrrTJkwIaeN1iWaxEEBDrc36LxKkfyXQvfjr2zWTRB1
+	1/n21eLJEEl52br9Nr3c4XesiXBJA4I=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87eda8g6q2.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsXC9ZZnoW5TgWOaweG/YhZz1q9hs/i84R+b
-	xYsN7YwWX9f/YrZ4+qmPxeLyrjlsFvfW/Ge1OL9rLavFjqX7mCwuHVjAZHG89wCTxfx7n9ks
-	Nm+aymxxfMpURovfP4CKT86azOIg4PG9tY/FY+esu+weCzaVemxeoeWxeM9LJo9NqzrZPDZ9
-	msTu8e7cOXaPEzN+s3jMOxno8X7fVTaPrb/sPBqnXmPz+LxJLoAvissmJTUnsyy1SN8ugSvj
-	+NEG5oK5XBX3ejQbGCdydDFyckgImEg82rGctYuRA8yesjwGJMwioCqx7u4vJhCbTUBd4saN
-	n8wgtoiAhsSnhcvZuxi5OJgFnjNJ/H7zmx0kISwQIjHtwxqwBl4BC4mLny6DxYUEMiWWrZ0H
-	FReUODnzCQuIzSygJXHj30smkL3MAtISy/+BncMpYCdxfM9MsBJRAWWJA9uOM4HskhBYxy7x
-	8OAzRoibJSUOrrjBMoFRYBaSsbOQjJ2FMHYBI/MqRqHMvLLcxMwcE72MyrzMCr3k/NxNjMAo
-	XFb7J3oH46cLwYcYBTgYlXh4E047pAmxJpYVV+YeYpTgYFYS4XUotE8T4k1JrKxKLcqPLyrN
-	SS0+xCjNwaIkzmv0rTxFSCA9sSQ1OzW1ILUIJsvEwSnVwOh+f3vKqeNmu7znz/BValaxWXTa
-	e6KTkeCRK9XzljCtPxLrxb6iewnfCdfPkSciNaYeKK5LfCLoLMkotqBCP3PmoU8pN6oZE/un
-	PnsjuHqJ7pJfoq/ebXr1OkXBP/rY43d35720+e93oim3kf1/y7oWe+s976xZelaF8UdmnFtj
-	/sewLq/d8KkSS3FGoqEWc1FxIgATQDtXvgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsXC5WfdrNtU4Jhm8OoPm8Wc9WvYLD5v+Mdm
-	8WJDO6PF1/W/mC2efupjsTg89ySrxeVdc9gs7q35z2pxftdaVosdS/cxWVw6sIDJ4njvASaL
-	+fc+s1ls3jSV2eL4lKmMFr9/ABWfnDWZxUHQ43trH4vHzll32T0WbCr12LxCy2PxnpdMHptW
-	dbJ5bPo0id3j3blz7B4nZvxm8Zh3MtDj/b6rbB6LX3xg8tj6y86jceo1No/Pm+QC+KO4bFJS
-	czLLUov07RK4Mo4fbWAumMtVca9Hs4FxIkcXIweHhICJxJTlMV2MnBwsAqoS6+7+YgKx2QTU
-	JW7c+MkMYosIaEh8WricvYuRi4NZ4DmTxO83v9lBEsICIRLTPqwBa+AVsJC4+OkyWFxIIFNi
-	2dp5UHFBiZMzn7CA2MwCWhI3/r1kAtnLLCAtsfwfB0iYU8BO4viemWAlogLKEge2HWeawMg7
-	C0n3LCTdsxC6FzAyr2IUycwry03MzDHVK87OqMzLrNBLzs/dxAiMqWW1fybuYPxy2f0QowAH
-	oxIPb8JphzQh1sSy4srcQ4wSHMxKIrwOhfZpQrwpiZVVqUX58UWlOanFhxilOViUxHm9wlMT
-	hATSE0tSs1NTC1KLYLJMHJxSDYxiTH8jdQ1vtxQfWnltp+CDVVISDIzvfh21O3ineEONHpuB
-	5rKexKoS7fP8jjJHQhyXfZUN9lrQun1WxSZXv+Q6zy2/z//8OjdwlsmkxeVz3RcY+eewHd/r
-	F7O47Dtzw7Xrm45Um+/uO6d5YbWl3KaN7w+vKhH8uHhpn/EP52Vhy1KMm/6ULr+uxFKckWio
-	xVxUnAgAXsgVcKUCAAA=
-X-CFilter-Loop: Reflected
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.400.31\))
+Subject: Re: [PATCH] Build guest_memfd_test also on arm64.
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Itaru Kitayama <itaru.kitayama@linux.dev>
+In-Reply-To: <E7E9D65D-1DAC-4CA5-BDA5-D515D15E50F8@linux.dev>
+Date: Mon, 13 May 2024 10:46:54 +0900
+Cc: Shuah Khan <shuah@kernel.org>,
+ kvm@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Itaru Kitayama <itaru.kitayama@fujitsu.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9804CC2E-9F3B-4A39-B91F-9C91155CC50F@linux.dev>
+References: <20240222-memfd-v1-1-7d39680286f1@linux.dev>
+ <CABgObfakz1KQ==Cvrxr5wS36Lq8mvF9uJtW3AWVe9m-b+0OKYA@mail.gmail.com>
+ <E7E9D65D-1DAC-4CA5-BDA5-D515D15E50F8@linux.dev>
+To: Paolo Bonzini <pbonzini@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, May 11, 2024 at 03:15:01PM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > Hi everyone,
-> >
-> > While I'm working with a tiered memory system e.g. CXL memory, I have
-> > been facing migration overhead esp. tlb shootdown on promotion or
-> > demotion between different tiers.  Yeah..  most tlb shootdowns on
-> > migration through hinting fault can be avoided thanks to Huang Ying's
-> > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
-> > is inaccessible").  See the following link for more information:
-> >
-> > https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
-> 
-> And, I still have interest of the performance impact of commit
-> 7e12beb8ca2a ("migrate_pages: batch flushing TLB").  In the email above,
-> you said that the performance of v6.5-rc5 + 7e12beb8ca2a reverted has
-> better performance than v6.5-rc5.  Can you provide more details?  For
-> example, the number of TLB flushing IPI for two kernels?
 
-Okay.  I will test and share the result with what you asked me now once
-I get available for the test.
 
-	Byungchul
+> On May 8, 2024, at 15:41, Itaru Kitayama <itaru.kitayama@linux.dev> =
+wrote:
+>=20
+> Hi Paolo,
+>=20
+>> On Feb 23, 2024, at 17:57, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>>=20
+>> On Thu, Feb 22, 2024 at 12:44=E2=80=AFAM Itaru Kitayama
+>> <itaru.kitayama@linux.dev> wrote:
+>>> on arm64 KVM_CAP_GUEST_MEMDF capability is not enabled, but
+>>> guest_memfd_test can build on arm64, let's build it on arm64 as =
+well.
+>>=20
+>> The test will be skipped, so there's no point in compiling it.
+>=20
+> It=E2=80=99s not merged yet, but the Arm CCA support series V2 is out =
+there, would you consider building it for arm64
+> as well?
 
-> I should have followed up the above email.  Sorry about that.  Anyway,
-> we should try to fix issue of that commit too.
-> 
-> --
-> Best Regards,
-> Huang, Ying
-> 
-> [snip]
+Unless KVM_CAP_GUEST_MEMFD is supported in arm64, you think it should =
+not be built at all?
+Then, I will build them locally for now.
+
+Thanks,
+Itaru.
+
+>=20
+> Thanks,
+> Itaru.
+>=20
+>>=20
+>> Paolo
+>>=20
+>>> Signed-off-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
+>>> ---
+>>> tools/testing/selftests/kvm/Makefile | 1 +
+>>> 1 file changed, 1 insertion(+)
+>>>=20
+>>> diff --git a/tools/testing/selftests/kvm/Makefile =
+b/tools/testing/selftests/kvm/Makefile
+>>> index 492e937fab00..8a4f8afb81ca 100644
+>>> --- a/tools/testing/selftests/kvm/Makefile
+>>> +++ b/tools/testing/selftests/kvm/Makefile
+>>> @@ -158,6 +158,7 @@ TEST_GEN_PROGS_aarch64 +=3D =
+access_tracking_perf_test
+>>> TEST_GEN_PROGS_aarch64 +=3D demand_paging_test
+>>> TEST_GEN_PROGS_aarch64 +=3D dirty_log_test
+>>> TEST_GEN_PROGS_aarch64 +=3D dirty_log_perf_test
+>>> +TEST_GEN_PROGS_aarch64 +=3D guest_memfd_test
+>>> TEST_GEN_PROGS_aarch64 +=3D guest_print_test
+>>> TEST_GEN_PROGS_aarch64 +=3D get-reg-list
+>>> TEST_GEN_PROGS_aarch64 +=3D kvm_create_max_vcpus
+>>>=20
+>>> ---
+>>> base-commit: 39133352cbed6626956d38ed72012f49b0421e7b
+>>> change-id: 20240222-memfd-7285f9564c1e
+>>>=20
+>>> Best regards,
+>>> --
+>>> Itaru Kitayama <itaru.kitayama@linux.dev>
+>>>=20
+>>=20
+>=20
+
 
