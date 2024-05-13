@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-177920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D7C8C463B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:38:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 601AC8C463F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51C201C22D95
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C7D1F24C12
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802642C69D;
-	Mon, 13 May 2024 17:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F6E2942F;
+	Mon, 13 May 2024 17:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="m90FUVvG"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="W1sQ4L4K"
+Received: from smtp.smtpout.orange.fr (smtp-24.smtpout.orange.fr [80.12.242.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487372837D;
-	Mon, 13 May 2024 17:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718DF2C1A0;
+	Mon, 13 May 2024 17:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715621869; cv=none; b=G4r+Jt4DEJfDgGQHVibQE6cbFkm3/IHLcbnMiifCYDl6mENf/8xFOVHufD4I47KtsXHEhUnqXXCcjM9dyHtrbXHZQGw5wBehrLOb5Rj1Dex4TWeikWjIEtWvpJuBlsW32WTmTCOXAc9tRoMSdHOgVWsOLCy+Ol/Kr6oJm3jJ1Bw=
+	t=1715621872; cv=none; b=S6N90BkYAG23yY+KI5lQyjP/lJzXc43dFe1uKhj0mef7axoDecNH//G9NIq8OOU0qItYfRXnR8vnpFPUdYBMoYz6wEA4D1rWVSCVJjJAQEnbM32T76hEL2bSLralmFb36kSrfpf7d+jQRCTb4b/U99hUehES5RQ0dd7lL2rmW5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715621869; c=relaxed/simple;
-	bh=a0hGDqbnr8QfjOn4UWdQQVFTsm1YKoftP6R8ds04QtU=;
+	s=arc-20240116; t=1715621872; c=relaxed/simple;
+	bh=mmp/3E5t0JWgl4/OYoYB0/Z3Zg7EBCcBulwzfpIlR2g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rXPyHyljk3K9np+kop+2iN6QmUJmvuXV+Gq2aW92oZiRlaR56fJH/dHVV6i5nb4RaS9ehtC7uJ16kGU5TAL536h/5GK4UstXBlbwg0ydcYE6zhHYEHvA7ZkvSWFm9eMNQQKPtRsCOw6jkV0Vy/CW4uHyLyuseAs+TEuYXzLExhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=m90FUVvG; arc=none smtp.client-ip=80.12.242.23
+	 MIME-Version; b=ElQzqRw7btoLi+SnmGpQB3mnisaDzAtjFXyixbe0QlNUcuHWavL/2D/eM3rigul1d1fGlckWoA2CDB25O8cBYmYJqTX6cjQIzOytsdBYyUK6rjyMSZkEV3DoZi9BN+qMG7ZBYd8rwv5flq+alIZsUrsbm4XMbidrpBNOoJLtyzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=W1sQ4L4K; arc=none smtp.client-ip=80.12.242.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
 Received: from localhost.localdomain ([86.243.17.157])
 	by smtp.orange.fr with ESMTPA
-	id 6ZcDs0lh7ME2z6ZcKsL81A; Mon, 13 May 2024 19:37:40 +0200
+	id 6ZcDs0lh7ME2z6ZcMsL81f; Mon, 13 May 2024 19:37:42 +0200
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715621860;
-	bh=vPx09WkVDSPEOpN7HAXVn6S1kGIy/0oMa/odUP4ITxc=;
+	s=t20230301; t=1715621863;
+	bh=A26Rl7MtM3B51oWgHFeoUVOcPLJ5BY3Z+dYCWIU7CTA=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=m90FUVvGUYAng9KWUEjKYM1eIH1fEklPDwdWolN/ZVlGtl+EpR9oNiMZT/sXgwwhJ
-	 oEH/6thb5Alo3o7a9uzF/JMtkmqmrnJm75rObyvke+qoOfymnHbV1IBuD2miuuY4UJ
-	 +YzXUW56a9zUu0SMrd5qUoGnbk4iTh3qv6lLA1l6jz6TE5ipLRdqWkp64+byy34C22
-	 yKngk6yqD/8ThHFwNaxSKJbUPiaYoGhj146tVS80EsfD2P3kWMJdHiT/7gOZrUvSKG
-	 YDFbRkJkbW0qdW3Z0LbubPyPtgvp3qTmP0AjaUrCgXYh40/5PH7mDpr/wz1y+fW5nd
-	 zc0rz5ydwA+ew==
+	b=W1sQ4L4KZKDLj0JG8sMTDYYCXP31N2hT7k41A6sBY2Z8c0LmZkf9HmTV/yO2SncVE
+	 fgorRdt1du9JSEGgtxOsjW91X/7ATkARIMK+pmfb4WbV5x5hzRPtusgNdtVHouDF3L
+	 OqZrK0UvU6SQ01Fi6g0FG6FOTaZCiJYN0Gf9HnzRQi9gSWxCC0eUxSXeKuAXU4mWy6
+	 4YJe+ZsrlXunh3/sPF2VAAlGiwUES0zAWQEt38sO9Ba/mnlhnzUWeKbsfmSIp373kF
+	 bygSM8HADDUbJfdv1hbyvQ+HVlzyFBhQ6LoWuQd0F44GMSmFGRJHgiwtSqXZQVu79B
+	 mp4n6S/LpS+PA==
 X-ME-Helo: localhost.localdomain
 X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 13 May 2024 19:37:40 +0200
+X-ME-Date: Mon, 13 May 2024 19:37:43 +0200
 X-ME-IP: 86.243.17.157
 From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 To: lgirdwood@gmail.com,
@@ -67,9 +67,9 @@ Cc: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH 3/6] ASoC: qdsp6: audioreach: Constify struct snd_soc_tplg_ops
-Date: Mon, 13 May 2024 19:37:22 +0200
-Message-ID: <a5ae843dd8aaacbc1148aea7a3b1d03f11495872.1715526069.git.christophe.jaillet@wanadoo.fr>
+Subject: [PATCH 4/6] ASoC: Intel: Skylake: Constify struct snd_soc_tplg_ops
+Date: Mon, 13 May 2024 19:37:23 +0200
+Message-ID: <48f096b6dc617ecf3ca53211c2a696a4df33b21a.1715526069.git.christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
 References: <f2f983e791d7f941a95556bb147f426a345d84d4.1715526069.git.christophe.jaillet@wanadoo.fr>
@@ -87,32 +87,32 @@ section, so increase overall security.
 On a x86_64, with allmodconfig:
 Before:
    text	   data	    bss	    dec	    hex	filename
-  19942	    832	      0	  20774	   5126	sound/soc/qcom/qdsp6/topology.o
+  58844	   5282	     56	  64182	   fab6	sound/soc/intel/skylake/skl-topology.o
 
 After:
    text	   data	    bss	    dec	    hex	filename
-  20102	    652	      0	  20754	   5112	sound/soc/qcom/qdsp6/topology.o
+  59004	   5122	     56	  64182	   fab6	sound/soc/intel/skylake/skl-topology.o
 
 Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
 Compile tested-only.
 ---
- sound/soc/qcom/qdsp6/topology.c | 2 +-
+ sound/soc/intel/skylake/skl-topology.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/qdsp6/topology.c b/sound/soc/qcom/qdsp6/topology.c
-index 70572c83e101..c15d1a2b6dbf 100644
---- a/sound/soc/qcom/qdsp6/topology.c
-+++ b/sound/soc/qcom/qdsp6/topology.c
-@@ -1240,7 +1240,7 @@ static const struct snd_soc_tplg_kcontrol_ops audioreach_io_ops[] = {
- 		audioreach_put_vol_ctrl_audio_mixer, snd_soc_info_volsw},
- };
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index e27f0fc3d897..602ef4321122 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -3470,7 +3470,7 @@ static int skl_tplg_complete(struct snd_soc_component *component)
+ 	return 0;
+ }
  
--static struct snd_soc_tplg_ops audioreach_tplg_ops  = {
-+static const struct snd_soc_tplg_ops audioreach_tplg_ops = {
- 	.io_ops = audioreach_io_ops,
- 	.io_ops_count = ARRAY_SIZE(audioreach_io_ops),
- 
+-static struct snd_soc_tplg_ops skl_tplg_ops  = {
++static const struct snd_soc_tplg_ops skl_tplg_ops = {
+ 	.widget_load = skl_tplg_widget_load,
+ 	.control_load = skl_tplg_control_load,
+ 	.bytes_ext_ops = skl_tlv_ops,
 -- 
 2.45.0
 
