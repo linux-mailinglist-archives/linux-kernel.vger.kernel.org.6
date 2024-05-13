@@ -1,550 +1,102 @@
-Return-Path: <linux-kernel+bounces-177827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4539E8C450E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:27:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D29058C4512
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 677A11C21D53
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6F71C21B33
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2215415539E;
-	Mon, 13 May 2024 16:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBED1553A3;
+	Mon, 13 May 2024 16:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GaRr1a9L"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FNZ1pN5h"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D91415534A;
-	Mon, 13 May 2024 16:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C81155382
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715617641; cv=none; b=tR4lJQ9NFHXBKtQInYPZLRYGOdmSkv3DjAsOPTqeAF2PwcmGalqAgVDiuic3AqQp7oMPL7hTT/ymUq2Aiw9hWJBpDGZZ2VXdBAiZxgCoveyOfeVTeljhmu85uWnQnaVhilyEmrOQmrgSHCwuNa6d1ocgI+x9aaJxsCUhsGzNwdU=
+	t=1715617666; cv=none; b=hk1xXQE1Gcd8EF5+xpCwugyZUH6JTfWaq6G/vFmsf/F1IUWzMTidUxtJR9ihAR4yjuWcrJhFLx/poDI1kxMtjQqXkE5HKV1ucBUZqKB/3tODrwMoyfJeGZWUNpXCZZ2vZj79z8aEKZVgNZWbUiN0qHOrkxYyiBp7gdQXlCSBXM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715617641; c=relaxed/simple;
-	bh=FoI8/Crln/k9Fu4H8Hk3E6wVBMT2gYt3UZjWYoFJIR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VxJKsQcZiRGMDBnIsEmXrN2FYXfsrTZHldA56d5CxQ6YbN+dAVVTIjjK2oTI5WaU7sSQvfaQwq+C6p9QnFukIDoKaT/lHwbdNaozhahP+ngddNf8TFIWHlT+bVtHYcEHrOKb+Nnm0F6PvJnyrpG94kz6rWEHmAyLV5Mm7uI9wpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GaRr1a9L; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DBRqEj013854;
-	Mon, 13 May 2024 16:27:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=2Kkf7INoYXad9rw9GnOquyxpBI9tsHNTkxfG2dISyn4=; b=Ga
-	Rr1a9LCeQRKhs2xiMPIQHu+fi97j86qjuZDqBTEKBfiYNjhku1jx63QHBSvchbZb
-	JllAhjffL4zynPvF26wkv1xcgCoea9HlQdtnJE966z0FOat+hetCfIDeKwLQR1VY
-	f4GfYMRK35Pn8ye4NZDgYtWWsdOHSGewyPvsn1VMPMh9YSzwyIPGPiVL8DE1YO5s
-	N2iszm/2fkme8YwjpnXDfCTI/FRzeK3IlA4j7Ac0YGtE1YhZNslxjDFJvzPMoqcw
-	kf6OaSlb3h9pBWF60q25gi8y5VyGB2Qvxxbv3d7U7jSwM5MHQ8Hfd6ZkuABXM6TJ
-	a433HYEGnlUPsl8sHCSw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y1y9kv3e7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 16:27:11 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44DGR98Z010391
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 16:27:10 GMT
-Received: from [10.251.44.40] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 13 May
- 2024 09:27:00 -0700
-Message-ID: <b4bf05b5-4e03-40d9-8149-956b55d91a41@quicinc.com>
-Date: Mon, 13 May 2024 19:26:58 +0300
+	s=arc-20240116; t=1715617666; c=relaxed/simple;
+	bh=indKPqo7wgjPODxZ3n6dtvDts7VXZJSCW/Fui71Wi8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CQvhbY4XERf/6yGmhJJc4Sh49GNGTHedxudq23vKHsi71Hyx10olW/ClN6JfJIqiLjSHQ0JH86u5IoWwtXtiKLEQ/tb2MZUtlyWj9wNYHR7/Jb0Kr/T1o46tKzGeKpVfENsV7ifit/r6PxVi24dsiBK7vD0keX8uBiblXgVW9qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FNZ1pN5h; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59a934ad50so1082456966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:27:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715617662; x=1716222462; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=AW+bcvxmWZZxt4c3Dh0r2wINUf+borweQyDfSngaYos=;
+        b=FNZ1pN5hNtC7xzOiicOPSaFeez0mu9wjN1ksyFhRVxok5UaO3DYJ2n7/5fsUqKHxHE
+         CTr7LpRdjBTJXII+YDLyeHzxYOla8U6oP0Cd7f98aGfT2wp37Ieep0E4evp2MDGjGlmX
+         PEJND0QbpR9xQlPvs763oesM2bbAQRAKZ2jIU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715617662; x=1716222462;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AW+bcvxmWZZxt4c3Dh0r2wINUf+borweQyDfSngaYos=;
+        b=SUl/ykSPR4kLJoMuBACISCOK4BL76/1sjyAwqGIZvGosN1iJpIw3yta4zOhmKLmMtx
+         igJ2nHv5H6RE4c2DIzSecBMFfu+WQn5tJMyR9k2cS8hUXuMAiXj/j7quHZzj8t9UKgAk
+         pdW48ZKAZKIRwlaohOglGcbH7y1jaPwG/3yXiQWmG1wjxCOunYAIngSwfdGtX+x+Ixff
+         m25uz/HLtc/0zAsPGjIP4sc1VxKe4z1cH9tUNHcPh2ONZjdsJvgUVIH8EftVlqPw9r3e
+         czNXBkqqu0qmIsFQjhwRGkVlpQ3s9uL4SmReT+oqnTS+oS6laadzyyNmXSCvjjnn89gy
+         JQYQ==
+X-Gm-Message-State: AOJu0Yxauep1JRs7ben07Jo7FsIQPKz8+79KHAdBWoXtrldni2afnFo9
+	dRd78t7/5nJOUqL/IFcwjMANySLf+A+KpdALz9I3PPLsE5ijDUhQuTsM+3p94s2tfOm/FK/f1fX
+	eTbU=
+X-Google-Smtp-Source: AGHT+IFYYDVvZCKiztxZ60rBmR6N/IZ2AG36u/vzrI65rCDMBRqsoQEUsFrCsA0nomhtvd50E2H0oQ==
+X-Received: by 2002:a17:906:b286:b0:a59:afba:d0a4 with SMTP id a640c23a62f3a-a5a2d57a74bmr602098666b.23.1715617662202;
+        Mon, 13 May 2024 09:27:42 -0700 (PDT)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a179c7d92sm621835266b.98.2024.05.13.09.27.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 09:27:41 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59a934ad50so1082447366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:27:41 -0700 (PDT)
+X-Received: by 2002:a17:906:f88c:b0:a59:c52b:9938 with SMTP id
+ a640c23a62f3a-a5a2d6653bamr696929366b.55.1715617661402; Mon, 13 May 2024
+ 09:27:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] media: qcom: camss: Decouple VFE from CSID
-Content-Language: en-US
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <laurent.pinchart@ideasonboard.com>,
-        <hverkuil-cisco@xs4all.nl>, <quic_hariramp@quicinc.com>
-References: <20240411124543.199-1-quic_grosikop@quicinc.com>
- <20240411124543.199-9-quic_grosikop@quicinc.com>
- <adbd0eeb-62c0-46a3-9cbb-92f6fde6c152@linaro.org>
-From: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
-In-Reply-To: <adbd0eeb-62c0-46a3-9cbb-92f6fde6c152@linaro.org>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com> <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+In-Reply-To: <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 13 May 2024 09:27:25 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgZ_fCwC5iGri1KOEwdV90H-myv1gSfjHfCwt82ZXaCWQ@mail.gmail.com>
+Message-ID: <CAHk-=wgZ_fCwC5iGri1KOEwdV90H-myv1gSfjHfCwt82ZXaCWQ@mail.gmail.com>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+	linux-alpha@vger.kernel.org, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, "Paul E. McKenney" <paulmck@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Qi5N_gkUIYQZJwucl1qQPxa6Cktp0eLB
-X-Proofpoint-GUID: Qi5N_gkUIYQZJwucl1qQPxa6Cktp0eLB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_11,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 malwarescore=0 phishscore=0 mlxscore=0 suspectscore=0
- spamscore=0 clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405130107
 
-Hi Vladimir,
+On Fri, 10 May 2024 at 14:20, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-alpha
 
-Thanks for the review,
+Well, despite the discussion about timing of this, I have pulled this.
+I still have a fond spot for alpha, even if it has the worst memory
+ordering ever devised, but the lack of byte operations was an
+inexcusable "we can deal with that in the compiler" senior moment in
+the design. So good riddance.
 
-On 5/13/2024 6:58 PM, Vladimir Zapolskiy wrote:
-> On 4/11/24 15:45, Gjorgji Rosikopulos wrote:
->> From: Milen Mitkov <quic_mmitkov@quicinc.com>
->>
->> Decouple the direct calls to VFE's vfe_get/put in the CSID subdev
->> in order to prepare for the introduction of IFE subdev.
->>
->> Also decouple CSID base address from VFE since on the Titan platform
->> CSID register base address resides within VFE's base address.
->>
->> Signed-off-by: Milen Mitkov <quic_mmitkov@quicinc.com>
->> Signed-off-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
->> ---
->>   .../media/platform/qcom/camss/camss-csid.c    | 16 +++--
->>   .../media/platform/qcom/camss/camss-csid.h    |  1 +
->>   drivers/media/platform/qcom/camss/camss.c     | 69 +++++++++++++++++++
->>   drivers/media/platform/qcom/camss/camss.h     |  8 +++
->>   4 files changed, 89 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c
->> b/drivers/media/platform/qcom/camss/camss-csid.c
->> index 5b23f5b8746d..858db5d4ca75 100644
->> --- a/drivers/media/platform/qcom/camss/camss-csid.c
->> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
->> @@ -602,7 +602,6 @@ static int csid_set_power(struct v4l2_subdev *sd,
->> int on)
->>       struct csid_device *csid = v4l2_get_subdevdata(sd);
->>       struct camss *camss = csid->camss;
->>       struct device *dev = camss->dev;
->> -    struct vfe_device *vfe = &camss->vfe[csid->id];
->>       int ret = 0;
->>         if (on) {
->> @@ -611,7 +610,7 @@ static int csid_set_power(struct v4l2_subdev *sd,
->> int on)
->>            * switching on the CSID. Do so unconditionally, as there is no
->>            * drawback in following the same powering order on older SoCs.
->>            */
->> -        ret = vfe_get(vfe);
->> +        ret = csid->res->parent_dev_ops->get(camss, csid->id);
->>           if (ret < 0)
->>               return ret;
->>   @@ -663,7 +662,7 @@ static int csid_set_power(struct v4l2_subdev
->> *sd, int on)
->>           regulator_bulk_disable(csid->num_supplies,
->>                          csid->supplies);
->>           pm_runtime_put_sync(dev);
->> -        vfe_put(vfe);
->> +        csid->res->parent_dev_ops->put(camss, csid->id);
->>       }
->>         return ret;
->> @@ -1021,6 +1020,11 @@ int msm_csid_subdev_init(struct camss *camss,
->> struct csid_device *csid,
->>       csid->id = id;
->>       csid->res = &res->csid;
->>   +    if (dev_WARN_ONCE(dev, !csid->res->parent_dev_ops,
-> 
-> Please remove/replace dev_WARN_ONCE() to a lesser dev_warn_once(),
-> wherever it's
-> possible please do not use/introduce WARN() type of writes to the kernel
-> log buffer...
-
-The error is fatal and driver probe will fail if this happens,
-it is good to have it in kernel log buffer.
-However i agree it can be changed to dev_warn_once.
-
-> 
->> +              "Error: CSID depends on VFE/IFE device ops!\n")) {
->> +        return -EINVAL;
->> +    }
->> +
->>       csid->res->hw_ops->subdev_init(csid);
->>         /* Memory */
->> @@ -1031,9 +1035,11 @@ int msm_csid_subdev_init(struct camss *camss,
->> struct csid_device *csid,
->>            * VFE to be initialized before CSID
->>            */
->>           if (id >= 2) /* VFE/CSID lite */
->> -            csid->base = camss->vfe[id].base + VFE_480_LITE_CSID_OFFSET;
->> +            csid->base =
->> csid->res->parent_dev_ops->get_base_address(camss, id)
->> +                + VFE_480_LITE_CSID_OFFSET;
->>           else
->> -            csid->base = camss->vfe[id].base + VFE_480_CSID_OFFSET;
->> +            csid->base =
->> csid->res->parent_dev_ops->get_base_address(camss, id)
->> +                 + VFE_480_CSID_OFFSET;
->>       } else {
->>           csid->base = devm_platform_ioremap_resource_byname(pdev,
->> res->reg[0]);
->>           if (IS_ERR(csid->base))
->> diff --git a/drivers/media/platform/qcom/camss/camss-csid.h
->> b/drivers/media/platform/qcom/camss/camss-csid.h
->> index 0e385d17c250..8cdae98e4dca 100644
->> --- a/drivers/media/platform/qcom/camss/camss-csid.h
->> +++ b/drivers/media/platform/qcom/camss/camss-csid.h
->> @@ -157,6 +157,7 @@ struct csid_hw_ops {
->>   struct csid_subdev_resources {
->>       bool is_lite;
->>       const struct csid_hw_ops *hw_ops;
->> +    const struct parent_dev_ops *parent_dev_ops;
->>       const struct csid_formats *formats;
->>   };
->>   diff --git a/drivers/media/platform/qcom/camss/camss.c
->> b/drivers/media/platform/qcom/camss/camss.c
->> index 37060eaa0ba5..4d625ef59cf7 100644
->> --- a/drivers/media/platform/qcom/camss/camss.c
->> +++ b/drivers/media/platform/qcom/camss/camss.c
->> @@ -32,6 +32,8 @@
->>   #define CAMSS_CLOCK_MARGIN_NUMERATOR 105
->>   #define CAMSS_CLOCK_MARGIN_DENOMINATOR 100
->>   +static const struct parent_dev_ops vfe_parent_dev_ops;
->> +
->>   static const struct camss_subdev_resources csiphy_res_8x16[] = {
->>       /* CSIPHY0 */
->>       {
->> @@ -87,6 +89,7 @@ static const struct camss_subdev_resources
->> csid_res_8x16[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_1,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_1
->>           }
->>       },
->> @@ -109,6 +112,7 @@ static const struct camss_subdev_resources
->> csid_res_8x16[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_1,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_1
->>           }
->>       },
->> @@ -226,6 +230,7 @@ static const struct camss_subdev_resources
->> csid_res_8x96[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       },
->> @@ -248,6 +253,7 @@ static const struct camss_subdev_resources
->> csid_res_8x96[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       },
->> @@ -270,6 +276,7 @@ static const struct camss_subdev_resources
->> csid_res_8x96[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       },
->> @@ -292,6 +299,7 @@ static const struct camss_subdev_resources
->> csid_res_8x96[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       }
->> @@ -445,6 +453,7 @@ static const struct camss_subdev_resources
->> csid_res_660[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       },
->> @@ -470,6 +479,7 @@ static const struct camss_subdev_resources
->> csid_res_660[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       },
->> @@ -495,6 +505,7 @@ static const struct camss_subdev_resources
->> csid_res_660[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       },
->> @@ -520,6 +531,7 @@ static const struct camss_subdev_resources
->> csid_res_660[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_4_7,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_4_7
->>           }
->>       }
->> @@ -714,6 +726,7 @@ static const struct camss_subdev_resources
->> csid_res_845[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -739,6 +752,7 @@ static const struct camss_subdev_resources
->> csid_res_845[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -765,6 +779,7 @@ static const struct camss_subdev_resources
->> csid_res_845[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       }
->> @@ -957,6 +972,7 @@ static const struct camss_subdev_resources
->> csid_res_8250[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -974,6 +990,7 @@ static const struct camss_subdev_resources
->> csid_res_8250[] = {
->>           .type = CAMSS_SUBDEV_TYPE_CSID,
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -991,6 +1008,7 @@ static const struct camss_subdev_resources
->> csid_res_8250[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1008,6 +1026,7 @@ static const struct camss_subdev_resources
->> csid_res_8250[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       }
->> @@ -1212,6 +1231,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .interrupt = { "csid0" },
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1227,6 +1247,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .interrupt = { "csid1" },
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1242,6 +1263,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .interrupt = { "csid2" },
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1257,6 +1279,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .interrupt = { "csid3" },
->>           .csid = {
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1272,6 +1295,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1287,6 +1311,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1302,6 +1327,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       },
->> @@ -1317,6 +1343,7 @@ static const struct camss_subdev_resources
->> csid_res_sc8280xp[] = {
->>           .csid = {
->>               .is_lite = true,
->>               .hw_ops = &csid_ops_gen2,
->> +            .parent_dev_ops = &vfe_parent_dev_ops,
->>               .formats = &csid_formats_gen2
->>           }
->>       }
->> @@ -1661,6 +1688,48 @@ void camss_pm_domain_off(struct camss *camss,
->> int id)
->>       }
->>   }
->>   +static int vfe_parent_dev_ops_get(struct camss *camss, int id)
->> +{
->> +    int ret = -EINVAL;
->> +
->> +    if (id < camss->res->vfe_num) {
-> 
-> 
-> if (id >= camss->res->vfe_num)
->     return -EINVAL;
-
-:-). I believe this is metter of personal taste. I also like
-the code which you have posted. But with function of this size
-i dont see that it will make any difference.
-
-> 
->> +        struct vfe_device *vfe = &camss->vfe[id];
->> +
->> +        ret = vfe_get(vfe);
->> +    }
->> +
->> +    return ret;
->> +}
->> +
->> +static int vfe_parent_dev_ops_put(struct camss *camss, int id)
->> +{
->> +    if (id < camss->res->vfe_num) {
->> +        struct vfe_device *vfe = &camss->vfe[id];
->> +
->> +        vfe_put(vfe);
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static void __iomem
->> +*vfe_parent_dev_ops_get_base_address(struct camss *camss, int id)
->> +{
->> +    if (id < camss->res->vfe_num) {
->> +        struct vfe_device *vfe = &camss->vfe[id];
->> +
->> +        return vfe->base;
->> +    }
->> +
->> +    return NULL;
-> 
-> I can find code snippets above like
-> 
->     if (IS_ERR(csid->base))
->         ...
-> 
-> So, is it really a good idea to return NULL on error? Probably it might
-> be better
-> to return a reasonable error to the caller.
-
-As general rule i agree. But here either we have address or not,
-i dont see the reason to return an error code. Also i dont see what
-caller will do if he gets error code instead of NULL.
-I am refering in particular this case. If we have different error paths
-of failiure maybe it will more sense.
-
-
-> 
->> +}
->> +
->> +static const struct parent_dev_ops vfe_parent_dev_ops = {
->> +    .get = vfe_parent_dev_ops_get,
->> +    .put = vfe_parent_dev_ops_put,
->> +    .get_base_address = vfe_parent_dev_ops_get_base_address
->> +};
->> +
->>   /*
->>    * camss_of_parse_endpoint_node - Parse port endpoint node
->>    * @dev: Device
->> diff --git a/drivers/media/platform/qcom/camss/camss.h
->> b/drivers/media/platform/qcom/camss/camss.h
->> index a5be9e872992..b3c967bcf8a9 100644
->> --- a/drivers/media/platform/qcom/camss/camss.h
->> +++ b/drivers/media/platform/qcom/camss/camss.h
->> @@ -143,6 +143,12 @@ struct camss_clock {
->>       u32 nfreqs;
->>   };
->>   +struct parent_dev_ops {
->> +    int (*get)(struct camss *camss, int id);
->> +    int (*put)(struct camss *camss, int id);
->> +    void __iomem *(*get_base_address)(struct camss *camss, int id);
->> +};
->> +
->>   void camss_add_clock_margin(u64 *rate);
->>   int camss_enable_clocks(int nclocks, struct camss_clock *clock,
->>               struct device *dev);
->> @@ -153,6 +159,8 @@ s64 camss_get_link_freq(struct media_entity
->> *entity, unsigned int bpp,
->>   int camss_get_pixel_clock(struct media_entity *entity, u64
->> *pixel_clock);
->>   int camss_pm_domain_on(struct camss *camss, int id);
->>   void camss_pm_domain_off(struct camss *camss, int id);
->> +int camss_vfe_get(struct camss *camss, int id);
->> +void camss_vfe_put(struct camss *camss, int id);
->>   void camss_delete(struct camss *camss);
->>     #endif /* QC_MSM_CAMSS_H */
-> 
-> -- 
-> Best wishes,
-> Vladimir
+            Linus
 
