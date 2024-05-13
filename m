@@ -1,507 +1,1731 @@
-Return-Path: <linux-kernel+bounces-177392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDED8C3DE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:13:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAB38C3E0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22614281DAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:13:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58560B20FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B62714882C;
-	Mon, 13 May 2024 09:13:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6321487F0;
+	Mon, 13 May 2024 09:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="C51z2VbW"
-Received: from EUR01-VE1-obe.outbound.protection.outlook.com (mail-ve1eur01on2040.outbound.protection.outlook.com [40.107.14.40])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r37gOMX1"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F61A1494A6;
-	Mon, 13 May 2024 09:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.14.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715591589; cv=fail; b=kOFdhkVRym7lJi9rBNE5Nl5xph+bdZYUV9ecWIn6sJBFL8NNWg80k3FtXcCGiWuyPpZWN/wHlxrxW0pz8+/I/EM4c369jYUSmVtuSxYpzMvHGp1LXb1RyMZAD+fv+r9qrmg+inWbysZKPi3TbfMOlWwpP58KpQszLX5E2D1Rtk4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715591589; c=relaxed/simple;
-	bh=Zh7YpwMv/nCIJz7Ve4uLw/xUE9R6TpwKE9s52I2y9Uo=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=okPKPb7+l234BnSdxN6j7mDgroi9ukJVtlcekwrUKFjFPeQLobNVF6N032DpUbCV1SyK940Cr9GK3dhnMh59zPTvcO9GHMm5sZclu8+WbXdZbVu6S8DjN7/Rc129zSuSXCY4KDOtRMJopVsqKIa/UdQBI7Cm7wFqsG0FSd8lG28=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=C51z2VbW; arc=fail smtp.client-ip=40.107.14.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YLUFl8QgQtKgVXtZk+XWjwi7OKSIo+BaCmG4yLPY03Br73aoOkxiSRQmCGQ5ptPnritlBjnZBx4h1rioQ6fwKhIemNDQqZ5TGQ7LurYna0s+hsTRVjM0Xv8ailQY+wyZbu+skqjawifxtL+5me8UKiAiEDokVAMZZ8gfuPApeyGvqxHaww4LGo1ccNWhITkqym6Cqi34TzL94gPoGr6ACtb2JHoixEPRe5VwzmXijK5X08XwY1j7Lj2nGY4OhStoPZ34QMm9JmIWyosYWcmw1JbeNsGHdC8we3Zxr/dNW0XMMYZOJiKJBWShMjI0eKwWrye/JvvL6kA2n+dJg7k0Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OU7izlKho4VwHmq9uf1XihUx42ovfQ1s1kVAXmpkjRc=;
- b=cloQx8gYzS1/M7jVtJ3EZ6N8XPf2tXRn9ZHxjYApP5y0leZdU9TEcl0BFqp0L+XG7FX6F/9OLvScI4mRUztuB1brR9cVvjBedSQqOCa0szLZtYpxsJr6qkTPjTDKkCxMaBhxHJ//CKeQbXg392IFuD9XqKTB9rTEpdHK/819f6ZTXZvcum1SQ0GWIxTkBxkGGushUmVptQbv0Lpc1O4ZvD+h7t2xaD30+v4FJiQH5TD2SeXr9RPwhhJDGieamA/dg2wWW2oIxdaVLLth0s1b+iixjL0/MAIR5vrr1fQMPaukY0ZZchQnYRV9uY3XouchwDlZYu+xz4gKoiIPuhopXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OU7izlKho4VwHmq9uf1XihUx42ovfQ1s1kVAXmpkjRc=;
- b=C51z2VbWAAFlAaZHUrgxzRgTNd85S0bQ3K+rBqsmKZdZ4ar7wdGjtEAMjrdQ6+cBM1mwk5NWlD6xiRr2MOhmtiCCxiMxwKHqxhC11HFhLcr4KIOeoN7WaaZjPMNcomMNvBdeoqZezMagky3p25AUQxCCsMTs6+w3Q0nPsnEQ3bc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by PAXPR04MB8910.eurprd04.prod.outlook.com (2603:10a6:102:20d::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 09:13:04 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 09:13:04 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Mon, 13 May 2024 17:20:47 +0800
-Subject: [PATCH 2/2] pinctrl: imx: Add pinctrl driver support for i.MX91
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240513-imx91-pinctrl-v1-2-c99a23c6843a@nxp.com>
-References: <20240513-imx91-pinctrl-v1-0-c99a23c6843a@nxp.com>
-In-Reply-To: <20240513-imx91-pinctrl-v1-0-c99a23c6843a@nxp.com>
-To: Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
- Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715592058; l=10779;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=gdaFJK07OmCQ2qJlNS1p4HLYwSgg8vqhFud9IOcFEdk=;
- b=D8v0T8MBJmB4riOd93Ja2/mA0r67zfJy5GuHCGXz3xd9rHoaZYQXWsFvLVRSnWVLCUUEqc+da
- TQqC/f/SLaECVehilMBsaMfho1W7Y2UhlyhqWXU3r9woCGJnEM+Lzon
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SGXP274CA0001.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::13)
- To DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C411474CF;
+	Mon, 13 May 2024 09:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715592189; cv=none; b=dGUI2djq/YsZBbAOR3kU5VcweRJD6iO+blVt0Oy3Sm56EAyuCCBGxR65Zz1sV0+8NmBBmr21UZWIg2rqEYrq1+BjtNZ/wgllPl+q6mmhH+HoV4gJ81RbZWSZT+VRK8Iqd5bI6RF9Q8IFiJ2KboT9k2mHZRxE4/9jqSjUN4CiWI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715592189; c=relaxed/simple;
+	bh=if8PkTnMwWhmWFjZWfpTQtItKUzrGvbw+TW1j9aiZCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tQtX0BY/QKfNYAZqKADy+5yOgDftratCu602Dr1asYGmnNHe7xHGEJx4ll05MbC2hrjGQwX1xKwDJkMjogCHse1udLLHUoT7PiQUaTQQhwMwB80T1cC0blBWe/CIR6EeMYjRwjqQOJJhnm0eCNgoD0L2ye9lmKD8jdgOusQoiec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r37gOMX1; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D7sTti013521;
+	Mon, 13 May 2024 11:22:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=xuf+Mn0UBIGVfLwPwy7RF7hpzP7JwaKr3iIfsJ8++Kw=; b=r3
+	7gOMX1+e52lyfh/oRqt6XzvpL+XhyxnxeVquIofNcbAuongBEUjo2xE3HkYztXzu
+	SgUD+fK8XonZ+uqeFwftfBhbNZ6xWDuMXcj31tmPdFOq/XMM+g81XJqBl9S5IKHx
+	qNAAY3Pf1P8Mkv4+BzvoS0hHUEtLaJdc5lu/kM4NKb4G3/O19YU1MKVr0e3eLSq6
+	wCXZaoTbDLMI7297U8tqKCUqbjvd9gnwswv+K8Xksj4PNpvSE8hFzSjGBNPQ0AeH
+	bpDi6Jbi2SoEQsdR1T0R4K1QXgPgaYQ8s84yBP/QCVsKQnMNZc5OBxmAU/xxAr2L
+	lXXBJLPkqKJP8CS2I1vw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2j80kme5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 11:22:24 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 842C140044;
+	Mon, 13 May 2024 11:22:10 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 001AD21231B;
+	Mon, 13 May 2024 11:21:19 +0200 (CEST)
+Received: from [10.252.0.239] (10.252.0.239) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
+ 2024 11:21:19 +0200
+Message-ID: <bdbfedd5-11bb-42f2-8548-b7157903b936@foss.st.com>
+Date: Mon, 13 May 2024 11:21:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|PAXPR04MB8910:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7be6c6e-f9c0-4259-f69d-08dc732ce540
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|7416005|52116005|1800799015|366007|921011|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WjE0QTN1NWlFcGg0SUhURFlvc2sxR3JYN3I1WDNUSjR4SGo4TkY0ZFNjOGJP?=
- =?utf-8?B?UGoxRVNsQTgzc0Z3VE9laWxJK3RsL1NUeC93T21oUkZMcE55Mkt1b3dJQWQr?=
- =?utf-8?B?c3lQc0ZFRzAybTNuRkp0eVNNcHR1bWJKL1p3NlcxZU1jRW0rMWY3dFlPRzlH?=
- =?utf-8?B?UTFxdWlUV2w4dEZMc3c4aFRrNWxHNFVYQkM2ejdkZXovOUZMUXlzK0RuL3po?=
- =?utf-8?B?eXZPUFA4VFZjMGZwaFdLakIrSHE2My84LzhGYzdVMENtS1RtR3Brc2xEeXNB?=
- =?utf-8?B?RzBVR0R3eE1tOFdSYW5EdHU2NC81b3o5Z0p4WExabHpZRWZDdWJBTWdSSmwr?=
- =?utf-8?B?Vm9wdVU2cStXZjNwNGVqTlcwS0FxbHVYQktTWnNlMm9mZXlXOU1FNkJkSFFR?=
- =?utf-8?B?Tm5DVk9hYXQ0TmY0ZU0zWkNjTnVjR3ZsSmVvTjREY0d6aDZFQXRoWEMrU21x?=
- =?utf-8?B?a1ppNXd4Y0U3eUZQOUgyT2NuUmFXR2VuRURrSHlaQmw1b0ZuWTZKbVI0bkJv?=
- =?utf-8?B?L1huK3hyeWd0MGxSM2NLV0JtZ096ZlA5YzdmQUxxeXNrQlAzMGhWTEV3OW92?=
- =?utf-8?B?ckhWVXhydGZ2M2VlZldMMkxTVDVlakY1c1RyRzR5QzFEWXVsS3B3VHorRzhk?=
- =?utf-8?B?d09QYnpKZGxtUzExK1FWTnlMcXBteU13NnhBU1BJazgyeUlBK1d2aU13bzJm?=
- =?utf-8?B?cFJEN2tQYVdiTUwzNytuYXFGT3Q1TmlJclhCMmhpclprUk9USFFLN25LUWVX?=
- =?utf-8?B?V1RNaVprRmRQa3k0ckI0UlRmT1RkaExNUWR3R1ZYSTB4K0l1SVpvQzJTSThx?=
- =?utf-8?B?WTlGNUpDby9hV2gra3pjMU9ZM3N3MlRvOFdVKytkYmM2alQvREM4dEpWb2Q5?=
- =?utf-8?B?S25TckVzY2pITTVteVQvb3JOSFAwaU9aWDNhNmtEWHBHQ3ZtMjVlcEpHTXFp?=
- =?utf-8?B?T0YyYkRYYU8zMnNCU210emk2M0w5VXFPaUo0ejJNSFF4NzF3K1JJZTZNYVhl?=
- =?utf-8?B?QS9ua3RBTWt5cGZJNXJnbTNxdklKQkI0c3pZTkY5NXZoZVFya29GOTIyZ2or?=
- =?utf-8?B?K0RpdVRvT1pIT04ra1lhK1U1R0svMW9hQmZFUEhpMm45dnVJd1MvRElSelp5?=
- =?utf-8?B?TUtmNmNSZWI5WUJkSmdxSExNSVQrbGZRaTdMLzZNRVVtbElvSStuWFkvQzFq?=
- =?utf-8?B?QVI3blc0cDhXZFRaOGVXR0dWNExlNmxmMDkyYzAydzNPbnhDYnA4MXJYMUNR?=
- =?utf-8?B?U2dlK1JhblZoOFBDR2FFRnA0NGZuQzUyRHlISWVsTVJ1cFpQbnQrVkpHQnF0?=
- =?utf-8?B?UWxpMkYwaXVnZ1ZUVXlWMTU4WDljTkNGdzhaRTVON1RVUjc3Z2lIMzhyZnNI?=
- =?utf-8?B?RXpJY3Y1MXVGOS8vdUhOYXNPSDNEQzZzVkEvaUhBcEVLTWlVYUVQYVZEekM5?=
- =?utf-8?B?bzJpSk52elR4YTZGSXdaaEpkT2I3YTdGOTdyTzFNTnpDR0RyWFZ5ZkJLdTQ1?=
- =?utf-8?B?Mi9vSUxlaGNLenhLOXYyQXBidHJTNEJPZFl2QXl1WENpSmZGaG5OcUZpYjNw?=
- =?utf-8?B?NWV5cFNVaEM2ckVWRWpaZktVd1JGYUhaNlVPMityak50SVV1QTFiRCtTcFh3?=
- =?utf-8?B?Y2xDVXBYdFlOVUdTMnZLUEVBM3EycW9NN1h3VmJ6Y0xtamRFMENraUZ6UzZv?=
- =?utf-8?B?T2xpUU0zTUtCZWVDNTV3RzEvTHpKMnRoWmQ1RzYwMXpPMGVFZmpxOUJodjZy?=
- =?utf-8?B?UVdDdEtrYTcrd0xXMU14U0cvUUpmN1VqMTQyeWdmTWlzdWYxOS9DZUFMTG5J?=
- =?utf-8?Q?ooPsOtuk557OyGLnwSns2/KvrmePaOJ8QgGmI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(52116005)(1800799015)(366007)(921011)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aVFXUFdsZVd4Tmc3MmZySXFZcHJiQnBiZGN6T3NJYWI2MU5MYkN3M0hETDZo?=
- =?utf-8?B?Wkxtc3lsMXViTXJzdDJWM0NaUWQvUW0ydzBxdjNVSldRdEk3ckRkNTdBSHZi?=
- =?utf-8?B?SUhwYVIyRUlsekE5YjRQdnhJZTNnODNhcE9lSXZhNi8zd1BOZE1MT1ZDWXlD?=
- =?utf-8?B?TFJSTXpJUVhBN0dCYkZPSHpBV2liY1ZNSHhWMkl6VkpWb01xMHNjdTk4TXJ0?=
- =?utf-8?B?Zk5TUEdFdXZ1bU9mMmxnL1FUTCtScGwreU93MUhRL1Bzb2hGb3V5My9yZzVD?=
- =?utf-8?B?K000T04xZldxL1ZzdS8xcno0T1VTOGI1Wmc3MHRlemdlazluVi90b0k3elFW?=
- =?utf-8?B?NHJQcklVT1hDcEZJaG1kT2pMTEFVbWxaQVFXV3A1VE9lM0pQS0hHVUZOeGVs?=
- =?utf-8?B?NHRuNnhHbXk1eTZNbzB3bGYrSGZDMjBqTWk3RkkzcW05aUxUa09lNkhlME5E?=
- =?utf-8?B?Mi9nc29QZHA0QVNYclg1SjBFdVVNWnRZQzd2bSs4NHh2dnkzVkFyRjl1YXBt?=
- =?utf-8?B?cEpWbG9hc3BMRWdVMmxQRGVjbjRGMlFCalNMaC9Yb3VUeUk4UHFJOFlLMUtV?=
- =?utf-8?B?dm11c1J1NGhSV0lIQXRYZUQ2dkVXRG9TZS8wekJxbGFNcGprV1IyMUNyNWlJ?=
- =?utf-8?B?WGtjcU5qNlRZS2Mzc1JDWktnbzd2NUdZdGxZU2Ztc09BQVdXYzQxWTZHT3VQ?=
- =?utf-8?B?YWlaTG1GR09XK2piWmZTMCtRWjdOdU1JSGQ5dUFMaFZReFh4ZnV2aFh3NDg1?=
- =?utf-8?B?Vkx5OGU3eUpDNUljeWZvd094U21CRWg0RmFWNE1HR2NYeFR0Tjg4TGYxRUdx?=
- =?utf-8?B?Y1NMbjA3ZTVpcDNBRTZ3cUZTbHlCMXJ1UmduRENTdGxDbHArVlhGbTE2eEJX?=
- =?utf-8?B?YTN1cGF6dXprRE5IbHFjd2RsZFlZVWVwV2NQMERhV2g5clBZa1dleHRRbVNJ?=
- =?utf-8?B?bGtsMEVhdkt6S3FJbnlyNEUwTm5aOWxhY2RGVXMxWkZ5NWJXaGNpZ0xxbVJ4?=
- =?utf-8?B?dXZuVk9YNjFqMU9yaXRKOTJ5c2gxaVQyb3pzTkhEckhhTVdRNFhVb0h2KytT?=
- =?utf-8?B?UEpOdDMyeWsyOFN2SnlsblRyV0tnVUtsTDB6WllUTlAwRXpydW9BeE11a09w?=
- =?utf-8?B?dEt4TmFoaVp0VUxIbW96bHg4RHlQU0hUaUVFZUJMOVpZQ1E4VktkTUMwRFBh?=
- =?utf-8?B?K3FrcS9MSXRGUmRVbWJwZnpJSlNZYWRvTWNKbHRYRm4zUDVid0lKeTNBekdH?=
- =?utf-8?B?KzNnQmM1bUNhWEt4UTlOVnlYeVdLbi9OcnpFK3EvRWxTMW9wSGtiWEVlQnQr?=
- =?utf-8?B?Mm1JMURJNFNncS8rc2pMMFd2alYxWGU1QlBKNW5EZm1QZERwdFg1aDIyNUp5?=
- =?utf-8?B?MEJDMVZSTEM1RFdLZDM3ZU9xSjVLY0NWa2ltNXRwT2FZY00rdGd2SUxJYXRa?=
- =?utf-8?B?SVBrTlVNQ1NMQUxGSVUyRlhXZ0QrZnhIQ0wzM1ZrdkdJQmxObm9nU2ZwRDBp?=
- =?utf-8?B?Y0Z5QkNEVE55NjVqRCtvaWp0ekpQTlhsWmRyYTNPOXJHbjRRajlRd3Fwc1M4?=
- =?utf-8?B?bWlpOHpScTJJVU1LRDZnc3FKbWNwSkhvclR3YWdyOU9PeUtKNWI3NFpnejlt?=
- =?utf-8?B?T0RMeGJqa3k0MTJiVVRqOVVRMmJoblp6V3c5K0NsVEdsNGE5RFhNS2FYWmdU?=
- =?utf-8?B?NExRV3RaaSt2QUdzVlNiN29xMk1KY1J0ODZBV3c1SnFLMFRaQjIvRnRxYWNE?=
- =?utf-8?B?elBQRmZpakdtaXBtR1NEa3RqVEl2eTJ2SWRkaEZEZXZNVzhiMk5Wb1JFYTVM?=
- =?utf-8?B?LzE0bjgvUEtjandzYTdTMHIwVjNVTTFXbm9zOGhVa1pWOFA3QTRnMjdkTlJX?=
- =?utf-8?B?bTVuQW8zZzcxMG1TK0ovYTVHbk5aVytlZzBJQ0NjU0RhcTVrYW54anlOWE5J?=
- =?utf-8?B?OGRZclZpU0szZlNucHpjTU5XaDZ6Vy8wZkI2bGhuVkdXYytBQzlGcGhkTm5J?=
- =?utf-8?B?VC9IdWlaSkZvb3JrN1FOSFQ0Wml4djdYMitnVWFoRVFKQTVjdjV6dlJ5WlN5?=
- =?utf-8?B?Q1N6K3J4K0NqMCtNcmJ6eU9lMDZwT3pPTy9wV3BHYWIyVXhFTHVOR1l4dXM3?=
- =?utf-8?Q?lDHOviYfpED9pnwbiWaV8cneT?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7be6c6e-f9c0-4259-f69d-08dc732ce540
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 09:13:04.2686
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TsBo9oQ2h3Eki/RFOGERb+SPzu1pduuuwAWCbMYD85ss4/5RwGfhw8HjfRyVrXOfs+6w/j0XQdeCABoesYC3ZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8910
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/12] dmaengine: Add STM32 DMA3 support
+To: Frank Li <Frank.li@nxp.com>
+CC: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>
+References: <20240423123302.1550592-1-amelie.delaunay@foss.st.com>
+ <20240423123302.1550592-6-amelie.delaunay@foss.st.com>
+ <ZjYst0rpC4zM5fs1@matsya> <01952335-7364-46ac-b02d-268c2ebd7e66@foss.st.com>
+ <ZjqOgBWrYEM5/8BL@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <ZjqOgBWrYEM5/8BL@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_06,2024-05-10_02,2023-05-22_02
 
-From: Peng Fan <peng.fan@nxp.com>
+Hi Frank,
 
-Add NXP i.MX91 pinctrl driver
+On 5/7/24 22:26, Frank Li wrote:
+> On Tue, May 07, 2024 at 01:33:31PM +0200, Amelie Delaunay wrote:
+>> Hi Vinod,
+>>
+>> Thanks for the review.
+>>
+>> On 5/4/24 14:40, Vinod Koul wrote:
+>>> On 23-04-24, 14:32, Amelie Delaunay wrote:
+>>>> STM32 DMA3 driver supports the 3 hardware configurations of the STM32 DMA3
+>>>> controller:
+>>>> - LPDMA (Low Power): 4 channels, no FIFO
+>>>> - GPDMA (General Purpose): 16 channels, FIFO from 8 to 32 bytes
+>>>> - HPDMA (High Performance): 16 channels, FIFO from 8 to 256 bytes
+>>>> Hardware configuration of the channels is retrieved from the hardware
+>>>> configuration registers.
+>>>> The client can specify its channel requirements through device tree.
+>>>> STM32 DMA3 channels can be individually reserved either because they are
+>>>> secure, or dedicated to another CPU.
+>>>> Indeed, channels availability depends on Resource Isolation Framework
+>>>> (RIF) configuration. RIF grants access to buses with Compartiment ID
+>>>
+>>> Compartiment? typo...?
+>>>
+>>
+>> Sorry, indeed, Compartment instead.
+>>
+>>>> (CIF) filtering, secure and privilege level. It also assigns DMA channels
+>>>> to one or several processors.
+>>>> DMA channels used by Linux should be CID-filtered and statically assigned
+>>>> to CID1 or shared with other CPUs but using semaphore. In case CID
+>>>> filtering is not configured, dma-channel-mask property can be used to
+>>>> specify available DMA channels to the kernel, otherwise such channels
+>>>> will be marked as reserved and can't be used by Linux.
+>>>>
+>>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+>>>> ---
+>>>>    drivers/dma/stm32/Kconfig      |   10 +
+>>>>    drivers/dma/stm32/Makefile     |    1 +
+>>>>    drivers/dma/stm32/stm32-dma3.c | 1431 ++++++++++++++++++++++++++++++++
+>>>>    3 files changed, 1442 insertions(+)
+>>>>    create mode 100644 drivers/dma/stm32/stm32-dma3.c
+>>>>
+>>>> diff --git a/drivers/dma/stm32/Kconfig b/drivers/dma/stm32/Kconfig
+>>>> index b72ae1a4502f..4d8d8063133b 100644
+>>>> --- a/drivers/dma/stm32/Kconfig
+>>>> +++ b/drivers/dma/stm32/Kconfig
+>>>> @@ -34,4 +34,14 @@ config STM32_MDMA
+>>>>    	  If you have a board based on STM32 SoC with such DMA controller
+>>>>    	  and want to use MDMA say Y here.
+>>>> +config STM32_DMA3
+>>>> +	tristate "STMicroelectronics STM32 DMA3 support"
+>>>> +	select DMA_ENGINE
+>>>> +	select DMA_VIRTUAL_CHANNELS
+>>>> +	help
+>>>> +	  Enable support for the on-chip DMA3 controller on STMicroelectronics
+>>>> +	  STM32 platforms.
+>>>> +	  If you have a board based on STM32 SoC with such DMA3 controller
+>>>> +	  and want to use DMA3, say Y here.
+>>>> +
+>>>>    endif
+>>>> diff --git a/drivers/dma/stm32/Makefile b/drivers/dma/stm32/Makefile
+>>>> index 663a3896a881..5082db4b4c1c 100644
+>>>> --- a/drivers/dma/stm32/Makefile
+>>>> +++ b/drivers/dma/stm32/Makefile
+>>>> @@ -2,3 +2,4 @@
+>>>>    obj-$(CONFIG_STM32_DMA) += stm32-dma.o
+>>>>    obj-$(CONFIG_STM32_DMAMUX) += stm32-dmamux.o
+>>>>    obj-$(CONFIG_STM32_MDMA) += stm32-mdma.o
+>>>> +obj-$(CONFIG_STM32_DMA3) += stm32-dma3.o
+>>>
+>>> are there any similarities in mdma/dma and dma3..?
+>>> can anything be reused...?
+>>>
+>>
+>> DMA/MDMA were originally intended for STM32 MCUs and have been used in
+>> STM32MP1 MPUs.
+>> New MPUs (STM32MP2, ...) and STM32 MCUs (STM32H5, STM32N6, ...) use DMA3.
+>> Unlike DMA/MDMA, DMA3 can be declined in multiple configurations, LPDMA,
+>> GPDMA, HPDMA, and among these global configurations, there are possible
+>> sub-configurations (e.g. channel fifo size). stm32-dma3 uses the hardware
+>> configuration registers to discover the controller/channels capabilities.
+>> Reuse stm32-dma or stm32-mdma would lead to complicating the driver and
+>> making future stm32-dma3 evolutions for next STM32 MPUs intricate and very
+>> difficult.
+> 
+> I think your reason still not enough to create new driver instead try to
+> reuse old one.
+> 
+> Does register layout or dma descriptor is totally difference?
+> 
+> If dma descriptor format is the same, at least you can reuse prepare DMA
+> descriptor part.
+> 
+> Choose channel is independt part of DMA channel. You can create sperate
+> one for difference DMA engine.
+> 
+> Frank
+> 
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/pinctrl/freescale/Kconfig         |   7 +
- drivers/pinctrl/freescale/Makefile        |   1 +
- drivers/pinctrl/freescale/pinctrl-imx91.c | 271 ++++++++++++++++++++++++++++++
- 3 files changed, 279 insertions(+)
+stm32-dma is not considered for reuse : register layout is completely 
+different and this DMA controller doesn't rely on descriptors mechanism.
 
-diff --git a/drivers/pinctrl/freescale/Kconfig b/drivers/pinctrl/freescale/Kconfig
-index 27bdc548f3a7..011dbc9b9680 100644
---- a/drivers/pinctrl/freescale/Kconfig
-+++ b/drivers/pinctrl/freescale/Kconfig
-@@ -184,6 +184,13 @@ config PINCTRL_IMXRT1050
- 	help
- 	  Say Y here to enable the imxrt1050 pinctrl driver
- 
-+config PINCTRL_IMX91
-+	tristate "IMX91 pinctrl driver"
-+	depends on ARCH_MXC
-+	select PINCTRL_IMX
-+	help
-+	  Say Y here to enable the imx91 pinctrl driver
-+
- config PINCTRL_IMX93
- 	tristate "IMX93 pinctrl driver"
- 	depends on ARCH_MXC
-diff --git a/drivers/pinctrl/freescale/Makefile b/drivers/pinctrl/freescale/Makefile
-index 647dff060477..70747bdf8fc2 100644
---- a/drivers/pinctrl/freescale/Makefile
-+++ b/drivers/pinctrl/freescale/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_PINCTRL_IMX8QM)	+= pinctrl-imx8qm.o
- obj-$(CONFIG_PINCTRL_IMX8QXP)	+= pinctrl-imx8qxp.o
- obj-$(CONFIG_PINCTRL_IMX8DXL)	+= pinctrl-imx8dxl.o
- obj-$(CONFIG_PINCTRL_IMX8ULP)	+= pinctrl-imx8ulp.o
-+obj-$(CONFIG_PINCTRL_IMX91)	+= pinctrl-imx91.o
- obj-$(CONFIG_PINCTRL_IMX93)	+= pinctrl-imx93.o
- obj-$(CONFIG_PINCTRL_VF610)	+= pinctrl-vf610.o
- obj-$(CONFIG_PINCTRL_MXS)	+= pinctrl-mxs.o
-diff --git a/drivers/pinctrl/freescale/pinctrl-imx91.c b/drivers/pinctrl/freescale/pinctrl-imx91.c
-new file mode 100644
-index 000000000000..5421141c586a
---- /dev/null
-+++ b/drivers/pinctrl/freescale/pinctrl-imx91.c
-@@ -0,0 +1,271 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/platform_device.h>
-+
-+#include "pinctrl-imx.h"
-+
-+enum imx91_pads {
-+	IMX91_PAD_DAP_TDI = 0,
-+	IMX91_PAD_DAP_TMS_SWDIO = 1,
-+	IMX91_PAD_DAP_TCLK_SWCLK = 2,
-+	IMX91_PAD_DAP_TDO_TRACESWO = 3,
-+	IMX91_PAD_GPIO_IO00 = 4,
-+	IMX91_PAD_GPIO_IO01 = 5,
-+	IMX91_PAD_GPIO_IO02 = 6,
-+	IMX91_PAD_GPIO_IO03 = 7,
-+	IMX91_PAD_GPIO_IO04 = 8,
-+	IMX91_PAD_GPIO_IO05 = 9,
-+	IMX91_PAD_GPIO_IO06 = 10,
-+	IMX91_PAD_GPIO_IO07 = 11,
-+	IMX91_PAD_GPIO_IO08 = 12,
-+	IMX91_PAD_GPIO_IO09 = 13,
-+	IMX91_PAD_GPIO_IO10 = 14,
-+	IMX91_PAD_GPIO_IO11 = 15,
-+	IMX91_PAD_GPIO_IO12 = 16,
-+	IMX91_PAD_GPIO_IO13 = 17,
-+	IMX91_PAD_GPIO_IO14 = 18,
-+	IMX91_PAD_GPIO_IO15 = 19,
-+	IMX91_PAD_GPIO_IO16 = 20,
-+	IMX91_PAD_GPIO_IO17 = 21,
-+	IMX91_PAD_GPIO_IO18 = 22,
-+	IMX91_PAD_GPIO_IO19 = 23,
-+	IMX91_PAD_GPIO_IO20 = 24,
-+	IMX91_PAD_GPIO_IO21 = 25,
-+	IMX91_PAD_GPIO_IO22 = 26,
-+	IMX91_PAD_GPIO_IO23 = 27,
-+	IMX91_PAD_GPIO_IO24 = 28,
-+	IMX91_PAD_GPIO_IO25 = 29,
-+	IMX91_PAD_GPIO_IO26 = 30,
-+	IMX91_PAD_GPIO_IO27 = 31,
-+	IMX91_PAD_GPIO_IO28 = 32,
-+	IMX91_PAD_GPIO_IO29 = 33,
-+	IMX91_PAD_CCM_CLKO1 = 34,
-+	IMX91_PAD_CCM_CLKO2 = 35,
-+	IMX91_PAD_CCM_CLKO3 = 36,
-+	IMX91_PAD_CCM_CLKO4 = 37,
-+	IMX91_PAD_ENET1_MDC = 38,
-+	IMX91_PAD_ENET1_MDIO = 39,
-+	IMX91_PAD_ENET1_TD3 = 40,
-+	IMX91_PAD_ENET1_TD2 = 41,
-+	IMX91_PAD_ENET1_TD1 = 42,
-+	IMX91_PAD_ENET1_TD0 = 43,
-+	IMX91_PAD_ENET1_TX_CTL = 44,
-+	IMX91_PAD_ENET1_TXC = 45,
-+	IMX91_PAD_ENET1_RX_CTL = 46,
-+	IMX91_PAD_ENET1_RXC = 47,
-+	IMX91_PAD_ENET1_RD0 = 48,
-+	IMX91_PAD_ENET1_RD1 = 49,
-+	IMX91_PAD_ENET1_RD2 = 50,
-+	IMX91_PAD_ENET1_RD3 = 51,
-+	IMX91_PAD_ENET2_MDC = 52,
-+	IMX91_PAD_ENET2_MDIO = 53,
-+	IMX91_PAD_ENET2_TD3 = 54,
-+	IMX91_PAD_ENET2_TD2 = 55,
-+	IMX91_PAD_ENET2_TD1 = 56,
-+	IMX91_PAD_ENET2_TD0 = 57,
-+	IMX91_PAD_ENET2_TX_CTL = 58,
-+	IMX91_PAD_ENET2_TXC = 59,
-+	IMX91_PAD_ENET2_RX_CTL = 60,
-+	IMX91_PAD_ENET2_RXC = 61,
-+	IMX91_PAD_ENET2_RD0 = 62,
-+	IMX91_PAD_ENET2_RD1 = 63,
-+	IMX91_PAD_ENET2_RD2 = 64,
-+	IMX91_PAD_ENET2_RD3 = 65,
-+	IMX91_PAD_SD1_CLK = 66,
-+	IMX91_PAD_SD1_CMD = 67,
-+	IMX91_PAD_SD1_DATA0 = 68,
-+	IMX91_PAD_SD1_DATA1 = 69,
-+	IMX91_PAD_SD1_DATA2 = 70,
-+	IMX91_PAD_SD1_DATA3 = 71,
-+	IMX91_PAD_SD1_DATA4 = 72,
-+	IMX91_PAD_SD1_DATA5 = 73,
-+	IMX91_PAD_SD1_DATA6 = 74,
-+	IMX91_PAD_SD1_DATA7 = 75,
-+	IMX91_PAD_SD1_STROBE = 76,
-+	IMX91_PAD_SD2_VSELECT = 77,
-+	IMX91_PAD_SD3_CLK = 78,
-+	IMX91_PAD_SD3_CMD = 79,
-+	IMX91_PAD_SD3_DATA0 = 80,
-+	IMX91_PAD_SD3_DATA1 = 81,
-+	IMX91_PAD_SD3_DATA2 = 82,
-+	IMX91_PAD_SD3_DATA3 = 83,
-+	IMX91_PAD_SD2_CD_B = 84,
-+	IMX91_PAD_SD2_CLK = 85,
-+	IMX91_PAD_SD2_CMD = 86,
-+	IMX91_PAD_SD2_DATA0 = 87,
-+	IMX91_PAD_SD2_DATA1 = 88,
-+	IMX91_PAD_SD2_DATA2 = 89,
-+	IMX91_PAD_SD2_DATA3 = 90,
-+	IMX91_PAD_SD2_RESET_B = 91,
-+	IMX91_PAD_I2C1_SCL = 92,
-+	IMX91_PAD_I2C1_SDA = 93,
-+	IMX91_PAD_I2C2_SCL = 94,
-+	IMX91_PAD_I2C2_SDA = 95,
-+	IMX91_PAD_UART1_RXD = 96,
-+	IMX91_PAD_UART1_TXD = 97,
-+	IMX91_PAD_UART2_RXD = 98,
-+	IMX91_PAD_UART2_TXD = 99,
-+	IMX91_PAD_PDM_CLK = 100,
-+	IMX91_PAD_PDM_BIT_STREAM0 = 101,
-+	IMX91_PAD_PDM_BIT_STREAM1 = 102,
-+	IMX91_PAD_SAI1_TXFS = 103,
-+	IMX91_PAD_SAI1_TXC = 104,
-+	IMX91_PAD_SAI1_TXD0 = 105,
-+	IMX91_PAD_SAI1_RXD0 = 106,
-+	IMX91_PAD_WDOG_ANY = 107,
-+};
-+
-+/* Pad names for the pinmux subsystem */
-+static const struct pinctrl_pin_desc imx91_pinctrl_pads[] = {
-+	IMX_PINCTRL_PIN(IMX91_PAD_DAP_TDI),
-+	IMX_PINCTRL_PIN(IMX91_PAD_DAP_TMS_SWDIO),
-+	IMX_PINCTRL_PIN(IMX91_PAD_DAP_TCLK_SWCLK),
-+	IMX_PINCTRL_PIN(IMX91_PAD_DAP_TDO_TRACESWO),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO00),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO01),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO02),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO03),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO04),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO05),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO06),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO07),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO08),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO09),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO10),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO11),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO12),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO13),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO14),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO15),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO16),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO17),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO18),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO19),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO20),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO21),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO22),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO23),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO24),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO25),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO26),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO27),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO28),
-+	IMX_PINCTRL_PIN(IMX91_PAD_GPIO_IO29),
-+	IMX_PINCTRL_PIN(IMX91_PAD_CCM_CLKO1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_CCM_CLKO2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_CCM_CLKO3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_CCM_CLKO4),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_MDC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_MDIO),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_TD3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_TD2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_TD1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_TD0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_TX_CTL),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_TXC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_RX_CTL),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_RXC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_RD0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_RD1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_RD2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET1_RD3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_MDC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_MDIO),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_TD3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_TD2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_TD1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_TD0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_TX_CTL),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_TXC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_RX_CTL),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_RXC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_RD0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_RD1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_RD2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_ENET2_RD3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_CLK),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_CMD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA4),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA5),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA6),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_DATA7),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD1_STROBE),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_VSELECT),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD3_CLK),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD3_CMD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD3_DATA0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD3_DATA1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD3_DATA2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD3_DATA3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_CD_B),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_CLK),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_CMD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_DATA0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_DATA1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_DATA2),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_DATA3),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SD2_RESET_B),
-+	IMX_PINCTRL_PIN(IMX91_PAD_I2C1_SCL),
-+	IMX_PINCTRL_PIN(IMX91_PAD_I2C1_SDA),
-+	IMX_PINCTRL_PIN(IMX91_PAD_I2C2_SCL),
-+	IMX_PINCTRL_PIN(IMX91_PAD_I2C2_SDA),
-+	IMX_PINCTRL_PIN(IMX91_PAD_UART1_RXD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_UART1_TXD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_UART2_RXD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_UART2_TXD),
-+	IMX_PINCTRL_PIN(IMX91_PAD_PDM_CLK),
-+	IMX_PINCTRL_PIN(IMX91_PAD_PDM_BIT_STREAM0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_PDM_BIT_STREAM1),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SAI1_TXFS),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SAI1_TXC),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SAI1_TXD0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_SAI1_RXD0),
-+	IMX_PINCTRL_PIN(IMX91_PAD_WDOG_ANY),
-+};
-+
-+static const struct imx_pinctrl_soc_info imx91_pinctrl_info = {
-+	.pins = imx91_pinctrl_pads,
-+	.npins = ARRAY_SIZE(imx91_pinctrl_pads),
-+	.flags = ZERO_OFFSET_VALID,
-+};
-+
-+static int imx91_pinctrl_probe(struct platform_device *pdev)
-+{
-+	return imx_pinctrl_probe(pdev, &imx91_pinctrl_info);
-+}
-+
-+static const struct of_device_id imx91_pinctrl_of_match[] = {
-+	{ .compatible = "fsl,imx91-iomuxc", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, imx91_pinctrl_of_match);
-+
-+static struct platform_driver imx91_pinctrl_driver = {
-+	.driver = {
-+		.name = "imx91-pinctrl",
-+		.of_match_table = imx91_pinctrl_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = imx91_pinctrl_probe,
-+};
-+
-+static int __init imx91_pinctrl_init(void)
-+{
-+	return platform_driver_register(&imx91_pinctrl_driver);
-+}
-+arch_initcall(imx91_pinctrl_init);
-+
-+MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-+MODULE_DESCRIPTION("NXP i.MX91 pinctrl driver");
-+MODULE_LICENSE("GPL");
+stm32-mdma is based on descriptors mechanism but even there, there are 
+significant differences in register layout and descriptors structure.
+As you can see:
+/* Descriptor from stm32-mdma */
+struct stm32_mdma_hwdesc {
+	u32 ctcr;
+	u32 cbndtr;
+	u32 csar;
+	u32 cdar;
+	u32 cbrur;
+	u32 clar;
+	u32 ctbr;
+	u32 dummy;
+	u32 cmar;
+	u32 cmdr;
+} __aligned(64);
 
--- 
-2.37.1
+/* Descriptor from stm32-dma3 */
+struct stm32_dma3_hwdesc {
+	u32 ctr1;
+	u32 ctr2;
+	u32 cbr1;
+	u32 csar;
+	u32 cdar;
+	u32 cllr;
+} __aligned(32);
 
+Moreover, stm32-dma3 can have static or dynamic linked-list items. 
+Dynamic data structure support is not yet in this patchset, current 
+implementation is undergoing validation and maturation.
+"cllr"  configures the data structure of the next linked-list item in 
+addition to its address pointer. The descriptor can be "compacted" 
+depending on cllr update bits values.
+
+/* CxLLR DMA channel x linked-list address register */
+#define CLLR_LA				GENMASK(15, 2) /* Address */
+#define CLLR_ULL			BIT(16) /* CxLLR update ? */
+#define CLLR_UDA			BIT(27) /* CxDAR update ? */
+#define CLLR_USA			BIT(28) /* CxSAR update ? */
+#define CLLR_UB1			BIT(29) /* CxBR1 update ? */
+#define CLLR_UT2			BIT(30) /* CxTR2 update ? */
+#define CLLR_UT1			BIT(31) /* CxTR1 update ? */
+
+If one or more CLLR_Uxx bit(s) is(are) not set, it means the 
+corresponding u32 value(s) in the descriptor is(are) not there. For 
+example, if CLLR_ULL bit is the only one that is set, then "cllr" value 
+should be at offset 0 in linked-list data structure.
+
+I hope this gives an insights into why I've decided not to reuse the 
+existing drivers, either in whole or in part.
+
+Amelie
+
+>>
+>>>> diff --git a/drivers/dma/stm32/stm32-dma3.c b/drivers/dma/stm32/stm32-dma3.c
+>>>> new file mode 100644
+>>>> index 000000000000..b5493f497d06
+>>>> --- /dev/null
+>>>> +++ b/drivers/dma/stm32/stm32-dma3.c
+>>>> @@ -0,0 +1,1431 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>>> +/*
+>>>> + * STM32 DMA3 controller driver
+>>>> + *
+>>>> + * Copyright (C) STMicroelectronics 2024
+>>>> + * Author(s): Amelie Delaunay <amelie.delaunay@foss.st.com>
+>>>> + */
+>>>> +
+>>>> +#include <linux/bitfield.h>
+>>>> +#include <linux/clk.h>
+>>>> +#include <linux/dma-mapping.h>
+>>>> +#include <linux/dmaengine.h>
+>>>> +#include <linux/dmapool.h>
+>>>> +#include <linux/init.h>
+>>>> +#include <linux/iopoll.h>
+>>>> +#include <linux/list.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/of_dma.h>
+>>>> +#include <linux/platform_device.h>
+>>>> +#include <linux/pm_runtime.h>
+>>>> +#include <linux/reset.h>
+>>>> +#include <linux/slab.h>
+>>>> +
+>>>> +#include "../virt-dma.h"
+>>>> +
+>>>> +#define STM32_DMA3_SECCFGR		0x00
+>>>> +#define STM32_DMA3_PRIVCFGR		0x04
+>>>> +#define STM32_DMA3_RCFGLOCKR		0x08
+>>>> +#define STM32_DMA3_MISR			0x0C
+>>>
+>>> lower hex please
+>>>
+>>
+>> Ok.
+>>
+>>>> +#define STM32_DMA3_SMISR		0x10
+>>>> +
+>>>> +#define STM32_DMA3_CLBAR(x)		(0x50 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CCIDCFGR(x)		(0x54 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CSEMCR(x)		(0x58 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CFCR(x)		(0x5C + 0x80 * (x))
+>>>> +#define STM32_DMA3_CSR(x)		(0x60 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CCR(x)		(0x64 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CTR1(x)		(0x90 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CTR2(x)		(0x94 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CBR1(x)		(0x98 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CSAR(x)		(0x9C + 0x80 * (x))
+>>>> +#define STM32_DMA3_CDAR(x)		(0xA0 + 0x80 * (x))
+>>>> +#define STM32_DMA3_CLLR(x)		(0xCC + 0x80 * (x))
+>>>> +
+>>>> +#define STM32_DMA3_HWCFGR13		0xFC0 /* G_PER_CTRL(X) x=8..15 */
+>>>> +#define STM32_DMA3_HWCFGR12		0xFC4 /* G_PER_CTRL(X) x=0..7 */
+>>>> +#define STM32_DMA3_HWCFGR4		0xFE4 /* G_FIFO_SIZE(X) x=8..15 */
+>>>> +#define STM32_DMA3_HWCFGR3		0xFE8 /* G_FIFO_SIZE(X) x=0..7 */
+>>>> +#define STM32_DMA3_HWCFGR2		0xFEC /* G_MAX_REQ_ID */
+>>>> +#define STM32_DMA3_HWCFGR1		0xFF0 /* G_MASTER_PORTS, G_NUM_CHANNELS, G_Mx_DATA_WIDTH */
+>>>> +#define STM32_DMA3_VERR			0xFF4
+>>>
+>>> here as well
+>>>
+>>
+>> Ok.
+>>
+>>>> +
+>>>> +/* SECCFGR DMA secure configuration register */
+>>>> +#define SECCFGR_SEC(x)			BIT(x)
+>>>> +
+>>>> +/* MISR DMA non-secure/secure masked interrupt status register */
+>>>> +#define MISR_MIS(x)			BIT(x)
+>>>> +
+>>>> +/* CxLBAR DMA channel x linked_list base address register */
+>>>> +#define CLBAR_LBA			GENMASK(31, 16)
+>>>> +
+>>>> +/* CxCIDCFGR DMA channel x CID register */
+>>>> +#define CCIDCFGR_CFEN			BIT(0)
+>>>> +#define CCIDCFGR_SEM_EN			BIT(1)
+>>>> +#define CCIDCFGR_SCID			GENMASK(5, 4)
+>>>> +#define CCIDCFGR_SEM_WLIST_CID0		BIT(16)
+>>>> +#define CCIDCFGR_SEM_WLIST_CID1		BIT(17)
+>>>> +#define CCIDCFGR_SEM_WLIST_CID2		BIT(18)
+>>>> +
+>>>> +enum ccidcfgr_cid {
+>>>> +	CCIDCFGR_CID0,
+>>>> +	CCIDCFGR_CID1,
+>>>> +	CCIDCFGR_CID2,
+>>>> +};
+>>>> +
+>>>> +/* CxSEMCR DMA channel x semaphore control register */
+>>>> +#define CSEMCR_SEM_MUTEX		BIT(0)
+>>>> +#define CSEMCR_SEM_CCID			GENMASK(5, 4)
+>>>> +
+>>>> +/* CxFCR DMA channel x flag clear register */
+>>>> +#define CFCR_TCF			BIT(8)
+>>>> +#define CFCR_HTF			BIT(9)
+>>>> +#define CFCR_DTEF			BIT(10)
+>>>> +#define CFCR_ULEF			BIT(11)
+>>>> +#define CFCR_USEF			BIT(12)
+>>>> +#define CFCR_SUSPF			BIT(13)
+>>>> +
+>>>> +/* CxSR DMA channel x status register */
+>>>> +#define CSR_IDLEF			BIT(0)
+>>>> +#define CSR_TCF				BIT(8)
+>>>> +#define CSR_HTF				BIT(9)
+>>>> +#define CSR_DTEF			BIT(10)
+>>>> +#define CSR_ULEF			BIT(11)
+>>>> +#define CSR_USEF			BIT(12)
+>>>> +#define CSR_SUSPF			BIT(13)
+>>>> +#define CSR_ALL_F			GENMASK(13, 8)
+>>>> +#define CSR_FIFOL			GENMASK(24, 16)
+>>>> +
+>>>> +/* CxCR DMA channel x control register */
+>>>> +#define CCR_EN				BIT(0)
+>>>> +#define CCR_RESET			BIT(1)
+>>>> +#define CCR_SUSP			BIT(2)
+>>>> +#define CCR_TCIE			BIT(8)
+>>>> +#define CCR_HTIE			BIT(9)
+>>>> +#define CCR_DTEIE			BIT(10)
+>>>> +#define CCR_ULEIE			BIT(11)
+>>>> +#define CCR_USEIE			BIT(12)
+>>>> +#define CCR_SUSPIE			BIT(13)
+>>>> +#define CCR_ALLIE			GENMASK(13, 8)
+>>>> +#define CCR_LSM				BIT(16)
+>>>> +#define CCR_LAP				BIT(17)
+>>>> +#define CCR_PRIO			GENMASK(23, 22)
+>>>> +
+>>>> +enum ccr_prio {
+>>>> +	CCR_PRIO_LOW,
+>>>> +	CCR_PRIO_MID,
+>>>> +	CCR_PRIO_HIGH,
+>>>> +	CCR_PRIO_VERY_HIGH,
+>>>> +};
+>>>> +
+>>>> +/* CxTR1 DMA channel x transfer register 1 */
+>>>> +#define CTR1_SINC			BIT(3)
+>>>> +#define CTR1_SBL_1			GENMASK(9, 4)
+>>>> +#define CTR1_DINC			BIT(19)
+>>>> +#define CTR1_DBL_1			GENMASK(25, 20)
+>>>> +#define CTR1_SDW_LOG2			GENMASK(1, 0)
+>>>> +#define CTR1_PAM			GENMASK(12, 11)
+>>>> +#define CTR1_SAP			BIT(14)
+>>>> +#define CTR1_DDW_LOG2			GENMASK(17, 16)
+>>>> +#define CTR1_DAP			BIT(30)
+>>>> +
+>>>> +enum ctr1_dw {
+>>>> +	CTR1_DW_BYTE,
+>>>> +	CTR1_DW_HWORD,
+>>>> +	CTR1_DW_WORD,
+>>>> +	CTR1_DW_DWORD, /* Depends on HWCFGR1.G_M0_DATA_WIDTH_ENC and .G_M1_DATA_WIDTH_ENC */
+>>>> +};
+>>>> +
+>>>> +enum ctr1_pam {
+>>>> +	CTR1_PAM_0S_LT, /* if DDW > SDW, padded with 0s else left-truncated */
+>>>> +	CTR1_PAM_SE_RT, /* if DDW > SDW, sign extended else right-truncated */
+>>>> +	CTR1_PAM_PACK_UNPACK, /* FIFO queued */
+>>>> +};
+>>>> +
+>>>> +/* CxTR2 DMA channel x transfer register 2 */
+>>>> +#define CTR2_REQSEL			GENMASK(7, 0)
+>>>> +#define CTR2_SWREQ			BIT(9)
+>>>> +#define CTR2_DREQ			BIT(10)
+>>>> +#define CTR2_BREQ			BIT(11)
+>>>> +#define CTR2_PFREQ			BIT(12)
+>>>> +#define CTR2_TCEM			GENMASK(31, 30)
+>>>> +
+>>>> +enum ctr2_tcem {
+>>>> +	CTR2_TCEM_BLOCK,
+>>>> +	CTR2_TCEM_REPEAT_BLOCK,
+>>>> +	CTR2_TCEM_LLI,
+>>>> +	CTR2_TCEM_CHANNEL,
+>>>> +};
+>>>> +
+>>>> +/* CxBR1 DMA channel x block register 1 */
+>>>> +#define CBR1_BNDT			GENMASK(15, 0)
+>>>> +
+>>>> +/* CxLLR DMA channel x linked-list address register */
+>>>> +#define CLLR_LA				GENMASK(15, 2)
+>>>> +#define CLLR_ULL			BIT(16)
+>>>> +#define CLLR_UDA			BIT(27)
+>>>> +#define CLLR_USA			BIT(28)
+>>>> +#define CLLR_UB1			BIT(29)
+>>>> +#define CLLR_UT2			BIT(30)
+>>>> +#define CLLR_UT1			BIT(31)
+>>>> +
+>>>> +/* HWCFGR13 DMA hardware configuration register 13 x=8..15 */
+>>>> +/* HWCFGR12 DMA hardware configuration register 12 x=0..7 */
+>>>> +#define G_PER_CTRL(x)			(ULL(0x1) << (4 * (x)))
+>>>> +
+>>>> +/* HWCFGR4 DMA hardware configuration register 4 x=8..15 */
+>>>> +/* HWCFGR3 DMA hardware configuration register 3 x=0..7 */
+>>>> +#define G_FIFO_SIZE(x)			(ULL(0x7) << (4 * (x)))
+>>>> +
+>>>> +#define get_chan_hwcfg(x, mask, reg)	(((reg) & (mask)) >> (4 * (x)))
+>>>> +
+>>>> +/* HWCFGR2 DMA hardware configuration register 2 */
+>>>> +#define G_MAX_REQ_ID			GENMASK(7, 0)
+>>>> +
+>>>> +/* HWCFGR1 DMA hardware configuration register 1 */
+>>>> +#define G_MASTER_PORTS			GENMASK(2, 0)
+>>>> +#define G_NUM_CHANNELS			GENMASK(12, 8)
+>>>> +#define G_M0_DATA_WIDTH_ENC		GENMASK(25, 24)
+>>>> +#define G_M1_DATA_WIDTH_ENC		GENMASK(29, 28)
+>>>> +
+>>>> +enum stm32_dma3_master_ports {
+>>>> +	AXI64, /* 1x AXI: 64-bit port 0 */
+>>>> +	AHB32, /* 1x AHB: 32-bit port 0 */
+>>>> +	AHB32_AHB32, /* 2x AHB: 32-bit port 0 and 32-bit port 1 */
+>>>> +	AXI64_AHB32, /* 1x AXI 64-bit port 0 and 1x AHB 32-bit port 1 */
+>>>> +	AXI64_AXI64, /* 2x AXI: 64-bit port 0 and 64-bit port 1 */
+>>>> +	AXI128_AHB32, /* 1x AXI 128-bit port 0 and 1x AHB 32-bit port 1 */
+>>>> +};
+>>>> +
+>>>> +enum stm32_dma3_port_data_width {
+>>>> +	DW_32, /* 32-bit, for AHB */
+>>>> +	DW_64, /* 64-bit, for AXI */
+>>>> +	DW_128, /* 128-bit, for AXI */
+>>>> +	DW_INVALID,
+>>>> +};
+>>>> +
+>>>> +/* VERR DMA version register */
+>>>> +#define VERR_MINREV			GENMASK(3, 0)
+>>>> +#define VERR_MAJREV			GENMASK(7, 4)
+>>>> +
+>>>> +/* Device tree */
+>>>> +/* struct stm32_dma3_dt_conf */
+>>>> +/* .ch_conf */
+>>>> +#define STM32_DMA3_DT_PRIO		GENMASK(1, 0) /* CCR_PRIO */
+>>>> +#define STM32_DMA3_DT_FIFO		GENMASK(7, 4)
+>>>> +/* .tr_conf */
+>>>> +#define STM32_DMA3_DT_SINC		BIT(0) /* CTR1_SINC */
+>>>> +#define STM32_DMA3_DT_SAP		BIT(1) /* CTR1_SAP */
+>>>> +#define STM32_DMA3_DT_DINC		BIT(4) /* CTR1_DINC */
+>>>> +#define STM32_DMA3_DT_DAP		BIT(5) /* CTR1_DAP */
+>>>> +#define STM32_DMA3_DT_BREQ		BIT(8) /* CTR2_BREQ */
+>>>> +#define STM32_DMA3_DT_PFREQ		BIT(9) /* CTR2_PFREQ */
+>>>> +#define STM32_DMA3_DT_TCEM		GENMASK(13, 12) /* CTR2_TCEM */
+>>>> +
+>>>> +#define STM32_DMA3_MAX_BLOCK_SIZE	ALIGN_DOWN(CBR1_BNDT, 64)
+>>>> +#define port_is_ahb(maxdw)		({ typeof(maxdw) (_maxdw) = (maxdw); \
+>>>> +					   ((_maxdw) != DW_INVALID) && ((_maxdw) == DW_32); })
+>>>> +#define port_is_axi(maxdw)		({ typeof(maxdw) (_maxdw) = (maxdw); \
+>>>> +					   ((_maxdw) != DW_INVALID) && ((_maxdw) != DW_32); })
+>>>> +#define get_chan_max_dw(maxdw, maxburst)((port_is_ahb(maxdw) ||			     \
+>>>> +					  (maxburst) < DMA_SLAVE_BUSWIDTH_8_BYTES) ? \
+>>>> +					 DMA_SLAVE_BUSWIDTH_4_BYTES : DMA_SLAVE_BUSWIDTH_8_BYTES)
+>>>> +
+>>>> +/* Static linked-list data structure (depends on update bits UT1/UT2/UB1/USA/UDA/ULL) */
+>>>> +struct stm32_dma3_hwdesc {
+>>>> +	u32 ctr1;
+>>>> +	u32 ctr2;
+>>>> +	u32 cbr1;
+>>>> +	u32 csar;
+>>>> +	u32 cdar;
+>>>> +	u32 cllr;
+>>>> +} __aligned(32);
+>>>> +
+>>>> +/*
+>>>> + * CLLR_LA / sizeof(struct stm32_dma3_hwdesc) represents the number of hdwdesc that can be addressed
+>>>> + * by the pointer to the next linked-list data structure. The __aligned forces the 32-byte
+>>>> + * alignment. So use hardcoded 32. Multiplied by the max block size of each item, it represents
+>>>> + * the sg size limitation.
+>>>> + */
+>>>> +#define STM32_DMA3_MAX_SEG_SIZE		((CLLR_LA / 32) * STM32_DMA3_MAX_BLOCK_SIZE)
+>>>> +
+>>>> +/*
+>>>> + * Linked-list items
+>>>> + */
+>>>> +struct stm32_dma3_lli {
+>>>> +	struct stm32_dma3_hwdesc *hwdesc;
+>>>> +	dma_addr_t hwdesc_addr;
+>>>> +};
+>>>> +
+>>>> +struct stm32_dma3_swdesc {
+>>>> +	struct virt_dma_desc vdesc;
+>>>> +	u32 ccr;
+>>>> +	bool cyclic;
+>>>> +	u32 lli_size;
+>>>> +	struct stm32_dma3_lli lli[] __counted_by(lli_size);
+>>>> +};
+>>>> +
+>>>> +struct stm32_dma3_dt_conf {
+>>>> +	u32 ch_id;
+>>>> +	u32 req_line;
+>>>> +	u32 ch_conf;
+>>>> +	u32 tr_conf;
+>>>> +};
+>>>> +
+>>>> +struct stm32_dma3_chan {
+>>>> +	struct virt_dma_chan vchan;
+>>>> +	u32 id;
+>>>> +	int irq;
+>>>> +	u32 fifo_size;
+>>>> +	u32 max_burst;
+>>>> +	bool semaphore_mode;
+>>>> +	struct stm32_dma3_dt_conf dt_config;
+>>>> +	struct dma_slave_config dma_config;
+>>>> +	struct dma_pool *lli_pool;
+>>>> +	struct stm32_dma3_swdesc *swdesc;
+>>>> +	enum ctr2_tcem tcem;
+>>>> +	u32 dma_status;
+>>>> +};
+>>>> +
+>>>> +struct stm32_dma3_ddata {
+>>>> +	struct dma_device dma_dev;
+>>>> +	void __iomem *base;
+>>>> +	struct clk *clk;
+>>>> +	struct stm32_dma3_chan *chans;
+>>>> +	u32 dma_channels;
+>>>> +	u32 dma_requests;
+>>>> +	enum stm32_dma3_port_data_width ports_max_dw[2];
+>>>> +};
+>>>> +
+>>>> +static inline struct stm32_dma3_ddata *to_stm32_dma3_ddata(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	return container_of(chan->vchan.chan.device, struct stm32_dma3_ddata, dma_dev);
+>>>> +}
+>>>> +
+>>>> +static inline struct stm32_dma3_chan *to_stm32_dma3_chan(struct dma_chan *c)
+>>>> +{
+>>>> +	return container_of(c, struct stm32_dma3_chan, vchan.chan);
+>>>> +}
+>>>> +
+>>>> +static inline struct stm32_dma3_swdesc *to_stm32_dma3_swdesc(struct virt_dma_desc *vdesc)
+>>>> +{
+>>>> +	return container_of(vdesc, struct stm32_dma3_swdesc, vdesc);
+>>>> +}
+>>>> +
+>>>> +static struct device *chan2dev(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	return &chan->vchan.chan.dev->device;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_dump_reg(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	struct device *dev = chan2dev(chan);
+>>>> +	u32 id = chan->id, offset;
+>>>> +
+>>>> +	offset = STM32_DMA3_SECCFGR;
+>>>> +	dev_dbg(dev, "SECCFGR(0x%03x): %08x\n", offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_PRIVCFGR;
+>>>> +	dev_dbg(dev, "PRIVCFGR(0x%03x): %08x\n", offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CCIDCFGR(id);
+>>>> +	dev_dbg(dev, "C%dCIDCFGR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CSEMCR(id);
+>>>> +	dev_dbg(dev, "C%dSEMCR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CSR(id);
+>>>> +	dev_dbg(dev, "C%dSR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CCR(id);
+>>>> +	dev_dbg(dev, "C%dCR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CTR1(id);
+>>>> +	dev_dbg(dev, "C%dTR1(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CTR2(id);
+>>>> +	dev_dbg(dev, "C%dTR2(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CBR1(id);
+>>>> +	dev_dbg(dev, "C%dBR1(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CSAR(id);
+>>>> +	dev_dbg(dev, "C%dSAR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CDAR(id);
+>>>> +	dev_dbg(dev, "C%dDAR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CLLR(id);
+>>>> +	dev_dbg(dev, "C%dLLR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +	offset = STM32_DMA3_CLBAR(id);
+>>>> +	dev_dbg(dev, "C%dLBAR(0x%03x): %08x\n", id, offset, readl_relaxed(ddata->base + offset));
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_dump_hwdesc(struct stm32_dma3_chan *chan,
+>>>> +					struct stm32_dma3_swdesc *swdesc)
+>>>> +{
+>>>> +	struct stm32_dma3_hwdesc *hwdesc;
+>>>> +	int i;
+>>>> +
+>>>> +	for (i = 0; i < swdesc->lli_size; i++) {
+>>>> +		hwdesc = swdesc->lli[i].hwdesc;
+>>>> +		if (i)
+>>>> +			dev_dbg(chan2dev(chan), "V\n");
+>>>> +		dev_dbg(chan2dev(chan), "[%d]@%pad\n", i, &swdesc->lli[i].hwdesc_addr);
+>>>> +		dev_dbg(chan2dev(chan), "| C%dTR1: %08x\n", chan->id, hwdesc->ctr1);
+>>>> +		dev_dbg(chan2dev(chan), "| C%dTR2: %08x\n", chan->id, hwdesc->ctr2);
+>>>> +		dev_dbg(chan2dev(chan), "| C%dBR1: %08x\n", chan->id, hwdesc->cbr1);
+>>>> +		dev_dbg(chan2dev(chan), "| C%dSAR: %08x\n", chan->id, hwdesc->csar);
+>>>> +		dev_dbg(chan2dev(chan), "| C%dDAR: %08x\n", chan->id, hwdesc->cdar);
+>>>> +		dev_dbg(chan2dev(chan), "| C%dLLR: %08x\n", chan->id, hwdesc->cllr);
+>>>> +	}
+>>>> +
+>>>> +	if (swdesc->cyclic) {
+>>>> +		dev_dbg(chan2dev(chan), "|\n");
+>>>> +		dev_dbg(chan2dev(chan), "-->[0]@%pad\n", &swdesc->lli[0].hwdesc_addr);
+>>>> +	} else {
+>>>> +		dev_dbg(chan2dev(chan), "X\n");
+>>>> +	}
+>>>> +}
+>>>> +
+>>>> +static struct stm32_dma3_swdesc *stm32_dma3_chan_desc_alloc(struct stm32_dma3_chan *chan, u32 count)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	struct stm32_dma3_swdesc *swdesc;
+>>>> +	int i;
+>>>> +
+>>>> +	/*
+>>>> +	 * If the memory to be allocated for the number of hwdesc (6 u32 members but 32-bytes
+>>>> +	 * aligned) is greater than the maximum address of CLLR_LA, then the last items can't be
+>>>> +	 * addressed, so abort the allocation.
+>>>> +	 */
+>>>> +	if ((count * 32) > CLLR_LA) {
+>>>> +		dev_err(chan2dev(chan), "Transfer is too big (> %luB)\n", STM32_DMA3_MAX_SEG_SIZE);
+>>>> +		return NULL;
+>>>> +	}
+>>>> +
+>>>> +	swdesc = kzalloc(struct_size(swdesc, lli, count), GFP_NOWAIT);
+>>>> +	if (!swdesc)
+>>>> +		return NULL;
+>>>> +
+>>>> +	for (i = 0; i < count; i++) {
+>>>> +		swdesc->lli[i].hwdesc = dma_pool_zalloc(chan->lli_pool, GFP_NOWAIT,
+>>>> +							&swdesc->lli[i].hwdesc_addr);
+>>>> +		if (!swdesc->lli[i].hwdesc)
+>>>> +			goto err_pool_free;
+>>>> +	}
+>>>> +	swdesc->lli_size = count;
+>>>> +	swdesc->ccr = 0;
+>>>> +
+>>>> +	/* Set LL base address */
+>>>> +	writel_relaxed(swdesc->lli[0].hwdesc_addr & CLBAR_LBA,
+>>>> +		       ddata->base + STM32_DMA3_CLBAR(chan->id));
+>>>> +
+>>>> +	/* Set LL allocated port */
+>>>> +	swdesc->ccr &= ~CCR_LAP;
+>>>> +
+>>>> +	return swdesc;
+>>>> +
+>>>> +err_pool_free:
+>>>> +	dev_err(chan2dev(chan), "Failed to alloc descriptors\n");
+>>>> +	while (--i >= 0)
+>>>> +		dma_pool_free(chan->lli_pool, swdesc->lli[i].hwdesc, swdesc->lli[i].hwdesc_addr);
+>>>> +	kfree(swdesc);
+>>>> +
+>>>> +	return NULL;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_desc_free(struct stm32_dma3_chan *chan,
+>>>> +				      struct stm32_dma3_swdesc *swdesc)
+>>>> +{
+>>>> +	int i;
+>>>> +
+>>>> +	for (i = 0; i < swdesc->lli_size; i++)
+>>>> +		dma_pool_free(chan->lli_pool, swdesc->lli[i].hwdesc, swdesc->lli[i].hwdesc_addr);
+>>>> +
+>>>> +	kfree(swdesc);
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_vdesc_free(struct virt_dma_desc *vdesc)
+>>>> +{
+>>>> +	struct stm32_dma3_swdesc *swdesc = to_stm32_dma3_swdesc(vdesc);
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(vdesc->tx.chan);
+>>>> +
+>>>> +	stm32_dma3_chan_desc_free(chan, swdesc);
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_check_user_setting(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	struct device *dev = chan2dev(chan);
+>>>> +	u32 ctr1 = readl_relaxed(ddata->base + STM32_DMA3_CTR1(chan->id));
+>>>> +	u32 cbr1 = readl_relaxed(ddata->base + STM32_DMA3_CBR1(chan->id));
+>>>> +	u32 csar = readl_relaxed(ddata->base + STM32_DMA3_CSAR(chan->id));
+>>>> +	u32 cdar = readl_relaxed(ddata->base + STM32_DMA3_CDAR(chan->id));
+>>>> +	u32 cllr = readl_relaxed(ddata->base + STM32_DMA3_CLLR(chan->id));
+>>>> +	u32 bndt = FIELD_GET(CBR1_BNDT, cbr1);
+>>>> +	u32 sdw = 1 << FIELD_GET(CTR1_SDW_LOG2, ctr1);
+>>>> +	u32 ddw = 1 << FIELD_GET(CTR1_DDW_LOG2, ctr1);
+>>>> +	u32 sap = FIELD_GET(CTR1_SAP, ctr1);
+>>>> +	u32 dap = FIELD_GET(CTR1_DAP, ctr1);
+>>>> +
+>>>> +	if (!bndt && !FIELD_GET(CLLR_UB1, cllr))
+>>>> +		dev_err(dev, "null source block size and no update of this value\n");
+>>>> +	if (bndt % sdw)
+>>>> +		dev_err(dev, "source block size not multiple of src data width\n");
+>>>> +	if (FIELD_GET(CTR1_PAM, ctr1) == CTR1_PAM_PACK_UNPACK && bndt % ddw)
+>>>> +		dev_err(dev, "(un)packing mode w/ src block size not multiple of dst data width\n");
+>>>> +	if (csar % sdw)
+>>>> +		dev_err(dev, "unaligned source address not multiple of src data width\n");
+>>>> +	if (cdar % ddw)
+>>>> +		dev_err(dev, "unaligned destination address not multiple of dst data width\n");
+>>>> +	if (sdw == DMA_SLAVE_BUSWIDTH_8_BYTES && port_is_ahb(ddata->ports_max_dw[sap]))
+>>>> +		dev_err(dev, "double-word source data width not supported on port %u\n", sap);
+>>>> +	if (ddw == DMA_SLAVE_BUSWIDTH_8_BYTES && port_is_ahb(ddata->ports_max_dw[dap]))
+>>>> +		dev_err(dev, "double-word destination data width not supported on port %u\n", dap);
+>>>
+>>> NO error/abort if this is wrong...?
+>>>
+>>
+>> User setting error triggers an interrupt caught in stm32_dma3_chan_irq()
+>> interrupt handler.
+>> Indeed User setting error can occur when enabling the channel or when DMA3
+>> registers are updated with each linked-list item.
+>> In interrupt handler, when USEF (User Setting Error Flag) is set, this
+>> function (stm32_dma3_check_user_setting) helps the user to understand what
+>> went wrong. The hardware automatically disables the channel to prevent the
+>> execution of the wrongly programmed transfer and the driver resets the
+>> channel and sets chan->dma_status = DMA_ERROR;. dmaengine_tx_status() will
+>> return DMA_ERROR.
+>> So from user point of view, the transfer will never complete, and the
+>> channel is ready to be reprogrammed.
+>> Note that in _prep_ functions, all is checked to avoid user setting error.
+>> If a user setting error occurs, it is rather due to a corrupted linked-list
+>> item (that should fortunately never happen).
+>>
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_prep_hwdesc(struct stm32_dma3_chan *chan,
+>>>> +					struct stm32_dma3_swdesc *swdesc,
+>>>> +					u32 curr, dma_addr_t src, dma_addr_t dst, u32 len,
+>>>> +					u32 ctr1, u32 ctr2, bool is_last, bool is_cyclic)
+>>>> +{
+>>>> +	struct stm32_dma3_hwdesc *hwdesc;
+>>>> +	dma_addr_t next_lli;
+>>>> +	u32 next = curr + 1;
+>>>> +
+>>>> +	hwdesc = swdesc->lli[curr].hwdesc;
+>>>> +	hwdesc->ctr1 = ctr1;
+>>>> +	hwdesc->ctr2 = ctr2;
+>>>> +	hwdesc->cbr1 = FIELD_PREP(CBR1_BNDT, len);
+>>>> +	hwdesc->csar = src;
+>>>> +	hwdesc->cdar = dst;
+>>>> +
+>>>> +	if (is_last) {
+>>>> +		if (is_cyclic)
+>>>> +			next_lli = swdesc->lli[0].hwdesc_addr;
+>>>> +		else
+>>>> +			next_lli = 0;
+>>>> +	} else {
+>>>> +		next_lli = swdesc->lli[next].hwdesc_addr;
+>>>> +	}
+>>>> +
+>>>> +	hwdesc->cllr = 0;
+>>>> +	if (next_lli) {
+>>>> +		hwdesc->cllr |= CLLR_UT1 | CLLR_UT2 | CLLR_UB1;
+>>>> +		hwdesc->cllr |= CLLR_USA | CLLR_UDA | CLLR_ULL;
+>>>> +		hwdesc->cllr |= (next_lli & CLLR_LA);
+>>>> +	}
+>>>> +}
+>>>> +
+>>>> +static enum dma_slave_buswidth stm32_dma3_get_max_dw(u32 chan_max_burst,
+>>>> +						     enum stm32_dma3_port_data_width port_max_dw,
+>>>> +						     u32 len, dma_addr_t addr)
+>>>> +{
+>>>> +	enum dma_slave_buswidth max_dw = get_chan_max_dw(port_max_dw, chan_max_burst);
+>>>> +
+>>>> +	/* len and addr must be a multiple of dw */
+>>>> +	return 1 << __ffs(len | addr | max_dw);
+>>>> +}
+>>>> +
+>>>> +static u32 stm32_dma3_get_max_burst(u32 len, enum dma_slave_buswidth dw, u32 chan_max_burst)
+>>>> +{
+>>>> +	u32 max_burst = chan_max_burst ? chan_max_burst / dw : 1;
+>>>> +
+>>>> +	/* len is a multiple of dw, so if len is < chan_max_burst, shorten burst */
+>>>> +	if (len < chan_max_burst)
+>>>> +		max_burst = len / dw;
+>>>> +
+>>>> +	/*
+>>>> +	 * HW doesn't modify the burst if burst size <= half of the fifo size.
+>>>> +	 * If len is not a multiple of burst size, last burst is shortened by HW.
+>>>> +	 */
+>>>> +	return max_burst;
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_chan_prep_hw(struct stm32_dma3_chan *chan, enum dma_transfer_direction dir,
+>>>> +				   u32 *ccr, u32 *ctr1, u32 *ctr2,
+>>>> +				   dma_addr_t src_addr, dma_addr_t dst_addr, u32 len)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	struct dma_device dma_device = ddata->dma_dev;
+>>>> +	u32 sdw, ddw, sbl_max, dbl_max, tcem;
+>>>> +	u32 _ctr1 = 0, _ctr2 = 0;
+>>>> +	u32 ch_conf = chan->dt_config.ch_conf;
+>>>> +	u32 tr_conf = chan->dt_config.tr_conf;
+>>>> +	u32 sap = FIELD_GET(STM32_DMA3_DT_SAP, tr_conf), sap_max_dw;
+>>>> +	u32 dap = FIELD_GET(STM32_DMA3_DT_DAP, tr_conf), dap_max_dw;
+>>>> +
+>>>> +	dev_dbg(chan2dev(chan), "%s from %pad to %pad\n",
+>>>> +		dmaengine_get_direction_text(dir), &src_addr, &dst_addr);
+>>>> +
+>>>> +	sdw = chan->dma_config.src_addr_width ? : get_chan_max_dw(sap, chan->max_burst);
+>>>> +	ddw = chan->dma_config.dst_addr_width ? : get_chan_max_dw(dap, chan->max_burst);
+>>>> +	sbl_max = chan->dma_config.src_maxburst ? : 1;
+>>>> +	dbl_max = chan->dma_config.dst_maxburst ? : 1;
+>>>> +
+>>>> +	/* Following conditions would raise User Setting Error interrupt */
+>>>> +	if (!(dma_device.src_addr_widths & BIT(sdw)) || !(dma_device.dst_addr_widths & BIT(ddw))) {
+>>>> +		dev_err(chan2dev(chan), "Bus width (src=%u, dst=%u) not supported\n", sdw, ddw);
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	if (ddata->ports_max_dw[1] == DW_INVALID && (sap || dap)) {
+>>>> +		dev_err(chan2dev(chan), "Only one master port, port 1 is not supported\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	sap_max_dw = ddata->ports_max_dw[sap];
+>>>> +	dap_max_dw = ddata->ports_max_dw[dap];
+>>>> +	if ((port_is_ahb(sap_max_dw) && sdw == DMA_SLAVE_BUSWIDTH_8_BYTES) ||
+>>>> +	    (port_is_ahb(dap_max_dw) && ddw == DMA_SLAVE_BUSWIDTH_8_BYTES)) {
+>>>> +		dev_err(chan2dev(chan),
+>>>> +			"8 bytes buswidth (src=%u, dst=%u) not supported on port (sap=%u, dap=%u\n",
+>>>> +			sdw, ddw, sap, dap);
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	if (FIELD_GET(STM32_DMA3_DT_SINC, tr_conf))
+>>>> +		_ctr1 |= CTR1_SINC;
+>>>> +	if (sap)
+>>>> +		_ctr1 |= CTR1_SAP;
+>>>> +	if (FIELD_GET(STM32_DMA3_DT_DINC, tr_conf))
+>>>> +		_ctr1 |= CTR1_DINC;
+>>>> +	if (dap)
+>>>> +		_ctr1 |= CTR1_DAP;
+>>>> +
+>>>> +	_ctr2 |= FIELD_PREP(CTR2_REQSEL, chan->dt_config.req_line) & ~CTR2_SWREQ;
+>>>> +	if (FIELD_GET(STM32_DMA3_DT_BREQ, tr_conf))
+>>>> +		_ctr2 |= CTR2_BREQ;
+>>>> +	if (dir == DMA_DEV_TO_MEM && FIELD_GET(STM32_DMA3_DT_PFREQ, tr_conf))
+>>>> +		_ctr2 |= CTR2_PFREQ;
+>>>> +	tcem = FIELD_GET(STM32_DMA3_DT_TCEM, tr_conf);
+>>>> +	_ctr2 |= FIELD_PREP(CTR2_TCEM, tcem);
+>>>> +
+>>>> +	/* Store TCEM to know on which event TC flag occurred */
+>>>> +	chan->tcem = tcem;
+>>>> +	/* Store direction for residue computation */
+>>>> +	chan->dma_config.direction = dir;
+>>>> +
+>>>> +	switch (dir) {
+>>>> +	case DMA_MEM_TO_DEV:
+>>>> +		/* Set destination (device) data width and burst */
+>>>> +		ddw = min_t(u32, ddw, stm32_dma3_get_max_dw(chan->max_burst, dap_max_dw,
+>>>> +							    len, dst_addr));
+>>>> +		dbl_max = min_t(u32, dbl_max, stm32_dma3_get_max_burst(len, ddw, chan->max_burst));
+>>>> +
+>>>> +		/* Set source (memory) data width and burst */
+>>>> +		sdw = stm32_dma3_get_max_dw(chan->max_burst, sap_max_dw, len, src_addr);
+>>>> +		sbl_max = stm32_dma3_get_max_burst(len, sdw, chan->max_burst);
+>>>> +
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_SDW_LOG2, ilog2(sdw));
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_SBL_1, sbl_max - 1);
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_DDW_LOG2, ilog2(ddw));
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_DBL_1, dbl_max - 1);
+>>>> +
+>>>> +		if (ddw != sdw) {
+>>>> +			_ctr1 |= FIELD_PREP(CTR1_PAM, CTR1_PAM_PACK_UNPACK);
+>>>> +			/* Should never reach this case as ddw is clamped down */
+>>>> +			if (len & (ddw - 1)) {
+>>>> +				dev_err(chan2dev(chan),
+>>>> +					"Packing mode is enabled and len is not multiple of ddw");
+>>>> +				return -EINVAL;
+>>>> +			}
+>>>> +		}
+>>>> +
+>>>> +		/* dst = dev */
+>>>> +		_ctr2 |= CTR2_DREQ;
+>>>> +
+>>>> +		break;
+>>>> +
+>>>> +	case DMA_DEV_TO_MEM:
+>>>> +		/* Set source (device) data width and burst */
+>>>> +		sdw = min_t(u32, sdw, stm32_dma3_get_max_dw(chan->max_burst, sap_max_dw,
+>>>> +							    len, src_addr));
+>>>> +		sbl_max = min_t(u32, sbl_max, stm32_dma3_get_max_burst(len, sdw, chan->max_burst));
+>>>> +
+>>>> +		/* Set destination (memory) data width and burst */
+>>>> +		ddw = stm32_dma3_get_max_dw(chan->max_burst, dap_max_dw, len, dst_addr);
+>>>> +		dbl_max = stm32_dma3_get_max_burst(len, ddw, chan->max_burst);
+>>>> +
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_SDW_LOG2, ilog2(sdw));
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_SBL_1, sbl_max - 1);
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_DDW_LOG2, ilog2(ddw));
+>>>> +		_ctr1 |= FIELD_PREP(CTR1_DBL_1, dbl_max - 1);
+>>>> +
+>>>> +		if (ddw != sdw) {
+>>>> +			_ctr1 |= FIELD_PREP(CTR1_PAM, CTR1_PAM_PACK_UNPACK);
+>>>> +			/* Should never reach this case as ddw is clamped down */
+>>>> +			if (len & (ddw - 1)) {
+>>>> +				dev_err(chan2dev(chan),
+>>>> +					"Packing mode is enabled and len is not multiple of ddw\n");
+>>>> +				return -EINVAL;
+>>>> +			}
+>>>> +		}
+>>>> +
+>>>> +		/* dst = mem */
+>>>> +		_ctr2 &= ~CTR2_DREQ;
+>>>> +
+>>>> +		break;
+>>>> +
+>>>> +	default:
+>>>> +		dev_err(chan2dev(chan), "Direction %s not supported\n",
+>>>> +			dmaengine_get_direction_text(dir));
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>> +	*ccr |= FIELD_PREP(CCR_PRIO, FIELD_GET(STM32_DMA3_DT_PRIO, ch_conf));
+>>>> +	*ctr1 = _ctr1;
+>>>> +	*ctr2 = _ctr2;
+>>>> +
+>>>> +	dev_dbg(chan2dev(chan), "%s: sdw=%u bytes sbl=%u beats ddw=%u bytes dbl=%u beats\n",
+>>>> +		__func__, sdw, sbl_max, ddw, dbl_max);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_start(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	struct virt_dma_desc *vdesc;
+>>>> +	struct stm32_dma3_hwdesc *hwdesc;
+>>>> +	u32 id = chan->id;
+>>>> +	u32 csr, ccr;
+>>>> +
+>>>> +	vdesc = vchan_next_desc(&chan->vchan);
+>>>> +	if (!vdesc) {
+>>>> +		chan->swdesc = NULL;
+>>>> +		return;
+>>>> +	}
+>>>> +	list_del(&vdesc->node);
+>>>> +
+>>>> +	chan->swdesc = to_stm32_dma3_swdesc(vdesc);
+>>>> +	hwdesc = chan->swdesc->lli[0].hwdesc;
+>>>> +
+>>>> +	stm32_dma3_chan_dump_hwdesc(chan, chan->swdesc);
+>>>> +
+>>>> +	writel_relaxed(chan->swdesc->ccr, ddata->base + STM32_DMA3_CCR(id));
+>>>> +	writel_relaxed(hwdesc->ctr1, ddata->base + STM32_DMA3_CTR1(id));
+>>>> +	writel_relaxed(hwdesc->ctr2, ddata->base + STM32_DMA3_CTR2(id));
+>>>> +	writel_relaxed(hwdesc->cbr1, ddata->base + STM32_DMA3_CBR1(id));
+>>>> +	writel_relaxed(hwdesc->csar, ddata->base + STM32_DMA3_CSAR(id));
+>>>> +	writel_relaxed(hwdesc->cdar, ddata->base + STM32_DMA3_CDAR(id));
+>>>> +	writel_relaxed(hwdesc->cllr, ddata->base + STM32_DMA3_CLLR(id));
+>>>> +
+>>>> +	/* Clear any pending interrupts */
+>>>> +	csr = readl_relaxed(ddata->base + STM32_DMA3_CSR(id));
+>>>> +	if (csr & CSR_ALL_F)
+>>>> +		writel_relaxed(csr, ddata->base + STM32_DMA3_CFCR(id));
+>>>> +
+>>>> +	stm32_dma3_chan_dump_reg(chan);
+>>>> +
+>>>> +	ccr = readl_relaxed(ddata->base + STM32_DMA3_CCR(id));
+>>>> +	writel_relaxed(ccr | CCR_EN, ddata->base + STM32_DMA3_CCR(id));
+>>>> +
+>>>> +	chan->dma_status = DMA_IN_PROGRESS;
+>>>> +
+>>>> +	dev_dbg(chan2dev(chan), "vchan %pK: started\n", &chan->vchan);
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_chan_suspend(struct stm32_dma3_chan *chan, bool susp)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	u32 csr, ccr = readl_relaxed(ddata->base + STM32_DMA3_CCR(chan->id)) & ~CCR_EN;
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	if (susp)
+>>>> +		ccr |= CCR_SUSP;
+>>>> +	else
+>>>> +		ccr &= ~CCR_SUSP;
+>>>> +
+>>>> +	writel_relaxed(ccr, ddata->base + STM32_DMA3_CCR(chan->id));
+>>>> +
+>>>> +	if (susp) {
+>>>> +		ret = readl_relaxed_poll_timeout_atomic(ddata->base + STM32_DMA3_CSR(chan->id), csr,
+>>>> +							csr & CSR_SUSPF, 1, 10);
+>>>> +		if (!ret)
+>>>> +			writel_relaxed(CFCR_SUSPF, ddata->base + STM32_DMA3_CFCR(chan->id));
+>>>> +
+>>>> +		stm32_dma3_chan_dump_reg(chan);
+>>>> +	}
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_reset(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	u32 ccr = readl_relaxed(ddata->base + STM32_DMA3_CCR(chan->id)) & ~CCR_EN;
+>>>> +
+>>>> +	writel_relaxed(ccr |= CCR_RESET, ddata->base + STM32_DMA3_CCR(chan->id));
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_chan_stop(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	u32 ccr;
+>>>> +	int ret = 0;
+>>>> +
+>>>> +	chan->dma_status = DMA_COMPLETE;
+>>>> +
+>>>> +	/* Disable interrupts */
+>>>> +	ccr = readl_relaxed(ddata->base + STM32_DMA3_CCR(chan->id));
+>>>> +	writel_relaxed(ccr & ~(CCR_ALLIE | CCR_EN), ddata->base + STM32_DMA3_CCR(chan->id));
+>>>> +
+>>>> +	if (!(ccr & CCR_SUSP) && (ccr & CCR_EN)) {
+>>>> +		/* Suspend the channel */
+>>>> +		ret = stm32_dma3_chan_suspend(chan, true);
+>>>> +		if (ret)
+>>>> +			dev_warn(chan2dev(chan), "%s: timeout, data might be lost\n", __func__);
+>>>> +	}
+>>>> +
+>>>> +	/*
+>>>> +	 * Reset the channel: this causes the reset of the FIFO and the reset of the channel
+>>>> +	 * internal state, the reset of CCR_EN and CCR_SUSP bits.
+>>>> +	 */
+>>>> +	stm32_dma3_chan_reset(chan);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_chan_complete(struct stm32_dma3_chan *chan)
+>>>> +{
+>>>> +	if (!chan->swdesc)
+>>>> +		return;
+>>>> +
+>>>> +	vchan_cookie_complete(&chan->swdesc->vdesc);
+>>>> +	chan->swdesc = NULL;
+>>>> +	stm32_dma3_chan_start(chan);
+>>>> +}
+>>>> +
+>>>> +static irqreturn_t stm32_dma3_chan_irq(int irq, void *devid)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = devid;
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	u32 misr, csr, ccr;
+>>>> +
+>>>> +	spin_lock(&chan->vchan.lock);
+>>>> +
+>>>> +	misr = readl_relaxed(ddata->base + STM32_DMA3_MISR);
+>>>> +	if (!(misr & MISR_MIS(chan->id))) {
+>>>> +		spin_unlock(&chan->vchan.lock);
+>>>> +		return IRQ_NONE;
+>>>> +	}
+>>>> +
+>>>> +	csr = readl_relaxed(ddata->base + STM32_DMA3_CSR(chan->id));
+>>>> +	ccr = readl_relaxed(ddata->base + STM32_DMA3_CCR(chan->id)) & CCR_ALLIE;
+>>>> +
+>>>> +	if (csr & CSR_TCF && ccr & CCR_TCIE) {
+>>>> +		if (chan->swdesc->cyclic)
+>>>> +			vchan_cyclic_callback(&chan->swdesc->vdesc);
+>>>> +		else
+>>>> +			stm32_dma3_chan_complete(chan);
+>>>> +	}
+>>>> +
+>>>> +	if (csr & CSR_USEF && ccr & CCR_USEIE) {
+>>>> +		dev_err(chan2dev(chan), "User setting error\n");
+>>>> +		chan->dma_status = DMA_ERROR;
+>>>> +		/* CCR.EN automatically cleared by HW */
+>>>> +		stm32_dma3_check_user_setting(chan);
+>>>> +		stm32_dma3_chan_reset(chan);
+>>>> +	}
+>>>> +
+>>>> +	if (csr & CSR_ULEF && ccr & CCR_ULEIE) {
+>>>> +		dev_err(chan2dev(chan), "Update link transfer error\n");
+>>>> +		chan->dma_status = DMA_ERROR;
+>>>> +		/* CCR.EN automatically cleared by HW */
+>>>> +		stm32_dma3_chan_reset(chan);
+>>>> +	}
+>>>> +
+>>>> +	if (csr & CSR_DTEF && ccr & CCR_DTEIE) {
+>>>> +		dev_err(chan2dev(chan), "Data transfer error\n");
+>>>> +		chan->dma_status = DMA_ERROR;
+>>>> +		/* CCR.EN automatically cleared by HW */
+>>>> +		stm32_dma3_chan_reset(chan);
+>>>> +	}
+>>>> +
+>>>> +	/*
+>>>> +	 * Half Transfer Interrupt may be disabled but Half Transfer Flag can be set,
+>>>> +	 * ensure HTF flag to be cleared, with other flags.
+>>>> +	 */
+>>>> +	csr &= (ccr | CCR_HTIE);
+>>>> +
+>>>> +	if (csr)
+>>>> +		writel_relaxed(csr, ddata->base + STM32_DMA3_CFCR(chan->id));
+>>>> +
+>>>> +	spin_unlock(&chan->vchan.lock);
+>>>> +
+>>>> +	return IRQ_HANDLED;
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_alloc_chan_resources(struct dma_chan *c)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	u32 id = chan->id, csemcr, ccid;
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = pm_runtime_resume_and_get(ddata->dma_dev.dev);
+>>>> +	if (ret < 0)
+>>>> +		return ret;
+>>>> +
+>>>> +	/* Ensure the channel is free */
+>>>> +	if (chan->semaphore_mode &&
+>>>> +	    readl_relaxed(ddata->base + STM32_DMA3_CSEMCR(chan->id)) & CSEMCR_SEM_MUTEX) {
+>>>> +		ret = -EBUSY;
+>>>> +		goto err_put_sync;
+>>>> +	}
+>>>> +
+>>>> +	chan->lli_pool = dmam_pool_create(dev_name(&c->dev->device), c->device->dev,
+>>>> +					  sizeof(struct stm32_dma3_hwdesc),
+>>>> +					  __alignof__(struct stm32_dma3_hwdesc), 0);
+>>>> +	if (!chan->lli_pool) {
+>>>> +		dev_err(chan2dev(chan), "Failed to create LLI pool\n");
+>>>> +		ret = -ENOMEM;
+>>>> +		goto err_put_sync;
+>>>> +	}
+>>>> +
+>>>> +	/* Take the channel semaphore */
+>>>> +	if (chan->semaphore_mode) {
+>>>> +		writel_relaxed(CSEMCR_SEM_MUTEX, ddata->base + STM32_DMA3_CSEMCR(id));
+>>>> +		csemcr = readl_relaxed(ddata->base + STM32_DMA3_CSEMCR(id));
+>>>> +		ccid = FIELD_GET(CSEMCR_SEM_CCID, csemcr);
+>>>> +		/* Check that the channel is well taken */
+>>>> +		if (ccid != CCIDCFGR_CID1) {
+>>>> +			dev_err(chan2dev(chan), "Not under CID1 control (in-use by CID%d)\n", ccid);
+>>>> +			ret = -EPERM;
+>>>> +			goto err_pool_destroy;
+>>>> +		}
+>>>> +		dev_dbg(chan2dev(chan), "Under CID1 control (semcr=0x%08x)\n", csemcr);
+>>>> +	}
+>>>> +
+>>>> +	return 0;
+>>>> +
+>>>> +err_pool_destroy:
+>>>> +	dmam_pool_destroy(chan->lli_pool);
+>>>> +	chan->lli_pool = NULL;
+>>>> +
+>>>> +err_put_sync:
+>>>> +	pm_runtime_put_sync(ddata->dma_dev.dev);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_free_chan_resources(struct dma_chan *c)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	unsigned long flags;
+>>>> +
+>>>> +	/* Ensure channel is in idle state */
+>>>> +	spin_lock_irqsave(&chan->vchan.lock, flags);
+>>>> +	stm32_dma3_chan_stop(chan);
+>>>> +	chan->swdesc = NULL;
+>>>> +	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>>>> +
+>>>> +	vchan_free_chan_resources(to_virt_chan(c));
+>>>> +
+>>>> +	dmam_pool_destroy(chan->lli_pool);
+>>>> +	chan->lli_pool = NULL;
+>>>> +
+>>>> +	/* Release the channel semaphore */
+>>>> +	if (chan->semaphore_mode)
+>>>> +		writel_relaxed(0, ddata->base + STM32_DMA3_CSEMCR(chan->id));
+>>>> +
+>>>> +	pm_runtime_put_sync(ddata->dma_dev.dev);
+>>>> +
+>>>> +	/* Reset configuration */
+>>>> +	memset(&chan->dt_config, 0, sizeof(chan->dt_config));
+>>>> +	memset(&chan->dma_config, 0, sizeof(chan->dma_config));
+>>>> +}
+>>>> +
+>>>> +static struct dma_async_tx_descriptor *stm32_dma3_prep_slave_sg(struct dma_chan *c,
+>>>> +								struct scatterlist *sgl,
+>>>> +								unsigned int sg_len,
+>>>> +								enum dma_transfer_direction dir,
+>>>> +								unsigned long flags, void *context)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +	struct stm32_dma3_swdesc *swdesc;
+>>>> +	struct scatterlist *sg;
+>>>> +	size_t len;
+>>>> +	dma_addr_t sg_addr, dev_addr, src, dst;
+>>>> +	u32 i, j, count, ctr1, ctr2;
+>>>> +	int ret;
+>>>> +
+>>>> +	count = sg_len;
+>>>> +	for_each_sg(sgl, sg, sg_len, i) {
+>>>> +		len = sg_dma_len(sg);
+>>>> +		if (len > STM32_DMA3_MAX_BLOCK_SIZE)
+>>>> +			count += DIV_ROUND_UP(len, STM32_DMA3_MAX_BLOCK_SIZE) - 1;
+>>>> +	}
+>>>> +
+>>>> +	swdesc = stm32_dma3_chan_desc_alloc(chan, count);
+>>>> +	if (!swdesc)
+>>>> +		return NULL;
+>>>> +
+>>>> +	/* sg_len and i correspond to the initial sgl; count and j correspond to the hwdesc LL */
+>>>> +	j = 0;
+>>>> +	for_each_sg(sgl, sg, sg_len, i) {
+>>>> +		sg_addr = sg_dma_address(sg);
+>>>> +		dev_addr = (dir == DMA_MEM_TO_DEV) ? chan->dma_config.dst_addr :
+>>>> +						     chan->dma_config.src_addr;
+>>>> +		len = sg_dma_len(sg);
+>>>> +
+>>>> +		do {
+>>>> +			size_t chunk = min_t(size_t, len, STM32_DMA3_MAX_BLOCK_SIZE);
+>>>> +
+>>>> +			if (dir == DMA_MEM_TO_DEV) {
+>>>> +				src = sg_addr;
+>>>> +				dst = dev_addr;
+>>>> +
+>>>> +				ret = stm32_dma3_chan_prep_hw(chan, dir, &swdesc->ccr, &ctr1, &ctr2,
+>>>> +							      src, dst, chunk);
+>>>> +
+>>>> +				if (FIELD_GET(CTR1_DINC, ctr1))
+>>>> +					dev_addr += chunk;
+>>>> +			} else { /* (dir == DMA_DEV_TO_MEM || dir == DMA_MEM_TO_MEM) */
+>>>> +				src = dev_addr;
+>>>> +				dst = sg_addr;
+>>>> +
+>>>> +				ret = stm32_dma3_chan_prep_hw(chan, dir, &swdesc->ccr, &ctr1, &ctr2,
+>>>> +							      src, dst, chunk);
+>>>> +
+>>>> +				if (FIELD_GET(CTR1_SINC, ctr1))
+>>>> +					dev_addr += chunk;
+>>>> +			}
+>>>> +
+>>>> +			if (ret)
+>>>> +				goto err_desc_free;
+>>>> +
+>>>> +			stm32_dma3_chan_prep_hwdesc(chan, swdesc, j, src, dst, chunk,
+>>>> +						    ctr1, ctr2, j == (count - 1), false);
+>>>> +
+>>>> +			sg_addr += chunk;
+>>>> +			len -= chunk;
+>>>> +			j++;
+>>>> +		} while (len);
+>>>> +	}
+>>>> +
+>>>> +	/* Enable Error interrupts */
+>>>> +	swdesc->ccr |= CCR_USEIE | CCR_ULEIE | CCR_DTEIE;
+>>>> +	/* Enable Transfer state interrupts */
+>>>> +	swdesc->ccr |= CCR_TCIE;
+>>>> +
+>>>> +	swdesc->cyclic = false;
+>>>> +
+>>>> +	return vchan_tx_prep(&chan->vchan, &swdesc->vdesc, flags);
+>>>> +
+>>>> +err_desc_free:
+>>>> +	stm32_dma3_chan_desc_free(chan, swdesc);
+>>>> +
+>>>> +	return NULL;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_caps(struct dma_chan *c, struct dma_slave_caps *caps)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +
+>>>> +	if (!chan->fifo_size) {
+>>>> +		caps->max_burst = 0;
+>>>> +		caps->src_addr_widths &= ~BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>>>> +		caps->dst_addr_widths &= ~BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>>>> +	} else {
+>>>> +		/* Burst transfer should not exceed half of the fifo size */
+>>>> +		caps->max_burst = chan->max_burst;
+>>>> +		if (caps->max_burst < DMA_SLAVE_BUSWIDTH_8_BYTES) {
+>>>> +			caps->src_addr_widths &= ~BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>>>> +			caps->dst_addr_widths &= ~BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>>>> +		}
+>>>> +	}
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_config(struct dma_chan *c, struct dma_slave_config *config)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +
+>>>> +	memcpy(&chan->dma_config, config, sizeof(*config));
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_terminate_all(struct dma_chan *c)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +	unsigned long flags;
+>>>> +	LIST_HEAD(head);
+>>>> +
+>>>> +	spin_lock_irqsave(&chan->vchan.lock, flags);
+>>>> +
+>>>> +	if (chan->swdesc) {
+>>>> +		vchan_terminate_vdesc(&chan->swdesc->vdesc);
+>>>> +		chan->swdesc = NULL;
+>>>> +	}
+>>>> +
+>>>> +	stm32_dma3_chan_stop(chan);
+>>>> +
+>>>> +	vchan_get_all_descriptors(&chan->vchan, &head);
+>>>> +
+>>>> +	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>>>> +	vchan_dma_desc_free_list(&chan->vchan, &head);
+>>>> +
+>>>> +	dev_dbg(chan2dev(chan), "vchan %pK: terminated\n", &chan->vchan);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_synchronize(struct dma_chan *c)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +
+>>>> +	vchan_synchronize(&chan->vchan);
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_issue_pending(struct dma_chan *c)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +	unsigned long flags;
+>>>> +
+>>>> +	spin_lock_irqsave(&chan->vchan.lock, flags);
+>>>> +
+>>>> +	if (vchan_issue_pending(&chan->vchan) && !chan->swdesc) {
+>>>> +		dev_dbg(chan2dev(chan), "vchan %pK: issued\n", &chan->vchan);
+>>>> +		stm32_dma3_chan_start(chan);
+>>>> +	}
+>>>> +
+>>>> +	spin_unlock_irqrestore(&chan->vchan.lock, flags);
+>>>> +}
+>>>> +
+>>>> +static bool stm32_dma3_filter_fn(struct dma_chan *c, void *fn_param)
+>>>> +{
+>>>> +	struct stm32_dma3_chan *chan = to_stm32_dma3_chan(c);
+>>>> +	struct stm32_dma3_ddata *ddata = to_stm32_dma3_ddata(chan);
+>>>> +	struct stm32_dma3_dt_conf *conf = fn_param;
+>>>> +	u32 mask, semcr;
+>>>> +	int ret;
+>>>> +
+>>>> +	dev_dbg(c->device->dev, "%s(%s): req_line=%d ch_conf=%08x tr_conf=%08x\n",
+>>>> +		__func__, dma_chan_name(c), conf->req_line, conf->ch_conf, conf->tr_conf);
+>>>> +
+>>>> +	if (!of_property_read_u32(c->device->dev->of_node, "dma-channel-mask", &mask))
+>>>> +		if (!(mask & BIT(chan->id)))
+>>>> +			return false;
+>>>> +
+>>>> +	ret = pm_runtime_resume_and_get(ddata->dma_dev.dev);
+>>>> +	if (ret < 0)
+>>>> +		return false;
+>>>> +	semcr = readl_relaxed(ddata->base + STM32_DMA3_CSEMCR(chan->id));
+>>>> +	pm_runtime_put_sync(ddata->dma_dev.dev);
+>>>> +
+>>>> +	/* Check if chan is free */
+>>>> +	if (semcr & CSEMCR_SEM_MUTEX)
+>>>> +		return false;
+>>>> +
+>>>> +	/* Check if chan fifo fits well */
+>>>> +	if (FIELD_GET(STM32_DMA3_DT_FIFO, conf->ch_conf) != chan->fifo_size)
+>>>> +		return false;
+>>>> +
+>>>> +	return true;
+>>>> +}
+>>>> +
+>>>> +static struct dma_chan *stm32_dma3_of_xlate(struct of_phandle_args *dma_spec, struct of_dma *ofdma)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = ofdma->of_dma_data;
+>>>> +	dma_cap_mask_t mask = ddata->dma_dev.cap_mask;
+>>>> +	struct stm32_dma3_dt_conf conf;
+>>>> +	struct stm32_dma3_chan *chan;
+>>>> +	struct dma_chan *c;
+>>>> +
+>>>> +	if (dma_spec->args_count < 3) {
+>>>> +		dev_err(ddata->dma_dev.dev, "Invalid args count\n");
+>>>> +		return NULL;
+>>>> +	}
+>>>> +
+>>>> +	conf.req_line = dma_spec->args[0];
+>>>> +	conf.ch_conf = dma_spec->args[1];
+>>>> +	conf.tr_conf = dma_spec->args[2];
+>>>> +
+>>>> +	if (conf.req_line >= ddata->dma_requests) {
+>>>> +		dev_err(ddata->dma_dev.dev, "Invalid request line\n");
+>>>> +		return NULL;
+>>>> +	}
+>>>> +
+>>>> +	/* Request dma channel among the generic dma controller list */
+>>>> +	c = dma_request_channel(mask, stm32_dma3_filter_fn, &conf);
+>>>> +	if (!c) {
+>>>> +		dev_err(ddata->dma_dev.dev, "No suitable channel found\n");
+>>>> +		return NULL;
+>>>> +	}
+>>>> +
+>>>> +	chan = to_stm32_dma3_chan(c);
+>>>> +	chan->dt_config = conf;
+>>>> +
+>>>> +	return c;
+>>>> +}
+>>>> +
+>>>> +static u32 stm32_dma3_check_rif(struct stm32_dma3_ddata *ddata)
+>>>> +{
+>>>> +	u32 chan_reserved, mask = 0, i, ccidcfgr, invalid_cid = 0;
+>>>> +
+>>>> +	/* Reserve Secure channels */
+>>>> +	chan_reserved = readl_relaxed(ddata->base + STM32_DMA3_SECCFGR);
+>>>> +
+>>>> +	/*
+>>>> +	 * CID filtering must be configured to ensure that the DMA3 channel will inherit the CID of
+>>>> +	 * the processor which is configuring and using the given channel.
+>>>> +	 * In case CID filtering is not configured, dma-channel-mask property can be used to
+>>>> +	 * specify available DMA channels to the kernel.
+>>>> +	 */
+>>>> +	of_property_read_u32(ddata->dma_dev.dev->of_node, "dma-channel-mask", &mask);
+>>>> +
+>>>> +	/* Reserve !CID-filtered not in dma-channel-mask, static CID != CID1, CID1 not allowed */
+>>>> +	for (i = 0; i < ddata->dma_channels; i++) {
+>>>> +		ccidcfgr = readl_relaxed(ddata->base + STM32_DMA3_CCIDCFGR(i));
+>>>> +
+>>>> +		if (!(ccidcfgr & CCIDCFGR_CFEN)) { /* !CID-filtered */
+>>>> +			invalid_cid |= BIT(i);
+>>>> +			if (!(mask & BIT(i))) /* Not in dma-channel-mask */
+>>>> +				chan_reserved |= BIT(i);
+>>>> +		} else { /* CID-filtered */
+>>>> +			if (!(ccidcfgr & CCIDCFGR_SEM_EN)) { /* Static CID mode */
+>>>> +				if (FIELD_GET(CCIDCFGR_SCID, ccidcfgr) != CCIDCFGR_CID1)
+>>>> +					chan_reserved |= BIT(i);
+>>>> +			} else { /* Semaphore mode */
+>>>> +				if (!FIELD_GET(CCIDCFGR_SEM_WLIST_CID1, ccidcfgr))
+>>>> +					chan_reserved |= BIT(i);
+>>>> +				ddata->chans[i].semaphore_mode = true;
+>>>> +			}
+>>>> +		}
+>>>> +		dev_dbg(ddata->dma_dev.dev, "chan%d: %s mode, %s\n", i,
+>>>> +			!(ccidcfgr & CCIDCFGR_CFEN) ? "!CID-filtered" :
+>>>> +			ddata->chans[i].semaphore_mode ? "Semaphore" : "Static CID",
+>>>> +			(chan_reserved & BIT(i)) ? "denied" :
+>>>> +			mask & BIT(i) ? "force allowed" : "allowed");
+>>>> +	}
+>>>> +
+>>>> +	if (invalid_cid)
+>>>> +		dev_warn(ddata->dma_dev.dev, "chan%*pbl have invalid CID configuration\n",
+>>>> +			 ddata->dma_channels, &invalid_cid);
+>>>> +
+>>>> +	return chan_reserved;
+>>>> +}
+>>>> +
+>>>> +static const struct of_device_id stm32_dma3_of_match[] = {
+>>>> +	{ .compatible = "st,stm32-dma3", },
+>>>> +	{ /* sentinel */},
+>>>> +};
+>>>> +MODULE_DEVICE_TABLE(of, stm32_dma3_of_match);
+>>>> +
+>>>> +static int stm32_dma3_probe(struct platform_device *pdev)
+>>>> +{
+>>>> +	struct device_node *np = pdev->dev.of_node;
+>>>> +	struct stm32_dma3_ddata *ddata;
+>>>> +	struct reset_control *reset;
+>>>> +	struct stm32_dma3_chan *chan;
+>>>> +	struct dma_device *dma_dev;
+>>>> +	u32 master_ports, chan_reserved, i, verr;
+>>>> +	u64 hwcfgr;
+>>>> +	int ret;
+>>>> +
+>>>> +	ddata = devm_kzalloc(&pdev->dev, sizeof(*ddata), GFP_KERNEL);
+>>>> +	if (!ddata)
+>>>> +		return -ENOMEM;
+>>>> +	platform_set_drvdata(pdev, ddata);
+>>>> +
+>>>> +	dma_dev = &ddata->dma_dev;
+>>>> +
+>>>> +	ddata->base = devm_platform_ioremap_resource(pdev, 0);
+>>>> +	if (IS_ERR(ddata->base))
+>>>> +		return PTR_ERR(ddata->base);
+>>>> +
+>>>> +	ddata->clk = devm_clk_get(&pdev->dev, NULL);
+>>>> +	if (IS_ERR(ddata->clk))
+>>>> +		return dev_err_probe(&pdev->dev, PTR_ERR(ddata->clk), "Failed to get clk\n");
+>>>> +
+>>>> +	reset = devm_reset_control_get_optional(&pdev->dev, NULL);
+>>>> +	if (IS_ERR(reset))
+>>>> +		return dev_err_probe(&pdev->dev, PTR_ERR(reset), "Failed to get reset\n");
+>>>> +
+>>>> +	ret = clk_prepare_enable(ddata->clk);
+>>>> +	if (ret)
+>>>> +		return dev_err_probe(&pdev->dev, ret, "Failed to enable clk\n");
+>>>> +
+>>>> +	reset_control_reset(reset);
+>>>> +
+>>>> +	INIT_LIST_HEAD(&dma_dev->channels);
+>>>> +
+>>>> +	dma_cap_set(DMA_SLAVE, dma_dev->cap_mask);
+>>>> +	dma_cap_set(DMA_PRIVATE, dma_dev->cap_mask);
+>>>> +	dma_dev->dev = &pdev->dev;
+>>>> +	/*
+>>>> +	 * This controller supports up to 8-byte buswidth depending on the port used and the
+>>>> +	 * channel, and can only access address at even boundaries, multiple of the buswidth.
+>>>> +	 */
+>>>> +	dma_dev->copy_align = DMAENGINE_ALIGN_8_BYTES;
+>>>> +	dma_dev->src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
+>>>> +				   BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
+>>>> +				   BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
+>>>> +				   BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>>>> +	dma_dev->dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE) |
+>>>> +				   BIT(DMA_SLAVE_BUSWIDTH_2_BYTES) |
+>>>> +				   BIT(DMA_SLAVE_BUSWIDTH_4_BYTES) |
+>>>> +				   BIT(DMA_SLAVE_BUSWIDTH_8_BYTES);
+>>>> +	dma_dev->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV) | BIT(DMA_MEM_TO_MEM);
+>>>> +
+>>>> +	dma_dev->descriptor_reuse = true;
+>>>> +	dma_dev->max_sg_burst = STM32_DMA3_MAX_SEG_SIZE;
+>>>> +	dma_dev->residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
+>>>> +	dma_dev->device_alloc_chan_resources = stm32_dma3_alloc_chan_resources;
+>>>> +	dma_dev->device_free_chan_resources = stm32_dma3_free_chan_resources;
+>>>> +	dma_dev->device_prep_slave_sg = stm32_dma3_prep_slave_sg;
+>>>> +	dma_dev->device_caps = stm32_dma3_caps;
+>>>> +	dma_dev->device_config = stm32_dma3_config;
+>>>> +	dma_dev->device_terminate_all = stm32_dma3_terminate_all;
+>>>> +	dma_dev->device_synchronize = stm32_dma3_synchronize;
+>>>> +	dma_dev->device_tx_status = dma_cookie_status;
+>>>> +	dma_dev->device_issue_pending = stm32_dma3_issue_pending;
+>>>> +
+>>>> +	/* if dma_channels is not modified, get it from hwcfgr1 */
+>>>> +	if (of_property_read_u32(np, "dma-channels", &ddata->dma_channels)) {
+>>>> +		hwcfgr = readl_relaxed(ddata->base + STM32_DMA3_HWCFGR1);
+>>>> +		ddata->dma_channels = FIELD_GET(G_NUM_CHANNELS, hwcfgr);
+>>>> +	}
+>>>> +
+>>>> +	/* if dma_requests is not modified, get it from hwcfgr2 */
+>>>> +	if (of_property_read_u32(np, "dma-requests", &ddata->dma_requests)) {
+>>>> +		hwcfgr = readl_relaxed(ddata->base + STM32_DMA3_HWCFGR2);
+>>>> +		ddata->dma_requests = FIELD_GET(G_MAX_REQ_ID, hwcfgr) + 1;
+>>>> +	}
+>>>> +
+>>>> +	/* G_MASTER_PORTS, G_M0_DATA_WIDTH_ENC, G_M1_DATA_WIDTH_ENC in HWCFGR1 */
+>>>> +	hwcfgr = readl_relaxed(ddata->base + STM32_DMA3_HWCFGR1);
+>>>> +	master_ports = FIELD_GET(G_MASTER_PORTS, hwcfgr);
+>>>> +
+>>>> +	ddata->ports_max_dw[0] = FIELD_GET(G_M0_DATA_WIDTH_ENC, hwcfgr);
+>>>> +	if (master_ports == AXI64 || master_ports == AHB32) /* Single master port */
+>>>> +		ddata->ports_max_dw[1] = DW_INVALID;
+>>>> +	else /* Dual master ports */
+>>>> +		ddata->ports_max_dw[1] = FIELD_GET(G_M1_DATA_WIDTH_ENC, hwcfgr);
+>>>> +
+>>>> +	ddata->chans = devm_kcalloc(&pdev->dev, ddata->dma_channels, sizeof(*ddata->chans),
+>>>> +				    GFP_KERNEL);
+>>>> +	if (!ddata->chans) {
+>>>> +		ret = -ENOMEM;
+>>>> +		goto err_clk_disable;
+>>>> +	}
+>>>> +
+>>>> +	chan_reserved = stm32_dma3_check_rif(ddata);
+>>>> +
+>>>> +	if (chan_reserved == GENMASK(ddata->dma_channels - 1, 0)) {
+>>>> +		ret = -ENODEV;
+>>>> +		dev_err_probe(&pdev->dev, ret, "No channel available, abort registration\n");
+>>>> +		goto err_clk_disable;
+>>>> +	}
+>>>> +
+>>>> +	/* G_FIFO_SIZE x=0..7 in HWCFGR3 and G_FIFO_SIZE x=8..15 in HWCFGR4 */
+>>>> +	hwcfgr = readl_relaxed(ddata->base + STM32_DMA3_HWCFGR3);
+>>>> +	hwcfgr |= ((u64)readl_relaxed(ddata->base + STM32_DMA3_HWCFGR4)) << 32;
+>>>> +
+>>>> +	for (i = 0; i < ddata->dma_channels; i++) {
+>>>> +		if (chan_reserved & BIT(i))
+>>>> +			continue;
+>>>> +
+>>>> +		chan = &ddata->chans[i];
+>>>> +		chan->id = i;
+>>>> +		chan->fifo_size = get_chan_hwcfg(i, G_FIFO_SIZE(i), hwcfgr);
+>>>> +		/* If chan->fifo_size > 0 then half of the fifo size, else no burst when no FIFO */
+>>>> +		chan->max_burst = (chan->fifo_size) ? (1 << (chan->fifo_size + 1)) / 2 : 0;
+>>>> +		chan->vchan.desc_free = stm32_dma3_chan_vdesc_free;
+>>>> +
+>>>> +		vchan_init(&chan->vchan, dma_dev);
+>>>> +	}
+>>>> +
+>>>> +	ret = dmaenginem_async_device_register(dma_dev);
+>>>> +	if (ret)
+>>>> +		goto err_clk_disable;
+>>>> +
+>>>> +	for (i = 0; i < ddata->dma_channels; i++) {
+>>>> +		if (chan_reserved & BIT(i))
+>>>> +			continue;
+>>>> +
+>>>> +		ret = platform_get_irq(pdev, i);
+>>>> +		if (ret < 0)
+>>>> +			goto err_clk_disable;
+>>>> +
+>>>> +		chan = &ddata->chans[i];
+>>>> +		chan->irq = ret;
+>>>> +
+>>>> +		ret = devm_request_irq(&pdev->dev, chan->irq, stm32_dma3_chan_irq, 0,
+>>>> +				       dev_name(chan2dev(chan)), chan);
+>>>> +		if (ret) {
+>>>> +			dev_err_probe(&pdev->dev, ret, "Failed to request channel %s IRQ\n",
+>>>> +				      dev_name(chan2dev(chan)));
+>>>> +			goto err_clk_disable;
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	ret = of_dma_controller_register(np, stm32_dma3_of_xlate, ddata);
+>>>> +	if (ret) {
+>>>> +		dev_err_probe(&pdev->dev, ret, "Failed to register controller\n");
+>>>> +		goto err_clk_disable;
+>>>> +	}
+>>>> +
+>>>> +	verr = readl_relaxed(ddata->base + STM32_DMA3_VERR);
+>>>> +
+>>>> +	pm_runtime_set_active(&pdev->dev);
+>>>> +	pm_runtime_enable(&pdev->dev);
+>>>> +	pm_runtime_get_noresume(&pdev->dev);
+>>>> +	pm_runtime_put(&pdev->dev);
+>>>> +
+>>>> +	dev_info(&pdev->dev, "STM32 DMA3 registered rev:%lu.%lu\n",
+>>>> +		 FIELD_GET(VERR_MAJREV, verr), FIELD_GET(VERR_MINREV, verr));
+>>>> +
+>>>> +	return 0;
+>>>> +
+>>>> +err_clk_disable:
+>>>> +	clk_disable_unprepare(ddata->clk);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static void stm32_dma3_remove(struct platform_device *pdev)
+>>>> +{
+>>>> +	pm_runtime_disable(&pdev->dev);
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_runtime_suspend(struct device *dev)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = dev_get_drvdata(dev);
+>>>> +
+>>>> +	clk_disable_unprepare(ddata->clk);
+>>>> +
+>>>> +	return 0;
+>>>> +}
+>>>> +
+>>>> +static int stm32_dma3_runtime_resume(struct device *dev)
+>>>> +{
+>>>> +	struct stm32_dma3_ddata *ddata = dev_get_drvdata(dev);
+>>>> +	int ret;
+>>>> +
+>>>> +	ret = clk_prepare_enable(ddata->clk);
+>>>> +	if (ret)
+>>>> +		dev_err(dev, "Failed to enable clk: %d\n", ret);
+>>>> +
+>>>> +	return ret;
+>>>> +}
+>>>> +
+>>>> +static const struct dev_pm_ops stm32_dma3_pm_ops = {
+>>>> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+>>>> +	RUNTIME_PM_OPS(stm32_dma3_runtime_suspend, stm32_dma3_runtime_resume, NULL)
+>>>> +};
+>>>> +
+>>>> +static struct platform_driver stm32_dma3_driver = {
+>>>> +	.probe = stm32_dma3_probe,
+>>>> +	.remove_new = stm32_dma3_remove,
+>>>> +	.driver = {
+>>>> +		.name = "stm32-dma3",
+>>>> +		.of_match_table = stm32_dma3_of_match,
+>>>> +		.pm = pm_ptr(&stm32_dma3_pm_ops),
+>>>> +	},
+>>>> +};
+>>>> +
+>>>> +static int __init stm32_dma3_init(void)
+>>>> +{
+>>>> +	return platform_driver_register(&stm32_dma3_driver);
+>>>> +}
+>>>> +
+>>>> +subsys_initcall(stm32_dma3_init);
+>>>> +
+>>>> +MODULE_DESCRIPTION("STM32 DMA3 controller driver");
+>>>> +MODULE_AUTHOR("Amelie Delaunay <amelie.delaunay@foss.st.com>");
+>>>> +MODULE_LICENSE("GPL");
+>>>> -- 
+>>>> 2.25.1
+>>>
+>>
+>> Regards,
+>> Amelie
 
