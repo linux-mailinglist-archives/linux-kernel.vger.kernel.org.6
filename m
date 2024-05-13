@@ -1,153 +1,185 @@
-Return-Path: <linux-kernel+bounces-177682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6203F8C42F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09AC8C42FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59181F21B7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FA7282A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D7A153BD8;
-	Mon, 13 May 2024 14:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F26153BEF;
+	Mon, 13 May 2024 14:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="j0/0JuGI"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2038.outbound.protection.outlook.com [40.92.21.38])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="TACf0VYb"
+Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B6A153BC9
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:14:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715609661; cv=fail; b=TIChmZnMungIyT5ILAGvg7Vvk/pczkNqIeQcGZdWufnSyZnw85+p1scU8iro5WD/KqFnQrU1uHRNEpN+5P36tUJD+lLAcVmTnfw3P4YCtqT2JoZaFRgFRdxBCdgWX+RsH5AepF8ur9Xplvw0wFAjndBYZ7nvQKo4Du7TeUOy1dg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715609661; c=relaxed/simple;
-	bh=8r25WIQcmdAeXxBVBcNzIAEEsF/Vn9xAXbNZttDLgNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=L+5eK9x/3R6KNeHVGF1DCGGvsqp1l/8LB9CcuualHzdz5DxKs1c6KlXPgpPEQNRUhwVGK06j/sdKIxdXaOarQY2N2smJBYD2GMj9kZ9tYEV6EtWVTD7U4JuQptQFnVwM+h/Tl2sYSb2WvaBtSG4RlVVlgfRpPKZQRAoqg6SjgHg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=j0/0JuGI; arc=fail smtp.client-ip=40.92.21.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=D8sCZKWzyBULaRyul4huNRSB95MhReswHBKcYjgXtOYD3yGiD41/le77V2DIsEeUyF+sRjx3iW4TSnTwZq+os/K4GXSBlcIcAEhGL38a/nZ074Nj/jeeE6uVYtTO/j819lQNHHeNlreNg67lkUstHm6VUXNj0v60WH/noleOSoNz85zs0cUj9/fqn6CbHbExh0KK3JbAPY04+1xInbHArBNM4mkd9nwm3BmpRWcF/00D7gNTgchfBUUokLpUVdAKUQ7MeLSW/CbeJPVpwdb7a1Lv5jaqb9A38oCC25DGdlfb4kQi/q27H+FOggwOQlfs+1hqcYdI4wODnfm9B/QhkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+Ii9GsWnJ7D6mP1n2yJF+TxiwCJPferw8vPhzhtBwuE=;
- b=divYYw/kKIHM5cFmE8yGTIAsGJgBIDsZLPvsbH31lZay2lyjrjxQRu+YMZ4+y0HqoyUui36ExAS6LJeIxYCYtX0O6OwWD4xCSyCbaMPmp25B2hlmZ31ndzwmxLakwDES9qam/mHWRdE4oxK1ZraKprm+LqD7gMzsK/hkUW/nPJltzVJv89gGRNdRLpciH8LOOw2yYRphmzJ3FjeacqLtmEqP79A8d0p9oxlMXJQJCxSu2kDbuuOHo5MNQT49L340kkc1NnC4oFwtUV51iRWUgAr266hEz83zZHXVS49kyTmelWj0yR+gdLMebceF/sLCNLmiWHLYq39j1Cm2Ebw/cA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+Ii9GsWnJ7D6mP1n2yJF+TxiwCJPferw8vPhzhtBwuE=;
- b=j0/0JuGIGoDM2u85XK+1SCj6NILuIJMe93oko7glq3JX7ElwJuNwgww4Mxyb2kRFq3Z5HH1LKSnSnGvr5ZN7WPqXmjoTinVk+w2l5IOFO/s46lJivIwm1J1az/K/GPxk4h6y1YmHLk50MpXx9794biZ5NPv0sm01b7pwkOl48hfSmMo75oKF0Z2NZR70sfLvUlQf6eYHPHvCzgnaowHLt/vkK0FwqrdGn7QLQmCUbLr6imr2d+zFX3v7PWwfKkBL8npMpOV2d83GFKJie4gw7/JWwiJU349VkGHnvLhqL0W1hF9ZDrSXAb9X18J8FphEQUSN6wS8/rXS293/VRVOiA==
-Received: from BYAPR03MB4168.namprd03.prod.outlook.com (2603:10b6:a03:78::23)
- by MW5PR03MB6982.namprd03.prod.outlook.com (2603:10b6:303:1a9::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 14:14:17 +0000
-Received: from BYAPR03MB4168.namprd03.prod.outlook.com
- ([fe80::b8b1:7fdc:95d4:238a]) by BYAPR03MB4168.namprd03.prod.outlook.com
- ([fe80::b8b1:7fdc:95d4:238a%6]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 14:14:16 +0000
-From: Jiasheng Jiang <jiashengjiangcool@outlook.com>
-To: jani.nikula@linux.intel.com,
-	joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com,
-	tursulin@ursulin.net,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	chris@chris-wilson.co.uk
-Cc: intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@outlook.com>
-Subject: [PATCH] drm/i915: Correct error handler
-Date: Mon, 13 May 2024 14:14:07 +0000
-Message-ID:
- <BYAPR03MB4168F12A763386E1ADF8A8A7ADE22@BYAPR03MB4168.namprd03.prod.outlook.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TMN: [9DNGlloOSkAg6/nouQhv1hukjZgaI1LQ]
-X-ClientProxiedBy: CH2PR10CA0025.namprd10.prod.outlook.com
- (2603:10b6:610:4c::35) To BYAPR03MB4168.namprd03.prod.outlook.com
- (2603:10b6:a03:78::23)
-X-Microsoft-Original-Message-ID:
- <20240513141407.48770-1-jiashengjiangcool@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD532153819;
+	Mon, 13 May 2024 14:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715609698; cv=none; b=XULjaHfVfQVMEvSoJAdBXR1M0EleYJQ85ArpBrAxxpExIN0ArBuhQeCXfpKBQ0mAu/lyrpowRt6b8TP7VkZQdeDJWDyV11ukQLFj+HcLrmapv6AzJTQ/D2ciFtijr3m2VmhAoDJ+5/MwL+06erBR/1V9GfuJnGZ9PzC9+mLlyGA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715609698; c=relaxed/simple;
+	bh=33erqRfm50dy4WDDGbSJahdMBXSmjtcQRIZ3HCaaYI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sblQaTUbqWUB6tam1JtJm8G3ael3KuM7DAD87dGMSMfrIfSKQBJZ7/Cu1tBwoOCpLdN54Jnn9xQmeaeJbu5dbEiVqGbbsFCk1Zv2nBk1zfPKLsc0mw1XAE1W7FWhflte0WWnLwzKq6zHBH+X2sfgmc3uVqXxpCyNd4qEgK1zod8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=TACf0VYb; arc=none smtp.client-ip=148.163.152.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355091.ppops.net [127.0.0.1])
+	by mx0b-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D8L2M2009106;
+	Mon, 13 May 2024 14:14:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=DKIM202306; bh=FdxN5qFp6MoVErrH5QHe
+	3LkBFgBJ9NheMIyMy9pry2s=; b=TACf0VYbDPMCX0OE4JNy0nGlAviTf3TODoMQ
+	XP17gE708/pc0ygl58pjCramAzizQUd5xc8XxQW2KR0cksdUOTm2nzAis+fj/8os
+	C6gDfWWwYj2UE1UmNEKsMQ4OIzh16ZeTndbeJj+eVasZ/FedduLL3nmdsCyPN5us
+	cKxjftxyS0VwQX90xMoMmlE3Kn1ea/HKBCkSIDH4IWtvsemL8UB8uPrWRVodHm7N
+	s9QOnH+DGI7pdt6nOAlhZq70m/QoK3Z/F7qBANobywZ7MoDosD3z0IhxUAUPzhZ8
+	vfywqGUch3U41uBly1gcNd0DgP/SqEbEE5KrMTrniydxT3jjuw==
+Received: from va32lpfpp02.lenovo.com ([104.232.228.22])
+	by mx0b-00823401.pphosted.com (PPS) with ESMTPS id 3y30gh9tfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 14:14:35 +0000 (GMT)
+Received: from va32lmmrp01.lenovo.com (va32lmmrp01.mot.com [10.62.177.113])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp02.lenovo.com (Postfix) with ESMTPS id 4VdM1l1TmPz50TkW;
+	Mon, 13 May 2024 14:14:35 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by va32lmmrp01.lenovo.com (Postfix) with ESMTPSA id 4VdM1k536Nz2VZRw;
+	Mon, 13 May 2024 14:14:34 +0000 (UTC)
+Date: Mon, 13 May 2024 09:14:33 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: [PATCH bpf-next v4 3/3] arm64/cfi,bpf: Use DEFINE_CFI_TYPE in arm64
+Message-ID: <ste77mcidmsm75jvh2ss5ebaa7x4em5ekuf67wxnftzpielypx@q7gsjlbk3atx>
+References: <wtb6czzpvtqq23t4g6hf7on257dtxzdb4fa4nuq3dtq32odmli@xoyyrtthafar>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR03MB4168:EE_|MW5PR03MB6982:EE_
-X-MS-Office365-Filtering-Correlation-Id: 723e0260-b985-427f-2e54-08dc7356f933
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199019|440099019|3412199016|3430499023|3420499023|1710799017;
-X-Microsoft-Antispam-Message-Info:
-	E6k/P1HCG+Pyuaws5+Qrd0XbnxVsmLcy/UIDaNVgzwgs3Imvo2N91rkMy33xkra/fnq+Xjd45c/ybHXhvCwHnLAOKe1ZbQjURCV3e2Ol03yda44/Zd3vmNwVcQCFTTfH+bIhNS7APZ4A3PhW2d93lkAxPcOCM9xjvel34aX2cWd7YRFRofYLWUYGLX2l+K5zGD8gaRuenUlVkob8SS5QUnfQP7XbC8O7/nacTW25PdX00o9hBWGRi0cUy+P/CpBQtJ7iCGUIaTLoe4GS0sDv+oXrDOsXBKoPFhya6NhiuaxeEylOGgyC0MI1N2a7yxlBmj6gFlwfdSVin622pEw+HbEzYd+LJUCGVEdz3MBUGujZh66IZxu5KDGM63X5qFMuCTBgXD3MFsFeA58VEVPTL1bTmcFmHF4Q9QAvlmzIBKmhK3fKQWuI4IqYiHfqryswH96yJWzJKz1X+3/8N0PuLPYxl8TR+1EQ6RGCWVO8DYHGvj2/Z4AXUDWkoB/nDimnPEtJHZu0Yx+YfjdkLRM6Ogvtwhn57fV/ophvl7iHJn7sLpQhU9+pT37Gwbh0aCYsutSKfTJ/m0Uo3ZmuJ5TyA4HNHKATEXHDrgESlXX1K8VgAgN0bX8lkpwY6v17tXUs
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nDaCK/rZrZXPZ4aaEC2CSnRxrcI1ORh2xBmMxxj4MV8xceaWotk2Y9DkKCad?=
- =?us-ascii?Q?8LdccdQLPCR04bWXj8B890mAlLGdZLJWp+L16yW5ftxH2CrV7oc2FCJhVPdg?=
- =?us-ascii?Q?PJArRttO412Zqb2SnmTAMBJba0Aa3TKNcfuSkoLGHE2FNCgh8XeSY7WyMPDO?=
- =?us-ascii?Q?qIDWxSrHRR07I4NnBtzZ41so6GPX2Xb0VwBeKse8d4yWYxC4EGJZmGqIP2Gm?=
- =?us-ascii?Q?dlG6Z2hcg2jN8jtoqQxA35o4USXey1mZipAa8z/EgNb86fUe5mfiQVJMb/ey?=
- =?us-ascii?Q?gFE82Z6alTIvTKlg5e+tX5hehP8pL7ri2gjid7uuV683HppwNBYjpktZjDc6?=
- =?us-ascii?Q?9IhhUJSMkvAjAGDi7iAcQm49+RfT+qMRWbIh2BLUli86Dcj1ewriYFeOVSFH?=
- =?us-ascii?Q?BaBJZP1CC+aLzZ80iDkqnrgYO/sJAfZBnUTPgPjc7E6uNSuGAF5p6cttZhYc?=
- =?us-ascii?Q?lg4bM/TwP2JkNwPEVCp8UBNmfdW4gQ5bM15Czvavp0tBRWeDd4QqdnsmjZhA?=
- =?us-ascii?Q?hFay/TGbfC9AYV4opaswz6cF2DhHJJKAmXV77mjjHfBuaF2TBQlP7DV03pec?=
- =?us-ascii?Q?YXxYSfx4TPM/qSmRl0i2d60nkPwZO5+D4lYykc7bIUfjXG/AvGMa0xp0Pfbe?=
- =?us-ascii?Q?XNjJJ8UDujHqwbz+qCfFM6emAIAIJuB+xFu3ISPQjdK1AA35k4V3j2MOWU3a?=
- =?us-ascii?Q?00y4L7YGPsCD0KTre7O7bbXu8dO+t2NmWiTdL5JfbIzixQkPlsYpUP3Re+qf?=
- =?us-ascii?Q?h8AKWoe7slzpAy63YVE179iyhcGKV3hqGngskGCUjEwwbghNHHxEqP10n40C?=
- =?us-ascii?Q?me6iM6GeG0dGgh+ujh85YF53rF7u/02nwf0WcnvDCvgyKgvaQbYcE4zDnQyy?=
- =?us-ascii?Q?1vabEK2gZnWjX4DLMYGivUfhcmoMrNeuyykNJBTmAsimXPQ6FIRzwI7EhFKY?=
- =?us-ascii?Q?Hj8EUgnp6yQq/z+Y/zda8rX8h4UTCL5hEwP2JsNUeNNOplNNvPlxlj3vEf4f?=
- =?us-ascii?Q?KT9/H5cEi8D+MyshsF3/hAmNGKCWsrWQ52NrFyqGlxYqkbLqSyk83pNRHrRy?=
- =?us-ascii?Q?Q7UPgsSrEEz3+KTbloQuy20xSZ0+TJJjBTIg11lz2Ox8Ik6smJamlKe+dzUn?=
- =?us-ascii?Q?o451xDVLzVFveDya2YJquQ5NK4DpCrMyJf6aGnJ4zHCKwmV88lZcax1syfwb?=
- =?us-ascii?Q?v6eJn8KzvEsdFMBEhIZtUsn0F2p84S1DgEM8VgK+sG3YnJzyG/lxQ3nGirE5?=
- =?us-ascii?Q?UYMaE1k/8FC8JvVg5ciO?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 723e0260-b985-427f-2e54-08dc7356f933
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR03MB4168.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 14:14:16.7680
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR03MB6982
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <wtb6czzpvtqq23t4g6hf7on257dtxzdb4fa4nuq3dtq32odmli@xoyyrtthafar>
+X-Proofpoint-GUID: ejn-Tuy6x7RGGoUP3mZrfDZYJKj-CR2c
+X-Proofpoint-ORIG-GUID: ejn-Tuy6x7RGGoUP3mZrfDZYJKj-CR2c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_09,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ clxscore=1015 mlxlogscore=999 priorityscore=1501 mlxscore=0 spamscore=0
+ impostorscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405130089
 
-> On 5/11/2024 5:48 PM, Jiasheng Jiang wrote:
->> Replace "slab_priorities" with "slab_dependencies" in the error handler to avoid memory leak.
-> 
-> Nice catch. I would make the subject more like:
-> 
-> drm/i915: Fix memory leak by correcting cache object name in error handler
-> 
->>
->> Fixes: 32eb6bcfdda9 ("drm/i915: Make request allocation caches global")
-> 
-> Also need Cc: <stable@vger.kernel.org> # v5.2+
-> 
-> With those:
-> 
-> Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
-> 
-> 
-> Nirmoy
+Corrects Puranjay Mohan's commit to adopt Mark Rutland's
+suggestion of using a C CFI type macro in kCFI+BPF.
 
-Thanks.
-I will submit a v2.
+Signed-off-by: Maxwell Bland <mbland@motorola.com>
+---
+ arch/arm64/kernel/alternative.c | 46 ++++-----------------------------
+ 1 file changed, 5 insertions(+), 41 deletions(-)
 
-- Jiasheng
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index 1715da7df137..d7a58eca7665 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -8,6 +8,7 @@
+ 
+ #define pr_fmt(fmt) "alternatives: " fmt
+ 
++#include <linux/cfi_types.h>
+ #include <linux/init.h>
+ #include <linux/cpu.h>
+ #include <linux/elf.h>
+@@ -302,53 +303,16 @@ EXPORT_SYMBOL(alt_cb_patch_nops);
+ 
+ #ifdef CONFIG_CFI_CLANG
+ struct bpf_insn;
+-
+ /* Must match bpf_func_t / DEFINE_BPF_PROG_RUN() */
+ extern unsigned int __bpf_prog_runX(const void *ctx,
+ 				    const struct bpf_insn *insn);
+-
+-/*
+- * Force a reference to the external symbol so the compiler generates
+- * __kcfi_typid.
+- */
+-__ADDRESSABLE(__bpf_prog_runX);
+-
+-/* u32 __ro_after_init cfi_bpf_hash = __kcfi_typeid___bpf_prog_runX; */
+-asm (
+-"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
+-"	.type	cfi_bpf_hash,@object				\n"
+-"	.globl	cfi_bpf_hash					\n"
+-"	.p2align	2, 0x0					\n"
+-"cfi_bpf_hash:							\n"
+-"	.word	__kcfi_typeid___bpf_prog_runX			\n"
+-"	.size	cfi_bpf_hash, 4					\n"
+-"	.popsection						\n"
+-);
+-
++DEFINE_CFI_TYPE(cfi_bpf_hash, __bpf_prog_runX);
+ /* Must match bpf_callback_t */
+ extern u64 __bpf_callback_fn(u64, u64, u64, u64, u64);
+-
+-__ADDRESSABLE(__bpf_callback_fn);
+-
+-/* u32 __ro_after_init cfi_bpf_subprog_hash = __kcfi_typeid___bpf_callback_fn; */
+-asm (
+-"	.pushsection	.data..ro_after_init,\"aw\",@progbits	\n"
+-"	.type	cfi_bpf_subprog_hash,@object			\n"
+-"	.globl	cfi_bpf_subprog_hash				\n"
+-"	.p2align	2, 0x0					\n"
+-"cfi_bpf_subprog_hash:						\n"
+-"	.word	__kcfi_typeid___bpf_callback_fn			\n"
+-"	.size	cfi_bpf_subprog_hash, 4				\n"
+-"	.popsection						\n"
+-);
+-
++DEFINE_CFI_TYPE(cfi_bpf_subprog_hash, __bpf_callback_fn);
+ u32 cfi_get_func_hash(void *func)
+ {
+-	u32 hash;
+-
+-	if (get_kernel_nofault(hash, func - cfi_get_offset()))
+-		return 0;
+-
+-	return hash;
++	u32 *hashp = func - cfi_get_offset();
++	return READ_ONCE(*hashp);
+ }
+ #endif
+-- 
+2.34.1
+
+
 
