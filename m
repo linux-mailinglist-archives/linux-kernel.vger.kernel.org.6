@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-177563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB3A8C40CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:35:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BA548C40D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D63D1C218B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5734282C31
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B114F14F9C6;
-	Mon, 13 May 2024 12:35:38 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E243E14F9FF;
+	Mon, 13 May 2024 12:35:44 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631812232B;
-	Mon, 13 May 2024 12:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3B7145B10
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715603738; cv=none; b=qF3aQujScylxqhSOQFvsY6Z3s1ujuE5mNnMWm3QVfAQi7+CxwGxFtDtj5m6TbtAsDVFd51ip+y8cUeOqnbpYTEXuoN4sgO0L2ST6ViY+fECnVtp23SOEzE4yyD3xXRx5he5bpkEW0+2anqWb+0wnNlGba+Xb+BnwA3ZWNAr4Bxo=
+	t=1715603744; cv=none; b=T3tgdU50Y9b5qUrZYTvVRHwf36FlVvTUq/0SpkEGCD+3rW5VrnukShBX5Jz0MPFkw9dFs2LPNRYRF7470/5JMnOROiLI0WN9WXv97VmbACVIBll5H2gNxmi+/xEf2IFA4rxtXku+LiZjfKEY9O9p2ogmIluQ9HnW/v6OKC4GvVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715603738; c=relaxed/simple;
-	bh=y+KAEzXfNr4jXio0KovIqBG8UPmnP24zcxGApuX+oAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VELc2v4RrpOWQk6Ofef7q87CRR0HrfmSoYnCYblauUe+fTgbD9AEoeKRCSRl1EbD6knQoN+DI3uwTjJR/Umk8r56AxyezoL2k3nTOgp2kWGYyjKodnpBu610nvP25qNbSEidzgPhTgwULfj96pSCV8kkUEp5QalQAZrFu5/jM5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6114c9b4d83so37455107b3.3;
-        Mon, 13 May 2024 05:35:36 -0700 (PDT)
+	s=arc-20240116; t=1715603744; c=relaxed/simple;
+	bh=oKLIKN/LA2qP/A7K2H7b69maMhrft+dHWN05c1P/Iyo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qil5hyUIBc03VIntPf4Ak1NZ7tOs5p0FPtB+IqQXGyB/BDu5EhATpTEO9/pwQborHZ96xmfakdm9lSWmkn7XuLeTNrZakM032pLawUhGJuEYa2VVXZXuhrLkuqP941K1XpSKvACqVnmR9UxD/H3F/OwaEGx36HrY9s1ZVFRTOeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7e1b65780b7so441959439f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:35:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715603735; x=1716208535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h7SLg+Ot/rrBD3DiLLuTnFPyuvGA7Ha5PNLCiH/8q30=;
-        b=HPtUKq0RepV6HYI0r7T4WdXZ/c+kevewo5IStpZcKU45Kols+pqGZ7sKf5F+YsfPCb
-         aEsO7zVphC50HTFQd0RBotF/3Z2K9MFkIX+3sTAdE64ZYfP0ZH69usr+VEW6VXmD8EDY
-         6xP2TKsLZlOJDE/IjsbOH2BKvbo27jsumBQCmXJQYM42Xz1oICc1wDsyPQV2wiPHTl93
-         47/IKbd7RY9Fi4XvVNGY03lTpWPciEFO4zfOjhFb9lLyifIHa8WRoYkYPIROCtwaluAq
-         Eyc41VpO49u0mLSJjh3e0CL8lKGQ8yE/OLRADPqQwcGFkIdd+fEXBYUgILiJEHVvdx6s
-         fX4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9yOCuxa5uTKhP/O8CQqhb1BS5FMs85b96lZY6ZDED5rvMOgrqiALMxKOLwmjcJX8fLIdlQgc1KbDWeY9L4jckoWcpYIU1/002bBiGZm9u0+y6mr0dm6XC141hYERfot+J5t9LemvOaV2rPcm5gA1zPy0Fx6PXiJsXqB4jzDD7fSbZuxeJ8Q==
-X-Gm-Message-State: AOJu0Yw7Gd+H0TW+Z8/JJ9WAgLfGqLnmH35ib+JR6htEuQGlr3+BiQwr
-	EzxWzIgUyduzoBEKGlU33GN2Ky0bTNAQrdNmDecU5tgA/uoi9ygzW2Looz0Y
-X-Google-Smtp-Source: AGHT+IEpBlnkSGP3hiyke/8RidOYNaW/gO4dOmz6kYuxM3I2gMCovhPDk/bGWNXYX4EeU29oOx7LWg==
-X-Received: by 2002:a81:ad04:0:b0:61d:fcde:5caf with SMTP id 00721157ae682-622b0148047mr84359887b3.37.1715603734679;
-        Mon, 13 May 2024 05:35:34 -0700 (PDT)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e24680csm20760657b3.6.2024.05.13.05.35.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 05:35:34 -0700 (PDT)
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-61816fc256dso41954497b3.0;
-        Mon, 13 May 2024 05:35:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAcykK5SPutHnp1VH/1cZpQKEVx45Qh+ulsBM3nscsVXQz7OYUwZ3YqhnxaPPdz/Hs+9Uzm/qHKB01T0vjeb+gUhpmGuwX0ELADBzJfGHzk1Jv+FHqBb+6GixSTzgYUZUxLc+1BgliFAp5Tnip5Q9SeT8u8diVL9BHAOuvFXGf0Y/1M13yJA==
-X-Received: by 2002:a81:a1c3:0:b0:618:5b27:e12b with SMTP id
- 00721157ae682-622affc63a9mr90048837b3.7.1715603734016; Mon, 13 May 2024
- 05:35:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715603742; x=1716208542;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=if8T46urbQNJN85WrRQs2gBhlpb+FKzcO0gmp2dH/G4=;
+        b=INQ2jnjGwbJ7bMGN8Vfti1coQq/b61dK7/COjH7OOJBwGq0EORL2DSqZIKVmlHPWtn
+         cbuMANlpHPgoywh/M3OeCUQNk4LvIDxq4FOyq83ky+mNwOlfrhleM2kLx25K4/W2qaQy
+         ce5PmK2yTUefkCi1LqoWg/q+VJ3nMtuc/PR01JbWvyH+E/NURYH+Q5vA8GZTeZv5ZiEp
+         +JP2F/IPoW8h5Rsz0zEbcEz/XKABU9ewoE9CSFx7HPJd5Oaqo7PY1S8H1/FUtGhwvC3L
+         Rf7gZ6GILN7wVlBcuUsmbUtJFarhCebnc0lf9NL/hsJoy47ZkmGuyQSYJ2cX0pPw1bF+
+         nasQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWe5MHo0LDYIqHt0jlcMAO5kEV7ml9zs59iBl2sNTumIOtupEofR6biJCjGMQnpm4jPdy2vf64fWsIWkCWUC9eN1Qz2sbzVoTxi/M86
+X-Gm-Message-State: AOJu0YzpfXXY16Z1TCylLZR79O6tk1zd1QutT29LmAiNh15vIzDo2bP+
+	U/kl0N/txUme5lx6D/bDjNhdiNEARqMc0IlQXDC5EY7GDWGxMdeaF2Fu+sZjWJ3/4Mo+g3f+fI7
+	td0fu72Ct9jYBYLc4qk7zWYqcrbz967vm0xVQr7JDtjwxEfpfqxXctaM=
+X-Google-Smtp-Source: AGHT+IFkOcJUfGNBMFnhw7AOqZk0zhwbG26hU/3puD3J78jqgbti4ZnaCFmJdXfhI7EHPYytA9urrqbsM+pNjJd3CFgGDktBFTfo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1715255980.git.agx@sigxcpu.org> <2b6eb6c3f68509aa35cdf2e2a586689ae97681ab.1715255980.git.agx@sigxcpu.org>
-In-Reply-To: <2b6eb6c3f68509aa35cdf2e2a586689ae97681ab.1715255980.git.agx@sigxcpu.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 May 2024 14:35:22 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVcR_3HcQzQse+5-2dgC4iLzFyiFO=ifR0hxymWRjURLQ@mail.gmail.com>
-Message-ID: <CAMuHMdVcR_3HcQzQse+5-2dgC4iLzFyiFO=ifR0hxymWRjURLQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] Input: gpio-keys - expose wakeup keys in sysfs
-To: =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Hermes Zhang <chenhuiz@axis.com>, 
-	Tony Lindgren <tony@atomide.com>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org
+X-Received: by 2002:a05:6638:8427:b0:488:7838:5aba with SMTP id
+ 8926c6da1cb9f-4895868b41amr921226173.2.1715603742333; Mon, 13 May 2024
+ 05:35:42 -0700 (PDT)
+Date: Mon, 13 May 2024 05:35:42 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a330cc0618551f1d@google.com>
+Subject: [syzbot] Monthly kvm report (May 2024)
+From: syzbot <syzbot+listae8e7effb4763866f80d@syzkaller.appspotmail.com>
+To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Guido,
+Hello kvm maintainers/developers,
 
-On Thu, May 9, 2024 at 2:00=E2=80=AFPM Guido G=C3=BCnther <agx@sigxcpu.org>=
- wrote:
-> This helps user space to figure out which keys should be used to unidle a
-> device. E.g on phones the volume rocker should usually not unblank the
-> screen.
->
-> Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
+This is a 31-day syzbot report for the kvm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/kvm
 
-Thanks for your patch!
-This is indeed a useful feature.
+During the period, 1 new issues were detected and 0 were fixed.
+In total, 3 issues are still open and 116 have been fixed so far.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Some of the still happening issues:
 
-Gr{oetje,eeting}s,
+Ref Crashes Repro Title
+<1> 147     Yes   WARNING in handle_exception_nmi (2)
+                  https://syzkaller.appspot.com/bug?extid=4688c50a9c8e68e7aaa1
+<2> 4       Yes   WARNING in vmx_handle_exit
+                  https://syzkaller.appspot.com/bug?extid=988d9efcdf137bc05f66
+<3> 1       No    WARNING in kvm_mmu_notifier_invalidate_range_start (4)
+                  https://syzkaller.appspot.com/bug?extid=30d8503d558f3d50306b
 
-                        Geert
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
