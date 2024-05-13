@@ -1,103 +1,78 @@
-Return-Path: <linux-kernel+bounces-178112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 357978C48E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:33:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 362028C48E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6710E1C22F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:33:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5967B23A65
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04FE8627C;
-	Mon, 13 May 2024 21:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC171272AA;
+	Mon, 13 May 2024 21:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kFISoqWZ"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IutrEA9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AA386260;
-	Mon, 13 May 2024 21:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA218612E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 21:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715636002; cv=none; b=Ka6kCbu9J0qnYTTCLAqs5tVb5vRYVxvAw3azQPSAhmwrWxXfQVebiQ2BO7u2omMMY3dVYnNxAayThWoYZIwwcq326+jP5G2Pz9S5crviAk/WVYs5Z8p82kCP7BOmC6LipBRyhkbtDlHnGrjMG9AVoonPDnKgSZw9RZ/nh/9Ncdw=
+	t=1715636018; cv=none; b=aT5svWux124dsiW6Y1ZnJxLRjDU4ZPCvM0+AgH6H+raHKvR825jTcD7uSi446TLnhLSvnAZQSJfg97wA6JtY5sgo0NB04PKiE5Svl2+FjzfW4WeVWkxpKC9qXJ2lG+fkhzXOu2Wq3u+u+3f6JfC6wajTtiK9Yza16ot2DFdjGfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715636002; c=relaxed/simple;
-	bh=qi4gfY7CxY5lo/QzsF+r6vCRWH2P1sqzriYVwDiX6K0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aCamAP7WKn4V3lgKbZtwC166WPIcF6ILqpfKInQndehTgerN5lDJl93GbV7nd0T1dGIBdx7Da/lcZmujkRpQnfFFeM912Q+7EhgTC+4VkVb5tcR6Pvb0h3t41+Hi6LiChcSZmilIdWSyzjChURPqV9matgj+vSuay5w8mLK02WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kFISoqWZ; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-de5ea7edb90so4965859276.1;
-        Mon, 13 May 2024 14:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715635999; x=1716240799; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gDDzT/EnD2tZjQ0C6IkF0YOSXhDST9ekY3DugUgHjdc=;
-        b=kFISoqWZbGG7I22upnciDiQWpX33ZAlkn7lkCRq06AC2NXTBS8Y2uhIw7Vl9kdCqeY
-         XDYrweTzNb4aHJoRR+WT4vmKZj0TijXJDTdnv35eB4MDTyG50mJM2qG8jCtpB2Mzwtbp
-         4xW/UWl+K8XqAVUspXYJW1BtU9Nz0Hm+KLueosJ7PygJd2tF0G9B79WRkebd1ps73kNc
-         V2Q8QSFjlzHcVc55nJkSZTJITQdDwmEfM3RkMl8VAZfAFaegKnGu5lpYGyAoCLLVYSm3
-         ldIQVcWWE5dOeNgvlF1ShQpZycyoZUuSGVqcwc7MALKemr1fr7d9h0TayTHvRrgGZjqg
-         3QlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715635999; x=1716240799;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gDDzT/EnD2tZjQ0C6IkF0YOSXhDST9ekY3DugUgHjdc=;
-        b=wQ4Z6JiwLL1Fpq7Fjv2YWzeyDFQAOAXXc4M2XYDibVXCKeRrQzXhZb1VBo3/kPtfpW
-         rBIN7x5KpjWVenAeEm76sgHAWXhxvXvkTB0z3Nw2mgOeRNyklO0yjNzbkyP6Yr7RVOEI
-         L/Dud2P/j0xU/kU83t7BesVqe17WLZl/Z9RcDEqSpdzk3/Ctb2MMmKifbhEqQVmry78b
-         WIvDULIoLPgh28WE0dKMbVd0IzCS2A50FA49GetG+DDvuB9GBnBszviAVkU1oXLfOLJz
-         MrbTEX3SV+D3ZCQaBxaRa0i+Z0hqoR20L2ovr0S87nXnGqzxlX9gS03iiUYdNey/irNa
-         KMpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDpZTmruTPRo3SIMurNDTyS5ULHHYvd8eZOGWebOjaVYseISK4+8BrLm2prwGCBKubKAE8gy1NK5i7GnRTYTibAY6YXeD1a5VOkdhDaBziIJZVbRFqDk9y0pK579oKbnglti7N3uv69rQ=
-X-Gm-Message-State: AOJu0Yz60dW4/7PBu+3tqXJcB58EaKn0uTgMAWIRM2IxXYgF7hWwmvRd
-	Vpqjt7P9tz87eXFlpZNfk//cy6lh3meWlqDInbgM9XlFAA8xCK9D
-X-Google-Smtp-Source: AGHT+IHXCO21/5LF+f5DhVdq1Hm2pvMdxOCpJ2xdW+rWo8rNV6ywL/eglmhyai9r/2VGVklghbBSiQ==
-X-Received: by 2002:a25:dc87:0:b0:de5:9e4b:4c92 with SMTP id 3f1490d57ef6-dee4f355c09mr11247566276.49.1715635998964;
-        Mon, 13 May 2024 14:33:18 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:7704:86a9:2c56:6794])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-debd372a1d6sm2300161276.19.2024.05.13.14.33.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 14:33:18 -0700 (PDT)
-Date: Mon, 13 May 2024 14:33:15 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Charles Wang <charles.goodix@gmail.com>
-Cc: hadess@hadess.net, hdegoede@redhat.com, neil.armstrong@linaro.org,
-	hughsient@gmail.com, broonie@kernel.org, jeff@labundy.com,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Input: goodix-berlin - Add sysfs interface for
- reading and writing touch IC registers
-Message-ID: <ZkKHGy0qvFzSoVhl@google.com>
-References: <20240513123444.11617-1-charles.goodix@gmail.com>
+	s=arc-20240116; t=1715636018; c=relaxed/simple;
+	bh=NPEoY07BN7zyypDIgR5w9AtNqjlreGY381GqHPuqTqA=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=t3TYxK3O7aWmtBj2Q+pzNlinluDQLdoG24xdAdufo9vERP5y1tYMb3lO3ZjDGZDEdOsYoLidBTXpn8h41T2XbSpfoTJN+QwIZsLZBqFRHJ6N+IdKEE6MIB4jTe1sNlKfUqIS6brLmb3HinArFZ9xuepJTAq6ca4bfR0eDZcc+IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IutrEA9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C72CDC113CC;
+	Mon, 13 May 2024 21:33:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715636017;
+	bh=NPEoY07BN7zyypDIgR5w9AtNqjlreGY381GqHPuqTqA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=IutrEA9BkYsBFRAVLL3VZ2j9cA6jk1zdoaB3Z1NVhsWoTL8HDLHG1WpOdMzF0NuER
+	 BK0UyIw57PtxvuFd+WMUhQTMWlSMtEp93i7OqCpZ7kF5B7AjrfjLhJ9e4f1qrnu8pr
+	 sgRuKkT4AiE8z+V5VajbJ7bLeBhkND6QUd3/W7EgrA1KpTMai6b/MXYbgK7kwfsi26
+	 w2Xyke3PCgJJJz2UG6npLbLT5HcP4MfAfPCx+wh6boJr8hYu/2vrbmvCjlLtHHC3yE
+	 qBOY1PF9wayrMpyo12df4PAHdlq9aDYuuJKeVbL+ZedXe4oTKnKADc16F+AgUMV71q
+	 rO2tKurrbvDTA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BC4AFC433E9;
+	Mon, 13 May 2024 21:33:37 +0000 (UTC)
+Subject: Re: [GIT PULL] seccomp update for 6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <202405111220.B75A16497@keescook>
+References: <202405111220.B75A16497@keescook>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <202405111220.B75A16497@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-6.10-rc1
+X-PR-Tracked-Commit-Id: e406737b11103752838cf50fd197ec8e9352bbf7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 1ba58f1ae9b2c07e2b736d187eb25ac8910a7613
+Message-Id: <171563601776.15304.10528088979177870221.pr-tracker-bot@kernel.org>
+Date: Mon, 13 May 2024 21:33:37 +0000
+To: Kees Cook <keescook@chromium.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>, Luis Chamberlain <mcgrof@kernel.org>, Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513123444.11617-1-charles.goodix@gmail.com>
 
-Hi Charles,
+The pull request you sent on Sat, 11 May 2024 12:21:04 -0700:
 
-On Mon, May 13, 2024 at 08:33:37PM +0800, Charles Wang wrote:
-> +
-> +const struct attribute_group *goodix_berlin_groups[] = {
-> +	&goodix_berlin_attr_group,
-> +	NULL,
-> +};
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-6.10-rc1
 
-This symbol needs to be exportedsymbol needs to be exported..
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/1ba58f1ae9b2c07e2b736d187eb25ac8910a7613
 
-Thanks.
+Thank you!
 
 -- 
-Dmitry
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
