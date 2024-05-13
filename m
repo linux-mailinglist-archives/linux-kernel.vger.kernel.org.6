@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-177498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E218C3FBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:21:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4388C3FBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA9541C225EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46D88287026
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5A114C593;
-	Mon, 13 May 2024 11:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3t6313W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984E414C59D;
+	Mon, 13 May 2024 11:21:29 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304DB146A8B;
-	Mon, 13 May 2024 11:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38B414BF8F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715599257; cv=none; b=rmpdqgLAGzuc0VYkoOJOlS1kjfBJba6b3xCvYDwupVChso7eux8NM6Wrj5Yyb1k0/E18aeBgR6X/Ndj5y7JrJo9ooIDOTYx+OyoqktQHOge+YPfGJmTCB8uOpZzb2vgQM58i0mjX+bCL/MNGNmTL0/+1B+QRtC98+BjeJfdEvoc=
+	t=1715599289; cv=none; b=Mgk/iO7l8EvlVFp8sV5SAbIsXEtpf3P0HtLn1ZDYxRb1NH8iW7MZIoO1olgpIAItQyPj8I2CX+9KipcvqCall4kt/+EktczLtxM1NhAsclBQZbShUQktVDRmphLOC/5TrXfwQgUYF8TzetStLJ/oZ9tj6/NmsKqObnO743l4Oio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715599257; c=relaxed/simple;
-	bh=hw1Avy7nsYq8cVMtiw3gPkQtVbSohz1j4cVpsZOqgIs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=XP6N0dVso4R+gMj7lSpJ3DwAkIhhOC9uHTPacHngPd9sE/K55S1/L2YbGMWZka3uu6BjwKvgSNkp9QP6ggkroWb4MQrQAwl3v7Pt3O8Z2crZQ26blneFDtToBnTknhmMFR6Dc9rZt6rZZTWBxH7Ome4pmbseV7kUw655VY3vX04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3t6313W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C59C113CC;
-	Mon, 13 May 2024 11:20:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715599256;
-	bh=hw1Avy7nsYq8cVMtiw3gPkQtVbSohz1j4cVpsZOqgIs=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=p3t6313WcjtyLf/NsMYbc1rS89GKhat2IUaj+VgvEJcsHgLZxslIAbI7u4rRuxy8S
-	 lyAdVowC2z6Adx/mJo+M9HNB2il7lYsTt93K8cnrvQNF/JGdZ6jFlNGe7EEbywwdfZ
-	 KnxHJ5njaa9EbUVRzmZs9YT0IQSugsMrRT1lZ3fNIzfBqz4oWKcq5cKUwEfDaBpsb6
-	 eeQnmi1kkSBSpH5ugVe9LmdvZr/Z0wePpUWoOGdUV30SLB6Ch7yb1IroEV/tzn/rae
-	 5Sgd+LRAGvw9m1p7u2pag5cP/eMSYva3oss9XzUiygbjX0N/y7ELbjOU1uPVYQLi5d
-	 x4QJExEtIWimw==
+	s=arc-20240116; t=1715599289; c=relaxed/simple;
+	bh=2i1G4Ryfk4/25gD4w2Kl5pRFKJemnMRohe9Xr7JIAW0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ng3WuUEbAEGZoIQs7EO/pWg0Bv7jPqKmCmFzXtNf99ldenkOsgwuqIqS9wrwyYAr3sL7gfEP+5uzY49GAZKdINPF3rqbf/A254+0up+yn43QKAPOimCu0LJGRsOHcyMvTfsM0umHNjZtGUUM8DxL2O3f2d+4T9NIwUFHWBx6wNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1db7e5386so151651439f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 04:21:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715599287; x=1716204087;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZFWNnaWE3XhlFsEY4Xi1pIV03wkj6KtbYqnhCD2A6iQ=;
+        b=QC75AG/ZVEQKFmnUmnb8ftj1jZlfTkT7COiuRL5HiOnLeCIzuiqueODrdU9s+aOxBt
+         eMk66nrVEq7aRZMgLaI1PzS6YNBUeE5XCMy1yilGd6KS7iMsvaEVw5sp5zfuZF297QLM
+         IjNwhYjLELWgQ7s8VRLm0+yOwePZy8+0vD8Eopdc4z9AmSQu11XzW7RePzH14MQqBe96
+         i3ftbwW20bKXq6wpxLKRzXjdi868REENN47QJg5Uz8UAD7eHBf22BrXeQ0oaFEXSvFVJ
+         X4SB3258bwXJJgBlyLISRCsLqDlmw8QDT9fx5g0BuPRQRRDeQlhmpTOX2EeeXARKsVSL
+         7eFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLzJOahK3x2hBTkS+yERq+qGslS/j/+B1u6csbZ2RuX0VcIUNTcsV0PSLmk1InGcjqRsnFmz42JvtqfS+fcDRuIfKBEX1GrOKGBBrt
+X-Gm-Message-State: AOJu0YwVwxmreiL97x03koa9EuMFDRnYHko+fjcCkwMrKCJgeamKPAIc
+	G2Bf6Ld0cwDOd4yZFr0Y4y8QzBVJ/Yn9TCDmJA7urxo7e9OTgqBz7+9xrOyz2jj2BcWIPgHbEJJ
+	Wy+cKc5oFOdj0BZQ7R/s+d8umwT9ImjiMa+6sDzsbqxRIhKiMBWxFc+4=
+X-Google-Smtp-Source: AGHT+IEMZz0TpEVuwJCFFtYBcVKkxPDRiJYvde9XiMABTeUdnHR09RfBSBwYKXPSIsMTzGNPNdABz8knfiXwCLQFzBcz4NPXYQrS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 13 May 2024 14:20:52 +0300
-Message-Id: <D18H6GHC4VSW.3C39QY6XUDOQR@kernel.org>
-To: "Mirsad Todorovac" <mtodorovac69@gmail.com>
-Cc: "John Hubbard" <jhubbard@nvidia.com>, <linux-kselftest@vger.kernel.org>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, "Shuah Khan"
- <shuah@kernel.org>, <linux-sgx@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Edward Liaw" <edliaw@google.com>
-Subject: Re: [PATCH v1 1/1] selftests/sgx: Fix the implicit declaration of
- asprintf() compiler error
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.17.0
-References: <656c3b4a-0481-4634-9dd4-19bb9e4cd612@gmail.com>
- <4dcd5fca-c200-42d1-a8f2-3045d5430fd6@nvidia.com>
- <65a79654-90e8-42b9-a840-e2ef404fe1f2@gmail.com>
- <D181GV24ULEA.UWQHOSM80TEV@kernel.org>
- <CAJ3WTWRQcZN5JSNAhUKXfpH8Q5sW_-EorMpgCE24G3NpczpqZQ@mail.gmail.com>
-In-Reply-To: <CAJ3WTWRQcZN5JSNAhUKXfpH8Q5sW_-EorMpgCE24G3NpczpqZQ@mail.gmail.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:8625:b0:488:7bb2:c9f6 with SMTP id
+ 8926c6da1cb9f-48958c02450mr961209173.3.1715599287003; Mon, 13 May 2024
+ 04:21:27 -0700 (PDT)
+Date: Mon, 13 May 2024 04:21:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000143d6f0618541652@google.com>
+Subject: [syzbot] [bcachefs?] [rcu?] WARNING: lock held when returning to user
+ space in srcu_lock_acquire
+From: syzbot <syzbot+d797fe78808e968d6c84@syzkaller.appspotmail.com>
+To: jiangshanlai@gmail.com, josh@joshtriplett.org, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, paulmck@kernel.org, rcu@vger.kernel.org, 
+	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon May 13, 2024 at 12:43 PM EEST, Mirsad Todorovac wrote:
-> Thanks for your explanation.
->
-> I did not realise that __USE_GNU is evil. :-/
+Hello,
 
-It's not "evil" IMHO. It is not just part of defined API :-)
+syzbot found the following issue on:
 
-Thus the official man pages are your friend.
+HEAD commit:    1c9135d29e9e Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=14ffaa6c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7d2d53e64c7e6a4f
+dashboard link: https://syzkaller.appspot.com/bug?extid=d797fe78808e968d6c84
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1705e85c980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11612d04980000
 
->
-> FWIW, there is a sound explanation of the difference between
-> _GNU_SOURCE and __USE_GNU
-> here: https://stackoverflow.com/questions/7296963/gnu-source-and-use-gnu
->
-> Thanks,
-> Mirsad
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/52dd1b4921ab/disk-1c9135d2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1a4f1788dc25/vmlinux-1c9135d2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b8d8ebd42a80/Image-1c9135d2.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0471560e01b3/mount_0.gz
 
-BR, Jarkko
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d797fe78808e968d6c84@syzkaller.appspotmail.com
+
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:152
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+================================================
+WARNING: lock held when returning to user space!
+6.9.0-rc7-syzkaller-g1c9135d29e9e #0 Not tainted
+------------------------------------------------
+syz-executor367/6238 is leaving the kernel with locks still held!
+1 lock held by syz-executor367/6238:
+ #0: ffff0000dcc84250 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:115
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
