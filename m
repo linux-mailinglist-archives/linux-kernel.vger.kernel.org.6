@@ -1,100 +1,85 @@
-Return-Path: <linux-kernel+bounces-177614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 495588C4191
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:13:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B21A8C41C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE94CB22724
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:13:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA57328292F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE533152160;
-	Mon, 13 May 2024 13:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D804152185;
+	Mon, 13 May 2024 13:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="apbCsBl0"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lvJ2QozZ"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC0D15098C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D721514E5;
+	Mon, 13 May 2024 13:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715605975; cv=none; b=nv9M42D3yCO2IrNRqjmHmAunZ3racqu8rDibB3DChx0y64vSTpnyroJ32WvMUC2SyuJAod4Ja+7tl1cBXLbNDD058s11HfFSv7P5LKmc38l/aafSLPpMvbamI3Gq8FWy3foVFWXyAV5vREz5UAby68R5ZMntBB+ASOWAkU62om8=
+	t=1715606568; cv=none; b=uOPmUh03J2FZ6pHhzmKgl3g6RMDOj5ygtf36pSBoV+6C8gX2WGbZY/LiQeNYRgl7CoOcPEOG5zQq8XiCA11ML0D6a11pT0aDFJDV/d7veItjy7pHdmM+0TngAUcBB3TBlxj3MFTD2QPJNnxkN5oPnymgzvDoxZ55XEktPBPpDWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715605975; c=relaxed/simple;
-	bh=QIyA9kU3DXYufAzAbyQLvhbsunKTbVggA+xwxPHEB3k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=slXWAwMjnvViNhWDDUh0sERcpe+/eslfFDG2V9BPKlPm7B53RXV9xNNMhF6hXww9tDWvQ2aBKHeLpqddfcYNwTMJfJ1yuh60p1o9FC25kPstUuf29pg0a0ZgoLkiT9eYM3d2BoJW/FQDFFWjE81lq33f52zA2V78Mj3lc2SA8ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=apbCsBl0; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4VdKfR2Dh3zlgVnf;
-	Mon, 13 May 2024 13:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1715605964; x=1718197965; bh=CK/yTD4vsBE25iZLNTjIJQVN
-	n6zNelLGLfVBPKfwaCQ=; b=apbCsBl00eKoh96TCJA+4gFfsHjvC2MCRzFnHNjt
-	igYlO5msrwPg+wC8vWf1qPY/DOiw9OJ4Ky2aBN6iQ8/DCmz939vm4E0beYyLgbbX
-	0qRe61nDogYk5RF/Y9zTLl8X1WwMjAC7z7WaF/Vshag1ytEjhbot0pJ+8/y0qCZ0
-	S3/lr4lbr34hCcqJEIJNMv2f6C/or7FAFe9/q8n7JkknryhXufZdPyqFekY1u8CU
-	DE+xlyblECb+NRNCPeBAKvAAPI4BbzsAOMBOa84Z7OJhwEuYHkB/llQubhJCys7Q
-	ya4MzBzUFU5tdoxJyzCwQNtaAV1bzPN6Fcx3OHmauIuKzA==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id oJpwUKMiAjg5; Mon, 13 May 2024 13:12:44 +0000 (UTC)
-Received: from [172.20.0.79] (unknown [8.9.45.205])
+	s=arc-20240116; t=1715606568; c=relaxed/simple;
+	bh=lGR/JTEovinL3WNGbtd8OB9QpmQr1FfHG7dzJAzXTU4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DLTRUi02Fi4YMfgXRAj0plzzI3/Y+TsGDn66npAX7rooZLnbMypyI4ehuo4TBmGQPnENHNWVnmmVcFGRDC5qqgawHew3CIoBH7j+EnZCf7aR3EV1N+nTKUgWkPSuLM9ICBPrHQO+ynAZoQxjR8HYS9mvGlHC8TZpwGIAbgA5sRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lvJ2QozZ; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ABDB947C38
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1715605990; bh=lpf6OUFZvm7ObQIuIT3AZZ2LQqZ6RrgRPjzd6o2GDF8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=lvJ2QozZIYvV7Jhup+iJxGOO0xSdy1/3hOb0/Wfx/N1jq/norVViXbs3WjUSXoi/Y
+	 S90RmL03HVEIgSwwvPum1L2qbWlrrdPk/q9ZIAlqzQCAMKQiV9m9Ex0FL3jrHQ5KhH
+	 ONV0eZxdIW7H/hh9GARRYGKOjvhT0J8iDW8vLZjzID6B7qg1z2QtTdWfLTbQybC1vg
+	 K0u5vAjBKjomM0ucp88hRQht/28ch80Hbu33+oQ3IP4ABz0VDMFMJ7i11Wxz/4NKKK
+	 DXP1NkIB6bcJKDtZLbGlLH/vZjRD8JV9h75Ah9VQ9n6lSg1U9xlUgMDuSUMfSvvQ1K
+	 /LO4ig5/NHBIA==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4VdKfM5rYNzlgVnW;
-	Mon, 13 May 2024 13:12:43 +0000 (UTC)
-Message-ID: <c75bef55-f3f3-444f-9aa9-d646fd13f73d@acm.org>
-Date: Mon, 13 May 2024 07:12:42 -0600
+	by ms.lwn.net (Postfix) with ESMTPSA id ABDB947C38;
+	Mon, 13 May 2024 13:13:10 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Diederik de Haas <didi.debian@cknow.org>, Dwaipayan Ray
+ <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Joe Perches <joe@perches.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH] docs: dev-tools: checkpatch: Add targets for checkpatch
+ tags
+In-Reply-To: <20240513102237.112376-1-didi.debian@cknow.org>
+References: <20240513102237.112376-1-didi.debian@cknow.org>
+Date: Mon, 13 May 2024 07:13:09 -0600
+Message-ID: <878r0dam8q.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] nvme-pci: allow unmanaged interrupts
-To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>
-Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- tglx@linutronix.de, ming.lei@redhat.com, Keith Busch <kbusch@kernel.org>
-References: <20240510141459.3207725-1-kbusch@meta.com>
- <20240510141459.3207725-2-kbusch@meta.com> <20240510151047.GA10486@lst.de>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240510151047.GA10486@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 5/10/24 08:10, Christoph Hellwig wrote:
-> On Fri, May 10, 2024 at 07:14:59AM -0700, Keith Busch wrote:
->> From: Keith Busch <kbusch@kernel.org>
->>
->> Some people _really_ want to control their interrupt affinity.
-> 
-> So let them argue why.  I'd rather have a really, really, really
-> good argument for this crap, and I'd like to hear it from the horses
-> mouth.
+Diederik de Haas <didi.debian@cknow.org> writes:
 
-Performance can be increased by modifying the interrupt assignments
-carefully, especially in storage appliances that have to process a
-large number of network and storage interrupts. By carefully assigning
-interrupts the number of completions processed per interrupt can be
-increased and hence performance also increases. In 2014 I was working
-on a product that benefited from this approach.
+> Make the tags directly linkable by defining targets for them.
+>
+> Closes: https://lore.kernel.org/r/8090211.0vHzs8tI1a@bagend/
+> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+> ---
+>  Documentation/dev-tools/checkpatch.rst | 216 +++++++++++++++++++++++++
+>  1 file changed, 216 insertions(+)
+
+In addition to the other comments, I have to add: you have said what you
+are doing but not *why*.  All of these labels clutter up the text; what
+use will be made of them to justify that?
 
 Thanks,
 
-Bart.
-
+jon
 
