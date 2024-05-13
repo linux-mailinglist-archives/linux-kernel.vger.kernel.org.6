@@ -1,201 +1,196 @@
-Return-Path: <linux-kernel+bounces-177242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B178C3BCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C00A28C3BD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFD11C21081
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD2D01C2101E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:19:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF820146D47;
-	Mon, 13 May 2024 07:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E6C146A81;
+	Mon, 13 May 2024 07:19:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i6Gwne/A"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o8xjLf6l"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3ED146A7A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6DE52F9B
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715584522; cv=none; b=MdOCLuMoM3PFHSLspfQvTnKBsSul3TorOOtMArc1GA+tYAdISwa/7Cx7BEBMjvQS7NRgSTuv20RngHoCWPHLcvFTrUNo3zq5yut24D3kTn++8LBea7hLcFm8WxuKFE4nlqGfVYfvQjAwhyRfQZJCK4eAILuMVQhaoXPDZXUvA18=
+	t=1715584749; cv=none; b=D2CswLAcMi0jWv7uAzN59gRoIvT2hMLJAqzYHGtzrctyWh3cNacj0SycNuIsrHzCUQkUSlki/268ubfQXzuGmMF8h13ZFxFRBl29oI4Pod0PZ0D3EvFR35kznupWoyCoX/3W6TwzbFXP1MA/7vuIZkTbn4nJlwh3HyhpTV5j7bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715584522; c=relaxed/simple;
-	bh=88msEBMLN/fbEdNPwSEDb//wSAtROOjVjX88xosD0mM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RWUbYfvBdEsnGv7CMo7nuzD1uE9zhlI1l6s60Pp9bIOLqeJKWds4c2jJ1T/HfvPLennNBSwE1CYSe6nlqq/bJuA5S8oXA7iXqWpyXkusmNHdwloiiVWKl9pF39bZgmHYF4toI0mKQPuF5//H/omnEW27qRIyqTNsSIAvXgwOvdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i6Gwne/A; arc=none smtp.client-ip=217.70.183.197
+	s=arc-20240116; t=1715584749; c=relaxed/simple;
+	bh=BmHn0tMkwEItFmLVWvwuNaiHb85Rjfz5hQYkbffnsXo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u/wPzJGxoBWvT+Ulnd5gKQM+pTylfi3cofA1dKdAqfOoYaYh80j5yeq5WlVx4wdJjtX9Iz0jh5JqMoWSxBgnhkiauXez/XT3B+8oRvpN9pyc6+9Cv+nxaWLHCGZJoH0gWrDpcA62B7ZEQ7KjJuBP0zPdEEs2SkHEtJxjFW3IHoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o8xjLf6l; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D80F01C0009;
-	Mon, 13 May 2024 07:15:15 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C0D062000B;
+	Mon, 13 May 2024 07:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715584518;
+	t=1715584744;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=q5dn2MPOf1PSIm7z/V3iIjqsAJYU1Za0Jzr7Ny6Sqvw=;
-	b=i6Gwne/A1aBtYIRnJIWVd1KlrxIch66paJ+HQmP5P2aG7NhH6IZTi3sIQSvpgq/kqVPNdQ
-	reThlQag28kLbi1mjSrCrEGPsMUBH0FrklljBp5Pvgxc13KHYKua56IZaHkzYn0ykbM8sI
-	lVKDo+Uf4crCjcbISZRc+DQJDrNixwCdD81waH8DX9Xpla0moKFzyDaCHx1O27cJ7Hr995
-	u3dmdKkWDFykQoAXryEjSN9E/19jAAOXWEdlm93mARKsWqGsOB5lDvcIcdXxU/rgtb8BJZ
-	MHLwkqd+KqvNdEmEZd1uNPsBdJjvbXLsXOrPaV3oRhxWxXzmx2v1pQAcKwg1HQ==
-Date: Mon, 13 May 2024 09:15:14 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Pekka Paalanen <pekka.paalanen@collabora.com>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
-	arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	marcheu@google.com, nicolejadeyee@google.com
-Subject: Re: [PATCH v6 09/17] drm/vkms: Introduce pixel_read_direction enum
-Message-ID: <ZkG-AjScoFvMSA1O@localhost.localdomain>
-Mail-Followup-To: Pekka Paalanen <pekka.paalanen@collabora.com>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
-	arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	marcheu@google.com, nicolejadeyee@google.com
-References: <20240409-yuv-v6-0-de1c5728fd70@bootlin.com>
- <20240409-yuv-v6-9-de1c5728fd70@bootlin.com>
- <20240422143918.098d3d09.pekka.paalanen@collabora.com>
+	bh=MskvBFMd+qrWo6ZlXiGYpEMPTg9+CeZ7e/xPiSpgH0I=;
+	b=o8xjLf6la1MFScVJaaomzFUintfjoKeox0Jnm2kqn8DKwyzhVGO/4lF6NrUJRl5Z4I9q9J
+	oRy/I/rNdVwyXvzj7//rrtkDvyKXnzhZYaFAXrD/Zc83SprlwtntyjetidJko0cq7zSgLA
+	A5INzDQwCogSzlyjZ9dsZQulGyMwEG/1AdvAEYWldFX6VQluvq+yJXItvLq3N7mnCvFFF8
+	7Q6PHKNmlCpX6mcVvLVWeNPon/BLQipCED5qc1bCdOmHH0XUnrgN32iiJ430fU9Dd25hSW
+	9GY/Civp5NArumrtglL7+ebosj4k5+M7pjRlMb8YO+T//8bj/KIW34k0RlII+w==
+Date: Mon, 13 May 2024 09:19:02 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] mtd: nand: mxc_nand: implement exec_op
+Message-ID: <20240513091902.2c00d30a@xps-13>
+In-Reply-To: <20240508-mtd-nand-mxc-nand-exec-op-v2-2-6b7366b7831f@pengutronix.de>
+References: <20240508-mtd-nand-mxc-nand-exec-op-v2-0-6b7366b7831f@pengutronix.de>
+	<20240508-mtd-nand-mxc-nand-exec-op-v2-2-6b7366b7831f@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240422143918.098d3d09.pekka.paalanen@collabora.com>
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-[...]
+Hi Sascha,
 
-> > +/**
-> > + * direction_for_rotation() - Get the correct reading direction for a given rotation
-> > + *
-> > + * @rotation: Rotation to analyze. It correspond the field @frame_info.rotation.
-> > + *
-> > + * This function will use the @rotation setting of a source plane to compute the reading
-> > + * direction in this plane which correspond to a "left to right writing" in the CRTC.
-> > + * For example, if the buffer is reflected on X axis, the pixel must be read from right to left
-> > + * to be written from left to right on the CRTC.
-> > + */
-> > +static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
-> > +{
-> > +	struct drm_rect tmp_a, tmp_b;
-> > +	int x, y;
-> > +
-> > +	/*
-> > +	 * The direction is computed by rotating the vector AB (top-left to top-right) in a
-> > +	 * 1x1 square.
-> 
-> Points A and B are depicted as zero-size rectangles on the CRTC.
-> The CRTC writing direction is from A to B. The plane reading direction
-> is discovered by inverse-transforming A and B.
-> 
-> (If you want, you can add that to the comment.)
+> @@ -1717,9 +1465,111 @@ static int mxcnd_setup_interface(struct nand_chip=
+ *chip, int chipnr,
+>  	return host->devtype_data->setup_interface(chip, chipnr, conf);
+>  }
+> =20
+> +static int mxcnd_exec_op(struct nand_chip *chip,
+> +			 const struct nand_operation *op,
+> +			 bool check_only)
+> +{
+> +	struct mxc_nand_host *host =3D nand_get_controller_data(chip);
+> +	struct mtd_info *mtd =3D nand_to_mtd(chip);
+> +	int i, j, buf_len;
+> +	void *buf_read =3D NULL;
+> +	const void *buf_write =3D NULL;
+> +	const struct nand_op_instr *instr;
+> +	bool readid =3D false;
+> +	bool statusreq =3D false;
+> +
+> +	dev_dbg(host->dev, "%s: %d instructions\n", __func__, op->ninstrs);
 
-It is better, thanks!
- 
-> > +	 */
-> > +
-> > +	tmp_a = DRM_RECT_INIT(0, 0, 0, 0);
-> > +	tmp_b = DRM_RECT_INIT(1, 0, 0, 0);
-> > +	drm_rect_rotate_inv(&tmp_a, 1, 1, rotation);
-> > +	drm_rect_rotate_inv(&tmp_b, 1, 1, rotation);
-> > +
-> > +	x = tmp_b.x1 - tmp_a.x1;
-> > +	y = tmp_b.y1 - tmp_a.y1;
-> > +
-> > +	if (x == 1)
-> > +		return READ_LEFT_TO_RIGHT;
-> > +	else if (x == -1)
-> > +		return READ_RIGHT_TO_LEFT;
-> > +	else if (y == 1)
-> > +		return READ_TOP_TO_BOTTOM;
-> > +	else if (y == -1)
-> > +		return READ_BOTTOM_TO_TOP;
-> 
-> I find this code practically obvious. Excellent!
-> 
-> If you want to be more strict, each condition could also require the
-> other component to be zero.
+Maybe you want to get rid of this debug line.
 
-I will add it.
+> +
+> +	if (check_only)
+> +		return 0;
+> +
+> +	for (i =3D 0; i < op->ninstrs; i++) {
+> +		instr =3D &op->instrs[i];
+> +
+> +		nand_op_trace("  ", instr);
+> +
+> +		switch (instr->type) {
+> +		case NAND_OP_WAITRDY_INSTR:
+> +			/*
+> +			 * NFC handles R/B internally. Therefore, this function
+> +			 * always returns status as ready.
 
-[...]
+This is no longer a standalone function, maybe:
 
-> > + */
-> > +static int get_block_step_byte(struct drm_framebuffer *fb, enum pixel_read_direction direction,
-> > +			       int plane_index)
-> > +{
-> > +	switch (direction) {
-> > +	case READ_LEFT_TO_RIGHT:
-> > +		return fb->format->char_per_block[plane_index];
-> > +	case READ_RIGHT_TO_LEFT:
-> > +		return -fb->format->char_per_block[plane_index];
-> > +	case READ_TOP_TO_BOTTOM:
-> > +		return (int)fb->pitches[plane_index];
-> > +	case READ_BOTTOM_TO_TOP:
-> > +		return -(int)fb->pitches[plane_index];
-> 
-> I'm not sure if this is correct for formats with block_h > 1.
-> 
-> If a pitch is the theoretical count of bytes per line, then this should
-> return block_h * pitch. But I'm not exactly sure what is correct here.
+"The controller handles the R/B pin internally, therefore there is
+nothing to do here."
 
-I think it is related to my answer to patch 07/17. If pitch is what you 
-describe, yes, the step should be block_h * DIV_ROUND_UP(fb_width / 
-block_w) (or something similar).
+> +			 */
+> +			break;
+> +		case NAND_OP_CMD_INSTR:
+> +			if (instr->ctx.cmd.opcode =3D=3D NAND_CMD_PAGEPROG)
+> +				host->devtype_data->send_page(mtd, NFC_INPUT);
+> +
+> +			host->devtype_data->send_cmd(host, instr->ctx.cmd.opcode, true);
+> +
+> +			if (instr->ctx.cmd.opcode =3D=3D NAND_CMD_READID)
+> +				readid =3D true;
+> +			if (instr->ctx.cmd.opcode =3D=3D NAND_CMD_STATUS)
+> +				statusreq =3D true;
+> +
+> +			break;
+> +		case NAND_OP_ADDR_INSTR:
+> +			for (j =3D 0; j < instr->ctx.addr.naddrs; j++) {
+> +				bool islast =3D j =3D=3D instr->ctx.addr.naddrs - 1;
+> +				host->devtype_data->send_addr(host, instr->ctx.addr.addrs[j], islast=
+);
+> +			}
+> +			break;
+> +		case NAND_OP_DATA_OUT_INSTR:
+> +			buf_write =3D instr->ctx.data.buf.out;
+> +			buf_len =3D instr->ctx.data.len;
+> +
+> +			memcpy32_toio(host->main_area0, buf_write, buf_len);
+> +			if (chip->oob_poi)
+> +				copy_spare(mtd, false, chip->oob_poi);
 
-If I take X0L2 with a buffer of 9x5 pixels, the step between two blocks 
-verticaly must be 40 bytes. Your formula and interpretation of pitch will 
-give only 36 bytes (a row only need 18 bytes). So a new "pitch" is needed.
+This copy should not be needed. It should be in your page accessors if
+needed.
 
-> Aside from this problem, looks good.
-> 
-> 
-> Thanks,
-> pq
-> 
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  /**
-> >   * packed_pixels_addr_1x1() - Get the pointer to the block containing the pixel at the given
-> >   * coordinates
-> > 
-> 
+> +
+> +			break;
+> +		case NAND_OP_DATA_IN_INSTR:
+> +
+> +			buf_read =3D instr->ctx.data.buf.in;
+> +			buf_len =3D instr->ctx.data.len;
+> +
+> +			if (readid) {
+> +				host->devtype_data->send_read_id(host);
+> +				readid =3D false;
+> +
+> +				memcpy32_fromio(host->data_buf, host->main_area0, buf_len * 2);
+> +
+> +				if (chip->options & NAND_BUSWIDTH_16) {
+> +					u8 *bufr =3D buf_read;
+> +					u16 *bufw =3D host->data_buf;
+> +					for (j =3D 0; j < buf_len; j++)
+> +						bufr[j] =3D bufw[j];
+> +				} else {
+> +					memcpy(buf_read, host->data_buf, buf_len);
+> +				}
+> +				break;
+> +			}
+> +
+> +			if (statusreq) {
+> +				*(u8*)buf_read =3D host->devtype_data->get_dev_status(host);
+> +				statusreq =3D false;
+> +				break;
+> +			}
+> +
+> +			host->devtype_data->read_page(chip);
+> +
+> +			if (IS_ALIGNED(buf_len, 4)) {
+> +				memcpy32_fromio(buf_read, host->main_area0, buf_len);
+> +			} else {
+> +				memcpy32_fromio(host->data_buf, host->main_area0, mtd->writesize);
+> +				memcpy(buf_read, host->data_buf, buf_len);
+> +			}
+> +
+> +			break;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
 
+Otherwise I'm very happy with the look.
 
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks,
+Miqu=C3=A8l
 
