@@ -1,211 +1,166 @@
-Return-Path: <linux-kernel+bounces-177370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF578C3DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D058C3DA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A104B224DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBC8A1C210DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A9C1487D0;
-	Mon, 13 May 2024 08:57:36 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AE5148315;
+	Mon, 13 May 2024 08:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XpHjJ5+j"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1EC38562C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6DC2B9D1
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715590655; cv=none; b=jypE9SvccjK412/cjS+33b9O/J5Va7g/9fueLxY9tsmZ7ljIVMNNWrM3O6efkznsgsmWddocxw7My138ag2y4nqLCTxw0Gde2+w+QLmIvy+WzeyGG/Khgx/GTxJj4thXjZrrpJg2gkStxWZx79yk5FR0mogPzw4bKNCjD0Ur5bA=
+	t=1715590747; cv=none; b=GVyjiS8c18P4EvmJ94Ut2oLJF+mHO3KAtG98YApO4wo6c3U/RMKVNyBOB8cfdOgA7IYWf9F+amH9wI4a7xsr3WzFyF7A+vbdUiisYfVqV5Crh6u9V4ZIqfOzpVC1P42BGjmjRasNU+JZ2k7lRh4k7/WcJ1lC8im6dMb2aArRkmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715590655; c=relaxed/simple;
-	bh=iDWYG7RtnNq3AoNOfRrjd0trTuhrPftP85t/iv2tG/A=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=baJXkQKUOIWTQd4xHyNO6pZLtEYVvqqz3nYgHBZHWetzDCpFfOinOQ8kl33C3B8bZZi2sbnPIBuIqxy/O5Wu4vd42Aoqy7ShE5ozxCn/aVsdHKvJA2K5JYc/womf5M7Xg4uWzCxzMm9BhcRZuvr4FrGbDs7KO3jWKlAkwvoUqzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e1d1c7229aso227541439f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:57:33 -0700 (PDT)
+	s=arc-20240116; t=1715590747; c=relaxed/simple;
+	bh=agPBsFfNnqoao+mSKP9HtbMAlzkTfkEYJ3henh90y7E=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ILSH1lyyPAStyn8Dz8VUFTW6b0AVDZm8VBnusIL8UP43Mso7j760Y7/bEUOvy4ZtF7KkpDbz3GCfSn9GELmfWUeVzKcWe58/q1cL5CiWxk1K9oxzJUCI8R4igrw/Np3N3qk+0bxrETIcpzjVj2Q7UJ0O22+1+VR/vtQEJCryWEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XpHjJ5+j; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59cdd185b9so871847466b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:59:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715590744; x=1716195544; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BONZtFMhDCloXM0WBlDley3CFN32CciOiMdKuHxFfJM=;
+        b=XpHjJ5+jyJqmcvNcezb8j2MntUWLS9y9tSrBjl7FGJM8D7AQgiiJANYAJWceI+T0jb
+         9b7UxyYuKW3fmOKU/OVe0+FW8WqQUVyzJeDfrLUbxkjgKdh9DPODtOX6wjpb3LsllIDw
+         ZZHzebvWH7KCIbTMAY1oZqr8hqWUzQmrKLxrzTUM6i1IdjS67yqjq3HNjTsXpbV9G4UW
+         qqzrIKW7+oGI142xkKLqDf4kKW/Pe97OCUzW8Tr5PbZhdMEr/Wvn/rMV3kTip3PBFeoV
+         m70O5gCP5pM8kXQfJkYuW1F8vibrq6zbwhuJ7DUZgHd3CCLh5vDN8geSuSfbpjbW57J5
+         uuXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715590653; x=1716195453;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MlsfaHQ06ghUuAit1ZjCEamDh0mY5oTBMtmvFXamK/s=;
-        b=w7y6t/T/NlTGOZVrZJ6fV6vjJH5sf8QGsQwPTxZEOg6wWZv20u+PoQLII271dAGC9e
-         0De+ZkGUft0aE395gZShtWKeh2cCr/sx8VOvyJskTFQcKiZe1Qit3rzSrsckB36cwEZ5
-         G2f3Ek9yL9HyZtyhs8hky2mwDKHIZWUUf5FUp+c/QrDhBZaeBRLV4m3JpWiGsJukt3+d
-         3GKwB6bm6bmCGL3XCovQGcWf9OltuR7GI0KuaNTED/3dqy0DW7QbQzME5CeO8m7+HJGB
-         b5h/Rnyqch/MoUt02VUf05mI5hZg1iucNSarOTj6YFa+cCCIAFFw9yq8QibeoI2tKQux
-         iTTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkSVmYHqrxiwxaDFYjix4sjYZzKs0pOPZAtTTz82yLpDLZSUDEA9HH9Hk58/iujPXjp0GJ+X5DZI++dc9ohH3+UP+mN81yCPLtQVJL
-X-Gm-Message-State: AOJu0YzGv4ASv6z9a3V+tZyIGyLJnnC7jw87AuJ+b4cy0Pma0PXBrruB
-	7ugeN9gyaM+5FZeZrnHI3G78YMTedyHa3rpKHpCFglbYsuFlwlVj+s4W5N7LofJoT9cy1mPii0q
-	pm6nQdh1/BpZm6JNwcxOZNOQJL/3jB8tFteGhAg+4DIIaFY9YFobglgY=
-X-Google-Smtp-Source: AGHT+IFMnzSU7DgRgXCbJVmw4Qx/eTeW0adkciJALKBtwAs9DQLAQ78RgRFPjEWpJd/1VpHqK+d6HPO+Iz0rQg+THfz8l/PPgnSf
+        d=1e100.net; s=20230601; t=1715590744; x=1716195544;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BONZtFMhDCloXM0WBlDley3CFN32CciOiMdKuHxFfJM=;
+        b=sFX6p0ajerZTSIwxGxXZOubqtkcoXBXLEYcFQYJhWwtig9bMByOG2BBkE+7M62qmAM
+         tbSadNYCva9FGI3biQr0XUrxV2jT+JISPTBy4MFY/6d6auwuNf24YNyzhr+oHK0TllF8
+         ygTGo3E2tCkPbVrMuYz3zsRSlfsL4QFc69eW3zCrKGwk731/d06GVgNlIdtICvQ03DlD
+         GA2NoPYRSnDtvMivHc2eU6EdXtpQuRpfz/AbAONCcxA1jnDG0yLhf2pSBC08bhIk6xbf
+         +5HCPWQhZaMpvqiTBW0YHAfqCT7CUwtY2+M66MOZHxS4mut3f0rTZinEcn5lgZz7FmtO
+         rC6g==
+X-Forwarded-Encrypted: i=1; AJvYcCX5FnllH+DHF100blWYdJWVhiUoaO6h9Fd5h/uYmhncKoD2xJGWgPUNEItQGB1O9DvuTowwnks9xTS4+EwHpQa0t/JOgQ+17tMenlxo
+X-Gm-Message-State: AOJu0YxajabVLFt4rSz/2HWM+yrfz/ow76alnSgG3WE13oQDvEpLqUuZ
+	klXtujjFOhdA34zYZFEi8nyGKfNA0z/GLfQnzOkbU7mw5dpmIQ8I
+X-Google-Smtp-Source: AGHT+IH1XPGeEvCa1Jj/xKONwcdbsf4R6tlnSM/deBFWW5SD0Gs5spOwdhlOp5STcOkXh7eIxaxVBA==
+X-Received: by 2002:a17:906:548:b0:a59:a01e:825f with SMTP id a640c23a62f3a-a5a2d292a95mr683570866b.29.1715590743914;
+        Mon, 13 May 2024 01:59:03 -0700 (PDT)
+Received: from ?IPV6:2a01:aec0:a3fd:7260:9636:62ff:a8fd:5751? ([2a01:aec0:a3fd:7260:9636:62ff:a8fd:5751])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a3c8724edsm399452266b.34.2024.05.13.01.59.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 01:59:03 -0700 (PDT)
+Message-ID: <0ed958b4-cbc9-4136-9113-e7a43a3f91e6@gmail.com>
+Date: Mon, 13 May 2024 10:59:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1352:b0:7de:de58:3b1f with SMTP id
- ca18e2360f4ac-7e1b5229103mr46266339f.4.1715590653126; Mon, 13 May 2024
- 01:57:33 -0700 (PDT)
-Date: Mon, 13 May 2024 01:57:33 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000075b694061852136a@google.com>
-Subject: [syzbot] [netfilter?] general protection fault in nf_tproxy_laddr4
-From: syzbot <syzbot+b94a6818504ea90d7661@syzkaller.appspotmail.com>
-To: coreteam@netfilter.org, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, kadlec@netfilter.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, pabeni@redhat.com, pablo@netfilter.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: ming.lei@redhat.com
+Cc: benjamin.meier70@gmail.com, hch@lst.de, kbusch@kernel.org,
+ kbusch@meta.com, linux-kernel@vger.kernel.org,
+ linux-nvme@lists.infradead.org, tglx@linutronix.de
+References: <ZkHR1L/cJesDEn60@fedora>
+Subject: Re: [PATCH 2/2] nvme-pci: allow unmanaged interrupts
+Content-Language: en-US
+From: Benjamin Meier <benjamin.meier70@gmail.com>
+In-Reply-To: <ZkHR1L/cJesDEn60@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+ > > The application which we develop and maintain (in the company I work)
+ > > has very high requirements regarding latency. We have some isolated 
+cores
+ >
+ > Are these isolated cores controlled by kernel command line `isolcpus=`?
 
-syzbot found the following issue on:
+Yes, exactly.
 
-HEAD commit:    6e7ffa180a53 net: dsa: mv88e6xxx: read cmode on mv88e6320/..
-git tree:       net
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=13ad5e04980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3714fc09f933e505
-dashboard link: https://syzkaller.appspot.com/bug?extid=b94a6818504ea90d7661
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16786a6c980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12526504980000
+ > > and we run our application on those.
+ > >
+ > > Our system is using kernel 5.4 which unfortunately does not support
+ > > "isolcpus=managed_irq". Actually, we did not even know about that
+ > > option, because we are focussed on kernel 5.4. It solves part
+ > > of our problem, but being able to specify where exactly interrupts
+ > > are running is still superior in our opinion.
+ > >
+ > > E.g. assume the number of house-keeping cores is small, because we
+ > > want to have full control over the system. In our case we have threads
+ > > of different priorities where some get an exclusive core. Some 
+other threads
+ > > share a core (or a group of cores) with other threads. Now we are still
+ > > happy to assign some interrupts to some of the cores which we 
+consider as
+ > > "medium-priority". Due to the small number of non-isolated cores, 
+it can
+ >
+ > So these "medium-priority" cores belong to isolated cpu list, you 
+still expect
+ > NVMe interrupts can be handled on these cpu cores, do I understand 
+correctly?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/344d515e5a83/disk-6e7ffa18.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c177dc9a5410/vmlinux-6e7ffa18.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cd11b4574661/bzImage-6e7ffa18.xz
+We want to avoid that the NVMe interrupts are on the "high priority" 
+cores. Having
+noise on them is quite bad for us, so we wanted to move some interrupts 
+to house
+keeping cores and if needed (due to performance issues) keep some on those
+"medium-priority" isolated cores. NVMe is not that highest priority for us,
+but possibly running too much on the house-keeping cores could also be bad.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b94a6818504ea90d7661@syzkaller.appspotmail.com
+ > If yes, I think your case still can be covered with 
+'isolcpus=managed_irq' which
+ > needn't to be same with cpu cores specified from `isolcpus=`, such as
+ > excluding medium-priority cores from 'isolcpus=managed_irq', and
+ > meantime include them in plain `isolcpus=`.
 
-netlink: 'syz-executor314': attribute type 4 has an invalid length.
-general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
-CPU: 1 PID: 5086 Comm: syz-executor314 Not tainted 6.9.0-rc6-syzkaller-00157-g6e7ffa180a53 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
-RIP: 0010:nf_tproxy_laddr4+0xb7/0x340 net/ipv4/netfilter/nf_tproxy_ipv4.c:62
-Code: 89 c5 31 ff 89 c6 e8 08 80 8d f7 85 ed 0f 84 ab 01 00 00 e8 bb 7b 8d f7 eb 05 e8 b4 7b 8d f7 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 3a 26 f2 f7 48 8b 1b e8 72 df 77
-RSP: 0018:ffffc9000344eb38 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff88802a7ada00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffffff8a0894f8 R09: 0000000000000001
-R10: 0000000000000002 R11: ffff88802a7ada00 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055556cd0a380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000221a6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nft_tproxy_eval_v4 net/netfilter/nft_tproxy.c:56 [inline]
- nft_tproxy_eval+0xa9a/0x1a00 net/netfilter/nft_tproxy.c:168
- expr_call_ops_eval net/netfilter/nf_tables_core.c:240 [inline]
- nft_do_chain+0x4ad/0x1da0 net/netfilter/nf_tables_core.c:288
- nft_do_chain_inet+0x418/0x6b0 net/netfilter/nft_chain_filter.c:161
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_slow+0xc3/0x220 net/netfilter/core.c:626
- nf_hook_slow_list+0x1f8/0x460 net/netfilter/core.c:665
- NF_HOOK_LIST include/linux/netfilter.h:350 [inline]
- ip_sublist_rcv+0x9a4/0xab0 net/ipv4/ip_input.c:637
- ip_list_rcv+0x42b/0x480 net/ipv4/ip_input.c:674
- __netif_receive_skb_list_ptype net/core/dev.c:5587 [inline]
- __netif_receive_skb_list_core+0x95a/0x980 net/core/dev.c:5635
- __netif_receive_skb_list net/core/dev.c:5687 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5779
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5831
- xdp_recv_frames net/bpf/test_run.c:278 [inline]
- xdp_test_run_batch net/bpf/test_run.c:356 [inline]
- bpf_test_run_xdp_live+0x1973/0x1e90 net/bpf/test_run.c:384
- bpf_prog_test_run_xdp+0x813/0x11b0 net/bpf/test_run.c:1267
- bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4269
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5678
- __do_sys_bpf kernel/bpf/syscall.c:5767 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5765 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5765
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fcafe84c2b9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffba9dffc8 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fcafe84c2b9
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 0000000000000000 R08: 00007fffba9dfff0 R09: 00007fffba9dfff0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:nf_tproxy_laddr4+0xb7/0x340 net/ipv4/netfilter/nf_tproxy_ipv4.c:62
-Code: 89 c5 31 ff 89 c6 e8 08 80 8d f7 85 ed 0f 84 ab 01 00 00 e8 bb 7b 8d f7 eb 05 e8 b4 7b 8d f7 48 83 c3 18 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 3a 26 f2 f7 48 8b 1b e8 72 df 77
-RSP: 0018:ffffc9000344eb38 EFLAGS: 00010206
-RAX: 0000000000000003 RBX: 0000000000000018 RCX: ffff88802a7ada00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffffff8a0894f8 R09: 0000000000000001
-R10: 0000000000000002 R11: ffff88802a7ada00 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: dffffc0000000000
-FS:  000055556cd0a380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 00000000221a6000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	89 c5                	mov    %eax,%ebp
-   2:	31 ff                	xor    %edi,%edi
-   4:	89 c6                	mov    %eax,%esi
-   6:	e8 08 80 8d f7       	call   0xf78d8013
-   b:	85 ed                	test   %ebp,%ebp
-   d:	0f 84 ab 01 00 00    	je     0x1be
-  13:	e8 bb 7b 8d f7       	call   0xf78d7bd3
-  18:	eb 05                	jmp    0x1f
-  1a:	e8 b4 7b 8d f7       	call   0xf78d7bd3
-  1f:	48 83 c3 18          	add    $0x18,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 3a 26 f2 f7       	call   0xf7f22673
-  39:	48 8b 1b             	mov    (%rbx),%rbx
-  3c:	e8                   	.byte 0xe8
-  3d:	72 df                	jb     0x1e
-  3f:	77                   	.byte 0x77
+Unfortunately, our kernel version (5.4) does not support "managed_irq" 
+and due
+to that we're happy with the patch. However, I see that for newer kernel 
+versions
+the already existing arguments could be sufficient to do everything.
 
+ > > be tricky to assign all interrupts to those without a 
+performance-penalty.
+ > >
+ > > Given these requirements, manually specifying interrupt/core 
+assignments
+ > > would offer greater flexibility and control over system performance.
+ > > Moreover, the proposed code changes appear minimal and have no
+ > > impact on existing functionalities.
+ >
+ > Looks your main concern is performance, but as Keith mentioned, the 
+proposed
+ > change may degrade nvme perf too:
+ >
+ > 
+https://lore.kernel.org/linux-nvme/Zj6745UDnwX1BteO@kbusch-mbp.dhcp.thefacebook.com/
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Yes, but for NVMe it's not that critical. The most important point for us is
+to keep them away from our "high-priority" cores. We still wanted to 
+have control
+where we run those interrupts, but also because we just did not know the 
+"managed_irq"
+option.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Benjamin
 
