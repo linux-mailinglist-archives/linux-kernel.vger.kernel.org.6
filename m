@@ -1,151 +1,147 @@
-Return-Path: <linux-kernel+bounces-177773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71948C447A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8989A8C447D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2456E1C22E1B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94B31C22C7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0640115442B;
-	Mon, 13 May 2024 15:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E8915442F;
+	Mon, 13 May 2024 15:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQq0r5sP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMKbzLPP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437D75695;
-	Mon, 13 May 2024 15:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31DA5695;
+	Mon, 13 May 2024 15:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715614967; cv=none; b=DhbGmzSoS9NKLhX2Dvencd5b//83vsweUW7NZ9nUzfEPSo6KHW8qLhlxhNCsRKXYYcQzMtWdh7cQ4oM3outUmZAVuY/l6p9zX9WmgDa5Uii0FP37nlZx0PzbXxdwIfW6+Svm4xBDA+JCSSvEpLMW58ovMadpMS+V1YJ71gOAsGQ=
+	t=1715615022; cv=none; b=gG/gC62CJOrs5urX3JGjb8GxLhdoZfiIFRgC3Kfqvup3zX7Hz79s+Da4h7GPUYBi0epC20riu1GsLbbyMfbAYP91IfMXsEceKXQLhhNEbqr0Ntd9Gv24x8mAjt7guuJp1WeyMig8N6qjz/lpAcFT5EVCVHTyfT9YzlGZ2CvMJHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715614967; c=relaxed/simple;
-	bh=F3u3mKadL+3EZX5zWP3ezeTiqNbAGqyfcxAJ3U4RsoI=;
+	s=arc-20240116; t=1715615022; c=relaxed/simple;
+	bh=J5hQzjcurJJsGoxq8banr21Pa9wy7hpwCT+lAe7WOE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uMeW0CE5ATJNTZtdJlNqI8iLQbO8ja4Ve+89EW6PgWCA4X1BBdO/6L4bGSsQQToyJVVlxoL1x++N8nbB1QMwt+YwZyGemtjlesdXhuaQTm4gpm7u6gi1aSvbD3t/GwcAdIRTcfyxQEgEFo9qIz3aeEbg4W4tPNy5u933zts0IFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQq0r5sP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91A22C32786;
-	Mon, 13 May 2024 15:42:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cs7a9rN+DKEjlb0COyBiIYjOQUw80SrFuZiWKsxptnYCxHcaNa/RzmgQ+8RyZoEk0wIwv3h6oMjD6itmJW5zPv46IAQi1/11zfYmGsKk7o5x2/DzO5LcV0t7Jaugb8jXsTK4lT3YqmsH68P4UhumGO4Sz+XSJUFhyIp9L8yS9Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMKbzLPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFD3C113CC;
+	Mon, 13 May 2024 15:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715614966;
-	bh=F3u3mKadL+3EZX5zWP3ezeTiqNbAGqyfcxAJ3U4RsoI=;
+	s=k20201202; t=1715615022;
+	bh=J5hQzjcurJJsGoxq8banr21Pa9wy7hpwCT+lAe7WOE0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KQq0r5sPRu78vdVdG+L7slIqkDQjf6Glz1m5xloulimbwvyaf331+Ts9RCGWXWy52
-	 V5vY3mLQKoDMBoynd61Q9m1bcEHA3vkD0gLfksydJ0E8t3+F1YYcYKXiAZuP5L7kVa
-	 v/5vfwkbYqYujFK0vsdNj+99Rp8YfMc0G38VhSQJnDLeLrnwLQvT1r5r1kya6YbuN0
-	 PhYnKGz+dJ1DeDeOj4mvpmJKE8YypTO1AL3rYJZZ6XJiYymY5qDge1FiOXpazziSgT
-	 U+ezmPVVPiXunoqCLxG0MOEuPSUwmxAfrJidFr/5CZ+rdd+SPsDj4uIv0sGa5N0NRN
-	 E4d0RuCySxi5w==
-Date: Mon, 13 May 2024 16:42:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Dmitry Rokosov <ddrokosov@salutedevices.com>, neil.armstrong@linaro.org,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-	martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-	kernel@sberdevices.ru, rockosov@gmail.com,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new
- syspll bindings
-Message-ID: <20240513-capsule-sadness-4d387baf2bed@spud>
-References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
- <20240510090933.19464-3-ddrokosov@salutedevices.com>
- <20240511-secret-barcode-e25c722ddf1d@spud>
- <1jjzjxzy4d.fsf@starbuckisacylon.baylibre.com>
+	b=nMKbzLPPNsLi0Y8bkFTPWjaohdSK+zjR/LvuOiBHGWooKmEZhkO8GY5CGqx69n9SY
+	 gmUfcQnR/qlVBTtISjVkp1GIAEX62k9Xhy5MvfgYGpx738kE98QnYt6L4lh8D2UVvY
+	 njDTH1JHN7TLogXHGHglAmaOi+2EL6Fl7HL1evq0sj1Eg+m7KOniXC77KHE++f/xFr
+	 EmNYfasW0x5ush8kPti6vIYX2O0GXuxKaSCHTN+PV8z0wYb/ez5LtN0E7GW6dvX6vQ
+	 KVTiEDh+VA2pizGwAWFZY3iKFc66KeeAMxfYxtyR/K2OgZ5jAila5ho3auBdQSii6o
+	 H1+Y30X1MN4Uw==
+Date: Mon, 13 May 2024 17:43:37 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Devyn Liu <liudingyuan@huawei.com>, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, f.fangjian@huawei.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com, linux-acpi@vger.kernel.org, 
+	jonathan.cameron@huawei.com, yangyicong@huawei.com, yisen.zhuang@huawei.com, 
+	kong.kongxinwei@hisilicon.com
+Subject: Re: [PATCH] gpiolib: acpi: Fix failed in acpi_gpiochip_find() by
+ adding parent node match
+Message-ID: <crpbtmccglgf4mpyt4ogdiqztophoadx34llx6z6lmnbneufju@pwm5j3fwusle>
+References: <20240513075901.2030293-1-liudingyuan@huawei.com>
+ <ZkHcniqCiLPEPN9o@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RbuUotNKYzyDBfFf"
-Content-Disposition: inline
-In-Reply-To: <1jjzjxzy4d.fsf@starbuckisacylon.baylibre.com>
-
-
---RbuUotNKYzyDBfFf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZkHcniqCiLPEPN9o@smile.fi.intel.com>
 
-On Mon, May 13, 2024 at 02:04:41PM +0200, Jerome Brunet wrote:
->=20
-> On Sat 11 May 2024 at 14:08, Conor Dooley <conor@kernel.org> wrote:
->=20
-> > [[PGP Signed Part:Undecided]]
-> > On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
-> >> The 'syspll' PLL is a general-purpose PLL designed specifically for the
-> >> CPU clock. It is capable of producing output frequencies within the
-> >> range of 768MHz to 1536MHz.
-> >>=20
-> >> The clock source sys_pll_div16, being one of the GEN clock parents,
-> >> plays a crucial role and cannot be tagged as "optional". Unfortunately,
-> >> it was not implemented earlier due to the cpu clock ctrl driver's
-> >> pending status on the TODO list.
-> >
-> > It's fine to not mark it optional in the binding, but it should be
-> > optional in the driver as otherwise backwards compatibility will be
-> > broken. Given this is an integral clock driver, sounds like it would
-> > quite likely break booting on these devices if the driver doesn't treat
-> > syspll_in as optional.
-> > A lesson perhaps in describing the hardware entirely, even if the
-> > drivers don't make use of all the information yet?
->=20
-> That is nice but it is only possible if/when we have perfect knowledge
-> of the HW being implemented. I don't know about you, but I rarely get
-> perfect documentation for HW, let alone a public one.
->=20
-> Those things are bound to happen as we implement support for the HW and
-> discover how it works, not to mention the mistakes humans will
-> inevitably do. If Linux was only supporting perfectly documented HW, it
-> would not be supporting much of them I suspect.
+On May 13 2024, Andy Shevchenko wrote:
+> On Mon, May 13, 2024 at 03:59:01PM +0800, Devyn Liu wrote:
+> > Previous patch modified the standard used by acpi_gpiochip_find()
+> > to match device nodes. Using the device node set in gc->gpiodev->d-
+> > ev instead of gc->parent.
+> > 
+> > However, there is a situation in gpio-dwapb where the GPIO device
+> > driver will set gc->fwnode for each port corresponding to a child
+> > node under a GPIO device, so gc->gpiodev->dev will be assigned the
+> > value of each child node in gpiochip_add_data().
+> > 
+> > gpio-dwapb.c:
+> > 128,31 static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
+> > 			       struct dwapb_port_property *pp,
+> > 			       unsigned int offs);
+> > port->gc.fwnode = pp->fwnode;
+> > 
+> > 693,39 static int dwapb_gpio_probe;
+> > err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
+> > 
+> > When other drivers request GPIO pin resources through the GPIO device
+> > node provided by ACPI (corresponding to the parent node), the change
+> > of the matching object to gc->gpiodev->dev in acpi_gpiochip_find()
+> > only allows finding the value of each port (child node), resulting
+> > in a failed request.
+> > 
+> > Reapply the condition of using gc->parent for match in acpi_gpio-
+> > chip_find() in the code can compatible with the problem of gpio-dwapb,
+> > and will not affect the two cases mentioned in the patch:
+> > 1. There is no setting for gc->fwnode.
+> > 2. The case that depends on using gc->fwnode for match.
+> 
+> Thanks for the report, analysis, and patch.
+> 
+> ...
+> 
+> >  static int acpi_gpiochip_find(struct gpio_chip *gc, const void *data)
+> >  {
+> > -	return device_match_acpi_handle(&gc->gpiodev->dev, data);
+> > +	return device_match_acpi_handle(&gc->gpiodev->dev, data) ||
+> > +		(gc->parent && device_match_acpi_handle(gc->parent, data));
+> >  }
 
-I mean, you can say what you want chief about what you did or didn't
-know, but there's a line in one of the drivers that was added back when
-the original driver was that talks about the missing clock, so you can't
-really act as if there was no knowledge about it. If it hadn't been
-previously known about and TODO-listed, I would not have made these
-comments.
+The original patch (from Devyn) is:
+Tested-by: Benjamin Tissoires <bentiss@kernel.org>
 
-> Stable API is already hard with ioctl but there, both sides are
-> perfectly known. That is a fundamental difference with the 'DT ABI'
->=20
-> Getting it right on day 1, every time
+For reference, a successful run can be seen at:
+https://gitlab.freedesktop.org/bentiss/hid/-/jobs/58661693
 
-Wind your neck in, I don't expect you (or anyone else) to get it right
-on "day 1, every time". I only expect it to be dealt with in a way that
-is compatible with the existing devicetree.
+> 
+> I'm wondering if the below approach will work for all:
+> 
+> static int acpi_gpiochip_find(struct gpio_chip *gc, const void *data)
+> {
+> 	struct device *dev = acpi_get_first_physical_node(ACPI_COMPANION(&gc->gpiodev->dev));
+> 
+> 	return device_match_acpi_handle(dev, data);
+> }
 
-Thanks,
-Conor.
+Looks like I get a bad dev pointer in this situation:
+https://gitlab.freedesktop.org/bentiss/hid/-/jobs/58662689#L704
 
-> - because things are set in stone
-> afterwards - is unrealistic. As a maintainer, I do spend a
-> disproportionate amount of time checking the bindings submission because
-> I know how painful it gets to fix things up down the line.
->=20
-> Unless I missed the simple solution to this problem, we can expect the
-> problem keep happening again and again, no matter the number of lessons
-> learned.
+Not sure if this is because the not-yet-upstream patches I have in
+hid-cp2112 are doing something wrong or if there is a good reason for
+it...
 
+The patch that adds fwnode to hid-cp2112 are:
+https://gitlab.freedesktop.org/bentiss/gitlab-kernel-ci/-/blob/master/VM/0002-HID-usbhid-Share-USB-device-firmware-node-with-child.patch
+https://gitlab.freedesktop.org/bentiss/gitlab-kernel-ci/-/blob/master/VM/0003-HID-cp2112-Fwnode-Support.patch
 
---RbuUotNKYzyDBfFf
-Content-Type: application/pgp-signature; name="signature.asc"
+both of those patches are applied before compilation in the CI run from
+above.
 
------BEGIN PGP SIGNATURE-----
+> 
+> Cc'ing to Benjamin for testing and commenting.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkI08QAKCRB4tDGHoIJi
-0jSxAQC8QxVuGHYq7syN68cgLxp136YiQh2236yQnHQf+MYYrgEAzT7ENp3HENlz
-kbYC+C95klbNPHlpS4gAQN2AoaUk4AM=
-=84uz
------END PGP SIGNATURE-----
+TL;DR: initial patch is fine, yours will probably need a check on the
+dev return value, so not sure if we gain a lot...
 
---RbuUotNKYzyDBfFf--
+Cheers,
+Benjamin
 
