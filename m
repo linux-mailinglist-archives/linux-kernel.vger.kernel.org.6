@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-177555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4B08C40B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:26:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9285A8C40BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57A2F1C22CFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:26:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C36411C21378
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3860614F13C;
-	Mon, 13 May 2024 12:26:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A6A414F9CB;
+	Mon, 13 May 2024 12:28:38 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A439914F133
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926D514F103;
+	Mon, 13 May 2024 12:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715603209; cv=none; b=Ac33/Yh4XWv59uOsup4qFdV30Pq3FVlIIEjJkko7HQFF/rjLNGLqSC9XFkRjAmRGbJEDpswi7cYIiEjlUNoD1Ky/MYSwBcVsCvlIMBSY81Sm274KBr0ZKm0qwimgWN8t+ugW0HTdUEc/lCcEHc//Gl9XjpW0yIfCyrB6n2+2TaM=
+	t=1715603318; cv=none; b=D+6wZJ9+NNQFrdIzA3SutNmkHxcbbTDIDabNJFhF3NRG+9BW3/Co3gTWD/af+b/0xawkvNYBwu1YTta7FPpf5eP3xyBaMFl9yGJMD4QZ80k61K8knP8Hs2/w+Wpg2fXh56JD+RYWOl/TUbBA99aI7QykT2amNbx592QVOphtzWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715603209; c=relaxed/simple;
-	bh=QqDCC4k0NPdJbIRo5g2C9AZNgV71fSbSWfaOiOVXx8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VZ/joQXCh5zs+AnRH76GIbj2z3oTDn4YfheTnM3Wr5HYwc78B1vd9MEouBJdZAJRRRqkew20j85TY3ehjRUdQQ3EH6LI7Eecv+z/KCT75ywKmt28xTCOrcEK6UgDShEN8hNL8ye9GpY5jJ99YfbUCpw4iGe4UlhgfjR0E8jKvGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1s6Ul4-0006Rd-I3; Mon, 13 May 2024 14:26:22 +0200
-Message-ID: <3ecbba68-d8c8-4700-b438-b47e9b8a4525@pengutronix.de>
-Date: Mon, 13 May 2024 14:26:20 +0200
+	s=arc-20240116; t=1715603318; c=relaxed/simple;
+	bh=efjpt6jyTPgyfXiPmrHxNy4PR/jcYioYANo2ECrW7Ro=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t2OFRr7dn4RXivf/thHlqeUspwic43i6ym+1DNF1LFb1SFC+xJ+yirWPTFByq+wsq5Wg/d3C9MUHxOqJtAdZDxukCWz6KD/9DtKNkhkjRuuYdClJ4h46jR++fvokU8kw4YeRowkEDfnc9Ae3/GzucmdFUZNlaiL3w6kyDmziYaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4VdJHf1KQxz9v7Hv;
+	Mon, 13 May 2024 20:11:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 547F5140381;
+	Mon, 13 May 2024 20:28:26 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwD3LyRfB0JmiJMSCA--.46264S2;
+	Mon, 13 May 2024 13:28:25 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com
+Cc: x86@kernel.org,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com,
+	linux-integrity@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH] arch/x86/um: Disable UBSAN sanitization
+Date: Mon, 13 May 2024 14:27:54 +0200
+Message-Id: <20240513122754.1282833-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/17] clk: imx: imx8mp: fix clock tree update of TF-A
- managed clocks
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
- Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Cc: imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
- linux-kernel@vger.kernel.org, Zhipeng Wang <zhipeng.wang_1@nxp.com>,
- Abel Vesa <abel.vesa@linaro.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
- <20240510-imx-clk-v2-8-c998f315d29c@nxp.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20240510-imx-clk-v2-8-c998f315d29c@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwD3LyRfB0JmiJMSCA--.46264S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrW5Gr4fZw4fur4kuw4xXrb_yoWDWFgE9F
+	WIqFZxJ34fZ3ykJ348KF4YvF93Cwn5AryS9w43WF13ta15XF97GF4xG343Xr45J3ZFvFWU
+	GF93ZFWUXr12kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
+	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
+	e7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xU4NB_UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5k-yAAAsb
 
-Hello Peng,
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-The commit message looks eerily familiar ;)
-Small correction below.
+Disable UBSAN sanitization on UML, since UML does not support it.
 
-On 10.05.24 11:19, Peng Fan (OSS) wrote:
-> From: Zhipeng Wang <zhipeng.wang_1@nxp.com>
-> 
-> On the i.MX8M*, the TF-A exposes a SiP (Silicon Provider) service
-> for DDR frequency scaling. The imx8m-ddrc-devfreq driver calls the
-> SiP and then does clk_set_parent on the DDR muxes to synchronize
-> the clock tree.
-> 
-> since commit 936c383673b9 ("clk: imx: fix composite peripheral flags"),
-> these TF-A managed muxes have SET_PARENT_GATE set, which results
-> in imx8m-ddrc-devfreq's clk_set_parent after SiP failing with -EBUSY:
-> 
-> clk_set_parent(dram_apb_src, sys1_pll_40m);(busfreq-imx8mq.c)
-> 
-> This is safe to do, because updating the Linux clock tree to reflect
-> reality will always be glitch-free.
+This fixes the error message when building the kernel:
 
-This refers to the next sentence, thus swap position of this sentence
-with the next one:
+  CALL    scripts/checksyscalls.sh
+  VDSO    arch/x86/um/vdso/vdso.so.dbg
+arch/x86/um/vdso/vdso.so.dbg: undefined symbols found
 
-> 
-> commit 926bf91248dd
-> ("clk: imx8m: fix clock tree update of TF-A managed clocks") adds this
-> method and enables 8mm, 8mn and 8mq. i.MX8MP also needs it.
-s/this method/imx8m_clk_hw_fw_managed_composite which sets the SET_PARENT_GATE flag/
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ arch/x86/um/vdso/Makefile | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> 
-> Another reason to this patch is that powersave image BT music
-> requires dram to be 400MTS, so clk_set_parent(dram_alt_src,
-> sys1_pll_800m); is required. Without this patch, it will not succeed.
-> 
-> Fixes: 936c383673b9 ("clk: imx: fix composite peripheral flags")
-> Signed-off-by: Zhipeng Wang <zhipeng.wang_1@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-With commit message adjusted:
-
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-
-Thanks,
-Ahmad
-
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 670aa2bab301..e561ff7b135f 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -551,8 +551,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  
->  	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
->  
-> -	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
-> -	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
-> +	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
-> +	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
->  	hws[IMX8MP_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mp_vpu_g1_sels, ccm_base + 0xa100);
->  	hws[IMX8MP_CLK_VPU_G2] = imx8m_clk_hw_composite("vpu_g2", imx8mp_vpu_g2_sels, ccm_base + 0xa180);
->  	hws[IMX8MP_CLK_CAN1] = imx8m_clk_hw_composite("can1", imx8mp_can1_sels, ccm_base + 0xa200);
-> 
-
+diff --git a/arch/x86/um/vdso/Makefile b/arch/x86/um/vdso/Makefile
+index b86d634730b2..ca79c0de582e 100644
+--- a/arch/x86/um/vdso/Makefile
++++ b/arch/x86/um/vdso/Makefile
+@@ -3,8 +3,10 @@
+ # Building vDSO images for x86.
+ #
+ 
+-# do not instrument on vdso because KASAN is not compatible with user mode
++# do not instrument on vdso because KASAN/UBSAN are not compatible with user
++# mode
+ KASAN_SANITIZE			:= n
++UBSAN_SANITIZE			:= n
+ 
+ # Prevents link failures: __sanitizer_cov_trace_pc() is not linked in.
+ KCOV_INSTRUMENT                := n
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.34.1
 
 
