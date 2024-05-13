@@ -1,118 +1,258 @@
-Return-Path: <linux-kernel+bounces-177268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE3CD8C3C2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:41:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A298C3C30
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 737862819F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:41:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 073161C2109E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30CF7146A90;
-	Mon, 13 May 2024 07:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD828146A91;
+	Mon, 13 May 2024 07:42:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgNetoPO"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SN8EruZm"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA43168DA
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82060168DA
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715586082; cv=none; b=Fk0fJzivMxrJgfseADdyFFFYaIQfHMJs8X/J5c68hpsuTcNgm8XRl3VYd5Q82eNlA5caW9oLotsEEtjxr+JnPfwQLOJaGcnvCa14XiApk4gCp9VYAMAkGok8o1ofDLh/RciFw+H2w9dCRDP4b7hOpdAs5xRSyc55J1BWKkBsN4c=
+	t=1715586142; cv=none; b=twAGTpReptwgJXWnUPV0kqgOMnFes4yb8WklK3evRN23SKm/DKI/U6Ne+TobjNVgCEm+6qwGpzhfJiOcqY2m3o0KdDUR6eRi7dTu95GmDob35pB8lqp3Vx6rYupPcK6pZDEEu+kXPXb8ARw6RUJOVH9Sqg1hsWRtBEsZ09epsdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715586082; c=relaxed/simple;
-	bh=NbAMICyDlsstIGEO20j7o3KsOH1uqM6Bwf3uWxd8iWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bzRjNdDzcXNxV6kLAlm6OxHDwk8a8hz+1SPDmVev9E7wfKchNafF1HGesSJqDVFjZF23nMpNqC8gwLfnRBr6MiuOCSmq3Aehxr5JGyPl6vNm01rTziFGrlS4g3/RMpeBbaNcLGmtHBE/4uxhOl/NIvCaT0qjv32AvuA4G5Z+b8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgNetoPO; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a5a5cb0e6b7so223507966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:41:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715586079; x=1716190879; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=fn+9ZGrINURnOclbL6L6sCXjIt+zNDYATi/tXCjDVEg=;
-        b=BgNetoPO3c+aimnrj/tOsWXActgmwL/dbLsCeuFdlvE9MUzdhKrMglrPCDdozFdPUA
-         vfoST4DuLXao0g9huRBwYz9IMZJPS9Oay8WBwl4IjvqeycHY2fpY4hDE6NzklYbr9W5i
-         OdDtS2i/QxMfDT26dvdj56aAkohOepowAJojdn3d4lYQE3m4+hBFflBgIyyqNS0sEKCS
-         8aEMVOyK3cc8StO+DpotDF0yuqJUwOorNydxunx2kncGBBcFihGWmp5rmL9rgcC4NN/9
-         fyV0NeXdWVcV5SAmkTwN25YNQCpJrOi1JXuw4Rh9aR0az4NsqvKzfrXYN5Wnim0NiRNE
-         7cLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715586079; x=1716190879;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fn+9ZGrINURnOclbL6L6sCXjIt+zNDYATi/tXCjDVEg=;
-        b=l2D6Qfa7XJ6W4GHnRAwanzi4eBdNHfw/kI+xIcLVmpkWZifMGr4o8HMQ5ohRpLU9LI
-         l4CbZWJ/ZZfLaEAOY+3+AAAasgedbJ/Liz1oZnDq01sk0KCb03qoF6pvVbmVv6D2Gdtm
-         cXoWTgV/XRddye1jxv/K6iQmuOLHkKDJRD07if+Zkgd1Iwhl/kmnj6Z7BdMFdjSkICMn
-         uc4oeKJ3ovwe1k+2u+jhK5PqXB7iZ5iBjP8yrJkh4F3lVMrInBapNHx+Xwn7H8YPaWOU
-         vA+dx6AMJoWlCJEFPUnrhHIHvtloovj6J676c51ngqE72xILM/6Qpo0RrAoXXP72aPHo
-         OhmA==
-X-Gm-Message-State: AOJu0YzmeET/F9MZiu8F9uua84aTeN7ThpUxmiC3kiP4KpaThL02YX1i
-	Px23yZFot1XxFpMPA1igUvvwd2OYrbHVn6eYAIn8BDSHv4FGEMOiEusA//Lg
-X-Google-Smtp-Source: AGHT+IH7B7TUKKmo0a9qlEiLS37SzXCE8nK5No9VAMrv0RcsoXU2hztTOUoD+PYHXqxG95W8OITHBw==
-X-Received: by 2002:a17:906:1358:b0:a59:9eab:1622 with SMTP id a640c23a62f3a-a5a2d665e06mr539096866b.56.1715586079014;
-        Mon, 13 May 2024 00:41:19 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17d10sm556021266b.198.2024.05.13.00.41.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 00:41:18 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 09:41:16 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-Subject: [GIT PULL] x86/fpu changes for v6.10
-Message-ID: <ZkHEHFVzn8bhhGIl@gmail.com>
+	s=arc-20240116; t=1715586142; c=relaxed/simple;
+	bh=WeoXoUQG4Spg2BNA3NuECdzYTo+AevDS5kWMpRMHe8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bGF5gaGbXTD9SK5la4XMgrVTOuzCgjcHXjqEN8Ka24VUZ9E3faHFY9SEWtzj+eA2RJl23Pa3OL0zvgr02w6XGz3d2HBXKymkOlvs7NdFgUygJCYANBRYyeFGqF304/wZNQiQyFuV6C9qQ5iLPs6Ji66w+f6VEElM3Ocju/oZY90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SN8EruZm; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B7F10E0070;
+	Mon, 13 May 2024 07:42:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715586138;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+dDor7bdmkwOSRGCuBAJQQIoJD+BBzutL1t/QhzKUfc=;
+	b=SN8EruZmgvDjmf7NTjlt1VZtsF2qArsga9lQiQ4GoheJnVL/opvgagI5SLWG5hctaITWTz
+	6FhamsD0/im3RZkspGxRzDS2MN+86F8AdP95DJQ5PWBBjPeaOzpkP8sI5rUgD3mHWGG2C+
+	N4My9jFvajhdy431RQuiZSzYlIAYHrng/SQi/vPWqBibyaqyVt48cbiApvotWsoha1ZuNh
+	hBosGqHHHsFxZ4umOCRg6ulk92dvdmlSCz+v3ll6S8ny4ndx2XR9oK/zegiHfX5egksBDq
+	JqprPEkEGoRY8Sh5pnPsMb3np28qLdAGnJek3wbSRT0T/dVgETTcRuDqYsVcxw==
+Date: Mon, 13 May 2024 09:42:17 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Richard Weinberger <richard@nod.at>, Vignesh Raghavendra
+ <vigneshr@ti.com>, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] mtd: nand: mxc_nand: support software ECC
+Message-ID: <20240513094217.4c1a0fc2@xps-13>
+In-Reply-To: <20240508-mtd-nand-mxc-nand-exec-op-v2-3-6b7366b7831f@pengutronix.de>
+References: <20240508-mtd-nand-mxc-nand-exec-op-v2-0-6b7366b7831f@pengutronix.de>
+	<20240508-mtd-nand-mxc-nand-exec-op-v2-3-6b7366b7831f@pengutronix.de>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Linus,
+Hi Sascha,
 
-Please pull the latest x86/fpu Git tree from:
+s.hauer@pengutronix.de wrote on Wed, 08 May 2024 13:08:29 +0200:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-fpu-2024-05-13
+> With these changes the driver can be used with software BCH ECC which
+> is useful for NAND chips that require a stronger ECC than the i.MX
+> hardware supports.
+>=20
+> The controller normally interleaves user data with OOB data when
+> accessing the NAND chip. With Software BCH ECC we write the data
+> to the NAND in a way that the raw data on the NAND chip matches the
+> way the NAND layer sees it. This way commands like NAND_CMD_RNDOUT
+> work as expected.
+>=20
+> This was tested on i.MX27 but should work on the other SoCs supported
+> by this driver as well.
+>=20
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> ---
+>  drivers/mtd/nand/raw/mxc_nand.c | 84 +++++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 75 insertions(+), 9 deletions(-)
+>=20
+> diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_n=
+and.c
+> index 1e8b4553e03ba..7004fd57c80f7 100644
+> --- a/drivers/mtd/nand/raw/mxc_nand.c
+> +++ b/drivers/mtd/nand/raw/mxc_nand.c
+> @@ -178,6 +178,7 @@ struct mxc_nand_host {
+>  	int			used_oobsize;
+>  	int			active_cs;
+>  	unsigned int		ecc_stats_v1;
+> +	unsigned int		column;
+> =20
+>  	struct completion	op_completion;
+> =20
+> @@ -1397,10 +1398,10 @@ static int mxcnd_attach_chip(struct nand_chip *ch=
+ip)
+>  	chip->ecc.bytes =3D host->devtype_data->eccbytes;
+>  	host->eccsize =3D host->devtype_data->eccsize;
+>  	chip->ecc.size =3D 512;
+> -	mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
+> =20
+>  	switch (chip->ecc.engine_type) {
+>  	case NAND_ECC_ENGINE_TYPE_ON_HOST:
+> +		mtd_set_ooblayout(mtd, host->devtype_data->ooblayout);
+>  		chip->ecc.read_page =3D mxc_nand_read_page;
+>  		chip->ecc.read_page_raw =3D mxc_nand_read_page_raw;
+>  		chip->ecc.read_oob =3D mxc_nand_read_oob;
+> @@ -1465,6 +1466,54 @@ static int mxcnd_setup_interface(struct nand_chip =
+*chip, int chipnr,
+>  	return host->devtype_data->setup_interface(chip, chipnr, conf);
+>  }
+> =20
+> +static void copy_page_to_sram(struct mtd_info *mtd)
+> +{
+> +	struct nand_chip *this =3D mtd_to_nand(mtd);
+> +	struct mxc_nand_host *host =3D nand_get_controller_data(this);
+> +	void *buf =3D host->data_buf;
+> +	unsigned int n_subpages =3D mtd->writesize / 512;
+> +	int oob_per_subpage, i;
+> +
+> +	/* mtd->writesize is not set during ident scanning */
+> +	if (!n_subpages)
+> +		n_subpages =3D 1;
+> +
+> +	oob_per_subpage =3D (mtd->oobsize / n_subpages) & ~1;
+> +
+> +	for (i =3D 0; i < n_subpages; i++) {
+> +		memcpy16_toio(host->main_area0 + i * 512, buf, 512);
+> +		buf +=3D 512;
+> +
+> +		memcpy16_toio(host->spare0 + i * host->devtype_data->spare_len, buf,
+> +			      oob_per_subpage);
+> +		buf +=3D oob_per_subpage;
+> +	}
+> +}
+> +
+> +static void copy_page_from_sram(struct mtd_info *mtd)
+> +{
+> +	struct nand_chip *this =3D mtd_to_nand(mtd);
+> +	struct mxc_nand_host *host =3D nand_get_controller_data(this);
+> +	void *buf =3D host->data_buf;
+> +	unsigned int n_subpages =3D mtd->writesize / 512;
+> +	int oob_per_subpage, i;
+> +
+> +	/* mtd->writesize is not set during ident scanning */
+> +	if (!n_subpages)
+> +		n_subpages =3D 1;
+> +
+> +	oob_per_subpage =3D (mtd->oobsize / n_subpages) & ~1;
+> +
+> +	for (i =3D 0; i < n_subpages; i++) {
+> +		memcpy16_fromio(buf, host->main_area0 + i * 512, 512);
+> +		buf +=3D 512;
+> +
+> +		memcpy16_fromio(buf, host->spare0 + i * host->devtype_data->spare_len,
+> +				oob_per_subpage);
+> +		buf +=3D oob_per_subpage;
+> +	}
+> +}
+> +
+>  static int mxcnd_exec_op(struct nand_chip *chip,
+>  			 const struct nand_operation *op,
+>  			 bool check_only)
+> @@ -1496,8 +1545,11 @@ static int mxcnd_exec_op(struct nand_chip *chip,
+>  			 */
+>  			break;
+>  		case NAND_OP_CMD_INSTR:
+> -			if (instr->ctx.cmd.opcode =3D=3D NAND_CMD_PAGEPROG)
+> +			if (instr->ctx.cmd.opcode =3D=3D NAND_CMD_PAGEPROG) {
+> +				if (chip->ecc.engine_type !=3D NAND_ECC_ENGINE_TYPE_ON_HOST)
+> +					copy_page_to_sram(mtd);
+>  				host->devtype_data->send_page(mtd, NFC_INPUT);
+> +			}
 
-   # HEAD: af813acf8c06db58c6e21d89d9e45e8cd1512965 x86/fpu: Update fpu_swap_kvm_fpu() uses in comments as well
+Same as before: data moves should not happen here.
 
-x86/fpu changes for v6.10:
+> =20
+>  			host->devtype_data->send_cmd(host, instr->ctx.cmd.opcode, true);
+> =20
+> @@ -1506,6 +1558,8 @@ static int mxcnd_exec_op(struct nand_chip *chip,
+>  			if (instr->ctx.cmd.opcode =3D=3D NAND_CMD_STATUS)
+>  				statusreq =3D true;
+> =20
+> +			host->column =3D 0;
+> +
 
- - Fix asm() constraints & modifiers in restore_fpregs_from_fpstate()
+This is risky but maybe this is the trick to get NAND_CMD_RNDOUT
+working? If yes maybe it is worth separating from this patchset, if
+possible, with a comment explaining what this is all about (the
+controller's SRAM being some kind of 1:1 mapping with the NAND SRAM,
+thus we need to write the data at the correct offset in the controller
+SRAM, I guess?).
 
- - Update comments
+Please write the comment above when defining the column field, and
+also, if my understanding is correct, can we rename it to sram_column
+or something like that?
 
- - Robustify the free_vm86() definition
+>  			break;
+>  		case NAND_OP_ADDR_INSTR:
+>  			for (j =3D 0; j < instr->ctx.addr.naddrs; j++) {
+> @@ -1517,9 +1571,14 @@ static int mxcnd_exec_op(struct nand_chip *chip,
+>  			buf_write =3D instr->ctx.data.buf.out;
+>  			buf_len =3D instr->ctx.data.len;
+> =20
+> -			memcpy32_toio(host->main_area0, buf_write, buf_len);
+> -			if (chip->oob_poi)
+> -				copy_spare(mtd, false, chip->oob_poi);
+> +			if (chip->ecc.engine_type =3D=3D NAND_ECC_ENGINE_TYPE_ON_HOST) {
+> +				memcpy32_toio(host->main_area0, buf_write, buf_len);
+> +				if (chip->oob_poi)
+> +					copy_spare(mtd, false, chip->oob_poi);
+> +			} else {
+> +				memcpy(host->data_buf + host->column, buf_write, buf_len);
+> +				host->column +=3D buf_len;
+> +			}
+> =20
+>  			break;
+>  		case NAND_OP_DATA_IN_INSTR:
+> @@ -1552,11 +1611,18 @@ static int mxcnd_exec_op(struct nand_chip *chip,
+> =20
+>  			host->devtype_data->read_page(chip);
+> =20
+> -			if (IS_ALIGNED(buf_len, 4)) {
+> -				memcpy32_fromio(buf_read, host->main_area0, buf_len);
+> +			if (chip->ecc.engine_type =3D=3D NAND_ECC_ENGINE_TYPE_ON_HOST) {
+> +				if (IS_ALIGNED(buf_len, 4)) {
+> +					memcpy32_fromio(buf_read, host->main_area0, buf_len);
+> +				} else {
+> +					memcpy32_fromio(host->data_buf, host->main_area0, mtd->writesize);
+> +					memcpy(buf_read, host->data_buf, buf_len);
+> +				}
+>  			} else {
+> -				memcpy32_fromio(host->data_buf, host->main_area0, mtd->writesize);
+> -				memcpy(buf_read, host->data_buf, buf_len);
+> +				if (!host->column)
+> +					copy_page_from_sram(mtd);
+> +				memcpy(buf_read, host->data_buf + host->column, buf_len);
+> +				host->column +=3D buf_len;
+>  			}
+> =20
+>  			break;
+>=20
 
- Thanks,
 
-	Ingo
-
------------------->
-Ingo Molnar (1):
-      x86/vm86: Make sure the free_vm86(task) definition uses its parameter even in the !CONFIG_VM86 case
-
-Li RongQing (1):
-      x86/fpu: Update fpu_swap_kvm_fpu() uses in comments as well
-
-Uros Bizjak (1):
-      x86/fpu: Fix AMD X86_BUG_FXSAVE_LEAK fixup
-
-
- arch/x86/include/asm/vm86.h  | 2 +-
- arch/x86/kernel/fpu/core.c   | 4 ++--
- arch/x86/kernel/fpu/xstate.c | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
+Thanks,
+Miqu=C3=A8l
 
