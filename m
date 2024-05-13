@@ -1,133 +1,127 @@
-Return-Path: <linux-kernel+bounces-177424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B2818C3E63
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:51:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12CC8C3E70
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6BCB21B4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:50:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 504F11F22070
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367AE148FEA;
-	Mon, 13 May 2024 09:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D46E14A093;
+	Mon, 13 May 2024 09:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zl6iBeDA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BZEgnYu5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6984C147C91;
-	Mon, 13 May 2024 09:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E98219E7;
+	Mon, 13 May 2024 09:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715593848; cv=none; b=rc0j3e/GqrsIPicmLNExwVborLWeMNsPndo0QlBhG6YiUOEM00u6kSpCqO+FQO0ox0pqiugLnl1WMbRtrBzIyeBMEtXyZ2CdfthuxtDE6xyO0OSdXkHzvbyE8a6RDMeNdyIodVwanJ5qiulbkS+UK1R6naIvStHYtSgu4rQPvRU=
+	t=1715594148; cv=none; b=lrHFZIgufqKfWR2KV4XQPIstkH6zQAKaf8wI7+xKrr0DRHJTtUMsjbuB7kQa324vCbMxsLK5c+O3o5ezfkt2cTstDWQzMsqdH1/F0EK+Gvf1UQ/WnO4RfMoJDVHUCLsO9w5NVRUJbcQAzOdsz6JwqFk5TzihMB7R754mmO+AKKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715593848; c=relaxed/simple;
-	bh=obainReipxsOetadK3S9x5Jt+lJ+nIC9rjpVjn7ETCc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dNQqDnAFZPbL60yJ3AS71LeKKxQphGVBmcD1LHgujUtdtRuU/b7Phph7EAoVq2Ofm9BrAFIF9cXX79J/oc+0jqQliv6RVHEDP/GYu5H9gC1ecnX8wIUYpSxCFLbcq47nqPCPCIfYvDakWCkB1eeWOO7xp+hMT8uB3R69tFfkJ74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zl6iBeDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6D6EC113CC;
-	Mon, 13 May 2024 09:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715593847;
-	bh=obainReipxsOetadK3S9x5Jt+lJ+nIC9rjpVjn7ETCc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Zl6iBeDAmfyGJavgOuKDO3p73ZHzDn2+ow5pvOFjpmkbpaPcxznWWit16owVeoA+6
-	 4PhjoBM5naFxt492YMR/9yRDxbumdX7Y/ZiGdMrMC9BLeXodeZfVlVS+YlVb9SuwVM
-	 9ixCHkaeXWBVaTXXttQ4cUyw2s3QvxaSvIfnHdKoxBc1liB9KJ9Yd64fSlcwhSvIhm
-	 8xz00uBAHHg5brv9CqpfZA2cM7+/H1kEdMpHDOFZAWGaM7N6mGyMvODGWJoIMmd9Wk
-	 vEeRslelJ/7K560UZt19d/5U8tDk2H3MceSm75Uht5fIzGD3FrX9C50Mcn9onbAjf8
-	 fDEPnYWPj/4OA==
-Date: Mon, 13 May 2024 18:50:40 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "songliubraving@fb.com" <songliubraving@fb.com>, "luto@kernel.org"
- <luto@kernel.org>, "mhiramat@kernel.org" <mhiramat@kernel.org>,
- "andrii@kernel.org" <andrii@kernel.org>, "debug@rivosinc.com"
- <debug@rivosinc.com>, "john.fastabend@gmail.com"
- <john.fastabend@gmail.com>, "linux-api@vger.kernel.org"
- <linux-api@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
- "rostedt@goodmis.org" <rostedt@goodmis.org>, "ast@kernel.org"
- <ast@kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, "yhs@fb.com"
- <yhs@fb.com>, "oleg@redhat.com" <oleg@redhat.com>, "peterz@infradead.org"
- <peterz@infradead.org>, "linux-man@vger.kernel.org"
- <linux-man@vger.kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>,
- "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
- "bp@alien8.de" <bp@alien8.de>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCHv5 bpf-next 6/8] x86/shstk: Add return uprobe support
-Message-Id: <20240513185040.416d62bc4a71e79367c1cd9c@kernel.org>
-In-Reply-To: <Zj_enIB_J6pGJ6Nu@krava>
-References: <20240507105321.71524-1-jolsa@kernel.org>
-	<20240507105321.71524-7-jolsa@kernel.org>
-	<a08a955c74682e9dc6eb6d49b91c6968c9b62f75.camel@intel.com>
-	<ZjyJsl_u_FmYHrki@krava>
-	<a8b7be15e6dbb1e8f2acaee7dae21fec7775194c.camel@intel.com>
-	<Zj_enIB_J6pGJ6Nu@krava>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715594148; c=relaxed/simple;
+	bh=zlS6twK/Dl58Vu5VAcua0fVTm5IGTx2anPsS2Dxpav8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=b8YFq0xI2X8GD3xyGT2xvjGlXU9EZ30h8PaNFmZ74vVWnd43b+7IHGUVmqN8eDnuOzYZ8xQ3CQRENhO1SJ+AnkYKcjEBig+VN50/amzbzIhuSwynWcxyPir9Ab1VcjemrWl5V3LW+zzJF8UCt1iUnoqH0IicPuErjfcpujDnFq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BZEgnYu5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D09G2Y009113;
+	Mon, 13 May 2024 09:55:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=U2WX32G1rFMx1/6IKHQPtO9xARAWs9tEx1dIHWNfp54=; b=BZ
+	EgnYu5wtaG+ih6mDQcRwFZhDHCE9+LkSMr3+nTrbXFa4NvsrFnVjBWAZ35r4h6oG
+	AG4DST5a9SlFXfMX3zKzH7EmRSOiwzHghXcvh6MNU1xB1zrPFv38wDrnvQi7aPSJ
+	cstuFft/oi588KH2OIxNbRlLgxRZgo7cQeuIWYv6G1EOSEsPjntaHv5zht8f8oro
+	FP9oaZ1DimdBPPswATAkd7n1sXazrXXaDGYf4KyXMvgCuIiNJBgBuzU7S91/YuII
+	9441WGzOLmt94jPBR6Rb0e6ODeZF5XdrU0hHt8TOu2L4nWxAcPuiq28WjjhCDQn2
+	7exiyiePrMXKVeAeIVpA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y2125b3p1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 09:55:40 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44D9tcpU015241
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 09:55:38 GMT
+Received: from [10.251.44.40] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 13 May
+ 2024 02:55:35 -0700
+Message-ID: <96a1e5a8-b887-4bb6-b79a-a4d4549c1415@quicinc.com>
+Date: Mon, 13 May 2024 12:55:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/8] media: qcom: camss: Add per sub-device type
+ resources
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <laurent.pinchart@ideasonboard.com>,
+        <hverkuil-cisco@xs4all.nl>, <quic_hariramp@quicinc.com>,
+        <matti.lehtimaki@gmail.com>
+References: <20240411124543.199-1-quic_grosikop@quicinc.com>
+ <20240411124543.199-2-quic_grosikop@quicinc.com>
+ <f9afdda4-0921-4632-8e4a-e8157b685da1@linaro.org>
+Content-Language: en-US
+From: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
+In-Reply-To: <f9afdda4-0921-4632-8e4a-e8157b685da1@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: mHPZmh5kXH2r6ID9jrhHU0_gdQtT8OJG
+X-Proofpoint-ORIG-GUID: mHPZmh5kXH2r6ID9jrhHU0_gdQtT8OJG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_06,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ lowpriorityscore=0 mlxlogscore=878 clxscore=1011 bulkscore=0
+ priorityscore=1501 impostorscore=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405130061
 
-On Sat, 11 May 2024 15:09:48 -0600
-Jiri Olsa <olsajiri@gmail.com> wrote:
 
-> On Thu, May 09, 2024 at 04:24:37PM +0000, Edgecombe, Rick P wrote:
-> > On Thu, 2024-05-09 at 10:30 +0200, Jiri Olsa wrote:
-> > > > Per the earlier discussion, this cannot be reached unless uretprobes are in
-> > > > use,
-> > > > which cannot happen without something with privileges taking an action. But
-> > > > are
-> > > > uretprobes ever used for monitoring applications where security is
-> > > > important? Or
-> > > > is it strictly a debug-time thing?
-> > > 
-> > > sorry, I don't have that level of detail, but we do have customers
-> > > that use uprobes in general or want to use it and complain about
-> > > the speed
-> > > 
-> > > there are several tools in bcc [1] that use uretprobes in scripts,
-> > > like:
-> > >   memleak, sslsniff, trace, bashreadline, gethostlatency, argdist,
-> > >   funclatency
-> > 
-> > Is it possible to have shadow stack only use the non-syscall solution? It seems
-> > it exposes a more limited compatibility in that it only allows writing the
-> > specific trampoline address. (IIRC) Then shadow stack users could still use
-> > uretprobes, but just not the new optimized solution. There are already
-> > operations that are slower with shadow stack, like longjmp(), so this could be
-> > ok maybe.
+
+On 5/11/2024 1:18 AM, Bryan O'Donoghue wrote:
+> On 11/04/2024 13:45, Gjorgji Rosikopulos wrote:
+>> +        .type = CAMSS_SUBDEV_TYPE_CSIPHY,
 > 
-> I guess it's doable, we'd need to keep both trampolines around, because
-> shadow stack is enabled by app dynamically and use one based on the
-> state of shadow stack when uretprobe is installed
+> As Matti pointed out to me on IRC, the .type value here isn't populated
+> in the rest of the 8280xp resources.
 > 
-> so you're worried the optimized syscall path could be somehow exploited
-> to add data on shadow stack?
+> I completely missed that but, then again this appears to be a dead field
+> in this series so it makes no difference if it is populated.
+> 
+> I realise it is probably of use in code you _haven't_ yet published but,
+> for now I think we should drop this field, since its dead code.
 
-Good point. For the security concerning (e.g. leaking sensitive information
-from secure process which uses shadow stack), we need another limitation
-which prohibits probing such process even for debugging. But I think that
-needs another series of patches. We also need to discuss when it should be
-prohibited and how (e.g. audit interface? SELinux?).
-But I think this series is just optimizing currently available uprobes with
-a new syscall. I don't think it changes such security concerning.
-
-Thank you,
+Yes that is correct i miss that as well.
 
 > 
-> jirka
+> I'll send a fixup patch for this, I don't think there's a need for you
+> to send the whole series again.
 
+Thank you for this.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+~Gjorgji
+
+> 
+> ---
+> bod
 
