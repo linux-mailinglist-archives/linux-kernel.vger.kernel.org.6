@@ -1,78 +1,107 @@
-Return-Path: <linux-kernel+bounces-177940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112D78C467E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:51:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F1A8C4681
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFAF9287A65
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:51:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7941F24244
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BEC38382;
-	Mon, 13 May 2024 17:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC48429D0B;
+	Mon, 13 May 2024 17:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUVDU8bh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OO2MpxNM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753E22C1A0;
-	Mon, 13 May 2024 17:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307F757C8D;
+	Mon, 13 May 2024 17:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715622651; cv=none; b=oVctUpar5ae1KeY1LnEvfbpRpC5QFxLrphM6mV0bbA1z5GT8LbbR+Kv6VD5iQzNq04y6fNHRFf+4PY/S2cv/2n78hpfO1Sw9+2kV4IRBE1VIHU7WxDbT46ylNhr/btFEl/skJ6EO38MjAdgU/PcBXZMYt5Frq9qVyvl4sAHrJZY=
+	t=1715622694; cv=none; b=Wqk6K53/M4FtNgpwdFmE+Lqx7nUZucdXw1pbMfR1IYHwn3QCsag9dV3xlm04ehN2PQria9ZeMg6zk81M0px4hJlbUxcoWMMXJz1r7UjpXq4N7hhYDQw6veZBmxTme3N12F+kb/kKDgpskapQ+BYJVdPrOynOBNN/ltFua/rAj74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715622651; c=relaxed/simple;
-	bh=sorOqKKQzlPlj81aXlKqUF4fhbygrU4LdHfsRxZb6ps=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bEveujnUdDJ0S6YpaPMRs+0/70sNAw7T+5Mv9LWm5sP1znXWw3d8FjYYwCHYA7bQNs8Qzueqjn+RjMzTZfjXMFUiAeGUXh6olpJkG/HH9CFse9nYX6IFH64uPCa2AoYDJshAdpHHOEcaO2udoi/3GBzLyJ+P45XPJH0KH4NZ8KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUVDU8bh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0969AC113CC;
-	Mon, 13 May 2024 17:50:51 +0000 (UTC)
+	s=arc-20240116; t=1715622694; c=relaxed/simple;
+	bh=DA+UD3fsPCm2aGviXf6VM5/MCw3pyuso45xWeS6YsPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=fjSDVfiR1Re41+Rzdh1hkwp7Ap8WEzTojKcCWgfRgtwiCdcyQVSSUO/2NRc+JSVzzXTCNqD7fjMxsfh+ERZzlacaOVb+YIj7ZiFnqXlLtAGso8AfQy3aYgyXsbhqT1dbjSJTLc5/Rcu1SWrayMxjfNUjb43YxnPANdOeC4r0+oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OO2MpxNM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F072C113CC;
+	Mon, 13 May 2024 17:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715622651;
-	bh=sorOqKKQzlPlj81aXlKqUF4fhbygrU4LdHfsRxZb6ps=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=oUVDU8bh4VukF++5TWp31mmmpbNqtplFwlqd63ViwgiZd4WSJranGYL9hlZsw+dov
-	 q15dr0J9a0FroZleM0C+s4yXEmkJ2YEETx++9sb5ZTgaG40lj58e+maMoNO7SvdqVC
-	 g2K9QQyVobUseL72bcf7H4KBgdxoCXmRo2DR8MAfWnpxc1tfvacuDN9YIIcEYhtk1M
-	 Wrt07QfpywtHxFpJHEo9ucERFWHcSR0AQxHUmvKDSLwHyPRSoaCB8GTwn6MY1CMNkl
-	 TpNhdOqBKJ36tNuGxHjYHxBjz93WAAvAGLIELgSoXdKD0B3MvQUV61GwtPJWKRJE8u
-	 HJzf/z1i7oMyQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 02041C433E9;
-	Mon, 13 May 2024 17:50:51 +0000 (UTC)
-Subject: Re: [GIT PULL] keys changes for v6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240509142517.2787-1-jarkko@kernel.org>
-References: <20240509142517.2787-1-jarkko@kernel.org>
-X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240509142517.2787-1-jarkko@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-next-6.10-rc1
-X-PR-Tracked-Commit-Id: 9da27fb65a14c18efd4473e2e82b76b53ba60252
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 25c73642cc5baea5b91bbb9b1f5fcd93672bfa08
-Message-Id: <171562265100.10937.11267638500736998467.pr-tracker-bot@kernel.org>
-Date: Mon, 13 May 2024 17:50:51 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
+	s=k20201202; t=1715622693;
+	bh=DA+UD3fsPCm2aGviXf6VM5/MCw3pyuso45xWeS6YsPQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OO2MpxNMj1H+5IPfIKaI+0XY2q/eDAH6nd5DVELGDFmMSsdww3S0gviR2LYgG4+55
+	 DS/C82prJmvyciUR3FtcWjcQcZ0AFsq+cz/hgzCxsc7hysyZrTBa+LA/6BIYku9Tq0
+	 lXnVs/piTxPAFFh0QiFdLLtMiAxOhWK+6J04cOcFpyHYkChNw0Ow/IUCn9ElJHV6gp
+	 rXLqYcDR4WKa72sI8dmfu3P7SqfMCAe6YzslsnyXlRGmQraPjKEWgeNGTvzFgirb11
+	 HdzL7v9Zo3P+bVoUD+mrSyit29r7xxSehPxvi524Ya+R6bOfP+uxjSNBLtRXr2qCp3
+	 viZ+c5otVPfiA==
+Date: Mon, 13 May 2024 12:51:31 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	andrew.gospodarek@broadcom.com, michael.chan@broadcom.com,
+	kuba@kernel.org, davem@davemloft.net,
+	Andy Gospodarek <gospo@broadcom.com>
+Subject: Re: [PATCH] pci: Add ACS quirk for Broadcom BCM5760X NIC
+Message-ID: <20240513175131.GA1991153@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510204228.73435-1-ajit.khaparde@broadcom.com>
 
-The pull request you sent on Thu,  9 May 2024 17:25:17 +0300:
+On Fri, May 10, 2024 at 01:42:28PM -0700, Ajit Khaparde wrote:
+> The Broadcom BCM5760X NIC may be a multi-function device.
+> While it does not advertise an ACS capability, peer-to-peer
+> transactions are not possible between the individual functions.
+> So it is ok to treat them as fully isolated.
+> 
+> Add an ACS quirk for this device so the functions can be in independent
+> IOMMU groups and attached individually to userspace applications using
+> VFIO.
+> 
+> Signed-off-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+> Reviewed-by: Andy Gospodarek <gospo@broadcom.com>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-next-6.10-rc1
+Looks like this was applied by Krzysztof to pci/acs for v6.10.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/25c73642cc5baea5b91bbb9b1f5fcd93672bfa08
+I'm hoping Broadcom is still working on using the standard ACS so we
+don't have to add quirks forever:
 
-Thank you!
+https://lore.kernel.org/all/CACKFLinvohm+jRupNZAV=G+OHg1buXvLDrs0yGgPY3o6NB8biA@mail.gmail.com/#t
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> ---
+>  drivers/pci/quirks.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index eff7f5df08e2..3d8aa3f709e2 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -5099,6 +5099,10 @@ static const struct pci_dev_acs_enabled {
+>  	{ PCI_VENDOR_ID_BROADCOM, 0x1750, pci_quirk_mf_endpoint_acs },
+>  	{ PCI_VENDOR_ID_BROADCOM, 0x1751, pci_quirk_mf_endpoint_acs },
+>  	{ PCI_VENDOR_ID_BROADCOM, 0x1752, pci_quirk_mf_endpoint_acs },
+> +	{ PCI_VENDOR_ID_BROADCOM, 0x1760, pci_quirk_mf_endpoint_acs },
+> +	{ PCI_VENDOR_ID_BROADCOM, 0x1761, pci_quirk_mf_endpoint_acs },
+> +	{ PCI_VENDOR_ID_BROADCOM, 0x1762, pci_quirk_mf_endpoint_acs },
+> +	{ PCI_VENDOR_ID_BROADCOM, 0x1763, pci_quirk_mf_endpoint_acs },
+>  	{ PCI_VENDOR_ID_BROADCOM, 0xD714, pci_quirk_brcm_acs },
+>  	/* Amazon Annapurna Labs */
+>  	{ PCI_VENDOR_ID_AMAZON_ANNAPURNA_LABS, 0x0031, pci_quirk_al_acs },
+> -- 
+> 2.39.2 (Apple Git-143)
+> 
+
+
 
