@@ -1,81 +1,131 @@
-Return-Path: <linux-kernel+bounces-177864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB4C8C4580
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:59:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E062A8C4501
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E98D2834AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0641C235AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C82F1C6A4;
-	Mon, 13 May 2024 16:59:49 +0000 (UTC)
-Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E542915534F;
+	Mon, 13 May 2024 16:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSuogmHR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7336B1AACA;
-	Mon, 13 May 2024 16:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EA314D2BF;
+	Mon, 13 May 2024 16:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619589; cv=none; b=pRpape/D4q8Z9hBwiUc8f7LEMK4SUNWTD4LqgLz1jgSMV1+Rz5QTfMzinFRu/Kz9DHRyciv0l5284VClRw7HPRL3zLHJFYqND+yj2uo/nxybRVpN8znKBS+t9TKInvDAylNGw39RI569WAFadTq32ja0FiBDncVIQ6lHk97cHQQ=
+	t=1715617379; cv=none; b=azwCh2nESL2gmfy4BvgEsiqCEafnWGJhMxGTq+6mmmwmSjzKq5ehom1etCDLfyfsZHPqMozDWuHwBFLGW+v7EC800S/7QdxUfXARox02VMnrUKxN+T93fTCp64rHAAVUEYbGg0h0do+6erEuwW0lSssq2D0DGX4jjjpqn75yp6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619589; c=relaxed/simple;
-	bh=ysyb2Jplk/f3vs0r/foaa32f7i2ZNfg5vNPzrga2Uh0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zn/46n4nwiS+4B525VtzKUtEyTD2zqd+QElzyGLNgh2C8mblBAd08GEnp3krkVImKBNDT2DoGqacaYWo0L0obwA6v2sQGCUq7DZGUJLFG9aDDRiiOncTE9QTSrcxL4thKCmWTCKs4VyXOPxTzvgQobfTsIYwKaU93IrYHxGY+Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
-	by finn.localdomain with esmtp (Exim 4.95)
-	(envelope-from <tharvey@gateworks.com>)
-	id 1s6YRA-009a4I-MK;
-	Mon, 13 May 2024 16:22:04 +0000
-From: Tim Harvey <tharvey@gateworks.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Scott Ehlert <ehlert@battelle.org>,
-	Tim Harvey <tharvey@gateworks.com>
-Subject: [PATCH] Bluetooth: btsdio: Do not bind to non-removable CYW4373
-Date: Mon, 13 May 2024 09:22:00 -0700
-Message-Id: <20240513162200.2658571-1-tharvey@gateworks.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1715617379; c=relaxed/simple;
+	bh=N2ATGd7KlEQx4kG5H+XRfUmL8uzdKU8CWZcVR4j/D6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bmuc3k4xzBg2yFl98zP3+P3X+G3Nye9y4yu0yS8HcxqSquoncPsU9bh0sdZy6/Lk40s8gBjolfqFKgbnwZrzxe3RrA4obxAXSJF8LwZvgKMQVWDH3TANAge3ndXur19YD+GQr2IK+j3ZJeuFlV0kP0L7DSkms67BMV2h0jG0z64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSuogmHR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5479C113CC;
+	Mon, 13 May 2024 16:22:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715617378;
+	bh=N2ATGd7KlEQx4kG5H+XRfUmL8uzdKU8CWZcVR4j/D6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pSuogmHR4dnns/0HOj3omiIm8ZdqXO1qtQ/dZSU9ruI15Mx/CYiFcHWlChYkhBzfc
+	 hwd65xyvkBsO23iRMRAaiI+UP38hExb3xmvACAbl/9eREniNiq47jN7SJRHXko4Uoo
+	 rP5fAiHJeJsZqI2cjc7+fhsQKJuv80JBy0jeb5hzKXD88Djc+NwvTUOI84AjuWktCI
+	 pwRq1uKCqbHAuLh5cT3H8fA7eF/r5nHm+Wf7INM5pdQf77xapIFQqFywP2j+9/0cqu
+	 xtgL0tp9ywA2jEC7SQ2qBfT2Ne26/7D1wVRff+glJE/eMyaudWaR2+0rc/nD/xKjtA
+	 9rFcC2XOgUlCw==
+Date: Mon, 13 May 2024 17:22:54 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alina Yu <alina_yu@richtek.com>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	johnny_lai@richtek.com, cy_huang@richtek.com
+Subject: Re: [PATCH v3 6/6] regulator: dt-bindings: rtq2208: Add property to
+ get ldo of RTQ2208 is adjustable or not
+Message-ID: <20240513-tissue-repave-13d2e3bf88fd@spud>
+References: <cover.1715340537.git.alina_yu@richtek.com>
+ <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0Rzf6EampsUN2LBy"
+Content-Disposition: inline
+In-Reply-To: <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
 
-From: Scott Ehlert <ehlert@battelle.org>
 
-CYW4373 devices soldered onto the PCB (non-removable),
-use a UART connection for Bluetooth and the advertised btsdio
-support as an SDIO function should be ignored.
+--0Rzf6EampsUN2LBy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Scott Ehlert <ehlert@battelle.org>
-Signed-off-by: Tim Harvey <tharvey@gateworks.com>
----
- drivers/bluetooth/btsdio.c | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, May 10, 2024 at 08:06:25PM +0800, Alina Yu wrote:
+> Since there is no way to check is ldo is adjustable or not.
+> As discussing in v2 series, 'richtek,fixed-microvolt' is added for that.
+> user is supposed to know whether vout of ldo is adjustable.
+>=20
+> Signed-off-by: Alina Yu <alina_yu@richtek.com>
+> ---
+>  Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml | 8 +++=
++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/regulator/richtek,rtq2208.=
+yaml b/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml
+> index 609c066..6212f44 100644
+> --- a/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml
+> +++ b/Documentation/devicetree/bindings/regulator/richtek,rtq2208.yaml
+> @@ -75,6 +75,13 @@ properties:
+>          description:
+>            regulator description for ldo[1-2].
+> =20
+> +        properties:
+> +          richtek,fixed-microvolt:
+> +            description: |
+> +              If it exists, the voltage is unadjustable.
+> +              There is no risk-free method for software to determine whe=
+ther the ldo vout is fixed or not.
+> +              Therefore, it can only be done in this way.
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -177,6 +184,7 @@ examples:
+>              };
+>            };
+>            ldo1 {
 
-diff --git a/drivers/bluetooth/btsdio.c b/drivers/bluetooth/btsdio.c
-index f19d31ee37ea..bc9631bddc40 100644
---- a/drivers/bluetooth/btsdio.c
-+++ b/drivers/bluetooth/btsdio.c
-@@ -298,6 +298,7 @@ static int btsdio_probe(struct sdio_func *func,
- 		case SDIO_DEVICE_ID_BROADCOM_4345:
- 		case SDIO_DEVICE_ID_BROADCOM_43455:
- 		case SDIO_DEVICE_ID_BROADCOM_4356:
-+		case SDIO_DEVICE_ID_BROADCOM_CYPRESS_4373:
- 			return -ENODEV;
- 		}
- 	}
--- 
-2.25.1
+> +            richtek,fixed-microvolt =3D <1200000>;
+>              regulator-min-microvolt =3D <1200000>;
+>              regulator-max-microvolt =3D <1200000>;
 
+I'm dumb and this example seemed odd to me. Can you explain to me why
+it is not sufficient to set min-microvolt =3D=3D max-microvolt to achieve
+the same thing?
+
+Cheers,
+Conor.
+
+--0Rzf6EampsUN2LBy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkI+XgAKCRB4tDGHoIJi
+0teoAP0deskjwTQhQkwFkOEF3YwHdE/UPQPpoXblTyQcsq2YKAD+JWsBhF6E1eTE
+vJixXEaTaIbjTD3RYNjy9OvMwTWmWwY=
+=GwZ0
+-----END PGP SIGNATURE-----
+
+--0Rzf6EampsUN2LBy--
 
