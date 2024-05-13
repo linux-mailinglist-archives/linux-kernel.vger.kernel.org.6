@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-178074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEE7C8C4847
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:35:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D2B8C4849
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBF11C20B3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:35:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8572819C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA5D80032;
-	Mon, 13 May 2024 20:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84D780045;
+	Mon, 13 May 2024 20:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lqsgXXBC"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Gfg+0xdX"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3BC1E4B3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E8A7F499
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715632542; cv=none; b=KpiCWz4MssEPrMOK4qZMxUGvcB3f8haJxXyPD7IjsjhYXpp+xOCxeIk8ytRkOLvkxuJNrwGbVFIM3WYF175KbTQlLVtk+zjraRyTJex/QkVp+8oO77kquxwY4rY13tDN37wauOh7NYaQyufeJ2/FXKHMHD55z9FxPyPWP6Mj49E=
+	t=1715632579; cv=none; b=us6kiFeHCJm6bbUGeavQB9jrhpZ7dFEaMOiKLamvTtF9tshfwnw5VidWktTCj9mPHtGV0exNUpanDi6Gcc2+pq7NKg3iNxcgJqdhhuRoizWRkCx/Sk8neMlsmLXwo6ReJViVriDYtNLpz7aNLfexaXdc0+vnyiOE0J3BIg8EaII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715632542; c=relaxed/simple;
-	bh=K5gJymEU887CrNC6X289CM2zG0sNjhqiEQwzbLWQ8aI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DvnibBXkEGunjZFwWePbFtGY5wNNzPzTwN3EKt8NqhWgihpmA8Ov2GkupWhWjpQQQPWkT5+d471vmKY+8GjhsUWPnVH8BTrwEzPz6r/lk0gmkh1e4HMEv+cr/0EM4ePnhPrFycM8KmzZovDRRajebRjLWfq7JiuifsnZoMvjUos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lqsgXXBC; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-61bed5ce32fso52041457b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715632539; x=1716237339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K5gJymEU887CrNC6X289CM2zG0sNjhqiEQwzbLWQ8aI=;
-        b=lqsgXXBCWoP4mfkbmPLX3+Y7tKuuQbuE/7eQ0VgRM8xV2eLjdsJMqmKG6likQJwXlA
-         6UCbAjQpNzs1YKL3uQfFcnrMWtX53p+/544o1p0JKxmTQw9jeTh3S3280k18a+ebrGhx
-         CODiN3MR+ZQNmRXmqxhfUf0+pNg9AR+hoQvdOfBCVwQhaVcEQ60EnAZugayaDi2fRHRK
-         EQnAX2iF3rQiAT4UgLuCXdNOTxhBfwDhSqVwA6nIAfK1pC/GY1QHphQoGOsFKJMZCOHq
-         vHpMZlPbeasNM8TLICrV9VDvYRH0pubfgTdNYpjOg1JPM8S7nbECnpHtNy/IHKzqYQLB
-         A6pw==
+	s=arc-20240116; t=1715632579; c=relaxed/simple;
+	bh=Vm5ffhlsGkE2Y3R2YiSsCMLraUbkncQ+RgFFPCJX4rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWW0l23roRF8+211ic79KfC71yOwQygYB8I851GA1/oFS3PbsshoU+usXqI5kO0+Wxq9xT7NQIK72XBdur3gGShXNwp9PtOzur4Ok5aFCAIU7y9R74+J3/6eameFPhs3VMLS7++GXYLknpAEdtKfxF3i3zVXIogyNH1JABTafxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Gfg+0xdX; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 077763FB6E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:36:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1715632568;
+	bh=iHGP+H/HM9flCIvET231fhltqpSgxNj3NFbnCTXeM88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=Gfg+0xdXR1HN7Q/j/WtqLQjBWj/ugy68Va3XzGKhuplG+Abwkz6MdaUdOd37gcJH3
+	 pSrpcZ/Z6oEXyVs8lP8edyEIo+7IVa6zkd1Ga32Iie0gb+9XnAQMOxasdRRiGk/ET5
+	 xQu4nj76KdAky3JDrAAmIZotHOUtF7mAHt6s6yolF7svzykn62oRqsEvweg/kAa75I
+	 x9YlXmk0D7HEDtcOT6S1zy7SWnbbkWtK6Nw1uWi148PO7HwOwIb8fnb9JohNwXjI49
+	 Pos8QGDDipo90IT9Qx5d/IVkYr6YKhAHDYbDwmdQksyblxmGYGbKyfjNKc9agzJ+F8
+	 s5tru/T/LYQZg==
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a5a5fdd6185so190864866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:36:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715632539; x=1716237339;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K5gJymEU887CrNC6X289CM2zG0sNjhqiEQwzbLWQ8aI=;
-        b=I/1CLY/TdBJeam4p1XcveS/MJxoEsEZgraMu+3Y5UQWLwn1Czg5E0F68p2YM4rXMfM
-         t7fcwNKbLjo33a56LiX3d6bz/Mjn+SmSDx6SCf3vUB3W061qP+ICVItq3ABtsJF1lrtq
-         5UpDT6sbsxen+ziYOC9/wmnWnOYL2lRX7DZ1Kd0sroeUMhtFE/R99a6C8T2u4ipHIdbK
-         j3a9wuw0mJfAf3XwxTdSOFX1KrquE2xmWkxcoHWCCIZZtxzX2AraUYcAzb4zRfQCouiy
-         5InDTqZ13HiaNQ5ynKcrTH6rPaKWaCr7w110mXtm3DeftXGYHlaRBCjWzKzG1xZKvJLm
-         HZ5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUf8LDsy8xfLr1tYgObva7gKqZFZbIytMw0tGNptUTSZbyVt9oLXiXcBxhZ0Fv5V8+pnaD1nGBp1EvmJvHuTJbwyZREaC1gO0S7dLVo
-X-Gm-Message-State: AOJu0YwqHls45Pwu4oskJQFJaWfwKXSXGRtUViOjcsLafBh/BBoXMDUJ
-	xQBhEcbo17eoZdaXdU8cVTss27o4m5ZRIuOzTSAr8Ve63Nc0QN6YY+SlRZho0voc3wz5Rklr4DN
-	j77VwOHEtywjrIiZNrdoMlW7Y3v6sLz8YZZIkzA==
-X-Google-Smtp-Source: AGHT+IHSl/yR0nTZcRlSe+ORPztjmoog4CRZc8k44qPEv4107dBUri0sSEMdFfUGHggaDXOsYQE07EPlHgu7P5eK1hg=
-X-Received: by 2002:a0d:df16:0:b0:618:83a4:588e with SMTP id
- 00721157ae682-622b013d333mr108562117b3.37.1715632537678; Mon, 13 May 2024
- 13:35:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715632565; x=1716237365;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iHGP+H/HM9flCIvET231fhltqpSgxNj3NFbnCTXeM88=;
+        b=YF9PANjJeyA4RV1VOvq4fW8JycKr+adNpBlFdZxPnmJHjmRrB87l7P1pML6uHW1nCi
+         frkyJnHOvyTL5My1nsYG1evju8grP5VHCcwh5ytakPTVXiNqIvnDdOowjMSlXA82yrwE
+         WpnDhKRGtc/TLgYEAqtR44IxepEwUZkipM06ZpvzyyCecqcRzUuFxknrsg2RJNKtAGgy
+         9J+TEWaWG+VV/7K29ts1JRpuThcHb1CdjgQ/Ag9V2fkV6kATzm8Fan1Rbrrshhbx20ZL
+         p02oyroxBcbSJupzxDNYfdNfezn17kcU/mxDyGvFaZAr6ArZwmTSfwWM/wHP3l6m7uXq
+         BjUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXB3s5hyFUfFMurvv8g6VaWjTJhYfTeih6jJrj1HxCKysJBt+Er0+6ab8LyA8sIyX8CV5FDFcgFxuUEN7A1O9Q2lRCo8BedN0Oce3LC
+X-Gm-Message-State: AOJu0YzXhnx2++t4UpBhFAWDfgmXUlkbzSwmZQCZ6IfksFiyMkSGOQGV
+	z1KpYJ5uyoxvb/xsAza28DShMtUVGsS5wC4AARhTBUwL2KGoP2qQaJlYipLYyRE8Qsn9GQqPEme
+	32UF6eG1JsHGRnjwnYkSPmf3TMsNFMjduerO4PNEkZxVJ1e25rlg0jHG6lsEpdjkyqARIgofa59
+	g19A==
+X-Received: by 2002:a17:906:bc50:b0:a59:cb28:a8ae with SMTP id a640c23a62f3a-a5a1123b477mr1149344466b.0.1715632564576;
+        Mon, 13 May 2024 13:36:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEg1kQyCjjCLZOhI8xB5fNDStLR4XHod0qoVMqxPP86DQNq5z5g3CRr53iNeRzv+ZRIvZoBqQ==
+X-Received: by 2002:a17:906:bc50:b0:a59:cb28:a8ae with SMTP id a640c23a62f3a-a5a1123b477mr1149339166b.0.1715632564003;
+        Mon, 13 May 2024 13:36:04 -0700 (PDT)
+Received: from localhost ([149.11.192.251])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17d02sm638065566b.218.2024.05.13.13.36.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 13:36:03 -0700 (PDT)
+Date: Mon, 13 May 2024 22:36:02 +0200
+From: Andrea Righi <andrea.righi@canonical.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <ZkJ5spNSP2Hzj-Xq@gpd>
+References: <20240501151312.635565-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511021326.288728-1-yangcong5@huaqin.corp-partner.google.com> <20240511021326.288728-8-yangcong5@huaqin.corp-partner.google.com>
-In-Reply-To: <20240511021326.288728-8-yangcong5@huaqin.corp-partner.google.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 May 2024 22:35:27 +0200
-Message-ID: <CACRpkdb0YQZsFY-uYFKLo_aqE_G4mQ+5mtiszDGsrgFz5R+CcQ@mail.gmail.com>
-Subject: Re: [PATCH v6 7/7] drm/panel: himax-hx83102: Support for IVO t109nw41
- MIPI-DSI panel
-To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
-	dianders@chromium.org, krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, 
-	conor+dt@kernel.org, airlied@gmail.com, dmitry.baryshkov@linaro.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240501151312.635565-1-tj@kernel.org>
 
-On Sat, May 11, 2024 at 4:14=E2=80=AFAM Cong Yang
-<yangcong5@huaqin.corp-partner.google.com> wrote:
+On Wed, May 01, 2024 at 05:09:35AM -1000, Tejun Heo wrote:
+..
+> - Ubuntu is considering to include sched_ext in the upcoming 24.10 release.
+>   Andrea Righi of Canonical has been actively working on a userspace
+>   scheduling framework since the end of the last year.
+> 
+>     https://github.com/sched-ext/scx/tree/main/scheds/rust/scx_rustland
+>     https://discourse.ubuntu.com/t/introducing-kernel-6-8-for-the-24-04-noble-numbat-release/41958
 
-> The IVO t109nw41 is a 11.0" WUXGA TFT LCD panel, use hx83102 controller
-> which fits in nicely with the existing panel-himax-hx83102 driver. Hence,
-> we add a new compatible with panel specific config.
->
-> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Regarding this topic, I can confirm that Ubuntu intends to provide
+official support for a sched_ext kernel in the 24.10 release.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+We still have to finalize all the specific details of the plan, but
+essentially, there will be a separate "derivative" kernel featuring
+sched_ext, alongside a user-space scx package(s) for the schedulers and
+tools (which, ideally, we would also like to upstream into Debian).
 
-Yours,
-Linus Walleij
+-Andrea
 
