@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-177834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A874F8C451F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:31:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553918C4522
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4787C1F223D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:31:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8FE1F22B44
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF3E17565;
-	Mon, 13 May 2024 16:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9621B815;
+	Mon, 13 May 2024 16:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlZlX32c"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsfsN2KX"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAE115B3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F217C95;
+	Mon, 13 May 2024 16:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715617878; cv=none; b=lk3qt8YE4icn+7L56MWleBEfzJbL5RJSCBMBo83RNd5NevFhe8gFVHT4W1eJYyan1KGIzDBeRte+k7ev9mv0TNkdJ2RItUFUMAqLj/C8LxTRpXdbkUzJvJFPlMP3O+scZLuppTYUBfoxUB+ApvKXSJNF25tzj9vpGCLoUgNtHA4=
+	t=1715617905; cv=none; b=icPT7mrakqsgbhG1vmnC90Gl1tDMOBHwatbozFR5RkFLRgYYn51/qxp5htL7YRnhH/wZomIJ8P6ucjaRqJG8ogYsLAqDEuXqlTyTk/iJQxRa7uOMCtW2o31DpnK7sj/xP/jqSU9wrbXG4x5VZioc6G0Ara9/6NiTAEK7vOjUTQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715617878; c=relaxed/simple;
-	bh=+m+CXIE9sGy1r9jEfg/hFVmdEoITFgHJ1cRdt1wM/1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIQUTVFr1PKs3S01d+OrAtGkSb1BlSsU5WBiJQbf1Vq5JccxdQhd1IY4ZCgTLe3LaAimKrDQmbeGDq0pxb9bGIgTxo1PN5pvQy0J0P+lLuvqq7/xTto2SlNbRKGfVyIOwrSJrqs9G9HIMejEdnh7My3JTReAwxIDFDjWtqvmeCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlZlX32c; arc=none smtp.client-ip=209.85.219.182
+	s=arc-20240116; t=1715617905; c=relaxed/simple;
+	bh=311dwzltPk5fOF2CTRb5l8iHO2TC3E82uom3/fmI05o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RvTHqZyvQnOp8NAwT5ec+251i2lTnuQZABRbQK7DG8KVdEZgjPMuFZEBEyl1VsUXDjQvRlcHy3MOu8mlNZZ0dCNf5/4B3Yd5H8gbgiMFS05iV//yEfCt7ZBU/ojAYih0w00OmYHrI6y5VNJDdlaCz3blY3BlOY8BmVaElM3plwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsfsN2KX; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de462979e00so4884937276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:31:16 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e34e85ebf4so40005681fa.2;
+        Mon, 13 May 2024 09:31:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715617876; x=1716222676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=O2xhJAEkTSmP71hWkBPFZsj3mOBJ8dSMKP4uS1UBEYI=;
-        b=ZlZlX32cWpJNjXCKEnGj7vxUMIzCErbMkwULXtKxUnd+SKoZ7bHMlzFDB8jpSi9Evt
-         vUYgK9e/7JZBcVq3T/HPZDZPVhbevQWL5Ue67aEymo84dYiOLlVkH0TUXJfwtRuQCqNq
-         onIJMAZU8H8uxj4zU720QRLemSvE5uGbzDneSMes8AfLSeeZqWllnSH4e/btUlWQuyvT
-         i7eiF4MOM46CGTgbVfxV4N01D/eY0uiGl/OLqlXcYdTmdQOkW2UMKSPO6hgNQTNNlwPX
-         XLZuErRh7zmVC35qVY3Slg9Zl5OVSe5sfNrZHz7HnqOoM8r/qUJvP+bkfuiRfq3LkBLn
-         6CTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715617876; x=1716222676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1715617902; x=1716222702; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=O2xhJAEkTSmP71hWkBPFZsj3mOBJ8dSMKP4uS1UBEYI=;
-        b=sS7jFP7MKunboW75IFwwwadHVUsq8MYIbLRCVgy/LqDr1IlJ9BWBuU0C3YZonsnVjp
-         H2kGQPdIxkvPa6xlxLCGkaniYb1dodUAIrP0pJfUNAUMDJvw6n5Q3qbgc6bL80lQeU0w
-         g0hr3xh57T4u1sDqIrMiV0ZB5+M2DOb5JAsxmzQZ4sgXVQdCYwFU8OT2pNHzWv37H2G9
-         Asrtu4kMI3KJG/8JgwaFr4Jd9lef3cVqy6oLElWtqrEDW1tZJV50HlFDhQOdKhs11ZaW
-         PxJzoVbjOsOlTePIpq/wBVGO/qKpHUuaki3i54duxkTo7LidsIDHL0i/cZzvBzXBvG9S
-         d2aw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Hk68ymEUGPFZ8A28JaWizgOvQFBiAaI515fZeY3gsNaC4//75TPTKwIso+OXJ6kBR5pD+zZGx9x0s81RFqwXmIhntlOKQUPkI0Hz
-X-Gm-Message-State: AOJu0Yz3mMrn0QOwjGdde0yU3aZREdTjiSy2nfvQrXVyCo3JqbMfl/3H
-	fCwV1kwAXpa+SjfBe7z0mCb+o9uTPzWHZUw5lwV8yOAXZylAiIrO
-X-Google-Smtp-Source: AGHT+IFcsRRloJlbVynBBYQVQaDvuQS2qMTkUamQXOcHmsWwvGu/Oycbu9I3hU6xajVwWZwT3oRQww==
-X-Received: by 2002:a5b:64a:0:b0:de5:9c4b:dd5c with SMTP id 3f1490d57ef6-dee4f31ad2bmr9493278276.23.1715617875877;
-        Mon, 13 May 2024 09:31:15 -0700 (PDT)
-Received: from localhost ([2601:344:8301:57f0:8acf:1c06:973:d499])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-debd3827c9asm2134665276.50.2024.05.13.09.31.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 09:31:15 -0700 (PDT)
-Date: Mon, 13 May 2024 09:31:14 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: Kyle Meyer <kyle.meyer@hpe.com>, Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [GIT PULL] bitmap changes for 6.10
-Message-ID: <ZkJAUsIl07c+dsCc@yury-ThinkPad>
-References: <ZkI/qHXm0x+8MSLR@yury-ThinkPad>
+        bh=HUFnT8yyTapCAsA+F1D1wSnTUO1k2FcynX/QhnqWbRY=;
+        b=dsfsN2KXL8RyBqEnoHuPeysMS61hNnzQwzdHosR/Hp2Nbv35lkAzcuTpJtZZ5CJYV7
+         lWp0Jmy78TkB8i2PJ7ysxi9yBmkqN1HazzPD1xBzYJAu001tPA54iygM+Eaqi9B4AXiS
+         7V1Zrbrd2E3WxGerH22Y6m/mVcEPegcdjjkPxCCFMSogxgaStKd4W4QsXEpyElv+dddt
+         wBOpn2mIZ3TEosmlQRRXEz9G8rFn23zxhevJ7JThp1SQwRYTMV8vo0DpxyJXbN9cHbUE
+         hY1pULEHmNdHsghQ3OvJxpp1L2+qGQnq+5ltZRgRcgqukvp2rO361HS+ZQmnFxFhCyG2
+         jPcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715617902; x=1716222702;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HUFnT8yyTapCAsA+F1D1wSnTUO1k2FcynX/QhnqWbRY=;
+        b=XheqE6OPCmGRO5wB9vF5r4lBjDmsRt6coQyBOCYqPUtIk63tAWEtWObfyDwPEmyTjL
+         qnn/G9TI6NlWgPgVJU4yuBLrZemnd5zMmM1BfVCfMZQFalcDuTWGrW6omRZi6z3QxaHd
+         HuhXhcMnVjTFkgi5L8F1DbhItOdj6/G3zou90ZVN67pEYY8qjxuYMii/Y8bPidXUXKun
+         mBY62JCVNEmUYGsIFHByuwuxdGmj61TJ4P4vaXwpG1Dfl0RK93HmKEI0mZx4ncgEW17s
+         e2OV3BaHkKhvvn9NqmpkogIDBhINO9Ggd2ynmWambIHHgHFW7O1xe9UxtJr6jaLo/y3V
+         xk1w==
+X-Forwarded-Encrypted: i=1; AJvYcCX+ZxzK1Un78g9mKblDHbRwC9T9Oaa4+ER+x3ZDPt0MfPnBickeRGc6SUmLDTyb7BcvypPd7U983rFbC+pOu+Fscc8bovs1lDGGPdq2SyUDsJ4gAL0fkv+W2VrVSkz531LBIibsDOvUEjnmzZiDoUfkPmm63RAe28XkzHu4TTXVX3aGOOdSJEWrJX7eK3hWmb9oO4tqI1MJcBpGQreYQsgz0cvfI/73
+X-Gm-Message-State: AOJu0YzxwPKn4nv6rpTyi5TAKYq8CvuJzai9mhi68TV74T5A93NYHOu3
+	fH/G99wgTQPlfLHYDGYUxd74db8X6MBuRAZnOl6O0aB739pjQMY2zkw+qF7bNVW6uDFXBV6vO9L
+	4GqMazEWDdcHrD4ncLU7OOmqKJ1s=
+X-Google-Smtp-Source: AGHT+IEfQfbks6Pb9MhqjUGNG1bzcGu+P0BjYxxyNbUBodsFQi2U8Ir6ig2hVVlBqpKtOgABUOUtPTVs2/IAcJEAvxQ=
+X-Received: by 2002:a2e:a7d6:0:b0:2db:a7c7:5d11 with SMTP id
+ 38308e7fff4ca-2e52039e290mr67635451fa.47.1715617901807; Mon, 13 May 2024
+ 09:31:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkI/qHXm0x+8MSLR@yury-ThinkPad>
+References: <AS8PR02MB7237ECD397BDB7F529ADC7468BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <202405122008.8A333C2@keescook>
+In-Reply-To: <202405122008.8A333C2@keescook>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 13 May 2024 12:31:29 -0400
+Message-ID: <CABBYNZJcg5SpO_pew6ZwN98n1sR7kNZs6VtkFToyOs9NM1bO8Q@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: hci_core: Prefer struct_size over open coded arithmetic
+To: Kees Cook <keescook@chromium.org>
+Cc: Erick Archer <erick.archer@outlook.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-bluetooth@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-+ linux-kernel@vger.kernel.org
+Hi Eric,
 
-On Mon, May 13, 2024 at 09:28:25AM -0700, Yury Norov wrote:
-> The following changes since commit 678e14c772130d3a83225ed56fb9860a40bca38b:
-> 
->   Merge tag 'soc-fixes-6.9-1' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc (2024-04-12 13:02:27 -0700)
-> 
-> are available in the Git repository at:
-> 
->   https://github.com:/norov/linux.git tags/bitmap-for-6.10
-> 
-> for you to fetch changes up to c3052c2f53d3546a53f05165a62a2d31abab0e27:
-> 
->   usercopy: Don't use "proxy" headers (2024-05-09 09:25:09 -0700)
-> 
-> ----------------------------------------------------------------
-> bitmap patches for 6.10
-> 
-> Hi Linus,
-> 
-> Please pull patches for 6.10. This includes:
->  - topology_span_sane() optimization from Kyle Meyer;
->  - fns() rework from Kuan-Wei Chiu and me (used in
->    cpumask_local_spread() and other places); and
->  - headers cleanup from Andy.
-> 
-> This also adds a MAINTAINERS record for bitops API as it's unattended,
-> and I'd like to follow it closer.
-> 
-> Thanks,
-> Yury
-> 
-> ----------------------------------------------------------------
-> Andy Shevchenko (2):
->       bitops: Move aligned_byte_mask() to wordpart.h
->       usercopy: Don't use "proxy" headers
-> 
-> Kuan-Wei Chiu (2):
->       lib/test_bitops: Add benchmark test for fns()
->       bitops: Optimize fns() for improved performance
-> 
-> Kyle Meyer (2):
->       cpumask: Add for_each_cpu_from()
->       sched/topology: Optimize topology_span_sane()
-> 
-> Yury Norov (5):
->       Compiler Attributes: Add __always_used macro
->       lib: make test_bitops compilable into the kernel image
->       bitmap: relax find_nth_bit() limitation on return value
->       bitops: squeeze even more out of fns()
->       MAINTAINERS: add BITOPS API record
-> 
->  MAINTAINERS                         | 14 ++++++++++
->  include/linux/bitops.h              | 55 +++++++++++++++++++++++++------------
->  include/linux/compiler_attributes.h | 13 +++++++++
->  include/linux/cpumask.h             | 10 +++++++
->  include/linux/find.h                |  2 +-
->  include/linux/wordpart.h            |  7 +++++
->  kernel/sched/topology.c             |  6 ++--
->  lib/Kconfig.debug                   |  1 -
->  lib/find_bit.c                      |  2 +-
->  lib/test_bitmap.c                   |  4 +--
->  lib/test_bitops.c                   | 28 +++++++++++++++++++
->  lib/usercopy.c                      |  9 ++++--
->  12 files changed, 122 insertions(+), 29 deletions(-)
+On Sun, May 12, 2024 at 11:08=E2=80=AFPM Kees Cook <keescook@chromium.org> =
+wrote:
+>
+> On Sun, May 12, 2024 at 04:17:06PM +0200, Erick Archer wrote:
+> > This is an effort to get rid of all multiplications from allocation
+> > functions in order to prevent integer overflows [1][2].
+> >
+> > As the "dl" variable is a pointer to "struct hci_dev_list_req" and this
+> > structure ends in a flexible array:
+> >
+> > struct hci_dev_list_req {
+> >       [...]
+> >       struct hci_dev_req dev_req[];   /* hci_dev_req structures */
+> > };
+> >
+> > the preferred way in the kernel is to use the struct_size() helper to
+> > do the arithmetic instead of the calculation "size + count * size" in
+> > the kzalloc() and copy_to_user() functions.
+> >
+> > At the same time, prepare for the coming implementation by GCC and Clan=
+g
+> > of the __counted_by attribute. Flexible array members annotated with
+> > __counted_by can have their accesses bounds-checked at run-time via
+> > CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
+> > strcpy/memcpy-family functions).
+> >
+> > In this case, it is important to note that the logic needs a little
+> > refactoring to ensure that the "dev_num" member is initialized before
+> > the first access to the flex array. Specifically, add the assignment
+> > before the list_for_each_entry() loop.
+> >
+> > Also remove the "size" variable as it is no longer needed and refactor
+> > the list_for_each_entry() loop to use dr[n] instead of (dr + n).
+
+Have the change above split on its own patch.
+
+> > This way, the code is more readable, idiomatic and safer.
+> >
+> > This code was detected with the help of Coccinelle, and audited and
+> > modified manually.
+> >
+> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#op=
+en-coded-arithmetic-in-allocator-arguments [1]
+> > Link: https://github.com/KSPP/linux/issues/160 [2]
+> >
+> > Signed-off-by: Erick Archer <erick.archer@outlook.com>
+>
+> Looks right to me. Thanks!
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> --
+> Kees Cook
+
+
+
+--=20
+Luiz Augusto von Dentz
 
