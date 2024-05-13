@@ -1,166 +1,194 @@
-Return-Path: <linux-kernel+bounces-177955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065B78C46C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:20:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C87D28C46C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:26:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 760A7B22581
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:20:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3A71C219B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C031D33CF1;
-	Mon, 13 May 2024 18:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hmOHVHuP"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFD92E647;
+	Mon, 13 May 2024 18:26:40 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBBF381BD;
-	Mon, 13 May 2024 18:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715624409; cv=fail; b=tlsk1O6tADaedFD/ww+0QYMlYbGJY11IwUELkFLL4JULdjyt9gEzH9aPqt4WgTsgLNZ1k0SUioHdaikt/6mxwjjvcf8p2SaqiejgEg/KyYYHzSN4ShDQxUDcF5Yfk7Re+GN5hwPfeDvFga2srePU2/ej44M/Z6CazGfK2XBhpOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715624409; c=relaxed/simple;
-	bh=IXp105klcdDEAaLR8Ywv1xJLz3hn+QHeyZz15f/UAns=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OlhxM+1AuAfjwZj+CqiQfvjCNHf9Whi3i9BsNSzTeI5gdRmQR9B70VDlyQ96wk/RUwuygpFqrEXWfuoupVyQA3Fuwsuew2mPyw+wJFEMY8G3iNz5h68P1QgLXUY3tf9PeykiCGsFdDvpVAv2pfTnQP/HHGsCIxRqhDtdpUHcbjc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hmOHVHuP; arc=fail smtp.client-ip=40.107.236.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bRaVxPf20gUrTXlS9RGYAEfQZlBVpMvs3dhPespjgLjPSqzDy7r7ASX+bXf4hvJ6BPVNLKwRu8/WfgAIS8yZUkk0ZNcU9lI+HiRnP2kfyZCAMWfwHot6SEiC9Q4HAj9eWLaO/pjaJuIKhmUToldT0t1p0vAI1/EFIuRMvArMo8lWpeYnmxmeBEGk7ySqWohThVZdufcNq39e1/d1l6LM07S7ugDcS9OVYtU1hRPXIaRtJwl1y/02n0SOobsckOQ5XNM+GnDviSKy38i9z7/NO5W+VCqmvvUsKmZiHcg1S/C3spl2MoLQ+jicOqP4S0tkHUAt9YlsLqbtV+PAG/GeGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FbgyawJm6sz098MO/ajzKlH6Es8z4+0gm12yCzNVxAU=;
- b=gTdf6lviGTJtlwN/fDOgOU4EnruXQ4jfEL7OSlmaPPaL4yD4a5ULcnV4D+dUgB6IAGSeQERdeq0uhzjtxRSBXdPMXRPMe2xjD7e2+LidbrmLI8sEyXK/Pc0j5UsG5TVXaox6Lf9otAZUsviBmXwXBaOgOaoldQ25lT0WBTihHv+FMtxZGpcfBuyTS9nozl9aKfHyH3J+vTZSOjeqCscRvM6Ube7BqVizGboqBdKb30b+Z1LS6JrFziqJ+OosMouZa9Uq1uFvlDlHwL2XckYplNKK8Qg0sm0Xvq63tyTGYUc8jZSrm05ZghMuUOGcjAKUPruP4B1oEryF9NGhQZrO+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FbgyawJm6sz098MO/ajzKlH6Es8z4+0gm12yCzNVxAU=;
- b=hmOHVHuP3MKyQnGT5UI9caSaVh5zQ3qq+73eGBChO38YzFB9RP3a27yzoZKLn6X3s7RFdJzjT6uIShlm140BE1cLc9wGvwA3C6TAf7iK7yWbXjDzyNTi7tG1ueo06CHUFYBUFtEG+S5cuzvIxJ97MmPg1pdZPStrAgOPTelo7yA=
-Received: from BN0PR04CA0167.namprd04.prod.outlook.com (2603:10b6:408:eb::22)
- by DM6PR12MB4466.namprd12.prod.outlook.com (2603:10b6:5:2ae::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 18:20:02 +0000
-Received: from BN2PEPF000044A5.namprd04.prod.outlook.com
- (2603:10b6:408:eb:cafe::83) by BN0PR04CA0167.outlook.office365.com
- (2603:10b6:408:eb::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55 via Frontend
- Transport; Mon, 13 May 2024 18:20:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000044A5.mail.protection.outlook.com (10.167.243.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 18:20:02 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
- 2024 13:20:00 -0500
-From: Michael Roth <michael.roth@amd.com>
-To: <kvm@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-	<linux-coco@lists.linux.dev>, Sean Christopherson <seanjc@google.com>
-Subject: [PATCH] KVM: SEV: Fix unused variable in guest request handling
-Date: Mon, 13 May 2024 13:19:28 -0500
-Message-ID: <20240513181928.720979-1-michael.roth@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0C321342
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715624799; cv=none; b=QFSXcjfH4ePjDRJvTi+7WJt6JZxNF0a2LeMqQUeQ2W/G5p0spzUbi0Tslr3YGphJaE//U9I3eitKo1HMEheSZYxzCyZfa2EqR9PZXde2/VBwZyyQlAbKMOw5+0nbBnxazZ+fEgQtogPm+NgFm5HYeXgOuRUBZdlbZ8UspcWkSwE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715624799; c=relaxed/simple;
+	bh=mdf/xTDbAu+7XZltXr/qauCMfLs0ZWyUR+qsBTNoZjY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uql56gBnonLNKZ585pji/nRtxLBUv0yHMLzGy5nn2zkEudxKIps2nm37epUc2wNzEIYLBuRY2jSfzJDvxpQ6ktM/Y2y7MPUvpzB9B5YtLglhJXSN8H/3fKXmGotrv5EzYYW37g3+Xh/+2/8N1OqERn5MvuOhREuB0n9LPQy5EUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1e05c39easo146176839f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:26:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715624797; x=1716229597;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zfnhQHd1ZaI0j5kxzVL1jMjjmQJMNrWjEIOxkja1Wu4=;
+        b=TEDz/5+bloaIffWjbGSIPvfInLnPFJszYxEYHchwmgWYV3jUu5us6CgaJxvPC8Zt3g
+         MHYBY+d1hCKKqTObDpXJl+IUDQ/Jjc1xmRCel5FZz3NkOKjXvI9t5yCDR0C/7IVX9KHE
+         BG4NdUIVp2U7YNMroym5tTZyDt4g7Zq6P77we189Ocns7UF4UzxDX/aliiPP6hNqVRRS
+         /cqmXmSPIEzA+zeqCPy8d6seoEkKUL7o8tKSeRPYdbjO5lKV7/xCyH3nuFAO2ij5u+X4
+         bctxCgob6AWjPzgNitn8cjTvLIwAReIGO89fW6W98a++eYNg6x3FY1ElJn/wVMNILzNn
+         bZ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUiNea4oXGuQ7bdYi7DnCdaeI5FkcA+ldk+YPd+rlI4D4nPf1neinYQzYXdtHsBZU7HcOdi/vNBXj/KIzZz2myVH2dKap2cu8HilkYQ
+X-Gm-Message-State: AOJu0YyGhu0rDwyrTAmLy+ku75INc6VzzOo1rVwVpQPf1pYM15GFdDVF
+	aKmGS6ig0a3zkdBWVBFnjI1dkBlxTr907cowH2pp+7TuZ91BwDZTYSmueF1ki/W/a6tor0H0Urw
+	5Ms9u+FNCK3Xcb6AXS4Bln9Hdw8htiyzn5KWnYUBTDaYKcmj8NSF1O6Y=
+X-Google-Smtp-Source: AGHT+IEsXd4YliBtrIX0lT9zxEK95pscGf5BmhGLrskx/S1b2sFPzk83qghFLDj4Y6yyFXPc2bZRpQTd+NUd45qZLISLcZKAvMwf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A5:EE_|DM6PR12MB4466:EE_
-X-MS-Office365-Filtering-Correlation-Id: 245cd088-b6e3-40fd-c1bf-08dc73794eb2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|36860700004|82310400017|1800799015|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xdFf62ZoEJaavF/Rtdg4aDHDt0ZUoXLBA/kj3Zf/pMEg8Vp40ILMk1Wz0aav?=
- =?us-ascii?Q?S27xgUEMHzOyw8/w4ejlxu0Jzhx28h2WKpCuKnh8JRGr2W+IkdBznU8d1sQ6?=
- =?us-ascii?Q?RxnSoVXno4lCrBHr1lIVWnrMal8HFEDsAzSCfqLw/I9RBeonvWbjKkPBrvzX?=
- =?us-ascii?Q?yvrgBbsdkDkdZVLyyHKlekJx3Op3Tz3UIcJnpJi9fQQ95JQyOz2eDryohwab?=
- =?us-ascii?Q?XuRr1nRpC61FK7CphAt2bLegarKOAIIaJju0bxaDu/QRbhMh4CD12DUschWZ?=
- =?us-ascii?Q?QzbXR3NX+cs89WyhT1jvgPoi6AYmz0I6kk/LnYxVS7QkWhodAvQRLETqYq7c?=
- =?us-ascii?Q?+tJ7GuzjE46rQbpCmZCRK3NDHo8n5a2nbF/YsBmV3r+CBZvxDoTTDwBDgX3u?=
- =?us-ascii?Q?t4fRTykRGfL4jZuXlYHt2NWYJwI7LngIP6xTH5iY7mafEoa96xsl2uQoAIfz?=
- =?us-ascii?Q?QQ760N8qgxQrc6r5/mwaOm+MPTWeoTqba3OFuLiGSKl0k10/a4IbcPTcpf7r?=
- =?us-ascii?Q?QGT/x6Es3CPNQeW81RtVfPfP+I6VFcrbB0STJOuIXOGQRSvf6wZWTPho8R8j?=
- =?us-ascii?Q?iAFn0cIFOpH5ESkMpUsugwkixybPLnb+c6rE1gf9QR6RvuSFHDwelqVt+mg5?=
- =?us-ascii?Q?P584xEUmg2v85c13U+s8xnX3zku/QEBqMqtpEG8tW6B+/SrtILxwLbrVe6qj?=
- =?us-ascii?Q?M/bSo+2SVDzZndvnou8aatqIWrwOQ+5gsfufkNVerOJXWfMGaqQMrvul8Z4z?=
- =?us-ascii?Q?aynUIo+3e5sOXsmT2fB0s1ar7nQEmzlsoRqbgFnQqeOPao6Hw3CvfCx7jEzK?=
- =?us-ascii?Q?rjMU2mNv9BqHdBlxCt4i21qiLI+v8Fy1WABo7i2YgkZZPuG8zSIZa/GJdfId?=
- =?us-ascii?Q?ZiNkH3pDwLUhKwOMK3+fs7Rt+WsQ9+jlLCmTOLODsoupzh/7ZhGiB8kBm2gx?=
- =?us-ascii?Q?n/+Dl5iCFmyh2RqSALZZJlm6q40Hnp/X+2qaUq/WiTMxGDkkC/68TqcDvL/X?=
- =?us-ascii?Q?5SnqAU6dEgJtAJH4K1GOJo2Q4kQZSmluNjNFCDYaIkUb8MKRLTwuRARU1gYY?=
- =?us-ascii?Q?has3gTyOYzrldCFuCcdaOs+0Czl1TgVlHlLzeMWa6OpgvlUtrcy9PbxNZyUn?=
- =?us-ascii?Q?9bGcKdlNxH16suMQoZ0pug2SG0NyZd4LlaKyhycojdPvib9gBto8uLmOlmda?=
- =?us-ascii?Q?5CrxlWSSmKtBSY6155UcHzBGjp2v0/9ZEN/FBtvYQPs731QXErYMAKWLAW9i?=
- =?us-ascii?Q?WrvNlVVuEg/Bok9V/+huIcex35nhTXIzPlgUFMtEvFtZeXJIV1kTLI2aZm96?=
- =?us-ascii?Q?Hs/4geWXlJ3r23jSm7QxPp5e7h0pmDPc5Ije5gCETz2r4NEAi/yIlXpjp8BN?=
- =?us-ascii?Q?K1wa0LE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400017)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 18:20:02.8030
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 245cd088-b6e3-40fd-c1bf-08dc73794eb2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A5.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4466
+X-Received: by 2002:a05:6638:872a:b0:488:7a00:9343 with SMTP id
+ 8926c6da1cb9f-489589c27b6mr799200173.0.1715624797253; Mon, 13 May 2024
+ 11:26:37 -0700 (PDT)
+Date: Mon, 13 May 2024 11:26:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009bc5fa06185a064d@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_journal_stop
+From: syzbot <syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The variable 'sev' is assigned, but never used. Remove it.
+Hello,
 
-Fixes: 449ead2d1edb ("KVM: SEV: Provide support for SNP_GUEST_REQUEST NAE event")
-Signed-off-by: Michael Roth <michael.roth@amd.com>
+syzbot found the following issue on:
+
+HEAD commit:    75fa778d74b7 Add linux-next specific files for 20240510
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16f304e0980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccdd3ebd6715749a
+dashboard link: https://syzkaller.appspot.com/bug?extid=10b936c5eaee2819b49b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106348cc980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129c8d24980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ad9391835bcf/disk-75fa778d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d827b3da9a26/vmlinux-75fa778d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8f32f0182388/bzImage-75fa778d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0d3a8c7d1a82/mount_0.gz
+
+The issue was bisected to:
+
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
+
+    bcachefs: make btree read errors silent during scan
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114323b8980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=134323b8980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=154323b8980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+10b936c5eaee2819b49b@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
+
+bcachefs (loop0): finished waiting for writes to stop
+bcachefs (loop0): flushing journal and stopping allocators, journal seq 13
+bcachefs (loop0): flushing journal and stopping allocators complete, journal seq 13
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/journal.c:1186!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 5092 Comm: syz-executor214 Not tainted 6.9.0-rc7-next-20240510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:bch2_fs_journal_stop+0x516/0x520 fs/bcachefs/journal.c:1184
+Code: f0 fe ff ff 44 89 f9 80 e1 07 38 c1 0f 8c 2f fd ff ff 4c 89 ff e8 6a e0 c6 fd e9 22 fd ff ff e8 d0 89 55 07 e8 4b 28 61 fd 90 <0f> 0b 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002e77700 EFLAGS: 00010293
+RAX: ffffffff8434f435 RBX: 000000000000000d RCX: ffff888022765a00
+RDX: 0000000000000000 RSI: 000000000000000d RDI: 000000000000000e
+RBP: ffffc90002e77840 R08: ffffffff8434f3f6 R09: 1ffff1100eca957f
+R10: dffffc0000000000 R11: ffffed100eca9580 R12: ffff88807654a5c0
+R13: dffffc0000000000 R14: 000000000000000e R15: 1ffff1100eca94b8
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fb5a6b89130 CR3: 000000007abe8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __bch2_fs_read_only+0x30c/0x430 fs/bcachefs/super.c:291
+ bch2_fs_read_only+0xb52/0x1210 fs/bcachefs/super.c:356
+ __bch2_fs_stop+0x105/0x540 fs/bcachefs/super.c:613
+ generic_shutdown_super+0x136/0x2d0 fs/super.c:642
+ bch2_kill_sb+0x41/0x50 fs/bcachefs/fs.c:2026
+ deactivate_locked_super+0xc4/0x130 fs/super.c:473
+ cleanup_mnt+0x426/0x4c0 fs/namespace.c:1267
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x27e0 kernel/exit.c:874
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+ __do_sys_exit_group kernel/exit.c:1034 [inline]
+ __se_sys_exit_group kernel/exit.c:1032 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb5a6b00749
+Code: Unable to access opcode bytes at 0x7fb5a6b0071f.
+RSP: 002b:00007ffc012e1a88 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb5a6b00749
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000001
+RBP: 00007fb5a6b8b2b0 R08: ffffffffffffffb8 R09: 000000000000f626
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb5a6b8b2b0
+R13: 0000000000000000 R14: 00007fb5a6b8c020 R15: 00007fb5a6acec80
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_fs_journal_stop+0x516/0x520 fs/bcachefs/journal.c:1184
+Code: f0 fe ff ff 44 89 f9 80 e1 07 38 c1 0f 8c 2f fd ff ff 4c 89 ff e8 6a e0 c6 fd e9 22 fd ff ff e8 d0 89 55 07 e8 4b 28 61 fd 90 <0f> 0b 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002e77700 EFLAGS: 00010293
+RAX: ffffffff8434f435 RBX: 000000000000000d RCX: ffff888022765a00
+RDX: 0000000000000000 RSI: 000000000000000d RDI: 000000000000000e
+RBP: ffffc90002e77840 R08: ffffffff8434f3f6 R09: 1ffff1100eca957f
+R10: dffffc0000000000 R11: ffffed100eca9580 R12: ffff88807654a5c0
+R13: dffffc0000000000 R14: 000000000000000e R15: 1ffff1100eca94b8
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005639ea5a3b68 CR3: 000000007abe8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- arch/x86/kvm/svm/sev.c | 3 ---
- 1 file changed, 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 59c0d89a4d52..6cf665c410b2 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -3965,14 +3965,11 @@ static int __snp_handle_guest_req(struct kvm *kvm, gpa_t req_gpa, gpa_t resp_gpa
- 				  sev_ret_code *fw_err)
- {
- 	struct sev_data_snp_guest_request data = {0};
--	struct kvm_sev_info *sev;
- 	int ret;
- 
- 	if (!sev_snp_guest(kvm))
- 		return -EINVAL;
- 
--	sev = &to_kvm_svm(kvm)->sev_info;
--
- 	ret = snp_setup_guest_buf(kvm, &data, req_gpa, resp_gpa);
- 	if (ret)
- 		return ret;
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
