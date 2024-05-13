@@ -1,112 +1,94 @@
-Return-Path: <linux-kernel+bounces-178109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD618C48D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:26:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7CAA8C48DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF85D1C20D06
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAAF281615
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1AD83A10;
-	Mon, 13 May 2024 21:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0C283CA2;
+	Mon, 13 May 2024 21:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="cxzeRZLH"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPbvR8jG"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8F582881
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 21:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D544E39FD8;
+	Mon, 13 May 2024 21:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715635601; cv=none; b=dCEVt+xsWCimsh8EMR9WpYDSAPAuKhYuwBzOmP1EVG5ppKahGypOrNsJzptLd4uM/w47NuES6ug6u7772eakd2clD2V1na1ZW4+uzjtVF4aYmKHaf5bzebAIaE0uuVQOY9prNP2RlTf940L/3XpDndnkS2VsRuYHpb2t61nmVcI=
+	t=1715635707; cv=none; b=uMwFdD6Yfb2GMLkcJ6s4rC6VIo4RoyfARXJkpdEFQYMAyVGZRZgHkpT0lZvm92aiE7hvnF5oazXLiZWQj81CHiDTSiL7UFlCbZKii1XBzHmHFlTWt1islVEbIpznvK/n5wAaJoDNC6KUCALk0EDzk/iYT62HBuoLom9c8oeN2jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715635601; c=relaxed/simple;
-	bh=LL2yga6BJDDS1lQbTpoY1aPGh2IjnTTQmfv5jkqA1s8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoN5G3Zp2mrEmD9ezURf4uNkggWlm6WtB4uUPk5wjJpZfTBKkzVTRcvRWYDPbw0ebMbmUzbFVSm0GCnbxc/wKPu9RtCT3z3oGxje7AEpf/oPNtX6QwnegkeJ2VnzGKojbcIXTiKwUfiT+GFT6krBkwE2uNYq+alTNV8NYkFnTi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=cxzeRZLH; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1eeabda8590so34946355ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:26:39 -0700 (PDT)
+	s=arc-20240116; t=1715635707; c=relaxed/simple;
+	bh=LBX+N5Ggua2JTg79zgfQCkDaC3nx4+lNOVDngdMnyk8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JVGTTkhNIpfqo0qilq8JLHyj3U+odl1yNt1YGR7ruq3FoiJQqzYhY4XgiBK3wO89zf5SQi7aTWuaNPOpEHVv4uw/1TbEMcM6Wo8VWhxVO8AbLd+gRA7HwfEPXPkgbeJNqs1XlQb8BKK6RD9p6XQdJZIkicwu/YEjxAttFOuWh7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPbvR8jG; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-61eba9f9c5dso3702928a12.0;
+        Mon, 13 May 2024 14:28:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715635599; x=1716240399; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715635705; x=1716240505; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Av9RgaPQsUZwKrihewqWhIa6dx8V7kURy0F4c3tXz8=;
-        b=cxzeRZLHNBmK/8Lc1wnLOUzjDMM3GQZd/VqYlrvJ2obmSRyj/KTBzKPzaxHveSOxF1
-         mattY3ofeUvwYcKE4mVln0uMGfNInWX7Tgv3TWA9OdrHC7MUwCaJGZLp92sC9i5EVchy
-         zt/zwjloqe8jQ4r0n7Tk9ktj2tyVD+LgeEK5HPsGfYgj87YmQgiX1G5Ykd2CkRuCa41w
-         VSw93P36BkT0w5UTkyiVZz5MnSo3osOR84xOHYTRJRO1afLhibTzzwt4cpL5++wYb8qZ
-         RUZfQ8SawGgVX85CsDl7zn0iN4or6SI+JUgJ+hX9twlAnpcFVwZo0SxNDeGvtZEaBFyC
-         urRA==
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cnoth6ZcdQw/rIhwFjYiJ5WI2BarXhQB3LevZcDNaps=;
+        b=hPbvR8jGa+4d4vaBJuHyhgGTsahAs9o+Nnmavc4cPIb1zSIOTNle/5QQ7BjDbKzHLc
+         hitqq0zAg3fzNx81YMf+k3I/OrQlb1Rl8kdhx+7FEQgniHq3n3AZHgOFkk7nzqzPZYMB
+         KVN7jAtcCKLzOv5zCXajN4UzDaYYPhjj2aWA6+2DvgLbwwBKmLqhRPYnxrxgTdA9pmOA
+         AC6rUy3ytU368/85p0HnPGeAYtqQCoo9oehKucN+v8LF/RYtGEYobmkpAQipPNHjGuFe
+         ygzFUE/zSjbQItCXjtIUyZ85qSP6bOBj6xiyBrPa10ZH8m3byynRIM78JPSUlo7qJAWR
+         MY/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715635599; x=1716240399;
+        d=1e100.net; s=20230601; t=1715635705; x=1716240505;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1Av9RgaPQsUZwKrihewqWhIa6dx8V7kURy0F4c3tXz8=;
-        b=DcXjVXDnveB+u/ti4BbJ1aCLKuid/NlNG3Dj7581HLKwvk6NS9DVEuqmAmhIszW1ig
-         x9TXqK3IWwhoRXuP2v/mdQOxlNWS2Oi0OZjlsikSsPX2ZyhZet8D/SmCdh0e9NXHJwd6
-         H2EEfNpIYtWkA90U4gtFyOVmRnj0hEUsf6vCuWZXqRMu4V+9lPvaM9BUq2Ef6Gj0YiIP
-         fIcNsjluB69BZMF7DBF/C8pBG3ulKgsoY87WIyCm2mdQ4OCZlpa2khdMOu/qvf33BhmL
-         mN7kvhA6BfvxNemzFtlU3sEj4VX7Jx5sZ7pNlxfE/ZlwoTclEGka7kWRTgdHSR1TwioR
-         NFKA==
-X-Forwarded-Encrypted: i=1; AJvYcCXG0np006FKUSofZIkrvHPqlhyFyuF2GunK8hqMyfN/xPjnVO8YfJ2tho3JiK+qrQ2g0b4mZkTKlMWNDUXRgoyLE+d8lzNDU3ZPW9HY
-X-Gm-Message-State: AOJu0Yws9jvEfxq8sCfuIU1PWa71c1n3qBdIpZOqtpI/4oNxdtcyExvv
-	iHHmYEiP1BiMIVURUYLeJ8JvJQwDtuzNpCZNPpHbyCRHnz+rlrNXvUf6KPQyLxM=
-X-Google-Smtp-Source: AGHT+IF+SpgNET3nuWJL5IGg9s5FZ86fG3Sc9l5DoORtZhuAz8MnSfbhg/ec9V32N2UyWUAOUoMzhg==
-X-Received: by 2002:a17:902:b70b:b0:1ec:76a6:ea9 with SMTP id d9443c01a7336-1ef43e338fcmr103173085ad.26.1715635598847;
-        Mon, 13 May 2024 14:26:38 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d16cfsm84105425ad.18.2024.05.13.14.26.33
+        bh=Cnoth6ZcdQw/rIhwFjYiJ5WI2BarXhQB3LevZcDNaps=;
+        b=G2cAOJAZiowKZPFwPMVRcFQUIvug4gOOkOEGqu7bYfTGyyLAkePGqUzEBaEwYP3bIW
+         ZtYqfuPXltsdH2D0KVgGhZe3HxT0i4Y2pUUrNGtNMy+ZpqJX0e9661i/FaJZTbD9yYJt
+         8cheBFyr48R4OgsgKDwWRw4Od1LxQ7kSJ9Y/9v8XoKkgJVfu9iklj+ABBwZRo4pYRVwM
+         iUI9mtgKF118ZjO+87A1eM+c/jqSF9TW/PIaFwV3gOs3DY7CuZNYFXIayegokcZjujls
+         w6nWrsJh3J34u8+rQ4M34XIzmWSOCUDW6rFWYhnOOV/RNz8ngURLyJgsWxfi0HHfk6bO
+         4BOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWE0IkR+ssMVdOCrXIYisotWxaMFIE8+XALDCK+Fv/6g+xKYSr3WDcdTopP5FTcWivvN81U75dzKGNgWcELZiT56Ek47NM0fioFFbshyQbFpmL8wukLy/ZmCMcDtLo5ETLAXTkEymNGDPLaR4vnWJgmuKYPfaP++zO80SYe/Gh5KQXRLkq+CRy40iAGOaHp1034fJOLCmv5ntqGL26Qm8scKD6S18NoE0RoWJzAowsdkq+YPcFyQQ/Qfm3B
+X-Gm-Message-State: AOJu0Yz5a6x5J+h1zXxy5ZVHkcm9912N/vVIcrMobyMCHpui1ttQ09HV
+	k47c1+pvEfZsCY96s6SG5tXhwwg96P0w0gzh8rR+5CFISlQkBF9Y
+X-Google-Smtp-Source: AGHT+IHkv+d6QPMuEL4E7fVb1LA2X8NN5ll/hGqsbcXiuhnvkSjMoilkO8Y0Nt+E6FS3tcrldryfkA==
+X-Received: by 2002:a17:90b:4f45:b0:2b1:534f:ea09 with SMTP id 98e67ed59e1d1-2b6cc76d27amr9527797a91.23.1715635705202;
+        Mon, 13 May 2024 14:28:25 -0700 (PDT)
+Received: from krava ([50.204.89.31])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126ac21sm8388958a91.30.2024.05.13.14.28.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 14:26:38 -0700 (PDT)
-Date: Mon, 13 May 2024 14:26:31 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
-	keescook@chromium.org, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, cleger@rivosinc.com,
-	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
-	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	apatel@ventanamicro.com, mchitale@ventanamicro.com,
-	dbarboza@ventanamicro.com, sameo@rivosinc.com,
-	shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 10/29] riscv/mm : ensure PROT_WRITE leads to VM_READ |
- VM_WRITE
-Message-ID: <ZkKFh2YJh3AcUTfN@ghost>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-11-debug@rivosinc.com>
- <Zj6LfpQhOjTLEx2O@ghost>
- <ZkJSLTk1iWFGJZCQ@debug.ba.rivosinc.com>
- <ZkJdYvkUqHkX7yPf@ghost>
- <ZkJe3ivq7m4NptHd@debug.ba.rivosinc.com>
+        Mon, 13 May 2024 14:28:24 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 13 May 2024 15:28:21 -0600
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv5 bpf-next 7/8] selftests/x86: Add return uprobe shadow
+ stack test
+Message-ID: <ZkKF9WZVfFgiVSxe@krava>
+References: <20240507105321.71524-1-jolsa@kernel.org>
+ <20240507105321.71524-8-jolsa@kernel.org>
+ <20240513184507.215ec89dea4790243d17a52c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,191 +97,207 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZkJe3ivq7m4NptHd@debug.ba.rivosinc.com>
+In-Reply-To: <20240513184507.215ec89dea4790243d17a52c@kernel.org>
 
-On Mon, May 13, 2024 at 11:41:34AM -0700, Deepak Gupta wrote:
-> On Mon, May 13, 2024 at 11:36:49AM -0700, Charlie Jenkins wrote:
-> > On Mon, May 13, 2024 at 10:47:25AM -0700, Deepak Gupta wrote:
-> > > On Fri, May 10, 2024 at 02:02:54PM -0700, Charlie Jenkins wrote:
-> > > > On Wed, Apr 03, 2024 at 04:34:58PM -0700, Deepak Gupta wrote:
-> > > > > `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
-> > > > > VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
-> > > > > updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
-> > > > > This is to make sure that any existing apps using PROT_WRITE still work.
-> > > > >
-> > > > > Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
-> > > > > Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
-> > > > > encodings for shadow stack. Above changes ensure that existing apps
-> > > > > continue to work because underneath kernel will be picking
-> > > > > `protection_map[VM_WRITE|VM_READ]` PTE encodings.
-> > > > >
-> > > > > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> > > > > ---
-> > > > >  arch/riscv/include/asm/mman.h    | 24 ++++++++++++++++++++++++
-> > > > >  arch/riscv/include/asm/pgtable.h |  1 +
-> > > > >  arch/riscv/kernel/sys_riscv.c    | 11 +++++++++++
-> > > > >  arch/riscv/mm/init.c             |  2 +-
-> > > > >  mm/mmap.c                        |  1 +
-> > > > >  5 files changed, 38 insertions(+), 1 deletion(-)
-> > > > >  create mode 100644 arch/riscv/include/asm/mman.h
-> > > > >
-> > > > > diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
-> > > > > new file mode 100644
-> > > > > index 000000000000..ef9fedf32546
-> > > > > --- /dev/null
-> > > > > +++ b/arch/riscv/include/asm/mman.h
-> > > > > @@ -0,0 +1,24 @@
-> > > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > > +#ifndef __ASM_MMAN_H__
-> > > > > +#define __ASM_MMAN_H__
-> > > > > +
-> > > > > +#include <linux/compiler.h>
-> > > > > +#include <linux/types.h>
-> > > > > +#include <uapi/asm/mman.h>
-> > > > > +
-> > > > > +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
-> > > > > +	unsigned long pkey __always_unused)
-> > > > > +{
-> > > > > +	unsigned long ret = 0;
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
-> > > > > +	 * Only VM_WRITE means shadow stack.
-> > > > > +	 */
-> > > > > +	if (prot & PROT_WRITE)
-> > > > > +		ret = (VM_READ | VM_WRITE);
-> > > > > +	return ret;
-> > > > > +}
-> > > > > +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
-> > > > > +
-> > > > > +#endif /* ! __ASM_MMAN_H__ */
-> > > > > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-> > > > > index 6066822e7396..4d5983bc6766 100644
-> > > > > --- a/arch/riscv/include/asm/pgtable.h
-> > > > > +++ b/arch/riscv/include/asm/pgtable.h
-> > > > > @@ -184,6 +184,7 @@ extern struct pt_alloc_ops pt_ops __initdata;
-> > > > >  #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
-> > > > >  #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
-> > > > >  					 _PAGE_EXEC | _PAGE_WRITE)
-> > > > > +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
-> > > > >
-> > > > >  #define PAGE_COPY		PAGE_READ
-> > > > >  #define PAGE_COPY_EXEC		PAGE_READ_EXEC
-> > > > > diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
-> > > > > index f1c1416a9f1e..846c36b1b3d5 100644
-> > > > > --- a/arch/riscv/kernel/sys_riscv.c
-> > > > > +++ b/arch/riscv/kernel/sys_riscv.c
-> > > > > @@ -8,6 +8,8 @@
-> > > > >  #include <linux/syscalls.h>
-> > > > >  #include <asm/cacheflush.h>
-> > > > >  #include <asm-generic/mman-common.h>
-> > > > > +#include <vdso/vsyscall.h>
-> > > > > +#include <asm/mman.h>
-> > > > >
-> > > > >  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
-> > > > >  			   unsigned long prot, unsigned long flags,
-> > > > > @@ -17,6 +19,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
-> > > > >  	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
-> > > > >  		return -EINVAL;
-> > > > >
-> > > > > +	/*
-> > > > > +	 * If only PROT_WRITE is specified then extend that to PROT_READ
-> > > > > +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
-> > > > > +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
-> > > > > +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
-> > > > > +	 */
-> > > > > +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
-> > > >
-> > > > The comments says that this should extend to PROT_READ if only
-> > > > PROT_WRITE is specified. This condition instead is checking if
-> > > > PROT_WRITE is selected but PROT_READ is not. If prot is (VM_EXEC |
-> > > > VM_WRITE) then it would be extended to (VM_EXEC | VM_WRITE | VM_READ).
-> > > > This will not currently cause any issues because these both map to the
-> > > > same value in the protection_map PAGE_COPY_EXEC, however this seems to
-> > > > be not the intention of this change.
-> > > >
-> > > > prot == PROT_WRITE better suits the condition explained in the comment.
-> > > 
-> > > If someone specifies this (PROT_EXEC | PROT_WRITE) today, it works because
-> > > of the way permissions are setup in `protection_map`. On risc-v there is no
-> > > way to have a page which is execute and write only. So expectation is that
-> > > if some apps were using `PROT_EXEC | PROT_WRITE` today, they were working
-> > > because internally it was translating to read, write and execute on page
-> > > permissions level. This patch make sure that, it stays same from page
-> > > permissions perspective.
-> > > 
-> > > If someone was using PROT_EXEC, it may translate to execute only and this change
-> > > doesn't impact that.
-> > > 
-> > > Patch simply looks for presence of `PROT_WRITE` and absence of `PROT_READ` in
-> > > protection flags and if that condition is satisfied, it assumes that caller assumed
-> > > page is going to be read allowed as well.
-> > 
-> > The purpose of this change is for compatibility with shadow stack pages
-> > but this affects flags for pages that are not shadow stack pages.
-> > Adding PROT_READ to the other cases is redundant as protection_map
-> > already handles that mapping. Permissions being strictly PROT_WRITE is
-> > the only case that needs to be handled, and is the only case that is
-> > called out in the commit message and in the comment.
+On Mon, May 13, 2024 at 06:45:07PM +0900, Masami Hiramatsu wrote:
+> On Tue,  7 May 2024 12:53:20 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
 > 
-> Yeah that's fine.
-> I can change the commit message or just strictly check for PROT_WRITE.
-> It doesn't change bottomline, I am fine with either option.
+> > Adding return uprobe test for shadow stack and making sure it's
+> > working properly. Borrowed some of the code from bpf selftests.
 > 
-> Let me know your preference.
+> Hi Jiri,
+> 
+> I can not find "SKIP" result in this change. If CONFIG_UPROBES=n,
+> this should skip uprobe test.
 
-I would prefer the strict check. This is not critical though so I will
-support whatever you decide!
+ah it should be detected by parse_uint_from_file returning ENOENT
+or something like that.. will add that
 
-- Charlie
+thanks,
+jirka
 
 > 
+> Thank you,
+> 
 > > 
-> > - Charlie
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  .../testing/selftests/x86/test_shadow_stack.c | 142 ++++++++++++++++++
+> >  1 file changed, 142 insertions(+)
 > > 
-> > > 
-> > > 
-> > > >
-> > > > > +		prot |= PROT_READ;
-> > > > > +
-> > > > >  	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
-> > > > >  			       offset >> (PAGE_SHIFT - page_shift_offset));
-> > > > >  }
-> > > > > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> > > > > index fa34cf55037b..98e5ece4052a 100644
-> > > > > --- a/arch/riscv/mm/init.c
-> > > > > +++ b/arch/riscv/mm/init.c
-> > > > > @@ -299,7 +299,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
-> > > > >  static const pgprot_t protection_map[16] = {
-> > > > >  	[VM_NONE]					= PAGE_NONE,
-> > > > >  	[VM_READ]					= PAGE_READ,
-> > > > > -	[VM_WRITE]					= PAGE_COPY,
-> > > > > +	[VM_WRITE]					= PAGE_SHADOWSTACK,
-> > > > >  	[VM_WRITE | VM_READ]				= PAGE_COPY,
-> > > > >  	[VM_EXEC]					= PAGE_EXEC,
-> > > > >  	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
-> > > > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > > > index d89770eaab6b..57a974f49b00 100644
-> > > > > --- a/mm/mmap.c
-> > > > > +++ b/mm/mmap.c
-> > > > > @@ -47,6 +47,7 @@
-> > > > >  #include <linux/oom.h>
-> > > > >  #include <linux/sched/mm.h>
-> > > > >  #include <linux/ksm.h>
-> > > > > +#include <linux/processor.h>
-> > > >
-> > > > It doesn't seem like this is necessary for this patch.
-> > > 
-> > > Thanks. Yeah it looks like I forgot to remove this over the churn.
-> > > Will fix it.
-> > > 
-> > > >
-> > > > - Charlie
-> > > >
-> > > > >
-> > > > >  #include <linux/uaccess.h>
-> > > > >  #include <asm/cacheflush.h>
-> > > > > --
-> > > > > 2.43.2
-> > > > >
+> > diff --git a/tools/testing/selftests/x86/test_shadow_stack.c b/tools/testing/selftests/x86/test_shadow_stack.c
+> > index 757e6527f67e..1b919baa999b 100644
+> > --- a/tools/testing/selftests/x86/test_shadow_stack.c
+> > +++ b/tools/testing/selftests/x86/test_shadow_stack.c
+> > @@ -34,6 +34,7 @@
+> >  #include <sys/ptrace.h>
+> >  #include <sys/signal.h>
+> >  #include <linux/elf.h>
+> > +#include <linux/perf_event.h>
+> >  
+> >  /*
+> >   * Define the ABI defines if needed, so people can run the tests
+> > @@ -681,6 +682,141 @@ int test_32bit(void)
+> >  	return !segv_triggered;
+> >  }
+> >  
+> > +static int parse_uint_from_file(const char *file, const char *fmt)
+> > +{
+> > +	int err, ret;
+> > +	FILE *f;
+> > +
+> > +	f = fopen(file, "re");
+> > +	if (!f) {
+> > +		err = -errno;
+> > +		printf("failed to open '%s': %d\n", file, err);
+> > +		return err;
+> > +	}
+> > +	err = fscanf(f, fmt, &ret);
+> > +	if (err != 1) {
+> > +		err = err == EOF ? -EIO : -errno;
+> > +		printf("failed to parse '%s': %d\n", file, err);
+> > +		fclose(f);
+> > +		return err;
+> > +	}
+> > +	fclose(f);
+> > +	return ret;
+> > +}
+> > +
+> > +static int determine_uprobe_perf_type(void)
+> > +{
+> > +	const char *file = "/sys/bus/event_source/devices/uprobe/type";
+> > +
+> > +	return parse_uint_from_file(file, "%d\n");
+> > +}
+> > +
+> > +static int determine_uprobe_retprobe_bit(void)
+> > +{
+> > +	const char *file = "/sys/bus/event_source/devices/uprobe/format/retprobe";
+> > +
+> > +	return parse_uint_from_file(file, "config:%d\n");
+> > +}
+> > +
+> > +static ssize_t get_uprobe_offset(const void *addr)
+> > +{
+> > +	size_t start, end, base;
+> > +	char buf[256];
+> > +	bool found = false;
+> > +	FILE *f;
+> > +
+> > +	f = fopen("/proc/self/maps", "r");
+> > +	if (!f)
+> > +		return -errno;
+> > +
+> > +	while (fscanf(f, "%zx-%zx %s %zx %*[^\n]\n", &start, &end, buf, &base) == 4) {
+> > +		if (buf[2] == 'x' && (uintptr_t)addr >= start && (uintptr_t)addr < end) {
+> > +			found = true;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	fclose(f);
+> > +
+> > +	if (!found)
+> > +		return -ESRCH;
+> > +
+> > +	return (uintptr_t)addr - start + base;
+> > +}
+> > +
+> > +static __attribute__((noinline)) void uretprobe_trigger(void)
+> > +{
+> > +	asm volatile ("");
+> > +}
+> > +
+> > +/*
+> > + * This test setups return uprobe, which is sensitive to shadow stack
+> > + * (crashes without extra fix). After executing the uretprobe we fail
+> > + * the test if we receive SIGSEGV, no crash means we're good.
+> > + *
+> > + * Helper functions above borrowed from bpf selftests.
+> > + */
+> > +static int test_uretprobe(void)
+> > +{
+> > +	const size_t attr_sz = sizeof(struct perf_event_attr);
+> > +	const char *file = "/proc/self/exe";
+> > +	int bit, fd = 0, type, err = 1;
+> > +	struct perf_event_attr attr;
+> > +	struct sigaction sa = {};
+> > +	ssize_t offset;
+> > +
+> > +	type = determine_uprobe_perf_type();
+> > +	if (type < 0)
+> > +		return 1;
+> > +
+> > +	offset = get_uprobe_offset(uretprobe_trigger);
+> > +	if (offset < 0)
+> > +		return 1;
+> > +
+> > +	bit = determine_uprobe_retprobe_bit();
+> > +	if (bit < 0)
+> > +		return 1;
+> > +
+> > +	sa.sa_sigaction = segv_gp_handler;
+> > +	sa.sa_flags = SA_SIGINFO;
+> > +	if (sigaction(SIGSEGV, &sa, NULL))
+> > +		return 1;
+> > +
+> > +	/* Setup return uprobe through perf event interface. */
+> > +	memset(&attr, 0, attr_sz);
+> > +	attr.size = attr_sz;
+> > +	attr.type = type;
+> > +	attr.config = 1 << bit;
+> > +	attr.config1 = (__u64) (unsigned long) file;
+> > +	attr.config2 = offset;
+> > +
+> > +	fd = syscall(__NR_perf_event_open, &attr, 0 /* pid */, -1 /* cpu */,
+> > +		     -1 /* group_fd */, PERF_FLAG_FD_CLOEXEC);
+> > +	if (fd < 0)
+> > +		goto out;
+> > +
+> > +	if (sigsetjmp(jmp_buffer, 1))
+> > +		goto out;
+> > +
+> > +	ARCH_PRCTL(ARCH_SHSTK_ENABLE, ARCH_SHSTK_SHSTK);
+> > +
+> > +	/*
+> > +	 * This either segfaults and goes through sigsetjmp above
+> > +	 * or succeeds and we're good.
+> > +	 */
+> > +	uretprobe_trigger();
+> > +
+> > +	printf("[OK]\tUretprobe test\n");
+> > +	err = 0;
+> > +
+> > +out:
+> > +	ARCH_PRCTL(ARCH_SHSTK_DISABLE, ARCH_SHSTK_SHSTK);
+> > +	signal(SIGSEGV, SIG_DFL);
+> > +	if (fd)
+> > +		close(fd);
+> > +	return err;
+> > +}
+> > +
+> >  void segv_handler_ptrace(int signum, siginfo_t *si, void *uc)
+> >  {
+> >  	/* The SSP adjustment caused a segfault. */
+> > @@ -867,6 +1003,12 @@ int main(int argc, char *argv[])
+> >  		goto out;
+> >  	}
+> >  
+> > +	if (test_uretprobe()) {
+> > +		ret = 1;
+> > +		printf("[FAIL]\turetprobe test\n");
+> > +		goto out;
+> > +	}
+> > +
+> >  	return ret;
+> >  
+> >  out:
+> > -- 
+> > 2.44.0
+> > 
+> 
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
