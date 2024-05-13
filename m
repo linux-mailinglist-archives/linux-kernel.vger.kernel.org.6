@@ -1,177 +1,204 @@
-Return-Path: <linux-kernel+bounces-177487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C6F8C3F76
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:07:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51CE98C3F91
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025481C20FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE91C2158E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC0514B076;
-	Mon, 13 May 2024 11:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE7514C593;
+	Mon, 13 May 2024 11:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uJIFPuX9"
-Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEyCCncm"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B585514BFAB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB81C683;
+	Mon, 13 May 2024 11:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715598446; cv=none; b=nqUNFrhWvuzHp+aRLJrsrLWbKsIW6kgiJBXN4VB+X6DJdVwdzldDL+f6bk8tMWK9Tu8frSgx5M5Zqoii3VUszRG76A4CCsQxPOfSwAshDd2J09oMwkPl+NsYnZxHLz+uVOwQYulTb3FvTuXSOL2oT0gGOVNfBuQLJ0y5B5t0rto=
+	t=1715598757; cv=none; b=Vo3HcaNoodA/aDHx30BKYlDgcw0ufUOl+o8h+etQmxhvpv43gsfynqu7/RZduY6DyPWn2swTlY6mUpjqOtcW7feb+/37Ymi9M/fePd8m++Pi0BCevZ5Ud6spePxH4kXSRsEA7z9pIq2aDgYly4G5zYszCecOz/+cfYnN55EMWrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715598446; c=relaxed/simple;
-	bh=yGixI+iHGX3TPfXml7qxn2htJP1ksYMKCpPrGRjCsgU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dqbrAb7TmuP6PqBJN3OZhoVRGhjfzgz3JSQfFQi4zkqmTBUPaIL+gg5vgv6bJ/WyZcKpZ0eauRZs+Lp0wA860VMOnKVMv27EKhGwbKRFElyEQ/aA+M4pGQ6oNKQzNvd9WvxSDCbD0iJu/xha4W0uPT0jc1pQftbNLXcB3teb960=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uJIFPuX9; arc=none smtp.client-ip=209.85.166.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-7e1e0939cbdso28362939f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 04:07:23 -0700 (PDT)
+	s=arc-20240116; t=1715598757; c=relaxed/simple;
+	bh=ovWECFyus9fyusYiUp7lb7F22QlyMqy46p2ZM0gDVzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAs9cs4VezWHKmachxNoLdCeMvCLUN0rOYYbvLUYoH9XfA5X6IE10fQvwr2A4un2K/QtjY57T3mMi7wK9fR423KJiP7LLewELuO/EtsD9bmDR1X4/JNWMZFpKhtxmtCtVa3VVOrrJ+iqtvCxIPX1Ez8UTvaWXefuBhwia5pX4xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dEyCCncm; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e576057c2bso26691231fa.1;
+        Mon, 13 May 2024 04:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715598443; x=1716203243; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xGQJNn0vnDN7oHpQ2fYIvhBcLWv6XEpScm6BqxW6Gn4=;
-        b=uJIFPuX9cC2kYiYBjXoyDCvDY5ovFnwkR8xHk8ZCZbyV907cCW6MgRDL3b1gMq4O81
-         TYyeqt+kMHIWJrjrtOYr7NfgQcf7ICLTTY7bi2NCGcBsctVtgKNzxgtTHNAQHDzxu8kq
-         azannFIZVjcwBThJ5xHlVKmTgwCUd8kaEHsv28IdAVSCpcnJeo6TUQ4cpe+RkgRGXnoR
-         Y/zC7GdEZSdgb+khJHBStnoImadGDaclt5GXnQm7KLwEpf6q00LjJzeFjjrvdv7+DRnm
-         f2RR18wFbCyi6cvTa94QrKfcaWrABul5PElHg8u6qcjoFcGn70AIkDuiXhCgMS3oqQb/
-         mUJw==
+        d=gmail.com; s=20230601; t=1715598754; x=1716203554; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CsXgR3w2FhQE+aSDSS2Gv40EZ/tbmCX2jDPHP8DnHb8=;
+        b=dEyCCncmOQTQZFjsEba16Wyf6ihjRTTyisSM4lDK5aSsWbvkErgZRMo3ipM5rf84td
+         iDXymqAfAf0UGzWknw7mFNK394MS7b96DKKSHHIcRRhlAokEgdoy2zQKKoAYo/GEm+JD
+         K7p/r/uHJr8DzzdQruse0/x1+HRPLWBY+X0gMOaSA30BXaFreh+Azq44jr2FmaPFxEDP
+         rxlOP3usuY4Hqp4mf/1gmLf4qf1nnU1o2XwvqWmoXX0YQ3p0xnoa3i7CBRic1oeXzHo8
+         lz66pHtf9tqHlMY8erfXkYs4wgfCx6K70rwmBqrC7hpCajt0GtPpdDGAL4kRGUyrRApZ
+         LsDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715598443; x=1716203243;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xGQJNn0vnDN7oHpQ2fYIvhBcLWv6XEpScm6BqxW6Gn4=;
-        b=ikdCYVwNbjoz/19tq+7UrKnNIbyAUZoNFH6r6XUHCzwRriq58+Zkum2ljz2lgzoUch
-         bfl8/5pRpYn5grRtebJJbhsT1vzpKObiMGn31sSoICpjYWIvVtS7/nfB54yNIaj63YSq
-         AsM4ZMd0MjrzwqotDdV0pyJJ81jDyo/qazdmj5IXdefNRSa/yiQFgqP+iDAbT2cknHqw
-         bMckksUHuA5h4KDLdDPWVldzs2C/zMaLPRT6wkzi129e+5ZuCUwjbCgivHNmHRwBFQE4
-         5vAhyhBHY9L7FyqQWlo6szAX3PzuW0aye9bEOjycmldOAT2JWtwmLF/5BoTI7vL10WAk
-         DWnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJt9IrgdVtbR92dFtJ7IEEZc9yCVIZ3bUP5bh9akHcOqH1a5kVODZ5q2ClSZPE8G975k4reEa/+H4TqApF5Zfgh3noYBS/UMeJWhOA
-X-Gm-Message-State: AOJu0YywPqBTfJv6Ty/+EUbH76Eoxg4r7dBMQXb+JkjSisqQxhXoxU1s
-	e9thEAuC/gmA7TFvGmv/1OOqWGc4NEsOYB5FPNO4cfynYdgDiRWqeAUwm0uK7VZTMbrp9Z5oApZ
-	Yfh8k/vQiP2Sj053uR1S6/FFtelK7FpgAzZck
-X-Google-Smtp-Source: AGHT+IEiadjb+MTc+UlqC6N1rwvvjZDJnAlay8TfzRluxCwQz8iR/sX8wqL+TFk3/kNd86shQakjYT2DoztuTJ1C/LM=
-X-Received: by 2002:a05:6602:2992:b0:7da:bc23:ac16 with SMTP id
- ca18e2360f4ac-7e1b520775bmr1054622539f.14.1715598442659; Mon, 13 May 2024
- 04:07:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715598754; x=1716203554;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CsXgR3w2FhQE+aSDSS2Gv40EZ/tbmCX2jDPHP8DnHb8=;
+        b=Ij1rNjpXW7bldXESGHzCPhcgRkTqq9cOElAJ0MwzIcf9cJURwJGg7DwinbUXP0nqKV
+         N+knpakm7CJND5e85jo3i2Q6BdqnKbZJqfFNPVyCNkajtI6oVbR3rdZe8alIALeBzm0l
+         B+nieDq1a9yUcRi+jFb3FxiGWHOAX9Lp5BBB3Ptaoiiqji9Zz2/Po3HOZzzzUFuVjjtF
+         U+Q9Me9JeM9UhtfXAnJNjfiGW2kwAo8AeAAlWFelRP/4XDF/IqN159KAmV3KiStjidYv
+         95HCCQKNgPw2SNBOfiRd8mHPLdtm1cB5Mc7wPz/LHkaqBNJLZ5i5KRd2WOCWXOpNCP4H
+         WH3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX95XhBk7xVfJlxjqs7pNGgos/7fABRx9hG3hxWOfbEVJu8y2Vbk2Aq3AWQowmEBPeSTUiaqPXZ/PVXEl3Kh5L5isa9cTg81/GLF2HbvWU4WVonDWJNZrFS9FubNgKosD1Jl/1iGuMmAAVSfqVFvzn+KQ6oOV4GsZKODYhzPIK72o5fVD88FIEtkhxC2aAniXVMaj1MqyvNhsFZpIXRNfO4zo0s
+X-Gm-Message-State: AOJu0Yxf3ZXc0R5Mphk1YF2ZWvYSEMvmIQtjTogGNj3/8anmbVyI1Rcn
+	PvkJwLt9f18byrDe2P8h6Aos4MW0cuTTmSXm0bD//Jk8+pTWV5R0zjg29nn/
+X-Google-Smtp-Source: AGHT+IFNrzH1ND0SZWwUAgn/8uMLO2dCcSkwSoLKZfE1t1yAXNHUDLcBvn8cGIMU+gIVm1ldgnIHuA==
+X-Received: by 2002:a05:651c:b0c:b0:2dd:bc53:e80 with SMTP id 38308e7fff4ca-2e52039daccmr90950591fa.51.1715598753491;
+        Mon, 13 May 2024 04:12:33 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0bbd6a7sm14048281fa.6.2024.05.13.04.12.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 04:12:32 -0700 (PDT)
+Date: Mon, 13 May 2024 14:12:29 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH net-next v7 2/7] net: stmmac: Add dedicated XPCS cleanup
+ method
+Message-ID: <u3t3zu4ihqoc44gl2mvw74seamtoas5wvxr7kqzxxhvu3enhbx@7txzs5fsse25>
+References: <20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com>
+ <20240513-rzn1-gmac1-v7-2-6acf58b5440d@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507155413.266057-1-panikiel@google.com> <20240507155413.266057-6-panikiel@google.com>
- <20240510211613.GA751688-robh@kernel.org>
-In-Reply-To: <20240510211613.GA751688-robh@kernel.org>
-From: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>
-Date: Mon, 13 May 2024 13:07:10 +0200
-Message-ID: <CAM5zL5oBA6Bkk=qAEjx7pvQ5cxa9MFHe9=T3AQMuKskzbjFrzw@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] media: dt-bindings: video-interfaces: Support
- DisplayPort MST
-To: Rob Herring <robh@kernel.org>
-Cc: airlied@gmail.com, akpm@linux-foundation.org, conor+dt@kernel.org, 
-	daniel@ffwll.ch, dinguyen@kernel.org, hverkuil-cisco@xs4all.nl, 
-	krzysztof.kozlowski+dt@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mchehab@kernel.org, mripard@kernel.org, tzimmermann@suse.de, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	chromeos-krk-upstreaming@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513-rzn1-gmac1-v7-2-6acf58b5440d@bootlin.com>
 
-On Fri, May 10, 2024 at 11:16=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
-e:
->
-> On Tue, May 07, 2024 at 03:54:08PM +0000, Pawe=C5=82 Anikiel wrote:
-> > Add a DisplayPort bus type and a multi-stream-support property
-> > indicating whether the interface supports MST.
-> >
-> > Signed-off-by: Pawe=C5=82 Anikiel <panikiel@google.com>
-> > ---
-> >  .../devicetree/bindings/media/video-interfaces.yaml        | 7 +++++++
-> >  include/dt-bindings/media/video-interfaces.h               | 2 ++
-> >  2 files changed, 9 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/video-interfaces.y=
-aml b/Documentation/devicetree/bindings/media/video-interfaces.yaml
-> > index 26e3e7d7c67b..7bf3a2c09a5b 100644
-> > --- a/Documentation/devicetree/bindings/media/video-interfaces.yaml
-> > +++ b/Documentation/devicetree/bindings/media/video-interfaces.yaml
-> > @@ -94,6 +94,7 @@ properties:
-> >        - 5 # Parallel
-> >        - 6 # BT.656
-> >        - 7 # DPI
-> > +      - 8 # DisplayPort
-> >      description:
-> >        Data bus type.
-> >
-> > @@ -217,4 +218,10 @@ properties:
-> >        Whether the clock signal is used as clock (0) or strobe (1). Use=
-d with
-> >        CCP2, for instance.
-> >
-> > +  multi-stream-support:
->
-> If MST is a known term for DP, then perhaps "dp-mst-support" for the
-> name. In any case, 'dp' should be in there somewhere.
+Hi Romain
 
-I tried to keep the name generic, for the use case of some other bus
-with a similar feature, e.g. CSI-2 and virtual channels.
+On Mon, May 13, 2024 at 09:25:13AM +0200, Romain Gantois wrote:
+> From: Serge Semin <fancer.lancer@gmail.com>
+> 
+> Currently the XPCS handler destruction is performed in the
+> stmmac_mdio_unregister() method. It doesn't look good because the handler
+> isn't originally created in the corresponding protagonist
+> stmmac_mdio_unregister(), but in the stmmac_xpcs_setup() function. In
+> order to have more coherent MDIO and XPCS setup/cleanup procedures,
+> let's move the DW XPCS destruction to the dedicated stmmac_pcs_clean()
+> method.
+> 
+> This method will also be used to cleanup PCS hardware using the
+> pcs_exit() callback that will be introduced to stmmac in a subsequent
+> patch.
+> 
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
+> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
->
-> > +    type: boolean
-> > +    description:
-> > +      Support transport of multiple independent streams. Used for
-> > +      DisplayPort MST-capable interfaces.
->
-> Wouldn't this be implied by the devices at each end of the link?
+Looking good. Thanks!
+* Not sure whether my explicit Rb tag will be required in such the tags
+disposition.)
 
-For the case of the Intel DP receiver, MST support is an IP
-configuration option which cannot be determined at probe time, so it
-needs to be read from DT. Having learned that the receiver should use
-properties from video-interfaces, I decided to put this property here.
-Do you think that's a good idea?
+-Serge(y)
 
-> The drivers for each device should really list out features supported for
-> the link. The mode used is then the union of those 2 lists with DT
-> properties only used when the union is not definitive.
-
-The mode that actually gets used (MST vs non-MST) is negotiated during
-link setup as part of the DP protocol - the sink reports to the source
-if it supports MST, and it's up to the source's ability to enable MST
-or not.
-
-The property I'm adding here is only useful for the driver to know if
-the hw supports MST or not (in the case it can't determine it itself).
-
->
->
-> > +
-> >  additionalProperties: true
-> > diff --git a/include/dt-bindings/media/video-interfaces.h b/include/dt-=
-bindings/media/video-interfaces.h
-> > index 68ac4e05e37f..b236806f4482 100644
-> > --- a/include/dt-bindings/media/video-interfaces.h
-> > +++ b/include/dt-bindings/media/video-interfaces.h
-> > @@ -12,5 +12,7 @@
-> >  #define MEDIA_BUS_TYPE_CSI2_DPHY             4
-> >  #define MEDIA_BUS_TYPE_PARALLEL                      5
-> >  #define MEDIA_BUS_TYPE_BT656                 6
-> > +#define MEDIA_BUS_TYPE_DPI                   7
-> > +#define MEDIA_BUS_TYPE_DISPLAYPORT           8
-> >
-> >  #endif /* __DT_BINDINGS_MEDIA_VIDEO_INTERFACES_H__ */
-> > --
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> >
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  1 +
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++++-
+>  drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 14 +++++++++++---
+>  3 files changed, 17 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+> index dddcaa9220cc3..badfe686a5702 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+> @@ -361,6 +361,7 @@ int stmmac_mdio_unregister(struct net_device *ndev);
+>  int stmmac_mdio_register(struct net_device *ndev);
+>  int stmmac_mdio_reset(struct mii_bus *mii);
+>  int stmmac_xpcs_setup(struct mii_bus *mii);
+> +void stmmac_pcs_clean(struct net_device *ndev);
+>  void stmmac_set_ethtool_ops(struct net_device *netdev);
+>  
+>  int stmmac_init_tstamp_counter(struct stmmac_priv *priv, u32 systime_flags);
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 3d828904db0d3..0ac99c132733d 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -7789,8 +7789,9 @@ int stmmac_dvr_probe(struct device *device,
+>  
+>  error_netdev_register:
+>  	phylink_destroy(priv->phylink);
+> -error_xpcs_setup:
+>  error_phy_setup:
+> +	stmmac_pcs_clean(ndev);
+> +error_xpcs_setup:
+>  	if (priv->hw->pcs != STMMAC_PCS_TBI &&
+>  	    priv->hw->pcs != STMMAC_PCS_RTBI)
+>  		stmmac_mdio_unregister(ndev);
+> @@ -7832,6 +7833,9 @@ void stmmac_dvr_remove(struct device *dev)
+>  	if (priv->plat->stmmac_rst)
+>  		reset_control_assert(priv->plat->stmmac_rst);
+>  	reset_control_assert(priv->plat->stmmac_ahb_rst);
+> +
+> +	stmmac_pcs_clean(ndev);
+> +
+>  	if (priv->hw->pcs != STMMAC_PCS_TBI &&
+>  	    priv->hw->pcs != STMMAC_PCS_RTBI)
+>  		stmmac_mdio_unregister(ndev);
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> index 0542cfd1817e6..73ba9901a4439 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
+> @@ -523,6 +523,17 @@ int stmmac_xpcs_setup(struct mii_bus *bus)
+>  	return 0;
+>  }
+>  
+> +void stmmac_pcs_clean(struct net_device *ndev)
+> +{
+> +	struct stmmac_priv *priv = netdev_priv(ndev);
+> +
+> +	if (!priv->hw->xpcs)
+> +		return;
+> +
+> +	xpcs_destroy(priv->hw->xpcs);
+> +	priv->hw->xpcs = NULL;
+> +}
+> +
+>  /**
+>   * stmmac_mdio_register
+>   * @ndev: net device structure
+> @@ -679,9 +690,6 @@ int stmmac_mdio_unregister(struct net_device *ndev)
+>  	if (!priv->mii)
+>  		return 0;
+>  
+> -	if (priv->hw->xpcs)
+> -		xpcs_destroy(priv->hw->xpcs);
+> -
+>  	mdiobus_unregister(priv->mii);
+>  	priv->mii->priv = NULL;
+>  	mdiobus_free(priv->mii);
+> 
+> -- 
+> 2.44.0
+> 
 
