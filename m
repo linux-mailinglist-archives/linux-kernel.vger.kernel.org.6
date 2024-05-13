@@ -1,147 +1,210 @@
-Return-Path: <linux-kernel+bounces-177910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CAD58C461D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:33:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D1A8C4622
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D11221F24059
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:33:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4845EB21258
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 230D823748;
-	Mon, 13 May 2024 17:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CB322616;
+	Mon, 13 May 2024 17:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="PBHbiJ16"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="BCXLY9ht"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D2120DF7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20EB22339
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715621614; cv=none; b=Tx8oYtsAEWhunVb3smPY7UPMaOBbkvxxRVvvbdpGC2czP+uz+7WBMKGbtLk3J9CfYn6T9m6Gs1q7iVlXvKvkBnQocb9CQV1aa70ZZnz84jpgCQeGaw5NddEBbjJOox2LCDOWDBoZjCbd649jj2D99A0X/4V1+qFRSirVRo6iM6o=
+	t=1715621622; cv=none; b=nCQ4ogX7GAZYCP1X/A+r2wm5l6nVWVEAnGLjMfQAYpGqI9IbCJM136iJryftg7iu9DcBGFSn+2o+qwFseprbO+ynvS/L8+empPFWrywXTvmab9bU1TVdJsKRnq3JG5ewwqA5VFVhSWLfBplC3gxKCQF3961B7t3/6CsCpRu1RcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715621614; c=relaxed/simple;
-	bh=004wZ/BTyT9fE4JXjqxo7dvB6azeLVxU7gAlJEphKdU=;
+	s=arc-20240116; t=1715621622; c=relaxed/simple;
+	bh=5faudNSwXM6eDrDOP7g8vTHfKZ2ssptQWyhi+r9NbAM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zeq2U1IpGWWpyUrdZHw8B+eqGw/2Ycu1BAg/y1ijX3BGj/sTVdse+XB7z04SzbtQChgFFVJipWL0jyPWBi1a7THxgyZw3HmzhBXXU84A2HQTNe/HYicBb+vH4ITFGRgSSOiRvCpDhetSzIxwsszEviG8oGDWOxruDVWl1j0nyJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=PBHbiJ16; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5aa3f0fcd46so2789076eaf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:33:32 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gCd5QxXQT8iKlMP/mr1LU7ifjnsNF5dvrHbtO1tVKvtpj0rszo+8Uav1dBj61fpOL3Oqbe4IO79SE4F3nbFA7l+88A8Aa/d0qO6aNyNslVsMmyjs3dZjKkMorYgohlhFRLKMVZDZlY7b3jv20nJkGWQSJC/gx/QzwIbIu4pzuz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=BCXLY9ht; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5d3907ff128so3970313a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1715621612; x=1716226412; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWgFC3S2PfP1iJSh371S2lssW1zUAEloG1SEMk5tnQo=;
-        b=PBHbiJ16yUyRq8xxXOantAlgyE+09KxSYjBca7c1xc4qrO7q0VcT1Jd86n/6qd2N0n
-         L8hp46JRPfQEs9ncx3lrKtwI4o0tLCDylmw8DicDZDngxrxs+7ECFbH0+B9LsTtr2cUj
-         KG+Lh/nwg5DSwJL7rYxyzx2LhBz1xsEYVWX5o=
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715621620; x=1716226420; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pNmfAcSQRV/kelva/h+PHsNWBp57DY+kk0TmAOrYUcA=;
+        b=BCXLY9htU64FtOhStHOPwzH3nxFYlucGGiYf+eUeT5lEb+lMWHo7Nj36oEVzyOMrom
+         JRSAHZ6yfLyqPf606RytRsKxx8IZL3EeL6FNbHrRqwRinzpMZnUpzzmJQk5EGV4xsH0f
+         SaGEBFWgRtkgFQMoUXWMxA980zbQOTugr0iNTuQIbWUebF9gd2h49YWRBxNOZbDM+CEZ
+         j6XRfMgQ6N0UebecqLh9Vf3nB7f11M+UjHiCOuSiau2T8HxH4+B0bqayV41kGI6QZLCT
+         QNhLwhR9yDghQODmN/E5aYls+5N6/dNygBXTgYFo8g4FLRwJ1728RwF72reTu8jFKzzK
+         TsjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715621612; x=1716226412;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nWgFC3S2PfP1iJSh371S2lssW1zUAEloG1SEMk5tnQo=;
-        b=uJNDScbZczRjemDzXujS+HJrDtendbrgFUu061V5bpBqdTm/x7fVeAvlEeg6ZD8cZL
-         mwAgAKgk0yWBIkDXZzbUaRJxRZmJWj76QhGCg5HUXnudXLrB4OOPHkOhVlcmElkVopMJ
-         P4gQAx9bdtlWI9qE3VX5t7E/3zSeBM2G0qR3pDgG54aZd7XxQboBM/jz7MY7dZkfWB1E
-         prJYT57vpGw6T5ZsZywgepDY65Jl5tHdr9ll2knVaxZscGK/RW+NxBHSqZ70cBXFdUM9
-         bT9UxTc+Dah++1S9+tm23HOfKIy1D8jbRufLDRwXnwOWs/tVeq6X8yyCDZgqXQaw/EmR
-         1aJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9+9T8cMST2y8O4YD0et9mf0qVcCfe/C6qX2eLeB5aa1l1LFHjgUGUt1AUIm3dgcOT3jZzw75CYollqpX27NChGWnfDmSmVrkPGNur
-X-Gm-Message-State: AOJu0YxxH0v8UCh0/SFHM6x265As+ZgIfAJp8sn3tUIBdNCMppCfujrp
-	G6pHtidwMHHvMS9Di1SGH/seY8RIRwhpZkzkFLpPamYjt2ITKREuS24RQbOcox4=
-X-Google-Smtp-Source: AGHT+IGLySbm6b/4r6B+YP3EJ/0D5HsDixyPGRii0Uq+ZLUeYN7X2cixlwoD4AR5edXW/aNBuPaBkA==
-X-Received: by 2002:a05:6870:c185:b0:22e:a451:57d1 with SMTP id 586e51a60fabf-24172f69da0mr10682085fac.52.1715621612005;
-        Mon, 13 May 2024 10:33:32 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a449e0esm7969360a12.13.2024.05.13.10.33.30
+        d=1e100.net; s=20230601; t=1715621620; x=1716226420;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pNmfAcSQRV/kelva/h+PHsNWBp57DY+kk0TmAOrYUcA=;
+        b=EFAXLKz8rnbxDYxfjQ3+K56BXsvaXqoc8ZlAY1bjP3gDiKtJZ+qHp0OJpld6gLckHy
+         1JT4XR3OuV3CxQaLQs+svU2azKgan/utX0F14Udk7Fiy3RdQv+0yEFgFaQiB/NhEMUyt
+         Fy6JtYbASoZnyMbywOUaF7xDXiavae28QRYE6E1s4sLQshigl0d4cmM7v3miOJ1/8mDH
+         LrLEdJaFpBX2wHiQEjbwjSjLthBgcpDjYtaQ/l60n9vqi6xhPNXh6tBl7PCEFBYBTMJa
+         MLyQuksZO0cHAVnRRAiBCC1nzBfaZFp/8Kr2mosUC5AMiGXmikHK3NEuyeGf5QgUo3Yz
+         IcXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGBmXN6Qv8b34NmvVOshRmexEo3D5v9P3SCDDJjGlkytDFM2a8ofHK2gTUbvyh4eitvE9oON07QpDjZnL1G4/p50Pb2oK567yR7wFq
+X-Gm-Message-State: AOJu0Yw92qvxjqg0vFhR1Ei2GOPGcC9XPLawlcqixdWB/s9y3m6HxyDL
+	LULBCtTKrk3zguq2S9Ax7g3+OdCVMCgWnJ4G4Xzj9z+Z6GOOSoTlOapoM4oc/nM=
+X-Google-Smtp-Source: AGHT+IEusspRKWgMqzxIHo3LjzZ32dPe15H5hiGbuRyTZXAqW+i0ka0qC7uUI7zx+K2rXL0puSVXpQ==
+X-Received: by 2002:a17:902:6b44:b0:1e2:81c1:b35e with SMTP id d9443c01a7336-1ef43f4e417mr123656285ad.54.1715621620059;
+        Mon, 13 May 2024 10:33:40 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d4733sm81989285ad.54.2024.05.13.10.33.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 10:33:31 -0700 (PDT)
-Date: Mon, 13 May 2024 10:33:28 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Tariq Toukan <tariqt@nvidia.com>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, zyjzyj2000@gmail.com, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
- stats
-Message-ID: <ZkJO6BIhor3VEJA2@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	zyjzyj2000@gmail.com, nalramli@fastly.com,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	"open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>
-References: <20240510041705.96453-1-jdamato@fastly.com>
- <20240510041705.96453-2-jdamato@fastly.com>
- <20240513075827.66d42cc1@kernel.org>
+        Mon, 13 May 2024 10:33:39 -0700 (PDT)
+Date: Mon, 13 May 2024 10:33:34 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, bjorn@rivosinc.com, alexghiti@rivosinc.com,
+	samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	charlie@rivosinc.com, apatel@ventanamicro.com,
+	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
+	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 12/29] riscv mmu: teach pte_mkwrite to manufacture
+ shadow stack PTEs
+Message-ID: <ZkJO7mlAYqVwDYt6@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-13-debug@rivosinc.com>
+ <a8ee97ee-c51c-4d6a-a9fc-54b065215ebf@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240513075827.66d42cc1@kernel.org>
+In-Reply-To: <a8ee97ee-c51c-4d6a-a9fc-54b065215ebf@ghiti.fr>
 
-On Mon, May 13, 2024 at 07:58:27AM -0700, Jakub Kicinski wrote:
-> On Fri, 10 May 2024 04:17:04 +0000 Joe Damato wrote:
-> > Add functions to support the netdev-genl per queue stats API.
-> > 
-> > ./cli.py --spec netlink/specs/netdev.yaml \
-> > --dump qstats-get --json '{"scope": "queue"}'
-> > 
-> > ...snip
-> > 
-> >  {'ifindex': 7,
-> >   'queue-id': 62,
-> >   'queue-type': 'rx',
-> >   'rx-alloc-fail': 0,
-> >   'rx-bytes': 105965251,
-> >   'rx-packets': 179790},
-> >  {'ifindex': 7,
-> >   'queue-id': 0,
-> >   'queue-type': 'tx',
-> >   'tx-bytes': 9402665,
-> >   'tx-packets': 17551},
-> > 
-> > ...snip
-> > 
-> > Also tested with the script tools/testing/selftests/drivers/net/stats.py
-> > in several scenarios to ensure stats tallying was correct:
-> > 
-> > - on boot (default queue counts)
-> > - adjusting queue count up or down (ethtool -L eth0 combined ...)
-> > - adding mqprio TCs
-> > 
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> 
-> Tariq, could you take a look? Is it good enough to make 6.10? 
-> Would be great to have it..
+On Sun, May 12, 2024 at 06:28:59PM +0200, Alexandre Ghiti wrote:
+>
+>On 04/04/2024 01:35, Deepak Gupta wrote:
+>>pte_mkwrite creates PTEs with WRITE encodings for underlying arch.
+>>Underlying arch can have two types of writeable mappings. One that can be
+>>written using regular store instructions. Another one that can only be
+>>written using specialized store instructions (like shadow stack stores).
+>>pte_mkwrite can select write PTE encoding based on VMA range (i.e.
+>>VM_SHADOW_STACK)
+>>
+>>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>>---
+>>  arch/riscv/include/asm/pgtable.h |  7 +++++++
+>>  arch/riscv/mm/pgtable.c          | 21 +++++++++++++++++++++
+>>  2 files changed, 28 insertions(+)
+>>
+>>diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>>index 6362407f1e83..9b837239d3e8 100644
+>>--- a/arch/riscv/include/asm/pgtable.h
+>>+++ b/arch/riscv/include/asm/pgtable.h
+>>@@ -403,6 +403,10 @@ static inline pte_t pte_wrprotect(pte_t pte)
+>>  /* static inline pte_t pte_mkread(pte_t pte) */
+>>+struct vm_area_struct;
+>>+pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma);
+>>+#define pte_mkwrite pte_mkwrite
+>>+
+>>  static inline pte_t pte_mkwrite_novma(pte_t pte)
+>>  {
+>>  	return __pte(pte_val(pte) | _PAGE_WRITE);
+>>@@ -694,6 +698,9 @@ static inline pmd_t pmd_mkyoung(pmd_t pmd)
+>>  	return pte_pmd(pte_mkyoung(pmd_pte(pmd)));
+>>  }
+>>+pmd_t pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma);
+>>+#define pmd_mkwrite pmd_mkwrite
+>>+
+>>  static inline pmd_t pmd_mkwrite_novma(pmd_t pmd)
+>>  {
+>>  	return pte_pmd(pte_mkwrite_novma(pmd_pte(pmd)));
+>>diff --git a/arch/riscv/mm/pgtable.c b/arch/riscv/mm/pgtable.c
+>>index ef887efcb679..c84ae2e0424d 100644
+>>--- a/arch/riscv/mm/pgtable.c
+>>+++ b/arch/riscv/mm/pgtable.c
+>>@@ -142,3 +142,24 @@ pmd_t pmdp_collapse_flush(struct vm_area_struct *vma,
+>>  	return pmd;
+>>  }
+>>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>+
+>>+pte_t pte_mkwrite(pte_t pte, struct vm_area_struct *vma)
+>>+{
+>>+	if (vma_is_shadow_stack(vma->vm_flags))
+>>+		return pte_mkwrite_shstk(pte);
+>>+
+>>+	pte = pte_mkwrite_novma(pte);
+>
+>
+>I would directly return pte_mkwrite_novma(pte) instead of assigning pte.
 
-Thanks Jakub.
+noted.
 
-FYI: I've also sent a v5 of the mlx4 patches which is only a very minor
-change from the v4 as suggested by Tariq (see the changelog in that cover
-letter).
+>
+>
+>>+
+>>+	return pte;
+>>+}
+>>+
+>>+pmd_t pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>>+{
+>>+	if (vma_is_shadow_stack(vma->vm_flags))
+>>+		return pmd_mkwrite_shstk(pmd);
+>>+
+>>+	pmd = pmd_mkwrite_novma(pmd);
+>
+>
+>Ditto here.
 
-I am not trying to "rush" either in, to to speak, but if they both made it
-to 6.10 it would be great to have the same support on both drivers in the
-same kernel release :)
+noted here too.
+
+>
+>
+>>+
+>>+	return pmd;
+>>+}
+>>+
+>
+>
+>Otherwise:
+>
+>Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>
+>Thanks,
+>
+>Alex
+>
 
