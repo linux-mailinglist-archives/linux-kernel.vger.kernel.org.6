@@ -1,130 +1,187 @@
-Return-Path: <linux-kernel+bounces-177935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C338C4670
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:48:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D0A8C4674
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19D21F2265A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:48:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0266B21356
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEBA2942F;
-	Mon, 13 May 2024 17:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D928E34;
+	Mon, 13 May 2024 17:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bk/Gg8Oz"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="CJ67mDu2"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEFC364D2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549032557F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715622516; cv=none; b=I2QrFbPZw0IA9zlfhC9TFfnvIv4jABEVwZG/f9pjcFAteBeCa0w4qc58FKeotXAe1bzdVxafStlkCMv+mJHgGiniXNLUXp6AaZ+RcG0NYeJlBkPJSZNq3pKU0ZhG9oFiB4uxgyo0Cze0EnOVHbGW+yt+QYpY5Zm1ciKkFeDg9bM=
+	t=1715622633; cv=none; b=YU7SOyn2ptcQ5G+reRWDeXuQKgb9RzCG9w1RFc4PiepHVXUaT17GDVEV/KDvyXpPusyhiWRN4jwkxtCamwaVOCE5gYwDu0O80/2VErcicYVDkoOr+0ETqzvzotiLVid5WqQVfH1rvYo6Ilyr/vpsXNRr6FXjIJQkZjrsKLDtxm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715622516; c=relaxed/simple;
-	bh=Qb9pI7QfawdOPDOVP3uOoIDj0eSToii5WjRsBEqNIHE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fOqqTOmxBXi+VN8SNKMY5PentZZN5NucX4SE21fnuCn+XlbLsR0XpgUjKoaw0yo26KFSaAf/WQC2zyOsliW8maTSFvuzLl7CCAJMcQpBZ2a9K9lOj5p3OmYtVkDBhI1kqVZ5N5gwhqQOlhYHEp1tcgY3XLjrW5f4NeH/WhtO6p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bk/Gg8Oz; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59cf8140d0so1071328666b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:48:34 -0700 (PDT)
+	s=arc-20240116; t=1715622633; c=relaxed/simple;
+	bh=CkWV6BI6pB19qRh2l/tD81uJGerHWKsptqUyLWE4ZSs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qJuaev3HEVrGGASAPLJUZdmtZVuqb6U6eTyuXZLZQxU5KbKLbbE+xW2t2r5tu18MmNgo5jQ9i5EZazyBh2cNtuIHhrWVLohTK4Z2S+QgWllnkj4HAu+8vfA0qzEX+iToXmqLyPGdsVnuX/y/Lk7pBv6VzbRVWlsWKYILj+6wdEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CJ67mDu2; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-ddaf165a8d9so6308627276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:50:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715622513; x=1716227313; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gRY3tylgCmAliI8QRE7thGCyBV7jJo3wfys0Ur6AtsA=;
-        b=bk/Gg8Oz+f9piwrkNNGwhRueQSquVpOk3rSxPgTNKprtsIz63AdTKzhCu9uSlhMESt
-         /YYS3CD3TSv6byf0h3SOQWCa+5IpckzRS+rYFtiU2N+57yFWutvrRTeZGfKHBLZYD9i3
-         QH+bqcH4AXn4DIywuJ0Lxu0VPs9qcTd+WHFgrnnACGRQ/lJXHM5ZQZ3dHJ3LZseM7K5b
-         YIrlGCUzrljVDzmypc77PGuObojSYiAuZSgs2Ve9R8YEAghQW4RmAvnCRJcmzrMM2eeq
-         CdElxCYrsDtIb+rH4+g1MsXUeMRVSkx+GmyUmC8kvIImfNmaRU5mFfFGED3nxQrbvdeC
-         EvEg==
+        d=google.com; s=20230601; t=1715622631; x=1716227431; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GydCGd/+JJ6CmtiwKdDK/+LMhNIkbo+G+AlL2WnOnIo=;
+        b=CJ67mDu2FEEbHx8Pd8/KXPC6JOEnFYZSEWNrUTCMpOwBHa+aI4GWmNfTXTcCTt4c2+
+         jyiOPUm8VROgw+0F0S+6E7aTHzRgJg/7c3QTcktplQTnWgjofytSFGc4LaF81DaAJ5Io
+         Zkef7RK0Jw+RMO6uN+tS8nfu3FDwOEUUuVOkwPzFJFedb4EHRMoMcdCKDw0CrFJN8X9K
+         6Ggd2VR+vZZFtHNCvyNtm/3FqMEqz5+jZ6OMYsu4QgZhbDtID+qZKmvU+ieFLEaG3d2J
+         vhb7efLg6BQylmk8IPq4DDjUQdOlRV//Uz2WK+nf2ui9fNdBYAr/vfy3V4ZacQfgz+dc
+         v9qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715622513; x=1716227313;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRY3tylgCmAliI8QRE7thGCyBV7jJo3wfys0Ur6AtsA=;
-        b=jipNztB1PyNzsaN9vKbCwK/BW/0mHbXnLmcF9H+jl7drHPQKxlvh50NBqzAiU5VN+8
-         KyuoxYacto6gMgayiCaXdN9Mp1X3DmWjDY09akjqkoDxjvHHhewyKd1Bl1KtGiVLltdp
-         63I+PZhHydIlLVbcOQUcyixm2XR9TCq4pe2W2SPskDIus1sAQuEm6+PkE6rk4hzwEeZQ
-         bHuMWgnyR+aCysieBFgadk6JoV9Qk2nBYMjzNkLBZVKbYvk21cyh7Mpa2WqlF97sEDM0
-         VctBWZO5NoFo8IWdXv6FjIEMV44Pj1/grtkOMflomxe6bYJaq7ZZ62W1Zk30j8J1pUp5
-         AaxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOwmz2uX2mtEiuW7sk7yabKbUEpV7TEg7A8gs9keVvGP7AaAFWUiyR79setWV8Xb3aTMRBsm1jquQFqA8GNj1cqb+gDGKTAB3iAIQR
-X-Gm-Message-State: AOJu0YyX31Zpxzf9W0x3p52x8sa6xeWD9Grrt/5MNQ/zB0+4jfqwY3FN
-	TNcvQbbEFFihoawflOHqKYmYktEzEfLbIUomvKMdZ649ynhM4Hran0KcuNSHWMI=
-X-Google-Smtp-Source: AGHT+IGrVeWxVKN0p3yev+Hucpc6yYLDpPjmN9epTdt903Nk5yOck85W17lX4Glgzej2638xCJkGQQ==
-X-Received: by 2002:a17:906:17c5:b0:a5a:1b57:426f with SMTP id a640c23a62f3a-a5a2d54c10fmr711563766b.13.1715622513191;
-        Mon, 13 May 2024 10:48:33 -0700 (PDT)
-Received: from [10.1.3.28] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cf9csm620178866b.7.2024.05.13.10.48.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 10:48:32 -0700 (PDT)
-Message-ID: <5bcfbb01-9650-4420-8982-af6537d7e7b5@linaro.org>
-Date: Mon, 13 May 2024 18:48:31 +0100
+        d=1e100.net; s=20230601; t=1715622631; x=1716227431;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GydCGd/+JJ6CmtiwKdDK/+LMhNIkbo+G+AlL2WnOnIo=;
+        b=mRFA35gBI6AO0xwjmgGAzFygl5NGqcuCZfO0pmcXJjfsUjaRagylVvkT0+dhGS2/Nn
+         PUYouVJL+ytuJLFDSUPIISFpmxSzOBj9OnlIOrTCKZCqahgqICFK7UAYLfdc4Ablzi9I
+         yCPg0F8+yCMWcjQ5W3nH/DlTKzJxBHD2AOKbRu7n9De4nJmUq9AELIKrKOjqUyf2g1Lv
+         GJpgS5KhmuqNYKmWdLRiT6xxK7g4CHNMqmLzgqBtuhPuHOKBduH5SWMLtFkDEU5JHb4B
+         ziLNsX8PVDBXAs/kOgIARUbVx0zsjZ/ntYwDhPc3kqWVVxtrDR0v6BLOG9HMOUwetHxB
+         ndiw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6QgJMlUK7u9JJhrVxciJzp64NyD0ZXGciy2++j0VhDoTLF9B9CE2XY2Yu4qcpS8YQ50M0XCZ5I29ud1nOvOXElTQD9WEkbICOidr0
+X-Gm-Message-State: AOJu0YzPgF8F+SqWC8r45u77MQSbPHbrvbZpDwwwBTkA7bw2GCAD66D2
+	/iYwVukG1Ro0QL9cDeKRj1PsBuT6xGGVZIBWxRyzXCkLw9gayRGfDLlmZoffQsnuvwOIkLlPlr6
+	pv5/N/KmXRSjIV03KV5lkGw==
+X-Google-Smtp-Source: AGHT+IH4o0V1PT7B0QIXUskKpo4VzIQ1a06kKnU6elsU559DTS+Pna5InxhhAGymLEnliGrWo2+jzRQfH5DNflrfYQ==
+X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
+ (user=justinstitt job=sendgmr) by 2002:a05:6902:1026:b0:dee:6147:7e26 with
+ SMTP id 3f1490d57ef6-dee6bf164abmr531190276.11.1715622631413; Mon, 13 May
+ 2024 10:50:31 -0700 (PDT)
+Date: Mon, 13 May 2024 17:50:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 8/8] media: qcom: camss: Decouple VFE from CSID
-Content-Language: en-US
-To: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, rfoss@kernel.org,
- todor.too@gmail.com, andersson@kernel.org, konrad.dybcio@linaro.org,
- mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
- hverkuil-cisco@xs4all.nl, quic_hariramp@quicinc.com
-References: <20240411124543.199-1-quic_grosikop@quicinc.com>
- <20240411124543.199-9-quic_grosikop@quicinc.com>
- <adbd0eeb-62c0-46a3-9cbb-92f6fde6c152@linaro.org>
- <b4bf05b5-4e03-40d9-8149-956b55d91a41@quicinc.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <b4bf05b5-4e03-40d9-8149-956b55d91a41@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAOVSQmYC/4WNUQqDMBBEryL73S1mjcT2q/coUhLdaMCakkhok
+ dy9qRfo5xtm3uwQOTiOcK12CJxcdH4tQKcKhlmvE6MbCwPVJOu2Vmgklg4mGx9WL4sf9MaoTEv
+ UGN3oTkCZvgJb9z60977w7OLmw+d4SeKX/hEmgQIbIttJc1F6bG+T99PC58E/oc85fwFTKLYmu QAAAA==
+X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715622630; l=3843;
+ i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
+ bh=CkWV6BI6pB19qRh2l/tD81uJGerHWKsptqUyLWE4ZSs=; b=mNrfhs0/3ITeH/kBQ/vw1Stjlb+h1///iiZ8tKZCfRXm39h8a4mOs9jc+AE1Xk4uHJiInitje
+ p7X/R7A/nn1Bf98PIqJ7PZNOWtTGhtzf87FUPxdrSvNMb1SEtvvD7P0
+X-Mailer: b4 0.12.3
+Message-ID: <20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com>
+Subject: [PATCH v2] fs: remove accidental overflow during wraparound check
+From: Justin Stitt <justinstitt@google.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
+	Kees Cook <keescook@chromium.org>, Justin Stitt <justinstitt@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 13/05/2024 17:26, Gjorgji Rosikopulos (Consultant) wrote:
->>> +static void __iomem
->>> +*vfe_parent_dev_ops_get_base_address(struct camss *camss, int id)
->>> +{
->>> +    if (id < camss->res->vfe_num) {
->>> +        struct vfe_device *vfe = &camss->vfe[id];
->>> +
->>> +        return vfe->base;
->>> +    }
->>> +
->>> +    return NULL;
->> I can find code snippets above like
->>
->>      if (IS_ERR(csid->base))
->>          ...
->>
->> So, is it really a good idea to return NULL on error? Probably it might
->> be better
->> to return a reasonable error to the caller.
-> As general rule i agree. But here either we have address or not,
-> i dont see the reason to return an error code. Also i dont see what
-> caller will do if he gets error code instead of NULL.
-> I am refering in particular this case. If we have different error paths
-> of failiure maybe it will more sense.
+Running syzkaller with the newly enabled signed integer overflow
+sanitizer produces this report:
 
-I don't see a compelling reason to change the submitted code. I'd leave 
-well-enough alone for v4.
+[  195.401651] ------------[ cut here ]------------
+[  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
+[  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
+[  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+[  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  195.425804] Call Trace:
+[  195.427360]  <TASK>
+[  195.428791]  dump_stack_lvl+0x93/0xd0
+[  195.431150]  handle_overflow+0x171/0x1b0
+[  195.433640]  vfs_fallocate+0x459/0x4f0
+..
+[  195.490053] ------------[ cut here ]------------
+[  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
+[  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
+[  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+[  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  195.514075] Call Trace:
+[  195.515636]  <TASK>
+[  195.517000]  dump_stack_lvl+0x93/0xd0
+[  195.519255]  handle_overflow+0x171/0x1b0
+[  195.521677]  vfs_fallocate+0x4cb/0x4f0
+[  195.524033]  __x64_sys_fallocate+0xb2/0xf0
 
-Please keep changes for V4 restricted to formatting/line indentation/SPDX.
+Historically, the signed integer overflow sanitizer did not work in the
+kernel due to its interaction with `-fwrapv` but this has since been
+changed [1] in the newest version of Clang. It was re-enabled in the
+kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+sanitizer").
 
-I don't want to have to reverify all of this code unless a bug is found.
+Let's use the check_add_overflow helper to first verify the addition
+stays within the bounds of its type (long long); then we can use that
+sum for the following check.
+
+Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+Closes: https://github.com/KSPP/linux/issues/356
+Cc: linux-hardening@vger.kernel.org
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Justin Stitt <justinstitt@google.com>
+---
+Changes in v2:
+- drop the sum < 0 check (thanks Jan)
+- carry along Kees' RB tag
+- Link to v1: https://lore.kernel.org/r/20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com
+---
+Here's the syzkaller reproducer:
+r0 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file1\x00', 0x42, 0x0)
+fallocate(r0, 0x10, 0x7fffffffffffffff, 0x2000807fffff7)
+
+.. which was used against Kees' tree here (v6.8rc2):
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+
+.. with this config:
+https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+---
+ fs/open.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index ee8460c83c77..23849d487479 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ {
+ 	struct inode *inode = file_inode(file);
+ 	long ret;
++	loff_t sum;
+ 
+ 	if (offset < 0 || len <= 0)
+ 		return -EINVAL;
+@@ -319,8 +320,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+ 	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+ 		return -ENODEV;
+ 
+-	/* Check for wrap through zero too */
+-	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
++	/* Check for wraparound */
++	if (check_add_overflow(offset, len, &sum))
++		return -EFBIG;
++
++	if (sum > inode->i_sb->s_maxbytes)
+ 		return -EFBIG;
+ 
+ 	if (!file->f_op->fallocate)
 
 ---
-bod
+base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+change-id: 20240507-b4-sio-vfs_fallocate-7b5223ba3a81
+
+Best regards,
+--
+Justin Stitt <justinstitt@google.com>
+
 
