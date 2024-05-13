@@ -1,110 +1,115 @@
-Return-Path: <linux-kernel+bounces-178045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE39C8C47D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:48:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708118C47D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5B1B23CED
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:48:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10DBF1F24B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E79F78C9B;
-	Mon, 13 May 2024 19:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5557C79B7E;
+	Mon, 13 May 2024 19:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qw+C8GQZ"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B3/TvDQb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B22D77106
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A9F77107;
+	Mon, 13 May 2024 19:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715629671; cv=none; b=rowRoJswPhuVcZKY28e3s2KYnXnK39atwoej91xCRjAeo9efcjh1WIZH1pZ9Xgs9mwN87nU++uFLnhomhnI7vEBm28MD9b43gEO4mu7/ioCM0y6M4M7j7cQSHMC45cHlzEMBzZAhDKqrPDc41Mo0tNw+9GzsLIF5hdaTILMy49M=
+	t=1715629734; cv=none; b=TEjLScff29YDanoZswNrHiOdSqxhsCbOlnjbHVBE8Fcy5wsF+Y4t+L//f6THYYSSStPFdbq8yUhpdYYllM9yihT3p9uqmRYLScBASjNfNuVkxBWimuAq5aXI5Z8mqF46R63jP6Kjrow0jW3WLMNr+sGUi3z5QLa6Miub1w42ImU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715629671; c=relaxed/simple;
-	bh=z8Twj3N13mhdW7sEoJ5gZMRJ0MxEOmkRN+36+9pgaRE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JGbMTBVAiJifZ4Nnu5IN0JkoWJ/ytwx9oIW7ZwNH9SF/8CX5wD0x5g9JX8WnVVT8v3C+134AOeXH8iU5hR7lWW9puPe7e1RoDaiyIl34hgNg2dFclWF38cqv9QVGXG+5p+l7IrEcQ3oNM/A1Ysc0LeOdTH4qeRFULZNJyqOeuD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qw+C8GQZ; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-61bee45d035so49364257b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:47:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715629669; x=1716234469; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DUknfNXk78tNoNSV/FKbuOTqBHWDprugew7p/EYSaSg=;
-        b=Qw+C8GQZR1kRCheFb/tzuinNqtjxndae1jJV2IlZxLZpGFwyByfWdboBhSfjd0+oHO
-         ikkCEN5sol2iEij/ZR6hBQeVdAx0x/jp/M6MZtw/aopXSUHclN3VOgTa/1mHYPyX46IB
-         XfXwoCSFNdn5HYEAht3xnYEzDVYG6iFvNt9t0doukTC+Je6uX2G0FyJD7MJoS+iVxpXA
-         HueoN2BJMXtuwUjarm/049cypgeZDEDWwgunNoqv0uu+IdTS1gK8L1h7ODnV7Mx1qL92
-         AQ941Fwebiia9A7Kt8nYVTfVYTDYA+l5NDsE2r96fVpPURxOph0qDDoBP2g6W7Ts3XXn
-         HAmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715629669; x=1716234469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DUknfNXk78tNoNSV/FKbuOTqBHWDprugew7p/EYSaSg=;
-        b=FObWktoFiDnYwgt3P22hP4YLRP4ZOd5HY+qG97MFum7medDtyDUyxDG+zVJQQ3h9FY
-         +QIG2W7vB6seyb8F5nRGwJC+Y3YmFSsWVPTsJUy+7pRQeEyjUnAWKD8uuvuMRKL1PZL7
-         z6AUzsZaDvXwsCuO06bbh9mxzcwQBohU+EKXdDXAWVPvIuMkd2219Q3R9xaFZZQIlZsa
-         WS5SkfB/f+uWNk4YAgzK345uVVJz5kCJ3ywzeiZlTzKgzQ+0UTnHQx2T2M54C3YTY/GK
-         n44xsRw95FRxb4R9sQrrpFV1c0J7GnwsytxfC/8m2qD27RDGRw6RtZ/Owd5ftVZwG56T
-         XAEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLR+/lTPmN1ZMaCnx9udW5ZduXeGR9/UhN8DkcdMVAwEeaU9dK+LUiSpX+DhD0ez1R3TUwICLDIuvytG/LHDYNRTkZnPZxNDZzXRHy
-X-Gm-Message-State: AOJu0YzSTKh7VvCYikHb4eCVX+MkHGmYY4mAS3iQC0IVOkCLSO+fAJUI
-	nH6lUuNhzc34G6tQFEFxv1E2dutv6pgJ9Y5bZw8U6p3VVIK+TSwbJDF4sYdi8N50k5r0okHQPvF
-	tn5b8ShNJW7UoyCVQmBP+9BjIGSLqdb4DNLkSXg==
-X-Google-Smtp-Source: AGHT+IGnYYmt0EOnAPY00AN8x9tLJNXpR+W6Srvl1WDn62aWdwxJ3ONetwGbkGS/UdOHkoVbG62q60/rx6bF8LH6+Ns=
-X-Received: by 2002:a25:f90e:0:b0:dc6:ff32:aae2 with SMTP id
- 3f1490d57ef6-dee4f3356e2mr8656703276.63.1715629669087; Mon, 13 May 2024
- 12:47:49 -0700 (PDT)
+	s=arc-20240116; t=1715629734; c=relaxed/simple;
+	bh=GWnloP3tT/YXXyk4QBq6IzLYt0yUwn9pk8D1SDfG4So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2+mXEth7QChItbvHU3ny4AkpaBxmTh5CS3rYXsqLuJuujlFrPgfd9IMslC/HQ7JPZuQ6o6V6LkATH4c873+LpViwtlQTPinQ/9DiEsRa99PER/GrViLXD5jC4qEa796VEgvS6qb4yVW+cdNz9LlIhREX5bS3dlOBaiGuxJJ3gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B3/TvDQb; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715629733; x=1747165733;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GWnloP3tT/YXXyk4QBq6IzLYt0yUwn9pk8D1SDfG4So=;
+  b=B3/TvDQb229/Hm75qbULTKzVRU0FfCX9mNBSo8pmFCH8mAnL3p6MVXby
+   ehCfmQHIIxz9Y6VdwuVXqNgc9JziP4vw7JMptfX6eXvDeF+HObWVoeZsj
+   +gdNhxBEpGk7bwZldmdiRDeh/mDii3FoVTl+OaQJoT62KKiBk3RpkPnTp
+   /q7Uhzrt/lh8L1lUjGmm/ov0HbLQMJuY+Qx5TsDBCED1gE1clvkwIQj8C
+   OAgbYe4649BC/7MQgz+KWaeONYL9q7z0qn9bvLOJUvv4gu9+WxW+do5ja
+   YsXBj0H9iNXU6JF4r3Eni//D/vCpVpm5C53MwSZK1u2GsDU+jzyWQBKv9
+   A==;
+X-CSE-ConnectionGUID: 05owgKGfSt+70jjdh7jKsA==
+X-CSE-MsgGUID: 4figUi2uRWy8r3+cfFmAyQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="29074350"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="29074350"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 12:48:52 -0700
+X-CSE-ConnectionGUID: XA58acsLS7aXmsJ6E+RhRw==
+X-CSE-MsgGUID: BDcvxECwSLyPGiiR4vN7zA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="67912153"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 13 May 2024 12:48:51 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6bfE-000Ac9-04;
+	Mon, 13 May 2024 19:48:48 +0000
+Date: Tue, 14 May 2024 03:48:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: Re: [PATCH] clocksource: Add node counter timer driver for
+ MIPS/Loongson64
+Message-ID: <202405140342.uKkbQKIJ-lkp@intel.com>
+References: <20240512-loongson_nodecnt-v1-1-2157b92ef8f8@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org> <20240509-dt-bindings-dsi-panel-reg-v1-3-8b2443705be0@linaro.org>
-In-Reply-To: <20240509-dt-bindings-dsi-panel-reg-v1-3-8b2443705be0@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 May 2024 21:47:38 +0200
-Message-ID: <CACRpkdaE0tMQ5=pSofT9pGVcSBLp=dm_7WedpO2EnkbP1w+08A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dt-bindings: display: panel: constrain 'reg' in DSI panels
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chris Morgan <macromorgan@hotmail.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Konrad Dybcio <konradybcio@gmail.com>, 
-	Del Regno <angelogioacchino.delregno@somainline.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Luca Weiss <luca.weiss@fairphone.com>, Dmitry Baryskov <dmitry.baryshkov@linaro.org>, 
-	Shawn Guo <shawn.guo@linaro.org>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240512-loongson_nodecnt-v1-1-2157b92ef8f8@flygoat.com>
 
-On Thu, May 9, 2024 at 11:43=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+Hi Jiaxun,
 
-> DSI-attached devices could respond to more than one virtual channel
-> number, thus their bindings are supposed to constrain the 'reg' property
-> to match hardware.  Add missing 'reg' constrain for DSI-attached display
-> panels, based on DTS sources in Linux kernel (assume all devices take
-> only one channel number).
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+kernel test robot noticed the following build errors:
 
-Looks right to me.
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+[auto build test ERROR on 75fa778d74b786a1608d55d655d42b480a6fa8bd]
 
-Yours,
-Linus Walleij
+url:    https://github.com/intel-lab-lkp/linux/commits/Jiaxun-Yang/clocksource-Add-node-counter-timer-driver-for-MIPS-Loongson64/20240512-200356
+base:   75fa778d74b786a1608d55d655d42b480a6fa8bd
+patch link:    https://lore.kernel.org/r/20240512-loongson_nodecnt-v1-1-2157b92ef8f8%40flygoat.com
+patch subject: [PATCH] clocksource: Add node counter timer driver for MIPS/Loongson64
+config: mips-loongson2k_defconfig (https://download.01.org/0day-ci/archive/20240514/202405140342.uKkbQKIJ-lkp@intel.com/config)
+compiler: mips64el-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405140342.uKkbQKIJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405140342.uKkbQKIJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   mips64el-linux-ld: arch/mips/loongson64/time.o: in function `plat_time_init':
+>> time.c:(.init.text+0xb4): undefined reference to `nodecnt_clocksource_init'
+>> mips64el-linux-ld: time.c:(.init.text+0xcc): undefined reference to `nodecnt_clocksource_init'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
