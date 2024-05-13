@@ -1,118 +1,142 @@
-Return-Path: <linux-kernel+bounces-177121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0318C3A62
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:08:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2808C8C3A61
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3962812CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8B7328130E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E96145B20;
-	Mon, 13 May 2024 03:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2C2145FF6;
+	Mon, 13 May 2024 03:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PmPPUFps"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BGOfnao6"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA3712AAEA
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084983E47E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715569727; cv=none; b=rM6EfkKD9WHsLdoV8p3Swdgdt58n92TOeled1dLCYeoLNvGnADwuLr869PWv0T/s6roPNx3sWxAbMd+ODPCZQsyYeUfU12TLeqo4IiAVmubb0k9LMxZlPaleDvjdgIGcNslhMykK1QMQyNYZAnaC+oV4TzL3qaK/RkxnS1Kq5SQ=
+	t=1715569697; cv=none; b=AnoxhEgXvEQhmHSz6XiXY3J8iA54uZ8USWpLBhClwTjZQFFgk6M6Jb5eEbG52kVwzf2gDuu1TsQcZo3RCsApO3b6kTKUwUMcLRqvh7EccFpTBiXxE/IhqgUTMLQGI+r6lJNopgru5ixOc2PypQTozJZLFcihqtSEr1/08E4ZiqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715569727; c=relaxed/simple;
-	bh=gA/7lXvyMG7IHm8IrlNnrTBKaBmoPVKDklOfk18TL/A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kahs3VxKBMTz+ol6uQH25+b7LM63VR/v5xisEYeyFwDC3Zy0kPyFj4dAv/vIobJmVGPp2dix5pn3N1HJ5FJe1VFoDIsSVjCYR3rM3iN6vVTJvcsGNnZPycHkWPH2O/rnOcph/Ttw6Z5H5IC6OdqHZwjt/M33Ai9urmxk9w8PeBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PmPPUFps; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715569722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tnZpkKg9cgdujd3Aq4lD9/9/FxuyG285EmfT33GGzAE=;
-	b=PmPPUFpsmDLdW9nAkuKBKOvQZhhIMr8XxYT78ICVRwJkHxeFtr3iwVxZeKxFfc+l48Hb+U
-	qEtyYgQxc6qVfOvr38nbMTX+k8D7q2NQOQYMtI/90IYOLKoL4qsJUSjQ5aToFa+TB10LYA
-	K7vD1DH5aJPSMiMe6JRe8ICGml5Hu2E=
-From: Chengming Zhou <chengming.zhou@linux.dev>
-Date: Mon, 13 May 2024 11:07:56 +0800
-Subject: [PATCH] mm/ksm: fix possible UAF of stable_node
+	s=arc-20240116; t=1715569697; c=relaxed/simple;
+	bh=9b9dap/mBsOztov9foEw6JPg7L/Za777S45jFaNqDDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpMqxOxGMNRlRx/vDMJYNmUOGrvq6+nyN9gsCJIrRzdo6q6qwASzMcVq2fK14u3SCztn7qCYiCxgw5x4TY3Bkgh2qnHANSrrRhifXzYO0W4/rahjhkzrzq4fPjYuGp8dEnFUgJLYiBpVQhesttqGQBlhRBzm0pfdnOp2rlx4PJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BGOfnao6; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b27d9fe710so1678435eaf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 20:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715569694; x=1716174494; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W4w1jo49aw27+rvRKGShr7/YYMsETCIgWlNJTN+A7s4=;
+        b=BGOfnao6EvDA2yzURYM4+6q62eUsZkIMvkUsyAxxhOXTW4nJjrxkwdCUhzjghOAujy
+         OkjZr2d3OlVB/Lbd6rt0HEAvm+q11dMJKbXjFDofhbzfrJbk8rFa/Y8TzkGnBPdQJAHW
+         rpRvWPDFJtDY1721XSlFKmkqPEfXgpITzQ0Ek=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715569694; x=1716174494;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W4w1jo49aw27+rvRKGShr7/YYMsETCIgWlNJTN+A7s4=;
+        b=iCCLujHc6Xuy3Bfl1z3k+wty6pVONi5M8spj+NxiBlGApAvGe9QFquHSA4g2so0dj1
+         UQFYgaJcY6QwN+g3zC1MhE1QIPIDRudQKHx65sZ5gGQNl/dSJd7WMffhcbus9hMtYyli
+         zBxo/V5fPl0AeHcUbauWalk/7C6I0zaVupqk20ytEPSNQliK4h211T2SeOW9zAN6m2Er
+         e27Sin5eaUXGZ2Xw1ddbcPQOeKCJOtpcqYxq32xvlBJRe5d/ogqLJ1ZpbFYQn0PCv8ZA
+         nITWPQTLeGc5J2Fs6UIqVKHP+WJhoFOnjtlUFWrFPj2e29kHwmluMQq24mRem4jFbSfK
+         dOUg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9OrjSducyixB/Y/wjdAyME/4DT2gtljAOxi5TLWuYqNaqgnC/cHIq92I3ygXrU8+gNREgHBo9DGPayGLOB1VfzgvkuM+t2QXm30rA
+X-Gm-Message-State: AOJu0YyvtWKDXCfFW36QL3zBWxkuk+zOigwT6PpNJ8gQNUCVaKy0cMfw
+	F3S3psMdOrHqjRPvJEeLFogxYJwjTtqd7EueyYf3BKZigZxcAIxGM8HVKLEwOw==
+X-Google-Smtp-Source: AGHT+IHemrUQTb2bVSGfwn2RlROCPRFiGs0Fe9XL2NMMyj8IULH+Ezp+5PKYw2emvI1F7voWXC5PIg==
+X-Received: by 2002:a05:6358:1209:b0:18f:6026:2d6a with SMTP id e5c5f4694b2df-193bcfde4abmr844964555d.21.1715569693849;
+        Sun, 12 May 2024 20:08:13 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634119041b2sm5776476a12.94.2024.05.12.20.08.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 20:08:13 -0700 (PDT)
+Date: Sun, 12 May 2024 20:08:12 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Erick Archer <erick.archer@outlook.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] Bluetooth: hci_core: Prefer struct_size over open coded
+ arithmetic
+Message-ID: <202405122008.8A333C2@keescook>
+References: <AS8PR02MB7237ECD397BDB7F529ADC7468BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240513-b4-ksm-stable-node-uaf-v1-1-f687de76f452@linux.dev>
-X-B4-Tracking: v=1; b=H4sIAAuEQWYC/x3MzQpCIRBA4VeRWTegZgW9SrTwZ6yh0nDujQviu
- 19p+S3O6SDUmASuqkOjHwvXMmEOCuLTlwchp2mw2jp9MkcMDl/yQVl8eBOWmghXnzHGeMlkczq
- HBDP+Nsq8/ce3+xg7I7TMe2gAAAA=
-To: Andrew Morton <akpm@linux-foundation.org>, 
- David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
- Andrea Arcangeli <aarcange@redhat.com>, Stefan Roesch <shr@devkernel.io>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715569718; l=1596;
- i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
- bh=gA/7lXvyMG7IHm8IrlNnrTBKaBmoPVKDklOfk18TL/A=;
- b=B1X1HMHHKXtit/7X6hdcXthfuE0UbCscRgiIoqnVwo40ChWPCoX/sArCTV7ZidHLIxvtW5T7l
- YL7nsjs5gk9Bhu6S6h66FOVNFhh0XGvCuDXijPKZ9B8GBzQtTuj9mRK
-X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
- pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AS8PR02MB7237ECD397BDB7F529ADC7468BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
 
-The commit 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page
-deduplication limit") introduced a possible failure case in the
-stable_tree_insert(), where we may free the new allocated stable_node_dup
-if we fail to prepare the missing chain node.
+On Sun, May 12, 2024 at 04:17:06PM +0200, Erick Archer wrote:
+> This is an effort to get rid of all multiplications from allocation
+> functions in order to prevent integer overflows [1][2].
+> 
+> As the "dl" variable is a pointer to "struct hci_dev_list_req" and this
+> structure ends in a flexible array:
+> 
+> struct hci_dev_list_req {
+> 	[...]
+> 	struct hci_dev_req dev_req[];	/* hci_dev_req structures */
+> };
+> 
+> the preferred way in the kernel is to use the struct_size() helper to
+> do the arithmetic instead of the calculation "size + count * size" in
+> the kzalloc() and copy_to_user() functions.
+> 
+> At the same time, prepare for the coming implementation by GCC and Clang
+> of the __counted_by attribute. Flexible array members annotated with
+> __counted_by can have their accesses bounds-checked at run-time via
+> CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
+> strcpy/memcpy-family functions).
+> 
+> In this case, it is important to note that the logic needs a little
+> refactoring to ensure that the "dev_num" member is initialized before
+> the first access to the flex array. Specifically, add the assignment
+> before the list_for_each_entry() loop.
+> 
+> Also remove the "size" variable as it is no longer needed and refactor
+> the list_for_each_entry() loop to use dr[n] instead of (dr + n).
+> 
+> This way, the code is more readable, idiomatic and safer.
+> 
+> This code was detected with the help of Coccinelle, and audited and
+> modified manually.
+> 
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [1]
+> Link: https://github.com/KSPP/linux/issues/160 [2]
+> 
+> Signed-off-by: Erick Archer <erick.archer@outlook.com>
 
-Then that kfolio return and unlock with a freed stable_node set... And
-any MM activities can come in to access kfolio->mapping, so UAF.
+Looks right to me. Thanks!
 
-Fix it by moving folio_set_stable_node() to the end after stable_node
-is inserted successfully.
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Fixes: 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication limit")
-Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
----
- mm/ksm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/ksm.c b/mm/ksm.c
-index e1034bf1c937..a8b76af5cf64 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -2153,7 +2153,6 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
- 
- 	INIT_HLIST_HEAD(&stable_node_dup->hlist);
- 	stable_node_dup->kpfn = kpfn;
--	folio_set_stable_node(kfolio, stable_node_dup);
- 	stable_node_dup->rmap_hlist_len = 0;
- 	DO_NUMA(stable_node_dup->nid = nid);
- 	if (!need_chain) {
-@@ -2172,6 +2171,8 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
- 		stable_node_chain_add_dup(stable_node_dup, stable_node);
- 	}
- 
-+	folio_set_stable_node(kfolio, stable_node_dup);
-+
- 	return stable_node_dup;
- }
- 
-
----
-base-commit: 7e8aafe0636cdcc5c9699ced05ff1f8ffcb937e2
-change-id: 20240513-b4-ksm-stable-node-uaf-ccc7fe2fd6bd
-
-Best regards,
 -- 
-Chengming Zhou <chengming.zhou@linux.dev>
-
+Kees Cook
 
