@@ -1,89 +1,118 @@
-Return-Path: <linux-kernel+bounces-177231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C842D8C3BAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:00:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB5118C3BAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:01:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEFF7B20DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 083EE1C21067
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9494146A78;
-	Mon, 13 May 2024 06:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63181146A66;
+	Mon, 13 May 2024 07:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w1REv7aI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y764Y8pL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DL1O4sdP"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D433E1FA1;
-	Mon, 13 May 2024 06:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C3C1465AD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715583592; cv=none; b=J8+bqoHKylscQIm/3dlyWjxgSiTJveVqeeCw+v1TtKTz+oN0BdSarQQDo9Pus7CzbTCgCEWyBWFTtNRtazwRT+LDDFMZtZg+EZkCUX+vXMhwSPfkfw2YMDHffeEnhWeRY9NDth6Bt86035VB68uPu+m/yubiPsI+RhxpNrhN71s=
+	t=1715583667; cv=none; b=iKeZ32HXwXJn7wVyvtru1BuzVaRh1UYTD7iCXTXvaYUvyXJvaUEks9dAr1gAqFztYPd3Pw5Rv4vy5vFWAkhjIdq7wDU5DSNbO0z7OO/ouGS+E1ObDULtcfS+yiRTmUe6shxQKUtu+tHHcM8fXitJxzNUuvMQLn+w1d2te5UMZPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715583592; c=relaxed/simple;
-	bh=+QlJWeIeHVmESlV+OK30IFE5ABQo0wAgt6nEKn8jBuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKjEyylDgB+pFyBxuiKyQcQ1Q4UFzLrkjqJpOodcAx6MKBFCGkI/R/laxopyW2fG6JpzgmbRm8vHSpDTvVrwI7uddFR34dd2jAk3g3JQPjUj9PrlYv/TAQCXP8/fezr5eUwTqDp57jfd+m/XbymigtaO8eHQGyoUlQkIIEx3Sak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w1REv7aI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y764Y8pL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 13 May 2024 08:59:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715583588;
+	s=arc-20240116; t=1715583667; c=relaxed/simple;
+	bh=FNglutKOMNf4oIKy8z3CJ0ag4Xtd06wdi78Qz0/sjP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vBhk2jLqcXKgeBt6ydsU/hM9IO6V6EUQp5OwYZ08gmQSQTyErqDX06Os/z4aRIAKutAI3mRSiJLWKRv5WQ9KfQGPY3iqZG5jdupnNgMfQuywk75NXkTOjWAsc4dYquZJGyJ+m0IBPMauUS2rrqxLDvS+WjHq1wvu5KIKs3jhf2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DL1O4sdP; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b666dbe4-e406-44fc-8bb7-122e6c007948@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715583662;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xYGAIigzwsVOzIOIcVnX378flEd/W0YT65rgmhlUiO8=;
-	b=w1REv7aIwPEbQxbCBb7jjuer5yLMMtIy2VpN47nmcE8wJjeYJGZSpD/sQ+z9mB/fWktdpr
-	z+Fx2qkOvBW+boVIj8esx01HmsxFvqTRz9s86QtJ2/W8W5YmjvN9wcJOTK7fvsqwEGrKeh
-	mz5e9fm5tgEEowAjUj9umvS3x+tv+kNF41VWxNEjzuB8mAQg6J9zrM3Kq3lcOlkB/ZiHN+
-	HIWqDMHBQcTE7+1kwm0XRJMJJbhG1SmyAV0iDMdxKsxGlhluBhrXFPL2oA89G/Lw4Bjx/X
-	fMuCN1ixbl5o0dpPe/NcfFMcD8iDAajDnVYPUiRPUXmVdtdWQvMNn2/M7ZgLww==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715583588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xYGAIigzwsVOzIOIcVnX378flEd/W0YT65rgmhlUiO8=;
-	b=Y764Y8pLx0BJGgo71/a/L8oPs1+vYyj5LzKk/T5Pdb/hgmrHC488lc8l0leXf6RSfyM0Og
-	atk1bOCuT7F9P8AA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "John B. Wyatt IV" <jwyatt@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v6.9-rc6-rt3
-Message-ID: <20240513065952.ueOpPAaq@linutronix.de>
-References: <20240430110347.LCK9LAJr@linutronix.de>
- <Zj5jVqzDMXGZtp7y@hatbackup>
+	bh=zuM1ivPBry8hvT+SMqe+Wim0oUpETn/fwoja6E4kiSE=;
+	b=DL1O4sdP9UfM9V2ARELSgsO1X5MSdx7mxbW/hLANEG8uSQPn8nxDnmNGMYBvvb2yju/8Gh
+	xDWPOaCrYAUuIW4TJi/7MkSQeekKER3ZUAzZKE4a71d1rTuCl2l64jfOpaHOz/9EKPIlpc
+	EVOLVTM9a+uqRnSxS/F0mh8A6Vxvv+A=
+Date: Mon, 13 May 2024 15:00:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zj5jVqzDMXGZtp7y@hatbackup>
+Subject: Re: [PATCH bpf-next v2 1/4] selftests/bpf: Add some null pointer
+ checks
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>, kunwu.chan@linux.dev,
+ ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, kunwu.chan@hotmail.com
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240510095803.472840-1-kunwu.chan@linux.dev>
+ <20240510095803.472840-2-kunwu.chan@linux.dev>
+ <a6172c6e-3b5b-43e5-8678-9dc4e428cf94@collabora.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kunwu Chan <kunwu.chan@linux.dev>
+In-Reply-To: <a6172c6e-3b5b-43e5-8678-9dc4e428cf94@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024-05-10 14:11:34 [-0400], John B. Wyatt IV wrote:
-> On Tue, Apr 30, 2024 at 01:03:47PM +0200, Sebastian Andrzej Siewior wrote:
-> > 
-> >   - The selftest with the cxgb4 networking driver raised a warnings.
-> >     Reported by John B. Wyatt IV.
-> 
-> Thank you for your work on the patch Sebastian.
+On 2024/5/10 19:20, Muhammad Usama Anjum wrote:
+> On 5/10/24 2:58 PM, kunwu.chan@linux.dev wrote:
+>> From: Kunwu Chan <chentao@kylinos.cn>
+>>
+>> There is a 'malloc' call, which can be unsuccessful.
+>> This patch will add the malloc failure checking
+>> to avoid possible null dereference.
+>>
+>> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
+>> ---
+>>   tools/testing/selftests/bpf/test_progs.c | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
+>> index 89ff704e9dad..ecc3ddeceeeb 100644
+>> --- a/tools/testing/selftests/bpf/test_progs.c
+>> +++ b/tools/testing/selftests/bpf/test_progs.c
+>> @@ -582,6 +582,11 @@ int compare_stack_ips(int smap_fd, int amap_fd, int stack_trace_len)
+>>   
+>>   	val_buf1 = malloc(stack_trace_len);
+>>   	val_buf2 = malloc(stack_trace_len);
+>> +	if (!val_buf1 || !val_buf2) {
+>> +		err = -ENOMEM;
+> Return from here instead of going to out where free(val_buf*) is being called.
+I think it's no harm.  And Unify the processing at the end to achieve 
+uniform format.
+>> +		goto out;
+>> +	}
+>> +
+>>   	cur_key_p = NULL;
+>>   	next_key_p = &key;
+>>   	while (bpf_map_get_next_key(smap_fd, cur_key_p, next_key_p) == 0) {
+>> @@ -1197,6 +1202,8 @@ static int dispatch_thread_send_subtests(int sock_fd, struct test_state *state)
+>>   	int subtest_num = state->subtest_num;
+>>   
+>>   	state->subtest_states = malloc(subtest_num * sizeof(*subtest_state));
+>> +	if (!state->subtest_states)
+>> +		return -ENOMEM;
+>>   
+>>   	for (int i = 0; i < subtest_num; i++) {
+>>   		subtest_state = &state->subtest_states[i];
 
-You are welcome.
+-- 
+Thanks,
+   Kunwu.Chan
 
-> QE said it fully resolved the issue in RHEL9.
-
-Glad to here. This change is part of the v6.9 release even outside of
-the RT queue (I just picked it up ahead of time).
-
-Sebastian
 
