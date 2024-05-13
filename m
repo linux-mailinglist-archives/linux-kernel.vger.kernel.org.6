@@ -1,98 +1,91 @@
-Return-Path: <linux-kernel+bounces-177689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1E468C431B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:19:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2D48C431F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F4341C21294
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:19:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704651C216C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8A2153BCA;
-	Mon, 13 May 2024 14:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EF2153BD8;
+	Mon, 13 May 2024 14:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQbhfASj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qp+CnAu9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18397152180;
-	Mon, 13 May 2024 14:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C2915383D;
+	Mon, 13 May 2024 14:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715609948; cv=none; b=o8Uwt9VCVlEzIDlnkzqBvdSVJ1K6g5Rf/uSQ0flhGNgYAZ9M1IZ4P2ViY3sb3crJVeMhZgxWhmorh6lYA+DNfsrPnjpFQKHqqeW+g7D9YBYj2cePqZtE6zcgGDf5BgIn+EQECIUJb7H7/Kj2G0ioCowLubLDJD8u5d9e4kgDw28=
+	t=1715609966; cv=none; b=niBnn0IDMa61lS2D2lAg4eNNdioE3bLNUzja66XZsuUEqTVPX9sp1yjAeJaguPVCliIlZkido21V3RnebhS/yov1JPoiK4/RSRVmbY03WRgs8P/iUO/r9GEKfhx4QJlpWvs1EkoXGcItYjj+P4NKtRibZ0TBjI5c2FykyaeWgek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715609948; c=relaxed/simple;
-	bh=PD4GwX3Z6iq20lzOHlzaVgnrNqVXh7Lp5OI62HCHswU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5qUK5V6Jm5CKbr2qAk0VEVFPkp69KXy2ivDHFEAhrSfWhNMt9v6lQzMeJWtFXMQTib3F5vYbglqBAMqITY8ze7Zr78OI7cgGE5mi3E8JUDoqXfzMGbv0dtDfErnaWZBoLh7OA4rVj1R7LBWAzqOUNwDWho/TgeKNY+sFNx5fWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQbhfASj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B27C4AF07;
-	Mon, 13 May 2024 14:19:07 +0000 (UTC)
+	s=arc-20240116; t=1715609966; c=relaxed/simple;
+	bh=Pf4Q+gCnCQVUE/TMvKBTjzV2HO0RZrZsRGNbNFuqenk=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=ozkBjyqzkKslzCSXzrYZaajGmXHxdP/KNykZN2uo/8YPeC4whGMHN/0hOywy8ga6ztAhsgZcG+YtUzks6poN/soPD5lYrREdLONnaCB9/a0jzK0M3fmA0HaDv6yF7wsdOvLeCCO91A2ZBelAzAOR28mOsiPQ9sI3sQ3OcXPNR6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qp+CnAu9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27401C4AF0C;
+	Mon, 13 May 2024 14:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715609947;
-	bh=PD4GwX3Z6iq20lzOHlzaVgnrNqVXh7Lp5OI62HCHswU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jQbhfASjvXHGTKOPtu1AmhG20WH02RT274WXbettv8w84cXwTK3rQJkJhKstTVkYq
-	 Kp5vyE2u6UhcE1o64Qo4nJLlwTOkBEmOqIWPR/ofPWCTXwqqfYPUevvIj/qid8TnAm
-	 GU1K7dX7dxfz6jauJpjAF/kvpab1CPjI04WIiUwuPYqb0mx2oxtYqratxHtpMuZLoA
-	 ZwfUoqFOFhiT3M9cSj5O84lNHuJZO3o/DoBAxf+1tt3BddnTtZ2btt6nEHYVNd7TNU
-	 IQPcesAJgDq5lPU2uzBhUc7uiXC7Bemjqlt8VEeFuo1hxLNnGPNUG9O4j4gxWRqmof
-	 7FhuGta9uPONg==
-Date: Mon, 13 May 2024 09:19:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: adc: adi,axi-adc: tweak example node
- name
-Message-ID: <20240513141906.GA2534611-robh@kernel.org>
-References: <20240510-b4-iio-axi-adc-dt-binding-tweak-v1-1-a1f633c4602c@baylibre.com>
+	s=k20201202; t=1715609965;
+	bh=Pf4Q+gCnCQVUE/TMvKBTjzV2HO0RZrZsRGNbNFuqenk=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=Qp+CnAu9cV1NVsPOJZrdK2r5V2/KW5LKZZ4h3j1wNWkbL1zeOGfNtY99cAXgB9Qdm
+	 gkkWDYxRtB+zzxwUIcB44CKCX0YCNg7+6xnva9IBstu2ONYpO1H1BbNrV83K1U4R5m
+	 XzShutYjN6avTokYFSuCunZwAjr6qRqnO1Hjox71mfDTnxU80aGXV/LY6MkloISZ73
+	 ArH3fXcGeeI1LJA1XXaa4Ef5dXXF4fEJ31lA6kV4qYpllbTM8hf2DkvhrtZzcC62mn
+	 L00e2sqf/0r2olLmt15a4FXC/HcB0OKs9qmJr4NudhuTVAV3UOmffxaXAIzezJk0mz
+	 aL56uKufFmopQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-b4-iio-axi-adc-dt-binding-tweak-v1-1-a1f633c4602c@baylibre.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH wireless-next v2] wifi: ath12k: allocate dummy net_device
+ dynamically
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240508095410.1923198-1-leitao@debian.org>
+References: <20240508095410.1923198-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: horms@kernel.org, Jeff Johnson <jjohnson@kernel.org>,
+ netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS)),
+ ath12k@lists.infradead.org (open list:QUALCOMM ATH12K WIRELESS DRIVER),
+ linux-kernel@vger.kernel.org (open list)
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <171560996218.1732161.18068750430706487082.kvalo@kernel.org>
+Date: Mon, 13 May 2024 14:19:23 +0000 (UTC)
 
-On Fri, May 10, 2024 at 04:04:38PM -0500, David Lechner wrote:
-> It is always recommended to use generic node names for devicetree nodes.
-> The documentation [1] of the AXI ADC IP core says "The most important
-> part of the core is the Receiver PHY module.", so using phy as the node
-> name seems appropriate.
+Breno Leitao <leitao@debian.org> wrote:
+
+> Embedding net_device into structures prohibits the usage of flexible
+> arrays in the net_device structure. For more details, see the discussion
+> at [1].
 > 
-> [1]: https://wiki.analog.com/resources/fpga/docs/axi_adc_ip
+> Un-embed the net_device from struct ath12k_ext_irq_grp by converting it
+> into a pointer. Then use the leverage alloc_netdev_dummy() to allocate
+> the net_device object at ath12k_pci_ext_irq_config().
 > 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> The free of the device occurs at ath12k_pci_free_ext_irq().
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> index e1f450b80db2..9cad4c439045 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,axi-adc.yaml
-> @@ -57,7 +57,7 @@ additionalProperties: false
->  
->  examples:
->    - |
-> -    axi-adc@44a00000 {
-> +    phy@44a00000 {
+> Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-phy should be used when there's #phy-cells which is not the case here. 
-'adc' is somewhat standard. Or maybe it should be tied to 
-#io-backend-cells.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Until we have something defined as ti what it should be, we should just 
-leave node names alone.
+4f9206e8c2c1 wifi: ath12k: allocate dummy net_device dynamically
 
-Rob
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240508095410.1923198-1-leitao@debian.org/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
