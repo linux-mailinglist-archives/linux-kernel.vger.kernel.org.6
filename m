@@ -1,134 +1,297 @@
-Return-Path: <linux-kernel+bounces-177982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC7A78C471C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470C58C470E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43976B2290B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB16F281BAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73ADC3BB30;
-	Mon, 13 May 2024 18:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E99E2E414;
+	Mon, 13 May 2024 18:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H0/WOs7K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="KkJOcaXD"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597081C6A4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D006243154
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626014; cv=none; b=bTRUw6d4oCY2JkJGsSCT0pgpYHIzOA3WSF4PwtpIHQavufKDzZsXhqP65uvF9l0PhrzXngnJtO6IYgaPDWXaFc6H2W/TZOpci74iJikMtIE10CnJgWJgpSZQgmJ46opd9v4PRjvZGX3OLGLT16hiGFyh9k3Rxqc4ozpXxN9zD2k=
+	t=1715625701; cv=none; b=Clha79CMiYsBV7gXiYV1TvTE2DRS4JkzSf4QFXDga7CVBWlCzgPKNQqVrxAXIkpmLPT8uAuwX88Xh0EyTClSthoZrZsqQ7LPhyOWWRIDbzmhaJ+Jrwq6NlLIjK2YQDsUs85nVYRUCatQiRiwE/qyhg14n08U+ITlanhs/iyVxtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626014; c=relaxed/simple;
-	bh=SisZcXZqgcbTdXFFIU8xWo+kq/drZzZdUZzdlkD8UKI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Sl7SiG0CBt3Q2c7R216jDvQQkzbZVgZ/Ey836Okampa+L4pZSloVPP+IpLUC1T9SQ3gtYC6XcDwie/y2TVQlyyaqXx25xh4W2XLhIgMk1whEOkgeIQj1tOjcCZFgBrBfOsTPqFq7kYo0hQyJOA3uwCFVT9TdzaKpL5KXb2nQSkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H0/WOs7K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715626012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BVIn2rWOpVhbTil8h2wwg1NNh+EXi/kd2LlnyPlZrH8=;
-	b=H0/WOs7KcrLqhQSfg0gRMbrr6oZYMMiUpzEp6YKXl8Hfru2lzFUH7yFoJQF3SgpS9dmN57
-	50InJTsX9A0gqclQ8taEymZO1O83lmMKe9AsM/Ucw97EDwuCkFQ21k4bDoojDrXlLWIrqF
-	tx2s7HiL33ddxQNiUdxW3F58DqjrzlE=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-125-Pe6TrLu5MZKnZIUa5vvWwg-1; Mon, 13 May 2024 14:40:46 -0400
-X-MC-Unique: Pe6TrLu5MZKnZIUa5vvWwg-1
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-43e1af4fbc4so13629941cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:40:46 -0700 (PDT)
+	s=arc-20240116; t=1715625701; c=relaxed/simple;
+	bh=xGBtiJZmTHqdBVzMjvOUzQnxsV/z6+7wQ+yQppDB/9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OI76Xs86z9PYY4XpvTc+KuIy2t0Rr3ouEECoVVY6xzgz+0uxuMjdDIBSYGdZcW1Jnb+rOJSq/mCreJ0X6dLxFsyFI0aIt43VOML3c/1Gp921Yu/deIU2XIlm9IyDqnYS+0K63+iAz5us3Pz5xxYucjdOrOpuJNR0KPt1G6TTYSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=KkJOcaXD; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f4ed9dc7beso1590410b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:41:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715625699; x=1716230499; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XY9wUjNICjiX4OH8fN35kly5zcKWL5OlXrAU/KY+MCs=;
+        b=KkJOcaXDYNC65LGBdmbPJEpYdvvlkC7AL6OIn419k8ZJz4tbQ4J7KkSoYrtSXJ5GOv
+         gt3n/7R0TUG2+Hmqofsobgc5isLmduVHeesMnUk7wkFeAmpU0Fc/kn3BEOJFSTsXD/Ne
+         abGJIuhv3I3mkgZRAtGW/eBXQ97BH2mXIFgRaNVN6i7m3Hpj98ebqdvEyXfQKklYbHbm
+         g5y34VwDk0iZDTxKLmrckU9rljUsnqHL5lCgIqiBcKN/5GZ9UlYa76Qu7SrjXIbSdobv
+         x9Slyk/7XDAm2/GyxC92au528sukPDTRT5rZ13pDCWu1r9AgCdeMLL/R6NxwmETNidzQ
+         HXFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715625646; x=1716230446;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BVIn2rWOpVhbTil8h2wwg1NNh+EXi/kd2LlnyPlZrH8=;
-        b=iqX6Fs5OHMo5Ujhys3AFyT68di+WBnFspP9cLgAQVALUKgqSDTVrdwNhUub7DNDQeI
-         JinVtEnZENU8XnLHcByHMKmGwt1IAcrztN2LoWdjCslXEaxVRpfde9oS4BIQqm+3k7J1
-         hojUQ5mRnt+e/BpH6cOry6Wwon7iNK4yl/3Y98mxsGalXBWxV47QXr2E3i10jfk67b8D
-         CXcQqe11wVNOtWzUfpbQPOpeLB6O1dTKnBbsSP6kDID/YwZWS7oWppomIAzbCpKsxYqX
-         Nq1fzKBIm5FKYIhb66HxHfIUBox82f7Ri32sDqGToy5f6h10PTiIUo+f/32hf2EaW1jX
-         L1gA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0jBpadNi5Cjp8GI8T/tiIm/awTBxQdVauGWlGjuMIHE9xENBXgQGFjcA/4G4PbXpDw61sqQo3mMyT6FxiEeqPyMC1VVZBpa/tXb3s
-X-Gm-Message-State: AOJu0YzaxKv13dutSSo/YxAVphFAK6A8h6GYoVfU5gznQ6BFP7KrXoCm
-	F0drKOxwHKRFPcF7Ljq8twd+7CH89FOrP7CL3wHLbpbmD4MGmAjwbqFtu1Y2i2YMze3vHSudgPF
-	Nq4hK+tyjtJASojBSs2FuV3ZDula9iT8fBgp4aUDlHdgRRMkCSTBGUuwjkLty/A==
-X-Received: by 2002:ac8:7dd6:0:b0:43a:f7fb:bc4b with SMTP id d75a77b69052e-43dfdb0714amr109230421cf.14.1715625646259;
-        Mon, 13 May 2024 11:40:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGyEMwpDTnVPRtCr+Mg/v54BS100776/OI4rfOSjtaaCh2632huCZWaUGLfxNq0fFe9FHICXg==
-X-Received: by 2002:ac8:7dd6:0:b0:43a:f7fb:bc4b with SMTP id d75a77b69052e-43dfdb0714amr109230311cf.14.1715625645923;
-        Mon, 13 May 2024 11:40:45 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e1115dd3esm25071211cf.19.2024.05.13.11.40.43
+        d=1e100.net; s=20230601; t=1715625699; x=1716230499;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XY9wUjNICjiX4OH8fN35kly5zcKWL5OlXrAU/KY+MCs=;
+        b=scARHd6NVKF5a1owcXSJz6gqwQeNsAiubc/xjUVPSI0GCMzukMYkqg7zw37KG2osRk
+         Apcnk+mbQTQS2NXTdVlMthoDHTxA5BfWElwiLWSJewKlXj+ntzRa+/E/HBStndudecKI
+         FJwFKpc8EY63/TZvgk3hE2CPUgve0yhuDddEqpi9CMDBLfbkAR/lrc7H7lf42jLXFTzn
+         McZo71pJZBHmDlNy3vtYL8YpPjw/3x4ygzx8vJ2G8NNHR7f6vfSnEA3TzLrssdNOQZ3u
+         dec54iaCCL46IezUkrlH/yWQ2IY5Zt2h6VFel4jEY8B8h+EphzeTkxfeOSAFUQqs5Mfb
+         Khvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4hcfZB+QyzMlbMS8RHUCQlxd0tom5ODg/4ouxEt+j/xn6pHKDqxBpEoUy/7Elq0kqxiGUzKJPmQjQrsu6LRAICJ8+NGb6oQy42QY
+X-Gm-Message-State: AOJu0YynBS7HN8a4b2n+R1+Kt4NwGiya77FfKYExa1gFxeUTgRA1XKjm
+	+E/rXIPR+VhRPo5N5IKozjcDBPPenAYmeg4m/YzWllsFOrlg5oi3V3w/Juj0Lh4=
+X-Google-Smtp-Source: AGHT+IFDpGJAozuUAoSCJToHHLthoDO4Bo/1R8ix+nOMfz5BRfFaIeih/L/fVxquTOUi37YhZTLrFg==
+X-Received: by 2002:a05:6a00:198a:b0:6f4:4b84:7c17 with SMTP id d2e1a72fcca58-6f4c9338971mr19674022b3a.13.1715625698960;
+        Mon, 13 May 2024 11:41:38 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b2f9eesm7681513b3a.212.2024.05.13.11.41.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 11:40:45 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, "Paul E. McKenney"
- <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Neeraj
- Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes
- <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun
- Feng <boqun.feng@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v2 27/27] context_tracking, rcu: Rename rcu_dyntick
- trace event into rcu_watching
-In-Reply-To: <ZjuFUZXk4rYO4L2v@localhost.localdomain>
-References: <20240430091740.1826862-1-vschneid@redhat.com>
- <20240430091740.1826862-28-vschneid@redhat.com>
- <ZjuFUZXk4rYO4L2v@localhost.localdomain>
-Date: Mon, 13 May 2024 20:40:42 +0200
-Message-ID: <xhsmhr0e5h7x1.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+        Mon, 13 May 2024 11:41:38 -0700 (PDT)
+Date: Mon, 13 May 2024 11:41:34 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 10/29] riscv/mm : ensure PROT_WRITE leads to VM_READ |
+ VM_WRITE
+Message-ID: <ZkJe3ivq7m4NptHd@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-11-debug@rivosinc.com>
+ <Zj6LfpQhOjTLEx2O@ghost>
+ <ZkJSLTk1iWFGJZCQ@debug.ba.rivosinc.com>
+ <ZkJdYvkUqHkX7yPf@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZkJdYvkUqHkX7yPf@ghost>
 
-On 08/05/24 15:59, Frederic Weisbecker wrote:
-> Le Tue, Apr 30, 2024 at 11:17:31AM +0200, Valentin Schneider a =C3=A9crit=
- :
->> @@ -228,7 +228,7 @@ void noinstr ct_nmi_exit(void)
->>      }
+On Mon, May 13, 2024 at 11:36:49AM -0700, Charlie Jenkins wrote:
+>On Mon, May 13, 2024 at 10:47:25AM -0700, Deepak Gupta wrote:
+>> On Fri, May 10, 2024 at 02:02:54PM -0700, Charlie Jenkins wrote:
+>> > On Wed, Apr 03, 2024 at 04:34:58PM -0700, Deepak Gupta wrote:
+>> > > `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+>> > > VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+>> > > updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+>> > > This is to make sure that any existing apps using PROT_WRITE still work.
+>> > >
+>> > > Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
+>> > > Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+>> > > encodings for shadow stack. Above changes ensure that existing apps
+>> > > continue to work because underneath kernel will be picking
+>> > > `protection_map[VM_WRITE|VM_READ]` PTE encodings.
+>> > >
+>> > > Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> > > ---
+>> > >  arch/riscv/include/asm/mman.h    | 24 ++++++++++++++++++++++++
+>> > >  arch/riscv/include/asm/pgtable.h |  1 +
+>> > >  arch/riscv/kernel/sys_riscv.c    | 11 +++++++++++
+>> > >  arch/riscv/mm/init.c             |  2 +-
+>> > >  mm/mmap.c                        |  1 +
+>> > >  5 files changed, 38 insertions(+), 1 deletion(-)
+>> > >  create mode 100644 arch/riscv/include/asm/mman.h
+>> > >
+>> > > diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
+>> > > new file mode 100644
+>> > > index 000000000000..ef9fedf32546
+>> > > --- /dev/null
+>> > > +++ b/arch/riscv/include/asm/mman.h
+>> > > @@ -0,0 +1,24 @@
+>> > > +/* SPDX-License-Identifier: GPL-2.0 */
+>> > > +#ifndef __ASM_MMAN_H__
+>> > > +#define __ASM_MMAN_H__
+>> > > +
+>> > > +#include <linux/compiler.h>
+>> > > +#include <linux/types.h>
+>> > > +#include <uapi/asm/mman.h>
+>> > > +
+>> > > +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+>> > > +	unsigned long pkey __always_unused)
+>> > > +{
+>> > > +	unsigned long ret = 0;
+>> > > +
+>> > > +	/*
+>> > > +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
+>> > > +	 * Only VM_WRITE means shadow stack.
+>> > > +	 */
+>> > > +	if (prot & PROT_WRITE)
+>> > > +		ret = (VM_READ | VM_WRITE);
+>> > > +	return ret;
+>> > > +}
+>> > > +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+>> > > +
+>> > > +#endif /* ! __ASM_MMAN_H__ */
+>> > > diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> > > index 6066822e7396..4d5983bc6766 100644
+>> > > --- a/arch/riscv/include/asm/pgtable.h
+>> > > +++ b/arch/riscv/include/asm/pgtable.h
+>> > > @@ -184,6 +184,7 @@ extern struct pt_alloc_ops pt_ops __initdata;
+>> > >  #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
+>> > >  #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
+>> > >  					 _PAGE_EXEC | _PAGE_WRITE)
+>> > > +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
+>> > >
+>> > >  #define PAGE_COPY		PAGE_READ
+>> > >  #define PAGE_COPY_EXEC		PAGE_READ_EXEC
+>> > > diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+>> > > index f1c1416a9f1e..846c36b1b3d5 100644
+>> > > --- a/arch/riscv/kernel/sys_riscv.c
+>> > > +++ b/arch/riscv/kernel/sys_riscv.c
+>> > > @@ -8,6 +8,8 @@
+>> > >  #include <linux/syscalls.h>
+>> > >  #include <asm/cacheflush.h>
+>> > >  #include <asm-generic/mman-common.h>
+>> > > +#include <vdso/vsyscall.h>
+>> > > +#include <asm/mman.h>
+>> > >
+>> > >  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>> > >  			   unsigned long prot, unsigned long flags,
+>> > > @@ -17,6 +19,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>> > >  	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
+>> > >  		return -EINVAL;
+>> > >
+>> > > +	/*
+>> > > +	 * If only PROT_WRITE is specified then extend that to PROT_READ
+>> > > +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
+>> > > +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
+>> > > +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
+>> > > +	 */
+>> > > +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
+>> >
+>> > The comments says that this should extend to PROT_READ if only
+>> > PROT_WRITE is specified. This condition instead is checking if
+>> > PROT_WRITE is selected but PROT_READ is not. If prot is (VM_EXEC |
+>> > VM_WRITE) then it would be extended to (VM_EXEC | VM_WRITE | VM_READ).
+>> > This will not currently cause any issues because these both map to the
+>> > same value in the protection_map PAGE_COPY_EXEC, however this seems to
+>> > be not the intention of this change.
+>> >
+>> > prot == PROT_WRITE better suits the condition explained in the comment.
 >>
->>      /* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
->> -	trace_rcu_dyntick(TPS("Startirq"), ct_nmi_nesting(), 0, ct_rcu_watchin=
-g());
->> +	trace_rcu_watching(TPS("Endirq"), ct_nmi_nesting(), 0, ct_rcu_watching=
-());
+>> If someone specifies this (PROT_EXEC | PROT_WRITE) today, it works because
+>> of the way permissions are setup in `protection_map`. On risc-v there is no
+>> way to have a page which is execute and write only. So expectation is that
+>> if some apps were using `PROT_EXEC | PROT_WRITE` today, they were working
+>> because internally it was translating to read, write and execute on page
+>> permissions level. This patch make sure that, it stays same from page
+>> permissions perspective.
+>>
+>> If someone was using PROT_EXEC, it may translate to execute only and this change
+>> doesn't impact that.
+>>
+>> Patch simply looks for presence of `PROT_WRITE` and absence of `PROT_READ` in
+>> protection flags and if that condition is satisfied, it assumes that caller assumed
+>> page is going to be read allowed as well.
 >
-> Ah the initial string was wrong and you're fixing it, right?
+>The purpose of this change is for compatibility with shadow stack pages
+>but this affects flags for pages that are not shadow stack pages.
+>Adding PROT_READ to the other cases is redundant as protection_map
+>already handles that mapping. Permissions being strictly PROT_WRITE is
+>the only case that needs to be handled, and is the only case that is
+>called out in the commit message and in the comment.
+
+Yeah that's fine.
+I can change the commit message or just strictly check for PROT_WRITE.
+It doesn't change bottomline, I am fine with either option.
+
+Let me know your preference.
+
 >
-> Should be a seperate patch?
+>- Charlie
 >
-
-No, I'm just creating confusion for everyone involved (including myself) :(
-Dynticks start when RCU stops watching, so the naming logic gets flipped on
-its head.
-
-If I take the original comment from
-bd2b879a1ca5 ("rcu: Add tracing to irq/NMI dyntick-idle transitions")
-"""
-as argument: "Start" for entering dyntick-idle mode, "Startirq" for
-entering it from irq/NMI
-"""
-
-So here "Startirq" means "start dyntick mode from IRQ". With the name
-change, it should be "Endirq", since RCU stops watching, from IRQ...
-
-I know, a lot of confusion for 0 functional change :(
-
+>>
+>>
+>> >
+>> > > +		prot |= PROT_READ;
+>> > > +
+>> > >  	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
+>> > >  			       offset >> (PAGE_SHIFT - page_shift_offset));
+>> > >  }
+>> > > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> > > index fa34cf55037b..98e5ece4052a 100644
+>> > > --- a/arch/riscv/mm/init.c
+>> > > +++ b/arch/riscv/mm/init.c
+>> > > @@ -299,7 +299,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>> > >  static const pgprot_t protection_map[16] = {
+>> > >  	[VM_NONE]					= PAGE_NONE,
+>> > >  	[VM_READ]					= PAGE_READ,
+>> > > -	[VM_WRITE]					= PAGE_COPY,
+>> > > +	[VM_WRITE]					= PAGE_SHADOWSTACK,
+>> > >  	[VM_WRITE | VM_READ]				= PAGE_COPY,
+>> > >  	[VM_EXEC]					= PAGE_EXEC,
+>> > >  	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
+>> > > diff --git a/mm/mmap.c b/mm/mmap.c
+>> > > index d89770eaab6b..57a974f49b00 100644
+>> > > --- a/mm/mmap.c
+>> > > +++ b/mm/mmap.c
+>> > > @@ -47,6 +47,7 @@
+>> > >  #include <linux/oom.h>
+>> > >  #include <linux/sched/mm.h>
+>> > >  #include <linux/ksm.h>
+>> > > +#include <linux/processor.h>
+>> >
+>> > It doesn't seem like this is necessary for this patch.
+>>
+>> Thanks. Yeah it looks like I forgot to remove this over the churn.
+>> Will fix it.
+>>
+>> >
+>> > - Charlie
+>> >
+>> > >
+>> > >  #include <linux/uaccess.h>
+>> > >  #include <asm/cacheflush.h>
+>> > > --
+>> > > 2.43.2
+>> > >
 
