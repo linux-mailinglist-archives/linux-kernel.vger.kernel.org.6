@@ -1,219 +1,150 @@
-Return-Path: <linux-kernel+bounces-178098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420BD8C48AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:15:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB658C48B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFD911F24E35
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DBC282324
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92FC882863;
-	Mon, 13 May 2024 21:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCE28287C;
+	Mon, 13 May 2024 21:17:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="C3HRbjhI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RBirZnE3"
-Received: from wfhigh5-smtp.messagingengine.com (wfhigh5-smtp.messagingengine.com [64.147.123.156])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eOZC+0n2"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69971DA24;
-	Mon, 13 May 2024 21:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D8F1DA24;
+	Mon, 13 May 2024 21:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715634891; cv=none; b=IXgxVQ1CYJl7yh8iGTi+yV2dZ9E0XKYKw+gSHW+kOEZPdOyv4Z1agl5E46xKTJmqdFQNa760xkBJ1GF4Ofw+M84P5VZ41JvktEBKSyJXAjWs15feEgjoPzG01pRAQ9H9pv5ZoV7VAbkalKas05pbMJjgLthfKLj+MjMCaKUIUrw=
+	t=1715635074; cv=none; b=dY2bN1MH1rCQShPrgBicMtotVL/RDVLbrjnIyIG3kEhzGXIHLxf+dUHOF1QtwfwbL16QIoEzp2N/9+5m67//Uq6JePfg5gqvqcfrKswoTUDuyKudg1Qq9HXdAFUsFkmnb99h7l4ENCqglNqYUL6Oa3fgd50czZ2EHKHQD1V+5us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715634891; c=relaxed/simple;
-	bh=3RU14hPBRJi9AV9s+50eZOV1ETZIQyBxt+R/qp8IzRE=;
+	s=arc-20240116; t=1715635074; c=relaxed/simple;
+	bh=oVVqK6WHIpXVbA0szVeaQq7lxDJEoXs14Hylmrigps8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsRQqrfE4FQWzXeaWC7bLbdr5cqsZ3DvMGitetcPLD2CTQD/1tUq6zdji2j0D++cI+kLWWNHFCrzXRGNg9d2RPrrpg4VpWh2vIeR+jJK7tQ3Ry26yAOjp2WmOyXm6DjqoRrk+VXzjXr3eOVdKVH4cko2agoGqbsoNDQSuB62uK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=C3HRbjhI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RBirZnE3; arc=none smtp.client-ip=64.147.123.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfhigh.west.internal (Postfix) with ESMTP id B62D61800165;
-	Mon, 13 May 2024 17:14:47 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Mon, 13 May 2024 17:14:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1715634887; x=1715721287; bh=5jWB6u8tA+
-	i7tSP2QC8w163S31C7XhqcLLTbhhZxvX4=; b=C3HRbjhI8qJH4OYIqx1gxKnweB
-	qPkVDutbLoTXx1orYCjAYNJL8jyMa6P8zr8Z5GPIQRNvQh8o76GuXgIULFWSFpyg
-	JUCOIcFlQSmLtP/OcUkSAIwVooEmRTSyDXYVHuBJp+HOK6IDnFp/ukTWD5oTawJm
-	3zJApPi88xNmmYwSEsW0JXujV02B66me109zyNbrG1VViSM6RqwXKAESJnFRy8m1
-	IkikurFuPFrYHlPe30s5H2CMylBb1+x/5Ws9W6TRROektZZ9cWh4Oz0nyyrvCUwH
-	WV88dSZdPc88h6gtO+SxobdvvksX9hF9KLsn5HtzQuw25W97AGqwdBpVtSTw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715634887; x=1715721287; bh=5jWB6u8tA+i7tSP2QC8w163S31C7
-	XhqcLLTbhhZxvX4=; b=RBirZnE3wJBSizEubcQhyFS/hGUmLA+N/h73t4J3wOsu
-	X2fP2OVVXgbe+7MA0kw0ye8XXRkonyRCxP86X6CQGN6mRhEhqS+fI6cTIQP7B8zM
-	+kh2qT+h4JkLyjGQ6shtG7wGCwbJj6hlHUvGB81eW2RAPLFoFUw3EjsGgixDFm3h
-	UqiyL7bwTYw2YFWh2o7eit4w37BBw5AfIQSa3XIBb2ObsYfrcQrMhp853x3yrJMx
-	nPHBk9GIHznfw4YitrnuXmY14X0roH2YZsR0WmMl1bEvu5Znj1w59isBX638P9jl
-	eQZXQUAtCSij5yxHIve94rBe4T1wl9zw/mtr4pb2vw==
-X-ME-Sender: <xms:xoJCZtiWU-clMtxv7adKhVdpHx5HuQNOQsKEb1LT0wgDwGXjt6p_gg>
-    <xme:xoJCZiBmMz_Um0uoONcB6tQKqU1AGrFZDHJ3QuoWLQrWKdN5_L70EeRCZptHI4kOt
-    vXsn7KpviBThWD4Sw>
-X-ME-Received: <xmr:xoJCZtGTg_PmDbBbZ9cpUJib-HAg5cA3Ao4AVBgYE27PczSB-mJwO1GXo6RAHghEnbqxzSIKqIKSdLkqVEzjqfZa1GoYSlf2wIo7ZBg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeggedgudehjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdejtddmnecujfgurhepff
-    fhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepffgrnhhivghlucgiuhcu
-    oegugihusegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpedvfeekteduudefie
-    egtdehfeffkeeuudekheduffduffffgfegiedttefgvdfhvdenucevlhhushhtvghrufhi
-    iigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegugihusegugihuuhhurdighiii
-X-ME-Proxy: <xmx:xoJCZiQiY63J_-4w_onneR62Y83dA5ctUgZVgMWpZTXR0XNW-2kmSw>
-    <xmx:xoJCZqylVdG6CoXR0qUgaHkrTVvFoMJyROPwN8rdRVsGbuIBtZCA4g>
-    <xmx:xoJCZo6uxnfvBUswxrNJF7XtzkZL5ih-9ejkZmtpcZlqcEIeUsYvGg>
-    <xmx:xoJCZvx38QH-qpYw1dpkEa41Q8fCBIc7bIf__Ep_-dk_Boua-KJTeg>
-    <xmx:x4JCZnzT7In_dEt7X-AGBC1w_mLHsoNCtrGNwQKzctGJwZnc7HheTDlF>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 May 2024 17:14:45 -0400 (EDT)
-Date: Mon, 13 May 2024 15:14:44 -0600
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: ast@kernel.org, daniel@iogearbox.net, qmo@kernel.org, 
-	andrii@kernel.org, olsajiri@gmail.com, quentin@isovalent.com, 
-	alan.maguire@oracle.com, acme@kernel.org, eddyz87@gmail.com
-Cc: martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com, haoluo@google.com, 
-	jolsa@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com
-Subject: Re: [PATCH bpf-next v3 2/2] bpftool: Support dumping kfunc
- prototypes from BTF
-Message-ID: <f27zhdp4ydckd36j7qskqjty227nax47uo62gqoimgw6hoanmv@bt2oxuxdngvs>
-References: <cover.1715625447.git.dxu@dxuuu.xyz>
- <6b16417c2c05019e83e420240c6d9796f9324a6c.1715625447.git.dxu@dxuuu.xyz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fpz8jLO0rs9XvYC2OMi/YaCAt4QGlC58RL4XUFwf+cQ4YywwwmWxDf8IJdQfF5k6mQQpw91ussaNiIecrsn2WYgP/kmQo26YglkLl3mZma7iXc1dE2lw0LjqvGSJFtjVt3Dn1siiltSSTptmjVxTDu4EPJWRB6r+2FIyjt7Up4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eOZC+0n2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715635069;
+	bh=oVVqK6WHIpXVbA0szVeaQq7lxDJEoXs14Hylmrigps8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eOZC+0n2SxqqByuyaY0QwKt38XxWtbh9Eqrpv9NK5DJXuH+BvpK4/0Rw9OFhyEnh5
+	 I6vbbaHkV2daizLT8qTHGbpGOLqa4GKuoquexIDN8p23PKnAVLHx+TtpPSUNtc6ERG
+	 Li96MpJ5wbLSHPEgGe+8YhIxSVu+Z3e8yxGhq4oV8e8J2TVcIgX7I8y5MPyMGAHxnf
+	 k33zT/GeeOrCN+XR8u7ezJHK5eKktbZJPJZSix5GkNO38VA5wWBhSZq0d+9/vHNySj
+	 ZWJqSSz3Rz8mj9p/mrPBYGcw/zYJIlyeX2WIRxOfnr5WHN1UR9qPadqiz7fvvQNR1E
+	 fYNLpAJm477NA==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 02B7237820D0;
+	Mon, 13 May 2024 21:17:49 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 6E8AA10606FD; Mon, 13 May 2024 23:17:48 +0200 (CEST)
+Date: Mon, 13 May 2024 23:17:48 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Peter Rosin <peda@axentia.se>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "Rob Herring (Arm)" <robh@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: sbs-manager: Remove class argument from
+ i2c_mux_add_adapter()
+Message-ID: <4g4u2g2nrcpjvx4uswxppw2vsfzwcsy6kbsjp7ukksgfyhgnqb@s5n6jlz6w7af>
+References: <20240513201400.16589-2-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d6m7btjvugjxoruz"
+Content-Disposition: inline
+In-Reply-To: <20240513201400.16589-2-wsa+renesas@sang-engineering.com>
+
+
+--d6m7btjvugjxoruz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6b16417c2c05019e83e420240c6d9796f9324a6c.1715625447.git.dxu@dxuuu.xyz>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 12:38:59PM GMT, Daniel Xu wrote:
-> This patch enables dumping kfunc prototypes from bpftool. This is useful
-> b/c with this patch, end users will no longer have to manually define
-> kfunc prototypes. For the kernel tree, this also means we can optionally
-> drop kfunc prototypes from:
-> 
->         tools/testing/selftests/bpf/bpf_kfuncs.h
->         tools/testing/selftests/bpf/bpf_experimental.h
-> 
-> Example usage:
-> 
->         $ make PAHOLE=/home/dxu/dev/pahole/build/pahole -j30 vmlinux
-> 
->         $ ./tools/bpf/bpftool/bpftool btf dump file ./vmlinux format c | rg "__ksym;" | head -3
->         extern void cgroup_rstat_updated(struct cgroup *cgrp, int cpu) __weak __ksym;
->         extern void cgroup_rstat_flush(struct cgroup *cgrp) __weak __ksym;
->         extern struct bpf_key *bpf_lookup_user_key(u32 serial, u64 flags) __weak __ksym;
-> 
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+Hi Wolfram,
+
+On Mon, May 13, 2024 at 10:11:16PM +0200, Wolfram Sang wrote:
+> Commit 99a741aa7a2d ("i2c: mux: gpio: remove support for class-based
+> device instantiation") removed the last call to i2c_mux_add_adapter()
+> with a non-null class argument. Therefore the class argument can be
+> removed.
+>=20
+> Note: Class-based device instantiation is a legacy mechanism which
+> shouldn't be used in new code, so we can rule out that this argument
+> may be needed again in the future.
+>=20
+> This driver was forgotten by the patch in the Fixes tag.
+>=20
+> Fixes: fec1982d7072 ("i2c: mux: Remove class argument from i2c_mux_add_ad=
+apter()")
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  tools/bpf/bpftool/btf.c | 54 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
-> 
-> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-> index 91fcb75babe3..884af6589f0d 100644
-> --- a/tools/bpf/bpftool/btf.c
-> +++ b/tools/bpf/bpftool/btf.c
-> @@ -20,6 +20,8 @@
->  #include "json_writer.h"
->  #include "main.h"
->  
-> +#define KFUNC_DECL_TAG		"bpf_kfunc"
-> +
->  static const char * const btf_kind_str[NR_BTF_KINDS] = {
->  	[BTF_KIND_UNKN]		= "UNKNOWN",
->  	[BTF_KIND_INT]		= "INT",
-> @@ -454,6 +456,48 @@ static int dump_btf_raw(const struct btf *btf,
->  	return 0;
->  }
->  
-> +static int dump_btf_kfuncs(struct btf_dump *d, const struct btf *btf)
-> +{
-> +	LIBBPF_OPTS(btf_dump_emit_type_decl_opts, opts);
-> +	int cnt = btf__type_cnt(btf);
-> +	int i;
-> +
-> +	printf("\n/* BPF kfuncs */\n");
-> +
-> +	for (i = 1; i < cnt; i++) {
-> +		const struct btf_type *t = btf__type_by_id(btf, i);
-> +		const char *name;
-> +		int err;
-> +
-> +		if (!btf_is_decl_tag(t))
-> +			continue;
-> +
-> +		if (btf_decl_tag(t)->component_idx != -1)
-> +			continue;
-> +
-> +		name = btf__name_by_offset(btf, t->name_off);
-> +		if (strncmp(name, KFUNC_DECL_TAG, sizeof(KFUNC_DECL_TAG)))
-> +			continue;
-> +
-> +		t = btf__type_by_id(btf, t->type);
-> +		if (!btf_is_func(t))
-> +			continue;
-> +
-> +		printf("extern ");
-> +
-> +		opts.field_name = btf__name_by_offset(btf, t->name_off);
-> +		err = btf_dump__emit_type_decl(d, t->type, &opts);
-> +		if (err)
-> +			return err;
-> +
-> +		printf(" __weak __ksym;\n");
-> +	}
-> +
-> +	printf("\n");
-> +
-> +	return 0;
-> +}
-> +
->  static void __printf(2, 0) btf_dump_printf(void *ctx,
->  					   const char *fmt, va_list args)
->  {
-> @@ -476,6 +520,12 @@ static int dump_btf_c(const struct btf *btf,
->  	printf("#ifndef BPF_NO_PRESERVE_ACCESS_INDEX\n");
->  	printf("#pragma clang attribute push (__attribute__((preserve_access_index)), apply_to = record)\n");
->  	printf("#endif\n\n");
-> +	printf("#ifndef __ksym\n");
-> +	printf("#define __ksym __attribute__((section(\".ksyms\")))\n");
-> +	printf("#endif\n\n");
-> +	printf("#ifndef __weak\n");
-> +	printf("#define __weak __attribute__((weak))\n");
-> +	printf("#endif\n\n");
->  
->  	if (root_type_cnt) {
->  		for (i = 0; i < root_type_cnt; i++) {
-> @@ -491,6 +541,10 @@ static int dump_btf_c(const struct btf *btf,
->  			if (err)
->  				goto done;
->  		}
-> +
-> +		err = dump_btf_kfuncs(d, btf);
-> +		if (err)
-> +			goto done;
->  	}
->  
->  	printf("#ifndef BPF_NO_PRESERVE_ACCESS_INDEX\n");
-> -- 
-> 2.44.0
-> 
-> 
+>=20
+> The to-be-fixed patch is only in linux-next in my i2c/for-next tree. We
+> want to remove this unneeded parameter in the next mergewindow. I
+> suggest that I just put it on top of my branch to avoid the
+> dependencies. A quick ack would be super-awesome! Thanks.
 
-Oh, looks like selftests fail to build. I will fix that for v4.
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+-- Sebastian
+
+>  drivers/power/supply/sbs-manager.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/power/supply/sbs-manager.c b/drivers/power/supply/sb=
+s-manager.c
+> index 9e4141cffbf9..933b04806d10 100644
+> --- a/drivers/power/supply/sbs-manager.c
+> +++ b/drivers/power/supply/sbs-manager.c
+> @@ -358,7 +358,7 @@ static int sbsm_probe(struct i2c_client *client)
+>  	/* register muxed i2c channels. One for each supported battery */
+>  	for (i =3D 0; i < SBSM_MAX_BATS; ++i) {
+>  		if (data->supported_bats & BIT(i)) {
+> -			ret =3D i2c_mux_add_adapter(data->muxc, 0, i + 1, 0);
+> +			ret =3D i2c_mux_add_adapter(data->muxc, 0, i + 1);
+>  			if (ret)
+>  				break;
+>  		}
+> --=20
+> 2.43.0
+>=20
+
+--d6m7btjvugjxoruz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZCg3gACgkQ2O7X88g7
++pp43w//VO9lJvcUaKz+JueNUDFd0HXec3yMyAZajSdxiWoBabx/LoCOh1+dgy5e
+36cR9TO7e/+f+OcwUD34gZ1GY0De+XLMMsFBojVll20VH222lOMyhg+WROUcKbU8
+AeZjL5YX6noqe4X+p+pRv5lQfU+GjKFY9Z3+TAm49Gk4zMHnL/KdCGwvgWhNFLiO
+bmR1yUUs+AG6TRpDSJCjv6c3tTG9u5shrCoQ4I1CAU4RUDh7skztzsRME/lgYSbf
+znikgB5tr3kIxiwwZHupaNitC7vXfhMXaMgjkkhCibkJNri/fqOv2/+taN79Zqct
+mHECbusAcvoQv4c9cJvekMrCpd+oqBW2d5clldPsrguICpq8R8E1loTVg6CFCPeW
+pXY79eqcCunzU1OEkCGZoYF3VkBthUuAn9lcdNS3oH6uPXosADrNoh2Raq4YHUYn
+vHuBAjYPNl9P/Uf3Rr3QiCu+01Zo63fOFyOCFhYYG5GzKShrQ3bI9zFkM79JB87J
+RHhRxr7Lqr5xM7lcAxJpBvP0JYBqgotP1PxpQ72ptjgzy0kcVky80uR5pXLCawxs
+88IZW1h8CBhj3W/l6tcGWsVOByHYIE6SmKboAmo3h/WVI8PUMBSjtyygjJXkm9d9
+MhgtdQjmV3vGk9s3rNJU7y9nwzKShjaE1sQgY87DrxXd5rvknEQ=
+=2KO3
+-----END PGP SIGNATURE-----
+
+--d6m7btjvugjxoruz--
 
