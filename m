@@ -1,105 +1,94 @@
-Return-Path: <linux-kernel+bounces-177583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A300E8C410C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720938C410F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877901C22D43
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:51:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF141C22C06
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:53:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFF115219A;
-	Mon, 13 May 2024 12:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4006315098C;
+	Mon, 13 May 2024 12:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PfvJ4kSM"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="tIPcgE+l"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B4A1509B2;
-	Mon, 13 May 2024 12:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DED314C5A3;
+	Mon, 13 May 2024 12:53:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715604657; cv=none; b=MB/DhgQFYt7VYbpcefEe3MNyDIgj7ZtlugVB99dbpxJi0rocvlyliJUJAJsurIOZADiZ39NoyAgnmcXt/Q22iN4hfW2DKqjc+Kh22VIwYLYX6c/5WuIFPrX9YxJNiky+mOOT+P0B4MbA+66DGRgY5n5cy9h9X0dh5rSbYItuWaM=
+	t=1715604797; cv=none; b=tZ8vv24gSKQMfGzExoreBmy/txjyuhcaGsMFXAEu8p4ZSgto0Np7DgdTPoYr0ZeXZ+et5nlY5PV3dHfZGKHAs6EpBCLhEuDbys211HCqybuKtSuxagS9O70DHnBfE6Y+T/nYLq2Z04pGIKjkKAvn1S2xGehrh6bDgG6dzSy9lA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715604657; c=relaxed/simple;
-	bh=ibad/oLXETdJ6gFZRASre3kHqdrQdhHpfWRltMesjec=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=a5bgkqQs/DDmw5nJA9CmXzcTiwzlsAHRqXhqlcXlcOAmuaRqfp7qPiGKPHZjmtO3ho2xRcLCBLb1iM2VDzILajax3qEPy4KMLqGjPU7rwsCbRw5Qt+EP8djDI8ZVFzDgfuvtb6QtvSXk1O99GW8WezO5EnXscVYw6V7wBYeeVfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PfvJ4kSM; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0DD66FF802;
-	Mon, 13 May 2024 12:50:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715604653;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BCTHEqncHX7PpEXTjLxoQdryl0DYK6TWxvSfa/L8L6Q=;
-	b=PfvJ4kSMsWdc2j20yS/BOvIQFEbCf0UaU26pGEq3zLcq4cfh7I6E2XepIPqefEp7JIoS3q
-	+frr91kLTPSGDdBbWLqlB9rTxQZrHw/1NkU+teVpLo98aE/NMjQZAKTFZAf12w5Opo9lyj
-	C5Btp70PYJWoZlhmyRjNrONij0ceSrk7knM6u84j1Mp55i2iUCEEN4LvCb0FL1goTfQxMP
-	g02b39pfRFpXccgMNDb7AreOac005qT1B9SZ/HksUJQrwC9q69TCmDLYo6oiAm1qTJpeNR
-	zDDyg7AJolHp2Z4jmB3izsOiRXr3gheK1EMpsKWhfhfhkPq6uDiJsrl28nsYBw==
-Date: Mon, 13 May 2024 14:50:49 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: <Steen.Hegelund@microchip.com>
-Cc: <tglx@linutronix.de>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>,
- <kuba@kernel.org>, <pabeni@redhat.com>, <lee@kernel.org>, <arnd@arndb.de>,
- <Horatiu.Vultur@microchip.com>, <UNGLinuxDriver@microchip.com>,
- <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
- <saravanak@google.com>, <bhelgaas@google.com>, <p.zabel@pengutronix.de>,
- <Lars.Povlsen@microchip.com>, <Daniel.Machon@microchip.com>,
- <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <Allan.Nielsen@microchip.com>, <luca.ceresoli@bootlin.com>,
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 12/17] irqchip: Add support for LAN966x OIC
-Message-ID: <20240513145049.25695b4a@bootlin.com>
-In-Reply-To: <D143YFK7334S.3MM7YORC0H24X@microchip.com>
-References: <20240430083730.134918-1-herve.codina@bootlin.com>
-	<20240430083730.134918-13-herve.codina@bootlin.com>
-	<D143YFK7334S.3MM7YORC0H24X@microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1715604797; c=relaxed/simple;
+	bh=8bkkbkRkMtHeGtx/q1XYfdnXfjo5YYKtbt2tSjRiBYo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Q2tKykPBhb2SQ7w1C+++8I+cIFhJDZSrVFy3707g2OtEagvpXm3L4eK87aa26mdtj2zERcb+uEGhOm/IM3DYU4IsK19ip9zgXFdOt5hCucZzxsDKvdN+i9icAnSBSvr3FftBkNvd+doQICWnCEdvGMx85grBzr4GyV+0Fc4Sso0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=tIPcgE+l; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=8bkkbkRkMtHeGtx/q1XYfdnXfjo5YYKtbt2tSjRiBYo=;
+	t=1715604796; x=1716814396; b=tIPcgE+llQTThOuMOnayQFnJgv93Wyr/m3thMFFaf/l6mZ1
+	KA5ie0be39IgSF3hxKROFtLr6LxtKWjwJSmN9jrOQ82duhDstfRxQs6VwbK2VoqP6iFT9mwgL8pBo
+	bSpUrCYsSx+cHae1N5sgXeeujfmeBnaykhI8fpRUkCk6Y40nLVcmBhzAEMPa05YOFDhd26Xg5Ag2q
+	AXYixoMCZ04+KzatReLMHpB/QqHLfCPSfrPkg5m1emp9gcow9JYh2R+Dh9v1PJmQ8tFZRoPdQK2dQ
+	84hUj+EJOjcMAbfCUiJcxjE0EOv+PJyXj73PfGapo8TxEOvpNcKBJ0iifxLvlaYQ==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1s6VAo-00000002HEm-0LUs;
+	Mon, 13 May 2024 14:52:58 +0200
+Message-ID: <f88384a305b90708db3b30012f9edf09690dc5ee.camel@sipsolutions.net>
+Subject: Re: [PATCH] arch/x86/um: Disable UBSAN sanitization
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, richard@nod.at, 
+	anton.ivanov@cambridgegreys.com, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com
+Cc: x86@kernel.org, linux-um@lists.infradead.org,
+ linux-kernel@vger.kernel.org,  zohar@linux.ibm.com,
+ linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Date: Mon, 13 May 2024 14:52:56 +0200
+In-Reply-To: <096121b3e74a7971b5e6a3d77ca8889380de1885.camel@huaweicloud.com>
+References: <20240513122754.1282833-1-roberto.sassu@huaweicloud.com>
+	 <d4f4666bf745e83ea00b466b7a7cfb5132b8c7b9.camel@sipsolutions.net>
+	 <096121b3e74a7971b5e6a3d77ca8889380de1885.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-malware-bazaar: not-scanned
 
-Hi Steen,
+On Mon, 2024-05-13 at 14:42 +0200, Roberto Sassu wrote:
+> On Mon, 2024-05-13 at 14:29 +0200, Johannes Berg wrote:
+> > On Mon, 2024-05-13 at 14:27 +0200, Roberto Sassu wrote:
+> > > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > >=20
+> > > Disable UBSAN sanitization on UML, since UML does not support it.
+> > >=20
+> >=20
+> > Luckily, that isn't actually true, nor does it actually do this at all.
+> > Please fix the commit message.
+>=20
+> Thanks, I was actually wondering. I based that statement based on
+> ARCH_HAS_UBSAN=3Dn.
+>=20
+> Any other solution would be ok.
 
-On Wed, 8 May 2024 08:08:30 +0000
-<Steen.Hegelund@microchip.com> wrote:
+Not sure I get it. What you're doing in the patch is perfectly fine and
+almost certainly required, but you're definitely not disabling UBSAN on
+ARCH=3Dum as you described in the commit message?
 
-..
-> > +/* Mapping of source to destination interrupts (_n = 0..8) */  
-> 
-> Are the indices really needed on LAN966X_OIC_DST_INTR_MAP* and _IDENT*
-> You do not appear to be using them?
-> 
-> 
-> > +#define LAN966X_OIC_DST_INTR_MAP(_n)   0x78
-
-Indeed, I missed them.
-These registers are defined from 0 to 8 in the document:
-  https://microchip-ung.github.io/lan9662_reginfo/reginfo_LAN9662.html?select=cpu,intr
-
-The code use only the indice 0.
-In the next iteration, I will keep indices and update the definition of
-registers like that:
-  #define LAN966X_OIC_DST_INTR_MAP(_n)   (0x78 + (_n) * 4)
-
-Best regards
-Hervé
+johannes
 
