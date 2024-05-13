@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-178072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11A5C8C4841
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:35:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF358C4844
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFCAB1F22284
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:35:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D4D285082
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D4EC8003B;
-	Mon, 13 May 2024 20:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3949B80032;
+	Mon, 13 May 2024 20:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Vqyxiqow"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J3dIIK78"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4E51E4B3;
-	Mon, 13 May 2024 20:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084C17F499
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715632491; cv=none; b=QkTYjqutwF8e2QncthXkfN/3vxZMsxk+0cPadCwmx4tvKeJdq+4GYcGhnrsm77pywgeO/dFhVPjIfbPjDyIvGMten+Zu5FDzFdaiS5pgGuZhk41Lk2UAvHrnnLoWxjOQnHt4griC7Y6BXreKoMZzTggeOXyw1DvrrBk08fFhDyg=
+	t=1715632514; cv=none; b=uUAHRGm8X1L2RmawzzVeGrYqdXBdkclWYaxvcs5P6vH0IWeYtAUqK2hA4Q4On10NV6MdmZLzrukksoDPMCS9qnXqqFL57xgvHS+BiLbcHVw+vhApX7j9mRwz8HtKkIc4/Th8LvmqQcYOjFDPMeBkmfChPmueSr3G66uVBGEZB8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715632491; c=relaxed/simple;
-	bh=1FYaTNZmbmetPdDToWbnMaxuvHyPdQkR6OVxNbKy0uI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gZ+C+gK9diUIYKAh9offNAR1aL3GUwTgZbV9rIHM3B1/jSHn3nJyWwkTh8jiB3bZNVTB990eXT+yznfXlNuAnrNBK7AgDiyOYT/qvNdv9f6UAb8scyuNRLLugXqLeNaIP3f9egBqYDTKzj0FHX6gS6IuwZbw45oB9ae1SMq7zJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Vqyxiqow; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DKIUGc024530;
-	Mon, 13 May 2024 20:34:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-transfer-encoding;
- s=corp-2023-11-20; bh=JSbc/8eA5xrI1SaFPGINdQ50BsHMllxXcq2iZ5yctfw=;
- b=VqyxiqowZbDyOT15WPPMVQu3gojdreUFeF6RgmwODXq8q+a80YE/Px2p22ZrGU6KCP3Q
- xL3Y8PPCiJRL7obsS1xAJtlOVpHgThz0Abr9+mZpIHRANzJZH6y0u7moNSVO8Pisz6RP
- C2TVyc8fUKIi2GcYRbbXvZTNiJfIDG3X+/Dmhy5tGf5OKn1drhs4+HXwMiBfV89HdZcX
- b8YiGgGx3w7u2wFANcPJVvtNtJ4HaeIim3HC5EL92lEH8zC9oKFx++G2B8+BCMcvfMyN
- zlTgpcLabYlJmyHMGoGY+nRKjw+hXETOoDoexEfKKHmuImGm/yHi4DLoyypTMKBROE8Y EA== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3ss9g1b9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 May 2024 20:34:33 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44DKB1Qj019247;
-	Mon, 13 May 2024 20:34:31 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y3r83vc9v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 May 2024 20:34:31 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44DKYVlA028454;
-	Mon, 13 May 2024 20:34:31 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 3y3r83vc9c-1;
-	Mon, 13 May 2024 20:34:31 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Crt Mori <cmo@melexis.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com, harshit.m.mogalapalli@oracle.com
-Subject: [PATCH  v2] iio: temperature: mlx90635: Fix ERR_PTR dereference in mlx90635_probe()
-Date: Mon, 13 May 2024 13:34:27 -0700
-Message-ID: <20240513203427.3208696-1-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1715632514; c=relaxed/simple;
+	bh=pTEzGIDxoUNXBmZiuvepDPcIKsUrMofBXWSemmO6LLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mpwmTI1hz4QNJZAgYEZMz4q5kSxdXHCzSrS2CWhUMCqx7Y7mQLXqxsgtNvEXmd9KCEVifUYK2NNJNnBR4xBEKvCdVOaHio+vAdkPvvTjBpGNZLiF4Sd0Nm6IZYBJ84KJxaftEY0qWHr/vzGlz74shKOyI7m4wVFWI7P21mJlXTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J3dIIK78; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-622f5a0badcso10920277b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:35:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715632512; x=1716237312; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pTEzGIDxoUNXBmZiuvepDPcIKsUrMofBXWSemmO6LLA=;
+        b=J3dIIK78u+pd/E929L3CJd9gnBPhFLpfsCBeuYZpEvkW7eWvTHcIODU0KUOk64PTgd
+         5KPUjoQD6J3LwcD0pdh5x9P2XbXIESmJu5XflQszmDEVpOIRTVVfgQwHO6vrIYu9qTYj
+         bYt0BYZssrtLjh8sj6mqOXJ9GTBKlIJBKe97mf8UosSMizy8j1G82ZRv+yR4vIknxgn3
+         TyhfRRSa2x+KWqhxLDb0nlchsuPIu2yEzDaEv7rjuOewbAqwdeeOEKlRShKJMye1nK6G
+         RlXeyNUkeeozBNbMzhu2BZpT1JcxtcuntQQDLUbZubIFbpQ9ZeGwZE/yoe6cA8EB3+Lj
+         1/Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715632512; x=1716237312;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pTEzGIDxoUNXBmZiuvepDPcIKsUrMofBXWSemmO6LLA=;
+        b=PlfIafY9OfHaAKpc6TeCfNR0eEVTXLB80jkAfKIZPVYlOEO2Iv5Jd+eaez+ve7xWbk
+         ofgclIf0YVLBun8tC24UIBA3fQEKiqgdOg8Fu/pbIXTc4xIpmUrTcNDtd8AxlqxqqN3k
+         Si5w5X5fhV0ZWJUX5rDbyCeByIPPp9kULFOdCPjQk18dMA4tXnUvEqVvyvFLnThFsJ5Z
+         1msFCikohK1NZuM6wp5G5fVksJZlvSIktb7xhCxGP0Gf69GajHsIlKIj6BjJDRZWQVnS
+         whhlUw475gS3hJTg05xUfqC8eQe5Z/cuQbEDuM/JlnOb2M5nP9N9Of3blhl42xiGC4iF
+         VeXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWf6/Mnv1a/SGv/nrnj+5PQapRi504erzRvuaGILm6K3HZj/IzTr9BywkB7zQs4hk6GcEohWMAB7GVDcyu721nBL91qy8X+cTK5la0B
+X-Gm-Message-State: AOJu0YxNn6OaERKjUiQiRG6DIJlI0OTyjrWqZPkrknY4PCaPLGIeuQGt
+	31nCYL5P+4EOc1VLw1TL2oPlzLcuQh0RqBM2f7rFaIlzY9dv9ymmVmVPHxa3MnBEqM+GsFua9Sg
+	ctWdLh68yNGA4TxcJPlsAQjXM1DMAOSXFITdZIw==
+X-Google-Smtp-Source: AGHT+IGmJyPMVsbnq4yfAa6HqzPJ3VX1xQsgoe90edGz5HOQOSfJzFbjTDY3qBrnK5tvkbNi7jtaibG1icr0I8RbCiw=
+X-Received: by 2002:a81:4305:0:b0:61b:349c:811 with SMTP id
+ 00721157ae682-622affc51e7mr108109127b3.10.1715632511805; Mon, 13 May 2024
+ 13:35:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_14,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405130141
-X-Proofpoint-GUID: WX5Xu_yCNJWIukO3q5l1yaFCI8-mRfPR
-X-Proofpoint-ORIG-GUID: WX5Xu_yCNJWIukO3q5l1yaFCI8-mRfPR
+References: <20240511021326.288728-1-yangcong5@huaqin.corp-partner.google.com> <20240511021326.288728-6-yangcong5@huaqin.corp-partner.google.com>
+In-Reply-To: <20240511021326.288728-6-yangcong5@huaqin.corp-partner.google.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 May 2024 22:35:00 +0200
+Message-ID: <CACRpkdZAwPH6J0FwCc8VfGvz6pn4_ZryMRhZG5QvdLavjvciOw@mail.gmail.com>
+Subject: Re: [PATCH v6 5/7] drm/panel: himax-hx83102: Support for BOE
+ nv110wum-l60 MIPI-DSI panel
+To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
+	dianders@chromium.org, krzysztof.kozlowski+dt@linaro.org, robh+dt@kernel.org, 
+	conor+dt@kernel.org, airlied@gmail.com, dmitry.baryshkov@linaro.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, xuxinxiong@huaqin.corp-partner.google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When devm_regmap_init_i2c() fails, regmap_ee could be error pointer,
-instead of checking for IS_ERR(regmap_ee), regmap is checked which looks
-like a copy paste error.
+On Sat, May 11, 2024 at 4:13=E2=80=AFAM Cong Yang
+<yangcong5@huaqin.corp-partner.google.com> wrote:
 
-Fixes: a1d1ba5e1c28 ("iio: temperature: mlx90635 MLX90635 IR Temperature sensor")
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
-This is found using smatch, only compile tested.
-v1->v2: Address Crt's comments.
----
- drivers/iio/temperature/mlx90635.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> The BOE nv110wum-l60 is a 11.0" WUXGA TFT LCD panel, use hx83102 controll=
+er
+> which fits in nicely with the existing panel-himax-hx83102 driver. Hence,
+> we add a new compatible with panel specific config.
+>
+> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
 
-diff --git a/drivers/iio/temperature/mlx90635.c b/drivers/iio/temperature/mlx90635.c
-index 1f5c962c1818..f7f88498ba0e 100644
---- a/drivers/iio/temperature/mlx90635.c
-+++ b/drivers/iio/temperature/mlx90635.c
-@@ -947,9 +947,9 @@ static int mlx90635_probe(struct i2c_client *client)
- 				     "failed to allocate regmap\n");
- 
- 	regmap_ee = devm_regmap_init_i2c(client, &mlx90635_regmap_ee);
--	if (IS_ERR(regmap))
--		return dev_err_probe(&client->dev, PTR_ERR(regmap),
--				     "failed to allocate regmap\n");
-+	if (IS_ERR(regmap_ee))
-+		return dev_err_probe(&client->dev, PTR_ERR(regmap_ee),
-+				     "failed to allocate EEPROM regmap\n");
- 
- 	mlx90635 = iio_priv(indio_dev);
- 	i2c_set_clientdata(client, indio_dev);
--- 
-2.39.3
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+Yours,
+Linus Walleij
 
