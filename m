@@ -1,116 +1,154 @@
-Return-Path: <linux-kernel+bounces-177601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9E88C4151
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:01:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08898C4157
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2A91F24498
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB475281605
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35E41514C1;
-	Mon, 13 May 2024 13:01:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CCE1509A3;
+	Mon, 13 May 2024 13:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="m6/kUc+n"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lHMS6AVZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D2E14C5A3;
-	Mon, 13 May 2024 13:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C60273502
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:04:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715605278; cv=none; b=uGrFMLo6RQIWtzaNBN0+6cjPdBC8E8TfkNYIPNs1/zyQdvdP9y4JJggK1O66W1Xa1tsouZcSBvta5rj+zIuL+kl0eKMpwzCFXKfA4hAdh8Lku/WIGLumrjdqmlI39+0fT0NAcIYkJSnXRHymEzS/F61ye0OLEDqCS2S1PvW7SYA=
+	t=1715605441; cv=none; b=rH3zgtG/BX7MCmN8HE4tQvWl7tUgXYHMj51x8NnvEZNN1FfIdrPrJHV/4PURHm0lEafRhHUIaSar9wblVW+CqsVK/icpvmzyP6gvGS1CzcclliUpXoduoGCzgpTzzUKk7RoelCnH6C3JVLM82hzt9wVUJC7zHUvoKdrDhO54kDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715605278; c=relaxed/simple;
-	bh=zFf4IL0Y1mUxcwPfjq2+ak1Dh56hOP+unCJYEQ6Wfnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mnQjRMJbcT+2YAcysCV654icDcQI2kx6BEimIX6Tr71OlECRTX0Sm2rdrNEyR7XlW53ZXDp8OWpDDmc+F3LYsYXuGtqc5TmISSNsQW8pCHXjuogze1d0g8Sx1e0/HIXwlUA6GqZ5cY3+xlRkP5DFHTC85Ztj09raVS1gKurW05c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=m6/kUc+n; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2Rs58EEQW/8Tv4QiXxXctVbqfNgBxWv+iDW5TsZtSKY=; b=m6/kUc+n3CYBToleHdtj6whAVJ
-	QzD0OtILsFNOXN9SO2gBV0Sm1Px8ekjYWefiA4JMLxnJ82kMksMw/AuNZOUM6T5eCV3N3+ubuZyQz
-	aAJ1sTlavsRTJZCOnGeGrFWq03Hqc7K/o6CtvcfghEZgK7R880u+kYmdWgQOZy+10XjE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s6VIO-00FIzh-As; Mon, 13 May 2024 15:00:48 +0200
-Date: Mon, 13 May 2024 15:00:48 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
-Cc: Piergiorgio Beruto <Pier.Beruto@onsemi.com>,
-	"Parthiban.Veerasooran@microchip.com" <Parthiban.Veerasooran@microchip.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"saeedm@nvidia.com" <saeedm@nvidia.com>,
-	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"Horatiu.Vultur@microchip.com" <Horatiu.Vultur@microchip.com>,
-	"ruanjinjie@huawei.com" <ruanjinjie@huawei.com>,
-	"Steen.Hegelund@microchip.com" <Steen.Hegelund@microchip.com>,
-	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
-	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
-	"Thorsten.Kummermehr@microchip.com" <Thorsten.Kummermehr@microchip.com>,
-	Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>,
-	"Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
-	"benjamin.bigler@bernformulastudent.ch" <benjamin.bigler@bernformulastudent.ch>
-Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
- interrupts unmasking
-Message-ID: <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
-References: <77d7d190-0847-4dc9-8fc5-4e33308ce7c8@lunn.ch>
- <Zi4czGX8jlqSdNrr@builder>
- <874654d4-3c52-4b0e-944a-dc5822f54a5d@lunn.ch>
- <ZjKJ93uPjSgoMOM7@builder>
- <b7c7aad7-3e93-4c57-82e9-cb3f9e7adf64@microchip.com>
- <ZjNorUP-sEyMCTG0@builder>
- <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
- <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
- <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
- <ZkG2Kb_1YsD8T1BF@minibuilder>
+	s=arc-20240116; t=1715605441; c=relaxed/simple;
+	bh=1uAlW7QKbeafzRlOsyIcTo0zraoTBDi8y2NInTKmZIk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=muZsULQcKe2mqFFNRYpD/Rn38TrqjX7t9d8nynOc42Ugf306xVcc6sWBFTStwNdg8nL5gncBO/TvQeqf1csWkqFQcb7WwKFdcoq5GKXfRzQXOZ7kp+6I2ggQ9Tr8CX6xk1wcDL2E26IaxJQ1xtaAwqAgjRRc4J4gGquungnVNVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lHMS6AVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BA27C113CC;
+	Mon, 13 May 2024 13:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715605441;
+	bh=1uAlW7QKbeafzRlOsyIcTo0zraoTBDi8y2NInTKmZIk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lHMS6AVZmgEVR8GQCJB3YENYj0XXl0hU2nzYPKfFSYHBCknoZBNYgRUm4JX37kcjC
+	 bNYLWm3qv5jEicHIwGRN+dwfgp8/mPIaeFETsdLSICXA+0kg5ZM0w5IuRVrIFP90a9
+	 jooDkQFBSjT4fCnJXtq1zANso/wRb28Kn0MZ/3u1r/a0TbbvjRxUdXDIz31zsWXeV+
+	 b6ihBdjHs8HaSt+pzkIDUzfMr7rgvxhFNLZQbs8slDABoO1nTSkxgm6zoFrnVe595/
+	 5a6seDiHmYYNM07daDUz7AR0A7IQdqETK42Gs6r2h6PI6JyT//NiUWUYRH3Nq0Ppur
+	 WAoI/NbtLdY1w==
+From: Geliang Tang <geliang@kernel.org>
+To: Andy Whitcroft <apw@canonical.com>,
+	Joe Perches <joe@perches.com>,
+	Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Geliang Tang <tanggeliang@kylinos.cn>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] checkpatch: skip warnings for symbol links
+Date: Mon, 13 May 2024 21:03:50 +0800
+Message-ID: <7601cf2dd6fc5db38ebccbc0050be6103be6ee5e.1715604900.git.tanggeliang@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkG2Kb_1YsD8T1BF@minibuilder>
+Content-Transfer-Encoding: 8bit
 
-> I've enabled some debugging options but so far nothing seems to hit.
-> What I've been able to conclude is that there still is SPI
-> communication, the macphy interrupt is still pulled low, and the cpu
-> does the ack so that it's reset to inactive.
+From: Geliang Tang <tanggeliang@kylinos.cn>
 
-Is it doing this in an endless cycle?
+If there is a symbol link in the given patch, checkpatch.pl reports two
+inaccurate warnings:
 
-Probably the debug tools are not showing anything because it is not
-looping in just one location. It is a complex loop, interrupts
-triggering a thread which runs to completion etc. So it looks like
-normal behaviour.
+$ cat 0001-selftests-bpf-Add-mptcp-pm_nl_ctl-link.patch
 
-If it is an endless cycle, it sounds like an interrupt storm. Some
-interrupt bit is not getting cleared, so it immediately fires again as
-soon as interrupts are enabled.
+ ... ...
 
-Is this your dual device board? Do you have both devices on the same
-SPI bus? Do they share interrupt lines?
+ '''
+ # diff --git a/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c \
+ #            b/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c
+ # new file mode 120000
+ # index 000000000000..5a08c255b278
+ # --- /dev/null
+ # +++ b/tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c
+ # @@ -0,0 +1 @@
+ # +../net/mptcp/pm_nl_ctl.c
+ # \ No newline at end of file
+ '''
 
-	Andrew
+$ ./scripts/checkpatch.pl 0001-selftests-bpf-Add-mptcp-pm_nl_ctl-link.patch
+
+ '''
+ WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+ #57: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+
+ WARNING: adding a line without newline at end of file
+ #57: FILE: tools/testing/selftests/bpf/mptcp_pm_nl_ctl.c:1:
+ +../net/mptcp/pm_nl_ctl.c
+
+ total: 0 errors, 2 warnings, 16 lines checked
+ '''
+
+This patch fixes this by adding a new variable $symbol_link in checkpatch
+script, set it if the new file mode is 120000. Skip these two checks
+"missing SPDX-License-Identifier" and "adding a line without newline at
+end of file" if this variable is set.
+
+Signed-off-by: Geliang Tang <tanggeliang@kylinos.cn>
+---
+ scripts/checkpatch.pl | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 9c4c4a61bc83..edf2d9dfde45 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2694,6 +2694,8 @@ sub process {
+ 
+ 	my $checklicenseline = 1;
+ 
++	my $symbol_link = 0;
++
+ 	sanitise_line_reset();
+ 	my $line;
+ 	foreach my $rawline (@rawlines) {
+@@ -3564,6 +3566,11 @@ sub process {
+ # ignore non-hunk lines and lines being removed
+ 		next if (!$hunk_line || $line =~ /^-/);
+ 
++# Check for symbol links
++		if ($line =~ /^new file mode 120000$/) {
++			$symbol_link = 1;
++		}
++
+ #trailing whitespace
+ 		if ($line =~ /^\+.*\015/) {
+ 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
+@@ -3756,7 +3763,8 @@ sub process {
+ 				}
+ 
+ 				if ($comment !~ /^$/ &&
+-				    $rawline !~ m@^\+\Q$comment\E SPDX-License-Identifier: @) {
++				    $rawline !~ m@^\+\Q$comment\E SPDX-License-Identifier: @ &&
++				    $symbol_link =~ 1) {
+ 					WARN("SPDX_LICENSE_TAG",
+ 					     "Missing or malformed SPDX-License-Identifier tag in line $checklicenseline\n" . $herecurr);
+ 				} elsif ($rawline =~ /(SPDX-License-Identifier: .*)/) {
+@@ -3867,7 +3875,8 @@ sub process {
+ 		}
+ 
+ # check for adding lines without a newline.
+-		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/) {
++		if ($line =~ /^\+/ && defined $lines[$linenr] && $lines[$linenr] =~ /^\\ No newline at end of file/ &&
++		    $symbol_link =~ 1) {
+ 			if (WARN("MISSING_EOF_NEWLINE",
+ 			         "adding a line without newline at end of file\n" . $herecurr) &&
+ 			    $fix) {
+-- 
+2.43.0
+
 
