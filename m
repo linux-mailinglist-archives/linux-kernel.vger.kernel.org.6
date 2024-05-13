@@ -1,131 +1,93 @@
-Return-Path: <linux-kernel+bounces-177603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE98C8C415A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:05:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61D38C415F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E1EF281843
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CEF1C22DDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBD51509BB;
-	Mon, 13 May 2024 13:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8099E1509BF;
+	Mon, 13 May 2024 13:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A6ajshkX"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RH/1CAKa"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE40573502;
-	Mon, 13 May 2024 13:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DB973502;
+	Mon, 13 May 2024 13:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715605492; cv=none; b=Q0vlPuBGCK31OGIlxrsPLmful05OqcYgGFrt7Lkdo3VIgpr5ZOqHdKwNpyakqbQFiRt20B7Pq48II2U27pBgr0nJc2nK8nE5Y5fIBvlV3xHzUB/R5d+SGU3YmpnimAsJHJkcg2pYtphlrjL/5XUtOdrylLRbjBPhMzFb6VGFUDQ=
+	t=1715605599; cv=none; b=LZTpOi11DtTUyTrNNt8BwOMNwr/O/YRZk0mnsw857i534c2+Q/zBocZueZk3MFMgK+2BdJcNZidTzZTU/1e+IJxUBL6Fq58QS1U7sJ6iNzJeu/dIJK7/WFCjsQDjaa+7vRic+Z47Yhb3rfZD9oyB82tL6O9weEi7Qin1sNTypzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715605492; c=relaxed/simple;
-	bh=7UCTCALAcwJZy/zFSv4mMa5RQSyTJwukKVfzBqwvx10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BfAGmSqvDMzou9C6PPP0x0xBajIS+SVL303BCHjxETvdgOs9Y+PlvK3mWQ3/duSTovi7PrIv0A0bfmOGS3nomz5xmQ+uD4iQbVH2Xbvx5HuPP202AyFILQNJDuQ6ItsnwrkQQ8D8BJF7JJjqLWbaHmZmzZHyxNrykRfi5L9KzNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A6ajshkX; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44DD4SOU117576;
-	Mon, 13 May 2024 08:04:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715605468;
-	bh=ev5eSmS3thwVNeY1xnA3bMkVddacaqfahgCUWZ2n/54=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=A6ajshkXex93BSA4K+rTjGlUXN0Qz4i7jsHMGlobqLBPTGOKa6SsZNPI/O/cvwrDJ
-	 xwy3fMkUbZ+cdlksV1YqmU+o/+1eXGoQSqnK9RCYTm/oBdBlNYH5DNOTNdRqEagbcq
-	 EeF2Ss9vU5dWYQaS9n9L4T0Ljz7dAjqKw8yby9Uc=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44DD4S44061240
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 13 May 2024 08:04:28 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 13
- May 2024 08:04:28 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 13 May 2024 08:04:27 -0500
-Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44DD4Kf9109966;
-	Mon, 13 May 2024 08:04:20 -0500
-Message-ID: <d63ae19c-9316-3a4c-e9ed-1672ace068b6@ti.com>
-Date: Mon, 13 May 2024 18:34:19 +0530
+	s=arc-20240116; t=1715605599; c=relaxed/simple;
+	bh=/Eyn9bkH5uoTKww4e9w5tijFhp5wmymIjSTpXFGepHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=egqj6+VPKlOIEWybHZKm5K7HBbw8pB/H9AiuFo2QLtTyLPqaw+DXHqh0aHXDsh/vq3j6RhRxawBoTjgMr0ZJvkiE4kJg9v3PpwYChzQvBjE9J75OCKCTg/b1paialwl3OowVY+rqY2UB1m5r/a36sfPIcf/9NEXb98HNiXlOtYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RH/1CAKa; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715605596;
+	bh=/Eyn9bkH5uoTKww4e9w5tijFhp5wmymIjSTpXFGepHA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RH/1CAKa1enDROjodfX18vOgP9pZ7PFlTktwN5ISlQGt93tgVOI3O6SLI9OJqh46y
+	 QsrPDKVwoyf9ZhqG3HEOTWaqO2KLDYrrmHLZnjyGbHoMUKR/NMtG+LzW1NZNNpSKVr
+	 5DJl7o8Yruis5fCyVYZ4LicMK51zs2YpZAn+quzWarB31aXV5dqCSeGQm6kRUSXRiU
+	 AwAVby/LufM0XWqtm4fr5EmVxWnYsuQ3C4M3M5+pz1G3s8QXhPccW+J65xTLvtoqW7
+	 r/EHIqlF+nYjbhXu/ZcOFea9GeyiPVTkfeoBSavfbwMoPwNSA9dbgkn7LyrR9eruc6
+	 kYD/jn0+NzIUg==
+Received: from [IPV6:fd00::2a:39ce] (cola.collaboradmins.com [IPv6:2a01:4f8:1c1c:5717::1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 91EC53782139;
+	Mon, 13 May 2024 13:06:33 +0000 (UTC)
+Message-ID: <a7a20d35-f566-4c3c-aef1-cb7a0f349cf6@collabora.com>
+Date: Mon, 13 May 2024 15:06:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v7 6/8] math.h Add macros to round to closest specified
- power of 2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm64: mediatek: add BananaPi R3 Mini
+To: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+ Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20240510095707.6895-1-linux@fw-web.de>
+ <20240510095707.6895-2-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: Jani Nikula <jani.nikula@intel.com>, <mchehab@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@collabora.com>,
-        <sebastian.fricke@collabora.com>, <akpm@linux-foundation.org>,
-        <gregkh@linuxfoundation.org>, <adobriyan@gmail.com>,
-        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
-        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
-        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
-        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
-        <nicolas@ndufresne.ca>
-References: <20240509183952.4064331-1-devarsht@ti.com>
- <Zj42vTpyH71TWeTk@smile.fi.intel.com> <87fruphf55.fsf@intel.com>
- <5ebcf480-81c6-4c2d-96e8-727d44f21ca9@ti.com>
- <ZkHWbS4raU_BPlpm@smile.fi.intel.com>
- <6557050e-6b18-2628-cbab-1a811b2190ba@ti.com>
- <ZkIG0-01pz632l4R@smile.fi.intel.com>
-From: Devarsh Thakkar <devarsht@ti.com>
-In-Reply-To: <ZkIG0-01pz632l4R@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20240510095707.6895-2-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Andy,
-
-On 13/05/24 17:55, Andy Shevchenko wrote:
-> On Mon, May 13, 2024 at 04:55:58PM +0530, Devarsh Thakkar wrote:
->> On 13/05/24 14:29, Andy Shevchenko wrote:
->>> On Sat, May 11, 2024 at 11:11:14PM +0530, Devarsh Thakkar wrote:
->>>> On 10/05/24 20:45, Jani Nikula wrote:
+Il 10/05/24 11:57, Frank Wunderlich ha scritto:
+> From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> [...]
-> - align naming (with the existing round*() macros)
+> Add MT7988A based BananaPi R3 Mini.
+> 
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-I think round_closest_up/round_closest_down align already and inspired by the
-existing naming convention used for round*() and DIV_ROUND_CLOSEST() macros in
-math.h as explained below (copied from my previous reply [1])
-
-"Coming back to naming, this is as per existing convention used for naming
-round_up, round_down (notice the `_` being used for macros working with pow of
-2) and DIV_ROUND_CLOSEST (notice the work `closest` used to specify the answer
- to be nearest to specified value)"
-
-But do let me know if you have any other suggestions for naming?
-
-> - add examples into commit message of the math.h patch
-
-Agreed
-> - add test cases (you need to create lib/math_kunit.c for that)
-Agreed.
-> - elaborate in the commit message of the IPU3 change what you posted above
->   (some kind of a summary)
-Agreed.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
-[1]: https://lore.kernel.org/all/ZkIG0-01pz632l4R@smile.fi.intel.com/
-
-Regards
-Devarsh
 
