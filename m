@@ -1,143 +1,227 @@
-Return-Path: <linux-kernel+bounces-177494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D5748C3FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:19:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA4A8C3FA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86CCC280A1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6CD81F22525
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B2614F126;
-	Mon, 13 May 2024 11:19:04 +0000 (UTC)
-Received: from weierstrass.telenet-ops.be (weierstrass.telenet-ops.be [195.130.137.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFB214C583;
+	Mon, 13 May 2024 11:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VXIz1x4z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876DF14D297
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD4114C591;
+	Mon, 13 May 2024 11:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715599144; cv=none; b=dgEUB1SjSC8rxdr/EUTnCHb+XuU51JXhcobQYpn5kaeHry/GMLtBdgzHt0osB3UrIZC51pPhLBVdfY4OL74ZXFN867COq1LYISUVAu6ohe63Zi5xvfR27EVynG/hlext6aZC70Z8/MgCUnCCV+eVLERv3yO3pb/GUDEiCrQlXmM=
+	t=1715599141; cv=none; b=thsBUszX8D02joM94qRGZSS7s1t47PaGqBIbh6pYeagCDmx1He1QrrVXBIZ5Zb0BthgcSHfN4l5u1ZFF0V/LUOImZO7lgW1zQGDQIlRw92bvPhnm3+eyI1SWSqsyzuy5PSvBIeHLC2t2r3s27C8Gy+FUWKf2EI/GiqBAnFa0MPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715599144; c=relaxed/simple;
-	bh=RChba25Ai+3pi3SylBL8EN8VNmPke8+6xM3Q/AA48Q8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fhSTyJF8E/JccG59afNtsnFBP9AYvB6UGb77VbXrzUg2yq6w+6lwW4mJA0d9UTVUEO37fFqGzBs/NWkPbMYyj88RpGA7kDH/+7XdLiVoa38G6oCAHiaTILCDQnzE/roHe2DEDFQfrVsjnMHA2GaY0DlXaaCHi3LCSJgnogEzunM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-	by weierstrass.telenet-ops.be (Postfix) with ESMTPS id 4VdH716R13z4x0sm
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:18:53 +0200 (CEST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c85e:4b6d:1f91:1410])
-	by laurent.telenet-ops.be with bizsmtp
-	id NbJm2C00K5V4kqY01bJm6W; Mon, 13 May 2024 13:18:46 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1s6Tgq-002tkG-0n;
-	Mon, 13 May 2024 13:18:46 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1s6The-008YWx-47;
-	Mon, 13 May 2024 13:18:46 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Greg Ungerer <gerg@linux-m68k.org>,
-	linux-m68k@lists.linux-m68k.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [GIT PULL] m68k updates for v6.10
-Date: Mon, 13 May 2024 13:18:43 +0200
-Message-Id: <20240513111843.2039350-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715599141; c=relaxed/simple;
+	bh=Hq107+KzbP8LLfL/8/jiKEoxV4uQvEu20/9t6yULhgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpFssj9aaXuKAnHi16PV8OtPHf6FM/lD90jaui4Ywc+Z0WFXK9SkUq54Ca/ruwgjLX1hovdri9oMC242/tLJq7CN6uk5c4l1aRy8wSoyCcG7BwEAfrcu+4bqJYhI0b+c4+Hz/8B8dm8VaMhttWB6rdKbgDtyZSD5qoxA35pit+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VXIz1x4z; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715599139; x=1747135139;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Hq107+KzbP8LLfL/8/jiKEoxV4uQvEu20/9t6yULhgY=;
+  b=VXIz1x4zN7CGf108Oit/tDx6Ijfe5sFzd+w61hHKxRIV4S6fP0+YD+Sk
+   znr7WG2l1a9pZ2Ptr7AG+sOBXXvKvkVo29EKqxbU1QU5ktATAP0LTx5G+
+   Us+1fFuIfi6n0UBfQL+trogIwFfeyGfm5D+osC78wO9b4sE8N7GExDWJK
+   pQpAhfFnQQWF12EQiAPszWXoTBdgVtUyU65UP1RjAlZhdEySEwC9LE7nT
+   E/T9pb0mpRx1fjQUJUgyRw5HWFD+PDjNDEi/WQCRDsPzI6pteDLmZEwKO
+   q/05b6cKB28/mc3zbJqdmnZaFMjSs5PNpRVu9xKK8cKomEsnlf906pd/1
+   w==;
+X-CSE-ConnectionGUID: yrb9+5eXTO66xLQJviy6qw==
+X-CSE-MsgGUID: kBlGDfLdTtOA7uI8/s1QbQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11349939"
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="11349939"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 04:18:58 -0700
+X-CSE-ConnectionGUID: Em0EdL3kS+ebItk6iQqS3Q==
+X-CSE-MsgGUID: 2h063URmRbasVo6zRP4CkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="61123834"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 04:18:53 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s6Thh-000000076l1-1gxQ;
+	Mon, 13 May 2024 14:18:49 +0300
+Date: Mon, 13 May 2024 14:18:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: lakshmi.sowjanya.d@intel.com
+Cc: tglx@linutronix.de, jstultz@google.com, giometti@enneenne.com,
+	corbet@lwn.net, linux-kernel@vger.kernel.org, x86@kernel.org,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	intel-wired-lan@lists.osuosl.org, eddie.dong@intel.com,
+	christopher.s.hall@intel.com, jesse.brandeburg@intel.com,
+	davem@davemloft.net, alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com, mcoquelin.stm32@gmail.com, perex@perex.cz,
+	linux-sound@vger.kernel.org, anthony.l.nguyen@intel.com,
+	peter.hilber@opensynergy.com, pandith.n@intel.com,
+	subramanian.mohan@intel.com, thejesh.reddy.t.r@intel.com
+Subject: Re: [PATCH v8 10/12] pps: generators: Add PPS Generator TIO Driver
+Message-ID: <ZkH3GP2b9WTz9W3W@smile.fi.intel.com>
+References: <20240513103813.5666-1-lakshmi.sowjanya.d@intel.com>
+ <20240513103813.5666-11-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513103813.5666-11-lakshmi.sowjanya.d@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-	Hi Linus,
+On Mon, May 13, 2024 at 04:08:11PM +0530, lakshmi.sowjanya.d@intel.com wrote:
+> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
+> 
+> The Intel Timed IO PPS generator driver outputs a PPS signal using
+> dedicated hardware that is more accurate than software actuated PPS.
+> The Timed IO hardware generates output events using the ART timer.
+> The ART timer period varies based on platform type, but is less than 100
+> nanoseconds for all current platforms. Timed IO output accuracy is
+> within 1 ART period.
+> 
+> PPS output is enabled by writing '1' the 'enable' sysfs attribute. The
+> driver uses hrtimers to schedule a wake-up 10 ms before each event
+> (edge) target time. At wakeup, the driver converts the target time in
+> terms of CLOCK_REALTIME to ART trigger time and writes this to the Timed
+> IO hardware. The Timed IO hardware generates an event precisely at the
+> requested system time without software involvement.
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+..
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+> +static ssize_t enable_store(struct device *dev, struct device_attribute *attr, const char *buf,
+> +			    size_t count)
+> +{
+> +	struct pps_tio *tio = dev_get_drvdata(dev);
+> +	bool enable;
+> +	int err;
 
-are available in the Git repository at:
+(1)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.10-tag1
+> +	err = kstrtobool(buf, &enable);
+> +	if (err)
+> +		return err;
+> +
+> +	guard(spinlock_irqsave)(&tio->lock);
+> +	if (enable && !tio->enabled) {
 
-for you to fetch changes up to ec8c8266373f6283a3e99b036aea7b9428480625:
+> +		if (!timekeeping_clocksource_has_base(CSID_X86_ART)) {
+> +			dev_err(tio->dev, "PPS cannot be started as clock is not related to ART");
 
-  m68k: defconfig: Update defconfigs for v6.9-rc1 (2024-05-08 17:43:25 +0200)
+Why not simply dev_err(dev, ...)?
 
-----------------------------------------------------------------
-m68k updates for v6.10
+> +			return -EPERM;
+> +		}
 
-  - Fix invalid context sleep and reboot hang on Mac,
-  - Fix spinlock race in kernel thread creation,
-  - Miscellaneous fixes and improvements,
-  - Defconfig updates.
+I'm wondering if we can move this check to (1) above.
+Because currently it's a good question if we are able to stop PPS which was run
+by somebody else without this check done.
 
-Thanks for pulling!
+I.o.w. this sounds too weird to me and reading the code doesn't give any hint
+if it's even possible. And if it is, are we supposed to touch that since it was
+definitely *not* us who ran it.
 
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      zorro: Use helpers from ioport.h
+> +		pps_tio_direction_output(tio);
+> +		hrtimer_start(&tio->timer, first_event(tio), HRTIMER_MODE_ABS);
+> +		tio->enabled = true;
+> +	} else if (!enable && tio->enabled) {
+> +		hrtimer_cancel(&tio->timer);
+> +		pps_tio_disable(tio);
+> +		tio->enabled = false;
+> +	}
+> +	return count;
+> +}
 
-Dawei Li (1):
-      m68k: Calculate THREAD_SIZE from THREAD_SIZE_ORDER
+..
 
-Finn Thain (2):
-      macintosh/via-macii: Fix "BUG: sleeping function called from invalid context"
-      m68k: mac: Fix reboot hang on Mac IIci
+> +static int pps_tio_probe(struct platform_device *pdev)
+> +{
 
-Geert Uytterhoeven (2):
-      m68k: Move ARCH_HAS_CPU_CACHE_ALIASING
-      m68k: defconfig: Update defconfigs for v6.9-rc1
+	struct device *dev = &pdev->dev;
 
-Michael Schmitz (1):
-      m68k: Fix spinlock race in kernel thread creation
+> +	struct pps_tio *tio;
+> +
+> +	if (!(cpu_feature_enabled(X86_FEATURE_TSC_KNOWN_FREQ) &&
+> +	      cpu_feature_enabled(X86_FEATURE_ART))) {
+> +		dev_warn(&pdev->dev, "TSC/ART is not enabled");
 
-Niklas Schnelle (1):
-      m68k: Let GENERIC_IOMAP depend on HAS_IOPORT
+		dev_warn(dev, "TSC/ART is not enabled");
 
-Thorsten Blum (1):
-      m68k: amiga: Use str_plural() to fix Coccinelle warning
+> +		return -ENODEV;
+> +	}
+> +
+> +	tio = devm_kzalloc(&pdev->dev, sizeof(*tio), GFP_KERNEL);
 
- arch/m68k/Kconfig                    |  4 ++--
- arch/m68k/amiga/config.c             |  2 +-
- arch/m68k/configs/amiga_defconfig    |  4 +---
- arch/m68k/configs/apollo_defconfig   |  4 +---
- arch/m68k/configs/atari_defconfig    |  4 +---
- arch/m68k/configs/bvme6000_defconfig |  4 +---
- arch/m68k/configs/hp300_defconfig    |  4 +---
- arch/m68k/configs/mac_defconfig      |  4 +---
- arch/m68k/configs/multi_defconfig    |  4 +---
- arch/m68k/configs/mvme147_defconfig  |  4 +---
- arch/m68k/configs/mvme16x_defconfig  |  4 +---
- arch/m68k/configs/q40_defconfig      |  4 +---
- arch/m68k/configs/sun3_defconfig     |  4 +---
- arch/m68k/configs/sun3x_defconfig    |  4 +---
- arch/m68k/include/asm/thread_info.h  |  9 +++++----
- arch/m68k/kernel/entry.S             |  4 +++-
- arch/m68k/mac/misc.c                 | 36 ++++++++++++++++++------------------
- drivers/macintosh/via-macii.c        | 11 +++--------
- drivers/zorro/zorro.c                | 14 ++++----------
- 19 files changed, 48 insertions(+), 80 deletions(-)
+	tio = devm_kzalloc(dev, sizeof(*tio), GFP_KERNEL);
 
-Gr{oetje,eeting}s,
 
-						Geert
+> +	if (!tio)
+> +		return -ENOMEM;
+> +
+> +	tio->dev = &pdev->dev;
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+	tio->dev = dev;
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+> +	tio->base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(tio->base))
+> +		return PTR_ERR(tio->base);
+
+> +	pps_tio_disable(tio);
+
+This...
+
+> +	hrtimer_init(&tio->timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
+> +	tio->timer.function = hrtimer_callback;
+> +	spin_lock_init(&tio->lock);
+
+> +	tio->enabled = false;
+
+..and this should go together, which makes me look at the enabled flag over
+the code and it seems there are a few places where you missed to sync it with
+the reality.
+
+I would think of something like this:
+
+	pps_tio_direction_output() ==> true
+	pps_tio_disable(tio) ==> false
+
+where "==> X" means assignment of enabled flag.
+
+And perhaps this:
+
+	tio->enabled = pps_generate_next_pulse(tio, expires + SAFE_TIME_NS);
+	if (!tio->enabled)
+		...
+
+But the above is just thinking out loudly, you may find the better approach(es).
+
+> +	platform_set_drvdata(pdev, tio);
+> +
+> +	return 0;
+> +}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
