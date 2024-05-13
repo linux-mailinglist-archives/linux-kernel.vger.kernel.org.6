@@ -1,169 +1,128 @@
-Return-Path: <linux-kernel+bounces-177317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B18C58C3CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:04:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DEC8C3CDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCCF9B21317
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D69E2820DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BBD1474A2;
-	Mon, 13 May 2024 08:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCCC1474B9;
+	Mon, 13 May 2024 08:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d3eYSRrU"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f3DMme5d"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFE9146D62;
-	Mon, 13 May 2024 08:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDABE146D51;
+	Mon, 13 May 2024 08:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715587466; cv=none; b=qq0ZStQ7wH9LymqD2sPqjolJOFBpUHCtn9SRHMEKAjUHvWjFspAkt9zg8uAhjSH+XLXEFCGzH/ObeInuw3gJppjRD5EbaUjZfTMSTlhe7aaanKO4PHzhf+IoVA6T4Q6oa99iWXKnq5PyC8ubIEDR8ILAT+XRtURyck9k/VzehyA=
+	t=1715587539; cv=none; b=r6n5vlhy5y79TV3WXPAoJaqhA1ieIGFKl0QtNvBDcLyuc2ttvPr71wtblFtFChAQLXZP9yzseVdWMkmX8Vkwwn4QXZBHsp0axb10Jiol/TJAKX3KEGN9VZBXH9ml4joq0eae/5TBDAgwz/3aFDMjHPVGMacga40XcQB9tb4bQ6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715587466; c=relaxed/simple;
-	bh=EAmiv7VSHmjNnLH+14OUNkI/+sQMsz87MSk2GKwM+/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HV5/xVdDN4EBq2hWkXwsxmdsnYQ90GZiRNiCLnmyUimJe7d92ZyrJPZCo/hVdxJZxXShXTkYU511bOeiMRszi//ssvHB2JyDIyxDe0yAfpzZyIfKlC8QPG9N0/xpCyuefRxClcVubPcRGxTwT6W4tetQmfhxO/cgssPw7MOgsyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d3eYSRrU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=trTboVybSpPr171+KCudUR4Obn/YpkzCtmzvOfCwqIY=; b=d3eYSRrUrt2qXEe99LIREdczLQ
-	pHtJ4aKB9ric91TLuOhYMaTSUOokSfB8DCnxWZLFkjBOU2UsH4wfTTGJF3pRmqIm2tFdgSeuqLnhl
-	9DlvPa3ZpMMPDqMx52jOvmLLRN+iH/aCk74HTtgGGzXm8+NwBjPokFqGC3ofcCBSyp8ZQT5HRDX+h
-	gCq5hqM86P0rAqBV5e6VdRPLToisLcrdTCUj0OZVZuU3PO+aUE1WHqA7+RhE5imb+rqwn3wueC6Cm
-	yrLezqNByK5C/b2t4yqhejx/qoCy4hTPx17L7pp9oOqSGBk/nyInjghxXfboiSLdBkYLv2WFRdGEC
-	lT2K6Grw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s6QfA-00000007nhx-0qqq;
-	Mon, 13 May 2024 08:04:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 568513011E8; Mon, 13 May 2024 10:03:59 +0200 (CEST)
-Date: Mon, 13 May 2024 10:03:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <20240513080359.GI30852@noisy.programming.kicks-ass.net>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240502084800.GY30852@noisy.programming.kicks-ass.net>
- <ZjPnb1vdt80FrksA@slm.duckdns.org>
- <20240503085232.GC30852@noisy.programming.kicks-ass.net>
- <ZjgWzhruwo8euPC0@slm.duckdns.org>
+	s=arc-20240116; t=1715587539; c=relaxed/simple;
+	bh=QjIzxQ8TAmkDr4YCdHB7dm8/MlbtW8LqG4Iu2oj6sHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cLugZrSxtmjQHKFMwEA2zTM0TJ81FSWNRvrW1mPY3fFUyTrH/19wom9RBrgK9nTMv5tZVK69eD8Hzpc+mKz7Upg73Fiajaaxwx/LhDXEZsEURvIB350c38hg093AqlihcUv/61oGw4ep6yI3sEwpRjvWJBj1oITpe1p/3c0pgsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f3DMme5d; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C90EC0005;
+	Mon, 13 May 2024 08:05:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715587529;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iyoZN19SXhcNpowY087583lyuLXsiKEVgwfckAcf1+w=;
+	b=f3DMme5dxtAT4mt5HSyw2dTwDS4cj1aQP7DTsF7JEASt6rAPey2MD6dQjtqCv/f//7ygwr
+	80tVcE3yboCLUBnrFQNlSPQbNERb3wwFmlBAzZULm6qLGkekBcWFHmAR+nso3/P5/3xKUi
+	jeo8olmnvjtndE9Z8cObUyAS+2gNhW5Uv3rCLkHEncVjQ2OFRVXHs1lDRzno4Td6rkDMdf
+	XX3MudMxRzLYEKTNr8IbYiINhlFGkBVlnKNAg19ttCrWo7nXUqBsYV3UhNtI8o0A55+6oO
+	9WX0VTKscxls9YA1fYGNpPorXUQ22t0JENtl1Og8jDDN/lrQznxUw6FTyswgOA==
+Date: Mon, 13 May 2024 10:05:23 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
+ <sebastian.hesselbarth@gmail.com>, Gregory Clement
+ <gregory.clement@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ UNGLinuxDriver@microchip.com, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Yisen Zhuang <yisen.zhuang@huawei.com>,
+ Salil Mehta <salil.mehta@huawei.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
+Message-ID: <20240513100523.4a23d58c@xps-13>
+In-Reply-To: <20240513-timing-snippet-38983a6b3e2f@spud>
+References: <20240510123018.3902184-1-robh@kernel.org>
+	<20240513095504.37776289@xps-13>
+	<20240513-timing-snippet-38983a6b3e2f@spud>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZjgWzhruwo8euPC0@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sun, May 05, 2024 at 01:31:26PM -1000, Tejun Heo wrote:
+Hi Conor,
 
-> > You Google/Facebook are touting collaboration, collaborate on fixing it.
-> > Instead of re-posting this over and over. After all, your main
-> > motivation for starting this was the cpu-cgroup overhead.
-> 
-> The hierarchical scheduling overhead isn't the main motivation for us. We
-> can't use the CPU controller for all workloads and while it'd be nice to
-> improve that,
+conor@kernel.org wrote on Mon, 13 May 2024 08:59:34 +0100:
 
-Hurmph, I had the impression from the earlier threads that this ~5%
-cgroup overhead was most definitely a problem and a motivator for all
-this.
+> On Mon, May 13, 2024 at 09:55:04AM +0200, Miquel Raynal wrote:
+> > Hi Rob,
+> >=20
+> > robh@kernel.org wrote on Fri, 10 May 2024 07:30:14 -0500:
+> >  =20
+> > > Add another batch of various "simple" syscon compatibles which were
+> > > undocumented or still documented with old text bindings. Remove the o=
+ld
+> > > text binding docs for the ones which were documented. =20
+> >=20
+> > ...
+> >  =20
+> > >  .../devicetree/bindings/mtd/atmel-nand.txt    |  9 ------ =20
+> >=20
+> > I don't know how useful are these compatibles, but if I take the case
+> > of atmel,sama5d3-nfc-io, it is only described in this file, while
+> > several DTSI reference it. After this change they will no longer be
+> > referenced at all but still in use. Is this intended? Shall these
+> > compatibles be totally dropped from the device trees as well?
+> >=20
+> > $ git grep -c atmel,sama5d3-nfc-io arch/
+> > arch/arm/boot/dts/microchip/sama5d2.dtsi:1
+> > arch/arm/boot/dts/microchip/sama5d3.dtsi:1
+> > arch/arm/boot/dts/microchip/sama5d4.dtsi:1
+> > arch/arm/boot/dts/microchip/sama7g5.dtsi:1 =20
+>=20
+> atmel,sama5d3-nfc-io is added to the syscon yaml binding in this patch,
+> so it's a move not a removal, no?
 
-The overhead was prohibitive, it was claimed, and you needed a solution.
-Did not previous versions use this very argument in order to push for
-all this?
+Ah sorry, I missed the additions in this file, fine then, sorry for the
+misunderstanding.
 
-By improving the cgroup mess -- I very much agree that the cgroup thing
-is not very nice. This whole argument goes away and we all get a better
-cgroup implementation.
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com> # mtd
 
-> This view works only if you assume that the entire world contains only a
-> handful of developers who can work on schedulers. The only way that would be
-> the case is if the barrier of entry is raised unreasonably high. Sometimes a
-> high barrier of entry can't be avoided or is beneficial. However, if it's
-> pushed up high enough to leave only a handful of people to work on an area
-> as large as scheduling, something probably is wrong.
-
-I've never really felt there were too few sched patches to stare at on
-any one day (quite the opposite on many days in fact).
-
-There have also always been plenty out of tree scheduler patches --
-although I rarely if ever have time to look at them.
-
-Writing a custom scheduler isn't that hard, simply ripping out
-fair_sched_class and replacing it with something simple really isn't
-*that* hard.
-
-The only really hard requirement is respecting affinities, you'll crash
-and burn real hard if you get that wrong (think of all the per-cpu
-kthreads that hard rely on the per-cpu-ness of them).
-
-But you can easily ignore cgroups, uclamp and a ton of other stuff and
-still boot and play around.
-
-> I believe we agree that we want more people contributing to the scheduling
-> area. 
-
-I think therein lies the rub -- contribution. If we were to do this
-thing, random loadable BPF schedulers, then how do we ensure people will
-contribute back?
-
-That is, from where I am sitting I see $vendor mandate their $enterprise
-product needs their $BPF scheduler. At which point $vendor will have no
-incentive to ever contribute back.
-
-And customers of $vendor that want to run additional workloads on
-their machine are then stuck with that scheduler, irrespective of it
-being suitable for them or not. This is not a good experience.
-
-So I don't at all mind people playing around with schedulers -- they can
-do so today, there are a ton of out of tree patches to start or learn
-from, or like I said, it really isn't all that hard to just rip out fair
-and write something new.
-
-Open source, you get to do your own thing. Have at.
-
-But part of what made Linux work so well, is in my opinion the GPL. GPL
-forces people to contribute back -- to work on the shared project. And I
-see the whole BPF thing as a run-around on that.
-
-Even the large cloud vendors and service providers (Amazon, Google,
-Facebook etc.) contribute back because of rebase pain -- as you well
-know. The rebase pain offsets the 'TIVO hole'.
-
-But with the BPF muck; where is the motivation to help improve things?
-
-Keeping a rando github repo with BPF schedulers is not contributing.
-That's just a repo with multiple out of tree schedulers to be ignored.
-Who will put in the effort of upsteaming things if they can hack up a
-BPF and throw it over the wall?
-
-So yeah, I'm very much NOT supportive of this effort. From where I'm
-sitting there is simply not a single benefit. You're not making my life
-better, so why would I care?
-
-How does this BPF muck translate into better quality patches for me?
+Thanks,
+Miqu=C3=A8l
 
