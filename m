@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-177577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E788C40FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:50:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE8E8C40FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693E928223F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:50:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71E0A1C22D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76AF150989;
-	Mon, 13 May 2024 12:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6B61509B5;
+	Mon, 13 May 2024 12:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iOohE7X4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nepNU4fP"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D1emCD5u";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TbR/FkQA"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6261474BE
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6328B14F9C6
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715604604; cv=none; b=usnWRedSdVMAIsSafJUsOf+iF+EjZIEb0fL/5rBWVF/ilH/xqfSvz1jS3LNXQ5QRYbA7U2i6EcpuO6hv17aUiblVjrlSoNnlIv/UsfO3NktJCxZiI92t4CwtnhbC14H7RfL2fWYEpo9BbFT0GD8xa2bUbLj6WYfG6qD4hDxKBlU=
+	t=1715604605; cv=none; b=BNbGEPIxBqTf0E1IAWctm09Kg4VcBXaMIx//7Q40w9TWbRLtegxCHzCZg2XRTzKqKE2B4xt6dPPOaex0xoaeZL0AVJSKEsM9IgkoMJrXXAWeLUuMufC02+5krGkKT14x48IcjvJ4ClSogEHTRN/ZoDVMnJcPriu+CxuBMlTMp6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715604604; c=relaxed/simple;
-	bh=LqesJ519+Yhq4vY3EAbpN9pu3NjqC3vAMkWGXFuU+4o=;
+	s=arc-20240116; t=1715604605; c=relaxed/simple;
+	bh=kmtYbZWl+xfrtc4xe3zGUCbHbgRdzlVTC2oD/0JjAGA=;
 	h=From:To:Cc:Subject:References:Message-ID:Content-Type:
-	 MIME-Version:Date; b=lBPOlq8WC8JSpyaaLfMlqzNoeDXyJNeZeUtHBn21L1tgN8IWFZ8yOeEuiZ5IxfwgZ/mtW6zwOIN34su1jvjXBN8uykhnzop7IPwNtiCV/xgkwPNnER7aa2FI6IXYoGX5afHp4hepBB4V9M+XZhJHZzCby3hREzoUUNPOuwZMLnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iOohE7X4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nepNU4fP; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Date; b=kTKGwgxl+m7IOjGLBW26iHWTQLp66DwGYVOvwqF691wzhwvW2FgY/CVYXBLYzE5YDGDIkOrJWSyZPxIHA19mDM176Y/Dmwzzegxf1Hsn+UE2b/M5tRjSknimqNo9TE5DbDBrCWRBiRDID8qTSWX14xy/BhjAWNLnLZ2nmDBnQeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D1emCD5u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TbR/FkQA; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715604600;
+	s=2020; t=1715604601;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:  references:references;
-	bh=vZbd85XOjWg1+GRdZBpjICEXdLk7or0v6xi6NIp8Baw=;
-	b=iOohE7X4LAnZT50AIsfU6tJuxdCxuFS8R74roROkucEO2NNGWHWIGBWF58BbKAzDpd1GG5
-	aKO6UvTK2KQwNHw2dovUtaGlMv3R6N85BZKn3TCdSZvSNT31u/5Q+6lEgdvwXZBo2gw9IB
-	fimronkJVcYqm4vlJdT4KoDGceI5vJIW+PI+58qVmSa9echYMC1Z8f5dAU8oe6Sf3HeGSg
-	PM4sODRaWo3hJeA5X6+VCk00+aGAdq9h9i1mY9KuAAuP79baVkLjsL7jnEDA+Sh3nt2c1g
-	NoO/owJ6j3x1RL4bXfHyVyzNHldVLOIpKcpCO5fd79KiYCD++XxuWOh6qeN/Sg==
+	bh=24Mgspsal6ptukw4WFZLBAkz0UsUKiHW2uNbmI39UnE=;
+	b=D1emCD5ugH2wEqoVFxHROiRw6RfkwJ19skHk3PnxDfWdgnRUxEBwynuLTiyh201qp034V7
+	BDg5EdQVptCKIa2j5RKIopPZZzY+0RiNaW5wE/6wV0H3JaZHe52iNRtQSmwvVzU2mmv7zy
+	LBuei9wixOQkiscucoZ7bkj/LHV9K69eNzgIXRkJPiTvjGmdnZ1NH5go3GYRyCsQaPY68d
+	pqpHpB46I3Ge+SBzN96Gcypgh0D/NVc8ShZGfQt8px63L5uTAJxT1JIy4020qMS1qvbCI5
+	I0iGlkBxBZd3pPKFswttGqts2R7Vx/UZPh2blKb88dNqtmoyHsp9OhjydH1KyA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715604600;
+	s=2020e; t=1715604601;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:  references:references;
-	bh=vZbd85XOjWg1+GRdZBpjICEXdLk7or0v6xi6NIp8Baw=;
-	b=nepNU4fPmctcA32YwjqXxlSJKqhWIwEQIgg0og2spfgU7jYfZCSkh3FTUCDLi/4rTDyrgE
-	Hp/8ML2MYwXjmmDA==
+	bh=24Mgspsal6ptukw4WFZLBAkz0UsUKiHW2uNbmI39UnE=;
+	b=TbR/FkQAJRqUYJj67d5qA0P6InVG1knkd3b8xGVhYVQPJMpgIuEUYCmJVkcZLD8ImEq2ID
+	Ep7dqG7LEjbQ0UDQ==
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] timers/core for v6.10-rc1
+Subject: [GIT pull] x86/irq for v6.10-rc1
 References: 
  <171560454635.3871325.5773365584560034962.tglx@xen13.tec.linutronix.de>
 Message-ID: 
- <171560454760.3871325.16502445987718332843.tglx@xen13.tec.linutronix.de>
+ <171560454884.3871325.5522975131804736634.tglx@xen13.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -66,1180 +66,1050 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 13 May 2024 14:50:00 +0200 (CEST)
+Date: Mon, 13 May 2024 14:50:01 +0200 (CEST)
 
 Linus,
 
-please pull the latest timers/core branch from:
+please pull the latest x86/irq branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-core-2024=
--05-12
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-irq-2024-05-=
+12
 
-up to:  a3825a769158: Merge tag 'timers-v6.10-rc1' of https://git.linaro.org/=
-people/daniel.lezcano/linux into timers/core
+up to:  6ecc2e7932fe: x86/irq: Use existing helper for pending vector check
 
-Timers and timekeeping updates:
+X86 interrupt handling update:
 
- - Core code:
+  Support for posted interrupts on bare metal
 
-   - Make timekeeping and VDSO time readouts resilent against math overflow:
+    Posted interrupts is a virtualization feature which allows to inject
+    interrupts directly into a guest without host interaction. The VT-d
+    interrupt remapping hardware sets the bit which corresponds to the
+    interrupt vector in a vector bitmap which is either used to inject the
+    interrupt directly into the guest via a virtualized APIC or in case
+    that the guest is scheduled out provides a host side notification
+    interrupt which informs the host that an interrupt has been marked
+    pending in the bitmap.
 
-     In guest context the kernel is prone to math overflow when the host
-     defers the timer interrupt due to overload, malfunction or malice.
+    This can be utilized on bare metal for scenarios where multiple
+    devices, e.g. NVME storage, raise interrupts with a high frequency.  In
+    the default mode these interrupts are handles independently and
+    therefore require a full roundtrip of interrupt entry/exit.
 
-     This can be mitigated by checking the clocksource delta for the
-     maximum deferrement which is readily available. If that value is
-     exceeded then the code uses a slowpath function which can handle the
-     multiplication overflow.
+    Utilizing posted interrupts this roundtrip overhead can be avoided by
+    coalescing these interrupt entries to a single entry for the posted
+    interrupt notification. The notification interrupt then demultiplexes
+    the pending bits in a memory based bitmap and invokes the corresponding
+    device specific handlers.
 
-     This functionality is enabled unconditionally in the kernel, but made
-     conditional in the VDSO code. The latter is conditional because it
-     allows architectures to optimize the check so it is not causing
-     performance regressions.
+    Depending on the usage scenario and device utilization throughput
+    improvements between 10% and 130% have been measured.
 
-     On X86 this is achieved by reworking the existing check for negative
-     TSC deltas as a negative delta obviously exceeds the maximum
-     deferrement when it is evaluated as an unsigned value. That avoids two
-     conditionals in the hotpath and allows to hide both the negative delta
-     and the large delta handling in the same slow path.
-
-   - Add an initial minimal ktime_t abstraction for Rust
-
-   - The usual boring cleanups and enhancements
-
- - Drivers:
-
-   - Boring updates to device trees and trivial enhancements in various
-     drivers.
+    As this is only relevant for high end servers with multiple device
+    queues per CPU attached and counterproductive for situations where
+    interrupts are arriving at distinct times, the functionality is opt-in
+    via a kernel command line parameter.
 
 Thanks,
 
 	tglx
 
 ------------------>
-Adrian Hunter (20):
-      vdso: Consolidate vdso_calc_delta()
-      vdso: Consolidate nanoseconds calculation
-      vdso: Add CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
-      math64: Tidy up mul_u64_u32_shr()
-      vdso, math64: Provide mul_u64_u32_add_u64_shr()
-      vdso: Add vdso_data:: Max_cycles
-      vdso: Make delta calculation overflow safe
-      x86/vdso: Make delta calculation overflow safe
-      timekeeping: Move timekeeping helper functions
-      timekeeping: Rename fast_tk_get_delta_ns() to __timekeeping_get_ns()
-      timekeeping: Tidy timekeeping_cycles_to_ns() slightly
-      timekeeping: Reuse timekeeping_cycles_to_ns()
-      timekeeping: Refactor timekeeping helpers
-      timekeeping: Consolidate timekeeping helpers
-      timekeeping: Fold in timekeeping_delta_to_ns()
-      timekeeping: Prepare timekeeping_cycles_to_ns() for overflow safety
-      timekeeping: Make delta calculation overflow safe
-      timekeeping: Let timekeeping_cycles_to_ns() handle both under and overf=
-low
-      clocksource: Make watchdog and suspend-timing multiplication overflow s=
-afe
-      vdso: Fix powerpc build U64_MAX undeclared error
-
-Alice Ryhl (1):
-      rust: time: Add Ktime
-
-Anna-Maria Behnsen (1):
-      timerqueue: Remove never used function timerqueue_node_expires()
-
-Boqun Feng (1):
-      rust: time: doc: Add missing C header links
-
-Borislav Petkov (AMD) (1):
-      clocksource: Make the int help prompt unit readable in ncurses
-
-Christophe JAILLET (1):
-      clocksource/drivers/timer-ti-dm: Remove an unused field in struct dmtim=
-er
-
-Geert Uytterhoeven (1):
-      clocksource/drivers/renesas-ostm: Avoid reprobe after successful early =
-probe
-
-Jiapeng Chong (2):
-      hrtimer: Remove unused function
-      hrtimer: Rename __hrtimer_hres_active() to hrtimer_hres_active()
-
-Lad Prabhakar (2):
-      dt-bindings: timer: renesas: ostm: Document Renesas RZ/V2H(P) SoC
-      clocksource/drivers/renesas-ostm: Allow OSTM driver to reprobe for RZ/V=
-2H(P) SoC
-
-Li Zhijian (2):
-      clocksource: Convert s[n]printf() to sysfs_emit()
-      clockevents: Convert s[n]printf() to sysfs_emit()
-
-Stephen Boyd (1):
-      clocksource/drivers/arm_arch_timer: Mark hisi_161010101_oem_info const
+Jacob Pan (13):
+      KVM: VMX: Move posted interrupt descriptor out of VMX code
+      x86/irq: Unionize PID.PIR for 64bit access w/o casting
+      x86/irq: Remove bitfields in posted interrupt descriptor
+      x86/irq: Add a Kconfig option for posted MSI
+      x86/irq: Reserve a per CPU IDT vector for posted MSIs
+      x86/irq: Set up per host CPU posted interrupt descriptors
+      x86/irq: Factor out handler invocation from common_interrupt()
+      x86/irq: Install posted MSI notification handler
+      x86/irq: Factor out common code for checking pending interrupts
+      x86/irq: Extend checks for pending vectors to posted interrupts
+      iommu/vt-d: Make posted MSI an opt-in command line option
+      iommu/vt-d: Enable posted mode for device MSIs
+      x86/irq: Use existing helper for pending vector check
 
 
- .../devicetree/bindings/timer/renesas,ostm.yaml    |  2 +
- arch/powerpc/include/asm/vdso/gettimeofday.h       | 26 +++---
- arch/s390/include/asm/vdso/gettimeofday.h          |  7 +-
- arch/x86/Kconfig                                   |  1 +
- arch/x86/include/asm/vdso/gettimeofday.h           | 44 ++++++----
- drivers/clocksource/arm_arch_timer.c               |  2 +-
- drivers/clocksource/renesas-ostm.c                 |  3 +-
- drivers/clocksource/timer-ti-dm.c                  |  1 -
- include/linux/math64.h                             |  8 +-
- include/linux/timerqueue.h                         |  5 --
- include/vdso/datapage.h                            |  4 +
- include/vdso/math64.h                              | 38 +++++++++
- kernel/time/Kconfig                                |  2 +-
- kernel/time/clockevents.c                          |  2 +-
- kernel/time/clocksource.c                          | 44 +++++-----
- kernel/time/hrtimer.c                              | 41 ++-------
- kernel/time/timekeeping.c                          | 96 +++++++++++---------=
+ Documentation/admin-guide/kernel-parameters.txt |   2 +
+ arch/x86/Kconfig                                |  11 ++
+ arch/x86/entry/entry_fred.c                     |   2 +
+ arch/x86/include/asm/apic.h                     |   6 +
+ arch/x86/include/asm/hardirq.h                  |   6 +
+ arch/x86/include/asm/idtentry.h                 |   6 +
+ arch/x86/include/asm/irq_remapping.h            |   7 +
+ arch/x86/include/asm/irq_vectors.h              |   8 +-
+ arch/x86/include/asm/posted_intr.h              | 118 ++++++++++++++++
+ arch/x86/kernel/apic/vector.c                   |   5 +-
+ arch/x86/kernel/cpu/common.c                    |   3 +
+ arch/x86/kernel/idt.c                           |   3 +
+ arch/x86/kernel/irq.c                           | 172 ++++++++++++++++++++++=
 --
- kernel/time/vsyscall.c                             |  6 ++
- lib/vdso/Kconfig                                   |  7 ++
- lib/vdso/gettimeofday.c                            | 55 ++++++++-----
- rust/kernel/time.rs                                | 63 ++++++++++++++
- 21 files changed, 284 insertions(+), 173 deletions(-)
+ arch/x86/kvm/vmx/posted_intr.c                  |   4 +-
+ arch/x86/kvm/vmx/posted_intr.h                  |  93 +------------
+ arch/x86/kvm/vmx/vmx.c                          |   3 +-
+ arch/x86/kvm/vmx/vmx.h                          |   2 +-
+ drivers/iommu/intel/irq_remapping.c             | 113 +++++++++++++++-
+ drivers/iommu/irq_remapping.c                   |   5 +-
+ 19 files changed, 450 insertions(+), 119 deletions(-)
+ create mode 100644 arch/x86/include/asm/posted_intr.h
 
-diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml b/Docu=
-mentation/devicetree/bindings/timer/renesas,ostm.yaml
-index 8b06a681764e..e8c642166462 100644
---- a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
-+++ b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
-@@ -26,6 +26,7 @@ properties:
-           - renesas,r9a07g043-ostm # RZ/G2UL and RZ/Five
-           - renesas,r9a07g044-ostm # RZ/G2{L,LC}
-           - renesas,r9a07g054-ostm # RZ/V2L
-+          - renesas,r9a09g057-ostm # RZ/V2H(P)
-       - const: renesas,ostm        # Generic
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/=
+admin-guide/kernel-parameters.txt
+index 902ecd92a29f..dfbe9fdf97e4 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2251,6 +2251,8 @@
+ 			no_x2apic_optout
+ 				BIOS x2APIC opt-out request will be ignored
+ 			nopost	disable Interrupt Posting
++			posted_msi
++				enable MSIs delivered as posted interrupts
 =20
-   reg:
-@@ -58,6 +59,7 @@ if:
-           - renesas,r9a07g043-ostm
-           - renesas,r9a07g044-ostm
-           - renesas,r9a07g054-ostm
-+          - renesas,r9a09g057-ostm
- then:
-   required:
-     - resets
-diff --git a/arch/powerpc/include/asm/vdso/gettimeofday.h b/arch/powerpc/incl=
-ude/asm/vdso/gettimeofday.h
-index 78302f6c2580..c6390890a60c 100644
---- a/arch/powerpc/include/asm/vdso/gettimeofday.h
-+++ b/arch/powerpc/include/asm/vdso/gettimeofday.h
-@@ -13,6 +13,17 @@
-=20
- #define VDSO_HAS_TIME			1
-=20
-+/*
-+ * powerpc specific delta calculation.
-+ *
-+ * This variant removes the masking of the subtraction because the
-+ * clocksource mask of all VDSO capable clocksources on powerpc is U64_MAX
-+ * which would result in a pointless operation. The compiler cannot
-+ * optimize it away as the mask comes from the vdso data and is not compile
-+ * time constant.
-+ */
-+#define VDSO_DELTA_NOMASK		1
-+
- static __always_inline int do_syscall_2(const unsigned long _r0, const unsig=
-ned long _r3,
- 					const unsigned long _r4)
- {
-@@ -104,21 +115,6 @@ static inline bool vdso_clocksource_ok(const struct vdso=
-_data *vd)
- }
- #define vdso_clocksource_ok vdso_clocksource_ok
-=20
--/*
-- * powerpc specific delta calculation.
-- *
-- * This variant removes the masking of the subtraction because the
-- * clocksource mask of all VDSO capable clocksources on powerpc is U64_MAX
-- * which would result in a pointless operation. The compiler cannot
-- * optimize it away as the mask comes from the vdso data and is not compile
-- * time constant.
-- */
--static __always_inline u64 vdso_calc_delta(u64 cycles, u64 last, u64 mask, u=
-32 mult)
--{
--	return (cycles - last) * mult;
--}
--#define vdso_calc_delta vdso_calc_delta
--
- #ifndef __powerpc64__
- static __always_inline u64 vdso_shift_ns(u64 ns, unsigned long shift)
- {
-diff --git a/arch/s390/include/asm/vdso/gettimeofday.h b/arch/s390/include/as=
-m/vdso/gettimeofday.h
-index db84942eb78f..7937765ccfa5 100644
---- a/arch/s390/include/asm/vdso/gettimeofday.h
-+++ b/arch/s390/include/asm/vdso/gettimeofday.h
-@@ -6,16 +6,13 @@
-=20
- #define VDSO_HAS_CLOCK_GETRES 1
-=20
-+#define VDSO_DELTA_NOMASK 1
-+
- #include <asm/syscall.h>
- #include <asm/timex.h>
- #include <asm/unistd.h>
- #include <linux/compiler.h>
-=20
--#define vdso_calc_delta __arch_vdso_calc_delta
--static __always_inline u64 __arch_vdso_calc_delta(u64 cycles, u64 last, u64 =
-mask, u32 mult)
--{
--	return (cycles - last) * mult;
--}
-=20
- static __always_inline const struct vdso_data *__arch_get_vdso_data(void)
- {
+ 	iomem=3D		Disable strict checking of access to MMIO memory
+ 		strict	regions from userspace.
 diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 4fff6ed46e90..4e251ba3bad2 100644
+index 4474bf32d0a4..fed22fc66217 100644
 --- a/arch/x86/Kconfig
 +++ b/arch/x86/Kconfig
-@@ -168,6 +168,7 @@ config X86
- 	select GENERIC_TIME_VSYSCALL
- 	select GENERIC_GETTIMEOFDAY
- 	select GENERIC_VDSO_TIME_NS
-+	select GENERIC_VDSO_OVERFLOW_PROTECT
- 	select GUP_GET_PXX_LOW_HIGH		if X86_PAE
- 	select HARDIRQS_SW_RESEND
- 	select HARDLOCKUP_CHECK_TIMESTAMP	if X86_64
-diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/=
-vdso/gettimeofday.h
-index 8e048ca980df..0ef36190abe6 100644
---- a/arch/x86/include/asm/vdso/gettimeofday.h
-+++ b/arch/x86/include/asm/vdso/gettimeofday.h
-@@ -300,7 +300,7 @@ static inline bool arch_vdso_cycles_ok(u64 cycles)
- #define vdso_cycles_ok arch_vdso_cycles_ok
+@@ -464,6 +464,17 @@ config X86_X2APIC
 =20
- /*
-- * x86 specific delta calculation.
-+ * x86 specific calculation of nanoseconds for the current cycle count
-  *
-  * The regular implementation assumes that clocksource reads are globally
-  * monotonic. The TSC can be slightly off across sockets which can cause
-@@ -308,8 +308,8 @@ static inline bool arch_vdso_cycles_ok(u64 cycles)
-  * jump.
-  *
-  * Therefore it needs to be verified that @cycles are greater than
-- * @last. If not then use @last, which is the base time of the current
-- * conversion period.
-+ * @vd->cycles_last. If not then use @vd->cycles_last, which is the base
-+ * time of the current conversion period.
-  *
-  * This variant also uses a custom mask because while the clocksource mask of
-  * all the VDSO capable clocksources on x86 is U64_MAX, the above code uses
-@@ -317,25 +317,37 @@ static inline bool arch_vdso_cycles_ok(u64 cycles)
-  * declares everything with the MSB/Sign-bit set as invalid. Therefore the
-  * effective mask is S64_MAX.
-  */
--static __always_inline
--u64 vdso_calc_delta(u64 cycles, u64 last, u64 mask, u32 mult)
-+static __always_inline u64 vdso_calc_ns(const struct vdso_data *vd, u64 cycl=
-es, u64 base)
- {
--	/*
--	 * Due to the MSB/Sign-bit being used as invalid marker (see
--	 * arch_vdso_cycles_valid() above), the effective mask is S64_MAX.
--	 */
--	u64 delta =3D (cycles - last) & S64_MAX;
-+	u64 delta =3D cycles - vd->cycle_last;
+ 	  If you don't know what to do here, say N.
 =20
- 	/*
--	 * Due to the above mentioned TSC wobbles, filter out negative motion.
--	 * Per the above masking, the effective sign bit is now bit 62.
-+	 * Negative motion and deltas which can cause multiplication
-+	 * overflow require special treatment. This check covers both as
-+	 * negative motion is guaranteed to be greater than @vd::max_cycles
-+	 * due to unsigned comparison.
-+	 *
-+	 * Due to the MSB/Sign-bit being used as invalid marker (see
-+	 * arch_vdso_cycles_valid() above), the effective mask is S64_MAX,
-+	 * but that case is also unlikely and will also take the unlikely path
-+	 * here.
- 	 */
--	if (unlikely(delta & (1ULL << 62)))
--		return 0;
-+	if (unlikely(delta > vd->max_cycles)) {
-+		/*
-+		 * Due to the above mentioned TSC wobbles, filter out
-+		 * negative motion.  Per the above masking, the effective
-+		 * sign bit is now bit 62.
-+		 */
-+		if (delta & (1ULL << 62))
-+			return base >> vd->shift;
-+
-+		/* Handle multiplication overflow gracefully */
-+		return mul_u64_u32_add_u64_shr(delta & S64_MAX, vd->mult, base, vd->shift);
-+	}
-=20
--	return delta * mult;
-+	return ((delta * vd->mult) + base) >> vd->shift;
- }
--#define vdso_calc_delta vdso_calc_delta
-+#define vdso_calc_ns vdso_calc_ns
-=20
- #endif /* !__ASSEMBLY__ */
-=20
-diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_a=
-rch_timer.c
-index 8d4a52056684..5bb43cc1a8df 100644
---- a/drivers/clocksource/arm_arch_timer.c
-+++ b/drivers/clocksource/arm_arch_timer.c
-@@ -331,7 +331,7 @@ static u64 notrace hisi_161010101_read_cntvct_el0(void)
- 	return __hisi_161010101_read_reg(cntvct_el0);
- }
-=20
--static struct ate_acpi_oem_info hisi_161010101_oem_info[] =3D {
-+static const struct ate_acpi_oem_info hisi_161010101_oem_info[] =3D {
- 	/*
- 	 * Note that trailing spaces are required to properly match
- 	 * the OEM table information.
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas=
--ostm.c
-index 8da972dc1713..3fcbd02b2483 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -210,6 +210,7 @@ static int __init ostm_init(struct device_node *np)
- 		pr_info("%pOF: used for clock events\n", np);
- 	}
-=20
-+	of_node_set_flag(np, OF_POPULATED);
- 	return 0;
-=20
- err_cleanup:
-@@ -224,7 +225,7 @@ static int __init ostm_init(struct device_node *np)
-=20
- TIMER_OF_DECLARE(ostm, "renesas,ostm", ostm_init);
-=20
--#ifdef CONFIG_ARCH_RZG2L
-+#if defined(CONFIG_ARCH_RZG2L) || defined(CONFIG_ARCH_R9A09G057)
- static int __init ostm_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti=
--dm.c
-index 56acf2617262..b7a34b1a975e 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -129,7 +129,6 @@ struct dmtimer {
- 	void __iomem	*func_base;	/* function register base */
-=20
- 	atomic_t enabled;
--	unsigned long rate;
- 	unsigned reserved:1;
- 	unsigned posted:1;
- 	unsigned omap1:1;
-diff --git a/include/linux/math64.h b/include/linux/math64.h
-index bf74478926d4..d34def7f9a8c 100644
---- a/include/linux/math64.h
-+++ b/include/linux/math64.h
-@@ -4,8 +4,8 @@
-=20
- #include <linux/types.h>
- #include <linux/math.h>
--#include <vdso/math64.h>
- #include <asm/div64.h>
-+#include <vdso/math64.h>
-=20
- #if BITS_PER_LONG =3D=3D 64
-=20
-@@ -179,16 +179,12 @@ static __always_inline u64 mul_u64_u64_shr(u64 a, u64 m=
-ul, unsigned int shift)
- #ifndef mul_u64_u32_shr
- static __always_inline u64 mul_u64_u32_shr(u64 a, u32 mul, unsigned int shif=
-t)
- {
--	u32 ah, al;
-+	u32 ah =3D a >> 32, al =3D a;
- 	u64 ret;
-=20
--	al =3D a;
--	ah =3D a >> 32;
--
- 	ret =3D mul_u32_u32(al, mul) >> shift;
- 	if (ah)
- 		ret +=3D mul_u32_u32(ah, mul) << (32 - shift);
--
- 	return ret;
- }
- #endif /* mul_u64_u32_shr */
-diff --git a/include/linux/timerqueue.h b/include/linux/timerqueue.h
-index 62973f7d4610..d306d9dd2207 100644
---- a/include/linux/timerqueue.h
-+++ b/include/linux/timerqueue.h
-@@ -37,11 +37,6 @@ static inline bool timerqueue_node_queued(struct timerqueu=
-e_node *node)
- 	return !RB_EMPTY_NODE(&node->node);
- }
-=20
--static inline bool timerqueue_node_expires(struct timerqueue_node *node)
--{
--	return node->expires;
--}
--
- static inline void timerqueue_init_head(struct timerqueue_head *head)
- {
- 	head->rb_root =3D RB_ROOT_CACHED;
-diff --git a/include/vdso/datapage.h b/include/vdso/datapage.h
-index c71ddb6d4691..d04d394db064 100644
---- a/include/vdso/datapage.h
-+++ b/include/vdso/datapage.h
-@@ -61,6 +61,7 @@ struct vdso_timestamp {
-  * @seq:		timebase sequence counter
-  * @clock_mode:		clock mode
-  * @cycle_last:		timebase at clocksource init
-+ * @max_cycles:		maximum cycles which won't overflow 64bit multiplication
-  * @mask:		clocksource mask
-  * @mult:		clocksource multiplier
-  * @shift:		clocksource shift
-@@ -92,6 +93,9 @@ struct vdso_data {
-=20
- 	s32			clock_mode;
- 	u64			cycle_last;
-+#ifdef CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
-+	u64			max_cycles;
-+#endif
- 	u64			mask;
- 	u32			mult;
- 	u32			shift;
-diff --git a/include/vdso/math64.h b/include/vdso/math64.h
-index 7da703ee5561..22ae212f8b28 100644
---- a/include/vdso/math64.h
-+++ b/include/vdso/math64.h
-@@ -21,4 +21,42 @@ __iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remaind=
-er)
- 	return ret;
- }
-=20
-+#if defined(CONFIG_ARCH_SUPPORTS_INT128) && defined(__SIZEOF_INT128__)
-+
-+#ifndef mul_u64_u32_add_u64_shr
-+static __always_inline u64 mul_u64_u32_add_u64_shr(u64 a, u32 mul, u64 b, un=
-signed int shift)
-+{
-+	return (u64)((((unsigned __int128)a * mul) + b) >> shift);
-+}
-+#endif /* mul_u64_u32_add_u64_shr */
-+
-+#else
-+
-+#ifndef mul_u64_u32_add_u64_shr
-+#ifndef mul_u32_u32
-+static inline u64 mul_u32_u32(u32 a, u32 b)
-+{
-+	return (u64)a * b;
-+}
-+#define mul_u32_u32 mul_u32_u32
-+#endif
-+static __always_inline u64 mul_u64_u32_add_u64_shr(u64 a, u32 mul, u64 b, un=
-signed int shift)
-+{
-+	u32 ah =3D a >> 32, al =3D a;
-+	bool ovf;
-+	u64 ret;
-+
-+	ovf =3D __builtin_add_overflow(mul_u32_u32(al, mul), b, &ret);
-+	ret >>=3D shift;
-+	if (ovf && shift)
-+		ret +=3D 1ULL << (64 - shift);
-+	if (ah)
-+		ret +=3D mul_u32_u32(ah, mul) << (32 - shift);
-+
-+	return ret;
-+}
-+#endif /* mul_u64_u32_add_u64_shr */
-+
-+#endif
-+
- #endif /* __VDSO_MATH64_H */
-diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
-index fc3b1a06c981..8ebb6d5a106b 100644
---- a/kernel/time/Kconfig
-+++ b/kernel/time/Kconfig
-@@ -202,7 +202,7 @@ config HIGH_RES_TIMERS
- 	  the size of the kernel image.
-=20
- config CLOCKSOURCE_WATCHDOG_MAX_SKEW_US
--	int "Clocksource watchdog maximum allowable skew (in =CE=BCs)"
-+	int "Clocksource watchdog maximum allowable skew (in microseconds)"
- 	depends on CLOCKSOURCE_WATCHDOG
- 	range 50 1000
- 	default 125
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index a7ca458cdd9c..60a6484831b1 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -677,7 +677,7 @@ static ssize_t current_device_show(struct device *dev,
- 	raw_spin_lock_irq(&clockevents_lock);
- 	td =3D tick_get_tick_dev(dev);
- 	if (td && td->evtdev)
--		count =3D snprintf(buf, PAGE_SIZE, "%s\n", td->evtdev->name);
-+		count =3D sysfs_emit(buf, "%s\n", td->evtdev->name);
- 	raw_spin_unlock_irq(&clockevents_lock);
- 	return count;
- }
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index e5b260aa0e02..d25ba49e313c 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -20,6 +20,16 @@
- #include "tick-internal.h"
- #include "timekeeping_internal.h"
-=20
-+static noinline u64 cycles_to_nsec_safe(struct clocksource *cs, u64 start, u=
-64 end)
-+{
-+	u64 delta =3D clocksource_delta(end, start, cs->mask);
-+
-+	if (likely(delta < cs->max_cycles))
-+		return clocksource_cyc2ns(delta, cs->mult, cs->shift);
-+
-+	return mul_u64_u32_shr(delta, cs->mult, cs->shift);
-+}
-+
- /**
-  * clocks_calc_mult_shift - calculate mult/shift factors for scaled math of =
-clocks
-  * @mult:	pointer to mult variable
-@@ -222,8 +232,8 @@ enum wd_read_status {
- static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csn=
-ow, u64 *wdnow)
- {
- 	unsigned int nretries, max_retries;
--	u64 wd_end, wd_end2, wd_delta;
- 	int64_t wd_delay, wd_seq_delay;
-+	u64 wd_end, wd_end2;
-=20
- 	max_retries =3D clocksource_get_max_watchdog_retry();
- 	for (nretries =3D 0; nretries <=3D max_retries; nretries++) {
-@@ -234,9 +244,7 @@ static enum wd_read_status cs_watchdog_read(struct clocks=
-ource *cs, u64 *csnow,
- 		wd_end2 =3D watchdog->read(watchdog);
- 		local_irq_enable();
-=20
--		wd_delta =3D clocksource_delta(wd_end, *wdnow, watchdog->mask);
--		wd_delay =3D clocksource_cyc2ns(wd_delta, watchdog->mult,
--					      watchdog->shift);
-+		wd_delay =3D cycles_to_nsec_safe(watchdog, *wdnow, wd_end);
- 		if (wd_delay <=3D WATCHDOG_MAX_SKEW) {
- 			if (nretries > 1 || nretries >=3D max_retries) {
- 				pr_warn("timekeeping watchdog on CPU%d: %s retried %d times before succe=
-ss\n",
-@@ -254,8 +262,7 @@ static enum wd_read_status cs_watchdog_read(struct clocks=
-ource *cs, u64 *csnow,
- 		 * report system busy, reinit the watchdog and skip the current
- 		 * watchdog test.
- 		 */
--		wd_delta =3D clocksource_delta(wd_end2, wd_end, watchdog->mask);
--		wd_seq_delay =3D clocksource_cyc2ns(wd_delta, watchdog->mult, watchdog->sh=
-ift);
-+		wd_seq_delay =3D cycles_to_nsec_safe(watchdog, wd_end, wd_end2);
- 		if (wd_seq_delay > WATCHDOG_MAX_SKEW/2)
- 			goto skip_test;
- 	}
-@@ -366,8 +373,7 @@ void clocksource_verify_percpu(struct clocksource *cs)
- 		delta =3D (csnow_end - csnow_mid) & cs->mask;
- 		if (delta < 0)
- 			cpumask_set_cpu(cpu, &cpus_ahead);
--		delta =3D clocksource_delta(csnow_end, csnow_begin, cs->mask);
--		cs_nsec =3D clocksource_cyc2ns(delta, cs->mult, cs->shift);
-+		cs_nsec =3D cycles_to_nsec_safe(cs, csnow_begin, csnow_end);
- 		if (cs_nsec > cs_nsec_max)
- 			cs_nsec_max =3D cs_nsec;
- 		if (cs_nsec < cs_nsec_min)
-@@ -398,8 +404,8 @@ static inline void clocksource_reset_watchdog(void)
-=20
- static void clocksource_watchdog(struct timer_list *unused)
- {
--	u64 csnow, wdnow, cslast, wdlast, delta;
- 	int64_t wd_nsec, cs_nsec, interval;
-+	u64 csnow, wdnow, cslast, wdlast;
- 	int next_cpu, reset_pending;
- 	struct clocksource *cs;
- 	enum wd_read_status read_ret;
-@@ -456,12 +462,8 @@ static void clocksource_watchdog(struct timer_list *unus=
-ed)
- 			continue;
- 		}
-=20
--		delta =3D clocksource_delta(wdnow, cs->wd_last, watchdog->mask);
--		wd_nsec =3D clocksource_cyc2ns(delta, watchdog->mult,
--					     watchdog->shift);
--
--		delta =3D clocksource_delta(csnow, cs->cs_last, cs->mask);
--		cs_nsec =3D clocksource_cyc2ns(delta, cs->mult, cs->shift);
-+		wd_nsec =3D cycles_to_nsec_safe(watchdog, cs->wd_last, wdnow);
-+		cs_nsec =3D cycles_to_nsec_safe(cs, cs->cs_last, csnow);
- 		wdlast =3D cs->wd_last; /* save these in case we print them */
- 		cslast =3D cs->cs_last;
- 		cs->cs_last =3D csnow;
-@@ -832,7 +834,7 @@ void clocksource_start_suspend_timing(struct clocksource =
-*cs, u64 start_cycles)
-  */
- u64 clocksource_stop_suspend_timing(struct clocksource *cs, u64 cycle_now)
- {
--	u64 now, delta, nsec =3D 0;
-+	u64 now, nsec =3D 0;
-=20
- 	if (!suspend_clocksource)
- 		return 0;
-@@ -847,12 +849,8 @@ u64 clocksource_stop_suspend_timing(struct clocksource *=
-cs, u64 cycle_now)
- 	else
- 		now =3D suspend_clocksource->read(suspend_clocksource);
-=20
--	if (now > suspend_start) {
--		delta =3D clocksource_delta(now, suspend_start,
--					  suspend_clocksource->mask);
--		nsec =3D mul_u64_u32_shr(delta, suspend_clocksource->mult,
--				       suspend_clocksource->shift);
--	}
-+	if (now > suspend_start)
-+		nsec =3D cycles_to_nsec_safe(suspend_clocksource, suspend_start, now);
-=20
- 	/*
- 	 * Disable the suspend timer to save power if current clocksource is
-@@ -1336,7 +1334,7 @@ static ssize_t current_clocksource_show(struct device *=
-dev,
- 	ssize_t count =3D 0;
-=20
- 	mutex_lock(&clocksource_mutex);
--	count =3D snprintf(buf, PAGE_SIZE, "%s\n", curr_clocksource->name);
-+	count =3D sysfs_emit(buf, "%s\n", curr_clocksource->name);
- 	mutex_unlock(&clocksource_mutex);
-=20
- 	return count;
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 70625dff62ce..492c14aac642 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -644,17 +644,12 @@ static inline ktime_t hrtimer_update_base(struct hrtime=
-r_cpu_base *base)
- /*
-  * Is the high resolution mode active ?
-  */
--static inline int __hrtimer_hres_active(struct hrtimer_cpu_base *cpu_base)
-+static inline int hrtimer_hres_active(struct hrtimer_cpu_base *cpu_base)
- {
- 	return IS_ENABLED(CONFIG_HIGH_RES_TIMERS) ?
- 		cpu_base->hres_active : 0;
- }
-=20
--static inline int hrtimer_hres_active(void)
--{
--	return __hrtimer_hres_active(this_cpu_ptr(&hrtimer_bases));
--}
--
- static void __hrtimer_reprogram(struct hrtimer_cpu_base *cpu_base,
- 				struct hrtimer *next_timer,
- 				ktime_t expires_next)
-@@ -678,7 +673,7 @@ static void __hrtimer_reprogram(struct hrtimer_cpu_base *=
-cpu_base,
- 	 * set. So we'd effectively block all timers until the T2 event
- 	 * fires.
- 	 */
--	if (!__hrtimer_hres_active(cpu_base) || cpu_base->hang_detected)
-+	if (!hrtimer_hres_active(cpu_base) || cpu_base->hang_detected)
- 		return;
-=20
- 	tick_program_event(expires_next, 1);
-@@ -789,12 +784,12 @@ static void retrigger_next_event(void *arg)
- 	 * function call will take care of the reprogramming in case the
- 	 * CPU was in a NOHZ idle sleep.
- 	 */
--	if (!__hrtimer_hres_active(base) && !tick_nohz_active)
-+	if (!hrtimer_hres_active(base) && !tick_nohz_active)
- 		return;
-=20
- 	raw_spin_lock(&base->lock);
- 	hrtimer_update_base(base);
--	if (__hrtimer_hres_active(base))
-+	if (hrtimer_hres_active(base))
- 		hrtimer_force_reprogram(base, 0);
- 	else
- 		hrtimer_update_next_event(base);
-@@ -951,7 +946,7 @@ void clock_was_set(unsigned int bases)
- 	cpumask_var_t mask;
- 	int cpu;
-=20
--	if (!__hrtimer_hres_active(cpu_base) && !tick_nohz_active)
-+	if (!hrtimer_hres_active(cpu_base) && !tick_nohz_active)
- 		goto out_timerfd;
-=20
- 	if (!zalloc_cpumask_var(&mask, GFP_KERNEL)) {
-@@ -1491,7 +1486,7 @@ u64 hrtimer_get_next_event(void)
-=20
- 	raw_spin_lock_irqsave(&cpu_base->lock, flags);
-=20
--	if (!__hrtimer_hres_active(cpu_base))
-+	if (!hrtimer_hres_active(cpu_base))
- 		expires =3D __hrtimer_get_next_event(cpu_base, HRTIMER_ACTIVE_ALL);
-=20
- 	raw_spin_unlock_irqrestore(&cpu_base->lock, flags);
-@@ -1514,7 +1509,7 @@ u64 hrtimer_next_event_without(const struct hrtimer *ex=
-clude)
-=20
- 	raw_spin_lock_irqsave(&cpu_base->lock, flags);
-=20
--	if (__hrtimer_hres_active(cpu_base)) {
-+	if (hrtimer_hres_active(cpu_base)) {
- 		unsigned int active;
-=20
- 		if (!cpu_base->softirq_activated) {
-@@ -1875,25 +1870,7 @@ void hrtimer_interrupt(struct clock_event_device *dev)
- 	tick_program_event(expires_next, 1);
- 	pr_warn_once("hrtimer: interrupt took %llu ns\n", ktime_to_ns(delta));
- }
--
--/* called with interrupts disabled */
--static inline void __hrtimer_peek_ahead_timers(void)
--{
--	struct tick_device *td;
--
--	if (!hrtimer_hres_active())
--		return;
--
--	td =3D this_cpu_ptr(&tick_cpu_device);
--	if (td && td->evtdev)
--		hrtimer_interrupt(td->evtdev);
--}
--
--#else /* CONFIG_HIGH_RES_TIMERS */
--
--static inline void __hrtimer_peek_ahead_timers(void) { }
--
--#endif	/* !CONFIG_HIGH_RES_TIMERS */
-+#endif /* !CONFIG_HIGH_RES_TIMERS */
-=20
- /*
-  * Called from run_local_timers in hardirq context every jiffy
-@@ -1904,7 +1881,7 @@ void hrtimer_run_queues(void)
- 	unsigned long flags;
- 	ktime_t now;
-=20
--	if (__hrtimer_hres_active(cpu_base))
-+	if (hrtimer_hres_active(cpu_base))
- 		return;
-=20
- 	/*
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index b58dffc58a8f..4e18db1819f8 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -237,7 +237,9 @@ static void timekeeping_check_update(struct timekeeper *t=
-k, u64 offset)
- 	}
- }
-=20
--static inline u64 timekeeping_get_delta(const struct tk_read_base *tkr)
-+static inline u64 timekeeping_cycles_to_ns(const struct tk_read_base *tkr, u=
-64 cycles);
-+
-+static inline u64 timekeeping_debug_get_ns(const struct tk_read_base *tkr)
- {
- 	struct timekeeper *tk =3D &tk_core.timekeeper;
- 	u64 now, last, mask, max, delta;
-@@ -264,34 +266,23 @@ static inline u64 timekeeping_get_delta(const struct tk=
-_read_base *tkr)
- 	 * Try to catch underflows by checking if we are seeing small
- 	 * mask-relative negative values.
- 	 */
--	if (unlikely((~delta & mask) < (mask >> 3))) {
-+	if (unlikely((~delta & mask) < (mask >> 3)))
- 		tk->underflow_seen =3D 1;
--		delta =3D 0;
--	}
-=20
--	/* Cap delta value to the max_cycles values to avoid mult overflows */
--	if (unlikely(delta > max)) {
-+	/* Check for multiplication overflows */
-+	if (unlikely(delta > max))
- 		tk->overflow_seen =3D 1;
--		delta =3D tkr->clock->max_cycles;
--	}
-=20
--	return delta;
-+	/* timekeeping_cycles_to_ns() handles both under and overflow */
-+	return timekeeping_cycles_to_ns(tkr, now);
- }
- #else
- static inline void timekeeping_check_update(struct timekeeper *tk, u64 offse=
-t)
- {
- }
--static inline u64 timekeeping_get_delta(const struct tk_read_base *tkr)
-+static inline u64 timekeeping_debug_get_ns(const struct tk_read_base *tkr)
- {
--	u64 cycle_now, delta;
--
--	/* read clocksource */
--	cycle_now =3D tk_clock_read(tkr);
--
--	/* calculate the delta since the last update_wall_time */
--	delta =3D clocksource_delta(cycle_now, tkr->cycle_last, tkr->mask);
--
--	return delta;
-+	BUG();
- }
- #endif
-=20
-@@ -370,32 +361,46 @@ static void tk_setup_internals(struct timekeeper *tk, s=
-truct clocksource *clock)
- }
-=20
- /* Timekeeper helper functions. */
-+static noinline u64 delta_to_ns_safe(const struct tk_read_base *tkr, u64 del=
-ta)
-+{
-+	return mul_u64_u32_add_u64_shr(delta, tkr->mult, tkr->xtime_nsec, tkr->shif=
-t);
-+}
-=20
--static inline u64 timekeeping_delta_to_ns(const struct tk_read_base *tkr, u6=
-4 delta)
-+static inline u64 timekeeping_cycles_to_ns(const struct tk_read_base *tkr, u=
-64 cycles)
- {
--	u64 nsec;
-+	/* Calculate the delta since the last update_wall_time() */
-+	u64 mask =3D tkr->mask, delta =3D (cycles - tkr->cycle_last) & mask;
-=20
--	nsec =3D delta * tkr->mult + tkr->xtime_nsec;
--	nsec >>=3D tkr->shift;
-+	/*
-+	 * This detects both negative motion and the case where the delta
-+	 * overflows the multiplication with tkr->mult.
-+	 */
-+	if (unlikely(delta > tkr->clock->max_cycles)) {
-+		/*
-+		 * Handle clocksource inconsistency between CPUs to prevent
-+		 * time from going backwards by checking for the MSB of the
-+		 * mask being set in the delta.
-+		 */
-+		if (delta & ~(mask >> 1))
-+			return tkr->xtime_nsec >> tkr->shift;
-+
-+		return delta_to_ns_safe(tkr, delta);
-+	}
-=20
--	return nsec;
-+	return ((delta * tkr->mult) + tkr->xtime_nsec) >> tkr->shift;
- }
-=20
--static inline u64 timekeeping_get_ns(const struct tk_read_base *tkr)
-+static __always_inline u64 __timekeeping_get_ns(const struct tk_read_base *t=
-kr)
- {
--	u64 delta;
--
--	delta =3D timekeeping_get_delta(tkr);
--	return timekeeping_delta_to_ns(tkr, delta);
-+	return timekeeping_cycles_to_ns(tkr, tk_clock_read(tkr));
- }
-=20
--static inline u64 timekeeping_cycles_to_ns(const struct tk_read_base *tkr, u=
-64 cycles)
-+static inline u64 timekeeping_get_ns(const struct tk_read_base *tkr)
- {
--	u64 delta;
-+	if (IS_ENABLED(CONFIG_DEBUG_TIMEKEEPING))
-+		return timekeeping_debug_get_ns(tkr);
-=20
--	/* calculate the delta since the last update_wall_time */
--	delta =3D clocksource_delta(cycles, tkr->cycle_last, tkr->mask);
--	return timekeeping_delta_to_ns(tkr, delta);
-+	return __timekeeping_get_ns(tkr);
- }
-=20
- /**
-@@ -431,14 +436,6 @@ static void update_fast_timekeeper(const struct tk_read_=
-base *tkr,
- 	memcpy(base + 1, base, sizeof(*base));
- }
-=20
--static __always_inline u64 fast_tk_get_delta_ns(struct tk_read_base *tkr)
--{
--	u64 delta, cycles =3D tk_clock_read(tkr);
--
--	delta =3D clocksource_delta(cycles, tkr->cycle_last, tkr->mask);
--	return timekeeping_delta_to_ns(tkr, delta);
--}
--
- static __always_inline u64 __ktime_get_fast_ns(struct tk_fast *tkf)
- {
- 	struct tk_read_base *tkr;
-@@ -449,7 +446,7 @@ static __always_inline u64 __ktime_get_fast_ns(struct tk_=
-fast *tkf)
- 		seq =3D raw_read_seqcount_latch(&tkf->seq);
- 		tkr =3D tkf->base + (seq & 0x01);
- 		now =3D ktime_to_ns(tkr->base);
--		now +=3D fast_tk_get_delta_ns(tkr);
-+		now +=3D __timekeeping_get_ns(tkr);
- 	} while (raw_read_seqcount_latch_retry(&tkf->seq, seq));
-=20
- 	return now;
-@@ -565,7 +562,7 @@ static __always_inline u64 __ktime_get_real_fast(struct t=
-k_fast *tkf, u64 *mono)
- 		tkr =3D tkf->base + (seq & 0x01);
- 		basem =3D ktime_to_ns(tkr->base);
- 		baser =3D ktime_to_ns(tkr->base_real);
--		delta =3D fast_tk_get_delta_ns(tkr);
-+		delta =3D __timekeeping_get_ns(tkr);
- 	} while (raw_read_seqcount_latch_retry(&tkf->seq, seq));
-=20
- 	if (mono)
-@@ -800,10 +797,15 @@ static void timekeeping_forward_now(struct timekeeper *=
-tk)
- 	tk->tkr_mono.cycle_last =3D cycle_now;
- 	tk->tkr_raw.cycle_last  =3D cycle_now;
-=20
--	tk->tkr_mono.xtime_nsec +=3D delta * tk->tkr_mono.mult;
--	tk->tkr_raw.xtime_nsec +=3D delta * tk->tkr_raw.mult;
-+	while (delta > 0) {
-+		u64 max =3D tk->tkr_mono.clock->max_cycles;
-+		u64 incr =3D delta < max ? delta : max;
-=20
--	tk_normalize_xtime(tk);
-+		tk->tkr_mono.xtime_nsec +=3D incr * tk->tkr_mono.mult;
-+		tk->tkr_raw.xtime_nsec +=3D incr * tk->tkr_raw.mult;
-+		tk_normalize_xtime(tk);
-+		delta -=3D incr;
-+	}
- }
-=20
- /**
-diff --git a/kernel/time/vsyscall.c b/kernel/time/vsyscall.c
-index f0d5062d9cbc..9193d6133e5d 100644
---- a/kernel/time/vsyscall.c
-+++ b/kernel/time/vsyscall.c
-@@ -22,10 +22,16 @@ static inline void update_vdso_data(struct vdso_data *vda=
-ta,
- 	u64 nsec, sec;
-=20
- 	vdata[CS_HRES_COARSE].cycle_last	=3D tk->tkr_mono.cycle_last;
-+#ifdef CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
-+	vdata[CS_HRES_COARSE].max_cycles	=3D tk->tkr_mono.clock->max_cycles;
-+#endif
- 	vdata[CS_HRES_COARSE].mask		=3D tk->tkr_mono.mask;
- 	vdata[CS_HRES_COARSE].mult		=3D tk->tkr_mono.mult;
- 	vdata[CS_HRES_COARSE].shift		=3D tk->tkr_mono.shift;
- 	vdata[CS_RAW].cycle_last		=3D tk->tkr_raw.cycle_last;
-+#ifdef CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
-+	vdata[CS_RAW].max_cycles		=3D tk->tkr_raw.clock->max_cycles;
-+#endif
- 	vdata[CS_RAW].mask			=3D tk->tkr_raw.mask;
- 	vdata[CS_RAW].mult			=3D tk->tkr_raw.mult;
- 	vdata[CS_RAW].shift			=3D tk->tkr_raw.shift;
-diff --git a/lib/vdso/Kconfig b/lib/vdso/Kconfig
-index d883ac299508..c46c2300517c 100644
---- a/lib/vdso/Kconfig
-+++ b/lib/vdso/Kconfig
-@@ -30,4 +30,11 @@ config GENERIC_VDSO_TIME_NS
- 	  Selected by architectures which support time namespaces in the
- 	  VDSO
-=20
-+config GENERIC_VDSO_OVERFLOW_PROTECT
-+	bool
++config X86_POSTED_MSI
++	bool "Enable MSI and MSI-x delivery by posted interrupts"
++	depends on X86_64 && IRQ_REMAP
 +	help
-+	  Select to add multiplication overflow protection to the VDSO
-+	  time getter functions for the price of an extra conditional
-+	  in the hotpath.
++	  This enables MSIs that are under interrupt remapping to be delivered as
++	  posted interrupts to the host kernel. Interrupt throughput can
++	  potentially be improved by coalescing CPU notifications during high
++	  frequency bursts.
 +
- endif
-diff --git a/lib/vdso/gettimeofday.c b/lib/vdso/gettimeofday.c
-index ce2f69552003..899850bd6f0b 100644
---- a/lib/vdso/gettimeofday.c
-+++ b/lib/vdso/gettimeofday.c
-@@ -5,15 +5,23 @@
- #include <vdso/datapage.h>
- #include <vdso/helpers.h>
++	  If you don't know what to do here, say N.
++
+ config X86_MPPARSE
+ 	bool "Enable MPS table" if ACPI
+ 	default y
+diff --git a/arch/x86/entry/entry_fred.c b/arch/x86/entry/entry_fred.c
+index 89c1476fcdd9..f004a4dc74c2 100644
+--- a/arch/x86/entry/entry_fred.c
++++ b/arch/x86/entry/entry_fred.c
+@@ -117,6 +117,8 @@ static idtentry_t sysvec_table[NR_SYSTEM_VECTORS] __ro_af=
+ter_init =3D {
+ 	SYSVEC(POSTED_INTR_VECTOR,		kvm_posted_intr_ipi),
+ 	SYSVEC(POSTED_INTR_WAKEUP_VECTOR,	kvm_posted_intr_wakeup_ipi),
+ 	SYSVEC(POSTED_INTR_NESTED_VECTOR,	kvm_posted_intr_nested_ipi),
++
++	SYSVEC(POSTED_MSI_NOTIFICATION_VECTOR,	posted_msi_notification),
+ };
 =20
--#ifndef vdso_calc_delta
--/*
-- * Default implementation which works for all sane clocksources. That
-- * obviously excludes x86/TSC.
-- */
--static __always_inline
--u64 vdso_calc_delta(u64 cycles, u64 last, u64 mask, u32 mult)
-+#ifndef vdso_calc_ns
-+
-+#ifdef VDSO_DELTA_NOMASK
-+# define VDSO_DELTA_MASK(vd)	ULLONG_MAX
-+#else
-+# define VDSO_DELTA_MASK(vd)	(vd->mask)
-+#endif
-+
-+#ifdef CONFIG_GENERIC_VDSO_OVERFLOW_PROTECT
-+static __always_inline bool vdso_delta_ok(const struct vdso_data *vd, u64 de=
-lta)
+ static bool fred_setup_done __initdata;
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index e6ab0cf15ed5..467532b3e070 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -14,6 +14,7 @@
+ #include <asm/msr.h>
+ #include <asm/hardirq.h>
+ #include <asm/io.h>
++#include <asm/posted_intr.h>
+=20
+ #define ARCH_APICTIMER_STOPS_ON_C3	1
+=20
+@@ -500,6 +501,11 @@ static inline bool lapic_vector_set_in_irr(unsigned int =
+vector)
+ 	return !!(irr & (1U << (vector % 32)));
+ }
+=20
++static inline bool is_vector_pending(unsigned int vector)
 +{
-+	return delta < vd->max_cycles;
++	return lapic_vector_set_in_irr(vector) || pi_pending_this_cpu(vector);
 +}
-+#else
-+static __always_inline bool vdso_delta_ok(const struct vdso_data *vd, u64 de=
-lta)
- {
--	return ((cycles - last) & mask) * mult;
-+	return true;
- }
++
+ /*
+  * Warm reset vector position:
+  */
+diff --git a/arch/x86/include/asm/hardirq.h b/arch/x86/include/asm/hardirq.h
+index fbc7722b87d1..c67fa6ad098a 100644
+--- a/arch/x86/include/asm/hardirq.h
++++ b/arch/x86/include/asm/hardirq.h
+@@ -44,10 +44,16 @@ typedef struct {
+ 	unsigned int irq_hv_reenlightenment_count;
+ 	unsigned int hyperv_stimer0_count;
+ #endif
++#ifdef CONFIG_X86_POSTED_MSI
++	unsigned int posted_msi_notification_count;
++#endif
+ } ____cacheline_aligned irq_cpustat_t;
+=20
+ DECLARE_PER_CPU_SHARED_ALIGNED(irq_cpustat_t, irq_stat);
+=20
++#ifdef CONFIG_X86_POSTED_MSI
++DECLARE_PER_CPU_ALIGNED(struct pi_desc, posted_msi_pi_desc);
++#endif
+ #define __ARCH_IRQ_STAT
+=20
+ #define inc_irq_stat(member)	this_cpu_inc(irq_stat.member)
+diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
+index 749c7411d2f1..d4f24499b256 100644
+--- a/arch/x86/include/asm/idtentry.h
++++ b/arch/x86/include/asm/idtentry.h
+@@ -751,6 +751,12 @@ DECLARE_IDTENTRY_SYSVEC(POSTED_INTR_NESTED_VECTOR,	sysve=
+c_kvm_posted_intr_nested
+ # define fred_sysvec_kvm_posted_intr_nested_ipi		NULL
  #endif
 =20
-@@ -24,6 +32,21 @@ static __always_inline u64 vdso_shift_ns(u64 ns, u32 shift)
++# ifdef CONFIG_X86_POSTED_MSI
++DECLARE_IDTENTRY_SYSVEC(POSTED_MSI_NOTIFICATION_VECTOR,	sysvec_posted_msi_no=
+tification);
++#else
++# define fred_sysvec_posted_msi_notification		NULL
++# endif
++
+ #if IS_ENABLED(CONFIG_HYPERV)
+ DECLARE_IDTENTRY_SYSVEC(HYPERVISOR_CALLBACK_VECTOR,	sysvec_hyperv_callback);
+ DECLARE_IDTENTRY_SYSVEC(HYPERV_REENLIGHTENMENT_VECTOR,	sysvec_hyperv_reenlig=
+htenment);
+diff --git a/arch/x86/include/asm/irq_remapping.h b/arch/x86/include/asm/irq_=
+remapping.h
+index 7a2ed154a5e1..5036f13ab69f 100644
+--- a/arch/x86/include/asm/irq_remapping.h
++++ b/arch/x86/include/asm/irq_remapping.h
+@@ -50,6 +50,13 @@ static inline struct irq_domain *arch_get_ir_parent_domain=
+(void)
+ 	return x86_vector_domain;
  }
- #endif
+=20
++extern bool enable_posted_msi;
++
++static inline bool posted_msi_supported(void)
++{
++	return enable_posted_msi && irq_remapping_cap(IRQ_POSTING_CAP);
++}
++
+ #else  /* CONFIG_IRQ_REMAP */
+=20
+ static inline bool irq_remapping_cap(enum irq_remap_cap cap) { return 0; }
+diff --git a/arch/x86/include/asm/irq_vectors.h b/arch/x86/include/asm/irq_ve=
+ctors.h
+index d18bfb238f66..13aea8fc3d45 100644
+--- a/arch/x86/include/asm/irq_vectors.h
++++ b/arch/x86/include/asm/irq_vectors.h
+@@ -97,10 +97,16 @@
+=20
+ #define LOCAL_TIMER_VECTOR		0xec
 =20
 +/*
-+ * Default implementation which works for all sane clocksources. That
-+ * obviously excludes x86/TSC.
++ * Posted interrupt notification vector for all device MSIs delivered to
++ * the host kernel.
 + */
-+static __always_inline u64 vdso_calc_ns(const struct vdso_data *vd, u64 cycl=
-es, u64 base)
++#define POSTED_MSI_NOTIFICATION_VECTOR	0xeb
++
+ #define NR_VECTORS			 256
+=20
+ #ifdef CONFIG_X86_LOCAL_APIC
+-#define FIRST_SYSTEM_VECTOR		LOCAL_TIMER_VECTOR
++#define FIRST_SYSTEM_VECTOR		POSTED_MSI_NOTIFICATION_VECTOR
+ #else
+ #define FIRST_SYSTEM_VECTOR		NR_VECTORS
+ #endif
+diff --git a/arch/x86/include/asm/posted_intr.h b/arch/x86/include/asm/posted=
+_intr.h
+new file mode 100644
+index 000000000000..de788b400fba
+--- /dev/null
++++ b/arch/x86/include/asm/posted_intr.h
+@@ -0,0 +1,118 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _X86_POSTED_INTR_H
++#define _X86_POSTED_INTR_H
++#include <asm/irq_vectors.h>
++
++#define POSTED_INTR_ON  0
++#define POSTED_INTR_SN  1
++
++#define PID_TABLE_ENTRY_VALID 1
++
++/* Posted-Interrupt Descriptor */
++struct pi_desc {
++	union {
++		u32 pir[8];     /* Posted interrupt requested */
++		u64 pir64[4];
++	};
++	union {
++		struct {
++			u16	notifications; /* Suppress and outstanding bits */
++			u8	nv;
++			u8	rsvd_2;
++			u32	ndst;
++		};
++		u64 control;
++	};
++	u32 rsvd[6];
++} __aligned(64);
++
++static inline bool pi_test_and_set_on(struct pi_desc *pi_desc)
 +{
-+	u64 delta =3D (cycles - vd->cycle_last) & VDSO_DELTA_MASK(vd);
-+
-+	if (likely(vdso_delta_ok(vd, delta)))
-+		return vdso_shift_ns((delta * vd->mult) + base, vd->shift);
-+
-+	return mul_u64_u32_add_u64_shr(delta, vd->mult, base, vd->shift);
++	return test_and_set_bit(POSTED_INTR_ON, (unsigned long *)&pi_desc->control);
 +}
-+#endif /* vdso_calc_ns */
 +
- #ifndef __arch_vdso_hres_capable
- static inline bool __arch_vdso_hres_capable(void)
- {
-@@ -49,10 +72,10 @@ static inline bool vdso_cycles_ok(u64 cycles)
- static __always_inline int do_hres_timens(const struct vdso_data *vdns, cloc=
-kid_t clk,
- 					  struct __kernel_timespec *ts)
- {
--	const struct vdso_data *vd;
- 	const struct timens_offset *offs =3D &vdns->offset[clk];
- 	const struct vdso_timestamp *vdso_ts;
--	u64 cycles, last, ns;
-+	const struct vdso_data *vd;
-+	u64 cycles, ns;
- 	u32 seq;
- 	s64 sec;
-=20
-@@ -73,10 +96,7 @@ static __always_inline int do_hres_timens(const struct vds=
-o_data *vdns, clockid_
- 		cycles =3D __arch_get_hw_counter(vd->clock_mode, vd);
- 		if (unlikely(!vdso_cycles_ok(cycles)))
- 			return -1;
--		ns =3D vdso_ts->nsec;
--		last =3D vd->cycle_last;
--		ns +=3D vdso_calc_delta(cycles, last, vd->mask, vd->mult);
--		ns =3D vdso_shift_ns(ns, vd->shift);
-+		ns =3D vdso_calc_ns(vd, cycles, vdso_ts->nsec);
- 		sec =3D vdso_ts->sec;
- 	} while (unlikely(vdso_read_retry(vd, seq)));
-=20
-@@ -111,7 +131,7 @@ static __always_inline int do_hres(const struct vdso_data=
- *vd, clockid_t clk,
- 				   struct __kernel_timespec *ts)
- {
- 	const struct vdso_timestamp *vdso_ts =3D &vd->basetime[clk];
--	u64 cycles, last, sec, ns;
-+	u64 cycles, sec, ns;
- 	u32 seq;
-=20
- 	/* Allows to compile the high resolution parts out */
-@@ -144,10 +164,7 @@ static __always_inline int do_hres(const struct vdso_dat=
-a *vd, clockid_t clk,
- 		cycles =3D __arch_get_hw_counter(vd->clock_mode, vd);
- 		if (unlikely(!vdso_cycles_ok(cycles)))
- 			return -1;
--		ns =3D vdso_ts->nsec;
--		last =3D vd->cycle_last;
--		ns +=3D vdso_calc_delta(cycles, last, vd->mask, vd->mult);
--		ns =3D vdso_shift_ns(ns, vd->shift);
-+		ns =3D vdso_calc_ns(vd, cycles, vdso_ts->nsec);
- 		sec =3D vdso_ts->sec;
- 	} while (unlikely(vdso_read_retry(vd, seq)));
-=20
-diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
-index 25a896eed468..e3bb5e89f88d 100644
---- a/rust/kernel/time.rs
-+++ b/rust/kernel/time.rs
-@@ -4,6 +4,12 @@
- //!
- //! This module contains the kernel APIs related to time and timers that
- //! have been ported or wrapped for usage by Rust code in the kernel.
-+//!
-+//! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
-+//! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
++static inline bool pi_test_and_clear_on(struct pi_desc *pi_desc)
++{
++	return test_and_clear_bit(POSTED_INTR_ON, (unsigned long *)&pi_desc->contro=
+l);
++}
 +
-+/// The number of nanoseconds per millisecond.
-+pub const NSEC_PER_MSEC: i64 =3D bindings::NSEC_PER_MSEC as i64;
++static inline bool pi_test_and_clear_sn(struct pi_desc *pi_desc)
++{
++	return test_and_clear_bit(POSTED_INTR_SN, (unsigned long *)&pi_desc->contro=
+l);
++}
++
++static inline bool pi_test_and_set_pir(int vector, struct pi_desc *pi_desc)
++{
++	return test_and_set_bit(vector, (unsigned long *)pi_desc->pir);
++}
++
++static inline bool pi_is_pir_empty(struct pi_desc *pi_desc)
++{
++	return bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS);
++}
++
++static inline void pi_set_sn(struct pi_desc *pi_desc)
++{
++	set_bit(POSTED_INTR_SN, (unsigned long *)&pi_desc->control);
++}
++
++static inline void pi_set_on(struct pi_desc *pi_desc)
++{
++	set_bit(POSTED_INTR_ON, (unsigned long *)&pi_desc->control);
++}
++
++static inline void pi_clear_on(struct pi_desc *pi_desc)
++{
++	clear_bit(POSTED_INTR_ON, (unsigned long *)&pi_desc->control);
++}
++
++static inline void pi_clear_sn(struct pi_desc *pi_desc)
++{
++	clear_bit(POSTED_INTR_SN, (unsigned long *)&pi_desc->control);
++}
++
++static inline bool pi_test_on(struct pi_desc *pi_desc)
++{
++	return test_bit(POSTED_INTR_ON, (unsigned long *)&pi_desc->control);
++}
++
++static inline bool pi_test_sn(struct pi_desc *pi_desc)
++{
++	return test_bit(POSTED_INTR_SN, (unsigned long *)&pi_desc->control);
++}
++
++/* Non-atomic helpers */
++static inline void __pi_set_sn(struct pi_desc *pi_desc)
++{
++	pi_desc->notifications |=3D BIT(POSTED_INTR_SN);
++}
++
++static inline void __pi_clear_sn(struct pi_desc *pi_desc)
++{
++	pi_desc->notifications &=3D ~BIT(POSTED_INTR_SN);
++}
++
++#ifdef CONFIG_X86_POSTED_MSI
++/*
++ * Not all external vectors are subject to interrupt remapping, e.g. IOMMU's
++ * own interrupts. Here we do not distinguish them since those vector bits in
++ * PIR will always be zero.
++ */
++static inline bool pi_pending_this_cpu(unsigned int vector)
++{
++	struct pi_desc *pid =3D this_cpu_ptr(&posted_msi_pi_desc);
++
++	if (WARN_ON_ONCE(vector > NR_VECTORS || vector < FIRST_EXTERNAL_VECTOR))
++		return false;
++
++	return test_bit(vector, (unsigned long *)pid->pir);
++}
++
++extern void intel_posted_msi_init(void);
++#else
++static inline bool pi_pending_this_cpu(unsigned int vector) { return false; }
++
++static inline void intel_posted_msi_init(void) {};
++#endif /* X86_POSTED_MSI */
++
++#endif /* _X86_POSTED_INTR_H */
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index 185738c72766..9eec52925fa3 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -965,7 +965,7 @@ static void __vector_cleanup(struct vector_cleanup *cl, b=
+ool check_irr)
+ 	lockdep_assert_held(&vector_lock);
 =20
- /// The time unit of Linux kernel. One jiffy equals (1/HZ) second.
- pub type Jiffies =3D core::ffi::c_ulong;
-@@ -18,3 +24,60 @@ pub fn msecs_to_jiffies(msecs: Msecs) -> Jiffies {
-     // matter what the argument is.
-     unsafe { bindings::__msecs_to_jiffies(msecs) }
+ 	hlist_for_each_entry_safe(apicd, tmp, &cl->head, clist) {
+-		unsigned int irr, vector =3D apicd->prev_vector;
++		unsigned int vector =3D apicd->prev_vector;
+=20
+ 		/*
+ 		 * Paranoia: Check if the vector that needs to be cleaned
+@@ -979,8 +979,7 @@ static void __vector_cleanup(struct vector_cleanup *cl, b=
+ool check_irr)
+ 		 * fixup_irqs() was just called to scan IRR for set bits and
+ 		 * forward them to new destination CPUs via IPIs.
+ 		 */
+-		irr =3D check_irr ? apic_read(APIC_IRR + (vector / 32 * 0x10)) : 0;
+-		if (irr & (1U << (vector % 32))) {
++		if (check_irr && is_vector_pending(vector)) {
+ 			pr_warn_once("Moved interrupt pending in old target APIC %u\n", apicd->ir=
+q);
+ 			rearm =3D true;
+ 			continue;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 605c26c009c8..25ef145586c6 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -68,6 +68,7 @@
+ #include <asm/traps.h>
+ #include <asm/sev.h>
+ #include <asm/tdx.h>
++#include <asm/posted_intr.h>
+=20
+ #include "cpu.h"
+=20
+@@ -2227,6 +2228,8 @@ void cpu_init(void)
+ 		barrier();
+=20
+ 		x2apic_setup();
++
++		intel_posted_msi_init();
+ 	}
+=20
+ 	mmgrab(&init_mm);
+diff --git a/arch/x86/kernel/idt.c b/arch/x86/kernel/idt.c
+index fc37c8d83daf..f445bec516a0 100644
+--- a/arch/x86/kernel/idt.c
++++ b/arch/x86/kernel/idt.c
+@@ -163,6 +163,9 @@ static const __initconst struct idt_data apic_idts[] =3D {
+ # endif
+ 	INTG(SPURIOUS_APIC_VECTOR,		asm_sysvec_spurious_apic_interrupt),
+ 	INTG(ERROR_APIC_VECTOR,			asm_sysvec_error_interrupt),
++# ifdef CONFIG_X86_POSTED_MSI
++	INTG(POSTED_MSI_NOTIFICATION_VECTOR,	asm_sysvec_posted_msi_notification),
++# endif
+ #endif
+ };
+=20
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 35fde0107901..385e3a5fc304 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -22,6 +22,8 @@
+ #include <asm/desc.h>
+ #include <asm/traps.h>
+ #include <asm/thermal.h>
++#include <asm/posted_intr.h>
++#include <asm/irq_remapping.h>
+=20
+ #define CREATE_TRACE_POINTS
+ #include <asm/trace/irq_vectors.h>
+@@ -181,6 +183,13 @@ int arch_show_interrupts(struct seq_file *p, int prec)
+ 		seq_printf(p, "%10u ",
+ 			   irq_stats(j)->kvm_posted_intr_wakeup_ipis);
+ 	seq_puts(p, "  Posted-interrupt wakeup event\n");
++#endif
++#ifdef CONFIG_X86_POSTED_MSI
++	seq_printf(p, "%*s: ", prec, "PMN");
++	for_each_online_cpu(j)
++		seq_printf(p, "%10u ",
++			   irq_stats(j)->posted_msi_notification_count);
++	seq_puts(p, "  Posted MSI notification event\n");
+ #endif
+ 	return 0;
  }
-+
-+/// A Rust wrapper around a `ktime_t`.
-+#[repr(transparent)]
-+#[derive(Copy, Clone)]
-+pub struct Ktime {
-+    inner: bindings::ktime_t,
+@@ -240,24 +249,16 @@ static __always_inline void handle_irq(struct irq_desc =
+*desc,
+ 		__handle_irq(desc, regs);
+ }
+=20
+-/*
+- * common_interrupt() handles all normal device IRQ's (the special SMP
+- * cross-CPU interrupts have their own entry points).
+- */
+-DEFINE_IDTENTRY_IRQ(common_interrupt)
++static __always_inline int call_irq_handler(int vector, struct pt_regs *regs)
+ {
+-	struct pt_regs *old_regs =3D set_irq_regs(regs);
+ 	struct irq_desc *desc;
+-
+-	/* entry code tells RCU that we're not quiescent.  Check it. */
+-	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
++	int ret =3D 0;
+=20
+ 	desc =3D __this_cpu_read(vector_irq[vector]);
+ 	if (likely(!IS_ERR_OR_NULL(desc))) {
+ 		handle_irq(desc, regs);
+ 	} else {
+-		apic_eoi();
+-
++		ret =3D -EINVAL;
+ 		if (desc =3D=3D VECTOR_UNUSED) {
+ 			pr_emerg_ratelimited("%s: %d.%u No irq handler for vector\n",
+ 					     __func__, smp_processor_id(),
+@@ -267,6 +268,23 @@ DEFINE_IDTENTRY_IRQ(common_interrupt)
+ 		}
+ 	}
+=20
++	return ret;
 +}
 +
-+impl Ktime {
-+    /// Create a `Ktime` from a raw `ktime_t`.
-+    #[inline]
-+    pub fn from_raw(inner: bindings::ktime_t) -> Self {
-+        Self { inner }
-+    }
++/*
++ * common_interrupt() handles all normal device IRQ's (the special SMP
++ * cross-CPU interrupts have their own entry points).
++ */
++DEFINE_IDTENTRY_IRQ(common_interrupt)
++{
++	struct pt_regs *old_regs =3D set_irq_regs(regs);
 +
-+    /// Get the current time using `CLOCK_MONOTONIC`.
-+    #[inline]
-+    pub fn ktime_get() -> Self {
-+        // SAFETY: It is always safe to call `ktime_get` outside of NMI cont=
-ext.
-+        Self::from_raw(unsafe { bindings::ktime_get() })
-+    }
++	/* entry code tells RCU that we're not quiescent.  Check it. */
++	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
 +
-+    /// Divide the number of nanoseconds by a compile-time constant.
-+    #[inline]
-+    fn divns_constant<const DIV: i64>(self) -> i64 {
-+        self.to_ns() / DIV
-+    }
++	if (unlikely(call_irq_handler(vector, regs)))
++		apic_eoi();
 +
-+    /// Returns the number of nanoseconds.
-+    #[inline]
-+    pub fn to_ns(self) -> i64 {
-+        self.inner
-+    }
+ 	set_irq_regs(old_regs);
+ }
+=20
+@@ -334,12 +352,139 @@ DEFINE_IDTENTRY_SYSVEC_SIMPLE(sysvec_kvm_posted_intr_n=
+ested_ipi)
+ }
+ #endif
+=20
++#ifdef CONFIG_X86_POSTED_MSI
 +
-+    /// Returns the number of milliseconds.
-+    #[inline]
-+    pub fn to_ms(self) -> i64 {
-+        self.divns_constant::<NSEC_PER_MSEC>()
-+    }
++/* Posted Interrupt Descriptors for coalesced MSIs to be posted */
++DEFINE_PER_CPU_ALIGNED(struct pi_desc, posted_msi_pi_desc);
++
++void intel_posted_msi_init(void)
++{
++	u32 destination;
++	u32 apic_id;
++
++	this_cpu_write(posted_msi_pi_desc.nv, POSTED_MSI_NOTIFICATION_VECTOR);
++
++	/*
++	 * APIC destination ID is stored in bit 8:15 while in XAPIC mode.
++	 * VT-d spec. CH 9.11
++	 */
++	apic_id =3D this_cpu_read(x86_cpu_to_apicid);
++	destination =3D x2apic_enabled() ? apic_id : apic_id << 8;
++	this_cpu_write(posted_msi_pi_desc.ndst, destination);
 +}
 +
-+/// Returns the number of milliseconds between two ktimes.
-+#[inline]
-+pub fn ktime_ms_delta(later: Ktime, earlier: Ktime) -> i64 {
-+    (later - earlier).to_ms()
++/*
++ * De-multiplexing posted interrupts is on the performance path, the code
++ * below is written to optimize the cache performance based on the following
++ * considerations:
++ * 1.Posted interrupt descriptor (PID) fits in a cache line that is frequent=
+ly
++ *   accessed by both CPU and IOMMU.
++ * 2.During posted MSI processing, the CPU needs to do 64-bit read and xchg
++ *   for checking and clearing posted interrupt request (PIR), a 256 bit fie=
+ld
++ *   within the PID.
++ * 3.On the other side, the IOMMU does atomic swaps of the entire PID cache
++ *   line when posting interrupts and setting control bits.
++ * 4.The CPU can access the cache line a magnitude faster than the IOMMU.
++ * 5.Each time the IOMMU does interrupt posting to the PIR will evict the PID
++ *   cache line. The cache line states after each operation are as follows:
++ *   CPU		IOMMU			PID Cache line state
++ *   ---------------------------------------------------------------
++ *...read64					exclusive
++ *...lock xchg64				modified
++ *...			post/atomic swap	invalid
++ *...-------------------------------------------------------------
++ *
++ * To reduce L1 data cache miss, it is important to avoid contention with
++ * IOMMU's interrupt posting/atomic swap. Therefore, a copy of PIR is used
++ * to dispatch interrupt handlers.
++ *
++ * In addition, the code is trying to keep the cache line state consistent
++ * as much as possible. e.g. when making a copy and clearing the PIR
++ * (assuming non-zero PIR bits are present in the entire PIR), it does:
++ *		read, read, read, read, xchg, xchg, xchg, xchg
++ * instead of:
++ *		read, xchg, read, xchg, read, xchg, read, xchg
++ */
++static __always_inline bool handle_pending_pir(u64 *pir, struct pt_regs *reg=
+s)
++{
++	int i, vec =3D FIRST_EXTERNAL_VECTOR;
++	unsigned long pir_copy[4];
++	bool handled =3D false;
++
++	for (i =3D 0; i < 4; i++)
++		pir_copy[i] =3D pir[i];
++
++	for (i =3D 0; i < 4; i++) {
++		if (!pir_copy[i])
++			continue;
++
++		pir_copy[i] =3D arch_xchg(&pir[i], 0);
++		handled =3D true;
++	}
++
++	if (handled) {
++		for_each_set_bit_from(vec, pir_copy, FIRST_SYSTEM_VECTOR)
++			call_irq_handler(vec, regs);
++	}
++
++	return handled;
 +}
 +
-+impl core::ops::Sub for Ktime {
-+    type Output =3D Ktime;
++/*
++ * Performance data shows that 3 is good enough to harvest 90+% of the benef=
+it
++ * on high IRQ rate workload.
++ */
++#define MAX_POSTED_MSI_COALESCING_LOOP 3
 +
-+    #[inline]
-+    fn sub(self, other: Ktime) -> Ktime {
-+        Self {
-+            inner: self.inner - other.inner,
-+        }
-+    }
++/*
++ * For MSIs that are delivered as posted interrupts, the CPU notifications
++ * can be coalesced if the MSIs arrive in high frequency bursts.
++ */
++DEFINE_IDTENTRY_SYSVEC(sysvec_posted_msi_notification)
++{
++	struct pt_regs *old_regs =3D set_irq_regs(regs);
++	struct pi_desc *pid;
++	int i =3D 0;
++
++	pid =3D this_cpu_ptr(&posted_msi_pi_desc);
++
++	inc_irq_stat(posted_msi_notification_count);
++	irq_enter();
++
++	/*
++	 * Max coalescing count includes the extra round of handle_pending_pir
++	 * after clearing the outstanding notification bit. Hence, at most
++	 * MAX_POSTED_MSI_COALESCING_LOOP - 1 loops are executed here.
++	 */
++	while (++i < MAX_POSTED_MSI_COALESCING_LOOP) {
++		if (!handle_pending_pir(pid->pir64, regs))
++			break;
++	}
++
++	/*
++	 * Clear outstanding notification bit to allow new IRQ notifications,
++	 * do this last to maximize the window of interrupt coalescing.
++	 */
++	pi_clear_on(pid);
++
++	/*
++	 * There could be a race of PI notification and the clearing of ON bit,
++	 * process PIR bits one last time such that handling the new interrupts
++	 * are not delayed until the next IRQ.
++	 */
++	handle_pending_pir(pid->pir64, regs);
++
++	apic_eoi();
++	irq_exit();
++	set_irq_regs(old_regs);
 +}
++#endif /* X86_POSTED_MSI */
+=20
+ #ifdef CONFIG_HOTPLUG_CPU
+ /* A cpu has been removed from cpu_online_mask.  Reset irq affinities. */
+ void fixup_irqs(void)
+ {
+-	unsigned int irr, vector;
++	unsigned int vector;
+ 	struct irq_desc *desc;
+ 	struct irq_data *data;
+ 	struct irq_chip *chip;
+@@ -366,8 +511,7 @@ void fixup_irqs(void)
+ 		if (IS_ERR_OR_NULL(__this_cpu_read(vector_irq[vector])))
+ 			continue;
+=20
+-		irr =3D apic_read(APIC_IRR + (vector / 32 * 0x10));
+-		if (irr  & (1 << (vector % 32))) {
++		if (is_vector_pending(vector)) {
+ 			desc =3D __this_cpu_read(vector_irq[vector]);
+=20
+ 			raw_spin_lock(&desc->lock);
+diff --git a/arch/x86/kvm/vmx/posted_intr.c b/arch/x86/kvm/vmx/posted_intr.c
+index af662312fd07..ec08fa3caf43 100644
+--- a/arch/x86/kvm/vmx/posted_intr.c
++++ b/arch/x86/kvm/vmx/posted_intr.c
+@@ -107,7 +107,7 @@ void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
+ 		 * handle task migration (@cpu !=3D vcpu->cpu).
+ 		 */
+ 		new.ndst =3D dest;
+-		new.sn =3D 0;
++		__pi_clear_sn(&new);
+=20
+ 		/*
+ 		 * Restore the notification vector; in the blocking case, the
+@@ -157,7 +157,7 @@ static void pi_enable_wakeup_handler(struct kvm_vcpu *vcp=
+u)
+ 		      &per_cpu(wakeup_vcpus_on_cpu, vcpu->cpu));
+ 	raw_spin_unlock(&per_cpu(wakeup_vcpus_on_cpu_lock, vcpu->cpu));
+=20
+-	WARN(pi_desc->sn, "PI descriptor SN field set before blocking");
++	WARN(pi_test_sn(pi_desc), "PI descriptor SN field set before blocking");
+=20
+ 	old.control =3D READ_ONCE(pi_desc->control);
+ 	do {
+diff --git a/arch/x86/kvm/vmx/posted_intr.h b/arch/x86/kvm/vmx/posted_intr.h
+index 26992076552e..6b2a0226257e 100644
+--- a/arch/x86/kvm/vmx/posted_intr.h
++++ b/arch/x86/kvm/vmx/posted_intr.h
+@@ -1,98 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __KVM_X86_VMX_POSTED_INTR_H
+ #define __KVM_X86_VMX_POSTED_INTR_H
+-
+-#define POSTED_INTR_ON  0
+-#define POSTED_INTR_SN  1
+-
+-#define PID_TABLE_ENTRY_VALID 1
+-
+-/* Posted-Interrupt Descriptor */
+-struct pi_desc {
+-	u32 pir[8];     /* Posted interrupt requested */
+-	union {
+-		struct {
+-				/* bit 256 - Outstanding Notification */
+-			u16	on	: 1,
+-				/* bit 257 - Suppress Notification */
+-				sn	: 1,
+-				/* bit 271:258 - Reserved */
+-				rsvd_1	: 14;
+-				/* bit 279:272 - Notification Vector */
+-			u8	nv;
+-				/* bit 287:280 - Reserved */
+-			u8	rsvd_2;
+-				/* bit 319:288 - Notification Destination */
+-			u32	ndst;
+-		};
+-		u64 control;
+-	};
+-	u32 rsvd[6];
+-} __aligned(64);
+-
+-static inline bool pi_test_and_set_on(struct pi_desc *pi_desc)
+-{
+-	return test_and_set_bit(POSTED_INTR_ON,
+-			(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline bool pi_test_and_clear_on(struct pi_desc *pi_desc)
+-{
+-	return test_and_clear_bit(POSTED_INTR_ON,
+-			(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline bool pi_test_and_clear_sn(struct pi_desc *pi_desc)
+-{
+-	return test_and_clear_bit(POSTED_INTR_SN,
+-			(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline bool pi_test_and_set_pir(int vector, struct pi_desc *pi_desc)
+-{
+-	return test_and_set_bit(vector, (unsigned long *)pi_desc->pir);
+-}
+-
+-static inline bool pi_is_pir_empty(struct pi_desc *pi_desc)
+-{
+-	return bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS);
+-}
+-
+-static inline void pi_set_sn(struct pi_desc *pi_desc)
+-{
+-	set_bit(POSTED_INTR_SN,
+-		(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline void pi_set_on(struct pi_desc *pi_desc)
+-{
+-	set_bit(POSTED_INTR_ON,
+-		(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline void pi_clear_on(struct pi_desc *pi_desc)
+-{
+-	clear_bit(POSTED_INTR_ON,
+-		(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline void pi_clear_sn(struct pi_desc *pi_desc)
+-{
+-	clear_bit(POSTED_INTR_SN,
+-		(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline bool pi_test_on(struct pi_desc *pi_desc)
+-{
+-	return test_bit(POSTED_INTR_ON,
+-			(unsigned long *)&pi_desc->control);
+-}
+-
+-static inline bool pi_test_sn(struct pi_desc *pi_desc)
+-{
+-	return test_bit(POSTED_INTR_SN,
+-			(unsigned long *)&pi_desc->control);
+-}
++#include <asm/posted_intr.h>
+=20
+ void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu);
+ void vmx_vcpu_pi_put(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 22411f4aff53..becefaf95cab 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -70,6 +70,7 @@
+ #include "x86.h"
+ #include "smm.h"
+ #include "vmx_onhyperv.h"
++#include "posted_intr.h"
+=20
+ MODULE_AUTHOR("Qumranet");
+ MODULE_LICENSE("GPL");
+@@ -4844,7 +4845,7 @@ static void __vmx_vcpu_reset(struct kvm_vcpu *vcpu)
+ 	 * or POSTED_INTR_WAKEUP_VECTOR.
+ 	 */
+ 	vmx->pi_desc.nv =3D POSTED_INTR_VECTOR;
+-	vmx->pi_desc.sn =3D 1;
++	__pi_set_sn(&vmx->pi_desc);
+ }
+=20
+ static void vmx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+index 90f9e4434646..7e483366b31e 100644
+--- a/arch/x86/kvm/vmx/vmx.h
++++ b/arch/x86/kvm/vmx/vmx.h
+@@ -7,10 +7,10 @@
+ #include <asm/kvm.h>
+ #include <asm/intel_pt.h>
+ #include <asm/perf_event.h>
++#include <asm/posted_intr.h>
+=20
+ #include "capabilities.h"
+ #include "../kvm_cache_regs.h"
+-#include "posted_intr.h"
+ #include "vmcs.h"
+ #include "vmx_ops.h"
+ #include "../cpuid.h"
+diff --git a/drivers/iommu/intel/irq_remapping.c b/drivers/iommu/intel/irq_re=
+mapping.c
+index 566297bc87dd..712ebfc9870c 100644
+--- a/drivers/iommu/intel/irq_remapping.c
++++ b/drivers/iommu/intel/irq_remapping.c
+@@ -19,6 +19,7 @@
+ #include <asm/cpu.h>
+ #include <asm/irq_remapping.h>
+ #include <asm/pci-direct.h>
++#include <asm/posted_intr.h>
+=20
+ #include "iommu.h"
+ #include "../irq_remapping.h"
+@@ -49,6 +50,7 @@ struct irq_2_iommu {
+ 	u16 sub_handle;
+ 	u8  irte_mask;
+ 	enum irq_mode mode;
++	bool posted_msi;
+ };
+=20
+ struct intel_ir_data {
+@@ -1118,6 +1120,14 @@ static void prepare_irte(struct irte *irte, int vector=
+, unsigned int dest)
+ 	irte->redir_hint =3D 1;
+ }
+=20
++static void prepare_irte_posted(struct irte *irte)
++{
++	memset(irte, 0, sizeof(*irte));
++
++	irte->present =3D 1;
++	irte->p_pst =3D 1;
++}
++
+ struct irq_remap_ops intel_irq_remap_ops =3D {
+ 	.prepare		=3D intel_prepare_irq_remapping,
+ 	.enable			=3D intel_enable_irq_remapping,
+@@ -1126,6 +1136,47 @@ struct irq_remap_ops intel_irq_remap_ops =3D {
+ 	.enable_faulting	=3D enable_drhd_fault_handling,
+ };
+=20
++#ifdef CONFIG_X86_POSTED_MSI
++
++static phys_addr_t get_pi_desc_addr(struct irq_data *irqd)
++{
++	int cpu =3D cpumask_first(irq_data_get_effective_affinity_mask(irqd));
++
++	if (WARN_ON(cpu >=3D nr_cpu_ids))
++		return 0;
++
++	return __pa(per_cpu_ptr(&posted_msi_pi_desc, cpu));
++}
++
++static void intel_ir_reconfigure_irte_posted(struct irq_data *irqd)
++{
++	struct intel_ir_data *ir_data =3D irqd->chip_data;
++	struct irte *irte =3D &ir_data->irte_entry;
++	struct irte irte_pi;
++	u64 pid_addr;
++
++	pid_addr =3D get_pi_desc_addr(irqd);
++
++	if (!pid_addr) {
++		pr_warn("Failed to setup IRQ %d for posted mode", irqd->irq);
++		return;
++	}
++
++	memset(&irte_pi, 0, sizeof(irte_pi));
++
++	/* The shared IRTE already be set up as posted during alloc_irte */
++	dmar_copy_shared_irte(&irte_pi, irte);
++
++	irte_pi.pda_l =3D (pid_addr >> (32 - PDA_LOW_BIT)) & ~(-1UL << PDA_LOW_BIT);
++	irte_pi.pda_h =3D (pid_addr >> 32) & ~(-1UL << PDA_HIGH_BIT);
++
++	modify_irte(&ir_data->irq_2_iommu, &irte_pi);
++}
++
++#else
++static inline void intel_ir_reconfigure_irte_posted(struct irq_data *irqd) {}
++#endif
++
+ static void intel_ir_reconfigure_irte(struct irq_data *irqd, bool force)
+ {
+ 	struct intel_ir_data *ir_data =3D irqd->chip_data;
+@@ -1139,8 +1190,9 @@ static void intel_ir_reconfigure_irte(struct irq_data *=
+irqd, bool force)
+ 	irte->vector =3D cfg->vector;
+ 	irte->dest_id =3D IRTE_DEST(cfg->dest_apicid);
+=20
+-	/* Update the hardware only if the interrupt is in remapped mode. */
+-	if (force || ir_data->irq_2_iommu.mode =3D=3D IRQ_REMAPPING)
++	if (ir_data->irq_2_iommu.posted_msi)
++		intel_ir_reconfigure_irte_posted(irqd);
++	else if (force || ir_data->irq_2_iommu.mode =3D=3D IRQ_REMAPPING)
+ 		modify_irte(&ir_data->irq_2_iommu, irte);
+ }
+=20
+@@ -1194,7 +1246,7 @@ static int intel_ir_set_vcpu_affinity(struct irq_data *=
+data, void *info)
+ 	struct intel_ir_data *ir_data =3D data->chip_data;
+ 	struct vcpu_data *vcpu_pi_info =3D info;
+=20
+-	/* stop posting interrupts, back to remapping mode */
++	/* stop posting interrupts, back to the default mode */
+ 	if (!vcpu_pi_info) {
+ 		modify_irte(&ir_data->irq_2_iommu, &ir_data->irte_entry);
+ 	} else {
+@@ -1233,6 +1285,49 @@ static struct irq_chip intel_ir_chip =3D {
+ 	.irq_set_vcpu_affinity	=3D intel_ir_set_vcpu_affinity,
+ };
+=20
++/*
++ * With posted MSIs, all vectors are multiplexed into a single notification
++ * vector. Devices MSIs are then dispatched in a demux loop where
++ * EOIs can be coalesced as well.
++ *
++ * "INTEL-IR-POST" IRQ chip does not do EOI on ACK, thus the dummy irq_ack()
++ * function. Instead EOI is performed by the posted interrupt notification
++ * handler.
++ *
++ * For the example below, 3 MSIs are coalesced into one CPU notification. On=
+ly
++ * one apic_eoi() is needed.
++ *
++ * __sysvec_posted_msi_notification()
++ *	irq_enter();
++ *		handle_edge_irq()
++ *			irq_chip_ack_parent()
++ *				dummy(); // No EOI
++ *			handle_irq_event()
++ *				driver_handler()
++ *		handle_edge_irq()
++ *			irq_chip_ack_parent()
++ *				dummy(); // No EOI
++ *			handle_irq_event()
++ *				driver_handler()
++ *		handle_edge_irq()
++ *			irq_chip_ack_parent()
++ *				dummy(); // No EOI
++ *			handle_irq_event()
++ *				driver_handler()
++ *	apic_eoi()
++ *	irq_exit()
++ */
++
++static void dummy_ack(struct irq_data *d) { }
++
++static struct irq_chip intel_ir_chip_post_msi =3D {
++	.name			=3D "INTEL-IR-POST",
++	.irq_ack		=3D dummy_ack,
++	.irq_set_affinity	=3D intel_ir_set_affinity,
++	.irq_compose_msi_msg	=3D intel_ir_compose_msi_msg,
++	.irq_set_vcpu_affinity	=3D intel_ir_set_vcpu_affinity,
++};
++
+ static void fill_msi_msg(struct msi_msg *msg, u32 index, u32 subhandle)
+ {
+ 	memset(msg, 0, sizeof(*msg));
+@@ -1274,6 +1369,11 @@ static void intel_irq_remapping_prepare_irte(struct in=
+tel_ir_data *data,
+ 		break;
+ 	case X86_IRQ_ALLOC_TYPE_PCI_MSI:
+ 	case X86_IRQ_ALLOC_TYPE_PCI_MSIX:
++		if (posted_msi_supported()) {
++			prepare_irte_posted(irte);
++			data->irq_2_iommu.posted_msi =3D 1;
++		}
++
+ 		set_msi_sid(irte,
+ 			    pci_real_dma_dev(msi_desc_to_pci_dev(info->desc)));
+ 		break;
+@@ -1361,7 +1461,12 @@ static int intel_irq_remapping_alloc(struct irq_domain=
+ *domain,
+=20
+ 		irq_data->hwirq =3D (index << 16) + i;
+ 		irq_data->chip_data =3D ird;
+-		irq_data->chip =3D &intel_ir_chip;
++		if (posted_msi_supported() &&
++		    ((info->type =3D=3D X86_IRQ_ALLOC_TYPE_PCI_MSI) ||
++		     (info->type =3D=3D X86_IRQ_ALLOC_TYPE_PCI_MSIX)))
++			irq_data->chip =3D &intel_ir_chip_post_msi;
++		else
++			irq_data->chip =3D &intel_ir_chip;
+ 		intel_irq_remapping_prepare_irte(ird, irq_cfg, info, index, i);
+ 		irq_set_status_flags(virq + i, IRQ_MOVE_PCNTXT);
+ 	}
+diff --git a/drivers/iommu/irq_remapping.c b/drivers/iommu/irq_remapping.c
+index ee59647c2050..056fec6991bc 100644
+--- a/drivers/iommu/irq_remapping.c
++++ b/drivers/iommu/irq_remapping.c
+@@ -24,6 +24,8 @@ int no_x2apic_optout;
+=20
+ int disable_irq_post =3D 0;
+=20
++bool enable_posted_msi __ro_after_init;
++
+ static int disable_irq_remap;
+ static struct irq_remap_ops *remap_ops;
+=20
+@@ -70,7 +72,8 @@ static __init int setup_irqremap(char *str)
+ 			no_x2apic_optout =3D 1;
+ 		else if (!strncmp(str, "nopost", 6))
+ 			disable_irq_post =3D 1;
+-
++		else if (IS_ENABLED(CONFIG_X86_POSTED_MSI) && !strncmp(str, "posted_msi", =
+10))
++			enable_posted_msi =3D true;
+ 		str +=3D strcspn(str, ",");
+ 		while (*str =3D=3D ',')
+ 			str++;
 
 
