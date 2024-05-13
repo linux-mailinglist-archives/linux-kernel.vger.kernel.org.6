@@ -1,163 +1,100 @@
-Return-Path: <linux-kernel+bounces-178082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 882858C4863
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:45:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EFD8C4868
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:47:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D91E1F2247B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AC701F2273A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F8F80C04;
-	Mon, 13 May 2024 20:45:10 +0000 (UTC)
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769C680C04;
+	Mon, 13 May 2024 20:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7txJ1tW"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAF93A1A2;
-	Mon, 13 May 2024 20:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458FD1C69E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715633109; cv=none; b=pkOjSuCn+rHBi3ypo8w82QMh0jdGI987XjKDqIWBcvL4GAFs0oPOHsbFlE9O4JtnistcqvCT79z0zj8Cb3yVszR9knzR08axFFKUI1ZNHtQQRXjzlmPZV/ZXG7SRqutBGepxQMFl3bphLvGH6PFJAa/V1+rP4oCvfDmYkK1BI+M=
+	t=1715633264; cv=none; b=NQZEXddghhS6ukvpmMqxHfCBTLewr9z3BXmyXJSOTERy8bZSuPaXCoV1MRlvbZDIcZcq/Hoi0PQpViAcH7BrzWK6XH2EX3PJPpl8qSLHRB9n3qovd1rNDVhDdYsDpXSfyEsn3VwMlLdAbUEkEkt6aY8CtT/PYsQ7VwfYEs+aaus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715633109; c=relaxed/simple;
-	bh=aF/Pllhk6I653hcEia2iO8Yd+UqBm6WptITdg6zZZkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=at9uQW4Q1UsyvtSpGPKRR2+obfuv0BkUMup4+VdHoKsONsGkvfjryz00ojxntq1DiuVyz2MCavkdi38SPnYA6rg7kCT21enW67U2K1DdECdWvOYUbe3q0RYCSmTX+lKqLvX+5CBZg0lqYY3GShbMYh+yNq0zJnU+EgVu0jkzZqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-61be599ab77so2161971a12.1;
-        Mon, 13 May 2024 13:45:08 -0700 (PDT)
+	s=arc-20240116; t=1715633264; c=relaxed/simple;
+	bh=GZm3fkcMwLz/ZnV8chMXzznqP9rPpkmjWataUnyNo8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fsiDgd8nKWaAKvys55LWmuuPxDps/PR0CFYEqUVZD4g4f4DBrC+ivSC2ugtiHs230aVmdi/FN4O3gLuvpstbZsXBsKt+0AP0GSzZpkECq3iMSLZLN5eZ4YPNOYUnOp7gkTfrZvjtpLjaM66xdEU6RdkRtZhi2iTYnnvhXWcZ5g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G7txJ1tW; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-61bb219737dso53467157b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:47:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715633262; x=1716238062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GZm3fkcMwLz/ZnV8chMXzznqP9rPpkmjWataUnyNo8k=;
+        b=G7txJ1tWK82lbl81YLst5ln/oc7FFwLBuw+T5cyzFzcaVeH/HkTTyuhAzIQZA/Q6Bn
+         CyVAQdSVSjwIbdRDWFFUTrOO2zJLh86gsaWTWKGkSsriNKm+/Yf+emYNz6slvRhy3d9U
+         b1Q7Fz7zNuKDZe2Z060X/pIWpgsr8iHrLtthH0o9PtQDUKULyMLD1INqOP9VXSDhJNX0
+         qNTyEk4/ILzWgF4ZW8CuO4DkqkoBjJSofOMul5FFLzhiq6q7M4lFlCQAUpyKo27Y1Wnn
+         uxybMr37gypglsrh3H6qQwzG3xGTWDMFsK/zWPRPP0nSGQjYi+46xwzyOMiZM+byZzd4
+         FemA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715633107; x=1716237907;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZN5aHmJD+8Qc+VF/qva9+v6a6gaT9BFTUwi3zjLZGzs=;
-        b=xIl6IjR7vtRDuVjSJbzHsDPW3v1B6kgS5XzKTzBa0oh7XM2HSojTK+OuNul97aeTSE
-         Lr1klIo64cUSC/rGzyyW0vnBJRoVmru4zaKQ6cR/awjjmv1JxvqRTeJnZTrpC80LYttf
-         At/yrifuMfaTrVEV7MT9hQvHDz+hj0bf/w4YnDqs8w9xEvhrTmbtAwR6WgU7N3t2j5qk
-         PirW7MAqVWOrOXMsRumq2uQ5jXVHLEWs1D09TxlWkzdqJKyTj8paAtCyRfaLX2FibitT
-         kPmuFecKLTPcQWFZ4nRNrHUrkHmprgPBqxIURh6z3VBvhbifgD+MQHBQqAXiugonw+fO
-         m6/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW22109sZppNdHub9G18sf4tCsM7t2yB2QiuDPycYB7VohZWwQx1BpezRZoAQYZkbBqTveIt41S/AHeh9z9oFn+7RLyLYICVPMRffUx0GbqXHnFjsb6GTsvfLFGxN8Au0qPYVbvov+F30YuNu5XQA==
-X-Gm-Message-State: AOJu0YygS2uctlZ8ab1JWrvaxPSrS0y9JPtLcJkzRNC+JjbM3wYEFj+y
-	2WXxnADyWDLxTvd+nLflR1INHhsz9SM3By001Q854/71Oud9ebun
-X-Google-Smtp-Source: AGHT+IFweo3u2/cBYbxTGLzmbhOIxRTyQMFZGoj3lxZwVWrXoZDdCk/aA6BmE3xnMJUJxDKXy90lNQ==
-X-Received: by 2002:a05:6a20:dd9e:b0:1af:d19b:a78 with SMTP id adf61e73a8af0-1afde0b7245mr9666032637.13.1715633107502;
-        Mon, 13 May 2024 13:45:07 -0700 (PDT)
-Received: from gmail.com ([50.204.89.32])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b62886b669sm10170490a91.24.2024.05.13.13.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 13:45:07 -0700 (PDT)
-Date: Mon, 13 May 2024 21:45:05 +0100
-From: Breno Leitao <leitao@debian.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf list: Fix the --no-desc option
-Message-ID: <ZkJ70SOeVPsLRuS1@gmail.com>
-References: <20240508133518.3204221-1-leitao@debian.org>
- <Zj-WE1aG7ihtevG3@x1>
- <CAP-5=fXXYVgb4rnftaiTZTEniGOr5NnpfXJFNqX96GXP6=oTiA@mail.gmail.com>
- <Zj-qIbUN2XFBnvP8@x1>
- <ZkJI6Q6KVKlzDgSQ@gmail.com>
- <CAP-5=fU=tG9Gk+OfO3TVfBONTc35oksNqi3xm6Y_hjc0oOK=dw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1715633262; x=1716238062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GZm3fkcMwLz/ZnV8chMXzznqP9rPpkmjWataUnyNo8k=;
+        b=mlGVLyoAklNiQknUbty4v1aom9f3LtaO9NNguIXIqd1kLkymJLrpfTzj9Ri2p4LZ8i
+         0jGfiwiwxfyB3AQmHAnKQoImO1TW7ZN2vBLFo8TKBKGkYyUfEgSGd8hTQG+PL/K9iL65
+         tP/IbZgG3My5phhjdeUB8jrhZYpnQAEwrbz1lUbEypBfwMt6UGDHATRg23vQSKa0ss3g
+         aGk885p3noU8w7Jxtl19swE+7gQAi19F5dMqbc3CUK2ZSwF+jcUm55Cp7IYuW2eG659k
+         hIik0IjBnXVIYzDNXelCc7CpfXgf68+J8VpBzxoKKTrOf9InaxTtVdV1+LH5DvnODMTq
+         V7pA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuncpPWrD8Ek/wxi6GLew0hY/lNklOIIjkQyztsgIuPzFG+p1ABdmbkHtM+0nevvFfJ/cDbXKC++HaRBlMrgXH91X3RRi3F0A21LFZ
+X-Gm-Message-State: AOJu0Yzy/YT7gmeh3N0xyglSkF2Hilmc05ana9ivwJCvZHaC3qgnpnhk
+	ZpphuTTO0QTilywlcOK79XkMb0ZMABelgkA3O5iyxfyUu5oUOaBX9K0xOBtKRrkSq0arFRxm59g
+	WbllnW0WTJTiJ3gqFHxZJwWWL/7JqdTWUh+ZJFQ==
+X-Google-Smtp-Source: AGHT+IHiJK4UXMbjpkNNhNJofaQ8/QLH8T7GL3z9FkLVTsr59KRPwSUrWDBHmTJkSuIIAQLr58jw0z0C6ZaJpE71X0I=
+X-Received: by 2002:a05:690c:386:b0:618:8900:8105 with SMTP id
+ 00721157ae682-622afd20f8emr131053067b3.0.1715633260299; Mon, 13 May 2024
+ 13:47:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fU=tG9Gk+OfO3TVfBONTc35oksNqi3xm6Y_hjc0oOK=dw@mail.gmail.com>
+References: <20240510160534.2424281-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240510160534.2424281-1-andriy.shevchenko@linux.intel.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 May 2024 22:47:29 +0200
+Message-ID: <CACRpkdb4g0UP5E_3sNPeOSJfVqSq5n_0NgmM=idKiz3G5j0yaQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] gpiolib: Show more info for interrupt only lines
+ in debugfs
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 10:13:01AM -0700, Ian Rogers wrote:
-> On Mon, May 13, 2024 at 10:08 AM Breno Leitao <leitao@debian.org> wrote:
-> > On Sat, May 11, 2024 at 02:25:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > Thanks for asking the question, I'm dropping the patch, Breno, can you
-> > > try again?
-> >
-> > Sure, let me think about it and send a v2.
-> 
-> Thanks Breno! My bug, thanks for digging into this.
+On Fri, May 10, 2024 at 6:05=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 
-How about something like this:
+> Show more info for interrupt only lines in debugfs. It's useful
+> to monitor the lines that have been never requested as GPIOs,
+> but IRQs.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Author: Breno Leitao <leitao@debian.org>
-Date:   Wed May 8 06:35:17 2024 -0700
+Excellent patch.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-    perf list: Fix the --no-desc option
-    
-    Currently, the --no-desc option in perf list isn't functioning as
-    intended.
-    
-    This issue arises from the overwriting of struct option->desc with the
-    opposite value of struct option->long_desc. Consequently, whatever
-    parse_options() returns at struct option->desc gets overridden later,
-    rendering the --desc or --no-desc arguments ineffective.
-    
-    To resolve this, set ->desc as true by default and allow parse_options()
-    to adjust it accordingly. This adjustment will fix the --no-desc
-    option while preserving the functionality of the other parameters.
-    
-    Signed-off-by: Breno Leitao <leitao@debian.org>
-
-diff --git a/tools/perf/builtin-list.c b/tools/perf/builtin-list.c
-index e27a1b1288c2..16186acdd301 100644
---- a/tools/perf/builtin-list.c
-+++ b/tools/perf/builtin-list.c
-@@ -149,7 +149,11 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
- 	} else
- 		fputc('\n', fp);
- 
--	if (desc && print_state->desc) {
-+	if (long_desc && print_state->long_desc) {
-+		fprintf(fp, "%*s", 8, "[");
-+		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
-+		fprintf(fp, "]\n");
-+	} else if (desc && print_state->desc) {
- 		char *desc_with_unit = NULL;
- 		int desc_len = -1;
- 
-@@ -165,12 +169,6 @@ static void default_print_event(void *ps, const char *pmu_name, const char *topi
- 		fprintf(fp, "]\n");
- 		free(desc_with_unit);
- 	}
--	long_desc = long_desc ?: desc;
--	if (long_desc && print_state->long_desc) {
--		fprintf(fp, "%*s", 8, "[");
--		wordwrap(fp, long_desc, 8, pager_get_columns(), 0);
--		fprintf(fp, "]\n");
--	}
- 
- 	if (print_state->detailed && encoding_desc) {
- 		fprintf(fp, "%*s", 8, "");
-@@ -484,6 +482,7 @@ int cmd_list(int argc, const char **argv)
- 	int i, ret = 0;
- 	struct print_state default_ps = {
- 		.fp = stdout,
-+		.desc = true,
- 	};
- 	struct print_state json_ps = {
- 		.fp = stdout,
-@@ -556,7 +555,6 @@ int cmd_list(int argc, const char **argv)
- 		};
- 		ps = &json_ps;
- 	} else {
--		default_ps.desc = !default_ps.long_desc;
- 		default_ps.last_topic = strdup("");
- 		assert(default_ps.last_topic);
- 		default_ps.visited_metrics = strlist__new(NULL, NULL);
+Yours,
+Linus Walleij
 
