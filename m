@@ -1,160 +1,119 @@
-Return-Path: <linux-kernel+bounces-177533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADBD28C4049
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:59:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4E08C4043
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A0B7B22C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:59:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45965285811
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F290514F10A;
-	Mon, 13 May 2024 11:59:39 +0000 (UTC)
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2390D14D2BF;
-	Mon, 13 May 2024 11:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC1614EC61;
+	Mon, 13 May 2024 11:59:29 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5857714D2BC;
+	Mon, 13 May 2024 11:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715601579; cv=none; b=QF9LSDIRcljg9zgdrgrcQoMUBIe+FQpCpSuDMCBoFcI6a49btCrUh/go974Y6JcVpBylLKsroODO0O1EJvbXcJkfXUoE0XeZtu0bUZUy5EV6ciZbprGvz+dq3hyIpOrjIUInqRnMiZEZWbZFdfgDBID+pDS7rlgLL8THrIpTp2w=
+	t=1715601568; cv=none; b=A7VB41/gXZJD9Jg1NpmxlKFHxagaMrRayBYU5ArX1ADd0uykr9bEF/DdwrxYBnPvxXk+WSdhZLgjED4i9H160rijlHk3rHkdbfglBZG89tiCEk2bFuGJA5aIktsQa+c9Z43DYcBqEMF8670j9olmDI/g/dRXnRhyb45jvTxJP5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715601579; c=relaxed/simple;
-	bh=ZI926+nrkyV0Flvn7rSMoQ1E2Kcx99Sv67xPVhZTYWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SnZKXZciKG06yGjKRcf7+a9PoQhAEFFLButkqXUQWd8kwny4PqysUs6SKhxXCtWvzRso0ZdSmIE/FgF7bIzc56z8d8ArHnZK+3oKdsUXcHQ/CLVtZXMLbEgqDiaBlQKwkx/HLDMqagDLp8l1sDub9FH1xwcf8vBokme6+JGfcrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e1b547cf45so197770139f.3;
-        Mon, 13 May 2024 04:59:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715601577; x=1716206377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z24B9qDTJHEobEGC/70CrM/eVAoUVzOxiy7onUzGbVU=;
-        b=CkMfp5et2O5a9RmAtIm384MmHUA7ynKksg5DrOV+5nJoROH1NTTqKoWCcGBTdBHfXk
-         /HM9887hBxRM2pr2F2XfmmX2c5MML97W5731LuQod87KInc3ouNs00IzxTFwYzoc/9X8
-         jv3t+DhxCdAp9QfysHfad+kgaobaRWyC6RZepWUGNTRDo/cO2KVz6kphwD1W0xk13W3E
-         RRW9Lq0/PvtVGOqPNbL9OxYCkCO6lUZaSyuAARrOi6ZDWZp+dCR9Xw4bFfkhC9NcAbwX
-         YXV5QnI71gyI3DjEtV42lXc/LVkIhDhMrsYahUYTp0thCjJOj9Y1U9EbFaO0esQvX8zG
-         28gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFKlbgPjXMU9alorpr5+du5rhxxJOpyuIfhr8rsF+ahzDeIN5dwhQX+RWhA3/ExOUYJM0LWJ7frHH/eIBA3XEPm4P++wD4n42CDvMuKADeRSQKxWOs+rt2Y2zkMS5MM+tCX0ypWq21O4Dk3o5aV0dKgQ+Apu3bSjHau6YaF9MNLzwG4y4gTmsFBIOOTHYoMeo6uTlTbs9xv51cT2cbD3jN3MvYAN+NYvaLfnTGh90eI4VF9B4MbUOltbJ/zE8DoHKWPGemxGjWxGkoag==
-X-Gm-Message-State: AOJu0YyxIU9HFMLX31rYpRNzs5MiUyOU/BtslvlOqdeSFQRUMWUmNYXW
-	g5wPSAi3ak0Tcd5LE/iZxdIK1fN2MsFyX6/uti0gBFewczmeKeX/vAY6eyon
-X-Google-Smtp-Source: AGHT+IGkuAhmaP5QSCTK/tzmsOgHETlJLegrQbKG1v+vxeUYEGFM8jJxMdC4UtDFtVNOGN+68vKMrg==
-X-Received: by 2002:a6b:5807:0:b0:7de:c720:ab1f with SMTP id ca18e2360f4ac-7e1b5217939mr1007495839f.20.1715601576741;
-        Mon, 13 May 2024 04:59:36 -0700 (PDT)
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com. [209.85.166.43])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-489376dc51esm2512762173.122.2024.05.13.04.59.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 04:59:36 -0700 (PDT)
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7e1b547cf45so197769439f.3;
-        Mon, 13 May 2024 04:59:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbqsOU11Vlh7yZXmfLg1+xFlj72kA+n6Y5jBnNoH1sevW1s+Z6LFjzpiQba+g07lYP9cdZwVs7tqISatJyubMsDXbQmy/71Mq1zXeloPnwWhPsvUpSnQw/j8vJLrrLDUSJWaPXw1mZEZMBPxysLiJSeS6v+s1Cdyvkx8EzSGH7zcQ/10F8AM7NC6+6Na0OWIuAfgpGoD85T6tQs+inE5OD6dZdBSKHrubMbDt28YI6B5BE6gurgfpcL5BeBJA4Ky/ALjOrQle+cd8L1g==
-X-Received: by 2002:a25:d048:0:b0:dcd:551f:1e2 with SMTP id
- 3f1490d57ef6-dee4f3694bbmr8978126276.34.1715601555547; Mon, 13 May 2024
- 04:59:15 -0700 (PDT)
+	s=arc-20240116; t=1715601568; c=relaxed/simple;
+	bh=TNgnzQqPq8Kz9uzS//yGwb0Uho0xHiz8NJ00cchimPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BjtNzQQzLJZw0zbRkHXQl1S9lG/LTO92WnIP1Y82mwGqivYMJFWuBtY+yhRBHyRz6u9HJ7MOmVd5yVkGoOTbhF70UDSK2pTdF5G5mgNFg66/BBt1D9Ebbfo4XOgZResVLLY7qWD/oF9yeSzKAHxOV6dWeT+LYe2I0FpFsvrtMAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d6dff70000001748-bd-66420098b2c9
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org,
+	Honggyu Kim <honggyu.kim@sk.com>,
+	Hyeongtak Ji <hyeongtak.ji@sk.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH v4 0/5] DAMON based tiered memory management for CXL memory
+Date: Mon, 13 May 2024 20:59:15 +0900
+Message-ID: <20240513115918.1479-1-honggyu.kim@sk.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20240512175447.75943-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com> <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com>
-In-Reply-To: <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 13 May 2024 13:59:03 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
-Message-ID: <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsXC9ZZnke5MBqc0g9uqFnPWr2GzePL/N6vF
+	5V1z2CzurfnPanFk/VkWi81nzzBbLF6uZrGv4wGTxeGvb5gcOD2Wnn7D5tGy7xa7x6ZVnWwe
+	mz5NYvc4MeM3i8eLzTMZPT5vkgtgj+KySUnNySxLLdK3S+DK2Hn5CVPBMq6KgxvXsTcwruTo
+	YuTkkBAwkbi/cyk7jP3q3U0mEJtNQE3iystJYLaIgKLEuccXWbsYuTiYBdYzS6y/cooZJCEs
+	ECzRfqyFBcRmEVCVWNJ2HmwQr4CZxLnXv1ghhmpKPN7+EyzOKWAssbjzASOILSTAI/Fqw35G
+	iHpBiZMzn4DNYRaQl2jeOpsZZJmEwHU2iZMtHUwQgyQlDq64wTKBkX8Wkp5ZSHoWMDKtYhTK
+	zCvLTczMMdHLqMzLrNBLzs/dxAgM6mW1f6J3MH66EHyIUYCDUYmHN+G0Q5oQa2JZcWXuIUYJ
+	DmYlEV6HQvs0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxG38pThATSE0tSs1NTC1KLYLJMHJxS
+	DYyeIvMS8u42XJ6wYXW96nRe+bWLk+c6JIWH3e9dYP0v+L2T81q2ag+PRRXKPE1C9r5/xLQK
+	ToWbTBcL81UU2VdzLqPw7c+V+dd8r9g3rPiY48Jz4kHtl43Oz1bqNk+0L1XaW7nvWnaZ5q/Q
+	BT+7zAN3OsqW5z1ZYLY5+L76rS7XN2VV+3N5DiuxFGckGmoxFxUnAgAjYSjrZgIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsXCNUNLT3cGg1OawZv1BhZz1q9hs3jy/zer
+	xednr5ktOp98Z7Q4PPckq8XlXXPYLO6t+c9qcWT9WRaLzWfPMFssXq5mcejac1aLfR0PmCwO
+	f33D5MDrsfT0GzaPln232D02repk89j0aRK7x4kZv1k8Xmyeyejx7baHx+IXH5g8Pm+SC+CM
+	4rJJSc3JLEst0rdL4MrYefkJU8EyroqDG9exNzCu5Ohi5OSQEDCRePXuJhOIzSagJnHl5SQw
+	W0RAUeLc44usXYxcHMwC65kl1l85xQySEBYIlmg/1sICYrMIqEosaTvPDmLzCphJnHv9ixVi
+	qKbE4+0/weKcAsYSizsfMILYQgI8Eq827GeEqBeUODnzCdgcZgF5ieats5knMPLMQpKahSS1
+	gJFpFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmAoL6v9M3EH45fL7ocYBTgYlXh4E047pAmx
+	JpYVV+YeYpTgYFYS4XUotE8T4k1JrKxKLcqPLyrNSS0+xCjNwaIkzusVnpogJJCeWJKanZpa
+	kFoEk2Xi4JRqYDwqGf684+zajwV7eOZ1SCnsU3RTn/1/9anuxlrzh4YmO/Wndk+zqSlck3s0
+	X+zmzIvPFyW4f1H64aClLuocvWPDvYzKTadY3y7llBBmfjJDxm/rpTN3ko9Yp7XE8R+flv1m
+	wf3s8uirG3WuOt5QnlE+1z9E5ze77m2nE9cDi0T4IpSNl082Oq3EUpyRaKjFXFScCABjKWO8
+	YQIAAA==
+X-CFilter-Loop: Reflected
 
-Hi Peng,
+Hi SeongJae,
 
-On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.com=
-> wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Use scope based of_node_put() cleanup to simplify code.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Thanks very much for your work!  It got delayed due to the priority
+changes in my workplace for building another heterogeneous memory
+allocator.
+https://github.com/skhynix/hmsdk/wiki/hmalloc
 
-Thanks for your patch!
+On Sun, 12 May 2024 10:54:42 -0700 SeongJae Park <sj@kernel.org> wrote:
+> There was an RFC IDEA "DAMOS-based Tiered-Memory Management" previously
+> posted at [1].
+> 
+> It says there is no implementation of the demote/promote DAMOS action
+> are made.  This RFC is about its implementation for physical address
+> space.
+> 
+> Changes from RFC v3
+> (https://lore.kernel.org/20240405060858.2818-1-honggyu.kim@sk.com):
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This link cannot be opened.  I will share the link again here.
+https://lore.kernel.org/all/20240405060858.2818-1-honggyu.kim@sk.com
 
-> --- a/drivers/pinctrl/renesas/pinctrl-rzn1.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rzn1.c
+>   0. updated from v3 and posted by SJ on behalf of Hunggyu under his
+>      approval.
+>   1. Do not reuse damon_pa_pageout() and drop 'enum migration_mode'
+>   2. Drop vmstat change
 
-You missed one trivial conversion, presumably because no error handling
-and thus no of_node_put() is involved?
+I haven't checked whether I can collect useful information without
+vmstat, but the changes look good in general except for that.
 
-@@ -737,13 +737,12 @@ static int rzn1_pinctrl_parse_groups(struct
-device_node *np,
+>   3. Drop unnecessary page reference check
 
- static int rzn1_pinctrl_count_function_groups(struct device_node *np)
- {
--       struct device_node *child;
-        int count =3D 0;
+I will compare this patch series with my previous v3 patchset and get
+back to you later maybe next week.  Sorry, I will have another break
+this week.
 
-        if (of_property_count_u32_elems(np, RZN1_PINS_PROP) > 0)
-                count++;
-
--       for_each_child_of_node(np, child) {
-+       for_each_child_of_node_scoped(np, child) {
-                if (of_property_count_u32_elems(child, RZN1_PINS_PROP) > 0)
-                        count++;
-        }
-
-If you prefer not to include this, I will send a small patch myself later.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Thanks,
+Honggyu
 
