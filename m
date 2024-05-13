@@ -1,130 +1,106 @@
-Return-Path: <linux-kernel+bounces-178043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F768C47D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:47:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D538C47D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D03D1C22EB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC5A1F22920
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CCE7E796;
-	Mon, 13 May 2024 19:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4EB7D408;
+	Mon, 13 May 2024 19:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SD4eiciR"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XlxULuNR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A537E765
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8687B3E5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715629636; cv=none; b=bW2Ke9mkpFsgeLe0xpVposw+icQM1g6Js+kf8tPCoohnvh5Qp5ORaoT+jVeZ7NqvaZrE6dLjLRn3E9mbAspn6v/jFpHZjIbrnpN9qlqLyrrrlSUE2JUMmdrQ3jgg56WorcayC/6s8uwXtyTUogUOLXj9dra1foCLqgmRQXfesGQ=
+	t=1715629648; cv=none; b=rHanTZyHCixtBNdVFHSRD/+MSetdVTFEGjHbBT6sc0hgU5tPcJCejb2GVK3le4JX8gsl4UhnrpqhG7Ms/qH5nIOIfF3vIUhm5l0IY3teJl1B3b2wFTj2dBp1WkPOmlK+tEUwPsjCXxQRyzy1i1ldQ33S1+OfQ+fvKPlhfr/ZhHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715629636; c=relaxed/simple;
-	bh=abzpbAIsGffQZOkQa0awGau3E+v6Yze3gFJC/Iqx9l0=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=NnbzIAJ8Etq8Ulc71P6X1XXH0vM97G6hSMwJy0IKAOFodZTktzjfzA+SC00DTYdcreTuX6IHNi1CLfqOA8TwzXUMDSD/oFtXKCbKhy/SYO0M0poPJiq8XUovCW0++TKDUrBn5t6wiz9zWNY5Rf4Goa3OqS9k+FSayUf1KAGQ9gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SD4eiciR; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-43df44ef3e3so19372181cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715629633; x=1716234433; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NPAXonk62bozSvr0eSu1klLU+I6EFV7iB0W5dHC6XiI=;
-        b=SD4eiciR7hVomzdJwU+AJgkWpMZYYwRYeDrME1P3huKBTwfOgSTJ3wnCmLPw7RC30h
-         zZ32DCWSqHXTIo6+720HNd5Jeo0UxroXEQY/vCyaiubOFRr1GFf7KeQvJsp1eU/tKYJV
-         T4fIt6OPUWJg3WOKc5ppVpRGirkURu2l7fTr3y5N+udKk9qLtIUcFoGRIfh97GOgSQXK
-         UM5O07e/imgSb0/PvM0foIxHTwVoDx9e5xG8q1R16bwucposikElKPi4ds2fgOnWjD60
-         t5ME1RBQeHxeD8+kRRw3WAoJDmbWmkL2bEGS+aWOBCKjjX/bC6CPJCnPjKx6ke+xUOku
-         KgwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715629633; x=1716234433;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NPAXonk62bozSvr0eSu1klLU+I6EFV7iB0W5dHC6XiI=;
-        b=vWajuprbBDO5FHN2x8WxwpW2ekvmTLytUsj6TXrqD8hwf3k7c3LKTH86tMA8fxq/im
-         5gwB+xXPtkiJ4y6XT9zait4ELA7q+ejS95NL1OLZNErUvtEMOwdoJFRn9Vhp52GQE4nF
-         Qcmuxzpau65bLsZkh8HW9995xnxaR4OwuWP5WHO42rziFb9ULw5WkKZRj2co3spceZsK
-         g/N+ToNtGBR30Ui1pUVRrggHoSVweEC4zU8+HusY+NGJ8tQ5Vz78iU4FKvaauHd5GLej
-         qJGpX1HlNRC/Rm0RgOh5c4n3appe43V4NNTBIKay2WShxUV/t/uaOT2kOux3KDuR0QdD
-         564g==
-X-Forwarded-Encrypted: i=1; AJvYcCUHw/6/AqHBHmkZSi89WjZYvIFt01xeuj2AfrRUDN8rSTprDzroyOySKESSX3pPENCyn7EVGrrRc3+kR6PxjT51dMIK0ngvA5Ecgp6r
-X-Gm-Message-State: AOJu0YyNM6XBWhEaxd9eXd0TId9wAKcWViLrGZB5fMbpxByuKs3EAw1Q
-	c8QLhA0N8slrc7jkvX12cgOsJ0HtflqyzxYX7HRfz+UKELZb6JAUIFAqLzJ8kluUo6mqTMAesX0
-	=
-X-Google-Smtp-Source: AGHT+IE45Lj4C6YXKvuuRhlkZ3gkoUCzPlmS1mjfW7AJ5KkG7So4V6WMEY+Smut2GJdr40+/DM86QA==
-X-Received: by 2002:a05:622a:64f:b0:43a:a965:b0f3 with SMTP id d75a77b69052e-43dfdb4915dmr128250611cf.49.1715629633462;
-        Mon, 13 May 2024 12:47:13 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df54b58c0sm59974371cf.9.2024.05.13.12.47.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 12:47:13 -0700 (PDT)
-Date: Mon, 13 May 2024 15:47:12 -0400
-Message-ID: <eb9e94532b792619e4161de6c0a397db@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20240513
+	s=arc-20240116; t=1715629648; c=relaxed/simple;
+	bh=Dvx8jaCDpjzDrMlZNJiqVb8gud8gHINPXhVAMLsiDdE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MFkQk9FTA4AaSm1S2//ZEtHsqwhnXkl/ABAfXEqsKySs4XpoYFSQLHE9mCVezaD11/lK/v6JUcc5DBdjdmKRh8PUNZLlm0ivXqTWNIO19GeBoIHHVBOKvO59xjZyvzEIiBf/O/T0PJkeaWt8+2vzmL91/fOZMJVdEGpAXeumS3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XlxULuNR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715629646; x=1747165646;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Dvx8jaCDpjzDrMlZNJiqVb8gud8gHINPXhVAMLsiDdE=;
+  b=XlxULuNR+bTTwqPb90K6hZaH1bmtAzNjv2rGU9S6Xjgt3OYRlfSIX7kX
+   yuAqgjfsoX+mJx7iaX1x8Uu7mDmTisadgMIWEFtQLjaturQiFG0dOlYEL
+   FCwopWAVQCU3Cx5+pIGSEklgGzYnhqRQQEluaV8+FDzW1q5VtipP+vz4+
+   bMXWH8IZ5KlyDhmp8zteehOjCStXqbjmrC37P5CsC+k8i7gxySuDaOBfh
+   7m1r3LCuBTfNR2JdVWROfJKzwgpeCc97Ccm4gIsrMsNtvQ+UseqMNu7oR
+   oe9lbU+d24LHsDoZ6Er3co+TFCzqmKSBUEr7LN1RV/fnLAdzeFBRxyKeL
+   Q==;
+X-CSE-ConnectionGUID: 2WXiPOltSP+ntqpB3lrF2g==
+X-CSE-MsgGUID: TEwMIwfWSAGzTEXjudalGw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="34097442"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="34097442"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 12:47:26 -0700
+X-CSE-ConnectionGUID: G5HzDGFtSyWNMC1uluoecQ==
+X-CSE-MsgGUID: ojIQyldBT2ik3SdrWab4Bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30502882"
+Received: from viggo.jf.intel.com (HELO ray2.amr.corp.intel.com) ([10.54.77.144])
+  by fmviesa010.fm.intel.com with ESMTP; 13 May 2024 12:47:26 -0700
+From: Dave Hansen <dave.hansen@linux.intel.com>
+To: torvalds@linux-foundation.org
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [GIT PULL] x86/apic for 6.10
+Date: Mon, 13 May 2024 12:47:20 -0700
+Message-Id: <20240513194720.456299-1-dave.hansen@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Linus,
+Hi Linus,
 
-Three fairly minor patches for the current merge window; highlights
-below:
-
-- The security/* portion of the effort to remove the empty sentinel
-  elements at the end of the ctl_table arrays.
-
-- Update the file list associated with the LSM / "SECURITY SUBSYSTEM"
-  entry in the MAINTAINERS file (and then fix a typo in then update).
-
-Please merge for Linux v6.10.
--Paul
+Please pull a single x86/apic change for 6.10. Coccinelle complained
+about some 64-bit divisions, but the divisor was really just a 32-bit
+value being stored as 'unsigned long'. Fixing the types fixes the
+warning.
 
 --
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+The following changes since commit 39cd87c4eb2b893354f3b850f916353f2658ae6f:
+
+  Linux 6.9-rc2 (2024-03-31 14:32:39 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20240513
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_apic_for_6.10
 
-for you to fetch changes up to dd80c7465029dd0671e6f9fc2678ae0fbdf785ac:
+for you to fetch changes up to 0049f04c7dfe977a0f8f6935071db3416e641837:
 
-  MAINTAINERS: repair file entry in SECURITY SUBSYSTEM
-    (2024-05-07 10:56:15 -0400)
+  x86/apic: Improve data types to fix Coccinelle warnings (2024-04-03 08:32:04 -0700)
 
 ----------------------------------------------------------------
-lsm/stable-6.10 PR 20240513
+Improve data types to fix Coccinelle division warnings
 
 ----------------------------------------------------------------
-Joel Granados (1):
-      lsm: remove the now superfluous sentinel element from ctl_table array
+Thorsten Blum (1):
+      x86/apic: Improve data types to fix Coccinelle warnings
 
-Lukas Bulwahn (1):
-      MAINTAINERS: repair file entry in SECURITY SUBSYSTEM
-
-Paul Moore (1):
-      MAINTAINERS: update the LSM file list
-
- MAINTAINERS                | 4 ++++
- security/apparmor/lsm.c    | 1 -
- security/keys/sysctl.c     | 1 -
- security/loadpin/loadpin.c | 1 -
- security/yama/yama_lsm.c   | 1 -
- 5 files changed, 4 insertions(+), 4 deletions(-)
-
---
-paul-moore.com
+ arch/x86/kernel/apic/apic.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
