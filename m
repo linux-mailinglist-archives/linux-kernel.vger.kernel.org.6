@@ -1,140 +1,182 @@
-Return-Path: <linux-kernel+bounces-177670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD308C42DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:08:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83FA8C42D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA77281156
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F2F11F21503
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218AF15382D;
-	Mon, 13 May 2024 14:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFCE153826;
+	Mon, 13 May 2024 14:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="r5DR/mAP"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDnREElo"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1BB50279;
-	Mon, 13 May 2024 14:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BDA50279;
+	Mon, 13 May 2024 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715609297; cv=none; b=Jf0VIoZJV25Dp3k5lovc54Invr/vhNBdvtPDMLmBO7H/eQlnUHFE4tdUuv3VlxNEk7rIAWyU5Ot2PRSbtfbxRbKkMtiYWPglBJm2rPqbBNZh+GYK2I7v6CA/8r0dmlLCF7hW1IVXL3m5wXN+8Cx7rso1M/NRy4CmG9shFyx1rts=
+	t=1715609193; cv=none; b=SzwPi+yhdtw7jJM2ZkIp7ErMwGM3Ex+8ueeRiZYgm8G0JZeeJw/lps0iretTubHeijXXoc2OnqvCc/NyH3JNncbgI9ZNnr6sE59YT7bWHgiZ2eBxfkCCW5S7qEpYmWSgjvNhJ2YGiIQd/t06WK6GSv6/l3RSN6SOTBgPWy36ekA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715609297; c=relaxed/simple;
-	bh=K5E+U1mJykH/GF+NxFkP/wtwFeDQzEeRkoFvRLpM2WU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GZR3Qwp5COrk3fTb53taueoGZK8lqvbIgIcSzqN8sCdGh5UlYh4Fi5X/zzAA+95ltDwfW3CmgwGUePacOjIbmdOFfjx4OT8pT8sSfItgwLoCpQzLV6QHvinmMSsJsBkGSZxT649Ka8KmAbAb8T/ZBc+Wb1sgBQNj2V5DOzsGSU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=r5DR/mAP; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DBs1dp004575;
-	Mon, 13 May 2024 16:07:40 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=IAj0zC/NmxIhXGebLMPF7t3BBODE7eX8o0Rp4kLw+l4=; b=r5
-	DR/mAPfO0af1cfHGG8N/uerGaz91NZ08BGOZcx5GX59tZxkfka/tPdOhKVFF2tU5
-	gbIhF6+lMSzPa4UKYyeo85vR8ETb+qmw3PutIOR+nuy09ct5Zd9WiVohL1Pwkv6R
-	NURIk6T71vmtvmy2OM2+FfPgHvyFno484apDzTRBdkUZe6rIM1jOxlh2fUKZKyHZ
-	vNr7Ufzf5mT9EDA7ZHtW8l0TzHgB801y0buH6SHAfugbQ1q17QBeCN+HjHmQAtG3
-	NYf/fRxxU/vcx/pBKDQO3wcYtRB83J19U+WOLHVUSyi4BD64r2VrxbJS1XA/CfL9
-	lP08LaX2lY8lPuSCH+Tg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2j80n46s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 16:07:40 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id BCBAD4004A;
-	Mon, 13 May 2024 16:07:34 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 93D9F220B7C;
-	Mon, 13 May 2024 16:06:19 +0200 (CEST)
-Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
- (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
- 2024 16:06:18 +0200
-Message-ID: <a2a631a0-9a16-4068-aed2-6bdaa71e3953@foss.st.com>
-Date: Mon, 13 May 2024 16:06:17 +0200
+	s=arc-20240116; t=1715609193; c=relaxed/simple;
+	bh=SxnE7rnuwXBi3EDidJwQErZKklISfFQ7ftxTwHnECuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=snCVkR8JvT7vVEEKpKX2ZWRZzlKxrReVe708w1unVn1StWkHfu+8Z8jaNj3zTjXhv71p08jWaGtN6KmJWOAJAoMSAr2efqigup8JReOwiTJEr8lqVZDDMiLVYSJRjkkWcQmLz7i053nbm1IyzuMqzpWUujqhwXGH+9SYOTZTcw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDnREElo; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-792c7704e09so283321385a.1;
+        Mon, 13 May 2024 07:06:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715609190; x=1716213990; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=97qvlrEWAPmxPYorX7UQV2kS8NfIOzG0eHj66y0TAo4=;
+        b=MDnREEloq4zsNQVJq2DJJAM63gmZFO240iTiYhQb/cppBcbaRVL32jBgo0QPVklonl
+         bG6tx236JHycDZj1emQMFFub1KIlbLsMHNTMoR9cHvr6k0/OG+7HYlZ+W9qzHoNUAe24
+         tyTU14PLqT1WGAUMcDdoac/mD9t7Q+bckZ9UtHhdYMGzyotRTos+Byy7043jB94cuOC/
+         dYvfVRgDTtOl4vh7xdSFMgdFjD/+Ik1OqbKtrkB5hSQJV6tgEU5kUTD+x1VaSimIT9lD
+         rmx211EtI70U6n8mgRRLdb0Kc9RS+hGcpHnpizD032mS0VeoYXvWJX4rJLnvlTuEAU+q
+         +Vxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715609190; x=1716213990;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=97qvlrEWAPmxPYorX7UQV2kS8NfIOzG0eHj66y0TAo4=;
+        b=lsgdBf1kRlpiXeUfozUp88UIujhre05ti7eNvY38knkNXohS7T+rvDb7kRBWZVMbt5
+         vMwxjgP/e2jBiyW9p7Cp9vH09rsfv0hA1J5K+ijOzTmMWRwedloYxJrwgYfzIy5GUbfj
+         kpFdHn9S/VRE9/Nq94Rb7KqFoIO2V2rkWz0vliMEA31p1swDd0vHuiwCzU3Dz6Advinw
+         aRju6J1si9ll+p/rXFI+uCPjDOLlEmnV6itg1a82YYEAA2rxBgj80n0FcBv1Y/lRm7Zz
+         COIaspGBHwa7rIk0qwImMQEFUTJVPKocxuna1myuU/hns7B3rs9RmZlJHJ8tp1C6HiX1
+         9hIw==
+X-Forwarded-Encrypted: i=1; AJvYcCW0vPuRng+/Eht8OPNvUrAUi0k2vwgYOiwiqMsnQLm+s6WK9lKWbVxWUiRMZR08EyWmTv6q0CWSZhK14Mt1RsVacjBva8Bk9b511ShbJeduYMDykh3onkmK97NpfPx2RwxpbBpAuZbD7QigHOc=
+X-Gm-Message-State: AOJu0YxbZQm4RxgPv++W+F//n6LRs95xKU5oA94qwd/G6MPJEX9YkLUK
+	cF7n5ZXEYAR18jkm89ZLsgQYWWheXJsHfmbjRtYWf1AbgUJmwcwg
+X-Google-Smtp-Source: AGHT+IHcbAWlauuYuu89G0SaL1p+fkjOPQxOioCqkRiv6vcAaQvHx3eeai/M4AoB6cGDSMxsiUENjA==
+X-Received: by 2002:a05:620a:4448:b0:790:9dad:ec52 with SMTP id af79cd13be357-792bbdd9cfemr2314253385a.13.1715609190525;
+        Mon, 13 May 2024 07:06:30 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf2fc3dbsm458274685a.96.2024.05.13.07.06.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 07:06:29 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 0FBE11200066;
+	Mon, 13 May 2024 10:06:29 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 13 May 2024 10:06:29 -0400
+X-ME-Sender: <xms:ZB5CZkCkp5r9oUYz_3j6oq0jnbPqzovN2yk_NTREEG3SBSWvUCEJvg>
+    <xme:ZB5CZmiL6Kk-S22o7ITqtaZbN3qCFSAc4l3jjpLRKbtTWq0w_5pXF64jysInkzcB6
+    GvAo7WAh1cH_pF9Gw>
+X-ME-Received: <xmr:ZB5CZnkjg_ALpRlpzcLASh4U-ClvgtStNmuOIKbRJhgNbVTAQ-K0_84oc7AayA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeggedgjedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeejiefhtdeuvdegvddtudffgfegfeehgfdtiedvveevleevhfekhefftdek
+    ieehvdenucffohhmrghinheprhhushhtqdhlrghnghdrohhrghenucevlhhushhtvghruf
+    hiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgr
+    uhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsoh
+    hquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:ZB5CZqw8JCDBVFs_bmi_FCRulnhBEXP1Y9JwvnYCaoL8g50xLXCphw>
+    <xmx:ZB5CZpQhxJCiINKm1sQKqotT2EhfNzGE9fY207e3MnyBP87hHnKY6A>
+    <xmx:ZB5CZlbgA6dui3585w5ftZB0cGrx7HRu6cHdlGUvnIgn4QwnbHt45g>
+    <xmx:ZB5CZiRaGW550WxK5YAh7ISH7pt9qb-Sv3oqTZs8V9AAtW-1j2rFWg>
+    <xmx:ZR5CZjCGqAEm7WMd6eiWbKnfutUoJUEpTvUTFWXqL_0pwLRuP73QDsyb>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 May 2024 10:06:28 -0400 (EDT)
+Date: Mon, 13 May 2024 07:06:19 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Miguel Ojeda <ojeda@kernel.org>, John Stultz <jstultz@google.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 2/2] rust: time: Use wrapping_sub() for Ktime::sub()
+Message-ID: <ZkIeW_NgXFYsAx5M@boqun-archlinux>
+References: <Zigj-lY5lnBSKuib@boqun-archlinux>
+ <87cypvnpwn.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/11] dt-bindings: net: add phy-supply property for
- stm32
-To: Rob Herring <robh@kernel.org>
-CC: "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni
-	<pabeni@redhat.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jose Abreu
-	<joabreu@synopsys.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Marek Vasut <marex@denx.de>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
- <20240426125707.585269-3-christophe.roullier@foss.st.com>
- <20240426153010.GA1910161-robh@kernel.org>
-Content-Language: en-US
-From: Christophe ROULLIER <christophe.roullier@foss.st.com>
-In-Reply-To: <20240426153010.GA1910161-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_10,2024-05-10_02,2023-05-22_02
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87cypvnpwn.ffs@tglx>
 
-Hi
+On Thu, May 09, 2024 at 02:14:16PM +0200, Thomas Gleixner wrote:
+> On Tue, Apr 23 2024 at 14:11, Boqun Feng wrote:
+> > On Thu, Apr 11, 2024 at 04:08:01PM -0700, Boqun Feng wrote:
+> >> Currently since Rust code is compiled with "-Coverflow-checks=y", so a
+> >> normal substraction may be compiled as an overflow checking and panic
+> >> if overflow happens:
+> >> 
+> >>         subq    %rsi, %rdi
+> >>         jo      .LBB0_2
+> >>         movq    %rdi, %rax
+> >>         retq
+> >> .LBB0_2:
+> >>         pushq   %rax
+> >>         leaq    str.0(%rip), %rdi
+> >>         leaq    .L__unnamed_1(%rip), %rdx
+> >>         movl    $33, %esi
+> >>         callq   *core::panicking::panic::h59297120e85ea178@GOTPCREL(%rip)
+> >> 
+> >> although overflow detection is nice to have, however this makes
+> >> `Ktime::sub()` behave differently than `ktime_sub()`, moreover it's not
+> >> clear that the overflow checking is helpful, since for example, the
+> >> current binder usage[1] doesn't have the checking.
+> >
+> > Ping. Thomas, John and Stepthen. Could you take a look at this, and the
+> > discussion between Miguel and me? The key question is the behavior when
+> > ktime_sub() hits a overflow, I think. Thanks!
+> 
+> In principle ktime_sub() should not overflow for regular use cases.
+> 
+> If the binder example overflows the substraction, then something is
+> seriously wrong. Though in that case as it's only for debug purposes
+> panicing would be totally counter productive. A warning might be
+> appropriate though.
+> 
 
-On 4/26/24 17:30, Rob Herring wrote:
-> On Fri, Apr 26, 2024 at 02:56:58PM +0200, Christophe Roullier wrote:
->> Phandle to a regulator that provides power to the PHY. This
->> regulator will be managed during the PHY power on/off sequence.
->>
->> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
->> ---
->>   Documentation/devicetree/bindings/net/stm32-dwmac.yaml | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->> index b901a432dfa9..7c3aa181abcb 100644
->> --- a/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->> +++ b/Documentation/devicetree/bindings/net/stm32-dwmac.yaml
->> @@ -84,6 +84,9 @@ properties:
->>             - description: offset of the control register
->>             - description: field to set mask in register
->>   
->> +  phy-supply:
->> +    description: PHY regulator
-> This is for which PHY? The serdes phy or ethernet phy? This only makes
-> sense here if the phy is part of the MAC. Otherwise, it belongs in the
-> phy node.
->
-> Rob
+Thanks! Looks to me, a reasonable implementation would be calling
+`overflowing_sub`[1] and print a warning if overflow happens:
 
-You are right, normally it should be managed in Ethernet PHY (Realtek, 
-Microchip etc...)
+	<in the implementation of Sub trait of Ktime>
 
-Lots of glue manage this like this. Does it forbidden now ? if yes need 
-to update PHY driver to manage this property.
+	let (ret, overflow) = self.inner.overflowing_sub(other.inner);
 
+	if overflow {
+		pr_err!("Overflow on Ktime: {} - {}\n", self.inner, other.inner);
+	}
+
+	return ret;
+
+I will use this as a new version for more reviews.
+
+[1]: https://doc.rust-lang.org/std/primitive.i64.html#method.overflowing_sub
+
+Regards,
+Boqun
+
+> Thanks,
+> 
+>         tglx
+> 
+> 
 
