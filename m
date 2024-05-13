@@ -1,151 +1,138 @@
-Return-Path: <linux-kernel+bounces-178011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCE98C4767
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:14:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8CC08C476A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB091F23B5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:14:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4BCB2180E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A411482FA;
-	Mon, 13 May 2024 19:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547004CB55;
+	Mon, 13 May 2024 19:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SWAwARDs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="paUo6HvC"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8B341C69
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91D14500D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715627665; cv=none; b=Htvbn2SOAKXPRhuVivU9gw+5inWm2ZetBrTik0DfJJc4G5b8W+qId2InNEEWCNA+6WdP9urrlAiFg9c3EW6FoHh/E//Kl9thzi2w1MUztzj1jWVH4EIcyyqflKR7PkP/dquVfcif1rImCopMwPjCpWOEa3bschHs1oEAMqhcNgA=
+	t=1715627765; cv=none; b=iohPWXl2QS//mxujkGF1jCIXZm83h+v17afqwG3sRvwKOhtl8cal9HHRzR5sm/O8BcYdqn3JGFOn3fr4JeuMjhgB9pzwx4C+gKIEan+icPjFv2vQZoBTkfc0jrnT4YAEc6X2USf0ozgCIbpiyUD/8/00GGoT8oazvcTWKN1KBBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715627665; c=relaxed/simple;
-	bh=5N15qcryEo41N2/C4GG6RzQY4PJ2O8cJAktjHr+5acU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p/3p+T8AmqlmdIu4UfIDNmK2x4vY4lcreFACkrV1h4Et7tIlM7cPpIpBDMAVZr33m/K/u9GFOI5gsa3kB1lgfrcglQCLNq69Z4YDLToWlXp5QdP2SgRCtLE3TrJh/F6E6ZFrxYxMaaXIWxoiuF0Ldg5iRzTblP54rcuaThjLfBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SWAwARDs; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715627662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=es+FVsqPWUNIRpUuG3Q0WLOBQbEEWGORQ4d1y6RL/uI=;
-	b=SWAwARDsuKVCnv+cs2/blRnpIfMjGpYTPJB+S7mUvYQKHhds3PBivMXyMlfwNcdlTbLfDK
-	dwZPhvjHZD83Xf/5X0UFzI2zbWMggFEZjW+BleOCIX15FPKqcTiZb05vmbcRH0++OmLocv
-	Nkd7NuuD6jIVhLOIv7PtIH9wquCXS9Y=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-IhuntFJkPiuuUjT2CZHgqA-1; Mon,
- 13 May 2024 15:14:21 -0400
-X-MC-Unique: IhuntFJkPiuuUjT2CZHgqA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 92A5E380009A;
-	Mon, 13 May 2024 19:14:20 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.8])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C255200B4D8;
-	Mon, 13 May 2024 19:14:20 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id 7C663400E4E82; Mon, 13 May 2024 16:14:03 -0300 (-03)
-Date: Mon, 13 May 2024 16:14:03 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-Message-ID: <ZkJme7kRGGNdxwnb@tpad>
-References: <20240511020557.1198200-1-leobras@redhat.com>
- <ZkE4N1X0wglygt75@tpad>
- <ZkGFmISfnrKNrUgj@LeoBras>
+	s=arc-20240116; t=1715627765; c=relaxed/simple;
+	bh=VTNZ62sNInU+Dd0cJEiFTSXsmrSxsvXnwZWnDCIDW1w=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=oxFHP6AcsDjvEzUqHq5IMI2lblWqic/y0KcACOFtdadgLxkO/Rw3vco75PySNoqlnKB6cn3e4EEMuiSjNHWMRVgwo1XK4mJvoAQa9AT0510+xS3h85iv9U2v6nahWR0O1hmVI3M3PkXvrpwTWEPyya8JodnPZ041d3l2Eic5VNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=paUo6HvC; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1715627756; x=1715886956;
+	bh=dnjH8R0E9R4kgtyNo0zRZg9A30KPJQ23f20lyVjqLUg=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=paUo6HvCMLe0YNG7ppE6+OPvGgid8o+AocVm7IAPnTOOrvFA/8N/tGUWjA2zzNR1c
+	 GVx7xT77FF6o+JP6+Zh09H3imzNnz4rQhZagjM1M4nrgThGaih72r6wrtOP2kNxl1N
+	 DHbwRXhrAulrtdz47x25GKugAUt/IFC4+3U0hkAal6Rsx3QureSft5H303iwrUXdAZ
+	 2d1HKUW2K6Qb8kG8VCuE3vE68ZJkRpggJJeRMvYUA1o6wPDzzN/Xw3TwTFvAZ09tQI
+	 fER0eEvBGTX1P0vNjY9qTuqab6A7AQNHppc7siqrvJvq4Vy0zENWkFww/RnFLoYQde
+	 aPh/FMAymeUSw==
+Date: Mon, 13 May 2024 19:15:47 +0000
+To: linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, akpm@linux-foundation.org, dmitry.torokhov@gmail.com, dverkamp@chromium.org, hughd@google.com, jeffxu@google.com, jorgelo@chromium.org, skhan@linuxfoundation.org, keescook@chromium.org
+From: =?utf-8?Q?Barnab=C3=A1s_P=C5=91cze?= <pobrn@protonmail.com>
+Subject: [PATCH v1] memfd: `MFD_NOEXEC_SEAL` should not imply `MFD_ALLOW_SEALING`
+Message-ID: <20240513191544.94754-1-pobrn@protonmail.com>
+Feedback-ID: 20568564:user:proton
+X-Pm-Message-ID: 67eeb4ec5ac3eaf815ed12f6c17c9a0732f87faa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkGFmISfnrKNrUgj@LeoBras>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 12:14:32AM -0300, Leonardo Bras wrote:
-> On Sun, May 12, 2024 at 06:44:23PM -0300, Marcelo Tosatti wrote:
-> > On Fri, May 10, 2024 at 11:05:56PM -0300, Leonardo Bras wrote:
-> > > As of today, KVM notes a quiescent state only in guest entry, which is good
-> > > as it avoids the guest being interrupted for current RCU operations.
-> > > 
-> > > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
-> > > check for any RCU operations waiting for this CPU. In case there are any of
-> > > such, it invokes rcu_core() in order to sched-out the current thread and
-> > > note a quiescent state.
-> > > 
-> > > This occasional schedule work will introduce tens of microsseconds of
-> > > latency, which is really bad for vcpus running latency-sensitive
-> > > applications, such as real-time workloads.
-> > > 
-> > > So, note a quiescent state in guest exit, so the interrupted guests is able
-> > > to deal with any pending RCU operations before being required to invoke
-> > > rcu_core(), and thus avoid the overhead of related scheduler work.
-> > 
-> > This does not properly fix the current problem, as RCU work might be
-> > scheduled after the VM exit, followed by a timer interrupt.
-> > 
-> > Correct?
-> 
-> Correct, for this case, check the note below:
-> 
-> > 
-> > > 
-> > > Signed-off-by: Leonardo Bras <leobras@redhat.com>
-> > > ---
-> > > 
-> > > ps: A patch fixing this same issue was discussed in this thread:
-> > > https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
-> > > 
-> > > Also, this can be paired with a new RCU option (rcutree.nocb_patience_delay)
-> > > to avoid having invoke_rcu() being called on grace-periods starting between
-> > > guest exit and the timer IRQ. This RCU option is being discussed in a
-> > > sub-thread of this message:
-> > > https://lore.kernel.org/all/5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop/
-> 
-> ^ This one above.
-> The idea is to use this rcutree.nocb_patience_delay=N :
-> a new option we added on RCU that allow us to avoid invoking rcu_core() if 
-> the grace_period < N miliseconds. This only works on nohz_full cpus.
-> 
-> So with both the current patch and the one in above link, we have the same 
-> effect as we previously had with last_guest_exit, with a cherry on top: we 
-> can avoid rcu_core() getting called in situations where a grace period just 
-> started after going into kernel code, and a timer interrupt happened before 
-> it can report quiescent state again. 
-> 
-> For our nohz_full vcpu thread scenario, we have:
-> 
-> - guest_exit note a quiescent state
-> - let's say we start a grace period in the next cycle
-> - If timer interrupts, it requires the grace period to be older than N 
->   miliseconds
->   - If we configure a proper value for patience, it will never reach the 
->     end of patience before going guest_entry, and thus noting a quiescent 
->     state
-> 
-> What do you think?
+`MFD_NOEXEC_SEAL` should remove the executable bits and set
+`F_SEAL_EXEC` to prevent further modifications to the executable
+bits as per the comment in the uapi header file:
 
-I don't fully understand all of the RCU details, but since RCU quiescent
-state marking happens in IRQ disabled section, there is no chance for a
-timer interrupt to conflict with the marking of quiescent state.
+  not executable and sealed to prevent changing to executable
 
-So seem to make sense to me.
+However, currently, it also unsets `F_SEAL_SEAL`, essentially
+acting as a superset of `MFD_ALLOW_SEALING`. Nothing implies
+that it should be so, and indeed up until the second version
+of the of the patchset[0] that introduced `MFD_EXEC` and
+`MFD_NOEXEC_SEAL`, `F_SEAL_SEAL` was not removed, however it
+was changed in the third revision of the patchset[1] without
+a clear explanation.
+
+This behaviour is suprising for application developers,
+there is no documentation that would reveal that `MFD_NOEXEC_SEAL`
+has the additional effect of `MFD_ALLOW_SEALING`.
+
+So do not remove `F_SEAL_SEAL` when `MFD_NOEXEC_SEAL` is requested.
+This is technically an ABI break, but it seems very unlikely that an
+application would depend on this behaviour (unless by accident).
+
+[0]: https://lore.kernel.org/lkml/20220805222126.142525-3-jeffxu@google.com=
+/
+[1]: https://lore.kernel.org/lkml/20221202013404.163143-3-jeffxu@google.com=
+/
+
+Fixes: 105ff5339f498a ("mm/memfd: add MFD_NOEXEC_SEAL and MFD_EXEC")
+Signed-off-by: Barnab=C3=A1s P=C5=91cze <pobrn@protonmail.com>
+---
+
+Or did I miss the explanation as to why MFD_NOEXEC_SEAL should
+imply MFD_ALLOW_SEALING? If so, please direct me to it and
+sorry for the noise.
+
+---
+ mm/memfd.c                                 | 9 ++++-----
+ tools/testing/selftests/memfd/memfd_test.c | 2 +-
+ 2 files changed, 5 insertions(+), 6 deletions(-)
+
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 7d8d3ab3fa37..8b7f6afee21d 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -356,12 +356,11 @@ SYSCALL_DEFINE2(memfd_create,
+=20
+ =09=09inode->i_mode &=3D ~0111;
+ =09=09file_seals =3D memfd_file_seals_ptr(file);
+-=09=09if (file_seals) {
+-=09=09=09*file_seals &=3D ~F_SEAL_SEAL;
++=09=09if (file_seals)
+ =09=09=09*file_seals |=3D F_SEAL_EXEC;
+-=09=09}
+-=09} else if (flags & MFD_ALLOW_SEALING) {
+-=09=09/* MFD_EXEC and MFD_ALLOW_SEALING are set */
++=09}
++
++=09if (flags & MFD_ALLOW_SEALING) {
+ =09=09file_seals =3D memfd_file_seals_ptr(file);
+ =09=09if (file_seals)
+ =09=09=09*file_seals &=3D ~F_SEAL_SEAL;
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/sel=
+ftests/memfd/memfd_test.c
+index 18f585684e20..b6a7ad68c3c1 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -1151,7 +1151,7 @@ static void test_noexec_seal(void)
+ =09=09=09    mfd_def_size,
+ =09=09=09    MFD_CLOEXEC | MFD_NOEXEC_SEAL);
+ =09mfd_assert_mode(fd, 0666);
+-=09mfd_assert_has_seals(fd, F_SEAL_EXEC);
++=09mfd_assert_has_seals(fd, F_SEAL_SEAL | F_SEAL_EXEC);
+ =09mfd_fail_chmod(fd, 0777);
+ =09close(fd);
+ }
+--=20
+2.45.0
+
 
 
