@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-177197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8760F8C3B46
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C258C3B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBFCAB20B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1571C20ED4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF791465A6;
-	Mon, 13 May 2024 06:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBB81465A6;
+	Mon, 13 May 2024 06:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ayQV59t3"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdFYWCCL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD6D4C81;
-	Mon, 13 May 2024 06:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91B1146591;
+	Mon, 13 May 2024 06:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715581636; cv=none; b=JhB1tHetnls8jM4rezDLG6zt8qJ9r+Z5qzDMdLEqkuqf4wZT0K7dIaXZANKCFetIze8H5JdPio22fwzIwywy5bxexv6ELCKVogRH4Duye7n5dgmPee4HHu8V04C/2SVznV2fhDIDJKmyz5sD/TbCy0QDPLsxHhUT7zk2bRkNXSw=
+	t=1715581659; cv=none; b=OR7p4D76HcZAPksDK92YMCwYtZ/uFu7ZBEgW7GJHp7yu2IRAgpHQFyiBQEFBcyWEd7HK4jPL0VSWyTUZet0S9DR5IJUfDjsavHkGaY0NcrGeLf86mxz06Sp8bC8eOmx5/aFNGGFsp7s4pCEEKj0o3U2NQIfkW+J0vs8u2bLFY9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715581636; c=relaxed/simple;
-	bh=UJ8u1P/0powQExzTZ7qC5TrAfTmjb24w0U2OTkahp8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aFfX152/2Wf3qFX3nsWMdAWyC044naUqXENxkgl9UmFO0Xd6HlnQh4ZJjD+bIntGOQR2tgXCnQPoX+vyiacusIU5rjoSyAWhwlGGvSLQ4Ju37bDSYWYiQwvil2fY7I3/gxXrJP7Fh0pE79Hxu+GFIp0/XrTbsqt/6KoPnstn7bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ayQV59t3; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44D6QPtI036976;
-	Mon, 13 May 2024 01:26:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715581585;
-	bh=e74PeFwbuX5U2n4ShRWkGGibNdGSScWO2TR29iGBNQs=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ayQV59t3BgELYDJR0Zz3Cvi3RHrU6wi/hoSbemuIMPHZ9RfZ8DOpXISo7EAT8HZoY
-	 PyTS9CcBpzT/Rxvw22i/uOM0QcvFSj54z2vBjfZsJxlodacp+0lvpx6oizqaS2DKqd
-	 Z795cXcOQSQiCoud53kqj+bH9L5G1AwBVUiwVJsQ=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44D6QPXo011521
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 13 May 2024 01:26:25 -0500
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 13
- May 2024 01:26:24 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 13 May 2024 01:26:24 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44D6QH63026776;
-	Mon, 13 May 2024 01:26:18 -0500
-Message-ID: <55eeec88-63ea-4838-865a-17493dfb847d@ti.com>
-Date: Mon, 13 May 2024 11:56:17 +0530
+	s=arc-20240116; t=1715581659; c=relaxed/simple;
+	bh=EB+QZYJ8ce7OsnEMRF/rmR4y9VScVkSrEIVGEYRx3HQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dbw63GPkA6tifGRe5av31do+xqc/ag/rSyEdPX9qZ80oMXjnxDTauqNlM9UkhtRhTnO5J4x0rFPuF9uFH+QQsEQmvddQKqB2yZLi/XXE6lDySqs8sHlcrxWBm2crhLAi5b927LjTHs66IeMSCg/rnNbBpxqRpsPNXdBHM5NRwyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdFYWCCL; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715581658; x=1747117658;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=EB+QZYJ8ce7OsnEMRF/rmR4y9VScVkSrEIVGEYRx3HQ=;
+  b=kdFYWCCLUNXX/nVcs796hp/XYQZwCeqGTTaGaKK97Iyg282UhSffqqqt
+   t1iRD3/z4dKz88CUnE0lZCbAFmNC/lRL65bBjQ6MrZzsSvPvHX80tftNG
+   SCj2nqu0ZDVwSBYfj9DpvluTRu0C6sDNZ5c4aGdK5jtNO/cuRn+Vg6S3/
+   UnhoMY/xzhiShqFfjKnWa6uLDPrlxTLFRdo6etqdt7Oh/P4qGoHtf7VIi
+   Mqay0dvtwp6j675fuswbmXzJ6xMu/hSVQp9HQ2/Fa1cDAPaI3+V045p6e
+   EO7xH8QRf4lQBBTGL7mIcKKP04jl6bGOp/BCzC5JMQD7hcfeXB7q8zDeO
+   A==;
+X-CSE-ConnectionGUID: McWEQ9MdRUew6taTn+C6wg==
+X-CSE-MsgGUID: zgrVSnkUTKuN1vUeRjsfNg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="34010126"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="34010126"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 23:27:38 -0700
+X-CSE-ConnectionGUID: cFuKuJL8TJSPmNTXgIVlGQ==
+X-CSE-MsgGUID: MPlPNm8GTgOtuBK2X0VSfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="30797945"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 23:27:34 -0700
+Message-ID: <349716b1-a577-48a8-87a8-ac6f6f377e0e@intel.com>
+Date: Mon, 13 May 2024 14:27:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,154 +66,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v5] net: ti: icssg_prueth: add TAPRIO offload
- support
+Subject: Re: [PATCH 13/17] KVM: x86/mmu: Move slot checks from
+ __kvm_faultin_pfn() to kvm_faultin_pfn()
+To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
+References: <20240507155817.3951344-1-pbonzini@redhat.com>
+ <20240507155817.3951344-14-pbonzini@redhat.com>
 Content-Language: en-US
-To: Paolo Abeni <pabeni@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>, Jan Kiszka <jan.kiszka@siemens.com>,
-        Simon
- Horman <horms@kernel.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Randy
- Dunlap <rdunlap@infradead.org>,
-        Diogo Ivo <diogo.ivo@siemens.com>,
-        Wolfram
- Sang <wsa+renesas@sang-engineering.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
-        Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <r-gunasekaran@ti.com>,
-        Roger
- Quadros <rogerq@ti.com>,
-        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>
-References: <20240429103022.808161-1-danishanwar@ti.com>
- <74be4e2e25644e0b65ac1894ccb9c2d0971bb643.camel@redhat.com>
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <74be4e2e25644e0b65ac1894ccb9c2d0971bb643.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240507155817.3951344-14-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Paolo,
-
-On 02/05/24 5:29 pm, Paolo Abeni wrote:
-> On Mon, 2024-04-29 at 16:00 +0530, MD Danish Anwar wrote:
->> +static int emac_taprio_replace(struct net_device *ndev,
->> +			       struct tc_taprio_qopt_offload *taprio)
->> +{
->> +	struct prueth_emac *emac = netdev_priv(ndev);
->> +	struct tc_taprio_qopt_offload *est_new;
->> +	int ret;
->> +
->> +	if (taprio->cycle_time_extension) {
->> +		NL_SET_ERR_MSG_MOD(taprio->extack, "Cycle time extension not supported");
->> +		return -EOPNOTSUPP;
->> +	}
->> +
->> +	if (taprio->cycle_time < TAS_MIN_CYCLE_TIME) {
->> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "cycle_time %llu is less than min supported cycle_time %d",
->> +				       taprio->cycle_time, TAS_MIN_CYCLE_TIME);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (taprio->num_entries > TAS_MAX_CMD_LISTS) {
->> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "num_entries %lu is more than max supported entries %d",
->> +				       taprio->num_entries, TAS_MAX_CMD_LISTS);
->> +		return -EINVAL;
->> +	}
->> +
->> +	if (emac->qos.tas.taprio_admin)
->> +		devm_kfree(&ndev->dev, emac->qos.tas.taprio_admin);
+On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
+> From: Sean Christopherson <seanjc@google.com>
 > 
-> it looks like 'qos.tas.taprio_admin' is initialized from
-> taprio_offload_get(), so it should be free with taprio_offload_free(),
-> right?
+> Move the checks related to the validity of an access to a memslot from the
+> inner __kvm_faultin_pfn() to its sole caller, kvm_faultin_pfn().  This
+> allows emulating accesses to the APIC access page, which don't need to
+> resolve a pfn, even if there is a relevant in-progress mmu_notifier
+> invalidation.  Ditto for accesses to KVM internal memslots from L2, which
+> KVM also treats as emulated MMIO.
 > 
-
-'qos.tas.taprio_admin' is assigned by "emac->qos.tas.taprio_admin =
-taprio_offload_get(taprio);". Here I will free it with taprio_offload_free()
-
->> +
->> +	est_new = devm_kzalloc(&ndev->dev,
->> +			       struct_size(est_new, entries, taprio->num_entries),
->> +			       GFP_KERNEL);
->> +	if (!est_new)
->> +		return -ENOMEM;
+> More importantly, this will allow for future cleanup by having the
+> "no memslot" case bail from kvm_faultin_pfn() very early on.
 > 
-> Why are you allocating 'est_new'? it looks like it's not used
-> anywhere?!? 
+> Go to rather extreme and gross lengths to make the change a glorified
+> nop, e.g. call into __kvm_faultin_pfn() even when there is no slot, as the
+> related code is very subtle.  E.g. fault->slot can be nullified if it
+> points at the APIC access page, some flows in KVM x86 expect fault->pfn
+> to be KVM_PFN_NOSLOT, while others check only fault->slot, etc.
 > 
-
-Sorry my bad. Forgot to remove est_new. I will remove it.
-
->> +
->> +	emac->qos.tas.taprio_admin = taprio_offload_get(taprio);
->> +	ret = tas_update_oper_list(emac);
->> +	if (ret)
->> +		return ret;
+> No functional change intended.
 > 
-> Should the above clear 'taprio_admin' on error, as well? 
-> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Message-ID: <20240228024147.41573-13-seanjc@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Yes here also we should clear taprio_admin and taprio on error. I will
-add a goto label and clear taprio on both errors.
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-Below is the diff to address handling of taprio and taprio_admin.
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_qos.c
-b/drivers/net/ethernet/ti/icssg/icssg_qos.c
-index 459463ea6c20..c7cadab0edec 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_qos.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_qos.c
-@@ -210,7 +210,7 @@ static int emac_taprio_replace(struct net_device *ndev,
- 	}
-
- 	if (emac->qos.tas.taprio_admin)
--		devm_kfree(&ndev->dev, emac->qos.tas.taprio_admin);
-+		taprio_offload_free(emac->qos.tas.taprio_admin);
-
- 	est_new = devm_kzalloc(&ndev->dev,
- 			       struct_size(est_new, entries, taprio->num_entries),
-@@ -221,13 +221,15 @@ static int emac_taprio_replace(struct net_device
-*ndev,
- 	emac->qos.tas.taprio_admin = taprio_offload_get(taprio);
- 	ret = tas_update_oper_list(emac);
- 	if (ret)
--		return ret;
-+		goto clear_taprio;
-
- 	ret = tas_set_state(emac, TAS_STATE_ENABLE);
--	if (ret) {
--		emac->qos.tas.taprio_admin = NULL;
--		taprio_offload_free(taprio);
--	}
-+	if (ret)
-+		goto clear_taprio;
-+
-+clear_taprio:
-+	emac->qos.tas.taprio_admin = NULL;
-+	taprio_offload_free(taprio);
-
- 	return ret;
- }
-
-Please have a look and let me know if this looks ok to you.
-
-
->>
-> Thanks,
-> 
-> Paolo
-> 
-
--- 
-Thanks and Regards,
-Danish
 
