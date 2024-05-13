@@ -1,52 +1,46 @@
-Return-Path: <linux-kernel+bounces-177532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4E08C4043
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21D668C404E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45965285811
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6D5C1F21DA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC1614EC61;
-	Mon, 13 May 2024 11:59:29 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5857714D2BC;
-	Mon, 13 May 2024 11:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EA914F105;
+	Mon, 13 May 2024 12:01:15 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CC614D2B2;
+	Mon, 13 May 2024 12:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715601568; cv=none; b=A7VB41/gXZJD9Jg1NpmxlKFHxagaMrRayBYU5ArX1ADd0uykr9bEF/DdwrxYBnPvxXk+WSdhZLgjED4i9H160rijlHk3rHkdbfglBZG89tiCEk2bFuGJA5aIktsQa+c9Z43DYcBqEMF8670j9olmDI/g/dRXnRhyb45jvTxJP5w=
+	t=1715601674; cv=none; b=RmZmOmtqG8SIwRomyCbuUV68buVw4S27vJ7lERtonirwj2ZRVOKhrXyIyHFQ40zymu/3f4o971Gk7DlbwUFE9yPRC/yYjUsNBnBCmH/MmloLW5isiuPgPUBs+dtYL+iCmVNSK5+ru/KAZfHAL0jp3Cc8R3m13w+5WcjSc3VCZA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715601568; c=relaxed/simple;
-	bh=TNgnzQqPq8Kz9uzS//yGwb0Uho0xHiz8NJ00cchimPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BjtNzQQzLJZw0zbRkHXQl1S9lG/LTO92WnIP1Y82mwGqivYMJFWuBtY+yhRBHyRz6u9HJ7MOmVd5yVkGoOTbhF70UDSK2pTdF5G5mgNFg66/BBt1D9Ebbfo4XOgZResVLLY7qWD/oF9yeSzKAHxOV6dWeT+LYe2I0FpFsvrtMAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-bd-66420098b2c9
-From: Honggyu Kim <honggyu.kim@sk.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	Honggyu Kim <honggyu.kim@sk.com>,
-	Hyeongtak Ji <hyeongtak.ji@sk.com>,
-	Rakie Kim <rakie.kim@sk.com>,
-	kernel_team@skhynix.com
-Subject: Re: [RFC PATCH v4 0/5] DAMON based tiered memory management for CXL memory
-Date: Mon, 13 May 2024 20:59:15 +0900
-Message-ID: <20240513115918.1479-1-honggyu.kim@sk.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20240512175447.75943-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1715601674; c=relaxed/simple;
+	bh=k5JrDD6kO9aJnux0YwQJArQrE0p+HvVa2V2MWegmWx4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GG3ITV59Cqf0pUMIRnLVK9magDjosh7SwI7w8XNcH6hmKxYBkao7kxlX54PauhvJoNQ8XYrPtZ/L+Rx5H08Lk8f9xU5wBzeCPgAEdRTV3/dE1d5y/8dbgocTuBBkuhH1pLGCLQBuF8NXvD62pQQIYSI5oiNALMzhHJrdG0r7ojQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from ssh248.corpemail.net
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id KJO00057;
+        Mon, 13 May 2024 20:00:57 +0800
+Received: from localhost.localdomain (10.94.9.159) by
+ jtjnmail201605.home.langchao.com (10.100.2.5) with Microsoft SMTP Server id
+ 15.1.2507.35; Mon, 13 May 2024 20:01:02 +0800
+From: Deming Wang <wangdeming@inspur.com>
+To: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>
+CC: <MPT-FusionLinux.pdl@broadcom.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Deming Wang <wangdeming@inspur.com>
+Subject: [PATCH] scsi: mpt3sas: Adding parameter descriptions to the _scsih_set_debug_level
+Date: Mon, 13 May 2024 07:59:56 -0400
+Message-ID: <20240513115956.1576-1-wangdeming@inspur.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,66 +48,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrMLMWRmVeSWpSXmKPExsXC9ZZnke5MBqc0g9uqFnPWr2GzePL/N6vF
-	5V1z2CzurfnPanFk/VkWi81nzzBbLF6uZrGv4wGTxeGvb5gcOD2Wnn7D5tGy7xa7x6ZVnWwe
-	mz5NYvc4MeM3i8eLzTMZPT5vkgtgj+KySUnNySxLLdK3S+DK2Hn5CVPBMq6KgxvXsTcwruTo
-	YuTkkBAwkbi/cyk7jP3q3U0mEJtNQE3iystJYLaIgKLEuccXWbsYuTiYBdYzS6y/cooZJCEs
-	ECzRfqyFBcRmEVCVWNJ2HmwQr4CZxLnXv1ghhmpKPN7+EyzOKWAssbjzASOILSTAI/Fqw35G
-	iHpBiZMzn4DNYRaQl2jeOpsZZJmEwHU2iZMtHUwQgyQlDq64wTKBkX8Wkp5ZSHoWMDKtYhTK
-	zCvLTczMMdHLqMzLrNBLzs/dxAgM6mW1f6J3MH66EHyIUYCDUYmHN+G0Q5oQa2JZcWXuIUYJ
-	DmYlEV6HQvs0Id6UxMqq1KL8+KLSnNTiQ4zSHCxK4rxG38pThATSE0tSs1NTC1KLYLJMHJxS
-	DYyeIvMS8u42XJ6wYXW96nRe+bWLk+c6JIWH3e9dYP0v+L2T81q2ag+PRRXKPE1C9r5/xLQK
-	ToWbTBcL81UU2VdzLqPw7c+V+dd8r9g3rPiY48Jz4kHtl43Oz1bqNk+0L1XaW7nvWnaZ5q/Q
-	BT+7zAN3OsqW5z1ZYLY5+L76rS7XN2VV+3N5DiuxFGckGmoxFxUnAgAjYSjrZgIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHLMWRmVeSWpSXmKPExsXCNUNLT3cGg1OawZv1BhZz1q9hs3jy/zer
-	xednr5ktOp98Z7Q4PPckq8XlXXPYLO6t+c9qcWT9WRaLzWfPMFssXq5mcejac1aLfR0PmCwO
-	f33D5MDrsfT0GzaPln232D02repk89j0aRK7x4kZv1k8Xmyeyejx7baHx+IXH5g8Pm+SC+CM
-	4rJJSc3JLEst0rdL4MrYefkJU8EyroqDG9exNzCu5Ohi5OSQEDCRePXuJhOIzSagJnHl5SQw
-	W0RAUeLc44usXYxcHMwC65kl1l85xQySEBYIlmg/1sICYrMIqEosaTvPDmLzCphJnHv9ixVi
-	qKbE4+0/weKcAsYSizsfMILYQgI8Eq827GeEqBeUODnzCdgcZgF5ieats5knMPLMQpKahSS1
-	gJFpFaNIZl5ZbmJmjqlecXZGZV5mhV5yfu4mRmAoL6v9M3EH45fL7ocYBTgYlXh4E047pAmx
-	JpYVV+YeYpTgYFYS4XUotE8T4k1JrKxKLcqPLyrNSS0+xCjNwaIkzusVnpogJJCeWJKanZpa
-	kFoEk2Xi4JRqYDwqGf684+zajwV7eOZ1SCnsU3RTn/1/9anuxlrzh4YmO/Wndk+zqSlck3s0
-	X+zmzIvPFyW4f1H64aClLuocvWPDvYzKTadY3y7llBBmfjJDxm/rpTN3ko9Yp7XE8R+flv1m
-	wf3s8uirG3WuOt5QnlE+1z9E5ze77m2nE9cDi0T4IpSNl082Oq3EUpyRaKjFXFScCABjKWO8
-	YQIAAA==
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+tUid: 20245132000575056574ac4176e6ca9cf9ecfe10e65bd
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Hi SeongJae,
+Adding parameter descriptions to the _scsih_set_debug_level.
 
-Thanks very much for your work!  It got delayed due to the priority
-changes in my workplace for building another heterogeneous memory
-allocator.
-https://github.com/skhynix/hmsdk/wiki/hmalloc
+Signed-off-by: Deming Wang <wangdeming@inspur.com>
+---
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-On Sun, 12 May 2024 10:54:42 -0700 SeongJae Park <sj@kernel.org> wrote:
-> There was an RFC IDEA "DAMOS-based Tiered-Memory Management" previously
-> posted at [1].
-> 
-> It says there is no implementation of the demote/promote DAMOS action
-> are made.  This RFC is about its implementation for physical address
-> space.
-> 
-> Changes from RFC v3
-> (https://lore.kernel.org/20240405060858.2818-1-honggyu.kim@sk.com):
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index 89ef43a5ef86..7b6733aa6174 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -302,8 +302,9 @@ struct _scsi_io_transfer {
+ 
+ /**
+  * _scsih_set_debug_level - global setting of ioc->logging_level.
+- * @val: ?
+- * @kp: ?
++ * @val: the value of the parameter to be set
++ * @kp: a pointer to the kernel_param structure, containing information
++ *      such as the parameter's name, type, and permissions
+  *
+  * Note: The logging levels are defined in mpt3sas_debug.h.
+  */
+-- 
+2.31.1
 
-This link cannot be opened.  I will share the link again here.
-https://lore.kernel.org/all/20240405060858.2818-1-honggyu.kim@sk.com
-
->   0. updated from v3 and posted by SJ on behalf of Hunggyu under his
->      approval.
->   1. Do not reuse damon_pa_pageout() and drop 'enum migration_mode'
->   2. Drop vmstat change
-
-I haven't checked whether I can collect useful information without
-vmstat, but the changes look good in general except for that.
-
->   3. Drop unnecessary page reference check
-
-I will compare this patch series with my previous v3 patchset and get
-back to you later maybe next week.  Sorry, I will have another break
-this week.
-
-Thanks,
-Honggyu
 
