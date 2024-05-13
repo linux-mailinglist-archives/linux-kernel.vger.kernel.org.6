@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-177416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AEAA8C3E41
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:39:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FCB8C3E43
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:39:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C471F22390
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:39:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B91C21240
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEEE1487F2;
-	Mon, 13 May 2024 09:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863DA1487FF;
+	Mon, 13 May 2024 09:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PtMF78SF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS5ag6Py"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A8A2F875
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725551474B1;
+	Mon, 13 May 2024 09:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715593152; cv=none; b=YHk0kNYv20SQ2t7nOANjKQjQGUTm/QhEdwfLjp8eugEvOCJbJo/DeJcHBP5FhPkyarLdL4iX1A0aytiQatRpRCOUjrhqYZsjnyWNI1QUPjqXyBzuzhUhiE878XG2rhbTxwIoUyorslmM7gl3u3JVA9abpeqIw8ASX/Vl6j2bka4=
+	t=1715593174; cv=none; b=haOEa5l2yRR/b3RqpjCgv0odcSVlemwOJWcmDRK/CfiDWMeAMxd2uY/MwF/4TnU/9+tlBodYBQYMQFk1+zPNNeftNpbhJUGqtqkkRXl+T765RkkqTXgmAlMNjqYMdtgs0lUBnxAZ5Sw6TTuFTrNYIA6G2FHS/Tvb33/kLDSgQxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715593152; c=relaxed/simple;
-	bh=RMaVpGtWTDF/EyWq1wtwfA7IKJ8BrYaDxt7v9A3r8z0=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=cA6UqOsROgfHgkq7GFMa8XN56tMioZkO+7T5iSJV/BzrhcgZzU7htmrH9Qdul/jkirkSalleClEKh0vilseAalnXfF7ayALktGoIrtHrvMisGUS2ylCyPOfD/RHQdoL8MrMKwmrZWc/WjKGzNjjYfY6C/2fTiZsoP1Qyykqyd3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PtMF78SF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE68C113CC;
-	Mon, 13 May 2024 09:39:09 +0000 (UTC)
+	s=arc-20240116; t=1715593174; c=relaxed/simple;
+	bh=yVN/UqsJMWWHeYKneTtrXuNjgMvI6poAggN0wIU2Z7Q=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=lwk7pfI0DqigESf46FyIxLpM2EZkzxUOJOOF/ebRUiMFxWaOXR07wkxdwYHekZeZ7JaYXICIlttcblklEYVz/amt/F1nkPjIkCpaPjyyWHqtfwzJIFeVOrSH5swzT0tXfr3s+bxDqTufqQC/uul20qeqifc6u/GBYQHBJp+bc8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZS5ag6Py; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7748AC113CC;
+	Mon, 13 May 2024 09:39:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715593152;
-	bh=RMaVpGtWTDF/EyWq1wtwfA7IKJ8BrYaDxt7v9A3r8z0=;
+	s=k20201202; t=1715593174;
+	bh=yVN/UqsJMWWHeYKneTtrXuNjgMvI6poAggN0wIU2Z7Q=;
 	h=From:To:Cc:Subject:Date:From;
-	b=PtMF78SF7OqWjVe3bp821bf54Bp10rQHjrQTtOTnbPAptL8zLpQ8parXEY0m5gX0i
-	 a7gCHJTh5ETqHzgWnrUA628/HN8m70SSGGAXWFWezzdJetZ4iSy4g8Cfzo/L1xiNzR
-	 Aoxz5OsfyfCEFSGB7rGnQV4oZY3vxMoXF95ik3gfUVri6O5N1k6zbEauWNtw9Q1X16
-	 SnUvsrkeRUdoEASsZ0ZjbqJ65DoDZJkJzV1LJgwej6i5rADzNyk4foO1hlBKhw5LKQ
-	 8k/63hky6EK6eAvIUm52ewjFp1XzngLQmt+604aCQsehwrPw9tVkLl/mOHFZZF9XGZ
-	 bU1OtgIC1SaJA==
-Message-ID: <969a662f066e8d49507ad947e3d7477a.broonie@kernel.org>
+	b=ZS5ag6PyBNAWcJc1QzhZF9gqYVoqhlnXWF6FkgIPzfKb6j1972vjE7N9XsgidijHN
+	 FltUrO3P8seDsSLQWLbjGnlesDzh2fC1MAn+afJISdB1f7V9ugstuNxfx6u8UXpBr1
+	 TAGiXL4lR5sbS6XSYn9frxLzDrGRCCHgGV2JgwfcAIbM/yiQ1KH7cWBYIddve8ECwu
+	 vGRp2S2RC66SWgykNUFh3YIqFDf8S7gAaClNL+XbR9YfbJHTQpNbCr7Kvy7vynig08
+	 cVmhuPbpQa1Hj00Re6m62LJafxh2/1mPhjrJO9SNDljYmy6/G5qBGVw2rgPoEbSCkJ
+	 XsQwErnBpFP5Q==
+Message-ID: <9e996db977142fec01e9cbbbfb79c07d.broonie@kernel.org>
 From: Mark Brown <broonie@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] regulator updates for v6.10
-Date: Mon, 13 May 2024 10:38:55 +0100
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] SPI updates for v6.10
+Date: Mon, 13 May 2024 10:39:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,131 +57,236 @@ The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-v6.10
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.10
 
-for you to fetch changes up to 4e70b26c873dfff317039458a6ea66314bbdce99:
+for you to fetch changes up to d6e7ffd4820f8894eb865890c96852085d3640e1:
 
-  regulator: sun20i: Add Allwinner D1 LDOs driver (2024-05-09 17:44:01 +0200)
-
-----------------------------------------------------------------
-regulator: Updates for v6.10
-
-There's one API update here, a new API factoring out a common pattern
-for reference voltage supplies.  These are supplies uses as a reference
-by analogue circuits where the consumer requests and enables the supply,
-reads the voltage to calibrate the user and then never touches it again.
-This is factored out into a single operation which just returns the
-voltage and uses devm_ to manage the request and enable portion.
-
-Otherwise this has been a very quiet release, we've got some new device
-support, some small fixes, housekeeping and cleanup work but nothing
-substantial.
-
-There's also some non-regulator changes in here, a number of users for
-the new reference voltage API were merged along with it and some MFD
-changes were pulled in as dependencies for new driver work.
-
-Highlights:
-
- - Add a new API for single operation handling of reference voltages.
- - Support for Allwinner AXP717 and D1, and NXP PCA9561A.
+  spi: dw: Bail out early on unsupported target mode (2024-05-09 17:48:06 +0200)
 
 ----------------------------------------------------------------
-Alina Yu (1):
-      regulator: rtq2208: Fix LDO discharge register and add vsel setting
+spi: Updates for v6.10
 
-Andre Przywara (4):
-      regulator: axp20x: fix typo-ed identifier
-      dt-bindings: mfd: x-powers,axp152: Document AXP717
-      mfd: axp20x: Add support for AXP717 PMIC
-      regulator: axp20x: add support for the AXP717
+The diffstat for this release is dominated by the new Airoha driver,
+mainly as a result of this being a generally quite quiet release.  There
+were a couple of cleanups in the core but nothing substantial, the
+updates here are almost all driver specific ones.
 
-Bo Liu (13):
-      regulator: da9121: convert to use maple tree register cache
-      regulator: da9211: convert to use maple tree register cache
-      regulator: isl9305: convert to use maple tree register cache
-      regulator: max8973: convert to use maple tree register cache
-      regulator: mt6311: convert to use maple tree register cache
-      regulator: pca9450: convert to use maple tree register cache
-      regulator: pf8x00: convert to use maple tree register cache
-      regulator: pfuze100: convert to use maple tree register cache
-      regulator: rtmv20: convert to use maple tree register cache
-      regulator: rtq6752: convert to use maple tree register cache
-      regulator: tps51632: convert to use maple tree register cache
-      regulator: tps62360: convert to use maple tree register cache
-      regulator: rpi-panel-attiny: convert to use maple tree register cache
+ - Support for multi-word mode in the OMAP2 McSPI driver.
+ - Overhaul of the PXA2xx driver, mostly API updates.
+ - A number of DT binding conversions.
+ - Support for Airoha NAND controllers, Cirrus Logic CS35L56, Mobileye
+   EYEQ5 and Renesas R8A779H0.
 
-David Lechner (8):
-      regulator: devres: add API for reference voltage supplies
-      hwmon: (adc128d818) Use devm_regulator_get_enable_read_voltage()
-      hwmon: (da9052) Use devm_regulator_get_enable_read_voltage()
-      regulator: devres: fix devm_regulator_get_enable_read_voltage() return
-      hwmon: (adc128d818) simplify final return in probe
-      iio: addac: ad74115: Use devm_regulator_get_enable_read_voltage()
-      iio: frequency: admv1013: Use devm_regulator_get_enable_read_voltage()
-      staging: iio: impedance-analyzer: ad5933: Use devm_regulator_get_enable_read_voltage()
+----------------------------------------------------------------
+Andy Shevchenko (32):
+      spi: xilinx: Fix kernel documentation in the xilinx_spi.h
+      spi: xilinx: Add necessary inclusion and forward declaration
+      spi: xilinx: Make num_chipselect 8-bit in the struct xspi_platform_data
+      spi: pxa2xx: Kill pxa2xx_set_spi_info()
+      spi: pxa2xx: Make num_chipselect 8-bit in the struct pxa2xx_spi_controller
+      spi: pxa2xx: Use proper SSP header in soc/pxa/ssp.c
+      spi: rspi: Get rid of unused struct rspi_plat_data
+      spi: pxa2xx: Keep PXA*_SSP types together
+      spi: pxa2xx: Switch to use dev_err_probe()
+      spi: pxa2xx: Narrow the Kconfig option visibility
+      spi: pxa2xx: Drop ACPI_PTR() and of_match_ptr()
+      spi: pxa2xx: Extract pxa2xx_spi_init_ssp() helper
+      spi: pxa2xx: Skip SSP initialization if it's done elsewhere
+      spi: pxa2xx: Call pxa_ssp_free() after getting the SSP type
+      spi: pxa2xx: Move number of CS pins validation out of condition
+      spi: Extract spi_toggle_csgpiod() helper for better maintanance
+      spi: Introduce spi_for_each_valid_cs() in order of deduplication
+      spi: Consistently use BIT for cs_index_mask (part 2)
+      spi: oc-tiny: Remove unused of_gpio.h
+      spi: bitbang: Use NSEC_PER_*SEC rather than hard coding
+      spi: bitbang: Add missing MODULE_DESCRIPTION()
+      spi: pxa2xx: Allow number of chip select pins to be read from property
+      spi: pxa2xx: Provide num-cs for Sharp PDAs via device properties
+      spi: pxa2xx: Move contents of linux/spi/pxa2xx_spi.h to a local one
+      spi: pxa2xx: Remove outdated documentation
+      spi: pxa2xx: Don't use "proxy" headers
+      spi: pxa2xx: Drop struct pxa2xx_spi_chip
+      spi: pxa2xx: Remove DMA parameters from struct chip_data
+      spi: pxa2xx: Remove timeout field from struct chip_data
+      spi: pxa2xx: Don't provide struct chip_data for others
+      spi: pxa2xx: Drop the stale entry in documentation TOC
+      spi: Remove unneded check for orig_nents
 
-Joy Zou (2):
-      regulator: dt-bindings: pca9450: add pca9451a support
-      regulator: pca9450: add pca9451a support
+Charles Keepax (4):
+      gpio: swnode: Add ability to specify native chip selects for SPI
+      spi: Switch to using is_acpi_device_node() in spi_dev_set_name()
+      spi: Update swnode based SPI devices to use the fwnode name
+      spi: cs42l43: Use devm_add_action_or_reset()
 
-Luca Weiss (1):
-      dt-bindings: regulator: qcom,usb-vbus-regulator: Add PM7250B compatible
+David Lechner (4):
+      spi: remove struct spi_message::is_dma_mapped
+      spi: au1550: t->{tx,rx}_dma checks
+      spi: fsl: remove is_dma_mapped checks
+      spi: use spi_valid_{tx,rx}buf() in stats function
 
-Mark Brown (4):
-      add pmic pca9451a support
-      regulator: convert to use maple tree register
-      regulator: Merge axp20x changes
-      regulator: new API for voltage reference supplies
+Fei Shao (1):
+      spi: spi-mt65xx: Rename a variable in interrupt handler
 
-Rob Herring (Arm) (1):
-      regulator: dt-bindings: fixed-regulator: Add a preferred node name
+Geert Uytterhoeven (2):
+      spi: renesas,sh-msiof: Add r8a779h0 support
+      spi: dw: Bail out early on unsupported target mode
 
-Samuel Holland (2):
-      regulator: dt-bindings: Add Allwinner D1 system LDOs
-      regulator: sun20i: Add Allwinner D1 LDOs driver
+Heikki Keranen (1):
+      spi: mux: Fix master controller settings after mux select
 
-Uwe Kleine-König (1):
-      regulator: Mention regulator id in error message about dummy supplies
+Justin Swartz (1):
+      spi: mt7621: allow GPIO chip select lines
 
- .../devicetree/bindings/mfd/x-powers,axp152.yaml   |   2 +
- .../regulator/allwinner,sun20i-d1-system-ldos.yaml |  37 ++++
- .../bindings/regulator/fixed-regulator.yaml        |   7 +
- .../bindings/regulator/nxp,pca9450-regulator.yaml  |   1 +
- .../regulator/qcom,usb-vbus-regulator.yaml         |   1 +
- Documentation/driver-api/driver-model/devres.rst   |   1 +
- drivers/hwmon/adc128d818.c                         |  57 ++----
- drivers/hwmon/da9052-hwmon.c                       |  38 ++--
- drivers/iio/addac/ad74115.c                        |  40 ++---
- drivers/iio/frequency/admv1013.c                   |  40 ++---
- drivers/mfd/axp20x-i2c.c                           |   2 +
- drivers/mfd/axp20x-rsb.c                           |   1 +
- drivers/mfd/axp20x.c                               |  90 ++++++++++
- drivers/regulator/Kconfig                          |   8 +
- drivers/regulator/Makefile                         |   1 +
- drivers/regulator/axp20x-regulator.c               |  94 +++++++++-
- drivers/regulator/core.c                           |   4 +-
- drivers/regulator/da9121-regulator.c               |   4 +-
- drivers/regulator/da9211-regulator.c               |   2 +-
- drivers/regulator/devres.c                         |  59 +++++++
- drivers/regulator/isl9305.c                        |   2 +-
- drivers/regulator/max8973-regulator.c              |   2 +-
- drivers/regulator/mt6311-regulator.c               |   2 +-
- drivers/regulator/pca9450-regulator.c              | 196 ++++++++++++++++++++-
- drivers/regulator/pf8x00-regulator.c               |   2 +-
- drivers/regulator/pfuze100-regulator.c             |   2 +-
- drivers/regulator/rpi-panel-attiny-regulator.c     |   2 +-
- drivers/regulator/rtmv20-regulator.c               |   2 +-
- drivers/regulator/rtq2208-regulator.c              | 100 +++++++----
- drivers/regulator/rtq6752-regulator.c              |   2 +-
- drivers/regulator/sun20i-regulator.c               | 157 +++++++++++++++++
- drivers/regulator/tps51632-regulator.c             |   2 +-
- drivers/regulator/tps62360-regulator.c             |   2 +-
- drivers/staging/iio/impedance-analyzer/ad5933.c    |  26 +--
- include/linux/mfd/axp20x.h                         |  98 ++++++++++-
- include/linux/regulator/consumer.h                 |   7 +
- include/linux/regulator/pca9450.h                  |   1 +
- 37 files changed, 879 insertions(+), 215 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/regulator/allwinner,sun20i-d1-system-ldos.yaml
- create mode 100644 drivers/regulator/sun20i-regulator.c
+Kousik Sanagavarapu (3):
+      spi: cadence-xspi: use for_each_available_child_of_node_scoped()
+      spi: dt-bindings: armada-3700: convert to dtschema
+      spi: dt-bindings: ti,qspi: convert to dtschema
+
+Krzysztof Kozlowski (5):
+      spi: loopback-test: drop driver owner assignment
+      spi: coldfire-qspi: drop driver owner assignment
+      spi: fsl-dspi: drop driver owner assignment
+      spi: docs: drop driver owner initialization
+      spi: altera: Drop unneeded MODULE_ALIAS
+
+Lorenzo Bianconi (2):
+      spi: airoha: add SPI-NAND Flash controller driver
+      spi: dt-bindings: airoha: Add YAML schema for SNFI controller
+
+Louis Chauvet (3):
+      spi: spi-omap2-mcspi.c: revert "Toggle CS after each word"
+      spi: omap2-mcspi: Add support for MULTI-mode
+      spi: omap2-mcpsi: Enable MULTI-mode in more situations
+
+Lukas Bulwahn (2):
+      MAINTAINERS: adjust file entry in TEXAS INSTRUMENTS AUDIO (ASoC/HDA) DRIVERS
+      MAINTAINERS: repair file entry in AIROHA SPI SNFI DRIVER
+
+Maciej Strozek (2):
+      spi: cs42l43: Add bridged cs35l56 amplifiers
+      spi: cs42l43: Correct name of ACPI property
+
+Mark Brown (11):
+      spi: pxa2xx: Clean up linux/spi/pxa2xx_spi.h
+      spi: xilinx: Massage xilinx_spi.h
+      Add multi mode support for omap-mcspi
+      spi: more tx_buf/rx_buf removal
+      spi: cadence-qspi: Prepare to add Mobileye EyeQ5 support
+      spi: More refacroings after multi-CS support
+      Add bridged amplifiers to cs42l43
+      Add add SPI-NAND Flash controller driver for EN7581
+      spi: use 'time_left' instead of 'timeout' with
+      spi: dw: Auto-detect number of native CS
+      spi: pxa2xx: Drop linux/spi/pxa2xx_spi.h
+
+Raju Rangoju (1):
+      spi: spi_amd: Add support for SPI MEM framework
+
+Randy Dunlap (1):
+      spi: spi.h: add missing kernel-doc for @last_cs_index_mask
+
+Serge Semin (4):
+      spi: dw: Convert to using BITS_TO_BYTES() macro
+      spi: dw: Add a number of native CS auto-detection
+      spi: dw: Convert dw_spi::num_cs to u32
+      spi: dw: Drop default number of CS setting
+
+Shivani Gupta (1):
+      spi: spi-s3c64xx.c: Remove of_node_put for auto cleanup
+
+Théo Lebrun (10):
+      spi: cadence-qspi: allow building for MIPS
+      spi: cadence-qspi: store device data pointer in private struct
+      spi: cadence-qspi: minimise register accesses on each op if !DTR
+      spi: dt-bindings: cdns,qspi-nor: sort compatibles alphabetically
+      spi: dt-bindings: cdns,qspi-nor: add mobileye,eyeq5-ospi compatible
+      spi: dt-bindings: cdns,qspi-nor: make cdns,fifo-depth optional
+      spi: cadence-qspi: allow FIFO depth detection
+      spi: cadence-qspi: add no-IRQ mode to indirect reads
+      spi: cadence-qspi: add early busywait to cqspi_wait_for_bit()
+      spi: cadence-qspi: add mobileye,eyeq5-ospi compatible
+
+Wolfram Sang (8):
+      spi: armada-3700: use 'time_left' variable with wait_for_completion_timeout()
+      spi: fsl-lpspi: use 'time_left' variable with wait_for_completion_timeout()
+      spi: imx: use 'time_left' variable with wait_for_completion_timeout()
+      spi: pic32-sqi: use 'time_left' variable with wait_for_completion_timeout()
+      spi: pic32: use 'time_left' variable with wait_for_completion_timeout()
+      spi: sun4i: use 'time_left' variable with wait_for_completion_timeout()
+      spi: sun6i: use 'time_left' variable with wait_for_completion_timeout()
+      spi: xlp: use 'time_left' variable with wait_for_completion_timeout()
+
+ .../bindings/spi/airoha,en7581-snand.yaml          |   65 ++
+ .../devicetree/bindings/spi/cdns,qspi-nor.yaml     |    8 +-
+ .../bindings/spi/marvell,armada-3700-spi.yaml      |   55 +
+ .../devicetree/bindings/spi/renesas,sh-msiof.yaml  |    1 +
+ .../devicetree/bindings/spi/spi-armada-3700.txt    |   25 -
+ Documentation/devicetree/bindings/spi/ti,qspi.yaml |   96 ++
+ Documentation/devicetree/bindings/spi/ti_qspi.txt  |   53 -
+ Documentation/spi/index.rst                        |    1 -
+ Documentation/spi/pxa2xx.rst                       |  211 ----
+ Documentation/spi/spi-summary.rst                  |    5 -
+ MAINTAINERS                                        |   11 +-
+ arch/arm/mach-pxa/devices.c                        |   18 -
+ arch/arm/mach-pxa/spitz.c                          |   35 +-
+ drivers/gpio/Kconfig                               |    9 +
+ drivers/gpio/gpiolib-swnode.c                      |   44 +
+ drivers/soc/pxa/ssp.c                              |    2 +-
+ drivers/spi/Kconfig                                |   22 +-
+ drivers/spi/Makefile                               |    1 +
+ drivers/spi/spi-airoha-snfi.c                      | 1129 ++++++++++++++++++++
+ drivers/spi/spi-altera-platform.c                  |    1 -
+ drivers/spi/spi-amd.c                              |  112 ++
+ drivers/spi/spi-armada-3700.c                      |    8 +-
+ drivers/spi/spi-atmel.c                            |    8 +-
+ drivers/spi/spi-au1550.c                           |   29 +-
+ drivers/spi/spi-bitbang.c                          |   23 +-
+ drivers/spi/spi-cadence-quadspi.c                  |  109 +-
+ drivers/spi/spi-cadence-xspi.c                     |    8 +-
+ drivers/spi/spi-coldfire-qspi.c                    |    1 -
+ drivers/spi/spi-cs42l43.c                          |  127 ++-
+ drivers/spi/spi-dw-core.c                          |   20 +-
+ drivers/spi/spi-dw-mmio.c                          |   13 +-
+ drivers/spi/spi-dw.h                               |    2 +-
+ drivers/spi/spi-fsl-cpm.c                          |   14 +-
+ drivers/spi/spi-fsl-cpm.h                          |    5 +-
+ drivers/spi/spi-fsl-dspi.c                         |    1 -
+ drivers/spi/spi-fsl-lpspi.c                        |   14 +-
+ drivers/spi/spi-fsl-spi.c                          |    7 +-
+ drivers/spi/spi-imx.c                              |   20 +-
+ drivers/spi/spi-loopback-test.c                    |    1 -
+ drivers/spi/spi-mt65xx.c                           |   32 +-
+ drivers/spi/spi-mt7621.c                           |   95 +-
+ drivers/spi/spi-mux.c                              |    2 +
+ drivers/spi/spi-oc-tiny.c                          |    2 -
+ drivers/spi/spi-omap2-mcspi.c                      |   95 +-
+ drivers/spi/spi-pic32-sqi.c                        |    6 +-
+ drivers/spi/spi-pic32.c                            |    6 +-
+ drivers/spi/spi-pxa2xx-dma.c                       |   38 +-
+ drivers/spi/spi-pxa2xx-pci.c                       |   10 +-
+ drivers/spi/spi-pxa2xx.c                           |  223 ++--
+ drivers/spi/spi-pxa2xx.h                           |   42 +-
+ drivers/spi/spi-rspi.c                             |   12 +-
+ drivers/spi/spi-s3c64xx.c                          |    6 +-
+ drivers/spi/spi-sun4i.c                            |    9 +-
+ drivers/spi/spi-sun6i.c                            |   17 +-
+ drivers/spi/spi-xlp.c                              |    8 +-
+ drivers/spi/spi.c                                  |  126 +--
+ include/linux/gpio/property.h                      |    4 +
+ include/linux/platform_data/spi-omap2-mcspi.h      |    3 -
+ include/linux/pxa2xx_ssp.h                         |    2 +-
+ include/linux/spi/pxa2xx_spi.h                     |   56 -
+ include/linux/spi/rspi.h                           |   18 -
+ include/linux/spi/spi.h                            |   12 +-
+ include/linux/spi/xilinx_spi.h                     |   14 +-
+ 63 files changed, 2224 insertions(+), 928 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
+ create mode 100644 Documentation/devicetree/bindings/spi/marvell,armada-3700-spi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/spi/spi-armada-3700.txt
+ create mode 100644 Documentation/devicetree/bindings/spi/ti,qspi.yaml
+ delete mode 100644 Documentation/devicetree/bindings/spi/ti_qspi.txt
+ delete mode 100644 Documentation/spi/pxa2xx.rst
+ create mode 100644 drivers/spi/spi-airoha-snfi.c
+ delete mode 100644 include/linux/spi/pxa2xx_spi.h
+ delete mode 100644 include/linux/spi/rspi.h
 
