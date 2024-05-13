@@ -1,84 +1,106 @@
-Return-Path: <linux-kernel+bounces-178084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1620F8C486A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:48:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34A2B8C486B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D7B28394D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FC741C20E9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133018287E;
-	Mon, 13 May 2024 20:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124B880BF7;
+	Mon, 13 May 2024 20:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="hdTBfAO/"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="zeR68r05"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8025F81720;
-	Mon, 13 May 2024 20:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CE11C69E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715633268; cv=none; b=FdmNkTcOXAIIvDHHEt2jXqMWewNG8iz+k0BK9167cnL9MyMOFuQZF+ObRWs/2Z/m1rLLFZJBkV+HqL93tzvgK/2bsOjMs6XDFXwpc2thJn63vNSy5KzqYK6scJ2dL2enFK09XoM3IQgSLpRmoYlY6YWsTLvDQi9TfmBEYAYJwsk=
+	t=1715633313; cv=none; b=clRqjq7UGRkFBa4o+bcuJCpj4XpizR+ofoA7OUyeR7hujylHsKh9Wqre003gD1Pg2DK3QJ83v5Fwa1sRdTN0MzxUtxP4yaHUY/HXFl/A//2Moppkk257jBqyETQ6XPH/yNGDelrOhCPSK2aTUmYllitRAuXoiaO2KwcVfBvVSQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715633268; c=relaxed/simple;
-	bh=UJBBxco8vlCXFrwL2rdHorUqQeY5Agk5Kikd6UwKDDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ovgqBcz7sjI6Bk00p89CD1ol/sHLBC2t6191MlRJGlHKxsbZEP9WrxIlAVWRx4kuR/yiqlGarvJGmH6XeFGSNdPLq0zoBNsw8yDyD/DODiR082gQbXaWu0ds/FmPkZBD5zoX0/jPRDTS+WFhh88Oh1Ev/eGvrS5O4w9fJkmrovI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=hdTBfAO/; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 51BE2DB422;
-	Mon, 13 May 2024 22:47:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1715633256; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=0uJiQ582lHn4ACjeoU6ecYjd0v8F9pqkd0xe3q/N7j4=;
-	b=hdTBfAO/yWWjw2bJdgpCL0+drpq8qDhZLsg2jfb95XPbFefJsBQNK7ZqTC6+wmO/iX9x4+
-	GezJe/cpuwYg3D8lyy6JTWWOuIfSghEv0Yyu3dtbDDtPrSx9k2nSWmPALi1tN3p8zhPKWZ
-	WK1LUfb1CtduA78BrNOiWqdyCNBZjVbhGt3cgv7Qy977plhOqQagpgxE2bX8eUP3Im0j+/
-	77R15m8StPKxPDR3n335MAN/OydKqH51cklILfaT/HpF4wDFv5eE7OkGrHx8qf047t2j4G
-	1BkCN7o1BcZxCENGWP1M8UA8i3NHL6nkklBbzZk4B72yWjzPN9xE1dkn/qIyfg==
-Date: Mon, 13 May 2024 22:47:29 +0200
-From: Daniel Wagner <wagi@monom.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org, 
-	stable-rt@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Tom Zanussi <tom.zanussi@linux.intel.com>, 
-	Clark Williams <williams@redhat.com>
-Subject: Re: [PATCH RT 0/1] Linux v4.19.312-rt134-rc3
-Message-ID: <af3jd6f5pym7gflg3gzjxfinj7i4zovah4jg36f2p6whtsdfqv@iejgojacrut2>
-References: <20240507151648.17883-1-wagi@monom.org>
- <20240513065935.hT5MCimc@linutronix.de>
+	s=arc-20240116; t=1715633313; c=relaxed/simple;
+	bh=6NQIZmC3T6mXsunc4jLDIVJ5qfYCcsJ2E5DUWCP3ZnA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hn18uoZBBJh/SA4jeOC6JxXWmwX5bhJ+4yZJrcTLJE6mnol1mBs0M/XBMxqxF83CyQRjVsyBy3aUItNkxMXhzkVIrvYqW1787YUq4XzVuN5WrcWMjxAl/FRTOKPNBzhEpn/GBB/wMCnYvOkEtu5AZ2aQnUfQ1bqgEwdIWwafrI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=zeR68r05; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-51aa6a8e49aso6633571e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715633309; x=1716238109; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OYPuebCXrFPix/veQ7EJx4DLctq9sIXjWmJL94zNtiQ=;
+        b=zeR68r05bAxYKOLQS3KP4iK8OW7aILPosvIN8sj7f2orjit6hu76H0YWw2K1ZIxOOe
+         5hydaRQuwJa1FdfZiL5Kyfm5bSDx+PZ2D7MSqz0K17TPQnWb0RQcdpRWrKimEcRfRJLW
+         z/t0ibfgBn6lN8/ArnqPGipM2u82KE3xscLN3YzNysNNmLPGPvSTfvd2qW0ApJeDk1KM
+         Bmc7//FV+uJhnUefcB4NTof5kWtc4R7dHpvuyEpJAr3y0ZwsXHIVbjaRLmlk7jM/vO4y
+         p0T1mRIshugR5QI7YAo/ENm8zhQI+9Q4H2bHciFja4PKAeEO2zo3NoLAI0HSbLNk5Xgd
+         81GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715633309; x=1716238109;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OYPuebCXrFPix/veQ7EJx4DLctq9sIXjWmJL94zNtiQ=;
+        b=c+rdysVTJp3s3LuPFh9SSwVOwHrlJjbNHfAziLcXP5oR9RcMRb0hoygW+tDnpXvxW7
+         8KhshtbHa2yqF6h0UiKX06e3TJYpfaR5JGxXRoVkn8hq0sMd8IzTEaXcpjIvUBZFFyL1
+         YJ/r7ZAPW0IhCieDI+DXd9kWOxGtVYroYMp19E7VwBcPtxA/LJGNCe2CZDfYWHR7DGNG
+         JxkxUOKG4N5vL7Wqhoq77lN6ubSli1m4DCqjRFQOuEtovBwX5DpaKyGsTxf5vS4opofR
+         HCPIPLjo92ymoN9Z1Ew9d+c9tCetSOtiM2x9ke3pdO4y0Uc5GdkRTUahOH9tWU2vY+XA
+         XorA==
+X-Gm-Message-State: AOJu0YwXSfi7q4PO/gJRpClrgc4hQ0Ucipp6EOTXY7qyxbQ2Nhdf91ow
+	PWz68Z0pSniaNDGb341yNsFFokB6vQAW/oUzI28Yr/yhugylXGgLOJIXzADBwrwQd7WmaPkzmKX
+	H
+X-Google-Smtp-Source: AGHT+IF/inAnv/4T/Kb5npOSIXsW2SLYWE+QafUUGSpWMdqVFgDTtKv1+weAXPEwdiYP2qGxCGGtqw==
+X-Received: by 2002:ac2:446c:0:b0:523:5dcc:c72 with SMTP id 2adb3069b0e04-5235dcc0ea3mr683318e87.57.1715633308683;
+        Mon, 13 May 2024 13:48:28 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17886sm639699866b.210.2024.05.13.13.48.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 13:48:28 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] w1: Fix typo in dev_info() message
+Date: Mon, 13 May 2024 22:47:34 +0200
+Message-ID: <20240513204733.291673-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513065935.hT5MCimc@linutronix.de>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024 at 08:59:35AM GMT, Sebastian Andrzej Siewior wrote:
-> On 2024-05-07 17:16:47 [+0200], Daniel Wagner wrote:
-> > Dear RT Folks,
-> > 
-> > This is the RT stable review cycle of patch 4.19.312-rt134-rc3.
-> > 
-> > Please scream at me if I messed something up. Please test the patches
-> > too.
-> >
-> > The -rc release is also available on kernel.org
-> 
-> I do have to complain a bit. The whole diff contains only a diff against
-> localversion while the content of interest not here. But but I guess it
-> is what we talked about so... but for everyone else it looks like
-> version increment.
+s/exists/exist/
 
-Sure, the merge diff should also be included. This feature missing in
-the tooling. I'll add it, so next time it should also contain also the
-merge diff.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ drivers/w1/w1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
+index afb1cc4606c5..d82e86d3ddf6 100644
+--- a/drivers/w1/w1.c
++++ b/drivers/w1/w1.c
+@@ -504,7 +504,7 @@ static ssize_t w1_master_attribute_store_remove(struct device *dev,
+ 		if (result == 0)
+ 			result = count;
+ 	} else {
+-		dev_info(dev, "Device %02x-%012llx doesn't exists\n", rn.family,
++		dev_info(dev, "Device %02x-%012llx doesn't exist\n", rn.family,
+ 			(unsigned long long)rn.id);
+ 		result = -EINVAL;
+ 	}
+-- 
+2.45.0
+
 
