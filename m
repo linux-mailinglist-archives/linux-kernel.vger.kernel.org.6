@@ -1,274 +1,440 @@
-Return-Path: <linux-kernel+bounces-177124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDEE8C3A67
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:16:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6B58C3A6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108141F210A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:16:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B30281C20C37
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321D5145B2C;
-	Mon, 13 May 2024 03:16:27 +0000 (UTC)
-Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2096.outbound.protection.partner.outlook.cn [139.219.146.96])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC37145B1E;
+	Mon, 13 May 2024 03:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YbOVl1cv"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDE9145B0A;
-	Mon, 13 May 2024 03:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715570186; cv=fail; b=P2jUCP95OEgFlKJ+b1gJ8x816knfXUJ6ghZKT4yJLGsk/IgrL9U7/b1kY8pJ73ZwQbfy2Eouf6OHj00arw0/JeraU9UbTQwRLnCy7Bxd9/RR47vMezFKEYEZjbpIanCvPY9WuRWzy6R4hKvcE3poUIucnd421tfBZTIB1cUxqrU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715570186; c=relaxed/simple;
-	bh=htnfL11LcYNS5fplqGS+tlhtNbCEYHcoi6MqbnNPUuY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DK7fd90opeX9oWPeQfF6U2ZOkbwyyQBbdjHRNWzUy6hyy5PrLmD+VlSal/xlD2sC6SKUCUVyvc9xix8wWT/dI/pqddExEOA79DBEEl++J9NoqQIlsZ86yFoJkOnG8eEsK8Rc7KL+kN8n/PJnxo++1zwxcBv6iSUv7S1NL73r8Cs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dJh6xtqKhSJ1zRdpamkqxSO1wx9gpraaMYPinohgUn0ivR4WsyZ5uPWtFmQE6dykTb47DQSZqD3TjVnZLBiTfwaSss5Pvt1F7rw8ePyO1bfdY/P9VOJGqne/Qk81JtMZw5JtuBeZ7GFk3YcBIS+A6kg/lYAcd1VIWTkEupGkS8JvzAMKh1V985AuAytrA41VCdPV03cPBDThhFdHOH4r+PVSBhUQaSWxk23eMlNL1Fu+4sKnewg5qjQ55wnbsrRrVAipVWRp7+gsvsPzvJRZISATXV9feOoIXuT2yJrqLVHjeerNQHYelUO8i5OMPi+9tniV5A1/9Wt5vYWnVKRApQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jX2bh41WhE8eTPK4Fs/+vHGzJuAQAasQ5kIrFISVn1k=;
- b=i2ZyEHSMM4mBgBAqWWMaXVenb/sPwV6ZLG+Gzz5es9SBRg5bPwydpUCCbvKWyD/KF68T0SLz8vtiEvisAeSRZiiRr8zkpn5cn0QrN6INJ1d66DIm6JMYixEjpzFOcivJXcdgn3GvOTR3FB704iCg+992hkRqsoXBtijqyldIS/Q/QwbueWKXbq8eLOyiKyB8T3pWVNf9VNNTRxq2ikHfPh2bXfiF/6pZHF3KlaTX4dqdqE2nDjzOVp3Sl8w329hQ4av071QWZlSoZanTA9ERv+3Qkiv4EsbCs+MkBmwc40DMqrFTB9eVYQhG4Eiy7OfzokvrriFd6zULH/iHkJYZbQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:20::14) by SH0PR01MB0555.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:6::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Mon, 13 May
- 2024 03:16:05 +0000
-Received: from SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn
- ([fe80::e0a:f88a:cad1:dc1c]) by SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn
- ([fe80::e0a:f88a:cad1:dc1c%7]) with mapi id 15.20.7472.044; Mon, 13 May 2024
- 03:16:05 +0000
-From: Joshua Yeong <joshua.yeong@starfivetech.com>
-To: Frank Li <Frank.Li@nxp.com>, "alexandre.belloni@bootlin.com"
-	<alexandre.belloni@bootlin.com>
-CC: "conor.culhane@silvaco.com" <conor.culhane@silvaco.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "jirislaby@kernel.org"
-	<jirislaby@kernel.org>, "joe@perches.com" <joe@perches.com>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	"krzysztof.kozlowski@linaro.org" <krzysztof.kozlowski@linaro.org>,
-	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>, "robh@kernel.org"
-	<robh@kernel.org>, "zbigniew.lukwinski@linux.intel.com"
-	<zbigniew.lukwinski@linux.intel.com>
-Subject: RE: [PATCH resend v9 1/8] i3c: add target mode support
-Thread-Topic: [PATCH resend v9 1/8] i3c: add target mode support
-Thread-Index: AQHaoL9J0lwk/jg/a0+LeeDupwAoCLGUgoaw
-Date: Mon, 13 May 2024 03:16:05 +0000
-Message-ID:
- <SH0PR01MB084187FBA1E4EE786A8996C9F9E22@SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn>
-References: <20240507204311.2898714-1-Frank.Li@nxp.com>
- <20240507204311.2898714-2-Frank.Li@nxp.com>
-In-Reply-To: <20240507204311.2898714-2-Frank.Li@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SH0PR01MB0841:EE_|SH0PR01MB0555:EE_
-x-ms-office365-filtering-correlation-id: 0f2ece38-1c4b-486c-e9ac-08dc72fb06c8
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info:
- mjC4M/eMaIhFRV2NRAZb1f6Xw0f1ukejnEp0JfU4fGBbxeU2jrnrFdHviQ+7etJc9MFdmk/JGLUKWary3eDY5zg/PZ1F5a6EdNSnw+gQU0u7p90Ve7nyjSoKzNIrFPEE9ebl5OJkXi4R+rAt76PPzGdgpisD4IB27C3tR5L6pu/VOuMW+yZ+2lhKtW1+96CdokpYAgV8NZxZx6Li9ZMcKWeb0ZJ6/IMRu2oO0SG2tTS4vuEWKkpB6sG6ftKa16nMZo2vrFl8Y/eaWtSAJZBAM3Yes0xmdVmLLh0u5nFeTnbu/IJO5SOeQaNOTHayYmqoLlzGLyF5BF8TlQKAZJ77MwC4lVl49MA4HLpIQ3iBj7ZU9nvP3ThsXKkD1y57SqbktVVQag7tldGDd0JOKkuCO/Ox57ObNASOEGqzqgmAlQFORlwDXOrmCUhWbBquheyFN8fKyulw5nNE2Rs45u0Xd5ttFAUwyt4cLMrV3n4x4Eaeyx+ZNwnCBHmi9jHzpqFj4APIn5rVYNYdQD8Am/gcQPjThSnSneq1rxgYjP89D0CsnD3qhPU/UVsfS8YLXYqUZ9I6ElXF4lk9A0TbAU5ijWnGTeQdoVzVvf3oM+FVyxLj1L15VNgu2Y7niw/g45et
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(41320700004)(7416005)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?5cFJc5b1KoDlprn18BUBa1U5aE8NC7FadivsA3seiz2dQM6onS49/KC9j+v0?=
- =?us-ascii?Q?z6cGsPL5ivxl4vQUhovQYzU8fLlQ53vfbS3xi+ztHTryKbpM/4E9mI4gt624?=
- =?us-ascii?Q?jQU2MYQjyPxCaxfvqNQULklSbwG4nJ5gnsfB7tRx/RQmasmGk3O7JEv/S2ub?=
- =?us-ascii?Q?bJYNyO8/YwaDsutxW1q6QWWwOR+bmbcR3yvXSKKtulSKRghmREbf2476nxHJ?=
- =?us-ascii?Q?8CPPFsouRCDrF9/Dzq+eEvdEP82p0HCl2WFwGMnoEIZFfGiPFmDMr+ELo+qr?=
- =?us-ascii?Q?JJpklfqg28j+nvFjN3Xk5PXaKcMwjGmS2gYFgWV38Tpbsv7z+RE5rCJ9eheq?=
- =?us-ascii?Q?f/jEnoj7uTg2u79yMIokGJCHkyZ04Fr106MyLOMmb5PCwyBnQks57JuziHn1?=
- =?us-ascii?Q?sflnvc5uSA2wuPD3PHCiEOfN1M14f3swKQL7SXD+AxzKeCCT+uYVIL0obDKO?=
- =?us-ascii?Q?u9AsfkvHTkz2yEmWyo4gs8YQ5C4WJ5hiMTt+OLHSaBIexOXBuy5jV7/kg88g?=
- =?us-ascii?Q?Q66sqadyADMrhJSMDvqwHpcvOQ3+LYhe4jh8/4ndR77grgB9ea/qMH1rF6zX?=
- =?us-ascii?Q?Ktc1Ru43+R6N9RtojOgF8t0CpC9aBnNiRBg9T0vBjcbRoTW084cztd4Pc1W5?=
- =?us-ascii?Q?qTa5GM/OPOaQIb8K5py38FdfSAac7WECbHfLcu3K7LI2T/jdRr4IV43KiY+1?=
- =?us-ascii?Q?guht8/JjkjMe7BT/kIXYY/jOuDSwlMLnJ5aRfpFulo0NHVvSFH4hr2kxwNlT?=
- =?us-ascii?Q?MxoiAVYhNVjdNio9F6brurfq64kTN2jcic2UvIM+0IxSzZribLgdadqR00Y9?=
- =?us-ascii?Q?a0G1PBVab5LwUJ77ajXkOgCXzhqN1YKY2TJPJrjbZDlTAIj9MsKE5+HgryMJ?=
- =?us-ascii?Q?feKeQXuiMvJ3f86S8TDrMwC3z2S2eH1JcVLQCTj50/3o4aGVtUYg0mNT82q6?=
- =?us-ascii?Q?gTy31KR7NeYhczGojwrjwNB29T4EdHvDSxeynRY65KmHmrrwJ4HDy9mZgrA5?=
- =?us-ascii?Q?LPgpry3uMsr1607dVG41TbUAfm6cCzx9cDLAJF6R/WyuTDLe95muJY+8yMv2?=
- =?us-ascii?Q?0cRdXUtvuEoxdiQI9/+2CNZdLnolC/+wiqXJ7PRNXpEFxYAZFx1Zh0FlACUZ?=
- =?us-ascii?Q?VmWcN6WrbzL2btO/ThQhoi/ktzO8qprhCd8bKXPdylEr3dYJpjDVOZw0CIzr?=
- =?us-ascii?Q?UOd2mkK0/vdZ31KO4lJoCHfrfPE3er9ZB2ONXdq1kckYBVXfo0ppXFhUNOBi?=
- =?us-ascii?Q?4VziwvqVBehU3tt19kXKZX6Z1YpwDuSszygnH9cenfnXye1NmqH8tTKyzMk3?=
- =?us-ascii?Q?SvH+Jo8Qogtkz6CfAmDLme4RE4U19oJXQ2P40/havLbJNlmGy8anZGTKdGu+?=
- =?us-ascii?Q?z09nH7/uBiHCAx6LayrOG9AFbHXslrBT3E5Gj1SZXck9Dq8V3G+4li6TNC4O?=
- =?us-ascii?Q?U7DdsWE0/tr8QTBwjMoh15Kullqw9DrVFXHHq2mNugSmMuh0WyQpy0aHXLHQ?=
- =?us-ascii?Q?a2uKOjl34DgWT7TbY/+szVkskfDDJ89mc5I7FyMdbJvk5NALnqVbApM7N9bw?=
- =?us-ascii?Q?MRNPs4tqRR9jBhHNhcwMsiYZm5WCp33WMliGbERGisO/3Ll88XlYoLsidnRt?=
- =?us-ascii?Q?Xg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DC01C6AF
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715570498; cv=none; b=qB1ctuuoHahh6prdT9TQWqJtBIFkk/34FduwJhTBL957rOXyGGO8gLSoz4sZCj2WhL8bR+nsgIj/QNeh2LZ/JTad1V2XyHE0k4SwupKITxBq17B8FS5YyHXm9jfN9aJrGG0BaLYAmIQIdjcjmtOjBwALlPoEvGCBCvv51/OqA5g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715570498; c=relaxed/simple;
+	bh=uM/CIEdfktRjxWO039dj3uT5yZ8xJY5aenxKOQ/n6qE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=MLzUfsyuSx4DJsYAk8VtX8uzY3o1uPCyzVM86oiQ84JTi4GybRi043WaKOrM4BEs1qEjKSK9Zz+rVGkuZZrax9ITHXj87XD9IbK90JUBVeHCf/oY1960CHvjaUTbpnXQb7xCrVr5M1q6TUr5fSo5NsGJ1h8hUHWh1mpU3Q3qeWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YbOVl1cv; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240513032127epoutp029a1b6d8b129f0535356c85e0749f1dbe~O7kTVZ7ye0083100831epoutp02R
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:21:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240513032127epoutp029a1b6d8b129f0535356c85e0749f1dbe~O7kTVZ7ye0083100831epoutp02R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715570487;
+	bh=jJLaIkPrw18gwCyz+Ugie37WZhS2A+BQXTNYk+Cmids=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=YbOVl1cvhdMGU9wK7zUXuqOyUfPZYrXrEE2FPdF37WsN5waXc7uYXgMv/6jwiOwrT
+	 iydgVM6xAT2n9qq7J+ocUq0bv8NhjQ/4GH4cx8X2SgVOdODY4DNuCtdMJTD8TR8bf4
+	 7dirVFYw2B3sycqQ1P0CTJL6GFQBOm4p0gDo/pEs=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240513032126epcas5p4ae4a6ce7072d18938bd3632a58d0e0df~O7kSAnst70306203062epcas5p4w;
+	Mon, 13 May 2024 03:21:26 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Vd4X411cMz4x9Ps; Mon, 13 May
+	2024 03:21:24 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	30.1D.09688.43781466; Mon, 13 May 2024 12:21:24 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240513032056epcas5p22f23ffea6848df3fd07e081a2b0bb659~O7j2TbZIj2885628856epcas5p2_;
+	Mon, 13 May 2024 03:20:56 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240513032056epsmtrp22900391b7cccd69acb0cda051c314e4c~O7j2Sa_Ol0326703267epsmtrp2O;
+	Mon, 13 May 2024 03:20:56 +0000 (GMT)
+X-AuditID: b6c32a4a-5dbff700000025d8-1c-664187344ed8
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	37.E7.08390.81781466; Mon, 13 May 2024 12:20:56 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240513032054epsmtip2bffa24e3cdafc4e5f55b79ada1f3b8ff~O7j1BdW0W2094720947epsmtip2b;
+	Mon, 13 May 2024 03:20:54 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: anuj20.g@samsung.com, asml.silence@gmail.com, cliang01.li@samsung.com,
+	io-uring@vger.kernel.org, joshi.k@samsung.com, kundan.kumar@samsung.com,
+	linux-kernel@vger.kernel.org, peiwei.li@samsung.com, ruyi.zhang@samsung.com,
+	wenwen.chen@samsung.com, xiaobing.li@samsung.com
+Subject: Re: [PATCH v3] io_uring: releasing CPU resources when polling
+Date: Mon, 13 May 2024 11:20:49 +0800
+Message-Id: <20240513032049.336581-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <20240507091651.2720896-1-xue01.he@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SH0PR01MB0841.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f2ece38-1c4b-486c-e9ac-08dc72fb06c8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2024 03:16:05.5641
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: meLKca3lf/TFg7RMqDVN60oKSRxqg9QkvJYqVBT4g7AI2pWeEx/KrYZBCR2b6AaWciNufN6RVId91ITHAoEZ7MmI8QYZUkiG47LZdfEKQwg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SH0PR01MB0555
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDJsWRmVeSWpSXmKPExsWy7bCmuq5Ju2OawdSFLBZNE/4yW8xZtY3R
+	YvXdfjaL038fs1i8az3HYnH0/1s2i1/ddxkttn75ympxedccNotnezktvhz+zm5xdsIHVoup
+	W3YwWXS0XGZ04PPYOesuu8fls6UefVtWMXp83iQXwBKVbZORmpiSWqSQmpecn5KZl26r5B0c
+	7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkDdKKSQlliTilQKCCxuFhJ386mKL+0JFUhI7+4
+	xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjQ8du1oJ+v4rDD/oZGxiv23cxcnJI
+	CJhIvHi5l6mLkYtDSGA3o8TPL3vYIJxPjBLzH01lBqkSEvjGKDG7Sxumo+/4baiOvYwSu67/
+	ZodwfjBKPD10mwWkik1ASWL/lg+MILaIgLDE/o5WFpAiZoHpTBLfvzSBJYQF3CSWrv0EtoJF
+	QFXi3t3prCA2r4CVxPIv65gh1slL3OzaD2ZzCthITJjUB1UjKHFy5hOwZcxANc1bZzODLJAQ
+	mMohsWzra6AnOIAcF4nN/zQh5ghLvDq+hR3ClpL4/G4vG4SdLzH5+3pGCLtGYt3mdywQtrXE
+	vyt7WEDGMAtoSqzfpQ8RlpWYemodE8RaPone30+YIOK8EjvmwdhKEkuOrIAaKSHxe8IiVgjb
+	Q2L3lUeMkMDqZ5TYvnw14wRGhVlI3pmF5J1ZCKsXMDKvYpRMLSjOTU8tNi0wyksth8dycn7u
+	JkZwstXy2sH48MEHvUOMTByMhxglOJiVRHgdCu3ThHhTEiurUovy44tKc1KLDzGaAsN7IrOU
+	aHI+MN3nlcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5YkpqdmlqQWgTTx8TBKdXAtM7ZryOG
+	6ZVFQvXOPf12r4v8lqhWLjop7njxTqzgjSdzvK73M//fUX7v948pu2LM7/1vesO/eXmfRv2y
+	A2cuW5ZYry/a93HLpKPHTxR9NJRMMNB1yfvOE7h6SZTpXxHne3VV9cpuB/fMM+LLECu96KzH
+	L+wdIFJryu52yT/m6J+nLHdflgotf7y8t+93z+NH87+LP5j3zOnoTbbbzo6Za68fVLyr03mI
+	d+sDwdX5TaXCSfVrbJ2c9+SI2EdYH59cztvap1U7e/XFzkb7J3Lv703Ye0yxYNueqfskj384
+	cfPztKPGfw8+OXvg8tZFU6e+qpzcnGRlHXrK8LabK1f30uiJxlNnua5R7XB99PTV1xtKLMUZ
+	iYZazEXFiQC0ZWDvPwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCLMWRmVeSWpSXmKPExsWy7bCSvK5Eu2OawY8mLoumCX+ZLeas2sZo
+	sfpuP5vF6b+PWSzetZ5jsTj6/y2bxa/uu4wWW798ZbW4vGsOm8WzvZwWXw5/Z7c4O+EDq8XU
+	LTuYLDpaLjM68HnsnHWX3ePy2VKPvi2rGD0+b5ILYInisklJzcksSy3St0vgyvjQsZu1oN+v
+	4vCDfsYGxuv2XYycHBICJhJ9x28zdTFycQgJ7GaUuL74KwtEQkJix6M/rBC2sMTKf8/ZIYq+
+	MUrcPbecCSTBJqAksX/LB0YQWwSoaH9HKwtIEbPAUiaJhvvb2EASwgJuEkvXfmIGsVkEVCXu
+	3Z0ONpVXwEpi+Zd1zBAb5CVudu0HszkFbCQmTOoDqxESsJaYsmkzM0S9oMTJmU/ArmMGqm/e
+	Opt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOWllusVJ+YWl+al6yXn525iBEeEltYOxj2r
+	PugdYmTiYDzEKMHBrCTC61BonybEm5JYWZValB9fVJqTWnyIUZqDRUmc99vr3hQhgfTEktTs
+	1NSC1CKYLBMHp1QDExOLaoDD3v2PUvcaKpcyv37yNGSPz8WiSe6TTZhjvuk1bc75rP/ZRvHG
+	rH9a3Pe003Wi397YqcTV07Vym2RW+qJVPB2rL9oL1uyfWnfO83G9pOZ5kbUlp08uTNTx+67I
+	FXL5/0yd76vcPkmsmyH92euKS8TjXY9WP8uLPfZ77kNRY/WtTfw3/hnsuzK526Bm6vWddXev
+	Mh+ensjwdOvMwCnqq0MmBhbwti9/W/tGe9X5va+eN69I8lqj51j5v2Ft4xv22YHVaStem+bu
+	/Tt73+a1Tl3nj+rt4xU6vFLmVdHizuUaDafvH30x+bDqH2l/Bt2MEJ1cZbvQfo4OkSvPHGKu
+	+Mp1/XJf581oKio494sSS3FGoqEWc1FxIgAFOniM9wIAAA==
+X-CMS-MailID: 20240513032056epcas5p22f23ffea6848df3fd07e081a2b0bb659
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240513032056epcas5p22f23ffea6848df3fd07e081a2b0bb659
+References: <20240507091651.2720896-1-xue01.he@samsung.com>
+	<CGME20240513032056epcas5p22f23ffea6848df3fd07e081a2b0bb659@epcas5p2.samsung.com>
 
-Joshua Yeong wrote:
->=20
-> Introduce a new target core layer in order to support target functions in=
- linux
-> kernel. This comprises the controller library and function library.
-> Controller library implements functions specific to an target controller =
-and
-> function library implements functions specific to an target function.
->=20
-> Introduce a new configfs entry to configure the target function configuri=
-ng
-> and bind the target function with target controller.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->=20
-> Notes:
->     Change from v8 to v9
->     -none
->=20
->     Change from v7 to v8
->     Added missed head files
->=20
->     Change from v5 to v6
->     - fixed build error when have not CONFIG_TARGET_CONFIGFS
->     | Reported-by: kernel test robot <lkp@intel.com>
->     | Closes: https://lore.kernel.org/oe-kbuild-all/202402030437.GdGCrKeK=
--
-> lkp@intel.com/
->=20
->     Chagne from v4 to v5
->     - add include <linux/slab.h> to fix build error
->     | Reported-by: kernel test robot <lkp@intel.com>
->     | Closes: https://lore.kernel.org/oe-kbuild-all/202401270838.wdxHPaAT=
--
-> lkp@intel.com/
->=20
->     Chagne from v4 to v8
->     - add include <linux/slab.h> to fix build error
->     | Reported-by: kernel test robot <lkp@intel.com>
->     | Closes: https://lore.kernel.org/oe-kbuild-all/202401270838.wdxHPaAT=
--
-> lkp@intel.com/
->=20
->  drivers/i3c/Kconfig        |  28 +-
->  drivers/i3c/Makefile       |   2 +
->  drivers/i3c/i3c-cfs.c      | 389 ++++++++++++++++++++++++++
->  drivers/i3c/target.c       | 453 ++++++++++++++++++++++++++++++
->  include/linux/i3c/target.h | 548
-> +++++++++++++++++++++++++++++++++++++
+On 5/7/24 17:16, hexue wrote:
+>This patch is intended to release the CPU resources of io_uring in
+>polling mode. When IO is issued, the program immediately polls for
+>check completion, which is a waste of CPU resources when IO commands
+>are executed on the disk.
 >
-> ...
+>I add the hybrid polling feature in io_uring, enables polling to
+>release a portion of CPU resources without affecting block layer.
 >
-> diff --git a/include/linux/i3c/target.h b/include/linux/i3c/target.h new =
-file
-> mode 100644 index 0000000000000..b0bf06685834c
-> --- /dev/null
-> +++ b/include/linux/i3c/target.h
+>- Record the running time and context switching time of each
+>  IO, and use these time to determine whether a process continue
+>  to schedule.
 >
-> ...
+>- Adaptive adjustment to different devices. Due to the real-time
+>  nature of time recording, each device's IO processing speed is
+>  different, so the CPU optimization effect will vary.
 >
-> +/**
-> + * struct i3c_target_ctrl_ops - set of function pointers for performing
-> +controller operations
-> + * @set_config: set I3C controller configuration
-> + * @enable: enable I3C controller
-> + * @disable: disable I3C controller
-> + * @raise_ibi: raise IBI interrupt to master
-> + * @alloc_request: allocate a i3c_request, optional, default use
-> +kmalloc
-> + * @free_request: free a i3c_request, default use kfree
-> + * @queue: queue an I3C transfer
-> + * @dequeue: dequeue an I3C transfer
-> + * @cancel_all_reqs: call all pending requests
-> + * @fifo_status: current FIFO status
-> + * @fifo_flush: flush hardware FIFO
-> + * @hotjoin: raise hotjoin request to master
-> + * @set_status_format1: set i3c status format1
-> + * @get_status_format1: get i3c status format1
-> + * @get_addr: get i3c dynmatic address
-> + * @get_features: ops to get the features supported by the I3C target
-> +controller
-> + * @owner: the module owner containing the ops  */ struct
-> +i3c_target_ctrl_ops {
-> +	int (*set_config)(struct i3c_target_ctrl *ctrl, struct i3c_target_func
-> *func);
-> +	int (*enable)(struct i3c_target_ctrl *ctrl);
-> +	int (*disable)(struct i3c_target_ctrl *ctrl);
-> +	int (*raise_ibi)(struct i3c_target_ctrl *ctrl, void *p, u8 size);
-> +
-> +	struct i3c_request *(*alloc_request)(struct i3c_target_ctrl *ctrl, gfp_=
-t
-> gfp_flags);
-> +	void (*free_request)(struct i3c_request *req);
-> +
-> +	int (*queue)(struct i3c_request *req, gfp_t gfp_flags);
-> +	int (*dequeue)(struct i3c_request *req);
-> +
-> +	void (*cancel_all_reqs)(struct i3c_target_ctrl *ctrl, bool tx);
-> +
-> +	int (*fifo_status)(struct i3c_target_ctrl *ctrl, bool tx);
-> +	void (*fifo_flush)(struct i3c_target_ctrl *ctrl, bool tx);
-> +	int (*hotjoin)(struct i3c_target_ctrl *ctrl);
-> +	int (*set_status_format1)(struct i3c_target_ctrl *ctrl, u16 status);
-> +	u16 (*get_status_format1)(struct i3c_target_ctrl *ctrl);
-> +	u8  (*get_addr)(struct i3c_target_ctrl *ctrl);
-> +	const struct i3c_target_ctrl_features *(*get_features)(struct
-> i3c_target_ctrl *ctrl);
-> +	struct module *owner;
-> +};
+>- Set a interface (ctx->flag) enables application to choose whether
+>  or not to use this feature.
+>
+>The CPU optimization in peak workload of patch is tested as follows:
+>  set 8 poll queues
+>  all CPU utilization of original polling is 100% for per CPU, after
+>  optimization, the CPU utilization drop a lot (per CPU);
+>
+>   read(128k, QD64, 1Job)     37%   write(128k, QD64, 1Job)     40%
+>   randread(4k, QD64, 16Job)  52%   randwrite(4k, QD64, 16Job)  12%
+>
+>  Compared to original polling, the optimised performance reduction
+>  with peak workload within 1%.
+>
+>   read  0.29%     write  0.51%    randread  0.09%    randwrite  0%
+>
+>Signed-off-by: hexue <xue01.he@samsung.com>
+>
+>---
+>
+>changes:
+>v2:
+> - extend hybrid poll to async polled io
+>
+>v1:
+> - initial version
+>---
+> include/linux/io_uring_types.h |  14 ++++
+> include/uapi/linux/io_uring.h  |   1 +
+> io_uring/io_uring.c            |   4 +-
+> io_uring/io_uring.h            |   3 +
+> io_uring/rw.c                  | 115 ++++++++++++++++++++++++++++++++-
+> 5 files changed, 135 insertions(+), 2 deletions(-)
+>
+>diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+>index 854ad67a5f70..3a75b9904326 100644
+>--- a/include/linux/io_uring_types.h
+>+++ b/include/linux/io_uring_types.h
+>@@ -224,6 +224,11 @@ struct io_alloc_cache {
+> 	size_t			elem_size;
+> };
+>
+>+struct iopoll_info {
+>+	long		last_runtime;
+>+	long		last_irqtime;
+>+};
+>+
+> struct io_ring_ctx {
+> 	/* const or read-mostly hot data */
+> 	struct {
+>@@ -421,6 +426,7 @@ struct io_ring_ctx {
+> 	unsigned short			n_sqe_pages;
+> 	struct page			**ring_pages;
+> 	struct page			**sqe_pages;
+>+	struct xarray		poll_array;
+> };
+>
+> struct io_tw_state {
+>@@ -571,6 +577,12 @@ static inline void io_kiocb_cmd_sz_check(size_t cmd_sz)
+> )
+> #define cmd_to_io_kiocb(ptr)	((struct io_kiocb *) ptr)
+>
+>+struct hy_poll_time {
+>+	int		poll_state;
+>+	struct timespec64		iopoll_start;
+>+	struct timespec64		iopoll_end;
+>+};
+>+
+> struct io_kiocb {
+> 	union {
+> 		/*
+>@@ -641,6 +653,8 @@ struct io_kiocb {
+> 		u64			extra1;
+> 		u64			extra2;
+> 	} big_cqe;
+>+	/* for hybrid iopoll */
+>+	struct hy_poll_time		*hy_poll;
+> };
+>
+> struct io_overflow_cqe {
+>diff --git a/include/uapi/linux/io_uring.h b/include/uapi/linux/io_uring.h
+>index 7a673b52827b..0038cdfec18f 100644
+>--- a/include/uapi/linux/io_uring.h
+>+++ b/include/uapi/linux/io_uring.h
+>@@ -198,6 +198,7 @@ enum {
+>  * Removes indirection through the SQ index array.
+>  */
+> #define IORING_SETUP_NO_SQARRAY		(1U << 16)
+>+#define IORING_SETUP_HY_POLL	(1U << 17)
+>
+> enum io_uring_op {
+> 	IORING_OP_NOP,
+>diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+>index cd9a137ad6ce..2c14768bbe27 100644
+>--- a/io_uring/io_uring.c
+>+++ b/io_uring/io_uring.c
+>@@ -311,6 +311,7 @@ static __cold struct io_ring_ctx *io_ring_ctx_alloc(struct io_uring_params *p)
+> 		goto err;
+>
+> 	ctx->flags = p->flags;
+>+	xa_init(&ctx->poll_array);
+> 	atomic_set(&ctx->cq_wait_nr, IO_CQ_WAKE_INIT);
+> 	init_waitqueue_head(&ctx->sqo_sq_wait);
+> 	INIT_LIST_HEAD(&ctx->sqd_list);
+>@@ -2921,6 +2922,7 @@ static __cold void io_ring_ctx_free(struct io_ring_ctx *ctx)
+> 	kfree(ctx->cancel_table_locked.hbs);
+> 	kfree(ctx->io_bl);
+> 	xa_destroy(&ctx->io_bl_xa);
+>+	xa_destroy(&ctx->poll_array);
+> 	kfree(ctx);
+> }
+>
+>@@ -4050,7 +4052,7 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+> 			IORING_SETUP_SQE128 | IORING_SETUP_CQE32 |
+> 			IORING_SETUP_SINGLE_ISSUER | IORING_SETUP_DEFER_TASKRUN |
+> 			IORING_SETUP_NO_MMAP | IORING_SETUP_REGISTERED_FD_ONLY |
+>-			IORING_SETUP_NO_SQARRAY))
+>+			IORING_SETUP_NO_SQARRAY | IORING_SETUP_HY_POLL))
+> 		return -EINVAL;
+>
+> 	return io_uring_create(entries, &p, params);
+>diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
+>index d5495710c178..72d6a4c3b46d 100644
+>--- a/io_uring/io_uring.h
+>+++ b/io_uring/io_uring.h
+>@@ -125,6 +125,9 @@ static inline void io_req_task_work_add(struct io_kiocb *req)
+> 	__io_req_task_work_add(req, 0);
+> }
+>
+>+/* if sleep time less than 1us, then do not do the schedule op */
+>+#define MIN_SCHETIME 1000
+>+
+> #define io_for_each_link(pos, head) \
+> 	for (pos = (head); pos; pos = pos->link)
+>
+>diff --git a/io_uring/rw.c b/io_uring/rw.c
+>index d5e79d9bdc71..29c7ce23ed71 100644
+>--- a/io_uring/rw.c
+>+++ b/io_uring/rw.c
+>@@ -713,6 +713,46 @@ static bool need_complete_io(struct io_kiocb *req)
+> 		S_ISBLK(file_inode(req->file)->i_mode);
+> }
+>
+>+void init_hybrid_poll(struct io_ring_ctx *ctx, struct io_kiocb *req)
+>+{
+>+	/*
+>+	 * In multiple concurrency, a thread may operate several files
+>+	 * under different file systems, the inode numbers may be
+>+	 * duplicated. Each device has a different IO command processing
+>+	 * capability, so using device number to record the running time
+>+	 * of device
+>+	 */
+>+	u32 index = req->file->f_inode->i_rdev;
+>+	struct iopoll_info *entry = xa_load(&ctx->poll_array, index);
+>+	struct hy_poll_time *hpt = kmalloc(sizeof(struct hy_poll_time), GFP_KERNEL);
+>+
+>+	/* if alloc fail, go to regular poll */
+>+	if (!hpt) {
+>+		ctx->flags &= ~IORING_SETUP_HY_POLL;
+>+		return;
+>+	}
+>+	hpt->poll_state = 0;
+>+	req->hy_poll = hpt;
+>+
+>+	if (!entry) {
+>+		entry = kmalloc(sizeof(struct iopoll_info), GFP_KERNEL);
+>+		if (!entry) {
+>+			ctx->flags &= ~IORING_SETUP_HY_POLL;
+>+			return;
+>+		}
+>+		entry->last_runtime = 0;
+>+		entry->last_irqtime = 0;
+>+		xa_store(&ctx->poll_array, index, entry, GFP_KERNEL);
+>+	}
+>+
+>+	/*
+>+	 * Here we need nanosecond timestamps, some ways of reading
+>+	 * timestamps directly are only accurate to microseconds, so
+>+	 * there's no better alternative here for now
+>+	 */
+>+	ktime_get_ts64(&hpt->iopoll_start);
+>+}
+>+
+> static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+> {
+> 	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+>@@ -750,6 +790,8 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
+> 		kiocb->ki_flags |= IOCB_HIPRI;
+> 		kiocb->ki_complete = io_complete_rw_iopoll;
+> 		req->iopoll_completed = 0;
+>+		if (ctx->flags & IORING_SETUP_HY_POLL)
+>+			init_hybrid_poll(ctx, req);
+> 	} else {
+> 		if (kiocb->ki_flags & IOCB_HIPRI)
+> 			return -EINVAL;
+>@@ -1118,6 +1160,75 @@ void io_rw_fail(struct io_kiocb *req)
+> 	io_req_set_res(req, res, req->cqe.flags);
+> }
+>
+>+void io_delay(struct hy_poll_time *hpt, struct iopoll_info *entry)
+>+{
+>+	struct hrtimer_sleeper timer;
+>+	struct timespec64 tc, oldtc;
+>+	enum hrtimer_mode mode;
+>+	ktime_t kt;
+>+	long sleep_ti;
+>+
+>+	if (hpt->poll_state == 1)
+>+		return;
+>+
+>+	if (entry->last_runtime <= entry->last_irqtime)
+>+		return;
+>+
+>+	/*
+>+	 * Avoid excessive scheduling time affecting performance
+>+	 * by using only 25 per cent of the remaining time
+>+	 */
+>+	sleep_ti = (entry->last_runtime - entry->last_irqtime) / 4;
+>+
+>+	/*
+>+	 * If the time available for sleep is too short, i.e. the
+>+	 * totle running time and the context switching loss time
+>+	 * are very close to each other, the scheduling operation
+>+	 * is not performed to avoid increasing latency
+>+	 */
+>+	if (sleep_ti < MIN_SCHETIME)
+>+		return;
+>+
+>+	ktime_get_ts64(&oldtc);
+>+	kt = ktime_set(0, sleep_ti);
+>+	hpt->poll_state = 1;
+>+
+>+	mode = HRTIMER_MODE_REL;
+>+	hrtimer_init_sleeper_on_stack(&timer, CLOCK_MONOTONIC, mode);
+>+	hrtimer_set_expires(&timer.timer, kt);
+>+	set_current_state(TASK_UNINTERRUPTIBLE);
+>+	hrtimer_sleeper_start_expires(&timer, mode);
+>+
+>+	if (timer.task)
+>+		io_schedule();
+>+
+>+	hrtimer_cancel(&timer.timer);
+>+	mode = HRTIMER_MODE_ABS;
+>+	__set_current_state(TASK_RUNNING);
+>+	destroy_hrtimer_on_stack(&timer.timer);
+>+
+>+	ktime_get_ts64(&tc);
+>+	entry->last_irqtime = tc.tv_nsec - oldtc.tv_nsec - sleep_ti;
+>+}
+>+
+>+int io_uring_hybrid_poll(struct io_kiocb *req,
+>+				struct io_comp_batch *iob, unsigned int poll_flags)
+>+{
+>+	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+>+	struct io_ring_ctx *ctx = req->ctx;
+>+	struct hy_poll_time *hpt = req->hy_poll;
+>+	u32 index = req->file->f_inode->i_rdev;
+>+	struct iopoll_info *entry = xa_load(&ctx->poll_array, index);
+>+	int ret;
+>+
+>+	io_delay(hpt, entry);
+>+	ret = req->file->f_op->iopoll(&rw->kiocb, iob, poll_flags);
+>+
+>+	ktime_get_ts64(&hpt->iopoll_end);
+>+	entry->last_runtime = hpt->iopoll_end.tv_nsec - hpt->iopoll_start.tv_nsec;
+>+	return ret;
+>+}
+>+
+> int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+> {
+> 	struct io_wq_work_node *pos, *start, *prev;
+>@@ -1145,7 +1256,9 @@ int io_do_iopoll(struct io_ring_ctx *ctx, bool force_nonspin)
+> 		if (READ_ONCE(req->iopoll_completed))
+> 			break;
+>
+>-		if (req->opcode == IORING_OP_URING_CMD) {
+>+		if (ctx->flags & IORING_SETUP_HY_POLL) {
+>+			ret = io_uring_hybrid_poll(req, &iob, poll_flags);
+>+		} else if (req->opcode == IORING_OP_URING_CMD) {
+> 			struct io_uring_cmd *ioucmd;
+>
+> 			ioucmd = io_kiocb_to_cmd(req, struct io_uring_cmd);
 
-This structure looks very different from the master controller ops 'i3c_mas=
-ter_controller_ops'.
-I think you could probably combine 'set_config, enable' into 'bus_init', 'd=
-isable' to 'bus_cleanup'.
-Also using the 'struct i3c_priv_xfer' rather redefining another 'struct i3c=
-_request' would be much cleaner.
+Hi, Jens
+I have revised some of the code according to your suggestions,
+and added comments to the parts that were not modified.
+Do you have any other comments?
 
-In the master i3c side they don't abbreviate i3c_master_controller to i3c_m=
-aster_ctrl. I think we should
-do the same here to standardize it. Thanks
+--
 
-Regards,
-Joshua
-
-> --
-> 2.34.1
->=20
->=20
-> --
-> linux-i3c mailing list
-> linux-i3c@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-i3c
+Xue He
 
