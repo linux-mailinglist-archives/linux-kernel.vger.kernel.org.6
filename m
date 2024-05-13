@@ -1,178 +1,116 @@
-Return-Path: <linux-kernel+bounces-177842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458E58C4533
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:39:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E806E8C4536
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F01952861CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:39:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74F28286D8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7E018C3D;
-	Mon, 13 May 2024 16:39:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1182918B14;
+	Mon, 13 May 2024 16:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LtNnHQ5c"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xcR9JJ8m"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00F81864C;
-	Mon, 13 May 2024 16:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B5315AF6
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618374; cv=none; b=JrlNvrhBx8lU6RmIJKryrzgz1CfWJ1V+hdNznhBai3aLrvsH9rScf1LmDzv98E56BI7VroZ3jBWN+dVEXYwOKh0IH3dTBwgMmsA3vNsaeTiBZ8PGtYBUyfCZiPoDt6/zD6cLaaIHzFmBXn4BE/xUJpevWfwM7H0ObVrtsMbQwIE=
+	t=1715618512; cv=none; b=X2FiK8YAxPAFc9c41xx6YgMpyRl8THs0B9p6L4mJdhOzqdRM+Qg82EhD3pQSX2hSV8js1byyVGzIk5yMA6EbfZAySWwfRXAEE5fEQFNRGto98dOPs9OVqG3INVwhvoZP/VQw7No0IOxIHmLmVKBexquf5hmRHmicdGHqGN3YZLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618374; c=relaxed/simple;
-	bh=FXjTIu7Javcp57PGJ37+TMBH2Efe81br2mmREIXkSTU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZPqgGxZmUDIOw532MS63rL4FIGRJEPY0Sjbsa3oNFmlbcrp9PCKtwrJvBynBeZGCfvuww2MSiXQs94DjAHGP4u7Pc3XKU8Tbhn/L462VaCCASk+judofbtXN1bdOgWl2eBtLR0RB7A0xSysyCglKnXUWOdMj3F64GN0CTg2bGkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LtNnHQ5c; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-420180b5838so6811545e9.2;
-        Mon, 13 May 2024 09:39:32 -0700 (PDT)
+	s=arc-20240116; t=1715618512; c=relaxed/simple;
+	bh=8mSDe/ImppLgPkyTNhXsgjTCK1PmL1zw0+0a6l1PJL8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e4zmlWLParIryOWlt61gaQWFixvjS6XI23dWk3pKqXxwK6gz71USqqlAz6eXAnmmSicVcqAGsP5w/jhtKXqOVpSP1AfZfQFrJrIwiQ95sd/ifME/hHIH0R9uCWZTvDEXiTQcuHtBJOv0uaMPW90r8DS/GdlTpKp4ZfPhZS9j7OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xcR9JJ8m; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcc71031680so4817936276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:41:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715618371; x=1716223171; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JlL47WvthT5p4/6Hq0zcLfQwW5agcsSiG76b2RdCPO8=;
-        b=LtNnHQ5cWHgNVzUA18Y58DxfeI1IUuVEr/7P5nHgG6WbIGPomfTfR7eoh1FQuMrgRy
-         4Jz9JGl817Qs+HTxs84xCKFikmhrHniBkSyMH1IYfEUpj5NDpB6RymYjEhnaYjt5kJFt
-         JsizPvQ1TfUvqCigtz5nJHI+WJsCFzYzLCcXXZu4sq9rqg4vbdliZOFYIwEeOA+JjN8q
-         J+yQeW1c4Sf64sVKPdr43U0bSJDyUx0aRqoRtXvJ7Cw9CowIBtR+VHhEyxN+HURvONkt
-         ZeAfgeli+OwTRhz4233tehFEOyPcQTMcRgtz6E2TcjEJWhZS7tiG2YMd9NZJAA5ipz8F
-         3V+Q==
+        d=linaro.org; s=google; t=1715618510; x=1716223310; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DH4khu6TurPS5qb0OEXIieAt+VWCVTM6kLpaEQH1DyY=;
+        b=xcR9JJ8mq6CGmXUmnNPv1Seo9swsZNYS7znOnC2h69UGt5wj++0/YL/qizbfyTlOue
+         kSVJ6y+0DqjqD0EK9p9n5nEvWhnKfnMbipvFDo6B0cYjG7RXmiF2VnFytyEA737ha/xC
+         cbQO3e1YfgjjiasfnqKYKkaFuFenfO5DTmlBtXP7O1Xt5TALIy61oOxXrVJQgCSKtGXq
+         RTHs2Lm+Zm9MPJd5zGOFQtGFHECuawzq5xPOIwgOm+v0iANuYQlpQotJfVer+mWp1N2T
+         bqJrw/qzQ360CWbd/PINiSslX5V1XoaTnCBp9UctThCQK4gabxUOBaqn2Fcm5UYrEFUl
+         Lk/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715618371; x=1716223171;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JlL47WvthT5p4/6Hq0zcLfQwW5agcsSiG76b2RdCPO8=;
-        b=wuk6q6tf3LWbS8q1hPfuIhJSWeaONcemD49e1tpih1Ek5OLbI0YUrfhkGRldCPD0pQ
-         OfukWLwOoCgxhIFU1Qi9BeKe9NQ/qWCoXkTxyxHqQ7IG6229QrlgFQ8ONjE56IjEUUDx
-         7YIXwNpNFB09BkPzig/bd/bFtuBIFxQBxpPs4WVCPIvM/rr+BFA65aMg2zcR5NQ6GuRI
-         Up1XgsvmUB1x/i3Bo1AKDR8ZHxgez46seIf1fnSgkSIfbEm5LdsRBSLegzWyXStocdV1
-         HyZA8WFysuTyaKDo4CJtqNUlQS+NNKtzaEvp4qhl5FW17DmneVEMzwCBaCC6e/DoXTs9
-         csoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXB3wL7jpheRl4qU200ftHQwEPSWuXKhUkwBIb9vOfDaLntRBUnGE0bnNQ1PKCdUKxUGVX1cKmNM3uDeklONUm1cqB0Yq0BeP0fw/xTxg3SWCCYOTOVjTTAwJ+E+Nh/4QQI
-X-Gm-Message-State: AOJu0YwHqfrZx+dJTHLnxGSplibyHekp1043ZYF3OC7jZ2+gl13Y7PtC
-	qx4bMv/4ZhkanYfpSB6vJzUUtua+kXxIjRBOmEzCEzjLPMsmHSWq
-X-Google-Smtp-Source: AGHT+IFheMWHt8UUqBv97Se6r51eErnibj4jwd2Xsi4g0uCOA5f0VLNA4AbqyY41m1+pDF9RqD9t8Q==
-X-Received: by 2002:a05:600c:4714:b0:41b:13d5:7da9 with SMTP id 5b1f17b1804b1-41fead643famr128548145e9.38.1715618370680;
-        Mon, 13 May 2024 09:39:30 -0700 (PDT)
-Received: from localhost (54-240-197-231.amazon.com. [54.240.197.231])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccee94dasm163110125e9.32.2024.05.13.09.39.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 13 May 2024 09:39:30 -0700 (PDT)
-From: Puranjay Mohan <puranjay12@gmail.com>
-To: Maxwell Bland <mbland@motorola.com>, "open list:BPF [GENERAL] (Safe
- Dynamic Programs and Tools)" <bpf@vger.kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland
- <mark.rutland@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, Mark
- Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, open
- list <linux-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>
-Subject: Re: [PATCH bpf-next v4 2/3] arm64/cfi,bpf: Support kCFI + BPF on arm64
-In-Reply-To: <ub6a7msv36rhotqez3usccexkn7kdqqnsyklrnqy7znqas7fhe@cry4jnw3baky>
-References: <wtb6czzpvtqq23t4g6hf7on257dtxzdb4fa4nuq3dtq32odmli@xoyyrtthafar>
- <ub6a7msv36rhotqez3usccexkn7kdqqnsyklrnqy7znqas7fhe@cry4jnw3baky>
-Date: Mon, 13 May 2024 16:39:28 +0000
-Message-ID: <mb61pttj1k6nz.fsf@gmail.com>
+        d=1e100.net; s=20230601; t=1715618510; x=1716223310;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DH4khu6TurPS5qb0OEXIieAt+VWCVTM6kLpaEQH1DyY=;
+        b=ZZLAty6oecV5jmYFsoNQmd6R1TErpEio9VqPKqlotCKI1NkuuzUNdxT4JAJewC3aUH
+         CFvECklcYDRoP1Wr41CxYzdpCoiKqlU2Zaei5Hpyfn5XzCu/BRSOgaWk3YTmLfB4MgcH
+         Svrfu6PvmsF5avcwRybPlotqa9kA0HZH+W4zohcR3hzQKGaiZJRWCURNZodbcOuAuYDS
+         zhYv1hxfhHUmtafDMFnxJ4o7DJ0M8M5zPXcPvbsLDeo6XfS9wsQZVliKLYxKfRmuh5lj
+         nHUVNgpVIJuiiukeA7p8sawHVvuyaGrV07MBP0KGHBwwnC+dK4UyBhPzgcsqdcoxLXJj
+         vZjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUd7SmKZgTHm6xdXZRsopKuQaj1VkfyC8oCYXnMHbM8DqbqAy0piwe2HorT/uMdWQQYh7dK00APyvm+rwZHtEVqkqxoRhhlZl6pACYM
+X-Gm-Message-State: AOJu0Yz/cRWV4kuxQzlWlVL0jCH0xjUIX16Gtzf/Fm46XI6c+6GGTzWx
+	xJqvmsmLhGbX43LfRZTI+3yJEBDQVZgWgTuonWhBj1XYtKZtCXptAZZ3yUJLX93TuKIK1Ah0MBH
+	a7aG4EWE0pwavDZFEVvql3pxTgddTZ2KfNaF32Q==
+X-Google-Smtp-Source: AGHT+IGq2C3XDhTaH0foAS493CYmJmGVWp1jeF0dF17vOTZlUltQhDhRhnjWctarnqxlh56yWFXuox8WxUwgr4RKcNc=
+X-Received: by 2002:a05:6902:2401:b0:de6:1645:499a with SMTP id
+ 3f1490d57ef6-dee4f338380mr9928504276.30.1715618510038; Mon, 13 May 2024
+ 09:41:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org> <20240513131711.GA2419451-robh@kernel.org>
+In-Reply-To: <20240513131711.GA2419451-robh@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 13 May 2024 19:41:39 +0300
+Message-ID: <CAA8EJppkJ9rukeUZ=1kAL3Y0WVhN5QFXnNU3tjv4yuXMjc++7w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] dt-bindings: display: panel: constrain 'reg'
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chris Morgan <macromorgan@hotmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Konrad Dybcio <konradybcio@gmail.com>, 
+	Del Regno <angelogioacchino.delregno@somainline.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Luca Weiss <luca.weiss@fairphone.com>, Shawn Guo <shawn.guo@linaro.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Maxwell Bland <mbland@motorola.com> writes:
+On Mon, 13 May 2024 at 16:17, Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, May 09, 2024 at 11:42:50AM +0200, Krzysztof Kozlowski wrote:
+> > Hi,
+> >
+> > Cleanups for display panel bindings.
+> >
+> > Rob, maybe you could take entire set if it applies? I based it on
+> > linux-next, so letl me know if I need to rebase on your for-next.
+>
+> Applied. These 2 don't exist in my tree:
 
-This patch has a subtle difference from the patch that I sent in v2[1]
+It's most likely fine, but was there an ack from drm-misc maintainers?
 
-Unfortunately, you didn't test this. :(
+> Documentation/devicetree/bindings/display/panel/lg,sw43408.yaml
+> Documentation/devicetree/bindings/display/panel/raydium,rm69380.yaml
 
-It will break BPF on an ARM64 kernel compiled with CONFIG_CFI_CLANG=y
+Because those were added to drm-misc during the last cycle. So ideally
+the patch should have gone through drm-misc.
 
-See below:
-
-> diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-> index 76b91f36c729..703247457409 100644
-> --- a/arch/arm64/net/bpf_jit_comp.c
-> +++ b/arch/arm64/net/bpf_jit_comp.c
-> @@ -17,6 +17,7 @@
->  #include <asm/asm-extable.h>
->  #include <asm/byteorder.h>
->  #include <asm/cacheflush.h>
-> +#include <asm/cfi.h>
->  #include <asm/debug-monitors.h>
->  #include <asm/insn.h>
->  #include <asm/patching.h>
-> @@ -162,6 +163,12 @@ static inline void emit_bti(u32 insn, struct jit_ctx *ctx)
->  		emit(insn, ctx);
->  }
->  
-> +static inline void emit_kcfi(u32 hash, struct jit_ctx *ctx)
-> +{
-> +	if (IS_ENABLED(CONFIG_CFI_CLANG))
-> +		emit(hash, ctx);
-> +}
-> +
->  /*
->   * Kernel addresses in the vmalloc space use at most 48 bits, and the
->   * remaining bits are guaranteed to be 0x1. So we can compose the address
-> @@ -337,6 +344,7 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf,
->  	 *
->  	 */
-
-In my original patch the hunk here looked something like:
-
---- >8 ---
-
--	const int idx0 = ctx->idx;
- 	int cur_offset;
- 
- 	/*
-@@ -332,6 +338,8 @@ static int build_prologue(struct jit_ctx *ctx, bool ebpf_from_cbpf,
- 	 *
- 	 */
- 
-+	emit_kcfi(is_subprog ? cfi_bpf_subprog_hash : cfi_bpf_hash, ctx);
-+	const int idx0 = ctx->idx;
-
---- 8< ---
-
-moving idx0 = ctx->idx; after emit_kcfi() is important because later
-this 'idx0' is used like:
-
-   cur_offset = ctx->idx - idx0;
-   if (cur_offset != PROLOGUE_OFFSET) {
-           pr_err_once("PROLOGUE_OFFSET = %d, expected %d!\n",
-                       cur_offset, PROLOGUE_OFFSET);
-           return -1;
-   }
-
-With the current version, when I boot the kernel I get:
-
-[    0.499207] bpf_jit: PROLOGUE_OFFSET = 13, expected 12!
-
-and now no BPF program can be JITed!
-
-Please fix this in the next version and test it by running:
-
-/tools/testing/selftests/bpf/test_progs
-
-Pay attention to the `rbtree_success` and the `dummy_st_ops` tests, they
-are the important ones for this change.
-
-[1] https://lore.kernel.org/all/20240324211518.93892-2-puranjay12@gmail.com/
-
-Thanks,
-Puranjay
+-- 
+With best wishes
+Dmitry
 
