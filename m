@@ -1,352 +1,360 @@
-Return-Path: <linux-kernel+bounces-177893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74EB8C45ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 777EB8C45F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61026282DA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89721F217DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6F3210EC;
-	Mon, 13 May 2024 17:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0A422EE5;
+	Mon, 13 May 2024 17:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="KYRUGNgf"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="WM6XAWX9"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253DB208D4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AB720DE8
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715621092; cv=none; b=AcklDGtXhPV47TAgVC6JblXlXFHaftibpSYU/9P51D+ZF79do0i7nD//m8X1+1anFPOAvJadczZA8EPBpkPjVLNV8JxgcmHNb5u63meNZYPsfcdfgKecgk/toOFMqjesGsiOamDzuRH5KZUZIpriXMttUR9A6xymZy98A01BSuQ=
+	t=1715621166; cv=none; b=AfeHTs5jPsGZJMpF5epQ1HhVCFjU5zS2GxMoofbMaTwlcf3hXaZdyCagwjNHS3eXCaT5OKMoaS9DmL3SgT1HqKfNncqrWhO5zgX318xrBIJ0CfbuFt7t2rMNUvzk+B2wAA/yTgV4xNLxbrw3XowoBTxofg2EC9Bl7OChIxkOWSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715621092; c=relaxed/simple;
-	bh=3pCCV3pIsPwoou09ayGUsRpQ+iP6dj5L6mBLbBQ9JQQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jk6JRtya8p+wuGTaif6okix++AxMOvAp7eAOBx2zVLcg0OZ5xbjT6d/vM9FYPtEAWO6yy67pA9kBW/8xbJAgOE2wyfNwY1p8fZqgpTTX3SXGq18nYAukqXzlPxbva4T9metya30EzzGEpVKYwk5ozcoQnjXGpHdnb4OfsmlEbY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KYRUGNgf; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-36c670757aaso348335ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:24:49 -0700 (PDT)
+	s=arc-20240116; t=1715621166; c=relaxed/simple;
+	bh=cW1LAz4fXICGwS+AudhaArylUOOaq0clgFk/bVAy87g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+EQbai/KFrKkj6COOZQyPJRgVA8d+xo4qLgttc23cT4WWPvuL76mXfGvDgHuoz8YxhapLh8I/fNvKbwFzqVeTlNkAV1FKIpGGOtxVQCTCAJoxxh51KHjZ3YEbIh6AQaJtVaGtgd+WQPJe+OsAj6WMNIV+dP077kztAIzvN063c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=WM6XAWX9; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-6f44e3fd382so3802104b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:26:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715621089; x=1716225889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qoSzKwBP/fkvEwEnZHAw4cEPWyEmks1QbjVuSI/cVOk=;
-        b=KYRUGNgfjF2lNP2oYitbuLrhZ2bQkz7+sgZ7Z2Ro1SlwoBVJrZSPsJNiDIROfl82RG
-         Iab9yclJso43dSo87ddG09iZiO7YnYCnzVOjopXfIZpp9OOEky9toKdAt+CaTfdng6nC
-         55zaQ20LNcAnKvGBgIKyUXwP3DSH5Z2hsSBZrOeD6OQFByHqeKevazdHStdWypYFaveH
-         wf+zTHxf/ExZBNuyoAAq1RV+HmpNNjkMNJ5TvClvUOLCHZ1pupPUU/bww+gudR4pfOcc
-         /6LQGkCeZm69vioOdUM29TzWsg9AjF9h3sQDdeI4PIf1Xrt3Q3ZUyQVjD8yNG4ryo7qD
-         aMJw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715621164; x=1716225964; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3CphAxnYmU7rHUQNVs8T3cwnTqgP0hWjWzVy/6SXnII=;
+        b=WM6XAWX9Heh3keW9gXOWjZsUUV1gOPrDY4Lhx57R5ffGqM/8r9sMup3/X0S3j/4iTG
+         FP2OB1KeDxpG0EEH//gtDHeF39fkiEwsKo+xTI3ly76WagO1JGbYQjZsdxc3jUpV0y54
+         UfU23TAL2IZsxC7XTux4VDznWWRzV628ZQsYk+2sgqbuPuhj9oB2ppnktRwWQAevWVSm
+         NRDW5Htptd8Xln5Xmqpn6qx+T+QZg+n0N+y3RKYuNPpn95CBNOTT7UZYlz9/54BXGS10
+         qBFCpZWmzXsfVNOYvRenaGunLRlW4ruhs0q6MZLmM4JXcDs8fbDbqPwmhVAaf4n8AQm2
+         01GA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715621089; x=1716225889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qoSzKwBP/fkvEwEnZHAw4cEPWyEmks1QbjVuSI/cVOk=;
-        b=C+DngnWTk/kPWiGc6eYhlb+R/KJUYqIx3u1PmSqmNHpmvA5KLZZTU3RObE8b3Fy5gc
-         pXdHNI00EcSWfv3WHGXI3v6bE//uODLj5dPdXLOmcN8KqrnKx3Ow/1EOjxTXQN1ohS0/
-         VoZGrFivQoQiL43N/K0QlIrV0bxNxdfeo3t/RIGR5H+iElAz8qCScvV/fC2FiUJWHJSR
-         qx4oZ7CZVAgxy75n4d7KEG8M6dQgM6dW4VHS1ixcuRJwbdOW28ssFw0lHUYx2R/6toag
-         ziHbvxChEgSkzxwtVEBOhFdgeJitqUdBYOVekEoSbb4GXbiK1lpWdLDmRkm6QNYFguHI
-         X44A==
-X-Forwarded-Encrypted: i=1; AJvYcCVB5BOJ9A+XDIFQDUcOiZPZAi1WFLWKpYGPpcRzyVrn5dpOYgb3KDpLKo9GfO9hVz0DFTqkSZJzFdvcJqt9qoyaGBywZk9ykOp9/QgA
-X-Gm-Message-State: AOJu0Yye3D6jSNG5fIJk2/cF0G4VTFDDI9s5h9Fg9QY0UbwBfQUsQ8o+
-	AwcZiL9s2BwX4Y5vkR0sfuTa4d6vvZTf+0bNqZj8them5KvvgNDKuLRguzUhMEyXATJfxnsx3hs
-	Dfx0vjYH6lVYDEgKXPKdSU++q2brd3o69PGqQ
-X-Google-Smtp-Source: AGHT+IHYMU6jMsPSnXdaLeFXuYoMOdmfMivMi4lN+n7GoENybPVKoifn+Yb6ANHGycPGxZe62L1KTUIxRVVd8SHq6m4=
-X-Received: by 2002:a92:cb85:0:b0:36c:cb38:a30c with SMTP id
- e9e14a558f8ab-36ccca86eb3mr4592855ab.11.1715621089034; Mon, 13 May 2024
- 10:24:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715621164; x=1716225964;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3CphAxnYmU7rHUQNVs8T3cwnTqgP0hWjWzVy/6SXnII=;
+        b=jjTLcNnf8hFVz/6lSjJvBUBUwl9TygtC1Z/H7H4gY7m8/O1N3nH424pwZL3bWvqlUL
+         uZhLcoarIDfyqMHpvfss4umbopYICBMk96lQrFs5EhgKGUEhITKm6UoQzabwC++Zirv1
+         HzFscU1z8E6HJB7ieLwBwNrP6WVHAouEYuu8tni4OYWRlsto5zIgGCGxE7dWcBTYsQ8A
+         /sC0Gh8szeHXoOlrR+FcjZRbtJr0mMwI++MvYYMInaRHO+hwgoyGsitjQEUcUYIraEJG
+         WeNGHXWz1kC7xJWlOjqKqMpR5LC3PpiNEph0AgLrAWWQzqlQ6UAFfEAmByY5Use+/3wP
+         Q9CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnWsx9/YmWNEPtK2T1+hPC0mmWizBKR+vhOug7qHScgXhe++YyC3wLzqbs/q7nW0nGbhRxio6p5DF7yi21IZ0RJHrsgOx9dMavQFWO
+X-Gm-Message-State: AOJu0YzSN2ale4Bdiq3RwCtWKAsbFQjWA7Nlt1MTqAQtATzR5khIYW6q
+	qgEa7t+wVCiPtXAN4vmr8obsbjH8cABET+YHNjvU4devLT87W+DynYh2wZJ2CMs=
+X-Google-Smtp-Source: AGHT+IHWYfZIMujic/Efx734TOOxaipvPsENyzxTx20y3wHlQ1JvIbN+S3KCHp0gNXx2ROBa3RZW9g==
+X-Received: by 2002:a05:6a20:7343:b0:1af:dbe7:c976 with SMTP id adf61e73a8af0-1afde115bc1mr11659334637.36.1715621163769;
+        Mon, 13 May 2024 10:26:03 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63411530b0esm8050191a12.88.2024.05.13.10.26.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 10:26:03 -0700 (PDT)
+Date: Mon, 13 May 2024 10:25:59 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, bjorn@rivosinc.com, alexghiti@rivosinc.com,
+	samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	charlie@rivosinc.com, apatel@ventanamicro.com,
+	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
+	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 14/29] riscv/mm: Implement map_shadow_stack() syscall
+Message-ID: <ZkJNJwEjoeHK6GDY@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-15-debug@rivosinc.com>
+ <d0e2d1a5-110a-40be-8662-7c78afe22446@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjssGrj+abyC6mYP@gmail.com> <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
- <ZkG4LWr7w11wQ/PR@gmail.com> <CAP-5=fVHrKcqwczoU1uMD4tP5DTVhfQ1T_hXnm_y5Ji3M6K_ag@mail.gmail.com>
- <ZkJK3x3zQ9a4wp8E@gmail.com>
-In-Reply-To: <ZkJK3x3zQ9a4wp8E@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 13 May 2024 10:24:37 -0700
-Message-ID: <CAP-5=fUh+GoqERAF-qf8zx4kwq2uzwR2Ugop5XOkPexYGAqF3A@mail.gmail.com>
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <d0e2d1a5-110a-40be-8662-7c78afe22446@ghiti.fr>
 
-On Mon, May 13, 2024 at 10:16=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wro=
-te:
+On Sun, May 12, 2024 at 06:50:18PM +0200, Alexandre Ghiti wrote:
+>
+>On 04/04/2024 01:35, Deepak Gupta wrote:
+>>As discussed extensively in the changelog for the addition of this
+>>syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+>>existing mmap() and madvise() syscalls do not map entirely well onto the
+>>security requirements for shadow stack memory since they lead to windows
+>>where memory is allocated but not yet protected or stacks which are not
+>>properly and safely initialised. Instead a new syscall map_shadow_stack()
+>>has been defined which allocates and initialises a shadow stack page.
+>>
+>>This patch implements this syscall for riscv. riscv doesn't require token
+>>to be setup by kernel because user mode can do that by itself. However to
+>>provide compatibility and portability with other architectues, user mode
+>>can specify token set flag.
+>>
+>>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>>---
+>>  arch/riscv/kernel/Makefile      |   2 +
+>>  arch/riscv/kernel/usercfi.c     | 149 ++++++++++++++++++++++++++++++++
+>>  include/uapi/asm-generic/mman.h |   1 +
+>>  3 files changed, 152 insertions(+)
+>>  create mode 100644 arch/riscv/kernel/usercfi.c
+>>
+>>diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+>>index 604d6bf7e476..3bec82f4e94c 100644
+>>--- a/arch/riscv/kernel/Makefile
+>>+++ b/arch/riscv/kernel/Makefile
+>>@@ -107,3 +107,5 @@ obj-$(CONFIG_COMPAT)		+= compat_vdso/
+>>  obj-$(CONFIG_64BIT)		+= pi/
+>>  obj-$(CONFIG_ACPI)		+= acpi.o
+>>+
+>>+obj-$(CONFIG_RISCV_USER_CFI) += usercfi.o
+>>diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+>>new file mode 100644
+>>index 000000000000..c4ed0d4e33d6
+>>--- /dev/null
+>>+++ b/arch/riscv/kernel/usercfi.c
+>>@@ -0,0 +1,149 @@
+>>+// SPDX-License-Identifier: GPL-2.0
+>>+/*
+>>+ * Copyright (C) 2024 Rivos, Inc.
+>>+ * Deepak Gupta <debug@rivosinc.com>
+>>+ */
+>>+
+>>+#include <linux/sched.h>
+>>+#include <linux/bitops.h>
+>>+#include <linux/types.h>
+>>+#include <linux/mm.h>
+>>+#include <linux/mman.h>
+>>+#include <linux/uaccess.h>
+>>+#include <linux/sizes.h>
+>>+#include <linux/user.h>
+>>+#include <linux/syscalls.h>
+>>+#include <linux/prctl.h>
+>>+#include <asm/csr.h>
+>>+#include <asm/usercfi.h>
+>>+
+>>+#define SHSTK_ENTRY_SIZE sizeof(void *)
+>>+
+>>+/*
+>>+ * Writes on shadow stack can either be `sspush` or `ssamoswap`. `sspush` can happen
+>>+ * implicitly on current shadow stack pointed to by CSR_SSP. `ssamoswap` takes pointer to
+>>+ * shadow stack. To keep it simple, we plan to use `ssamoswap` to perform writes on shadow
+>>+ * stack.
+>>+ */
+>>+static noinline unsigned long amo_user_shstk(unsigned long *addr, unsigned long val)
+>>+{
+>>+	/*
+>>+	 * Since shadow stack is supported only in 64bit configuration,
+>>+	 * ssamoswap.d is used below.
+>
+>>*        * CONFIG_RISCV_USER_CFI is dependent
+>>+	 * on 64BIT and compile of this file is dependent on CONFIG_RISCV_USER_CFI
+>>+	 * In case ssamoswap faults, return -1.
 >
 >
-> * Ian Rogers <irogers@google.com> wrote:
->
-> > > Was this regression fix propagated to v6.9 in time?
-> >
-> > We switched to using the handwritten file in v6.4:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
-it/tools/perf/util/bpf_skel/vmlinux.h?id=3Da887466562b425bd6183bf75b523c147=
-7c9fd22d
->
-> So there must be some different regression then, as this is readily
-> reproducible for me on v6.9, as per the build log below - I simply
-> Ctrl-C-ed a build, and the next build results in:
->
->   kepler:~/tip/tools/perf> make clean install
->   Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.=
-  Stop.
->   make: *** [Makefile:90: clean] Error 2
->   kepler:~/tip/tools/perf>
->
-> Thanks,
->
->         Ingo
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D>
-> kepler:~/tip/tools/perf> make clean install
->   CLEAN   x86
->   CLEAN   libapi
->   CLEAN   libbpf
->   CLEAN   libsubcmd
->   CLEAN   libsymbol
->   CLEAN   libperf
->   CLEAN   arm64-sysreg-defs
->   CLEAN   fixdep
->   CLEAN   feature-detect
->   CLEAN   python
->   CLEAN   bpf-skel
->   CLEAN   coresight
->   CLEAN   core-objs
->   CLEAN   core-progs
->   CLEAN   core-gen
->   CLEAN   Documentation
->   BUILD:   Doing 'make -j64' parallel build
->   HOSTCC  fixdep.o
->   HOSTLD  fixdep-in.o
->   LINK    fixdep
-> Warning: Kernel ABI header differences:
->   diff -u tools/include/uapi/linux/vhost.h include/uapi/linux/vhost.h
->   diff -u tools/include/linux/bits.h include/linux/bits.h
->   diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/c=
-pufeatures.h
->   diff -u tools/arch/x86/include/asm/irq_vectors.h arch/x86/include/asm/i=
-rq_vectors.h
->   diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr=
--index.h
->   diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entr=
-y/syscalls/syscall_64.tbl
->
->
->
->
->
-> Auto-detecting system features:
-> ...                                   dwarf: [ on  ]
-> ...                      dwarf_getlocations: [ on  ]
-> ...                                   glibc: [ on  ]
-> ...                                  libbfd: [ on  ]
-> ...                          libbfd-buildid: [ on  ]
-> ...                                  libcap: [ on  ]
-> ...                                  libelf: [ on  ]
-> ...                                 libnuma: [ on  ]
-> ...                  numa_num_possible_cpus: [ on  ]
-> ...                                 libperl: [ on  ]
-> ...                               libpython: [ on  ]
-> ...                               libcrypto: [ on  ]
-> ...                               libunwind: [ on  ]
-> ...                      libdw-dwarf-unwind: [ on  ]
-> ...                             libcapstone: [ on  ]
-> ...                                    zlib: [ on  ]
-> ...                                    lzma: [ on  ]
-> ...                               get_cpuid: [ on  ]
-> ...                                     bpf: [ on  ]
-> ...                                  libaio: [ on  ]
-> ...                                 libzstd: [ on  ]
->
->   GEN     common-cmds.h
->   CC      perf-read-vdso32
->   CC      perf-read-vdsox32
->   CC      jvmti/libjvmti.o
->   CC      dlfilters/dlfilter-test-api-v0.o
->   CC      dlfilters/dlfilter-test-api-v2.o
->   CC      jvmti/jvmti_agent.o
->   CC      dlfilters/dlfilter-show-cycles.o
->   CC      jvmti/libstring.o
->   CC      jvmti/libctype.o
->   GEN     /home/mingo/tip/tools/perf/arch/arm64/include/generated/asm/sys=
-reg-defs.h
->   PERF_VERSION =3D 6.9.g16ae3bebb76c
->   INSTALL /home/mingo/tip/tools/perf/libsubcmd/include/subcmd/exec-cmd.h
->   INSTALL /home/mingo/tip/tools/perf/libsubcmd/include/subcmd/help.h
->   INSTALL /home/mingo/tip/tools/perf/libsubcmd/include/subcmd/pager.h
->   GEN     perf-archive
->   GEN     perf-iostat
->   INSTALL /home/mingo/tip/tools/perf/libsubcmd/include/subcmd/parse-optio=
-ns.h
->   CC      /home/mingo/tip/tools/perf/libsubcmd/exec-cmd.o
->   INSTALL /home/mingo/tip/tools/perf/libsubcmd/include/subcmd/run-command=
-h
->   CC      /home/mingo/tip/tools/perf/libsubcmd/help.o
->   CC      /home/mingo/tip/tools/perf/libsubcmd/pager.o
->   CC      /home/mingo/tip/tools/perf/libsubcmd/parse-options.o
->   CC      /home/mingo/tip/tools/perf/libsubcmd/run-command.o
->   CC      /home/mingo/tip/tools/perf/libsubcmd/sigchain.o
->   CC      /home/mingo/tip/tools/perf/libsubcmd/subcmd-config.o
->   INSTALL libsubcmd_headers
->   GEN      doc.dep
->   INSTALL /home/mingo/tip/tools/perf/libapi/include/api/cpu.h
->   INSTALL /home/mingo/tip/tools/perf/libapi/include/api/debug.h
->   INSTALL /home/mingo/tip/tools/perf/libsymbol/include/symbol/kallsyms.h
->   INSTALL /home/mingo/tip/tools/perf/libapi/include/api/io.h
->   INSTALL /home/mingo/tip/tools/perf/libapi/include/api/fd/array.h
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/bpf_perf.h
->   LINK    dlfilters/dlfilter-show-cycles.so
->   INSTALL /home/mingo/tip/tools/perf/libapi/include/api/fs/fs.h
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/core.h
->   CC      /home/mingo/tip/tools/perf/libsymbol/kallsyms.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/cpumap.h
->   INSTALL /home/mingo/tip/tools/perf/libapi/include/api/fs/tracing_path.h
->   CC      /home/mingo/tip/tools/perf/libapi/cpu.o
->   MKDIR   /home/mingo/tip/tools/perf/libapi/fd/
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/threadmap.h
->   CC      /home/mingo/tip/tools/perf/libapi/debug.o
->   CC      /home/mingo/tip/tools/perf/libperf/core.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/evlist.h
->   MKDIR   /home/mingo/tip/tools/perf/libapi/fs/
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/evsel.h
->   CC      /home/mingo/tip/tools/perf/libperf/cpumap.o
->   CC      /home/mingo/tip/tools/perf/libapi/str_error_r.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/event.h
->   MKDIR   /home/mingo/tip/tools/perf/libapi/fs/
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/perf/mmap.h
->   CC      /home/mingo/tip/tools/perf/libperf/threadmap.o
->   MKDIR   /home/mingo/tip/tools/perf/libapi/fs/
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/cpumap.h
->   CC      /home/mingo/tip/tools/perf/libperf/evsel.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/evlist.h
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/evsel.h
->   CC      /home/mingo/tip/tools/perf/libapi/fd/array.o
->   CC      /home/mingo/tip/tools/perf/libperf/evlist.o
->   CC      /home/mingo/tip/tools/perf/libapi/fs/fs.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/lib.h
->   INSTALL libsymbol_headers
->   CC      /home/mingo/tip/tools/perf/libperf/mmap.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/mmap.h
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/rc_check.h
->   CC      /home/mingo/tip/tools/perf/libapi/fs/tracing_path.o
->   INSTALL libapi_headers
->   CC      /home/mingo/tip/tools/perf/libperf/zalloc.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/threadmap.h
->   CC      /home/mingo/tip/tools/perf/libapi/fs/cgroup.o
->   INSTALL /home/mingo/tip/tools/perf/libperf/include/internal/xyarray.h
->   CC      /home/mingo/tip/tools/perf/libperf/xyarray.o
->   CC      /home/mingo/tip/tools/perf/libperf/lib.o
->   GEN     /home/mingo/tip/tools/perf/libbpf/bpf_helper_defs.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/bpf.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/libbpf.h
->   INSTALL libperf_headers
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/btf.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/libbpf_common.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/libbpf_legacy.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/bpf_helpers.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/bpf_tracing.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/bpf_endian.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/bpf_core_read.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/skel_internal.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/libbpf_version.h
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/usdt.bpf.h
->   LINK    dlfilters/dlfilter-test-api-v2.so
->   LINK    dlfilters/dlfilter-test-api-v0.so
->   LD      /home/mingo/tip/tools/perf/libapi/fd/libapi-in.o
->   INSTALL /home/mingo/tip/tools/perf/libbpf/include/bpf/bpf_helper_defs.h
->   MKDIR   /home/mingo/tip/tools/perf/libbpf/staticobjs/
->   MKDIR   /home/mingo/tip/tools/perf/libbpf/staticobjs/
->   MKDIR   /home/mingo/tip/tools/perf/libbpf/staticobjs/
->   MKDIR   /home/mingo/tip/tools/perf/libbpf/staticobjs/
->   MKDIR   /home/mingo/tip/tools/perf/libbpf/staticobjs/
->   MKDIR   /home/mingo/tip/tools/perf/libbpf/staticobjs/
->   INSTALL libbpf_headers
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/netlink.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/bpf.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/libbpf.o
->   LD      /home/mingo/tip/tools/perf/libsymbol/libsymbol-in.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/btf.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/nlattr.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/libbpf_errno.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/str_error.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/bpf_prog_linfo.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/libbpf_probes.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/hashmap.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/btf_dump.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/ringbuf.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/strset.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/linker.o
->   ASCIIDOC perf-annotate.xml
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/gen_loader.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/relo_core.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/usdt.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/zip.o
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/elf.o
->   AR      /home/mingo/tip/tools/perf/libsymbol/libsymbol.a
->   CC      /home/mingo/tip/tools/perf/libbpf/staticobjs/features.o
->   LD      /home/mingo/tip/tools/perf/libapi/fs/libapi-in.o
->   LD      /home/mingo/tip/tools/perf/libapi/libapi-in.o
->   LD      /home/mingo/tip/tools/perf/libperf/libperf-in.o
->   AR      /home/mingo/tip/tools/perf/libperf/libperf.a
->   AR      /home/mingo/tip/tools/perf/libapi/libapi.a
->   LD      jvmti/jvmti-in.o
->   LINK    libperf-jvmti.so
->   LD      /home/mingo/tip/tools/perf/libsubcmd/libsubcmd-in.o
->   AR      /home/mingo/tip/tools/perf/libsubcmd/libsubcmd.a
->   ASCIIDOC perf-archive.xml
->   GEN     python/perf.cpython-311-x86_64-linux-gnu.so
->   ASCIIDOC perf-arm-spe.xml
->   ASCIIDOC perf-bench.xml
->   ASCIIDOC perf-buildid-cache.xml
->   ASCIIDOC perf-buildid-list.xml
->   ASCIIDOC perf-c2c.xml
->   ASCIIDOC perf-config.xml
->   ASCIIDOC perf-daemon.xml
->   ASCIIDOC perf-data.xml
->   ASCIIDOC perf-diff.xml
->   ASCIIDOC perf-dlfilter.xml
-> ^Cmake[2]: *** [Makefile.perf:1121: /home/mingo/tip/tools/perf/util/bpf_s=
-kel/.tmp/bootstrap/bpftool] Interrupt
-> make[4]: *** [/home/mingo/tip/tools/build/Makefile.build:105: /home/mingo=
-/tip/tools/perf/libbpf/staticobjs/libbpf.o] Interrupt
-> make[3]: *** [Makefile:157: /home/mingo/tip/tools/perf/libbpf/staticobjs/=
-libbpf-in.o] Interrupt
-> interrupted
-> make[2]: *** [Makefile.perf:868: /home/mingo/tip/tools/perf/libbpf/libbpf=
-a] Interrupt
-> make[3]: *** [Makefile:275: perf-dlfilter.xml] Interrupt
-> make[3]: *** [Makefile:275: perf-diff.xml] Interrupt
-> make[2]: *** [Makefile.perf:1072: try-install-man] Interrupt
-> make[2]: *** [Makefile.perf:681: python/perf.cpython-311-x86_64-linux-gnu=
-so] Interrupt
-> make[1]: *** [Makefile.perf:264: sub-make] Interrupt
-> make: *** [Makefile:113: install] Interrupt
->
-> kepler:~/tip/tools/perf> make clean install
-> Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  =
-Stop.
-> make: *** [Makefile:90: clean] Error 2
-> kepler:~/tip/tools/perf>
+>To me, this part of the comment is not needed.
 
-Strange. I'll try to repro and update you.
+Ok, will remove it.
 
-Thanks,
-Ian
+>
+>
+>>+	 * Never expect -1 on shadow stack. Expect return addresses and zero
+>
+>
+>In that case, should we BUG() instead?
+
+Caller (create_rstor_token) of `amo_user_shstk` is returning -EFAULT. It'll translate to 
+signal (SIGSEGV) delivery to user app or terminate.
+
+>
+>
+>>+	 */
+>>+	unsigned long swap = -1;
+>>+
+>>+	__enable_user_access();
+>>+	asm goto(
+>>+				".option push\n"
+>>+				".option arch, +zicfiss\n"
+>>+				"1: ssamoswap.d %[swap], %[val], %[addr]\n"
+>>+				_ASM_EXTABLE(1b, %l[fault])
+>>+				RISCV_ACQUIRE_BARRIER
+>>+				".option pop\n"
+>>+				: [swap] "=r" (swap), [addr] "+A" (*addr)
+>>+				: [val] "r" (val)
+>>+				: "memory"
+>>+				: fault
+>>+			);
+>>+	__disable_user_access();
+>>+	return swap;
+>>+fault:
+>>+	__disable_user_access();
+>>+	return -1;
+>>+}
+>>+
+>>+/*
+>>+ * Create a restore token on the shadow stack.  A token is always XLEN wide
+>>+ * and aligned to XLEN.
+>>+ */
+>>+static int create_rstor_token(unsigned long ssp, unsigned long *token_addr)
+>>+{
+>>+	unsigned long addr;
+>>+
+>>+	/* Token must be aligned */
+>>+	if (!IS_ALIGNED(ssp, SHSTK_ENTRY_SIZE))
+>>+		return -EINVAL;
+>>+
+>>+	/* On RISC-V we're constructing token to be function of address itself */
+>>+	addr = ssp - SHSTK_ENTRY_SIZE;
+>>+
+>>+	if (amo_user_shstk((unsigned long __user *)addr, (unsigned long) ssp) == -1)
+>>+		return -EFAULT;
+>>+
+>>+	if (token_addr)
+>>+		*token_addr = addr;
+>>+
+>>+	return 0;
+>>+}
+>>+
+>>+static unsigned long allocate_shadow_stack(unsigned long addr, unsigned long size,
+>>+				unsigned long token_offset,
+>>+				bool set_tok)
+>>+{
+>>+	int flags = MAP_ANONYMOUS | MAP_PRIVATE;
+>>+	struct mm_struct *mm = current->mm;
+>>+	unsigned long populate, tok_loc = 0;
+>>+
+>>+	if (addr)
+>>+		flags |= MAP_FIXED_NOREPLACE;
+>>+
+>>+	mmap_write_lock(mm);
+>>+	addr = do_mmap(NULL, addr, size, PROT_READ, flags,
+>
+>
+>Hmmm why do you map the shadow stack as PROT_READ here?
+
+I believe its redundant here. I followed what x86 did for their shadow stack creation.
+GCS (arm shadow stack) patches also do same thing. Collectively, we think at some time in
+future many of these flows will become generic (arch agnostic).
+
+>
+>
+>>+				VM_SHADOW_STACK | VM_WRITE, 0, &populate, NULL);
+>>+	mmap_write_unlock(mm);
+>>+
+>>+	if (!set_tok || IS_ERR_VALUE(addr))
+>>+		goto out;
+>>+
+>>+	if (create_rstor_token(addr + token_offset, &tok_loc)) {
+>>+		vm_munmap(addr, size);
+>>+		return -EINVAL;
+>>+	}
+>>+
+>>+	addr = tok_loc;
+>>+
+>>+out:
+>>+	return addr;
+>>+}
+>>+
+>>+SYSCALL_DEFINE3(map_shadow_stack, unsigned long, addr, unsigned long, size, unsigned int, flags)
+>>+{
+>>+	bool set_tok = flags & SHADOW_STACK_SET_TOKEN;
+>>+	unsigned long aligned_size = 0;
+>>+
+>>+	if (!cpu_supports_shadow_stack())
+>>+		return -EOPNOTSUPP;
+>>+
+>>+	/* Anything other than set token should result in invalid param */
+>>+	if (flags & ~SHADOW_STACK_SET_TOKEN)
+>>+		return -EINVAL;
+>>+
+>>+	/*
+>>+	 * Unlike other architectures, on RISC-V, SSP pointer is held in CSR_SSP and is available
+>>+	 * CSR in all modes. CSR accesses are performed using 12bit index programmed in instruction
+>>+	 * itself. This provides static property on register programming and writes to CSR can't
+>>+	 * be unintentional from programmer's perspective. As long as programmer has guarded areas
+>>+	 * which perform writes to CSR_SSP properly, shadow stack pivoting is not possible. Since
+>>+	 * CSR_SSP is writeable by user mode, it itself can setup a shadow stack token subsequent
+>>+	 * to allocation. Although in order to provide portablity with other architecture (because
+>>+	 * `map_shadow_stack` is arch agnostic syscall), RISC-V will follow expectation of a token
+>>+	 * flag in flags and if provided in flags, setup a token at the base.
+>>+	 */
+>>+
+>>+	/* If there isn't space for a token */
+>>+	if (set_tok && size < SHSTK_ENTRY_SIZE)
+>>+		return -ENOSPC;
+>>+
+>>+	if (addr && (addr % PAGE_SIZE))
+>
+>
+>I would use:
+>
+>if (addr && (addr & (PAGE_SIZE - 1))
+
+noted.
+
+>
+>
+>>+		return -EINVAL;
+>>+
+>>+	aligned_size = PAGE_ALIGN(size);
+>>+	if (aligned_size < size)
+>>+		return -EOVERFLOW;
+>>+
+>>+	return allocate_shadow_stack(addr, aligned_size, size, set_tok);
+>>+}
+>>diff --git a/include/uapi/asm-generic/mman.h b/include/uapi/asm-generic/mman.h
+>>index 57e8195d0b53..0c0ac6214de6 100644
+>>--- a/include/uapi/asm-generic/mman.h
+>>+++ b/include/uapi/asm-generic/mman.h
+>>@@ -19,4 +19,5 @@
+>>  #define MCL_FUTURE	2		/* lock all future mappings */
+>>  #define MCL_ONFAULT	4		/* lock all pages that are faulted in */
+>>+#define SHADOW_STACK_SET_TOKEN (1ULL << 0)     /* Set up a restore token in the shadow stack */
+>>  #endif /* __ASM_GENERIC_MMAN_H */
+>
+>
+>Don't we need to advertise this new syscall to the man pages?
+
+`map_shadow_stack` is already mainline as part of x86. I am assuming there is man page for this.
+I'll check to be sure and confirm here.
+
+>
 
