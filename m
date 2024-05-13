@@ -1,193 +1,103 @@
-Return-Path: <linux-kernel+bounces-177874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4007C8C45A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:06:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4388C45B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6328F1C22451
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:06:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE89F1C225A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5F21CD26;
-	Mon, 13 May 2024 17:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uMpModaY"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6762C20DFF;
+	Mon, 13 May 2024 17:08:08 +0000 (UTC)
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014D22B9CD
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0448208CE;
+	Mon, 13 May 2024 17:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619992; cv=none; b=UUnT3ZFm5G1oohN8xvTdbxPcSkCFvhuigusEQfn36LxCMJjadvyBvajYrQl3gQQh2uTK5wYXOXwTX6NlVI6jz5G7y4oMMo02Hqr3qXBPBPZvXK8UUmgWA4N/3dhWrMZ9/hICOFxBQs2wM6T86299MCqKJSI6BnPDqpRymNHVmO0=
+	t=1715620088; cv=none; b=uCovNo5hq5ShyRPd0sufTh7Az1iG/Bg6QLvg31Q8QRBKUgJTGm9PDLiAHwZleI7nLTKD1FGH9AnVywQgt02fd76gSTlV0yI7AeMEM7Lx7AfhKBzyZq3AWIvgGSw+wcDxAZTyLj/Wf9PMkHnXMvDj2ZAqu1h0d1Xg8nhYTh7CcR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619992; c=relaxed/simple;
-	bh=+P2SBhCjt1cNR4Hf9i6Gn7yMnwDDxmC4jAga89KBFuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AQrPt4QBSHgbEEBtre8LAAmhxRYzWxRFLF9b+Hj+JofRtDHOVHqgydrP2nr78WLojNyxk5gRGiNBi41FFatrtLsLUCA1AqUFbvXJS6fKHo9iP0OIzEtewKqpXXiOZRm6U76dYhotKVQBnBm672gzucmzFPXw7JkPKIV755tN1Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uMpModaY; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e09138a2b1so65083101fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715619988; x=1716224788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pXw985lX5WlJQmTXNpCIqA41wwGetKb+YHxlJsQLqRM=;
-        b=uMpModaYv/H/oI7+De0gNVizuEccAKWldn0kSElxpz/rh8aMUeq/+9KzwaYCqX8ri+
-         211heG2kYg+4Nk17DCqrHBD3Xh1SVC0w/0IkVv/llELypli35hjvisBLxQeC5d4YEif9
-         lUIeeqJyW7u68NTJjuXdOTvIGljGo/on5VrpiE+OQvbzSSzagU89cgaaFgUYlCtdjpQd
-         qprrFIBa4x8Ze1Mx1tne3tQeVP7BcCmbmT8wuemhOmFs/NzeW3DuekXkdpC19A1OsE/x
-         DriXu0c4jcxfCLe7fmn5QAUuN48au5ZzZKJZdSlEpHLAS6n5rhBRQoJz3dK1F0xmaxVt
-         0oqg==
+	s=arc-20240116; t=1715620088; c=relaxed/simple;
+	bh=5w3t18fUZhPXGU1DdXrP+hf6z7XV9qftCg2rlMTls7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tS1j3GOQt1Kw1TedZeT7MnczSS9TErNwpknGEuUL5RzUPW8pMK72MkYQXjZ069W1fvUOo/p1Z7gYxwMlcynABDnikeUAObI4NUI630SxV8emRno+XrRI3k2c3FMQlp4LonFD6nWBOxAS5XPnoVBvVsuuj8YtB+OhakTkP4YpGis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-6f44bcbaae7so4138944b3a.2;
+        Mon, 13 May 2024 10:08:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715619988; x=1716224788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pXw985lX5WlJQmTXNpCIqA41wwGetKb+YHxlJsQLqRM=;
-        b=hamGAU7P2C+xqJZZl1i5vBEnuDFuNXbS8VHZp1KlBaZKmA46BbaeywfgkGMs1JZ7N3
-         LuEUV0uoWRDkxfeiAF6NHzjwXnHH6msWazzGNBf7zDtKB5Krw/cVbOMLpMNm3syGAPhx
-         0gRZcR8scJtAzKfQVfQYN+r8N2XqGAS8woS15eXCWPTFhADo4oQ17VvtCPTujNIkGafd
-         RBHfQFCMATZ4jjEmtcVhJMq0JzO91GXtlGDeZmH+RdzhseAsaVZnvd19+J60zp9MUEoY
-         8T36GjQlq7lQI5fIbVFcJjkMlke4gq6ZXs1h/oedv2lJvA+KE7HPpkKDtnvs/VK7eigi
-         vRCw==
-X-Forwarded-Encrypted: i=1; AJvYcCX96PzAEoNsLTsZh1oLdu0cPvdB+5LrQTYd09CdS9cZdKrg3rVcpftkteu78XcaNQFq9VcIIG+aHVfES+DZ1z1MPm4Eopp9IjxFKP3J
-X-Gm-Message-State: AOJu0Yz1FxNkS8ZPnLUrHzk+LlwXzc5qX45/3/1ObHyDWp3LlX4+ZXRl
-	aNSj0OeG5+JoRCGf/U5dUimZdfirz269w626+Qi1P/6Iu5+eAW+WG+bNIT8VtotZXjReClkO9Wb
-	5GKe+LATF2m/R6k+VUz/MEr2t9XZ5tmGdDiinSQ==
-X-Google-Smtp-Source: AGHT+IHKzXmraEEpr9cm14X7+52nWL86ByTUDO6GdlPQ4N4YO+I2wY0fIqMJ7Li7S33/GHOlNNDE8KzdgJFvMG4euIY=
-X-Received: by 2002:a2e:b1c5:0:b0:2d8:8eb4:11a6 with SMTP id
- 38308e7fff4ca-2e51ff5ce50mr63520551fa.12.1715619988132; Mon, 13 May 2024
- 10:06:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715620086; x=1716224886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=19v2OFHX5HNykaPKmmf/pQJmN9oKb4YnIwFLKnn8zuI=;
+        b=AhTGaLLNJwzO9CMgPhiGp9Z1XRlktWriL8Si4/NrENx0FH/q9M+B69XS6ryt8MDwk7
+         YLfunXfJ9/xkBO5dajqcF/WKhXkpH857njuUZbD+IuuN+sk68K1rsIWYZn69ThiANSF3
+         7GD53BlfQlWqyBu8lxBaLlIy/GRgOYTnZMqBqePnZn3TOjI0XiqJKVRTHc1K2HkAPHE2
+         GNy+yh8BwJ+tubv2UlLCDhn8IczuiEeBQIsqwxu7gFn0GObN6m7v7hPi8FX/pgwxzoVZ
+         A+ovHPzyxrpO4Hbs9094D3P4uayQ2zCOY9cU/tfsbCREzUIJp9NMZjd/tRzQNWjJJrAe
+         oVgg==
+X-Forwarded-Encrypted: i=1; AJvYcCV1XRAfuz3s6Z5vmGIcuKd8pIXpLaGRrnqOn/cBPeGhDlkzhNsYbzM2fQUrNaekYFAALEmpwJqn2hb/MVR6WS0dnrj/1gGNirQMyKQAnJC+4Tnzrm7PJcMC7lMlJBO2zRkExRyU25qxD1GlxuYQFg==
+X-Gm-Message-State: AOJu0Ywxl352AnAi0N3IOhoXUVR2gW0DjTB7HrZGkqKtgeo/i4GDRIws
+	ysJBPdxFh00gLlIA8l4POEsbooSN/CS9TPosAms68r1dI7gmeeCL
+X-Google-Smtp-Source: AGHT+IFOofykO0WDr7isCvnHZmiW0wlTi8yaXitAeudIwuTRvMIKsCaIwDJM0r82yYawc5TXbxPvpw==
+X-Received: by 2002:a05:6a20:9c8e:b0:1af:d15a:6b60 with SMTP id adf61e73a8af0-1afde11bbafmr10903762637.28.1715620085968;
+        Mon, 13 May 2024 10:08:05 -0700 (PDT)
+Received: from gmail.com ([50.204.89.31])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340b767e59sm8002536a12.21.2024.05.13.10.08.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 10:08:05 -0700 (PDT)
+Date: Mon, 13 May 2024 18:07:53 +0100
+From: Breno Leitao <leitao@debian.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf list: Fix the --no-desc option
+Message-ID: <ZkJI6Q6KVKlzDgSQ@gmail.com>
+References: <20240508133518.3204221-1-leitao@debian.org>
+ <Zj-WE1aG7ihtevG3@x1>
+ <CAP-5=fXXYVgb4rnftaiTZTEniGOr5NnpfXJFNqX96GXP6=oTiA@mail.gmail.com>
+ <Zj-qIbUN2XFBnvP8@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
- <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com> <20240513-headsman-hacking-d51fcc811695@spud>
-In-Reply-To: <20240513-headsman-hacking-d51fcc811695@spud>
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 13 May 2024 12:06:17 -0500
-Message-ID: <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
- spi-offloads property
-To: Conor Dooley <conor@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	David Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zj-qIbUN2XFBnvP8@x1>
 
-On Mon, May 13, 2024 at 11:46=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
-ote:
->
-> On Fri, May 10, 2024 at 07:44:24PM -0500, David Lechner wrote:
-> > This adds a new property to the spi-peripheral-props binding for use
-> > with peripherals connected to controllers that support offloading.
-> >
-> > Here, offloading means that the controller has the ability to perform
-> > complex SPI transactions without CPU intervention in some shape or form=
-.
-> >
-> > This property will be used to assign controller offload resources to
-> > each peripheral that needs them. What these resources are will be
-> > defined by each specific controller binding.
-> >
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > ---
-> >
-> > v2 changes:
-> >
-> > In v1, instead of generic SPI bindings, there were only controller-
-> > specific bindings, so this is a new patch.
-> >
-> > In the previous version I also had an offloads object node that describ=
-ed
-> > what the offload capabilities were but it was suggested that this was
-> > not necessary/overcomplicated. So I've gone to the other extreme and
-> > made it perhaps over-simplified now by requiring all information about
-> > how each offload is used to be encoded in a single u32.
->
-> The property is a u32-array, so I guess, not a single u32?
+On Sat, May 11, 2024 at 02:25:53PM -0300, Arnaldo Carvalho de Melo wrote:
+> With Breno's patch the default doesn't change, --no-desc gets fixed but
+> --long-desc is broken:
+> 
+> perf list --long-desc
+> <SNIP>
+> cache:
+>   longest_lat_cache.miss
+>        [Counts the number of cacheable memory requests that miss in the LLC. Counts on a per core basis. Unit: cpu_atom]
+>        [Counts the number of cacheable memory requests that miss in the Last Level Cache (LLC). Requests include demand loads,reads for ownership (RFO),instruction fetches and L1 HW
+>         prefetches. If the platform has an L3 cache,the LLC is the L3 cache,otherwise it is the L2 cache. Counts on a per core basis]
+> <SNIP>
 
-It is an array to handle cases where a peripheral might need more than
-one offload. But the idea was it put everything about each individual
-offload in a single u32. e.g. 0x0101 could be offload 1 with hardware
-trigger 1 and 0x0201 could be offload 1 with hardware trigger 2. Then
-a peripheral could have spi-offloads =3D <0x0101>, <0x0201>; if it
-needed to select between both triggers at runtime.
+Oh, both descriptions (long and "short") are being displayed. 
 
->
-> > We could of course consider using #spi-offload-cells instead for
-> > allowing encoding multiple parameters for each offload instance if that
-> > would be preferable.
->
-> A -cells property was my gut reaction to what you'd written here and
-> seems especially appropriate if there's any likelihood of some future
-> device using some external resources for spi-offloading.
-> However, -cells properties go in providers, not consumers, so it wouldn't
-> end up in spi-periph-props.yaml, but rather in the controller binding,
-> and instead there'd be a cell array type property in here. I think you
-> know that though and I'm interpreting what's been written rather than
-> what you meant.
+> Thanks for asking the question, I'm dropping the patch, Breno, can you
+> try again?
 
-Indeed you guess correctly. So the next question is if it should be
-the kind of #-cells that implies a phandle like most providers or
-without phandles like #address-cells? Asking because I got pushback on
-v1 for using a phandle with offloads (although in that case, the
-phandle was for the offload instance itself instead for the SPI
-controller, so maybe this is different in this case?).
+Sure, let me think about it and send a v2.
 
->
-> > I also considered adding spi-offload-names that could be used as sort
-> > of a compatible string (more of an interface name really) in case some
-> > peripherals may want to support more than 1 specialized type of offload=
-.
-> > ---
-> >  .../devicetree/bindings/spi/spi-peripheral-props.yaml          | 10 ++=
-++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props=
-yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> > index 15938f81fdce..32991a2d2264 100644
-> > --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> > +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
-> > @@ -113,6 +113,16 @@ properties:
-> >      minItems: 2
-> >      maxItems: 4
-> >
-> > +  spi-offloads:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    description:
-> > +      Array of controller offload instances that are reserved for use =
-by the
-> > +      peripheral device. The semantic meaning of the values of the arr=
-ay
-> > +      elements is defined by the controller. For example, it could be =
-a simple
-> > +      0-based index of the offload instance, or it could be a bitfield=
- where
-> > +      a few bits represent the assigned hardware trigger, a few bits r=
-epresent
-> > +      the assigned RX stream, etc.
-> > +
-> >    st,spi-midi-ns:
-> >      description: |
-> >        Only for STM32H7, (Master Inter-Data Idleness) minimum time
-> >
-> > --
-> > 2.43.2
-> >
+Thanks!
 
