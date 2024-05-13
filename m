@@ -1,235 +1,149 @@
-Return-Path: <linux-kernel+bounces-177550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD8998C40A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:22:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780528C40A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56E912819B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:22:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1259CB22032
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D40B14F13E;
-	Mon, 13 May 2024 12:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D8C14F9C7;
+	Mon, 13 May 2024 12:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="alSM/Oca"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jzT6xeI3"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B2614EC5E
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BE114EC5E;
+	Mon, 13 May 2024 12:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602936; cv=none; b=VB+mgyOCcspxDheNuWGUlTC27pUjbFpW4XXp3VCXj0YRCwnXmufCHnanRy9I+l3FiI1UhP8n3GQ8F/x5ckZ1BkeiEIJ8NRZbyc31w2zTh2HboaqKK0rxSzRSHS4FTsjlcQkLRYDVDq9v6ZBzhLLMy9KsfjDPJbrrYWUijVxdTOc=
+	t=1715602986; cv=none; b=aEpvjtEbFh0kOLECbCUiC2PeZlwIMeyySqCEEdtxJAdhXR8UCY1t9SjKKU1j1OBsWeOZvbTIkTj7LCmRM+kJjQwFff8z2tx7uxBZqOCDBUUHRXaVxlm7R79OCYGnw+2CLiCxJJn4jKKHXIwHLXnv1E7yxrqLNTLsiJYwpPmaJd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602936; c=relaxed/simple;
-	bh=id3DevvPuhpaveGORwJ1ADXmEmKg9A1oHpKpWyZgLuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ehiCLyOjO1i5T9eVI4LW/VqVOGPtgkoUapUYY+I0by6uAfqkXQVlVHoyOFRhujE1YnhkpVjL9xkJ8vAmyNTQlnitF93AFrg6WtIWfBjVVLAklUEjSSBGKvs0dDX/TOBt/j2bbolIQPU9E7ztJmFiIyOYhdnkDknauUE29S4MU7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=alSM/Oca; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2e2b468ea12so37173421fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:22:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715602932; x=1716207732; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eVFGQiUl4f9vRRwJr1XvDEsFnHjYVxcSnOQ7oMZf/CQ=;
-        b=alSM/OcakQWC8YvyUIHYLbCX69uBLRyj0xaruGWjM8Iw+NXfQw+kAkiG0NTY/Xl8R6
-         tHhiLC6NzvZTcow1TphyMoZTZRuoiodqF00R1lemqqbzSLUvsFnyRGTScBaPH443Gym7
-         kPOWH8knHBFqpMY5zGm01oEsWaKD+P6OExaOc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715602932; x=1716207732;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eVFGQiUl4f9vRRwJr1XvDEsFnHjYVxcSnOQ7oMZf/CQ=;
-        b=aqSFrgxwXUfM1p0CGEkiJw9KJ2kJzfr9YgCmD0NH6N0zv7Pup3MctR2jzjE7huWlz1
-         Wiflpf45pqgqMoQhqhy29wJnQgVdZir5s6A6EoHb7/LAbzxjqynZlyW1VaA6uq1BjU0m
-         4h4Tm/f91xunuHzGhyYnMbaVPBQ7emWPiWP9//Bf94MNSbp/XbKcOWzUW8x3GngeFOhl
-         PBh39s2zkBCNqQk1aZTKlg7sLVn4IZJEaZW7AHjB3xRal1YWsI32nfWJtj8x+GMqq4b+
-         lXMsZzrlU5+Yi1fe8meO+nWnCwrGNbyNYJQ75Z7xlrSOYxvoM8d0n89U0i7/PaDIk9k+
-         hhVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvHwi3hHzmEtqE5WVzdiYzhOLGcXee/3PYPrfmA24YclgklnL3DaPhypzRWD9LucYZYIv+GXKRNzcTIQE0fR1BTybVp8sUhhNSFftw
-X-Gm-Message-State: AOJu0YwDanuVBr0ejHO3qoNPzWir1Rnl5kKX/Ae29XA8bZ+ju9KmXdgP
-	S7gXkXFCmz/wLg75xoCm4N1UGG8y68zmvQME51I1x7j3yh3sjhkVOG8a7zgDmnMUt1WDadqH7b5
-	jWFgPC/4pDGuCkUp7yVfI2URXEPFyZ1Zka9Ki
-X-Google-Smtp-Source: AGHT+IHb0pL1THp0q/JWWu+0YxijSDpZon98nIs4jsZ3y5hFR3bXE+IWnLAxA/+vVAY2Pj1ttu362GAGDYOSGPq3hLA=
-X-Received: by 2002:a2e:812:0:b0:2d4:535a:e7a with SMTP id 38308e7fff4ca-2e51b4784b6mr30680471fa.24.1715602932536;
- Mon, 13 May 2024 05:22:12 -0700 (PDT)
+	s=arc-20240116; t=1715602986; c=relaxed/simple;
+	bh=GMpp0dPFuIFfvEUduPyIjFcKlLnBpiSg9daDEDmMREo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lTbCEDmoImQbPZtEd015bqs/NgWxm3yrLzT7C+QzanKiRLejU3OtGamWaxEWDKeM6eTVRvEBCx6+FkmU/xp0G47gBpZ4xAXM6PbkDp0fEHvEFhTgpqWWzAcCV0qGG7uZ2jWU/Dd1JHPnLM5xGIpC08b5n+47Ujf2tPKkW6IYkbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jzT6xeI3; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VdJXy1tR4z6Cnk90;
+	Mon, 13 May 2024 12:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1715602962; x=1718194963; bh=7Ih71/Watz1cdPTWlkmWtBwl
+	P9ZcU5ZJPsGWDZOPS0Y=; b=jzT6xeI3w+cBrbZgW+L7A5crY0hWa6Q4mx/1MHQE
+	B8JU1uAtmpxRvcx8kY5GQZBcuGgyo2OONYgKdIgmhlAvT6oKhREKiOFVCBfTCmHA
+	a3JXZoC1XANZmc9Z/saTfeC99ouZ0tuRaxaafBSKRBySDS3d6wwcjB+VOxYoJYuG
+	Kshui5g5ctx5ZcnXxJ/HO/HaeHSThdryHdvqM/b3bwdcbQkcR27Z6D6ISOpRZDCi
+	6N1JwHxIu+EMOmqRUAf+7TGxu6V+wD0lNfW+An2y4fbLVOVBDm6pCyNoR80qHnHM
+	9X88dvEGxU9nWcY+IUWLez3lumEp7uNOlnogIavx0EP7hg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 6kRT-qnGtJMv; Mon, 13 May 2024 12:22:42 +0000 (UTC)
+Received: from [172.20.0.79] (unknown [8.9.45.205])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VdJXV0Dx6z6Cnk8s;
+	Mon, 13 May 2024 12:22:33 +0000 (UTC)
+Message-ID: <1b618942-a0fe-45d9-90de-eede429e7284@acm.org>
+Date: Mon, 13 May 2024 06:22:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513105446.297451-1-bbhushan2@marvell.com>
-In-Reply-To: <20240513105446.297451-1-bbhushan2@marvell.com>
-From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Mon, 13 May 2024 17:52:01 +0530
-Message-ID: <CAH-L+nO1up0OwYjiEjTw58a3az96EekXpQTZ7psxHFDYOdD=Ug@mail.gmail.com>
-Subject: Re: [net-next,v2 0/8] cn10k-ipsec: Add outbound inline ipsec support
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, sgoutham@marvell.com, 
-	gakula@marvell.com, sbhatta@marvell.com, hkelam@marvell.com, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	jerinj@marvell.com, lcherian@marvell.com, richardcochran@gmail.com
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000647586061854ef00"
-
---000000000000647586061854ef00
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] rust: block: introduce `kernel::block::mq` module
+To: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
+ Damien Le Moal <Damien.LeMoal@wdc.com>, Hannes Reinecke <hare@suse.de>,
+ Ming Lei <ming.lei@redhat.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Cc: Andreas Hindborg <a.hindborg@samsung.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>,
+ =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
+ Joel Granados <j.granados@samsung.com>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>,
+ Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+ open list <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+ "gost.dev@samsung.com" <gost.dev@samsung.com>
+References: <20240512183950.1982353-1-nmi@metaspace.dk>
+ <20240512183950.1982353-2-nmi@metaspace.dk>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240512183950.1982353-2-nmi@metaspace.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 4:25=E2=80=AFPM Bharat Bhushan <bbhushan2@marvell.c=
-om> wrote:
->
-> This patch series adds outbound inline ipsec support on Marvell
-> cn10k series of platform. One crypto hardware logical function
-> (cpt-lf) per netdev is required for inline ipsec outbound
-> functionality. Software prepare and submit crypto hardware
-> (CPT) instruction for outbound inline ipsec crypto mode offload.
-> The CPT instruction have details for encryption and authentication
-> Crypto hardware encrypt, authenticate and provide the ESP packet
-> to network hardware logic to transmit ipsec packet.
->
-> First patch makes dma memory writable for in-place encryption,
-> Second patch moves code to common file, Third patch disable
-> backpressure on crypto (CPT) and network (NIX) hardware.
-> Patch four onwards enables inline outbound ipsec.
->
-> v1->v2:
->  - Fix compilation error to build driver a module
->  - Use dma_wmb() instead of architecture specific barrier
->  - Fix couple of other compilation warnings
+On 5/12/24 11:39, Andreas Hindborg wrote:
+> +    /// Set the logical block size of the device.
+> +    ///
+> +    /// This is the smallest unit the storage device can address. It i=
+s
+> +    /// typically 512 bytes.
 
-Comments on V1 is not addressed.
+Hmm ... all block devices that I have encountered recently have a
+logical block size of 4096 bytes. Isn't this the preferred logical
+block size for SSDs and for SMR hard disks?
 
-Also, please respect the 24h grace period when posting on netdev:
+> +    /// Set the physical block size of the device.
+> +    ///
+> +    /// This is the smallest unit a physical storage device can write
+> +    /// atomically. It is usually the same as the logical block size b=
+ut may be
+> +    /// bigger. One example is SATA drives with 4KB sectors that expos=
+e a
+> +    /// 512-byte logical block size to the operating system.
 
-https://elixir.bootlin.com/linux/latest/source/Documentation/process/mainta=
-iner-netdev.rst#L399
->
-> Bharat Bhushan (8):
->   octeontx2-pf: map skb data as device writeable
->   octeontx2-pf: Move skb fragment map/unmap to common code
->   octeontx2-af: Disable backpressure between CPT and NIX
->   cn10k-ipsec: Initialize crypto hardware for outb inline ipsec
->   cn10k-ipsec: Add SA add/delete support for outb inline ipsec
->   cn10k-ipsec: Process inline ipsec transmit offload
->   cn10k-ipsec: Allow inline ipsec offload for skb with SA
->   cn10k-ipsec: Enable outbound inline ipsec offload
->
->  .../net/ethernet/marvell/octeontx2/af/mbox.h  |    4 +
->  .../ethernet/marvell/octeontx2/af/rvu_nix.c   |   74 +-
->  .../ethernet/marvell/octeontx2/nic/Makefile   |    1 +
->  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 1068 +++++++++++++++++
->  .../marvell/octeontx2/nic/cn10k_ipsec.h       |  258 ++++
->  .../marvell/octeontx2/nic/otx2_common.c       |   80 ++
->  .../marvell/octeontx2/nic/otx2_common.h       |   25 +
->  .../marvell/octeontx2/nic/otx2_dcbnl.c        |    3 +
->  .../ethernet/marvell/octeontx2/nic/otx2_pf.c  |   19 +-
->  .../marvell/octeontx2/nic/otx2_txrx.c         |   65 +-
->  .../marvell/octeontx2/nic/otx2_txrx.h         |    3 +
->  .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |   10 +-
->  12 files changed, 1563 insertions(+), 47 deletions(-)
->  create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipse=
-c.c
->  create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipse=
-c.h
->
-> --
-> 2.34.1
->
->
+Please be consistent and change "4 KB sectors" into "4 KB physical block
+size".
 
+I think that the physical block size can also be smaller than the
+logical block size. From the SCSI SBC standard:
 
---=20
-Regards,
-Kalesh A P
+Table 91 =E2=80=94 LOGICAL BLOCKS PER PHYSICAL BLOCK EXPONENT field
+-----  ------------------------------------------------------------
+Code   Description
+-----  ------------------------------------------------------------
+0      One or more physical blocks per logical block (the number of
+        physical blocks per logical block is not reported).
+n > 0  2**n logical blocks per physical block
+-----  ------------------------------------------------------------
 
---000000000000647586061854ef00
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+> +impl<T: Operations, S: GenDiskState> GenDisk<T, S> {
+> +    /// Call to tell the block layer the capacity of the device in sec=
+tors (512B).
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBWowggRSoAMCAQICDDfBRQmwNSI92mit0zANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAwODI5NTZaFw0yNTA5MTAwODI5NTZaMIGi
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xHzAdBgNVBAMTFkthbGVzaCBBbmFra3VyIFB1cmF5aWwxMjAw
-BgkqhkiG9w0BCQEWI2thbGVzaC1hbmFra3VyLnB1cmF5aWxAYnJvYWRjb20uY29tMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxnv1Reaeezfr6NEmg3xZlh4cz9m7QCN13+j4z1scrX+b
-JfnV8xITT5yvwdQv3R3p7nzD/t29lTRWK3wjodUd2nImo6vBaH3JbDwleIjIWhDXLNZ4u7WIXYwx
-aQ8lYCdKXRsHXgGPY0+zSx9ddpqHZJlHwcvas3oKnQN9WgzZtsM7A8SJefWkNvkcOtef6bL8Ew+3
-FBfXmtsPL9I2vita8gkYzunj9Nu2IM+MnsP7V/+Coy/yZDtFJHp30hDnYGzuOhJchDF9/eASvE8T
-T1xqJODKM9xn5xXB1qezadfdgUs8k8QAYyP/oVBafF9uqDudL6otcBnziyDBQdFCuAQN7wIDAQAB
-o4IB5DCCAeAwDgYDVR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZC
-aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJj
-YTIwMjAuY3J0MEEGCCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3Iz
-cGVyc29uYWxzaWduMmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcC
-ARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNV
-HR8EQjBAMD6gPKA6hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNp
-Z24yY2EyMDIwLmNybDAuBgNVHREEJzAlgSNrYWxlc2gtYW5ha2t1ci5wdXJheWlsQGJyb2FkY29t
-LmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGP
-zzAdBgNVHQ4EFgQUI3+tdStI+ABRGSqksMsiCmO9uDAwDQYJKoZIhvcNAQELBQADggEBAGfe1o9b
-4wUud0FMjb/FNdc433meL15npjdYWUeioHdlCGB5UvEaMGu71QysfoDOfUNeyO9YKp0h0fm7clvo
-cBqeWe4CPv9TQbmLEtXKdEpj5kFZBGmav69mGTlu1A9KDQW3y0CDzCPG2Fdm4s73PnkwvemRk9E2
-u9/kcZ8KWVeS+xq+XZ78kGTKQ6Wii3dMK/EHQhnDfidadoN/n+x2ySC8yyDNvy81BocnblQzvbuB
-a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
-x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
-VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
-bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIORnBzpuDjNlCkna+yv9DcQzKVDKj+1pufguM50LmEMtMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDUxMzEyMjIxMlowaQYJKoZIhvcNAQkPMVwwWjAL
-BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBVAWxQewlh
-sNECFQXNPi8oFPTqPO4CroYeMieFUrk9GEcYSjD9uHga8WschIVsV0IWuIIwcQ54b6npGxxZDwVn
-wpuMg9VCziPu+r7Fz/fxZQvHbd/A8JpRAtgGjMq6CcmXQ7zktP38KJ40E4ulYIhj28QJbAMIgdHK
-QlOPtu0ejy0qUqkL3/r+xc5wKasi9nC9fv5ouEctrzTqedrvSEz2sNZzUaZhTiHsrd77kI6lAJtt
-LXtWc9kY9krEGcIZd4Jwa5JFemgsF74UAx1hsv+RebvAQp1ghTK0NCvEovMibhRYQL35PH5+AGzm
-xzxZEjTlTZU6J7Fl4Z7ZJPRrgsMr
---000000000000647586061854ef00--
+Why to use any other unit than bytes in Rust block::mq APIs? sector_t
+was introduced before 64-bit CPUs became available to reduce the number
+of bytes required to represent offsets. I don't think that this is still
+a concern today. Hence my proposal to be consistent in the Rust=20
+block::mq API and to use bytes as the unit in all APIs.
+
+Thanks,
+
+Bart.
 
