@@ -1,118 +1,155 @@
-Return-Path: <linux-kernel+bounces-177851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AB08C4553
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:50:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852088C4554
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29A51C22F8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3421F249D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0861AACC;
-	Mon, 13 May 2024 16:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C69210EC;
+	Mon, 13 May 2024 16:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XXfwRxrl"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B0F0/V78"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1040D199B0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB5920DC4
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619008; cv=none; b=hkEAMRPHwdcmQMmIC/RSq+vZZ0wkeBQWVFp9Mts1W16GcUVKBfrp7y+ZqGrUVvHbQFzUjpj4Djtt2SnRppYSZXe7fMj7Vff82N8TWYLrUWktJ1Fqs8LefpxTNpqkPNiOsm5LMYbnTwU/kW43LakFwHjaAmE+8tgZrOHknvxCDkI=
+	t=1715619013; cv=none; b=o+1AWDRvtY50LLLy90acIFWak2J4QAcoLg29Yi+8EsENwL102+RDoHFTGTtcci7xCb1NiI6/TsjjIhtjx2YYF5rAf6F6x6VukeFC7yea0TcC14nU2mi2dhZ12kQyPmCL2UXGyWx2B7CqxoXAb9XLyvUWvVSR2OVda98K4PNiqLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619008; c=relaxed/simple;
-	bh=XyqO5YqD0sOyGP/It50Q154O28J6XCuAIJm0bKJyWNA=;
+	s=arc-20240116; t=1715619013; c=relaxed/simple;
+	bh=kVSNLmMVb3ishC+4udHKioz5ZxxHmqDWUUUuuA8nWc4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JLOr9a3LRVOFxFN6oFx+luZUvE7/fsqvYPGn616EQzgsIro0S760FCQ+SzHNaukuYEnDhE7FSelNzs9C5crsOTenEEEl/+a64BNkShTWKuv27PjcnXR3BjP4j2MtnmEfQyq+BJ+n7yqa7/OBzqw5IpiNr4Tbv+OmnjJ8tJ8btl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XXfwRxrl; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43e12244dc9so10850971cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:50:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715619005; x=1716223805; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XmdRKmR5GwP+S1V0WsXgEf9q8eN7ZBEpbwBCtyyE8ew=;
-        b=XXfwRxrlsZ5ByySL2UuSmKrTxHeuQjBnsnWg9imtGlq9wdt5bBe71ynpLlRZ9DiK6Z
-         LcGXNAriXzqA47D/mBc5uco+89yQrYyeB/Er4ZHJPpk02NmkdyRvPH2e2WBrJZ0WFCo6
-         IVkDY1+x+yY/AxBKppoqkyIOdzmOlsg8V3Ams=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715619005; x=1716223805;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XmdRKmR5GwP+S1V0WsXgEf9q8eN7ZBEpbwBCtyyE8ew=;
-        b=MNLf0X75elh9Lt8LbI+4YthaeQywG66PxT2CvhVfvqrJsusE8gA3phEN9h27DYaHyx
-         EGm4eH6pIr/5Ry7kh+6Jnkt5ksyMoB8zeBnK1Sb9v6e1fNiMBwyv3IZlBZ1aAtwelAMf
-         arzYWKa0X/oT1MJOjMXiK/GGaTr8Nmke5T70B6bHgj80imQdNc0AMCrf569NYeG+2kvD
-         TkLUsoKZQbta1QM6dwQiYtenFwXT0S9IRUYvDH/WuXfLTMQ4Uzi1U+VCJeUYRKEW2UdR
-         qPwhsC73XoT9FdMUq/jT5E78arHptXSEOmjEF8aP48QjqLQKKy+fF7ixOcDLV7YCIY0s
-         +Q4A==
-X-Forwarded-Encrypted: i=1; AJvYcCW32SuSCCocL9+1sb1udGP5JHL44xmupxjGiSA+ynw+Zg0oie38zlMVUx4/1fQy7zwEGpX9yVvujVymRKmEfbZ4HWGpSqrxFiVkyhG4
-X-Gm-Message-State: AOJu0YxzlKukdARKDI6jaXBUO+NdP9yQfS9iqk8+IfnTT+SPO077ovr0
-	fc+qSbO7Nq7fIwBM22nzZHbNfVJnyOiS0wrCU4K9yzrExX3e7s5KvH/tBVgx3rw+ELnTjrsBRps
-	=
-X-Google-Smtp-Source: AGHT+IGylUCFHn8LI/cPuzN4MDFNb7yRjGVq0dPgR57FV1LtY7g1KPyb1plCd/4Br/RnGRyTJZVlPA==
-X-Received: by 2002:ac8:594b:0:b0:43d:eeb2:db4c with SMTP id d75a77b69052e-43dfdd10196mr135789121cf.62.1715619004399;
-        Mon, 13 May 2024 09:50:04 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df56d58ffsm56943011cf.90.2024.05.13.09.50.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 09:50:03 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-43df9ac3ebcso767301cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:50:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXuaBWjb3CigoX7N1jD4i2QqGKZWGjiMX21wHKmhEe7QxIpuBmyBVKcmcQ6TZA0B390lzndQygRbWsSH+NTNxSkgLMZea9Ut4hLS4We
-X-Received: by 2002:a05:622a:5595:b0:437:b4d9:ddc6 with SMTP id
- d75a77b69052e-43e0a22f92fmr4507621cf.27.1715619003150; Mon, 13 May 2024
- 09:50:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=lPBF//zf0LqhWfNARDDWl1Y4T5PX91LSkeSuuyv/LeT4iYPoBrNxOOGdAnqsCmJq0S4d6KIHrx5PtGkPgOns2Lld/xDrNq8EaR1306iA1AKuDWyMX9aq7RPjApoI2PrFHUxChrst1F8SOPGwwGfeXWrj/xRJsbqA74PuRBPoMvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B0F0/V78; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FA4BC4AF0D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:50:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715619013;
+	bh=kVSNLmMVb3ishC+4udHKioz5ZxxHmqDWUUUuuA8nWc4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B0F0/V78joq/yEbhD0tf92fIRwmf60l5/p80nc+aV20iAs3E6+rXxrkcb6OakynYA
+	 DY12ZdC+uJNi2gz0XEKapwThxCA+nX7OmtJrD0/fejcce5672zFYPXlFfFtMpDV/JC
+	 lEI8Fv1zgWo9eSQO08Lam0LNMQXaIeBhEuzXmCzsJ7wjRPfn/skTXVBOSqUgzdGTpJ
+	 dwaxCOFE0NvKt6TTqYHw9yg6utRaXGrOgXHi0Ec9DcQiLcn1aB/0/l/kNPinWAIi7+
+	 taqDQruFTtl7XlVeVNND/EQHCEvM2Hz7mgB4a0gqnT9TzDYzpGH5ZNvXi6a0CPtBUR
+	 F05CKP2vwYK9A==
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-241572c02efso2821631fac.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:50:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVunrd6wyaL3DGiAAd2u9/A5wEGwA8FY/IDB7qUagPIyXk1cspOtuK4NemBfrqb6qafEfw4acRwVGo+rR59kTc9dWc7koZ19OAYHnVB
+X-Gm-Message-State: AOJu0YymQT+2FKKMIx+JN8KzvFZ3xUJDNj03uZ8YNJBcoH3NusDFt5CD
+	L8/NSy12FGIrvw5Tl/BAl5VTS3+xRLXA+PJQ7HsSLW3lOA3MoqS/u9ZPmq0pXlGm1B5saEb2Mjp
+	Rww3hCZnSCrjHaZ7nQ2wLGzTf3pEhyra0zVypmg==
+X-Google-Smtp-Source: AGHT+IG9etvbYxYHR0fWxJzpfBkuEGL2PwOBWLMig6t/Z5/hSFgr76RJXGAeEjvXkZP26WGn9lBOmLwbuqRzLnLTm6Q=
+X-Received: by 2002:a05:6870:4191:b0:23c:6cb5:24f6 with SMTP id
+ 586e51a60fabf-241728f480cmr13074398fac.7.1715619012605; Mon, 13 May 2024
+ 09:50:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240512-dsi-panels-upd-api-v2-0-e31ca14d102e@linaro.org> <20240512-dsi-panels-upd-api-v2-2-e31ca14d102e@linaro.org>
-In-Reply-To: <20240512-dsi-panels-upd-api-v2-2-e31ca14d102e@linaro.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 13 May 2024 09:49:51 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VU7KQohfuOi+hh1Hb+MEYHtCG=BytyK1aGrxhzv85jgw@mail.gmail.com>
-Message-ID: <CAD=FV=VU7KQohfuOi+hh1Hb+MEYHtCG=BytyK1aGrxhzv85jgw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] drm/mipi-dsi: wrap more functions for streamline handling
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
-	Caleb Connolly <caleb.connolly@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	Vinod Koul <vkoul@kernel.org>, Cong Yang <yangcong5@huaqin.corp-partner.google.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240513080243.3952292-1-victor.liu@nxp.com> <4b6e49ee-d2fd-4e54-88d5-ab06d8ebf644@bosc.ac.cn>
+In-Reply-To: <4b6e49ee-d2fd-4e54-88d5-ab06d8ebf644@bosc.ac.cn>
+From: Robert Foss <rfoss@kernel.org>
+Date: Mon, 13 May 2024 18:49:59 +0200
+X-Gmail-Original-Message-ID: <CAN6tsi5uZf57G26PmSiUZMCCPAV1dhWGDWT35HPmpVDevVJoxA@mail.gmail.com>
+Message-ID: <CAN6tsi5uZf57G26PmSiUZMCCPAV1dhWGDWT35HPmpVDevVJoxA@mail.gmail.com>
+Subject: Re: drm/bridge: adv7511: Attach next bridge without creating connector
+To: Sui Jingfeng <suijingfeng@bosc.ac.cn>
+Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	dmitry.baryshkov@linaro.org, biju.das.jz@bp.renesas.com, aford173@gmail.com, 
+	bli@bang-olufsen.dk, robh@kernel.org, jani.nikula@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, May 13, 2024 at 6:30=E2=80=AFPM Sui Jingfeng <suijingfeng@bosc.ac.c=
+n> wrote:
+>
+> Hi,
+>
+>
+> On 5/13/24 16:02, Liu Ying wrote:
+> > The connector is created by either this ADV7511 bridge driver or
+> > any DRM device driver/previous bridge driver, so this ADV7511
+> > bridge driver should not let the next bridge driver create connector.
+> >
+> > If the next bridge is a HDMI connector, the next bridge driver
+> > would fail to attach bridge from display_connector_attach() without
+> > the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+> >
+> > Add that flag to drm_bridge_attach() function call in
+> > adv7511_bridge_attach() to fix the issue.
+> >
+> > This fixes the issue where the HDMI connector bridge fails to attach
+> > to the previous ADV7535 bridge on i.MX8MP EVK platform:
+> >
+> > [    2.216442] [drm:drm_bridge_attach] *ERROR* failed to attach bridge =
+/hdmi-connector to encoder None-37: -22
+> > [    2.220675] mmc1: SDHCI controller on 30b50000.mmc [30b50000.mmc] us=
+ing ADMA
+> > [    2.226262] [drm:drm_bridge_attach] *ERROR* failed to attach bridge =
+/soc@0/bus@30800000/i2c@30a30000/hdmi@3d to encoder None-37: -22
+> > [    2.245204] [drm:drm_bridge_attach] *ERROR* failed to attach bridge =
+/soc@0/bus@32c00000/dsi@32e60000 to encoder None-37: -22
+> > [    2.256445] imx-lcdif 32e80000.display-controller: error -EINVAL: Fa=
+iled to attach bridge for endpoint0
+> > [    2.265850] imx-lcdif 32e80000.display-controller: error -EINVAL: Ca=
+nnot connect bridge
+> > [    2.274009] imx-lcdif 32e80000.display-controller: probe with driver=
+ imx-lcdif failed with error -22
+> >
+> > Fixes: 14b3cdbd0e5b ("drm/bridge: adv7511: make it honour next bridge i=
+n DT")
+> > Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> > ---
+> >   drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu=
+/drm/bridge/adv7511/adv7511_drv.c
+> > index dd21b81bd28f..66ccb61e2a66 100644
+> > --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> > +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+> > @@ -953,7 +953,8 @@ static int adv7511_bridge_attach(struct drm_bridge =
+*bridge,
+> >       int ret =3D 0;
+> >
+> >       if (adv->next_bridge) {
+> > -             ret =3D drm_bridge_attach(bridge->encoder, adv->next_brid=
+ge, bridge, flags);
+> > +             ret =3D drm_bridge_attach(bridge->encoder, adv->next_brid=
+ge, bridge,
+> > +                                     flags | DRM_BRIDGE_ATTACH_NO_CONN=
+ECTOR);
+>
+> As a side note, I think, maybe you could do better in the future.
+>
+> If we know that the KMS display driver side has the HDMI connector
+> already created for us, we should pass DRM_BRIDGE_ATTACH_NO_CONNECTOR
+> from the root KMS driver side. Which is to forbidden all potential
+> drm bridge drivers to create a connector in the middle.
+>
+> The KMS display driver side could parse the DT to know if there is
+> a hdmi connector, or merely just hdmi connector device node, or
+> something else.
+>
+> However, other maintainer and/or reviewer's opinion are of cause
+> more valuable. I send a A-b because I thought the bug is urgency
+> and it's probably more important to solve this bug first. And
+> maybe you can Cc: <stable@vger.kernel.org> if you like.
+>
 
-On Sat, May 11, 2024 at 4:00=E2=80=AFPM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> Follow the pattern of mipi_dsi_dcs_*_multi() and wrap several existing
-> MIPI DSI functions to use the context for processing. This simplifies
-> and streamlines driver code to use simpler code pattern.
->
-> Note, msleep function is also wrapped in this way as it is frequently
-> called inbetween other mipi_dsi_dcs_*() functions.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/gpu/drm/drm_mipi_dsi.c | 210 +++++++++++++++++++++++++++++++++++=
-++++++
->  include/drm/drm_mipi_dsi.h     |  21 +++++
->  2 files changed, 231 insertions(+)
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Robert Foss <rfoss@kernel.org>
 
