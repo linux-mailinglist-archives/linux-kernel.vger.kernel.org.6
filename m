@@ -1,270 +1,241 @@
-Return-Path: <linux-kernel+bounces-177180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD21A8C3B1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 705A48C3B1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D91A2815D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:56:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B42B2815D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B54A146592;
-	Mon, 13 May 2024 05:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584C414658F;
+	Mon, 13 May 2024 06:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jibfKuJV"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2075.outbound.protection.outlook.com [40.107.247.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BicIse0b"
+Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302C52E827
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715579790; cv=fail; b=exiEB/7QVpPQtnHkT3Or74NxeFdvvZEuvXHCUQCSK5cUVXtxSF2iYQwyeQVYpoTSL1mbTxkx4nHm2vZXlJISDYddA5v1Y+YsvtVaxlYDEacQQFhCyNrzYYvNUbBNaTMCjfGfXe/UENVkaf8TTtZrMriSHsG3mqp0ZYp0yzivG7Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715579790; c=relaxed/simple;
-	bh=/m7YqPQaH/9gMRTH2MuEHh2WwCBUbAQbITP56Maivds=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZocbtHPDmQP10O40qvZQ6JemcJSGCxaMa9wbAFRQf3nNbvBKrfls3nZKBxjfOg26gswn5KwyOoPiDOIET98vFWeNvmDY/4tquHqiEPG2XrfCEC2HRctaug1zNigWMWUi66gZ7zz+52HAQ4ucott8s7vEkbuYNs320so+AN0J0aM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=jibfKuJV; arc=fail smtp.client-ip=40.107.247.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YKIXbm1nm3RlTo0HdClfTRfnWR6/8F5HEeFxadw9VaqjjPXex0cJdfjWOlFK10ysw88JgteinU+PTJbx923zGZ8Uy+PtITkcwr5NjSoQyKm/AHy2+OSTWDTcDtmpfAyeYWf2saTABdRRptt6D9CuSrHbVfaUed2w9JXvNTi7Io3U3NCQJPsPr8cV40JoBDA20aWJ1tlAECwX9YIgSmyYf9dJE3x/QOMHvawVDHn3CYbnfuM7OLg2eNOjcOUkkFCNZlsUcXbZ9Xap/HsDjR/pSt+dEeuBFPXo2qdiWaBtRpIC0UPV/YXBMveWNAtEHSv0LWfvmxF0sibXmcJasn2YUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Oh/JApK8tLnIkZENMUl4JPNQy+hfN8rstZKGhAN8NZk=;
- b=YguzHof7XIBoH6cw246gU53iwq+ODsFNx1lTgPU02CBewIWMZD7CuF04SUQl8n8nv1oqG4JkCAt1/UM0+S6CFC5irmhDvdUcUOILz4NIbLYm0lobFoo9OrpM2Ec1IwXJcmWPnZ32/I036JtFAx+MdgPKIpa/kc6dpNbtWdWChqOI1r2miwmBUslRCpP6oEh0jfGbWkOBJywnSt/WSl3UxR7uXlyI31pPBSzLcRhBMPSyBUdWzXGas56Un0vx4fnSqF6ny+FfI79NLMUbLe0dGHJ7LMgtjPVFf+YqelCnSg7xcYhAKKysxbpiyiZ4F0HAS//re4WgpXZ41o8Ej6Ijrg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Oh/JApK8tLnIkZENMUl4JPNQy+hfN8rstZKGhAN8NZk=;
- b=jibfKuJVZIxovJhStSOSecGsl9EIPAIa3rKllkxrtf0gt7fbN7ZumdqtCeAM+l86/fjYlBEt1H8OpxfDXNZpLHSB1nzW/0Wq2LBMSvdeL6oOWc7Hu1pEC9txIQd8QmYB/L1EGgqFzzrL0sXOgiUxZ+1rOEiK8bpAIiy5sKz8UNU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by PA4PR04MB7839.eurprd04.prod.outlook.com (2603:10a6:102:c9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 05:56:24 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 05:56:24 +0000
-Message-ID: <c1a69a18-4db2-4625-80c2-a7536347e15f@nxp.com>
-Date: Mon, 13 May 2024 13:56:40 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: imx: Remove redundant checks on existence of
- bridge->encoder
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- Maxime Ripard <mripard@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240511150816.326846-1-sui.jingfeng@linux.dev>
-Content-Language: en-US
-From: Liu Ying <victor.liu@nxp.com>
-In-Reply-To: <20240511150816.326846-1-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR03CA0105.apcprd03.prod.outlook.com
- (2603:1096:4:7c::33) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2D44C81
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715580036; cv=none; b=ljeHP2z2oxC+ETkBERXEbEd2zXNVjWGSYDBYjr2PfcgO0nvuzdG9dsIoSCdHwZz9kv6xWvxehTM2HvjWIX+iZj5hsfqM2YcgMWsv7PNh8NbTYQKzZhw6C4zx9j5T0LzR+6HbMigplgWoBx0wGRSaju+iuSqiZvohR9iq7kAEqCQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715580036; c=relaxed/simple;
+	bh=U6jyMIMYyMvRLZrQ+/DKHJ/d/UnO6SKxH0N3kkgzAGA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ihw7Gp/P3GwdFxnDRyoA3rqc1Wj5DWry6C5CMiZxUYgMO204NV8YcqfsqR7SAc+761oaWBmJYQgaM+EIK+Vr/VNzpT7/ZCCpFgHgNBQ8Bf6FGg8ckR4ocK/jlkDe9lWYJd0dXRyy/vae2sKWXjDfXvj1uWgnfAtyoGqTaiJDHg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BicIse0b; arc=none smtp.client-ip=209.85.210.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-6f447260f9dso3095655b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 23:00:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715580034; x=1716184834; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A+UWE13EKJKc2jsx12DqNcqiTCBkf/xDYNgDW2I4NGM=;
+        b=BicIse0bv15L/OaAXm0fyxAHUrl8BG+j1uUsoQ5zXzv5lui5wM/WndKgWuT6S8PY6T
+         NbRYzXU3Np3BNvPy2pIb1aIxPVxKPzN+vlIVa9E76ikyH6o7IP+W23YxaA0FyRKU6fln
+         5sRgQEAJ6gYsC/Zpv7RypZj3DFBTDTdbj2Lk/ywexLe20PNqS7vIWPYRHVJiqsNgV9NK
+         THHZZDx/JCw2mbAEYhw+FzExraZP0U2qJaljV5jQiPzvNsIE1wjIUzGyjn+TkFAfzxAw
+         s8SWrf/tVDoNLfNHW/U+kYpYlhlQlJ0ujd9gXaeKpV5JBSLOi+bDCJx5Bycw9jyqt6Nw
+         Yr0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715580034; x=1716184834;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A+UWE13EKJKc2jsx12DqNcqiTCBkf/xDYNgDW2I4NGM=;
+        b=EEksMoEBB4SW6PhrT7szzHEw+1EbcAWanKA9y89su08ZL3n5HJOfGgcT/YsS63qowA
+         UYPXmTB3MghI1NdL1RUwZbMjUpfnBEKk+c+JCbx7ReDwhLwbfoqTBNiUELIZlSTv8BIs
+         IoDpn+lagKHgSFd6K7zkWDv7tkL59l4Nfr/n1jf47CdvkEkFcvIt7rZR+aiWwrm1cqcB
+         mr1EkrV0NcipB8reUsYvu8HYfV5uKziHgMA7Mi0Ygebo9D8NzKoC8p1MX0qHxqNptDmJ
+         M3lK6jDojoBp1KQSuLvUWgxZ3TnxiSlbzRGEJm2ttm6Sq4BXZndXm71cc2oHfz3iEtlh
+         fFUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCSZXw41F7eAb3OOfWr2jNDIXp2ros3l8W6wBr/KF/GY+KEiIMV+9wPO8UCY4GZdD0DAkIGOa9km+pjEhDqCYs3mbHwy+BsS24pr1g
+X-Gm-Message-State: AOJu0Yyn9Y1f/6TcjtMs0wg9e6CBmlah6jKX+MQfUaKCzFDiFRZbp8t/
+	PABPAuOie2eB+JpI0h65Tt+H6USANwhFFoGmmeX1sYCG4hv/5rAn
+X-Google-Smtp-Source: AGHT+IFgXfG6zZft0seFQcj/0hGAntlM5b4QIRh98rM7ciwNpamlMxzfQnNQCIrlaVzeReaaX3tY9A==
+X-Received: by 2002:a05:6a20:12d4:b0:1a5:6a85:8ce9 with SMTP id adf61e73a8af0-1afde0a8da9mr9520068637.12.1715580034317;
+        Sun, 12 May 2024 23:00:34 -0700 (PDT)
+Received: from localhost.localdomain ([193.203.214.57])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67105649fsm7106812a91.6.2024.05.12.23.00.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 23:00:33 -0700 (PDT)
+From: xu xin <xu.xin.sc@gmail.com>
+X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
+To: chengming.zhou@linux.dev
+Cc: aarcange@redhat.com,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	hughd@google.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	shr@devkernel.io,
+	xu.xin16@zte.com.cn,
+	zhouchengming@bytedance.com,
+	si.hao@zte.com.cn
+Subject: Re: [PATCH v2 2/2] mm/ksm: fix ksm_zero_pages accounting
+Date: Mon, 13 May 2024 06:00:29 +0000
+Message-Id: <20240513060029.651050-1-xu.xin16@zte.com.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240513-b4-ksm-counters-v2-2-f2520183a8ca@linux.dev>
+References: <20240513-b4-ksm-counters-v2-2-f2520183a8ca@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PA4PR04MB7839:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ae3c044-4b2c-49e4-c39a-08dc73116bdd
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|7416005|366007;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?eTNhdzFDMWxlWCtiK2ZONmliVlptZzdVS1R0WERSeFBDcEtpQXlPT1kyQUl6?=
- =?utf-8?B?T0x0N3V5M01zYVR2RWFkQnpzYk81bUh6d0JPS3BKelhkNFdSZzhkamc0Q3lD?=
- =?utf-8?B?QisxUjd2aXdVV0RvZW5HN0VJLzcwamJLOWVVd0l3UlMwZ1ZoK05yMTFrbDRw?=
- =?utf-8?B?OU96c1Z3enN2V1ovNG5hc0lNUnJiSmVsOHQ0U0d3UnBQZHhUaFU5RFgyU3Uz?=
- =?utf-8?B?VmtYY1NibXB4TURtSXYrd2lyeit1VTc0aGFHQk9mVzJLdjdVMFRZZEErMmRw?=
- =?utf-8?B?YkRHVHJrS2g4dXVuOEp4MEJ3Vkgwc0h3bjNFdExXby9IUXlqUWsrSUR0Kzlz?=
- =?utf-8?B?cGZjOVRlWXhwaHpVSUNrQ24wdE5KYTgyOUpuOHhnUG5wNDRRWXBSZ0dPMk4v?=
- =?utf-8?B?U1MzY1BYS2txRTgwdm1yL01POVdPM29yZUpuM3VvR3BwazBGYm5FaE05dE1h?=
- =?utf-8?B?OFRxRGxUem16WW5wKzZDVHhvWEIyZ1IyWldIOHVSZkEyNlFDbVRNYVhxVGpl?=
- =?utf-8?B?Nm1Fb2ZweTE5UEczejU0RXRlZkJVcHVVZWE4ZjRsTnJrTnc5MzBMVGdJMStC?=
- =?utf-8?B?VVJ3TXlSYmY4Y2thWDF0bGRsaE1QdTM0dHhuS1JYRHVzWFp5blRuWVBQVlB4?=
- =?utf-8?B?MEEraFNzb2JrYlVGZUVWcmh4d2xPWFR5M2MvU1NtY0QzMkVIdUs3aHpyZkhL?=
- =?utf-8?B?YTU5NUVwZ29nUnVIS3UzMXFaRk5USE0veXg0UVJaeFpLdTd5b0pPZHdkY1Ju?=
- =?utf-8?B?VWJQQ0U4K0xQRitqMEs3MitYbEVFamVHc2tMMklZWUNmaW9hRzdXVjVwU3JM?=
- =?utf-8?B?eG5wQ2psT0twWEZwLytsUUJWWE9QcXcwTWQ2S2o4M3BKVnVOVHlwN2drTlZk?=
- =?utf-8?B?K2U3VWRYYlZHLy9hN2llajBwNURMVXhiNVM4eFppLzlBb3JJbm5DQ3ZZVmlq?=
- =?utf-8?B?enJ3UmN2NEp4VXdwWG5oY0lEQWJoNkxwem5jVkM4SWhrOWNobnpZTEd4UDJr?=
- =?utf-8?B?VWFyZ3ZWNW5NM1M4R255YmhmUVNPd1lDNVhLbVNKamRraVFmU2E3ZmFydSs4?=
- =?utf-8?B?bWJpYVBGZUJoWWs5Q0JEK3UwWVg2VStscEowNEZXb2JVbHptU1dWbkxncWcx?=
- =?utf-8?B?RnFLMVQ3Ukh6NW1jbW8vOEVnM3hTcG5GSnBUQnBjc3pPVUlmY2V1aERVN0ZI?=
- =?utf-8?B?WDcrQ0VnSS9pTWVyUTVaZC9hOGNOdkJ5REFhL1JhUlcyeSs4MWp1bW9oUUth?=
- =?utf-8?B?aGR3V0FPUXFCaVRoUTFNbUpVbDlLN2tINWlteWdQZXRBVkREQXpIaUJLQ3RL?=
- =?utf-8?B?aTBLYlNoem52bk9JTC92TDB3L2dsWm50OG1qZDZHdWlOazh3Z0VyWkVET2ox?=
- =?utf-8?B?S0xQRjBlRU50NVN4c0pMK3JmNUJzWTYwZllDYnRFSmdiQ0JBbUhhRXRYd0NM?=
- =?utf-8?B?RFJnUnpIWkRySTlPV1BsVUxrVHJlcVpUUzc1SjZDWFNsVG13RFFTdHl1TlJy?=
- =?utf-8?B?Mld0Q29XbFpDcm4vTDBaMDRSWWpMaVlvWk5zN0FaUm9uV2ZiTzUyQS9pQjVK?=
- =?utf-8?B?NTVqZjhKcjlRN0oycUxWOVlpdUR5SmxsTGpOSGhyeHdiMUoxd2R5Y1F5dU1k?=
- =?utf-8?B?cWVNZ1BEV3ZNd2hWNEJoUnpXblJsUE13dU8ycDBNRzRjTnVOQU5FNzlDaW9F?=
- =?utf-8?B?SW52cWpwV0JEbjB5UGg1ZmxVd2ZML01Bb3N0N2lKOHVkYlVsYzJaRVlBPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(7416005)(366007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?bXVMUGVRTFhIcUV6TDYySGFRcGxML0p3MnQ4cHJnQ3ZqaTZTakFjaVFONnk3?=
- =?utf-8?B?dVgrY05IQ3hsU1ZsT3pJNG15Yk1OcDlLdzlOcG5IaFFZa2o5NWM1VlY2U1FX?=
- =?utf-8?B?bUFVdjdBQTlqRHF6aXhpRnhjb0laYm1Fd3lGR0FGRWYrWk9QdXM5VDlyWk03?=
- =?utf-8?B?Mjh2cHgxZExzM0tWSFJKS1ArcGFoSWJ3RU14NmJzbER0eWRwK0pqVHh5YjV6?=
- =?utf-8?B?Tyt1T3U2b3FNY0VpVVRjYVE3NytBOWV0MDh4eHhFNTJ3QjBzNzlsYlNScFl4?=
- =?utf-8?B?Rk5tNTh1c0kwQ3NLTDA4ZEFFbFlTOVQ1T2FTa29qd3dDdE94Nk5LNzUxWVZO?=
- =?utf-8?B?aDBHa1I5OTlpTkM4cnl5TXRRcFJJU1FEbExUNlpVQ1hjNWZsaStUOHF3Mmh6?=
- =?utf-8?B?d0M4dHV4OWZueEF0Q29WTVRnZWVsWkU2Mi9QSU5rcTl3Z3JUZ3o1RFlZOW5t?=
- =?utf-8?B?Q1grUmd0TnlOeUZCYjdPbmQxME84OXV3OTd0RE5Hd21TNjllWGx1bFU5eE92?=
- =?utf-8?B?dEwxdzdQaDlScjd1ZjhzbzFEWm15bWd5Rk5INFVsWEp6YzJtNEZPQUNqRUxJ?=
- =?utf-8?B?UDR6NlFzV1hrMy8rQkJLcWdqU3lCNG1TL2pzV3c2QmJvMDNPcFdUcWN3d3VF?=
- =?utf-8?B?NmdpQ1ZqcStFem5iTDY3Vld2TklQYS9sSldpN1NBcWFMbmxZTmtzM3ZtVVRG?=
- =?utf-8?B?RDVWYTdXL29Mb3ZVZklvWW5lZWIvUHRmK2NWMG5GRS9lNklzNVdENnd1WFNZ?=
- =?utf-8?B?V05hbCsrVWdNVlZhVkROblU4NGpDWWYva3hKc0dnVEMwdHZqSFErNEZiYlVB?=
- =?utf-8?B?MFNUYlBvRGRaUWZ4a2dzdXlzV0JLZnBSb3AzV3RXY0dhTXlXdXlSSy9NZmJ5?=
- =?utf-8?B?dkd3SVBNTDdtcEk1Y0JxZVVWNzNPc29FQVFZY25LMkFzMU1COWMzbGhwd0dY?=
- =?utf-8?B?aE45dFZrelcyZXd2NEZ6eE42eWNhNW5kRXlUYmtaTmI2NTY2ZysvemoybDRS?=
- =?utf-8?B?aWtVSWI0MUFNUk12R2pzMUlkekg4RnBmN09hU21hVmswR0dLRWlnTE5icjRo?=
- =?utf-8?B?azRVbGFxWDkvaVA2YXppa1pHTHZBTWwvamxzQVZ0eGxoMTF2ZWxLM1FIZGRl?=
- =?utf-8?B?RE0zRkRKNEY0Y2p3cXRlUWRmdm5jVTNYRnJjTGY3T3A3dGltSElLNFhnVlU2?=
- =?utf-8?B?cWR2MEY5dityVisvZm50TGo0Y3BxVGFDL3hEVWJ6K2lobEhTQUZ4YkQvejhR?=
- =?utf-8?B?SjZQenRHUnBMaG9pNVBZeCsvRXFidkJHdk1uTm1LL2VkR3pHMzFBVzg4Z0Fi?=
- =?utf-8?B?TGRNSFRUTTVOQWpKRDdlNWdmN2FVWlV0T3VxTG0zWUJ1QmFUY3dKMlIraXo2?=
- =?utf-8?B?ek5KcDIydDZXL2lRT3orazlIUWdzMFVGdWxyeW1rNEt1TFp2UHNXZXpTSm9V?=
- =?utf-8?B?NUs0QS9jZEs3TmJVMjlVbDdaNStRTkJBaVNVNi9VQkRRNUVvcGlvR09NNzE4?=
- =?utf-8?B?QTZ4dVRLRFc3WjFPQjZqMHhucTdSWlZ1aXFDMWVYOE5ZRm1EeVZYQ1BxaUp0?=
- =?utf-8?B?TDBtc1h5U0ZMZmpWYS9kVWxFOHNHd0djRW1sL3ZMMjJyQnVWMDR2RjUzeDd3?=
- =?utf-8?B?V01FOFFhbkFVdW5obXQ2Z0tmNGNxdVVNWVJ0YitRbHBxOGRtdWVQWGl0aXll?=
- =?utf-8?B?cWFjNCtkZ0tRY3N4dTJYR1kza0JZWFRaWDJPR0F1eU1nQkJrb1Z4Nm45V2Fs?=
- =?utf-8?B?YU5BMVJPYm55d1VtNmNDRWY3UGJ3TzBiVDc4eVM3SEFETGpsYzlHY2VNU1dI?=
- =?utf-8?B?WklHUGtYdllWYS9yTDlWT3VqWDlGbkF4NEtmSHo4b25uRGprVDJ6elhYVldJ?=
- =?utf-8?B?UlB2dFR3RkI1cFJTZGUwN3hWVjZhdEJSVlpETmcvSmhOMHBTSlRnTUJrOXJo?=
- =?utf-8?B?RTZreDlMNDQ0ZDJqbGE3cDhQVWViT1BOdGM0eGNHODNIbjZPRjJTRTIrRnJt?=
- =?utf-8?B?aW9EMSt6TUtzcUZNa3lHaFYxYkRPZy92V1VtWTFSc1RDL1RQcTQ0Y2ZuWnF5?=
- =?utf-8?B?bXM1ZVl1SGY4N2FER3k1L2daNDgvaXZHWit4VUg3Z2xWWmpQRjFvOXg3cnVH?=
- =?utf-8?Q?rP67eQc+R5HXZvnDPDppwyAgo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ae3c044-4b2c-49e4-c39a-08dc73116bdd
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 05:56:24.3905
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rf1XQCkUFNjknnCSlJE/FiaCK0g8ZO6syUQvkCelxOrB1Xv9YW9oXV1O+vk5yct+I9dA2+TXmC8QMx6EiVDkSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7839
+Content-Transfer-Encoding: 8bit
 
-On 5/11/24 23:08, Sui Jingfeng wrote:
-> The check on the existence of bridge->encoder on the implementation layer
-> of drm bridge driver is not necessary, as it has already been done in the
-> drm_bridge_attach() function. It is guaranteed that the .encoder member
-> of the drm_bridge instance is not NULL when various imx_xxx_bridge_attach()
-> function gets called.
+> We normally ksm_zero_pages++ in ksmd when page is merged with zero page,
+> but ksm_zero_pages-- is done from page tables side, which can't protected
+> by the ksmd mutex.
 
-Nit:
-ldb_bridge_attach_helper() doesn't follow the fashion of
-imx_xxx_bridge_attach(), not even the other bridge attach
-functions touched by this patch do.  Maybe, reword as
-"when various i.MX specific bridge attach functions are
-called."
+  "cant protected" -> "can't be protected".
 
-Regards,
-Liu Ying
+  But It's better to say  "where there is no any accessing protection of
+  ksm_zero_pages" because ksmd mutex is to protect the flag of ksm_run, not to
+  protect the counters of KSM.
 
+
+  Anyway, The following code looks OK to me.
 > 
-> Remove the redundant checking codes "if (!bridge->encoder) { ... }".
+> So we can read very exceptional value of ksm_zero_pages in rare cases,
+> such as -1, which is very confusing to users.
 > 
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
+> Fix it by changing to use atomic_long_t, and the same case with the
+> mm->ksm_zero_pages.
+> 
+> Fixes: e2942062e01d ("ksm: count all zero pages placed by KSM")
+> Fixes: 6080d19f0704 ("ksm: add ksm zero pages for each process")
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 > ---
->  drivers/gpu/drm/bridge/imx/imx-ldb-helper.c         | 5 -----
->  drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c | 5 -----
->  drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c     | 5 -----
->  drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c        | 5 -----
->  4 files changed, 20 deletions(-)
+>  fs/proc/base.c           |  2 +-
+>  include/linux/ksm.h      | 17 ++++++++++++++---
+>  include/linux/mm_types.h |  2 +-
+>  mm/ksm.c                 | 11 +++++------
+>  4 files changed, 21 insertions(+), 11 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/imx/imx-ldb-helper.c b/drivers/gpu/drm/bridge/imx/imx-ldb-helper.c
-> index 6967325cd8ee..9b5bebbe357d 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx-ldb-helper.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx-ldb-helper.c
-> @@ -116,11 +116,6 @@ int ldb_bridge_attach_helper(struct drm_bridge *bridge,
->  		return -EINVAL;
->  	}
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 18550c071d71..72a1acd03675 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -3214,7 +3214,7 @@ static int proc_pid_ksm_stat(struct seq_file *m, struct pid_namespace *ns,
+>  	mm = get_task_mm(task);
+>  	if (mm) {
+>  		seq_printf(m, "ksm_rmap_items %lu\n", mm->ksm_rmap_items);
+> -		seq_printf(m, "ksm_zero_pages %lu\n", mm->ksm_zero_pages);
+> +		seq_printf(m, "ksm_zero_pages %ld\n", mm_ksm_zero_pages(mm));
+>  		seq_printf(m, "ksm_merging_pages %lu\n", mm->ksm_merging_pages);
+>  		seq_printf(m, "ksm_process_profit %ld\n", ksm_process_profit(mm));
+>  		mmput(mm);
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index 52c63a9c5a9c..11690dacd986 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -33,16 +33,27 @@ void __ksm_exit(struct mm_struct *mm);
+>   */
+>  #define is_ksm_zero_pte(pte)	(is_zero_pfn(pte_pfn(pte)) && pte_dirty(pte))
 >  
-> -	if (!bridge->encoder) {
-> -		DRM_DEV_ERROR(ldb->dev, "missing encoder\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	return drm_bridge_attach(bridge->encoder,
->  				ldb_ch->next_bridge, bridge,
->  				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c
-> index d0868a6ac6c9..e6dbbdc87ce2 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c
-> @@ -119,11 +119,6 @@ static int imx8qxp_pc_bridge_attach(struct drm_bridge *bridge,
->  		return -EINVAL;
->  	}
+> -extern unsigned long ksm_zero_pages;
+> +extern atomic_long_t ksm_zero_pages;
+> +
+> +static inline void ksm_map_zero_page(struct mm_struct *mm)
+> +{
+> +	atomic_long_inc(&ksm_zero_pages);
+> +	atomic_long_inc(&mm->ksm_zero_pages);
+> +}
 >  
-> -	if (!bridge->encoder) {
-> -		DRM_DEV_ERROR(pc->dev, "missing encoder\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	return drm_bridge_attach(bridge->encoder,
->  				 ch->next_bridge, bridge,
->  				 DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-> index ed8b7a4e0e11..1d11cc1df43c 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c
-> @@ -138,11 +138,6 @@ static int imx8qxp_pixel_link_bridge_attach(struct drm_bridge *bridge,
->  		return -EINVAL;
+>  static inline void ksm_might_unmap_zero_page(struct mm_struct *mm, pte_t pte)
+>  {
+>  	if (is_ksm_zero_pte(pte)) {
+> -		ksm_zero_pages--;
+> -		mm->ksm_zero_pages--;
+> +		atomic_long_dec(&ksm_zero_pages);
+> +		atomic_long_dec(&mm->ksm_zero_pages);
 >  	}
+>  }
 >  
-> -	if (!bridge->encoder) {
-> -		DRM_DEV_ERROR(pl->dev, "missing encoder\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	return drm_bridge_attach(bridge->encoder,
->  				 pl->next_bridge, bridge,
->  				 DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-> diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c b/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c
-> index 4a886cb808ca..fb7cf4369bb8 100644
-> --- a/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c
-> +++ b/drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c
-> @@ -58,11 +58,6 @@ static int imx8qxp_pxl2dpi_bridge_attach(struct drm_bridge *bridge,
->  		return -EINVAL;
->  	}
+> +static inline long mm_ksm_zero_pages(struct mm_struct *mm)
+> +{
+> +	return atomic_long_read(&mm->ksm_zero_pages);
+> +}
+> +
+>  static inline int ksm_fork(struct mm_struct *mm, struct mm_struct *oldmm)
+>  {
+>  	if (test_bit(MMF_VM_MERGEABLE, &oldmm->flags))
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 24323c7d0bd4..af3a0256fa93 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -985,7 +985,7 @@ struct mm_struct {
+>  		 * Represent how many empty pages are merged with kernel zero
+>  		 * pages when enabling KSM use_zero_pages.
+>  		 */
+> -		unsigned long ksm_zero_pages;
+> +		atomic_long_t ksm_zero_pages;
+>  #endif /* CONFIG_KSM */
+>  #ifdef CONFIG_LRU_GEN_WALKS_MMU
+>  		struct {
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 0f9c491552ff..6f461411d070 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -296,7 +296,7 @@ static bool ksm_use_zero_pages __read_mostly;
+>  static bool ksm_smart_scan = true;
 >  
-> -	if (!bridge->encoder) {
-> -		DRM_DEV_ERROR(p2d->dev, "missing encoder\n");
-> -		return -ENODEV;
-> -	}
-> -
->  	return drm_bridge_attach(bridge->encoder,
->  				 p2d->next_bridge, bridge,
->  				 DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-
+>  /* The number of zero pages which is placed by KSM */
+> -unsigned long ksm_zero_pages;
+> +atomic_long_t ksm_zero_pages = ATOMIC_LONG_INIT(0);
+>  
+>  /* The number of pages that have been skipped due to "smart scanning" */
+>  static unsigned long ksm_pages_skipped;
+> @@ -1429,8 +1429,7 @@ static int replace_page(struct vm_area_struct *vma, struct page *page,
+>  		 * the dirty bit in zero page's PTE is set.
+>  		 */
+>  		newpte = pte_mkdirty(pte_mkspecial(pfn_pte(page_to_pfn(kpage), vma->vm_page_prot)));
+> -		ksm_zero_pages++;
+> -		mm->ksm_zero_pages++;
+> +		ksm_map_zero_page(mm);
+>  		/*
+>  		 * We're replacing an anonymous page with a zero page, which is
+>  		 * not anonymous. We need to do proper accounting otherwise we
+> @@ -3373,7 +3372,7 @@ static void wait_while_offlining(void)
+>  #ifdef CONFIG_PROC_FS
+>  long ksm_process_profit(struct mm_struct *mm)
+>  {
+> -	return (long)(mm->ksm_merging_pages + mm->ksm_zero_pages) * PAGE_SIZE -
+> +	return (long)(mm->ksm_merging_pages + mm_ksm_zero_pages(mm)) * PAGE_SIZE -
+>  		mm->ksm_rmap_items * sizeof(struct ksm_rmap_item);
+>  }
+>  #endif /* CONFIG_PROC_FS */
+> @@ -3662,7 +3661,7 @@ KSM_ATTR_RO(pages_skipped);
+>  static ssize_t ksm_zero_pages_show(struct kobject *kobj,
+>  				struct kobj_attribute *attr, char *buf)
+>  {
+> -	return sysfs_emit(buf, "%ld\n", ksm_zero_pages);
+> +	return sysfs_emit(buf, "%ld\n", atomic_long_read(&ksm_zero_pages));
+>  }
+>  KSM_ATTR_RO(ksm_zero_pages);
+>  
+> @@ -3671,7 +3670,7 @@ static ssize_t general_profit_show(struct kobject *kobj,
+>  {
+>  	long general_profit;
+>  
+> -	general_profit = (ksm_pages_sharing + ksm_zero_pages) * PAGE_SIZE -
+> +	general_profit = (ksm_pages_sharing + atomic_long_read(&ksm_zero_pages)) * PAGE_SIZE -
+>  				ksm_rmap_items * sizeof(struct ksm_rmap_item);
+>  
+>  	return sysfs_emit(buf, "%ld\n", general_profit);
+> 
+> -- 
+> 2.45.0
+> 
 
