@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-177811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C90898C44E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:15:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DEFD8C44EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8617C282AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:15:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 286B8B2240A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DEF0157A5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6774158849;
 	Mon, 13 May 2024 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUDtJgHb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5JwiLaM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9620E15687D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A42157A56
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715616907; cv=none; b=CUvXK6CKgoTXFTglajUpHPRhp1cqk813fKIAAhbnjRgu5OZEEx48oW6+Y6NIS8SYwZW4bUVORpOtIwW/5mKfPknCIlEVlll0mrnwJGnPCaybP5IwYlQqoemlYf6O8GBhnl1ijrK/OIOj4mQZKsmqtX3r6Zow/mIaCBA671qI05Y=
+	t=1715616908; cv=none; b=FP0g6bD6yL1fiLIbiUUXLq0QYPLSyfBKBkiYwZwnFNH1d0+7RM909YjCqQlC/4rsvMyOMvDLbFahiWKQ3REZwIhqP0XWvElQBTUAl1spdIiJ7B2hBfHdnBD8lVOAwlUQGMrDr5oaVAP8eSbBtxdMANnAR2Z6JEf+I4rbyrH0ulE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715616907; c=relaxed/simple;
-	bh=UiTGQxTTI+3PMZ1KNaByzzSNJwDUA5uEkbfPMtcGsDY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=q0MtVPECiZlH1YM0vETRaHmrBtCWc5BZ5wZCShC6WzHwuflVdDxrcZRUedEyzmaI2bb8nd0IIc8rF+BUCO5Abn9P/IwadT0fFQJnzQOBO3ESNWRwkKziVrt9K7cjf27yYtkII4yy710XM68KMckDYBWqlU0wA8d8vmxlKRRofhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUDtJgHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 79488C32782;
-	Mon, 13 May 2024 16:15:07 +0000 (UTC)
+	s=arc-20240116; t=1715616908; c=relaxed/simple;
+	bh=E7QK33IDKAmCZvmyhuJmbwWmEmmiVieGUFYiNuP3f4E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XfYGeZzxmMnQKkyPXv47m8f1rJauwiXT+IFFoIdc/x6+jHxNXNcmZOXn0T3/0meISlwtyWiR7A5lvb6xAd4eg7is5JFE4IzIxJxquIFwHUQpXMJGnenVYQWODwxRNwyYgffwcuboot98nP6y3sF/GUCQfYVGzLBzuCM8b4GYjpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5JwiLaM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0D189C4AF0B;
+	Mon, 13 May 2024 16:15:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715616907;
-	bh=UiTGQxTTI+3PMZ1KNaByzzSNJwDUA5uEkbfPMtcGsDY=;
+	s=k20201202; t=1715616908;
+	bh=E7QK33IDKAmCZvmyhuJmbwWmEmmiVieGUFYiNuP3f4E=;
 	h=Subject:From:In-Reply-To:References:Date:To:List-Id:Cc:From;
-	b=TUDtJgHbVN8Nsvwq+H+6lliTBpjIs+CEKO5+kNdI/fQ4NXHzJg3Y9TJfwevni+O0n
-	 Je0KN+yYRHv3hhorcMTbVQzgoDWninA5jw4XxM/wypzbm7ygiimT30YKp9fZbei9+Q
-	 WGPajBjWdB5qTVEqJJL5LKIGxLTeXLM/Da4IGdv5foliJheAcnvLx4eZT8IId0mMAE
-	 AugoGMpiIa7STYf1ZM1W5kF4p+5LdrtWl8ZQEAQzVjptv2qBMuZI/ARCV8I+WsoIVz
-	 r2XBKW/Q5cZT8223A0ULT04bCa6fNgmhDvcOdp7WPOMyqC0/lXVwVIMq8/mgYunLM4
-	 BpzUZCYkOy7PA==
+	b=g5JwiLaM/MCgKGzdpJA7bIy5Z/8w8TwHjmEZJcwP/bWg9MTcINO8C9LF+zLbItDEQ
+	 do2P0s6EY8KBGZ/lhBuqeg1q07VFAZ8YieTyAatDdvdDYlBkjdwtVcrU+OMJZPSZ2K
+	 E1+s8o0bT/Qep8cPG+SA8JmkKCNcf8cBzq28aKX9Sp2LznTEjVeTia0G2eg6y7k3HT
+	 pVL+HnF8mMXuKzGGqhMnjqtjhA9PUAL3yEZCzlNtrrvPLvWL1R4mR3bmiVASOodzZD
+	 LXg4FhO1pKRbIxgzC/gqciRZug88nNvXwR/AqkJWS1uzuoNJm4eGlfbdrR+Hpp6dmB
+	 LUg1zQR1auADA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 66A9FC433E9;
-	Mon, 13 May 2024 16:15:07 +0000 (UTC)
-Subject: Re: [GIT PULL 1/4] soc: devicetree updates for 6.10, part 1
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0436DC433F2;
+	Mon, 13 May 2024 16:15:08 +0000 (UTC)
+Subject: Re: [GIT PULL 4/4] soc: defconfig updates for 6.10
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <54b241db-fa39-41d4-8a2f-d44c18745249@app.fastmail.com>
-References: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com> <54b241db-fa39-41d4-8a2f-d44c18745249@app.fastmail.com>
+In-Reply-To: <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
+References: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com> <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <54b241db-fa39-41d4-8a2f-d44c18745249@app.fastmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-dt-6.10
-X-PR-Tracked-Commit-Id: 0cb7e0c617c6aa3da46514ee5982bd7de11a2b2e
+X-PR-Tracked-Message-Id: <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.10
+X-PR-Tracked-Commit-Id: 78b08cf6313061499948126aebdf00e1079e4d21
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6c60000f0b9ae7da630a5715a9ba33042d87e7fd
-Message-Id: <171561690739.7727.1818536666593784751.pr-tracker-bot@kernel.org>
-Date: Mon, 13 May 2024 16:15:07 +0000
+X-PR-Merge-Commit-Id: 6d1346f1bcbf2724dee8af013cdab9f7b581435b
+Message-Id: <171561690801.7727.7331858026509769153.pr-tracker-bot@kernel.org>
+Date: Mon, 13 May 2024 16:15:08 +0000
 To: Arnd Bergmann <arnd@arndb.de>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
@@ -63,12 +63,12 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 10 May 2024 23:11:03 +0200:
+The pull request you sent on Fri, 10 May 2024 23:13:38 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-dt-6.10
+> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.10
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6c60000f0b9ae7da630a5715a9ba33042d87e7fd
+https://git.kernel.org/torvalds/c/6d1346f1bcbf2724dee8af013cdab9f7b581435b
 
 Thank you!
 
