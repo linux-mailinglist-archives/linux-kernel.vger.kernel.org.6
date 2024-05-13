@@ -1,276 +1,276 @@
-Return-Path: <linux-kernel+bounces-177932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE22A8C4663
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:45:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9700F8C466C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9439E281CB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5419F281B5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C66622EE5;
-	Mon, 13 May 2024 17:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5861C22F0D;
+	Mon, 13 May 2024 17:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FV8PZQpP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="pm4i718F"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7ED224CC
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9524249F5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715622307; cv=none; b=ZMFoeDhttVGp2fjho47KYZk3hXrh8Nk+KgRuo9xSHr1IG5RBjzETc3p7S19+yn8JL5sVol/LJdSL4OWAnBo8g4gYiQDKZx5LwImTfCdMQmEpO83fbYSJryb5BgnAF2fZJ09g5SZqZgifVO3r278RvW9BVcmpLmE6fvVYELVwo5c=
+	t=1715622455; cv=none; b=b7KtOuxTxN/XYBk11DjqQlPNQELn06LpWGObk86s8VLK/WAgnbSuK5ji8kV773I+GzZuXlw/tT6kExHrbSCOYemKVPQ53WAUsKA4jnwVrSud7Pf96Vq2JjALHS1obrywvIXEYb2jzKMa0RFBnsDaD6qBG/OHXwuNuvFpe8BB6q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715622307; c=relaxed/simple;
-	bh=2rezK1XL/74bCQlLzdhDVSkMiRYcS8LmC2OnklHjGaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WDoGKZLYVoUbM2mRvsEU+rQNQVfMsCRuzMuUdGR37WMyeN/PJCkcAKcQPLiS3RT6MRHEy/DaP95CTEtzOuoiFmAQ30Y4TgMGi3k2QOSjuMonnQ0ayRjGimLP/m+kiQjRGoySVMinOW1o6Uh658qmlXR+Sb98q1vUHPrc5VUXFCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FV8PZQpP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DABAFC4AF13
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715622306;
-	bh=2rezK1XL/74bCQlLzdhDVSkMiRYcS8LmC2OnklHjGaM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FV8PZQpPyPmDlglxw4Dg51arwE5HjX7K5iWHJx6RIYBi5AtTOyAwbkSnEyLYl85Ds
-	 CU2Ik+LWi9g4K6uCwdbsdoxLI+1JfeTYMeFPb4ws3Ddd3jXO6uwMSp53mZOm2hT4zS
-	 2MkyzeFe+p8Mp6RdKxb2ZX+0MRY9i8ekgBLwRlafdC1JV+zEtrHMX3Up0VT0oocRIr
-	 A6ZEVxZqy0KcVJucycDkgkq3LgccDRHndzsPHmcwhm/qHFYPv1v/R1UdC7JQ4zo+6L
-	 lFMRga04noBuoVzPgVMlY45axmYkpKzFwotqhQHjiJkWCzFuC5HBwy2rLtceF4O6HL
-	 GbupwrzCG2HfQ==
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-de5acdb3838so4715026276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:45:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXe4xHUGkukGKLY+rW39OK6N1anGVy617lKxvzOsfHo+Ng8gJqoqie4VKwF8RWspwpDCrHU16jUe3rFXN5LJ/pipKrdeuTd87f8vWmZ
-X-Gm-Message-State: AOJu0YxrzlkVlH2VimOJ4c0nXDMbrWLTMZKVNJNEuTPGsuNLcxJgrzOm
-	UjFHe7VPaBi3tlfItknGsESlfsTQ/GxzBJxX8m46LPEUcTvm8xswW5+9Ueglc05BMUj3p+Ty/rM
-	N/YarQrrpuY0GIi+6p9qz4KuqS5HOgzDTiMqsxg==
-X-Google-Smtp-Source: AGHT+IFOJ4tybZ9ppj6693Jo6eHIZkd9mIjZAeRXGoyIuu0UFbmcIOOVX5DDCrD/CM348EaQz00MTgYp2cuTxQSpREg=
-X-Received: by 2002:a25:bc8f:0:b0:dee:6346:b856 with SMTP id
- 3f1490d57ef6-dee6346bbaemr6453224276.34.1715622305916; Mon, 13 May 2024
- 10:45:05 -0700 (PDT)
+	s=arc-20240116; t=1715622455; c=relaxed/simple;
+	bh=Fg+Nj1DQuuL02Ilzi8jCFAbiXMFR3aYYTKYOamODzJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0kKxuesEWYnhMJr7KPg6hs5PYdT8Fbws0gQzAaU8DxR+VmY9S2WpeKN2smfqRrmV5cz48Sf+KpxH6WgzItL/fZY1glkTUa/cN7ti9A641mXKx233bAMuaDOW7qF7eZXlpj6NchGsbMdO+xtfYTONOLFJm/nWhiuHCGNyuadQl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=pm4i718F; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d4d15ec7c5so4027151a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715622453; x=1716227253; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6LaUfYbhjgFs2AjjPA78Kswq4d56jrbrUI3xg3pcRhk=;
+        b=pm4i718FrX0J+PdCM61GxXfkEEsTDgw7pIv5KSdohz5pBokET272CSI+F76igf+hAZ
+         Q97dzxgb6/+g6WDJ8cksOyUjoWkjKxOxGq52KWA/6QgcIJr0wRItMK5/xhg0lueqnjq7
+         lHt/xvQ0imJuVLKypzmj/mlDYQmJBUtGk3gY7eGh8yrsD7DnqooA88X7b+bUpJspCihK
+         PWizX1YkdUvV4IB3thskOXNiZ5PJsbzmabWPVCTd4tnnP+GwlC0++xzoytWpbA6kN5kO
+         IAK5ATtSq1NSlIk7FijjkO/EgnrRNX/UdewVQPsTzYQoCKVRQVi+n2dRHjCJ/OvWOB0z
+         ROvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715622453; x=1716227253;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6LaUfYbhjgFs2AjjPA78Kswq4d56jrbrUI3xg3pcRhk=;
+        b=msqfujjaduXvV15nUlgdmIUlj9axU9oNcvHHCrpB2zjcV/WdAc3kLMibjFZdzzgd/1
+         sw30skhNZ5dNlfhMJp2e2Q/EFOAP9otr37bZokDjIP+qBPp1FDxenq55tIzX7HXNjCkN
+         lJZH8m1Ta8GGK8XdMoeOdHWnRBEHkB97OEuhSZMdfwRW+i3kax8RiK60nnTp3dI73vV1
+         kEsnelhRzcn48wi3mTqfQ7TymyTlY+f++n6lirtzkVFqNliHHb1cVBUfGNZQj/MzJsTG
+         9ORpiZ3Gs90R8jZZhXENfja/M38PmAq6my+x5uYA4a4gyQ5VxS2fuhW5adbiZ7M16YIq
+         qaoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVUJTSGlz8sFEELDE2ApNEq6qx2aUUYhvXL07J7v7NrEAgHkAZXFZTj3Abotm1daLwZT/Pe4DURt/wG73dHfD9CEkwToObL/mVZ3QM
+X-Gm-Message-State: AOJu0YwSCpOcImzWbCWDWQ00FHOJ5Yi/jG1XYKFDiVmJGG6q2D+a7ipy
+	S2ytSTf8tTOKULlyQ+TqhsK804eT5FNLVpJNxuXj80xe2xZodwSg+5Nn0mHmiBI=
+X-Google-Smtp-Source: AGHT+IGjx0AoLZdsnPMmBtuPR7WiUWSxaNpuC/v1kUd2jvw2APP6WDzK0//bbc0udBP7gghTi2HA6A==
+X-Received: by 2002:a17:90b:106:b0:2b6:c4d7:fc31 with SMTP id 98e67ed59e1d1-2b6cd1e4ba4mr11564581a91.40.1715622451120;
+        Mon, 13 May 2024 10:47:31 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628ea6c10sm10010384a91.53.2024.05.13.10.47.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 10:47:30 -0700 (PDT)
+Date: Mon, 13 May 2024 10:47:25 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 10/29] riscv/mm : ensure PROT_WRITE leads to VM_READ |
+ VM_WRITE
+Message-ID: <ZkJSLTk1iWFGJZCQ@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-11-debug@rivosinc.com>
+ <Zj6LfpQhOjTLEx2O@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506094644.887842-1-kuro.chung@ite.com.tw>
- <20240506094644.887842-2-kuro.chung@ite.com.tw> <CAN6tsi5b50fqgbph4waTuqVO=vjEUCCjSOZYzj6O9Fgg-6Wjfw@mail.gmail.com>
-In-Reply-To: <CAN6tsi5b50fqgbph4waTuqVO=vjEUCCjSOZYzj6O9Fgg-6Wjfw@mail.gmail.com>
-From: Robert Foss <rfoss@kernel.org>
-Date: Mon, 13 May 2024 19:44:55 +0200
-X-Gmail-Original-Message-ID: <CAN6tsi6s4q+Lm9xF5iBQiSVGAkGhMg6nCPy4OEwfqmWtNwbr_g@mail.gmail.com>
-Message-ID: <CAN6tsi6s4q+Lm9xF5iBQiSVGAkGhMg6nCPy4OEwfqmWtNwbr_g@mail.gmail.com>
-Subject: Re: [PATCH v7 1/1] drm/bridge: it6505: fix hibernate to resume no
- display issue
-To: kuro <kuro.chung@ite.com.tw>
-Cc: Allen Chen <allen.chen@ite.com.tw>, Pin-yen Lin <treapking@chromium.org>, 
-	Kenneth Haung <kenneth.hung@ite.com.tw>, 
-	Kuro Chung <kuro.chung@ite.corp-partner.google.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <Zj6LfpQhOjTLEx2O@ghost>
 
-On Mon, May 13, 2024 at 7:42=E2=80=AFPM Robert Foss <rfoss@kernel.org> wrot=
-e:
+On Fri, May 10, 2024 at 02:02:54PM -0700, Charlie Jenkins wrote:
+>On Wed, Apr 03, 2024 at 04:34:58PM -0700, Deepak Gupta wrote:
+>> `arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+>> VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+>> updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+>> This is to make sure that any existing apps using PROT_WRITE still work.
+>>
+>> Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
+>> Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+>> encodings for shadow stack. Above changes ensure that existing apps
+>> continue to work because underneath kernel will be picking
+>> `protection_map[VM_WRITE|VM_READ]` PTE encodings.
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  arch/riscv/include/asm/mman.h    | 24 ++++++++++++++++++++++++
+>>  arch/riscv/include/asm/pgtable.h |  1 +
+>>  arch/riscv/kernel/sys_riscv.c    | 11 +++++++++++
+>>  arch/riscv/mm/init.c             |  2 +-
+>>  mm/mmap.c                        |  1 +
+>>  5 files changed, 38 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/riscv/include/asm/mman.h
+>>
+>> diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
+>> new file mode 100644
+>> index 000000000000..ef9fedf32546
+>> --- /dev/null
+>> +++ b/arch/riscv/include/asm/mman.h
+>> @@ -0,0 +1,24 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef __ASM_MMAN_H__
+>> +#define __ASM_MMAN_H__
+>> +
+>> +#include <linux/compiler.h>
+>> +#include <linux/types.h>
+>> +#include <uapi/asm/mman.h>
+>> +
+>> +static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+>> +	unsigned long pkey __always_unused)
+>> +{
+>> +	unsigned long ret = 0;
+>> +
+>> +	/*
+>> +	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
+>> +	 * Only VM_WRITE means shadow stack.
+>> +	 */
+>> +	if (prot & PROT_WRITE)
+>> +		ret = (VM_READ | VM_WRITE);
+>> +	return ret;
+>> +}
+>> +#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+>> +
+>> +#endif /* ! __ASM_MMAN_H__ */
+>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>> index 6066822e7396..4d5983bc6766 100644
+>> --- a/arch/riscv/include/asm/pgtable.h
+>> +++ b/arch/riscv/include/asm/pgtable.h
+>> @@ -184,6 +184,7 @@ extern struct pt_alloc_ops pt_ops __initdata;
+>>  #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
+>>  #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
+>>  					 _PAGE_EXEC | _PAGE_WRITE)
+>> +#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
+>>
+>>  #define PAGE_COPY		PAGE_READ
+>>  #define PAGE_COPY_EXEC		PAGE_READ_EXEC
+>> diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+>> index f1c1416a9f1e..846c36b1b3d5 100644
+>> --- a/arch/riscv/kernel/sys_riscv.c
+>> +++ b/arch/riscv/kernel/sys_riscv.c
+>> @@ -8,6 +8,8 @@
+>>  #include <linux/syscalls.h>
+>>  #include <asm/cacheflush.h>
+>>  #include <asm-generic/mman-common.h>
+>> +#include <vdso/vsyscall.h>
+>> +#include <asm/mman.h>
+>>
+>>  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>>  			   unsigned long prot, unsigned long flags,
+>> @@ -17,6 +19,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>>  	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
+>>  		return -EINVAL;
+>>
+>> +	/*
+>> +	 * If only PROT_WRITE is specified then extend that to PROT_READ
+>> +	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
+>> +	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
+>> +	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
+>> +	 */
+>> +	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
 >
-> On Mon, May 6, 2024 at 11:36=E2=80=AFAM kuro <kuro.chung@ite.com.tw> wrot=
-e:
-> >
-> > From: Kuro <kuro.chung@ite.com.tw>
-> >
-> > ITE added a FIFO reset bit for input video. When system power resume,
-> > the TTL input of it6505 may get some noise before video signal stable
-> > and the hardware function reset is required.
-> > But the input FIFO reset will also trigger error interrupts of output m=
-odule rising.
-> > Thus, it6505 have to wait a period can clear those expected error inter=
-rupts
-> > caused by manual hardware reset in one interrupt handler calling to avo=
-id interrupt looping.
-> >
-> > Signed-off-by: Kuro Chung <kuro.chung@ite.corp-partner.google.com>
-> >
-> > ---
-> >  drivers/gpu/drm/bridge/ite-it6505.c | 73 +++++++++++++++++++----------
-> >  1 file changed, 49 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/brid=
-ge/ite-it6505.c
-> > index b53da9bb65a16..64e2706e3d0c3 100644
-> > --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> > +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> > @@ -1317,9 +1317,15 @@ static void it6505_video_reset(struct it6505 *it=
-6505)
-> >         it6505_link_reset_step_train(it6505);
-> >         it6505_set_bits(it6505, REG_DATA_MUTE_CTRL, EN_VID_MUTE, EN_VID=
-_MUTE);
-> >         it6505_set_bits(it6505, REG_INFOFRAME_CTRL, EN_VID_CTRL_PKT, 0x=
-00);
-> > -       it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESE=
-T);
-> > +
-> > +       it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, TX_FI=
-FO_RESET);
-> > +       it6505_set_bits(it6505, REG_VID_BUS_CTRL1, TX_FIFO_RESET, 0x00)=
-;
-> > +
-> >         it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, RST_50=
-1_FIFO);
-> >         it6505_set_bits(it6505, REG_501_FIFO_CTRL, RST_501_FIFO, 0x00);
-> > +
-> > +       it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, VIDEO_RESE=
-T);
-> > +       usleep_range(1000, 2000);
-> >         it6505_set_bits(it6505, REG_RESET_CTRL, VIDEO_RESET, 0x00);
-> >  }
-> >
-> > @@ -2249,12 +2255,11 @@ static void it6505_link_training_work(struct wo=
-rk_struct *work)
-> >         if (ret) {
-> >                 it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> >                 it6505_link_train_ok(it6505);
-> > -               return;
-> >         } else {
-> >                 it6505->auto_train_retry--;
-> > +               it6505_dump(it6505);
-> >         }
-> >
-> > -       it6505_dump(it6505);
-> >  }
-> >
-> >  static void it6505_plugged_status_to_codec(struct it6505 *it6505)
-> > @@ -2475,31 +2480,53 @@ static void it6505_irq_link_train_fail(struct i=
-t6505 *it6505)
-> >         schedule_work(&it6505->link_works);
-> >  }
-> >
-> > -static void it6505_irq_video_fifo_error(struct it6505 *it6505)
-> > +static bool it6505_test_bit(unsigned int bit, const unsigned int *addr=
-)
-> >  {
-> > -       struct device *dev =3D &it6505->client->dev;
-> > -
-> > -       DRM_DEV_DEBUG_DRIVER(dev, "video fifo overflow interrupt");
-> > -       it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> > -       flush_work(&it6505->link_works);
-> > -       it6505_stop_hdcp(it6505);
-> > -       it6505_video_reset(it6505);
-> > +       return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE))=
-;
-> >  }
-> >
-> > -static void it6505_irq_io_latch_fifo_overflow(struct it6505 *it6505)
-> > +static void it6505_irq_video_handler(struct it6505 *it6505, const int =
-*int_status)
-> >  {
-> >         struct device *dev =3D &it6505->client->dev;
-> > +       int reg_0d, reg_int03;
-> >
-> > -       DRM_DEV_DEBUG_DRIVER(dev, "IO latch fifo overflow interrupt");
-> > -       it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> > -       flush_work(&it6505->link_works);
-> > -       it6505_stop_hdcp(it6505);
-> > -       it6505_video_reset(it6505);
-> > -}
-> > +       /*
-> > +        * When video SCDT change with video not stable,
-> > +        * Or video FIFO error, need video reset
-> > +        */
-> >
-> > -static bool it6505_test_bit(unsigned int bit, const unsigned int *addr=
-)
-> > -{
-> > -       return 1 & (addr[bit / BITS_PER_BYTE] >> (bit % BITS_PER_BYTE))=
-;
-> > +       if ((!it6505_get_video_status(it6505) &&
-> > +               (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_=
-status))) ||
-> > +               (it6505_test_bit(BIT_INT_IO_FIFO_OVERFLOW, (unsigned in=
-t *) int_status)) ||
-> > +               (it6505_test_bit(BIT_INT_VID_FIFO_ERROR, (unsigned int =
-*) int_status))) {
-> > +
-> > +               it6505->auto_train_retry =3D AUTO_TRAIN_RETRY;
-> > +               flush_work(&it6505->link_works);
-> > +               it6505_stop_hdcp(it6505);
-> > +               it6505_video_reset(it6505);
-> > +
-> > +               usleep_range(10000, 11000);
-> > +
-> > +               /*
-> > +                * Clear FIFO error IRQ to prevent fifo error -> reset =
-loop
-> > +                * HW will trigger SCDT change IRQ again when video sta=
-ble
-> > +                */
-> > +
-> > +               reg_int03 =3D it6505_read(it6505, INT_STATUS_03);
-> > +               reg_0d =3D it6505_read(it6505, REG_SYSTEM_STS);
-> > +
-> > +               reg_int03 &=3D (BIT(INT_VID_FIFO_ERROR) | BIT(INT_IO_LA=
-TCH_FIFO_OVERFLOW));
-> > +               it6505_write(it6505, INT_STATUS_03, reg_int03);
-> > +
-> > +               DRM_DEV_DEBUG_DRIVER(dev, "reg08 =3D 0x%02x", reg_int03=
-);
-> > +               DRM_DEV_DEBUG_DRIVER(dev, "reg0D =3D 0x%02x", reg_0d);
-> > +
-> > +               return;
-> > +       }
-> > +
-> > +
-> > +       if (it6505_test_bit(INT_SCDT_CHANGE, (unsigned int *) int_statu=
-s))
-> > +               it6505_irq_scdt(it6505);
-> >  }
-> >
-> >  static irqreturn_t it6505_int_threaded_handler(int unused, void *data)
-> > @@ -2512,15 +2539,12 @@ static irqreturn_t it6505_int_threaded_handler(=
-int unused, void *data)
-> >         } irq_vec[] =3D {
-> >                 { BIT_INT_HPD, it6505_irq_hpd },
-> >                 { BIT_INT_HPD_IRQ, it6505_irq_hpd_irq },
-> > -               { BIT_INT_SCDT, it6505_irq_scdt },
-> >                 { BIT_INT_HDCP_FAIL, it6505_irq_hdcp_fail },
-> >                 { BIT_INT_HDCP_DONE, it6505_irq_hdcp_done },
-> >                 { BIT_INT_AUX_CMD_FAIL, it6505_irq_aux_cmd_fail },
-> >                 { BIT_INT_HDCP_KSV_CHECK, it6505_irq_hdcp_ksv_check },
-> >                 { BIT_INT_AUDIO_FIFO_ERROR, it6505_irq_audio_fifo_error=
- },
-> >                 { BIT_INT_LINK_TRAIN_FAIL, it6505_irq_link_train_fail }=
-,
-> > -               { BIT_INT_VID_FIFO_ERROR, it6505_irq_video_fifo_error }=
-,
-> > -               { BIT_INT_IO_FIFO_OVERFLOW, it6505_irq_io_latch_fifo_ov=
-erflow },
-> >         };
-> >         int int_status[3], i;
-> >
-> > @@ -2550,6 +2574,7 @@ static irqreturn_t it6505_int_threaded_handler(in=
-t unused, void *data)
-> >                         if (it6505_test_bit(irq_vec[i].bit, (unsigned i=
-nt *)int_status))
-> >                                 irq_vec[i].handler(it6505);
-> >                 }
-> > +               it6505_irq_video_handler(it6505, (unsigned int *) int_s=
-tatus);
-> >         }
-> >
-> >         pm_runtime_put_sync(dev);
-> > --
-> > 2.25.1
-> >
+>The comments says that this should extend to PROT_READ if only
+>PROT_WRITE is specified. This condition instead is checking if
+>PROT_WRITE is selected but PROT_READ is not. If prot is (VM_EXEC |
+>VM_WRITE) then it would be extended to (VM_EXEC | VM_WRITE | VM_READ).
+>This will not currently cause any issues because these both map to the
+>same value in the protection_map PAGE_COPY_EXEC, however this seems to
+>be not the intention of this change.
 >
-> Reviewed-by: Robert Foss <rfoss@kernel.org>
+>prot == PROT_WRITE better suits the condition explained in the comment.
 
-This patch does not apply on drm-misc-next, please fix this and then
-this patch is ready to be applied.
+If someone specifies this (PROT_EXEC | PROT_WRITE) today, it works because
+of the way permissions are setup in `protection_map`. On risc-v there is no
+way to have a page which is execute and write only. So expectation is that
+if some apps were using `PROT_EXEC | PROT_WRITE` today, they were working
+because internally it was translating to read, write and execute on page
+permissions level. This patch make sure that, it stays same from page
+permissions perspective.
+
+If someone was using PROT_EXEC, it may translate to execute only and this change
+doesn't impact that.
+
+Patch simply looks for presence of `PROT_WRITE` and absence of `PROT_READ` in
+protection flags and if that condition is satisfied, it assumes that caller assumed
+page is going to be read allowed as well.
+
+
+>
+>> +		prot |= PROT_READ;
+>> +
+>>  	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
+>>  			       offset >> (PAGE_SHIFT - page_shift_offset));
+>>  }
+>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> index fa34cf55037b..98e5ece4052a 100644
+>> --- a/arch/riscv/mm/init.c
+>> +++ b/arch/riscv/mm/init.c
+>> @@ -299,7 +299,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>>  static const pgprot_t protection_map[16] = {
+>>  	[VM_NONE]					= PAGE_NONE,
+>>  	[VM_READ]					= PAGE_READ,
+>> -	[VM_WRITE]					= PAGE_COPY,
+>> +	[VM_WRITE]					= PAGE_SHADOWSTACK,
+>>  	[VM_WRITE | VM_READ]				= PAGE_COPY,
+>>  	[VM_EXEC]					= PAGE_EXEC,
+>>  	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index d89770eaab6b..57a974f49b00 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -47,6 +47,7 @@
+>>  #include <linux/oom.h>
+>>  #include <linux/sched/mm.h>
+>>  #include <linux/ksm.h>
+>> +#include <linux/processor.h>
+>
+>It doesn't seem like this is necessary for this patch.
+
+Thanks. Yeah it looks like I forgot to remove this over the churn.
+Will fix it.
+
+>
+>- Charlie
+>
+>>
+>>  #include <linux/uaccess.h>
+>>  #include <asm/cacheflush.h>
+>> --
+>> 2.43.2
+>>
 
