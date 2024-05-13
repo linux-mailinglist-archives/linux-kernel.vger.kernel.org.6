@@ -1,111 +1,188 @@
-Return-Path: <linux-kernel+bounces-177177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124568C3B15
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:48:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5F8D8C3B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4419A1C20FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EFA2281478
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B301482FC;
-	Mon, 13 May 2024 05:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543AB14659B;
+	Mon, 13 May 2024 05:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="CY1e+wNP"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QkmrbKzH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFFF1465B5;
-	Mon, 13 May 2024 05:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456441CD3D;
+	Mon, 13 May 2024 05:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715579232; cv=none; b=QiuyPxbg+KVty33+XJSRgAo8sNeXI4AfmVpI1GES4Zxoi10dwMrnd/QzfmOubMt/qO93HXIFIzXsVXT7CV9pYkUtT4aHITKAFhivXNe9BBULJnPkpUO1Ev4QdgzblNE3znawtl3bmJYUfkRTE+dEXPOyUe74qU0s7QOG3VCkz7c=
+	t=1715579429; cv=none; b=Oc0AAjICQJMI4+21Bu+OrsyES16XF73/3o0G/ySH+H2h97DgbYHeG8Y3GNxI0TzU68XO6eYBjg15CUxzMk83mL5nHor00V6W7e4XduVde+u31jgH2fEo/lIlj+jfceOBDY8jRcEFkUkeEydn2lc8HCwEfdQmlrkm3weqZWGVPJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715579232; c=relaxed/simple;
-	bh=ZQb2+jnuLXwJoGH1fK4C6Xh429KIdyV1ARItZI6ro50=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cLg4n1HSdM+nhy3X+tqcfasE4naaCNJsHtsrt1i4CqlVbDvNL0H2JJ3ZyhVeZwOjWNILWTGmL6RZOgMdqYj7Tf/H7Xtr1FB6T67LxtDy4624Orcho359RTnvGtWmZSjNwFbnK1aIyHyWegmcUiorKQ93kcf7Ct362DHzv33U89w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=CY1e+wNP; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44CLjKqH018797;
-	Sun, 12 May 2024 22:47:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	pfpt0220; bh=OZvmT2boOq9u2LiX64FnJgQxbVh/mRv404o2yXm+es8=; b=CY1
-	e+wNPHELeunGA50eMJYEfzztw0vciWmpPU7xXmOa363HKXrz+NuOUc5eU98KJzLA
-	jJvqfHb9Ul/ZxfaUlqvxaDya7tnGdocVwZrPBW0v6PNI1Ns2e4+RzpDT2TrcCpve
-	jCkAP/AVMCJPVtYXbWdG4zkajq7kbdXHI6oUCVPk+eCuAJ8gT8sOwckUrzXTFt2n
-	3VDl1JpjcxzQQE6xvVBtPU/o6ZlD9YVW7/jpISlfQhC3Rvbl4B83vyVASOUc/miF
-	he2uyVpnXhlHa/4z2YgjGf24/SocG+0sKfCGQKk1ZQXhwhsDawnSU2MkZ7JYox1n
-	qX6DlFhYVgmBV7B4PdQ==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3y286jb8p7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 22:47:03 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 12 May 2024 22:47:01 -0700
-Received: from bharat-OptiPlex-3070.marvell.com (10.69.176.80) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server id
- 15.2.1544.4 via Frontend Transport; Sun, 12 May 2024 22:46:58 -0700
-From: Bharat Bhushan <bbhushan2@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sgoutham@marvell.com>, <gakula@marvell.com>, <sbhatta@marvell.com>,
-        <hkelam@marvell.com>, <davem@davemloft.net>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>
-CC: Bharat Bhushan <bbhushan2@marvell.com>
-Subject: [PATCH 8/8] cn10k-ipsec: Enable outbound inline ipsec offload
-Date: Mon, 13 May 2024 11:16:23 +0530
-Message-ID: <20240513054623.270366-9-bbhushan2@marvell.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240513054623.270366-1-bbhushan2@marvell.com>
-References: <20240513054623.270366-1-bbhushan2@marvell.com>
+	s=arc-20240116; t=1715579429; c=relaxed/simple;
+	bh=cTisG/wWFStNxcixatGO/BSRIF8skJ05OMYCUvIo4Rg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OfydWkVASlna5zU7MjA29z5Gge8ZmWk0b3Jy5rvK9zm2+5rOneGCiKES6Icf+V+gTK4lH2IhlUSoTzmkkb4kRp66ptrDOQ2zY5gH28HFmP9Hpw2fjTnzDtXC9LTWTLu4iufkUAVd9/7aMPfIgYaPpA9fzdNDAdIORibjgyWuBso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QkmrbKzH; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715579427; x=1747115427;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cTisG/wWFStNxcixatGO/BSRIF8skJ05OMYCUvIo4Rg=;
+  b=QkmrbKzH+1b2UfAB2rPe/4OGhLbPV28T1Seg9dOMRyQKCHdc97Y2gNVE
+   ee9QMKh7bOdysQhzdEh++iHCTmH0YNnqLDEo4L5YOl7SCLgZsNx+KniF4
+   IlHh3GzinMWTiB38fKjwujyb4rV4cDMMT5tRSnSE5uPgD7rjBfrb6hX+a
+   wOuQmAornZokavUDYUWuz3Uku/MSCsKMJuHPQuZML0c7XZgrAZhOcvANn
+   mFMteOfDXwXMYq0JkiWVJgCW+6MTD1BPCOt8kI5SoUBAw1w2hJTSjpy8u
+   eZCeHaK3iLT2pcnoiM5wLifE8zo4zVA5DX5OVINXfYw8RWgf0DcVXclIo
+   Q==;
+X-CSE-ConnectionGUID: j4RrnMAkQSqLFCupvOaeLA==
+X-CSE-MsgGUID: ove0mJXQTQ6cBhLgWoSShQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="22069778"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="22069778"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 22:50:26 -0700
+X-CSE-ConnectionGUID: 4+gxAaO3Q3OT31BpFOXOkA==
+X-CSE-MsgGUID: nHMH4IrFTt6xiO3EEHz+vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="30216756"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 22:50:24 -0700
+Message-ID: <3b6bc6ac-276f-4a83-8972-68b98db672c7@intel.com>
+Date: Mon, 13 May 2024 13:50:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: SZjpRS813UyoNJY7Q_fmAacuwnNUMSl5
-X-Proofpoint-ORIG-GUID: SZjpRS813UyoNJY7Q_fmAacuwnNUMSl5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_04,2024-05-10_02,2023-05-22_02
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/17] KVM: x86: Move synthetic PFERR_* sanity checks to
+ SVM's #NPF handler
+To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>,
+ Binbin Wu <binbin.wu@linux.intel.com>
+References: <20240507155817.3951344-1-pbonzini@redhat.com>
+ <20240507155817.3951344-5-pbonzini@redhat.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240507155817.3951344-5-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hardware is initialized and netdev transmit flow is
-hooked up for outbound inline ipsec, so finally enable
-ipsec offload.
+On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
+> From: Sean Christopherson <seanjc@google.com>
+> 
+> Move the sanity check that hardware never sets bits that collide with KVM-
+> define synthetic bits from kvm_mmu_page_fault() to npf_interception(),
+> i.e. make the sanity check #NPF specific.  The legacy #PF path already
+> WARNs if _any_ of bits 63:32 are set, and the error code that comes from
+> VMX's EPT Violatation and Misconfig is 100% synthesized (KVM morphs VMX's
+> EXIT_QUALIFICATION into error code flags).
+> 
+> Add a compile-time assert in the legacy #PF handler to make sure that KVM-
+> define flags are covered by its existing sanity check on the upper bits.
+> 
+> Opportunistically add a description of PFERR_IMPLICIT_ACCESS, since we
+> are removing the comment that defined it.
+> 
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+> Message-ID: <20240228024147.41573-8-seanjc@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> ---
+>   arch/x86/include/asm/kvm_host.h |  6 ++++++
+>   arch/x86/kvm/mmu/mmu.c          | 14 +++-----------
+>   arch/x86/kvm/svm/svm.c          |  9 +++++++++
+>   3 files changed, 18 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 58bbcf76ad1e..12e727301262 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -267,7 +267,13 @@ enum x86_intercept_stage;
+>   #define PFERR_GUEST_ENC_MASK	BIT_ULL(34)
+>   #define PFERR_GUEST_SIZEM_MASK	BIT_ULL(35)
+>   #define PFERR_GUEST_VMPL_MASK	BIT_ULL(36)
+> +
+> +/*
+> + * IMPLICIT_ACCESS is a KVM-defined flag used to correctly perform SMAP checks
+> + * when emulating instructions that triggers implicit access.
+> + */
+>   #define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
+> +#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
+>   
+>   #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
+>   				 PFERR_WRITE_MASK |		\
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index c72a2033ca96..5562d693880a 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4502,6 +4502,9 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
+>   		return -EFAULT;
+>   #endif
+>   
+> +	/* Ensure the above sanity check also covers KVM-defined flags. */
 
-Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c | 5 +++++
- 1 file changed, 5 insertions(+)
+1. There is no sanity check above related to KVM-defined flags yet. It 
+has to be after Patch 6.
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-index 8fbe39458e22..71208582cac0 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
-@@ -825,6 +825,11 @@ int cn10k_ipsec_init(struct net_device *netdev)
- 	memset(pf->ipsec.outb_sa->base, 0, sa_size * CN10K_IPSEC_OUTB_MAX_SA);
- 	bitmap_zero(pf->ipsec.sa_bitmap, CN10K_IPSEC_OUTB_MAX_SA);
- 
-+	/* Set xfrm device ops */
-+	netdev->xfrmdev_ops = &cn10k_ipsec_xfrmdev_ops;
-+	netdev->hw_features |= NETIF_F_HW_ESP;
-+	netdev->hw_enc_features |= NETIF_F_HW_ESP;
-+
- 	mutex_init(&pf->ipsec.lock);
- 	return 0;
- }
--- 
-2.34.1
+2. I somehow cannot parse the comment properly, though I know it's to 
+ensure KVM-defined PFERR_SYNTHETIC_MASK not contain any bit below 32-bits.
+
+> +	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
+> +
+>   	vcpu->arch.l1tf_flush_l1d = true;
+>   	if (!flags) {
+>   		trace_kvm_page_fault(vcpu, fault_address, error_code);
+> @@ -5786,17 +5789,6 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
+>   	int r, emulation_type = EMULTYPE_PF;
+>   	bool direct = vcpu->arch.mmu->root_role.direct;
+>   
+> -	/*
+> -	 * IMPLICIT_ACCESS is a KVM-defined flag used to correctly perform SMAP
+> -	 * checks when emulating instructions that triggers implicit access.
+> -	 * WARN if hardware generates a fault with an error code that collides
+> -	 * with the KVM-defined value.  Clear the flag and continue on, i.e.
+> -	 * don't terminate the VM, as KVM can't possibly be relying on a flag
+> -	 * that KVM doesn't know about.
+> -	 */
+> -	if (WARN_ON_ONCE(error_code & PFERR_IMPLICIT_ACCESS))
+> -		error_code &= ~PFERR_IMPLICIT_ACCESS;
+> -
+>   	if (WARN_ON_ONCE(!VALID_PAGE(vcpu->arch.mmu->root.hpa)))
+>   		return RET_PF_RETRY;
+>   
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 0f3b59da0d4a..535018f152a3 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -2047,6 +2047,15 @@ static int npf_interception(struct kvm_vcpu *vcpu)
+>   	u64 fault_address = svm->vmcb->control.exit_info_2;
+>   	u64 error_code = svm->vmcb->control.exit_info_1;
+>   
+> +	/*
+> +	 * WARN if hardware generates a fault with an error code that collides
+> +	 * with KVM-defined sythentic flags.  Clear the flags and continue on,
+> +	 * i.e. don't terminate the VM, as KVM can't possibly be relying on a
+> +	 * flag that KVM doesn't know about.
+> +	 */
+> +	if (WARN_ON_ONCE(error_code & PFERR_SYNTHETIC_MASK))
+> +		error_code &= ~PFERR_SYNTHETIC_MASK;
+> +
+>   	trace_kvm_page_fault(vcpu, fault_address, error_code);
+>   	return kvm_mmu_page_fault(vcpu, fault_address, error_code,
+>   			static_cpu_has(X86_FEATURE_DECODEASSISTS) ?
 
 
