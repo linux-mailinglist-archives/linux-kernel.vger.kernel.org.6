@@ -1,187 +1,78 @@
-Return-Path: <linux-kernel+bounces-177937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D0A8C4674
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:50:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2B78C467C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0266B21356
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B170286EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A30D928E34;
-	Mon, 13 May 2024 17:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3D138394;
+	Mon, 13 May 2024 17:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="CJ67mDu2"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhvSuWMy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549032557F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D752E646;
+	Mon, 13 May 2024 17:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715622633; cv=none; b=YU7SOyn2ptcQ5G+reRWDeXuQKgb9RzCG9w1RFc4PiepHVXUaT17GDVEV/KDvyXpPusyhiWRN4jwkxtCamwaVOCE5gYwDu0O80/2VErcicYVDkoOr+0ETqzvzotiLVid5WqQVfH1rvYo6Ilyr/vpsXNRr6FXjIJQkZjrsKLDtxm8=
+	t=1715622651; cv=none; b=tH13sxvxmVMnVC2CRhwC51VKoq5nkmglJrB5T+zJStOiqhiCrjzYLzgE6VscfU4C1V6XAiBg4r+QVPFckuh4/v65RcpWWO8NKUGcreIGOZuS9muZhe2rlRjGg1W5IJXpLGnNjRBbnminMbUnB/CMJntM8wwLbyktQd46ULkIKNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715622633; c=relaxed/simple;
-	bh=CkWV6BI6pB19qRh2l/tD81uJGerHWKsptqUyLWE4ZSs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qJuaev3HEVrGGASAPLJUZdmtZVuqb6U6eTyuXZLZQxU5KbKLbbE+xW2t2r5tu18MmNgo5jQ9i5EZazyBh2cNtuIHhrWVLohTK4Z2S+QgWllnkj4HAu+8vfA0qzEX+iToXmqLyPGdsVnuX/y/Lk7pBv6VzbRVWlsWKYILj+6wdEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CJ67mDu2; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--justinstitt.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-ddaf165a8d9so6308627276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:50:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715622631; x=1716227431; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GydCGd/+JJ6CmtiwKdDK/+LMhNIkbo+G+AlL2WnOnIo=;
-        b=CJ67mDu2FEEbHx8Pd8/KXPC6JOEnFYZSEWNrUTCMpOwBHa+aI4GWmNfTXTcCTt4c2+
-         jyiOPUm8VROgw+0F0S+6E7aTHzRgJg/7c3QTcktplQTnWgjofytSFGc4LaF81DaAJ5Io
-         Zkef7RK0Jw+RMO6uN+tS8nfu3FDwOEUUuVOkwPzFJFedb4EHRMoMcdCKDw0CrFJN8X9K
-         6Ggd2VR+vZZFtHNCvyNtm/3FqMEqz5+jZ6OMYsu4QgZhbDtID+qZKmvU+ieFLEaG3d2J
-         vhb7efLg6BQylmk8IPq4DDjUQdOlRV//Uz2WK+nf2ui9fNdBYAr/vfy3V4ZacQfgz+dc
-         v9qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715622631; x=1716227431;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GydCGd/+JJ6CmtiwKdDK/+LMhNIkbo+G+AlL2WnOnIo=;
-        b=mRFA35gBI6AO0xwjmgGAzFygl5NGqcuCZfO0pmcXJjfsUjaRagylVvkT0+dhGS2/Nn
-         PUYouVJL+ytuJLFDSUPIISFpmxSzOBj9OnlIOrTCKZCqahgqICFK7UAYLfdc4Ablzi9I
-         yCPg0F8+yCMWcjQ5W3nH/DlTKzJxBHD2AOKbRu7n9De4nJmUq9AELIKrKOjqUyf2g1Lv
-         GJpgS5KhmuqNYKmWdLRiT6xxK7g4CHNMqmLzgqBtuhPuHOKBduH5SWMLtFkDEU5JHb4B
-         ziLNsX8PVDBXAs/kOgIARUbVx0zsjZ/ntYwDhPc3kqWVVxtrDR0v6BLOG9HMOUwetHxB
-         ndiw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6QgJMlUK7u9JJhrVxciJzp64NyD0ZXGciy2++j0VhDoTLF9B9CE2XY2Yu4qcpS8YQ50M0XCZ5I29ud1nOvOXElTQD9WEkbICOidr0
-X-Gm-Message-State: AOJu0YzPgF8F+SqWC8r45u77MQSbPHbrvbZpDwwwBTkA7bw2GCAD66D2
-	/iYwVukG1Ro0QL9cDeKRj1PsBuT6xGGVZIBWxRyzXCkLw9gayRGfDLlmZoffQsnuvwOIkLlPlr6
-	pv5/N/KmXRSjIV03KV5lkGw==
-X-Google-Smtp-Source: AGHT+IH4o0V1PT7B0QIXUskKpo4VzIQ1a06kKnU6elsU559DTS+Pna5InxhhAGymLEnliGrWo2+jzRQfH5DNflrfYQ==
-X-Received: from jstitt-linux1.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:23b5])
- (user=justinstitt job=sendgmr) by 2002:a05:6902:1026:b0:dee:6147:7e26 with
- SMTP id 3f1490d57ef6-dee6bf164abmr531190276.11.1715622631413; Mon, 13 May
- 2024 10:50:31 -0700 (PDT)
-Date: Mon, 13 May 2024 17:50:30 +0000
+	s=arc-20240116; t=1715622651; c=relaxed/simple;
+	bh=cGU21muLomTx6b3RkpnRSQSH1EbqgueeEZN/mflhJ8c=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=natMeRof897PQ0B7vstpWAG3/03lEfU8/oxEuGuexPb0ffjFRElaY7MxcSWCTJR8mseGeiZ5x5z5qCphOPLPbuyF9By22MNIKCFJewbrdAveXMHIizR8wjBbrWFZGK+jFH7mYJYONFh1KsCar2JlZA1DQtulkGY+kCkogNR1pJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhvSuWMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 247B7C32786;
+	Mon, 13 May 2024 17:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715622651;
+	bh=cGU21muLomTx6b3RkpnRSQSH1EbqgueeEZN/mflhJ8c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=NhvSuWMyfpucJ1FaJxzF0F1B06/beOV5AbHHVlq3k2ea+lWeRg8/88fDVqAO/8SKE
+	 czwvmo5kvRpqEJlkmBdfiJNSnN60v2/Srnwb6uwDhvXjdsPvCLg/YQRz0duaMu8YCd
+	 kFkYs7IpqxpO4h0wshIN8PO9Kg2yNltZwVVuHf5cCpwVYrapwUopnFHtGtuClPllBr
+	 Xcp+v5UgEujE91iw4A9v24R1t0m2n09aIW0UB/7OAB/oBXfiICtow+djzUwVNO6cgv
+	 pdPxI3Mlu8WwfqAoKAkcBNOTyhU66UFN2zTKDHjLVer/vtRFRgKK8N6XEC0nA1Kz0I
+	 ee8MmAC3EerYQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 19C98C433F2;
+	Mon, 13 May 2024 17:50:51 +0000 (UTC)
+Subject: Re: [GIT PULL] trusted keys changes for v6.10-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240509154751.25983-1-jarkko@kernel.org>
+References: <20240509154751.25983-1-jarkko@kernel.org>
+X-PR-Tracked-List-Id: <keyrings.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240509154751.25983-1-jarkko@kernel.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-6.10-rc1
+X-PR-Tracked-Commit-Id: 28c5f596ae3d1790cdc96fa5fc7370f934abfb2e
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c024814828f72b1ae9cc2c338997b2d9826c80f6
+Message-Id: <171562265110.10937.17676739352918213107.pr-tracker-bot@kernel.org>
+Date: Mon, 13 May 2024 17:50:51 +0000
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, David Howells <dhowells@redhat.com>, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, keyrings@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAOVSQmYC/4WNUQqDMBBEryL73S1mjcT2q/coUhLdaMCakkhok
- dy9qRfo5xtm3uwQOTiOcK12CJxcdH4tQKcKhlmvE6MbCwPVJOu2Vmgklg4mGx9WL4sf9MaoTEv
- UGN3oTkCZvgJb9z60977w7OLmw+d4SeKX/hEmgQIbIttJc1F6bG+T99PC58E/oc85fwFTKLYmu QAAAA==
-X-Developer-Key: i=justinstitt@google.com; a=ed25519; pk=tC3hNkJQTpNX/gLKxTNQKDmiQl6QjBNCGKJINqAdJsE=
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715622630; l=3843;
- i=justinstitt@google.com; s=20230717; h=from:subject:message-id;
- bh=CkWV6BI6pB19qRh2l/tD81uJGerHWKsptqUyLWE4ZSs=; b=mNrfhs0/3ITeH/kBQ/vw1Stjlb+h1///iiZ8tKZCfRXm39h8a4mOs9jc+AE1Xk4uHJiInitje
- p7X/R7A/nn1Bf98PIqJ7PZNOWtTGhtzf87FUPxdrSvNMb1SEtvvD7P0
-X-Mailer: b4 0.12.3
-Message-ID: <20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com>
-Subject: [PATCH v2] fs: remove accidental overflow during wraparound check
-From: Justin Stitt <justinstitt@google.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>, 
-	Nick Desaulniers <ndesaulniers@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
-	Kees Cook <keescook@chromium.org>, Justin Stitt <justinstitt@google.com>
-Content-Type: text/plain; charset="utf-8"
 
-Running syzkaller with the newly enabled signed integer overflow
-sanitizer produces this report:
+The pull request you sent on Thu,  9 May 2024 18:47:51 +0300:
 
-[  195.401651] ------------[ cut here ]------------
-[  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
-[  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
-[  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
-[  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  195.425804] Call Trace:
-[  195.427360]  <TASK>
-[  195.428791]  dump_stack_lvl+0x93/0xd0
-[  195.431150]  handle_overflow+0x171/0x1b0
-[  195.433640]  vfs_fallocate+0x459/0x4f0
-..
-[  195.490053] ------------[ cut here ]------------
-[  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
-[  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
-[  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
-[  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[  195.514075] Call Trace:
-[  195.515636]  <TASK>
-[  195.517000]  dump_stack_lvl+0x93/0xd0
-[  195.519255]  handle_overflow+0x171/0x1b0
-[  195.521677]  vfs_fallocate+0x4cb/0x4f0
-[  195.524033]  __x64_sys_fallocate+0xb2/0xf0
+> git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags/keys-trusted-next-6.10-rc1
 
-Historically, the signed integer overflow sanitizer did not work in the
-kernel due to its interaction with `-fwrapv` but this has since been
-changed [1] in the newest version of Clang. It was re-enabled in the
-kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-sanitizer").
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c024814828f72b1ae9cc2c338997b2d9826c80f6
 
-Let's use the check_add_overflow helper to first verify the addition
-stays within the bounds of its type (long long); then we can use that
-sum for the following check.
+Thank you!
 
-Link: https://github.com/llvm/llvm-project/pull/82432 [1]
-Closes: https://github.com/KSPP/linux/issues/356
-Cc: linux-hardening@vger.kernel.org
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Justin Stitt <justinstitt@google.com>
----
-Changes in v2:
-- drop the sum < 0 check (thanks Jan)
-- carry along Kees' RB tag
-- Link to v1: https://lore.kernel.org/r/20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com
----
-Here's the syzkaller reproducer:
-r0 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file1\x00', 0x42, 0x0)
-fallocate(r0, 0x10, 0x7fffffffffffffff, 0x2000807fffff7)
-
-.. which was used against Kees' tree here (v6.8rc2):
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
-
-.. with this config:
-https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
----
- fs/open.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index ee8460c83c77..23849d487479 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- {
- 	struct inode *inode = file_inode(file);
- 	long ret;
-+	loff_t sum;
- 
- 	if (offset < 0 || len <= 0)
- 		return -EINVAL;
-@@ -319,8 +320,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
- 	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
- 		return -ENODEV;
- 
--	/* Check for wrap through zero too */
--	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
-+	/* Check for wraparound */
-+	if (check_add_overflow(offset, len, &sum))
-+		return -EFBIG;
-+
-+	if (sum > inode->i_sb->s_maxbytes)
- 		return -EFBIG;
- 
- 	if (!file->f_op->fallocate)
-
----
-base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
-change-id: 20240507-b4-sio-vfs_fallocate-7b5223ba3a81
-
-Best regards,
---
-Justin Stitt <justinstitt@google.com>
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
