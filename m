@@ -1,121 +1,188 @@
-Return-Path: <linux-kernel+bounces-177912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC5A8C4623
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:34:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113E98C4628
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EFEA281D69
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:34:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F4FFB20FA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E8822612;
-	Mon, 13 May 2024 17:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FC022616;
+	Mon, 13 May 2024 17:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EYHnu708"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="n9jqREXH"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2126.outbound.protection.outlook.com [40.107.220.126])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9E520DF4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715621648; cv=none; b=Mlc/prgd2xgPSzp53OV3Lcm8NemGzqaDYsIcf4tHsN+q5od891kReE8S7wBsJrq/gRTNDwW5eXTxcR1QA9nQznJYqCU9pRphe/xSeNyp//E4aF4hyct7v/SrQkUskUbZCIJKrvuHOd4sgQW2c/c2007U+VXWF/KzYzOZ8zdN5G0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715621648; c=relaxed/simple;
-	bh=LGyj4luFEwyxCJutXStC46wb2QnlMbg8i3ELpfd0ioo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SiOMMssJyD56xClBNdYL987xKnNiuxqOar0Zb/59lah5xsS0TBGNz22mlZPSDh47bNtxg/74bE3r/Ccw+JSgXwMJZAD94O/ds/Z2qTmvvj91d5//UhCjDZbg9Vssfhy8PssEPSZ1/9oTAd/gqx65LPjGWhlZQbZinVj8CNdZVeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EYHnu708; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a59a8f0d941so1135522466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:34:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27310199B0;
+	Mon, 13 May 2024 17:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.126
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715621761; cv=fail; b=MHaZqiVvlUY39J6CPuXD6ucxaJ48L0fZajJyQzDJoY1e3zRNZ1xVx7OPdZfldWJGJHnYrs9HI647/0Ky3MvZJksUIuYyq1w2R8MfPS6p5awekxgiaIJbcPSQRssavjSdxAf6ysVm9lvXUMZGrRn9UW6IePQzb+VTd+aHT37j8Vo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715621761; c=relaxed/simple;
+	bh=RRU3etZ6k41HXZ+0WE40yP7GRw4bhIOR08w5gFXn39c=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=S/GdjZ7/SYo359TWaMyvmKaBs4YP7+9+CI+m41eIGUP4ZXWSwxSvQ1e2SsRwbR/eHSEXuS/SVDGB/LfAaVstsfi7I1bLq96wiTMh6SAAUjWD42BbLKlI1dPsqotJ/C6VN7Y44m2TOOz3bRwOQmum6f8MA4hc+689GwyBaX5J0BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=n9jqREXH; arc=fail smtp.client-ip=40.107.220.126
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=IsQhHcx0UpAMfF8IxgxxhLY/0GDVENNUD23kh3BhTXqeF025TmJjmPDOrq40BTkQU+s3XSBd+/CihkSOQ8CxqkmmxJ2+Ao1rQQP4rBsKmMsMrvULrVSbRWgvO+/Mm/I1nqUzXhbqnYgveiNByUMbkMZFGMKGHMgFyZxx6zXVXwikFjRh8QDFR/2W79JB7yGWurbWWwSx9XAedBjSnKy/XdhYK5yZxmRuibicpb2i+XHYbYZZp1kqI6iZnPSSD3tkbRWIWCDm62mXUWrHolUQge9sShPpIORzaGcP66lsQvwyx89mILbpZ1Kyq/rZhc+94R6w6HEeqUngVBapquv4dw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xEhuCkt5clsbSj7N3dOEC3ADY59QwPpxEUNS2OMsi/E=;
+ b=ArNb3KLp00/W7PWKdIEF6m6/c2gNQnxga7HnQhftGt1Oi7ZHXE7M8FJUl28Ypswo+0qCrv9sTlSR2TWua/OM5ySVhK1NdWNiKjAFHEHQ8SPIHIGtVoKcLe1yD8rUI7bx9qVDT55LEpUbjHSz42odk1+F0I+wFkWeo0nvkwa3RdOvvl58kllmZkf0ewsViA/07uLSUWVP9LBjWMl54Au/RJScxrBfDJu1RbIGXRquh5PUo0OuyGmci/Qbqu0wQxRM0f2dxOWIxxEHDrtvH56SAT1T4uDbal1+RLqlUMYV4jaOgchMG4ztoT0E9ZmCnZt97gk7ObfA1c7i0ZFyqSIjzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1715621644; x=1716226444; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gF7u5KTdydtGb+C4u/lKHMX/r20FiXVK70KMr4rQijg=;
-        b=EYHnu708blrHYqiCasfWEmHhSyyDZnDNseVnTvOjYMkmmNWCIVosphzkryeQRqVIf8
-         hNYefOiTXVrMZWP7lLqmQmj79gsX85vmKg6vxv9ZipZgj6GJE6/hEsqDgXU0pJ0WEpu6
-         ZQF7Ma53iDSG8NX5GHkvpNIhEskuMULhrpGHo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715621644; x=1716226444;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gF7u5KTdydtGb+C4u/lKHMX/r20FiXVK70KMr4rQijg=;
-        b=fTJ4YtHbUhFVfiWUOyAyiD7LP7C0DCxQO+I3bxu1JPzgK8ES4a2fzMA0iXhuw+hNOu
-         mnnKvxKiFgnU38enFXNJIoU28UjuYkvteXiSXwflLzu1dzsiC8tzgFkcF15fqySn9bVu
-         W2e0YFeKJ+CMBgSEkAtAg4UbLCB7/YAevhRJDrZvOrGHWnQvwH38rcZ9oaLpEHAHjgmC
-         B/SScduW8aWdGyB1r0+l81EDCfMESQ5W6fWBXBhZf76AzVUE53uCrj68/5P69E7n8PmQ
-         1lq4QJMwrTMcuyYqkdQmFDNN99vWZgcwpn1WvOjHLhZx4fRGEf+UoRpEjdioqMuslB5y
-         P0pg==
-X-Forwarded-Encrypted: i=1; AJvYcCWN3NnUW9+30o4jw5hDORBqqBL3gwJP94Q9oa4J8Shm4hAN5qEBj9FPSvoi/mkOI84kxPaR/4zx8hOlMfyQw092+jL2RsZKI3Pi0fLx
-X-Gm-Message-State: AOJu0YzShoc9CpfjkTpLj4x+AtbIrSEKCZh4M8Gz2koqbGRvCBnkTCur
-	8LVkNcRAx0BJFD1Vl2pCrhZOiFBmK7md/N70bP8l6JrxRKUboMccYR1nXNHh3GB2DoNORQ+aWww
-	mrYn+pw==
-X-Google-Smtp-Source: AGHT+IEw7N4kPiEMJOK0Yxp2x8PX+faIakoxUtUgYAbqB7khyrYqve9B/8vBFqUCkRYBixvMMQ9jBA==
-X-Received: by 2002:a17:906:22cc:b0:a59:c319:f1e3 with SMTP id a640c23a62f3a-a5a2d53ae7emr678818866b.12.1715621644509;
-        Mon, 13 May 2024 10:34:04 -0700 (PDT)
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1792228csm622585566b.92.2024.05.13.10.34.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 10:34:04 -0700 (PDT)
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a8f0d941so1135511166b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:34:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW9PCvhhM/7o1szigHyuCo9ifNM9kwsSeoZcgL6c/nSz0/aIWfm6LkAvuJ+HUZ5a0vJLLLQPyk3oFBC3zeGZN/Gd+9HH/Nj+yXh4/xy
-X-Received: by 2002:a17:906:2298:b0:a5a:3579:b908 with SMTP id
- a640c23a62f3a-a5a3579bb63mr599168266b.38.1715621643624; Mon, 13 May 2024
- 10:34:03 -0700 (PDT)
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xEhuCkt5clsbSj7N3dOEC3ADY59QwPpxEUNS2OMsi/E=;
+ b=n9jqREXHNFIWxksUNtMFSwzQwQRGCmyzc4gTOZNlRqyfcDGh6remTHYqQ1dRcXnmVU3xkoojgEi84jT/9l4NIuMRp7ek9uo15Og5ZxwP+uWsuP4YSVI+fT5C7+p/t7KfiZfUnvpEILHJHgAvPBP7C+sZCtS3jQnZsl31/daYII4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
+ SJ0PR01MB6191.prod.exchangelabs.com (2603:10b6:a03:296::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.55; Mon, 13 May 2024 17:35:54 +0000
+Received: from SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d%4]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 17:35:54 +0000
+From: admiyo@os.amperecomputing.com
+To:
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: [PATCH 0/3] MCTP over PCC
+Date: Mon, 13 May 2024 13:35:43 -0400
+Message-Id: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH5P223CA0010.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:610:1f3::11) To SA0PR01MB6171.prod.exchangelabs.com
+ (2603:10b6:806:e5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <587f5e6b-d543-4028-85c8-93cc8f581d02@suse.cz>
-In-Reply-To: <587f5e6b-d543-4028-85c8-93cc8f581d02@suse.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 13 May 2024 10:33:46 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiZpyWvC-nh4CPhKkPLMwWb_W00NDMopuxVNTnGB7fYeg@mail.gmail.com>
-Message-ID: <CAHk-=wiZpyWvC-nh4CPhKkPLMwWb_W00NDMopuxVNTnGB7fYeg@mail.gmail.com>
-Subject: Re: [GIT PULL] slab updates for 6.10
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	LKML <linux-kernel@vger.kernel.org>, patches@lists.linux.dev, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|SJ0PR01MB6191:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6a0c615-9aa0-417a-be50-08dc73732444
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|52116005|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?isFb6Ex3/rq4eGtxRdYIju0/G/aPOEfNyR3dRXJm6qdpYWBiQYr9UZktuEX5?=
+ =?us-ascii?Q?Q84AAbnBRCse+MBbruTmiT5uxKrOB2NZHJvJbs+QBn+K+fyQwZ+fJQ86KuGM?=
+ =?us-ascii?Q?pxzNJ1zc8Rh1FM9nPaNk/iVqg1v1wvqLfvUoWz2SX9sjKock6C90cQXb7N3T?=
+ =?us-ascii?Q?HydIo6FZMdHptWLiXNjeyN+akJpLE99jJ0m+l8vizNep3YsvALbyaJdky1lT?=
+ =?us-ascii?Q?GO6F3v7Q6zjFvZatqQeGFAjEu5/UnuJ8USEuU2jdRONJFBfURIJ3edNXf5qI?=
+ =?us-ascii?Q?rZWmLUibhnDTodYKf56yvMceigTPUqsdcCpXaZCZK/4dmiHRgtlzZFwVjsve?=
+ =?us-ascii?Q?FewBH8yqOzDtwIkxa6ITo7mZ6RetIS0NQE2wz7mX5df3H9CxWxOxcPZQn1F1?=
+ =?us-ascii?Q?OYTgkQU9rYoEw0TiYdEeGhJa35XLtX3jpVsViahp8dBYseyVZn0QsHJvl+uW?=
+ =?us-ascii?Q?Z+TJQ719Bvvzl3IhF4L5B6vAjQhM4WYAkgDNg6l+hkcYu1vY+w1P4s/PG79r?=
+ =?us-ascii?Q?Pm2GX3MHVy4uCppCwvICRy+F4ar2m6iAO6UCBgxxgrZ+c/nAuPvJHkAqF1em?=
+ =?us-ascii?Q?yx++iRx8im7YczoCkNh9Xc0APIHa40tKU1faywlqFHKGv1dWjrYnxTTSKhKw?=
+ =?us-ascii?Q?2jmbIZ7dnfKC+bA8NawBFluxQcs7xusy+Hl1trsbTUh5lLCnNur5RrO4utSu?=
+ =?us-ascii?Q?g14FzaQl+Qs1wA9risiqbu1uelEgrjwSLgLs4eOk3iRQ+hG0gxTeoYwga0K3?=
+ =?us-ascii?Q?rinBxxWwde2RafyHQzEuoH3kfLTjWv9VcYEpTQhbpgEqHzhGVAvaDvJWTUVd?=
+ =?us-ascii?Q?NHmPMATZriqMmkByQz79NR6zykMtGNn562GGLTZVbHAUkbm3O+LR+II0AsB0?=
+ =?us-ascii?Q?Xg6wE+B7DsuDOijjXi7OEPgJT30I3bXMB8XAgMzG+eChMt+ya/a7Nsn/9NrS?=
+ =?us-ascii?Q?qdLVRjRYZp0XRnMNdAjMbdp+UjjxY27Rz0jJFTgzt8qUB9eHld8IaXT8/8xO?=
+ =?us-ascii?Q?3defFlHMvhsHMliCnZGt/DdCKFiz+IL282beBwRj5MKXxLQoyJTCMe7fg0Xr?=
+ =?us-ascii?Q?MVZLfFs7yM2/kE9xbXzfbywLZ+pEKLRD7B64JUQsKn3N27CQWPP1cxSnIaLj?=
+ =?us-ascii?Q?lpfPfpo0PKlx9ttOxTTiWl977p5z4CM3r9Ukw5zawF+jR/CA9YKSHMtTE0XP?=
+ =?us-ascii?Q?GKoS1hqeOIOGDG4F8qI8k7O5jwVQz3d4FzYWex16GeXciita4y0z4GcahcWB?=
+ =?us-ascii?Q?8rkxAXXwqiuL1BrNn8Q2P/VGqBCsMSKTfU3MSISpAQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(366007)(1800799015)(376005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Nxo1perhoGsbmi/87naADkRwD06aA7yUbUmBf2rXWtuoKg9tQmBK1DbOkNqC?=
+ =?us-ascii?Q?uTDPhaJD/z7jrH2Litbx6cWBAVXON3uYtEBft62wbga8NXYKWZ7bujw2/Qr5?=
+ =?us-ascii?Q?cmY1iBlQDKKB5842bmWg6rcEiRo2SQqGgWfoo4P2WK4JI/jh0gpZqXF9XGAV?=
+ =?us-ascii?Q?9OJ/3gXD5VBvP9b+F2Qbs9KkJTz9Zjyq1wdBINCdJJeS80cSf0GcB5xmf1/A?=
+ =?us-ascii?Q?fFxtPv3I2TmPRGPQCJ3YJQFEBrjNV1cGBR+tmneo9SUp0ua3OKBUUZ7wP3Uj?=
+ =?us-ascii?Q?xJ0P/OLgZkCVq66OTQjEMn1LvAGvtFVF/98NFQh6N3h59PKFTcMm9q0/qG4v?=
+ =?us-ascii?Q?KSA+W+FFK6HOaK2ixA7lmVG3i14TvouQINeFC8rXZXjzfA7Pd3BoJWbALLuU?=
+ =?us-ascii?Q?BwkK2v+xUk5nd8OBN27YMam3aVNabdeD5I7OcfpCDpxiCapRpyvrvMrsPGJ5?=
+ =?us-ascii?Q?mVG5Eaf+8qz0g86lRjPg4yQbNBNt1w1tH0nNVvhcFiSIbQbwlgPso3R1oqwv?=
+ =?us-ascii?Q?51gTd3d8O7vZX15O5j3J+l2QPIEbblPkSKINfYVpdqUqMlw69cYk2qp6cryw?=
+ =?us-ascii?Q?Pb+ilrA/pMtigpDGdtE+6b3jKYxnwUKFYWzIGUQdzFXRPwPBn/7zjH8PPUEl?=
+ =?us-ascii?Q?M52KmTT49krZVDu1vp8yEp7sTEqB/vsqA6PaKPZUF78y/Xhx70RqxWVqW9au?=
+ =?us-ascii?Q?R3XpNoFbsP1FxWhwsHC/8jqtswkt9GrNBfsg2r7mOxLz4fbkIkasRnuuXmbH?=
+ =?us-ascii?Q?3H1V91mtQFC1JcNdLav6x6r7+RUJZmCw6XP0MA9PlnCowvKRhunxpCRCRZQI?=
+ =?us-ascii?Q?Tj0tRmj3ZmUz1gWzmKp71vwgmC+0lzsgjFPkow21Cbx7F+mz1nxJLWQr7fI7?=
+ =?us-ascii?Q?R3XL+afjS77/6+1Qs8oXftvoNv71xnql2Uh0A4NUmDJ9g8/ENVwMhLrdrvrm?=
+ =?us-ascii?Q?9aVg5q8iNyboGMvm0paP2bhHm9aTjI33B2iWcCJNo2HBhYYANOyFkitAa/Kf?=
+ =?us-ascii?Q?aNoKSlqa4321/dAdLGsl7s4kRSpqsU0tXODBEnvENeDYSDYC87HjiY06WoC0?=
+ =?us-ascii?Q?T2dHC1JSVTs5wA0BOCGPjhOqh6WH5XSOcL27Mv3FFIy8Ajkd+uPr/gzqrx2d?=
+ =?us-ascii?Q?pfMCwAymSBcYefULgA3zNoSlsmblSJm0Df6o92Wr0kBlysg/+5ljqQBEhtoQ?=
+ =?us-ascii?Q?NJKMZ1RMtWVi6ncOlP9g5othIkaT/dPKe74wjomTN/yOH0x1Pfe9Jaf5EyLS?=
+ =?us-ascii?Q?eHCw3K5m8Fpx+EVzTnUMlnO3KKHVxlZJTFFhDt4IkEac94OOYULk8Wxjngc3?=
+ =?us-ascii?Q?vyQqIeB9Yp4ksIO6mf+qPg2+tgpWBYehwrZgolluwUSg6/xEG7SypdeTUrt6?=
+ =?us-ascii?Q?4Ci2x8U6a6bTJ6QGRkgOrnEPQQQbBnPnEryAiU/+iWRBr2vRR3O4di7RSyq4?=
+ =?us-ascii?Q?GZgyZh5whSJcpka8my1HBtHFaS/2Cq4SOdDE3YfdYdTQDvtvfGXJfYW9yM7c?=
+ =?us-ascii?Q?7JdlSLJ+FYFDUw8bZZpKmxBb8mGRbcst0Oqs7CUokAzuaF/P2MC4yao0+Gef?=
+ =?us-ascii?Q?XtzJQ3ufrfWK2zYVm7rs0poQXg5gb9MiyfVHVF1EFNaee9hNHbByDo4Rn3Yk?=
+ =?us-ascii?Q?47yNt9opq+Y07LljUlIBZEIfFgfOybWUigQKTN193TadlpphIlaft/MOif/6?=
+ =?us-ascii?Q?r8CYXSa6346JUYiPfDHQzizEWU0=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6a0c615-9aa0-417a-be50-08dc73732444
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 17:35:54.7367
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XR2j1/KRj7C/NaBl2xGRgiP7j3bgP0SyiWrRTK5UG67aiSwRiKktlYEluvrBeC3R6FdLrEOU671GfuEe3sBBTo8aVxBwBFCOgFEiwvvYhhwM2Sr++iWVIaB0k9mNV/z6
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB6191
 
-On Thu, 9 May 2024 at 07:25, Vlastimil Babka <vbabka@suse.cz> wrote:
->
->   To avoid affecting fast paths with another shared counter (attempted in the
->   past) or complex partial list traversal schemes that allow rescheduling, the
->   chosen solution resorts to approximation - when the partial list is over
->   10000 slabs long, we will only traverse first 5000 slabs from head and tail
->   each and use the average of those to estimate the whole list. Both head and
->   tail are used as the slabs near head to tend to have more free objects than
->   the slabs towards the tail.
+From: Adam Young <admiyo@os.amperecomputing.com>
 
-I suspect you could have cut this down by an order of magnitude, and
-made the limit be just 1k slabs rather than 10k slabs. Or even
-_another_ order of magnitude smaller.
+This series adds support for the Management Control Transport Protocol (MCTP)
+over the Platform Communication Channel (PCC) mechanism.
 
-Somebody was being a bit too worried about approximations, methinks -
-but I think the real worry goes the other way, where it's practically
-so hard to even hit the approximation situation that it gets no
-testing at all.
+MCTP defines a communication model intended to
+facilitate communication between Management controllers
+and other management controllers, and between Management
+controllers and management devices
 
-IOW, I suspect it's better to be explicit about approximations, and
-have people aware of it, rather than be overly cautious and have it be
-a special case that almost never triggers in any normal loads.
+PCC is a mechanism for communication between components within
+the  Platform.  It is a composed of shared memory regions,
+interrupt registers, and status registers.
 
-But pulled.
+The MCTP over PCC driver makes use of two PCC channels. For
+sending messages, it uses a Type 3 channel, and for receiving
+messages it uses the paired Type 4 channel.  The device
+and its corresponding channels are specified via ACPI.
 
-              Linus
+Adam Young (3):
+  mctp pcc: Implement MCTP over PCC Transport
+  mctp pcc: Allow PCC Data Type in MCTP resource.
+  mctp pcc: RFC Check before sending MCTP PCC response ACK
+
+ drivers/acpi/acpica/rsaddr.c |   2 +-
+ drivers/mailbox/pcc.c        |   5 +-
+ drivers/net/mctp/Kconfig     |  12 ++
+ drivers/net/mctp/Makefile    |   1 +
+ drivers/net/mctp/mctp-pcc.c  | 372 +++++++++++++++++++++++++++++++++++
+ include/acpi/pcc.h           |   1 +
+ 6 files changed, 391 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/mctp/mctp-pcc.c
+
+-- 
+2.34.1
+
 
