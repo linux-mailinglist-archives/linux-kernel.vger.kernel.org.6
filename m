@@ -1,130 +1,155 @@
-Return-Path: <linux-kernel+bounces-177665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B7FE8C42C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:03:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED29B8C42CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA0CC287C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:03:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A83FB229A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1064F153813;
-	Mon, 13 May 2024 14:03:29 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEF9153807;
+	Mon, 13 May 2024 14:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DzShIiKS";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DzShIiKS"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACF950279;
-	Mon, 13 May 2024 14:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC94153598;
+	Mon, 13 May 2024 14:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715609008; cv=none; b=IpbAy+saQTitQIJQl5aVxx5BImj9m7OZ0WiohZYdUyy1PxqwgYjverR8bTl0VMCOtkLoTivqST2BGLv2DQnh7uBD5ccD9QRgw95MQZn4nROJSICk+0WD5Q9nC3GI5/LCLDoPWvj5+ab63eJPP0jcruWPT5E4OZMLe5Q09cWHe1U=
+	t=1715609038; cv=none; b=cou21guH9qCsXf+JvKUucpp62vq6tkiwpzbKB+KJa0aAHo+83tApnxuKpAvjcHelQnPZEovbPGss60Td4N6DzfviV63AjfluOV0hDGdkEfmIchKUdbru0MSixHvxbMUDglimV4O876CfRqjhII5lH2ghGp44xPRFbYhj2vlDIrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715609008; c=relaxed/simple;
-	bh=K7veTtApNyiwjmLaFO5BMobsj0TYJEd3cEVzL9mDR7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=chahyhx/xePUlSqPPjz3XDo+WfwF4WT4o25UZL9qdId7ac17Q+Xje82Y7VOkb3y/hh7M34uSxdEIkNrH6GNYFjk3SJ8v+yyCPgm/4kqcmtGlIBLyQ4dBhi+WYyg6e4BNtWzSHfStdk+JC0PjjCK6/qqaQnSG/xf6GuuSFBiVV3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBA00C4AF17;
-	Mon, 13 May 2024 14:03:24 +0000 (UTC)
-Date: Mon, 13 May 2024 15:03:22 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v2 03/14] arm64: realm: Query IPA size from the RMM
-Message-ID: <ZkIdqoELmQ3tUJ8M@arm.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-4-steven.price@arm.com>
+	s=arc-20240116; t=1715609038; c=relaxed/simple;
+	bh=Lgh6G1eAGr1IMo9Vxnj39v+o8JT8rLEQeJcV+88RQik=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=llnAGMNbgRWdep23V2QLaCJcx7YYGg8QcTdYa4gJYc+YhQ/jRtSdU2M4IzOWSfoX1Id4MxSTGiJwQV4YRkvFE+J7aatMdChVm4flhOD6Ko4X/r4hoJTVTlD4fwLe5jrIOfT6qGxrlnXVxGP1LUIjfpHtDZ1qU29zk7vNvb+2RAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DzShIiKS; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DzShIiKS; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715609035;
+	bh=Lgh6G1eAGr1IMo9Vxnj39v+o8JT8rLEQeJcV+88RQik=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=DzShIiKSdsasr4E5wVwexE/6FI5q7gmgOCvYJelYgn5BBWydE+yU+fFY6TxQRQK9p
+	 eoCxlHz+3inoYRyYQUU36n7EplsZYAILi0eTMzHY7svMU6X9BcOUCqldaILXNl0S7R
+	 ZpqQSofQA2kPOjl5toD/5mti2kL2wVIXHDv1T1DE=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id A27841286A69;
+	Mon, 13 May 2024 10:03:55 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id fsnPAtpqdWnn; Mon, 13 May 2024 10:03:55 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715609035;
+	bh=Lgh6G1eAGr1IMo9Vxnj39v+o8JT8rLEQeJcV+88RQik=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=DzShIiKSdsasr4E5wVwexE/6FI5q7gmgOCvYJelYgn5BBWydE+yU+fFY6TxQRQK9p
+	 eoCxlHz+3inoYRyYQUU36n7EplsZYAILi0eTMzHY7svMU6X9BcOUCqldaILXNl0S7R
+	 ZpqQSofQA2kPOjl5toD/5mti2kL2wVIXHDv1T1DE=
+Received: from [172.21.4.27] (unknown [50.204.89.31])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 069031286A24;
+	Mon, 13 May 2024 10:03:54 -0400 (EDT)
+Message-ID: <a8ea533bf30c658508875948f29341663360db57.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH v2 4/4] tsm: Allow for extending and reading
+ configured RTMRs
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Samuel Ortiz <sameo@rivosinc.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Kuppuswamy Sathyanarayanan
+ <sathyanarayanan.kuppuswamy@linux.intel.com>, Qinkun Bao
+ <qinkun@google.com>,  "Yao, Jiewen" <jiewen.yao@intel.com>, "Xing, Cedric"
+ <cedric.xing@intel.com>, Dionna Amalie Glaze <dionnaglaze@google.com>,
+ biao.lu@intel.com, linux-coco@lists.linux.dev, 
+ linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 13 May 2024 08:03:53 -0600
+In-Reply-To: <ZkHoiYMseU0XqEbR@vermeer>
+References: <20240128212532.2754325-1-sameo@rivosinc.com>
+	 <20240128212532.2754325-5-sameo@rivosinc.com>
+	 <ec7edddcf8c74e48cb392db0789b03243ab05692.camel@HansenPartnership.com>
+	 <ZkHoiYMseU0XqEbR@vermeer>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240412084213.1733764-4-steven.price@arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 12, 2024 at 09:42:02AM +0100, Steven Price wrote:
-> diff --git a/arch/arm64/include/asm/pgtable-prot.h b/arch/arm64/include/asm/pgtable-prot.h
-> index dd9ee67d1d87..15d8f0133af8 100644
-> --- a/arch/arm64/include/asm/pgtable-prot.h
-> +++ b/arch/arm64/include/asm/pgtable-prot.h
-> @@ -63,6 +63,9 @@
->  #include <asm/pgtable-types.h>
->  
->  extern bool arm64_use_ng_mappings;
-> +extern unsigned long prot_ns_shared;
-> +
-> +#define PROT_NS_SHARED		((prot_ns_shared))
+On Mon, 2024-05-13 at 12:16 +0200, Samuel Ortiz wrote:
+> On Fri, May 10, 2024 at 10:57:37PM -0400, James Bottomley wrote:
+> > I'm not really sure where to hang this, since there's no posted
+> > agenda
+> > or materials for the CCC meeting today.
+> 
+> The agenda was posted on the linux-coco ml [1]. I sent a link to the
+> presentation slides [2] to the thread.
 
-Nit: what's with the double parenthesis here?
+That's great, thanks.
 
->  #define PTE_MAYBE_NG		(arm64_use_ng_mappings ? PTE_NG : 0)
->  #define PMD_MAYBE_NG		(arm64_use_ng_mappings ? PMD_SECT_NG : 0)
-> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-> index 1076649ac082..b93252ed6fc5 100644
-> --- a/arch/arm64/kernel/rsi.c
-> +++ b/arch/arm64/kernel/rsi.c
-> @@ -7,6 +7,11 @@
->  #include <linux/memblock.h>
->  #include <asm/rsi.h>
->  
-> +struct realm_config __attribute((aligned(PAGE_SIZE))) config;
+> > However, it struck me you missed a third option: use the ima log
+> > format.  This has the advantage that we can define additional
+> > events and have them published with a kernel patch (the IMA log
+> > format is defined in the kernel).  Thanks to the TCG, it's also CEL
+> > compatible but doesn't require any sort of TCG blessing of the
+> > events.  Plus we also have existing kernel infrastructure to log to
+> > that format.
+> 
+> That's an interesting idea. It may avoid having to extend the CEL
+> spec with a new Content Type, but otoh the current spec defines which
+> IMA events are supported. So adding new ones may require to also
+> eventually extend the spec. But I guess since IMA is a Linux kernel
+> subsystem, changing the kernel code and ABI would de-facto extend the
+> TCG CEL IMA spec.
 
-Another nit: use __aligned(PAGE_SIZE).
+That's what I was assuming since the TCG is currently deferring to IMA
+in that regard.
 
-However, does the spec require this to be page-size aligned? The spec
-says aligned to 0x1000 and that's not necessarily the kernel page size.
-It also states that the RsiRealmConfig structure is 4096 and I did not
-see this in the first patch, you only have 8 bytes in this structure.
-Some future spec may write more data here overriding your other
-variables in the data section.
+> Here I assume you're talking about the IMA_TEMPLATE CEL specified
+> format, which is designed to accomodate for the current kernel IMA
+> log format. The main drawback of this format is that the digest does
+> not include the whole content event, making the CEL content type, the
+> IMA tag name and both lengths (for the content event and the IMA
+> content) untrusted for event log verifiers.
 
-So that's the wrong place to force the alignment. Just do this when you
-define the actual structure in the first patch:
+That's only because IMA doesn't yet have such an event.  If we're
+assuming effectively designing an IMA log format for non repudiation of
+external events, one can be added.  Although I wouldn't want to be
+hasty: one of the big problems of all options is that no existing log
+format really covers the measure container use case and we're not
+completely sure what other use cases will arise (the firewall rules
+measurements was one that regulated cloud providers seem to think would
+be important ... and that has a periodic rush of events, but there will
+be others).
 
-struct realm_config {
-	union {
-		unsigned long ipa_bits; /* Width of IPA in bits */
-		u8 __pad[4096];
-	};
-} __aligned(4096);
+However, the current IMA templates (event descriptions) are known by an
+ASCII prefix (they all begin ima-):
 
-and maybe with a comment on why the alignment and padding. You could
-also have an unnamed struct around ipa_bits in case you want to add more
-fields in the future (siginfo follows this pattern).
+https://docs.kernel.org/security/IMA-templates.html#supported-template-fields-and-descriptors
 
-> +
-> +unsigned long prot_ns_shared;
-> +EXPORT_SYMBOL(prot_ns_shared);
-> +
->  DEFINE_STATIC_KEY_FALSE_RO(rsi_present);
->  EXPORT_SYMBOL(rsi_present);
->  
-> @@ -53,6 +58,9 @@ void __init arm64_rsi_init(void)
->  {
->  	if (!rsi_version_matches())
->  		return;
-> +	if (rsi_get_realm_config(&config))
-> +		return;
-> +	prot_ns_shared = BIT(config.ipa_bits - 1);
->  
->  	static_branch_enable(&rsi_present);
->  }
+So it would be easy to add more with a non ima- prefix.  Note that this
+doc is out of date an IMA does support hashes all the way to SHA256
+although SHA384 isn't currently listed.
 
--- 
-Catalin
+The current record fields are defined in
+
+security/integrity/ima/ima_template.c
+
+> CEL defines another IMA format (IMA_TLV), that hashes the whole event
+> content. I think we should at least use that format as our output
+> ABI, if we want to use a TCG specified IMA content type.
+
+Possibly.  Although avoiding double hashing may be a useful performance
+measure (not really sure how fast records will come in yet).
+
+James
+
 
