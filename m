@@ -1,106 +1,121 @@
-Return-Path: <linux-kernel+bounces-177836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEE18C4526
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:36:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1028C452B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BE01C21927
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F54285064
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCEA1B94F;
-	Mon, 13 May 2024 16:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F85318C3D;
+	Mon, 13 May 2024 16:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgI9iDP/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LbgSsB3B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LgB7OxUa"
+Received: from wfout7-smtp.messagingengine.com (wfout7-smtp.messagingengine.com [64.147.123.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C21A716;
-	Mon, 13 May 2024 16:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC9315E89;
+	Mon, 13 May 2024 16:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618161; cv=none; b=kVqhb2LCzrtwPuvWtKN781/c//0dJwkv/+P0YkBdaNIZtR4Y8b3o36cYBX3LEKFgOeL5ZJ8XM2jLaLVZYtIR/rIfzENxcm6CcSPFEfjnEF16v9/bVkO3xMGACnQQAnmZkGwGsudlORA0rUF5LgRHPLAzABuLurOKj7bAsgZCGY4=
+	t=1715618259; cv=none; b=D0nXBOunaXWJq7dslFV1Dc3FOv4fgPGBDvXrpM1GX0dm3Eu4W3L/RKwu26LKNzZdWakrhsEsjoeaRblbnKSZJ7pKIWdZSXY2HYJZKu02+I7UrWjmvyyzZAq2Hy7W9rqmx2yM+2CurWUDYck5WcYiAR54HnX1XuWwDG/JHic2Lsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618161; c=relaxed/simple;
-	bh=WL4mQviCBXJXVL3QbU+lDj3cm5lbV4VfD08lc6+45kc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pz6sIZflSmyHuE4MMASjr1nqL3HBueUMwUZZDJ/+G7C1Wtvd9VYW38ShuG96xIkcWOyOHiLCV/M4UsSchN42W74DRQXUbjhF3448QM+gxii+NEtI2IiptwiRL9ZgIvkLayyg1bXgZzmpspQA2PNd723cxLFPZZqJscCpvLMzTQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgI9iDP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03B5C113CC;
-	Mon, 13 May 2024 16:35:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715618161;
-	bh=WL4mQviCBXJXVL3QbU+lDj3cm5lbV4VfD08lc6+45kc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kgI9iDP/j23MTKqJ38bXuHTYN+VYj1ybdPdblKAETl9tinCbaM8aJ9XqKwyaxCJfQ
-	 MCJUksnmp3fP9iyVo5TzVTy883f3IUxpvGRvLUGr/aiVfK9tRhPouQOnpYjuyf5mfw
-	 P6EafBr5vR5y9tRMbJIsrzXgKefscmgEtKGO1pOEpAHjuAZRYI9nPjDFU5kPnjC/s8
-	 adafPBwFtx2PJ9W3VIE1bP7yzmSKL7o8DZBo23P0NDBA2hq6NTW8TTuRShitLSPO1C
-	 EpiL16d71Dn0Bw29SEa6/NT8EMYEJxgirhhxQcmkf9+HVY9gNdDO2fL8MR1CafETNZ
-	 lfEd3U22/NiKQ==
-From: Robert Foss <rfoss@kernel.org>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: imx@lists.linux.dev, Maxime Ripard <mripard@kernel.org>, Liu Ying <victor.liu@nxp.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, Douglas Anderson <dianders@chromium.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Sascha Hauer <s.hauer@pengutronix.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240513153109.46786-1-sui.jingfeng@linux.dev>
-References: <20240513153109.46786-1-sui.jingfeng@linux.dev>
-Subject: Re: [PATCH v2 00/12] Remove redundant checks on existence of 'bridge->encoder'
-Message-Id: <171561815850.92124.10451289435632217035.b4-ty@kernel.org>
-Date: Mon, 13 May 2024 18:35:58 +0200
+	s=arc-20240116; t=1715618259; c=relaxed/simple;
+	bh=PbdGZ3TwKrbjrqFfabuEQkXoWTXqDP+9zPV11dHeqBc=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=rpJcJGpbh8CHO4EdrLajF7JXMMADd53+C38TSxte2deEfvaNg63IAHbtQSgYlZT/dxrQYcGVh2mRxQMdctdApuCMLzyDmO2slcnXopP7cT7FF8SWHVT16givPQh8qj8k9xIDr328s2g2AHHrgIkFZ5L+2a+520yrZGfx8ok60kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LbgSsB3B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LgB7OxUa; arc=none smtp.client-ip=64.147.123.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 1D5A01C0013B;
+	Mon, 13 May 2024 12:37:36 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Mon, 13 May 2024 12:37:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1715618255; x=1715704655; bh=OLSvBVK4M4
+	JqWME4JdbR1HCf22FXxhgdPQQXlahJrro=; b=LbgSsB3B1DF4InZ7czZPRbKrsi
+	GrBLdiWNYGTbnDmLfaWPAuxN7MO6pEcCUNlxz6JuTrv5NjAnIY6uJ+MCojpR5N8l
+	Fc12LpxcLP7EqiPB36b8d6wa8hxWbT5jRscoGeI/fzbPQK2VM9iLCoNkGLnmqdYk
+	MNjmmkhRTUeJsjvFe+4WJx+NtbRKLtQsDkY8UlVBqJKtOiIbDkKhXGWwzPJcjZZT
+	vBukDnPzn1uyqoXy9r8YCy6XinKjxgxm6LOdEuKFAas1n2LOAibWN6Q3z5tEerAi
+	J0F001aC23C1qDGKM7fnaBEFJWGmfqBCz7HBiUnn4OnFhPoo8PapCqSnrZxw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715618255; x=1715704655; bh=OLSvBVK4M4JqWME4JdbR1HCf22FX
+	xhgdPQQXlahJrro=; b=LgB7OxUabV7db2HgVqqmHJESTeMk85/ZGbhfTXWK1AE3
+	qOZhKJZceOBg7ua7bTD3A4TW6QBUXrADQH7EnZMPgMrsRlr6fKTvRpWMYRnY4jaB
+	JcUfsK3hAW4VJvC+RSzAKTZfdT0NlCl5rqfHDh5c5wdo+HH+eMqXeUho3FMENrWA
+	I/26hOznOdLn7+RB7MyEaw92M6e7fpUROiQLiA5Rx/Bd+yF/A3ufIJXtC8VhPpcG
+	WlaHyM+qRUGIzqQ/Xj2ZNmNW/QC3PCurft2ORz8uTWVJ9RIQPOaPrkpbzRQs3NMU
+	7X45WlQUc7zODLPDe8++j803Q4esH3KuX4Y68rzd1w==
+X-ME-Sender: <xms:z0FCZqzm1_cl5OKjykPQqeaVlZn7O0ngTBRxDxmSuskZf4wsrANLUg>
+    <xme:z0FCZmTbsZZM9so-Smg_XyNcYKXhyD7Bdn37c6cSQsswSYhYi5hJU0xtuf-PWEONj
+    PcbkxiZNhNYbBA80q8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeggedguddtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
+    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:z0FCZsWZZuSWFK25qMk3X94Rv9SkEnyRmVhotR01zV4bStUuisFWPQ>
+    <xmx:z0FCZgjjVUqxYS9bjflJlSXx3vt4MhsPV4pGM4XCvx_S_5VvaFqI-g>
+    <xmx:z0FCZsCeLkg-qdgOwgaDDd5OYEeeOyjOnsKlZhyK5j27K9qqr_TgzQ>
+    <xmx:z0FCZhK0YPiu0g7f1tZcnBTVlGvzNP-VnWC-kaO6fvQJnq4h8nwAwA>
+    <xmx:z0FCZv_trafq_oT5d7EKgbyRDn4R5wwWJXI7PbubnJmG4W08s8qBKXGH>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 49756B6008D; Mon, 13 May 2024 12:37:35 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-455-g0aad06e44-fm-20240509.001-g0aad06e4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.10.1
+Message-Id: <2182538a-640e-4d61-a159-7c8bd1779493@app.fastmail.com>
+In-Reply-To: 
+ <CAHk-=wh85pfJiHPPTZpknanYf6_JDEVDo=tmvtvy-XW+S7_Y8w@mail.gmail.com>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+ <CAHk-=wh85pfJiHPPTZpknanYf6_JDEVDo=tmvtvy-XW+S7_Y8w@mail.gmail.com>
+Date: Mon, 13 May 2024 16:36:52 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "Thorsten Blum" <thorsten.blum@toblux.com>
+Subject: Re: [GIT PULL] asm-generic cleanups for 6.10
+Content-Type: text/plain
 
-On Mon, 13 May 2024 23:30:57 +0800, Sui Jingfeng wrote:
-> The checks on the existence of bridge->encoder in the implementation of
-> drm_bridge_funcs::attach() is not necessary, as it has already been checked
-> in the drm_bridge_attach() function call by previous bridge or KMS driver.
-> The drm_bridge_attach() will quit with a negative error code returned if
-> it fails for some reasons, hence, it is guaranteed that the .encoder member
-> of the drm_bridge instance is not NULL when various bridge attach functions
-> are called.
-> 
-> [...]
+On Mon, May 13, 2024, at 16:11, Linus Torvalds wrote:
+> On Fri, 10 May 2024 at 14:17, Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git asm-generic-6.10
+>
+> Hmm. That tag doesn't exist. The top commit you mention doesn't exist
+> under any other name either, so there isn't even a matching branch.
 
-Applied, thanks!
+Indeed, I must have forgotten to push out the tag. Unfortunately
+I'm traveling at the moment without my gpg key, and won't be
+able to upload it until Friday. The contents are of course in
+the for-next branch of the above tree (along with the other tag),
+but they can all wait as they are all just cleanups that nothing
+depends on for the moment.
 
-[01/12] drm/bridge: simple-bridge: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=f0a83a2cf9eb
-[02/12] drm/bridge: tfp410: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=482ade3ec1c5
-[03/12] drm/bridge: nxp-ptn3460: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0f4bca4e1be3
-[04/12] drm/bridge: panel: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=a8f856bf054a
-[05/12] drm/bridge: it6505: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=8761a39e3f9d
-[06/12] drm/bridge: adv7511: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=41e6ed85e457
-[07/12] drm/bridge: cdns-mhdp8546: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=b24fd6e9eb66
-[08/12] drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0a59deb2fedb
-[09/12] drm/bridge: synopsys: dw-mipi-dsi: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=80221a89ff95
-[10/12] drm/bridge: lt9611uxc: Remove a redundant check on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=91942a37ebba
-[11/12] drm/bridge: imx: Remove redundant checks on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=ec74951a7507
-[12/12] drm/bridge: analogix: Remove redundant checks on existence of bridge->encoder
-        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=591255853a37
+At least it wasn't the arm-soc branches that I forgot to push,
+that would have been more annoying.
 
-
-
-Rob
-
+     Arnd
 
