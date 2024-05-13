@@ -1,83 +1,60 @@
-Return-Path: <linux-kernel+bounces-177856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3831A8C455C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:53:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 632808C4560
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B98EE1F21C3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACD01F21975
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9385E1CABD;
-	Mon, 13 May 2024 16:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAE522616;
+	Mon, 13 May 2024 16:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="SNNKkRaY"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GOgbe9zy"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247DE1BF2A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87065224DC
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619211; cv=none; b=k6QfrlTGSLpbLBvMGZFEmihKCzb4HM+EE8WXjhkeTym7m/eZKTxsUvdboTDkdluE2ttQbvp7cHcHt4Ib0WW6TOgU9IDE1JIwFfHCmsQI/3SimzqPktU4b8926Qg0VRF0I/tS6gIJl7vt1++rpmMmc+P4CS0OIhX8oYdQ0dilDbY=
+	t=1715619255; cv=none; b=R0K784xziT4EQBadUR+Gau4zERZPEVTZH0dEVBgqvKrWMJP9HS2Mk9x36FTtJEB60A6DaFP4nqOMztTxWRKtRvzZ6cm4DI7K7vcmF7HIluLtT5nt8j1mTx5lRJZZUQdIpEMmDSWQ+oHI6sGbs81atXe4KXkgRH/NcaMGkiKz0Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619211; c=relaxed/simple;
-	bh=tYn3826eEKH6f1tndWzHmG2prJ0t5GbyHtUGkIAnuMI=;
+	s=arc-20240116; t=1715619255; c=relaxed/simple;
+	bh=VSyMo7DaP8KwB5t5bwaEbjfbFZwEfyRtAF6IFAROUOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AvO/Hd5FPutv9oNVdcyFd3igCOYWs32y/RY0WXO3/sXickVGEuRgSAaHJqD7qUifoGm3Bi6wkvfb5LtFOQexCLif+RbvEfwadgNbeN62/UMfl0tSBOHdoGWO7NfUiKCpvLnrRuHGW4hJWnQEL+swlJe6wKsjFHp6S8nOIdgCD0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=SNNKkRaY; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59ad344f7dso943397566b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1715619208; x=1716224008; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1oBPAF2w8fZVPm8NSdnQib33iYXIwPTD6vxiqg/Fetg=;
-        b=SNNKkRaYQuij4To8x+gJc4DMrcnqbzUS7gXbORoJyHuIp8AWlISFOmdRlKYqFA60mF
-         c8yZkPhgmsLykqJBnl/znaz7/5H9gxteZrHY46xIJHhwj5jUjzAKU02HTmrJxRs3UQFO
-         mnllTA2n/pZ7bzdfysfyuNg8UwwX5JlbKoX63FPM+kXbU+6r+TJ98S9cdwfVz/6br1SO
-         dy7VIx5cbUDlRWDMM8HoVKL+0GExvFa4LE6XoqNS0MPpk29MyFSIf8V6EtDKn/Obcp44
-         qjJdbGb7o3zMK9Q9t2Sdw0WXcS6ju2QcuH9OrltssXJcSiZjVHVHaIMvdptVJ1lfaCgE
-         sWhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715619208; x=1716224008;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1oBPAF2w8fZVPm8NSdnQib33iYXIwPTD6vxiqg/Fetg=;
-        b=hxehmvyRpadLyvS+7aQhJ6A7CGRhf/Xvsx6DhBY7jmGtTGf2MtabUu+TatTIosJasB
-         NIHp/CDbrGuLoYvkh2PDus8k0kCiNlGKKHl17poa8v6TtMnrAx1W4XsRuYbuU90d9P/O
-         OU3CQ9rJuwfa7gr598uaT07Yyw/5PAMPyQ6R8X+VX2eTnvfT73T052kY4uz+kPS/UQaJ
-         wzSKJyhHj9ktBSfpkOj6lcuRDI2Dpg8NIKfvpufVH5iMuB0NqiH93JYuG2rbLlyGhx90
-         XANOpULQcdr+syymM72rn3/AzoIqqcWmm/iAHVDkbNmfv4F+9gkbFdjvxANSwkDvBVbh
-         3t1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXYD5mjxYFhE9xrb3dS4F6kZ146icavFaXbKTMZa7vd0k7M/uQYwPYs2SciIDIQ1Dk1ScM4JJSnj3kr91vQO4Ury1t1Ya4l6/DaZAWd
-X-Gm-Message-State: AOJu0Yx7oSfQCrjCNrsiZWu7K4UpYmxszW0lwNidaNeaIbqXN4WSGwVX
-	RkLSLno+SA64FOI85MGDN3wLaNCPFUxWw+ChMw0rSfkl+UJwUNSflRkesSHFAK4=
-X-Google-Smtp-Source: AGHT+IGdnmvLUxoBJc6VxZdO9jyZljv6lqT40AVcHBqVs5j7MRwp1eJG+AnOtf3UQerVicHm0jYmkw==
-X-Received: by 2002:a50:d596:0:b0:572:d4fc:cc3 with SMTP id 4fb4d7f45d1cf-5734d5974d0mr7375118a12.2.1715619208429;
-        Mon, 13 May 2024 09:53:28 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c2c7d79sm6427800a12.59.2024.05.13.09.53.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 09:53:27 -0700 (PDT)
-Date: Mon, 13 May 2024 18:53:26 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Xiao Wang <xiao.w.wang@intel.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	luke.r.nels@gmail.com, xi.wang@gmail.com, bjorn@kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, 
-	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@google.com, haoluo@google.com, jolsa@kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	pulehui@huawei.com, haicheng.li@intel.com, conor@kernel.org
-Subject: Re: [PATCH v2] riscv, bpf: Optimize zextw insn with Zba extension
-Message-ID: <20240513-5c6f04fb4a29963c63d09aa2@orel>
-References: <20240511023436.3282285-1-xiao.w.wang@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qhW62aX1Vogs775nfL4kEMvpofOjsmRRrIA0QmUw5Ct4CbsITHQ2J+bV0ocSi0qGNkDqqaIo0dPS7hs0YfWlHSvNlSdVq098mj6YhLjHipb5y9e6c9OufQQb6EEp1M7fQs0dAW3mtBryGK/Cisu+NnhqzwWxYqLvngA9bPdju94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GOgbe9zy; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=AxpmKkEHWsf0GDlqpvJu8ao2VhIdXEomezlWOSgaREw=; b=GOgbe9zy7XQs6mjdR1ZG6ET3v/
+	M2pRaO1M62ufIEErA602bm/pjg4R2nmBO5jGSlMKHos1Wcf8oUg171SfV8oaLGKs0d5ac51gf9r+T
+	IX3goI9IKFZbuvYu4DspFBgNHtmqEppw2RiZbhM8Ow9K/SkQVSUOwKb+VYFMfM5mwGf0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s6YwE-00FK4D-P4; Mon, 13 May 2024 18:54:10 +0200
+Date: Mon, 13 May 2024 18:54:10 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Stephen Langstaff <stephenlangstaff1@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
+	"OlteanV@gmail.com" <OlteanV@gmail.com>
+Subject: Re: drivers/net/dsa/dsa_loop_bdinfo.c build problems
+Message-ID: <688e54ec-3b29-4e3b-a2c3-f2c83b9c97b7@lunn.ch>
+References: <CAHx5RXBfazB62qpbGGK3_YjwCFbiJbEXrgo88V6qHFdTW1CdRQ@mail.gmail.com>
+ <338daebd-b4af-4a0c-951a-ad7f86dc4646@gmail.com>
+ <CAHx5RXAOKBGXRgC8pqEyY3MZGXxj0-vrwnqg_WZqKreYp18dAg@mail.gmail.com>
+ <7efffaa0-6330-4b01-b3d2-63eb063cbbb0@gmail.com>
+ <CAHx5RXD8qFmbEytrPcd40Pj0VRo7uOvZjucrMj6Xxqw73YyS1Q@mail.gmail.com>
+ <212a9464-d52b-4730-95b9-5a0aebd38c91@gmail.com>
+ <CAHx5RXCWW5M-eW5v65bAkQWZemsU2NTvDv3jA9_XKz=+YP56Qg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,116 +63,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240511023436.3282285-1-xiao.w.wang@intel.com>
+In-Reply-To: <CAHx5RXCWW5M-eW5v65bAkQWZemsU2NTvDv3jA9_XKz=+YP56Qg@mail.gmail.com>
 
-On Sat, May 11, 2024 at 10:34:36AM GMT, Xiao Wang wrote:
-> The Zba extension provides add.uw insn which can be used to implement
-> zext.w with rs2 set as ZERO.
+> What I am trying to achieve is to use dsa_loop to connect a CPU
+> running Linux to an Ethernet switch via a "conduit" Ethernet link
+> (e.g. eth0) using the port-based Ethertype DSA (Marvell) frame tagging
+> protocol, so that the Linux kernel will present the userspace with
+> separate Ethernet links for each of the switch's user ports (e.g.
+> lan1, lan2, lan3).
 > 
-> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
-> ---
-> v2:
-> * Add Zba description in the Kconfig. (Lehui)
-> * Reword the Kconfig help message to make it clearer. (Conor)
-> ---
->  arch/riscv/Kconfig       | 22 ++++++++++++++++++++++
->  arch/riscv/net/bpf_jit.h | 18 ++++++++++++++++++
->  2 files changed, 40 insertions(+)
+> As I understand it this is usually done via a fixed phy-less conduit
+> (e.g. xMII) and an MDIO link between the processor and the switch so
+> that the processor can configure and control the physical user ports.
 > 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 6bec1bce6586..e262a8668b41 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -586,6 +586,14 @@ config RISCV_ISA_V_PREEMPTIVE
->  	  preemption. Enabling this config will result in higher memory
->  	  consumption due to the allocation of per-task's kernel Vector context.
->  
-> +config TOOLCHAIN_HAS_ZBA
-> +	bool
-> +	default y
-> +	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zba)
-> +	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zba)
-> +	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
-> +	depends on AS_HAS_OPTION_ARCH
-> +
->  config TOOLCHAIN_HAS_ZBB
->  	bool
->  	default y
-> @@ -601,6 +609,20 @@ config TOOLCHAIN_HAS_VECTOR_CRYPTO
->  	def_bool $(as-instr, .option arch$(comma) +v$(comma) +zvkb)
->  	depends on AS_HAS_OPTION_ARCH
->  
-> +config RISCV_ISA_ZBA
-> +	bool "Zba extension support for bit manipulation instructions"
-> +	depends on TOOLCHAIN_HAS_ZBA
+> I want to do some software development ahead of receiving the
+> hardware, so I want to "fake" the MDIO link, or in some other way
+> configure the kernel, such that it uses port-based EDSA frame tagging
+> over an ordinary (PHY-equipped) Ethernet port and it looks to me like
+> dsa_loop should be capable of doing this.
 
-We handcraft the instruction, so why do we need toolchain support?
+That is an interesting use case. I don't know of anybody doing that
+before.
 
-> +	depends on RISCV_ALTERNATIVE
+As Florian pointed out, dsa_loop_bdinfo.o should be built into your
+kernel. When you insmod dsa_loop.ko, it should match the data in
+dsa_loop_bdinfo to the dsa_loop driver an instantiate an instance of
+it. Do you see that happening?
 
-Also, while riscv_has_extension_likely() will be accelerated with
-RISCV_ALTERNATIVE, it's not required.
+You could hack dsa_loop_get_protocol() to return DSA_TAG_PROTO_EDSA,
+in order to use the EDSA frame tagger. dsa_loop does not have an
+implementation of .change_tag_protocol, so i don't think you can
+change it at runtime. However an implementation of it should be
+trivial.
 
-> +	default y
-> +	help
-> +	   Add support for enabling optimisations in the kernel when the Zba
-> +	   extension is detected at boot.
-> +
-> +	   The Zba extension provides instructions to accelerate the generation
-> +	   of addresses that index into arrays of basic data types.
-> +
-> +	   If you don't know what to do here, say Y.
-> +
->  config RISCV_ISA_ZBB
->  	bool "Zbb extension support for bit manipulation instructions"
->  	depends on TOOLCHAIN_HAS_ZBB
-> diff --git a/arch/riscv/net/bpf_jit.h b/arch/riscv/net/bpf_jit.h
-> index f4b6b3b9edda..18a7885ba95e 100644
-> --- a/arch/riscv/net/bpf_jit.h
-> +++ b/arch/riscv/net/bpf_jit.h
-> @@ -18,6 +18,11 @@ static inline bool rvc_enabled(void)
->  	return IS_ENABLED(CONFIG_RISCV_ISA_C);
->  }
->  
-> +static inline bool rvzba_enabled(void)
-> +{
-> +	return IS_ENABLED(CONFIG_RISCV_ISA_ZBA) && riscv_has_extension_likely(RISCV_ISA_EXT_ZBA);
-> +}
-> +
->  static inline bool rvzbb_enabled(void)
->  {
->  	return IS_ENABLED(CONFIG_RISCV_ISA_ZBB) && riscv_has_extension_likely(RISCV_ISA_EXT_ZBB);
-> @@ -937,6 +942,14 @@ static inline u16 rvc_sdsp(u32 imm9, u8 rs2)
->  	return rv_css_insn(0x7, imm, rs2, 0x2);
->  }
->  
-> +/* RV64-only ZBA instructions. */
-> +
-> +static inline u32 rvzba_zextw(u8 rd, u8 rs1)
-> +{
-> +	/* add.uw rd, rs1, ZERO */
-> +	return rv_r_insn(0x04, RV_REG_ZERO, rs1, 0, rd, 0x3b);
-> +}
-> +
->  #endif /* __riscv_xlen == 64 */
->  
->  /* Helper functions that emit RVC instructions when possible. */
-> @@ -1159,6 +1172,11 @@ static inline void emit_zexth(u8 rd, u8 rs, struct rv_jit_context *ctx)
->  
->  static inline void emit_zextw(u8 rd, u8 rs, struct rv_jit_context *ctx)
->  {
-> +	if (rvzba_enabled()) {
-> +		emit(rvzba_zextw(rd, rs), ctx);
-> +		return;
-> +	}
-> +
->  	emit_slli(rd, rs, 32, ctx);
->  	emit_srli(rd, rd, 32, ctx);
->  }
-> -- 
-> 2.25.1
->
-
-Thanks,
-drew
+   Andrew
 
