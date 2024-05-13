@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-177119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F9148C3A5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0318C3A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F34CFB20C5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B3962812CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8BF145B34;
-	Mon, 13 May 2024 03:08:17 +0000 (UTC)
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E96145B20;
+	Mon, 13 May 2024 03:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PmPPUFps"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122F2145B03;
-	Mon, 13 May 2024 03:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA3712AAEA
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715569696; cv=none; b=UN7fgsTyqS4Z43hYevb+isTp707Q7hvtKsxd4JskabY0ORWu25WglUvtE6Y/5o+vt0bBakMX7/RnwQDfnozhh/V9V+JLtX3k5fjsaCGK9rEOEYlCu3GEqvO8gZacIU2x7AnJVgjiceZL8XVhK6gR0NC++KZkoGD8+IIIylq/xbM=
+	t=1715569727; cv=none; b=rM6EfkKD9WHsLdoV8p3Swdgdt58n92TOeled1dLCYeoLNvGnADwuLr869PWv0T/s6roPNx3sWxAbMd+ODPCZQsyYeUfU12TLeqo4IiAVmubb0k9LMxZlPaleDvjdgIGcNslhMykK1QMQyNYZAnaC+oV4TzL3qaK/RkxnS1Kq5SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715569696; c=relaxed/simple;
-	bh=qMsAsGDNQ4GHMd5TD/Xe+g54+qy2vdkDoNDAsdxcdSY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SMfA39ktJWCfrIrRIbEMNxsBCisBRnMp2jz2j1/EHlvxTb1yBui6F/qu4vmIjEyebtypX52AxBv+pFYDlOUbGrcF4Lb6O+Yf0DN6DNae/M5bPYGYSAryqBPTTQWC/UKMMtf31DPXvNeMKTvj0E7/5Bzhd2kB5wHuezAbKa6lzyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44D37fXsA1107450, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44D37fXsA1107450
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 13 May 2024 11:07:41 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 11:07:40 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 11:07:39 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
- RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
- 15.01.2507.035; Mon, 13 May 2024 11:07:39 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "jiri@resnulli.us" <jiri@resnulli.us>,
-        "horms@kernel.org" <horms@kernel.org>,
-        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
-Subject: RE: [PATCH net-next v18 06/13] rtase: Implement .ndo_start_xmit function
-Thread-Topic: [PATCH net-next v18 06/13] rtase: Implement .ndo_start_xmit
- function
-Thread-Index: AQHaoUVFS3AReltz50OiDSH+k5DKnbGQKQQAgARZsNA=
-Date: Mon, 13 May 2024 03:07:39 +0000
-Message-ID: <76de0f7149bf4024998758120a5552ab@realtek.com>
-References: <20240508123945.201524-1-justinlai0215@realtek.com>
- <20240508123945.201524-7-justinlai0215@realtek.com>
- <1bb2d174-ccae-43e3-80ec-872b9a140fbe@lunn.ch>
-In-Reply-To: <1bb2d174-ccae-43e3-80ec-872b9a140fbe@lunn.ch>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1715569727; c=relaxed/simple;
+	bh=gA/7lXvyMG7IHm8IrlNnrTBKaBmoPVKDklOfk18TL/A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kahs3VxKBMTz+ol6uQH25+b7LM63VR/v5xisEYeyFwDC3Zy0kPyFj4dAv/vIobJmVGPp2dix5pn3N1HJ5FJe1VFoDIsSVjCYR3rM3iN6vVTJvcsGNnZPycHkWPH2O/rnOcph/Ttw6Z5H5IC6OdqHZwjt/M33Ai9urmxk9w8PeBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PmPPUFps; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715569722;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=tnZpkKg9cgdujd3Aq4lD9/9/FxuyG285EmfT33GGzAE=;
+	b=PmPPUFpsmDLdW9nAkuKBKOvQZhhIMr8XxYT78ICVRwJkHxeFtr3iwVxZeKxFfc+l48Hb+U
+	qEtyYgQxc6qVfOvr38nbMTX+k8D7q2NQOQYMtI/90IYOLKoL4qsJUSjQ5aToFa+TB10LYA
+	K7vD1DH5aJPSMiMe6JRe8ICGml5Hu2E=
+From: Chengming Zhou <chengming.zhou@linux.dev>
+Date: Mon, 13 May 2024 11:07:56 +0800
+Subject: [PATCH] mm/ksm: fix possible UAF of stable_node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
-X-KSE-AntiSpam-Interceptor-Info: fallback
-X-KSE-Antivirus-Interceptor-Info: fallback
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240513-b4-ksm-stable-node-uaf-v1-1-f687de76f452@linux.dev>
+X-B4-Tracking: v=1; b=H4sIAAuEQWYC/x3MzQpCIRBA4VeRWTegZgW9SrTwZ6yh0nDujQviu
+ 19p+S3O6SDUmASuqkOjHwvXMmEOCuLTlwchp2mw2jp9MkcMDl/yQVl8eBOWmghXnzHGeMlkczq
+ HBDP+Nsq8/ce3+xg7I7TMe2gAAAA=
+To: Andrew Morton <akpm@linux-foundation.org>, 
+ David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+ Andrea Arcangeli <aarcange@redhat.com>, Stefan Roesch <shr@devkernel.io>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ zhouchengming@bytedance.com, Chengming Zhou <chengming.zhou@linux.dev>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715569718; l=1596;
+ i=chengming.zhou@linux.dev; s=20240508; h=from:subject:message-id;
+ bh=gA/7lXvyMG7IHm8IrlNnrTBKaBmoPVKDklOfk18TL/A=;
+ b=B1X1HMHHKXtit/7X6hdcXthfuE0UbCscRgiIoqnVwo40ChWPCoX/sArCTV7ZidHLIxvtW5T7l
+ YL7nsjs5gk9Bhu6S6h66FOVNFhh0XGvCuDXijPKZ9B8GBzQtTuj9mRK
+X-Developer-Key: i=chengming.zhou@linux.dev; a=ed25519;
+ pk=kx40VUetZeR6MuiqrM7kPCcGakk1md0Az5qHwb6gBdU=
+X-Migadu-Flow: FLOW_OUT
 
->=20
-> > +static u32 rtase_tx_csum(struct sk_buff *skb, const struct net_device
-> > +*dev) {
-> > +     u32 csum_cmd =3D 0;
-> > +     u8 ip_protocol;
-> > +
-> > +     switch (vlan_get_protocol(skb)) {
-> > +     case htons(ETH_P_IP):
-> > +             csum_cmd =3D RTASE_TX_IPCS_C;
-> > +             ip_protocol =3D ip_hdr(skb)->protocol;
-> > +             break;
-> > +
-> > +     case htons(ETH_P_IPV6):
-> > +             csum_cmd =3D RTASE_TX_IPV6F_C;
-> > +             ip_protocol =3D ipv6_hdr(skb)->nexthdr;
-> > +             break;
-> > +
-> > +     default:
-> > +             ip_protocol =3D IPPROTO_RAW;
-> > +             break;
-> > +     }
-> > +
-> > +     if (ip_protocol =3D=3D IPPROTO_TCP)
-> > +             csum_cmd |=3D RTASE_TX_TCPCS_C;
-> > +     else if (ip_protocol =3D=3D IPPROTO_UDP)
-> > +             csum_cmd |=3D RTASE_TX_UDPCS_C;
-> > +     else
-> > +             WARN_ON_ONCE(1);
->=20
-> I'm not so sure about this WARN_ON_ONCE(). It looks like if i send a cust=
-om
-> packet which is not IPv4 or IPv6 it will fire. There are other protocols =
-then IP.
-> Connecting to an Ethernet switch using DSA tags would be a good example. =
-So
-> i don't think you want this warning.
->=20
->       Andrew
+The commit 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page
+deduplication limit") introduced a possible failure case in the
+stable_tree_insert(), where we may free the new allocated stable_node_dup
+if we fail to prepare the missing chain node.
 
-Hi Andrew,
-Thank you for your review, I will confirm and modify this part.
+Then that kfolio return and unlock with a freed stable_node set... And
+any MM activities can come in to access kfolio->mapping, so UAF.
+
+Fix it by moving folio_set_stable_node() to the end after stable_node
+is inserted successfully.
+
+Fixes: 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication limit")
+Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+---
+ mm/ksm.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mm/ksm.c b/mm/ksm.c
+index e1034bf1c937..a8b76af5cf64 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -2153,7 +2153,6 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
+ 
+ 	INIT_HLIST_HEAD(&stable_node_dup->hlist);
+ 	stable_node_dup->kpfn = kpfn;
+-	folio_set_stable_node(kfolio, stable_node_dup);
+ 	stable_node_dup->rmap_hlist_len = 0;
+ 	DO_NUMA(stable_node_dup->nid = nid);
+ 	if (!need_chain) {
+@@ -2172,6 +2171,8 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
+ 		stable_node_chain_add_dup(stable_node_dup, stable_node);
+ 	}
+ 
++	folio_set_stable_node(kfolio, stable_node_dup);
++
+ 	return stable_node_dup;
+ }
+ 
+
+---
+base-commit: 7e8aafe0636cdcc5c9699ced05ff1f8ffcb937e2
+change-id: 20240513-b4-ksm-stable-node-uaf-ccc7fe2fd6bd
+
+Best regards,
+-- 
+Chengming Zhou <chengming.zhou@linux.dev>
+
 
