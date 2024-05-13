@@ -1,124 +1,80 @@
-Return-Path: <linux-kernel+bounces-177573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E768C40F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9538C40F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46AA9B225BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B59E287A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43961509B2;
-	Mon, 13 May 2024 12:44:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4A414F9CE;
+	Mon, 13 May 2024 12:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kL6heHlS";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8PQOmpRe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nt8tuW3M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDB115099B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A04A514F9CB;
+	Mon, 13 May 2024 12:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715604259; cv=none; b=dHHggqGRGta6aZ9CdywdtlsGOcCOfBofGtMD3jT9uWIKw+AjnBEJiFuPFKwUwnDazzJS3q0onr7iapivLghxycoks7vFSIBKMxz7+IgM77duu/6U8eLc3YfH4/MDRgDyXj8fmqsN05EfpmD0LHKYpwQ7iqKm0wiVvL0GFy7Q5Uk=
+	t=1715604452; cv=none; b=MYi6r3sPRFRqbxCjpk46Ccn8HUT7HLvksF193gcozTk3/BoZFXK7tLkuzzyrn/jLqywMK5yyr9YfjXJZhBHJg8Dqdp5UOR78U7dL5unCUiUrpRO+afJLV/9RI08EDR48YplMn3ApODVjSeBqJtWpf7CARjl2jC3ICETJhN/Hs2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715604259; c=relaxed/simple;
-	bh=8KSUVzTvqxp7OIdS+GOnbv91geAiKRiZv1Q7eZCzMQc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IBrB4nW1bDM+P3an98D+dytbsuHODCHG8mDagCjj9WNeobMarA6X9+g9WfxEH45nEewGARy+fhZkxa5NwatGjr55At2YxE4CYRVdiVywRFAhVriBDn5oGbrHKtFwzMFFCkdOT6BZuArgZnwtt2qIwmQHPCUCw2Vs8me/x/tvLQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kL6heHlS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8PQOmpRe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715604255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oAB6AC0uf4kU0wwIw6N445hCMYVKJ7r1lOXf9S9Bb5c=;
-	b=kL6heHlSPMN/pHLoNZnqKMl30/S5c6EGVaohafb3ZLJrndk7gd3/VWYn5uZ8OL45HoZiMP
-	YTPtp8yQG9+LQCEa8uFjPBXUZMKGKpHAqB07i3LanfCAtgLtIh9NaIPyM7PnAEUVSmIlNt
-	oExT8knvUv0siYIwnr1SAMd3RUqGdF95IVYFRstmi3VJVbS4O0RlixfaJYX7CJrdA+3s7V
-	9UiGJczxrBP7Ojxm0XvQ/75cbhTzK923acjp83pMIpH+UXjqLkAWg4VtdehvDcbbH618ak
-	4il4PoaqgI5nr0Ei8SZ7g2EWNaWbaQUbyxNnqsinpo/jWMNxMqaI+3mqZLUBmg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715604255;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oAB6AC0uf4kU0wwIw6N445hCMYVKJ7r1lOXf9S9Bb5c=;
-	b=8PQOmpReg3DfXxCsRL+7m3s8iwztutKUd+RWc0d4ypaxfy6pMG9iUjllvTSzqaQCTGBu1X
-	ESvttDPH+iekbdDw==
-To: Dongli Zhang <dongli.zhang@oracle.com>, x86@kernel.org
-Cc: mingo@redhat.com, Borislavbp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, joe.jin@oracle.com, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev
-Subject: Re: [PATCH 1/1] x86/vector: Fix vector leak during CPU offline
-In-Reply-To: <20240510190623.117031-1-dongli.zhang@oracle.com>
-References: <20240510190623.117031-1-dongli.zhang@oracle.com>
-Date: Mon, 13 May 2024 14:44:15 +0200
-Message-ID: <87msotnaow.ffs@tglx>
+	s=arc-20240116; t=1715604452; c=relaxed/simple;
+	bh=0HltB7Wu15exFPm11GPbS4MlerrEk7eYgJypSOVemfE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVGm9NBYfUNSQ5+Mazukl/AkZp7lDMuzNY8BPOZPWAv4z9e5oj+CvPFuJ+I7NES1rWIQ0UndAOdW2xonz2Z5GB5UHnMeFVBlyke55DSTmJ6N3nUJDpWMh7wEOsko7Ifu+kupmH4RSLuYvuowjS9Y9dKeJyGF/igcO/bKKxbjX9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nt8tuW3M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79DD4C113CC;
+	Mon, 13 May 2024 12:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715604452;
+	bh=0HltB7Wu15exFPm11GPbS4MlerrEk7eYgJypSOVemfE=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=Nt8tuW3MMhJ/S22qCuApLtQ/R/SIT3ww4JArIvApPqtcJsdahxErQJfKfP/40wVKw
+	 VGvPVAPotjVXKKEHvRRMEiB4oIstfpPzY+2TJKQLX1J3vF8/tZMco8edQff0lHJtFO
+	 Hv8MZOcMaZ9ChOkVooipZFZYb/21aKdY7Bk98dDTzzrM/R14VzRXGzCvCVFLTBLNO5
+	 8jlZlX2yA3fJUM/N9lwsfH3CVLe+eYQWaYCTngG2jHLeyDfjovYFx+i7L8w9psfnYH
+	 TTabwTDedaEAVMzoAI5b3G60u8CqPk3WC0Cr4FR97MaBZ0EAz0YkYABFmMOjdlM8Xn
+	 eLUjwbIXh2PfA==
+Date: Mon, 13 May 2024 14:47:27 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Wolfram Sang <wsa@kernel.org>, linux-i2c <linux-i2c@vger.kernel.org>, 
+	lkml <linux-kernel@vger.kernel.org>, Sai Pavan Boddu <sai.pavan.boddu@amd.com>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.9-rc8
+Message-ID: <2mqgax6smctnfpkelum7sbz2ukqraankpudjig3sv7cwx2bgsi@tgslonensttd>
+References: <pb7vi7igdvqo6jlyjrd2lhfgbrz2kx5nmmw36vcdy64ndwbs3r@e675jdrgq3lj>
+ <sadxp73tm5zhfgsv6ufroexcoq4cg4j4quljry4bsojkzniw4c@m5mhet2w5f5e>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <sadxp73tm5zhfgsv6ufroexcoq4cg4j4quljry4bsojkzniw4c@m5mhet2w5f5e>
 
-On Fri, May 10 2024 at 12:06, Dongli Zhang wrote:
-> The absence of IRQD_MOVE_PCNTXT prevents immediate effectiveness of
-> interrupt affinity reconfiguration via procfs. Instead, the change is
-> deferred until the next instance of the interrupt being triggered on the
-> original CPU.
->
-> When the interrupt next triggers on the original CPU, the new affinity is
-> enforced within __irq_move_irq(). A vector is allocated from the new CPU,
-> but if the old vector on the original CPU remains online, it is not
-> immediately reclaimed. Instead, apicd->move_in_progress is flagged, and the
-> reclaiming process is delayed until the next trigger of the interrupt on
-> the new CPU.
->
-> Upon the subsequent triggering of the interrupt on the new CPU,
-> irq_complete_move() adds a task to the old CPU's vector_cleanup list if it
-> remains online. Subsequently, the timer on the old CPU iterates over its
-> vector_cleanup list, reclaiming vectors.
->
-> However, if the old CPU is offline before the interrupt triggers again on
-> the new CPU, irq_complete_move() simply resets both apicd->move_in_progress
-> and apicd->prev_vector to 0. Consequently, the vector remains unreclaimed
-> in vector_matrix, resulting in a CPU vector leak.
+Hi Wolfram,
 
-I doubt that.
+> > after a few weeks, we received to patches marked as fixes from
+> > Christophe and Sai Pavan.
+> 
+> Sorry, I was away this weekend, so I couldn't get this into 6.9-final.
 
-Any interrupt which is affine to an outgoing CPU is migrated and
-eventually pending moves are enforced:
+no worries! Nothing seriously critical was missed :-)
 
-cpu_down()
-  ...
-  cpu_disable_common()
-    fixup_irqs()
-      irq_migrate_all_off_this_cpu()
-        migrate_one_irq()
-          irq_force_complete_move()
-            free_moved_vector();
+> Yet, I think pulling into 6.10-rc1 and backporting to 6.9 should work as
+> well.
 
-No?
+If you want I can include them in the merge window pull request,
+so that we fix also one of the two dependencies there. Then they
+would find their way to the stable kernels.
 
-In fact irq_complete_move() should never see apicd->move_in_progress
-with apicd->prev_cpu pointing to an offline CPU.
-
-The CPU offline case in __vector_schedule_cleanup() should not even
-exist or at least just emit a warning.
-
-If you can trigger that case, then there is something fundamentally
-wrong with the CPU hotplug interrupt migration code and that needs to be
-investigated and fixed.
-
-Thanks,
-
-        tglx
-
+Andi
 
