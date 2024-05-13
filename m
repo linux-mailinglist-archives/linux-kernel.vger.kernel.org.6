@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-177194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92A68C3B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:19:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FC18C3B41
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159881F214A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 455C3281579
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED981465A1;
-	Mon, 13 May 2024 06:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F121465A5;
+	Mon, 13 May 2024 06:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJ4jhPM2"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AvLkdU1g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712A34C81;
-	Mon, 13 May 2024 06:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869A74C81;
+	Mon, 13 May 2024 06:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715581132; cv=none; b=eSuBbIwFZ5nn5MqL5lz8jCT3qHH2O8EmWU7choRIRuoU/XoPxygKjDCsysB38DiLviQpY3gs9sBI5raWHGVH9UtBEsm2KyntyUvh8kYUHjJ1uBk9kSCUylhr9DWofWnIRAg3aopaMd63CH4UJhFsiGG4RxTnUoU9edSkuUttryE=
+	t=1715581351; cv=none; b=tdRFRfRYjSeA79IQVel7xuHxxsSE8lWSlNs+Ji5aNvl8NLn3xmSkKAzVd2LSRPh57TLUxZvWN8ArSIj7+odQeLnQ/a/zAS0mC5YAvFBvTcxJrlBhX2TRAgd4nSDvx5R1lA7UCE0/1rNsj4E5rSqOBDapTpZuCm7mKJmtg4YN3/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715581132; c=relaxed/simple;
-	bh=Gk6VmF76HZLrQGn1rjBPIIo3n7MlZgoUBYdttRsR1Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Y6LQqw9ZDN7SUH8+HHKEdNynNc0F+/2ysHgOsH581cs0gum1r5f9NJuHX2qCft+xaxOxKfl3/YOdfr4kTde+QxAsHrvWIPHx3O/WrfqN8+AXMVCHjgJQmWbegly4A+BfgDrHUwmanUVG8Au82rTC1by+Fy/wxYOsOsoZYBMSfc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJ4jhPM2; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59a609dd3fso676299466b.0;
-        Sun, 12 May 2024 23:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715581129; x=1716185929; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=bpNCHKdi23YsbMpYSlsHEWAO9h6Qj7cZkm3c+kyT6U0=;
-        b=LJ4jhPM2TJ5t0AVkS4nIe6AXcXQrj/mNDw7NHhWNOK1C8U9t7AFJAOmruuhLrwK+e/
-         Zx2QEQqN3SkSD6EW/I8saUdpD+ezRY/ypNZwjhxy2s9RzxED0xs7bKopvFnBCinaZTRN
-         +2kph3jtVb2s54D2OHqPqryuaR1hofmsbYtMBewy4IxOjhj3DnWb7UYGeMaSmyQKm2o4
-         orOy3mbkGVWJq3kZtaKXyfTJQNxo7X7TJqAPq5NlZJ8ZeD28ox5ZPEhDA40hc0DoMejQ
-         xEq82IG4YQsNCQV5up0mZkItlFmDo4HxTGinucj35KJtDIsRl5uAgknUfu1ZJxx+xRFr
-         nRuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715581129; x=1716185929;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bpNCHKdi23YsbMpYSlsHEWAO9h6Qj7cZkm3c+kyT6U0=;
-        b=g1B+G+4MIk51PC63utzcsIx0wCIJpe8TyHXgGodurAQbowYf7dU65u22g3ZqaQ7PAY
-         482RG7M8yydUFBFQkZZGUc12dhEze87OzgU5Mf9q8QuZ6W615KLHoi9Cd8i3hmPsKlLg
-         M7dUsur1QfDOyMzfXVQX7uUrml/ILEm4R1jwOCnIGzR5dXw+Y/hYDEsFpveDjSDymBJr
-         p0z/wefUBVMwFFt3coy8MJLMdzgb5/w4K5YBpKXHWeoNJfsxkNawato6okiCSJFIdb66
-         mmTcAWKBB1D/Sb04tiLRA6/JUY7hak9VmN7+66Ylp9+4j2hyNs0N2Hno0KGwbUpyghO9
-         LIFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZdnonsIwNpHKdrItfAZIPAigK/pgG+cdY7V1jOhxiaHc7Bgm0M+ufhjq+ZzHS1s6JrQ3QdnTQjGonRqoxl7kCIKHLZ0xSTtnNENXkYiM1RA==
-X-Gm-Message-State: AOJu0Yzh9CEulg6j+nHYMLfi2EjN2NLR3fZme2NkA/uAKJsRYIDlFSZ4
-	WxPsHZ0xqf7sU/WZiDLsbx3GP22WSDBzTua+NaYY1fw8IpTzdYG+BAvNOm6R
-X-Google-Smtp-Source: AGHT+IGvN97uv+5VPVcETjyuwMmfCu+pxWUP44myWRmk86L98LzT78rLxDiKUAaoRfc3CXxx3yxvjw==
-X-Received: by 2002:a17:906:7748:b0:a59:92b0:e0d3 with SMTP id a640c23a62f3a-a5a118c5393mr849555566b.34.1715581128347;
-        Sun, 12 May 2024 23:18:48 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a174bdfa1sm547022766b.0.2024.05.12.23.18.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 23:18:47 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 08:18:45 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Jiri Olsa <jolsa@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [GIT PULL] Performance events changes for v6.10
-Message-ID: <ZkGwxW0JArbudf/+@gmail.com>
+	s=arc-20240116; t=1715581351; c=relaxed/simple;
+	bh=87G22HmZGVCVhfo0PHdgnl4NiiTRMH623e5Agi35Xos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPr5K0DDuFVndJhU9w+wjVq66+LGGY+mvcX2nkI7IgR09O/hjsPqBRPfWs/lpLwBPzcYVGbhc+nYv8FEz+aLkOOwS0csscEyqdC2ESenHeieRmmR6OAjDEBxFEGBU/Fm4eNAoe/FKPhO5HLyTqTlioionX1AV6eNbXJT0mIlCaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AvLkdU1g; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715581350; x=1747117350;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=87G22HmZGVCVhfo0PHdgnl4NiiTRMH623e5Agi35Xos=;
+  b=AvLkdU1gKblylWsGSx0buSrC2Fg3mUWWs0tTsRHNQ2sxhx013Ir6g/ad
+   gTy84irY4MzZEH+wkoGVgcQ0h8VP822uIbNrpZygE8rHQcGyFpp86vJ8f
+   3vXZwPLvN4EePuzqVhk/t7sIlkPYF5DuvkOQrjPcki6gtIxsscvwiF8wN
+   pRP68ssPzodxV5cfcC69e6dxL6TF5HBLfEgb9ilwSUihZFQWMEgu+HHqH
+   OWhNARgLlqmWtU/6wCmoyLcirH/Evt2Pw9fbllOOIpBEbDkVCFijMZmyo
+   V+5OG8kE6hiWuYVNNuaG0JCPv3puKNxIaGqCikG1fwywD5ymYEu3WxsDw
+   w==;
+X-CSE-ConnectionGUID: j0A90InURJClhO0CT3QZtw==
+X-CSE-MsgGUID: X3JtK90SR2uN2rGZaoqsnQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="28988945"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="28988945"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 23:22:30 -0700
+X-CSE-ConnectionGUID: NTCJnoUuQ1WsDbzwHNiJpw==
+X-CSE-MsgGUID: etbcJPqQQ62cA71w6DIwOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="34921657"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 23:22:27 -0700
+Message-ID: <0034bc6b-0349-40ea-b56e-a52037e6fe4e@intel.com>
+Date: Mon, 13 May 2024 14:22:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/17] KVM: x86/mmu: Move private vs. shared check above
+ slot validity checks
+To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+ Yu Zhang <yu.c.zhang@linux.intel.com>,
+ Chao Peng <chao.p.peng@linux.intel.com>, Fuad Tabba <tabba@google.com>,
+ Michael Roth <michael.roth@amd.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>, Kai Huang <kai.huang@intel.com>
+References: <20240507155817.3951344-1-pbonzini@redhat.com>
+ <20240507155817.3951344-11-pbonzini@redhat.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20240507155817.3951344-11-pbonzini@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Linus,
+On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
+> From: Sean Christopherson <seanjc@google.com>
+> 
+> Prioritize private vs. shared gfn attribute checks above slot validity
+> checks to ensure a consistent userspace ABI.  E.g. as is, KVM will exit to
+> userspace if there is no memslot, but emulate accesses to the APIC access
+> page even if the attributes mismatch.
+> 
+> Fixes: 8dd2eee9d526 ("KVM: x86/mmu: Handle page fault for private memory")
+> Cc: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Cc: Chao Peng <chao.p.peng@linux.intel.com>
+> Cc: Fuad Tabba <tabba@google.com>
+> Cc: Michael Roth <michael.roth@amd.com>
+> Cc: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Reviewed-by: Kai Huang <kai.huang@intel.com>
+> Message-ID: <20240228024147.41573-10-seanjc@google.com>
+> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 
-Please pull the latest perf/core Git tree from:
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-core-2024-05-13
+> ---
+>   arch/x86/kvm/mmu/mmu.c | 20 +++++++++++++++-----
+>   1 file changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 0d884d0b0f35..ba50b93e93ed 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -4317,11 +4317,6 @@ static int __kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+>   			return RET_PF_EMULATE;
+>   	}
+>   
+> -	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+> -		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+> -		return -EFAULT;
+> -	}
+> -
+>   	if (fault->is_private)
+>   		return kvm_faultin_pfn_private(vcpu, fault);
+>   
+> @@ -4359,9 +4354,24 @@ static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault,
+>   {
+>   	int ret;
+>   
+> +	/*
+> +	 * Note that the mmu_invalidate_seq also serves to detect a concurrent
+> +	 * change in attributes.  is_page_fault_stale() will detect an
+> +	 * invalidation relate to fault->fn and resume the guest without
 
-   # HEAD: 854dd99b5ddc9d90e31e5f112462a5994dd31810 perf/bpf: Mark perf_event_set_bpf_handler() and perf_event_free_bpf_handler() as inline too
+s/fault->fn/fault->gfn/
 
-Perf events changes for v6.10:
+> +	 * installing a mapping in the page tables.
+> +	 */
+>   	fault->mmu_seq = vcpu->kvm->mmu_invalidate_seq;
+>   	smp_rmb();
+>   
+> +	/*
+> +	 * Now that we have a snapshot of mmu_invalidate_seq we can check for a
+> +	 * private vs. shared mismatch.
+> +	 */
+> +	if (fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+> +		kvm_mmu_prepare_memory_fault_exit(vcpu, fault);
+> +		return -EFAULT;
+> +	}
+> +
+>   	/*
+>   	 * Check for a relevant mmu_notifier invalidation event before getting
+>   	 * the pfn from the primary MMU, and before acquiring mmu_lock.
 
- - Combine perf and BPF for fast evalution of HW breakpoint
-   conditions.
-
- - Add LBR capture support outside of hardware events
-
- - Trigger IO signals for watermark_wakeup
-
- - Add RAPL support for Intel Arrow Lake and Lunar Lake
-
- - Optimize frequency-throttling
-
- - Miscellaneous cleanups & fixes.
-
- Thanks,
-
-	Ingo
-
------------------->
-Andrii Nakryiko (4):
-      perf/x86/amd: Ensure amd_pmu_core_disable_all() is always inlined
-      perf/x86/amd: Avoid taking branches before disabling LBR
-      perf/x86/amd: Support capturing LBR from software events
-      perf/x86/amd: Don't reject non-sampling events with configured LBR
-
-Erick Archer (1):
-      perf/x86/rapl: Prefer struct_size() over open coded arithmetic
-
-Ingo Molnar (2):
-      perf/bpf: Change the !CONFIG_BPF_SYSCALL stubs to static inlines
-      perf/bpf: Mark perf_event_set_bpf_handler() and perf_event_free_bpf_handler() as inline too
-
-Kyle Huey (10):
-      perf/bpf: Reorder bpf_overflow_handler() ahead of __perf_event_overflow()
-      perf/bpf: Create bpf_overflow_handler() stub for !CONFIG_BPF_SYSCALL
-      perf/bpf: Remove #ifdef CONFIG_BPF_SYSCALL from struct perf_event members
-      perf/bpf: Call BPF handler directly, not through overflow machinery
-      perf/bpf: Remove unneeded uses_default_overflow_handler()
-      perf/bpf: Allow a BPF program to suppress all sample side effects
-      selftest/bpf: Test a perf BPF program that suppresses side effects
-      perf: Move perf_event_fasync() to perf_event.h
-      perf/ring_buffer: Trigger IO signals for watermark_wakeup
-      selftests/perf_events: Test FASYNC with watermark wakeups
-
-Namhyung Kim (2):
-      perf/core: Optimize perf_adjust_freq_unthr_context()
-      perf/core: Reduce PMU access to adjust sample freq
-
-Zhang Rui (2):
-      perf/x86/rapl: Add support for Intel Arrow Lake
-      perf/x86/rapl: Add support for Intel Lunar Lake
-
-
- arch/arm/kernel/hw_breakpoint.c                    |   8 +-
- arch/arm64/kernel/hw_breakpoint.c                  |   4 +-
- arch/x86/events/amd/core.c                         |  37 ++-
- arch/x86/events/amd/lbr.c                          |  13 +-
- arch/x86/events/perf_event.h                       |  13 +
- arch/x86/events/rapl.c                             |   7 +-
- include/linux/perf_event.h                         |  37 ++-
- kernel/events/core.c                               | 273 +++++++++++----------
- kernel/events/ring_buffer.c                        |   4 +
- tools/testing/selftests/bpf/prog_tests/perf_skip.c | 137 +++++++++++
- tools/testing/selftests/bpf/progs/test_perf_skip.c |  15 ++
- tools/testing/selftests/perf_events/.gitignore     |   1 +
- tools/testing/selftests/perf_events/Makefile       |   2 +-
- .../selftests/perf_events/watermark_signal.c       | 146 +++++++++++
- 14 files changed, 525 insertions(+), 172 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/perf_skip.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_perf_skip.c
- create mode 100644 tools/testing/selftests/perf_events/watermark_signal.c
 
