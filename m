@@ -1,185 +1,140 @@
-Return-Path: <linux-kernel+bounces-177739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C3C8C43F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:16:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB01E8C43F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90A51F240E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:16:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FB4DB23CBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A835731F;
-	Mon, 13 May 2024 15:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B32C1DA20;
+	Mon, 13 May 2024 15:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Vg2uyfnY"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxrHjuKh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C2A1DFFD
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6811EB2B;
+	Mon, 13 May 2024 15:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715613369; cv=none; b=Moi61UcVIimVY7yARxsAwb3WoYETQV1q2YEmPxwCy2u4Pt/Jp++KUJNkQOMFr+yBvC7AxQzMFzTLIg3mR8BcCUiR5P4Rd3Ixbb5I2jXMHTC9xlL/nPu2LiUJ4hKat6/csUfxfjkIxk28ALOc5L7mIpPTeXN6WSGK2kignAKyRwU=
+	t=1715613409; cv=none; b=P/+l+IE9DmDROQpSjWqAjja9jGEyryQqh4YkvjZsU442V6woq2pLzOZ9COfPiyMdDpQUfqrmFxVDQqTztyiZCuz3JfIOFcYtLQJvsAPlL+92fbf4BIsmIbxh84jWwLFAIVZJiyTJlQtWeTVq1RAfgHHGbKDpP6sGm9WiPGm5s/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715613369; c=relaxed/simple;
-	bh=/v6zZK8vC1iWKChJg5ELITID+E0oYkoNv1bfMOqpejI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VZ6R0Ai7TIGYCXXehhohQ0N0VDKgdUONZc7HwgaNZGE23k/S7fMRKYwelbty04Jd5K+QQdbp4pvH8oFzjhwae5YHbq1Oxd2FwzHiH1937EBKbPRDYN5mWsthrspY8+/3MIw1G3V4umckCspJjm3VMw1sL5X2V4XsjZ3KvyCrloQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Vg2uyfnY; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2e52181c228so33926931fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715613365; x=1716218165; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uXHSyWB6fJ4bI4UOzHNSJAK2n7Pmu648dfIJZfg2RtE=;
-        b=Vg2uyfnYQWnV59dji9In+wfBSNsCejh0Z+Dw96/imVYb6ssAlSuNPPuEnqJJpmzOcj
-         PldL5hSFA749LMtYihYpsZsiF0SImByQCLesVZAdDZPnz/qKgWcEGdwjwIdOgdFCjLuP
-         dvf3RdlWtCxB3iLnCkYqSYrbvzSKq/NISW+A+PidRQzUWTgElcQZ/HnKzaiMBIrV8zx3
-         /1EMAUMpgKk/VgKZXLE3uW+cZSCeuX51Ra6yGSqNPWAfeLWi8iHs/9UX721/QqA1ReoA
-         mC3HTpXFI9kaDY8sI47OjqjxjoLDpcoTaLwqePegOBFb1XBAmB9evtB2qm+QcepFICkA
-         2vqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715613365; x=1716218165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uXHSyWB6fJ4bI4UOzHNSJAK2n7Pmu648dfIJZfg2RtE=;
-        b=VHf325+MGNuiHfNMrq/VHfkgjzz6voaKfhgoBlgGopitFYdovH8MDxPkPq+3iK8jFy
-         ei8vRB1zGvipZONB7jrvoCtHZTdbeG1LDyx1KiGVgGmW1quTik4iMsnOQj6sjhNw2yV7
-         2lyZWwhzHIE19KsQ5x8DJjGS9Ztz+zGyCKuwh83YmiySfQhU4lMgXZhDB4qP2jBc9EMI
-         b7cAwYj56S9HIRiFslNnW7z7uqcmxR/Ktn3Txe8LAwGGNEP+BvWj/5qNGCWISV+UDTyc
-         Zk05i6VOQlztvLYBaVV2plF2mzlv9LUHIAhmdQqVpXudzDEnk57kkLo93akNlueHFPYZ
-         gx2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXuHMJuy/MXRx2vELMASJHByc8IEtw4PtrfakBTr36c7at/nAl+o4tJFEd+pO7RehlGDxbtAG+lzLXEcPocpZYkGjze70lIciFoAvLu
-X-Gm-Message-State: AOJu0YwzqMLX+NTvabLNnO2n9BvepjIP1YqlVe3JePtLTUXMhzplXAuv
-	1b0xPIPXsTQWeA420mEsgFyADX41xjHpOc2eGJz9c6GvogaT1Xp0+rQ1oL67ryqjXVRHExRa7vB
-	BgTIWdQGSrED8NCgPH2kWnLd9PCOShuER6NHTtg==
-X-Google-Smtp-Source: AGHT+IGKijrN67shG2KPnM4VRi/Q9YI0q+7SOQY6GvY0EJC5mkeXMC97pzJgBqg0pSAdaBuhfs6XNl1xEroVw6ed6J0=
-X-Received: by 2002:a05:651c:d1:b0:2e0:c6ec:bcc1 with SMTP id
- 38308e7fff4ca-2e5204ac486mr60438181fa.45.1715613365410; Mon, 13 May 2024
- 08:16:05 -0700 (PDT)
+	s=arc-20240116; t=1715613409; c=relaxed/simple;
+	bh=HU9Kthyf9AMvfavUhbOcA41Vuir/Y1fnNqQMRB+ThnI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcbToy9gLFou71/6DlA6FZhQRlJQSrOOzjrGOP40KngZxIV5rR5003XzSsUikKN12kRYd1cFOwzx2HaGyGxmM6hq3Rew5gTDnfzPaxYPcUWy02VaRhV6cI20rnZ9Sw+g5/vMyyV2i5hQDVYuW4Phr2zAqw2XvexbbmGMolf218k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxrHjuKh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15316C113CC;
+	Mon, 13 May 2024 15:16:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715613408;
+	bh=HU9Kthyf9AMvfavUhbOcA41Vuir/Y1fnNqQMRB+ThnI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lxrHjuKhb3JXMA3yvXcjLCZF753vbE9sWINCd0Ep1XXA/LSaBp0ZDXvT/q/5gKO++
+	 Lzw2/twgMrGiuEScOAO2zDy7CNwaxX60tVhSo6+rkjF/wCWkAWuAVKl9TgahRpbc2W
+	 txo0MSgdR8a7Xaa22nzigdLN+L/2/TNXt1OtiXtpcY8l07zZwtDiquDwe/NfbOsgJI
+	 /pznRwlM7FwQt7kBN7vaWpxl23/sqHvUTabMWXUG+WBr8X8Oa+Dba4lawv9R6hE1Dg
+	 5QdcD1DRFHRnjtvt7PtcdVMh+mR+jzwqk1ZMF0ipkEChrgIvzW9RgXC5vjYDCTZU+b
+	 v5p+29TQr+oxw==
+Date: Mon, 13 May 2024 16:16:43 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Marek Vasut <marex@denx.de>
+Cc: Patrick Delaunay <patrick.delaunay@foss.st.com>,
+	Alexandre TORGUE <alexandre.torgue@foss.st.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Pascal Paillet <p.paillet@foss.st.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add
+ compatible for STM32MP13
+Message-ID: <20240513-stabilize-proofread-81f0f9ee38b9@spud>
+References: <20240513095605.218042-1-patrick.delaunay@foss.st.com>
+ <20240513115601.v3.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
+ <615dfdcb-cbda-426f-895e-810f03a8ce60@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
- <20240510-dlech-mainline-spi-engine-offload-2-v2-8-8707a870c435@baylibre.com>
- <20240511175832.6c2f6517@jic23-huawei> <CAMknhBGG9bYwzPw8woaR_YaVRW+wpT4W1KpHzG32nWj9Qi7fig@mail.gmail.com>
- <20240512125202.312d0576@jic23-huawei>
-In-Reply-To: <20240512125202.312d0576@jic23-huawei>
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 13 May 2024 10:15:54 -0500
-Message-ID: <CAMknhBHMz2OEVGC_e44zoKz6+WLgP07KkOOMbxb6_bidXRm2Bw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 8/8] iio: adc: ad7944: add support for SPI offload
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	David Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7WL8bDW+3sE8qEPT"
+Content-Disposition: inline
+In-Reply-To: <615dfdcb-cbda-426f-895e-810f03a8ce60@denx.de>
+
+
+--7WL8bDW+3sE8qEPT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 12, 2024 at 6:52=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
- wrote:
->
-> On Sat, 11 May 2024 13:41:09 -0500
-> David Lechner <dlechner@baylibre.com> wrote:
->
-> > On Sat, May 11, 2024 at 11:58=E2=80=AFAM Jonathan Cameron <jic23@kernel=
-org> wrote:
-> > >
-> > > On Fri, 10 May 2024 19:44:31 -0500
-> > > David Lechner <dlechner@baylibre.com> wrote:
-> > >
-> > > > This adds support for SPI offload to the ad7944 driver. This allows
-> > > > reading data at the max sample rate of 2.5 MSPS.
-> > > >
-> > > > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > > > ---
-> > > >
-> > > > v2 changes:
-> > > >
-> > > > In the previous version, there was a new separate driver for the PW=
-M
-> > > > trigger and DMA hardware buffer. This was deemed too complex so the=
-y
-> > > > are moved into the ad7944 driver.
-> > > >
-> > > > It has also been reworked to accommodate for the changes described =
-in
-> > > > the other patches.
-> > > >
-> > > > RFC: This isn't very polished yet, just FYI. A few things to sort o=
-ut:
-> > > >
-> > > > Rather than making the buffer either triggered buffer or hardware b=
-uffer,
-> > > > I'm considering allowing both, e.g. buffer0 will always be the trig=
-gered
-> > > > buffer and buffer1 will will be the hardware buffer if connected to=
- a SPI
-> > > > controller with offload support, otherwise buffer1 is absent. But s=
-ince
-> > > > multiple buffers haven't been used much so far, more investigation =
-is
-> > > > needed to see how that would work in practice. If we do that though=
-, then
-> > > > we would always have the sampling_frequency attribute though even t=
-hough
-> > > > it only applies to one buffer.
-> > >
-> > > Why would someone who has this nice IP in the path want the conventio=
-nal
-> > > triggered buffer?  I'm not against the two buffer option, but I'd lik=
-e to know
-> > > the reasoning not to just provide the hardware buffer if this SPI off=
-load
-> > > is available.
-> > >
-> > > I can conjecture reasons but would like you to write them out for me =
-:)
-> > > This feels like if someone has paid for the expensive hardware they p=
-robably
-> > > only want the best performance.
-> > >
-> >
-> > For me, it was more of a question of if we need to keep the userspace
-> > interface consistent between both with or without offload support. But
-> > if you are happy with it this way where we have only one or the other,
-> > it is less work for me. :-)
->
-> So inconsistency in userspace interfaces can occur for many reasons like
-> whether the interrupt is wired or not, but in this particularly
-> case I guess we have ABI stability issue because there are boards out the=
-re
-> today and people using the driver without this offload functionality.
+On Mon, May 13, 2024 at 04:34:20PM +0200, Marek Vasut wrote:
+> On 5/13/24 11:56 AM, Patrick Delaunay wrote:
+> > Add new compatible "st,stm32mp13-pwr-reg" for STM32MP13 SoC family.
+> >=20
+> > Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> > ---
+> >=20
+> > Changes in v3:
+> > - Replace oneOf/const by enum; solve the V2 issues for dt_binding_check
+> >=20
+> > Changes in v2:
+> > - update for Rob review, only add compatible for STM32MP13 family
+> >=20
+> >   .../devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml    | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pw=
+r-reg.yaml b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-re=
+g.yaml
+> > index c9586d277f41..c766f0a15a31 100644
+> > --- a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.y=
+aml
+> > +++ b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.y=
+aml
+> > @@ -11,7 +11,9 @@ maintainers:
+> >   properties:
+> >     compatible:
+> > -    const: st,stm32mp1,pwr-reg
+> > +    enum:
+> > +      - st,stm32mp1,pwr-reg
+> > +      - st,stm32mp13-pwr-reg
+>=20
+> Should the st,stm32mp1,pwr-reg be treated as fallback compatible for
+> st,stm32mp13-pwr-reg or not ?
+>=20
+> In other words, should the DT contain:
+> compatible =3D "st,stm32mp13-pwr-reg", "st,stm32mp1,pwr-reg";
+> or
+> compatible =3D "st,stm32mp13-pwr-reg";
+> ? Which one is preferable ?
+>=20
+> I think the former one, since the MP13 PWR block could also be operated by
+> older MP1(5) PWR block driver(s) without any adverse effects, except the =
+SD
+> IO domain configuration won't be available, right ?
 
-FWIW, the ad7944 driver will be landing in 6.10, so no users to speak of ye=
-t.
+Aye, the fallback sounds like what should be being used here, especially
+if another user of the DT might not need to implement the extra domain.
 
-> I'd not really thought that bit through, so I think you are correct that
-> we need to maintain the triggered buffer interface and 'add' the new
-> ABI for the offloaded case.  The multibuffer approach should work for thi=
-s.
-> Will be interesting if any problem surface from having two very different
-> types of buffer on the same device.
->
+--7WL8bDW+3sE8qEPT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In this particular case, I think the issues will be:
-1. The hardware buffer can't allow the soft timestamp. Otherwise, the
-buffer layout is the same (on other chips, we won't always be so
-lucky).
-2. The hardware trigger (sampling_frequency attribute) will only apply
-if there is the SPI offload support.
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkIu2wAKCRB4tDGHoIJi
+0lvfAP9rGyh8L75hqzO31KKo0VjnQVaddbWqnT+TfJuogvhOPgD+K/V4pOzfwW3l
+NyOTQkYcM9fqIXgdfeeXPmIZ/6VV3QI=
+=kDOI
+-----END PGP SIGNATURE-----
+
+--7WL8bDW+3sE8qEPT--
 
