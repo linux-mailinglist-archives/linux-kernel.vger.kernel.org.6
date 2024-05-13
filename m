@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-177748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D55148C443C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:32:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6638C442E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81AB91F22A37
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:32:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89625281D30
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532A758228;
-	Mon, 13 May 2024 15:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EBB57CAA;
+	Mon, 13 May 2024 15:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dQutNbbD"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="G/K9gFio"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB7C154431
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4393C2D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715614289; cv=none; b=bkAaZC8XWlBcjJsChXIIPt0pipWNxN0FuRPEkCVzOi1wML9nGKKFJUpCC/JQdSw6cO+apoQpKt3ro5aSX2mGEeUEmwl6qJy/acQQoCLKlHHKkTwY35M5dWAZu9txdiaNTnZIedGXwKAhAlpNdjg6WepF0WkmRC3w6iAxzfOFZZI=
+	t=1715614279; cv=none; b=S2uFHAqPDPZ9MdDDlHyIYGsc3rVoh/kzLnnaZhrdo11y5qi9fGQpTwvIZCkfAJKigtc2ZclyPC/FB85/dJQAqzTiGnSzbZE7LIqkINdK2z/IXiPLpQULjCU/jj5Q+gKZNjx9UH7rh8y2vsUzPYAfOgTdjuIMLMxxA4yhqckGYq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715614289; c=relaxed/simple;
-	bh=p6YXlAq5y5nroCD3axdcAiCsFuwA/e7PiPvtBxv/PWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gwWBN+ahN1c3AEPkRtJM8STyCvzalCWVSYCkSYAl4kVg2duzIjtB22CqI/eRvMhD74+Bdu+KHxoD5gUqw9QNNUmk0BVwVXbFOXqaE7+qf912pp2Tt8eCEnlqPfP9KbF1TJXQduvGw/oBVFYaNdhFWEbXwyzERJMnsHtjv+yAyjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dQutNbbD; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715614286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4YoVt4aSJSp709BZ9Sg0TFkDLrzgxtQT0KSEfyb8RGE=;
-	b=dQutNbbD0iwsWvTR7cYsV4k51jyQEB518S7NGrJrei0GmE8x2FDXw9Xwpe1viUxWJLfktb
-	cCnzN5N60RHj7cODV2AHrqo2rePzXacLapXoqJhWrN/8iF80pRtK88QX2onB0zWBepOLLI
-	6P4szXukzBRqgTPN67witSUwmvjaWKU=
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-To: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Douglas Anderson <dianders@chromium.org>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Liu Ying <victor.liu@nxp.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	Sui Jingfeng <sui.jingfeng@linux.dev>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 02/12] drm/bridge: tfp410: Remove a redundant check on existence of bridge->encoder
-Date: Mon, 13 May 2024 23:30:59 +0800
-Message-ID: <20240513153109.46786-3-sui.jingfeng@linux.dev>
-In-Reply-To: <20240513153109.46786-1-sui.jingfeng@linux.dev>
-References: <20240513153109.46786-1-sui.jingfeng@linux.dev>
+	s=arc-20240116; t=1715614279; c=relaxed/simple;
+	bh=cx9w25r3S0QxsfhlKB/TKTp6ksRfr8AQG+VWA8K7NVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=A6rJAj4Q2kdCQ907JcPBc/6/PJWHClTlL91fO4J+wCIdH7PFPYGTxnRyoL4fT7D2X/dpT0Z8DfYwoX4SGr4Oy4aN9RkMpT0lm19yn73pf4VyBD0CP6SYK2Kb0WYhR1iwP3d0huPXfDZZLX0qMbCPrSeYxRZxOHcbF9tOTvCsUgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=G/K9gFio; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-420180b5897so6712765e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1715614276; x=1716219076; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=dxmLYimTka0UK5sW5DAVxYAiCvREtrz1TArXlHydtTQ=;
+        b=G/K9gFioftHh7/G4jDvdmbMCNkK68rcAljmOtbdJq7cMMu4N/3sCXfq3YjDHdKE7we
+         T4YLJi7/6IVdyGBE7rVIcW7bLix+UhxKB+p+PDmEJ9A/EtlpyjYg933s5DoNm0Avt5BR
+         DekAXG6EMhLpYKC1SNc7GA8fhBNbCPUZcuuQD+nPq/n7Eijr7lXj+mBk+8Zh/qFKUoJV
+         t4D891n1ZJWnPEMaIqKZA01JqY++jJ1whmMjyJhhNGYqeI8lq2HOvcmpmYxF/K/qO9R7
+         KDA83lCKWdrqi5M1sL8A1PUR+yf21eAuddtGaPYBpix8c0pD10ZfWw5k/i8vtgXgfmlV
+         Ewgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715614276; x=1716219076;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dxmLYimTka0UK5sW5DAVxYAiCvREtrz1TArXlHydtTQ=;
+        b=eE1ZNMtJdD2V0+ZNQ8aSbRQ540Tvv/QDSXYaglFo/NwvPEQQOwXjnwmWjl6eUOst1n
+         6zL4yS2VqLgAkUmC7AdRpvYh9TuH/8o5p2xFT/aNr84jcSbpVGyXnMCU90nGwnZ0+7rQ
+         SoI+bKRRowKvy2CQdip3XfqiCngSTyXLpPyGjzW+nVEj9ASU6jApUe7/+EEQ3R0nVSmX
+         rbLJGnqo2B5f+iXywWWqZIm/5by3BzBfgTp+msOU/DeXzeV+iSPUnbzsIIlYPFENIiAE
+         mvJb+kNajkvjYcNOv0o05G0KoZZp1OkCYQYIWjCuybWyA6RTJjzS0GrrF03l2RrEuQ21
+         ZwIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU20lmCHokQHV+C/ZNvnA0wA0wgAsQkXjQNYN52ZmOz5SSKSpQ7eft18f7KcKsGzg0ANcUaKyj+x7CRxdkilLCgEZoRM3eRk4Y5BUgr
+X-Gm-Message-State: AOJu0YwjTMgTOm5xTMzU6tLC5wS5BZUnid0ACzOqUYSLRmT9fgGWYuNx
+	SgrYfm08DGrs5SfJ6Sryc94HlhBYW4k3SwLqYnJ+r2tlvU2MHeMqngNjiA==
+X-Google-Smtp-Source: AGHT+IFb7EnW+3pnZyH0Glgdx0MzBoXAaDIlnzZ4ffNIl2p0CjkGlHYUuJB7zs16Toj4uMbxwCEHYw==
+X-Received: by 2002:a05:600c:3108:b0:416:536b:683a with SMTP id 5b1f17b1804b1-41fead65000mr68116615e9.32.1715614275921;
+        Mon, 13 May 2024 08:31:15 -0700 (PDT)
+Received: from [192.168.1.10] ([94.1.72.75])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87b2648fsm197138905e9.7.2024.05.13.08.31.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 08:31:15 -0700 (PDT)
+Message-ID: <3f5fbab7-13f1-4eb8-976c-882c6cff9292@googlemail.com>
+Date: Mon, 13 May 2024 16:30:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Betterbird (Linux)
+Subject: Re: /sys/kernel/debug/vgaswitcheroo directory missing
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ LKML <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org
+References: <199a1636-2cd1-4d66-b2b2-1b64c5af4f2d@googlemail.com>
+ <ZjugHVX1WIgjbAH1@phenom.ffwll.local>
+ <b77cb343-1ea8-4cfd-ac77-b7e8d1c5e078@googlemail.com>
+ <b25a0ca3-e1bd-4457-8283-6878493b864f@googlemail.com>
+ <87cypqgnro.fsf@intel.com>
+Content-Language: en-GB
+From: Chris Clayton <chris2553@googlemail.com>
+In-Reply-To: <87cypqgnro.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Because the existence of bridge->encoder has already been checked before
-the simple_bridge_attach() function get called, And drm_bridge_attach()
-will quit with a negative error code returned if it fails for some reasons.
-Hence, it is guaranteed that the .encoder member of the drm_bridge instance
-is not NULL when the tfp410_attach() function get called.
+Revert "drm/nouveau/firmware: Fix SG_DEBUG error with nvkm_firmware_ctor()"
+a222a6470d7eea91193946e8162066fa88da64c2
 
-Remove the redundant checking codes "if (!bridge->encoder) { ... }".
+The errors I reported are the same as those quoted in the pull request for the revert.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
----
- drivers/gpu/drm/bridge/ti-tfp410.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/ti-tfp410.c b/drivers/gpu/drm/bridge/ti-tfp410.c
-index c7bef5c23927..b1b1e4d5a24a 100644
---- a/drivers/gpu/drm/bridge/ti-tfp410.c
-+++ b/drivers/gpu/drm/bridge/ti-tfp410.c
-@@ -133,11 +133,6 @@ static int tfp410_attach(struct drm_bridge *bridge,
- 	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
- 		return 0;
- 
--	if (!bridge->encoder) {
--		dev_err(dvi->dev, "Missing encoder\n");
--		return -ENODEV;
--	}
--
- 	if (dvi->next_bridge->ops & DRM_BRIDGE_OP_DETECT)
- 		dvi->connector.polled = DRM_CONNECTOR_POLL_HPD;
- 	else
--- 
-2.43.0
-
+On 13/05/2024 08:43, Jani Nikula wrote:
+> On Sat, 11 May 2024, Chris Clayton <chris2553@googlemail.com> wrote:
+>> Mmm, I see a patch has made it's way to mainline and can confirm that
+>> it fixes the problems I tbothered you with in this thread.
+> 
+> Which patch? Might be interesting for posterity.
+> 
+> BR,
+> Jani.
+> 
+> 
 
