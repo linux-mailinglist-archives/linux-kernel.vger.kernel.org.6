@@ -1,128 +1,148 @@
-Return-Path: <linux-kernel+bounces-177721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392648C43A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:59:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6548C43AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B5991C213D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:59:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDE512830EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFB24C7B;
-	Mon, 13 May 2024 14:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139F94C84;
+	Mon, 13 May 2024 15:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HVLqMfAU"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WM99eoOK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7B4C6D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E48F41C01
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715612385; cv=none; b=esQHpBe3gnE/+7Ug0rRD4yxpgyxruvymQwj5FJa4GEBNBQkHDd/hveW3BOAoZWEIHByeAT4EwdtsDxw+Z6+c0I95OZI/gdo58fvP1/dODyyntKCPArn1IZJ9bLyHwK2sFYaW9pAedT8Gl129acQzrzTqajeKAZ6jNgAruofqpEE=
+	t=1715612717; cv=none; b=e+/+LBpohLdPnJldSkCHCf1dpshQUxlQnPSjbYD0nLFsTjnYDLSV2Pt5ohc8v1nIhtAQ/d8iD8lF+NQD/POd5Ls2srMNZpD8itnx7MyKO9YEYsy46W7gUWeMSWs0aMysJNXUez5RnelEkDFFLL1GMYxxsxh5iPyZqgVyAqJvbEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715612385; c=relaxed/simple;
-	bh=NAFNAGZXDH28lYLqiCjV6acOfA/J8mZARBGgABvAM9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=deWNWyn1Bc6kJt0FojvH0SnLurc97Ibm7yi5leu9HyWw4O3X5VyofAUueSMp863w5xQ/EJe7QkaZAMW0jWMpl8WFo2xjennCDcPOAX58r08FRfxm4aM5FXwP8CDA/cbLdWlGY0ETbj6dbGDWRN2hPJiMKRjW9nI0nk63ZEDOCUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HVLqMfAU; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-de5b1e6beceso5120573276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1715612383; x=1716217183; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dmYZk0kFF6OOGj9czkV32wEYdGGtifIB7+d5SgpETuU=;
-        b=HVLqMfAUvFNYcP4pMfnvTJq/1R1Wr5QlEfLvtN/pVkPkHllu5mJDCR0HYKgR47AdYb
-         CVLkMJ03uXnKHFnrQx5ugimdxwoCVav4Xm8TLHvkd4NUxHDjaZl5SLDuWntgkhGCo2YL
-         VjkdeDB9tBSSxpq7jE+bi/wWCFV9b4Bnck93Rxvp3mfAV7O/4HCOCShEevUvS5CakNg3
-         gAnKKcRBPt+ukuSTllH7YdzdZC8ahzNdVlvhyywVBGF2TpQvT2BlcDywzA96IcbAP6S/
-         60bwQW5qt1fJo0PpKxbyVX60aSECkEyEGW8QuoqpNRazHcartUYFTxUQl5QVd2PagCdq
-         N58A==
+	s=arc-20240116; t=1715612717; c=relaxed/simple;
+	bh=kPaX16GAumoLkoxVvW9Riw3RfFqAgptTl67y6E6jEmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T64Z5YUhukEdQsiSxKoJBqBAF8wCj5eITyU2uRoS2dmOeaKpgWq4MFAXnxPs3K6Lku8nGvRBKdnlyeIhcORPtQ3g6kdDsLbv1MDrXJ3wKmyWh3vBCPNIIP1Y643/h8BjIpUhTdz5sPCrpwMTdi2ybsJEduspC+rRnOu/jj58X2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WM99eoOK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715612714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyjE9PAfPntlI9F+E3R7TZESYJSzxOtguEEK1S0AZZk=;
+	b=WM99eoOK3jMGdtGpzRVZEz40Vu7nXWbXW1+ytAoji5MFMwC+MwX8LXz2uQKxulir6zVhrR
+	RSzalkqra8f04nZ9W3QRx9P3Q+hmvOwqk3lH5zM7krju5yoSJwWll+x+LSLjvMCRMd72Kk
+	odf+BhzAkGrSK9HxibQ8QMg9QNaUspY=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-HvNHvXloM2iajv0g93VnMA-1; Mon, 13 May 2024 11:03:52 -0400
+X-MC-Unique: HvNHvXloM2iajv0g93VnMA-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5206ef0d6fdso3992066e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:03:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715612383; x=1716217183;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dmYZk0kFF6OOGj9czkV32wEYdGGtifIB7+d5SgpETuU=;
-        b=p0ZeT8dYR/1+T/yfKqJ9PXYwQ4MrbSzVO96Lo6IshJWlO3jqbLsT01qGyGxkV3gGlv
-         7kmlBKRaw6LrkUmEUxsaDUlAMrIPkkKeH+Ia/ey+aKPIzOS/GP3aLtdeinn8gasA8F3R
-         ax8/EVRb7XyGMgR90lTzKJ2pCHZBxUXF4twae/YlGyuE69L2HeuRgbappKQSeeHaVce6
-         /LODyGzw3RcxIBFJhNOjp68NLhXQieMXFxoY+7Cob55nVk6D9B28Tq2Xn1oUEVRLw0Mz
-         9KuXskG2sGfwOfuDMOK/9VGFgERIL7+PmoSfrooXfJUebPIjj7TQLVRHuOeklUxIRPFa
-         G5kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFHORbkD/90fKc6cOZPXzrRNZxheFPPkZsNT+kmrHaGZfQk3YmQ/T5ATkOUDuDBaYDiUqGuV+XXZgO/A8ymmdL8ecvsAiLYGjhGGq+
-X-Gm-Message-State: AOJu0YyFwcK7Me9pUaqwvYa+5o6nP9qFvB9ErVdTlGk8idAbbHYjASCV
-	rqhnKzqGAXy8/Ty9Izb+HarD+nlDIDuFEaTmZtyox2X6sObc0FnSGbNlpKyFpxnpwBccTCp8o3M
-	uoGdh8j9dWMClrXDFeC85KU4oSfpRGv2lcvEkWv4xfLSE2DA=
-X-Google-Smtp-Source: AGHT+IFIGLplDoMFraH1zkLAVywXcB6c6GYboq/6d5rFURkDTnzUpiqkAe+TQql/tQILTDNyMfl0quYdML71woeC2Eg=
-X-Received: by 2002:a5b:b0d:0:b0:deb:9e90:2f5b with SMTP id
- 3f1490d57ef6-dee4f34b10dmr9160333276.29.1715612383406; Mon, 13 May 2024
- 07:59:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715612628; x=1716217428;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EyjE9PAfPntlI9F+E3R7TZESYJSzxOtguEEK1S0AZZk=;
+        b=Es191bTb/h56AEZpny9DdAw4hi3lV9RBK5M/n4iNq/t9IXoa/ehHnWmb0uv9lURVIb
+         MEkpSNCfw5lqDULj+LNgjHYaIfnh3Cgj9lQNAqrAZjLVAhoZCCuL6VBl62GaFaLQPK9n
+         js6JszjGNt0rjLmZkX7XlYjHfZPL+1AsRD5Qjiw1t3N0l3ETLJc9Ur+mrrUUMcUTPUfH
+         SZB3rM4nwNy2icijkK+hCygy0nKWF1C27jXvG/+QFCAHgQBSflVIafWpvVNaZTN0U1I/
+         y8hYQEh+MuOvfRwEgigGK5j0WJNFPr3N4bnnp0feDddf6HV6/x57uQw4X5FoxQJenaD/
+         bNMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVX9HuONjTFFX7VLsOmwhZT0SgUIYbtyr59YGPYmAgbsqT1twtYy4/3LNDsIPROlcUi5prAwxa7yoyifZ2fLUZPo/XLQOfds/jIcGVN
+X-Gm-Message-State: AOJu0YwpXSb4097dnrx9Duvy99pcWGJxUi7cxjADDHr+q8q9C3iR0WnZ
+	9e9S+KnbDUT+5UsY3Mq5SLRidlj/yqEWYUpnrzYqBIOuxErPN3Elpx0FbJ6xFODv3fkLyOiIYJV
+	5jtpaIt9RU9qK3afwSq0QWWG1SdZz+6QkBYZIQ/us10e5ri4ZId3h3PCaFESA0Q==
+X-Received: by 2002:ac2:46ca:0:b0:518:95b6:176f with SMTP id 2adb3069b0e04-5220fe7a008mr5844786e87.50.1715612627937;
+        Mon, 13 May 2024 08:03:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFPEzbJt9rhoLuAPJVxmbZBS5Is5DbsQzF5kOol2Qfa6kMaUpfMmI4ti7VSb0rQ3Q6ozKqv/A==
+X-Received: by 2002:ac2:46ca:0:b0:518:95b6:176f with SMTP id 2adb3069b0e04-5220fe7a008mr5844774e87.50.1715612627379;
+        Mon, 13 May 2024 08:03:47 -0700 (PDT)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d708sm606825666b.41.2024.05.13.08.03.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 08:03:47 -0700 (PDT)
+Message-ID: <9df151e2-c4db-4114-a6fa-1d9c732efa16@redhat.com>
+Date: Mon, 13 May 2024 17:03:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000f5f83206180101e7@google.com> <CAHC9VhSinu25_9evZZmLaiJL=R-LNOmB+Yz-3NtdMi5b+vQiRg@mail.gmail.com>
- <CANp29Y74qSm4_VTVT-j5n5kwpJaPk1zTMXPRO_xxWViXADUNeg@mail.gmail.com>
-In-Reply-To: <CANp29Y74qSm4_VTVT-j5n5kwpJaPk1zTMXPRO_xxWViXADUNeg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 13 May 2024 10:59:32 -0400
-Message-ID: <CAHC9VhTY47hMxCYbU08aj0VGoPLQviL_6rGfTPyMDe8K36wPkQ@mail.gmail.com>
-Subject: Re: [syzbot] [audit?] BUG: unable to handle kernel NULL pointer
- dereference in kauditd_hold_skb
-To: Aleksandr Nogikh <nogikh@google.com>
-Cc: syzbot <syzbot+8ffdaad8822cadf6ff4e@syzkaller.appspotmail.com>, 
-	audit@vger.kernel.org, eparis@redhat.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] devm-helpers: Fix a misspelled cancellation in the
+ comments
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-kernel@vger.kernel.org
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>
+References: <20240503173843.2922111-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240503173843.2922111-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 10, 2024 at 3:01=E2=80=AFAM Aleksandr Nogikh <nogikh@google.com=
-> wrote:
-> On Fri, May 10, 2024 at 1:27=E2=80=AFAM Paul Moore <paul@paul-moore.com> =
-wrote:
-> >
-> > On Thu, May 9, 2024 at 4:14=E2=80=AFAM syzbot
-> > <syzbot+8ffdaad8822cadf6ff4e@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    6d7ddd805123 Merge tag 'soc-fixes-6.9-3' of git://git=
-kern..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D10c901b89=
-80000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D758bb5b8f=
-724c7ba
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D8ffdaad8822=
-cadf6ff4e
-> > > compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU =
-ld (GNU Binutils for Debian) 2.40
-> > > userspace arch: arm
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17ed19b=
-8980000
-> >
-> > Is syzbot no longer providing reproducers in C?  I see the syzbot
-> > reproducer but no vanilla C code ...
->
-> Syzbot still provides them, but in this particular case when syzbot
-> tried to translate the .syz repro to C, it was unable to reproduce the
-> problem anymore. So it didn't report it. It usually doesn't stay too
-> long like this, in some time it will find a working C reproducer.
+Hi,
 
-Thanks for the explanation.  This failure looks odd enough that I'll
-wait for the C reproducer to spend any more time on it.
+On 5/3/24 7:38 PM, Andy Shevchenko wrote:
+> Fix a misspelled cancellation in the comments.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
---=20
-paul-moore.com
+Thank you for your patch, I've applied this patch to my review-hans 
+branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+
+Note it will show up in my review-hans branch once I've pushed my
+local branch there, which might take a while.
+
+Once I've run some tests on this branch the patches there will be
+added to the platform-drivers-x86/for-next branch and eventually
+will be included in the pdx86 pull-request to Linus for the next
+merge-window.
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  include/linux/devm-helpers.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/devm-helpers.h b/include/linux/devm-helpers.h
+> index 74891802200d..708ca9131402 100644
+> --- a/include/linux/devm-helpers.h
+> +++ b/include/linux/devm-helpers.h
+> @@ -41,7 +41,7 @@ static inline void devm_delayed_work_drop(void *res)
+>   * detached. A few drivers need delayed work which must be cancelled before
+>   * driver is detached to avoid accessing removed resources.
+>   * devm_delayed_work_autocancel() can be used to omit the explicit
+> - * cancelleation when driver is detached.
+> + * cancellation when driver is detached.
+>   */
+>  static inline int devm_delayed_work_autocancel(struct device *dev,
+>  					       struct delayed_work *w,
+> @@ -66,7 +66,7 @@ static inline void devm_work_drop(void *res)
+>   * A few drivers need to queue work which must be cancelled before driver
+>   * is detached to avoid accessing removed resources.
+>   * devm_work_autocancel() can be used to omit the explicit
+> - * cancelleation when driver is detached.
+> + * cancellation when driver is detached.
+>   */
+>  static inline int devm_work_autocancel(struct device *dev,
+>  				       struct work_struct *w,
+
 
