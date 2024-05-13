@@ -1,122 +1,102 @@
-Return-Path: <linux-kernel+bounces-177711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4328C4386
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:54:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B790B8C4389
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58F21F224A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:54:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8CB21C22B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8414B4C9D;
-	Mon, 13 May 2024 14:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD834C79;
+	Mon, 13 May 2024 14:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XiGMMNwS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GLlZAvFN"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4601C01;
-	Mon, 13 May 2024 14:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B1B4A1A;
+	Mon, 13 May 2024 14:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715612039; cv=none; b=N21o0euDsU2eomTAe7NJa9cNFJKsVoEMjgCyRdHchBsbouwJuRYS/LMODax6PxK2xZ2D63zyIpsY5kkdp6zHkaauQQzDgd0Wa3mO51Mxkwje0A3Jf4dDZnvJQ9iSdKg3QKhEABlovrXgyzFutoOV3vxvagwIF2QsSIQI7uTTDEc=
+	t=1715612135; cv=none; b=gY/kpet0rCpz5QNp/f0mO+LtxQw5yIuqdeRZ+wQfuU3y0vKmxjijE7xEb46jtGrR6LoqbKoB7jjDQCoAuPTvm9HNWIiC6pzIT9xqP5G2gGOSfBw31grf6rNykZYicEoH3QDwqzA2fue5y+N77Jrq+Qtn6/futRnuwGXKC3HTyK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715612039; c=relaxed/simple;
-	bh=dLfguYFlEZM8pXj+gnfRKXow5bLqSaYtXraAJ28Xh+s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3AWRf9pwM3PZQdGvjqs4/WUcYV/MfCb6+Vlv70DsxNXsZ8r26PBe7AdtfVKzBeSxgA7XYS57x3G2IjTlA8GIyG3Vyxll77ZdDDhdFoo1nK7+cSPRci4M6ZL4JQGnJgegRwU28HxWw4+5rp4YdZryeXkzce4g6QYgaq2fD4oidU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XiGMMNwS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0372DC113CC;
-	Mon, 13 May 2024 14:53:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715612039;
-	bh=dLfguYFlEZM8pXj+gnfRKXow5bLqSaYtXraAJ28Xh+s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XiGMMNwS0pqUaXc/XjsL9E0Ll3T4d4WZIAw1c8zOCWDCHCbkesjjdnlLtfqWR1f0N
-	 2NxNyqSTtyGAfD7QyxJlJ17wJF9rBsn4aWaUxr2CxUyfIx1OScZG6/okfkOnwUdbFN
-	 ZbryLIj8PRNzMSpzBTr4DqhdFnBgg9eEC35YCON7w403zoetxm21pUe1Yz+4NAY+Kr
-	 nzLZZAefzR9nluD7nQ+sUDQa/ubpKr17a+7pRv/G3XGdNoTFpFeTcd1nhLJLo4oOCg
-	 mkiZyqKU4dQZO1yagMaCcqgq+YnAI+iNOk9Ck7xs7NofaMpNhJ60h6JjM/t4oJO98H
-	 7bcI9oMtxAKYQ==
-Date: Mon, 13 May 2024 09:53:58 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 09/17] dt-bindings: interrupt-controller: Add support for
- Microchip LAN966x OIC
-Message-ID: <20240513145358.GA2574205-robh@kernel.org>
-References: <20240430083730.134918-1-herve.codina@bootlin.com>
- <20240430083730.134918-10-herve.codina@bootlin.com>
- <20240507152806.GA505222-robh@kernel.org>
- <20240513143720.1174306a@bootlin.com>
+	s=arc-20240116; t=1715612135; c=relaxed/simple;
+	bh=/zuMT5Y4ZRWt6Ev/Pe1bed+f3UqPLoYxack4eF1uwkE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rX4icDeevdWUvWsXtc1fG/81NhXJXIqorUTC5LxzkRbZi/LfW0VxLtsdpnOU/ofY18NcSVvq5iM6Pr2BeDsHhOWm9QSRuRWD3tCNMh5tsaVsyzxREbt8Yc+eoLB+ukuhPTM9sJL66ZYroza7k0VOix+HUDyXKNpCASk8Rnb1zhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GLlZAvFN; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715612132;
+	bh=/zuMT5Y4ZRWt6Ev/Pe1bed+f3UqPLoYxack4eF1uwkE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=GLlZAvFN/grbmJC42rwU4WfEUpGd/4bdKMD1jtecZnGh8Q5im5TXf75rOKBLjbV7f
+	 34cuinhwjH39OZcWptmvm5aRhocT3xZ2O7EtHADqQujXUHM02vkA6SJMwsg9gTCZWm
+	 n2+JuAeh35odoXSogxfm1o3DoH/FVWH2Mai8AYlJwvx72v6oyO0y6+ZoXNc9cTvVL5
+	 Pwrs+Do1xAKi0xSkutB6a7wTugBHP/hTwYzJ3CTiMxZEknEr03R2rzxs4R1MUemSp7
+	 go+qc+ZHMIT0/fnMvc742YgijHyrwRmtoYkZSZTUKugRnHnHlOWycP00rF9HANbj8A
+	 P8cjcBW7VYoXg==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 96BF8378217F;
+	Mon, 13 May 2024 14:55:30 +0000 (UTC)
+Message-ID: <d2876f64774d09db10ddae01f98889d542563507.camel@collabora.com>
+Subject: Re: [PATCH] media: verisilicon: AV1: Be more fexible on postproc
+ capabilities
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	ezequiel@vanguardiasur.com.ar, p.zabel@pengutronix.de, mchehab@kernel.org, 
+	heiko@sntech.de
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com
+Date: Mon, 13 May 2024 10:55:24 -0400
+In-Reply-To: <20240328093439.18712-1-benjamin.gaignard@collabora.com>
+References: <20240328093439.18712-1-benjamin.gaignard@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513143720.1174306a@bootlin.com>
 
-On Mon, May 13, 2024 at 02:37:20PM +0200, Herve Codina wrote:
-> Hi Rob,
-> 
-> On Tue, 7 May 2024 10:28:06 -0500
-> Rob Herring <robh@kernel.org> wrote:
-> 
-> ...
-> > > +examples:
-> > > +  - |
-> > > +    interrupt-controller@e00c0120 {
-> > > +        compatible = "microchip,lan966x-oic";
-> > > +        reg = <0xe00c0120 0x190>;  
-> > 
-> > Looks like this is part of some larger block?
-> > 
-> 
-> According to the registers information document:
->   https://microchip-ung.github.io/lan9662_reginfo/reginfo_LAN9662.html?select=cpu,intr
-> 
-> The interrupt controller is mapped at offset 0x48 (offset in number of
-> 32bit words).
-> -> Address offset: 0x48 * 4 = 0x120
-> -> size: (0x63 + 1) *  4 = 0x190
-> 
-> IMHO, the reg property value looks correct.
+Le jeudi 28 mars 2024 =C3=A0 10:34 +0100, Benjamin Gaignard a =C3=A9crit=C2=
+=A0:
+> RK3588 post-processor block is able to convert 10 bits streams
+> into 8 bits pixels format.
+>=20
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> Fixes: 003afda97c65 ("media: verisilicon: Enable AV1 decoder on rk3588")
 
-What I mean is h/w blocks don't just start at some address with small 
-alignment. That wouldn't work from a physical design standpoint. The 
-larger block here is "CPU System Regs". The block as a whole should be 
-documented, but maybe that ship already sailed.
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-Also, here you call it the OIC, but the link above calls it the VCore 
-interrupt controller.
+> ---
+>  drivers/media/platform/verisilicon/rockchip_vpu_hw.c | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c b/drive=
+rs/media/platform/verisilicon/rockchip_vpu_hw.c
+> index f97527670783..964122e7c355 100644
+> --- a/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+> +++ b/drivers/media/platform/verisilicon/rockchip_vpu_hw.c
+> @@ -82,7 +82,6 @@ static const struct hantro_fmt rockchip_vpu981_postproc=
+_fmts[] =3D {
+>  	{
+>  		.fourcc =3D V4L2_PIX_FMT_NV12,
+>  		.codec_mode =3D HANTRO_MODE_NONE,
+> -		.match_depth =3D true,
+>  		.postprocessed =3D true,
+>  		.frmsize =3D {
+>  			.min_width =3D ROCKCHIP_VPU981_MIN_SIZE,
 
-Rob
 
