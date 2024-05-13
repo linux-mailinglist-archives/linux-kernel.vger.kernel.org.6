@@ -1,189 +1,174 @@
-Return-Path: <linux-kernel+bounces-177210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727C48C3B78
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:39:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F7E8C3B7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C9E1F21266
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:39:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66B06B20EDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B724145B19;
-	Mon, 13 May 2024 06:39:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E977146A62;
+	Mon, 13 May 2024 06:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fz8SeCcn"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C618468
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C9E52F9B;
+	Mon, 13 May 2024 06:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715582394; cv=none; b=e83xGCtAJwlKlhEUMsd4YI2PZpwsgs+SgRCzPpaD+CPOMItFPeHuuvuc0/G1icPldwN28OQdav1fw/5/n0CmTY+8zcPlvr3JJID2ISjIaTyvz91E5dN5dEC6qWWUeYbFjxJZChHTPuU+D2Xeb7djsok1jklUYoTclK3SglLICEI=
+	t=1715582437; cv=none; b=miIlUwV2raCMpekwBTZq9cASjYfLvQKH8H2xzDt1WVcSKJBLH8Ug+kcMbbw4k+sUKexYb1Y/YMdz5YtbdqVFbFyyrRNc4uDDjCRR+LVUyfYZ2zBN7r/8g1rxyWrOzFHERrlXUvu38kJD6yI2ZKdgG/JfTxp8H9FQij1y5dETQHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715582394; c=relaxed/simple;
-	bh=qWUVcFOckM2mzHpQ2EXaxk0W1FsPXBRLNnFXKDxYnZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XDsgRADpdSKOheApxRJIyS/iPn/K/35R8Z+Ui5yr5x6LN0aQQKW83xZmaMed704MKNRcM0BDqyGL0OembdGGOdytHCyYn7b9c6lXk0AjevpoEFMlexb+O77oGPYstaaknM7n17Lmj03INMedZTblFqsQqiN9gfPPFaTfZVM3ab4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s6PLT-0004Yo-2g; Mon, 13 May 2024 08:39:35 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s6PLS-0017Sf-4l; Mon, 13 May 2024 08:39:34 +0200
-Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <sha@pengutronix.de>)
-	id 1s6PLS-009O2c-07;
-	Mon, 13 May 2024 08:39:34 +0200
-Date: Mon, 13 May 2024 08:39:34 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
-	Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH v2 01/17] clk: imx: composite-8m: Enable gate clk with
- mcore_booted
-Message-ID: <ZkG1put2k33K4c_b@pengutronix.de>
-References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
- <20240510-imx-clk-v2-1-c998f315d29c@nxp.com>
+	s=arc-20240116; t=1715582437; c=relaxed/simple;
+	bh=lqcEe4hZIzl0ewoaZ/vN2AJJvQPMQLnu4BDGTpFrGFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jIkXsIyaDBok2JOgSNv/vPylwCutYrdXA0BORqoMQM8rmz4y5K7z+9IBCyCLVNOy4JiUbjBju3G3NAHiXGGwzLpOICoT1Zww6IXTyMyWERhwlXMqiy7waVutGRVVP2ONZ9Ul5uqSSaWWX9QkS8WVOjvH8vaF/+9BTc907HU/Z1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fz8SeCcn; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44D6e52h010669;
+	Mon, 13 May 2024 01:40:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715582405;
+	bh=EznlNRZRqFxgIXuvyRQEXYusN2dLWKllykgxYp3lDds=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=fz8SeCcnbcWfSGP42Pl8maqcPtERRwY5/QbwF3ekjMm++Nmp/Vb3DgfX5OE41gQxj
+	 Fxm+q3Z6jNGoNjXv5qUs5BC4wXl0ArxaC1WbVJsxpsLOIr4vyRCAzy+yPjb/fEdyxd
+	 J+6r6C8ZJNrgkJWX+kzbrmdTS+yN4jEWYHfucYEU=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44D6e5ob021930
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 13 May 2024 01:40:05 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 13
+ May 2024 01:40:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 13 May 2024 01:40:05 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44D6dwwk076174;
+	Mon, 13 May 2024 01:39:58 -0500
+Message-ID: <7542d6ed-28aa-467d-a81a-ab44f82cef72@ti.com>
+Date: Mon, 13 May 2024 12:09:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240510-imx-clk-v2-1-c998f315d29c@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5] net: ti: icssg_prueth: add TAPRIO offload
+ support
+Content-Language: en-US
+To: Paolo Abeni <pabeni@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+        Andrew Lunn <andrew@lunn.ch>, Jan Kiszka <jan.kiszka@siemens.com>,
+        Simon
+ Horman <horms@kernel.org>,
+        Niklas Schnelle <schnelle@linux.ibm.com>,
+        Randy
+ Dunlap <rdunlap@infradead.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Wolfram
+ Sang <wsa+renesas@sang-engineering.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>, <r-gunasekaran@ti.com>,
+        Roger
+ Quadros <rogerq@ti.com>,
+        Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>
+References: <20240429103022.808161-1-danishanwar@ti.com>
+ <74be4e2e25644e0b65ac1894ccb9c2d0971bb643.camel@redhat.com>
+ <cc9eae8f17e3e0ad142c9efa3fe5dff7afe2554c.camel@redhat.com>
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <cc9eae8f17e3e0ad142c9efa3fe5dff7afe2554c.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 10, 2024 at 05:18:56PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+
+
+On 02/05/24 5:32 pm, Paolo Abeni wrote:
+> On Thu, 2024-05-02 at 13:59 +0200, Paolo Abeni wrote:
+>> On Mon, 2024-04-29 at 16:00 +0530, MD Danish Anwar wrote:
+>>> +static int emac_taprio_replace(struct net_device *ndev,
+>>> +			       struct tc_taprio_qopt_offload *taprio)
+>>> +{
+>>> +	struct prueth_emac *emac = netdev_priv(ndev);
+>>> +	struct tc_taprio_qopt_offload *est_new;
+>>> +	int ret;
+>>> +
+>>> +	if (taprio->cycle_time_extension) {
+>>> +		NL_SET_ERR_MSG_MOD(taprio->extack, "Cycle time extension not supported");
+>>> +		return -EOPNOTSUPP;
+>>> +	}
+>>> +
+>>> +	if (taprio->cycle_time < TAS_MIN_CYCLE_TIME) {
+>>> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "cycle_time %llu is less than min supported cycle_time %d",
+>>> +				       taprio->cycle_time, TAS_MIN_CYCLE_TIME);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	if (taprio->num_entries > TAS_MAX_CMD_LISTS) {
+>>> +		NL_SET_ERR_MSG_FMT_MOD(taprio->extack, "num_entries %lu is more than max supported entries %d",
+>>> +				       taprio->num_entries, TAS_MAX_CMD_LISTS);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	if (emac->qos.tas.taprio_admin)
+>>> +		devm_kfree(&ndev->dev, emac->qos.tas.taprio_admin);
+>>
+>> it looks like 'qos.tas.taprio_admin' is initialized from
+>> taprio_offload_get(), so it should be free with taprio_offload_free(),
+>> right?
+>>
+>>> +
+>>> +	est_new = devm_kzalloc(&ndev->dev,
+>>> +			       struct_size(est_new, entries, taprio->num_entries),
+>>> +			       GFP_KERNEL);
+>>> +	if (!est_new)
+>>> +		return -ENOMEM;
+>>
+>> Why are you allocating 'est_new'? it looks like it's not used
+>> anywhere?!? 
+>>
+>>> +
+>>> +	emac->qos.tas.taprio_admin = taprio_offload_get(taprio);
+>>> +	ret = tas_update_oper_list(emac);
+>>> +	if (ret)
+>>> +		return ret;
+>>
+>> Should the above clear 'taprio_admin' on error, as well? 
 > 
-> Bootloader might disable some CCM ROOT Slices. So if mcore_booted set with
-> display CCM ROOT disabled by Bootloader, kernel display BLK CTRL driver
-> imx8m_blk_ctrl_driver_init may hang the system because the BUS clk is
-> disabled.
+> Side note: the patch itself is rather big, I guess it would be better
+> split it. You can make a small series putting the the struct definition
+> move in a separate patch. 
+
+
+Sure Paolo, I will split the "struct definition move" to a separate
+patch and post both the patches as a small series in v6.
+
 > 
-> Add back gate ops, but with disable doing nothing, then the CCM ROOT
-> will be enabled when used.
+> Thanks,
 > 
-> Fixes: 489bbee0c983 ("clk: imx: composite-8m: Enable gate clk with mcore_booted")
-
-I can't find this commitish anywhere, also the subject looks like this
-patch fixes itself.
-
-> Reviewed-by: Ye Li <ye.li@nxp.com>
-> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-composite-8m.c | 53 ++++++++++++++++++++++++++++++--------
->  1 file changed, 42 insertions(+), 11 deletions(-)
+> Paolo
 > 
-> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-> index 8cc07d056a83..f187582ba491 100644
-> --- a/drivers/clk/imx/clk-composite-8m.c
-> +++ b/drivers/clk/imx/clk-composite-8m.c
-> @@ -204,6 +204,34 @@ static const struct clk_ops imx8m_clk_composite_mux_ops = {
->  	.determine_rate = imx8m_clk_composite_mux_determine_rate,
->  };
->  
-> +static int imx8m_clk_composite_gate_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_gate *gate = to_clk_gate(hw);
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	spin_lock_irqsave(gate->lock, flags);
-> +
-> +	val = readl(gate->reg);
-> +	val |= BIT(gate->bit_idx);
-> +	writel(val, gate->reg);
-> +
-> +	spin_unlock_irqrestore(gate->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx8m_clk_composite_gate_disable(struct clk_hw *hw)
-> +{
-> +	/* composite clk requires the disable hook */
-> +}
-> +
-> +static const struct clk_ops imx8m_clk_composite_gate_ops = {
-> +	.enable = imx8m_clk_composite_gate_enable,
-> +	.disable = imx8m_clk_composite_gate_disable,
-> +	.is_enabled = clk_gate_is_enabled,
-> +};
-> +
->  struct clk_hw *__imx8m_clk_hw_composite(const char *name,
->  					const char * const *parent_names,
->  					int num_parents, void __iomem *reg,
-> @@ -217,6 +245,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
->  	struct clk_mux *mux;
->  	const struct clk_ops *divider_ops;
->  	const struct clk_ops *mux_ops;
-> +	const struct clk_ops *gate_ops;
->  
->  	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
->  	if (!mux)
-> @@ -257,20 +286,22 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
->  	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
->  
->  	/* skip registering the gate ops if M4 is enabled */
-
-This comment doesn't seems to become inaccurate with this patch.
-
-> -	if (!mcore_booted) {
-> -		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-> -		if (!gate)
-> -			goto free_div;
-> -
-> -		gate_hw = &gate->hw;
-> -		gate->reg = reg;
-> -		gate->bit_idx = PCG_CGC_SHIFT;
-> -		gate->lock = &imx_ccm_lock;
-> -	}
-> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-> +	if (!gate)
-> +		goto free_div;
-> +
-> +	gate_hw = &gate->hw;
-> +	gate->reg = reg;
-> +	gate->bit_idx = PCG_CGC_SHIFT;
-> +	gate->lock = &imx_ccm_lock;
-> +	if (!mcore_booted)
-> +		gate_ops = &clk_gate_ops;
-> +	else
-> +		gate_ops = &imx8m_clk_composite_gate_ops;
-
-Please use positive logic. It's easier to read.
-
-Sascha
 
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Thanks and Regards,
+Danish
 
