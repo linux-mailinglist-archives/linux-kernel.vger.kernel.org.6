@@ -1,155 +1,89 @@
-Return-Path: <linux-kernel+bounces-178078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77388C4852
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:38:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10468C4855
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3141F235CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 514AE1F2347F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:39:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39BF8004B;
-	Mon, 13 May 2024 20:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qh2KbS+i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EABC80632;
+	Mon, 13 May 2024 20:39:19 +0000 (UTC)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283A11DA24;
-	Mon, 13 May 2024 20:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D237E575;
+	Mon, 13 May 2024 20:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715632724; cv=none; b=ayvZ4WQ5WyBGMYKu3rGoE3U878Apx1jAvIi/mrc8Zufe9Wkek1NubLxI9MwpiMSsK2RSTm35XXLVIAie5B8v/EuxKkgvkbPTlNmGZOM619Ty/kusq/f5b5WOYGmA5UvGQlzPVgDu5jFuHte6LDPdSTuk64HPPh+PDMUDDDY2wwY=
+	t=1715632758; cv=none; b=CfQo+vh743cWtrbokFeaiGbFsca6FSf30HmgoEcqf5BAMcSNizA2fnI4rJNX7yTvCAHEXkpj42NxFNuamZLffAPw0je5CAITArXQ9KCbeEKufR3LEHNQusd1wIltAI99MMHkd4mXs8RIidHVUXw2/4kJDi0V+YRbGIJbPEnBhEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715632724; c=relaxed/simple;
-	bh=QbhhRTYOI2vg+p7o11+oe+NFacNKUaoVU7Oa8Khfwjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VUkxskIYW8nkLbuq2br17BurZlJo2dfQt01k2QnGhn1BwdFT8V2AUErq0rzSF5CZqB3Q4/0hpoSZJAS6hO/Gvi/iLnLlnBlXDPxeblNYL2Up3MF0tLqO+oLEG5h0ZU1mIxuB4VaMY+WAsGH0Ca7vrJIhMGHY1Mt4ZCpeVG74A1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qh2KbS+i; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715632722; x=1747168722;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QbhhRTYOI2vg+p7o11+oe+NFacNKUaoVU7Oa8Khfwjo=;
-  b=Qh2KbS+iP8og4WtnVdMRV/fvs6bcmSDE0FErndI6sZXh6l1chTC8zsg2
-   oq8kvf72tS9NXCJZqdG8lShaBfnI5E3xEOYUvJy4pq1xlMXa7sK+f6CkH
-   98Z1ESi6wGP7CV76pgfXRfb9GO7g0RAoEar9guhWhVafkhtMuxjomXM8z
-   zNUJPT3TbJL8CD638x/ix5QTGsK0rfOGKhw1GrOFDz+ZwuNoBkExroH3p
-   DiZTpV9QfJyPzE+zy5bb9GXcHs3d9cYlRvcb2QyiI4fevrwiZK617J0kR
-   3tVT6WFUacDzVkIOlaNU2IQJ6Xcd9kb3W7WODnQGPNEFUXCIlUviPAiYj
-   A==;
-X-CSE-ConnectionGUID: Znq0Zj9BTZSXqoIEQyZpCA==
-X-CSE-MsgGUID: fO8mXY5oS6SqxmjKKXiD4Q==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11443959"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11443959"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:38:41 -0700
-X-CSE-ConnectionGUID: fsxa21CaQ6+416ND+iF+Dw==
-X-CSE-MsgGUID: +1HvBkbbRliBpfPAleBnvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="35144881"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:38:41 -0700
-Date: Mon, 13 May 2024 13:38:39 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, seanjc@google.com, michael.roth@amd.com,
-	isaku.yamahata@intel.com, thomas.lendacky@amd.com,
-	isaku.yamahata@linux.intel.com
-Subject: Re: [PATCH 02/21] KVM: Allow page-sized MMU caches to be initialized
- with custom 64-bit values
-Message-ID: <20240513203839.GA168153@ls.amr.corp.intel.com>
-References: <20240227232100.478238-1-pbonzini@redhat.com>
- <20240227232100.478238-3-pbonzini@redhat.com>
- <6bd61607-9491-4517-8fc8-8d61d9416cab@linux.intel.com>
- <4d0d9f64-4cc4-4c1e-ba27-ff70c9827570@linux.intel.com>
+	s=arc-20240116; t=1715632758; c=relaxed/simple;
+	bh=8vMRy4szMOnPXyhw6N0O+8flCrkzToamhCJ98N3KqF0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GbiH+KeCBFDamK6M5/5a2Yb2sunHWt8/FFWdwNEMstmkI8OaRsQiE8RtpJXpNZs+kS5ZndwxQfXH5Mi7Z7se5O2EL++okRzb5mnR/GtDLauMbb0TU7RoTTCxxSBQo2igOQXfezVsBahcCzqJClE8CDZ/L1kVfLOAFhE24EJlpII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-5c229dabbb6so3106813a12.0;
+        Mon, 13 May 2024 13:39:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715632757; x=1716237557;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QMdSbsIUDp4fnJ0tPLW9CHarXx/pt+cDpbweLwiPVH8=;
+        b=sfJfGLb1VSVZPcsKpi/p4IsKa7Xe7Te5N+4rrnMpzqc3Fxybk81IhI0BRLBHmpk1qG
+         vzEnXKaWUtQx9dtHTt6bldCleN2NkHk28RnJk3AmWhsVAdGwCOVjnUbSazwH7MYWKkyf
+         y6DzuRBtsX/NrYYOhy9OiBgjCPwu5hV24ytmVKPGxGfbjIAROinoOgMdnTGcrff3ABev
+         jRlUpiq3X9BtEUa0EzEvqQrJA9vGcuh6Gc3RtEsjLeXXVdBGH38RhmlM/UnnHWtAPChu
+         fp/WOWZKP4K3KZeZEYwQbHoMdK5Jk6GzftuBrNOzAQUoJlQ5P8zWZnzo20cddoO6hwjY
+         mzSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVOh6r1ylxPuKQvBszlnaAMDzzTYa3vARa/SYGREWy6lSDslPSY/lP+U71a7fG0WPlfhJ29ZCsVdTZs7qv22tuD9Z1yBqJ8CbP22EumhbR6xv7Mb5b2i/FuWUMp3rvk5HbB341ur3Xug4MEcD2d6eXu3GKFutDrmKTj+yi554IAwUHMaQ==
+X-Gm-Message-State: AOJu0YyT7t7AEvJxInjVokFDHqvlGrJtn4SUVvNQ5K1ziWkzuz7elq/+
+	jV2MFZz1F6ot+dIAzxj/oLNYpjKDjwWhN1NJoWR2xUzfX2So7wPH4yvnvAs4DaCtRHWThRoul2a
+	rL3QdzAoEei3eqvCYiYNuJuZ66sM=
+X-Google-Smtp-Source: AGHT+IHuIwdncaMT0VngdNHIDyv/NgiYmPbs2SORZ20aglicpHu4lF6+t9bFdO0lOajqmUymSh4okJMQuCgcc+8ejDM=
+X-Received: by 2002:a17:90a:9318:b0:2b6:24bf:6b19 with SMTP id
+ 98e67ed59e1d1-2b6ccd6b99fmr8662382a91.31.1715632756645; Mon, 13 May 2024
+ 13:39:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4d0d9f64-4cc4-4c1e-ba27-ff70c9827570@linux.intel.com>
+References: <20240510191423.2297538-1-yabinc@google.com> <20240510191423.2297538-4-yabinc@google.com>
+ <CAM9d7chNz8-84m28q5qSLjUjZ=Ni1CA_JzbB_P+YJooLQd85YA@mail.gmail.com> <CALJ9ZPP_2=X7XNQrLCV1pQUVH-pnHbW=Kz75ugSy+kda9Xwmpg@mail.gmail.com>
+In-Reply-To: <CALJ9ZPP_2=X7XNQrLCV1pQUVH-pnHbW=Kz75ugSy+kda9Xwmpg@mail.gmail.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 13 May 2024 13:39:04 -0700
+Message-ID: <CAM9d7cggLpPVEuMAriR7Zk-xNP6_Ecwx-zg5SyM6emvhRwEP+w@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] perf/core: Check sample_type in perf_sample_save_brstack
+To: Yabin Cui <yabinc@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 26, 2024 at 11:56:35PM +0800,
-Binbin Wu <binbin.wu@linux.intel.com> wrote:
+On Mon, May 13, 2024 at 11:31=E2=80=AFAM Yabin Cui <yabinc@google.com> wrot=
+e:
+>
+> arch/powerpc/perf/core-book3s.c checks sample_type, see
+>    if (event->attr.sample_type & PERF_SAMPLE_BRANCH_STACK) {
+>      ...
+>      perf_sample_save_brstack(&data, event, &cpuhw->bhrb_stack, NULL);
+>   }
+> So I think we don't need the "fixes:" line.
 
-> On 3/5/2024 2:55 PM, Binbin Wu wrote:
-> > 
-> > 
-> > On 2/28/2024 7:20 AM, Paolo Bonzini wrote:
-> > > From: Sean Christopherson <seanjc@google.com>
-> > > 
-> > > Add support to MMU caches for initializing a page with a custom 64-bit
-> > > value, e.g. to pre-fill an entire page table with non-zero PTE values.
-> > > The functionality will be used by x86 to support Intel's TDX, which
-> > > needs
-> > > to set bit 63 in all non-present PTEs in order to prevent !PRESENT page
-> > > faults from getting reflected into the guest (Intel's EPT Violation #VE
-> > > architecture made the less than brilliant decision of having the per-PTE
-> > > behavior be opt-out instead of opt-in).
-> > > 
-> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-> > > Message-Id: <5919f685f109a1b0ebc6bd8fc4536ee94bcc172d.1705965635.git.isaku.yamahata@intel.com>
-> > > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> > > ---
-> > >   include/linux/kvm_types.h |  1 +
-> > >   virt/kvm/kvm_main.c       | 16 ++++++++++++++--
-> > >   2 files changed, 15 insertions(+), 2 deletions(-)
-> > 
-> > Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> > 
-> > > 
-> > > diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
-> > > index d93f6522b2c3..827ecc0b7e10 100644
-> > > --- a/include/linux/kvm_types.h
-> > > +++ b/include/linux/kvm_types.h
-> > > @@ -86,6 +86,7 @@ struct gfn_to_pfn_cache {
-> > >   struct kvm_mmu_memory_cache {
-> > >       gfp_t gfp_zero;
-> > >       gfp_t gfp_custom;
-> > > +    u64 init_value;
-> > >       struct kmem_cache *kmem_cache;
-> > >       int capacity;
-> > >       int nobjs;
-> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > > index 9c99c9373a3e..c9828feb7a1c 100644
-> > > --- a/virt/kvm/kvm_main.c
-> > > +++ b/virt/kvm/kvm_main.c
-> > > @@ -401,12 +401,17 @@ static void kvm_flush_shadow_all(struct kvm *kvm)
-> > >   static inline void *mmu_memory_cache_alloc_obj(struct
-> > > kvm_mmu_memory_cache *mc,
-> > >                              gfp_t gfp_flags)
-> > >   {
-> > > +    void *page;
-> > > +
-> > >       gfp_flags |= mc->gfp_zero;
-> > >         if (mc->kmem_cache)
-> > >           return kmem_cache_alloc(mc->kmem_cache, gfp_flags);
-> > > -    else
-> > > -        return (void *)__get_free_page(gfp_flags);
-> > > +
-> > > +    page = (void *)__get_free_page(gfp_flags);
-> > > +    if (page && mc->init_value)
-> > > +        memset64(page, mc->init_value, PAGE_SIZE /
-> > > sizeof(mc->init_value));
-> 
-> Do we need a static_assert() to make sure mc->init_value is 64bit?
+Oh, ok.  Thanks for the correction!
 
-That's overkill because EPT entry is defined as 64bit and KVM uses u64 for it
-uniformly.
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+Namhyung
 
