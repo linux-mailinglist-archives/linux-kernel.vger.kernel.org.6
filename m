@@ -1,507 +1,199 @@
-Return-Path: <linux-kernel+bounces-177083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 544EF8C39E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA408C39EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD2C2815CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:42:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DCE91C20EDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE51A12B72;
-	Mon, 13 May 2024 01:42:15 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10B2D304
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715564534; cv=none; b=NgoGi5/ya9Ao8lIDYUnsSvBujfsGUmHQeI3TH6VUBEtWlshUaE3t6rCAXWwq1ML7lVBY3OggMNKDCJWxUlhyeNo3HbwZKLZLNPFkDIP4qN3VGwcRA+RUDqoiWliwyydb/LmfpCIrIq59ZGEAlw5IOicBqB4wh2i/RC/yELMRFno=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715564534; c=relaxed/simple;
-	bh=JYf6Cjq/buLZsbjjxkQXM4x1YWr0ZBBiHAyb6TEKcAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pKNpN6fxPCyjYPBzkgfdU9J8eAYGXn4C6m3vOOB0k+MX17Uz6MZkhZ6pNMKPwPK5+xCZE7KX2CbMcM2SumifwYbObgkHWbz6qLMyzwqJBqUhft8QwblI9a+PfJejTSrOL9a27yPQqfXa9S1EtHzc5MBkn5FByXeyEinydGINmgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d6dff70000001748-fd-66416fe7e2df
-Date: Mon, 13 May 2024 10:41:54 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	kernel_team@skhynix.com, akpm@linux-foundation.org,
-	vernhao@tencent.com, mgorman@techsingularity.net, hughd@google.com,
-	willy@infradead.org, david@redhat.com, peterz@infradead.org,
-	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, rjgolo@gmail.com
-Subject: Re: [PATCH v10 00/12] LUF(Lazy Unmap Flush) reducing tlb numbers
- over 90%
-Message-ID: <20240513014154.GA38851@system.software.com>
-References: <20240510065206.76078-1-byungchul@sk.com>
- <87ikzkg7no.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 605D51400A;
+	Mon, 13 May 2024 01:45:05 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D834112E61;
+	Mon, 13 May 2024 01:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715564704; cv=fail; b=TIokSi/ZnW4780BLkZfd1QVxxRMAk/2YdIr9vwm1JlFM2XG15rEz+adkApw5bLU9EHlmo2ZDFhEgHTGulU2pczzM3mpn1G70Xo4MTI2KD2XIaezZ63wGB9h1hGD1u6ACbjW70OKaDDp6UF0TtbNHEuVgcJXjz7CZQHTDAefWvcw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715564704; c=relaxed/simple;
+	bh=9kQp7chxLku0YoBb/yihbp5JOCkwg1Bpql0C3Lgsmks=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=dVT/liIsfKfKa+M5pEWA3/oga6RnBI2xbnZG0gXWk3cMU+MmKTCNFfL2UEXeCRZOhEOU/wkaGzeQ1YQjza5VWX/hMAmTnXRaEId9pYNGM4s9/VO0uC3rOGsoWo2vTw83YrMg3ywcTKK9rdp416O8WpHgcjRfkoPerJslWO739Fs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D1WFjw018312;
+	Mon, 13 May 2024 01:44:10 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2101.outbound.protection.outlook.com [104.47.55.101])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3y1yc498vn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 01:44:10 +0000 (GMT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gT81RaqPz40I3uC+P0O9NRT51V5IeeWqC2nvc4mCR2XC2Jg9HV2SonIBWHrQzYWlbYg+zIT/KB9axAaoFbfDzbj+3LysRnVaec76vRj0PHdU188Dcn7TM2I5MBFjZLcMPK5+/c1Utbv6xFj2anwBEZNC9IbF0/0OZ5cRStgQ+ahyCI8ef2pS/fsxurFHJhrNb4xdue7Mnq7lVGhmV8aKrXmR0qfPnEc0d1A5z0WQbZoFrFIf+O18ZQFXyns+8FgagF95d4/v0jVLvRNWH85DW5y8OfmziOsTYWlB3fFAML6+drDWrmp/2zhnQ9X+NkvejWYphP0oAzDYeH6/bhYF2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7U/FU454mXXiGUGE8gRICRpl58C/COVgoQ6mkFGN+ac=;
+ b=EOhFdcLR+lsntMJf8X6PmfYF1pmbuKEBtSzHNvRwCIh2ByicAeplqIw3RpIUqA2KHRVXaJuBenAD+SPnxqgGXbNo4S2mRY0iWd+TiP7MWtMHMK5lh48NlK+66/E5+FJJCgErv62QvFEn+S7wfLgdrvfhvaGOPgNW9dXSj4eqYRBqaoyF2DDX5rl5I5dRpmF6QX2V1Y/dPQRZQjbSdrt8tnzFTVO3NOrL9ArKbqxG1lVl9KtsBwufVZKh9b0Q7ts2v6dLxQhFwp+H/EL5zr2hFi71gpchDLxCPH78nO2riQTDdpJQQLqllF7J0koC7jWARRGQssgr+ZW7PJJI8KT5PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=windriver.com; dmarc=pass action=none
+ header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
+Received: from SJ0PR11MB5769.namprd11.prod.outlook.com (2603:10b6:a03:420::8)
+ by PH7PR11MB7477.namprd11.prod.outlook.com (2603:10b6:510:279::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 01:44:05 +0000
+Received: from SJ0PR11MB5769.namprd11.prod.outlook.com
+ ([fe80::4ebe:8375:ccb:b4ad]) by SJ0PR11MB5769.namprd11.prod.outlook.com
+ ([fe80::4ebe:8375:ccb:b4ad%5]) with mapi id 15.20.7544.046; Mon, 13 May 2024
+ 01:44:05 +0000
+From: Xiaolei Wang <xiaolei.wang@windriver.com>
+To: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        mcoquelin.stm32@gmail.com, richardcochran@gmail.com,
+        bartosz.golaszewski@linaro.org, horms@kernel.org,
+        rohan.g.thomas@intel.com, rmk+kernel@armlinux.org.uk,
+        fancer.lancer@gmail.com, ahalaney@redhat.com
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [net/net-next PATCH v6 0/2] Move EST lock and EST structure to struct stmmac_priv 
+Date: Mon, 13 May 2024 09:43:44 +0800
+Message-Id: <20240513014346.1718740-1-xiaolei.wang@windriver.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0189.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:382::15) To SJ0PR11MB5769.namprd11.prod.outlook.com
+ (2603:10b6:a03:420::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ikzkg7no.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrDIsWRmVeSWpSXmKPExsXC9ZZnoe7zfMc0g4lbLCzmrF/DZvF5wz82
-	ixcb2hktvq7/xWzx9FMfi8XlXXPYLO6t+c9qcX7XWlaLHUv3MVlcOrCAyeJ47wEmi/n3PrNZ
-	bN40ldni+JSpjBa/fwAVn5w1mcVBwON7ax+Lx85Zd9k9Fmwq9di8Qstj8Z6XTB6bVnWyeWz6
-	NInd4925c+weJ2b8ZvGYdzLQ4/2+q2weW3/ZeTROvcbm8XmTXABfFJdNSmpOZllqkb5dAlfG
-	7Y+zWAt2LmGs+H5rOVMD48GyLkZODgkBE4nvC+6ww9irbpxmArFZBFQl1j7cwgZiswmoS9y4
-	8ZMZxBYR0JD4tHA5UD0XB7PAcyaJ329+gzULC4RITPuwBqyZV8BC4sOWFpYuRg4OIYFMienf
-	FSHCghInZz5hAbGZBbQkbvx7yQRSwiwgLbH8HweIySlgJ3FmOyNIhaiAssSBbceZQDZJCGxi
-	l/h/4DUzxJmSEgdX3GCZwCgwC8nUWUimzkKYuoCReRWjUGZeWW5iZo6JXkZlXmaFXnJ+7iZG
-	YBwuq/0TvYPx04XgQ4wCHIxKPLwJpx3ShFgTy4orcw8xSnAwK4nwOhTapwnxpiRWVqUW5ccX
-	leakFh9ilOZgURLnNfpWniIkkJ5YkpqdmlqQWgSTZeLglGpg5P+7wVpWVkHg/NF4nZTev8E+
-	vaIqNvsYXbnnCYdb/FPmdZcNquZTXcJb32HYVJ2R9a/gYwPPFv2z4R1aJ9YvMjxQH3I84fyq
-	HRz7lOvKY4OuJryTnP2g/Zbc1xQLy4JJl5ZMcTmipapWc6Ly3eqbJrpms+OeNkXGf3tUvO6u
-	u/q5lBkNWxSUWIozEg21mIuKEwH+1nyHvwIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsXC5WfdrPs83zHN4PpNdYs569ewWXze8I/N
-	4sWGdkaLr+t/MVs8/dTHYnF47klWi8u75rBZ3Fvzn9Xi/K61rBY7lu5jsrh0YAGTxfHeA0wW
-	8+99ZrPYvGkqs8XxKVMZLX7/ACo+OWsyi4Ogx/fWPhaPnbPusnss2FTqsXmFlsfiPS+ZPDat
-	6mTz2PRpErvHu3Pn2D1OzPjN4jHvZKDH+31X2TwWv/jA5LH1l51H49RrbB6fN8kF8Edx2aSk
-	5mSWpRbp2yVwZdz+OIu1YOcSxorvt5YzNTAeLOti5OSQEDCRWHXjNBOIzSKgKrH24RY2EJtN
-	QF3ixo2fzCC2iICGxKeFy9m7GLk4mAWeM0n8fvObHSQhLBAiMe3DGrBmXgELiQ9bWli6GDk4
-	hAQyJaZ/V4QIC0qcnPmEBcRmFtCSuPHvJRNICbOAtMTyfxwgJqeAncSZ7YwgFaICyhIHth1n
-	msDIOwtJ8ywkzbMQmhcwMq9iFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIjKpltX8m7mD8ctn9
-	EKMAB6MSD2/CaYc0IdbEsuLK3EOMEhzMSiK8DoX2aUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
-	vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2MTfyCby9MS+Fo5Dd+8Fua12bevdwgx3qJAtei1sCF
-	ArVWuar+TpUG37S2K7ROLLKRvl20g/1FgUTLnbfzlvnNWyhgI8G0ZyvbFP9a3s+RG0TVVk4r
-	jK+LXewV+ubxDJstjN1HFnokVM7SSF50WXHWln8KJ49ly1Rz7ZeQ/1YWeeeL9dn7j3crsRRn
-	JBpqMRcVJwIA5VvaH6YCAAA=
-X-CFilter-Loop: Reflected
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR11MB5769:EE_|PH7PR11MB7477:EE_
+X-MS-Office365-Filtering-Correlation-Id: f2cc099c-f71e-4490-34ec-08dc72ee2c75
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230031|376005|366007|7416005|1800799015|52116005|38350700005|921011;
+X-Microsoft-Antispam-Message-Info: 
+	=?us-ascii?Q?sccdwY8WVyt0Rl7Vds34NSaS+N538G/mT1fuRVQHFpaxfGWViFsjiphsSb2D?=
+ =?us-ascii?Q?y09/HuHof+5catpLowe2CWGYJkpJdNV1XCwMNycqxEa0mwC190domO/ZNqFi?=
+ =?us-ascii?Q?zLpqcLKMRnleG6jkH2EbsjHLqssq1WyKLxh5WduhPeMWor8Nky3RkLXyPG1s?=
+ =?us-ascii?Q?ElNfDp0g72JxqYd7PumJ/IYBanYoHOagtVbeje0cSF75fuXciXHJU1SCtXyR?=
+ =?us-ascii?Q?m7K7lAnD3ozJNmEFaxEPm99GYvFiSrnZv/X3vFXsQzUHG9hOygpEAm2Eo4Yc?=
+ =?us-ascii?Q?S8SVefJOLQ/l9EJuVB3IA4XmAlX5RdV2Y68d4pfSV0X+zgnLYG0wZrj2G5/L?=
+ =?us-ascii?Q?KEe9VmTHmZ7ikZWJSxbsTyOdW+S2K77lR6HpoNqGVqOFUiWM1NmByGEHlbun?=
+ =?us-ascii?Q?5zvmOV5qetOyXWcb7CaPyD1u1MaSH5aRoUx3g1syLuDkVYKSaCRCLD/j89iC?=
+ =?us-ascii?Q?tiMcuzyHgaU6u5Itu9Cp6qWZqOQDGPaiO5YXIMovjexv5rDzxxCtOVpVmjAy?=
+ =?us-ascii?Q?nViIbx9HCDsLlqE9q4XBTcw7ok6gQhcp32x0yDs0QYvQyQ25WrwVyyHa1y9u?=
+ =?us-ascii?Q?GBbMwBWhsd5ogDCXPg21jZDabiqmcnLPj7bgnDUcjtJLH4zkVOimv7F8wXtk?=
+ =?us-ascii?Q?O2f0myfrybdY5+2ZBJsAuXA9bCEtv5Q1BhvkSrfkbL1MZbfG3RCboY9u657O?=
+ =?us-ascii?Q?NynTWXKGpdikZ9EC2UjWC6YvTVOpu8K4PyRUWZEatZtiwhLCEIkCXEC5iCgV?=
+ =?us-ascii?Q?ycLX4N0+7hI6BXxaZAwFmUIvRIdoaBcA/+DqQApMIuRi9FQ94+HP6FyxL9Wy?=
+ =?us-ascii?Q?ZPoqIAzR2oAC6CS+wYOtRSqKZD3LkjG6leAMC3htpVXByUuDVZ2RuboQmsKy?=
+ =?us-ascii?Q?Cfk9uMwJcO/oYtG2dljfes/RWrA6SoEUBQl2vNwxMgitkX+UxXgZKyr+trNn?=
+ =?us-ascii?Q?HtEwk6eOW4QBgWT790g9i8WAQLiiSkX304sCBsQ1H9lxjITtf34Epd/xxWei?=
+ =?us-ascii?Q?uOWJG9b7a6ZtRhjBt01AUoW2U2voeO+twaaE46VoGU1zBI1DtO0taeZxfxv/?=
+ =?us-ascii?Q?yMVZVDHt+1y/Ts3gubzjysqKy4dTdiurzhkIKZx6yeeYwKrpTGGoVOxRtiE7?=
+ =?us-ascii?Q?CUk8L3zZPmZwvHqY3MZSH/hlzzlYLWFb+K5sHF4K1OfM9kfFg7L5/svYvJtL?=
+ =?us-ascii?Q?9inZNHyTwP72682WmY80LN6zSecJiyj305pOY/dEHivgCs/r+gvV3QuohppE?=
+ =?us-ascii?Q?s7/lkPG+J7kXVrwVOrO2zwRlrk899o0Nj/oYaLyHUFFaSFJWJlApJI2BbYmg?=
+ =?us-ascii?Q?1H4N9/dF8wWIEAHay/lkEhaLLtxwrrOn1AxebBWqtYhTtAoquHcrHX7jhcGm?=
+ =?us-ascii?Q?FYMDZA4=3D?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB5769.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015)(52116005)(38350700005)(921011);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?2+BSDQaRoViGquNXhOJrvgDrl/KqvLTK12c0Tt37vF+FK2CsRDsPH59Cihmu?=
+ =?us-ascii?Q?4XiRc4Hy4BqHZIkS37vuHWU4tgBgLhWQqArr+7sW25KKWg4/mD9j1LmBU/q0?=
+ =?us-ascii?Q?5UzT5BMb0wx+2Wba/7ELRpF9+s3vN+Gof/fZSakhagwxDXhwNaZw/fhd/41q?=
+ =?us-ascii?Q?Z61zGzqB7+nbWhh61DAyEOv2cwo92JQXZ8GEHUPzBI6c4FmyqlLmNwCyashn?=
+ =?us-ascii?Q?eb8ka+Hd8MIT+YWSixz/Xpnz/X2DeLZMgUJeyXRWP81JggLdQqiEkL1paWs3?=
+ =?us-ascii?Q?apK+zzGMr32D+80dVrg8MBZ6528X6w8G2DKAcC2IJTaV5y3lKjRl+Nd3j3z4?=
+ =?us-ascii?Q?tIT5FcJNXAhqtpil9Ol7EeU4UlmgeG32rgL3eG4nce/k1yo5HkUuv0YPQ1OP?=
+ =?us-ascii?Q?rPLBaMw+dRaMW41jRODN8JbQVHYrV8hsBN2G886z40GSErGgefDd3gpxYZOr?=
+ =?us-ascii?Q?HEX6yVxSSzsfKqcwKMhbE6QtzV4WaSPMNRbO9a/9oZnzr/7FM8rDpCQnpnZF?=
+ =?us-ascii?Q?TWU60WCgxo6jXI+NEomN9uT52d/oFOYvYGENy9VagoKDV7ZvwsKcXw2u77pr?=
+ =?us-ascii?Q?Ims/RbFdejYxPmlcogbFMXlRpO4UM90pPNTbkSDisfotY6DqAo8/8+ojFMR/?=
+ =?us-ascii?Q?LLIUK/fF47SE9+rK2Y3y1N9tYzkssT33THKRTEUyx+h3Hrx2YcA56gKB0+CC?=
+ =?us-ascii?Q?4I+T+xHIpecHfpmcwIhgJhp1XdGZ5DaaHlXhzeuR8kJgEv4Me2IubWlLdkCl?=
+ =?us-ascii?Q?ek+ySM0Ra1t6SZ+77NSNFxBHa1OOdJ6uWygq857vdiADmRT35VUG/32i9pCT?=
+ =?us-ascii?Q?WXHfxm1wY5JMQctS0hExErqrbkEb1rXEk+eQ5/HmbNLwVho6GaI90YgxHkSO?=
+ =?us-ascii?Q?q2dfVi83QFvMp294xkyBTQcIqafa5pALHrgOiGz0TXY65X1E9PWgGNzEBgMb?=
+ =?us-ascii?Q?V74u2CXMNSvIA7XnXNO6tOrQuuFLpW6YCfeR1noyt4ZlssPrG6DrToHoxi5N?=
+ =?us-ascii?Q?7bduZWbCBa31I6JWYU7ZL7SMF29gDujiwTXdqTVr6fJbTDCCWu6KFx+nYApc?=
+ =?us-ascii?Q?3nMYp6Rrwx/dcPmhU5jI3QmSTsl25qiVxhbDG2b/Z4vo96DyjjI/4wv3sZMj?=
+ =?us-ascii?Q?b+7zXeTbFHlStjNk/lYby2ylm7dm9n6SRx3bHMxrG/Ivoz+v1GZni7JRe+W3?=
+ =?us-ascii?Q?2cvn1xdmgyeBB8XmToGjsr1LP/xiCUBGNTc8sLP0Zz1aGEZFJ/r3aTctNmlT?=
+ =?us-ascii?Q?LZcGQoBrVrKWqxsyWbI4rdFNQ9DqaFc7mm38FWB4u4h0IkxnGW4/22h8F2wD?=
+ =?us-ascii?Q?xAoCzoQFpU4KcGnxHx1hz4xHS28XhQfgZY5lP3iW9uvjLNm2g4qAiXmklM0x?=
+ =?us-ascii?Q?KqNJ9wO3kS8ERqcZPI4zMAQJeD4Wfm2kSvn6fMDHeuKt+mzQHqKcmSbKMTaq?=
+ =?us-ascii?Q?GDbIByUYmMDjBxmghYj0XevCm3Xhkfwewa41iPIn2iH5Sc69dsLYjdJk+UUH?=
+ =?us-ascii?Q?Svy/R61BW/6BBuIlZyEJdxyNmg0mrC9Xwyz6vFH+Fx6ai6MkT4C5X/g9LFYE?=
+ =?us-ascii?Q?K1FFaEL67Q7Cc8UkjjicYtdQ0XAGe1anP5XIPSmyXBzzwSZ4eDuKUttsh2hg?=
+ =?us-ascii?Q?0Q=3D=3D?=
+X-OriginatorOrg: windriver.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f2cc099c-f71e-4490-34ec-08dc72ee2c75
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB5769.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 01:44:05.5940
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p3F5Pd0Wss97kfdjuoHRA7+IZuBnD05iAifNJ7iH9B1rYc8E29zI5D2qPX6s8evikTVw7mO+mcCWBR0Zpr3PvEozl22E2lFMbLVIY8jLPUc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7477
+X-Proofpoint-GUID: -a_5WC4HFM_6J4ePV54uYYaURIM4NtFl
+X-Proofpoint-ORIG-GUID: -a_5WC4HFM_6J4ePV54uYYaURIM4NtFl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-12_15,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ priorityscore=1501 adultscore=0 malwarescore=0 lowpriorityscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405130010
 
-On Sat, May 11, 2024 at 02:54:51PM +0800, Huang, Ying wrote:
-> Byungchul Park <byungchul@sk.com> writes:
-> 
-> > Hi everyone,
-> >
-> > While I'm working with a tiered memory system e.g. CXL memory, I have
-> > been facing migration overhead esp. tlb shootdown on promotion or
-> > demotion between different tiers.  Yeah..  most tlb shootdowns on
-> > migration through hinting fault can be avoided thanks to Huang Ying's
-> > work, commit 4d4b6d66db ("mm,unmap: avoid flushing tlb in batch if PTE
-> > is inaccessible").  See the following link for more information:
-> >
-> > https://lore.kernel.org/lkml/20231115025755.GA29979@system.software.com/
-> >
-> > However, it's only for migration through hinting fault.  I thought it'd
-> > be much better if we have a general mechanism to reduce all the tlb
-> > numbers that we can apply to any unmap code, that we normally believe
-> > tlb flush should be followed.
-> >
-> > I'm suggesting a new mechanism, LUF(Lazy Unmap Flush), defers tlb flush
-> > until folios that have been unmapped and freed, eventually get allocated
-> > again.  It's safe for folios that had been mapped read-only and were
-> > unmapped, since the contents of the folios don't change while staying in
-> > pcp or buddy so we can still read the data through the stale tlb entries.
-> >
-> > tlb flush can be defered when folios get unmapped as long as it
-> > guarantees to perform tlb flush needed, before the folios actually
-> > become used, of course, only if all the corresponding ptes don't have
-> > write permission.  Otherwise, the system will get messed up.
-> >
-> > To achieve that:
-> >
-> >    1. For the folios that map only to non-writable tlb entries, prevent
-> >       tlb flush during unmapping but perform it just before the folios
-> >       actually become used, out of buddy or pcp.
-> >
-> >    2. When any non-writable ptes change to writable e.g. through fault
-> >       handler, give up luf mechanism and perform tlb flush required
-> >       right away.
-> >
-> >    3. When a writable mapping is created e.g. through mmap(), give up
-> >       luf mechanism and perform tlb flush required right away.
-> >
-> > No matter what type of workload is used for performance evaluation, the
-> > result would be positive thanks to the unconditional reduction of tlb
-> > flushes, tlb misses and interrupts.
-> 
-> Are there any downsides of the optimization?  Will it cause regression
-> for workloads with almost no read-only mappings?  Will it cause
+1. Pulling the mutex protecting the EST structure out to avoid
+    clearing it during reinit/memset of the EST structure,and
+    reacquire the mutex lock when doing this initialization.
 
-IMHO, no.  LUF does almost nothing for folios writable mapped.
+2. Moving the EST structure to a more logical location
 
-> regression for page allocation?
+v1 -> v2:
+  - move the lock to struct plat_stmmacenet_data
+v2 -> v3:
+  - Add require the mutex lock for reinitialization
+v3 -> v4
+  - Move est and est lock to stmmac_priv as suggested by Serge
+v4 -> v5
+  - Submit it into two patches and add the Fixes tag
+v5 -> v6
+  - move the stmmac_est structure declaration from
+    include/linux/stmmac.h to
+    drivers/net/ethernet/stmicro/stmmac/stmmac.h
 
-TLB flush might be added in prep_new_page() if pended, however, that
-should have been already performed anyway.  It's not additional overhead.
+Xiaolei Wang (2):
+  net: stmmac: move the EST lock to struct stmmac_priv
+  net: stmmac: move the EST structure to struct stmmac_priv
 
-The TLB flush even can be skipped by the batched work.
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  | 17 ++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 18 +++---
+ .../net/ethernet/stmicro/stmmac/stmmac_ptp.c  | 30 +++++-----
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 58 +++++++++----------
+ include/linux/stmmac.h                        | 16 -----
+ 5 files changed, 70 insertions(+), 69 deletions(-)
 
-> > For the test, I picked up one of
-> > the most popular and heavy workload, llama.cpp that is a
-> > LLM(Large Language Model) inference engine.
-> 
-> IIUC, llama.cpp is a workload with huge read-only mapping.
+-- 
+2.25.1
 
-Right.  LUF works on read-only mapping.  So the more read-only mappings
-are used, the better LUF works.  Fortunately, such a workload with huge
-read-only mappings that is normal in a light weight inference engine, is
-quite popular these days in the era of LLM.
-
-	Byungchul
-
-> > The result would depend on memory latency and how often reclaim runs,
-> > which implies tlb miss overhead and how many times unmapping happens.
-> > In my system, the result shows:
-> >
-> >    1. tlb flushes are reduced about 95%.
-> >    2. tlb misses(itlb) are reduced about 80%.
-> >    3. tlb misses(dtlb store) are reduced about 57%.
-> >    4. tlb misses(dtlb load) are reduced about 24%.
-> >    5. tlb shootdown interrupts are reduced about 95%.
-> >    6. The test program runtime is reduced about 5%.
-> >
-> > The test environment and the result is like:
-> >
-> >    Machine: bare metal, x86_64, Intel(R) Xeon(R) Gold 6430
-> >    CPU: 1 socket 64 core with hyper thread on
-> >    Numa: 2 nodes (64 CPUs DRAM 42GB, no CPUs CXL expander 98GB)
-> >    Config: swap off, numa balancing tiering on, demotion enabled
-> >
-> >    The test set:
-> >
-> >       llama.cpp/main -m $(70G_model1) -p "who are you?" -s 1 -t 15 -n 20 &
-> >       llama.cpp/main -m $(70G_model2) -p "who are you?" -s 1 -t 15 -n 20 &
-> >       llama.cpp/main -m $(70G_model3) -p "who are you?" -s 1 -t 15 -n 20 &
-> >       wait
-> >
-> >       where -t: nr of threads, -s: seed used to make the runtime stable,
-> >       -n: nr of tokens that determines the runtime, -p: prompt to ask,
-> >       -m: LLM model to use.
-> >
-> >    Run the test set 10 times successively with caches dropped every run
-> >    via 'echo 3 > /proc/sys/vm/drop_caches'.  Each inference prints its
-> >    runtime at the end of each.
-> >
-> >    1. Runtime from the output of llama.cpp:
-> >
-> >    BEFORE
-> >    ------
-> >    llama_print_timings:       total time = 1002461.95 ms /    24 tokens
-> >    llama_print_timings:       total time = 1044978.38 ms /    24 tokens
-> >    llama_print_timings:       total time = 1000653.09 ms /    24 tokens
-> >    llama_print_timings:       total time = 1047104.80 ms /    24 tokens
-> >    llama_print_timings:       total time = 1069430.36 ms /    24 tokens
-> >    llama_print_timings:       total time = 1068201.16 ms /    24 tokens
-> >    llama_print_timings:       total time = 1078092.59 ms /    24 tokens
-> >    llama_print_timings:       total time = 1073200.45 ms /    24 tokens
-> >    llama_print_timings:       total time = 1067136.00 ms /    24 tokens
-> >    llama_print_timings:       total time = 1076442.56 ms /    24 tokens
-> >    llama_print_timings:       total time = 1004142.64 ms /    24 tokens
-> >    llama_print_timings:       total time = 1042942.65 ms /    24 tokens
-> >    llama_print_timings:       total time =  999933.76 ms /    24 tokens
-> >    llama_print_timings:       total time = 1046548.83 ms /    24 tokens
-> >    llama_print_timings:       total time = 1068671.48 ms /    24 tokens
-> >    llama_print_timings:       total time = 1068285.76 ms /    24 tokens
-> >    llama_print_timings:       total time = 1077789.63 ms /    24 tokens
-> >    llama_print_timings:       total time = 1071558.93 ms /    24 tokens
-> >    llama_print_timings:       total time = 1066181.55 ms /    24 tokens
-> >    llama_print_timings:       total time = 1076767.53 ms /    24 tokens
-> >    llama_print_timings:       total time = 1004065.63 ms /    24 tokens
-> >    llama_print_timings:       total time = 1044522.13 ms /    24 tokens
-> >    llama_print_timings:       total time =  999725.33 ms /    24 tokens
-> >    llama_print_timings:       total time = 1047510.77 ms /    24 tokens
-> >    llama_print_timings:       total time = 1068010.27 ms /    24 tokens
-> >    llama_print_timings:       total time = 1068999.31 ms /    24 tokens
-> >    llama_print_timings:       total time = 1077648.05 ms /    24 tokens
-> >    llama_print_timings:       total time = 1071378.96 ms /    24 tokens
-> >    llama_print_timings:       total time = 1066326.32 ms /    24 tokens
-> >    llama_print_timings:       total time = 1077088.92 ms /    24 tokens
-> >
-> >    AFTER
-> >    -----
-> >    llama_print_timings:       total time =  988522.03 ms /    24 tokens
-> >    llama_print_timings:       total time =  997204.52 ms /    24 tokens
-> >    llama_print_timings:       total time =  996605.86 ms /    24 tokens
-> >    llama_print_timings:       total time =  991985.50 ms /    24 tokens
-> >    llama_print_timings:       total time = 1035143.31 ms /    24 tokens
-> >    llama_print_timings:       total time =  993660.18 ms /    24 tokens
-> >    llama_print_timings:       total time =  983082.14 ms /    24 tokens
-> >    llama_print_timings:       total time =  990431.36 ms /    24 tokens
-> >    llama_print_timings:       total time =  992707.09 ms /    24 tokens
-> >    llama_print_timings:       total time =  992673.27 ms /    24 tokens
-> >    llama_print_timings:       total time =  989285.43 ms /    24 tokens
-> >    llama_print_timings:       total time =  996710.06 ms /    24 tokens
-> >    llama_print_timings:       total time =  996534.64 ms /    24 tokens
-> >    llama_print_timings:       total time =  991344.17 ms /    24 tokens
-> >    llama_print_timings:       total time = 1035210.84 ms /    24 tokens
-> >    llama_print_timings:       total time =  994714.13 ms /    24 tokens
-> >    llama_print_timings:       total time =  984184.15 ms /    24 tokens
-> >    llama_print_timings:       total time =  990909.45 ms /    24 tokens
-> >    llama_print_timings:       total time =  991881.48 ms /    24 tokens
-> >    llama_print_timings:       total time =  993918.03 ms /    24 tokens
-> >    llama_print_timings:       total time =  990061.34 ms /    24 tokens
-> >    llama_print_timings:       total time =  998076.69 ms /    24 tokens
-> >    llama_print_timings:       total time =  997082.59 ms /    24 tokens
-> >    llama_print_timings:       total time =  990677.58 ms /    24 tokens
-> >    llama_print_timings:       total time = 1036054.94 ms /    24 tokens
-> >    llama_print_timings:       total time =  994125.93 ms /    24 tokens
-> >    llama_print_timings:       total time =  982467.01 ms /    24 tokens
-> >    llama_print_timings:       total time =  990191.60 ms /    24 tokens
-> >    llama_print_timings:       total time =  993319.24 ms /    24 tokens
-> >    llama_print_timings:       total time =  992540.57 ms /    24 tokens
-> >
-> >    2. tlb shootdowns from 'cat /proc/interrupts':
-> >
-> >    BEFORE
-> >    ------
-> >    TLB:
-> >    125553646  141418810  161932620  176853972  186655697  190399283
-> >    192143823  196414038  192872439  193313658  193395617  192521416
-> >    190788161  195067598  198016061  193607347  194293972  190786732
-> >    191545637  194856822  191801931  189634535  190399803  196365922
-> >    195268398  190115840  188050050  193194908  195317617  190820190
-> >    190164820  185556071  226797214  229592631  216112464  209909495
-> >    205575979  205950252  204948111  197999795  198892232  205287952
-> >    199344631  195015158  195869844  198858745  195692876  200961904
-> >    203463252  205921722  199850838  206145986  199613202  199961345
-> >    200129577  203020521  207873649  203697671  197093386  204243803
-> >    205993323  200934664  204193128  194435376  TLB shootdowns
-> >
-> >    AFTER
-> >    -----
-> >    TLB:
-> >      5648092    6610142    7032849    7882308    8088518    8352310
-> >      8656536    8705136    8647426    8905583    8985408    8704522
-> >      8884344    9026261    8929974    8869066    8877575    8810096
-> >      8770984    8754503    8801694    8865925    8787524    8656432
-> >      8755912    8682034    8773935    8832925    8797997    8515777
-> >      8481240    8891258   10595243   10285973    9756935    9573681
-> >      9398968    9069244    9242984    8899009    9310690    9029095
-> >      9069758    9105825    9092703    9270202    9460287    9258546
-> >      9180415    9232723    9270611    9175020    9490420    9360316
-> >      9420818    9057663    9525631    9310152    9152242    8654483
-> >      9181804    9050847    8919916    8883856  TLB shootdowns
-> >
-> >    3. tlb numbers from 'perf stat' per test set:
-> >
-> >    BEFORE
-> >    ------
-> >    3163679332	dTLB-load-misses
-> >    2017751856	dTLB-store-misses
-> >    327092903	iTLB-load-misses
-> >    1357543886	tlb:tlb_flush
-> >
-> >    AFTER
-> >    -----
-> >    2394694609	dTLB-load-misses
-> >    861144167	dTLB-store-misses
-> >    64055579	iTLB-load-misses
-> >    69175002	tlb:tlb_flush
-> >
-> > ---
-> >
-> > Changes from v9:
-> >
-> > 	1. Expand the candidate to apply this mechanism:
-> >
-> > 	   BEFORE - The souce folios at any type of migration.
-> > 	   AFTER  - Any folios that have been unmapped and freed.
-> >
-> > 	2. Change the workload for test:
-> >
-> > 	   BEFORE - XSBench
-> > 	   AFTER  - llama.cpp (one of the most popluar real workload)
-> >
-> > 	3. Change the test environment:
-> >
-> > 	   BEFORE - qemu machine, too small DRAM(1GB), large remote mem
-> > 	   AFTER  - bare metal, real CXL memory, practical memory size
-> >
-> > 	4. Rename the mechanism from MIGRC(Migration Read Copy) to
-> > 	   LUF(Lazy Unmap Flush) to reflect the current version of the
-> > 	   mechanism can be applied not only to unmap during migration
-> > 	   but any unmap code e.g. unmap in shrink_folio_list().
-> >
-> > 	5. Fix build error for riscv. (feedbacked by kernel test bot)
-> >
-> > 	6. Supplement commit messages to describe what this mechanism is
-> > 	   for, especially in the patches for arch code. (feedbacked by
-> > 	   Thomas Gleixner)
-> >
-> > 	7. Clean up some trivial things.
-> >
-> > Changes from v8:
-> >
-> > 	1. Rebase on akpm/mm.git mm-unstable as of April 18, 2024.
-> > 	2. Supplement comments and commit message.
-> > 	3. Change the candidate to apply migrc mechanism:
-> >
-> > 	   BEFORE - The source folios at demotion and promotion.
-> > 	   AFTER  - The souce folios at any type of migration.
-> >
-> > 	4. Change how migrc mechanism works:
-> >
-> > 	   BEFORE - Reduce tlb flushes by deferring folio_free() for
-> > 	            source folios during demotion and promotion.
-> > 	   AFTER  - Reduce tlb flushes by deferring tlb flush until they
-> > 	            actually become used, out of pcp or buddy. The
-> > 		    current version of migrc does *not* defer calling
-> > 	            folio_free() but let it go as it is as the same as
-> > 		    vanilla kernel, with the folios marked kind of 'need
-> > 		    to tlb flush'. And then handle the flush when the
-> > 		    page exits from pcp or buddy so as to prevent
-> > 		    changing vm stats e.g. free pages.
-> >
-> > Changes from v7:
-> >
-> > 	1. Rewrite cover letter to explain what 'migrc' mechasism is.
-> > 	   (feedbacked by Andrew Morton)
-> > 	2. Supplement the commit message of a patch 'mm: Add APIs to
-> > 	   free a folio directly to the buddy bypassing pcp'.
-> > 	   (feedbacked by Andrew Morton)
-> >
-> > Changes from v6:
-> >
-> > 	1. Fix build errors in case of
-> > 	   CONFIG_ARCH_WANT_BATCHED_UNMAP_tlb_FLUSH disabled by moving
-> > 	   migrc_flush_{start,end}() calls from arch code to
-> > 	   try_to_unmap_flush() in mm/rmap.c.
-> >
-> > Changes from v5:
-> >
-> > 	1. Fix build errors in case of CONFIG_MIGRATION disabled or
-> > 	   CONFIG_HWPOISON_INJECT moduled. (feedbacked by kernel test
-> > 	   bot and Raymond Jay Golo)
-> > 	2. Organize migrc code with two kconfigs, CONFIG_MIGRATION and
-> > 	   CONFIG_ARCH_WANT_BATCHED_UNMAP_tlb_FLUSH.
-> >
-> > Changes from v4:
-> >
-> > 	1. Rebase on v6.7.
-> > 	2. Fix build errors in arm64 that is doing nothing for tlb flush
-> > 	   but has CONFIG_ARCH_WANT_BATCHED_UNMAP_tlb_FLUSH. (reported
-> > 	   by kernel test robot)
-> > 	3. Don't use any page flag. So the system would give up migrc
-> > 	   mechanism more often but it's okay. The final improvement is
-> > 	   good enough.
-> > 	4. Instead, optimize full tlb flush(arch_tlbbatch_flush()) by
-> > 	   avoiding redundant CPUs from tlb flush.
-> >
-> > Changes from v3:
-> >
-> > 	1. Don't use the kconfig, CONFIG_MIGRC, and remove sysctl knob,
-> > 	   migrc_enable. (feedbacked by Nadav)
-> > 	2. Remove the optimization skipping CPUs that have already
-> > 	   performed tlb flushes needed by any reason when performing
-> > 	   tlb flushes by migrc because I can't tell the performance
-> > 	   difference between w/ the optimization and w/o that.
-> > 	   (feedbacked by Nadav)
-> > 	3. Minimize arch-specific code. While at it, move all the migrc
-> >            declarations and inline functions from include/linux/mm.h to
-> >            mm/internal.h (feedbacked by Dave Hansen, Nadav)
-> > 	4. Separate a part making migrc paused when the system is in
-> > 	   high memory pressure to another patch. (feedbacked by Nadav)
-> > 	5. Rename:
-> > 	      a. arch_tlbbatch_clean() to arch_tlbbatch_clear(),
-> > 	      b. tlb_ubc_nowr to tlb_ubc_ro,
-> > 	      c. migrc_try_flush_free_folios() to migrc_flush_free_folios(),
-> > 	      d. migrc_stop to migrc_pause.
-> > 	   (feedbacked by Nadav)
-> > 	6. Use ->lru list_head instead of introducing a new llist_head.
-> > 	   (feedbacked by Nadav)
-> > 	7. Use non-atomic operations of page-flag when it's safe.
-> > 	   (feedbacked by Nadav)
-> > 	8. Use stack instead of keeping a pointer of 'struct migrc_req'
-> > 	   in struct task, which is for manipulating it locally.
-> > 	   (feedbacked by Nadav)
-> > 	9. Replace a lot of simple functions to inline functions placed
-> > 	   in a header, mm/internal.h. (feedbacked by Nadav)
-> > 	10. Add additional sufficient comments. (feedbacked by Nadav)
-> > 	11. Remove a lot of wrapper functions. (feedbacked by Nadav)
-> >
-> > Changes from RFC v2:
-> >
-> > 	1. Remove additional occupation in struct page. To do that,
-> > 	   unioned with lru field for migrc's list and added a page
-> > 	   flag. I know page flag is a thing that we don't like to add
-> > 	   but no choice because migrc should distinguish folios under
-> > 	   migrc's control from others. Instead, I force migrc to be
-> > 	   used only on 64 bit system to mitigate you guys from getting
-> > 	   angry.
-> > 	2. Remove meaningless internal object allocator that I
-> > 	   introduced to minimize impact onto the system. However, a ton
-> > 	   of tests showed there was no difference.
-> > 	3. Stop migrc from working when the system is in high memory
-> > 	   pressure like about to perform direct reclaim. At the
-> > 	   condition where the swap mechanism is heavily used, I found
-> > 	   the system suffered from regression without this control.
-> > 	4. Exclude folios that pte_dirty() == true from migrc's interest
-> > 	   so that migrc can work simpler.
-> > 	5. Combine several patches that work tightly coupled to one.
-> > 	6. Add sufficient comments for better review.
-> > 	7. Manage migrc's request in per-node manner (from globally).
-> > 	8. Add tlb miss improvement in commit message.
-> > 	9. Test with more CPUs(4 -> 16) to see bigger improvement.
-> >
-> > Changes from RFC:
-> >
-> > 	1. Fix a bug triggered when a destination folio at the previous
-> > 	   migration becomes a source folio at the next migration,
-> > 	   before the folio gets handled properly so that the folio can
-> > 	   play with another migration. There was inconsistency in the
-> > 	   folio's state. Fixed it.
-> > 	2. Split the patch set into more pieces so that the folks can
-> > 	   review better. (Feedbacked by Nadav Amit)
-> > 	3. Fix a wrong usage of barrier e.g. smp_mb__after_atomic().
-> > 	   (Feedbacked by Nadav Amit)
-> > 	4. Tried to add sufficient comments to explain the patch set
-> > 	   better. (Feedbacked by Nadav Amit)
-> >
-> > Byungchul Park (12):
-> >   x86/tlb: add APIs manipulating tlb batch's arch data
-> >   arm64: tlbflush: add APIs manipulating tlb batch's arch data
-> >   riscv, tlb: add APIs manipulating tlb batch's arch data
-> >   x86/tlb, riscv/tlb, mm/rmap: separate arch_tlbbatch_clear() out of
-> >     arch_tlbbatch_flush()
-> >   mm: buddy: make room for a new variable, ugen, in struct page
-> >   mm: add folio_put_ugen() to deliver unmap generation number to pcp or
-> >     buddy
-> >   mm: add a parameter, unmap generation number, to free_unref_folios()
-> >   mm/rmap: recognize read-only tlb entries during batched tlb flush
-> >   mm: implement LUF(Lazy Unmap Flush) defering tlb flush when folios get
-> >     unmapped
-> >   mm: separate move/undo parts from migrate_pages_batch()
-> >   mm, migrate: apply luf mechanism to unmapping during migration
-> >   mm, vmscan: apply luf mechanism to unmapping during folio reclaim
-> >
-> >  arch/arm64/include/asm/tlbflush.h |  18 ++
-> >  arch/riscv/include/asm/tlbflush.h |  21 ++
-> >  arch/riscv/mm/tlbflush.c          |   1 -
-> >  arch/x86/include/asm/tlbflush.h   |  18 ++
-> >  arch/x86/mm/tlb.c                 |   2 -
-> >  include/linux/mm.h                |  22 ++
-> >  include/linux/mm_types.h          |  40 +++-
-> >  include/linux/rmap.h              |   7 +-
-> >  include/linux/sched.h             |  11 +
-> >  mm/compaction.c                   |  10 +
-> >  mm/internal.h                     | 115 +++++++++-
-> >  mm/memory.c                       |   8 +
-> >  mm/migrate.c                      | 184 ++++++++++------
-> >  mm/mmap.c                         |   8 +
-> >  mm/page_alloc.c                   | 157 +++++++++++---
-> >  mm/page_isolation.c               |   6 +
-> >  mm/page_reporting.c               |  10 +
-> >  mm/rmap.c                         | 345 +++++++++++++++++++++++++++++-
-> >  mm/swap.c                         |  18 +-
-> >  mm/vmscan.c                       |  29 ++-
-> >  20 files changed, 904 insertions(+), 126 deletions(-)
-> >
-> >
-> > base-commit: f52bcd4a9f6058704a6f6b6b50418f579defd4fe
-> 
-> --
-> Best Regards,
-> Huang, Ying
 
