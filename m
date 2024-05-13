@@ -1,380 +1,223 @@
-Return-Path: <linux-kernel+bounces-178021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7F058C478D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECF88C4787
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 323211F21AE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8658228292A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EFD75802;
-	Mon, 13 May 2024 19:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBE476056;
+	Mon, 13 May 2024 19:30:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdYDWrw/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyGGm2RA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D12D745E2;
-	Mon, 13 May 2024 19:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7827A745E2;
+	Mon, 13 May 2024 19:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715628617; cv=none; b=QnkWBDTd09LknmlXmdN41Qw7UtDc2RTrNRIRzFJ8cEvEXC0rRAWMknUEmpJnTp/s0w72yCQHNQGGsebeL5PY4zx9gamNMOj95kh6GkCPIIi9rITSTPF7hA3JU1YN5d0Ka2qBMOeEE7kghQQlXAFs6vZzz0EkEXELCCBGsO0CTdQ=
+	t=1715628612; cv=none; b=NYcO5d1bRL/2iTVZZ+Kgz5YdC57JufmqaEpN1ZwZ4HtIY5JTxTHXRx48aBha8317E/UjTzNoxvrrb19FQMkSGuQ3EelD4epmDvt/ofy0LK1kUrbd5W/uWQ1zz89d69hDu6dfjEAM8zCL8UYmjp59jCXrKd4SDwRqxpXaB9SsxRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715628617; c=relaxed/simple;
-	bh=Bmn3VkvhWDzNgwGKEi4oKOL/Z5X8DmrE66CJjLFbc80=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oHzKbwOw+P+NMOT5HCIuP35rq1vEM4sMAyee5rEsmcrjJdNoeoFNnaEEk7k+qZMNuP7/ucBNdAG6ZBxxXuyBHgourib1uc4Rv87XEXPlgs/ZtMo8OUNA6jKHlxlgnqFDOy+UlSYHOhZPwy8BEYuZpGZG5f4qIVkJ7knmURfxmiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdYDWrw/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AC40C113CC;
-	Mon, 13 May 2024 19:30:17 +0000 (UTC)
+	s=arc-20240116; t=1715628612; c=relaxed/simple;
+	bh=iThTAPThwTXWAZAmme59Q3SDkLqYOlftEs0Yr1QP0QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5H2Tm6uynWmA9vvSXK47eCRo6NrugWaX/rAoVEqiGNMZoB+/yxmaMX68hXeZfCgRnJuNFEsjtuk9lTYEv14I9/PEvDUAXwCb2tcwi1e78G/hoG1JbWBRgd9Ep687c4SP77G5OnSIGJodkyUeD2NVxRMbofFVKzKJlxmFwqIAU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyGGm2RA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9685C113CC;
+	Mon, 13 May 2024 19:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715628617;
-	bh=Bmn3VkvhWDzNgwGKEi4oKOL/Z5X8DmrE66CJjLFbc80=;
-	h=From:Date:Subject:To:Cc:From;
-	b=FdYDWrw/FnCMCm7ZR8881eXVCyiBdYE9/JbYg/JYSjeUvW8g7bkNVnXrvutev0z3l
-	 JSEydrH91lbNAw/hbz8/CbHU/STlnGASX3hBcpTJcIwYCjhBS6YfDDq5TKVq9VwY78
-	 l3c4zt+VXNil8ACpIpZx5IumZemM2DX9je0x3mnkVa4MrsMMiby4ZlS1bRv9hl0OeZ
-	 vnW74OoYrESf8wudA279ECeHVaV4zbx3OdKbB0F3+ypdtJQ5z5Kp2FqMAKYNUHlquE
-	 RHXedQPOwchrDyyEyViy0ENU1lln1nvLKlU0KJgVqRNLIXQICPDdYru7nzl56zsVOr
-	 Jj1YDH+iIPcwQ==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5b2760a6ba2so161244eaf.3;
-        Mon, 13 May 2024 12:30:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOnqoCGR9VGGYJP8YNR8UP533YytfP8HkUIJZdlJQ83PXxW2O2w3UY3ExE1D1zLk8S0yMa6gBviuMRDwRRk8+Ke1W5k2d88Iw3iaVkDNtTCL1Lw56BSHe04lOs2/sT5/zNmcjdRBU=
-X-Gm-Message-State: AOJu0Yy7wgIO8MWZgiOnhhno6qVI7wPLQvVXwnxTbgAP1FAcZH3U7unX
-	ncqvV5zKaaMltRkA1BuIBnlqLqngkabJeFEDeZZEUjIwHDptdKcEfs+Zn9ycfrQJvG0qolUjTc+
-	zK3IiE0FCtGF/8anO8YRf/TCnunw=
-X-Google-Smtp-Source: AGHT+IFRKCIaib1fx2mPixVo/CyNzG4Edy6/KhVUofT2v2I0l20YEabKhNCDd7UsK5MenBrmr2P6r5Sj8E6/Jb30f/I=
-X-Received: by 2002:a4a:d10e:0:b0:5af:be60:ccdc with SMTP id
- 006d021491bc7-5b2815e1c94mr11721393eaf.0.1715628616277; Mon, 13 May 2024
- 12:30:16 -0700 (PDT)
+	s=k20201202; t=1715628612;
+	bh=iThTAPThwTXWAZAmme59Q3SDkLqYOlftEs0Yr1QP0QE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tyGGm2RAVP1mZAkKhfrfz4v417TAvlwbXuDJRuVh153vHpFC6PB0RLDWWzlsbaXFu
+	 1zb4h5e0mbfJ8mUcu7AJaVWLvTEHTOcYrNO2ke6CdBFjHDrzpv/bwnzeZrOdEwLkTl
+	 zfxzPjLeQPriqOai9sRB8GrtpyBbguwfrnQyWD37AohL9ney2Ulm4uEyQEjf5jiW4+
+	 Jil1524zA2Ugl5oTAg/JpetNOwClNUwd32HlPrjHmr9oIii9qAhlfdyk20c5FBSFX5
+	 Jn4NeuW9VckXfkTFDYoeIesS1qjTHo4KAfmjJCjQN3LxTzlRPHumEtdHbRGVTQLnBH
+	 jxe/Sx9N99J3w==
+Date: Mon, 13 May 2024 14:30:09 -0500
+From: Rob Herring <robh@kernel.org>
+To: Aradhya Bhatia <a-bhatia1@ti.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Jyri Sarha <jyri.sarha@iki.fi>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	DRI Development List <dri-devel@lists.freedesktop.org>,
+	Devicetree List <devicetree@vger.kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
+Subject: Re: [PATCH 2/4] dt-bindings: display: ti: Add schema for AM625 OLDI
+ Transmitter
+Message-ID: <20240513193009.GA2986074-robh@kernel.org>
+References: <20240511193055.1686149-1-a-bhatia1@ti.com>
+ <20240511193055.1686149-3-a-bhatia1@ti.com>
+ <20240512193459.GF17158@pendragon.ideasonboard.com>
+ <e0433619-75c7-40bc-aafb-f0a875ea7dc3@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 13 May 2024 21:30:05 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iTaVs5EBUkq0Vs39y+gYCcsZypW5YJNS1n3ES+upM2JQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iTaVs5EBUkq0Vs39y+gYCcsZypW5YJNS1n3ES+upM2JQ@mail.gmail.com>
-Subject: [GIT PULL] ACPI updates for v6.10-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Linus,
-
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.10-rc1
-
-with top-most commit e573d27e18f8289454b6abb378de531374bd3cde
-
- Merge branches 'acpi-tools', 'acpi-docs' and 'pnp'
-
-on top of commit dd5a440a31fae6e459c0d6271dddd62825505361
-
- Linux 6.9-rc7
-
-to receive ACPI updates for 6.10-rc1.
-
-These are ACPICA updates coming from the 20240322 release upstream, an
-ACPI DPTF driver update adding new platform support for it, some new
-quirks and some assorted fixes and cleanups.
-
-Specifics:
-
- - Add EINJ CXL error types to actbl1.h (Ben Cheatham).
-
- - Add support for RAS2 table to ACPICA (Shiju Jose).
-
- - Fix various spelling mistakes in text files and code comments in
-   ACPICA (Colin Ian King).
-
- - Fix spelling and typos in ACPICA (Saket Dumbre).
-
- - Modify ACPI_OBJECT_COMMON_HEADER (lijun).
-
- - Add RISC-V RINTC affinity structure support to ACPICA (Haibo Xu).
-
- - Fix CXL 3.0 structure (RDPAS) in the CEDT table (Hojin Nam).
-
- - Add missin increment of registered GPE count to ACPICA (Daniil
-   Tatianin).
-
- - Mark new ACPICA release 20240322 (Saket Dumbre).
-
- - Add support for the AEST V2 table to ACPICA (Ruidong Tian).
-
- - Disable -Wstringop-truncation for some ACPICA code in the kernel to
-   avoid a compiler warning  that is not very useful (Arnd Bergmann).
-
- - Make the kernel indicate support for several ACPI features that are
-   in fact supported to the platform firmware through _OSC and fix the
-   Generic Initiator Affinity _OSC bit (Armin Wolf).
-
- - Make the ACPI core set the owner value for ACPI drivers, drop the
-   owner setting from a number of drivers and eliminate the owner
-   field from struct acpi_driver (Krzysztof Kozlowski).
-
- - Rearrange fields in several structures to effectively eliminate
-   computations from container_of() in some cases (Andy Shevchenko).
-
- - Do some assorted cleanups of the ACPI device enumeration code (Andy
-   Shevchenko).
-
- - Make the ACPI device enumeration code skip devices with _STA values
-   clearly identified by the specification as invalid (Rafael Wysocki).
-
- - Rework the handling of the NHLT table to simplify and clarify it and
-   drop some obsolete pieces (Cezary Rojewski).
-
- - Add ACPI IRQ override quirks for Asus Vivobook Pro N6506MV, TongFang
-   GXxHRXx and GMxHGxx, and XMG APEX 17 M23 (Guenter Schafranek, Tamim
-   Khan, Christoffer Sandberg).
-
- - Add reference to UEFI DSD Guide to the documentation related to the
-   ACPI handling of device properties (Sakari Ailus).
-
- - Fix SRAT lookup of CFMWS ranges with numa_fill_memblks(), remove
-   lefover architecture-dependent code from the ACPI NUMA handling code
-   and simplify it on top of that (Robert Richter).
-
- - Add a num-cs device property to specify the number of chip selects
-   for Intel Braswell to the ACPI LPSS (Intel SoC) driver and remove a
-   nested CONFIG_PM #ifdef from it (Andy Shevchenko).
-
- - Move three x86-specific ACPI files to the x86 directory (Andy
-   Shevchenko).
-
- - Mark SMO8810 accel on Dell XPS 15 9550 as always present and add a
-   PNP_UART1_SKIP quirk for Lenovo Blade2 tablets (Hans de Goede).
-
- - Move acpi_blacklisted() declaration to asm/acpi.h (Kuppuswamy
-   Sathyanarayanan).
-
- - Add Lunar Lake support to the ACPI DPTF driver (Sumeet Pawnikar).
-
- - Mark the einj_driver driver's remove callback as __exit because it
-   cannot get unbound via sysfs (Uwe Kleine-K=C3=B6nig).
-
- - Fix a typo in the ACPI documentation regarding the layout of sysfs
-   subdirectory representing the ACPI namespace (John Watts).
-
- - Make the ACPI pfrut utility print the update_cap field during
-   capability query (Chen Yu).
-
- - Add HAS_IOPORT dependencies to PNP (Niklas Schnelle).
-
- - Add backlight=3Dnative quirk for Lenovo Slim 7 16ARH7 to the ACPI
-   backlight (video) driver (Takashi Iwai).
-
-Thanks!
-
-
----------------
-
-Andy Shevchenko (12):
-      ACPI: bus: Make container_of() no-op where it makes sense
-      ACPI: bus: Don't use "proxy" headers
-      ACPI: scan: Use list_first_entry_or_null() in acpi_device_hid()
-      ACPI: scan: Move misleading comment to acpi_dma_configure_id()
-      ACPI: scan: Use standard error checking pattern
-      ACPI: scan: Introduce typedef:s for struct acpi_hotplug_context membe=
-rs
-      ACPI: LPSS: Advertise number of chip selects via property
-      ACPI: LPSS: Remove nested ifdeffery for CONFIG_PM
-      ACPI: x86: Introduce a Makefile
-      ACPI: x86: Move acpi_cmos_rtc to x86 folder
-      ACPI: x86: Move blacklist to x86 folder
-      ACPI: x86: Move LPSS to x86 folder
-
-Armin Wolf (5):
-      ACPI: bus: Indicate support for _TFP thru _OSC
-      ACPI: bus: Indicate support for more than 16 p-states thru _OSC
-      ACPI: bus: Indicate support for the Generic Event Device thru _OSC
-      ACPI: Fix Generic Initiator Affinity _OSC bit
-      ACPI: bus: Indicate support for IRQ ResourceSource thru _OSC
-
-Arnd Bergmann (1):
-      ACPI: disable -Wstringop-truncation
-
-Ben Cheatham (1):
-      ACPICA: actbl1.h: Add EINJ CXL error types
-
-Cezary Rojewski (4):
-      ACPI: NHLT: Reintroduce types the table consists of
-      ACPI: NHLT: Introduce API for the table
-      ACPI: NHLT: Drop redundant types
-      ACPI: NHLT: Streamline struct naming
-
-Chen Yu (1):
-      ACPI: tools: pfrut: Print the update_cap field during capability quer=
-y
-
-Christoffer Sandberg (1):
-      ACPI: resource: Do IRQ override on TongFang GXxHRXx and GMxHGxx
-
-Colin Ian King (1):
-      ACPICA: Fix various spelling mistakes in text files and code comments
-
-Daniil Tatianin (1):
-      ACPICA: events/evgpeinit: don't forget to increment registered GPE co=
-unt
-
-Guenter Schafranek (1):
-      ACPI: resource: Do IRQ override on GMxBGxx (XMG APEX 17 M23)
-
-Haibo Xu (2):
-      ACPICA: SRAT: Add RISC-V RINTC affinity structure
-      ACPICA: SRAT: Add dump and compiler support for RINTC affinity struct=
-ure
-
-Hans de Goede (2):
-      ACPI: x86: utils: Mark SMO8810 accel on Dell XPS 15 9550 as always pr=
-esent
-      ACPI: x86: Add PNP_UART1_SKIP quirk for Lenovo Blade2 tablets
-
-Hojin Nam (1):
-      ACPICA: Fix CXL 3.0 structure (RDPAS) in the CEDT table
-
-John Watts (1):
-      Documentation: firmware-guide: ACPI: Fix namespace typo
-
-Krzysztof Kozlowski (19):
-      ACPI: store owner from modules with acpi_bus_register_driver()
-      Input: atlas - drop owner assignment
-      net: fjes: drop owner assignment
-      platform/chrome: wilco_ec: drop owner assignment
-      platform: asus-laptop: drop owner assignment
-      platform: classmate-laptop: drop owner assignment
-      platform/x86/dell: drop owner assignment
-      platform/x86/eeepc: drop owner assignment
-      platform/x86/intel/rst: drop owner assignment
-      platform/x86/intel/smartconnect: drop owner assignment
-      platform/x86/lg-laptop: drop owner assignment
-      platform/x86/sony-laptop: drop owner assignment
-      platform/x86/toshiba_acpi: drop owner assignment
-      platform/x86/toshiba_bluetooth: drop owner assignment
-      platform/x86/toshiba_haps: drop owner assignment
-      platform/x86/wireless-hotkey: drop owner assignment
-      ptp: vmw: drop owner assignment
-      virt: vmgenid: drop owner assignment
-      ACPI: drop redundant owner from acpi_driver
-
-Kuppuswamy Sathyanarayanan (1):
-      ACPI: Move acpi_blacklisted() declaration to asm/acpi.h
-
-Niklas Schnelle (1):
-      PNP: add HAS_IOPORT dependencies
-
-Rafael J. Wysocki (1):
-      ACPI: scan: Avoid enumerating devices with clearly invalid _STA value=
-s
-
-Robert Richter (4):
-      x86/numa: Fix SRAT lookup of CFMWS ranges with numa_fill_memblks()
-      ACPI/NUMA: Remove architecture dependent remainings
-      ACPI/NUMA: Squash acpi_numa_slit_init() into acpi_parse_slit()
-      ACPI/NUMA: Squash acpi_numa_memory_affinity_init() into
-acpi_parse_memory_affinity()
-
-Ruidong Tian (1):
-      ACPICA: AEST: Add support for the AEST V2 table
-
-Sakari Ailus (1):
-      ACPI: property: Add reference to UEFI DSD Guide
-
-Saket Dumbre (4):
-      ACPICA: Attempt 1 to fix issue #900
-      ACPICA: Clean up the fix for Issue #900
-      ACPICA: Fix spelling and typos
-      ACPICA: Update acpixf.h for new ACPICA release 20240322
-
-Shiju Jose (1):
-      ACPICA: ACPI 6.5: RAS2: Add support for RAS2 table
-
-Sumeet Pawnikar (1):
-      ACPI: DPTF: Add Lunar Lake support
-
-Takashi Iwai (1):
-      ACPI: video: Add backlight=3Dnative quirk for Lenovo Slim 7 16ARH7
-
-Tamim Khan (1):
-      ACPI: resource: Skip IRQ override on Asus Vivobook Pro N6506MV
-
-Uwe Kleine-K=C3=B6nig (1):
-      ACPI: APEI: EINJ: mark remove callback as __exit
-
-lijun (1):
-      ACPICA: Modify ACPI_OBJECT_COMMON_HEADER
-
----------------
-
- Documentation/firmware-guide/acpi/namespace.rst    |   4 +-
- arch/x86/include/asm/acpi.h                        |   2 +
- arch/x86/include/asm/sparsemem.h                   |   2 -
- arch/x86/mm/numa.c                                 |   4 +-
- drivers/acpi/Kconfig                               |   3 +
- drivers/acpi/Makefile                              |   8 +-
- drivers/acpi/acpica/Makefile                       |   1 +
- drivers/acpi/acpica/aclocal.h                      |   2 +-
- drivers/acpi/acpica/acobject.h                     | 107 +++--
- drivers/acpi/acpica/evgpeinit.c                    |   1 +
- drivers/acpi/acpica/utdebug.c                      |   5 +
- drivers/acpi/apei/einj-core.c                      |  12 +-
- drivers/acpi/bus.c                                 |  25 +-
- drivers/acpi/dock.c                                |  48 +-
- drivers/acpi/dptf/dptf_pch_fivr.c                  |   1 +
- drivers/acpi/dptf/dptf_power.c                     |   2 +
- drivers/acpi/dptf/int340x_thermal.c                |   6 +
- drivers/acpi/fan.h                                 |   1 +
- drivers/acpi/internal.h                            |   3 +-
- drivers/acpi/nhlt.c                                | 289 ++++++++++++
- drivers/acpi/numa/srat.c                           |  82 ++--
- drivers/acpi/property.c                            |  11 +-
- drivers/acpi/resource.c                            |  25 +
- drivers/acpi/scan.c                                |  30 +-
- drivers/acpi/video_detect.c                        |   8 +
- drivers/acpi/x86/Makefile                          |   8 +
- drivers/acpi/{ =3D> x86}/blacklist.c                 |   2 +-
- drivers/acpi/{acpi_cmos_rtc.c =3D> x86/cmos_rtc.c}   |   2 +-
- drivers/acpi/{acpi_lpss.c =3D> x86/lpss.c}           |   5 +-
- drivers/acpi/x86/utils.c                           |  29 +-
- drivers/input/misc/atlas_btns.c                    |   1 -
- drivers/net/fjes/fjes_main.c                       |   1 -
- drivers/platform/chrome/wilco_ec/event.c           |   1 -
- drivers/platform/x86/asus-laptop.c                 |   1 -
- drivers/platform/x86/classmate-laptop.c            |   5 -
- drivers/platform/x86/dell/dell-rbtn.c              |   1 -
- drivers/platform/x86/eeepc-laptop.c                |   1 -
- drivers/platform/x86/intel/rst.c                   |   1 -
- drivers/platform/x86/intel/smartconnect.c          |   1 -
- drivers/platform/x86/lg-laptop.c                   |   1 -
- drivers/platform/x86/sony-laptop.c                 |   2 -
- drivers/platform/x86/toshiba_acpi.c                |   1 -
- drivers/platform/x86/toshiba_bluetooth.c           |   1 -
- drivers/platform/x86/toshiba_haps.c                |   1 -
- drivers/platform/x86/wireless-hotkey.c             |   1 -
- drivers/pnp/isapnp/Kconfig                         |   2 +-
- drivers/ptp/ptp_vmw.c                              |   1 -
- .../intel/int340x_thermal/int3400_thermal.c        |   1 +
- .../intel/int340x_thermal/int3403_thermal.c        |   1 +
- drivers/virt/vmgenid.c                             |   1 -
- include/acpi/acpi_bus.h                            |  36 +-
- include/acpi/acpixf.h                              |   2 +-
- include/acpi/actbl1.h                              |   8 +-
- include/acpi/actbl2.h                              | 516 +++++++++++++----=
-----
- include/acpi/actbl3.h                              |  18 +-
- include/acpi/nhlt.h                                | 181 ++++++++
- include/linux/acpi.h                               |  13 +-
- include/linux/numa.h                               |   7 +-
- tools/power/acpi/tools/pfrut/pfrut.c               |   2 +
- 59 files changed, 1129 insertions(+), 408 deletions(-)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e0433619-75c7-40bc-aafb-f0a875ea7dc3@ti.com>
+
+On Mon, May 13, 2024 at 02:07:44PM +0530, Aradhya Bhatia wrote:
+> Hi Laurent,
+> 
+> Thank you for reviewing the patches!
+> 
+> On 13-May-24 01:04, Laurent Pinchart wrote:
+> > Hi Aradhya,
+> > 
+> > Thank you for the patch.
+> > 
+> > On Sun, May 12, 2024 at 01:00:53AM +0530, Aradhya Bhatia wrote:
+> >> Add devicetree binding schema for AM625 OLDI Transmitters.
+> >>
+> >> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> >> ---
+> >>  .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
+> >>  MAINTAINERS                                   |   1 +
+> >>  2 files changed, 154 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> >> new file mode 100644
+> >> index 000000000000..0a96e600bc0b
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
+> >> @@ -0,0 +1,153 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Texas Instruments AM625 OLDI Transmitter
+> >> +
+> >> +maintainers:
+> >> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> >> +  - Aradhya Bhatia <a-bhatia1@ti.com>
+> >> +
+> >> +description: |
+> >> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
+> >> +  pixel data transmission between host and flat panel display over LVDS (Low
+> >> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
+> >> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
+> >> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
+> >> +  padded and un-padded 18-bit RGB bus formats as input.
+> >> +
+> >> +properties:
+> >> +  reg:
+> >> +    maxItems: 1
+> >> +
+> >> +  clocks:
+> >> +    maxItems: 1
+> >> +    description: serial clock input for the OLDI transmitters
+> >> +
+> >> +  clock-names:
+> >> +    const: s_clk
+> >> +
+> >> +  ti,companion-oldi:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >> +    description:
+> >> +      phandle to companion OLDI transmitter. This property is mandatory for the
+> >> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
+> >> +      mode or in clone mode. This property should point to the secondary OLDI
+> >> +      TX.
+> >> +
+> >> +  ti,secondary-oldi:
+> >> +    type: boolean
+> >> +    description: Boolean property to mark an OLDI TX as secondary node.
+> >> +
+> >> +  ti,oldi-io-ctrl:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >> +    description:
+> >> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
+> >> +      control MMR region. This property is needed for OLDI interface to work.
+> >> +
+> >> +  ports:
+> >> +    $ref: /schemas/graph.yaml#/properties/ports
+> >> +
+> >> +    properties:
+> >> +      port@0:
+> >> +        $ref: /schemas/graph.yaml#/properties/port
+> >> +        description: Parallel RGB input port
+> >> +
+> >> +      port@1:
+> >> +        $ref: /schemas/graph.yaml#/properties/port
+> >> +        description: LVDS output port
+> >> +
+> >> +    required:
+> >> +      - port@0
+> >> +      - port@1
+> >> +
+> >> +allOf:
+> >> +  - if:
+> >> +      properties:
+> >> +        ti,secondary-oldi: true
+> >> +    then:
+> >> +      properties:
+> >> +        ti,companion-oldi: false
+> >> +        ti,oldi-io-ctrl: false
+> >> +        clocks: false
+> >> +        clock-names: false
+> >> +
+> >> +    else:
+> >> +      required:
+> >> +        - ti,oldi-io-ctrl
+> >> +        - clocks
+> >> +        - clock-names
+> >> +
+> >> +required:
+> >> +  - reg
+> >> +  - ports
+> >> +
+> >> +additionalProperties: false
+> >> +
+> >> +examples:
+> >> +  - |
+> >> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
+> >> +
+> >> +    oldi_txes {
+> >> +        #address-cells = <1>;
+> >> +        #size-cells = <0>;
+> >> +        oldi: oldi@0 {
+> >> +            reg = <0>;
+> >> +            clocks = <&k3_clks 186 0>;
+> >> +            clock-names = "s_clk";
+> >> +            ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
+> > 
+> > What bus does this device live on ? Couldn't the I/O register space be
+> > referenced by the reg property ?.
+> > 
+> 
+> These registers are a part of the system-controller register space
+> (ctrl_mmr0). The whole register set is owned by the main_conf[0]
+> devicetree node, with sub-nodes pointing to specific regions. That's why
+> I cannot reference these registers directly.
+
+Then what does 'reg' represent? Looks like you just made up an index. If 
+so, then this should probably be a child of &dss_oldi_io_ctrl instead. 
+Or it should just be merged into that node.
+
+Rob
 
