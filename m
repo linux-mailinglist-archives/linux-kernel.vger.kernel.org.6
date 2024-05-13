@@ -1,306 +1,150 @@
-Return-Path: <linux-kernel+bounces-177328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9708C3CEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:13:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A5F8C3CEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:13:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 292BE1F21CEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:13:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53C291C212D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D149D147C9A;
-	Mon, 13 May 2024 08:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx5o+0Uv"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD77E1474A2;
+	Mon, 13 May 2024 08:13:13 +0000 (UTC)
+Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2102.outbound.protection.partner.outlook.cn [139.219.17.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40151147C63
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715587998; cv=none; b=tKWRhZ9wSSaMHv9OH6/Sl7Wh2w5x2vB1Dy28RSw1oieFlFDuy4Q4JOeGiZb6v4fO6XsQHp3mlhjyAzloYn2n3z3bLUz09SCB2JzLC6oHMBf/VOcBPgK2K6rvwEEgBalpod8ullk93fZN6vX+EnG+63HvVaJjuvr/BCBdvpVMmf4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715587998; c=relaxed/simple;
-	bh=8rQNnlpHNwSiby7H2KfOJ545BmEBEQbSDs3gFqf7ryE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bnI76sie5DpsfWocuzQAJ3rltHyNX4z/Z5scxxo1lZUgej+1BW8rvjsOlIXBanDFQcrh16gDhZd9HlB2YaknG9gv8C8LoJR6mq5nXtHENy1iioRuxwk9u6W3nbdUBH6OjC00dcpraOFYkLXtkglzN7fTiO5pJMY3u1+4Oz9yR6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx5o+0Uv; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4200ee78f33so13396005e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715587995; x=1716192795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KjI2GIzbNeY5mYmEJBzlwq8aj+x1UHEKf/2QoRMS7Cs=;
-        b=Tx5o+0UvrfIe/CofrsmD/lehG7oTjpJtTWWSlzySl7G/CygVmhWepYMiCkTHSVbYDj
-         Kl4fhlzkv6T9ByUwTK8aBQ5AHoYLsgrZ1frgggBpv3K2fx40iO+5QLJbFcoFEB8L8iST
-         cpxkLYyiTkJTOE3EOSOa5CiTfg0YsvgT9vNbtB9NS4cwImnOd46jwUnTzH4Vyp61IJtr
-         7xggBl5OPhGjeHquS+nx7xB7vFR/DKWBymjJb8NmIWKblc54eqmwRSD6l1/ZD1IjZG4O
-         CyGrUDe71qZ3P+jjFweP5OHNf7zcblIH6jsTpXunW7a3hZPXh46XLWMLwzwqXR2/6E4g
-         0uwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715587995; x=1716192795;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KjI2GIzbNeY5mYmEJBzlwq8aj+x1UHEKf/2QoRMS7Cs=;
-        b=nBO7wJKgoUMxP/wWcdP/9twy6v8TpMuWQ15eIoXSeFJhs+Q8DjIsKq9P0UsdMS0bkh
-         nMd8GSd3syaDCv7hfGOMn+XiqcygGSF2MU8bmFMBBrT/sYkplJSp/+ANGA3BMoclmC8r
-         nZHsF46NNPmtGsVr9XjMu1DlbpJo1jEQJjYVFW1WYjL9m15vDW86MvVzAdSLsB362Pvs
-         AYKKw9SZIFYFyCNXCh4wYNye77V4fwpxPpbVaRmhjMVJcduJu1jlEjpf6+W4SyfPij1O
-         7kwtYDgrV1Wq67vHaTV+04W01uVP+QVk6YpUG/JgaI1ICLT5wBgf2EqiU2FDhD36zExT
-         dCiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpiIMaSJgK1Vw86yEvbDMVvH8ExsqX4nKSCSW1RgBs3dgU3rNwoGhTL8sYZxMdhV8e/Hr5qOYvIC9KbEagEwxDlLqQMJunkHqaxKgx
-X-Gm-Message-State: AOJu0YzPKWCyaMtkSu51tsg0yofuVlOhvSl4b71abo47V3XILd7HhbDy
-	bdarj6v1vcxHFUR6Ew0p/+TLJijw5VZ+nvWFo7xc3O0Qsze+AaqWFMgLNG5f/UY=
-X-Google-Smtp-Source: AGHT+IGTEXWrUQ7VGUcVeKG0+Ho7vHvmqvLjvCgT6L/7ToRERkrjvg7sB944hy/FRrFnxQ2sXbBaag==
-X-Received: by 2002:a05:600c:4fc9:b0:41c:1434:f571 with SMTP id 5b1f17b1804b1-41feac59deemr67598535e9.37.1715587994435;
-        Mon, 13 May 2024 01:13:14 -0700 (PDT)
-Received: from localhost.localdomain ([2001:b07:ac9:e686:c88b:6249:b2f4:9ae2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a77f8sm10399563f8f.54.2024.05.13.01.13.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 01:13:14 -0700 (PDT)
-From: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
-To: sudeep.holla@arm.com
-Cc: vincenzo.mezzela@gmail.com,
-	gregkh@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr,
-	linux-kernel@vger.kernel.org,
-	rafael@kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH 2/2 v4] drivers: arch_topology: use __free attribute instead of of_node_put()
-Date: Mon, 13 May 2024 10:13:04 +0200
-Message-Id: <20240513081304.499915-3-vincenzo.mezzela@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240513081304.499915-1-vincenzo.mezzela@gmail.com>
-References: <20240501094313.407820-1-vincenzo.mezzela@gmail.com>
- <20240513081304.499915-1-vincenzo.mezzela@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9607E146D5C;
+	Mon, 13 May 2024 08:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715587993; cv=fail; b=Eyg9r0O5AKbh7A8LlazEX0O7ZFb9qrL1UdFh+NNA2QRF8Uk34H6hGpmw5qs4NtC6LhyhsbxHgaPqQp45trTE5ApQ6qK+F97yclK1hzXDKWL1jFoLQBK+8mleWC56Sgp4RcL9BkcOOVAO7tt+bgpBsE8IXZ9bbQeTQwQLIBDrR/E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715587993; c=relaxed/simple;
+	bh=sm5ojYjqspJpsjBR6kXuJgzLIx9+kfcoRa2r0oD34b8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YbyuQVxBuTB3AJ2u0FOIvxhXfsTemGjkGjS1qoe/9GkK1JmHwFO14AUHiyZ9RfjCmGfbj5069vTV9DUh7HATYEicHxIf7IOGH+2UeoR55hAoI52D4ma/USBRDuOhvF94raWthId2tUDu4RC4U7rt8T2KeRh+HJbjcUf3VD3A1B4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bPqembSEatOUbSAj6ejjHmQcl8G8HpxoRmFJSgHh7AYpFckKHN+axlNV9an6kcNHLoLH4uOM110FUV0DO9k9leAKbTiGfpPr5VCOd2cBGRZdsnUns6PgO2hcIK9CjB9BiOxX5l0rR3Z/qbmtWYdZg7xogD4ZBV6M8n4PBlLCh/m/o/FO2Q8EGHKvB3gRvQOZIV4EgYxkzdPNGLeXj9uuU7nvzFFBIkgKtjM3m5T1kuU0bctFSEPPhk5WLrmm4huyl0mBL3CoPuMTLgz1v+IXwoGV4+PTLtQkhj88v7rPxf9dIESCuJJw1fNk36YPehYwgRbw/+zQyLo037EPrVEKUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sm5ojYjqspJpsjBR6kXuJgzLIx9+kfcoRa2r0oD34b8=;
+ b=DOjMX8le6BYODQfLvsNHfxysi33gRzE6vjxbjzYsXSsO4rP7SAUTTo+ieXTBFIBGADpypk7UKnrG2ehSzN80uUHFJIF/aR3xshXwm63S5eEw+D0tuHMC8lb2JNVua7CPtrwjLkz/2QPeyCU3P8va6Gb4cNfzMc6BPi3FfkFzWRuq+miVfk7tAxnVfudv1GH9bxMSQJMJgBtbOtZUDUyRIXv4U0MPClhf/E+pjORoO/1chDW0gsMQETP5W3RM16MN7XsO2EhimkVqVdfWXK/mXgcz8GvxCNXl7bxVz+4Z8ERnbKlBbhLs9f7IrLmX7HWuZGmn/Hcz17Vl3vwQyY7Aag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NT0PR01MB1070.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:3::6) by NT0PR01MB1086.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:3::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.33; Mon, 13 May
+ 2024 08:13:06 +0000
+Received: from NT0PR01MB1070.CHNPR01.prod.partner.outlook.cn
+ ([fe80::2bb1:5ec6:5260:17bd]) by
+ NT0PR01MB1070.CHNPR01.prod.partner.outlook.cn ([fe80::2bb1:5ec6:5260:17bd%6])
+ with mapi id 15.20.7472.042; Mon, 13 May 2024 08:13:06 +0000
+From: Shengyang Chen <shengyang.chen@starfivetech.com>
+To: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>
+CC: "vkoul@kernel.org" <vkoul@kernel.org>, "kishon@kernel.org"
+	<kishon@kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, Minda Chen <minda.chen@starfivetech.com>,
+	Changhuang Liang <changhuang.liang@starfivetech.com>, "rogerq@kernel.org"
+	<rogerq@kernel.org>, "geert+renesas@glider.be" <geert+renesas@glider.be>,
+	Keith Zhao <keith.zhao@starfivetech.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 0/2] Add JH7110 MIPI DPHY TX support
+Thread-Topic: [PATCH v5 0/2] Add JH7110 MIPI DPHY TX support
+Thread-Index: AQHakUOQsqv/k7+taUGMK+CBBD3iILGU9kAw
+Date: Mon, 13 May 2024 08:13:06 +0000
+Message-ID:
+ <NT0PR01MB1070236E5E5FF0F0223ED81BEFE22@NT0PR01MB1070.CHNPR01.prod.partner.outlook.cn>
+References: <20240418035020.47876-1-shengyang.chen@starfivetech.com>
+In-Reply-To: <20240418035020.47876-1-shengyang.chen@starfivetech.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NT0PR01MB1070:EE_|NT0PR01MB1086:EE_
+x-ms-office365-filtering-correlation-id: 6625ac71-96ed-4156-f69d-08dc732484ae
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ OywekNV/mVaY28KKub094fol+2aMUetqbB5j5sKXTI08EU/bBYiZge3RMoa3sQZUXB22NsrdsRnwyL5rb1hkmcgRo439E0DChRPoYMrcKylWXPpWaYrO2Cyr4iNfiv3CL/dZFQ5SPY1R5AOKp81BFrEdAx1yw0CgXJgqExqm1ZBB0aNAJ/uplBSq03nyVrRHUreYoXXFtrBPIA3JpXdWgEY9ck0IwnANgbbReb5sDt4emj3vm3yjfrfqv+qsVxP/Qz8nTnOA0gmQaY46pem94upjkaYYanGfmCsNl5Kwj8VL0l3zTu7MroHjR8e1lrxabHL17IM56NkNbBEcLn6l3AnllR7zXV0QJ+dTXyjZ3Kon6SKXvr+Zw/czX2zgRYNiDpMOTh7Zfo+helSCUYMqDfztoJrhanCWRf73xd4qPZfOA0ySTaD/xc0rWVrH1ZwpcFZxjE7cWZ7tyMZRqUp8kN+kfRkv3NSoSNPs6FL1f7urL0lFhV9rSF2I/1dGwO31mK9aF/q7PqwS7ZSSUJigLNsAKx17S9mIf8mLP9FO9WeZCPARkaJHrrPv4DH3Q6qDyNK0DYXt+ujtLmkv4Vopr5YL4oEETva4YcMUTWELxszQ1N+Sx+xM6HeEe89U+ceL
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NT0PR01MB1070.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(7416005)(41320700004)(1800799015)(366007)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?95gZM4Omj6/arFy7g+2NrwK2iVELIXAdE/P2XdvftnT9PKTlgn8daMgWOB7z?=
+ =?us-ascii?Q?qwtiA/9tkbYhAx2d85S1qfs7Sq5WwgLJipGuvD0Mr6B/V4BA99N304nfKELW?=
+ =?us-ascii?Q?jEQQNqQUMGWlM8HdqtAO7nmPCimb0gHmzY/HjlGBAZiu0MArHpfiIAN6nVUI?=
+ =?us-ascii?Q?XrO6p6wxdJCZY5qvVjq82Q5sHovyxJE6LiIcJRdGtO8GyjzgJJrS3RwllSTT?=
+ =?us-ascii?Q?u2qcNpRU87Brmy/ZAw61VJoDNXUNiWLaDAIYbLw905VCltmUjRR+cp8zmUyF?=
+ =?us-ascii?Q?ZNaNrl7oXppAlwvH3ZOfsfRegHLUTOx98Vr55ngUkVNvijlHiGfyWNi7YoU4?=
+ =?us-ascii?Q?12MwG5FRjeyJgXZAU46hQ4OlqS33m46FABdPk+m3s9+krgzEzCUCHd0MOQVj?=
+ =?us-ascii?Q?aB/CPvbcBxhSF9U8z32SPzYUhoBgEGUtqYvR/Gr5zqNi2iI4p8UmSnHe6S27?=
+ =?us-ascii?Q?xC/Lo6xWIWKV+A5/+jL3aRK54Tumij8PGkVGPmGI7qchrxdGQgV4SrsUOGI7?=
+ =?us-ascii?Q?m5yHAxHt4HmFxXqSShtuyx7kF8rcJICDQmol92D3uYcDSdD/v62q+btAw/Jt?=
+ =?us-ascii?Q?viQEZzJoBLGWXrcaGqSAtjLYZK6eyFkvcRsbCRVq5Ufx5gVE8Fw+lWK7OsKk?=
+ =?us-ascii?Q?cT0YUjwJ1rXNQowcSmhJPkWsSU05Dc7iqAY9YXN3Q0sOobYknDnmVxNpGniq?=
+ =?us-ascii?Q?97wGDbNwnnFyQRKPUr9s3KDLWKAr9zXP0QPRDDcwSSC8CWZajJQkKB+RBUmI?=
+ =?us-ascii?Q?n++NWVIeNX/xdiDnr1kGGvaDsH21JLoD8eoxk4YdNMR/E3g/NGZhwHTV33pm?=
+ =?us-ascii?Q?r0sZ1Uaxr41gNkziGdN5BmrpKxd1+gIO9vNux+gXv7adQCPFjU+5Een5tB62?=
+ =?us-ascii?Q?5WHWU2ch21HExtn/MESYUaGkNwbYGn2fpyWe73u/JiFX1wIOmAN1gPprqESK?=
+ =?us-ascii?Q?pc7mMs9/i0mF5o0BkP7y+SuLJ++3usiA9oXAK+THFI9W3D00Bk8PzGDSNcuA?=
+ =?us-ascii?Q?cRE4excZDDqtJQZo2MUcJjHf99ypmELAI+n1d3ej/Pzd63RCSDFWoj/tzmQ+?=
+ =?us-ascii?Q?RyMVyUqMwKAu6+2V1poVdQfwn2KPT/MNKQE7NEp5ZuT3tU40tZVSRrUBilxQ?=
+ =?us-ascii?Q?FbsX1iV58wmM1LdjIQMR5+13uqXMV2MQUqKbfuGGDGFyKUe8+cjyboUJDHYR?=
+ =?us-ascii?Q?JidfJDH2s6YaduGxLsM3PSyR5mD57MV7cAlFy91XCQ6NkLWVYiNvrl3ASPKk?=
+ =?us-ascii?Q?Ufxg56dUpdO85I2HWuZmRcbpQjCSC3xSPp6/fUBj3gfvhVIJICGT6SRXd9oJ?=
+ =?us-ascii?Q?5+yxu7Yfpo2fTaxwkzykwXFhPESzw3P47p5q5SwWWA7WNsIzQjCypyZTEkbs?=
+ =?us-ascii?Q?Vf3o/ojqjnaHfIzjWcN1jRP+fBDjidl7R32IwNU3D4LbaH9Di/uCfL071UJK?=
+ =?us-ascii?Q?ldDmrV7huXZKYOnzPyngsysQCg0uPMcs5tK3W+T5uQPjZP6Au+qFio+qOt3+?=
+ =?us-ascii?Q?H4/ZHexTdqI93sYdrm6EHcOjBPr1sDKgyyKqP0V3Vv+0MiPtIea9zSAjXQm7?=
+ =?us-ascii?Q?REwtgZhHUQVwp/5QbcP0qEuRnIMtEc8b8U6Oyw9WtdRhYx/14tfCZMBTP7jK?=
+ =?us-ascii?Q?BQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NT0PR01MB1070.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6625ac71-96ed-4156-f69d-08dc732484ae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2024 08:13:06.1592
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: I6xf+n4tXWoFxWNiiael/vzs2j7hcga80T4TWSw+2zYHKp4R/BbgWoJwbO+82zF9HmdQlcC2yVXky2VHVcw4ObyBDM7hx8QTCBtS74HMKhE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NT0PR01MB1086
 
-Introduce the __free attribute for scope-based resource management.
-Resources allocated with __free are automatically released at the end of
-the scope. This enhancement aims to mitigate memory management issues
-associated with forgetting to release resources by utilizing __free
-instead of of_node_put().
+> This patchset adds mipi dphy tx support for the StarFive JH7110 SoC.
+> It is used to transfer DSI data. The series has been tested on the Vision=
+Five 2
+> board.
+>=20
+>=20
 
-The declaration of the device_node used within the do-while loops is
-moved directly within the loop so that the resource is automatically
-freed at the end of each iteration.
+Hi, Vinod and Kishon
 
-Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-Signed-off-by: Vincenzo Mezzela <vincenzo.mezzela@gmail.com>
----
- drivers/base/arch_topology.c | 56 +++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 30 deletions(-)
+Could you please help to review and give me some suggestions
+for this patch series? Thank you for your time.
 
-diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index 0115011b7a99..93c9f0499694 100644
---- a/drivers/base/arch_topology.c
-+++ b/drivers/base/arch_topology.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/acpi.h>
- #include <linux/cacheinfo.h>
-+#include <linux/cleanup.h>
- #include <linux/cpu.h>
- #include <linux/cpufreq.h>
- #include <linux/device.h>
-@@ -513,10 +514,10 @@ core_initcall(free_raw_capacity);
-  */
- static int __init get_cpu_for_node(struct device_node *node)
- {
--	struct device_node *cpu_node;
- 	int cpu;
-+	struct device_node *cpu_node __free(device_node) =
-+		of_parse_phandle(node, "cpu", 0);
- 
--	cpu_node = of_parse_phandle(node, "cpu", 0);
- 	if (!cpu_node)
- 		return -1;
- 
-@@ -527,7 +528,6 @@ static int __init get_cpu_for_node(struct device_node *node)
- 		pr_info("CPU node for %pOF exist but the possible cpu range is :%*pbl\n",
- 			cpu_node, cpumask_pr_args(cpu_possible_mask));
- 
--	of_node_put(cpu_node);
- 	return cpu;
- }
- 
-@@ -538,11 +538,12 @@ static int __init parse_core(struct device_node *core, int package_id,
- 	bool leaf = true;
- 	int i = 0;
- 	int cpu;
--	struct device_node *t;
- 
- 	do {
- 		snprintf(name, sizeof(name), "thread%d", i);
--		t = of_get_child_by_name(core, name);
-+		struct device_node *t __free(device_node) =
-+			of_get_child_by_name(core, name);
-+
- 		if (!t)
- 			break;
- 
-@@ -555,10 +556,8 @@ static int __init parse_core(struct device_node *core, int package_id,
- 			cpu_topology[cpu].thread_id = i;
- 		} else if (cpu != -ENODEV) {
- 			pr_err("%pOF: Can't get CPU for thread\n", t);
--			of_node_put(t);
- 			return -EINVAL;
- 		}
--		of_node_put(t);
- 		i++;
- 	} while (1);
- 
-@@ -587,7 +586,6 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 	char name[20];
- 	bool leaf = true;
- 	bool has_cores = false;
--	struct device_node *c;
- 	int core_id = 0;
- 	int i, ret;
- 
-@@ -599,7 +597,9 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 	i = 0;
- 	do {
- 		snprintf(name, sizeof(name), "cluster%d", i);
--		c = of_get_child_by_name(cluster, name);
-+		struct device_node *c __free(device_node) =
-+			of_get_child_by_name(cluster, name);
-+
- 		if (!c)
- 			break;
- 
-@@ -607,7 +607,6 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 		ret = parse_cluster(c, package_id, i, depth + 1);
- 		if (depth > 0)
- 			pr_warn("Topology for clusters of clusters not yet supported\n");
--		of_node_put(c);
- 		if (ret != 0)
- 			return ret;
- 		i++;
-@@ -617,7 +616,9 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 	i = 0;
- 	do {
- 		snprintf(name, sizeof(name), "core%d", i);
--		c = of_get_child_by_name(cluster, name);
-+		struct device_node *c __free(device_node) =
-+			of_get_child_by_name(cluster, name);
-+
- 		if (!c)
- 			break;
- 
-@@ -625,21 +626,19 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- 
- 		if (depth == 0) {
- 			pr_err("%pOF: cpu-map children should be clusters\n", c);
--			of_node_put(c);
- 			return -EINVAL;
- 		}
- 
- 		if (leaf) {
- 			ret = parse_core(c, package_id, cluster_id, core_id++);
-+			if (ret != 0)
-+				return ret;
- 		} else {
- 			pr_err("%pOF: Non-leaf cluster with core %s\n",
- 			       cluster, name);
--			ret = -EINVAL;
-+			return -EINVAL;
- 		}
- 
--		of_node_put(c);
--		if (ret != 0)
--			return ret;
- 		i++;
- 	} while (1);
- 
-@@ -652,19 +651,19 @@ static int __init parse_cluster(struct device_node *cluster, int package_id,
- static int __init parse_socket(struct device_node *socket)
- {
- 	char name[20];
--	struct device_node *c;
- 	bool has_socket = false;
- 	int package_id = 0, ret;
- 
- 	do {
- 		snprintf(name, sizeof(name), "socket%d", package_id);
--		c = of_get_child_by_name(socket, name);
-+		struct device_node *c __free(device_node) =
-+			of_get_child_by_name(socket, name);
-+
- 		if (!c)
- 			break;
- 
- 		has_socket = true;
- 		ret = parse_cluster(c, package_id, -1, 0);
--		of_node_put(c);
- 		if (ret != 0)
- 			return ret;
- 
-@@ -679,11 +678,11 @@ static int __init parse_socket(struct device_node *socket)
- 
- static int __init parse_dt_topology(void)
- {
--	struct device_node *cn, *map;
- 	int ret = 0;
- 	int cpu;
-+	struct device_node *cn __free(device_node) =
-+		of_find_node_by_path("/cpus");
- 
--	cn = of_find_node_by_path("/cpus");
- 	if (!cn) {
- 		pr_err("No CPU information found in DT\n");
- 		return 0;
-@@ -693,13 +692,15 @@ static int __init parse_dt_topology(void)
- 	 * When topology is provided cpu-map is essentially a root
- 	 * cluster with restricted subnodes.
- 	 */
--	map = of_get_child_by_name(cn, "cpu-map");
-+	struct device_node *map __free(device_node) =
-+		of_get_child_by_name(cn, "cpu-map");
-+
- 	if (!map)
--		goto out;
-+		return ret;
- 
- 	ret = parse_socket(map);
- 	if (ret != 0)
--		goto out_map;
-+		return ret;
- 
- 	topology_normalize_cpu_scale();
- 
-@@ -709,14 +710,9 @@ static int __init parse_dt_topology(void)
- 	 */
- 	for_each_possible_cpu(cpu)
- 		if (cpu_topology[cpu].package_id < 0) {
--			ret = -EINVAL;
--			break;
-+			return -EINVAL;
- 		}
- 
--out_map:
--	of_node_put(map);
--out:
--	of_node_put(cn);
- 	return ret;
- }
- #endif
--- 
-2.34.1
+Best regards,
+Shengyang
 
 
