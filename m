@@ -1,134 +1,118 @@
-Return-Path: <linux-kernel+bounces-178088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE548C487E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 602718C4879
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691232866FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:51:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19B3A286687
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6C583A0B;
-	Mon, 13 May 2024 20:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DE4823D9;
+	Mon, 13 May 2024 20:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SITGYBZc"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cXe+QG05"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F2A80BF7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0F03A1A2;
+	Mon, 13 May 2024 20:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715633497; cv=none; b=mSykRMCXvce/zzEtvG7Q2TzvuMyAR0ExFT3jcVfFTY8xJJdw4VGITWgOXukaZgWr23kGe5+Jx5ds7qB9mTz2LiWg6bJHlaPlkX/xdizah9dDsyI9KAZl/CyG7e3n51Da+B2KNQ9Hyw9Kmj/FfL3xubUSAvgmhkE2ZzuepdoLOSA=
+	t=1715633495; cv=none; b=qmnBzdHxOBXVnhxT6DX67SGXrM127owc0DKFF3xDCWxx5Q2896yUxvnB5aLFGQskCZHaCwhcE4rHf52NYC4TirnKXc+I/K9bjQWqQhxVC9YfkKIYRi1+8TD6s/K7UV/JDX+HAs3AvvIZVNNo3u2E8xgwP1LBtkzM9YI+l0vkpjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715633497; c=relaxed/simple;
-	bh=Rv7jmDTVVRFwx435oiB3ZXmxSleUrrvg/LBh8jNJlFU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m7MJRCuCPUBiXG8vIgoAQyB93ysq23hedKNSD9G6XtiYUw3QNuJaPT5RVxANgVd/fpztold7WjJy8rAS6ForwHxIx6IGrCNlhObZ71FdQIabaK+dOQgnSaClUYTHVa1ZDxWD+LbqvAWMPMhWO8aquaBdkTCsqgU9vnWv5xVss/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SITGYBZc; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-61e01d5ea74so50976507b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715633494; x=1716238294; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rv7jmDTVVRFwx435oiB3ZXmxSleUrrvg/LBh8jNJlFU=;
-        b=SITGYBZcGRltvTYKUw+xwPT3Qppw4Qwcf5qKHQoVeqBbdG/b5riNKV+SNKraBdZJm1
-         SB1g7154H7STgV+k+FtLPO84psOs4roLrlEJz+6kBSYjH2TItTYjfgQeQ5Y8MypBNmh0
-         sqlU9X+Gylc1bEuPK7s+XN4X7/tKpP25j0A+Q4gewtbkvAo9Xr3l3+LvjUIGcDm6olVZ
-         O6/lrSNySBm495BniGMYQ+81Hg3fqXsOUzw08gw4MoZm9l96MVYiPWiLAv//cAjo2JzO
-         +XK+3rd5sM8xI03g7ujqkafQdm68HVqPG3O+B+qy18PgS1rpcvD2a4CzdLdvKl/CRURa
-         ALwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715633494; x=1716238294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rv7jmDTVVRFwx435oiB3ZXmxSleUrrvg/LBh8jNJlFU=;
-        b=h4xbhURuHDL0ttS5+fqFXR23rP5UpFNADxzlPXal3D0SSrlbSYjfrMdl68+fiod0iQ
-         HYczWz7tgx+JmiXeQ/BudQH8w5mVaP67yyxtikKXZkDpw4JUMRmmFUPugF/OxSi4gtbT
-         IlWj3TrWQPh+sZgwORHoqtGcmDe1r7Yzkn5Lhj6b7NA2TukplSPREBqqgkg+Q7PHrmM+
-         m68vRqHopnD6VJaQ/5acvkJMUjG2WlD2m9u92t9Qq/oMSAxETe79558tCiuilITmcu3R
-         TOf9BiGiFtlKHjMXmUGafoC1yvt6OAa1Hmi8endzzAUxK4WukCa5h3l5AfZC72oUrWoc
-         yPsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPj8hQXivBIZj42Y+EFXeajcUV1dBxFa9HM6WmS1YOEzS+M3XEwiYspxHhaiSRx8M5p6TN3RuNBzvN4QNbFCGX0qjSZIHUjZ4ylWdj
-X-Gm-Message-State: AOJu0Yz8UaEmbiUy13eq5j4FhGTjh1bOZz5BXoGhouKoK4kE7m4fWGxH
-	VBkEyUJ1gxFCsYaPENs4ndM2omzfwhrK7j5olXp8OF1so/qb+iHWkFI7MpvorS0g8ZGPcwUF/Pf
-	Zt+1EeF4kN3Lg9oMkjW0OMDfgCxjIeGLNUCEPig==
-X-Google-Smtp-Source: AGHT+IHIMCINiS4Rm3W7vEHXnxoinnBVVMUXT21CaUFl/K9jprbEih1fz56tIA0O4ev2Ijok+dKJMkYRTsYw4QOpIww=
-X-Received: by 2002:a05:690c:ed4:b0:61a:e9f6:2b1b with SMTP id
- 00721157ae682-622aff774d9mr145019207b3.8.1715633492884; Mon, 13 May 2024
- 13:51:32 -0700 (PDT)
+	s=arc-20240116; t=1715633495; c=relaxed/simple;
+	bh=x1s6uZWdvm+KEY3Apexxgf5pQTfniOCvOTs3jXtO7wk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=POcBw1CJ4kMq9sjzvqAgv/bV8M5XMsb671hTwCMiYdTsLYT1GxQgJ4i6YsVnd/B4p+HPBWP0KuvI+qPjMzjEjyd3t/qFXBU9H310+lj43IMj/gAI6c9WcpI8koJUFkPkEfLDX3V9SBol3zBJ0bCp8xhl9b4V3yQM+WTMcXWbdbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cXe+QG05; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715633494; x=1747169494;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=x1s6uZWdvm+KEY3Apexxgf5pQTfniOCvOTs3jXtO7wk=;
+  b=cXe+QG055mFNENquv+Xl0X+iKRgQSphPMIVyb/+k9AoZQUP8z+MOjHZI
+   XB04Ev7y70tvjij9VHctHNdHBIutCjSsY+2XYmTYZdhtzny9TR9vZIL8t
+   R6bo7v2s/EDDZuSZ0ZNMSmU24/AaohoSvtQlmf5KNvgRKG7THoMs1oLke
+   PGWOG7HV2LLhC+KE/q+RDAoTliR8QaF8UOmo4HbbyqX7cjKC4OfszX3lr
+   Eo9dUa7KMW+y/j+3WL3ojyd4dkf9Vj5mhb7bPbT+KKGi53dfkTkF6smdw
+   Pzw5e36hdZBfzyDJGX4xlICuT0s65lzAtZV3zGtwNQ5LFSSJgGEtBufRs
+   g==;
+X-CSE-ConnectionGUID: NZR/EfZaRLiWtyLQzKjIeQ==
+X-CSE-MsgGUID: iLedArpxR1aPYndKjsV2NA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="22737126"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="22737126"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:51:33 -0700
+X-CSE-ConnectionGUID: cCQB5xTpQYC76ith1YZAwQ==
+X-CSE-MsgGUID: WExAGTfLQSyd0xOustYf6w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="34896296"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:51:32 -0700
+Date: Mon, 13 May 2024 13:51:32 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, seanjc@google.com, michael.roth@amd.com,
+	isaku.yamahata@intel.com, thomas.lendacky@amd.com,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH 02/21] KVM: Allow page-sized MMU caches to be initialized
+ with custom 64-bit values
+Message-ID: <20240513205132.GB168153@ls.amr.corp.intel.com>
+References: <20240227232100.478238-1-pbonzini@redhat.com>
+ <20240227232100.478238-3-pbonzini@redhat.com>
+ <6bd61607-9491-4517-8fc8-8d61d9416cab@linux.intel.com>
+ <4d0d9f64-4cc4-4c1e-ba27-ff70c9827570@linux.intel.com>
+ <20240513203839.GA168153@ls.amr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com> <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 May 2024 22:51:21 +0200
-Message-ID: <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
-Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240513203839.GA168153@ls.amr.corp.intel.com>
 
-On Mon, May 13, 2024 at 1:59=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp.c=
-om> wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Use scope based of_node_put() cleanup to simplify code.
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
->
-> Thanks for your patch!
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, May 13, 2024 at 01:38:39PM -0700,
+Isaku Yamahata <isaku.yamahata@intel.com> wrote:
 
-Does this go into the Renesas patch stack?
+> > > > index 9c99c9373a3e..c9828feb7a1c 100644
+> > > > --- a/virt/kvm/kvm_main.c
+> > > > +++ b/virt/kvm/kvm_main.c
+> > > > @@ -401,12 +401,17 @@ static void kvm_flush_shadow_all(struct kvm *kvm)
+> > > >   static inline void *mmu_memory_cache_alloc_obj(struct
+> > > > kvm_mmu_memory_cache *mc,
+> > > >                              gfp_t gfp_flags)
+> > > >   {
+> > > > +    void *page;
+> > > > +
+> > > >       gfp_flags |= mc->gfp_zero;
+> > > >         if (mc->kmem_cache)
+> > > >           return kmem_cache_alloc(mc->kmem_cache, gfp_flags);
+> > > > -    else
+> > > > -        return (void *)__get_free_page(gfp_flags);
+> > > > +
+> > > > +    page = (void *)__get_free_page(gfp_flags);
+> > > > +    if (page && mc->init_value)
+> > > > +        memset64(page, mc->init_value, PAGE_SIZE /
+> > > > sizeof(mc->init_value));
+> > 
+> > Do we need a static_assert() to make sure mc->init_value is 64bit?
+> 
+> That's overkill because EPT entry is defined as 64bit and KVM uses u64 for it
+> uniformly.
 
-I think the patch stands fine without the rest of the series.
-
-Yours,
-Linus Walleij
+Oops, I picked the wrong mail to reply. Sorry for noise.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
