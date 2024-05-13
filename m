@@ -1,72 +1,81 @@
-Return-Path: <linux-kernel+bounces-178023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C874F8C4791
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:35:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327DD8C4794
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F15B1C220DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFADC28292A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D71F762EB;
-	Mon, 13 May 2024 19:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93B576058;
+	Mon, 13 May 2024 19:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBioGh+4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MV9xnDpf"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F34439FD8;
-	Mon, 13 May 2024 19:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8877D1E49F;
+	Mon, 13 May 2024 19:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715628907; cv=none; b=EWyTj3bS4hWXewpdtrZ9E2dVtL0qi7Odsys2Dw5NoHRXLZQMSsxHEYqwAwOena3aRIXwXPfWFdgKfSUs8hLNVTD3LthdbWv/SPrWy4JFUO4+w4+Q9n8Z63UPfh4yviwOCxT+xY/Odc1JAxv89pdnChiOQ6otme+P1JjnAKKT7uI=
+	t=1715629051; cv=none; b=LBAhn+k/U40pLQnhWzgB3g2Qp65nhnk31Bu0xEMk1jOVS+5+GeaieHm03c9xU8owwBRwiPVOXWslRIjJyhRD33nSxhiegBoYK+zBfoh+jbMJTVKCOsvq+iTkQOmg5LLGrFpnbvtYuwuZD44Ea3EWp93Jdzsf+9JWJpv/v6EKZro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715628907; c=relaxed/simple;
-	bh=KNTg+2wS+o1DKHL98I7FqXY+zNv3Twt4zrowVfZvpN8=;
+	s=arc-20240116; t=1715629051; c=relaxed/simple;
+	bh=M9Av3oU8n04AtsbwLQfSL20FncYfaav+0D7ozavvTf4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCZrAzm/CxwV7MurV9AyYR1KKDbVqNkUiei5iAEQSeefNgjubPhcOxrpyH7qHZkQpwAI9zJ7sjQXoPcAGO3WKMaJbqr/iJZgtqwoNntQdDIITjmkjDsZC4mlpuJG5Jfz5bISNFj80g7Y3ke1VBdmUXeDsyvolT+gYSPBfnPvHXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBioGh+4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0BEAC113CC;
-	Mon, 13 May 2024 19:35:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715628906;
-	bh=KNTg+2wS+o1DKHL98I7FqXY+zNv3Twt4zrowVfZvpN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EBioGh+4tTPxzt3D8JlYW0wLp/e4N7nSOtfQvKZpS1tWCbeyRNVLPKf2CTRnGiLkZ
-	 XnrYs7H+aavjBKzCMDhf9ujP19Xb9X2vyDqvLIA+IJfSkG42wPHUrbPa+aTArklx+t
-	 4JTqqpj9+ETx1la2tnaFqYVzQILAr13BPdfANys4zkTQJ7WFLD18UoEdI3WF52ZxAi
-	 xJUPt8hBZk03JNe8tb8GcVvKRV0lQMmi/pLt4Hf/5E3dsRg0CVu+BEZkRQMR6gHQuu
-	 695SrPiR9KAdmFLZhCsjrGFTDfk2jghgkl0xaApzWH0Dg81rckYoqs4Gl+dXFFPtV2
-	 dWy3ZAZdUaFgg==
-Date: Mon, 13 May 2024 14:35:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: Aradhya Bhatia <a-bhatia1@ti.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Jyri Sarha <jyri.sarha@iki.fi>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	DRI Development List <dri-devel@lists.freedesktop.org>,
-	Devicetree List <devicetree@vger.kernel.org>,
-	Linux Kernel List <linux-kernel@vger.kernel.org>,
-	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-	Francesco Dolcini <francesco@dolcini.it>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
-	Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra <j-luthra@ti.com>
-Subject: Re: [PATCH 3/4] dt-bindings: display: ti,am65x-dss: Add OLDI
- properties for AM625 DSS
-Message-ID: <20240513193504.GA3000298-robh@kernel.org>
-References: <20240511193055.1686149-1-a-bhatia1@ti.com>
- <20240511193055.1686149-4-a-bhatia1@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UT32fCgW2nQld4lUWL4kNLfY1ypL5H7cFA0USybeZCI9vRg6J9ix4U7a6nrQe9+h31xxGDDeBh6lWs6fDuE9ShAOyWrEWsAnbq/6LewSI7Erbas9/gb/60SBdePEQvTUK81nHjomkzvuwJud2f4NL67jSgnXMKi24Lv059Iv5Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MV9xnDpf; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e3c3aa8938so32333845ad.1;
+        Mon, 13 May 2024 12:37:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715629049; x=1716233849; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WrXG6JI63u00fBjFaKN5tlrQUFXX0nIsNBWnFMgexpY=;
+        b=MV9xnDpfkPXU6HCKJfPx5M8Uvrjm1yJj51BDhtj+GbnkpQrAmAMVWJdW1pFKItA7sL
+         PY1sjkW3XaeqdS4tEN0I/Kb//1uVraDWoPN+Hq3UgiZdC/pvDqJwNsSNjK2yhCwreaHD
+         z/uARP84lHemkZe+h9Zw5aYzOOsOFvz+O/6vsTE2JD33p0t0DS6aQru440qC3UY/KjOx
+         68vdkQHy6FZoKCsVx297rIZyO11FUBoljnRWEVrLe6jJfHCC1N6pxUtfgG/80uMteKGU
+         t9HwpkQ5PkDtWmcnuCrOY/GqWnpaaoVQZ56ZRMKlQBmdeEAC7TORw54cYTytePMZABgS
+         BgIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715629049; x=1716233849;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WrXG6JI63u00fBjFaKN5tlrQUFXX0nIsNBWnFMgexpY=;
+        b=XvQVwErzefBnG3IJnVKlduMbWDkjN0pBkfdHDY9JgGgtAuk0JCMRO+B4Kh0ngch8PU
+         nTFQ9EoMILOGXADvpqnyLRHT2sZvOQJAEpwEq/HcA1K2OZj2f+S1O1JuUwHc4curMYOQ
+         PCKRtNS4dWlovzRrnfPsH1ef0K+t6EDixe3OcSIxOQNk3zllik1rbv3b2vhm9sL4HkBD
+         1cbOhwY2wyO0Grlb5T9CHGNAODITH8zrVufbQSqB6Q0un6UMroMHk5prUdWehFxuq3Gf
+         Iol2OLfS27nbFxcS3fWsBC/4HXgXpIJ3+N7bzTSBRgUvXahksafHtd/s3ZRwpdOoaonh
+         8OqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgPb3mMM23aPq0lgFh0rPxfbV8viQmwiJIwyGkGr90tHOSF86GZIrkA0xO/zSInE/X8sb6Xp3jzsF3HiX/PFlsmpshwwW2Xfplt/EJ/JbIh7upYV8uxKQ5Q78ksORpmraKXajt7wGGK+A=
+X-Gm-Message-State: AOJu0Yw2zGAFTO1M3P6pZ0a8mH+OXofJn4NNDqrY5w+ajAxitKIw8vBb
+	q05PJWve56+L7iVqTHFig+SeTCvlGXb6T0zJkBjWEKCGXY41Rr6n
+X-Google-Smtp-Source: AGHT+IHqZslrfWabBRBr1EVGcLS86482a+ubhlYZJKVMxH4xU5RvaLQMxScoq+w3QCmTcw5tZ62+6g==
+X-Received: by 2002:a17:902:da8c:b0:1ee:b35e:963f with SMTP id d9443c01a7336-1ef43d18cb3mr129145865ad.26.1715629048802;
+        Mon, 13 May 2024 12:37:28 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c039e89sm85207695ad.224.2024.05.13.12.37.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 12:37:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Mon, 13 May 2024 12:37:26 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Marius Zachmann <mail@mariuszachmann.de>
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] hwmon: (corsair-cpro) Add firmware and bootloader
+ information
+Message-ID: <6d063681-03d5-4270-9fe6-7879fc019382@roeck-us.net>
+References: <20240513192538.40144-2-mail@mariuszachmann.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,78 +84,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240511193055.1686149-4-a-bhatia1@ti.com>
+In-Reply-To: <20240513192538.40144-2-mail@mariuszachmann.de>
 
-On Sun, May 12, 2024 at 01:00:54AM +0530, Aradhya Bhatia wrote:
-> The DSS in AM625 SoC has 2 OLDI TXes. Refer the OLDI schema to add the
-> properties.
-> 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->  .../bindings/display/ti/ti,am65x-dss.yaml     | 136 +++++++++++++++++-
->  1 file changed, 135 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> index 399d68986326..4aa2de59b32b 100644
-> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
-> @@ -85,12 +85,30 @@ properties:
+On Mon, May 13, 2024 at 09:25:38PM +0200, Marius Zachmann wrote:
+[ ...]
 >  
->      properties:
->        port@0:
-> -        $ref: /schemas/graph.yaml#/properties/port
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-
-You don't need this change. You aren't adding any extra properties.
-
->          description:
->            For AM65x DSS, the OLDI output port node from video port 1.
->            For AM625 DSS, the internal DPI output port node from video
->            port 1.
->            For AM62A7 DSS, the port is tied off inside the SoC.
-> +        properties:
-> +          endpoint@0:
-> +            $ref: /schemas/graph.yaml#/properties/endpoint
-> +            description:
-> +              For AM625 DSS, VP Connection to OLDI0.
-> +              For AM65X DSS, OLDI output from the SoC.
+> +/* read firmware version */
+> +static int get_fw_version(struct ccp_device *ccp)
+> +{
+> +	int ret;
 > +
-> +          endpoint@1:
-> +            $ref: /schemas/graph.yaml#/properties/endpoint
-> +            description:
-> +              For AM625 DSS, VP Connection to OLDI1.
-> +
-> +        anyOf:
-> +          - required:
-> +              - endpoint
-> +          - required:
-> +              - endpoint@0
-> +              - endpoint@1
->  
->        port@1:
->          $ref: /schemas/graph.yaml#/properties/port
-> @@ -112,6 +130,22 @@ properties:
->        Input memory (from main memory to dispc) bandwidth limit in
->        bytes per second
->  
-> +  oldi-txes:
-> +    type: object
-> +    properties:
-> +      "#address-cells":
-> +        const: 1
-> +
-> +      "#size-cells":
-> +        const: 0
-> +
-> +    patternProperties:
-> +      '^oldi_tx@[0-1]$':
-> +        type: object
-> +        $ref: ti,am625-oldi.yaml#
-> +        unevaluatedProperties: false
-> +        description: OLDI transmitters connected to the DSS VPs
+> +	ret = send_usb_cmd(ccp, CTL_GET_FW_VER, 0, 0, 0);
+> +	if (ret) {
+> +		hid_notice(ccp->hdev, "Failed to read firmware version.\n");
 
-Connected to is not part of the DSS. I don't think these nodes belong 
-here as mentioned in the other patch.
+Please use the following pattern:
 
-Rob
+	if (ret) {
+		hid_notice(ccp->hdev, "Failed to read firmware version.\n");
+		return ret;
+	}
+	ccp->firmware_ver[0] = ccp->buffer[1];
+	ccp->firmware_ver[1] = ccp->buffer[2];
+	ccp->firmware_ver[2] = ccp->buffer[3];
+
+	return 0;
+
+Thanks,
+Guenter
 
