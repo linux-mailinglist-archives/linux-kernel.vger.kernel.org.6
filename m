@@ -1,359 +1,393 @@
-Return-Path: <linux-kernel+bounces-178149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28AFF8C49B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:44:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A68F8C49BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C7B51C21870
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:44:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0351C21CEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4A984DF7;
-	Mon, 13 May 2024 22:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7017E84DF3;
+	Mon, 13 May 2024 22:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S/VqtakY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="kHLkwhFu"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADB22AF09;
-	Mon, 13 May 2024 22:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715640283; cv=fail; b=faqH/3ULJZzgHMT+v8jHlU8QDttAHi3LphBD/nRp73Hogp7lThyPqy1NBrBNOYg90b3Gy0d7dj4nnF7ug1Byy7WH1AbNDlvxsVKI1Q1X+IvG9pdZAcjuDg+MSyRkjyS6IlVJp2uhcJgQUIzoNmSjXqaheTk8cYRkvq8Z2l6/vQc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715640283; c=relaxed/simple;
-	bh=TwciVqrvNU7T2QKZuHGVcV6WmY+l3K7NBX3gxwAR0RA=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lpjYC0/0Tjg97UiAIp+sxXYouQYt7lcw3SVd92Gljarrm7Ehvk9Ic/RmonEIvcMePp+KzwHmp7dyMcW9I1E/+IEEstwBsXOZKk5WBygiuORGuNZ1EwP+xjPTmBDqLt676gibXG/4OmoZDsJ5HMxJetsz0+rop+S6pcLdrqqjDek=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S/VqtakY; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715640282; x=1747176282;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=TwciVqrvNU7T2QKZuHGVcV6WmY+l3K7NBX3gxwAR0RA=;
-  b=S/VqtakY7OvSlKeDvmevbv97DgISqpANjp4AdJIyPGEXHDXCecv6CRnU
-   xy0snuoF/ZVtlqQnp/8d0Qu9ziInBbfScre9SSAgQXrTCE0QPUOCzVsbg
-   MDIx1pefbMLbEjIBHtKfMhbo4KT69Gr3bcsbTXP0IDE6YETzyk5qq2LnX
-   rl+dyS5n9yXbWcLisCSY9XuQ6nlFhNhwYbvvYiBmQroKEYqaGDc864zyf
-   zJMnxmIHpg4CaG/23Fr95+QQsJCZHOsFr9v6zQZdCNo2MyyT12VQuzpW6
-   3IHEHMvy0yQWC304gzoFKEr/qeM/37HVyt6itzQQTomZh6g5g7CUJkvBp
-   w==;
-X-CSE-ConnectionGUID: ukXFq96qTdaLrL5Vk04Cyw==
-X-CSE-MsgGUID: iv0FuvjXSi+iDF5fGlLiIA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="22197544"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="22197544"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 15:44:40 -0700
-X-CSE-ConnectionGUID: 8pSAa7r3Rpapafqs9zhNaw==
-X-CSE-MsgGUID: 3U9kN4QvRWSqdMr3CV7boQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="35226011"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 May 2024 15:44:40 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 13 May 2024 15:44:39 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 13 May 2024 15:44:39 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 13 May 2024 15:44:39 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83602AF09;
+	Mon, 13 May 2024 22:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715640412; cv=none; b=Gm7sPEYP68q2Lm/MDoZ0vfMKpusUd7PlEDD22fhdROEsdpiYusToIk+9orKiNajmlSluo/z3K6bq5u9VPIRF/QM7SchiL6FtEdnoe8bM4VQX/jmX7SKxVmXBRclX7CCIDZZZfk/aHNJX9Ye7DtWSYy0NWUcrP8oqI6DAgeDiVpE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715640412; c=relaxed/simple;
+	bh=y8FOmJu3tWA29CYfyy+y+pXIeU/7gF8sl1aFPPGxY/k=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZMEi4I0WND9AFqFg44WIjChxujst53kC6dv64b4T+KQf3aLDhqjh/nQnNtr2fJQ8W7AzuEARw+02GSdQ5t6PeizQpf8TYop9igrf2RH0EkUOnW/3opqf+xcHux8GRXba3634eEk8oY7oyuOoSp+/sB1HLKfHSLoU4F7n0gLw3DE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=kHLkwhFu; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 8B56F12001C;
+	Tue, 14 May 2024 01:46:43 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8B56F12001C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715640403;
+	bh=kXE1Li6CYAMN37Y6ndANEsSdW059zB4iC9T0bLHvcxg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=kHLkwhFueeFp6DpOXB/h35U1Z6uGicWSKOkof9iyYngtvn3GPyZu2cn3aUQXCX0it
+	 oXSAhD8Ad0+hSVNrS6AlhIId6hNaKXDFQakdxfC7cgQik37aazcYC/6uFsaGqCZeJm
+	 vcwLo/3/vfu9PP49863eIAw5dW2mml8Q8kFIBTctudJXdY56jWEnscpKl5t+6eoLdo
+	 UunROdUtrE5oFgzFHRIPXaLtsSt38/7g95nRetP8aaT/6GD9Ma3TsvqFoz7PPSs8VU
+	 xEztQzkVpm1LlHfxaw2T3AhdSI2/wFU7fq9cUPGsrXFTzGygW1Z0BTUatTci+3mSmM
+	 cpDbXI/HzZ/7g==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 14 May 2024 01:46:43 +0300 (MSK)
+Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 15:44:39 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kiVX+ix62vL/H/cHFLVEoLCGUof0XAV2yB21C5mgvpzzDdyiLDXUnt8YMet9Lnf/dtD5oc4l0lj06pgaoe9sqacCtAtzcy+HcJqHM4MEOePEJ6LzBiVoUTTVaMrHNnh2U8JMqg1Y+NyWrPusG6T/o3NEJMBQxDtZhacsCJAqVJ4CG23VecDAIlHITnMHJWxY8W/4PJz7xKAbzDcLf3WKgVlTlGC+3H4aN+Jtp+7+sG+UxFoBjh42CuDHvHjhpCUklUNRyt0LlfOb71jzyRI4IvUG2QzTG/3DpGIrPK8aEZAb/4pQDF+vhko1+ImGkiDpMlnRdzdc2ycy47FJRvn3RA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8T5jPm1gRKCBkaOZ61OamWEwgv9hSTE+xDzB16FscLw=;
- b=hte4dCy5rbbiwaHknkPNElJZZ7j49YdnnnzoEzGyr1UN9EM5JqUcFZ8D6lIu6nA3c++bl/eVX+2tdIaIYXcb/e5utL96QdUz/MXPNeBhVDstnYc8ejb9412TgimMi/zGPcksPgLW6K3TAzuLdBO1erusn2Zx47jrOJpPETVgC2XnJoI7IbqB438xhjsSAl3shnoZrSJKBYZ/xVe6xAkegmbRE8ERhkkvbLl5SBMWow2PaKUi3KatFc8XwjF9vhXMwCw5f2ASmXndNSZy/acN/OfDeXL3gjQNoiTWtlsLleW2XZm+RVxmZADFOYv8eZsVEAEV9mHjiekd4GPhf1l2uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by DS0PR11MB7649.namprd11.prod.outlook.com (2603:10b6:8:146::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 22:44:37 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 22:44:36 +0000
-Message-ID: <6100e822-378b-422e-8ff8-f41b19785eea@intel.com>
-Date: Tue, 14 May 2024 10:44:29 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] x86/reboot: Unconditionally define
- cpu_emergency_virt_cb typedef
-To: Sean Christopherson <seanjc@google.com>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <20240425233951.3344485-1-seanjc@google.com>
- <20240425233951.3344485-2-seanjc@google.com>
- <5dfc9eb860a587d1864371874bbf267fa0aa7922.camel@intel.com>
- <ZkI5WApAR6iqCgil@google.com>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <ZkI5WApAR6iqCgil@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR03CA0133.namprd03.prod.outlook.com
- (2603:10b6:303:8c::18) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+ 15.2.1118.40; Tue, 14 May 2024 01:46:42 +0300
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
+	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v2] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
+Date: Tue, 14 May 2024 01:45:52 +0300
+Message-ID: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|DS0PR11MB7649:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f475ee9-9550-4d5c-fcea-08dc739e4448
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|1800799015;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?UjQ3MkEzMi9POWRuRjgyN0RUQ0crVWZVekRBOHJUci84NER4VEdxc0c3NVRx?=
- =?utf-8?B?MXdxaEh4Y0VJQ1RjaWJtalVYNEtFNStocm1FODBtbjZDWVBnUDhzRm9leHcy?=
- =?utf-8?B?eHYvYmhuT3ZyNUFNTmlWMTU4MkFoYmZ0N3hodnIxMjhjKyt3a2RVNTBwNWxT?=
- =?utf-8?B?ZWlBS3ZWZ3J3TEgrQnRJdG9ZaVJGbzN4aFNZRGEzaEFXOW9QWHdFR3RsQjB5?=
- =?utf-8?B?RFprRDRFQll6SHd0dVF3ZGNlbHVnZzBENVI4ekVTRzdEb3MzS0ZFZjRLb1Rw?=
- =?utf-8?B?d0JXN0xCdi8zQTlyekI2RFlVa004N1B3cFFzdEtPQU5vaXRSZUdIcWdWemw3?=
- =?utf-8?B?RDlWeURaTjN5SlNSaHdxT0xGamZHK2QvQTNHdUpvRUFZaUQ4dzFEQlAyZ05V?=
- =?utf-8?B?TUs2QVFXUEpnY2tlVDZaTmNyL3dtcmNJak5pWVMvVmhlRWk4bkdwMkYwZkhr?=
- =?utf-8?B?bGZyd045WWo5V1g2eG96Qlo5eDJLYllUT25IL0xtUjJ0aHhUdHpPZlp4Q2pS?=
- =?utf-8?B?NVN4d1ExUU44Z2hYeDI3aHJVQ3g5a1pwMHNtVXF2MFNOb0pqMnF5K0pOZWQ5?=
- =?utf-8?B?ZGZqSlhtUUhHNVEvRzNZMldhQmNSRlRKdk1Dd25Pa3I3M3lwV1lGbEtPLzYv?=
- =?utf-8?B?YTlSYTF2Nldpb21DWEtsQTFObEUxMW51R2ZHWFplNEtkempTTlBsUzhLcWZK?=
- =?utf-8?B?YlJma1ZiaVVYcXlZQm80cHBFTUIxSE1HZlloZEl4WHRkTHd3MjFITjRXY3VX?=
- =?utf-8?B?T1YwZDBQNVJnUXZ0UForQ2FsWUVZdkFLcENVM29PRWxyY3dkOXA0Q2ZEZHp2?=
- =?utf-8?B?RUVGMHlVeFZyb2NBZ1RvY0R3T2x2ZHVDU2YvcGFpUEhINVdFYWRHRGVkQ1R5?=
- =?utf-8?B?TE00bkE3WGlpdGxLeUhRaEUzd1RSbVpTT0ROSDlLbzc5MXFLcFEwN053dnRq?=
- =?utf-8?B?WTBlZUNBNUJsUDJBR1BSN3Fvb241b2pENWQ5T3gwcmpYTDFJREljWmRhYWdz?=
- =?utf-8?B?THRoZzNNaEtpVEdRVG10dXFWWWowbmJCUVF3TUlacmY3TkliS1c0NWhmL1lF?=
- =?utf-8?B?dGlDaTkyWlVPUjJ6cXRGcTh6TlRmdVlLR3NXejBuN2tsS2dESDVWUC9BdXVU?=
- =?utf-8?B?M3psbGkrU1B6YUlpQ2dBZllXSFlBZktIbHdUR1hkVU4rcTkvdm5COUczM0pv?=
- =?utf-8?B?UzVRbTlpMXhGQ0J5RmI0TkNDYUFFSzFxdElDNUNuTERiL2lFMlJxbGxZaDJR?=
- =?utf-8?B?NW55VXB5RVFidVUwRno5VkNFendsRks1K3dsNlZ2UFEwd3VYZGZBQUlkcHp6?=
- =?utf-8?B?bXlneGRSeGJlSVZGVFk4V2o5azJJd1VMOE5FSnlaTFF5UEhGUlRiVGxQeUlt?=
- =?utf-8?B?TThLeTUzcU9zQUpsL1o1a2pCZGh5aVZzNU04NUpyaXZ0dGROZHB0SG1WRGlF?=
- =?utf-8?B?OHBOa21aMGU1TEZtTkpzUXYwSkRWbXlIcmhJMk1qSjJEOURrYUQ1endIUk1Z?=
- =?utf-8?B?Q0MwYzVYOXV0VnNaTGpwWnFMOUN4RWRnOWlEbGFUeHg4RkJ3eUREb2M4SFBL?=
- =?utf-8?B?ZDFkcjZJNGxnaDRyM3RxeTNOMGdjUXFnVWpJNDVKM0tqeEN6Um1EU2V4ejdN?=
- =?utf-8?Q?lZCE8+RhYEW0caxq6Xr7vCXnUQRlr/ff0DLvo+GGPsTE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UXFtaE83eUI1UmxZRjk5ZzJlWG4wK21CeXgwRU1rZXpVMEFCZjQrV0RrVndj?=
- =?utf-8?B?NEhwR0FpYW5FWmNkTGJtVVZlS2VWZXZyQ2Z0TUk2OGtMZmtTeDlHUEkzMHd3?=
- =?utf-8?B?czZwVjEwaHZIcFZ5U1hUUHBKRWJWbklRVVNWTHYwZEl5dGloYUNMQVVuWTJQ?=
- =?utf-8?B?THk4aEJzek1hL1JuV2V2aitlWlFUSmVZUWYzc0VqY1VhYjc0TitZN2Z0TTJi?=
- =?utf-8?B?NW1CKzc5SDRCaDVwQjlWMFEvTkpRVHBiWUhXc0RjMnVLZU51YTFGbWlLWkQ1?=
- =?utf-8?B?WW1YWTVHZ1BzUjE5dEw4M05EdlhmdzQ0ditrV3NsdVJ2WXJJazJ6ZEhFcjhC?=
- =?utf-8?B?L2tCREYydjlsdGpTa3RGcXhzRjE0ZW1nWHFOQXRPeUFLY0ZaY2hPd3VrT3Mv?=
- =?utf-8?B?VlVSMldPQzFxMzJ6emJFM3J6VWtiZDgxSmx0SjlpZTN2VVYveUVVcnptM2pL?=
- =?utf-8?B?R3pEZmJQeHpza3Q4RnJtU1luVFg3WE0yalJMU3dvUC9HYndpcWtmTU10cjBW?=
- =?utf-8?B?TWtwQWV1M1lkT2FxQU1GVU5ybDFxdlBOZ3JhdkdGRXl1K2FHZkRYakNERlRj?=
- =?utf-8?B?YW9Qa1NlT1h1RU9iaG4wQStKQzA3RkZWUFFQbkh0TEU4RkltbG9vd0UyWDVh?=
- =?utf-8?B?NXVrcm5Ra2ZINlVONk13bjVjOHVnWEU3Nzk4UVVxMkpoZW9mdzd3QjN1eDcz?=
- =?utf-8?B?OFJZSEVzQ0djajZvbUpLbk5TWXYzTmdnMEszRjdkc0lnbHgxbVpaaFFabGFL?=
- =?utf-8?B?TXpEY3J5MVJ4dnhRSUs4VUJJR1hEcklLcFRTK1B4eVFDN3phNnF4TFhwNmdG?=
- =?utf-8?B?RldPSGZYQlhMYXBBMHp6d1Ftdk9FekhoS0J0akswOVBDamtSUFV3TmFYZkNw?=
- =?utf-8?B?WEhoNWhnZXBRRWY5TWpyVDlha0JvbkJJN0xCOXVzMW1EUVN0eWQ4Y1l1cVZO?=
- =?utf-8?B?S01oaC9oUWdJaTQ3OExPbmIyVkd1RDA4ZkNtK2x2QVhMK0ZwVlhtRmgxcTd2?=
- =?utf-8?B?SEZGamVwN3AzM2R3eVJVejRaQnplSDcyeWVvNTVqVWUyelJ5Mjk2YnlSSk53?=
- =?utf-8?B?bXBmOE9OR1A1THh6OTdweGdaVk5XZUg2WHE2Zzl5SW9sTHVYaUFOaTM0Wmxa?=
- =?utf-8?B?U0hDVHJxOVkwMi9ESFNwcU1GQS9NWE9LcXc0T0hhRThOTTd0UlJ3d29tRURQ?=
- =?utf-8?B?NExtVXhMczYzdmEyQzlnRDJkV0loOVR5dmZnMTZrUm0rR1B6UkZwZFlUVjZ2?=
- =?utf-8?B?WmZEZmR0dU5PTUVEeTliandHZWlTTFBSYkxpOXhjeHVhcEVjZ0laQ3dycDdt?=
- =?utf-8?B?RTVQdDBmU2NqNnhNYlhlT3BvN2V6ZCs3dHROZnF2eHJzRkJuQ3VYL1pDMFRh?=
- =?utf-8?B?VHRXY2t5NzJ0STZTR1pxM3ZaU1Q2Tk9QaUx2anB3L3FWYUFlTTZ3Vm4vQjM3?=
- =?utf-8?B?cFhDSGw4aTNjMjVTYTZaVE53TUJ0OU04ZkNPL0tRSXhPdkRLM3hsVE1aYW5m?=
- =?utf-8?B?S0crbzA2UVBsVXppaU9pcVFac25IUzdBK0JSa2FTR0NiWnM0Zjg0dUtOQnRx?=
- =?utf-8?B?SUhZUjI3MjdPZmcrL0RFQlk0OWlNM2Z2TFRNVk1MRXJEVHNGbXZYRHJtYzNK?=
- =?utf-8?B?WkJHVFA0cUNOREZ5bGM5OXUwZFdpVG5wN2cwbFZLMDE4aWRHYmRoUHVFNXpC?=
- =?utf-8?B?RWw0anB2Mno4eWpQdHowbXpEYnk5UnVaMjFFQjM2d01jdHJHTVNlbXYwcmxy?=
- =?utf-8?B?dUtmZnBOTHRQYW1pd2hxQUszT0liaExOQThRZ2F3cTdtMmJHaVpKSFJrZ0Yx?=
- =?utf-8?B?cFRGeU1UWmpkQkZ5L1h5eCtDR1RPbzVJRG1SdHp0UmpWd1RpQmxicFd1eDhM?=
- =?utf-8?B?VDkwcmZNMm5jazFxVGNqYkZ0cFRUZWdMQ1l2YnJYOXlKaGNHU3lGblhWWnZQ?=
- =?utf-8?B?UU5MS1BiVnJKeE53OGlXTUJlOXpQeW1hMHJhdzVLcXBMa1NSRzlEellhUFdT?=
- =?utf-8?B?aHN6QmZ0aVJ6d0xjSkptaW1OdEM4MVVDOGQ4VFdtdHZYUmhQVklqSit1b0lk?=
- =?utf-8?B?VE5KTTNrcHc2cjcvQnI3QUdLaUtBOVd0VEVtaktmUFlSQ1daZzRZdzVISTNv?=
- =?utf-8?Q?h4pMLOb2Bf7k6vPAlTH6pN1b0?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f475ee9-9550-4d5c-fcea-08dc739e4448
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 22:44:36.9022
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gDy6iKKhf3hGIqkTeFI2T/R7N0zBSICLJ5aXqRZMFhLnN2/QIA4SgKqum+8Sjm/cBgI7ruGrtpvEgX7Bk1FH/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7649
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185198 [May 13 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;devicetree.org:7.1.1;100.64.160.123:7.1.2;lore.kernel.org:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/05/13 21:20:00
+X-KSMG-LinksScanning: Clean, bases: 2024/05/13 21:20:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/13 20:57:00 #25189509
+X-KSMG-AntiVirus-Status: Clean, skipped
 
+From: Alexander Stein <alexander.stein@mailbox.org>
 
+Convert Amlogic AXG Audio Clock Controller binding to yaml.
 
-On 14/05/2024 4:01 am, Sean Christopherson wrote:
-> On Mon, May 13, 2024, Kai Huang wrote:
->> On Thu, 2024-04-25 at 16:39 -0700, Sean Christopherson wrote:
->>> Define cpu_emergency_virt_cb even if the kernel is being built without KVM
->>> support so that KVM can reference the typedef in asm/kvm_host.h without
->>> needing yet more #ifdefs.
->>>
->>> No functional change intended.
->>>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->>> ---
->>>   arch/x86/include/asm/reboot.h | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/arch/x86/include/asm/reboot.h b/arch/x86/include/asm/reboot.h
->>> index 6536873f8fc0..d0ef2a678d66 100644
->>> --- a/arch/x86/include/asm/reboot.h
->>> +++ b/arch/x86/include/asm/reboot.h
->>> @@ -25,8 +25,8 @@ void __noreturn machine_real_restart(unsigned int type);
->>>   #define MRR_BIOS	0
->>>   #define MRR_APM		1
->>>   
->>> -#if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
->>>   typedef void (cpu_emergency_virt_cb)(void);
->>> +#if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
->>>   void cpu_emergency_register_virt_callback(cpu_emergency_virt_cb *callback);
->>>   void cpu_emergency_unregister_virt_callback(cpu_emergency_virt_cb *callback);
->>>   void cpu_emergency_disable_virtualization(void);
->>
->> It looks a little it weird.  If other file wants to include
->> <asm/kvm_host.h> (directly or via <linux/kvm_host.h>) unconditionally then
->> in general I think <asm/kvm_host.h> or <linux/kvm_host.h> should
->> have something like:
->>
->> 	#ifdef CONFIG_KVM
->>
->> 	void func(void);
->> 	...
->>
->> 	#else
->>
->> 	static inline void func(void) {}
->>
->> 	#endif
->>
->> But it seems neither <asm/kvm_host.h> nor <linux/kvm_host.h> has this
->> pattern.
->>
->> I tried to build with !CONFIG_KVM with patch 2 in this series, and I got
->> below error:
-> 
-> Well, yeah.
-> 
->> In file included from ./include/linux/kvm_host.h:45,
->>                   from arch/x86/events/intel/core.c:17:
->> ./arch/x86/include/asm/kvm_host.h:1617:9: error: unknown type name
->> ‘cpu_emergency_virt_cb’
->>   1617 |         cpu_emergency_virt_cb *emergency_disable;
->>        |         ^~~~~~~~~~~~~~~~~~~~~
->>
->>
->> Looking at the code, it seems it is because intel_guest_get_msrs() needs
->> 'struct kvm_pmu' (e.g., it accesses the members of 'struct kvm_pmu').  But
->> it doesn't look the relevant code should be compiled when !CONFIG_KVM.
->>
->> So looks a better way is to explicitly use #ifdef CONFIG_KVM around the
->> relevant code in the arch/x86/events/intel/core.c?
-> 
-> Eh, there's no right or wrong way to handle code that is conditionally compiled.
-> There are always tradeoffs and pros/cons, e.g. the number of #ifdefs, the amount
-> of effective code validation for all configs, readability, etc.
-> 
-> E.g. if there is only one user of a function that conditionally exists, then
-> having the caller handle the situation might be cleaner.  But if there are
-> multiple callers, then providing a stub is usually preferable.
+Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
+Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+---
 
-Yeah.
+Also, this patch was discussed at [1].
 
-> 
-> IMO, the real problem is that perf pokes into KVM _at all_.  Same for VFIO.
-> The perf usage is especially egregious, as there is zero reason perf should need
-> KVM internals[1].  VFIO requires a bit more effort, but I'm fairly confident that
-> Jason's file-based approach[2] will yield clean, robust code that minimizes the
-> number of #ifdefs required.
-> 
-> I'm planning/hoping to get back to that series in the next few weeks.  As for
-> this small series, I prefer to unconditionally define the typedef, as it requires
-> no additional #ifdefs, and there are no meaningful downsides to letting the
-> typedef exist for all kernel builds.
+Changes v1 -> v2 [2]
+ - Stop using conditionals and list all clocks;
+ - Cosmetics.
 
-Seems the final target is to remove those <linux/kvm_host.h> users, or I 
-think a safe-once-for-all solution is to provide the stubs in 
-<linux/kvm_host.h> with:
+Links
+[1] https://lore.kernel.org/linux-devicetree/20240508144259.191843-1-jan.dakinevich@salutedevices.com/
+[2] https://lore.kernel.org/linux-devicetree/20230808194811.113087-1-alexander.stein@mailbox.org/
 
-	#ifdef CONFIG_KVM
-	...
-	#else
-	#endif
+ .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 -----
+ .../clock/amlogic,axg-audio-clkc.yaml         | 201 ++++++++++++++++++
+ 2 files changed, 201 insertions(+), 59 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
 
-In either way, my concerns is it seems modifying the <asm/reboot.h> is a 
-temporary workaround.  And when we reach the final solution I suppose we 
-will need to revert it back to the current way?
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+deleted file mode 100644
+index 3a8948c04bc9..000000000000
+--- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
++++ /dev/null
+@@ -1,59 +0,0 @@
+-* Amlogic AXG Audio Clock Controllers
+-
+-The Amlogic AXG audio clock controller generates and supplies clock to the
+-other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
+-devices.
+-
+-Required Properties:
+-
+-- compatible	: should be "amlogic,axg-audio-clkc" for the A113X and A113D,
+-		  "amlogic,g12a-audio-clkc" for G12A,
+-		  "amlogic,sm1-audio-clkc" for S905X3.
+-- reg		: physical base address of the clock controller and length of
+-		  memory mapped region.
+-- clocks	: a list of phandle + clock-specifier pairs for the clocks listed
+-		  in clock-names.
+-- clock-names	: must contain the following:
+-		  * "pclk" - Main peripheral bus clock
+-		  may contain the following:
+-		  * "mst_in[0-7]" - 8 input plls to generate clock signals
+-		  * "slv_sclk[0-9]" - 10 slave bit clocks provided by external
+-				      components.
+-		  * "slv_lrclk[0-9]" - 10 slave sample clocks provided by external
+-				       components.
+-- resets	: phandle of the internal reset line
+-- #clock-cells	: should be 1.
+-- #reset-cells  : should be 1 on the g12a (and following) soc family
+-
+-Each clock is assigned an identifier and client nodes can use this identifier
+-to specify the clock which they consume. All available clocks are defined as
+-preprocessor macros in the dt-bindings/clock/axg-audio-clkc.h header and can be
+-used in device tree sources.
+-
+-Example:
+-
+-clkc_audio: clock-controller@0 {
+-	compatible = "amlogic,axg-audio-clkc";
+-	reg = <0x0 0x0 0x0 0xb4>;
+-	#clock-cells = <1>;
+-
+-	clocks = <&clkc CLKID_AUDIO>,
+-		 <&clkc CLKID_MPLL0>,
+-		 <&clkc CLKID_MPLL1>,
+-		 <&clkc CLKID_MPLL2>,
+-		 <&clkc CLKID_MPLL3>,
+-		 <&clkc CLKID_HIFI_PLL>,
+-		 <&clkc CLKID_FCLK_DIV3>,
+-		 <&clkc CLKID_FCLK_DIV4>,
+-		 <&clkc CLKID_GP0_PLL>;
+-	clock-names = "pclk",
+-		      "mst_in0",
+-		      "mst_in1",
+-		      "mst_in2",
+-		      "mst_in3",
+-		      "mst_in4",
+-		      "mst_in5",
+-		      "mst_in6",
+-		      "mst_in7";
+-	resets = <&reset RESET_AUDIO>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+new file mode 100644
+index 000000000000..fd7982dd4cea
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
+@@ -0,0 +1,201 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/amlogic,axg-audio-clkc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Amlogic AXG Audio Clock Controller
++
++maintainers:
++  - Neil Armstrong <neil.armstrong@linaro.org>
++  - Jerome Brunet <jbrunet@baylibre.com>
++
++description:
++  The Amlogic AXG audio clock controller generates and supplies clock to the
++  other elements of the audio subsystem, such as fifos, i2s, spdif and pdm
++  devices.
++
++properties:
++  compatible:
++    enum:
++      - amlogic,axg-audio-clkc
++      - amlogic,g12a-audio-clkc
++      - amlogic,sm1-audio-clkc
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    items:
++      - description: main peripheral bus clock
++      - description: input plls to generate clock signals N0
++      - description: input plls to generate clock signals N1
++      - description: input plls to generate clock signals N2
++      - description: input plls to generate clock signals N3
++      - description: input plls to generate clock signals N4
++      - description: input plls to generate clock signals N5
++      - description: input plls to generate clock signals N6
++      - description: input plls to generate clock signals N7
++      - description: slave bit clock N0 provided by external components
++      - description: slave bit clock N1 provided by external components
++      - description: slave bit clock N2 provided by external components
++      - description: slave bit clock N3 provided by external components
++      - description: slave bit clock N4 provided by external components
++      - description: slave bit clock N5 provided by external components
++      - description: slave bit clock N6 provided by external components
++      - description: slave bit clock N7 provided by external components
++      - description: slave bit clock N8 provided by external components
++      - description: slave bit clock N9 provided by external components
++      - description: slave sample clock N0 provided by external components
++      - description: slave sample clock N1 provided by external components
++      - description: slave sample clock N2 provided by external components
++      - description: slave sample clock N3 provided by external components
++      - description: slave sample clock N4 provided by external components
++      - description: slave sample clock N5 provided by external components
++      - description: slave sample clock N6 provided by external components
++      - description: slave sample clock N7 provided by external components
++      - description: slave sample clock N8 provided by external components
++      - description: slave sample clock N9 provided by external components
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: pclk
++      - const: mst_in0
++      - const: mst_in1
++      - const: mst_in2
++      - const: mst_in3
++      - const: mst_in4
++      - const: mst_in5
++      - const: mst_in6
++      - const: mst_in7
++      - const: slv_sclk0
++      - const: slv_sclk1
++      - const: slv_sclk2
++      - const: slv_sclk3
++      - const: slv_sclk4
++      - const: slv_sclk5
++      - const: slv_sclk6
++      - const: slv_sclk7
++      - const: slv_sclk8
++      - const: slv_sclk9
++      - const: slv_lrclk0
++      - const: slv_lrclk1
++      - const: slv_lrclk2
++      - const: slv_lrclk3
++      - const: slv_lrclk4
++      - const: slv_lrclk5
++      - const: slv_lrclk6
++      - const: slv_lrclk7
++      - const: slv_lrclk8
++      - const: slv_lrclk9
++
++  resets:
++    description: internal reset line
++
++required:
++  - compatible
++  - '#clock-cells'
++  - reg
++  - clocks
++  - clock-names
++  - resets
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - amlogic,g12a-audio-clkc
++              - amlogic,sm1-audio-clkc
++    then:
++      required:
++        - '#reset-cells'
++    else:
++      properties:
++        '#reset-cells': false
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/axg-clkc.h>
++    #include <dt-bindings/reset/amlogic,meson-axg-reset.h>
++    apb {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        clkc_audio: clock-controller@0 {
++            compatible = "amlogic,axg-audio-clkc";
++            reg = <0x0 0x0 0x0 0xb4>;
++            #clock-cells = <1>;
++
++            clocks = <&clkc CLKID_AUDIO>,
++                     <&clkc CLKID_MPLL0>,
++                     <&clkc CLKID_MPLL1>,
++                     <&clkc CLKID_MPLL2>,
++                     <&clkc CLKID_MPLL3>,
++                     <&clkc CLKID_HIFI_PLL>,
++                     <&clkc CLKID_FCLK_DIV3>,
++                     <&clkc CLKID_FCLK_DIV4>,
++                     <&clkc CLKID_GP0_PLL>,
++                     <&slv_sclk0>,
++                     <&slv_sclk1>,
++                     <&slv_sclk2>,
++                     <&slv_sclk3>,
++                     <&slv_sclk4>,
++                     <&slv_sclk5>,
++                     <&slv_sclk6>,
++                     <&slv_sclk7>,
++                     <&slv_sclk8>,
++                     <&slv_sclk9>,
++                     <&slv_lrclk0>,
++                     <&slv_lrclk1>,
++                     <&slv_lrclk2>,
++                     <&slv_lrclk3>,
++                     <&slv_lrclk4>,
++                     <&slv_lrclk5>,
++                     <&slv_lrclk6>,
++                     <&slv_lrclk7>,
++                     <&slv_lrclk8>,
++                     <&slv_lrclk9>;
++            clock-names = "pclk",
++                          "mst_in0",
++                          "mst_in1",
++                          "mst_in2",
++                          "mst_in3",
++                          "mst_in4",
++                          "mst_in5",
++                          "mst_in6",
++                          "mst_in7",
++                          "slv_sclk0",
++                          "slv_sclk1",
++                          "slv_sclk2",
++                          "slv_sclk3",
++                          "slv_sclk4",
++                          "slv_sclk5",
++                          "slv_sclk6",
++                          "slv_sclk7",
++                          "slv_sclk8",
++                          "slv_sclk9",
++                          "slv_lrclk0",
++                          "slv_lrclk1",
++                          "slv_lrclk2",
++                          "slv_lrclk3",
++                          "slv_lrclk4",
++                          "slv_lrclk5",
++                          "slv_lrclk6",
++                          "slv_lrclk7",
++                          "slv_lrclk8",
++                          "slv_lrclk9";
++            resets = <&reset RESET_AUDIO>;
++        };
++    };
+-- 
+2.34.1
 
-If so, how about manually add a temporary typedef in <asm/kvm_host.h> 
-for now?
-
-	#ifndef CONFIG_KVM
-	typedef void (cpu_emergency_virt_cb)(void);
-	#endif
-
-Yes it's ugly, but it's KVM self-contained, and can be removed when ready.
-
-Anyway, just my 2 cents.
-
-
-
-
-> 
-> [1] https://lore.kernel.org/all/20230916003118.2540661-21-seanjc@google.com
-> [2] https://lore.kernel.org/all/ZXkVSKULLivrMkBl@google.com
-> 
->> And it seems vfio does it in vfio_main.c:
->>
->> 	#if IS_ENABLED(CONFIG_KVM)
->> 	#include <linux/kvm_host.h>
->> 	#endif
->>
->> 	#if IS_ENABLED(CONFIG_KVM)
->> 	void vfio_device_get_kvm_safe(struct vfio_device *device,
->> 			struct kvm *kvm)
->> 	{
->> 		...
->> 	}
->> 	...
->> 	#endif
->>
->>
->> The only remaining weird thing is 'struct kvm *kvm' is still used
->> unconditionally in vfio_main.c, but I think the reason it builds fine with
->> !CONFIG_KVM is because <linux/vfio.h> declares it explicitly:
->>
->> 	struct kvm;
->> 	struct iommufd_ctx;
->> 	...
->>
->> So it seems to me that this patch around 'cpu_emergency_virt_cb' is more
->> like a workaround of existing non-perfect <linux/kvm_host.h> and/or
->> <asm/kvm_host.h>?
-> 
 
