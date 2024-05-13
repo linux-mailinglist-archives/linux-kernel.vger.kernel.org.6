@@ -1,78 +1,94 @@
-Return-Path: <linux-kernel+bounces-178189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C496B8C4A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2178C4A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 649011F24B26
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2481C20F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0DF8615E;
-	Mon, 13 May 2024 23:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BF485C44;
+	Mon, 13 May 2024 23:52:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwNl5YI1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZnqwwKZS"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405598564F;
-	Mon, 13 May 2024 23:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8B285622;
+	Mon, 13 May 2024 23:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715644253; cv=none; b=EDLCPNJN2+/bv/JjBUAuopNhVChOQk8+1127h9KS0kwSWE2stWm0j5tlEwfNyRsNr42pkJ+Wl77KWB4+23M0Qh6AmezdKHJnbwBEWelBm7w4EfCxeNB1pr1Nv12o5MEF3O+1rjVOK7vgmOSdV913sZlP29OzNx4e3FnkDdRTcdQ=
+	t=1715644368; cv=none; b=Yx67hFKYT/ws0mRlihTCLkV/HYclZZE1kZOgOFJnBJlgnCz3WSjA8G/7a/pDNwLdv0ZBhhQIRTklmv8aIl7TJyOw6YT2cmD8oFh7+gyZKKBihKcVFy0cZyNMK1MnoTKFeOUGgSZ7Bradiv/dAlTptqkLXoZWsVfjvjvNNkjZm4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715644253; c=relaxed/simple;
-	bh=Z7PFGCr1Ay0h8R7lvDprHgkUr7Uub44rUYakE/tq+dA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=TGqPAh9jmF2F3AmBugnKAmvsMAMPNhdZq8Am70wUZhZ9ugP5JmRkCNyBc1+u3diMUpT9OsZRMyzx0omjhD5mhQcYyqgMaSgqErXcj0Lrjf1qc7L7NW4m1TUHuZC6V/0sPl63O1aegJIQFNJ4e+LkWH+Htzr/4Dq2DpbkqTZskZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwNl5YI1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 174D9C113CC;
-	Mon, 13 May 2024 23:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715644253;
-	bh=Z7PFGCr1Ay0h8R7lvDprHgkUr7Uub44rUYakE/tq+dA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=XwNl5YI1jDbA7F4jBA3Cou/bwfxmZaLWzX9msgRPJya5Uj7SKGcCPQYE5vI2OSGnM
-	 R27H84f/rXZTh5kCxpenXYgMVjDiWzMLadOpnWoiLnxvCTlzW6mG5yiK4lvj6aSuOR
-	 vnTXZ76Th5r/sTYPc6tazKyyNkfLQKQDB22zYKoeJpwK2zt30bLCNH1mOdvskMIrnA
-	 yoH88zxotpBoyBDSvEp1N/NL+jihKY4SfItPvZJt6mpOeDzVn5LLNSSXQf6vJ1OvQe
-	 KFaQnVbFx+uatynR8nl7QlYAjnVooPS4bqBZzALhM+sCs8iEnLsLQxagMSkIMOfyz1
-	 ifFtZIXHpKofw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0E3B0C433E9;
-	Mon, 13 May 2024 23:50:53 +0000 (UTC)
-Subject: Re: [GIT PULL] chrome-platform changes for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <ZkGWGbzFu3rmDElk@google.com>
-References: <ZkGWGbzFu3rmDElk@google.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ZkGWGbzFu3rmDElk@google.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git tags/tag-chrome-platform-for-v6.10
-X-PR-Tracked-Commit-Id: 2fbe479c0024e1c6b992184a799055e19932aa48
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 59729c8a76544d9d7651287a5d28c5bf7fc9fccc
-Message-Id: <171564425304.32070.11371575006226893866.pr-tracker-bot@kernel.org>
-Date: Mon, 13 May 2024 23:50:53 +0000
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: torvalds@linux-foundation.org, pmalani@chromium.org, bleung@chromium.org, groeck@chromium.org, tzungbi@kernel.org, linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev
+	s=arc-20240116; t=1715644368; c=relaxed/simple;
+	bh=YiZ/KTwPoAMviHDfw9kvqjjai+9ZeNnkqupC6XucNb8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dTHQ4xy1DCxNC0I6CWJYG8vPmEFRPHgW7FYon3oBruIyTg8TliCCCY9B3nwCNXdTaPF2zm+64NT7EnFKCPE62o178WivF95Ij1fI3w4++QVTrIua5ktq8n1qoTFN6mLFG3o8OKqZgyJwYSdyPpwvEERqhDujHh+LSgyRtov5DdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZnqwwKZS; arc=none smtp.client-ip=192.19.144.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id BE73BC0000E3;
+	Mon, 13 May 2024 16:52:39 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com BE73BC0000E3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1715644359;
+	bh=YiZ/KTwPoAMviHDfw9kvqjjai+9ZeNnkqupC6XucNb8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZnqwwKZSmXN+7HsLzpEyG/7kwytc6nTK0Yygowx0CkwpwXuIMJ3SS7A/2FWcBbpEt
+	 XclL2ETp84W6ElcTD9aMq/F4uQCIBfQ3KjI+U1s7CYcwETBQ7zx6OBlrJoMo8gaWMO
+	 t1GifvcSLkB7N4t6T19QOp778xqnoeRfAbHmyu+o=
+Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id A753418041CAC4;
+	Mon, 13 May 2024 16:52:37 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list),
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 0/3] ARCH_BCM2835 Kconfig changes
+Date: Mon, 13 May 2024 16:52:31 -0700
+Message-Id: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon, 13 May 2024 12:24:57 +0800:
+This patch series updates a number of Kconfig entries such that enable
+ARCH_BCM2835 guarantees that essential drivers are also enabled, saves a
+lot of configuration and troubleshooting time for when they are not.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git tags/tag-chrome-platform-for-v6.10
+Florian Fainelli (3):
+  mailbox: Make BCM2835_MBOX default to ARCH_BCM2835
+  firmware: Default RASPBERRYPI_FIRMWARE to ARCH_BCM2835
+  clk: bcm: Make CLK_RASPBERRYPI default to RASPBERRYPI_FIRMWARE
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/59729c8a76544d9d7651287a5d28c5bf7fc9fccc
-
-Thank you!
+ drivers/clk/bcm/Kconfig  | 1 +
+ drivers/firmware/Kconfig | 1 +
+ drivers/mailbox/Kconfig  | 1 +
+ 3 files changed, 3 insertions(+)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.34.1
+
 
