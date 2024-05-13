@@ -1,162 +1,140 @@
-Return-Path: <linux-kernel+bounces-178174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED278C4A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:27:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A73F8C4A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CC8A283D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:27:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD45E1F219FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088E385635;
-	Mon, 13 May 2024 23:27:15 +0000 (UTC)
-Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94A085945;
+	Mon, 13 May 2024 23:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VvIyA/X9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001BA446BD
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 23:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C558563F;
+	Mon, 13 May 2024 23:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715642834; cv=none; b=pxBktJH7iTe+x8G08KukDXagZZyaKPpZAUdQ+lGCC3rC7XVLD/XdRBB68n2nRFpLHFHALx/ac7CBd76Dx8Ck9gwjEfMd8yoDIkCEjFwdE972+eti79c+jLQQlaoDATL06s4EAJtuR/opN11Uq/N/x11kb4XiQ7HIoCAeN8ezrGI=
+	t=1715642909; cv=none; b=fFL/6gHA3EWv03PZFHb9EHM7LT1A/ACtzzforCtiaRjBc+yLky7CncmLaUC0pKzSUOcv+9HV1nO0bqarYhCqOnN0fDRZbCBNnvdwoEEB2skUAzqM56eU+gMBUO2VNlIef/f+8esMSNve/MfWR61Q0buL7YQfp0kkbAUcfnCir7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715642834; c=relaxed/simple;
-	bh=zMzkmfe/SImkrDD6F58Ahl/biyaLPosnlc2zhtCaLCo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cElcTaGOpxapTmIkjZ8DWW67aZCbmIS4lWLFFQ40UevL/+zIo2Du0fEAjCElIuTITWgMf1JqnMCCkIQoa4RQ54+FFjZzUHYTDaOQN+3ZZaSdPUKIbOKDZC67vIaxOv3XZk5NPuM1NtOenKxnL4DDS4Fm/Jfy1px4jcxr93inras=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.50.104])
-	by sina.com (172.16.235.25) with ESMTP
-	id 6642A1C600000526; Mon, 14 May 2024 07:27:04 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 60530034210354
-X-SMAIL-UIID: F7BD05331E194D2091A55FB4A3CBD377-20240514-072704-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+55cd5225f71c5cff7f6f@syzkaller.appspotmail.com>
-Cc: johan.hedberg@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	luiz.dentz@gmail.com,
-	marcel@holtmann.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Nicolai Stange <nstange@suse.de>,
-	syzkaller-bugs@googlegroups.com
-Subject: [syzbot] [bluetooth?] BUG: sleeping function called from invalid context in lock_sock_nested (3)
-Date: Tue, 14 May 2024 07:26:52 +0800
-Message-Id: <20240513232652.3080-1-hdanton@sina.com>
-In-Reply-To: <0000000000009f2fe006185570d8@google.com>
-References: 
+	s=arc-20240116; t=1715642909; c=relaxed/simple;
+	bh=8Gh1hcIWN4rcXBwDSbtnP1I9GK4gJY14SknicU3V5gA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WdqQzNASyDxFJcZLA6HZ8WWWHiFkejbHevct64WYN2Tr7a1CBuFIQzBSU+Ae/imw2Gubq/4dnLph52Kwni/UAnWIAVKJfgT1jH97kk0+KpeBzHw/cqHJQucZh98DuiNWuZ5e1mYpbm4M9l7j6HMNb0IseDpA9VQg2QskiaWP01g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VvIyA/X9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F9DC32786;
+	Mon, 13 May 2024 23:28:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715642908;
+	bh=8Gh1hcIWN4rcXBwDSbtnP1I9GK4gJY14SknicU3V5gA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VvIyA/X9utfx2ueiwihtps00cAc/lwD7Bzt8kFx9+7zrMD+48lrfqYPOGqkIJzCAr
+	 oMdqRX+QzXfdIjt4adW/+Az0p7i89T6OCR904Y1JLcZRaj3uXA7ovuhJLrCRPmEVe8
+	 jGUjCazkGFl4siUqhFTIasgY7O+jsxbpME5mNM7r2ezPiigfZ7C4R2yI53fI0lBXUD
+	 cFweqZPHdYnCh3EvnYGQJj3OcpRZY/AMog0Bq7Ex5b7q3gQpXpVK0kJYZxhn+1PNnp
+	 2DljDtcfVrkOF/WmmU5KcTr/AoNeO3I4IFUcxd78OBeDfzlBT9QnAOkuJ90g2N7JvK
+	 qglQhyEP8i2Pg==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso54544811fa.0;
+        Mon, 13 May 2024 16:28:28 -0700 (PDT)
+X-Gm-Message-State: AOJu0YxBHBz7m9jeCIDOu/4Ua7wQa/2Y6ulHq529ltZKtSfgQb0+pYF3
+	v5V1QYP6Au+UUG1adadaFKye3FaH9RVbSfyUMLy6EDHGZPhBt5ebw3baPALWVUzKquAjcWzgSj7
+	bHf8gPqW6mh4fXtYFd/LkHxAWjzw=
+X-Google-Smtp-Source: AGHT+IF9j8e043DkOiSrOVWoiLzHywRaJqPk8A8PajaIWmL3pmtY7IbuS8+0heTiyQSFt+7KF4lC2hFhRKR/f8Ugois=
+X-Received: by 2002:a2e:9bcd:0:b0:2e3:9350:a7ca with SMTP id
+ 38308e7fff4ca-2e51fd3fdaemr109449691fa.6.1715642907412; Mon, 13 May 2024
+ 16:28:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240511000953.11181-1-masahiroy@kernel.org>
+In-Reply-To: <20240511000953.11181-1-masahiroy@kernel.org>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 14 May 2024 08:27:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASKANEH6mCvz-5uUcne_x5+M8bWwOyy7fw6SEY7Oz6bww@mail.gmail.com>
+Message-ID: <CAK7LNASKANEH6mCvz-5uUcne_x5+M8bWwOyy7fw6SEY7Oz6bww@mail.gmail.com>
+Subject: Re: [PATCH] rapidio: remove choice for enumeration
+To: linux-kbuild@vger.kernel.org, Matt Porter <mporter@kernel.crashing.org>, 
+	Alexandre Bounine <alex.bou9@gmail.com>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 13 May 2024 05:58:21 -0700
-> syzbot found the following issue on:
-> 
-> HEAD commit:    1c9135d29e9e Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10df1ea8980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7d2d53e64c7e6a4f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=55cd5225f71c5cff7f6f
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: arm64
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/52dd1b4921ab/disk-1c9135d2.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/1a4f1788dc25/vmlinux-1c9135d2.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b8d8ebd42a80/Image-1c9135d2.gz.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+55cd5225f71c5cff7f6f@syzkaller.appspotmail.com
-> 
-> BUG: sleeping function called from invalid context at net/core/sock.c:3537
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6274, name: kworker/u9:3
-> preempt_count: 1, expected: 0
-> RCU nest depth: 0, expected: 0
-> 6 locks held by kworker/u9:3/6274:
->  #0: ffff0000d8c79948 ((wq_completion)hci0#2){+.+.}-{0:0}, at: process_one_work+0x668/0x15d4 kernel/workqueue.c:3241
->  #1: ffff8000a9cb7c20 ((work_completion)(&hdev->rx_work)){+.+.}-{0:0}, at: process_one_work+0x6b4/0x15d4 kernel/workqueue.c:3241
->  #2: ffff0000e8294078 (&hdev->lock){+.+.}-{3:3}, at: hci_sync_conn_complete_evt+0xa4/0x870 net/bluetooth/hci_event.c:5061
->  #3: ffff800091d51708 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:2010 [inline]
->  #3: ffff800091d51708 (hci_cb_list_lock){+.+.}-{3:3}, at: hci_sync_conn_complete_evt+0x3d4/0x870 net/bluetooth/hci_event.c:5144
->  #4: ffff0000d0bf4420 (&conn->lock#2){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
->  #4: ffff0000d0bf4420 (&conn->lock#2){+.+.}-{2:2}, at: sco_conn_ready net/bluetooth/sco.c:1273 [inline]
->  #4: ffff0000d0bf4420 (&conn->lock#2){+.+.}-{2:2}, at: sco_connect_cfm+0x260/0x94c net/bluetooth/sco.c:1358
->  #5: ffff0000cd046258 (sk_lock-AF_BLUETOOTH-BTPROTO_SCO){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1673 [inline]
->  #5: ffff0000cd046258 (sk_lock-AF_BLUETOOTH-BTPROTO_SCO){+.+.}-{0:0}, at: sco_conn_ready net/bluetooth/sco.c:1286 [inline]
->  #5: ffff0000cd046258 (sk_lock-AF_BLUETOOTH-BTPROTO_SCO){+.+.}-{0:0}, at: sco_connect_cfm+0x3e8/0x94c net/bluetooth/sco.c:1358
-> Preemption disabled at:
-> [<ffff80008a0d70d4>] spin_lock include/linux/spinlock.h:351 [inline]
-> [<ffff80008a0d70d4>] sco_conn_ready net/bluetooth/sco.c:1273 [inline]
-> [<ffff80008a0d70d4>] sco_connect_cfm+0x260/0x94c net/bluetooth/sco.c:1358
+To: Rapidio maintainers
 
-A known issue in 2021 [1]
 
-[1] Subject: Possible sleep-in-atomic in BT SCO code
-https://lore.kernel.org/lkml/s5hilz8n1an.wl-tiwai@suse.de/
+I applied this to linux-kbuild.
+If this change is not OK, please let me know.
 
-> CPU: 0 PID: 6274 Comm: kworker/u9:3 Not tainted 6.9.0-rc7-syzkaller-g1c9135d29e9e #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-> Workqueue: hci0 hci_rx_work
-> Call trace:
->  dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
->  show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
->  dump_stack+0x1c/0x28 lib/dump_stack.c:123
->  __might_resched+0x374/0x4d0 kernel/sched/core.c:10197
->  __might_sleep+0x90/0xe4 kernel/sched/core.c:10126
->  lock_sock_nested+0x6c/0x11c net/core/sock.c:3537
->  lock_sock include/net/sock.h:1673 [inline]
->  sco_conn_ready net/bluetooth/sco.c:1286 [inline]
->  sco_connect_cfm+0x3e8/0x94c net/bluetooth/sco.c:1358
->  hci_connect_cfm include/net/bluetooth/hci_core.h:2013 [inline]
->  hci_sync_conn_complete_evt+0x438/0x870 net/bluetooth/hci_event.c:5144
->  hci_event_func net/bluetooth/hci_event.c:7545 [inline]
->  hci_event_packet+0x740/0x1098 net/bluetooth/hci_event.c:7597
->  hci_rx_work+0x318/0xa78 net/bluetooth/hci_core.c:4171
->  process_one_work+0x7b8/0x15d4 kernel/workqueue.c:3267
->  process_scheduled_works kernel/workqueue.c:3348 [inline]
->  worker_thread+0x938/0xef4 kernel/workqueue.c:3429
->  kthread+0x288/0x310 kernel/kthread.c:388
->  ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-> Bluetooth: hci0: command tx timeout
-> 
-> 
+
+
+On Sat, May 11, 2024 at 9:10=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> This is the last use of the tristate choice.
+>
+> This choice was introduced a decade ago by commit a11650e11093
+> ("rapidio: make enumeration/discovery configurable"). Since then,
+> RAPIDIO_ENUM_BASIC has always been the sole member.
+>
+> There was no need to have this choice block.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
+>
+>  drivers/rapidio/Kconfig | 17 ++---------------
+>  1 file changed, 2 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/rapidio/Kconfig b/drivers/rapidio/Kconfig
+> index b9f8514909bf..f1d742ac8f7c 100644
+> --- a/drivers/rapidio/Kconfig
+> +++ b/drivers/rapidio/Kconfig
+> @@ -59,26 +59,13 @@ config RAPIDIO_DEBUG
+>
+>           If you are unsure about this, say N here.
+>
+> -choice
+> -       prompt "Enumeration method"
+> -       depends on RAPIDIO
+> -       default RAPIDIO_ENUM_BASIC
+> -       help
+> -         There are different enumeration and discovery mechanisms offere=
+d
+> -         for RapidIO subsystem. You may select single built-in method or
+> -         or any number of methods to be built as modules.
+> -         Selecting a built-in method disables use of loadable methods.
+> -
+> -         If unsure, select Basic built-in.
+> -
+>  config RAPIDIO_ENUM_BASIC
+> -       tristate "Basic"
+> +       tristate "Basic Enumeration method"
+> +       depends on RAPIDIO
+>         help
+>           This option includes basic RapidIO fabric enumeration and disco=
+very
+>           mechanism similar to one described in RapidIO specification Ann=
+ex 1.
+>
+> -endchoice
+> -
+>  config RAPIDIO_CHMAN
+>         tristate "RapidIO Channelized Messaging driver"
+>         depends on RAPIDIO
+> --
+> 2.40.1
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
