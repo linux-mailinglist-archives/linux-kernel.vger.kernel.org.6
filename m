@@ -1,166 +1,118 @@
-Return-Path: <linux-kernel+bounces-177966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AAB8C46E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:34:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAB08C46F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39711C222E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:34:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2437F1F22466
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F3D20B34;
-	Mon, 13 May 2024 18:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765F63A1BB;
+	Mon, 13 May 2024 18:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IRZbdAg5"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdUm4mLd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EA137153
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA0A2E631;
+	Mon, 13 May 2024 18:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625263; cv=none; b=Kxr+1V9cH4V51GPbvENJ41xQ8YHSVqzCvBYPzIv5rjNDGvYcxQ1ZlAe/HZn9JYlrBZ9tJSkC0FNOBqme4CECcP8fOx8bDu0YTSjrCh4T+zrvrtpqlb/ZSZ0v5PeyHD3tN3PYjrPCzZF+nmrIWQ2J17GW5RjTCOY9gXzBpT6easw=
+	t=1715625328; cv=none; b=IYby7TbTNFjVUhBQwADROvk27K64T2+oqbvGONBjLv5NwkrIwaYfrENOckQ8s3yLJh/THXs46pGck7WZvWNuFEYOvkSRfXU52Sj94VIoBsogU2sus8foGr08SzybwF7q+6qdbqYRFXv/fNFiIOJA6e2hL3DAz7Ps3pNXCsUJK4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625263; c=relaxed/simple;
-	bh=LMpgS9YUb5fP274F97/qNj06fpYzBLVeI1R6c6nW9QM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvGD9wkjUKcgHnP/vcftfw236pskHaUeGZBAHWHlLuPad4mo2rYYugHEKZYjegASQukGKj0wd3euNRJqVaeLKWOcuIU/RUF6M784N2PtNIyL5Bk/6NYJRj3mDFYcqrNmHyvtmXJGakRxbGCYhqWThRpQW8QH0RaPIAO2nouSLuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IRZbdAg5; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1ee954e0aa6so35780945ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:34:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715625261; x=1716230061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h++n7Qlyg3sgT4EiaSRCnOzzYyK0B8BDWAHRP3/F3N0=;
-        b=IRZbdAg5Fjfq1LlzW2OU3qJQiaF0Y36cLpUw+oWEwGb1ZbDoU98E6N8oHl/2rzWCHk
-         0J1HOQmi4/qvXT4+9oLUQs4sUJ2KF7lmn65JzzrEUIB/BXbV/B7gvwACHU3Oyso/lcv/
-         FGQOa0cTZ0i3NV+ABmzUpys6SdplIP6k+ErvY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715625261; x=1716230061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h++n7Qlyg3sgT4EiaSRCnOzzYyK0B8BDWAHRP3/F3N0=;
-        b=LGr/dWTs+NEqqZiHxi7fCyd9l653PU0zn2R95vAaLGgrXyhY2dTXrfvO4CMrNnqPuY
-         Ktgqpo4RQpWNXxZeg3ETEOz/j8zdP9pgQdrYWgjELFVWZPgbSODzdnSxo+zhmgO/1B8O
-         jAL9NPABQ5TjZF1pUD16es4nNVEdtIQqvnR2oB2oGYeL25kOSygho5Q6fRP2/Bq5J0TY
-         LdZ4EPmijCkdKWXShPDIxJYKO8b99WdgIbyC5B3mffvqFK/IeID4F0O8BB9y4bNXJcnS
-         zaXqko1gDhJWXXRpxkqGQJ+IzfqidmDSUPJWQe7Jdho6egdKcdB58EOZDCT141kAdeIm
-         Q1Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCUehz3E4ZOewgC4c4PCSbepNUQDTyq4VRKg8cUY3atdyBKRy8ocWQoz3Hx9suRinLizhoKcydg2wGEhIq6+9yKGDH8wtRBYHV0HEKHs
-X-Gm-Message-State: AOJu0YyAi6oFY9dofptpRr/T4BMLFQKdA4sclp3kSphFNbNqeYSaUVG7
-	tbxwttBtKq/pvWsEsR6tMr2HKuH45ZdDj5t2ejq4z7kCJFgWsm7BMe52ZoAN1g==
-X-Google-Smtp-Source: AGHT+IHCc1iDoDY8y7cN3McKpzD8GoP+zaGEka3xojOMmbdy8UwKg3X31LKvQDdXyzyN7fH2gRjLEA==
-X-Received: by 2002:a17:902:dac6:b0:1e0:b62a:c0a2 with SMTP id d9443c01a7336-1ef441613edmr122093915ad.51.1715625261157;
-        Mon, 13 May 2024 11:34:21 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c13908bsm82642315ad.265.2024.05.13.11.34.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 11:34:20 -0700 (PDT)
-Date: Mon, 13 May 2024 11:34:20 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Martin Uecker <uecker@tugraz.at>, Justin Stitt <justinstitt@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [RFC] Mitigating unexpected arithmetic overflow
-Message-ID: <202405131047.A3861EC13@keescook>
-References: <202404291502.612E0A10@keescook>
- <CAHk-=wi5YPwWA8f5RAf_Hi8iL0NhGJeL6MN6UFWwRMY8L6UDvQ@mail.gmail.com>
- <202405081144.D5FCC44A@keescook>
- <CAHk-=wjeiGb1UxCy6Q8aif50C=wWDX9Pgp+WbZYrO72+B1f_QA@mail.gmail.com>
- <202405081354.B0A8194B3C@keescook>
- <CAHk-=wgoE5EkH+sQwi4KhRhCZizUxwZAnC=+9RbZcw7g6016LQ@mail.gmail.com>
- <59f731ab619673afec4956fce6832a1cd5324fb8.camel@tugraz.at>
- <CAHk-=wjERv03yFU7-RUuqX1y89DYHcpdsuu++ako2nR41-EjYg@mail.gmail.com>
+	s=arc-20240116; t=1715625328; c=relaxed/simple;
+	bh=YKbPkKlqAwoRaNZqki6fpfGRkig5wtpfRBksExN/W+4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GyEn7lw523Mjm3Sf1bd5N0EHQrexyruyxNfoM/BYPjTmgG7Gs6jwbgWSHSRt26O1vPCYBWHe2ZufXgxZ5337Py3OyYXI4/Wfe4kswyNKIZmV5vusSTW64ovuFGaiFuo+XCSDygThhL37V+DE6/9u/v2WWAibnKLO1Mkbw0PkeA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdUm4mLd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE3E4C113CC;
+	Mon, 13 May 2024 18:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715625328;
+	bh=YKbPkKlqAwoRaNZqki6fpfGRkig5wtpfRBksExN/W+4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kdUm4mLdt6zonDi2uj1fC/4yvUuFv7+8Yf1ocwHVZVTXuoGnZ1WetV+VPrITiJ00/
+	 0ArlywI8B0iDrEvkfZaMVc+Gd6cDtnD3nnlD2sT3ut3tfJ+gjzgtRXlvI0DhQ2N1Wb
+	 yRcv/KFQUloyZ6eDmhGQlKxZHP/TVwagCOVArll6rUlUWcaz2yxxjgcnvtwxkOtG8C
+	 4M1v47TFLU8EKmW9BDwdDkzpn29CqRZoCnXbFJH3G4t9zDP2r98iHWvQhPHHLPF9Qf
+	 ckas1s2zW6jNAP0wWeqNsNxt90ijUwYzEuz92SyUmAkM6vhY/naqjDZhZQfi9rX6eG
+	 9BobUVT2+XpDg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: Jarkko Sakkinen <jarkko@kernel.org>,
+	stable@vger.kernel.org,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] KEYS: trusted: Do not use WARN when encode fails
+Date: Mon, 13 May 2024 21:35:17 +0300
+Message-ID: <20240513183518.10922-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjERv03yFU7-RUuqX1y89DYHcpdsuu++ako2nR41-EjYg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 12, 2024 at 09:09:08AM -0700, Linus Torvalds wrote:
->         unsigned char *p;
->         u32 val;
-> 
->         p[0] = val;
->         p[1] = val >> 8;
->         p[2] = val >> 16;
->         p[3] = val >> 24;
-> 
-> kind of code is both traditional and correct, but obviously drops bits
-> very much intentionally on each of those assignments.
+Error on asn1_encode_sequence() is handled with a WARN incorrectly
+because:
 
-The good news here is that the integer implicit truncation sanitizers
-are already split between "signed" and "unsigned". So the 2 cases of
-exploitable flaws mentioned earlier:
+1. asn1_encode_sequence() is not an internal function (located
+   in lib/asn1_encode.c).
+2. Location on known, which makes the stack trace useless.
+3. Results a crash if panic_on_warn is set.
 
-	u8 num_elems;
-	...
-	num_elems++;		/* int promotion stored back to u8 */
+It is also noteworthy that the use of WARN is undocumented, and it
+should be avoided unless there is carefully considered rationale to use
+it, which is now non-existent.
 
-and
+Replace WARN with pr_err, and print the return value instead, which is
+only useful piece of information (and was not printed).
 
-	int size;
-	u16 read_size;
-	...
-	read_size = size;	/* large int stored to u16 */
+Cc: stable@vger.kernel.org # v5.13+
+Fixes: f2219745250f ("security: keys: trusted: use ASN.1 TPM2 key format for the blobs")
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ security/keys/trusted-keys/trusted_tpm2.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-are both confusions across signed/unsigned types, which the signed
-sanitizer would catch. The signed sanitizer would entirely ignore
-the quoted example at the top: everything is unsigned and no int
-promotion is happening.
-
-So, I think we can start with just the "signed integer implicit
-truncation" sanitizer. The compiler will still need to deal with the
-issues I outlined in [1], where I think we need some consideration
-specifically on how to handle things like this (that have a
-smaller-than-int size and trip the sanitizer due to int promotion):
-
-u8 checksum(const u8 *buf)
-{
-	u8 sum = 0;
-
-	for (int i = 0; i < 4; i++)
-		sum += buf[i];		/* int promotion */
-	return sum;
-}
-
-We want "sum" to wrap. We could avoid the "implicit" truncation by
-explicitly truncating with something eye-bleedingly horrible like:
-
-		sum = (u8)(sum + buf[i]);
-
-Adding a wrapper for the calculation could work but repeats "sum", and
-needs to be explicitly typed, making it just as unfriendly:
-
-		sum = truncate(u8, sum + buf[i]);
-
-Part of the work I'd done in preparation for all this was making the
-verbosely named wrapping_assign_add() helper which handles all the
-types by examining the arguments and avoids repeating the destination
-argument. So this would become:
-
-		wrapping_assign_add(sum, buf[i]);
-
-Still not as clean as "+=", but at least more readable than the
-alternatives and leaves no question about wrapping intent.
-
--Kees
-
-[1] https://lore.kernel.org/lkml/202405081949.0565810E46@keescook/
-
+diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
+index c8d8fdefbd8d..e31fe53822a1 100644
+--- a/security/keys/trusted-keys/trusted_tpm2.c
++++ b/security/keys/trusted-keys/trusted_tpm2.c
+@@ -39,6 +39,7 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	u8 *end_work = scratch + SCRATCH_SIZE;
+ 	u8 *priv, *pub;
+ 	u16 priv_len, pub_len;
++	int ret;
+ 
+ 	priv_len = get_unaligned_be16(src) + 2;
+ 	priv = src;
+@@ -80,8 +81,11 @@ static int tpm2_key_encode(struct trusted_key_payload *payload,
+ 	work1 = payload->blob;
+ 	work1 = asn1_encode_sequence(work1, work1 + sizeof(payload->blob),
+ 				     scratch, work - scratch);
+-	if (WARN(IS_ERR(work1), "BUG: ASN.1 encoder failed"))
+-		return PTR_ERR(work1);
++	if (IS_ERR(work1)) {
++		ret = PTR_ERR(work1);
++		pr_err("ASN.1 encode error %d\n", ret);
++		return ret;
++	}
+ 
+ 	return work1 - payload->blob;
+ }
 -- 
-Kees Cook
+2.45.0
+
 
