@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-177285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62408C3C64
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:49:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAED8C3C6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD36280FBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207DB281024
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873F6146A9F;
-	Mon, 13 May 2024 07:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B8D146D74;
+	Mon, 13 May 2024 07:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EdK3EXM2"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="T8/TG7AB"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AE8146D57
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4978146D79
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715586569; cv=none; b=ggvU1fhPJ2dV+5Duj/+wiPrgc3unNtzK/UqYMSGznmzUytu8cNnh2uTrKVSeMY4QSmsF2cd97CLKotQ/tK+QaCLorN/GktNBnC/PvMxxtShoSFr1/Ptpi4yCrU9y0yGXg8m2cd7dMVCXX4ynQ4JQZPmnC9PWZiqE1E0IzgwKQew=
+	t=1715586574; cv=none; b=Lce8DELpHS+qUfjcUmaSorI+GmYN3b97T0wvbCDeXkxGXqit3d/hySLBWD5BXVNEPp7UjsZKyb979cbtN6KP7exVvtGqRd6rFiFcdZLtcAGsRlVITKiNT8wSzsSzqGg040oMmAgXmcubWAeK3BI0w368IhQVcS5QSXNuKM6OWVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715586569; c=relaxed/simple;
-	bh=nNY02W8+mwn4OfGfOk44xFpXhIwKsr2nKA7lZGKZsG8=;
+	s=arc-20240116; t=1715586574; c=relaxed/simple;
+	bh=Z92BapNXqrD8mH8Lvn9VhbzXh/a0lrQadfg2Cq2n/08=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Fsz2oum4dlr+dm1/oXXUr63+/gJLor8WsOXvvTIOoTpJbv3EfjVcklhxE3jnH81SwONgccw3eTuBWbXHu7nK09n0cBHs1HblTgkG9oa2jo832bgqs0OQyTBpozFjhYe3VZBg7vVW6fCkm+ppHbADeBmos1daI1oQGS+vSO3hvIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EdK3EXM2; arc=none smtp.client-ip=209.85.214.172
+	 MIME-Version; b=Utm9nIfBu627jarVC0edAneKi1G83n/cA4eHKm1kw7IT6BeIWieVj+Choo1XPAwdT40WRH677Q3e86oT3SavWMEuEKKGX+2LOVTKqpn4kzPTq0tu7nSc29HSiGHtAcChIT4cjgjeLF47Lx6ZaOZcBnDuuc2IPTF6gGOfgsNuw9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=T8/TG7AB; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ecddf96313so34830355ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:49:27 -0700 (PDT)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ecd9a81966so35088745ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:49:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1715586566; x=1716191366; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1715586572; x=1716191372; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gvU9L4BSNfi8J9xPmuApsxXdGaL41m0A1yNVgMIPbng=;
-        b=EdK3EXM263ygSf52V0zHBqXwfchG8EuIMqi9xmS6Q1V4Qu/XEJX3M5byuuOp4aqKYY
-         tiN8gHnZR6nEYuI3vjLpejZ05sGFd2sop1h/RRmxBLx3cG9B0RLIGl2tqFEz3SCm1Rrl
-         TVP5n/6shFqCWq3k4+sSOonQEOrgY11oTZvx0vSWAmUXV0rAj8TVUuZmes8pCSFdhNZJ
-         cEKrV4FHy7Gwz9m11zSHN4fggL1ozwGknZXhuTxkuyR1l5tCIGgfEc67BKtJ0FF6Uo8s
-         VZEOSZxeUHZHcgd/wFeD1smOk8VDnlSYVA6ec11Ua4ekEOExD3YBBoHQx7I7qay15ggC
-         zUKA==
+        bh=TEo/a1+oRG2cXEy6c+2coJnHGUNZUbI5ZqJs4KidFuk=;
+        b=T8/TG7AB4Gf7JWTnxoOD+VVRGuh0aPunURRASZ5pZCPx1BSrTSmQzDJnfvXe4PsJIH
+         qtwjIdGv2hotBHBdIqCPY62bhHW1bwZMTbvoPuyJkak6Cu9dQuYt7MC3BcNHxkOgbw37
+         JDUNfzY2e3QiCcSRSmathECIDfe4F36aRHXxmkp2fjQdMi5zAstmBFXWGYGdqST8ierI
+         7zwdmcNI3oXI7Y4juE4kNV2C0bITkjeEnFm5SpGjHBUJo9PBvuxRMXpKWThT7kKDtb/n
+         ZnSayqhgfagUnaM0D7rEq3mUwwJ07F/dKegxWpEm34JAtX5piEnt6xKCLdJGQnuTC7uS
+         aUjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715586566; x=1716191366;
+        d=1e100.net; s=20230601; t=1715586572; x=1716191372;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gvU9L4BSNfi8J9xPmuApsxXdGaL41m0A1yNVgMIPbng=;
-        b=uMi3CdIRkQfPbxJFjJtLPuK4t/nOodRObbDZm22ZToGt2ZWtOGhlRqBMUxE+YjB0lN
-         rxR9mhBv9KqBe+jZ4HQOYTK1zXDSyTD0bitypbXa7f/62nRrxawBAN9ggUTg1omPe1aS
-         CNgIxbIF7c6UZwCCF+ptII0bsT/LEgz+0pwF3eHApJ+KwF0ji6bgBdLHy9GIj+v26Lj6
-         vd599VcKoRYtVBx3VGueipmZkyOMoTvVQdFQjeZ5SUYcYBbyw9kZwPtjLFM+FWml3/ub
-         nWIxXA5ML97siLB+FW44GalhVjGsB+ZVm333Sp9S1VzSes9E946D8Up//qOZe/CrzpnB
-         bVYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNtpaMg3pAjfkVyNkPt9QpQ+WDnukJcitcTS8qaBSP1aQhT/5m7anz8Y/JFn+xYK33RLIGANwk9v0+q8bKZeP3SVaD8MooRjjbl/lt
-X-Gm-Message-State: AOJu0Yw8aPnIIcxV9I0gPaV5pajijFuVXaldRpXS6oRK+Z0/sS6BApGY
-	0d3ZMN37V99v3hqWNNoZu5Xb3tQqhDxG9HunEwH642v+cOpV2X6gR1FMU1xvXBs=
-X-Google-Smtp-Source: AGHT+IH4JooL2Xn1oFULJpSiLnWe/sK1u5EuizKlovQAmyypuZ3uwWz/JZO5VX66fX8eMuIfWbdI5w==
-X-Received: by 2002:a17:902:e883:b0:1eb:d79a:c111 with SMTP id d9443c01a7336-1ef43c095b1mr155344545ad.4.1715586566631;
-        Mon, 13 May 2024 00:49:26 -0700 (PDT)
+        bh=TEo/a1+oRG2cXEy6c+2coJnHGUNZUbI5ZqJs4KidFuk=;
+        b=Q8eYiYcGpRngTdnKukBbujpUYN91NTcFTm4VcyiPCTAM4s2LfZHsbZfmVoc8eaD4jK
+         CUSqqZ6RNzn2ugqHUlrGCCF0bz0qJ+/jGzVxbAG8fylMUkDm+r+rUhujiFEdKIdHudEC
+         A/dtviI1MoJh2FGvo4rana+E7K7A1ODfpkWo/utJbyMKAoHs1eopm78lmbulKXFNJ16h
+         5GkPmvoUtVZ/wUIPyPlyEGdFOOD+eoFtJyxuwtjOnwl4Tnc4kZyHFE9bEIDdgJl/DZXa
+         OHaFM/6p7JrHbQP3GDuxXjkD+/n98mvgufiOpd+eG9v7o5KVDyafGHyE19SKg3fM4nrz
+         aXsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk4LT3RqGw2OzI7dTVTzlhjqlQT4bZarvbMmXBtr/lILkmRTFbduPyh1BsSIW/54ikPXE/2BD/C7OjrkbH5yj9E/GmWq4QbLrqGKV0
+X-Gm-Message-State: AOJu0YyKytzIbmPVE0khe3zSJesWF832EFpDmOTOjwyH6WYqFNMLvkID
+	8qX1WnXLrNi+pr+3tNZ1BGwTcGxwV7sEARqiNUkwGHKbqpWVwebTADmNPHPyDi4=
+X-Google-Smtp-Source: AGHT+IHoZtwtgD7hFchCDIQOTf44g03q4zF7Jb1rcy/3zG/BIayitweAZoAdp++6XuRxJ1Ft606/JQ==
+X-Received: by 2002:a17:902:f68f:b0:1e0:9964:76f4 with SMTP id d9443c01a7336-1ef42e6e646mr129350585ad.14.1715586572235;
+        Mon, 13 May 2024 00:49:32 -0700 (PDT)
 Received: from ubuntu20.04 ([203.208.189.12])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0badadacsm73396695ad.111.2024.05.13.00.49.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0badadacsm73396695ad.111.2024.05.13.00.49.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 00:49:25 -0700 (PDT)
+        Mon, 13 May 2024 00:49:31 -0700 (PDT)
 From: Yang Jihong <yangjihong@bytedance.com>
 To: peterz@infradead.org,
 	mingo@redhat.com,
@@ -81,9 +81,9 @@ To: peterz@infradead.org,
 	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: yangjihong@bytedance.com
-Subject: [PATCH v2 1/2] perf build: Specify libtraceevent dir to rpath for asan/msan build
-Date: Mon, 13 May 2024 15:49:09 +0800
-Message-Id: <20240513074910.1660373-2-yangjihong@bytedance.com>
+Subject: [PATCH v2 2/2] perf build: Add libtraceevent lib64 to -L directory & rpath on 64-bit
+Date: Mon, 13 May 2024 15:49:10 +0800
+Message-Id: <20240513074910.1660373-3-yangjihong@bytedance.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240513074910.1660373-1-yangjihong@bytedance.com>
 References: <20240513074910.1660373-1-yangjihong@bytedance.com>
@@ -95,64 +95,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-perf built by asan/msan will not search for shared libraries in the
--L directory. For cross-compilation, we assume that sanitizers is
-generally not enabled and add libtraceevent dir to rpath in a simple way.
+For 64-bit system, libtraceevent will install these libraries into
+lib64 directory, so add it to the -L directory and rpath as well.
 
-1. msan build
-
-Before:
-  $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=memory -fsanitize-memory-track-origins" CC=clang CXX=clang++ HOSTCC=clang NO_LIBELF=1 BUILD_BPF_SKEL=0 NO_LIBPFM=1 LIBTRACEEVENT_DIR=/opt/libtraceevent
-  ...
-  $ /tmp/perf/perf
-  /tmp/perf/perf: error while loading shared libraries: libtraceevent.so.1: cannot open shared object file: No such file or directory
-
-After:
-  $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=memory -fsanitize-memory-track-origins" CC=clang CXX=clang++ HOSTCC=clang NO_LIBELF=1 BUILD_BPF_SKEL=0 NO_LIBPFM=1 LIBTRACEEVENT_DIR=/opt/libtraceevent
-  ...
-  $ /tmp/perf/perf --build-options
-  perf version 6.9.0-rc5
-  <SNIP>
-           libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
-  <SNIP>
-
- 2. asan build
+build libtraceevent:
+  $ make EXTRA_CFLAGS="-O0 -g -fsanitize=address" DESTDIR=~/libtrace install
 
 Before:
-  $ make DEBUG=1 EXTRA_CFLAGS='-fno-omit-frame-pointer -fsanitize=address' LIBTRACEEVENT_DIR=/opt/libtraceevent
-  ...
-  $ ./perf
-  ./perf: error while loading shared libraries: libtraceevent.so.1: cannot open shared object file: No such file or directory
+  $ rm -rf /tmp/perf; mkdir /tmp/perf; make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=address -Wno-error=unused-function" LIBTRACEEVENT_DIR=~/libtrace/usr/local 1>/dev/null
+  Makefile.config:1146: No alternatives command found, you need to set JDIR= to point to the root of your Java directory
+  Makefile.config:1196: *** ERROR: libtraceevent is missing. Please install libtraceevent-dev/libtraceevent-devel and/or set LIBTRACEEVENT_DIR or build with NO_LIBTRACEEVENT=1.  Stop.
+  make[1]: *** [Makefile.perf:264: sub-make] Error 2
+  make: *** [Makefile:70: all] Error 2
 
 After:
-   $ make DEBUG=1 EXTRA_CFLAGS='-fno-omit-frame-pointer -fsanitize=address' LIBTRACEEVENT_DIR=/opt/libtraceevent
-   ...
-   $ ./perf --build-options
-   perf version 6.9.0-rc5
-   <SNIP>
-            libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
-   <SNIP>
+  $ rm -rf /tmp/perf; mkdir /tmp/perf; make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=address -Wno-error=unused-function" LIBTRACEEVENT_DIR=~/libtrace/usr/local 1>/dev/null
+  Makefile.config:1154: No alternatives command found, you need to set JDIR= to point to the root of your Java directory
+    PERF_VERSION = 6.9.0-rc5
+  $ echo $?
+  0
+  $ ldd /tmp/perf/perf
+  <SINP>
+  	libtraceevent.so.1 => /home/yangjihong/libtrace/usr/local/lib64/libtraceevent.so.1 (0x00007f08983d5000)
+  <SINP>
 
 Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
 ---
- tools/perf/Makefile.config | 4 ++++
- 1 file changed, 4 insertions(+)
+ tools/perf/Makefile.config | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 7f1e016a9253..a9a923358604 100644
+index a9a923358604..d632c85e6c4d 100644
 --- a/tools/perf/Makefile.config
 +++ b/tools/perf/Makefile.config
-@@ -188,6 +188,10 @@ TRACEEVENTLIBS := -ltraceevent
+@@ -188,9 +188,17 @@ TRACEEVENTLIBS := -ltraceevent
  ifdef LIBTRACEEVENT_DIR
    LIBTRACEEVENT_CFLAGS  := -I$(LIBTRACEEVENT_DIR)/include
    LIBTRACEEVENT_LDFLAGS := -L$(LIBTRACEEVENT_DIR)/lib
-+  # Specify rpath for asan/msan build. Generally, cross-compilation will not enable sanitizers.
-+  ifeq ($(findstring -fsanitize=,${EXTRA_CFLAGS}),-fsanitize=)
-+    LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib
++  # libtraceevent install libraries into lib64 on 64-bit, so add it to -L directory as well
++  ifeq (${IS_64_BIT}, 1)
++    LIBTRACEEVENT_LDFLAGS += -L$(LIBTRACEEVENT_DIR)/lib64
 +  endif
+   # Specify rpath for asan/msan build. Generally, cross-compilation will not enable sanitizers.
+   ifeq ($(findstring -fsanitize=,${EXTRA_CFLAGS}),-fsanitize=)
+     LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib
++    # libtraceevent install libraries into lib64 on 64-bit, so add it to rpath as well
++    ifeq (${IS_64_BIT}, 1)
++      LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib64
++    endif
+   endif
  endif
  FEATURE_CHECK_CFLAGS-libtraceevent := $(LIBTRACEEVENT_CFLAGS)
- FEATURE_CHECK_LDFLAGS-libtraceevent := $(LIBTRACEEVENT_LDFLAGS) $(TRACEEVENTLIBS)
 -- 
 2.25.1
 
