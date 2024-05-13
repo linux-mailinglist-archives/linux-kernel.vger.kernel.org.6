@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-178178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5613A8C4A1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:31:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD6308C4A1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A51DEB2151F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39681C2114F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEAEC85C42;
-	Mon, 13 May 2024 23:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE8F85945;
+	Mon, 13 May 2024 23:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJ4+eKX9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOZr0mVY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8C446BD;
-	Mon, 13 May 2024 23:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D63A85622;
+	Mon, 13 May 2024 23:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715643078; cv=none; b=pkcuLdlTR8fO/SZlvGe+Ae00t54/L6kVUjuzosgQIOeuzI1C8ITt6o3Nd70yfX78jxGSviS+vv2whGofolgeHQSbDoTuNe3w4n/AIf9d6kUxsXFT09xuN+YDHW937/jvTseMT3Ltx2dkQk6/+gmjs2zQinlBIS7IbXTUPtJ77Xo=
+	t=1715643107; cv=none; b=k+n1rYu0wEWWW6ZIi2qxPd5++LQ8lgWJottgCHOA+N4G/5f0oPmzq7APqJTZBd0Tr4u15vmuhbCLqOhWO80d4PY2qBREN+ICuHwxXuOUBpNvun8HHzpRny6oEE8Z5pQky3ZgYG//dBQqjUxldKSsH7w9iFkkxZpg3tyFdjYdVKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715643078; c=relaxed/simple;
-	bh=edYEvfVF7LrKCEOZSZcW2VnvwSmiDi2QkoyU4leeWL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hGpCKcoY/w6Gln9pm+E5v3EZag0SfSBcqz1EyQLe43Y+miE4IpBPQ4AWaqsqI7iDxUDKEnBMUZBhktO1YpqkOtTJaM/UGIEFtBRsQoxgK5R6QHxGZsOE/jIO9TCXaZp7y4nz/vNz70f1ijAvblhNpKELP3DD+f82BYQUxZ9/W/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UJ4+eKX9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781EFC113CC;
-	Mon, 13 May 2024 23:31:15 +0000 (UTC)
+	s=arc-20240116; t=1715643107; c=relaxed/simple;
+	bh=8aCK+9otNEWX8teUIuXuFTHKu5bAZsokXv23+TwPN/E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pDxWKBdz+Wc9y+XrmVlGU3HU8CueZqTzMxWixMB1ptdvk2Wfv2d4F1sF58PeEyZt71tNTW9xIbSaRK5YpT+sgNgsfZAxMZuP1473QtlKMvgdmtICxtdPqyDcSbzl81b8WDN9WgfOYuQpkr724OZDmsk4ro4IONaCVAczE2wWa8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOZr0mVY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26D9EC113CC;
+	Mon, 13 May 2024 23:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715643077;
-	bh=edYEvfVF7LrKCEOZSZcW2VnvwSmiDi2QkoyU4leeWL4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UJ4+eKX9Jjb5n009vEa+fw3qm93HTsbq6E/2kjaqWw2wukzg/halQAfNZEZXm/LE4
-	 VseHIcoczFEhUFNJrX+hE4brEcaqhJYLF5QDeawrQXHzGtVSeWHqMAph2zfIoqyKzs
-	 dOJA+Rc3OrJVxsqBTVfE67aPPpe9lMIgv3q46l/7C7ygJVD9GHoY5L6Ff+NHFHfw2i
-	 EpUgZS3K/R4TIL0bsax/NTea+fsRH6i/BQKSVamsq7sDeOuVD37dm9gghM9OITGk7Y
-	 MbBxbNA6+ZDp6bsz2N1nY5IAOc0jzEJb0dHK2wgUTlLTS0Qe7idImQezxoSFuJYfYW
-	 r/H0ew9pGJ3Hg==
-Date: Mon, 13 May 2024 16:31:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Donald Hunter <donald.hunter@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>, Ivan
- Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>,
- Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
- <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
- <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, "Christian
- =?UTF-8?B?S8O2bmln?=" <christian.koenig@amd.com>, Pavel Begunkov
- <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, Jason Gunthorpe
- <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend Chand
- <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>
-Subject: Re: [PATCH net-next v9 00/14] Device Memory TCP
-Message-ID: <20240513163114.52b44f66@kernel.org>
-In-Reply-To: <20240510232128.1105145-1-almasrymina@google.com>
-References: <20240510232128.1105145-1-almasrymina@google.com>
+	s=k20201202; t=1715643107;
+	bh=8aCK+9otNEWX8teUIuXuFTHKu5bAZsokXv23+TwPN/E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eOZr0mVYNyHiTSvYNAsECBCdwV4kuWKj3Or8DhPSPVAPcULSJxHrJqQj50ZPtjNkb
+	 0HsVTsONC2EYsB4+FpNA5FEjjnY/c8PjaWDbYSoOhxxUMotK4hlIu9tcSN+VE6QHwd
+	 XkQa/FsURRh7Wwq0IL0Fps1liEi+LVyB8dVCNFi7N5fBIy9CXtb+mqzw0TJRDZ0mdN
+	 OuKh9Il+9EXFKq5v8yLXUIy2wAGQcFZA6vaR2NDLRvmVKh9nqNL1w1XIMSNp/SaHsQ
+	 XQ2kjgdqzEqqfjPxVJCXZlhhb8HD0eCQmp7LroU+nGc8sbuzWXggNr/Gh+Tnl5iq8q
+	 x/sWxe7+vF8HQ==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] kconfig: use sym_get_choice_menu() in sym_check_prop()
+Date: Tue, 14 May 2024 08:31:42 +0900
+Message-Id: <20240513233142.458372-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 10 May 2024 16:21:11 -0700 Mina Almasry wrote:
-> Device Memory TCP
+Choices and their members are associated via the P_CHOICE property.
 
-Sorry Mina, this is too big to apply during the merge window :(
+Currently, prop_get_symbol(sym_get_choice_prop()) is used to obtain
+the choice of the given choice member.
+
+Replace it with sym_get_choice_menu(), which retrieves the choice
+without relying on P_CHOICE.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/menu.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/scripts/kconfig/menu.c b/scripts/kconfig/menu.c
+index bee96c9964fd..53151c5a6028 100644
+--- a/scripts/kconfig/menu.c
++++ b/scripts/kconfig/menu.c
+@@ -263,11 +263,9 @@ static void sym_check_prop(struct symbol *sym)
+ 					    sym->name);
+ 			}
+ 			if (sym_is_choice(sym)) {
+-				struct property *choice_prop =
+-					sym_get_choice_prop(sym2);
++				struct menu *choice = sym_get_choice_menu(sym2);
+ 
+-				if (!choice_prop ||
+-				    prop_get_symbol(choice_prop) != sym)
++				if (!choice || choice->sym != sym)
+ 					prop_warn(prop,
+ 						  "choice default symbol '%s' is not contained in the choice",
+ 						  sym2->name);
 -- 
-pw-bot: defer
+2.40.1
+
 
