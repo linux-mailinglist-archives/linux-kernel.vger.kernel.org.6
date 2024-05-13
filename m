@@ -1,155 +1,129 @@
-Return-Path: <linux-kernel+bounces-177666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED29B8C42CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:04:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2FF18C42D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A83FB229A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5367D1F20F57
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEF9153807;
-	Mon, 13 May 2024 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8D16153830;
+	Mon, 13 May 2024 14:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DzShIiKS";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="DzShIiKS"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bU9Fuy/G"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC94153598;
-	Mon, 13 May 2024 14:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4E950279;
+	Mon, 13 May 2024 14:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715609038; cv=none; b=cou21guH9qCsXf+JvKUucpp62vq6tkiwpzbKB+KJa0aAHo+83tApnxuKpAvjcHelQnPZEovbPGss60Td4N6DzfviV63AjfluOV0hDGdkEfmIchKUdbru0MSixHvxbMUDglimV4O876CfRqjhII5lH2ghGp44xPRFbYhj2vlDIrw=
+	t=1715609113; cv=none; b=JPcnDMbrESKSHwmPEYlfsv/MtlmCsszB+D8tVMyOquC0QgBxkNkyWfYfr5Eru/usEWzEZfbsH+IG2TI9dC4UZAQmxonJ2yd9BmjGflgoqqsHa2uLS5xp7G0bsv6YaNiplfEPKqHiqJRRj7ZS8HCL3svytSoMXjS4sEDCU2FYJQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715609038; c=relaxed/simple;
-	bh=Lgh6G1eAGr1IMo9Vxnj39v+o8JT8rLEQeJcV+88RQik=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=llnAGMNbgRWdep23V2QLaCJcx7YYGg8QcTdYa4gJYc+YhQ/jRtSdU2M4IzOWSfoX1Id4MxSTGiJwQV4YRkvFE+J7aatMdChVm4flhOD6Ko4X/r4hoJTVTlD4fwLe5jrIOfT6qGxrlnXVxGP1LUIjfpHtDZ1qU29zk7vNvb+2RAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DzShIiKS; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=DzShIiKS; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1715609035;
-	bh=Lgh6G1eAGr1IMo9Vxnj39v+o8JT8rLEQeJcV+88RQik=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=DzShIiKSdsasr4E5wVwexE/6FI5q7gmgOCvYJelYgn5BBWydE+yU+fFY6TxQRQK9p
-	 eoCxlHz+3inoYRyYQUU36n7EplsZYAILi0eTMzHY7svMU6X9BcOUCqldaILXNl0S7R
-	 ZpqQSofQA2kPOjl5toD/5mti2kL2wVIXHDv1T1DE=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id A27841286A69;
-	Mon, 13 May 2024 10:03:55 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id fsnPAtpqdWnn; Mon, 13 May 2024 10:03:55 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1715609035;
-	bh=Lgh6G1eAGr1IMo9Vxnj39v+o8JT8rLEQeJcV+88RQik=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=DzShIiKSdsasr4E5wVwexE/6FI5q7gmgOCvYJelYgn5BBWydE+yU+fFY6TxQRQK9p
-	 eoCxlHz+3inoYRyYQUU36n7EplsZYAILi0eTMzHY7svMU6X9BcOUCqldaILXNl0S7R
-	 ZpqQSofQA2kPOjl5toD/5mti2kL2wVIXHDv1T1DE=
-Received: from [172.21.4.27] (unknown [50.204.89.31])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 069031286A24;
-	Mon, 13 May 2024 10:03:54 -0400 (EDT)
-Message-ID: <a8ea533bf30c658508875948f29341663360db57.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v2 4/4] tsm: Allow for extending and reading
- configured RTMRs
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Samuel Ortiz <sameo@rivosinc.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Kuppuswamy Sathyanarayanan
- <sathyanarayanan.kuppuswamy@linux.intel.com>, Qinkun Bao
- <qinkun@google.com>,  "Yao, Jiewen" <jiewen.yao@intel.com>, "Xing, Cedric"
- <cedric.xing@intel.com>, Dionna Amalie Glaze <dionnaglaze@google.com>,
- biao.lu@intel.com, linux-coco@lists.linux.dev, 
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 13 May 2024 08:03:53 -0600
-In-Reply-To: <ZkHoiYMseU0XqEbR@vermeer>
-References: <20240128212532.2754325-1-sameo@rivosinc.com>
-	 <20240128212532.2754325-5-sameo@rivosinc.com>
-	 <ec7edddcf8c74e48cb392db0789b03243ab05692.camel@HansenPartnership.com>
-	 <ZkHoiYMseU0XqEbR@vermeer>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1715609113; c=relaxed/simple;
+	bh=qwjQ4fg1WT6WfdujCf5cSA6FPKSOt1LSqitx8MP9bKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+fx/QI71yjlwFDIlR7mHg8z/V23D4nQ5tdyKd4CL49uWgntrapB+3akWSY7I5dVfpEx60H7jv3yEjoHg4jVuaSsAQZf0oLSsdzOiFPl9EcQa1DCDXGkb4v7PC10vZ1yFpmAunVuunkPA7wcPfR7Y/B5aPUjSOcTHYlNFAj1bz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bU9Fuy/G; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=aEGhKcPHh9CD0ui7RPmRSg76vE/Dq4xMw3NyWOINtCw=; b=bU9Fuy/GeuRaJHGhTQLB4qpvcH
+	cvKBaa7/AIOhMZOvKgrCuI7WM2kyUuohkdWAAioU75+Di2yG1zJqB+yt7VX3xeTWWj9qshuEPYoT+
+	V659BFgGI0LN137cGAl1WQNS/MkbeyQsllBOu4jWpxq5EcPeTbO1bRNIU7jlSY/h+xDg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s6WIQ-00FJKx-7h; Mon, 13 May 2024 16:04:54 +0200
+Date: Mon, 13 May 2024 16:04:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: =?iso-8859-1?Q?Ram=F3n?= Nordin Rodriguez <ramon.nordin.rodriguez@ferroamp.se>
+Cc: Piergiorgio Beruto <Pier.Beruto@onsemi.com>,
+	"Parthiban.Veerasooran@microchip.com" <Parthiban.Veerasooran@microchip.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"saeedm@nvidia.com" <saeedm@nvidia.com>,
+	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"robh+dt@kernel.org" <robh+dt@kernel.org>,
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"Horatiu.Vultur@microchip.com" <Horatiu.Vultur@microchip.com>,
+	"ruanjinjie@huawei.com" <ruanjinjie@huawei.com>,
+	"Steen.Hegelund@microchip.com" <Steen.Hegelund@microchip.com>,
+	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
+	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
+	"Thorsten.Kummermehr@microchip.com" <Thorsten.Kummermehr@microchip.com>,
+	Selvamani Rajagopal <Selvamani.Rajagopal@onsemi.com>,
+	"Nicolas.Ferre@microchip.com" <Nicolas.Ferre@microchip.com>,
+	"benjamin.bigler@bernformulastudent.ch" <benjamin.bigler@bernformulastudent.ch>
+Subject: Re: [PATCH net-next v4 05/12] net: ethernet: oa_tc6: implement error
+ interrupts unmasking
+Message-ID: <81170ef6-2b16-4d7f-85b1-4c3fecdc8853@lunn.ch>
+References: <874654d4-3c52-4b0e-944a-dc5822f54a5d@lunn.ch>
+ <ZjKJ93uPjSgoMOM7@builder>
+ <b7c7aad7-3e93-4c57-82e9-cb3f9e7adf64@microchip.com>
+ <ZjNorUP-sEyMCTG0@builder>
+ <ae801fb9-09e0-49a3-a928-8975fe25a893@microchip.com>
+ <fd5d0d2a-7562-4fb1-b552-6a11d024da2f@lunn.ch>
+ <BY5PR02MB678683EADBC47A29A4F545A59D1C2@BY5PR02MB6786.namprd02.prod.outlook.com>
+ <ZkG2Kb_1YsD8T1BF@minibuilder>
+ <708d29de-b54a-40a4-8879-67f6e246f851@lunn.ch>
+ <ZkIakC6ixYpRMiUV@minibuilder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkIakC6ixYpRMiUV@minibuilder>
 
-On Mon, 2024-05-13 at 12:16 +0200, Samuel Ortiz wrote:
-> On Fri, May 10, 2024 at 10:57:37PM -0400, James Bottomley wrote:
-> > I'm not really sure where to hang this, since there's no posted
-> > agenda
-> > or materials for the CCC meeting today.
+> Good input. I'll add some instrumentation/stats for how many jiffies
+> have elapsed between releases of the worker thread and for the irq
+> handler. I can probably find a gpio to toggle as well if it's really
+> tight timings.
+
+What might be more interesting is the interrupt status registers. Is
+there a bit always set which the driver is not clearly correctly?
+
+You can try printing the values. But that might upset the timing so
+you cannot reproduce the issue.
+
+If the printk() does upset the timing, what i have done before is
+allocate an array of u32 values. Write the interrupt status into it,
+looping around when you get to the end of the array. And then use
+debugfs_create_u32_array() to export the array in /sys/kernel/debugfs.
+Trigger the problem and then look at the values.
+
+> > Is this your dual device board? Do you have both devices on the same
+> > SPI bus? Do they share interrupt lines?
+> > 
 > 
-> The agenda was posted on the linux-coco ml [1]. I sent a link to the
-> presentation slides [2] to the thread.
-
-That's great, thanks.
-
-> > However, it struck me you missed a third option: use the ima log
-> > format.  This has the advantage that we can define additional
-> > events and have them published with a kernel patch (the IMA log
-> > format is defined in the kernel).  Thanks to the TCG, it's also CEL
-> > compatible but doesn't require any sort of TCG blessing of the
-> > events.  Plus we also have existing kernel infrastructure to log to
-> > that format.
+> It's on the dual device board, the macphys are using separate spi buses,
+> one chip shares the bus with another spi device, but the other is the
+> only tenant on the bus.
 > 
-> That's an interesting idea. It may avoid having to extend the CEL
-> spec with a new Content Type, but otoh the current spec defines which
-> IMA events are supported. So adding new ones may require to also
-> eventually extend the spec. But I guess since IMA is a Linux kernel
-> subsystem, changing the kernel code and ABI would de-facto extend the
-> TCG CEL IMA spec.
+> No device shares an irq line.
 
-That's what I was assuming since the TCG is currently deferring to IMA
-in that regard.
+I was just wondering how your setup differs so you can trigger the
+issue, but others have not been able to reproduce it. It might be
+another clue as to what is going on. I don't think you need to do
+anything with respect to this, its just information to keep in mind.
 
-> Here I assume you're talking about the IMA_TEMPLATE CEL specified
-> format, which is designed to accomodate for the current kernel IMA
-> log format. The main drawback of this format is that the digest does
-> not include the whole content event, making the CEL content type, the
-> IMA tag name and both lengths (for the content event and the IMA
-> content) untrusted for event log verifiers.
-
-That's only because IMA doesn't yet have such an event.  If we're
-assuming effectively designing an IMA log format for non repudiation of
-external events, one can be added.  Although I wouldn't want to be
-hasty: one of the big problems of all options is that no existing log
-format really covers the measure container use case and we're not
-completely sure what other use cases will arise (the firewall rules
-measurements was one that regulated cloud providers seem to think would
-be important ... and that has a periodic rush of events, but there will
-be others).
-
-However, the current IMA templates (event descriptions) are known by an
-ASCII prefix (they all begin ima-):
-
-https://docs.kernel.org/security/IMA-templates.html#supported-template-fields-and-descriptors
-
-So it would be easy to add more with a non ima- prefix.  Note that this
-doc is out of date an IMA does support hashes all the way to SHA256
-although SHA384 isn't currently listed.
-
-The current record fields are defined in
-
-security/integrity/ima/ima_template.c
-
-> CEL defines another IMA format (IMA_TLV), that hashes the whole event
-> content. I think we should at least use that format as our output
-> ABI, if we want to use a TCG specified IMA content type.
-
-Possibly.  Although avoiding double hashing may be a useful performance
-measure (not really sure how fast records will come in yet).
-
-James
-
+	Andrew
 
