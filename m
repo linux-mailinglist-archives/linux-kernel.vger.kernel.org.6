@@ -1,168 +1,172 @@
-Return-Path: <linux-kernel+bounces-177896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2488A8C45F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85B1F8C45FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC4D1F21B45
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C731C216DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF98A20DFF;
-	Mon, 13 May 2024 17:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613782233E;
+	Mon, 13 May 2024 17:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MxgYCYpO";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="MxgYCYpO"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="RktCxG5I"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9813398B;
-	Mon, 13 May 2024 17:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715621213; cv=none; b=C+HhRKI7nSHIlMAjms0HEyp04N/9UmNBR0ZLcvESvAdDoauaFuRGC5Tz6YU/9DuVGPFg9CN6bR0qVjUwdkFOnWTyeZ/HSrcCsJWa7mPWVvRgn5+IZA/J8EAMdqdMJea9HS1bkiwBNDe9FbpVlao/x9Oz4Gtp1l8p+dxrRiAFqP8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715621213; c=relaxed/simple;
-	bh=dbD3uJP//crk7zbG3JGEpMcw5M6x1oBmQ1U92lN7o3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEpcpboFgAfTJQzKRmtZjFMkbnGpgzDrXmJY4gYFbTUFBVJ23FFtY//I/K6pghI2J3v5IwDyb2zADdFr7+NpZtIrqKu07TU7wPzCDkoeQW22ngl7hzZ2zbptKfgHQn5XRWCK/nqgm6Y21Kdopq+89mxxiBK6bNNNZH7wegwgd7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MxgYCYpO; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=MxgYCYpO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0B6465C85C;
-	Mon, 13 May 2024 17:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715621209; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LHwhqBcJNb7hcRmxDBdb2RRQjH1GPK52RNyomipKXWI=;
-	b=MxgYCYpOqPRV0h2hOCM8DsixEEmYjKw4Ifk/nVucpdcfVEPrAghfDU2uIgWTcb/iPaSB/1
-	51fQXELtnfAjhQJrN3Rx0sAsHcK/y6D6vvODE+WdaLI8txHtUH9v1D97zZxjmCOqIsAiuC
-	K8nPV9EDdkpc2fowqa+S8amjhKdt6HM=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=MxgYCYpO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1715621209; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LHwhqBcJNb7hcRmxDBdb2RRQjH1GPK52RNyomipKXWI=;
-	b=MxgYCYpOqPRV0h2hOCM8DsixEEmYjKw4Ifk/nVucpdcfVEPrAghfDU2uIgWTcb/iPaSB/1
-	51fQXELtnfAjhQJrN3Rx0sAsHcK/y6D6vvODE+WdaLI8txHtUH9v1D97zZxjmCOqIsAiuC
-	K8nPV9EDdkpc2fowqa+S8amjhKdt6HM=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB0D413A52;
-	Mon, 13 May 2024 17:26:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hSXqOFhNQmaydAAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Mon, 13 May 2024 17:26:48 +0000
-Date: Mon, 13 May 2024 19:26:47 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Christian Brauner <brauner@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Kees Cook <keescook@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Tycho Andersen <tandersen@netflix.com>, 
-	Jens Axboe <axboe@kernel.dk>, Aleksa Sarai <cyphar@cyphar.com>
-Subject: Re: [PATCH 2/3] kernel/pid: Remove default pid_max value
-Message-ID: <dfoqa6pd2vyk6zcnc7zulojiho5uezgeyv2a7h6i7dm2oaawgt@7h33yk4pgiw4>
-References: <20240408145819.8787-1-mkoutny@suse.com>
- <20240408145819.8787-3-mkoutny@suse.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F322B37147;
+	Mon, 13 May 2024 17:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715621295; cv=fail; b=mYDjwY0fMsNrc44PSh1Flcc7+UlZ13q7OPGVV5nlWedmSr5+VnncXlUAFuBH2hf8ALFuWjUgoT8hdLc5db8uB7FFmquOataEXGbQsj8lhwmp2BTCj+/tq/wTlfHqk2gvBb8d2uxYZYMf15N6GJ2ZUOn5iNsFVJzJOvHwnN1NxNU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715621295; c=relaxed/simple;
+	bh=X2TyUZBpKE4CdsOK9sDAFR+FzRu+NGB2oRo1B2XkNA8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mtiw9dsqbKNBTWjQgEmh7laZRbqhdZKk8FQWvlfdtC9icB1ZyroLL3oJnC2i9RNFhBo16UeiL4UoHa+TImbRTctT05tqvRRrDaCQXltXQ4y7bH0aYTJ+g49dZbpm91b7JNldXAkoni2xopPvW/prBKywOM6dvzdHTMlg2IFXRXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=RktCxG5I; arc=fail smtp.client-ip=40.107.244.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bP5v+9+F4H92hHZUBO+ExCoDNgR5PokGZ8WhMD0GAFSU7+M0fAxpo9XiXn32x7x3mtT++8wq5YiAnjHV744n9Iv1+qCpNpTuM7sd/c23ei+fFOOLsS6qcYiIEKv4UP9o6EJV7CnWPS+rT0WUzZ1h7gwtgwFY7feD1FbeItxIPTq9WLmrOdRoLGjynglbapLXsGrkz1Yd3Nk10kG5wahSrUxu4SxyokDkCsEqITlVmJFBM70KFt7fstlU9rH4kjOQXUgiBHulW6cj7fnu4sTqW45IR/dhsq52jeHv/8OnNXPSFbQZL9L0ylwiQCRgMcmo+JSEEYjx4qWI5ZivJvrK5A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3lKwFwiQMV+7KnOetMR3uIee8u0G7vmNTmBgib6N/LQ=;
+ b=iUgLyO5OqIC7UbHdEdVWi45G+fIEIMXIdDfUC3GDK/8fQQ9TagSdV/rOxzP5pXaM8OIzbGzlZgnAhZeVUpWt5FOTAH/G9mxhYB+TrL0Y4s6UkkrD3F3uOz49Hei2Zewcuh5ZZUal5HBfJeiMu8jvLH2gdgfBb0lqQVqalDhpKvO5KN6+90Xc1jFnnpgcr+dukelIj5vVLWV67df+UhPWQfmfGO0o238URZZWCGGt5qSP8g6psIlj2jvKYcwTrbNd5iku2H62FL9ktXsgi4OyULWfVMuvJf4E5tGXKF1wTDHj/dO0bO9uFrdD2JdOoi7L2KZ6PyzPZDew3X1iBJcchQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3lKwFwiQMV+7KnOetMR3uIee8u0G7vmNTmBgib6N/LQ=;
+ b=RktCxG5IbU22lg64dijKjgm9U+jbBotYx9cijI2exUvCvD0Wf0PsoPqs+0V0JPC0Yboq2jQMg3q5avKx7UsLrfMzVAlW3JtWQuEbLpxcTtUksxc6xpff/0RQovptjYgAb4r3k6vwJEyRl/lHf7znU7b2pgIt8IhONLQufOWMESA=
+Received: from DM6PR01CA0021.prod.exchangelabs.com (2603:10b6:5:296::26) by
+ SN7PR12MB7882.namprd12.prod.outlook.com (2603:10b6:806:348::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 17:28:12 +0000
+Received: from DS1PEPF00017090.namprd03.prod.outlook.com (2603:10b6:5:296::4)
+ by DM6PR01CA0021.outlook.office365.com (2603:10b6:5:296::26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.55 via Frontend Transport; Mon, 13 May 2024 17:28:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF00017090.mail.protection.outlook.com (10.167.17.132) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 17:28:11 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
+ 2024 12:28:10 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: <kvm@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+	<linux-coco@lists.linux.dev>, Sean Christopherson <seanjc@google.com>, Nathan
+ Chancellor <nathan@kernel.org>
+Subject: [PATCH] KVM: SEV: Fix uninitialized firmware error code
+Date: Mon, 13 May 2024 12:27:04 -0500
+Message-ID: <20240513172704.718533-1-michael.roth@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nkvry3sagr4djnvz"
-Content-Disposition: inline
-In-Reply-To: <20240408145819.8787-3-mkoutny@suse.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-8.11 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SIGNED_PGP(-2.00)[];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:dkim,suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 0B6465C85C
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -8.11
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017090:EE_|SN7PR12MB7882:EE_
+X-MS-Office365-Filtering-Correlation-Id: 575740f7-1b87-4731-3994-08dc73721023
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|82310400017|36860700004|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?A1O9bZZJK6zrpG6zNOwEN244jZ6U8FmC5cQhrYGSXTZLeXqft4MgRzseZ+D9?=
+ =?us-ascii?Q?zwZUhYJ4rUxB8xsnDmnGj6Qd1h+2Tw2zYzN9ICAhJCvbLgRsycwaQoQAnZpT?=
+ =?us-ascii?Q?25ZlVFZ2E6AGL6Dhk7TmUZVSITAbRl1nO+RZL6Xv+6uLWlnED+oP+enK+WmD?=
+ =?us-ascii?Q?Tapeg3jaMNf2s5Jpx1WSyRslMhmlmtCj32XceyHTwbXwIJiD1lzlzCuf/Zsd?=
+ =?us-ascii?Q?scrZm+54k7YKXloLKJ/6DSBmTKKkdYzzg7AMbCfi+WwGWpfoWBub7voelnUv?=
+ =?us-ascii?Q?TGe7NYqEn2/rBgk47oT+meUlKHrfhRb7sohxlVXlB3QU8mkUCTlwtanCbHdj?=
+ =?us-ascii?Q?DcnLu+3cpShu2/zNcsNpIJTxskJV5vGcspf1EQPJsw/trixVgZx7TMd71wNl?=
+ =?us-ascii?Q?TM+Qhd9rzfj8dCx1NVz85F9mmSrkzZrKqPfFTuTXtVLFiE5H6J/B72eNWq4f?=
+ =?us-ascii?Q?GWgo3eRw9vtrUqGhBh01hGGRib9PHOovT/jB6NW7G57E2MSWXTGwvZfSc5iE?=
+ =?us-ascii?Q?lgzSlalm+u8nv90hKKm0saEzb0ALQhQgqh/17k3fLWxsTmfD6tivGncbkdYj?=
+ =?us-ascii?Q?RvM6Z5NaOfNOPI/fs/OTaUluxTz3b+9Zb/+3hsQRDR8ypZewJoEEYiLOOLjP?=
+ =?us-ascii?Q?RQQIBAOS0RyyAwlp410yN7nwdX5eqbRWIiOC3MSRRXoAwCe9K2eVXKAKE2ng?=
+ =?us-ascii?Q?eIeOipqQPo9k21T4oW1xjS2tgf+erYgDLTcNFGLZYnj+AnM6oAiDQUCmdFZa?=
+ =?us-ascii?Q?zye3NKx75bqhXqCkR1SflzZMsy4KqXeGe9G2jeYoZ0ybjU1DWsOgCdBujumu?=
+ =?us-ascii?Q?dBq/i08lKh1Yxx/29LUYl0bshCnwO0DjxFXuBZeOmN0PRuZemYFoX8RFA7/H?=
+ =?us-ascii?Q?JymQll9iSy3J8grd01WysMNxXilUs+JkSoGKBTefX1rK+VtucxKTHFKbSBNX?=
+ =?us-ascii?Q?qYEQJ5ckoHS9ue/3a61X31mrpYfHhJQJaLG3nTOpwNi9WdbPC9S4PKvZaHKe?=
+ =?us-ascii?Q?Ccf0HJCBUgC6/4VYgsbwvm7AuuKz27zvt3dTwKmuuy/wX/+jUgX6ouANzNRc?=
+ =?us-ascii?Q?Pyk/TG0IeYrcBXuTrI0sxS4+6dq3eZeS3osMdEN57GzvTtWpdxecJjJJQ2OD?=
+ =?us-ascii?Q?iSVvtguYsL9rUSo+Jl5EYzSwDzYlWxqJwaqugPHFpI8Co3KdV/vnzpopbktz?=
+ =?us-ascii?Q?p3A/rf48tpCoE212oovSQIeuOshgbJ2Dye4XEWEFUJLhuI0DFPiSiWT45b/5?=
+ =?us-ascii?Q?Tn22UfGPHbqSytnSPsMHeyAnfFJb68mYkR+6nFAzxo043k1nFxFlecQsv23V?=
+ =?us-ascii?Q?CKY0SIkAFF+hBkQR319M0tXF?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(376005)(82310400017)(36860700004)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 17:28:11.3040
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 575740f7-1b87-4731-3994-08dc73721023
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017090.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7882
 
+The current code triggers a clang warning due to passing back an
+uninitialized firmware return code in cases where an attestation request
+is aborted before getting sent to userspace. Since firmware has not been
+involved at this point the appropriate value is 0.
 
---nkvry3sagr4djnvz
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Closes: https://lore.kernel.org/kvm/20240513151920.GA3061950@thelio-3990X/
+Fixes: 32fde9e18b3f ("KVM: SEV: Provide support for SNP_EXTENDED_GUEST_REQUEST NAE event")
+Signed-off-by: Michael Roth <michael.roth@amd.com>
+---
+ arch/x86/kvm/svm/sev.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On Mon, Apr 08, 2024 at 04:58:18PM GMT, Michal Koutn=FD <mkoutny@suse.com> =
-wrote:
-> The kernel provides mechanisms, while it should not imply policies --
-> default pid_max seems to be an example of the policy that does not fit
-> all. At the same time pid_max must have some value assigned, so use the
-> end of the allowed range -- pid_max_max.
->=20
-> This change thus increases initial pid_max from 32k to 4M (x86_64
-> defconfig).
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 57c2c8025547..59c0d89a4d52 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -4048,7 +4048,6 @@ static int snp_begin_ext_guest_req(struct kvm_vcpu *vcpu)
+ 	int vmm_ret = SNP_GUEST_VMM_ERR_GENERIC;
+ 	struct vcpu_svm *svm = to_svm(vcpu);
+ 	unsigned long data_npages;
+-	sev_ret_code fw_err;
+ 	gpa_t data_gpa;
+ 
+ 	if (!sev_snp_guest(vcpu->kvm))
+@@ -4075,7 +4074,7 @@ static int snp_begin_ext_guest_req(struct kvm_vcpu *vcpu)
+ 	return 0; /* forward request to userspace */
+ 
+ abort_request:
+-	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, SNP_GUEST_ERR(vmm_ret, fw_err));
++	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, SNP_GUEST_ERR(vmm_ret, 0));
+ 	return 1; /* resume guest */
+ }
+ 
+-- 
+2.25.1
 
-Out of curiosity I dug out the commit
-	acdc721fe26d ("[PATCH] pid-max-2.5.33-A0") v2.5.34~5
-that introduced the 32k default. The commit message doesn't say why such
-a sudden change though.
-Previously, the limit was 1G of pids (i.e. effectively no default limit
-like the intention of this series).
-
-Honestly, I expected more enthusiasm or reasons against removing the
-default value of pid_max. Is this really not of interest to anyone?
-
-(Thanks, Andrew, for your responses. I don't plan to pursue this further
-should there be no more interest in having less default limit values in
-kernel.)
-
-Regards,
-Michal
-
---nkvry3sagr4djnvz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQpEWyjXuwGT2dDBqAGvrMr/1gcjgUCZkJNVQAKCRAGvrMr/1gc
-jpSvAQCsSOm/I5e5OvSYLJxNDtQ9wak/VEONLbVa3cVJP2xHhAEApi2V5nn0hmbR
-480flnaEOBy19fewu+8DXLEC1byvEQo=
-=5y2m
------END PGP SIGNATURE-----
-
---nkvry3sagr4djnvz--
 
