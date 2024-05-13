@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-177996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F288C4740
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:57:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 267EB8C4746
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0939285E4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08BE285FCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0822245014;
-	Mon, 13 May 2024 18:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998E255C08;
+	Mon, 13 May 2024 18:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WH5YCYqI"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="g/pB59Bd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P5vUuSbR"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0993D0A4
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3212145014;
+	Mon, 13 May 2024 18:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626628; cv=none; b=JxKG6cGgNRJ+G8Qsl7FDXgMNlYQ6hEHbHP80l5i3LQJzZ4UeMNeEMNzLlrx+F72uzm8t7Kkf82AVAo1yM9EC5R3E7IVCNH2Oe48kt6N+AKMwDhyTZcGNBSHp5pJ2wTM1iqPVtTjGKTDhw2M+mYYeTkHjg279qAo5WUSA6J7s1rM=
+	t=1715626697; cv=none; b=ZWICaV2iB9hbV9h4E04qXy9ekOvjWNXSyZX3N4ofeNdmBe8D6T37FaG6rGgSBOdbhJ+0JqSBEZOP6oHU//OAUG0L8ZPdsuAtQJj59OYr7yn8X5/Zr302UR6L1r+a/BcKN/TDUpF5CxHFuerJ7O/kKV+/mWcw9idvnNWSjcXP5QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626628; c=relaxed/simple;
-	bh=q5wPdG/4nQ7huyx+fHjYRyb5vaRB6g0n6Fi2oJpjudg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thS6h3zQelDXd7Fz1h1+ivIUP5Chv1XhJuIcZ8KA5OLfTylpOPvWPzTj2vzYX0bU4bnuWLXw76hp7Bx7YLp03PxRTNZuLSedt6ekc83NrYObW3Zb+sQI97de0pHrzZ9lL0W4JBV4xE71F7d6U2MQ0LLPi4Z2hqj4Qi0eVYhhTHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WH5YCYqI; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-61be599ab77so2100010a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:57:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715626625; x=1716231425; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Sr9kb5P0bdJ6cwmhx72J5XTZqy5p16gtf0vFcQMPyY=;
-        b=WH5YCYqIc8Jge3V/TDdAYdAP9FxsCdf0v/8mvIAgJkeEcji+qwKYD4Qk2p3wdKKANp
-         Pvg/RJlUMxDO68KxfJL93NYkgY+GN3AwySDULVBqXtEK02qja+Bo/i0B6YUJ5zjiVihk
-         MjMc+uUJl97mvLUsNNG4GO4ic3eFgFQ6wJhm8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715626625; x=1716231425;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9Sr9kb5P0bdJ6cwmhx72J5XTZqy5p16gtf0vFcQMPyY=;
-        b=IrEBYvuqZ3FIK020cCgYUAKxIANQdFVeK9rTg8y668pE7V2QHhTrZ2hcXFDHk16rnI
-         hN3hfFkweGrYvQa6l1I6aooXODzVAwx4O11vHaxhnQF4A2ijqkGo3saDVtNMaxoC0CNu
-         9VlmSWRjvMLqyCQWKeYJJ85+ZBkSeE0R68yv8GW+j4BF8/PARELzkdZ5ubcaIiCU1fd3
-         KlSD/os155LQj4RSxxA4QF8MWtB6YmLM23A3wrsiAz4tUzOlclYzRoJ66GXDTXC9MgUl
-         EhAT+Le27WJELVxjFFqK8cZAgwHt3YSftDv4chfqwERTqlSIANp89q5cpgBhFWRGh/GI
-         FbkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAeg91SPVM/7VHnKM7ey4Sp9XAjPjllpK/rzzvudrVAciKXJTqqP8bNAtlY+EUr0VzwR5nD6iOzfn77/UT1kSGcvtteLXk3oVj2OJp
-X-Gm-Message-State: AOJu0YxLX5/dboEaK6/MGl1KhPi+buOtWKxIzzlrp9l2gZMShUNch/Pu
-	VC3NEVdP13cZsBuCEURrgsi8TMO48dDI7L6Fj2kjijvpeuL0ZZ+cr6OGz73vDQ==
-X-Google-Smtp-Source: AGHT+IFZy10S65Q1vfaN/XWvg9gq6x4mClMImz+nVw5XGcRK6RvacpVEeTsgn5spmcSloAx5/jBJ3w==
-X-Received: by 2002:a05:6a21:2b0a:b0:1af:cd4a:1e1d with SMTP id adf61e73a8af0-1afde1c554bmr8986093637.40.1715626625368;
-        Mon, 13 May 2024 11:57:05 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a7asm84964695ad.140.2024.05.13.11.57.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 11:57:04 -0700 (PDT)
-Date: Mon, 13 May 2024 11:57:04 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Erick Archer <erick.archer@outlook.com>
-Cc: Taras Chornyi <taras.chornyi@plvision.eu>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] net: prestera: Add flex arrays to some structs
-Message-ID: <202405131154.BABC943C@keescook>
-References: <AS8PR02MB7237E8469568A59795F1F0408BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
+	s=arc-20240116; t=1715626697; c=relaxed/simple;
+	bh=qu2Ea7/LSXXvVzXlIpzjmu8Cb8NhYM1NABuWG3jCFmk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CLFZVdyUu8CRaf3XhyPHy59p2AE3FoM28k6R53T3qnJetXah5eA5Iz23j5xESerFpRvI3C+KTarn/WPVlkM2q453K5paaJH+ecFX6zQC1hsmIzcmcq/KIOK13NaAS15VYxy5gNsmWjfAqtLOSOse3vKoBtka816kRlquAawphzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=g/pB59Bd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=P5vUuSbR; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 4D7A3114014E;
+	Mon, 13 May 2024 14:58:15 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 13 May 2024 14:58:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1715626695; x=1715713095; bh=eu
+	By1XyEq9PKhM9EjMcv/PS7V33O30zg/FBOb0ToDZI=; b=g/pB59BdsYhioMfZLF
+	SoDHA8O3PF/w5Ajte9JNZwgQZOocA7uBhU1QBdf82t75EEhpGDReugzc++LMUgoZ
+	sdOZ/PvkNKfhDZm7L1/aWfvAfDEt8jgomm+0fPYsV8Nmuir+Uihlv1a89gLFxbqy
+	ZgbQ7ajRlH7aY8OvSDoIrmAyoMO+n4igBcl72o+DTPNvnNXEbzyK6NSln1xBUd/z
+	BqQLCmn+OGZVQfQG3VfS5Ts0V53fGoVPgUomXw2tNLsIiFF1Ng4nnfOqnuRSuyEH
+	JUInCmPwG6WGFoEQGA+zjlyaaxEkWB0OYPuyZks1r5x61ueU9116vGkNk+5dH2oJ
+	tMdg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1715626695; x=1715713095; bh=euBy1XyEq9PKh
+	M9EjMcv/PS7V33O30zg/FBOb0ToDZI=; b=P5vUuSbRV1xrETq8myE/LnAe7/KQy
+	122nnKQIyad2lJ/naEFf2srDzyDuh98BU5tE0rFqJHcBObWy/F1CyOKtEi5U7a7I
+	dfd4DrpdHRycN757hmbTlc92anHSDZ9Tr+a6KfC5Lwec8P8J6/XzKfwikO30csOX
+	EVbwda4VlG90I5CEhSoFKwzKwMzO+ML995aCbndFGAxpaRwdODr3M0pKI9zoTKXu
+	e+Cf+GRPq8hy0Gzv5TRPIOlX0Uqxir5e3rSFlr1tJoZLpiSk9YeWKvZ7nLfScJ+Z
+	tipkxl9tRbpvDEXhliQXLMscTxdOA8ReRGh4UJA9SR/UWcRtuCWzOGZnA==
+X-ME-Sender: <xms:xmJCZmroyt6Vf5_QHrEG5M8JKic0if_cteIBSQ76ZaQT5nG52zY7Fg>
+    <xme:xmJCZkpN4p7DxQCPUk3Y04vcOy8K42CLQlIXfE_gkHG6Y9vaJVAOzSUe1KIO4Vx1Q
+    8IqrDvnZ4isKgsdDDY>
+X-ME-Received: <xmr:xmJCZrO8Y1s10HcMboeA2VGasUGIGuCNSqaKdf4wdSbvRFExF0wZNY0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeggedguddvlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomheplfhirgig
+    uhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenuc
+    ggtffrrghtthgvrhhnpedufffffffhueehvefhgfelveekueegteefgeeiieejheefkeeh
+    keevudevieegueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:x2JCZl6W5_jkFGLSWhelb-ha7-JJYj1BjQwAxFDg8LmsS0-n2qDRAQ>
+    <xmx:x2JCZl4-n2oHDvbDp-66PoBgwsfSveqpAK2PSZp7corV_e5fsEbS_g>
+    <xmx:x2JCZlieZPtoR9Gw6yH6jWa7Fj2lk6f3Spy8PvJUKdQJwBjVOGMPrw>
+    <xmx:x2JCZv4M2CuDsNwwLXvIdlELQSAtTKXqgMBJlMGprRTqB7r4AepNFA>
+    <xmx:x2JCZiwk6mO4U5ZGxlvuuDpFx2NYe-lUTLOi4eqDjmhnBKyu7NbH6fYr>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 May 2024 14:58:13 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH 0/2] MIPS: Boston: Fix syscon devicetree binding and node
+Date: Mon, 13 May 2024 19:58:13 +0100
+Message-Id: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR02MB7237E8469568A59795F1F0408BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMViQmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDU0Nj3aT84pL8PN3iyuJkIGWRamxommppkmhhaaIE1FNQlJqWWQE2Lzq
+ 2thYAhROtNl8AAAA=
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=529;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=qu2Ea7/LSXXvVzXlIpzjmu8Cb8NhYM1NABuWG3jCFmk=;
+ b=owGbwMvMwCHmXMhTe71c8zDjabUkhjSnpONXmDd/1BS0MSn55Xk436SnruDsXLWriwxb7Te8O
+ /f+0DTTjlIWBjEOBlkxRZYQAaW+DY0XF1x/kPUHZg4rE8gQBi5OAZhIXjAjw7+dcZef32gsKz0V
+ lSx1453xv8xzv8S4ZrH2e9QysLJMnMLwz3jfku+L7ZS/cGl3lOgz/uZji2KZ1rH8HJOjsOk+iXX
+ uXAA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On Sun, May 12, 2024 at 06:10:27PM +0200, Erick Archer wrote:
-> The "struct prestera_msg_vtcam_rule_add_req" uses a dynamically sized
-> set of trailing elements. Specifically, it uses an array of structures
-> of type "prestera_msg_acl_action actions_msg".
-> 
-> The "struct prestera_msg_flood_domain_ports_set_req" also uses a
-> dynamically sized set of trailing elements. Specifically, it uses an
-> array of structures of type "prestera_msg_acl_action actions_msg".
-> 
-> So, use the preferred way in the kernel declaring flexible arrays [1].
-> 
-> At the same time, prepare for the coming implementation by GCC and Clang
-> of the __counted_by attribute. Flexible array members annotated with
-> __counted_by can have their accesses bounds-checked at run-time via
-> CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
-> strcpy/memcpy-family functions). In this case, it is important to note
-> that the attribute used is specifically __counted_by_le since the
-> counters are of type __le32.
-> 
-> The logic does not need to change since the counters for the flexible
-> arrays are asigned before any access to the arrays.
-> 
-> The order in which the structure prestera_msg_vtcam_rule_add_req and the
-> structure prestera_msg_flood_domain_ports_set_req are defined must be
-> changed to avoid incomplete type errors.
-> 
-> Also, avoid the open-coded arithmetic in memory allocator functions [2]
-> using the "struct_size" macro.
-> 
-> Moreover, the new structure members also allow us to avoid the open-
-> coded arithmetic on pointers. So, take advantage of this refactoring
-> accordingly.
-> 
-> This code was detected with the help of Coccinelle, and audited and
-> modified manually.
-> 
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#zero-length-and-one-element-arrays [1]
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments [2]
-> Signed-off-by: Erick Archer <erick.archer@outlook.com>
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Jiaxun Yang (2):
+      dt-bindings: mfd: syscon: Add img,boston-platform-regs
+      MIPS: dts: Boston: Add simple-mfd compatible
 
-This is a really nice cleanup. :) Fewer lines of code, more readable,
-and protected by __counted_by!
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
+ arch/mips/boot/dts/img/boston.dts                 | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+---
+base-commit: 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
+change-id: 20240513-boston-syscon-8e315e94a894
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-
+Best regards,
 -- 
-Kees Cook
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+
 
