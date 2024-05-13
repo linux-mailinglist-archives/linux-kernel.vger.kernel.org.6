@@ -1,97 +1,150 @@
-Return-Path: <linux-kernel+bounces-177671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5102D8C42DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:08:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 665F48C42DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80EE41C20F3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96F831C2132B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB816153835;
-	Mon, 13 May 2024 14:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9E2153826;
+	Mon, 13 May 2024 14:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="d47PCMxb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vw0P+P2F"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="Fi2QihlK"
+Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38396153823
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AAE50279;
+	Mon, 13 May 2024 14:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715609326; cv=none; b=AVcltC2k5ULPaNLK+y5DsuQAwunJG3Qw8ld8JjwZnSy1ImzdUJDSAYstpEzeRN4fdyJwbgQ0ZeoApMqb66jpazmT7lV2nWb1CSmODPVYwDq95k6vSz5wcdWOlJY8XNLPPISm1xN9/p+1rAptCUJjXmATre84u7nbVn50RajS7fE=
+	t=1715609379; cv=none; b=NN0J1RYtdTfhTo+cbZCGfV5nmH9byoyc7f2B60t79FPoT+Kc/Y9tZErD/OznRVLI3pHjCna6II6jTMw6j+gAAIlO2e8RqEQ6c6Rzk0gRMu7LDdulL4mFZpbwuf8cUzyUoGhA66F4QbUu6IGWyadALtvg2sm/0x7DJCWA/CcJCTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715609326; c=relaxed/simple;
-	bh=UT5j7BgJNNrlLd9K13kM/MkWDznH/+I5nuxgWBNbFDo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DX1wV3KyXA2fuKganz0lZb3S1tgsfF9HQtUiL1QdE0XxRtCRsx41LccqRiasKB8s8IML/onuMruKtgYiY98iM6nFAOcvflVKT8XN0V9eEfBjo9edKpHwHB39Jp+p37zmp3mf2Ie8W6LEchMh1GCzgxf0MZjIc90riJgQ0XPgKNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=d47PCMxb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vw0P+P2F; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715609323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IlV+zvrsTzEjXr8XFq27EiNK1xlgS37wfphlRcyXsZs=;
-	b=d47PCMxb+7X00xF0re7aKwR1NF5o93jJuXr0CcBg168+ySKiSATgNERdALWpHlyTg8CRmr
-	JYm42p5ORow7rQxfyEc/vhVkLln68Wgv3f3UqemDUC2n0sJ+GSWMu8ZXjeZZIyRD77cfJb
-	qiz+IfPM0Q/p65YWV3T0vp7QFYfHL2HPoE2WfEB/9RAVwSBg3jyIjSqOg40g5cyrqzIfx5
-	fL7p9TM+x05j0p1kY0+JuPiuBo6KiRpU3ZGmvINBIMlIjkMr2ZJbilFl08EDNLYX/LgCfq
-	wprKnh4mjZDOWbKiGSMOzFmlOHcBC1S+fyR+9gneNriq4MJ18uj8nxoiwdCLzg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715609323;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IlV+zvrsTzEjXr8XFq27EiNK1xlgS37wfphlRcyXsZs=;
-	b=vw0P+P2FxgAyUMs8hP3N9W6LMWgiTzIJ2p0xX4ne7diYGDi6nkvuyqDzUeBKlEpgUh3IkH
-	GLKYrKLgM/STqwBA==
-To: Lyude Paul <lyude@redhat.com>, "Linux regression tracking
- (Thorsten Leemhuis)" <regressions@leemhuis.info>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, Mario Limonciello
- <mario.limonciello@amd.com>, Borislav Petkov <bp@alien8.de>, Linux kernel
- regressions list <regressions@lists.linux.dev>
-Subject: Re: Early boot regression from f0551af0213 ("x86/topology: Ignore
- non-present APIC IDs in a present package")
-In-Reply-To: <d2c6f335a6eb5892b0d894d5df4a6e713fa013b5.camel@redhat.com>
-References: <3d77cb89857ee43a9c31249f4eab7196013bc4b4.camel@redhat.com>
- <20240418082703.GCZiDZVyra7qOQbyqn@fat_crate.local>
- <fd040809d95b3e12b2fdc78a2409e187716bc66f.camel@redhat.com>
- <87plumxz4x.ffs@tglx>
- <abbb7d7ca781f6c664e4c5b1dffc19394ac79691.camel@redhat.com>
- <87le59vw1y.ffs@tglx>
- <3a0afe545747e5314a9cb6bbaa9ce90b259ddfac.camel@redhat.com>
- <87edautcmz.ffs@tglx>
- <3b1d16e357c1f9badeef405366492f05af26c085.camel@redhat.com>
- <878r11t8zu.ffs@tglx> <016902d9-3858-4c65-b3ec-f7a5103af63c@amd.com>
- <51d0dff8-2888-463c-95ab-71b491f12a8f@leemhuis.info> <877cg4ppd5.ffs@tglx>
- <ea927dad269cc21de1d0baf3d6c9f66ee025b862.camel@redhat.com>
- <d2c6f335a6eb5892b0d894d5df4a6e713fa013b5.camel@redhat.com>
-Date: Mon, 13 May 2024 16:08:42 +0200
-Message-ID: <87jzjxn6s5.ffs@tglx>
+	s=arc-20240116; t=1715609379; c=relaxed/simple;
+	bh=FAfkXAwyjCo/QZMau5q8n1Mc9IC9NRMCuqxd0zsLphs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Qxst9cVJLYxzx62Zf8kSbM+oIV29TeW9f8tfiQCrSUhutZtZv9Dp5hgrTimfiCFc4pYV9ARuFZURZcyHkmeoB1y99V9RL2YtBCocNcJ38kzBmRQwqTALZzVaEDeHVnvbwZe4yFpiUecJg5Q+ZuEI+a7GWLVbPzmsiThK/o7dqMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=Fi2QihlK; arc=none smtp.client-ip=148.163.152.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355092.ppops.net [127.0.0.1])
+	by mx0b-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DBvq9a025305;
+	Mon, 13 May 2024 14:08:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	date:from:to:cc:subject:message-id:mime-version:content-type; s=
+	DKIM202306; bh=/Pslq7UGfJig0rYvVspeuOhidIHs7ghS/8dTl5NO4KI=; b=F
+	i2QihlKnLCPsYrzL7yGGg3CowRYvNN8yahEZByVxoeIbC7mV/uu4K9+gg3vDLEcC
+	Qww4/HykhM1oxiM4Li2TSRdF5wh4YFfAL7abY9pGizw5sIAM4eazYJpH5CsglbcX
+	XZXY5AMA7IcIzA+1TgPAJe8NmBPyN8MZRdz4KLzCk0Z6iMu2QI/QPGc+RIfX0I5y
+	dQFBZ3Rt6+U4W8r2q/qm+wH3oGYsc11Q9M7Fs6ng6HzQxgN7ZIVe4Rb2gB6Cj9mR
+	1XO7XrE0opzFzd2VORDf1/jeUnjy7YgqNKePoOhnmBsid6boZAUqDBa7LBhqXjUz
+	RIqRFDp00ffDi/awxcPYQ==
+Received: from va32lpfpp04.lenovo.com ([104.232.228.24])
+	by mx0b-00823401.pphosted.com (PPS) with ESMTPS id 3y3d7ps0xv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 14:08:47 +0000 (GMT)
+Received: from ilclmmrp01.lenovo.com (ilclmmrp01.mot.com [100.65.83.165])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp04.lenovo.com (Postfix) with ESMTPS id 4VdLv31TGxzg1bp;
+	Mon, 13 May 2024 14:08:47 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by ilclmmrp01.lenovo.com (Postfix) with ESMTPSA id 4VdLv26mbvz3nd87;
+	Mon, 13 May 2024 14:08:46 +0000 (UTC)
+Date: Mon, 13 May 2024 09:08:45 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Zi Shen Lim <zlim.lnx@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Puranjay Mohan <puranjay12@gmail.com>
+Subject: [PATCH bpf-next v4 0/3]  Support kCFI + BPF on arm64
+Message-ID: <wtb6czzpvtqq23t4g6hf7on257dtxzdb4fa4nuq3dtq32odmli@xoyyrtthafar>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Proofpoint-ORIG-GUID: vkgeap01RG7LlgWIsm2nTryLwdxI0CEw
+X-Proofpoint-GUID: vkgeap01RG7LlgWIsm2nTryLwdxI0CEw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_10,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 malwarescore=0 suspectscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 impostorscore=0 clxscore=1015 mlxlogscore=400
+ lowpriorityscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405010000 definitions=main-2405130089
 
-On Wed, May 08 2024 at 19:21, Lyude Paul wrote:
-> Regarding the test results - I tried possible_cpus all the way up to 17
-> and nothing got the machine to boot. However, possible_cpus=8
-> intremap=off did get the machine to boot successfully
+For the BPF summit meeting tomorrow, I might as well have a mergable
+version. I took a look back on BPF-CFI patches to check the status and
+found that there had been no updates for around a month, so I went ahead
+and made the fixes suggested in v2.
 
-Oh. That's interesting.
+E.g.
+ffff80008021d5a4 <reuseport_array_lookup_elem>:   
+ffff80008021d5a4: d503245f      bti     c         
 
-Does v6.9 (released yesterday) boot with just 'intremap=off' too?
+Potentially this should be replaced by a proper paciasp + autiasp, but I
+suppose if we can assume the verifier provides back-edge integrity.
 
-Thanks,
+Changes in v3->v4
+https://lore.kernel.org/all/fhdcjdzqdqnoehenxbipfaorseeamt3q7fbm7ghe6z5s2chif5@lrhtasolawud/
+- Fix authorship attribution
 
-        tglx
+Changes in v2->v3:
+https://lore.kernel.org/all/20240324211518.93892-1-puranjay12@gmail.com/
+- Simplify cfi_get_func_hash to avoid needless failure case
+- Use DEFINE_CFI_TYPE as suggested by Mark Rutland
+
+Changes in v1->v2:
+https://lore.kernel.org/bpf/20240227151115.4623-1-puranjay12@gmail.com/
+- Rebased on latest bpf-next/master
+
+Mark Rutland (1):
+  cfi: add C CFI type macro
+
+Maxwell Bland (1):
+  arm64/cfi,bpf: Use DEFINE_CFI_TYPE in arm64
+
+Puranjay Mohan (1):
+  arm64/cfi,bpf: Support kCFI + BPF on arm64
+
+ arch/arm64/include/asm/cfi.h    | 23 ++++++++++++++++++++++
+ arch/arm64/kernel/alternative.c | 18 +++++++++++++++++
+ arch/arm64/net/bpf_jit_comp.c   | 18 +++++++++++++++--
+ arch/riscv/kernel/cfi.c         | 34 ++------------------------------
+ arch/x86/kernel/alternative.c   | 35 +++------------------------------
+ include/linux/cfi_types.h       | 23 ++++++++++++++++++++++
+ 6 files changed, 85 insertions(+), 66 deletions(-)
+ create mode 100644 arch/arm64/include/asm/cfi.h
+
+
+base-commit: 329a6720a3ebbc041983b267981ab2cac102de93
+-- 
+2.34.1
+
+
 
