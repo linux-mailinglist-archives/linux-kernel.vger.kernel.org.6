@@ -1,147 +1,89 @@
-Return-Path: <linux-kernel+bounces-177994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B77AE8C4739
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:54:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E8E8C473E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA8741C21E23
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BECA285F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F841C69;
-	Mon, 13 May 2024 18:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB76446A5;
+	Mon, 13 May 2024 18:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KMTqIsdK"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2c5wLXQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A63F3BBE9;
-	Mon, 13 May 2024 18:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9EDD537E7;
+	Mon, 13 May 2024 18:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626484; cv=none; b=k/vfCNZcdIw/UlbsU4kyTB6ZHH1WsmGrITOKkbjNyZWlVF3we9I/NNKrs0SUDfaQW3FXKXVfjt1ezTxmUEwcsUSqMeQ+t1Mz2QyJ16YX8MwG3ypVZyos3V6/XDnRsiDwlH/lfcLtamo66lHfvCh6E7JVkmVkMRp5mLsrY20iSME=
+	t=1715626526; cv=none; b=JsF9Pc5nclT9/at2MBh0OCQpyJzSyQt4x8uCxc48fqjXDasPsNatVg2BVuesqiNS6UfaZiv7kZADpLY1/BQF4pDX3iJorg1neoHPEhs4XlajI4NDpx2WRfJ6q5UgpS0VbjXnfLOrskeC0e1Cg2J9yOMjupdObyHjTn7fXcLzrrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626484; c=relaxed/simple;
-	bh=d2jgkbkMoV3Siq9CkSyxiqhZl+sMSfVZF3OGa6qLXek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FpqEB4RRgQam8HAWriblp61pDShySOx8IylVix9pP78v1cWS5+cH1v18+jK1OGDxesdtGQAnTQOEXHJZkseJLW/HJKEV17xCFgXN0qWVNbao0T49LNLeFB6dGmf4Z+NH9ZPU1r7F49xYz2N1+9cbWQc2u5dAvnaP6pDTP//ETYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KMTqIsdK; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=vGf/jTtuUwk/HfEDJqDmtiYZAy8X+Zz7Hwm9/iogRd8=; b=KMTqIsdKZZtq0XAnw1JFppwfJB
-	drxZVDMm8YEO6YQTHtlUaMNrpuWBLQ/dijcZB4JpgDFvxlY/UJvKtCTPJXYmGG+GwCcaTw2nTywpm
-	hlxoOFUE3Ck6baAyVfJSqz2RB+xrUCOl0dR0L+VYWEZTB0II2qLKTBu3HnMOT3pfyx9VLpv1QoWxz
-	7HfOINW9c2M0V2BJducBB4d+oEOfKtQ6ujoyCHvpJxu4VqYsbBNp7SH53tuR9f4p8sSOnqIFCYrls
-	FMCfqIvD10B6rwSSTF7BH3WlvTm1PJjUOchwtjIay7lq9YXoTrc0Ku4FkQHMIU9+3g5mjOHPMY3xK
-	yFqDsz+A==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s6aoi-0000000Dvoe-2NFs;
-	Mon, 13 May 2024 18:54:32 +0000
-Message-ID: <f24eef54-e32f-41bc-b4cd-13ca83e1ea48@infradead.org>
-Date: Mon, 13 May 2024 11:54:29 -0700
+	s=arc-20240116; t=1715626526; c=relaxed/simple;
+	bh=GZV/Vfwlmaxtj4wAoHOeOIS1lpiVCIVCn9kJZPfG650=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pZevpvQ2KrA9aU27o0tIjmnbyIMHtyeuYyjtTnR4bP7j8PULZKCb49sapiPEfOBAwqeZ/fpunvDcxsr45fuy1eccJW7IJDrDvzTEax6aGEUCKNSCKTc6cXuGIGhpjF+4HT3g/2SUqHkOvCoRl5k2XrV5aiyBbJjYQ6L4bgcuq7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2c5wLXQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB248C113CC;
+	Mon, 13 May 2024 18:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715626526;
+	bh=GZV/Vfwlmaxtj4wAoHOeOIS1lpiVCIVCn9kJZPfG650=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=L2c5wLXQcyT2Ddu0xxVsRugbQm2r19tFz29/0ox6iEp5r22M02s99LV/89p0SUhww
+	 yjvDvPtSCgK+ybmIR5aq0pCwnYi9PllDMBORgjfAXlOLh06nNG9RGLk8Vi20HOjX4X
+	 l8XnwSfAB5ECLkhW7/kW+BlhSYVaeiTd9ekwQI5Bwiidj+odvjJqAsDR7oYgEj5F+U
+	 kRyXRJEP/TaRoe+xa0wMMk6OmIIrHGu7B23iqvcMGmjfyN5ldcRrgL9wvTEWtcP3EI
+	 R11dVf519U/WBWoFfVAJjh5oVRFngSTcLpOB2qw3bq1Rqhi91L+1gtMaeJjWnj8jYi
+	 VSw6AMBq7sbGw==
+Date: Mon, 13 May 2024 11:55:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, zyjzyj2000@gmail.com, nalramli@fastly.com, Saeed
+ Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
+ stats
+Message-ID: <20240513115525.15043cfb@kernel.org>
+In-Reply-To: <ZkJgIe71mz12qCe1@LQ3V64L9R2>
+References: <20240510041705.96453-1-jdamato@fastly.com>
+	<20240510041705.96453-2-jdamato@fastly.com>
+	<20240513075827.66d42cc1@kernel.org>
+	<ZkJO6BIhor3VEJA2@LQ3V64L9R2>
+	<ZkJgIe71mz12qCe1@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/6] perf Document: Sysfs event names must be lower or
- upper case
-To: Ian Rogers <irogers@google.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Jonathan Corbet <corbet@lwn.net>, Jing Zhang <renyu.zj@linux.alibaba.com>,
- James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-References: <20240502213507.2339733-1-irogers@google.com>
- <20240502213507.2339733-3-irogers@google.com>
- <fe41f9a7-5726-49d5-9bc6-70102d9680a1@infradead.org>
- <CAP-5=fWHrX5AgH8=62f3=a-SSqUACXX1rkDZJ-WV1RcNieeHFA@mail.gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAP-5=fWHrX5AgH8=62f3=a-SSqUACXX1rkDZJ-WV1RcNieeHFA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-
-On 5/13/24 9:22 AM, Ian Rogers wrote:
-> On Sun, May 12, 2024 at 3:08 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> Hi,
->>
->> On 5/2/24 2:35 PM, Ian Rogers wrote:
->>> To avoid directory scans in perf it is going to be assumed that sysfs
->>> event names are either lower or upper case.
->>>
->>> Signed-off-by: Ian Rogers <irogers@google.com>
->>> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
->>> ---
->>>  .../ABI/testing/sysfs-bus-event_source-devices-events       | 6 ++++++
->>>  1 file changed, 6 insertions(+)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
->>> index 77de58d03822..e7efeab2ee83 100644
->>> --- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
->>> +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
->>> @@ -37,6 +37,12 @@ Description:       Per-pmu performance monitoring events specific to the running syste
->>>               performance monitoring event supported by the <pmu>. The name
->>>               of the file is the name of the event.
->>>
->>> +             As performance monitoring event names are case
->>> +             insensitive in the perf tool, the perf tool only looks
->>> +             for lower or upper case event names in sysfs to avoid
->>> +             scanning the directory. It is therefore required the
->>> +             name of the event here is either lower or upper case.
->>> +
->>
->> This is ambiguous to me. Is it clear to everyone else?
->>
->> "for lower or upper case event names":
->>
->> Is that a logical OR or an exclusive OR?
->> "AbC" contains lower case or upper case characters. :)
->>
->> I think the code [static bool permitted_event_name()]
->> implements an exclusive OR.
->> The code also allows event names to contain numbers AFAICT.
->> The documentation doesn't mention this.
->>
->> HTH.
->>
->>>               File contents:
->>>
->>>                       <term>[=<value>][,<term>[=<value>]]...
+On Mon, 13 May 2024 11:46:57 -0700 Joe Damato wrote:
+> > FYI: I've also sent a v5 of the mlx4 patches which is only a very minor
+> > change from the v4 as suggested by Tariq (see the changelog in that cover
+> > letter).
+> > 
+> > I am not trying to "rush" either in, to to speak, but if they both made it
+> > to 6.10 it would be great to have the same support on both drivers in the
+> > same kernel release :)  
 > 
-> Sorry, this reads like a troll. Assuming good intentions, could you
-> propose a fix in the form of a patch? When a word is made upper or
-
-Sure, I'll send a patch.
-No trolling here.
-
-> lower case I believe it is generally assumed the operation applies to
-> all characters within the word, but I'm happy to see ambiguity cleared
-> up.
+> Err, sorry, just going through emails now and saw that net-next was closed
+> just before I sent the v5.
 > 
-> Thanks,
-> Ian
+> My apologies for missing that announcement.
+> 
+> Do I need to re-send after net-next re-opens or will it automatically be in
+> the queue for net-next?
 
-
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+Right, unless it somehow magically gets into our 6.10 PR - you'll most
+likely have to make a fresh posting after the merge window :)
 
