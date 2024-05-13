@@ -1,284 +1,362 @@
-Return-Path: <linux-kernel+bounces-177888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50118C45DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E937E8C45DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F9E51F25ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183661C2106D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD6723768;
-	Mon, 13 May 2024 17:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16719200C3;
+	Mon, 13 May 2024 17:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GWsG0fid"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Ei9j5Wg"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94AF22339
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62880208A1
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715620672; cv=none; b=RDrSOsQ5Bw81sGQ3bzeljFZ6SPNnh9Bbv7y7ohYUyfiRdKdDMUsF7rDf+URtf8MK5NBGxETpF7i3mVMdWs4IWqIY9Ud0+ysbf5HpOsVf8tP29a1xtFymRj5LlMKJRWLKtsfJ1ZjR4pg73DVKE6BSwPM6hIv9OA6w+hEu9e4vBRQ=
+	t=1715620768; cv=none; b=KkmIg59tqzo4u7KoJbQlzxsQVtofJl4SU3YN7cvn7vIBiPe+puUBUDP/MleOFEUVOCWLud3KelTDpgYiOBjTZzIgJnHmSBsXCsYI7KQz9vUkYR75NvwRR0EC0kPTKeFdtf3iHXbCnOhoebsHmCv26MHIiCyhqlkhSIc9B/9yiCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715620672; c=relaxed/simple;
-	bh=QcQ/pCPEkSj5QIqFMXBcXK/NycL8IU+ixLdFa4lm54A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQTglQICF4H4BpEY4tQKSQJ3srxA4wZA38xsC5ZVneoDCE3Zq9JfWl7pq9wNWJNyGpUHCYwabfMwXgcyr47NyNpymXAho8prqfI9QVZJvAVaB0azE77gmjKbn53/OD4MgNHa07KMbZ6gdbAbE6AulTtsO4x6TeekwONI2/dVPII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GWsG0fid; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715620669; x=1747156669;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QcQ/pCPEkSj5QIqFMXBcXK/NycL8IU+ixLdFa4lm54A=;
-  b=GWsG0fidj9TzuZPVak/DZgGnb0G5hQXcKSUSyGJc7FrRlrcllql9XBca
-   hCuRqNf6/zDIp9aQefVWnG+u+MFZ9U1pT6+C0PIeq8MGVV00epoAIP1AD
-   zMGIimvvp9eOAsUJ+a1t4AM40PterubWtm+e1tTmtsNELarmRYDgUpOfM
-   bTWqYRepcGxsR227wc44nK+lPuZDCVA7Iv0zhAdBRDtJeVjCZtLWIWEPi
-   DX/lmEWmkWo/pMU3o/D+R0H2s0vH1exMcX+eYwANvFzc/BIQ3J6yTx3hn
-   GIBudbVi+J78f7lcRCYjDxIeVrMyPZ9MvJb6RIbxYzejpv03ItMj2Jy+1
-   w==;
-X-CSE-ConnectionGUID: EZYDmuk3SBSih2+ebsstDw==
-X-CSE-MsgGUID: asavtT3uQ46t7zaLmtXqpg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="15390453"
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="15390453"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 10:17:48 -0700
-X-CSE-ConnectionGUID: Tdm0B/uKScm4G38ISZNCDA==
-X-CSE-MsgGUID: CkR5S46DRImA1x1l+Q8T6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="30386078"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.105])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 10:17:48 -0700
-Date: Mon, 13 May 2024 10:17:47 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Subject: Re: [PATCH v17 8/9] x86/resctrl: Sub NUMA Cluster detection and
- enable
-Message-ID: <ZkJLO-fNXVxdm6Bb@agluck-desk3>
-References: <20240503203325.21512-1-tony.luck@intel.com>
- <20240503203325.21512-9-tony.luck@intel.com>
- <570e0c1d-8df8-45c6-a9a8-972e1ff2cf66@intel.com>
+	s=arc-20240116; t=1715620768; c=relaxed/simple;
+	bh=MJiVwiM18XryHUPJhid6EktmMnrxfcyKLI1aF/pSACw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ud9MVXRTyzeyboerkoaZWDBpTXFcK+lInY94A4ZNLH3rFiQbYfkHG4mYeRsinSkAvKmAdP/PiTss638XQ/XGHP48jom/nvxzMdDtqyNvMOw71vNbJxLwUhUz5a0H28YQTYEi9L6ObwEkOKWI2N9+z1gRPjdzB92K/PBZmMUfwPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Ei9j5Wg; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36c6789b520so353765ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:19:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715620765; x=1716225565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+0LcTyeTsxJaPnZ45cfiBgAVI9jES1Y4g+ohTkoWGUw=;
+        b=2Ei9j5Wg6O6/qB40/2aulFUIKXSQWn61xjUeF1fmhSS1aMrtu5QfaHTae9VZB2uY0Z
+         /z3sgGReAHsJnMC1avCOSFjaEr2AKchf/Ku3bGZD/txcPm1kZEsKu9cMZoXhDRJwf/nh
+         A5+rxzvBarfGhVJE6zfcjWtYTYkCPIr3kUdXHj+0tYYMGkHFtGjNWSdv2F9y2cte79QC
+         H4OM56RbvsczCHHlWVwkoD2LePrxAYuhEMOxB3h+1W84ekzJIoU8uh9BvVuSbUyKIlox
+         Ufo81MAKjO99hz/N3uqXsKuT94J3ZpgDjx8pCkWMBq7uswl2hcD0lxC5yb1pNDZSG7WM
+         cWUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715620765; x=1716225565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+0LcTyeTsxJaPnZ45cfiBgAVI9jES1Y4g+ohTkoWGUw=;
+        b=Pi4zhVe3KnGcU6maxc9Ea0aNAQL0pkJBoLjQ7lXpcZ/FZJ63HOAp//gKjAdlfaIsuk
+         vJe3HANIv/73EmVQPXh9ZPqiHVxI0smZ1gPjo2x0ZS8JOt+s7Je3XQtMEGYVNTuanILo
+         A7t+haHM5/i5kOlremSujGoTrg4pUh00Z9kG+WU4jkYBIM4hsw8C9DR60ofKDUJG5KWR
+         iiIG8VvT+cTe3B8uStv0T8FldsPzr5jMmme2GBlSO0kqObscxOfX3Uq3Sf+dO7zZCmFL
+         Mp6kADaSPSz0ljhyNF7zYPncb0UY7NBmiAN8QkKLUz0DQFw76ULT9j5kf3R5rg0chDwy
+         Okxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlMhLzpA8HCStQFKglt6z3UiqHToU3kHaO2iMxgsab1WT/nMJaEdG+oGclYutW3NzK1COS2xsLlyUornkvZZsg8ZztyOvFBnlJfM+1
+X-Gm-Message-State: AOJu0YwmsnBwAQA+1YjQ273Mhg7zk1fGqvTvh00L7/76i6ZyqpjWioY7
+	uynpuzbgl1Ej0B5yF2ux4ohV1ES27tLDoGFddCqZR95O29Y5DH28YCpv7/VSF8DmMJ3lHJXH7Oi
+	GfjOlVtYJ6N7/lh7LnvPHYc9DvTBghDAC5rBR
+X-Google-Smtp-Source: AGHT+IHz250z2fsSfufWt35b1l38Vjd0Oami4jYQovh1cLlCfllpQsmtMEwp1o+6AyTLkjf+AYr8RDCjJC6mp5mdSQ4=
+X-Received: by 2002:a05:6e02:c71:b0:36c:5511:4a4a with SMTP id
+ e9e14a558f8ab-36ccb8904ccmr4746675ab.6.1715620765372; Mon, 13 May 2024
+ 10:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <570e0c1d-8df8-45c6-a9a8-972e1ff2cf66@intel.com>
+References: <20240511003601.2666907-1-irogers@google.com> <DBBPR08MB4538FF1CC6CC1C3CD37FCF76F7E22@DBBPR08MB4538.eurprd08.prod.outlook.com>
+In-Reply-To: <DBBPR08MB4538FF1CC6CC1C3CD37FCF76F7E22@DBBPR08MB4538.eurprd08.prod.outlook.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 13 May 2024 10:19:13 -0700
+Message-ID: <CAP-5=fWqGvVZxjjEb5MvTNK6oJXheedkohFw4xx3z1N_Csvr_A@mail.gmail.com>
+Subject: Re: [PATCH v1] perf pmu: Count sys and cpuid json events separately
+To: Justin He <Justin.He@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <Mark.Rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	James Clark <James.Clark@arm.com>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Garry <john.g.garry@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 02:24:49PM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> On 5/3/2024 1:33 PM, Tony Luck wrote:
-> > There isn't a simple hardware bit that indicates whether a CPU is
-> > running in Sub NUMA Cluster (SNC) mode. Infer the state by comparing
-> > the ratio of NUMA nodes to L3 cache instances.
-> > 
-> > When SNC mode is detected, reconfigure the RMID counters by updating
-> > the MSR_RMID_SNC_CONFIG MSR on each socket as CPUs are seen.
-> > 
-> > Clearing bit zero of the MSR divides the RMIDs and renumbers the ones
-> > on the second SNC node to start from zero.
-> > 
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
+On Sun, May 12, 2024 at 7:22=E2=80=AFPM Justin He <Justin.He@arm.com> wrote=
+:
+>
+>
+>
+> > -----Original Message-----
+> > From: Ian Rogers <irogers@google.com>
+> > Sent: Saturday, May 11, 2024 8:36 AM
+> > To: Justin He <Justin.He@arm.com>; Peter Zijlstra <peterz@infradead.org=
+>;
+> > Ingo Molnar <mingo@redhat.com>; Arnaldo Carvalho de Melo
+> > <acme@kernel.org>; Namhyung Kim <namhyung@kernel.org>; Mark Rutland
+> > <Mark.Rutland@arm.com>; Alexander Shishkin
+> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Ian=
+ Rogers
+> > <irogers@google.com>; Adrian Hunter <adrian.hunter@intel.com>; Kan Lian=
+g
+> > <kan.liang@linux.intel.com>; James Clark <James.Clark@arm.com>;
+> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; John Ga=
+rry
+> > <john.g.garry@oracle.com>
+> > Subject: [PATCH v1] perf pmu: Count sys and cpuid json events separatel=
+y
+> >
+> > Sys events are eagerly loaded as each event has a compat option that ma=
+y mean
+> > the event is or isn't associated with the PMU. These shouldn't be count=
+ed as
+> > loaded_json_events as that is used for json events matching the CPUID t=
+hat may
+> > or may not have been loaded. The mismatch causes issues on ARM64 that u=
+ses
+> > sys events.
+> >
+> > Reported-by: Jia He <justin.he@arm.com>
+> > Closes:
+> > https://lore.kernel.org/lkml/20240510024729.1075732-1-justin.he@arm.com
+> > /
+> > Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
 > > ---
-> >  arch/x86/include/asm/msr-index.h   |   1 +
-> >  arch/x86/kernel/cpu/resctrl/core.c | 119 +++++++++++++++++++++++++++++
-> >  2 files changed, 120 insertions(+)
-> > 
-> > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> > index e72c2b872957..ce54a1ffe1e5 100644
-> > --- a/arch/x86/include/asm/msr-index.h
-> > +++ b/arch/x86/include/asm/msr-index.h
-> > @@ -1165,6 +1165,7 @@
-> >  #define MSR_IA32_QM_CTR			0xc8e
-> >  #define MSR_IA32_PQR_ASSOC		0xc8f
-> >  #define MSR_IA32_L3_CBM_BASE		0xc90
-> > +#define MSR_RMID_SNC_CONFIG		0xca0
-> >  #define MSR_IA32_L2_CBM_BASE		0xd10
-> >  #define MSR_IA32_MBA_THRTL_BASE		0xd50
-> >  
-> > diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> > index a949e69308cd..6a1727ea1dfe 100644
-> > --- a/arch/x86/kernel/cpu/resctrl/core.c
-> > +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> > @@ -21,7 +21,9 @@
-> >  #include <linux/err.h>
-> >  #include <linux/cacheinfo.h>
-> >  #include <linux/cpuhotplug.h>
-> > +#include <linux/mod_devicetable.h>
-> >  
-> > +#include <asm/cpu_device_id.h>
-> >  #include <asm/intel-family.h>
-> >  #include <asm/resctrl.h>
-> >  #include "internal.h"
-> > @@ -746,11 +748,42 @@ static void clear_closid_rmid(int cpu)
-> >  	      RESCTRL_RESERVED_CLOSID);
-> >  }
-> >  
-> > +/*
-> > + * The power-on reset value of MSR_RMID_SNC_CONFIG is 0x1
-> > + * which indicates that RMIDs are configured in legacy mode.
-> > + * This mode is incompatible with Linux resctrl semantics
-> > + * as RMIDs are partitioned between SNC nodes, which requires
-> > + * a user to know which RMID is allocated to a task.
-> > + * Clearing bit 0 reconfigures the RMID counters for use
-> > + * in Sub NUMA Cluster mode. This mode is better for Linux.
-> > + * The RMID space is divided between all SNC nodes with the
-> > + * RMIDs renumbered to start from zero in each node when
-> > + * couning operations from tasks. Code to read the counters
-> > + * must adjust RMID counter numbers based on SNC node. See
-> > + * __rmid_read() for code that does this.
-> > + */
-> > +static void snc_remap_rmids(int cpu)
-> > +{
-> > +	u64 val;
-> > +
-> > +	/* Only need to enable once per package. */
-> > +	if (cpumask_first(topology_core_cpumask(cpu)) != cpu)
-> > +		return;
-> > +
-> > +	rdmsrl(MSR_RMID_SNC_CONFIG, val);
-> > +	val &= ~BIT_ULL(0);
-> > +	wrmsrl(MSR_RMID_SNC_CONFIG, val);
-> > +}
-> > +
-> >  static int resctrl_arch_online_cpu(unsigned int cpu)
-> >  {
-> >  	struct rdt_resource *r;
-> >  
-> >  	mutex_lock(&domain_list_lock);
-> > +
-> > +	if (snc_nodes_per_l3_cache > 1)
-> > +		snc_remap_rmids(cpu);
-> > +
-> >  	for_each_capable_rdt_resource(r)
-> >  		domain_add_cpu(cpu, r);
-> >  	mutex_unlock(&domain_list_lock);
-> > @@ -990,11 +1023,97 @@ static __init bool get_rdt_resources(void)
-> >  	return (rdt_mon_capable || rdt_alloc_capable);
-> >  }
-> >  
-> > +/* CPU models that support MSR_RMID_SNC_CONFIG */
-> > +static const struct x86_cpu_id snc_cpu_ids[] __initconst = {
-> > +	X86_MATCH_INTEL_FAM6_MODEL(ICELAKE_X, 0),
-> > +	X86_MATCH_INTEL_FAM6_MODEL(SAPPHIRERAPIDS_X, 0),
-> > +	X86_MATCH_INTEL_FAM6_MODEL(EMERALDRAPIDS_X, 0),
-> > +	X86_MATCH_INTEL_FAM6_MODEL(GRANITERAPIDS_X, 0),
-> > +	X86_MATCH_INTEL_FAM6_MODEL(ATOM_CRESTMONT_X, 0),
-> > +	{}
+> >  tools/perf/util/pmu.c | 70 ++++++++++++++++++++++++++++++-------------
+> >  tools/perf/util/pmu.h |  6 ++--
+> >  2 files changed, 53 insertions(+), 23 deletions(-)
+> >
+> > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c index
+> > b3b072feef02..888ce9912275 100644
+> > --- a/tools/perf/util/pmu.c
+> > +++ b/tools/perf/util/pmu.c
+> > @@ -36,6 +36,18 @@ struct perf_pmu perf_pmu__fake =3D {
+> >
+> >  #define UNIT_MAX_LEN 31 /* max length for event unit name */
+> >
+> > +enum event_source {
+> > +     /* An event loaded from /sys/devices/<pmu>/events. */
+> > +     EVENT_SRC_SYSFS,
+> > +     /* An event loaded from a CPUID matched json file. */
+> > +     EVENT_SRC_CPU_JSON,
+> > +     /*
+> > +      * An event loaded from a /sys/devices/<pmu>/identifier matched j=
+son
+> > +      * file.
+> > +      */
+> > +     EVENT_SRC_SYS_JSON,
 > > +};
 > > +
-> > +/*
-> > + * There isn't a simple hardware bit that indicates whether a CPU is running
-> > + * in Sub NUMA Cluster (SNC) mode. Infer the state by comparing the
-> > + * ratio of NUMA nodes to L3 cache instances.
-> > + * It is not possible to accurately determine SNC state if the system is
-> > + * booted with a maxcpus=N parameter. That distorts the ratio of SNC nodes
-> > + * to L3 caches. It will be OK if system is booted with hyperthreading
-> > + * disabled (since this doesn't affect the ratio).
-> > + */
-> > +static __init int snc_get_config(void)
-> > +{
-> > +	unsigned long *node_caches;
-> > +	int mem_only_nodes = 0;
-> > +	int cpu, node, ret;
-> > +	int num_l3_caches;
-> > +	int cache_id;
+> >  /**
+> >   * struct perf_pmu_alias - An event either read from sysfs or builtin =
+in
+> >   * pmu-events.c, created by parsing the pmu-events json files.
+> > @@ -521,7 +533,7 @@ static int update_alias(const struct pmu_event *pe,
+> >
+> >  static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
+> >                               const char *desc, const char *val, FILE *=
+val_fd,
+> > -                             const struct pmu_event *pe)
+> > +                             const struct pmu_event *pe, enum event_so=
+urce src)
+> >  {
+> >       struct perf_pmu_alias *alias;
+> >       int ret;
+> > @@ -574,25 +586,30 @@ static int perf_pmu__new_alias(struct perf_pmu
+> > *pmu, const char *name,
+> >               }
+> >               snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
+> >       }
+> > -     if (!pe) {
+> > -             /* Update an event from sysfs with json data. */
+> > -             struct update_alias_data data =3D {
+> > -                     .pmu =3D pmu,
+> > -                     .alias =3D alias,
+> > -             };
+> > -
+> > +     switch (src) {
+> > +     default:
+> > +     case EVENT_SRC_SYSFS:
+> >               alias->from_sysfs =3D true;
+> >               if (pmu->events_table) {
+> > +                     /* Update an event from sysfs with json data. */
+> > +                     struct update_alias_data data =3D {
+> > +                             .pmu =3D pmu,
+> > +                             .alias =3D alias,
+> > +                     };
+> >                       if (pmu_events_table__find_event(pmu->events_tabl=
+e, pmu,
+> > name,
+> >                                                        update_alias, &d=
+ata) =3D=3D 0)
+> > -                             pmu->loaded_json_aliases++;
+> > +                             pmu->cpu_json_aliases++;
+> >               }
+> > -     }
+> > -
+> > -     if (!pe)
+> >               pmu->sysfs_aliases++;
+> > -     else
+> > -             pmu->loaded_json_aliases++;
+> > +             break;
+> > +     case  EVENT_SRC_CPU_JSON:
+> > +             pmu->cpu_json_aliases++;
+> > +             break;
+> > +     case  EVENT_SRC_SYS_JSON:
+> > +             pmu->sys_json_aliases++;
+> > +             break;
 > > +
-> > +	if (!x86_match_cpu(snc_cpu_ids))
-> > +		return 1;
-> > +
-> > +	node_caches = bitmap_zalloc(num_possible_cpus(), GFP_KERNEL);
-> > +	if (!node_caches)
-> > +		return 1;
-> > +
-> > +	cpus_read_lock();
-> > +
-> > +	if (num_online_cpus() != num_present_cpus())
-> > +		pr_warn("Some CPUs offline, SNC detection may be incorrect\n");
-> > +
-> > +	for_each_node(node) {
-> > +		cpu = cpumask_first(cpumask_of_node(node));
-> > +		if (cpu < nr_cpu_ids) {
-> > +			cache_id = get_cpu_cacheinfo_id(cpu, 3);
-> > +			if (cache_id != -1)
-> > +				set_bit(cache_id, node_caches);
-> > +		} else {
-> > +			mem_only_nodes++;
-> > +		}
-> > +	}
-> > +	cpus_read_unlock();
-> > +
-> > +	num_l3_caches = bitmap_weight(node_caches, num_possible_cpus());
-> > +	kfree(node_caches);
-> > +
-> > +	if (!num_l3_caches)
-> > +		goto insane;
-> > +
-> > +	/* sanity check #1: Number of CPU nodes must be multiple of num_l3_caches */
-> > +	if ((nr_node_ids - mem_only_nodes) % num_l3_caches)
-> > +		goto insane;
-> > +
-> > +	ret = (nr_node_ids - mem_only_nodes) / num_l3_caches;
-> > +
-> > +	/* sanity check #2: Only valid results are 1, 2, 3, 4 */
-> > +	switch (ret) {
-> > +	case 1:
-> > +		break;
-> > +	case 2:
-> > +	case 3:
-> > +	case 4:
-> > +		pr_info("Sub-NUMA cluster detected with %d nodes per L3 cache\n", ret);
-> > +		rdt_resources_all[RDT_RESOURCE_L3].r_resctrl.mon_scope = RESCTRL_NODE;
-> > +		break;
-> > +	default:
-> > +		goto insane;
-> > +	}
-> > +
-> > +	return ret;
-> > +insane:
-> > +	pr_warn("SNC insanity: CPU nodes = %d num_l3_caches = %d\n",
-> > +		(nr_node_ids - mem_only_nodes), num_l3_caches);
-> > +	return 1;
-> > +}
-> 
-> I find it confusing how dramatically this SNC detection code changed without
-> any explanations. This detection seems to match the SNC detection code from v16 but
-> after v16 you posted a new SNC detection implementation that did SNC detection totally
-> differently [1] from v16. Instead of keeping with the "new" detection this implements
-> what was in v16. Could you please help me understand what motivated the different
-> implementations and why the big differences?
+> > +     }
+> >       list_add_tail(&alias->list, &pmu->aliases);
+> >       return 0;
+> >  }
+> > @@ -653,7 +670,8 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu=
+,
+> > int events_dir_fd)
+> >               }
+> >
+> >               if (perf_pmu__new_alias(pmu, name, /*desc=3D*/ NULL,
+> > -                                     /*val=3D*/ NULL, file, /*pe=3D*/ =
+NULL) < 0)
+> > +                                     /*val=3D*/ NULL, file, /*pe=3D*/ =
+NULL,
+> > +                                     EVENT_SRC_SYSFS) < 0)
+> >                       pr_debug("Cannot set up %s\n", name);
+> >               fclose(file);
+> >       }
+> > @@ -946,7 +964,8 @@ static int pmu_add_cpu_aliases_map_callback(const
+> > struct pmu_event *pe,  {
+> >       struct perf_pmu *pmu =3D vdata;
+> >
+> > -     perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=
+=3D*/
+> > NULL, pe);
+> > +     perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=
+=3D*/
+> > NULL,
+> > +                         pe, EVENT_SRC_CPU_JSON);
+> >       return 0;
+> >  }
+> >
+> > @@ -981,13 +1000,14 @@ static int pmu_add_sys_aliases_iter_fn(const str=
+uct
+> > pmu_event *pe,
+> >               return 0;
+> >
+> >       if (pmu_uncore_alias_match(pe->pmu, pmu->name) &&
+> > -                     pmu_uncore_identifier_match(pe->compat, pmu->id))=
+ {
+> > +         pmu_uncore_identifier_match(pe->compat, pmu->id)) {
+> >               perf_pmu__new_alias(pmu,
+> >                               pe->name,
+> >                               pe->desc,
+> >                               pe->event,
+> >                               /*val_fd=3D*/ NULL,
+> > -                             pe);
+> > +                             pe,
+> > +                             EVENT_SRC_SYS_JSON);
+> >       }
+> >
+> >       return 0;
+> > @@ -1082,6 +1102,12 @@ struct perf_pmu *perf_pmu__lookup(struct
+> > list_head *pmus, int dirfd, const char
+> >       pmu->max_precise =3D pmu_max_precise(dirfd, pmu);
+> >       pmu->alias_name =3D pmu_find_alias_name(pmu, dirfd);
+> >       pmu->events_table =3D perf_pmu__find_events_table(pmu);
+> > +     /*
+> > +      * Load the sys json events/aliases when loading the PMU as each =
+event
+> > +      * may have a different compat regular expression. We therefore c=
+an't
+> > +      * know the number of sys json events/aliases without computing t=
+he
+> > +      * regular expressions for them all.
+> > +      */
+> >       pmu_add_sys_aliases(pmu);
+> >       list_add_tail(&pmu->list, pmus);
+> >
+> > @@ -1739,12 +1765,14 @@ size_t perf_pmu__num_events(struct perf_pmu
+> > *pmu)
+> >       size_t nr;
+> >
+> >       pmu_aliases_parse(pmu);
+> > -     nr =3D pmu->sysfs_aliases;
+> > +     nr =3D pmu->sysfs_aliases + pmu->sys_json_aliases;;
+>
+> Nits: double ";", others lgtm.
+>
+> This fixes the error on the Arm N2 server:
+> Unexpected event smmuv3_pmcg_3f002/smmuv3_pmcg_3f002/transaction//
+> Unexpected event smmuv3_pmcg_3f042/smmuv3_pmcg_3f042/transaction//
+> Unexpected event smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
+> Unexpected event smmuv3_pmcg_3f402/smmuv3_pmcg_3f402/transaction//
+> Unexpected event smmuv3_pmcg_3f442/smmuv3_pmcg_3f442/transaction//
+> .....
+>
+> Please feel free to add
+> Tested-by: Jia He <justin.he@arm.com>
 
-Reinette,
+Thanks Justin! I noticed Arnaldo has picked this up in the next tree:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/co=
+mmit/?h=3Dperf-tools-next&id=3Dd9c5f5f94c2d356fdf3503f7fcaf254512bc032d
+Would be great to add the Tested-by and address the ;; issue, good catch :-=
+)
 
-Do you like the detection code in that version? You didn't make any
-comments about it.
+Ian
 
-I switched back to the v16 code because that had survived review before
-and I just wanted to make the modifications to add both per-L3 and
-per-SNC node monitoring files.
-
-I can pull that into the next iteration if you want.
-
--Tony
-> 
-> [1] https://lore.kernel.org/lkml/20240327200352.236835-11-tony.luck@intel.com/
+> --
+> Cheers,
+> Justin (Jia He)
+> >
+> >       if (pmu->cpu_aliases_added)
+> > -              nr +=3D pmu->loaded_json_aliases;
+> > +              nr +=3D pmu->cpu_json_aliases;
+> >       else if (pmu->events_table)
+> > -             nr +=3D pmu_events_table__num_events(pmu->events_table, p=
+mu) -
+> > pmu->loaded_json_aliases;
+> > +             nr +=3D pmu_events_table__num_events(pmu->events_table, p=
+mu) -
+> > pmu->cpu_json_aliases;
+> > +     else
+> > +             assert(pmu->cpu_json_aliases =3D=3D 0);
+> >
+> >       return pmu->selectable ? nr + 1 : nr;
+> >  }
+> > diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h index
+> > 561716aa2b25..b2d3fd291f02 100644
+> > --- a/tools/perf/util/pmu.h
+> > +++ b/tools/perf/util/pmu.h
+> > @@ -123,8 +123,10 @@ struct perf_pmu {
+> >       const struct pmu_events_table *events_table;
+> >       /** @sysfs_aliases: Number of sysfs aliases loaded. */
+> >       uint32_t sysfs_aliases;
+> > -     /** @sysfs_aliases: Number of json event aliases loaded. */
+> > -     uint32_t loaded_json_aliases;
+> > +     /** @cpu_json_aliases: Number of json event aliases loaded specif=
+ic to the
+> > CPUID. */
+> > +     uint32_t cpu_json_aliases;
+> > +     /** @sys_json_aliases: Number of json event aliases loaded matchi=
+ng the
+> > PMU's identifier. */
+> > +     uint32_t sys_json_aliases;
+> >       /** @sysfs_aliases_loaded: Are sysfs aliases loaded from disk? */
+> >       bool sysfs_aliases_loaded;
+> >       /**
+> > --
+> > 2.45.0.118.g7fe29c98d7-goog
+>
+> IMPORTANT NOTICE: The contents of this email and any attachments are conf=
+idential and may also be privileged. If you are not the intended recipient,=
+ please notify the sender immediately and do not disclose the contents to a=
+ny other person, use it for any purpose, or store or copy the information i=
+n any medium. Thank you.
 
