@@ -1,79 +1,56 @@
-Return-Path: <linux-kernel+bounces-178047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708118C47D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:49:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D97C68C47DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10DBF1F24B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:49:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF35F1C23282
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5557C79B7E;
-	Mon, 13 May 2024 19:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C6C7BAFF;
+	Mon, 13 May 2024 19:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="B3/TvDQb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVWZOSVg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A9F77107;
-	Mon, 13 May 2024 19:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69211757FB;
+	Mon, 13 May 2024 19:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715629734; cv=none; b=TEjLScff29YDanoZswNrHiOdSqxhsCbOlnjbHVBE8Fcy5wsF+Y4t+L//f6THYYSSStPFdbq8yUhpdYYllM9yihT3p9uqmRYLScBASjNfNuVkxBWimuAq5aXI5Z8mqF46R63jP6Kjrow0jW3WLMNr+sGUi3z5QLa6Miub1w42ImU=
+	t=1715629815; cv=none; b=cpqx/sYZjFsjQoBerF1xpV6ti0Rpe7IJlJkVzzZAw0yYAku7++PHfg3Tt7s04nPfJGMLDWecUyGYfY2yLxM0wBkWjvuYwVWWNnZjExxt9Vc1a0X0kv3U03XzKHykPQzfcrEzteLk0LKXvcZFhuWxl/Bys9RMT1bNKnT9og3HWTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715629734; c=relaxed/simple;
-	bh=GWnloP3tT/YXXyk4QBq6IzLYt0yUwn9pk8D1SDfG4So=;
+	s=arc-20240116; t=1715629815; c=relaxed/simple;
+	bh=NrfU76rQkDacMih4EfCdtj4kvNf3aCwAPMB9IErV4bI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a2+mXEth7QChItbvHU3ny4AkpaBxmTh5CS3rYXsqLuJuujlFrPgfd9IMslC/HQ7JPZuQ6o6V6LkATH4c873+LpViwtlQTPinQ/9DiEsRa99PER/GrViLXD5jC4qEa796VEgvS6qb4yVW+cdNz9LlIhREX5bS3dlOBaiGuxJJ3gQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=B3/TvDQb; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715629733; x=1747165733;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GWnloP3tT/YXXyk4QBq6IzLYt0yUwn9pk8D1SDfG4So=;
-  b=B3/TvDQb229/Hm75qbULTKzVRU0FfCX9mNBSo8pmFCH8mAnL3p6MVXby
-   ehCfmQHIIxz9Y6VdwuVXqNgc9JziP4vw7JMptfX6eXvDeF+HObWVoeZsj
-   +gdNhxBEpGk7bwZldmdiRDeh/mDii3FoVTl+OaQJoT62KKiBk3RpkPnTp
-   /q7Uhzrt/lh8L1lUjGmm/ov0HbLQMJuY+Qx5TsDBCED1gE1clvkwIQj8C
-   OAgbYe4649BC/7MQgz+KWaeONYL9q7z0qn9bvLOJUvv4gu9+WxW+do5ja
-   YsXBj0H9iNXU6JF4r3Eni//D/vCpVpm5C53MwSZK1u2GsDU+jzyWQBKv9
-   A==;
-X-CSE-ConnectionGUID: 05owgKGfSt+70jjdh7jKsA==
-X-CSE-MsgGUID: 4figUi2uRWy8r3+cfFmAyQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="29074350"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="29074350"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 12:48:52 -0700
-X-CSE-ConnectionGUID: XA58acsLS7aXmsJ6E+RhRw==
-X-CSE-MsgGUID: BDcvxECwSLyPGiiR4vN7zA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="67912153"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 13 May 2024 12:48:51 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s6bfE-000Ac9-04;
-	Mon, 13 May 2024 19:48:48 +0000
-Date: Tue, 14 May 2024 03:48:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: Re: [PATCH] clocksource: Add node counter timer driver for
- MIPS/Loongson64
-Message-ID: <202405140342.uKkbQKIJ-lkp@intel.com>
-References: <20240512-loongson_nodecnt-v1-1-2157b92ef8f8@flygoat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWTMgDDKf3SKejUmKrsE+rLCNvR6aVjoidqDmdRRUWL0POM40ZuxCPktTHX7fDqsaqcVBZCQr+y/NTvXhj26VwKtfo41VTConypzZR7823rXbS6TckBP54O0WEuqdJAdYtabjVMueBpSaYnVzt78eBtP8LFHzC4aWcZcOmCGcUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVWZOSVg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3805C113CC;
+	Mon, 13 May 2024 19:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715629815;
+	bh=NrfU76rQkDacMih4EfCdtj4kvNf3aCwAPMB9IErV4bI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aVWZOSVgRq1OlnbzQAK3cpcg3rOJXKkQbYEzNv/XVkLOaUh0/l/KJBW2MMYqE7QZd
+	 F7dS4rem5C9x9ZKieAw45EXIVSycjjukzdJK0b7haPPxCMm+wpSvv49jxCsQClRQPy
+	 i/shI+9XyCapgk7/x80lIWYa25n5OZRWjQGSUJCQtDyLKes7/Krxjj73tv0fV5a2tW
+	 BahY0FO+fhPIune5Dg/kS92iqhh3a9g8Zi487w8WGGuBNPBDnyrdZtF2HJ+k6P/iRR
+	 mIqsThiDmUTMcRK9XXpTrOpDNO1SYBRIPwRGCuv9rIQ6eUBhQYUhaC/f1G2LzsOlai
+	 KCdve26RrMeaA==
+Date: Mon, 13 May 2024 20:50:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, richardcochran@gmail.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: micrel: Fix receiving the timestamp in the
+ frame for lan8841
+Message-ID: <20240513195010.GW2787@kernel.org>
+References: <20240513192157.3917664-1-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,34 +59,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240512-loongson_nodecnt-v1-1-2157b92ef8f8@flygoat.com>
+In-Reply-To: <20240513192157.3917664-1-horatiu.vultur@microchip.com>
 
-Hi Jiaxun,
+On Mon, May 13, 2024 at 09:21:57PM +0200, Horatiu Vultur wrote:
+> The blamed commit started to use the ptp workqueue to get the second
+> part of the timestamp. And when the port was set down, then this
+> workqueue is stopped. But if the config option NETWORK_PHY_TIMESTAMPING
+> is not enabled, then the ptp_clock is not initialized so then it would
+> crash when it would try to access the delayed work.
+> So then basically by setting up and then down the port, it would crash.
+> The fix consists in checking if the ptp_clock is initialized and only
+> then cancel the delayed work.
+> 
+> Fixes: cc7554954848 ("net: micrel: Change to receive timestamp in the frame for lan8841")
+> Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-[auto build test ERROR on 75fa778d74b786a1608d55d655d42b480a6fa8bd]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jiaxun-Yang/clocksource-Add-node-counter-timer-driver-for-MIPS-Loongson64/20240512-200356
-base:   75fa778d74b786a1608d55d655d42b480a6fa8bd
-patch link:    https://lore.kernel.org/r/20240512-loongson_nodecnt-v1-1-2157b92ef8f8%40flygoat.com
-patch subject: [PATCH] clocksource: Add node counter timer driver for MIPS/Loongson64
-config: mips-loongson2k_defconfig (https://download.01.org/0day-ci/archive/20240514/202405140342.uKkbQKIJ-lkp@intel.com/config)
-compiler: mips64el-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405140342.uKkbQKIJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405140342.uKkbQKIJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mips64el-linux-ld: arch/mips/loongson64/time.o: in function `plat_time_init':
->> time.c:(.init.text+0xb4): undefined reference to `nodecnt_clocksource_init'
->> mips64el-linux-ld: time.c:(.init.text+0xcc): undefined reference to `nodecnt_clocksource_init'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
