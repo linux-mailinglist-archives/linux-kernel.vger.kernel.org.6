@@ -1,78 +1,193 @@
-Return-Path: <linux-kernel+bounces-177872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E318C45A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:06:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4007C8C45A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 101EDB24707
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6328F1C22451
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E7A1CF8D;
-	Mon, 13 May 2024 17:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5F21CD26;
+	Mon, 13 May 2024 17:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIDVf8tu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uMpModaY"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0D0224CE;
-	Mon, 13 May 2024 17:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014D22B9CD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619957; cv=none; b=tdwWRw1in916Q15UepDtYq+kb5WwS3FH1qnDU53rj1WM6OTc0erphs4RUzHxiP/FlpwsAJ5eT8qI41FUmTNH1uxLOknP4r8dplFygfRBedJ9n1zgRoY51v01GChjAhZQ3uIVmgg44PPp50FzeHaRGOoY0K2hAkDw+nGqIlVexCk=
+	t=1715619992; cv=none; b=UUnT3ZFm5G1oohN8xvTdbxPcSkCFvhuigusEQfn36LxCMJjadvyBvajYrQl3gQQh2uTK5wYXOXwTX6NlVI6jz5G7y4oMMo02Hqr3qXBPBPZvXK8UUmgWA4N/3dhWrMZ9/hICOFxBQs2wM6T86299MCqKJSI6BnPDqpRymNHVmO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619957; c=relaxed/simple;
-	bh=8bb7Cxrgw9uF7S2/7MJAxwk3N+w8Yw+IlliZbcd7F3Q=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=oX3lBHwwmoaamhiB1gVlKfL4ZxfFhJuGfZLiYWUWxe7WnwhnuyW30dzrDG/49hl1sSeXHsJ6+s3zPZduE/L7EZ1Q+xOUzZv285rIFz68uTnyVUa8PGCoHYpoMj0OzP8EYz+RQsZOM/vXNESq/srKO6Jqf7J/dMLRKTXWyggYJUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIDVf8tu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 180B5C113CC;
-	Mon, 13 May 2024 17:05:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715619957;
-	bh=8bb7Cxrgw9uF7S2/7MJAxwk3N+w8Yw+IlliZbcd7F3Q=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=lIDVf8tuj5KYTZskU7fpeTDE6DD70KDLYKIBV2Iq/0r5sQxLVqTs6V9heR49i3ca+
-	 39gAfvBuhgg0lacUxOpch/jP0mHbGmwOz7xyeJzX5dmF9gdNxV9HDtfRqEE8UocB7O
-	 eUUqCcBnRqY6ALAJP0d99UaxB9UyRKRhIN/+Z40u12ayUBGcm21F9Tbp2G/ktd+3QO
-	 4iOcZwXglCuGV49PbAj5TghLhpsLP+iZ9Ro3gdieEnQ9nhXMzDQfFETbc4QmApchiA
-	 jNJkTSRN+pMyhKiJAnLn4O1VczNrtxz+OkaOZ0JPu+rGPOa9v/8oqfYdGMBuJHBfzx
-	 w5kiX3EI9JFhg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 107F9C433E9;
-	Mon, 13 May 2024 17:05:57 +0000 (UTC)
-Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
-References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com> <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
-X-PR-Tracked-List-Id: <linux-alpha.vger.kernel.org>
-X-PR-Tracked-Message-Id: <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-alpha
-X-PR-Tracked-Commit-Id: a4184174be36369c3af8d937e165f28a43ef1e02
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 736676f5c3abd1fc01c41813a95246e892937f6d
-Message-Id: <171561995705.9638.8286642138765117973.pr-tracker-bot@kernel.org>
-Date: Mon, 13 May 2024 17:05:57 +0000
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, linux-alpha@vger.kernel.org, Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, "Paul E. McKenney" <paulmck@kernel.org>
+	s=arc-20240116; t=1715619992; c=relaxed/simple;
+	bh=+P2SBhCjt1cNR4Hf9i6Gn7yMnwDDxmC4jAga89KBFuE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AQrPt4QBSHgbEEBtre8LAAmhxRYzWxRFLF9b+Hj+JofRtDHOVHqgydrP2nr78WLojNyxk5gRGiNBi41FFatrtLsLUCA1AqUFbvXJS6fKHo9iP0OIzEtewKqpXXiOZRm6U76dYhotKVQBnBm672gzucmzFPXw7JkPKIV755tN1Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uMpModaY; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2e09138a2b1so65083101fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:06:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715619988; x=1716224788; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pXw985lX5WlJQmTXNpCIqA41wwGetKb+YHxlJsQLqRM=;
+        b=uMpModaYv/H/oI7+De0gNVizuEccAKWldn0kSElxpz/rh8aMUeq/+9KzwaYCqX8ri+
+         211heG2kYg+4Nk17DCqrHBD3Xh1SVC0w/0IkVv/llELypli35hjvisBLxQeC5d4YEif9
+         lUIeeqJyW7u68NTJjuXdOTvIGljGo/on5VrpiE+OQvbzSSzagU89cgaaFgUYlCtdjpQd
+         qprrFIBa4x8Ze1Mx1tne3tQeVP7BcCmbmT8wuemhOmFs/NzeW3DuekXkdpC19A1OsE/x
+         DriXu0c4jcxfCLe7fmn5QAUuN48au5ZzZKJZdSlEpHLAS6n5rhBRQoJz3dK1F0xmaxVt
+         0oqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715619988; x=1716224788;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pXw985lX5WlJQmTXNpCIqA41wwGetKb+YHxlJsQLqRM=;
+        b=hamGAU7P2C+xqJZZl1i5vBEnuDFuNXbS8VHZp1KlBaZKmA46BbaeywfgkGMs1JZ7N3
+         LuEUV0uoWRDkxfeiAF6NHzjwXnHH6msWazzGNBf7zDtKB5Krw/cVbOMLpMNm3syGAPhx
+         0gRZcR8scJtAzKfQVfQYN+r8N2XqGAS8woS15eXCWPTFhADo4oQ17VvtCPTujNIkGafd
+         RBHfQFCMATZ4jjEmtcVhJMq0JzO91GXtlGDeZmH+RdzhseAsaVZnvd19+J60zp9MUEoY
+         8T36GjQlq7lQI5fIbVFcJjkMlke4gq6ZXs1h/oedv2lJvA+KE7HPpkKDtnvs/VK7eigi
+         vRCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX96PzAEoNsLTsZh1oLdu0cPvdB+5LrQTYd09CdS9cZdKrg3rVcpftkteu78XcaNQFq9VcIIG+aHVfES+DZ1z1MPm4Eopp9IjxFKP3J
+X-Gm-Message-State: AOJu0Yz1FxNkS8ZPnLUrHzk+LlwXzc5qX45/3/1ObHyDWp3LlX4+ZXRl
+	aNSj0OeG5+JoRCGf/U5dUimZdfirz269w626+Qi1P/6Iu5+eAW+WG+bNIT8VtotZXjReClkO9Wb
+	5GKe+LATF2m/R6k+VUz/MEr2t9XZ5tmGdDiinSQ==
+X-Google-Smtp-Source: AGHT+IHKzXmraEEpr9cm14X7+52nWL86ByTUDO6GdlPQ4N4YO+I2wY0fIqMJ7Li7S33/GHOlNNDE8KzdgJFvMG4euIY=
+X-Received: by 2002:a2e:b1c5:0:b0:2d8:8eb4:11a6 with SMTP id
+ 38308e7fff4ca-2e51ff5ce50mr63520551fa.12.1715619988132; Mon, 13 May 2024
+ 10:06:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+ <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com> <20240513-headsman-hacking-d51fcc811695@spud>
+In-Reply-To: <20240513-headsman-hacking-d51fcc811695@spud>
+From: David Lechner <dlechner@baylibre.com>
+Date: Mon, 13 May 2024 12:06:17 -0500
+Message-ID: <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+To: Conor Dooley <conor@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	David Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Fri, 10 May 2024 23:19:56 +0200:
+On Mon, May 13, 2024 at 11:46=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Fri, May 10, 2024 at 07:44:24PM -0500, David Lechner wrote:
+> > This adds a new property to the spi-peripheral-props binding for use
+> > with peripherals connected to controllers that support offloading.
+> >
+> > Here, offloading means that the controller has the ability to perform
+> > complex SPI transactions without CPU intervention in some shape or form=
+.
+> >
+> > This property will be used to assign controller offload resources to
+> > each peripheral that needs them. What these resources are will be
+> > defined by each specific controller binding.
+> >
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> >
+> > v2 changes:
+> >
+> > In v1, instead of generic SPI bindings, there were only controller-
+> > specific bindings, so this is a new patch.
+> >
+> > In the previous version I also had an offloads object node that describ=
+ed
+> > what the offload capabilities were but it was suggested that this was
+> > not necessary/overcomplicated. So I've gone to the other extreme and
+> > made it perhaps over-simplified now by requiring all information about
+> > how each offload is used to be encoded in a single u32.
+>
+> The property is a u32-array, so I guess, not a single u32?
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git tags/asm-generic-alpha
+It is an array to handle cases where a peripheral might need more than
+one offload. But the idea was it put everything about each individual
+offload in a single u32. e.g. 0x0101 could be offload 1 with hardware
+trigger 1 and 0x0201 could be offload 1 with hardware trigger 2. Then
+a peripheral could have spi-offloads =3D <0x0101>, <0x0201>; if it
+needed to select between both triggers at runtime.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/736676f5c3abd1fc01c41813a95246e892937f6d
+>
+> > We could of course consider using #spi-offload-cells instead for
+> > allowing encoding multiple parameters for each offload instance if that
+> > would be preferable.
+>
+> A -cells property was my gut reaction to what you'd written here and
+> seems especially appropriate if there's any likelihood of some future
+> device using some external resources for spi-offloading.
+> However, -cells properties go in providers, not consumers, so it wouldn't
+> end up in spi-periph-props.yaml, but rather in the controller binding,
+> and instead there'd be a cell array type property in here. I think you
+> know that though and I'm interpreting what's been written rather than
+> what you meant.
 
-Thank you!
+Indeed you guess correctly. So the next question is if it should be
+the kind of #-cells that implies a phandle like most providers or
+without phandles like #address-cells? Asking because I got pushback on
+v1 for using a phandle with offloads (although in that case, the
+phandle was for the offload instance itself instead for the SPI
+controller, so maybe this is different in this case?).
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+>
+> > I also considered adding spi-offload-names that could be used as sort
+> > of a compatible string (more of an interface name really) in case some
+> > peripherals may want to support more than 1 specialized type of offload=
+.
+> > ---
+> >  .../devicetree/bindings/spi/spi-peripheral-props.yaml          | 10 ++=
+++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/spi/spi-peripheral-props=
+yaml b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> > index 15938f81fdce..32991a2d2264 100644
+> > --- a/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> > +++ b/Documentation/devicetree/bindings/spi/spi-peripheral-props.yaml
+> > @@ -113,6 +113,16 @@ properties:
+> >      minItems: 2
+> >      maxItems: 4
+> >
+> > +  spi-offloads:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> > +    description:
+> > +      Array of controller offload instances that are reserved for use =
+by the
+> > +      peripheral device. The semantic meaning of the values of the arr=
+ay
+> > +      elements is defined by the controller. For example, it could be =
+a simple
+> > +      0-based index of the offload instance, or it could be a bitfield=
+ where
+> > +      a few bits represent the assigned hardware trigger, a few bits r=
+epresent
+> > +      the assigned RX stream, etc.
+> > +
+> >    st,spi-midi-ns:
+> >      description: |
+> >        Only for STM32H7, (Master Inter-Data Idleness) minimum time
+> >
+> > --
+> > 2.43.2
+> >
 
