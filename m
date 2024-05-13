@@ -1,152 +1,107 @@
-Return-Path: <linux-kernel+bounces-177847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 356BE8C4546
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:48:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113A78C4547
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66C3F1C20D2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C919C287167
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A7A1BDD0;
-	Mon, 13 May 2024 16:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32083199B0;
+	Mon, 13 May 2024 16:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gQZSbtyi"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U5ZClxxE"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A2B17C95;
-	Mon, 13 May 2024 16:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07411864C
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618924; cv=none; b=JJmcV4BknBUEiZrnqCMHX366HZtt3w6TkeyPNxxbJCYQIJbR2K0oR5GFqpc0fRarupRtD06Y3Q6BB3riFi7L7pv4e/Ovm+0SfLbnCYselpYNEQn7lJwXbLI/x4xOHePjnr0j4erzg0cw28aelPxicZi0/1ys5ZCCNCGxyr8oqEc=
+	t=1715618950; cv=none; b=IFbDFl7wUz+/ehVtEtnw0SSsKQbAOCpNScrmaujNDwsTRnAwL0aiJ1+emLzRQoOlyH4ZYpDQg0Q0ucm2/ELv9Wienx+u65O/0xncV5r1JQGwg3kfPTIG/NMQLAdgBV7lW9/WRtEgt8p9ZyISmQ+s2Jwi2ewR8mTpepehk+i+xcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618924; c=relaxed/simple;
-	bh=VZYkjSb6DWCUJwKCbLxr+IJcvhEU6M6GYKRNUvCOrHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkEx0oo+oJwf1tVxpU3oTRlLXACYsfhqmbbMkKP1NJNB1+bxvBK3dTgQdt4xUoomG7MhpFXNkHU3A5xldB39uyOK+pNKQO7KfUhuZSeN+SWjsu0I4SlmMO00EmEj/XEoF00g5Naoi+y4PfvJqt5RGt5gyaxopnXQ1Roh6yb87eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gQZSbtyi; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ecddf96313so39384005ad.2;
-        Mon, 13 May 2024 09:48:42 -0700 (PDT)
+	s=arc-20240116; t=1715618950; c=relaxed/simple;
+	bh=7HJki1UM4r909Ntbce/v15mbZXUH12ohnP4FbyjkcBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i8ihuh02p561WeKLPU5WYZJGd90IPnMEIPBOLM2Nk2y+FbUHYW6iZ0V66hHjZmlwWZ2xhgfhOixKMrF0Iixx28KdQe0mEzlb0Q6sHCCxr3rOLCD0HmnH0n3BJBTtEU1rSnKOI5gGRn5Cs4QopInk87kQu0jg+C6Ep7fLYBQ9B6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U5ZClxxE; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-51aa6a8e49aso6272706e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715618922; x=1716223722; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Kac4Zeh2cIXzitZj+a2ebGBL/xE0N7jX70xodaorgd8=;
-        b=gQZSbtyi+pUIN3Cn+G8Hd5eN9V5I6LYCnfXRXu1miPdWGJUiz+9pDE4KvoftK692Bt
-         MFN10HkvOEFtUUlh3c6xLKP4gnLavfgkymEXCKVcs1MmRHhqCKdEbdkUIQUnwQRoj2Kl
-         33N6JRmy79g6yT1+MvEriogUQDnQXz7oryPNLytRua4tRCoW00FEAskdKRGbK0SUdjVQ
-         PYdUgpukhvEsZR/hpUcIDVQZY8IeAsmC9TuxR8/9AuZGy0WMK1IMoZ5tdDh5OdqFU4sW
-         9nl6uCQUXZqP7mNtlmwy7ERPkygrckFcHdOQh8TIC4Lg/7kV8SxOuvZENx+ud975EiH0
-         exbQ==
+        d=linux-foundation.org; s=google; t=1715618947; x=1716223747; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HwX85Cc4Z5UBCMlHC2NISB9r0JBio+whHTW3qGBLXLU=;
+        b=U5ZClxxEWRAApdgDDB03NRWcqR2vhOdmj2/Bheul+BEF+V2d8aaW5VBxo32cRz+QGu
+         6x2fu6dxwjUKooFQTuZYuOF6t0vkyKE4jdsNeAJVq6aUzUnYUzJuruIVF6luaecBZNQo
+         o6wGHpTXkCp2BwuR7mfZT3aSslq3vG59LDXaE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715618922; x=1716223722;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kac4Zeh2cIXzitZj+a2ebGBL/xE0N7jX70xodaorgd8=;
-        b=lOLSk3ZwuUH7Me0VV2I8+86DUUY7xqPWNTbKojQT0AmxwGLFAe2e+Y1CL2WbPU4CRG
-         M+NTxb4cwS8RRN3d8yQiD5TAa06hIXPR4/NqY7KtZaFx8yf5j+6J87AfXrrq+FSdzfIN
-         BK7arCRXD3XK1TEKsBmtgEgxgI9k26gBr6jiTotmmXAW0GEdYnY0fxm9UFuRyuV2c5vd
-         MxpqmBejmc41xkMQFK5ky5oRcvL4jCirxCoHiIUfywv7vVvAzcW7GDLp7s9vz6LmiD26
-         dVXl51Wsu15pn6BJiXpLXzCSkVWnLfSkcJZ3JH6A6pdImplLiuUJM9zipOOUr4vqyzif
-         J/0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUbXFknM4tP27OBVnYVtT+G6q6evRpaBkETgOzawMmprTiqTDk+ekhDQl52QHcSi8h85cfgkxG1Hy96IxYqMugkUrEtt9P5PkgkmE6XFfdLsDu6T3jcs8PJgixWNvOVDo9wtyMn
-X-Gm-Message-State: AOJu0Yx6+xTIxw1g+chi+Pp/+T3MAHCHUpR35SJUBd/mNTGjCkc4nG1C
-	RTBfMlsd1CNMwXN1l1jeXxgM/5/fnbpjrpLhgPeYT/nASz0g5mFG
-X-Google-Smtp-Source: AGHT+IGe852ziRhP3hKGzTtryZAf7Y23teDVSjb2hjIYcr8OLeHRzwFp7mMVdV7volkrj8d33sTYHQ==
-X-Received: by 2002:a17:902:b18b:b0:1ea:3798:e404 with SMTP id d9443c01a7336-1ef43d2ba22mr123930565ad.31.1715618922079;
-        Mon, 13 May 2024 09:48:42 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c1368desm81802925ad.233.2024.05.13.09.48.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 09:48:40 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 13 May 2024 06:48:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Allison Henderson <allison.henderson@oracle.com>,
-	Manjunath Patil <manjunath.b.patil@oracle.com>,
-	Mark Zhang <markzhang@nvidia.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Yang Li <yang.lee@linux.alibaba.com>
-Subject: Re: [PATCH 1/6] workqueue: Inherit NOIO and NOFS alloc flags
-Message-ID: <ZkJEZuNRqIVUGcSn@slm.duckdns.org>
-References: <20240513125346.764076-1-haakon.bugge@oracle.com>
- <20240513125346.764076-2-haakon.bugge@oracle.com>
+        d=1e100.net; s=20230601; t=1715618947; x=1716223747;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HwX85Cc4Z5UBCMlHC2NISB9r0JBio+whHTW3qGBLXLU=;
+        b=mI+EtryP9VusITe9f0CNrhJlRp94NtYqNBylUonX0lXF5hegbfICH93j5KbVqvVYud
+         3ryqcGhXVU04CERlS9KeeMyRK4wo6tONPiPwL3Ai9+jBoay6NnOfMHweHtt78Ne52FKo
+         4pLBTZB8G/QFWu/GjotePIN7c7rrZPMyIrDQV/RWb2JNytA3GRGXpLS1KzNmNLTluIvi
+         i9+Ftxexkb4j9CAzmpdQrUzJyx87+vLr7YhART3KUU4A2evwJiHkxPN0EfIcuTitguuG
+         tu0czCxGUQmLwgYwPcxfSwtIREllINga5KdtHe4MAWMXl/9YOVpdNp9BsVN8GMG4sIfh
+         +0JA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdivdOV6FOjLVe8bszWge3KaCztbGYjxxcN767WAPsIydGGOuqp3sWPsuvGcl3aoqh+Y7jEL/yWzHaCd9d0RLZnFmJ2jmIJ1QHb3qk
+X-Gm-Message-State: AOJu0YzT6h7jHluBZYWk8/tH2eAJzZk1vs9lb2Jkxo/bXu/pR/+iWZQG
+	AFYNqi/j4dU4ZcJj0rzCcMX15m1krSmJHvHt/eBPgIDKIOHGlFZ7rIEHEomhHhB/QLAGBvHWL5X
+	d+HHISg==
+X-Google-Smtp-Source: AGHT+IH04I5RpwSSuOduAsXzjfwvCz5Lbm+b/B8F1VirhsAIfnje/2Ij6SljAYtYuQZd05PnHMtHCQ==
+X-Received: by 2002:ac2:454b:0:b0:51e:fa9d:a532 with SMTP id 2adb3069b0e04-5220fc6d526mr6411845e87.37.1715618944466;
+        Mon, 13 May 2024 09:49:04 -0700 (PDT)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d32fcsm1813508e87.167.2024.05.13.09.49.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 09:49:03 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51ef64d051bso5277348e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:49:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW84bJlWvy0h0zREPAXqwVtkll+xrpZM9dCC3XHMxkMQAm2Q0/Au6TOmQabOwP7F1bn06q1jp/AVgj+6N5N1Uux/9tXPvuNmVIwNygM
+X-Received: by 2002:ac2:4253:0:b0:51d:55a7:668d with SMTP id
+ 2adb3069b0e04-5220fb72dbamr6347700e87.25.1715618943247; Mon, 13 May 2024
+ 09:49:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240513125346.764076-2-haakon.bugge@oracle.com>
+References: <20240510183049.312477-1-urezki@gmail.com> <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
+ <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
+In-Reply-To: <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 13 May 2024 09:48:47 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjLr_c_7N0rTOD2eBd=WFydas-Z+_9ucwO_YkegYxrw+Q@mail.gmail.com>
+Message-ID: <CAHk-=wjLr_c_7N0rTOD2eBd=WFydas-Z+_9ucwO_YkegYxrw+Q@mail.gmail.com>
+Subject: Re: [GIT PULL] RCU changes for v6.10
+To: paulmck@kernel.org
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Johannes Berg <johannes.berg@intel.com>, 
+	Nikita Kiryushin <kiryushin@ancud.ru>, linke li <lilinke99@qq.com>, 
+	Zqiang <qiang.zhang1211@gmail.com>, Zenghui Yu <zenghui.yu@linux.dev>, 
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Mon, 13 May 2024 at 09:46, Paul E. McKenney <paulmck@kernel.org> wrote:
+>
+> Yes, this is intentional, nothing odd is going on, and Uladzislau's pull
+> request is legitimate.
 
-On Mon, May 13, 2024 at 02:53:41PM +0200, Håkon Bugge wrote:
-> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-> index 158784dd189ab..09ecc692ffcae 100644
-> --- a/include/linux/workqueue.h
-> +++ b/include/linux/workqueue.h
-> @@ -398,6 +398,8 @@ enum wq_flags {
->  	__WQ_DRAINING		= 1 << 16, /* internal: workqueue is draining */
->  	__WQ_ORDERED		= 1 << 17, /* internal: workqueue is ordered */
->  	__WQ_LEGACY		= 1 << 18, /* internal: create*_workqueue() */
-> +	__WQ_NOIO               = 1 << 19, /* internal: execute work with NOIO */
-> +	__WQ_NOFS               = 1 << 20, /* internal: execute work with NOFS */
+If this is more than a one-time thing, maybe Uladzislau should be in
+the MAINTAINERS entry too?
 
-I don't quite understand how this is supposed to be used. The flags are
-marked internal but nothing actually sets them. Looking at later patches, I
-don't see any usages either. What am I missing?
-
-> @@ -3184,6 +3189,12 @@ __acquires(&pool->lock)
->  
->  	lockdep_copy_map(&lockdep_map, &work->lockdep_map);
->  #endif
-> +	/* Set inherited alloc flags */
-> +	if (use_noio_allocs)
-> +		noio_flags = memalloc_noio_save();
-> +	if (use_nofs_allocs)
-> +		nofs_flags = memalloc_nofs_save();
-> +
->  	/* ensure we're on the correct CPU */
->  	WARN_ON_ONCE(!(pool->flags & POOL_DISASSOCIATED) &&
->  		     raw_smp_processor_id() != pool->cpu);
-> @@ -3320,6 +3331,12 @@ __acquires(&pool->lock)
->  
->  	/* must be the last step, see the function comment */
->  	pwq_dec_nr_in_flight(pwq, work_data);
-> +
-> +	/* Restore alloc flags */
-> +	if (use_nofs_allocs)
-> +		memalloc_nofs_restore(nofs_flags);
-> +	if (use_noio_allocs)
-> +		memalloc_noio_restore(noio_flags);
-
-Also, this looks like something that the work function can do on entry and
-before exit, no?
-
-Thanks.
-
--- 
-tejun
+              Linus
 
