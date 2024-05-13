@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-177306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788958C3CAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:54:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4AB8C3CC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B76E28621E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:54:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7EBC287E25
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544CB147C60;
-	Mon, 13 May 2024 07:52:28 +0000 (UTC)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8D71474C5;
+	Mon, 13 May 2024 07:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JD9XVGjf"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F199F1474DB
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB0F1474A0;
+	Mon, 13 May 2024 07:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715586747; cv=none; b=OJvn/jMLao+d4pRArfomFBx0b+TzuFZoyB1P1f30JARR61NfN3McufBmAffwOi8fuebEi+Y81na9bOJNueAvVe0OnCR60eqS+HhlxUd4pKpEp99JLt9Ofzs+g3WoU5Ti5PyxdvVwUmCjUV9oIyIpbQf8kYHinLrlNPBCPyCOcgw=
+	t=1715587036; cv=none; b=IF0nOo0W7d3D3kqClvzCX7zHS3s7bY9bmoHBoyl9px0ocfY6m/bsHIbLIn8aTqH22p8A9xfbOp7+fTz7iIgsErH9bdNISP884yKF0Kn3+/MT+jhRI1yTf6ITMkl9y0VDyYuJ+Sv3o2TFZb4fiq/NkoMhq3vvH/QW5au+NRph4P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715586747; c=relaxed/simple;
-	bh=XFhq+fS8vngKltkRwhFgEcYvz5ZZ2cNTyMUN7weOJ6s=;
-	h=Date:From:To:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dMwCcIxzA5PunGPQQAHxai8OVM30HxfVzen3Ix5bbHuurAJM5CeEUd88xVyumtnIHqNpI8k/fv5vb13o03fS4yNzycp//AbPyYb43aBupJOxVpRPfIp/lL7y6vmVMtU5Pfm4uPVnOY1RMIvfKEuPqKPGnBx64O3yeFR04KE0S+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c85e:4b6d:1f91:1410])
-	by andre.telenet-ops.be with bizsmtp
-	id NXsP2C0025V4kqY01XsP2g; Mon, 13 May 2024 09:52:23 +0200
-Received: from geert (helo=localhost)
-	by ramsan.of.borg with local-esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1s6QTv-002Sz9-12
-	for linux-kernel@vger.kernel.org;
-	Mon, 13 May 2024 09:52:23 +0200
-Date: Mon, 13 May 2024 09:52:23 +0200 (CEST)
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-Subject: Re: Build regressions/improvements in v6.9
-In-Reply-To: <20240513071306.474132-1-geert@linux-m68k.org>
-Message-ID: <da4545f2-3016-70b-7eec-7ba6ec4f5d95@linux-m68k.org>
-References: <CAHk-=whnKYL-WARzrZhVTZ8RP3WZc24C9_DT7JMJooONNT2udQ@mail.gmail.com> <20240513071306.474132-1-geert@linux-m68k.org>
+	s=arc-20240116; t=1715587036; c=relaxed/simple;
+	bh=b2qyThKrEXROa5UsqCfJs5RqQ6LvqWVkpGEAlf5h7zo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=YjkBVway6VVWvGq5Cn5VBXewdzbYEG69Vl4++Eo/HzhN3nxupUZaFW8sBWVWNFIv1nOl3kCrOwGTCqbaWK2a5gOUFS+NNeHbnRsOvN1iKTE5JB4kB/zp7iX03ZQuU6etgOMa3tv276tJ3BUenDH/lzpa3kltfyjS1R+rDz5pWWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JD9XVGjf; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1715586792; x=1716191592; i=markus.elfring@web.de;
+	bh=afouwgxXsDL3wwqwmPj0DrSGZAI4iej4a0NwiQc/opQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=JD9XVGjfwWsXwGsMNEne9Laq2+6O9huzgUeHey/rSmtqC1sDyiZw0hxTqAFObbV6
+	 MhOQvONjmLNumTiKm+lnuBCEd6R7gZ9Lof7IV0AUm9mgQej4jJrb+HJmgARBhDnxs
+	 UKUYvPK8mHAGrcdbybejEcigTdtqxhpygmzq8lyi0HWWWpIx5W4pSA8AVNihKvso8
+	 1G69wmB5F0qWhJg/kIsjWAc3gQbgmPRva2bZmuO76XziGwH7a41vJlbWYnyuLjMPp
+	 Pe6kbekSxDg8YeYjFjkTnUkNnAi4sQTAuFhx3cxOsFIHT4+OGEDCcfe5ypdWY9yI6
+	 rNltlO36/0IrtKMeDg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JEu-1s9BNi2VuE-002mNB; Mon, 13
+ May 2024 09:53:12 +0200
+Message-ID: <5dca19e5-6dd2-40f3-ae54-a4154e7d00be@web.de>
+Date: Mon, 13 May 2024 09:52:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+User-Agent: Mozilla Thunderbird
+To: Kunwu Chan <chentao@kylinos.cn>, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
+ Yonghong Song <yonghong.song@linux.dev>
+Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@linux.dev>,
+ Kunwu Chan <kunwu.chan@hotmail.com>
+References: <20240510095803.472840-2-kunwu.chan@linux.dev>
+Subject: Re: [PATCH bpf-next v2 1/4] selftests/bpf: Add some null pointer
+ checks
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240510095803.472840-2-kunwu.chan@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0qk556X1UoKRP1d2KUauvi0VtAOXwmbAC6L/EY2Q15ZO1iJRJbc
+ d77Fky6GThq/k9gouG6fF5OqxAIIpSXeG10tGR0S5QoBNvLPYG2wQT6YO3Qk7igdkuqqk4e
+ ZxadIQ1wbisRXc93q7N7bwqh9e3MLrHwwKhOfSrKXtiRMsMhq9LnbvOfH3WhhL6ElMcCmAA
+ 4yvCu1pRWJJIOj6hMtH9Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ul5fiYkhqWw=;Diwge/DZwN1fc5Y2JRQzn3zMuVW
+ 6Cl3u/3RgS0oPiw/6ht2sQxev4EFBdf+leywX1BBO6WQ4KcwZCzN7pABbqVbIvDXnCYRK3jLt
+ /srMMw+mJm2Q0KQzj3cqZIBfAcIR/RI/3CYtNJ1IJgdBDB0S3tzDkPm00yzaeu2plrfyO5to1
+ tjZkRH5y+o2S0fagXOUsyKmRtN8RJtcJGHWe0AxAqgnMKPQrkSZRZes6AqBpT9aXPu0MdQSbh
+ Ff47a7jTW7SbeS5MQQZcvCfAuTDsbfdKUPbVJTFpV+dypRjBARI+34+d5l/eBx2hxDeXNoMR+
+ FVjuKzc5yAt4XT3SBt1zO2wgoswdbZ7bRcks7qh82GJLu0Nju5IJdnYiP4Y+8yfnTrrL81Z6H
+ xKqrkyDQxVECSsMovYbultCBK3fZcOAuUGmFyhtAy3JIuHb1pspU+070rD1SD3Ir84ec1DRIY
+ IJssxTAaabqD0q/9pijMDbLe3re2HBZDgQ4fnjeJtZWTPwOjKJxMEgK3cO9mkitQMYaUVMMgd
+ x6J2bl0jRz/rjHB9AMxRrkmJ8bF1dNF5c2mZS6+dtZBuwSs20+V46yg2lrYcDi7ch+uiDG5nt
+ mFXko9o4+PQdZI6FaHuc9fpCedvn3p/tn9o6GsgKc5CeeC9wFZrTdn4dG8mNekPiqrKhElEmD
+ LRV0TBl3B1AjVOE0p6dBbmlS39hSFpVdSvvFyRg+ty3otrdAWvyoAELJfKKMrMhc7flJW5muE
+ CLW8Z+g1uQUCandg5gT04LzUiyNhbBXD1wd+ZK9eX9gcFVoUfIxyApw7OwfzTK/gTrxgl0z3a
+ XOwM3SelmRf7DkjQbk5uWgcqzuqCSceiZbOsltYfgsFBw=
 
-On Mon, 13 May 2024, Geert Uytterhoeven wrote:
-> JFYI, when comparing v6.9[1] to v6.9-rc7[3], the summaries are:
->  - build errors: +6/-1
+> There is a 'malloc' call, which can be unsuccessful.
 
-   + /kisskb/src/arch/sparc/vdso/vclock_gettime.c: error: no previous prototype for '__vdso_clock_gettime' [-Werror=missing-prototypes]:  => 254:1
+                  two calls?
 
-sparc64-gcc13/sparc64-allmodconfig (seen before)
 
-   + /kisskb/src/arch/sparc/vdso/vclock_gettime.c: error: no previous prototype for '__vdso_clock_gettime_stick' [-Werror=missing-prototypes]:  => 282:1
-   + /kisskb/src/arch/sparc/vdso/vclock_gettime.c: error: no previous prototype for '__vdso_gettimeofday' [-Werror=missing-prototypes]:  => 307:1
-   + /kisskb/src/arch/sparc/vdso/vclock_gettime.c: error: no previous prototype for '__vdso_gettimeofday_stick' [-Werror=missing-prototypes]:  => 343:1
-   + {standard input}: Error: pcrel too far: 561, 563, 572, 554, 552, 579, 543, 545, 590, 570, 581, 588 => 572, 584, 568, 550, 557, 545, 586, 581, 570, 577, 575, 593, 552, 548, 563, 559, 561, 566, 543, 588, 590, 595, 554, 579
-   + {standard input}: Error: unknown pseudo-op: `.cfi_def_cfa_off':  => 609
+> This patch will add the malloc failure checking
+=E2=80=A6
 
-sh4-gcc13/sh-allmodconfig (ICE crickets)
+Please use imperative wordings for improved change descriptions also in yo=
+ur patches.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
 
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6/ (all 138 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/dd5a440a31fae6e459c0d6271dddd62825505361/ (all 138 configs)
-
-Gr{oetje,eeting}s,
-
- 						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
- 							    -- Linus Torvalds
+Regards,
+Markus
 
