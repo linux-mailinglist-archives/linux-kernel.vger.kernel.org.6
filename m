@@ -1,218 +1,117 @@
-Return-Path: <linux-kernel+bounces-177517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33EE8C400B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:45:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B035B8C4014
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A0A32878B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:45:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 338FEB23609
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F6814F9F2;
-	Mon, 13 May 2024 11:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2879614F102;
+	Mon, 13 May 2024 11:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="knWj2i3b"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6BayJbT6"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED17B14F9E3;
-	Mon, 13 May 2024 11:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BD643AAB;
+	Mon, 13 May 2024 11:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715600709; cv=none; b=hNf2RHvJ5o/dEnfKWen92lIIh0cJEm2DZedEpafoeKeznyLDObegS0Kc3AQumf02SY8a2NAmZCkGg2JihQVPiuS7eZ+X1rPFdz7CZjSFdJtJnIgsPC9WXp8o8PviruxDHiIIaOIPqcEOWHGOxwxHvRaLo/nalK7TDlNnobFbDgU=
+	t=1715600823; cv=none; b=irQ/MGRUrAVZNIXPMOzbYxNNflfK0QIhcvlmDQTGc63Ss5mGF4MCBXp1jhHISHmkYZtbeCZ0BKgbvIcb5WusHydD/Mw20x/xpzfiRbwdJLA8D7cti3OT/uhscCru220YZNkYs8Csjf0b8RnNKBGnZkcsF/KY29lAJorMYltlxyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715600709; c=relaxed/simple;
-	bh=/2h4IWhyMKDvL3BsU0t9S0k874hGqIIbxVtf9NYmZ8M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UOtfHIuO9vE6Dtt2AlX4nr+RjzFMzdC/ic/ZMkG4kjA6A2aKWiHci/mCFUYGWp9u8tj2ZCiQOo6gcHFP8OAHbrjwPhP/HXgCppjE48QRJbGZDMc/CT7eG4uerJhbmPA9gwKDM41tf+5WXYWueFlyW13FWcuaLRCZCm4P/HD5V9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=knWj2i3b; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44DBj15C107614;
-	Mon, 13 May 2024 06:45:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715600701;
-	bh=yGYODzhRTKhI2Q5KMHiIKKScm+LSU/cb2USphFHGmcM=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=knWj2i3b8Hbx2QbaFP0ONDQwPOYPsektWCr2uBcFn+QlsgyVdyKmgNe+vnB23Osqy
-	 K800KCaIDyJrYMArhmlCD2yQAqiXfKVzg6RJY6ggPmqoFeJfi0/+yReF52Or0Ue5Hi
-	 aQkrZATTmPSuHrPtoZoYv30h8NyYt3ZQbuJwHcZE=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44DBj1wg020296
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 13 May 2024 06:45:01 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 13
- May 2024 06:45:00 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 13 May 2024 06:45:00 -0500
-Received: from uda0500640.dal.design.ti.com (uda0500640.dhcp.ti.com [172.24.227.88])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44DBiiZj086026;
-	Mon, 13 May 2024 06:44:57 -0500
-From: Ravi Gunasekaran <r-gunasekaran@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <afd@ti.com>, <robh@kernel.org>,
-        <rogerq@kernel.org>
-CC: <kristo@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <srk@ti.com>, <r-gunasekaran@ti.com>, <s-vadapalli@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/3] arm64: dts: ti: k3-j722s-evm: Update USB0 and USB1
-Date: Mon, 13 May 2024 17:14:43 +0530
-Message-ID: <20240513114443.16350-4-r-gunasekaran@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240513114443.16350-1-r-gunasekaran@ti.com>
-References: <20240513114443.16350-1-r-gunasekaran@ti.com>
+	s=arc-20240116; t=1715600823; c=relaxed/simple;
+	bh=bkl5mIpaXX5R+0JYXYWav244dyOdyvV/LK6ynmQSRXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ca1Gl33QOYwDrCTOBF7HkYATzUhkYAEOlH9gty1HoAYNXTMRAS7FSYwTaZDunY+Fwf4NzHs2ZHWpZpSOxO9+ZpspqNdw8OKc+hH7AKBtuN/ohyd6TfHgkCo99c/YdcVDykB5lgXwzBvbZub69nII+XZv2yEGQtCSyBcCceWHmzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6BayJbT6; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D8Jhwq004753;
+	Mon, 13 May 2024 13:46:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=+Ud1oJct5YusRDi0DBo0DqaYGoRY5+vpKVG6u0z0jyM=; b=6B
+	ayJbT6RGR5CsoE/qdXQJIeTFJXL2WOSwoC7ERbRYG1NszkOkgLMeZHDAqrA1lHqi
+	JTrKRQeXbQBdfxnrcfrfAnvw6LME4ex7/x1jiXRXsTM4kjXH8lT9jp89TgEczHOp
+	fpmh9++24iKg0yt0fwe4fot+uRkgmZqz70d87x8nu3z/J+St3LgNgFOHqnhfbp1g
+	Cea/ZC0oGPS7jBq3QLh1je8D49/zGVvJMGtjjraC1M4lBSfeM9l0uSINqN2HcBLz
+	q08k+PflE3/HAhWgLxNOjzzQZ6bnGRD4mCGGQ0jVcpcPpLrZmtxnMTSohnu0J4qp
+	e9V/APaAKpF+Kus9QkQA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2kmhm4k8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 13:46:27 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 89A9940044;
+	Mon, 13 May 2024 13:46:21 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CFB90217B95;
+	Mon, 13 May 2024 13:45:06 +0200 (CEST)
+Received: from [10.48.86.164] (10.48.86.164) by SHFDAG1NODE2.st.com
+ (10.75.129.70) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
+ 2024 13:45:05 +0200
+Message-ID: <0ef43ed5-24f5-4889-abb2-d01ee445a02d@foss.st.com>
+Date: Mon, 13 May 2024 13:45:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/11] dt-bindings: net: add phy-supply property for
+ stm32
+To: Marek Vasut <marex@denx.de>, "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
+ <20240426125707.585269-3-christophe.roullier@foss.st.com>
+ <4e03e7a4-c52b-4c68-b7e5-a03721401cdf@denx.de>
+Content-Language: en-US
+From: Christophe ROULLIER <christophe.roullier@foss.st.com>
+In-Reply-To: <4e03e7a4-c52b-4c68-b7e5-a03721401cdf@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE2.st.com
+ (10.75.129.70)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_08,2024-05-10_02,2023-05-22_02
 
-The GPIO expander on the EVM allows the USB selection for Type-C
-port to either USB0 or USB1 via USB hub. By default, let the Type-C
-port select USB0 via the GPIO expander port P05.
+Hi,
 
-Enable super-speed on USB1 by updating SerDes0 lane configuration.
-
-Signed-off-by: Ravi Gunasekaran <r-gunasekaran@ti.com>
----
-Changes since v1:
-----------------
-* Removed USB aliases, line-name property for p05 GPIO hog
-
-* Included k3-j722s-main.dtsi
-
-v1: https://lore.kernel.org/all/20240429120932.11456-1-r-gunasekaran@ti.com/
-
- arch/arm64/boot/dts/ti/k3-j722s-evm.dts | 55 +++++++++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-j722s.dtsi    |  5 +++
- arch/arm64/boot/dts/ti/k3-serdes.h      |  7 ++++
- 3 files changed, 67 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-index bf3c246d13d1..531912be97c9 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-evm.dts
-@@ -9,7 +9,9 @@
- /dts-v1/;
- 
- #include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/phy/phy.h>
- #include "k3-j722s.dtsi"
-+#include "k3-serdes.h"
- 
- / {
- 	compatible = "ti,j722s-evm", "ti,j722s";
-@@ -202,6 +204,12 @@
- 			J722S_IOPAD(0x012c, PIN_OUTPUT, 0) /* (AF25) RGMII1_TX_CTL */
- 		>;
- 	};
-+
-+	main_usb1_pins_default: main-usb1-default-pins {
-+		pinctrl-single,pins = <
-+			J722S_IOPAD(0x0258, PIN_INPUT, 0) /* (B27) USB1_DRVVBUS */
-+		>;
-+	};
- };
- 
- &cpsw3g {
-@@ -301,6 +309,13 @@
- 				  "PCIe0_1L_RC_RSTz", "PCIe0_1L_PRSNT#",
- 				  "ENET1_EXP_SPARE2", "ENET1_EXP_PWRDN",
- 				  "PD_I2ENET1_I2CMUX_SELC_IRQ", "ENET1_EXP_RESETZ";
-+
-+		p05-hog {
-+			/* P05 - USB2.0_MUX_SEL */
-+			gpio-hog;
-+			gpios = <5 GPIO_ACTIVE_LOW>;
-+			output-high;
-+		};
- 	};
- };
- 
-@@ -384,3 +399,43 @@
- 	status = "okay";
- 	bootph-all;
- };
-+
-+&serdes0_ln_ctrl {
-+	idle-states = <J722S_SERDES0_LANE0_USB>,
-+		      <J722S_SERDES1_LANE0_PCIE0_LANE0>;
-+};
-+
-+&serdes0 {
-+	status = "okay";
-+	serdes0_usb_link: phy@0 {
-+		reg = <0>;
-+		cdns,num-lanes = <1>;
-+		#phy-cells = <0>;
-+		cdns,phy-type = <PHY_TYPE_USB3>;
-+		resets = <&serdes_wiz0 1>;
-+	};
-+};
-+
-+&usbss0 {
-+	ti,vbus-divider;
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	dr_mode = "otg";
-+	usb-role-switch;
-+};
-+
-+&usbss1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_usb1_pins_default>;
-+	ti,vbus-divider;
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	dr_mode = "host";
-+	maximum-speed = "super-speed";
-+	phys = <&serdes0_usb_link>;
-+	phy-names = "cdns3,usb3-phy";
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s.dtsi b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-index c75744edb143..61b64fae1bf4 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j722s.dtsi
-@@ -87,3 +87,8 @@
- 	reg = <0x00 0x70000000 0x00 0x40000>;
- 	ranges = <0x00 0x00 0x70000000 0x40000>;
- };
-+
-+/* Include bus peripherals that are additionally
-+ * present in J722S
-+ */
-+ #include "k3-j722s-main.dtsi"
-diff --git a/arch/arm64/boot/dts/ti/k3-serdes.h b/arch/arm64/boot/dts/ti/k3-serdes.h
-index a011ad893b44..9082abeddcb1 100644
---- a/arch/arm64/boot/dts/ti/k3-serdes.h
-+++ b/arch/arm64/boot/dts/ti/k3-serdes.h
-@@ -201,4 +201,11 @@
- #define J784S4_SERDES4_LANE3_USB		0x2
- #define J784S4_SERDES4_LANE3_IP4_UNUSED		0x3
- 
-+/* J722S */
-+#define J722S_SERDES0_LANE0_USB			0x0
-+#define J722S_SERDES0_LANE0_QSGMII_LANE2	0x1
-+
-+#define J722S_SERDES1_LANE0_PCIE0_LANE0		0x0
-+#define J722S_SERDES1_LANE0_QSGMII_LANE1	0x1
-+
- #endif /* DTS_ARM64_TI_K3_SERDES_H */
--- 
-2.17.1
-
+On 4/26/24 16:47, Marek Vasut wrote:
+> On 4/26/24 2:56 PM, Christophe Roullier wrote:
+>> Phandle to a regulator that provides power to the PHY. This
+>> regulator will be managed during the PHY power on/off sequence.
+>>
+>> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+>
+> Maybe this entire regulator business should be separate series from 
+> the MP13 DWMAC ethernet series ?
+I prefer push it with MP13 Ethernet series if possible.
 
