@@ -1,78 +1,163 @@
-Return-Path: <linux-kernel+bounces-177813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEFD8C44EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:16:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B048C44F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 286B8B2240A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:16:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E281C23334
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6774158849;
-	Mon, 13 May 2024 16:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7318F15534C;
+	Mon, 13 May 2024 16:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g5JwiLaM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJQBUmZX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A42157A56
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF8114F9F7;
+	Mon, 13 May 2024 16:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715616908; cv=none; b=FP0g6bD6yL1fiLIbiUUXLq0QYPLSyfBKBkiYwZwnFNH1d0+7RM909YjCqQlC/4rsvMyOMvDLbFahiWKQ3REZwIhqP0XWvElQBTUAl1spdIiJ7B2hBfHdnBD8lVOAwlUQGMrDr5oaVAP8eSbBtxdMANnAR2Z6JEf+I4rbyrH0ulE=
+	t=1715617045; cv=none; b=oJGOZWGv4Zpl3nS9590SX5zES3cUcapfZo7Uxr7+ZTTtPv0+YLQitlS7tgqeLFXotdftG3bV5Z3qUO+aMxxTIkBT+2bUqfuJDghprism5fzHy7r8CFS6WC7FH/I31c9uxe4oX3fD1tpwyLruEZWa5zb8fMyeD/EmGMTWVHjxgOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715616908; c=relaxed/simple;
-	bh=E7QK33IDKAmCZvmyhuJmbwWmEmmiVieGUFYiNuP3f4E=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XfYGeZzxmMnQKkyPXv47m8f1rJauwiXT+IFFoIdc/x6+jHxNXNcmZOXn0T3/0meISlwtyWiR7A5lvb6xAd4eg7is5JFE4IzIxJxquIFwHUQpXMJGnenVYQWODwxRNwyYgffwcuboot98nP6y3sF/GUCQfYVGzLBzuCM8b4GYjpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g5JwiLaM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0D189C4AF0B;
-	Mon, 13 May 2024 16:15:08 +0000 (UTC)
+	s=arc-20240116; t=1715617045; c=relaxed/simple;
+	bh=iz6gKe5/2InAmAQEj6JDMra0XNlFlsPSsb2ffqq6GHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJTgUVxPT27ld/CNCxR7AiLsxCIMmFLmKgPV2aPc9yuSSefNzc+e/MP5VOOeKU4yWY1Hh52uCtIWc3ikWbmTjOs0D8naP71hHAHriHSHe/ExYDnctBnYoNDNhc5/8iab1uIc7A9Q+6JyTBdZrFBwCngOZi20M5o3GThJVTzKwas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJQBUmZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E0CC113CC;
+	Mon, 13 May 2024 16:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715616908;
-	bh=E7QK33IDKAmCZvmyhuJmbwWmEmmiVieGUFYiNuP3f4E=;
-	h=Subject:From:In-Reply-To:References:Date:To:List-Id:Cc:From;
-	b=g5JwiLaM/MCgKGzdpJA7bIy5Z/8w8TwHjmEZJcwP/bWg9MTcINO8C9LF+zLbItDEQ
-	 do2P0s6EY8KBGZ/lhBuqeg1q07VFAZ8YieTyAatDdvdDYlBkjdwtVcrU+OMJZPSZ2K
-	 E1+s8o0bT/Qep8cPG+SA8JmkKCNcf8cBzq28aKX9Sp2LznTEjVeTia0G2eg6y7k3HT
-	 pVL+HnF8mMXuKzGGqhMnjqtjhA9PUAL3yEZCzlNtrrvPLvWL1R4mR3bmiVASOodzZD
-	 LXg4FhO1pKRbIxgzC/gqciRZug88nNvXwR/AqkJWS1uzuoNJm4eGlfbdrR+Hpp6dmB
-	 LUg1zQR1auADA==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0436DC433F2;
-	Mon, 13 May 2024 16:15:08 +0000 (UTC)
-Subject: Re: [GIT PULL 4/4] soc: defconfig updates for 6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
-References: <fa20b5a4-a131-49b4-9597-15886435a288@app.fastmail.com> <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <d8eb719b-3b66-4475-b117-7a4734af9def@app.fastmail.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.10
-X-PR-Tracked-Commit-Id: 78b08cf6313061499948126aebdf00e1079e4d21
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6d1346f1bcbf2724dee8af013cdab9f7b581435b
-Message-Id: <171561690801.7727.7331858026509769153.pr-tracker-bot@kernel.org>
-Date: Mon, 13 May 2024 16:15:08 +0000
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, soc@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+	s=k20201202; t=1715617045;
+	bh=iz6gKe5/2InAmAQEj6JDMra0XNlFlsPSsb2ffqq6GHA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YJQBUmZXzTCZ/i1iZR65iKFMbRctWdBBqKRZNljj9p+noqSRWQmXkwKJaN3MBfu0U
+	 anmvFJolRIELG1uK2Achj/hy4DwI6C9W8v/9UN2VdZbIVAeW0LjHdVNjvCHz3horZV
+	 WmhKLCLpMt7zSt4oGG2oBbQbMNc8SpVI8upNAJLZ9LaymR5n1Ta2CoSE9KecwsQ2ME
+	 aKeNvTcouOTx/IahhGTeTwDEADKgk1/uAdDPSG9MM0xeFi3KdzKHKDduvdcecM+6d1
+	 Z+C3FsY1sy3XDKvUrvlNf9VTN5YNQCFeyv1PXRGKRWdYpDWFZL/1ig/GA/xMZX368E
+	 3s5OLstfuCdUA==
+Date: Mon, 13 May 2024 17:17:20 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kanak Shilledar <kanakshilledar@gmail.com>
+Cc: wahrenst@gmx.net, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Kanak Shilledar <kanakshilledar111@protonmail.com>,
+	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: spi: brcm,bcm2835-spi: convert to
+ dtschema
+Message-ID: <20240513-shredder-renderer-80f888812467@spud>
+References: <20240511061457.8363-1-kanakshilledar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="iNrqzZLi0em8VcEV"
+Content-Disposition: inline
+In-Reply-To: <20240511061457.8363-1-kanakshilledar@gmail.com>
 
-The pull request you sent on Fri, 10 May 2024 23:13:38 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-defconfig-6.10
+--iNrqzZLi0em8VcEV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6d1346f1bcbf2724dee8af013cdab9f7b581435b
+On Sat, May 11, 2024 at 11:44:56AM +0530, Kanak Shilledar wrote:
+> diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml =
+b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+> new file mode 100644
+> index 000000000000..94da68792194
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-spi.yaml
+> @@ -0,0 +1,50 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/brcm,bcm2835-spi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM2835 SPI0 controller
+> +
+> +maintainers:
+> +  - Florian Fainelli <florian.fainelli@broadcom.com>
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> +  - Kanak Shilledar <kanakshilledar111@protonmail.com>
+
+Why didn't you use protonmail for both?
+
+Otherwise, this looks fine.
+
+Thanks,
+Conor.
+
+> +  - Stefan Wahren <wahrenst@gmx.net>
+> +
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - brcm,bcm2835-spi
+> +      - brcm,bcm2711-spi
+> +      - brcm,bcm7211-spi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi@20204000 {
+> +        compatible =3D "brcm,bcm2835-spi";
+> +        reg =3D <0x7e204000 0x1000>;
+> +        interrupts =3D <2 22>;
+> +        clocks =3D <&clk_spi>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +    };
+> --=20
+> 2.34.1
+>=20
+
+--iNrqzZLi0em8VcEV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkI9EAAKCRB4tDGHoIJi
+0jVvAQDreMdyauMLXm/MjQJ/ND97gubmJtVqz3KZ0m6Mgfy9MQD+IZ8qrPf5LryK
+WZjiu6UhLbPIHSAPZ88qxmdKAbWpzAk=
+=hu+c
+-----END PGP SIGNATURE-----
+
+--iNrqzZLi0em8VcEV--
 
