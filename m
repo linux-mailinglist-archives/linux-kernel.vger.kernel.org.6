@@ -1,122 +1,127 @@
-Return-Path: <linux-kernel+bounces-177118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8422D8C3A5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:07:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F9148C3A5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:08:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43081C20BE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:07:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F34CFB20C5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B4B145B1A;
-	Mon, 13 May 2024 03:07:16 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8BF145B34;
+	Mon, 13 May 2024 03:08:17 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7A017550
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122F2145B03;
+	Mon, 13 May 2024 03:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715569636; cv=none; b=M1Vwjfj8fu/9VcweZZeDZfJyAp4WvEGKsfDNZwoJgYDbBs6THuJrWSRa3XLqowRPuRPgz8EYW4D4a5+xCYL0AO27/fuiHUy3h4kIwCYmfz9jdGzwZCOEWx+mC6WpzK6LmjU3h8uE1uwZWvkP3A63l2OkaFS3xG2jY640c0083kQ=
+	t=1715569696; cv=none; b=UN7fgsTyqS4Z43hYevb+isTp707Q7hvtKsxd4JskabY0ORWu25WglUvtE6Y/5o+vt0bBakMX7/RnwQDfnozhh/V9V+JLtX3k5fjsaCGK9rEOEYlCu3GEqvO8gZacIU2x7AnJVgjiceZL8XVhK6gR0NC++KZkoGD8+IIIylq/xbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715569636; c=relaxed/simple;
-	bh=WIi2mTkxrFyXaEO9TW4GQt+gruKYfGyeIlyjdMs0hxY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cAMqCkOuDUBFmBfGld09guDkuuc8MSJTBvEhkZrOmtVqTGcP3lAAyyWd8/OuR+Qwx9wGM03lzSVSmzQhpwWH0CRx2zQftUzswsdihBBFFPA40m3yMvayMTWtJml/lSaMV87qD7h5TEZzH+17aD++xHufk217JqLkj63ZaO8jzQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Vd4B65DCxzch2H;
-	Mon, 13 May 2024 11:05:50 +0800 (CST)
-Received: from kwepemm600012.china.huawei.com (unknown [7.193.23.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8665C180064;
-	Mon, 13 May 2024 11:07:01 +0800 (CST)
-Received: from build.huawei.com (10.175.101.6) by
- kwepemm600012.china.huawei.com (7.193.23.74) with Microsoft SMTP Server
+	s=arc-20240116; t=1715569696; c=relaxed/simple;
+	bh=qMsAsGDNQ4GHMd5TD/Xe+g54+qy2vdkDoNDAsdxcdSY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SMfA39ktJWCfrIrRIbEMNxsBCisBRnMp2jz2j1/EHlvxTb1yBui6F/qu4vmIjEyebtypX52AxBv+pFYDlOUbGrcF4Lb6O+Yf0DN6DNae/M5bPYGYSAryqBPTTQWC/UKMMtf31DPXvNeMKTvj0E7/5Bzhd2kB5wHuezAbKa6lzyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 44D37fXsA1107450, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/2.95/5.92) with ESMTPS id 44D37fXsA1107450
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 13 May 2024 11:07:41 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 11:07:00 +0800
-From: Wenchao Hao <haowenchao2@huawei.com>
-To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, Aaron
- Tomlin <atomlin@atomlin.com>, <linux-kernel@vger.kernel.org>
-CC: Wenchao Hao <haowenchao22@gmail.com>, Wenchao Hao <haowenchao2@huawei.com>
-Subject: [PATCH] workqueue: Fix rescuer task's name truncated
-Date: Mon, 13 May 2024 11:06:39 +0800
-Message-ID: <20240513030639.3772468-1-haowenchao2@huawei.com>
-X-Mailer: git-send-email 2.32.0
+ 15.1.2507.35; Mon, 13 May 2024 11:07:40 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 13 May 2024 11:07:39 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Mon, 13 May 2024 11:07:39 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "kuba@kernel.org" <kuba@kernel.org>,
+        "davem@davemloft.net"
+	<davem@davemloft.net>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org" <horms@kernel.org>,
+        Ping-Ke Shih <pkshih@realtek.com>, Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v18 06/13] rtase: Implement .ndo_start_xmit function
+Thread-Topic: [PATCH net-next v18 06/13] rtase: Implement .ndo_start_xmit
+ function
+Thread-Index: AQHaoUVFS3AReltz50OiDSH+k5DKnbGQKQQAgARZsNA=
+Date: Mon, 13 May 2024 03:07:39 +0000
+Message-ID: <76de0f7149bf4024998758120a5552ab@realtek.com>
+References: <20240508123945.201524-1-justinlai0215@realtek.com>
+ <20240508123945.201524-7-justinlai0215@realtek.com>
+ <1bb2d174-ccae-43e3-80ec-872b9a140fbe@lunn.ch>
+In-Reply-To: <1bb2d174-ccae-43e3-80ec-872b9a140fbe@lunn.ch>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600012.china.huawei.com (7.193.23.74)
+X-KSE-ServerInfo: RTEXH36505.realtek.com.tw, 9
+X-KSE-AntiSpam-Interceptor-Info: fallback
+X-KSE-Antivirus-Interceptor-Info: fallback
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Task comm of task is limitted to 16, prefix "kworker/R-" is added for
-rescuer worker's task, which cause most task name is truncated as
-following:
+>=20
+> > +static u32 rtase_tx_csum(struct sk_buff *skb, const struct net_device
+> > +*dev) {
+> > +     u32 csum_cmd =3D 0;
+> > +     u8 ip_protocol;
+> > +
+> > +     switch (vlan_get_protocol(skb)) {
+> > +     case htons(ETH_P_IP):
+> > +             csum_cmd =3D RTASE_TX_IPCS_C;
+> > +             ip_protocol =3D ip_hdr(skb)->protocol;
+> > +             break;
+> > +
+> > +     case htons(ETH_P_IPV6):
+> > +             csum_cmd =3D RTASE_TX_IPV6F_C;
+> > +             ip_protocol =3D ipv6_hdr(skb)->nexthdr;
+> > +             break;
+> > +
+> > +     default:
+> > +             ip_protocol =3D IPPROTO_RAW;
+> > +             break;
+> > +     }
+> > +
+> > +     if (ip_protocol =3D=3D IPPROTO_TCP)
+> > +             csum_cmd |=3D RTASE_TX_TCPCS_C;
+> > +     else if (ip_protocol =3D=3D IPPROTO_UDP)
+> > +             csum_cmd |=3D RTASE_TX_UDPCS_C;
+> > +     else
+> > +             WARN_ON_ONCE(1);
+>=20
+> I'm not so sure about this WARN_ON_ONCE(). It looks like if i send a cust=
+om
+> packet which is not IPv4 or IPv6 it will fire. There are other protocols =
+then IP.
+> Connecting to an Ethernet switch using DSA tags would be a good example. =
+So
+> i don't think you want this warning.
+>=20
+>       Andrew
 
-root   81  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-xprti]
-root   82  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-cfg80]
-root   85  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-nfsio]
-root   86  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-xfsal]
-root   87  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-xfs_m]
-root   88  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-acpi_]
-root   93  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-iscsi]
-root   95  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
-root   97  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
-root   99  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
-
-Fix this issue by split rescuer name to 2 part like other kworker,
-the normal part is "kworker/R" which is set to task_struct's comm,
-another part is wq->name which is added to kworker's desc. These 2 parts
-would be merged in wq_worker_comm().
-
-Fixes: b6a46f7263bd ("workqueue: Rename rescuer kworker")
-
-Signed-off-by: Wenchao Hao <haowenchao2@huawei.com>
-Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
-
----
- kernel/workqueue.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index d2dbe099286b..07c077a53f93 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5443,7 +5443,7 @@ static int init_rescuer(struct workqueue_struct *wq)
- 	}
- 
- 	rescuer->rescue_wq = wq;
--	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R-%s", wq->name);
-+	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R");
- 	if (IS_ERR(rescuer->task)) {
- 		ret = PTR_ERR(rescuer->task);
- 		pr_err("workqueue: Failed to create a rescuer kthread for wq \"%s\": %pe",
-@@ -5452,6 +5452,8 @@ static int init_rescuer(struct workqueue_struct *wq)
- 		return ret;
- 	}
- 
-+	snprintf(rescuer->desc, sizeof(rescuer->desc), "%s", wq->name);
-+
- 	wq->rescuer = rescuer;
- 	if (wq->flags & WQ_UNBOUND)
- 		kthread_bind_mask(rescuer->task, wq_unbound_cpumask);
-@@ -6302,6 +6304,8 @@ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
- 						  worker->desc);
- 			}
- 			raw_spin_unlock_irq(&pool->lock);
-+		} else if (worker->desc[0] != '\0') {
-+			scnprintf(buf + off, size - off, "-%s", worker->desc);
- 		}
- 	}
- 
--- 
-2.32.0
-
+Hi Andrew,
+Thank you for your review, I will confirm and modify this part.
 
