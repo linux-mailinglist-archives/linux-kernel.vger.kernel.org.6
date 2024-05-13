@@ -1,148 +1,221 @@
-Return-Path: <linux-kernel+bounces-177795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E2D8C44B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838378C44BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 302EB281FCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54F21C214CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34C615532D;
-	Mon, 13 May 2024 16:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2F9155342;
+	Mon, 13 May 2024 16:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MxzXKmne"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZgLAnJcj"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2598154423;
-	Mon, 13 May 2024 16:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AF8155335
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715616003; cv=none; b=fJzTlJQYpQssTehy1lT7xsM8yvQubxj/SVCgXz30VY0yrQ6prPr7vV4/C8G4XrtwgUD1+3Sq1jLeM9Grcf9QV9Dl7iv66E/nQ5xZG8729uVqeRPoCCRlkJj6h4TBQmM1iHeaUTdDDVnny/QK/Jbg9kA5KIFF96RPCR3SiGuvOtU=
+	t=1715616092; cv=none; b=LHBCKYe96adjkJHW2/ieaf1giP0d4Mk1DH7vQPMdQ2KiOkqXZthmb+7YzXC7P5kiKJgw5yI5jZF/78ooLAqN6QpGGs1yKUq0Z4azrC833zCcNWCIDMpFmmk7gZUCq9ZMoHhXj0tw4C5Cvi5kHFQ+ITbqrNP3K492rff6PhN/bYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715616003; c=relaxed/simple;
-	bh=k2zBO/pJSJJXeGK42+0QmyGneLPTwY0zTIWbg5TCzdo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ao1COASCgMuLQ2rJuQZEXx89twU7V+2NcbMir1DBxJ3hxjuVspQOzvAZq4ionwKNz9Df1IbV8ON5WU/SJFQA5kQDBx1cKirC564yZJqlygo2LdPK3Yzr0XWr+yKRwhq3qtqSB4gmsGXQ5MIzHaSeHx9BscUmkQFUv3gIOKBWiBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MxzXKmne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA2CC113CC;
-	Mon, 13 May 2024 16:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715616002;
-	bh=k2zBO/pJSJJXeGK42+0QmyGneLPTwY0zTIWbg5TCzdo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MxzXKmne4Q0q7RCI54pTOJidMsN+RsKt47FFBV47KtxcReD+agKNZ6QuIZwlpKDFJ
-	 r7yNAphTKeaym1EwZwOCBxaOgl5UEw6eU/Wqgt7Az4e/Cb6LQHLV8/zZwH+cr39xBd
-	 Zr/NVoF7f5wlVCSibtXWRnuXdQjfxA57MiNn3SE1Hfcot+QSY+2klBOWg35QQTVkgT
-	 vcXW86bdIXkeMIMJbvSlybzmJOVEz5qLXccq8tZYcsw1GyYNgEWonvAhs7vSqpAFqV
-	 MgdAUAzCSspNpFY3ExqbVGhDRCNGnDaf2xfHBtzPuLk9oRzZN03heKLaKSOCbqjciN
-	 WpY42C+27A/yw==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Naveen N Rao <naveen@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
- <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Hari Bathini
- <hbathini@linux.ibm.com>, bpf@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- paulmck@kernel.org
-Subject: Re: [PATCH bpf v3] powerpc/bpf: enforce full ordering for ATOMIC
- operations with BPF_FETCH
-In-Reply-To: <wlslraxtexuncmqsfen6gum4sg4viecu4zx73pvlfztjmwxenl@fcoal5io4kse>
-References: <20240513100248.110535-1-puranjay@kernel.org>
- <wlslraxtexuncmqsfen6gum4sg4viecu4zx73pvlfztjmwxenl@fcoal5io4kse>
-Date: Mon, 13 May 2024 15:59:59 +0000
-Message-ID: <mb61pwmnxhfcw.fsf@kernel.org>
+	s=arc-20240116; t=1715616092; c=relaxed/simple;
+	bh=7aIb0LLcOZQItl53cYSnWrlITnVVqi2Ng/kqLoiQdHA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KMinx5NPSGl4IHCPiL12L5iBViop3MjPozm/wAkApyJU0TsrXmcM1WA+DzjaRN69UK02ZqKXMuttzF2BvUpznPo4g4cRIoa2JCRVOCX3sTXvPK+i49FUi5YXUYvYIrLgsBo5ruOAKlMsjtXaTArM47cCglwvviFQwWT0IzwrpNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZgLAnJcj; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-de8b6847956so7855320276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:01:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715616090; x=1716220890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P7pWGVe0IoguyDwyyQdCj4C526jTQ2Gx3U1Hay8S43k=;
+        b=ZgLAnJcjo/nXBo7g9KqHTqtHh6o5UMs9eG45Uy4v9/qb5d3ir9Ep9dgIS9QVsm3EQh
+         Jv6w4PnHfQ5hPKPDs75PmnpHyr0yvCm8CsvCsmVsIqW0MwLKAFeiamxgMdXpA5hfIUo8
+         bx01D2NMjbSzHgMiVbT4sggBIuegb0gH2K3nLajP3YW+7R8PkEY0UVK860baaJB0CkcZ
+         Z39OUrltvdtKMa2kxlCpWX61FvMXyGqCFJQRsJIy+sM7ZSX0FSce7ya8hETpkq16qjPY
+         aqlWF3QvNY93lEarQK3hOD/u0LtN8JnzVdW+BPgmbef5b4nkEmSQIyHBtw8FIvaehV1X
+         me1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715616090; x=1716220890;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=P7pWGVe0IoguyDwyyQdCj4C526jTQ2Gx3U1Hay8S43k=;
+        b=ejQimEr1J5sgF1hcootl+ULsbVONE8ssUPsHjy+VC0uNCngrTotuqPypDeRLnp34Zx
+         /LDTZdbTfa7Fmj7+FvQ7wwwobkEiWu9d1AXCOUupqP3wU8K7zGFJXgZMffEHqVXI4n7B
+         Bim9uwa9hOVpX8flr6iEBgytNUn0wS9uNxk/4s/2czVjD10ui4A+Z8HjtmL51ruFLdH6
+         3j66VIfnWSXlT7xkcYoV92kKtXPMa0roEFShPTT2qZpOb12Z650epy2cMYpBnmmZnP2m
+         EBg60VaKAkE0Dtk4lXr3rY2gSgGfEuHxsIQx4/MV2BqyypEjXuSKoleyS2OAe3+tIE8N
+         gaSA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDv9/X/1P8WKeB/OrAxGDJs9mpNnfvR6FsAkb8kNotOv1h13h6U1DBtZR84XLleOOuKFLx08Dnf+4SJOzKxwMUuhxU77dVyif1JhLB
+X-Gm-Message-State: AOJu0YwhSFEa28ZjIGHjt2Ds37MJI7Fqe744y4HlNk/rjsdgiKWXox5e
+	wBE/h7iGSmoOpIk0NCvAQB1BRH/wW7cxHeW+cJtELF6oQeHdOxOUEbhahVz6BNXtq7ti/Uro08j
+	WTw==
+X-Google-Smtp-Source: AGHT+IGwuX7zcJx0ogFKg+j/v3Ui4cvmwInv4HbrTsBJ2xd7BgAlVylu3n985aaxuLDYr0jvpd4Zzg3ADZo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:68c3:0:b0:de5:dcb8:5c8a with SMTP id
+ 3f1490d57ef6-debcfbce27fmr2904889276.2.1715616090015; Mon, 13 May 2024
+ 09:01:30 -0700 (PDT)
+Date: Mon, 13 May 2024 09:01:28 -0700
+In-Reply-To: <5dfc9eb860a587d1864371874bbf267fa0aa7922.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20240425233951.3344485-1-seanjc@google.com> <20240425233951.3344485-2-seanjc@google.com>
+ <5dfc9eb860a587d1864371874bbf267fa0aa7922.camel@intel.com>
+Message-ID: <ZkI5WApAR6iqCgil@google.com>
+Subject: Re: [PATCH 1/4] x86/reboot: Unconditionally define
+ cpu_emergency_virt_cb typedef
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Naveen N Rao <naveen@kernel.org> writes:
+On Mon, May 13, 2024, Kai Huang wrote:
+> On Thu, 2024-04-25 at 16:39 -0700, Sean Christopherson wrote:
+> > Define cpu_emergency_virt_cb even if the kernel is being built without =
+KVM
+> > support so that KVM can reference the typedef in asm/kvm_host.h without
+> > needing yet more #ifdefs.
+> >=20
+> > No functional change intended.
+> >=20
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/x86/include/asm/reboot.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/arch/x86/include/asm/reboot.h b/arch/x86/include/asm/reboo=
+t.h
+> > index 6536873f8fc0..d0ef2a678d66 100644
+> > --- a/arch/x86/include/asm/reboot.h
+> > +++ b/arch/x86/include/asm/reboot.h
+> > @@ -25,8 +25,8 @@ void __noreturn machine_real_restart(unsigned int typ=
+e);
+> >  #define MRR_BIOS	0
+> >  #define MRR_APM		1
+> > =20
+> > -#if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
+> >  typedef void (cpu_emergency_virt_cb)(void);
+> > +#if IS_ENABLED(CONFIG_KVM_INTEL) || IS_ENABLED(CONFIG_KVM_AMD)
+> >  void cpu_emergency_register_virt_callback(cpu_emergency_virt_cb *callb=
+ack);
+> >  void cpu_emergency_unregister_virt_callback(cpu_emergency_virt_cb *cal=
+lback);
+> >  void cpu_emergency_disable_virtualization(void);
+>=20
+> It looks a little it weird.  If other file wants to include
+> <asm/kvm_host.h> (directly or via <linux/kvm_host.h>) unconditionally the=
+n
+> in general I think <asm/kvm_host.h> or <linux/kvm_host.h> should
+> have=C2=A0something like:
+>=20
+> 	#ifdef CONFIG_KVM
+>=20
+> 	void func(void);
+> 	...
+>=20
+> 	#else
+>=20
+> 	static inline void func(void) {}
+>=20
+> 	#endif
+>=20
+> But it seems neither <asm/kvm_host.h> nor <linux/kvm_host.h> has this
+> pattern.
+>=20
+> I tried to build with !CONFIG_KVM with patch 2 in this series, and I got
+> below error:
 
-> On Mon, May 13, 2024 at 10:02:48AM GMT, Puranjay Mohan wrote:
->> The Linux Kernel Memory Model [1][2] requires RMW operations that have a
->> return value to be fully ordered.
->> 
->> BPF atomic operations with BPF_FETCH (including BPF_XCHG and
->> BPF_CMPXCHG) return a value back so they need to be JITed to fully
->> ordered operations. POWERPC currently emits relaxed operations for
->> these.
->> 
->> We can show this by running the following litmus-test:
->> 
->> PPC SB+atomic_add+fetch
->> 
->> {
->> 0:r0=x;  (* dst reg assuming offset is 0 *)
->> 0:r1=2;  (* src reg *)
->> 0:r2=1;
->> 0:r4=y;  (* P0 writes to this, P1 reads this *)
->> 0:r5=z;  (* P1 writes to this, P0 reads this *)
->> 0:r6=0;
->> 
->> 1:r2=1;
->> 1:r4=y;
->> 1:r5=z;
->> }
->> 
->> P0                      | P1            ;
->> stw         r2, 0(r4)   | stw  r2,0(r5) ;
->>                         |               ;
->> loop:lwarx  r3, r6, r0  |               ;
->> mr          r8, r3      |               ;
->> add         r3, r3, r1  | sync          ;
->> stwcx.      r3, r6, r0  |               ;
->> bne         loop        |               ;
->> mr          r1, r8      |               ;
->>                         |               ;
->> lwa         r7, 0(r5)   | lwa  r7,0(r4) ;
->> 
->> ~exists(0:r7=0 /\ 1:r7=0)
->> 
->> Witnesses
->> Positive: 9 Negative: 3
->> Condition ~exists (0:r7=0 /\ 1:r7=0)
->> Observation SB+atomic_add+fetch Sometimes 3 9
->> 
->> This test shows that the older store in P0 is reordered with a newer
->> load to a different address. Although there is a RMW operation with
->> fetch between them. Adding a sync before and after RMW fixes the issue:
->> 
->> Witnesses
->> Positive: 9 Negative: 0
->> Condition ~exists (0:r7=0 /\ 1:r7=0)
->> Observation SB+atomic_add+fetch Never 0 9
->> 
->> [1] https://www.kernel.org/doc/Documentation/memory-barriers.txt
->> [2] https://www.kernel.org/doc/Documentation/atomic_t.txt
->> 
->> Fixes: 65112709115f ("powerpc/bpf/64: add support for BPF_ATOMIC bitwise operations")
->
-> As I noted in v2, I think that is the wrong commit. This fixes the below 
+Well, yeah.
 
-Sorry for missing this. Would this need another version or your message
-below will make it work with the stable process?
+> In file included from ./include/linux/kvm_host.h:45,
+>                  from arch/x86/events/intel/core.c:17:
+> ./arch/x86/include/asm/kvm_host.h:1617:9: error: unknown type name
+> =E2=80=98cpu_emergency_virt_cb=E2=80=99
+>  1617 |         cpu_emergency_virt_cb *emergency_disable;
+>       |         ^~~~~~~~~~~~~~~~~~~~~
+>=20
+>=20
+> Looking at the code, it seems it is because intel_guest_get_msrs() needs
+> 'struct kvm_pmu' (e.g., it accesses the members of 'struct kvm_pmu').  Bu=
+t
+> it doesn't look the relevant code should be compiled when !CONFIG_KVM.=C2=
+=A0
+>=20
+> So looks a better way is to explicitly use #ifdef CONFIG_KVM around the
+> relevant code in the arch/x86/events/intel/core.c?
 
-> four commits in mainline:
-> Fixes: aea7ef8a82c0 ("powerpc/bpf/32: add support for BPF_ATOMIC bitwise operations")
-> Fixes: 2d9206b22743 ("powerpc/bpf/32: Add instructions for atomic_[cmp]xchg")
-> Fixes: dbe6e2456fb0 ("powerpc/bpf/64: add support for atomic fetch operations")
-> Fixes: 1e82dfaa7819 ("powerpc/bpf/64: Add instructions for atomic_[cmp]xchg")
->
-> Cc: stable@vger.kernel.org # v6.0+
+Eh, there's no right or wrong way to handle code that is conditionally comp=
+iled.
+There are always tradeoffs and pros/cons, e.g. the number of #ifdefs, the a=
+mount
+of effective code validation for all configs, readability, etc.
 
-Thanks,
-Puranjay
+E.g. if there is only one user of a function that conditionally exists, the=
+n
+having the caller handle the situation might be cleaner.  But if there are
+multiple callers, then providing a stub is usually preferable.
+
+IMO, the real problem is that perf pokes into KVM _at all_.  Same for VFIO.
+The perf usage is especially egregious, as there is zero reason perf should=
+ need
+KVM internals[1].  VFIO requires a bit more effort, but I'm fairly confiden=
+t that
+Jason's file-based approach[2] will yield clean, robust code that minimizes=
+ the
+number of #ifdefs required.
+
+I'm planning/hoping to get back to that series in the next few weeks.  As f=
+or
+this small series, I prefer to unconditionally define the typedef, as it re=
+quires
+no additional #ifdefs, and there are no meaningful downsides to letting the
+typedef exist for all kernel builds.
+
+[1] https://lore.kernel.org/all/20230916003118.2540661-21-seanjc@google.com
+[2] https://lore.kernel.org/all/ZXkVSKULLivrMkBl@google.com
+
+> And it seems vfio does it in vfio_main.c:
+>=20
+> 	#if IS_ENABLED(CONFIG_KVM)
+> 	#include <linux/kvm_host.h>
+> 	#endif
+>=20
+> 	#if IS_ENABLED(CONFIG_KVM)
+> 	void vfio_device_get_kvm_safe(struct vfio_device *device,=C2=A0
+> 			struct kvm *kvm)
+> 	{
+> 		...
+> 	}
+> 	...
+> 	#endif
+>=20
+>=20
+> The only remaining weird thing is 'struct kvm *kvm' is still used
+> unconditionally in vfio_main.c, but I think the reason it builds fine wit=
+h
+> !CONFIG_KVM is because <linux/vfio.h> declares it explicitly:
+>=20
+> 	struct kvm;
+> 	struct iommufd_ctx;
+> 	...
+>=20
+> So it seems to me that this patch around 'cpu_emergency_virt_cb' is more
+> like a workaround of existing non-perfect <linux/kvm_host.h> and/or
+> <asm/kvm_host.h>?
 
