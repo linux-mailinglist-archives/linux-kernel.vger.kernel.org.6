@@ -1,176 +1,281 @@
-Return-Path: <linux-kernel+bounces-178089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB838C488B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:56:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B34668C4892
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE27F1C20F55
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:56:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D76CA1C21455
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A027480BE3;
-	Mon, 13 May 2024 20:56:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405888287E;
+	Mon, 13 May 2024 20:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v//YArKL"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aZ2IfGIr"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFE481AB1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929131DA24;
+	Mon, 13 May 2024 20:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715633782; cv=none; b=dyVocfh8/L5I6lvMQ2fwc3n+SQa4l72ca8u70Z3yB2m8BaLx5j6fNriwyw1sEyEXigS1/Q7PqILwjCsxkeFRYaPHNYY458+q9ooqr0bL84wpLsqYa4dB61H/lswiR1oWlBYUlIuhRWlAWgDSYnSe9rFnWFLk7anLVRbCRetzkYs=
+	t=1715633995; cv=none; b=i2SYHcXbGioAIiNlAmcXjcpqRRNouzeAfr0Rh7WjXWezUPqye1shwE5G+3GRzYkMt5zkmLwBNr3RxdRmu4hQb5kEv69uSEcs+RuSY9cY88vSEz4pvuWJbdEcYu9cIP1k2NHe/iOTR5Kd10eh15rURzqLF7verTimg+0xvcJeSwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715633782; c=relaxed/simple;
-	bh=a38ahy8MNKvTWoemBchbGlDmXUcxYFOMei1qLnNBQNU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BD0bQ3AyLW9mFjXUggSEM5hoQ8CTBMz8MfB0o0xbwvruRoTTEPYdPd9Nn3PcqmLrIUgsfKUVjKuH49mCZhWXeaCCG47TQdVrMaASAPpf/lC3tMLLQ7y2iLPnjpMmFFM1tl4KXfxwoiNUsD7HsEpSchM/+rVFISHAq8QZWEAw/Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v//YArKL; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2b3fbed1a03so4257662a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715633781; x=1716238581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j9J9OiagbHgYo4fNILaqE2zKAvLmIQvaQQp7mxiI34I=;
-        b=v//YArKL07LrU4NeKMa3DAPuqc5+xZWlW1IhlfXE5guWP0h+0ixtDgM+b8rg+QPd7b
-         6n3bDIq+J1Dl1Z9da7Uz0nQfucyr8eNobly+HZ5bRocPEwFanLmOD55oJ3cKmvzKqG8+
-         fyej6rheyk3MyuXCCOIKKOxRvtKU+bp44Kzs4D9U0KNU+NdEkhG/0pYqPG137iixDSlm
-         O0jKCZQuxU8joz8OlP2fzvcl57OY4KUetr99x9CHWBm2DvbDf8LTiQ2ddV7yEgGyl46l
-         aAc5kTAujpmUahIYb6/FsFlomE80Xxg3m3zHUFCixHohQ6MapwDmXB/XrX3l1QNs9KcQ
-         fGWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715633781; x=1716238581;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=j9J9OiagbHgYo4fNILaqE2zKAvLmIQvaQQp7mxiI34I=;
-        b=ZNAo6in8gpKCiTZvd9aDYvqqHiNnleWl9O9Kqka76xwCTjVvhyo1DKBykS2qRL/hlG
-         e2nbtw0UzZjmD82+JEIGn/1FYIvUgBQrEhJ43gd6LzK9j2EpoF/5lwB6/4amIFSqSPsp
-         8my8Cz9vHOljqvIgujrUNjxgyY7h4Cr3ICOitTUrs4jLnQ4KafgnDMsBjYpFdTXPDeAR
-         9KuxL+btvv76A83yzVIdorQ55ZPogA1Z8yq3KXzH0bROOWANWGlpCJsl/eO1heKlm67c
-         q09IhPKNQf4HrMHxP7HLnY/i9/qtLZbL/7sNh5+/cC5mCZ+kAx0CoPIqzsudJBppkZvC
-         2xsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8eW5HMoOKD9P/TcqiqckhnsYSuSsodHMAnkXOIVaXk7vzv/wC2bvXucZE/JsKJ1uHrjHRV4mrlkQX8Y4zKIs5hp25B6HwjkzkVX86
-X-Gm-Message-State: AOJu0YzwT96EvuIyyua8bg7IGWaGca46JFvppIolYDxztNEd7G8uvajQ
-	zVMV/Q5G/DVDKborBKHL9eECN78p0FnZvTPlsOEG43EApmLF2eCQxBllJyP/zN7ddIEVQzxiW6K
-	YVg==
-X-Google-Smtp-Source: AGHT+IFcGEcUsDPl12bJyUIqIjMBgOr+q2PeBKpAeayx0CQKwRTQxdpBuaJA0HUJg/j9PlAOBRvWKuscvf0=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:1788:b0:2ad:7736:1a05 with SMTP id
- 98e67ed59e1d1-2b6cc769ce3mr29621a91.3.1715633780682; Mon, 13 May 2024
- 13:56:20 -0700 (PDT)
-Date: Mon, 13 May 2024 13:56:19 -0700
-In-Reply-To: <20240513203839.GA168153@ls.amr.corp.intel.com>
+	s=arc-20240116; t=1715633995; c=relaxed/simple;
+	bh=dkkEaZdlGlHT49ZU3NBORQGpKALXUwJ7ygaxgEkYyeE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vw7h+vy22haG97IRZ/I30OQYDdGHyVRQq3M3V4fN0OWExOjzVw7mEsL9+cKvPoe+QSMq/MYAh5fKvAk0GBH7aYVjIb90LVHKaAiEhIEeHFCMFxzSvwZpSMpYNuUap6VdtGqaLCyBpqZMV7JqrOdkBD8Mzv6ZIJtar//MRvxDdbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aZ2IfGIr; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715633994; x=1747169994;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=dkkEaZdlGlHT49ZU3NBORQGpKALXUwJ7ygaxgEkYyeE=;
+  b=aZ2IfGIrYEr8cE7vYZKrzfbnE4ou3d+OBtC8nNOtfwEiqN48TFAzWUwF
+   STQXP/b6y37zT7rVV75QHMkgW7WwRBZRUGf1OUcb+iBKZgTOlCrWohVjJ
+   TlIfgq97oj1jHAU7+uB2bZDk5y/Rpl/VUMcEDNXl1GbH1Bq51wStnit+t
+   Vb8FRDjUQLOEXaLZMDBrWNeGnL98OFol2+Vs8Bn09IGttPBLXt+9d3RZZ
+   XWX7mBCsbEJCpJTMKPw04URIjNIGfxjDgQkVBea6tS7ukcnFfZTG1zJyl
+   JPkR/VjSoJlmLJpLeHxTdMtz6l/whn7+92s63vCSHTb98txUl0uCuOqE5
+   A==;
+X-CSE-ConnectionGUID: xZ4e70j+QLqNqmOLAbTYww==
+X-CSE-MsgGUID: S/zfnvV6QJOIGleNcrCidw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="22260139"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="22260139"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:59:52 -0700
+X-CSE-ConnectionGUID: MqTWVmp9RwygEqtnbLGWMQ==
+X-CSE-MsgGUID: oN8DMCwXREC2y98S/enIRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30493213"
+Received: from test2-linux-lab.an.intel.com ([10.122.105.166])
+  by fmviesa006.fm.intel.com with ESMTP; 13 May 2024 13:59:50 -0700
+From: matthew.gerlach@linux.intel.com
+To: bhelgaas@google.com,
+	lpieralisi@kernel.org,
+	kw@linux.com,
+	robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Subject: [PATCH v5] dt-bindings: PCI: altera: Convert to YAML
+Date: Mon, 13 May 2024 15:59:13 -0500
+Message-Id: <20240513205913.313592-1-matthew.gerlach@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240227232100.478238-1-pbonzini@redhat.com> <20240227232100.478238-3-pbonzini@redhat.com>
- <6bd61607-9491-4517-8fc8-8d61d9416cab@linux.intel.com> <4d0d9f64-4cc4-4c1e-ba27-ff70c9827570@linux.intel.com>
- <20240513203839.GA168153@ls.amr.corp.intel.com>
-Message-ID: <ZkJ-c5El-sXc-GZB@google.com>
-Subject: Re: [PATCH 02/21] KVM: Allow page-sized MMU caches to be initialized
- with custom 64-bit values
-From: Sean Christopherson <seanjc@google.com>
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: Binbin Wu <binbin.wu@linux.intel.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, michael.roth@amd.com, 
-	thomas.lendacky@amd.com, isaku.yamahata@linux.intel.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024, Isaku Yamahata wrote:
-> On Tue, Mar 26, 2024 at 11:56:35PM +0800, Binbin Wu <binbin.wu@linux.inte=
-l.com> wrote:
-> > > > diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
-> > > > index d93f6522b2c3..827ecc0b7e10 100644
-> > > > --- a/include/linux/kvm_types.h
-> > > > +++ b/include/linux/kvm_types.h
-> > > > @@ -86,6 +86,7 @@ struct gfn_to_pfn_cache {
-> > > > =C2=A0 struct kvm_mmu_memory_cache {
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gfp_t gfp_zero;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gfp_t gfp_custom;
-> > > > +=C2=A0=C2=A0=C2=A0 u64 init_value;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct kmem_cache *kmem_cache;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int capacity;
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int nobjs;
-> > > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > > > index 9c99c9373a3e..c9828feb7a1c 100644
-> > > > --- a/virt/kvm/kvm_main.c
-> > > > +++ b/virt/kvm/kvm_main.c
-> > > > @@ -401,12 +401,17 @@ static void kvm_flush_shadow_all(struct kvm *=
-kvm)
-> > > > =C2=A0 static inline void *mmu_memory_cache_alloc_obj(struct
-> > > > kvm_mmu_memory_cache *mc,
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 gfp_t gfp_flags)
-> > > > =C2=A0 {
-> > > > +=C2=A0=C2=A0=C2=A0 void *page;
-> > > > +
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 gfp_flags |=3D mc->gfp_zero;
-> > > > =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (mc->kmem_cache)
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return kmem_=
-cache_alloc(mc->kmem_cache, gfp_flags);
-> > > > -=C2=A0=C2=A0=C2=A0 else
-> > > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return (void *)__get_fr=
-ee_page(gfp_flags);
-> > > > +
-> > > > +=C2=A0=C2=A0=C2=A0 page =3D (void *)__get_free_page(gfp_flags);
-> > > > +=C2=A0=C2=A0=C2=A0 if (page && mc->init_value)
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 memset64(page, mc->init=
-_value, PAGE_SIZE /
-> > > > sizeof(mc->init_value));
-> >=20
-> > Do we need a static_assert() to make sure mc->init_value is 64bit?
->=20
-> That's overkill because EPT entry is defined as 64bit and KVM uses u64 fo=
-r it
-> uniformly.
+From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 
-I'm pretty sure Binbin is talking about passing init_value to memset64(), n=
-ot
-about whether or not that suffices for EPT.  So I wouldn't say it's overkil=
-l.
+Convert the device tree bindings for the Altera Root Port PCIe controller
+from text to YAML.
 
-However, I don't think a static assert is warranted.  Functionally, trackin=
-g
-init_value as a u32 or even a u8 would be a-ok as it's a copy-by-value para=
-meter
-that won't be sign-extended or truncated.  I.e. the real reqiurement comes =
-from
-TDX wanting to set a 64-bit value.
+Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+---
+v5:
+ - add interrupt-conntroller #interrupt-cells to required field
+ - don't touch original example dts
 
-And trying to set bit 63 in a 32-bit field _will_ make the compiler unhappy=
-:
+v4:
+ - reorder reg-names to match original binding
+ - move reg and reg-names to top level with limits.
 
-arch/x86/kvm/mmu/mmu.c: In function =E2=80=98kvm_mmu_create=E2=80=99:
-include/vdso/bits.h:8:33: error: conversion from =E2=80=98long long unsigne=
-d int=E2=80=99 to =E2=80=98u32=E2=80=99 {aka =E2=80=98unsigned int=E2=80=99=
-} changes value from =E2=80=989223372036854775808=E2=80=99 to =E2=80=980=E2=
-=80=99 [-Werror=3Doverflow]
-    8 | #define BIT_ULL(nr)             (ULL(1) << (nr))
-      |                                 ^
-arch/x86/kvm/mmu/spte.h:162:33: note: in expansion of macro =E2=80=98BIT_UL=
-L=E2=80=99
-  162 | #define SHADOW_NONPRESENT_VALUE BIT_ULL(63)
-      |                                 ^~~~~~~
-arch/x86/kvm/mmu/mmu.c:6225:17: note: in expansion of macro =E2=80=98SHADOW=
-_NONPRESENT_VALUE=E2=80=99
- 6225 |                 SHADOW_NONPRESENT_VALUE;
-      |                 ^~~~~~~~~~~~~~~~~~~~~~~
+v3:
+ - Added years to copyright
+ - Correct order in file of allOf and unevaluatedProperties
+ - remove items: in compatible field
+ - fix reg and reg-names constraints
+ - replace deprecated pci-bus.yaml with pci-host-bridge.yaml
+ - fix entries in ranges property
+ - remove device_type from required
 
+v2:
+ - Move allOf: to bottom of file, just like example-schema is showing
+ - add constraint for reg and reg-names
+ - remove unneeded device_type
+ - drop #address-cells and #size-cells
+ - change minItems to maxItems for interrupts:
+ - change msi-parent to just "msi-parent: true"
+ - cleaned up required:
+ - make subject consistent with other commits coverting to YAML
+ - s/overt/onvert/g
+---
+ .../devicetree/bindings/pci/altera-pcie.txt   | 50 ----------
+ .../bindings/pci/altr,pcie-root-port.yaml     | 93 +++++++++++++++++++
+ 2 files changed, 93 insertions(+), 50 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
 
-I suppose one could argue that changing init_value to a u128 could result i=
-n
-undetected truncation, but IMO that firmly crosses into ridiculous territor=
-y.
+diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
+deleted file mode 100644
+index 816b244a221e..000000000000
+--- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
++++ /dev/null
+@@ -1,50 +0,0 @@
+-* Altera PCIe controller
+-
+-Required properties:
+-- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
+-- reg:		a list of physical base address and length for TXS and CRA.
+-		For "altr,pcie-root-port-2.0", additional HIP base address and length.
+-- reg-names:	must include the following entries:
+-		"Txs": TX slave port region
+-		"Cra": Control register access region
+-		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
+-- interrupts:	specifies the interrupt source of the parent interrupt
+-		controller.  The format of the interrupt specifier depends
+-		on the parent interrupt controller.
+-- device_type:	must be "pci"
+-- #address-cells:	set to <3>
+-- #size-cells:		set to <2>
+-- #interrupt-cells:	set to <1>
+-- ranges:	describes the translation of addresses for root ports and
+-		standard PCI regions.
+-- interrupt-map-mask and interrupt-map: standard PCI properties to define the
+-		mapping of the PCIe interface to interrupt numbers.
+-
+-Optional properties:
+-- msi-parent:	Link to the hardware entity that serves as the MSI controller
+-		for this PCIe controller.
+-- bus-range:	PCI bus numbers covered
+-
+-Example
+-	pcie_0: pcie@c00000000 {
+-		compatible = "altr,pcie-root-port-1.0";
+-		reg = <0xc0000000 0x20000000>,
+-			<0xff220000 0x00004000>;
+-		reg-names = "Txs", "Cra";
+-		interrupt-parent = <&hps_0_arm_gic_0>;
+-		interrupts = <0 40 4>;
+-		interrupt-controller;
+-		#interrupt-cells = <1>;
+-		bus-range = <0x0 0xFF>;
+-		device_type = "pci";
+-		msi-parent = <&msi_to_gic_gen_0>;
+-		#address-cells = <3>;
+-		#size-cells = <2>;
+-		interrupt-map-mask = <0 0 0 7>;
+-		interrupt-map = <0 0 0 1 &pcie_0 1>,
+-			            <0 0 0 2 &pcie_0 2>,
+-			            <0 0 0 3 &pcie_0 3>,
+-			            <0 0 0 4 &pcie_0 4>;
+-		ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000
+-			  0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
+-	};
+diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+new file mode 100644
+index 000000000000..7f02e7fb33e1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+@@ -0,0 +1,93 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++# Copyright (C) 2015, 2019, 2024, Intel Corporation
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/altr,pcie-root-port.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Altera PCIe Root Port
++
++maintainers:
++  - Matthew Gerlach <matthew.gerlach@linux.intel.com>
++
++properties:
++  compatible:
++    enum:
++      - altr,pcie-root-port-1.0
++      - altr,pcie-root-port-2.0
++
++  reg:
++    items:
++      - description: TX slave port region
++      - description: Control register access region
++      - description: Hard IP region
++    minItems: 2
++
++  reg-names:
++    items:
++      - const: Txs
++      - const: Cra
++      - const: Hip
++    minItems: 2
++
++  interrupts:
++    maxItems: 1
++
++  interrupt-controller: true
++
++  interrupt-map-mask:
++    items:
++      - const: 0
++      - const: 0
++      - const: 0
++      - const: 7
++
++  interrupt-map:
++    maxItems: 4
++
++  "#interrupt-cells":
++    const: 1
++
++  msi-parent: true
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - interrupts
++  - "#interrupt-cells"
++  - interrupt-controller
++  - interrupt-map
++  - interrupt-map-mask
++
++allOf:
++  - $ref: /schemas/pci/pci-host-bridge.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++    pcie_0: pcie@c00000000 {
++        compatible = "altr,pcie-root-port-1.0";
++        reg = <0xc0000000 0x20000000>,
++              <0xff220000 0x00004000>;
++        reg-names = "Txs", "Cra";
++        interrupt-parent = <&hps_0_arm_gic_0>;
++        interrupts = <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-controller;
++        #interrupt-cells = <1>;
++        bus-range = <0x0 0xff>;
++        device_type = "pci";
++        msi-parent = <&msi_to_gic_gen_0>;
++        #address-cells = <3>;
++        #size-cells = <2>;
++        interrupt-map-mask = <0 0 0 7>;
++        interrupt-map = <0 0 0 1 &pcie_0 1>,
++                        <0 0 0 2 &pcie_0 2>,
++                        <0 0 0 3 &pcie_0 3>,
++                        <0 0 0 4 &pcie_0 4>;
++        ranges = <0x82000000 0x00000000 0x00000000 0xc0000000 0x00000000 0x10000000>,
++                 <0x82000000 0x00000000 0x10000000 0xd0000000 0x00000000 0x10000000>;
++    };
+-- 
+2.34.1
+
 
