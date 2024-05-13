@@ -1,150 +1,227 @@
-Return-Path: <linux-kernel+bounces-178100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB658C48B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:18:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A09348C48BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49DBC282324
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555FE2821D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCE28287C;
-	Mon, 13 May 2024 21:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7922482C88;
+	Mon, 13 May 2024 21:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eOZC+0n2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ECv/sK9Z"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2061.outbound.protection.outlook.com [40.107.243.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D8F1DA24;
-	Mon, 13 May 2024 21:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715635074; cv=none; b=dY2bN1MH1rCQShPrgBicMtotVL/RDVLbrjnIyIG3kEhzGXIHLxf+dUHOF1QtwfwbL16QIoEzp2N/9+5m67//Uq6JePfg5gqvqcfrKswoTUDuyKudg1Qq9HXdAFUsFkmnb99h7l4ENCqglNqYUL6Oa3fgd50czZ2EHKHQD1V+5us=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715635074; c=relaxed/simple;
-	bh=oVVqK6WHIpXVbA0szVeaQq7lxDJEoXs14Hylmrigps8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fpz8jLO0rs9XvYC2OMi/YaCAt4QGlC58RL4XUFwf+cQ4YywwwmWxDf8IJdQfF5k6mQQpw91ussaNiIecrsn2WYgP/kmQo26YglkLl3mZma7iXc1dE2lw0LjqvGSJFtjVt3Dn1siiltSSTptmjVxTDu4EPJWRB6r+2FIyjt7Up4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eOZC+0n2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715635069;
-	bh=oVVqK6WHIpXVbA0szVeaQq7lxDJEoXs14Hylmrigps8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eOZC+0n2SxqqByuyaY0QwKt38XxWtbh9Eqrpv9NK5DJXuH+BvpK4/0Rw9OFhyEnh5
-	 I6vbbaHkV2daizLT8qTHGbpGOLqa4GKuoquexIDN8p23PKnAVLHx+TtpPSUNtc6ERG
-	 Li96MpJ5wbLSHPEgGe+8YhIxSVu+Z3e8yxGhq4oV8e8J2TVcIgX7I8y5MPyMGAHxnf
-	 k33zT/GeeOrCN+XR8u7ezJHK5eKktbZJPJZSix5GkNO38VA5wWBhSZq0d+9/vHNySj
-	 ZWJqSSz3Rz8mj9p/mrPBYGcw/zYJIlyeX2WIRxOfnr5WHN1UR9qPadqiz7fvvQNR1E
-	 fYNLpAJm477NA==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 02B7237820D0;
-	Mon, 13 May 2024 21:17:49 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 6E8AA10606FD; Mon, 13 May 2024 23:17:48 +0200 (CEST)
-Date: Mon, 13 May 2024 23:17:48 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>, 
-	Peter Rosin <peda@axentia.se>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "Rob Herring (Arm)" <robh@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: supply: sbs-manager: Remove class argument from
- i2c_mux_add_adapter()
-Message-ID: <4g4u2g2nrcpjvx4uswxppw2vsfzwcsy6kbsjp7ukksgfyhgnqb@s5n6jlz6w7af>
-References: <20240513201400.16589-2-wsa+renesas@sang-engineering.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D701E824A3;
+	Mon, 13 May 2024 21:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715635127; cv=fail; b=Q53KPOagxKIfAoI+Yxb2ZtBQktKSgcXEBBOXX0jF0MwlWHXUpsMGetdo6KneCf6UfIMRBVDmZHjXt5LUCwLFI94IaOwixciWtxW0ySAD2YEEBgOaZWm58Gj66vxb6HPgl4LcyMhDU9nnpH8E5Ax+iQudC33nlbM/YrGEYW5iyO4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715635127; c=relaxed/simple;
+	bh=5oUD2nPoyGUCx5TGQuQtjxRyRApUCGP3mMnNFdt9mAQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGI2POb6pLLcl1qeVgN6AI8hDiq4WoZFu3fsSs8/jaaFvJUJTkfUZbSl/lIAu1zOV8XklegEVmrTGBWxwb+UzoI0s9ccaCL5R13nKbOlRjxXSbPaJeFApoRU51emq1+92J6UQwMv9iTSPXwrhYxlzur78gSpKi7SEAAyN7ouWbk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ECv/sK9Z; arc=fail smtp.client-ip=40.107.243.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lXX27+MYX0BgM9/g1WhC1ssgcYZ3JYzCSJH14XJjYGNcIN9sBBbS9+bCi0cOyRljp11w3BlTbpKdF4RCGJrQ7cHko7argJ/9EFW4UsrGBvPidb/f4k0Yw8k7GmBsohQQkHb9wrolLSal+BYChZW2dvX02wV6c114P+xLi/E4OwmDRBDD0o6pXsYP+eFRItA3MJtog8v8vzHejmbpIaoUPq19VrnLGk9AR4r9zOzhIuH5TCBDYMWlYAgfNKpXl+n9+hNYfIyMm92rHl/c2Xjn3l2KQY9GvGRb3F7p+OAbSSWwsFXcVoNoADgeBPeJ71+u8LqxI3XEeHaOu+JkaqWmvA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2JwlqFjexOxmYJkPHvWfL5YnAjxWZsyeZM1VRbh7/sE=;
+ b=Apzi9pRNpvjlGts9WhTchSX8RCOKsNp4xyGrLepeB2bPQaPflfl1C0TvDWCOEs+MQviZxg8y+gQbRGxNvRxu6Bjxm0ccKJU1+uJKHBi9Wxa+FkAghHXLYf8A4a8anhR3wKjovxE/trDRmib9Jh7VgwIHrvfnnbGg04NMMxHvOAZA81qprkdn+DpYuqlzc1JbSPUoIi3RIRzCLTpha/a1rvRfGSJYo55CmM3jlpf58xWC3EHOOW0rhVR/wWV8aQej+mo+kzF6MUF73qUnNVNrf4mJggYvuiwh2PVmKnR2mfncOSt+kkvI67U5oxvTbVAinV+pU2YXu96wieNSMEeOaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2JwlqFjexOxmYJkPHvWfL5YnAjxWZsyeZM1VRbh7/sE=;
+ b=ECv/sK9ZqJ0si+JwhN8mib6mDUy+lj25eTEw+I4yj4IVR7oo9dQ9HIWbsak9fSO0Y/lhTG4iHi0KNJK1OTAWNSSdVn/+nNs/aj0wiYt26THyB0Q4ekYM9Fvk20G+opPNMQvZi1kWG1iaFuFjxo+5/jrN+UYMUmQwT5/0a7zIL00=
+Received: from CH2PR05CA0023.namprd05.prod.outlook.com (2603:10b6:610::36) by
+ DS0PR12MB7534.namprd12.prod.outlook.com (2603:10b6:8:139::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7544.49; Mon, 13 May 2024 21:18:40 +0000
+Received: from CH2PEPF00000148.namprd02.prod.outlook.com
+ (2603:10b6:610:0:cafe::9a) by CH2PR05CA0023.outlook.office365.com
+ (2603:10b6:610::36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.22 via Frontend
+ Transport; Mon, 13 May 2024 21:18:40 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000148.mail.protection.outlook.com (10.167.244.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 21:18:40 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
+ 2024 16:18:40 -0500
+Date: Mon, 13 May 2024 16:18:21 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+CC: Nathan Chancellor <nathan@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Sean Christopherson <seanjc@google.com>,
+	<llvm@lists.linux.dev>
+Subject: Re: [PULL 18/19] KVM: SEV: Provide support for
+ SNP_EXTENDED_GUEST_REQUEST NAE event
+Message-ID: <20240513211821.rgg6mz4dgj5w3b4h@amd.com>
+References: <20240510211024.556136-1-michael.roth@amd.com>
+ <20240510211024.556136-19-michael.roth@amd.com>
+ <20240513151920.GA3061950@thelio-3990X>
+ <0ceafce9-0e08-4d47-813d-6b3f52ac5fd6@redhat.com>
+ <20240513170535.je74yhujxpogijga@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d6m7btjvugjxoruz"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240513201400.16589-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240513170535.je74yhujxpogijga@amd.com>
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000148:EE_|DS0PR12MB7534:EE_
+X-MS-Office365-Filtering-Correlation-Id: c6f9db7b-1a52-49a8-c6d4-08dc73924316
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|36860700004|82310400017|376005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?z4Jb8G/hXkRc6ODxswmySX4zZsJKYq2s3duZgNg8YRVbEVK9+br6TGbF8YxJ?=
+ =?us-ascii?Q?NnZ1lgZm8RuZnoTnkAGLwy0QKlU9Ab1w9ODkx16tmQ9Ot7P91p+ykAXqr87Y?=
+ =?us-ascii?Q?tXoPmuD5DNBqARVdTF2cBYLaCBX1sRUqMpol80/BZVLMIAgD4gHATUSwYPP1?=
+ =?us-ascii?Q?yvDecyoLJ0ZWbeXava16A2IAb9LeX8gGgRsy9dcKEwgIe2+NF1j/BeyTIxCF?=
+ =?us-ascii?Q?4ZehqRrmjBKP/9+1VLnvLRxLEQ/nJH+VoETF9UbEH1XKA3klmSHVxkrOySP/?=
+ =?us-ascii?Q?2kvQF/O5586RFyoPTy+TyoLNxdj52ijwwXWYAFISkMyCes/4jDre/7MwEUMi?=
+ =?us-ascii?Q?iAR3cNRiepitkVrNfGs4cmeF/4H24qyiERCoHwyfdb9o/SmontvLgkDLKTHy?=
+ =?us-ascii?Q?qOpgwyQRSYnxTmet+4JkjRegimquLKaaOgjlNdGRrjfmghtgDGojVCZQjA/H?=
+ =?us-ascii?Q?f7EahBawerJOB67mb0WnAcdxXg23h6ryFbytp1oMfzghI96aMw1DNoYyhZpT?=
+ =?us-ascii?Q?Ahb0v/vd2AV0k3XbxlwG3c2trijH2i932dVlF1skB6OYvG490bGzvYLU9tD/?=
+ =?us-ascii?Q?AchrhZYl+iYBF3Xfq++4vZ5Ay+NqZqcR4FuyEeN9nSOn8yxepO2iheTm43Wd?=
+ =?us-ascii?Q?95cXBQY64hdfYJEze2kl7ycPG/s33nc/3sNXeRTazaCXoF+fWQI65Gkb59ql?=
+ =?us-ascii?Q?vp360pYDJ699FMVUARn8XEa+6MLWR/ubBVJfs0mv1rsadnsXCXnA3bq5DuzG?=
+ =?us-ascii?Q?Si9pxnRs9lo/z3nZ78rk7tNuNjALb396JVIpoO1oKUFv5f/4DtKgNOLIsE9p?=
+ =?us-ascii?Q?yymTcYaskXe2BPhks16lXK70oEV/rtE0/RBjt4gC1QXOMJB+Y3lX3dLFld15?=
+ =?us-ascii?Q?8oX2MhF25W8TZ/O65iXDr22gn8XH05MxTA7BPJgA7ixHsmz2CIY5SHoG87P/?=
+ =?us-ascii?Q?oUWLdV9VNOPNGh4dF3ZYXgZvMTjkjjnlfHa3tXRqwk50teIjwMYAUXSFvqVR?=
+ =?us-ascii?Q?012COh3INLU7QV0KPNcZ5ejCQAcZrpDnKBR/Q6b0IcN+RJO4e/a2Dc/iPAZY?=
+ =?us-ascii?Q?975kndCkx6ffQAesAOy+lQWLDdYJScZ+iHUCPrvffghVpc6XQu6i/+E2vNdE?=
+ =?us-ascii?Q?tYstH/yNolE1LV6kCdqRJsszwE1EFX2d1NJfekUX8lGXfktAu8Q9SbKYvg7d?=
+ =?us-ascii?Q?fDuSxicNkvDwomaEygteAU34PQWMbK4CC3cczCiABxblM+FWrtcFS3IrDse4?=
+ =?us-ascii?Q?re/zsg9xVS3YsolARHI3XkRRJ9wMpZm3PKzU6dG10mzdOropNbYZIllZhK9u?=
+ =?us-ascii?Q?qvzjoUghUO/HRidPnMnoL/h0PWyXRdoz0tWRyzZiO1mVVA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(36860700004)(82310400017)(376005)(1800799015);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 21:18:40.6659
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6f9db7b-1a52-49a8-c6d4-08dc73924316
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7534
 
+On Mon, May 13, 2024 at 12:05:35PM -0500, Michael Roth wrote:
+> On Mon, May 13, 2024 at 06:53:24PM +0200, Paolo Bonzini wrote:
+> > On 5/13/24 17:19, Nathan Chancellor wrote:
+> > > > +static int snp_begin_ext_guest_req(struct kvm_vcpu *vcpu)
+> > > > +{
+> > > > +	int vmm_ret = SNP_GUEST_VMM_ERR_GENERIC;
+> > > > +	struct vcpu_svm *svm = to_svm(vcpu);
+> > > > +	unsigned long data_npages;
+> > > > +	sev_ret_code fw_err;
+> > > > +	gpa_t data_gpa;
+> > > > +
+> > > > +	if (!sev_snp_guest(vcpu->kvm))
+> > > > +		goto abort_request;
+> > > > +
+> > > > +	data_gpa = vcpu->arch.regs[VCPU_REGS_RAX];
+> > > > +	data_npages = vcpu->arch.regs[VCPU_REGS_RBX];
+> > > > +
+> > > > +	if (!IS_ALIGNED(data_gpa, PAGE_SIZE))
+> > > > +		goto abort_request;
+> > > 
+> > > [...]
+> > > 
+> > > > +abort_request:
+> > > > +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, SNP_GUEST_ERR(vmm_ret, fw_err));
+> > > > +	return 1; /* resume guest */
+> > > > +}
+> > > 
+> > > This patch is now in -next as commit 32fde9e18b3f ("KVM: SEV: Provide
+> > > support for SNP_EXTENDED_GUEST_REQUEST NAE event"), where it causes a
+> > > clang warning (or hard error when CONFIG_WERROR is enabled) [...]
+> > > Seems legitimate to me. What was the intention here?
+> > 
+> > Mike, I think this should just be 0?
+> 
+> Hi Paolo,
+> 
+> Yes, I was just about to submit a patch that does just that:
+> 
+>   https://github.com/mdroth/linux/commit/df55e9c5b97542fe037f5b5293c11a49f7c658ef
 
---d6m7btjvugjxoruz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Submitted a proper patch here:
 
-Hi Wolfram,
+  https://lore.kernel.org/kvm/20240513172704.718533-1-michael.roth@amd.com/
 
-On Mon, May 13, 2024 at 10:11:16PM +0200, Wolfram Sang wrote:
-> Commit 99a741aa7a2d ("i2c: mux: gpio: remove support for class-based
-> device instantiation") removed the last call to i2c_mux_add_adapter()
-> with a non-null class argument. Therefore the class argument can be
-> removed.
->=20
-> Note: Class-based device instantiation is a legacy mechanism which
-> shouldn't be used in new code, so we can rule out that this argument
-> may be needed again in the future.
->=20
-> This driver was forgotten by the patch in the Fixes tag.
->=20
-> Fixes: fec1982d7072 ("i2c: mux: Remove class argument from i2c_mux_add_ad=
-apter()")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->=20
-> The to-be-fixed patch is only in linux-next in my i2c/for-next tree. We
-> want to remove this unneeded parameter in the next mergewindow. I
-> suggest that I just put it on top of my branch to avoid the
-> dependencies. A quick ack would be super-awesome! Thanks.
+and also one for a separate warning:
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+  https://lore.kernel.org/kvm/20240513181928.720979-1-michael.roth@amd.com/
 
--- Sebastian
+I saw my build environment had WARN=0 for the last round of changes, so I
+re-tested various kernel configs with/without clang and haven't seen any
+other issues. So I think that should be the last of it. I'll be sure to be
+a lot more careful about this in the future.
 
->  drivers/power/supply/sbs-manager.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/power/supply/sbs-manager.c b/drivers/power/supply/sb=
-s-manager.c
-> index 9e4141cffbf9..933b04806d10 100644
-> --- a/drivers/power/supply/sbs-manager.c
-> +++ b/drivers/power/supply/sbs-manager.c
-> @@ -358,7 +358,7 @@ static int sbsm_probe(struct i2c_client *client)
->  	/* register muxed i2c channels. One for each supported battery */
->  	for (i =3D 0; i < SBSM_MAX_BATS; ++i) {
->  		if (data->supported_bats & BIT(i)) {
-> -			ret =3D i2c_mux_add_adapter(data->muxc, 0, i + 1, 0);
-> +			ret =3D i2c_mux_add_adapter(data->muxc, 0, i + 1);
->  			if (ret)
->  				break;
->  		}
-> --=20
-> 2.43.0
->=20
+Thanks,
 
---d6m7btjvugjxoruz
-Content-Type: application/pgp-signature; name="signature.asc"
+Mike
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmZCg3gACgkQ2O7X88g7
-+pp43w//VO9lJvcUaKz+JueNUDFd0HXec3yMyAZajSdxiWoBabx/LoCOh1+dgy5e
-36cR9TO7e/+f+OcwUD34gZ1GY0De+XLMMsFBojVll20VH222lOMyhg+WROUcKbU8
-AeZjL5YX6noqe4X+p+pRv5lQfU+GjKFY9Z3+TAm49Gk4zMHnL/KdCGwvgWhNFLiO
-bmR1yUUs+AG6TRpDSJCjv6c3tTG9u5shrCoQ4I1CAU4RUDh7skztzsRME/lgYSbf
-znikgB5tr3kIxiwwZHupaNitC7vXfhMXaMgjkkhCibkJNri/fqOv2/+taN79Zqct
-mHECbusAcvoQv4c9cJvekMrCpd+oqBW2d5clldPsrguICpq8R8E1loTVg6CFCPeW
-pXY79eqcCunzU1OEkCGZoYF3VkBthUuAn9lcdNS3oH6uPXosADrNoh2Raq4YHUYn
-vHuBAjYPNl9P/Uf3Rr3QiCu+01Zo63fOFyOCFhYYG5GzKShrQ3bI9zFkM79JB87J
-RHhRxr7Lqr5xM7lcAxJpBvP0JYBqgotP1PxpQ72ptjgzy0kcVky80uR5pXLCawxs
-88IZW1h8CBhj3W/l6tcGWsVOByHYIE6SmKboAmo3h/WVI8PUMBSjtyygjJXkm9d9
-MhgtdQjmV3vGk9s3rNJU7y9nwzKShjaE1sQgY87DrxXd5rvknEQ=
-=2KO3
------END PGP SIGNATURE-----
-
---d6m7btjvugjxoruz--
+> 
+> Sorry for the breakage,
+> 
+> Mike
+> 
+> > 
+> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> > index c7a0971149f2..affb4fb47f91 100644
+> > --- a/arch/x86/kvm/svm/sev.c
+> > +++ b/arch/x86/kvm/svm/sev.c
+> > @@ -3911,7 +3911,6 @@ static int snp_begin_ext_guest_req(struct kvm_vcpu *vcpu)
+> >  	int vmm_ret = SNP_GUEST_VMM_ERR_GENERIC;
+> >  	struct vcpu_svm *svm = to_svm(vcpu);
+> >  	unsigned long data_npages;
+> > -	sev_ret_code fw_err;
+> >  	gpa_t data_gpa;
+> >  	if (!sev_snp_guest(vcpu->kvm))
+> > @@ -3938,7 +3937,7 @@ static int snp_begin_ext_guest_req(struct kvm_vcpu *vcpu)
+> >  	return 0; /* forward request to userspace */
+> >  abort_request:
+> > -	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, SNP_GUEST_ERR(vmm_ret, fw_err));
+> > +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb, SNP_GUEST_ERR(vmm_ret, 0));
+> >  	return 1; /* resume guest */
+> >  }
+> > Paolo
+> > 
+> > 
+> 
 
