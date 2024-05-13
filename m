@@ -1,85 +1,130 @@
-Return-Path: <linux-kernel+bounces-177623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B21A8C41C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7F9F8C4196
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA57328292F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:22:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D59D1F21001
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D804152185;
-	Mon, 13 May 2024 13:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0113152190;
+	Mon, 13 May 2024 13:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="lvJ2QozZ"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HTAifjR8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D721514E5;
-	Mon, 13 May 2024 13:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527CF15098C;
+	Mon, 13 May 2024 13:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715606568; cv=none; b=uOPmUh03J2FZ6pHhzmKgl3g6RMDOj5ygtf36pSBoV+6C8gX2WGbZY/LiQeNYRgl7CoOcPEOG5zQq8XiCA11ML0D6a11pT0aDFJDV/d7veItjy7pHdmM+0TngAUcBB3TBlxj3MFTD2QPJNnxkN5oPnymgzvDoxZ55XEktPBPpDWE=
+	t=1715606056; cv=none; b=ovcCEPqE2H4tXQY6HVK1Fomcz5Oj+/wvbXunj5hVdjxtyjFR1FNotrpwBB2WwOmEwFUAsnddmulMbTRm6bESMrRngGIhelJAU+GielxTRLpHVKSDp7kXVwTHQYCjaKwSM62Dm1ZH/Iao9RAudmRfLBPUCzSyc8eR4dwofweP7ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715606568; c=relaxed/simple;
-	bh=lGR/JTEovinL3WNGbtd8OB9QpmQr1FfHG7dzJAzXTU4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DLTRUi02Fi4YMfgXRAj0plzzI3/Y+TsGDn66npAX7rooZLnbMypyI4ehuo4TBmGQPnENHNWVnmmVcFGRDC5qqgawHew3CIoBH7j+EnZCf7aR3EV1N+nTKUgWkPSuLM9ICBPrHQO+ynAZoQxjR8HYS9mvGlHC8TZpwGIAbgA5sRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=lvJ2QozZ; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net ABDB947C38
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1715605990; bh=lpf6OUFZvm7ObQIuIT3AZZ2LQqZ6RrgRPjzd6o2GDF8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lvJ2QozZIYvV7Jhup+iJxGOO0xSdy1/3hOb0/Wfx/N1jq/norVViXbs3WjUSXoi/Y
-	 S90RmL03HVEIgSwwvPum1L2qbWlrrdPk/q9ZIAlqzQCAMKQiV9m9Ex0FL3jrHQ5KhH
-	 ONV0eZxdIW7H/hh9GARRYGKOjvhT0J8iDW8vLZjzID6B7qg1z2QtTdWfLTbQybC1vg
-	 K0u5vAjBKjomM0ucp88hRQht/28ch80Hbu33+oQ3IP4ABz0VDMFMJ7i11Wxz/4NKKK
-	 DXP1NkIB6bcJKDtZLbGlLH/vZjRD8JV9h75Ah9VQ9n6lSg1U9xlUgMDuSUMfSvvQ1K
-	 /LO4ig5/NHBIA==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id ABDB947C38;
-	Mon, 13 May 2024 13:13:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Diederik de Haas <didi.debian@cknow.org>, Dwaipayan Ray
- <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc: Joe Perches <joe@perches.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: [PATCH] docs: dev-tools: checkpatch: Add targets for checkpatch
- tags
-In-Reply-To: <20240513102237.112376-1-didi.debian@cknow.org>
-References: <20240513102237.112376-1-didi.debian@cknow.org>
-Date: Mon, 13 May 2024 07:13:09 -0600
-Message-ID: <878r0dam8q.fsf@meer.lwn.net>
+	s=arc-20240116; t=1715606056; c=relaxed/simple;
+	bh=fZPA2U0w/NaPd1XPXrH9KUPReWy8Mu/+vRwHo8Emv3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Io6Fxech5otQMPL7jq5mkFRmdGwmLQEoHSKJfJn/QjRlKuxWL2JGn/hrKFHD37tGi3/Xv4wQmUHd02IzhH93pED/UwZvD8ZFipArubI9hjlbZ7OQfTY7i5b6t4Bz8eOe9T8g//OlgFCx1wc/8N/vaUbv9Fw/9wDTIOt1CNZAQIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HTAifjR8; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715606055; x=1747142055;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fZPA2U0w/NaPd1XPXrH9KUPReWy8Mu/+vRwHo8Emv3A=;
+  b=HTAifjR8rlutgfCDh22fQkiJbeyODvI8uAWfUVsVPT1OL4IsnP/Ncv33
+   jObe8GTaCmwILV8mXsrasEPbd/ehHtXOfLqL1ZVTkPQ3kK8acRV8f22pt
+   uaUyiJamNbRCBTaEapsY3spv0BwmzY0XTOUMY+AQGx7W5U3eo5K1Iq9pE
+   4SbOQGPkq0Ej+SHVQYyVWqhiMPzeoH7Gg9Cr0OWSwWdj/8gAym9RCFTI1
+   u6ti0+JSNIKKGjRPR29vYn5eomQbmqgb6/QL+5qjfLL8GDBgcgCW47u9l
+   XpwUAn28xoulJKD0IPXI4nEN7kG7B8KJ5CSNyYs1FNZ/CEKh9wQMP7dWI
+   Q==;
+X-CSE-ConnectionGUID: Dbt8KeG9SrCdSj4jWI6q3w==
+X-CSE-MsgGUID: CDp7fslAQ6yp4nLqLaCQrg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11390399"
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="11390399"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 06:14:14 -0700
+X-CSE-ConnectionGUID: HrSYo+lVRL2UPrBM1JzUzw==
+X-CSE-MsgGUID: AhNYnZ1gQ/y065zn5CRwig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="30456394"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 06:14:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s6VVE-000000078wG-0cig;
+	Mon, 13 May 2024 16:14:04 +0300
+Date: Mon, 13 May 2024 16:14:03 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: Jani Nikula <jani.nikula@intel.com>, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, benjamin.gaignard@collabora.com,
+	sebastian.fricke@collabora.com, akpm@linux-foundation.org,
+	gregkh@linuxfoundation.org, adobriyan@gmail.com,
+	p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, a-bhatia1@ti.com,
+	j-luthra@ti.com, b-brnich@ti.com, detheridge@ti.com,
+	p-mantena@ti.com, vijayp@ti.com, andrzej.p@collabora.com,
+	nicolas@ndufresne.ca
+Subject: Re: [PATCH v7 6/8] math.h Add macros to round to closest specified
+ power of 2
+Message-ID: <ZkISG6p1tn9Do-xY@smile.fi.intel.com>
+References: <20240509183952.4064331-1-devarsht@ti.com>
+ <Zj42vTpyH71TWeTk@smile.fi.intel.com>
+ <87fruphf55.fsf@intel.com>
+ <5ebcf480-81c6-4c2d-96e8-727d44f21ca9@ti.com>
+ <ZkHWbS4raU_BPlpm@smile.fi.intel.com>
+ <6557050e-6b18-2628-cbab-1a811b2190ba@ti.com>
+ <ZkIG0-01pz632l4R@smile.fi.intel.com>
+ <d63ae19c-9316-3a4c-e9ed-1672ace068b6@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d63ae19c-9316-3a4c-e9ed-1672ace068b6@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Diederik de Haas <didi.debian@cknow.org> writes:
+On Mon, May 13, 2024 at 06:34:19PM +0530, Devarsh Thakkar wrote:
+> On 13/05/24 17:55, Andy Shevchenko wrote:
+> > On Mon, May 13, 2024 at 04:55:58PM +0530, Devarsh Thakkar wrote:
+> >> On 13/05/24 14:29, Andy Shevchenko wrote:
+> >>> On Sat, May 11, 2024 at 11:11:14PM +0530, Devarsh Thakkar wrote:
+> >>>> On 10/05/24 20:45, Jani Nikula wrote:
 
-> Make the tags directly linkable by defining targets for them.
->
-> Closes: https://lore.kernel.org/r/8090211.0vHzs8tI1a@bagend/
-> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
-> ---
->  Documentation/dev-tools/checkpatch.rst | 216 +++++++++++++++++++++++++
->  1 file changed, 216 insertions(+)
+[...]
 
-In addition to the other comments, I have to add: you have said what you
-are doing but not *why*.  All of these labels clutter up the text; what
-use will be made of them to justify that?
+> > - align naming (with the existing round*() macros)
+> 
+> I think round_closest_up/round_closest_down align already and inspired by the
+> existing naming convention used for round*() and DIV_ROUND_CLOSEST() macros in
+> math.h as explained below (copied from my previous reply [1])
+> 
+> "Coming back to naming, this is as per existing convention used for naming
+> round_up, round_down (notice the `_` being used for macros working with pow of
+> 2) and DIV_ROUND_CLOSEST (notice the work `closest` used to specify the answer
+>  to be nearest to specified value)"
+> 
+> But do let me know if you have any other suggestions for naming?
 
-Thanks,
+Just make sure that semantically the naming is aligned, that's it.
+If you think it's already done that way, fine!
 
-jon
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
