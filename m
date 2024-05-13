@@ -1,159 +1,145 @@
-Return-Path: <linux-kernel+bounces-177395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EAC8C3DE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:14:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D266B8C3DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A6BDB23225
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF01281CE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277E71487E1;
-	Mon, 13 May 2024 09:14:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F571487C3;
-	Mon, 13 May 2024 09:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC761487E8;
+	Mon, 13 May 2024 09:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="CYf4VGza"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B5214830A;
+	Mon, 13 May 2024 09:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715591673; cv=none; b=GKcRnpXFc7v7kaYPWplhajgSo3OD/pfBJrX6JuxfkPor4eS07MdgxKNtXToSG7Y+r5fK6mm3McoXXPVATbWoXbr0ytMSFc4MkNhFEtPkUPg0uadIYVho4tjPgjXyQv+1oEptj2F8oB4qAg2uCtF1/nqiSiVfoMGpOxcOixJ9JzY=
+	t=1715591780; cv=none; b=rXKNBR8UoNzoviOlwSXFTyyhLyzAQeW5iNjQYiUry4Lltygu1kM4SH9Sr2yvrZ8m1DtCw7jXgYX4HklblTPmKv9z3nNobkCpcyWzn3Yvv9kHsyaSB6kIAcsKXIH2kM+2qez5V3a2tNnWkyLLttgxLIE4L5wOfj3OjamgZ4FzsVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715591673; c=relaxed/simple;
-	bh=Xont+LTcReRWcCq8vORfAehGCF5YAd/0vAUmmjBYfQw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hjYVSQPorMDFTjpsM6rxF7OOQpkhNG6+lES8vqUIsH99fGn2tfGgRmt5CAN+W63rzm1rfVE2O2a3sqYI20t5MW7kQ6NZAxNSul8yfpkGauOs5I6PxnVeYgnQHM781drygow/ZPLSEyDpsKvj5SVvfAEOy5pztsk+0o/TKSuH3lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7554E1007;
-	Mon, 13 May 2024 02:14:56 -0700 (PDT)
-Received: from dsg-hive-n1sdp-01.cambridge.arm.com (dsg-hive-n1sdp-01.cambridge.arm.com [10.2.3.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CE9E93F762;
-	Mon, 13 May 2024 02:14:29 -0700 (PDT)
-From: Nick Forrington <nick.forrington@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: Nick Forrington <nick.forrington@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>
-Subject: [PATCH 1/1] perf lock info: Display both map and thread by default
-Date: Mon, 13 May 2024 09:14:12 +0000
-Message-ID: <20240513091413.738537-2-nick.forrington@arm.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240513091413.738537-1-nick.forrington@arm.com>
-References: <20240513091413.738537-1-nick.forrington@arm.com>
+	s=arc-20240116; t=1715591780; c=relaxed/simple;
+	bh=wuY6ynaI/iBKhtPbtbtLhuqleEoQa5EirCmJaZBdsOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DPsah+Lu8FeFnOAW5dlEnkutb8+EbjvpdZX9iClknzVOmt+CIGA09yzeZ9h/O87BwAPfxUwKwGU+02BLV92ATCJKMSn5bqj81Qb/SlBTZ/fEgeZrvKGVmizJN9MWPIngFFU/mDeX02Zf3zL3GbOnhrMp/xoNigIx5JDI46o2o6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=CYf4VGza; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PUYErwj+94JicaDRBG3wqgYE+Hc9r7mIzXQtcNrbMCk=; b=CYf4VGzaIUFblQfi1rNVH5lkPM
+	kmUtCRxw92E90JzKrSoFedlAwkWPr9mPpMMWSRXYWkT0UzER+/4J+sD1DIWQ2s4H7P/c2jmCEPeWp
+	5qxg41I9MV06dwJvtWotFw3POcPeX0bkPJnh81A7L4OdgtB4zx2R0jr9wjPx8+qZg/fpcElEa9CNL
+	E26YnMVp9eNqGj6pdO9cKLwjgakwhsrVSxYOqB0lhfk2QluIesqOq1kbd8Sjz3y/iPpGjTwVeeRKA
+	0CtqUV26IqSiCpMoDjLMzcSehNJLpIg8Q0gtxRuv09XIS54+J07qsaD3akROnawFtwAmvNVXG7Wg0
+	tcUxm+dA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53832)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s6Rmj-0001b0-39;
+	Mon, 13 May 2024 10:15:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s6Rme-00061E-GO; Mon, 13 May 2024 10:15:48 +0100
+Date: Mon, 13 May 2024 10:15:48 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Nathan Chancellor <nathan@kernel.org>, davem@davemloft.net,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+	Eric Dumazet <edumazet@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
+	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
+	Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next 0/2] Fix phy_link_topology initialization
+Message-ID: <ZkHaRD8WGrhrzemn@shell.armlinux.org.uk>
+References: <20240507102822.2023826-1-maxime.chevallier@bootlin.com>
+ <20240513063636.GA652533@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513063636.GA652533@thelio-3990X>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Change "perf lock info" argument handling to:
+On Sun, May 12, 2024 at 11:36:36PM -0700, Nathan Chancellor wrote:
+> Hi Maxime,
+> 
+> On Tue, May 07, 2024 at 12:28:19PM +0200, Maxime Chevallier wrote:
+> > Nathan and Heiner reported issues that occur when phylib and phy drivers
+> > built as modules expect the phy_link_topology to be initialized, due to
+> > wrong use of IS_REACHABLE.
+> > 
+> > This small fixup series addresses that by moving the initialization code
+> > into net/core/dev.c, but at the same time implementing lazy
+> > initialization to only allocate the topology upon the first PHY
+> > insertion.
+> > 
+> > This needed some refactoring, namely pass the netdevice itself as a
+> > parameter for phy_link_topology helpers.
+> > 
+> > Thanks Heiner for the help on untangling this, and Nathan for the
+> > report.
+> 
+> Are you able to prioritize getting this series merged? This has been a
+> problem in -next for over a month now and the merge window is now open.
+> I would hate to see this regress in mainline, as my main system may be
+> affected by it (not sure, I got a new test machine that got bit by it in
+> addition to the other two I noticed it on).
 
-Display both map and thread info (rather than an error) when neither are
-specified.
+.. and Maxime has been working on trying to get an acceptable fix for
+it over that time, with to-and-fro discussions. Maxime still hasn't got
+an ack from Heiner for the fixes, and changes are still being
+requested.
 
-Display both map and thread info (rather than just thread info) when
-both are requested.
+I think, sadly, the only way forward at this point would be to revert
+the original commit. I've just tried reverting 6916e461e793 in my
+net-next tree and it's possible, although a little noisy:
 
-Signed-off-by: Nick Forrington <nick.forrington@arm.com>
----
- tools/perf/Documentation/perf-lock.txt |  4 ++--
- tools/perf/builtin-lock.c              | 27 ++++++++++++++------------
- 2 files changed, 17 insertions(+), 14 deletions(-)
+$ git revert 6916e461e793
+Performing inexact rename detection: 100% (8904/8904), done.
+Auto-merging net/core/dev.c
+Auto-merging include/uapi/linux/ethtool.h
+Removing include/linux/phy_link_topology_core.h
+Removing include/linux/phy_link_topology.h
+Auto-merging include/linux/phy.h
+Auto-merging include/linux/netdevice.h
+Removing drivers/net/phy/phy_link_topology.c
+Auto-merging drivers/net/phy/phy_device.c
+Auto-merging MAINTAINERS
+hint: Waiting for your editor to close the file...
 
-diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Documentation/perf-lock.txt
-index f5938d616d75..57a940399de0 100644
---- a/tools/perf/Documentation/perf-lock.txt
-+++ b/tools/perf/Documentation/perf-lock.txt
-@@ -111,11 +111,11 @@ INFO OPTIONS
- 
- -t::
- --threads::
--	dump thread list in perf.data
-+	dump only the thread list in perf.data
- 
- -m::
- --map::
--	dump map of lock instances (address:name table)
-+	dump only the map of lock instances (address:name table)
- 
- 
- CONTENTION OPTIONS
-diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-index 230461280e45..7eb115aeb927 100644
---- a/tools/perf/builtin-lock.c
-+++ b/tools/perf/builtin-lock.c
-@@ -1477,20 +1477,16 @@ static void dump_map(void)
- 		fprintf(lock_output, " %#llx: %s\n", (unsigned long long)st->addr, st->name);
- }
- 
--static int dump_info(void)
-+static void dump_info(void)
- {
--	int rc = 0;
--
- 	if (info_threads)
- 		dump_threads();
--	else if (info_map)
-+
-+	if (info_map) {
-+		if (info_threads)
-+			fputc('\n', lock_output);
- 		dump_map();
--	else {
--		rc = -1;
--		pr_err("Unknown type of information\n");
- 	}
--
--	return rc;
- }
- 
- static const struct evsel_str_handler lock_tracepoints[] = {
-@@ -1992,7 +1988,7 @@ static int __cmd_report(bool display_info)
- 
- 	setup_pager();
- 	if (display_info) /* used for info subcommand */
--		err = dump_info();
-+		dump_info();
- 	else {
- 		combine_result();
- 		sort_result();
-@@ -2578,9 +2574,9 @@ int cmd_lock(int argc, const char **argv)
- 
- 	const struct option info_options[] = {
- 	OPT_BOOLEAN('t', "threads", &info_threads,
--		    "dump thread list in perf.data"),
-+		    "dump the thread list in perf.data"),
- 	OPT_BOOLEAN('m', "map", &info_map,
--		    "map of lock instances (address:name table)"),
-+		    "dump the map of lock instances (address:name table)"),
- 	OPT_PARENT(lock_options)
- 	};
- 
-@@ -2694,6 +2690,13 @@ int cmd_lock(int argc, const char **argv)
- 			if (argc)
- 				usage_with_options(info_usage, info_options);
- 		}
-+
-+		/* If neither threads nor map requested, display both */
-+		if (!info_threads && !info_map) {
-+			info_threads = true;
-+			info_map = true;
-+		}
-+
- 		/* recycling report_lock_ops */
- 		trace_handler = &report_lock_ops;
- 		rc = __cmd_report(true);
+I haven't checked whether that ends up with something that's buildable.
+
+Any views Jakub/Dave/Paolo?
+
 -- 
-2.44.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
