@@ -1,152 +1,106 @@
-Return-Path: <linux-kernel+bounces-177835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553918C4522
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEE18C4526
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8FE1F22B44
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BE01C21927
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9621B815;
-	Mon, 13 May 2024 16:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCEA1B94F;
+	Mon, 13 May 2024 16:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsfsN2KX"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgI9iDP/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24F217C95;
-	Mon, 13 May 2024 16:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C21A716;
+	Mon, 13 May 2024 16:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715617905; cv=none; b=icPT7mrakqsgbhG1vmnC90Gl1tDMOBHwatbozFR5RkFLRgYYn51/qxp5htL7YRnhH/wZomIJ8P6ucjaRqJG8ogYsLAqDEuXqlTyTk/iJQxRa7uOMCtW2o31DpnK7sj/xP/jqSU9wrbXG4x5VZioc6G0Ara9/6NiTAEK7vOjUTQI=
+	t=1715618161; cv=none; b=kVqhb2LCzrtwPuvWtKN781/c//0dJwkv/+P0YkBdaNIZtR4Y8b3o36cYBX3LEKFgOeL5ZJ8XM2jLaLVZYtIR/rIfzENxcm6CcSPFEfjnEF16v9/bVkO3xMGACnQQAnmZkGwGsudlORA0rUF5LgRHPLAzABuLurOKj7bAsgZCGY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715617905; c=relaxed/simple;
-	bh=311dwzltPk5fOF2CTRb5l8iHO2TC3E82uom3/fmI05o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RvTHqZyvQnOp8NAwT5ec+251i2lTnuQZABRbQK7DG8KVdEZgjPMuFZEBEyl1VsUXDjQvRlcHy3MOu8mlNZZ0dCNf5/4B3Yd5H8gbgiMFS05iV//yEfCt7ZBU/ojAYih0w00OmYHrI6y5VNJDdlaCz3blY3BlOY8BmVaElM3plwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsfsN2KX; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e34e85ebf4so40005681fa.2;
-        Mon, 13 May 2024 09:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715617902; x=1716222702; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HUFnT8yyTapCAsA+F1D1wSnTUO1k2FcynX/QhnqWbRY=;
-        b=dsfsN2KXL8RyBqEnoHuPeysMS61hNnzQwzdHosR/Hp2Nbv35lkAzcuTpJtZZ5CJYV7
-         lWp0Jmy78TkB8i2PJ7ysxi9yBmkqN1HazzPD1xBzYJAu001tPA54iygM+Eaqi9B4AXiS
-         7V1Zrbrd2E3WxGerH22Y6m/mVcEPegcdjjkPxCCFMSogxgaStKd4W4QsXEpyElv+dddt
-         wBOpn2mIZ3TEosmlQRRXEz9G8rFn23zxhevJ7JThp1SQwRYTMV8vo0DpxyJXbN9cHbUE
-         hY1pULEHmNdHsghQ3OvJxpp1L2+qGQnq+5ltZRgRcgqukvp2rO361HS+ZQmnFxFhCyG2
-         jPcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715617902; x=1716222702;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HUFnT8yyTapCAsA+F1D1wSnTUO1k2FcynX/QhnqWbRY=;
-        b=XheqE6OPCmGRO5wB9vF5r4lBjDmsRt6coQyBOCYqPUtIk63tAWEtWObfyDwPEmyTjL
-         qnn/G9TI6NlWgPgVJU4yuBLrZemnd5zMmM1BfVCfMZQFalcDuTWGrW6omRZi6z3QxaHd
-         HuhXhcMnVjTFkgi5L8F1DbhItOdj6/G3zou90ZVN67pEYY8qjxuYMii/Y8bPidXUXKun
-         mBY62JCVNEmUYGsIFHByuwuxdGmj61TJ4P4vaXwpG1Dfl0RK93HmKEI0mZx4ncgEW17s
-         e2OV3BaHkKhvvn9NqmpkogIDBhINO9Ggd2ynmWambIHHgHFW7O1xe9UxtJr6jaLo/y3V
-         xk1w==
-X-Forwarded-Encrypted: i=1; AJvYcCX+ZxzK1Un78g9mKblDHbRwC9T9Oaa4+ER+x3ZDPt0MfPnBickeRGc6SUmLDTyb7BcvypPd7U983rFbC+pOu+Fscc8bovs1lDGGPdq2SyUDsJ4gAL0fkv+W2VrVSkz531LBIibsDOvUEjnmzZiDoUfkPmm63RAe28XkzHu4TTXVX3aGOOdSJEWrJX7eK3hWmb9oO4tqI1MJcBpGQreYQsgz0cvfI/73
-X-Gm-Message-State: AOJu0YzxwPKn4nv6rpTyi5TAKYq8CvuJzai9mhi68TV74T5A93NYHOu3
-	fH/G99wgTQPlfLHYDGYUxd74db8X6MBuRAZnOl6O0aB739pjQMY2zkw+qF7bNVW6uDFXBV6vO9L
-	4GqMazEWDdcHrD4ncLU7OOmqKJ1s=
-X-Google-Smtp-Source: AGHT+IEfQfbks6Pb9MhqjUGNG1bzcGu+P0BjYxxyNbUBodsFQi2U8Ir6ig2hVVlBqpKtOgABUOUtPTVs2/IAcJEAvxQ=
-X-Received: by 2002:a2e:a7d6:0:b0:2db:a7c7:5d11 with SMTP id
- 38308e7fff4ca-2e52039e290mr67635451fa.47.1715617901807; Mon, 13 May 2024
- 09:31:41 -0700 (PDT)
+	s=arc-20240116; t=1715618161; c=relaxed/simple;
+	bh=WL4mQviCBXJXVL3QbU+lDj3cm5lbV4VfD08lc6+45kc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pz6sIZflSmyHuE4MMASjr1nqL3HBueUMwUZZDJ/+G7C1Wtvd9VYW38ShuG96xIkcWOyOHiLCV/M4UsSchN42W74DRQXUbjhF3448QM+gxii+NEtI2IiptwiRL9ZgIvkLayyg1bXgZzmpspQA2PNd723cxLFPZZqJscCpvLMzTQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgI9iDP/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03B5C113CC;
+	Mon, 13 May 2024 16:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715618161;
+	bh=WL4mQviCBXJXVL3QbU+lDj3cm5lbV4VfD08lc6+45kc=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=kgI9iDP/j23MTKqJ38bXuHTYN+VYj1ybdPdblKAETl9tinCbaM8aJ9XqKwyaxCJfQ
+	 MCJUksnmp3fP9iyVo5TzVTy883f3IUxpvGRvLUGr/aiVfK9tRhPouQOnpYjuyf5mfw
+	 P6EafBr5vR5y9tRMbJIsrzXgKefscmgEtKGO1pOEpAHjuAZRYI9nPjDFU5kPnjC/s8
+	 adafPBwFtx2PJ9W3VIE1bP7yzmSKL7o8DZBo23P0NDBA2hq6NTW8TTuRShitLSPO1C
+	 EpiL16d71Dn0Bw29SEa6/NT8EMYEJxgirhhxQcmkf9+HVY9gNdDO2fL8MR1CafETNZ
+	 lfEd3U22/NiKQ==
+From: Robert Foss <rfoss@kernel.org>
+To: Sui Jingfeng <sui.jingfeng@linux.dev>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Cc: imx@lists.linux.dev, Maxime Ripard <mripard@kernel.org>, Liu Ying <victor.liu@nxp.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, Douglas Anderson <dianders@chromium.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Sascha Hauer <s.hauer@pengutronix.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240513153109.46786-1-sui.jingfeng@linux.dev>
+References: <20240513153109.46786-1-sui.jingfeng@linux.dev>
+Subject: Re: [PATCH v2 00/12] Remove redundant checks on existence of 'bridge->encoder'
+Message-Id: <171561815850.92124.10451289435632217035.b4-ty@kernel.org>
+Date: Mon, 13 May 2024 18:35:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AS8PR02MB7237ECD397BDB7F529ADC7468BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <202405122008.8A333C2@keescook>
-In-Reply-To: <202405122008.8A333C2@keescook>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 13 May 2024 12:31:29 -0400
-Message-ID: <CABBYNZJcg5SpO_pew6ZwN98n1sR7kNZs6VtkFToyOs9NM1bO8Q@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: hci_core: Prefer struct_size over open coded arithmetic
-To: Kees Cook <keescook@chromium.org>
-Cc: Erick Archer <erick.archer@outlook.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-bluetooth@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.10.1
 
-Hi Eric,
+On Mon, 13 May 2024 23:30:57 +0800, Sui Jingfeng wrote:
+> The checks on the existence of bridge->encoder in the implementation of
+> drm_bridge_funcs::attach() is not necessary, as it has already been checked
+> in the drm_bridge_attach() function call by previous bridge or KMS driver.
+> The drm_bridge_attach() will quit with a negative error code returned if
+> it fails for some reasons, hence, it is guaranteed that the .encoder member
+> of the drm_bridge instance is not NULL when various bridge attach functions
+> are called.
+> 
+> [...]
 
-On Sun, May 12, 2024 at 11:08=E2=80=AFPM Kees Cook <keescook@chromium.org> =
-wrote:
->
-> On Sun, May 12, 2024 at 04:17:06PM +0200, Erick Archer wrote:
-> > This is an effort to get rid of all multiplications from allocation
-> > functions in order to prevent integer overflows [1][2].
-> >
-> > As the "dl" variable is a pointer to "struct hci_dev_list_req" and this
-> > structure ends in a flexible array:
-> >
-> > struct hci_dev_list_req {
-> >       [...]
-> >       struct hci_dev_req dev_req[];   /* hci_dev_req structures */
-> > };
-> >
-> > the preferred way in the kernel is to use the struct_size() helper to
-> > do the arithmetic instead of the calculation "size + count * size" in
-> > the kzalloc() and copy_to_user() functions.
-> >
-> > At the same time, prepare for the coming implementation by GCC and Clan=
-g
-> > of the __counted_by attribute. Flexible array members annotated with
-> > __counted_by can have their accesses bounds-checked at run-time via
-> > CONFIG_UBSAN_BOUNDS (for array indexing) and CONFIG_FORTIFY_SOURCE (for
-> > strcpy/memcpy-family functions).
-> >
-> > In this case, it is important to note that the logic needs a little
-> > refactoring to ensure that the "dev_num" member is initialized before
-> > the first access to the flex array. Specifically, add the assignment
-> > before the list_for_each_entry() loop.
-> >
-> > Also remove the "size" variable as it is no longer needed and refactor
-> > the list_for_each_entry() loop to use dr[n] instead of (dr + n).
+Applied, thanks!
 
-Have the change above split on its own patch.
-
-> > This way, the code is more readable, idiomatic and safer.
-> >
-> > This code was detected with the help of Coccinelle, and audited and
-> > modified manually.
-> >
-> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#op=
-en-coded-arithmetic-in-allocator-arguments [1]
-> > Link: https://github.com/KSPP/linux/issues/160 [2]
-> >
-> > Signed-off-by: Erick Archer <erick.archer@outlook.com>
->
-> Looks right to me. Thanks!
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> --
-> Kees Cook
+[01/12] drm/bridge: simple-bridge: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=f0a83a2cf9eb
+[02/12] drm/bridge: tfp410: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=482ade3ec1c5
+[03/12] drm/bridge: nxp-ptn3460: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0f4bca4e1be3
+[04/12] drm/bridge: panel: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=a8f856bf054a
+[05/12] drm/bridge: it6505: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=8761a39e3f9d
+[06/12] drm/bridge: adv7511: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=41e6ed85e457
+[07/12] drm/bridge: cdns-mhdp8546: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=b24fd6e9eb66
+[08/12] drm/bridge: megachips-stdpxxxx-ge-b850v3-fw: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=0a59deb2fedb
+[09/12] drm/bridge: synopsys: dw-mipi-dsi: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=80221a89ff95
+[10/12] drm/bridge: lt9611uxc: Remove a redundant check on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=91942a37ebba
+[11/12] drm/bridge: imx: Remove redundant checks on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=ec74951a7507
+[12/12] drm/bridge: analogix: Remove redundant checks on existence of bridge->encoder
+        https://cgit.freedesktop.org/drm/drm-misc/commit/?id=591255853a37
 
 
 
---=20
-Luiz Augusto von Dentz
+Rob
+
 
