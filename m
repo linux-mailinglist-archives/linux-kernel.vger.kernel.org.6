@@ -1,126 +1,140 @@
-Return-Path: <linux-kernel+bounces-177997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C39938C4743
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:58:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6A18C4749
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD8F1F231CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:58:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0B21C22E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6588A4436B;
-	Mon, 13 May 2024 18:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206AB58203;
+	Mon, 13 May 2024 18:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BmsNO9zN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="gSCzSbWi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bIVHrdJq"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35AD3A1BB;
-	Mon, 13 May 2024 18:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD22F54BE7;
+	Mon, 13 May 2024 18:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626694; cv=none; b=fl9+c3dwThbg68HkWamSgQ0oM1PilRG6CGHKWuMYz9JJ5Hps5Q9c2UwI6a1SvD8j7UZLDWKlyjmQAbTRh2u0J6gn0fxtPyMHis26qFYvpC+NAn5zZOiN0re/gUC07gLU/qC49QT9j+fTetEQ8YHazztDGJ2AMfLj1beFG64eXm4=
+	t=1715626699; cv=none; b=oCrRd4c/u8jrQI3+Q8XherMZE/OB3TR21s5VRP+eib/UH7APxKQhLEQpBtEA00YspLtKpNEWMokis41tVgxh3NfnM9ChnO0/HRvnHXeFm92lPI4Zi6+OVf75id3o+n22Shjwxnri4zBSx0wPAj3gK9YkBI6zRhYNzEBlrQBevi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626694; c=relaxed/simple;
-	bh=57fZM2+CJ+hL4V48G83HQA+tgOjiimKWogurk2thYUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlTnLCCEmX5CaNp59ZwULR5i2XZ1mis1xhwQcOGgDHKFU2ErQW+tyQDi2M0B8XS7zH5macJ9MV0qFh0r3vUd561cY1EbKX9toL1yVa7YWTHdp1y8f4Qb4Ym/5A3ngkAT3HyOae+GWCbtlUoXKpDR5AWAvt6bdbdgRiCY2ly4Dzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BmsNO9zN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15146C113CC;
-	Mon, 13 May 2024 18:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715626694;
-	bh=57fZM2+CJ+hL4V48G83HQA+tgOjiimKWogurk2thYUI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BmsNO9zN1OA/q1Gq2nCgr0abq+WgVsthzfcBAOOEj4p0Kp2bZN88jyiYKI0GIwbna
-	 Sbu32+V1CYQ6uhazji7m9MlROgolHRKycA4k9YG8aL/nOD4xNWOBH6BljBl/T2CO/m
-	 9VkQ/veriSICNyyTUlQEEs2N79yjVkq+CFuTC1K2deygf0Fkhbet/9ix1ItTsF13wZ
-	 8JgC92a61eYeIzyVK51ZhHKzAV7ejSZJn120RlMgGiCLrDQY+kYXgecJ9JdEmImbAM
-	 jiN8aXyopVuvOTB5kjyJYk006jJUwoH1es1NX1e3G4yw+LTZhSyUh1Bd/n+hlk627+
-	 33mEhOtDOU3+g==
-Date: Mon, 13 May 2024 13:58:13 -0500
-From: Rob Herring <robh@kernel.org>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kamal Dasu <kamal.dasu@broadcom.com>,
-	Al Cooper <alcooperx@gmail.com>, Eric Anholt <eric@anholt.net>,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] dt-bindings: mmc: Add support for BCM2712 SD host
- controller
-Message-ID: <20240513185813.GA2931923-robh@kernel.org>
-References: <cover.1715332922.git.andrea.porta@suse.com>
- <1f0c4fa62d6849753e2138cce5498693cfc3a230.1715332922.git.andrea.porta@suse.com>
- <01a7a263-9de3-468c-b438-c16f2c73872c@gmx.net>
+	s=arc-20240116; t=1715626699; c=relaxed/simple;
+	bh=t5eCBQ5M+n7brnGGMkhGl+ht9oOAYb6+C4AhuQKxXiI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=A/8tFMtK7/8S/jRY+SkBCt2fcKhHih3SKmu6kAPBm/LXqnCuJ34l1rqeKZBdnj2I6UiD91CIk153FAo7cWqJhs1d/S4ZGN1UoQUg9Ben++KTU7agVwm1rsdTh0BwOUA5Vqh4468RKTbEzexQtOZ5lG66YNYFLkAcQs8phoat9dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=gSCzSbWi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bIVHrdJq; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfout.nyi.internal (Postfix) with ESMTP id D76C51380282;
+	Mon, 13 May 2024 14:58:16 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 13 May 2024 14:58:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1715626696;
+	 x=1715713096; bh=rnH2iga0qXVi0UpBbHDam/6Q6T1MPWwYJ+YNIiwXV6o=; b=
+	gSCzSbWi0KUMOwc707C73s+iCtxcWB1AXtb5t4tPevHN0IZbXLmP8Kcu+qI0RGMP
+	5XhwjXvDatJhRpLgFOIxU0A08pZskMBGNwPvHfODiO28DmH2SSlFip7tOkVrJq5R
+	ieJ5QXZ7eDauwADF3poQF7XKPxZbBG2kv/ghHXn11jvsd5lwzlw0cuhXZla9aI6M
+	qht23V9yaxcgvYUkLAGt3TdqALnAZ7v+mWzGP8WAKlDE6MBdh33gjoSMURksiYGZ
+	Fn6cPdASWq28ouk7KehWGkqamEABQfWxm2eDHdVmdiXdNk+ABJM+ZMDqNukAKt8m
+	WoHyuCTyvPfocljK2831GQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715626696; x=
+	1715713096; bh=rnH2iga0qXVi0UpBbHDam/6Q6T1MPWwYJ+YNIiwXV6o=; b=b
+	IVHrdJqlZqTR06faCjfiwPXODnfiKwp/Sv+rshwk6MTOIghHDf1sqiDXJJ7tJko0
+	M/nUVybBceHATTUDAC3tV3OB4RJoMQPSN9d/q9IF3zELYadVBAdqWEpdh30d9Kyp
+	auTVWImFtvrold8MNVpJ/49sZORDWwtTujuzuO23ugygHT/9r6vCBYMGRhJc8yAy
+	WouzcCPBSmnw0ABEVf1jWsx9UEar454UClkf09d/ej25/nr0iNlz5mqC/rmlgRT0
+	LntOfzN69lbJLDvecynYuaVZhoDfXmlZi+gfjytdDUioZ4cY5vQaAvQ00Vcm/vmO
+	kGN3bVUblKLURmJmq+CwQ==
+X-ME-Sender: <xms:yGJCZmUN2fyc2vblQs3pcYyRe0njpab8X_Jf2WkQPglOqID_TRG0Cw>
+    <xme:yGJCZimOheHwBdW4Boxe4YgzwkjfYS9jRqPOEmi7QBrZ5PMW7adT35N1QJevNul9b
+    TV3ouAqGrK7jTnxWIk>
+X-ME-Received: <xmr:yGJCZqa1wpYAJ8qXJu7MxHwRp5zqSNI4I7eSiZ807N5fIif3H1b0Wu0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeggedgudeftdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomheplfhi
+    rgiguhhnucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqe
+    enucggtffrrghtthgvrhhnpedvkeeihfefveekueevteefleffkeegudeghfdtuddugefh
+    ueevgeffgedukeejleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:yGJCZtXnBc7KH9U5UgUuv6p0ZaAW9CE9Ul2o_WW4j7ycdzwViE9Z5A>
+    <xmx:yGJCZgnYbLHn7xNEyhZXVxGLzHvGHbVv4YW1lwYasFnRGTN2zr07hw>
+    <xmx:yGJCZieuosygieEIKnNs5ksX3GiAYyD4qcFSFgFxhYRXH7jXemdWEg>
+    <xmx:yGJCZiHCTBpZg3zV2b1ckiRVAbcOlo8646e0DnpdepaAWT-fJTR2Jg>
+    <xmx:yGJCZpd-zbp1sK8WD48v3022pp1Urs2KVRabiwNJ2oH4UaQYbqJZmya0>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 13 May 2024 14:58:15 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Mon, 13 May 2024 19:58:14 +0100
+Subject: [PATCH 1/2] dt-bindings: mfd: syscon: Add img,boston-platform-regs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01a7a263-9de3-468c-b438-c16f2c73872c@gmx.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
+References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
+In-Reply-To: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=894;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=t5eCBQ5M+n7brnGGMkhGl+ht9oOAYb6+C4AhuQKxXiI=;
+ b=owGbwMvMwCHmXMhTe71c8zDjabUkhjSnpOParWmPZjt6cOvv2DthYtG5GUxMa5LbY8TlHuW6C
+ LtKNbl3lLIwiHEwyIopsoQIKPVtaLy44PqDrD8wc1iZQIYwcHEKwESi5zH8dxQ69r7A/vXO3y6f
+ exotXvbkp64SEt4d/O7qLxHvlcfXbmVkeHFmG1tU6Xq+Gf/Kdlb/kbgyc6uZTPH8s9ymFozeb3I
+ mcAEA
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On Fri, May 10, 2024 at 09:01:33PM +0200, Stefan Wahren wrote:
-> Hi Andrea,
-> 
-> please drop E. Anholt from the recipients. AFAIK she is not interested
-> in kernel development anymore.
-> 
-> Am 10.05.24 um 16:35 schrieb Andrea della Porta:
-> > The BCM2712 has an SDHCI capable host interface similar to the one found
-> > in other STB chipsets. Add the relevant compatible string and relative
-> > example.
-> > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> > ---
-> >   .../bindings/mmc/brcm,sdhci-brcmstb.yaml      | 23 +++++++++++++++++++
-> >   1 file changed, 23 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> > index cbd3d6c6c77f..404b75fa7adb 100644
-> > --- a/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/brcm,sdhci-brcmstb.yaml
-> > @@ -13,6 +13,10 @@ maintainers:
-> >   properties:
-> >     compatible:
-> >       oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - brcm,bcm2712-sdhci
-> > +          - const: brcm,sdhci-brcmstb
-> >         - items:
-> >             - enum:
-> >                 - brcm,bcm7216-sdhci
-> > @@ -114,3 +118,22 @@ examples:
-> >         clocks = <&scmi_clk 245>;
-> >         clock-names = "sw_sdio";
-> >       };
-> > +
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    soc {
-> > +      #address-cells = <2>;
-> > +      #size-cells = <2>;
-> Would be nice to have a short explanation in the commit message why this
-> is necessary.
+This compatible has been used in arch/mips/boot/dts/img/boston.dts
+for a while but never documented properly.
 
-That has nothing to do with *this* patch. It's needed because 'reg' is 
-dependent on it and the examples default to 1 cell.
+Add it to simple syscon binding.
 
-In any case, please just drop the example. A new compatible doesn't 
-justify another example.
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Rob
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index 7ed12a938baa..034765e6a37b 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -57,6 +57,7 @@ properties:
+               - hisilicon,pcie-sas-subctrl
+               - hisilicon,peri-subctrl
+               - hpe,gxp-sysreg
++              - img,boston-platform-regs
+               - intel,lgm-syscon
+               - loongson,ls1b-syscon
+               - loongson,ls1c-syscon
+
+-- 
+2.34.1
+
 
