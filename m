@@ -1,362 +1,167 @@
-Return-Path: <linux-kernel+bounces-177889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E937E8C45DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:19:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAAFA8C45E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183661C2106D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7BCE1C21DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16719200C3;
-	Mon, 13 May 2024 17:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9363F2233E;
+	Mon, 13 May 2024 17:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Ei9j5Wg"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="riSzfD9p"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03olkn2036.outbound.protection.outlook.com [40.92.59.36])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62880208A1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715620768; cv=none; b=KkmIg59tqzo4u7KoJbQlzxsQVtofJl4SU3YN7cvn7vIBiPe+puUBUDP/MleOFEUVOCWLud3KelTDpgYiOBjTZzIgJnHmSBsXCsYI7KQz9vUkYR75NvwRR0EC0kPTKeFdtf3iHXbCnOhoebsHmCv26MHIiCyhqlkhSIc9B/9yiCk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715620768; c=relaxed/simple;
-	bh=MJiVwiM18XryHUPJhid6EktmMnrxfcyKLI1aF/pSACw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ud9MVXRTyzeyboerkoaZWDBpTXFcK+lInY94A4ZNLH3rFiQbYfkHG4mYeRsinSkAvKmAdP/PiTss638XQ/XGHP48jom/nvxzMdDtqyNvMOw71vNbJxLwUhUz5a0H28YQTYEi9L6ObwEkOKWI2N9+z1gRPjdzB92K/PBZmMUfwPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Ei9j5Wg; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-36c6789b520so353765ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:19:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715620765; x=1716225565; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0LcTyeTsxJaPnZ45cfiBgAVI9jES1Y4g+ohTkoWGUw=;
-        b=2Ei9j5Wg6O6/qB40/2aulFUIKXSQWn61xjUeF1fmhSS1aMrtu5QfaHTae9VZB2uY0Z
-         /z3sgGReAHsJnMC1avCOSFjaEr2AKchf/Ku3bGZD/txcPm1kZEsKu9cMZoXhDRJwf/nh
-         A5+rxzvBarfGhVJE6zfcjWtYTYkCPIr3kUdXHj+0tYYMGkHFtGjNWSdv2F9y2cte79QC
-         H4OM56RbvsczCHHlWVwkoD2LePrxAYuhEMOxB3h+1W84ekzJIoU8uh9BvVuSbUyKIlox
-         Ufo81MAKjO99hz/N3uqXsKuT94J3ZpgDjx8pCkWMBq7uswl2hcD0lxC5yb1pNDZSG7WM
-         cWUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715620765; x=1716225565;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0LcTyeTsxJaPnZ45cfiBgAVI9jES1Y4g+ohTkoWGUw=;
-        b=Pi4zhVe3KnGcU6maxc9Ea0aNAQL0pkJBoLjQ7lXpcZ/FZJ63HOAp//gKjAdlfaIsuk
-         vJe3HANIv/73EmVQPXh9ZPqiHVxI0smZ1gPjo2x0ZS8JOt+s7Je3XQtMEGYVNTuanILo
-         A7t+haHM5/i5kOlremSujGoTrg4pUh00Z9kG+WU4jkYBIM4hsw8C9DR60ofKDUJG5KWR
-         iiIG8VvT+cTe3B8uStv0T8FldsPzr5jMmme2GBlSO0kqObscxOfX3Uq3Sf+dO7zZCmFL
-         Mp6kADaSPSz0ljhyNF7zYPncb0UY7NBmiAN8QkKLUz0DQFw76ULT9j5kf3R5rg0chDwy
-         Okxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlMhLzpA8HCStQFKglt6z3UiqHToU3kHaO2iMxgsab1WT/nMJaEdG+oGclYutW3NzK1COS2xsLlyUornkvZZsg8ZztyOvFBnlJfM+1
-X-Gm-Message-State: AOJu0YwmsnBwAQA+1YjQ273Mhg7zk1fGqvTvh00L7/76i6ZyqpjWioY7
-	uynpuzbgl1Ej0B5yF2ux4ohV1ES27tLDoGFddCqZR95O29Y5DH28YCpv7/VSF8DmMJ3lHJXH7Oi
-	GfjOlVtYJ6N7/lh7LnvPHYc9DvTBghDAC5rBR
-X-Google-Smtp-Source: AGHT+IHz250z2fsSfufWt35b1l38Vjd0Oami4jYQovh1cLlCfllpQsmtMEwp1o+6AyTLkjf+AYr8RDCjJC6mp5mdSQ4=
-X-Received: by 2002:a05:6e02:c71:b0:36c:5511:4a4a with SMTP id
- e9e14a558f8ab-36ccb8904ccmr4746675ab.6.1715620765372; Mon, 13 May 2024
- 10:19:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC7C200C3;
+	Mon, 13 May 2024 17:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.59.36
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715620790; cv=fail; b=u7GaVD9iFTmbpfHIa/F6bkRZldcpLEtU3AXkhrEQZPAJDXDEH87fXBNsRe/5hqfmOzsZZhc24PTDnGfXNjClWi1JQCWdYdzR9LUxlJtyxrxFVNh7Wll3ijPQbA0WNnz72B5ul9AWEy9X9tcQS5izKceWNxpBH9BqVsLvDpsmWJw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715620790; c=relaxed/simple;
+	bh=ZgbVEL+vsrij1DSMczoVQ4FTy6aeHqktaS/azvnWwH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=j19Uoak8iC6vcetiKogS24gPBF7hKOnDr2mP5QJQzejmrkxWdpz4XcfPeFcMilkFDtQQXDYRcB1b4FPdg2SLZ0iEcw0n71VqHGbmRS8hGZi8pifzLrjClDVUgi4ylU0jVi1aTxArQrYQm9UjDeU7TiZL1kUNgYvweQLlOBArUrA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=riSzfD9p; arc=fail smtp.client-ip=40.92.59.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gFt+1Lat4suMMssH1VqYXBWs1LnsafpBCdJh+lGtt/nLsAS51aLzRi9EXR3rNNq9lyLS4NvdAqjtvsEf3D8V3r0nprwuqMhLUF1Ty2Y75TnIcLsH5mUY7M64Q8APzxI958nJwCw4UwEmtZIXXIewR9fRbqxwJswmg7YeuLomjuoHDzzmDUXD3W8ENATs5TH97jfm/85srDbqAp70Hkqani4NG+EEhFAXXYb4yFz5vbXftcgbBOCSgxGtF8YvS5roLQRCC2sM1Dw14ie578NZRhWtFBauuUFH6JOC27A37KEdgMUOpRAv1e+ZU2nfK737zH+WPOuVMI29vX4XXLAwGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hBSFxt6DKoMUnf98J40iCQppC4H0Qk+LIoOpb0XIiz0=;
+ b=F54SvvN8rWTzX53tMD99ZDK7IiHgr1KrMuYHoyH0/k+oKHPjDSmG0Ija30i/VVl9BJQIcPEyCXArqijRWlkhNyFY+Viyq9nlFg7s0DPUkNw6sqeOkLzET0v+oVQ1KsayvL2g1XE7aovzaLEUHrQaeaFafV+XfVZNKzT+8PnIlIEjcQ9WjgNXDquRhUIJi3ry9VhC18gpwUa1E59ELgaPHcBwT1uAeTF8GRgckUtPObco2hDN+4Hc4XSZRILVUEAGbZ0Q/HZA/8DtnS9rpkXtUDhA73mJfJqZipHTuAr8+CNx4Ra5h6u63Re6yVmDKUaKtbJRM0ADgFT4lpV+2iIIXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hBSFxt6DKoMUnf98J40iCQppC4H0Qk+LIoOpb0XIiz0=;
+ b=riSzfD9pVKCDZZjIHm53Ob/zplpuhSpLep1HXRpZmTUdkqMRJAINwv/mkqNh7DVCt61VxZJj80kqUF4Rs4NjaHHCNhnU+WlRjWKn1WhlUF9pfzJUkLbc/IqnoOz5iGGKBGj3tNvUfWXtS16aInuFnwzsZWNUbQBuFQ+LF7cKA8G5S6UZgMmClHmrHFmuRA9Jl26VgKCDTA57iPov1eXCAukEVKWKbBNInZv+tbW5XMKd2Sik+pD9arg8ERUoNFKdGBB6wN1Jr/L5uVWZEQbMilNy4LZJWSFWI5bzScHWMLPKJooIHlgcn37opiky9FZbQQi9SPc6sn+P0sQwPaVm4Q==
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com (2603:10a6:20b:3f1::10)
+ by DB9PR02MB9780.eurprd02.prod.outlook.com (2603:10a6:10:451::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 17:19:46 +0000
+Received: from AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658]) by AS8PR02MB7237.eurprd02.prod.outlook.com
+ ([fe80::409b:1407:979b:f658%5]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 17:19:45 +0000
+Date: Mon, 13 May 2024 19:19:43 +0200
+From: Erick Archer <erick.archer@outlook.com>
+To: Kees Cook <keescook@chromium.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Erick Archer <erick.archer@outlook.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	"David S.  Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] Bluetooth: hci_core: Prefer struct_size over open coded
+ arithmetic
+Message-ID:
+ <AS8PR02MB7237C71997007C058A51233E8BE22@AS8PR02MB7237.eurprd02.prod.outlook.com>
+References: <AS8PR02MB7237ECD397BDB7F529ADC7468BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
+ <202405122008.8A333C2@keescook>
+ <CABBYNZJcg5SpO_pew6ZwN98n1sR7kNZs6VtkFToyOs9NM1bO8Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABBYNZJcg5SpO_pew6ZwN98n1sR7kNZs6VtkFToyOs9NM1bO8Q@mail.gmail.com>
+X-TMN: [zlDpCEdadwWhEMJF58mS9nRALgBSH1at]
+X-ClientProxiedBy: MA4P292CA0011.ESPP292.PROD.OUTLOOK.COM
+ (2603:10a6:250:2d::17) To AS8PR02MB7237.eurprd02.prod.outlook.com
+ (2603:10a6:20b:3f1::10)
+X-Microsoft-Original-Message-ID: <20240513171943.GB7952@titan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511003601.2666907-1-irogers@google.com> <DBBPR08MB4538FF1CC6CC1C3CD37FCF76F7E22@DBBPR08MB4538.eurprd08.prod.outlook.com>
-In-Reply-To: <DBBPR08MB4538FF1CC6CC1C3CD37FCF76F7E22@DBBPR08MB4538.eurprd08.prod.outlook.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 13 May 2024 10:19:13 -0700
-Message-ID: <CAP-5=fWqGvVZxjjEb5MvTNK6oJXheedkohFw4xx3z1N_Csvr_A@mail.gmail.com>
-Subject: Re: [PATCH v1] perf pmu: Count sys and cpuid json events separately
-To: Justin He <Justin.He@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <Mark.Rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <James.Clark@arm.com>, 
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Garry <john.g.garry@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR02MB7237:EE_|DB9PR02MB9780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f48050f-e8e3-472c-9d0b-08dc7370e2b5
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|440099019|3412199016|1710799017;
+X-Microsoft-Antispam-Message-Info:
+	SBurZOrSjFH12RoEYCRK9S411xTtk5NwudYUPHN8oFKYCfZO8w2fUypa2DRI2bWLo2CJlF/Q4BUbXUR9q2C719O9JS9KPMIwwS6c8sErg//4zaULw+2MYVNA8GE2SWDPqO3FUURKgstqLEOBSsYm1Toyc0IBBAWwKlnKLIyUWAs/GSVtkeJ+pXYkQQkNm0sn4nxgCk1nbT/c/O71qLhx4UJGqCNYZo6Hyo7VSf+eI/sO5+ALF/aCGBXL1WkFavyyFVqlT6BQ9BWtSkxMCQCMqRngC9d3Qvw6xXAa3jeqvcXc39v88/6xsLo8AnfkLIMdZgmvqRj/yJaOMTIOfqTQu8b4JrDh3lmdkUUCq7k4DQGEKONOnggx2+iLAvW0dBe0/VDG3zx7zBwEJ36RRCTdXeDddf6tbaY4DYWqwT/Ro9PV1/nqr8iugGi7Pp5vnHrfQC8JcqOMPvjk/tpdZhEf9y0BjYYaKt3U+hUCoojeb8bbzHQovcXQPwQDrV7KdBmUQeATLoWwn3Yizcx8+z3mddV6DIhDdr2nLpQKDA5CGXY6Tm7fJtcB1OWaraU/iupqPGHUg4d1bK2HxFiXaKiFsx9269NY6lVUW/SrK+fS0qAbZRIiUHOqjyx6bMMQUmgF
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V1ExcWNqUG1DUkthLzZPRiszeVlCVHBYajArL09ZUk5xeVNyTDFmdmJCdUtp?=
+ =?utf-8?B?U3Q3WTNyVHlIaVdyeFhCcElLdkRDUGRPb04xOTRwQ2dNVWlOQ3N4am5jYjI2?=
+ =?utf-8?B?WXh0L3kza0FjQVo0TlRmY2xpU1YweGNvdU9hM2pQTlBVZHZTaTNMUWZCRHdq?=
+ =?utf-8?B?Wjg4MTBPblVZbFp6THdmOWxiVWF2dTEyUmsvcnZMdmlyaS9OOXF4bkNuUEsw?=
+ =?utf-8?B?VlZUYkYwY1orWTRFRUJqRlpROHp2M3d6dkNRSzhvTjFKWVF2dkFFTjliZ3JC?=
+ =?utf-8?B?RnNZMnErdVVCaGt5b2hvazdZd08yd1IvdUFNZjJSMnVjUElBSU5hcGo2dnVW?=
+ =?utf-8?B?Q3lxSDlBSXpBRVJDNjFzTkFvQVVnMHFzSFVhZ0hxQW9NNlVxMmFSWi84Zm9I?=
+ =?utf-8?B?dnJ2cStNN2Y3R2FReUxzWjZSOUhZR0NGTXJReDF3NlhBZ3lXbFpGQnVuQ0ZC?=
+ =?utf-8?B?ZnY1L3JmWHZjOFgvN3o2RVZLQjg1QTFrT2pMMHZCcXJmc1hqNXdDelFDVmlk?=
+ =?utf-8?B?RlcyUnR4VjYyMGpOOEVXcEVjZ3RQK2dtamZWVzUwNUptVk1XdURVLzRPUENL?=
+ =?utf-8?B?UEExMEk4V1g2NWdjVkdRUXdtYThlN0NIcUhaQldBQXg3TFptbGEwZ1lIVGt4?=
+ =?utf-8?B?dzdaSjBseFUxOE1HcXBqQitUdUExZlhuZzA3aUc4elBDZFY1dWZmbzhwWlZL?=
+ =?utf-8?B?eUZwWERrQ0c5ekdWQ1FZYm00aTNUZndSM0hGVkxVQlVQMFA1RE5jZWRUSWww?=
+ =?utf-8?B?Q2xCRHBPZ0NJdGF0MXRDTnZWRCtKVDg3cmpwSUxyaE8xbkJSNjY4OW1jVzE0?=
+ =?utf-8?B?ZjFRamc1WkxJWTJhMUFpQXZQdGJTbmhiN2RjS2xjVVFYTE52SjEzZzBwbEZE?=
+ =?utf-8?B?Zlo1K0RkaDFXT0djVjFTVHJBbDd1ZjUzam1odkJBdWxhaGE2VFNmbmtuQlE2?=
+ =?utf-8?B?d0d5alVaeGxUVFVvWExyVm9KUEZWYVRtWHZ4Mk53QzQ3alVCbXJDNVJ3TUxw?=
+ =?utf-8?B?aW0wOERrclhEZmZnZy9FeGNvUUNObWZYQlhKUHpCbkxQSDFCYThIeU9Wd0Rv?=
+ =?utf-8?B?bW4yWGtpZ2pnL2FZeXNhekw5Wi9HdHhIMWNFRThOMWxaOWZ6VVFWVlBobXN3?=
+ =?utf-8?B?RVVhTGtueDVkMDZFNUF3b3NBM2ZWTEU2ZzdsWW5Ub1lZYU1YTmd3dDNtVWlB?=
+ =?utf-8?B?SEovWGVpK0cwWTBzeHRpdkNpMFIyRy9KM0xnVXBpaWNpOTZrVTB4dTVXL094?=
+ =?utf-8?B?WS9YMHFJU0VpYld0YldHUjJyL1c2MXNwRFl3UzdISjdQRGZoaG5XZm9HK0VG?=
+ =?utf-8?B?VFZheCs5Ums2UzMzRXZKS1JMVkhVeXRJaU8vUzcrdHRIQUk3T29DSFRRTnph?=
+ =?utf-8?B?YUx0a0RUMUwxOUtocU9maElxeURnNVloVThZOERJVUlhT3ZWRmt2QktyQ0pH?=
+ =?utf-8?B?V3dVVzdZZEx1WU9oZk91WFpSeGdvTldZa0VVYTBpRHZoQVlGeEdZZTJDb1pq?=
+ =?utf-8?B?eWZlYU9pdlgwdE5jK0Nsd3BGbU5qaXRmNFF2M0NaRFpEWjM4ZG5qUUFETk5h?=
+ =?utf-8?B?OE1yMXZFbFd3RjRrVFU5TGFjb0NPK0RFNGVVNkFJUW5rVTRkV2VOYVhwSkFC?=
+ =?utf-8?B?NVlYQkF4dU5qSTdld2V5b3lqMXVzUVJFbHE1UXc1ZzYvUE9EdlF5cUdZaFlh?=
+ =?utf-8?Q?ZNuEid4kfyTmHiV9xheF?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f48050f-e8e3-472c-9d0b-08dc7370e2b5
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR02MB7237.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 17:19:45.8113
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR02MB9780
 
-On Sun, May 12, 2024 at 7:22=E2=80=AFPM Justin He <Justin.He@arm.com> wrote=
-:
->
->
->
-> > -----Original Message-----
-> > From: Ian Rogers <irogers@google.com>
-> > Sent: Saturday, May 11, 2024 8:36 AM
-> > To: Justin He <Justin.He@arm.com>; Peter Zijlstra <peterz@infradead.org=
->;
-> > Ingo Molnar <mingo@redhat.com>; Arnaldo Carvalho de Melo
-> > <acme@kernel.org>; Namhyung Kim <namhyung@kernel.org>; Mark Rutland
-> > <Mark.Rutland@arm.com>; Alexander Shishkin
-> > <alexander.shishkin@linux.intel.com>; Jiri Olsa <jolsa@kernel.org>; Ian=
- Rogers
-> > <irogers@google.com>; Adrian Hunter <adrian.hunter@intel.com>; Kan Lian=
-g
-> > <kan.liang@linux.intel.com>; James Clark <James.Clark@arm.com>;
-> > linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; John Ga=
-rry
-> > <john.g.garry@oracle.com>
-> > Subject: [PATCH v1] perf pmu: Count sys and cpuid json events separatel=
-y
-> >
-> > Sys events are eagerly loaded as each event has a compat option that ma=
-y mean
-> > the event is or isn't associated with the PMU. These shouldn't be count=
-ed as
-> > loaded_json_events as that is used for json events matching the CPUID t=
-hat may
-> > or may not have been loaded. The mismatch causes issues on ARM64 that u=
-ses
-> > sys events.
-> >
-> > Reported-by: Jia He <justin.he@arm.com>
-> > Closes:
-> > https://lore.kernel.org/lkml/20240510024729.1075732-1-justin.he@arm.com
-> > /
-> > Fixes: e6ff1eed3584 ("perf pmu: Lazily add JSON events")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/pmu.c | 70 ++++++++++++++++++++++++++++++-------------
-> >  tools/perf/util/pmu.h |  6 ++--
-> >  2 files changed, 53 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c index
-> > b3b072feef02..888ce9912275 100644
-> > --- a/tools/perf/util/pmu.c
-> > +++ b/tools/perf/util/pmu.c
-> > @@ -36,6 +36,18 @@ struct perf_pmu perf_pmu__fake =3D {
-> >
-> >  #define UNIT_MAX_LEN 31 /* max length for event unit name */
-> >
-> > +enum event_source {
-> > +     /* An event loaded from /sys/devices/<pmu>/events. */
-> > +     EVENT_SRC_SYSFS,
-> > +     /* An event loaded from a CPUID matched json file. */
-> > +     EVENT_SRC_CPU_JSON,
-> > +     /*
-> > +      * An event loaded from a /sys/devices/<pmu>/identifier matched j=
-son
-> > +      * file.
-> > +      */
-> > +     EVENT_SRC_SYS_JSON,
-> > +};
-> > +
-> >  /**
-> >   * struct perf_pmu_alias - An event either read from sysfs or builtin =
-in
-> >   * pmu-events.c, created by parsing the pmu-events json files.
-> > @@ -521,7 +533,7 @@ static int update_alias(const struct pmu_event *pe,
-> >
-> >  static int perf_pmu__new_alias(struct perf_pmu *pmu, const char *name,
-> >                               const char *desc, const char *val, FILE *=
-val_fd,
-> > -                             const struct pmu_event *pe)
-> > +                             const struct pmu_event *pe, enum event_so=
-urce src)
-> >  {
-> >       struct perf_pmu_alias *alias;
-> >       int ret;
-> > @@ -574,25 +586,30 @@ static int perf_pmu__new_alias(struct perf_pmu
-> > *pmu, const char *name,
-> >               }
-> >               snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
-> >       }
-> > -     if (!pe) {
-> > -             /* Update an event from sysfs with json data. */
-> > -             struct update_alias_data data =3D {
-> > -                     .pmu =3D pmu,
-> > -                     .alias =3D alias,
-> > -             };
-> > -
-> > +     switch (src) {
-> > +     default:
-> > +     case EVENT_SRC_SYSFS:
-> >               alias->from_sysfs =3D true;
-> >               if (pmu->events_table) {
-> > +                     /* Update an event from sysfs with json data. */
-> > +                     struct update_alias_data data =3D {
-> > +                             .pmu =3D pmu,
-> > +                             .alias =3D alias,
-> > +                     };
-> >                       if (pmu_events_table__find_event(pmu->events_tabl=
-e, pmu,
-> > name,
-> >                                                        update_alias, &d=
-ata) =3D=3D 0)
-> > -                             pmu->loaded_json_aliases++;
-> > +                             pmu->cpu_json_aliases++;
-> >               }
-> > -     }
-> > -
-> > -     if (!pe)
-> >               pmu->sysfs_aliases++;
-> > -     else
-> > -             pmu->loaded_json_aliases++;
-> > +             break;
-> > +     case  EVENT_SRC_CPU_JSON:
-> > +             pmu->cpu_json_aliases++;
-> > +             break;
-> > +     case  EVENT_SRC_SYS_JSON:
-> > +             pmu->sys_json_aliases++;
-> > +             break;
-> > +
-> > +     }
-> >       list_add_tail(&alias->list, &pmu->aliases);
-> >       return 0;
-> >  }
-> > @@ -653,7 +670,8 @@ static int __pmu_aliases_parse(struct perf_pmu *pmu=
-,
-> > int events_dir_fd)
-> >               }
-> >
-> >               if (perf_pmu__new_alias(pmu, name, /*desc=3D*/ NULL,
-> > -                                     /*val=3D*/ NULL, file, /*pe=3D*/ =
-NULL) < 0)
-> > +                                     /*val=3D*/ NULL, file, /*pe=3D*/ =
-NULL,
-> > +                                     EVENT_SRC_SYSFS) < 0)
-> >                       pr_debug("Cannot set up %s\n", name);
-> >               fclose(file);
-> >       }
-> > @@ -946,7 +964,8 @@ static int pmu_add_cpu_aliases_map_callback(const
-> > struct pmu_event *pe,  {
-> >       struct perf_pmu *pmu =3D vdata;
-> >
-> > -     perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=
-=3D*/
-> > NULL, pe);
-> > +     perf_pmu__new_alias(pmu, pe->name, pe->desc, pe->event, /*val_fd=
-=3D*/
-> > NULL,
-> > +                         pe, EVENT_SRC_CPU_JSON);
-> >       return 0;
-> >  }
-> >
-> > @@ -981,13 +1000,14 @@ static int pmu_add_sys_aliases_iter_fn(const str=
-uct
-> > pmu_event *pe,
-> >               return 0;
-> >
-> >       if (pmu_uncore_alias_match(pe->pmu, pmu->name) &&
-> > -                     pmu_uncore_identifier_match(pe->compat, pmu->id))=
- {
-> > +         pmu_uncore_identifier_match(pe->compat, pmu->id)) {
-> >               perf_pmu__new_alias(pmu,
-> >                               pe->name,
-> >                               pe->desc,
-> >                               pe->event,
-> >                               /*val_fd=3D*/ NULL,
-> > -                             pe);
-> > +                             pe,
-> > +                             EVENT_SRC_SYS_JSON);
-> >       }
-> >
-> >       return 0;
-> > @@ -1082,6 +1102,12 @@ struct perf_pmu *perf_pmu__lookup(struct
-> > list_head *pmus, int dirfd, const char
-> >       pmu->max_precise =3D pmu_max_precise(dirfd, pmu);
-> >       pmu->alias_name =3D pmu_find_alias_name(pmu, dirfd);
-> >       pmu->events_table =3D perf_pmu__find_events_table(pmu);
-> > +     /*
-> > +      * Load the sys json events/aliases when loading the PMU as each =
-event
-> > +      * may have a different compat regular expression. We therefore c=
-an't
-> > +      * know the number of sys json events/aliases without computing t=
-he
-> > +      * regular expressions for them all.
-> > +      */
-> >       pmu_add_sys_aliases(pmu);
-> >       list_add_tail(&pmu->list, pmus);
-> >
-> > @@ -1739,12 +1765,14 @@ size_t perf_pmu__num_events(struct perf_pmu
-> > *pmu)
-> >       size_t nr;
-> >
-> >       pmu_aliases_parse(pmu);
-> > -     nr =3D pmu->sysfs_aliases;
-> > +     nr =3D pmu->sysfs_aliases + pmu->sys_json_aliases;;
->
-> Nits: double ";", others lgtm.
->
-> This fixes the error on the Arm N2 server:
-> Unexpected event smmuv3_pmcg_3f002/smmuv3_pmcg_3f002/transaction//
-> Unexpected event smmuv3_pmcg_3f042/smmuv3_pmcg_3f042/transaction//
-> Unexpected event smmuv3_pmcg_3f062/smmuv3_pmcg_3f062/transaction//
-> Unexpected event smmuv3_pmcg_3f402/smmuv3_pmcg_3f402/transaction//
-> Unexpected event smmuv3_pmcg_3f442/smmuv3_pmcg_3f442/transaction//
-> .....
->
-> Please feel free to add
-> Tested-by: Jia He <justin.he@arm.com>
+Hi Kees and Luiz,
+First of all, thanks for the reviews.
 
-Thanks Justin! I noticed Arnaldo has picked this up in the next tree:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/co=
-mmit/?h=3Dperf-tools-next&id=3Dd9c5f5f94c2d356fdf3503f7fcaf254512bc032d
-Would be great to add the Tested-by and address the ;; issue, good catch :-=
-)
-
-Ian
-
-> --
-> Cheers,
-> Justin (Jia He)
+On Mon, May 13, 2024 at 12:31:29PM -0400, Luiz Augusto von Dentz wrote:
+> Hi Eric,
+> 
+> On Sun, May 12, 2024 at 11:08 PM Kees Cook <keescook@chromium.org> wrote:
 > >
-> >       if (pmu->cpu_aliases_added)
-> > -              nr +=3D pmu->loaded_json_aliases;
-> > +              nr +=3D pmu->cpu_json_aliases;
-> >       else if (pmu->events_table)
-> > -             nr +=3D pmu_events_table__num_events(pmu->events_table, p=
-mu) -
-> > pmu->loaded_json_aliases;
-> > +             nr +=3D pmu_events_table__num_events(pmu->events_table, p=
-mu) -
-> > pmu->cpu_json_aliases;
-> > +     else
-> > +             assert(pmu->cpu_json_aliases =3D=3D 0);
-> >
-> >       return pmu->selectable ? nr + 1 : nr;
-> >  }
-> > diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h index
-> > 561716aa2b25..b2d3fd291f02 100644
-> > --- a/tools/perf/util/pmu.h
-> > +++ b/tools/perf/util/pmu.h
-> > @@ -123,8 +123,10 @@ struct perf_pmu {
-> >       const struct pmu_events_table *events_table;
-> >       /** @sysfs_aliases: Number of sysfs aliases loaded. */
-> >       uint32_t sysfs_aliases;
-> > -     /** @sysfs_aliases: Number of json event aliases loaded. */
-> > -     uint32_t loaded_json_aliases;
-> > +     /** @cpu_json_aliases: Number of json event aliases loaded specif=
-ic to the
-> > CPUID. */
-> > +     uint32_t cpu_json_aliases;
-> > +     /** @sys_json_aliases: Number of json event aliases loaded matchi=
-ng the
-> > PMU's identifier. */
-> > +     uint32_t sys_json_aliases;
-> >       /** @sysfs_aliases_loaded: Are sysfs aliases loaded from disk? */
-> >       bool sysfs_aliases_loaded;
-> >       /**
-> > --
-> > 2.45.0.118.g7fe29c98d7-goog
->
-> IMPORTANT NOTICE: The contents of this email and any attachments are conf=
-idential and may also be privileged. If you are not the intended recipient,=
- please notify the sender immediately and do not disclose the contents to a=
-ny other person, use it for any purpose, or store or copy the information i=
-n any medium. Thank you.
+> > On Sun, May 12, 2024 at 04:17:06PM +0200, Erick Archer wrote:
+> > > [...]
+> > > Also remove the "size" variable as it is no longer needed and refactor
+> > > the list_for_each_entry() loop to use dr[n] instead of (dr + n).
+> 
+> Have the change above split on its own patch.
+
+Ok, no problem. I will send a new version.
+
+Regards,
+Erick
+
 
