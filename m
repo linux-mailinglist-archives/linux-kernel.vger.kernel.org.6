@@ -1,159 +1,227 @@
-Return-Path: <linux-kernel+bounces-177330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B578C3CF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:14:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0CDA8C3CF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:15:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41151B21BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:14:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9641A28243D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:15:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D223E1474A0;
-	Mon, 13 May 2024 08:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3A5147C88;
+	Mon, 13 May 2024 08:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mc6nznAe"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dq5FSfpI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE7F146D5C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715588070; cv=none; b=pZx9nRZtqsPx/2T9ZT1h8iSJxyUKp9lc6XP6lNmWM6R6jHh3PM5RmkKjdcG8GWg2Kt8PsYqTS3AMFV7enHJaGux771aOOQsl5BP8zex+C6+GKntkl+HzWHvkqWwpLDm8SkULnOtbSt9gWU9GHgo5iahG8Apn/nO3q9jWZfliwlM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715588070; c=relaxed/simple;
-	bh=12ml4wWfxQl4jhbhqgvB8GySKJX6FlqTruuxJO3r50s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pKdpLN7xIhGltfOIQAZ02WP6/f+9I6+2dVLnFCCJ/SDcVgtQgbglUbo6HvIdo68+oGWa5GatA9u+VvHcnXFgs0YcHvrMYidCroQceSwm4fRHL0gFtjVS1guLh3fokrCAOxT7Ev6f4wYv9klEIMV9cjAAAIocM3UEKnCBVbuB+mo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mc6nznAe; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-47efc592d9fso1149994137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:14:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715588067; x=1716192867; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=f0QsI6eg5FRHjsJ3EXAYkOdUsRM9QF3yW2xylikNfdY=;
-        b=mc6nznAe164x80c7YoJMbtDNP7Os9yNeaBOuOgoZaxVmnTpTXhM7aXwA/BFq3OedU5
-         ozmMpKEAjtcIUyHUS2E8C5Qu9VOhR49+rPByIeMFdjknlTmKXJpUjLA0foRWY6F8M0sp
-         8nlnj6toixhcQdyJZcf+sKVX6kP2soHeskCQBs4a1kaysSECppmX5ikLPgM474QfHQ/N
-         7ancMeBGBARY+K26FXcTt899+m5rFU0XBWPg1brekvl4RbVG9n3wgzPk5/nvfoNZGMs0
-         SBvg/Js4n5la2qTIYka+5cqf1HqH2PRcgXeBWJ3aL1jtVKx09Y6wzpyDo1dfYYSLbKdJ
-         rEUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715588067; x=1716192867;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f0QsI6eg5FRHjsJ3EXAYkOdUsRM9QF3yW2xylikNfdY=;
-        b=lRs3pxihxoeL3Yeje/YKRDbWiinMBFLEHMaGT44+PziruW632vuliuFMjgAGXW1QiA
-         5fHwsql4VHuL1IUSaPpPbF3DSvjrMzuFHiC+/wKjh2BflBb893gb0azmt3gFd+38SGiT
-         a4IJa207aTKluZ/fe00q9NeMCwMsQ+/Secw3JYBnErFeZ3MBfdRbddu7dujx0L+Hglrt
-         7C6FCfKPyT2DqBmrZnEn58Hd2/RuIn5TTD3qKjGfefPPK+EAPWhW35pjT1v6lCwrFo4J
-         wdu2ICCiEc4boE0R5tW0WLZMjGv8hLMsezgnxAM31A/haTDEB42L4+CXGsiZAN920cq3
-         Qlog==
-X-Forwarded-Encrypted: i=1; AJvYcCVzZkSd5gO0HbNYONeBgNMF54pn93UD80roqFWFmag80Vg5DeR0+/AZ40rwTU6Pb688M93BYBC8VujsQ0PE+YkGhkTHi26bB077TRxv
-X-Gm-Message-State: AOJu0YxkeVjnDpsnXShAxYqMZj5YxEurTII/mZE9MKrvRFJNGH8Yc5+H
-	8ZhJTfW6cP1KdqYH6eVTTNz2SlZgGDxRkOPAUf1au2ytxBPlO1krl87G9DHJb0nzVX58OCPDOe2
-	dUZ8PuDcNi2jUYXznBFj8/0xV4VL+eZaL4R7g
-X-Google-Smtp-Source: AGHT+IEN0CwwIMvMPcNvYrtwL0GHvXK2FmCEs3NcLvhxj5VrVLU78hu+gqQv8TlnVYs4qK+0BgkSJwJf7Ph04NygmMk=
-X-Received: by 2002:a05:6102:38ca:b0:47c:2c87:f019 with SMTP id
- ada2fe7eead31-48077db706cmr10268656137.5.1715588067255; Mon, 13 May 2024
- 01:14:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F296146D6B;
+	Mon, 13 May 2024 08:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715588114; cv=fail; b=F+hw8ofQpnAVKT1oZfmGkBSP3mA+ec/O1NXl+pNx9D39HiNT9zwv6/Z+mLCzPDzZyTDEohMMCRdqL3sYf0icg62zKNNkM+aO3Om2upMkuZwpO72rgP5NaO82WqrWheHR6qLQiwwH4gO10KvVbSrKJOunNP7XF3lWpl4KyIZDGzo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715588114; c=relaxed/simple;
+	bh=DbFz6whZqLrlKUEv3adzqBaZ62TXMorrz0W+YJr/CAo=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IV0b6lVfs1y8Ca6ndpa+/mi+Xw9ZGDErhA4EIOVXVxDzhwyXO50/6cYbofn4SwgVzplTS+SHf6FGdZN16g4l1OEa8orH1Jo9CSSrTyluZeYQbwwDBhdpFFme98WMI5xFpzjf1MCglEkoVZNar/8cdMCtpZT81UGYFv5o/TDysw8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dq5FSfpI; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715588113; x=1747124113;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=DbFz6whZqLrlKUEv3adzqBaZ62TXMorrz0W+YJr/CAo=;
+  b=Dq5FSfpI5AwZG43VCfniKbJnkk6KSVhpUMcwesH4EOynQwpHD3TWZiAb
+   rRpyuD8LNxTDEG6e9BT/geiCSC8UXtJMtcNnq9aIOQfhjHOlS6XHevBsD
+   MLGI0bc9MHzsBAf3iuz/x/dUokDe/Pujqyu3M01+S1F4C5Lahmm9coY11
+   uo1VJ6extQRhFD7ndH0AwfzGb1ealHCwRQNsF4OmenRMfi/IwEOoZojUp
+   zvaMN/asdnLDlWfJM5rZW4vNzO9wD84jTvwfyMQv2xoU36HYjQncOjkO7
+   IGpwmsBPyK2NAoJ3gCOlyLubpEbw8ctVjHt/em9RbbYaW5XSUUcqT+xgG
+   w==;
+X-CSE-ConnectionGUID: XHtS1ihqQYqEVILT+wUAsw==
+X-CSE-MsgGUID: BSgv1mkCTvarxajoAS4qVg==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11666876"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="11666876"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 01:15:12 -0700
+X-CSE-ConnectionGUID: hX7FW9XJQyy7IxLxl4G/4A==
+X-CSE-MsgGUID: 8fzAlEjVRLONQYS/jQv8cQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="35024235"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 May 2024 01:15:12 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 13 May 2024 01:15:11 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Mon, 13 May 2024 01:15:11 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 13 May 2024 01:14:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RZYTJ9/JtBeurljUnwIX/QHQPPuBzfZ/KwJisVWt04C9Rx0JTj7U6fxrbN/aQmBV/UqH52gq26DVGzdnCh0G797PdO2SgWouVfXH9jxQ/ej7rdUGyaaWEm/uJ6FGnl+T62GdysbsF/SNGtSgoBXhjgOtsNgX7yu4ln6Ray1RqAPi0Mc3PybN4BVu6ufRq5p7u3qmkvns7nxMKGX0saUXJEiO5LC4I1TTGPhBje+FnEcBk1QvzoenWR9RPn+3BvLTmf4YIAoSTP9jU92y6gyNvyJXK94scgr0ZyeElCF7eCqsbruvsPAyM+nb4rxJpi/MlzJAMC+uPJ6Oe03XxbaHWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XyAIWCEiTKk3Vmhrah6UY0Jxu9Cb/vjuObGlL7qXYkc=;
+ b=c+b4O/spgNM4JEqMS1O1fuBDdg2umYC65af/zG2oWpTbQioc8RMOCBbq5HBEPj1k1qUk+wxUCl/mYAGjMwqX3+5EoaakiE4eW9gVlo+YsdVGYyXKem1GQ6yldP69szfaqZ01T+bstsMcmSupX/44m3L68W4mKYxD929FsEkTHy9gUTLoYtqbvQqbc52MaJ1mVUcPxUNYruGWlC4rHj1q1PWbm3Ll1ruTA/8ipwGQU8NQXvwQgrZx44iRoc7aOv8KnUMQ7sSfiJuiym0NnlESIcl0jiYEEBent6byvWnwwnE+ufUXkx3MKHOr+41OQfsogA8U1UtdezPmwZ5ljtGTMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by SA2PR11MB4811.namprd11.prod.outlook.com (2603:10b6:806:11d::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 08:14:50 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::bfb:c63:7490:93eb]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::bfb:c63:7490:93eb%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 08:14:50 +0000
+Message-ID: <8f599fc9-99f4-462b-838d-6da2fb19fa10@intel.com>
+Date: Mon, 13 May 2024 10:14:44 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dpll: fix return value check for kmemdup
+Content-Language: en-US
+To: Chen Ni <nichen@iscas.ac.cn>, <vadim.fedorenko@linux.dev>,
+	<arkadiusz.kubalewski@intel.com>, <jiri@resnulli.us>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<davem@davemloft.net>, <jan.glaza@intel.com>
+References: <20240513032824.2410459-1-nichen@iscas.ac.cn>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+In-Reply-To: <20240513032824.2410459-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MI2P293CA0003.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:45::16) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510141921.883231-1-leitao@debian.org> <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
- <de92101c-f9c4-4af4-95f4-19a6f59b636f@paulmck-laptop> <d037f37a-4722-4a1d-a282-63355a97a1a1@acm.org>
- <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop> <4d230bac-bdb0-4a01-8006-e95156965aa8@acm.org>
- <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop> <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org>
- <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
-In-Reply-To: <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
-From: Marco Elver <elver@google.com>
-Date: Mon, 13 May 2024 10:13:49 +0200
-Message-ID: <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
-Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
-To: paulmck@kernel.org
-Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>, Jens Axboe <axboe@kernel.dk>, 
-	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA2PR11MB4811:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53f89f17-a84d-4346-84c5-08dc7324c293
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|1800799015|366007|376005;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?eks2eFhTZzNrWHJVRkkxeWgvOWVQaHVZSFpENHFDN0VxS0tIc29FRWhaakZE?=
+ =?utf-8?B?c3huMlhqM1BKK3hyc2hTclRubzBxTjBvWkZOMTdUVHRkeHhiK1VRY09FYjVm?=
+ =?utf-8?B?OFo4cksxSUVsd0dyOXF6SGdFU1FmVGQzN2UzU0pDNFpoeldSNXpaZVJQZ09y?=
+ =?utf-8?B?cXE3TWxMZlRDNzI1c0JrZWlDVWo3VG15dHlBV0hSdldUeUE3U0tXa1k1c1lh?=
+ =?utf-8?B?V0tXcUJuYjFrSG1kdXh2NGN5T0pUaVFYWStlUEFYYWN4Q2YxdURaRloxL2Ex?=
+ =?utf-8?B?RHM2OUVlYjV3S254ZmR2MGxWbUNWTUduWFJJL1NTVkovYzFvUXdES1BUYkRU?=
+ =?utf-8?B?c0tqUGZRNkdEQ0p1Wjc1S2Fhd3ZHZmJ2VHd5V3EzMjgrY2F0WW44SEtJbGJm?=
+ =?utf-8?B?dmdWVE5VU3hoelFvVTZjRXcyaVRUcTZOQmIrN0lZUXNwT2M1eFRNWER2V0xF?=
+ =?utf-8?B?QmpieG0yNm0veS9yQzJXL0xGK0RpZHFaeEt6RlRpVUl5RzBTb2VwOXNUbWt5?=
+ =?utf-8?B?ZzEwS2F3MDF3ZjI1d00xMXlZS0Y2Mm1yeXV6RjN5Z01jTFkveUYxMXVIYnFC?=
+ =?utf-8?B?V3kzRWZmRXNDVU1sWU5kb3A5dEU3QVV0elVzU1F4bzdtRTVTcC83dmM0T2Yz?=
+ =?utf-8?B?TlV3T3cwQ0o1ZWpsMm51WEJyTklmS0d0SUxMekpjd3QxQzZEcURjNjRzekoy?=
+ =?utf-8?B?RVBxMjQ3TURvNFJTTTM4eWFqZzBCTFk4WHJEeU9tSUdJa0pFcG1CRWJlS2Fh?=
+ =?utf-8?B?dHBHdmdJYUdpNFpnNStlMzFocW53S3V0MDNZcUlUakVDSHZ0NkdWNVNUUjBs?=
+ =?utf-8?B?dFFjK2s1UU9NZlJ1VWN5MWNKd2xhKzJvYnltNlpjMzdaTHZvWmRyT3ZzUFMy?=
+ =?utf-8?B?TVZEUTVNUkdwT2xocThmS05PN1JhZ0Jnb0Z2TmpWeUxTczdqVisxQ29QRk1B?=
+ =?utf-8?B?aWhnTm81Q2I0dFEzWmNaQTRYRVltU3lCWTNUK3FJckQwd2cwSUZLaWt5NXlk?=
+ =?utf-8?B?cUMwWENDQkx1bXBEczE5S2tVZVFDN3ZsVTkvWE00WHIyVkdnVUFEZWpHOFgw?=
+ =?utf-8?B?Nmh3UFo4VFZGTlY2UnZhNEVKcVpadlpaRDVXTllodnI3T0FBeWlEcXV5c3pH?=
+ =?utf-8?B?bFdSQktqNmpoemNURkVlMEZ3R3h0SUIvNjR6NUovZmlZdSt1MXIzaXVMUUFi?=
+ =?utf-8?B?Z3lIMmxsY1hjY3NBM0lWUEdxMTRjU2xTd1FPY2o4NFFBOHVLa2dNTGQrREU2?=
+ =?utf-8?B?a3oyQndGanVXTVVPcElhMTdFbFdjVU1CZzN4elFjL3hTOXJySUVRNE9Yc3hs?=
+ =?utf-8?B?L0lNaXdTbjMvZWJQczJkK2plbjVQd2owR0lvSWlUQjExOXNOLzFjYTBtQWNy?=
+ =?utf-8?B?U3dvL0JtNGhsZHdmQU9FK21lQUFvcVdaa3VmNWRMSFVHaWo4RjZkb3UwcTEz?=
+ =?utf-8?B?eE9KdW9CdnlXVTZFeU55MXVLalp0QlVTWXhUWGNWZEhtclExTklRakZvMmJa?=
+ =?utf-8?B?UkRuWkkrM3k3U3RRZVhYN2RZckxxbG9HcTV3Wmk3R2Q5ck9nVlVqNXNkUEda?=
+ =?utf-8?B?L2hDWjdENjAyb09yZHU1QUVEWmVmZUtVQWFUMnhpYzE0Z29tek53R1lTWGRx?=
+ =?utf-8?B?ZGl3eVJUNTh1QWQyVE9GOTI4SGVPV1p4U1RUY1dxZ3BtNFZXbU5UYW1HWDEy?=
+ =?utf-8?B?d2ZxRHY2cXAySmtCVjBqVmkrYVNSVlZFMEFMQmlTbVFNUVZscTZ4UmVRPT0=?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T1VYRXhrOWgyWHB1WXFqaFpoNjJXVGlWZVhVdnZvMlVCbzljcUJ3WnZFRW9O?=
+ =?utf-8?B?OU9nc1RDbFBWZ3ZtaFVWZEwrekVHbGpRVmo5ZUhhWFB1dUtRdTU0RzFXanJC?=
+ =?utf-8?B?aUM4UlpjVHcrdHp3WkJQUmU5eWtDYzhtS3lhMVhYTURIQTRwb00wcVM1L1pw?=
+ =?utf-8?B?REhBeXdRNEhvcTd3WERVSzRMT0RLMFNJeVBBcUNzMm5xQi9ObTkvWldkYWk4?=
+ =?utf-8?B?N2tWWUFWS0pzTmFQMDgyMDlzRHJYYXBpNVczRkxyOS9yZk9pdXJ6MG5XSEpj?=
+ =?utf-8?B?SWVPVXkyOXFKUFNJR2swNjBBQzJVaHNyRWFqenJ6enZhOGhLN2t2QjRuT2pK?=
+ =?utf-8?B?YUpYOUN4MlRRTW1PRmRyM2VudWc2cC9SUjMvcmFHZ05tT0JoY3NyUUJCZE9O?=
+ =?utf-8?B?a0FhakdOZlVESkxKbXdGTm1IcVg1d2xrK1JDbTFqRDNEQjhnODNRTklEKzFy?=
+ =?utf-8?B?OStmRGp2TXlOaFhyRWszeXBiSHFPN1dCaWFNM3dDYjFQcmZYZ3hwSTdnR00r?=
+ =?utf-8?B?WmZrTEFTU1hhK1hZaVhPbjF4ZXM0NHdRdUdyY1BLb3VGMmFJd1NQcjZyMTk0?=
+ =?utf-8?B?c3BDK3QwenhOb0kweElZMzBUdER0ZDIrRjBReENlR3MrVS9jL24rY0hYRDF3?=
+ =?utf-8?B?ZlZJUGdwTmJ6WW15ZGk1dDZBNUx2L2pEazh6MGJBbUMycDRpM3hKV0lCRG42?=
+ =?utf-8?B?VmlIRmFjVWxoVlgzeXcydXdqNldIQXY2MDRBVmltVXZ1QTNDSkx5b0phZStC?=
+ =?utf-8?B?MktPWW9KY3VVU1RRRXRpQndEcDA3SHU3NTU0MmtJdFZpZnR1dHVWQVhjZ1JU?=
+ =?utf-8?B?VXViOXhPVE9XYStJakk2OXVZM255MnBaTUoyL205SnZwVGY4cFZkRXR3dmM3?=
+ =?utf-8?B?SjNTOFdoNHRXc0VyblIzUzcvbzg1Q1FFK2RHZ0RKTHVhNUV5YlZJeTVYZnRH?=
+ =?utf-8?B?Q2R4ZllwWk9LOEFEUzlOKzBoaXluOGo4UVdoVWYzaXkxYlNqVVA2UXRxKzRt?=
+ =?utf-8?B?NFZoYWRhcVVHNEhmcFN3bWh0dW1OWUpVZjMxZ2JlM2pKVDgvcWZmaEd4SU1H?=
+ =?utf-8?B?eW9wNEYzOENDb1pNU3dYUXMzcXVaQkJKbWFPQllwRjN6UHBLV0ZuNHRldnow?=
+ =?utf-8?B?M051S1N5eUU2RXlxcUpvMkE2Tkg5VUkxR3lpajhOUzNOYkNpaC8zMnFkeGlG?=
+ =?utf-8?B?TFgxcHVsUzJ4WklZTnlQZklyMFk2WUEwYnprWVNockgzL0x0eWJnc0ZyUkFS?=
+ =?utf-8?B?RTVpcXJsc3hjRUIvWTRLN1BNZnE4Zk1yZUlTeVhlcXgzQjZDS01uSGpsTm16?=
+ =?utf-8?B?d0dJVXhqREVPeUhMMlBLdURuZUxXWDdZODVqSUxCOUtHSU41UFZqUUNXWWln?=
+ =?utf-8?B?UzM0NFVXR0pjcnlYQWRubC95SmhIWlQ4dHBsTlFDcy9hSWNUcjdnbmxRaUNZ?=
+ =?utf-8?B?SHVDRnBWV3MyUy9hMXE1aFljaUlMVENOTGQ4aXEzeDZIb2ZVVUF6WWZzM0xV?=
+ =?utf-8?B?R0dYL0ZSL0dMTUpkT0hIamJYcW1JTWlNcm1QS21jeVcydGpYTzhlT0xsU1Ir?=
+ =?utf-8?B?QmkyVU4rMGNrSEZjbmlRcjJxTHlZOEJSQ29CSEZsV25uakNSeWxHWXZML202?=
+ =?utf-8?B?TWJwQkVRVDhkZldXdUNra1dpZlBlM1JFOWVIaExqeDhtVXhWT3pRSkRXdTVp?=
+ =?utf-8?B?STI4cXJFM2NXZWpyK2NjQ211K0FHK1lsM1RucGJtOEpPNXJyamtBRjJQTkE2?=
+ =?utf-8?B?OTQ1R2EzN2pSdWFXM1Q5VmdFY29MYXVMMHNmYWNkcTZqdE83ZDNGVGw5OWc2?=
+ =?utf-8?B?MndkLzNaaDlackY3L2ZJMTVwZWlERlMwRU4yU2hqc2Q0MFVlZWZvMmtNV2V0?=
+ =?utf-8?B?VE04ckp3U1lyUStLQm5xcUZzemdHRjhqdFlzUmdid3ZKT05KUktXT21QSStX?=
+ =?utf-8?B?c2dMd3FTRE5MeElDQnkxbXFJbFFaRlduVnJ1a0hMQTU2bWt6VTVGR1greVFE?=
+ =?utf-8?B?R0EvNzdqNDFtMlNIckRMYzdDOUdPOCtYWi8vUnBNQjhkdStZLzhUQ250bWUw?=
+ =?utf-8?B?ZVBYU082Ri84cWNyZmh4R1pLbHJnVlNOZVJCV2NPZGRCM0hFTlhkZlphRWVi?=
+ =?utf-8?B?eW05VUtKcmFrc3Z6WURGUytLQmRIUEtDOW5wamJWY1FnUlpSTDhMU0V4TXkr?=
+ =?utf-8?B?L1E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53f89f17-a84d-4346-84c5-08dc7324c293
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 08:14:50.2326
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dWSrXlzLjPvThiQrEffVsju9N4YMR865yFWin1D2uMsCeuUHOay8NuPZvZxxo+GYTDNK14b7yV6/0JJ/RVBXTFRtRt8hVOEEE7CqumhYo4k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4811
+X-OriginatorOrg: intel.com
 
-On Sat, 11 May 2024 at 02:41, Paul E. McKenney <paulmck@kernel.org> wrote:
-[...]
-> ------------------------------------------------------------------------
->
-> commit 930cb5f711443d8044e88080ee21b0a5edda33bd
-> Author: Paul E. McKenney <paulmck@kernel.org>
-> Date:   Fri May 10 15:36:57 2024 -0700
->
->     kcsan: Add example to data_race() kerneldoc header
->
->     Although the data_race() kerneldoc header accurately states what it does,
->     some of the implications and usage patterns are non-obvious.  Therefore,
->     add a brief locking example and also state how to have KCSAN ignore
->     accesses while also preventing the compiler from folding, spindling,
->     or otherwise mutilating the access.
->
->     [ paulmck: Apply Bart Van Assche feedback. ]
->
->     Reported-by: Bart Van Assche <bvanassche@acm.org>
->     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->     Cc: Marco Elver <elver@google.com>
->     Cc: Breno Leitao <leitao@debian.org>
->     Cc: Jens Axboe <axboe@kernel.dk>
->
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index c00cc6c0878a1..9249768ec7a26 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -194,9 +194,17 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->   * This data_race() macro is useful for situations in which data races
->   * should be forgiven.  One example is diagnostic code that accesses
->   * shared variables but is not a part of the core synchronization design.
-> + * For example, if accesses to a given variable are protected by a lock,
-> + * except for diagnostic code, then the accesses under the lock should
-> + * be plain C-language accesses and those in the diagnostic code should
-> + * use data_race().  This way, KCSAN will complain if buggy lockless
-> + * accesses to that variable are introduced, even if the buggy accesses
-> + * are protected by READ_ONCE() or WRITE_ONCE().
->   *
-> - * This macro *does not* affect normal code generation, but is a hint
-> - * to tooling that data races here are to be ignored.
-> + * This macro *does not* affect normal code generation, but is a hint to
-> + * tooling that data races here are to be ignored.  If code generation must
-> + * be protected *and* KCSAN should ignore the access, use both data_race()
+On 5/13/24 05:28, Chen Ni wrote:
+> The return value of kmemdup() is dst->freq_supported, not
+> src->freq_supported. Update the check accordingly.
+> 
+> Fixes: 830ead5fb0c5 ("dpll: fix pin dump crash for rebound module")
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> ---
+>   drivers/dpll/dpll_core.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+> index d0f6693ca142..32019dc33cca 100644
+> --- a/drivers/dpll/dpll_core.c
+> +++ b/drivers/dpll/dpll_core.c
+> @@ -449,7 +449,7 @@ static int dpll_pin_prop_dup(const struct dpll_pin_properties *src,
+>   				   sizeof(*src->freq_supported);
+>   		dst->freq_supported = kmemdup(src->freq_supported,
+>   					      freq_size, GFP_KERNEL);
+> -		if (!src->freq_supported)
+> +		if (!dst->freq_supported)
+>   			return -ENOMEM;
+>   	}
+>   	if (src->board_label) {
 
-"code generation must be protected" seems ambiguous, because
-protecting code generation could mean a lot of different things to
-different people.
-
-The more precise thing would be to write that "If the access must be
-atomic *and* KCSAN should ignore the access, use both ...".
-
-I've also had trouble in the past referring to "miscompilation" or
-similar, because that also entirely depends on the promised vs.
-expected semantics: if the code in question assumes for the access to
-be atomic, the compiler compiling the code in a way that the access is
-no longer atomic would be a "miscompilation". Although is it still a
-"miscompilation" if the compiler generated code according to specified
-language semantics (say according to our own LKMM) - and that's where
-opinions can diverge because it depends on which side we stand
-(compiler vs. our code).
-
-> + * and READ_ONCE(), for example, data_race(READ_ONCE(x)).
-
-Having more documentation sounds good to me, thanks for adding!
-
-This extra bit of documentation also exists in a longer form in
-access-marking.txt, correct? I wonder how it would be possible to
-refer to it, in case the reader wants to learn even more.
-
-Thanks,
--- Marco
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
