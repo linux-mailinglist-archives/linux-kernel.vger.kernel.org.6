@@ -1,105 +1,76 @@
-Return-Path: <linux-kernel+bounces-177504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C473B8C3FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:32:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74598C3FE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629641F2234F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:32:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9E61C22BB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7477014D293;
-	Mon, 13 May 2024 11:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDE414D29E;
+	Mon, 13 May 2024 11:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qdlm8FPk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4L8RDXy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBFC14C59D;
-	Mon, 13 May 2024 11:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B2D14C584;
+	Mon, 13 May 2024 11:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715599954; cv=none; b=Cd2KsA5noNMdENr+Z0WexqnixgQXJjZCugUGIJGPNUY0nDfj9Su3P6dwhQ/ORLJLZjqdJsiQ0VJ7ioOTtgKO1d+27bbu04Pgaq3GxnIjxiHr7AF/2dHi4dNmyRSU/4agnZKaaOGwwuwHsCvcJft2C+gTpL7vOT1DEg4Ut3Jzkvo=
+	t=1715600083; cv=none; b=Y6u7oeRqVi9n5WcuZlVbQpr4fPUj7utxsEPSvM+HkoFyuAurLymk5h5D1oaRNMBeZo3nt5zqrrv+hIfpaNTr8grn0/E7s0AjK68aTdw7mIfJXqylTP2sU/XXMTrCG7dX1VRyxzPe1CW1WlgJYXYHfRuUuXh0m69VMYE6QfrpbNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715599954; c=relaxed/simple;
-	bh=5Q7SvryTCkzI9i/Yhjm3yvtskbQvHGoyG+prJzmV6EA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eo7On/VamYK5pP9aZv5l2tiRycglpKh9+EKY5dlCh0f0noKaJ6z5tfej5XLdl1FmdmzyXun4cs2UegWSZkaYcm8NcXlFwJZVzjpUYDlAqwA9CwBCSRXN8h+jIhYlq2uBxqR+0Fkc9MAXKifY8MQ1NdaooOHiT2paDibC+CT2u00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qdlm8FPk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C740C113CC;
-	Mon, 13 May 2024 11:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715599954;
-	bh=5Q7SvryTCkzI9i/Yhjm3yvtskbQvHGoyG+prJzmV6EA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qdlm8FPkdFGhDn47egt8X7tUXbgywLQZMqliFak8Bqx5vK/s4QUWAtE+8k5Vd3AJq
-	 vj7N3p1X1b7+aK3LYX9o8/jF2zcI+78oDC0vorFQaUfS+u5hjCN8urYZvDUTo5573W
-	 qa4kcDv7DZx/eo5xXJnrNCHIsLO3p2pgO1dwT6QI=
-Date: Mon, 13 May 2024 13:32:31 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: stable@vger.kernel.org, airlied@gmail.com, airlied@redhat.com,
-	daniel@ffwll.ch, dreaming.about.electric.sheep@gmail.com,
-	dri-devel@lists.freedesktop.org, kraxel@redhat.com,
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, spice-devel@lists.freedesktop.org,
-	tzimmermann@suse.de, virtualization@lists.linux.dev,
-	Anders Blomdell <anders.blomdell@gmail.com>,
-	David Wang <00107082@163.com>
-Subject: Re: [Regression] 6.9.0: WARNING: workqueue: WQ_MEM_RECLAIM
- ttm:ttm_bo_delayed_delete [ttm] is flushing !WQ_MEM_RECLAIM
- events:qxl_gc_work [qxl]
-Message-ID: <2024051324-unfitted-levitator-cae6@gregkh>
-References: <20240430061337.764633-1-00107082@163.com>
- <20240506143003.4855-1-00107082@163.com>
- <ac41c761-27c9-48c3-bd80-d94d4db291e8@leemhuis.info>
- <b57f8ede-5de6-4d3d-96a0-d2fdc6c31174@gmail.com>
- <7e3fdac4-e0bc-42f4-9bb3-a6b16f323491@leemhuis.info>
+	s=arc-20240116; t=1715600083; c=relaxed/simple;
+	bh=S9sC2+G9YvC9OP8HvDTTM98Hu931Pe01owG83+5KNZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYZLr9BFaIE9zOlSpkeIahVVRYuv4iFt+IGQzLvAvSzNT3pWxgr9zSEXE8FeEeObWXLqlYWKaLvqyB5JkpB0rwUFIq9WEVDzVtqEoArwvnKD1rC/UecXI+VRz+iRQ9K78p/Oe0VNAeYbIS3ha1dquokrxp8nE8NJVNioJSdHBpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4L8RDXy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEEFCC32782;
+	Mon, 13 May 2024 11:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715600083;
+	bh=S9sC2+G9YvC9OP8HvDTTM98Hu931Pe01owG83+5KNZg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z4L8RDXykfsx96g7Njx+b5Xqxzj9oHgq1FgwSF5d4EJpdc5cZP4mYeJrED1hOGttk
+	 vWrtfE1kNGYJMr8hKQFWQh9i/IMNf2TpiEJINcgw49QVciuSnxreNJILK3sS478qHC
+	 3OwjKOqRs6nVf0bxdhCmRntJt6P/A/pZydw5LPSHAfFMPRX6kz+QpO/HeAUxRwOdyS
+	 Om7ByeETzoyMazUy8lzfzrUJH3SObWr0VV29WU1wIQdV/a4fblsDVhWDE/bizfw7q1
+	 OiIziGBT32CtblG8XOCZ3Fk/a3dhl2gKmAoex9GH1DeqF61My4/qDv/Jxf3I0hzREy
+	 y249VWn2DDfQA==
+Message-ID: <e7b52f2c-3d8c-4f6d-bf0b-73706e5e6754@kernel.org>
+Date: Mon, 13 May 2024 12:34:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7e3fdac4-e0bc-42f4-9bb3-a6b16f323491@leemhuis.info>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpftool: fix make dependencies for vmlinux.h
+To: Artem Savkov <asavkov@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ bpf@vger.kernel.org, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Jan Stancek <jstancek@redhat.com>
+References: <20240513112658.43691-1-asavkov@redhat.com>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <20240513112658.43691-1-asavkov@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, May 08, 2024 at 02:51:10PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 08.05.24 14:35, Anders Blomdell wrote:
-> > On 2024-05-07 07:04, Linux regression tracking (Thorsten Leemhuis) wrote:
-> >> On 06.05.24 16:30, David Wang wrote:
-> >>>> On 30.04.24 08:13, David Wang wrote:
-> >>
-> >>>> And confirmed that the warning is caused by
-> >>>> 07ed11afb68d94eadd4ffc082b97c2331307c5ea and reverting it can fix.
-> >>>
-> >>> The kernel warning still shows up in 6.9.0-rc7.
-> >>> (I think 4 high load processes on a 2-Core VM could easily trigger
-> >>> the kernel warning.)
-> >>
-> >> Thx for the report. Linus just reverted the commit 07ed11afb68 you
-> >> mentioned in your initial mail (I put that quote in again, see above):
-> >>
-> >> 3628e0383dd349 ("Reapply "drm/qxl: simplify qxl_fence_wait"")
-> >> https://git.kernel.org/torvalds/c/3628e0383dd349f02f882e612ab6184e4bb3dc10
-> >>
-> >> So this hopefully should be history now.
-> >>
-> > Since this affects the 6.8 series (6.8.7 and onwards), I made a CC to
-> > stable@vger.kernel.org
+2024-05-13 12:27 UTC+0100 ~ Artem Savkov <asavkov@redhat.com>
+> With pre-generated vmlinux.h there is no dependency on neither vmlinux
+> nor bootstrap bpftool. Define dependencies separately for both modes.
+> This avoids needless rebuilds in some corner cases.
 > 
-> Ohh, good idea, I thought Linus had added a stable tag, but that is not
-> the case. Adding Greg as well and making things explicit:
-> 
-> @Greg: you might want to add 3628e0383dd349 ("Reapply "drm/qxl: simplify
-> qxl_fence_wait"") to all branches that received 07ed11afb68d94 ("Revert
-> "drm/qxl: simplify qxl_fence_wait"") (which afaics went into v6.8.7,
-> v6.6.28, v6.1.87, and v5.15.156).
+> Suggested-by: Jan Stancek <jstancek@redhat.com>
+> Signed-off-by: Artem Savkov <asavkov@redhat.com>
 
-Now queued up, thanks.
 
-greg k-h
+Looks good, thank you.
+
+Acked-by: Quentin Monnet <qmo@kernel.org>
 
