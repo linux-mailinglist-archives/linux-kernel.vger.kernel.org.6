@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-177867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1958C458E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:01:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB198C4594
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 622181C20B3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:01:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27FA1B22F64
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0651BDD0;
-	Mon, 13 May 2024 17:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791B61CF8D;
+	Mon, 13 May 2024 17:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="buCcPj+i"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iNHmFR6J"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197251AACA;
-	Mon, 13 May 2024 17:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758041AACA;
+	Mon, 13 May 2024 17:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619683; cv=none; b=hUho9EvCERpSKNIOwMd8F2CR6fKvLZLq1R3+um7B+G9LbTPyoIAcwJzO7xFRgMSyrCm997T3ktluE9z6I9S93Nii8PAIVXwiI+Zbn20TKG3cVfs4lE09cxNE6zvEdqGMsC6L6gwcJBnY6Z5J7VTQlvW38rprP2O5VUBy0Bp+TlY=
+	t=1715619777; cv=none; b=CbiDaYYRPGhcKHN5dwpndEw+vbWXKCHNOP9848JYfnNtDctcwNSNxbvFeqZOAPwR+Tzev7fycZYuJGpiV5fasIFyV8mwLFZWYNuIaDcyGoeLlNhjRuTyq7ADbXPqDNPBL6wQWTikB0PfhOF0PLqLgTT8J7+12ZtHsrrOz4nwhWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619683; c=relaxed/simple;
-	bh=XsZtZuRiNpuWeI9mzQ+m0y+LVUyl0guK9RaBIDr+LAU=;
+	s=arc-20240116; t=1715619777; c=relaxed/simple;
+	bh=DudJ0M1t2xOJsupOhUhG4zVCuTfRl0L4ezlISHkVcho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UdS9wDhC3bQGEPh30wVw4nv3hFpQqYL+QFLDs3SHQ2UdMAjdRqBenXTYj3ANkAcPOzoDAjioOEiYdhWtkBHkX5W7Vf9wrMAvikadt5FbxxCSWT8/JLy6gLj44FiHyifWCQ6OMp3TTz+Pk4dsMX5i/R5Erv0UmS1uRJZoqf21Bng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=buCcPj+i; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=rW5YsYvCky4ywSsR072+8mYUmPaGEiq7r9XzUS8PJs9WXRlnd1ZWhgIkrKNAZvcSS5sNhymyD5UXne7rl0sV/djUgTiQR5JmqsuPjtpnP2fJAXOE7cVt6hcRRSGrvDHBAbG6S/VdJbyP/tuTuGMM4tOz0Ia3SOZemrjt0QXhC9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iNHmFR6J; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-792ce7a2025so59058485a.0;
-        Mon, 13 May 2024 10:01:21 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ecddf96313so39548135ad.2;
+        Mon, 13 May 2024 10:02:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715619681; x=1716224481; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715619776; x=1716224576; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EYkKLBBqb+wHJGa0p+AL05B0+Hq45S8piw7EzZCu8QM=;
-        b=buCcPj+idDixLB7H4eQfabmBqxq/iiuPruMfJCMwOLNCDNjarDuFmXjswR31BuvVYs
-         JQRBDrHHvmv10+x5t5YrnGWExsHakldE+yDihG2zItI5MGhYb/i/AA4YE/AiD4apzGLR
-         WFmwrrodOJwKeVhglkZWEVdooG5drmU2cub5IVvDbJRVK7aKwg7i9rqFz855T5ckGB6I
-         KdNZdYg9bSOIrRg3uTPrHbnemENckEEp2ZSyzkNNlMUAONKUSbJ/MrvUDS9kVivWEZUm
-         kEBiMlXMf3LQLjHihjB340RV0D/V2Mw+ZUgSqPvJOR80tuL8W2YTJmXSl5vCRJESDYC0
-         htmQ==
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d7/MyNyoBm5MjfWHxVQeY2+je7QIeNePW0nfv/5L5Eg=;
+        b=iNHmFR6JwShIHjz1goVo/Q48CO/gztaxRHszXGK0DVDbzCPdo6Fo85T3kj9ta6PvOI
+         /3JiBsXe2JHoHGVX2pAGiNdL5iW4r9C2MBHlMGsN0760tA3VrWOlGViVgppIJUrsaujq
+         IAwMl3IytFaQZ71QvwyB4AvekJQbaRU5kPMVZXAifbDEzSw6K1nWo95hPjgnQVWHYC1I
+         tqCr9SOC8KharvPLv0eO2XoPCJtKPK/7ny/V1N2CzvPTIRfiu5gkuoADOHfpOen/Dic6
+         ZygLBeJAEOsCFK+KBk1k02LH5KOEZGAng7dRfaqNZNOJeiP5aNs84qfSV9/EEVBMC6A4
+         sx9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715619681; x=1716224481;
+        d=1e100.net; s=20230601; t=1715619776; x=1716224576;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EYkKLBBqb+wHJGa0p+AL05B0+Hq45S8piw7EzZCu8QM=;
-        b=QBlvNTXiN092SV4FxsJSXhZK6Z+0168fOfBwrxxS4+FhTavzOj1LKHv4Kgg45ADUHW
-         kgs63+/+1ml5Z1Xl9G3s67lKGllraLDcffN1iSSvkq+OKYpxwpV0pMwnU1DlmML0Vdy8
-         Z0ODp2HRqc7vy7w+pXd3M1aPdFfnJ4MogMYyIN5LSX3NRiCvEMff5xeI9i7hfnzU4/XI
-         Qz/KxN4KqS4QaCDNuoy9XrmbEr2dUGFGBeVoe3RkB1/azCmd+bB7Adf6iF7tKVYJ20s/
-         zcZGge1jUVleDFCgg5bmUR47s4lr99uuUNJyNygUu89fqNb7unFKC1dQeB8K84J1fkLq
-         bMIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpZdRmCNKw9Wb1UHDrdfiNSojPNXXxDMRmRN5lDaxvgZqQ0F/Znnsd4lFH8BrO8ZhHLRGlbRtah8bRUkE7CWDS1bh1jRdH0cnxs5GxyX9o63JLCs+YaXHjQwdbsPed9kub
-X-Gm-Message-State: AOJu0YzChGHzz9ok4oK54uGR0E+wIn0M9WSgcnBpi6+ohJox9endGtCO
-	gmQM7vRXYh3Cb25qAk3j86z8GMwDfqXYGtvVi37jhBRssYykbL6a
-X-Google-Smtp-Source: AGHT+IFqtDw1zpak/yUs+kLR9yR+fmMLsjFVR4D5N6mYic0jZHbPNMj+gRyZFdubSlhDkrx0JFqG+Q==
-X-Received: by 2002:a05:620a:3859:b0:792:bffb:ab78 with SMTP id af79cd13be357-792c7574a69mr1035529185a.1.1715619676026;
-        Mon, 13 May 2024 10:01:16 -0700 (PDT)
-Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf27fa7csm472341485a.40.2024.05.13.10.01.15
+        bh=d7/MyNyoBm5MjfWHxVQeY2+je7QIeNePW0nfv/5L5Eg=;
+        b=ghBusnqF8V9ZGzlJwyPyJMQ4kLjRiGlwlpuNSdh/o++9wGiF+Gey/oeeLqSdKVEP/q
+         QnMkq4kd3HTxvQCYuZZJ7J3Oz7lVZVETQmdzG5tCNWLExBN1M/ZxGlfzH3YRxDwJ2oCd
+         Y1rY+AQEVT0PgezTA6odTCeNG1ATORC3DpZjEZRUSCZYuOs0reT0T02RmIQNysEPCq5U
+         FgQkvMZvg2iSaAMbhIoX1sFyt0J9aL9A8iFfuUrol4qVBQ0cWvD7Eg1hvNijp+gNZLET
+         UAidNy7byilFz+NcKlYl/rlHFxDjHff+f6WeeL0YaNrE0IzWxUrDHk/nVJTjhAQKCXQe
+         F5bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrhpzgNY8KvkJMXX4UaEsvBpve1XpreHn2OVk1f9D7TlF2I5KT5Nr93afHsYgloW7g7/Que8dWcopYT2nYv7ALe0QJpwgH5du6M7dtYjUUpMTQjZC4Nd69eje/PX3VBKCEdd2rbyMwqeX7D5YENnxgv2pKDf9VBo7zsgfeFV4Jb0U7OV4q1c44MTIN44IGrxjVfIlxd6+Ktgt23LupbgEnVQFrVRpdZA3ozgrYiha2qcpvf0gAYGjxmV6jjxZkqETvre5W0vVkvlQeaHc2mNVLtcO/yPfcT/qkeQ==
+X-Gm-Message-State: AOJu0Yzvq+HysE8Tm+eUClf5Ish+57rOQWzClvRYysvrFdL+pFLhDB+/
+	0jRiLcG/oC6UefWO8Rhk30bW6C8saY/7i7fIuQ/ji9u3NRa7HXh0
+X-Google-Smtp-Source: AGHT+IHwOZA/yfEnvU1uj/wTKNnpTSmBPcCl0ixyY9k7PieEC1uOAPdzdzFf5e1FfRz7aoujiXiBYA==
+X-Received: by 2002:a17:902:e945:b0:1eb:77ed:8fba with SMTP id d9443c01a7336-1ef43d1242dmr182253905ad.17.1715619775677;
+        Mon, 13 May 2024 10:02:55 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30b17sm81794325ad.143.2024.05.13.10.02.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 10:01:15 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 07D0A1200069;
-	Mon, 13 May 2024 13:01:15 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Mon, 13 May 2024 13:01:15 -0400
-X-ME-Sender: <xms:WkdCZs1Ru97HrtJrKvJQb9sLD_gaR8K76ecG_b_I_ESCiuwEgFB8gw>
-    <xme:WkdCZnEeMpjqJEGhrjvrmieIKqfh9hnHt0OaVrRBPtHNlyPsfmeFijw-JKzj2IGrZ
-    i0QrHfqezuiy1sBig>
-X-ME-Received: <xmr:WkdCZk7UPNr_qUbn-HYHh_VdM19ujL4z8_bjqn9q_xwUel-UHr4DfuRaDG_MTw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdeggedguddtjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
-    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
-    grthhtvghrnhepteegudejjeduheevkeetteeffefhffehtefguefgteffkeeiteeitddu
-    hefgfffgnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhu
-    nhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqdduje
-    ejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdr
-    nhgrmhgv
-X-ME-Proxy: <xmx:WkdCZl3lbzNexuk-m-CV_jrP5kAbLZ0Mcu-JIB7W6L1s5Yypm19iCA>
-    <xmx:WkdCZvH6tcJ7paQwpZiLXeXNXAWMejAsE1txT_g0PR9XDmBlJGP5vg>
-    <xmx:WkdCZu_6AjwzYMuJMxWqdbruzqyAxYpawa1RhrTMMJjTgRzPSeQNbA>
-    <xmx:WkdCZkkjqUP4PdpHxy-9hmmPGTH0HskqqSTmAA8vnR5EuEQNVB4yHQ>
-    <xmx:W0dCZvFotKIbCVLuQDVNPSU8yFQ7Jci5L6v-WF1DWIOos7fvVC29wmMj>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 May 2024 13:01:14 -0400 (EDT)
-Date: Mon, 13 May 2024 10:01:05 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Nikita Kiryushin <kiryushin@ancud.ru>, linke li <lilinke99@qq.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Zenghui Yu <zenghui.yu@linux.dev>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [GIT PULL] RCU changes for v6.10
-Message-ID: <ZkJHUYbrztpfG-BP@boqun-archlinux>
-References: <20240510183049.312477-1-urezki@gmail.com>
- <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
- <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
+        Mon, 13 May 2024 10:02:55 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 13 May 2024 07:02:54 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Edward Liaw <edliaw@google.com>
+Cc: shuah@kernel.org, =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kernel-team@android.com, linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org, linux-riscv@lists.infradead.org,
+	bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v4 08/66] selftests/cgroup: Drop define _GNU_SOURCE
+Message-ID: <ZkJHvrwZEqg6RJK5@slm.duckdns.org>
+References: <20240510000842.410729-1-edliaw@google.com>
+ <20240510000842.410729-9-edliaw@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -123,41 +107,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
+In-Reply-To: <20240510000842.410729-9-edliaw@google.com>
 
-On Mon, May 13, 2024 at 09:46:45AM -0700, Paul E. McKenney wrote:
-> On Mon, May 13, 2024 at 09:38:11AM -0700, Linus Torvalds wrote:
-> > [ I should have reacted to this earlier, but I just put all the "for
-> > 6.10" pull requests in the queue without looking closer ]
-> > 
-> > On Fri, 10 May 2024 at 11:30, Uladzislau Rezki (Sony) <urezki@gmail.com> wrote:
-> > >
-> > > Please pull the latest RCU git tree from:
-> > >
-> > > https://github.com/urezki/linux.git tags/rcu.next.v6.10
-> > 
-> > Hmm. I don't have your pgp key to check, but I do see that it's in the
-> > kernel.org repo of pgp keys so I know where to get it.
-> > 
-> > HOWEVER - importantly - I also don't find any handoff emails from Paul
-> > or Boqun giving a heads up that I should expect pull requests from
-> > others.
-> > 
-> > Put another way: I really want to see proper heads-up and "yes, this
-> > was all intentional, nothing odd going on" when seeing pull requests
-> > from new people to core areas.
+On Fri, May 10, 2024 at 12:06:25AM +0000, Edward Liaw wrote:
+> _GNU_SOURCE is provided by lib.mk, so it should be dropped to prevent
+> redefinition warnings.
 > 
-> My bad, and apologies!
-> 
+> Signed-off-by: Edward Liaw <edliaw@google.com>
 
-Apologies on my end as well, I should have done this or asked Paul to
-do.
+Applied to cgroup/for-6.10.
 
-Regards,
-Boqun
+Thanks.
 
-> Yes, this is intentional, nothing odd is going on, and Uladzislau's pull
-> request is legitimate.
-> 
-> 							Thanx, Paul
+-- 
+tejun
 
