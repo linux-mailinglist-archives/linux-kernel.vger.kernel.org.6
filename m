@@ -1,140 +1,215 @@
-Return-Path: <linux-kernel+bounces-177349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C248C3D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:34:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 346B58C3D5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:35:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082FC1C213EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 579E21C2140F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96C6147C8E;
-	Mon, 13 May 2024 08:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XVgit3Hi"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3336D147C8E;
+	Mon, 13 May 2024 08:35:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB3A4D9F2;
-	Mon, 13 May 2024 08:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F414D9F2;
+	Mon, 13 May 2024 08:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589272; cv=none; b=uyirEzqgzRl7Xwezfr1kFjd37IQp27vmuD0zdMI1jzkZO8Bb4FGR+tXIUcAqBeC9JrjiGJsMt/ZlaFBwEHJK7UnKEnlOejrKvQi4QUnvh9EOeIOXVCMEM4Zhs+l/8EUT8LXCbTZ44Ef/BAgXMfJor27PmeuZnDwIMtk9BzqDCLI=
+	t=1715589324; cv=none; b=o6TIFzqJcXI9Z4OEnHqAkhXqGOVPguz6JoD3hbFPmwoNqQgDFYWQKoTxcrqLkzLgiOm/fjTKyPaltsZ0972KiulM1Nfwks6nm3bq3+5cN8aNXV+bREZtb4LRz4lsBzREbEzR3qobkhJndnJ73OrCE8uQESeMiUG4fXsIyGOgx7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589272; c=relaxed/simple;
-	bh=3+JpsjijNwVfhIgxFFClxLN3MWbkLfvCjawwwkKMzyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnXT7jBgCFKHrebcHnNA5ZOUKqFEIv6nXSV3aeweNABMa0Q8ZAN04yhUkd7y+BApkQWixQPG3IUCONMfa1SCQfLBjFEme9RXlkRIxHnQuceY14vxj/xlr+krLTjdkCCF5oUd6xFiFH6oEeB/aMQG0XBQFLd/6Ew1g962msbKD3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XVgit3Hi; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C0B7A25B;
-	Mon, 13 May 2024 10:34:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715589260;
-	bh=3+JpsjijNwVfhIgxFFClxLN3MWbkLfvCjawwwkKMzyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XVgit3HiXv0r/DEgZjewkKpcLVKH45rkn4krxw+Z/vm6ly+fsEJ+xG45xgXw3E8Fr
-	 dEcilM+p9aGwMzSv3GMRBLs+RS0wiKQf+P5ekg6WNiLW7Z3gh/BZePedompb19Xf1d
-	 kLq4vYcQp/hxlWdEeRkBzSdKbJYZms20li2q9TiU=
-Date: Mon, 13 May 2024 11:34:17 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <mripard@redhat.com>
-Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240513083417.GA18630@pendragon.ideasonboard.com>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
- <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
- <20240507183613.GB20390@pendragon.ideasonboard.com>
- <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
- <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
- <20240513-heretic-didactic-newt-1d6daf@penduick>
+	s=arc-20240116; t=1715589324; c=relaxed/simple;
+	bh=QCf36tZtXXXjt922Hu7+FbrZmPbJUcU8bAE6NBRi73I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Hi7I8i8vFGYsRkHBHMQrGfvrRjLl7MLV7psSk+5FpgRT3kLNKFn2YAPShn0wgQv65ljTuqu2+IVBCrazv6eq89gPDGykj6RfcGZTeyLN7baExG/usHxxpBqUlWvLW3PgHeGNy4waVZG87q3v+cbo1Mp1Go+g6EodMfOK3osY5zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4VdCTR0vKxz6K9FL;
+	Mon, 13 May 2024 16:34:35 +0800 (CST)
+Received: from lhrpeml100001.china.huawei.com (unknown [7.191.160.183])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1430E140B2A;
+	Mon, 13 May 2024 16:35:11 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (7.191.163.240) by
+ lhrpeml100001.china.huawei.com (7.191.160.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 13 May 2024 09:35:10 +0100
+Received: from lhrpeml500005.china.huawei.com ([7.191.163.240]) by
+ lhrpeml500005.china.huawei.com ([7.191.163.240]) with mapi id 15.01.2507.039;
+ Mon, 13 May 2024 09:35:10 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, Alex Williamson
+	<alex.williamson@redhat.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v6 2/5] hisi_acc_vfio_pci: modify the register location of
+ the XQC address
+Thread-Topic: [PATCH v6 2/5] hisi_acc_vfio_pci: modify the register location
+ of the XQC address
+Thread-Index: AQHalxSYiMUGo9i0CEeMRf9rOEDS3LGFqjoAgAXIF4CAAET0AIABOcaAgACzG4CAAQ/SgIAAR8IAgAXg5QCAABUFoA==
+Date: Mon, 13 May 2024 08:35:10 +0000
+Message-ID: <4e7f3027d07645aca80e811598d4ce21@huawei.com>
+References: <20240425132322.12041-1-liulongfang@huawei.com>
+ <20240425132322.12041-3-liulongfang@huawei.com>
+ <20240503101138.7921401f.alex.williamson@redhat.com>
+ <bc4fd179-265a-cbd8-afcb-358748ece897@huawei.com>
+ <20240507063552.705cb1b6.alex.williamson@redhat.com>
+ <3911fd96-a872-c352-b0ab-0eb2ae982037@huawei.com>
+ <20240508115957.1c13dd12.alex.williamson@redhat.com>
+ <ed07017d74f147b28a069660100e3ad1@huawei.com>
+ <20240509082940.51a69feb.alex.williamson@redhat.com>
+ <e63c0c85-7f3a-100c-5059-322268b3f517@huawei.com>
+In-Reply-To: <e63c0c85-7f3a-100c-5059-322268b3f517@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240513-heretic-didactic-newt-1d6daf@penduick>
 
-On Mon, May 13, 2024 at 10:29:22AM +0200, Maxime Ripard wrote:
-> On Wed, May 08, 2024 at 10:36:08AM +0200, Daniel Vetter wrote:
-> > On Tue, May 07, 2024 at 04:07:39PM -0400, Nicolas Dufresne wrote:
-> > > Hi,
-> > > 
-> > > Le mardi 07 mai 2024 à 21:36 +0300, Laurent Pinchart a écrit :
-> > > > Shorter term, we have a problem to solve, and the best option we have
-> > > > found so far is to rely on dma-buf heaps as a backend for the frame
-> > > > buffer allocatro helper in libcamera for the use case described above.
-> > > > This won't work in 100% of the cases, clearly. It's a stop-gap measure
-> > > > until we can do better.
-> > > 
-> > > Considering the security concerned raised on this thread with dmabuf heap
-> > > allocation not be restricted by quotas, you'd get what you want quickly with
-> > > memfd + udmabuf instead (which is accounted already).
-> > > 
-> > > It was raised that distro don't enable udmabuf, but as stated there by Hans, in
-> > > any cases distro needs to take action to make the softISP works. This
-> > > alternative is easy and does not interfere in anyway with your future plan or
-> > > the libcamera API. You could even have both dmabuf heap (for Raspbian) and the
-> > > safer memfd+udmabuf for the distro with security concerns.
-> > > 
-> > > And for the long term plan, we can certainly get closer by fixing that issue
-> > > with accounting. This issue also applied to v4l2 io-ops, so it would be nice to
-> > > find common set of helpers to fix these exporters.
-> > 
-> > Yeah if this is just for softisp, then memfd + udmabuf is also what I was
-> > about to suggest. Not just as a stopgap, but as the real official thing.
-> > 
-> > udmabuf does kinda allow you to pin memory, but we can easily fix that by
-> > adding the right accounting and then either let mlock rlimits or cgroups
-> > kernel memory limits enforce good behavior.
-> 
-> I think the main drawback with memfd is that it'll be broken for devices
-> without an IOMMU, and while you said that it's uncommon for GPUs, it's
-> definitely not for codecs and display engines.
 
-If the application wants to share buffers between the camera and a
-display engine or codec, it should arguably not use the libcamera
-FrameBufferAllocator, but allocate the buffers from the display or the
-encoder. memfd wouldn't be used in that case.
 
-We need to eat our own dogfood though. If we want to push the
-responsibility for buffer allocation in the buffer sharing case to the
-application, we need to modify the cam application to do so when using
-the KMS backend.
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Monday, May 13, 2024 9:16 AM
+> To: Alex Williamson <alex.williamson@redhat.com>; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>
+> Cc: jgg@nvidia.com; Jonathan Cameron <jonathan.cameron@huawei.com>;
+> kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linuxarm@openeuler.org
+> Subject: Re: [PATCH v6 2/5] hisi_acc_vfio_pci: modify the register locati=
+on of
+> the XQC address
+>=20
+> On 2024/5/9 22:29, Alex Williamson wrote:
+> > On Thu, 9 May 2024 09:37:51 +0000
+> > Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+> wrote:
+> >
+> >>> -----Original Message-----
+> >>> From: Alex Williamson <alex.williamson@redhat.com>
+> >>> Sent: Wednesday, May 8, 2024 7:00 PM
+> >>> To: liulongfang <liulongfang@huawei.com>
+> >>> Cc: jgg@nvidia.com; Shameerali Kolothum Thodi
+> >>> <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> >>> <jonathan.cameron@huawei.com>; kvm@vger.kernel.org; linux-
+> >>> kernel@vger.kernel.org; linuxarm@openeuler.org
+> >>> Subject: Re: [PATCH v6 2/5] hisi_acc_vfio_pci: modify the register
+> location of
+> >>> the XQC address
+> >>
+> >> [...]
+> >>
+> >>>> HiSilicon accelerator equipment can perform general services after
+> >>> completing live migration.
+> >>>> This kind of business is executed through the user mode driver and o=
+nly
+> >>> needs to use SQE and CQE.
+> >>>>
+> >>>> At the same time, this device can also perform kernel-mode services =
+in
+> the
+> >>> VM through the crypto
+> >>>> subsystem. This kind of service requires the use of EQE.
+> >>>>
+> >>>> Finally, if the device is abnormal, the driver needs to perform a de=
+vice
+> >>> reset, and AEQE needs to
+> >>>> be used in this case.
+> >>>>
+> >>>> Therefore, a complete device live migration function needs to ensure
+> that
+> >>> device functions are
+> >>>> normal in all these scenarios.
+> >>>> Therefore, this data still needs to be migrated.
+> >>>
+> >>> Ok, I had jumped to an in-kernel host driver in reference to "kernel
+> >>> mode" rather than a guest kernel.  Migrating with bad data only affec=
+ts
+> >>> the current configuration of the device, reloading a guest driver to
+> >>> update these registers or a reset of the device would allow proper
+> >>> operation of the device, correct?
+> >>
+> >> Yes, after talking to Longfang, the device RAS will trigger a reset an=
+d
+> >> would function after reset.
+> >>
+> >>>
+> >>> But I think this still isn't really a complete solution, we know
+> >>> there's a bug in the migration data stream, so not only would we fix
+> >>> the data stream, but I think we should also take measures to prevent
+> >>> loading a known bad data stream.  AIUI migration of this device while
+> >>> running in kernel mode (ie. a kernel driver within a guest VM) is
+> >>> broken.  Therefore, the least we can do in a new kernel, knowing that
+> >>> there was previously a bug in the migration data stream, is to fail t=
+o
+> >>> load that migration data because it risks this scenario where the
+> >>> device is broken after migration.  Shouldn't we then also increment a
+> >>> migration version field in the data stream to block migrations that
+> >>> risk this breakage, or barring that, change the magic data field to
+> >>> prevent the migration?  Thanks,
+> >>
+> >> Ok. We could add a new ACC_DEV_MAGIC_V2 and prevent the migration
+> >> in vf_qm_check_match(). The only concern here is that, it will complet=
+ely
+> >> block old kernel to new kernel migration and since we can recover the
+> >> device after the reset whether it is too restrictive or not.
+> >
+> > What's the impact to the running driver, kernel or userspace, if the
+> > device is reset?  Migration is intended to be effectively transparent
+>=20
+> If the device is reset, the user's task needs to be restarted.
+> If an exception has been detected, the best way is not to migrate.
+>=20
+> > to the driver.  If the driver stalls and needs to reset the device,
+> > what has the migration driver accomplished versus an offline migration?
+> >
+> > If there's a way to detect from the migration data if the device is
+> > running in kernel mode or user mode then you could potentially accept
+> > and send v1 magic conditional that the device is in user mode and
+> > require v2 magic for any migration where the device is in kernel mode.
+> > This all adds complication though and seems like it has corner cases
+> > where we might allow migration to an old kernel that might trap the
+> > device there if the use case changes.
+> >
+>=20
+> The driver does not support checking whether the device is running in
+> kernel mode or user mode.
+> Moreover, the device supports user-mode services and kernel-mode services
+> to run at the same time.
+>=20
+> > Essentially it comes down to what should the migration experience be
+> > and while restricting old->new and new->old migration is undesirable,
+> > it seems old->old migration is effectively already broken anyway.  As
+> > you consider a v2 magic, perhaps consider how the migration data
+> > structure might be improved overall to better handle new features and
+> > bugs.  Thanks,
+> >
+>=20
+> We discussed a plan:
+> Update ACC_DEV_MAGIC to ACC_DEV_MAGIC_VERSION and configure its
+> last byte
+> as version information:
+>=20
+> /* QM match information, last byte is version number */
+> #define ACC_DEV_MAGIC_VERSION	0XACCDEVFEEDCAFE01
 
--- 
-Regards,
+Oops..cant have V there. But the idea is replace magic with last byte
+as version info which can be used in future for handling bugs/features
+etc.
 
-Laurent Pinchart
+Thanks,
+Shameer
 
