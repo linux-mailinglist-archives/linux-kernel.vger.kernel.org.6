@@ -1,50 +1,53 @@
-Return-Path: <linux-kernel+bounces-177662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA158C42C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:01:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA50E8C42C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0715B286A71
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:01:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95733286C12
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B01215358E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6BF153804;
 	Mon, 13 May 2024 14:01:42 +0000 (UTC)
 Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64971153572
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649C4153586
 	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715608902; cv=none; b=mAHxmQ2+O6CJtWnm61+Ql1dWUbTshx+53K5HtjwswYiY+ZbiaOJhDAy4LNqSyAkQE2k6exxqAxnDx/8wldkavubT3ShE0/JmX5aov+4UDP1hwto7e5bR6zyYmaDR6SEBLjHFHDjq5KGx+vh1GEv6LjvNZm8Kv/s1fTkfZRUti0Q=
+	t=1715608902; cv=none; b=SqRyiIqNGxkraSjmKbZHDY91/Q5d1BsNkiQiobk4aC5rEAk6OBOCwUwJLpCJ2Y5d6XxQpg2AhKRfb3V8sXGhGKjGTd/D5Q60/s2lLUETWow7pNLh31Poxg+T4Yy72kG7z2QPZD96xNUXYXJg2X2tdbTqK+59RWxcYwytsbY3mEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715608902; c=relaxed/simple;
-	bh=DqqiMdOsLjKJ4i69L67ZVSd+a0rntd7ed+pxuFA1jPo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s1mXWQTLoqHRA2H8607oeSxDfc5NIkJd6/Ty6VCgW3mCOMPVVR1wcJ1UjqAfKQAW+HsFcL1XWbPyXmbtm6e2ywWfizBG46XYgZipntN1cZfNh9HUFIGyh/lAzSejTuRijr3gH2t0W+I1ie0fcFNpWwnm0G41cAUp9hA+Puc+EqA=
+	bh=HPa93/yyuhVjmfwRFTysZ4WvwSZHtZfjl7F3cX7WKp4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fh+PIKl31mtjrMJZ0D3JwaqCTuTku744jcBd3dtP9lzzsr9SKr9j946TZVZU+Yf7uxdhN8jBiwf3nTvTHeUFPtjpro+50CKs9HZ2Gqng9l5RzLX3n0m64TmQuwCWT5uykPncJj2MvbO6sPoM0r/NwYY8Ry1Rp8aNEEW9G24pf2Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VdLfl56pXzvYJL;
-	Mon, 13 May 2024 21:58:07 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VdLfm25WKzvYHl;
+	Mon, 13 May 2024 21:58:08 +0800 (CST)
 Received: from kwepemm600012.china.huawei.com (unknown [7.193.23.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5E1FB18009C;
+	by mail.maildlp.com (Postfix) with ESMTPS id E782D1800B8;
 	Mon, 13 May 2024 22:01:34 +0800 (CST)
 Received: from build.huawei.com (10.175.101.6) by
  kwepemm600012.china.huawei.com (7.193.23.74) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 13 May 2024 22:01:33 +0800
+ 15.1.2507.35; Mon, 13 May 2024 22:01:34 +0800
 From: Wenchao Hao <haowenchao2@huawei.com>
 To: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, Aaron
  Tomlin <atomlin@atomlin.com>, <linux-kernel@vger.kernel.org>
 CC: Wenchao Hao <haowenchao22@gmail.com>, Wenchao Hao <haowenchao2@huawei.com>
-Subject: [PATCH v2 0/2] workqueue: Fix rescuer task's name truncated
-Date: Mon, 13 May 2024 22:01:13 +0800
-Message-ID: <20240513140115.3892827-1-haowenchao2@huawei.com>
+Subject: [PATCH v2 1/2] workqueue: Fix rescuer task's name truncated
+Date: Mon, 13 May 2024 22:01:14 +0800
+Message-ID: <20240513140115.3892827-2-haowenchao2@huawei.com>
 X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20240513140115.3892827-1-haowenchao2@huawei.com>
+References: <20240513140115.3892827-1-haowenchao2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,27 +74,50 @@ root   95  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
 root   97  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
 root   99  0.0  0.0  0  0 ?   I<   11:18   0:00 [kworker/R-scsi_]
 
-I want to fix this issue by split rescuer name to 2 part like other
-kworker, the normal part is "kworker/R" which is set to task_struct's comm,
+Fix this issue by split rescuer name to 2 part like other kworker,
+the normal part is "kworker/R" which is set to task_struct's comm,
 another part is wq->name which is added to kworker's desc. These 2 parts
 would be merged in wq_worker_comm().
 
-The first patch fix the rescuer task's name truncated;
-The second patch fix workqueue_struct's name truncated.
+Fixes: b6a46f7263bd ("workqueue: Rename rescuer kworker")
 
-V2:
-Add another patch to increased worker desc's length to 32 to fix compile
-warning reported:
-https://lore.kernel.org/oe-kbuild-all/202405131400.sEYZHYk2-lkp@intel.com/
+Signed-off-by: Wenchao Hao <haowenchao2@huawei.com>
+Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
+---
+ kernel/workqueue.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Wenchao Hao (2):
-  workqueue: Fix rescuer task's name truncated
-  workqueue: Increase worker desc's length to 32
-
- include/linux/workqueue.h | 2 +-
- kernel/workqueue.c        | 6 +++++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index d2dbe099286b..07c077a53f93 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -5443,7 +5443,7 @@ static int init_rescuer(struct workqueue_struct *wq)
+ 	}
+ 
+ 	rescuer->rescue_wq = wq;
+-	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R-%s", wq->name);
++	rescuer->task = kthread_create(rescuer_thread, rescuer, "kworker/R");
+ 	if (IS_ERR(rescuer->task)) {
+ 		ret = PTR_ERR(rescuer->task);
+ 		pr_err("workqueue: Failed to create a rescuer kthread for wq \"%s\": %pe",
+@@ -5452,6 +5452,8 @@ static int init_rescuer(struct workqueue_struct *wq)
+ 		return ret;
+ 	}
+ 
++	snprintf(rescuer->desc, sizeof(rescuer->desc), "%s", wq->name);
++
+ 	wq->rescuer = rescuer;
+ 	if (wq->flags & WQ_UNBOUND)
+ 		kthread_bind_mask(rescuer->task, wq_unbound_cpumask);
+@@ -6302,6 +6304,8 @@ void wq_worker_comm(char *buf, size_t size, struct task_struct *task)
+ 						  worker->desc);
+ 			}
+ 			raw_spin_unlock_irq(&pool->lock);
++		} else if (worker->desc[0] != '\0') {
++			scnprintf(buf + off, size - off, "-%s", worker->desc);
+ 		}
+ 	}
+ 
 -- 
 2.32.0
 
