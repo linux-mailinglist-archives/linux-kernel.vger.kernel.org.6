@@ -1,74 +1,56 @@
-Return-Path: <linux-kernel+bounces-177546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B07C8C408D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:18:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00A708C4098
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8D31F21459
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D3B1C21D05
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B17A14F12F;
-	Mon, 13 May 2024 12:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FBfnzJF7"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4670814F9E5;
+	Mon, 13 May 2024 12:19:20 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3E414EC6A;
-	Mon, 13 May 2024 12:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1595E14EC6A;
+	Mon, 13 May 2024 12:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602729; cv=none; b=kcxNipLrAmGZvGB7rKr9n4/N4WuYBae9hP86uMvCtx8VXTNwQ6Dn/PdOWHiwMFDPymRrf9hv3U4yajreLaHpeIULJKZonzfeJDUWLKSOpazXDMi908B7bgag9S4V4Wkxbwx6QuWBUHaf7j0UvwtmAv0X9/InPuPJT4e5GjCCtoU=
+	t=1715602759; cv=none; b=aG/GJawicsFo6JgJjezRX7s331DC7dEl5toFahOvEeU8FGxS6/lwtATcxsHN6Gu8zUi7Uwb9Yc5k1TponoNv54hTl8S/mkHm+/D0w/pMKtPk6AV1FfmiYRQm5JU06dJjIArxt/j0Kk48lmeitBc/2Z6qFMeWzVb274I5Y6797Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602729; c=relaxed/simple;
-	bh=eTJyGFZuuUTf0Z9OwR7wZgGFFPBjo9/DMFTo6oR/Ncw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=rM1D2PaOaEgQwsIrYeJ8HXfb/Z6/a8Ztt7YDpjQzzJTw5IEbJisTDonnOupp6voeH/NpZUGbz88rdoN1j58RamTAimXWEeVJam+l97/Ev556CK/dBC9ZU/C0Y+0M91dF3mw1rwK+Uz11dlY7TJplgPB80kyIDDgipBbSVfS0C5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FBfnzJF7; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1715602416; bh=xv+9xk6+JmJ0SrgxJjY2cegIbCyOT4cBAO76O1vPTxI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=FBfnzJF7yo5kFg+i/lP4ezMVj/PlZp43R+qepMoMmCj1/eAew618hV8nXhsdEUQ7A
-	 iYpwSIMgqrha0dhSpRIq9PnALbbzc/rqQ7NpdsxXi/0BHLTNIIzBKCZ+YgnRK5rM5J
-	 54jAoJCprxpgV5LVVzCL8Qb0bCpYk2cl4V6+GAw8=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 1D13ACD5; Mon, 13 May 2024 20:07:17 +0800
-X-QQ-mid: xmsmtpt1715602037tws7b70qy
-Message-ID: <tencent_8BBBDE33A39E011B1B4BFB1B332504BA4808@qq.com>
-X-QQ-XMAILINFO: NvH2zBBgt3uT997bsVhXHWC5QIzHeJNxRUlyXolPdllYLQueIU+6HC1jfqXrDH
-	 zkSAgVyu1yXWNcxU2vyh3aokE5Jx5B53H6KTNBG6jGJnoDIQ7UobGNi6l71ivnZ/GO87z88vd8kx
-	 ZLSua5Kup6S2TZ8J5ZZHvZm7nkjDjWLyssLeGd9ndq4z4aNV2Cj+mIDer2fNoddpO3eA5LD0ntfu
-	 x8K2yzh3TZqVlCpgyoPQNEKqtX9k02TG69wL7sYLWa6GSALywRxGYAQVax10+oXtmKLampK94/2t
-	 437/Icwuk1hqy/kN5L1RWtx24cupN9LxhMk7hnkDFmxHx7fJAiUgomWtUkcF/IDmKlK2pK93pT0s
-	 2XK3FVN7PRbAOEF3fFEoypvNNKtuv72tw8VYd60hA5IjxoYJhcHfHjf9wAmJzi2/WB0QGMhUPVYP
-	 Ba2gSKz60JWHdI9m+2DzJwIZfdoTudxYOYcUfpmQei9uOW45QwllIviXa+Efa6DlCT3QXZ+vJ16c
-	 1L4aKMjSJU5ydZtuwAtr9syhGO5BYU80Q1B7Y79pB3h5AcMiaMKWOJGxccIZK0aShvbvYFwa0dFc
-	 QQI5Puefy9YzYnjkBIVS6EijF2GKNDPsyYiNo+J7z8V+rqs8BrOYAeqbfMDZTh9la6jOdpgkdtLo
-	 LzWs1U7Rb8EzSmzkh0O5q2Cb0gDVkrQ5hU/1o/Gv7nnNzNT5GNNiVdrMa2CEMal6mGjIGlwFlA6f
-	 KxYmtG/L7RE0RmZ2AP+x8lTNZz9ISBTqLocYXMbAlEuQXo1MF2QRUlZhLY4MxWawRgBsEMagYUU8
-	 bn84U1ToQjqnhewfbl59Af7qx5qQM8r3TIAV8H1H7Z4YbtmYrMvhyByFfbysJTxUEQsrme0RoIH4
-	 LmS32iKNx76WlpwaraJ95vAkLzh0P/Cejnmm7SfFN/vazSvzxek3vFTxW66zyfLIohriAmYsDDa6
-	 PyqitKZCg=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+73414091bd382684ee2b@syzkaller.appspotmail.com
-Cc: bfoster@redhat.com,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
+	s=arc-20240116; t=1715602759; c=relaxed/simple;
+	bh=lkPugVOypGhAP7Q3SGXFpjeqcaDfBZ/dF03MDdJXcP4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Xjz4XwiEzRoC2to5pkKG43Um+DMfCgGGpn109kqWi1MXqF5o1CtWYcV9/ywzCu2cJehoP9WIieDzX/VnBnXGkDCrv8vTNi/gJVSmoktNQQBFvYDqS864s2RPAQHFMDWrtGBX8Lqrt5xqU2z1l/tSjWXs8S34/9Gv3n+uZkuYA8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VdJSR0dcyz4f3kkP;
+	Mon, 13 May 2024 20:19:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F0D31A016E;
+	Mon, 13 May 2024 20:19:08 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP1 (Coremail) with SMTP id cCh0CgAn9g46BUJm8iY0Mg--.57325S4;
+	Mon, 13 May 2024 20:19:08 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk
+Cc: cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH] bcachefs: if input options invalid return -BCH_ERR_option_name
-Date: Mon, 13 May 2024 20:07:17 +0800
-X-OQ-MSGID: <20240513120717.3349265-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <0000000000001e59c20618455922@google.com>
-References: <0000000000001e59c20618455922@google.com>
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH -next 0/2] blk-throttle: fix lower control under super low iops limit
+Date: Mon, 13 May 2024 20:08:46 +0800
+Message-Id: <20240513120848.2828797-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,45 +58,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgAn9g46BUJm8iY0Mg--.57325S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY77AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2js
+	IEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE
+	5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeV
+	CFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l
+	FIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-When the input parameter options format is invalid, it will cause the opts object
-to not be set correctly. 
-When a similar situation occurs, it should return -BCH_ERR_option_name and terminate
-the mounting action.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
-Reported-and-tested-by: syzbot+73414091bd382684ee2b@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- fs/bcachefs/opts.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Yu Kuai (2):
+  blk-throttle: factor out a helper to get throtl_slice from tg
+  blk-throttle: fix lower control under super low iops limit
 
-diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
-index e1800c4119b5..2fc59b8aa32d 100644
---- a/fs/bcachefs/opts.c
-+++ b/fs/bcachefs/opts.c
-@@ -443,7 +443,7 @@ int bch2_parse_mount_opts(struct bch_fs *c, struct bch_opts *opts,
- 			  char *options)
- {
- 	char *copied_opts, *copied_opts_start;
--	char *opt, *name, *val;
-+	char *opt, *name, *val, opts_set = 0;
- 	int ret, id;
- 	struct printbuf err = PRINTBUF;
- 	u64 v;
-@@ -498,8 +498,11 @@ int bch2_parse_mount_opts(struct bch_fs *c, struct bch_opts *opts,
- 			goto bad_val;
- 
- 		bch2_opt_set_by_id(opts, id, v);
-+		opts_set = 1;
- 	}
- 
-+	if (!opts_set)
-+		goto bad_opt;
- 	ret = 0;
- 	goto out;
- 
+ block/blk-throttle.c | 52 ++++++++++++++++++++++++++++++++------------
+ block/blk-throttle.h |  6 +++++
+ 2 files changed, 44 insertions(+), 14 deletions(-)
+
 -- 
-2.43.0
+2.39.2
 
 
