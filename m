@@ -1,124 +1,120 @@
-Return-Path: <linux-kernel+bounces-177883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7C228C45CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:13:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070418C45D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D3C62822F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1DC1F24E7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7BF22612;
-	Mon, 13 May 2024 17:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D3421362;
+	Mon, 13 May 2024 17:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3VNWfQFD"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PXQC96iq"
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BA51CFB9
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652DC20335
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715620394; cv=none; b=ibvN8aAbhww5vyeiwDW0VXBYJ0vh5aQwbm3tnA9lu7/G0xcOv0mP2P7cR15LzkNpI6BH3WO5eaxT7egwnx5dHSmHKZA00LuxsX09UABblM2VLVQVtJToBBmpteVoXDNZbZxRqrpRsYQEg2u7FJ2RMJX9FpYHKlwjNkXfRT4TjeQ=
+	t=1715620549; cv=none; b=Jb4gmxOOR2UnBaTAlvlgIYOENjQ7DeapfVfoXHaUCBtUlbcOjqFgLzWKtjhoJ8we/NfxAuzTVJkZ+cYy3C9zoQTWJS+uzHhqJJiVC7Oa/CKKaKkeKoUX2dx75OGlV7ZKsDMLwgXllPcIAj/KhXsT620dZa6YFJE3b7/niHuEtMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715620394; c=relaxed/simple;
-	bh=lnR1APljmIH03rmMQHJl0kK8AphsBZFL2sGEtcS0pIc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NyekfpvcLFXjC7OfDczlTYyVOKhTnlatlzel4n4iRDxZiwLph+njlU9MmcDtwRpJTzNRA5+0DKM57FwnxeubuSLSTrgj04prrzQhOVqUeDtWmsQIGrKmAv3am2G+s5HTUYewtZZWPIiCDyJsKBFlF4z5UVkVEYiR784gFMW+4/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3VNWfQFD; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-43dfe020675so860361cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:13:13 -0700 (PDT)
+	s=arc-20240116; t=1715620549; c=relaxed/simple;
+	bh=Kpqsl0XSnFWNY3VT/3iCR1YsNFUYLpITGe1YGMB5gWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K29psEfDfAW81prG7kMglMiGLENdRRWh6ipuUm0iz451AZcwg776aCL8FbejXvxY0HV8OrAGeMp/QbyyQZNZ9MOdJPJGi7cix4fORw4t5AjarQXdTL6AEZQ+OW19l7mg3Epf1SipoSq1bXYWQNSiEp7kzt8m3kjnAP2+O2Oj6vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PXQC96iq; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7e1b8606bfdso24893539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:15:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715620392; x=1716225192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TITLmmYxLbFcBdgKs9jfudTIyaXBl3JLzkEtZcPj6iM=;
-        b=3VNWfQFDww5D++cnMYUTAJEnp8H19Shi6nBrxXoKNonRjjREGtDCb8QWJPf6D/EZ1+
-         h4d0JE+1iYy/Xrc4LtzaBvCI9RCanktuC+WJ3KXP0YWyqTsvPIaL2Zl3Dfnhi9Sgn2Xo
-         Ly+I8dV4zV4XC9A6ZwUBmjmmD1BNy0oAQ3JwF+7mQ+L0q4K9FoiK1RO//RHJSky6NNPi
-         ioNVKw9KXZtJqmNjvzO5MRtML1RN2CAsOSr7LcJBEEsNRox13GN5AIMo2bivPXkgY7po
-         odNXAynYhBg7Mjpnv3aibD6V4Mxm7inm/Ne51Vg3OLEgUnRNI6XxKcdd/VZisCMT8MYW
-         GzMw==
+        d=linuxfoundation.org; s=google; t=1715620547; x=1716225347; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dkhS35s9f4IrzQ+xDWVyzbK3FS+T/wMMOlTPXDBz7SM=;
+        b=PXQC96iqmBFhpewiiaLtUIx131w4X7zkSiQZxwfApKEPDJEQEtsPPmCIcvbdbP2wYa
+         us10KJPxTokfHPdI9HRhhdpBvIDR2uQo5FP6rhS6lZHpf9YqMIy4B+DsJubBXBC55R1v
+         tgI34GZ7lmdKolCGMIlKVzmuaG/JIWgkUJwtY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715620392; x=1716225192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TITLmmYxLbFcBdgKs9jfudTIyaXBl3JLzkEtZcPj6iM=;
-        b=hEHOQymUtmfZTL03zqB+woD7P9Gnx9ZSIK8wrZVHRMdcZn6Pds4tz4dia4v8H3KWfF
-         m+emtjPVP+w482h+UMbXNAQTGQzv+i2Vukux5LQL51ye8PRxNg+JoesjS264iHL5JlXR
-         2dci9zDaAmF3x/Gd9nv2nsYaD6uVShz5jw40eJFevrNQQnAjUr2mDd8aauGPjYZ3BjQ8
-         TGoxOrjL2B8x2wMrWIaXht53H0LWyk2i86lutgMY049YF6spn5g1GXW7eAvHnj8RJAjZ
-         9I6JvNBtoDrvEmRXDcIwlMFwlDN+991LNilxukv5rbLFXAzdRs2VvKSkN8kqwiu1ui4S
-         DMhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ1CzMKPwYVWkuMn7fryLr8RN1HDtQFPQ4xSKMcW1vgGps2Af0BteIBP2LjL283GvqavInh9NIz58I1vyT7PIpDHDU1unkaTTcjnBE
-X-Gm-Message-State: AOJu0Yym29hzxgRDrZVrPUpnP5qqF3TShQVl5Vo0zaq+Dkp49GeynNlg
-	8Tsyxq62Qfzrjk0ppAXnwxLSIFQAuLYSgCEiY+OyJIS6kOTygXOieHOxb/H+XTSt0LgI7u7yu0z
-	eWGuJCb7l94gsEXMpn/7Q1FRIBc4AanbK/tXDAQ0qjKR0J9Irqg==
-X-Google-Smtp-Source: AGHT+IEAb7Fu5kKXgnCg0HYiSTA3/+R79Po1+IwMmEjCt9aXoksBEl8u8nhvj+mp18aBdE+jvaZmZMXcFsJzaoRrzgA=
-X-Received: by 2002:a05:622a:4184:b0:43d:e294:3075 with SMTP id
- d75a77b69052e-43e0a21da9cmr4872671cf.7.1715620392377; Mon, 13 May 2024
- 10:13:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715620547; x=1716225347;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dkhS35s9f4IrzQ+xDWVyzbK3FS+T/wMMOlTPXDBz7SM=;
+        b=fAMmjASgED/5cjYpyThDQF1d7ItYCrM0f3hZr7+PYXZRBEuVR+T/Z34I28TrfACPUh
+         TDd4k3AoewYkwIfjuq7jnodYhrsBTxfo6ARUz+xPjWtQ75+2TExTRsIgGHrTBStPS6Vt
+         egeEz1I8YpUm8R/5dFS8Cffbwt36CkCoRCQnABnVIuoAcFxEJS2Ly+6BVXKOr/td6MqG
+         3cVdhegY2+j6hgiGdRbgF7QuXknW+93ZmrmHfqwJEeb0glOUvaJXrb3Fwpn4msLf5NBj
+         4p6WTbbSmfLY6C18/TUa8xfbLP07P2WDPP6fl8zxmOJct8CEKBit5hGf+HcYXqpGbf29
+         7//w==
+X-Forwarded-Encrypted: i=1; AJvYcCWNdoFZakgItQo3Y6m/6HBOdSJFyrQsdtnoVO/lzTM8C1wRZx258Olr9bgnUd/2n7Ym/LtvLl4ct42yDBvMSjdxWoaI0Dw9J24HC0Qs
+X-Gm-Message-State: AOJu0YzFjOv8vUjutJdpPq+zi3CUZn9ha2SSiR8PbINJr3vBwrtDnrib
+	VWebxCBuhdlps3F4P1/NCWVX2RD9MUPvtF+6tBkcxrFrVzgGZL59EIJtRYCDqYg=
+X-Google-Smtp-Source: AGHT+IEsUUvesNSzDOZXBVwOpH/mJvxScDlUqihZEzqBcc1/za2BRTRLILpTeNLwc1aaK6xtRTtPOg==
+X-Received: by 2002:a6b:5007:0:b0:7de:b4dc:9b8f with SMTP id ca18e2360f4ac-7e1b5238e16mr1143476539f.2.1715620547263;
+        Mon, 13 May 2024 10:15:47 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893714d92esm2559667173.75.2024.05.13.10.15.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 10:15:46 -0700 (PDT)
+Message-ID: <6016b316-d266-48cf-aca9-127c72f9681b@linuxfoundation.org>
+Date: Mon, 13 May 2024 11:15:45 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240508133518.3204221-1-leitao@debian.org> <Zj-WE1aG7ihtevG3@x1>
- <CAP-5=fXXYVgb4rnftaiTZTEniGOr5NnpfXJFNqX96GXP6=oTiA@mail.gmail.com>
- <Zj-qIbUN2XFBnvP8@x1> <ZkJI6Q6KVKlzDgSQ@gmail.com>
-In-Reply-To: <ZkJI6Q6KVKlzDgSQ@gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 13 May 2024 10:13:01 -0700
-Message-ID: <CAP-5=fU=tG9Gk+OfO3TVfBONTc35oksNqi3xm6Y_hjc0oOK=dw@mail.gmail.com>
-Subject: Re: [PATCH] perf list: Fix the --no-desc option
-To: Breno Leitao <leitao@debian.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, leit@meta.com, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>, 
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Kselftest fixes for v6.9
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
+Cc: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Brendan Higgins <brendanhiggins@google.com>,
+ Christian Brauner <brauner@kernel.org>, David Gow <davidgow@google.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Jon Hunter <jonathanh@nvidia.com>,
+ Kees Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>,
+ Ron Economos <re@w6rz.net>, Ronald Warsow <rwarsow@gmx.de>,
+ Sasha Levin <sashal@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Shengyu Li <shengyu.li.evgeny@gmail.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>, Will Drewry <wad@chromium.org>,
+ kernel test robot <oliver.sang@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ netdev@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
+ shuah <shuah@kernel.org>
+References: <20240512105657.931466-1-mic@digikod.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240512105657.931466-1-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024 at 10:08=E2=80=AFAM Breno Leitao <leitao@debian.org> w=
-rote:
->
-> On Sat, May 11, 2024 at 02:25:53PM -0300, Arnaldo Carvalho de Melo wrote:
-> > With Breno's patch the default doesn't change, --no-desc gets fixed but
-> > --long-desc is broken:
-> >
-> > perf list --long-desc
-> > <SNIP>
-> > cache:
-> >   longest_lat_cache.miss
-> >        [Counts the number of cacheable memory requests that miss in the=
- LLC. Counts on a per core basis. Unit: cpu_atom]
-> >        [Counts the number of cacheable memory requests that miss in the=
- Last Level Cache (LLC). Requests include demand loads,reads for ownership =
-(RFO),instruction fetches and L1 HW
-> >         prefetches. If the platform has an L3 cache,the LLC is the L3 c=
-ache,otherwise it is the L2 cache. Counts on a per core basis]
-> > <SNIP>
->
-> Oh, both descriptions (long and "short") are being displayed.
->
-> > Thanks for asking the question, I'm dropping the patch, Breno, can you
-> > try again?
->
-> Sure, let me think about it and send a v2.
+On 5/12/24 04:56, Mickaël Salaün wrote:
+> Hi Linus,
+> 
+> Without reply from Shuah, and given the importance of these fixes [1], here is
+> a PR to fix Kselftest (broken since v6.9-rc1) for at least KVM, pidfd, and
+> Landlock.  I cannot test against all kselftests though.  This has been in
+> linux-next since the beginning of this week, and so far only one issue has been
+> reported [2] and fixed [3].
+> 
+> Feel free to take this PR if you see fit.
 
-Thanks Breno! My bug, thanks for digging into this.
+Thank you - I totally missed the emails about sending these up for 6.9 :(
 
-Ian
+I see that these are already in Linux 6.9
 
-> Thanks!
+thanks,
+-- Shuah
+
 
