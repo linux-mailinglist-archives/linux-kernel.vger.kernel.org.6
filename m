@@ -1,159 +1,266 @@
-Return-Path: <linux-kernel+bounces-177418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D83AE8C3E48
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:43:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4648C3E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC661F22385
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:43:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95FF21F2231A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9AF148827;
-	Mon, 13 May 2024 09:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741EA148848;
+	Mon, 13 May 2024 09:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="INyNBbtK"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="omVU3PSm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF78219E7;
-	Mon, 13 May 2024 09:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC70219E7;
+	Mon, 13 May 2024 09:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715593402; cv=none; b=kKpoerESjOJPP2aZAXXYxkDFVU6scAMYOEdOCmZBMWHBE6++7+jI5tfoA4ZKhXGk4oZgnqbgnMJ6I1h3hZ0BnUgiwjvDysUtFC08M9SQ5S0hjqkHmmB0ItHY3eUrWNosM92IJKp7J6wDDB0JC/PKfuCxVKevZc5obgMB4WRFMxE=
+	t=1715593516; cv=none; b=vGUOyjfTwGnpHYtfJKd6OfjmgVj4EY4IeLw0cZMqNQeY2xveYbqWtDWS6NrPU/waCZd6z75xhT5q9x4stahfbZ7qT1OM0lOI1t7om5hG3tqCLtSm4ZkkgKx8AT5SGEuS7srfnGNKj5W9GtbkBFfz8DOrjedk8hdefg1QetVUaVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715593402; c=relaxed/simple;
-	bh=izkCTqpLBQCSN8vjmeX4sZ24IBrC0VWu/QzOxgrxUeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e56KrySqYFZ8EvqJLUH8HhbmNu2+lr9JtCS74ERxr2WeN2kNeKkN5bMjtHz19pyCzF3gVLm6rMQuIEo1EodoZ3VUlIJvxob1vddY1N287LDm54HFloud8bGBM5d7KMdMUjP+DSGgCPojxJho2k8SY2OJYyS4Qh8JFs9ApZUdfiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=INyNBbtK; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-622e32414ffso9356627b3.1;
-        Mon, 13 May 2024 02:43:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715593399; x=1716198199; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+/gJ7W9jK8yRpC+gXkb+9v8zR17FUBWTE2nmLOEIu8o=;
-        b=INyNBbtKG6nD5gZRtOpJtwmZQq1hwWz0cCCbxsHy8YP7jJkHBtD9bGcW6r7M075SEs
-         JuGgplnfoQ3S1Uj133wF0vEqlfaVh3tcu801yUVOdZ7iu6mBXnnX6jJOhnLZ2CNlIehu
-         w/rZngexW13BK3XMZsLbJzO/4Nqbmz7NNASXLcGGQZ117mNB6HmvHEFbduJi1Hzljqyz
-         CUetNFp17pRPz70UaiHJ08FxcRHp4jUwAh2/Dv5yoUBLVqBV17CNQXXjfK0Ix3xFfnXU
-         DQdZZqznIJorpCg5XuR4wQKeFJq3GlSN/Qy2lQKN5BJQfJNtRWn8TSMmp/5ahSy0LO7n
-         Ao5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715593399; x=1716198199;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+/gJ7W9jK8yRpC+gXkb+9v8zR17FUBWTE2nmLOEIu8o=;
-        b=wsLwSpaoNOTh9Uha5WW5qOdQPdrIk8E0fYEF10uEf1kYiPiZum2kvaewS+ZoGZXRiB
-         0klOpPm4oLeB0pYo9hSDkWKUkgm64+jEGYgNn7EPH3rEn7uDMLM5KItPjlTKr13hqwt1
-         x4/Hc6WFGmKRKBEjr/BHGAOyo2iMwjbWTzHb2YizY1VkabTx6ROjOtIIEZdxyYiRDQoc
-         VA8/J+2rVDCEarV5hjXu4lj8cabTpIb+vrpRLkvCW+tun7BPUhlbGmLs+EQ3m+XN7W3y
-         GEz34yPonrriQn8Igm74rul3bKQ640UWc2oIK1tML2L+IegGePVlhqHSlMVBNNPgIHtU
-         9V9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZD//lIYGZR9xpQWE28T+KBesyxhnRjM4BdKV9Cb2coy8ujNPHpay7ZkZxJlipPkxNsuOlfkHPXioAP2G7YWsASfEIAuXoN9HioNPbsYb8WbOFPJ4YFzqYGc3xlAajrDbKkcACZQ0W2ITxJ599LmxQcHFsjlqMks09V8ibq3BMC22InmQrCe9K
-X-Gm-Message-State: AOJu0YycqpVpzeuo29eVcD1IUHlAZo5FiE8Etpof8Il6z+M5R5KDEx5v
-	Sttvz3tf9lpLboZNzL8Sn857ncbj12g5nm96VRE53LUAbFpM5bH4JSoNi4ceXfpQr1lHvb/eLAT
-	urNnd/wFODq7uBXYr1GD8nGRPPe0=
-X-Google-Smtp-Source: AGHT+IFbjzOztndJSlKdpP3r9xNRThifVHYHVwA0PtsZ/VjMun5yi3vbEXBsk//OEAy4FEhPddw6zeI0a6E7nZjWDQs=
-X-Received: by 2002:a25:26ca:0:b0:de5:4cd0:8da4 with SMTP id
- 3f1490d57ef6-dee4f35b6f2mr11944212276.33.1715593399330; Mon, 13 May 2024
- 02:43:19 -0700 (PDT)
+	s=arc-20240116; t=1715593516; c=relaxed/simple;
+	bh=peJzz5pNrQ/dEd3/VmjQgcVwR9MR0Gcc9ElaVB8uRng=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=kcClYuP8xEtXoK3SxLWKoXmgELQDNMiYaSrQeVHiYDXFPNAY8Nynz69yTEw5pGaPsNXcygW576gm9+jtVCtOmukwx4krrfthvFyBN96RzGOuZXMCLzxTi/3mRk2iAJWN8u7VFqgt+6tLAbC/22WrcPfPmm9SQRT0nsMIWstekXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=omVU3PSm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA43EC32782;
+	Mon, 13 May 2024 09:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715593516;
+	bh=peJzz5pNrQ/dEd3/VmjQgcVwR9MR0Gcc9ElaVB8uRng=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=omVU3PSmZPRU/dJbyVEGRWRJOaYQYEVzCZM7oVTLVxHkxzcm7EuYMmMHpHXqdj/FO
+	 mtx/X476N7pzNOk+/GEZFPq1248HEHfguaFibnNrn0+ax5CZStVsWQkUuoY5pSr9z8
+	 79CjnPHph4jEJVAsTq7dUiTpJOcLBqbHA63ZjpcLhqCNDPcNQzcRlMOHwS08nqQ9Cq
+	 BK8mpsrxtC+b6/hUZJfMDJLNAl28WyyT/jiMKm98KU2oyFHZ2hiA01jnTWt/58YTeV
+	 naEXmJP+KMvmfjFUEFwNpIdLqFYn7cWFCcdh7Z0xADPkjchGbrnK34yYSjKR9wy7Bi
+	 fRnJboZpjXtRA==
+Date: Mon, 13 May 2024 18:45:07 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-man@vger.kernel.org, x86@kernel.org,
+ bpf@vger.kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song
+ <yhs@fb.com>, John Fastabend <john.fastabend@gmail.com>, Peter Zijlstra
+ <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>, "Edgecombe, Rick P"
+ <rick.p.edgecombe@intel.com>, Deepak Gupta <debug@rivosinc.com>
+Subject: Re: [PATCHv5 bpf-next 7/8] selftests/x86: Add return uprobe shadow
+ stack test
+Message-Id: <20240513184507.215ec89dea4790243d17a52c@kernel.org>
+In-Reply-To: <20240507105321.71524-8-jolsa@kernel.org>
+References: <20240507105321.71524-1-jolsa@kernel.org>
+	<20240507105321.71524-8-jolsa@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <656c3b4a-0481-4634-9dd4-19bb9e4cd612@gmail.com>
- <4dcd5fca-c200-42d1-a8f2-3045d5430fd6@nvidia.com> <65a79654-90e8-42b9-a840-e2ef404fe1f2@gmail.com>
- <D181GV24ULEA.UWQHOSM80TEV@kernel.org>
-In-Reply-To: <D181GV24ULEA.UWQHOSM80TEV@kernel.org>
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Date: Mon, 13 May 2024 11:43:08 +0200
-Message-ID: <CAJ3WTWRQcZN5JSNAhUKXfpH8Q5sW_-EorMpgCE24G3NpczpqZQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] selftests/sgx: Fix the implicit declaration of
- asprintf() compiler error
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: John Hubbard <jhubbard@nvidia.com>, linux-kselftest@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Edward Liaw <edliaw@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thanks for your explanation.
+On Tue,  7 May 2024 12:53:20 +0200
+Jiri Olsa <jolsa@kernel.org> wrote:
 
-I did not realise that __USE_GNU is evil. :-/
+> Adding return uprobe test for shadow stack and making sure it's
+> working properly. Borrowed some of the code from bpf selftests.
 
-FWIW, there is a sound explanation of the difference between
-_GNU_SOURCE and __USE_GNU
-here: https://stackoverflow.com/questions/7296963/gnu-source-and-use-gnu
+Hi Jiri,
 
-Thanks,
-Mirsad
+I can not find "SKIP" result in this change. If CONFIG_UPROBES=n,
+this should skip uprobe test.
 
-On Mon, May 13, 2024 at 1:02=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Sat May 11, 2024 at 12:02 AM EEST, Mirsad Todorovac wrote:
-> > On 5/10/24 22:52, John Hubbard wrote:
-> > > On 5/10/24 1:37 PM, Mirsad Todorovac wrote:
-> > > ...
-> > >> The fix defines __USE_GNU before including <stdio.h> in case it isn'=
-t already
-> > >> defined. After this intervention the module compiles OK.
-> > >
-> > > Instead of interventions, I believe the standard way to do this is to=
- simply
-> > > define _GNU_SOURCE before including the header file(s). For example, =
-the
-> > > following also fixes the compilation failure on Ubuntu:
-> > >
-> > > diff --git a/tools/testing/selftests/sgx/main.c b/tools/testing/selft=
-ests/sgx/main.c
-> > > index 9820b3809c69..bb6e795d06e2 100644
-> > > --- a/tools/testing/selftests/sgx/main.c
-> > > +++ b/tools/testing/selftests/sgx/main.c
-> > > @@ -1,6 +1,7 @@
-> > >  // SPDX-License-Identifier: GPL-2.0
-> > >  /*  Copyright(c) 2016-20 Intel Corporation. */
-> > >
-> > > +#define _GNU_SOURCE
-> > >  #include <cpuid.h>
-> > >  #include <elf.h>
-> > >  #include <errno.h>
-> > >
-> > >
-> > > However, that's not required, because Edward Liaw is already on v4 of
-> > > a patchset[1] that fixes up the _GNU_SOURCE problem for all selftests=
-.
-> > >
-> > > [1] https://lore.kernel.org/all/20240510000842.410729-2-edliaw@google=
-com/
-> > >
-> > > thanks,
-> >
-> > Hi,
-> >
-> > Yes, I actually like Ed's solution more, because it solves the asprintf=
-() prototype
-> > problem with TEST_HARNESS_MAIN macro for all of the tests.
-> >
-> > Sorry for the noise and the time wasted reviewing. 8-|
-> >
-> > Best regards,
-> > Mirsad Todorovac
->
-> Yeah, well, it does not cause any harm and I was not sure when the patch
-> set is in mainline so thus gave the pointers. Anyway, never ever touch
-> __USE_GNU and always look at the man page from man7.org next time and
-> should cause less friction...
->
-> BR, Jarkko
+Thank you,
+
+> 
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  .../testing/selftests/x86/test_shadow_stack.c | 142 ++++++++++++++++++
+>  1 file changed, 142 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/x86/test_shadow_stack.c b/tools/testing/selftests/x86/test_shadow_stack.c
+> index 757e6527f67e..1b919baa999b 100644
+> --- a/tools/testing/selftests/x86/test_shadow_stack.c
+> +++ b/tools/testing/selftests/x86/test_shadow_stack.c
+> @@ -34,6 +34,7 @@
+>  #include <sys/ptrace.h>
+>  #include <sys/signal.h>
+>  #include <linux/elf.h>
+> +#include <linux/perf_event.h>
+>  
+>  /*
+>   * Define the ABI defines if needed, so people can run the tests
+> @@ -681,6 +682,141 @@ int test_32bit(void)
+>  	return !segv_triggered;
+>  }
+>  
+> +static int parse_uint_from_file(const char *file, const char *fmt)
+> +{
+> +	int err, ret;
+> +	FILE *f;
+> +
+> +	f = fopen(file, "re");
+> +	if (!f) {
+> +		err = -errno;
+> +		printf("failed to open '%s': %d\n", file, err);
+> +		return err;
+> +	}
+> +	err = fscanf(f, fmt, &ret);
+> +	if (err != 1) {
+> +		err = err == EOF ? -EIO : -errno;
+> +		printf("failed to parse '%s': %d\n", file, err);
+> +		fclose(f);
+> +		return err;
+> +	}
+> +	fclose(f);
+> +	return ret;
+> +}
+> +
+> +static int determine_uprobe_perf_type(void)
+> +{
+> +	const char *file = "/sys/bus/event_source/devices/uprobe/type";
+> +
+> +	return parse_uint_from_file(file, "%d\n");
+> +}
+> +
+> +static int determine_uprobe_retprobe_bit(void)
+> +{
+> +	const char *file = "/sys/bus/event_source/devices/uprobe/format/retprobe";
+> +
+> +	return parse_uint_from_file(file, "config:%d\n");
+> +}
+> +
+> +static ssize_t get_uprobe_offset(const void *addr)
+> +{
+> +	size_t start, end, base;
+> +	char buf[256];
+> +	bool found = false;
+> +	FILE *f;
+> +
+> +	f = fopen("/proc/self/maps", "r");
+> +	if (!f)
+> +		return -errno;
+> +
+> +	while (fscanf(f, "%zx-%zx %s %zx %*[^\n]\n", &start, &end, buf, &base) == 4) {
+> +		if (buf[2] == 'x' && (uintptr_t)addr >= start && (uintptr_t)addr < end) {
+> +			found = true;
+> +			break;
+> +		}
+> +	}
+> +
+> +	fclose(f);
+> +
+> +	if (!found)
+> +		return -ESRCH;
+> +
+> +	return (uintptr_t)addr - start + base;
+> +}
+> +
+> +static __attribute__((noinline)) void uretprobe_trigger(void)
+> +{
+> +	asm volatile ("");
+> +}
+> +
+> +/*
+> + * This test setups return uprobe, which is sensitive to shadow stack
+> + * (crashes without extra fix). After executing the uretprobe we fail
+> + * the test if we receive SIGSEGV, no crash means we're good.
+> + *
+> + * Helper functions above borrowed from bpf selftests.
+> + */
+> +static int test_uretprobe(void)
+> +{
+> +	const size_t attr_sz = sizeof(struct perf_event_attr);
+> +	const char *file = "/proc/self/exe";
+> +	int bit, fd = 0, type, err = 1;
+> +	struct perf_event_attr attr;
+> +	struct sigaction sa = {};
+> +	ssize_t offset;
+> +
+> +	type = determine_uprobe_perf_type();
+> +	if (type < 0)
+> +		return 1;
+> +
+> +	offset = get_uprobe_offset(uretprobe_trigger);
+> +	if (offset < 0)
+> +		return 1;
+> +
+> +	bit = determine_uprobe_retprobe_bit();
+> +	if (bit < 0)
+> +		return 1;
+> +
+> +	sa.sa_sigaction = segv_gp_handler;
+> +	sa.sa_flags = SA_SIGINFO;
+> +	if (sigaction(SIGSEGV, &sa, NULL))
+> +		return 1;
+> +
+> +	/* Setup return uprobe through perf event interface. */
+> +	memset(&attr, 0, attr_sz);
+> +	attr.size = attr_sz;
+> +	attr.type = type;
+> +	attr.config = 1 << bit;
+> +	attr.config1 = (__u64) (unsigned long) file;
+> +	attr.config2 = offset;
+> +
+> +	fd = syscall(__NR_perf_event_open, &attr, 0 /* pid */, -1 /* cpu */,
+> +		     -1 /* group_fd */, PERF_FLAG_FD_CLOEXEC);
+> +	if (fd < 0)
+> +		goto out;
+> +
+> +	if (sigsetjmp(jmp_buffer, 1))
+> +		goto out;
+> +
+> +	ARCH_PRCTL(ARCH_SHSTK_ENABLE, ARCH_SHSTK_SHSTK);
+> +
+> +	/*
+> +	 * This either segfaults and goes through sigsetjmp above
+> +	 * or succeeds and we're good.
+> +	 */
+> +	uretprobe_trigger();
+> +
+> +	printf("[OK]\tUretprobe test\n");
+> +	err = 0;
+> +
+> +out:
+> +	ARCH_PRCTL(ARCH_SHSTK_DISABLE, ARCH_SHSTK_SHSTK);
+> +	signal(SIGSEGV, SIG_DFL);
+> +	if (fd)
+> +		close(fd);
+> +	return err;
+> +}
+> +
+>  void segv_handler_ptrace(int signum, siginfo_t *si, void *uc)
+>  {
+>  	/* The SSP adjustment caused a segfault. */
+> @@ -867,6 +1003,12 @@ int main(int argc, char *argv[])
+>  		goto out;
+>  	}
+>  
+> +	if (test_uretprobe()) {
+> +		ret = 1;
+> +		printf("[FAIL]\turetprobe test\n");
+> +		goto out;
+> +	}
+> +
+>  	return ret;
+>  
+>  out:
+> -- 
+> 2.44.0
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
