@@ -1,96 +1,89 @@
-Return-Path: <linux-kernel+bounces-177148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1CF8C3AD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B5898C3AD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29BB5B20C37
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C640A2812EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9DD146005;
-	Mon, 13 May 2024 05:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A699146006;
+	Mon, 13 May 2024 05:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGY9H0Gd"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="BeEYIHlO"
+Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2064.outbound.protection.outlook.com [40.107.104.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6774B1E493
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715576774; cv=none; b=KWVvM5KLjxY3IIllMOc7RDylY9T+j4T2ShSQWiQ/++5yEeQwCtumatKJDpiQ0+ZvDC/3hg99c6wymywrKOwX72bMwnlhpPZZFEgmaF7sgVpAKVIQ2XJhe/J+JQBCzMYMVFfUTJAnCP1Z29+japyYQ48GvHX4BnTTtsL1tmwHv18=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715576774; c=relaxed/simple;
-	bh=HfX7F7ojfaf41PdCJZ+kwmTV2ZLK/OS8ZYak0OOG1h0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hgpSXTR4O7pJLteQ54sFjrFm1eY/WhnmHRC3H0OeEX7nFy4y9LWt3RdWB+kGHPIn8En/bLOCc3mIw4uPU+HD2ijzwuAMORP68b+DGtpjKc0ENzi3pn+7JWH1SLjlGZlEF9CMFkv7B1gFqQWBTgQe5/dpyeD9+ZWZOBg1sx9vBQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGY9H0Gd; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f45020ac2cso3042020b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 22:06:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715576773; x=1716181573; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CMsOuSvzf4aVI6LsRrkYGtxxdKvIAWtBa8DssIl0GDM=;
-        b=CGY9H0GdIG/dzPFk/XvgK6eUrkM8P4VELdS/6u0XMeiRAEPRVKPCUeVvTMh6rYrGOi
-         5YBlIBwfihHIfBInf1sXHm667+9mIrIKMdr+GdCmBQur4fY7pwx3WLPjNwy8vNVcm3uP
-         5dQ3UFn4DYVo0EMb0ipwQEebJQ3NqFFVUQH5Yo/pptcdi9vG5/3Qp8pSJlfjdJq18HwE
-         IvIo4BGoPlSbMx7WHp57+O/H/yA5OU7uOetCc4nhgPCSflAiu/eoOo5s0wxEW1268Vhe
-         k28noixWeZd2kCiWzqZBmXDLacSRp187seNUDOwe0OTmhA4+ZtPLPDoWuRvZM3YwE7IP
-         Krjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715576773; x=1716181573;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CMsOuSvzf4aVI6LsRrkYGtxxdKvIAWtBa8DssIl0GDM=;
-        b=Q1SekGhmlR/OLB7cZpvQmsKFxNspC1tX17I1OjG/2+Yrcq40bX1r9WM7AuGFijEmpe
-         Xv++3CVy/HqKnGXdYmdsdJ+jD2AAl8EJdAodqzU4d0BxgsgDVNtyT6M5C0/hIyJ96gK6
-         C9nKJb+ilf9CaBZvgf7To0Um0UeJFRbBMAbfHQfOA2PfNiQHAowxytI9dwjuU4TLJLNe
-         FmohjYJtH1u/ltXd9AMD9EQERLG33q91jQ90raoOs8vwyBOqI1DcVItNS1eNyDbs6Wbn
-         lD+ovLqQma05ODxKa18/st/ZAJMQZ5d1Yoy1O+eWJD/qQ97axmlm+bFdgir6QB9+j8fr
-         gEMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEZFcGTUpesz+vNxdyZyz/oDX9wu2i6OR/wwY05lwo2j1ItRHihPWZHzxA+TKsoYLwsyQ1y8WmbH1GsZlgJ7JAhe8FE2wLM1f8HEjF
-X-Gm-Message-State: AOJu0YyNkKS/99Ln2QgXyxe7YMMPwSS9rMwHRuQgIfTg2SaIBwXAo4r0
-	HkfJAxmvXflj4660ry0hEX1TqCOA5w8vxLyzW2mZ06DgjJAnroY4
-X-Google-Smtp-Source: AGHT+IGYrPCxcmnR8cJ4d+auQeAC8wKD1GQ9YTUIxUbDF7H2GDkf39apOY5KNAJeaYeRqV+ZkUDjPw==
-X-Received: by 2002:a05:6a00:2daa:b0:6f3:ebc4:4407 with SMTP id d2e1a72fcca58-6f4e0299e1amr9756864b3a.4.1715576772592;
-        Sun, 12 May 2024 22:06:12 -0700 (PDT)
-Received: from LancedeMBP.lan ([112.10.225.242])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2b26ceasm6507313b3a.187.2024.05.12.22.06.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 22:06:12 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org,
-	sj@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	maskray@google.com,
-	ziy@nvidia.com,
-	ryan.roberts@arm.com,
-	david@redhat.com,
-	21cnbao@gmail.com,
-	mhocko@suse.com,
-	fengwei.yin@intel.com,
-	zokeefe@google.com,
-	shy828301@gmail.com,
-	xiehuan09@gmail.com,
-	libang.li@antgroup.com,
-	wangkefeng.wang@huawei.com,
-	songmuchun@bytedance.com,
-	peterx@redhat.com,
-	minchan@kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Lance Yang <ioworker0@gmail.com>
-Subject: [PATCH v5 0/4] Reclaim lazyfree THP without splitting
-Date: Mon, 13 May 2024 13:05:21 +0800
-Message-Id: <20240513050525.84252-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.33.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B540A145FE5
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715576827; cv=fail; b=JIK15vUuBDTVQJRWEBwpotjMSE8UE4w72ZtKm0No71rZm7vJ9GCaVlYyM8gLotIZ/89da5J7Zvkt9Lq4qT7JOrTZKk4fyR5LNwZTMH7JvGzvPywfY+r8ZN/9BXXKw8DMHRLJ/fiAsiiNhpOdY2sHg2mHhmQqJr4zs+5Vi6cP4Kg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715576827; c=relaxed/simple;
+	bh=Zfn64PcS4yPaWNK0gvJRBtwWnzQzowMeeApiIHsW8hc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hHfFnT3oP2bgwH4Dqo5x2b144ys4mlMQLNsIiTnTvw6Ba4yQT5B1RnIQygHET6NUSd+7wjPwV5vT7leRqwVAumYNW9PH/CbM27+YLcdvknJSjEY/fRloyqaRHhxpe+GJ5defLN7K2S4Z8i2DyCPsljhbmOKOIx4lvn7KhFhMf18=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=BeEYIHlO; arc=fail smtp.client-ip=40.107.104.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TMmyC9b3la2K6wnnLsulDC+Qn3dTxyjFql1qy5tZE9Qu9s6hE8pWAni30j9hWO5P4vNf/0CmiDQUlI/a3eZoOmcILREOYuv0Od5XBhRV/PZprLSebrQfuMRQx9nsRMuTbzATca0ks3c3Oy263rN4ssZatDZgRRXwwwLjubU6wMISz7pEzQZVKifd8RZapf17iOL+7TzucYiFjgWjVhz04umz2prNLV1i5qGRmDyqN8Is6o/1eI4wAo8/A/SORRtXFEhEYF+GX0OuEFmIVPyRHFo0G0AeOCogpw3TpRPhCmO1WPS6+X7YJm+lYAd/xtlwBz4RNVE5oW6fWtsy8drW9g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=G4YCHX/ZfNYOF8s1odnacnwl2OXQMMIZKdB2IdHASTY=;
+ b=Wx2GYLYHcPNvehAOZw/eXD3K4FJ8aqbzOIkwhb5oCdGNFvhPecbM+ij1xDlKVDK9+nxgd8XYvHSS5DyDUO0ef7wqLmvf9+K++pHDgiD2l0brpT3+dfb/v36NBFr3t62LWuvZIua73N1xSNqqiQWXr8ZC1NTH9Mjij4Q5jUU7Lrd8sO49XzesczPrej5B5AxKb/cqdjlkyzfebrJ3/57i/L7RAwEm9VeX/WeLNAaDTkP6rWnPN3aqGlRBGAsmg0mrLIn/QcmLiVnANj0R8wnc1Q8IWlY0t3+ASYMfh9Eg64Hmvh6WscLQt81qocxmxNnID+o4yWjEHPJVDMXvmRgJBw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G4YCHX/ZfNYOF8s1odnacnwl2OXQMMIZKdB2IdHASTY=;
+ b=BeEYIHlOUVIJxCMbl858g+24YDMmiJ/8oLG0PpL5d7APQsOt2k/Z6bI5UUz0oqqLdeoBVAxUV4TLsnLb9GxROHTNFPApmR3aL5no+nTYPquiCPU8VCYfWATVbNj/0tuf2qbDPhrJDFrkzVroqWuLHCUvLtjaDaUXJiILxY+9O+GVBVHyRQsbC2xnV5dau0DmfxJbm+fTMKNQL8WOv7NbV8gciwmMXhLhg0O6r42PUmAyWYkw83VyqYm1/DBsaoOFV1sGOOjexqG5spRybJJZyBdcMjXY9PVuwyp8ui4S3RLb0vUtyzr74ZD1eDILzMjLlvM1oMCsZhRK7pW+t+u26Q==
+Received: from DUZP191CA0040.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:4f8::18)
+ by VI0PR10MB9032.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:215::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 05:07:00 +0000
+Received: from DU6PEPF0000A7E0.eurprd02.prod.outlook.com
+ (2603:10a6:10:4f8:cafe::8d) by DUZP191CA0040.outlook.office365.com
+ (2603:10a6:10:4f8::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55 via Frontend
+ Transport; Mon, 13 May 2024 05:06:59 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ DU6PEPF0000A7E0.mail.protection.outlook.com (10.167.8.39) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 05:06:59 +0000
+Received: from SI-EXCAS2000.de.bosch.com (10.139.217.201) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 13 May
+ 2024 07:06:48 +0200
+Received: from HI7-C-0001H.de.bosch.com (10.139.217.196) by
+ SI-EXCAS2000.de.bosch.com (10.139.217.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.37; Mon, 13 May 2024 07:06:48 +0200
+From: Dirk Behme <dirk.behme@de.bosch.com>
+To: <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>
+CC: <dirk.behme@de.bosch.com>, Rafael J Wysocki <rafael@kernel.org>, "Eugeniu
+ Rosca" <eugeniu.rosca@bosch.com>,
+	<syzbot+ffa8143439596313a85a@syzkaller.appspotmail.com>, Ashish Sangwan
+	<a.sangwan@samsung.com>, Namjae Jeon <namjae.jeon@samsung.com>
+Subject: [PATCH v2] drivers: core: synchronize really_probe() and dev_uevent()
+Date: Mon, 13 May 2024 07:06:34 +0200
+Message-ID: <20240513050634.3964461-1-dirk.behme@de.bosch.com>
+X-Mailer: git-send-email 2.28.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,92 +91,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU6PEPF0000A7E0:EE_|VI0PR10MB9032:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3e445e8-5104-41ab-c6ce-08dc730a84f9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|1800799015|36860700004|376005|82310400017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?S2qdZ+XLIWJGVymEdnVF6B2DXJop0NEUiVkOCJYkZ/uwVN6JFxV+6NwasD1L?=
+ =?us-ascii?Q?ggxwFe9S4MiLD37ys0QKTNCfrUMC3iEm5XYtz6hvip573gen3cR6XPkbNWGk?=
+ =?us-ascii?Q?kYTQzaYnjPVCtns1cZKNZ2E233UNVd6avy+qXvHxjRKe3h/ekgLpG0b05xpg?=
+ =?us-ascii?Q?86QJHxGDGzBgI+sNzj+CLCLTFIRptyQF06pbfu7CZa5gsCP2fx+nxjf7gPrA?=
+ =?us-ascii?Q?J2AEuom21d8pJ2oxxaFPaxKQ/LkWtgnUJQQLjRBKz9gVSGiRDUJQ1j/t20Xy?=
+ =?us-ascii?Q?YWopbBkg+dGM3/ACycAZiE4q3PJzV+g6uPcNv+GqoXAEHlxECz2OyI9xCpdW?=
+ =?us-ascii?Q?LzVLhfV/mfA0NABk/hJ2RbOSO1tUYN3elWJSLbABAtxq+OAJMNitw8dlmgGi?=
+ =?us-ascii?Q?sH8OW/LywCNYCYPHEOEQdUbW59MoUWThkfkCaXfQiB+QaHhIN9tEByNFu0+1?=
+ =?us-ascii?Q?ELtwEsZpgQfD3DGDltlm7D0sxX6oYBvTs9sdQ7kDZ/SaHbonRMP3pw/YRtyI?=
+ =?us-ascii?Q?EbsrIktDNBF4G8S/flSN4Q7hEbc+V4Le6mgG1z7lYV6fTpR62YG0PeDQMFK2?=
+ =?us-ascii?Q?bYmE0R6bJ4iV+vMEP4sPx6DtXGv9rIbHvH3e8ovPlA2SL5h7WInXjUXUvmq1?=
+ =?us-ascii?Q?cHIrR8w+c/Rf8iEyx3x7rwb56PMM5G6nwQD4hfa4YBDp2SWsftgkRjc9Qlcu?=
+ =?us-ascii?Q?n6wgb5eNksEiEpsU32kDWwEtRjkxkJMcox/ofjdEs+i58lc9/vT6nSEHDDTq?=
+ =?us-ascii?Q?nTxtbRAdGLlh6z6VGV3UQG5wmcOF3f21iPEGi3IH/1ekvaKdiZL0EyFN0ADv?=
+ =?us-ascii?Q?P/MpLGA+QI+nRlS65dZ2Htf+3/T9D+8SdwHZlVK7+7jOkgwgBm+TSz2lI3uf?=
+ =?us-ascii?Q?0plJ3g5/RqpFx82WRD5l10A4tdNM7lvjQkU2PsNOQlrqlaOEADoG3d5cr8w5?=
+ =?us-ascii?Q?jIUjGDF5D0AyXeRt7jtdjXwBg0D64IKuAb5Qly4w6TMR8OJyYM51v5yN21LY?=
+ =?us-ascii?Q?qqyCgboNWTRT5Nkqg+YBPdNRalfR6ZlUBIot0V71xNlPC2VY1jQbBW72MmSb?=
+ =?us-ascii?Q?9uOhI+ZYk1g6djHR1sQeimB7/xv5sDoVSVpqZJvZsGn0+xyFOt7oyro6ISiI?=
+ =?us-ascii?Q?KVepCYPMEX/tuWDIF74v7FbnZLq9wrO+rS2K9WzptphGE8HyT5oy/MgCuLkv?=
+ =?us-ascii?Q?aclSjJbLIKTybicaLJwc78+9abTp0NCPh0ZoylFU5rQrXVfJaBz2pHXnKF7T?=
+ =?us-ascii?Q?eC5sX4JwPWnZEOq7x1Z5JRjLTyEF3pKXXAppZi/ZzAJAUKKJ0lPilC4rvouF?=
+ =?us-ascii?Q?qf8EIBz/Os0CaxRb8j8691wW?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(36860700004)(376005)(82310400017);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 05:06:59.6659
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3e445e8-5104-41ab-c6ce-08dc730a84f9
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000A7E0.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB9032
 
-Hi all,
+Synchronize the dev->driver usage in really_probe() and dev_uevent().
+These can run in different threads, what can result in the following
+race condition for dev->driver uninitialization:
 
-This series adds support for reclaiming PMD-mapped THP marked as lazyfree
-without needing to first split the large folio via split_huge_pmd_address().
+Thread #1:
+==========
 
-When the user no longer requires the pages, they would use madvise(MADV_FREE)
-to mark the pages as lazy free. Subsequently, they typically would not re-write
-to that memory again.
+really_probe() {
+..
+probe_failed:
+..
+device_unbind_cleanup(dev) {
+    ...
+    dev->driver = NULL;   // <= Failed probe sets dev->driver to NULL
+    ...
+    }
+..
+}
 
-During memory reclaim, if we detect that the large folio and its PMD are both
-still marked as clean and there are no unexpected references(such as GUP), so we
-can just discard the memory lazily, improving the efficiency of memory
-reclamation in this case.
+Thread #2:
+==========
 
-Performance Testing
-===================
+dev_uevent() {
+..
+if (dev->driver)
+      // If dev->driver is NULLed from really_probe() from here on,
+      // after above check, the system crashes
+      add_uevent_var(env, "DRIVER=%s", dev->driver->name);
+..
+}
 
-On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
-mem_cgroup_force_empty() results in the following runtimes in seconds
-(shorter is better):
+really_probe() holds the lock, already. So nothing needs to be done
+there. dev_uevent() is called with lock held, often, too. But not
+always. What implies that we can't add any locking in dev_uevent()
+itself. So fix this race by adding the lock to the non-protected
+path. This is the path where above race is observed:
 
---------------------------------------------
-|     Old       |      New       |  Change  |
---------------------------------------------
-|   0.683426    |    0.049197    |  -92.80% |
---------------------------------------------
+ dev_uevent+0x235/0x380
+ uevent_show+0x10c/0x1f0  <= Add lock here
+ dev_attr_show+0x3a/0xa0
+ sysfs_kf_seq_show+0x17c/0x250
+ kernfs_seq_show+0x7c/0x90
+ seq_read_iter+0x2d7/0x940
+ kernfs_fop_read_iter+0xc6/0x310
+ vfs_read+0x5bc/0x6b0
+ ksys_read+0xeb/0x1b0
+ __x64_sys_read+0x42/0x50
+ x64_sys_call+0x27ad/0x2d30
+ do_syscall_64+0xcd/0x1d0
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
+Similar cases are reported by syzkaller in
+
+https://syzkaller.appspot.com/bug?extid=ffa8143439596313a85a
+
+But these are regarding the *initialization* of dev->driver
+
+dev->driver = drv;
+
+As this switches dev->driver to non-NULL these reports can be considered
+to be false-positives (which should be "fixed" by this commit, as well,
+though).
+
+The same issue was reported and tried to be fixed back in 2015 in
+
+https://lore.kernel.org/lkml/1421259054-2574-1-git-send-email-a.sangwan@samsung.com/
+
+already.
+
+Fixes: 239378f16aa1 ("Driver core: add uevent vars for devices of a class")
+Cc: syzbot+ffa8143439596313a85a@syzkaller.appspotmail.com
+Cc: Ashish Sangwan <a.sangwan@samsung.com>,
+Cc: Namjae Jeon <namjae.jeon@samsung.com>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
 ---
+Changes in v2: Use locking instead of READ_ONCE().
 
-Changes since v4 [4]
-====================
- - mm/rmap: remove duplicated exit code in pagewalk loop
-    - Pick RB from Zi Yan - thanks!
- - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-    - Remove the redundant alignment (per Baolin Wang)
-    - Set pvmw.ptl to NULL after unlocking the PTL (per Baolin Wang)
- - mm/mlock: check for THP missing the mlock in try_to_unmap_one()
-    - Check whether the mlock of PMD-mapped THP was missed
-      (suggested by Baolin Wang)
- - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-    - No need to check the TTU_SPLIT_HUGE_PMD flag for unmap_huge_pmd_locked()
-      (per Zi Yan)
-    - Drain the local mlock batch after folio_remove_rmap_pmd()
-      (per Baolin Wang)
+ drivers/base/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes since v3 [3]
-====================
- - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-    - Resolve compilation errors by handling the case where
-      CONFIG_PGTABLE_HAS_HUGE_LEAVES is undefined (thanks to SeongJae Park)
- - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-    - Remove the unnecessary conditional compilation directives
-      (thanks to Barry Song)
-    - Resolve compilation errors due to undefined references to
-      unmap_huge_pmd_locked and split_huge_pmd_locked (thanks to Barry)
-
-Changes since v2 [2]
-====================
- - Update the changelog (thanks to David Hildenbrand)
- - Support try_to_unmap_one() to unmap PMD-mapped folios
-   (thanks a lot to David Hildenbrand and Zi Yan)
-
-Changes since v1 [1]
-====================
- - Update the changelog
- - Follow the exact same logic as in try_to_unmap_one() (per David Hildenbrand)
- - Remove the extra code from rmap.c (per Matthew Wilcox)
-
-[1] https://lore.kernel.org/linux-mm/20240417141111.77855-1-ioworker0@gmail.com
-[2] https://lore.kernel.org/linux-mm/20240422055213.60231-1-ioworker0@gmail.com
-[3] https://lore.kernel.org/linux-mm/20240429132308.38794-1-ioworker0@gmail.com
-[4] https://lore.kernel.org/linux-mm/20240501042700.83974-1-ioworker0@gmail.com
-
-Lance Yang (4):
-  mm/rmap: remove duplicated exit code in pagewalk loop
-  mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
-  mm/mlock: check for THP missing the mlock in try_to_unmap_one()
-  mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
-
- include/linux/huge_mm.h |  15 ++++++
- mm/huge_memory.c        | 117 +++++++++++++++++++++++++++++++++-------
- mm/rmap.c               |  73 ++++++++++++++-----------
- 3 files changed, 153 insertions(+), 52 deletions(-)
-
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index b93f3c5716ae..e2a1dd015074 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -2723,8 +2723,11 @@ static ssize_t uevent_show(struct device *dev, struct device_attribute *attr,
+ 	if (!env)
+ 		return -ENOMEM;
+ 
++	/* Synchronize with really_probe() */
++	device_lock(dev);
+ 	/* let the kset specific function add its keys */
+ 	retval = kset->uevent_ops->uevent(&dev->kobj, env);
++	device_unlock(dev);
+ 	if (retval)
+ 		goto out;
+ 
 -- 
-2.33.1
+2.28.0
 
 
