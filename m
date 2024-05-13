@@ -1,153 +1,220 @@
-Return-Path: <linux-kernel+bounces-177358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2558C3D75
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:43:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCFAB8C3D78
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E737B280D93
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:43:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08380B20AD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0C91482EF;
-	Mon, 13 May 2024 08:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Syxg9neN"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9FB147C7F;
-	Mon, 13 May 2024 08:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D564C1482E4;
+	Mon, 13 May 2024 08:43:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D011474B1
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589775; cv=none; b=iMRatYZY/Q6mmz0mRaRbHHJvsMrgnPlAz3/Aa55298uDuTAD6z9vMozjz00uiBcXgHRrt7mZEctLgyOTn29M1B4i16Bk5lbKaTLk2Qp1O8Mh3Ob/aR6tOJBgWU4E4Lj6GYblakla9t60Gxv2lxYI6LAzfbInIsmDcOZobKteH10=
+	t=1715589836; cv=none; b=LpRKAYBlXNXGtk4zd9pvRdj3SNI8rwiT3SEaP+Kj5vzdlnDq/6UwX9vKy9ML8EBbfyTFueseSrW8Zbf4jEBsPbrpX3vemmA0b6udQOgMLUZkHhcukwr68LCg9QD/5WKrmpyDaoCP5ugcxZsItcaZkqBLotGkUoOQAsX1jhzdl/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589775; c=relaxed/simple;
-	bh=y7lPqf6Kbd8pfKb7R0gWDlNSm18f/VWp7Do2LxaEh3w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=h5e3AKyGl3a0ECVAMz3sv3vk7mohDnmRiPg7FI5I+bC7lZIMdvurdkJSPkMf7NMPL3pVPv47IZcL4f31KoM12Y2gLfq2JsRHFBsW+KcLRiE9H3cs9+RabjQSci5l8GoPVEWUwOrQjrfxWxxOLQOJ3a88vGK09H5e3yFpVcHIQao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Syxg9neN; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1ec69e3dbcfso30530475ad.0;
-        Mon, 13 May 2024 01:42:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715589774; x=1716194574; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y7lPqf6Kbd8pfKb7R0gWDlNSm18f/VWp7Do2LxaEh3w=;
-        b=Syxg9neNdLuft7fTZdu9MhWAWgirpHfemMYhZaber6dr6kfUuoZUd7W2FWBZyO1xxX
-         f1TAiHc3cNSRDtqFneqYdsIfisWW2vnT2nv4hLWPOW0m3Uwa+eDMYchBtTcr4NB9fzW9
-         HQJHjBD0nzJAEcd6Ca6+Kfn3UX3Kqgj7XUExfsQG1o8jcCiovp5C2/x8flkjCdRNnlyj
-         Osw1o3gukIBcYI1SYdf1dIsVTxJ3bAoCKbZ7j4Z/RLZNhpaTSkZxR9D22+GodM8VLJDS
-         JYG7PMI6oKH+rscTycPXXC8NV42sofTrHjX1aeP2A1+P0lXrbe6j88r+1IPwJ9+JDvj3
-         HDdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715589774; x=1716194574;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y7lPqf6Kbd8pfKb7R0gWDlNSm18f/VWp7Do2LxaEh3w=;
-        b=pnE/ti4yMYa8bAE2oSzaqwpo/EkDWEGzI60Hyn74MJvDxCpe0okXYxsjlxsdsW2M3f
-         26bJqQJgq+jTiUCovb42XOklWFWun59rddpn7B5jdGcYcDrs9cU1AI984d7SZJryCvOB
-         b8+gfBVaVVRqio4D2YbO2GwkgyLHjFc5BMfBZyV45YwlB4lzzPoMBvfEMq3zseDUMMEF
-         E5JGdgciteH4NBeoP2m6ZPeuy0clleJe5WF9aEHqvrVrn2SxR6MbcD35aqXjw+w+25zb
-         HxYb8yQ1wd9BIoQSyE/kVIsLSXvkdtkjHn2VhEeFS3W2e37u1hghjO4SthtzXb7SAsUP
-         Vcsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+9M9aD8/8yWTAioR0BJsaQtYYMxVcW3B2zfq9anTREunaL+p42o6Ep4/1FRieciOL5KhMXQeQw0tMCwp0eWCeKNXzvYqo
-X-Gm-Message-State: AOJu0YyZzrF9fRJeN8Ql/FGJ3m8Zob6+jbRLdK847cuAEq+ijyT15JaO
-	NFgGs61uj8oisqaBCjmmAgyPDBbN8lhGCuaTJZf9pXY5pAd39ugg
-X-Google-Smtp-Source: AGHT+IG75rkNOpcpo5GhLpsIDduIrQUEWF6yC924gDigs5v7pfDFIFCXraNZ7Di0/yOikq6t4XIz3Q==
-X-Received: by 2002:a17:903:1251:b0:1eb:5344:6a01 with SMTP id d9443c01a7336-1ef4404a25bmr103311395ad.44.1715589773717;
-        Mon, 13 May 2024 01:42:53 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a32sm75607045ad.123.2024.05.13.01.42.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 01:42:53 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id EB5A2181C8FA4; Mon, 13 May 2024 15:42:50 +0700 (WIB)
-Date: Mon, 13 May 2024 15:42:50 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Linux Networking <netdev@vger.kernel.org>,
-	intel-wired-lan@lists.osuosl.org
-Cc: Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	lukas.probsthain@googlemail.com
-Subject: Regression of e1000e (I219-LM) from 6.1.90 to 6.6.30
-Message-ID: <ZkHSipExKpQC8bWJ@archie.me>
+	s=arc-20240116; t=1715589836; c=relaxed/simple;
+	bh=oPs0LIVO0daVAFThgjJxWqxTMHcpGjCf9NysjZWeEKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ERpweqjOFHBiQYu4bCgAIZVPHMQRfMrIoHcDdwT9TEd0PN3ulJnzgoe1Xjcq1FU/t57s1KALuxaCWF3EpKyGhcULzX8hJMu/Z9DcOAgJXHbaHJJk2uveOZs0wiIbXGVj7/CED3ku5xEusFp57pWCIk/IRl8xuoixSw66uCcsi7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0BA31007;
+	Mon, 13 May 2024 01:44:18 -0700 (PDT)
+Received: from [10.57.68.95] (unknown [10.57.68.95])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60ECD3F7A6;
+	Mon, 13 May 2024 01:43:51 -0700 (PDT)
+Message-ID: <17b4f026-d734-4610-8517-d83081f75ed4@arm.com>
+Date: Mon, 13 May 2024 09:43:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ae47ss+eiIbn41c"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 5/7] mm: swap: Allow storage of all mTHP orders
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+ Huang Ying <ying.huang@intel.com>, Gao Xiang <xiang@kernel.org>,
+ Yu Zhao <yuzhao@google.com>, Yang Shi <shy828301@gmail.com>,
+ Michal Hocko <mhocko@suse.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Chris Li <chrisl@kernel.org>, Lance Yang <ioworker0@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240408183946.2991168-1-ryan.roberts@arm.com>
+ <20240408183946.2991168-6-ryan.roberts@arm.com>
+ <CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 13/05/2024 08:30, Barry Song wrote:
+> On Tue, Apr 9, 2024 at 6:40 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> Multi-size THP enables performance improvements by allocating large,
+>> pte-mapped folios for anonymous memory. However I've observed that on an
+>> arm64 system running a parallel workload (e.g. kernel compilation)
+>> across many cores, under high memory pressure, the speed regresses. This
+>> is due to bottlenecking on the increased number of TLBIs added due to
+>> all the extra folio splitting when the large folios are swapped out.
+>>
+>> Therefore, solve this regression by adding support for swapping out mTHP
+>> without needing to split the folio, just like is already done for
+>> PMD-sized THP. This change only applies when CONFIG_THP_SWAP is enabled,
+>> and when the swap backing store is a non-rotating block device. These
+>> are the same constraints as for the existing PMD-sized THP swap-out
+>> support.
+>>
+>> Note that no attempt is made to swap-in (m)THP here - this is still done
+>> page-by-page, like for PMD-sized THP. But swapping-out mTHP is a
+>> prerequisite for swapping-in mTHP.
+>>
+>> The main change here is to improve the swap entry allocator so that it
+>> can allocate any power-of-2 number of contiguous entries between [1, (1
+>> << PMD_ORDER)]. This is done by allocating a cluster for each distinct
+>> order and allocating sequentially from it until the cluster is full.
+>> This ensures that we don't need to search the map and we get no
+>> fragmentation due to alignment padding for different orders in the
+>> cluster. If there is no current cluster for a given order, we attempt to
+>> allocate a free cluster from the list. If there are no free clusters, we
+>> fail the allocation and the caller can fall back to splitting the folio
+>> and allocates individual entries (as per existing PMD-sized THP
+>> fallback).
+>>
+>> The per-order current clusters are maintained per-cpu using the existing
+>> infrastructure. This is done to avoid interleving pages from different
+>> tasks, which would prevent IO being batched. This is already done for
+>> the order-0 allocations so we follow the same pattern.
+>>
+>> As is done for order-0 per-cpu clusters, the scanner now can steal
+>> order-0 entries from any per-cpu-per-order reserved cluster. This
+>> ensures that when the swap file is getting full, space doesn't get tied
+>> up in the per-cpu reserves.
+>>
+>> This change only modifies swap to be able to accept any order mTHP. It
+>> doesn't change the callers to elide doing the actual split. That will be
+>> done in separate changes.
 
---2ae47ss+eiIbn41c
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-Hi,
+> 
+> Hi Ryan,
+> 
+> Sorry for bringing up an old thread.
 
-<lukas.probsthain@googlemail.com> reported on Bugzilla
-(https://bugzilla.kernel.org/show_bug.cgi?id=3D218826) regression on his Th=
-inkpad
-T480 with Intel I219-LM:
+No problem - thanks for the report!
 
-> After updating from kernel version 6.1.90 to 6.6.30, the e1000e driver ex=
-hibits a regression on a Lenovo Thinkpad T480 with an Intel I219-LM Etherne=
-t controller. The system experiences a freeze when an Ethernet cable is plu=
-gged in. The issue is not present in the previous kernel version 6.1.90.
->=20
-> System Information:
-> - Model: Lenovo Thinkpad T480
-> - BIOS Version: N24ET76W (1.51) dated 02/27/2024
-> - Ethernet Controller: Intel Corporation Ethernet Connection (4) I219-LM =
-(rev 21)
-> - Kernel Module in Use: e1000e
-> - Operating System: Manjaro Linux, kernel version 6.6.30-1
->=20
-> Steps to Reproduce:
-> 1. Boot system with kernel version 6.6.30.
-> 2. Connect the Ethernet cable to the laptop.
-> 3. Observe that the system freezes.
->=20
-> Expected Behavior:
-> The system should remain stable and maintain network connectivity without=
- freezing when the Ethernet cable is connected.
->=20
-> Actual Behavior:
-> The system freezes immediately upon plugging in the Ethernet cable.
->=20
-> Additional Information:
-> The regression seems to be introduced in one of the updates between kerne=
-l versions 6.1.90 and 6.6.30. The issue does not occur with the older kerne=
-l version 6.1.90.
+> 
+> During the initial hour of utilizing an Android phone with 64KiB mTHP,
+> we noticed that the
+> anon_swpout_fallback rate was less than 10%. However, after several
+> hours of phone
+> usage, we observed a significant increase in the anon_swpout_fallback
+> rate, reaching
+> 100%.
 
-Thanks.
+I suspect this is due to fragmentation of the clusters; If there is just one
+page left in a cluster then the cluster can't be freed and once the cluster free
+list is empty a new cluster allcoation will fail and this will cause fallback to
+order-0.
 
---=20
-An old man doll... just what I always wanted! - Clara
+> 
+> As I checked the code of scan_swap_map_try_ssd_cluster(),
+> 
+> static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+>         unsigned long *offset, unsigned long *scan_base, int order)
+> {
+>         unsigned int nr_pages = 1 << order;
+>         struct percpu_cluster *cluster;
+>         struct swap_cluster_info *ci;
+>         unsigned int tmp, max;
+> 
+> new_cluster:
+>         cluster = this_cpu_ptr(si->percpu_cluster);
+>         tmp = cluster->next[order];
+>         if (tmp == SWAP_NEXT_INVALID) {
+>                 if (!cluster_list_empty(&si->free_clusters)) {
+>                         tmp = cluster_next(&si->free_clusters.head) *
+>                                         SWAPFILE_CLUSTER;
+>                 } else if (!cluster_list_empty(&si->discard_clusters)) {
+>                         /*
+>                          * we don't have free cluster but have some clusters in
+>                          * discarding, do discard now and reclaim them, then
+>                          * reread cluster_next_cpu since we dropped si->lock
+>                          */
+>                         swap_do_scheduled_discard(si);
+>                         *scan_base = this_cpu_read(*si->cluster_next_cpu);
+>                         *offset = *scan_base;
+>                         goto new_cluster;
+>                 } else
+>                         return false;
+>         }
+> ...
+> 
+> }
+> 
+> Considering the cluster_list_empty() checks, is it necessary to have
+> free_cluster to
+> ensure a continuous allocation of swap slots for large folio swap out?
 
---2ae47ss+eiIbn41c
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, currently that is done by design; if we can't allocate a free cluster then
+we only scan for free space in an already allocated cluster for order-0
+allocations. I did this for a couple of reasons;
 
------BEGIN PGP SIGNATURE-----
+1: Simplicity.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZkHSigAKCRD2uYlJVVFO
-o0Z/AQCIkJz7plid8wPPU7db5xKtA7Ftq60HC/uJ7718jfmBkgEAtvtduKsDn2CB
-sliUh8IN6Cx7oNQTIYq+Il73paLXMAk=
-=lNxt
------END PGP SIGNATURE-----
+2: Keep behavior the same as PMD-order allocations, which are never scanned
+(although the cluster is the same size as the PMD so scanning would be pointless
+there - so perhaps this is not a good argument for not scanning smaller high
+orders).
 
---2ae47ss+eiIbn41c--
+3: If scanning for a high order fails then we would fall back to order-0 and
+scan again, so I was trying to avoid the potential for 2 scans (although once
+you split the page, you'll end up scanning per-page, so perhaps its not a real
+argument either).
+
+> For instance,
+> if numerous clusters still possess ample free swap slots, could we
+> potentially miss
+> out on them due to a lack of execution of a slow scan?
+
+I think it would definitely be possible to add support for scanning high orders
+and from memory, I don't think it would be too difficult. Based on your
+experience, it sounds like this would be valuable.
+
+I'm going to be out on Paternity leave for 3 weeks from end of today, so I won't
+personally be able to do this until I get back. I might find some time to review
+if you were to post something though :)
+
+> 
+> I'm not saying your patchset has problems, just that I have some questions.
+
+Let's call it "opportunity for further improvement" rather than problems. :)
+
+I suspect swap-in of large folios may help reduce the fragmentation a bit since
+we are less likely to keep parts of a previously swapped-out mTHP in swap.
+
+Also, I understand that Chris Li has been doing some thinking around an
+indirection layer which would remove the requirement for pages of a large folio
+to be stored contiguously in the swap file. I think he is planning to talk about
+that at LSFMM? (which I sadly won't be attending).
+
+Thanks,
+Ryan
+
+> 
+> Thanks
+> Barry
+
 
