@@ -1,128 +1,169 @@
-Return-Path: <linux-kernel+bounces-177315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA018C3CD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18C58C3CD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB401F21B69
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCCF9B21317
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A746146D50;
-	Mon, 13 May 2024 08:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BBD1474A2;
+	Mon, 13 May 2024 08:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHiXjQ7t"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d3eYSRrU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C49146A64
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFE9146D62;
+	Mon, 13 May 2024 08:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715587403; cv=none; b=Clf+XPWUXLmzpgB7NJWbpMsSATZ7JTupMKI29oD4pSdwI89vQy+QBww2tWl9MuNEfAsJCLUKH941B7kdp9PdI9qJ+I6d9IFaqDGUgnmBcmuGmK2+cGnYxj+3Ha6Tngnjxlc/oAf27NsDzwZAE+1igUwNGOvGmeHIQI5KCDMy0vA=
+	t=1715587466; cv=none; b=qq0ZStQ7wH9LymqD2sPqjolJOFBpUHCtn9SRHMEKAjUHvWjFspAkt9zg8uAhjSH+XLXEFCGzH/ObeInuw3gJppjRD5EbaUjZfTMSTlhe7aaanKO4PHzhf+IoVA6T4Q6oa99iWXKnq5PyC8ubIEDR8ILAT+XRtURyck9k/VzehyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715587403; c=relaxed/simple;
-	bh=23uWuj7ICqa3qQCSJxZ9h9ChpqiL/yGtIf1aTLfSpnE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Trcmyb1Q5ulNNeHH4IM+WEMF864oOYnW7NAZkkbJM5VwfuKyOfTlGhSI/4Cmr23g+Y+59rsIOMWiC9y1AFCz3ZESOYGkSj4TvpGSXFL63dSjrYohH2pgi9kPil4W6kbGvy8Ba1tQaeMqSq7hITGFzh/Qya0TcyIkbf1MRCwK730=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHiXjQ7t; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59ce1e8609so877900366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:03:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715587400; x=1716192200; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WnZ6trVhzdlXSKG3rKBrCEdLdkgOZsBK4FUKMxCUy7c=;
-        b=jHiXjQ7tmi1NqBaI3GUirUyVepKe+K3dKIz4N7lY2vzT0nuZMd2X+z5r4iTmZxcLHy
-         AgQohdjkGAhDw79lmkm3uJLsSnZxOc35sHBUlpxWLWJ3hVNbnMl7RgM1IB3joIFnlS+7
-         JdwZAejdfRTEUmd7kR4Es7jaXPje/KvGsEfH0x5jFbO/DoqbrbzRlrqP5+Mg+tORxJlX
-         Spc/XpZiBSJutFRs2rO/IoFY+/2hvGP4rAg44AMKHtkGpKAVA2L/+AJ1PkkZh09cNPJF
-         5misHSnHSoF0tt1kkKeqD72X3spvvUZAUOqeuvxvA21ua2XNnJNDYT/rjcckIafUCCGG
-         y7Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715587400; x=1716192200;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=WnZ6trVhzdlXSKG3rKBrCEdLdkgOZsBK4FUKMxCUy7c=;
-        b=hT0VgQmJWBJGV43g+HsoPKSo7RNNztDxqWTv2uSSDQGlyhMpizOBOhZuhgM2pYvhUB
-         UZK1w778DbVHx+SqgU3U1NnvdyfDdoz6Rmz53kZAzdTEV8ABb/rftQ/RNzCVGU/nQO/2
-         l2eXw9Su16jpMtjHN3beb9m7tGKab6nCIgJ0n++ged255af5Sve0pM7fhH87QGehSLlT
-         oMqO5V4oe64n+lDBxqi/ruwCF8+kPMIi7zCUpUpKcWhl4BF7EJs+rMUV6gMeknFtccVx
-         61L2Bevn8vk0rPHRlwsgwepXraShW2GtdYWex9pUaP7783OO1EmxjP28wmgQrCuz5rsn
-         1cYA==
-X-Gm-Message-State: AOJu0Yya7VlRLxtKU8W6hvSp++FuKHZGcX2Jgh9MRbTZZXdcuR/B8sit
-	ui8jSitlLLABuie/YfDmr1HgD2vRfcKAibE5XHs5K8+a7JTBE5vh
-X-Google-Smtp-Source: AGHT+IG94D9DPyExALzgvsPjVqXg/C4+F3PXVM5MqYAZ6Xxfs8MPAM5TY6AhIDt6jLBUQMByxvJBkQ==
-X-Received: by 2002:a17:906:8315:b0:a59:c807:72d3 with SMTP id a640c23a62f3a-a5a2d1ddfebmr773843766b.17.1715587400101;
-        Mon, 13 May 2024 01:03:20 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17892444sm558300766b.76.2024.05.13.01.03.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 01:03:19 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 10:03:17 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-Subject: [GIT PULL] x86/platform changes for v6.10
-Message-ID: <ZkHJRYpDIBpxWeyz@gmail.com>
+	s=arc-20240116; t=1715587466; c=relaxed/simple;
+	bh=EAmiv7VSHmjNnLH+14OUNkI/+sQMsz87MSk2GKwM+/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HV5/xVdDN4EBq2hWkXwsxmdsnYQ90GZiRNiCLnmyUimJe7d92ZyrJPZCo/hVdxJZxXShXTkYU511bOeiMRszi//ssvHB2JyDIyxDe0yAfpzZyIfKlC8QPG9N0/xpCyuefRxClcVubPcRGxTwT6W4tetQmfhxO/cgssPw7MOgsyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=d3eYSRrU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=trTboVybSpPr171+KCudUR4Obn/YpkzCtmzvOfCwqIY=; b=d3eYSRrUrt2qXEe99LIREdczLQ
+	pHtJ4aKB9ric91TLuOhYMaTSUOokSfB8DCnxWZLFkjBOU2UsH4wfTTGJF3pRmqIm2tFdgSeuqLnhl
+	9DlvPa3ZpMMPDqMx52jOvmLLRN+iH/aCk74HTtgGGzXm8+NwBjPokFqGC3ofcCBSyp8ZQT5HRDX+h
+	gCq5hqM86P0rAqBV5e6VdRPLToisLcrdTCUj0OZVZuU3PO+aUE1WHqA7+RhE5imb+rqwn3wueC6Cm
+	yrLezqNByK5C/b2t4yqhejx/qoCy4hTPx17L7pp9oOqSGBk/nyInjghxXfboiSLdBkYLv2WFRdGEC
+	lT2K6Grw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s6QfA-00000007nhx-0qqq;
+	Mon, 13 May 2024 08:04:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 568513011E8; Mon, 13 May 2024 10:03:59 +0200 (CEST)
+Date: Mon, 13 May 2024 10:03:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <20240513080359.GI30852@noisy.programming.kicks-ass.net>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240502084800.GY30852@noisy.programming.kicks-ass.net>
+ <ZjPnb1vdt80FrksA@slm.duckdns.org>
+ <20240503085232.GC30852@noisy.programming.kicks-ass.net>
+ <ZjgWzhruwo8euPC0@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjgWzhruwo8euPC0@slm.duckdns.org>
 
+On Sun, May 05, 2024 at 01:31:26PM -1000, Tejun Heo wrote:
 
-Linus,
+> > You Google/Facebook are touting collaboration, collaborate on fixing it.
+> > Instead of re-posting this over and over. After all, your main
+> > motivation for starting this was the cpu-cgroup overhead.
+> 
+> The hierarchical scheduling overhead isn't the main motivation for us. We
+> can't use the CPU controller for all workloads and while it'd be nice to
+> improve that,
 
-Please pull the latest x86/platform Git tree from:
+Hurmph, I had the impression from the earlier threads that this ~5%
+cgroup overhead was most definitely a problem and a motivator for all
+this.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-platform-2024-05-13
+The overhead was prohibitive, it was claimed, and you needed a solution.
+Did not previous versions use this very argument in order to push for
+all this?
 
-   # HEAD: 801549ed6abe7586eb9ad0cf7147b0bef383ad22 x86/platform/olpc-xo1-sci: Convert to platform remove callback returning void
+By improving the cgroup mess -- I very much agree that the cgroup thing
+is not very nice. This whole argument goes away and we all get a better
+cgroup implementation.
 
-x86/platform changes for v6.10:
+> This view works only if you assume that the entire world contains only a
+> handful of developers who can work on schedulers. The only way that would be
+> the case is if the barrier of entry is raised unreasonably high. Sometimes a
+> high barrier of entry can't be avoided or is beneficial. However, if it's
+> pushed up high enough to leave only a handful of people to work on an area
+> as large as scheduling, something probably is wrong.
 
- - Improve the DeviceTree (OF) NUMA enumeration code to
-   address kernel warnings & mis-mappings on DeviceTree platforms.
+I've never really felt there were too few sched patches to stare at on
+any one day (quite the opposite on many days in fact).
 
- - Migrate x86 platform drivers to the .remove_new callback API
+There have also always been plenty out of tree scheduler patches --
+although I rarely if ever have time to look at them.
 
- - Misc cleanups & fixes
+Writing a custom scheduler isn't that hard, simply ripping out
+fair_sched_class and replacing it with something simple really isn't
+*that* hard.
 
- Thanks,
+The only really hard requirement is respecting affinities, you'll crash
+and burn real hard if you get that wrong (think of all the per-cpu
+kthreads that hard rely on the per-cpu-ness of them).
 
-	Ingo
+But you can easily ignore cgroups, uclamp and a ton of other stuff and
+still boot and play around.
 
------------------->
-Saurabh Sengar (4):
-      x86/hyperv/vtl: Correct x86_init.mpparse.parse_smp_cfg assignment
-      x86/of: Set the parse_smp_cfg for all the DeviceTree platforms by default
-      x86/of: Map NUMA node to CPUs as per DeviceTree
-      x86/of: Change x86_dtb_parse_smp_config() to static
+> I believe we agree that we want more people contributing to the scheduling
+> area. 
 
-Uwe Kleine-König (3):
-      x86/platform/iris: Convert to platform remove callback returning void
-      x86/platform/olpc-x01-pm: Convert to platform remove callback returning void
-      x86/platform/olpc-xo1-sci: Convert to platform remove callback returning void
+I think therein lies the rub -- contribution. If we were to do this
+thing, random loadable BPF schedulers, then how do we ensure people will
+contribute back?
 
+That is, from where I am sitting I see $vendor mandate their $enterprise
+product needs their $BPF scheduler. At which point $vendor will have no
+incentive to ever contribute back.
 
- arch/x86/hyperv/hv_vtl.c              |  1 -
- arch/x86/include/asm/prom.h           |  9 ++-------
- arch/x86/kernel/devicetree.c          | 24 ++++++++++++++----------
- arch/x86/platform/ce4100/ce4100.c     |  1 -
- arch/x86/platform/iris/iris.c         |  5 ++---
- arch/x86/platform/olpc/olpc-xo1-pm.c  |  7 +++----
- arch/x86/platform/olpc/olpc-xo1-sci.c |  5 ++---
- 7 files changed, 23 insertions(+), 29 deletions(-)
+And customers of $vendor that want to run additional workloads on
+their machine are then stuck with that scheduler, irrespective of it
+being suitable for them or not. This is not a good experience.
+
+So I don't at all mind people playing around with schedulers -- they can
+do so today, there are a ton of out of tree patches to start or learn
+from, or like I said, it really isn't all that hard to just rip out fair
+and write something new.
+
+Open source, you get to do your own thing. Have at.
+
+But part of what made Linux work so well, is in my opinion the GPL. GPL
+forces people to contribute back -- to work on the shared project. And I
+see the whole BPF thing as a run-around on that.
+
+Even the large cloud vendors and service providers (Amazon, Google,
+Facebook etc.) contribute back because of rebase pain -- as you well
+know. The rebase pain offsets the 'TIVO hole'.
+
+But with the BPF muck; where is the motivation to help improve things?
+
+Keeping a rando github repo with BPF schedulers is not contributing.
+That's just a repo with multiple out of tree schedulers to be ignored.
+Who will put in the effort of upsteaming things if they can hack up a
+BPF and throw it over the wall?
+
+So yeah, I'm very much NOT supportive of this effort. From where I'm
+sitting there is simply not a single benefit. You're not making my life
+better, so why would I care?
+
+How does this BPF muck translate into better quality patches for me?
 
