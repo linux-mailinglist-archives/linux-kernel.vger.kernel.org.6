@@ -1,224 +1,306 @@
-Return-Path: <linux-kernel+bounces-177345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87888C3D23
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:29:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120498C3D33
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EF51F22021
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DACE1F21C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1101474AF;
-	Mon, 13 May 2024 08:28:58 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2F4146A6A;
+	Mon, 13 May 2024 08:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="EO18oQo4"
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2065.outbound.protection.outlook.com [40.107.6.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82D0146A91
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715588937; cv=none; b=d+ywUoWdqcPbBkJ1/esge2b7go9g52PwrydImIFiOJ4Qqng/FubmyFatjJ+yV/M+Y82p5fGTzdRq6n57huyatJhaFehFdp4afM51n5P7zuotHDVw1yGe1BtIgcPZwwh718PHlD9owf5qVrUnAOM+V/gmhg3jG6lHHU00byiiBX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715588937; c=relaxed/simple;
-	bh=lHwMqh3/sQG+UrkqlERYWXvDvlxAsNbGETkH6rl1ZcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eOddxlNR0J98TqeHin6tUq8j0VGsEtjF37G3KNv7j8Hp1KNNv4ymSvZLQfBPXSLjFipRJreKypEVLUwzhnPfOHeNP3UyNqxD0rLTwFJDHDGjoqwIjnSDImILmP01ATU/d21DERBTubr1wdE1lBtVGbpO2pNrCmlXHfiplP1NMhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <l.goehrs@pengutronix.de>)
-	id 1s6R3G-0005f7-2I; Mon, 13 May 2024 10:28:54 +0200
-Message-ID: <39033ed7-3e57-4339-80b4-fc8919e26aa7@pengutronix.de>
-Date: Mon, 13 May 2024 10:29:49 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A8517F3;
+	Mon, 13 May 2024 08:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715589087; cv=fail; b=iTrmmbn9FobTO/ZWuOWgH1jiqRtLlZHpEHG5DYCnR6KIpixMZ/GijPrthPT78CkcQUE9gWHc29G/KeuJkimIEgS/H7qVPccb/DjpGkhh9pvo0OU07kKMOLDu8IbRCSA88gm1LbdwJx45GbtxjaIREzf1d1kTMM0qBJVo+Z+vWbY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715589087; c=relaxed/simple;
+	bh=CpTbhBbB/GIlQ+4kCmBkLcYUeNQZvGJL3ob+0GK7blk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eDqdrgoOjPmBkLJ4kBBVlp9eh+rKM3ql2Ih3KQtSjN1xLbGTE3hx1m60oroXg4NLMbfhyLWNahnXBYXge8w/nzT8sQM8Zg8LgtZfmWFsmgS/sYJRdQXWEac2TQTlerNZWKuSXJaaWLgqLyrsszkQXJRpWre2ovjiQRaSv/eW/mk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=EO18oQo4; arc=fail smtp.client-ip=40.107.6.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=brNSGC3Bp5rdms2oZ5syI8S+IiUIJmS6DhmdEN6s2dgaBmq+7iYrgCP0Q5tog2CGwm6lluhTJ84163rj2nAtSFU0VWITWqLneIJ8u6eE3r7/sj712jNN9nEzWKtjQU6mWnCMS9y0QbwF0/v99kYol26VWuvBlBFrfNM3r8fSYYaEMY+iP33uCmV6dr0OcDOSNq3T0C/TBdttf5AcFgiMydY6WtWo5Aa496Wi9izA0O+x6ReHNUrvdBL8WpEeplOW7nvIJ0K2UUvDOJDMHnSKXF5lhPRTIwqF2TbdpxW1o152/GNSYiF+zJ7mJ69vQwJ9K7vPLPtiHmGelfu8di/pTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NYOQaoEGXePCQFhA/OW7SOjT02okixGvZEM85LXLF90=;
+ b=Mp4/5EnIcYzD5wYhshL5ucLsMQ+HADgHll/p4+leNjdxUl8hKRVYLBg3MeM4g4W7CgjOOv/D1c2dl++UEtuHlEUCloTnF5IUfwpSfiPns19HyLayba0AjmSMmRAld0CzRZj7AjajHllBf2v539EnRzLKT7SglqMx+yxpXC8HdHJDqYepMMlO2RxbLM6/Wqz+Mgkj5ApWHRbs0Q8Cq0PigNqw8zn6hGn/VanBHHQQpfou5+OTAAuHDDXfg6FnCI+BNElN/JM9L8EFfCa1eHu+IVny0qgUw8RfcNp7dDBtTEEsp6/n39Vp1DSHf6ehKxyNkUp/3Ji01jNPDQ9+3sheDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NYOQaoEGXePCQFhA/OW7SOjT02okixGvZEM85LXLF90=;
+ b=EO18oQo4hC7DtAfv2EaWYhurTDSeXHle91g7Uj6zeJndyn13maX0fG4idMX3NSwy/n9o4s9UIt6J6l2TfXMwfRgQnW7dUhE+aK7aP8koI6nsQy7nT2TanRG65Sv6ypp4eMtw39cmfj328AlO2xIchwoVNnhDNA2GhuKisjnUEUs=
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AM9PR04MB8258.eurprd04.prod.outlook.com (2603:10a6:20b:3e2::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 08:31:23 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 08:31:22 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Sascha Hauer <s.hauer@pengutronix.de>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Abel Vesa <abelvesa@kernel.org>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio
+ Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>, Ye Li
+	<ye.li@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Abel Vesa <abel.vesa@linaro.org>
+Subject: RE: [PATCH v2 01/17] clk: imx: composite-8m: Enable gate clk with
+ mcore_booted
+Thread-Topic: [PATCH v2 01/17] clk: imx: composite-8m: Enable gate clk with
+ mcore_booted
+Thread-Index: AQHaorn/IJcAguxNukGP/b7YV5Q9pbGUuy4AgAAe3+A=
+Date: Mon, 13 May 2024 08:31:22 +0000
+Message-ID:
+ <DU0PR04MB941709208F206C9CADF320A288E22@DU0PR04MB9417.eurprd04.prod.outlook.com>
+References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
+ <20240510-imx-clk-v2-1-c998f315d29c@nxp.com>
+ <ZkG1put2k33K4c_b@pengutronix.de>
+In-Reply-To: <ZkG1put2k33K4c_b@pengutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|AM9PR04MB8258:EE_
+x-ms-office365-filtering-correlation-id: fa03e10b-d80c-4262-aee5-08dc7327125b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230031|366007|1800799015|376005|7416005|38070700009;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?nendKFzJ6SMEnqhuWtaTNOhbRK56+8u7ylte5eNpOo02/5ZtTE1Qq+IdnwLT?=
+ =?us-ascii?Q?zN7WYoVQFlEQ/Cb5cGhcg/V/uHdY6onXNQ5pdHATnlOg/FmApt0yPmTX2BDG?=
+ =?us-ascii?Q?IYAvWMxVwsGcCF4qcFx+yWJsl2uZ06LWYl2XI63PrpN//CdB2tpHoNCvICoy?=
+ =?us-ascii?Q?JVGhSQyObRJNb4WBr51qsiJ3cp4WO407n4gmU3nqO/UiehXfrHchoMEYf5DL?=
+ =?us-ascii?Q?Nv5x0zfmY3+exozfM3lzjqRw43sifNj7oNVq1I/IHQClFw8+goVTC6LjnaBA?=
+ =?us-ascii?Q?fD1S6ftn3C/in7o03q8P9HCOjMLz+Dm07gnUKZgTUdgpuYtzokwGxISyanYk?=
+ =?us-ascii?Q?yPzT2jiwE3iUEwP2V12nkjERT8H3F/OxYu4Gm3y9Pk2usOK0w16uI6zDv4IH?=
+ =?us-ascii?Q?y5ySKPVVEBzTfB2OyTv40k4sNhVvoe5Sdi1YzAENLp8t6iMOlEFjtdrVWJVi?=
+ =?us-ascii?Q?5evn+kLIMXLjjwNzp2NpQnUoFZF70f6UPxKJywmfJsD8FmQ3TQ/ldCelMShu?=
+ =?us-ascii?Q?WOZhmKkCW1jwMAx9iqPLqyNn5f0kkFY3/+d/Z2P6I4qruKVpABXtTemaVdJu?=
+ =?us-ascii?Q?+loGZVvg66+B8a06qTOpkB4IHAj3rS9nU0Nror/HAfkDFTYoo70KRcH4BEfH?=
+ =?us-ascii?Q?BzYEJGYk3RJyTNwyfjs0KCwVbbSjSo+Y2UX3fcyQh8FXTzTULx1ot/rtVTG5?=
+ =?us-ascii?Q?0wZSKT3p/Y6h0G5hI++5Yx6KWMP7TsdOmGVY8afyg4qvXE9C7MMLAE4Nyxi3?=
+ =?us-ascii?Q?pWGvG7OuPWTpdm9n4owJtECCH8nrXvfg3nzndh2wQRc4RnBDGKDFCwGt++aw?=
+ =?us-ascii?Q?wf3IikwIWppV3TAAXq99bx3Fg0qDDl5igOp3lpjnigzdVTS7XO00y91D/DA+?=
+ =?us-ascii?Q?KLWqCE9ZCNP0Tl0BXsC85pLjSrY6rRSyWH6TQxmintjAk7zJ+40WGJg5BNSr?=
+ =?us-ascii?Q?1ka1dQG9TqJv76a5ca/36BH8Ueu6wgpyl4nwqU2GI5RROBaPXSKkjcEbTUK4?=
+ =?us-ascii?Q?7OsWTowFI1mW0uKy8+0Wcfr4Jg6oIBpdqlAaQXGCbP+kEcd60NW8BpSybg8k?=
+ =?us-ascii?Q?lOb0ryLgwwy9k+qns+liE1OeGZgKhgFKilWkM3M5xGASrsng2i3Mp+HCyWZK?=
+ =?us-ascii?Q?fY8iV+VHosz83QTRPJWVQ4hjXo6Fmjm5why6m5ZjhC05qDyZcFHYZ0IQVx8i?=
+ =?us-ascii?Q?sIuaOc+ljAQwoFaMi088HWPsy/AeHhLNvuHOlmSDDsqwI8KPy6igsyOJJXYw?=
+ =?us-ascii?Q?OL/NkZNQjjqrVDL/yUzZTTcyWwoKZWkucS6scIRNRg=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005)(7416005)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?n1r7v8NLsws1KuvMBUJbtfB1lr5u2z/r577dUfzdwYlDXvtH4JvvvBBteE95?=
+ =?us-ascii?Q?0ZF+5ApYc4UR8M+x4xMjGELy06KGaJURroXvzx+z4RyPyFBfJpNWEAiIfjCT?=
+ =?us-ascii?Q?Z5bqAbmgb0ARXOsaf0IPeaLLL2OLrZ5q8RNMwS6z8ogDLvgXNSNWteV7zpcv?=
+ =?us-ascii?Q?Wf/WktDI0IJCl35c70MItP7nr2kensutqH+WY3rXItG+/geDZgFQQR415msG?=
+ =?us-ascii?Q?XlgaUCqjcWxQLVLpg7tqEtKwu/QDhfGmKycOwOEThSsouu0UQVpJBiulxGu4?=
+ =?us-ascii?Q?8/BtFz9aVn+Cw9TeLqzH9I07biFbKl+urKBxUH+7hVGvkG1t5sj60dkB9Pkl?=
+ =?us-ascii?Q?eQQfewIVmlkZnP/dzYSm9HmKsuiSGnAC8B2RbIcbcdSXMBBGrOxEKxdPCZtu?=
+ =?us-ascii?Q?iug5+ZDefMClPgaU6LjFt9u/PbpM/pf4wSQsLu9z9qlEbnQGy6fIWXF8+xYj?=
+ =?us-ascii?Q?k+cKhXRsXf37s0eLD2Qn8A9gflTcq1r/RuyZ99tUsXXEAXfDRd2Do9cTDW2F?=
+ =?us-ascii?Q?h7j1BM73ktL7/GddcpmlwzQHSy9SLfJyaHd+uRMDDuO//aSU+BSKdXI1UM+a?=
+ =?us-ascii?Q?1xbj1uAnYd53kxhuTisDAFZJe+bdcCaIx/9qP0JgMIsV+4sTSVe8vKO+CLwY?=
+ =?us-ascii?Q?zt5kQOjVuE+GS3XWyGvhhICqgGCU+Wd5ftK2dV7FH81aJVpxhFVqkf7ovxAc?=
+ =?us-ascii?Q?vCQa3G2QU7D3xmdf44DDYQSZqaq/IbnxV1N+RYdG+YD//AmIqhI/ays7x/LX?=
+ =?us-ascii?Q?OZXmns7ZV7yAQZw/B0RZPysBqgBD8YXMfZ5jMqTmqb6AxBMiECF1U6CdS9RT?=
+ =?us-ascii?Q?ZPkV1fQJX7sGu5kPL5zWbtCMkIXeyjj7UEV8KgO3hcuoh0MYw2oPhfJr4dW4?=
+ =?us-ascii?Q?iDJ6+sVedgbQoEEequxrgNdeRmnXU1tWUoGOV5wbif8geP+vFg0zgjLf6N5x?=
+ =?us-ascii?Q?ZaU8KVVVLy+G3gMCpyjFbT0YOYK6lULiF3NU1cHkBpsSE1k5H3TPKTNrEmNz?=
+ =?us-ascii?Q?VermrfEzSgqRBOdSTXDYkPoPUGXrV0QNlb5BekzjeVhJITx1ZX5qwT+U/iiV?=
+ =?us-ascii?Q?vbV/8BnqIrNWM+tCfrnnUkA+kkUsIzehYXL979D579MQTXpp4OPo5U66tLpG?=
+ =?us-ascii?Q?55VmSBqNH6UbVuxWc7SZQ0YSCOaNs2bNs+0D27/aWPzxXBD/+AZBjSSTdzK4?=
+ =?us-ascii?Q?qM/uXK4ma9Y5bu7b65MC/sfwQieJf7gz6xDMvFWK+nc5LHV5tWxdTG1CHSZk?=
+ =?us-ascii?Q?VEJIBWHYlXNR7qUKQyUaz/CJGL50ZRDrJ0oKNdHwMYycqlPaDk2qc03bUiVL?=
+ =?us-ascii?Q?qNl6xMASCUSIHkUN1NuwbCoFWpeFx32eE0XrhMDy9XRci+52jIsc7r3f2u3K?=
+ =?us-ascii?Q?+0YhgtwFTjXanYVYOcVVEOrJGYjSEmhplo3WbZ3Xq/56BjkunQdCL755QBHx?=
+ =?us-ascii?Q?hu3CNq0BIunahBY7jLTRhoXg/31NsIkEI7e46wxh1kMjshnRQjpzVfXEsips?=
+ =?us-ascii?Q?9+1tYYzIZNW1Lp9Vu8EFK9bqWBFc+wKwcoPkUWZ/TQrN61/BJ3HFOtiKPNxj?=
+ =?us-ascii?Q?5cbFeunrNj4QK8vgMRY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] spi: stm32: enable controller before asserting CS
-To: Ben Wolsieffer <ben.wolsieffer@hefring.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Brown
- <broonie@kernel.org>, Alain Volmat <alain.volmat@foss.st.com>
-References: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>
-In-Reply-To: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.goehrs@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa03e10b-d80c-4262-aee5-08dc7327125b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2024 08:31:22.8186
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9UTw9F6amFhYJFUzAprMocJ69xKxYwcvb+zmUr/7Bbp4e4t+OIlGDXpYaUnpEoTLHUgmlD6zDUyvZ0mnTaN50Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8258
 
-Hi,
+> Subject: Re: [PATCH v2 01/17] clk: imx: composite-8m: Enable gate clk wit=
+h
+> mcore_booted
+>
+> On Fri, May 10, 2024 at 05:18:56PM +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Bootloader might disable some CCM ROOT Slices. So if mcore_booted set
+> > with display CCM ROOT disabled by Bootloader, kernel display BLK CTRL
+> > driver imx8m_blk_ctrl_driver_init may hang the system because the BUS
+> > clk is disabled.
+> >
+> > Add back gate ops, but with disable doing nothing, then the CCM ROOT
+> > will be enabled when used.
+> >
+> > Fixes: 489bbee0c983 ("clk: imx: composite-8m: Enable gate clk with
+> > mcore_booted")
+>
+> I can't find this commitish anywhere, also the subject looks like this pa=
+tch
+> fixes itself.
 
-I am in the process of updating an STM32MP157 based device from 6.8 to 6.9
-and have noticed SPI related issues that may be caused by this change.
+My bad. Picked the first commit when I use --pretty=3Dfixes.
 
-I am testing on an LXA TAC Generation 2 (arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen2.dts)
-and the issues I see are SPI transfer timeouts:
+>
+> > Reviewed-by: Ye Li <ye.li@nxp.com>
+> > Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >  drivers/clk/imx/clk-composite-8m.c | 53
+> > ++++++++++++++++++++++++++++++--------
+> >  1 file changed, 42 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/clk/imx/clk-composite-8m.c
+> > b/drivers/clk/imx/clk-composite-8m.c
+> > index 8cc07d056a83..f187582ba491 100644
+> > --- a/drivers/clk/imx/clk-composite-8m.c
+> > +++ b/drivers/clk/imx/clk-composite-8m.c
+> > @@ -204,6 +204,34 @@ static const struct clk_ops
+> imx8m_clk_composite_mux_ops =3D {
+> >     .determine_rate =3D imx8m_clk_composite_mux_determine_rate,
+> >  };
+> >
+> > +static int imx8m_clk_composite_gate_enable(struct clk_hw *hw) {
+> > +   struct clk_gate *gate =3D to_clk_gate(hw);
+> > +   unsigned long flags;
+> > +   u32 val;
+> > +
+> > +   spin_lock_irqsave(gate->lock, flags);
+> > +
+> > +   val =3D readl(gate->reg);
+> > +   val |=3D BIT(gate->bit_idx);
+> > +   writel(val, gate->reg);
+> > +
+> > +   spin_unlock_irqrestore(gate->lock, flags);
+> > +
+> > +   return 0;
+> > +}
+> > +
+> > +static void imx8m_clk_composite_gate_disable(struct clk_hw *hw) {
+> > +   /* composite clk requires the disable hook */ }
+> > +
+> > +static const struct clk_ops imx8m_clk_composite_gate_ops =3D {
+> > +   .enable =3D imx8m_clk_composite_gate_enable,
+> > +   .disable =3D imx8m_clk_composite_gate_disable,
+> > +   .is_enabled =3D clk_gate_is_enabled,
+> > +};
+> > +
+> >  struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+> >                                     const char * const *parent_names,
+> >                                     int num_parents, void __iomem
+> *reg, @@ -217,6 +245,7 @@ struct
+> > clk_hw *__imx8m_clk_hw_composite(const char *name,
+> >     struct clk_mux *mux;
+> >     const struct clk_ops *divider_ops;
+> >     const struct clk_ops *mux_ops;
+> > +   const struct clk_ops *gate_ops;
+> >
+> >     mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
+> >     if (!mux)
+> > @@ -257,20 +286,22 @@ struct clk_hw
+> *__imx8m_clk_hw_composite(const char *name,
+> >     div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
+> >
+> >     /* skip registering the gate ops if M4 is enabled */
+>
+> This comment doesn't seems to become inaccurate with this patch.
 
-   [   13.565081] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
-   [   13.565131] spi_master spi2: failed to transfer one message from queue
-   [   13.565134] spi_stm32 44005000.spi: spurious IT (sr=0x00010002, ier=0x00000000)
-   [   13.565145] spi_master spi2: noqueue transfer failed
-   [   13.565183] panel-mipi-dbi-spi spi2.0: error -110 when sending command 0x2a
-   [   13.769113] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
-   [   13.769163] spi_master spi2: failed to transfer one message from queue
-   [   13.769164] spi_stm32 44005000.spi: spurious IT (sr=0x00010002, ier=0x00000000)
-   [   13.769177] spi_master spi2: noqueue transfer failed
-   [   13.769210] panel-mipi-dbi-spi spi2.0: error -110 when sending command 0x2b
-   [   13.977028] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
-   [   13.977082] spi_master spi2: failed to transfer one message from queue
-   [   13.977095] spi_master spi2: noqueue transfer failed
-   [   14.460924] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
+Right. Drop it in v3.
 
-Followed by workqueue lockups and the device becoming unresponsive later
-in the boot, preventing me from logging in and investigating further that way:
+>
+> > -   if (!mcore_booted) {
+> > -           gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> > -           if (!gate)
+> > -                   goto free_div;
+> > -
+> > -           gate_hw =3D &gate->hw;
+> > -           gate->reg =3D reg;
+> > -           gate->bit_idx =3D PCG_CGC_SHIFT;
+> > -           gate->lock =3D &imx_ccm_lock;
+> > -   }
+> > +   gate =3D kzalloc(sizeof(*gate), GFP_KERNEL);
+> > +   if (!gate)
+> > +           goto free_div;
+> > +
+> > +   gate_hw =3D &gate->hw;
+> > +   gate->reg =3D reg;
+> > +   gate->bit_idx =3D PCG_CGC_SHIFT;
+> > +   gate->lock =3D &imx_ccm_lock;
+> > +   if (!mcore_booted)
+> > +           gate_ops =3D &clk_gate_ops;
+> > +   else
+> > +           gate_ops =3D &imx8m_clk_composite_gate_ops;
+>
+> Please use positive logic. It's easier to read.
 
-   [   17.026263] spi_master spi2: noqueue transfer failed
+Sure. update in v3.
 
-   TAC OS - The LXA TAC operating system 24.04+dev lxatac-00011 ttySTM0
-
-   lxatac-00011 login: root
-   [   62.434326] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 44s!
-   [   62.441321] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=-20 stuck for 44s!
-   …
-
-Reverting this commit fixes the issue for me. It may be some time before
-I get around to investigating the issue in detail, so I thought I should
-ask if anyone else has already noticed this as well.
-
-We are currently in the process of adding the device in question to
-KernelCI [1], which may help in catching such problems earlier.
-
-[1]: https://github.com/kernelci/kernelci-core/pull/2542
-
-
-On 24.04.24 15:52, Ben Wolsieffer wrote:
-> On the STM32F4/7, the MOSI and CLK pins float while the controller is
-> disabled. CS is a regular GPIO, and therefore always driven. Currently,
-> the controller is enabled in the transfer_one() callback, which runs
-> after CS is asserted.  Therefore, there is a period where the SPI pins
-> are floating while CS is asserted, making it possible for stray signals
-> to disrupt communications. An analogous problem occurs at the end of the
-> transfer when the controller is disabled before CS is released.
-> 
-> This problem can be reliably observed by enabling the pull-up (if
-> CPOL=0) or pull-down (if CPOL=1) on the clock pin. This will cause two
-> extra unintended clock edges per transfer, when the controller is
-> enabled and disabled.
-> 
-> Note that this bug is likely not present on the STM32H7, because this
-> driver sets the AFCNTR bit (not supported on F4/F7), which keeps the SPI
-> pins driven even while the controller is disabled.
-> 
-> Enabling/disabling the controller as part of runtime PM was suggested as
-> an alternative approach, but this breaks the driver on the STM32MP1 (see
-> [1]). The following quote from the manual may explain this:
-> 
->> To restart the internal state machine properly, SPI is strongly
->> suggested to be disabled and re-enabled before next transaction starts
->> despite its setting is not changed.
-> 
-> This patch has been tested on an STM32F746 with a MAX14830 UART
-> expander.
-> 
-> [1] https://lore.kernel.org/lkml/ZXzRi_h2AMqEhMVw@dell-precision-5540/T/
-> 
-> Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
-> ---
-> v2:
->   * Improve explanation of problem
->   * Discuss why not to use runtime PM instead
-> 
->   drivers/spi/spi-stm32.c | 14 ++------------
->   1 file changed, 2 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
-> index e4e7ddb7524a..4a68abcdcc35 100644
-> --- a/drivers/spi/spi-stm32.c
-> +++ b/drivers/spi/spi-stm32.c
-> @@ -1016,10 +1016,8 @@ static irqreturn_t stm32fx_spi_irq_event(int irq, void *dev_id)
->   static irqreturn_t stm32fx_spi_irq_thread(int irq, void *dev_id)
->   {
->   	struct spi_controller *ctrl = dev_id;
-> -	struct stm32_spi *spi = spi_controller_get_devdata(ctrl);
->   
->   	spi_finalize_current_transfer(ctrl);
-> -	stm32fx_spi_disable(spi);
->   
->   	return IRQ_HANDLED;
->   }
-> @@ -1187,6 +1185,8 @@ static int stm32_spi_prepare_msg(struct spi_controller *ctrl,
->   			 ~clrb) | setb,
->   			spi->base + spi->cfg->regs->cpol.reg);
->   
-> +	stm32_spi_enable(spi);
-> +
->   	spin_unlock_irqrestore(&spi->lock, flags);
->   
->   	return 0;
-> @@ -1204,7 +1204,6 @@ static void stm32fx_spi_dma_tx_cb(void *data)
->   
->   	if (spi->cur_comm == SPI_SIMPLEX_TX || spi->cur_comm == SPI_3WIRE_TX) {
->   		spi_finalize_current_transfer(spi->ctrl);
-> -		stm32fx_spi_disable(spi);
->   	}
->   }
->   
-> @@ -1219,7 +1218,6 @@ static void stm32_spi_dma_rx_cb(void *data)
->   	struct stm32_spi *spi = data;
->   
->   	spi_finalize_current_transfer(spi->ctrl);
-> -	spi->cfg->disable(spi);
->   }
->   
->   /**
-> @@ -1307,8 +1305,6 @@ static int stm32fx_spi_transfer_one_irq(struct stm32_spi *spi)
->   
->   	stm32_spi_set_bits(spi, STM32FX_SPI_CR2, cr2);
->   
-> -	stm32_spi_enable(spi);
-> -
->   	/* starting data transfer when buffer is loaded */
->   	if (spi->tx_buf)
->   		spi->cfg->write_tx(spi);
-> @@ -1345,8 +1341,6 @@ static int stm32h7_spi_transfer_one_irq(struct stm32_spi *spi)
->   
->   	spin_lock_irqsave(&spi->lock, flags);
->   
-> -	stm32_spi_enable(spi);
-> -
->   	/* Be sure to have data in fifo before starting data transfer */
->   	if (spi->tx_buf)
->   		stm32h7_spi_write_txfifo(spi);
-> @@ -1378,8 +1372,6 @@ static void stm32fx_spi_transfer_one_dma_start(struct stm32_spi *spi)
->   		 */
->   		stm32_spi_set_bits(spi, STM32FX_SPI_CR2, STM32FX_SPI_CR2_ERRIE);
->   	}
-> -
-> -	stm32_spi_enable(spi);
->   }
->   
->   /**
-> @@ -1413,8 +1405,6 @@ static void stm32h7_spi_transfer_one_dma_start(struct stm32_spi *spi)
->   
->   	stm32_spi_set_bits(spi, STM32H7_SPI_IER, ier);
->   
-> -	stm32_spi_enable(spi);
-> -
->   	if (STM32_SPI_HOST_MODE(spi))
->   		stm32_spi_set_bits(spi, STM32H7_SPI_CR1, STM32H7_SPI_CR1_CSTART);
->   }
+Thanks,
+Peng.
+>
+> Sascha
+>
+> --
+> Pengutronix e.K.                           |                             =
+|
+> Steuerwalder Str. 21                       |
+> http://www.p/
+> engutronix.de%2F&data=3D05%7C02%7Cpeng.fan%40nxp.com%7C86a2a0908b
+> 83408401af08dc73178043%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0
+> %7C0%7C638511791969660985%7CUnknown%7CTWFpbGZsb3d8eyJWIjoi
+> MC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%
+> 7C%7C%7C&sdata=3DeJJ8rdenU2ACBFUBX0CKKFzhkIQA999b7rpOuMkqgoU%3
+> D&reserved=3D0  |
+> 31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    =
+|
+> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 =
+|
 
