@@ -1,185 +1,83 @@
-Return-Path: <linux-kernel+bounces-178147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2398C49AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:40:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F0338C49AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF82C1C21701
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:40:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03BB6B227B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856BA84DF2;
-	Mon, 13 May 2024 22:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3497F84D07;
+	Mon, 13 May 2024 22:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eROTGHQI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="UrytV0QK"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B498053E30;
-	Mon, 13 May 2024 22:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0383B134BC
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715640008; cv=none; b=Nu8+mucn9dqBq37FKKfLlMQMo943Bu2xolDmow9wtZeyjpQJkTmfuuQBZYz27KIfUAGUs7IprO0bewoVUY5uBGeVfQVGRtinFheLOk62iVWPgk2+pxSXtCU/m7aK1/+mupjC+9UkVmRpaumrHb6EoZ2MVWm3AB69ykSZUcRpwtw=
+	t=1715639994; cv=none; b=J6VMRVJeqsEl93XQx9H8p5H+pF8NzDPIxJtUgqhM67FGMJb1DvbThr9+ETQhtHLD5wjBf+LKwqJ829QirH1DHp7xHOpF7I71wFGgtd1fVkgwKD3GOQ/3fSqBPYRkSg6LaqOXcYHKj8sSkjHbHPL1/S54pmZqDaBe84xJcmVGp7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715640008; c=relaxed/simple;
-	bh=x/Nx1D89T1lHlU5B5CqZ/p8dOgkTvhf1i6pKCzFa02k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0XVc1la8nwsBJUyFnR/M6790IQsjjbjKETfAQYFWclzXQ/3tNPy9pmkqBYCHJy7kqrK3/PXrrXuxsNaIk3pZNV+W5abTfUuSLDNavBIJRcZ+FPW6O0wvBPD212LUZrapdCCEK35zg/A0m4jjBgT6AbKJCiMj50Zn+edFdH15B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eROTGHQI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC92C4AF09;
-	Mon, 13 May 2024 22:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715640008;
-	bh=x/Nx1D89T1lHlU5B5CqZ/p8dOgkTvhf1i6pKCzFa02k=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=eROTGHQIRn/ruz3M/3Z51w7eviTp1FSvYe3lW2x9/oR/a3Z5Isxj1Z9guaGMWAp2+
-	 zfDLKe9ysI4+bY/XJHjj0YK9k6wEEAa7QUh8BtQrfTvxGYFOCiCUUY+vHbDHLTQjWH
-	 ASOG4RUDXnuwmBYEW0aErhsPf4zrqDIjqgK/NdceGDsCJiEuemskHrRTmb1i+U/AYB
-	 WToNfHl4haQcCjwGrnF4Q2PRIH1D+80qVAbjRENSrvyRR4K+HGhAXMj3mkLoYDd4p3
-	 cT+sN1+5vp9nSXPSQ1CE9SH0LaotGQr6ZIlXFVteQIwbTEfE8X8aBe+zjIdafIiGgz
-	 HxQ4ChTteGBxg==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51f1bf83f06so6113414e87.1;
-        Mon, 13 May 2024 15:40:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6Toda41xdG9KxX9gROtvXXcQb24I/KplU/XYp1CmbejPafHqMod+VYNAX51baxpdVjMnZ3OI0qxggM/3BHPVrzUPiUaHfjJ/j/nvVSGwQSxTASZWc2JT6aFQO3+xQktN0mTG9f0B5Luvg5Xy3X7VKrurT2hgNT3YkKKgV3mJzs33oDBTRhBJpMw==
-X-Gm-Message-State: AOJu0YzGsHVmFO4Xm+Noa1KwWZDZm1J5Xm1JTEMKm0dxjfnKZwlADysf
-	K5MqMEBVZnIrr/7QTnBx9cJWfu06lDKbn6+R2sR1NDNEKdU9kS796d6Axm844CUl+jn6onFpVVQ
-	bICKtQd9R8hEh4Ne6qBSXdc5QX6o=
-X-Google-Smtp-Source: AGHT+IHbHNx5gwjCrmuc7c1K5c3QgIyJyryN7uuHy1ZDptb5sJxd7YMZEqQk+hD1Ap+n2OC5zmc0Q0L5IFdcn6mTIQY=
-X-Received: by 2002:a05:6512:6c7:b0:522:2dd4:bb30 with SMTP id
- 2adb3069b0e04-5222dd4bba8mr6686133e87.54.1715640007187; Mon, 13 May 2024
- 15:40:07 -0700 (PDT)
+	s=arc-20240116; t=1715639994; c=relaxed/simple;
+	bh=BSN7Xy3cGgTmiOR56jzKBdth2uyQ80MxzKLMljOx1AM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=VHZdisR/LZx/lqgekymNyK5QbnZbM1gwzc0jIiVc+eaLi10+1PwAoYgnJiN5tVbZiZeQB6CEygf4PO/VVjmM9fM+EhO9pK6F0IYOuSBTpsCe/ASUnukHIJjES4V2M50bj5wQRhlF1LjzjDgaT55kM8LnSp81f76Em0nWU6Kz/wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=UrytV0QK; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1715639986;
+	bh=BSN7Xy3cGgTmiOR56jzKBdth2uyQ80MxzKLMljOx1AM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=UrytV0QKWFlEdF+Hn8ySUdjdNjc7JvrK9YOERxx7rGXk68GXZs059H6agzVTj6mLr
+	 rrtXg3p5M0ENyH6WhUATfOY/fJecOYmF++Lx33NipqmDGsV1q+L+lg0gUa0BCVFe6S
+	 hIGrkMC/UdNWH9I5QvKGeYFWGtRx6ys4E8cGNy48=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id AE2A740A8F; Mon, 13 May 2024 15:39:46 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id AD19E4093E;
+	Mon, 13 May 2024 15:39:46 -0700 (PDT)
+Date: Mon, 13 May 2024 15:39:46 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+cc: Yang Shi <yang@os.amperecomputing.com>, catalin.marinas@arm.com, 
+    will@kernel.org, scott@os.amperecomputing.com, 
+    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: mm: force write fault for atomic RMW
+ instructions
+In-Reply-To: <ea88e906-3219-48c0-884c-3bb13ca0d18f@arm.com>
+Message-ID: <ec207271-623a-f2c0-0adf-7ecbc47aa99b@gentwo.org>
+References: <20240507223558.3039562-1-yang@os.amperecomputing.com> <c9c3c0d5-bb61-4eed-8b89-b0341a2c6f5c@arm.com> <c1ba9ba3-b0d6-4c6c-d628-614751d737c2@gentwo.org> <ea88e906-3219-48c0-884c-3bb13ca0d18f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240506133544.2861555-1-masahiroy@kernel.org> <202405131136.73E766AA8@keescook>
-In-Reply-To: <202405131136.73E766AA8@keescook>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 14 May 2024 07:39:31 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARZuqxWyxn2peMCCt0gbsRdWjri=Pd9-HvpK7bcOB-9dA@mail.gmail.com>
-Message-ID: <CAK7LNARZuqxWyxn2peMCCt0gbsRdWjri=Pd9-HvpK7bcOB-9dA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] kbuild: remove many tool coverage variables
-To: Kees Cook <keescook@chromium.org>
-Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Marco Elver <elver@google.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Peter Oberparleiter <oberpar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Tue, May 14, 2024 at 3:48=E2=80=AFAM Kees Cook <keescook@chromium.org> w=
-rote:
->
-> In the future can you CC the various maintainers of the affected
-> tooling? :)
-
-
-Sorry, I was too lazy to add CC for treewide changes like this.
-Anyway, thanks for adding CC.
-
-
-
-
-> On Mon, May 06, 2024 at 10:35:41PM +0900, Masahiro Yamada wrote:
-> >
-> > This patch set removes many instances of the following variables:
-> >
-> >   - OBJECT_FILES_NON_STANDARD
-> >   - KASAN_SANITIZE
-> >   - UBSAN_SANITIZE
-> >   - KCSAN_SANITIZE
-> >   - KMSAN_SANITIZE
-> >   - GCOV_PROFILE
-> >   - KCOV_INSTRUMENT
-> >
-> > Such tools are intended only for kernel space objects, most of which
-> > are listed in obj-y, lib-y, or obj-m.
->
-> This is a reasonable assertion, and the changes really simplify things
-> now and into the future. Thanks for finding such a clean solution! I
-> note that it also immediately fixes the issue noticed and fixed here:
-> https://lore.kernel.org/all/20240513122754.1282833-1-roberto.sassu@huawei=
-cloud.com/
->
-> > The best guess is, objects in $(obj-y), $(lib-y), $(obj-m) can opt in
-> > such tools. Otherwise, not.
-> >
-> > This works in most places.
->
-> I am worried about the use of "guess" and "most", though. :) Before, we
-> had some clear opt-out situations, and now it's more of a side-effect. I
-> think this is okay, but I'd really like to know more about your testing.
-
-
-- defconfig for arc, hexagon, loongarch, microblaze, sh, xtensa
-- allmodconfig for the other architectures
-
-
-(IIRC, allmodconfig failed for the first case, for reasons unrelated
-to this patch set, so I used defconfig instead.
-I do not remember what errors I observed)
-
-
-I checked the diff of .*.cmd files.
-
-
-
-
+On Thu, 9 May 2024, Anshuman Khandual wrote:
 
 >
-> It seems like you did build testing comparing build flags, since you
-> call out some of the explicit changes in patch 2, quoting:
+>>> Okay, I was about to ask, but is not calling get_user() for all data
+>>> read page faults increase the cost for a hot code path in general for
+>>> some potential savings for a very specific use case. Not sure if that
+>>> is worth the trade-off.
+>>
+>> The instruction is cache hot since it must be present in the cpu cache for the fault. So the overhead is minimal.
+>>
 >
-> >  - include arch/mips/vdso/vdso-image.o into UBSAN, GCOV, KCOV
-> >  - include arch/sparc/vdso/vdso-image-*.o into UBSAN
-> >  - include arch/sparc/vdso/vma.o into UBSAN
-> >  - include arch/x86/entry/vdso/extable.o into KASAN, KCSAN, UBSAN, GCOV=
-, KCOV
-> >  - include arch/x86/entry/vdso/vdso-image-*.o into KASAN, KCSAN, UBSAN,=
- GCOV, KCOV
-> >  - include arch/x86/entry/vdso/vdso32-setup.o into KASAN, KCSAN, UBSAN,=
- GCOV, KCOV
-> >  - include arch/x86/entry/vdso/vma.o into GCOV, KCOV
-> >  - include arch/x86/um/vdso/vma.o into KASAN, GCOV, KCOV
->
-> I would agree that these cases are all likely desirable.
->
-> Did you find any cases where you found that instrumentation was _removed_
-> where not expected?
+> But could not a pagefault_disable()-enable() window prevent concurring
+> page faults for the current process thus degrading its performance.
+
+The cpu is already executing a fault handler in kernel space. There cannot 
+be an additional user space fault since we do not execute that code 
+currently.
 
 
-
-
-See the commit log of 1/3.
-
-
-> Note:
->
-> The coverage for some objects will be changed:
->
->   - exclude .vmlinux.export.o from UBSAN, KCOV
->   - exclude arch/csky/kernel/vdso/vgettimeofday.o from UBSAN
->   - exclude arch/parisc/kernel/vdso32/vdso32.so from UBSAN
->   - exclude arch/parisc/kernel/vdso64/vdso64.so from UBSAN
->   - exclude arch/x86/um/vdso/um_vdso.o from UBSAN
->   - exclude drivers/misc/lkdtm/rodata.o from UBSAN, KCOV
->   - exclude init/version-timestamp.o from UBSAN, KCOV
->   - exclude lib/test_fortify/*.o from all santizers and profilers
->
-> I believe these are positive effects.
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
 
