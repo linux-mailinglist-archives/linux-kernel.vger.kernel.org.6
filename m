@@ -1,210 +1,189 @@
-Return-Path: <linux-kernel+bounces-177146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5988C3AC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:44:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 764918C3ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7F51C20E37
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C9B28129B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AE6146009;
-	Mon, 13 May 2024 04:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018F7146001;
+	Mon, 13 May 2024 04:57:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Dkhwcucj"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/Ilp0Bo"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7341EB2A;
-	Mon, 13 May 2024 04:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715575450; cv=fail; b=rPKIt5dNZKP7rL1x9xmUFOOMPrRUt0twyRwAI227QkjbCpBnj0pkjYiNfOvKaxKnMrXT8rslU9WoOhSgrr2pWyLQ6E80fyAEbaU46sSBUbqJhSoY5Yf0WeUoOC7BCNBiki8bwDEchLMwXkNywUe10YTdPUcgBiLyUcwDv0mzXyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715575450; c=relaxed/simple;
-	bh=B+wWCO8Gc+gDULRxi4sAg+Q20zDtLN4sqGD6eO/ePH0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u0CKNUWkIbeFN/Y4S4nnQTYj+40B7cMxnnF2H3IMA9yXtwtkI+P3YuM449NKUqu6HFPZzlAY+e/d6VlNLA3uT8rNcHSOlp0NEoYQV7ghMabv0n/T3b5utMoKcCAD18Ad6B3ABjJRn81X35A+kGEgiQwgMpJowimhsbVlp0MkjeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Dkhwcucj; arc=fail smtp.client-ip=40.107.243.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JLwmU2Gj655tHGWOxk4AuGF5wMb0Nd12xNrmbElRrnHUpPO/TDOLtTov+/ufUyORNQWmr9yhMqxYLe2Qbd1olFTh6FS7zQU47OsKPZFQAp3SvHHElIF6+LmC4mkMbdJhR4ljdzdBu/NJjFWY7TQyl0QCQzvmTbG0Rc9yB7waZNSPBnt3iLX7PBz4VIGIaLLQ/cTADIyaSxXDxArD9LoNOfCVYjhGQwyxYxVCzrTsvjKjIBWzzMcacVTkN3zAReT+lmfaNenuLK9BDgWn4Dvl6V9pxFpDt+kNQWfgJ87ExGnnj4lr9aJOJaWf4Hb0ugENq0ue2CI2cmEuorCBu4sinA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hZVpGCVOQscqtZoDF4QVIBZt6BKJ9Fmo0aKcmpeYdFE=;
- b=dfCzY0zMXJnNvGmhnEH6QCqq079l7EuTE9ZpPXiYH+dwm9dlDBFI83jsB+E7OpuRMH9tWV4vS4oyb/Kuh6y5a1whTtMHLAEGAeb5y9AObXYSjXG4QPWPq6nYrbiJD2uvv0m6TUKUY22U7dWNAEm+/x3jriy6oFh84mPof0CD3dZr0TOMTru4nCzXW4rlP1JIYWtdy86dJk/g+Aek7VcdKNtSGrV2eP/5fKqAICLs5uZDbRQwzobC7eKJnvyaVsz4ITeBJkFLBzYzJWVFYh2FWw3Ymxoa6qyX2IVHX22F0aHPTjpAwCMrdJ4gs+MX5NU44Ma6TpR6v/oOrWZIFDJOXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hZVpGCVOQscqtZoDF4QVIBZt6BKJ9Fmo0aKcmpeYdFE=;
- b=DkhwcucjXtbN7P+FB3ck8/APq60O6hnqzEuPcGvETt3zaxNidYC/U2OLOoHVgM/7lE7xCDnvz3+NBqtixEBAbq+onLHvPBhDUF27f2CejNbgYhXVqhH2SsTnITMPdr9ryLsT768aO6x5G88IlFfTmZQy6RUECvoNwOCUXIkeQz1rNT7wo2dAHA1/iIfmxy/0B2uRcTA0X2yjIrVaIzlFhyM/g2O9VfMM6xb7mPkhzPTNgGKQCvZd7eqDPzUhoRjYUH32AskoP63jc8ETuLJSykSmcQS6Iiz1JQivwD3h9FIYrFgk0hN/5j2WC2wwWy6XUTUs++FYnI7/L2gzlvmw+Q==
-Received: from BY3PR05CA0030.namprd05.prod.outlook.com (2603:10b6:a03:254::35)
- by DS7PR12MB8290.namprd12.prod.outlook.com (2603:10b6:8:d8::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 04:44:05 +0000
-Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
- (2603:10b6:a03:254:cafe::24) by BY3PR05CA0030.outlook.office365.com
- (2603:10b6:a03:254::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.22 via Frontend
- Transport; Mon, 13 May 2024 04:44:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 04:44:04 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
- 2024 21:43:49 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
- 2024 21:43:49 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Sun, 12 May 2024 21:43:45 -0700
-Date: Sun, 12 May 2024 21:43:42 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
-	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
-	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 13/14] iommufd: Add mmap infrastructure
-Message-ID: <ZkGafm+qAe77bvIW@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <6fef9ff9944381d51dd18f83ec03785a26754dcf.1712978213.git.nicolinc@nvidia.com>
- <ZkDd8A2qAYnuxGJQ@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72451E493
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 04:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715576260; cv=none; b=rXFBQI9pvhT7nCqZb5UX2bJ1jFYxhRZtl4baBi1j0okJ5S/6Uc/ANvgi9ck5cIT6h+D42sn0nBdb/kS8/+I9+p94vQS3driML946H8R9RSQADZXcCS3wAGxpNYGKTerjmxpSiqALvknBQ2zhKv7+33Bkdt9fqYATnyI30q6udP8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715576260; c=relaxed/simple;
+	bh=HfX7F7ojfaf41PdCJZ+kwmTV2ZLK/OS8ZYak0OOG1h0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ANGrRj6ULpjQEykTNBoqKIcqXunNAXfHfCEwlmzATo3vOTQG9IxiENqdKxS2irdYcTr2+5NFDnTd2VerP2EGWDleIGU1IzX3xkkMrrytpfEPdPD0tVnjthBRYow06TCKDcIo8Roqq9M94Vuo/fClJ5DF+OAlRAjGI99hrmJeR60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/Ilp0Bo; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ee954e0aa6so28952685ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 21:57:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715576258; x=1716181058; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMsOuSvzf4aVI6LsRrkYGtxxdKvIAWtBa8DssIl0GDM=;
+        b=I/Ilp0BodUn1OQiZfyEWUl641DXE90bJAh1ujn5wHFLe5XXI9+ZY3auDhOX/NOAnkB
+         CPnwzeIvygIoWpTD3hcRgNb3w0zr2jpGXYoDDhGxsOJ5480EkKIpW0qH3/WPNCW2/vsi
+         UetLWP2oy9Y44niG9dOdEsSM9EbPxa1HMPo+pfl9D0zKJAuV7Vw49xUqrlJCKRVbOtip
+         9xA5/VxrTsyOa4PinOK6rIhluO2sooKuEG7h8dGsC/kaHMY8d1THbCVd6lmUtk/8D5uw
+         Ffy5NqOfAigCniT8qfgGmeG/Ai+x9Mc4m7q/K+4KeeIg4wCI7NQXZouPsmuDRt0IeIC+
+         z22w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715576258; x=1716181058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CMsOuSvzf4aVI6LsRrkYGtxxdKvIAWtBa8DssIl0GDM=;
+        b=rul257nK9GHMh19fDdDzPG//4wv3LG+W3n9yfdtQAmV0jL0qe5UB5/o4XwT1mXtm6r
+         smebtzsHaHl1itvRe2U1jvfdUy0rZhOR7vYuPdww6B/7Ab8GGLjFJ03NbgfWMKwgfuiG
+         uDHLWr9jN9xDWugmiVEKXegh1TnK7IU1qMrsrFFEl2AyZsmmjpciouiQKO0Gtx0VMd2s
+         cYyhgH69MKUdMvHoyOiCyH7Cjm/RxwcSwMHWngYXVWIdd/rHZ3mCn60z6wC0dICTLn9h
+         cFU2tLWZatuoPK1k91pkLopuXOJcd8I6bWa9EobtaiJpMkq94sMl2Zp8LSAUbZCTUEpB
+         O75w==
+X-Forwarded-Encrypted: i=1; AJvYcCV9sgIY6s0poh/HIYkrz3stN3/LNRK8Vh/FWSDT4SGWL8K6D5hkCju6F1xH+q86qjxLRjCseZGpMmQU/S1X/RywxJaaj+ErGiuf2tkp
+X-Gm-Message-State: AOJu0YyP/5svdMflU86rYrvSoZnt6bMboVkcS11CrSjPLo8X18SxL34/
+	f5iSG7+MMEskMZ+f+RHsxhyHd9MKxtRl/G2nygtV/rVABcVaQiH8
+X-Google-Smtp-Source: AGHT+IEWKrOn68W8n0UjoB6cxJVuRvPkFOgK91Ok2MZQMNcWfGsTgpeKcUGYT6XnlTTpxQRsuceCcw==
+X-Received: by 2002:a17:902:aa45:b0:1e4:9ad5:7522 with SMTP id d9443c01a7336-1ef43e292efmr83830345ad.21.1715576257976;
+        Sun, 12 May 2024 21:57:37 -0700 (PDT)
+Received: from LancedeMBP.lan ([112.10.225.242])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d187fsm69823705ad.27.2024.05.12.21.57.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 21:57:37 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: akpm@linux-foundation.org
+Cc: willy@infradead.org,
+	sj@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	maskray@google.com,
+	ziy@nvidia.com,
+	ryan.roberts@arm.com,
+	david@redhat.com,
+	21cnbao@gmail.com,
+	mhocko@suse.com,
+	fengwei.yin@intel.com,
+	zokeefe@google.com,
+	shy828301@gmail.com,
+	xiehuan09@gmail.com,
+	libang.li@antgroup.com,
+	wangkefeng.wang@huawei.com,
+	songmuchun@bytedance.com,
+	peterx@redhat.com,
+	minchan@kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Lance Yang <ioworker0@gmail.com>
+Subject: [PATCH v5 0/4] Reclaim lazyfree THP without splitting
+Date: Mon, 13 May 2024 12:56:22 +0800
+Message-Id: <20240513045626.84016-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.33.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkDd8A2qAYnuxGJQ@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|DS7PR12MB8290:EE_
-X-MS-Office365-Filtering-Correlation-Id: c4aeb330-ebae-4741-861e-08dc73075190
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|1800799015|7416005|36860700004|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fuOdM6dktizx1i5TkTv7EUoN/RLQoKVpowEiZFIWNp9mJT73q+F8EqKEucY5?=
- =?us-ascii?Q?0Jp9pkZtjCUpM72npCsMZO7QtLAPNaxocHYmRp5WUXn/jOOF0TX9rGdNdH+i?=
- =?us-ascii?Q?zbLcNOeKMe7z0wzObVp3IYk/3s0woGC7T3wEKvpbw5+cKHoICXyLe1gOxAwS?=
- =?us-ascii?Q?SOIzKQdJcOyHc10p/J8Z/68pobTlD5750MsNveKBvQ3D0IVcnQSn3OfxICuS?=
- =?us-ascii?Q?bGoZzqDVUgwQylJK3ndDDOaFYnWUQKWH3RRU0BoKv1XvCP0towlw2mDUsy/7?=
- =?us-ascii?Q?hBDkSwHr/6hOvu1cZYcEzb5pyNQEzcDxWHoQ6Gcb12VUE5lDBtXBaONY9a2a?=
- =?us-ascii?Q?kQOS/c2pyUXXTVWk4LOyPnm2in5hm2qRZE3/mhMGarQewryaV3Bttcsu0GGB?=
- =?us-ascii?Q?Xdap0Ds0d2Z5WHA0/xm1V9g+FmqWKwAnx3NBcUAEgjWM/r+Xhg37ZNJHWQ8D?=
- =?us-ascii?Q?zts1sEl+bak2E9os+lp2csmqWgUf1Ln1bCED9ksWgeDihZPoaEP7YMHGl5RV?=
- =?us-ascii?Q?aLSJEtG7Zn92708D+GyDKlXFBlEvPkQKQxsA/r5o94JQ1R7/2Oq7tKQRjPZi?=
- =?us-ascii?Q?0DjsvprOdRF4KT3yj9q03C+YIO/s0r56Gg9wOnrUSnCQbNmM4Pm8f65mm/yu?=
- =?us-ascii?Q?825DyjZynEr/SjBkDzu5fX0SDnAQLEv9rvFB5s38fxPfzf19Ahy758XYOKsN?=
- =?us-ascii?Q?On5UHes9vfEmffdLRuoa4Hb6U3MUAYXW+dJ4h30FJXQs7OztetK4yR1WtywC?=
- =?us-ascii?Q?jVwwx2QzLukSYGZSJ+SRGDRzAZ0lBeHh66wgE5tO3WOa9ALyldiqAzHrwJMs?=
- =?us-ascii?Q?2qIHJwiuPokKVOUTbbNXHo42HTZd8DPxSaLLO4w5S6Z2iQk4leLwP35MtfIY?=
- =?us-ascii?Q?lDT536VrnsBZGjVVvpb5fv3v4xMt4KPHrFZedNtMyU7Cvm9j5NaSOsKeT3oz?=
- =?us-ascii?Q?HD1VkW+2Ug1WCnsD/4rJXB8PxTrPPbommwfMc7At7Pb3Yn9wQGezgD3R5hpP?=
- =?us-ascii?Q?RL+EbQvkckMaKweCZczSbHGQW0BHjGZShHicAWcLDzZL2kCYTuYZ5c04EFqD?=
- =?us-ascii?Q?l+NiHcKJAp+/FUw8VG5+BruGWETpldEY7iRA8h2mN2wGfNKrQqcfHHpo4IM1?=
- =?us-ascii?Q?bINZpkbDTu3ZVdBI5crSHpv/DAqlx+zYoHnHD3iTsKXHXiVKAxN13TMeY8qC?=
- =?us-ascii?Q?mt/xFdP0kgMXi8DAX+IZhihaWLOxRNa1UpdVkqG3NLhsMX0Nkp0ppdrYsm9q?=
- =?us-ascii?Q?SZyiDemcCavDvQwH7ALYjfQD+VO52x4SvfRssQJj9KInkDgJsQtwi+F+A3L8?=
- =?us-ascii?Q?5fIwt1Q2kKDtbYvttZpuTiA8YTwk1P1QlTgiHE0KID6ujEhnb3cJL17BYTDj?=
- =?us-ascii?Q?yING/vaPnctJuTOfAVmYUS72w50V?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(7416005)(36860700004)(376005);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 04:44:04.8752
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c4aeb330-ebae-4741-861e-08dc73075190
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8290
+Content-Transfer-Encoding: 8bit
 
-On Sun, May 12, 2024 at 12:19:12PM -0300, Jason Gunthorpe wrote:
-> On Fri, Apr 12, 2024 at 08:47:10PM -0700, Nicolin Chen wrote:
-> > Add for sharing the kernel page with user space. This allows to pass
-> > through HW resource (VCMDQ MMIO pages for example) to user space VMM
-> > and guest OS. Use vma->vm_pgoff as the carrier of a viommu_id.
-> > 
-> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> > ---
-> >  drivers/iommu/iommufd/main.c | 40 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/iommufd.h      |  4 ++++
-> >  2 files changed, 44 insertions(+)
-> > 
-> > diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-> > index 96ef81530809..5b401c80cca8 100644
-> > --- a/drivers/iommu/iommufd/main.c
-> > +++ b/drivers/iommu/iommufd/main.c
-> > @@ -16,6 +16,7 @@
-> >  #include <linux/mutex.h>
-> >  #include <linux/bug.h>
-> >  #include <uapi/linux/iommufd.h>
-> > +#include <linux/iommu.h>
-> >  #include <linux/iommufd.h>
-> >  
-> >  #include "io_pagetable.h"
-> > @@ -427,11 +428,50 @@ static long iommufd_fops_ioctl(struct file *filp, unsigned int cmd,
-> >  	return ret;
-> >  }
-> >  
-> > +static int iommufd_fops_mmap(struct file *filp, struct vm_area_struct *vma)
-> > +{
-> > +	struct iommufd_ctx *ictx = filp->private_data;
-> > +	size_t size = vma->vm_end - vma->vm_start;
-> > +	u32 viommu_id = (u32)vma->vm_pgoff;
-> 
-> Don't do mmaps this way, it doesn't scale well for future things.
-> 
-> The pgoff/length should *always* come from the kernel as some
-> 'mmap_offset' output. I usually call this the mmap cookie.
-> 
-> In this case have the mmap cookie for the tegra doorbell return in the
-> viommu's driver data struct, then userspace just passes the opaque
-> cookie to mmap to get the correct tegra doorbell.
-> 
-> The core code has some simple xarray/maple tree to allocate cookies
-> and dispatch them to the correct mmap callback. Usually I'd say to
-> provide a mmap callback pointer when allocating the cookie.
-> 
-> Also look at the RDMA Code around mmap there is a bunch of VMA
-> validations needed. Ie we must insist on VM_SHARED and check
-> permissions, etc.
+Hi all,
 
-Yea, the vm_pgoff as a carrier is a bit of hack, as mentioned
-in the cover-letter. Let me revisit the whole thing and study
-from RDMA code also.
+This series adds support for reclaiming PMD-mapped THP marked as lazyfree
+without needing to first split the large folio via split_huge_pmd_address().
 
-Thanks
-Nicolin
+When the user no longer requires the pages, they would use madvise(MADV_FREE)
+to mark the pages as lazy free. Subsequently, they typically would not re-write
+to that memory again.
+
+During memory reclaim, if we detect that the large folio and its PMD are both
+still marked as clean and there are no unexpected references(such as GUP), so we
+can just discard the memory lazily, improving the efficiency of memory
+reclamation in this case.
+
+Performance Testing
+===================
+
+On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
+mem_cgroup_force_empty() results in the following runtimes in seconds
+(shorter is better):
+
+--------------------------------------------
+|     Old       |      New       |  Change  |
+--------------------------------------------
+|   0.683426    |    0.049197    |  -92.80% |
+--------------------------------------------
+
+---
+
+Changes since v4 [4]
+====================
+ - mm/rmap: remove duplicated exit code in pagewalk loop
+    - Pick RB from Zi Yan - thanks!
+ - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+    - Remove the redundant alignment (per Baolin Wang)
+    - Set pvmw.ptl to NULL after unlocking the PTL (per Baolin Wang)
+ - mm/mlock: check for THP missing the mlock in try_to_unmap_one()
+    - Check whether the mlock of PMD-mapped THP was missed
+      (suggested by Baolin Wang)
+ - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+    - No need to check the TTU_SPLIT_HUGE_PMD flag for unmap_huge_pmd_locked()
+      (per Zi Yan)
+    - Drain the local mlock batch after folio_remove_rmap_pmd()
+      (per Baolin Wang)
+
+Changes since v3 [3]
+====================
+ - mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+    - Resolve compilation errors by handling the case where
+      CONFIG_PGTABLE_HAS_HUGE_LEAVES is undefined (thanks to SeongJae Park)
+ - mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+    - Remove the unnecessary conditional compilation directives
+      (thanks to Barry Song)
+    - Resolve compilation errors due to undefined references to
+      unmap_huge_pmd_locked and split_huge_pmd_locked (thanks to Barry)
+
+Changes since v2 [2]
+====================
+ - Update the changelog (thanks to David Hildenbrand)
+ - Support try_to_unmap_one() to unmap PMD-mapped folios
+   (thanks a lot to David Hildenbrand and Zi Yan)
+
+Changes since v1 [1]
+====================
+ - Update the changelog
+ - Follow the exact same logic as in try_to_unmap_one() (per David Hildenbrand)
+ - Remove the extra code from rmap.c (per Matthew Wilcox)
+
+[1] https://lore.kernel.org/linux-mm/20240417141111.77855-1-ioworker0@gmail.com
+[2] https://lore.kernel.org/linux-mm/20240422055213.60231-1-ioworker0@gmail.com
+[3] https://lore.kernel.org/linux-mm/20240429132308.38794-1-ioworker0@gmail.com
+[4] https://lore.kernel.org/linux-mm/20240501042700.83974-1-ioworker0@gmail.com
+
+Lance Yang (4):
+  mm/rmap: remove duplicated exit code in pagewalk loop
+  mm/rmap: integrate PMD-mapped folio splitting into pagewalk loop
+  mm/mlock: check for THP missing the mlock in try_to_unmap_one()
+  mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+
+ include/linux/huge_mm.h |  15 ++++++
+ mm/huge_memory.c        | 117 +++++++++++++++++++++++++++++++++-------
+ mm/rmap.c               |  73 ++++++++++++++-----------
+ 3 files changed, 153 insertions(+), 52 deletions(-)
+
+-- 
+2.33.1
+
 
