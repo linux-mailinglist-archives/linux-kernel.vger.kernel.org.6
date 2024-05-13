@@ -1,147 +1,188 @@
-Return-Path: <linux-kernel+bounces-177357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED158C3D72
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:41:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376DA8C3D77
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3CECB21088
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:41:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B3EEB20CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751AC1482EF;
-	Mon, 13 May 2024 08:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B251487CD;
+	Mon, 13 May 2024 08:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3VCcXT8/"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="U/jn0vKY"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAF9147C7F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2FA146D4E;
+	Mon, 13 May 2024 08:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589663; cv=none; b=qBGaQS7g96dOOeV9xFREKor/yoNi7e5gPOEn1OLr2b9PFA5/ViUnO1KEu0cydDc8a3+sQrmsefuPZCjoZTj67kLhe9zpcLTMEbqEfBird6MtAu8N4pLavxp6zvXVL2v2pC4oFjOhVlrgZnzFRsmpXtzZ1EGvzB2pAgFJnMntOAU=
+	t=1715589776; cv=none; b=IJW//d0gDrugrJvsKiWkKxwVBmMHJRrQN7N5/JcN+3KjD6DittglQXKp1s7brcPrimy59l4LkAE6tlegFXEnVDeUuhh5xvN583PFpd1T9anYzGzFkRZSnNivQ41V+afKM/7/h4zte6ki7+jQCS0ZRThhxef7V3Z3DEOpjlagpQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589663; c=relaxed/simple;
-	bh=6Qe+Z4SzpwQnD/xZduFUuZ+qeUgZmflyk3fkh5lZ93s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uu4LzNywYMI7ZCliGlerPit5BGgwLxgVh6qSfnn1Mhrr967abI8ZkvfQSgnf21T1MaAKngK9cbUvAUfH0DiQJ7WpoKb6Dn8DojwziPLBSxXevFWnwzGvsbUq+MDvmUfmHqT5Z+poJijziFXKZyOQ03mKi9CmY5AUiMEOqFjvGIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3VCcXT8/; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso14630a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715589660; x=1716194460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iSDRwv7jk6IAgHWtX5wD76uWRnyIu2E9jN3RV77i0HQ=;
-        b=3VCcXT8/uQ5qKRowowrKsBuK0rDnIpewljbIwCzj6lgnZfLB8UC/cfoxOzNo51+8Ln
-         PXWMN5w5mISm/Qiey2V9CxpgDNZ3128DDReiKBjTBwmARoaL2PpqjVr2/lFz2yxRwong
-         fLp3NsCTR+TzrLCtI0bLTdima0Pg9/RY7YP1shMX/+LTKgYetS++xOMzDJCd5Ubo5uMx
-         TbnjUoMM6hw4OI4vRpIkyUpb+S5dEYwoLBaXk7et8bkXR7avQ++1eQ5UCjZNDBtIEHB2
-         lwvf2eBKYLgAivaFOaL/yu2Dw4UYvQkWttdMsAwNvR1ue3tlvqsri9d1FGbBgdST41Pa
-         uh/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715589660; x=1716194460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iSDRwv7jk6IAgHWtX5wD76uWRnyIu2E9jN3RV77i0HQ=;
-        b=f5EigjT94FxN7jsnsDMsetpRis6pGxEwQOrn534dw5gHGeiyVNrA+qdYmSHGHTW9F7
-         IYOEDVufK83BT+R8kmi1agBHQCZ/k8wlJq5Q17Q1uOLIiHou56/+hZBO0VZdXuUxmtjR
-         9QBs6nJELGb7QxwaWJZ7RsL+XcmojhCJ30YkBbAJgj67bP7T48uX1EFS7uTxCP/3Dkq/
-         jrZriRPE2cbT9V5IpSqHfrQQLW1JInhOfeWfOVPY0tVEN2ROcBtXcxzJWxM/5UL5/ERt
-         v+y+K2EHxK5zKj1smTnoqdL31Au/wy/ke2OuTj9uBw7oM94irFffv8lExQ4uZH59KvBf
-         Oerg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQKsSclL+tfntju8kNPZEncfEnE0BWBoj4fY6ZsRfZYfU+lMaO6Uacert+In1vi0shqJldXQ8xdNLNDhx5oCgT26Y5e3RJEbe8NkQf
-X-Gm-Message-State: AOJu0YxKWEMy382EFAhdmFzi8F3GdLPKm3wzMJO6mHdGNAjFw75zHylc
-	TOMiGU/ZBn7lQKTskFAL2wJqOAVU0UjjJifP/MLTfmdkd7J67tdTJCOLzTjwAM4WAzVadAMLMqE
-	58XevE7eaXLhuf07p+Cfo+eUEskBjDzLYWYLN
-X-Google-Smtp-Source: AGHT+IG57BWFXudd7m8JcDciNBmtXJbh5+hfFHuyw1l+yn/mpSNaGi+yGRv/Cgp0O9O0ywU03d4iur9Dsc9F5E9hlnM=
-X-Received: by 2002:a05:6402:2153:b0:572:5597:8f89 with SMTP id
- 4fb4d7f45d1cf-57443d30921mr260807a12.6.1715589660140; Mon, 13 May 2024
- 01:41:00 -0700 (PDT)
+	s=arc-20240116; t=1715589776; c=relaxed/simple;
+	bh=MmX9FpULig5/5mihxwyU5uTtNaJ+zcs97Xoo8Vr4T8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S9SnQgG6Orn22ku83VgCgKT4P3u9PFJU/oiG2doSQjD1E0MD+KgU98FcQ45loFnE/52vQ2l+vyYAHK/REt8hyEBK8nGkte/o/L4txDJsRl0WIywMYSu6bWyDF4DO+K30iC8q4xsX702dwJqgdUPL1vD6/l4GgrTWWnLNnPQZbLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=U/jn0vKY; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1715589745; x=1716889745;
+	bh=8WnIPYmz22YKfjEz50TsMCQIHhCvLUNOX/xgj1FoVV0=; h=From;
+	b=U/jn0vKYicg46UhLvK/VgNQWgQpHZq76odqbibwayciFKcqEGZVYLHAn3YdRuGsat
+	 OZfuX5YbUD/sgYRjM5gLANxh7Gv37czWow8RGsJV4c06YC0mM5/iYxZ4R/GVEh/AnA
+	 CGrSE+/lXhNnet1V+p9/xTJq21VxctgbM7UQx6IueMNUBLdps00UP1gcL5R4xJ/Dn3
+	 1JpRWSu8SQi42lRL8JH9CsIpwhRcEW0cWKlJaDNJOopXPQrBkDwq79bHA8IYhiYXya
+	 Jlf7O41dg3kR3mxsv+b4otnNF395qMo+agJxlJHLKzUICSq27zP4q9wVfmvd8tHnAQ
+	 8bfyYHCqE7gxQ==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 44D8gL9k022851
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Mon, 13 May 2024 10:42:23 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
+From: Karel Balej <balejk@matfyz.cz>
+To: Thorsten Leemhuis <linux@leemhuis.info>, Jonathan Corbet <corbet@lwn.net>,
+        regressions@lists.linux.dev, workflows@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: balejk@matfyz.cz
+Subject: [PATCH docs-next v3] docs: handling-regressions.rst: recommend using "Closes:" tags
+Date: Mon, 13 May 2024 10:41:10 +0200
+Message-ID: <20240513084145.2460-1-balejk@matfyz.cz>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513015127.961360-1-wei.fang@nxp.com> <CANn89i+EQDCFrhC3mN8g2k=KFpaKtrDusgaUo9zBvv0JCw8eYg@mail.gmail.com>
- <PAXPR04MB85100C1A06253C0AE1EB36C288E22@PAXPR04MB8510.eurprd04.prod.outlook.com>
-In-Reply-To: <PAXPR04MB85100C1A06253C0AE1EB36C288E22@PAXPR04MB8510.eurprd04.prod.outlook.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 13 May 2024 10:40:46 +0200
-Message-ID: <CANn89i+0xtG5hg2LsGvNOueCAkOac_UccXWq-Eeqt1a40EkqBA@mail.gmail.com>
-Subject: Re: [PATCH net] net: fec: avoid lock evasion when reading pps_enable
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, 
-	"pabeni@redhat.com" <pabeni@redhat.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
-	Clark Wang <xiaoning.wang@nxp.com>, 
-	"richardcochran@gmail.com" <richardcochran@gmail.com>, "andrew@lunn.ch" <andrew@lunn.ch>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024 at 9:53=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
->
-> > -----Original Message-----
-> > From: Eric Dumazet <edumazet@google.com>
-> > Sent: 2024=E5=B9=B45=E6=9C=8813=E6=97=A5 15:29
-> > To: Wei Fang <wei.fang@nxp.com>
-> > Cc: davem@davemloft.net; kuba@kernel.org; pabeni@redhat.com; Shenwei
-> > Wang <shenwei.wang@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
-> > richardcochran@gmail.com; andrew@lunn.ch; netdev@vger.kernel.org;
-> > linux-kernel@vger.kernel.org; imx@lists.linux.dev
-> > Subject: Re: [PATCH net] net: fec: avoid lock evasion when reading pps_=
-enable
-> >
-> > On Mon, May 13, 2024 at 4:02=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wro=
-te:
-> > >
-> > > The assignment of pps_enable is protected by tmreg_lock, but the read
-> > > operation of pps_enable is not. So the Coverity tool reports a lock
-> > > evasion warning which may cause data race to occur when running in a
-> > > multithread environment. Although this issue is almost impossible to
-> > > occur, we'd better fix it, at least it seems more logically
-> > > reasonable, and it also prevents Coverity from continuing to issue wa=
-rnings.
-> > >
-> > > Fixes: 278d24047891 ("net: fec: ptp: Enable PPS output based on ptp
-> > > clock")
-> > > Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> > > ---
-> > >  drivers/net/ethernet/freescale/fec_ptp.c | 8 +++++---
-> > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/net/ethernet/freescale/fec_ptp.c
-> > > b/drivers/net/ethernet/freescale/fec_ptp.c
-> > > index 181d9bfbee22..8d37274a3fb0 100644
-> > > --- a/drivers/net/ethernet/freescale/fec_ptp.c
-> > > +++ b/drivers/net/ethernet/freescale/fec_ptp.c
-> > > @@ -104,14 +104,16 @@ static int fec_ptp_enable_pps(struct
-> > fec_enet_private *fep, uint enable)
-> > >         struct timespec64 ts;
-> > >         u64 ns;
-> > >
-> > > -       if (fep->pps_enable =3D=3D enable)
-> > > -               return 0;
-> > > -
-> > >         fep->pps_channel =3D DEFAULT_PPS_CHANNEL;
-> > >         fep->reload_period =3D PPS_OUPUT_RELOAD_PERIOD;
-> >
-> > Why are these writes left without the spinlock protection ?
-> For fec driver, the pps_channel and the reload_period of PPS request
-> are always fixed, and they were also not protected by the lock in the
-> original code.
+Update the handling-regressions guide to recommend using "Closes:" tags
+rather than "Link:" when referencing fixed reports. The latter was used
+originally but now is only recommended when the given patch only fixes
+part of the issue, as described in submitting-patches. Briefly mention
+that and also note that regzbot currently doesn't make a distinction.
 
-If this is the case, please move this initialization elsewhere, so
-that we can be absolutely sure of the  claim.
+Also fix a typo.
 
-I see fep->reload_period being overwritten in this file, I do not see
-clear evidence this is all safe.
+Acked-by: Thorsten Leemhuis <linux@leemhuis.info>
+Signed-off-by: Karel Balej <balejk@matfyz.cz>
+---
+
+Notes:
+    v3:
+    - Drop sentence about some maintainers preferring "Link:".
+    - Add Thorsten's Ack trailer.
+    - v2: https://lore.kernel.org/r/20240510183748.13028-1-balejk@matfyz.cz/
+    v2:
+    - v1: https://lore.kernel.org/r/20240328194342.11760-1-balejk@matfyz.cz/
+    - Rebase to git://git.lwn.net/linux.git docs-next.
+    - Prefer Closes: tags, mention that regzbot makes no distinction and
+      only mention Link: briefly and explain when it's preferred, in
+      accordance with submitting-patches.
+    - Include a typo fix.
+    - Reword commit message accordingly (and make it less verbose :-).
+
+ .../process/handling-regressions.rst          | 30 +++++++++++--------
+ 1 file changed, 18 insertions(+), 12 deletions(-)
+
+diff --git a/Documentation/process/handling-regressions.rst b/Documentation/process/handling-regressions.rst
+index 49ba1410cfce..1f5ab49c48a4 100644
+--- a/Documentation/process/handling-regressions.rst
++++ b/Documentation/process/handling-regressions.rst
+@@ -40,10 +40,13 @@ The important bits (aka "The TL;DR")
+        #regzbot from: Some N. Ice Human <some.human@example.com>
+        #regzbot monitor: http://some.bugtracker.example.com/ticket?id=123456789
+ 
+-#. When submitting fixes for regressions, add "Link:" tags to the patch
++#. When submitting fixes for regressions, add "Closes:" tags to the patch
+    description pointing to all places where the issue was reported, as
+    mandated by Documentation/process/submitting-patches.rst and
+-   :ref:`Documentation/process/5.Posting.rst <development_posting>`.
++   :ref:`Documentation/process/5.Posting.rst <development_posting>`. If you are
++   only fixing part of the issue that caused the regression, you may use
++   "Link:" tags instead. regzbot currently makes no distinction between the
++   two.
+ 
+ #. Try to fix regressions quickly once the culprit has been identified; fixes
+    for most regressions should be merged within two weeks, but some need to be
+@@ -91,10 +94,10 @@ When doing either, consider making the Linux kernel regression tracking bot
+    Note the caret (^) before the "introduced": it tells regzbot to treat the
+    parent mail (the one you reply to) as the initial report for the regression
+    you want to see tracked; that's important, as regzbot will later look out
+-   for patches with "Link:" tags pointing to the report in the archives on
++   for patches with "Closes:" tags pointing to the report in the archives on
+    lore.kernel.org.
+ 
+- * When forwarding a regressions reported to a bug tracker, include a paragraph
++ * When forwarding a regression reported to a bug tracker, include a paragraph
+    with these regzbot commands::
+ 
+        #regzbot introduced: 1f2e3d4c5b6a
+@@ -102,7 +105,7 @@ When doing either, consider making the Linux kernel regression tracking bot
+        #regzbot monitor: http://some.bugtracker.example.com/ticket?id=123456789
+ 
+    Regzbot will then automatically associate patches with the report that
+-   contain "Link:" tags pointing to your mail or the mentioned ticket.
++   contain "Closes:" tags pointing to your mail or the mentioned ticket.
+ 
+ What's important when fixing regressions
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@@ -112,10 +115,14 @@ remember to do what Documentation/process/submitting-patches.rst,
+ :ref:`Documentation/process/5.Posting.rst <development_posting>`, and
+ Documentation/process/stable-kernel-rules.rst already explain in more detail:
+ 
+- * Point to all places where the issue was reported using "Link:" tags::
++ * Point to all places where the issue was reported using "Closes:" tags::
+ 
+-       Link: https://lore.kernel.org/r/30th.anniversary.repost@klaava.Helsinki.FI/
+-       Link: https://bugzilla.kernel.org/show_bug.cgi?id=1234567890
++       Closes: https://lore.kernel.org/r/30th.anniversary.repost@klaava.Helsinki.FI/
++       Closes: https://bugzilla.kernel.org/show_bug.cgi?id=1234567890
++
++   If you are only fixing part of the issue, you may use "Link:" instead as
++   described in the first document mentioned above. regzbot currently treats
++   both of these equivalently and considers the linked reports as resolved.
+ 
+  * Add a "Fixes:" tag to specify the commit causing the regression.
+ 
+@@ -126,7 +133,7 @@ All this is expected from you and important when it comes to regression, as
+ these tags are of great value for everyone (you included) that might be looking
+ into the issue weeks, months, or years later. These tags are also crucial for
+ tools and scripts used by other kernel developers or Linux distributions; one of
+-these tools is regzbot, which heavily relies on the "Link:" tags to associate
++these tools is regzbot, which heavily relies on the "Closes:" tags to associate
+ reports for regression with changes resolving them.
+ 
+ Expectations and best practices for fixing regressions
+@@ -326,7 +333,7 @@ How does regression tracking work with regzbot?
+ 
+ The bot watches for replies to reports of tracked regressions. Additionally,
+ it's looking out for posted or committed patches referencing such reports
+-with "Link:" tags; replies to such patch postings are tracked as well.
++with "Closes:" tags; replies to such patch postings are tracked as well.
+ Combined this data provides good insights into the current state of the fixing
+ process.
+ 
+@@ -338,8 +345,7 @@ take care of that using ``#regzbot ^introduced``.
+ 
+ For developers there normally is no extra work involved, they just need to make
+ sure to do something that was expected long before regzbot came to light: add
+-"Link:" tags to the patch description pointing to all reports about the issue
+-fixed.
++links to the patch description pointing to all reports about the issue fixed.
+ 
+ Do I have to use regzbot?
+ ~~~~~~~~~~~~~~~~~~~~~~~~~
+-- 
+2.45.0
+
 
