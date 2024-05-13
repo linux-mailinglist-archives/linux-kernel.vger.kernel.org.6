@@ -1,235 +1,315 @@
-Return-Path: <linux-kernel+bounces-177743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A535B8C4420
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:25:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176C68C4427
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF5B1F22483
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:25:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A244B22E55
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F191254665;
-	Mon, 13 May 2024 15:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8BF57C96;
+	Mon, 13 May 2024 15:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LhU00KXQ"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ka1OKGm+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923011EB5C
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD9557894
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715613912; cv=none; b=YcPnAq29USDg7Pc7S+0fXCF9DkLxlsRCtd7Pv/getTBrKPh9ZGHZuYBRR5T10Oz6XflY21b5liEeOivQhfE98aXm2pINyslzWz8m1S9UM2rtUAKwFBVDHmqVayGEp/62cNiEatyq91yEM/elwBUvY/t7xxp4b8QfJDEjPmuFQ6o=
+	t=1715614200; cv=none; b=MR1BtNhltPcD9X2Z/JaDk8RmXnZopIq8oAzu2nMqnMsChTd3mUvIRHxTGmVXSw05zK7FUYda82TWOP7zX6iEMStQlrLQpAYWd4g4mPZZXHTle9xz/1mrgUn+y25yUeJJRYzomoiTjUnC3fpVf3svPp2bb1Km4mg4XGG4c5rXLGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715613912; c=relaxed/simple;
-	bh=FW6U4mdY0AxC8HYE8MuJ/SaPh+fzCnCoQZeEU36JE6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kxdVQmLFHazZEeHS9+nIfttdhcuJ2waPQsfom7oNp+Fnbew5nCmqJqCGWVw5re+PFqduVV9cEvYKc6+fHNIwBwSfVSsYl6W0yUWMrN/LBMgY8t7y4lyBaPzBO1uG+sRym3inPEZSOJqGpY5jxS0tzCjMGX9zUl7YmwMozPOTg6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LhU00KXQ; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-43dff9b28f6so23375631cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715613909; x=1716218709; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JqRTM+BRTc6qs/8KXMGYjKmbrdCcHaPYNDAxFgrG96E=;
-        b=LhU00KXQY7rrK9p+rz3c7ZB4uPdOnFxTnaqpllLEM/B37wPx+uNeg6VYt7U07CPKKA
-         zpcXcp23pXWUce2PA8xVIwXZsRPFz5jhfEe+EwcgBmLLKX3li+jrroOE2/5tgiJrdD99
-         aNZzmyLbtzvnx8d6TLHAljN2wsLqRcToKFzZ4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715613909; x=1716218709;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JqRTM+BRTc6qs/8KXMGYjKmbrdCcHaPYNDAxFgrG96E=;
-        b=CqCrHJI0rbxfV6AcmpSXSGkhYlPkOLs3ZcYbNx9JZOvryV1ldb3O2AKLDZQLAC8/I3
-         8AOI1qkTDLaM4Vxi+gbOZL1WlR4DCi8ZNLnMJfbd1Ak+trCsJmsnUZYByr9b/JKMJSts
-         6Njj/GjdIvzc0h1a6JRcQHUnNMO0qbX0U4OFe4xHwhf0KXji6PuBOSKnMREfAQaNUABD
-         1sWtj2Gst31qnmOKFa/HaBPn1+HDIXXUnI2DMD/2gkZa/rxeY/W22l02OuLnJaoofzt3
-         FZv5sOjiSII4Be2VYRggnVIZBQZQH0uCnNWZOmXQB+BVqwYB9ec88kfFY3NCSoeNozhB
-         h8VA==
-X-Forwarded-Encrypted: i=1; AJvYcCWz2ayN1BsErZmTgG0p8Mnak46HHSrQJK8SyLrn9xK57KunT3c6AheSUWUe3Nm75JCDYr7cDu9ChSfTW2DxEYZZKGPPK1CV3kdaLgt1
-X-Gm-Message-State: AOJu0Yx/SsfSk6uNZNsV0JrlUqr89RXMi+ZBO59qH3+Gu8xwgebif0nI
-	7GRSgcCLNGw76qVpZKdjOCLWCCt3Ckz4vYHWENnKYsg08V8fpvjwjvlmZBwF5Q==
-X-Google-Smtp-Source: AGHT+IESmcSy5V+HwdZ3G2EB2EsQiokSYuvLf6AGlL3ugaNzQxvquc2TEN6JAzOJ3/l/BjVs4oKzZg==
-X-Received: by 2002:a05:622a:394:b0:43a:fbe3:c2ea with SMTP id d75a77b69052e-43dec297879mr137242971cf.21.1715613909398;
-        Mon, 13 May 2024 08:25:09 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df8308580sm53827241cf.66.2024.05.13.08.25.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 08:25:07 -0700 (PDT)
-Message-ID: <2ca65ebd-7b85-4bc2-8137-692991102774@broadcom.com>
-Date: Mon, 13 May 2024 08:25:03 -0700
+	s=arc-20240116; t=1715614200; c=relaxed/simple;
+	bh=HvLHlNIARfVIcuFw9eDkpyU0syqxjB/6zfMwQil/xfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uVCVJmDiIzwTwh58GBl/lg5FS7aqOmzcF6Qs7MvSbeeK/o9A2qN0NekOCRSLeTrVF8ZkNmmUTPrYOcLhFZQDKZgF8ZHS0lDfyX8jZHQvMyg0pLUy2+JB8GMr0QClt4vLHaUuEksgYBzPPwo8Uvz3EALTQQ+Q4Zngz94vdhi8tNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ka1OKGm+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39BA0C113CC;
+	Mon, 13 May 2024 15:29:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715614200;
+	bh=HvLHlNIARfVIcuFw9eDkpyU0syqxjB/6zfMwQil/xfc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ka1OKGm+yZJ19L+u+jngRCvJ9aloBT5oRnIOPm7bU64+iyPhuKzz0nzZNyTt8zcZG
+	 ar+9VvpUc3+CvhOx+q554GwetNkqLhjzP88UKKwp/N3UAVZ9q/B9rF/2PS2kNtYRz1
+	 U8kyteyd0I1PmWTYye1821tI16GCaaBNBffRNX0qCxL1vj3u/Ix5zLbOn1atpk483x
+	 3UXEUuyZlGSrvWRyiWzRYJzjxHlwowIUptnEAn+cmysosu7Mq5IZINdfr/6rmhePfT
+	 ziHJ1zNN0eaHxoBHrVhYYcTgKPfwhUwYdGEnv9JOlrgHUI3/Yzl1pd3eS33wcseISd
+	 dClIlpLHRrSHQ==
+Date: Mon, 13 May 2024 16:29:55 +0100
+From: Will Deacon <will@kernel.org>
+To: torvalds@linux-foundation.org
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: [GIT PULL] arm64 updates for 6.10
+Message-ID: <20240513152955.GA28901@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/4] dt-bindings: mips: brcm: Document
- brcm,bmips-cbr-reg property
-To: Christian Marangi <ansuelsmth@gmail.com>,
- Hauke Mehrtens <hauke@hauke-m.de>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?=
- <zajec5@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, linux-mips@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>
-References: <20240511130349.23409-1-ansuelsmth@gmail.com>
- <20240511130349.23409-3-ansuelsmth@gmail.com>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240511130349.23409-3-ansuelsmth@gmail.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000aa1b1e0618577d38"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
---000000000000aa1b1e0618577d38
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Hi Linus,
 
+Please pull these arm64 updates for 6.10. There's a summary in the tag,
+but the most interesting parts are probably the mm changes from Ryan
+which optimise the creation of the linear mapping at boot and
+(separately) implement write-protect support for userfaultfd.
 
+Outside of our usual directories, the Kbuild-related changes under
+scripts/ have been acked by Masahiro whilst the drivers/acpi/ parts have
+been acked by Rafael and the addition of cpumask_any_and_but() has been
+acked by Yury.
 
-On 5/11/2024 6:03 AM, Christian Marangi wrote:
-> Document brcm,bmips-cbr-reg property.
-> 
-> Some SoC suffer from a BUG where CBR(Core Base Register)
-> address might be badly or never initialized by the Bootloader
-> or reading it from co-processor registers, if the system boots
-> from secondary CPU, results in invalid address.
-> 
-> The CBR address is always the same on the SoC.
-> 
-> Usage of this property is to give an address also in these broken
-> configuration/bootloader.
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+I've also picked up some CPU errata workarounds since tagging this, so
+I'll aim to send those next week.
 
-Acked-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Cheers,
 
---000000000000aa1b1e0618577d38
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Will
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIGKXLJdNd4ci37f7
-d9I+xdpKWQc9ZzmoogJvFqV+uYGuMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDUxMzE1MjUwOVowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQDfH9LAaKehk+csexDqY3hWl8eu+zOX+9oA
-ZJh3r6HlX/2fXtopw6YSbY4G1UPeYumhKjMnS95j6mbDPv9lRaCcvNSHqYkv121/MkIUtq/DGUoK
-aCnENngkrRQ/DGU5Mttfrt5Zy+vW98WyST+yW24D7QfDp5OFajDWFWGbruEZSkAS3m1ntPpBHJ/d
-9iXFigMnR+vWTjlHNjWlfCUnbgIke/sH3VsHaZ35K6HGE1ozqGD2Ln37wInsOEohCwzpI3lBWvfZ
-d1klZbTjDC5Pso24pqWb6Ua11+R3m9PoG5UjL+AjWlr5a6nXfJZUc1uPjrHn4JGHMOsyyWSoSc6K
-cv7i
---000000000000aa1b1e0618577d38--
+--->8
+
+The following changes since commit e3ba51ab24fddef79fc212f9840de54db8fd1685:
+
+  arm64: tlb: Fix TLBI RANGE operand (2024-04-10 18:22:28 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-upstream
+
+for you to fetch changes up to 54e1a2aa61a7bf4af2799baf7ab2dc2712844245:
+
+  Merge branch 'for-next/tlbi' into for-next/core (2024-05-09 15:56:26 +0100)
+
+----------------------------------------------------------------
+arm64 updates for 6.10
+
+ACPI:
+* Support for the Firmware ACPI Control Structure (FACS) signature
+  feature which is used to reboot out of hibernation on some systems.
+
+Kbuild:
+* Support for building Flat Image Tree (FIT) images, where the kernel
+  Image is compressed alongside a set of devicetree blobs.
+
+Memory management:
+* Optimisation of our early page-table manipulation for creation of the
+  linear mapping.
+
+* Support for userfaultfd write protection, which brings along some nice
+  cleanups to our handling of invalid but present ptes.
+
+* Extend our use of range TLBI invalidation at EL1.
+
+Perf and PMUs:
+* Ensure that the 'pmu->parent' pointer is correctly initialised by PMU
+  drivers.
+
+* Avoid allocating 'cpumask_t' types on the stack in some PMU drivers.
+
+* Fix parsing of the CPU PMU "version" field in assembly code, as it
+  doesn't follow the usual architectural rules.
+
+* Add best-effort unwinding support for USER_STACKTRACE
+
+* Minor driver fixes and cleanups.
+
+Selftests:
+* Minor cleanups to the arm64 selftests (missing NULL check, unused
+  variable).
+
+Miscellaneous
+* Add a command-line alias for disabling 32-bit application support.
+
+* Add part number for Neoverse-V2 CPUs.
+
+* Minor fixes and cleanups.
+
+----------------------------------------------------------------
+Andrea della Porta (1):
+      arm64: Add the arm64.no32bit_el0 command line option
+
+Andy Shevchenko (1):
+      drivers/perf: thunderx2_pmu: Replace open coded acpi_match_acpi_device()
+
+Besar Wicaksono (1):
+      arm64: Add Neoverse-V2 part
+
+David Woodhouse (2):
+      ACPICA: Detect FACS even for hardware reduced platforms
+      arm64: acpi: Honour firmware_signature field of FACS, if it exists
+
+Dawei Li (9):
+      perf/alibaba_uncore_drw: Avoid placing cpumask on the stack
+      perf/arm-cmn: Avoid placing cpumask on the stack
+      perf/arm_cspmu: Avoid placing cpumask on the stack
+      perf/arm_dsu: Avoid placing cpumask on the stack
+      perf/dwc_pcie: Avoid placing cpumask on the stack
+      perf/hisi_pcie: Avoid placing cpumask on the stack
+      perf/hisi_uncore: Avoid placing cpumask on the stack
+      perf/qcom_l2: Avoid placing cpumask on the stack
+      perf/thunderx2: Avoid placing cpumask on the stack
+
+Gavin Shan (2):
+      arm64: tlb: Improve __TLBI_VADDR_RANGE()
+      arm64: tlb: Allow range operation for MAX_TLBI_RANGE_PAGES
+
+George Guo (1):
+      arm64: simplify arch_static_branch/_jump function
+
+Hao Chen (1):
+      drivers/perf: hisi: hns3: Actually use devm_add_action_or_reset()
+
+Jinjie Ruan (1):
+      arm64: Remove unnecessary irqflags alternative.h include
+
+Joel Granados (1):
+      drivers: perf: Remove the now superfluous sentinel elements from ctl_table array
+
+Jonathan Cameron (23):
+      perf/hisi-pcie: Assign parent for event_source device
+      Documentation: hisi-pmu: Drop reference to /sys/devices path
+      perf/hisi-uncore: Assign parents for event_source devices
+      Documentation: hns-pmu: Use /sys/bus/event_source/devices paths
+      perf/hisi-hns3: Assign parents for event_source device
+      perf/amlogic: Assign parents for event_source devices
+      perf/arm_cspmu: Assign parents for event_source devices
+      Documentation: xgene-pmu: Use /sys/bus/event_source/devices paths
+      perf/xgene: Assign parents for event_source devices
+      Documentation: thunderx2-pmu: Use /sys/bus/event_source/devices paths
+      perf/thunderx2: Assign parents for event_source devices
+      perf/riscv: Assign parents for event_source devices
+      Documentation: qcom-pmu: Use /sys/bus/event_source/devices paths
+      perf/qcom: Assign parents for event_source devices
+      perf/imx_ddr: Assign parents for event_source devices
+      perf/arm_pmu: Assign parents for event_source devices
+      perf/alibaba_uncore: Assign parents for event_source device
+      perf/arm-cci: Assign parents for event_source device
+      perf/arm-ccn: Assign parents for event_source device
+      perf/arm-dmc620: Assign parents for event_source device
+      perf/arm-dsu: Assign parents for event_source device
+      perf/arm-smmuv3: Assign parents for event_source device
+      perf/arm-spe: Assign parents for event_source device
+
+Junhao He (2):
+      drivers/perf: hisi_pcie: Fix out-of-bound access when valid event group
+      drivers/perf: hisi: hns3: Fix out-of-bound access when valid event group
+
+Kunwu Chan (1):
+      kselftest: arm64: Add a null pointer check
+
+Mark Rutland (3):
+      cpumask: add cpumask_any_and_but()
+      arm64: assembler: update stale comment for disable_step_tsk
+      arm64: defer clearing DAIF.D
+
+Robin Murphy (1):
+      perf/arm-cmn: Set PMU device parent
+
+Ryan Roberts (8):
+      arm64: mm: Don't remap pgtables per-cont(pte|pmd) block
+      arm64: mm: Batch dsb and isb when populating pgtables
+      arm64: mm: Don't remap pgtables for allocate vs populate
+      arm64/mm: generalize PMD_PRESENT_INVALID for all levels
+      arm64/mm: Remove PTE_PROT_NONE bit
+      arm64/mm: Move PTE_PRESENT_INVALID to overlay PTE_NG
+      arm64/mm: Add uffd write-protect support
+      arm64/mm: Fix pud_user_accessible_page() for PGTABLE_LEVELS <= 2
+
+Shiqi Liu (1):
+      arm64/sysreg: Update PIE permission encodings
+
+Simon Glass (2):
+      arm64: Add BOOT_TARGETS variable
+      arm64: boot: Support Flat Image Tree
+
+Will Deacon (7):
+      Merge branch 'for-next/acpi' into for-next/core
+      Merge branch 'for-next/kbuild' into for-next/core
+      Merge branch 'for-next/misc' into for-next/core
+      Merge branch 'for-next/mm' into for-next/core
+      Merge branch 'for-next/perf' into for-next/core
+      Merge branch 'for-next/selftests' into for-next/core
+      Merge branch 'for-next/tlbi' into for-next/core
+
+Yicong Yang (1):
+      arm64: arm_pmuv3: Correctly extract and check the PMUVer
+
+chenqiwu (1):
+      arm64: Add USER_STACKTRACE support
+
+xieming (1):
+      kselftest/arm64: Remove unused parameters in abi test
+
+ Documentation/admin-guide/kernel-parameters.txt  |   3 +
+ Documentation/admin-guide/perf/hisi-pmu.rst      |   1 -
+ Documentation/admin-guide/perf/hns3-pmu.rst      |   8 +-
+ Documentation/admin-guide/perf/qcom_l2_pmu.rst   |   2 +-
+ Documentation/admin-guide/perf/qcom_l3_pmu.rst   |   2 +-
+ Documentation/admin-guide/perf/thunderx2-pmu.rst |   2 +-
+ Documentation/admin-guide/perf/xgene-pmu.rst     |   2 +-
+ Documentation/process/changes.rst                |   9 +
+ MAINTAINERS                                      |   7 +
+ arch/arm64/Kconfig                               |   2 +
+ arch/arm64/Makefile                              |  11 +-
+ arch/arm64/boot/.gitignore                       |   1 +
+ arch/arm64/boot/Makefile                         |   6 +-
+ arch/arm64/include/asm/assembler.h               |  13 +-
+ arch/arm64/include/asm/cputype.h                 |   2 +
+ arch/arm64/include/asm/el2_setup.h               |   9 +-
+ arch/arm64/include/asm/irqflags.h                |   1 -
+ arch/arm64/include/asm/jump_label.h              |  28 ++-
+ arch/arm64/include/asm/pgtable-prot.h            |  19 +-
+ arch/arm64/include/asm/pgtable.h                 | 114 ++++++---
+ arch/arm64/include/asm/sysreg.h                  |  24 +-
+ arch/arm64/include/asm/tlbflush.h                |  33 ++-
+ arch/arm64/kernel/acpi.c                         |  10 +
+ arch/arm64/kernel/perf_callchain.c               | 118 +--------
+ arch/arm64/kernel/pi/idreg-override.c            |   2 +
+ arch/arm64/kernel/setup.c                        |  11 +-
+ arch/arm64/kernel/smp.c                          |   7 +
+ arch/arm64/kernel/stacktrace.c                   | 120 ++++++++++
+ arch/arm64/mm/mmu.c                              | 101 ++++----
+ arch/arm64/mm/proc.S                             |  10 -
+ drivers/acpi/acpica/tbfadt.c                     |  30 +--
+ drivers/acpi/acpica/tbutils.c                    |   7 +-
+ drivers/perf/alibaba_uncore_drw_pmu.c            |  11 +-
+ drivers/perf/amlogic/meson_ddr_pmu_core.c        |   1 +
+ drivers/perf/arm-cci.c                           |   1 +
+ drivers/perf/arm-ccn.c                           |   1 +
+ drivers/perf/arm-cmn.c                           |  11 +-
+ drivers/perf/arm_cspmu/arm_cspmu.c               |   9 +-
+ drivers/perf/arm_dmc620_pmu.c                    |   1 +
+ drivers/perf/arm_dsu_pmu.c                       |  20 +-
+ drivers/perf/arm_pmu_platform.c                  |   1 +
+ drivers/perf/arm_smmuv3_pmu.c                    |   1 +
+ drivers/perf/arm_spe_pmu.c                       |   1 +
+ drivers/perf/dwc_pcie_pmu.c                      |  10 +-
+ drivers/perf/fsl_imx8_ddr_perf.c                 |   1 +
+ drivers/perf/hisilicon/hisi_pcie_pmu.c           |  24 +-
+ drivers/perf/hisilicon/hisi_uncore_pmu.c         |   7 +-
+ drivers/perf/hisilicon/hns3_pmu.c                |  17 +-
+ drivers/perf/qcom_l2_pmu.c                       |   9 +-
+ drivers/perf/qcom_l3_pmu.c                       |   1 +
+ drivers/perf/riscv_pmu_legacy.c                  |   1 +
+ drivers/perf/riscv_pmu_sbi.c                     |   2 +-
+ drivers/perf/thunderx2_pmu.c                     |  30 +--
+ drivers/perf/xgene_pmu.c                         |   1 +
+ include/linux/cpumask.h                          |  23 ++
+ scripts/Makefile.lib                             |  16 ++
+ scripts/make_fit.py                              | 290 +++++++++++++++++++++++
+ tools/arch/arm64/include/asm/sysreg.h            |  24 +-
+ tools/testing/selftests/arm64/abi/tpidr2.c       |   2 +-
+ tools/testing/selftests/arm64/tags/tags_test.c   |   4 +
+ 60 files changed, 859 insertions(+), 376 deletions(-)
+ create mode 100755 scripts/make_fit.py
 
