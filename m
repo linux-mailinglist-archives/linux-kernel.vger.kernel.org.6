@@ -1,43 +1,44 @@
-Return-Path: <linux-kernel+bounces-177622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8E138C41B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAFD88C41B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05FFE1C22DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA7C1C22F07
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C68A1534EE;
-	Mon, 13 May 2024 13:21:10 +0000 (UTC)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060A015279D;
+	Mon, 13 May 2024 13:21:06 +0000 (UTC)
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D2159164
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EFA59164
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715606470; cv=none; b=KkK5Oovw6ih9uB2RQVj3nLZzlLO8o+JWsInIfljH7lM3TKeItICXW7GGoKHEtljTPmnZGf0uhjiJZ8lgYGJ7fDCT4ySYsug4USy6PG1yizgy53X+59kSqlmXRXBJN6Hkro0FyR1Wkd0P1HLQG1nLxUwjEwiNxjH2auiymnRg6sc=
+	t=1715606465; cv=none; b=NN6muK45NoYUEbcmtwNL6ktXoOzNEf2LjwR7ys2mDrT5+zwhlOSAnOzN6iWYCLpkPrrz4+1EWGFnB6DvqgIBioy/pEY6DYldIkOu0+dFr1Wnj+TpeeaHFMb+KvcAR73p1xFOh/RBqhQB4a/LFSY4imQT5mLanJ3oPg+3vqn0u70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715606470; c=relaxed/simple;
-	bh=p8vL6YoySFXtH7yBUGU4yZJWG0hMGXiTflCKpNQf50I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fFWS7UFxud1FNF61wSk8HvGAjyr370EFPlZjIxH6ETmnKYRub+m2gf5tKT3XgP5OTO04jGJQrJ6qI6H0qe/xFH9Z4pLSB4lK2bv/H97QzFkQjIUc7iMaTj+Mol+MLg+nRiw9JfCR97VWqOEFBNPKchwjrf6Am+3m3HXu5ivKRRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+	s=arc-20240116; t=1715606465; c=relaxed/simple;
+	bh=RJCXdkLFskpSIxdK08El8C87yvPHTIuYVmWle4eyCy8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=n2BxtS1E3pwOdpeXh4elQiInbgQ4FUPi7CSjEd4unhI4tgMOcYxuBDxG/tD4AHJbszwSIQEQx+cpsR8qq7+DOrOxV7UBIJtlqju65qgow7LmnQPY8MqjvStHFCx8bRZzLidlG/csC9+8Y9HvUWcNZQIKt8Rp0UHcnHGD70dV/pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:c85e:4b6d:1f91:1410])
-	by baptiste.telenet-ops.be with bizsmtp
-	id NdM02C0065V4kqY01dM0nt; Mon, 13 May 2024 15:21:00 +0200
+	by laurent.telenet-ops.be with bizsmtp
+	id NdM02C0055V4kqY01dM0ZC; Mon, 13 May 2024 15:21:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1s6Vb7-00399h-RK;
+	id 1s6Vb7-00399i-RK;
 	Mon, 13 May 2024 15:21:00 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1s6Vbv-008tqO-U0;
+	id 1s6Vbv-008tqR-VC;
 	Mon, 13 May 2024 15:20:59 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Yoshinori Sato <ysato@users.sourceforge.jp>,
@@ -47,10 +48,12 @@ To: Yoshinori Sato <ysato@users.sourceforge.jp>,
 Cc: linux-sh@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] sh: Fix missing prototypes (part three)
-Date: Mon, 13 May 2024 15:20:52 +0200
-Message-Id: <cover.1715606232.git.geert+renesas@glider.be>
+Subject: [PATCH 1/3] sh: of-generic: Add missing #include <asm/clock.h>
+Date: Mon, 13 May 2024 15:20:53 +0200
+Message-Id: <942621553ed82e3331e2e91485b643892d2d08bc.1715606232.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1715606232.git.geert+renesas@glider.be>
+References: <cover.1715606232.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,34 +62,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+arch/sh/boards/of-generic.c:146:20: warning: no previous prototype for 'arch_init_clk_ops' [-Wmissing-prototypes]
 
-This patch series fixes more "no previous prototype for <foo>" warnings
-when building a kernel for SuperH, namely when building j2_defconfig.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  sh: of-generic: Add missing #include <asm/clock.h>
-  sh: smp: Protect setup_profiling_timer() by CONFIG_PROFILING
-  sh: setup: Add missing forward declaration for sh_fdt_init()
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  arch/sh/boards/of-generic.c | 2 ++
- arch/sh/include/asm/setup.h | 1 +
- arch/sh/kernel/smp.c        | 2 ++
- 3 files changed, 5 insertions(+)
+ 1 file changed, 2 insertions(+)
 
+diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
+index f7f3e618e85b6a52..cc88cb8908cc1d2e 100644
+--- a/arch/sh/boards/of-generic.c
++++ b/arch/sh/boards/of-generic.c
+@@ -10,6 +10,8 @@
+ #include <linux/of_fdt.h>
+ #include <linux/clocksource.h>
+ #include <linux/irqchip.h>
++
++#include <asm/clock.h>
+ #include <asm/machvec.h>
+ #include <asm/rtc.h>
+ 
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
 
