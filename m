@@ -1,104 +1,193 @@
-Return-Path: <linux-kernel+bounces-177206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3B08C3B6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:36:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB018C3B6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 922C82815AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:36:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFC731C20F6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5266145FEB;
-	Mon, 13 May 2024 06:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7271D145B3D;
+	Mon, 13 May 2024 06:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTaxfkDW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pD/Np6Po"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C40614265;
-	Mon, 13 May 2024 06:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B36F14265;
+	Mon, 13 May 2024 06:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715582200; cv=none; b=hTKuiHRp2hCxT7SB31HgZU1jo4J1/TyEJZ2nsQCAMmBSeRMUFeOBcDZNKhIOrij/OVMNehr0UsariJ4vwH63mbjTGaRWHLNH+4S80VbNcCK6XCJM60x5abTLUgq34Mduv7LL4g8nDLFh342SZ8M0j6L3J56bfr2UtOCICBPrWKo=
+	t=1715582257; cv=none; b=Y32chRT0yhwGPbPCa5nyzJk2ESnq5qHHJDECSi9Njlte8D9D9TtmJXlNW2Bb+BnSN2EBaEY8q3ovMbl3Jp/sBYxllA6jxjEuPHrOqKijmXKjii0LtsAAALt/eWfeXwH8ZUFWIG0jX6XOAeJahFEI4JMbjX6oFERy2IBATKa02kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715582200; c=relaxed/simple;
-	bh=TbOvTyRXh66VompTcjMDwvYNM69rIo59zf33ZAIoC3k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LIjdeOH36cMpBWmk5u8UJpYaZKQvnK4kpyEC36gaC/VEk3e2S6LW847kMBk23vM3CP0nufMU8GR/PlowD3OOzvh7S1c7NH8nF6RGIT4OFJFjQfGrFiLoOCj69P9HG9cZqBDSY3uUY+JGfkD59lh5qmznWTZhBfEU3nFo6XufPJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTaxfkDW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49A8EC113CC;
-	Mon, 13 May 2024 06:36:38 +0000 (UTC)
+	s=arc-20240116; t=1715582257; c=relaxed/simple;
+	bh=S52a+RqrGVrObrUsSMPbS/sGgUDY4gm9+SbH53KZ9OI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ELIvR2eGrYnYg0QwKDUWPSo4NDKFMOpjMkrBEygTxJ7KpWXm9mJqFbLtqvgn3CisMXXHeSQXk1RVuS/YOTyQU7nBUssFC7DKAONp0mPMSkKBtXZgfoWqne+24DVW9rd+JSQXPt/j7q0PDitF6OvO3qc+WTwAWuvTF2B8CGcllsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pD/Np6Po; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CBEC113CC;
+	Mon, 13 May 2024 06:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715582199;
-	bh=TbOvTyRXh66VompTcjMDwvYNM69rIo59zf33ZAIoC3k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tTaxfkDWkpFLHTwZC04kCtJkxNIENzZTmI5PYUKwkt1HRtZwwVBTYbFXCKWXcUsFE
-	 lu793V3wsQpVnnxhiyy4l3w5M3BManAyomm+xMwTAyNaim5rV90eGNn3mMiMpD8jsA
-	 UqfnBD4pUsnBApFDVrZ72bs8rFERvxkxKcnlGxScNmrpZTFJO+rliEnufnsu6y1QsJ
-	 jdnX14KSi0SrFalr1dugXSDJs67FWBNS2YuhD+3FL8+CiNOMhnAtTO7NBueFaBX95U
-	 Nzb7vZnq+/kTgT5lFs+P3Qv+b3a98AU3Lm85P6JH8vioKPHQYsZ7kJnumUdy3NbnRA
-	 DYkUpN6BPUoVA==
-Date: Sun, 12 May 2024 23:36:36 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Jesse Brandeburg <jesse.brandeburg@intel.com>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?iso-8859-1?Q?Nicol=F2?= Veronese <nicveronese@gmail.com>,
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
-	Antoine Tenart <atenart@kernel.org>
-Subject: Re: [PATCH net-next 0/2] Fix phy_link_topology initialization
-Message-ID: <20240513063636.GA652533@thelio-3990X>
-References: <20240507102822.2023826-1-maxime.chevallier@bootlin.com>
+	s=k20201202; t=1715582257;
+	bh=S52a+RqrGVrObrUsSMPbS/sGgUDY4gm9+SbH53KZ9OI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pD/Np6Pocn3xRzPS6Dfcg1ZtVYUoCC+tlMDa4x6CinzBOGJbhENxMkiHxjuzS2K1Z
+	 xb6puXRvuBzhyWMoxsVdWg72dI1Lt00hQelKOL6+sp2p7I9oz44kJCvVYyN8JzAixI
+	 HDp3h4kh8WNRS+Y+RKSbq4cGjrSDakPwILvoY8WUZ772KewHzkLHWT8Xw58+Sb/+Y5
+	 2wUD5cmOaIPvHyvtO0NR5ETh92Y7YATvfHzRkhBD5oxzfTq+i23S2dFE66TvrgsFg3
+	 L3qxBjqU+l6IxKMm3lk0BdSFyJxDvBG0KrfSVqNjXCRFtmzVU4hgv9hlxDDwA1dH04
+	 4UiSXu8D3TM2A==
+Message-ID: <e02c2f42-b5e4-4200-8131-3881b7034625@kernel.org>
+Date: Mon, 13 May 2024 08:37:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507102822.2023826-1-maxime.chevallier@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Add dp PHY dt-bindings
+To: Liankun Yang <liankun.yang@mediatek.com>, chunkuang.hu@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ chunfeng.yun@mediatek.com, vkoul@kernel.org, kishon@kernel.org,
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ jitao.shi@mediatek.com, mac.shen@mediatek.com,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+References: <20240510110523.12524-1-liankun.yang@mediatek.com>
+ <20240510110523.12524-3-liankun.yang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240510110523.12524-3-liankun.yang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Maxime,
+On 10/05/2024 13:04, Liankun Yang wrote:
+> Add dp PHY dt-bindings.
 
-On Tue, May 07, 2024 at 12:28:19PM +0200, Maxime Chevallier wrote:
-> Nathan and Heiner reported issues that occur when phylib and phy drivers
-> built as modules expect the phy_link_topology to be initialized, due to
-> wrong use of IS_REACHABLE.
+This tells me nothing. Read submitting patches.
+
 > 
-> This small fixup series addresses that by moving the initialization code
-> into net/core/dev.c, but at the same time implementing lazy
-> initialization to only allocate the topology upon the first PHY
-> insertion.
-> 
-> This needed some refactoring, namely pass the netdevice itself as a
-> parameter for phy_link_topology helpers.
-> 
-> Thanks Heiner for the help on untangling this, and Nathan for the
-> report.
+> Changeds in v2:
 
-Are you able to prioritize getting this series merged? This has been a
-problem in -next for over a month now and the merge window is now open.
-I would hate to see this regress in mainline, as my main system may be
-affected by it (not sure, I got a new test machine that got bit by it in
-addition to the other two I noticed it on).
+This does goes to changelog, not commit log.
 
-Cheers,
-Nathan
+> - Add dp PHY dt-bindings.
+> https://patchwork.kernel.org/project/linux-mediatek/patch/
+> 20240403040517.3279-1-liankun.yang@mediatek.com/
+> 
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
+
+This patch looks terrible... there's so many wrong things I don't even
+know where to start.
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+
+> ---
+>  .../display/mediatek/mediatek.phy-dp.yaml     | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/mediatek/mediatek.phy-dp.yaml
+
+Wrong filename
+
+> 
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek.phy-dp.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek.phy-dp.yaml
+> index 000000000000..476bc329363f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek.phy-dp.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/mediatek/mediatek,phy-dp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MediaTek Display Port Controller
+> +
+> +maintainers:
+> +  - Mac shen <mac.shen@mediatek.com>
+> +  - Liankun yang <Liankun.yang@mediatek.com>
+> +
+> +description: |
+> +  Special settings need to be configured by MediaTek DP based on the actual
+> +  hardware situation. For example, when using a certain brand's docking
+> +  station for display projection, garbage may appear. Adjusting the specific
+> +  ssc value can resolve this issue.
+> +
+> +properties:
+> +  status: disabled
+
+I think you nicely shocked Rob already.
+
+Please reach internally to Mediatek or collaborating companies to get
+basic training and instructions how to write patches and bindings.
+
+Otherwise it is waste of our time. Mediatek is not a small company so
+there is no excuse in sending such poor quality patches, which would be
+EASILY spotted by the MOST BASIC review.
+
+Best regards,
+Krzysztof
+
 
