@@ -1,145 +1,467 @@
-Return-Path: <linux-kernel+bounces-177768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60D28C4468
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:38:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C622F8C446B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 586CDB2130F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:38:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79E9A281A8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE31715443A;
-	Mon, 13 May 2024 15:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F71474CA;
+	Mon, 13 May 2024 15:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="US5XeI47"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BQ6g3R4N"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917E8153BEE;
-	Mon, 13 May 2024 15:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90656153BEE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715614701; cv=none; b=VVQ6Eoew9VX/+Xtv/x/YonDiAkoVCRgt5qkGjaECz3kaU7BGRKiS3qBHpx7WuXkI1ydIulmagbl3y3BmANcUT3MXQaE+COPIow8q4axrscEs2cffTTaldDG3I3E39jGriB7hNZE35qPFxuwwZRY+RFNtGEINWKxd5ClOaeqUyjs=
+	t=1715614790; cv=none; b=sVrmkcHhF4ziEDDqldQ+anQRf7qzE59tAwLulgYZcFkc1G2IuPCmcj6T2eGIZk215NMzOUShBlM4rp+ytZP89wA4fe8VNZ1X1sBHFnqB3Eet2vlU8bF0MGiBBLoNRuPDLyn+DTemWefHWSdtoebQHZ0Tv5b3aKxuCyvggjbBZ2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715614701; c=relaxed/simple;
-	bh=D4Jesxp0goxfo4+RkqtmVUcnjRYiUHslXFAvBn18PIg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9eKqG+2uxg0TzQevDzo3shjBXv2Sg7S6BSWTsxNdD883jjV3aaeXrV4CRWjW7edxJKblyUouFD7CvIWqBchgsqbT0MwAlwzAv52qwDb5xpJMpPy+HcMFNy0ugx9ym+bWQoZ8rIUpkAigjlcC/lbOnev2v5NVYJh0qq9mQ1UtY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=US5XeI47; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59e4136010so1161281166b.3;
-        Mon, 13 May 2024 08:38:19 -0700 (PDT)
+	s=arc-20240116; t=1715614790; c=relaxed/simple;
+	bh=e73Qxhnwot2lfI+R/UQMZ+swnRsXgYDtysktYG/a52c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RYBABBLjMrqgwDhdFQd8YYs6tCeDXW3nAPtuX0SabIPMQdHCR3kWQsthEW9WNt4/0w3a76ZSY3OoZn2zYvYq5Jyk0LU4Bpweqw+jweVidG9pOZMMYiwZ/JN+hUuWK/Q0NqEOiBzwZvXyGrp5dckJyPMysLUUuw5W0HT0FUwA2rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BQ6g3R4N; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-345606e8ac0so864071f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:39:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715614698; x=1716219498; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cwyN+SM57vzeVl611qrZpQ9hXHag66qCgwB27/VmmyA=;
-        b=US5XeI47bp0EIzSEF6RCjXLmzqxl5eNlpkErlK7jziudh1+E0URZ9eKz6GtjMWNEfH
-         tCQyk9B4MeNkayR8w8ndV9HGDDYOCGsbfJ+2POD+HvdUE7WqHN0341LmqVqP5parXF49
-         GFI1uQLJJs8QMBllfFK33t+rgCqOfwsSPUYB865IqQRY4E9Trv7sXrZZRA/Ah3An9lOW
-         RC1kKzhOzDdR2ot8j9+CnPCxTzcTk59mNY8VD9FtsV2o6bThRsqAwTuR+Rjh/sTZa/QN
-         RuiBMQInuwUO//FuDPT1Enw8c/Z3KlnBxguPTIKAlz2jIlOWi5SLDPVovT/0G1qfBtoj
-         verw==
+        d=linaro.org; s=google; t=1715614787; x=1716219587; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rP2aaVf8dFLFhsm6qBn807LGYJgCX08X8bR7IKOZshs=;
+        b=BQ6g3R4Ngf0OiUpdl9D/k/F6hKPQO0W2t+v6PLdCV6Qu2eio3dsHOM2ndG+kohqFyn
+         Ni0jaYIZobU7ufewJ4v6GpPrn/WkumyA/Jitm1EWhGmnc/ZZAeRteQLhdGjie9SpPPv7
+         RXx60k+uvIi/k6SUn/2sbtlvPf1cKFrHKc+QRbLKcIIsrZmdLFcsdxmaUXywutLkIIq/
+         W9YH5AyjEu6LMdZu+zyGUgGp3BmuMUq7hssXTjAgb7QmgF0OHd6ZPBQHf3IW5YDuqkJw
+         v0yRlmmnPjqA9Ac0o1QB87BDBP7usjWOn/TMMKyUGKf7lvkJjGCuFO93SBwYP7gqVYPM
+         7cog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715614698; x=1716219498;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cwyN+SM57vzeVl611qrZpQ9hXHag66qCgwB27/VmmyA=;
-        b=D50aWMqG62leXs1Hl4thl5rG0F23U1q8G0H/BjKNqO/4lCv+gJQq2Y2BGk2yJ4Htua
-         40j2lWNKyluja4l58LKtxrIbLh0XMTIj7U2gEBuGIKqauqPaJvVdfT5VRnW0tcaLlZ3n
-         7pg2F/lmpZ9mjSUt4h8IWEsuSw4Rj3nWT92jMyFn8fYxMntbmUNOmBgjKKtJuUcIcvgG
-         +lBpLvMa2zzdSh6u1/O4yg2QGdcQIBr7DLv6hAWf9/nEpplRnVyUe1q2jUiCHfs4vauo
-         e5b5Bv1WSnEHiFpC5vt/M1o2YwanzD/0FPkHDFnGlZU2BbbocN0rzux056/UattXG+a3
-         HXdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6cvPSO67d065hLFaOIhUvvXwsvcA2cAr8HLZ5+vsI8HGxHnH9Yse1o89o6hT1LtbGpuGV0lCDptgu70VvFLJgbu4iflY4ndHl9ZAnW5HtCMI07Wu0lIVwjX/g6AXzYt8Eqx8AhoU1dg==
-X-Gm-Message-State: AOJu0YyYZjKjLPasoyJQ/4gkeZfL9rSTExSDOnrhGLKv8FxlW9+ilyzo
-	CkeByeeinyWLYMH0qmsBJ+3bLuB9arLjey6rMChOG4U071I8D/jk2H+FA4Mf
-X-Google-Smtp-Source: AGHT+IGTNJtlgQGQD4ibnubprYy9/aebeejMr1qpEPPXsn/mM3SWgJQhe7VU8Jgr2xjufacdWnm8yg==
-X-Received: by 2002:a50:c010:0:b0:572:7e9f:c124 with SMTP id 4fb4d7f45d1cf-5734d59040bmr7010860a12.9.1715614697660;
-        Mon, 13 May 2024 08:38:17 -0700 (PDT)
-Received: from njaxe.localnet (host-79-55-54-147.retail.telecomitalia.it. [79.55.54.147])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733c322c06sm6459548a12.85.2024.05.13.08.38.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 08:38:17 -0700 (PDT)
-From: matteomartelli3@gmail.com
-To: Matteo Martelli <matteomartelli3@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: es8311: dt-bindings: add everest es8311 codec
-Date: Mon, 13 May 2024 17:38:16 +0200
-Message-ID: <4072123.0gxhY3eTYf@njaxe>
-In-Reply-To: <91fa1c1f-22ea-4f4a-9d87-a919ddf118cd@kernel.org>
-References:
- <20240510131238.1319333-1-matteomartelli3@gmail.com>
- <20240510131238.1319333-2-matteomartelli3@gmail.com>
- <91fa1c1f-22ea-4f4a-9d87-a919ddf118cd@kernel.org>
+        d=1e100.net; s=20230601; t=1715614787; x=1716219587;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rP2aaVf8dFLFhsm6qBn807LGYJgCX08X8bR7IKOZshs=;
+        b=T20Sh7EoO39y8rruSBn1uYOms00BRyHsmdMV4atzvXX7wrzW9SM9Y0K72BYd1pLTA+
+         mezXTrntpw9dE6GsPI02pscDgpvtBOlAIAFNWikUR9jbBAJsZGfwgOptcCVSO8HA5MH9
+         BwPvEPbu/Y/GZiG4gSVlyE2GXiGFi62gkltW8NzJNFW6i9t+qEMsGVsRrmIbWcIKTN1k
+         d1lghSSakdU1gyUBEQR2EpvUbaIJ4xW9Lqj89cF967HyA7wll+QfTlxvA3TGxWU1O+wb
+         oaX4PJjIm2LI00quDD3tHcLYP+p3QCaFPYHpMoJZudXlU1j2QrsbZ3ZvAIGKtzmNJX1C
+         soUw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8/yJq+rf/Cll7ishODwc/ztPCbe7NHmWF7ryoSUBkODvld5Us9jFfDbXOEhTL+MiNBBtI/g2Tz16RtVaOg1TP/hFJlrOo6NPNJHRU
+X-Gm-Message-State: AOJu0Yxl/2JCTyIL3nxxYUIB6mXu8JnXfBGjSRwbZC4nyY0wBTtUr6z+
+	YykPZZwRCl/DFrNza7RObrrhqL1a38v9GNHfvk87zQApScSWwLRjnY54d6GVJZQ=
+X-Google-Smtp-Source: AGHT+IF5Mb4MetZLo2NIlSAgSaKFZbnchaSvxf1xX8BV6ry1OwySDhl9xiquDUFJJ5cHFoce/Hq+6Q==
+X-Received: by 2002:adf:f705:0:b0:34d:7201:4616 with SMTP id ffacd0b85a97d-3504a20b1admr7155807f8f.0.1715614786869;
+        Mon, 13 May 2024 08:39:46 -0700 (PDT)
+Received: from [10.91.0.142] ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baacf52sm11522861f8f.87.2024.05.13.08.39.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 08:39:46 -0700 (PDT)
+Message-ID: <c6797921-2c2b-4dc1-866e-011d10c9d3c2@linaro.org>
+Date: Mon, 13 May 2024 18:39:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] media: qcom: camss: Move format related functions
+Content-Language: en-US
+To: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, andersson@kernel.org,
+ konrad.dybcio@linaro.org, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+ hverkuil-cisco@xs4all.nl, quic_hariramp@quicinc.com
+References: <20240411124543.199-1-quic_grosikop@quicinc.com>
+ <20240411124543.199-6-quic_grosikop@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240411124543.199-6-quic_grosikop@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Monday, 13 May 2024 10.53.57 CEST Krzysztof Kozlowski wrote:
-> On 10/05/2024 15:00, Matteo Martelli wrote:
-> > Add DT bindings documentation for the Everest-semi ES8311 codec.
-> > 
-> > Everest-semi ES8311 codec is a low-power mono audio codec with I2S audio
-> > interface and I2C control.
-> > 
-> > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> > ---
-> >  .../bindings/sound/everest,es8311.yaml        | 52 +++++++++++++++++++
-> >  1 file changed, 52 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/sound/everest,es8311.yaml b/Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > new file mode 100644
-> > index 000000000000..54fb58b9ab58
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > @@ -0,0 +1,52 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/sound/everest,es8311.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Everest ES8311 audio CODEC
+On 4/11/24 15:45, Gjorgji Rosikopulos wrote:
+> From: Radoslav Tsvetkov <quic_rtsvetko@quicinc.com>
 > 
-> This looks exactly like es8316, except of later added port. Are you sure
-> you are not planning to add port later, which would make both schemas
-> identical?
-
-I did not pay enough attention to audio-graph-port property which is in
-fact supported and could be added as well. Thus the es8311.yaml would be
-identical to es8316.yaml. My guess is that I should just add the
-"everest,es8311" compatible string to the existing es8316.yaml even if the
-two drivers are separate (like for instance mediatek,mt8186-clock.yaml). Is
-this correct?
-If that's the case:
-* should the evereset,es8316.yaml file be renamed to evereset,es831x.yaml?
-* should I also add myself to the maintainers list of that schema?
-
-> Best regards,
-> Krzysztof
+> Move out the format related helper functions from vfe and video in a
+> separate file. The goal here is to create a format API.
 > 
+> Signed-off-by: Radoslav Tsvetkov <quic_rtsvetko@quicinc.com>
+> Signed-off-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/camss/Makefile    |  1 +
+>   .../media/platform/qcom/camss/camss-format.c  | 98 +++++++++++++++++++
+>   .../media/platform/qcom/camss/camss-format.h  |  5 +
+>   drivers/media/platform/qcom/camss/camss-vfe.c | 86 +++++-----------
+>   .../media/platform/qcom/camss/camss-video.c   | 26 +----
+>   5 files changed, 128 insertions(+), 88 deletions(-)
+>   create mode 100644 drivers/media/platform/qcom/camss/camss-format.c
 > 
+> diff --git a/drivers/media/platform/qcom/camss/Makefile b/drivers/media/platform/qcom/camss/Makefile
+> index 0d4389ab312d..e636968a1126 100644
+> --- a/drivers/media/platform/qcom/camss/Makefile
+> +++ b/drivers/media/platform/qcom/camss/Makefile
+> @@ -19,5 +19,6 @@ qcom-camss-objs += \
+>   		camss-vfe-gen1.o \
+>   		camss-vfe.o \
+>   		camss-video.o \
+> +		camss-format.o \
+>   
+>   obj-$(CONFIG_VIDEO_QCOM_CAMSS) += qcom-camss.o
+> diff --git a/drivers/media/platform/qcom/camss/camss-format.c b/drivers/media/platform/qcom/camss/camss-format.c
+> new file mode 100644
+> index 000000000000..6279cb099625
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/camss/camss-format.c
+> @@ -0,0 +1,98 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2023, The Linux Foundation. All rights reserved.
+> + * Copyright (c) 2023 Qualcomm Technologies, Inc.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 and
+> + * only version 2 as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
 
-Thanks for your support,
-Matteo Martelli
+SPDX-License-Identifier is fully sufficient, the licence description shall be removed.
 
+> +
+> +#include <linux/bug.h>
+> +#include <linux/errno.h>
+> +
+> +#include "camss-format.h"
+> +
+> +/*
+> + * camss_format_get_bpp - Map media bus format to bits per pixel
+> + * @formats: supported media bus formats array
+> + * @nformats: size of @formats array
+> + * @code: media bus format code
+> + *
+> + * Return number of bits per pixel
+> + */
+> +u8 camss_format_get_bpp(const struct camss_format_info *formats, unsigned int nformats, u32 code)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < nformats; i++)
+> +		if (code == formats[i].code)
+> +			return formats[i].mbus_bpp;
+> +
+> +	WARN(1, "Unknown format\n");
+> +
+> +	return formats[0].mbus_bpp;
+> +}
+> +
+> +/*
+> + * camss_format_find_code - Find a format code in an array
+> + * @code: a pointer to media bus format codes array
+> + * @n_code: size of @code array
+> + * @index: index of code in the array
+> + * @req_code: required code
+> + *
+> + * Return media bus format code
+> + */
+> +u32 camss_format_find_code(u32 *code, unsigned int n_code, unsigned int index, u32 req_code)
+> +{
+> +	int i;
+> +
+> +	if (!req_code && index >= n_code)
+> +		return 0;
+> +
 
+0 as an error condition indicator is not very common, at least it shall be
+documented in the comment.
 
+> +	for (i = 0; i < n_code; i++) {
+> +		if (req_code) {
+> +			if (req_code == code[i])
+> +				return req_code;
+> +		} else {
+> +			if (i == index)
+> +				return code[i];
+> +		}
+> +	}
+> +
+> +	return code[0];
+> +}
+> +
+> +/*
+> + * camss_format_find_format - Find a format in an array
+> + * @code: media bus format code
+> + * @pixelformat: V4L2 pixel format FCC identifier
+> + * @formats: a pointer to formats array
+> + * @nformats: size of @formats array
+> + *
+> + * Return index of a format or a negative error code otherwise
+> + */
+> +int camss_format_find_format(u32 code, u32 pixelformat, const struct camss_format_info *formats,
+> +			     unsigned int nformats)
+> +{
+> +	int i;
+
+unsigned int i
+
+> +
+> +	for (i = 0; i < nformats; i++) {
+> +		if (formats[i].code == code &&
+> +		    formats[i].pixelformat == pixelformat)
+> +			return i;
+> +	}
+> +
+> +	for (i = 0; i < nformats; i++) {
+> +		if (formats[i].code == code)
+> +			return i;
+> +	}
+> +
+> +	WARN_ON(1);
+> +
+
+WARN_ON() is not needed here, it has to be removed.
+
+> +	return -EINVAL;
+> +}
+> diff --git a/drivers/media/platform/qcom/camss/camss-format.h b/drivers/media/platform/qcom/camss/camss-format.h
+> index bfbc761bd46c..86b5790e343d 100644
+> --- a/drivers/media/platform/qcom/camss/camss-format.h
+> +++ b/drivers/media/platform/qcom/camss/camss-format.h
+> @@ -59,4 +59,9 @@ struct camss_formats {
+>   	const struct camss_format_info *formats;
+>   };
+>   
+> +u8 camss_format_get_bpp(const struct camss_format_info *formats, unsigned int nformats, u32 code);
+> +u32 camss_format_find_code(u32 *code, unsigned int n_code, unsigned int index, u32 req_code);
+> +int camss_format_find_format(u32 code, u32 pixelformat, const struct camss_format_info *formats,
+> +			     unsigned int nformats);
+> +
+>   #endif /* __CAMSS_FORMAT_H__ */
+> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
+> index 2d5a64c055f1..83c5a36d071f 100644
+> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
+> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
+> @@ -278,48 +278,6 @@ const struct camss_formats vfe_formats_pix_845 = {
+>   	.formats = formats_rdi_845
+>   };
+>   
+> -/*
+> - * vfe_get_bpp - map media bus format to bits per pixel
+> - * @formats: supported media bus formats array
+> - * @nformats: size of @formats array
+> - * @code: media bus format code
+> - *
+> - * Return number of bits per pixel
+> - */
+> -static u8 vfe_get_bpp(const struct camss_format_info *formats,
+> -		      unsigned int nformats, u32 code)
+> -{
+> -	unsigned int i;
+> -
+> -	for (i = 0; i < nformats; i++)
+> -		if (code == formats[i].code)
+> -			return formats[i].mbus_bpp;
+> -
+> -	WARN(1, "Unknown format\n");
+> -
+> -	return formats[0].mbus_bpp;
+> -}
+> -
+> -static u32 vfe_find_code(u32 *code, unsigned int n_code,
+> -			 unsigned int index, u32 req_code)
+> -{
+> -	int i;
+> -
+> -	if (!req_code && (index >= n_code))
+> -		return 0;
+> -
+> -	for (i = 0; i < n_code; i++)
+> -		if (req_code) {
+> -			if (req_code == code[i])
+> -				return req_code;
+> -		} else {
+> -			if (i == index)
+> -				return code[i];
+> -		}
+> -
+> -	return code[0];
+> -}
+> -
+>   static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   			    unsigned int index, u32 src_req_code)
+>   {
+> @@ -335,8 +293,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_YUYV8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		case MEDIA_BUS_FMT_YVYU8_1X16:
+>   		{
+> @@ -345,8 +303,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_YVYU8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		case MEDIA_BUS_FMT_UYVY8_1X16:
+>   		{
+> @@ -355,8 +313,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_UYVY8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		case MEDIA_BUS_FMT_VYUY8_1X16:
+>   		{
+> @@ -365,8 +323,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_VYUY8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		default:
+>   			if (index > 0)
+> @@ -391,8 +349,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_YUYV8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		case MEDIA_BUS_FMT_YVYU8_1X16:
+>   		{
+> @@ -404,8 +362,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_YVYU8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		case MEDIA_BUS_FMT_UYVY8_1X16:
+>   		{
+> @@ -417,8 +375,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_UYVY8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		case MEDIA_BUS_FMT_VYUY8_1X16:
+>   		{
+> @@ -430,8 +388,8 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
+>   				MEDIA_BUS_FMT_VYUY8_1_5X8,
+>   			};
+>   
+> -			return vfe_find_code(src_code, ARRAY_SIZE(src_code),
+> -					     index, src_req_code);
+> +			return camss_format_find_code(src_code, ARRAY_SIZE(src_code),
+> +						      index, src_req_code);
+>   		}
+>   		default:
+>   			if (index > 0)
+> @@ -714,9 +672,9 @@ static int vfe_set_clock_rates(struct vfe_device *vfe)
+>   				} else {
+>   					struct vfe_line *l = &vfe->line[j];
+>   
+> -					bpp = vfe_get_bpp(l->formats,
+> -						l->nformats,
+> -						l->fmt[MSM_VFE_PAD_SINK].code);
+> +					bpp = camss_format_get_bpp(l->formats,
+> +								   l->nformats,
+> +								   l->fmt[MSM_VFE_PAD_SINK].code);
+>   					tmp = pixel_clock[j] * bpp / 64;
+>   				}
+>   
+> @@ -795,9 +753,9 @@ static int vfe_check_clock_rates(struct vfe_device *vfe)
+>   				} else {
+>   					struct vfe_line *l = &vfe->line[j];
+>   
+> -					bpp = vfe_get_bpp(l->formats,
+> -						l->nformats,
+> -						l->fmt[MSM_VFE_PAD_SINK].code);
+> +					bpp = camss_format_get_bpp(l->formats,
+> +								   l->nformats,
+> +								   l->fmt[MSM_VFE_PAD_SINK].code);
+>   					tmp = pixel_clock[j] * bpp / 64;
+>   				}
+>   
+> diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/media/platform/qcom/camss/camss-video.c
+> index cd13a432e291..00b10dda3615 100644
+> --- a/drivers/media/platform/qcom/camss/camss-video.c
+> +++ b/drivers/media/platform/qcom/camss/camss-video.c
+> @@ -28,27 +28,6 @@
+>    * Helper functions
+>    */
+>   
+> -static int video_find_format(u32 code, u32 pixelformat,
+> -			     const struct camss_format_info *formats,
+> -			     unsigned int nformats)
+> -{
+> -	int i;
+> -
+> -	for (i = 0; i < nformats; i++) {
+> -		if (formats[i].code == code &&
+> -		    formats[i].pixelformat == pixelformat)
+> -			return i;
+> -	}
+> -
+> -	for (i = 0; i < nformats; i++)
+> -		if (formats[i].code == code)
+> -			return i;
+> -
+> -	WARN_ON(1);
+> -
+> -	return -EINVAL;
+> -}
+> -
+>   /*
+>    * video_mbus_to_pix_mp - Convert v4l2_mbus_framefmt to v4l2_pix_format_mplane
+>    * @mbus: v4l2_mbus_framefmt format (input)
+> @@ -121,9 +100,8 @@ static int video_get_subdev_format(struct camss_video *video,
+>   	if (ret)
+>   		return ret;
+>   
+> -	ret = video_find_format(fmt.format.code,
+> -				format->fmt.pix_mp.pixelformat,
+> -				video->formats, video->nformats);
+> +	ret = camss_format_find_format(fmt.format.code, format->fmt.pix_mp.pixelformat,
+> +				       video->formats, video->nformats);
+>   	if (ret < 0)
+>   		return ret;
+>   
+
+--
+Best wishes,
+Vladimir
 
