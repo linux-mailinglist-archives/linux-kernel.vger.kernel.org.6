@@ -1,622 +1,195 @@
-Return-Path: <linux-kernel+bounces-178142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C036C8C49A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C6C8C49A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2CFF1C21415
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D290285068
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1E653E30;
-	Mon, 13 May 2024 22:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C406E84D3E;
+	Mon, 13 May 2024 22:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Y48TqlNX"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Tb+fXxso"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CE384DE3
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715639691; cv=none; b=sTtN/3ZCRJU5kwg9cx8MOS6QE9mQxvgnW+Dh0I3TtxHERFQURfbpr4r5FRw3DK7UhuVjsgLyUGzwaLmHLfU1qwn2+OCG1sDFFtTiY5QnK45C3DetbvkdwbTDywihLZHeG1uKUDg308QIdFADVo35kpjJLbhK4O9w3X8esVfIaBA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715639691; c=relaxed/simple;
-	bh=aZDTYPYLkiHD3uVvOBk+W7IT3dzdCOOuWFRJh0Pp6Lw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hz0rzzFb0I2RYfXFiAYlPncN39x8wYTXofTkS/uyQbnjuv2C0gk3GKzJNsf7C2NA2HrobImaGm2muj6G26MklBCIVuHp18etCq5/xTahaxg62dcuj7Suc/RWunjCIxKxnI0le8gwmklrqk3RUl7dwiLjnI4W2aGbG0/gCnY8nmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Y48TqlNX; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4df1e45461fso1836309e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:34:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1715639687; x=1716244487; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4t+D1QNthuj7NNn6UwkaClE21q9jxXrxTc9e8akmM9o=;
-        b=Y48TqlNXuth2oJ6KA6nFfw8x0XZ7xDm47aQQQmJl55uTRT6gEQVrPaMPzw6QHKGjwV
-         Ku0ohzryHeYzXkpC7tcN7i2ve/JnAraekjuB1oF0uzP99GojG6OBlSENBwkA+9SN+YLy
-         GM3YcolxFC6fAQGnyRoAabxli3UF/TCrtYufU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715639687; x=1716244487;
-        h=in-reply-to:autocrypt:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4t+D1QNthuj7NNn6UwkaClE21q9jxXrxTc9e8akmM9o=;
-        b=jK0exUkyYJPgoiLJcVxG5lGWn1b+1u0w6PUM0++Aahlq252/KvPtCIaPUi9HrnKZVi
-         iIO8UUkGGXhxBfbAocAGR9V2oQ7nszLvIn/dJZK7MZpT2mU1beUe3yuzHC1VCbHyOPAo
-         oZphO6vLOwVHIbhG8FqlS30GCAppV//V/IpjFkeow1Exx7uFXWQuJ2gJpHxMRAr9gwBP
-         jGsxxD2hsJ3Rylly9L589MKy17IqDxL0DzzRlJAsxsUzX0FfVBSvhyZwvPgF1Y3vZ7QY
-         a3+GTFMpjyB+XnDEv23Kyq2gnGsNRgP2/3xGbgml56elZaVusetZ94L++fQyxcMxlGIi
-         EUJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSxfOoKQ+HcMTp7TR6LZje9RyKo0D06GUmXHBJUw69d3TYk3W9mTNQjLZkbEWzex8+7UYZx9ZG67Z7dQXqkoYEzrxBGBtxuHnrUAc0
-X-Gm-Message-State: AOJu0YyOGWzKKsfNDUWW1oFbkehm2Xr8/J2e+sXB9OsH/M/j9q+q7rNU
-	KDE4NZWhJ5tWP6ZGrIuGhunAF8MdbWpSwEpR75bXygCQRgScZ2d6YlryVJMQAg==
-X-Google-Smtp-Source: AGHT+IFSC2i/AKeX74yWnZc9gqmMNBZxc5JBmuVNyVcD5owFQNE2Z9qSfbktP4FX0GY/24PbJsYz7g==
-X-Received: by 2002:a05:6122:915:b0:4d3:3952:1d1a with SMTP id 71dfb90a1353d-4df882a3a21mr9360560e0c.4.1715639687460;
-        Mon, 13 May 2024 15:34:47 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4df7c0531f4sm1333890e0c.38.2024.05.13.15.34.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 15:34:46 -0700 (PDT)
-Message-ID: <470b9bc4-701a-480e-b6e1-3e1bda13cb78@broadcom.com>
-Date: Mon, 13 May 2024 15:34:45 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF6B2AF09;
+	Mon, 13 May 2024 22:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715639792; cv=fail; b=lhUhBkUczTHFF40QxPk6MRWiHfrb+634z3TngtjDuIme4hqARUNE3Yzfh7q42pSBbJbR8yAXHCJoYA/rq/7+QLOqniHZ5va9jwU9vy3CZ8NstLHKRqavUkzL3EwlqzIu0zZJStC73WAuIi8yluBhvC0SQEksbS5ibGi9t1hpsmE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715639792; c=relaxed/simple;
+	bh=EikdCu0KVbvgTQs/KsCXjiIRMtQ1AgQYFShsDxbv29I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bYfp9WNcqS7INUD7zZ3FvuHNuMcjlo+qnNk0quv4wwf42M8otnPMR1JdNxcu/JdKPhhQovF09g4kgh53cxT59RCYLpKWNmdFJA1HA8rGftP++iyR6bdT+pCN0EeQUd6q7JthFXFdbekDdiO2fQypo7F9rwRNE22dBGNU/SA2Oag=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Tb+fXxso; arc=fail smtp.client-ip=40.107.92.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AbZp9mPDydG6weBWvuSbCf5rDhFb8pRqtG2L8l3Z4214aT8GYnsFXcTwDSXoFVaKsC48JtQgOXXy0smqyACyWOlk3VUo7Ii9v9Zi3wo/MnRN94zibifQ8ZBo6z8gk2wmKjV5+YcRgsyKiSov8q9VoZFO6bCEhAjT3enIr5rUHR5cvR+bpZgirJYXwzLf97ynRIr806xR9bua0YEm1jArxKly4qUtWASCUyCNi9VqRzENSyew4AB8OOEYvulstC6tgk/4fcMpC8vadrhj+wwPx9HfPqgGQ+beqJbvbCubVxHHGPsovycS9x1ZNJ9fu/Obk31W66HmfIv+YB8s3APjCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EJTII+l+JnM53pfUE/UncmqTezpk8rsnVov3Sg/QZoA=;
+ b=IuETnWRSIoauuTFpCBIAaDF9gQjKEJFP7lY3A0Ed/OVJ7eqAt+QGaPCgCS/a26hZH7fobCspYJMmqGbZQu16XN0e7GfjjALOcGR/0pEb7FHHM0czY5RzkSGo1IBTdM1FLiw1f0/+5REz9ai4BvGGEGOKpdBzaXJ5iWJ9mJfYlExTgtKt+s9zX9Hk1aL50DfNOr0TXmOulvFP+DwOYSUnHqS7mT+1JZcYEDweMQdcxvBS1sr13dFwluKHSxkkEENFFMpMTo4Aq3ox+KNGYclilxJm8pHWXbq+qxdq0+NOWRcyJW9g7M1a9zhZhIbvulGMiLne+b/YwTJHkvcs0oOIJg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EJTII+l+JnM53pfUE/UncmqTezpk8rsnVov3Sg/QZoA=;
+ b=Tb+fXxsonBTFOp2n/Em4bPjXHY7CYMhRe6/EzLWdzngEooyM7/jt3OGI8MOEjgs+fj4mCbBhM1WctWN8E0s6hXur5EFKeTBhShP5hHmVOgNf6+SRd5gVaTIHnEpvG/l4bpC54EN1p2kF9D6U5JjFpPivN5itLGDqD3raQ7zJPnQtPp0F21gxkidBUueR3OREzTfaSWeoUp2r+yndbK/5rT3IixxgFUnbNE9JgT/Jd1LtwWthPkkPPr/nb2o5X5D/bGHoPH5LQc9wlasljY9j9NnfVUyyjOpqWk7a1zdMcwzsnn9hffIEJZhbk46EncySxAb8rbiGXwkQGVUfpJfZeQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
+ by SA1PR12MB8987.namprd12.prod.outlook.com (2603:10b6:806:386::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 22:36:27 +0000
+Received: from DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
+ ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 22:36:27 +0000
+Date: Mon, 13 May 2024 19:36:24 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, kevin.tian@intel.com,
+	suravee.suthikulpanit@amd.com, joro@8bytes.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+	yi.l.liu@intel.com, eric.auger@redhat.com, vasant.hegde@amd.com,
+	jon.grimm@amd.com, santosh.shukla@amd.com, Dhaval.Giani@amd.com,
+	shameerali.kolothum.thodi@huawei.com
+Subject: Re: [PATCH RFCv1 12/14] iommufd: Add IOMMUFD_OBJ_VQUEUE and
+ IOMMUFD_CMD_VQUEUE_ALLOC
+Message-ID: <ZkKV6HcHEw5vetV4@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <b0ee53af3f59602834e67ddf86c748ca304da175.1712978213.git.nicolinc@nvidia.com>
+ <ZkDZ/YO0jqZOlRtA@nvidia.com>
+ <ZkGZ7+37HnLlT6Jn@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkGZ7+37HnLlT6Jn@nvidia.com>
+X-ClientProxiedBy: SJ0PR03CA0018.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::23) To DM6PR12MB3849.namprd12.prod.outlook.com
+ (2603:10b6:5:1c7::26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Issue with "kbuild: create a list of all built DTB files"
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, Markus Mayer <mmayer@broadcom.com>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <ea330927-2a8d-4026-a6f1-d418a916d19c@broadcom.com>
- <CAK7LNAQJcFifScm_N40B+uHXB7o=EYyERQVRQ4=f2f0JTEM3+g@mail.gmail.com>
- <2c71072b-e611-4a7c-a53f-a33fec959ee7@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <2c71072b-e611-4a7c-a53f-a33fec959ee7@broadcom.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000002a2ade06185d7ed9"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|SA1PR12MB8987:EE_
+X-MS-Office365-Filtering-Correlation-Id: 51c4f063-3fa0-4025-a419-08dc739d2031
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8XxbJxrFKeUPgi78lDFy5VtdCq4syQFfuJfrJBRx8RQF2A2/T5znHZLOmORW?=
+ =?us-ascii?Q?jEicIC9P+meQQBdo1ePSQl9s923+RFs6iLlxUmYW1LTUa2PSE7on2LeaiUpI?=
+ =?us-ascii?Q?MMZ4K1qQzjgKzLXGKkLw2SEaMN45a908sRVDHyL1ACtlCoRs2/Ib/rjkrgn9?=
+ =?us-ascii?Q?SC5JXrq8Q/m1gRcbB1K9I05jPa3M3YZcyJMCCozoP42NbOFvqIsOhV7zG3m5?=
+ =?us-ascii?Q?uSPKrYccliYylwPP6OxxyrsQvLfJUqbnyF1OPbP2mNl+mmQXdzkbU+HDCtzz?=
+ =?us-ascii?Q?njIsqRLSu7roH+hPaol2M9xIQ7CPWMP0DAGDAafkzY3jgBfh7fw7fKA+32vg?=
+ =?us-ascii?Q?X9VGhTuxWbSUVA32EVzCYVzEWUn2SCfW+c2K2PJ4zyw8q1hSBorlSLib/Xx+?=
+ =?us-ascii?Q?jWUHU+fEa6+lM756i0UkJLcBPWb1s3lTm9TZcI8ElDs/26GVc2wt4uUaxdLI?=
+ =?us-ascii?Q?v/jeVG2fEfl0bFmt5HznaGTun8NzJYcaKv8UjUJwWwUV7l+QJAs113ohEFMo?=
+ =?us-ascii?Q?LiO3Sg7DucQ2jttk2sOUpTr/5Uy3ZUf3jDVN5pukKY2NZYZgUZ7ohE4w4Ux0?=
+ =?us-ascii?Q?mkI4roBtpPXWGGXFFpwfZ1VWpEckpDf++0diGb9iU+P8cxfkhHSoVZf15HzV?=
+ =?us-ascii?Q?HtYhjTncIfXIZYCYBJn0VoHt0E0u3UdcHXx3Lwb39cWBKcYXheRxjSqaXrtu?=
+ =?us-ascii?Q?CPiy1NMyeiugF9VVz52KEZyHpGUxvsq60SPw9zPf4Jwn05lAJBqxF5YTKwp1?=
+ =?us-ascii?Q?IEZjXw4msKsKfVRAr8Yp/xfKgSplSR2H1MpI835WutZdKAXn4kWMsWVZtjgC?=
+ =?us-ascii?Q?eULmr7JPUKtnnraZHtj+kUGlhSNYx4YuIROES0FXj2cMEd+6HJQ/5q8KQmW7?=
+ =?us-ascii?Q?Qf59wfMps6r7TTtkj7hKssj4o1HVf469pzIPefk2vz2x7knNX1DLWCLjzZqh?=
+ =?us-ascii?Q?wSLmrlsn/XA1Vn4rN0JZqXbZ3zaXJKfqu12hhzJxfriC0bVerQCmi5SyTL2e?=
+ =?us-ascii?Q?EFIAO2IhyJEwMNhi6hNMPpPc9QosgVa04oRckB/ofcdo2CpxPrW8l/v5qfvK?=
+ =?us-ascii?Q?fX8GWpHi2S0y7QNxpBfXL+JG5iEFJIm4CbeTx5nwwqCi8McUtTGuGbIW3ZDz?=
+ =?us-ascii?Q?8I2hcBodCE35V5NyNkz1neVpTJdjY7JGP1Bi7pgSzuDfFQAtFHPZGqiqvBA1?=
+ =?us-ascii?Q?aNeu3q032e8WASR/CcVqw0oRdQ/8vVlSDaiJXOxGRLSy27MINbvkilC+VZ1L?=
+ =?us-ascii?Q?pEweTLXB0Dg+uzMkST3kzn91fe3ObUK/6rLk6SJ6qw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TZZ5Tc9USlLetUsEJg95EiYZJ86ZlKpICHdpCWWO3oHakHnjG0OgiMwUaiZF?=
+ =?us-ascii?Q?sYuzd9rHHWGJK7L48aeesQzNvpv1/c3qsLWXvgAwryXBPyj48a/VDMR0iS/M?=
+ =?us-ascii?Q?/FCkq8vnlFoZp3Cewry70Go9/OfWZZYqfQ2jTNLhNEGQIj7fV0fjtRMky7VJ?=
+ =?us-ascii?Q?Xl/0+q8T9sD0K+7/NkAl8mfenJhWFvEcfSM/ve9B+gCnYcIOoB6sRii1pYWj?=
+ =?us-ascii?Q?o3L3BYugWK8MVd4gGYqtIkebCTqTVJMho6EcB/BoNizzNaHslA3X0qxrNbmr?=
+ =?us-ascii?Q?6Am1YD7lhvheUG/gB271yIvrUZx8uJp6YZoxw+oYXwixqoztSQJe7T0z/Kny?=
+ =?us-ascii?Q?fxCX7hx0EiNFXzZf1GEwj8too0CWHKG4U9Up3aIY8h+T2s0j+PWextT25Mcl?=
+ =?us-ascii?Q?C14JGw/GB0JoGrJihhcoT0UuPeGkpCdJ9NI5MsVTOAEjOrL8aqEbW+PEo70h?=
+ =?us-ascii?Q?oieWVfxuuwazpvzmZaszdHY6tlPmOMShAFZF5U6X2d9AXCb0l40c4tPdzxMf?=
+ =?us-ascii?Q?97fySjlgw/0HxHszrF8w4oM7KFq/xY+hw/Ks8eP5jgG3s48ewdTn5OgU8ykQ?=
+ =?us-ascii?Q?yADB55/VWni9zFYpSynRR5WEf70J6bgCDFjsDGPvPdhBL/ygZJ2h/jzmQalE?=
+ =?us-ascii?Q?84eDNBq1GnXQs00GpQl1ZVRLB/Vc/YAgomIcz5YAoke/wZhoc7FxQbiTG+j+?=
+ =?us-ascii?Q?pp+lNzWJ2WvE/pYMpnNsdEyC69sLQRDlCGvhNp7FFRpJjuyXDinYUthuWAlq?=
+ =?us-ascii?Q?UDOPu/l02a14HJKhVE1Ve3esnXHG0BIBk1OeteeM8NCgcWUlddMK0rZWU38G?=
+ =?us-ascii?Q?Q7tcDjS2QMArPtcGMbDTLdtQcKGwqyQR7v27Zrl+krIq3XtGkM50R5qNFQGI?=
+ =?us-ascii?Q?t1k6n0lM2hVGb5NbwO0Wjh5e1OhMxgFBxZmNvfHAFMObv+PN/GypyMZmk733?=
+ =?us-ascii?Q?YpvFWieAEtno4f8+bm5JnK71fldFHNqB1Ji8lFx+DbDr0KG1ZCe5PGd978q4?=
+ =?us-ascii?Q?ctQdeatvPtTTvhBFo2cFgYEueAu72kMAkFxmLLRt+E7SmCaPU7Of3sdZjltL?=
+ =?us-ascii?Q?J9nqv9I3NQzFMCAIhZU1J5m5BK/BM12WDvo8giOU8K263N3Y9TVm8/EmF4E0?=
+ =?us-ascii?Q?qWJf8DOjijfqH2w95z3+EvaQl+xQq2jE/4mVkW+mBKfSFnF5GO1m6jXMX6aw?=
+ =?us-ascii?Q?WLVmU/CMZShoD8R7M7npQmKekiusxQzXEBpaMLfWCIUihv7oLMiqpPiavKEd?=
+ =?us-ascii?Q?f43lr1PEVQfynWeBniaGI/WjARzlxxuMEO3y7CPBvnh9AhG6P4uNFYihFBAo?=
+ =?us-ascii?Q?yUGO/4bxyrC8h/ssguQ6E2VvbUcQA0mupFwZRNlkODpUPow8ZmjbH+ji5f1k?=
+ =?us-ascii?Q?dfbUAlgoBpphrg2qDDHQQMW7py9pguYNv0XoEzmIV3R3W7upaq7qVKIS4Gc5?=
+ =?us-ascii?Q?I5Wx6BqcgecfyoNSqJrScHqj8Gny+iXorsjIQaF22qaFBgzS3RtP2WIZzITI?=
+ =?us-ascii?Q?3ygSzyfMQ/1HAdV+7QIGV/grg1vMY6SLmJ6bw7hoExKJj2wlHVfr9YulyJXO?=
+ =?us-ascii?Q?xhBQ2868Os7lNS7zrUs=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 51c4f063-3fa0-4025-a419-08dc739d2031
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 22:36:27.1611
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d99f+Aryzk2erfPuPP3zXFjtEoMYjgJJbocxEU0D38Sc8dPTRTyE7rKTFUOOFTO4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8987
 
---0000000000002a2ade06185d7ed9
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-On 4/17/24 11:37, Florian Fainelli wrote:
-> On 4/17/24 07:31, Masahiro Yamada wrote:
->> On Wed, Apr 17, 2024 at 2:22 AM Florian Fainelli
->> <florian.fainelli@broadcom.com> wrote:
->>>
->>> Hi Masahiro,
->>>
->>> Sorry about the late report, commit
->>> 24507871c3c6ae4f6b460b016da7ff434cd34149 ("kbuild: create a list of all
->>> built DTB files") is breaking the build when we are doing a rsync of the
->>> Linux sources into a build directory, which is how buildroot works when
->>> doing a source directory override.
->>>
->>> This does not happen when doing a build from the git directory
->>> containing the sources, and I cannot find a missing $(obj) reference, so
->>> I am left wondering what I am missing here. The build error looks 
->>> like this:
->>>
->>> cat: arch/arm64/boot/dts/actions/dtbs-list: No such file or directory
->>> host-make[3]: *** [scripts/Makefile.build:423:
->>> arch/arm64/boot/dts/dtbs-list] Error 1
->>> host-make[3]: *** Deleting file 'arch/arm64/boot/dts/dtbs-list'
->>> host-make[2]: *** [Makefile:1394: dtbs] Error 2
->>> host-make[2]: *** Waiting for unfinished jobs....
->>>
->>> running with verbose, we can see the rule not generating an empty file
->>> at all:
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=scripts/dtc
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=scripts
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts need-dtbslist=1
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=scripts/genksyms \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/actions \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/allwinner \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/altera \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/amazon \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/tools kapi
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/amd \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/amlogic \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/apm \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/apple \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/arm \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/bitmain \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/broadcom \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/cavium \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/exynos \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/freescale \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/hisilicon \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/intel \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/lg \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> # GEN     arch/arm64/include/generated/asm/cpucap-defs.h
->>>     mkdir -p arch/arm64/include/generated/asm/; awk -f
->>> arch/arm64/tools/gen-cpucaps.awk arch/arm64/tools/cpucaps >
->>> arch/arm64/include/generated/asm/cpucap-defs.h
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/marvell \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/mediatek \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> # GEN     arch/arm64/include/generated/asm/sysreg-defs.h
->>>     mkdir -p arch/arm64/include/generated/asm/; awk -f
->>> arch/arm64/tools/gen-sysreg.awk arch/arm64/tools/sysreg >
->>> arch/arm64/include/generated/asm/sysreg-defs.h
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/microchip \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/broadcom/bcmbca \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/nuvoton \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/broadcom/northstar2 \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/exynos/google \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/nvidia \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/broadcom/stingray \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/qcom \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/realtek \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/renesas \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/rockchip \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/socionext \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/sprd \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/st \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/synaptics \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/tesla \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/ti \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/toshiba \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> /home/fainelli/work/buildroot/output/arm64/host/bin/host-make -f
->>> ./scripts/Makefile.build obj=arch/arm64/boot/dts/xilinx \
->>> need-builtin= \
->>> need-modorder= \
->>>
->>> # cmd_gen_order arch/arm64/boot/dts/dtbs-list
->>>     {   cat arch/arm64/boot/dts/actions/dtbs-list;   cat
->>> arch/arm64/boot/dts/allwinner/dtbs-list;   cat
->>> arch/arm64/boot/dts/altera/dtbs-list;   cat
->>> arch/arm64/boot/dts/amazon/dtbs-list;   cat
->>> arch/arm64/boot/dts/amd/dtbs-list;   cat
->>> arch/arm64/boot/dts/amlogic/dtbs-list;   cat
->>> arch/arm64/boot/dts/apm/dtbs-list;   cat
->>> arch/arm64/boot/dts/apple/dtbs-list;   cat
->>> arch/arm64/boot/dts/arm/dtbs-list;   cat
->>> arch/arm64/boot/dts/bitmain/dtbs-list;   cat
->>> arch/arm64/boot/dts/broadcom/dtbs-list;   cat
->>> arch/arm64/boot/dts/cavium/dtbs-list;   cat
->>> arch/arm64/boot/dts/exynos/dtbs-list;   cat
->>> arch/arm64/boot/dts/freescale/dtbs-list;   cat
->>> arch/arm64/boot/dts/hisilicon/dtbs-list;   cat
->>> arch/arm64/boot/dts/intel/dtbs-list;   cat
->>> arch/arm64/boot/dts/lg/dtbs-list;   cat
->>> arch/arm64/boot/dts/marvell/dtbs-list;   cat
->>> arch/arm64/boot/dts/mediatek/dtbs-list;   cat
->>> arch/arm64/boot/dts/microchip/dtbs-list;   cat
->>> arch/arm64/boot/dts/nuvoton/dtbs-list;   cat
->>> arch/arm64/boot/dts/nvidia/dtbs-list;   cat
->>> arch/arm64/boot/dts/qcom/dtbs-list;   cat
->>> arch/arm64/boot/dts/realtek/dtbs-list;   cat
->>> arch/arm64/boot/dts/renesas/dtbs-list;   cat
->>> arch/arm64/boot/dts/rockchip/dtbs-list;   cat
->>> arch/arm64/boot/dts/socionext/dtbs-list;   cat
->>> arch/arm64/boot/dts/sprd/dtbs-list;   cat
->>> arch/arm64/boot/dts/st/dtbs-list;   cat
->>> arch/arm64/boot/dts/synaptics/dtbs-list;   cat
->>> arch/arm64/boot/dts/tesla/dtbs-list;   cat
->>> arch/arm64/boot/dts/ti/dtbs-list;   cat
->>> arch/arm64/boot/dts/toshiba/dtbs-list;   cat
->>> arch/arm64/boot/dts/xilinx/dtbs-list; :; } > 
->>> arch/arm64/boot/dts/dtbs-list
->>> cat: arch/arm64/boot/dts/actions/dtbs-list: No such file or directory
->>> host-make[3]: *** [scripts/Makefile.build:423:
->>> arch/arm64/boot/dts/dtbs-list] Error 1
->>> host-make[3]: *** Deleting file 'arch/arm64/boot/dts/dtbs-list'
->>> host-make[2]: *** [Makefile:1394: dtbs] Error 2
->>> host-make[2]: *** Waiting for unfinished jobs....
->>> make[1]: *** [package/pkg-generic.mk:293:
->>> /home/fainelli/work/buildroot/output/arm64/build/linux-custom/.stamp_built]
->>> Error 2
->>> make: *** [Makefile:27: _all] Error 2
->>>
->>> Buildroot builds its own GNU Make version 4.4.1.
->>>
->>> Any clues what might be going on? My defconfig is such that only
->>> CONFIG_ARCH_BRCMSTB is enabled, and there are essentially no .dtbs file
->>> that will be generated.
->>
->>
->>
->> How to reproduce this in buildroot?
+On Sun, May 12, 2024 at 09:41:19PM -0700, Nicolin Chen wrote:
+> On Sun, May 12, 2024 at 12:02:21PM -0300, Jason Gunthorpe wrote:
+> > On Fri, Apr 12, 2024 at 08:47:09PM -0700, Nicolin Chen wrote:
+> > 
+> > > +/**
+> > > + * struct iommu_vqueue_alloc - ioctl(IOMMU_VQUEUE_ALLOC)
+> > > + * @size: sizeof(struct iommu_vqueue_alloc)
+> > > + * @flags: Must be 0
+> > > + * @viommu_id: viommu ID to associate the virtual queue with
+> > > + * @out_vqueue_id: The ID of the new virtual queue
+> > > + * @data_type: One of enum iommu_vqueue_data_type
+> > > + * @data_len: Length of the type specific data
+> > > + * @data_uptr: User pointer to the type specific data
+> > > + *
+> > > + * Allocate an virtual queue object for driver-specific HW-accelerated queue
+> > > + */
+> > > +
+> > > +struct iommu_vqueue_alloc {
+> > > +	__u32 size;
+> > > +	__u32 flags;
+> > > +	__u32 viommu_id;
+> > > +	__u32 out_vqueue_id;
+> > > +	__u32 data_type;
+> > > +	__u32 data_len;
+> > > +	__aligned_u64 data_uptr;
+> > 
+> > Some of the iommus will want an IPA here not a user pointer. I think
+> > it is fine API wise, we'd just add a flag to indicate data_uptr is an
+> > IPA.
 > 
-> It is a bit involved since it would require having some intermediate 
-> builds and as I was crafting an environment for you to take a look, it 
-> stopped being reproducible...  I will let you know if this resurfaces 
-> again.
+> Ack.
 
-Adding Markus since he helped me with a similar issue before that showed 
-up entirely differently around last year. I had an alias that basically 
-does the following to build a kernel using buildroot:
+To be clear, add a flag someday, no change needed
 
-make DESTDIR=/path/to/tftp/$KVER linux-reconfigure all install -j48
-
-down the road in buildroot this ends-up building the kernel. The first 
-time I had a problem this is what happened:
-
-ff944844@stbirv-lnx-2:/local/users/fainelli/buildroot/output/arm64$ make V=1
-test -d images || mkdir images
-test -r images/rootfs.cpio || touch images/rootfs.cpio
-umask 0022 && make -C /local/users/fainelli/buildroot 
-O=/local/users/fainelli/buildroot/output/arm64/.
- >>> host-skeleton  Executing pre-build script board/brcmstb/pre-build.sh
- >>> linux custom Building
-board/brcmstb/linux-pre-build.sh
-Removing previous kernel modules
-/bin/sed -i -e '/^\(# \)\?CONFIG_GCC_PLUGINS\>/d' 
-/local/users/fainelli/buildroot/output/arm64/build/linux-custom//.config 
-&& echo '# CONFIG_GCC_PLUGINS is not set' >> 
-/local/users/fainelli/buildroot/output/arm64/build/linux-custom//.config
-PATH="/local/users/fainelli/buildroot/output/arm64/host/bin:/local/users/fainelli/buildroot/output/arm64/host/sbin:/home/ff944844/bin:/home/ff944844/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/dell/srvadmin/bin" 
-PKG_CONFIG="/local/users/fainelli/buildroot/output/arm64/host/bin/pkg-config" 
-PKG_CONFIG_SYSROOT_DIR="/" PKG_CONFIG_ALLOW_SYSTEM_CFLAGS=1 
-PKG_CONFIG_ALLOW_SYSTEM_LIBS=1 
-PKG_CONFIG_LIBDIR="/local/users/fainelli/buildroot/output/arm64/host/lib/pkgconfig:/local/users/fainelli/buildroot/output/arm64/host/share/pkgconfig" 
-BR_BINARIES_DIR=/local/users/fainelli/buildroot/output/arm64/images 
-KCFLAGS=-Wno-attribute-alias 
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -j33 
-HOSTCC="/local/users/fainelli/buildroot/output/arm64/host/bin/ccache 
-/usr/bin/gcc -O2 -isystem 
-/local/users/fainelli/buildroot/output/arm64/host/include -DNDEBUG 
--L/local/users/fainelli/buildroot/output/arm64/host/lib 
--Wl,-rpath,/local/users/fainelli/buildroot/output/arm64/host/lib" 
-ARCH=arm64 
-INSTALL_MOD_PATH=/local/users/fainelli/buildroot/output/arm64/target 
-CROSS_COMPILE="/local/users/fainelli/buildroot/output/arm64/host/bin/aarch64-linux-" 
-WERROR=0 REGENERATE_PARSERS=1 
-DEPMOD=/local/users/fainelli/buildroot/output/arm64/host/sbin/depmod 
-INSTALL_MOD_STRIP=1 -C 
-/local/users/fainelli/buildroot/output/arm64/build/linux-custom all
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/Makefile syncconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/basic
-rm -f .tmp_quiet_recordmcount
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/kconfig syncconfig
-scripts/kconfig/conf  --syncconfig Kconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/Makefile syncconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/basic
-rm -f .tmp_quiet_recordmcount
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/kconfig syncconfig
-scripts/kconfig/conf  --syncconfig Kconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/Makefile syncconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/basic
-rm -f .tmp_quiet_recordmcount
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/kconfig syncconfig
-scripts/kconfig/conf  --syncconfig Kconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/Makefile syncconfig
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/basic
-rm -f .tmp_quiet_recordmcount
-/local/users/fainelli/buildroot/output/arm64/host/bin/host-make -f 
-/scripts/Makefile.build obj=scripts/kconfig syncconfig
-scripts/kconfig/conf  --syncconfig Kconfig
-
-we would basically end-up in an endless syncconfig make recipe and there 
-would be no forward progress. Markus had done a great job at identifying 
-that the problem, and he provided the following:
-
-* The problem DOES happen with GNU make 4.4.1 and Linux 5.4 (and,
-presumably, older kernels)
-* The problem does NOT happen with GNU make 4.4 or older, irrespective
-of the kernel version
-* The problem also does NOT happen with Linux 5.15 (and, presumably
-newer), irrespective of the GNU make version
-
-So, this would seem to be some feature / change that was introduced in
-GNU make that the kernel build system subsequently accounted for. Or
-it could be independent changes where the kernel build system changed
-first and GNU make changed later; 4.4.1 was only tagged on February
-26, 2023.
-
-And eventually he tracked it down to two commit of you, one in GNU Make:
-
-https://git.savannah.gnu.org/cgit/make.git/commit/?id=a275f4e9ab14
-
-and an innocent Linux change that ended up "fixing" the issue:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=77342a02ff6e
-
-Sure enough, the machine on which I had the issue I reported to you with 
-the dtbs-list being empty still used the old alias for building a kernel.
-
-I would like to give you a minimal reproducer, because it seems like 
-there is a genuine issue that just shows up in unexpected ways here. The 
-key thing is really specifying a DESTDIR variable on the make command 
-line of buildroot, which eventually makes it to Linux's build system and 
-breaks in unexpected ways.
-
-Thanks!
--- 
-Florian
-
-
---0000000000002a2ade06185d7ed9
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIEYiKE4sUs2Ns1M8
-LtbIpYL3L2fOBvsQ0/n1YYvHCHmfMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDUxMzIyMzQ0N1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQDsUGlZ/XU9HWVL4qRPCf4ATGOFK2l0eIDW
-OhCqu8YrgSa1gTrDdFLWNO3vcp7rXG+h1iY6JKlF6+jq0c5sTaTUJ+/Lu2mtTyoAY5qF0PNTKm0l
-cgs2T1VxAeGvAWYo0a8O4zD2Z59BfLHn6PRIWaErGxZ5PY8OZsYQ5+WIHKVUnR+CtoxiSv/2999O
-syisIzQLTYBLpykG98jYWv0W2AMQjTwa8cMCAT7ZxLMvEU190S3QMnesCWSI/v15C9xQHWvHoSO8
-zAKmMOYfY90zp96mku2CqY2Tt2qaNenN9vXABdWuFoXheS0qB0o5noocAfuL8LQ95PYLNxL44rwX
-vaEP
---0000000000002a2ade06185d7ed9--
+Jason
 
