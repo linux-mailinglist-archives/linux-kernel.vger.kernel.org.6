@@ -1,128 +1,82 @@
-Return-Path: <linux-kernel+bounces-177759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729CB8C4449
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:34:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6194B8C444B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8531F2482D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:34:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 791BAB23AC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D423F156C49;
-	Mon, 13 May 2024 15:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C24B15E9B;
+	Mon, 13 May 2024 15:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PJOVXwFX"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tg9r/kC5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CBF156861
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 15:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B63414F103;
+	Mon, 13 May 2024 15:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715614323; cv=none; b=Fd526bhjh0cpKYPEu6Nl73WvTdzoGYitJFxBWrEZQDHmLFZBd9p5zdv00Tc2J7vkOpy120dOZ6JqJA8oCPfPZ4E2NPRW1ZkIxsBAGgmswbcCJgDMqHAaNcGmMt3yfTpnBvon+MkHY6kghiKjiIbyLp+8cEve6b2J+UFtYa49qHw=
+	t=1715614347; cv=none; b=ftL/cjnCBShE1WfTkukapAAp5PniLMBR39Gj3pVfhX/nmgn2r3+I9X0VzavestHzN4NcfLJLABMei5amrQA1pmyf7VmnrTWMT1F5QwPuhA7E8qmBvyoEDpU1pTpgaf+o7afmhIPcMyaJWy/5/PmcUWtFciQqqufJpy1LEkiwa4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715614323; c=relaxed/simple;
-	bh=9XgQabjgGAZzJXK2jlYawVYFy2EhNnFwkqg78gYlNhs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=G/FCjWJKPx/2wkJwlHKsh5YY/g6wPh+Qtt0fMxuUkV8EBNnzyYy7BllgaZLWW8pgxwVGCG0M05uc34uraYz7j6EUKMMGpHPoR6XsfVsgEHdxMWLC++PmgPOfJwx1sNew/NvccBvcYuSZiXskEvkwHL3hg30zozJlofUQ/ZdoR6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PJOVXwFX; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-de6054876efso8934330276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:32:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715614320; x=1716219120; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMgvtz2/Q+j3YoQLH1bJjltvWBvO9e9H4j6SuRwFAj8=;
-        b=PJOVXwFXmFCkhzmsox0fcmiNV13775ihOSOjxf0CJ+/lFHYuVxvlv9d6gKuHdv7GyW
-         nRHj4lg46W05wcyOaATBCnwQZYfgYZyLKsSdPd8wwjBITrqPXWMYWcoVsBoCgYVtmvJd
-         hiOmXRzwOkLl+76Iqed7hkEWOaX6W2gZonvngTzB/iECgc/dbVruLGW2YDQZzjB3V18B
-         njp6MKabddBmAlTjCw41O7y81LI3oEzhucC0oCko9dxDuIVPp5K9PHrIslTztwprJSUq
-         ixBmGgts/jyZxqFBAhAYYlM1dtLgWbgveBNrunCex4clKG+3XN4clrMc2oXhyessWbfP
-         AcWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715614320; x=1716219120;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMgvtz2/Q+j3YoQLH1bJjltvWBvO9e9H4j6SuRwFAj8=;
-        b=k5MQm5znQuWjV4atpbkWi3NmLlmH2R8PmD2dow5B2hbc4dgT4EEwrlA6XaAGMlGX3r
-         sq7MKPcgMnWAJx1jl1qRZ5KqETC6q+E+Gc0fm2gBlR1MDd7fbFYIaF4dx0JArfic+LeV
-         kKSa/psrsSv0Ku7GM8QirtVtiQVW2kJ0axHAk4YhtYRp3rKoyj/dTrIE4hlCjaImutPH
-         rwxbXDoJkEqbZ/H0s6pL9AofYT9goP030OyLkNhLvzTRLkP60Ap3HYApUb9iEvjNyQ61
-         EnnekyN2swJqJIWMHtJNhtdvgUKcgXvAMkPuoxPIdxLF7t4vrhGw5/oKn+Jx/1ixCV14
-         cLRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXr7rlBc9Bfk9FkgWptx0HzCnUzn+l49PQogXg114Q/DywNcc/zoQIj0DUEiY+XCGbQfjjMGuUr6LOjZylTsq6w8KrJtMEtTbKjRbmf
-X-Gm-Message-State: AOJu0Yxl0TmdaAoBc4uE2vUrdwELb2ku5Es/7LW+4+qdMVDiO+4wTDYC
-	alc+HrHDP4Y6ueNkJ+9jQvaiggPJwOyU3ZdNSv9uPiIZ9KGsB5Y8LoREv/jqsf/6xCuG+eabzKi
-	6qQ==
-X-Google-Smtp-Source: AGHT+IHZWBYz9+tTVBadLe59oEaPPBnRDd/Y1wOg2pWyejXNtUymRegfzCexCxQG+dYrcCBcHmTremWD7KA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:102d:b0:dee:6802:dc49 with SMTP id
- 3f1490d57ef6-dee6802f337mr1771991276.1.1715614320675; Mon, 13 May 2024
- 08:32:00 -0700 (PDT)
-Date: Mon, 13 May 2024 08:31:59 -0700
-In-Reply-To: <22def35f-5b8d-4424-a03b-c90e9174a14d@redhat.com>
+	s=arc-20240116; t=1715614347; c=relaxed/simple;
+	bh=jar4ZIkYznevo+scBPt1nRHEl+qcfb0bftbjz3Sb1yA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hdKPBpMVMlhgyHzsZdDSvtBHBBGTa2kN0RgF8Dek1B8pkkXLTS9KEBP7l+I878yw4D79OwMK7+RXQw9nF0ar4N3GyVjrh4Vq8kQIHhrFbjYLVQcSdHJky3DipuH55xN5dJW/FGxGyRc74ROKlXgUipiEPJ9y7DhQfewT7DdQd74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tg9r/kC5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87C2FC2BD11;
+	Mon, 13 May 2024 15:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715614346;
+	bh=jar4ZIkYznevo+scBPt1nRHEl+qcfb0bftbjz3Sb1yA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tg9r/kC5256VEq85o6scWYVAGk1eQYr+jXLK2h0AYpcj1LmRJ2SE1CwIuOU/Z5mMM
+	 8aM2jP9brEUJ4/2pYsbgYTeWmM3GL8QDRln8Y7B6O2VZqP47rOey3zz3lnN6yG+WRm
+	 1PqJV5w8RAcc8xvdIyGPK6vEVON+ol+0OprF5a+6MkuMRlF3E2nOb6A0pwtGx2ZwmM
+	 bkUX2JEfRuHTkcM3+AU4hTLVkNxSX6FjJsB6G2QZXaMC7r5DTusWdR1+UDDhCv/D+x
+	 lcB3Ooxou2JY2kA6NnyizV4Fxig4Zrbtw7gPpQfMOrsGVmPl1sBQ7H2wPzhaXRXaRf
+	 tKRD/7OMhrq7w==
+Date: Mon, 13 May 2024 08:32:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mor Nagli
+ <mor.nagli@solid-run.com>
+Subject: Re: [PATCH net-next v3] net: dsa: mv88e6xxx: control mdio bus-id
+ truncation for long paths
+Message-ID: <20240513083225.1043f59e@kernel.org>
+In-Reply-To: <c30a0242-9c68-4930-a752-80fb4ad499d9@solid-run.com>
+References: <20240505-mv88e6xxx-truncate-busid-v3-1-e70d6ec2f3db@solid-run.com>
+	<A40C71BD-A733-43D2-A563-FEB1322ECB5C@gmail.com>
+	<c30a0242-9c68-4930-a752-80fb4ad499d9@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240110214723.695930-1-seanjc@google.com> <22def35f-5b8d-4424-a03b-c90e9174a14d@redhat.com>
-Message-ID: <ZkIyXCBCLeOaAzN4@google.com>
-Subject: Re: [PATCH] sched/core: Drop spinlocks on contention iff kernel is preemptible
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	linux-kernel@vger.kernel.org, Valentin Schneider <valentin.schneider@arm.com>, 
-	Marco Elver <elver@google.com>, Frederic Weisbecker <frederic@kernel.org>, 
-	David Matlack <dmatlack@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 13, 2024, Paolo Bonzini wrote:
-> On 1/10/24 22:47, Sean Christopherson wrote:
-> > Use preempt_model_preemptible() to detect a preemptible kernel when
-> > deciding whether or not to reschedule in order to drop a contended
-> > spinlock or rwlock.  Because PREEMPT_DYNAMIC selects PREEMPTION, kernels
-> > built with PREEMPT_DYNAMIC=y will yield contended locks even if the live
-> > preemption model is "none" or "voluntary".  In short, make kernels with
-> > dynamically selected models behave the same as kernels with statically
-> > selected models.
+On Tue, 7 May 2024 12:03:31 +0000 Josua Mayer wrote:
+> > The idea and implementation is reasonable but this could affect other drivers than mv88e6xxx, why not move that logic to mdiobus_register() and tracking the truncation index globally within the MDIO bus layer?  
+> Conceptually I agree, it would be nice to have a centralized
+> solution to this problem, it probably can occur in multiple places.
 > 
-> Peter, looks like this patch fell through the cracks.  Could this be applied
-> for 6.10?
+> My reasoning is that solving the problem within a single driver
+> is a much smaller task, especially for sporadic contributors
+> who lack a deep understanding for how all layers interact.
 > 
-> There is a slightly confusing line in the commit message below, so that it
-> reads more like an RFC; but the patch fixes a CONFIG_PREEMPT_DYNAMIC
-> regression wrt static preemption models and has no functional change for
-> !CONFIG_PREEMPT_DYNAMIC.
-> 
-> > Somewhat counter-intuitively, NOT yielding a lock can provide better
-> > latency for the relevant tasks/processes.  E.g. KVM x86's mmu_lock, a
-> > rwlock, is often contended between an invalidation event (takes mmu_lock
-> > for write) and a vCPU servicing a guest page fault (takes mmu_lock for
-> > read).  For _some_ setups, letting the invalidation task complete even
-> > if there is mmu_lock contention provides lower latency for *all* tasks,
-> > i.e. the invalidation completes sooner *and* the vCPU services the guest
-> > page fault sooner.
-> > 
-> > But even KVM's mmu_lock behavior isn't uniform, e.g. the "best" behavior
-> > can vary depending on the host VMM, the guest workload, the number of
-> > vCPUs, the number of pCPUs in the host, why there is lock contention, etc.
-> > 
-> > In other words, simply deleting the CONFIG_PREEMPTION guard (or doing the
->                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 
-> This should be "deleting the preempt_model_preemptible() guard" given that
-> the patch does delete CONFIG_PREEMPTION, and only leaves
-> preempt_model_preemptible() in place.
+> Perhaps agreeing on a good solution within this driver
+> can inform a more general solution to be added later.
 
-Note, this version won't apply cleanly, v2[*] handles the code movement and still
-applies on Linus' tree.
-
-[*] https://lore.kernel.org/all/20240312193911.1796717-1-seanjc@google.com
+I agree with Florian, FWIW. The choice of how to truncate is a bit
+arbitrary, if core does it at least it will be consistent.
 
