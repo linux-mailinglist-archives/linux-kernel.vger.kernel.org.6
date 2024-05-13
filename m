@@ -1,215 +1,357 @@
-Return-Path: <linux-kernel+bounces-177258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9233D8C3C12
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:30:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0EF48C3C16
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FCE281AAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:30:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C945281A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CF4146A89;
-	Mon, 13 May 2024 07:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327AE1474A3;
+	Mon, 13 May 2024 07:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pd1GnwgK"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gnNGVw30"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36263214
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB56146A8E;
+	Mon, 13 May 2024 07:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715585426; cv=none; b=IPhMBtX33ITuRfvVLWRKT3iV1DXjjq25AWd0ad0vCmL/x1ZVnk33MJRXS/ILEOtrfcMTy8GpYhdZ8bki7z1A6rSqpoNf3XFZmuVLS0V5A3yNUWAYpGYARyv8pqEwapg9mhgBN71frs/pcp7p/oMa5oKlF4UPg2CsTuCv2bJ7tZ8=
+	t=1715585437; cv=none; b=ZHHX4KWIw3ujHbnTnplJXDQJ3UsP3Jdb0lpSXq4DC+GYm+70Ma/a5TdkUj9H11PsKmP/jyu8WjpZjKs3wSSEFtA+z2IuN3nSVcFJO8h/Vrd16ZlXz8AjmchlPo8Tg3tJ2vrKfmcSDah/O27ZryOgbwP0568E9PB/f5dnmEGwKEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715585426; c=relaxed/simple;
-	bh=tbIJ/6G/hAHF17FOE3UTLuF8ZGlr/OBLpMQDR/aB+A0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=baJVpDW7p83g7qV/BSgIaj5R2Pd0bkT9ukKlsJATdU5SqrDAkVxo7xzoG69uZf9DLwiJZlaSJnTm5hjIC8/qdN4Zh3IzkNPO7O/SIy+z13hX86OG0zYAcRUUc3s989WVGN5Mlty/iR9pcjKw0TrEs6Sg17Wosf7t/ruhz7G1AF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pd1GnwgK; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59b58fe083so859502466b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715585423; x=1716190223; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=o9PQUMcmF5US7fCsLj823TkMpdi3cNWhmj7hShrFTCo=;
-        b=Pd1GnwgK4RVce8lOfOlcLEG1dtgrGs1Q8vvCoZDvTXfgOFOCmYxk4QSu3z800okKbQ
-         n0Y07/0DDlp8nJjKo/xhz3Wx4GCG4MEDIV+9tK2Cel/fXXS9eArlYtJR2MtSOY0f++C+
-         dz9SbQmtXBhmpO4NwJ+oAcztrNoXrm93vK92S4HC+J9D6CaZXk/0VDMrvBmmpbzlxhPl
-         6n7EsqlbFM7ZFunAPoc4NKqGAtfE/zHHW7lvcM5tUywB4ry5IbhLLbJYg0sWo3YrM7Wd
-         qUXyYjJau9MQrd3O5zjQOtjHRr5v2W7EqCCl4QEFQFfXIgJpj7OnjgLMlllx9Nx8Seqe
-         S4zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715585423; x=1716190223;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=o9PQUMcmF5US7fCsLj823TkMpdi3cNWhmj7hShrFTCo=;
-        b=vuBQ+Rfy88v6EVa0HJ03pNejGs8WiiTN9twYNeBHASNMMKRLUP3GiayKoJRpVb/WQ2
-         4IdH1zug3ijhFMBmxIBKSnz9/sbKE7UAvdUeLaPI2jGm5BiOn2fipRxBFExk4MbJQoyZ
-         TLAON0wqYcmQJsOJefRBHq6UzwMcM9JsV/0HWt2Jw6366iXyUgYqIelCDxDWxWRsgn2R
-         fG7mzPKqEtGFWeilkL5yiMVm+HDMz9aBsJhODZSz9bqW6ceicvZZDeD/rOalBN44TPB3
-         QWVoC1DszR0MzWIyViJyTXXiE+lc+TvLgooSHWERMGwDi/t6AZ7dhdBX7L4Elo/lipyA
-         /Pyw==
-X-Gm-Message-State: AOJu0YxkdUSRNEienHWarq/8IuZ2k/MReYjo7R9OPLf3gVGKdTnUmUZZ
-	pba33+vTRSu+B90sq/P/600O1sDadzKgwVYHXTqtYtX+1r5OjdGg
-X-Google-Smtp-Source: AGHT+IGQ+uvKb/Ffv005mmSE9hWwIYA79223JQ2ZsFIHMRf+iDUDfe/LU6tmtOHhSAmU/ZZWaB+SNw==
-X-Received: by 2002:a17:906:eb18:b0:a59:c844:beea with SMTP id a640c23a62f3a-a5a2d676a37mr563154266b.73.1715585423031;
-        Mon, 13 May 2024 00:30:23 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d553sm559143166b.43.2024.05.13.00.30.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 00:30:22 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 09:30:20 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-Subject: [GIT PULL] x86/cpu changes for v6.10
-Message-ID: <ZkHBjIwLlEkVD2Vu@gmail.com>
+	s=arc-20240116; t=1715585437; c=relaxed/simple;
+	bh=ESzWUWT7UdAigvgNqjCvp20f69P4NvbnvQBAmM94kpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kvbbmgrZKHesRsd2I4JM2DfzhqSMZOpxVrR7RIfYcrrd3Y5BtpHMvClQrUoLMz2m6GGiFHqwPQptc/2YOjwdAhNL1bBOw9b+atxwe2644NhV9jI36lqKpQpcR5u5syEPKO8VEuijaPccncfJkB/OFc8460tq7w0Sz4cqmoJTRGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gnNGVw30; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C336120015;
+	Mon, 13 May 2024 07:30:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715585433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LbjmTJQmBDoiweHEq3SgUCBe2L/0nXtHCoGhZ/iLhzg=;
+	b=gnNGVw30rpMBsMDh6TW+A3Lu0G0hH3MoAQPMp6NP0S4LtIWjp1VTBUADgS3acoMcTSWQ8b
+	bs+7DfkUgKEw5yY134pSyPqfYP/jkL6sjWDEmZJCAaeHJe+2w3AwIUgbVl2ovrTlKAO0qE
+	xbuE3twIclcMn0jIZNdbTGu5wIt1A9PF5fFAmmgI/LP8NgmQHp8wfpDnUjCf3Az94/bEYQ
+	xdzWQPmR7CRjD8hSCtAwUguTV1sNiyPdLfqAuqj6irfslleDNtybEkdYJG+pClu5bjfzVt
+	fZLhxKaSLCvch8ZFsw/jsaE/mVTC2sHv5t1V9ayIxnZYziF5c8X0xo/O6mySXw==
+Date: Mon, 13 May 2024 09:30:29 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Heiner Kallweit <hkallweit1@gmail.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
+ <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
+ <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Piergiorgio Beruto
+ <piergiorgio.beruto@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ =?UTF-8?B?Tmljb2zDsg==?= Veronese <nicveronese@gmail.com>, Simon Horman
+ <horms@kernel.org>, mwojtas@chromium.org, Nathan Chancellor
+ <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next 2/2] net: phy: phy_link_topology:
+ Lazy-initialize the link topology
+Message-ID: <20240513093029.5df48163@device-28.home>
+In-Reply-To: <6cedd632-d555-4c17-81cb-984af73f2c08@gmail.com>
+References: <20240507102822.2023826-1-maxime.chevallier@bootlin.com>
+	<20240507102822.2023826-3-maxime.chevallier@bootlin.com>
+	<6cedd632-d555-4c17-81cb-984af73f2c08@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Linus,
+Hi Heiner,
 
-Please pull the latest x86/cpu Git tree from:
+On Wed, 8 May 2024 07:44:22 +0200
+Heiner Kallweit <hkallweit1@gmail.com> wrote:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cpu-2024-05-13
+> On 07.05.2024 12:28, Maxime Chevallier wrote:
+> > Having the net_device's init path for the link_topology depend on
+> > IS_REACHABLE(PHYLIB)-protected helpers triggers errors when modules are being
+> > built with phylib as a module as-well, as they expect netdev->link_topo
+> > to be initialized.
+> > 
+> > Move the link_topo initialization at the first PHY insertion, which will
+> > both improve the memory usage, and make the behaviour more predicatble
+> > and robust.
+> > 
+> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> > Fixes: 6916e461e793 ("net: phy: Introduce ethernet link topology representation")
+> > Closes: https://lore.kernel.org/netdev/2e11b89d-100f-49e7-9c9a-834cc0b82f97@gmail.com/
+> > Closes: https://lore.kernel.org/netdev/20240409201553.GA4124869@dev-arch.thelio-3990X/
+> > ---
+> >  drivers/net/phy/phy_link_topology.c    | 31 ++++++---------------
+> >  include/linux/netdevice.h              |  2 ++
+> >  include/linux/phy_link_topology.h      | 23 ++++++++--------
+> >  include/linux/phy_link_topology_core.h | 23 +++-------------
+> >  net/core/dev.c                         | 38 ++++++++++++++++++++++----
+> >  5 files changed, 58 insertions(+), 59 deletions(-)
+> > 
+> > diff --git a/drivers/net/phy/phy_link_topology.c b/drivers/net/phy/phy_link_topology.c
+> > index 0e36bd7c15dc..b1aba9313e73 100644
+> > --- a/drivers/net/phy/phy_link_topology.c
+> > +++ b/drivers/net/phy/phy_link_topology.c
+> > @@ -12,29 +12,6 @@
+> >  #include <linux/rtnetlink.h>
+> >  #include <linux/xarray.h>
+> >  
+> > -struct phy_link_topology *phy_link_topo_create(struct net_device *dev)
+> > -{
+> > -	struct phy_link_topology *topo;
+> > -
+> > -	topo = kzalloc(sizeof(*topo), GFP_KERNEL);
+> > -	if (!topo)
+> > -		return ERR_PTR(-ENOMEM);
+> > -
+> > -	xa_init_flags(&topo->phys, XA_FLAGS_ALLOC1);
+> > -	topo->next_phy_index = 1;
+> > -
+> > -	return topo;
+> > -}
+> > -
+> > -void phy_link_topo_destroy(struct phy_link_topology *topo)
+> > -{
+> > -	if (!topo)
+> > -		return;
+> > -
+> > -	xa_destroy(&topo->phys);
+> > -	kfree(topo);
+> > -}
+> > -
+> >  int phy_link_topo_add_phy(struct net_device *dev,
+> >  			  struct phy_device *phy,
+> >  			  enum phy_upstream upt, void *upstream)
+> > @@ -43,6 +20,14 @@ int phy_link_topo_add_phy(struct net_device *dev,
+> >  	struct phy_device_node *pdn;
+> >  	int ret;
+> >  
+> > +	if (!topo) {
+> > +		ret = netdev_alloc_phy_link_topology(dev);  
+> 
+> This function is implemented in net core, but used only here.
+> So move the implementation here?
 
-   # HEAD: 2eda374e883ad297bd9fe575a16c1dc850346075 x86/mm: Switch to new Intel CPU model defines
+If it's OK not to have both helpers to alloc and destroy in different
+files, then I'll move it :)
 
-x86/cpu changes for v6.10:
+> 
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		topo = dev->link_topo;
+> > +	}
+> > +
+> >  	pdn = kzalloc(sizeof(*pdn), GFP_KERNEL);
+> >  	if (!pdn)
+> >  		return -ENOMEM;
+> > diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+> > index cf261fb89d73..25a0a77cfadc 100644
+> > --- a/include/linux/netdevice.h
+> > +++ b/include/linux/netdevice.h
+> > @@ -4569,6 +4569,8 @@ void __hw_addr_unsync_dev(struct netdev_hw_addr_list *list,
+> >  					const unsigned char *));
+> >  void __hw_addr_init(struct netdev_hw_addr_list *list);
+> >  
+> > +int netdev_alloc_phy_link_topology(struct net_device *dev);
+> > +
+> >  /* Functions used for device addresses handling */
+> >  void dev_addr_mod(struct net_device *dev, unsigned int offset,
+> >  		  const void *addr, size_t len);
+> > diff --git a/include/linux/phy_link_topology.h b/include/linux/phy_link_topology.h
+> > index 166a01710aa2..3501f9a9e932 100644
+> > --- a/include/linux/phy_link_topology.h
+> > +++ b/include/linux/phy_link_topology.h
+> > @@ -32,10 +32,12 @@ struct phy_device_node {
+> >  	struct phy_device *phy;
+> >  };
+> >  
+> > -struct phy_link_topology {
+> > -	struct xarray phys;
+> > -	u32 next_phy_index;
+> > -};
+> > +#if IS_ENABLED(CONFIG_PHYLIB)
+> > +int phy_link_topo_add_phy(struct net_device *dev,
+> > +			  struct phy_device *phy,
+> > +			  enum phy_upstream upt, void *upstream);
+> > +
+> > +void phy_link_topo_del_phy(struct net_device *dev, struct phy_device *phy);
+> >  
+> >  static inline struct phy_device
+> >  *phy_link_topo_get_phy(struct net_device *dev, u32 phyindex)
+> > @@ -53,13 +55,6 @@ static inline struct phy_device
+> >  	return NULL;
+> >  }
+> >  
+> > -#if IS_REACHABLE(CONFIG_PHYLIB)
+> > -int phy_link_topo_add_phy(struct net_device *dev,
+> > -			  struct phy_device *phy,
+> > -			  enum phy_upstream upt, void *upstream);
+> > -
+> > -void phy_link_topo_del_phy(struct net_device *dev, struct phy_device *phy);
+> > -
+> >  #else
+> >  static inline int phy_link_topo_add_phy(struct net_device *dev,
+> >  					struct phy_device *phy,
+> > @@ -72,6 +67,12 @@ static inline void phy_link_topo_del_phy(struct net_device *dev,
+> >  					 struct phy_device *phy)
+> >  {
+> >  }
+> > +
+> > +static inline struct phy_device *
+> > +phy_link_topo_get_phy(struct net_device *dev, u32 phyindex)
+> > +{
+> > +	return NULL;
+> > +}
+> >  #endif
+> >  
+> >  #endif /* __PHY_LINK_TOPOLOGY_H */
+> > diff --git a/include/linux/phy_link_topology_core.h b/include/linux/phy_link_topology_core.h
+> > index 0a6479055745..f9c0520806fb 100644
+> > --- a/include/linux/phy_link_topology_core.h
+> > +++ b/include/linux/phy_link_topology_core.h
+> > @@ -2,24 +2,9 @@
+> >  #ifndef __PHY_LINK_TOPOLOGY_CORE_H
+> >  #define __PHY_LINK_TOPOLOGY_CORE_H
+> >  
+> > -struct phy_link_topology;
+> > -
+> > -#if IS_REACHABLE(CONFIG_PHYLIB)
+> > -
+> > -struct phy_link_topology *phy_link_topo_create(struct net_device *dev);
+> > -void phy_link_topo_destroy(struct phy_link_topology *topo);
+> > -
+> > -#else
+> > -
+> > -static inline struct phy_link_topology *phy_link_topo_create(struct net_device *dev)
+> > -{
+> > -	return NULL;
+> > -}
+> > -
+> > -static inline void phy_link_topo_destroy(struct phy_link_topology *topo)
+> > -{
+> > -}
+> > -
+> > -#endif
+> > +struct phy_link_topology {
+> > +	struct xarray phys;
+> > +	u32 next_phy_index;
+> > +};
+> >    
+> This is all which is left in this header. As this header is public anyway,
+> better move this definition to phy_link_topology.h?
 
- - Rework the x86 CPU vendor/family/model code: introduce the 'VFM'
-   value that is an 8+8+8 bit concatenation of the vendor/family/model
-   value, and add macros that work on VFM values. This simplifies the
-   addition of new Intel models & families, and simplifies existing
-   enumeration & quirk code.
+Well I'll have to include the whole phy_link_topology.h in
+net/core/dev.c, and I was trying to avoid including that whole header,
+and keep the included content to a bare minimum.
 
- - Add support for the AMD 0x80000026 leaf, to better parse topology
-   information.
+> 
+> >  #endif /* __PHY_LINK_TOPOLOGY_CORE_H */
+> > diff --git a/net/core/dev.c b/net/core/dev.c
+> > index d2ce91a334c1..1b4ffc273a04 100644
+> > --- a/net/core/dev.c
+> > +++ b/net/core/dev.c
+> > @@ -10256,6 +10256,35 @@ static void netdev_do_free_pcpu_stats(struct net_device *dev)
+> >  	}
+> >  }
+> >  
+> > +int netdev_alloc_phy_link_topology(struct net_device *dev)
+> > +{
+> > +	struct phy_link_topology *topo;
+> > +
+> > +	topo = kzalloc(sizeof(*topo), GFP_KERNEL);
+> > +	if (!topo)
+> > +		return -ENOMEM;
+> > +
+> > +	xa_init_flags(&topo->phys, XA_FLAGS_ALLOC1);
+> > +	topo->next_phy_index = 1;
+> > +
+> > +	dev->link_topo = topo;
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL_GPL(netdev_alloc_phy_link_topology);
+> > +
+> > +static void netdev_free_phy_link_topology(struct net_device *dev)
+> > +{
+> > +	struct phy_link_topology *topo = dev->link_topo;
+> > +
+> > +	if (!topo)
+> > +		return;
+> > +
+> > +	xa_destroy(&topo->phys);
+> > +	kfree(topo);
+> > +	dev->link_topo = NULL;  
+> 
+> Give the compiler a chance to remove this function if
+> CONFIG_PHYLIB isn't enabled.
+> 
+> if (IS_ENABLED(CONFIG_PHYLIB) && topo) {
+> 	xa_destroy(&topo->phys);
+> 	kfree(topo);
+> 	dev->link_topo = NULL;
+> }
 
- - Optimize the NUMA allocation layout of more per-CPU data structures
+Well if we add more things to the link topology, then it's going to be
+easy to forget updating that without clear helpers for alloc/destroy,
+don't you think ?
 
- - Improve the workaround for AMD erratum 1386
+I can try to squeeze another iteration before net-next closes.
 
- - Clear TME from /proc/cpuinfo as well, when disabled by the firmware
+Maxime
 
- - Improve x86 self-tests
+> > +}
+> > +
+> >  /**
+> >   * register_netdevice() - register a network device
+> >   * @dev: device to register
+> > @@ -10998,11 +11027,6 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+> >  #ifdef CONFIG_NET_SCHED
+> >  	hash_init(dev->qdisc_hash);
+> >  #endif
+> > -	dev->link_topo = phy_link_topo_create(dev);
+> > -	if (IS_ERR(dev->link_topo)) {
+> > -		dev->link_topo = NULL;
+> > -		goto free_all;
+> > -	}
+> >  
+> >  	dev->priv_flags = IFF_XMIT_DST_RELEASE | IFF_XMIT_DST_RELEASE_PERM;
+> >  	setup(dev);
+> > @@ -11092,7 +11116,9 @@ void free_netdev(struct net_device *dev)
+> >  	free_percpu(dev->xdp_bulkq);
+> >  	dev->xdp_bulkq = NULL;
+> >  
+> > -	phy_link_topo_destroy(dev->link_topo);
+> > +#if IS_ENABLED(CONFIG_PHYLIB)
+> > +	netdev_free_phy_link_topology(dev);
+> > +#endif
+> >    
+> Then the conditional compiling can be removed here.
+> 
+> >  	/*  Compatibility with error handling in drivers */
+> >  	if (dev->reg_state == NETREG_UNINITIALIZED ||  
+> 
+> 
+> 
+> 
 
- - Extend the mce_record tracepoint with the ::ppin and ::microcode fields
-
- - Implement recovery for MCE errors in TDX/SEAM non-root mode
-
- - Misc cleanups and fixes
-
- Thanks,
-
-	Ingo
-
------------------->
-Avadhut Naik (2):
-      tracing: Add the ::ppin field to the mce_record tracepoint
-      tracing: Add the ::microcode field to the mce_record tracepoint
-
-Bingsong Si (1):
-      x86/cpu: Clear TME feature flag if TME is not enabled by BIOS
-
-Borislav Petkov (AMD) (2):
-      x86/cpu: Get rid of an unnecessary local variable in get_cpu_address_sizes()
-      x86/CPU/AMD: Improve the erratum 1386 workaround
-
-Ingo Molnar (2):
-      x86/mce: Clean up TP_printk() output line of the 'mce_record' tracepoint
-      x86/cpu: Improve readability of per-CPU cpumask initialization code
-
-Li RongQing (2):
-      x86/cpu: Take NUMA node into account when allocating per-CPU cpumasks
-      x86/sev: Take NUMA node into account when allocating memory for per-CPU SEV data
-
-Muhammad Usama Anjum (1):
-      x86/selftests: Skip the tests if prerequisites aren't fulfilled
-
-Rafael J. Wysocki (1):
-      x86/cpu: Move leftover contents of topology.c to setup.c
-
-Thomas Gleixner (1):
-      x86/cpu/topology: Add support for the AMD 0x80000026 leaf
-
-Tony Luck (22):
-      x86/mce: Implement recovery for errors in TDX/SEAM non-root mode
-      x86/cpu/vfm: Add/initialize x86_vfm field to struct cpuinfo_x86
-      x86/cpu/vfm: Add new macros to work with (vendor/family/model) values
-      x86/cpu/vfm: Update arch/x86/include/asm/intel-family.h
-      x86/bugs: Switch to new Intel CPU model defines
-      x86/bugs: Switch to new Intel CPU model defines
-      perf/x86/intel/cstate: Switch to new Intel CPU model defines
-      perf/x86/lbr: Switch to new Intel CPU model defines
-      perf/x86/intel/pt: Switch to new Intel CPU model defines
-      perf/x86/intel/uncore: Switch to new Intel CPU model defines
-      perf/x86/msr: Switch to new Intel CPU model defines
-      x86/apic: Switch to new Intel CPU model defines
-      x86/aperfmperf: Switch to new Intel CPU model defines
-      x86/cpu/intel_epb: Switch to new Intel CPU model defines
-      x86/cpu: Switch to new Intel CPU model defines
-      x86/mce: Switch to new Intel CPU model defines
-      x86/microcode/intel: Switch to new Intel CPU model defines
-      x86/resctrl: Switch to new Intel CPU model defines
-      x86/cpu: Switch to new Intel CPU model defines
-      x86/tsc: Switch to new Intel CPU model defines
-      x86/tsc_msr: Switch to new Intel CPU model defines
-      x86/mm: Switch to new Intel CPU model defines
-
-
- arch/x86/events/intel/cstate.c            | 116 ++++++++++----------
- arch/x86/events/intel/lbr.c               |   3 +-
- arch/x86/events/intel/pt.c                |  12 +--
- arch/x86/events/intel/uncore.c            | 100 ++++++++---------
- arch/x86/events/intel/uncore_nhmex.c      |   3 +-
- arch/x86/events/intel/uncore_snbep.c      |   5 +-
- arch/x86/events/msr.c                     | 116 ++++++++++----------
- arch/x86/include/asm/cpu_device_id.h      | 101 ++++++++++++++++++
- arch/x86/include/asm/intel-family.h       |  84 +++++++++++++++
- arch/x86/include/asm/mce.h                |   2 +
- arch/x86/include/asm/processor.h          |  20 +++-
- arch/x86/kernel/Makefile                  |   2 +-
- arch/x86/kernel/apic/apic.c               |  38 +++----
- arch/x86/kernel/apic/x2apic_cluster.c     |   7 +-
- arch/x86/kernel/cpu/amd.c                 |  12 +++
- arch/x86/kernel/cpu/aperfmperf.c          |  17 ++-
- arch/x86/kernel/cpu/bugs.c                |  30 +++---
- arch/x86/kernel/cpu/common.c              | 171 +++++++++++++++---------------
- arch/x86/kernel/cpu/intel.c               |   1 +
- arch/x86/kernel/cpu/intel_epb.c           |  12 +--
- arch/x86/kernel/cpu/match.c               |   5 +-
- arch/x86/kernel/cpu/mce/core.c            |  24 ++++-
- arch/x86/kernel/cpu/mce/intel.c           |  21 ++--
- arch/x86/kernel/cpu/mce/severity.c        |  26 +++--
- arch/x86/kernel/cpu/microcode/intel.c     |   5 +-
- arch/x86/kernel/cpu/resctrl/core.c        |  10 +-
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c |  22 ++--
- arch/x86/kernel/cpu/topology_amd.c        |  19 ++--
- arch/x86/kernel/cpu/topology_ext.c        |  15 +++
- arch/x86/kernel/setup.c                   |   8 ++
- arch/x86/kernel/sev.c                     |   8 +-
- arch/x86/kernel/smpboot.c                 |  28 ++---
- arch/x86/kernel/topology.c                |  43 --------
- arch/x86/kernel/tsc.c                     |   6 +-
- arch/x86/kernel/tsc_msr.c                 |  14 +--
- arch/x86/mm/init.c                        |  16 ++-
- include/trace/events/mce.h                |  25 ++++-
- tools/testing/selftests/x86/amx.c         |  27 ++---
- tools/testing/selftests/x86/lam.c         |   2 +-
- 39 files changed, 704 insertions(+), 472 deletions(-)
- delete mode 100644 arch/x86/kernel/topology.c
 
