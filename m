@@ -1,225 +1,126 @@
-Return-Path: <linux-kernel+bounces-177825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B908F8C4507
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82F3E8C451E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:30:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73014282686
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:25:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D904281FF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F29B6155351;
-	Mon, 13 May 2024 16:25:18 +0000 (UTC)
-Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB08915E89;
+	Mon, 13 May 2024 16:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZjckHrhJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFCB23CB;
-	Mon, 13 May 2024 16:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8303139E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715617518; cv=none; b=CR5jupuagMyRc7EwMC/TDdCDaiB5uCHiOaAjWsv+VcXnFkiVPifdOxSA/6+lWCng8+RCngY75FrCenK1ZVTaCU4hzqE7fkrpMCgbADBOgrYpA5cL2JtgQgkLE2TnfN7F3bwngs/HxM+UCiyH1lF/P9IaeEZUnklGwaAFAH3eYVU=
+	t=1715617832; cv=none; b=MXYwu7aMqVaZjmz2f/dB+SDFkysRLA0JznNqrFFZ6tRTyN/UectzJ2O26GYYiNduD94nhioArjMN46grINUvJcHihNEdZ2sSvcMx01en7yocjogreGtAwGFCMRxYs3NM54wrW4OYVH81JSLRdCJyuRyQFwRTFC4Sv1IsDr4w628=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715617518; c=relaxed/simple;
-	bh=onmSAyOiUFMGRMabu5p+825ul4TqokXJE2w92iqKJ1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tx7Qc2fcCuCmhD7UdcALJNY2nRI8BjwZLSvfRaj52vHDdLogZOcBKrALxnxP7fgqKLaUUHiEwwdv/I4xmyLPQhoAwhtsP8FFIL1JDBDC7adlHb5f67XInwbWu5BpP9rb4dISaidBQjZKjG+5OkltjTcX2Z/3svNyYuQW7nBUVeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; arc=none smtp.client-ip=178.254.4.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
-Received: from [2.211.228.80] (helo=marius.fritz.box)
-	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <mail@mariuszachmann.de>)
-	id 1s6YU7-004ry5-Rq;
-	Mon, 13 May 2024 18:25:07 +0200
-From: Marius Zachmann <mail@mariuszachmann.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Marius Zachmann <mail@mariuszachmann.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
+	s=arc-20240116; t=1715617832; c=relaxed/simple;
+	bh=mqkpP5V4QVSA4anpQiHTHwlb/AKm98IPiclk2+ATzrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2ZOxHtwFYt9U6N0S4OFPk4Z6d4aPsvVicrfuNf9o5HV3qWM91dsj/AuLqdsWvqAJ6x//Mmv1h/l+l5uChP9waHpRmMwxAnHAriGmq+zWkUp0hCoi6S9NGXlPCWWkY2COhwlGyDfxUijhwJtMCPgDmCi59JYQoPGJZyjBm/PQ2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZjckHrhJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715617829;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v7uExH1cJ0oWpPOfrUmnPVpCEdXUh777q3puoMHm6fI=;
+	b=ZjckHrhJ3a/psZtPbH6gBKX0ZCg32aE4wUbnUrpDd/qBKpDu4X1z7wMjwPrdsoNWtzuLf2
+	JZjt1CzMfb8EqioBR0yCRJx/8LKDjsFmwaq9gMoOGBOESc4K5Yaj35jMMvIIvqgqhHoFHd
+	YKNxoKCfTUEHMRrcyS/JshMrZ2WT+ak=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-597-Q0iLV-uLPSO10HkIST7lFg-1; Mon,
+ 13 May 2024 12:25:28 -0400
+X-MC-Unique: Q0iLV-uLPSO10HkIST7lFg-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D9AFA1C05122;
+	Mon, 13 May 2024 16:25:27 +0000 (UTC)
+Received: from lorien.usersys.redhat.com (unknown [10.39.193.86])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 5563451BF;
+	Mon, 13 May 2024 16:25:22 +0000 (UTC)
+Date: Mon, 13 May 2024 12:25:19 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Paul Sherwood <paul.sherwood@codethink.co.uk>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] hwmon: (corsair-cpro) Add firmware and bootloader information
-Date: Mon, 13 May 2024 18:23:29 +0200
-Message-ID: <20240513162328.17636-3-mail@mariuszachmann.de>
-X-Mailer: git-send-email 2.45.0
+Subject: Re: [PATCH] sched/deadline: Fix grammar and typos in comments
+Message-ID: <20240513162519.GC9998@lorien.usersys.redhat.com>
+References: <20240511082644.44757-1-paul.sherwood@codethink.co.uk>
+ <20240513135812.GA9998@lorien.usersys.redhat.com>
+ <ef7021835015a5bdd5bf5404ee712853@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Con-Id: 241080
-X-Con-U: 0-mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ef7021835015a5bdd5bf5404ee712853@codethink.co.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Add support for reporting firmware and bootloader version using debugfs.
-Update documentation accordingly.
+On Mon, May 13, 2024 at 04:19:10PM +0100 Paul Sherwood wrote:
+> On 2024-05-13 14:58, Phil Auld wrote:
+> > On Sat, May 11, 2024 at 09:26:44AM +0100 Paul Sherwood wrote:
+> > > - conjugate verb to match subject of sentence
+> > > - s/a entity/an entity/g
+> > > - s/this misbehave/this misbehaviour/
+> > > - a few typos
+> > > 
+> >   - not starting all the lines of a commit message with "-", priceless.
+> > 
+> > Plus, you're just repeating what's in the actual patch.
+> > 
+> > Otherwise, these changes themselves look good to me.
+> 
+> Thanks for the feedback - would you like me to re-submit without the
+> bullet-points, or without the text entirely?
+>
 
-Signed-off-by: Marius Zachmann <mail@mariuszachmann.de>
----
-Changes in v3:
-- use different debugfs directory name for each device
+Personally I'd rather a sentence or two saying something like
+"Fix some types and grammar issues in sched deadline comments."
+Or something.  I know that's basically same as the title, but
+that gets lost in the subject line, so maybe worded a little
+differently? For this it probably doesn't need much but does
+need something. 
 
-Changes in v2:
-- better patch description
-- Documentation uses "Firmware version" and "Bootloader version"
-- removed conditional CONFIG_DEBUG_FS
-- get_fw_version gets called from ccp_debugfs_init
-- get_fw_version does print a hid_notice when an error occurs
-  instead of failing.
----
- Documentation/hwmon/corsair-cpro.rst |  8 ++++
- drivers/hwmon/corsair-cpro.c         | 71 ++++++++++++++++++++++++++++
- 2 files changed, 79 insertions(+)
+I'm not the one to merge it though so I don't know if the
+maintainer wanted to just fix it up at the time.   Just my
+opinion...
 
-diff --git a/Documentation/hwmon/corsair-cpro.rst b/Documentation/hwmon/corsair-cpro.rst
-index 751f95476b57..15077203a2f8 100644
---- a/Documentation/hwmon/corsair-cpro.rst
-+++ b/Documentation/hwmon/corsair-cpro.rst
-@@ -39,3 +39,11 @@ fan[1-6]_target		Sets fan speed target rpm.
- pwm[1-6]		Sets the fan speed. Values from 0-255. Can only be read if pwm
- 			was set directly.
- ======================= =====================================================================
-+
-+Debugfs entries
-+---------------
-+
-+======================= ===================
-+firmware_version	Firmware version
-+bootloader_version	Bootloader version
-+======================= ===================
-diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-index 3e63666a61bd..f7d321d8676e 100644
---- a/drivers/hwmon/corsair-cpro.c
-+++ b/drivers/hwmon/corsair-cpro.c
-@@ -10,11 +10,13 @@
- 
- #include <linux/bitops.h>
- #include <linux/completion.h>
-+#include <linux/debugfs.h>
- #include <linux/hid.h>
- #include <linux/hwmon.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -28,6 +30,8 @@
- #define LABEL_LENGTH		11
- #define REQ_TIMEOUT		300
- 
-+#define CTL_GET_FW_VER		0x02	/* returns the firmware version in bytes 1-3 */
-+#define CTL_GET_BL_VER		0x06	/* returns the bootloader version in bytes 1-2 */
- #define CTL_GET_TMP_CNCT	0x10	/*
- 					 * returns in bytes 1-4 for each temp sensor:
- 					 * 0 not connected
-@@ -78,6 +82,7 @@
- struct ccp_device {
- 	struct hid_device *hdev;
- 	struct device *hwmon_dev;
-+	struct dentry *debugfs;
- 	/* For reinitializing the completion below */
- 	spinlock_t wait_input_report_lock;
- 	struct completion wait_input_report;
-@@ -88,6 +93,8 @@ struct ccp_device {
- 	DECLARE_BITMAP(temp_cnct, NUM_TEMP_SENSORS);
- 	DECLARE_BITMAP(fan_cnct, NUM_FANS);
- 	char fan_label[6][LABEL_LENGTH];
-+	u8 firmware_ver[3];
-+	u8 bootloader_ver[2];
- };
- 
- /* converts response error in buffer to errno */
-@@ -496,6 +503,66 @@ static int get_temp_cnct(struct ccp_device *ccp)
- 	return 0;
- }
- 
-+/* read firmware and bootloader version */
-+static void get_fw_version(struct ccp_device *ccp)
-+{
-+	int ret;
-+
-+	ret = send_usb_cmd(ccp, CTL_GET_FW_VER, 0, 0, 0);
-+	if (ret) {
-+		hid_notice(ccp->hdev, "Failed to read firmware version.\n");
-+	} else {
-+		ccp->firmware_ver[0] = ccp->buffer[1];
-+		ccp->firmware_ver[1] = ccp->buffer[2];
-+		ccp->firmware_ver[2] = ccp->buffer[3];
-+	}
-+
-+	ret = send_usb_cmd(ccp, CTL_GET_BL_VER, 0, 0, 0);
-+	if (ret) {
-+		hid_notice(ccp->hdev, "Failed to read bootloader version.\n");
-+	} else {
-+		ccp->bootloader_ver[0] = ccp->buffer[1];
-+		ccp->bootloader_ver[1] = ccp->buffer[2];
-+	}
-+}
-+
-+static int firmware_show(struct seq_file *seqf, void *unused)
-+{
-+	struct ccp_device *ccp = seqf->private;
-+
-+	seq_printf(seqf, "%d.%d.%d\n",
-+		   ccp->firmware_ver[0],
-+		   ccp->firmware_ver[1],
-+		   ccp->firmware_ver[2]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(firmware);
-+
-+static int bootloader_show(struct seq_file *seqf, void *unused)
-+{
-+	struct ccp_device *ccp = seqf->private;
-+
-+	seq_printf(seqf, "%d.%d\n",
-+		   ccp->bootloader_ver[0],
-+		   ccp->bootloader_ver[1]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(bootloader);
-+
-+static void ccp_debugfs_init(struct ccp_device *ccp)
-+{
-+	char name[32];
-+
-+	get_fw_version(ccp);
-+
-+	scnprintf(name, sizeof(name), "corsaircpro-%s", dev_name(&ccp->hdev->dev));
-+	ccp->debugfs = debugfs_create_dir(name, NULL);
-+	debugfs_create_file("firmware_version", 0444, ccp->debugfs, ccp, &firmware_fops);
-+	debugfs_create_file("bootloader_version", 0444, ccp->debugfs, ccp, &bootloader_fops);
-+}
-+
- static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- {
- 	struct ccp_device *ccp;
-@@ -542,6 +609,9 @@ static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	ret = get_fan_cnct(ccp);
- 	if (ret)
- 		goto out_hw_close;
-+
-+	ccp_debugfs_init(ccp);
-+
- 	ccp->hwmon_dev = hwmon_device_register_with_info(&hdev->dev, "corsaircpro",
- 							 ccp, &ccp_chip_info, NULL);
- 	if (IS_ERR(ccp->hwmon_dev)) {
-@@ -562,6 +632,7 @@ static void ccp_remove(struct hid_device *hdev)
- {
- 	struct ccp_device *ccp = hid_get_drvdata(hdev);
- 
-+	debugfs_remove_recursive(ccp->debugfs);
- 	hwmon_device_unregister(ccp->hwmon_dev);
- 	hid_hw_close(hdev);
- 	hid_hw_stop(hdev);
+
+For the changes themselves, fwiw,
+
+Reviewed-by: Phil Auld <pauld@redhat.com>
+
+
+
+Cheers,
+Phil
+
+> br
+> Paul
+> 
+
 -- 
-2.45.0
+ 
 
 
