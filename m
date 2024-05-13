@@ -1,104 +1,145 @@
-Return-Path: <linux-kernel+bounces-177715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2CF8C4392
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE7A8C439C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8051F2451A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:57:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D5F1F2244D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C02D6AC0;
-	Mon, 13 May 2024 14:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26855221;
+	Mon, 13 May 2024 14:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlfm238f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MlxoQiCX"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFCC538A;
-	Mon, 13 May 2024 14:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731D54C79
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715612231; cv=none; b=pRBuk0gUIYX5kSI0bX01XGTQZbNhiTS2ttJnV/eWakp5jz37ASDCbwwS7xfECA9or/4fhCKJDH1lYArb6Mnj/wWs3MpzV5YdZyyzYIQIAtKbHZmywt1ej//lOkZ1LoRtMkwNQ52M+AzKwzwsQitrObvY+1VdZA72p8UX+9Fy/TY=
+	t=1715612291; cv=none; b=ov6Qe0Nsg5qMKlla73Xl3WIcJIAtYLOFmSTAaZJlNgJfNUo/iNo4W7ebVyz+0f9rXAAmJZfHeKQTXEcBGh73CCL7QGtKRGBKdFWFN4Qu3tib9uxsgDdDpXO3W28NFPQzYoaIEaUfqx3ZR6DSeHx6p37rAuIcbey+L6Bv9HMLyvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715612231; c=relaxed/simple;
-	bh=0w9mbGT1UZZt1dOpgC8NPTR0pigL8NKPJ4Gx+UMc4No=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B/CXm8XbavvxDeOajNTV8LNSHhf583V7rlt58RJoJhtd6g/H0peu+tuPPbj73z8D58bjAFRw3FS6PJXecUXu9w5SKPWLGsRhWqqz75gdiC8ITaiosxitW25NA3d9W/ig0m2pPzaxEFZxtDmeFzGqm4x1sOMdrxV/z8bJzSOayZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlfm238f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E950DC113CC;
-	Mon, 13 May 2024 14:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715612231;
-	bh=0w9mbGT1UZZt1dOpgC8NPTR0pigL8NKPJ4Gx+UMc4No=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nlfm238fMGiVIDMNGnEKc97gNmE29hdsLp7YKC9Wpqq8IWVhjJOyzeE4d72H+4zii
-	 8TMHr1INhhSxLq7XjhdouQqKS31hGdQMfWd6fOJ4zfJFAcgD0xMuX2jnSuWxJNA20x
-	 t5G1Z194+qKS2gfSXhW/tHGhzSw/j45xXTtOKObCug+qUO0V1fditIlV7aHLJVd2qm
-	 ZvkFm5erZ9XOw3zu/ucAuBs5LWwSL4FN4vIS4vWmwyNNZ6j3slga4IbqfjW5ULH7Hg
-	 SNwPM57X0TwGJ7OgpyhhJQxHQ7CXyCcSZu5CPq97FNK6BPg7z5W2gfmLIojzFZM+a0
-	 JEcbmHifAhrGw==
-Date: Mon, 13 May 2024 09:57:09 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Anup Patel <anup@brainfault.org>,
-	Andrew Jones <ajones@ventanamicro.com>, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Atish Patra <atishp@atishpatra.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [PATCH v4] of: property: Add fw_devlink support for
- interrupt-map property
-Message-ID: <171561222690.2595290.16864995832552950240.robh@kernel.org>
-References: <20240509120820.1430587-1-apatel@ventanamicro.com>
+	s=arc-20240116; t=1715612291; c=relaxed/simple;
+	bh=j9bZZti+9FQ+7r5shz9bNfaDhSYxfYzTp3+5PA+YT2Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l+xDitj8BMgm6t53WNeWjGchS3XQ8L/XYjS4nH5SU40PQs4rFS2MYYDMt3CtsB9cTUJnitTiYlwPeMFXclmE+a30rC7jYrIhv/o8Wpj+GGN580pw0qeeZvRqlT2qauIuPAvBCF8NaiLKT9YQsfPN5qYKZwPh895E5ZZftCSOUdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MlxoQiCX; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-de462979e00so4774511276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1715612288; x=1716217088; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7M0SyizaRAHUtRPojEicOMbmKA68tXqqO+2+to/w/2k=;
+        b=MlxoQiCXSbrfMPXkGp2CySc5KaQkGq4Lb35ptU6hanGbEN0eefxIMEFmO8kqSY/z31
+         1hZSAoZtQLSjl+3E4S3icY0v9aT++r/mSboTlo537FdpEFrEXAuCkI7fYDMwptNvwT8m
+         XcI7BmZHgPJAdZQWN0xpyRG6Yae44SqlOS1OhzXaO/vZ/XYjQ83q7fmCfowOP4TwC2EN
+         38aCZX2r1aAwtdqGpUWpqu3fPBUWxku4JHE2zoIyCb4Mrn04fVauh8/OOoflfoOEkrwS
+         VO+KKuN+QhvyJgAb5E5e1ki7klFsPz3CE2rs6b+i3hvQCZ8McPk1UgJtWIrniTkBicDv
+         7J1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715612288; x=1716217088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7M0SyizaRAHUtRPojEicOMbmKA68tXqqO+2+to/w/2k=;
+        b=jXeHl8mA+3194A8ZlxC9JH3M/YeOmbz435CEwu9hWsIG2pVJCrhaPRCMKJw35hbClg
+         dsPCvFwLlDxESEDVb2PTpEztnFboJnNwtV9WTTEM4dZnCD644JLsAJuY8a0acBQjucYu
+         FyvBFgjTvsiB4RrjUpkLkeBqqAh0oHAARr860kvEDDfmAhw387TBTkryJzDoLjovQRR6
+         /uqs3eyTKvdJT0ZtSUes3oLfhA9V7eWSeeuH93MZa0X0dhd1W0tgqla092DteyCTEnWa
+         PGw58mKSz5p4AeDQbhe2aZ5YdvmWimS0mK8rt/4FiTbcQ2FDkmkvZDOs1mlWXBodu9Vt
+         xqIw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFrElIUBgdlnxJdBqXBLl7Mlzv33TlmYxCW728kAe+I1BCUuGoeL2xO5axYoC9JSYfHE8zQ39NldlybZ10NDwv/Fd9IOVGk1t0VND9
+X-Gm-Message-State: AOJu0YwEPHYf49/TPlZ8ms/rCIkBAd5qYrlEDvTae/THvJcWMhoaSKmw
+	ioAUK4VF7XmHm5MJv2FM4N1WGoPOtV1m7gN7ewz0dMooM/aRTcxBYqUVLcM34pAd2ey19TUihWx
+	6hCSxWOFiMWFc+6Ii07cOWtSnMXthrR8cyYL0
+X-Google-Smtp-Source: AGHT+IHDwN+8pFFHqgzAJfSHa/ND4FCnNNX1ClwsHGCc0PzWIetjNmGPFOImdjRGWe9tJ4iyY/v+WvT8iIXTHbiGQJ4=
+X-Received: by 2002:a25:53c7:0:b0:de5:5b9c:4452 with SMTP id
+ 3f1490d57ef6-dee4f319277mr8718086276.21.1715612288420; Mon, 13 May 2024
+ 07:58:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240509120820.1430587-1-apatel@ventanamicro.com>
+References: <20240223190546.3329966-1-mic@digikod.net> <20240223190546.3329966-2-mic@digikod.net>
+ <CAHC9VhQGLmeL4Buh3ZzS3LuZ9Grut9s7KEq2q04DYUMCftrVkg@mail.gmail.com>
+ <CAHC9VhTUux1j9awg8pBhHv_4-ZZH0_txnEp5jQuiRpAcZy79uQ@mail.gmail.com>
+ <CAHC9VhQHpZZDOoPcCqRQJeDc_DOh8XGvhFF3M2wZse4ygCXZJA@mail.gmail.com> <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
+In-Reply-To: <147b0637-7423-4abc-b7fe-3d8da2c1e57c@canonical.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 13 May 2024 10:57:57 -0400
+Message-ID: <CAHC9VhRbHKkdtAC4JWFbWpj=T3MG7wPhH1EHhJomKu+pU6oCQA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] AppArmor: Fix lsm_get_self_attr()
+To: John Johansen <john.johansen@canonical.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 10, 2024 at 12:10=E2=80=AFPM John Johansen
+<john.johansen@canonical.com> wrote:
+> On 2/27/24 08:01, Paul Moore wrote:
+> > On Mon, Feb 26, 2024 at 2:59=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> >> On Fri, Feb 23, 2024 at 4:07=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> >>> On Fri, Feb 23, 2024 at 2:06=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
+@digikod.net> wrote:
+> >>>>
+> >>>> aa_getprocattr() may not initialize the value's pointer in some case=
+.
+> >>>> As for proc_pid_attr_read(), initialize this pointer to NULL in
+> >>>> apparmor_getselfattr() to avoid an UAF in the kfree() call.
+> >>>>
+> >>>> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> >>>> Cc: John Johansen <john.johansen@canonical.com>
+> >>>> Cc: Paul Moore <paul@paul-moore.com>
+> >>>> Cc: stable@vger.kernel.org
+> >>>> Fixes: 223981db9baf ("AppArmor: Add selfattr hooks")
+> >>>> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> >>>> ---
+> >>>>   security/apparmor/lsm.c | 2 +-
+> >>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> If you like John, I can send this up to Linus with the related SELinu=
+x
+> >>> fix, I would just need an ACK from you.
+> >>
+> >> Reviewed-by: Paul Moore <paul@paul-moore.com>
+> >>
+> >> This patch looks good to me, and while we've still got at least two
+> >> (maybe three?) more weeks before v6.8 is tagged, I think it would be
+> >> good to get this up to Linus ASAP.  I'll hold off for another day, but
+> >> if we don't see any comment from John I'll go ahead and merge this and
+> >> send it up to Linus with the SELinux fix; I'm sure John wouldn't be
+> >> happy if v6.8 went out the door without this fix.
+> >
+> > I just merged this into lsm/stable-6.8 and once the automated
+> > build/test has done it's thing and come back clean I'll send this,
+> > along with the associated SELinux fix, up to Linus.  Thanks all.
+> >
+> > John, if this commit is problematic please let me know and I'll send a
+> > fix or a revert.
+>
+> sorry, I am still trying to dig out of my backlog. This is good, you can
+> certainly have my ACK, I know its already in tree so no point in adding
+> it there but wanted to just make sure its on list
 
-On Thu, 09 May 2024 17:38:20 +0530, Anup Patel wrote:
-> Some of the PCI host controllers (such as generic PCI host controller)
-> use "interrupt-map" DT property to describe the mapping between PCI
-> endpoints and PCI interrupt pins. This is the only case where the
-> interrupts are not described in DT.
-> 
-> Currently, there is no fw_devlink created based on "interrupt-map"
-> DT property so interrupt controller is not guaranteed to be probed
-> before the PCI host controller. This affects every platform where
-> both PCI host controller and interrupt controllers are probed as
-> regular platform devices.
-> 
-> This creates fw_devlink between consumers (PCI host controller) and
-> supplier (interrupt controller) based on "interrupt-map" DT property.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-> Reviewed-by: Saravana Kannan <saravanak@google.com>
-> ---
-> Changes since v3:
-> - Added a comment about of_irq_parse_raw()
-> - Removed redundant NULL assignments to sup_args.np
-> Changes since v2:
-> - No need for a loop to find #interrupt-cells property value
-> - Fix node de-reference leak when index is greater than number
->   of entries in interrupt-map property
-> Changes since v1:
-> - Updated commit description based on Rob's suggestion
-> - Use of_irq_parse_raw() for parsing interrupt-map DT property
-> ---
->  drivers/of/property.c | 52 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 52 insertions(+)
-> 
+No worries, reviews are still appreciated; just because a patch has
+made its way up to Linus is no guarantee there isn't something wrong
+with it ;)
 
-Applied, thanks!
-
+--=20
+paul-moore.com
 
