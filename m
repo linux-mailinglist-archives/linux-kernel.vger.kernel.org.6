@@ -1,119 +1,162 @@
-Return-Path: <linux-kernel+bounces-177202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B6D8C3B52
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BB18C3B59
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16DF7B20DD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36320B20D83
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6941465B2;
-	Mon, 13 May 2024 06:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D5C41A87;
+	Mon, 13 May 2024 06:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hnUOUzo2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D94ZXrYs"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE1D14659C;
-	Mon, 13 May 2024 06:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44798468
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715581762; cv=none; b=SPxcxyM6QB7BbuJsnFTbjzgq0A/6QdWRZhjisSQlH0YWnYHLuiXSgsekhStscDS/oenMC0NJ16wdI18+fBVrygf049wibrDA8LyKzfDyQQyxYS/Nyqt4lbZDH/BlfwlKMTE0zEeEOuNhtVpWwOTlEMgQcLy7o09P1Cku56TGr3A=
+	t=1715581890; cv=none; b=LWCl2CntvV3ehvy5pLnYXkgn3leH+q6jH1SQPqA1KDR+ALjn0ReHIc9ximVuecbXdibrkTsF1obawZNAEAiyuQppbCxx9hAEFIpoKgb5t5MyHy0KCptTokLo1EAs1Ni9gUVcMSSnlFhyAnPo8QW9PBUtW/tW9+h/3N8tSGG8MwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715581762; c=relaxed/simple;
-	bh=K7+q6mEcm0MecmJSlBCIXqsx3wgnaExLsqGzVizM7Xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=itQUZ52xL4wLXKcH8Xft1dypKEi0u1OAarb4YkwzQx2FgUDeD3vF2a8tyz4UKkh8vtdZAAEVWCuk8H5qam3C123rj/lYJfVNEdMEEcHjtwk8dn+K95zHN5bsyYmcizjjHb/+atu7jGTTiVUYW3TV+mN9H+O/z7Qc22x/NwRs1qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hnUOUzo2; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715581760; x=1747117760;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=K7+q6mEcm0MecmJSlBCIXqsx3wgnaExLsqGzVizM7Xo=;
-  b=hnUOUzo2x4jMNABw42639RXHQAgDkiKsB/hgWlmRajPuHEOhtxjRETdb
-   6E8Q/HJfcZTIdrvptcde8QYL3dUm33x15waVQ0vpXUiLx1Fgd3yQrUuAY
-   QmDHtTQ5E7I0wYdmaOt40t49daw1OGBtIfqbD89LniDW44OODLNzvs/rH
-   k7asF4d8enWHehJw24RV5fps3Vaq1o20ER2r8FVm+1DRj9ruOhmyM5wY9
-   L1MOfguspv8W571cldqIoGAHf8+zh38BBwgfWNEnlJHflqEmUdcHGIOpm
-   GoDTQwIqJYdTYq93IsDSoMc+4HBssr7HH9XbRPwkZdpAvnxOhqITXVSDR
-   A==;
-X-CSE-ConnectionGUID: qaXgFiLhTBSut6dXHmBifw==
-X-CSE-MsgGUID: 5g9tkjAqQT2ZvwizQvkQUA==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11655697"
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="11655697"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 23:29:19 -0700
-X-CSE-ConnectionGUID: iqHQaP97SoWQmYvu0WAhNQ==
-X-CSE-MsgGUID: 2F7NualDTfS34ToEW564sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="30317533"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 23:29:18 -0700
-Message-ID: <e9b58170-8746-42b9-a4a5-413736d47a7d@intel.com>
-Date: Mon, 13 May 2024 14:29:15 +0800
+	s=arc-20240116; t=1715581890; c=relaxed/simple;
+	bh=teoP5Ie0rPmTaLcIaPhr5DO8lyp0/D9rBsJF9A6I4Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HhRW5K47+loX94ZEHPKeV6P+CUXTTV9xqxco8lsjA6E3nB6VAMaHztclhzXXJEZW7ZPFiOfmEZE06GjLOQJUMYtXdHhaXov5R2QFKHNy+7P7t+tSgCn8F45Ii5hRapEN58ROAvWeYSafGflt15Y0/5vkUpYUkBF3gVXy0uUxO7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D94ZXrYs; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 59EABE0009;
+	Mon, 13 May 2024 06:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715581879;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VfRoAFfC/1PV/3iC+jAvDAhNdr3/rvOcMyIFh+A5RLE=;
+	b=D94ZXrYsv0C3e3g1KLqfGtvFsrQmwc5/78CFWP+o/WShVTsybRFJLQ2Pg8IcyaRue3JkDD
+	ADn7ebqLAmz7Vp7+YW7qkeNxnjcViTJX/Axrp+LKxIrSwLL/7tKFkOPTZay7DYxJVvmjRD
+	GTJYx6SzalaL4eGRfOHLWWAJiDo9w82cXlQxmPREzhtutkYxOgVz0ZLQqoW94GYMX9subN
+	P9/Vrw0UhFRyQ1DTmS+dDvXv/+qP1yMNqien+fSxBtV52xpDx17ix3ORlbVZKaAD6fxQ4L
+	yD0tsfJHGjbJQ4+s4o5AxK7hZv0yOp+fzv8C2PPeqiyMTzICbVpRlH57N11Teg==
+Date: Mon, 13 May 2024 08:31:15 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Pekka Paalanen <pekka.paalanen@collabora.com>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	marcheu@google.com, nicolejadeyee@google.com
+Subject: Re: [PATCH v6 03/17] drm/vkms: write/update the documentation for
+ pixel conversion and pixel write functions
+Message-ID: <ZkGzsyR3U1fhpPqZ@localhost.localdomain>
+Mail-Followup-To: Pekka Paalanen <pekka.paalanen@collabora.com>,
+	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, Jonathan Corbet <corbet@lwn.net>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	thomas.petazzoni@bootlin.com, seanpaul@google.com,
+	marcheu@google.com, nicolejadeyee@google.com
+References: <20240409-yuv-v6-0-de1c5728fd70@bootlin.com>
+ <20240409-yuv-v6-3-de1c5728fd70@bootlin.com>
+ <20240422133358.59fb6221.pekka.paalanen@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/17] KVM: x86/mmu: Initialize kvm_page_fault's pfn and
- hva to error values
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>, Kai Huang <kai.huang@intel.com>
-References: <20240507155817.3951344-1-pbonzini@redhat.com>
- <20240507155817.3951344-17-pbonzini@redhat.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240507155817.3951344-17-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240422133358.59fb6221.pekka.paalanen@collabora.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
-> From: Sean Christopherson <seanjc@google.com>
+Le 22/04/24 - 13:33, Pekka Paalanen a écrit :
+> On Tue, 09 Apr 2024 15:25:21 +0200
+> Louis Chauvet <louis.chauvet@bootlin.com> wrote:
 > 
-> Explicitly set "pfn" and "hva" to error values in kvm_mmu_do_page_fault()
-> to harden KVM against using "uninitialized" values.  In quotes because the
-> fields are actually zero-initialized, and zero is a legal value for both
-> page frame numbers and virtual addresses.  E.g. failure to set "pfn" prior
-> to creating an SPTE could result in KVM pointing at physical address '0',
-> which is far less desirable than KVM generating a SPTE with reserved PA
-> bits set and thus effectively killing the VM.
+> > Add some documentation on pixel conversion functions.
+> > Update of outdated comments for pixel_write functions.
+> > 
+> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/vkms/vkms_composer.c |  7 ++++
+> >  drivers/gpu/drm/vkms/vkms_drv.h      | 15 ++++++++-
+> >  drivers/gpu/drm/vkms/vkms_formats.c  | 62 ++++++++++++++++++++++++++++++------
+> >  3 files changed, 74 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
+> > index c6d9b4a65809..da0651a94c9b 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_composer.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_composer.c
+> > @@ -189,6 +189,13 @@ static void blend(struct vkms_writeback_job *wb,
+> >  
+> >  	size_t crtc_y_limit = crtc_state->base.crtc->mode.vdisplay;
+> >  
+> > +	/*
+> > +	 * The planes are composed line-by-line to avoid heavy memory usage. It is a necessary
+> > +	 * complexity to avoid poor blending performance.
+> > +	 *
+> > +	 * The function vkms_compose_row is used to read a line, pixel-by-pixel, into the staging
+> > +	 * buffer.
+> > +	 */
+> >  	for (size_t y = 0; y < crtc_y_limit; y++) {
+> >  		fill_background(&background_color, output_buffer);
+> >  
+> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> > index b4b357447292..a86cb537d6aa 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> > @@ -25,6 +25,17 @@
+> >  
+> >  #define VKMS_LUT_SIZE 256
+> >  
+> > +/**
+> > + * struct vkms_frame_info - structure to store the state of a frame
+> > + *
+> > + * @fb: backing drm framebuffer
+> > + * @src: source rectangle of this frame in the source framebuffer
+> > + * @dst: destination rectangle in the crtc buffer
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Reviewed-by: Kai Huang <kai.huang@intel.com>
-> Message-ID: <20240228024147.41573-16-seanjc@google.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> Are both src and dst using whole pixel units, or is src using 1/65536th
+> pixel units?
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-
-> ---
->   arch/x86/kvm/mmu/mmu_internal.h | 3 +++
->   1 file changed, 3 insertions(+)
+dst is in whole pixels, src in 1/65536 yes, I will clarify.
+ 
+> Asking because UAPI has src rect in 16.16 fixed-point, IIRC.
 > 
-> diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-> index dfd9ff383663..ce2fcd19ba6b 100644
-> --- a/arch/x86/kvm/mmu/mmu_internal.h
-> +++ b/arch/x86/kvm/mmu/mmu_internal.h
-> @@ -307,6 +307,9 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
->   		.req_level = PG_LEVEL_4K,
->   		.goal_level = PG_LEVEL_4K,
->   		.is_private = err & PFERR_PRIVATE_ACCESS,
-> +
-> +		.pfn = KVM_PFN_ERR_FAULT,
-> +		.hva = KVM_HVA_ERR_BAD,
->   	};
->   	int r;
->   
+> With that clarified:
+> 
+> Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
 
+[...]
+
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
