@@ -1,149 +1,146 @@
-Return-Path: <linux-kernel+bounces-177551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780528C40A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:23:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC21E8C40A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1259CB22032
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF2D1C22C4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D8C14F9C7;
-	Mon, 13 May 2024 12:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5FB14F13D;
+	Mon, 13 May 2024 12:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="jzT6xeI3"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIKpq9JJ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BE114EC5E;
-	Mon, 13 May 2024 12:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BC814F119;
+	Mon, 13 May 2024 12:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602986; cv=none; b=aEpvjtEbFh0kOLECbCUiC2PeZlwIMeyySqCEEdtxJAdhXR8UCY1t9SjKKU1j1OBsWeOZvbTIkTj7LCmRM+kJjQwFff8z2tx7uxBZqOCDBUUHRXaVxlm7R79OCYGnw+2CLiCxJJn4jKKHXIwHLXnv1E7yxrqLNTLsiJYwpPmaJd4=
+	t=1715603091; cv=none; b=GKYitgAvci8zLqtPYPyq2iZSTYwxYhHXwLU460ScERJN998sJ9cndkEpAxNsQS5V2/F6cRoxS/oRFa3kj0XWu8Lv1/AF1tuk5QYkB3cLSJgYAl5L25mKgBn5KIwwC2TOx0hFA+OwsquzkpltmoAFQhPnj9IpTJgrqqMvaNLZB3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602986; c=relaxed/simple;
-	bh=GMpp0dPFuIFfvEUduPyIjFcKlLnBpiSg9daDEDmMREo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lTbCEDmoImQbPZtEd015bqs/NgWxm3yrLzT7C+QzanKiRLejU3OtGamWaxEWDKeM6eTVRvEBCx6+FkmU/xp0G47gBpZ4xAXM6PbkDp0fEHvEFhTgpqWWzAcCV0qGG7uZ2jWU/Dd1JHPnLM5xGIpC08b5n+47Ujf2tPKkW6IYkbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=jzT6xeI3; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4VdJXy1tR4z6Cnk90;
-	Mon, 13 May 2024 12:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1715602962; x=1718194963; bh=7Ih71/Watz1cdPTWlkmWtBwl
-	P9ZcU5ZJPsGWDZOPS0Y=; b=jzT6xeI3w+cBrbZgW+L7A5crY0hWa6Q4mx/1MHQE
-	B8JU1uAtmpxRvcx8kY5GQZBcuGgyo2OONYgKdIgmhlAvT6oKhREKiOFVCBfTCmHA
-	a3JXZoC1XANZmc9Z/saTfeC99ouZ0tuRaxaafBSKRBySDS3d6wwcjB+VOxYoJYuG
-	Kshui5g5ctx5ZcnXxJ/HO/HaeHSThdryHdvqM/b3bwdcbQkcR27Z6D6ISOpRZDCi
-	6N1JwHxIu+EMOmqRUAf+7TGxu6V+wD0lNfW+An2y4fbLVOVBDm6pCyNoR80qHnHM
-	9X88dvEGxU9nWcY+IUWLez3lumEp7uNOlnogIavx0EP7hg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 6kRT-qnGtJMv; Mon, 13 May 2024 12:22:42 +0000 (UTC)
-Received: from [172.20.0.79] (unknown [8.9.45.205])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4VdJXV0Dx6z6Cnk8s;
-	Mon, 13 May 2024 12:22:33 +0000 (UTC)
-Message-ID: <1b618942-a0fe-45d9-90de-eede429e7284@acm.org>
-Date: Mon, 13 May 2024 06:22:31 -0600
+	s=arc-20240116; t=1715603091; c=relaxed/simple;
+	bh=gGMG42Zz0ybZm0xvlkq65MZ8X026PNiCDiLOel1ltDs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jUaMMhbLRl8O04yx81mfJY5bHDMswFFiHldy6kgsm6ecmJ/LIx0+i+dmXpLZ3wKmRs+yj1Cy/aJ21rBXVE6q3Jjn/YC7PTp/4WmxYL7+bJO94Wlyd9E36JSTmsza7TNWgsTlM3vm3T30xrAAE9QS3cp7/5Mp0uS0gWAXTsHR5Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UIKpq9JJ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1eca195a7c8so35356885ad.2;
+        Mon, 13 May 2024 05:24:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715603089; x=1716207889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9uEdXqbZ7OmVXroYRzO4MQldyt0w8o8Vs1CnZronQ5I=;
+        b=UIKpq9JJGtwlNf48WQcj7Z1grGybPE+RGeu5VmxrOH1SOZpdWlzcAxNiFBWWusOYBb
+         gOT/mstx9RKYwTspIik+qtbqqu/linUrCaimQP3Wu8BUiYZTjxw/FjDyXyr7+Kadw31w
+         uj34izmOO8aZkg4BPvcWsix6MJhQmgKsjsqI4GdjeDHcZcYeHynAA5i6hez1996IsVO9
+         kABLSNzytUVsIg8fV/Ba7s33dzPRsdljobB5xZtf7A2sVr2sxEIl1Ap5n5zbxdqZqhZd
+         CNZgziaTJ+Tt8zoI/sdwtGkLqjRK/Y/3JAcuPDdbxcIGC8sY4bYAz4CXhJxsBFOyHh3l
+         bmvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715603089; x=1716207889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9uEdXqbZ7OmVXroYRzO4MQldyt0w8o8Vs1CnZronQ5I=;
+        b=WIiqPlmpAjts4YIlNnbJ4Odk1efI2rWsGMntRcAHlzbP5Wf/uj1I7Eiwu3rViv0Kag
+         UF4V9U7Nsj2wfT3mRMWIlzuVy5jYNUwSZRlCUkHeODGT8wVz9/kMFfPpWB70y4ePtyGe
+         3b9h68h2ae21pkWz4wOVyRvlavvZVlPOMO+PiHyK2HYB8wMVxCAmQ+AS3j/PXqdwCv17
+         yG9Iw2Vi+ixcy7LzQ2eNNEJMVHZswjjajzNwvSV314R3KuEoASsT7nr+XO0FUWVlJ4m6
+         nNgEdopRE1kVmWFjNpf470Gk2ISHVp95aYAc+uei7BMdIw6G3QQXBDTLf3HdJX3XREIs
+         On7A==
+X-Forwarded-Encrypted: i=1; AJvYcCXbAgIHHP3vSIxI+e3GHjKBuuQE+Qy5s61F0I31CJu7H4jjWTvTC7sR5mQcNyKsQyioKvn99nxlvMyyrXmutnRMZAewbfjds4RV76RaQlLysv+3ex47+Yjr05D0yYtf5wsq1qCNxNgAXA==
+X-Gm-Message-State: AOJu0YwEU/N568RYF7MmzjeHI6qvzla4vYYpWW6CcOGG9h5AzxembbgW
+	YpAc3DhTgH0VK59W3tW6Wa3ix5ivZdahFUyvjqF/as5+QntVdVKiGzqNe1fEqN1LIfl8PDJY7YZ
+	ftVfplsoZcNw3DqukNsKnzlcH0Ko=
+X-Google-Smtp-Source: AGHT+IHdqWutAgLlnkeZq9lfl0ycFYjE0nnS3IKxHwLVKS8LDItaYXZI9kZ+SBHOfXOhLhe5WXWhAIXZE8Bv1REbIiY=
+X-Received: by 2002:a17:902:e847:b0:1e0:f473:fd8b with SMTP id
+ d9443c01a7336-1ef43c0f5f4mr119026505ad.9.1715603089219; Mon, 13 May 2024
+ 05:24:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] rust: block: introduce `kernel::block::mq` module
-To: Andreas Hindborg <nmi@metaspace.dk>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>,
- Damien Le Moal <Damien.LeMoal@wdc.com>, Hannes Reinecke <hare@suse.de>,
- Ming Lei <ming.lei@redhat.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Cc: Andreas Hindborg <a.hindborg@samsung.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>,
- Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>,
- =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
- Joel Granados <j.granados@samsung.com>,
- "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Daniel Gomez <da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>,
- Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>,
- Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
- open list <linux-kernel@vger.kernel.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
- "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
- "gost.dev@samsung.com" <gost.dev@samsung.com>
-References: <20240512183950.1982353-1-nmi@metaspace.dk>
- <20240512183950.1982353-2-nmi@metaspace.dk>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240512183950.1982353-2-nmi@metaspace.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240305004859.201085-1-aford173@gmail.com> <20240305004859.201085-2-aford173@gmail.com>
+ <CAHCN7xLsEvP0A3mQJRzX=nXGr30WD4RU9vQVw9ynqzSi6cDNRg@mail.gmail.com>
+In-Reply-To: <CAHCN7xLsEvP0A3mQJRzX=nXGr30WD4RU9vQVw9ynqzSi6cDNRg@mail.gmail.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 13 May 2024 07:24:36 -0500
+Message-ID: <CAHCN7xJGnutJ8szxqG+AHyEU5ULOMAcn8Q21N0=FBp18EYSqmQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] arm64: dts: imx8mp-beacon-kit: Enable HDMI bridge HPD
+To: dri-devel@lists.freedesktop.org
+Cc: aford@beaconembedded.com, laurent.pinchart@ideasonboard.com, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 5/12/24 11:39, Andreas Hindborg wrote:
-> +    /// Set the logical block size of the device.
-> +    ///
-> +    /// This is the smallest unit the storage device can address. It i=
-s
-> +    /// typically 512 bytes.
+On Tue, Apr 16, 2024 at 4:18=E2=80=AFPM Adam Ford <aford173@gmail.com> wrot=
+e:
+>
+> On Mon, Mar 4, 2024 at 6:49=E2=80=AFPM Adam Ford <aford173@gmail.com> wro=
+te:
+> >
+> > The DSI to HDMI bridge supports hot-plut-detect, but the
+> > driver didn't previously support a shared IRQ GPIO.  With
+> > the driver updated, the interrupt can be added to the bridge.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> Shawn,
+>
+> Patch 1/2 has been applied and sits in linux-next.  Are you OK to
+> apply this to the IMX branch so the hot-plug detection can work?
 
-Hmm ... all block devices that I have encountered recently have a
-logical block size of 4096 bytes. Isn't this the preferred logical
-block size for SSDs and for SMR hard disks?
 
-> +    /// Set the physical block size of the device.
-> +    ///
-> +    /// This is the smallest unit a physical storage device can write
-> +    /// atomically. It is usually the same as the logical block size b=
-ut may be
-> +    /// bigger. One example is SATA drives with 4KB sectors that expos=
-e a
-> +    /// 512-byte logical block size to the operating system.
+Shawn,
 
-Please be consistent and change "4 KB sectors" into "4 KB physical block
-size".
+Do you want me to repost this patch separately since patch 1/2 has
+already been applied?
 
-I think that the physical block size can also be smaller than the
-logical block size. From the SCSI SBC standard:
-
-Table 91 =E2=80=94 LOGICAL BLOCKS PER PHYSICAL BLOCK EXPONENT field
------  ------------------------------------------------------------
-Code   Description
------  ------------------------------------------------------------
-0      One or more physical blocks per logical block (the number of
-        physical blocks per logical block is not reported).
-n > 0  2**n logical blocks per physical block
------  ------------------------------------------------------------
-
-> +impl<T: Operations, S: GenDiskState> GenDisk<T, S> {
-> +    /// Call to tell the block layer the capacity of the device in sec=
-tors (512B).
-
-Why to use any other unit than bytes in Rust block::mq APIs? sector_t
-was introduced before 64-bit CPUs became available to reduce the number
-of bytes required to represent offsets. I don't think that this is still
-a concern today. Hence my proposal to be consistent in the Rust=20
-block::mq API and to use bytes as the unit in all APIs.
-
-Thanks,
-
-Bart.
+adam
+>
+> Thank you,
+>
+> adam
+>
+> adam
+> > ---
+> > V2:  No Change
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts b/arch=
+/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
+> > index a08057410bde..fba8fd04398d 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mp-beacon-kit.dts
+> > @@ -304,6 +304,8 @@ adv_bridge: hdmi@3d {
+> >                 compatible =3D "adi,adv7535";
+> >                 reg =3D <0x3d>, <0x3c>, <0x3e>, <0x3f>;
+> >                 reg-names =3D "main", "cec", "edid", "packet";
+> > +               interrupt-parent =3D <&gpio4>;
+> > +               interrupts =3D <27 IRQ_TYPE_EDGE_FALLING>;
+> >                 adi,dsi-lanes =3D <4>;
+> >                 #sound-dai-cells =3D <0>;
+> >
+> > --
+> > 2.43.0
+> >
 
