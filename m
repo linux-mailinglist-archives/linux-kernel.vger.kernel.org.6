@@ -1,128 +1,100 @@
-Return-Path: <linux-kernel+bounces-177215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D338C3B82
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414AC8C3B87
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6623BB20FEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:41:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2D3B207CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9842E145B1D;
-	Mon, 13 May 2024 06:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qE7yHvC1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D744252F9B;
-	Mon, 13 May 2024 06:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 769B4146A65;
+	Mon, 13 May 2024 06:41:52 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F077A145B1D;
+	Mon, 13 May 2024 06:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715582475; cv=none; b=HYYUVeUvNP5WiIp1kZSSmfvmgRmwBWIx4ouS84Q68B1C7jTFM1cDJ7yAPci7wyrmR8zhJ9tTyRo7101q1e96Eq2OBjaTAMKCRQNIYYNfqoZ6Y95/BCB6G6oXSjUUz9uQVXq6illym0sX7seHvsCgLgVNiFySTtD8SOvRTtOQLdc=
+	t=1715582512; cv=none; b=d3MWQVTeyo2I9LWD35irkQMoHb34I9Pu95caplF423w5PuJ3gk63Wi4Iwd+MwJ8WW6EZ8AIEX6rAN3wImVYFmQ9nnMIHXhTgXw7FuzRzFaIckxyXSY+5MdsK8AHTKRvCDgj5Y8hkG1m5xMHaIPOcU+y6QP2RsV3PlP5s0E6jbl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715582475; c=relaxed/simple;
-	bh=6QZTaNfQKHHJkDfbCKCKSyHBhlmyX/9bwUSilTbv0uU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uILjHU/GGhcyeWwRopRLNWoUPsICmdeDEk2/jJdvw+Vf3imT9a93XvyvpPNjn8ZYFoyRvDhehqa3PORRCS0cNwDxzCQRaw9qvIK2GIsiaUuchb6lHP74lpBOS52qfM2IAb+1hERuxgpE6661Dc+NvrIR0tk+QRTqab8NvxzPXLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qE7yHvC1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4751BC113CC;
-	Mon, 13 May 2024 06:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715582475;
-	bh=6QZTaNfQKHHJkDfbCKCKSyHBhlmyX/9bwUSilTbv0uU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qE7yHvC16QUgj+DyAmcgwo/KCLY0SiKoMuHgi6nxSTjE9VTNDi66f1yR5uMnULDaw
-	 DMMSg/RV2vSGOlCExuRA6xsLPMHvwhFtVxIttX6sSfhxsQJeKG6CIqolMYzyFSLiA9
-	 HDpGq6wvKut1qrSylz82Ux0WqtuxC/npT/I5C8irmTgzU/OX6cq0U5Rtyysu/kLc/B
-	 ZwkJoEBu6530a8Gm4rCR/fU108ojLMHB+ozgrNR6KKcI0ljjAKOXkdFLMPpQU3Z4RE
-	 C3DH/3+CDnl0iqaBpwyElvFefk/3cdAnKLdOoWVc153L+Z6ecR2tyCN3z9QmqWfNTV
-	 dHy97jghAu3vw==
-Message-ID: <472a5e0b-cc8b-47b1-bc00-bd68fbf6d70f@kernel.org>
-Date: Mon, 13 May 2024 08:41:10 +0200
+	s=arc-20240116; t=1715582512; c=relaxed/simple;
+	bh=9CNcVsx6GH8f9RXjua1bE7voMwh312ilPJJw8WrRdxU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oa43Zli0lwDQArLBX86d5q1TJhHwEZkNh3UkcsUay4GZFkdfJoikr4duzAEiLCGD4H8naGE8Oox1wny7f1DjQ2Clhh6ZSGuB+UNu8HKyuiLutK5Q3LUPY1W2MnqO7/Ko0atOEXfkxx4+YCT6+P/Sy873aOIhJ49Ox1Akqq2URYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.24])
+	by gateway (Coremail) with SMTP id _____8AxY+oqtkFm_xIMAA--.17447S3;
+	Mon, 13 May 2024 14:41:46 +0800 (CST)
+Received: from [10.20.42.24] (unknown [10.20.42.24])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8DxXN4ptkFmoqMcAA--.51510S3;
+	Mon, 13 May 2024 14:41:45 +0800 (CST)
+Subject: Re: [PATCH 2/2] Loongarch:Support loongarch avec
+To: Xi Ruoyao <xry111@xry111.site>, chenhuacai@kernel.org, kernel@xen0n.name,
+ tglx@linutronix.de, jiaxun.yang@flygoat.com, gaoliang@loongson.cn,
+ wangliupu@loongson.cn, lvjianmin@loongson.cn, yijun@loongson.cn,
+ mhocko@suse.com, akpm@linux-foundation.org, dianders@chromium.org,
+ maobibo@loongson.cn, zhaotianrui@loongson.cn, nathan@kernel.org,
+ yangtiezhu@loongson.cn, zhoubinbin@loongson.cn
+Cc: loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240507125953.9117-1-zhangtianyang@loongson.cn>
+ <a0a896fef1aca8958a190801ab5355e22373081d.camel@xry111.site>
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+Message-ID: <b38caf8e-b817-7ea2-50e3-eef78909b642@loongson.cn>
+Date: Mon, 13 May 2024 14:41:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add ti,am625-dss-oldi-io-ctrl
- compatible
-To: Aradhya Bhatia <a-bhatia1@ti.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Devicetree List <devicetree@vger.kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
-References: <20240512143824.1862290-1-a-bhatia1@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+In-Reply-To: <a0a896fef1aca8958a190801ab5355e22373081d.camel@xry111.site>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240512143824.1862290-1-a-bhatia1@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8DxXN4ptkFmoqMcAA--.51510S3
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29K
+	BjDU0xBIdaVrnRJUUUm0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26c
+	xKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vE
+	j48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxV
+	AFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E
+	14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44
+	I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2
+	jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62
+	AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxAqzxv262kKe7AKxVWUAVWUtwCF54CYxVCY
+	1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUAV
+	WUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07josjUUUUUU=
 
-On 12/05/2024 16:38, Aradhya Bhatia wrote:
-> Add TI DSS OLDI-IO control registers compatible for AM625 DSS. This is a
-> region of 10 32bit registers found in the TI AM625 CTRL_MMR0 register
-> space[0]. They are used to control the characteristics of the OLDI
-> DATA/CLK IO as needed by the OLDI TXes controller node.
-> 
-> [0]: https://www.ti.com/lit/pdf/spruiv7
-> 
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+在 2024/5/7 下午10:20, Xi Ruoyao 写道:
+> On Tue, 2024-05-07 at 20:59 +0800, Tianyang Zhang wrote:
+>> +static inline void loongarch_avec_ack_irq(struct irq_data *d)
+>> +{
+>> +}
+>> +
+>> +static inline void loongarch_avec_unmask_irq(struct irq_data *d)
+>> +{
+>> +}
+>> +
+>> +static inline void loongarch_avec_mask_irq(struct irq_data *d)
+>> +{
+>> +}
+> "inline" has no use here because these functions are only called via
+> function pointers, thus such calls cannot be inline-able.  I'd suggest
+> to remove "inline" for them.
+>
+Thank you for your feedback. I will make the necessary changes here
 
 
