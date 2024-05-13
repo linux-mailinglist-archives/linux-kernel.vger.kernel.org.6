@@ -1,100 +1,155 @@
-Return-Path: <linux-kernel+bounces-178077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700708C484F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:37:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77388C4852
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EA8C1C20CFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C3141F235CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87C118003B;
-	Mon, 13 May 2024 20:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39BF8004B;
+	Mon, 13 May 2024 20:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oo94HEM6"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qh2KbS+i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4801DA24
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283A11DA24;
+	Mon, 13 May 2024 20:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715632640; cv=none; b=IZZ+5XQm55P7yEySdmXMpwu040kDhm/oot+urigzE2lDuEFu4cNmQOl0nLRdwCjYQWScHp3cr4opVztuRlaiGIR4SME7JONwXAvCApuHXIS8OFZBOZrpH5xPlGf2s/nAH9hjqMw5MpDXZPNiRin56BsqpJQO+xwMyJwOnWwT04Y=
+	t=1715632724; cv=none; b=ayvZ4WQ5WyBGMYKu3rGoE3U878Apx1jAvIi/mrc8Zufe9Wkek1NubLxI9MwpiMSsK2RSTm35XXLVIAie5B8v/EuxKkgvkbPTlNmGZOM619Ty/kusq/f5b5WOYGmA5UvGQlzPVgDu5jFuHte6LDPdSTuk64HPPh+PDMUDDDY2wwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715632640; c=relaxed/simple;
-	bh=/s3/UizLB9d9fYOIbdf0witT1lzFPXKEbUQjbfvT2sw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZAlBH8VbQuMf3x7IeEgjSvGOL/n+KC8PfZjCjteFXeD6rxIqaL4pn2cxPRcNIjsooTpdA9EPlScqW4CCbBvMlV89bg3lFyKR3U/RucQ5/JqUQY5BcDVs69T9ecPm48yg3Wvc7vc311o8iaq9uFAs3090v8Sjt+OGTZK1Wmz0qsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oo94HEM6; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-61e0c1ec7e2so51575687b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715632638; x=1716237438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/s3/UizLB9d9fYOIbdf0witT1lzFPXKEbUQjbfvT2sw=;
-        b=Oo94HEM6V5KE8wmGWaOWLxp8rId9hegFRFFXrS67w4xn9g6ts0D6CckEwHKuwtmvdC
-         sGbqugQJj6Wp87viuLeVGEGWs4ek/w4M2vxWkqXKazgWyKCC2L2FxaQz2O4Qen51DV44
-         u6Wfg+UqjUjjdr6IJIsNUsR8KlrWvb0LyPj/sBjJH3+uRDyXnwl7DQhz6arCmv3KfEz6
-         9VzDrYxj/pIMtnH2dv+orIdcPh5aEPbIlD6TKV1xoLmyfXp4GTZiKZnrdyr6M8UuR1UM
-         ZDxtGuCVkFMDQIaxOdbPeGsbch2wJMzwnhKdvEpG7c/bOuzztdY0jN5dWBuBlBnvg9ks
-         3A2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715632638; x=1716237438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/s3/UizLB9d9fYOIbdf0witT1lzFPXKEbUQjbfvT2sw=;
-        b=oyIctzOQeM3NWfDuwHtkJSLZq1d5iQcQRK8ttKhVDikVlZDzhGw93MERu4rUTF0Y93
-         ilaYcwC8bNRzEP4PMK7ZEk8IPj58VEenNl8bUKtC5tmDK2QL3PZdJbVHELAj6vRurs3y
-         FAqgs7nNZ93ODED/gxljXmnHzDRxVwoHx9yllMQZ6kyJ0FhTKlRhUdcmQbQS3cmn0RQq
-         ypY28Xf0UM7tyy54SfumiyPEPoKpmHzFhprjjKfcWIYU3Vko2CIJdzdMKk4QRIuHiPi4
-         4IQfhSJoxypPemmx1i0xNf6b4S7rctJiRFQOFIt6IrA89Ys2YCAt+810PZMavYlOGDRZ
-         U2dA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ8YcLJyE0JqZ2ZZhIku3EOOVvl9kqh6lNUzrWLzZX30JFFDmTI/IxEY93wE+OP48qN2Nbq769jLfu9lfM3sa89m13HPOuCsvdAmGj
-X-Gm-Message-State: AOJu0YzoUaFqaKNO1+1i/cIJtpN0IFwOTOEhN1r/DA1UzMCBHlgiYVSy
-	xzSirq+8jP+mBd2ietBkja9bkxn9b8/1pSEPHXR74xnJt9qMP2F5VlVyiTNdVk+b79zJzTaekjs
-	fdmZfLlAXcVG0KFRARGniiEOKBbnAo4Y0F6q/Tg==
-X-Google-Smtp-Source: AGHT+IEcMlVLKcTYYQyZW7CkpC4bBM2Fd32LFkkd6763hdBeNFF9PnfVfmZMf9sLj0r0NA2+7tzRkznixINWUAHUzwI=
-X-Received: by 2002:a81:924c:0:b0:618:498f:9dbe with SMTP id
- 00721157ae682-62099381e4dmr101763867b3.10.1715632638569; Mon, 13 May 2024
- 13:37:18 -0700 (PDT)
+	s=arc-20240116; t=1715632724; c=relaxed/simple;
+	bh=QbhhRTYOI2vg+p7o11+oe+NFacNKUaoVU7Oa8Khfwjo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUkxskIYW8nkLbuq2br17BurZlJo2dfQt01k2QnGhn1BwdFT8V2AUErq0rzSF5CZqB3Q4/0hpoSZJAS6hO/Gvi/iLnLlnBlXDPxeblNYL2Up3MF0tLqO+oLEG5h0ZU1mIxuB4VaMY+WAsGH0Ca7vrJIhMGHY1Mt4ZCpeVG74A1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qh2KbS+i; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715632722; x=1747168722;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=QbhhRTYOI2vg+p7o11+oe+NFacNKUaoVU7Oa8Khfwjo=;
+  b=Qh2KbS+iP8og4WtnVdMRV/fvs6bcmSDE0FErndI6sZXh6l1chTC8zsg2
+   oq8kvf72tS9NXCJZqdG8lShaBfnI5E3xEOYUvJy4pq1xlMXa7sK+f6CkH
+   98Z1ESi6wGP7CV76pgfXRfb9GO7g0RAoEar9guhWhVafkhtMuxjomXM8z
+   zNUJPT3TbJL8CD638x/ix5QTGsK0rfOGKhw1GrOFDz+ZwuNoBkExroH3p
+   DiZTpV9QfJyPzE+zy5bb9GXcHs3d9cYlRvcb2QyiI4fevrwiZK617J0kR
+   3tVT6WFUacDzVkIOlaNU2IQJ6Xcd9kb3W7WODnQGPNEFUXCIlUviPAiYj
+   A==;
+X-CSE-ConnectionGUID: Znq0Zj9BTZSXqoIEQyZpCA==
+X-CSE-MsgGUID: fO8mXY5oS6SqxmjKKXiD4Q==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11443959"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11443959"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:38:41 -0700
+X-CSE-ConnectionGUID: fsxa21CaQ6+416ND+iF+Dw==
+X-CSE-MsgGUID: +1HvBkbbRliBpfPAleBnvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35144881"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.31])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:38:41 -0700
+Date: Mon, 13 May 2024 13:38:39 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, seanjc@google.com, michael.roth@amd.com,
+	isaku.yamahata@intel.com, thomas.lendacky@amd.com,
+	isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH 02/21] KVM: Allow page-sized MMU caches to be initialized
+ with custom 64-bit values
+Message-ID: <20240513203839.GA168153@ls.amr.corp.intel.com>
+References: <20240227232100.478238-1-pbonzini@redhat.com>
+ <20240227232100.478238-3-pbonzini@redhat.com>
+ <6bd61607-9491-4517-8fc8-8d61d9416cab@linux.intel.com>
+ <4d0d9f64-4cc4-4c1e-ba27-ff70c9827570@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240510123238.3904779-1-robh@kernel.org> <20240510123238.3904779-2-robh@kernel.org>
-In-Reply-To: <20240510123238.3904779-2-robh@kernel.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 13 May 2024 22:37:07 +0200
-Message-ID: <CACRpkda69tvg=B6BsP2sNx0ah_GyrHjgY2EFNrkqOxN4g2DapA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: arm: Remove obsolete RTSM DCSCB binding
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4d0d9f64-4cc4-4c1e-ba27-ff70c9827570@linux.intel.com>
 
-On Fri, May 10, 2024 at 2:32=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
- wrote:
+On Tue, Mar 26, 2024 at 11:56:35PM +0800,
+Binbin Wu <binbin.wu@linux.intel.com> wrote:
 
-> The Arm VExpress DCSCB binding is unused and was only ever used on a s/w
-> model over 10 years ago. Remove it.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> On 3/5/2024 2:55 PM, Binbin Wu wrote:
+> > 
+> > 
+> > On 2/28/2024 7:20 AM, Paolo Bonzini wrote:
+> > > From: Sean Christopherson <seanjc@google.com>
+> > > 
+> > > Add support to MMU caches for initializing a page with a custom 64-bit
+> > > value, e.g. to pre-fill an entire page table with non-zero PTE values.
+> > > The functionality will be used by x86 to support Intel's TDX, which
+> > > needs
+> > > to set bit 63 in all non-present PTEs in order to prevent !PRESENT page
+> > > faults from getting reflected into the guest (Intel's EPT Violation #VE
+> > > architecture made the less than brilliant decision of having the per-PTE
+> > > behavior be opt-out instead of opt-in).
+> > > 
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> > > Message-Id: <5919f685f109a1b0ebc6bd8fc4536ee94bcc172d.1705965635.git.isaku.yamahata@intel.com>
+> > > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+> > > ---
+> > >   include/linux/kvm_types.h |  1 +
+> > >   virt/kvm/kvm_main.c       | 16 ++++++++++++++--
+> > >   2 files changed, 15 insertions(+), 2 deletions(-)
+> > 
+> > Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+> > 
+> > > 
+> > > diff --git a/include/linux/kvm_types.h b/include/linux/kvm_types.h
+> > > index d93f6522b2c3..827ecc0b7e10 100644
+> > > --- a/include/linux/kvm_types.h
+> > > +++ b/include/linux/kvm_types.h
+> > > @@ -86,6 +86,7 @@ struct gfn_to_pfn_cache {
+> > >   struct kvm_mmu_memory_cache {
+> > >       gfp_t gfp_zero;
+> > >       gfp_t gfp_custom;
+> > > +    u64 init_value;
+> > >       struct kmem_cache *kmem_cache;
+> > >       int capacity;
+> > >       int nobjs;
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index 9c99c9373a3e..c9828feb7a1c 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -401,12 +401,17 @@ static void kvm_flush_shadow_all(struct kvm *kvm)
+> > >   static inline void *mmu_memory_cache_alloc_obj(struct
+> > > kvm_mmu_memory_cache *mc,
+> > >                              gfp_t gfp_flags)
+> > >   {
+> > > +    void *page;
+> > > +
+> > >       gfp_flags |= mc->gfp_zero;
+> > >         if (mc->kmem_cache)
+> > >           return kmem_cache_alloc(mc->kmem_cache, gfp_flags);
+> > > -    else
+> > > -        return (void *)__get_free_page(gfp_flags);
+> > > +
+> > > +    page = (void *)__get_free_page(gfp_flags);
+> > > +    if (page && mc->init_value)
+> > > +        memset64(page, mc->init_value, PAGE_SIZE /
+> > > sizeof(mc->init_value));
+> 
+> Do we need a static_assert() to make sure mc->init_value is 64bit?
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+That's overkill because EPT entry is defined as 64bit and KVM uses u64 for it
+uniformly.
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
