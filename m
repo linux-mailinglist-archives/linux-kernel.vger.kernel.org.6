@@ -1,108 +1,418 @@
-Return-Path: <linux-kernel+bounces-177710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E464E8C4381
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:52:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC13C8C437F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 77E7DB23083
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF9A283157
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28C63C1;
-	Mon, 13 May 2024 14:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qW/lUqtX"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE114689;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C6646BF;
 	Mon, 13 May 2024 14:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93AD1C01
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715611946; cv=none; b=fBPfpIdX5axMn0ac1AN2cF+d0LMdgsYJTC6bNc6fkRHt4yg+HanFf5/ffmNJyescgPBANGVslh3O21MUFrE3nH1Ndv3CkCAMt1JwyyHE7VKjm52Zq/mF24IEBl496cMIGzXtLvkO9yTjYT7f7MBTUlTN6nKk0fk0MQkCpjkjzXU=
+	t=1715611944; cv=none; b=mhVGiGrapbuBJGLR2M3y0+w5Z9GBKU/hKWc1zuXU0aub+pl35DfH3Sst98iNQpDCqeo2Yd9H/CSkjcpTQFMb+2jLWT8YJHF7RgqNP68qKNdXbWwWMyRYgFC7DptKamIukSzkMMkx7yZrl6zvQL9Vew3mPtrJaQK5CTYhkTp57Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715611946; c=relaxed/simple;
-	bh=dGPesChjn6zfCGN+uZgQZ6d6gonk0aHoo23Qown8aUw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aJveKTJg6ks4FZh28Va//5X0/C3ZkeDVhJDKMok8/ljOlDFBPXzcKxrjd0Bp31j9Ow6D8rsQcIsqt7M2/PENubIQ7bwuISZ5RCN/hnTdzdfKde/b1qL9zNEXLwfk2mQvE+Q/Eb1qMkefbAN1BMyOSRMnURQC6qfAVW6VhzrR6kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qW/lUqtX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715611941;
-	bh=dGPesChjn6zfCGN+uZgQZ6d6gonk0aHoo23Qown8aUw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qW/lUqtX+1mZwPJhOnBSNA9bxBp3Wrew4U5lRRZuUEl/R0qI11+fDk3Glorw5HxMA
-	 GUnRqWAudolecol5X8Weo8OTh9fLBQgAX6BAIJyds/FKJCp9uheAfobi7I5to1nCpY
-	 aSKkXJZVP1uX5HYSOm5/wikVCvq1fSQWES3SCUIeZIkaTkKlw+66WVVUdjD+7W98UL
-	 YYLm2kyeMoReMZI1o3Kg9ZN98kRJcokYMDvgzfHkcSw56nD5VcD2wzE1eWuD2ubR23
-	 TvodC8+bZeW5qQxyuNimLx8Z9z25m5AQHwrSp+X7R3IvgF4ZmA1vRa0ONWpVtsFC91
-	 5lNfaJq23oiVA==
-Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6A2ED378216D;
-	Mon, 13 May 2024 14:52:20 +0000 (UTC)
-Message-ID: <8a6ec70f8054979db20fc7f62d12d4e4f5747324.camel@collabora.com>
-Subject: Re: [PATCH] media: verisilicon: Fix auxiliary buffers allocation
- size
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	ezequiel@vanguardiasur.com.ar, p.zabel@pengutronix.de, mchehab@kernel.org, 
-	heiko@sntech.de
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kernel@collabora.com
-Date: Mon, 13 May 2024 10:52:14 -0400
-In-Reply-To: <20240328093439.18712-2-benjamin.gaignard@collabora.com>
-References: <20240328093439.18712-1-benjamin.gaignard@collabora.com>
-	 <20240328093439.18712-2-benjamin.gaignard@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
+	s=arc-20240116; t=1715611944; c=relaxed/simple;
+	bh=kxd5hnI6ad5f+wn2klbEvtrY/THA3Cx3xld09WS1Y2g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WaWyIZ88RVOkazA5rozuJ2yuGCF9kBHofz3f77uuOLEMuqTuBB5aKCjt3bVMPcmbMqL/fjhY9KqFU/r0pymxyXL8XH9gKCWkVeMuT6fTgeUdCuJz32M8iOWAenKXoAj4vOeDLirKc4iD3rg8KlPkHZJKdWjMREtTCfqTkUbx4hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DEBC1007;
+	Mon, 13 May 2024 07:52:46 -0700 (PDT)
+Received: from [10.57.68.95] (unknown [10.57.68.95])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 027603F641;
+	Mon, 13 May 2024 07:52:17 -0700 (PDT)
+Message-ID: <a5eecb04-c73c-41cc-b989-80bfc54b4c58@arm.com>
+Date: Mon, 13 May 2024 15:52:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2 1/9] riscv: Restore the pfn in a NAPOT pte when
+ manipulated by core mm code
+Content-Language: en-GB
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-mm@kvack.org
+References: <20240508113419.18620-1-alexghiti@rivosinc.com>
+ <20240508113419.18620-2-alexghiti@rivosinc.com>
+ <8aa0a606-f47c-4826-96ad-121ac1f7eb96@arm.com>
+ <CAHVXubjTbDd6t5NxbvsLTMtHFDd0ZL2aJFPtcjJe=jZDtWjP6A@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAHVXubjTbDd6t5NxbvsLTMtHFDd0ZL2aJFPtcjJe=jZDtWjP6A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Le jeudi 28 mars 2024 =C3=A0 10:34 +0100, Benjamin Gaignard a =C3=A9crit=C2=
-=A0:
-> Use v4l2_av1_tile_info->tile_cols to know the number of colons
-> in the frame. This made auxiliary buffers meory size computation
-> more accurate.
->=20
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> Fixes: 727a400686a2 ("media: verisilicon: Add Rockchip AV1 decoder")
+On 13/05/2024 14:06, Alexandre Ghiti wrote:
+> Hi Ryan,
+> 
+> On Fri, May 10, 2024 at 2:20 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>
+>> On 08/05/2024 12:34, Alexandre Ghiti wrote:
+>>> The core mm code expects to be able to extract the pfn from a pte. NAPOT
+>>> mappings work differently since its ptes actually point to the first pfn
+>>> of the mapping, the other bits being used to encode the size of the
+>>> mapping.
+>>>
+>>> So modify ptep_get() so that it returns a pte value that contains the
+>>> *real* pfn (which is then different from what the HW expects) and right
+>>> before storing the ptes to the page table, reset the pfn LSBs to the
+>>> size of the mapping.
+>>
+>> Did you consider leaving the pte as is and instead modifying your pte_pfn()
+>> implementation?
+>>
+>> For arm64 at least, it is beneficial to keep the pte marked as contiguous when
+>> passing it up to core-mm because there are other helpers which need to parse the
+>> contiguous bit (e.g. pte_leaf_size()). If we were to clear the cont bit in
+>> ptep_get() that info would be lost and perf_get_pgtable_size() would always
+>> conclude the leaf size is 4K even when it is actually 64K.
+> 
+> I don't clear the contpte bit here (ie the napot bit), I'm just
+> setting the right pfn so that the core-mm code knows exactly which
+> page is targeted by each pte of a contpte region (remember riscv napot
+> extension uses the lsb of the pte pfn to encode the size the mapping,
+> so all ptes of a contpte region will return the same pfn).
+> 
+> And from pte_pfn(), we have no way of knowing from the pte value alone
+> which page is targeted, we need to know its position in the page table
+> to "guess" the right pfn.
 
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Ahh yes - good point!
 
-> ---
->  .../media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c    | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_de=
-c.c b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-> index cc4483857489..65e8f2d07400 100644
-> --- a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-> +++ b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-> @@ -257,7 +257,8 @@ static int rockchip_vpu981_av1_dec_tiles_reallocate(s=
-truct hantro_ctx *ctx)
->  	struct hantro_dev *vpu =3D ctx->dev;
->  	struct hantro_av1_dec_hw_ctx *av1_dec =3D &ctx->av1_dec;
->  	struct hantro_av1_dec_ctrls *ctrls =3D &av1_dec->ctrls;
-> -	unsigned int num_tile_cols =3D 1 << ctrls->tile_group_entry->tile_col;
-> +	const struct v4l2_av1_tile_info *tile_info =3D &ctrls->frame->tile_info=
-;
-> +	unsigned int num_tile_cols =3D tile_info->tile_cols;
->  	unsigned int height =3D ALIGN(ctrls->frame->frame_height_minus_1 + 1, 6=
-4);
->  	unsigned int height_in_sb =3D height / 64;
->  	unsigned int stripe_num =3D ((height + 8) + 63) / 64;
+> 
+>>
+>>>
+>>> And make sure that all NAPOT mappings are set using set_ptes().
+>>>
+>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>> ---
+>>>  arch/riscv/include/asm/pgtable-64.h |  11 +++
+>>>  arch/riscv/include/asm/pgtable.h    | 105 ++++++++++++++++++++++++++--
+>>>  arch/riscv/mm/hugetlbpage.c         |  38 +++++-----
+>>>  3 files changed, 128 insertions(+), 26 deletions(-)
+>>>
+>>> diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
+>>> index 221a5c1ee287..9fe076fc503e 100644
+>>> --- a/arch/riscv/include/asm/pgtable-64.h
+>>> +++ b/arch/riscv/include/asm/pgtable-64.h
+>>> @@ -106,6 +106,17 @@ enum napot_cont_order {
+>>>  #define napot_cont_mask(order)       (~(napot_cont_size(order) - 1UL))
+>>>  #define napot_pte_num(order) BIT(order)
+>>>
+>>> +static inline bool is_napot_order(unsigned int order)
+>>> +{
+>>> +     unsigned int napot_order;
+>>> +
+>>> +     for_each_napot_order(napot_order)
+>>> +             if (order == napot_order)
+>>> +                     return true;
+>>> +
+>>> +     return false;
+>>> +}
+>>> +
+>>>  #ifdef CONFIG_RISCV_ISA_SVNAPOT
+>>>  #define HUGE_MAX_HSTATE              (2 + (NAPOT_ORDER_MAX - NAPOT_CONT_ORDER_BASE))
+>>>  #else
+>>> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>>> index 9f8ea0e33eb1..268c828f5152 100644
+>>> --- a/arch/riscv/include/asm/pgtable.h
+>>> +++ b/arch/riscv/include/asm/pgtable.h
+>>> @@ -297,6 +297,8 @@ static inline unsigned long pte_napot(pte_t pte)
+>>>       return pte_val(pte) & _PAGE_NAPOT;
+>>>  }
+>>>
+>>> +#define pte_valid_napot(pte) (pte_present(pte) && pte_napot(pte))
+>>> +
+>>>  static inline pte_t pte_mknapot(pte_t pte, unsigned int order)
+>>>  {
+>>>       int pos = order - 1 + _PAGE_PFN_SHIFT;
+>>> @@ -306,6 +308,12 @@ static inline pte_t pte_mknapot(pte_t pte, unsigned int order)
+>>>       return __pte((pte_val(pte) & napot_mask) | napot_bit | _PAGE_NAPOT);
+>>>  }
+>>>
+>>> +/* pte at entry must *not* encode the mapping size in the pfn LSBs. */
+>>> +static inline pte_t pte_clear_napot(pte_t pte)
+>>> +{
+>>> +     return __pte(pte_val(pte) & ~_PAGE_NAPOT);
+>>> +}
+>>> +
+>>>  #else
+>>>
+>>>  static __always_inline bool has_svnapot(void) { return false; }
+>>> @@ -315,17 +323,14 @@ static inline unsigned long pte_napot(pte_t pte)
+>>>       return 0;
+>>>  }
+>>>
+>>> +#define pte_valid_napot(pte) false
+>>> +
+>>>  #endif /* CONFIG_RISCV_ISA_SVNAPOT */
+>>>
+>>>  /* Yields the page frame number (PFN) of a page table entry */
+>>>  static inline unsigned long pte_pfn(pte_t pte)
+>>>  {
+>>> -     unsigned long res  = __page_val_to_pfn(pte_val(pte));
+>>> -
+>>> -     if (has_svnapot() && pte_napot(pte))
+>>> -             res = res & (res - 1UL);
+>>> -
+>>> -     return res;
+>>> +     return __page_val_to_pfn(pte_val(pte));
+>>>  }
+>>>
+>>>  #define pte_page(x)     pfn_to_page(pte_pfn(x))
+>>> @@ -525,9 +530,91 @@ static inline void __set_pte_at(struct mm_struct *mm, pte_t *ptep, pte_t pteval)
+>>>
+>>>  #define PFN_PTE_SHIFT                _PAGE_PFN_SHIFT
+>>>
+>>> +#ifdef CONFIG_RISCV_ISA_SVNAPOT
+>>> +static inline int arch_contpte_get_num_contig(pte_t *ptep, unsigned long size,
+>>> +                                           size_t *pgsize)
+>>> +{
+>>> +     pte_t __pte;
+>>> +
+>>> +     /* We must read the raw value of the pte to get the size of the mapping */
+>>> +     __pte = READ_ONCE(*ptep);
+>>> +
+>>> +     if (pgsize) {
+>>> +             if (size >= PGDIR_SIZE)
+>>> +                     *pgsize = PGDIR_SIZE;
+>>> +             else if (size >= P4D_SIZE)
+>>> +                     *pgsize = P4D_SIZE;
+>>> +             else if (size >= PUD_SIZE)
+>>> +                     *pgsize = PUD_SIZE;
+>>> +             else if (size >= PMD_SIZE)
+>>> +                     *pgsize = PMD_SIZE;
+>>> +             else
+>>> +                     *pgsize = PAGE_SIZE;
+>>> +     }
+>>> +
+>>> +     /* Make sure __pte is not a swap entry */
+>>> +     if (pte_valid_napot(__pte))
+>>> +             return napot_pte_num(napot_cont_order(__pte));
+>>> +
+>>> +     return 1;
+>>> +}
+>>> +#endif
+>>> +
+>>> +static inline pte_t ptep_get(pte_t *ptep)
+>>> +{
+>>> +     pte_t pte = READ_ONCE(*ptep);
+>>> +
+>>> +#ifdef CONFIG_RISCV_ISA_SVNAPOT
+>>> +     /*
+>>> +      * The pte we load has the N bit set and the size of the mapping in
+>>> +      * the pfn LSBs: keep the N bit and replace the mapping size with
+>>> +      * the *real* pfn since the core mm code expects to find it there.
+>>> +      * The mapping size will be reset just before being written to the
+>>> +      * page table in set_ptes().
+>>> +      */
+>>> +     if (unlikely(pte_valid_napot(pte))) {
+>>> +             unsigned int order = napot_cont_order(pte);
+>>> +             int pos = order - 1 + _PAGE_PFN_SHIFT;
+>>> +             unsigned long napot_mask = ~GENMASK(pos, _PAGE_PFN_SHIFT);
+>>> +             pte_t *orig_ptep = PTR_ALIGN_DOWN(ptep, sizeof(*ptep) * napot_pte_num(order));
+>>> +
+>>> +             pte = __pte((pte_val(pte) & napot_mask) + ((ptep - orig_ptep) << _PAGE_PFN_SHIFT));
+>>> +     }
+>>> +#endif
+>>> +
+>>> +     return pte;
+>>> +}
+>>> +#define ptep_get     ptep_get
+>>> +
+>>>  static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>>>               pte_t *ptep, pte_t pteval, unsigned int nr)
+>>>  {
+>>> +#ifdef CONFIG_RISCV_ISA_SVNAPOT
+>>> +     if (unlikely(pte_valid_napot(pteval))) {
+>>> +             unsigned int order = ilog2(nr);
+>>> +
+>>> +             if (!is_napot_order(order)) {
+>>> +                     /*
+>>> +                      * Something's weird, we are given a NAPOT pte but the
+>>> +                      * size of the mapping is not a known NAPOT mapping
+>>> +                      * size, so clear the NAPOT bit and map this without
+>>> +                      * NAPOT support: core mm only manipulates pte with the
+>>> +                      * real pfn so we know the pte is valid without the N
+>>> +                      * bit.
+>>> +                      */
+>>> +                     pr_err("Incorrect NAPOT mapping, resetting.\n");
+>>> +                     pteval = pte_clear_napot(pteval);
+>>> +             } else {
+>>> +                     /*
+>>> +                      * NAPOT ptes that arrive here only have the N bit set
+>>> +                      * and their pfn does not contain the mapping size, so
+>>> +                      * set that here.
+>>> +                      */
+>>> +                     pteval = pte_mknapot(pteval, order);
+>>> +             }
+>>> +     }
+>>> +#endif
+>>
+>> I think all this complexity comes along due to using this function both as a
+>> public interface that the core-mm uses (which never sets napot)
+>> and also using
+>> it as an internal interface that riscv-hugetlb uses (which does set napot)? It
+>> might be more understandable if you layer it into a lower level/internal API and
+>> a higher level/public API (similar to arm64)?
+> 
+> I think you're right here, I'll try to do that too.
+> 
+> Thanks for your comments,
+> 
+> Alex
+> 
+>>
+>>> +
+>>>       page_table_check_ptes_set(mm, ptep, pteval, nr);
+>>>
+>>>       for (;;) {
+>>> @@ -535,6 +622,12 @@ static inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>>>               if (--nr == 0)
+>>>                       break;
+>>>               ptep++;
+>>> +
+>>> +#ifdef CONFIG_RISCV_ISA_SVNAPOT
+>>> +             if (unlikely(pte_valid_napot(pteval)))
+>>> +                     continue;
+>>> +#endif
+>>> +
+>>>               pte_val(pteval) += 1 << _PAGE_PFN_SHIFT;
+>>>       }
+>>>  }
+>>> diff --git a/arch/riscv/mm/hugetlbpage.c b/arch/riscv/mm/hugetlbpage.c
+>>> index 5ef2a6891158..fe8067ee71b4 100644
+>>> --- a/arch/riscv/mm/hugetlbpage.c
+>>> +++ b/arch/riscv/mm/hugetlbpage.c
+>>> @@ -256,8 +256,7 @@ void set_huge_pte_at(struct mm_struct *mm,
+>>>
+>>>       clear_flush(mm, addr, ptep, pgsize, pte_num);
+>>>
+>>> -     for (i = 0; i < pte_num; i++, ptep++, addr += pgsize)
+>>> -             set_pte_at(mm, addr, ptep, pte);
+>>> +     set_ptes(mm, addr, ptep, pte, pte_num);
+>>>  }
+>>>
+>>>  int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>> @@ -267,16 +266,16 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>>                              int dirty)
+>>>  {
+>>>       struct mm_struct *mm = vma->vm_mm;
+>>> -     unsigned long order;
+>>> +     size_t pgsize;
+>>>       pte_t orig_pte;
+>>> -     int i, pte_num;
+>>> +     int pte_num;
+>>>
+>>>       if (!pte_napot(pte))
+>>>               return ptep_set_access_flags(vma, addr, ptep, pte, dirty);
+>>>
+>>> -     order = napot_cont_order(pte);
+>>> -     pte_num = napot_pte_num(order);
+>>> -     ptep = huge_pte_offset(mm, addr, napot_cont_size(order));
+>>> +     pte_num = arch_contpte_get_num_contig(ptep, 0, &pgsize);
+>>> +     ptep = huge_pte_offset(mm, addr, pte_num * pgsize);
+>>> +
+>>>       orig_pte = get_clear_contig_flush(mm, addr, ptep, pte_num);
+>>>
+>>>       if (pte_dirty(orig_pte))
+>>> @@ -285,8 +284,7 @@ int huge_ptep_set_access_flags(struct vm_area_struct *vma,
+>>>       if (pte_young(orig_pte))
+>>>               pte = pte_mkyoung(pte);
+>>>
+>>> -     for (i = 0; i < pte_num; i++, addr += PAGE_SIZE, ptep++)
+>>> -             set_pte_at(mm, addr, ptep, pte);
+>>> +     set_ptes(mm, addr, ptep, pte, pte_num);
+>>>
+>>>       return true;
+>>>  }
+>>> @@ -301,7 +299,7 @@ pte_t huge_ptep_get_and_clear(struct mm_struct *mm,
+>>>       if (!pte_napot(orig_pte))
+>>>               return ptep_get_and_clear(mm, addr, ptep);
+>>>
+>>> -     pte_num = napot_pte_num(napot_cont_order(orig_pte));
+>>> +     pte_num = arch_contpte_get_num_contig(ptep, 0, NULL);
+>>>
+>>>       return get_clear_contig(mm, addr, ptep, pte_num);
+>>>  }
+>>> @@ -311,24 +309,23 @@ void huge_ptep_set_wrprotect(struct mm_struct *mm,
+>>>                            pte_t *ptep)
+>>>  {
+>>>       pte_t pte = ptep_get(ptep);
+>>> -     unsigned long order;
+>>> +     size_t pgsize;
+>>>       pte_t orig_pte;
+>>> -     int i, pte_num;
+>>> +     int pte_num;
+>>>
+>>>       if (!pte_napot(pte)) {
+>>>               ptep_set_wrprotect(mm, addr, ptep);
+>>>               return;
+>>>       }
+>>>
+>>> -     order = napot_cont_order(pte);
+>>> -     pte_num = napot_pte_num(order);
+>>> -     ptep = huge_pte_offset(mm, addr, napot_cont_size(order));
+>>> +     pte_num = arch_contpte_get_num_contig(ptep, 0, &pgsize);
+>>> +     ptep = huge_pte_offset(mm, addr, pte_num * pgsize);
+>>> +
+>>>       orig_pte = get_clear_contig_flush(mm, addr, ptep, pte_num);
+>>>
+>>>       orig_pte = pte_wrprotect(orig_pte);
+>>>
+>>> -     for (i = 0; i < pte_num; i++, addr += PAGE_SIZE, ptep++)
+>>> -             set_pte_at(mm, addr, ptep, orig_pte);
+>>> +     set_ptes(mm, addr, ptep, orig_pte, pte_num);
+>>>  }
+>>>
+>>>  pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
+>>> @@ -341,7 +338,7 @@ pte_t huge_ptep_clear_flush(struct vm_area_struct *vma,
+>>>       if (!pte_napot(pte))
+>>>               return ptep_clear_flush(vma, addr, ptep);
+>>>
+>>> -     pte_num = napot_pte_num(napot_cont_order(pte));
+>>> +     pte_num = arch_contpte_get_num_contig(ptep, 0, NULL);
+>>>
+>>>       return get_clear_contig_flush(vma->vm_mm, addr, ptep, pte_num);
+>>>  }
+>>> @@ -351,6 +348,7 @@ void huge_pte_clear(struct mm_struct *mm,
+>>>                   pte_t *ptep,
+>>>                   unsigned long sz)
+>>>  {
+>>> +     size_t pgsize;
+>>>       pte_t pte = ptep_get(ptep);
+>>>       int i, pte_num;
+>>>
+>>> @@ -359,8 +357,8 @@ void huge_pte_clear(struct mm_struct *mm,
+>>>               return;
+>>>       }
+>>>
+>>> -     pte_num = napot_pte_num(napot_cont_order(pte));
+>>> -     for (i = 0; i < pte_num; i++, addr += PAGE_SIZE, ptep++)
+>>> +     pte_num = arch_contpte_get_num_contig(ptep, 0, &pgsize);
+>>> +     for (i = 0; i < pte_num; i++, addr += pgsize, ptep++)
+>>>               pte_clear(mm, addr, ptep);
+>>>  }
+>>>
+>>
 
 
