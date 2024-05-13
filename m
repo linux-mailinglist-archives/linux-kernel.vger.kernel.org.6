@@ -1,106 +1,174 @@
-Return-Path: <linux-kernel+bounces-177608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7648C416E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:09:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC0C8C416C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D9AA1C229DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:09:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE77F1C22D17
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AFB152171;
-	Mon, 13 May 2024 13:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EC81509BF;
+	Mon, 13 May 2024 13:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="flRn3mXZ"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLHbT8oY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CE6DF6C;
-	Mon, 13 May 2024 13:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9E1DF6C;
+	Mon, 13 May 2024 13:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715605731; cv=none; b=MlH1gvueAWKip+cTrmfK1a84+sPpi4Q302TpBxI76xf9CQKgy8F6UGuzc6x69fKZ1NC2H5gAYoKRDQItZra5RcdYEdH66ro4OGv/BXObxMK9dQaaHg17qVFg27zsmMgSFMaPlScBHmJgxbNtVy0afdLYWyKoPVeNAiAnh4Yhmf0=
+	t=1715605724; cv=none; b=L2/OoBKNigAErHGeGHFoY8FcwThCc2ULN6OnWmnI+eEoTKN0dAuCUMYqXfY+lbIMPzgP7mgV0+9NIwjFWDuENaL6xieHWSqhbufaoNmZvgz1/pYbZ9flL7xu0HK4XUcq3QDe0gUEAd1ydNZCIJ7feaxBHacAGHdfcB7kdOPygsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715605731; c=relaxed/simple;
-	bh=zoSxVBCVN+gkwt4Gp0eaYQXVfaorf0WQt7DhqdHnm2c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XuoI8sKAyfO4TtSMSO3B9IjT9I4ATzr4Zg+e9mnkaD9k9WzVP8L/mTpGrR1iurTsR0wknp596EArI/y9aDx3QZY9RWUzdDWRYiyBBe6KeeJP5ZucirplaIsC86DUHUdYynHr8IG9U600HYeFITThzxDSQVNZNjT0PDEUa9fmFP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=flRn3mXZ; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=zoSxVBCVN+gkwt4Gp0eaYQXVfaorf0WQt7DhqdHnm2c=;
-	t=1715605729; x=1716815329; b=flRn3mXZiejYyJXcHhi6iCknEDNovmuCCT9UeWelz/lZF5h
-	H29WY6QKlt/mYp400YZbS8+tyV/y/+GtqrSV4jQ1eC0xgJ9G8uKpRJFe6tsryf7WWaQh4saapqWr8
-	OUv+ZxLJH2L+Zb4K9AZ6zaCmLms0aasIgvE2LcEmZ3semzjPT8KzaVT3YZ+hRZkXL0uqyxNGlQqHM
-	N4e2zhWvfclmRw97KKAfEZyNzWhkj3E7t8BbLuGz32nQ0bBN5khO9LvFMP62ncdEpwrIn6DOJkjsL
-	LZZ6lYri1masynJFV2FkVv1SDG6WXi+vKP4mEIWfumR3sdbV3ZrJn+C+joYr6uqw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1s6VPs-00000002HwD-0hyI;
-	Mon, 13 May 2024 15:08:32 +0200
-Message-ID: <d4f9861effd64c155f93cc712d2c7660b1cf2e4a.camel@sipsolutions.net>
-Subject: Re: [PATCH] arch/x86/um: Disable UBSAN sanitization
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com
-Cc: x86@kernel.org, linux-um@lists.infradead.org,
- linux-kernel@vger.kernel.org,  zohar@linux.ibm.com,
- linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Mon, 13 May 2024 15:08:30 +0200
-In-Reply-To: <dba181a54e76ba2916ecd4747f76e40e6fbbb757.camel@huaweicloud.com>
-References: <20240513122754.1282833-1-roberto.sassu@huaweicloud.com>
-	 <d4f4666bf745e83ea00b466b7a7cfb5132b8c7b9.camel@sipsolutions.net>
-	 <096121b3e74a7971b5e6a3d77ca8889380de1885.camel@huaweicloud.com>
-	 <f88384a305b90708db3b30012f9edf09690dc5ee.camel@sipsolutions.net>
-	 <dba181a54e76ba2916ecd4747f76e40e6fbbb757.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+	s=arc-20240116; t=1715605724; c=relaxed/simple;
+	bh=jMBP6V+KrQiY7ae7qCJD7wO2o7LlEvAAj86B765UqAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZHY05MmvjgRjHn4EjgUXS8XgO+5YCPvGL8PXRmjL+j5In/+D9d2miQlOHABOW7TCaO6xi8RxVOFer+6nFP+1F4MX/TGObyFd9EUCRYMkoutaE4L1lf7zw6Ia9rsk4fxXSD4eRzO63AqfU1lkRkR/fZxQ4pkhtj7ccYuP/cHbbJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLHbT8oY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C93C32782;
+	Mon, 13 May 2024 13:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715605724;
+	bh=jMBP6V+KrQiY7ae7qCJD7wO2o7LlEvAAj86B765UqAE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KLHbT8oYxB7LFOPNmCzkTbTuUHu5Xo7HGa+GZJwAtDu9mh+NF94yhQVh5y31OmTv8
+	 +9RbHUHEXJhpll++YzGTK9bpuLBF8O5kpnE7eaa+P1SU6PTaIKzhXKNeoAkSaEXORE
+	 BNyAfhtWDUhzxfX7xYLTguzxzVa4HGM4XIhMi6t85K6rG1Tv8j0MPoEIsu/n5qVGzA
+	 Q6IdgpzRwpfmHUwmdBm8nUIjVteAZDvrp4Yu21v663slo2hGKd6fABS8rTMttFNi3l
+	 VP+7+2TpKxG5onWKhFoTFKs3N+dWo7OiXz+5mZtOJ/oJ8Yjb3fGBgO6wy/RnmiCrat
+	 eFg5LPWwUyRuQ==
+Message-ID: <f3a5d43c-b94b-49ef-a883-c27e4720c8a5@kernel.org>
+Date: Mon, 13 May 2024 22:08:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] rust: block: introduce `kernel::block::mq` module
+To: Andreas Hindborg <nmi@metaspace.dk>, Bart Van Assche <bvanassche@acm.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ Keith Busch <kbusch@kernel.org>, Damien Le Moal <Damien.LeMoal@wdc.com>,
+ Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ Andreas Hindborg <a.hindborg@samsung.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Greg KH <gregkh@linuxfoundation.org>, Matthew Wilcox <willy@infradead.org>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Yexuan Yang <1182282462@bupt.edu.cn>,
+ =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
+ Joel Granados <j.granados@samsung.com>,
+ "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Daniel Gomez <da.gomez@samsung.com>, Niklas Cassel <Niklas.Cassel@wdc.com>,
+ Philipp Stanner <pstanner@redhat.com>, Conor Dooley <conor@kernel.org>,
+ Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>,
+ open list <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "lsf-pc@lists.linux-foundation.org" <lsf-pc@lists.linux-foundation.org>,
+ "gost.dev@samsung.com" <gost.dev@samsung.com>
+References: <20240512183950.1982353-1-nmi@metaspace.dk>
+ <20240512183950.1982353-2-nmi@metaspace.dk>
+ <1b618942-a0fe-45d9-90de-eede429e7284@acm.org> <87r0e5j2st.fsf@metaspace.dk>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <87r0e5j2st.fsf@metaspace.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-05-13 at 14:58 +0200, Roberto Sassu wrote:
-> On Mon, 2024-05-13 at 14:52 +0200, Johannes Berg wrote:
-> > On Mon, 2024-05-13 at 14:42 +0200, Roberto Sassu wrote:
-> > > On Mon, 2024-05-13 at 14:29 +0200, Johannes Berg wrote:
-> > > > On Mon, 2024-05-13 at 14:27 +0200, Roberto Sassu wrote:
-> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > >=20
-> > > > > Disable UBSAN sanitization on UML, since UML does not support it.
-> > > > >=20
-> > > >=20
-> > > > Luckily, that isn't actually true, nor does it actually do this at =
-all.
-> > > > Please fix the commit message.
-> > >=20
-> > > Thanks, I was actually wondering. I based that statement based on
-> > > ARCH_HAS_UBSAN=3Dn.
-> > >=20
-> > > Any other solution would be ok.
-> >=20
-> > Not sure I get it. What you're doing in the patch is perfectly fine and
-> > almost certainly required, but you're definitely not disabling UBSAN on
-> > ARCH=3Dum as you described in the commit message?
->=20
-> Ok, I guess the right word is instrumentation (got it from commit
-> d4be85d068b44). And the reason is that the vDSO is executing in user
-> space. Will fix it.
+On 2024/05/13 21:48, Andreas Hindborg wrote:
+> 
+> Hi Bart,
+> 
+> Bart Van Assche <bvanassche@acm.org> writes:
+> 
+>> On 5/12/24 11:39, Andreas Hindborg wrote:
+>>> +    /// Set the logical block size of the device.
+>>> +    ///
+>>> +    /// This is the smallest unit the storage device can address. It is
+>>> +    /// typically 512 bytes.
+>>
+>> Hmm ... all block devices that I have encountered recently have a
+>> logical block size of 4096 bytes. Isn't this the preferred logical
+>> block size for SSDs and for SMR hard disks?
+> 
+> Yes, that is probably true. This text was lifted from the entry on the
+> sysfs attribute in `Documentation/ABI/stable/sysfs-block`, but maybe
+> that needs to be updated as well.
+> 
+>>
+>>> +    /// Set the physical block size of the device.
+>>> +    ///
+>>> +    /// This is the smallest unit a physical storage device can write
+>>> +    /// atomically. It is usually the same as the logical block size but may be
+>>> +    /// bigger. One example is SATA drives with 4KB sectors that expose a
+>>> +    /// 512-byte logical block size to the operating system.
+>>
+>> Please be consistent and change "4 KB sectors" into "4 KB physical block
+>> size".
+> 
+> OK, I will. I can CC the changes to
+> `Documentation/ABI/stable/sysfs-block` then'
+> 
+>>
+>> I think that the physical block size can also be smaller than the
+>> logical block size. From the SCSI SBC standard:
+>>
+>> Table 91 — LOGICAL BLOCKS PER PHYSICAL BLOCK EXPONENT field
+>> -----  ------------------------------------------------------------
+>> Code   Description
+>> -----  ------------------------------------------------------------
+>> 0      One or more physical blocks per logical block (the number of
+>>        physical blocks per logical block is not reported).
+>> n > 0  2**n logical blocks per physical block
+>> -----  ------------------------------------------------------------
 
-No, UBSAN is fine, but you're only disabling it for the vDSO :) The
-commit message doesn't even mention the vDSO though.
+That text is bad. 0 really means physical == logical. Otherwise, there is no way
+to know how to access the drive because the logical size is the unit for
+accessing the drive. In practice, the logical block size is always smaller or
+equal to the physical block size. The physical block size is always a power of 2
+number of logical blocks.
 
-johannes
+> How does that work? Would the drive do a read/modify/write internally?
+
+Yes.
+
+> Would that not make the physical block size as seen from the OS equal to
+> the smaller logical block size?
+
+Not necessarily. There are a lot of 512e drives out there: 4K physical, 512B
+logical. So applications/hosts can still do 512B accesses for compatibility but
+performance may be bad. For such drive, the user should really do 4K aligned
+accesses.
+
+> 
+>>
+>>> +impl<T: Operations, S: GenDiskState> GenDisk<T, S> {
+>>> +    /// Call to tell the block layer the capacity of the device in sectors (512B).
+>>
+>> Why to use any other unit than bytes in Rust block::mq APIs? sector_t
+>> was introduced before 64-bit CPUs became available to reduce the number
+>> of bytes required to represent offsets. I don't think that this is still
+>> a concern today. Hence my proposal to be consistent in the Rust block::mq API
+>> and to use bytes as the unit in all APIs.
+> 
+> I think that is very good idea. How do others feel about this?
+> 
+> BR Andreas
+> 
+> 
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
