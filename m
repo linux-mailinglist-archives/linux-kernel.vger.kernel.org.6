@@ -1,176 +1,179 @@
-Return-Path: <linux-kernel+bounces-177219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627C58C3B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D085F8C3B91
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852341C20EFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:45:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 464861F214D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4E11465AD;
-	Mon, 13 May 2024 06:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CD91465AA;
+	Mon, 13 May 2024 06:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JKCbKcYr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="F/Yb5pY9"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2060.outbound.protection.outlook.com [40.107.93.60])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B54B50291;
-	Mon, 13 May 2024 06:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715582694; cv=none; b=t+Yr4MF6r8VOn8qp3MR9FFbbSXV3HipyShdsLvY7AlmsA+IqMpndQRLWrU0jhT3od1/auqkCW5/hyci96BJlQm52ZAOYHHtj6wTxdXxaLUTjzNtMnEN2jX4f3goeAGQYzoqaX2kwpfAFJodq/hd+1euS6ScBbADf9LtakpQMlZs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715582694; c=relaxed/simple;
-	bh=nXq7taxxO3JmxhnRidgrhbb405e2XuxFNsxB6fFsriY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqsZ9qFhRwXT+WNoe9Z41ELgCI16E9B7f2vXVv0q1w8qd6NoUXTycZAe0Rpv1EO8F8URaiQwz/pDb+eImUlAKoi4JhM/b0F7fmODTr66/JzV4+bJruj6+WcI1ruJzwc/GA0rNDzLguTURJb+at61kPEFbEDemoReR0gS2wawkYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JKCbKcYr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF37CC113CC;
-	Mon, 13 May 2024 06:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715582693;
-	bh=nXq7taxxO3JmxhnRidgrhbb405e2XuxFNsxB6fFsriY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JKCbKcYrka4uQS8xXY9NIsNwsvYa6QRq1rM0f9hGVe+APSUp4f8uRHNeqSb06WyI2
-	 kdC2JK1B43GqJ5HiTc/p0gErpql+V4iVLNeuOY20M7VFzBY1HdT/kBWjZnxcQG1KSx
-	 +OVF6ntJZSwM5OHCSBeIYW/FHIhvEt7aKHfTgaieYM+tHTbCL+eJlM6LLA30phoum8
-	 AHBHyZXWt2zrEVaPBpbCjTWptGANEUvN/6gGdzIYRCxbH1FkqQZHWp8zoy+d+2fL2n
-	 WmTjI062s62za9GlXtAQLYAb7DxyS2QrEHQp9d3H3bHvXxm3nA99EjwzAuaYD+ERBu
-	 TvmGonECdSI3w==
-Date: Sun, 12 May 2024 23:44:51 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kousik Sanagavarapu <five231003@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, Nishanth Menon <nm@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Julia Lawall <julia.lawall@inria.fr>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/3] soc: ti: knav_qmss_queue: do device_node auto cleanup
-Message-ID: <20240513064451.GB652533@thelio-3990X>
-References: <20240510071432.62913-3-five231003@gmail.com>
- <202405111846.3m9z398l-lkp@intel.com>
- <ZkCZTv0Gci3xxKtw@five231003>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5325550291
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715582737; cv=fail; b=qVmHsCyxadnwmhk18swT4X6DAQK4ozmk2kG6RZbIl+nm3PqudrS157dodJWewdJVetmYb1+qa/pubbsuf0FfxW8hdfFOGcg0KqnYHGjoidtJ4pGCWtYKZPu7Z32B0MipnXWXzB4A8JSivus3g4WrMYA2dfkbiX7RQmBM9tHHzvo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715582737; c=relaxed/simple;
+	bh=7qPkeXtrfKG35Sk6Xn6vd/c8Ina/42aTLPTpWJZ7aHM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=i208/hq/h0rCGeHlTS9nnaZi8G5xLFpTDQY3ftU5+i/NRNJVBeDZfaQgmTzi7Hs1evkSZ/m2q9ngCKRZZF6+bbL4eio1p6dn3IJHltlZugpgPr0CZre9p650AtYxuj8ahDEUJDn8ewmB9XDPTeNTwR2ikw3BD5fppMqOxgKOUbU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=F/Yb5pY9; arc=fail smtp.client-ip=40.107.93.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kjfdu51JXioPrLf43VLxPd6s+rLY/iDO80CkaQuqa8Bm9lDS+LbiLFKo218UCKw+AlO7s88CNzt8Xs2G/xlpMtPYZkdR1Up7CSwZaSDM43jehXrnIH6ZeXHSpxIJWGLxMxqQu9oLm5keQ+SNGPTpZh10YCjH/O+AFti+StzKKZW2Plzjgr+V6ig629IkdMjyoVVioQrJpMc3gQzpCwGAC9G38do4AYgfBQVundaHwIGv2B2l40yLO5rISgoEYkMtWnYY3yLGXL2sfhtcailWh5zQtKzBua2i0+DfseLUwZEojfvGj3LbQxIQtyMhRapqZ7K0fp5YI++xjN2fHNNVDg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3eBqRsCIaNVoCC/OfYelHst/HlXfviTSk2BGerUSOpc=;
+ b=XJZ4zWe70371u29zSXdTeOp8ivu90K/8X6T993CJAvmXTOdyfqtkEXOGseDPY9b3ACJ9LjauBPt1y/v+FByCD2qPd6nQJ04WDQ/XDmJcEe00lffOmS6P/CDP7MCmwP8VEMcAKOx88Q/UJgitOzqF8o6NCg605j0k6FIbUrG3KANjQZ+rrMOoykVxeLS5YQ3d+xRfyOgxUBaZ2Re5Hqcx/WK75ryQiiNDJlG13dt3Z1jQAHDNORTjoqjKXGR0PtPke+NLniXiVOrW6ylUu13HQcIoza4TZo45pWyqHiTMLqXThyaot1L7yUIZETr39Z9Bkx7APl3if27Fs5G994jIuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3eBqRsCIaNVoCC/OfYelHst/HlXfviTSk2BGerUSOpc=;
+ b=F/Yb5pY94bJ7bwDXA+F9+BrA9d+4LMw6s5of/+CBJ3B1OiFBlhNvNpzJVv/xOnj1M3cg3D9DoS4xG0Eoi0seDVHMN68pOVAsMjhq/ycizkDtq/Jcxc/QjBRYmwfYpgb4v4QFVfIx8ETZLDo0Y9QpUS13miS/GVC5Qszu/aH8fck=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ MW4PR12MB7238.namprd12.prod.outlook.com (2603:10b6:303:229::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.54; Mon, 13 May
+ 2024 06:45:26 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%7]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 06:45:26 +0000
+Message-ID: <8da8c8cf-6815-4d8c-b21c-6efe3a7a4dc3@amd.com>
+Date: Mon, 13 May 2024 13:45:18 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] iommu/amd: Fix sysfs leak in iommu init
+Content-Language: en-US
+To: "Kun(llfl)" <llfl@linux.alibaba.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Jerry Snitselaar <jsnitsel@redhat.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <c8e0d11c6ab1ee48299c288009cf9c5dae07b42d.1715215003.git.llfl@linux.alibaba.com>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <c8e0d11c6ab1ee48299c288009cf9c5dae07b42d.1715215003.git.llfl@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR01CA0197.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::8) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkCZTv0Gci3xxKtw@five231003>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|MW4PR12MB7238:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6090f13c-1968-4837-4794-08dc73184568
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|1800799015|366007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmtEQm96a1g4RVJzblNIK05tSUl1eE1RTGZSQmx0ak5NZXV0SFZhb2ZSSzIy?=
+ =?utf-8?B?ckZJaVAvNWtvUzgyaHhYQXNFVzZtV1k2L1Z6akZCTjRBT2h1RTJBVTNiWThV?=
+ =?utf-8?B?anh3ZnNEcGhrc21UTUNMbmdRSzRFQUticmE1NDJZenJramQrT1h4ellzWlBo?=
+ =?utf-8?B?ellob040ekdZZHI5czhzK3lneXJFZFZlUUd5cDY0ZStBN2JHcEVEWDZ4QzVQ?=
+ =?utf-8?B?UmtGY2Nqb1U0L2pSWklzRHFuU0tjVFhnSVNZSjBHNkd3dkg2TUpFRGV4bGVN?=
+ =?utf-8?B?VU42eDJMcE9mVFdNQUtscjB0ZWdLSzkwMTQ0aXlUNmNhTHl5c25LQzZWY2F3?=
+ =?utf-8?B?WTN5aTJ6cGdHamFDMTZKalZBN09yWlZXS2hMTXFTYlY5bS9XQUtqNjdXQXc1?=
+ =?utf-8?B?Z1MxcGdmVmhOa1JVMXkwcFpMSzlySXJnYzBORzdyYWh0RDhBMDVSVGdOMmNr?=
+ =?utf-8?B?MHRuR0VneWQ0ZXIxR2RIRGczT1kyQmlNVHptdlJ0SmR1TENtSWIwZzJPek80?=
+ =?utf-8?B?anhUWVcwV21lQkNXeUFFcmJXbUZEQ1RPL1JoWktXblh4YXRkZk9pNzNwVEZB?=
+ =?utf-8?B?Mm53Szd5dkU5Q1M2ZEZKWFA2dHowaE5FRENabkZ4MHNTZWQ5S3JtbmZ3cG1G?=
+ =?utf-8?B?UWRoVUNBV3FNQ3d1bHpKOGpOa1Z0TEwxRk8wZzJieXV6OGlTNkliQXVadEhF?=
+ =?utf-8?B?blpJNmhMWGpvaHAvTlBmRDJpUk55OEUwRmVmWXdseVdxS3MrS01yTkoyeVMx?=
+ =?utf-8?B?ODVUTWFIZ3RxY0czRWNvZXpCWVE1UDNtbnBYQ01XTTg0aVFady80cFNlemJK?=
+ =?utf-8?B?M2Q2Zy8rNHZHdHBrYVhISXNCbmRYenpNWDNDakJpVk5oVFFDL2pqTmtmcWNB?=
+ =?utf-8?B?WDk3QlFWSG95VUxQK0IxcW5ZNjZTRVZuU3NiR0hVcGYvTDhuT2liVlVubWV2?=
+ =?utf-8?B?MHhFdDBGVTAzUzAxWGRPUVdZS0NCYjJRUGNGdnYxS3Z6eWpPQW14bmYycHRn?=
+ =?utf-8?B?UlNjdmtzVGVPeFJ0MVB0aTRuL3g5UWRzdTRaVU9zUUpUSncrVVNHeU5qWlpa?=
+ =?utf-8?B?aHgrUHlXZFNMcmZ6c3phNmJXSWlUUkQ0clp6VWhjVk1YelVsa2dNUWkybW9I?=
+ =?utf-8?B?eWRza3ErekpOamtWSkNZMVZ3WHdHV0pqNm1jRzNYZUIzakpBVENyblJ1R1Jh?=
+ =?utf-8?B?dktMc3BpbUE2Wlk4d2tBUTJNQkhpVlhaZ3BTT25kL01ZalhTV0xiQVVMNTBO?=
+ =?utf-8?B?WGVVOHh5TGhMZXZVZWd1UTZZR3hVWUxkYnN0Y3BqdG1WZCtyVk5CZWxlT1BI?=
+ =?utf-8?B?b1FpSDBLVEZGOGN5RjIyT0FDZnRFVEd5b1kwT012d2lkdUpCUHltUXEyalB4?=
+ =?utf-8?B?Y2hXTTloUWxVd1lhUytCaUkyU1FUT1RYTTFva3ZNNml0dHNyRkZjb2IwQXhj?=
+ =?utf-8?B?b3gzOVljWkIvd05rUjQ5SVI4eUtZSng5OXdGc1dJbXFMYU15Y0dTaHdibHR0?=
+ =?utf-8?B?VWhDT0tncXlmUG0rRzk4Z1lkZlhPcWtLT0hmQ2gxTXVjbFZ2QjF1dnpYUG5Y?=
+ =?utf-8?B?RmhRSE5MSUFiMmp0YnpkcVVTUlNEcVJnZHNKOFg3WGxZTEJMZUN6UTU3cUN4?=
+ =?utf-8?B?OEZ3dkVPSGkvT1RGdGlvb1Z4NktDRTRHa0hsQVRSNFRhODNUaWhwYXhMdk55?=
+ =?utf-8?B?aVJNVURtUzZqN21IYXo3bVFpRkZmbXZFWDVwT2d0WHIybGxCSDFrSmRRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OFAyTkJHMk9wUWd2b3gvS0RXNFc4bTUyOUVQTkZwUHNuVDZzS3dmUFQvQWY0?=
+ =?utf-8?B?dmVrd3ZGSGVHamUxdW5BYXkwR1R6N0w0VXNKNFhkd0I0WDFqeWVTb09UNGdi?=
+ =?utf-8?B?c0o3VlBRK01Pbjh0RkhtdjVjbW95ME1jM1dpZUhrOCs3T3EyOFIrdlExdGtL?=
+ =?utf-8?B?dGhmUWlrZTdiQ3pOVmRLUitKMGcxcjBXSEk5b3RoeHkzUTVPYm1ydnd2QjlK?=
+ =?utf-8?B?bEQ0YlhqTjR3WjgvcnoybnhmeXBRY3dkNVZYZXFGUjVNNDBvc2lwZjJoNjR1?=
+ =?utf-8?B?Mm8wUy9VR1EzdmZNZXJYeHFMVWdJTDgxcDhEUWR6QWViN1draGl1K0Z2aVM2?=
+ =?utf-8?B?Q05hSkFleW9zVzR4K3VOdTM2bGdYWEVPZ2F6bm4vL3g5R0UvTURPMnZNSTBV?=
+ =?utf-8?B?cWpqL21udmZEeHIveVFLS2M4alNlMFg1OEdITmpNTTZEOUhkeGgxTElYZnlz?=
+ =?utf-8?B?YnU4d1lzQ3hUT2R3WWo1QUxWRWtnQ3dCZHlQMXpLK29xWFpFcy9TMHNOdXNr?=
+ =?utf-8?B?WkxLS1Awb0dZRGtnMUp0cEQ4UDVlZC83aGRHS0x4RnhlSzRoVWpvRTUvYWtP?=
+ =?utf-8?B?OVdWZWVaVU9ZdFMzSGtQTUowaENoOVhXUmN5em9teHVpRzVvVis4bjhTYTBF?=
+ =?utf-8?B?WHJabWVGYUlVU0ExSjJPOGNsQ3dCQ1p1V1pkSGZtR1ZkRjZ5MGN4RjExdzlJ?=
+ =?utf-8?B?aUJMdk9BN3dLbW9XRXJ0aldWeHdHdVdFZlFnV3hiNGp4SUZQYVVSTzhuMksv?=
+ =?utf-8?B?THhKZnZTZGRncDVwZ2h2K0tHeHV2K3JnNzg5NytlbVEyUnNOSWFaY0hzemlW?=
+ =?utf-8?B?OFNzb09adnIwdXRZQXIveXo3Z2p6L1k1TituNW9OL0Qxd1RNR1NGN3FYSFlv?=
+ =?utf-8?B?dUgvRmlpM2ZwampyR0g4RjhERFp3ODBrY0FaWlVZZEhMUjJ6aEJjcHlCK0Fy?=
+ =?utf-8?B?UzUrYXpJREo0cXY5WVZaUUdORzh4a1h5RzVXaitmTFF0eGhMSUxDdVhvVGFT?=
+ =?utf-8?B?aldxclg0cGFGZFdtV1VzZ1RGazdjbktHTVBKbkFScXRKSFRHN2xWd1hZZXlr?=
+ =?utf-8?B?eEJpVjAyYm8xL2c1akIxdmtFNHVaZHhORDFDd0ZBR1JjZDRnS0ZucTZmaHhw?=
+ =?utf-8?B?MW92ejExdFkwaWc0MlhMOTMwMlJoVGNmN2gzRGN6UXdNRWJyamtPc3ljY3BK?=
+ =?utf-8?B?Wm5XU1JJVTFkSzFZOHlmVlloV0d2a2tOWUlpajF5a2xpcnZiODd5ZWR6dWR2?=
+ =?utf-8?B?bVkrdVBsMGg3ZzB6THNiSkVDWS9MeGJTYTVhTTdFcy9vSmVvVzJoZUZwQTRL?=
+ =?utf-8?B?SU9TV3B6SkZLUFplQzJkOE1sZGluc2M5aTZBZHM5aHhoWlZGRGtmQXorbzlk?=
+ =?utf-8?B?bUZRRExxZG5XTno0RmhTa00wN080MjZzaC9PZUQvUHdoTm54eHNwbzhyYktO?=
+ =?utf-8?B?OGNBUXJNR04ycjVmTTlRUDBMZUZES3IrZEl5Y3BaclpHTE1VNEVMbFhNcWpi?=
+ =?utf-8?B?RnVITlJHODR3clVaWExHTUloVHAvMHVoeHYrZm5DRklzODEyeWV6N0NCQkkv?=
+ =?utf-8?B?bUVHOVFTVyt5R0J1YlQ5aEY1aVlyMVVGZ2FsbWlEUmw2OUdVak13M083eGZo?=
+ =?utf-8?B?RHhZWG9vd0pEUCs0ZlRHN04xSi9UMU1WSnN3aFFmV1JhMXlUcERxc0RzUTBE?=
+ =?utf-8?B?MVhHbG1XV2c0amZHVThWNzVZZHFpRVhGVUVxc1J0WFp1Tk90NlNPb2MzNnRS?=
+ =?utf-8?B?Z2FhRXpRZUtIMGdGaytkVEgvN3F6ZnVTWEgvNzdNYTh0UHVWWUdYMVZDZUtL?=
+ =?utf-8?B?dURuTUhQeXA5OUU4Z1ZZMi9sMDZ2QzJ2emd5RXh0RGEyS05PaldNOERjc25r?=
+ =?utf-8?B?Q2hORkJ5WWhZNC9FUWtoeGtaaU1FckJEOTRhc3ZyN2lpQ1paNFBpNDJoaVln?=
+ =?utf-8?B?cVc4dHo1VTNGWm50OWVSVk5tZzhhZjRIbE44K0xMcmZEQWJoUmxsUW1mVGdh?=
+ =?utf-8?B?Skh0L0xJU0Z0ejhqOXJiamttS2dJQis1MllHTGpaY2VHWDYzZUt4RG9rS2o2?=
+ =?utf-8?B?OFl0YmMwL28rcG1tblM4RE1QN0tJVDJnNGt2K3MzNm81ZWk1Wi9peTJNUzA3?=
+ =?utf-8?Q?LEXX8MGDVuYbEnHnxyCrCb0Xj?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6090f13c-1968-4837-4794-08dc73184568
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 06:45:26.4457
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fXJSIGT9g+yYSkSntEVn6m7V3xTYnrPY1t5Qrps1EKzLlLR7mgBzhNvYKQpeoDSyxMVdAPvn0ys7/nP90EuXtw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7238
 
-On Sun, May 12, 2024 at 03:56:22PM +0530, Kousik Sanagavarapu wrote:
-> On Sat, May 11, 2024 at 06:12:39PM +0800, kernel test robot wrote:
-> > Hi Kousik,
-> > 
-> > kernel test robot noticed the following build errors:
-> > 
+
+
+On 5/9/2024 7:42 AM, Kun(llfl) wrote:
+> During the iommu initialization, iommu_init_pci() adds sysfs nodes.
+> However, these nodes aren't remove in free_iommu_resources() subsequently.
 > 
-> [...]
-> 
-> > All errors (new ones prefixed by >>):
-> > 
-> > >> drivers/soc/ti/knav_qmss_queue.c:1853:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1840:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1835:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1831:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1822:4: error: cannot jump from this goto statement to its label
-> >                            goto err;
-> >                            ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1818:4: error: cannot jump from this goto statement to its label
-> >                            goto err;
-> >                            ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1810:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1813:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *pdsps __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1806:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1813:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *pdsps __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1795:3: error: cannot jump from this goto statement to its label
-> >                    goto err;
-> >                    ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1855:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *regions __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1826:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *queue_pools __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1813:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *pdsps __free(device_node) =
-> >                                ^
-> >    drivers/soc/ti/knav_qmss_queue.c:1801:22: note: jump bypasses initialization of variable with __attribute__((cleanup))
-> >            struct device_node *qmgrs __free(device_node) =
-> >                                ^
-> >    9 errors generated.
-> 
-> Seems like gcc didn't catch this when I compiled locally.
+> Fixes: 39ab9555c241 ("iommu: Add sysfs bindings for struct iommu_device")
+> Signed-off-by: Kun(llfl) <llfl@linux.alibaba.com>
 
-FWIW, you may notice this as you do more conversions. The fact that GCC
-does not warn at all is a GCC bug as far as I am aware (i.e., clang's
-error is correct):
-
-https://gcc.gnu.org/bugzilla/show_bug.cgi?id=91951
-
-which has come up in other places:
-
-https://lore.kernel.org/20240425174732.GA270911@dev-arch.thelio-3990X/
-
-Cheers,
-Nathan
+Reviewed-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
