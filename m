@@ -1,247 +1,181 @@
-Return-Path: <linux-kernel+bounces-178003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B61B8C4752
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:00:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6C68C4759
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075981F22BE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A5941F24037
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F093B54BD8;
-	Mon, 13 May 2024 18:59:55 +0000 (UTC)
-Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392147F4B;
+	Mon, 13 May 2024 19:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F88L8rB4"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52B8446DE;
-	Mon, 13 May 2024 18:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8903441C69
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626795; cv=none; b=AmOyvrPMdyS7HgXet3jq7ImtZddr0/lQwhTG7P40E9BuwKX3QOAnCpvWt1QNiX1sRTzvGQhocF91qieWcEKAPLNylxQPx/z1xg0lb5NJegby0hQuj+HjPyAENh0zsCbwqYmVDMRag+K1tUxFJCrXsrSvMF/+EYVVtFjAV7jI9AM=
+	t=1715627032; cv=none; b=sASMc0wtt73rli8wgB1hH21LBRyAjMa/A1iF8chTKjJ2ACVNA5LGfWrmYYkxFfUPkPUllhfd4uQQ5uf6weG7wTw65PdKq+RYygzJXU7oAtx1ZpbOwH0niI7pJOw3LIchAo3wVcEtmml/jVm7m+ftzKNvBgce5YCsvgxwWwEKAo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626795; c=relaxed/simple;
-	bh=aePf0JOBXn78wI9ftaCWPhl/wej/6T9oe6C/HoTRS8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cvCKEkfnYCYRj8tQRuXE3ncZd03xUENEL9tMM0kwnQ6yX8jTZaTHBcLfjss4LPMbTMu/KR1eW06bbdhjhKoabq4L465U+xTjGw4m3SsT7fV9D9lXoxH0ugvpHcmfZt5XyL6eq5UhxwQGfQkqwk5+Cvpmv5yorNj9E7UvOT/TCdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; arc=none smtp.client-ip=178.254.4.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
-Received: from [2.211.228.80] (helo=marius.localnet)
-	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <mail@mariuszachmann.de>)
-	id 1s6atl-0073cy-N1;
-	Mon, 13 May 2024 20:59:45 +0200
-From: Marius Zachmann <mail@mariuszachmann.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v3] hwmon: (corsair-cpro) Add firmware and bootloader information
-Date: Mon, 13 May 2024 20:59:45 +0200
-Message-ID: <4918546.31r3eYUQgx@marius>
-In-Reply-To: <0e5d5843-e91a-4c0e-a7a7-fbda55301265@roeck-us.net>
-References:
- <20240513162328.17636-3-mail@mariuszachmann.de>
- <0e5d5843-e91a-4c0e-a7a7-fbda55301265@roeck-us.net>
+	s=arc-20240116; t=1715627032; c=relaxed/simple;
+	bh=ODnBtUQC1KGN4ow+iWiB+NzhvXE+z0uYg67vlzoql8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=isYeFkQqs7Bd7WuQzL9IXZjsbo2/7t0sonsYXk8kPZlTaWFmtGVoLCyZTibKByFKky0ujSUyXLhUX6QsPOtQ3CA8e6tzEj6TGzZrquFyLNHXrLMw8AJxzAFnQOzJcJ1NpOnG2E9XuXb+jS/f+ih5MzJuR4zm1a51WHR0kFLqanE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F88L8rB4; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e0933d3b5fso70588171fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715627027; x=1716231827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nhvUe0kz82j++VbhjIKW6Ozs4qMAqHSTH+1XrVw/7S0=;
+        b=F88L8rB4UB8o45X+uuVh56RqHNcVBskatOIFhVaO4kl1vtGv5fLmcyj5Dx9EvhDZNE
+         ADybMfqCX1x+uagiX5Sco95XrX8fGwOywU0rHwBdQGlJ2hIDpjfW2oHQcTmvki59p6M5
+         V8TGEPBqdWI5cgi7ZQ9/o2CTyOkbEq8TsukYDkCC497chYIMHxyYJGdJ6bK8abuKRNLh
+         ox99c3TCHFyS8VtxCQdu/PisMYnwvpv536wJSeDlmoES7kdIRA5hzKRLmtK4IGwXmv6+
+         Xv6xF/S6DVW3Mw+5HRuvdHt31f/ISraQp5Jj1iQHlxm0/ArIUkWsHYHZXJ7myKdNoLKl
+         KTqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715627027; x=1716231827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nhvUe0kz82j++VbhjIKW6Ozs4qMAqHSTH+1XrVw/7S0=;
+        b=Ad16SLplY78e0Q6dC0J/aQDiSfy3P8bqA43rsbUx0XnYbYEJTv8H0JKKHB5j1lmGMP
+         0eFY6gRTWEmNh+GKCd5CJb4lriET+6hsn5k6bS0xdvAIrQ5MvDwhFUQYC/uyB81+H1jH
+         QSbEc5/XGZaRDDUQ6Z/On2L5fya3klptqZeLedBJ2QeAUGZu8S94NtfPNOHPeJjfB3Y3
+         kas8BfmlGqJ+iR/kEtMDdIrH2z1epBTAVDOCTfp3qux01n1nTgXuwrhVxvhCBvsOzyyI
+         5uGOieXuqWJI8kq3t3INkL8/TlHncwilMZhYQMnZwFNK9urE6XU+Ci6lxksVCew/z4Ba
+         OFNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXcZvXkeyNzMCdOtjcXkN0yRaIBqyDGwfWf67j5ZHo4ZRmYZnCr6crZCS3T0C4rOElLxSx5oYPqskSz3R1LvBzO2gJIbxsOOoj/6iFM
+X-Gm-Message-State: AOJu0YwcVeG3WNoEl/7Z8EbXzCWixzkLFuE6ZQ7hnHOWwgDniZALAcgM
+	NxBzvf3cfIq1YTZ0imnIM+t5F2Gjb5abcHtJ3V7vhUfa1EVsLMnqHYOKOYQRu/m6FXW7Yw604rd
+	bbxivwIhgI6Yw0YYL0iKVdipRnKuoiCgyLicjaw==
+X-Google-Smtp-Source: AGHT+IGZ69IeXMlMpqoM2M2YCgUD+Q6OrAktJUZz+SfLTgBzkeHUgQGwGofSbNJO2eeSU7To0QFto6gNN1OAzOT88qk=
+X-Received: by 2002:a2e:2c15:0:b0:2e1:c6bd:ebba with SMTP id
+ 38308e7fff4ca-2e51fd42043mr59366271fa.1.1715627026721; Mon, 13 May 2024
+ 12:03:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-Con-Id: 241080
-X-Con-U: 0-mail
+References: <20240510141836.1624009-1-adureghello@baylibre.org>
+ <20240510141836.1624009-3-adureghello@baylibre.org> <CAMknhBGU8bXg7obzyjzb7a4AUbjnw_0b+mqEAYJJekAK2CB-CQ@mail.gmail.com>
+ <20240513185231.GA2920495-robh@kernel.org>
+In-Reply-To: <20240513185231.GA2920495-robh@kernel.org>
+From: David Lechner <dlechner@baylibre.com>
+Date: Mon, 13 May 2024 14:03:35 -0500
+Message-ID: <CAMknhBH6CrUmoUiSmU-EGc0eLw-HbaO30gAcsLBQppe3uYHpWw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: iio: dac: fix ad3552r gain parameter names
+To: Rob Herring <robh@kernel.org>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, jic23@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nuno.sa@analog.com, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 13.05.24 at 20:51:25 MESZ, Guenter Roeck wrote
-> On 5/13/24 09:23, Marius Zachmann wrote:
-> > Add support for reporting firmware and bootloader version using debugfs.
-> > Update documentation accordingly.
-> > 
-> > Signed-off-by: Marius Zachmann <mail@mariuszachmann.de>
-> > ---
-> > Changes in v3:
-> > - use different debugfs directory name for each device
-> > 
-> > Changes in v2:
-> > - better patch description
-> > - Documentation uses "Firmware version" and "Bootloader version"
-> > - removed conditional CONFIG_DEBUG_FS
-> > - get_fw_version gets called from ccp_debugfs_init
-> > - get_fw_version does print a hid_notice when an error occurs
-> >    instead of failing.
-> > ---
-> >   Documentation/hwmon/corsair-cpro.rst |  8 ++++
-> >   drivers/hwmon/corsair-cpro.c         | 71 ++++++++++++++++++++++++++++
-> >   2 files changed, 79 insertions(+)
-> > 
-> > diff --git a/Documentation/hwmon/corsair-cpro.rst b/Documentation/hwmon/corsair-cpro.rst
-> > index 751f95476b57..15077203a2f8 100644
-> > --- a/Documentation/hwmon/corsair-cpro.rst
-> > +++ b/Documentation/hwmon/corsair-cpro.rst
-> > @@ -39,3 +39,11 @@ fan[1-6]_target		Sets fan speed target rpm.
-> >   pwm[1-6]		Sets the fan speed. Values from 0-255. Can only be read if pwm
-> >   			was set directly.
-> >   ======================= =====================================================================
-> > +
-> > +Debugfs entries
-> > +---------------
-> > +
-> > +======================= ===================
-> > +firmware_version	Firmware version
-> > +bootloader_version	Bootloader version
-> > +======================= ===================
-> > diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-> > index 3e63666a61bd..f7d321d8676e 100644
-> > --- a/drivers/hwmon/corsair-cpro.c
-> > +++ b/drivers/hwmon/corsair-cpro.c
-> > @@ -10,11 +10,13 @@
-> >   
-> >   #include <linux/bitops.h>
-> >   #include <linux/completion.h>
-> > +#include <linux/debugfs.h>
-> >   #include <linux/hid.h>
-> >   #include <linux/hwmon.h>
-> >   #include <linux/kernel.h>
-> >   #include <linux/module.h>
-> >   #include <linux/mutex.h>
-> > +#include <linux/seq_file.h>
-> >   #include <linux/slab.h>
-> >   #include <linux/spinlock.h>
-> >   #include <linux/types.h>
-> > @@ -28,6 +30,8 @@
-> >   #define LABEL_LENGTH		11
-> >   #define REQ_TIMEOUT		300
-> >   
-> > +#define CTL_GET_FW_VER		0x02	/* returns the firmware version in bytes 1-3 */
-> > +#define CTL_GET_BL_VER		0x06	/* returns the bootloader version in bytes 1-2 */
-> >   #define CTL_GET_TMP_CNCT	0x10	/*
-> >   					 * returns in bytes 1-4 for each temp sensor:
-> >   					 * 0 not connected
-> > @@ -78,6 +82,7 @@
-> >   struct ccp_device {
-> >   	struct hid_device *hdev;
-> >   	struct device *hwmon_dev;
-> > +	struct dentry *debugfs;
-> >   	/* For reinitializing the completion below */
-> >   	spinlock_t wait_input_report_lock;
-> >   	struct completion wait_input_report;
-> > @@ -88,6 +93,8 @@ struct ccp_device {
-> >   	DECLARE_BITMAP(temp_cnct, NUM_TEMP_SENSORS);
-> >   	DECLARE_BITMAP(fan_cnct, NUM_FANS);
-> >   	char fan_label[6][LABEL_LENGTH];
-> > +	u8 firmware_ver[3];
-> > +	u8 bootloader_ver[2];
-> >   };
-> >   
-> >   /* converts response error in buffer to errno */
-> > @@ -496,6 +503,66 @@ static int get_temp_cnct(struct ccp_device *ccp)
-> >   	return 0;
-> >   }
-> >   
-> > +/* read firmware and bootloader version */
-> > +static void get_fw_version(struct ccp_device *ccp)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = send_usb_cmd(ccp, CTL_GET_FW_VER, 0, 0, 0);
-> > +	if (ret) {
-> > +		hid_notice(ccp->hdev, "Failed to read firmware version.\n");
-> 
-> If this happens, the debugfs file should not be created, or at the very least
-> display something like "unavailable".
-> 
-> > +	} else {
-> > +		ccp->firmware_ver[0] = ccp->buffer[1];
-> > +		ccp->firmware_ver[1] = ccp->buffer[2];
-> > +		ccp->firmware_ver[2] = ccp->buffer[3];
-> 
-> That makes me wonder: What is in buffer[0] ?
+On Mon, May 13, 2024 at 1:52=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Fri, May 10, 2024 at 10:43:18AM -0500, David Lechner wrote:
+> > On Fri, May 10, 2024 at 9:19=E2=80=AFAM Angelo Dureghello
+> > <adureghello@baylibre.com> wrote:
+> > >
+> > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > >
+> > > The adi,gain-scaling-p/n values are an inverted log2,
+> > > so initial naiming was set correct, but the driver uses just
+> > > adi,gain-scaling-p/n, so uniforming documentation, that seems
+> > > a less-risk fix for future rebases, and still conformant to datasheet=
+.
+> > >
+> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > ---
+> > >  .../devicetree/bindings/iio/dac/adi,ad3552r.yaml | 16 ++++++++------=
+--
+> > >  1 file changed, 8 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.ya=
+ml b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > > index 17442cdfbe27..9e3dbf890bfa 100644
+> > > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad3552r.yaml
+> > > @@ -94,13 +94,13 @@ patternProperties:
+> > >              maximum: 511
+> > >              minimum: -511
+> > >
+> > > -          adi,gain-scaling-p-inv-log2:
+> > > -            description: GainP =3D 1 / ( 2 ^ adi,gain-scaling-p-inv-=
+log2)
+> > > +          adi,gain-scaling-p:
+> > > +            description: GainP =3D 1 / ( 2 ^ adi,gain-scaling-p)
+> > >              $ref: /schemas/types.yaml#/definitions/uint32
+> > >              enum: [0, 1, 2, 3]
+> > >
+> > > -          adi,gain-scaling-n-inv-log2:
+> > > -            description: GainN =3D 1 / ( 2 ^ adi,gain-scaling-n-inv-=
+log2)
+> > > +          adi,gain-scaling-n:
+> > > +            description: GainN =3D 1 / ( 2 ^ adi,gain-scaling-n)
+> > >              $ref: /schemas/types.yaml#/definitions/uint32
+> > >              enum: [0, 1, 2, 3]
+> > >
+> > > @@ -109,8 +109,8 @@ patternProperties:
+> > >
+> > >          required:
+> > >            - adi,gain-offset
+> > > -          - adi,gain-scaling-p-inv-log2
+> > > -          - adi,gain-scaling-n-inv-log2
+> > > +          - adi,gain-scaling-p
+> > > +          - adi,gain-scaling-n
+> > >            - adi,rfb-ohms
+> > >
+> > >      required:
+> > > @@ -214,8 +214,8 @@ examples:
+> > >                  reg =3D <1>;
+> > >                  custom-output-range-config {
+> > >                      adi,gain-offset =3D <5>;
+> > > -                    adi,gain-scaling-p-inv-log2 =3D <1>;
+> > > -                    adi,gain-scaling-n-inv-log2 =3D <2>;
+> > > +                    adi,gain-scaling-p =3D <1>;
+> > > +                    adi,gain-scaling-n =3D <2>;
+> > >                      adi,rfb-ohms =3D <1>;
+> > >                  };
+> > >              };
+> > > --
+> > > 2.45.0.rc1
+> > >
+> > >
+> >
+> > The DT bindings are generally considered immutable. So unless we can
+> > prove that no one has ever put adi,gain-scaling-n-inv-log2 in a .dtb
+> > file,
+>
+> You can't ever prove that.
+>
+> > we probably need to fix this in the driver rather than in the
+> > bindings. (The driver can still handle adi,gain-scaling-p in the
+> > driver for backwards compatibility but the official binding should be
+> > what was already accepted in the .yaml file)
+>
+> If we can reasonable assume that the Linux driver is the only consumer,
+> there are no upstream dts users (in kernel or other opensource
+> projects), and/or the property is somewhat recent, then that's good
+> enough IMO.
+>
+> Rob
 
-buffer[0] is an errorcode returned by the device. It is read by ccp_get_errno,
-which is called by send_usb_cmd.
-
-> 
-> > +	}
-> > +
-> > +	ret = send_usb_cmd(ccp, CTL_GET_BL_VER, 0, 0, 0);
-> > +	if (ret) {
-> > +		hid_notice(ccp->hdev, "Failed to read bootloader version.\n");
-> 
-> Same here.
-> 
-> > +	} else {
-> > +		ccp->bootloader_ver[0] = ccp->buffer[1];
-> > +		ccp->bootloader_ver[1] = ccp->buffer[2];
-> > +	}
-> > +}
-> > +
-> > +static int firmware_show(struct seq_file *seqf, void *unused)
-> > +{
-> > +	struct ccp_device *ccp = seqf->private;
-> > +
-> > +	seq_printf(seqf, "%d.%d.%d\n",
-> > +		   ccp->firmware_ver[0],
-> > +		   ccp->firmware_ver[1],
-> > +		   ccp->firmware_ver[2]);
-> > +
-> > +	return 0;
-> > +}
-> > +DEFINE_SHOW_ATTRIBUTE(firmware);
-> > +
-> > +static int bootloader_show(struct seq_file *seqf, void *unused)
-> > +{
-> > +	struct ccp_device *ccp = seqf->private;
-> > +
-> > +	seq_printf(seqf, "%d.%d\n",
-> > +		   ccp->bootloader_ver[0],
-> > +		   ccp->bootloader_ver[1]);
-> > +
-> > +	return 0;
-> > +}
-> > +DEFINE_SHOW_ATTRIBUTE(bootloader);
-> > +
-> > +static void ccp_debugfs_init(struct ccp_device *ccp)
-> > +{
-> > +	char name[32];
-> > +
-> > +	get_fw_version(ccp);
-> > +
-> > +	scnprintf(name, sizeof(name), "corsaircpro-%s", dev_name(&ccp->hdev->dev));
-> > +	ccp->debugfs = debugfs_create_dir(name, NULL);
-> > +	debugfs_create_file("firmware_version", 0444, ccp->debugfs, ccp, &firmware_fops);
-> > +	debugfs_create_file("bootloader_version", 0444, ccp->debugfs, ccp, &bootloader_fops);
-> > +}
-> > +
-> >   static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >   {
-> >   	struct ccp_device *ccp;
-> > @@ -542,6 +609,9 @@ static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
-> >   	ret = get_fan_cnct(ccp);
-> >   	if (ret)
-> >   		goto out_hw_close;
-> > +
-> > +	ccp_debugfs_init(ccp);
-> > +
-> >   	ccp->hwmon_dev = hwmon_device_register_with_info(&hdev->dev, "corsaircpro",
-> >   							 ccp, &ccp_chip_info, NULL);
-> >   	if (IS_ERR(ccp->hwmon_dev)) {
-> > @@ -562,6 +632,7 @@ static void ccp_remove(struct hid_device *hdev)
-> >   {
-> >   	struct ccp_device *ccp = hid_get_drvdata(hdev);
-> >   
-> > +	debugfs_remove_recursive(ccp->debugfs);
-> >   	hwmon_device_unregister(ccp->hwmon_dev);
-> >   	hid_hw_close(hdev);
-> >   	hid_hw_stop(hdev);
-> 
-> 
-
-
-
-
+Ack. I stand corrected then.
 
