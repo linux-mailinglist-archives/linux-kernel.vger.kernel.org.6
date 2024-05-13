@@ -1,175 +1,224 @@
-Return-Path: <linux-kernel+bounces-177350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18C58C3D5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:34:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87888C3D23
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76937281F90
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32EF51F22021
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9BE147C7F;
-	Mon, 13 May 2024 08:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QDwC38E3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1101474AF;
+	Mon, 13 May 2024 08:28:58 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A658F4D9F2
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82D0146A91
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589289; cv=none; b=cxSbt6sguUpUt9+M+Z2huVLfZUc8rtjbcRlI14w2FU9mJVKMijuRLDP18PqyApGE2+8wHW2vao5cFrP9si3vcrQL/hwIFk0NhSKiiqJK2lhlg+8s/nEwvZCrPLHBPfO3n0KuyLHumWmle6ST3j2KhifDBBsQNg+emU6oig5gF3g=
+	t=1715588937; cv=none; b=d+ywUoWdqcPbBkJ1/esge2b7go9g52PwrydImIFiOJ4Qqng/FubmyFatjJ+yV/M+Y82p5fGTzdRq6n57huyatJhaFehFdp4afM51n5P7zuotHDVw1yGe1BtIgcPZwwh718PHlD9owf5qVrUnAOM+V/gmhg3jG6lHHU00byiiBX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589289; c=relaxed/simple;
-	bh=ACGTg+jqwLvGd3uIYLEqlsb3DEYNKvz+FsT7qMFK+3A=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3vw6nrKwIqQyyrlWOBlCwZaY5bZXRemcraDF4O609tFboGDDKfWNOcrvn0xv4sQa+2Iiv1K76vhIWuHl0euO9yC94KoeeD1Cc11DtsXAmuZNaUj5B4xVDJWVJeULXvCWABt+hUQT7LGi9vdeJZAO58yhJ42LAEZ4FCe5GMgxiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QDwC38E3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715589286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ACGTg+jqwLvGd3uIYLEqlsb3DEYNKvz+FsT7qMFK+3A=;
-	b=QDwC38E3DcNjIzhO+oEy09Xx73oUjHrj4J6KqfYhFKQhRqrSIDKCc1uVTSzxID+cXGfAxU
-	uVxTVj5hzaWdmNveXyzG1AdBh/0vV2OuC5X+7qWRXLciaZS+Kw43mQpdKtm9FsrX0AazD5
-	7b8grLB+wuMgNszif/ZlQVML8iJXqnk=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-GM1ieEeQOFK2nxsM74_bcA-1; Mon, 13 May 2024 04:29:35 -0400
-X-MC-Unique: GM1ieEeQOFK2nxsM74_bcA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-34deefe9142so2606062f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:29:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715588974; x=1716193774;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ACGTg+jqwLvGd3uIYLEqlsb3DEYNKvz+FsT7qMFK+3A=;
-        b=dwU1UIzCKQQZcs9SAv7rIcwsWuNN5uLndZ4UMFafkII7aYZGYKasON0M8S/O3nZeSY
-         4DcoAdvMdN8D4tyYOJq58tK3pRupwGIWmGVxbOYd2oXm7ESWsk9zm/xQQo2wrI9yW3M1
-         +YGbScrRxYlg6qubXU9lYy4gJdO6PSDbZpOycAt2CL6kl0kYkT/h9JPNhl687UPxHt7D
-         T1GQG/4nYK8cT3QSoDbpwy/0f+bqfQNjDf/gp6NVrNeU7aphtCZ/hIr1j+Z/fCctFjb1
-         F+iOcQS715vmlrJ1leO7zc6L+8krnf1+svi3rnXwQVz2RetYWPhUOwi7v+a6S1/TbVxV
-         f9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXP+FjXM59WPnxiF0HUnsJfYO4VVfMVsA234dsygqoAwQGBlQcwd6ofN4oqCKmiJQHWSBaP4iYeka3DUrhDUqU1G5DJDe2noSkqgdw/
-X-Gm-Message-State: AOJu0YySPNfSG08oZKmXCzqACtOPyFkM0g4kWcGVpK+4Sel9ivTOO6uZ
-	Jil/pOseGkTAXDAQjP/PuFbU6EDDN00P1xd5NxV4JEq77vGabK3pmms8G+tuKkGYhQfcNv+VGlR
-	AGETjSLxhpBBFPZnbwGdF2s+l2vdrJml5D7RqH0QChwspGemE1Kt1BFIYFnNNjw==
-X-Received: by 2002:a5d:444b:0:b0:34e:4cc2:7015 with SMTP id ffacd0b85a97d-3504a73bc06mr5553399f8f.31.1715588974253;
-        Mon, 13 May 2024 01:29:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvlr1r3nrAIBq+G7ChUWvWgw+OvWO5SlmWK/Uy2RAOomeNeCf7DAAnSfqycFznvhJ7OQM6xQ==
-X-Received: by 2002:a5d:444b:0:b0:34e:4cc2:7015 with SMTP id ffacd0b85a97d-3504a73bc06mr5553375f8f.31.1715588973707;
-        Mon, 13 May 2024 01:29:33 -0700 (PDT)
-Received: from localhost ([193.32.126.216])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a789asm10513081f8f.51.2024.05.13.01.29.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 01:29:33 -0700 (PDT)
-Date: Mon, 13 May 2024 10:29:22 +0200
-From: Maxime Ripard <mripard@redhat.com>
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
-	Sebastien Bacher <sebastien.bacher@canonical.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal <mzamazal@redhat.com>, 
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240513-heretic-didactic-newt-1d6daf@penduick>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
- <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
- <20240507183613.GB20390@pendragon.ideasonboard.com>
- <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
- <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
+	s=arc-20240116; t=1715588937; c=relaxed/simple;
+	bh=lHwMqh3/sQG+UrkqlERYWXvDvlxAsNbGETkH6rl1ZcY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eOddxlNR0J98TqeHin6tUq8j0VGsEtjF37G3KNv7j8Hp1KNNv4ymSvZLQfBPXSLjFipRJreKypEVLUwzhnPfOHeNP3UyNqxD0rLTwFJDHDGjoqwIjnSDImILmP01ATU/d21DERBTubr1wdE1lBtVGbpO2pNrCmlXHfiplP1NMhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <l.goehrs@pengutronix.de>)
+	id 1s6R3G-0005f7-2I; Mon, 13 May 2024 10:28:54 +0200
+Message-ID: <39033ed7-3e57-4339-80b4-fc8919e26aa7@pengutronix.de>
+Date: Mon, 13 May 2024 10:29:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="uitctc2p333ggqzy"
-Content-Disposition: inline
-In-Reply-To: <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] spi: stm32: enable controller before asserting CS
+To: Ben Wolsieffer <ben.wolsieffer@hefring.com>,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, Mark Brown
+ <broonie@kernel.org>, Alain Volmat <alain.volmat@foss.st.com>
+References: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>
+In-Reply-To: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.goehrs@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+Hi,
+
+I am in the process of updating an STM32MP157 based device from 6.8 to 6.9
+and have noticed SPI related issues that may be caused by this change.
+
+I am testing on an LXA TAC Generation 2 (arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen2.dts)
+and the issues I see are SPI transfer timeouts:
+
+   [   13.565081] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
+   [   13.565131] spi_master spi2: failed to transfer one message from queue
+   [   13.565134] spi_stm32 44005000.spi: spurious IT (sr=0x00010002, ier=0x00000000)
+   [   13.565145] spi_master spi2: noqueue transfer failed
+   [   13.565183] panel-mipi-dbi-spi spi2.0: error -110 when sending command 0x2a
+   [   13.769113] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
+   [   13.769163] spi_master spi2: failed to transfer one message from queue
+   [   13.769164] spi_stm32 44005000.spi: spurious IT (sr=0x00010002, ier=0x00000000)
+   [   13.769177] spi_master spi2: noqueue transfer failed
+   [   13.769210] panel-mipi-dbi-spi spi2.0: error -110 when sending command 0x2b
+   [   13.977028] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
+   [   13.977082] spi_master spi2: failed to transfer one message from queue
+   [   13.977095] spi_master spi2: noqueue transfer failed
+   [   14.460924] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
+
+Followed by workqueue lockups and the device becoming unresponsive later
+in the boot, preventing me from logging in and investigating further that way:
+
+   [   17.026263] spi_master spi2: noqueue transfer failed
+
+   TAC OS - The LXA TAC operating system 24.04+dev lxatac-00011 ttySTM0
+
+   lxatac-00011 login: root
+   [   62.434326] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 44s!
+   [   62.441321] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=-20 stuck for 44s!
+   …
+
+Reverting this commit fixes the issue for me. It may be some time before
+I get around to investigating the issue in detail, so I thought I should
+ask if anyone else has already noticed this as well.
+
+We are currently in the process of adding the device in question to
+KernelCI [1], which may help in catching such problems earlier.
+
+[1]: https://github.com/kernelci/kernelci-core/pull/2542
 
 
---uitctc2p333ggqzy
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 08, 2024 at 10:36:08AM +0200, Daniel Vetter wrote:
-> On Tue, May 07, 2024 at 04:07:39PM -0400, Nicolas Dufresne wrote:
-> > Hi,
-> >=20
-> > Le mardi 07 mai 2024 =E0 21:36 +0300, Laurent Pinchart a =E9crit=A0:
-> > > Shorter term, we have a problem to solve, and the best option we have
-> > > found so far is to rely on dma-buf heaps as a backend for the frame
-> > > buffer allocatro helper in libcamera for the use case described above.
-> > > This won't work in 100% of the cases, clearly. It's a stop-gap measure
-> > > until we can do better.
-> >=20
-> > Considering the security concerned raised on this thread with dmabuf he=
-ap
-> > allocation not be restricted by quotas, you'd get what you want quickly=
- with
-> > memfd + udmabuf instead (which is accounted already).
-> >=20
-> > It was raised that distro don't enable udmabuf, but as stated there by =
-Hans, in
-> > any cases distro needs to take action to make the softISP works. This
-> > alternative is easy and does not interfere in anyway with your future p=
-lan or
-> > the libcamera API. You could even have both dmabuf heap (for Raspbian) =
-and the
-> > safer memfd+udmabuf for the distro with security concerns.
-> >=20
-> > And for the long term plan, we can certainly get closer by fixing that =
-issue
-> > with accounting. This issue also applied to v4l2 io-ops, so it would be=
- nice to
-> > find common set of helpers to fix these exporters.
->=20
-> Yeah if this is just for softisp, then memfd + udmabuf is also what I was
-> about to suggest. Not just as a stopgap, but as the real official thing.
->=20
-> udmabuf does kinda allow you to pin memory, but we can easily fix that by
-> adding the right accounting and then either let mlock rlimits or cgroups
-> kernel memory limits enforce good behavior.
-
-I think the main drawback with memfd is that it'll be broken for devices
-without an IOMMU, and while you said that it's uncommon for GPUs, it's
-definitely not for codecs and display engines.
-
-Maxime
-
---uitctc2p333ggqzy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkHPWQAKCRAnX84Zoj2+
-duxcAX0X7gUdYVGGk8sIw/t/75URUn2L5jsx1bztYmSAMrIPZpJ7dy/qcltWYmgI
-q0DvusYBf1GwSIDpuk/d4mHAtHlq5OHKP4OPgGrWsyOdD3IsotlmEl1GTuBDF6Eq
-cHFRahQOCA==
-=o8us
------END PGP SIGNATURE-----
-
---uitctc2p333ggqzy--
-
+On 24.04.24 15:52, Ben Wolsieffer wrote:
+> On the STM32F4/7, the MOSI and CLK pins float while the controller is
+> disabled. CS is a regular GPIO, and therefore always driven. Currently,
+> the controller is enabled in the transfer_one() callback, which runs
+> after CS is asserted.  Therefore, there is a period where the SPI pins
+> are floating while CS is asserted, making it possible for stray signals
+> to disrupt communications. An analogous problem occurs at the end of the
+> transfer when the controller is disabled before CS is released.
+> 
+> This problem can be reliably observed by enabling the pull-up (if
+> CPOL=0) or pull-down (if CPOL=1) on the clock pin. This will cause two
+> extra unintended clock edges per transfer, when the controller is
+> enabled and disabled.
+> 
+> Note that this bug is likely not present on the STM32H7, because this
+> driver sets the AFCNTR bit (not supported on F4/F7), which keeps the SPI
+> pins driven even while the controller is disabled.
+> 
+> Enabling/disabling the controller as part of runtime PM was suggested as
+> an alternative approach, but this breaks the driver on the STM32MP1 (see
+> [1]). The following quote from the manual may explain this:
+> 
+>> To restart the internal state machine properly, SPI is strongly
+>> suggested to be disabled and re-enabled before next transaction starts
+>> despite its setting is not changed.
+> 
+> This patch has been tested on an STM32F746 with a MAX14830 UART
+> expander.
+> 
+> [1] https://lore.kernel.org/lkml/ZXzRi_h2AMqEhMVw@dell-precision-5540/T/
+> 
+> Signed-off-by: Ben Wolsieffer <ben.wolsieffer@hefring.com>
+> ---
+> v2:
+>   * Improve explanation of problem
+>   * Discuss why not to use runtime PM instead
+> 
+>   drivers/spi/spi-stm32.c | 14 ++------------
+>   1 file changed, 2 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-stm32.c b/drivers/spi/spi-stm32.c
+> index e4e7ddb7524a..4a68abcdcc35 100644
+> --- a/drivers/spi/spi-stm32.c
+> +++ b/drivers/spi/spi-stm32.c
+> @@ -1016,10 +1016,8 @@ static irqreturn_t stm32fx_spi_irq_event(int irq, void *dev_id)
+>   static irqreturn_t stm32fx_spi_irq_thread(int irq, void *dev_id)
+>   {
+>   	struct spi_controller *ctrl = dev_id;
+> -	struct stm32_spi *spi = spi_controller_get_devdata(ctrl);
+>   
+>   	spi_finalize_current_transfer(ctrl);
+> -	stm32fx_spi_disable(spi);
+>   
+>   	return IRQ_HANDLED;
+>   }
+> @@ -1187,6 +1185,8 @@ static int stm32_spi_prepare_msg(struct spi_controller *ctrl,
+>   			 ~clrb) | setb,
+>   			spi->base + spi->cfg->regs->cpol.reg);
+>   
+> +	stm32_spi_enable(spi);
+> +
+>   	spin_unlock_irqrestore(&spi->lock, flags);
+>   
+>   	return 0;
+> @@ -1204,7 +1204,6 @@ static void stm32fx_spi_dma_tx_cb(void *data)
+>   
+>   	if (spi->cur_comm == SPI_SIMPLEX_TX || spi->cur_comm == SPI_3WIRE_TX) {
+>   		spi_finalize_current_transfer(spi->ctrl);
+> -		stm32fx_spi_disable(spi);
+>   	}
+>   }
+>   
+> @@ -1219,7 +1218,6 @@ static void stm32_spi_dma_rx_cb(void *data)
+>   	struct stm32_spi *spi = data;
+>   
+>   	spi_finalize_current_transfer(spi->ctrl);
+> -	spi->cfg->disable(spi);
+>   }
+>   
+>   /**
+> @@ -1307,8 +1305,6 @@ static int stm32fx_spi_transfer_one_irq(struct stm32_spi *spi)
+>   
+>   	stm32_spi_set_bits(spi, STM32FX_SPI_CR2, cr2);
+>   
+> -	stm32_spi_enable(spi);
+> -
+>   	/* starting data transfer when buffer is loaded */
+>   	if (spi->tx_buf)
+>   		spi->cfg->write_tx(spi);
+> @@ -1345,8 +1341,6 @@ static int stm32h7_spi_transfer_one_irq(struct stm32_spi *spi)
+>   
+>   	spin_lock_irqsave(&spi->lock, flags);
+>   
+> -	stm32_spi_enable(spi);
+> -
+>   	/* Be sure to have data in fifo before starting data transfer */
+>   	if (spi->tx_buf)
+>   		stm32h7_spi_write_txfifo(spi);
+> @@ -1378,8 +1372,6 @@ static void stm32fx_spi_transfer_one_dma_start(struct stm32_spi *spi)
+>   		 */
+>   		stm32_spi_set_bits(spi, STM32FX_SPI_CR2, STM32FX_SPI_CR2_ERRIE);
+>   	}
+> -
+> -	stm32_spi_enable(spi);
+>   }
+>   
+>   /**
+> @@ -1413,8 +1405,6 @@ static void stm32h7_spi_transfer_one_dma_start(struct stm32_spi *spi)
+>   
+>   	stm32_spi_set_bits(spi, STM32H7_SPI_IER, ier);
+>   
+> -	stm32_spi_enable(spi);
+> -
+>   	if (STM32_SPI_HOST_MODE(spi))
+>   		stm32_spi_set_bits(spi, STM32H7_SPI_CR1, STM32H7_SPI_CR1_CSTART);
+>   }
 
