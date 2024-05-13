@@ -1,190 +1,132 @@
-Return-Path: <linux-kernel+bounces-177535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FCA8C4052
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:03:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0818C4055
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0CA01F217EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:03:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E4C0B21B35
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D5F14EC7D;
-	Mon, 13 May 2024 12:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G95b4L9H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E9714EC5B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336F314EC7B;
+	Mon, 13 May 2024 12:04:05 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD5014D2B2
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715601807; cv=none; b=uHRZWaHT1z3fyfZ+vZ4XQl73/YYtu5jRwf4brnq1lCcibgZzgGOlVluvE/CAM7TNWcKAfDZPsrPE+HM7mU3L6k2FK4ZBNfG74SBHbTVsC/MdZoAM/u8l4Tt71ReWiOiv7iXjRFPtsC4TMHZGnHfU1WM8qaf7utfVa3DsbbqWiwo=
+	t=1715601844; cv=none; b=ODBxqHHKlkhI8Hpj0vJEXEy8wRdxGJhHPN1i2sKWsOBDEBVVEyrgqapJwLWJkUJAR+IATalroBb9j/qgAUgZmGo25Nyoq3Ej3hC9D3UaIufabqmrsiaQu+HpbNtcm4H1PGdTXQO3PfpPqrgm/1r/+2AnBbl3IZJewLJ4W6ZN320=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715601807; c=relaxed/simple;
-	bh=9v46DOtoCtPx3deO2gpdg8ipRFMAGh1txJKl+pUtw8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NmneLTmFsB7zMu69JgqDkHkxGIBVewZTtiqPD/bD9N1BbX/350lSFv3hZk3lA8gQ6vca0bpd3i6DdciV2AUll2Gj8RJ5mxjTaJBsrfZii00v0p7MGXTGYzCCf80mDM7oIIR/sM/R2S62rkUS/2G2XyMY76f8S69WAl+j6+68gz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G95b4L9H; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715601805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bmXU/OebYF8kESlWqWUxls9X3mxoHXPcTWE7A16L9IE=;
-	b=G95b4L9HXhG3iOw7xb1vsvNBJGtdaE+QlCRxBK6+eQ4SsQ3tdWneOr7JFv0v2IgVi+AlkR
-	UYRymQQH/f8Kx4ptoxjNn/EWTjpdW2BC4f9P6RKiGPvuIKymLQG7BUlo4WDEoUBgIegCV3
-	8Q6J1bZmjmTTdUUE+ti7TAZLAHYawnE=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-376-13UC2eseOu-Stvv5_IZ_RA-1; Mon, 13 May 2024 08:03:23 -0400
-X-MC-Unique: 13UC2eseOu-Stvv5_IZ_RA-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a5a180153aeso280640866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:03:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715601803; x=1716206603;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bmXU/OebYF8kESlWqWUxls9X3mxoHXPcTWE7A16L9IE=;
-        b=uWSHtHOsclVu5lYjbtEsCZ0JCZfUQEtSR3TkTkArY7w9UH6LxIWZ64bJ1WHy3jlZBI
-         zPxg4UKciHoMl4UDajBtwiltmdXL5WWRni4HTBF/1VevpG7Ug7LcP9/rZISarXt4lR4l
-         qLGjMakN/YypOVdqN7+5cf6e8vxkJUd91VWkO9JVBPIT/Jo+w8G8GiU+B0n6jme0hmsL
-         wtPIgqZXVFkG+x/8uUc6LZaIGBf1GmUhsVW+T+vGJ9XLHinnWfFmLwn9K0hZq9aGtCHv
-         5xhkx+rj6ghjrEhi+bwUgEJ0AMOWcFeLdpXl7onEzfX20+huQUhCTWq50zvrpgQ247SN
-         uqag==
-X-Forwarded-Encrypted: i=1; AJvYcCVekgOVh2L1EDYyonBDONFZVjoFQOtQ+Iva0X4KVmQNslvs1h/wRFxJUpoyk1CqsAbu0nqz1RWGzxJeXizDmcyYgaPHSQ6tdZLbVIIC
-X-Gm-Message-State: AOJu0Yx8TPKJuEqCVuSMQp3P2LTVULEXY8cIE5Mxgq57U7yMqHZi0SFh
-	/Mmdm5HEWWVf/oJpydCGtM61XX5RPxUx4TBoi07NHzEyOzTt269BAhUOYNktEZR52Z11A1wrWWf
-	iSZqhi5P0P7eu12MpsS7ZdafirzULlamEx8jcZdyl/sUXy471XlR/x7nt1UwTWQ==
-X-Received: by 2002:a17:906:aad0:b0:a59:cfab:50d with SMTP id a640c23a62f3a-a5a2d536daemr632207466b.2.1715601802736;
-        Mon, 13 May 2024 05:03:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOSYLzF/c1ldnDEBTul+Z4tWR29hhou430+Bl6cslc7jUse5ojohz8EKDIm2rZfXZU31xO5A==
-X-Received: by 2002:a17:906:aad0:b0:a59:cfab:50d with SMTP id a640c23a62f3a-a5a2d536daemr632205866b.2.1715601802334;
-        Mon, 13 May 2024 05:03:22 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01785sm587479566b.164.2024.05.13.05.03.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 05:03:21 -0700 (PDT)
-Message-ID: <7867b308-7cea-4282-82e8-551d88fe70c4@redhat.com>
-Date: Mon, 13 May 2024 14:03:20 +0200
+	s=arc-20240116; t=1715601844; c=relaxed/simple;
+	bh=j3t1zFeNKBQd0gUy4VHB63/qi8W1BPNaXQPiQyTHiCU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bm1ozpDiJG9BtIUs/34mAEL5VBux/JlSCk32M23w94HlWPr+wtEb1h2M7TuW+QFrym9INxDK9lNL5LuzxN+cOg3ot/TlIdQAJuYDFqPPT9sQ9jpo9tEeyUTgyOrUfYCQ9LilgE80QUFsIvM4c/cXcJWe7FIqSHnq1l/ZijpqrhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-d85ff70000001748-8a-664201b00e92
+From: Honggyu Kim <honggyu.kim@sk.com>
+To: SeongJae Park <sj@kernel.org>
+Cc: Honggyu Kim <honggyu.kim@sk.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	damon@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel_team@skhynix.com
+Subject: Re: [RFC PATCH v4 1/5] mm: make alloc_demote_folio externally invokable for migration
+Date: Mon, 13 May 2024 21:03:56 +0900
+Message-ID: <20240513120358.1503-1-honggyu.kim@sk.com>
+X-Mailer: git-send-email 2.43.0.windows.1
+In-Reply-To: <20240512175447.75943-2-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] p2sb: Don't init until unassigned resources have been
- assigned.
-To: bcfradella@proton.me, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Ben Fradella <bfradell@netapp.com>, Ranjan Dutta
- <ranjan.dutta@intel.com>, Yifan2 Li <yifan2.li@intel.com>,
- Jonathan Yong <jonathan.yong@intel.com>
-References: <20240509164905.41016-1-bcfradella@proton.me>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240509164905.41016-1-bcfradella@proton.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGLMWRmVeSWpSXmKPExsXC9ZZnke4GRqc0g8M72CzmrF/DZvHk/29W
+	i8u75rBZ3Fvzn9Xi8Nc3TA6sHptWdbJ5bPo0id3jxIzfLB4vNs9k9Pi8SS6ANYrLJiU1J7Ms
+	tUjfLoErY+HsVSwFDfwV69ZOY2lgnM7TxcjJISFgInHt5Q4mGPvb+pssIDabgJrElZeTwOIi
+	AooS5x5fZO1i5OJgFtjNKDG/7RozSEJYIE7i5+bbQA0cHCwCqhJ3nvOBhHkFzCSuXJ7NAjFT
+	U+Lx9p/sIDangLHE/n8NYHEhAR6JVxv2M0LUC0qcnPkELM4sIC/RvHU2M8guCYE5bBL/Jn1h
+	hRgkKXFwxQ2WCYz8s5D0zELSs4CRaRWjUGZeWW5iZo6JXkZlXmaFXnJ+7iZGYGguq/0TvYPx
+	04XgQ4wCHIxKPLwHGJzShFgTy4orcw8xSnAwK4nwOhTapwnxpiRWVqUW5ccXleakFh9ilOZg
+	URLnNfpWniIkkJ5YkpqdmlqQWgSTZeLglGpg9BTK+6/IKXm0e2NZYF7CinmXFDesFb3wMKnk
+	6t4F567r77o8/3XYV9urdtNbVTr6FuZtjxL02VJ4PXl++doPfS4WlWv9vCTYfl1ZxBA1tXv+
+	srf8X1bnJny4Gvv/T0ty4jITCelLBZNVXugbKAa8OJ7k7jDJpyZQ62ost+PqhC/T9tzpX7Rt
+	kRJLcUaioRZzUXEiAMkNyg1JAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGLMWRmVeSWpSXmKPExsXCNUNLT3c9o1Oawc6F5hZz1q9hs3jy/zer
+	xednr5ktDs89yWpxedccNot7a/6zWhz++obJgd1j06pONo9Nnyaxe5yY8ZvF48XmmYwe3257
+	eCx+8YHJ4/MmuQD2KC6blNSczLLUIn27BK6MhbNXsRQ08FesWzuNpYFxOk8XIyeHhICJxLf1
+	N1lAbDYBNYkrLycxgdgiAooS5x5fZO1i5OJgFtjNKDG/7RozSEJYIE7i5+bbQA0cHCwCqhJ3
+	nvOBhHkFzCSuXJ7NAjFTU+Lx9p/sIDangLHE/n8NYHEhAR6JVxv2M0LUC0qcnPkELM4sIC/R
+	vHU28wRGnllIUrOQpBYwMq1iFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIDL1ltX8m7mD8ctn9
+	EKMAB6MSD+8BBqc0IdbEsuLK3EOMEhzMSiK8DoX2aUK8KYmVValF+fFFpTmpxYcYpTlYlMR5
+	vcJTE4QE0hNLUrNTUwtSi2CyTBycUg2MVq+2MvJMr45Y8iUslqf1IBO/3e9XXD1tphnnJSr4
+	5X8msb1uOdYk5rX63Pm1/15tjN3K8efcurcv5UPCY5LXNWsdUFvmJerPwF1xkm1K/4mU13xb
+	Csw22HM1fAv03FyV6XqRQenLxt2/D22Y9SOn0vhnzA37CXc0HddWMCT4LttycGbfRQMzJZbi
+	jERDLeai4kQAfCLvwDkCAAA=
+X-CFilter-Loop: Reflected
 
-Hi,
-
-On 5/9/24 6:49 PM, bcfradella@proton.me wrote:
-> From: Ben Fradella <bfradell@netapp.com>
+On Sun, 12 May 2024 10:54:43 -0700 SeongJae Park <sj@kernel.org> wrote:
+> From: Honggyu Kim <honggyu.kim@sk.com>
 > 
-> The P2SB could get an invalid BAR from the BIOS, and that won't be fixed
-> up until pcibios_assign_resources(), which is an fs_initcall().
+> The alloc_demote_folio can be used out of vmscan.c so it'd be better to
+> remove static keyword from it.
 > 
-> - Move p2sb_fs_init() to an fs_initcall_sync(). This is still early
->   enough to avoid a race with any dependent drivers.
-> 
-> - Add a check for IORESOURCE_UNSET in p2sb_valid_resource() to catch
->   unset BARs going forward.
-> 
-> - Return error values from p2sb_fs_init() so that the 'initcall_debug'
->   cmdline arg provides useful data.
-> 
-> Signed-off-by: Ben Fradella <bfradell@netapp.com>
+> This function can also be used for both demotion and promotion so it'd
+> be better to rename it from alloc_demote_folio to alloc_migrate_folio.
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
+This description doesn't match with the changes below.
 
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-
+> Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 > ---
->  drivers/platform/x86/p2sb.c | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
+>  mm/internal.h | 1 +
+>  mm/vmscan.c   | 3 +--
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/platform/x86/p2sb.c b/drivers/platform/x86/p2sb.c
-> index 3d66e1d4eb1f..1938a3ef9480 100644
-> --- a/drivers/platform/x86/p2sb.c
-> +++ b/drivers/platform/x86/p2sb.c
-> @@ -56,12 +56,9 @@ static int p2sb_get_devfn(unsigned int *devfn)
->  	return 0;
->  }
+> diff --git a/mm/internal.h b/mm/internal.h
+> index b2c75b12014e..b3ca996a4efc 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1052,6 +1052,7 @@ extern unsigned long  __must_check vm_mmap_pgoff(struct file *, unsigned long,
+>          unsigned long, unsigned long);
 >  
-> -static bool p2sb_valid_resource(struct resource *res)
-> +static bool p2sb_valid_resource(const struct resource *res)
->  {
-> -	if (res->flags)
-> -		return true;
-> -
-> -	return false;
-> +	return res->flags & ~IORESOURCE_UNSET;
->  }
->  
->  /* Copy resource from the first BAR of the device in question */
-> @@ -220,16 +217,20 @@ EXPORT_SYMBOL_GPL(p2sb_bar);
->  
->  static int __init p2sb_fs_init(void)
->  {
-> -	p2sb_cache_resources();
-> -	return 0;
-> +	return p2sb_cache_resources();
->  }
->  
->  /*
-> - * pci_rescan_remove_lock to avoid access to unhidden P2SB devices can
-> - * not be locked in sysfs pci bus rescan path because of deadlock. To
-> - * avoid the deadlock, access to P2SB devices with the lock at an early
-> - * step in kernel initialization and cache required resources. This
-> - * should happen after subsys_initcall which initializes PCI subsystem
-> - * and before device_initcall which requires P2SB resources.
-> + * pci_rescan_remove_lock() can not be locked in sysfs pci bus rescan path
-> + * because of deadlock. To avoid the deadlock, access P2SB devices with the lock
-> + * at an early step in kernel initialization and cache required resources.
-> + *
-> + * We want to run as early as possible. If the P2SB was assigned a bad BAR,
-> + * we'll need to wait on pcibios_assign_resources() to fix it. So, our list of
-> + * initcall dependencies looks something like this:
-> + *
-> + * ...
-> + * subsys_initcall (pci_subsys_init)
-> + * fs_initcall     (pcibios_assign_resources)
->   */
-> -fs_initcall(p2sb_fs_init);
-> +fs_initcall_sync(p2sb_fs_init);
+>  extern void set_pageblock_order(void);
+> +struct folio *alloc_demote_folio(struct folio *src, unsigned long private);
 
+I still prefer to rename it to alloc_migrate_folio.
+
+>  unsigned long reclaim_pages(struct list_head *folio_list);
+>  unsigned int reclaim_clean_pages_from_list(struct zone *zone,
+>  					    struct list_head *folio_list);
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index 6981a71c8ef0..27269bc2bcc5 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -933,8 +933,7 @@ static void folio_check_dirty_writeback(struct folio *folio,
+>  		mapping->a_ops->is_dirty_writeback(folio, dirty, writeback);
+>  }
+>  
+> -static struct folio *alloc_demote_folio(struct folio *src,
+> -		unsigned long private)
+> +struct folio *alloc_demote_folio(struct folio *src, unsigned long private)
+
+Here as well.
+
+>  {
+>  	struct folio *dst;
+>  	nodemask_t *allowed_mask;
+> -- 
+> 2.39.2
+> 
+
+Thanks,
+Honggyu
 
