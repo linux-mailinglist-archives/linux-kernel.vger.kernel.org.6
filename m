@@ -1,146 +1,268 @@
-Return-Path: <linux-kernel+bounces-178140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C398C499D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:33:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B918C49F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0321B224FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:33:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BC311C21085
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEA684D07;
-	Mon, 13 May 2024 22:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825F68564F;
+	Mon, 13 May 2024 23:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FRo/n1ej"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="KDb1W5zf"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E20D51A;
-	Mon, 13 May 2024 22:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D5F84D07;
+	Mon, 13 May 2024 23:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715639614; cv=none; b=fJxOIFnIOCHeKwM8ubbB9Vr4dB7U3mwpWA64X+GN7g7B/sumw2NOziSxUdcrQDaO0J1cLhp8Wh8WSDYwmb+6nNehcTC5T3299Ki7OZoiNW6XopeINC02bnaU9bxXg5+YrIRjLcGqO/s/zCKEVzPHJsyuE9g9uhyMJQypQiMdNB0=
+	t=1715642139; cv=none; b=fty4U/JMuryfcDUbvTHSb12YY43EbZ12hP0oDk7hgTK9zi4J5SnhIq0jMVCK4qshZ8Rf/WFGR8kQvOFK6CbWlvzi5evD4+kgEn4ND1TI6TiGXaLRzbFmzS+MsIyCDPJOpBqmrG1x57gb/ic03BrMzDkBDPNPcL/Lmmanae1u9uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715639614; c=relaxed/simple;
-	bh=VF+xtnpj6iNd1cqa0mfpTf22R+BwsnEumpnvLM8BRJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B9QpbkzqigFjrO/O+LDR4sXoqC2cr0oowKOzaJx0Vjb9CyukENb0pStELyfJdxfZRxyJExPbvZjQ+BTvvSoOlSs5Bi7lHMoIPPkzgh2DkCf7NdkJap3tQXHhPKF4JywY8Md8RqGdIgSYjyin8OPclm55FDw1Hky3XNEBPjeGtVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FRo/n1ej; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715639607;
-	bh=866m8QdJ9ODjSr65zAIEiDVsaMx436FiNEjIN0mFDpo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FRo/n1ejgW31yns0cGuJnHrvzwmey8W3h9K9i1iSVs5zX5Tdp+U6hpehuKHvcFB6w
-	 tOCQtZFlcIrJWMqR1FzgZk/t6Ct4Npq/J1FFYTLYoGOy6c5cJhg8cPTTq84alkh344
-	 B4GMyh2yi8j3Cte52+mhRDnc/pmdteFv/x4JJ4w5hvrPqEnzyobZz7y6TYn1QYs5A4
-	 AHAPORLboAtb5O0dJGanerZwiJ07bf5MqblXv3JERFWKcdTZJInL92c+VOnZ6sBl70
-	 REVn6WCepH/0W4gZ7bZtN9PMQHMNj/RpfrnMjKiLhxrjgpjiYKAxglqR9V7f3fcYsT
-	 tC1K2hZyrnk1w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1715642139; c=relaxed/simple;
+	bh=loyZmoPtuDA5rMTG5lqXULUHGz/rf7HlgkI14OxieQA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A7jEYQaNb4Zwa9seJPtCqeI98gO1FO5gickNzBn/JCWFw5dXa1lDcoD4QdV1Nt1iw+qI+8lwJ/xJxG2b0yk2aq3rkekQn/uyxP596RuCVYz9q4D6mNaO1F0ZEq9yX6RkQmjn3kf7mz9GvXMRPUMzfShALpD1M+oGmxjPZFTWSO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=KDb1W5zf; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VdZ5M4PlJz4wb0;
-	Tue, 14 May 2024 08:33:27 +1000 (AEST)
-Date: Tue, 14 May 2024 08:33:04 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the stm32 tree
-Message-ID: <20240514083304.0a8b368b@canb.auug.org.au>
-In-Reply-To: <20240430110428.30432b2f@canb.auug.org.au>
-References: <20240430110428.30432b2f@canb.auug.org.au>
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id AE06A87C75;
+	Tue, 14 May 2024 01:15:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715642135;
+	bh=y94VBu3rZqXoPf5qJmghmwP/Qu0OecNomu4N18OPJk8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KDb1W5zfmoUzuqSNQmrm2kabFQTBN/gm1zuaeWYez5y7rFnL1dy6ic3sgUfoasrKc
+	 8TgdCpee1r/OJis2LcSjW34EIsKO9z1Zwy3Ydhcs0Z57pJZWqRrhp3Bt5xvlOZOjuS
+	 URdcvQ0pnhBVgsaSDE/WxfO4501H3T1IfT7pLNZPRabvHYdospTWpEHzDxaYGJqagG
+	 hMag83m+X0lzF89Q8mqru018k0xEvdOaxCulH69/72NQAx4Q/12NCgVs36jmld4YY0
+	 J2fVqAmI068QXmNd0DdlW05QcOME83EsHYZ3qy+Gy4fLP9gAOY64dOHoSiXIKe+vDh
+	 ah4FSmqSe7aeA==
+Message-ID: <2d213010-7aae-4f5a-8332-54d7e69b862c@denx.de>
+Date: Tue, 14 May 2024 00:33:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/y6KkD+C1uYVV+V_u2t3jAxg";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/11] net: stmmac: dwmac-stm32: update config
+ management for phy wo cristal
+To: Christophe ROULLIER <christophe.roullier@foss.st.com>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Richard Cochran <richardcochran@gmail.com>, Jose Abreu
+ <joabreu@synopsys.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240426125707.585269-1-christophe.roullier@foss.st.com>
+ <20240426125707.585269-6-christophe.roullier@foss.st.com>
+ <b790f34e-8bfb-44f6-869d-798508008483@denx.de>
+ <3137049f-eac8-4522-ad2e-b2b0d3537239@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <3137049f-eac8-4522-ad2e-b2b0d3537239@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
---Sig_/y6KkD+C1uYVV+V_u2t3jAxg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 5/13/24 5:11 PM, Christophe ROULLIER wrote:
+> 
+> On 4/26/24 17:37, Marek Vasut wrote:
+>> On 4/26/24 2:57 PM, Christophe Roullier wrote:
+>>> Some cleaning because some Ethernet PHY configs do not need to add
+>>> st,ext-phyclk property.
+>>> Change print info message "No phy clock provided" only when debug.
+>>>
+>>> Signed-off-by: Christophe Roullier <christophe.roullier@foss.st.com>
+>>> ---
+>>>   .../net/ethernet/stmicro/stmmac/dwmac-stm32.c | 27 ++++++++++---------
+>>>   1 file changed, 14 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c 
+>>> b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+>>> index 7529a8d15492..e648c4e790a7 100644
+>>> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+>>> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
+>>> @@ -55,17 +55,17 @@
+>>>    *|         |        |      25MHz    |        50MHz 
+>>> |                  |
+>>>    * 
+>>> ---------------------------------------------------------------------------
+>>>    *|  MII    |     -   |     eth-ck    |          n/a | n/a        |
+>>> - *|         |        | st,ext-phyclk | |             |
+>>> + *|         |        |                 | |             |
+>>>    * 
+>>> ---------------------------------------------------------------------------
+>>>    *|  GMII   |     -   |     eth-ck    |          n/a | n/a        |
+>>> - *|         |        | st,ext-phyclk | |             |
+>>> + *|         |        |               | |             |
+>>>    * 
+>>> ---------------------------------------------------------------------------
+>>>    *| RGMII   |     -   |     eth-ck    |          n/a | eth-ck      |
+>>> - *|         |        | st,ext-phyclk |                    | 
+>>> st,eth-clk-sel or|
+>>> + *|         |        |               |                    | 
+>>> st,eth-clk-sel or|
+>>>    *|         |        |               |                    | 
+>>> st,ext-phyclk    |
+>>>    * 
+>>> ---------------------------------------------------------------------------
+>>>    *| RMII    |     -   |     eth-ck    |        eth-ck | n/a        |
+>>> - *|         |        | st,ext-phyclk | st,eth-ref-clk-sel 
+>>> |             |
+>>> + *|         |        |               | st,eth-ref-clk-sel 
+>>> |             |
+>>>    *|         |        |               | or st,ext-phyclk 
+>>> |             |
+>>>    * 
+>>> ---------------------------------------------------------------------------
+>>>    *
+>>> @@ -174,23 +174,22 @@ static int stm32mp1_set_mode(struct 
+>>> plat_stmmacenet_data *plat_dat)
+>>>       dwmac->enable_eth_ck = false;
+>>>       switch (plat_dat->mac_interface) {
+>>>       case PHY_INTERFACE_MODE_MII:
+>>> -        if (clk_rate == ETH_CK_F_25M && dwmac->ext_phyclk)
+>>> +        if (clk_rate == ETH_CK_F_25M)
+>>
+>> I see two problems here.
+>>
+>> First, according to the table above, in MII mode, clk_rate cannot be 
+>> anything else but 25 MHz, so the (clk_rate == ETH_CK_F_25M) condition 
+>> is always true. Why not drop that condition ?
+> Not agree, there is also "Normal" case MII (MII with quartz/cristal) 
+> (first column in the table above), so need to keep this test to check 
+> clk_rate 25MHz.
 
-Hi all,
+What other rate is supported in the MII mode ? Isn't the rate always 25 
+MHz for MII , no matter whether it is generated by RCC or external Xtal ?
 
-On Tue, 30 Apr 2024 11:04:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> The following commits are also in the arm-soc tree as different
-> commits (but the same patches):
->=20
->   0087ca056c73 ("arm64: dts: st: add all 8 i2c nodes on stm32mp251")
->   2886ab7437de ("arm64: dts: st: add rcc support for STM32MP25")
->   385ca8e3841f ("arm64: dts: st: add spi3 / spi8 properties on stm32mp257=
-f-ev1"
-> )
->   3e7d579c9fca ("ARM: dts: stm32: add ETZPC as a system bus for STM32MP15=
-x boar
-> ds")
->   4ef09379d765 ("arm64: dts: st: add i2c2 / i2c8 properties on stm32mp257=
-f-ev1"
-> )
->   5e6b388d7bcb ("ARM: dts: stm32: move can3 node from stm32f746 to stm32f=
-769")
->   7442597f90ba ("arm64: dts: st: add i2c2/i2c8 pins for stm32mp25")
->   7c12d95564a2 ("ARM: dts: stm32: add LTDC pinctrl on STM32MP13x SoC fami=
-ly")
->   7c3d4f99a920 ("ARM: dts: stm32: put ETZPC as an access controller for S=
-TM32MP
-> 15x boards")
->   808691f7389d ("media: dt-bindings: add access-controllers to STM32MP25 =
-video=20
-> codecs")
->   881bccce217e ("ARM: dts: stm32: add LTDC support for STM32MP13x SoC fam=
-ily")
->   8fe31699b83d ("bus: stm32_firewall: fix off by one in stm32_firewall_ge=
-t_firewall()")
->   9e716b41a2b5 ("arm64: dts: st: add RIFSC as an access controller for ST=
-M32MP25x boards")
->   a012bd75abf6 ("ARM: dts: stm32: enable display support on stm32mp135f-d=
-k board")
->   aee0ce48516c ("arm64: dts: st: add spi3/spi8 pins for stm32mp25")
->   be62e9c0c3fc ("bus: etzpc: introduce ETZPC firewall controller driver")
->   c7f2f2c0ace8 ("ARM: dts: stm32: add heartbeat led for stm32mp157c-ed1")
->   cab43766e000 ("ARM: dts: stm32: add ETZPC as a system bus for STM32MP13=
-x boards")
->   d3740a9fd78c ("dt-bindings: display: simple: allow panel-common propert=
-ies")
->   dccdbccb7045 ("arm64: dts: st: correct masks for GIC PPI interrupts on =
-stm32mp25")
->   de9b447d5678 ("ARM: dts: stm32: put ETZPC as an access controller for S=
-TM32MP13x boards")
->   ede58756bbe5 ("arm64: dts: st: add all 8 spi nodes on stm32mp251")
->   f798f7079233 ("ARM: dts: stm32: add PWR regulators support on stm32mp13=
-1")
+>> The "dwmac->ext_phyclk" means "Ethernet PHY have no crystal", which 
+>> means the clock are provided by the STM32 RCC clock IP instead, which 
+>> means if the dwmac->ext_phyclk is true, dwmac->enable_eth_ck should be 
+>> set to true, because dwmac->enable_eth_ck controls the enablement of 
+>> these STM32 clock IP generated clock.
+> Right
+>>
+>> Second, as far as I understand it, there is no way to operate this IP 
+>> with external clock in MII mode, so this section should always be only:
+>>
+>> dwmac->enable_eth_ck = true;
+> Not for case "Normal" MII :-)
 
-Those commits are now duplicates of commits in Linus' tree.
---=20
-Cheers,
-Stephen Rothwell
+What happens if that external clock source is not an xtal, but an 
+oscillator with its own driver described in DT, and enabled e.g. using 
+GPIO (that's compatible "gpio-gate-clock" for that oscillator) . Then 
+you do need to enable those clock even in the "normal" (with external 
+clock source instead of RCC clock source) MII case.
 
---Sig_/y6KkD+C1uYVV+V_u2t3jAxg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+>>>               dwmac->enable_eth_ck = true;
+>>>           val = dwmac->ops->pmcsetr.eth1_selmii;
+>>>           pr_debug("SYSCFG init : PHY_INTERFACE_MODE_MII\n");
+>>>           break;
+>>>       case PHY_INTERFACE_MODE_GMII:
+>>>           val = SYSCFG_PMCR_ETH_SEL_GMII;
+>>> -        if (clk_rate == ETH_CK_F_25M &&
+>>> -            (dwmac->eth_clk_sel_reg || dwmac->ext_phyclk)) {
+>>> +        if (clk_rate == ETH_CK_F_25M)
+>>>               dwmac->enable_eth_ck = true;
+>>> -            val |= dwmac->ops->pmcsetr.eth1_clk_sel;
+>>> -        }
+>>>           pr_debug("SYSCFG init : PHY_INTERFACE_MODE_GMII\n");
+>>>           break;
+>>>       case PHY_INTERFACE_MODE_RMII:
+>>>           val = dwmac->ops->pmcsetr.eth1_sel_rmii | 
+>>> dwmac->ops->pmcsetr.eth2_sel_rmii;
+>>> -        if ((clk_rate == ETH_CK_F_25M || clk_rate == ETH_CK_F_50M) &&
+>>> +        if (clk_rate == ETH_CK_F_25M)
+>>> +            dwmac->enable_eth_ck = true;
+>>> +        if (clk_rate == ETH_CK_F_50M &&
+>>>               (dwmac->eth_ref_clk_sel_reg || dwmac->ext_phyclk)) {
+>>
+>> This doesn't seem to be equivalent change to the previous code . Here, 
+>> if the clock frequency is 25 MHz, the clock are unconditionally 
+>> enabled. Before, the code enabled the clock only if clock frequency 
+>> was 25 MHz AND one of the "dwmac->eth_ref_clk_sel_reg" or 
+>> "dwmac->ext_phyclk" was set (i.e. clock provided by SoC RCC clock IP).
+> 
+> You are right, but in STM32MP15/MP13 reference manual it is write that 
+> we need to update SYSCFG (SYSCFG_PMCSETR) register only in "Ethernet 
+> 50MHz RMII clock selection":
+> 
+> Bit 17 ETH_REF_CLK_SEL: Ethernet 50MHz RMII clock selection.
+> 
+>      Set by software.
+> 
+>        0: Writing '0' has no effect, reading '0' means External clock is 
+> used. Need selection of AFMux. Could be used with all PHY
+> 
+>        1: Writing '1' set this bit, reading '1' means Internal clock 
+> ETH_CLK1 from RCC is used regardless AFMux. Could be used only with RMII 
+> PHY
 
------BEGIN PGP SIGNATURE-----
+Look at this:
+"
+RM0436 Rev 6 Reset and clock control (RCC)
+Clock distribution for Ethernet (ETH)
+Figure 83. Peripheral clock distribution for Ethernet
+Page 575
+"
+See the mux at bottom left side in the PKCS group.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZClSAACgkQAVBC80lX
-0GyhoQf/URZkgMxevy8lFmqX6G50N5iexA96Z3VwvTjMT197cyAyX/IuThQcZdf5
-uqR7htdMsIzIod2PoSCmkqHv4kuhFxhkhNB5aQMDdS2zDV+Z8R0q4Gem4ajMkKE1
-nccYyPVEnJEtuPqrWJKDb6/2e1DLo+v6KFhg+IEHVtNRvQb6g+wfaoWsuZJw/TsP
-1Gl4Ohxmxbxf24pstgd/Hhsyr/cqF5Irhq3SGbnHsuhQ7v80LQSWngxwdWT2/QQK
-efSZsBeEFqXVS0Eyg0vvJpz9sMHJyw2eN5FU1mQEr463+NOIx2rXuYafCKNIFAk/
-F62ppmuyc13dSjgYuTlEUtBkcKbIHQ==
-=arru
------END PGP SIGNATURE-----
+I suspect that no matter whether the clock are 25 MHz or 50 MHz, they 
+enter this mux, the mux selects the clock source from either RCC or from 
+external oscillator, and therefore the original code was correct.
 
---Sig_/y6KkD+C1uYVV+V_u2t3jAxg--
+>> I think it might make this code easier if you drop all of the 
+>> frequency test conditionals, which aren't really all that useful, and 
+>> only enable the clock if either dwmac->ext_phyclk / 
+>> dwmac->eth_clk_sel_reg / dwmac->eth_ref_clk_sel_reg is set , because 
+>> effectively what this entire convoluted code is implementing is "if 
+>> (clock supplied by clock IP i.e. RCC) enable the clock()" *, right ?
+>>
+>> * And it is also toggling the right clock mux bit in PMCSETR.
+>>
+>> So, for MII this would be plain:
+>> dwmac->enable_eth_ck = true;
+>>
+>> For GMII/RGMII this would be:
+>> if (dwmac->ext_phyclk || dwmac->eth_clk_sel_reg)
+>>   dwmac->enable_eth_ck = true;
+>>
+>> For RMII this would be:
+>> if (dwmac->ext_phyclk || dwmac->eth_ref_clk_sel_reg)
+>>   dwmac->enable_eth_ck = true;
+>>
+>> Maybe the clock frequency validation can be retained, but done 
+>> separately?
+> As explained previously, need to keep check of clock frequency in this 
+> test.
+
+I sent 5 patches which split this code up, you were on CC:
+
+[net-next,RFC,PATCH 1/5] net: stmmac: dwmac-stm32: Separate out external 
+clock rate validation
+
+Maybe you can apply those, fix them up as needed, and then add this 
+series on top ? I think it would simplify this code a lot, since that 
+series splits up the clock rate validation / PMCR configuration / 
+external-internal clock selection into separate steps. What do you think ?
 
