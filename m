@@ -1,154 +1,368 @@
-Return-Path: <linux-kernel+bounces-177837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10598C4529
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB6A38C452E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4431F21F2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB4E1C22DAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEB017554;
-	Mon, 13 May 2024 16:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22701946F;
+	Mon, 13 May 2024 16:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b="aA/OnQIz"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V+E6KIUq"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C691CD15
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207941C6A8;
+	Mon, 13 May 2024 16:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618223; cv=none; b=foDIXWsMI60f8epMAF9F51XAnAj4LoA2cUVoMrEwCRYdtj0hyCVU2eM8a1wT3vdX3B/t9FTKCI3cRz76GOe1hYurObwqgjWAvrttxm8qfwIXHfxDFZ4XkhWGo5pY4Txc1eX/46MnJsY0yU6yh95fRSL+TkmQdCECW1f3dLOdTNo=
+	t=1715618270; cv=none; b=bOaIQOry4LWhuhLY7IJUSq7CSNYtjL6SyIYovI98nSsIdizD/Ei1KRl0s+bw14B2vZpnKyKdFOMvEdWl6PjfJmFbD4lpHP/D4Bve34ja6FHLMRZGvmd/fExZhUfPtra2/z46j/uxYh7eLOEu+EO238SE49t3DN5bGf/SrzWZm8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618223; c=relaxed/simple;
-	bh=HB/ZQWK82QJzttDHy6A5em5xmW4L2ZDmWpvy9z6d6Ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXv9YUeWSRs9F0M9oyv+vw3V76Um1Ix+PTd+fyv7/cFF4IdziZQ7oRdxHVc+kmNzncX+YxwHyX4JYfUFZornc6ICaH2kIGfIRhEwMOpbK7jZ2sU197UJrCxvvd7NGF0XAGjXOh5cBLX6xkpCMR6udqSkhPXQt7lQi/1LxAC0Rs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com; spf=none smtp.mailfrom=hefring.com; dkim=pass (2048-bit key) header.d=hefring-com.20230601.gappssmtp.com header.i=@hefring-com.20230601.gappssmtp.com header.b=aA/OnQIz; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hefring.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=hefring.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-78f02c96c52so294537685a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=hefring-com.20230601.gappssmtp.com; s=20230601; t=1715618220; x=1716223020; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UhNPxyDIoyt90UWgtYorTleVUvtJf0Skch2qUWjrKUo=;
-        b=aA/OnQIzWdmFAzVZUoybkQLbPHPGRjK9jzSLnuEulA0kOqGdr51eC4/XJGCDBkV/EB
-         cBzpUvIUmNMwJ6JHfMZJvZGjnFDvcAcCGNgkw1SSQ8PG5r4pDq3EwntqYMotnzduY8mZ
-         NDntGqNLXyfndyguwa86uSDwGm4XaJdUoQ2o5KAEJjhgn2X4jceRMziWAOyTDd9+W+Lv
-         s46vjgvC0PoYmcSxJk1K2moZymhMrmcSrP1RTV9a7y9CpDacDaLh1/O3C5j52eAaCbZz
-         0JO6puVbOVbMX57/3pPHeA2XSEG8a4wAcqcWfXLUFAkjQ6J3U2Bppm19wnyhfKlniseT
-         c2Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715618220; x=1716223020;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhNPxyDIoyt90UWgtYorTleVUvtJf0Skch2qUWjrKUo=;
-        b=SXuie0ZD9IbgKwzoakdx8emAXZEdSFWmD5Q95YSZrxYAsFxPlhvGjnMXn5HJavcvCk
-         MEu4MK2mw/evitWxsA0qh2u6zmx8CNwTQfkoYrK54FLkxsZaJfmCfmmIZe2/5sI6jnS/
-         tnhtmunbZq2LedsKGVFywVqci3pUBDrXfqWeNnVZaQPwxPDp1cnbzHeuxptet16TEeJi
-         umn/x3YiT5gbTstgPKdNHj6mkpMXZHga7dzxCJJweV06lql4CCCdBRIDn8oiMRKpNeX+
-         vvINkBFbDKMPlAAvQQ/CXKhio8srFYnUmzSOKJrNQ7owLXcit84sfNvt8/3zpN/ERSNL
-         qtRA==
-X-Gm-Message-State: AOJu0Yw0QgJu+OosFkiVsiVYPIqoJKW6GQmIbxK8OE3k7f1UrYywHroq
-	V/X0xu1IDJ0DQi4GCGog66xDLER9YFYbfta7x/C90VXVX/hQQdqfBsd0omvdMW4=
-X-Google-Smtp-Source: AGHT+IHR+PMA8mzP/ODUs2ari2ZHO3kfobx2t3yRaJYmectZkzl57AVHabUnpaYuaTgcCtztbZ6HWg==
-X-Received: by 2002:a05:6214:319c:b0:6a0:81b4:9871 with SMTP id 6a1803df08f44-6a16815f5a4mr84632286d6.15.1715618220631;
-        Mon, 13 May 2024 09:37:00 -0700 (PDT)
-Received: from dell-precision-5540 ([50.212.55.90])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1d6f30sm44727336d6.110.2024.05.13.09.36.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 09:37:00 -0700 (PDT)
-Date: Mon, 13 May 2024 12:36:57 -0400
-From: Ben Wolsieffer <ben.wolsieffer@hefring.com>
-To: Leonard =?iso-8859-1?Q?G=F6hrs?= <l.goehrs@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Alain Volmat <alain.volmat@foss.st.com>
-Subject: Re: [PATCH v2] spi: stm32: enable controller before asserting CS
-Message-ID: <ZkJBqSbJakye6BBc@dell-precision-5540>
-References: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
- <39033ed7-3e57-4339-80b4-fc8919e26aa7@pengutronix.de>
+	s=arc-20240116; t=1715618270; c=relaxed/simple;
+	bh=X18vwAxlVG0UKTCuKLQ28hp2uw3lgPZsOtm11sImz1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bbXH8x9W5KnKAJeLy5C1AhiPtAlB2e/ptLBHPwCcnMIu38qXdE/zfcyzu9HtcDN+N0GmCbRauVcYwZTftXey4mXElPp/QoheQJl9dIdaONJi3nQ4YKhZWX8LcXPaE8Cl/YWztGBtvSIfOqf0uj0zBiSCns57F3xSTXBsqAFxgSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V+E6KIUq; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DCVWWj017846;
+	Mon, 13 May 2024 16:37:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=W5arlA8MXtY+9NSAQzAXJc9YmqjS5maGVc0JDRCzk00=; b=V+
+	E6KIUqAqgoN65ziKpd/rqx3KKAvDaOueUKJsvLma69RgjmcJBwGGnVbrku14hh2/
+	AxadMF6ikIxxw15UbWfdqlD0an8XhmMFYLaBYDF0cRSc6szyaTkw512MDBsriT/u
+	LlnKgCSrY08KeDGyU753pPSniRiuYH8Gx3jzNBVAMhVceh9R7+smzucdsgYuQE6v
+	7/+2sR5CNApV9kfpfcCgzeiVBgfSwwM0t5W2lSvajyysPyvLlzbTbKUMhxLg8H9d
+	k+P/9YL8hcIvd7XfNR8dfgrS5OZtLmRHNiJmj3J80/zZ9/Fqdla5MVCd5GIFN9Hr
+	bPUxbvrt1MQBlCfB6Vaw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y21edby9q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 16:37:34 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44DGbV8t009351
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 16:37:31 GMT
+Received: from [10.110.48.61] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 13 May
+ 2024 09:37:27 -0700
+Message-ID: <ce8bc51b-a8b3-259c-f70c-d240d7b166cc@quicinc.com>
+Date: Mon, 13 May 2024 09:37:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <39033ed7-3e57-4339-80b4-fc8919e26aa7@pengutronix.de>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v8 2/4] arm64: dts: qcom: qcs8550: introduce qcs8550 dtsi
+Content-Language: en-US
+To: Tengfei Fan <quic_tengfan@quicinc.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <dmitry.baryshkov@linaro.org>
+CC: <keescook@chromium.org>, <tony.luck@intel.com>, <gpiccoli@igalia.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>,
+        <kernel@quicinc.com>
+References: <20240513090735.1666142-1-quic_tengfan@quicinc.com>
+ <20240513090735.1666142-3-quic_tengfan@quicinc.com>
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <20240513090735.1666142-3-quic_tengfan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YjorLMcRRo1bcy5TzRutdL8oOvFAKhcn
+X-Proofpoint-ORIG-GUID: YjorLMcRRo1bcy5TzRutdL8oOvFAKhcn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_11,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405130108
 
-On Mon, May 13, 2024 at 10:29:49AM +0200, Leonard Göhrs wrote:
-> Hi,
-> 
-> I am in the process of updating an STM32MP157 based device from 6.8 to 6.9
-> and have noticed SPI related issues that may be caused by this change.
-> 
-> I am testing on an LXA TAC Generation 2 (arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen2.dts)
-> and the issues I see are SPI transfer timeouts:
-> 
->   [   13.565081] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
->   [   13.565131] spi_master spi2: failed to transfer one message from queue
->   [   13.565134] spi_stm32 44005000.spi: spurious IT (sr=0x00010002, ier=0x00000000)
->   [   13.565145] spi_master spi2: noqueue transfer failed
->   [   13.565183] panel-mipi-dbi-spi spi2.0: error -110 when sending command 0x2a
->   [   13.769113] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
->   [   13.769163] spi_master spi2: failed to transfer one message from queue
->   [   13.769164] spi_stm32 44005000.spi: spurious IT (sr=0x00010002, ier=0x00000000)
->   [   13.769177] spi_master spi2: noqueue transfer failed
->   [   13.769210] panel-mipi-dbi-spi spi2.0: error -110 when sending command 0x2b
->   [   13.977028] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
->   [   13.977082] spi_master spi2: failed to transfer one message from queue
->   [   13.977095] spi_master spi2: noqueue transfer failed
->   [   14.460924] panel-mipi-dbi-spi spi2.0: SPI transfer timed out
-> 
-> Followed by workqueue lockups and the device becoming unresponsive later
-> in the boot, preventing me from logging in and investigating further that way:
-> 
->   [   17.026263] spi_master spi2: noqueue transfer failed
-> 
->   TAC OS - The LXA TAC operating system 24.04+dev lxatac-00011 ttySTM0
-> 
->   lxatac-00011 login: root
->   [   62.434326] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 44s!
->   [   62.441321] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=-20 stuck for 44s!
->   …
-> 
-> Reverting this commit fixes the issue for me. It may be some time before
-> I get around to investigating the issue in detail, so I thought I should
-> ask if anyone else has already noticed this as well.
-> 
-> We are currently in the process of adding the device in question to
-> KernelCI [1], which may help in catching such problems earlier.
-> 
-> [1]: https://github.com/kernelci/kernelci-core/pull/2542
-> 
+On 5/13/2024 2:07 AM, Tengfei Fan wrote:
+> QCS8550 is derived from SM8550. The differnece between SM8550 and
 
-Sorry about that; it looks like the STM32H7/MP platforms require the
-controller to be enabled later. I agree that it should be reverted and
-I'll try to think of another approach.
+spellcheck s/difference/difference 
 
-The STM32H7/MP devices are significantly different from the F4/7
-devices, which makes it difficult to change shared code without causing
-problems like this. I wonder if it might be better to split the F4/7
-support into a separate driver. This would duplicate a bit of code,
-namely the initialization in probe, the baud rate divider calculation
-and the SPI mode config, but would make testing easier and get rid of
-the indirection that handles the different register offsets and field
-masks on each platform. The code for actually transcieving data and
-handling IRQs is already platform specific.
+> QCS8550 is QCS8550 doesn't have modem RF system. QCS8550 is mainly used
+> in IoT scenarios.
 
+IoT products and not scenarios. 
+
+> QCS8550 firmware has different memory map with SM8550 firmware. 
+
+"QCS8550 firmware has different memory map compared to SM8550"
+
+
+The
+> memory map will be runtime added through bootloader.
+
+
+> There are 3 types of reserved memory regions here:
+> 1. Firmware related regions which aren't shared with kernel.
+>     The device tree source in kernel doesn't need to have node to indicate
+> the firmware related reserved information. OS bootloader conveys the
+
+Just "Bootloader conveys the information by updating devicetree at runtime" ?
+
+> information by update device tree in runtime.
+>     This will be described as: UEFI saves the physical address of the
+> UEFI System Table to dts file's chosen node. Kernel read this table and
+> add reserved memory regions to efi config table. Current reserved memory
+> region may have reserved region which was not yet used, release note of
+> the firmware have such kind of information.
+
+I understand what you are trying to explain below, but can we simplify further? I 
+had to read multiple times to understand what you are trying to convey above. 
+
+> 2. Firmware related memory regions which are shared with Kernel
+>     Each region has a specific node with specific label name for later
+> phandle reference from other driver dt node.
+> 3. PIL regions.
+
+Do we use the PIL - peripheral image loader in the upstream kernel or just remoteproc?
+I am fine w/ PIL if it is used at other places in Qualcomm remoteproc. 
+
+>     PIL regions will be reserved and then assigned to subsystem firmware
+> later.
+> Here is a reserved memory map for this platform:
+> 0x100000000 +------------------+
+>             |                  |
+>             | Firmware Related |
+>             |                  |
+>  0xd4d00000 +------------------+
+>             |                  |
+>             | Kernel Available |
+
+What is "kernel available" means? 
+
+>             |                  |
+>  0xa7000000 +------------------+
+>             |                  |
+>             |    PIL Region    |
+>             |                  |
+>  0x8a800000 +------------------+
+>             |                  |
+>             | Firmware Related |
+>             |                  |
+>  0x80000000 +------------------+
+
+> Note that:
+
+Do we need to write "Note that:" ? 
+
+> 0xa7000000..0xA8000000 is used by bootloader, when kernel boot up,
+> it is available for kernel usage. This region is not suggested to be
+> used by kernel features like ramoops, suspend resume etc.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs8550.dtsi | 169 ++++++++++++++++++++++++++
+>  1 file changed, 169 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs8550.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs8550.dtsi b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
+> new file mode 100644
+> index 000000000000..a3ebf3d4e16d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs8550.dtsi
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include "sm8550.dtsi"
+> +
+> +/delete-node/ &reserved_memory;
+> +
+> +/ {
+> +	reserved_memory: reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +
+> +		/* These are 3 types of reserved memory regions here:
+> +		 * 1. Firmware related regions which aren't shared with kernel.
+> +		 *     The device tree source in kernel doesn't need to have node to
+> +		 * indicate the firmware related reserved information. OS bootloader
+> +		 * conveys the information by update device tree in runtime.
+> +		 *     This will be described as: UEFI saves the physical address of
+> +		 * the UEFI System Table to dts file's chosen node. Kernel read this
+> +		 * table and add reserved memory regions to efi config table. Current
+> +		 * reserved memory region may have reserved region which was not yet
+> +		 * used, release note of the firmware have such kind of information.
+> +		 * 2. Firmware related memory regions which are shared with Kernel.
+> +		 *     Each region has a specific node with specific label name for
+> +		 * later phandle reference from other driver dt node.
+> +		 * 3. PIL regions.
+> +		 *     PIL regions will be reserved and then assigned to subsystem
+> +		 * firmware later.
+> +		 * Here is a reserved memory map for this platform:
+
+Just check the comment above and it will apply here. 
+
+> +		 * 0x100000000 +------------------+
+> +		 *             |                  |
+> +		 *             | Firmware Related |
+> +		 *             |                  |
+> +		 *  0xd4d00000 +------------------+
+> +		 *             |                  |
+> +		 *             | Kernel Available |
+> +		 *             |                  |
+> +		 *  0xa7000000 +------------------+
+> +		 *             |                  |
+> +		 *             |    PIL Region    |
+> +		 *             |                  |
+> +		 *  0x8a800000 +------------------+
+> +		 *             |                  |
+> +		 *             | Firmware Related |
+> +		 *             |                  |
+> +		 *  0x80000000 +------------------+
+> +		 * Note that:
+> +		 * 0xa7000000..0xA8000000 is used by bootloader, when kernel boot up,
+> +		 * it is available for kernel usage. This region is not suggested to
+> +		 * be used by kernel features like ramoops, suspend resume etc.
+> +		 */
+> +
+> +		/*
+> +		 * Firmware related regions, bootlader will possible reserve parts of
+
+spellcheck s/bootlader/bootloader
+
+> +		 * region from 0x80000000..0x8a800000.
+> +		 */
+> +		aop_image_mem: aop-image-region@81c00000 {
+> +			reg = <0x0 0x81c00000 0x0 0x60000>;
+> +			no-map;
+> +		};
+> +
+> +		aop_cmd_db_mem: aop-cmd-db-region@81c60000 {
+> +			compatible = "qcom,cmd-db";
+> +			reg = <0x0 0x81c60000 0x0 0x20000>;
+> +			no-map;
+> +		};
+> +
+> +		aop_config_mem: aop-config-region@81c80000 {
+> +			no-map;
+> +			reg = <0x0 0x81c80000 0x0 0x20000>;
+> +		};
+> +
+> +		smem_mem: smem-region@81d00000 {
+> +			compatible = "qcom,smem";
+> +			reg = <0x0 0x81d00000 0x0 0x200000>;
+> +			hwlocks = <&tcsr_mutex 3>;
+> +			no-map;
+> +		};
+> +
+> +		adsp_mhi_mem: adsp-mhi-region@81f00000 {
+> +			reg = <0x0 0x81f00000 0x0 0x20000>;
+> +			no-map;
+> +		};
+> +
+> +		/* PIL region */
+> +		mpss_mem: mpss-region@8a800000 {
+> +			reg = <0x0 0x8a800000 0x0 0x10800000>;
+> +			no-map;
+> +		};
+> +
+> +		q6_mpss_dtb_mem: q6-mpss-dtb-region@9b000000 {
+> +			reg = <0x0 0x9b000000 0x0 0x80000>;
+> +			no-map;
+> +		};
+> +
+> +		ipa_fw_mem: ipa-fw-region@9b080000 {
+> +			reg = <0x0 0x9b080000 0x0 0x10000>;
+> +			no-map;
+> +		};
+> +
+> +		ipa_gsi_mem: ipa-gsi-region@9b090000 {
+> +			reg = <0x0 0x9b090000 0x0 0xa000>;
+> +			no-map;
+> +		};
+> +
+> +		gpu_micro_code_mem: gpu-micro-code-region@9b09a000 {
+> +			reg = <0x0 0x9b09a000 0x0 0x2000>;
+> +			no-map;
+> +		};
+> +
+> +		spss_region_mem: spss-region@9b100000 {
+> +			reg = <0x0 0x9b100000 0x0 0x180000>;
+> +			no-map;
+> +		};
+> +
+> +		spu_secure_shared_memory_mem: spu-secure-shared-memory-region@9b280000 {
+> +			reg = <0x0 0x9b280000 0x0 0x80000>;
+> +			no-map;
+> +		};
+> +
+> +		camera_mem: camera-region@9b300000 {
+> +			reg = <0x0 0x9b300000 0x0 0x800000>;
+> +			no-map;
+> +		};
+> +
+> +		video_mem: video-region@9bb00000 {
+> +			reg = <0x0 0x9bb00000 0x0 0x700000>;
+> +			no-map;
+> +		};
+> +
+> +		cvp_mem: cvp-region@9c200000 {
+> +			reg = <0x0 0x9c200000 0x0 0x700000>;
+> +			no-map;
+> +		};
+> +
+> +		cdsp_mem: cdsp-region@9c900000 {
+> +			reg = <0x0 0x9c900000 0x0 0x2000000>;
+> +			no-map;
+> +		};
+> +
+> +		q6_cdsp_dtb_mem: q6-cdsp-dtb-region@9e900000 {
+> +			reg = <0x0 0x9e900000 0x0 0x80000>;
+> +			no-map;
+> +		};
+> +
+> +		q6_adsp_dtb_mem: q6-adsp-dtb-region@9e980000 {
+> +			reg = <0x0 0x9e980000 0x0 0x80000>;
+> +			no-map;
+> +		};
+> +
+> +		adspslpi_mem: adspslpi-region@9ea00000 {
+> +			reg = <0x0 0x9ea00000 0x0 0x4080000>;
+> +			no-map;
+> +		};
+> +
+> +		/*
+> +		 * Firmware related regions, bootlader will possible reserve parts of
+
+Ditto. 
+
+> +		 * region from 0xd8000000..0x100000000.
+> +		 */
+> +		mpss_dsm_mem: mpss_dsm_region@d4d00000 {
+> +			reg = <0x0 0xd4d00000 0x0 0x3300000>;
+> +			no-map;
+> +		};
+> +	};
+> +};
+-- 
+---Trilok Soni
 
 
