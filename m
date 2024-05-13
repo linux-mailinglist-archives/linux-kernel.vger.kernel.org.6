@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-177129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 047F38C3A77
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E235C8C3A7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:29:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AC90B20A66
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F5881C20E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A87145B35;
-	Mon, 13 May 2024 03:28:54 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AACE145A11;
-	Mon, 13 May 2024 03:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA847145B3D;
+	Mon, 13 May 2024 03:29:29 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.195])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id EFAE1145A11;
+	Mon, 13 May 2024 03:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715570933; cv=none; b=NoIfI9dxL7oHS1/kmSKyjckUOn7vi4Lc3qvGd53GUKvQ+5RzAW/FAxdrZojDhUGBNaIpSkivR+zTrbKlol1RVGOfwM+S+M2uGrRji1tMUv2Tc0iXCEq9VeLUayA6QYw/nN2Xn/eoxVvCn3qiX8Ra77y+tVnXYfRH92OkbaR62Uc=
+	t=1715570969; cv=none; b=ZOtWabiQfC/rEkaNicVApHFk7GtCRFCenc1NjabquBxhP6diz06IFPSj9A2HKNkCeH4m+isHqcthabVLIVcqdEfIhmL3Gq43hW8Y8Il0uSNpvNikU8uzLfV7gH7BVXzNAtmny0K/EWgjZitcPvGlSpAvCRwBrigBgdmndBv7fZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715570933; c=relaxed/simple;
-	bh=Sc4lVwGwuwh8l0GV0drplYsEgllKtx/zFNNahESzNn0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=i83FHlG2ZcKTWjUiG+aNxfKlPE2PzxAhfdF9//mzwS18wRsGrk9fgXhQOUYwDm2InwfPItUiKKzc9hhebd8lz6hl3gEGr+bZ8Ee0ko5WdpNk1YStVwc92Jn/xERHQFYAr3PqMd/tOjjhJsluqf6HU/NimD7zaQ+VLBuzZNbboeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAB3fubciEFmiSW6Cg--.38107S2;
-	Mon, 13 May 2024 11:28:29 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: vadim.fedorenko@linux.dev,
-	arkadiusz.kubalewski@intel.com,
-	jiri@resnulli.us,
-	davem@davemloft.net,
-	jan.glaza@intel.com,
-	przemyslaw.kitszel@intel.com
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1715570969; c=relaxed/simple;
+	bh=tkh8eCP0pbd39xurVRNii2rqP0hk0zpbzdUfZw4bnTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t2VsBvyMV4thKEEBu08H0R+bNq+xNqnX5AD8I2kADPw7PHD4GR8jM/bhOrX6A7cZJ3op9DAEbVMQG6ew7xXA1kZg0/PQMIEpQGFEvnWKMIpcJ3OhY7SOv4FQ6DGwiLL1UyGb2lfF9P/rgDZXrb490LAatYeGS3Vz8y5g1aIGBo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (Maildata Gateway V2.8.8) with ESMTPSA id 8E9B56046A8C1;
+	Mon, 13 May 2024 11:28:45 +0800 (CST)
+X-MD-Sfrom: dengxiang@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: dengxiang <dengxiang@nfschina.com>
+To: lenb@kernel.org,
+	rafael@kernel.org,
+	linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] dpll: fix return value check for kmemdup
-Date: Mon, 13 May 2024 11:28:24 +0800
-Message-Id: <20240513032824.2410459-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	linux-edac@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	wanghuiqiang@huawei.com,
+	prime.zeng@hisilicon.com,
+	tony.luck@intel.com
+Cc: dengxiang <dengxiang@nfschina.com>
+Subject: [PATCH] ACPI: video: Add force_vendor quirk for Lenovo X1 Carbon.
+Date: Mon, 13 May 2024 11:28:31 +0800
+Message-Id: <20240513032831.7983-1-dengxiang@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,47 +52,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAB3fubciEFmiSW6Cg--.38107S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKF4kKr47Gw45tw48Ww4fGrg_yoW3KrcEk3
-	48JrsrXry5G3Z8J3WYka93Wry2ywnrXrn5XryIqFWftayjvryDur4Ivrs8Gr1DXayUuF9r
-	G3yxu3W8Cw4kCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbz8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-The return value of kmemdup() is dst->freq_supported, not
-src->freq_supported. Update the check accordingly.
+Lenovo X1 Carbon advertises both native and vendor backlight
+control interfaces.But Linux defaults to picking the native ACPI
+video backlight interface, which will make that the vendor
+zx_backlight interface to not work.
 
-Fixes: 830ead5fb0c5 ("dpll: fix pin dump crash for rebound module")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Add a DMI quirk to force use of the vendor interface.
+
+Signed-off-by: dengxiang <dengxiang@nfschina.com>
 ---
- drivers/dpll/dpll_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/acpi/video_detect.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
-index d0f6693ca142..32019dc33cca 100644
---- a/drivers/dpll/dpll_core.c
-+++ b/drivers/dpll/dpll_core.c
-@@ -449,7 +449,7 @@ static int dpll_pin_prop_dup(const struct dpll_pin_properties *src,
- 				   sizeof(*src->freq_supported);
- 		dst->freq_supported = kmemdup(src->freq_supported,
- 					      freq_size, GFP_KERNEL);
--		if (!src->freq_supported)
-+		if (!dst->freq_supported)
- 			return -ENOMEM;
- 	}
- 	if (src->board_label) {
+diff --git a/drivers/acpi/video_detect.c b/drivers/acpi/video_detect.c
+index 2cc3821b2b16..e647186b4e83 100644
+--- a/drivers/acpi/video_detect.c
++++ b/drivers/acpi/video_detect.c
+@@ -875,6 +875,14 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
+ 		DMI_MATCH(DMI_PRODUCT_NAME, "Mipad2"),
+ 		},
+ 	},
++	{
++	 .callback = video_detect_force_vendor,
++	 /* Lenovo X1 Carbon */
++	 .matches = {
++		DMI_MATCH(DMI_SYS_VENDOR, "KaiTian"),
++		DMI_MATCH(DMI_PRODUCT_NAME, "KaiTian X1 G1d"),
++		},
++	},
+ 	{ },
+ };
+ 
 -- 
-2.25.1
+2.30.2
 
 
