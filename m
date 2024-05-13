@@ -1,84 +1,74 @@
-Return-Path: <linux-kernel+bounces-177541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A11B8C4073
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:07:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B07C8C408D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:18:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169A828450F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D8D31F21459
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569FB14D293;
-	Mon, 13 May 2024 12:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B17A14F12F;
+	Mon, 13 May 2024 12:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7sxbp21"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FBfnzJF7"
+Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8C21C683;
-	Mon, 13 May 2024 12:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3E414EC6A;
+	Mon, 13 May 2024 12:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602018; cv=none; b=hCRCDTVRnvpCxSfe/9GfIg2nLYn7fDyGjAyW0C2ZOlBIGX6wX6kZKSpj36no8Ro3mDKvIVCWb5JFv1FFJ6Pag4aZ+ZDD2X/iONLGYAN+fYKe9J5CLFhOjnhzq4yej+JYQE2p+k9FCejqGyH3qPUYrBHdXDMLDenGg1kJgNjlz2o=
+	t=1715602729; cv=none; b=kcxNipLrAmGZvGB7rKr9n4/N4WuYBae9hP86uMvCtx8VXTNwQ6Dn/PdOWHiwMFDPymRrf9hv3U4yajreLaHpeIULJKZonzfeJDUWLKSOpazXDMi908B7bgag9S4V4Wkxbwx6QuWBUHaf7j0UvwtmAv0X9/InPuPJT4e5GjCCtoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602018; c=relaxed/simple;
-	bh=xsGQyMUhP00Zqt+lGxpgG0zKx7Cp/SFFHHzkQaew4Tw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XylMEOPoPIm5NwGGwYEZtWyg5HGkYiO17goYXzfKaDleIm3YqRQqiwV5DEYTdLVGEjLCh4tYnYJLGXsSyNrR8Wn9jMfgVk6lK6asx3PVVJ1purS+NEzx9ezxMxyfEIDip5Qofv7KrwsyvpDjW/C0kzDowsr7fvYCffbIQ31OErg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7sxbp21; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-6f44b390d5fso3636965b3a.3;
-        Mon, 13 May 2024 05:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715602016; x=1716206816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBSGhcRATGfWqcuw9ROtUQ71vyzWXEjjFm1V6NJTT0Y=;
-        b=G7sxbp21HgY1LTDbcJRH66MKoUEgrpgqH8tR3LAg6xR0iQOLW6PZZDN116bAuwCeE5
-         gzPieBqoi/Oa+yljXYB0TTgBQZPqIZwHMmzos1Enl6B1iARYZfgW+sfNTuTN4qHrbmbE
-         gPTIMxSJImVt+/AXtSlIN2brd9Wuorl5JrcRfbo+sjs+cKoNeNFBQNwBy6eucOVhiVO3
-         Pg5mRDLDZMnI8eEYWguoeiv1b/e36aamx+nISuLBflJg0qMTi/ivlT08ljvI+3IXsmEv
-         lXOJRw28eSH6YULrWQZnYUtgkeWNJKjYyU/oVqBaMwNBUxoa1OZXJ3fZMIofv0k2w+na
-         1f0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715602016; x=1716206816;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fBSGhcRATGfWqcuw9ROtUQ71vyzWXEjjFm1V6NJTT0Y=;
-        b=N+vXe2ghc2gp8A6i32bTBmpCMshK0BxQxue/YDPRTwx1LTR5Ml0ZYurv16UzTd3Xzb
-         i1ADsiyfZQJ1oeVrGMKg1dfzn2TkxGkcVD2Jjk39RC3jb02RMj8I2Sv6RHPxV2CSC0n5
-         OYqTOjiXPiwGvcZh+x/qwQRRHVcM9Qk9VpvbO4GyNCtlfc9bZ1tU6EyHA74Me8TJFc1T
-         v/GJBZBL2XtZ9ZjoAF3qNMkHE1PGmmIbN6bflNiFB2LfzuvQSifxZR4XM1aVRAPsFeWE
-         Xvo1Z2U6j+FYJxmuumCBXucvL6N6FZogqs+R3h/EB8Lfzc5jk2Rz6VA+Ss1tW7aFTP9l
-         Bzuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtMo4T/1rBNBSJXtdXOT9EjigNUnhJVnheZ+W1J86UPHrVinKjSmZTa/f2KgKttNsetTZeQKggYBgLRMYMZgRnisNBUfKt7OSjpBjGag==
-X-Gm-Message-State: AOJu0YxmJeb+gaWxAOzQNfmv/ED8n3IKnZdiYbICLZunpi2HU1CBr2vw
-	Av+RMRP/bJzO913pOsLnUTspOYKlHE20e6zd+0KGtl/DNzsaRdCG3k8xElJz
-X-Google-Smtp-Source: AGHT+IFiCkyceinqWjKp3qasZ/AZ4ESi/IBe1hBQMdHCVdIO0QRYINlrHJFq9+4IMlcIsS6y2bNYsg==
-X-Received: by 2002:a05:6a20:3c87:b0:1a3:dd15:dacb with SMTP id adf61e73a8af0-1afde1d913cmr12462779637.52.1715602016566;
-        Mon, 13 May 2024 05:06:56 -0700 (PDT)
-Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-204-48.dynamic-ip.hinet.net. [220.143.204.48])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2b1esm7446131b3a.171.2024.05.13.05.06.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 05:06:56 -0700 (PDT)
-From: Adrian Huang <adrianhuang0701@gmail.com>
-X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jiwei Sun <sunjw10@lenovo.com>,
-	Adrian Huang <ahuang12@lenovo.com>
-Subject: [PATCH 2/2] genirq/proc: Refine percpu kstat_irqs access logic
-Date: Mon, 13 May 2024 20:05:48 +0800
-Message-Id: <20240513120548.14046-3-ahuang12@lenovo.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240513120548.14046-1-ahuang12@lenovo.com>
-References: <20240513120548.14046-1-ahuang12@lenovo.com>
+	s=arc-20240116; t=1715602729; c=relaxed/simple;
+	bh=eTJyGFZuuUTf0Z9OwR7wZgGFFPBjo9/DMFTo6oR/Ncw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=rM1D2PaOaEgQwsIrYeJ8HXfb/Z6/a8Ztt7YDpjQzzJTw5IEbJisTDonnOupp6voeH/NpZUGbz88rdoN1j58RamTAimXWEeVJam+l97/Ev556CK/dBC9ZU/C0Y+0M91dF3mw1rwK+Uz11dlY7TJplgPB80kyIDDgipBbSVfS0C5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FBfnzJF7; arc=none smtp.client-ip=162.62.57.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1715602416; bh=xv+9xk6+JmJ0SrgxJjY2cegIbCyOT4cBAO76O1vPTxI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=FBfnzJF7yo5kFg+i/lP4ezMVj/PlZp43R+qepMoMmCj1/eAew618hV8nXhsdEUQ7A
+	 iYpwSIMgqrha0dhSpRIq9PnALbbzc/rqQ7NpdsxXi/0BHLTNIIzBKCZ+YgnRK5rM5J
+	 54jAoJCprxpgV5LVVzCL8Qb0bCpYk2cl4V6+GAw8=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.153])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 1D13ACD5; Mon, 13 May 2024 20:07:17 +0800
+X-QQ-mid: xmsmtpt1715602037tws7b70qy
+Message-ID: <tencent_8BBBDE33A39E011B1B4BFB1B332504BA4808@qq.com>
+X-QQ-XMAILINFO: NvH2zBBgt3uT997bsVhXHWC5QIzHeJNxRUlyXolPdllYLQueIU+6HC1jfqXrDH
+	 zkSAgVyu1yXWNcxU2vyh3aokE5Jx5B53H6KTNBG6jGJnoDIQ7UobGNi6l71ivnZ/GO87z88vd8kx
+	 ZLSua5Kup6S2TZ8J5ZZHvZm7nkjDjWLyssLeGd9ndq4z4aNV2Cj+mIDer2fNoddpO3eA5LD0ntfu
+	 x8K2yzh3TZqVlCpgyoPQNEKqtX9k02TG69wL7sYLWa6GSALywRxGYAQVax10+oXtmKLampK94/2t
+	 437/Icwuk1hqy/kN5L1RWtx24cupN9LxhMk7hnkDFmxHx7fJAiUgomWtUkcF/IDmKlK2pK93pT0s
+	 2XK3FVN7PRbAOEF3fFEoypvNNKtuv72tw8VYd60hA5IjxoYJhcHfHjf9wAmJzi2/WB0QGMhUPVYP
+	 Ba2gSKz60JWHdI9m+2DzJwIZfdoTudxYOYcUfpmQei9uOW45QwllIviXa+Efa6DlCT3QXZ+vJ16c
+	 1L4aKMjSJU5ydZtuwAtr9syhGO5BYU80Q1B7Y79pB3h5AcMiaMKWOJGxccIZK0aShvbvYFwa0dFc
+	 QQI5Puefy9YzYnjkBIVS6EijF2GKNDPsyYiNo+J7z8V+rqs8BrOYAeqbfMDZTh9la6jOdpgkdtLo
+	 LzWs1U7Rb8EzSmzkh0O5q2Cb0gDVkrQ5hU/1o/Gv7nnNzNT5GNNiVdrMa2CEMal6mGjIGlwFlA6f
+	 KxYmtG/L7RE0RmZ2AP+x8lTNZz9ISBTqLocYXMbAlEuQXo1MF2QRUlZhLY4MxWawRgBsEMagYUU8
+	 bn84U1ToQjqnhewfbl59Af7qx5qQM8r3TIAV8H1H7Z4YbtmYrMvhyByFfbysJTxUEQsrme0RoIH4
+	 LmS32iKNx76WlpwaraJ95vAkLzh0P/Cejnmm7SfFN/vazSvzxek3vFTxW66zyfLIohriAmYsDDa6
+	 PyqitKZCg=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+73414091bd382684ee2b@syzkaller.appspotmail.com
+Cc: bfoster@redhat.com,
+	kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] bcachefs: if input options invalid return -BCH_ERR_option_name
+Date: Mon, 13 May 2024 20:07:17 +0800
+X-OQ-MSGID: <20240513120717.3349265-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000001e59c20618455922@google.com>
+References: <0000000000001e59c20618455922@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,71 +77,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Adrian Huang <ahuang12@lenovo.com>
+When the input parameter options format is invalid, it will cause the opts object
+to not be set correctly. 
+When a similar situation occurs, it should return -BCH_ERR_option_name and terminate
+the mounting action.
 
-There is no need to accumulate all CPUs' kstat_irqs to determine whether
-the corresponding irq should be printed. Instead, stop the iteration
-once one of kstat_irqs is nonzero.
-
-In addition, no need to check if kstat_irqs address is available
-for each iteration when printing each CPU irq statistic.
-
-Tested-by: Jiwei Sun <sunjw10@lenovo.com>
-Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
+Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+Reported-and-tested-by: syzbot+73414091bd382684ee2b@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- kernel/irq/proc.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ fs/bcachefs/opts.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
-index 623b8136e9af..bfa341fac687 100644
---- a/kernel/irq/proc.c
-+++ b/kernel/irq/proc.c
-@@ -461,7 +461,7 @@ int show_interrupts(struct seq_file *p, void *v)
+diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
+index e1800c4119b5..2fc59b8aa32d 100644
+--- a/fs/bcachefs/opts.c
++++ b/fs/bcachefs/opts.c
+@@ -443,7 +443,7 @@ int bch2_parse_mount_opts(struct bch_fs *c, struct bch_opts *opts,
+ 			  char *options)
  {
- 	static int prec;
+ 	char *copied_opts, *copied_opts_start;
+-	char *opt, *name, *val;
++	char *opt, *name, *val, opts_set = 0;
+ 	int ret, id;
+ 	struct printbuf err = PRINTBUF;
+ 	u64 v;
+@@ -498,8 +498,11 @@ int bch2_parse_mount_opts(struct bch_fs *c, struct bch_opts *opts,
+ 			goto bad_val;
  
--	unsigned long flags, any_count = 0;
-+	unsigned long flags, print_irq = 1;
- 	int i = *(loff_t *) v, j;
- 	struct irqaction *action;
- 	struct irq_desc *desc;
-@@ -488,18 +488,28 @@ int show_interrupts(struct seq_file *p, void *v)
- 	if (!desc || irq_settings_is_hidden(desc))
- 		goto outsparse;
- 
--	if (desc->kstat_irqs) {
--		for_each_online_cpu(j)
--			any_count |= data_race(*per_cpu_ptr(desc->kstat_irqs, j));
-+	if ((!desc->action || irq_desc_is_chained(desc)) && desc->kstat_irqs) {
-+		print_irq = 0;
-+		for_each_online_cpu(j) {
-+			if (data_race(*per_cpu_ptr(desc->kstat_irqs, j))) {
-+				print_irq = 1;
-+				break;
-+			}
-+		}
+ 		bch2_opt_set_by_id(opts, id, v);
++		opts_set = 1;
  	}
  
--	if ((!desc->action || irq_desc_is_chained(desc)) && !any_count)
-+	if (!print_irq)
- 		goto outsparse;
++	if (!opts_set)
++		goto bad_opt;
+ 	ret = 0;
+ 	goto out;
  
- 	seq_printf(p, "%*d: ", prec, i);
--	for_each_online_cpu(j)
--		seq_printf(p, "%10u ", desc->kstat_irqs ?
--					*per_cpu_ptr(desc->kstat_irqs, j) : 0);
-+
-+	if (desc->kstat_irqs) {
-+		for_each_online_cpu(j)
-+			seq_printf(p, "%10u ", *per_cpu_ptr(desc->kstat_irqs, j));
-+	} else {
-+		for_each_online_cpu(j)
-+			seq_printf(p, "%10u ", 0);
-+	}
- 
- 	raw_spin_lock_irqsave(&desc->lock, flags);
- 	if (desc->irq_data.chip) {
 -- 
-2.25.1
+2.43.0
 
 
