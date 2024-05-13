@@ -1,398 +1,269 @@
-Return-Path: <linux-kernel+bounces-177853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45508C4556
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:51:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32C98C455A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A36B282617
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B3571F21A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7E81B94F;
-	Mon, 13 May 2024 16:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2D31C687;
+	Mon, 13 May 2024 16:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP198nFL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b8bL5T2q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C21C680;
-	Mon, 13 May 2024 16:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BEFD18C3D;
+	Mon, 13 May 2024 16:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619098; cv=none; b=YnvKHYn8Sau6pps5hubpp62KDFEb3qzJlNHDqglTgmamjMML7QrIC3lA8Vas+FAX7XPKDUKOsgmjo3ZNQYHE+HtpVvUXv+BIvbR34BtApZpqJDOy1dQi0sXrck1m+8S8dvDaqmoxTgin/o6NETok9eAo4vg+xwKhFOR1VUj3sE8=
+	t=1715619139; cv=none; b=ulLDR7zAHADkUjwxcTWYCgtyv+2ji0Eq5Q9TpK3hUrkSxlmAAvR5F2atse5CqmeUQ6UV+eUMAiydDVT3lgjZbTL7IQPoaF6877er1VTSN1bKo/a8m5slwaL7ih10Cpidu5VAJqHiEN/IqpbEqrvG0+Y2BG/0PxSTZT1Gv1KeGNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619098; c=relaxed/simple;
-	bh=yJ/MMFLcNTPl27dnPO3ITE5THMb1MLtJhvhlBn1heAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U+3ymjXe2keGQZQZxBmdkgfquaQOhP1Eq0zsGxc7hkNULOZaEJttSTD8hxTW8QMwq3K/syf4d20xEG0tZwoNs9cQnXC+T+0gW7J4s3SwHZKFWhoE2tg8C4MwgbbbIi7f2h60Omx999ZDRa3eJNAmbQtfY2QZzC9IZM548rhmnQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP198nFL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C661C113CC;
-	Mon, 13 May 2024 16:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715619098;
-	bh=yJ/MMFLcNTPl27dnPO3ITE5THMb1MLtJhvhlBn1heAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HP198nFLfQVHY4E0LaCXcxEzzS1V/FwH3EGuT4g5SVzPaD47iK9/8GU1koo45z9S1
-	 XWeEs4q8VAfhwQzNN1qCIRWt0rPr8qYAzWGj+c7SwLcGte1H/DI8l9pBkkJB4CP6Zt
-	 rc30H2Gg7a13vfmJmah3jZGLfM1MHW7+XCnTCBw/Z0XtTJjE+YLRE5M7WxMjlm2Mp4
-	 cUJv0iNmRPnDSJXqZ7ULzBHMxT16wCaqRivuSQvCKArwLFEVR9PhaQ2mZiexaOQmK6
-	 09T7Fj0+HF2by/rYX5BccCeU2d3qjQn8mgYn2K+qhZ+Ht0+76MFdREYUHc0Vxn65MQ
-	 iTmgpm7KDUFPg==
-Date: Mon, 13 May 2024 17:51:33 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
-	hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com,
-	lcherian@marvell.com, richardcochran@gmail.com
-Subject: Re: [net-next,v2 5/8] cn10k-ipsec: Add SA add/delete support for
- outb inline ipsec
-Message-ID: <20240513165133.GS2787@kernel.org>
-References: <20240513105446.297451-1-bbhushan2@marvell.com>
- <20240513105446.297451-6-bbhushan2@marvell.com>
+	s=arc-20240116; t=1715619139; c=relaxed/simple;
+	bh=HxxOong3W3gZPaT5eDY3JXpmkoKgzN6SCBTlmXMa5lU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L5iHmvFJpjyPp/zrxe6/x/hcOdhPEUHJ9p+gG0SRJATQFOYIYFAlpmO3B/Jde19oZeQDNfx8P+sg1Hy6RSPkquAVJgrG6qyN+M+7UCmH1Bd3MX+jdG2O5Jea6Gd1viVKzaJloxu4+aIeywDiIGvdCbuC/2UD900kJWofhUI6JEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b8bL5T2q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DBKFuT028330;
+	Mon, 13 May 2024 16:52:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Es6jTmjTFhFxEXJqbKsv8hP+lTSCf3yS1oPECWLd7uU=; b=b8
+	bL5T2qM6w6vWqsveIlmPT6FTE+fEHl/SgiNkv56tjxBXCYVJ0SIg76lJVLQgmOli
+	17SFFFZc5wP6pDBDj+MvzoH2h0AAhphre+NP+OYqcJ0kcEobhDH1fPi3Bq+TcBw/
+	QsdEVeBalSbAUGFnGF3hiKyk+HIxqJh+dc3k+zF8Pb0UM0UnyRTJG34OnFNdRbrn
+	KzgjumTmYHZAyXeD743//D3gG6fegklJIgC2ka8Phusi+H2ZyJRYpSUV+Kz6zjVY
+	ttLWSzC/dOm1fPYju+MhZ5juBzoHxUpLxhiR/v8ITbtB8qu8Cc2H5bJ1xhQLVNIA
+	U4liJwWFrg04LepwDmcA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y1ymq45qg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 16:52:11 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44DGq9Uj022330
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 13 May 2024 16:52:09 GMT
+Received: from [10.251.44.40] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 13 May
+ 2024 09:52:04 -0700
+Message-ID: <d53fec3e-e46c-4185-abcd-e621818057a5@quicinc.com>
+Date: Mon, 13 May 2024 19:52:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513105446.297451-6-bbhushan2@marvell.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] media: qcom: camss: Move format related functions
+Content-Language: en-US
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, <rfoss@kernel.org>,
+        <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <mchehab@kernel.org>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <laurent.pinchart@ideasonboard.com>,
+        <hverkuil-cisco@xs4all.nl>, <quic_hariramp@quicinc.com>
+References: <20240411124543.199-1-quic_grosikop@quicinc.com>
+ <20240411124543.199-6-quic_grosikop@quicinc.com>
+ <c6797921-2c2b-4dc1-866e-011d10c9d3c2@linaro.org>
+From: "Gjorgji Rosikopulos (Consultant)" <quic_grosikop@quicinc.com>
+In-Reply-To: <c6797921-2c2b-4dc1-866e-011d10c9d3c2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: w_TBqawH3ZvU1dG_Am_m1ksTWIZOPq5_
+X-Proofpoint-ORIG-GUID: w_TBqawH3ZvU1dG_Am_m1ksTWIZOPq5_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-13_11,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 suspectscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
+ definitions=main-2405130109
 
-On Mon, May 13, 2024 at 04:24:43PM +0530, Bharat Bhushan wrote:
-> This patch adds support to add and delete Security Association
-> (SA) xfrm ops. Hardware maintains SA context in memory allocated
-> by software. Each SA context is 128 byte aligned and size of
-> each context is multiple of 128-byte. Add support for transport
-> and tunnel ipsec mode, ESP protocol, aead aes-gcm-icv16, key size
-> 128/192/256-bits with 32bit salt.
+Hi Vladimir,
+
+Thanks for the review,
+
+
+On 5/13/2024 6:39 PM, Vladimir Zapolskiy wrote:
+> On 4/11/24 15:45, Gjorgji Rosikopulos wrote:
+>> From: Radoslav Tsvetkov <quic_rtsvetko@quicinc.com>
+>>
+>> Move out the format related helper functions from vfe and video in a
+>> separate file. The goal here is to create a format API.
+>>
+>> Signed-off-by: Radoslav Tsvetkov <quic_rtsvetko@quicinc.com>
+>> Signed-off-by: Gjorgji Rosikopulos <quic_grosikop@quicinc.com>
+>> ---
+>>   drivers/media/platform/qcom/camss/Makefile    |  1 +
+>>   .../media/platform/qcom/camss/camss-format.c  | 98 +++++++++++++++++++
+>>   .../media/platform/qcom/camss/camss-format.h  |  5 +
+>>   drivers/media/platform/qcom/camss/camss-vfe.c | 86 +++++-----------
+>>   .../media/platform/qcom/camss/camss-video.c   | 26 +----
+>>   5 files changed, 128 insertions(+), 88 deletions(-)
+>>   create mode 100644 drivers/media/platform/qcom/camss/camss-format.c
+>>
+>> diff --git a/drivers/media/platform/qcom/camss/Makefile
+>> b/drivers/media/platform/qcom/camss/Makefile
+>> index 0d4389ab312d..e636968a1126 100644
+>> --- a/drivers/media/platform/qcom/camss/Makefile
+>> +++ b/drivers/media/platform/qcom/camss/Makefile
+>> @@ -19,5 +19,6 @@ qcom-camss-objs += \
+>>           camss-vfe-gen1.o \
+>>           camss-vfe.o \
+>>           camss-video.o \
+>> +        camss-format.o \
+>>     obj-$(CONFIG_VIDEO_QCOM_CAMSS) += qcom-camss.o
+>> diff --git a/drivers/media/platform/qcom/camss/camss-format.c
+>> b/drivers/media/platform/qcom/camss/camss-format.c
+>> new file mode 100644
+>> index 000000000000..6279cb099625
+>> --- /dev/null
+>> +++ b/drivers/media/platform/qcom/camss/camss-format.c
+>> @@ -0,0 +1,98 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/* Copyright (c) 2023, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2023 Qualcomm Technologies, Inc.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 and
+>> + * only version 2 as published by the Free Software Foundation.
+>> + *
+>> + * This program is distributed in the hope that it will be useful,
+>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>> + * GNU General Public License for more details.
+>> + */
 > 
-> Signed-off-by: Bharat Bhushan <bbhushan2@marvell.com>
-> ---
-> v1->v2:
->  - Use dma_wmb() instead of architecture specific barrier
+> SPDX-License-Identifier is fully sufficient, the licence description
+> shall be removed.
+
+I need to check, but as i can see with other files the license
+description can be removed.
+
 > 
->  .../marvell/octeontx2/nic/cn10k_ipsec.c       | 433 +++++++++++++++++-
->  .../marvell/octeontx2/nic/cn10k_ipsec.h       | 114 +++++
->  2 files changed, 546 insertions(+), 1 deletion(-)
+>> +
+>> +#include <linux/bug.h>
+>> +#include <linux/errno.h>
+>> +
+>> +#include "camss-format.h"
+>> +
+>> +/*
+>> + * camss_format_get_bpp - Map media bus format to bits per pixel
+>> + * @formats: supported media bus formats array
+>> + * @nformats: size of @formats array
+>> + * @code: media bus format code
+>> + *
+>> + * Return number of bits per pixel
+>> + */
+>> +u8 camss_format_get_bpp(const struct camss_format_info *formats,
+>> unsigned int nformats, u32 code)
+>> +{
+>> +    unsigned int i;
+>> +
+>> +    for (i = 0; i < nformats; i++)
+>> +        if (code == formats[i].code)
+>> +            return formats[i].mbus_bpp;
+>> +
+>> +    WARN(1, "Unknown format\n");
+>> +
+>> +    return formats[0].mbus_bpp;
+>> +}
+>> +
+>> +/*
+>> + * camss_format_find_code - Find a format code in an array
+>> + * @code: a pointer to media bus format codes array
+>> + * @n_code: size of @code array
+>> + * @index: index of code in the array
+>> + * @req_code: required code
+>> + *
+>> + * Return media bus format code
+>> + */
+>> +u32 camss_format_find_code(u32 *code, unsigned int n_code, unsigned
+>> int index, u32 req_code)
+>> +{
+>> +    int i;
+>> +
+>> +    if (!req_code && index >= n_code)
+>> +        return 0;
+>> +
 > 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.c
+> 0 as an error condition indicator is not very common, at least it shall be
+> documented in the comment.
 
-..
+The original function was vfe_find_code. This change moves all format
+related functions across the sub-device files to camss-format
+I believe that 0 is default format.
 
-> @@ -356,6 +362,414 @@ static int cn10k_outb_cpt_clean(struct otx2_nic *pf)
->  	return err;
->  }
->  
-> +static int cn10k_outb_get_sa_index(struct otx2_nic *pf,
-> +				   struct cn10k_tx_sa_s *sa_entry)
-> +{
-> +	u32 sa_size = pf->ipsec.sa_size;
-> +	u32 sa_index;
-> +
-> +	if (!sa_entry || ((void *)sa_entry < pf->ipsec.outb_sa->base))
-> +		return -EINVAL;
-> +
-> +	sa_index = ((void *)sa_entry - pf->ipsec.outb_sa->base) / sa_size;
-> +	if (sa_index >= CN10K_IPSEC_OUTB_MAX_SA)
-> +		return -EINVAL;
-> +
-> +	return sa_index;
-> +}
-> +
-> +static dma_addr_t cn10k_outb_get_sa_iova(struct otx2_nic *pf,
-> +					 struct cn10k_tx_sa_s *sa_entry)
-> +{
-> +	u32 sa_index = cn10k_outb_get_sa_index(pf, sa_entry);
-> +
-> +	if (sa_index < 0)
-> +		return 0;
+> 
+>> +    for (i = 0; i < n_code; i++) {
+>> +        if (req_code) {
+>> +            if (req_code == code[i])
+>> +                return req_code;
+>> +        } else {
+>> +            if (i == index)
+>> +                return code[i];
+>> +        }
+>> +    }
+>> +
+>> +    return code[0];
+>> +}
+>> +
+>> +/*
+>> + * camss_format_find_format - Find a format in an array
+>> + * @code: media bus format code
+>> + * @pixelformat: V4L2 pixel format FCC identifier
+>> + * @formats: a pointer to formats array
+>> + * @nformats: size of @formats array
+>> + *
+>> + * Return index of a format or a negative error code otherwise
+>> + */
+>> +int camss_format_find_format(u32 code, u32 pixelformat, const struct
+>> camss_format_info *formats,
+>> +                 unsigned int nformats)
+>> +{
+>> +    int i;
+> 
+> unsigned int i
 
-Should the type of sa_index be int?
-That would match the return type of cn10k_outb_get_sa_index.
+Maybe it makes sense to go to all functions already existing in camss
+and change int with unsigned int for for loops...
 
-Otherwise, testing for < 0 will always be false.
+> 
+>> +
+>> +    for (i = 0; i < nformats; i++) {
+>> +        if (formats[i].code == code &&
+>> +            formats[i].pixelformat == pixelformat)
+>> +            return i;
+>> +    }
+>> +
+>> +    for (i = 0; i < nformats; i++) {
+>> +        if (formats[i].code == code)
+>> +            return i;
+>> +    }
+>> +
+>> +    WARN_ON(1);
+>> +
+> 
+> WARN_ON() is not needed here, it has to be removed.
 
-Likewise in cn10k_outb_free_sa and cn10k_ipsec_del_state.
+Again this is migrated code from camss-video :/. I guess we need bigger
+consensus to remove this WARN_ON. For me it makes sense to be removed.
 
-Flagged by Smatch.
-
-> +	return pf->ipsec.outb_sa->iova + sa_index * pf->ipsec.sa_size;
-> +}
-
-..
-
-> +static int cn10k_outb_write_sa(struct otx2_nic *pf, struct cn10k_tx_sa_s *sa_cptr)
-> +{
-> +	dma_addr_t res_iova, dptr_iova, sa_iova;
-> +	struct cn10k_tx_sa_s *sa_dptr;
-> +	struct cpt_inst_s inst;
-> +	struct cpt_res_s *res;
-> +	u32 sa_size, off;
-> +	u64 reg_val;
-> +	int ret;
-> +
-> +	sa_iova = cn10k_outb_get_sa_iova(pf, sa_cptr);
-> +	if (!sa_iova)
-> +		return -EINVAL;
-> +
-> +	res = dma_alloc_coherent(pf->dev, sizeof(struct cpt_res_s),
-> +				 &res_iova, GFP_ATOMIC);
-> +	if (!res)
-> +		return -ENOMEM;
-> +
-> +	sa_size = sizeof(struct cn10k_tx_sa_s);
-> +	sa_dptr = dma_alloc_coherent(pf->dev, sa_size, &dptr_iova, GFP_ATOMIC);
-> +	if (!sa_dptr) {
-> +		dma_free_coherent(pf->dev, sizeof(struct cpt_res_s), res,
-> +				  res_iova);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	for (off = 0; off < (sa_size / 8); off++)
-> +		*((u64 *)sa_dptr + off) = cpu_to_be64(*((u64 *)sa_cptr + off));
-
-Given the layout of struct cn10k_tx_sa_s, it's not clear
-to me how it makes sense for it to be used to store big endian quadwords.
-Which is a something that probably ought to be addressed.
-
-But if not, Sparse complains about the endienness of the types used
-above. I think it wants:
-
-	*((__be64 *)sa_dptr + off)
-
-> +
-> +	memset(&inst, 0, sizeof(struct cpt_inst_s));
-> +
-> +	res->compcode = CN10K_CPT_COMP_E_NOTDONE;
-> +	inst.res_addr = res_iova;
-> +	inst.dptr = (u64)dptr_iova;
-> +	inst.param2 = sa_size >> 3;
-> +	inst.dlen = sa_size;
-> +	inst.opcode_major = CN10K_IPSEC_MAJOR_OP_WRITE_SA;
-> +	inst.opcode_minor = CN10K_IPSEC_MINOR_OP_WRITE_SA;
-> +	inst.cptr = sa_iova;
-> +	inst.ctx_val = 1;
-> +	inst.egrp = CN10K_DEF_CPT_IPSEC_EGRP;
-> +
-> +	cn10k_cpt_inst_flush(pf, &inst, sizeof(struct cpt_inst_s));
-> +	dma_wmb();
-> +	ret = cn10k_wait_for_cpt_respose(pf, res);
-> +	if (ret)
-> +		goto out;
-> +
-> +	/* Trigger CTX flush to write dirty data back to DRAM */
-> +	reg_val = FIELD_PREP(CPT_LF_CTX_FLUSH, sa_iova >> 7);
-> +	otx2_write64(pf, CN10K_CPT_LF_CTX_FLUSH, reg_val);
-> +
-> +out:
-> +	dma_free_coherent(pf->dev, sa_size, sa_dptr, dptr_iova);
-> +	dma_free_coherent(pf->dev, sizeof(struct cpt_res_s), res, res_iova);
-> +	return ret;
-> +}
-
-..
-
-> +static void cn10k_outb_prepare_sa(struct xfrm_state *x,
-> +				  struct cn10k_tx_sa_s *sa_entry)
-> +{
-> +	int key_len = (x->aead->alg_key_len + 7) / 8;
-> +	struct net_device *netdev = x->xso.dev;
-> +	u8 *key = x->aead->alg_key;
-> +	struct otx2_nic *pf;
-> +	u32 *tmp_salt;
-> +	u64 *tmp_key;
-> +	int idx;
-> +
-> +	memset(sa_entry, 0, sizeof(struct cn10k_tx_sa_s));
-> +
-> +	/* context size, 128 Byte aligned up */
-> +	pf = netdev_priv(netdev);
-> +	sa_entry->ctx_size = (pf->ipsec.sa_size / OTX2_ALIGN)  & 0xF;
-> +	sa_entry->hw_ctx_off = cn10k_ipsec_get_hw_ctx_offset();
-> +	sa_entry->ctx_push_size = cn10k_ipsec_get_ctx_push_size();
-> +
-> +	/* Ucode to skip two words of CPT_CTX_HW_S */
-> +	sa_entry->ctx_hdr_size = 1;
-> +
-> +	/* Allow Atomic operation (AOP) */
-> +	sa_entry->aop_valid = 1;
-> +
-> +	/* Outbound, ESP TRANSPORT/TUNNEL Mode, AES-GCM with AES key length
-> +	 * 128bit.
-> +	 */
-> +	sa_entry->sa_dir = CN10K_IPSEC_SA_DIR_OUTB;
-> +	sa_entry->ipsec_protocol = CN10K_IPSEC_SA_IPSEC_PROTO_ESP;
-> +	sa_entry->enc_type = CN10K_IPSEC_SA_ENCAP_TYPE_AES_GCM;
-> +	if (x->props.mode == XFRM_MODE_TUNNEL)
-> +		sa_entry->ipsec_mode = CN10K_IPSEC_SA_IPSEC_MODE_TUNNEL;
-> +	else
-> +		sa_entry->ipsec_mode = CN10K_IPSEC_SA_IPSEC_MODE_TRANSPORT;
-> +
-> +	sa_entry->spi = cpu_to_be32(x->id.spi);
-
-The type of spi is a 32-bit bitfield of a 64-bit unsigned host endien integer.
-
-1. I suspect it would make more sense to declare that field as a 32bit integer.
-2. It is being assigned a big endian value.  That doesn't seem right.
-
-The second issue was flagged by Sparse.
-
-> +
-> +	/* Last 4 bytes are salt */
-> +	key_len -= 4;
-> +	sa_entry->aes_key_len = cn10k_ipsec_get_aes_key_len(key_len);
-> +	memcpy(sa_entry->cipher_key, key, key_len);
-> +	tmp_key = (u64 *)sa_entry->cipher_key;
-> +
-> +	for (idx = 0; idx < key_len / 8; idx++)
-> +		tmp_key[idx] = be64_to_cpu(tmp_key[idx]);
-
-More endian problems flagged by Sparse on this line.
-An integer variable should typically be used to store
-a big endian value, a little endian value, or a host endian value.
-Not more than one of these.
-
-This is because tooling such as Sparse can then be used to verify
-the correctness of the endian used.
-
-> +
-> +	memcpy(&sa_entry->iv_gcm_salt, key + key_len, 4);
-> +	tmp_salt = (u32 *)&sa_entry->iv_gcm_salt;
-> +	*tmp_salt = be32_to_cpu(*tmp_salt);
-
-Likewise here.
-
-> +
-> +	/* Write SA context data to memory before enabling */
-> +	wmb();
-> +
-> +	/* Enable SA */
-> +	sa_entry->sa_valid = 1;
-> +}
-
-..
-
-> +static int cn10k_ipsec_add_state(struct xfrm_state *x,
-> +				 struct netlink_ext_ack *extack)
-> +{
-> +	struct net_device *netdev = x->xso.dev;
-> +	struct cn10k_tx_sa_s *sa_entry;
-> +	struct cpt_ctx_info_s *sa_info;
-> +	struct otx2_nic *pf;
-> +	int err;
-> +
-> +	err = cn10k_ipsec_validate_state(x);
-> +	if (err)
-> +		return err;
-> +
-> +	if (x->xso.dir == XFRM_DEV_OFFLOAD_IN) {
-> +		netdev_err(netdev, "xfrm inbound offload not supported\n");
-> +		err = -ENODEV;
-
-This path results in pf being dereferenced while uninitialised
-towards the bottom of this function.
-
-Flagged by Smatch, and Clang-18 W=1 build
-
-> +	} else {
-> +		pf = netdev_priv(netdev);
-> +		if (!mutex_trylock(&pf->ipsec.lock)) {
-> +			netdev_err(netdev, "IPSEC device is busy\n");
-> +			return -EBUSY;
-> +		}
-> +
-> +		if (!(pf->flags & OTX2_FLAG_INLINE_IPSEC_ENABLED)) {
-> +			netdev_err(netdev, "IPSEC not enabled/supported on device\n");
-> +			err = -ENODEV;
-> +			goto unlock;
-> +		}
-> +
-> +		sa_entry = cn10k_outb_alloc_sa(pf);
-> +		if (!sa_entry) {
-> +			netdev_err(netdev, "SA maximum limit %x reached\n",
-> +				   CN10K_IPSEC_OUTB_MAX_SA);
-> +			err = -EBUSY;
-> +			goto unlock;
-> +		}
-> +
-> +		cn10k_outb_prepare_sa(x, sa_entry);
-> +
-> +		err = cn10k_outb_write_sa(pf, sa_entry);
-> +		if (err) {
-> +			netdev_err(netdev, "Error writing outbound SA\n");
-> +			cn10k_outb_free_sa(pf, sa_entry);
-> +			goto unlock;
-> +		}
-> +
-> +		sa_info = kmalloc(sizeof(*sa_info), GFP_KERNEL);
-> +		sa_info->sa_entry = sa_entry;
-> +		sa_info->sa_iova = cn10k_outb_get_sa_iova(pf, sa_entry);
-> +		x->xso.offload_handle = (unsigned long)sa_info;
-> +	}
-> +
-> +unlock:
-> +	mutex_unlock(&pf->ipsec.lock);
-> +	return err;
-> +}
-
-..
-
-> +static const struct xfrmdev_ops cn10k_ipsec_xfrmdev_ops = {
-> +	.xdo_dev_state_add	= cn10k_ipsec_add_state,
-> +	.xdo_dev_state_delete	= cn10k_ipsec_del_state,
-> +};
-> +
-
-cn10k_ipsec_xfrmdev_ops is unused.
-Perhaps it, along with it's callbacks,
-should be added by the function that uses it?
-
-Flagged by W=1 builds.
-
->  int cn10k_ipsec_ethtool_init(struct net_device *netdev, bool enable)
->  {
->  	struct otx2_nic *pf = netdev_priv(netdev);
-
-..
-
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.h b/drivers/net/ethernet/marvell/octeontx2/nic/cn10k_ipsec.h
-
-..
-
-> +struct cn10k_tx_sa_s {
-> +	u64 esn_en		: 1; /* W0 */
-> +	u64 rsvd_w0_1_8		: 8;
-> +	u64 hw_ctx_off		: 7;
-> +	u64 ctx_id		: 16;
-> +	u64 rsvd_w0_32_47	: 16;
-> +	u64 ctx_push_size	: 7;
-> +	u64 rsvd_w0_55		: 1;
-> +	u64 ctx_hdr_size	: 2;
-> +	u64 aop_valid		: 1;
-> +	u64 rsvd_w0_59		: 1;
-> +	u64 ctx_size		: 4;
-> +	u64 w1;			/* W1 */
-> +	u64 sa_valid		: 1; /* W2 */
-> +	u64 sa_dir		: 1;
-> +	u64 rsvd_w2_2_3		: 2;
-> +	u64 ipsec_mode		: 1;
-> +	u64 ipsec_protocol	: 1;
-> +	u64 aes_key_len		: 2;
-> +	u64 enc_type		: 3;
-> +	u64 rsvd_w2_11_31	: 21;
-> +	u64 spi			: 32;
-> +	u64 w3;			/* W3 */
-> +	u8 cipher_key[32];	/* W4 - W7 */
-> +	u32 rsvd_w8_0_31;	/* W8 : IV */
-> +	u32 iv_gcm_salt;
-> +	u64 rsvd_w9_w30[22];	/* W9 - W30 */
-> +	u64 hw_ctx[6];		/* W31 - W36 */
-> +};
-
-..
+~Gjorgji
 
