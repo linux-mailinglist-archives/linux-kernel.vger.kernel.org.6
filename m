@@ -1,119 +1,143 @@
-Return-Path: <linux-kernel+bounces-177980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222868C4715
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:44:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FF88C4718
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525E21C20B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1994B1F22F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C5B3BB30;
-	Mon, 13 May 2024 18:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67933BB48;
+	Mon, 13 May 2024 18:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA8zQk03"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyfEyhzi"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0283BBC9;
-	Mon, 13 May 2024 18:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E640849;
+	Mon, 13 May 2024 18:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625847; cv=none; b=cqXhn9bzjNfXC1TLHLx8VBicyaXZxDoABgq/tWW21RRtUc3SfXc5rTjlOqC67a9HaZllZ8tCGYGF4TaaAVzDKt3ymYMfeLqQeQxymOAvVRfPM6/E0vKzz6CTomAOwiWlYtpXTV5Nbr3kJd+rmkCEl5ptItEreLpLgXFevBD64oI=
+	t=1715625881; cv=none; b=VbR+/GYF0cDqEk2hArXK/hFEFd71qycf9sfX/t53YZqr+iIaYR1dhWs5fKdMpKyBxxuutCTOwJ+yDXxJ5WrCxw3qM2QPUvc3Cse9XRhZIysttS0ADDw7WxIrVA3+zSLdalYpet0YSorrxBDByr/51giWe3BMvyWZ3Ngz3aKEE2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625847; c=relaxed/simple;
-	bh=WcXjsnsTDPkhfmYPfLYLMxFC0JdNHdWOZt2KFyWC9kk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pH75wlvAhrlkbbF6TSenMg9Zt4i34dfXrd4IYy7WM9LW2L2/p43xb3K93/0z0ocwUJS8rodUbCy2+4neEmZoRyuyurbTgWA0dL2FoHkKYo7CxFRUV3ndpYyPVBuI/YXWxrXr7bPJK2XAmJjmvsC2mcV0O5lMYL/0dEqEpEDvAMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YA8zQk03; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48BBDC113CC;
-	Mon, 13 May 2024 18:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715625846;
-	bh=WcXjsnsTDPkhfmYPfLYLMxFC0JdNHdWOZt2KFyWC9kk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YA8zQk031Al6OQfS2Vq+vf/7SorSXU5LMglbd6lzj7zW/7dwN45Hc7NaKzGjeT5wB
-	 P4cdgbH9iQjsC+yfepXVqRkcBE8EZjw/aYBek/nDzgI6FlPfXqcpSxMshtVGn4c/ot
-	 bK1yLYMzxLfbfoYIJnA3t7gpg7imlEVPHUe29O024Afi4WkrRpnffyilbhIDwQp1lq
-	 RJSr6zKPk1JEEUo3lXeyKxIZ6uKi7h+a6PAimWRUhVjcrt1xL8bCoPMmEhwBuYQg18
-	 t7uz+APoMQrtBTt2FengjvGp/TQ6gi2c1U3zDfFkVQ6ewmSg/qQagFoaScFJROJB9C
-	 OICCOjZhgiUsg==
-Date: Mon, 13 May 2024 13:44:04 -0500
-From: Rob Herring <robh@kernel.org>
-To: matteomartelli3@gmail.com
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: es8311: dt-bindings: add everest es8311 codec
-Message-ID: <20240513184404.GA2805391-robh@kernel.org>
-References: <20240510131238.1319333-1-matteomartelli3@gmail.com>
- <20240510131238.1319333-2-matteomartelli3@gmail.com>
- <91fa1c1f-22ea-4f4a-9d87-a919ddf118cd@kernel.org>
- <4072123.0gxhY3eTYf@njaxe>
+	s=arc-20240116; t=1715625881; c=relaxed/simple;
+	bh=V+isaCSZhCjRM6q/lNr4SqvHnAMAfUr4V2ylici215w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSMD2pjONzrSNSiZu3XTM+7E6eeEW4SsjfVkuzI/pCrkcSsMO+O/txjFTR6IcBR3kl9wLwdRR4Ag5gWzPTczPMyAsimQ73hH+JAJtW8zWSe+CjLkdPdhFy4lVqwTURmyOx75DJ7DzZpwxUL8Z3voxtpu8dz/JsyTWuLe4opi3og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyfEyhzi; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41ff5e3dc3bso23688475e9.1;
+        Mon, 13 May 2024 11:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715625878; x=1716230678; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
+        b=RyfEyhzi6T162kF8oQO6oZkO4QR1Z/28PfbiOYZ+FdawSp3rBctuTaA35YJ7DIucme
+         R4SJoitrZOP8eLswacgbjaBwC6UqLfkIdMgYP93UW3vzv9Jj6OvZ4/jTwYbG5obMcznc
+         csNM95D+gwE2jizptx4BHEdPndmbmaxUbtDEQcvYWgAgxpBgAfdQwz9gpiQ3tuiCNaQM
+         v6HufRExb3nm3/e5dEXOCPcQ8YYa2e9DRTGsYqeBo1VN+xjG3+I8H4sRc42EGi+WKRrZ
+         +RPnw8TdxPSnd/B5UiehH9UqSsfy1pdgE9Pbx4H7YQ6HPqwWRuEL/4wSIcSbqXwgxqAO
+         zevQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715625878; x=1716230678;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
+        b=wDBGYQSFnP3kudJBHSLddmb/p47tllG23ro6h3UqNobFwnsuExjrF2rV0NNqdVnY8f
+         1UTZh4FVqdv1rNdQLV7YSjM9Falal6tbHx2xXWh1TAb3gzwKeXOANLfZ1ipezshSw9QR
+         dau9MMCe+LoLReVsorOlfN3SCt7yovRGnQ9hC+rEO1PRdPQy4vOlTnWSWa8i1qqbAd0r
+         4VzIAPfNpcKGlxB4OBJqKdN2C4wgbLWgSQYfk2xGcDO107ImhrJ+Zbu/0Sv1OKL+RAIm
+         khJ2bIXDIgM46YQ65XHF8TZQMVcB156u3OAecW5edvSVn9v5+WeuY90mEnOMQFXW909/
+         Ug2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHFyGwgBWHg26G61L6L1bDy1QX+7IoD6By49rurb/N8kt0Ol0GXLyJ5jUw5wx2dKMGHAIRFvUjJomybEHNvgTiVFe6HhVVjd6SuTytXdFSPqWG/DYRlqUET5C4z6trMey4rcZvgqN2
+X-Gm-Message-State: AOJu0YyJysE+X1b9KJliNc8btvv7RKDiidqi0af5rsAD4YQMifc54slm
+	UWvxA06+8aX3r7hT2nCndwxy6mxuab+4vHpVeF0sUV1z1jZd87Am
+X-Google-Smtp-Source: AGHT+IF7zBTcIFLiTi46x3uVkADC+UX2XcNcYdPPZ8YgAghzbFRye/FiXNHlf9LviG5sOZkNNQzTbQ==
+X-Received: by 2002:a05:600c:1d21:b0:41b:97c5:ccc7 with SMTP id 5b1f17b1804b1-41fea9320bbmr69197895e9.8.1715625877429;
+        Mon, 13 May 2024 11:44:37 -0700 (PDT)
+Received: from [192.168.20.170] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce9426sm164700615e9.25.2024.05.13.11.44.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 11:44:36 -0700 (PDT)
+Message-ID: <01889053-bcf2-40cb-86ad-2f2bff56f24b@gmail.com>
+Date: Mon, 13 May 2024 20:44:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4072123.0gxhY3eTYf@njaxe>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
+ Stromer pll configs
+Content-Language: hu
+To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Varadarajan Narayanan
+ <quic_varada@quicinc.com>,
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+References: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
+ <baa81202-f129-4ec2-baca-6ca8b476a37d@linaro.org>
+ <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024 at 05:38:16PM +0200, matteomartelli3@gmail.com wrote:
-> On Monday, 13 May 2024 10.53.57 CEST Krzysztof Kozlowski wrote:
-> > On 10/05/2024 15:00, Matteo Martelli wrote:
-> > > Add DT bindings documentation for the Everest-semi ES8311 codec.
-> > > 
-> > > Everest-semi ES8311 codec is a low-power mono audio codec with I2S audio
-> > > interface and I2C control.
-> > > 
-> > > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> > > ---
-> > >  .../bindings/sound/everest,es8311.yaml        | 52 +++++++++++++++++++
-> > >  1 file changed, 52 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/sound/everest,es8311.yaml b/Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > > new file mode 100644
-> > > index 000000000000..54fb58b9ab58
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/sound/everest,es8311.yaml
-> > > @@ -0,0 +1,52 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/sound/everest,es8311.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Everest ES8311 audio CODEC
-> > 
-> > This looks exactly like es8316, except of later added port. Are you sure
-> > you are not planning to add port later, which would make both schemas
-> > identical?
+2024. 05. 10. 18:25 keltezéssel, Kathiravan Thirumoorthy írta:
 > 
-> I did not pay enough attention to audio-graph-port property which is in
-> fact supported and could be added as well. Thus the es8311.yaml would be
-> identical to es8316.yaml. My guess is that I should just add the
-> "everest,es8311" compatible string to the existing es8316.yaml even if the
-> two drivers are separate (like for instance mediatek,mt8186-clock.yaml). Is
-> this correct?
+> 
+> On 5/10/2024 12:23 AM, Konrad Dybcio wrote:
+>> On 9.05.2024 10:08 AM, Gabor Juhos wrote:
+>>> Since the CONFIG_CTL register is only 32 bits wide in the Stromer
+>>> and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
+>>> IPQ5018 and IPQ5332 configurations are not used so remove those.
+>>>
+>>> No functional changes.
+>>>
+>>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+>>> ---
+>>
+>> Hm, it sounds suspicious that we'd have these settings then.. Could somebody from
+>> QC please confirm that everything's alright here?
+> 
+> 
+> I checked the HW doc and yes in both IPQ5018 and IPQ5332 CONFIG_CTL_U register
+> is not implemented. I see offset of CONFIG_CTL_U register is removed in the
+> change[1] by Gabor.
 
-Yes.
+Thanks for confirming!
 
-> If that's the case:
-> * should the evereset,es8316.yaml file be renamed to evereset,es831x.yaml?
+> 
+> Given that, should we also drop the pll_has_64bit_config() if block from
+> clk_stromer_pll_configure function?
 
-No.
+If we can be sure, that there will be no Stromer PLLs which implements that
+register we can drop the check. Also, since the SUPPORTS_FSM_MODE flag is not
+set for any of the Stromer (Plus) Plls supported currently, the related check
+can be dropped as well.
 
-> * should I also add myself to the maintainers list of that schema?
+However I would keep that as is for now. I'm planning to remove the
+clk_stromer_pll_configure() function entirely but that needs a bunch of
+preparatory patches which I'm working on at the moment.
 
-That's up to you. Do you want to be CCed on future changes to it?
+> 
+> Nevertheless, for this patch
+> 
+> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
 
-Rob
+Thank you!
+
+Regards,
+Gabor
 
