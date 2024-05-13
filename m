@@ -1,52 +1,69 @@
-Return-Path: <linux-kernel+bounces-177859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49B08C4565
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:56:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BDC8C4567
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEB528744A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:56:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98351C20F0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81151C687;
-	Mon, 13 May 2024 16:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63C620B34;
+	Mon, 13 May 2024 16:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJruhOoP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514EE1CD15;
-	Mon, 13 May 2024 16:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1536C208A1;
+	Mon, 13 May 2024 16:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715619379; cv=none; b=hlysFIS6YOKZyEzZkBXUlCRhp5KkNbL4PR0neMfbSnt3cJ8IEtwK4sMKxKBsB+4JmPOI5jSxCJSkucjqPQoZQMnhImpEp73/cwysvLPTc6SPVsxTg1g08WLE50J7qhVh/17Fk4pKpXdbLrtn7otT15Li55w4DYyKxMYg4/a5tE8=
+	t=1715619397; cv=none; b=nEeF9fIY+d1auGty3ptQF37v0h8liMY1onwMo0m1xRTbXeHx5q2eNH+ASAon349NIZnR90sa7VBnky+SYmdd+cBQO4RiWhmsFiNqBRPmp+PsTIZfy9ZN2ylXa05bpnZ+CWVOQKZj9LrwQ/0KlhmkMQ+rxoK3ZXQlUhyyMa7Z3e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715619379; c=relaxed/simple;
-	bh=R1yt8VY85saTQsFLGCPH5N9UB7wO5F3GKqnZyj/mioc=;
+	s=arc-20240116; t=1715619397; c=relaxed/simple;
+	bh=kDUE2YBSI6XESDuJs1tvY4S5ix6CLVxPpXG0bXiNekg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dG6ebOgTG0ObmAZdOgcZyiYED6cWwK9pozKa7Tc02eAypEo2772QxdOuZfYY99bMfkXLTJjK4kAG8Xb6ITG697RCPtwVzr3vonA79fq0EWHeyxqpuV85CeX+R+ZzA+irCxdVorGGMjPguUEXO/jn4pymAKuFOZjkmDNYGFn6g0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05AEC113CC;
-	Mon, 13 May 2024 16:56:15 +0000 (UTC)
-Date: Mon, 13 May 2024 17:56:13 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Subject: Re: [PATCH v2 08/14] arm64: Enforce bounce buffers for realm DMA
-Message-ID: <ZkJGLV5FfEPmdoG-@arm.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-9-steven.price@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KgqU6DCVhLcx/RzgQEHlaCDGSlFeRzY9+bqC/Pp5ZCadApp1jUeNB9CHakrHytVwr5gggHoYwVLEqFygrG2XCPrchwq44tBi/s1TFou7vxCTMAVIFX//UUnj1MfHQ+KuK86ER/f86SfKsC8s89rUQP+Tv0S4erVipfRAekweUXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJruhOoP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD28C113CC;
+	Mon, 13 May 2024 16:56:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715619396;
+	bh=kDUE2YBSI6XESDuJs1tvY4S5ix6CLVxPpXG0bXiNekg=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=qJruhOoPJb/wCT7/9Viy63KOzw7Ku992k6DXPKg2B2bosXApsfTDrkD0bVScLe3CH
+	 ppHdY4Jl+6gd5IFAu5GLhqlt+8yoWr/6Klxbytru/fI+ru1ovzb2Kyiot+pUheOzzS
+	 9cQ53WKz/vzYOS+Z+qR50tOnMGAe3E1clpenhiJSPRisR0HKV5KvgFgkq+fGMyJZO6
+	 iQv1fVEsRdCEuLwGBpp18TKFmfw0+p1XqDlzZjvS45utDFSOriY/IS6rYLdF9YufK1
+	 Az3d6Tby3FZtK0V4IVS0GBfu0JzcCAz7wNheiTvWZn4Vm93TpMH8/xa5tM5VBKorIN
+	 Qhl4EIU+k6yqw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id A6A8BCE0448; Mon, 13 May 2024 09:56:29 -0700 (PDT)
+Date: Mon, 13 May 2024 09:56:29 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Nikita Kiryushin <kiryushin@ancud.ru>, linke li <lilinke99@qq.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Zenghui Yu <zenghui.yu@linux.dev>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [GIT PULL] RCU changes for v6.10
+Message-ID: <925ad012-ba28-48dc-8498-1721954e902e@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240510183049.312477-1-urezki@gmail.com>
+ <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
+ <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
+ <CAHk-=wjLr_c_7N0rTOD2eBd=WFydas-Z+_9ucwO_YkegYxrw+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,59 +72,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240412084213.1733764-9-steven.price@arm.com>
+In-Reply-To: <CAHk-=wjLr_c_7N0rTOD2eBd=WFydas-Z+_9ucwO_YkegYxrw+Q@mail.gmail.com>
 
-On Fri, Apr 12, 2024 at 09:42:07AM +0100, Steven Price wrote:
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 786fd6ce5f17..01a2e3ce6921 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -370,7 +370,9 @@ void __init bootmem_init(void)
->   */
->  void __init mem_init(void)
->  {
-> -	bool swiotlb = max_pfn > PFN_DOWN(arm64_dma_phys_limit);
-> +	bool swiotlb = (max_pfn > PFN_DOWN(arm64_dma_phys_limit));
+On Mon, May 13, 2024 at 09:48:47AM -0700, Linus Torvalds wrote:
+> On Mon, 13 May 2024 at 09:46, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > Yes, this is intentional, nothing odd is going on, and Uladzislau's pull
+> > request is legitimate.
+> 
+> If this is more than a one-time thing, maybe Uladzislau should be in
+> the MAINTAINERS entry too?
 
-This series tends to add unnecessary brackets.
+I queued a patch for this (admittedly embarrassingly few days ago)
+in -rcu:
 
-> +
-> +	swiotlb |= is_realm_world();
+e3838cb87bb4 ("MAINTAINERS: Add Uladzislau Rezki as RCU maintainer")
 
-I first thought we wouldn't need this, just passing 'true' further down
-but I guess you want to avoid reducing the bounce buffer size when it's
-only needed for kmalloc() bouncing.
+Unless you tell me you want it sooner, we will sending this into the
+v6.11 merge window.
 
->  
->  	if (IS_ENABLED(CONFIG_DMA_BOUNCE_UNALIGNED_KMALLOC) && !swiotlb) {
->  		/*
-> @@ -383,7 +385,12 @@ void __init mem_init(void)
->  		swiotlb = true;
->  	}
->  
-> -	swiotlb_init(swiotlb, SWIOTLB_VERBOSE);
-> +	if (is_realm_world()) {
-> +		swiotlb_init(swiotlb, SWIOTLB_VERBOSE | SWIOTLB_FORCE);
-> +		swiotlb_update_mem_attributes();
-> +	} else {
-> +		swiotlb_init(swiotlb, SWIOTLB_VERBOSE);
-> +	}
-
-Just do this higher up and avoid calling is_realm_world() twice:
-
-	unsigned int flags = SWIOTLB_VERBOSE;
-
-	...
-
-	if (is_realm_world()) {
-		swiotlb = true;
-		flags |= SWIOTLB_FORCE;
-	}
-
-	...
-
-	swiotlb_init(swiotlb, flags);
-
--- 
-Catalin
+							Thanx, Paul
 
