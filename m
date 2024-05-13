@@ -1,103 +1,164 @@
-Return-Path: <linux-kernel+bounces-178194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460C48C4A42
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:53:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DE998C4A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77AC11C20F6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:53:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57163286F28
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6F485C59;
-	Mon, 13 May 2024 23:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E31C84E1D;
+	Mon, 13 May 2024 23:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VUDwdl/9"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.208])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="luRtVw/9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE5184DE3;
-	Mon, 13 May 2024 23:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5BD85C42;
+	Mon, 13 May 2024 23:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715644368; cv=none; b=IqeiWFPzVHTYKIQXxt7tJadobZYHfTsGlfDp9ELd5xOVBq8yOr6bZhKwo1v9AOIujimkDl/BeNMmrMOH9o6hqiM4zOAJzjT7WHXpD0lKtN07/bU8KVCxMVTDx1P+af3JC5q52OcNiN9leP0JM/tGEfhpvu3FIrzbB/vZpJ+Dbx8=
+	t=1715644421; cv=none; b=IrJsyPu/cQURE+wbywi3PLOThEZOgUpBrVH7fLyUZgZ+yKhlJzbvF2it2USWMDHEkb10DRA+ed/uI4zEpWPqirqdwtndeltHG8IiMOXfkqmZDYKbqOVWygXBmLULkIUHvqffw+C/4hbSw4QgVlbWkzezPwrpg9yGS7JNwMas/zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715644368; c=relaxed/simple;
-	bh=CgglF9AYIa374nzIGZ8DrZU9JTTF3trFBwVc5yQ5UBM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q7UxJNWBTJrQo4hFqB/Y43gelNCmZwcJw1vPb0CAZ9XeWeuC/qNki4g8kr6Mi630CWfEkmKtLEkaKJ1y/9g6uKMmwgM5rqpGH05vjyh+BVlqy65b0piHjc487gMmGQ66d7EXuUh7wVqMBWnlcfterxXwdI45xyvicRPd76ZUNmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VUDwdl/9; arc=none smtp.client-ip=192.19.144.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 58F82C0000EC;
-	Mon, 13 May 2024 16:52:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 58F82C0000EC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1715644360;
-	bh=CgglF9AYIa374nzIGZ8DrZU9JTTF3trFBwVc5yQ5UBM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VUDwdl/90EA7fYv3NbI8V6ds10mvzUdOK6boeHWdKoCdvxYGhp9TOOON0kJyaLTef
-	 XzDkCEEPjW91dqa+7kD8H0ibulJTsxYcgOQmWwOtV52KqQ2kHg0XS2mdZ2GoAP54A0
-	 kD1vVKAyuxAyhHpo5vGDQgzC0cl+FnGJHnbMiHWQ=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	s=arc-20240116; t=1715644421; c=relaxed/simple;
+	bh=R/KylpXSXNvGKAiTGKjpx8UwgnUX+GBGMiz5pPzku6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fOphjwz3PevUhH3djBFlNNnjfOnoF/DW8VCOdm3AcX4NaaP/D/PS20NmzWmozagWhklLjofng8wrviBFBiHNNyKRznb2ZUY50wW8LaNrlAuA5HIe5XjXTphq6YCpxr7uukA8rY5XAzZmTWKDY7Lu7WKr9XAzmDIVn4CxorTvBos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=luRtVw/9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715644417;
+	bh=nrX0QnSujQBcrtoDk0rMMTUg0PNEV0q40s3RZ7bbSG4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=luRtVw/9c5vJtIXfTK3jZAetTYnmiLMQfjZDWIWVXnCvgH77gnB56xkHocfQJNL+r
+	 chWcXETXg8CdgBdS38EWVf5W/PHUF06x59Y6qUXwIrOQFLiTbXZNXG83s3XpDTqsxA
+	 w2NP68VvF/+XNmqxPZ5T1qtAOJJAmVt/sollEYAvatSGsCKbekdbCXGD5wk/yzoDOC
+	 +rhDOmL31lgkUYpRnwAc+5hRdpCJcbLvuKDwIPWvs4RaSNK6bUgVFTC1QbmcbJAusH
+	 Ef+geWdhxThLJD7bifBI7PuYRPUiycXdMVXLO5SDk4cYGBjMsjxSCcEgNVnxZ9kZFG
+	 toRpkjZGyV7Mw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 5696A18041CAC4;
-	Mon, 13 May 2024 16:52:38 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-	linux-kernel@vger.kernel.org (open list),
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH 3/3] clk: bcm: Make CLK_RASPBERRYPI default to RASPBERRYPI_FIRMWARE
-Date: Mon, 13 May 2024 16:52:34 -0700
-Message-Id: <20240513235234.1474619-4-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
-References: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vdbsr6PlMz4wbr;
+	Tue, 14 May 2024 09:53:36 +1000 (AEST)
+Date: Tue, 14 May 2024 09:53:36 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>, Damien Le Moal <dlemoal@kernel.org>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the block tree
+Message-ID: <20240514095336.5b805453@canb.auug.org.au>
+In-Reply-To: <20240510131003.70f46881@canb.auug.org.au>
+References: <20240510131003.70f46881@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/fo57KRCbyFjjZQkD81OmLOp";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The clock driver is essential in providing clocks for UARTs and other
-peripherals, make it enabled by default.
+--Sig_/fo57KRCbyFjjZQkD81OmLOp
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/clk/bcm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi all,
 
-diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-index a972d763eb77..90e7bab851ae 100644
---- a/drivers/clk/bcm/Kconfig
-+++ b/drivers/clk/bcm/Kconfig
-@@ -106,6 +106,7 @@ config CLK_BCM_SR
- config CLK_RASPBERRYPI
- 	tristate "Raspberry Pi firmware based clock support"
- 	depends on RASPBERRYPI_FIRMWARE || (COMPILE_TEST && !RASPBERRYPI_FIRMWARE)
-+	default RASPBERRYPI_FIRMWARE
- 	help
- 	  Enable common clock framework support for Raspberry Pi's firmware
- 	  dependent clocks
--- 
-2.34.1
+On Fri, 10 May 2024 13:10:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the block tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> block/blk-zoned.c: In function 'blk_zone_write_plug_bio_endio':
+> block/blk-zoned.c:1260:25: error: 'struct block_device' has no member nam=
+ed 'bd_has_submit_bio'
+>  1260 |         if (bio->bi_bdev->bd_has_submit_bio)
+>       |                         ^~
+> block/blk-zoned.c: In function 'blk_zone_wplug_bio_work':
+> block/blk-zoned.c:1329:17: error: 'struct block_device' has no member nam=
+ed 'bd_has_submit_bio'
+>  1329 |         if (bdev->bd_has_submit_bio)
+>       |                 ^~
+>=20
+> Caused by commit
+>=20
+>   dd291d77cc90 ("block: Introduce zone write plugging")
+>=20
+> interacting with commit
+>=20
+>   ac2b6f9dee8f ("bdev: move ->bd_has_subit_bio to ->__bd_flags")
+>=20
+> from the vfs tree.
+>=20
+> I have applied the following merge resolution patch.
+>=20
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 10 May 2024 12:59:09 +1000
+> Subject: [PATCH] fix up for "bdev: move ->bd_has_subit_bio to ->__bd_flag=
+s"
+>=20
+> interacting with "block: Introduce zone write plugging".
+>=20
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  block/blk-zoned.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+> index 57d367ada1f2..03aa4eead39e 100644
+> --- a/block/blk-zoned.c
+> +++ b/block/blk-zoned.c
+> @@ -1257,7 +1257,7 @@ void blk_zone_write_plug_bio_endio(struct bio *bio)
+>  	 * is not called. So we need to schedule execution of the next
+>  	 * plugged BIO here.
+>  	 */
+> -	if (bio->bi_bdev->bd_has_submit_bio)
+> +	if (bdev_test_flag(bio->bi_bdev, BD_HAS_SUBMIT_BIO))
+>  		disk_zone_wplug_unplug_bio(disk, zwplug);
+> =20
+>  	/* Drop the reference we took when entering this function. */
+> @@ -1326,7 +1326,7 @@ static void blk_zone_wplug_bio_work(struct work_str=
+uct *work)
+>  	 * path for BIO-based devices will not do that. So drop this extra
+>  	 * reference here.
+>  	 */
+> -	if (bdev->bd_has_submit_bio)
+> +	if (bdev_test_flag(bdev, BD_HAS_SUBMIT_BIO))
+>  		blk_queue_exit(bdev->bd_disk->queue);
+> =20
+>  put_zwplug:
+> --=20
+> 2.43.0
 
+This is now a semantic conflict between the vfs tree and Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/fo57KRCbyFjjZQkD81OmLOp
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZCqAAACgkQAVBC80lX
+0Gxclwf/V6HIcsyWW98hZSKTFWyKVQIoS2XYHiiXXKaE6iKD6jiKvJnk/Km/CCIN
+uTJPZOvarDDIylH5r+Eg2Y6u6wNIq85qhlOWbBWwoVmvK9SX5GN4jo77mJEoT6SB
+tca64lvZA/XCKBjloC7p8GK+4e7YVGVNA7tS85oQVUELJq74/5kQGouYSopGheJY
+Z/cP8hEu+9ehVBlHp6ndEpAPcU2WFVcPsWhaXm+fAzI/Qt3vJgAgGx4btWXVdKN0
+/Dy5jYyeCnQE9Slt3TgIhkXkw2ZvRMtt+maHKXn0bPYf25WHam4aCY1WN0sPk0S1
+tR4v4sAXHpDJng7IaZcRbqqLkXAr2A==
+=p9oD
+-----END PGP SIGNATURE-----
+
+--Sig_/fo57KRCbyFjjZQkD81OmLOp--
 
