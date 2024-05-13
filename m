@@ -1,268 +1,970 @@
-Return-Path: <linux-kernel+bounces-177448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BF58C3EC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:22:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 962488C3ECF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4CF1F22C53
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:22:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07701B2373F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D9514A4E5;
-	Mon, 13 May 2024 10:21:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5349A14A0AF;
+	Mon, 13 May 2024 10:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="MNJSokqC"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="zYbqSc/z"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9EB14A098;
-	Mon, 13 May 2024 10:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715595713; cv=fail; b=NMPmHdSIQEPPSld+kbQEx1QTwZ/F/NYrNGyppCA+FeEJBu0pjfu3AqwWfiek2FTaz3DgdI5t04BuGvJXpmb1WQp/26zhfTzkHwFIjBQWEw9Zf/BTTxO/WfykD/Z0tvY25CFw5yGovIy36axONyhbLsIPEBTJ6MoqMelK41LrYDk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715595713; c=relaxed/simple;
-	bh=QSX30FNasTlgWg0Lv2PWe3hfU6OipIDPQf5AQ9ZTsc4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IsKfczefuyStfKpd0xuQ8ZnlDY1gQHcNXgx9dIC6z3NN/Zhx/r9T42P+C/kavwKmbpI+IG1gxWz+j4MsObvh+hAff53l5e93iDr7+S9mL2RNYFHc1arOxcIcSkitnZ1aCT1iEFqrHD6Hj9WC0VhzgQOviB5ox359bxwwqy15LPI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=MNJSokqC; arc=fail smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D8X8E5002142;
-	Mon, 13 May 2024 03:21:24 -0700
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2041.outbound.protection.outlook.com [104.47.56.41])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3y286jbw42-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 03:21:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mws9ctsYaX+GurpdiRXG4kE0zm8RbD4BiuspdN+orrETou9/ewdIulra3rLh9OHzPNOnrvZZx3zx0tR4bGaY7IIDLJDOWn7ITHQSQ3lhlcqQmEJcD90XZSXgwNv80rUz1R7ypog8KvLQDxYTqVVk4UUsjoPftFX2w9JVZdDE+7KVil1yBd7rdLBM4gMWOn0/EMRaPbqaXRv31Jwzl6yvX86WL2dOAjNc05iBgaE0FvLiuJopdwo+KzlptWOaRZcFwP4xRcpbNUp4w3rXcXOg2c1rhQNx3GYc6QtV1MAmvw0BxskO3jcCsi4qBWYNIlbC1myrbPHx57SomjNZWAdIoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QSX30FNasTlgWg0Lv2PWe3hfU6OipIDPQf5AQ9ZTsc4=;
- b=CBJs+gLE53dbqVFP8WduJrbufCrMMAnU5pBCFaspa2ItdEkmCXGM4v7MQws6+eD8i2pMoYLy5gCXN/BcQzDOkxReSGwuDRSNmDr7ERJYPHPcsX91w7DaT6uJaOmYXt7vA3R2GqnLqayKDY7OBHaiCat+MXdCHN59G33Q4J4b3DZ/H9m2TWH2AMDgwRuOtfUSYXIb1e7GBO/lQ5cPwRVQRTsXtPa3ueAZYhPsj/PalLdvhZ5Xz4yAp/yYCO17FJJk22tY8ZNPKIpJZGWY1BiCHBsjbuK7ynkCPm+z/m0QM8RzX7z9Lw58sKvjsjs9IKHe4MucTsBATlUoE5jDiizzUA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QSX30FNasTlgWg0Lv2PWe3hfU6OipIDPQf5AQ9ZTsc4=;
- b=MNJSokqCvUWgme8J0RE233IMpInudzwHpUGN9RqR9rHQ14L0XvZjfEOS5IQsGKC071d57Lb80UMK9u5hLQCgF/MXsCA/S6V1O6NcpGO6BpxZLtlc7Bwwkm6A4/Io0x3hUFD3noXi1mxEMGCRZg36jbtl02KxIRpbqY1U6g4KGSo=
-Received: from PH0PR18MB4474.namprd18.prod.outlook.com (2603:10b6:510:ea::22)
- by MW5PR18MB5043.namprd18.prod.outlook.com (2603:10b6:303:1ce::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 10:21:21 +0000
-Received: from PH0PR18MB4474.namprd18.prod.outlook.com
- ([fe80::eeed:4f:2561:f916]) by PH0PR18MB4474.namprd18.prod.outlook.com
- ([fe80::eeed:4f:2561:f916%5]) with mapi id 15.20.7452.049; Mon, 13 May 2024
- 10:21:21 +0000
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Romain Gantois <romain.gantois@bootlin.com>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Geert Uytterhoeven
-	<geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Russell King
-	<linux@armlinux.org.uk>,
-        =?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
-	<clement.leger@bootlin.com>,
-        Serge Semin <fancer.lancer@gmail.com>
-CC: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>,
-        "linux-stm32@st-md-mailman.stormreply.com"
-	<linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "Russell King (Oracle)"
-	<rmk+kernel@armlinux.org.uk>,
-        Maxime Chevallier
-	<maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v7 4/7] net: stmmac: introduce pcs_init/pcs_exit
- stmmac operations
-Thread-Topic: [PATCH net-next v7 4/7] net: stmmac: introduce pcs_init/pcs_exit
- stmmac operations
-Thread-Index: AQHapR9M2cl0MlcglkmuPXZDhMyxrQ==
-Date: Mon, 13 May 2024 10:21:21 +0000
-Message-ID: 
- <PH0PR18MB4474CF9D605C4F1EAF5978A0DEE22@PH0PR18MB4474.namprd18.prod.outlook.com>
-References: <20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com>
- <20240513-rzn1-gmac1-v7-4-6acf58b5440d@bootlin.com>
-In-Reply-To: <20240513-rzn1-gmac1-v7-4-6acf58b5440d@bootlin.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR18MB4474:EE_|MW5PR18MB5043:EE_
-x-ms-office365-filtering-correlation-id: cfb7c1a0-1838-46a5-3b27-08dc73366f7d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230031|1800799015|366007|376005|7416005|921011|38070700009;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?cVRGUUpqWklLVEppVDVOS2hLYzRZMU5iKy9VZW96QmY3djRPTlBidTVWZ0tM?=
- =?utf-8?B?cnVidmFXZ2h6Wnk1WGtwMkVBcDJqRWNOY254R2NYRENMaE5tQkJoVDBraHl2?=
- =?utf-8?B?UGs3Y3NnNUpFazkybUxLRXNMVmZrOG5VWUYrV1FObHlRNHdOcGNpaUtROEI1?=
- =?utf-8?B?ZEt4b0puQ2I0c05CSFRGQXYyR05ENnhURzNwV1NocmNvVWJ1Sjh2emRaa3M4?=
- =?utf-8?B?SlRrc01XSWRFRWNySGxiMGo2UDE2ei9aem8vTkJmd0VGTHNnMzFHOU9jcVFB?=
- =?utf-8?B?d3ZwM010dnRoT21qU3JuZGMyVjdHdUtiUXdjV3llVkxsektrbUEwWEx1QXl5?=
- =?utf-8?B?UVdENS95NUNxaWNEcDIreHFZRTk3MXhvajI1VHpzS1BYcFE0YTd5TC9Samp5?=
- =?utf-8?B?aVFMUUVZY1dxZ0xFZTZSY1NGTVBQRUJFQjEvNlFXRGFSbVNrZ3hocElYK0dD?=
- =?utf-8?B?R045N3lDTkRHemQ2RVFCUFovMWhZY1JZL2FWVjJjbXd0c3FqcERmdDhjVklH?=
- =?utf-8?B?TDMxbE5HUSt3dHQyaFo1T3M4Y1JoK1ZTVHh0MzJyM3ByUXE0d0RKZXAvZmN3?=
- =?utf-8?B?bkp0bDNqY29MR2pJUlZaczJJSFBQRVdCQ0dvbWpOUVduSjNQZjdnUWVxdGNP?=
- =?utf-8?B?akF0SUE4OHk1RllpaUdXejdXd0hzRWFwRncxQVRwRHQxaUdSN2p4NE00TWFD?=
- =?utf-8?B?bjN3UlZyNW9hWXZEVm45R2xMcnorZ21YbVd4NytiaWc4bmdWaFB2K0VQcm5r?=
- =?utf-8?B?U0M2cHFpS2UvUmUxeHVsWU5wNnR4YjhqcXRyZEpLOVFIaTJkcVcwN08zU3Fn?=
- =?utf-8?B?VDA2cGRZZlBJTGU1R1hzd3lsQ21iZEwxdU82SjJSaHRuSWMweG1IdjMvbUxK?=
- =?utf-8?B?V0xyZVlKNlJKSzY5NE1GTDd4cGxHcjNSUHNvd2tQeUZqd1ZxZE9tVVRvNTFH?=
- =?utf-8?B?ZVpKSXdJcFlmVW1JQmNndG0rT0tLbWJrL3RiR3RDUitjb0EvbDEzSWNNSVhz?=
- =?utf-8?B?NWFsdEtlaWZrK3V5dHA1ZHAraEpTNjROa050MEUvT2k2cVpPR09JM2RBbXhu?=
- =?utf-8?B?bUsybU81dTBTQU5OK3VzSmJScDBEYzAwQnlDSDNzVzBzdUtoa1JERUdFb1Vk?=
- =?utf-8?B?R2dSc0k3K09Rd3EzTHJaWnJtKzJDeERFQmo1NWYwcUFKS2cxanU0Z0J1NTND?=
- =?utf-8?B?dm43dmpoOVhZRjJuNzNqTHZtQWFGcm0zKysrckF4alhKRCs4NGRRTUlEQkxU?=
- =?utf-8?B?aXpJcmwvMG84aTByTVhVRHBPbGp0Tk9ob0RIVTNncXJJSDZEZjdsMUFjb3dz?=
- =?utf-8?B?V2VPK0N2R3FJQmhiWVh5bVc3N3R6UmlEK3d1YWRHWmxRZGxGemRlMzRpQXdZ?=
- =?utf-8?B?WXE3YTZjQTZaaHc5OUY1U1EwdnZDTG5PalM0VkVjWG9LWlF2eTZJN0x2UFdQ?=
- =?utf-8?B?ZzJBTGxGOXFCaDMzQUo1Ump4TVlWazViMTcwcGdZbjREYjg0NWNEWDZOVlNI?=
- =?utf-8?B?ZmpqR0NiMjN4RGYxa2lFRWVqUloySDFYOVhLQVByeXVVMDdjOGxYazA0alVO?=
- =?utf-8?B?UGIxWHNiQlRIMm5BclpQa25MS2tGTUJOMjdaTEZxSU1Bcml1UkhqUEQwbjJR?=
- =?utf-8?B?YTk1b2pwVTZ1clpvSUE5aVZpY3ZLek4vOEM5dE1sdEYwTDVFc1o3NWgrVGJq?=
- =?utf-8?B?KzlzYjNQRlNWVS90WVNtUDRxbXNLNU83R05FYS9DMElUMUdhemZoWXFMc1NF?=
- =?utf-8?B?VVU5MXAxVjc0eG5FbWVQdnlzNFRrSUs3WWI1OFFZVWZlWDhsQmFkcWxsckdO?=
- =?utf-8?Q?Gp1HnlgfPoDfOLWnEqcu3HHHjYhpQMX+6m1QE=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR18MB4474.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(376005)(7416005)(921011)(38070700009);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?d2N6UFg4TkpDaHNMUkwvM1lVbjFQdW01QXc4c3gzRGIyUitpaldyZm1CVDZ6?=
- =?utf-8?B?ajZTZnAxaEJaRnZxQTJ5UkxJKzRILzFNRGNidkRRU0VjdXlMai81Qk54azVE?=
- =?utf-8?B?cElNVGdKeWIvbVhEVW5zeVEwc1I3L1Z1RHkveGE0ZWlSQkZKTWFHWXZaTTJi?=
- =?utf-8?B?MjlXOW5uWGhTUWlHaHVTR29FaGJyck9uTG5uLy9NK0JqSVlCa3RaRnlZRDl6?=
- =?utf-8?B?bTNndFJBWmRhUnU0YjhpY241eFRuaFUwV2lxa1NhMXJzbXlObUsvQTZVSmRN?=
- =?utf-8?B?aUdTa3hHZndid3QrVjIvSGl6V3c1L0FNZFFMcCtYWFB4YVJWZUlHTmJCSnFi?=
- =?utf-8?B?R09wZkR2UjNsOVBUdXpxZk1pemRMZTdGMXFIWUg1ckJUSENWNER2OTlaVDVD?=
- =?utf-8?B?dlgwcDhFaXQ4bUdZWmNZWXFIOWEzLzVVV1lqdnFQeHNHTFlJTVlDMDd3eVY4?=
- =?utf-8?B?eGVDbnRkRGVaR2REaUtrSzYva2NwVzBwRFFkVi9MVnplcEN0NnhhMWFwbWlZ?=
- =?utf-8?B?eUp5ZVAwcFRCOFdNNXpTRENkUWk1ZGN1R0QvTHQ2SHpWRzY4M2tqQmwyZURP?=
- =?utf-8?B?bGlLNVBiNHR0UlNnVmE1NGJVUENMaTVnbVRVOW5YdFRWcXFKSEd1ZWROejZL?=
- =?utf-8?B?dGdOZmFEQlcrT3BVbmJtL2YvVlA2VTdWcEpDWUlCckRweTY0U282ZVFwMThs?=
- =?utf-8?B?QWh6aUp3RklVajBuRmg3aU5MamxPNkZ3dGFYYnNQUFRpNmdsdm9XUmJIV1Nk?=
- =?utf-8?B?Yys2ajFXMk1zTlRxTFdtVE5GMmROSlgrY3kvYlk4RjVwWjlvd2lYRnFmOU5r?=
- =?utf-8?B?NEh3T2dGOUo3YStuczZKaFFDdDIvbDVPQnYzUEVXSGFLNXJXdHBENXhRNUJF?=
- =?utf-8?B?YjkrVnV0cTQ5a0RNRzV2ZVBadmNCa2F0eUtFMG1lTXM1LzZJbk0xTGdIdGdC?=
- =?utf-8?B?UVEzYTZSK2xkYTFFL0U2VWxSYVJPeVZ5Tk5pS2wyajZ4WnJkakxiWDFwVGx0?=
- =?utf-8?B?WXpiSFRvdjdPbUtZVUFMelhKUURkdUV2SHYzOW1CbG13dnNkWG5oWTRNcUps?=
- =?utf-8?B?NWJtRWI2SUxwZzJYUGdpRGtxaUtCRlZ2UkpLMldDcUR2VmJwa3g2VnBJYXF5?=
- =?utf-8?B?L0RFejhBamdrdGNLYitmL2hHREVIUEtnWUwrOTBoTjdEd1Z1TzJLTkliVzNJ?=
- =?utf-8?B?b0VoOVRNWXlGa05OUEY0dUJBOGo5dHpZUTMxSGZXYWVYQ2RiSHJ6cXY5ZHVm?=
- =?utf-8?B?MiszTitFYXFISmR2OTBTaUtyUjlEbERYeHoxbmF6a2dUSXlXYXppWllrZXg3?=
- =?utf-8?B?bU4zOWZCNlhhWGhTbDYyN1hRWUlWMjJMK093OHYrM0tieUlHK3ArMlphMmhz?=
- =?utf-8?B?MFFEcHNzWFVvc1hwcVdUSE1PQUljMWRHY1hnbTV1TkJkbmhJbHFDV3JONjcw?=
- =?utf-8?B?WEp0b083VkxrdnRENmJFVU8yYzZtemFEYlNwdXZaMUZpQ0dpbnY5cTBiVnRU?=
- =?utf-8?B?ZnU2K3E2U1d6RlkwUXYrR3VGVDM4OENjZzhpaWp4SkdIZHQza0ZVMytxNkg3?=
- =?utf-8?B?dVVLNmh1UitzMVVFTCtyUkZhamRVUFR6bVJKR01MRzRMZnh5cnlCQk9IWldq?=
- =?utf-8?B?Z0ZaZGpnS09hR2JtN1NsQWkwUktJalVEMDlWTVJXb3J0YmtFV3ZzajdqN1A1?=
- =?utf-8?B?ajlPdzBDUHJ4VWh6bjg3TzVSVXVDNzAyZE56UnpVdGlnalE1MDFjZ0NVUVZj?=
- =?utf-8?B?RHo1V0JqenBta3RJQ0ZRakN0NUJiNnRUS3FuR1d4L092WkhSVWF4dTJla3JX?=
- =?utf-8?B?dUhGb3FVVDBkS0E2SlM4VHNMbXZ0Y1NWL2MycjFsS3F3SGFZNE42cmJ1N0R2?=
- =?utf-8?B?R0hKN1hFRzFaL3hIU25iYUlHQUMyck03ZkNWQkEraWl3bUdNa2F5bGZBZWwy?=
- =?utf-8?B?MXJxaHVqVVRjYThiZ3NoR3VIY1liNXhxS1k3OFpYK0hVcFJyMzN2b2U5ellR?=
- =?utf-8?B?TFpzejB0ek1mWTl2a0xKdVI1QkhoVjJaQkFSZnQ1TEZjZGxZS2EzR244bEw4?=
- =?utf-8?B?eURTREFQYStNbGkvQTUxdmNQNGlHYXZwTjlvSUJkaWNJODJ3dmxYQlNySzA3?=
- =?utf-8?Q?vG6s=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7516A14BF8D
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715595822; cv=none; b=qRKpQnIXCzf7zMoASr99y08L1WXK78+mQ4cV3M/vyjXznf9QoCG7EdoEX1Jh01Z1SxqLC0Pa2V8DrTFit8cP6lB3y4K0p5LrWDl1O/mB/yUarGuczdNVv83jstiPbBfI7BG7UyXC5JFoekMelApM2WLePdN1C5w1WujwvRyM+Ys=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715595822; c=relaxed/simple;
+	bh=zNoO3TGNt53DpymRhJbqpaAM8wYTkYGLujh9zuHKWUo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ErOkPEW7cIYqSRONI2sP+ZJoPb9R68XK+b49LoPv1Gsn0Svt0QuGOqZo94OCuwBn7BJSwQWIWy9l7WAUYDUpuZjeMTdvzg1+qzle/XS5xOnxxrxRvvojhTwnpnqXy4AgjLKwnPODuCscofdr5zJHTGY9IdtEVEk3j29t/7idW20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=zYbqSc/z; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1715595816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YMCk3QCTKq/g7VpLGuVrxPpSogwMZaPOszYZbr21za4=;
+	b=zYbqSc/ziPZ4Tx+GqOoE8Ua17xY80ctiOGcKEGjf6NH4aDNfWFehrM8uU8w2NWLwxLfHxj
+	ECNQVSGQFlaSGn9/a/AhesKJvgF/gnEh3hi8dnuTDBOS37wPNDCHaVpE7blSPmyDSLmPeq
+	beyCcQERG72467unRPGy45q8pe7TBvZTCms3flWWdqOXvF7yUmh9THrybFuPMx3+/KikMR
+	1il93oO14y5F7i8VMuPagO39iJtKRH+yimh6yeIycIEEPh4I3TOd4EILIrPEEkkOHMKD6k
+	ZtHlDgyomeuQEKSGWy9qcerF6NokXEOALNi8Z2HpxCTz5vF3+FhbI9GHYLdBmA==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Dwaipayan Ray <dwaipayanray1@gmail.com>,
+	Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: Joe Perches <joe@perches.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] docs: dev-tools: checkpatch: Add targets for checkpatch tags
+Date: Mon, 13 May 2024 12:22:21 +0200
+Message-ID: <20240513102237.112376-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR18MB4474.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cfb7c1a0-1838-46a5-3b27-08dc73366f7d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2024 10:21:21.5332
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xZtV4d0BGpUYKT1YpYNQ/AMOxD2gTLSPDQLFfMX1BN35DxOK0muwSDp0ujdyRqa+jWLbS+AvSHU/DtA2xM7JMw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR18MB5043
-X-Proofpoint-GUID: o66hQPHCVkQq6q6oe9lQktqLvjJOGjy9
-X-Proofpoint-ORIG-GUID: o66hQPHCVkQq6q6oe9lQktqLvjJOGjy9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_06,2024-05-10_02,2023-05-22_02
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-DQoNCj4gRnJvbTogIlJ1c3NlbGwgS2luZyAoT3JhY2xlKSIgPHJtaytrZXJuZWxAYXJtbGludXgu
-b3JnLnVrPg0KPiANCj4gSW50cm9kdWNlIGEgbWVjaGFuaXNtIHdoZXJlYnkgcGxhdGZvcm1zIGNh
-biBjcmVhdGUgdGhlaXIgUENTIGluc3RhbmNlcw0KPiBwcmlvciB0byB0aGUgbmV0d29yayBkZXZp
-Y2UgYmVpbmcgcHVibGlzaGVkIHRvIHVzZXJzcGFjZSwgYnV0IGFmdGVyIHNvbWUgb2YNCj4gdGhl
-IGNvcmUgc3RtbWFjIGluaXRpYWxpc2F0aW9uIGhhcyBiZWVuIGNvbXBsZXRlZC4gVGhpcyBtZWFu
-cyB0aGF0IHRoZSBkYXRhDQo+IHN0cnVjdHVyZXMgdGhhdCBwbGF0Zm9ybXMgbmVlZCB3aWxsIGJl
-IGF2YWlsYWJsZS4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFJ1c3NlbGwgS2luZyAoT3JhY2xlKSA8
-cm1rK2tlcm5lbEBhcm1saW51eC5vcmcudWs+DQo+IFJldmlld2VkLWJ5OiBNYXhpbWUgQ2hldmFs
-bGllciA8bWF4aW1lLmNoZXZhbGxpZXJAYm9vdGxpbi5jb20+DQo+IFJldmlld2VkLWJ5OiBTZXJn
-ZSBTZW1pbiA8ZmFuY2VyLmxhbmNlckBnbWFpbC5jb20+DQo+IENvLWRldmVsb3BlZC1ieTogUm9t
-YWluIEdhbnRvaXMgPHJvbWFpbi5nYW50b2lzQGJvb3RsaW4uY29tPg0KPiBTaWduZWQtb2ZmLWJ5
-OiBSb21haW4gR2FudG9pcyA8cm9tYWluLmdhbnRvaXNAYm9vdGxpbi5jb20+DQo+IC0tLQ0KPiAg
-ZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFjX21kaW8uYyB8IDggKysr
-KysrKy0NCj4gIGluY2x1ZGUvbGludXgvc3RtbWFjLmggICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgfCAyICsrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlv
-bigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3Rt
-bWFjL3N0bW1hY19tZGlvLmMNCj4gYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9zdG1pY3JvL3N0bW1h
-Yy9zdG1tYWNfbWRpby5jDQo+IGluZGV4IDU0NzA4NDQwZTI3YjguLmFhNDMxMTcxMzRkMzggMTAw
-NjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3N0bWljcm8vc3RtbWFjL3N0bW1hY19t
-ZGlvLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvc3RtaWNyby9zdG1tYWMvc3RtbWFj
-X21kaW8uYw0KPiBAQCAtNTA1LDcgKzUwNSwxMCBAQCBpbnQgc3RtbWFjX3Bjc19zZXR1cChzdHJ1
-Y3QgbmV0X2RldmljZSAqbmRldikNCj4gIAlwcml2ID0gbmV0ZGV2X3ByaXYobmRldik7DQo+ICAJ
-bW9kZSA9IHByaXYtPnBsYXQtPnBoeV9pbnRlcmZhY2U7DQo+IA0KPiAtCWlmIChwcml2LT5wbGF0
-LT5tZGlvX2J1c19kYXRhICYmIHByaXYtPnBsYXQtPm1kaW9fYnVzX2RhdGEtDQo+ID5oYXNfeHBj
-cykgew0KPiArCWlmIChwcml2LT5wbGF0LT5wY3NfaW5pdCkgew0KPiArCQlyZXQgPSBwcml2LT5w
-bGF0LT5wY3NfaW5pdChwcml2KTsNCj4gKwl9IGVsc2UgaWYgKHByaXYtPnBsYXQtPm1kaW9fYnVz
-X2RhdGEgJiYNCj4gKwkJICAgcHJpdi0+cGxhdC0+bWRpb19idXNfZGF0YS0+aGFzX3hwY3MpIHsN
-Cj4gIAkJLyogVHJ5IHRvIHByb2JlIHRoZSBYUENTIGJ5IHNjYW5uaW5nIGFsbCBhZGRyZXNzZXMg
-Ki8NCj4gIAkJZm9yIChhZGRyID0gMDsgYWRkciA8IFBIWV9NQVhfQUREUjsgYWRkcisrKSB7DQo+
-ICAJCQl4cGNzID0geHBjc19jcmVhdGVfbWRpb2Rldihwcml2LT5taWksIGFkZHIsIG1vZGUpOw0K
-PiBAQCAtNTMzLDYgKzUzNiw5IEBAIHZvaWQgc3RtbWFjX3Bjc19jbGVhbihzdHJ1Y3QgbmV0X2Rl
-dmljZSAqbmRldikgIHsNCj4gIAlzdHJ1Y3Qgc3RtbWFjX3ByaXYgKnByaXYgPSBuZXRkZXZfcHJp
-dihuZGV2KTsNCj4gDQo+ICsJaWYgKHByaXYtPnBsYXQtPnBjc19leGl0KQ0KPiArCQlwcml2LT5w
-bGF0LT5wY3NfZXhpdChwcml2KTsNCj4gKw0KPiAgCWlmICghcHJpdi0+aHctPnhwY3MpDQo+ICAJ
-CXJldHVybjsNCj4gDQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3N0bW1hYy5oIGIvaW5j
-bHVkZS9saW51eC9zdG1tYWMuaCBpbmRleA0KPiBkZmExODI4Y2Q3NTZhLi40YTI0YTI0NmM2MTdk
-IDEwMDY0NA0KPiAtLS0gYS9pbmNsdWRlL2xpbnV4L3N0bW1hYy5oDQo+ICsrKyBiL2luY2x1ZGUv
-bGludXgvc3RtbWFjLmgNCj4gQEAgLTI4NSw2ICsyODUsOCBAQCBzdHJ1Y3QgcGxhdF9zdG1tYWNl
-bmV0X2RhdGEgew0KPiAgCWludCAoKmNyb3NzdHN0YW1wKShrdGltZV90ICpkZXZpY2UsIHN0cnVj
-dCBzeXN0ZW1fY291bnRlcnZhbF90DQo+ICpzeXN0ZW0sDQo+ICAJCQkgICB2b2lkICpjdHgpOw0K
-PiAgCXZvaWQgKCpkdW1wX2RlYnVnX3JlZ3MpKHZvaWQgKnByaXYpOw0KPiArCWludCAoKnBjc19p
-bml0KShzdHJ1Y3Qgc3RtbWFjX3ByaXYgKnByaXYpOw0KPiArCXZvaWQgKCpwY3NfZXhpdCkoc3Ry
-dWN0IHN0bW1hY19wcml2ICpwcml2KTsNCj4gIAl2b2lkICpic3BfcHJpdjsNCj4gIAlzdHJ1Y3Qg
-Y2xrICpzdG1tYWNfY2xrOw0KPiAgCXN0cnVjdCBjbGsgKnBjbGs7DQo+IA0KPiAtLQ0KPiAyLjQ0
-LjANCj4gDQpSZXZpZXdlZC1ieTogSGFyaXByYXNhZCBLZWxhbSA8aGtlbGFtQG1hcnZlbGwuY29t
-Pg0KDQo=
+Make the tags directly linkable by defining targets for them.
+
+Closes: https://lore.kernel.org/r/8090211.0vHzs8tI1a@bagend/
+Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+---
+ Documentation/dev-tools/checkpatch.rst | 216 +++++++++++++++++++++++++
+ 1 file changed, 216 insertions(+)
+
+diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
+index 127968995847..6499e29c3a19 100644
+--- a/Documentation/dev-tools/checkpatch.rst
++++ b/Documentation/dev-tools/checkpatch.rst
+@@ -242,6 +242,8 @@ This section contains a description of all the message types in checkpatch.
+ Allocation style
+ ----------------
+ 
++  .. _alloc-array-args:
++
+   **ALLOC_ARRAY_ARGS**
+     The first argument for kcalloc or kmalloc_array should be the
+     number of elements.  sizeof() as the first argument is generally
+@@ -249,6 +251,8 @@ Allocation style
+ 
+     See: https://www.kernel.org/doc/html/latest/core-api/memory-allocation.html
+ 
++  .. _alloc-sizeof-struct:
++
+   **ALLOC_SIZEOF_STRUCT**
+     The allocation style is bad.  In general for family of
+     allocation functions using sizeof() to get memory size,
+@@ -262,6 +266,8 @@ Allocation style
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#allocating-memory
+ 
++  .. _alloc-with-multiply:
++
+   **ALLOC_WITH_MULTIPLY**
+     Prefer kmalloc_array/kcalloc over kmalloc/kzalloc with a
+     sizeof multiply.
+@@ -272,16 +278,22 @@ Allocation style
+ API usage
+ ---------
+ 
++  .. _arch-defines:
++
+   **ARCH_DEFINES**
+     Architecture specific defines should be avoided wherever
+     possible.
+ 
++  .. _arch-include-linux:
++
+   **ARCH_INCLUDE_LINUX**
+     Whenever asm/file.h is included and linux/file.h exists, a
+     conversion can be made when linux/file.h includes asm/file.h.
+     However this is not always the case (See signal.h).
+     This message type is emitted only for includes from arch/.
+ 
++  .. _avoid-bug:
++
+   **AVOID_BUG**
+     BUG() or BUG_ON() should be avoided totally.
+     Use WARN() and WARN_ON() instead, and handle the "impossible"
+@@ -289,6 +301,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/process/deprecated.html#bug-and-bug-on
+ 
++  .. _consider-kstrto:
++
+   **CONSIDER_KSTRTO**
+     The simple_strtol(), simple_strtoll(), simple_strtoul(), and
+     simple_strtoull() functions explicitly ignore overflows, which
+@@ -298,6 +312,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
+ 
++  .. _constant-conversion:
++
+   **CONSTANT_CONVERSION**
+     Use of __constant_<foo> form is discouraged for the following functions::
+ 
+@@ -334,6 +350,8 @@ API usage
+ 
+     See: https://lore.kernel.org/lkml/1400106425.12666.6.camel@joe-AO725/
+ 
++  .. _deprecated-api:
++
+   **DEPRECATED_API**
+     Usage of a deprecated RCU API is detected.  It is recommended to replace
+     old flavourful RCU APIs by their new vanilla-RCU counterparts.
+@@ -342,6 +360,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/RCU/whatisRCU.html#full-list-of-rcu-apis
+ 
++  .. _deprecated-variable:
++
+   **DEPRECATED_VARIABLE**
+     EXTRA_{A,C,CPP,LD}FLAGS are deprecated and should be replaced by the new
+     flags added via commit f77bf01425b1 ("kbuild: introduce ccflags-y,
+@@ -360,6 +380,8 @@ API usage
+       2. https://lore.kernel.org/lkml/1313384834-24433-12-git-send-email-lacombar@gmail.com/
+       3. https://www.kernel.org/doc/html/latest/kbuild/makefiles.html#compilation-flags
+ 
++  .. _device-attr-functions:
++
+   **DEVICE_ATTR_FUNCTIONS**
+     The function names used in DEVICE_ATTR is unusual.
+     Typically, the store and show functions are used with <attr>_store and
+@@ -374,6 +396,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/driver-api/driver-model/device.html#attributes
+ 
++  .. _device-attr-ro:
++
+   **DEVICE_ATTR_RO**
+     The DEVICE_ATTR_RO(name) helper macro can be used instead of
+     DEVICE_ATTR(name, 0444, name_show, NULL);
+@@ -383,6 +407,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/driver-api/driver-model/device.html#attributes
+ 
++  .. _device-attr-rw:
++
+   **DEVICE_ATTR_RW**
+     The DEVICE_ATTR_RW(name) helper macro can be used instead of
+     DEVICE_ATTR(name, 0644, name_show, name_store);
+@@ -392,6 +418,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/driver-api/driver-model/device.html#attributes
+ 
++  .. _device-attr-wo:
++
+   **DEVICE_ATTR_WO**
+     The DEVICE_AATR_WO(name) helper macro can be used instead of
+     DEVICE_ATTR(name, 0200, NULL, name_store);
+@@ -401,6 +429,8 @@ API usage
+ 
+     See: https://www.kernel.org/doc/html/latest/driver-api/driver-model/device.html#attributes
+ 
++  .. _duplicated-sysctl-const:
++
+   **DUPLICATED_SYSCTL_CONST**
+     Commit d91bff3011cf ("proc/sysctl: add shared variables for range
+     check") added some shared const variables to be used instead of a local
+@@ -419,6 +449,8 @@ API usage
+       1. https://lore.kernel.org/lkml/20190430180111.10688-1-mcroce@redhat.com/
+       2. https://lore.kernel.org/lkml/20190531131422.14970-1-mcroce@redhat.com/
+ 
++  .. _enosys:
++
+   **ENOSYS**
+     ENOSYS means that a nonexistent system call was called.
+     Earlier, it was wrongly used for things like invalid operations on
+@@ -426,15 +458,21 @@ API usage
+ 
+     See: https://lore.kernel.org/lkml/5eb299021dec23c1a48fa7d9f2c8b794e967766d.1408730669.git.luto@amacapital.net/
+ 
++  .. _enotsupp:
++
+   **ENOTSUPP**
+     ENOTSUPP is not a standard error code and should be avoided in new patches.
+     EOPNOTSUPP should be used instead.
+ 
+     See: https://lore.kernel.org/netdev/20200510182252.GA411829@lunn.ch/
+ 
++  .. _export-symbol:
++
+   **EXPORT_SYMBOL**
+     EXPORT_SYMBOL should immediately follow the symbol to be exported.
+ 
++  .. _in-atomic:
++
+   **IN_ATOMIC**
+     in_atomic() is not for driver use so any such use is reported as an ERROR.
+     Also in_atomic() is often used to determine if sleeping is permitted,
+@@ -445,6 +483,8 @@ API usage
+ 
+     See: https://lore.kernel.org/lkml/20080320201723.b87b3732.akpm@linux-foundation.org/
+ 
++  .. _lockdep:
++
+   **LOCKDEP**
+     The lockdep_no_validate class was added as a temporary measure to
+     prevent warnings on conversion of device->sem to device->mutex.
+@@ -452,20 +492,28 @@ API usage
+ 
+     See: https://lore.kernel.org/lkml/1268959062.9440.467.camel@laptop/
+ 
++  .. _malformed-include:
++
+   **MALFORMED_INCLUDE**
+     The #include statement has a malformed path.  This has happened
+     because the author has included a double slash "//" in the pathname
+     accidentally.
+ 
++  .. _use-lockdep:
++
+   **USE_LOCKDEP**
+     lockdep_assert_held() annotations should be preferred over
+     assertions based on spin_is_locked()
+ 
+     See: https://www.kernel.org/doc/html/latest/locking/lockdep-design.html#annotations
+ 
++  .. _uapi-include:
++
+   **UAPI_INCLUDE**
+     No #include statements in include/uapi should use a uapi/ path.
+ 
++  .. _usleep-range:
++
+   **USLEEP_RANGE**
+     usleep_range() should be preferred over udelay(). The proper way of
+     using usleep_range() is mentioned in the kernel docs.
+@@ -476,6 +524,8 @@ API usage
+ Comments
+ --------
+ 
++  .. _block-comment-style:
++
+   **BLOCK_COMMENT_STYLE**
+     The comment style is incorrect.  The preferred style for multi-
+     line comments is::
+@@ -500,12 +550,16 @@ Comments
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#commenting
+ 
++  .. _data-race:
++
+   **DATA_RACE**
+     Applications of data_race() should have a comment so as to document the
+     reasoning behind why it was deemed safe.
+ 
+     See: https://lore.kernel.org/lkml/20200401101714.44781-1-elver@google.com/
+ 
++  .. _fsf-mailing-address:
++
+   **FSF_MAILING_ADDRESS**
+     Kernel maintainers reject new instances of the GPL boilerplate paragraph
+     directing people to write to the FSF for a copy of the GPL, since the
+@@ -519,12 +573,16 @@ Comments
+ Commit message
+ --------------
+ 
++  .. _bad-sign-off:
++
+   **BAD_SIGN_OFF**
+     The signed-off-by line does not fall in line with the standards
+     specified by the community.
+ 
+     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
+ 
++  .. _bad-stable-address-style:
++
+   **BAD_STABLE_ADDRESS_STYLE**
+     The email format for stable is incorrect.
+     Some valid options for stable address are::
+@@ -536,17 +594,23 @@ Commit message
+ 
+       stable@vger.kernel.org # version info
+ 
++  .. _commit-comment-symbol:
++
+   **COMMIT_COMMENT_SYMBOL**
+     Commit log lines starting with a '#' are ignored by git as
+     comments.  To solve this problem addition of a single space
+     infront of the log line is enough.
+ 
++  .. _commit-message:
++
+   **COMMIT_MESSAGE**
+     The patch is missing a commit description.  A brief
+     description of the changes made by the patch should be added.
+ 
+     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+ 
++  .. _email-subject:
++
+   **EMAIL_SUBJECT**
+     Naming the tool that found the issue is not very useful in the
+     subject line.  A good subject line summarizes the change that
+@@ -554,6 +618,8 @@ Commit message
+ 
+     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+ 
++  .. _from-sign-off-mismatch:
++
+   **FROM_SIGN_OFF_MISMATCH**
+     The author's email does not match with that in the Signed-off-by:
+     line(s). This can be sometimes caused due to an improperly configured
+@@ -566,6 +632,8 @@ Commit message
+       - The email subaddresses do not match.
+       - The email comments do not match.
+ 
++  .. _missing-sign-off:
++
+   **MISSING_SIGN_OFF**
+     The patch is missing a Signed-off-by line.  A signed-off-by
+     line should be added according to Developer's certificate of
+@@ -573,6 +641,8 @@ Commit message
+ 
+     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+ 
++  .. _no-author-sign-off:
++
+   **NO_AUTHOR_SIGN_OFF**
+     The author of the patch has not signed off the patch.  It is
+     required that a simple sign off line should be present at the
+@@ -582,6 +652,8 @@ Commit message
+ 
+     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#sign-your-work-the-developer-s-certificate-of-origin
+ 
++  .. _diff-in-commit-msg:
++
+   **DIFF_IN_COMMIT_MSG**
+     Avoid having diff content in commit message.
+     This causes problems when one tries to apply a file containing both
+@@ -590,6 +662,8 @@ Commit message
+ 
+     See: https://lore.kernel.org/lkml/20150611134006.9df79a893e3636019ad2759e@linux-foundation.org/
+ 
++  .. _gerrit-change-id:
++
+   **GERRIT_CHANGE_ID**
+     To be picked up by gerrit, the footer of the commit message might
+     have a Change-Id like::
+@@ -599,6 +673,8 @@ Commit message
+ 
+     The Change-Id line must be removed before submitting.
+ 
++  .. _git-commit-id:
++
+   **GIT_COMMIT_ID**
+     The proper way to reference a commit id is:
+     commit <12+ chars of sha1> ("<title line>")
+@@ -612,6 +688,8 @@ Commit message
+ 
+     See: https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+ 
++  .. _bad-fixes-tag:
++
+   **BAD_FIXES_TAG**
+     The Fixes: tag is malformed or does not follow the community conventions.
+     This can occur if the tag have been split into multiple lines (e.g., when
+@@ -623,6 +701,8 @@ Commit message
+ Comparison style
+ ----------------
+ 
++  .. _assign-in-if:
++
+   **ASSIGN_IN_IF**
+     Do not use assignments in if condition.
+     Example::
+@@ -634,16 +714,22 @@ Comparison style
+       foo = bar(...);
+       if (foo < BAZ) {
+ 
++  .. _bool-comparison:
++
+   **BOOL_COMPARISON**
+     Comparisons of A to true and false are better written
+     as A and !A.
+ 
+     See: https://lore.kernel.org/lkml/1365563834.27174.12.camel@joe-AO722/
+ 
++  .. _comparison-to-null:
++
+   **COMPARISON_TO_NULL**
+     Comparisons to NULL in the form (foo == NULL) or (foo != NULL)
+     are better written as (!foo) and (foo).
+ 
++  .. _constant-comparison:
++
+   **CONSTANT_COMPARISON**
+     Comparisons with a constant or upper case identifier on the left
+     side of the test should be avoided.
+@@ -652,6 +738,8 @@ Comparison style
+ Indentation and Line Breaks
+ ---------------------------
+ 
++  .. _code-indent:
++
+   **CODE_INDENT**
+     Code indent should use tabs instead of spaces.
+     Outside of comments, documentation and Kconfig,
+@@ -659,6 +747,8 @@ Indentation and Line Breaks
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#indentation
+ 
++  .. _deep-indentation:
++
+   **DEEP_INDENTATION**
+     Indentation with 6 or more tabs usually indicate overly indented
+     code.
+@@ -668,6 +758,8 @@ Indentation and Line Breaks
+ 
+     See: https://lore.kernel.org/lkml/1328311239.21255.24.camel@joe2Laptop/
+ 
++  .. _switch-case-indent-level:
++
+   **SWITCH_CASE_INDENT_LEVEL**
+     switch should be at the same indent as case.
+     Example::
+@@ -691,6 +783,8 @@ Indentation and Line Breaks
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#indentation
+ 
++  .. _long-line:
++
+   **LONG_LINE**
+     The line has exceeded the specified maximum length.
+     To use a different maximum line length, the --max-line-length=n option
+@@ -703,6 +797,8 @@ Indentation and Line Breaks
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-long-lines-and-strings
+ 
++  .. _long-line-string:
++
+   **LONG_LINE_STRING**
+     A string starts before but extends beyond the maximum line length.
+     To use a different maximum line length, the --max-line-length=n option
+@@ -710,6 +806,8 @@ Indentation and Line Breaks
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-long-lines-and-strings
+ 
++  .. _long-line-comment:
++
+   **LONG_LINE_COMMENT**
+     A comment starts before but extends beyond the maximum line length.
+     To use a different maximum line length, the --max-line-length=n option
+@@ -717,12 +815,16 @@ Indentation and Line Breaks
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#breaking-long-lines-and-strings
+ 
++  .. _split-string:
++
+   **SPLIT_STRING**
+     Quoted strings that appear as messages in userspace and can be
+     grepped, should not be split across multiple lines.
+ 
+     See: https://lore.kernel.org/lkml/20120203052727.GA15035@leaf/
+ 
++  .. _multiline-dereference:
++
+   **MULTILINE_DEREFERENCE**
+     A single dereferencing identifier spanned on multiple lines like::
+ 
+@@ -750,6 +852,8 @@ Indentation and Line Breaks
+     violation because it is much easier to read a dereferencing identifier
+     on a single line.
+ 
++  .. _trailing-statements:
++
+   **TRAILING_STATEMENTS**
+     Trailing statements (for example after any conditional) should be
+     on the next line.
+@@ -766,6 +870,8 @@ Indentation and Line Breaks
+ Macros, Attributes and Symbols
+ ------------------------------
+ 
++  .. _array-size:
++
+   **ARRAY_SIZE**
+     The ARRAY_SIZE(foo) macro should be preferred over
+     sizeof(foo)/sizeof(foo[0]) for finding number of elements in an
+@@ -775,10 +881,14 @@ Macros, Attributes and Symbols
+ 
+       #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+ 
++  .. _avoid-externs:
++
+   **AVOID_EXTERNS**
+     Function prototypes don't need to be declared extern in .h
+     files.  It's assumed by the compiler and is unnecessary.
+ 
++  .. _avoid-l-prefix:
++
+   **AVOID_L_PREFIX**
+     Local symbol names that are prefixed with `.L` should be avoided,
+     as this has special meaning for the assembler; a symbol entry will
+@@ -791,12 +901,16 @@ Macros, Attributes and Symbols
+     the beginning or end of code regions via
+     `SYM_CODE_START_LOCAL`/`SYM_CODE_END`
+ 
++  .. _bit-macro:
++
+   **BIT_MACRO**
+     Defines like: 1 << <digit> could be BIT(digit).
+     The BIT() macro is defined via include/linux/bits.h::
+ 
+       #define BIT(nr)         (1UL << (nr))
+ 
++  .. _const-read-mostly:
++
+   **CONST_READ_MOSTLY**
+     When a variable is tagged with the __read_mostly annotation, it is a
+     signal to the compiler that accesses to the variable will be mostly
+@@ -805,6 +919,8 @@ Macros, Attributes and Symbols
+     const __read_mostly does not make any sense as const data is already
+     read-only.  The __read_mostly annotation thus should be removed.
+ 
++  .. _date-time:
++
+   **DATE_TIME**
+     It is generally desirable that building the same source code with
+     the same set of tools is reproducible, i.e. the output is always
+@@ -816,6 +932,8 @@ Macros, Attributes and Symbols
+ 
+     See: https://www.kernel.org/doc/html/latest/kbuild/reproducible-builds.html#timestamps
+ 
++  .. _define-arch-has:
++
+   **DEFINE_ARCH_HAS**
+     The ARCH_HAS_xyz and ARCH_HAVE_xyz patterns are wrong.
+ 
+@@ -827,9 +945,13 @@ Macros, Attributes and Symbols
+ 
+     See: https://lore.kernel.org/lkml/CA+55aFycQ9XJvEOsiM3txHL5bjUc8CeKWJNR_H+MiicaddB42Q@mail.gmail.com/
+ 
++  .. _do-while-macro-with-trailing-semicolon:
++
+   **DO_WHILE_MACRO_WITH_TRAILING_SEMICOLON**
+     do {} while(0) macros should not have a trailing semicolon.
+ 
++  .. _init-attribute:
++
+   **INIT_ATTRIBUTE**
+     Const init definitions should use __initconst instead of
+     __initdata.
+@@ -837,6 +959,8 @@ Macros, Attributes and Symbols
+     Similarly init definitions without const require a separate
+     use of const.
+ 
++  .. _inline-location:
++
+   **INLINE_LOCATION**
+     The inline keyword should sit between storage class and type.
+ 
+@@ -854,6 +978,8 @@ Macros, Attributes and Symbols
+               ...
+       }
+ 
++  .. _misplaced-init:
++
+   **MISPLACED_INIT**
+     It is possible to use section markers on variables in a way
+     which gcc doesn't understand (or at least not the way the
+@@ -868,6 +994,8 @@ Macros, Attributes and Symbols
+ 
+     See: https://lore.kernel.org/lkml/1377655732.3619.19.camel@joe-AO722/
+ 
++  .. _multistatement-macro-use-do-while:
++
+   **MULTISTATEMENT_MACRO_USE_DO_WHILE**
+     Macros with multiple statements should be enclosed in a
+     do - while block.  Same should also be the case for macros
+@@ -881,10 +1009,14 @@ Macros, Attributes and Symbols
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#macros-enums-and-rtl
+ 
++  .. _prefer-fallthrough:
++
+   **PREFER_FALLTHROUGH**
+     Use the `fallthrough;` pseudo keyword instead of
+     `/* fallthrough */` like comments.
+ 
++  .. _trailing-semicolon:
++
+   **TRAILING_SEMICOLON**
+     Macro definition should not end with a semicolon. The macro
+     invocation style should be consistent with function calls.
+@@ -906,6 +1038,8 @@ Macros, Attributes and Symbols
+ 
+     See: https://lore.kernel.org/lkml/1399671106.2912.21.camel@joe-AO725/
+ 
++  .. _single-statement-do-while-macro:
++
+   **SINGLE_STATEMENT_DO_WHILE_MACRO**
+     For the multi-statement macros, it is necessary to use the do-while
+     loop to avoid unpredictable code paths. The do-while loop helps to
+@@ -917,6 +1051,8 @@ Macros, Attributes and Symbols
+     the do-while loop is redundant. So remove the do-while loop for single
+     statement macros.
+ 
++  .. _weak-declaration:
++
+   **WEAK_DECLARATION**
+     Using weak declarations like __attribute__((weak)) or __weak
+     can have unintended link defects.  Avoid using them.
+@@ -925,15 +1061,21 @@ Macros, Attributes and Symbols
+ Functions and Variables
+ -----------------------
+ 
++  .. _camelcase:
++
+   **CAMELCASE**
+     Avoid CamelCase Identifiers.
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#naming
+ 
++  .. _const-const:
++
+   **CONST_CONST**
+     Using `const <type> const *` is generally meant to be
+     written `const <type> * const`.
+ 
++  .. _const-struct:
++
+   **CONST_STRUCT**
+     Using const is generally a good idea.  Checkpatch reads
+     a list of frequently used structs that are always or
+@@ -944,6 +1086,8 @@ Functions and Variables
+ 
+     See: https://lore.kernel.org/lkml/alpine.DEB.2.10.1608281509480.3321@hadrien/
+ 
++  .. _embedded-function-name:
++
+   **EMBEDDED_FUNCTION_NAME**
+     Embedded function names are less appropriate to use as
+     refactoring can cause function renaming.  Prefer the use of
+@@ -952,6 +1096,8 @@ Functions and Variables
+     Note that this does not work with -f (--file) checkpatch option
+     as it depends on patch context providing the function name.
+ 
++  .. _function-arguments:
++
+   **FUNCTION_ARGUMENTS**
+     This warning is emitted due to any of the following reasons:
+ 
+@@ -972,6 +1118,8 @@ Functions and Variables
+ 
+          All arguments should have identifier names.
+ 
++  .. _function-without-args:
++
+   **FUNCTION_WITHOUT_ARGS**
+     Function declarations without arguments like::
+ 
+@@ -981,22 +1129,30 @@ Functions and Variables
+ 
+       int foo(void)
+ 
++  .. _global-initialisers:
++
+   **GLOBAL_INITIALISERS**
+     Global variables should not be initialized explicitly to
+     0 (or NULL, false, etc.).  Your compiler (or rather your
+     loader, which is responsible for zeroing out the relevant
+     sections) automatically does it for you.
+ 
++  .. _initialised-static:
++
+   **INITIALISED_STATIC**
+     Static variables should not be initialized explicitly to zero.
+     Your compiler (or rather your loader) automatically does
+     it for you.
+ 
++  .. _multiple-assignments:
++
+   **MULTIPLE_ASSIGNMENTS**
+     Multiple assignments on a single line makes the code unnecessarily
+     complicated. So on a single line assign value to a single variable
+     only, this makes the code more readable and helps avoid typos.
+ 
++  .. _return-parentheses:
++
+   **RETURN_PARENTHESES**
+     return is not a function and as such doesn't need parentheses::
+ 
+@@ -1010,6 +1166,8 @@ Functions and Variables
+ Permissions
+ -----------
+ 
++  .. _device-attr-perms:
++
+   **DEVICE_ATTR_PERMS**
+     The permissions used in DEVICE_ATTR are unusual.
+     Typically only three permissions are used - 0644 (RW), 0444 (RO)
+@@ -1017,10 +1175,14 @@ Permissions
+ 
+     See: https://www.kernel.org/doc/html/latest/filesystems/sysfs.html#attributes
+ 
++  .. _execute-permissions:
++
+   **EXECUTE_PERMISSIONS**
+     There is no reason for source files to be executable.  The executable
+     bit can be removed safely.
+ 
++  .. _exported-world-writable:
++
+   **EXPORTED_WORLD_WRITABLE**
+     Exporting world writable sysfs/debugfs files is usually a bad thing.
+     When done arbitrarily they can introduce serious security bugs.
+@@ -1030,10 +1192,14 @@ Permissions
+ 
+     See: https://lore.kernel.org/linux-arm-kernel/cover.1296818921.git.segoon@openwall.com/
+ 
++  .. _non-octal-permissions:
++
+   **NON_OCTAL_PERMISSIONS**
+     Permission bits should use 4 digit octal permissions (like 0700 or 0444).
+     Avoid using any other base like decimal.
+ 
++  .. _symbolic-perms:
++
+   **SYMBOLIC_PERMS**
+     Permission bits in the octal form are more readable and easier to
+     understand than their symbolic counterparts because many command-line
+@@ -1049,10 +1215,14 @@ Permissions
+ Spacing and Brackets
+ --------------------
+ 
++  .. _assignment-continuations:
++
+   **ASSIGNMENT_CONTINUATIONS**
+     Assignment operators should not be written at the start of a
+     line but should follow the operand at the previous line.
+ 
++  .. _braces:
++
+   **BRACES**
+     The placement of braces is stylistically incorrect.
+     The preferred way is to put the opening brace last on the line,
+@@ -1073,6 +1243,8 @@ Spacing and Brackets
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces
+ 
++  .. _bracket-space:
++
+   **BRACKET_SPACE**
+     Whitespace before opening bracket '[' is prohibited.
+     There are some exceptions:
+@@ -1089,6 +1261,8 @@ Spacing and Brackets
+ 
+         = { [0...10] = 5 }
+ 
++  .. _concatenated-string:
++
+   **CONCATENATED_STRING**
+     Concatenated elements should have a space in between.
+     Example::
+@@ -1099,17 +1273,23 @@ Spacing and Brackets
+ 
+       printk(KERN_INFO "bar");
+ 
++  .. _else-after-brace:
++
+   **ELSE_AFTER_BRACE**
+     `else {` should follow the closing block `}` on the same line.
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces
+ 
++  .. _line-spacing:
++
+   **LINE_SPACING**
+     Vertical space is wasted given the limited number of lines an
+     editor window can display when multiple blank lines are used.
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#spaces
+ 
++  .. _open-brace:
++
+   **OPEN_BRACE**
+     The opening brace should be following the function definitions on the
+     next line.  For any non-functional block it should be on the same line
+@@ -1117,6 +1297,8 @@ Spacing and Brackets
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#placing-braces-and-spaces
+ 
++  .. _pointer-location:
++
+   **POINTER_LOCATION**
+     When using pointer data or a function that returns a pointer type,
+     the preferred use of * is adjacent to the data name or function name
+@@ -1129,11 +1311,15 @@ Spacing and Brackets
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#spaces
+ 
++  .. _spacing:
++
+   **SPACING**
+     Whitespace style used in the kernel sources is described in kernel docs.
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#spaces
+ 
++  .. _trailing-whitespace:
++
+   **TRAILING_WHITESPACE**
+     Trailing whitespace should always be removed.
+     Some editors highlight the trailing whitespace and cause visual
+@@ -1141,6 +1327,8 @@ Spacing and Brackets
+ 
+     See: https://www.kernel.org/doc/html/latest/process/coding-style.html#spaces
+ 
++  .. _unnecessary-parentheses:
++
+   **UNNECESSARY_PARENTHESES**
+     Parentheses are not required in the following cases:
+ 
+@@ -1172,6 +1360,8 @@ Spacing and Brackets
+           &foo->bar
+           *foo->bar
+ 
++  .. _while-after-brace:
++
+   **WHILE_AFTER_BRACE**
+     while should follow the closing bracket on the same line::
+ 
+@@ -1185,19 +1375,27 @@ Spacing and Brackets
+ Others
+ ------
+ 
++  .. _config-description:
++
+   **CONFIG_DESCRIPTION**
+     Kconfig symbols should have a help text which fully describes
+     it.
+ 
++  .. _corrupted-patch:
++
+   **CORRUPTED_PATCH**
+     The patch seems to be corrupted or lines are wrapped.
+     Please regenerate the patch file before sending it to the maintainer.
+ 
++  .. _cvs-keyword:
++
+   **CVS_KEYWORD**
+     Since linux moved to git, the CVS markers are no longer used.
+     So, CVS style keywords ($Id$, $Revision$, $Log$) should not be
+     added.
+ 
++  .. _default-no-break:
++
+   **DEFAULT_NO_BREAK**
+     switch default case is sometimes written as "default:;".  This can
+     cause new cases added below default to be defective.
+@@ -1205,16 +1403,22 @@ Others
+     A "break;" should be added after empty default statement to avoid
+     unwanted fallthrough.
+ 
++  .. _dos-line-endings:
++
+   **DOS_LINE_ENDINGS**
+     For DOS-formatted patches, there are extra ^M symbols at the end of
+     the line.  These should be removed.
+ 
++  .. _dt-schema-binding-patch:
++
+   **DT_SCHEMA_BINDING_PATCH**
+     DT bindings moved to a json-schema based format instead of
+     freeform text.
+ 
+     See: https://www.kernel.org/doc/html/latest/devicetree/bindings/writing-schema.html
+ 
++  .. _dt-split-binding-patch:
++
+   **DT_SPLIT_BINDING_PATCH**
+     Devicetree bindings should be their own patch.  This is because
+     bindings are logically independent from a driver implementation,
+@@ -1224,20 +1428,28 @@ Others
+ 
+     See: https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+ 
++  .. _embedded-filename:
++
+   **EMBEDDED_FILENAME**
+     Embedding the complete filename path inside the file isn't particularly
+     useful as often the path is moved around and becomes incorrect.
+ 
++  .. _file-path-changes:
++
+   **FILE_PATH_CHANGES**
+     Whenever files are added, moved, or deleted, the MAINTAINERS file
+     patterns can be out of sync or outdated.
+ 
+     So MAINTAINERS might need updating in these cases.
+ 
++  .. _memset:
++
+   **MEMSET**
+     The memset use appears to be incorrect.  This may be caused due to
+     badly ordered parameters.  Please recheck the usage.
+ 
++  .. _not-unified-diff:
++
+   **NOT_UNIFIED_DIFF**
+     The patch file does not appear to be in unified-diff format.  Please
+     regenerate the patch file before sending it to the maintainer.
+@@ -1245,6 +1457,8 @@ Others
+   **PRINTF_0XDECIMAL**
+     Prefixing 0x with decimal output is defective and should be corrected.
+ 
++  .. _spdx-license-tag:
++
+   **SPDX_LICENSE_TAG**
+     The source file is missing or has an improper SPDX identifier tag.
+     The Linux kernel requires the precise SPDX identifier in all source files,
+@@ -1252,5 +1466,7 @@ Others
+ 
+     See: https://www.kernel.org/doc/html/latest/process/license-rules.html
+ 
++  .. _typo-spelling:
++
+   **TYPO_SPELLING**
+     Some words may have been misspelled.  Consider reviewing them.
+-- 
+2.43.0
+
 
