@@ -1,186 +1,146 @@
-Return-Path: <linux-kernel+bounces-178139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E3008C499A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:31:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C398C499D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27E61F22354
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:31:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0321B224FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8C384DF2;
-	Mon, 13 May 2024 22:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEA684D07;
+	Mon, 13 May 2024 22:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Kf3PL3eK"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2069.outbound.protection.outlook.com [40.107.236.69])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FRo/n1ej"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65F1D51A;
-	Mon, 13 May 2024 22:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715639466; cv=fail; b=JgtTpd8LgyOdPZ7u9Ag7IxETwre1PM9AJLfirHgOIp+0Wno6R2ody/bMH0gI4fKY+HtH5eUJCV0kYjHfKFPTE29SqRZPeWr/OROxDdTQ8AgVkFTO+GpmKzmBrLllDNUupS9XBNm+baaLNJIUoL+W6bzW1R+G9rvHGz9FWQ2X6mk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715639466; c=relaxed/simple;
-	bh=Ih8G7utJPq1IFV0YPLerxzQtXWE4zh4MOdXICDgC2ek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lIPnM7SEgWuEjZm5CMlhJoGJSzoaZCxzb2PWUc5kHfebZAPddAqYFt0Z6MgMzdJnZbKIfyA8iha709K9loBROVT0NiUx03lV7HBxnvi6BgRcne4FWzzzwE+ds2JlzcDyvTwntsW97tjZk8lGquqNOmmtKOg/egAZp1PDNTm4N/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Kf3PL3eK; arc=fail smtp.client-ip=40.107.236.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PnWiJk5xCxyxQyEPMB718s8qyP6WJsiHsa3Ng6T02KtuxX9dvzeVzpa2qBWjnEchZHlotogQdsbvH4LndtbcVgmDjYwicQ8xZ8lHfgm8+mIrHclD+E5CCZitCq797gHatpvjhVAklMKbJ+LfNiNajsx44Gs35KLfx37t3BF23zIkP4MvY/6kFq6e6Pjvt/1UnSj0SFlXiawmYDMichsnrAYsQzpBAQVtEYMlzI6vykMKYDyZ5na//b3O2xp04frTw03mhSJvF2VmrjzSkF4IBPp291GliCqRrDKM0HklkepMUHsVlKxQSy8i5pH0Esi7CBmwF9ywJOjU5rMJ7HtYvw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V6uPQqsDtSy3dWjY5u2Z92DsyhEkRjC2zOcYS8SCMaQ=;
- b=aI/F6pyKgDnx5npd3TorwBYJgN7FJDqqk7H0jvC4wGbKh+vKmF7ZvxG8+cOntPdkllBIf6m/xU3JGL/Oa4AosdqtEl3OGIIZdhiYohk/EYi0xWXqfg6FdcFx7/4SazHqwXMyTkUh1BZrm8C5Zf8G2qz7OYBGsBqvN+KPKaisFCRu7RPCL1R+YQKqUqTljNB6yKsBMnRAt4r+aT3P60hOooieRuiP+9whfstwzySyJYXyyucOvPswCrViVyaSjMzBWNF3JIqmXPc8LR9yrZV5L030FGUur4FgbL1ubdSAL6/1UgHr2v4krcJebvZgXh7y9T+tddPEiAC0NELsyIwwUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V6uPQqsDtSy3dWjY5u2Z92DsyhEkRjC2zOcYS8SCMaQ=;
- b=Kf3PL3eKdjYUcpgE5ujgJeyDhNycBOJ+cCYrWGZpTVdFUnG8MdeESc/NbYfzvI+jjRgUKrwYIa066+ryOGl6Gamym+tMdv/lKMS0DK6FdzBCPTMeIJionJ/AyfeezHjXn28chdUVJhQSYlD+RVzwfgZ4ClxLKtcbvcRuYlskyzshuD0tYYpU4G9rKWxOqB/YSpYJCXuhfCrSXd3JdjssjiEcZhNIDhV5Ce5azNKD7MAFOogebdk/jrVOPyjcuU1bjlGqzyBmgZ2wev4oZd/uKQBddmSMTcCfvQGKgCpbwv/j16W6QzvTg2/J/FfG5msLOl/RZL0/R9PkhofUwTPG3Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by PH7PR12MB5709.namprd12.prod.outlook.com (2603:10b6:510:1e0::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 22:31:00 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%4]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 22:31:00 +0000
-Date: Mon, 13 May 2024 19:30:59 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, kevin.tian@intel.com,
-	suravee.suthikulpanit@amd.com, joro@8bytes.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	yi.l.liu@intel.com, eric.auger@redhat.com, vasant.hegde@amd.com,
-	jon.grimm@amd.com, santosh.shukla@amd.com, Dhaval.Giani@amd.com,
-	shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH RFCv1 02/14] iommufd: Swap _iommufd_object_alloc and
- __iommufd_object_alloc
-Message-ID: <ZkKUo1Z+YKdsUPm8@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <43bab81816a7bb08fde868a43d62c439ede91f9f.1712978212.git.nicolinc@nvidia.com>
- <ZkDDlMouOmfTaRRg@nvidia.com>
- <ZkF7EY+COAPYNWwU@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkF7EY+COAPYNWwU@nvidia.com>
-X-ClientProxiedBy: SJ0PR13CA0051.namprd13.prod.outlook.com
- (2603:10b6:a03:2c2::26) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E20D51A;
+	Mon, 13 May 2024 22:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715639614; cv=none; b=fJxOIFnIOCHeKwM8ubbB9Vr4dB7U3mwpWA64X+GN7g7B/sumw2NOziSxUdcrQDaO0J1cLhp8Wh8WSDYwmb+6nNehcTC5T3299Ki7OZoiNW6XopeINC02bnaU9bxXg5+YrIRjLcGqO/s/zCKEVzPHJsyuE9g9uhyMJQypQiMdNB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715639614; c=relaxed/simple;
+	bh=VF+xtnpj6iNd1cqa0mfpTf22R+BwsnEumpnvLM8BRJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B9QpbkzqigFjrO/O+LDR4sXoqC2cr0oowKOzaJx0Vjb9CyukENb0pStELyfJdxfZRxyJExPbvZjQ+BTvvSoOlSs5Bi7lHMoIPPkzgh2DkCf7NdkJap3tQXHhPKF4JywY8Md8RqGdIgSYjyin8OPclm55FDw1Hky3XNEBPjeGtVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FRo/n1ej; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715639607;
+	bh=866m8QdJ9ODjSr65zAIEiDVsaMx436FiNEjIN0mFDpo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FRo/n1ejgW31yns0cGuJnHrvzwmey8W3h9K9i1iSVs5zX5Tdp+U6hpehuKHvcFB6w
+	 tOCQtZFlcIrJWMqR1FzgZk/t6Ct4Npq/J1FFYTLYoGOy6c5cJhg8cPTTq84alkh344
+	 B4GMyh2yi8j3Cte52+mhRDnc/pmdteFv/x4JJ4w5hvrPqEnzyobZz7y6TYn1QYs5A4
+	 AHAPORLboAtb5O0dJGanerZwiJ07bf5MqblXv3JERFWKcdTZJInL92c+VOnZ6sBl70
+	 REVn6WCepH/0W4gZ7bZtN9PMQHMNj/RpfrnMjKiLhxrjgpjiYKAxglqR9V7f3fcYsT
+	 tC1K2hZyrnk1w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VdZ5M4PlJz4wb0;
+	Tue, 14 May 2024 08:33:27 +1000 (AEST)
+Date: Tue, 14 May 2024 08:33:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the stm32 tree
+Message-ID: <20240514083304.0a8b368b@canb.auug.org.au>
+In-Reply-To: <20240430110428.30432b2f@canb.auug.org.au>
+References: <20240430110428.30432b2f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|PH7PR12MB5709:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4d0b4dba-8201-42b9-12c0-08dc739c5da4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|376005|366007|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4pMNyg+zBSSJncjw1cxzER8+Dq1FV+wXkuaHAEorDzKQG/Maz+JX5NL84OMp?=
- =?us-ascii?Q?996DKsIvzH1kZsg6YHC+0NjCHEe2DR8xsDqEsMRe51UY6kKf1mJpsKbgiDCx?=
- =?us-ascii?Q?OcogSKhSpazv5VM/ptLZV7rp/tUR4ftppDIN/sPp02OgYh/3vu3uS26iErtQ?=
- =?us-ascii?Q?CNqUmQg8sOXCc1X123cKUWo3zw0n6Jc6BZes/tHkymdIn5rTzMLY1Tba2JhI?=
- =?us-ascii?Q?BW5tnuxk/YQap2lYyGFGQ46MjwjHiVS64XtGuj/4lOGKJcPuS94h8jKsO6u9?=
- =?us-ascii?Q?04Ubznx6xRZcXHfs08ZXxB05jO7XAnIXb0ZrWV2wNQAMPfGwtvCfKsQsmA0g?=
- =?us-ascii?Q?pspnG3DyblFf7dyFOqTfq/2ZgVLpZlmW8uK9MTVEiwG8oyg4DM+lAmJxaEYH?=
- =?us-ascii?Q?25Ujg1EGy35KFy2B9AoNDeKdMieSKkL2rZMa6ZrnVeJIi/QmmVF0IoqhgQZc?=
- =?us-ascii?Q?ukHhxpYqSGV3zkkgNqUEqzL2+XMew5hldl3yElgnEEkKexEusXzFLinl8YBj?=
- =?us-ascii?Q?NJmIBFSNagkqkw7VfwUYJSj2vP7QVpiJVb0eakDNpZyuxvCaQAkSzQlrJMSW?=
- =?us-ascii?Q?bB7l+LpOhcMfVKLF3FYgaYFBx5cLocr+qEEbEr2jrD6116AnKflOwdH/ciRf?=
- =?us-ascii?Q?PTrIbhbeRzIJFgE46qZUxw4JfB8ff02xRl1AvSTg/xQiWvAO8ZS40y1eIDue?=
- =?us-ascii?Q?UGsxMvT5/xfmnhRGjbAiBwUbHlD9B55TdNwmNCQ9LTBT1pbxliLTXodZohen?=
- =?us-ascii?Q?c7+QjSfkO4f85uL+9K7oIiMP5RYQDKx809B4SQkvxaSUErwKlc6MD6EKJhMP?=
- =?us-ascii?Q?f5PSOILiFWM0yXymq4mAUg5ZrOhHh4UG+MEMI10NOGn8SlYNLKF19k40x3kH?=
- =?us-ascii?Q?wJPi6hjfi8hpxu0hVOMFUY3xSCraBiTUrHZpWiCOMjpJSGhLifsAO7Lae15d?=
- =?us-ascii?Q?IrcvyXOSn+u+/NQU9OAFOsXfSjjWMZrRX5lwTIlMWkma3WQ8VOWkabKWi3Js?=
- =?us-ascii?Q?ddmPBKixBOIgYTVsFYL/Ov9g9dNoxu1vUPiRiUdo2DN/Q+S58FkEE4cmhmyt?=
- =?us-ascii?Q?VNWv6VzFyOVVnRfjQrjlDMCbLBpx+tByfQwbK6JVn13/ALHpmzcI4+RyOO+o?=
- =?us-ascii?Q?mtPuSDywWnvuPR/g4BtNlJfsUpPLRAig5oLwAOE7E3SxFE0MlaYuZ8TSp5gB?=
- =?us-ascii?Q?Rwa1bfL8Ehv4PAegEcunT6/sgDgxsIkTPKoSn/7adPQyx37GpkTKEhnNOpRN?=
- =?us-ascii?Q?MJ2M7hLiBatJ4Z/6Aur4TE2/CisBS1RyCwK69FP2Qw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(366007)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?h0YSL8kAKmp6w7FAInWvRey/Jc3HgEzz8nlJQeeoWBWTQtvWhTAoJpb9jclN?=
- =?us-ascii?Q?zmASUCA6hngTXXWnY4qi8nRsY5Xyvs1WIkG3uUXC3T5VSNoJybioIxJrkBE9?=
- =?us-ascii?Q?SilTafhImfMOFm3hbIpxr/cOb6tdWcVF7mWoumVZD2m9Ptd/TJyGEl6p3Q+Z?=
- =?us-ascii?Q?Oz5wkLIpS/TWxcynD7z+RxTcsQVcVyAj419jmFuEmKvNRf4GB2+ml73XoMnl?=
- =?us-ascii?Q?ngpHJWy7JTU5F6DCBFhfTS1ZgxSTq8vqNtzmM8noGrl8TQAWVOHbQiLSklj0?=
- =?us-ascii?Q?Fyw+r6XqfY2UTOCr+eZp8NHwDvzqDFjlb9z2c4zvF1IQePUJpr4da+dhvgtr?=
- =?us-ascii?Q?cC9YzGul8MQjvRcjKGRJBiwSXlc9k9P3lyQM5tcX58Kqc5UlXPbEW9v7BAQ+?=
- =?us-ascii?Q?zekuD9WkijJI1ZuD5LKXQyzn7jCMXn9rm6VN5HIU6wuBgV64/8WLahugbi+K?=
- =?us-ascii?Q?FQ7yQHOq1JEHotJCQV48qOzlR33ydLRF2CICgms6+4T4HmqowdlVZV3YESnu?=
- =?us-ascii?Q?5dQNK0iwTdlMFEjP+4p+RaNWOYvxdcwTEjtHMX436EiwX44DAAZqlNcmYjND?=
- =?us-ascii?Q?8hpd0cVIOEKo0jNc8TqIzqzEj7twDLUOiJzf7wm/Iyuugi2Ku5WFSWg174Oh?=
- =?us-ascii?Q?Vr4NhSe1skuOHNvjS7/y9eycaY7HfNtxlX1gD1ZAR2FigMenlev+dgBeHKK3?=
- =?us-ascii?Q?esbMSRw2B6omvyZM8lyfZ2PnJwGMgbQTlwD+MDmFgONkUuyV0dwoWZFJD/8R?=
- =?us-ascii?Q?RVlEnQiLjSbQx7mpyUmxkRLGFdHIEXWWMTcIHn2501WGLA0cT1ZH8oTQAXP6?=
- =?us-ascii?Q?oG/djgETZddrJzYVU4FTfNipTSxyvxLI6BcUcgksC+ul334pjglsB6T/VDaf?=
- =?us-ascii?Q?VtJeFnJYpPOgeLm06NQYCmvDu+AUw8JV0uKw2XZqH5DaZOxF/bPOvQwvtk7Z?=
- =?us-ascii?Q?wlTHW2MQITN0g8UWoI8zLY6XdCeJNZqRjAykSZNJvZTunOd6HMQl2O+V489U?=
- =?us-ascii?Q?okLT3BrpgLyLHWBk8n4rMXP0d3fRFfTKQSmOTaTpl3ykW7MG6kUa+fx7gAYa?=
- =?us-ascii?Q?yoQNm3mCchRHLh6DbnTRXh0o+VvLhOcEnsJnrKXAte/hQ00ZiX58wbZdc7zE?=
- =?us-ascii?Q?5uMrGdyouQY6tG7eHFuiLHbUPnM5ridLNfI8FTp2O+LnrlDcst+3xEfCGMnZ?=
- =?us-ascii?Q?ZpQSOhddNOcvpD2/9MV1kX4FIZer1ah3kzIC6Bn8LTvC9pLlwg+m9sLD7K3Z?=
- =?us-ascii?Q?Mum3sV/+Vuui6Xq5+wUTUZhTXK7CF+hLjI2/dxC3S/rHYLPg0h5U/pltGaw+?=
- =?us-ascii?Q?zTi1GuEHJ9mgdaOjfHsmzNXk+pEbDet7zgbh0mIjrCroXtSKvPLHDk3t36/l?=
- =?us-ascii?Q?oiUg3Bn/iCpOo0AQD+wYqk1hZnJKEzth+fkSu1xTxuMsJr72X+8e6zfVn7Iw?=
- =?us-ascii?Q?B0yEG1qAH3glnfFCFahw9iE/gXOMGZkUaMKINlLDOSC6rwpJMw2tgy2sJM5Y?=
- =?us-ascii?Q?XN5GkXDZuTBoJXBKdol25xLK/N7QTO/VeFgkxNCtECnWB/GfMOde2Yqc+W7J?=
- =?us-ascii?Q?rWpp5VBG0rLLwSMnMxo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d0b4dba-8201-42b9-12c0-08dc739c5da4
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 22:31:00.4317
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VNq9IbJ/HhTAkdJn8joxZfDQmcK8uIGIVUoM4HSOMHCND0deHoSpw1OCF7Vyhg3Q
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5709
+Content-Type: multipart/signed; boundary="Sig_/y6KkD+C1uYVV+V_u2t3jAxg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, May 12, 2024 at 07:29:37PM -0700, Nicolin Chen wrote:
-> On Sun, May 12, 2024 at 10:26:44AM -0300, Jason Gunthorpe wrote:
-> > On Fri, Apr 12, 2024 at 08:46:59PM -0700, Nicolin Chen wrote:
-> > > Currently, the object allocation function calls:
-> > > level-0: iommufd_object_alloc()
-> > > level-1:     ___iommufd_object_alloc()
-> > > level-2:         _iommufd_object_alloc()
-> > 
-> > Let's give __iommufd_object_alloc() a better name then
-> > 
-> > It is a less general version of iommufd_object_alloc(), maybe
-> > iommufd_object_alloc_elm() ?
-> 
-> With the level-3 allocator, something like the followings?
-> 
-> level-0: iommufd_object_alloc()
-> level-1:     __iommufd_object_alloc()
-> level-2:         iommufd_object_alloc_elm()
-> level-3:             __iommufd_object_alloc_elm()
-> 
-> In this case, this patch will be:
-> "iommufd: Rename _iommufd_object_alloc to iommufd_object_alloc_elm"
+--Sig_/y6KkD+C1uYVV+V_u2t3jAxg
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes
+Hi all,
 
-Jason
+On Tue, 30 Apr 2024 11:04:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> The following commits are also in the arm-soc tree as different
+> commits (but the same patches):
+>=20
+>   0087ca056c73 ("arm64: dts: st: add all 8 i2c nodes on stm32mp251")
+>   2886ab7437de ("arm64: dts: st: add rcc support for STM32MP25")
+>   385ca8e3841f ("arm64: dts: st: add spi3 / spi8 properties on stm32mp257=
+f-ev1"
+> )
+>   3e7d579c9fca ("ARM: dts: stm32: add ETZPC as a system bus for STM32MP15=
+x boar
+> ds")
+>   4ef09379d765 ("arm64: dts: st: add i2c2 / i2c8 properties on stm32mp257=
+f-ev1"
+> )
+>   5e6b388d7bcb ("ARM: dts: stm32: move can3 node from stm32f746 to stm32f=
+769")
+>   7442597f90ba ("arm64: dts: st: add i2c2/i2c8 pins for stm32mp25")
+>   7c12d95564a2 ("ARM: dts: stm32: add LTDC pinctrl on STM32MP13x SoC fami=
+ly")
+>   7c3d4f99a920 ("ARM: dts: stm32: put ETZPC as an access controller for S=
+TM32MP
+> 15x boards")
+>   808691f7389d ("media: dt-bindings: add access-controllers to STM32MP25 =
+video=20
+> codecs")
+>   881bccce217e ("ARM: dts: stm32: add LTDC support for STM32MP13x SoC fam=
+ily")
+>   8fe31699b83d ("bus: stm32_firewall: fix off by one in stm32_firewall_ge=
+t_firewall()")
+>   9e716b41a2b5 ("arm64: dts: st: add RIFSC as an access controller for ST=
+M32MP25x boards")
+>   a012bd75abf6 ("ARM: dts: stm32: enable display support on stm32mp135f-d=
+k board")
+>   aee0ce48516c ("arm64: dts: st: add spi3/spi8 pins for stm32mp25")
+>   be62e9c0c3fc ("bus: etzpc: introduce ETZPC firewall controller driver")
+>   c7f2f2c0ace8 ("ARM: dts: stm32: add heartbeat led for stm32mp157c-ed1")
+>   cab43766e000 ("ARM: dts: stm32: add ETZPC as a system bus for STM32MP13=
+x boards")
+>   d3740a9fd78c ("dt-bindings: display: simple: allow panel-common propert=
+ies")
+>   dccdbccb7045 ("arm64: dts: st: correct masks for GIC PPI interrupts on =
+stm32mp25")
+>   de9b447d5678 ("ARM: dts: stm32: put ETZPC as an access controller for S=
+TM32MP13x boards")
+>   ede58756bbe5 ("arm64: dts: st: add all 8 spi nodes on stm32mp251")
+>   f798f7079233 ("ARM: dts: stm32: add PWR regulators support on stm32mp13=
+1")
+
+Those commits are now duplicates of commits in Linus' tree.
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/y6KkD+C1uYVV+V_u2t3jAxg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZClSAACgkQAVBC80lX
+0GyhoQf/URZkgMxevy8lFmqX6G50N5iexA96Z3VwvTjMT197cyAyX/IuThQcZdf5
+uqR7htdMsIzIod2PoSCmkqHv4kuhFxhkhNB5aQMDdS2zDV+Z8R0q4Gem4ajMkKE1
+nccYyPVEnJEtuPqrWJKDb6/2e1DLo+v6KFhg+IEHVtNRvQb6g+wfaoWsuZJw/TsP
+1Gl4Ohxmxbxf24pstgd/Hhsyr/cqF5Irhq3SGbnHsuhQ7v80LQSWngxwdWT2/QQK
+efSZsBeEFqXVS0Eyg0vvJpz9sMHJyw2eN5FU1mQEr463+NOIx2rXuYafCKNIFAk/
+F62ppmuyc13dSjgYuTlEUtBkcKbIHQ==
+=arru
+-----END PGP SIGNATURE-----
+
+--Sig_/y6KkD+C1uYVV+V_u2t3jAxg--
 
