@@ -1,78 +1,109 @@
-Return-Path: <linux-kernel+bounces-178115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39748C48EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:34:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238E88C48F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75BB8B23CDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:34:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09C8285B4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2260F1272D9;
-	Mon, 13 May 2024 21:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8AA8405D;
+	Mon, 13 May 2024 21:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pj8pPLzU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="WOfNa72S"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663EE8626C;
-	Mon, 13 May 2024 21:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86501175A6;
+	Mon, 13 May 2024 21:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715636018; cv=none; b=H25lDyOHxpGy+v6AKLNyGG7L9HwELzBKRNnQVPobNYK/m4gnaNea2xwLjIu7W9xw9uWQXeqx3Kbb9HYPckWMdkcFjOdLGD/Z8X8giq+6ETB0U4jqQ5J7XElB/f/PaESXWdOoyRxckEhiLp3cnecBYM1pFUEDzUQyWcEMh/nxfgc=
+	t=1715636565; cv=none; b=Io0nV0zw5Qv3R0doBhMoAA9/RGx/DaOCcVMYBAkGsSTOILz3bwAdXABHbhDBdCrDlDQSsLX0PP6rT2Q8/0Do7ri3ypt6ceI6KFMd8+qklQrWkNfHA+RA9AfGFxjM9qypnyEaF79xmsnMHhE1MWFKfyt7garZQT+eNDNOq3NPgLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715636018; c=relaxed/simple;
-	bh=LZQyVa6HbF5aFesfL5KBEJjWp6Uo08VsW0BunuSRUB4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MXhQAuYapx0nqxMmiGTBRqvI4+q9pRTO16VvI4YRnRMHCEFyNNDJiPMmh7GUk/TKbjCq6/epGhmvwhNZsmMjRyewPciq8irIu5DNqVqaB0wsrwaB3EZjQ6KnriyjeGYUIdgdfJgtTCs2QA67vVWfL+eY+WHp7UDZoQeolEKCfFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pj8pPLzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 44F49C4AF08;
-	Mon, 13 May 2024 21:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715636018;
-	bh=LZQyVa6HbF5aFesfL5KBEJjWp6Uo08VsW0BunuSRUB4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=pj8pPLzUq1LIYJUWGpB1MXCBwTRVvXrkcejqqLCp1hn35ObS7tWtqkZnFmR2LRC3t
-	 fr+LjsVFW7qMMV35kpfO7SHy4Lj1Qq6fgaL8//vfKnqK5lQ4IGIED/yRm5ZsD63zBi
-	 E6vxUc2rOh4mC9RTHOtiD4BYGLxhBC3nD2Sl48ZXF12yS58YCD+SKCOHeV5XEewYo1
-	 C9tNYwDpHpQardSvgUn9JwqRyO8ibTnG52Xk8JhLbb1OFZEVzEEKXZ/lCZ3saatwLZ
-	 VQ5Y6M4OPpq0cjxSJbQuYBpJ00XB6NslP3DZi7yVNtHAhlmlqiV3CIRwUJU2jB5p42
-	 ESdp3YDuWRP9g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 321DCC433F2;
-	Mon, 13 May 2024 21:33:38 +0000 (UTC)
-Subject: Re: [GIT PULL] hardening updates for 6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <202405111234.6F2AB1F@keescook>
-References: <202405111234.6F2AB1F@keescook>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <202405111234.6F2AB1F@keescook>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-6.10-rc1
-X-PR-Tracked-Commit-Id: 6d305cbef1aa01b9714e01e35f3d5c28544cf04d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 87caef42200cd44f8b808ec2f8ac2257f3e0a8c1
-Message-Id: <171563601819.15304.1622750092646698226.pr-tracker-bot@kernel.org>
-Date: Mon, 13 May 2024 21:33:38 +0000
-To: Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, Charles Bertsch <cbertsch@cox.net>, Erhard Furtner <erhard_f@mailbox.org>, Erick Archer <erick.archer@outlook.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, Ivan Orlov <ivan.orlov0322@gmail.com>, Justin Stitt <justinstitt@google.com>, Kees Cook <keescook@chromium.org>, kernel test robot <oliver.sang@intel.com>, linux-hardening@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>, Marco Elver <elver@google.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, Nathan Chancellor <nathan@kernel.org>, Sven Eckelmann <sven@narfation.org>, Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>, Tycho Andersen <tycho@tycho.pizza>
+	s=arc-20240116; t=1715636565; c=relaxed/simple;
+	bh=CBBzXf2XlbvIjqTi00W41XD8zqaVqm+JP9BOU2COkbY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AsPMpmdr9g3ssFmjQ8hUvxscaxCiaXo5z0kw3A12UG5SHk8z2pB3QnRQD/pPnST4vpYY9I6ExtJZriUvuih7RBcIyxUcq54cBTHrpIpqpEtu4yWkT2M1xFRUfdQtD5hDx09wiuc3umlglIqwofo+G6cJEwmgw4zsKllm9nADyE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=WOfNa72S; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QD2Hn4PiSFI1O5kOZF6pVg+j/auYbzCHkdsarZTYRnk=; t=1715636561; x=1716241361; 
+	b=WOfNa72SFXMlVbeoYenGtTclCUlrxNvv3q4n0bT8DReD/eh5caS6aKkyojGctkIhk88hVqpQE8d
+	U+eWJG2APWzeZhgVwldSSQjT+8awSjV6zo7lO+68Zrb0TwJbe2+4+4Mq38QSsF/n03iLkx+U/ghZe
+	QMuc6Wi4UP7CRMuRhGijTLFia35GXsgT2EQtNY8hwj3O74Gr+Mbrfe7UXrSd+yzHWB+hD1O/Yxhzb
+	Cwrdu+Egw6YBOn3Wyv//mHF5VMrvGAqmP80bse1WRLoRajJXPeLDbSzBaT7QNMJJzAFAEgRFsO/c3
+	rDZg+aWmfnPTpsVL3WUs7M6PTvSks0tPw1sw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s6dRN-00000002UDW-48Xa; Mon, 13 May 2024 23:42:38 +0200
+Received: from p5b13a15c.dip0.t-ipconnect.de ([91.19.161.92] helo=suse-laptop.fritz.box)
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s6dRN-00000003xHf-3AzV; Mon, 13 May 2024 23:42:37 +0200
+Message-ID: <c585d63e73453082ecbf7ddc19d5116abdcfba79.camel@physik.fu-berlin.de>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann
+	 <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>, 
+ linux-alpha@vger.kernel.org, Richard Henderson
+ <richard.henderson@linaro.org>,  Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, "Paul E. McKenney" <paulmck@kernel.org>
+Date: Mon, 13 May 2024 23:42:37 +0200
+In-Reply-To: <CAHk-=wgZ_fCwC5iGri1KOEwdV90H-myv1gSfjHfCwt82ZXaCWQ@mail.gmail.com>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+	 <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+	 <CAHk-=wgZ_fCwC5iGri1KOEwdV90H-myv1gSfjHfCwt82ZXaCWQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-The pull request you sent on Sat, 11 May 2024 12:42:39 -0700:
+On Mon, 2024-05-13 at 09:27 -0700, Linus Torvalds wrote:
+> On Fri, 10 May 2024 at 14:20, Arnd Bergmann <arnd@arndb.de> wrote:
+> >=20
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git =
+tags/asm-generic-alpha
+>=20
+> Well, despite the discussion about timing of this, I have pulled this.
+> I still have a fond spot for alpha, even if it has the worst memory
+> ordering ever devised, but the lack of byte operations was an
+> inexcusable "we can deal with that in the compiler" senior moment in
+> the design. So good riddance.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/hardening-6.10-rc1
+As someone who spends a lot of personal time and energy and even money into
+Linux, I have to say the way this change was steamrolled into the kernel
+without any real discussion actually hurts.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/87caef42200cd44f8b808ec2f8ac2257f3e0a8c1
+It's days like these when I'm starting to question my efforts.
 
-Thank you!
+Adrian
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
