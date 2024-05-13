@@ -1,208 +1,128 @@
-Return-Path: <linux-kernel+bounces-178060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8708C480C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6118C480F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF721C231DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29BE21F22716
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36187E101;
-	Mon, 13 May 2024 20:08:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD5F87E567;
+	Mon, 13 May 2024 20:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="svcateWi"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xhFE4XTS"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3417BB12;
-	Mon, 13 May 2024 20:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C867CF25
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715630911; cv=none; b=tDMpGrxEq+O5/bgY7ZtE3Bn10U8AOP+voPHU6d/VrAVF71bL2F6PD0xTy23TSD3qfZ0Z/aTgArkZGUkT2hreMEtS2T6N1Kdo533bfCzg7S2efAIkgI+pdMmnI+qb/Z3P1HS1pDbW98DdNhtRmdDlKKt978rVPY4Sg13QnzGn7Cg=
+	t=1715630924; cv=none; b=Crl4Gaqt669Sbl0knUYSD43GE5XkqXT3E4XyBYPXa7ikCmEd5TjrLGN51pVzuZrSaVIkVH5m8Kjjq5jn1xXxKsT/GtPIPG1dMxZ+hvkDiBhxRHKGYDobpt9pqMDoSLB0TCRdpBNOpIvNCOXlkbmqCj8VcxXgVLvBdcdS78hTRxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715630911; c=relaxed/simple;
-	bh=EXgu6swCEGC/mWOd4154HwA6kZ1C3Y/hV7wHFjYnz9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nW57WRWK1S9qR8i3Vzvuq9en1nu+66uILHIDh8YHUbRjoXi2pi6rgIovDgshnv7CtMi0UYu4qSWLIQEPhdqCGsNj1HvdXokz2b0sJxa9kh0OYY4bxiO5fkSt8gL0nl0j9+qHVFJ+Oh7G7IgrKadQjiHXXN8otlKIsQkFcPUhQ7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=svcateWi; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=BBbU0N/GofBCvp79/gpgCjNhyGoIydeQdyHeE8NSkdM=; b=svcateWiUd1keI6Pe8ykjBxrnZ
-	f38uSpNWdz4p953/U16PKOwQaahojU8t2c2ssBqOm1iSxuTCyEdKULz/iGzY4EHFDD7Nw/jjJwXX+
-	0YHAsedUThfxNba654MD6o4N9bCe7CpSXYxhK5qFmRpVp0H8RMoFrLYftF4lN0gtx7hU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1s6by4-00FKhM-Jh; Mon, 13 May 2024 22:08:16 +0200
-Date: Mon, 13 May 2024 22:08:16 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: admiyo@os.amperecomputing.com
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <6d3aed83-ee56-4c3c-bb23-0f7d1f471ea4@lunn.ch>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
- <20240513173546.679061-2-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1715630924; c=relaxed/simple;
+	bh=h++qaq6zP9e9LxDlnuAEc9H3qFDQRQ6CLNWg+o080RM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bztQgTnjtOtg2+2X54pAYl4gwcvGmo/tT/KsCbJjKJ9BkYMAOQxp6kiRyglmRiEjSA8IzuOVbm8EsiB/N/xetJB+GtL7MmvjMNf8givH9RV/1I/aBc6WfxdOolSLTRZe3e7or1ncmgHRhAt7B07fIsZdDPr29pgCLY4ifUkWrUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xhFE4XTS; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-deb5f006019so5177274276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:08:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715630921; x=1716235721; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g5A1GoMGEwyA2ur0YkX2d7Zm3EGSPcQafJ+kxduRrTg=;
+        b=xhFE4XTSVGIPB7F5o9ruoD2TkPg8Wapvtiyg6ceDzXX/Z4LfHip5eAPQ54jpO0WGAo
+         Zz/BifMuILb3m7o8xNWq/khukXD/li8i9MQBxqXQKk6fGBIeDu1Mgoc45DJq71WeA5NU
+         5TCHiqsBJV3HULLZQhIRWR2c+B/QBRbFKYEeLXLjHNAQ666FuzcX6vq4g6fabRWyWDzt
+         7ms8KoQ39ZMhWe4fdsA7+4rKMKFNYLp5boqVbiYeZ0KJ5ONbVft0c34iuw514faYHvVv
+         iDoCLPGphxJrfnqWA7tI/cSXjodqliBB81KmxO1TPJc+nxrgWWoIDny0zPOctgzd1qVH
+         u/gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715630921; x=1716235721;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g5A1GoMGEwyA2ur0YkX2d7Zm3EGSPcQafJ+kxduRrTg=;
+        b=UXKXxWOuvjC3CGvELPtamX9hGcd0bu0qT66YytK2jEKnXNmIfz6ca32/2PJZySSk0K
+         HwLmY41/byRsTc3dIw+pFTFcyZQnH3Tcrp9+hv0L41FcmnqJ7DfaXLbfPbE25wf00v0D
+         iE8uiMXAQMMU5iwppN8TpM0fcY6IVrl+WLh8oDk3FJFBArdDp0c5e6U8oB5mWG0+NIZ9
+         H9LUan5rxk4QNIX3KfjIDnSPOLdiGG4O8B/OsU5N+RuUPPWlUP+gwkvKKKXhAbe5yqvh
+         h26tmaT8/CuH09ViTrzn+n4BcIpBIBdnUC9YcpIhdog+AGVfVV5TuVCKZtoomuuw5KK0
+         S1/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUrIP+QNgvTB7/x3B/gG2z3dcg/J3zAFDI0Bh4JlEM49dDilayTy+muuOfMS63u8vacmGjnyVqyPMPatEGM28oU3gyvL7BdGnX7tbeO
+X-Gm-Message-State: AOJu0YztRB4ukzH0d5SeCKcI7h2MUr8Lxg3OQUPIC+p23xf/yPdDP7io
+	Fhz1oHuwW/3WZ2r9X1jIxDDz/JlCfKhI69s+Lm612Up0k9ttLY9mazvKTccUNAnBiQ+ttE7hEps
+	wSxhZKNBuVx2yenM6pduNMbyIwJG7XW7L7cVzGKYy1l1oQTrFGQzUmQ==
+X-Google-Smtp-Source: AGHT+IGkSQiveVffIMwCeTQ0Vm8Z7bdjgghLsIABe1CDCxHsQVmDYMB43PdQ98LNA5H1T36BxYRnxD4fVKpeiZOV5X4=
+X-Received: by 2002:a25:dcc9:0:b0:deb:42d2:c299 with SMTP id
+ 3f1490d57ef6-dee4f37b967mr10928052276.55.1715630921527; Mon, 13 May 2024
+ 13:08:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513173546.679061-2-admiyo@os.amperecomputing.com>
+References: <ZiJkxBU3bYNWOdbK@Z926fQmE5jqhFMgp6>
+In-Reply-To: <ZiJkxBU3bYNWOdbK@Z926fQmE5jqhFMgp6>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 May 2024 22:08:30 +0200
+Message-ID: <CACRpkdb+8=OOx4Gh9+kPrXZE3pYa_bO3t2u9+P-aBc2TjLs2GQ@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio-syscon: do not report bogus error
+To: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, etienne.buira@free.fr
+Cc: "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +struct mctp_pcc_hdr {
-> +	u32 signature;
-> +	u32  flags;
+On Fri, Apr 19, 2024 at 2:35=E2=80=AFPM Etienne Buira <etienne.buira@free.f=
+r> wrote:
 
-There looks to be an extra space here, or a tab vs space issue.
+> It has been suggested to automatically detect if node has a valid
+> parent, but that would defeat the purpose of error message, for example
+> arch/arm/boot/dts/ti/keystone/keystone-k2g.dtsi could then be used
+> without gpio,syscon-dev, and lead to funny results without error
+> message.
 
-> +	u32 length;
-> +	char mctp_signature[4];
-> +};
-> +
-> +struct mctp_pcc_packet {
-> +	struct mctp_pcc_hdr pcc_header;
-> +	union {
-> +		struct mctp_hdr     mctp_header;
+Now the DTSI does have all these gpio,syscon-dev pointers so
+this is just a theoretical problem, right?
 
-and more here. I would expect checkpatch to point these out.
+The fact that someone can write a DTS to shoot themselves in the
+foot doesn't concern me so much, there are many ways to do that
+if one wants to.
 
-> +struct mctp_pcc_hw_addr {
-> +	int inbox_index;
-> +	int outbox_index;
-> +};
-> +	physical_link_addr.inbox_index =
-> +		htonl(mctp_pcc_dev->hw_addr.inbox_index);
+> It has been tried to mandate use of gpio,syscon-dev, but that raised
+> objection.
 
+I don't get it. In the example you mention it is already mandated:
+Look in
+Documentation/devicetree/bindings/gpio/gpio-dsp-keystone.txt
 
-These are {in|out}box_index are u32s right? Otherwise you would not be
-using htonl() on them. Maybe specify the type correctly.
+Required properties:
+(...)
+- ti,syscon-dev: phandle/offset pair. The phandle to syscon used to
+  access device state control registers and the offset of device's specific
+  registers within device state control registers range.
 
-> +	physical_link_addr.outbox_index =
-> +		htonl(mctp_pcc_dev->hw_addr.outbox_index);
+Apart from the obvious spelling error (should be gpio,syscon-dev)
+it is right there. (The spelling error is a binding bug, patches welcome.)
 
-You should also mark the physical_link_addr members as being big
-endian so sparse can check you are not missing any byte swaps.
+If this binding is converted to YAML and the property renamed
+properly to what is actually used in the device tree then the schema
+check will even yell about it.
 
-> +	dev_addr_set(ndev, (const u8 *)&physical_link_addr);
-> +	rc = register_netdev(ndev);
-> +	if (rc)
-> +		goto cleanup_in_channel;
-> +	list_add_tail(&mctp_pcc_dev->head, &mctp_pcc_ndevs);
-> +	return 0;
-> +cleanup_in_channel:
+I don't see what the problem is to let the driver just look for a parent
+if gpio,syscon-dev is not set.
 
-It would be normal to add a blink line after the return, just to make
-it easier to see where the error cleanup code starts.
-
-
-> +	mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->in_chan);
-> +cleanup_out_channel:
-> +	mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->out_chan);
-> +free_netdev:
-> +	unregister_netdev(ndev);
-
-Can you get here with the ndev actually registered?
-
-> +static acpi_status lookup_pcct_indices(struct acpi_resource *ares, void *context)
-> +{
-> +	struct acpi_resource_address32 *addr;
-> +	struct lookup_context *luc = context;
-> +
-> +	switch (ares->type) {
-> +	case 0x0c:
-> +	case 0x0a:
-
-Please replace these magic numbers of #defines.
-
-> +static int mctp_pcc_driver_add(struct acpi_device *adev)
-> +{
-> +	int inbox_index;
-> +	int outbox_index;
-> +	acpi_handle dev_handle;
-> +	acpi_status status;
-> +	struct lookup_context context = {0, 0, 0};
-> +
-> +	dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
-
-It would be better to not spam the logs when a driver probes, unless
-there is an actual error.
-
-> +	dev_handle = acpi_device_handle(adev);
-> +	status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices, &context);
-> +	if (ACPI_SUCCESS(status)) {
-> +		inbox_index = context.inbox_index;
-> +		outbox_index = context.outbox_index;
-> +		return create_mctp_pcc_netdev(adev, &adev->dev, inbox_index, outbox_index);
-> +	}
-> +	dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
-> +	return -EINVAL;
-> +};
-> +
-> +/* pass in adev=NULL to remove all devices
-> + */
-> +static void mctp_pcc_driver_remove(struct acpi_device *adev)
-> +{
-> +	struct mctp_pcc_ndev *mctp_pcc_dev = NULL;
-> +	struct list_head *ptr;
-> +	struct list_head *tmp;
-> +
-> +	list_for_each_safe(ptr, tmp, &mctp_pcc_ndevs) {
-> +		mctp_pcc_dev = list_entry(ptr, struct mctp_pcc_ndev, head);
-> +		if (!adev || mctp_pcc_dev->acpi_device == adev) {
-> +			struct net_device *ndev;
-> +
-> +			mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->out_chan);
-> +			mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->in_chan);
-> +			ndev = mctp_pcc_dev->mdev.dev;
-> +			if (ndev)
-> +				mctp_unregister_netdev(ndev);
-> +			list_del(ptr);
-> +			if (adev)
-> +				break;
-> +		}
-> +	}
-> +};
-> +
-> +static const struct acpi_device_id mctp_pcc_device_ids[] = {
-> +	{ "DMT0001", 0},
-> +	{ "", 0},
-> +};
-> +
-> +static struct acpi_driver mctp_pcc_driver = {
-> +	.name = "mctp_pcc",
-> +	.class = "Unknown",
-> +	.ids = mctp_pcc_device_ids,
-> +	.ops = {
-> +		.add = mctp_pcc_driver_add,
-> +		.remove = mctp_pcc_driver_remove,
-> +		.notify = NULL,
-> +	},
-> +	.owner = THIS_MODULE,
-> +
-> +};
-> +
-> +static int __init mctp_pcc_mod_init(void)
-> +{
-> +	int rc;
-> +
-> +	pr_info("initializing MCTP over PCC\n");
-
-More useless log spamming... pr_dbg(), or remove altogether.
-
-	Andrew
+Yours,
+Linus Walleij
 
