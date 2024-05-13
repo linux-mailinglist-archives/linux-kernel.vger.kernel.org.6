@@ -1,218 +1,261 @@
-Return-Path: <linux-kernel+bounces-177122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F3048C3A63
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:14:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0188C3A64
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:15:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 826651C20E1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:13:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206BB281277
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4066E145B23;
-	Mon, 13 May 2024 03:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D080A145B1D;
+	Mon, 13 May 2024 03:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="s/MK7enq"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2088.outbound.protection.outlook.com [40.107.92.88])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZwZOT0p6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E5C83CDE;
-	Mon, 13 May 2024 03:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715570032; cv=fail; b=UPbu0p9UFn3Qy2xU+K1WeiKagI7VkNVhjQ1Q1l8Tihc+3raPf/DXMNwgpvu2v6iby2/Lelm+PKb7AH+W3s+0F7l2GGt5TFBlXdVw/pgmGetWABG1pa3BAnBo3Jq0WOY6ZLtqXulgbORRRIfwm/GPJfDaQBp2Qx3HCJP322CKU/o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715570032; c=relaxed/simple;
-	bh=prEjAIUEaWfsSjkVPV5LjZH0xjvq/Ur7FvJSG5CmeRI=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nWmKihzu8G1E9SWerw7Ao67sY3GlUGGFlXMk0UlYoF39vpBUhyODfwwRzNF5ac+lEbupyYhD8snajS8NbnaRAcbXYHZI72J1vs5c4UizvT0++/5ld2jFYe63vv8GsqxHOyBMZi7whcmXpMFW/Wp22166GYk8vpf5SeaT3WpyboU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=s/MK7enq; arc=fail smtp.client-ip=40.107.92.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X1yhI3yx7uV0aiLc3Y51AhGTEiOFRY8UaZ9qZssJC7T3JqEnm2X+e/BueKwoMlFmvNZKY/vtH4cjkknardBIr6JojqEajKVuA9yPpQHbpuBBHVEqaLXZXcVclQHwC2wTUtcFjaQuIqk6iWrZUcxH7afdrWFQfWDQNI4yEIGMl79Fyh3p6WwJBw6+IW/ie+Xii3dfIIyIfiUMnH7zFwNfong9Mju/rWE27KtR+/mrkSlTmHVrFwBBCNdeiaxznjfFcsluPyEKV2Bofjim599eTNMPTW2Z0IhPpt/CCMUOLBhMZBEPhp4VWjpfGRyyTbCCt0+UWez9PQg0pnHTHouBRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q3ASHcL2fIwdiUBdklV6ExRh2y4y5BWAHnXVkd+yPDo=;
- b=hBqatbhwjV9v4nvLh2mQQsH8g1ettIMIVB7bQKU3Q+6HahubC58N3GgfAe2epEArM0nSYguaSMjMMuwT7PLzqT1EC+J/GtMGD9lK7EgerdhbuuLsPBvuE51OhZGjqnhQovwq9CGWoZ0WAF0JwtlIO7HYGmdSJRam0sntsOdJ4c0dzqkwj6rfzHTb2xy60H5nlX6gdIOIz75dkkDsR6ItbhSaEejPuWnZNRd2g82PoP2i8B8WIzZ5AWdMf75S3himSEMPxdO6Re8NbT208rUX353e1dSjzXR+OTdraTZWdyIoi35pL3eKciKzw5PJQL5xjmL+AMzvShwsVpb73NKTTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q3ASHcL2fIwdiUBdklV6ExRh2y4y5BWAHnXVkd+yPDo=;
- b=s/MK7enqEgul7z1lihp9xgk0Jp52jNETNH5WECo76afLwzbImFsgUGnuC4uG/nvIzWnE06f4VznMn0uxvv8VFHVlANnaXZv/QIbrl/ZSIFGy4BY7WiEI5hyv3i2VWIrKEqGtVtA0XdQ3vZS6+ajtUiJbe0XhSuwW+ESbTFz+UkQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com (2603:10b6:510:210::10)
- by DS0PR12MB8293.namprd12.prod.outlook.com (2603:10b6:8:f3::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7544.55; Mon, 13 May 2024 03:13:47 +0000
-Received: from PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39]) by PH7PR12MB6588.namprd12.prod.outlook.com
- ([fe80::5e9c:4117:b5e0:cf39%5]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 03:13:47 +0000
-Message-ID: <284a27be-bd63-d86c-885f-756bd2d37adc@amd.com>
-Date: Mon, 13 May 2024 08:43:32 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.10.0
-From: Ravi Bangoria <ravi.bangoria@amd.com>
-Subject: Re: [RFC 4/4] perf sched schedstat: Add support for report subcommand
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org, irogers@google.com, swapnil.sapkal@amd.com,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- rostedt@goodmis.org, vincent.guittot@linaro.org, bristot@redhat.com,
- adrian.hunter@intel.com, james.clark@arm.com, kan.liang@linux.intel.com,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, juri.lelli@redhat.com,
- yangjihong@bytedance.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, santosh.shukla@amd.com,
- ananth.narayan@amd.com, sandipan.das@amd.com,
- Ravi Bangoria <ravi.bangoria@amd.com>
-References: <20240508060427.417-1-ravi.bangoria@amd.com>
- <20240508060427.417-5-ravi.bangoria@amd.com> <Zj8iMV9vhyGC3tT9@chenyu5-mobl2>
-Content-Language: en-US
-In-Reply-To: <Zj8iMV9vhyGC3tT9@chenyu5-mobl2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0129.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:bf::8) To PH7PR12MB6588.namprd12.prod.outlook.com
- (2603:10b6:510:210::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F9683CDE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715570099; cv=none; b=F9FaZjwKiYZRAop7yH/DGJ/mmujRu5PjdqLJSIaB2SFT5yWaGfASc8eH5cjG1HyIgcU7d+SNnd8upcs72P1rmkA4/PrUbGuOeEz89DH/3QneKPS2KmeZbsVVskIg+Kjzn/H1PBkzHDdLvAajFfuIdOXeeCluLYnAWhnDET3prmQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715570099; c=relaxed/simple;
+	bh=e83pyTSL/0FYOwrnJ5j49Wi6n7/x+jlh8h3ehPnVBmI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type:Content-Disposition; b=hv3rRPFwJX8vVVMGXFsi0VVD0FJ+8nIzW/alk3BzLbaaq9nWexKCyF8ZpVU9Jq1mXsvtqMGxFr43r2qYcU5y2DX0axtxQSim4dDtKHMk35PaAIXi8td/XDipBNTJKuz0llfemlAg13FcJhUBOIYmFbD+0GrpCF0G5MTzzzHtjOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZwZOT0p6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715570096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pdp0sTJWZleI1ZvLM/ZeS0ROuPS4/85owNKykPi0fwE=;
+	b=ZwZOT0p6hI5hqn7X+Y/SvcjOV46pmoTEWKxvxW3HF87QnLMzbUGjsWUSL1K6uZY3qfC2md
+	uoccEa+kjkiapFrIdq9+fz4uI+d4XUcb9uUq3qcUPMv+OMsZOIBBzqHK4spWYx1blL9NfC
+	XCBrWEJJ43cZq8n6uBlqCYGFreocR24=
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
+ [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-v8VPyEdaNYOKpExq4Vr2pQ-1; Sun, 12 May 2024 23:14:55 -0400
+X-MC-Unique: v8VPyEdaNYOKpExq4Vr2pQ-1
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-6f454878580so3850967b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 20:14:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715570094; x=1716174894;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pdp0sTJWZleI1ZvLM/ZeS0ROuPS4/85owNKykPi0fwE=;
+        b=rh+42xmuq01wxFzuhMECsde8kaBTT35G4D9unPodzPbtUFeuQbVruTbXXm8xXCO3IZ
+         zMCS4NtlrIdLftv+Yt/5rTq8CFs3JFJJKW0KftmLHu3SeL3c1WMFytYx9u2JOIzngZ9I
+         EoY13ZuXP/rAUQDa0aLr6oregGhDwJSESLpbZWcfu/IjO8tfkFH5V2GE/JJipYeLnZxC
+         HmMB7fviEtVeOFlOu2sYr4vFsYEr4eQdAWVKz5Wb6gB6BVI48MkGLyogXeZbfqEAn0A4
+         J8y4n9tr5z4JZnRAymCBh5gFx/s1aocKgcmmGQTONsuAy1c5WrBvwvnPJLzv4e3Pgzau
+         mX6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqL706zvfSI4zcns0OihrWpXrl6ZQWOQ9yGj3qEKcD5GEPdyHGYdEfE1GkHegJfQ8VJr/DlS70RPiSTmdBl5diFpdr7ZXDTaBJWv79
+X-Gm-Message-State: AOJu0Ywtt8BiORA/CUQVmTEcJ8tqLlqplm3EWQeUwWqSsHvGoA3SHGIG
+	mtTNsD8uZvjMZaqL1VmtFitWpNEw1E8aguTna2ClvR5zX6j8SZrn6h6v4ZTjXbpTG5KxcTJM0nD
+	A3kDcLlmOWGUPhGPKZCd8W58vbE0lCEyiuV+iy32J6gOEg61lhktaBEPeYxHRGA==
+X-Received: by 2002:a05:6a00:4f86:b0:6ec:f0e7:d942 with SMTP id d2e1a72fcca58-6f4e032358amr11580581b3a.28.1715570093944;
+        Sun, 12 May 2024 20:14:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpTRiqaJXicVKodhK+KVvkmH5VRFOWl2CZ8RVYO2f78UigU6Bh0g8Vf5xllRMeWrjV7wYNBQ==
+X-Received: by 2002:a05:6a00:4f86:b0:6ec:f0e7:d942 with SMTP id d2e1a72fcca58-6f4e032358amr11580540b3a.28.1715570092799;
+        Sun, 12 May 2024 20:14:52 -0700 (PDT)
+Received: from localhost.localdomain ([2804:1b3:a800:a9e8:e01f:c640:3398:ffe5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4f89d7ff5sm2127569b3a.84.2024.05.12.20.14.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 12 May 2024 20:14:52 -0700 (PDT)
+From: Leonardo Bras <leobras@redhat.com>
+To: Marcelo Tosatti <mtosatti@redhat.com>
+Cc: Leonardo Bras <leobras@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+Date: Mon, 13 May 2024 00:14:32 -0300
+Message-ID: <ZkGFmISfnrKNrUgj@LeoBras>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <ZkE4N1X0wglygt75@tpad>
+References: <20240511020557.1198200-1-leobras@redhat.com> <ZkE4N1X0wglygt75@tpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB6588:EE_|DS0PR12MB8293:EE_
-X-MS-Office365-Filtering-Correlation-Id: 48eb129a-b38c-465d-b547-08dc72fab43e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|7416005|376005;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mi9lQ1BGc0t0Slh6OThDYWNISkxDOGZRUFZTUFhkeE0zZUUzVS81ZG11NFV2?=
- =?utf-8?B?aGtRUDg4R3VpdUxxeGk2aFF6VW9ZRnkwTEE4TlpTaUVqZXN5TXFKQ2VlU29S?=
- =?utf-8?B?blBGUDc2djVDdkJYQnlsYVNsdkQ5T2lTRHh0WktVTHd5ZWJJQjB6REZTUSt0?=
- =?utf-8?B?WnF2RVI4bWcyVTBKeUc3UlNvQ0Z1aEZXbmhYS0I0L01RRVN0cHpVQ1dhT1Nt?=
- =?utf-8?B?SmVhSUhhbEViUDduczhUbmNJQ29Ubi9jQ0xyNFVwVFFvUnlQWWZrdGU5cUpq?=
- =?utf-8?B?QWw3WWZtTGxNOVY1Y1FqZzNuT1MyeHdqNlovbEZpUjRBbzB2b0YwK1VDTEpp?=
- =?utf-8?B?dGpKZGlGWm1lR2IydDZpcmhtSmdreFBEZTczRlY1R3dCM21jM0Z0NURkOWI0?=
- =?utf-8?B?RUtjUHNZTElqNVV5MWpnME42VldmdXllci9FRWlFUWN5a1kyRGlDeTAvRzBv?=
- =?utf-8?B?WWU4M0M4cXd0ajdtZG9YSEVXT2FIUEVDNVRZaVJJb000SkJ3Wm1TQkJLY1BG?=
- =?utf-8?B?dHhPYm5WQmhLUnhUQ0IxeGlnRTV5WjlTWFI0akRQOTVNTnI5WVkzS2VMTXo4?=
- =?utf-8?B?d0dlU0p0aEZFTDNDSWt0ZlRaQ1hud256Z21nNTNhK09XSGtLZDB1WFlXL2hB?=
- =?utf-8?B?bFpad1J3U3ZHOG1QcThNMkgvNWZkQlNEZHcxTW5mUHJ4QXJWQWRhRXpoY1Y2?=
- =?utf-8?B?NU50N1Q3UmRQeUlXUGYrTmUreVVJR3ExOEZ0b0RLcGlobnlsMTMzWURhYWNF?=
- =?utf-8?B?c3U3Vk50YmhZenRwTGhWSkFVSzRQaWMrSG4wcjdaVDBHd29jcDBtb2RTazJp?=
- =?utf-8?B?RmFhb2FRNHRPdjlWUHlGL0xJTmVxd2h6SVdwYUpsRGFpdzZaTDVtUDU1NXRD?=
- =?utf-8?B?UjlDSGNIOHFqQi95Um52OFdpT2Mxb3VjdExQODZMWGNqWUw4VXFCVzZYaHUr?=
- =?utf-8?B?Mk4yOXd4a1FzYkZzZjZmUTFSNUxjZWNqNnhOZ3RpTXFDNFZzcnJTNUc0VEtT?=
- =?utf-8?B?MklSL050clhUZFdmNCtHUG1ycDhQYjMyN2MyVDVYV2ZPU0pFT2pKU21Gb0Zx?=
- =?utf-8?B?Z1Rwc055YnBmK0k5ekV1ZmRweC83TDJiNmd1bDB5NmRIRnAzRlZ6U3AzNVNR?=
- =?utf-8?B?akFId0E1dVRDQThnbzZYUml3ZVQ2clRNU2ppVzRpVlh1RG96ZUVqb0EzTFU2?=
- =?utf-8?B?Q0d1VjJvQlVpaGduTDg3bDRLdlk0SlJmc2J6cGgyQ3FHR2ErOUdEcUZNVzNB?=
- =?utf-8?B?alZQaUd0N0cxZmZOU1ZBdW81SjVtalBLSE9vU1dUd0U1WkRucFpIQnZVbGN5?=
- =?utf-8?B?QVc1aEJQN2x3b1gxVldBOE1MUHUveWlRM0VYU3FYcWF6MXQrcnQxeHRKdGxy?=
- =?utf-8?B?MU5DRFl6MEZpdnN5UHN0WSs4ZzJ3aHZYdno1M0l0V0szc2pZNytsRm8xZ3Ex?=
- =?utf-8?B?SGlzcDZaZnRqcjFMdC9Bc0VQL0FIeWFzb3dVUU10ekRPSnRHRUtubk9VdzMx?=
- =?utf-8?B?aE04UStScjBRU3E5cHZhdldVRityWWFULzlLcE80WmRxL3R1Qm5HV0Nta05I?=
- =?utf-8?B?ZVVIcTBDNmhXUml6bUhJUDB6cHJYYlpiWWw4bTZ1TW1mVU9iZVoyb2tVeUk1?=
- =?utf-8?B?a0FYOHJueG10ek4vYzcwY2JaK21Kckhoby9lczdZUGdJbFhYeUdHK2ZuRjJ0?=
- =?utf-8?B?OURXUEhWa0JvdWtJOVRMdHdnSTJ4RDZQeGdUVE5IWStzZkt2QjVnMFBnPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB6588.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(7416005)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OEM4NE9xU3EzUjIvaXpUbHRRMXl0Zk9aaldoY0pWQjlaNDZYenNLTkUyMGVq?=
- =?utf-8?B?Z0I1eDQ5NDkzVTU1R3BuUGdhZnZYSVN6OFp5L3dWRWN4N3djRHJlWWgyZVBt?=
- =?utf-8?B?S082N2hEaTVWeEROWms0cVdJTXhEdks0S1VIcmpYQWsrd2xZdDJ1d1c1R0hK?=
- =?utf-8?B?TkdZL01VWDVDMXlkQWdIbmRXZTU4bTY4c0FpRzJudS9Fd0o1NEFOYmN3emZ6?=
- =?utf-8?B?cUU5UHNrZHE2WmlRNmhBN3VGTDVXaGl1UTRIZHArZ1BvOWVTN0l1SnVrVEIr?=
- =?utf-8?B?NWJSL1ZBT092clUvQkhiUHdodVByVkhqNEQ1NnhUMDBWWE0vOFh3elNUZGUr?=
- =?utf-8?B?SEpxMlJHSGZ0SmlncTR6dXI2NS9BMitEQWdrdEMzUWJGNFlWMTlDV2t4REQx?=
- =?utf-8?B?OTZOT1FQT0s3cVVldHNmQ0UrREJnZFNvQWRtYTNXZXlPZm9PY3FIazE3ZnJP?=
- =?utf-8?B?akVkb3BPR2JHMkd4N0hJM3orOGxMeFhjY3d0aGZkSkhrS3FuZnlWc3A1SzF5?=
- =?utf-8?B?Q3RBdU82Z3QzYUZaQ0JmZW1OODFvbTlSZnova3crcUE2WlBSa3MvdUNOUGR1?=
- =?utf-8?B?T29LUUo0VGVJZFhvd1E0Z3JYbHBEMnI4SHJMNmFHZTlkeFNqV0Y5cDl1dTV0?=
- =?utf-8?B?NkM4QXRsVUx0S3VYR1lXV2czSE9kMHlsN3JTSGdEL25KbkRwdDdoOFpKL2Y4?=
- =?utf-8?B?VGxhbzhxVVlZWm5mMlJkVUdpOTYyUFl1cjJEa3d6NkdnMEJHazlsWGN0Ti92?=
- =?utf-8?B?MWU1Z0hzZjM5dW8wdUFFZGdBc092NmRka3R1UytXdEtITlJXV29tS29iZElk?=
- =?utf-8?B?cEFSajluYlNWWEt2TkI4VnJlN0YzYmt0VlB5TC92S2hxalJKVWl4RHF3UHVX?=
- =?utf-8?B?TzJQRzNrVS9IRlNZYUZaZnhxZllOSWRjQ1QycmZvK1FxejQ0SVdEN01yemhp?=
- =?utf-8?B?b2Q0eTlyN1BMYVdKcjVjNHBRTWpNZjNkb0gyUnZmdDRMRW1LbC9YaTZQeDdI?=
- =?utf-8?B?b0ZHV29xN2VyOG5FMit2SHJyY24zZk9TVUI2cjRnOE9oVWZrRXJOYmx4Z21r?=
- =?utf-8?B?TVRkWVpaU3Vmdnd1R2tOcUdybjN5czFHMXl2aDB1RHNqLzFGKzVvanh3YU83?=
- =?utf-8?B?Vm5TQkxkVnNHYkdpd2QwN1NGcGRxbWVvd3pnNlVjQ2NHNWY2R3VoZG40NUJE?=
- =?utf-8?B?a3JBODE2QWZHcXkzRFdKSzdOamliWG1BWGRTdndjSTdObzV2UTMwcVZUbzVl?=
- =?utf-8?B?OTVJaDVXOTJKV0R3bURCTVVrc2gwYVdiZC9FRnJMZWtIbjVDL2FuRFdvVjdY?=
- =?utf-8?B?enYvWmJ0Uk1BaFhDR1JaN1ZRenZFb2E2SzUrVUpPdjhDK1RCWWw2dW9KZm9x?=
- =?utf-8?B?L0RqQ2pZUGY4dWkvYk1JeW5ONkRpZUN6Q0w1VnQ1ZDFRMmxMSndpeVVnQytD?=
- =?utf-8?B?ZDR2YmJUY0ZZQ0JLRHJMN2o3Y3pvUkc0Z0RyRTFvNC9uR3RsSGxlT1ZUSVo2?=
- =?utf-8?B?OVFualZOTTZXV29NblFtNk5GQlVNWUJXaTJrV0F4eStrRU5MelN3bzBtcDBB?=
- =?utf-8?B?Z0g3czRqQjIrWTRpT3pqemJvRFVVS2ZKL1FWQm5lVmxOWC9CMVF2M3BhSDFG?=
- =?utf-8?B?QlNiK2FMbmtJa2oxRXNkdXd0Z0pWRGJoY09Bdjh3aU9hUmR6NlVodHJBZExy?=
- =?utf-8?B?MmZkTXltcTZzS1BGVmRRT1o5bHZWNDJ5SUVjUDRjK1dPVE1UdEhlSnRzZTZi?=
- =?utf-8?B?VEx1VjNIRmhiQjgvTGhGa252bXo3U3dYaWNSdTJ4ZkxUTExFb2l2VVA1QUtS?=
- =?utf-8?B?c1Avak9MUGY1WnhzWnQ4Q3RMU1VHSFJJYmc4K2Zxd2VpcndqSW8zRm8veWY5?=
- =?utf-8?B?NUlYNUZDaktCaThsSWpab2RUcEpnMU9rT0tHejJkak5WNHBUbWhvTGhYSmNG?=
- =?utf-8?B?L3phbkZFZ2tXbGVsOExHNG80aHFDSHczTnZSTitCVUNmNXVWcEZRay9aR2tG?=
- =?utf-8?B?WDdaYk41anVTSGpkSDAwVGtsbTlQTFJpNkxDNG90TWtKUUFXZFZub1dLTHA0?=
- =?utf-8?B?T2ZIbXlPZ3RoMzBoRFdXU0g1THRzaHJhSTVacUd6Q2I4SzBscTRnSTNOVENU?=
- =?utf-8?Q?U7owg2fNP8djX1cHXIUYuzkQo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48eb129a-b38c-465d-b547-08dc72fab43e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB6588.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 03:13:47.2613
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QZ4guOqWpMZFq4YyY1iqML7Xsmot2M/zmpFT2zXXbdlE9QzBPGUkmORFeb5qcHY8nAlZga73Y+35SkscyktBOw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8293
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 11-May-24 1:15 PM, Chen Yu wrote:
-> On 2024-05-08 at 11:34:27 +0530, Ravi Bangoria wrote:
->> From: Swapnil Sapkal <swapnil.sapkal@amd.com>
->>
->> `perf sched schedstat record` captures two sets of samples. For workload
->> profile, first set right before workload starts and second set after
->> workload finishes. For the systemwide profile, first set at the beginning
->> of profile and second set on receiving SIGINT signal.
->>
->> Add `perf sched schedstat report` subcommand that will read both the set
->> of samples, get the diff and render a final report. Final report prints
->> scheduler stat at cpu granularity as well as sched domain granularity.
->>
->> Usage example:
->>
->>   # perf sched schedstat record
->>   # perf sched schedstat report
->>
->> Co-developed-by: Ravi Bangoria <ravi.bangoria@amd.com>
->> Signed-off-by: Swapnil Sapkal <swapnil.sapkal@amd.com>
->> Signed-off-by: Ravi Bangoria <ravi.bangoria@amd.com>
->>
+On Sun, May 12, 2024 at 06:44:23PM -0300, Marcelo Tosatti wrote:
+> On Fri, May 10, 2024 at 11:05:56PM -0300, Leonardo Bras wrote:
+> > As of today, KVM notes a quiescent state only in guest entry, which is good
+> > as it avoids the guest being interrupted for current RCU operations.
+> > 
+> > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
+> > check for any RCU operations waiting for this CPU. In case there are any of
+> > such, it invokes rcu_core() in order to sched-out the current thread and
+> > note a quiescent state.
+> > 
+> > This occasional schedule work will introduce tens of microsseconds of
+> > latency, which is really bad for vcpus running latency-sensitive
+> > applications, such as real-time workloads.
+> > 
+> > So, note a quiescent state in guest exit, so the interrupted guests is able
+> > to deal with any pending RCU operations before being required to invoke
+> > rcu_core(), and thus avoid the overhead of related scheduler work.
 > 
-> I've tested it on a 240 CPUs Xeon system and it looks very useful. Thanks!
+> This does not properly fix the current problem, as RCU work might be
+> scheduled after the VM exit, followed by a timer interrupt.
+> 
+> Correct?
 
-Glad you found it useful!
+Correct, for this case, check the note below:
 
-> 1. Just to confirm, if we want to add new fields for debugging purpose,
->    schedstat-domain-v1x.h and schedstat-cpu-v1x.h are the only files to
->    be touched, right?
+> 
+> > 
+> > Signed-off-by: Leonardo Bras <leobras@redhat.com>
+> > ---
+> > 
+> > ps: A patch fixing this same issue was discussed in this thread:
+> > https://lore.kernel.org/all/20240328171949.743211-1-leobras@redhat.com/
+> > 
+> > Also, this can be paired with a new RCU option (rcutree.nocb_patience_delay)
+> > to avoid having invoke_rcu() being called on grace-periods starting between
+> > guest exit and the timer IRQ. This RCU option is being discussed in a
+> > sub-thread of this message:
+> > https://lore.kernel.org/all/5fd66909-1250-4a91-aa71-93cb36ed4ad5@paulmck-laptop/
 
-Correct.
+^ This one above.
+The idea is to use this rcutree.nocb_patience_delay=N :
+a new option we added on RCU that allow us to avoid invoking rcu_core() if 
+the grace_period < N miliseconds. This only works on nohz_full cpus.
 
-> 2. Although we can filter the output, is it applicable to only track some
->    CPUs? Like perf sched schedstat -C 4 record
+So with both the current patch and the one in above link, we have the same 
+effect as we previously had with last_guest_exit, with a cherry on top: we 
+can avoid rcu_core() getting called in situations where a grace period just 
+started after going into kernel code, and a timer interrupt happened before 
+it can report quiescent state again. 
 
-Yes, adding filtering capabilities should be possible at both record and report
-time.
+For our nohz_full vcpu thread scenario, we have:
 
-Thanks,
-Ravi
+- guest_exit note a quiescent state
+- let's say we start a grace period in the next cycle
+- If timer interrupts, it requires the grace period to be older than N 
+  miliseconds
+  - If we configure a proper value for patience, it will never reach the 
+    end of patience before going guest_entry, and thus noting a quiescent 
+    state
+
+What do you think?
+
+Thanks!
+Leo
+
+> > 
+> > 
+> >  include/linux/context_tracking.h |  6 ++++--
+> >  include/linux/kvm_host.h         | 10 +++++++++-
+> >  2 files changed, 13 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/include/linux/context_tracking.h b/include/linux/context_tracking.h
+> > index 6e76b9dba00e..8a78fabeafc3 100644
+> > --- a/include/linux/context_tracking.h
+> > +++ b/include/linux/context_tracking.h
+> > @@ -73,39 +73,41 @@ static inline void exception_exit(enum ctx_state prev_ctx)
+> >  }
+> >  
+> >  static __always_inline bool context_tracking_guest_enter(void)
+> >  {
+> >  	if (context_tracking_enabled())
+> >  		__ct_user_enter(CONTEXT_GUEST);
+> >  
+> >  	return context_tracking_enabled_this_cpu();
+> >  }
+> >  
+> > -static __always_inline void context_tracking_guest_exit(void)
+> > +static __always_inline bool context_tracking_guest_exit(void)
+> >  {
+> >  	if (context_tracking_enabled())
+> >  		__ct_user_exit(CONTEXT_GUEST);
+> > +
+> > +	return context_tracking_enabled_this_cpu();
+> >  }
+> >  
+> >  #define CT_WARN_ON(cond) WARN_ON(context_tracking_enabled() && (cond))
+> >  
+> >  #else
+> >  static inline void user_enter(void) { }
+> >  static inline void user_exit(void) { }
+> >  static inline void user_enter_irqoff(void) { }
+> >  static inline void user_exit_irqoff(void) { }
+> >  static inline int exception_enter(void) { return 0; }
+> >  static inline void exception_exit(enum ctx_state prev_ctx) { }
+> >  static inline int ct_state(void) { return -1; }
+> >  static inline int __ct_state(void) { return -1; }
+> >  static __always_inline bool context_tracking_guest_enter(void) { return false; }
+> > -static __always_inline void context_tracking_guest_exit(void) { }
+> > +static __always_inline bool context_tracking_guest_exit(void) { return false; }
+> >  #define CT_WARN_ON(cond) do { } while (0)
+> >  #endif /* !CONFIG_CONTEXT_TRACKING_USER */
+> >  
+> >  #ifdef CONFIG_CONTEXT_TRACKING_USER_FORCE
+> >  extern void context_tracking_init(void);
+> >  #else
+> >  static inline void context_tracking_init(void) { }
+> >  #endif /* CONFIG_CONTEXT_TRACKING_USER_FORCE */
+> >  
+> >  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 48f31dcd318a..e37724c44843 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -480,21 +480,29 @@ static __always_inline void guest_state_enter_irqoff(void)
+> >  /*
+> >   * Exit guest context and exit an RCU extended quiescent state.
+> >   *
+> >   * Between guest_context_enter_irqoff() and guest_context_exit_irqoff() it is
+> >   * unsafe to use any code which may directly or indirectly use RCU, tracing
+> >   * (including IRQ flag tracing), or lockdep. All code in this period must be
+> >   * non-instrumentable.
+> >   */
+> >  static __always_inline void guest_context_exit_irqoff(void)
+> >  {
+> > -	context_tracking_guest_exit();
+> > +	/*
+> > +	 * Guest mode is treated as a quiescent state, see
+> > +	 * guest_context_enter_irqoff() for more details.
+> > +	 */
+> > +	if (!context_tracking_guest_exit()) {
+> > +		instrumentation_begin();
+> > +		rcu_virt_note_context_switch();
+> > +		instrumentation_end();
+> > +	}
+> >  }
+> >  
+> >  /*
+> >   * Stop accounting time towards a guest.
+> >   * Must be called after exiting guest context.
+> >   */
+> >  static __always_inline void guest_timing_exit_irqoff(void)
+> >  {
+> >  	instrumentation_begin();
+> >  	/* Flush the guest cputime we spent on the guest */
+> > -- 
+> > 2.45.0
+> > 
+> > 
+> > 
+> 
+
 
