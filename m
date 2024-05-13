@@ -1,149 +1,139 @@
-Return-Path: <linux-kernel+bounces-177225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302948C3BA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAA28C3BA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1B43B20F19
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:50:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0018F1F21584
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18714146A66;
-	Mon, 13 May 2024 06:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2BB146A64;
+	Mon, 13 May 2024 06:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFxE9Cix"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xr7VaLCo"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57FA145FF5;
-	Mon, 13 May 2024 06:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4FD1465A8
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715583027; cv=none; b=fFJxCVfO/WwXQvASCLqH9cXHCcnlBmeQFF5tkVy/Y1B2IzOjMJuj2j8x4oSnKPbrVyvyyyuMqbk0E8N14IHXCpCLhSvVnPmynVJuHJDY3HwZ+0y8styyqji1ljsrxBYaMWjKi/ekujmn560qu4Pojvw6a+mopzxmCrRTfn9Ho24=
+	t=1715583094; cv=none; b=oCjq5h2T7wKKtQqywCbvm/3WM9da4a+810s7v61QO6pw3w22V8wi2PEVBagkceW8p3y5ocKRjnl8X0ndLB4V4L8Hc1f1i6VdHFU8VUUJQTY4AE04QbhhnjmWlqeACRsaWMkybKEltlYDxdsojEQqt2xIAOU+oO0KzDxbkm6ZLf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715583027; c=relaxed/simple;
-	bh=QUOm7V4vSiSrgeSHZ2JKQI5LAjwW9licY9YU1aJmr+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZVfUFq2OWLrJ6LubsKolyuzKbLHs86YvpIkhFbUFCEotSPweEvYykWdY47UTuCafx3x0BRg0buv+0VPiBo0XQ8D4eVVNuDS+IJCm6kQLu4+5XsHBZU1o7QnaApz+cesVyvnOdf1wrFqW/qx967sPULB6dnqBHkhlPO+NxT/h+jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFxE9Cix; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1715583094; c=relaxed/simple;
+	bh=aOc3stdhNTM7VjP3EPUkCBORXbQ9jEkdpsXSziZ+/Gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VTIioR/C5QQpuRijO3Vty9uKQuQFcqC22lDJsuSmfDIjbrWp73isZNUrvKRB+HGkRKXMdXV3YWmrQkBNB+lXkPhY1GFTgG01uQ8jSJdXLdU3BV81HO31RR0SfBv9bhHZRkaBQSqLzadMpe/oJgPTO2RwuVzx4dszgdPmOUR1YZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xr7VaLCo; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-573137ba8d7so8860841a12.0;
-        Sun, 12 May 2024 23:50:25 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59cc765c29so6112266b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 23:51:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715583024; x=1716187824; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1/vfuyDEB6iqKuXa6PXzq38FF7XS/WAj88oyZv8SIIU=;
-        b=KFxE9CixvjzIs5wq0um0pTIN9i9A0dd2QMwZW0NRMn1az2ciNG+QjWgPUDvkskM1iN
-         vjKuc0N60GuWQHuIpuQkaOhOmrSxpgjyjwFlJZHMqSvnC5JWGzin/6vaLSdBEK/9mM4D
-         3bHs4qAHqpveuSl88+tvsKOFP+Lx4c4rL06nk/F66iC5E77MI3Ot5iy1wFPcF+2pQIcn
-         yHvhY9wdqLLw+RGuq8hTVIjq1mQ7rjJETvKamonTfdVYYMSGgWcWFaFM238ZYrMtB9Vw
-         xbAodHtJmArpVj9dWsV/0j0rzUm2aywr+NsY7UCJYM1AkRLZ3kDUaS46BUV+AbBFp7sX
-         E48w==
+        d=gmail.com; s=20230601; t=1715583091; x=1716187891; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=A6RoRJ02d55IkQCuFsHu80Ik1WWzpnYqgvIAQSq8ZIw=;
+        b=Xr7VaLCoSjaTnh8+mSY2MLnqGLLMc98xM/lcF6cBW0d4F16N2o/2im+Qb4QDWa8A9J
+         HbLlB/nnVRo8jSI5JdU1up9Kw8n2aHw3LfsxRsyWFk4rm4qyYYqf4NwKAW1Atr+v21Am
+         oItUNmIzX5IjothJwbvBMVVOPyRDO96NAGl40FWeASPN2ZcPOc1ZM3gYG9s9xVeCqvk3
+         zMzeacIKSgdtrCr/do9TAqbw9rin3mIkqszDV1iG1tuZhN8zJ4kHYYACnLticQvEf2Mc
+         UCMIKV1aU5FdFzlACwC6L7F4G/1YflgVR0KWWCKSQqxI0+uv/Tj6TSf6HaZNmNuquDcj
+         WbyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715583024; x=1716187824;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1/vfuyDEB6iqKuXa6PXzq38FF7XS/WAj88oyZv8SIIU=;
-        b=W3yQNSAbwZeFtGg2dHiWhTVt588ay9nrBM4BBtArLOnTCBm06z38NYHaL0m2TfpJqg
-         Gfvp7QYjqCMFecEbl6E4/g2EhXYzQx3p1YPMBVQnV66LRlzZCdme864+a6pcYbEHAY6b
-         hf/hYB3XG+/ZJuezWZEOky+D6Nx1XuGQAPLP3KupGWHIk54avZQpClrJiP4z7BBzWk4w
-         nXyPMOTVPyW62m3SV6CqBbik+8HCqgPy/F1MgdGNiCzhAPbLppo+H9k0VEKRl2pyYQba
-         BufCtBM+tSSZqP3rhUuwxX/MuA8wAY1Kr8JPIxbWH+3wCm/FL7lmk+ICvdGrgyH7Rb8f
-         X7ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWijyAq+Pekm66BURC+PfOtce6Y8jHMoK+JhAuXRjUZMwmFsYOQstL6xzqfxfl+zOHWTH/sXFLZigYsDRKghpQz7rsBUNF7Xspguq/bKfidPnSlTB+VLlsCmd7927E1MyR5r30aELC+xAI0OYvkjw==
-X-Gm-Message-State: AOJu0YwZjbu20EsplsOZLqlS6oI3iNEc4WFl2rawlWU/LbPmekZ0tJF5
-	vheL23Nd5bnCY56DGiQEnLSmxvR9trNJeTo1b9J16xSpq20O9Ug3
-X-Google-Smtp-Source: AGHT+IE29z436yi9DtGoFUwAyCxpuHZu1P2d5NfwIO/DP5PToFoaH+9LkiqaqoOCy9236I3XbPfOig==
-X-Received: by 2002:a17:906:30da:b0:a59:aa1f:55bd with SMTP id a640c23a62f3a-a5a2d18c72emr760070166b.6.1715583023979;
-        Sun, 12 May 2024 23:50:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715583091; x=1716187891;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A6RoRJ02d55IkQCuFsHu80Ik1WWzpnYqgvIAQSq8ZIw=;
+        b=nVS8DVzBKbKMww8LEwUgGIQQWevxGdxL1g728nyRQR10WomYrjCjzb12LQxNwE3MgB
+         Xmj2eb9MQdrY1Wt1A9v8+M8ow7qPrP3CoZ1Kw9eoHF61gcxZP+1TKFoEmNSYA/GqZsB6
+         iNPmZMmmpARD6sevZLpS34yziz8PYJevpOmRc6e7O49EvOqk/9rfWZv0fegCc4EyVUb+
+         47W2EDWeVMhtX12oXUxwikosWhIO2/cHrjaHebJafJ5EGbOxlJ0dJFqfcjPGXrCV9DJE
+         tLZlSWJx0f3StNDBbjV0+OZ01x9/2xdNEb+rUyVAlO+DYUt3X2XQ80zYFoMUIYWoenfd
+         gqfg==
+X-Gm-Message-State: AOJu0YxgfHfFA3s6324edSR7RF7JIhtqhCIHlEouzb5865vIAwZ7G3vs
+	DPnzTa1S/83bH+SEz1PW96SfxEYOclt2Z2TnCwYGRqqBoi5jtIBSy4Wl5Okr
+X-Google-Smtp-Source: AGHT+IEmXgJMCFlIO5ulEzs4i7G6qimyTlzKQMhWNbLAHqx+vsifxImUqvAEVToiUjovztr8QbRMkQ==
+X-Received: by 2002:a17:906:b081:b0:a5a:5c98:c594 with SMTP id a640c23a62f3a-a5a5c98c636mr202744766b.65.1715583090993;
+        Sun, 12 May 2024 23:51:30 -0700 (PDT)
 Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cdb5sm550453666b.29.2024.05.12.23.50.22
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b17555sm549047566b.189.2024.05.12.23.51.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 23:50:23 -0700 (PDT)
+        Sun, 12 May 2024 23:51:30 -0700 (PDT)
 Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 08:50:21 +0200
+Date: Mon, 13 May 2024 08:51:28 +0200
 From: Ingo Molnar <mingo@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: Makefile.perf:1149: *** Missing bpftool input for generating
- vmlinux.h. Stop.
-Message-ID: <ZkG4LWr7w11wQ/PR@gmail.com>
-References: <ZjssGrj+abyC6mYP@gmail.com>
- <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: [GIT PULL] x86/boot changes for v6.10
+Message-ID: <ZkG4cMe1TFI5w7sc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUvLiCDVDFFfJ78ng4T1FZ8j2N9Yt1sGTeGsupkbFEEug@mail.gmail.com>
 
+Linus,
 
-* Ian Rogers <irogers@google.com> wrote:
+Please pull the latest x86/boot Git tree from:
 
-> On Wed, May 8, 2024 at 12:39 AM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > So I've been getting this perf build failure for some time:
-> >
-> >   kepler:~/tip/tools/perf> make clean
-> >   Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
-> >   make: *** [Makefile:90: clean] Error 2
-> >
-> > ... but if I clone a new repository, it works fine, until a point.
-> >
-> > 'make clean' doesn't work - and 'make mrproper' in the main kernel
-> > directory doesn't clean up properly.
-> >
-> > Only if I do a brute-force:
-> >
-> >         rm -rf tools/
-> >         git checkout HEAD -f
-> >
-> > does it get resolved.
-> >
-> > The failure condition triggers if I Ctrl-C the following build a couple of
-> > times, without it being finished:
-> >
-> >
-> >    cd tools/perf; make clean install
-> >    ...
-> >
-> >    LD      util/perf-in.o
-> >    LD      perf-in.o
-> >    CC      pmu-events/pmu-events.o
-> >  ^Cmake[3]: *** [pmu-events/Build:43: pmu-events/pmu-events.o] Interrupt
-> >  make[2]: *** [Makefile.perf:709: pmu-events/pmu-events-in.o] Interrupt
-> >  make[1]: *** [Makefile.perf:264: sub-make] Interrupt
-> >  make: *** [Makefile:113: install] Interrupt
-> >  kepler:~/tip> perfi
-> >  Makefile.perf:1149: *** Missing bpftool input for generating vmlinux.h.  Stop.
-> >  make: *** [Makefile:90: clean] Error 2
-> 
-> We have a checked-in vmlinux.h:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/bpf_skel/vmlinux/vmlinux.h?h=perf-tools-next
-> so this shouldn't have been a problem for a while. bpftool is no
-> longer on that line:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/Makefile.perf?h=perf-tools-next#n1149
-> so I suspect if you use a newer tree then things will work.
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-boot-2024-05-13
 
-Was this regression fix propagated to v6.9 in time?
+   # HEAD: a0025f587c685e5ff842fb0194036f2ca0b6eaf4 x86/boot/64: Clear most of CR4 in startup_64(), except PAE, MCE and LA57
 
-Thanks,
+x86/boot changes for v6.10:
+
+ - Move the kernel cmdline setup earlier in the boot process (again),
+   to address a split_lock_detect= boot parameter bug.
+
+ - Ignore relocations in .notes sections
+
+ - Simplify boot stack setup
+
+ - Re-introduce a bootloader quirk wrt. CR4 handling
+
+ - Miscellaneous cleanups & fixes
+
+ Thanks,
 
 	Ingo
+
+------------------>
+Ard Biesheuvel (1):
+      x86/boot/64: Clear most of CR4 in startup_64(), except PAE, MCE and LA57
+
+Brian Gerst (1):
+      x86/boot: Simplify boot stack setup
+
+Guixiong Wei (1):
+      x86/boot: Ignore relocations in .notes sections in walk_relocs() too
+
+Ingo Molnar (1):
+      x86/build: Clean up arch/x86/tools/relocs.c a bit
+
+Julian Stecklina (1):
+      x86/boot: Move kernel cmdline setup earlier in the boot process (again)
+
+Xin Li (Intel) (1):
+      x86: Rename __{start,end}_init_task to __{start,end}_init_stack
+
+
+ arch/x86/boot/compressed/head_64.S |   5 +
+ arch/x86/include/asm/processor.h   |   6 +-
+ arch/x86/kernel/head_32.S          |  11 +-
+ arch/x86/kernel/head_64.S          |   2 +-
+ arch/x86/kernel/setup.c            |  32 ++--
+ arch/x86/kernel/vmlinux.lds.S      |   3 +
+ arch/x86/tools/relocs.c            | 371 +++++++++++++++++++------------------
+ arch/x86/xen/xen-head.S            |   2 +-
+ include/asm-generic/vmlinux.lds.h  |   6 +-
+ 9 files changed, 219 insertions(+), 219 deletions(-)
 
