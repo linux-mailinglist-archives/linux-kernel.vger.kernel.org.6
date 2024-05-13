@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-177253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF2E8C3C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:26:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302D78C3C0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AF092817FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:26:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B28DBB20DE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D92A1494CE;
-	Mon, 13 May 2024 07:24:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E4B146D74;
+	Mon, 13 May 2024 07:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cVJp5gwK"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MgYfy9Y9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E54F1487D1;
-	Mon, 13 May 2024 07:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E801474A0
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715585091; cv=none; b=dG9mJ9RIya57qiBPNno2vzw7f+PeNNIdrNp3HOjTwwNO5NV7+abQT0+kxnYPRqrQl/JA4Vgum/ydhYTI7YVQRHX5hr2Tmb+BRQSaNluL/gihIP6KT0Lru7cSv2hZ+BRwBnWi2xL6mPPXwjjXnlcaHPI4mbTptOGFRMlWd8lVsSU=
+	t=1715585153; cv=none; b=XyejlzO5MSfaG5OrPHWPzq99mM8BEIgRqnE0VPFik+c4UguR2WUJ1Cc1v6XOuKjUor44IqDFqzilHuIWYR4ZKPxfNpSLcmmxeamioX8hrptWTPDxalEvCoHNrDM5Qb+X3fgptYKtV0f1UGH8AJJWu6+KiK26/MqmVLk3yDAlHw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715585091; c=relaxed/simple;
-	bh=oecI1I5F8ploSJtFJdVODKUb+t2YKq7ntuJtu7bZFnU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ER5ggDF0Ck2As7hrCFOGXnhMbJiVCTDCCSgIntu1oRi5nveV09RXw0xynn5b0RBjl+soMAJ8+o3TEVGtDy1T95WTSWfNqazASNi3iD3jgoDb1YsllWKz0/P/WDfKS+jfOXavHSA7LywkIZ8+X6mMzY9wmoeCSCW5JWYpEsItAi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cVJp5gwK; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 660CE2000B;
-	Mon, 13 May 2024 07:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715585087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NzNqKTpVWMnrcgcJVGgyUqBdfYphefuKpHkJ0PXLDgQ=;
-	b=cVJp5gwKqB0Mh/yJT1k6c5lOBf16FMIt4SuwlyVG5N1wkt/1kjN+Wh0LT9inGh6yf83b9k
-	n14F3oLw2J3vH5inilqW/qVAWOVSc6BSibk6J89UAblJ8NM/5MHUds5CMj/Je+QiVTvFzo
-	1ifkrUOzV752vU3Xu9WgVtdpkgL/1MmagXup1SkfqMm7JfcUQcOlIQ+LtmSao7ED0KEwKH
-	22GnNziHOKe+gSz5YDvqs5Ksq7lo0KFfPEDhYiNPGogxx6mCcVqAf0LhBgQGlWjZu0pgX6
-	TR1/XoodKayc2UWH898/TQYA0bQQz3G1fUkaT+We1PiHkCInH06Faspmn5eCpA==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Mon, 13 May 2024 09:25:18 +0200
-Subject: [PATCH net-next v7 7/7] ARM: dts: r9a06g032: describe GMAC1
+	s=arc-20240116; t=1715585153; c=relaxed/simple;
+	bh=wMEuAI0hnZW1lo/a7h1KVjA6PRjEKyLoM0M7DADEqcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fg3PSqxlRU/euWI6uGjpaBBP+SwmEYyS/vSfQ6Yx7Ltw5q24wRPRQCQ8f9GFk5bn5e8Va2u4MZeCevKTtgFyoVDfqfCGd9CE55fTeZYtWK0XRCYB5QgWsxPHsEYycjm7v49g2KCII5p0p81Dm/INho7xYXXkznn9o3lntRfccWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MgYfy9Y9; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715585152; x=1747121152;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wMEuAI0hnZW1lo/a7h1KVjA6PRjEKyLoM0M7DADEqcA=;
+  b=MgYfy9Y9g11Cah784Hk+WlIdRkfZQM0eiMDGhdnAkSzp89iNXySOZJru
+   yQVvF541+HGUFR5rhKpFySaLzrTLVSa9ENVXf3P3sVtPISufs1+yMGMlb
+   z1fx2tE7tbVFDreioIxjfuLNq/kZPwqk47oCC25HfloV2d+w+qRvG44Ka
+   Q8IRGfSms0AO2Zo1TTtvxLBf5EoMCkK+Y+M4zYRCjuOkrgGVVukfv8192
+   ymKhXGf034WHILqDXivolT7K6satuFlhLrX9s2goRWK5qww0jpKksw8ph
+   qmhUERN+PulRGSkElDgintGcp+HTnkKzEtnZi4xy5KUE2kR+CCoK6+/9C
+   Q==;
+X-CSE-ConnectionGUID: mEuip9srQ5WCHEGzJojjZA==
+X-CSE-MsgGUID: Xy0PrlOjSD+xq69pCpSS7A==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="29019684"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="29019684"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 00:25:51 -0700
+X-CSE-ConnectionGUID: B0o9cwonRVSGhjNXnaLsSw==
+X-CSE-MsgGUID: VSbT3SNNQ2mbkjbrR83ESw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="34761360"
+Received: from nirmoyda-mobl.ger.corp.intel.com (HELO [10.246.50.245]) ([10.246.50.245])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 00:25:50 -0700
+Message-ID: <ce1e1097-2e7d-475b-ac17-3b84aec473e2@linux.intel.com>
+Date: Mon, 13 May 2024 09:25:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240513-rzn1-gmac1-v7-7-6acf58b5440d@bootlin.com>
-References: <20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com>
-In-Reply-To: <20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Jose Abreu <joabreu@synopsys.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- =?utf-8?q?Cl=C3=A9ment_L=C3=A9ger?= <clement.leger@bootlin.com>, 
- Serge Semin <fancer.lancer@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, 
- Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.13.0
-X-GND-Sasl: romain.gantois@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/i915: Correct error handler
+To: Jiasheng Jiang <jiashengjiangcool@outlook.com>,
+ jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+ rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+ daniel@ffwll.ch, chris@chris-wilson.co.uk
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <BYAPR03MB41680146FAD88A8F26C3827BADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+Content-Language: en-US
+From: Nirmoy Das <nirmoy.das@linux.intel.com>
+In-Reply-To: <BYAPR03MB41680146FAD88A8F26C3827BADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Clément Léger <clement.leger@bootlin.com>
 
-The r9a06g032 SoC of the RZ/N1 family features two GMAC devices named
-GMAC1/2, that are based on Synopsys cores. GMAC1 is connected to a
-RGMII/RMII converter that is already described in this device tree.
+On 5/11/2024 5:48 PM, Jiasheng Jiang wrote:
+> Replace "slab_priorities" with "slab_dependencies" in the error handler to avoid memory leak.
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-[rgantois: commit log]
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- arch/arm/boot/dts/renesas/r9a06g032.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Nice catch. I would make the subject more like:
 
-diff --git a/arch/arm/boot/dts/renesas/r9a06g032.dtsi b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-index fa63e1afc4ef4..57c730f43442e 100644
---- a/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/renesas/r9a06g032.dtsi
-@@ -316,6 +316,24 @@ dma1: dma-controller@40105000 {
- 			data-width = <8>;
- 		};
- 
-+		gmac1: ethernet@44000000 {
-+			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
-+			reg = <0x44000000 0x2000>;
-+			interrupts = <GIC_SPI 34 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "macirq", "eth_wake_irq", "eth_lpi";
-+			clocks = <&sysctrl R9A06G032_HCLK_GMAC0>;
-+			clock-names = "stmmaceth";
-+			power-domains = <&sysctrl>;
-+			snps,multicast-filter-bins = <256>;
-+			snps,perfect-filter-entries = <128>;
-+			tx-fifo-depth = <2048>;
-+			rx-fifo-depth = <4096>;
-+			pcs-handle = <&mii_conv1>;
-+			status = "disabled";
-+		};
-+
- 		gmac2: ethernet@44002000 {
- 			compatible = "renesas,r9a06g032-gmac", "renesas,rzn1-gmac", "snps,dwmac";
- 			reg = <0x44002000 0x2000>;
+drm/i915: Fix memory leak by correcting cache object name in error handler
 
--- 
-2.44.0
+>
+> Fixes: 32eb6bcfdda9 ("drm/i915: Make request allocation caches global")
 
+Also need Cc: <stable@vger.kernel.org> # v5.2+
+
+With those:
+
+Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
+
+
+Nirmoy
+
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+> ---
+>   drivers/gpu/drm/i915/i915_scheduler.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/i915/i915_scheduler.c b/drivers/gpu/drm/i915/i915_scheduler.c
+> index 762127dd56c5..70a854557e6e 100644
+> --- a/drivers/gpu/drm/i915/i915_scheduler.c
+> +++ b/drivers/gpu/drm/i915/i915_scheduler.c
+> @@ -506,6 +506,6 @@ int __init i915_scheduler_module_init(void)
+>   	return 0;
+>   
+>   err_priorities:
+> -	kmem_cache_destroy(slab_priorities);
+> +	kmem_cache_destroy(slab_dependencies);
+>   	return -ENOMEM;
+>   }
 
