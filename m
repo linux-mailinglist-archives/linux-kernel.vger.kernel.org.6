@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-177058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C1C8C3980
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:00:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968158C397E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598791C20C41
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:00:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DDE281446
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341605C60D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149155A7A0;
 	Mon, 13 May 2024 00:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNezXcoA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzAXZuL2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0A12AD1C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1292A1AA;
 	Mon, 13 May 2024 00:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715558430; cv=none; b=RolrzGK/n75+XhFtHi1eo5xFu8gUUPTy+5IT5fiJjNTTRnXUjfIlEYZ4QAncEaLGx8vMvoJUNkSRD1xQU6DLSJi6gt2tU0jTXP7KeiXI/D0UbBF84gso7DdcdlfQgZpykMTfHRFaNdnu2tTjORAtbn2TgATEM0RYU0RuVJ+KYmU=
+	t=1715558430; cv=none; b=kPpvEucJGfTjkE/woLD/Cq+GGv+E/NihGPUTF/D6FW/Oz/LEd+9pOzfpnXTAHne1pSfL86oJ/g5nQT3Tv93ibIiLd0pzxuu9zzPJ+/WeDqF3KAxtlCqEQiWEcI4nMclgfPdE8DcF3geooHOpJrgCX8xTtsasooyJXp7q2FT0rqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715558430; c=relaxed/simple;
-	bh=DiRTuxx7jNsBtxssJVhLLs4f7CaGC42GVb0//KHi0+Q=;
+	bh=e2NpOR2CweEKvqvlaEK0pm/6D2en3jgIpSgJ46eRceA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oJB+2VGPCXRPL9pT0KVtgpTg3PHIpSAG0ZtUIP1UHDAUrb4U6N+g+gzB1AhU5hK07dVo3iZEvzb5pHHnecobm5nmNXNQHj12w65Vdumw6SQapKmHjf3Id+BPH7FE0OHtnW1L45vPJVYCHIqZRL3s1OkWXYkvIt9jjxptabkv9p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNezXcoA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0BAA6C4AF68;
-	Mon, 13 May 2024 00:00:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=WH/O8K2C454s0D4mR8+gqcJ4SXzh8xL8znqMuxbVkW+njNbLRk09uGFFufEf2101fWSuI49FUY5xELmHPfJeF+c4ci8QXkAWTdxLsRyeT9fGMpXd9ns2+zrSHPvUx0CJHmuTpp8t1gRtAl4qcJC01ccUz3rUbpZJvPFgVSZN9vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzAXZuL2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id CD42FC4AF08;
+	Mon, 13 May 2024 00:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715558430;
-	bh=DiRTuxx7jNsBtxssJVhLLs4f7CaGC42GVb0//KHi0+Q=;
+	s=k20201202; t=1715558429;
+	bh=e2NpOR2CweEKvqvlaEK0pm/6D2en3jgIpSgJ46eRceA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DNezXcoAnZJoDgMjJrPT+jgW4KILzJjpEM9I1RtcUGJaYC+xaKT3GH36QU49ZGauM
-	 D6GRY1JhP+lgWjY13ekzLROJQGQrwGpEYG23kSIO8rhVWMFQE85a466uE05fLHh+M0
-	 tpUuyxGA90OFXWrZFO6j7SgBHVtj6YySFLgDqa3TckzZcOaOevrl+vCbSmJDS0NG5d
-	 dl63CnVVAKaINqsr29kIpxYjbVO8qhLjd1Qmngtjb0gnklBRcPrZnURQKQ+L/9Fs6Y
-	 FAn2A7ehdYOaabu2DvDuJ82ZGekpsU0ht20RCfMszzsB+ComXlYHlqrgRkVT7v1mJF
-	 xQ0Gps4GxHOyA==
+	b=YzAXZuL24mQqZ0qK+/OMp07ToKUNqmOycs4b2wBwgP7vFX80wU8v2wXxnQRnH2Sj4
+	 e45QZoxmPPjHGl5GwA+KAICSLYQVPKKfG22iKb2qBt/VTRs+ybs3O19PMCYinRzFeG
+	 LuAruWUGwELm28J/rVCEAcFioBIV/iTGL3iyurJSVGSl7n2lEetRQE7T0rtWPSgcwu
+	 z/prxpV4gNm3PtKqD6rONtXOXpJ9w64BBt9ilE80dCX2HeOJQxVhkYYEVGuB2iDXbm
+	 QofhHKbCDcASOT8eSd2NEI4AAy765DtUJz80wRTBOdP1YWraBs9YeL4ACmrBLza+KZ
+	 kSyrtKPuQ4Cyw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id EB394C43336;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id BBEF1C43444;
 	Mon, 13 May 2024 00:00:29 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,39 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv, bpf: Fix typo in comment
+Subject: Re: [PATCH bpf] riscv, bpf: make some atomic operations fully ordered
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171555842995.18024.4820208884159276915.git-patchwork-notify@kernel.org>
+ <171555842976.18024.13752863594876761911.git-patchwork-notify@kernel.org>
 Date: Mon, 13 May 2024 00:00:29 +0000
-References: <20240507111618.437121-1-xiao.w.wang@intel.com>
-In-Reply-To: <20240507111618.437121-1-xiao.w.wang@intel.com>
-To: Xiao Wang <xiao.w.wang@intel.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- luke.r.nels@gmail.com, xi.wang@gmail.com, bjorn@kernel.org, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
- eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
- haoluo@google.com, jolsa@kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, pulehui@huawei.com,
- haicheng.li@intel.com
+References: <20240505201633.123115-1-puranjay@kernel.org>
+In-Reply-To: <20240505201633.123115-1-puranjay@kernel.org>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, bjorn@kernel.org,
+ pulehui@huawei.com, paulmck@kernel.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, bpf@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ puranjay12@gmail.com
 
 Hello:
 
 This patch was applied to bpf/bpf-next.git (master)
 by Alexei Starovoitov <ast@kernel.org>:
 
-On Tue,  7 May 2024 19:16:18 +0800 you wrote:
-> We can use either "instruction" or "insn" in the comment.
+On Sun,  5 May 2024 20:16:33 +0000 you wrote:
+> The BPF atomic operations with the BPF_FETCH modifier along with
+> BPF_XCHG and BPF_CMPXCHG are fully ordered but the RISC-V JIT implements
+> all atomic operations except BPF_CMPXCHG with relaxed ordering.
 > 
-> Signed-off-by: Xiao Wang <xiao.w.wang@intel.com>
-> ---
->  arch/riscv/net/bpf_jit.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Section 8.1 of the "The RISC-V Instruction Set Manual Volume I:
+> Unprivileged ISA" [1], titled, "Specifying Ordering of Atomic
+> Instructions" says:
+> 
+> [...]
 
 Here is the summary with links:
-  - riscv, bpf: Fix typo in comment
-    https://git.kernel.org/bpf/bpf-next/c/80c5a07ae673
+  - [bpf] riscv, bpf: make some atomic operations fully ordered
+    https://git.kernel.org/bpf/bpf-next/c/20a759df3bba
 
 You are awesome, thank you!
 -- 
