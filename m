@@ -1,304 +1,204 @@
-Return-Path: <linux-kernel+bounces-177468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E278C3F32
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:41:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 464038C3F40
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49528289CF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:41:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 923C8B24AA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF79614D29C;
-	Mon, 13 May 2024 10:39:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118DE14BF85;
+	Mon, 13 May 2024 10:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hOxqNYRG"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="CE9MvLLl"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454CA152525
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF6314A4CA
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715596757; cv=none; b=rK9/EqYjaw7gLh8HqSpd0hsMXnbZh78dm6K8TjsKi2ptV8u/UfuLF1zqtChF0E9CkrBMd66ouxwbmbx90PWR54NtOO5CvMy/PBqKGJlxlxvr7XN8qU8MhOptt5EyESjvZlv/Mf6cDXbWsIwBRp3ZZRRmH+mS+bgW2/GARNc5TJA=
+	t=1715596822; cv=none; b=ndFWGml8A/89cPN4TTnBI3jh5MirTl8zrX/YCi0MIH9o76z30GRyJt3z/J+7vUMELJ0rimoO+sJZ3Vy/1wW3GC6xw6qy7T5si4hQPqO5+yTAn9idTuizZhZxZnBMTVjcht/rbMbo3bqNVJc5LlmEIX9tRitWfJ8pm4oDghbzRT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715596757; c=relaxed/simple;
-	bh=bO77ZRGvWIEiIfC7TMwMEcW0RLLTSTMSPZNgoIU1nDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AxebfF6ymz9FP6iXXYPfW0lLOIoChWCsHkH/QtVcgw8jJ1Ip4vZOnL2ga0H/MzUb1lFmdLl4jOp5ZEh55NLKFR85KlMFdtvjcsyEJHQG1IIeWVOJ8/j6bYTs4hGOzkWtmyT1YawahjGdUVSG2u0PeCFSpiBLUQUyrvWhI2IgefE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hOxqNYRG; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-7d9e70f388fso202337239f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:39:15 -0700 (PDT)
+	s=arc-20240116; t=1715596822; c=relaxed/simple;
+	bh=p5Q2GOl/EQWCxna/AMLd/bkO94wUGNtC6V8AMrx57Oc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IYsn6adxpbC0eNpClmejplaA0Bm7iD04r9gI07nRSpDVD5yDNayzE46Dhp1CpIw5Ziz5j/lR7C2D6P+stncQZmPJbVpkKoW9ViKrNLUENupoefLwVYTlHcy9iV3F/U4a+KMjxdQRYm+YsITmWvvaWi6KTS/3wp1VpKr2e4YqUyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=CE9MvLLl; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f490b5c23bso3473672b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:40:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715596754; x=1716201554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=buebxfvhrKsxWwmHpN8HIqeIzqJ1dJvpRSV41poUdTw=;
-        b=hOxqNYRGSsHd+8FFhTIku1RhY9FhCGSRa0bPhuX07H2yzx0ybN6AvZqj4xjSskhP4h
-         8wdHeOAnb9ryI1saRG5rHj3h+H9ZGfGchb2P0hckXMwFzkDFFifivpgoDOTDUmuuXFR+
-         DUfkIflWS2TkjibMovVai8twPJzhm3ooGiBfQOsvccnrc4iPo6Rdqwt85i9x/tLyNKDi
-         vDeoltKJTcBqH+/NfvciEyQWxCD2nkEyT6Ip22QRZfgcvRcz4u3yfr01fmiAw8U4INTb
-         kFmvdjGA5DiZ5B/skVWYtRQu9ou25Tu0kmZbK1q++YW8IIemQgVOkQwSnwtMM0lJbwVo
-         RXPA==
+        d=shopee.com; s=shopee.com; t=1715596819; x=1716201619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrlM4I62umYG/2gHEkVTt/muxhnq5jSDYrq38HrPJW8=;
+        b=CE9MvLLlXUflQyZ9Qt854g+49ghciZv/hc8XLgHLSLLmaQtr4eDTDfsZ4ZgTTjiomM
+         Ke2YjrNFuUjY8kTnwqiUL8WKQ5VJ4sLgk9y6A/asISL0LxeBQPjlvJqJUbtdbABTKt0h
+         aP+dvmJ7h85JIELizJZOx2hxEzR/IpvKPP3ndU7T7IsI7zZMnmKPI1Fi0SqqC+14M9CN
+         H1woc4JbSLCH373DtuvV3zCP93ON4DNs4HeejPImHC88Dwum1EtxbAxbvI6XtPCTj1mN
+         GvQF96vG1umWNqaPwYetKTk/nb03bXCZEyzXQiMqBAqOaOSXLRq0kUDKccuNcHBnJJ/k
+         ECqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715596754; x=1716201554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=buebxfvhrKsxWwmHpN8HIqeIzqJ1dJvpRSV41poUdTw=;
-        b=Sul803UbXbzlcbPczvo4DK6ZwV9bLj8YhgVGFZFDLqqSxQUTGr9Ty2sZT+FmdppDrM
-         ClF5SstauTneGGmirXvuyPo2okTpatlLH5eqhUOxmjUDZpWt24DL3WfwdgsgHMSFZF6z
-         +VakgDuwnItUyDL1mO9t4NmPye5hzlSkyG8Ii5AzbPRR8U8DKBVYeV3ULQY3cX6cDk5C
-         Df7dpN7P7d7kZONpkKxxtnnWwTXG2Z+adQl/nlAbVaBdEmqiCoo0CrZz8zdH1JSXmwtW
-         o5fI5FwIwL6jJ3bb9SrCCvBtugFmE0Sx3g7mckWqyINB24je0slR8RibP/9i4gdTtNRf
-         np5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXphXqFWoZNPn2n1YzRViSa06sfypG26xAleqJOXrO4MgqBZJWONbuyCwBwPNnsJ6sB7hU12+Mjp69ESwNqgT/8mY2e1Pmz4N4wso/e
-X-Gm-Message-State: AOJu0YxR9lPIcnbbL0kQDhE5QbW9egb5qSdee9dZU1xyX90nY3cyH8dh
-	RzCO2CVXRN0OaHFxgrmHp0fhaW7Xv/Fq0fC4VaYu7n+j7xqo62HETNyvud5bSSybUKGLBxxpA7f
-	KM2fdxWMRCT1DK8sd9uEz86xU6Q2v80omszU1
-X-Google-Smtp-Source: AGHT+IGpxlYX8+VKGkmtPuAIMGxA5UAZbcx0MnAYFeFpA91msfpdz6rwOjVALAC61BpdL+rxCAb37kOiJezzIguf1p0=
-X-Received: by 2002:a5e:8e0b:0:b0:7de:e432:fd27 with SMTP id
- ca18e2360f4ac-7e1b5207a33mr1205090239f.13.1715596754196; Mon, 13 May 2024
- 03:39:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715596819; x=1716201619;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mrlM4I62umYG/2gHEkVTt/muxhnq5jSDYrq38HrPJW8=;
+        b=FpBKZS4DohlH46z5uqV5KNB1xFnreTMIVBZOUNcsje6gJSfwmy2LeVXOH1sX0N50YC
+         Pm+OHEyr/lDOIw9QdackGHxqMFPBSWZv+Z6VgqitvzaMPgZCwW+DJiiiJOMI5FbwjwRI
+         7VQ1CcMXqODjHLCOgKMO7BXucYaCJh24Kz0UgRukhlHM15lpFLcRkKecRXZMq+7earjt
+         G7SMopucx+qlyNh1asmTkiuI9fr2WPcQuaQjZAoGWLgfi2ykPBURSrzMBZq5/QBCKf0i
+         rsJpqYDrhkV9VTKzQ4dKfBfeQFdACJ+VPN1Gl5Sjwx+JC52DGEY09i79sHZBsOAQrrKy
+         G8TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMR8Wo1ty2WcQdIU6AADbNgl6qFsWQEN3qjxWZE1Rj6mu9sesMdnd6OUMp48kAl9FrieviZW4u8LMkhA3UY4dzoUIkd7ft5bdQzr0+
+X-Gm-Message-State: AOJu0Yx9+aTVUFGUBY5WJ9DDDhBwO/S9P6+IzCSXwMoWA7dufH8Ww9hz
+	GxXgbd6mCV9Y7AHc7i88pN6ITsjCjMV1pIAf8SAWruiVTxkP3F1NUEvdthzvkUE=
+X-Google-Smtp-Source: AGHT+IGRyBW7aktP1xEoJkajy/bs6gnaIULhIW0yiuFcyofLUbDpxdGDsFqSLkmu3UQWeXdtlVTKww==
+X-Received: by 2002:a05:6a20:dc95:b0:1af:7646:fc14 with SMTP id adf61e73a8af0-1afddf12766mr8682701637.0.1715596819107;
+        Mon, 13 May 2024 03:40:19 -0700 (PDT)
+Received: from localhost.localdomain ([101.127.248.173])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30baesm76338985ad.158.2024.05.13.03.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 03:40:18 -0700 (PDT)
+From: Haifeng Xu <haifeng.xu@shopee.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	frederic@kernel.org,
+	mark.rutland@arm.com
+Cc: acme@kernel.org,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Haifeng Xu <haifeng.xu@shopee.com>
+Subject: [PATCH v4] perf/core: Fix missing wakeup when waiting for context reference
+Date: Mon, 13 May 2024 10:39:48 +0000
+Message-Id: <20240513103948.33570-1-haifeng.xu@shopee.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507155413.266057-1-panikiel@google.com> <20240507155413.266057-10-panikiel@google.com>
- <20240510212442.GA758313-robh@kernel.org>
-In-Reply-To: <20240510212442.GA758313-robh@kernel.org>
-From: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>
-Date: Mon, 13 May 2024 12:39:02 +0200
-Message-ID: <CAM5zL5qx06f7v-fEXRT1=dZ2s=Vo5eske2GrcMubf2ZuPFJ7mA@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] media: dt-bindings: Add Intel Displayport RX IP
-To: Rob Herring <robh@kernel.org>
-Cc: airlied@gmail.com, akpm@linux-foundation.org, conor+dt@kernel.org, 
-	daniel@ffwll.ch, dinguyen@kernel.org, hverkuil-cisco@xs4all.nl, 
-	krzysztof.kozlowski+dt@linaro.org, maarten.lankhorst@linux.intel.com, 
-	mchehab@kernel.org, mripard@kernel.org, tzimmermann@suse.de, 
-	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	chromeos-krk-upstreaming@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 10, 2024 at 11:24=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
-e:
->
-> On Tue, May 07, 2024 at 03:54:12PM +0000, Pawe=C5=82 Anikiel wrote:
-> > Add dt binding for the Intel Displayport receiver FPGA IP.
-> > It is a part of the DisplayPort Intel FPGA IP Core, and supports
-> > DisplayPort 1.4, HBR3 video capture and Multi-Stream Transport.
-> >
-> > The user guide can be found here:
-> > https://www.intel.com/programmable/technical-pdfs/683273.pdf
-> >
-> > Signed-off-by: Pawe=C5=82 Anikiel <panikiel@google.com>
-> > ---
-> >  .../devicetree/bindings/media/intel,dprx.yaml | 172 ++++++++++++++++++
-> >  1 file changed, 172 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/media/intel,dprx.=
-yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/intel,dprx.yaml b/=
-Documentation/devicetree/bindings/media/intel,dprx.yaml
-> > new file mode 100644
-> > index 000000000000..01bed858f746
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/media/intel,dprx.yaml
-> > @@ -0,0 +1,172 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/media/intel,dprx.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Intel DisplayPort RX IP
-> > +
-> > +maintainers:
-> > +  - Pawe=C5=82 Anikiel <panikiel@google.com>
-> > +
-> > +description: |
-> > +  The Intel Displayport RX IP is a part of the DisplayPort Intel FPGA =
-IP
-> > +  Core. It implements a DisplayPort 1.4 receiver capable of HBR3 video
-> > +  capture and Multi-Stream Transport.
-> > +
-> > +  The IP features a large number of configuration parameters, found at=
-:
-> > +  https://www.intel.com/content/www/us/en/docs/programmable/683273/23-=
-3-20-0-1/sink-parameters.html
-> > +
-> > +  The following parameters have to be enabled:
-> > +    - Support DisplayPort sink
-> > +    - Enable GPU control
-> > +  The following parameters have to be set in the devicetree:
-> > +    - RX maximum link rate (using link-frequencies)
-> > +    - Maximum lane count (using data-lanes)
-> > +    - Support MST (using multi-stream-support)
-> > +    - Max stream count (inferred from the number of ports)
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: intel,dprx-20.0.1
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +
-> > +    properties:
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        description: MST virtual channel 0 or SST main link
-> > +
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: /schemas/media/video-interfaces.yaml#
-> > +
-> > +            properties:
-> > +              link-frequencies: true
-> > +
-> > +              data-lanes:
-> > +                minItems: 1
-> > +                maxItems: 4
-> > +
-> > +              multi-stream-support: true
-> > +
-> > +            required:
-> > +              - data-lanes
-> > +              - link-frequencies
-> > +
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: MST virtual channel 0 or SST main link
->
-> How can port@0 also be "MST virtual channel 0 or SST main link"?
+In our production environment, we found many hung tasks which are
+blocked for more than 18 hours. Their call traces are like this:
 
-Sorry, I made a mistake. port@0 should be something like "Input port".
+[346278.191038] __schedule+0x2d8/0x890
+[346278.191046] schedule+0x4e/0xb0
+[346278.191049] perf_event_free_task+0x220/0x270
+[346278.191056] ? init_wait_var_entry+0x50/0x50
+[346278.191060] copy_process+0x663/0x18d0
+[346278.191068] kernel_clone+0x9d/0x3d0
+[346278.191072] __do_sys_clone+0x5d/0x80
+[346278.191076] __x64_sys_clone+0x25/0x30
+[346278.191079] do_syscall_64+0x5c/0xc0
+[346278.191083] ? syscall_exit_to_user_mode+0x27/0x50
+[346278.191086] ? do_syscall_64+0x69/0xc0
+[346278.191088] ? irqentry_exit_to_user_mode+0x9/0x20
+[346278.191092] ? irqentry_exit+0x19/0x30
+[346278.191095] ? exc_page_fault+0x89/0x160
+[346278.191097] ? asm_exc_page_fault+0x8/0x30
+[346278.191102] entry_SYSCALL_64_after_hwframe+0x44/0xae
 
->
-> > +
-> > +      port@2:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: MST virtual channel 1
-> > +
-> > +      port@3:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: MST virtual channel 2
-> > +
-> > +      port@4:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: MST virtual channel 3
-> > +
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - ports
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +
-> > +    dp-receiver@c0062000 {
-> > +        compatible =3D "intel,dprx-20.0.1";
-> > +        reg =3D <0xc0062000 0x800>;
-> > +        interrupt-parent =3D <&dprx_mst_irq>;
-> > +        interrupts =3D <0 IRQ_TYPE_EDGE_RISING>;
-> > +
-> > +        ports {
-> > +            #address-cells =3D <1>;
-> > +            #size-cells =3D <0>;
-> > +
-> > +            port@0 {
-> > +                reg =3D <0>;
-> > +                dprx_mst_in: endpoint {
-> > +                    remote-endpoint =3D <&dp_input_mst_0>;
-> > +                    data-lanes =3D <0 1 2 3>;
-> > +                    link-frequencies =3D /bits/ 64 <1620000000 2700000=
-000
-> > +                                                  5400000000 810000000=
-0>;
-> > +                    multi-stream-support;
-> > +                };
-> > +            };
-> > +
-> > +            port@1 {
-> > +                reg =3D <1>;
-> > +                dprx_mst_0: endpoint {
-> > +                    remote-endpoint =3D <&video_mst0_0>;
-> > +                };
-> > +            };
-> > +
-> > +            port@2 {
-> > +                reg =3D <2>;
-> > +                dprx_mst_1: endpoint {
-> > +                    remote-endpoint =3D <&video_mst1_0>;
-> > +                };
-> > +            };
-> > +
-> > +            port@3 {
-> > +                reg =3D <3>;
-> > +                dprx_mst_2: endpoint {
-> > +                    remote-endpoint =3D <&video_mst2_0>;
-> > +                };
-> > +            };
-> > +
-> > +            port@4 {
-> > +                reg =3D <4>;
-> > +                dprx_mst_3: endpoint {
-> > +                    remote-endpoint =3D <&video_mst3_0>;
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +  - |
-> > +    dp-receiver@c0064000 {
-> > +        compatible =3D "intel,dprx-20.0.1";
-> > +        reg =3D <0xc0064000 0x800>;
-> > +        interrupt-parent =3D <&dprx_sst_irq>;
-> > +        interrupts =3D <0 IRQ_TYPE_EDGE_RISING>;
-> > +
-> > +        ports {
-> > +            #address-cells =3D <1>;
-> > +            #size-cells =3D <0>;
-> > +
-> > +            port@0 {
-> > +                reg =3D <0>;
-> > +                dprx_sst_in: endpoint {
-> > +                    remote-endpoint =3D <&dp_input_sst_0>;
-> > +                    data-lanes =3D <0 1 2 3>;
-> > +                    link-frequencies =3D /bits/ 64 <1620000000 2700000=
-000
-> > +                                                  5400000000 810000000=
-0>;
-> > +                };
-> > +            };
-> > +
-> > +            port@1 {
-> > +                reg =3D <1>;
-> > +                dprx_sst_0: endpoint {
-> > +                    remote-endpoint =3D <&video_sst_0>;
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > --
-> > 2.45.0.rc1.225.g2a3ae87e7f-goog
-> >
+The task was waiting for the refcount become to 1, but from the vmcore,
+we found the refcount has already been 1. It seems that the task didn't
+get woken up by perf_event_release_kernel() and got stuck forever. The
+below scenario may cause the problem.
+
+Thread A					Thread B
+..						...
+perf_event_free_task				perf_event_release_kernel
+						   ...
+						   acquire event->child_mutex
+						   ...
+						   get_ctx
+   ...						   release event->child_mutex
+   acquire ctx->mutex
+   ...
+   perf_free_event (acquire/release event->child_mutex)
+   ...
+   release ctx->mutex
+   wait_var_event
+						   acquire ctx->mutex
+						   acquire event->child_mutex
+						   # move existing events to free_list
+						   release event->child_mutex
+						   release ctx->mutex
+						   put_ctx
+..						...
+
+In this case, all events of the ctx have been freed, so we couldn't
+find the ctx in free_list and Thread A will miss the wakeup. It's thus
+necessary to add a wakeup after dropping the reference.
+
+Fixes: 1cf8dfe8a661 ("perf/core: Fix race between close() and fork()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haifeng Xu <haifeng.xu@shopee.com>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+---
+Changes since v1:
+- Add the fixed tag.
+- Simplify v1's patch. (Frederic)
+
+Changes since v2:
+- Use Reviewed-by tag instead of Signed-off-by tag.
+
+Changes since v3:
+- Add Acked-by tag.
+- Cc stable@vger.kernel.org. (Mark)
+---
+ kernel/events/core.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 4f0c45ab8d7d..15c35070db6a 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5340,6 +5340,7 @@ int perf_event_release_kernel(struct perf_event *event)
+ again:
+ 	mutex_lock(&event->child_mutex);
+ 	list_for_each_entry(child, &event->child_list, child_list) {
++		void *var = NULL;
+ 
+ 		/*
+ 		 * Cannot change, child events are not migrated, see the
+@@ -5380,11 +5381,23 @@ int perf_event_release_kernel(struct perf_event *event)
+ 			 * this can't be the last reference.
+ 			 */
+ 			put_event(event);
++		} else {
++			var = &ctx->refcount;
+ 		}
+ 
+ 		mutex_unlock(&event->child_mutex);
+ 		mutex_unlock(&ctx->mutex);
+ 		put_ctx(ctx);
++
++		if (var) {
++			/*
++			 * If perf_event_free_task() has deleted all events from the
++			 * ctx while the child_mutex got released above, make sure to
++			 * notify about the preceding put_ctx().
++			 */
++			smp_mb(); /* pairs with wait_var_event() */
++			wake_up_var(var);
++		}
+ 		goto again;
+ 	}
+ 	mutex_unlock(&event->child_mutex);
+-- 
+2.25.1
+
 
