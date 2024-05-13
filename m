@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-177425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18218C3E6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:55:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870D08C3E7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A70C281C8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:55:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09BC9B21A38
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC36148FEA;
-	Mon, 13 May 2024 09:55:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D70148FEA;
+	Mon, 13 May 2024 09:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="32l4m8S2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVFNpvx4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C12219E7;
-	Mon, 13 May 2024 09:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E41148833
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715594142; cv=none; b=dJlT2mWjqi9IODM4yHqua5SQmbsZpWHOuT6uGWpauLv2u0YEcn14Mes04xdpAcarpxTLORVT8oo94hWCXjOFtnoCrPYcHuQe1OWXTl0YZYmn8rFjpl2n798O8mOWens2fJiEB5vmjdH0i5y8RNRdk8vcUjf5UQRd+VGWFtJMSuo=
+	t=1715594344; cv=none; b=HNkpI0+WFKxV5cqh4oUEwcDgM83SxzXMz+5AoPCWfVu3BcIZY/hwIMsDwlxZ0zvkc5QrDnlx+5mINm/g6Ct4IzJ/N7F/DStVrVyV95p2EpZwe7H2O3gdJsjwSJnkaCk1b45l6hFpNyB8iR67FCrsX42JFj6p4+j85/jPFdckB90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715594142; c=relaxed/simple;
-	bh=AzFRCKPlN54IHQkn4IQjKlX2R9+TZTCVcPTOOYJgaeE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ULnx42Q6Y0uOqo7Rg5/g/9EozWao7G9+Fz0xCJhS/0XZa7NNN1DAyYR4VCRPhEjl7Geuzj+irDVJQysQP7MiJSMy/eUCKe0JMOqP3o0YJtsXl80aT00lxzaqqYGClj9M8qm0v+CNcXNo9hMfaUSbZ1UzajZKaTjrttI6Jbx0/iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=32l4m8S2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715594139;
-	bh=AzFRCKPlN54IHQkn4IQjKlX2R9+TZTCVcPTOOYJgaeE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=32l4m8S2naThXhPAWN6EXlSnoZ9zxuJOnqXFvJOcuUVH6He74yNjdFfVLx0Pn22tw
-	 oZizhqojp9tqc7sXSdqYJPElxkyXz0xR/l9OveTN+uyK6YCW1wqitul+XibhXrGDFp
-	 i+CrX1zaeblnSzMleXzhYT1zBZv/QtqVZbp9J3eKWvj+4i8sJpdbOhUcMdSNFj9NeQ
-	 V65lZfYlEOy196vCV1e0jA+7q0gtvuku0qbcE/nahArFN5WfakJc9KZAIm1u637nnh
-	 dVNVZZtz4gAUxkgOnZMeB6c4e5gN44GPu0tNYL6xQnLgtv/u7+raPKLWFae//rS7fE
-	 JwsHKcu5aHTjQ==
-Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1F2F3378212F;
-	Mon, 13 May 2024 09:55:38 +0000 (UTC)
-From: Laura Nao <laura.nao@collabora.com>
-To: mika.westerberg@linux.intel.com,
-	andriy.shevchenko@linux.intel.com
-Cc: linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	kernel@collabora.com,
-	linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	Laura Nao <laura.nao@collabora.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	"kernelci.org bot" <bot@kernelci.org>
-Subject: [PATCH] gpiolib: acpi: Move ACPI device NULL check to acpi_can_fallback_to_crs()
-Date: Mon, 13 May 2024 11:56:10 +0200
-Message-Id: <20240513095610.216668-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1715594344; c=relaxed/simple;
+	bh=ankU08gSvLs7z5PjJH2l/JvZZTP/EIbvoooq0j5B/0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r31vGvRKPzTxcRRcRBNrIDGYGZ+IFVxeswdCeG94nvW4afO7lToUFuo22QGLSBWuD0h7VhY7i2zeZL4rEwjQ6YUmHfNpsoh7MyDvMCieEPFAc6U2JRfszSLqLAqvziia4VJcvsaS335/W+JqA0rt/irOyciuA6o9UNjHjfXD1Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVFNpvx4; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715594343; x=1747130343;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ankU08gSvLs7z5PjJH2l/JvZZTP/EIbvoooq0j5B/0s=;
+  b=WVFNpvx4laP56NePZ9n+InmE5ptujQgs7iO8M8Q8Y1kYsP91j4GPkF2/
+   3kRV91EKWm8h3eeF1qcAl/z1AGdz8B7Yn4HrdPcXXq4lOQxOFeDF4Nx2l
+   i3QoAcTLMOfuWicFMgB5musQUZglKo09+BpPd0VDfsJbbmEFNLB6KRcVI
+   fMZnMYUVtrPqIUmjvNVEDH6B1znAMpe7l1wwE/1NNtljV8hoXudthZ+n9
+   BH9NSMxsoBIc1TAEQmKF/cdsguHWRctZj27RGzUhlyljDLDDrL3b7agXl
+   HBy5MwBak9uPP2sm/ovGRv6lnJ374nTF3aqQ1qJyLWctO2hKtBD5cAZnU
+   A==;
+X-CSE-ConnectionGUID: x07EEC4MT/e78J0reyXKWA==
+X-CSE-MsgGUID: yZEfYUQyTFm1cqcZ7T8TGw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="15355327"
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="15355327"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 02:59:02 -0700
+X-CSE-ConnectionGUID: nNf+vrqtRyyToNxv2M9oWA==
+X-CSE-MsgGUID: EahDSCLJRKS0nA4a6GTXQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="30702672"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 02:58:57 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1s6SSM-000000074o7-14V8;
+	Mon, 13 May 2024 12:58:54 +0300
+Date: Mon, 13 May 2024 12:58:53 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
+	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
+	alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+	liam.r.girdwood@intel.com, bard.liao@intel.com,
+	yung-chuan.liao@linux.intel.com, kevin-lu@ti.com,
+	cameron.berkenpas@gmail.com, tiwai@suse.de, baojun.xu@ti.com,
+	soyer@irl.hu, Baojun.Xu@fpt.com
+Subject: Re: [PATCH v5 1/3] ASoC: tas2781: Fix wrong loading calibrated data
+ sequence
+Message-ID: <ZkHkXYCpkuWzgZgR@smile.fi.intel.com>
+References: <20240512025040.1276-1-shenghao-ding@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240512025040.1276-1-shenghao-ding@ti.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Following the relocation of the function call outside of
-__acpi_find_gpio(), move the ACPI device NULL check to
-acpi_can_fallback_to_crs().
+On Sun, May 12, 2024 at 10:50:37AM +0800, Shenghao Ding wrote:
+> Remove declaration of unused API which load calibrated data in wrong
+> sequence, changed the copyright year and correct file name in license
+> header.
 
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reported-by: "kernelci.org bot" <bot@kernelci.org>
-Closes: https://lore.kernel.org/all/20240426154208.81894-1-laura.nao@collabora.com/
-Fixes: 49c02f6e901c ("gpiolib: acpi: Move acpi_can_fallback_to_crs() out of __acpi_find_gpio()")
----
-v1: https://lore.kernel.org/all/20240509104605.538274-1-laura.nao@collabora.com/T/#u
----
- drivers/gpio/gpiolib-acpi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> -int tasdevice_prmg_calibdata_load(void *context, int prm_no);
 
-diff --git a/drivers/gpio/gpiolib-acpi.c b/drivers/gpio/gpiolib-acpi.c
-index 553a5f94c00a..c7483cd800ee 100644
---- a/drivers/gpio/gpiolib-acpi.c
-+++ b/drivers/gpio/gpiolib-acpi.c
-@@ -939,7 +939,7 @@ static bool acpi_can_fallback_to_crs(struct acpi_device *adev,
- 				     const char *con_id)
- {
- 	/* Never allow fallback if the device has properties */
--	if (acpi_dev_has_props(adev) || adev->driver_gpios)
-+	if (!adev || acpi_dev_has_props(adev) || adev->driver_gpios)
- 		return false;
- 
- 	return con_id == NULL;
-@@ -978,10 +978,10 @@ __acpi_find_gpio(struct fwnode_handle *fwnode, const char *con_id, unsigned int
- 	}
- 
- 	/* Then from plain _CRS GPIOs */
--	if (!adev || !can_fallback)
--		return ERR_PTR(-ENOENT);
-+	if (can_fallback)
-+		return acpi_get_gpiod_by_index(adev, NULL, idx, info);
- 
--	return acpi_get_gpiod_by_index(adev, NULL, idx, info);
-+	return ERR_PTR(-ENOENT);
- }
- 
- struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
+This is still being used in two files. How won't this break the build?
+
 -- 
-2.30.2
+With Best Regards,
+Andy Shevchenko
+
 
 
