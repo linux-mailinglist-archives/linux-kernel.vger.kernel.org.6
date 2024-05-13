@@ -1,278 +1,494 @@
-Return-Path: <linux-kernel+bounces-177135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864E28C3A8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:49:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1218C3A90
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:50:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7BC7B20B41
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:49:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA6681C20E51
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C763E17550;
-	Mon, 13 May 2024 03:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="p2hPgoRP";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="eI8HSlMv"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1466146005;
+	Mon, 13 May 2024 03:50:19 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10931EB2A
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 03:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715572185; cv=fail; b=oAth5kFErGYXz8aOkM5TaGVznGNxzNrggxod0VlfRhJiwC9LH563q3a1R4KlkDmax0IX0NgPSaZKWF/3jyCg6+y00pjpRVUGDThFS2UEJSp0+cT0pX7rKIn8jYUYMY1B2HY3UKt2AJ0m4gUkYglV5lUqXbJ1oRwu3bn86tpLND0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715572185; c=relaxed/simple;
-	bh=pPHmvGkROxx99ghZ7x6P92FeARHliLIgl+RLcQ42MWQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tsjdkfA3z+bAcgU8ICRBwnh2dwJD2tAeX76Ex2hNPdnZnoKqqGyA6psJrt9fcVeaTwgmmOEzpZ21m97gv9bOx6RqHbRjo8awwfFF9/gYRKAoYydq6TCruIfqrkiCtsxlZFABx/V4IID7FjtQN4f4jmLNELXAf8YdWVH/VniJSjw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=p2hPgoRP; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=eI8HSlMv; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: cca11a8610db11ef8065b7b53f7091ad-20240513
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=pPHmvGkROxx99ghZ7x6P92FeARHliLIgl+RLcQ42MWQ=;
-	b=p2hPgoRPyBUPxrDgV6eFZRmKxu3VpSRdnTKsoJmbHEEvZOSp7BJBHvfps+f+lr9jcDREhHUGVWHf6PCpAMUMxPyWCYmiigfA7oZFRXgyAHr0cN21OkgOSO2VC+PuWEMe9tHOM56ivXeWsqoVVtx6YtIWmM5hrrS+21KMEQ7M4gQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ba76f785-915b-4684-88a7-06141fcec27d,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:c60e02fc-ed05-4274-9204-014369d201e8,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: cca11a8610db11ef8065b7b53f7091ad-20240513
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <liankun.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 696237788; Mon, 13 May 2024 11:49:28 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 13 May 2024 11:49:28 +0800
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 13 May 2024 11:49:28 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oNd275E3W7dCEA41sThNnBHB8zq404BLRGZYImayY3CIHKnhaMd8pRWdHBAY17CqK/sVvRDpqyyNspl/7Oq0ry0aTMff/xD2HUzw+vCKGudBE1vabn0qVdFqCCyuzLON58x3EIG6E0exty3HrBzptb17p+R3SkkJhiHLYeFpWm/0MCeOG//H/ybIuZkOa+OAD/DZpgwA1i15yg/qi2eMK9jYAY5HrOM2xBiuoqRaovUp9whI6PtjthtZOpICxublXfxNfOHGO5hhEMOlTGg/6YybBrI5UVYix/JKM88Z3DaplGTGjC/EBQ3ViKr91vYXEj3osA38lSiBJBNnztatRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pPHmvGkROxx99ghZ7x6P92FeARHliLIgl+RLcQ42MWQ=;
- b=KRFTUdqazLC+cuOwWMz2YnQrCM6q6ha6ydtdKas/lLt17qWOaxZd5NiRNIIbmip3LGA0kLJsjmvNf6o+taQPVFS9pWWr+uisd6QALFjYyY13b0OLN22k2ef6umgPcEO8SWzyh02IgvqArlU3MC7L1u6ZoUDCjlOPIedNUp2vKbzSwZG7jcnaiOvPcUMdxGS9X3g4+FgZYnk5OWo3RFssxFKUZ0xhgyT+o9yQ6NtqEnMgsfYIoFLwAz+L7UeyS3wHRm/M5KYMN1aX3VSB/c3rVLYTTTz4OY1D4JP0FmacKXJDyxfP3x2em7WsYdQerV9crFXJqFWX/Wy0v4Uh3kO81A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pPHmvGkROxx99ghZ7x6P92FeARHliLIgl+RLcQ42MWQ=;
- b=eI8HSlMva3vhmNFG5wU1CP//bAft9oYJUSBF0Qc3E7vsnDiopO6R5BtY9M/Bzj91FGo3BWE8h5CRgtzcRTwkbfzZgBMU1HdhiTQbF8V0bxFhKIVVjixz8qRVstCwY4QH9nMcaM+L49ZCYJ9P8mUCdkmvIm7nJkbysFkSGV9BZ48=
-Received: from TYZPR03MB5760.apcprd03.prod.outlook.com (2603:1096:400:70::13)
- by JH0PR03MB7982.apcprd03.prod.outlook.com (2603:1096:990:36::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.22; Mon, 13 May
- 2024 03:49:26 +0000
-Received: from TYZPR03MB5760.apcprd03.prod.outlook.com
- ([fe80::10a4:6aaa:bf25:96f3]) by TYZPR03MB5760.apcprd03.prod.outlook.com
- ([fe80::10a4:6aaa:bf25:96f3%5]) with mapi id 15.20.7587.021; Mon, 13 May 2024
- 03:49:26 +0000
-From: =?utf-8?B?TElBTktVTiBZQU5HICjmnajov57lnaQp?= <Liankun.Yang@mediatek.com>
-To: =?utf-8?B?TWFjIFNoZW4gKOayiOS/iik=?= <Mac.Shen@mediatek.com>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	=?utf-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/1] Fix get efuse issue for MT8188 DPTX
-Thread-Topic: [PATCH v1 1/1] Fix get efuse issue for MT8188 DPTX
-Thread-Index: AQHaoqG6xjcGXP+E0ECiLfoD1Vz4NbGQPv2AgARM14A=
-Date: Mon, 13 May 2024 03:49:26 +0000
-Message-ID: <2f831b6ec2123001134933c2d75d33602696e528.camel@mediatek.com>
-References: <20240510061716.31103-1-liankun.yang@mediatek.com>
-	 <f72b241f-11ab-4165-af51-14413d4e9f7a@collabora.com>
-In-Reply-To: <f72b241f-11ab-4165-af51-14413d4e9f7a@collabora.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB5760:EE_|JH0PR03MB7982:EE_
-x-ms-office365-filtering-correlation-id: b2d5ebb8-b078-43b0-7bcd-08dc72ffaf59
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015|38070700009;
-x-microsoft-antispam-message-info: =?utf-8?B?ZmhnbEwyaE9VMTIzdkFRb3NWRHRtN3EyU01HWTdFUjZlaHEzNlBaK0xsRElE?=
- =?utf-8?B?THJwTWthU09MbXlsVUhINUtmdnVFSmMzSUxNelh6YzhKekRiZ0tlVVJiUS92?=
- =?utf-8?B?REtxM3EvbnpmU25HK3I1QmdidHBWRXE3dUxpNHBXU1lWRmVwYUxUS0IrYWJi?=
- =?utf-8?B?VGpwcVZSNjhBdkdqaGtTdkZ5aVF1VGRibzgwb3hWYmtzNU8wSHd1MCtBcFVG?=
- =?utf-8?B?bW9rb1ZxcERWQVhUaXd2Y2JOZGgwbE1MVVk4YXBnWC9kbUJkdEV2RlJIdzFz?=
- =?utf-8?B?V3NzczY5Y3pjVkJzYVZXMUI4MXVzZGpoK3hERE9XRVA3MVVZcWFCS01WQ1ph?=
- =?utf-8?B?bUdnaW5SU2FxQk15NDBmSXpRSXl4UUx4UU5JOVZTcVhIb2Q1ejJXLzh3SlRE?=
- =?utf-8?B?djlpLzdLa0h5ZzdiYlpxU0VoSklzUFlrYmpaNWlraXowWk5ZU3VoSEt0TUFT?=
- =?utf-8?B?RW5saW5PbHUwbWxkK2xYMFhOOTZXb2ZNazVoUnVZbWlabStyMFNjS016UUM2?=
- =?utf-8?B?M3Z3QTFtVVRrQlJyQUx1cDRvaWJnTXNVMi9MT2VtQXZjV1FMTW0xWVRuNGMx?=
- =?utf-8?B?SkZvZyttSnA4WjRYNHY2TDh2TEs0ZVlrSEszT1pjT1NCZnl1cnVzcGJhS0lk?=
- =?utf-8?B?ang4dHV0RW5ZSGFTbCtzV2s5NDdZTzBTRFgrd0lmUTdjVWV5OXRTTjc1L050?=
- =?utf-8?B?SnBVeGVncldHTm53bkx2Q1lnRkNLUHVNMC9LZ0xMZmJnMVJmMVJvaU9rbVZu?=
- =?utf-8?B?WVo4enRQKzhFVGU2V0NSZWYyc1I0UUJzMkloQW1rY1VWYVhkbnVCMDhlTkJC?=
- =?utf-8?B?WWRXT3crdjlOQkpTSE1FK1M0S0RMUXlUbDNabjFzM1UxcEJ4VnZJNjBNZWN0?=
- =?utf-8?B?dkRnTEgxVlhCcEZsM2t5VUtkWkVNV0F2ZHh3Q2JCY2FBaEcwcEVqcjRMbmo5?=
- =?utf-8?B?S0RIRkZZc3dwbzBOemxLc0NyeWFNMnF2UTdGNVhQUUtpL3pJNlZpTVNjOVZ4?=
- =?utf-8?B?cUZaTFFiRlBHNC84TzVKM0UvcU5pVEluejZUM0hoN3ZXcUVYRUtwWnQrb3dJ?=
- =?utf-8?B?d081eUx0SUcrRlBzSmJLanFSMDMvWW9HbUpHZm1JWWNSaHhjSHR2REQzbmN6?=
- =?utf-8?B?L0F2cUo1Zk9kUy8xaExJOEhWdVhqWWxlZkdYSXZ4bWlsT0tjMURVV0xlbktJ?=
- =?utf-8?B?YnBvNlIyc1pMTktQMHJoRHhTeVBWeHFzVDFydi9Oa09tQW5TVjRTbnVlSy9x?=
- =?utf-8?B?ank0S1VUd3RWZDVVMzR6NS8rNENLY3c4UEJhYlBWSTAzcDJoNytHbUwrcndh?=
- =?utf-8?B?L2xYdUcxRDNJRDMwQTNlQ1lGVWdUbFJLSVFMQndQYkpjNGRRYTdJOG9tNFdv?=
- =?utf-8?B?STlSTDMydXNsNzVlR29XOXV2WElsV3JueFJrMHl3VThXZWhxL1Z3c2liM3A1?=
- =?utf-8?B?WXpsV0MyazVqNHhYUWYyOVlZWURnR1RHcjN0ME5TL0piblVkZjFDeVBwWk5t?=
- =?utf-8?B?eTZ2VkVwY0M3YXpUZHRTWm93NTJsNHE3MTRlWndFQ3c0THpGalVvVkV5OEIz?=
- =?utf-8?B?MDBONTVkbUNmY2cyak00VmJ2YkFlRk8xSll2ZkZ5c1p0ZmtMWG90SVJVZEdw?=
- =?utf-8?B?MnRSYVJpeXNvc2RzRlNOSmp6L1VtQnNlZURRQWwvaFh6dy80VjVXZGU3Y0dL?=
- =?utf-8?B?Vk1mYm9XYWF4WkpldmI4OVZOZ1RxZWh6MUtnT2FIVDZUcjNqM0NTaU5RY3Iy?=
- =?utf-8?B?ek8yQzk5cHRKY3IvVlZlb2ZRWXVCVFFhbHhTVzRncEVDd0V5N2crNFhuNzlm?=
- =?utf-8?B?K0NLL3lIRG1LTWc1cUtKUT09?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB5760.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UU5OaHQ4OFhmRHVrNUtXWURFRFFsVkZGK3hRdG4zbXozSVJKVjhNVUVXTlZQ?=
- =?utf-8?B?V3A1SklxbFQrb1ZzMElZWC9NQTl0V21QTWl0emhUcU0xT1BxLzJNNjFwbFBa?=
- =?utf-8?B?bVFsZHlEaE84TFFDdDdyWjREZjlVYXJLM3ZzeFBTTzBNWE9aak1vZUsydkFJ?=
- =?utf-8?B?ajJ3eVpNMHhIY2FGN1g4V250dzBzQmErby9mTE9NY3ExVUdocHc4QTFHTVR2?=
- =?utf-8?B?a2s4L0RURURTRE53WU95K3lwcHBNK1BSbk51Z3I3Nnk3RUQ2UG5sWldOcUpG?=
- =?utf-8?B?TklkUUFIdi8vN0dnbjhOa2V6aXBzb3JmZFhQWElNNEpGeXAvQkhpQ2FWN3NJ?=
- =?utf-8?B?eEI1anRNZGpXSENnT3lla2RjdFdyYzhzUmtyNE1LSkp2Z1F6VmN2UjBRV204?=
- =?utf-8?B?cGpIcldtd1paL0dSNmNMWk9SL1RDZThIY2NHWmpUSFhhaTU2NTVMU2tybDVo?=
- =?utf-8?B?bVE5R2lWN2tBY0hIU1N0N2JIMmtGUWlOV1Q1bkNNZnJrUGpmR0FUSmpWcFFM?=
- =?utf-8?B?cWRSZGorUU4vR0Y1MENHT1JJYnhrWGdNUjV4Q2VUSTJISEpwa1Y5Wm5VOG5z?=
- =?utf-8?B?SXVHYWxsZDBSZ01aS01adHVjQWxNQzBQRk90VFFhbU11R2lXQkh5NFpXaFVG?=
- =?utf-8?B?YXpEOE9wV3RVNDNhTFhDbW44RDg5Y1F2U2xqUVhrTzBidUZVeU9FaUdDWkti?=
- =?utf-8?B?anNSYWZtSFRkNzM2SWtCbUZFTFJRWEg3eFRHOXJJb25KZVh5QnlaOG1HaC9B?=
- =?utf-8?B?ZjBJODkwbXVBNFRIVGR0TVFOcHNjeGN5YkYxRGJma3p4S2VyMUl5a1RTTStL?=
- =?utf-8?B?SDkzcWhnRmVQb2xjTlJscDh4UW04N3hiYXVxLytaSjNxNTRWMVJOcnJOOE1q?=
- =?utf-8?B?Q0RwbUJ0ZlpZOU13VEprdUloUzlvalhkUDFWdWVHWVFxNnpKMmJmN0pIcXN0?=
- =?utf-8?B?dnVZbXVUUWtKNWVYMzlTQ1BleklERGw1VFFRZFF2ejJFR2N1NHZrMVA4Tzhl?=
- =?utf-8?B?OGVvNWpDWFNiNjlUclZDVVRXUEdEUjhyUjhpbGx5bXZ0Z09uaDhIL3dhcTVC?=
- =?utf-8?B?NHJ0YytXb1NySkwrRzlsUTR6UVZsTVJ1ZnEzWGFLWVFOdktPK3VNcEZaOU81?=
- =?utf-8?B?dWR3cWZ3Rk9EaEJMMGxzZGRGVFVHUXRhbnRoRnoxZHJqcWViamIvQnRHVkEw?=
- =?utf-8?B?SGxaZmFsbEVSSHFIRnlEZ01mcXFtWlF6cXdxbWFPOXlFeHdld2xHQ3lqUDVo?=
- =?utf-8?B?SGVJYzhmUHI1dXZqUS9YeW1GbDFoei8yVVh4NVBEWVFQdytRU3dnbmJqd1VG?=
- =?utf-8?B?S1RWTGJyRWQwSWJqVnJZTktvUzE4S3Y2UjFweCtueEFlNzdiZUEvaUpTQ3g0?=
- =?utf-8?B?WlhESk1senJBQzdsYUd2cm1ESUl6WHRaV1VMWXo0Zi84R3pKdUNERmt0Wk5x?=
- =?utf-8?B?SDBZU2tqdlphQ3c1ZGwxdXhkQ0szaEl2MEJqeDhDT0F2Z28xNVl4SURvOGk3?=
- =?utf-8?B?dlpaZkxtR2wyL1crV3hDQ2lmbVBZUFI1R1dIcS9HZ0lxQnJxK3lLMFJyUU5G?=
- =?utf-8?B?TlNQenQ0VTdSNGs4cWpDazRsWEE3bEJDU1FUZFNyZ29JeFF0YTZvVENoYzV4?=
- =?utf-8?B?cXFZTFp5ZllBeWZwTDZJajNwS2NjQklXSHZWUElsS2JoUjVIQmp0VDJRNk92?=
- =?utf-8?B?OGFTaFhWSnRVWmVDTHBTbWhnbUFpcENhUFBGRjZnSDlrRFYrL0ZZRHhPMDY3?=
- =?utf-8?B?bTlQS2ZHbVRZdmdEQTA1VURVb3VPalVGOGZxZ1Nnd2JRWVVJUVRnQjlGaVpp?=
- =?utf-8?B?QzRKZWlhVkNlN1BDbmk3QWxjTzBOVU9rTU1zMnNkbHNpRXBQM1Ixb3BoWW5Q?=
- =?utf-8?B?VDl0UXRoU1BORlh0NjRneXAvQ0xJSEZwUzNCR0orM213akRvc0pubWlOYW01?=
- =?utf-8?B?Wnd3SHBVUFNSbDJhK29jVVlsZmd4a2hGeGhaUWFmb0c5MHhjNWd5NU04bER1?=
- =?utf-8?B?blpvMTZhWWtXUlZJSFg0U1dxZHgyVDJScm94OUh2UUozcmE5eFg0bU9DY0Zs?=
- =?utf-8?B?bkJBME93bnhkRHQ3SnRHdmh1QXFNZVdHbXpkZzNQMlJwbGd3dndlRjZnenhZ?=
- =?utf-8?B?WnVWV3NwSGtndXllT1dvUi9Ud3M2YWFnQmw3c3JjaUNNMk1Kc0RQdWNwRmI0?=
- =?utf-8?B?ZkE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D1A783009D2D164691A77229839D1332@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC88145FE7;
+	Mon, 13 May 2024 03:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715572218; cv=none; b=XEne2vazAR6coq5FuvNYZWCA1vcBvxMN064CLDzBdM0w4MaFYKrIP9/QnoyFvFYk7Jc8KffAt6O5siM2VRv3bdQvvuteLvYQ3KwokRdCWeriw6Ijuee02fohmYwb7C/FT5MsVIeFZI31tu04xJqclZpZ0tJUqz36rUSfLFJodlY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715572218; c=relaxed/simple;
+	bh=YQsXCOsVVBa8qOy+/hFqzFoGl9riWQ6K5Zfnn8qGWqY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1ura/FRQ3LQLW9omkc/b4CN5dM6axQ5sKxPW2OFqu93RI/FZMsmjmKeqfeMJnbrwYyqA/wN+z94cb1b4LpV7Nci9ZbKNj5rTvjkaOgfKGxETIkjX11a2ORoUZjDq2S8cbEg2VCTamt/Q3y3qyntqtDFzQyBhFfKBcdD5biEnFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1s6MhO-00EQVN-1v;
+	Mon, 13 May 2024 11:50:03 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 13 May 2024 11:50:03 +0800
+Date: Mon, 13 May 2024 11:50:03 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Update for 6.10
+Message-ID: <ZkGN64ulwzPVvn6-@gondor.apana.org.au>
+References: <Yui+kNeY+Qg4fKVl@gondor.apana.org.au>
+ <Yzv0wXi4Uu2WND37@gondor.apana.org.au>
+ <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au>
+ <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
+ <ZEYLC6QsKnqlEQzW@gondor.apana.org.au>
+ <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au>
+ <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au>
+ <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB5760.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2d5ebb8-b078-43b0-7bcd-08dc72ffaf59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2024 03:49:26.3635
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Dba+2rhrciarueNg7SVh5lxPIXDjxtFB6HZ9bLxsaiVH5VXBZR9oKQ2MHyn31IFolyzyEF9nW8Xhpby+7SGmoAqHwItJ6Z0AqAg6siu6PZI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7982
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
 
-T24gRnJpLCAyMDI0LTA1LTEwIGF0IDEyOjA5ICswMjAwLCBBbmdlbG9HaW9hY2NoaW5vIERlbCBS
-ZWdubyB3cm90ZToNCj4gSWwgMTAvMDUvMjQgMDg6MTYsIExpYW5rdW4gWWFuZyBoYSBzY3JpdHRv
-Og0KPiA+IEZpeCBnZXQgZWZ1c2UgaXNzdWUgZm9yIE1UODE4OCBEUFRYLg0KPiA+IA0KPiA+IFNp
-Z25lZC1vZmYtYnk6IExpYW5rdW4gWWFuZyA8bGlhbmt1bi55YW5nQG1lZGlhdGVrLmNvbT4NCj4g
-DQo+IEkgbWF5IGFncmVlIHdpdGggdGhpcyBjb21taXQsIGJ1dDoNCj4gMS4gVGhlIGNvbW1pdCB0
-aXRsZSBpcyBpbmNvcnJlY3QgLSBJIGRvbid0IHNlZSAiZHJtL21lZGlhdGVrOiIgLQ0KPiBwbGVh
-c2UgbG9vayBhdA0KPiAgICAgdGhlIGhpc3RvcnkgdG8gZmluZCBvdXQgdGhlIHJpZ2h0IHRpdGxl
-cyBmb3IgeW91ciBjb21taXRzOyBhbmQNCj4gMi4gVGhlIGNvbW1pdCBkZXNjcmlwdGlvbiBpc24n
-dCBkZXNjcmliaW5nIGFueXRoaW5nLCB5b3UncmUganVzdA0KPiByZXBlYXRpbmcgdGhlDQo+ICAg
-ICB0aXRsZTogcGxlYXNlIGFkZCBhIGRlc2NyaXB0aW9uLiBXaGF0IHdhcyB3cm9uZz8gV2hhdCBk
-aWQgeW91IGZpeA0KPiBwcmVjaXNlbHk/DQo+IDMuIFRoZXJlJ3Mgbm8gRml4ZXMgdGFnLiBQbGVh
-c2UgYWRkIHRoZSByZWxldmFudCBvbmUuDQo+IA0KPiBSZWdhcmRzLA0KPiBBbmdlbG8NCj4gDQo+
-ID4gLS0tDQo+ID4gICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RwLmMgfCA4NQ0KPiA+
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCA4
-NCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHAuYw0KPiA+IGIvZHJpdmVycy9ncHUvZHJtL21l
-ZGlhdGVrL210a19kcC5jDQo+ID4gaW5kZXggMjEzNmE1OTZlZmExLi4zMmIzNmI2M2E0ZTEgMTAw
-NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcC5jDQo+ID4gKysr
-IGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcC5jDQo+ID4gQEAgLTE0NSw2ICsxNDUs
-ODkgQEAgc3RydWN0IG10a19kcF9kYXRhIHsNCj4gPiAgIAl1MTYgYXVkaW9fbV9kaXYyX2JpdDsN
-Cj4gPiAgIH07DQo+ID4gICANCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBtdGtfZHBfZWZ1c2Vf
-Zm10DQo+ID4gbXQ4MTg4X2RwX2VmdXNlX2ZtdFtNVEtfRFBfQ0FMX01BWF0gPSB7DQo+ID4gKwlb
-TVRLX0RQX0NBTF9HTEJfQklBU19UUklNXSA9IHsNCj4gPiArCQkuaWR4ID0gMCwNCj4gPiArCQku
-c2hpZnQgPSAxMCwNCj4gPiArCQkubWFzayA9IDB4MWYsDQo+ID4gKwkJLm1pbl92YWwgPSAxLA0K
-PiA+ICsJCS5tYXhfdmFsID0gMHgxZSwNCj4gPiArCQkuZGVmYXVsdF92YWwgPSAweGYsDQo+ID4g
-Kwl9LA0KPiA+ICsJW01US19EUF9DQUxfQ0xLVFhfSU1QU0VdID0gew0KPiA+ICsJCS5pZHggPSAw
-LA0KPiA+ICsJCS5zaGlmdCA9IDE1LA0KPiA+ICsJCS5tYXNrID0gMHhmLA0KPiA+ICsJCS5taW5f
-dmFsID0gMSwNCj4gPiArCQkubWF4X3ZhbCA9IDB4ZSwNCj4gPiArCQkuZGVmYXVsdF92YWwgPSAw
-eDgsDQo+ID4gKwl9LA0KPiA+ICsJW01US19EUF9DQUxfTE5fVFhfSU1QU0VMX1BNT1NfMF0gPSB7
-DQo+ID4gKwkJLmlkeCA9IDEsDQo+ID4gKwkJLnNoaWZ0ID0gMCwNCj4gPiArCQkubWFzayA9IDB4
-ZiwNCj4gPiArCQkubWluX3ZhbCA9IDEsDQo+ID4gKwkJLm1heF92YWwgPSAweGUsDQo+ID4gKwkJ
-LmRlZmF1bHRfdmFsID0gMHg4LA0KPiA+ICsJfSwNCj4gPiArCVtNVEtfRFBfQ0FMX0xOX1RYX0lN
-UFNFTF9QTU9TXzFdID0gew0KPiA+ICsJCS5pZHggPSAxLA0KPiA+ICsJCS5zaGlmdCA9IDgsDQo+
-ID4gKwkJLm1hc2sgPSAweGYsDQo+ID4gKwkJLm1pbl92YWwgPSAxLA0KPiA+ICsJCS5tYXhfdmFs
-ID0gMHhlLA0KPiA+ICsJCS5kZWZhdWx0X3ZhbCA9IDB4OCwNCj4gPiArCX0sDQo+ID4gKwlbTVRL
-X0RQX0NBTF9MTl9UWF9JTVBTRUxfUE1PU18yXSA9IHsNCj4gPiArCQkuaWR4ID0gMSwNCj4gPiAr
-CQkuc2hpZnQgPSAxNiwNCj4gPiArCQkubWFzayA9IDB4ZiwNCj4gPiArCQkubWluX3ZhbCA9IDEs
-DQo+ID4gKwkJLm1heF92YWwgPSAweGUsDQo+ID4gKwkJLmRlZmF1bHRfdmFsID0gMHg4LA0KPiA+
-ICsJfSwNCj4gPiArCVtNVEtfRFBfQ0FMX0xOX1RYX0lNUFNFTF9QTU9TXzNdID0gew0KPiA+ICsJ
-CS5pZHggPSAxLA0KPiA+ICsJCS5zaGlmdCA9IDI0LA0KPiA+ICsJCS5tYXNrID0gMHhmLA0KPiA+
-ICsJCS5taW5fdmFsID0gMSwNCj4gPiArCQkubWF4X3ZhbCA9IDB4ZSwNCj4gPiArCQkuZGVmYXVs
-dF92YWwgPSAweDgsDQo+ID4gKwl9LA0KPiA+ICsJW01US19EUF9DQUxfTE5fVFhfSU1QU0VMX05N
-T1NfMF0gPSB7DQo+ID4gKwkJLmlkeCA9IDEsDQo+ID4gKwkJLnNoaWZ0ID0gNCwNCj4gPiArCQku
-bWFzayA9IDB4ZiwNCj4gPiArCQkubWluX3ZhbCA9IDEsDQo+ID4gKwkJLm1heF92YWwgPSAweGUs
-DQo+ID4gKwkJLmRlZmF1bHRfdmFsID0gMHg4LA0KPiA+ICsJfSwNCj4gPiArCVtNVEtfRFBfQ0FM
-X0xOX1RYX0lNUFNFTF9OTU9TXzFdID0gew0KPiA+ICsJCS5pZHggPSAxLA0KPiA+ICsJCS5zaGlm
-dCA9IDEyLA0KPiA+ICsJCS5tYXNrID0gMHhmLA0KPiA+ICsJCS5taW5fdmFsID0gMSwNCj4gPiAr
-CQkubWF4X3ZhbCA9IDB4ZSwNCj4gPiArCQkuZGVmYXVsdF92YWwgPSAweDgsDQo+ID4gKwl9LA0K
-PiA+ICsJW01US19EUF9DQUxfTE5fVFhfSU1QU0VMX05NT1NfMl0gPSB7DQo+ID4gKwkJLmlkeCA9
-IDEsDQo+ID4gKwkJLnNoaWZ0ID0gMjAsDQo+ID4gKwkJLm1hc2sgPSAweGYsDQo+ID4gKwkJLm1p
-bl92YWwgPSAxLA0KPiA+ICsJCS5tYXhfdmFsID0gMHhlLA0KPiA+ICsJCS5kZWZhdWx0X3ZhbCA9
-IDB4OCwNCj4gPiArCX0sDQo+ID4gKwlbTVRLX0RQX0NBTF9MTl9UWF9JTVBTRUxfTk1PU18zXSA9
-IHsNCj4gPiArCQkuaWR4ID0gMSwNCj4gPiArCQkuc2hpZnQgPSAyOCwNCj4gPiArCQkubWFzayA9
-IDB4ZiwNCj4gPiArCQkubWluX3ZhbCA9IDEsDQo+ID4gKwkJLm1heF92YWwgPSAweGUsDQo+ID4g
-KwkJLmRlZmF1bHRfdmFsID0gMHg4LA0KPiA+ICsJfSwNCj4gPiArfTsNCj4gPiArDQo+ID4gICBz
-dGF0aWMgY29uc3Qgc3RydWN0IG10a19kcF9lZnVzZV9mbXQNCj4gPiBtdDgxOTVfZWRwX2VmdXNl
-X2ZtdFtNVEtfRFBfQ0FMX01BWF0gPSB7DQo+ID4gICAJW01US19EUF9DQUxfR0xCX0JJQVNfVFJJ
-TV0gPSB7DQo+ID4gICAJCS5pZHggPSAzLA0KPiA+IEBAIC0yNzU4LDcgKzI4NDEsNyBAQCBzdGF0
-aWMgU0lNUExFX0RFVl9QTV9PUFMobXRrX2RwX3BtX29wcywNCj4gPiBtdGtfZHBfc3VzcGVuZCwg
-bXRrX2RwX3Jlc3VtZSk7DQo+ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19kcF9kYXRhIG10
-ODE4OF9kcF9kYXRhID0gew0KPiA+ICAgCS5icmlkZ2VfdHlwZSA9IERSTV9NT0RFX0NPTk5FQ1RP
-Ul9EaXNwbGF5UG9ydCwNCj4gPiAgIAkuc21jX2NtZCA9IE1US19EUF9TSVBfQVRGX1ZJREVPX1VO
-TVVURSwNCj4gPiAtCS5lZnVzZV9mbXQgPSBtdDgxOTVfZHBfZWZ1c2VfZm10LA0KPiA+ICsJLmVm
-dXNlX2ZtdCA9IG10ODE4OF9kcF9lZnVzZV9mbXQsDQo+ID4gICAJLmF1ZGlvX3N1cHBvcnRlZCA9
-IHRydWUsDQo+ID4gICAJLmF1ZGlvX3BrdF9pbl9oYmxhbmtfYXJlYSA9IHRydWUsDQo+ID4gICAJ
-LmF1ZGlvX21fZGl2Ml9iaXQgPQ0KPiA+IE1UODE4OF9BVURJT19NX0NPREVfTVVMVF9ESVZfU0VM
-X0RQX0VOQzBfUDBfRElWXzIsDQo+IA0KPiBTb3JyeS5JIHdpbGwgc2VuZCB0aGUgc2Vjb25kIGVk
-aXRpb24sYW5kIGZpeGluZyB0aGUgY29tbWl0IHRpdGxlIGFuZA0KPiBjb21taXQgZGVzY3JpcHRp
-b24uDQo=
+Hi Linus:
+
+The following changes since commit 174fdc93a241af54772ae3e745ec719e9f6cebfc:
+
+  Merge tag 'v6.9-p2' of git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6 (2024-03-25 10:48:23 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git v6.10-p1 
+
+for you to fetch changes up to 13909a0c88972c5ef5d13f44d1a8bf065a31bdf4:
+
+  crypto: atmel-sha204a - provide the otp content (2024-05-10 17:15:25 +0800)
+
+----------------------------------------------------------------
+This update includes the following changes:
+
+API:
+
+- Remove crypto stats interface.
+
+Algorithms:
+
+- Add faster AES-XTS on modern x86_64 CPUs.
+- Forbid curves with order less than 224 bits in ecc (FIPS 186-5).
+- Add ECDSA NIST P521.
+
+Drivers:
+
+- Expose otp zone in atmel.
+- Add dh fallback for primes > 4K in qat.
+- Add interface for live migration in qat.
+- Use dma for aes requests in starfive.
+- Add full DMA support for stm32mpx in stm32.
+- Add Tegra Security Engine driver.
+
+Others:
+
+- Introduce scope-based x509_certificate allocation.
+----------------------------------------------------------------
+
+Adam Guerin (2):
+      crypto: qat - improve error message in adf_get_arbiter_mapping()
+      crypto: qat - improve error logging to be consistent across features
+
+Akhil R (3):
+      dt-bindings: crypto: Add Tegra Security Engine
+      gpu: host1x: Add Tegra SE to SID table
+      crypto: tegra - Add Tegra Security Engine driver
+
+Aleksandr Mishin (1):
+      crypto: bcm - Fix pointer arithmetic
+
+Animesh Agarwal (1):
+      dt-bindings: crypto: ti,omap-sham: Convert to dtschema
+
+Ard Biesheuvel (1):
+      crypto: arm64/aes-ce - Simplify round key load sequence
+
+Arnd Bergmann (1):
+      crypto: ccp - drop platform ifdef checks
+
+Chang S. Bae (2):
+      crypto: x86/aesni - Rearrange AES key size check
+      crypto: x86/aesni - Update aesni_set_key() to return void
+
+Chen Ni (1):
+      crypto: octeontx2 - add missing check for dma_map_single
+
+Chenghai Huang (10):
+      crypto: hisilicon/sec - Add the condition for configuring the sriov function
+      crypto: hisilicon/debugfs - Fix debugfs uninit process issue
+      crypto: hisilicon/sgl - Delete redundant parameter verification
+      crypto: hisilicon/debugfs - Fix the processing logic issue in the debugfs creation
+      crypto: hisilicon/qm - Add the default processing branch
+      crypto: hisilicon - Adjust debugfs creation and release order
+      crypto: hisilicon/sec - Fix memory leak for sec resource release
+      crypto: hisilicon/debugfs - Resolve the problem of applying for redundant space in sq dump
+      crypto: hisilicon/qm - Add the err memory release process to qm uninit
+      crypto: hisilicon/debugfs - mask the unnecessary info from the dump
+
+Colin Ian King (1):
+      crypto: qat - Fix spelling mistake "Invalide" -> "Invalid"
+
+Damian Muszynski (1):
+      crypto: qat - implement dh fallback for primes > 4K
+
+Dan Carpenter (1):
+      crypto: tegra - Fix some error codes
+
+Eric Biggers (24):
+      crypto: remove CONFIG_CRYPTO_STATS
+      x86: add kconfig symbols for assembler VAES and VPCLMULQDQ support
+      crypto: x86/aes-xts - add AES-XTS assembly macro for modern CPUs
+      crypto: x86/aes-xts - wire up AESNI + AVX implementation
+      crypto: x86/aes-xts - wire up VAES + AVX2 implementation
+      crypto: x86/aes-xts - wire up VAES + AVX10/256 implementation
+      crypto: x86/aes-xts - wire up VAES + AVX10/512 implementation
+      crypto: x86/nh-avx2 - add missing vzeroupper
+      crypto: x86/sha256-avx2 - add missing vzeroupper
+      crypto: x86/sha512-avx2 - add missing vzeroupper
+      crypto: x86/aes-xts - make non-AVX implementation use new glue code
+      crypto: x86/aes-xts - access round keys using single-byte offsets
+      crypto: x86/sha256-ni - convert to use rounds macros
+      crypto: x86/sha256-ni - rename some register aliases
+      crypto: x86/sha256-ni - optimize code size
+      crypto: x86/sha256-ni - simplify do_4rounds
+      crypto: x86/aes-xts - handle CTS encryption more efficiently
+      crypto: x86/aesni-xts - deduplicate aesni_xts_enc() and aesni_xts_dec()
+      crypto: x86/aes-xts - handle AES-128 and AES-192 more efficiently
+      crypto: x86/aes-xts - eliminate a few more instructions
+      crypto: x86/aes-xts - optimize size of instructions operating on lengths
+      crypto: x86/aes-xts - simplify loop in xts_crypt_slowpath()
+      crypto: x86/aes-gcm - delete unused GCM assembly code
+      crypto: x86/aes-gcm - simplify GCM hash subkey derivation
+
+Geert Uytterhoeven (1):
+      dt-bindings: crypto: starfive: Restore sort order
+
+Giovanni Cabiddu (3):
+      crypto: qat - adf_get_etr_base() helper
+      crypto: qat - relocate CSR access code
+      crypto: qat - specify firmware files for 402xx
+
+Gustavo A. R. Silva (2):
+      crypto: nx - Avoid -Wflex-array-member-not-at-end warning
+      crypto: qat - Avoid -Wflex-array-member-not-at-end warnings
+
+Hailey Mothershead (1):
+      crypto: aead,cipher - zeroize key buffer after use
+
+Herbert Xu (1):
+      padata: Disable BH when taking works lock on MT path
+
+Jerry Snitselaar (1):
+      crypto: iaa - Fix some errors in IAA documentation
+
+Jia Jie Ho (8):
+      dt-bindings: crypto: starfive: Add jh8100 support
+      crypto: starfive - Update hash dma usage
+      crypto: starfive - Skip unneeded key free
+      crypto: starfive - Use dma for aes requests
+      crypto: starfive - Skip dma setup for zeroed message
+      crypto: starfive - Skip unneeded fallback allocation
+      crypto: starfive - Do not free stack buffer
+      crypto: starfive - Use fallback for unaligned dma access
+
+Joachim Vandersmissen (2):
+      crypto: ecc - update ecc_gen_privkey for FIPS 186-5
+      crypto: ecdh - explicitly zeroize private_key
+
+Joel Granados (1):
+      crypto: fips - Remove the now superfluous sentinel element from ctl_table array
+
+Li Zhijian (1):
+      hwrng: core - Convert sprintf/snprintf to sysfs_emit
+
+Lothar Rubusch (4):
+      crypto: atmel-i2c - add missing arg description
+      crypto: atmel-i2c - rename read function
+      crypto: atmel-sha204a - add reading from otp zone
+      crypto: atmel-sha204a - provide the otp content
+
+Luca Weiss (1):
+      dt-bindings: crypto: ice: Document sc7280 inline crypto engine
+
+Lucas Segarra Fernandez (1):
+      crypto: qat - validate slices count returned by FW
+
+Lukas Wunner (1):
+      X.509: Introduce scope-based x509_certificate allocation
+
+Marek Vasut (3):
+      hwrng: stm32 - use logical OR in conditional
+      hwrng: stm32 - put IP into RPM suspend on failure
+      hwrng: stm32 - repair clock handling
+
+Maxime Méré (1):
+      crypto: stm32/hash - add full DMA support for stm32mpx
+
+Pankaj Gupta (2):
+      crypto: caam - init-clk based on caam-page0-access
+      crypto: caam - i.MX8ULP donot have CAAM page0 access
+
+Roman Smirnov (2):
+      crypto: ecc - remove checks in crypto_ecdh_shared_secret() and ecc_make_pub_key()
+      crypto: algboss - remove NULL check in cryptomgr_schedule_probe()
+
+Siming Wan (3):
+      crypto: qat - rename get_sla_arr_of_type()
+      crypto: qat - expand CSR operations for QAT GEN4 devices
+      crypto: qat - add bank save and restore flows
+
+Stefan Berger (16):
+      crypto: ecdsa - Fix module auto-load on add-key
+      crypto: ecc - Use ECC_CURVE_NIST_P192/256/384_DIGITS where possible
+      crypto: ecdsa - Convert byte arrays with key coordinates to digits
+      crypto: ecdsa - Adjust tests on length of key parameters
+      crypto: ecdsa - Extend res.x mod n calculation for NIST P521
+      crypto: ecc - Add nbits field to ecc_curve structure
+      crypto: ecc - Implement vli_mmod_fast_521 for NIST p521
+      crypto: ecc - Add special case for NIST P521 in ecc_point_mult
+      crypto: ecc - Add NIST P521 curve parameters
+      crypto: ecdsa - Replace ndigits with nbits where precision is needed
+      crypto: ecdsa - Rename keylen to bufsize where necessary
+      crypto: ecdsa - Register NIST P521 and extend test suite
+      crypto: asymmetric_keys - Adjust signature size calculation for NIST P521
+      crypto: x509 - Add OID for NIST P521 and extend parser for it
+      crypto: ecdh - Pass private key in proper byte order to check valid key
+      crypto: ecdh - Initialize ctx->private_key in proper byte order
+
+Thorsten Blum (4):
+      crypto: jitter - Use kvfree_sensitive() to fix Coccinelle warning
+      crypto: jitter - Remove duplicate word in comment
+      crypto: jitter - Replace http with https
+      crypto: iaa - Use kmemdup() instead of kzalloc() and memcpy()
+
+Tom Zanussi (5):
+      crypto: iaa - fix decomp_bytes_in stats
+      crypto: iaa - Remove comp/decomp delay statistics
+      crypto: iaa - Add global_stats file and remove individual stat files
+      crypto: iaa - Change iaa statistics to atomic64_t
+      crypto: iaa - Use cpumask_weight() when rebalancing
+
+Uwe Kleine-König (2):
+      hwrng: mxc-rnga - Drop usage of platform_driver_probe()
+      crypto: tegra - Convert to platform remove callback returning void
+
+Vitaly Chikunov (1):
+      crypto: ecrdsa - Fix module auto-load on add_key
+
+Wenkai Lin (1):
+      crypto: hisilicon/sec2 - fix for register offset
+
+Wolfram Sang (2):
+      crypto: api - use 'time_left' variable with wait_for_completion_killable_timeout()
+      crypto: sahara - use 'time_left' variable with wait_for_completion_timeout()
+
+Xin Zeng (4):
+      crypto: qat - relocate and rename 4xxx PF2VM definitions
+      crypto: qat - move PFVF compat checker to a function
+      crypto: qat - add interface for live migration
+      crypto: qat - implement interface for live migration
+
+ .../bindings/crypto/nvidia,tegra234-se-aes.yaml    |   52 +
+ .../bindings/crypto/nvidia,tegra234-se-hash.yaml   |   52 +
+ .../devicetree/bindings/crypto/omap-sham.txt       |   28 -
+ .../bindings/crypto/qcom,inline-crypto-engine.yaml |    1 +
+ .../bindings/crypto/starfive,jh7110-crypto.yaml    |   30 +-
+ .../devicetree/bindings/crypto/ti,omap-sham.yaml   |   56 +
+ Documentation/driver-api/crypto/iaa/iaa-crypto.rst |   96 +-
+ MAINTAINERS                                        |    5 +
+ arch/arm64/crypto/aes-ce.S                         |   34 +-
+ arch/arm64/crypto/aes-neon.S                       |   20 +-
+ arch/s390/configs/debug_defconfig                  |    1 -
+ arch/s390/configs/defconfig                        |    1 -
+ arch/x86/Kconfig.assembler                         |   10 +
+ arch/x86/crypto/Makefile                           |    3 +-
+ arch/x86/crypto/aes-xts-avx-x86_64.S               |  845 +++++++++
+ arch/x86/crypto/aesni-intel_asm.S                  |  469 +----
+ arch/x86/crypto/aesni-intel_glue.c                 |  420 +++--
+ arch/x86/crypto/nh-avx2-x86_64.S                   |    1 +
+ arch/x86/crypto/sha256-avx2-asm.S                  |    1 +
+ arch/x86/crypto/sha256_ni_asm.S                    |  251 +--
+ arch/x86/crypto/sha512-avx2-asm.S                  |    1 +
+ crypto/Kconfig                                     |   20 -
+ crypto/Makefile                                    |    2 -
+ crypto/acompress.c                                 |   33 -
+ crypto/aead.c                                      |   87 +-
+ crypto/ahash.c                                     |   63 +-
+ crypto/akcipher.c                                  |   31 -
+ crypto/algboss.c                                   |    3 -
+ crypto/api.c                                       |    8 +-
+ crypto/asymmetric_keys/public_key.c                |   14 +-
+ crypto/asymmetric_keys/x509_cert_parser.c          |   46 +-
+ crypto/asymmetric_keys/x509_parser.h               |    3 +
+ crypto/asymmetric_keys/x509_public_key.c           |   31 +-
+ crypto/cipher.c                                    |    3 +-
+ crypto/compress.h                                  |    3 -
+ crypto/{crypto_user_base.c => crypto_user.c}       |   10 +-
+ crypto/crypto_user_stat.c                          |  176 --
+ crypto/ecc.c                                       |  100 +-
+ crypto/ecc_curve_defs.h                            |   49 +
+ crypto/ecdh.c                                      |   11 +-
+ crypto/ecdsa.c                                     |   66 +-
+ crypto/ecrdsa.c                                    |    1 +
+ crypto/ecrdsa_defs.h                               |    5 +
+ crypto/fips.c                                      |    1 -
+ crypto/hash.h                                      |   30 -
+ crypto/jitterentropy-kcapi.c                       |    3 +-
+ crypto/jitterentropy.c                             |    4 +-
+ crypto/kpp.c                                       |   30 -
+ crypto/lskcipher.c                                 |   73 +-
+ crypto/rng.c                                       |   44 +-
+ crypto/scompress.c                                 |    3 -
+ crypto/shash.c                                     |   75 +-
+ crypto/sig.c                                       |   13 -
+ crypto/skcipher.c                                  |   86 +-
+ crypto/skcipher.h                                  |   10 -
+ crypto/testmgr.c                                   |    7 +
+ crypto/testmgr.h                                   |  146 ++
+ drivers/char/hw_random/core.c                      |    2 +-
+ drivers/char/hw_random/mxc-rnga.c                  |    9 +-
+ drivers/char/hw_random/stm32-rng.c                 |   18 +-
+ drivers/crypto/Kconfig                             |    8 +
+ drivers/crypto/Makefile                            |    1 +
+ drivers/crypto/atmel-i2c.c                         |   30 +-
+ drivers/crypto/atmel-i2c.h                         |    8 +-
+ drivers/crypto/atmel-sha204a.c                     |   68 +
+ drivers/crypto/bcm/spu2.c                          |    2 +-
+ drivers/crypto/caam/ctrl.c                         |   19 +-
+ drivers/crypto/ccp/sp-platform.c                   |   14 +-
+ drivers/crypto/hisilicon/debugfs.c                 |   65 +-
+ drivers/crypto/hisilicon/hpre/hpre_main.c          |   23 +-
+ drivers/crypto/hisilicon/qm.c                      |    8 +-
+ drivers/crypto/hisilicon/sec2/sec_crypto.c         |    4 +-
+ drivers/crypto/hisilicon/sec2/sec_main.c           |   32 +-
+ drivers/crypto/hisilicon/sgl.c                     |    5 +-
+ drivers/crypto/hisilicon/zip/zip_main.c            |   24 +-
+ drivers/crypto/intel/iaa/iaa_crypto.h              |   16 +-
+ drivers/crypto/intel/iaa/iaa_crypto_main.c         |   23 +-
+ drivers/crypto/intel/iaa/iaa_crypto_stats.c        |  183 +-
+ drivers/crypto/intel/iaa/iaa_crypto_stats.h        |    8 -
+ .../crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c |    5 +-
+ .../crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c   |    7 +-
+ drivers/crypto/intel/qat/qat_4xxx/adf_drv.c        |    2 +
+ .../crypto/intel/qat/qat_c3xxx/adf_c3xxx_hw_data.c |    1 +
+ .../intel/qat/qat_c3xxxvf/adf_c3xxxvf_hw_data.c    |    1 +
+ .../crypto/intel/qat/qat_c62x/adf_c62x_hw_data.c   |    1 +
+ .../intel/qat/qat_c62xvf/adf_c62xvf_hw_data.c      |    1 +
+ drivers/crypto/intel/qat/qat_common/Makefile       |    6 +-
+ .../intel/qat/qat_common/adf_accel_devices.h       |   88 +
+ .../crypto/intel/qat/qat_common/adf_common_drv.h   |   10 +
+ .../intel/qat/qat_common/adf_gen2_hw_csr_data.c    |  101 +
+ .../intel/qat/qat_common/adf_gen2_hw_csr_data.h    |   86 +
+ .../crypto/intel/qat/qat_common/adf_gen2_hw_data.c |   97 -
+ .../crypto/intel/qat/qat_common/adf_gen2_hw_data.h |   76 -
+ .../intel/qat/qat_common/adf_gen4_hw_csr_data.c    |  231 +++
+ .../intel/qat/qat_common/adf_gen4_hw_csr_data.h    |  188 ++
+ .../crypto/intel/qat/qat_common/adf_gen4_hw_data.c |  380 +++-
+ .../crypto/intel/qat/qat_common/adf_gen4_hw_data.h |  127 +-
+ .../crypto/intel/qat/qat_common/adf_gen4_pfvf.c    |    8 +-
+ drivers/crypto/intel/qat/qat_common/adf_gen4_tl.c  |    1 +
+ .../crypto/intel/qat/qat_common/adf_gen4_vf_mig.c  | 1010 ++++++++++
+ .../crypto/intel/qat/qat_common/adf_gen4_vf_mig.h  |   10 +
+ .../crypto/intel/qat/qat_common/adf_mstate_mgr.c   |  318 ++++
+ .../crypto/intel/qat/qat_common/adf_mstate_mgr.h   |   89 +
+ .../intel/qat/qat_common/adf_pfvf_pf_proto.c       |    8 +-
+ .../crypto/intel/qat/qat_common/adf_pfvf_utils.h   |   11 +
+ drivers/crypto/intel/qat/qat_common/adf_rl.c       |   12 +-
+ drivers/crypto/intel/qat/qat_common/adf_rl.h       |    2 +
+ drivers/crypto/intel/qat/qat_common/adf_sriov.c    |    7 +-
+ .../crypto/intel/qat/qat_common/adf_telemetry.c    |   21 +
+ .../crypto/intel/qat/qat_common/adf_telemetry.h    |    1 +
+ .../crypto/intel/qat/qat_common/adf_transport.c    |    4 +-
+ .../crypto/intel/qat/qat_common/qat_asym_algs.c    |   66 +-
+ drivers/crypto/intel/qat/qat_common/qat_bl.c       |    6 +-
+ drivers/crypto/intel/qat/qat_common/qat_bl.h       |   11 +-
+ drivers/crypto/intel/qat/qat_common/qat_mig_dev.c  |  130 ++
+ .../intel/qat/qat_dh895xcc/adf_dh895xcc_hw_data.c  |    1 +
+ .../qat/qat_dh895xccvf/adf_dh895xccvf_hw_data.c    |    1 +
+ drivers/crypto/marvell/octeontx2/cn10k_cpt.c       |    4 +
+ drivers/crypto/nx/nx-842.c                         |    6 +-
+ drivers/crypto/nx/nx-842.h                         |   10 +-
+ drivers/crypto/sahara.c                            |   16 +-
+ drivers/crypto/starfive/Kconfig                    |    4 +
+ drivers/crypto/starfive/jh7110-aes.c               |  603 ++++--
+ drivers/crypto/starfive/jh7110-cryp.c              |   43 -
+ drivers/crypto/starfive/jh7110-cryp.h              |   10 +-
+ drivers/crypto/starfive/jh7110-hash.c              |  285 ++-
+ drivers/crypto/starfive/jh7110-rsa.c               |   14 +-
+ drivers/crypto/stm32/stm32-hash.c                  |  570 ++++--
+ drivers/crypto/tegra/Makefile                      |    9 +
+ drivers/crypto/tegra/tegra-se-aes.c                | 1933 ++++++++++++++++++++
+ drivers/crypto/tegra/tegra-se-hash.c               | 1060 +++++++++++
+ drivers/crypto/tegra/tegra-se-key.c                |  156 ++
+ drivers/crypto/tegra/tegra-se-main.c               |  437 +++++
+ drivers/crypto/tegra/tegra-se.h                    |  560 ++++++
+ drivers/gpu/host1x/dev.c                           |   24 +
+ include/crypto/acompress.h                         |   73 +-
+ include/crypto/aead.h                              |   21 -
+ include/crypto/akcipher.h                          |   78 +-
+ include/crypto/algapi.h                            |    3 -
+ include/crypto/ecc_curve.h                         |    2 +
+ include/crypto/ecdh.h                              |    1 +
+ include/crypto/hash.h                              |   22 -
+ include/crypto/internal/acompress.h                |    1 -
+ include/crypto/internal/cryptouser.h               |   16 -
+ include/crypto/internal/ecc.h                      |   27 +-
+ include/crypto/internal/scompress.h                |    1 -
+ include/crypto/kpp.h                               |   58 +-
+ include/crypto/rng.h                               |   51 +-
+ include/crypto/skcipher.h                          |   25 -
+ include/linux/compiler.h                           |    2 +
+ include/linux/oid_registry.h                       |    1 +
+ include/linux/qat/qat_mig_dev.h                    |   31 +
+ include/uapi/linux/cryptouser.h                    |   30 +-
+ kernel/padata.c                                    |    8 +-
+ 154 files changed, 10335 insertions(+), 3222 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/crypto/nvidia,tegra234-se-aes.yaml
+ create mode 100644 Documentation/devicetree/bindings/crypto/nvidia,tegra234-se-hash.yaml
+ delete mode 100644 Documentation/devicetree/bindings/crypto/omap-sham.txt
+ create mode 100644 Documentation/devicetree/bindings/crypto/ti,omap-sham.yaml
+ create mode 100644 arch/x86/crypto/aes-xts-avx-x86_64.S
+ rename crypto/{crypto_user_base.c => crypto_user.c} (98%)
+ delete mode 100644 crypto/crypto_user_stat.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen2_hw_csr_data.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen2_hw_csr_data.h
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen4_hw_csr_data.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen4_hw_csr_data.h
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen4_vf_mig.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen4_vf_mig.h
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_mstate_mgr.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_mstate_mgr.h
+ create mode 100644 drivers/crypto/intel/qat/qat_common/qat_mig_dev.c
+ create mode 100644 drivers/crypto/tegra/Makefile
+ create mode 100644 drivers/crypto/tegra/tegra-se-aes.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-hash.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-key.c
+ create mode 100644 drivers/crypto/tegra/tegra-se-main.c
+ create mode 100644 drivers/crypto/tegra/tegra-se.h
+ delete mode 100644 include/crypto/internal/cryptouser.h
+ create mode 100644 include/linux/qat/qat_mig_dev.h
+
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
