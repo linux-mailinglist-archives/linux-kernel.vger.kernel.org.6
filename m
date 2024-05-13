@@ -1,88 +1,117 @@
-Return-Path: <linux-kernel+bounces-177802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A70E8C44CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:05:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C96878C44D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADB0EB20D63
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59358281D0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BB4155340;
-	Mon, 13 May 2024 16:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0292155345;
+	Mon, 13 May 2024 16:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BYVzRYNE"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C573C15532B;
-	Mon, 13 May 2024 16:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hzGqeL8M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23EF115532B;
+	Mon, 13 May 2024 16:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715616315; cv=none; b=KHiygQY2DmtFo4zLPAcTAnJE+rXRjDrrMnTmEPnAeIV4lmyy62nG3P14PVUhhEepjtbgiXdcQd6nj5Ld4YpmJiUVtMfAdkzSmDSY5MpQanLGk668aU8y1wNlTQAgVh/2SmlqhyZxazZFPtrb8aUwBgi4wyNe2nBTurwjjBJWsM0=
+	t=1715616591; cv=none; b=VuUXeyoVBqPwYRwW+6A5coMzyd7LdNkmzj4/40FXfOpBLjNC746a1E9Y/cxFDmSsIxuukg3vYC7Vq/K1VeyKM+7Q8jcLzpoEc3pZ80bbE98INVl0eQIUDA8c3jgoU9ufn0NC6R5DFuOS6TSrU1OpeyMGA2V/xIHFgzHEDsj6kHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715616315; c=relaxed/simple;
-	bh=bYdJm1M3v/L/LA8S0gkxQxCLhbLs2/UBkzFhcNoQrlY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LPOPDtwn7LASvbS9xpokvrUh9p2O4limvXasaDTm5gmmV/ZDhunYrx6RzEHGipviscT6wUqq17fJe84YmWFzkC5qDcxSzanSaBvdZB2HPka1AfXgtl0iAohFI07qMEE9rU+rnhSteG3jKKOM8i8O4g739PxhvqKqFo+mrnbKpY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BYVzRYNE; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1CAEA2095CF2;
-	Mon, 13 May 2024 09:05:13 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1CAEA2095CF2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1715616313;
-	bh=kE8+KVkskLCGQvVL4hNflGzRevUkwjjByfB24ZBdHxg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=BYVzRYNE+gHKTSHrMeNxeZPopZgLF36R3HpRx4q9K4Co94OwrRknyvFp28ZXT7kin
-	 6tNs/7APYAbxg+rwmipkc9Df9K26s01L9NMOngjXI/vUCjYrbE5t14gR5rIK98252s
-	 YDItUCe1o3rRjG/mau0qxnLjFWWvSisxKQrHsM3o=
-Message-ID: <f072acf6-0c25-4199-aaec-f599530d10b2@linux.microsoft.com>
-Date: Mon, 13 May 2024 09:05:12 -0700
+	s=arc-20240116; t=1715616591; c=relaxed/simple;
+	bh=VgZrcH2L0VNhynVh/vwPqZ8Wq2nfjg7j3GeXk9G68/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aT5Vjzvtw3A3+CeT54/8h+r/6uPt6aScQutcZsssjWINKEPiFNYBUXRmsdU1XHhCbp6TJTQGntW5V1YFXCoIbWQ5b/T7uJRBeYIL99h0R5QZSgxpZYt1AVzpnjRzLA1/qH0EVo4f23lZMhESqS1x/rl/alvO8+figyfCOov+l4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hzGqeL8M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA5A4C113CC;
+	Mon, 13 May 2024 16:09:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715616590;
+	bh=VgZrcH2L0VNhynVh/vwPqZ8Wq2nfjg7j3GeXk9G68/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hzGqeL8Mea6GqV6H07IZzyG42u7QxB9xAZUCqSfxWiZFrzj8LQcDNWyC0IsfzFJT5
+	 OnJiy/GWTdIxyNWZvkyUZ+gZyTiV99ra+1SDHmvg4js4YMpyyCEE5GptOsLYfWqkaR
+	 oExXUDOc6w2OdEJaBUhwvJXF7rHTx2wwcC+SoW6br/pkWYdCF1/Q2kx5bB0Q+p9GHP
+	 MiX5notiRHe00SD4KqaimIP7WgYE7guLhguLcsPiMqXOqM4GelCPT1RkNaRwEZ/FIi
+	 nRVoYTqpXLYHASnhpgoaugk51x4MwKVbeRZSZah9FRIzK2pc1XGCVtEHAj/TxQUDxc
+	 AJEPGASh/1jCQ==
+Date: Mon, 13 May 2024 17:09:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Gustavo Silva <gustavograzs@gmail.com>
+Cc: jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lars@metafoo.de, christophe.jaillet@wanadoo.fr,
+	gerald.loacker@wolfvision.net, devicetree@vger.kernel.org,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] dt-bindings: Add ENS160 as trivial device
+Message-ID: <20240513-entree-ferris-cbaf7c57b0b5@spud>
+References: <20240512210444.30824-1-gustavograzs@gmail.com>
+ <20240512210444.30824-3-gustavograzs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Documentation: hyperv: Improve synic and interrupt
- handling description
-To: mhklinux@outlook.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, kys@microsoft.com, corbet@lwn.net,
- linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20240511133818.19649-1-mhklinux@outlook.com>
- <20240511133818.19649-2-mhklinux@outlook.com>
-Content-Language: en-CA
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <20240511133818.19649-2-mhklinux@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dbL0gNk2qdW68dmr"
+Content-Disposition: inline
+In-Reply-To: <20240512210444.30824-3-gustavograzs@gmail.com>
 
-On 5/11/2024 6:38 AM, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Current documentation does not describe how Linux handles the synthetic
-> interrupt controller (synic) that Hyper-V provides to guest VMs, nor how
-> VMBus or timer interrupts are handled. Add text describing the synic and
-> reorganize existing text to make this more clear.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+
+--dbL0gNk2qdW68dmr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, May 12, 2024 at 06:04:38PM -0300, Gustavo Silva wrote:
+> ScioSense ENS160 is a multi-gas sensor.
+>=20
+> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+
+Looks like this device has two supplies, Vdd and Vddio.
+Jonathan generally likes supplies to be documented, so that would
+disqualify this as a trivial device.
+
+Cheers,
+Conor.
+
 > ---
-> Changes in v2:
-> * In clocks.rst, made a hyperlink for the reference to VMBus documentation
->   [Easwar Hariharan]
-> 
->  Documentation/virt/hyperv/clocks.rst | 21 +++++---
->  Documentation/virt/hyperv/vmbus.rst  | 79 ++++++++++++++++++----------
->  2 files changed, 66 insertions(+), 34 deletions(-)
-> 
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
+umentation/devicetree/bindings/trivial-devices.yaml
+> index e07be7bf8..cdd7f0b46 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -318,6 +318,8 @@ properties:
+>            - samsung,24ad0xd1
+>              # Samsung Exynos SoC SATA PHY I2C device
+>            - samsung,exynos-sataphy-i2c
+> +            # ScioSense ENS160 multi-gas sensor
+> +          - sciosense,ens160
+>              # Semtech sx1301 baseband processor
+>            - semtech,sx1301
+>              # Sensirion multi-pixel gas sensor with I2C interface
+> --=20
+> 2.45.0
+>=20
 
-LGTM,
+--dbL0gNk2qdW68dmr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Reviewed-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkI7SgAKCRB4tDGHoIJi
+0k/eAQCSd/M4zUc1ofya4kDKydd6wRBwRRHnsAAiT7Qyfi65DwEAsrQnbgqZgQdN
+3rkQXY8pa9rpx8pPLcKaio1D8l1WQQ8=
+=hSoY
+-----END PGP SIGNATURE-----
+
+--dbL0gNk2qdW68dmr--
 
