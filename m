@@ -1,132 +1,181 @@
-Return-Path: <linux-kernel+bounces-177356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6D18C3D70
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9FE8C3D6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 859E9B20D5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:40:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B704280DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78781147C93;
-	Mon, 13 May 2024 08:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355C51482EF;
+	Mon, 13 May 2024 08:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Iy6isypS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hVGXIn4S"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC50147C7F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D69147C8F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589614; cv=none; b=p6hRdZlzeqP+dp92UGCR2xxSY4ksknl0hed4+IUkcb5YPxzTB9quRp2xsw1DRSixHcBUBtq05A5jhErmL/TVlVDCaYhg5HLUMMRQm1QwGgNEBVFysx2vjQEcWWThnqS18ZXPI6RW+QKbgTN/Qnqy9n8E7k/Yiu/gAytzP9gj1IA=
+	t=1715589599; cv=none; b=s6SLWVK88PX6q+c/UV8d8rUzCsItVwh7lrg7uUiFVocrmn/3Kk8WT28Dx4s8RuuI4MhkUq/NxE2g2OzM0R2Bn2pwqjHWP60JpFkZWqpfwEsea7betKV1iflhuFN2JuUp6IL4+4HyvzUIY0oVsvOcTBH+ApfE9/xRfTBK47GVLeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589614; c=relaxed/simple;
-	bh=W7Upr80CUPRnv/2p62AHw64D2eAOW6aoxATj8eWlFyI=;
+	s=arc-20240116; t=1715589599; c=relaxed/simple;
+	bh=NafnT6nxtfip1QG/byPJKrL48bOdfUlcszFB+gXZGRk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atztx2BslHBZrglyAboX2tf9h8qLkbCTquLOBozuAGZlz3uNBso9Bs8ZxhwbJjO2BhSbgIewwkqi04PQxCkNUt3eoIjl/DAhqm6JPRG3XsmpuMS8EcWSJN5/nvss7LrqpcDmL4YH02t7rJQJ0nSS+j8Vf3ERF1Na1H5RPKuGOVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Iy6isypS; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=RXtC60wy8KokgnjTuzVV2Xdcbe1ODdyxH74DEnoHtO8SuWnABbp5eDddU+4qWgpEVTJlaTmMGb+mJ5Ofb5Ff7rGXVU65UMODPJkomCqL4XjhuFY+HtZs8+i8ACnFxwnXKh8j86n7baJERzQRlq25TMQX9uyEDkng4g0urVFznrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hVGXIn4S; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715589612;
+	s=mimecast20190719; t=1715589596;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=y9TfaHjT18CdtzvNmwQpp2X/7RmpdQsmO2fg/Q54E5g=;
-	b=Iy6isypSNr9VBkN1FPWAQ80+eSoyCIoxZb8omnyo2lmJx3MbN+vHVm6QJqD3LPvSj1Mi99
-	hCGBVlwJb3PPvnaWPStmemEuU7pr5DaKGG2prjFlbB2X35oiQhUAg5l5pKwJryiOjOeVXB
-	+hmYU1ZUeyru8JhcJM1ILX2urZ9ALVU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=NafnT6nxtfip1QG/byPJKrL48bOdfUlcszFB+gXZGRk=;
+	b=hVGXIn4S/exlX1urmj+PfuzWgXZkp9iMCjqmtseVX6ZczbcguadZIu8NTaQGWrGRhy1h2v
+	yASVuLhYl3s1TXM6kllaa10OFfcekjNh3qE0I71W0cB3it26p/bXnpLq70EVYdbBxr2JiJ
+	EWgx8PLWCwyi1GwsU3RyC4EJRoK3mNw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-54-5OsPxujyM4GbGF1I4fXupg-1; Mon, 13 May 2024 04:39:57 -0400
-X-MC-Unique: 5OsPxujyM4GbGF1I4fXupg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BF80C800656;
-	Mon, 13 May 2024 08:39:56 +0000 (UTC)
-Received: from fedora (unknown [10.72.112.91])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 6553540C5D0;
-	Mon, 13 May 2024 08:39:52 +0000 (UTC)
-Date: Mon, 13 May 2024 16:39:48 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Benjamin Meier <benjamin.meier70@gmail.com>
-Cc: hch@lst.de, kbusch@kernel.org, kbusch@meta.com,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	tglx@linutronix.de, ming.lei@redhat.com
-Subject: Re: [PATCH 2/2] nvme-pci: allow unmanaged interrupts
-Message-ID: <ZkHR1L/cJesDEn60@fedora>
-References: <20240510151047.GA10486@lst.de>
- <26d4ad30-c0fe-4286-9802-aa6afbd8074a@gmail.com>
+ us-mta-462-g7u-hQicPg-DezHkK-QerA-1; Mon, 13 May 2024 04:39:50 -0400
+X-MC-Unique: g7u-hQicPg-DezHkK-QerA-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-41fe6df6ef3so14287825e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:39:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715589589; x=1716194389;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NafnT6nxtfip1QG/byPJKrL48bOdfUlcszFB+gXZGRk=;
+        b=st28+3yTBAbFt8sOGwQDjg8Qgggio3aYd22lAGHrkWHwmH3aI4yLhTuthSyhB6g0zO
+         ZvJ76md2rQtPi1HnEEK1+x0JeGh5pGFxaBqeYV8YQT+g2KCXf40Y1I4jkH4rgDbTa8kL
+         X05bcFWmU64PpgZNekjZxm4o2BXXcSZLqxS8rZ1ay/snHlbpO8DFyfzVFxIupfPrNZSn
+         kV+3jsJxePpq0RJRYlBjnpOiMEfJo3i0kvG81cIFaQzHkpuWYw6wN78kPCG0OoaKaJ9c
+         c1dPVK1nAvXONkBkIjircis1hpQVaXCHhpYcRMijh6SXlfxQ01TSz6eUt1k61LKt6vLI
+         i+rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxqXaO2js6t/HejWTv/Igp/yM9gZ9zz5i1X5tK+22a402Rr7h4rABFxj0J0wBSUNgzF/X4r2D4PgT/uXyIPP9/Ia7nHKKqfgj02SnU
+X-Gm-Message-State: AOJu0YwZtv/H+h+1Ek/nLP2DcktVPb88MIqfD1/U5HDi+Uypj7xNWIGf
+	XwFdK/owP6ySkjbIPBaH7503Kh0P4S5N6qfubH04PL4svpMIHGSAyBW5Nz8uBNdVjkNPg9iSPvc
+	suc9xYqF6w3Lqy3+QPdcH4LT/sHx5fSkY7zFDntldUFtn6tspEYcHdIZFuaQMzg==
+X-Received: by 2002:a05:600c:3caa:b0:41b:55b1:6cfc with SMTP id 5b1f17b1804b1-41feaa2f3a3mr60665345e9.1.1715589589263;
+        Mon, 13 May 2024 01:39:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGSHY3Vs6wnO8Hqo+e75wM+DuYwRlx0w2YGHoHP++IqYSQpbYZoInfS6/LKCMB/0qMhU4uo5Q==
+X-Received: by 2002:a05:600c:3caa:b0:41b:55b1:6cfc with SMTP id 5b1f17b1804b1-41feaa2f3a3mr60665135e9.1.1715589588807;
+        Mon, 13 May 2024 01:39:48 -0700 (PDT)
+Received: from localhost ([2a01:e34:ec60:48a0:b89c:e3fb:cb18:893d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87b2648fsm185332075e9.7.2024.05.13.01.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 01:39:48 -0700 (PDT)
+Date: Mon, 13 May 2024 10:39:48 +0200
+From: Maxime Ripard <mripard@redhat.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
+	Sebastien Bacher <sebastien.bacher@canonical.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal <mzamazal@redhat.com>, 
+	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
+ (udev uaccess tag) ?
+Message-ID: <20240513-delectable-busy-serval-fbe3fe@penduick>
+References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
+ <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
+ <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
+ <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+ <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+ <CAA8EJpr4bJUQt2T63_FZ=KHGEm4vixfpk3pMV9naABEONJfMmQ@mail.gmail.com>
+ <20240507184049.GC20390@pendragon.ideasonboard.com>
+ <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="qh6aaiqzlccizapn"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
+
+
+--qh6aaiqzlccizapn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <26d4ad30-c0fe-4286-9802-aa6afbd8074a@gmail.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 09:33:27AM +0200, Benjamin Meier wrote:
-> > From: Christoph Hellwig <hch@lst.de>
+On Tue, May 07, 2024 at 10:59:42PM +0300, Dmitry Baryshkov wrote:
+> On Tue, 7 May 2024 at 21:40, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
 > >
-> > So let them argue why.  I'd rather have a really, really, really
-> > good argument for this crap, and I'd like to hear it from the horses
-> > mouth.
-> 
-> I reached out to Keith to explore the possibility of manually defining
-> which cores handle NVMe interrupts.
-> 
-> The application which we develop and maintain (in the company I work)
-> has very high requirements regarding latency. We have some isolated cores
+> > On Tue, May 07, 2024 at 06:19:18PM +0300, Dmitry Baryshkov wrote:
+> > > On Tue, 7 May 2024 at 18:15, Bryan O'Donoghue wrote:
+> > > > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
+> > > > > Ah, I see. Then why do you require the DMA-ble buffer at all? If =
+you are
+> > > > > providing data to VPU or DRM, then you should be able to get the =
+buffer
+> > > > > from the data-consuming device.
+> > > >
+> > > > Because we don't necessarily know what the consuming device is, if =
+any.
+> > > >
+> > > > Could be VPU, could be Zoom/Hangouts via pipewire, could for argume=
+nt
+> > > > sake be GPU or DSP.
+> > > >
+> > > > Also if we introduce a dependency on another device to allocate the
+> > > > output buffers - say always taking the output buffer from the GPU, =
+then
+> > > > we've added another dependency which is more difficult to guarantee
+> > > > across different arches.
+> > >
+> > > Yes. And it should be expected. It's a consumer who knows the
+> > > restrictions on the buffer. As I wrote, Zoom/Hangouts should not
+> > > require a DMA buffer at all.
+> >
+> > Why not ? If you want to capture to a buffer that you then compose on
+> > the screen without copying data, dma-buf is the way to go. That's the
+> > Linux solution for buffer sharing.
+>=20
+> Yes. But it should be allocated by the DRM driver. As Sima wrote,
+> there is no guarantee that the buffer allocated from dma-heaps is
+> accessible to the GPU.
 
-Are these isolated cores controlled by kernel command line `isolcpus=`?
+And there is no guarantee that the buffer allocated from the GPU is
+accessible to the display engine. In practice, I've yet to see an issue
+with that assumption.
 
-> and we run our application on those.
-> 
-> Our system is using kernel 5.4 which unfortunately does not support
-> "isolcpus=managed_irq". Actually, we did not even know about that
-> option, because we are focussed on kernel 5.4. It solves part
-> of our problem, but being able to specify where exactly interrupts
-> are running is still superior in our opinion.
-> 
-> E.g. assume the number of house-keeping cores is small, because we
-> want to have full control over the system. In our case we have threads
-> of different priorities where some get an exclusive core. Some other threads
-> share a core (or a group of cores) with other threads. Now we are still
-> happy to assign some interrupts to some of the cores which we consider as
-> "medium-priority". Due to the small number of non-isolated cores, it can
+And there's the other elephant in the room that hasn't been addressed.
+Buffers typically allocated by the data-consuming frameworks are
+coherent buffers, which on arm/arm64 usually mean non-cacheable.
 
-So these "medium-priority" cores belong to isolated cpu list, you still expect
-NVMe interrupts can be handled on these cpu cores, do I understand correctly?
+Performances are *terrible*. Meanwhile, dma-heaps and dma-buf provide
+cacheable buffers with a cache synchronization API, which allow to have
+it run much faster.
 
-If yes, I think your case still can be covered with 'isolcpus=managed_irq' which
-needn't to be same with cpu cores specified from `isolcpus=`, such as
-excluding medium-priority cores from 'isolcpus=managed_irq', and
-meantime include them in plain `isolcpus=`.
+Maxime
 
-> be tricky to assign all interrupts to those without a performance-penalty.
-> 
-> Given these requirements, manually specifying interrupt/core assignments
-> would offer greater flexibility and control over system performance.
-> Moreover, the proposed code changes appear minimal and have no
-> impact on existing functionalities.
+--qh6aaiqzlccizapn
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Looks your main concern is performance, but as Keith mentioned, the proposed
-change may degrade nvme perf too:
+-----BEGIN PGP SIGNATURE-----
 
-https://lore.kernel.org/linux-nvme/Zj6745UDnwX1BteO@kbusch-mbp.dhcp.thefacebook.com/
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkHR0wAKCRAnX84Zoj2+
+dmpnAYCn9sxfeRSm1Faf0OjKfvfKYpA6+XhCEJJVQzH6jGId/Sk32BahqCR3ZucO
+/1TsALQBf160+BzC2jF6k7Xud+ixD5QuBdXfxo6UziSenQ1ClVh2UFdyf0TG2Tzj
+I+TfIOqSEg==
+=cY/A
+-----END PGP SIGNATURE-----
 
-
-
-thanks,
-Ming
+--qh6aaiqzlccizapn--
 
 
