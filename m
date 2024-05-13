@@ -1,102 +1,83 @@
-Return-Path: <linux-kernel+bounces-177845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DCD98C453C
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:46:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54588C45EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97F3D1C20D8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E1B1C21929
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843821CD15;
-	Mon, 13 May 2024 16:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6585821342;
+	Mon, 13 May 2024 17:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbAhzog5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="HSI2oNt6"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69141CA89;
-	Mon, 13 May 2024 16:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6571C6B4
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715618807; cv=none; b=nI4BNRiCmZ5Ziewxg4M/+lWInvTJpz3uTyghoMrd4sYC8sIFEN2mpVKMYkrye5ZcCBQ7MphECqqZi5jLNpXZ6U0rwp5mcXG6JlK1u8ZE13cRctk1e5gOO8d8jydPx54vNs7DBiBOcYa8VPKmiSDv8FZIJUhjfykoJW1A4gR4UGE=
+	t=1715621165; cv=none; b=WzCPvZA4yi/p+E4Rx5ZqvL5i9fCBKKguM0eq3GfuaAoUIjX2Qiub6z3cj3Fz4+MnIFh2t5WIslq1+llHOp63/I1FUeqZA6fL3SbbiAsIqYETVkF6WtqzpqJvjh8Amyv3grG33WyBX7sVMY7J3h9NM1a+PRo4iZGuSUWHDZoa3iI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715618807; c=relaxed/simple;
-	bh=MkWI0eSVp+S5LEhfZiAhhvdMwAvSY+rnKHO51GHLaDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmCwHYrR33rL2vRyps4H74WhLYBqrn+qSQHFmWsJLMzfYqY0GNUBhsOpXoYdxhVLnHyxew4N9tclUYY7EenlOmNyF3x1A2X48UQCv6+YIJOiQDaw30L06A+QB4Gj7vuDSEtqbu3crcgb5D3v83XWsaNlRf+wXYDomnOyDVMKH7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbAhzog5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 449A7C113CC;
-	Mon, 13 May 2024 16:46:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715618807;
-	bh=MkWI0eSVp+S5LEhfZiAhhvdMwAvSY+rnKHO51GHLaDs=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=LbAhzog5jaflLHu4HNwazc1VclE3Tv/XMW70rUi15/HyQf0RCFv8uTnnHQPOPw1ye
-	 HHchU9WY1h7qBwDJypMB90uNAAbIQrjRyjCwKp+/CI+lIHB/fa/map64Yh5z8gKXkL
-	 PCCCKv6WbMG1QSWGUcQ/nSsV7OVKZ+guEoRyz/UB49D9AWGGwSyrTOrRUHy9KVwOy7
-	 Y883rhR5lHaS2E9MH/tzfbm0FfmvGVEYuym9pupC+PKx8fcqb1p+eU5ZiRRHg4IsJ0
-	 d3esvv17JzNgLhq48kEtrRBKUl6xpRnCUWBW5wg2G9qc9KMMZxv46jVuaYnAb8llvk
-	 kxIJ4VICPxOyQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3F7BFCE098A; Mon, 13 May 2024 09:46:45 -0700 (PDT)
-Date: Mon, 13 May 2024 09:46:45 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Nikita Kiryushin <kiryushin@ancud.ru>, linke li <lilinke99@qq.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Zenghui Yu <zenghui.yu@linux.dev>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [GIT PULL] RCU changes for v6.10
-Message-ID: <e35bf672-88d9-4a00-8237-99298392e55f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240510183049.312477-1-urezki@gmail.com>
- <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
+	s=arc-20240116; t=1715621165; c=relaxed/simple;
+	bh=bRxRdIb0qEI1l9lUD47p5esn/0bH1Sob3rRa5SRDNKM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=uMkWVD60PXYX801U2oUAkKAaWstpEJuzvHCjuBQzWeNAouxhGt64mu4XTQ3bYhNgTrERI6hDbCl5s4bE1DTDTaFuprmBm+zpASKw3DBuw0+b2xGdj+CTurpmI8k2yzHMEcsrnx30fg7wnJ1BQT2b3MCHDrTQO6HXEOYxnfl6nug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=HSI2oNt6; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:Cc:To:Subject:From:
+	MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=POuc8bRKw+ZVfGGWi70gcI/cCCyHEzzAaSLFlGjszDA=; b=HSI2oNt6Yh57ovfuHJ5icM3Rlv
+	WsWN54QXqAd4ZXRDRyE5fUSi3VewXqwCc0Ih7lyZo+x3/r18FWYF06qArhZpunt/0fxs5CVA8XPbi
+	DxrcO0lWQGt5jyWR3a/BHNU2oMDy5MAXxhkNzkRTbt0Epnd1n78rI42l7A3ufEAfMr7RwdSOjJhO8
+	+ZA1X4J4huVSWAicVXQEIiRUftnycuVH2CCCTpMeoPubjugIulzYPyFnVYLCZq2MwFNsq3pAuRG6s
+	ARP/5Si9zA0horNtHKetuUG9xbmCK78Ft6IVozTHlZswkImxjgpB/Jxwod+l54PWktDgxI38qzsCT
+	DfpYLNsQ==;
+Received: from [179.193.1.248] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1s6YpJ-007aPo-Vx; Mon, 13 May 2024 18:47:02 +0200
+Message-ID: <92bacfe3-efac-4615-9d30-a6215f6bba29@igalia.com>
+Date: Mon, 13 May 2024 13:46:58 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh=HgEeyKVKGXTKiLdhvs-5t9pFxUkK6ED+zsby=quBdA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+Subject: [ANNOUNCE] Graphics & DRM MC at LPC 2024
+To: dri-devel <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Daniel Stone <daniel@fooishbar.org>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel.vetter@ffwll.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 13, 2024 at 09:38:11AM -0700, Linus Torvalds wrote:
-> [ I should have reacted to this earlier, but I just put all the "for
-> 6.10" pull requests in the queue without looking closer ]
-> 
-> On Fri, 10 May 2024 at 11:30, Uladzislau Rezki (Sony) <urezki@gmail.com> wrote:
-> >
-> > Please pull the latest RCU git tree from:
-> >
-> > https://github.com/urezki/linux.git tags/rcu.next.v6.10
-> 
-> Hmm. I don't have your pgp key to check, but I do see that it's in the
-> kernel.org repo of pgp keys so I know where to get it.
-> 
-> HOWEVER - importantly - I also don't find any handoff emails from Paul
-> or Boqun giving a heads up that I should expect pull requests from
-> others.
-> 
-> Put another way: I really want to see proper heads-up and "yes, this
-> was all intentional, nothing odd going on" when seeing pull requests
-> from new people to core areas.
+The Graphics and DRM Microconference was accepted for Linux Plumbers 
+2024! Please, submit your proposal in the following page:
 
-My bad, and apologies!
+	https://lpc.events/event/18/abstracts/
 
-Yes, this is intentional, nothing odd is going on, and Uladzislau's pull
-request is legitimate.
+Remember to select "Graphics & DRM MC" in the Track field. The deadline 
+for submissions is Sunday 30th June. The accepted proposals will be 
+listed here:
 
-							Thanx, Paul
+	https://lpc.events/event/18/contributions/1664/
+
+LPC 2024 will happen in Vienna, Austria, on September 18-20:
+
+	https://lpc.events/event/18/
+
+Thanks!
 
