@@ -1,331 +1,216 @@
-Return-Path: <linux-kernel+bounces-178001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19528C474D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FB68C474E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F7D4B236E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E58D281D01
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017C65F87D;
-	Mon, 13 May 2024 18:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5ECA43158;
+	Mon, 13 May 2024 18:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="vkjxjnvi"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aNrFTHXq"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2081.outbound.protection.outlook.com [40.107.100.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558355F84F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715626749; cv=none; b=CAI2xcuouBUqEx4pO1hB9nf2NN4g5M2AFE0DEns3fI4YwQbopBO+DJVnRvxmmhPleHhj7D5y5nNR2QqwUnhGWf/aY+9iicGzPJqicc9p/iHSgzEiZh8SVXH9dfI0VFNyOu/ydLzeD/IZSi6osHqv2A3sOi3WYvjpllOIdg7ue9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715626749; c=relaxed/simple;
-	bh=PhGdhNFvZZbZxGhIhqAB/A26vdTYa6Ksch5m1ZGKeLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rs2Ijlqux5EwYjKfFZjQ2udOgmqnJBNzlTXfUV0EEuTxsxyyqFCvli4vf3Xm5MMFahI+r/XJF+7PKgVqx3Nn4+BcG9q88T0TsDZKJXzpOBzXw3jmMK5KsfdUkob88Tn09LqxE5shrlX5AZFVN0WSpOlgTqKfkiehEo/ndNkiwTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=vkjxjnvi; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1e4c4fb6af3so26963345ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:59:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715626747; x=1716231547; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DkQ7gN7nCNGAvo6j4bf0eNtvdYMb49Sp4UB0TNBH5zI=;
-        b=vkjxjnviFk3c+RGiNXreAaozLZA1Id7nCLoC5Uurw4VSqkBwspkUFHNrI6ETd0BcXx
-         lRgv68SFSxztApfmX+zQPNIYz75QK+YzxGzayQF5TuAu5zG6+Hq8EqFkz0TmGtbPmOP9
-         6luCdDh2rGuHAp7wpxft23+uHXxipuhzGd/4EGBCGDjPjtS9V7qf7wduZizx8/R21kjC
-         MqnWDyb2Sz2SWQKocWmsjm/NODA7NG9gBBFe1X8D6Sg+SIF/UUEQVrio360ZHBTwQmqm
-         cZdFsTHW4So0tS4YofUArT+Ju8iA2kUTGZKjyPObuJ4Jz+Nn5UY6HKQEB3/kQdWDJUAQ
-         5HIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715626747; x=1716231547;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DkQ7gN7nCNGAvo6j4bf0eNtvdYMb49Sp4UB0TNBH5zI=;
-        b=vFouYcA903nUbJAIG7fGjrr3hHjjMGvt36zoSujYMG02/we9AHgs9+0ETJ4OzlM53O
-         940JV7GTKLHFbhC1FsDAPfX0KCRpIL5+w3KU/ekTBLXrfpnqelqqyPkanAmebXp9Ki3r
-         UO98RtKHklBNz3AcWyt7K/C2S0FPkf0zGwdSjUNBBam4JJR+eAcUkhJQt7/oRZgtF5ZM
-         +iv7YQCGRMafg7KE6q1kzD4ICR5ereNuiQcvqEYa4B4Oo8TYJmHfF7AfZQ30Qjn+Av+k
-         CNbqG+CPqTFI7Uy+1xQ4xsDvv2xenpz6WQH6LV0NP9LA42k7cHNBDWCJOLlC6kLF6WM/
-         XDPg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOW4V6gfekVAqXJjnvxyyGwcYk0m2vayWYDCkiPSASth8xyyISOX0UjbmsX2sxmeKt0fRYDGxxjnrpus2rgDAb96UUC9R5v4oCTV6q
-X-Gm-Message-State: AOJu0YxCwAAqLaeYOB7Cztr5UYDQ589lpkFB/G5eLE2CuuDpvpGcQ1oO
-	ek/hDdoovLzim71+8rED67RYuk5ZllTHZQ7PV+fqGWvJI2Rfj0NdTKOkDwaMabA=
-X-Google-Smtp-Source: AGHT+IG20sYXzHGsKV8cr1mnWemCePdNZlDhW5Dt/UqsXAayGzUvlBnnQvW06jxjqdu/cIJjaKjgrg==
-X-Received: by 2002:a17:903:234c:b0:1e8:682b:7f67 with SMTP id d9443c01a7336-1ef432a0c85mr152017945ad.29.1715626746563;
-        Mon, 13 May 2024 11:59:06 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f083c35680sm648365ad.119.2024.05.13.11.59.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 11:59:06 -0700 (PDT)
-Date: Mon, 13 May 2024 11:59:02 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, paul.walmsley@sifive.com, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com, andy.chiu@sifive.com,
-	hankuan.chen@sifive.com, guoren@kernel.org, greentime.hu@sifive.com,
-	samitolvanen@google.com, cleger@rivosinc.com,
-	apatel@ventanamicro.com, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, mchitale@ventanamicro.com,
-	dbarboza@ventanamicro.com, waylingii@gmail.com, sameo@rivosinc.com,
-	alexghiti@rivosinc.com, akpm@linux-foundation.org,
-	shikemeng@huaweicloud.com, rppt@kernel.org, charlie@rivosinc.com,
-	xiao.w.wang@intel.com, willy@infradead.org, jszhang@kernel.org,
-	leobras@redhat.com, songshuaishuai@tinylab.org, haxel@fzi.de,
-	samuel.holland@sifive.com, namcaov@gmail.com, bjorn@rivosinc.com,
-	cuiyunhui@bytedance.com, wangkefeng.wang@huawei.com,
-	falcon@tinylab.org, viro@zeniv.linux.org.uk, bhe@redhat.com,
-	chenjiahao16@huawei.com, hca@linux.ibm.com, arnd@arndb.de,
-	kent.overstreet@linux.dev, boqun.feng@gmail.com, oleg@redhat.com,
-	paulmck@kernel.org, broonie@kernel.org, rick.p.edgecombe@intel.com
-Subject: Re: [RFC PATCH 07/12] riscv/mm: prepare shadow stack for init task
- for kernel cfi
-Message-ID: <ZkJi9rYMkwbp5h7I@debug.ba.rivosinc.com>
-References: <20240409061043.3269676-1-debug@rivosinc.com>
- <20240409061043.3269676-8-debug@rivosinc.com>
- <e46b2d43-fe4d-4e9b-95ad-1900779b8bed@ghiti.fr>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67333604B3
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715626789; cv=fail; b=sSvyeQgEL3dzu5gk6EY1vy9F9tqH0ekxPbJFbMadCjD2o29HENkLJAKLp3O0RxkEPi2dHFvkrAr8RcD0HdZ0utgIEDuTecdFgR5XzI0mgHnRmXelvQ45HKBWm1t1arZwyc4KJxMKvir40vkpFoZKjil234/c0fqPUhjbp5P1fAA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715626789; c=relaxed/simple;
+	bh=tSvyq8HDQTA2emsbH9DupS6eYq1R7xTL7L4Y8UVo//Y=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=aYXkL7XRq801s767KjO81im4e5w+/jEimqz+v/NhCJvKoN9XY7yTeY2D58NM2nsi7zWvim5nwrjnZWjyt7R6J3+N/2XVGsUZrIRLu2emblwTNv/SvHhXsANfFtPm0Z6xgthSgP5wZObxGvNa4q8DqksuiaE+ydotmKELLddYX4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aNrFTHXq; arc=fail smtp.client-ip=40.107.100.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=K+o94ZNKbmzplV/evyIvgowHbFuCsBZa73pt/pYVILGf2hsxVNF2kFvmJgXmQiY+p+j6oKDv+sBD1aTHDJBj0xW7mQ7Ig5ZC2/gc81NpDYmUeKrtzRflptgq2KK+q5lellBUDakWeOmh58CSYvOuW1+9Tl5AsbQ4oqLkM4KhM0/FFN7TnI8p7sTbA6A92enpp1RE18SMWaqtkmSx5Kh23bPzZrufUNKoaifxAFwWHOIVPH6iFLgU3/fTH1G6xR8toxh1U8Nw5qPFkqWDo9DOiYTj+vzD587pReTppFHuvTTxNQAHB5YlSXE+FcSNvgx9yM5+1/eO+2DPvH8Tz+k2yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+f5QnsIuGZlWpgfbjeMLEo5DPwiFZmubVWuFJRg/LdY=;
+ b=IiNHHnjbYr0WwFLCVeizTc2ZZ/KorXutqUhRIEWY+hO7PCCa/pJu39L1Fh33Z+mqsBPLoNScJCowkVEPpzHyiEso/eI/+JflqXkTvUU8Rs7fRavyEymnwqSQNFfwSLWmtOirCH5Gh9sEaI0iUJoTN8ihDPoN6s9MvqCxHKSCL8foPfKQ58K4EYQJv5xALh3w+MpZTyfMF9O2Iv3IMlNzEixq7nEJeat44OKbOK4f4tBGiJf8S9+Ok7ffzrBVpG89b1qwMNaYM/UlILsrwzfRpE7P1VATp3UdjD57f+97cdlr55Y8jGAfRXy6ZhyhcihsmZMzYETULIwdedrA+sGQrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+f5QnsIuGZlWpgfbjeMLEo5DPwiFZmubVWuFJRg/LdY=;
+ b=aNrFTHXqIp6dbZEZihec00fYHjTdmGe+vKxTyRCqDdqL1mYvv4vkxUeuvxHwFpISCyDbGrY7lfa4FailXNpAOZCGlX8W0JyUjZVfxXg8GDmdRVko0A4xC4Z5KEpQ33xtog46T8InmhB46C8IXlZFG4VaNDpTJJTZ6OHRw4AafZI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ PH7PR12MB7329.namprd12.prod.outlook.com (2603:10b6:510:20c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 18:59:42 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%7]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 18:59:42 +0000
+Message-ID: <1b03ba34-ac06-47ed-9086-f8d346a20bb1@amd.com>
+Date: Tue, 14 May 2024 01:59:33 +0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] iommu/amd: Introduce helper functions for managing
+ IOMMU memory
+Content-Language: en-US
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, joro@8bytes.org,
+ thomas.lendacky@amd.com, vasant.hegde@amd.com, michael.roth@amd.com,
+ jon.grimm@amd.com, rientjes@google.com
+References: <20240430152430.4245-1-suravee.suthikulpanit@amd.com>
+ <20240430152430.4245-2-suravee.suthikulpanit@amd.com>
+ <20240501161741.GG1723318@ziepe.ca>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <20240501161741.GG1723318@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: JH0PR01CA0051.apcprd01.prod.exchangelabs.com
+ (2603:1096:990:5d::17) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <e46b2d43-fe4d-4e9b-95ad-1900779b8bed@ghiti.fr>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|PH7PR12MB7329:EE_
+X-MS-Office365-Filtering-Correlation-Id: e95ea51b-902c-49da-586e-08dc737ed8d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dTdmcjJvcVFpODNBUFJ2UHh5bTdXRWpDd0J3b09xYk96akk0dE13cHJNSzlR?=
+ =?utf-8?B?cTZBM0VDU3k4QWlKN3hVc0dsdUZiWGR1WHo5THFaN3R3MUdrSHFVMTZYYXR5?=
+ =?utf-8?B?WlpHcDdFSWxBeUNjd2h0MjNZUEpKUDZyeUdZWEJEbnZXeTlMbDBKb0txcTZB?=
+ =?utf-8?B?bWdPOWlQdWdrcUdBRTdoOVY3REZXZ2RrZDVST04wb1h0Wm0xWERUbHhkWFBU?=
+ =?utf-8?B?bEFaaDJXTm5pUHAwellzVFRTeElTYWdZbHZPTUlmajc4cXg5clR0TURxcEtk?=
+ =?utf-8?B?KzlQVFprVVBJOG1URlNDUWlxUktlampNV3VIRnNkZCtpcXVWRUpBNU9peWNv?=
+ =?utf-8?B?ZE1NaDkwZ3FLU2pRY0NwdnY5Qk9zUXp1Q3pwWUpKT3ovN0h6aXg4ZGRxdW1q?=
+ =?utf-8?B?SzY4bXVRaWtQL2FpaUdrK2crdzVMTFh4aHUzc3BzK0kyMFVkOGJRN1hjemkw?=
+ =?utf-8?B?TVh5VFlaT2FSWFYwZzc4NHZ0SzVKNWd0REMydWpaVjBXL0dIVUxDUURYckFV?=
+ =?utf-8?B?enduYnlObE9WQ1RHVXFvUFRzRUdzbUV2dGl3TXhiOEtITlIrSHo1MGF1OVZh?=
+ =?utf-8?B?YWQrRGFDdmNKbHhvMlBBRDJxMVc3YTh2ekM4aG4yVFk0SFBUWnpESGEwNE5l?=
+ =?utf-8?B?QmFBRVFxT2dMb2xEOTR1MkZBb3VFU0hxRmtYaTBxTWdkcjI4QXBBUWRRR295?=
+ =?utf-8?B?aHBaUmdpWG56MDd1cndBZERnNUZ1OEJCRThCMmFZVC82M0RGVVhNYi83OWdT?=
+ =?utf-8?B?K1VXaUVOQVBVL3kxTTZiRmRUU3kyQ1l3Uzg4cEhNV3Awc0ZUNXFiUGxJWTQ3?=
+ =?utf-8?B?ME1jMTk1UWhra29tZmdHejR1THZiRFZQVzNEcnpLeVNZajg2bmZYUzBTZ0tE?=
+ =?utf-8?B?S2RwTG1tZG8zUHJxdjA4bmQ1aEt2YktNM28veXJBT3lqL1NNbTZQaWlJdVB5?=
+ =?utf-8?B?YW5XcEkxRDlmUWxQQWpJT0R4RnF4cGRqV3VpUmJRMUNISGc2S29MMkdFUDJj?=
+ =?utf-8?B?SWdIWEJjRmo4RHNkREFPK01WZHJ2a04wL1R5V1JFWjNybVdhRDBkSWRsRU8v?=
+ =?utf-8?B?NU05U3J3R2k4VEFhY0lvajlJRTFLZVNkcFBEbCt5M2dIZjhudUM3VUExb21B?=
+ =?utf-8?B?ZjRYa2JzTVdzN2xuREpWdHJtQ1RNc29UVVIzUndHTkJ2RnFWMCttM2VvNDl0?=
+ =?utf-8?B?QXBoMHlFOWRvOEJsWTBweXMvZTNMWkYwek4yREg2Tlh2OG0zUUxVN2Q0dkV5?=
+ =?utf-8?B?TlRHbWpGanVKZWJ5cmQyTnhDTnhQRnZORnEyR05yYWZnSklQMG84anl6V3pU?=
+ =?utf-8?B?VDdZYjZMbGVVeW84cWN1bWVKV0lWQzB2Rjk2czRGczIyaGtUdDZXaUZjTVU4?=
+ =?utf-8?B?ZUZTTTVaYlJSTm1YT01WenhRaytONHZSVzQzNytVTW9jSUxudFFsZUpMRHFQ?=
+ =?utf-8?B?V3RtU3BXL2NTUmlEcG9QTEhzRWhvRTc5OG82WGhxWFNza044NGJsQ0s3Vnlh?=
+ =?utf-8?B?bWpmRVF1RlkxYjloU2xua2o2Q0xicmo4VFQxSTFCWXNQclEvVnJ0UmhpYUJt?=
+ =?utf-8?B?U1NMZ1JJVkVrQ0Nub0lXY0RKSm9tTnBORExzRXdIODNWS0ZkMWlRUStMejU4?=
+ =?utf-8?B?ZllCazZaTzBXRXhRUEtwUitHaTR2Yk12MkRGUFZIdlovQTIvVTMxNTRzUlho?=
+ =?utf-8?B?cFNLRDNFWTgxOTlrckhueWNjTlBwbUF3K2t2Wm4zWXlzR3JpUWhLNThBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eTBFU1R1YXpQMFBFdE9Jakk4WDZuU01SeDJSaXhSS0RLS29YZitOQTJYVmdH?=
+ =?utf-8?B?RzA5bHlNZkpSLzFjL0pYYTcvSmNGdVFrY1U1bUJIRUk2THpOblZPdTdNQkhl?=
+ =?utf-8?B?VjBMaE9kWW1nWFZleEtwSWM4SGQvV29vQW1Zc2dOb3JhM1pLT0RURFl4SHhU?=
+ =?utf-8?B?Q2tDUEtGSnlnbnVRS0p5ZDVETDhnN1N0L2hsU1hXTC9SRzZFaDRzclVScmtD?=
+ =?utf-8?B?NCt3TlhSOEgyZ3Z3UFJoOEV6TElqSk1jWVFZTTQrY2MrNHc3UlhhN2NlVTVW?=
+ =?utf-8?B?L2VpZDk3dFVQaFRxVWVZWEJGRzFiT1N6VDFxMjhJUHBqQ0pFdWZBWTAyUlJo?=
+ =?utf-8?B?amh0bmN0UFhwa3V6eHlHWkp4MWtLVmdHRUdmRExOckVlaXZ2djQxVTMrWEdp?=
+ =?utf-8?B?d3dkcThiblhBallzSXVlNkNQN0FRdmY4L0I1TE1YcUpFa2ovZnFCc254Sm9Q?=
+ =?utf-8?B?SmFiZmExOVpQOGdnUEN4NzQwbUNubDQ0bTVMYTB3a2ROTXlOdW8xbG5yNExk?=
+ =?utf-8?B?OGNkdmpYUXFpZG5PRktnTjh3dG81ZENzNjFrZVpwQXpjM3RDSDc2Tk0wNXc0?=
+ =?utf-8?B?YkUzSDJVcEFMaU9NVmNJRGI4aVd5OXNzL3I0b0YwUGdnbHgwdlVKekx2RkN4?=
+ =?utf-8?B?UFpYWG1INms3VlhHdXR3bys1VkZEd2pib25XQTFER0ZmV2JTMDBuUHZkM3JU?=
+ =?utf-8?B?bkpmT1ZNSEdHZ3BsYzBsOTQ5SDhEMndObTFvUE5xSm5RQ3pid29yTkxJK0N0?=
+ =?utf-8?B?MlVtTlJNNlhwc3A3SVU2U3QvZEhTd0treTlVcWsxclNsbXF2Szl6YkI3VUdK?=
+ =?utf-8?B?eEJCRFA0SzFGaXVTR0pMYTExNnk3YzVpSDVCMms5R1kwellMa0ZIUzVIRTN4?=
+ =?utf-8?B?ejBnOU44eEtkZmVqQ2RxamVLZ2ZlNENEMjd1cHpJTk5YNk1HV20wcGp2Mlkz?=
+ =?utf-8?B?ak9rYUZjaWV2cktUbytSOE9yT1VmU2dNb1pVMXBsSG5VbnZ4YzRjUW9Xc28x?=
+ =?utf-8?B?dE5NTU9LN0d3ZW4vOXJTTzI4dG5JUnNjbmU0Wi9nYlZWemVkc1lWUmRVL0Fn?=
+ =?utf-8?B?N05KSC9QMGt0SWlrRm1qNU4zditQNWcwNGNGWkJkZFpZWFdwRWdXSERVamNn?=
+ =?utf-8?B?d0x6eTRpV1RuUmsxOGpvTWNXb3paMytONVEzMHVlcnBwYlRscksveERaWE0w?=
+ =?utf-8?B?RERGSFdreUlxc29UN2FDQi91bFdkcVpxTFhwNlUwRVhJdjJzZE53TXRZclpm?=
+ =?utf-8?B?dlhPZWJJV0JiZU5nRFh6a09zbVBOUGlDWVBMVDFSU2hmeGRySUtIN2huTzZK?=
+ =?utf-8?B?OXdVREdadm1OL0haN0NDakdxZ3VDWHg2Vm1rcEVzNnV4NjlFbFAvL2s5cW9k?=
+ =?utf-8?B?Mm1FS0hSYktlaHRiWml1NjU0RTZKVWVKQ2VNaWlLNzBHdmRRdFg0ZlRPQ3FH?=
+ =?utf-8?B?eVJtUUt0dkNmVE5yZ2NvVUxWZVA3eko2TWlnTkJHL1d3aG9PdlZqMlcwQnR6?=
+ =?utf-8?B?Y3QrS0VsdDJwZXRkOFJhT1k2TlNodmxjYk03WFEvWGU0SXFyd0VyTHZOcTY3?=
+ =?utf-8?B?Z3ZLcThoWVFyKzFxa1U3eGhjOVhrNXd1THkvSXN3QWZkZWdicFA0WFV2UUhz?=
+ =?utf-8?B?ZXZLNXJMYXN1UXhYckJJY3BVdFVTRUhQeWxtVlY1amI0bE41dWlQL0lROWpr?=
+ =?utf-8?B?RjhOckZhbmp3NzZrbnQxY0N6OHRZeUFGcnpRb00xVkpjTjdqdjIxNjg1V0s2?=
+ =?utf-8?B?aDVQRU1SVzlQUjhKZ1Z4WGpzWXVOWGQ5WWJ0U3VOQUNKdVJiVTNPblZISW42?=
+ =?utf-8?B?NkNOTldiRHRsYVYvM0o5M3ZZZVE0N3pMRUFUcXZYTUYvTDNSVVVDb0NqWXVO?=
+ =?utf-8?B?bWxFSkFQWExCYWM2SnZyUnJqdXZDUWdUY3piMG1rQ3d5YmVvWHJWUEowR2hF?=
+ =?utf-8?B?VEpFcXRoVFMxbVdvWU1xTk5Sa2R5TXhBLzBiMnFURkFBQjh4aXltWTJIbjgy?=
+ =?utf-8?B?TXVNNG81U3I2R29JdDBtZlVCdG5wNjBOKzhqL2NUVmo1S0RXazhqcXFRS1Z6?=
+ =?utf-8?B?cE4rUTNJUjYzRThReTh2ZEg0YlFKUFE4cE51bTB3U3JVMHg2M3gzVlRYc2J2?=
+ =?utf-8?Q?RXtCidzdV3Un3weg1y3FOdhkv?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e95ea51b-902c-49da-586e-08dc737ed8d1
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 18:59:42.3854
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5vCGgN11jmS19Ihbh7cCvU2eiFzbITfESMo8PpATF7ApILeX/dRKYHkVh5z8Ca2jI2Z3M0etcMYlvFoIkhsiPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7329
 
-Thanks Alex.
+Jason
 
-
-On Sun, May 12, 2024 at 10:12:33PM +0200, Alexandre Ghiti wrote:
->
->On 09/04/2024 08:10, Deepak Gupta wrote:
->>Under CONFIG_SHADOW_CALL_STACK, shadow call stack goes into data section.
->>Although with CONFIG_DYNAMIC_SCS on riscv, hardware assisted shadow stack
->>are used. Hardware assisted shadow stack on riscv uses PTE.R=0, PTE.W=1 &
->>PTE.X=0 encodings. Without CONFIG_DYNAMIC_SCS, shadow stack for init is
->>placed in data section and thus regular read/write encodings are applied
->>to it. Although with with CONFIG_DYNAMIC_SCS, they need to go into
->>different section. This change places it into `.shadowstack` section.
->>As part of this change early boot code (`setup_vm`), applies appropriate
->>PTE encodings to shadow call stack for init placed in `.shadowstack`
->>section.
+On 5/1/2024 11:17 PM, Jason Gunthorpe wrote:
+> On Tue, Apr 30, 2024 at 03:24:22PM +0000, Suravee Suthikulpanit wrote:
+>> Depending on the modes of operation, certain AMD IOMMU data structures are
+>> allocated with constraints. For example:
 >>
->>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->>---
->>  arch/riscv/include/asm/pgtable.h     |  4 ++++
->>  arch/riscv/include/asm/sections.h    | 22 +++++++++++++++++++++
->>  arch/riscv/include/asm/thread_info.h | 10 ++++++++--
->>  arch/riscv/kernel/vmlinux.lds.S      | 12 ++++++++++++
->>  arch/riscv/mm/init.c                 | 29 +++++++++++++++++++++-------
->>  5 files changed, 68 insertions(+), 9 deletions(-)
+>>   * Some buffers must be 4K-aligned when running in SNP-enabled host
 >>
->>diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
->>index 9f8ea0e33eb1..3409b250390d 100644
->>--- a/arch/riscv/include/asm/pgtable.h
->>+++ b/arch/riscv/include/asm/pgtable.h
->>@@ -197,6 +197,10 @@ extern struct pt_alloc_ops pt_ops __initdata;
->>  #define PAGE_KERNEL_READ_EXEC	__pgprot((_PAGE_KERNEL & ~_PAGE_WRITE) \
->>  					 | _PAGE_EXEC)
->>+#ifdef CONFIG_DYNAMIC_SCS
->>+#define PAGE_KERNEL_SHADOWSTACK __pgprot(_PAGE_KERNEL & ~(_PAGE_READ | _PAGE_EXEC))
->>+#endif
->>+
->
->
->Not sure the ifdefs are necessary here, but I'll let others jump in. 
->We have a lot of them, so we should try not to add.
+>>   * To support AMD IOMMU emulation in an SEV guest, some data structures
+>>     cannot be encrypted so that the VMM can access the memory successfully.
+> 
+> Uh, this seems like a really bad idea. The VM's integrity strongly
+> depends on the correct function of the HW. If the IOMMU datastructures
+> are not protected then the whole thing is not secure.
+> 
+> For instance allowing hostile VMs to manipulate the DTE, or interfere
+> with the command queue, destroys any possibility to have secure DMA.
 
-I have no hard leanings either way. I was trying to make sure compile fails if shadow stack
-is not enabled. But there are other places where config selection makes sure of this.
-So may be not needed here.
+Currently, we have already set the area used for guest SWIOTLB region as 
+shared memory to support DMA in SEV guest. Here, we are setting 
+additional guest IOMMU data structures as shared:
 
->
->
->>  #define PAGE_TABLE		__pgprot(_PAGE_TABLE)
->>  #define _PAGE_IOREMAP	((_PAGE_KERNEL & ~_PAGE_MTMASK) | _PAGE_IO)
->>diff --git a/arch/riscv/include/asm/sections.h b/arch/riscv/include/asm/sections.h
->>index a393d5035c54..4c4154d0021e 100644
->>--- a/arch/riscv/include/asm/sections.h
->>+++ b/arch/riscv/include/asm/sections.h
->>@@ -14,6 +14,10 @@ extern char __init_data_begin[], __init_data_end[];
->>  extern char __init_text_begin[], __init_text_end[];
->>  extern char __alt_start[], __alt_end[];
->>  extern char __exittext_begin[], __exittext_end[];
->>+#ifdef CONFIG_DYNAMIC_SCS
->>+extern char __init_shstk_start[], __init_shstk_end[];
->>+#endif
->>+extern char __end_srodata[];
->>  static inline bool is_va_kernel_text(uintptr_t va)
->>  {
->>@@ -31,4 +35,22 @@ static inline bool is_va_kernel_lm_alias_text(uintptr_t va)
->>  	return va >= start && va < end;
->>  }
->>+#ifdef CONFIG_DYNAMIC_SCS
->>+static inline bool is_va_init_shadow_stack_early(uintptr_t va)
->>+{
->>+	uintptr_t start = (uintptr_t)(kernel_mapping_pa_to_va(__init_shstk_start));
->>+	uintptr_t end = (uintptr_t)(kernel_mapping_pa_to_va(__init_shstk_end));
->>+
->>+	return va >= start && va < end;
->>+}
->>+
->>+static inline bool is_va_init_shadow_stack(uintptr_t va)
->>+{
->>+	uintptr_t start = (uintptr_t)(__init_shstk_start);
->>+	uintptr_t end = (uintptr_t)(__init_shstk_end);
->>+
->>+	return va >= start && va < end;
->>+}
->>+#endif
->
->
->You could have used an early flag and have only one function but 
->that's up to you.
+* Device Table
+* Command Buffer
+* Completion-Wait Semaphore Buffer
+* Per-device Interrupt Remapping Table
 
-Make sense, yeah I'll do that.
+, which are necessary for QEMU interrupt remapping emulation. Therefore,
+we are not making the VM any less secure from device perspective.
 
->
->
->>+
->>  #endif /* __ASM_SECTIONS_H */
->>diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
->>index 5d473343634b..7ae28d627f84 100644
->>--- a/arch/riscv/include/asm/thread_info.h
->>+++ b/arch/riscv/include/asm/thread_info.h
->>@@ -63,12 +63,18 @@ struct thread_info {
->>  };
->>  #ifdef CONFIG_SHADOW_CALL_STACK
->>+#ifdef CONFIG_DYNAMIC_SCS
->>  #define INIT_SCS							\
->>-	.scs_base	= init_shadow_call_stack,			\
->>+	.scs_base	= init_shadow_call_stack,	\
->>+	.scs_sp		= &init_shadow_call_stack[SCS_SIZE / sizeof(long)],
->>+#else
->>+#define INIT_SCS							\
->>+	.scs_base	= init_shadow_call_stack,	\
->>  	.scs_sp		= init_shadow_call_stack,
->>+#endif /* CONFIG_DYNAMIC_SCS */
->>  #else
->>  #define INIT_SCS
->>-#endif
->>+#endif /* CONFIG_SHADOW_CALL_STACK */
->>  /*
->>   * macros/functions for gaining access to the thread information structure
->>diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
->>index 002ca58dd998..cccc51f845ab 100644
->>--- a/arch/riscv/kernel/vmlinux.lds.S
->>+++ b/arch/riscv/kernel/vmlinux.lds.S
->>@@ -126,6 +126,18 @@ SECTIONS
->>  		*(.srodata*)
->>  	}
->>+	. = ALIGN(SECTION_ALIGN);
->>+	__end_srodata = .;
->>+
->>+#ifdef CONFIG_DYNAMIC_SCS
->>+	.shadowstack : AT(ADDR(.shadowstack) - LOAD_OFFSET){
->>+		__init_shstk_start = .;
->>+		KEEP(*(.shadowstack..init))
->>+		. = __init_shstk_start + PAGE_SIZE;
->>+		__init_shstk_end = .;
->>+	}
->>+#endif
->>+
->>  	. = ALIGN(SECTION_ALIGN);
->>  	_data = .;
->>diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->>index fe8e159394d8..5b6f0cfa5719 100644
->>--- a/arch/riscv/mm/init.c
->>+++ b/arch/riscv/mm/init.c
->>@@ -713,14 +713,22 @@ static __init pgprot_t pgprot_from_va(uintptr_t va)
->>  	if (IS_ENABLED(CONFIG_64BIT) && is_va_kernel_lm_alias_text(va))
->>  		return PAGE_KERNEL_READ;
->>+#ifdef CONFIG_DYNAMIC_SCS
->>+	/* If init task's shadow stack va, return write only page protections */
->>+	if (IS_ENABLED(CONFIG_64BIT) && is_va_init_shadow_stack(va)) {
->>+		pr_info("Shadow stack protections are being applied to for init\n");
->>+		return PAGE_KERNEL_SHADOWSTACK;
->>+	}
->>+#endif
->
->
->To avoid the ifdef here, I would hide it inis_va_init_shadow_stack().
+> Is this some precursor to implementing a secure iommu where the data
+> structures will remain encrypted? 
 
-Make sense too.
+Yes, the is precursor to secure vIOMMU support in the guest.
 
->
->
->>+
->>  	return PAGE_KERNEL;
->>  }
->>  void mark_rodata_ro(void)
->>  {
->>-	set_kernel_memory(__start_rodata, _data, set_memory_ro);
->>+	set_kernel_memory(__start_rodata, __end_srodata, set_memory_ro);
->>  	if (IS_ENABLED(CONFIG_64BIT))
->>-		set_kernel_memory(lm_alias(__start_rodata), lm_alias(_data),
->>+		set_kernel_memory(lm_alias(__start_rodata), lm_alias(__end_srodata),
->>  				  set_memory_ro);
->>  }
->>  #else
->>@@ -913,14 +921,21 @@ static void __init create_kernel_page_table(pgd_t *pgdir,
->>  static void __init create_kernel_page_table(pgd_t *pgdir, bool early)
->>  {
->>  	uintptr_t va, end_va;
->>+	pgprot_t prot;
->>  	end_va = kernel_map.virt_addr + kernel_map.size;
->>-	for (va = kernel_map.virt_addr; va < end_va; va += PMD_SIZE)
->>+	for (va = kernel_map.virt_addr; va < end_va; va += PMD_SIZE) {
->>+		prot = PAGE_KERNEL_EXEC;
->>+#ifdef CONFIG_DYNAMIC_SCS
->>+		if (early && is_va_init_shadow_stack_early(va))
->>+			prot = PAGE_KERNEL_SHADOWSTACK;
->>+#endif
->
->
->Ditto here to avoid the ifdef, hide it intois_va_init_shadow_stack_early().
+> What is even the point of putting a non-secure viommu into a SEV guest anyhow?
 
-Yes, will do.
+This is needed to provide interrupt remapping support for vcpu with 
+x2APIC ID (> 255) in the guest, which is already available w/ 
+QEMU-emulated AMD vIOMMU.
 
->
->
->>  		create_pgd_mapping(pgdir, va,
->>-				   kernel_map.phys_addr + (va - kernel_map.virt_addr),
->>-				   PMD_SIZE,
->>-				   early ?
->>-					PAGE_KERNEL_EXEC : pgprot_from_va(va));
->>+					kernel_map.phys_addr + (va - kernel_map.virt_addr),
->>+					PMD_SIZE,
->>+					early ?
->
->
->The 3 lines above are not modified, so no need to indent them.
-
-noted.
-
->
->
->>+					prot : pgprot_from_va(va));
->>+	}
->>  }
->>  #endif
->
->
->Apart from the nits above, you can add:
->
->Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->
->Thanks,
->
->Alex
->
+Thanks,
+Suravee
 
