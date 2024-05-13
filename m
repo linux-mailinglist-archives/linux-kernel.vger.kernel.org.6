@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-178093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6458C489A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:00:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64D368C4899
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B2FAB238B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:00:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05394B238FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D979583A0B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6203839F8;
 	Mon, 13 May 2024 21:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGlEGCUJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGo2Sybp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF0080BE3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF8181741;
 	Mon, 13 May 2024 21:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715634031; cv=none; b=ScP0+CRHAmLVAxOBM5RsZitMXhKc50X084zygDBgaVYjm87mbGt6ele8cw9UjEGqaLoiH3QPCv6Peff/0td279P9r9N3keNPnsQ37h/xCpfrNlBwukBrcP64+PCVkgFZAsKs6FQUUyRigQdksL8vfk+qRE8SgZII93WTjfKaTpI=
+	t=1715634031; cv=none; b=c2fG4pyWKJrcv44GcLZcLZE9ewoUWOePLN4kKnHLCe5o3JaOhyRwRaJ5ioOsEdNNIG/W08APgzxJgJetLmSHVuhxuUYg3TX9V5RmMxib/qifhrojogn0pVhTo1OTDwJgkp++L4AfX3Izx7iA5JVYCvXOXgJDLOLHQk3uJ7cf4+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715634031; c=relaxed/simple;
-	bh=Bl3VxXGVratxwfDnVG4jwWP7nX50ZfRcID+p2155ZIk=;
+	bh=hIkA1gPj2/D1aunRqsi8+wfqPz4MiORLkR+FQhueo/I=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=JnhMcnp955RVy7WXvkYb0+yRt9/Wuo2cB42Yztl6dtSh/aap0nOuP1HAovOG+NhoKPYLEd0tVIiIrh1dbymlQRKYV5lcSS+qBQQ2PfgDly4SboxF0Emk6kHNJVpvnNsBxsZRTId/B/IHSiO+UJW4KwzJsy4Lg6dkhcfcpoibpYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGlEGCUJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C2E7EC4AF08;
+	 In-Reply-To:To:Cc; b=GlpfZvknvCnblBJY2KiIIGgygcZqcFDQXBZyI2n/RbjzJlu0is/YshEJsOdlYfrEdHiX4qDN81RIhJk1kWVuJL9uteJ9Lns8B5dRMdU4DGP+joEKzLtMfS8p+pKMi29L36MkWcioP5F8P6L2VJ0+InnxQnEPP5Z9+6ijUu6Jnbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGo2Sybp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AD78DC32786;
 	Mon, 13 May 2024 21:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715634030;
-	bh=Bl3VxXGVratxwfDnVG4jwWP7nX50ZfRcID+p2155ZIk=;
+	bh=hIkA1gPj2/D1aunRqsi8+wfqPz4MiORLkR+FQhueo/I=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bGlEGCUJtsNEDBcijuKqPlAUvovqb9fN/tO3RDbmVKHGHT5I293E+fPyNwqPhqn14
-	 PVSZw7T9lXJNJp+OoR0JjWvKVzyQLSZSgLRXN25nIU8077nwJeVxva2RvI1bpQycAz
-	 7fSYG/uySRZYrZs+AW6xZtKVPhxaSE218HK2pnHFoystd3PLulMszs89vueN4CreoO
-	 DEzXM6uHZgneedpLax8BHrv6GsGO+Qsdd5ZWU9vgAqSicOvxZ/rAMuzQpaG9ytnAWu
-	 nDZYtOvbB3T9BCet4aFEj9Qr3oEPMd/3gIhxcHE6Vj7tJMjT6SINFgRhtaS+ZxYIIa
-	 Q6+a5ej7VS6AA==
+	b=YGo2SybpZMyGq3ZswKa1a78fgrFlkjfUPPVSHAMNGI9c2rlMTs/QSHFLv80eX3rcb
+	 vX1tVlJD3PYiu7BrX17gWRt+8nQZafQw68s9Fc/K9LNMTX8Aktofsb85jUdP/UKZvl
+	 E3Ww66odq3fBov3G5gbpMtn4xvEeZI4ps7AgDtfudwP23vZPQacdf7nzFyovtNoG7X
+	 X9Waggx+aAwuRiKFqjndsQVg6Dm1ZIg6hs7SmEC8lJdJ2RbPFZXvmwPMpF8L4nmsvf
+	 gfSQnxQjfZEu+SdNrT7cHQq1BA7GE4HpYoqk5m4FpPWWJf8wEECikKZeOwiuPZR4Hq
+	 RUBuh2wF3eMOA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B276CC43446;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9E9EEC43443;
 	Mon, 13 May 2024 21:00:30 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,36 +51,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] selftest: epoll_busy_poll: Fix spelling mistake "couldnt" ->
- "couldn't"
+Subject: Re: [PATCH net-next v2] net: phy: air_en8811h: reset netdev rules when
+ LED is set manually
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <171563403072.25832.9322227128298571251.git-patchwork-notify@kernel.org>
+ <171563403064.25832.6280293947152507143.git-patchwork-notify@kernel.org>
 Date: Mon, 13 May 2024 21:00:30 +0000
-References: <20240510084811.3299685-1-colin.i.king@gmail.com>
-In-Reply-To: <20240510084811.3299685-1-colin.i.king@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
+References: <5ed8ea615890a91fa4df59a7ae8311bbdf63cdcf.1715248281.git.daniel@makrotopia.org>
+In-Reply-To: <5ed8ea615890a91fa4df59a7ae8311bbdf63cdcf.1715248281.git.daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ ericwouds@gmail.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 10 May 2024 09:48:11 +0100 you wrote:
-> There is a spelling mistake in a TH_LOG message. Fix it.
+On Thu, 9 May 2024 11:00:42 +0100 you wrote:
+> Setting LED_OFF via brightness_set should deactivate hw control, so make
+> sure netdev trigger rules also get cleared in that case.
+> This fixes unwanted restoration of the default netdev trigger rules and
+> matches the behaviour when using the 'netdev' trigger without any
+> hardware offloading.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  tools/testing/selftests/net/epoll_busy_poll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Fixes: 71e79430117d ("net: phy: air_en8811h: Add the Airoha EN8811H PHY driver")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> 
+> [...]
 
 Here is the summary with links:
-  - selftest: epoll_busy_poll: Fix spelling mistake "couldnt" -> "couldn't"
-    https://git.kernel.org/netdev/net-next/c/f37dc28ac6e2
+  - [net-next,v2] net: phy: air_en8811h: reset netdev rules when LED is set manually
+    https://git.kernel.org/netdev/net-next/c/87bfdbbb1992
 
 You are awesome, thank you!
 -- 
