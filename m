@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-177571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B84F8C40EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:43:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E008C40EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 14:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26192821FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:43:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523051C21634
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 12:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC11214F9E2;
-	Mon, 13 May 2024 12:43:12 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A02DA3F;
-	Mon, 13 May 2024 12:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C2B14F9DA;
+	Mon, 13 May 2024 12:44:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98830A3F;
+	Mon, 13 May 2024 12:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715604192; cv=none; b=AuvZpz7SKDH+OC83UyImaoqWxihNcCfk8aHDZoOvXnmke9JZojmKVngVR9zAM4Q8b+cA0MQQwSrIRZrxZm4pcHV9DEdXuBgc+M6teTMLt7cYp6/efUVRnTQHSrBOEy+0NjPbD3E4gQ2R2W34qnGhhjA7qOJ7KJkTNvJNkwaK6oo=
+	t=1715604254; cv=none; b=Ors9WQFe7soQrWR/uiGL0OLPctJaqvFLdR/QkxWj3cvYm/WTC3ELYp7lesZ5+7LrrqQXtUPbaqOqJDlmIez81m58WnO701mWNtmIvJo+ggjPPIYCqOQuXmdjqxt5rX96Bf/qrYkKSZl25lvESU3iPH+d5y4/p0ZLR9JRcUm4WXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715604192; c=relaxed/simple;
-	bh=INhTGa+hLJWxJaIBH8Ei7S3x1zwZqdSWYWQ3g86eEoE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=L5Hxs28DRyuAy9XabMW+v5JUIHZNg+R0deiLt8C5lfC7COHt2W+X7dQC7m/N3pq3iBKl3DZqf5QPRTCWegVVF3B/djk3JaMIIzx+FKfavaDdBKRST/xbNFE+x9YQwiNdB3hLoJ8YSPme9kjwTi6YB3SKxU9FyoqmcX1UBbdyp9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VdJW06sbTz9v7Jf;
-	Mon, 13 May 2024 20:21:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 64FFE1401E0;
-	Mon, 13 May 2024 20:42:58 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAXAyfGCkJmtr4SCA--.47370S2;
-	Mon, 13 May 2024 13:42:57 +0100 (CET)
-Message-ID: <096121b3e74a7971b5e6a3d77ca8889380de1885.camel@huaweicloud.com>
-Subject: Re: [PATCH] arch/x86/um: Disable UBSAN sanitization
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Johannes Berg <johannes@sipsolutions.net>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com
-Cc: x86@kernel.org, linux-um@lists.infradead.org,
- linux-kernel@vger.kernel.org,  zohar@linux.ibm.com,
- linux-integrity@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Mon, 13 May 2024 14:42:42 +0200
-In-Reply-To: <d4f4666bf745e83ea00b466b7a7cfb5132b8c7b9.camel@sipsolutions.net>
-References: <20240513122754.1282833-1-roberto.sassu@huaweicloud.com>
-	 <d4f4666bf745e83ea00b466b7a7cfb5132b8c7b9.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1715604254; c=relaxed/simple;
+	bh=/b03Zf1aRDdZv7Bhcjq4xGxDuP82x35zRerWPUH3wHs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAlyK+f1v9uwlfkEmpERjS3Ti2cVxPP0L9liiaXZTVapNsOC9jbX6j/REc+rIrO0IiGZLzdH21+ZG8VpibX+w0D5TZ1MRpozkanzOLmScol27dJf2ZyN2wqwn9T9TbPNw2qOroivElTGvqL0gXeCtK4NItTObhbOl9l/GBesmWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D04781007;
+	Mon, 13 May 2024 05:44:36 -0700 (PDT)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BA61E3F7A6;
+	Mon, 13 May 2024 05:44:08 -0700 (PDT)
+Message-ID: <9e845146-8a31-407c-a5ee-e2e32f1655e5@arm.com>
+Date: Mon, 13 May 2024 14:43:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAXAyfGCkJmtr4SCA--.47370S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYj7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbPEf5
-	UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgACBF1jj5lAAQAAst
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] sched: Consolidate cpufreq updates
+To: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Juri Lelli <juri.lelli@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240512190018.531820-1-qyousef@layalina.io>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240512190018.531820-1-qyousef@layalina.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-05-13 at 14:29 +0200, Johannes Berg wrote:
-> On Mon, 2024-05-13 at 14:27 +0200, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > Disable UBSAN sanitization on UML, since UML does not support it.
-> >=20
->=20
-> Luckily, that isn't actually true, nor does it actually do this at all.
-> Please fix the commit message.
+On 12/05/2024 21:00, Qais Yousef wrote:
 
-Thanks, I was actually wondering. I based that statement based on
-ARCH_HAS_UBSAN=3Dn.
+[...]
 
-Any other solution would be ok.
+> @@ -4682,7 +4659,7 @@ static void attach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>  
+>  	add_tg_cfs_propagate(cfs_rq, se->avg.load_sum);
+>  
+> -	cfs_rq_util_change(cfs_rq, 0);
+> +	cpufreq_update_util(rq_of(cfs_rq), 0);
 
-Thanks
+Isn't this slighlty different now?
 
-Roberto
+before:
+
+   if (&rq->cfs == cfs_rq) {
+       cpufreq_update_util(rq, ....)
+   }
+
+now:
+
+   cpufreq_update_util(rq_of(cfs_rq), ...)
+
+You should get way more updates from attach/detach now.
+
+>  
+>  	trace_pelt_cfs_tp(cfs_rq);
+>  }
+
+[...]
 
 
