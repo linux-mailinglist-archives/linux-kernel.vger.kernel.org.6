@@ -1,234 +1,210 @@
-Return-Path: <linux-kernel+bounces-177145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48458C3AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:44:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A5988C3AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E483BB20D00
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7F51C20E37
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA9B146006;
-	Mon, 13 May 2024 04:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AE6146009;
+	Mon, 13 May 2024 04:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnRZnZBi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Dkhwcucj"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2046.outbound.protection.outlook.com [40.107.243.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4482110F;
-	Mon, 13 May 2024 04:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715575434; cv=none; b=uzrfgjD9Lr0rdDiE7knO9tj4YK/qDDTNanhMEEaJeQLxx1wchOQByhCsWi/iuzu9qTvJoAYEjwi7PpMuJQcc9wITbA7eBgPKrSyKzTD5lTvDfmZIKXaOYtN++Fhszmjvuq5ZJ3VdBsmuW9wRySZaS4CXlkbZozhd2IYxAXp4o00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715575434; c=relaxed/simple;
-	bh=f2hRnqnMpqjqK9xq/EnAefNcHhujuWO4M7G+A9jFyxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BOpj+D8y9dsHwLSqKyU3cEIy/Jc8YbNjHWAQsuPhkucI9ntoZBt7xaNBNLcpOLNQsvmdX+YN2OWRXVh9sxj7MkwLoL8Jr/LpwcIvI7s/L7nwhj6t5oNW83WxMibhHIfEcTQTxkooWo8WqwZvjRs9ODAC6LRFQOczeH0+HMZXKKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnRZnZBi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7674C113CC;
-	Mon, 13 May 2024 04:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715575433;
-	bh=f2hRnqnMpqjqK9xq/EnAefNcHhujuWO4M7G+A9jFyxw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KnRZnZBiCEqHPjRBiDJXkGZFxA1MD81ZDlBN5aBceUv6w5WovzbrMuIS2jq89htjC
-	 DZvnUrdk7G2/YEgAyihzMtxLbxO2wBe4jebtf15zGRufSFrUGarGmsCmyjR5gRYPME
-	 WmRNOJbVd+Blh3Uze7GhhmyHje0ZPkUbSQaNPScCJWPuJjE3MaOgJEy41c0FPEzvDp
-	 06mGN7dd4PE3VeNXfzEhVupnlVy+GmM9b4fFL9R4gPllx4Ow9SWVLzZ+xUEUhaTjfu
-	 a/8MUk4FGDPph0AjhACmoeEwnLHqd5pUqrT5a+9cVNDnBOOdUmBEXZa/TK1FlE6P64
-	 yMOMc1JBLS5lA==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e27277d2c1so51096711fa.2;
-        Sun, 12 May 2024 21:43:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWrKvMwzeclU1JkQEmRcukiTplMcVBkMVLDETqAjLMWM/WaiOZlMSXZxLRZ2pFB3aiM3w36LT8ZEfAxDif6CzeWZMCSn0/zGl2gwtCip4WsEO1E/tprx+sjGFw80f9AMz5q3UJ2VWOc93MDFuFmpgqskEO9+XfyD2u3GfP0el9sAjfCEITddhpYkjMGNRtHjA==
-X-Gm-Message-State: AOJu0Yx1ijkBwJ/QZVjAvHUUI9IBo/dodBez4JqkPa291jI+c/JjKwxd
-	jvEI/+ClxW0LANBGYygWeO/6nYRmH3UefvwzT6Fk8hz1GbRxCKd9hXqtojCSwtb8Ck3YHeA0/dc
-	lIm3Yh/+EL/9+eUKfyOp7kbo70eQ=
-X-Google-Smtp-Source: AGHT+IH+GcVG/AnLQ4PfEDzfNh+gYR0Re2MrA/t7vDkubHmAlPo1YCWxRHlsnnEHrBsYZiZlxNkPGxwJHeJT8BqoqJQ=
-X-Received: by 2002:a2e:1309:0:b0:2e6:a87e:6df9 with SMTP id
- 38308e7fff4ca-2e6ac4bb517mr3086031fa.20.1715575432301; Sun, 12 May 2024
- 21:43:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7341EB2A;
+	Mon, 13 May 2024 04:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715575450; cv=fail; b=rPKIt5dNZKP7rL1x9xmUFOOMPrRUt0twyRwAI227QkjbCpBnj0pkjYiNfOvKaxKnMrXT8rslU9WoOhSgrr2pWyLQ6E80fyAEbaU46sSBUbqJhSoY5Yf0WeUoOC7BCNBiki8bwDEchLMwXkNywUe10YTdPUcgBiLyUcwDv0mzXyU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715575450; c=relaxed/simple;
+	bh=B+wWCO8Gc+gDULRxi4sAg+Q20zDtLN4sqGD6eO/ePH0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u0CKNUWkIbeFN/Y4S4nnQTYj+40B7cMxnnF2H3IMA9yXtwtkI+P3YuM449NKUqu6HFPZzlAY+e/d6VlNLA3uT8rNcHSOlp0NEoYQV7ghMabv0n/T3b5utMoKcCAD18Ad6B3ABjJRn81X35A+kGEgiQwgMpJowimhsbVlp0MkjeM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Dkhwcucj; arc=fail smtp.client-ip=40.107.243.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JLwmU2Gj655tHGWOxk4AuGF5wMb0Nd12xNrmbElRrnHUpPO/TDOLtTov+/ufUyORNQWmr9yhMqxYLe2Qbd1olFTh6FS7zQU47OsKPZFQAp3SvHHElIF6+LmC4mkMbdJhR4ljdzdBu/NJjFWY7TQyl0QCQzvmTbG0Rc9yB7waZNSPBnt3iLX7PBz4VIGIaLLQ/cTADIyaSxXDxArD9LoNOfCVYjhGQwyxYxVCzrTsvjKjIBWzzMcacVTkN3zAReT+lmfaNenuLK9BDgWn4Dvl6V9pxFpDt+kNQWfgJ87ExGnnj4lr9aJOJaWf4Hb0ugENq0ue2CI2cmEuorCBu4sinA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hZVpGCVOQscqtZoDF4QVIBZt6BKJ9Fmo0aKcmpeYdFE=;
+ b=dfCzY0zMXJnNvGmhnEH6QCqq079l7EuTE9ZpPXiYH+dwm9dlDBFI83jsB+E7OpuRMH9tWV4vS4oyb/Kuh6y5a1whTtMHLAEGAeb5y9AObXYSjXG4QPWPq6nYrbiJD2uvv0m6TUKUY22U7dWNAEm+/x3jriy6oFh84mPof0CD3dZr0TOMTru4nCzXW4rlP1JIYWtdy86dJk/g+Aek7VcdKNtSGrV2eP/5fKqAICLs5uZDbRQwzobC7eKJnvyaVsz4ITeBJkFLBzYzJWVFYh2FWw3Ymxoa6qyX2IVHX22F0aHPTjpAwCMrdJ4gs+MX5NU44Ma6TpR6v/oOrWZIFDJOXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hZVpGCVOQscqtZoDF4QVIBZt6BKJ9Fmo0aKcmpeYdFE=;
+ b=DkhwcucjXtbN7P+FB3ck8/APq60O6hnqzEuPcGvETt3zaxNidYC/U2OLOoHVgM/7lE7xCDnvz3+NBqtixEBAbq+onLHvPBhDUF27f2CejNbgYhXVqhH2SsTnITMPdr9ryLsT768aO6x5G88IlFfTmZQy6RUECvoNwOCUXIkeQz1rNT7wo2dAHA1/iIfmxy/0B2uRcTA0X2yjIrVaIzlFhyM/g2O9VfMM6xb7mPkhzPTNgGKQCvZd7eqDPzUhoRjYUH32AskoP63jc8ETuLJSykSmcQS6Iiz1JQivwD3h9FIYrFgk0hN/5j2WC2wwWy6XUTUs++FYnI7/L2gzlvmw+Q==
+Received: from BY3PR05CA0030.namprd05.prod.outlook.com (2603:10b6:a03:254::35)
+ by DS7PR12MB8290.namprd12.prod.outlook.com (2603:10b6:8:d8::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 04:44:05 +0000
+Received: from CO1PEPF000044F3.namprd05.prod.outlook.com
+ (2603:10b6:a03:254:cafe::24) by BY3PR05CA0030.outlook.office365.com
+ (2603:10b6:a03:254::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.22 via Frontend
+ Transport; Mon, 13 May 2024 04:44:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000044F3.mail.protection.outlook.com (10.167.241.73) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 04:44:04 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
+ 2024 21:43:49 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
+ 2024 21:43:49 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Sun, 12 May 2024 21:43:45 -0700
+Date: Sun, 12 May 2024 21:43:42 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
+	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
+	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
+	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: Re: [PATCH RFCv1 13/14] iommufd: Add mmap infrastructure
+Message-ID: <ZkGafm+qAe77bvIW@nvidia.com>
+References: <cover.1712978212.git.nicolinc@nvidia.com>
+ <6fef9ff9944381d51dd18f83ec03785a26754dcf.1712978213.git.nicolinc@nvidia.com>
+ <ZkDd8A2qAYnuxGJQ@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511224035.27775-1-kris.van.hees@oracle.com>
-In-Reply-To: <20240511224035.27775-1-kris.van.hees@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 13 May 2024 13:43:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com>
-Message-ID: <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] Generate address range data for built-in modules
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZkDd8A2qAYnuxGJQ@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F3:EE_|DS7PR12MB8290:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4aeb330-ebae-4741-861e-08dc73075190
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|82310400017|1800799015|7416005|36860700004|376005;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fuOdM6dktizx1i5TkTv7EUoN/RLQoKVpowEiZFIWNp9mJT73q+F8EqKEucY5?=
+ =?us-ascii?Q?0Jp9pkZtjCUpM72npCsMZO7QtLAPNaxocHYmRp5WUXn/jOOF0TX9rGdNdH+i?=
+ =?us-ascii?Q?zbLcNOeKMe7z0wzObVp3IYk/3s0woGC7T3wEKvpbw5+cKHoICXyLe1gOxAwS?=
+ =?us-ascii?Q?SOIzKQdJcOyHc10p/J8Z/68pobTlD5750MsNveKBvQ3D0IVcnQSn3OfxICuS?=
+ =?us-ascii?Q?bGoZzqDVUgwQylJK3ndDDOaFYnWUQKWH3RRU0BoKv1XvCP0towlw2mDUsy/7?=
+ =?us-ascii?Q?hBDkSwHr/6hOvu1cZYcEzb5pyNQEzcDxWHoQ6Gcb12VUE5lDBtXBaONY9a2a?=
+ =?us-ascii?Q?kQOS/c2pyUXXTVWk4LOyPnm2in5hm2qRZE3/mhMGarQewryaV3Bttcsu0GGB?=
+ =?us-ascii?Q?Xdap0Ds0d2Z5WHA0/xm1V9g+FmqWKwAnx3NBcUAEgjWM/r+Xhg37ZNJHWQ8D?=
+ =?us-ascii?Q?zts1sEl+bak2E9os+lp2csmqWgUf1Ln1bCED9ksWgeDihZPoaEP7YMHGl5RV?=
+ =?us-ascii?Q?aLSJEtG7Zn92708D+GyDKlXFBlEvPkQKQxsA/r5o94JQ1R7/2Oq7tKQRjPZi?=
+ =?us-ascii?Q?0DjsvprOdRF4KT3yj9q03C+YIO/s0r56Gg9wOnrUSnCQbNmM4Pm8f65mm/yu?=
+ =?us-ascii?Q?825DyjZynEr/SjBkDzu5fX0SDnAQLEv9rvFB5s38fxPfzf19Ahy758XYOKsN?=
+ =?us-ascii?Q?On5UHes9vfEmffdLRuoa4Hb6U3MUAYXW+dJ4h30FJXQs7OztetK4yR1WtywC?=
+ =?us-ascii?Q?jVwwx2QzLukSYGZSJ+SRGDRzAZ0lBeHh66wgE5tO3WOa9ALyldiqAzHrwJMs?=
+ =?us-ascii?Q?2qIHJwiuPokKVOUTbbNXHo42HTZd8DPxSaLLO4w5S6Z2iQk4leLwP35MtfIY?=
+ =?us-ascii?Q?lDT536VrnsBZGjVVvpb5fv3v4xMt4KPHrFZedNtMyU7Cvm9j5NaSOsKeT3oz?=
+ =?us-ascii?Q?HD1VkW+2Ug1WCnsD/4rJXB8PxTrPPbommwfMc7At7Pb3Yn9wQGezgD3R5hpP?=
+ =?us-ascii?Q?RL+EbQvkckMaKweCZczSbHGQW0BHjGZShHicAWcLDzZL2kCYTuYZ5c04EFqD?=
+ =?us-ascii?Q?l+NiHcKJAp+/FUw8VG5+BruGWETpldEY7iRA8h2mN2wGfNKrQqcfHHpo4IM1?=
+ =?us-ascii?Q?bINZpkbDTu3ZVdBI5crSHpv/DAqlx+zYoHnHD3iTsKXHXiVKAxN13TMeY8qC?=
+ =?us-ascii?Q?mt/xFdP0kgMXi8DAX+IZhihaWLOxRNa1UpdVkqG3NLhsMX0Nkp0ppdrYsm9q?=
+ =?us-ascii?Q?SZyiDemcCavDvQwH7ALYjfQD+VO52x4SvfRssQJj9KInkDgJsQtwi+F+A3L8?=
+ =?us-ascii?Q?5fIwt1Q2kKDtbYvttZpuTiA8YTwk1P1QlTgiHE0KID6ujEhnb3cJL17BYTDj?=
+ =?us-ascii?Q?yING/vaPnctJuTOfAVmYUS72w50V?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(1800799015)(7416005)(36860700004)(376005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 04:44:04.8752
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4aeb330-ebae-4741-861e-08dc73075190
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8290
 
-On Sun, May 12, 2024 at 7:42=E2=80=AFAM Kris Van Hees <kris.van.hees@oracle=
-com> wrote:
->
-> Especially for tracing applications, it is convenient to be able to
-> refer to a symbol using a <module name, symbol name> pair and to be able
-> to translate an address into a <nodule mname, symbol name> pair.  But
-> that does not work if the module is built into the kernel because the
-> object files that comprise the built-in module implementation are simply
-> linked into the kernel image along with all other kernel object files.
->
-> This is especially visible when providing tracing scripts for support
-> purposes, where the developer of the script targets a particular kernel
-> version, but does not have control over whether the target system has
-> a particular module as loadable module or built-in module.  When tracing
-> symbols within a module, referring them by <module name, symbol name>
-> pairs is both convenient and aids symbol lookup.  But that naming will
-> not work if the module name information is lost if the module is built
-> into the kernel on the target system.
->
-> Earlier work addressing this loss of information for built-in modules
-> involved adding module name information to the kallsyms data, but that
-> required more invasive code in the kernel proper.  This work never did
-> get merged into the kernel tree.
->
-> All that is really needed is knowing whether a given address belongs to
-> a particular module (or multiple modules if they share an object file).
-> Or in other words, whether that address falls within an address range
-> that is associated with one or more modules.
->
-> This patch series is baaed on Luis Chamberlain's patch to generate
-> modules.builtin.objs, associating built-in modules with their object
-> files.  Using this data, vmlinux.o.map and vmlinux.map can be parsed in
-> a single pass to generate a modules.buitin.ranges file with offset range
-> information (relative to the base address of the associated section) for
-> built-in modules.  The file gets installed along with the other
-> modules.builtin.* files.
+On Sun, May 12, 2024 at 12:19:12PM -0300, Jason Gunthorpe wrote:
+> On Fri, Apr 12, 2024 at 08:47:10PM -0700, Nicolin Chen wrote:
+> > Add for sharing the kernel page with user space. This allows to pass
+> > through HW resource (VCMDQ MMIO pages for example) to user space VMM
+> > and guest OS. Use vma->vm_pgoff as the carrier of a viommu_id.
+> > 
+> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> > ---
+> >  drivers/iommu/iommufd/main.c | 40 ++++++++++++++++++++++++++++++++++++
+> >  include/linux/iommufd.h      |  4 ++++
+> >  2 files changed, 44 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
+> > index 96ef81530809..5b401c80cca8 100644
+> > --- a/drivers/iommu/iommufd/main.c
+> > +++ b/drivers/iommu/iommufd/main.c
+> > @@ -16,6 +16,7 @@
+> >  #include <linux/mutex.h>
+> >  #include <linux/bug.h>
+> >  #include <uapi/linux/iommufd.h>
+> > +#include <linux/iommu.h>
+> >  #include <linux/iommufd.h>
+> >  
+> >  #include "io_pagetable.h"
+> > @@ -427,11 +428,50 @@ static long iommufd_fops_ioctl(struct file *filp, unsigned int cmd,
+> >  	return ret;
+> >  }
+> >  
+> > +static int iommufd_fops_mmap(struct file *filp, struct vm_area_struct *vma)
+> > +{
+> > +	struct iommufd_ctx *ictx = filp->private_data;
+> > +	size_t size = vma->vm_end - vma->vm_start;
+> > +	u32 viommu_id = (u32)vma->vm_pgoff;
+> 
+> Don't do mmaps this way, it doesn't scale well for future things.
+> 
+> The pgoff/length should *always* come from the kernel as some
+> 'mmap_offset' output. I usually call this the mmap cookie.
+> 
+> In this case have the mmap cookie for the tegra doorbell return in the
+> viommu's driver data struct, then userspace just passes the opaque
+> cookie to mmap to get the correct tegra doorbell.
+> 
+> The core code has some simple xarray/maple tree to allocate cookies
+> and dispatch them to the correct mmap callback. Usually I'd say to
+> provide a mmap callback pointer when allocating the cookie.
+> 
+> Also look at the RDMA Code around mmap there is a bunch of VMA
+> validations needed. Ie we must insist on VM_SHARED and check
+> permissions, etc.
 
+Yea, the vm_pgoff as a carrier is a bit of hack, as mentioned
+in the cover-letter. Let me revisit the whole thing and study
+from RDMA code also.
 
-
-I still do not want to see modules.builtin.objs.
-
-
-During the vmlinux.o.map parse, every time an object path
-is encountered, you can open the corresponding .cmd file.
-
-
-
-Let's say, you have the following in vmlinux.o.map:
-
-text          0x00000000007d4fe0     0x46c8 drivers/i2c/i2c-core-base.o
-
-
-
-You can check drivers/i2c/.i2c-core-base.o.cmd
-
-
-$ cat drivers/i2c/.i2c-core-base.o.cmd | tr ' ' '\n' | grep KBUILD_MODFILE
--DKBUILD_MODFILE=3D'"drivers/i2c/i2c-core"'
-
-
-Now you know this object is part of drivers/i2c/i2c-core
-(that is, its modname is "i2c-core")
-
-
-
-
-Next, you will get the following:
-
- .text          0x00000000007dc550     0x13c4 drivers/i2c/i2c-core-acpi.o
-
-
-$ cat drivers/i2c/.i2c-core-acpi.o.cmd | tr ' ' '\n' | grep KBUILD_MODFILE
--DKBUILD_MODFILE=3D'"drivers/i2c/i2c-core"'
-
-
-This one is also a part of drivers/i2c/i2c-core
-
-
-You will get the address range of "i2c-core" without changing Makefiles.
-
-You still need to modify scripts/Makefile.vmlinux(_o)
-but you can implement everything else in your script,
-although I did not fully understand the gawk script.
-
-
-Now, you can use Python if you like:
-
-  https://lore.kernel.org/lkml/20240512-python-version-v2-1-382870a1fa1d@li=
-naro.org/
-
-Presumably, python code will be more readable for many people.
-
-
-GNU awk is not documented in Documentation/process/changes.rst
-If you insist on using gawk, you need to add it to the doc.
-
-
-
-
-
-Having said that, I often hope to filter traced functions
-by an object path instead of a modname because modname
-filtering is only useful tristate code.
-For example, filter by "path:drivers/i2c/" or "path:drivers/i2c/i2c-core*"
-rather than "mod:i2c-core"
-
-<object path, symbol name> reference will be useful for always-builtin code=
-.
-
-
-
-
->
-> The impact on the kernel build is minimal because everything is done
-> using a single-pass AWK script.  The generated data size is minimal as
-> well, (depending on the exact kernel configuration) usually in the range
-> of 500-700 lines, with a file size of 20-40KB.
->
-> Changes since v1:
->  - Renamed CONFIG_BUILTIN_RANGES to CONFIG_BUILTIN_MODULE_RANGES
->  - Moved the config option to the tracers section
->  - 2nd arg to generate_builtin_ranges.awk should be vmlinux.map
->
-> Kris Van Hees (5):
->   trace: add CONFIG_BUILTIN_MODULE_RANGES option
->   kbuild: generate a linker map for vmlinux.o
->   module: script to generate offset ranges for builtin modules
->   kbuild: generate modules.builtin.ranges when linking the kernel
->   module: add install target for modules.builtin.ranges
->
-> Luis Chamberlain (1):
->   kbuild: add modules.builtin.objs
->
->  .gitignore                          |   2 +-
->  Documentation/dontdiff              |   2 +-
->  Documentation/kbuild/kbuild.rst     |   5 ++
->  Makefile                            |   8 +-
->  include/linux/module.h              |   4 +-
->  kernel/trace/Kconfig                |  17 ++++
->  scripts/Makefile.lib                |   5 +-
->  scripts/Makefile.modinst            |  11 ++-
->  scripts/Makefile.vmlinux            |  17 ++++
->  scripts/Makefile.vmlinux_o          |  18 ++++-
->  scripts/generate_builtin_ranges.awk | 149 ++++++++++++++++++++++++++++++=
-++++++
->  11 files changed, 228 insertions(+), 10 deletions(-)
->  create mode 100755 scripts/generate_builtin_ranges.awk
->
->
-> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
-> --
-> 2.42.0
->
->
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks
+Nicolin
 
