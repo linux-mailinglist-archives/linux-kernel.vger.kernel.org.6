@@ -1,139 +1,93 @@
-Return-Path: <linux-kernel+bounces-178161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C258C49DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:03:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 327A18C49E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 748F62820BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFDA1F21DCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8488785272;
-	Mon, 13 May 2024 23:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3B484FD0;
+	Mon, 13 May 2024 23:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="iKd+8fwn"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsK17zj5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7798084DF1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 23:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610C784DF4;
+	Mon, 13 May 2024 23:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715641406; cv=none; b=KGClKSgZ7fsEDeoe2JKyAXgw/Ck1QsLoAXU/3Zgk7CXEn9pil+qcJ7dSe057RdwOG0YI66H8+GakfJ8xeyB4ScbEzGaoKj4C09G3mQ+nMxSxYLzKhD5FR4WS82TYe/xXVWeeoa/0G3TE4nbl9SLaSkWrKHNJabqoLiYfTK637Dk=
+	t=1715641592; cv=none; b=jBooi63ojAe5PacdiG2xMXkJXn/DeztiEJBc6SGhgOsNbOKzDw/wx1iwQ9mEJFn1AHiGvvwHkMVcnEhmYRO5hqf1UIsuSgFIkgOIMciUaomeIx9tai/TQju7ASNkgVgnY460CCKjYvo9txAGE0yPDteiOrmcpst4++BEOVYxVbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715641406; c=relaxed/simple;
-	bh=/9z5Va8BoS10Zw3lv3iW17W4Qhvjzu7IIUUc3s4u6+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxVtRZmu1cJvNhu/2InqZn45sH509Udh2teZAbcdUjxh1SNdTudzx4n1NbcD0bHDXeTpAQwseocYAXsNub8OZxzE+d7sUEAh2fFQLhnpYyfe8NRO5i4YGqNiIFhQCsZLcSTJIcL3Fl3jBcGxNUlBzPkQ1MR0w9q9DOSEoE9BTzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=iKd+8fwn; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f490b5c23bso4168266b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 16:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1715641404; x=1716246204; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eiIURfigbv4jfMYVn+cegJe5X/kgu+BloNveVda8Z54=;
-        b=iKd+8fwngYQ1a9VzFZ1uGEVrJHwiOLeTu0PzsbV4jUJ3bNunb/Hrd+Ob/apHhpW9F1
-         PpcyDeGKKTuX8Lbk4hb1N8fYWGHFp+1iCvt0CyhdE9tdaQXsjtG0FFvDIhbHWsu/qMpI
-         mJx6tYUMvvYeQwFfnDSL/KByxX7SdP9uHyOlVaXU1p2xFGcaTMInakp5Z9YwdclpkCsL
-         vp8ZFSDahv/9sI/5ChJXUPBeS2g5a2ttW6IgLxquW0ahKsdBV0wo97d708G81TM5vp0D
-         oncFWNnaT9SS/8tJqd018OMRbp+87vuaFtRFBHrDWi4BjiWVAulZ4HPrpxPyJoo1SpE1
-         Ay4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715641404; x=1716246204;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eiIURfigbv4jfMYVn+cegJe5X/kgu+BloNveVda8Z54=;
-        b=wbymkt8PlhGxKjT2QBEfga2FFHVSorUbMk7OOpQo59LZ/3wc47TvYlgslkGnF/wG/X
-         Du3vXzTHVZWHKj1gomWvVq6r10PUAfY9Nw0chna4AzVMPt1UmrTJ4brHW67tbXud151A
-         cl2GZ6OlHlURT5IBCdHOoPwlSl0FcDfftaJVPFvqjCgaqHpCH18Fex/IrpngtcNb497l
-         qA+qlHEJcx2LknGtsqZT9q8QuPJzppcfM9TEx4fnIKeT6V93dsmpPyRI5JoBZzL3G+DX
-         U0nXCKvqlG1T2vDfZi2iIV6AauMAyqw1WlhmvgpfFnehfVvj0RtfUQtvH1L2vRlsYCrm
-         eFYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLiDH7rs7Mv/ReYEVLLUcPzyt2fzabyb9SagqxOUhu4mGdjx/OCHIqc64XCejiBI/H2tFCgixosZmv2XrumWy6A4sCQO0osa5mKjp+
-X-Gm-Message-State: AOJu0Yz7KWpjutztCOXQiUoQEWMyu3wQxHYodTU2GDTAfUAblfx5eBQm
-	wPf8nF4tjt6628bAdSbHnGogLmvS0ZkLuvMI6D4AY2z7Ns1er6zbsVuvCRWGbaE=
-X-Google-Smtp-Source: AGHT+IGZZ05t4FHBsyrm+Iw0NDc4I2GEzxI8XRqc94KzZJOwLZEC+KqvVPk0Pm01zm+C+DAs6jMXHA==
-X-Received: by 2002:a05:6a21:6da1:b0:1a9:5e1f:8485 with SMTP id adf61e73a8af0-1afde1180a2mr10908731637.31.1715641403754;
-        Mon, 13 May 2024 16:03:23 -0700 (PDT)
-Received: from ziepe.ca ([50.204.89.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a665c0sm7877475b3a.3.2024.05.13.16.03.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 16:03:22 -0700 (PDT)
-Received: from jgg by jggl with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1s6ehW-0001ej-5J;
-	Mon, 13 May 2024 20:03:22 -0300
-Date: Mon, 13 May 2024 20:03:22 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, rds-devel@oss.oracle.com,
-	Leon Romanovsky <leon@kernel.org>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Allison Henderson <allison.henderson@oracle.com>,
-	Manjunath Patil <manjunath.b.patil@oracle.com>,
-	Mark Zhang <markzhang@nvidia.com>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>,
-	Yang Li <yang.lee@linux.alibaba.com>
-Subject: Re: [PATCH 0/6] rds: rdma: Add ability to force GFP_NOIO
-Message-ID: <ZkKcOogJpI0PU2l3@ziepe.ca>
-References: <20240513125346.764076-1-haakon.bugge@oracle.com>
+	s=arc-20240116; t=1715641592; c=relaxed/simple;
+	bh=e8N7D1BpfBQnynMsqmyyIUHaGcH8BKYPBKZbu2NtRRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rrV0tT+cmCLbKJNVzk2OY5LvtPqMSHEox8NlM+Ou6aFcLzLa/lcMWPPK1XlPr5X+zRisNihrFcbJjZHcDh5hvkN841rH7HnLa0YJCInEEqcMd0kAM7iX76rukLIUgYWwd9C16agz8HeW0QiuTLZnY9lC275ugoWS7PnJ5Pi2BAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsK17zj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A042C113CC;
+	Mon, 13 May 2024 23:06:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715641591;
+	bh=e8N7D1BpfBQnynMsqmyyIUHaGcH8BKYPBKZbu2NtRRA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TsK17zj55pMffE9DVaKJikVTL8MIFp/VJO2w3ud043/vmOr07OHMzDwdWxmM/YxwD
+	 dgRIMAPWBX26BPYGKvPI23NCos0Q6RhvPMp2+oBG/gM/5qUGj71VOi64jmBOQoaILJ
+	 yh+LsO93S124rBA0PHyhn2pGPmwNJUS2ZcoFxQvJ70VRtZEcQ7IppH0pI6WaIzqPTb
+	 SIkxCmZhKqHEZABjaE5UE8lNne4Sh2lKdLA4vjjvF1yPZaTjGjUKJoa8FqpNwgxZVs
+	 umjuRdO6+/6ybDFGmCDt99cVwfVs99PFp/ZOsdd/HbbSA7l6iiEdRzIRRaODu87zRl
+	 2lFksnHjU9ViA==
+Date: Mon, 13 May 2024 16:06:30 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, Geliang
+ Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Florian
+ Westphal <fw@strlen.de>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Gregory Detal <gregory.detal@gmail.com>
+Subject: Re: [PATCH net-next 0/8] mptcp: small improvements, fix and
+ clean-ups
+Message-ID: <20240513160630.545c3024@kernel.org>
+In-Reply-To: <20240510-upstream-net-next-20240509-misc-improvements-v1-0-4f25579e62ba@kernel.org>
+References: <20240510-upstream-net-next-20240509-misc-improvements-v1-0-4f25579e62ba@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240513125346.764076-1-haakon.bugge@oracle.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 13, 2024 at 02:53:40PM +0200, Håkon Bugge wrote:
-> This series enables RDS and the RDMA stack to be used as a block I/O
-> device. This to support a filesystem on top of a raw block device
-> which uses RDS and the RDMA stack as the network transport layer.
+On Fri, 10 May 2024 13:18:30 +0200 Matthieu Baerts (NGI0) wrote:
+> This series contain mostly unrelated patches:
 > 
-> Under intense memory pressure, we get memory reclaims. Assume the
-> filesystem reclaims memory, goes to the raw block device, which calls
-> into RDS, which calls the RDMA stack. Now, if regular GFP_KERNEL
-> allocations in RDS or the RDMA stack require reclaims to be fulfilled,
-> we end up in a circular dependency.
+> - The two first patches can be seen as "fixes". They are part of this
+>   series for -next because it looks like the last batch of fixes for
+>   v6.9 has already been sent. These fixes are not urgent, so they can
+>   wait if an unlikely v6.9-rc8 is published. About the two patches:
+>     - Patch 1 fixes getsockopt(SO_KEEPALIVE) support on MPTCP sockets
+>     - Patch 2 makes sure the full TCP keep-alive feature is supported,
+>       not just SO_KEEPALIVE.
 > 
-> We break this circular dependency by:
+> - Patch 3 is a small optimisation when getsockopt(MPTCP_INFO) is used
+>   without buffer, just to check if MPTCP is still being used: no
+>   fallback to TCP.
 > 
-> 1. Force all allocations in RDS and the relevant RDMA stack to use
->    GFP_NOIO, by means of a parenthetic use of
->    memalloc_noio_{save,restore} on all relevant entry points.
+> - Patch 4 adds net.mptcp.available_schedulers sysctl knob to list packet
+>   schedulers, similar to net.ipv4.tcp_available_congestion_control.
+> 
+> - Patch 5 and 6 fix CheckPatch warnings: "prefer strscpy over strcpy"
+>   and "else is not generally useful after a break or return".
+> 
+> - Patch 7 and 8 remove and add header includes to avoid unused ones, and
+>   add missing ones to be self-contained.
 
-I didn't see an obvious explanation why each of these changes was
-necessary. I expected this:
- 
-> 2. Make sure work-queues inherits current->flags
->    wrt. PF_MEMALLOC_{NOIO,NOFS}, such that work executed on the
->    work-queue inherits the same flag(s).
-
-To broadly capture everything and understood this was the general plan
-from the MM side instead of direct annotation?
-
-So, can you explain in each case why it needs an explicit change?
-
-And further, is there any validation of this? There is some lockdep
-tracking of reclaim, I feel like it should be more robustly hooked up
-in RDMA if we expect this to really work..
-
-Jason
+Seems to conflict with:
+https://lore.kernel.org/all/20240509-upstream-net-next-20240509-mptcp-tcp_is_mptcp-v1-1-f846df999202@kernel.org/
+-- 
+pw-bot: cr
 
