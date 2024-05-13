@@ -1,177 +1,158 @@
-Return-Path: <linux-kernel+bounces-177957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E7648C46C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7B58C46C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:28:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F33282984
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:26:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420C7282465
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1697381DE;
-	Mon, 13 May 2024 18:26:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A566383AE;
+	Mon, 13 May 2024 18:28:28 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795C62C1A9;
-	Mon, 13 May 2024 18:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F46381BD
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715624811; cv=none; b=tDA9OV/SsZ9oZ2L9//JxzWGdFqPpm2p/WcNam3zFHC2EMD6yJUa20UW1cRMfUESUWR8n/e2pRG8eeiBCETiLseUVmeBff3CVXemFgTVo5/qjxfc2R7nWK11Bx2TblGbeUw7tfga55OljQOS2ypv5eWvKpnX/O2+23iCuz0sFDZE=
+	t=1715624908; cv=none; b=NRMhVoqJz87C6jz9fyYGE+gkm4fGT4IphfC/twfgmhE5yi40GU+2t/NiCA/gGwdqDiDeqsUSTwNYq8ki9Xbye8nLfV6TTXC+BLSD/pIyipfxocHiDODgRUxr2kOushUSrLqQl+W+daeiMrWvTD3WGCFd8tUc0yIYh7RE/629doo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715624811; c=relaxed/simple;
-	bh=KMlCK65C87EvBcjZbxwN/eiP899E0BT6IdkmKFZJmSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JpKdfvYRflt/VuLtfM05u5PyyLjiphHwLaLOTo7PCnpwVrn8tNtkXpRt4dVeOY9s1nyU6ZOehBZFnUacciD8frGQEaT2tdXSMoetBDfODvWwJeaWJhsxr0JdTrE43eOm4UVROVTtJk+AZzaah9QaDRRdU62V3i/OxFTOr6tvm7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8819C113CC;
-	Mon, 13 May 2024 18:26:48 +0000 (UTC)
-Date: Mon, 13 May 2024 14:26:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, torvalds@linux-foundation.org,
- mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
- bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
- joshdon@google.com, brho@google.com, pjt@google.com, derkling@google.com,
- haoluo@google.com, dvernet@meta.com, dschatzberg@meta.com,
- dskarlat@cs.cmu.edu, riel@surriel.com, changwoo@igalia.com,
- himadrics@inria.fr, memxor@gmail.com, andrea.righi@canonical.com,
- joel@joelfernandes.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- kernel-team@meta.com
-Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
-Message-ID: <20240513142646.4dc5484d@rorschach.local.home>
-In-Reply-To: <20240513080359.GI30852@noisy.programming.kicks-ass.net>
-References: <20240501151312.635565-1-tj@kernel.org>
-	<20240502084800.GY30852@noisy.programming.kicks-ass.net>
-	<ZjPnb1vdt80FrksA@slm.duckdns.org>
-	<20240503085232.GC30852@noisy.programming.kicks-ass.net>
-	<ZjgWzhruwo8euPC0@slm.duckdns.org>
-	<20240513080359.GI30852@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715624908; c=relaxed/simple;
+	bh=Icslwjsq8g9SV845eb164Q87FLWh/kmVKyl69+aO8PA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VFts7obbvifQ8AH5kDY9S0KMEK8ESxUHlT4Hl5BSGqmqU0t72LKHMOHVpSZ7UHLeC9YJlVklxtgXk2y/spKAyzmdO2XylIgTFYakvVF1A8soK8NAQtM+HZXvmHE2lZ+ZRTQGh2vJKJtKqaAGxpHnm+XHG1xQY/r1hc/7CA3Mlxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1d122f75cso304394539f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:28:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715624906; x=1716229706;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=msQ7h7JBL1Igw0Dsub4eMsPGj3cl9F2AESheEMyZNi0=;
+        b=GnNN5bqneacKqKNFpjfMTiyRK810BerJeb36pBgYOFlfy8/HT+MRl4PK0G9bVPKRvP
+         u0fp14Idvy5iLcyethJ/bVd4cqSkyelxXJ5wlSSQ/rlK7Y4lo83gdVzDZf8JF/dQc9II
+         Q1DwJLd6JExMhk9MaUKkFiVFdx+7f8Vp4FIbUAM0mIKbJCkvC4susAjsCtRVrSBcKYUh
+         F7tLGl65DmbH3FZ5bF4LADhnJtDqGVorCEya3VjcRPT9+kAcMQApS/6q7bcAryc26I6B
+         5wrgzCp6CEhec/n/wH6X8OBUBkHI54oVjpk66hxl8J1AbWXCCrVHt8fww6vw/JQdNxzz
+         HZQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsx57nKjV1W4mP33U0ZuVjDpja76URuwFNe4ewX+EA0iiy0Fv25hfVXEDHIl3/7YaFH0qYQqRdRaFLS+ORot5wsxjn3PCqO9QPr9jO
+X-Gm-Message-State: AOJu0YzpmAKYlsG3425X9wWngO4zB2Y63IKPSEjPLJbFnDtqkoMQIAON
+	koA+Kdayk9H5nx+ynWBUlYzoCLBdiDKD5vqJ75qUOe0AF44jR3YnFts8mRkm5+PylJHgdKp9ZzN
+	2uTslYfrUPfHXJP7UzJ+V64tMAdIfSyEaHROPfsH7XLdTqGIC167v8nU=
+X-Google-Smtp-Source: AGHT+IEJ87fqDBDxD5FNsfS/AshCbCDYvrG+kW4m+aPcTiCAXIld7FqaZva35xQz5z0JmJLK7syjbP10t7ZOrjGaAJHfkVT3me+f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6638:2510:b0:488:c743:c17 with SMTP id
+ 8926c6da1cb9f-4895a39dbf2mr971912173.5.1715624905804; Mon, 13 May 2024
+ 11:28:25 -0700 (PDT)
+Date: Mon, 13 May 2024 11:28:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000141e8306185a0daa@google.com>
+Subject: [syzbot] [overlayfs?] WARNING in ovl_workdir_create (3)
+From: syzbot <syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 13 May 2024 10:03:59 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hello,
 
-> > I believe we agree that we want more people contributing to the schedul=
-ing
-> > area.  =20
->=20
-> I think therein lies the rub -- contribution. If we were to do this
-> thing, random loadable BPF schedulers, then how do we ensure people will
-> contribute back?
+syzbot found the following issue on:
 
-Hi Peter,
+HEAD commit:    45db3ab70092 Merge tag '6.9-rc7-ksmbd-fixes' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=169b934c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2f7a2b43b9e58995
+dashboard link: https://syzkaller.appspot.com/bug?extid=8aa3f99a6acb9f8fd429
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-I'm somewhat agnostic to sched_ext itself, but I have been an advocate
-for a plugable scheduler infrastructure. And we are seriously looking
-at adding it to ChromeOS.
+Unfortunately, I don't have any reproducer for this issue yet.
 
->=20
-> That is, from where I am sitting I see $vendor mandate their $enterprise
-> product needs their $BPF scheduler. At which point $vendor will have no
-> incentive to ever contribute back.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0c2a8034002c/disk-45db3ab7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/807e35e2b3a9/vmlinux-45db3ab7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4868b2eab91a/bzImage-45db3ab7.xz
 
-Believe me they already have their own scheduler, and because its so
-different, it's very hard to contribute back.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8aa3f99a6acb9f8fd429@syzkaller.appspotmail.com
 
->=20
-> And customers of $vendor that want to run additional workloads on
-> their machine are then stuck with that scheduler, irrespective of it
-> being suitable for them or not. This is not a good experience.
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888077f311f0, owner = 0x0, curr 0xffff8880787ebc00, list empty
+WARNING: CPU: 1 PID: 8339 at kernel/locking/rwsem.c:1369 __up_write kernel/locking/rwsem.c:1369 [inline]
+WARNING: CPU: 1 PID: 8339 at kernel/locking/rwsem.c:1369 up_write+0x469/0x520 kernel/locking/rwsem.c:1632
+Modules linked in:
+CPU: 1 PID: 8339 Comm: syz-executor.2 Not tainted 6.9.0-rc7-syzkaller-00056-g45db3ab70092 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:__up_write kernel/locking/rwsem.c:1369 [inline]
+RIP: 0010:up_write+0x469/0x520 kernel/locking/rwsem.c:1632
+Code: ea 03 80 3c 02 00 75 53 48 8b 13 4d 89 f1 41 55 4d 89 f8 4c 89 e1 48 c7 c6 40 b7 2c 8b 48 c7 c7 60 b6 2c 8b e8 08 91 e5 ff 90 <0f> 0b 90 90 5a e9 96 fc ff ff 48 89 ef e8 e5 26 7f 00 e9 03 fd ff
+RSP: 0018:ffffc90010ac7928 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffff888077f311f0 RCX: ffffc9000baa6000
+RDX: 0000000000040000 RSI: ffffffff81517126 RDI: 0000000000000001
+RBP: ffff888077f311f8 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000002 R12: ffff888077f311f0
+R13: ffffffff8b2cb5a0 R14: ffff8880787ebc00 R15: 0000000000000000
+FS:  00007f0eebfff6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020098000 CR3: 0000000021f12000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:800 [inline]
+ ovl_workdir_create+0x33e/0x820 fs/overlayfs/super.c:359
+ ovl_make_workdir fs/overlayfs/super.c:656 [inline]
+ ovl_get_workdir fs/overlayfs/super.c:814 [inline]
+ ovl_fill_super+0xe6b/0x6720 fs/overlayfs/super.c:1382
+ vfs_get_super fs/super.c:1268 [inline]
+ get_tree_nodev+0xdd/0x190 fs/super.c:1287
+ vfs_get_tree+0x92/0x380 fs/super.c:1779
+ do_new_mount fs/namespace.c:3352 [inline]
+ path_mount+0x14e6/0x1f20 fs/namespace.c:3679
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount fs/namespace.c:3875 [inline]
+ __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcf/0x260 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0eec47dd69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0eebfff0c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f0eec5ac050 RCX: 00007f0eec47dd69
+RDX: 0000000020000080 RSI: 00000000200000c0 RDI: 0000000000000000
+RBP: 00007f0eec4ca49e R08: 0000000020000200 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f0eec5ac050 R15: 00007ffe9e328388
+ </TASK>
 
-And $vendor usually has a unique workload that their changes will
-likely cause regressions in other workloads, making it even harder to
-contribute back.
 
->=20
-> So I don't at all mind people playing around with schedulers -- they can
-> do so today, there are a ton of out of tree patches to start or learn
-> from, or like I said, it really isn't all that hard to just rip out fair
-> and write something new.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-For cloud servers, I bet a lot of schedulers are not public. Although,
-my company tries to publish the schedulers they use.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->=20
-> Open source, you get to do your own thing. Have at.
->=20
-> But part of what made Linux work so well, is in my opinion the GPL. GPL
-> forces people to contribute back -- to work on the shared project. And I
-> see the whole BPF thing as a run-around on that.
->=20
-> Even the large cloud vendors and service providers (Amazon, Google,
-> Facebook etc.) contribute back because of rebase pain -- as you well
-> know. The rebase pain offsets the 'TIVO hole'.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-=46rom what I understand (I don't work on production, but Chromebooks), a
-lot of changes cannot be contributed back because their updates are far
-from what is upstream. Having a plugable scheduler would actually allow
-them to contribute *more*.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->=20
-> But with the BPF muck; where is the motivation to help improve things?
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-For the same reasons you mention about GPL and why it works.
-Collaboration. Sharing ideas helps everyone. If there's some secret
-sauce scheduler then they would likely just replace the scheduler, as
-its more performant. I don't believe it would be worth while to use BPF
-for that purpose.
-
->=20
-> Keeping a rando github repo with BPF schedulers is not contributing.
-
-Agreed, and I would guess having them in the Linux kernel tree would be
-more beneficial.
-
-> That's just a repo with multiple out of tree schedulers to be ignored.
-> Who will put in the effort of upsteaming things if they can hack up a
-> BPF and throw it over the wall?
-
-If there's a place in the Linux kernel tree, I'm sure there would be
-motivation to place it there. Having it in the kernel proper does give
-more visibility of code, and therefore enhancements to that code. This
-was the same rationale for putting perf into the kernel proper.
-
->=20
-> So yeah, I'm very much NOT supportive of this effort. From where I'm
-> sitting there is simply not a single benefit. You're not making my life
-> better, so why would I care?
->=20
-> How does this BPF muck translate into better quality patches for me?
-
-Here's how we will be using it (we will likely be porting sched_ext to
-ChromeOS regardless of its acceptance).
-
-Doing testing of scheduler changes in the field is extremely time
-consuming and complex. We tested EEVDF vs CFS by backporting EEVDF to
-5.15 (as that is the kernel version we are using on the chromebooks we
-were testing on), and then we need to add a user space "switch" to
-change the scheduler. Note, this also risks causing a bug in adding
-these changes. Then we push the kernel out, and then start our
-experiment that enables our feature to a small percentage, and slowly
-increases the number of users until we have a enough for a statistical
-result.
-
-What sched_ext would give us is a easy way to try different scheduling
-algorithms and get feedback much quicker. Once we determine a solution
-that improves things, we would then spend the time to implement it in
-the scheduler, and yes, send it upstream.
-
-To me, sched_ext should never be the final solution, but it can be
-extremely useful in testing various changes quickly in the field. Which
-to me would encourage more contributions.
-
--- Steve
+If you want to undo deduplication, reply with:
+#syz undup
 
