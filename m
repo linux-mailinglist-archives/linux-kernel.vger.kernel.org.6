@@ -1,129 +1,250 @@
-Return-Path: <linux-kernel+bounces-177959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D378C46CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:29:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8077D8C46CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3ABE28260E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:29:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF171F22828
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE603BBE9;
-	Mon, 13 May 2024 18:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E845733CF1;
+	Mon, 13 May 2024 18:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NizuvP9O"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="loiOnv6p"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F033BB23
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D72C42078
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715624952; cv=none; b=jltLoGVx1mUgxlbesf2ZxlxRXMwkoTlQe5FWv6Kf8dMdBPwpyucMU4v89ZqqeGHenVfcSX2Hfkc+4ac9SUZ3VfUtXnPlfiH0nLc7eb6wqki86i3i6ISNhloMBYmfWbQus4hF1he2f4uWcVNGW0+mR3fnNIfKz9GIHkz+SCbVOq4=
+	t=1715624975; cv=none; b=Vh/oedaZDF59aPoz2Ot3GsEKJE1KZEaZAAsUFZ/E2esHIw1KNBn6GH5g+Mo6ZQLktcDMfGHv6T2Y+ZK7QiO2WlmPfLXSEKLtQ9UZWXgWhlnM+H+Kfxpv53wEH8YN9TeAmnJ3BW/ixsIKD+gsw2fMnYawFymC8CYL34gDbTR9bl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715624952; c=relaxed/simple;
-	bh=VtkodfHuoeRehP7+RVMWw3fg9LMwBd0LXT4qxXoWTBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=K8Jpkush/SlqRPTry4dovjs+oWCbTZI93WL9G68gl4aBLmsv6I+Y/VND4ISlPg54sayMV4cTfWBSbrcVVKUpE9d9tru8Y+ZHOs5JyFttWoYLrWya53HywRq5MChm5Si9Hb2tkdYQ3FXhFFCT0/4VpMSOcVM0cHroInneC7UsYNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NizuvP9O; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 78DEA40E023A;
-	Mon, 13 May 2024 18:29:07 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Pg1XYjy3Lo19; Mon, 13 May 2024 18:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715624944; bh=heJMfQ/hBgDafD7NVzacM4cXnmIHNOZJVOvGIFwdnao=;
-	h=Date:From:To:Cc:Subject:From;
-	b=NizuvP9OPvyOp2YmYDsV3enVQDRjKKAwDoF6HS52YBruKWxdmxFsLkiWJUUO1JCeU
-	 LZtNwclMDHNs7puLXE6pKoHIA2rFgV+RGaQO9U+tJReMxG+PqSJPkELoGk8vgDXE1V
-	 Bm9HPSpYZQRJIOfK+feuZUfM/jh72ZxT8TE/K/TnT7trY4CF7J7ne3A0vGGffD8aH7
-	 aAKlmxalpaxtkg6aq+ed8lPR5UjKzEiiLkCShAeuL0NGGwCuTvGZa41xy/m9k47GTs
-	 Eq0jm/ApSf/xX5Jp2/0F7UWoN9A8iBeDra6t3thbA51tTK93wSOnY9ln71qpFeWT5q
-	 aI3Qa73kq4QcXIm7a2LWHjod0FXjZnJerdjPdzBPluHletyC4k8F1TEdAQWa+F/D3e
-	 qgBNJwzJaF7mA7sbfNuUqzu6SWfHhSbLx4sF4XA5Si7xHYfIOzdOlDdkaoWrEaEOjF
-	 cJlzf8VNO2RBFeKtZBvcIeF6M6zlLVOl7wNgbS5lOJMiKPqrJ5cm8OJDTd6gknoy7n
-	 kYthxWGPi7pmLVC3fPjDHyhwaOBUPEi7wMyiHEVQ8btxrUQ7RX0pkIAKTBD1mrfH/V
-	 AjcrtralQptp7cxcBbSsuXqc30xoUHjxCktLyr3ri5QCVXxT4zs9HKadjlYg883OA2
-	 BDefPGEnXz51GGfHxbeBdgUM=
-Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4D04540E0192;
-	Mon, 13 May 2024 18:29:01 +0000 (UTC)
-Date: Mon, 13 May 2024 20:28:55 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] x86/cache for v6.10-rc1
-Message-ID: <20240513182855.GAZkJb52i6WCWQpXA-@fat_crate.local>
+	s=arc-20240116; t=1715624975; c=relaxed/simple;
+	bh=HE0FXVQon6YE2VqxfdPsjgpv5qFG4R1N/nJHFvW5Kdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+U4eSC9AS63KbdAYzqJ6uahTuTTF4CtnEPOyY63+UlNyRGRfjgOV7llZVIFMe/XouLnfMeYYU4xuqu6mJLsbXMs/7fG2TiV9ama1r2kispL6O6Orw7EzSUHrjje3EZzKSBjPYLcR8vGotSoxuhFo3iX2HGzaaglu5B/C26vqHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=loiOnv6p; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5f415fd71f8so3683796a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:29:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715624972; x=1716229772; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PiRTZzs1aSfsYke8dHlxZkqknmQw6lQNFES/HAZTAzg=;
+        b=loiOnv6pgLCQu3cze/KF4lA4FAj2/Iqj8tTvhKJeLO+TBEtfEbRoriSejTylJ5iLAt
+         PF7y2rviFmJQVZyHb9el4t7lho6XhWeXeWdVzSsTkFY65mMjqP/3Ex1Vtdf96yIkcuW9
+         TBRHrPItXbENrC/fRLSmXW4GgLx/LOxgpPnuibtFNOZzBBkINE5JCd2bsPgTJ+DWVmv4
+         ZhHOU7Gj7joYYfUk9NzkmRtcdTmQ61wBfXxQvB3ud44PFscoA1oObrPanNXj2sL7cYJj
+         tXPrCLbMqlbVWwc4n6Xao9d3XTd53mWoMhIbxT7JZ9abe4ssbPHsdZ3c2vPqoh25+Xnn
+         nqMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715624972; x=1716229772;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PiRTZzs1aSfsYke8dHlxZkqknmQw6lQNFES/HAZTAzg=;
+        b=FsE0eRJDAk/ACbjfAEPj6LDdcQ6wNlXZPoDpDJw2o0U0FjwOCFuwLZORXxMkam2KPo
+         55udEvTA1sMH8NVTtafnwGZyOOkAOkVqGcXKItzhi6qB979bXYKr0F1Dw0QClPnXn7rJ
+         Cunyv7JIW2KecLLQnJbu7kTRWkTJG7E7a6xECMm+y02mfKlnA/c/x9f8DIVh2U7CYCpm
+         K5vizs50zhUmTOLhCvlu2t88y88yRlFCXWhUAlfA/3pWjfejsu3PaNnnuzkRB7dSY+ee
+         EltkGzzxtSkg6gX1No2aloIIzseTES6tBRi7dtpIJerWoPwLAU8ZSyf0u//CJNvzNEUc
+         D4Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHZJKuWNN9KQ/YrKfFRbeLaQ7iwQoQIYG8RR7w/m+oh/2osHMGj6Ej3diOoqxwueNyI2IddqWmZF4HO4wYPdDGQgrzakvowjgm+Mvs
+X-Gm-Message-State: AOJu0Yw2+YHSZa3TVIyq00eNkGn7ji4aGWX3tv/MAx7eDk7ND6kz34IS
+	0exxF44ODR4G0Bw/lrYUZtK26RDqeEMLYJEmbw4XqPl9CLHj3vaE9/KsOX7FgBo=
+X-Google-Smtp-Source: AGHT+IFicEZcKeNvrbf0O6DdxrDGspREEgzWPCly98S4fjg/+yKIhmUX03N3FPrODmM7wQKDwilkhg==
+X-Received: by 2002:a17:90a:9604:b0:2b3:ed2:1a77 with SMTP id 98e67ed59e1d1-2b6cc340388mr9349756a91.10.1715624972209;
+        Mon, 13 May 2024 11:29:32 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628ea6affsm10023078a91.54.2024.05.13.11.29.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 11:29:31 -0700 (PDT)
+Date: Mon, 13 May 2024 11:29:27 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, bjorn@rivosinc.com, alexghiti@rivosinc.com,
+	samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	charlie@rivosinc.com, apatel@ventanamicro.com,
+	mchitale@ventanamicro.com, dbarboza@ventanamicro.com,
+	sameo@rivosinc.com, shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 10/29] riscv/mm : ensure PROT_WRITE leads to VM_READ |
+ VM_WRITE
+Message-ID: <ZkJcB5u+0bZ2KsS+@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-11-debug@rivosinc.com>
+ <c759444d-fe84-4a61-8448-80fb692c7904@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
+In-Reply-To: <c759444d-fe84-4a61-8448-80fb692c7904@ghiti.fr>
 
-Hi Linus,
+On Sun, May 12, 2024 at 06:24:45PM +0200, Alexandre Ghiti wrote:
+>Hi Deepak,
+>
+>On 04/04/2024 01:34, Deepak Gupta wrote:
+>>`arch_calc_vm_prot_bits` is implemented on risc-v to return VM_READ |
+>>VM_WRITE if PROT_WRITE is specified. Similarly `riscv_sys_mmap` is
+>>updated to convert all incoming PROT_WRITE to (PROT_WRITE | PROT_READ).
+>>This is to make sure that any existing apps using PROT_WRITE still work.
+>>
+>>Earlier `protection_map[VM_WRITE]` used to pick read-write PTE encodings.
+>>Now `protection_map[VM_WRITE]` will always pick PAGE_SHADOWSTACK PTE
+>>encodings for shadow stack. Above changes ensure that existing apps
+>>continue to work because underneath kernel will be picking
+>>`protection_map[VM_WRITE|VM_READ]` PTE encodings.
+>>
+>>Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>>---
+>>  arch/riscv/include/asm/mman.h    | 24 ++++++++++++++++++++++++
+>>  arch/riscv/include/asm/pgtable.h |  1 +
+>>  arch/riscv/kernel/sys_riscv.c    | 11 +++++++++++
+>>  arch/riscv/mm/init.c             |  2 +-
+>>  mm/mmap.c                        |  1 +
+>>  5 files changed, 38 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/riscv/include/asm/mman.h
+>>
+>>diff --git a/arch/riscv/include/asm/mman.h b/arch/riscv/include/asm/mman.h
+>>new file mode 100644
+>>index 000000000000..ef9fedf32546
+>>--- /dev/null
+>>+++ b/arch/riscv/include/asm/mman.h
+>>@@ -0,0 +1,24 @@
+>>+/* SPDX-License-Identifier: GPL-2.0 */
+>>+#ifndef __ASM_MMAN_H__
+>>+#define __ASM_MMAN_H__
+>>+
+>>+#include <linux/compiler.h>
+>>+#include <linux/types.h>
+>>+#include <uapi/asm/mman.h>
+>>+
+>>+static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
+>>+	unsigned long pkey __always_unused)
+>>+{
+>>+	unsigned long ret = 0;
+>>+
+>>+	/*
+>>+	 * If PROT_WRITE was specified, force it to VM_READ | VM_WRITE.
+>>+	 * Only VM_WRITE means shadow stack.
+>>+	 */
+>>+	if (prot & PROT_WRITE)
+>>+		ret = (VM_READ | VM_WRITE);
+>>+	return ret;
+>>+}
+>>+#define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
+>>+
+>>+#endif /* ! __ASM_MMAN_H__ */
+>>diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+>>index 6066822e7396..4d5983bc6766 100644
+>>--- a/arch/riscv/include/asm/pgtable.h
+>>+++ b/arch/riscv/include/asm/pgtable.h
+>>@@ -184,6 +184,7 @@ extern struct pt_alloc_ops pt_ops __initdata;
+>>  #define PAGE_READ_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ | _PAGE_EXEC)
+>>  #define PAGE_WRITE_EXEC		__pgprot(_PAGE_BASE | _PAGE_READ |	\
+>>  					 _PAGE_EXEC | _PAGE_WRITE)
+>>+#define PAGE_SHADOWSTACK       __pgprot(_PAGE_BASE | _PAGE_WRITE)
+>>  #define PAGE_COPY		PAGE_READ
+>>  #define PAGE_COPY_EXEC		PAGE_READ_EXEC
+>>diff --git a/arch/riscv/kernel/sys_riscv.c b/arch/riscv/kernel/sys_riscv.c
+>>index f1c1416a9f1e..846c36b1b3d5 100644
+>>--- a/arch/riscv/kernel/sys_riscv.c
+>>+++ b/arch/riscv/kernel/sys_riscv.c
+>>@@ -8,6 +8,8 @@
+>>  #include <linux/syscalls.h>
+>>  #include <asm/cacheflush.h>
+>>  #include <asm-generic/mman-common.h>
+>>+#include <vdso/vsyscall.h>
+>>+#include <asm/mman.h>
+>>  static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>>  			   unsigned long prot, unsigned long flags,
+>>@@ -17,6 +19,15 @@ static long riscv_sys_mmap(unsigned long addr, unsigned long len,
+>>  	if (unlikely(offset & (~PAGE_MASK >> page_shift_offset)))
+>>  		return -EINVAL;
+>>+	/*
+>>+	 * If only PROT_WRITE is specified then extend that to PROT_READ
+>>+	 * protection_map[VM_WRITE] is now going to select shadow stack encodings.
+>>+	 * So specifying PROT_WRITE actually should select protection_map [VM_WRITE | VM_READ]
+>>+	 * If user wants to create shadow stack then they should use `map_shadow_stack` syscall.
+>>+	 */
+>>+	if (unlikely((prot & PROT_WRITE) && !(prot & PROT_READ)))
+>>+		prot |= PROT_READ;
+>>+
+>>  	return ksys_mmap_pgoff(addr, len, prot, flags, fd,
+>>  			       offset >> (PAGE_SHIFT - page_shift_offset));
+>>  }
+>>diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>>index fa34cf55037b..98e5ece4052a 100644
+>>--- a/arch/riscv/mm/init.c
+>>+++ b/arch/riscv/mm/init.c
+>>@@ -299,7 +299,7 @@ pgd_t early_pg_dir[PTRS_PER_PGD] __initdata __aligned(PAGE_SIZE);
+>>  static const pgprot_t protection_map[16] = {
+>>  	[VM_NONE]					= PAGE_NONE,
+>>  	[VM_READ]					= PAGE_READ,
+>>-	[VM_WRITE]					= PAGE_COPY,
+>>+	[VM_WRITE]					= PAGE_SHADOWSTACK,
+>>  	[VM_WRITE | VM_READ]				= PAGE_COPY,
+>>  	[VM_EXEC]					= PAGE_EXEC,
+>>  	[VM_EXEC | VM_READ]				= PAGE_READ_EXEC,
+>>diff --git a/mm/mmap.c b/mm/mmap.c
+>>index d89770eaab6b..57a974f49b00 100644
+>>--- a/mm/mmap.c
+>>+++ b/mm/mmap.c
+>>@@ -47,6 +47,7 @@
+>>  #include <linux/oom.h>
+>>  #include <linux/sched/mm.h>
+>>  #include <linux/ksm.h>
+>>+#include <linux/processor.h>
+>>  #include <linux/uaccess.h>
+>>  #include <asm/cacheflush.h>
+>
+>
+>What happens if someone restricts the permission to PROT_WRITE using 
+>mprotect()? I would say this is an issue since it would turn the pages 
+>into shadow stack pages.
 
-please pull a set of resctrl updates for v6.10-rc1.
+look at this patch in this patch series.
+"riscv/mm : ensure PROT_WRITE leads to VM_READ | VM_WRITE"
 
-Thx.
+It implements `arch_calc_vm_prot_bits` for risc-v and enforces that incoming
+PROT_WRITE is converted to VM_READ | VM_WRITE. And thus it'll become read/write
+memory. This way `mprotect` can be used to convert a shadow stack page to
+read/write memory but not a regular memory to shadow stack page.
 
----
-
-The following changes since commit ed30a4a51bb196781c8058073ea720133a65596f:
-
-  Linux 6.9-rc5 (2024-04-21 12:35:54 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_cache_for_v6.10_rc1
-
-for you to fetch changes up to 931be446c6cbc15691dd499957e961f4e1d56afb:
-
-  x86/resctrl: Add tracepoint for llc_occupancy tracking (2024-04-24 14:24:48 +0200)
-
-----------------------------------------------------------------
-- Add a tracepoint to read out LLC occupancy of resource monitor IDs with the
-  goal of freeing them sooner rather than later
-
-- Other code improvements and cleanups
-
-----------------------------------------------------------------
-Haifeng Xu (2):
-      x86/resctrl: Rename pseudo_lock_event.h to trace.h
-      x86/resctrl: Add tracepoint for llc_occupancy tracking
-
-Tony Luck (2):
-      x86/resctrl: Pass domain to target CPU
-      x86/resctrl: Simplify call convention for MSR update functions
-
- Documentation/arch/x86/resctrl.rst                 |  6 +++
- arch/x86/kernel/cpu/resctrl/core.c                 | 55 +++++++++-------------
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c          | 40 ++++------------
- arch/x86/kernel/cpu/resctrl/internal.h             |  5 +-
- arch/x86/kernel/cpu/resctrl/monitor.c              | 11 +++++
- arch/x86/kernel/cpu/resctrl/pseudo_lock.c          |  2 +-
- arch/x86/kernel/cpu/resctrl/rdtgroup.c             | 12 +----
- .../cpu/resctrl/{pseudo_lock_event.h => trace.h}   | 24 ++++++++--
- 8 files changed, 72 insertions(+), 83 deletions(-)
- rename arch/x86/kernel/cpu/resctrl/{pseudo_lock_event.h => trace.h} (56%)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+>
 
