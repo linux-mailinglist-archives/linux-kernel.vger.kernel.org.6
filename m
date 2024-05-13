@@ -1,105 +1,197 @@
-Return-Path: <linux-kernel+bounces-178057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E888C4803
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50E88C4809
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6961F21D3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:03:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AD8E283D8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199287CF3A;
-	Mon, 13 May 2024 20:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7377D408;
+	Mon, 13 May 2024 20:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kmhAuAtT"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="S4xW8+Q/"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2032.outbound.protection.outlook.com [40.92.40.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEB978C9B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715630580; cv=none; b=f8fRcWvNuP2J8gjrItKNZ1J6DIXORb9YWsNHN8h2KLIJ1cTHilVx5t9oPM/Y+7KXwhO1TDvYGhV1aJPuNVSepOY8LKJt8xMAohwuxrhmBiH9AXAlssRjP16xR/FNAKEva7gCKYfKSBBKXULcWyZKXJ/Jy+dO5bvYWT8J7QFcKqc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715630580; c=relaxed/simple;
-	bh=vN/oZPVUM0VbKTBMpMyTJSQOi5UZXcQoj84jhnHinmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApDrLEZ/GvMalnjTe04r0wnOLNmsOBVywQ20P5lG+lAQrYqMukb8Y21np46Q+lmXWQOasVj78K+8bSbB3Y6ht4utv6KPQWwz/O6yAk9EL7uEnHaZt8n+sWa1NIbQPV1pi0C3/iyUIx1jvS6zu3hDoLiOnG+NieZ+cPYllFdOAoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kmhAuAtT; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1ec4dc64c6cso33317035ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 13:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715630578; x=1716235378; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L5nQNVYZPxKaKLdJxSwXvg5R8/O6lRnjptx4J93d4hY=;
-        b=kmhAuAtTSRBDjVwsZJH4oVuUmfzhyMrIe8cZ8Tud4FCMLKQJmxIGplZNKhVLJgzmRV
-         tTKI1lYGHn9XnIB+sI2nL0ONOCBEHPt3qzI9U2BlCTOq4Hv925YxS5K+nm2HpA2/aejE
-         vTRZOyRXiIOGvH38XcbhF3rqnjcco6JwEtorg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715630578; x=1716235378;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L5nQNVYZPxKaKLdJxSwXvg5R8/O6lRnjptx4J93d4hY=;
-        b=vIxF/orKTFS8KZmT+o6LLcX0IFqE+B8qBhJL6w6JgZ98mrj0k3LBOmDwpYy5x9Rra0
-         LpBo6u7n997SvLKOfaKS7dC6QXNBjlPmu0QSz2kkFIKFQ6+gAodHyXWekCX/3PK36kMZ
-         oNwvG5ys6G6EYnFxPaWI8oC2PAFtlxSBdJ60CdkfwAHnJlM2xIPSGqvtYRQzhi9+HSOg
-         Ho98EasOXYXz0RMiLGJX2pOYGzrW4cwxxMf8KcYF3XddV3+fCg5s/qlAtQs0T78I5EP2
-         8Or/HXeoLjTuAW1n5Y7nPCyf8xGhfsipHKN3yj1F2FUqaPioUfnJSiUEHtWPBcvZmMGa
-         68cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3R4Q4EF9gCLze8X0SySD0cBy+3vF1/RFrDug+/U7UCjZdYQukxtkniP0+QtTQoz0znUH42aU70F1O0o0EQqUOKSvbp4Ukun5ObWQS
-X-Gm-Message-State: AOJu0YwHflNRYjeJyGY4Pq6A43vZo5Nrl8HKdTTrTje95K7sGPBn+EhA
-	DUEbXPV5b0ce0RdjJT+DFJSnGE9K//7z3iL4Fx1BL6Ml0R8QgA9RDUWTabdf/g==
-X-Google-Smtp-Source: AGHT+IG/kQjGxArMBt2gt0E87feuvucE0+UTE644XiSYwvBHzgRi5fADgV7o5cADuhUcHPkhpx2rNw==
-X-Received: by 2002:a17:902:ce85:b0:1e5:11ac:a283 with SMTP id d9443c01a7336-1ef43d0ada2mr143038325ad.9.1715630576456;
-        Mon, 13 May 2024 13:02:56 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c1368desm83578025ad.233.2024.05.13.13.02.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 13:02:56 -0700 (PDT)
-Date: Mon, 13 May 2024 13:02:55 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: richard@nod.at, anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-	x86@kernel.org, linux-um@lists.infradead.org,
-	linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v2] x86: um: vdso: Disable UBSAN instrumentation
-Message-ID: <202405131302.51918C1C1A@keescook>
-References: <20240513131024.1309073-1-roberto.sassu@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23AB7BB12
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715630737; cv=fail; b=MvJS1GlBRJtps4NLNKKugbuBxgrKJtJgWxVVRI3CsxLKHLYXhGu0JN2pg2GeP3+Sfw1R97OY9ZOoLX9OPITaAUJdcJfatc44f24MUZspkrlfp5ZR19gQ333SzSwZjpN4zmlx5W4fmLN4LPcosfsv1M6B8nnCUwyzIES3JKlGBEg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715630737; c=relaxed/simple;
+	bh=WFA8QzbDosjDhfXNaD8S/L2oeOpAQ/spJ5B0elA86Ms=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z1XVPdA9LxLOSFCQMTgnRYk5zGPjkFAAfAjRkHbTctbKNmWHDW4s+bd+Lh9m9VdVHQV2CDZo/261he3hFUZXhv0cummG0UJYrnZU9QA8T9ncXzEWUCrFt5y4TVo5x4DAptFeVCJFD/9gI5UQk+Xk4YLGCIOpD9vHVgNy5hw1XL8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=S4xW8+Q/; arc=fail smtp.client-ip=40.92.40.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ASIHy/Lxna9t0obTIXeuCMHj1O8sBc5IjuXfomnoaay0DhxfNeTDlINL7YA9YIv66hl5F8CapBM1biOxp+gQC3MVolUIeA7RPD3ExIOPY40Hhnq0gtDjKuKyv65UvzwhtJzM9BxseI3Jua8+KIrN1Hzns7wTQavEih4Pjfh9onHjQ1XRJEjoot1M49es6EoTlBAjaHNkPvt4Kcv/Zip2feXmHKs72Afw5XsT0JD6Wj7S1V/17nIxNlepsJ6UUjQMfUZGTqSoZqglOmYY5TVhWN4cH100GYwK1SjaX4v5Woe6rBfQwRYTvrj3Uw4Ki711QVWpff7o3qdtzdCSpRJWSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=12jBG8GeRw0MxBU1B8TsCob15P0mIFrddKloaOn0CXA=;
+ b=TQ1o8GjmpSUMZKkGBikZwoY3uVTxXR2jHTic5j8r+C6pfFln2UAlAWmvMG3FHZ2PqYBN2lffBef6KBG3iksHOYQa9jPzmrcRUAFvMHHny0H44w1Lsqbl9+uBV3xUjbeRkOJ86GI90L9JTp/I/+RFAd6Hg9wR+BtnxTFya4Eq0nzyAqNLS6daxfTtbkusdO4KQL6FwpsqF2TcAhiCvSBSInbZrKhvBzrEpU6S1oZyVYOvZJp4smcJsNglw6hPajC3V8C7DzXhgmr68I7EiFu8O/DphbTuD01bd/TzHWuOTw/UiJ9+Ww2zfHcNzvOObBFSrstFHA+Px5sJfVx17cMZEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=12jBG8GeRw0MxBU1B8TsCob15P0mIFrddKloaOn0CXA=;
+ b=S4xW8+Q/LVRU3HKF+t7nXsYyYFE5R5utkE80GjtdTrnFsmi5lmKAP1hiGn9CQI4zFPPURtXFdzxcpQlyOnKUkgsspcPziH+grrNA7R/Wgwgv6FQtV6VeH9yR3BMdcgYZRdSFMWqeLdxBllIrSRco2hCW8Ei4I+mWasGN3BhpPKf0vHYvDIMDitiXhYS2rva2WcrF3ckRxzcdqu8P0osBZIske1umQVhi96cALDjVErqblR3+iWy7TLZ6mP8wDCOdUMs6WW428aolSAxvLLlWU6fNg62kIcNXsED2621qLI4goR7H4YSJtzbEtnrno36zTVNHjtEXNYaQTMGFbK5IfA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by CY8PR02MB9542.namprd02.prod.outlook.com (2603:10b6:930:78::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 20:05:32 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 20:05:31 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "joro@8bytes.org"
+	<joro@8bytes.org>
+CC: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"vasant.hegde@amd.com" <vasant.hegde@amd.com>, "michael.roth@amd.com"
+	<michael.roth@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>
+Subject: RE: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
+ SEV-SNP guest kernel
+Thread-Topic: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
+ SEV-SNP guest kernel
+Thread-Index: AQHamxKg8G3tDdy39E2idvNw1Py2z7GVp95w
+Date: Mon, 13 May 2024 20:05:31 +0000
+Message-ID:
+ <SN6PR02MB4157E795C636EBE75CC806A1D4E22@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240430152430.4245-1-suravee.suthikulpanit@amd.com>
+In-Reply-To: <20240430152430.4245-1-suravee.suthikulpanit@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [Vq07iy0/LrUcj2bJVqhmCeLlQzacMhBo]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|CY8PR02MB9542:EE_
+x-ms-office365-filtering-correlation-id: 9d1bc4ee-85b2-443d-7627-08dc73880b10
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199019|1602099003|102099023|440099019|3412199016;
+x-microsoft-antispam-message-info:
+ 9nLbprf/QGL/Rjo3T9eEwLxYcoOdUGiH2vhLa8MlEuiOkotZuc2W/vTu9C8GoCmTvuwm9k0s+3J77vwcYmic4kqWLPKsD0mE9juHlhDouJabiWX2yIxOsM3EiY0Ee9BocVhzJXgLutFuWQZJ+ljH7LNt509fmzIQvbcnpPWc9we4BG6IwrUUY03rXx+rur8uTnH5fql+WZgSV1p6sr/a//Id6zQ4JgoLH1+TJnY2LY5ZRK9olYXVCuRJ7GtpXihUJ8lBudeMisi0VRbfXhlkBqty5TSfHsLxhUoi0K22Tgb3XkcoSa+l9oON8cGYB4Cu7Ya8lCNxkFPKPCEGr4q2etgdloZTNFU+GdquZoP23+9uO1jM/GSbk4i79j9yzgiYU8SOa52uoiU7qbxKnU06UVCBr+HvQ9PTIuzavzNOhEgnnQCAyuHs0Ci3/EwGZrW+0Rm+go9+zniE6S1Kup0tE4D+UCuFyf2DBRgHcA8PF5SWMprySRaoC2uzzHAj5mpd4LihT9PBBjyi0L856tAlvmQBmjZdhGLIxff0apoWqjLk8ZXjHguQTktHw8HVfblRFGHDMJvSLqAOQKL2FWto6zpRHqnJuo2/hgjbLBR14pRpdz1PkEVPgpAltG9m2bl+yCqLPP4MtuvBi/qYyxahLL81HokjppowSVUHzbhv0yc=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?BnRaeGBrw04GIJBYlbHlbXPKyBw0CDFGzRB/dBGn7qx9BZ6VagTSvLcWUUGx?=
+ =?us-ascii?Q?WBR6BOaT4vLA7wo6Mk2jOAEoYdzzzY+HH6j/83LqKY2ypxz2GB6uvEWOc5Q1?=
+ =?us-ascii?Q?ihMLWI4BHvdxNXjLDSTJpUcx2wQNzJCRyCx2FlPYqq6E+OB7sqnj8FI5vpDT?=
+ =?us-ascii?Q?ccktvCEQUQBPJhzoIqQigwq/krDto3KxP9ozWCmUq8TCmNMAnXszGFjd8aUf?=
+ =?us-ascii?Q?xAr6OL8iGYnF14sDNL/c2iZlfxC0jLA3Y9cAHz15OiJ6rclUu7DQNaYcU0W9?=
+ =?us-ascii?Q?Z29dQ+RoWRwZcjFqCEbWN8XOwy8dRyjHQVVtGw6/kgSYUVj6K7YKY/a1NAY6?=
+ =?us-ascii?Q?M0N6JV4GW16Up3Q7TxyZc2xZ4SOVyET6kZyJfFE3mLuUXXAuWjmd+1jQGuPK?=
+ =?us-ascii?Q?40rTjdT/j8kJ/2x+s4XN/GD0SuvBFjvoyuEJNwwQ/+Tj+NPXxLhaevYPnUeO?=
+ =?us-ascii?Q?tcGOjoUQtqyEQy3UxL0PkD1JNOjDSSqVdZgQPNSVTRhPvb35SgqYeKXCjQ7s?=
+ =?us-ascii?Q?0d8J0sQ3jUlyHI/SLpLo2JMHGJd0BDPs9jkysHJ02Djd1zZW6umGoL4nPWIK?=
+ =?us-ascii?Q?/X/ZjtNT39qxn3qBG/zWynqrJ6MbBMFDY9rt5uXpr7F2b8DUgmKePmlGDVja?=
+ =?us-ascii?Q?A5+ZMc6Ncl3uiFetxnnoFjKUPAgLjFQGZ9RTJ7oXjCXJkOmmHrczy7ZQu8dZ?=
+ =?us-ascii?Q?6Z2lVRz8jH+XS77PnNsx5WBH7AFSUPELyPo+L11Rj0hetnzfqBTI3QSA8U4i?=
+ =?us-ascii?Q?4TsshbFmhArq+OlzQODy/6AoF+pajHC2SjwRsoET13lLHom0fkqb6UCUlmRE?=
+ =?us-ascii?Q?/Zf/TPP+znaYlBJ156Y+sMPnz+Hszx4nCfC3eue5QqNviJgN/M8Kta4W94Mt?=
+ =?us-ascii?Q?EhIULM1HUTQmQ34nE4FaR3E4eD9zkBnF2gxIuA15tayNNADSdqd9DE9M0Gjb?=
+ =?us-ascii?Q?HGIS5RTtEDJ1ovh3u7fWr8cN7YKuUYwWfsCWiz/VqNqYaD6n+AahBeyvLjd6?=
+ =?us-ascii?Q?5voSxx3m0X4iHZd33PsUI4L+D82bq1LKYuq0zsVT8l/TreuNk4KdULfQFmEA?=
+ =?us-ascii?Q?6m5+XW29WZq9bOFWzV3oA9vgQWQPZd1jguIdn8POkqaQJMiTaa75RUzSYVEx?=
+ =?us-ascii?Q?xhbZikIJKAq7YtKi4gFv+09bo3tVYZ+J4IPhkzP4uxjsNA4TeSngS8bPcaG7?=
+ =?us-ascii?Q?OtC9u1cBwX+dazSEqy0drgO/ugWFauXv+rambS6CWy0QxAOAuRyeI4nmEt4?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513131024.1309073-1-roberto.sassu@huaweicloud.com>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d1bc4ee-85b2-443d-7627-08dc73880b10
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 May 2024 20:05:31.7758
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR02MB9542
 
-On Mon, May 13, 2024 at 03:10:24PM +0200, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> The UBSAN instrumentation cannot work in the vDSO since it is executing in
-> userspace, so disable it in the Makefile. Fixes the build failures such as:
-> 
->   CALL    scripts/checksyscalls.sh
->   VDSO    arch/x86/um/vdso/vdso.so.dbg
-> arch/x86/um/vdso/vdso.so.dbg: undefined symbols found
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com> Sent: Tuesday, =
+April 30, 2024 8:24 AM
+>=20
+> To boot a VM w/ x2APIC ID > 255, guest interrupt remapping emulation
+> is required.
 
-This is fixed differently (and more universally) here:
-https://lore.kernel.org/lkml/20240506133544.2861555-1-masahiroy@kernel.org/
+Top-level question:  Is there a reason the MSI extended destination ID mech=
+anism is
+insufficient to avoid the need for interrupt remapping?  (see function poin=
+ter
+"msi_ext_dest_id").  I'm unclear on whether it is or not. If it is not suff=
+icient, perhaps
+you could explain why.
 
--- 
-Kees Cook
+> For SEV guest, this can be achieved using an emulated
+> AMD IOMMU.
+
+You've used "SEV" here and in several other places.  I think you intend thi=
+s to be
+the more specific "SEV-SNP", and exclude SEV and SEV-ES. For avoid any conf=
+usion,
+I'd suggest using "SEV-SNP" throughout if that's what you mean.
+
+Michael
+
+>=20
+> In order to support emulated AMD IOMMU in SEV guest, memory pages used
+> by the guest IOMMU data structures must be in decrypted mode. Also GPAs
+> for these pages must not have the memory encryption bit set.
+>=20
+> Testing:
+>   - Booting Linux SEV guest w/ 512 vcpus w/ QEMU emulated amd-iommu with
+>     qemu-system-x86_64 option: -device amd-iommu,intremap=3Don,xtsup=3Don
+>     (emulated devices only for now).
+>=20
+> GIT repos:
+> * https://github.com/AMDESE/linux-iommu/tree/iommu_next_sev-iommu-v1
+>=20
+> Thanks,
+> Suravee
+>=20
+> Suravee Suthikulpanit (9):
+>   iommu/amd: Introduce helper functions for managing IOMMU memory
+>   iommu/amd: Convert Device Table pointer to use struct amd_iommu_mem
+>   iommu/amd: Convert Command Buffer pointer to use struct amd_iommu_mem
+>   iommu/amd: Convert Completion-Wait Semaphore pointer to use struct
+>     amd_iommu_mem
+>   iommu/amd: Convert Event Log pointer to use struct amd_iommu_mem
+>   iommu/amd: Convert PPR Log pointer to use the struct amd_iommu_mem
+>   iommu/amd: Remove iommu_alloc_4k_pages() helper function
+>   iommu/amd: Decrypt interrupt remapping table for AMD IOMMU emulation
+>     in SEV guest
+>   iommu/amd: Set default domain to IDENTITY_DOMAIN when running in SEV
+>     guest
+>=20
+>  drivers/iommu/amd/amd_iommu.h       |  31 +++++-
+>  drivers/iommu/amd/amd_iommu_types.h |  28 ++++--
+>  drivers/iommu/amd/init.c            | 144 +++++++++++++++-------------
+>  drivers/iommu/amd/iommu.c           | 133 +++++++++++++++++++------
+>  drivers/iommu/amd/ppr.c             |  22 +++--
+>  5 files changed, 246 insertions(+), 112 deletions(-)
+>=20
+> --
+> 2.34.1
+>=20
+
 
