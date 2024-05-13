@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-177233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD868C3BB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:03:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74458C3BB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1AE280FB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240981C21043
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EDB146A6C;
-	Mon, 13 May 2024 07:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF640146A76;
+	Mon, 13 May 2024 07:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HRVnhgMk"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="TqZ5VZwi"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2693E1FA1
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91B51FA1;
+	Mon, 13 May 2024 07:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715583809; cv=none; b=s8fw4nWAMgZ8LinrkM37TLAIQoR+XBJQ/mw7cA9AnfGoiWgLKlLE+GxipbktRO5c6s9zdjvBGU3voNFW2llTk2PCibcte6ylNKV8A7J53iLyIbk/jyrUAnZ3d4j4CLJXEWfeOMhjH5W4TRvatqzkxT21hu73PQhoIV+xFJg/ZBI=
+	t=1715584224; cv=none; b=Jf4KZosghsaMPcphx/OsEucc4M39fqFbf82ByVK6aUSlH2pDr8pr0zxsp65ShDJ1LCJcnUDDnWT56kpd1DF7I/kW+L9/GjtpndG+tI1oKkJm33QTGfZ9KcyOAgoe9gOEwO3xVbcDyE9w7md8T+im/a2LoTDJ8RPS4qcM8Ke4o7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715583809; c=relaxed/simple;
-	bh=ONdJxKlfhyNXebBPQPra4Xv6KPjeaTlP2lRULfxOxYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RKq9aJlB3RFNXs1ei0/PRzRp/VnCCm5awuSzCvOsaTgMKfvH8JfBPYsbPaoYs0ZHEL81twJ2dSGmAgGXKy5kW5GVYq6N7iPDVzeJyVJSpZI7CXmDzGGssAizJ5qAOr3R9Wsbi0uSk24x1v3Al29Hx3XzomDB0/v/JhOwXToYat8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HRVnhgMk; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a59a64db066so992416066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715583806; x=1716188606; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=UB9MjKNzc+XYuQAMT6qF9iPxqKBm5lo44opn5r+P9mI=;
-        b=HRVnhgMkeJpy6tB2ZxH1EWLJ3vyCYeVPZU+AwJuRqx+dxO6KlL6RuJsTnW+mlJeE72
-         wP7ek+SHimwmKt7fXf8ZTjEz0+HYXM2R2hfaACMQ77ClJV2DWd5HY1T6UOJ1XtwIFrqe
-         MfpDOva4GfRSft5ypY7lSyDWF0uLB7oRCiNdhEbGV9A5KU+8n8djleLvEZirE4Y5X/xy
-         dgsVhnFPM8bJ5KYdNAfo2Gtv5qwgUN/LP70AZptPSSMsjNtIcKbI3bg9FD92roNZidln
-         V9SieiXgMUYXM0aAn4zaJhY7X3+pRtoROoOzZEWIPyMspPlmcihVFuDV9HTenG+EqYaw
-         zN+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715583806; x=1716188606;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UB9MjKNzc+XYuQAMT6qF9iPxqKBm5lo44opn5r+P9mI=;
-        b=q8siS5K6a/Vw9HDsPe15fOKOs+9TNjDisQEuO1NUVsCfx+sXm6eQyh01QcraAf+CEG
-         eOAo6zWmLDPWWmFMWyz4s6lkGpu7JE+6MD1riqmPm0OYiMtMpvkrJCSU3tHSE09IFlRK
-         VudWmU/T9e2CRzSrWB+ZDCalzRXtWqOsqTudbja7sqOyfNU1IxkM+9K+ardODWXya584
-         cLMbQwNnszk1HSEcsNQPOVSr2qZwv6V29kKfNUYh6vbzG3Z+AnGcdbJs/ZtjmzB+omDX
-         hwAVoJxSeFuGpbrhk0an2onpG/PX0e1ULxgDvppHZjHLWd00m5Jzxl7J4vmQUpc1L3Vf
-         rY1Q==
-X-Gm-Message-State: AOJu0Yy3UaGIMhiF3oJm2R7U12yFEZBqUFMMMaDufFPMF8rPb6nOXaWj
-	MSVa/XEqDeBW5zzXhD71EmGB55uf67J17MADXJctY2QM/zxnmsWdaJh15JpM
-X-Google-Smtp-Source: AGHT+IFKvNWgi3mVl/tyu1Ht/F7pKiRvFDS7Mg6KhuQG7bV9n7TpHx1GTpshxsDOji0Q9EAyiutjHQ==
-X-Received: by 2002:a17:907:119a:b0:a5a:1df:a0ae with SMTP id a640c23a62f3a-a5a2d53bb30mr624098566b.7.1715583806232;
-        Mon, 13 May 2024 00:03:26 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b0145csm551856666b.158.2024.05.13.00.03.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 00:03:25 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 09:03:23 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-Subject: [GIT PULL] x86/build changes for v6.10
-Message-ID: <ZkG7O1JtDp8vDNH+@gmail.com>
+	s=arc-20240116; t=1715584224; c=relaxed/simple;
+	bh=cIaTuup17FLKy3SKuokzSPWCxTVA5LU27DQa4gaT41A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=e5JBCju5UmOxcZNsGe/c8GqnwPrx7x3m3LvBjEWq26wFxztcX+JCrxPqDbp+/hQT0WJnRhMkr8Q6FjX79pFGw78PaFl2o+eoEX4AMVQnBapZWpcwHnfbBf21gDyTI3rifEcPNIZeA9yVQjOJ787/w6vk5O7mQJn8VJFbzT7zGA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=TqZ5VZwi; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1VtKiyWvSIZUu5Z+IFOoMq7wXL01ztBGeKBNrRkF5Q0=; t=1715584221; x=1716189021; 
+	b=TqZ5VZwiDA+9WqIxBxXmBes+IiT6T/ilgEpP68YU1JY4qd5EyB1VJ/KLL6lg2E5Zv+bAr0W5Mh5
+	bZFyqXqAOG9Lws50Tk3xuV27SYp1okJKrGPqwgkb5C98bJuTdGZu/SkDVdyil0duFU6tkgaHutLMr
+	WoQHrJKZTxt5Q9HS9x96i4QTCcPV0m9HiPlYSAewba+/zCX6e5p/MJdrwpU2HNbxGt3emGAZwSjtG
+	DNDW0+Q6uyfhqt1K/1Z/ViPPhu8CyOvqFIJ7O5RT7Zpn7nTy3Jzf6U0GBTakCgK8uEdB73iQq3wW7
+	Y2hIFxeugMi7OKSavoQ4q9OWPABh4pyY7NJw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s6Pp6-00000000bvh-0V38; Mon, 13 May 2024 09:10:12 +0200
+Received: from p57bd9c8e.dip0.t-ipconnect.de ([87.189.156.142] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s6Pp5-00000000iGC-3l6B; Mon, 13 May 2024 09:10:12 +0200
+Message-ID: <ca22cfceb465dcbc336f51621f844593aa45619f.camel@physik.fu-berlin.de>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: paulmck@kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Linux-Arch
+ <linux-arch@vger.kernel.org>, linux-alpha@vger.kernel.org, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>,  Matt Turner <mattst88@gmail.com>, Alexander
+ Viro <viro@zeniv.linux.org.uk>
+Date: Mon, 13 May 2024 09:10:11 +0200
+In-Reply-To: <a8241a71-2b7d-4be0-8772-5c3b40fb5302@paulmck-laptop>
+References: <71feb004-82ef-4c7b-9e21-0264607e4b20@app.fastmail.com>
+	 <e383dfe5-814a-4a87-befc-4831a7788f42@app.fastmail.com>
+	 <6e6dae45ffbf7a6ab54175695a3e21207c6f5126.camel@physik.fu-berlin.de>
+	 <46543a98-4767-471a-91be-20fb60ab138b@paulmck-laptop>
+	 <7432d241b538819b603194bfb3a306faf360d4b1.camel@physik.fu-berlin.de>
+	 <a1331c86-dc07-4635-b169-623fcdd11824@paulmck-laptop>
+	 <8dd1c466-54e3-45c1-a19f-f81dd9dbf243@app.fastmail.com>
+	 <f01d9eb2-9ab8-4e82-99d2-467385ebce2b@paulmck-laptop>
+	 <975442500864e4f30a830afb4ffd09a9bedb65d6.camel@physik.fu-berlin.de>
+	 <a8241a71-2b7d-4be0-8772-5c3b40fb5302@paulmck-laptop>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Linus,
+Hello,
 
-Please pull the latest x86/build Git tree from:
+On Sun, 2024-05-12 at 07:44 -0700, Paul E. McKenney wrote:
+> On Sun, May 12, 2024 at 08:02:59AM +0200, John Paul Adrian Glaubitz wrote=
+:
+> > On Sat, 2024-05-11 at 18:26 -0700, Paul E. McKenney wrote:
+> > > And that breaks things because it can clobber concurrent stores to
+> > > other bytes in that enclosing machine word.
+> >=20
+> > But pre-EV56 Alpha has always been like this. What makes it broken
+> > all of a sudden?
+>=20
+> I doubt if it was sudden.   Putting concurrently (but rarely) accessed
+> small-value quantities into single bytes is a very natural thing to do,
+> and I bet that there are quite a few places in the kernel where exactly
+> this happens.  I happen to know of a specific instance that went into
+> mainline about two years ago.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-build-2024-05-13
+But it's treated like it happened all of a sudden instead of taking the way
+of a proper phaseout. That's what I am criticizing.
 
-   # HEAD: 71d99ea47fbd3179e01f8037aad1d1367a821de2 x86/Kconfig: Merge the two CONFIG_X86_EXTENDED_PLATFORM entries
+> > We could actually ask Ulrich Teichert what the current state is
+> > on his Jensen machine.
+>=20
+> Please feel free to do so.
+>=20
+> And if the ability to run current mainline reliably on these systems
+> is so very important to you, please also feel free to look into ways of
+> fixing this issue within the confines of the Alpha-specific code rather
+> than attempting to continue placing this outdated constraint on the rest
+> of the kernel.
 
-x86/build changes for v6.10:
+Well, we have had a similar discussion just a few months before with the
+ia64 removal. But in that case we agreed that a good compromise would be
+to slate the removal for an LTS release so that users would be able to use
+an LTS kernel on these machines.
 
- - Use -fpic to build the kexec 'purgatory' (self-contained code that runs between two kernels)
+I'm not sure why this shouldn't be possible in this case as well.
 
- - Clean up vmlinux.lds.S generation
+> Yes, it is no longer the year 1973, but it still is the case that using
+> four bytes (or, worse yet, per Arnd, eight bytes) where one byte will
+> do is wasting a huge amount of resources across the billions of systems
+> on which the Linux kernel runs.  So again, if running current mainline
+> on these decades-old systems is so very important to you, please figure
+> out a way to do so that isn't quite so wasteful of resources.
 
- - Simplify the X86_EXTENDED_PLATFORM section of the x86 Kconfig
+The way this whole change was pushed through doesn't sound like you're will=
+ing
+to give people the time to find an alternative solution. The pre-EV56 remov=
+al
+was pushed through without any further discussion with the claim that pre-E=
+V56
+support is broken.
 
- - Misc cleanups & fixes
+Is that not something that can be criticized?
 
- Thanks,
+Adrian
 
-	Ingo
-
------------------->
-Ard Biesheuvel (1):
-      x86/purgatory: Switch to the position-independent small code model
-
-Masahiro Yamada (1):
-      x86/Kconfig: Merge the two CONFIG_X86_EXTENDED_PLATFORM entries
-
-Wei Yang (4):
-      vmlinux.lds.h: Fix a typo in comment
-      x86/vmlinux.lds.S: Remove conditional definition of LOAD_OFFSET
-      x86/vmlinux.lds.S: Take __START_KERNEL out conditional definition
-      x86/boot: Replace __PHYSICAL_START with LOAD_PHYSICAL_ADDR
-
-
- arch/x86/Kconfig                  | 26 +++++++-------------------
- arch/x86/include/asm/boot.h       |  5 -----
- arch/x86/include/asm/page_types.h |  8 +++++---
- arch/x86/kernel/vmlinux.lds.S     |  7 +------
- arch/x86/purgatory/Makefile       |  3 ++-
- include/asm-generic/vmlinux.lds.h |  2 +-
- 6 files changed, 16 insertions(+), 35 deletions(-)
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
