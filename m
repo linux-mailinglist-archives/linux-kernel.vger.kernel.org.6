@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-177067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6F0B8C39B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:44:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836D78C39BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 03:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0420F1C20967
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 00:44:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 011E6B20B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 01:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1268BB64B;
-	Mon, 13 May 2024 00:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB57AD2D;
+	Mon, 13 May 2024 01:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnjbzmA0"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GEPmqErU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9CDA92E;
-	Mon, 13 May 2024 00:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B6E4C8F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715561074; cv=none; b=HWAEhwphAdFhwdeP6A32gyjwoHT6pDKM/QT+d7DpdFmMQ3pw/2qbP9JNQJ4bW0A0keqkF6wfoucpms8kDJzOTPSY9x8gyXtNreOGHbm/JccWxReVe9uLTtgXHmrFglrqa5FuPrlX5mzL1S3bDYui1VJ/EW3gTY/MLTIkCrcvGAI=
+	t=1715562403; cv=none; b=R7h88yPPEJnfs9SJHc4yCq4Tsd1hERQqeCnzDEYdwAaNBsW2sCIGLoqQMQ206zFJR9QbblbqvZbLWBWQBI4fraR1GlsXeWk6KVldnUcSGH+q/DIZURxUv9FM4RXjdXc7/jpgbBhCGZltIoA5spAmw2ydVVLTqpUW0kghbBpXmZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715561074; c=relaxed/simple;
-	bh=7RTQAxOE4gseDbvj5xELr4U8bjt2F0qAxOTnHFFWk1o=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=mJ0DVlcUuwHmFEyo88O/dLxLVn1KRE0wzVgzqjFa4bmDfgC1/pC4HYvANuYt7w3j3ljXNMcxNDY09n3miuojChh1xc32jjpALmSUQuldcSULJa/fiszT5k98P7Av2hM7kkp57BUPwzgk8BzHfY1bYfF/T8a8c/NYgmg88WWH0MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NnjbzmA0; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-792b8d98a56so373915685a.2;
-        Sun, 12 May 2024 17:44:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715561072; x=1716165872; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SEj05y7zwAgF01ZJe2G4wS354kgEmuo/anN2IwQpPxM=;
-        b=NnjbzmA0CaDs+5iMKQBkzvezArHn1cva+rsO7al8m0/hNR57YYTrrNaRqNzDozAZHd
-         uM0JDANS6Wnb6/MrlCMjGfShe+Z76SmrhnQYis+hWPlKIQQjhQvKk71jXAMUvp6KWhFQ
-         fK6B3PXEpk/rtjADax3NJwPDdr5pSWHZahj5i28X2onXvYIHDmhSagZ7KFXaooRg00u5
-         GJkezzhn2rhql9YR7PfcuIgmuGXfBS1D1JjHmRsYbq5vqT/7MTC2sctvLof1o28kWiRb
-         uemU+8RYW7VY7U4LEwLPE2N7PomzDg7r++OfiZCcAV75aF8i8ATB7T7sgrYI47nuCrzI
-         28xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715561072; x=1716165872;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SEj05y7zwAgF01ZJe2G4wS354kgEmuo/anN2IwQpPxM=;
-        b=CHSvyTozA2Pq54rkVWwTmKfP8v6BN2fBO7U+crNPnHqsMHI64+Lw/7hRkkjUzDKodQ
-         JjvpaXtA2Ldh2nbxRzaCmITTjdywABGKGUMOhqVBiQ7RgNAqyfNhqy+nh43+IEOr9URX
-         omtJbfflYlOcBpFo7tqcb7+lgmY1/tZJk1DxL4W6RXNJ05eDOoJydb7ME5colDlPqAae
-         rRrXkx+DYrJD8seXGvv8hr8zHjjogwC44+N3hEzxOb5kU+Fc3muhiGlwUwk7AFXaHgbO
-         uqIua//iqcTyYSXjZYbBTBAl6uxOijaXsYKtpBaZby6TKlWQN4041TWVWVRu2KOzQCg8
-         KTQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaF5gBvqjThXK668dgGFG55qmw39W9rETnb90Z5MwwzAfbmbucnUSDTZFJrBS0+qoA3tgHCQ4ZMHqg+Aj0NMKXaxX+kJ/KO27mK/jaVQzGVRVcABUOm6oOdK3Q5GSJrLYZ5i4CO9VE5B0a2dj5oMRMnS23JMTSElGLCVliut3mZxk/6nZI
-X-Gm-Message-State: AOJu0YyCgOwFQSH+dYJjkYlwM9ynROxDALFzrQmj59P+t+7MlPmYrPWu
-	3kSaT7/i+4z1rJvHze3cDrzJlIl4F+e1+MSJWb2sKkIxgZ/R0iNFHp4EpQ==
-X-Google-Smtp-Source: AGHT+IEc/lCy3lDKBxXLFFBUH7wh9dTLPrI22KVj42Fqg6glJzLwJbH306KZW6hOvqW456qYAb0H7g==
-X-Received: by 2002:a05:622a:1301:b0:43b:aa3:2b41 with SMTP id d75a77b69052e-43dfdbb48e1mr74671531cf.67.1715561071756;
-        Sun, 12 May 2024 17:44:31 -0700 (PDT)
-Received: from localhost (164.146.150.34.bc.googleusercontent.com. [34.150.146.164])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43df56bfcf5sm49483451cf.79.2024.05.12.17.44.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 17:44:31 -0700 (PDT)
-Date: Sun, 12 May 2024 20:44:31 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Richard Gobert <richardbgobert@gmail.com>, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- willemdebruijn.kernel@gmail.com, 
- dsahern@kernel.org, 
- alexander.duyck@gmail.com, 
- shuah@kernel.org, 
- netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org
-Cc: Richard Gobert <richardbgobert@gmail.com>
-Message-ID: <6641626f4a7cb_1d6c67294ee@willemb.c.googlers.com.notmuch>
-In-Reply-To: <20240509190819.2985-4-richardbgobert@gmail.com>
-References: <20240509190819.2985-1-richardbgobert@gmail.com>
- <20240509190819.2985-4-richardbgobert@gmail.com>
-Subject: Re: [PATCH net-next v10 3/3] selftests/net: add flush id selftests
+	s=arc-20240116; t=1715562403; c=relaxed/simple;
+	bh=ezi5JG5jGeRIMP4maaRmb26rGRyip+vMxbnGTkqsVGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t/lF9Q2PkRR5vXKSQjotWrmlgyLN8RFVe/7NJCSp7jeZRaf1apAaABvJSRwTH85RMBp8dCypRH6t6m+d2/WXDo02AL3zyzz8P8vwPi1pn/aNJSfCDQB2aRLzUO3X/g77GpmDKhFTfgB0zp5SZ1I/bTXtiFc5KjiXFYqErMr0zFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GEPmqErU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715562400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6MyrT71GcyLYykYsEHxxBn+570CfbXvsmsIsSXNOh8M=;
+	b=GEPmqErUPPMbPAoWZvn1zdB5MUKUpOOqsXtI6YINarramTKKrkS5W+qEVrgVSCphZeCCys
+	yGV080s9CdgroGGnPN/yp4qEnKs6CL0laoi1bZ5xJnBc4CwvT4GMkD27Xh+WMtcfnQxv+y
+	UAO+C94k5KBNzzhu+IsjsK5Fbo/L8wc=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-436-8OscVjmtPX2G7pk1n611Vw-1; Sun,
+ 12 May 2024 21:06:37 -0400
+X-MC-Unique: 8OscVjmtPX2G7pk1n611Vw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B3B551C05149;
+	Mon, 13 May 2024 01:06:36 +0000 (UTC)
+Received: from tpad.localdomain (unknown [10.96.133.2])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id AB61B40C6EB7;
+	Mon, 13 May 2024 01:06:35 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+	id 0C35B400DF3F8; Sun, 12 May 2024 22:06:20 -0300 (-03)
+Date: Sun, 12 May 2024 22:06:20 -0300
+From: Marcelo Tosatti <mtosatti@redhat.com>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+Message-ID: <ZkFnjDZRB2x/tzVt@tpad>
+References: <20240511020557.1198200-1-leobras@redhat.com>
+ <ZkE4N1X0wglygt75@tpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkE4N1X0wglygt75@tpad>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-Richard Gobert wrote:
-> Added flush id selftests to test different cases where DF flag is set or
-> unset and id value changes in the following packets. All cases where the
-> packets should coalesce or should not coalesce are tested.
+On Sun, May 12, 2024 at 06:44:23PM -0300, Marcelo Tosatti wrote:
+> On Fri, May 10, 2024 at 11:05:56PM -0300, Leonardo Bras wrote:
+> > As of today, KVM notes a quiescent state only in guest entry, which is good
+> > as it avoids the guest being interrupted for current RCU operations.
+> > 
+> > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
+> > check for any RCU operations waiting for this CPU. In case there are any of
+> > such, it invokes rcu_core() in order to sched-out the current thread and
+> > note a quiescent state.
+> > 
+> > This occasional schedule work will introduce tens of microsseconds of
+> > latency, which is really bad for vcpus running latency-sensitive
+> > applications, such as real-time workloads.
+> > 
+> > So, note a quiescent state in guest exit, so the interrupted guests is able
+> > to deal with any pending RCU operations before being required to invoke
+> > rcu_core(), and thus avoid the overhead of related scheduler work.
 > 
-> Signed-off-by: Richard Gobert <richardbgobert@gmail.com>
+> This does not properly fix the current problem, as RCU work might be
+> scheduled after the VM exit, followed by a timer interrupt.
+> 
+> Correct?
 
-Reviewed-by: Willem de Bruijn <willemb@google.com>
+Not that i am against the patch... 
+
+But, regarding the problem at hand, it does not fix it reliably.
+
 
