@@ -1,146 +1,125 @@
-Return-Path: <linux-kernel+bounces-177405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E278C3E18
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6539F8C3E1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3101C1C2123F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:26:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BFD1C212A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C3B148855;
-	Mon, 13 May 2024 09:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99BB1487F3;
+	Mon, 13 May 2024 09:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XyLKE9Hu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="pkOsR+8Y"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0711474B1;
-	Mon, 13 May 2024 09:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963921487E2;
+	Mon, 13 May 2024 09:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715592359; cv=none; b=pF+gnR++bhiVpxKhmZxPqptx1QJjw3eaEifKzKwiTFmOq+PN+ddu5kLCxuoOSjmDkqX3bpGw3bQDOpmlImI2Fs3ZsrGhYpVBKHhLKFPCWP6S1Zz/U1hnuFOSmnSrS8bhIKuDyxBxG18wR2lVvFOPjXF99BJMt+XeEtuRqEdHRoI=
+	t=1715592383; cv=none; b=sLOnQwOzY/+GifBX7XzBy+ZoJ02tABm3fjQQu+nXz59fFLCX5vjjLxJzhgUh2fhhSw5Nz/oGagwyRcRaeVg62uJss7AFu2eLp0hJ2Ejl1TpDonId9c0gI2HkePMElLPk0Y7cCpgt/BKcG49TA8YrSeYjnXQwIWUFSEYUkHD+8EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715592359; c=relaxed/simple;
-	bh=eUxyCthTkzLGiOzZpbcweFxKVgJqygyWBG1GroNMWH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ER+R9c9NnHgvcTI+JEIGCde1wL+REdkLGH7X4aKDIeSLCI2pFEvSlO8Zt3BdlI9evUCQo5WnUAx7OU/VLtY8SdsOp+F+ET8gyEA1x9kknWsDPzN0KlZUXcGT+dUTL36dAKe+7DzS9fX3PFynrnd8OgmGp7KDENEdrFPeZPm3KT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XyLKE9Hu; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715592357; x=1747128357;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eUxyCthTkzLGiOzZpbcweFxKVgJqygyWBG1GroNMWH0=;
-  b=XyLKE9Huhp9GWGUGAKjxkd/p2SFzytfdfXTdCyp/SFs4RqoAk/Ekz3tm
-   yUOVY9/lyUUdVUVXpgmy6yibKJwMqY2qEy/yIu4hTEMxlgAesYNpy9ZZ0
-   ADNAPwYlTfrFuUKMkRE7JlYVGRl0Lbya7J+G1i3RcepPxdb3G3YjpGq+D
-   VbhY9esCJknJbXKWqrI/rNrmXVZClKenLrbXRjz1NmCpzvJPsPIIVq8G/
-   5cewN3wPsszqQhH8EEtB7AXRkBbPi1Uq4y8rityLxmqmWQPdcaU3tJ8qI
-   M08RFN8TiRWoI9YQub2v1C/1jG4aKgRjH2ehW24UpVoAxZEV0C28Ih8hK
-   g==;
-X-CSE-ConnectionGUID: 4PY4uzQ4QAeBYwVlJNWctA==
-X-CSE-MsgGUID: vqBS76DHSJuAfkHDAHnlJQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="14464576"
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="14464576"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 02:25:56 -0700
-X-CSE-ConnectionGUID: ODn1dWKRQK6QsacEKrGs1A==
-X-CSE-MsgGUID: F15USjABTZuZ9imEr2i1dw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
-   d="scan'208";a="30266327"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 02:25:53 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1s6RwM-000000074IG-1vyI;
-	Mon, 13 May 2024 12:25:50 +0300
-Date: Mon, 13 May 2024 12:25:50 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Devyn Liu <liudingyuan@huawei.com>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: linus.walleij@linaro.org, brgl@bgdev.pl, f.fangjian@huawei.com,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com, linux-acpi@vger.kernel.org,
-	jonathan.cameron@huawei.com, yangyicong@huawei.com,
-	yisen.zhuang@huawei.com, kong.kongxinwei@hisilicon.com
-Subject: Re: [PATCH] gpiolib: acpi: Fix failed in acpi_gpiochip_find() by
- adding parent node match
-Message-ID: <ZkHcniqCiLPEPN9o@smile.fi.intel.com>
-References: <20240513075901.2030293-1-liudingyuan@huawei.com>
+	s=arc-20240116; t=1715592383; c=relaxed/simple;
+	bh=3+SaavHS99Cwl9vnJNW3fGg2az9uoJolKOnYP9G3qq0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VsSpTVz/BycMBxPMHjhhUsI2Ta8eMPys9jX//HuwMwTHm2V6JfX11tGFjoSWe47hVuIwAvANqr2mOldf8oHm06O6Wzzp5sGU5AzEenY7bnWiD+AmOLslXgMd06jQyn54GIZ4EH8TtfR92qBnA9jtqDbUxfRgDk1POeBXZdVJ5NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=pkOsR+8Y; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=n5fYRKZOOxszQhTBpaiPHWnUxAoMygv8dpLvNys6cPY=; t=1715592380; x=1716197180; 
+	b=pkOsR+8Yqc+Y9fAE28msFVTFGfDsbS4idyMMNjQwFQEiSghHF5aNnqwEyrEO8Q5nhEnfJP2wwwZ
+	cWexG6VMZ9eq0gnSun140e/DzsQ7CGS0Kbe49QJaNCXlZ6JMKc47Rbu3ofzBchv+/k02uG5lta1Re
+	O0UZke3gh7/YXRl9GCbs5YOwT9zXLl4PLFmftogkEAWswBi0bRDyZ/gAKrmeT2KZPK8o5y0yI/cJ3
+	fgDIoDczxvy8AuZ82RXg8hy7CgnemaxS7OcoF0E/OeZrah/yqFqqhVQoSI+yubwauo+5BamiP78TD
+	nYQkWNZshbHebXGJq4t33C9S/vr+pfgfBOJA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s6Rwl-00000001npY-1qbD; Mon, 13 May 2024 11:26:15 +0200
+Received: from p57bd9c8e.dip0.t-ipconnect.de ([87.189.156.142] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s6Rwl-00000001Efn-0s5F; Mon, 13 May 2024 11:26:15 +0200
+Message-ID: <59b2fc5781c65fcedbac21142408ed6e7824e84b.camel@physik.fu-berlin.de>
+Subject: Re: [GIT PULL] alpha: cleanups and build fixes for 6.10
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Akira Yokosawa <akiyks@gmail.com>, paulmck@kernel.org
+Cc: arnd@arndb.de, ink@jurassic.park.msu.ru, linux-alpha@vger.kernel.org, 
+ linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+ mattst88@gmail.com,  richard.henderson@linaro.org,
+ torvalds@linux-foundation.org,  viro@zeniv.linux.org.uk, Ulrich Teichert
+ <krypton@ulrich-teichert.org>
+Date: Mon, 13 May 2024 11:26:14 +0200
+In-Reply-To: <99765904-3f35-4c78-998e-b444a6ab90e4@gmail.com>
+References: <a8241a71-2b7d-4be0-8772-5c3b40fb5302@paulmck-laptop>
+	 <99765904-3f35-4c78-998e-b444a6ab90e4@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513075901.2030293-1-liudingyuan@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Mon, May 13, 2024 at 03:59:01PM +0800, Devyn Liu wrote:
-> Previous patch modified the standard used by acpi_gpiochip_find()
-> to match device nodes. Using the device node set in gc->gpiodev->d-
-> ev instead of gc->parent.
-> 
-> However, there is a situation in gpio-dwapb where the GPIO device
-> driver will set gc->fwnode for each port corresponding to a child
-> node under a GPIO device, so gc->gpiodev->dev will be assigned the
-> value of each child node in gpiochip_add_data().
-> 
-> gpio-dwapb.c:
-> 128,31 static int dwapb_gpio_add_port(struct dwapb_gpio *gpio,
-> 			       struct dwapb_port_property *pp,
-> 			       unsigned int offs);
-> port->gc.fwnode = pp->fwnode;
-> 
-> 693,39 static int dwapb_gpio_probe;
-> err = dwapb_gpio_add_port(gpio, &pdata->properties[i], i);
-> 
-> When other drivers request GPIO pin resources through the GPIO device
-> node provided by ACPI (corresponding to the parent node), the change
-> of the matching object to gc->gpiodev->dev in acpi_gpiochip_find()
-> only allows finding the value of each port (child node), resulting
-> in a failed request.
-> 
-> Reapply the condition of using gc->parent for match in acpi_gpio-
-> chip_find() in the code can compatible with the problem of gpio-dwapb,
-> and will not affect the two cases mentioned in the patch:
-> 1. There is no setting for gc->fwnode.
-> 2. The case that depends on using gc->fwnode for match.
+On Mon, 2024-05-13 at 12:50 +0900, Akira Yokosawa wrote:
+> > So why didn't the people running current mainline on pre-EV56 Alpha
+> > systems notice?  One possibility is that they are upgrading their
+> > kernels only occasionally.  Another possibility is that they are seeing
+> > the failures, but are not tracing the obtuse failure modes back to the
+> > change(s) in question.  Yet another possibility is that the resulting
+> > failures are very low probability, with mean times to failure that are
+> > so long that you won't notice anything on a single system.
+>=20
+> Another possibility is that the Jensen system was booted into uni process=
+er
+> mode.  Looking at the early boot log [1] provided by Ulrich (+CCed) back =
+in
+> Sept. 2021, I see the following by running "grep -i cpu":
+>=20
+> > > > [1] https://marc.info/?l=3Dlinux-alpha&m=3D163265555616841&w=3D2
+>=20
+> [    0.000000] Memory: 90256K/131072K available (8897K kernel code, 9499K=
+ rwdata, \
+> 2704K rodata, 312K init, 437K bss, 40816K reserved, 0K cma-reserved) [   =
+ 0.000000] \
+> random: get_random_u64 called from __kmem_cache_create+0x54/0x600 with cr=
+ng_init=3D0 [  \
+> 0.000000] SLUB: HWalign=3D64, Order=3D0-3, MinObjects=3D0, CPUs=3D1, Node=
+s=3D1 [    0.000000]
+>                                                      ^^^^^^
+>=20
+> Without any concurrent atomic updates, the "broken" atomic accesses won't
+> matter, I guess.
 
-Thanks for the report, analysis, and patch.
+At least from my perspective, the machines that matter for hobbyists are un=
+i-processors,
+i.e. workstations. I don't know of any early Alpha workstations from the ti=
+p of my head
+that are multi-processor.
 
-..
+Adrian
 
->  static int acpi_gpiochip_find(struct gpio_chip *gc, const void *data)
->  {
-> -	return device_match_acpi_handle(&gc->gpiodev->dev, data);
-> +	return device_match_acpi_handle(&gc->gpiodev->dev, data) ||
-> +		(gc->parent && device_match_acpi_handle(gc->parent, data));
->  }
-
-I'm wondering if the below approach will work for all:
-
-static int acpi_gpiochip_find(struct gpio_chip *gc, const void *data)
-{
-	struct device *dev = acpi_get_first_physical_node(ACPI_COMPANION(&gc->gpiodev->dev));
-
-	return device_match_acpi_handle(dev, data);
-}
-
-Cc'ing to Benjamin for testing and commenting.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
