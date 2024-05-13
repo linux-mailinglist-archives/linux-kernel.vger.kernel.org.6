@@ -1,131 +1,175 @@
-Return-Path: <linux-kernel+bounces-177524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A874C8C4026
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:51:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16E08C4029
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B0B2833B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:51:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D39A41C2189C
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F31014D704;
-	Mon, 13 May 2024 11:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uy0aQAEt"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4158914EC7C;
+	Mon, 13 May 2024 11:53:14 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3146914D2A4;
-	Mon, 13 May 2024 11:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CFE14D29E;
+	Mon, 13 May 2024 11:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715601096; cv=none; b=pkcwc0OqRLV99XW5lEtmJ8JHGWzpRzTvOpthaIWzlefIDs0bTP3uqynxAuIKr7Y/102LDdencUuASgljPS/Xz7MpqIzqHqSpaWRZGHzyIaO8OKCdZTpbfhhbQRM6fvYMquJiZI1Ili9gCuJwhsqezt5g1oHsj5U0cpDwrSIpmRQ=
+	t=1715601193; cv=none; b=fuxcoUd9FfggwgpZD78naucb/92j1E5S+kqwNSBZe7wdmn5m7pOkw9V2ee5JVHBea/9wE+OA+eSw+XnZy1lsKyKGDZC4GMSAMgtN8R3CAXhYn/VWeiTtx4sVYq1gyvziHJbQ0X0B48cUfZQETkGj0NfQRAt6CyxSNUDVn1Hvn1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715601096; c=relaxed/simple;
-	bh=cuiN7VZeNudBHCC7NNrRTz1Uuo2YLNSWuQqGNFSpnrE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=DKaTLt6rMQYTNgyBzryUCAfhI/8Owphe6iSaC4/zwBSS1z+XnoelpPZnwCaa9C/Tv6Y94zcJaQLmCskGPkCNUrss5gzmmPe6vk3maMdhVwJtYEl8VZ2c4bmkXzxk7laPGBJnC7OxJnPLhRmVG06QLf0xU92bafI9elyFybXlV4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uy0aQAEt; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5ad2da2196aso2882608eaf.2;
-        Mon, 13 May 2024 04:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715601094; x=1716205894; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uOCAo2YP1owERd3lcsNlFYd76qmZNOIP2lbJko76h1g=;
-        b=Uy0aQAEtFuFgLBSBe+7z91KmM5QOaigLtJDspZ62xsk/Y8o+q+J1uy1gIOdl29Ekf4
-         iPWaAMUcgoaC3J3VOaUuk7WhvZWtCGkvugEqEOdXRs/ZGLUhYv0fRzw3S2cjnlG/1VGE
-         NiImtnJgqtNZVJktYsfLoaAczzPqhIjSXsJAZkJJiCGZwRrgTAPmyr1YvGiB+1ftSOEA
-         foasTmBandexqJU3kYSzu3EKEeZe0vA2wqG2Q997pC8Nu1ApozH7+GwMHWKSPykHN4ec
-         1g2CdLmeI4HbTk7ElnxwmS2CwyDirHNtlJkLyXlgQZJBWyfRB9hBn7ffkvUqBsfUJdoN
-         Be0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715601094; x=1716205894;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uOCAo2YP1owERd3lcsNlFYd76qmZNOIP2lbJko76h1g=;
-        b=CUs84M+fbiQb/OR2NBBeSC3r2oIh6rC2DvpeeXfDKGHYODc2opy4aMulf3TC5L8+As
-         S4zbTrJc/QljefbG/hOnDHL+mCGeG6Euh4OdQdZPh0tcSrPDf3UmJ3OVligOda1um+5b
-         8GpqeRSeY0hXOmIhxeEaMxsF+tWFHl+8MfTOg+yFyw6AK6RxIowE44dtR3TZIxTpY8sd
-         TWn9vLD3cVU+E7p1OnoY/f0rdOo++XyNdQ2GQmjI6jhucATblGiZOJZwKU89CPUatBOz
-         67FMRN8H3WYPleVHnW2qJnlmN2IM7TP/mYgnkQONz+TWKTctDPjCxRUIhga9AvO7Bq2T
-         AeAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqLnBiUc07mnTAooxXQ93bjWPsdsWenqZhorvPONb7R2N8seJ1UY1AiyaX6mKYl9NEJJgHeujMSLday+hFr66z14wIq7o4dD5zJuxbZvAXWB04z4QdAYmubiPozekvozyQseNv6l+G
-X-Gm-Message-State: AOJu0YzA5VQ5cpy1NTKnNP3uHEhrkME1oPm62Z6mltq04U8FjtHJySGM
-	80B2MtdbFB0ZIyhAnKx6Zvbo4WZbiQOyPWqbzvZ0pWDdjoDJwol/1ZexLw==
-X-Google-Smtp-Source: AGHT+IGMpFjXFKpbHGbcskj/jjXkjiJcqlHpFk/YgF4jtXzCXgbYXweazhnQZgKd/wyNGdJGI4V5Iw==
-X-Received: by 2002:a05:6358:52c8:b0:18d:6fba:d2f8 with SMTP id e5c5f4694b2df-193bb612b95mr1275239055d.13.1715601093984;
-        Mon, 13 May 2024 04:51:33 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-634103f7130sm7548152a12.64.2024.05.13.04.51.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 04:51:33 -0700 (PDT)
-Message-ID: <56da5a74-be65-4f36-8d78-7423e11f537d@gmail.com>
-Date: Mon, 13 May 2024 20:51:31 +0900
+	s=arc-20240116; t=1715601193; c=relaxed/simple;
+	bh=973yi3/moS9nP33izvSYXjFm6aTvdo5cVj1K5rMMWH0=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=F+zkIMDNZayZnIX39HluC0h3baJK88AwAUwSyJhEUh8cvrnibKcnIed0rLkD4YjEgQtTeFoJ3nKZ0d/N8V7OvG/rhzaBEXT8uGZUCNGbtwhfJVssRLqIpzGajDlNmEp3f7NZnxu2f15CiCRnzPeWPjnuvNRdzji5BLiKRPCF2Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4VdHpR0cMWz1S52Z;
+	Mon, 13 May 2024 19:49:35 +0800 (CST)
+Received: from dggpemm500005.china.huawei.com (unknown [7.185.36.74])
+	by mail.maildlp.com (Postfix) with ESMTPS id 75184180060;
+	Mon, 13 May 2024 19:53:01 +0800 (CST)
+Received: from [10.69.30.204] (10.69.30.204) by dggpemm500005.china.huawei.com
+ (7.185.36.74) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 13 May
+ 2024 19:53:01 +0800
+Subject: Re: [PATCH net-next v3 11/13] net: replace page_frag with
+ page_frag_cache
+To: Mat Martineau <martineau@kernel.org>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexander Duyck
+	<alexander.duyck@gmail.com>, Ayush Sawal <ayush.sawal@chelsio.com>, Eric
+ Dumazet <edumazet@google.com>, Willem de Bruijn
+	<willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>, Ingo
+ Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
+	<mgorman@suse.de>, Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin
+ Schneider <vschneid@redhat.com>, John Fastabend <john.fastabend@gmail.com>,
+	Jakub Sitnicki <jakub@cloudflare.com>, David Ahern <dsahern@kernel.org>,
+	Matthieu Baerts <matttbe@kernel.org>, Geliang Tang <geliang@kernel.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>, Boris Pismenny <borisp@nvidia.com>,
+	<bpf@vger.kernel.org>, <mptcp@lists.linux.dev>
+References: <20240508133408.54708-1-linyunsheng@huawei.com>
+ <20240508133408.54708-12-linyunsheng@huawei.com>
+ <334a8c67-87c8-a918-9517-0afbfae0d02b@kernel.org>
+ <b8877f3a-831d-f899-9678-b1665739dbe9@huawei.com>
+ <9a3cea15-2001-2222-0d0d-5f61f90507c3@kernel.org>
+From: Yunsheng Lin <linyunsheng@huawei.com>
+Message-ID: <444d0349-476b-a04b-f6f1-d59ee57e2054@huawei.com>
+Date: Mon, 13 May 2024 19:53:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: jani.nikula@linux.intel.com, didi.debian@cknow.org
-Cc: corbet@lwn.net, dwaipayanray1@gmail.com, joe@perches.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- lukas.bulwahn@gmail.com, Akira Yokosawa <akiyks@gmail.com>
-References: <87a5kuez97.fsf@intel.com>
-Subject: Re: [PATCH] docs: dev-tools: checkpatch: Add targets for checkpatch
- tags
+In-Reply-To: <9a3cea15-2001-2222-0d0d-5f61f90507c3@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <87a5kuez97.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm500005.china.huawei.com (7.185.36.74)
 
-On Mon, 13 May 2024 14:18:28 +0300, Jani Nikula wrote:
-> On Mon, 13 May 2024, Diederik de Haas <didi.debian@cknow.org> wrote:
->> Make the tags directly linkable by defining targets for them.
->>
->> Closes: https://lore.kernel.org/r/8090211.0vHzs8tI1a@bagend/
->> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
->> ---
->>  Documentation/dev-tools/checkpatch.rst | 216 +++++++++++++++++++++++++
->>  1 file changed, 216 insertions(+)
->>
->> diff --git a/Documentation/dev-tools/checkpatch.rst b/Documentation/dev-tools/checkpatch.rst
->> index 127968995847..6499e29c3a19 100644
->> --- a/Documentation/dev-tools/checkpatch.rst
->> +++ b/Documentation/dev-tools/checkpatch.rst
->> @@ -242,6 +242,8 @@ This section contains a description of all the message types in checkpatch.
->>  Allocation style
->>  ----------------
->>  
->> +  .. _alloc-array-args:
->> +
->>    **ALLOC_ARRAY_ARGS**
+On 2024/5/11 1:29, Mat Martineau wrote:
+> On Fri, 10 May 2024, Yunsheng Lin wrote:
 > 
-> Alternatively, you could just convert the definition lists into section
-> titles to make them implicit hyperlink targets. The rst stays cleaner
-> and there's no manual updating.
+>> On 2024/5/10 0:22, Mat Martineau wrote:
+>>> On Wed, 8 May 2024, Yunsheng Lin wrote:
+>>>
+>>>> Use the newly introduced prepare/probe/commit API to
+>>>> replace page_frag with page_frag_cache for sk_page_frag().
+>>>>
+>>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>>> ---
+>>>> .../chelsio/inline_crypto/chtls/chtls.h       |   3 -
+>>>> .../chelsio/inline_crypto/chtls/chtls_io.c    | 100 ++++---------
+>>>> .../chelsio/inline_crypto/chtls/chtls_main.c  |   3 -
+>>>> drivers/net/tun.c                             |  28 ++--
+>>>> include/linux/sched.h                         |   4 +-
+>>>> include/net/sock.h                            |  14 +-
+>>>> kernel/exit.c                                 |   3 +-
+>>>> kernel/fork.c                                 |   3 +-
+>>>> net/core/skbuff.c                             |  32 ++--
+>>>> net/core/skmsg.c                              |  22 +--
+>>>> net/core/sock.c                               |  46 ++++--
+>>>> net/ipv4/ip_output.c                          |  33 +++--
+>>>> net/ipv4/tcp.c                                |  35 ++---
+>>>> net/ipv4/tcp_output.c                         |  28 ++--
+>>>> net/ipv6/ip6_output.c                         |  33 +++--
+>>>> net/kcm/kcmsock.c                             |  30 ++--
+>>>> net/mptcp/protocol.c                          |  70 +++++----
+>>>> net/sched/em_meta.c                           |   2 +-
+>>>> net/tls/tls_device.c                          | 139 ++++++++++--------
+>>>> 19 files changed, 331 insertions(+), 297 deletions(-)
+>>>>
+>>>
+>>> <snip>
+>>>
+>>>> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+>>>> index bb8f96f2b86f..ab844011d442 100644
+>>>> --- a/net/mptcp/protocol.c
+>>>> +++ b/net/mptcp/protocol.c
+>>>> @@ -960,17 +960,18 @@ static bool mptcp_skb_can_collapse_to(u64 write_seq,
+>>>> }
+>>>>
+>>>> /* we can append data to the given data frag if:
+>>>> - * - there is space available in the backing page_frag
+>>>> - * - the data frag tail matches the current page_frag free offset
+>>>> + * - there is space available for the current page
+>>>> + * - the data frag tail matches the current page and offset
+>>>>  * - the data frag end sequence number matches the current write seq
+>>>>  */
+>>>> static bool mptcp_frag_can_collapse_to(const struct mptcp_sock *msk,
+>>>> -                       const struct page_frag *pfrag,
+>>>> +                       const struct page *page,
+>>>> +                       const unsigned int offset,
+>>>> +                       const unsigned int size,
+>>>
+>>> Hi Yunsheng -
+>>>
+>>> Why add the 'size' parameter here? It's checked to be a nonzero value, but it can only be 0 if page is also NULL. In this case "page == df->page" will be false, so the function will return false even without checking 'size'.
+>>
+>> Is it possible that the pfrag->page is also NULL, which may cause
+>> mptcp_frag_can_collapse_to() to return true?
 > 
+> Not sure. But I do know that df->page will never be NULL, so "page == df->page" will always be false when page == NULL.
+> 
+>>
+>> I just found out that the 'size' is not set to zero when return
+>> NULL for the implementation of probe API for the current version.
+>> Perhaps it makes more sense to expect the API caller to make sure
+>> the the returned 'page' not being NULL before using the 'offset',
+>> 'size' and 'va', like below:
+>>
+>> df && page && page == df->page
+>>
+> 
+> Given that df->page is never NULL, I don't think the extra "&& page" is needed.
 
-+1
+Not checking the extra "&& page" seems to cause the below warning, it seems we
+have the below options:
+1. ignore the warning.
+2. set offset to zero if there is no enough space when probe API asks for a specific
+   amount of available space as you suggested.
+3. add the "&& page" in mptcp_frag_can_collapse_to()
 
-I misread Diederik's intention and thought he wanted that single target
-he mentioned in the other thread.
+what is your favour option? or any other better option?
 
-I believe Jani's suggestion is the right way going forward.
+net-mptcp-protocol.c:warning:variable-offset-is-used-uninitialized-whenever-if-condition-is-false
 
-        Thanks, Akira
-
-> BR,
-> Jani.
-[snip]
-
+> 
+> - Mat
+> .
+> 
 
