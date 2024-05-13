@@ -1,86 +1,187 @@
-Return-Path: <linux-kernel+bounces-177501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0888B8C3FC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:24:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803EF8C3FCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3916F1C210B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB49C1F221EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AEE14C59D;
-	Mon, 13 May 2024 11:24:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E31714D282;
+	Mon, 13 May 2024 11:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mTVa941V"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C210146A8B
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:24:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA9C146A8B;
+	Mon, 13 May 2024 11:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715599444; cv=none; b=f+wG6rW1/ex90ZEb1hx8fmLa45XeohUfHhDUNZmWfbh4pXZI3fzN0skKTmubEM6n3X8+KLVXdwKJbI+Thf5kEjKeylkz8ylVWgu4ZeVyBi22Cg07Xpvt+AuUY06eHa3mMo/nxEYCJYv5cqjUU5dUvpvIwE3tisgiZ8z6WtO2fKQ=
+	t=1715599589; cv=none; b=Vhg6JYUELYKs6Lzx4xVuh3pzpzqFycVg50Slbet5wpNmP1avdXDOcXeEyLMzHzlvSW54WM3V+unJBBBBbQmn+jCFAdoOIjRkMf4IHPfSXBX06rJRwYJxe3t5mgIbDqj6/5lY+ObkHFLQhI2lqthMXP8g8z5ssrLbDc0t7gl+rFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715599444; c=relaxed/simple;
-	bh=8XGzwB5/KmaCImU/CjQwAfbce1h6HoPd9hyQteAVZxc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=KlxCn03vFUAiy+SeJvedB5EhRtXmU3WMRcq+ijwMBUJEgSBm6IYGEfFtAotJ9zd5xJAcRVJrsR5zJoBwH6ztVqzJFlkYfjteKv1t4pEeLqwKO+y/cI7uWQ0m7tyYyh1K4nBIsIflrFdUzWmty0I2umoYTRGUhGss4a8gzzSl350=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e1bdfff102so347288639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 04:24:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715599442; x=1716204242;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AoIkvFhqxbcz52fu41phthYKCR+A8owaIUQQo3Rz0LY=;
-        b=cIY3lOj0VhghtUn8kBG+ChC99g4pmIqQvcTd2Sym+HO9OwvjUlM7ZiP2ZVKJNa/ErC
-         Vq2KMkSvThXlcNFFUBfJadLz88jPIwNKejJE3E5qnO0+grm+hOADt5V8FnQWCOpwbjnM
-         88cHN0xTW7Uchf9o7cI2sprZAxXkqFZ1C54X2sjs74HjTXcDmnLfXJvCLOZh96E6NKwM
-         ZxkCx1CgEoGHSuckmXwclCw5n6WJqlofR8ReCk7vcfl/JBlGx5TC7zm5M56vU2XkT3tM
-         ckB2k3KceV7vo3uufDPF1GOIG0kxoGDiXeUymfco4846eyqgdfMpsjGsk28lXVERklrH
-         r1Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCU8vvJ8a/hAco+wWDngOb5P9uoRIohW1FFRHiVZKd9YgaRU51oWwab9G3+9cMmkJlwG+QgsTECT63yQgWfPOuDFFCuEI26B+Lqql67v
-X-Gm-Message-State: AOJu0YzOj4nD8WVX3zTAqE/SVsvadp3F0A1fJ+83t22ltH7I2HDfV2Tg
-	hocyrabiRcmTICnCiD6sO+YgqWnRd2Q2ddK4DBbenWSI5hTp9NpN7r+PSRJxF49KkcHwRmNNvw3
-	LLK4x8Q93GAXYjGM2P7c19o18RXVw0ykbfKUcA3wyPQuZg6RDSces8V4=
-X-Google-Smtp-Source: AGHT+IFtoCSJpQtGZrGzZUO2bYTbfBdSy/uZ4PAvz9mepD5VOW1eqKiMhl56qKj/ZTSdBv//FygC9Wz2qTwZex/0neBu8XhJlSIw
+	s=arc-20240116; t=1715599589; c=relaxed/simple;
+	bh=w6bXvTIiUpMD4wbwccXChfqc4hfumpC2Fp5Gf0Kx3Jw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TEroiBp62BSpSsif/2elBxKeYprLZTIlC6ZK3cbZvCSH/pcVDQAc2k3gDcgHB0nJBIG0JKU9QDBj9KPWV0bYmlzQwhX/nXC24/W2tIPPUTJdeLDG4pzrxd6nmNBxqiDAsvPU3R5ByGgjpmpreGpCdVSBSprYyMkki1XHmPgXCRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mTVa941V; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44DBQ7LZ120561;
+	Mon, 13 May 2024 06:26:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715599567;
+	bh=eawYmx/H8bHfSzex1qDdS9vopfxAzhLAnG6LsubXIAc=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=mTVa941Vc+32qCU2A+G8gQGpQNJUVjif86p6HO5cP8Mjap69/1yYgiv2Hvg9CZwWI
+	 aKdBkNh7SOV+wtWX55ixUTiFFM1wj59EUiCSGs4JxanKU4ySbxUM7WGJAGLXRiK+0l
+	 sgqsnCoOrTwSe86OgZBWpV8Qt0XSJ18pD19cBJtA=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44DBQ7gs029885
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 13 May 2024 06:26:07 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 13
+ May 2024 06:26:07 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 13 May 2024 06:26:07 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44DBPxsB051978;
+	Mon, 13 May 2024 06:25:59 -0500
+Message-ID: <6557050e-6b18-2628-cbab-1a811b2190ba@ti.com>
+Date: Mon, 13 May 2024 16:55:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8703:b0:488:c8a4:76f3 with SMTP id
- 8926c6da1cb9f-4895a49d4afmr1129290173.6.1715599442377; Mon, 13 May 2024
- 04:24:02 -0700 (PDT)
-Date: Mon, 13 May 2024 04:24:02 -0700
-In-Reply-To: <tencent_3966EDCECDA47B8A6C302F696D8C95DCE90A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000570e010618541f59@google.com>
-Subject: Re: [syzbot] [bcachefs?] kernel BUG in cpu_replicas_add_entry
-From: syzbot <syzbot+73414091bd382684ee2b@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH v7 6/8] math.h Add macros to round to closest specified
+ power of 2
+Content-Language: en-US
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: Jani Nikula <jani.nikula@intel.com>, <mchehab@kernel.org>,
+        <hverkuil-cisco@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <benjamin.gaignard@collabora.com>,
+        <sebastian.fricke@collabora.com>, <akpm@linux-foundation.org>,
+        <gregkh@linuxfoundation.org>, <adobriyan@gmail.com>,
+        <p.zabel@pengutronix.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <dri-devel@lists.freedesktop.org>, <laurent.pinchart@ideasonboard.com>,
+        <praneeth@ti.com>, <nm@ti.com>, <vigneshr@ti.com>, <a-bhatia1@ti.com>,
+        <j-luthra@ti.com>, <b-brnich@ti.com>, <detheridge@ti.com>,
+        <p-mantena@ti.com>, <vijayp@ti.com>, <andrzej.p@collabora.com>,
+        <nicolas@ndufresne.ca>
+References: <20240509183952.4064331-1-devarsht@ti.com>
+ <Zj42vTpyH71TWeTk@smile.fi.intel.com> <87fruphf55.fsf@intel.com>
+ <5ebcf480-81c6-4c2d-96e8-727d44f21ca9@ti.com>
+ <ZkHWbS4raU_BPlpm@smile.fi.intel.com>
+From: Devarsh Thakkar <devarsht@ti.com>
+In-Reply-To: <ZkHWbS4raU_BPlpm@smile.fi.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hello,
+Hi Andy,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 13/05/24 14:29, Andy Shevchenko wrote:
+> On Sat, May 11, 2024 at 11:11:14PM +0530, Devarsh Thakkar wrote:
+>> On 10/05/24 20:45, Jani Nikula wrote:
+> 
+> [...]
+> 
+>>> Moreover, I think the naming of round_up() and round_down() should have
+>>> reflected the fact that they operate on powers of 2. It's unfortunate
+>>> that the difference to roundup() and rounddown() is just the underscore!
+>>> That's just a trap.
+>>>
+>>> So let's perhaps not repeat the same with round_closest_up() and
+>>> round_closest_down()?
+>>
+>> Yes the naming is inspired by existing macros i.e. round_up, round_down
+>> (which round up/down to next pow of 2) and DIV_ROUND_CLOSEST (which
+>> round the divided value to closest value) and there are already a lot of
+>> users for these API's :
+>>
+>>   linux-next git:(heads/next-20240509) ✗ grep -nr round_up drivers | wc
+>>     730    4261   74775
+>>
+>>   linux-next git:(heads/next-20240509) ✗ grep -nr round_down drivers | wc
+>>     226    1293   22194
+>>
+>>  linux-next git:(heads/next-20240509) ✗ grep -nr DIV_ROUND_CLOSEST
+>> drivers | wc
+>>    1207    7461  111822
+> 
+> Side note, discover `git grep ...`: it's much much faster on Git index,
+> than classic one on a working copy.
+> 
+>> so I thought to align with existing naming convention assuming
+>> developers are already familiar with this.
+>>
+>> But if a wider consensus is to go with a newer naming convention then I
+>> am open to it, although a challenge there would be to keep it short. For
+>> e.g. this one is already 3 words, if we go with more explicit
+>> "round_closest_up_pow_2" it looks quite long in my opinion :) .
+> 
+> You need properly name the macros. Again, round_up() / roundup() and
+> roundup_pow_of_two() are three _different_ macros, and it's not clear
+> why you can't use one of them in your case.
+> 
 
-Reported-and-tested-by: syzbot+73414091bd382684ee2b@syzkaller.appspotmail.com
+I can't use any of these because these macros either round up or round down,
+whereas I want to round to closest value for the argument specified by the
+user, be it achieved either by rounding up or rounding down depending upon
+whichever makes the answer closer to the user-specified argument.
 
-Tested on:
+To make it clear, I have already included the examples in the macro
+description [2], copying it here, maybe I can put the same examples in the
+commit message too to avoid confusions :
 
-commit:         cf87f46f Merge tag 'drm-fixes-2024-05-11' of https://g..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=152aa96c980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d7ea7de0cb32587
-dashboard link: https://syzkaller.appspot.com/bug?extid=73414091bd382684ee2b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=112bfdd4980000
+round_closest_up(17, 4) = 16
+round_closest_up(15, 4) = 16
+round_closest_up(14, 4) = 16
 
-Note: testing is done by a robot and is best-effort only.
+round_closest_down(17, 4) = 16
+round_closest_down(15, 4) = 16
+round_closest_down(14, 4) = 12
+
+Coming back to naming, this is as per existing convention used for naming
+round_up, round_down (notice the `_` being used for macros working with pow of
+2) and DIV_ROUND_CLOSEST (notice the work `closest` used to specify the answer
+to be nearest to specified value). Naming is a bit subjective, but I
+personally don't think it is a good idea to go away with the existing naming
+convention or go with longer names.
+
+> The patch that changes those to a new one are doubtful to begin with.
+> I.e. need a careful review on the arithmetics side of the change
+> including HW capabilities of handling "closest" results.
+> 
+
+This is already tested from my side, in-fact I have posted some of the results
+in cover-letter with these macros [1] :
+
+Regarding hardware capabilities, it uses existing round_up, round_down macros
+underneath which are optimized to handle pow of 2 after modifying the user
+provided argument using addition/subtraction and division, so I don't think it
+should generally a problem with the hardware.
+And I see other macros DIV_ROUND_CLOSEST [3] already using similar operations
+i.e. addition/subtraction and division so don't think it should be a problem
+to keep similar other macros in the same file.
+
+[1]:
+https://gist.github.com/devarsht/de6f5142f678bb1a5338abfd9f814abd#file-v7_jpeg_encoder_crop_validation-L204
+[2]: https://lore.kernel.org/all/20240509183952.4064331-1-devarsht@ti.com/
+[3]: https://elixir.bootlin.com/linux/latest/source/include/linux/math.h#L86
+
+Regards
+Devarsh
 
