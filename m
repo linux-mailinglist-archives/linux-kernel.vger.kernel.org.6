@@ -1,221 +1,291 @@
-Return-Path: <linux-kernel+bounces-177101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62A98C3A13
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:10:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65348C3A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B827280E5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:10:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416B81F22E1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 02:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51D513957E;
-	Mon, 13 May 2024 02:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14FB1353F5;
+	Mon, 13 May 2024 02:15:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sNIqxyVK"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2077.outbound.protection.outlook.com [40.107.95.77])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ayjDv5ct"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A15313956B;
-	Mon, 13 May 2024 02:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715566106; cv=fail; b=SVssFx/UBivOc7wkO+QlPw8FJv+lhjO6GznzwoWwXpRy5X+JEqSwKWMH8c0MyV3PzJD98nIUYwsECKvKtQTzmWFFuwAmWYkXVxY/IsTxL/+a2DOHk5gexXiBj8gRhKN4W6XWtpOecJ3Hm6HG3iSgpYuABnNxPhnFVa5QXH/qpOU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715566106; c=relaxed/simple;
-	bh=xOX5/jL71gOPe+phHcmMOPqzYt6IMtZWbvbb1kZ/FrU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KmJex0h7Fq3BYt+BbUBTm93wdp6OQzI4tHgnmWIxFA9MZW0ZJjkfbBeidjQyTGsJB+1blNFKLoTiGm0fOMw0uul1qtPjLeuEchFqjxso3FlcDo/6XLiHQ+cxSwWudVM02qM580Kb7rCYPtJyHyRA/x/Vhy8Hizx/4lrdQog9Xv0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sNIqxyVK; arc=fail smtp.client-ip=40.107.95.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FSA5QgoJfcbXJi2BzcZ6a8J0tN33Cz3sT7lQvl72aKXeN6CZ8jR2fUKSaVr2umsZb0RRPsWUepwFIsrHEP3OwBiZ87sR1hZ2Sf0pN6AU2mM7sZs3c+ErWQMnf4mkGFbTN4sqTwvUx8xxlO2BUMUiDHobMKNiCOAMYUL5Otz2JI4lxCyO0y25EgN7yZRQxcPd9V4B9pXEpuKR7SkebKSjPTDsoTpclhGa42grrEYXhURChvBkCf5VTvLFsXwS8xKTkdHodG6je0YOgQwD68eJK+YxLkCA1IBF/EDNMQRlSjjyqj0d80hyafv/DWrRh8qZGbdtwkNgc+6b9Pvj/UAfoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7FAyYt0HE/cZUL1eFC7ZRF+YdqP/UpH2iZS9/18ppi4=;
- b=fY/9/QJlnJgQU9z/FT2vXaquBgdfjyVs1+HaCK2OMCd6zml6wUVqJxZn8lP5gegrtNQ1kh15a1xCDVFOwBhylnhr9tZ1x9nYyhJnV4UOITeAXFGtT9kYotbu2Oy7DQEgQvvOllQwEfWWq2Lt10j+t0jqhGXGYSV63tf5cA6aZdhraYzQJ/eQI2eyp5STKJUd2vBmQXlYW6Pl0cbMiTPG+N8ka+SLioOZiUpa7G9046cwHQPQ+g8XS/KTW6Ou0EnJzaV0aZQ9JorPzEtlqXqzfPviiztEaybfZUZ+pG0bm1YocU6d5oCvn02uCv2riYhuA6PzLhzXYizgmA43rNqesg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7FAyYt0HE/cZUL1eFC7ZRF+YdqP/UpH2iZS9/18ppi4=;
- b=sNIqxyVKzzVYwwFn8I9+q1GGV7XxHMkwyBRPrfb7DCz/ZqMT7Q+LaXpdfhYpfqtQFVSQt7cfQJtWZ8Hop2KXXqvhpGnvCpMd8UiSr45B3NJvehyZuAvJqNsHXvlJsXxqQUtroC/NVY4A15iGPVm2D13X+PtUJcLS6Jo0FTe8RhA=
-Received: from BY3PR05CA0025.namprd05.prod.outlook.com (2603:10b6:a03:254::30)
- by PH7PR12MB5950.namprd12.prod.outlook.com (2603:10b6:510:1d9::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 02:08:20 +0000
-Received: from SJ1PEPF00001CE3.namprd05.prod.outlook.com
- (2603:10b6:a03:254:cafe::bd) by BY3PR05CA0025.outlook.office365.com
- (2603:10b6:a03:254::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.22 via Frontend
- Transport; Mon, 13 May 2024 02:08:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE3.mail.protection.outlook.com (10.167.242.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 02:08:19 +0000
-Received: from pyuan-Chachani-VN.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 12 May 2024 21:08:16 -0500
-From: Perry Yuan <perry.yuan@amd.com>
-To: <Mario.Limonciello@amd.com>, <gautham.shenoy@amd.com>,
-	<Ray.Huang@amd.com>, <Borislav.Petkov@amd.com>
-CC: <rafael.j.wysocki@intel.com>, <Alexander.Deucher@amd.com>,
-	<Xinmei.Huang@amd.com>, <Xiaojian.Du@amd.com>, <Li.Meng@amd.com>,
-	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 10/10] cpufreq: amd-pstate: automatically load pstate driver by default
-Date: Mon, 13 May 2024 10:07:28 +0800
-Message-ID: <9b31fbcdfd4e4f00c3302f45e655aa43589b224c.1715356532.git.perry.yuan@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1715356532.git.perry.yuan@amd.com>
-References: <cover.1715356532.git.perry.yuan@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF194C9F;
+	Mon, 13 May 2024 02:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715566511; cv=none; b=suIUIqc8MS7hteMCe8HlKgi5l80RVUkeavBsKQAtxiQEB/T0pdMXqUaGG1ktEXzxVhY5QvHRxvCJxNtEOVjxbGXvb93FdYOmTWZWggvmFFVjeEY658S0xgOArwYJwomsmnobjO7zybkSdc+JZ809WiK0GjbQszsn8xJrs9GO4ZQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715566511; c=relaxed/simple;
+	bh=0VAOcaO47ViYN0bE4o2MNcHqcHxmHC8zeryv8HizuaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CnX1q/ZQE5sZnf2RgzXCw5L4GO0x+fWDuX21w/60zCVKLlHpBnYau5ZKjAYK81zZnTr8ljJMmGK6O5975IpnK4djZXM/8hG4ulpLnQ7y7eiaPM4Y3UVAaA+UJAOo0THco4aYyNz8THx/WgsMGcyH+lQJ6RNE6SyPvdojI2FqPWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ayjDv5ct; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715566510; x=1747102510;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0VAOcaO47ViYN0bE4o2MNcHqcHxmHC8zeryv8HizuaA=;
+  b=ayjDv5ctxKLBgRhYKkQccXx9KgFlNYDWbep57w8+rglCtZNK5z8BG58d
+   ldsxKXGj1wXdWnu1s8VAUbBqTCHuInTtItOzS50VdwCMAd4Hp2cLWqptd
+   vT5V17uhqalC/k3f8q5jYW0837q8NcIGRbWJMlWU3wgAULrpwuygYJQh3
+   NKxBNH43oc67v8WwV4dvpsc261kI1igylOmb6PZ/gmlseis2GOmue6iqI
+   6KtybdUneKtHqU4F0wu5nfPKK7qEujASerAtr9CZdmEPvWN5aD8yP+ESA
+   xoPYjR6tzehku+shsfI+pHw17epywuVQNaTLy25gucLRhgz3qtoKosQ2h
+   A==;
+X-CSE-ConnectionGUID: qvw5hd+VS5mmjOup73q5mA==
+X-CSE-MsgGUID: VQclhbORTq6opQOMrmAkEQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="11336591"
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="11336591"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 19:15:09 -0700
+X-CSE-ConnectionGUID: x+dHR9TqReyTglgKWezljw==
+X-CSE-MsgGUID: ZJXzqTgfRGeK6QDn7kbW9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
+   d="scan'208";a="34870413"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 12 May 2024 19:15:04 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6LDR-0009P1-1Y;
+	Mon, 13 May 2024 02:15:01 +0000
+Date: Mon, 13 May 2024 10:14:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	gregkh@linuxfoundation.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	johannes@sipsolutions.net, philipp.g.hortmann@gmail.com,
+	tdavies@darkphysics.net, garyrookard@fastmail.org,
+	straube.linux@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-staging@lists.linux.dev,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 1/3] lib80211: Handle const struct lib80211_crypto_ops in
+ lib80211
+Message-ID: <202405130949.5EW85uAq-lkp@intel.com>
+References: <d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE3:EE_|PH7PR12MB5950:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3cd7070c-2e07-4dba-d49f-08dc72f18f8d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|1800799015|36860700004|376005|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IrmaSVe3lV6SjTM77XFP6Te4PLy7SG0Yd7hfArHutkNZdFQJD45tBmx8430Q?=
- =?us-ascii?Q?GaCcEEbLR4XahUt55Cor4bIlKmitnOd5vGHh/Bk7KtYbA0qUdgtFeBkzD+oV?=
- =?us-ascii?Q?AKaLkpxlGm//rRyCfcf/3+dcRLn4Y7fuRTRy/VbrVyGc6/t4jqpk2CbKg1mq?=
- =?us-ascii?Q?Igt37mZzqxUSOWXHRvICzSU6dOVBNQaJ1/Pf4COboxET7QLsIcmieEk4onPt?=
- =?us-ascii?Q?5Q1FjcWOCPH7goIVIdgEXkbxa60Bq3RNiU61cqsTVrGOE1eZX6PBJ58IbjdB?=
- =?us-ascii?Q?0PIZjseWhtelRymqWRxBu3OisEwRZoFm3AD+XmrAPaQykPz/AGI/i3waK7fi?=
- =?us-ascii?Q?Ojf4h5FXTza8Mg7UbypV4UTncUJWp9JetkeKJZ3hsPcLKYh3jBBSuYmuo1vm?=
- =?us-ascii?Q?7UkqsWdKOp/Oo7luuA7Kuhy1Hx19lshp81SZLTk31uR25dCNJzidvV2XazBe?=
- =?us-ascii?Q?pQ+W0PpEQfEJUb5l8ADUH+ENeOdMi+HjOdyE4c818gnKA6xaYpqebnHA9g5d?=
- =?us-ascii?Q?rhPynMeC/zQKgNiKsNc2OyLWMldXqa+IObiPvPJ0S3WkS15c0fQNsCYgzcbC?=
- =?us-ascii?Q?Cd753UdTBCNgQf+J+WpIfPAXslWilgymFLwtjwtuIG6U80RssUUfuQagwuO3?=
- =?us-ascii?Q?597BZvkR0sz24xvQIrsBtd5PXN7fHopRtqjL8T0Y4+Oj/zyAxcOT55BuPelP?=
- =?us-ascii?Q?ErUkXmNfIPorU60s4yGBrROIIEfWxTKCk74GBj4GGQTdjJ5WTsToX1ErepsT?=
- =?us-ascii?Q?NpGrNyoZBlnWTFqGMcgT8Ur2E7C5/hejyc75cjg1wbQT6zOMB3Su+JurDsvM?=
- =?us-ascii?Q?06QEJ4LZHpeBTHva0PATqCr4eg1FDsoZbjPCb68v4Fi5AgjeYUnBxBEUAhez?=
- =?us-ascii?Q?q5h1c1oIkl2wQ0/gnxtj6LRiEDXoFgOJCuLbAJE5mIX3BP08kaWqk6M/1LNV?=
- =?us-ascii?Q?YgD8d1Ep1h1wXQXXuZ1J8PuLcKKiTNZoLX0bYn6NjNCMkbKL5Am1vK2POlDH?=
- =?us-ascii?Q?Zk7L+uE/jzk+EXtsPUIw8NGG8dwhGHs8NY2hU+Xxal5aIevA6DFPuXYL+GJw?=
- =?us-ascii?Q?oqzbgaxdOVgUHYtPd+/ioeCs5NGRcQHBT7IM8MHx6CmLJXHEIGh2yelMbuLk?=
- =?us-ascii?Q?4RtZHXCAxUALQKWTFIZTM6Fa1C2SAzqQFkbFSwsk34m/EyHzIBtL0w3FBk0j?=
- =?us-ascii?Q?WWkni7FhU9tpbhnFpFGmCmMeSpKfyJU9AptC4bpS+2ZQimOwJ4abBmgoEayW?=
- =?us-ascii?Q?xpQ2/iWGyIBpaOgbwYIsw1hcOaYAuZu5ejfSEZ5nSMa6wcQT71ctCWWJUwY3?=
- =?us-ascii?Q?m3g08Tc0oIgHpHT/pW/Z8X+c?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230031)(1800799015)(36860700004)(376005)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 02:08:19.9014
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3cd7070c-2e07-4dba-d49f-08dc72f18f8d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5950
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet@wanadoo.fr>
 
-If the `amd-pstate` driver is not loaded automatically by default,
-it is because the kernel command line parameter has not been added.
-To resolve this issue, it is necessary to call the `amd_pstate_set_driver()`
-function to enable the desired mode (passive/active/guided) before registering
-the driver instance.
-This ensures that the driver is loaded correctly without relying on the kernel
-command line parameter.
+Hi Christophe,
 
-[    0.917789] usb usb6: Manufacturer: Linux 6.9.0-rc6-amd-pstate-new-fix-v1 xhci-hcd
-[    0.982579] amd_pstate: failed to register with return -22
+kernel test robot noticed the following build warnings:
 
-Reported-by: Andrei Amuraritei <andamu@posteo.net>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218705
-Signed-off-by: Perry Yuan <perry.yuan@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 36 +++++++++++++++++++-----------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
+[auto build test WARNING on staging/staging-testing]
+[also build test WARNING on staging/staging-next staging/staging-linus wireless-next/main wireless/main linus/master v6.9 next-20240510]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index dce901a403c9..03342fef7d94 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -1785,28 +1785,30 @@ static int __init amd_pstate_init(void)
- 	/* check if this machine need CPPC quirks */
- 	dmi_check_system(amd_pstate_quirks_table);
- 
-+	/* get default driver mode for loading */
-+	if (cppc_state == AMD_PSTATE_UNDEFINED)
-+		cppc_state = CONFIG_X86_AMD_PSTATE_DEFAULT_MODE;
-+
-+	/* Disable on the following configs by default:
-+	 * 1. Undefined platforms
-+	 * 2. Server platforms
-+	 */
-+	if (amd_pstate_acpi_pm_profile_undefined() ||
-+		amd_pstate_acpi_pm_profile_server()) {
-+		pr_info("driver load is disabled for server or undefined platform\n");
-+		return -ENODEV;
-+	}
-+
- 	switch (cppc_state) {
--	case AMD_PSTATE_UNDEFINED:
--		/* Disable on the following configs by default:
--		 * 1. Undefined platforms
--		 * 2. Server platforms
--		 * 3. Shared memory designs
--		 */
--		if (amd_pstate_acpi_pm_profile_undefined() ||
--		    amd_pstate_acpi_pm_profile_server() ||
--		    !cpu_feature_enabled(X86_FEATURE_CPPC)) {
--			pr_info("driver load is disabled, boot with specific mode to enable this\n");
--			return -ENODEV;
--		}
--		ret = amd_pstate_set_driver(CONFIG_X86_AMD_PSTATE_DEFAULT_MODE);
--		if (ret)
--			return ret;
--		break;
- 	case AMD_PSTATE_DISABLE:
-+		pr_info("driver load is disabled, boot with specific mode to enable this\n");
- 		return -ENODEV;
- 	case AMD_PSTATE_PASSIVE:
- 	case AMD_PSTATE_ACTIVE:
- 	case AMD_PSTATE_GUIDED:
-+		ret = amd_pstate_set_driver(cppc_state);
-+		if (ret)
-+			return ret;
- 		break;
- 	default:
- 		return -EINVAL;
-@@ -1827,7 +1829,7 @@ static int __init amd_pstate_init(void)
- 	/* enable amd pstate feature */
- 	ret = amd_pstate_enable(true);
- 	if (ret) {
--		pr_err("failed to enable with return %d\n", ret);
-+		pr_err("failed to enable driver mode(%d)\n", cppc_state);
- 		return ret;
- 	}
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Christophe-JAILLET/lib80211-Handle-const-struct-lib80211_crypto_ops-in-lib80211/20240512-003642
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/d6306f7c76015653e9539ddbcd1ed74d1681a98f.1715443223.git.christophe.jaillet%40wanadoo.fr
+patch subject: [PATCH 1/3] lib80211: Handle const struct lib80211_crypto_ops in lib80211
+config: csky-randconfig-r132-20240513 (https://download.01.org/0day-ci/archive/20240513/202405130949.5EW85uAq-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240513/202405130949.5EW85uAq-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405130949.5EW85uAq-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/wireless/intel/ipw2x00/libipw_wx.c:587:13: sparse: sparse: incorrect type in assignment (different modifiers) @@     expected struct lib80211_crypto_ops *ops @@     got struct lib80211_crypto_ops const * @@
+   drivers/net/wireless/intel/ipw2x00/libipw_wx.c:587:13: sparse:     expected struct lib80211_crypto_ops *ops
+   drivers/net/wireless/intel/ipw2x00/libipw_wx.c:587:13: sparse:     got struct lib80211_crypto_ops const *
+   drivers/net/wireless/intel/ipw2x00/libipw_wx.c:590:21: sparse: sparse: incorrect type in assignment (different modifiers) @@     expected struct lib80211_crypto_ops *ops @@     got struct lib80211_crypto_ops const * @@
+   drivers/net/wireless/intel/ipw2x00/libipw_wx.c:590:21: sparse:     expected struct lib80211_crypto_ops *ops
+   drivers/net/wireless/intel/ipw2x00/libipw_wx.c:590:21: sparse:     got struct lib80211_crypto_ops const *
+
+vim +587 drivers/net/wireless/intel/ipw2x00/libipw_wx.c
+
+b453872c35cfcb net/ieee80211/ieee80211_wx.c                   Jeff Garzik        2005-05-12  501  
+b0a4e7d8a291de drivers/net/wireless/ipw2x00/libipw_wx.c       John W. Linville   2009-08-20  502  int libipw_wx_set_encodeext(struct libipw_device *ieee,
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  503  			       struct iw_request_info *info,
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  504  			       union iwreq_data *wrqu, char *extra)
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  505  {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  506  	struct net_device *dev = ieee->dev;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  507  	struct iw_point *encoding = &wrqu->encoding;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  508  	struct iw_encode_ext *ext = (struct iw_encode_ext *)extra;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  509  	int i, idx, ret = 0;
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  510  	int group_key = 0;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  511  	const char *alg, *module;
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  512  	struct lib80211_crypto_ops *ops;
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  513  	struct lib80211_crypt_data **crypt;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  514  
+b0a4e7d8a291de drivers/net/wireless/ipw2x00/libipw_wx.c       John W. Linville   2009-08-20  515  	struct libipw_security sec = {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  516  		.flags = 0,
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  517  	};
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  518  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  519  	idx = encoding->flags & IW_ENCODE_INDEX;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  520  	if (idx) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  521  		if (idx < 1 || idx > WEP_KEYS)
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  522  			return -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  523  		idx--;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  524  	} else
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  525  		idx = ieee->crypt_info.tx_keyidx;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  526  
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  527  	if (ext->ext_flags & IW_ENCODE_EXT_GROUP_KEY) {
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  528  		crypt = &ieee->crypt_info.crypt[idx];
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  529  		group_key = 1;
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  530  	} else {
+e189277a3f1cbb net/ieee80211/ieee80211_wx.c                   Volker Braun       2005-10-24  531  		/* some Cisco APs use idx>0 for unicast in dynamic WEP */
+e189277a3f1cbb net/ieee80211/ieee80211_wx.c                   Volker Braun       2005-10-24  532  		if (idx != 0 && ext->alg != IW_ENCODE_ALG_WEP)
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  533  			return -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  534  		if (ieee->iw_mode == IW_MODE_INFRA)
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  535  			crypt = &ieee->crypt_info.crypt[idx];
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  536  		else
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  537  			return -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  538  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  539  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  540  	sec.flags |= SEC_ENABLED | SEC_ENCRYPT;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  541  	if ((encoding->flags & IW_ENCODE_DISABLED) ||
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  542  	    ext->alg == IW_ENCODE_ALG_NONE) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  543  		if (*crypt)
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  544  			lib80211_crypt_delayed_deinit(&ieee->crypt_info, crypt);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  545  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  546  		for (i = 0; i < WEP_KEYS; i++)
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  547  			if (ieee->crypt_info.crypt[i] != NULL)
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  548  				break;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  549  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  550  		if (i == WEP_KEYS) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  551  			sec.enabled = 0;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  552  			sec.encrypt = 0;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  553  			sec.level = SEC_LEVEL_0;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  554  			sec.flags |= SEC_LEVEL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  555  		}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  556  		goto done;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  557  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  558  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  559  	sec.enabled = 1;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  560  	sec.encrypt = 1;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  561  
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  562  	if (group_key ? !ieee->host_mc_decrypt :
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  563  	    !(ieee->host_encrypt || ieee->host_decrypt ||
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  564  	      ieee->host_encrypt_msdu))
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  565  		goto skip_host_crypt;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  566  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  567  	switch (ext->alg) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  568  	case IW_ENCODE_ALG_WEP:
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  569  		alg = "WEP";
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  570  		module = "lib80211_crypt_wep";
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  571  		break;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  572  	case IW_ENCODE_ALG_TKIP:
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  573  		alg = "TKIP";
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  574  		module = "lib80211_crypt_tkip";
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  575  		break;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  576  	case IW_ENCODE_ALG_CCMP:
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  577  		alg = "CCMP";
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  578  		module = "lib80211_crypt_ccmp";
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  579  		break;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  580  	default:
+b0a4e7d8a291de drivers/net/wireless/ipw2x00/libipw_wx.c       John W. Linville   2009-08-20  581  		LIBIPW_DEBUG_WX("%s: unknown crypto alg %d\n",
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  582  				   dev->name, ext->alg);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  583  		ret = -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  584  		goto done;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  585  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  586  
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29 @587  	ops = lib80211_get_crypto_ops(alg);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  588  	if (ops == NULL) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  589  		request_module(module);
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  590  		ops = lib80211_get_crypto_ops(alg);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  591  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  592  	if (ops == NULL) {
+b0a4e7d8a291de drivers/net/wireless/ipw2x00/libipw_wx.c       John W. Linville   2009-08-20  593  		LIBIPW_DEBUG_WX("%s: unknown crypto alg %d\n",
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  594  				   dev->name, ext->alg);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  595  		ret = -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  596  		goto done;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  597  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  598  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  599  	if (*crypt == NULL || (*crypt)->ops != ops) {
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  600  		struct lib80211_crypt_data *new_crypt;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  601  
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  602  		lib80211_crypt_delayed_deinit(&ieee->crypt_info, crypt);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  603  
+0da974f4f303a6 net/ieee80211/ieee80211_wx.c                   Panagiotis Issaris 2006-07-21  604  		new_crypt = kzalloc(sizeof(*new_crypt), GFP_KERNEL);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  605  		if (new_crypt == NULL) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  606  			ret = -ENOMEM;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  607  			goto done;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  608  		}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  609  		new_crypt->ops = ops;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  610  		if (new_crypt->ops && try_module_get(new_crypt->ops->owner))
+6eb6edf04acd09 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-22  611  			new_crypt->priv = new_crypt->ops->init(idx);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  612  		if (new_crypt->priv == NULL) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  613  			kfree(new_crypt);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  614  			ret = -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  615  			goto done;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  616  		}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  617  		*crypt = new_crypt;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  618  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  619  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  620  	if (ext->key_len > 0 && (*crypt)->ops->set_key &&
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  621  	    (*crypt)->ops->set_key(ext->key, ext->key_len, ext->rx_seq,
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  622  				   (*crypt)->priv) < 0) {
+b0a4e7d8a291de drivers/net/wireless/ipw2x00/libipw_wx.c       John W. Linville   2009-08-20  623  		LIBIPW_DEBUG_WX("%s: key setting failed\n", dev->name);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  624  		ret = -EINVAL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  625  		goto done;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  626  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  627  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  628        skip_host_crypt:
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  629  	if (ext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY) {
+274bfb8dc5ffa1 net/ieee80211/ieee80211_wx.c                   John W. Linville   2008-10-29  630  		ieee->crypt_info.tx_keyidx = idx;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  631  		sec.active_key = idx;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  632  		sec.flags |= SEC_ACTIVE_KEY;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  633  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  634  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  635  	if (ext->alg != IW_ENCODE_ALG_NONE) {
+260a9ad9446723 drivers/net/wireless/intel/ipw2x00/libipw_wx.c Dan Carpenter      2021-04-14  636  		int key_len = clamp_val(ext->key_len, 0, SCM_KEY_LEN);
+260a9ad9446723 drivers/net/wireless/intel/ipw2x00/libipw_wx.c Dan Carpenter      2021-04-14  637  
+260a9ad9446723 drivers/net/wireless/intel/ipw2x00/libipw_wx.c Dan Carpenter      2021-04-14  638  		memcpy(sec.keys[idx], ext->key, key_len);
+260a9ad9446723 drivers/net/wireless/intel/ipw2x00/libipw_wx.c Dan Carpenter      2021-04-14  639  		sec.key_sizes[idx] = key_len;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  640  		sec.flags |= (1 << idx);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  641  		if (ext->alg == IW_ENCODE_ALG_WEP) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  642  			sec.encode_alg[idx] = SEC_ALG_WEP;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  643  			sec.flags |= SEC_LEVEL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  644  			sec.level = SEC_LEVEL_1;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  645  		} else if (ext->alg == IW_ENCODE_ALG_TKIP) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  646  			sec.encode_alg[idx] = SEC_ALG_TKIP;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  647  			sec.flags |= SEC_LEVEL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  648  			sec.level = SEC_LEVEL_2;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  649  		} else if (ext->alg == IW_ENCODE_ALG_CCMP) {
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  650  			sec.encode_alg[idx] = SEC_ALG_CCMP;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  651  			sec.flags |= SEC_LEVEL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  652  			sec.level = SEC_LEVEL_3;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  653  		}
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  654  		/* Don't set sec level for group keys. */
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  655  		if (group_key)
+ccd0fda3a6d918 net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  656  			sec.flags &= ~SEC_LEVEL;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  657  	}
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  658        done:
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  659  	if (ieee->set_security)
+3fc7bc8ea792b4 drivers/net/wireless/ipw2x00/libipw_wx.c       Paul Bolle         2012-09-21  660  		ieee->set_security(dev, &sec);
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  661  
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  662  	return ret;
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  663  }
+e0d369d1d969fc net/ieee80211/ieee80211_wx.c                   James Ketrenos     2005-09-21  664  
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
