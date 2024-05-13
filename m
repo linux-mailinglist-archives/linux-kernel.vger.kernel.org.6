@@ -1,108 +1,137 @@
-Return-Path: <linux-kernel+bounces-177254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A678C3C0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:27:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C493A8C3C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C7D2814E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:27:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759E21F21A21
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB36146D56;
-	Mon, 13 May 2024 07:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD4C146A9D;
+	Mon, 13 May 2024 07:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cCy6F3db"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="so7U/oaT"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D4B146A77;
-	Mon, 13 May 2024 07:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42675146A77
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715585144; cv=none; b=sfqgDX8tCT5+3k3ZGD2f5briml618i/uK94fuZ73dXY7weXkbVEjzua6H3Q7lVlgaW/qL8CDPmuKX/sM30wSS9LXyjaL1oE0QjlaFk1W45XV/LrfGTNYMeT6PyFvVNxNl+1Fz6rMKswWJZpFHhi+BD4Vn2CyFfaasVH+5CNXgZs=
+	t=1715585385; cv=none; b=Gch8GlYtFLB+6H57C3KO8ux9m5LYQOwj5HK8sehZPL6cxoE2T0b8MeQO81M98t1/92VtufM1a567dSnWf9pLNna1unEcAi0eiyzgt6AngYs4Z/0Ta9SO0Q1xN5piw78O3X8090mdRfYDcSR+WHGxg17V/yqOUm8F5ruwQV5EOHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715585144; c=relaxed/simple;
-	bh=90qi8fWxM1Bs9HINt8y+fri3O1GINnSZ+60me1bYPZg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=johwYwtFNn/YxpESWiDhsGh5wUri3evT8RL+2rm2/bdHPhkUQbAteeAz7v0xIkIJ8xvNfAC2ucNBAtXxEqRQrIO5IysUAiBUPaWmRS/q7bBe4UEp993IT64zP1U7N/hrIYipA+alL9P8pfnd62BPOls4R91+F4kKNAN6NoFfB8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cCy6F3db; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 06AE8FF805;
-	Mon, 13 May 2024 07:25:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715585133;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3iN0ItRZDrnSlN4ReBOmK3jB09/b+zxkMx2rwDWFhp0=;
-	b=cCy6F3dbOTlV7pzWtlwoZ44WYFXoU2cAF7OG54Sc0QLZlnlGdhfHRvYqZvFzxYGjujiUdd
-	nQMhXPhZvumnfIkPQX0/ZrFylRcn46YaJGRJVqp652RjQLRG3da0gI6o5MdCsINxr97hcw
-	lihvuOARiHJcz9HqMhPW++79zSKHs0OPOpgwmTCBon18G8sOmK8wAc+bonYwEXXrOakIti
-	2mZHmm/x873gCXflMPdJJbhmybgoZOR5BGt9+II4f+ax6EkdwN2lVsUDQFqprigpmRoUvX
-	0ku1un7VeG7ZvTmlOoomwYrb4SczoLhLhHPCJJ9fOI/4At6FnuuZ4IR5fe0Gxg==
-Date: Mon, 13 May 2024 09:26:12 +0200 (CEST)
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Simon Horman <horms@kernel.org>
-cc: Romain Gantois <romain.gantois@bootlin.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-    Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-    Conor Dooley <conor+dt@kernel.org>, 
-    Geert Uytterhoeven <geert+renesas@glider.be>, 
-    Magnus Damm <magnus.damm@gmail.com>, 
-    Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-    Jose Abreu <joabreu@synopsys.com>, 
-    Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-    Russell King <linux@armlinux.org.uk>, 
-    =?ISO-8859-15?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>, 
-    Serge Semin <fancer.lancer@gmail.com>, 
-    Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
-    devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    linux-renesas-soc@vger.kernel.org, 
-    linux-stm32@st-md-mailman.stormreply.com, 
-    linux-arm-kernel@lists.infradead.org, 
-    "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, 
-    Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH net-next v6 4/7] net: stmmac: introduce pcs_init/pcs_exit
- stmmac operations
-In-Reply-To: <20240511181119.GU2347895@kernel.org>
-Message-ID: <64f188d8-9336-2578-fb47-ce6ff615acab@bootlin.com>
-References: <20240510-rzn1-gmac1-v6-0-b63942be334c@bootlin.com> <20240510-rzn1-gmac1-v6-4-b63942be334c@bootlin.com> <20240511181119.GU2347895@kernel.org>
+	s=arc-20240116; t=1715585385; c=relaxed/simple;
+	bh=IzPgdw0K49eRhw5jtIZPmynlarK4dqQ229YsGJcycyE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q2dKY1KJYPKbaSSQ7v0pNyIGVYcXs/Xakgd4616xUf0wMj4ZWGhZ2ChbK+g3B0uVwtSgxtdaLwwZ1JAQuVuoaFLvU0FerSNXiffzTuiSRs6mHPpthFNguE2SVD0hfDfNerxFwxEB+w5fmJlGDGIUVC/8+PBiupTDMV12UKFexns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=so7U/oaT; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5724736770cso8793a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:29:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715585382; x=1716190182; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iAY4/lorGsuZXDngCKORi6jmMI4bRdFCzdsTXkDAPOg=;
+        b=so7U/oaTH/1My0EXDal3lNbOVdwa4Pb2lXxhCe1w/KPWh8LrWgdOyXwvyL+6gE5ZqP
+         aVVvwQAx8YxYKuKTgG+sxq0UDSkTK3VK7iWyTIVcnlBb6fTHSLFQo1z9TMljFTZxTtgZ
+         csIeaBVTqGwQC7Y5S7qXmNQpSUXSzFR1PZOItHZnikuHDJDJnFDKOIqNKoO2PFKi2LSD
+         2iLFrL40RGmDGFQ0DdUOnHyJsrIY4C9htfBT4B51/CAIY9HMiNXhx4IXfzD9cQ2A7rKq
+         Rg51rvqr22Cj3k5Hlt2vZjFU+wuYVl1ieiJ0YxDCV7UG0AhEQK5qRb+Y2BZt8lbppfKG
+         5UaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715585382; x=1716190182;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iAY4/lorGsuZXDngCKORi6jmMI4bRdFCzdsTXkDAPOg=;
+        b=xTibsM69oNYzcSHgqHZKQhs44VHML+/BgNvBg2yOWk/U/Lg2xJ3dP3X2ksaGTu12lr
+         Lgy43FAHv+pkXyxy09/haSgwBIzX1jDhCBpN06WUG2rNEr9RfhZx95/RybOxe9b8+Ixp
+         jGlIkCpKdRiEc9r25hFA22Ap0v2EjGoUNjOJoWzGyZ0flwkKPzn0NME0MKDjXp+QYjRY
+         8xnpdouzi/wbwaV8MD2atU+/O5A4H8lgn8ec3FCp1wvQszeaLX+g4rvHRglFgm37jaTG
+         V1QU4ki9zN+vrCPW24xskRwMRXZE0dJb2HlpUdZN+PQy9Rn5UnUCHQaZzEMKv688fIDI
+         UsMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRfRXAKSTqXjVShZJNIEFnhEpWn7Rf3fgSt9eNzx9T+cE3ZCiDeYJkclejLFI2EuibtWeAO4FcUvEE8W5wZMVm6w6HjyUQxaCWeXQO
+X-Gm-Message-State: AOJu0YxLmaDAq6Q9IAQSUfnbC1axQar8hGICwdfjdISY1FwCnI6GJ2GW
+	jOjGlZ6IfjIJtHSsC8eVz+OJ9n7UsXIafnqASEmoUijB3NZjWUXABsHYWS+3DbM+5KqfwwCYVMQ
+	8McTjIkowhOJPDDa1zFIwId/p13X662Rxs8k7
+X-Google-Smtp-Source: AGHT+IGhtol7Ka3Q9hALBhyjhXgfG9C+/LulSKbBCs7IbilYl6XQXtTboOY2HfvABdOkS/zVQlGEo51pnJ6tSHLdWqg=
+X-Received: by 2002:a05:6402:2228:b0:572:57d8:4516 with SMTP id
+ 4fb4d7f45d1cf-5743a09ba38mr227370a12.2.1715585382186; Mon, 13 May 2024
+ 00:29:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-GND-Sasl: romain.gantois@bootlin.com
+References: <20240513015127.961360-1-wei.fang@nxp.com>
+In-Reply-To: <20240513015127.961360-1-wei.fang@nxp.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 13 May 2024 09:29:28 +0200
+Message-ID: <CANn89i+EQDCFrhC3mN8g2k=KFpaKtrDusgaUo9zBvv0JCw8eYg@mail.gmail.com>
+Subject: Re: [PATCH net] net: fec: avoid lock evasion when reading pps_enable
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	shenwei.wang@nxp.com, xiaoning.wang@nxp.com, richardcochran@gmail.com, 
+	andrew@lunn.ch, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Simon,
+On Mon, May 13, 2024 at 4:02=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
+>
+> The assignment of pps_enable is protected by tmreg_lock, but the read
+> operation of pps_enable is not. So the Coverity tool reports a lock
+> evasion warning which may cause data race to occur when running in a
+> multithread environment. Although this issue is almost impossible to
+> occur, we'd better fix it, at least it seems more logically reasonable,
+> and it also prevents Coverity from continuing to issue warnings.
+>
+> Fixes: 278d24047891 ("net: fec: ptp: Enable PPS output based on ptp clock=
+")
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+>  drivers/net/ethernet/freescale/fec_ptp.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ether=
+net/freescale/fec_ptp.c
+> index 181d9bfbee22..8d37274a3fb0 100644
+> --- a/drivers/net/ethernet/freescale/fec_ptp.c
+> +++ b/drivers/net/ethernet/freescale/fec_ptp.c
+> @@ -104,14 +104,16 @@ static int fec_ptp_enable_pps(struct fec_enet_priva=
+te *fep, uint enable)
+>         struct timespec64 ts;
+>         u64 ns;
+>
+> -       if (fep->pps_enable =3D=3D enable)
+> -               return 0;
+> -
+>         fep->pps_channel =3D DEFAULT_PPS_CHANNEL;
+>         fep->reload_period =3D PPS_OUPUT_RELOAD_PERIOD;
 
-On Sat, 11 May 2024, Simon Horman wrote:
+Why are these writes left without the spinlock protection ?
 
-> > -	if (priv->plat->mdio_bus_data && priv->plat->mdio_bus_data->has_xpcs) {
-> > +	if (priv->plat->pcs_init) {
-> > +		ret = priv->plat->pcs_init(priv);
-> > +	} else if (priv->plat->mdio_bus_data &&
-> > +		   priv->plat->mdio_bus_data->has_xpcs) {
-> >  		/* Try to probe the XPCS by scanning all addresses */
-> >  		for (addr = 0; addr < PHY_MAX_ADDR; addr++) {
-> >  			xpcs = xpcs_create_mdiodev(priv->mii, addr, mode);
-> 
-> I am unsure if this can occur, but if priv->plat->pcs_init returns 0 then
-> xpcs will be used while uninitialised towards the end of this function.
 
-Indeed this could occur, I've just sent a v7 that fixes this.
-
-Thanks,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>
+>         spin_lock_irqsave(&fep->tmreg_lock, flags);
+>
+> +       if (fep->pps_enable =3D=3D enable) {
+> +               spin_unlock_irqrestore(&fep->tmreg_lock, flags);
+> +               return 0;
+> +       }
+> +
+>         if (enable) {
+>                 /* clear capture or output compare interrupt status if ha=
+ve.
+>                  */
+> --
+> 2.34.1
+>
 
