@@ -1,126 +1,128 @@
-Return-Path: <linux-kernel+bounces-177214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810758C3B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:41:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D338C3B82
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:41:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19531C20F9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:41:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6623BB20FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:41:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C717D14659C;
-	Mon, 13 May 2024 06:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9842E145B1D;
+	Mon, 13 May 2024 06:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FA89JUv/"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qE7yHvC1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDCB145B19
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 06:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D744252F9B;
+	Mon, 13 May 2024 06:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715582451; cv=none; b=FhXua73TCVzFBuqesUsEFV8TFoNthC2H5aEYyyS0r8BxbbKdpZNIkl8eGpPJjW/cnet5N2rkCOSp+OygmnZv01pG+Bt/P14v6ANHYknkxa+TIIQXuzk+V/hUFE3+RGBaceJtbRDrDb9l3vdU2n1b74y5BTmF/C8KGi2wME1jB+A=
+	t=1715582475; cv=none; b=HYYUVeUvNP5WiIp1kZSSmfvmgRmwBWIx4ouS84Q68B1C7jTFM1cDJ7yAPci7wyrmR8zhJ9tTyRo7101q1e96Eq2OBjaTAMKCRQNIYYNfqoZ6Y95/BCB6G6oXSjUUz9uQVXq6illym0sX7seHvsCgLgVNiFySTtD8SOvRTtOQLdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715582451; c=relaxed/simple;
-	bh=yxF90Br7QmOUK3LCw+6twJYKw/mQe+YkyyfE8V6KlyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=GTCzO07UxaQMkEDJNcgfKrMHCecUJFlGthjQAQy/WYZ+Ttu9nulAP3Ih4AFUQ3RSj2/jF+n1MPHpOEwaMVnXMVOJt5DjEbi899VkgJNvmUX6XgkCDfVt9NGf94zlJaf+V2WCmP13CejVJcXezaaFUyWYzV0uMgtBIrgDs85tGYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FA89JUv/; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a5a5cce2ce6so208836866b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 12 May 2024 23:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715582448; x=1716187248; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=LaWHbjgN9aI6ddaKT4LQDAGK2/D8k7lIaGHYUNMyh7M=;
-        b=FA89JUv/FUYR8pTVDCtWvuuStOTXM0MTcwFDz7IveUWo26RgXXcrwa5cJYZrmgwLK3
-         GTAfZtZJoPPxffvW53wojCkYDrOfDWIMnh/iT4kn4p+dzJ6CKEz3pLsVUA0eWsQqXGAj
-         4gJlS8SWF2EytmLGUl154OykxggmFA9LgBsETld/6+voIFuEqHzo7VRRbdVZ7VpWyqZx
-         GKco05/0JjJhVwDUQAJGhT7dH00Q6158xVAZmvVuR9FMQj9UW8q9udS5QWDZztN93xV2
-         c5XvQqh9/rL31/n8jOrezQwwHQTGrobnHegsR47Zor92Y+IrzB4UEj/xOt5gu4PVvSl+
-         lZ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715582448; x=1716187248;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LaWHbjgN9aI6ddaKT4LQDAGK2/D8k7lIaGHYUNMyh7M=;
-        b=bN3Yzb1DfAHIj985wZN7o2/dVcCSZYWmNRLHeFhS4a6wpXhDNBEdHTnvgskb8edXlC
-         ojVm6WskXUBUO6KJsHfXxWertYJTzr3E72Eptr+oDLKeIkTcFMXWne8/OTNQTsrXaj1m
-         e6MBrtsMhnccanfiUW85BVzYjRRGOpV74j/TwMXkjIihmaRPzGCQQtbnVu+ctNGeoDGe
-         sjtSg/kQ0imvBrvZTum4FSE1/hXT2rZ2vHdZJz41hIoCbzyfS5z/n7oYRLHgBcLk3gAP
-         vaQ0SXoQ+aEF++GW3uYb3gHsftYBkmQwCXswRpOx95AiQqz1PyVwgz+ixPqXKufdxC7f
-         NYqg==
-X-Gm-Message-State: AOJu0YyYoM6rL339+lw5RgTQNuIXZEVAfPB9d4pGqYP3Q2w6VUe7OnXX
-	Y1nM7MH77TuXPqOJe6qHZ+Vda0c3kPTwI3JTZfQ7NaIfi+z9vZgsT7zq8PcN
-X-Google-Smtp-Source: AGHT+IErj+YVRnyggMSvx3nUJ5R6ROHE2xdo+n/d3bEe+MPVQkLKgRmuUBQtz8QZ2YCtXJcenbylsA==
-X-Received: by 2002:a17:906:17c5:b0:a59:c9ad:bd26 with SMTP id a640c23a62f3a-a5a2d54c601mr554093666b.12.1715582447380;
-        Sun, 12 May 2024 23:40:47 -0700 (PDT)
-Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b014f6sm559294366b.145.2024.05.12.23.40.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 May 2024 23:40:46 -0700 (PDT)
-Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
-Date: Mon, 13 May 2024 08:40:45 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-Subject: [GIT PULL] x86/asm changes for v6.10
-Message-ID: <ZkG17XCNvUM7C0k5@gmail.com>
+	s=arc-20240116; t=1715582475; c=relaxed/simple;
+	bh=6QZTaNfQKHHJkDfbCKCKSyHBhlmyX/9bwUSilTbv0uU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uILjHU/GGhcyeWwRopRLNWoUPsICmdeDEk2/jJdvw+Vf3imT9a93XvyvpPNjn8ZYFoyRvDhehqa3PORRCS0cNwDxzCQRaw9qvIK2GIsiaUuchb6lHP74lpBOS52qfM2IAb+1hERuxgpE6661Dc+NvrIR0tk+QRTqab8NvxzPXLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qE7yHvC1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4751BC113CC;
+	Mon, 13 May 2024 06:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715582475;
+	bh=6QZTaNfQKHHJkDfbCKCKSyHBhlmyX/9bwUSilTbv0uU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qE7yHvC16QUgj+DyAmcgwo/KCLY0SiKoMuHgi6nxSTjE9VTNDi66f1yR5uMnULDaw
+	 DMMSg/RV2vSGOlCExuRA6xsLPMHvwhFtVxIttX6sSfhxsQJeKG6CIqolMYzyFSLiA9
+	 HDpGq6wvKut1qrSylz82Ux0WqtuxC/npT/I5C8irmTgzU/OX6cq0U5Rtyysu/kLc/B
+	 ZwkJoEBu6530a8Gm4rCR/fU108ojLMHB+ozgrNR6KKcI0ljjAKOXkdFLMPpQU3Z4RE
+	 C3DH/3+CDnl0iqaBpwyElvFefk/3cdAnKLdOoWVc153L+Z6ecR2tyCN3z9QmqWfNTV
+	 dHy97jghAu3vw==
+Message-ID: <472a5e0b-cc8b-47b1-bc00-bd68fbf6d70f@kernel.org>
+Date: Mon, 13 May 2024 08:41:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add ti,am625-dss-oldi-io-ctrl
+ compatible
+To: Aradhya Bhatia <a-bhatia1@ti.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jai Luthra <j-luthra@ti.com>
+References: <20240512143824.1862290-1-a-bhatia1@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240512143824.1862290-1-a-bhatia1@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Linus,
+On 12/05/2024 16:38, Aradhya Bhatia wrote:
+> Add TI DSS OLDI-IO control registers compatible for AM625 DSS. This is a
+> region of 10 32bit registers found in the TI AM625 CTRL_MMR0 register
+> space[0]. They are used to control the characteristics of the OLDI
+> DATA/CLK IO as needed by the OLDI TXes controller node.
+> 
+> [0]: https://www.ti.com/lit/pdf/spruiv7
+> 
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> ---
 
-Please pull the latest x86/asm Git tree from:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-asm-2024-05-13
+Best regards,
+Krzysztof
 
-   # HEAD: a0c8cf9780359376496bbd6d2be1343badf68af7 x86/alternatives: Remove a superfluous newline in _static_cpu_has()
-
-x86/asm changes for v6.10:
-
- - Clean up & fix asm() operand modifiers & constraints
-
- - Misc cleanups
-
- Thanks,
-
-	Ingo
-
------------------->
-Alexey Dobriyan (1):
-      x86/asm/64: Clean up memset16(), memset32(), memset64() assembly constraints in <asm/string_64.h>
-
-Borislav Petkov (AMD) (1):
-      x86/alternatives: Remove a superfluous newline in _static_cpu_has()
-
-Uros Bizjak (4):
-      x86/asm: Remove %P operand modifier from altinstr asm templates
-      x86/asm: Use %c/%n instead of %P operand modifier in asm templates
-      x86/asm: Use %a instead of %P operand modifier in asm templates
-      x86/asm: Use "m" operand constraint in WRUSSQ asm template
-
-
- arch/x86/boot/main.c                 |  4 ++--
- arch/x86/include/asm/alternative.h   | 22 +++++++++---------
- arch/x86/include/asm/apic.h          |  2 +-
- arch/x86/include/asm/atomic64_32.h   |  2 +-
- arch/x86/include/asm/cpufeature.h    |  5 ++--
- arch/x86/include/asm/irq_stack.h     |  2 +-
- arch/x86/include/asm/processor.h     |  6 ++---
- arch/x86/include/asm/special_insns.h |  8 +++----
- arch/x86/include/asm/string_64.h     | 45 +++++++++++++++++++-----------------
- arch/x86/include/asm/uaccess.h       |  4 ++--
- 10 files changed, 51 insertions(+), 49 deletions(-)
 
