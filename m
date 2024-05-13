@@ -1,165 +1,123 @@
-Return-Path: <linux-kernel+bounces-177626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E548C41E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DD88C41E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 15:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04AF3B212BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:27:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43564B215FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DE5152195;
-	Mon, 13 May 2024 13:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFD31527AD;
+	Mon, 13 May 2024 13:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrjtQW9i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2boD59UG"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA3814C594;
-	Mon, 13 May 2024 13:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806A615219D;
+	Mon, 13 May 2024 13:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715606825; cv=none; b=X4Qf+XqMDWZLo/XdUhp9k8GLesvMZfa5De7CYhH6iyQXLzFAZ7YlWjwqiuPCRl1+6t1rFK88vbo8pIOOHOfiNrqUi9GFu+ORipVyJw/eaJ34JSvj6mYcnIhflHOg1oXveh5pOHtJev07LREaHfcB6Fb7rcW29X5AePHt5tBmVUw=
+	t=1715606845; cv=none; b=GeQI/gICTXdwUnDG1XCPf5c77dd+M0Rd9Te1iaNlodCKrxzfmA1ioO2qS3gS4QwwnNmxhemFjdss6mvTJqH1f6KZBhsXoT/99B/7fZNhNVcOijPQe0ARba3GjQEpTbGhTstAbYC6fJES2WZrQ5aw6pZKLuCWnz9kUmpn+BE1QLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715606825; c=relaxed/simple;
-	bh=10lk38XyzErIUEli139gJKZDzm+Z8ZSe1J18NuIyxBY=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=KwzCGFXVonR5fLCFyifUasW3Gbf2G3JIGTs1w1N5F5lSHj8dnHPYLjPQyJ3/uKc1JEiTh0S9O/adKE7cibwdgfqccHwRmu1468KBYXBOc3DgUT5v/OZTR3gt4FqQcGaVVUkqsGsdVi0uhHUW5Il0jZU9WA885xTcO+854rXjz9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrjtQW9i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 452E2C32781;
-	Mon, 13 May 2024 13:27:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715606824;
-	bh=10lk38XyzErIUEli139gJKZDzm+Z8ZSe1J18NuIyxBY=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=YrjtQW9iczUk6tYsPzkrupLm9sjLXnQxc9ZhtcYH0JYWot5fYjYaM1aio/TBbPt6i
-	 O6ufYBh99bu6VnJCaUuqrw9XPFsV5ON2raukMLdtLABZqlzrXoLs/U0m/Keo5vxYa/
-	 SSYqR9BOx+nsoMFjN+r0Lt5o9orPqQvVYFNlx1jK/opiB3+ZYPvSqAYjm9h1vqYgAr
-	 iefdJ5vcEZeTjRQdkJwnAFWENZJ0upbjM6wNImtnqy2bEva1/EB/U1ebPrXJwcJHdU
-	 FJ9nvfJuuqtgJjytAZgO679PbCPfOs9UNuzKu2z/ELvjVgDQbqf5sqRnbaFMMHva2F
-	 gheNSCz+D0LPw==
-Date: Mon, 13 May 2024 08:27:02 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1715606845; c=relaxed/simple;
+	bh=NzaUkkwEKk0uvh872xSMbzVwhIw9xTSB4RRHlccdB6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cMLtmXmOzaaTzHYANOL/GxnXVxhL9X0LqsmND3j34go0EhEP9GfpjOyf6avh7QT05rXQjfWVkQY/IGAbJoynpSTe2u87h4TEnhcRQOekWPpHTC4377c2GfkGL1h96Joap5LkAcMZd3pr7kg5O47gCB9acJsE5q5L57PRw6RnHmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2boD59UG; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715606842;
+	bh=NzaUkkwEKk0uvh872xSMbzVwhIw9xTSB4RRHlccdB6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2boD59UGe/8iG54XHk/8VC17Vlmeyzsp3dT9D4WF7oQwad+5xZa7pBiQHEfzBVqRF
+	 WxXzbCCN5rX5EhuWYv9topeocU+Xgw0IfcxLb87B+duy1T5bLfNJmAOIfrHa4WCsIY
+	 GlHcAcUBOfGUQhzPR+fbtiTNGb4BrVvvol9kSFyXeCFDfgxcZfj6CJ+fZ59iFRjCuy
+	 DTrVMHE6VhLunBajekm1a9oJLjSDW9OGiFy3TMp2NQNWatGiv6f3ZApOnADtj3VgvX
+	 0PSkwnxf9giLxEyKxVePXCRKkykIH16GdzHJa5sNDtp2xyqfX/MUsZAPONUaFE1t4o
+	 FsMLvF8iKfPlw==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0CCB33782017;
+	Mon, 13 May 2024 13:27:20 +0000 (UTC)
+Date: Mon, 13 May 2024 09:27:18 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Hsin-Te Yuan <yuanhsinte@chromium.org>,
+	Sebastian Reichel <sre@kernel.org>, kernel@collabora.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Pin-yen Lin <treapking@chromium.org>
+Subject: Re: [PATCH v3] power: supply: sbs-battery: Handle unsupported
+ PROP_TIME_TO_EMPTY_NOW
+Message-ID: <1db95251-04bb-4d4f-b77b-3b78a8f497cd@notapiano>
+References: <20240418-sbs-time-empty-now-error-v3-1-f286e29e3fca@collabora.com>
+ <cf4d8131-4b63-4c7a-9f27-5a0847c656c4@notapiano>
+ <CAHc4DNJ0prAQOw89Hvw8n9KhY+8xB3D77pJvoPfU-X7ZFDYu7Q@mail.gmail.com>
+ <924db470-8163-4454-8f59-f7372a132186@notapiano>
+ <c721f2b9-2b08-45f3-adb5-09b163924fbc@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Kamal Dasu <kamal.dasu@broadcom.com>, Eric Anholt <eric@anholt.net>, 
- Scott Branden <sbranden@broadcom.com>, linux-mmc@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Al Cooper <alcooperx@gmail.com>, Ray Jui <rjui@broadcom.com>, 
- Ulf Hansson <ulf.hansson@linaro.org>, Stefan Wahren <wahrenst@gmx.net>, 
- devicetree@vger.kernel.org, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- linux-rpi-kernel@lists.infradead.org, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <cover.1715332922.git.andrea.porta@suse.com>
-References: <cover.1715332922.git.andrea.porta@suse.com>
-Message-Id: <171560671443.2464066.440073842827214763.robh@kernel.org>
-Subject: Re: [PATCH v2 0/4] Add minimal boot support for Raspberry Pi 5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c721f2b9-2b08-45f3-adb5-09b163924fbc@collabora.com>
 
-
-On Fri, 10 May 2024 16:35:26 +0200, Andrea della Porta wrote:
-> Hi,
+On Thu, May 09, 2024 at 05:43:42PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 09/05/24 17:25, Nícolas F. R. A. Prado ha scritto:
+> > On Mon, Apr 22, 2024 at 04:10:23PM +0800, Hsin-Te Yuan wrote:
+> > > On Sat, Apr 20, 2024 at 12:03 AM Nícolas F. R. A. Prado
+> > > <nfraprado@collabora.com> wrote:
+> > > > 
+> > > > On Thu, Apr 18, 2024 at 01:34:23PM -0400, Nícolas F. R. A. Prado wrote:
+[..]
+> > 
+> > Getting back on this, we were finally able to update the EC firmware for both
+> > juniper and limozeen and all the issues were fixed. I have added the logs below
+> > just for reference. So I guess the only change we could have upstream would be a
+> > message suggesting the user to update the EC firmware in case the SBS is behind
+> > the CrosEC and it starts throwing errors. I'll prepare a patch for that.
+> > 
 > 
-> This patchset adds minimal support for the Broadcom BCM2712 SoC and for
-> the on-board SDHCI controller on Broadcom BCM2712 in order to make it
-> possible to boot (particularly) a Raspberry Pi 5 from SD card and get a
-> console through uart.
-> Changes to arm64/defconfig are not needed since the actual options work
-> as they are.
-> This work is heavily based on downstream contributions.
+> ...yes, but then you can't do that in the sbs-battery driver, but rather in the
+> CrOS EC - so you'd have to link this and the other driver (beware: I'm not
+> proposing to do that!), which wouldn't be the cleanest of options.
+
+I *was* actually thinking of adding the log in the sbs driver by checking the
+parent's compatible, since that's already done elsewhere in that driver to
+disable PEC:
+
+	if (of_device_is_compatible(client->dev.parent->of_node, "google,cros-ec-i2c-tunnel")
+
+But now that you mention it, indeed if we're only printing a warning, it would
+be best to do it in the EC i2c tunnel driver. And that's all that I'm proposing
+to do: log a warning telling the user to update their EC firmware, as that
+should fix the readouts, and not add any quirk to the driver.
+
+Thanks,
+Nícolas
+
 > 
-> Tested on Tumbleweed substituting the stock kernel with upstream one,
-> either chainloading uboot+grub+kernel or directly booting the kernel
-> from 1st stage bootloader. Steps to reproduce:
-> - prepare an SD card from a Raspberry enabled raw image, mount the first
->   FAT partition.
-> - make sure the FAT partition is big enough to contain the kernel,
->   anything bigger than 64Mb is usually enough, depending on your kernel
->   config options.
-> - build the kernel and dtbs making sure that the support for your root
->   fs type is compiled as builtin.
-> - copy the kernel image in your FAT partition overwriting the older one
->   (e.g. kernel*.img for Raspberry Pi OS or u-boot.bin for Tumbleweed).
-> - copy arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb on FAT partition.
-> - make sure you have a cmdline.txt file in FAT partition with the
->   following content:
->   # cat /boot/efi/cmdline.txt
->   root=/dev/mmcblk0p3 rootwait rw console=tty ignore_loglevel earlycon
->   console=ttyAMA10,115200
-> - if you experience random SD issues during boot, try to set
->   initial_turbo=0 in config.txt.
+> Perhaps we could check "how many times *in a row, from boot*" the readout is
+> failing and dynamically add the quirk with a big pr_warn().
 > 
-> Changes in V2:
+> I guess that could work but, at the same time, that's code to engineer very
+> carefully, or we'd risk breaking machines that would get that reading to work,
+> for example, only after a suspend-resume cycle (which is bad, yes, but still)
+> or other oddities...
 > 
-> - the patchshet has been considerably simplified, both in terms of dts and
->   driver code. Notably, the pinctrl/pinmux driver (and associated binding)
->   was not strictly needed to use the SD card so it has been dropped.
-> - dropped the optional SD express support patch
-> - the patches order has been revisited
-> - pass all checks (binding, dtb, checkpatch)
+> Any other ideas?
 > 
-> Many thanks,
-> Andrea
-> 
-> References:
-> - Link to V1: https://lore.kernel.org/all/cover.1713036964.git.andrea.porta@suse.com/
-> 
-> Andrea della Porta (4):
->   dt-bindings: arm: bcm: Add BCM2712 SoC support
->   dt-bindings: mmc: Add support for BCM2712 SD host controller
->   mmc: sdhci-brcmstb: Add BCM2712 support
->   arm64: dts: broadcom: Add support for BCM2712
-> 
->  .../devicetree/bindings/arm/bcm/bcm2835.yaml  |   6 +
->  .../bindings/mmc/brcm,sdhci-brcmstb.yaml      |  23 ++
->  arch/arm64/boot/dts/broadcom/Makefile         |   1 +
->  .../boot/dts/broadcom/bcm2712-rpi-5-b.dts     |  62 ++++
->  arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 302 ++++++++++++++++++
->  drivers/mmc/host/sdhci-brcmstb.c              |  81 +++++
->  6 files changed, 475 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dts
->  create mode 100644 arch/arm64/boot/dts/broadcom/bcm2712.dtsi
-> 
-> --
-> 2.35.3
-> 
-> 
-> 
-
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y broadcom/bcm2712-rpi-5-b.dtb' for cover.1715332922.git.andrea.porta@suse.com:
-
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/timer@7c003000: failed to match any schema with compatible: ['brcm,bcm2835-system-timer']
-arch/arm64/boot/dts/broadcom/bcm2712-rpi-5-b.dtb: /soc@107c000000/local-intc@7cd00000: failed to match any schema with compatible: ['brcm,bcm2836-l1-intc']
-
-
-
-
-
+> Cheers,
+> Angelo
 
