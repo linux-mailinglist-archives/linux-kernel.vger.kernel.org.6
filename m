@@ -1,276 +1,279 @@
-Return-Path: <linux-kernel+bounces-177948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF768C46A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:04:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DCF88C46B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A6E1C216CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FB41F22C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86712E414;
-	Mon, 13 May 2024 18:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA05364BE;
+	Mon, 13 May 2024 18:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="w1FEZJox"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ALq3nshk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687B12940B;
-	Mon, 13 May 2024 18:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B052B381B8;
+	Mon, 13 May 2024 18:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715623435; cv=none; b=Mq4n/rgF/owARMaz1GsQEbUcXmy6Qybm87+UrL+ccAzTUHcpZV2bGYUn6qEG5NwLmjsNIj5pkixYesAHwzkOh51lXToOhjuGV2oQ9RIpsZOBHBwqdlnb58z5i02R5+m1YrhzjXQ1SJJhfUYasjVWTjpO24qHRrZLNSe/uth05aM=
+	t=1715623493; cv=none; b=EzJiq+m73hpEFC8D5E3SgNVeTPe79xDt4DYVSDgDh5PcBiz/Y2lLqHc/eyvIOcN5ir5sMcx6Y+0NxGab/sHIUjRdWd9CZ0fR9+X+EWtOy1MHK+Swdk//sJfuNHyvMYozS0GtZrwe//7BA2THSwO4UEVeqjiJ2OZmjIPQ0klExfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715623435; c=relaxed/simple;
-	bh=xjUBXjbyd0cJtO8foRZNXs5N1w655lJMKfcLTmwAS3E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QstDRUfnr6FmYHPDpJE2q8Eo1JkU3xj7mla6KeU+rZQ5HA7PQHVo9i1jc56aou20IZi0BcBniQ3vitjcQ+kw9SrTafwe+wb0R5lTyhvUg7STOxes9bz88jhB98X1a3yMUqA06HNgWAvVAhVWVRjh2xnpDzY9edCK9WUTkPKbu+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=w1FEZJox; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44DH4Q0m020067;
-	Mon, 13 May 2024 20:03:27 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=9OAfNnJHeMU9nK01d+Hvov9DzgQE0mw8dqPgxIiAhYA=; b=w1
-	FEZJoxqP5vEMLrWnmMq92Okt0X3/a9f+l2Ypcztndrd4SWxA2wbrAZypM3i85iU1
-	tjusGp0tOUV7kHHYYqZ0+ZNU7m90q4XpRTvEmHO9F4qAdf0QzITMyAi1a8lVTmT1
-	DOmUfUg5DkF8HtnPlCyrKZOdDVRkXhRGerD7Ump9yc8ce3CbHwfkdNJeT7p0ehHT
-	rURUTUdPSpkA6+zHuoF1lQmiGO7Hq1tEyaGzhudESj0A6g77Du43usoL9cF5SDpf
-	5TzG1HhuGbXm5dV8BeEZfr+dZ0hvqa1uBtbVx8voLQ/+JWIKzGS6fY+RVMoy03CK
-	tJPjEgb0J6qRSLiHzGXw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2j80nuyt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 20:03:27 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6B8074002D;
-	Mon, 13 May 2024 20:03:22 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 744B921B534;
-	Mon, 13 May 2024 20:02:23 +0200 (CEST)
-Received: from [10.48.87.205] (10.48.87.205) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
- 2024 20:02:22 +0200
-Message-ID: <d73d4435-75d6-4cea-b38e-07c7ceae3980@foss.st.com>
-Date: Mon, 13 May 2024 20:02:21 +0200
+	s=arc-20240116; t=1715623493; c=relaxed/simple;
+	bh=UNnjVc+pJh5y1zaNd677ePOr+EfWhLiINtWrDbZ6JiI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHuyI1u0HbREkdxYJgycyzZC+q6cK9Au0A9KO9Z76HnnpoJ18zjyToRm6BLg48dwekwaWzo8ZrLeir8OBUFh1RfGSGklsi8GIDMuGSfMbp1dOuXBEuN1oChKHHME4hXVsdsnu85AO3rO+EkAVaRtGL6gXFG0F+oLrVCH8FpiujQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ALq3nshk; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715623492; x=1747159492;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=UNnjVc+pJh5y1zaNd677ePOr+EfWhLiINtWrDbZ6JiI=;
+  b=ALq3nshkfJNACZs2bGRBOibPHb1J24MjACY4s8o5fwfWEkLXMRJrHPAQ
+   SPW7qeEFCn3JfLOk+7eCAcAYPnSGqbLTsxXguiN5VsWrHsPqkxdiN1LMe
+   K0wpDYbM6xdh8WbDtWXjPGydOoE3Qr/weq0KcK51qiYnKCZOE/EoEEOVv
+   CBiS6T6rFEHvct5VvpgAeuglkS1KtsIJbOsO0AOQ8RAo5GOnLma0YmDEG
+   ynJ1BWGeI6GmmbY5g8OjfBMf4GVVgj8Ve6tvbJPqxgkiZNHQeB/d8l0rA
+   YhtAtW+kc2UBbm/kcAzOKHoEun4VkCjT0nEHXMH+qAQIMl3/VlVDWQ56Y
+   A==;
+X-CSE-ConnectionGUID: illagKBOR/CTZF5qivd0iA==
+X-CSE-MsgGUID: KVLR66K5TlK0yDkUEKwOXA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11707184"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11707184"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 11:04:51 -0700
+X-CSE-ConnectionGUID: nd+xT5/HRpWebuVOWnS8bQ==
+X-CSE-MsgGUID: SDUo857CR4WS3qN7ZUTp3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30360987"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 13 May 2024 11:04:45 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6a2V-000AVf-1L;
+	Mon, 13 May 2024 18:04:43 +0000
+Date: Tue, 14 May 2024 02:04:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, rds-devel@oss.oracle.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Allison Henderson <allison.henderson@oracle.com>,
+	Manjunath Patil <manjunath.b.patil@oracle.com>,
+	Mark Zhang <markzhang@nvidia.com>,
+	=?iso-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>,
+	Yang Li <yang.lee@linux.alibaba.com>
+Subject: Re: [PATCH 2/6] rds: Brute force GFP_NOIO
+Message-ID: <202405140136.LE0Nk9by-lkp@intel.com>
+References: <20240513125346.764076-3-haakon.bugge@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: regulator: st,stm32mp1-pwr-reg: add
- compatible for STM32MP13
-To: Conor Dooley <conor@kernel.org>, Marek Vasut <marex@denx.de>
-CC: Alexandre TORGUE <alexandre.torgue@foss.st.com>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Pascal
- Paillet <p.paillet@foss.st.com>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240513095605.218042-1-patrick.delaunay@foss.st.com>
- <20240513115601.v3.1.Ia0a99d90acb512aa020a6e7a8cca8cc1b71f1759@changeid>
- <615dfdcb-cbda-426f-895e-810f03a8ce60@denx.de>
- <20240513-stabilize-proofread-81f0f9ee38b9@spud>
-Content-Language: en-US
-From: Patrick DELAUNAY <patrick.delaunay@foss.st.com>
-In-Reply-To: <20240513-stabilize-proofread-81f0f9ee38b9@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_12,2024-05-10_02,2023-05-22_02
+In-Reply-To: <20240513125346.764076-3-haakon.bugge@oracle.com>
 
-Hi,
+Hi Håkon,
 
-On 5/13/24 17:16, Conor Dooley wrote:
-> On Mon, May 13, 2024 at 04:34:20PM +0200, Marek Vasut wrote:
->> On 5/13/24 11:56 AM, Patrick Delaunay wrote:
->>> Add new compatible "st,stm32mp13-pwr-reg" for STM32MP13 SoC family.
->>>
->>> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
->>> ---
->>>
->>> Changes in v3:
->>> - Replace oneOf/const by enum; solve the V2 issues for dt_binding_check
->>>
->>> Changes in v2:
->>> - update for Rob review, only add compatible for STM32MP13 family
->>>
->>>    .../devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml    | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
->>> index c9586d277f41..c766f0a15a31 100644
->>> --- a/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
->>> +++ b/Documentation/devicetree/bindings/regulator/st,stm32mp1-pwr-reg.yaml
->>> @@ -11,7 +11,9 @@ maintainers:
->>>    properties:
->>>      compatible:
->>> -    const: st,stm32mp1,pwr-reg
->>> +    enum:
->>> +      - st,stm32mp1,pwr-reg
->>> +      - st,stm32mp13-pwr-reg
->> Should the st,stm32mp1,pwr-reg be treated as fallback compatible for
->> st,stm32mp13-pwr-reg or not ?
->>
->> In other words, should the DT contain:
->> compatible = "st,stm32mp13-pwr-reg", "st,stm32mp1,pwr-reg";
->> or
->> compatible = "st,stm32mp13-pwr-reg";
->> ? Which one is preferable ?
->>
->> I think the former one, since the MP13 PWR block could also be operated by
->> older MP1(5) PWR block driver(s) without any adverse effects, except the SD
->> IO domain configuration won't be available, right ?
-> Aye, the fallback sounds like what should be being used here, especially
-> if another user of the DT might not need to implement the extra domain.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on tj-wq/for-next]
+[also build test WARNING on rdma/for-next net/main net-next/main linus/master v6.9 next-20240513]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes it is the the only difference but I think that type of fallback is 
-no more recommended for different device and
+url:    https://github.com/intel-lab-lkp/linux/commits/H-kon-Bugge/workqueue-Inherit-NOIO-and-NOFS-alloc-flags/20240513-205927
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git for-next
+patch link:    https://lore.kernel.org/r/20240513125346.764076-3-haakon.bugge%40oracle.com
+patch subject: [PATCH 2/6] rds: Brute force GFP_NOIO
+config: s390-defconfig (https://download.01.org/0day-ci/archive/20240514/202405140136.LE0Nk9by-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project b910bebc300dafb30569cecc3017b446ea8eafa0)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405140136.LE0Nk9by-lkp@intel.com/reproduce)
 
-the PWR device on STM32MP13 and on STM32MP15 are different.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405140136.LE0Nk9by-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
 
-The other user of the non-secure device tree don't use the yet the PWR 
-driver for STM32MP13,
-
-so for me the fallback is not needed for non secure world (Linux/U-Boot).
-
-
-So I prefer to introduce a new compatible in Linux kernel before the 
-STM32MP13 PWR node is really usedÂ  to avoid ABI break in futur.
-
-PS: I will update the U-Boot PWR driver to avoid issue for boards 
-managing PWR in non-secure world (alignment with Linux device tree).
-
-For information: on the STMicroelectronics STM32MP13 reference designs the PWR IP is only managed in secure world by OP-TEE
-and the support of SD IO domain on PWR STM32MP13 is mandatory for ultra High Speed support on SD/eMMC devices.
-
-
-The node is introduced in SoC device tree by [1], copied from first up 
-streamed OP-TEE device tree,
-
-[1] commit f798f7079233 ("ARM: dts: stm32: add PWR regulators support on stm32mp131")
-     https://lore.kernel.org/linux-arm-kernel/b89d0531-067f-4356-91b0-ed7434cee3d7@foss.st.com/
-
-
-but unfortunately the OP-TEE binding not acceptable.
-
-
-For OP-TEE this new feature of PWR is managed with new nodes with compatible "st,stm32mp13-iod"
-and a separate driver core/drivers/regulator/stm32mp1_regulator_iod.c
-
-But it is NOT acceptable for Linux binding / driver because the register PWR_CR3 = 0x5000100C
-are used in this driver and also in PWR regulator driver core/arch/arm/plat-stm32mp1/drivers/stm32mp1_pwr.c
-
-It is not acceptable because offset 0xC of the register range of pwr_regulators: pwr@50001000
-(with reg = <0x50001000 0x10>) so the SD IO domain must be defined in the same node.
-
-
-For example, when the PWR is managed in secure world, the SCMI regulator are it is used with:
-
-&sdmmc1 {
-	pinctrl-names = "default", "opendrain", "sleep";
-	pinctrl-0 = <&sdmmc1_b4_pins_a &sdmmc1_clk_pins_a>;
-	pinctrl-1 = <&sdmmc1_b4_od_pins_a &sdmmc1_clk_pins_a>;
-	pinctrl-2 = <&sdmmc1_b4_sleep_pins_a>;
-	cd-gpios = <&gpioh 4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-	disable-wp;
-	st,neg-edge;
-	bus-width = <4>;
-	vmmc-supply = <&scmi_vdd_sd>;
-	vqmmc-supply = <&scmi_sdmmc1_io>;
-	sd-uhs-sdr12;
-	sd-uhs-sdr25;
-	sd-uhs-sdr50;
-	sd-uhs-ddr50;
-	sd-uhs-sdr104;
-	status = "okay";
-};
-
-
-For me the IOD must be export as a regulator of PWR node.
-
-because for hardware point of view sdmmc1_io/sdmmc2_io are at the same level that othe STM32MP13 regulator reg11/reg18/usb33,
-
-
-So I will align the OP-TEE device tree/ driver if the Linux binding is accepted.
-
-
-Something like:
-
-
-		pwr_regulators: pwr@50001000 {
-			compatible = "st,stm32mp13,pwr-reg";
-			reg = <0x50001000 0x10>;
-
-			reg11: reg11 {
-				regulator-name = "reg11";
-				regulator-min-microvolt = <1100000>;
-				regulator-max-microvolt = <1100000>;
-			};
-
-			reg18: reg18 {
-				regulator-name = "reg18";
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <1800000>;
-			};
+   In file included from net/rds/af_rds.c:33:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:173:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2208:
+   include/linux/vmstat.h:508:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     508 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     509 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:515:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     515 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     516 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:527:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     527 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     528 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:536:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     536 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     537 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   In file included from net/rds/af_rds.c:38:
+   In file included from include/linux/ipv6.h:101:
+   In file included from include/linux/tcp.h:17:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from net/rds/af_rds.c:38:
+   In file included from include/linux/ipv6.h:101:
+   In file included from include/linux/tcp.h:17:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from net/rds/af_rds.c:38:
+   In file included from include/linux/ipv6.h:101:
+   In file included from include/linux/tcp.h:17:
+   In file included from include/linux/skbuff.h:28:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:78:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:692:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     692 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:700:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     700 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:708:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     708 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:717:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     717 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:726:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     726 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:735:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     735 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> net/rds/af_rds.c:315:15: warning: variable 'noio_flags' set but not used [-Wunused-but-set-variable]
+     315 |         unsigned int noio_flags;
+         |                      ^
+   18 warnings generated.
 
 
-			usb33: usb33 {
-				regulator-name = "usb33";
-				regulator-min-microvolt = <3300000>;
-				regulator-max-microvolt = <3300000>;
-			};
+vim +/noio_flags +315 net/rds/af_rds.c
 
-			sdmmc1_io: sdmmc1_io {
-				compatible = "st,stm32mp13-iod";
-				regulator-name = "sdmmc1_io";
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
-				vddsd1-supply = <&vddsd1>;
-				regulator-always-on;
-			};
+   310	
+   311	static int rds_cancel_sent_to(struct rds_sock *rs, sockptr_t optval, int len)
+   312	{
+   313		struct sockaddr_in6 sin6;
+   314		struct sockaddr_in sin;
+ > 315		unsigned int noio_flags;
+   316		int ret = 0;
+   317	
+   318		if (rds_force_noio)
+   319			noio_flags = memalloc_noio_save();
+   320	
+   321		/* racing with another thread binding seems ok here */
+   322		if (ipv6_addr_any(&rs->rs_bound_addr)) {
+   323			ret = -ENOTCONN; /* XXX not a great errno */
+   324			goto out;
+   325		}
+   326	
+   327		if (len < sizeof(struct sockaddr_in)) {
+   328			ret = -EINVAL;
+   329			goto out;
+   330		} else if (len < sizeof(struct sockaddr_in6)) {
+   331			/* Assume IPv4 */
+   332			if (copy_from_sockptr(&sin, optval,
+   333					sizeof(struct sockaddr_in))) {
+   334				ret = -EFAULT;
+   335				goto out;
+   336			}
+   337			ipv6_addr_set_v4mapped(sin.sin_addr.s_addr, &sin6.sin6_addr);
+   338			sin6.sin6_port = sin.sin_port;
+   339		} else {
+   340			if (copy_from_sockptr(&sin6, optval,
+   341					   sizeof(struct sockaddr_in6))) {
+   342				ret = -EFAULT;
+   343				goto out;
+   344			}
+   345		}
+   346	
+   347		rds_send_drop_to(rs, &sin6);
+   348	out:
+   349		if (rds_force_noio)
+   350			noio_flags = memalloc_noio_save();
+   351		return ret;
+   352	}
+   353	
 
-			sdmmc2_io: sdmmc2_io {
-				compatible = "st,stm32mp13-iod";
-				regulator-name = "sdmmc2_io";
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
-				vddsd2-supply = <&vdd>;
-				regulator-always-on;
-			};
-		};
-
-
-And the sdmmc1_io/sdmmc2_io nodes allow to select the IOD for ultra high speed,
-
-for example with "vqmmc-supply = <&sdmmc1_io>;"
-
-
-To conclude:
-
-Adding a separate compatible is mandatory for addition of SD IO domain (to manage new sub nodes in yaml),
-and the PWR fallback is not needed as PWR not yet used by any board in non secure worl (Linux/U-Boot).
-
-Patrick
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
