@@ -1,71 +1,59 @@
-Return-Path: <linux-kernel+bounces-178015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B128C4774
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:22:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252298C4776
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1F228107A
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:22:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3C3A2816B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22517537E7;
-	Mon, 13 May 2024 19:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD515537F8;
+	Mon, 13 May 2024 19:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kwd7dyUt"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JoD8gseo"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D465A4CD;
-	Mon, 13 May 2024 19:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841081BDD0;
+	Mon, 13 May 2024 19:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715628139; cv=none; b=U2scXyVkurz/4aZ+sxI60Xy2EAmg0LZz7sEIirvDcETlTGom8qaiBuRbsrDTOac38uPLjd497rH/jL5Dcpw/bawx+BtxcKHlPhKT2LXyIo2Qab86Fli1g1e/5xlIe3qQl8rwBMu7nNeDls3hFdlPCWVrLXcttYCnOwPqgAgi+dE=
+	t=1715628283; cv=none; b=sDt67VsYSYJ62i/8XViVaikuxMDkiDOhsNpY7vizAwbKnbR0ScW8GSj8XrJumsqF0vaV4ufuPR1lKP8Oi3EA7FjtiglEdOv4rvWKo9TxWu4bIyWEEkbqV6Cvt3qxUg/ikPuv5IO8ozg54LB90qJwgb2nZRz0V2M+5FQBk1obxl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715628139; c=relaxed/simple;
-	bh=ANzLfyitrT66TC5PrzGIG4Ao4Hz5G1gvu8BHHzCW1lE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=koym18MesYblsKPlMYhYXaUJTs5lf48C5QG7txJe3162khp5U6cnIT5bd9TcxS92XFskEh3Fa/WJnDFcf4sYIoaDdCR5WWd8eqHSK4eUIxyOc6YyD9nSF/FEZz27e8NTWJyYxqo24u02rDFLj5jgDVzHTEcgTapTXA4BihSWHq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kwd7dyUt; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1715628137; x=1747164137;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ANzLfyitrT66TC5PrzGIG4Ao4Hz5G1gvu8BHHzCW1lE=;
-  b=kwd7dyUtJCpq4OSWp4ThsixvH7BqhY93UD+v1hGBHKrV4KbGyzlY6SEb
-   CXqgE5hX1ZGXG+yyx9rnnjKFYJuvfJfXt08EIagrCNtW1n5kSCjdmHhpK
-   CZ6RqKaJS+Ancc2bDFjGxntl2UY21HIPoLVWRRtmiN4LLpziBv1HDz/1Q
-   wVjFvMQdW2PlIxKoV2krMpx/tUrlyuqOR7j313gcsgHNQC12uPqOWGja/
-   fVd1s0bFHv8sfIBK7XoXYxfDxQlm9+oYdx7rQ/G5GCwHDxZC9rQKXlCfo
-   O+vBiJhQPQvKGyOpriPYTe6jsRObFvRcFs4p1GMK0zCOt0LgZut6UXjfl
-   A==;
-X-CSE-ConnectionGUID: OQ8P2cr3Qse3nU7CMDdgCg==
-X-CSE-MsgGUID: HYroyLDqS/CcXMEDx6F+7A==
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="26770103"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 May 2024 12:22:16 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 13 May 2024 12:22:04 -0700
-Received: from DEN-DL-M31836.microsemi.net (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 13 May 2024 12:22:02 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <richardcochran@gmail.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net] net: micrel: Fix receiving the timestamp in the frame for lan8841
-Date: Mon, 13 May 2024 21:21:57 +0200
-Message-ID: <20240513192157.3917664-1-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715628283; c=relaxed/simple;
+	bh=dPMmvsODoZpZ/NxdG44eRfZIG7IUKN1u9ef09sZyJK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GioWSBp2ce5z6lRkciyg26ANvMUY8D8dZCnkCKM0WhZ+H69+njsHADwoai0JzY7U+rv8v6QciDqntRQ6E3Z7yJOz0syt60/McpRf/nxkQJ9K6Tq7mOS1eiCaovZx2PiyvNs2fyGEa54KX3FFGH/3EVjMhzxhfnOgk6I7ODqPq/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JoD8gseo; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=G5NpfL0YPCY6XSoxrEaLMX3Ip4IV4/bg/nVptU+9HTc=; b=JoD8gseoZrX4t4KmkMwJ605UGy
+	/Vc+qDsB9mjaLtpb3QDmGMDAL3GjascOMT6kMYvm2MwQJU+EFPoCIYn2U2btKXNLgZHQN1jhFYJXC
+	ZyMIh4/7BtNCGYFwLhOy9/MTlqzluaSbgQGwyQuD1MxUGtS5uy3/DzeWaUDPl5Wyt0VHaYIEv/+FC
+	pz6rTp0xeVs12YtuosrIylB/WwWNvk2MgYPeNr2EndtNipl0KV/YnTgZ8P8l2+dN4GZEL5Eqndeiv
+	6p+T8MioSy80h/5jXY25EzrIbXFdRwvooJrEQ6zu1RQUyXv5xVovw2Wsi33XKTgB4raD4Y3iRoc+M
+	qqWyWtSA==;
+Received: from [50.53.4.147] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1s6bHs-0000000DzZw-0xfo;
+	Mon, 13 May 2024 19:24:40 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf Documentation: clarify sysfs event names characters
+Date: Mon, 13 May 2024 12:24:39 -0700
+Message-ID: <20240513192439.18473-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,38 +61,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-The blamed commit started to use the ptp workqueue to get the second
-part of the timestamp. And when the port was set down, then this
-workqueue is stopped. But if the config option NETWORK_PHY_TIMESTAMPING
-is not enabled, then the ptp_clock is not initialized so then it would
-crash when it would try to access the delayed work.
-So then basically by setting up and then down the port, it would crash.
-The fix consists in checking if the ptp_clock is initialized and only
-then cancel the delayed work.
+Specify that perf event names in sysfs must not contain mixed lower and
+upper case characters and that they may contain numbers, ".", "_",
+or "-" as well.
 
-Fixes: cc7554954848 ("net: micrel: Change to receive timestamp in the frame for lan8841")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+Fixes: 785623ee855e ("perf Document: Sysfs event names must be lower or upper case")
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: linux-perf-users@vger.kernel.org
 ---
- drivers/net/phy/micrel.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/ABI/testing/sysfs-bus-event_source-devices-events |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index ddb50a0e2bc82..87780465cd0d5 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -4676,7 +4676,8 @@ static int lan8841_suspend(struct phy_device *phydev)
- 	struct kszphy_priv *priv = phydev->priv;
- 	struct kszphy_ptp_priv *ptp_priv = &priv->ptp_priv;
+diff -- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
+--- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
++++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
+@@ -37,11 +37,13 @@ Description:	Per-pmu performance monitor
+ 		performance monitoring event supported by the <pmu>. The name
+ 		of the file is the name of the event.
  
--	ptp_cancel_worker_sync(ptp_priv->ptp_clock);
-+	if (ptp_priv->ptp_clock)
-+		ptp_cancel_worker_sync(ptp_priv->ptp_clock);
+-		As performance monitoring event names are case
+-		insensitive in the perf tool, the perf tool only looks
+-		for lower or upper case event names in sysfs to avoid
++		As performance monitoring event names are case insensitive
++		in the perf tool, the perf tool only looks for all lower
++		case or all upper case event names in sysfs to avoid
+ 		scanning the directory. It is therefore required the
+-		name of the event here is either lower or upper case.
++		name of the event here is either completely lower or upper
++		case, with no mixed-case characters. Numbers, '.', '_', and
++		'-' are also allowed.
  
- 	return genphy_suspend(phydev);
- }
--- 
-2.34.1
-
+ 		File contents:
+ 
 
