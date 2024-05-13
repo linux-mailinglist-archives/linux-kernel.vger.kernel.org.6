@@ -1,231 +1,154 @@
-Return-Path: <linux-kernel+bounces-177513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 411068C4002
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92B368C400E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658AD1C22B60
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499751F22B47
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD8F14D42C;
-	Mon, 13 May 2024 11:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCA014D2B2;
+	Mon, 13 May 2024 11:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BovhxuMu"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="h02zrtwJ"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C63014D28C;
-	Mon, 13 May 2024 11:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C2314F102;
+	Mon, 13 May 2024 11:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715600693; cv=none; b=tqNNf1PgwRO8JMSlfbxGhJy3V9IA1KRlmz8dEm23CU3D8PCpnACR2guKOXoqpqreCBpC4ZQkWI8AlpI35tZT6iSpzirU7J3rdtn3Fu5oLUnSwjGSxTxKC7jl6rE3gWvXG67XJzEFUXG82bN3s2fKt1EJxwiiutbx8SDKVpQn5es=
+	t=1715600718; cv=none; b=qIdiFVm8QQvMmIe9/eNwZyOE8ewbWIbxLHLadmLVMwfH6+k+zc16WEtRCFrkxY0sfmmb66sq3TUH4iamIZ5V8H5OBoYOrTe6NeI9Cu5AYQMLbkKSdfHBgDF0wCM5vGUW0C/ysxA+RryYq7U2QhXAO52YmfvpZ23RZpFE2P2qkG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715600693; c=relaxed/simple;
-	bh=1CuQwLvdXNIMjatSyuAeXJFxXLuB2HlU01UVZ00JRcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Mi066UHY3BnTr9IwA+ZmmFmOZnPLqOSe65mpf5z6DddPDq1C8I0xAdrjL9m7lu5lSl7aWiU8O9TABjqUgRwoqXBGaW1qb6xJDGJXU3T6+rfve4WhRBOTqWuWSdtsYBvJHkGVlfyGPl2zxzMXactclunt3GZBNK95S1/KOnStUG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BovhxuMu; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44D8Jhwc004753;
-	Mon, 13 May 2024 13:44:31 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=GIy0RxbMTa08PqVo24zPZgrWF7BfaDEsPdaCzmdxk98=; b=Bo
-	vhxuMuV0hdNvP/zLegqNG36p/iA9JicOtZuRxlzlo6ccvBDDCyR8eC8pDSUVdqZT
-	RJE2qM0semhXJU3iPUaWzQlzojCpr+nbWfTb9Zvvu4OSSIW9Ys7oxzczfsjt6dxN
-	Bt/dC/AbFaletetPm+hbOJaQGg9uSv3YjiAc/HDfAgSF08AKpboImrlDmJiHLlY5
-	tlNDl6RCEOguCt/J1uNZsVFUIfnGn52Md4cQMkGomJ1+IsXV5qr9ylQKiSuAvLEp
-	neooNM63TQBlk1wg3nCMvDp8h7VoNYrmjlba/8RwucyLbAfY+xz7N6sLjNaGo8bY
-	L0i3rtlsXD2zurhG/LEg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y2kmhm4cm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 13 May 2024 13:44:30 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 663054002D;
-	Mon, 13 May 2024 13:44:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 151A321860D;
-	Mon, 13 May 2024 13:43:47 +0200 (CEST)
-Received: from [10.130.76.233] (10.130.76.233) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 13 May
- 2024 13:43:46 +0200
-Message-ID: <a688b2f2-d972-450a-9bec-2b506b58a21f@foss.st.com>
-Date: Mon, 13 May 2024 13:43:46 +0200
+	s=arc-20240116; t=1715600718; c=relaxed/simple;
+	bh=eAyTMUMGGuqdLpsBgzQWqQ1HResoKyZy1l6rRRccU3g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acEYlAjWFqwwOLtgs0aUk0yH8Mc2qtM6sSWVLqtUc+MM3cZcvau2EixEYpW1WC0qBe0TjapZoxuoaspAlXghLvgSwyHUoseyTOzq6EfWL1P6kcdVvZNUCsSjIZUH4IRPZohhA57oQN7x7fjTjb4dfMEELidTzxd/incKvFI6H7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=h02zrtwJ; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1715600716; x=1747136716;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eAyTMUMGGuqdLpsBgzQWqQ1HResoKyZy1l6rRRccU3g=;
+  b=h02zrtwJZyDDMuzOEnq/jEE9jZ2f+N0PnhzxjGCl05YUrAmpU14AyDVX
+   JQ76mnVd6HeKDdLOMiwiIiIjpvmZxkVmfiepKuGlNcY6zfZ+WRNFyxUos
+   R71tqeym9NSYkhbL6rxS/s6Nlqk3+KiuOscZQEu2An3r8W1RZNQOXUuOd
+   DPAAknzJXWwfYsXkW1LFZd8dQntremg8mCbYE0RTo8SdcQbUVn250+FCl
+   wA8j2WGSpuLTMgvbuTsxKDy4XEJUHzPUmnizeLCIavqlmNbJEuwIgpuhi
+   cjh6toa+hJ6wQPHrd/tX1iC2BJdY6mqL18epah7G3YVPEOc8zrl/3SSbn
+   Q==;
+X-CSE-ConnectionGUID: bvZzCf3dQ5+hvTmN+nHzBQ==
+X-CSE-MsgGUID: C9csftaRRSujjB9EEGCyAw==
+X-IronPort-AV: E=Sophos;i="6.08,158,1712646000"; 
+   d="scan'208";a="24493015"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 May 2024 04:44:09 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 13 May 2024 04:44:08 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Mon, 13 May 2024 04:44:08 -0700
+Date: Mon, 13 May 2024 13:44:07 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Herve Codina <herve.codina@bootlin.com>
+CC: <UNGLinuxDriver@microchip.com>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, "Paolo
+ Abeni" <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Allan Nielsen
+	<allan.nielsen@microchip.com>, Steen Hegelund <steen.hegelund@microchip.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, <stable@vger.kernel.org>
+Subject: Re: [PATCH net v2] net: lan966x: remove debugfs directory in probe()
+ error path
+Message-ID: <20240513114407.t2iqcx7txoxkbnlj@DEN-DL-M31836.microchip.com>
+References: <20240513111853.58668-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 linux-next] media: i2c: st-mipid02: replace
- of_node_put() with __free
-To: R Sundar <prosunofficial@gmail.com>, <sylvain.petinot@foss.st.com>,
-        <mchehab@kernel.org>, <sakari.ailus@linux.intel.com>,
-        <laurent.pinchart@ideasonboard.com>
-CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <skhan@linuxfoundation.org>, <javier.carrasco.cruz@gmail.com>,
-        Julia Lawall
-	<julia.lawall@inria.fr>
-References: <20240429163736.11544-1-prosunofficial@gmail.com>
-Content-Language: en-US
-From: Benjamin Mugnier <benjamin.mugnier@foss.st.com>
-In-Reply-To: <20240429163736.11544-1-prosunofficial@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_08,2024-05-10_02,2023-05-22_02
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20240513111853.58668-1-herve.codina@bootlin.com>
 
 Hi,
 
-I took sometime to reflect on this. Currently I favor drivers consistency.
-Merging this patch as is would introduce some differences between the
-vgxy61 and other drivers that follow the 'of_node_put' flow, which I
-think is not an improvement.
-
-Now, this patch is certainly good. Would it be possible to extend it to
-all other drivers using the 'of_node_put' ?
-
-That would the consistency issue while improving code quality at the
-same time.
-
-Thank you.
-
-
-On 4/29/24 18:37, R Sundar wrote:
-> Use the new cleanup magic to replace of_node_put() with
-> __free(device_node) marking to auto release and to simplify the error
-> paths.
+The 05/13/2024 13:18, Herve Codina wrote:
 > 
-> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: R Sundar <prosunofficial@gmail.com>
+> A debugfs directory entry is create early during probe(). This entry is
+> not removed on error path leading to some "already present" issues in
+> case of EPROBE_DEFER.
+> 
+> Create this entry later in the probe() code to avoid the need to change
+> many 'return' in 'goto' and add the removal in the already present error
+> path.
+> 
+> Fixes: 942814840127 ("net: lan966x: Add VCAP debugFS support")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+This looks OK to me. As the debugfs_root is used inside lan966x_vcap_init
+which is called at the end of the probe.
+
+Reviewed-by: Horatiu Vultur <horatiu.vultur@microchip.com>
+
 > ---
+>  drivers/net/ethernet/microchip/lan966x/lan966x_main.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> Changes since v1 - 
+> diff --git a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> index 2635ef8958c8..61d88207eed4 100644
+> --- a/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> +++ b/drivers/net/ethernet/microchip/lan966x/lan966x_main.c
+> @@ -1087,8 +1087,6 @@ static int lan966x_probe(struct platform_device *pdev)
+>         platform_set_drvdata(pdev, lan966x);
+>         lan966x->dev = &pdev->dev;
 > 
-> - Added missed out __free() marking in mipid02_parse_tx_ep().
-> - In mipid02_parse_tx_ep(), In error case, return value is always -EINVAL.  so
-> sending the -EINVAL instead of ret variable value. 
-> 
-> Link to v1 - https://lore.kernel.org/all/20240427095643.11486-1-prosunofficial@gmail.com/#t
-> 
->  drivers/media/i2c/st-mipid02.c | 37 +++++++++-------------------------
->  1 file changed, 9 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/st-mipid02.c b/drivers/media/i2c/st-mipid02.c
-> index f250640729ca..bd3cf94f8534 100644
-> --- a/drivers/media/i2c/st-mipid02.c
-> +++ b/drivers/media/i2c/st-mipid02.c
-> @@ -715,31 +715,28 @@ static int mipid02_parse_rx_ep(struct mipid02_dev *bridge)
->  	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_CSI2_DPHY };
->  	struct i2c_client *client = bridge->i2c_client;
->  	struct v4l2_async_connection *asd;
-> -	struct device_node *ep_node;
->  	int ret;
->  
->  	/* parse rx (endpoint 0) */
-> -	ep_node = of_graph_get_endpoint_by_regs(bridge->i2c_client->dev.of_node,
-> -						0, 0);
-> +	struct device_node *ep_node __free(device_node) =
-> +		of_graph_get_endpoint_by_regs(bridge->i2c_client->dev.of_node, 0, 0);
->  	if (!ep_node) {
->  		dev_err(&client->dev, "unable to find port0 ep");
-> -		ret = -EINVAL;
-> -		goto error;
-> +		return -EINVAL;
->  	}
->  
->  	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep_node), &ep);
->  	if (ret) {
->  		dev_err(&client->dev, "Could not parse v4l2 endpoint %d\n",
->  			ret);
-> -		goto error_of_node_put;
-> +		return ret;
->  	}
->  
->  	/* do some sanity checks */
->  	if (ep.bus.mipi_csi2.num_data_lanes > 2) {
->  		dev_err(&client->dev, "max supported data lanes is 2 / got %d",
->  			ep.bus.mipi_csi2.num_data_lanes);
-> -		ret = -EINVAL;
-> -		goto error_of_node_put;
-> +		return -EINVAL;
->  	}
->  
->  	/* register it for later use */
-> @@ -750,7 +747,6 @@ static int mipid02_parse_rx_ep(struct mipid02_dev *bridge)
->  	asd = v4l2_async_nf_add_fwnode_remote(&bridge->notifier,
->  					      of_fwnode_handle(ep_node),
->  					      struct v4l2_async_connection);
-> -	of_node_put(ep_node);
->  
->  	if (IS_ERR(asd)) {
->  		dev_err(&client->dev, "fail to register asd to notifier %ld",
-> @@ -764,46 +760,31 @@ static int mipid02_parse_rx_ep(struct mipid02_dev *bridge)
->  		v4l2_async_nf_cleanup(&bridge->notifier);
->  
->  	return ret;
+> -       lan966x->debugfs_root = debugfs_create_dir("lan966x", NULL);
 > -
-> -error_of_node_put:
-> -	of_node_put(ep_node);
-> -error:
-> -
-> -	return ret;
+>         if (!device_get_mac_address(&pdev->dev, mac_addr)) {
+>                 ether_addr_copy(lan966x->base_mac, mac_addr);
+>         } else {
+> @@ -1179,6 +1177,8 @@ static int lan966x_probe(struct platform_device *pdev)
+>                 return dev_err_probe(&pdev->dev, -ENODEV,
+>                                      "no ethernet-ports child found\n");
+> 
+> +       lan966x->debugfs_root = debugfs_create_dir("lan966x", NULL);
+> +
+>         /* init switch */
+>         lan966x_init(lan966x);
+>         lan966x_stats_init(lan966x);
+> @@ -1257,6 +1257,8 @@ static int lan966x_probe(struct platform_device *pdev)
+>         destroy_workqueue(lan966x->stats_queue);
+>         mutex_destroy(&lan966x->stats_lock);
+> 
+> +       debugfs_remove_recursive(lan966x->debugfs_root);
+> +
+>         return err;
 >  }
->  
->  static int mipid02_parse_tx_ep(struct mipid02_dev *bridge)
->  {
->  	struct v4l2_fwnode_endpoint ep = { .bus_type = V4L2_MBUS_PARALLEL };
->  	struct i2c_client *client = bridge->i2c_client;
-> -	struct device_node *ep_node;
->  	int ret;
->  
->  	/* parse tx (endpoint 2) */
-> -	ep_node = of_graph_get_endpoint_by_regs(bridge->i2c_client->dev.of_node,
-> -						2, 0);
-> +	struct device_node *ep_node __free(device_node) =
-> +		of_graph_get_endpoint_by_regs(bridge->i2c_client->dev.of_node, 2, 0);
->  	if (!ep_node) {
->  		dev_err(&client->dev, "unable to find port1 ep");
-> -		ret = -EINVAL;
-> -		goto error;
-> +		return -EINVAL;
->  	}
->  
->  	ret = v4l2_fwnode_endpoint_parse(of_fwnode_handle(ep_node), &ep);
->  	if (ret) {
->  		dev_err(&client->dev, "Could not parse v4l2 endpoint\n");
-> -		goto error_of_node_put;
-> +		return -EINVAL;
->  	}
->  
-> -	of_node_put(ep_node);
->  	bridge->tx = ep;
->  
->  	return 0;
-> -
-> -error_of_node_put:
-> -	of_node_put(ep_node);
-> -error:
-> -
-> -	return -EINVAL;
->  }
->  
->  static int mipid02_probe(struct i2c_client *client)
+> 
+> --
+> 
+> This patch was previously sent as part of a bigger series:
+>   https://lore.kernel.org/lkml/20240430083730.134918-9-herve.codina@bootlin.com/
+> As it is a simple fix, this v2 is the patch extracted from the series
+> and sent alone to net.
+> 
+> Changes v1 -> v2
+>   Add 'Reviewed-by: Andrew Lunn <andrew@lunn.ch>'
+> 
+> 2.44.0
 
 -- 
-Regards,
-
-Benjamin
+/Horatiu
 
