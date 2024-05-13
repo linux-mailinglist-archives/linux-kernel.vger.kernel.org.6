@@ -1,250 +1,110 @@
-Return-Path: <linux-kernel+bounces-178046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E921B8C47D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:48:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE39C8C47D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4084FB23F25
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:48:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C5B1B23CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92837BB0C;
-	Mon, 13 May 2024 19:48:17 +0000 (UTC)
-Received: from ms-10.1blu.de (ms-10.1blu.de [178.254.4.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E79F78C9B;
+	Mon, 13 May 2024 19:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qw+C8GQZ"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D5F7711C;
-	Mon, 13 May 2024 19:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.254.4.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B22D77106
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715629697; cv=none; b=jJxqTs3od5CYYh+nZ+R+IoSFgQLu4PNOCHNUJEyy/ArkvP80jwankvQD9MU5yuDwP0+8ixGOoRCqVwLSzro9khjYu2sQRJJb3Y2wkNyR7I40oSeY0rNLwJr2YDUnQcdY2Fbbu0UGh/flOFGSdBbC0A2rlYeWUQU2q+oZgNYhtVQ=
+	t=1715629671; cv=none; b=rowRoJswPhuVcZKY28e3s2KYnXnK39atwoej91xCRjAeo9efcjh1WIZH1pZ9Xgs9mwN87nU++uFLnhomhnI7vEBm28MD9b43gEO4mu7/ioCM0y6M4M7j7cQSHMC45cHlzEMBzZAhDKqrPDc41Mo0tNw+9GzsLIF5hdaTILMy49M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715629697; c=relaxed/simple;
-	bh=WbFp/lJk/n40S3r/37qXNhy9l21/JyDq9ErRk3UrWzk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Avj6Bf0aIqXQLu+ZMTUTL/9qlXl6SH1jP5avTRHOV/LB4Dm6sIct9Oax4Q3Bp4qmTm6FaOL5Immb2gbK7JrDSKOL3h2Qq+2mbmCMQEpJOD8M92yxvxvJtTEHAv55pE3/OWEJW08PH8raOmLqHbGlsRKjiepS3zpmTSj2zGiHB3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de; spf=pass smtp.mailfrom=mariuszachmann.de; arc=none smtp.client-ip=178.254.4.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mariuszachmann.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mariuszachmann.de
-Received: from [2.211.228.80] (helo=marius.fritz.box)
-	by ms-10.1blu.de with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <mail@mariuszachmann.de>)
-	id 1s6beb-007gP9-LQ;
-	Mon, 13 May 2024 21:48:09 +0200
-From: Marius Zachmann <mail@mariuszachmann.de>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Marius Zachmann <mail@mariuszachmann.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5] hwmon: (corsair-cpro) Add firmware and bootloader information
-Date: Mon, 13 May 2024 21:47:34 +0200
-Message-ID: <20240513194734.43040-2-mail@mariuszachmann.de>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1715629671; c=relaxed/simple;
+	bh=z8Twj3N13mhdW7sEoJ5gZMRJ0MxEOmkRN+36+9pgaRE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JGbMTBVAiJifZ4Nnu5IN0JkoWJ/ytwx9oIW7ZwNH9SF/8CX5wD0x5g9JX8WnVVT8v3C+134AOeXH8iU5hR7lWW9puPe7e1RoDaiyIl34hgNg2dFclWF38cqv9QVGXG+5p+l7IrEcQ3oNM/A1Ysc0LeOdTH4qeRFULZNJyqOeuD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qw+C8GQZ; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-61bee45d035so49364257b3.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 12:47:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715629669; x=1716234469; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DUknfNXk78tNoNSV/FKbuOTqBHWDprugew7p/EYSaSg=;
+        b=Qw+C8GQZR1kRCheFb/tzuinNqtjxndae1jJV2IlZxLZpGFwyByfWdboBhSfjd0+oHO
+         ikkCEN5sol2iEij/ZR6hBQeVdAx0x/jp/M6MZtw/aopXSUHclN3VOgTa/1mHYPyX46IB
+         XfXwoCSFNdn5HYEAht3xnYEzDVYG6iFvNt9t0doukTC+Je6uX2G0FyJD7MJoS+iVxpXA
+         HueoN2BJMXtuwUjarm/049cypgeZDEDWwgunNoqv0uu+IdTS1gK8L1h7ODnV7Mx1qL92
+         AQ941Fwebiia9A7Kt8nYVTfVYTDYA+l5NDsE2r96fVpPURxOph0qDDoBP2g6W7Ts3XXn
+         HAmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715629669; x=1716234469;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DUknfNXk78tNoNSV/FKbuOTqBHWDprugew7p/EYSaSg=;
+        b=FObWktoFiDnYwgt3P22hP4YLRP4ZOd5HY+qG97MFum7medDtyDUyxDG+zVJQQ3h9FY
+         +QIG2W7vB6seyb8F5nRGwJC+Y3YmFSsWVPTsJUy+7pRQeEyjUnAWKD8uuvuMRKL1PZL7
+         z6AUzsZaDvXwsCuO06bbh9mxzcwQBohU+EKXdDXAWVPvIuMkd2219Q3R9xaFZZQIlZsa
+         WS5SkfB/f+uWNk4YAgzK345uVVJz5kCJ3ywzeiZlTzKgzQ+0UTnHQx2T2M54C3YTY/GK
+         n44xsRw95FRxb4R9sQrrpFV1c0J7GnwsytxfC/8m2qD27RDGRw6RtZ/Owd5ftVZwG56T
+         XAEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLR+/lTPmN1ZMaCnx9udW5ZduXeGR9/UhN8DkcdMVAwEeaU9dK+LUiSpX+DhD0ez1R3TUwICLDIuvytG/LHDYNRTkZnPZxNDZzXRHy
+X-Gm-Message-State: AOJu0YzSTKh7VvCYikHb4eCVX+MkHGmYY4mAS3iQC0IVOkCLSO+fAJUI
+	nH6lUuNhzc34G6tQFEFxv1E2dutv6pgJ9Y5bZw8U6p3VVIK+TSwbJDF4sYdi8N50k5r0okHQPvF
+	tn5b8ShNJW7UoyCVQmBP+9BjIGSLqdb4DNLkSXg==
+X-Google-Smtp-Source: AGHT+IGnYYmt0EOnAPY00AN8x9tLJNXpR+W6Srvl1WDn62aWdwxJ3ONetwGbkGS/UdOHkoVbG62q60/rx6bF8LH6+Ns=
+X-Received: by 2002:a25:f90e:0:b0:dc6:ff32:aae2 with SMTP id
+ 3f1490d57ef6-dee4f3356e2mr8656703276.63.1715629669087; Mon, 13 May 2024
+ 12:47:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Con-Id: 241080
-X-Con-U: 0-mail
+References: <20240509-dt-bindings-dsi-panel-reg-v1-0-8b2443705be0@linaro.org> <20240509-dt-bindings-dsi-panel-reg-v1-3-8b2443705be0@linaro.org>
+In-Reply-To: <20240509-dt-bindings-dsi-panel-reg-v1-3-8b2443705be0@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 13 May 2024 21:47:38 +0200
+Message-ID: <CACRpkdaE0tMQ5=pSofT9pGVcSBLp=dm_7WedpO2EnkbP1w+08A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dt-bindings: display: panel: constrain 'reg' in DSI panels
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chris Morgan <macromorgan@hotmail.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Konrad Dybcio <konradybcio@gmail.com>, 
+	Del Regno <angelogioacchino.delregno@somainline.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Luca Weiss <luca.weiss@fairphone.com>, Dmitry Baryskov <dmitry.baryshkov@linaro.org>, 
+	Shawn Guo <shawn.guo@linaro.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for reporting firmware and bootloader version using debugfs.
-Update documentation accordingly.
+On Thu, May 9, 2024 at 11:43=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 
-Signed-off-by: Marius Zachmann <mail@mariuszachmann.de>
----
-Changes in v5:
-- remove else in get_fw_version and get_bl_version in favor
-  of returning directly
+> DSI-attached devices could respond to more than one virtual channel
+> number, thus their bindings are supposed to constrain the 'reg' property
+> to match hardware.  Add missing 'reg' constrain for DSI-attached display
+> panels, based on DTS sources in Linux kernel (assume all devices take
+> only one channel number).
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Changes in v4:
-- split get_fw_version into get_fw_version and get_bl_version
-- only create debugfs file, when the reading succeeded
+Looks right to me.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Changes in v3:
-- use different debugfs directory name for each device
-
-Changes in v2:
-- better patch description
-- Documentation uses "Firmware version" and "Bootloader version"
-- removed conditional CONFIG_DEBUG_FS
-- get_fw_version gets called from ccp_debugfs_init
-- get_fw_version does print a hid_notice when an error occurs
-  instead of failing.
----
- Documentation/hwmon/corsair-cpro.rst |  8 +++
- drivers/hwmon/corsair-cpro.c         | 88 ++++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+)
-
-diff --git a/Documentation/hwmon/corsair-cpro.rst b/Documentation/hwmon/corsair-cpro.rst
-index 751f95476b57..15077203a2f8 100644
---- a/Documentation/hwmon/corsair-cpro.rst
-+++ b/Documentation/hwmon/corsair-cpro.rst
-@@ -39,3 +39,11 @@ fan[1-6]_target		Sets fan speed target rpm.
- pwm[1-6]		Sets the fan speed. Values from 0-255. Can only be read if pwm
- 			was set directly.
- ======================= =====================================================================
-+
-+Debugfs entries
-+---------------
-+
-+======================= ===================
-+firmware_version	Firmware version
-+bootloader_version	Bootloader version
-+======================= ===================
-diff --git a/drivers/hwmon/corsair-cpro.c b/drivers/hwmon/corsair-cpro.c
-index 3e63666a61bd..e3300f3f4da6 100644
---- a/drivers/hwmon/corsair-cpro.c
-+++ b/drivers/hwmon/corsair-cpro.c
-@@ -10,11 +10,13 @@
- 
- #include <linux/bitops.h>
- #include <linux/completion.h>
-+#include <linux/debugfs.h>
- #include <linux/hid.h>
- #include <linux/hwmon.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
-+#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -28,6 +30,8 @@
- #define LABEL_LENGTH		11
- #define REQ_TIMEOUT		300
- 
-+#define CTL_GET_FW_VER		0x02	/* returns the firmware version in bytes 1-3 */
-+#define CTL_GET_BL_VER		0x06	/* returns the bootloader version in bytes 1-2 */
- #define CTL_GET_TMP_CNCT	0x10	/*
- 					 * returns in bytes 1-4 for each temp sensor:
- 					 * 0 not connected
-@@ -78,6 +82,7 @@
- struct ccp_device {
- 	struct hid_device *hdev;
- 	struct device *hwmon_dev;
-+	struct dentry *debugfs;
- 	/* For reinitializing the completion below */
- 	spinlock_t wait_input_report_lock;
- 	struct completion wait_input_report;
-@@ -88,6 +93,8 @@ struct ccp_device {
- 	DECLARE_BITMAP(temp_cnct, NUM_TEMP_SENSORS);
- 	DECLARE_BITMAP(fan_cnct, NUM_FANS);
- 	char fan_label[6][LABEL_LENGTH];
-+	u8 firmware_ver[3];
-+	u8 bootloader_ver[2];
- };
- 
- /* converts response error in buffer to errno */
-@@ -496,6 +503,83 @@ static int get_temp_cnct(struct ccp_device *ccp)
- 	return 0;
- }
- 
-+/* read firmware version */
-+static int get_fw_version(struct ccp_device *ccp)
-+{
-+	int ret;
-+
-+	ret = send_usb_cmd(ccp, CTL_GET_FW_VER, 0, 0, 0);
-+	if (ret) {
-+		hid_notice(ccp->hdev, "Failed to read firmware version.\n");
-+		return ret;
-+	}
-+	ccp->firmware_ver[0] = ccp->buffer[1];
-+	ccp->firmware_ver[1] = ccp->buffer[2];
-+	ccp->firmware_ver[2] = ccp->buffer[3];
-+
-+	return 0;
-+}
-+
-+/* read bootloader version */
-+static int get_bl_version(struct ccp_device *ccp)
-+{
-+	int ret;
-+
-+	ret = send_usb_cmd(ccp, CTL_GET_BL_VER, 0, 0, 0);
-+	if (ret) {
-+		hid_notice(ccp->hdev, "Failed to read bootloader version.\n");
-+		return ret;
-+	}
-+	ccp->bootloader_ver[0] = ccp->buffer[1];
-+	ccp->bootloader_ver[1] = ccp->buffer[2];
-+
-+	return 0;
-+}
-+
-+static int firmware_show(struct seq_file *seqf, void *unused)
-+{
-+	struct ccp_device *ccp = seqf->private;
-+
-+	seq_printf(seqf, "%d.%d.%d\n",
-+		   ccp->firmware_ver[0],
-+		   ccp->firmware_ver[1],
-+		   ccp->firmware_ver[2]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(firmware);
-+
-+static int bootloader_show(struct seq_file *seqf, void *unused)
-+{
-+	struct ccp_device *ccp = seqf->private;
-+
-+	seq_printf(seqf, "%d.%d\n",
-+		   ccp->bootloader_ver[0],
-+		   ccp->bootloader_ver[1]);
-+
-+	return 0;
-+}
-+DEFINE_SHOW_ATTRIBUTE(bootloader);
-+
-+static void ccp_debugfs_init(struct ccp_device *ccp)
-+{
-+	char name[32];
-+	int ret;
-+
-+	scnprintf(name, sizeof(name), "corsaircpro-%s", dev_name(&ccp->hdev->dev));
-+	ccp->debugfs = debugfs_create_dir(name, NULL);
-+
-+	ret = get_fw_version(ccp);
-+	if (!ret)
-+		debugfs_create_file("firmware_version", 0444,
-+				    ccp->debugfs, ccp, &firmware_fops);
-+
-+	ret = get_bl_version(ccp);
-+	if (!ret)
-+		debugfs_create_file("bootloader_version", 0444,
-+				    ccp->debugfs, ccp, &bootloader_fops);
-+}
-+
- static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- {
- 	struct ccp_device *ccp;
-@@ -542,6 +626,9 @@ static int ccp_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	ret = get_fan_cnct(ccp);
- 	if (ret)
- 		goto out_hw_close;
-+
-+	ccp_debugfs_init(ccp);
-+
- 	ccp->hwmon_dev = hwmon_device_register_with_info(&hdev->dev, "corsaircpro",
- 							 ccp, &ccp_chip_info, NULL);
- 	if (IS_ERR(ccp->hwmon_dev)) {
-@@ -562,6 +649,7 @@ static void ccp_remove(struct hid_device *hdev)
- {
- 	struct ccp_device *ccp = hid_get_drvdata(hdev);
- 
-+	debugfs_remove_recursive(ccp->debugfs);
- 	hwmon_device_unregister(ccp->hwmon_dev);
- 	hid_hw_close(hdev);
- 	hid_hw_stop(hdev);
--- 
-2.45.0
-
+Yours,
+Linus Walleij
 
