@@ -1,212 +1,128 @@
-Return-Path: <linux-kernel+bounces-177310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C1F8C3CBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:55:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA018C3CD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE8A42878ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:55:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB401F21B69
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6E6146A90;
-	Mon, 13 May 2024 07:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A746146D50;
+	Mon, 13 May 2024 08:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KeCVmwyE"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2052.outbound.protection.outlook.com [40.107.104.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHiXjQ7t"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B58146D63
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715586915; cv=fail; b=QZgO+aY8Lf4YjDKTHntZ8y0rtMq0Mxhwt13Sf46BsCmmUewoguHIh1rMWCBgP5VpRrhyC5xTVKZDXgTvD+oxiDE7YwL5HdgQMh7dSa6tCTRZHv8+ClSj7+k8GdNkmD/6+6RDBGMYBGqz2vquHtKTEmemIpFmZ8+L/EH6EYUk37g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715586915; c=relaxed/simple;
-	bh=YHY+q4XxVhp1LT1CCdCskRTVNG/aR4qnP27/uUzhXnE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Pn/Db2TnU4AXieWwMKgOtoUXD2+b3k2Js6EBMrQV5zLgQVTiGpEmwkfbjoTC31KmacSrIEYyZ3Q9pisS6yMTX+I9cp73Afhwbap1WuQ8thUzeBuVEefdkrIsAGO3cqiMpkM4JLCHdjKy+IMNK2WfdmddgDo8YFDHhCUz7n+upVw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=KeCVmwyE; arc=fail smtp.client-ip=40.107.104.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TXstsC6ccLamlhO989NZ3YwIy427VU2Bs9162colSgLCpaeC2Gx8Bqz2czHiK/39+BFlSuhnEEThwm4I/jLXvMNS1d6sA+JscNJSNHos2JLv050yCs6e/GJvKGUTSscYgwOx+ym2/bMRfUnU84PFDYSsGZ/QJ8jI3Momeo8VhzSUWdATjkpSqPy4OiSJ7c5e/B276nmOfFJdiJ8EccWk5qyw3KzPrzxiJ01eYhaq+cfX2qsfFeaVyACvEDMaiv8x2uNmUIHPKIjtDJ9dadkuLF02Mo1LU3yDDGOqPe6UqBtRvNTKGmexCR7fgy7K9Y5PtzQOwSmffPh2dJHyNkXeQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0CehvpRZ6SLcC8HjwubxbY4iMS7lPFJU1Mnh2vcavGA=;
- b=GgB5rZEpH4bSCR0OsEKQ/8zvxUZg2XeYcMFwTiy1LPxKRVlFwNg5aZ/uojig7TMrCy6yp1w8lEjHg8LUM5zyme21+2xqp/O/kUA0ur8ioETeskYxR7/N+MqKiVGEwUDFXRbJNAGFp+BRa5zrDbaXZC7XLBuVY/nWCBUGXHxLtZC8f13rJUnDQ8sLzA8t+U7G+cqQfMn+/WQglmSTyYthVdbTHuiCb57w2KuD3f/jnpq+D7XHcheP9x+7qmURewPdGBNmJXTWb0HpxarJceuuxSVZ6yIm+cixSHFynZNfQnq1oXGVMI+GxwUNNzb4y5eDABshmw/jv0bv3vyNs9bK+A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0CehvpRZ6SLcC8HjwubxbY4iMS7lPFJU1Mnh2vcavGA=;
- b=KeCVmwyECXqRTZZxr1xcdfGgBLZL6oVYFUM/o6RlG89CVnDGERKDrwRCyhXrt4oVdvgv+yceJObP54l6asWkNcFkVTiYJg2lT3glDCXDnylPq3vQks5E+jv9sPMUPaE5mwdt4pBmdBX1Fqqr5dKxQiLRJUptWZVeZpwSAI5MsUw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VI1PR04MB7149.eurprd04.prod.outlook.com (2603:10a6:800:12e::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 07:55:10 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 07:55:09 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dmitry.baryshkov@linaro.org,
-	biju.das.jz@bp.renesas.com,
-	aford173@gmail.com,
-	bli@bang-olufsen.dk,
-	robh@kernel.org,
-	jani.nikula@intel.com
-Subject: [PATCH] drm/bridge: adv7511: Attach next bridge without creating connector
-Date: Mon, 13 May 2024 16:02:43 +0800
-Message-Id: <20240513080243.3952292-1-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.37.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI1PR02CA0042.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::17) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C49146A64
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715587403; cv=none; b=Clf+XPWUXLmzpgB7NJWbpMsSATZ7JTupMKI29oD4pSdwI89vQy+QBww2tWl9MuNEfAsJCLUKH941B7kdp9PdI9qJ+I6d9IFaqDGUgnmBcmuGmK2+cGnYxj+3Ha6Tngnjxlc/oAf27NsDzwZAE+1igUwNGOvGmeHIQI5KCDMy0vA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715587403; c=relaxed/simple;
+	bh=23uWuj7ICqa3qQCSJxZ9h9ChpqiL/yGtIf1aTLfSpnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Trcmyb1Q5ulNNeHH4IM+WEMF864oOYnW7NAZkkbJM5VwfuKyOfTlGhSI/4Cmr23g+Y+59rsIOMWiC9y1AFCz3ZESOYGkSj4TvpGSXFL63dSjrYohH2pgi9kPil4W6kbGvy8Ba1tQaeMqSq7hITGFzh/Qya0TcyIkbf1MRCwK730=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHiXjQ7t; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59ce1e8609so877900366b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715587400; x=1716192200; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:sender:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WnZ6trVhzdlXSKG3rKBrCEdLdkgOZsBK4FUKMxCUy7c=;
+        b=jHiXjQ7tmi1NqBaI3GUirUyVepKe+K3dKIz4N7lY2vzT0nuZMd2X+z5r4iTmZxcLHy
+         AgQohdjkGAhDw79lmkm3uJLsSnZxOc35sHBUlpxWLWJ3hVNbnMl7RgM1IB3joIFnlS+7
+         JdwZAejdfRTEUmd7kR4Es7jaXPje/KvGsEfH0x5jFbO/DoqbrbzRlrqP5+Mg+tORxJlX
+         Spc/XpZiBSJutFRs2rO/IoFY+/2hvGP4rAg44AMKHtkGpKAVA2L/+AJ1PkkZh09cNPJF
+         5misHSnHSoF0tt1kkKeqD72X3spvvUZAUOqeuvxvA21ua2XNnJNDYT/rjcckIafUCCGG
+         y7Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715587400; x=1716192200;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:sender:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WnZ6trVhzdlXSKG3rKBrCEdLdkgOZsBK4FUKMxCUy7c=;
+        b=hT0VgQmJWBJGV43g+HsoPKSo7RNNztDxqWTv2uSSDQGlyhMpizOBOhZuhgM2pYvhUB
+         UZK1w778DbVHx+SqgU3U1NnvdyfDdoz6Rmz53kZAzdTEV8ABb/rftQ/RNzCVGU/nQO/2
+         l2eXw9Su16jpMtjHN3beb9m7tGKab6nCIgJ0n++ged255af5Sve0pM7fhH87QGehSLlT
+         oMqO5V4oe64n+lDBxqi/ruwCF8+kPMIi7zCUpUpKcWhl4BF7EJs+rMUV6gMeknFtccVx
+         61L2Bevn8vk0rPHRlwsgwepXraShW2GtdYWex9pUaP7783OO1EmxjP28wmgQrCuz5rsn
+         1cYA==
+X-Gm-Message-State: AOJu0Yya7VlRLxtKU8W6hvSp++FuKHZGcX2Jgh9MRbTZZXdcuR/B8sit
+	ui8jSitlLLABuie/YfDmr1HgD2vRfcKAibE5XHs5K8+a7JTBE5vh
+X-Google-Smtp-Source: AGHT+IG94D9DPyExALzgvsPjVqXg/C4+F3PXVM5MqYAZ6Xxfs8MPAM5TY6AhIDt6jLBUQMByxvJBkQ==
+X-Received: by 2002:a17:906:8315:b0:a59:c807:72d3 with SMTP id a640c23a62f3a-a5a2d1ddfebmr773843766b.17.1715587400101;
+        Mon, 13 May 2024 01:03:20 -0700 (PDT)
+Received: from gmail.com (1F2EF402.unconfigured.pool.telekom.hu. [31.46.244.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17892444sm558300766b.76.2024.05.13.01.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 01:03:19 -0700 (PDT)
+Sender: Ingo Molnar <mingo.kernel.org@gmail.com>
+Date: Mon, 13 May 2024 10:03:17 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
+Subject: [GIT PULL] x86/platform changes for v6.10
+Message-ID: <ZkHJRYpDIBpxWeyz@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VI1PR04MB7149:EE_
-X-MS-Office365-Filtering-Correlation-Id: 714afeda-1190-4b58-4581-08dc7322030c
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230031|376005|52116005|366007|7416005|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?ivFclt3C4PIZ2+E/T3/Nf3sIVh+6oEu6qmHneJRilN2rl8AQwLajxuWftfxg?=
- =?us-ascii?Q?YYT/aSSqSSZIXzocMYQhix+tsqGVwCd9WxA2EjV8HAJe2RKXhcGJqYuort5o?=
- =?us-ascii?Q?vRT7WU+5OyFzwFRGmE/KRiaP3/IqZJLEqLp6AvP0Xy9l68XGdQ86VOXB92VT?=
- =?us-ascii?Q?UEegub/VkTi/VFbj8xekYvvocrMVot/eBHQ1rbTkEEMfK5Rb46tkfPjJIy9k?=
- =?us-ascii?Q?V2Y3w5nbMEdwhcGek+G7G4HbGoAtAsYppZsV/dWr5WnHFIiZxV8i5HmfXXud?=
- =?us-ascii?Q?lRx0QjeZZ8HUMGQ4B2E1x4Ahp1cvpSwm90tyYXpZls1139VGHRfVd+xvGxUs?=
- =?us-ascii?Q?uk4aoYrRaGMlTH9Si94Ig/LAzxVEuMMMoIT1mLj/7YcnYrE2kawY3525P6Bg?=
- =?us-ascii?Q?MLz5vepRBzFX8rPxHM2DwDgZVjzGuUlMYYdrsRfRPOk/Gr211MDAOL3cWMNS?=
- =?us-ascii?Q?pXxZhnTzFZUABE0qVEWQzf9LPLnw50RJkVIbvlLg4NxerPJxwZMnqxxNJMGt?=
- =?us-ascii?Q?H5U2kbDJBGrqyZ+G/MXutRXl8kum8qmVEPL5YUadDyZLC5MUJmHv9E6m9wgr?=
- =?us-ascii?Q?6alJ1yp2p6b5AXhokL96go/ycu5eWigmMkWLeffQn/seuPMZrN8e+WsX8TGF?=
- =?us-ascii?Q?Gbb2fY+oWVG6JniIDZjUhhyGv7Idj/ORzHpdpmjE12FFzJ+Wd9Hbzpf2cf3Z?=
- =?us-ascii?Q?l0R2W3DIsk5uYI/oXAnfcO5lOajaW+CI/eIeO36aSHNh03XaBZ2qLH79iUKV?=
- =?us-ascii?Q?dMGRwUFY7Jr///G3pMipWBvZoyG9Ov4/dt4BlLN1sVCUnFqZ18UTpfLmDPKg?=
- =?us-ascii?Q?jkllXZSCV6n2LVzc2UjI/1FYDoSWHJ8GYMHoqTrvTOpGri4+E5m0owaOl5pT?=
- =?us-ascii?Q?A7zttejKQZ0eYD3kmgwXUzCvnITFaR9gkxFgNoTlPN/vbKDI/iej9uLTqFBj?=
- =?us-ascii?Q?RWoYdvxAGQtToqJqZK7bUO/DCw0yym9mr6yUIesDJUk6XrhuUG91XuWWyu//?=
- =?us-ascii?Q?2Ztral91Qfdph+UHCilih9RlkdL2Js98aD25cpa1IprTZUmVb7rZPR+reAkh?=
- =?us-ascii?Q?ppaeWl7XvDRoBJxCYcEKc18zSpEzitNP5hJ1GN/yvYVWyrl5qgWCufHnID/E?=
- =?us-ascii?Q?VR6vXvueejh7WD3QbyxsJJudgS6GHbmI/GpwxcttJmHduqvojjZP6jl/DNyC?=
- =?us-ascii?Q?hDj4Vp0UzQSzWfMtUT78CdBeHWhVUgfdKi+JIqdzKuG8tKQyK1j2OSIi3dpb?=
- =?us-ascii?Q?Ry4HD6cSWl/FTlm/CUzUROvrduigFWaNTXth7+l3BwqGva5fBKsk7H5vD+2u?=
- =?us-ascii?Q?ikLzafxtWrIOofcEfTK77KLL/tssh/ClvZ8iwD1j829a7g=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(366007)(7416005)(1800799015)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?9vbjX+KB1y8vdH9wCtz0PQZVF5mTGEoLMx8SQs8QTtCVNTy8ynyFXqeAVVMF?=
- =?us-ascii?Q?tW8uhNV2jHc/pGKXQBAiH7jZ065/5jlr5DQmM02j+oHKOafhoAj7s8CUfvVG?=
- =?us-ascii?Q?qlyLPupcbFk4HqSh3hdXPNH3LpzMBkfm1bkHwqdzDmMHlEmUJ5UDQAAa9BvT?=
- =?us-ascii?Q?AG0Mh0E0g/63G1hr4mfz/ppPO8wTHTn8EfI64DNczCXb0McK0OOa4CwG9sLy?=
- =?us-ascii?Q?MFmF5FyAOq6ccQWDnHdvNd/G3q54W3+AOXWIKrwsTjv1aNWWKDXE2PnC+j5K?=
- =?us-ascii?Q?yvKaRfNU2Wp4ilil0ymp8nqcm0tDJAZGhgeRdXLdCBAiye8WaEvj6OCUyAiP?=
- =?us-ascii?Q?iT/KYH9gc37mmyIcd4RulO0qklWNgJhMnX6UYBx9QFmsadAhI2gxfl3A8iMK?=
- =?us-ascii?Q?Gd05kijgdwmNZvsvv7n3Y4ymnG54UpCRgRBgJn4qqQABMLZvIVuz7MQgUuDe?=
- =?us-ascii?Q?9xplJDMyMGkD+73BVErM6QCp6PKsZB9Mdhje9aqBCF94UDZ7VpsAHTw38J99?=
- =?us-ascii?Q?m8S6EqqkZz5H49zyx8w1qVrFxcNg2gLFv4FVXIEylgoIWvzX1fL5+Ha8JeJr?=
- =?us-ascii?Q?qSiDwG+n9HDRVld7/EFGlqSj3fSw9cxqZthlbpH2Cu+gx1S6NXypxl4FRNwX?=
- =?us-ascii?Q?8cP4IxCZCxAxf9SFsxkI/KWChf41RPqk5UN8Bzi/5R9v5s6ajPMP44Fr4sWs?=
- =?us-ascii?Q?VW6zW8vSFri2IuDr6hfIH1bZPcsWLyOG5w54H27lJbkKWU0bQcyo7MLIehPH?=
- =?us-ascii?Q?se7+xCsTZEuZem2BqQHJbZtsQw8yoNwyVO44v2zOwxiiv6eTxUrrByDpA1o9?=
- =?us-ascii?Q?RpAgcrdJ5XdcZHrLYbid2rDS85cXZZ4hjM1n15hnMHdhQvWTkn3/nKGDohee?=
- =?us-ascii?Q?QTdBKc5TFj8rJeEdIUxAYxahyYse/KFAccfne2EXqLGMHo3J7pRElqQBfZCt?=
- =?us-ascii?Q?16sepomYz9dYMOalJQ4GjJMT0yhlsW3qkyQmRoe8EnEp0EHTSWtMZvjhoI83?=
- =?us-ascii?Q?f0doDvEP6j/Nxblm+Gl3X9uQw16oAQHHHUknAbFYmT4qS6bBnigbrnMHc3zB?=
- =?us-ascii?Q?b/iuTg4FKnQQf2lJ7DFH5Bl43I+/AERk4g479jLkooH8Dk6NSvvf82NGMXeM?=
- =?us-ascii?Q?A6tLHWyYxNXXewQDxPvWV0YqEZS56L+Q8L14CsB2j7ITBBHhlC1UGKhxTIMq?=
- =?us-ascii?Q?2lD/r70lNUPRi0WZJBDjGeJ33YRdDAqzjMEHnzPZtylcwdv0JWmJq1jZeVO2?=
- =?us-ascii?Q?MTCHIIt8/kLcr9WAIEYEBCuZKNYKJOmdVbbQRRdY3iQq8ml5xjHCupcSWyha?=
- =?us-ascii?Q?4NpcaEZBmA2jRSbawOqHiWAwmWch9or240spTFg4JGdG40Ivz8igat3eR2bp?=
- =?us-ascii?Q?1HShEMHOHwa9lHMwgmnRGe27pO5KZVIV+h40axvW4OKqpq6C6gthwMaHrU4q?=
- =?us-ascii?Q?hrfFPkv/OoUqcT7NzYKFgoKpNKTJoyZRnGJ+4F5tarhXrdn8gjJr1IGk+Oxa?=
- =?us-ascii?Q?crgk4IxVQU4iUdLcwQfwWr//oKKyYfNyaCEYMNsLGFCJHVWDeShOg3Xb26fA?=
- =?us-ascii?Q?yE1fmfDDNlfftZuP1sDuOVRXH/WICzD6V0YN5ZWL?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 714afeda-1190-4b58-4581-08dc7322030c
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 07:55:09.9051
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nKW4QlNd1iG1D/V5NyD0ACcZjvqokHsNGhD67HB8bkBDRmM1NaizEUu0hQ04v1KZaX1n8TgnGKk7tYzhHipphg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7149
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-The connector is created by either this ADV7511 bridge driver or
-any DRM device driver/previous bridge driver, so this ADV7511
-bridge driver should not let the next bridge driver create connector.
 
-If the next bridge is a HDMI connector, the next bridge driver
-would fail to attach bridge from display_connector_attach() without
-the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag.
+Linus,
 
-Add that flag to drm_bridge_attach() function call in
-adv7511_bridge_attach() to fix the issue.
+Please pull the latest x86/platform Git tree from:
 
-This fixes the issue where the HDMI connector bridge fails to attach
-to the previous ADV7535 bridge on i.MX8MP EVK platform:
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-platform-2024-05-13
 
-[    2.216442] [drm:drm_bridge_attach] *ERROR* failed to attach bridge /hdmi-connector to encoder None-37: -22
-[    2.220675] mmc1: SDHCI controller on 30b50000.mmc [30b50000.mmc] using ADMA
-[    2.226262] [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@30800000/i2c@30a30000/hdmi@3d to encoder None-37: -22
-[    2.245204] [drm:drm_bridge_attach] *ERROR* failed to attach bridge /soc@0/bus@32c00000/dsi@32e60000 to encoder None-37: -22
-[    2.256445] imx-lcdif 32e80000.display-controller: error -EINVAL: Failed to attach bridge for endpoint0
-[    2.265850] imx-lcdif 32e80000.display-controller: error -EINVAL: Cannot connect bridge
-[    2.274009] imx-lcdif 32e80000.display-controller: probe with driver imx-lcdif failed with error -22
+   # HEAD: 801549ed6abe7586eb9ad0cf7147b0bef383ad22 x86/platform/olpc-xo1-sci: Convert to platform remove callback returning void
 
-Fixes: 14b3cdbd0e5b ("drm/bridge: adv7511: make it honour next bridge in DT")
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+x86/platform changes for v6.10:
 
-diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index dd21b81bd28f..66ccb61e2a66 100644
---- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-+++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -953,7 +953,8 @@ static int adv7511_bridge_attach(struct drm_bridge *bridge,
- 	int ret = 0;
- 
- 	if (adv->next_bridge) {
--		ret = drm_bridge_attach(bridge->encoder, adv->next_bridge, bridge, flags);
-+		ret = drm_bridge_attach(bridge->encoder, adv->next_bridge, bridge,
-+					flags | DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 		if (ret)
- 			return ret;
- 	}
--- 
-2.34.1
+ - Improve the DeviceTree (OF) NUMA enumeration code to
+   address kernel warnings & mis-mappings on DeviceTree platforms.
 
+ - Migrate x86 platform drivers to the .remove_new callback API
+
+ - Misc cleanups & fixes
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Saurabh Sengar (4):
+      x86/hyperv/vtl: Correct x86_init.mpparse.parse_smp_cfg assignment
+      x86/of: Set the parse_smp_cfg for all the DeviceTree platforms by default
+      x86/of: Map NUMA node to CPUs as per DeviceTree
+      x86/of: Change x86_dtb_parse_smp_config() to static
+
+Uwe Kleine-König (3):
+      x86/platform/iris: Convert to platform remove callback returning void
+      x86/platform/olpc-x01-pm: Convert to platform remove callback returning void
+      x86/platform/olpc-xo1-sci: Convert to platform remove callback returning void
+
+
+ arch/x86/hyperv/hv_vtl.c              |  1 -
+ arch/x86/include/asm/prom.h           |  9 ++-------
+ arch/x86/kernel/devicetree.c          | 24 ++++++++++++++----------
+ arch/x86/platform/ce4100/ce4100.c     |  1 -
+ arch/x86/platform/iris/iris.c         |  5 ++---
+ arch/x86/platform/olpc/olpc-xo1-pm.c  |  7 +++----
+ arch/x86/platform/olpc/olpc-xo1-sci.c |  5 ++---
+ 7 files changed, 23 insertions(+), 29 deletions(-)
 
