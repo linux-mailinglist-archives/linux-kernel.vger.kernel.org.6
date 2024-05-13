@@ -1,166 +1,106 @@
-Return-Path: <linux-kernel+bounces-178062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB1AF8C4811
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:10:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3485F8C4817
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 22:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94C1B2842CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:10:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65FC31C21271
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020247E118;
-	Mon, 13 May 2024 20:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8927E578;
+	Mon, 13 May 2024 20:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mvsk0Kjm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kdo0IEK1"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157BF7BB12;
-	Mon, 13 May 2024 20:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CA27D414
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 20:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715631000; cv=none; b=amxF9NssC5fes0uw7EV4NCf52wxQBtEQc0UuqEZpn6eZ49uZAc+/J0vXjCMQo3NZCzr9X4imT9x5KurfY3NcL82981Ovrl6ubmIbUXkVbhVgTq0cWix8SyOc1o8JvAngZKtd6bQiLObb298vxl/fLFoLw7ItIjcXWh1pLvvV8nI=
+	t=1715631258; cv=none; b=t4F9Pb+3p0ARVX4+b1vf00dfAm2c+Y8vE6xvzVT7qIBFTsQYf6ATW7gZeK645u9t2jwRnZBP4wiJ+Ts85DrO1vIUp5i1H7WNhFmKtOnMTM/LfWf973HCG8bmoPV+3EIT9BCW99NwV/SupdRqy7gSOqAx2rZju9MulHUVQWFBpSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715631000; c=relaxed/simple;
-	bh=5srbF7A/r6ZZVZ38QlSzulTr02juUo3FmLj9M76HhZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TtG0ZAV0P/qVZqLEJSQ6Mp9YjzBF31cu5X/KoqTebatRaW6KV/Fhh4Z9i/jnEhYRUngsxlqZ+HxggerQBS8XiF+kmu4GfdMjN8Mh09RtBow11xmZ80AE78wma612pedfUtYR4w0X65XuGprVXGYTmBxE7dF9V5RzwVopgfuPjgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mvsk0Kjm; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715630998; x=1747166998;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5srbF7A/r6ZZVZ38QlSzulTr02juUo3FmLj9M76HhZ8=;
-  b=mvsk0KjmLA8fgXx5JvqX52VVbAuMSkhC4k+84nOO6Va+L8AzycnryfsV
-   VnooiIrWjAX9YJtNNs8RvYVbTVWT1h+xOScc2eQU/zT+tB2n2CpfVcZ81
-   Uun7kxF1wmCghtYEo6kfg7owRc7fMjx4qvcy/4Kp1xKp3sQBqHRg+YWx5
-   7AgX1ypzbhQT7fKPOI2CkWROo1tJWPrfYIsG6MFRBQg6l588V88vGh+ba
-   NC/E7hBY1tVE/CDet+KCYvHfeWtfiYMHiJ8Q1XteUsfcvT9JmNsSM9Nc4
-   QxdevDI53P+srAe+TD0xCET/RT9jzgrTRRsKLaSJX2lGVhuk5WDUBPuvF
-   Q==;
-X-CSE-ConnectionGUID: C0MNPuq6SYe3yJkh8RICxQ==
-X-CSE-MsgGUID: GN7ao2MNQ32Jzhip8+N35A==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="14530865"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="14530865"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 13:09:57 -0700
-X-CSE-ConnectionGUID: +aadTLrMRYyEcp7OimqdlQ==
-X-CSE-MsgGUID: zFsui8dvRbKCxU0Ftvz+/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="61266228"
-Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 13 May 2024 13:09:55 -0700
-Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1s6bzb-000Afp-1j;
-	Mon, 13 May 2024 20:09:51 +0000
-Date: Tue, 14 May 2024 04:09:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lyndon Sanche <lsanche@lyndeno.ca>
-Cc: oe-kbuild-all@lists.linux.dev, mario.limonciello@amd.com,
-	pali@kernel.org, W_Armin@gmx.de,
-	srinivas.pandruvada@linux.intel.com,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dell.Client.Kernel@dell.com
-Subject: Re: [PATCH v2] platform/x86: dell-laptop: Implement platform_profile
-Message-ID: <202405140348.Wz7gOmdP-lkp@intel.com>
-References: <20240426020448.10862-1-lsanche@lyndeno.ca>
+	s=arc-20240116; t=1715631258; c=relaxed/simple;
+	bh=55Wf+mAaH9z5EnP3Stxwcm/ef1ex9U3o3+2+2kyCC94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vq3SQ1pRVEf0U8WxFr5JJ6K2VOIjz6O8VXbCwATjkzKmU4GY3Ufg5I/zKtBiyZOASYXvIRwD8QkBcEmRRMnttdJLp3aIkWB4bMWV/RMagfBCoCS2rq0LlBFh5lSwC9+YaLdCCOW/C8X4mhi4YykD+Obxv/7Ua78nWnPWz8yuVd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=kdo0IEK1; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=KRH5X+1HYEC761
+	1+i5xKKN04opWRJp5Kz9WR7lisqg0=; b=kdo0IEK1grh6ayBKMfTKflTiiICWC1
+	09xIzeBzFOmJCJ9JeaCjsEz76VDMedXuXoySUgiy7ncqBSWrgEZeTBGbMYDL5DfC
+	R3OSu2QhpOV9TUrgECCiGplQ6aTuAo+gYYtVsWjT79HlT1dYROAiX8yvCEruT8Tj
+	R3c6qE5nAg21zoqP4CePY74oGI37Grx3gjbHSpCEuCecfGiycQaq7f1XLB5VokII
+	la9yt/unHDYuZgJnpbqV73vowZElBgOXjrTTDZTAAVzCN+Y5sJ4GaTQvvBanrZ7a
+	GzhXubv8FRtdhgJFpveHkFVZ4nGwcDbpUdFec5a44wS1PHbRVnopC50w==
+Received: (qmail 2269724 invoked from network); 13 May 2024 22:14:10 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 May 2024 22:14:10 +0200
+X-UD-Smtp-Session: l3s3148p1@Z3A3h1sY4IdehhtP
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-i2c@vger.kernel.org
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Peter Rosin <peda@axentia.se>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] power: supply: sbs-manager: Remove class argument from i2c_mux_add_adapter()
+Date: Mon, 13 May 2024 22:11:16 +0200
+Message-ID: <20240513201400.16589-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240426020448.10862-1-lsanche@lyndeno.ca>
+Content-Transfer-Encoding: 8bit
 
-Hi Lyndon,
+Commit 99a741aa7a2d ("i2c: mux: gpio: remove support for class-based
+device instantiation") removed the last call to i2c_mux_add_adapter()
+with a non-null class argument. Therefore the class argument can be
+removed.
 
-kernel test robot noticed the following build errors:
+Note: Class-based device instantiation is a legacy mechanism which
+shouldn't be used in new code, so we can rule out that this argument
+may be needed again in the future.
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.9 next-20240513]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This driver was forgotten by the patch in the Fixes tag.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Lyndon-Sanche/platform-x86-dell-laptop-Implement-platform_profile/20240511-144534
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240426020448.10862-1-lsanche%40lyndeno.ca
-patch subject: [PATCH v2] platform/x86: dell-laptop: Implement platform_profile
-config: i386-randconfig-005-20240513 (https://download.01.org/0day-ci/archive/20240514/202405140348.Wz7gOmdP-lkp@intel.com/config)
-compiler: gcc-8 (Ubuntu 8.4.0-3ubuntu2) 8.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405140348.Wz7gOmdP-lkp@intel.com/reproduce)
+Fixes: fec1982d7072 ("i2c: mux: Remove class argument from i2c_mux_add_adapter()")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405140348.Wz7gOmdP-lkp@intel.com/
+The to-be-fixed patch is only in linux-next in my i2c/for-next tree. We
+want to remove this unneeded parameter in the next mergewindow. I
+suggest that I just put it on top of my branch to avoid the
+dependencies. A quick ack would be super-awesome! Thanks.
 
-All errors (new ones prefixed by >>):
+ drivers/power/supply/sbs-manager.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   ld: drivers/platform/x86/dell/dell-laptop.o: in function `thermal_init':
->> drivers/platform/x86/dell/dell-laptop.c:2404:(.text+0x21a3): undefined reference to `platform_profile_register'
-   ld: drivers/platform/x86/dell/dell-laptop.o: in function `thermal_cleanup':
->> drivers/platform/x86/dell/dell-laptop.c:2412:(.text+0x21cc): undefined reference to `platform_profile_remove'
->> ld: drivers/platform/x86/dell/dell-laptop.c:2412:(.init.text+0xb44): undefined reference to `platform_profile_remove'
->> ld: drivers/platform/x86/dell/dell-laptop.c:2412:(.exit.text+0x7c): undefined reference to `platform_profile_remove'
-
-
-vim +2404 drivers/platform/x86/dell/dell-laptop.c
-
-  2377	
-  2378	int thermal_init(void)
-  2379	{
-  2380		int ret;
-  2381		int supported_modes;
-  2382	
-  2383		ret = thermal_get_supported_modes(&supported_modes);
-  2384	
-  2385		if (ret || !supported_modes)
-  2386			return 0;
-  2387	
-  2388		thermal_handler = kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
-  2389		if (!thermal_handler)
-  2390			return -ENOMEM;
-  2391		thermal_handler->profile_get = thermal_platform_profile_get;
-  2392		thermal_handler->profile_set = thermal_platform_profile_set;
-  2393	
-  2394		if ((supported_modes >> DELL_QUIET) & 1)
-  2395			set_bit(PLATFORM_PROFILE_QUIET, thermal_handler->choices);
-  2396		if ((supported_modes >> DELL_COOL_BOTTOM) & 1)
-  2397			set_bit(PLATFORM_PROFILE_COOL, thermal_handler->choices);
-  2398		if ((supported_modes >> DELL_BALANCED) & 1)
-  2399			set_bit(PLATFORM_PROFILE_BALANCED, thermal_handler->choices);
-  2400		if ((supported_modes >> DELL_PERFORMANCE) & 1)
-  2401			set_bit(PLATFORM_PROFILE_PERFORMANCE, thermal_handler->choices);
-  2402	
-  2403		// Clean up but do not fail
-> 2404		if (platform_profile_register(thermal_handler))
-  2405			kfree(thermal_handler);
-  2406	
-  2407		return 0;
-  2408	}
-  2409	
-  2410	void thermal_cleanup(void)
-  2411	{
-> 2412		platform_profile_remove();
-  2413		kfree(thermal_handler);
-  2414	}
-  2415	
-
+diff --git a/drivers/power/supply/sbs-manager.c b/drivers/power/supply/sbs-manager.c
+index 9e4141cffbf9..933b04806d10 100644
+--- a/drivers/power/supply/sbs-manager.c
++++ b/drivers/power/supply/sbs-manager.c
+@@ -358,7 +358,7 @@ static int sbsm_probe(struct i2c_client *client)
+ 	/* register muxed i2c channels. One for each supported battery */
+ 	for (i = 0; i < SBSM_MAX_BATS; ++i) {
+ 		if (data->supported_bats & BIT(i)) {
+-			ret = i2c_mux_add_adapter(data->muxc, 0, i + 1, 0);
++			ret = i2c_mux_add_adapter(data->muxc, 0, i + 1);
+ 			if (ret)
+ 				break;
+ 		}
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
