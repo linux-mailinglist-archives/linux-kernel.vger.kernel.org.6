@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-177374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739E78C3DB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:00:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 170FB8C3DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D1283797
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47EC21C21403
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF301487DB;
-	Mon, 13 May 2024 09:00:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85F21487D0
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 09:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678A01487C5;
+	Mon, 13 May 2024 09:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/+FLJbj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9752AD11;
+	Mon, 13 May 2024 09:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715590805; cv=none; b=uu9e396POmlqd4Hz/RsjWmdippT8krUPFj1UznDcMcAKc5gRNQsPoSEQQI8AY7VkvtRNMHRe//zgmVEtSJUnhTC9PGv4z1Lgm4hrL+bEugjcYE7TUL/LlFKcKOHLQt3zFbPplV0wNS5VIzgNuUFqwuww6+bOUiEgXeW6X7GNwrs=
+	t=1715590980; cv=none; b=DPbW/nmq3LjZF3clq5B44zFOm95/pHTfDmMn1E2wlVW5qBRfD3FhXWf1w/R9tGMWPGpEdKH4quzR37Qa6JydOQMdmO9g91LkpmI9wjU/AP7psfXOJO2HHdTwldDo+LzKAgNuqy5G0ZS4KvKkW3JpwSWq2M900SEYrrwq7wzs75A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715590805; c=relaxed/simple;
-	bh=/MX6rrnEoR/kypgxe6c7ubeCiw+US5Kh9gC7XtmMmzw=;
+	s=arc-20240116; t=1715590980; c=relaxed/simple;
+	bh=s0EggrzDRtwd1QQwT28+y5mOLtbo0dl6U8XEYPlo+yQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TnANiB5JKONmkoFSQjzuwos+H9ijOZT3ZD8lr/llNx7sH1HtHHoulZP68Y8oCWr2I3KhDAhsefHrjY+pRjPEj0F0WKwlZT3ExnOKbSpxWlxBP0AhYRck0dILMTgmewaej7u4wisq/PhVvZ2dKx34gLn4WLyQ9hNSZp0fgm2Gb9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5E1B1007;
-	Mon, 13 May 2024 02:00:27 -0700 (PDT)
-Received: from [10.57.68.95] (unknown [10.57.68.95])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A91963F762;
-	Mon, 13 May 2024 02:00:00 -0700 (PDT)
-Message-ID: <7504a525-8211-48b3-becb-a6e838c1b42e@arm.com>
-Date: Mon, 13 May 2024 09:59:59 +0100
+	 In-Reply-To:Content-Type; b=fBnIjNY038Ao1IH3yUNCX643OOI441/ft5wS6ZlguaxPNAoCXCTINrXDoguOLVd6m31foVE68I//A/5Hm1NiF1X6Jkf7AUXHb25SrQWEY9s/NReO5ljqM8PkXNfwpQCvBvfWDP0yg7jb3JEydiRQBBUx8ez4N1J6b9mGr7oDC9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/+FLJbj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AD1C113CC;
+	Mon, 13 May 2024 09:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715590980;
+	bh=s0EggrzDRtwd1QQwT28+y5mOLtbo0dl6U8XEYPlo+yQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=A/+FLJbj4oXu5vlP2FOyLU5Y3872Wt4b2TwJjGM0ieE2rOafc8vehRo6Vq6/PQMNZ
+	 Z2LeE+/SeiiVRlsDNRFQKbDrtwh+O1i0QK8CWWOPU0p9Z9v3YFsgBi3ghu1+xbxG6J
+	 WTEddw9Kdv31J9rygrSXfMD3pSyg0ROSHlKjOWTxRxsyLJxnErI9lgGwpHYzYbb1H7
+	 Qr52K+qH53PlN1elIWpGeXoySdQngfWQYkTGyD61bsQj6AxHBxCA4VHn7w0N12gp0H
+	 v9R2OuABqhlWRQm1i/tCb9df/9dB6HXy8sIAQYi3OmAuofb0q8qWNwQWYRRCbOyMli
+	 TjXWx7jKfjwSg==
+Message-ID: <99f0fcb4-7c45-426a-8176-8191a032c0f0@kernel.org>
+Date: Mon, 13 May 2024 11:02:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,150 +49,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2 0/9] Merge arm64/riscv hugetlbfs contpte support
-Content-Language: en-GB
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton
- <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-mm@kvack.org
-References: <20240508113419.18620-1-alexghiti@rivosinc.com>
- <6d37f914-d139-48ea-be63-c428ac767cc1@arm.com>
- <CAHVXubhmihZA50pdaek4=fx83ycdOyuYkRmVLPtZk59uKBoWPw@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAHVXubhmihZA50pdaek4=fx83ycdOyuYkRmVLPtZk59uKBoWPw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: mfd: add schema for 8ulp AVD-SIM
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>,
+ Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, Liu Ying <victor.liu@nxp.com>,
+ Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240418203720.8492-1-laurentiumihalcea111@gmail.com>
+ <20240418203720.8492-3-laurentiumihalcea111@gmail.com>
+ <20240422142906.GB1207218-robh@kernel.org>
+ <799c3c81-fc33-4f76-bd0b-287e8b8a6f5a@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <799c3c81-fc33-4f76-bd0b-287e8b8a6f5a@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 12/05/2024 18:25, Alexandre Ghiti wrote:
-> Hi Ryan,
+On 09/05/2024 20:48, Laurentiu Mihalcea wrote:
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 1
+>> If you do add child nodes, 'simple-mfd' also means there is not any 
+>> dependency on the parent node such as needing this clock to be enabled 
+>> for the child nodes.
+>>
+>> Rob
 > 
-> On Fri, May 10, 2024 at 3:49 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 08/05/2024 12:34, Alexandre Ghiti wrote:
->>> This patchset intends to merge the contiguous ptes hugetlbfs implementation
->>> of arm64 and riscv.
->>>
->>> Both arm64 and riscv support the use of contiguous ptes to map pages that
->>> are larger than the default page table size, respectively called contpte
->>> and svnapot.
->>>
->>> The riscv implementation differs from the arm64's in that the LSBs of the
->>> pfn of a svnapot pte are used to store the size of the mapping, allowing
->>> for future sizes to be added (for now only 64KB is supported). That's an
->>> issue for the core mm code which expects to find the *real* pfn a pte points
->>> to. Patch 1 fixes that by always returning svnapot ptes with the real pfn
->>> and restores the size of the mapping when it is written to a page table.
->>>
->>> The following patches are just merges of the 2 different implementations
->>> that currently exist in arm64 and riscv which are very similar. It paves
->>> the way to the reuse of the recent contpte THP work by Ryan [1] to avoid
->>> reimplementing the same in riscv.
->>
->> Hi Alexandre,
->>
->> I've skimmed through this series and the one that moves contpte. I can see there
->> is definitely value in sharing the implementation, and the rough shape of things
->> seems appropriate. I had some minor concerns about making it harder to implement
->> potential future arm64 errata workarounds but on reflection, most of the
->> now-shared code is really just wrapping the primitives that are still arch-specific.
->>
->> I'm going to need to spend proper time reviewing it to give detailed feedback,
->> but I'll be out on paternity leave for 3 weeks from end of Monday at the latest.
-> 
-> Too bad, I expected to discuss that with you at LSF/MM...But congrats!
-> Hope your wife is fine :)
+> The plan was to add the children later on as required.
+> Given the children would in fact depend on the parent's clock being
+> enabled, I wonder if just removing 'simple-mfd' from the compatible
+> list would do the trick?
 
-Thanks! Yes its unfortunate timing - there are a few topics I would have liked
-to get involved with. There's always next year...
+Dropping simple-mfd would be a requirement in such case, but not
+sufficient. Please send complete bindings, so with the children.
 
-> 
->> So realistically I won't be able to do the detailed review until at least the
->> first week of June.
->>
->> Some high level thoughts:
->>
->>  - huge_ptep_* functions could be working on different sized huge ptes - arm64
->> supports contpte, pmd, contpmd and pud. Is keeping them in contpte.c
->> appropriate?
-> 
-> Hmm indeed, I'll see what I can do.
-> 
->> Perhaps it's better to keep huge_pte and contpte separate? Also, it
->> only works on arm64 because we can get away with calling the lower-level pte
->> functions even when the huge_pte is actually a contpmd/pmd/pud, because the
->> format is the same. That might present challenges to other arches if the format
->> is different?
-> 
-> Yes, but I think that if that happens, we could get away with it by
-> choosing the right function depending on the size of the mapping?
-
-Yes possibly. One potential future new user of this common code would be arm32
-(arch/arm), which also has the contig bit. But AIUI, the pmd an pte formats are
-quite different. It's likely that arm would want to opt-in to contpte but not
-huge_ptep, so separate selectors may be valuable.
-
-> 
->>
->>  - It might be easier to review if the arm64 stuff is first moved (without
->> changes) then modified to make it suitable for riscv, then for riscv to be
->> hooked up. At the moment I'm trying to follow all 3 parts per-function.
-> 
-> Ok, let me give it a try during your paternity leave!
-
-Thanks! If it's too difficult then it's not a deal-breaker. Perhaps just an
-initial patch to move the existing arm functions to core-mm without change, then
-all your existing patches on top of that would do the job?
-
-> 
->>
->> Thanks,
->> Ryan
-> 
-> Thanks,
-> 
-> Alex
-> 
->>
->>
->>>
->>> This patchset was tested by running the libhugetlbfs testsuite with 64KB
->>> and 2MB pages on both architectures (on a 4KB base page size arm64 kernel).
->>>
->>> [1] https://lore.kernel.org/linux-arm-kernel/20240215103205.2607016-1-ryan.roberts@arm.com/
->>>
->>> Changes in v2:
->>>   - Rebase on top of 6.9-rc3
->>>
->>> Alexandre Ghiti (9):
->>>   riscv: Restore the pfn in a NAPOT pte when manipulated by core mm code
->>>   riscv: Safely remove huge_pte_offset() when manipulating NAPOT ptes
->>>   mm: Use common huge_ptep_get() function for riscv/arm64
->>>   mm: Use common set_huge_pte_at() function for riscv/arm64
->>>   mm: Use common huge_pte_clear() function for riscv/arm64
->>>   mm: Use common huge_ptep_get_and_clear() function for riscv/arm64
->>>   mm: Use common huge_ptep_set_access_flags() function for riscv/arm64
->>>   mm: Use common huge_ptep_set_wrprotect() function for riscv/arm64
->>>   mm: Use common huge_ptep_clear_flush() function for riscv/arm64
->>>
->>>  arch/arm64/Kconfig                  |   1 +
->>>  arch/arm64/include/asm/pgtable.h    |  56 +++++-
->>>  arch/arm64/mm/hugetlbpage.c         | 291 +---------------------------
->>>  arch/riscv/Kconfig                  |   1 +
->>>  arch/riscv/include/asm/hugetlb.h    |   2 +-
->>>  arch/riscv/include/asm/pgtable-64.h |  11 ++
->>>  arch/riscv/include/asm/pgtable.h    | 153 +++++++++++++--
->>>  arch/riscv/mm/hugetlbpage.c         | 227 ----------------------
->>>  arch/riscv/mm/pgtable.c             |   6 +-
->>>  mm/Kconfig                          |   3 +
->>>  mm/Makefile                         |   1 +
->>>  mm/contpte.c                        | 272 ++++++++++++++++++++++++++
->>>  12 files changed, 480 insertions(+), 544 deletions(-)
->>>  create mode 100644 mm/contpte.c
->>>
->>
+Best regards,
+Krzysztof
 
 
