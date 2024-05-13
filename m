@@ -1,81 +1,108 @@
-Return-Path: <linux-kernel+bounces-178053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA378C47EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:57:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B858C47EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58AEA283564
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6911F22C49
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7697BB15;
-	Mon, 13 May 2024 19:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 686D17BB15;
+	Mon, 13 May 2024 19:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/cmjbZd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tYvbkEej"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D9C3C08A;
-	Mon, 13 May 2024 19:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70493BB30;
+	Mon, 13 May 2024 19:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715630215; cv=none; b=bT6NORGrP2HwaTdBRxOoPuGMDx6BR3p81rG35oekHRKL7qgbWlA+HuZVaFkvPZjsYrtsSxKetFoQV0EfBTD4J+kGQt9H4E1e6VSu5w9sC29Ftkg0PFVVAOgmzltreMGldVBcCrHLHTEIRCJfZLNoI8uEaJpsUaXLSlWZpkEFbug=
+	t=1715630311; cv=none; b=ZmLPFHktVMwHWd7mdOegO1IEyYNry7aUiaFrSp/S8/JBZFgjnfjkqz8dPDZovzg2BD7IbZdFiou0rFehxODdTuuwxpgjsjfQnMJaRXTDZHC1Y/v6KhNbkZBxBKWknhSebM5JPfQfg+Y6a5OcJrX0keWprhFqg6UPPT5wTxZ96/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715630215; c=relaxed/simple;
-	bh=wVrCYAqrup8syMMMZL9tLVORbn9Co7XWkPqPW6wAFuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EhHTIxfUfXiHnRLKrY2chkQg6Ma1zXE9OWWB8SEe0aA+gpEmvIApy8lo4Yt9Q6mjeL5ZKovh3kLu1YcWoW+LtspAEdOPU5V25Wo79IChD0fSBoixOxU/AilTu7QJiCE/bHsih/HvOpKM5zjXn9n4024vF/OW+fgKzTVPHgEfBSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/cmjbZd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66545C113CC;
-	Mon, 13 May 2024 19:56:52 +0000 (UTC)
+	s=arc-20240116; t=1715630311; c=relaxed/simple;
+	bh=xRu8CyhGp/dMQMFRPvRlpYQszBroFlUYx9/roPUrmLQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=MhtUQ91il4ncEJ3as8j1UXEa9oFrAvvAtgRnivDGRd7rqatutDPfnNN1N4Z/xbqnPWVyLVVBnMcxwCebTn7BEPckA1Lu1eAVD1KpuAYCs4ubN5d0U31lEcGtyJBY6dJ8Vkf/hERWGVnnVMWcr3ISq0Vl9lWwFjPHQLQsHB1PM3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tYvbkEej; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1390BC113CC;
+	Mon, 13 May 2024 19:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715630215;
-	bh=wVrCYAqrup8syMMMZL9tLVORbn9Co7XWkPqPW6wAFuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S/cmjbZdCBk/3Ayuu5OwujnOaJESu+1DwgXVdlrQh8dEClczdzlMYQX0izHXQcszx
-	 oWRMcOuW5rT591OelN2TTSMqbogi9V4IjypJiz8JT5SwnjeJVl/ke+plEUjL85r37h
-	 SGLqlThJxHmBDdbRpnP/i1gr6esr6GKSEsvH6X/kLP452u+jSbtEiLDdX1nN65EaHy
-	 84SkGbBKu5kSzqr3oVT0ke9XLA9oqjoZyAz1m/TpM5FNUlIqop6K9aCKRPN7ISfK0m
-	 DvEATrUTujjZvbY5E/xsnGVm1G4ZYAMwkMAQPqDjx8YgzlgMVJClZn4E5zXqIJ1qOn
-	 oaqxyFai26xoQ==
-Date: Mon, 13 May 2024 20:56:49 +0100
-From: Simon Horman <horms@kernel.org>
-To: Wei Fang <wei.fang@nxp.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, shenwei.wang@nxp.com, xiaoning.wang@nxp.com,
-	richardcochran@gmail.com, andrew@lunn.ch, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH net] net: fec: avoid lock evasion when reading pps_enable
-Message-ID: <20240513195649.GY2787@kernel.org>
-References: <20240513015127.961360-1-wei.fang@nxp.com>
- <20240513195459.GX2787@kernel.org>
+	s=k20201202; t=1715630311;
+	bh=xRu8CyhGp/dMQMFRPvRlpYQszBroFlUYx9/roPUrmLQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=tYvbkEejMiE6HhVN/wo0Q4dJ/UzS+ZBdRKQiafF0yjO0c+CrUS3wNJusXwg9sQstV
+	 Zw26BkzNRB0XjovtDrDUhb+3U6dSE7NzYLlfhAwKztXDuoZ/TOa1/9DKUYYK/Ed/A7
+	 lakvpF/kBK0r0xVn1ow+r6+k078r/6oxLuPf1WihsPDWk6q2TAaaehy3LrKpYJGbNN
+	 aXSzwkzTgF2KEyrQrMcScKKfyVHOFVLAXndjtI0xd9ykEcjOOM4tDg8PZK6fwoxV3I
+	 +sFPrjtY6XPEft97bVilgdnwMXHYL3cQdPCB1rj9UDMUbn97U7rgwdH27szngUhfq/
+	 bTl8y3IvWi6Ig==
+From: Kalle Valo <kvalo@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
+  Dave Hansen <dave.hansen@linux.intel.com>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  x86@kernel.org,  linux-pm@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  regressions@lists.linux.dev,  Jeff Johnson
+ <quic_jjohnson@quicinc.com>
+Subject: Re: [regression] suspend stress test stalls within 30 minutes
+References: <87o79cjjik.fsf@kernel.org>
+	<20240511184847.GCZj-9j2sh1Akpt9iS@fat_crate.local>
+	<20240511184945.GDZj-9yaOEWqf1ng8u@fat_crate.local>
+	<87h6f4jdrq.fsf@kernel.org>
+Date: Mon, 13 May 2024 22:58:27 +0300
+In-Reply-To: <87h6f4jdrq.fsf@kernel.org> (Kalle Valo's message of "Sat, 11 May
+	2024 23:26:49 +0300")
+Message-ID: <878r0djxgc.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513195459.GX2787@kernel.org>
+Content-Type: text/plain
 
-On Mon, May 13, 2024 at 08:54:59PM +0100, Simon Horman wrote:
-> On Mon, May 13, 2024 at 09:51:26AM +0800, Wei Fang wrote:
-> > The assignment of pps_enable is protected by tmreg_lock, but the read
-> > operation of pps_enable is not. So the Coverity tool reports a lock
-> > evasion warning which may cause data race to occur when running in a
-> > multithread environment. Although this issue is almost impossible to
-> > occur, we'd better fix it, at least it seems more logically reasonable,
-> > and it also prevents Coverity from continuing to issue warnings.
-> > 
-> > Fixes: 278d24047891 ("net: fec: ptp: Enable PPS output based on ptp clock")
-> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> 
-> Reviewed-by: Simon Horman <horms@kernel.org>
+Kalle Valo <kvalo@kernel.org> writes:
 
-Sorry, I convinced myself this is correct.
-But I now see that questions have been raised by others.
-So please ignore the above.
+> Borislav Petkov <bp@alien8.de> writes:
+>
+>> On Sat, May 11, 2024 at 08:48:47PM +0200, Borislav Petkov wrote:
+>>> On Sat, May 11, 2024 at 09:22:43PM +0300, Kalle Valo wrote:
+>>> > Here's the diff between broken and working .config:
+>>> > 
+>>> > $ diffconfig broken.config works.config 
+>>> > -CALL_PADDING y
+>>> > -CALL_THUNKS y
+>>> > -CALL_THUNKS_DEBUG n
+>>> > -HAVE_CALL_THUNKS y
+>>> > -MITIGATION_CALL_DEPTH_TRACKING y
+>>> > -MITIGATION_GDS_FORCE y
+>>> > -MITIGATION_IBPB_ENTRY y
+>>> > -MITIGATION_IBRS_ENTRY y
+>>> > -MITIGATION_PAGE_TABLE_ISOLATION y
+>>> > -MITIGATION_RETHUNK y
+>>> > -MITIGATION_RETPOLINE y
+>>> > -MITIGATION_RFDS y
+>>> > -MITIGATION_SLS y
+>>> > -MITIGATION_SPECTRE_BHI y
+>>
+>> ... and if it started with -rc4, I'd try this one first.
+>
+> I'm not sure if this bug started with -rc4, let's say somewhere between
+> -rc3 and -rc6. I'll start with disabling MITIGATION_SPECTRE_BHI and then
+> I'll disable them one by one.
+
+It is starting to look like that MITIGATION_IBRS_ENTRY is causing my
+problems. If I enable MITIGATION_IBRS_ENTRY I see the suspend stall
+relatively quickly. And then I disable the config I have not been able
+to reproduce the problem so far. But as this issue happens randomly I
+want to do some more tests to be sure.
+
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
