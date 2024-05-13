@@ -1,181 +1,147 @@
-Return-Path: <linux-kernel+bounces-177355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9FE8C3D6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:40:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ED158C3D72
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B704280DB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3CECB21088
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355C51482EF;
-	Mon, 13 May 2024 08:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751AC1482EF;
+	Mon, 13 May 2024 08:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hVGXIn4S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3VCcXT8/"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D69147C8F
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAF9147C7F
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715589599; cv=none; b=s6SLWVK88PX6q+c/UV8d8rUzCsItVwh7lrg7uUiFVocrmn/3Kk8WT28Dx4s8RuuI4MhkUq/NxE2g2OzM0R2Bn2pwqjHWP60JpFkZWqpfwEsea7betKV1iflhuFN2JuUp6IL4+4HyvzUIY0oVsvOcTBH+ApfE9/xRfTBK47GVLeI=
+	t=1715589663; cv=none; b=qBGaQS7g96dOOeV9xFREKor/yoNi7e5gPOEn1OLr2b9PFA5/ViUnO1KEu0cydDc8a3+sQrmsefuPZCjoZTj67kLhe9zpcLTMEbqEfBird6MtAu8N4pLavxp6zvXVL2v2pC4oFjOhVlrgZnzFRsmpXtzZ1EGvzB2pAgFJnMntOAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715589599; c=relaxed/simple;
-	bh=NafnT6nxtfip1QG/byPJKrL48bOdfUlcszFB+gXZGRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RXtC60wy8KokgnjTuzVV2Xdcbe1ODdyxH74DEnoHtO8SuWnABbp5eDddU+4qWgpEVTJlaTmMGb+mJ5Ofb5Ff7rGXVU65UMODPJkomCqL4XjhuFY+HtZs8+i8ACnFxwnXKh8j86n7baJERzQRlq25TMQX9uyEDkng4g0urVFznrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hVGXIn4S; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715589596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NafnT6nxtfip1QG/byPJKrL48bOdfUlcszFB+gXZGRk=;
-	b=hVGXIn4S/exlX1urmj+PfuzWgXZkp9iMCjqmtseVX6ZczbcguadZIu8NTaQGWrGRhy1h2v
-	yASVuLhYl3s1TXM6kllaa10OFfcekjNh3qE0I71W0cB3it26p/bXnpLq70EVYdbBxr2JiJ
-	EWgx8PLWCwyi1GwsU3RyC4EJRoK3mNw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-462-g7u-hQicPg-DezHkK-QerA-1; Mon, 13 May 2024 04:39:50 -0400
-X-MC-Unique: g7u-hQicPg-DezHkK-QerA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-41fe6df6ef3so14287825e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:39:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715589589; x=1716194389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1715589663; c=relaxed/simple;
+	bh=6Qe+Z4SzpwQnD/xZduFUuZ+qeUgZmflyk3fkh5lZ93s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uu4LzNywYMI7ZCliGlerPit5BGgwLxgVh6qSfnn1Mhrr967abI8ZkvfQSgnf21T1MaAKngK9cbUvAUfH0DiQJ7WpoKb6Dn8DojwziPLBSxXevFWnwzGvsbUq+MDvmUfmHqT5Z+poJijziFXKZyOQ03mKi9CmY5AUiMEOqFjvGIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3VCcXT8/; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572f6c56cdaso14630a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 01:41:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715589660; x=1716194460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NafnT6nxtfip1QG/byPJKrL48bOdfUlcszFB+gXZGRk=;
-        b=st28+3yTBAbFt8sOGwQDjg8Qgggio3aYd22lAGHrkWHwmH3aI4yLhTuthSyhB6g0zO
-         ZvJ76md2rQtPi1HnEEK1+x0JeGh5pGFxaBqeYV8YQT+g2KCXf40Y1I4jkH4rgDbTa8kL
-         X05bcFWmU64PpgZNekjZxm4o2BXXcSZLqxS8rZ1ay/snHlbpO8DFyfzVFxIupfPrNZSn
-         kV+3jsJxePpq0RJRYlBjnpOiMEfJo3i0kvG81cIFaQzHkpuWYw6wN78kPCG0OoaKaJ9c
-         c1dPVK1nAvXONkBkIjircis1hpQVaXCHhpYcRMijh6SXlfxQ01TSz6eUt1k61LKt6vLI
-         i+rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxqXaO2js6t/HejWTv/Igp/yM9gZ9zz5i1X5tK+22a402Rr7h4rABFxj0J0wBSUNgzF/X4r2D4PgT/uXyIPP9/Ia7nHKKqfgj02SnU
-X-Gm-Message-State: AOJu0YwZtv/H+h+1Ek/nLP2DcktVPb88MIqfD1/U5HDi+Uypj7xNWIGf
-	XwFdK/owP6ySkjbIPBaH7503Kh0P4S5N6qfubH04PL4svpMIHGSAyBW5Nz8uBNdVjkNPg9iSPvc
-	suc9xYqF6w3Lqy3+QPdcH4LT/sHx5fSkY7zFDntldUFtn6tspEYcHdIZFuaQMzg==
-X-Received: by 2002:a05:600c:3caa:b0:41b:55b1:6cfc with SMTP id 5b1f17b1804b1-41feaa2f3a3mr60665345e9.1.1715589589263;
-        Mon, 13 May 2024 01:39:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSHY3Vs6wnO8Hqo+e75wM+DuYwRlx0w2YGHoHP++IqYSQpbYZoInfS6/LKCMB/0qMhU4uo5Q==
-X-Received: by 2002:a05:600c:3caa:b0:41b:55b1:6cfc with SMTP id 5b1f17b1804b1-41feaa2f3a3mr60665135e9.1.1715589588807;
-        Mon, 13 May 2024 01:39:48 -0700 (PDT)
-Received: from localhost ([2a01:e34:ec60:48a0:b89c:e3fb:cb18:893d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87b2648fsm185332075e9.7.2024.05.13.01.39.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 01:39:48 -0700 (PDT)
-Date: Mon, 13 May 2024 10:39:48 +0200
-From: Maxime Ripard <mripard@redhat.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T.J. Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Robert Mader <robert.mader@collabora.com>, 
-	Sebastien Bacher <sebastien.bacher@canonical.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linaro-mm-sig@lists.linaro.org, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal <mzamazal@redhat.com>, 
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240513-delectable-busy-serval-fbe3fe@penduick>
-References: <bb372250-e8b8-4458-bc99-dd8365b06991@redhat.com>
- <ojduxo54lpcbfg2wfuhqhy7k3phncamtklh65z7gvttcwztmhk@zkifewcy4ovi>
- <3c0c7e7e-1530-411b-b7a4-9f13e0ff1f9e@redhat.com>
- <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <CAA8EJpr4bJUQt2T63_FZ=KHGEm4vixfpk3pMV9naABEONJfMmQ@mail.gmail.com>
- <20240507184049.GC20390@pendragon.ideasonboard.com>
- <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
+        bh=iSDRwv7jk6IAgHWtX5wD76uWRnyIu2E9jN3RV77i0HQ=;
+        b=3VCcXT8/uQ5qKRowowrKsBuK0rDnIpewljbIwCzj6lgnZfLB8UC/cfoxOzNo51+8Ln
+         PXWMN5w5mISm/Qiey2V9CxpgDNZ3128DDReiKBjTBwmARoaL2PpqjVr2/lFz2yxRwong
+         fLp3NsCTR+TzrLCtI0bLTdima0Pg9/RY7YP1shMX/+LTKgYetS++xOMzDJCd5Ubo5uMx
+         TbnjUoMM6hw4OI4vRpIkyUpb+S5dEYwoLBaXk7et8bkXR7avQ++1eQ5UCjZNDBtIEHB2
+         lwvf2eBKYLgAivaFOaL/yu2Dw4UYvQkWttdMsAwNvR1ue3tlvqsri9d1FGbBgdST41Pa
+         uh/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715589660; x=1716194460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iSDRwv7jk6IAgHWtX5wD76uWRnyIu2E9jN3RV77i0HQ=;
+        b=f5EigjT94FxN7jsnsDMsetpRis6pGxEwQOrn534dw5gHGeiyVNrA+qdYmSHGHTW9F7
+         IYOEDVufK83BT+R8kmi1agBHQCZ/k8wlJq5Q17Q1uOLIiHou56/+hZBO0VZdXuUxmtjR
+         9QBs6nJELGb7QxwaWJZ7RsL+XcmojhCJ30YkBbAJgj67bP7T48uX1EFS7uTxCP/3Dkq/
+         jrZriRPE2cbT9V5IpSqHfrQQLW1JInhOfeWfOVPY0tVEN2ROcBtXcxzJWxM/5UL5/ERt
+         v+y+K2EHxK5zKj1smTnoqdL31Au/wy/ke2OuTj9uBw7oM94irFffv8lExQ4uZH59KvBf
+         Oerg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQKsSclL+tfntju8kNPZEncfEnE0BWBoj4fY6ZsRfZYfU+lMaO6Uacert+In1vi0shqJldXQ8xdNLNDhx5oCgT26Y5e3RJEbe8NkQf
+X-Gm-Message-State: AOJu0YxKWEMy382EFAhdmFzi8F3GdLPKm3wzMJO6mHdGNAjFw75zHylc
+	TOMiGU/ZBn7lQKTskFAL2wJqOAVU0UjjJifP/MLTfmdkd7J67tdTJCOLzTjwAM4WAzVadAMLMqE
+	58XevE7eaXLhuf07p+Cfo+eUEskBjDzLYWYLN
+X-Google-Smtp-Source: AGHT+IG57BWFXudd7m8JcDciNBmtXJbh5+hfFHuyw1l+yn/mpSNaGi+yGRv/Cgp0O9O0ywU03d4iur9Dsc9F5E9hlnM=
+X-Received: by 2002:a05:6402:2153:b0:572:5597:8f89 with SMTP id
+ 4fb4d7f45d1cf-57443d30921mr260807a12.6.1715589660140; Mon, 13 May 2024
+ 01:41:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="qh6aaiqzlccizapn"
-Content-Disposition: inline
-In-Reply-To: <CAA8EJpqLu5w7gnqtDyuDDQBd7AEROTd6LTYi8muzjToXmkKR3w@mail.gmail.com>
-
-
---qh6aaiqzlccizapn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240513015127.961360-1-wei.fang@nxp.com> <CANn89i+EQDCFrhC3mN8g2k=KFpaKtrDusgaUo9zBvv0JCw8eYg@mail.gmail.com>
+ <PAXPR04MB85100C1A06253C0AE1EB36C288E22@PAXPR04MB8510.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB85100C1A06253C0AE1EB36C288E22@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 13 May 2024 10:40:46 +0200
+Message-ID: <CANn89i+0xtG5hg2LsGvNOueCAkOac_UccXWq-Eeqt1a40EkqBA@mail.gmail.com>
+Subject: Re: [PATCH net] net: fec: avoid lock evasion when reading pps_enable
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>, "kuba@kernel.org" <kuba@kernel.org>, 
+	"pabeni@redhat.com" <pabeni@redhat.com>, Shenwei Wang <shenwei.wang@nxp.com>, 
+	Clark Wang <xiaoning.wang@nxp.com>, 
+	"richardcochran@gmail.com" <richardcochran@gmail.com>, "andrew@lunn.ch" <andrew@lunn.ch>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 07, 2024 at 10:59:42PM +0300, Dmitry Baryshkov wrote:
-> On Tue, 7 May 2024 at 21:40, Laurent Pinchart
-> <laurent.pinchart@ideasonboard.com> wrote:
+On Mon, May 13, 2024 at 9:53=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wrote:
+>
+> > -----Original Message-----
+> > From: Eric Dumazet <edumazet@google.com>
+> > Sent: 2024=E5=B9=B45=E6=9C=8813=E6=97=A5 15:29
+> > To: Wei Fang <wei.fang@nxp.com>
+> > Cc: davem@davemloft.net; kuba@kernel.org; pabeni@redhat.com; Shenwei
+> > Wang <shenwei.wang@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
+> > richardcochran@gmail.com; andrew@lunn.ch; netdev@vger.kernel.org;
+> > linux-kernel@vger.kernel.org; imx@lists.linux.dev
+> > Subject: Re: [PATCH net] net: fec: avoid lock evasion when reading pps_=
+enable
 > >
-> > On Tue, May 07, 2024 at 06:19:18PM +0300, Dmitry Baryshkov wrote:
-> > > On Tue, 7 May 2024 at 18:15, Bryan O'Donoghue wrote:
-> > > > On 07/05/2024 16:09, Dmitry Baryshkov wrote:
-> > > > > Ah, I see. Then why do you require the DMA-ble buffer at all? If =
-you are
-> > > > > providing data to VPU or DRM, then you should be able to get the =
-buffer
-> > > > > from the data-consuming device.
-> > > >
-> > > > Because we don't necessarily know what the consuming device is, if =
-any.
-> > > >
-> > > > Could be VPU, could be Zoom/Hangouts via pipewire, could for argume=
-nt
-> > > > sake be GPU or DSP.
-> > > >
-> > > > Also if we introduce a dependency on another device to allocate the
-> > > > output buffers - say always taking the output buffer from the GPU, =
-then
-> > > > we've added another dependency which is more difficult to guarantee
-> > > > across different arches.
+> > On Mon, May 13, 2024 at 4:02=E2=80=AFAM Wei Fang <wei.fang@nxp.com> wro=
+te:
 > > >
-> > > Yes. And it should be expected. It's a consumer who knows the
-> > > restrictions on the buffer. As I wrote, Zoom/Hangouts should not
-> > > require a DMA buffer at all.
+> > > The assignment of pps_enable is protected by tmreg_lock, but the read
+> > > operation of pps_enable is not. So the Coverity tool reports a lock
+> > > evasion warning which may cause data race to occur when running in a
+> > > multithread environment. Although this issue is almost impossible to
+> > > occur, we'd better fix it, at least it seems more logically
+> > > reasonable, and it also prevents Coverity from continuing to issue wa=
+rnings.
+> > >
+> > > Fixes: 278d24047891 ("net: fec: ptp: Enable PPS output based on ptp
+> > > clock")
+> > > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > > ---
+> > >  drivers/net/ethernet/freescale/fec_ptp.c | 8 +++++---
+> > >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/net/ethernet/freescale/fec_ptp.c
+> > > b/drivers/net/ethernet/freescale/fec_ptp.c
+> > > index 181d9bfbee22..8d37274a3fb0 100644
+> > > --- a/drivers/net/ethernet/freescale/fec_ptp.c
+> > > +++ b/drivers/net/ethernet/freescale/fec_ptp.c
+> > > @@ -104,14 +104,16 @@ static int fec_ptp_enable_pps(struct
+> > fec_enet_private *fep, uint enable)
+> > >         struct timespec64 ts;
+> > >         u64 ns;
+> > >
+> > > -       if (fep->pps_enable =3D=3D enable)
+> > > -               return 0;
+> > > -
+> > >         fep->pps_channel =3D DEFAULT_PPS_CHANNEL;
+> > >         fep->reload_period =3D PPS_OUPUT_RELOAD_PERIOD;
 > >
-> > Why not ? If you want to capture to a buffer that you then compose on
-> > the screen without copying data, dma-buf is the way to go. That's the
-> > Linux solution for buffer sharing.
->=20
-> Yes. But it should be allocated by the DRM driver. As Sima wrote,
-> there is no guarantee that the buffer allocated from dma-heaps is
-> accessible to the GPU.
+> > Why are these writes left without the spinlock protection ?
+> For fec driver, the pps_channel and the reload_period of PPS request
+> are always fixed, and they were also not protected by the lock in the
+> original code.
 
-And there is no guarantee that the buffer allocated from the GPU is
-accessible to the display engine. In practice, I've yet to see an issue
-with that assumption.
+If this is the case, please move this initialization elsewhere, so
+that we can be absolutely sure of the  claim.
 
-And there's the other elephant in the room that hasn't been addressed.
-Buffers typically allocated by the data-consuming frameworks are
-coherent buffers, which on arm/arm64 usually mean non-cacheable.
-
-Performances are *terrible*. Meanwhile, dma-heaps and dma-buf provide
-cacheable buffers with a cache synchronization API, which allow to have
-it run much faster.
-
-Maxime
-
---qh6aaiqzlccizapn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZkHR0wAKCRAnX84Zoj2+
-dmpnAYCn9sxfeRSm1Faf0OjKfvfKYpA6+XhCEJJVQzH6jGId/Sk32BahqCR3ZucO
-/1TsALQBf160+BzC2jF6k7Xud+ixD5QuBdXfxo6UziSenQ1ClVh2UFdyf0TG2Tzj
-I+TfIOqSEg==
-=cY/A
------END PGP SIGNATURE-----
-
---qh6aaiqzlccizapn--
-
+I see fep->reload_period being overwritten in this file, I do not see
+clear evidence this is all safe.
 
