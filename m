@@ -1,197 +1,261 @@
-Return-Path: <linux-kernel+bounces-177962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0270C8C46D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:31:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1066B8C46DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 20:31:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0E91F2193D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3390A1C216F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6548439AEC;
-	Mon, 13 May 2024 18:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEE939FEC;
+	Mon, 13 May 2024 18:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gHn6lwgo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="DxLkD53q"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71AA28FD;
-	Mon, 13 May 2024 18:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307E82EAF9
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 18:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625076; cv=none; b=P743XS2riG5+8Bt1WVx9BHJpuCp3nGfI7r1tkrEjctZ7NcJ3QE0dVnJbdW3TddR/IgCV+sxOYmmC3herreV2vGxPKWZVDPOUMPjB5rm+9qvtfPDm9inJP4yh4+fGQ0vkxxybe+dxAZdrypkaFXBhvGg23bclZD5dK6GA/j/IbA0=
+	t=1715625091; cv=none; b=MTUsgKIdlrBHFfhKEjzHSBdr5ds4oI+BQR9QtjH5EhZEBxLz0BPatGtbUJozoWPelu0XJWl60BRELrZueXiXXR761pPXLb2LK+Z3hEe8PafcbH71CqvzaE9r4W1t93Mhl3FF3hE2B50XOSom6FPgqGB5lSXtYjXbVwfIYGSwTD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625076; c=relaxed/simple;
-	bh=yiPqKMs6hQxmNLnb5Dok/TnU2Xk8ipFhsF5HYnfk6PU=;
+	s=arc-20240116; t=1715625091; c=relaxed/simple;
+	bh=YfDtAh3JmrRp+3O5lVAjzeyWvRESXw22+V2fb9MAXtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ibf9sgk3gxQGSdoNHYWVeAYV5gHq1bp8CO09JIIBQBS+ECFQ8jX0gCouYEMLvBo+VTBgkRbp6EhUq1+3IHpXrktt3naK25XQTX0cxuG0H2Px/N/IjLgjHCJwMDH6MHSx5i8d47J0+Edmjj7pYG1cDf2xILwRSJ4YQZj+5IZo5z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gHn6lwgo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DC3BC113CC;
-	Mon, 13 May 2024 18:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715625076;
-	bh=yiPqKMs6hQxmNLnb5Dok/TnU2Xk8ipFhsF5HYnfk6PU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gHn6lwgo3XiPEhGFeYNrjQAhOgkT5qiId4xuuqPMf0DnZaqF1+ovN5KDgSeuLKejS
-	 uKt3+DdS/Tg4xSzAuco3SweKKdvrpe3nnC68c8Gz/ySrJYzuUsOWdJXrqobCdGLPST
-	 cjvyJxMkGkFY6uNXmku9PFMtWx0Ww371lHOfpnl7UX1/M8ibOexlrFBJBETHEAgJru
-	 FlDVXWiYYnPnVJKQDS0uX5xcvQrdLhRg4vW9hrCW8nARDlW5hYm1Q8ScC/S+cfM0Ni
-	 QUDCOgVE3dhXedZKKEscqs1rtGxpF8QfPpJIDqUFf0e2AntrJF7O5hdRH4a5yJBlj4
-	 T3ctS789z/Xdg==
-Date: Mon, 13 May 2024 19:31:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: admiyo@os.amperecomputing.com
-Cc: Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mctp pcc: Implement MCTP over PCC Transport
-Message-ID: <20240513183111.GV2787@kernel.org>
-References: <20240513173546.679061-1-admiyo@os.amperecomputing.com>
- <20240513173546.679061-2-admiyo@os.amperecomputing.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hH7q4WKn17lnbD6IfQ5ZGXLC0dz0eLu6fivAPeEYsqFf6GZJ0XJ3oV6DrFq2eEIn5HPEFzY2768HNEUiLS63P21qNEu8WTRl3QqV7CzL0WBIMlQKQZlHQZNP9sVlMOh+Z8Wmmcp5ggSUZsHOL1AXq9GsVzNN6HnYA4b83cH5JGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=DxLkD53q; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f4551f2725so4130584b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:31:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715625088; x=1716229888; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lfxB6TGC4fu8lY9DVlJ3Uo04rJaZ2CFPzF6bJyMTII=;
+        b=DxLkD53qGG4HiMANQa3H1wVcGWvMT5md7OLT/QabV4n2wpK0mEB1fVj7yKE+aWlTk8
+         1zHhVm7Mrm8Cv6sLtr4HpKx/pQdiTWsA+q+8TZdt+0W0WOd0XxdOS8OmNkZDCA4K95aT
+         KjUoPv3Q4I89VvkLizhsUzRZMuJQmb4OeTpg7+t961xn519rUk1K+4ZR3RdmwsGi+S5n
+         FLkJUol5041uG62+CeNymUKPzsGB3LHYK6yNK1oauPBNwQ6YEJYG3gD1Ry1NBkqmjAJK
+         EnpDjGpqAkgPTFoeQF9Qyvm7QO+Q6EF7KC8+7gxa7b+p+xHxd3vD0yjQSZbC4ivOgutD
+         ZBiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715625088; x=1716229888;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9lfxB6TGC4fu8lY9DVlJ3Uo04rJaZ2CFPzF6bJyMTII=;
+        b=QGgZzgMWRVFoybDE1eDBRAVODDlgmERFjWk9fcLfSV7e/Q6J3ZuefbsSdQPl1/B9Cu
+         JA5JgNBWWEG8xG5srAM0NS4ijF7Rt7EEFCtR9Pa6qPzMn/WXZdPhsbEWfqzXPlgEhhx6
+         HHaDxD7H7lgGu3Ftd4XtalYzm6iQuHJ1oCeqmDav7elCm+k+dyy9JjZ1VLmYhuqNaTSS
+         4cwhpSfR8BJDLWlZzJFZ1WUbJ393xb5VaaT5dr/RsZNBacESunfmtACEoUKb8iEPzKI7
+         dS4UxWH4NVADfG05VWfMVIT6lHMaiS486PRLF7dzWNPX7wrILzafWhQYB2MPw2JhGUF1
+         YmRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkRrMnqCA1ns7CWykVnhrheP2ugvDJdi4kXMY9bhuh62lAfLSdivk15MQIaPMjvhcQ2ppaHIWcHghkrmgo55TMx2ZF2B4Pi9XPLAeW
+X-Gm-Message-State: AOJu0YwdOazdDQFzPbpe2v8aHKFqnEMg8TrhgHApkJ1ygJ7kXv3AoR2P
+	4x5rrsuaDSHml5WxoxdSaf/h0zXxZ6AWfonzv2qJQxYxJGn37ku3WK9YbvUECWw=
+X-Google-Smtp-Source: AGHT+IH1OSRQPwx8UUxBA+2NIldqGQBfyQNuOaQuzBWIoDTXDv4FJlctQ5Ean61dJ4G8ZeTtENbZeA==
+X-Received: by 2002:a05:6a20:8428:b0:1a9:d9bb:acdc with SMTP id adf61e73a8af0-1afde10df02mr12897298637.28.1715625088408;
+        Mon, 13 May 2024 11:31:28 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340b48a152sm8067572a12.20.2024.05.13.11.31.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 11:31:28 -0700 (PDT)
+Date: Mon, 13 May 2024 11:31:23 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
+	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
+	keescook@chromium.org, ajones@ventanamicro.com,
+	conor.dooley@microchip.com, cleger@rivosinc.com,
+	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
+	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
+	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
+	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
+	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, hankuan.chen@sifive.com,
+	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
+	apatel@ventanamicro.com, mchitale@ventanamicro.com,
+	dbarboza@ventanamicro.com, sameo@rivosinc.com,
+	shikemeng@huaweicloud.com, willy@infradead.org,
+	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
+	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
+	maskray@google.com, ancientmodern4@gmail.com,
+	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
+	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
+	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
+	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
+	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
+	jhubbard@nvidia.com
+Subject: Re: [PATCH v3 17/29] prctl: arch-agnostic prctl for indirect branch
+ tracking
+Message-ID: <ZkJce/hix5kRhubS@debug.ba.rivosinc.com>
+References: <20240403234054.2020347-1-debug@rivosinc.com>
+ <20240403234054.2020347-18-debug@rivosinc.com>
+ <Zj6tzxWFj4H+250p@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20240513173546.679061-2-admiyo@os.amperecomputing.com>
+In-Reply-To: <Zj6tzxWFj4H+250p@ghost>
 
-On Mon, May 13, 2024 at 01:35:44PM -0400, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@os.amperecomputing.com>
-> 
-> Implementation of DMTF DSP:0292
-> Management Control Transport Protocol(MCTP)  over
-> Platform Communication Channel(PCC)
-> 
-> MCTP devices are specified by entries in DSDT/SDST and
-> reference channels specified in the PCCT.
-> 
-> Communication with other devices use the PCC based
-> doorbell mechanism.
-> 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+On Fri, May 10, 2024 at 04:29:19PM -0700, Charlie Jenkins wrote:
+>On Wed, Apr 03, 2024 at 04:35:05PM -0700, Deepak Gupta wrote:
+>> Three architectures (x86, aarch64, riscv) have support for indirect branch
+>> tracking feature in a very similar fashion. On a very high level, indirect
+>> branch tracking is a CPU feature where CPU tracks branches which uses
+>> memory operand to perform control transfer in program. As part of this
+>> tracking on indirect branches, CPU goes in a state where it expects a
+>> landing pad instr on target and if not found then CPU raises some fault
+>> (architecture dependent)
+>>
+>> x86 landing pad instr - `ENDBRANCH`
+>> aarch64 landing pad instr - `BTI`
+>> riscv landing instr - `lpad`
+>>
+>> Given that three major arches have support for indirect branch tracking,
+>> This patch makes `prctl` for indirect branch tracking arch agnostic.
+>>
+>> To allow userspace to enable this feature for itself, following prtcls are
+>> defined:
+>>  - PR_GET_INDIR_BR_LP_STATUS: Gets current configured status for indirect
+>>    branch tracking.
+>>  - PR_SET_INDIR_BR_LP_STATUS: Sets a configuration for indirect branch
+>>    tracking.
+>>    Following status options are allowed
+>>        - PR_INDIR_BR_LP_ENABLE: Enables indirect branch tracking on user
+>>          thread.
+>>        - PR_INDIR_BR_LP_DISABLE; Disables indirect branch tracking on user
+>>          thread.
+>>  - PR_LOCK_INDIR_BR_LP_STATUS: Locks configured status for indirect branch
+>>    tracking for user thread.
+>>
+>> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+>> ---
+>>  include/uapi/linux/prctl.h | 27 +++++++++++++++++++++++++++
+>>  kernel/sys.c               | 30 ++++++++++++++++++++++++++++++
+>>  2 files changed, 57 insertions(+)
+>>
+>> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+>> index 3c66ed8f46d8..b7a8212a068e 100644
+>> --- a/include/uapi/linux/prctl.h
+>> +++ b/include/uapi/linux/prctl.h
+>> @@ -328,4 +328,31 @@ struct prctl_mm_map {
+>>   */
+>>  #define PR_LOCK_SHADOW_STACK_STATUS      73
+>>
+>> +/*
+>> + * Get the current indirect branch tracking configuration for the current
+>> + * thread, this will be the value configured via PR_SET_INDIR_BR_LP_STATUS.
+>> + */
+>> +#define PR_GET_INDIR_BR_LP_STATUS      74
+>> +
+>> +/*
+>> + * Set the indirect branch tracking configuration. PR_INDIR_BR_LP_ENABLE will
+>> + * enable cpu feature for user thread, to track all indirect branches and ensure
+>> + * they land on arch defined landing pad instruction.
+>> + * x86 - If enabled, an indirect branch must land on `ENDBRANCH` instruction.
+>> + * arch64 - If enabled, an indirect branch must land on `BTI` instruction.
+>> + * riscv - If enabled, an indirect branch must land on `lpad` instruction.
+>> + * PR_INDIR_BR_LP_DISABLE will disable feature for user thread and indirect
+>> + * branches will no more be tracked by cpu to land on arch defined landing pad
+>> + * instruction.
+>> + */
+>> +#define PR_SET_INDIR_BR_LP_STATUS      75
+>> +# define PR_INDIR_BR_LP_ENABLE		   (1UL << 0)
+>> +
+>> +/*
+>> + * Prevent further changes to the specified indirect branch tracking
+>> + * configuration.  All bits may be locked via this call, including
+>> + * undefined bits.
+>> + */
+>> +#define PR_LOCK_INDIR_BR_LP_STATUS      76
+>> +
+>>  #endif /* _LINUX_PRCTL_H */
+>> diff --git a/kernel/sys.c b/kernel/sys.c
+>> index 242e9f147791..c770060c3f06 100644
+>> --- a/kernel/sys.c
+>> +++ b/kernel/sys.c
+>> @@ -2330,6 +2330,21 @@ int __weak arch_lock_shadow_stack_status(struct task_struct *t, unsigned long st
+>>  	return -EINVAL;
+>>  }
+>>
+>> +int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>> +int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>> +{
+>> +	return -EINVAL;
+>> +}
+>> +
+>
+>These weak references each cause a warning:
+>
+>kernel/sys.c:2333:12: warning: no previous prototype for 'arch_get_indir_br_lp_status' [-Wmissing-prototypes]
+> 2333 | int __weak arch_get_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>kernel/sys.c:2338:12: warning: no previous prototype for 'arch_set_indir_br_lp_status' [-Wmissing-prototypes]
+> 2338 | int __weak arch_set_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>kernel/sys.c:2343:12: warning: no previous prototype for 'arch_lock_indir_br_lp_status' [-Wmissing-prototypes]
+> 2343 | int __weak arch_lock_indir_br_lp_status(struct task_struct *t, unsigned long __user *status)
+>
+>Can the definitions be added to include/linux/mm.h alongside the
+>*_shadow_stack_status() definitions?
 
-Hi Adam,
+Noted. Will work on a fix for this.
 
-Some minor feedback from my side.
-
-..
-
-> +static struct mctp_pcc_packet *mctp_pcc_extract_data(struct sk_buff *old_skb,
-> +						     void *buffer, int outbox_index)
-> +{
-> +	struct mctp_pcc_packet *mpp;
-> +
-> +	mpp = buffer;
-> +	writel(PCC_MAGIC | outbox_index, &mpp->pcc_header.signature);
-> +	writel(0x1, &mpp->pcc_header.flags);
-> +	memcpy_toio(mpp->pcc_header.mctp_signature, MCTP_SIGNATURE, SIGNATURE_LENGTH);
-> +	writel(old_skb->len + SIGNATURE_LENGTH,  &mpp->pcc_header.length);
-> +	memcpy_toio(mpp->header_data,    old_skb->data, old_skb->len);
-> +	return mpp;
-> +}
-> +
-> +static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *)
-
-Please include a name for all function parameters.
-
-Flagged by W=1 builds.
-
-> +{
-> +	struct sk_buff *skb;
-> +	struct mctp_pcc_packet *mpp;
-> +	struct mctp_skb_cb *cb;
-> +	int data_len;
-> +	unsigned long buf_ptr_val;
-
-buf_ptr_val is assigned but otherwise unused.
-
-Flagged by W=1 builds.
-
-> +	struct mctp_pcc_ndev *mctp_pcc_dev = container_of(c, struct mctp_pcc_ndev, inbox_client);
-> +	void *skb_buf;
-
-For Networking code please consider:
-
-1. Using reverse xmas tree order - longest line to shortest - for local
-   variable declarations.
-
-   This tool can be of assistance: https://github.com/ecree-solarflare/xmastree
-
-2. Restricting lines to 80 columns wide where this can be trivially achieved.
-
-   ./scripts/checkpatch.pl --max-line-length=80
-
-In this case, perhaps:
-
-	struct mctp_pcc_ndev *mctp_pcc_dev;
-	struct mctp_pcc_packet *mpp;
-	struct mctp_skb_cb *cb;
-	struct sk_buff *skb;
-	void *skb_buf;
-	int data_len;
-
-	mctp_pcc_dev = container_of(c, struct mctp_pcc_ndev, inbox_client);
-
-> +
-> +	mpp = (struct mctp_pcc_packet *)mctp_pcc_dev->pcc_comm_inbox_addr;
-> +	buf_ptr_val = (unsigned long)mpp;
-> +	data_len = readl(&mpp->pcc_header.length) + MCTP_HEADER_LENGTH;
-> +	skb = netdev_alloc_skb(mctp_pcc_dev->mdev.dev, data_len);
-> +	if (!skb) {
-> +		mctp_pcc_dev->mdev.dev->stats.rx_dropped++;
-> +		return;
-> +	}
-> +	skb->protocol = htons(ETH_P_MCTP);
-> +	skb_buf = skb_put(skb, data_len);
-> +	memcpy_fromio(skb_buf, mpp, data_len);
-> +	skb_reset_mac_header(skb);
-> +	skb_pull(skb, sizeof(struct mctp_pcc_hdr));
-> +	skb_reset_network_header(skb);
-> +	cb = __mctp_cb(skb);
-> +	cb->halen = 0;
-> +	skb->dev =  mctp_pcc_dev->mdev.dev;
-> +	netif_rx(skb);
-> +}
-> +
-> +static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
-> +{
-> +	unsigned char *buffer;
-> +	struct mctp_pcc_ndev *mpnd;
-> +	struct mctp_pcc_packet  *mpp;
-> +	unsigned long flags;
-> +	int rc;
-> +
-> +	netif_stop_queue(ndev);
-> +	ndev->stats.tx_bytes += skb->len;
-> +	mpnd = (struct mctp_pcc_ndev *)netdev_priv(ndev);
-> +	spin_lock_irqsave(&mpnd->lock, flags);
-> +	buffer =  mpnd->pcc_comm_outbox_addr;
-
-buffer is assigned but otherwise unused in this function.
-
-Flagged by W=1 builds.
-
-> +	mpp = mctp_pcc_extract_data(skb, mpnd->pcc_comm_outbox_addr, mpnd->hw_addr.outbox_index);
-> +	rc = mpnd->out_chan->mchan->mbox->ops->send_data(mpnd->out_chan->mchan, mpp);
-> +	spin_unlock_irqrestore(&mpnd->lock, flags);
-> +
-> +	dev_consume_skb_any(skb);
-> +	netif_start_queue(ndev);
-> +	if (!rc)
-> +		return NETDEV_TX_OK;
-> +	return NETDEV_TX_BUSY;
-> +}
-
-..
-
--- 
-pw-bot: changes-requested
+>
+>- Charlie
+>
+>>  #define PR_IO_FLUSHER (PF_MEMALLOC_NOIO | PF_LOCAL_THROTTLE)
+>>
+>>  #ifdef CONFIG_ANON_VMA_NAME
+>> @@ -2787,6 +2802,21 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>>  			return -EINVAL;
+>>  		error = arch_lock_shadow_stack_status(me, arg2);
+>>  		break;
+>> +	case PR_GET_INDIR_BR_LP_STATUS:
+>> +		if (arg3 || arg4 || arg5)
+>> +			return -EINVAL;
+>> +		error = arch_get_indir_br_lp_status(me, (unsigned long __user *) arg2);
+>> +		break;
+>> +	case PR_SET_INDIR_BR_LP_STATUS:
+>> +		if (arg3 || arg4 || arg5)
+>> +			return -EINVAL;
+>> +		error = arch_set_indir_br_lp_status(me, (unsigned long __user *) arg2);
+>> +		break;
+>> +	case PR_LOCK_INDIR_BR_LP_STATUS:
+>> +		if (arg3 || arg4 || arg5)
+>> +			return -EINVAL;
+>> +		error = arch_lock_indir_br_lp_status(me, (unsigned long __user *) arg2);
+>> +		break;
+>>  	default:
+>>  		error = -EINVAL;
+>>  		break;
+>> --
+>> 2.43.2
+>>
 
