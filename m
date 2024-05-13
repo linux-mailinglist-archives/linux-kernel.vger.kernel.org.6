@@ -1,117 +1,137 @@
-Return-Path: <linux-kernel+bounces-177927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D418C4653
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 951178C4654
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 798E61F24D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A8F1C23413
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7247D2263A;
-	Mon, 13 May 2024 17:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F49C24B2A;
+	Mon, 13 May 2024 17:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KlIQJb11"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YkracBHs"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C548224CC
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18202263A
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715622034; cv=none; b=pAVT9+1aVuu2I17i7sbowhpcKBZzvWyGlCYUXxWDPH274s2H45USAmO+6O4EG9aKhNfJKZcr4rn25w/7neKlkuKXkri2vZ5t1Ih9wrEH/cCkkvZKl4eirAteKDzafoV22aW9iKiHwlqBIFv1mO5Ao4tJrs92CkOGVI77Ol1Gk+U=
+	t=1715622060; cv=none; b=XMJhjM5LObm5nDNs/ScCUlx63krsuDc/YQmHyjqEUDHeoPam7xamVwnDILDB6xGrkqLuKByyOPCumiY8g799mjod5oK5eUXS0+B3X5SiqOMlbKcuhRV+0zqQjvGbZhWvrPGQPz2NkC1/ecNxn7ZZ1Si6GEWrIbY6kVnqpxJedB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715622034; c=relaxed/simple;
-	bh=t5SpwHTjyFiHLCIZdQyU0B+XcxTvQrO08SXfGI600DQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FDoPZqjXC1t8nE4ITr3ydVvJvnqiEymxW1/JghcJ060q7/aHo/a6L6x83bEojCznGUVxvDEJH97QSnebc7SYTFbHEAG99KjjuIqvb/N1YRAriynoyH4bBmWGLpG7BUOeAzRztbqRs2EQccGHPvd2ol5mG/2TVPUiS04dQy72zIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KlIQJb11; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51fb14816f6so5968631e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:40:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715622031; x=1716226831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=24+tcaOUdABW+nIu4gSBjGBZOzZFGwP/RR0C3nr9PDs=;
-        b=KlIQJb11EM++tyEgfg0AXADEnaboBBKjf7XogWJXpAMZscfOXpGdq50BvIvGbO+Fjx
-         FTqGVUCv0MwlNgHIC4RXWx4mnFMKc6uy2nP4mnVGzfCkXgeJnDiGcaGQ8RYVQ5DJ/j+D
-         mSAMuaEXLZF5zuzQjxWr7qFTktJBFgIW0gtFgF4HRE26NfhUqraFedNJwZGc+lmLy94Q
-         fpjkYbAAW7GsdED0D6UCzsOv2tCa5E9gxe7U1ItIAVYAqfxbUVwE7aop6PoSV3ywjehK
-         exCCmaghHFCPwocJQEjYPtKSgPSGtj1+IHs1YrlS91OrqEyszrsxs00O8wQRMEtrpOW0
-         /ygQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715622031; x=1716226831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=24+tcaOUdABW+nIu4gSBjGBZOzZFGwP/RR0C3nr9PDs=;
-        b=Cwq5/+e930rqDn6s3M6O1tx1Tltj+BIrBWXSpbSSVaucvGNld0Z7ZhvSE1ZWmgu+TE
-         3gT4bhXkduP7aCs21iYaASADF3eL75QCRNgeac4j/0jj9wqGIaGUv8QUQroIISCsXGD7
-         L7AF2Oj8c9VyrCn0+zXjGm9D9SKlp838O8KZmLz38FidB8HVwz8mHLyDnDUG62+aG7rg
-         QsBIqPK9/IaYbas3CNRg+tcIkt8iqVSD6LMG59ivaHVwr+HbsZeI7g+61I6etzRvO/vA
-         2FI47p3Vrsrx51D44ms7/bd3ysdI1vn4gGsSYQnsTNeEkKJv30NcGex7xU4ao7FCQ/5N
-         iCNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwEEgtu6wBywedknO0STvIEZd2qJWiAaulxaVtZSitcvnc4tuDF7CFumvF5WxHCC6p6tA+H5R7Bx7gz281wYxQbTlHu1G21oauvvu3
-X-Gm-Message-State: AOJu0YzNvViVti03pZC9hcBv9F06IL+/Tt2xg4xm1k90ziLntvAbw3j2
-	IqFS1qNiOAKghO8Jku4R2AIAXnmtOR7qCatAtyL1bufkD36NfOsq/b32kfplcsF2lL6WVzL5A3+
-	wffNgNDxlIA8qfiqK14jojKg2yeo=
-X-Google-Smtp-Source: AGHT+IHC0KZ5j0ymUWuKV5sJjg+pdAqwWkahWyvfPoDuWJyTmcZeUSOgpVUC0Abl/XwLPL4Au4KaiAJXgT5PjEl4TFY=
-X-Received: by 2002:a05:6512:52a:b0:51f:13e8:3729 with SMTP id
- 2adb3069b0e04-5220fc78605mr6304140e87.20.1715622031102; Mon, 13 May 2024
- 10:40:31 -0700 (PDT)
+	s=arc-20240116; t=1715622060; c=relaxed/simple;
+	bh=/L1/jnpE8b7+f3OHM4BP1SRT75MT3adXNsbtj+5NpW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mwIcXUSj1+U7B4j4PDqXooQ2tCFiBxi942SxNbrGUiMaVKawEdiWVOQCiKUszwck4g/1j115aXv/CWUF6IdWSCqElKMLBVqPCeB2qKm9i+v9Mpyx0eBH6RnzqhW0G6yQVWbRhCeTrdoHj0udNGn0r5eFClRm8ads7+vh+PYb6Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YkracBHs; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B31B140E0244;
+	Mon, 13 May 2024 17:40:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id g74zZVoWWEGB; Mon, 13 May 2024 17:40:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1715622051; bh=SF3hHmxLdQeF695Adkz40wb9aj7fiE1oJ7frwWYgGXo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YkracBHsf4Y0RjACVIknJfECEA3v+lMK5CY1xL9BVHTm5aX7XyTY5UUWvsOPttJQl
+	 qVNtd0bmTbbMnY2/22wR2dgqECjPmBefPEKluktaZMq6Xb+fyM/1yChEXdJadUWmKb
+	 wEGSgT5xbHmbtZSTud7bFxF7OkAXabwY5KnnruLhUqaAdjcCsycp142zR4OrLvQyCc
+	 Tm+3+uyl6ulrLroS9WVY5H2zaDYXSRERfzZwQcjlAthINIPW7gJ4lNgIBc+LzhgaxP
+	 Xj9DsqDjSoMAerHQfBKWK+jkszGy+k2GZwU/YNFHSrqOwlD+8VPwbmqWBQ6NqGzq4l
+	 HTqN8Yp21CpBCC8SPyx0qry02CY6fbM9HYMdQeCijZmIeOP5aTub38c8QlWa+Emowz
+	 KFuqH2OEU9QHGRaU6Gt+ftW4+7T2NhBAsgPPkBgzvKsBUlk24j5PyQ/yvaak/ORA6E
+	 hCnzNuSdLSKy3nbru890N2NT2YzGAWCyfozuZdBja1AE56Y43JcquRzN5yhYJgklSS
+	 39WiX8PzKCWpydHbNI0GB1PNDfckV/12Pb3tyR9isCoayM5mbcWkCZLvVsum9anXjf
+	 NV9q+CaGmLwp2CsivXUdR+kRBXybG8J7ddVEqSyb3Fz+l8X5rRjzFObR5A/x4ByOG8
+	 nzLGECMIZNBRvgDfiEx9BgGk=
+Received: from zn.tnic (pd953020b.dip0.t-ipconnect.de [217.83.2.11])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 37FFB40E01A3;
+	Mon, 13 May 2024 17:40:48 +0000 (UTC)
+Date: Mon, 13 May 2024 19:40:42 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/alternatives for v6.10-rc1
+Message-ID: <20240513174042.GAZkJQmuIGCVEfYCrg@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHx5RXBfazB62qpbGGK3_YjwCFbiJbEXrgo88V6qHFdTW1CdRQ@mail.gmail.com>
- <338daebd-b4af-4a0c-951a-ad7f86dc4646@gmail.com> <CAHx5RXAOKBGXRgC8pqEyY3MZGXxj0-vrwnqg_WZqKreYp18dAg@mail.gmail.com>
- <7efffaa0-6330-4b01-b3d2-63eb063cbbb0@gmail.com> <CAHx5RXD8qFmbEytrPcd40Pj0VRo7uOvZjucrMj6Xxqw73YyS1Q@mail.gmail.com>
- <212a9464-d52b-4730-95b9-5a0aebd38c91@gmail.com> <CAHx5RXCWW5M-eW5v65bAkQWZemsU2NTvDv3jA9_XKz=+YP56Qg@mail.gmail.com>
- <688e54ec-3b29-4e3b-a2c3-f2c83b9c97b7@lunn.ch>
-In-Reply-To: <688e54ec-3b29-4e3b-a2c3-f2c83b9c97b7@lunn.ch>
-From: Stephen Langstaff <stephenlangstaff1@gmail.com>
-Date: Mon, 13 May 2024 18:40:19 +0100
-Message-ID: <CAHx5RXBFdzsgKXR94gdZd2b=uz8PJDg4OjLPJxKtsdhcjJq3Qw@mail.gmail.com>
-Subject: Re: drivers/net/dsa/dsa_loop_bdinfo.c build problems
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org, 
-	"OlteanV@gmail.com" <OlteanV@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Mon, May 13, 2024 at 5:54=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
-> As Florian pointed out, dsa_loop_bdinfo.o should be built into your
-> kernel. When you insmod dsa_loop.ko, it should match the data in
-> dsa_loop_bdinfo to the dsa_loop driver an instantiate an instance of
-> it. Do you see that happening?
+Hi Linus,
 
-Well, if I fiddle with the Makefiles to get dsa_loop_bdinfo built as a
-module (as opposed to not building at all) then I see the following
-behaviour:
+please pull x86/alternatives for v6.10-rc1.
 
-root@machine:~/dsa_test# ls
-dsa_loop.ko  dsa_loop_bdinfo.ko
-root@machine:~/dsa_test# modprobe dsa_core
-root@machine:~/dsa_test# insmod dsa_loop_bdinfo.ko
-root@machine:~/dsa_test# insmod dsa_loop.ko
-root@machine:~/dsa_test# lsmod
-Module                  Size  Used by
-dsa_loop               16384  0
-dsa_loop_bdinfo        16384  0
-dsa_core              118784  1 dsa_loop
-..
+You might encounter an easy peasy merge conflict which you can resolve
+by simply zapping alternative_input_2(), i.e., what
 
-..and I see no new interfaces reported by ifconfig -a
-[just the existing eth0, eth1 and lo0 interfaces]
+  8dc8b02d707e ("x86/alternatives: Remove alternative_input_2()")
 
-I will revert my changes to the Makefiles and confirm that
-dsa_loop_bdinfo.o does not get built into the kernel - that's an
-overnight build for me so bye for now!
+does.
+
+Thx.
+
+---
+
+The following changes since commit fec50db7033ea478773b159e0e2efb135270e3b7:
+
+  Linux 6.9-rc3 (2024-04-07 13:22:46 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip x86_alternatives_for_v6.10_rc1
+
+for you to fetch changes up to 8dc8b02d707ee4167fffaf3a97003bcdac282876:
+
+  x86/alternatives: Remove alternative_input_2() (2024-05-06 14:30:54 +0200)
+
+----------------------------------------------------------------
+- Switch the in-place instruction patching which lead to at least one weird bug
+  with 32-bit guests, seeing stale instruction bytes, to one working on
+  a buffer, like the rest of the alternatives code does
+
+- Add a long overdue check to the X86_FEATURE flag modifying functions to warn
+  when former get changed in a non-compatible way after alternatives have been
+  patched because those changes will be already wrong
+
+- Other cleanups
+
+----------------------------------------------------------------
+Borislav Petkov (AMD) (6):
+      x86/alternatives: Catch late X86_FEATURE modifiers
+      x86/alternatives: Use a temporary buffer when optimizing NOPs
+      x86/alternatives: Get rid of __optimize_nops()
+      x86/alternatives: Optimize optimize_nops()
+      x86/alternatives: Sort local vars in apply_alternatives()
+      x86/alternatives: Remove alternative_input_2()
+
+ arch/x86/include/asm/alternative.h   |  14 ----
+ arch/x86/include/asm/cpufeature.h    |   8 ++-
+ arch/x86/include/asm/text-patching.h |   2 +-
+ arch/x86/kernel/alternative.c        | 133 +++++++++++++++--------------------
+ arch/x86/kernel/callthunks.c         |   9 +--
+ arch/x86/kernel/cpu/cpuid-deps.c     |   3 +
+ 6 files changed, 71 insertions(+), 98 deletions(-)
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
