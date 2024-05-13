@@ -1,303 +1,121 @@
-Return-Path: <linux-kernel+bounces-178110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CAA8C48DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:28:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D848C48E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAAF281615
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C821F2190E
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0C283CA2;
-	Mon, 13 May 2024 21:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722BC839F5;
+	Mon, 13 May 2024 21:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPbvR8jG"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="s9m2xquz"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D544E39FD8;
-	Mon, 13 May 2024 21:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7087E58E
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 21:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715635707; cv=none; b=uMwFdD6Yfb2GMLkcJ6s4rC6VIo4RoyfARXJkpdEFQYMAyVGZRZgHkpT0lZvm92aiE7hvnF5oazXLiZWQj81CHiDTSiL7UFlCbZKii1XBzHmHFlTWt1islVEbIpznvK/n5wAaJoDNC6KUCALk0EDzk/iYT62HBuoLom9c8oeN2jI=
+	t=1715635896; cv=none; b=q/DjuU45v/dvqYk5mAEGvOuKJXsWYQ9oQCrwYZotkdAipR68LVxHjqB1g1+fBEwyA2taJfdjOfBOF4nmZof4GKH730paybmckwAmqjsdDniCMnTrpgI9OoIx4Kg8Cc93SI01RIotbZ/9aKuyWBhbAom5xKJdyuH0lcQvN/xO05Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715635707; c=relaxed/simple;
-	bh=LBX+N5Ggua2JTg79zgfQCkDaC3nx4+lNOVDngdMnyk8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JVGTTkhNIpfqo0qilq8JLHyj3U+odl1yNt1YGR7ruq3FoiJQqzYhY4XgiBK3wO89zf5SQi7aTWuaNPOpEHVv4uw/1TbEMcM6Wo8VWhxVO8AbLd+gRA7HwfEPXPkgbeJNqs1XlQb8BKK6RD9p6XQdJZIkicwu/YEjxAttFOuWh7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPbvR8jG; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-61eba9f9c5dso3702928a12.0;
-        Mon, 13 May 2024 14:28:25 -0700 (PDT)
+	s=arc-20240116; t=1715635896; c=relaxed/simple;
+	bh=Kr9UDK5KfJoHTz3suK1v0y1iPSQaijtXIRR3Ew0eZHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOWbCOiwtK1akHf3yoxKOXiJ0xWd6iTZBiYiV9o1Ty/cEuCHvybywg+bvvPh8L1kiu0jJM0vOkdSRz/NXFiMKDmTKXJL1qDa2Xhu7n9mLzfxrWzpmGOLsNsiUJdbVW1SH0JlgXC+I8B2nbbb4opj9UbkGNMVjhKbeY51Y4Wg6Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=s9m2xquz; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a59cf8140d0so1122441666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:31:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715635705; x=1716240505; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cnoth6ZcdQw/rIhwFjYiJ5WI2BarXhQB3LevZcDNaps=;
-        b=hPbvR8jGa+4d4vaBJuHyhgGTsahAs9o+Nnmavc4cPIb1zSIOTNle/5QQ7BjDbKzHLc
-         hitqq0zAg3fzNx81YMf+k3I/OrQlb1Rl8kdhx+7FEQgniHq3n3AZHgOFkk7nzqzPZYMB
-         KVN7jAtcCKLzOv5zCXajN4UzDaYYPhjj2aWA6+2DvgLbwwBKmLqhRPYnxrxgTdA9pmOA
-         AC6rUy3ytU368/85p0HnPGeAYtqQCoo9oehKucN+v8LF/RYtGEYobmkpAQipPNHjGuFe
-         ygzFUE/zSjbQItCXjtIUyZ85qSP6bOBj6xiyBrPa10ZH8m3byynRIM78JPSUlo7qJAWR
-         MY/A==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1715635893; x=1716240693; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KHM5OrKq8XtLFGFwS3E7+LYEHMOw759zWdrMQnI18lk=;
+        b=s9m2xquzDHjwJcImvw2ftFWVY9zxwt/2yFmHNop3o1uR+vsvUVUb17CABn8Y0Q5kB7
+         GPsu/JUM4pDkd14ry8EAMWiIpNuKNMS85rrDMDI/UvYhTkDHEOI4w32i4fbtJDNWCS1r
+         fPyKP4SldT4SU3fkYFILBBNCyl/nfUck4CTZE7TZjnL2a31xhq9avQbfvNkZo+O+62wn
+         Y1EUlKfAkYOQH6WNaBZIPPlhV6jW/NjIwTOVLPsrLdfROmOm+xRmSwZV33/Ckz2Rshs6
+         ZBhSB1Bh5AZjPgFmxud6c3HXItqzYUeGYWk+K2K2+5bXL01YsQ6+yjmH5QWtpdFpTTQn
+         gjIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715635705; x=1716240505;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cnoth6ZcdQw/rIhwFjYiJ5WI2BarXhQB3LevZcDNaps=;
-        b=G2cAOJAZiowKZPFwPMVRcFQUIvug4gOOkOEGqu7bYfTGyyLAkePGqUzEBaEwYP3bIW
-         ZtYqfuPXltsdH2D0KVgGhZe3HxT0i4Y2pUUrNGtNMy+ZpqJX0e9661i/FaJZTbD9yYJt
-         8cheBFyr48R4OgsgKDwWRw4Od1LxQ7kSJ9Y/9v8XoKkgJVfu9iklj+ABBwZRo4pYRVwM
-         iUI9mtgKF118ZjO+87A1eM+c/jqSF9TW/PIaFwV3gOs3DY7CuZNYFXIayegokcZjujls
-         w6nWrsJh3J34u8+rQ4M34XIzmWSOCUDW6rFWYhnOOV/RNz8ngURLyJgsWxfi0HHfk6bO
-         4BOA==
-X-Forwarded-Encrypted: i=1; AJvYcCWE0IkR+ssMVdOCrXIYisotWxaMFIE8+XALDCK+Fv/6g+xKYSr3WDcdTopP5FTcWivvN81U75dzKGNgWcELZiT56Ek47NM0fioFFbshyQbFpmL8wukLy/ZmCMcDtLo5ETLAXTkEymNGDPLaR4vnWJgmuKYPfaP++zO80SYe/Gh5KQXRLkq+CRy40iAGOaHp1034fJOLCmv5ntqGL26Qm8scKD6S18NoE0RoWJzAowsdkq+YPcFyQQ/Qfm3B
-X-Gm-Message-State: AOJu0Yz5a6x5J+h1zXxy5ZVHkcm9912N/vVIcrMobyMCHpui1ttQ09HV
-	k47c1+pvEfZsCY96s6SG5tXhwwg96P0w0gzh8rR+5CFISlQkBF9Y
-X-Google-Smtp-Source: AGHT+IHkv+d6QPMuEL4E7fVb1LA2X8NN5ll/hGqsbcXiuhnvkSjMoilkO8Y0Nt+E6FS3tcrldryfkA==
-X-Received: by 2002:a17:90b:4f45:b0:2b1:534f:ea09 with SMTP id 98e67ed59e1d1-2b6cc76d27amr9527797a91.23.1715635705202;
-        Mon, 13 May 2024 14:28:25 -0700 (PDT)
-Received: from krava ([50.204.89.31])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67126ac21sm8388958a91.30.2024.05.13.14.28.23
+        d=1e100.net; s=20230601; t=1715635893; x=1716240693;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KHM5OrKq8XtLFGFwS3E7+LYEHMOw759zWdrMQnI18lk=;
+        b=Aomj19ifLjbn4xA/sXySNa8xCpkLScIQCVwOoKmRI6PT6Xac1lEw4STMAk2DyMUThv
+         U7jimu0J/4dcza+Roupiw3AzT3L1IitbuRyRMvYt2qCRyNne4/waph6SINefgik/QGJy
+         IZcczobPK7DmY5S7afCO1bczJRZeIcSLkKbZA76QobmnlSXxM1pTZn0f5serY14cz2R+
+         fjTbGpumJCmlOK8MR6QCl3RLWZHLtgPiXDi4M6KWx288El3qZeM9w+EI0xGRHujVROFA
+         X/P+S/deBc4+4qrJeIfomgDXFwk7dirq+B4p8H+iR7CdgFv6GEuDupENq//RMM+mj+Jh
+         faWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWA3e++CXEo/YlZ4Mja3q/yjJP7qb3arYloTkPpqq6Rg6JxxAyR1jbEREHUoj5JV7xJZpZfDnET+BLd7pzewznBcu1IUC8ugGnnIfTz
+X-Gm-Message-State: AOJu0YyLPLOzYNbY4h9cextXB7yVGJhXtkSLDhmVETVEPdV+KasXeK2f
+	BcBEMpveY7kBVUYjYZaN7lUkz5fjHlV/Z8UxuYJnwWWv/FugQ7Uc77qL7CD4Xag=
+X-Google-Smtp-Source: AGHT+IFRtIdiCU6HVhtdEvjPxTd68hHuSXaq7Nk9aW986VCC2SUhFWuj88xAWlYO1YHE9NZl0vVLQQ==
+X-Received: by 2002:a17:906:7d7:b0:a59:b6e8:9ded with SMTP id a640c23a62f3a-a5a2d66a283mr687658866b.59.1715635893486;
+        Mon, 13 May 2024 14:31:33 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-100.dynamic.mnet-online.de. [62.216.208.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17891f6esm644037366b.54.2024.05.13.14.31.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 14:28:24 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Mon, 13 May 2024 15:28:21 -0600
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Oleg Nesterov <oleg@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-man@vger.kernel.org, x86@kernel.org, bpf@vger.kernel.org,
-	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>
-Subject: Re: [PATCHv5 bpf-next 7/8] selftests/x86: Add return uprobe shadow
- stack test
-Message-ID: <ZkKF9WZVfFgiVSxe@krava>
-References: <20240507105321.71524-1-jolsa@kernel.org>
- <20240507105321.71524-8-jolsa@kernel.org>
- <20240513184507.215ec89dea4790243d17a52c@kernel.org>
+        Mon, 13 May 2024 14:31:33 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] drm: Combine identical if/elif code blocks
+Date: Mon, 13 May 2024 23:28:38 +0200
+Message-ID: <20240513212836.292589-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513184507.215ec89dea4790243d17a52c@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024 at 06:45:07PM +0900, Masami Hiramatsu wrote:
-> On Tue,  7 May 2024 12:53:20 +0200
-> Jiri Olsa <jolsa@kernel.org> wrote:
-> 
-> > Adding return uprobe test for shadow stack and making sure it's
-> > working properly. Borrowed some of the code from bpf selftests.
-> 
-> Hi Jiri,
-> 
-> I can not find "SKIP" result in this change. If CONFIG_UPROBES=n,
-> this should skip uprobe test.
+Merge the identical if/elif code blocks and remove the following two
+warnings reported by make includecheck:
 
-ah it should be detected by parse_uint_from_file returning ENOENT
-or something like that.. will add that
+	asm/ioctl.h is included more than once
+	linux/types.h is included more than once
 
-thanks,
-jirka
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ include/uapi/drm/drm.h | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> 
-> Thank you,
-> 
-> > 
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  .../testing/selftests/x86/test_shadow_stack.c | 142 ++++++++++++++++++
-> >  1 file changed, 142 insertions(+)
-> > 
-> > diff --git a/tools/testing/selftests/x86/test_shadow_stack.c b/tools/testing/selftests/x86/test_shadow_stack.c
-> > index 757e6527f67e..1b919baa999b 100644
-> > --- a/tools/testing/selftests/x86/test_shadow_stack.c
-> > +++ b/tools/testing/selftests/x86/test_shadow_stack.c
-> > @@ -34,6 +34,7 @@
-> >  #include <sys/ptrace.h>
-> >  #include <sys/signal.h>
-> >  #include <linux/elf.h>
-> > +#include <linux/perf_event.h>
-> >  
-> >  /*
-> >   * Define the ABI defines if needed, so people can run the tests
-> > @@ -681,6 +682,141 @@ int test_32bit(void)
-> >  	return !segv_triggered;
-> >  }
-> >  
-> > +static int parse_uint_from_file(const char *file, const char *fmt)
-> > +{
-> > +	int err, ret;
-> > +	FILE *f;
-> > +
-> > +	f = fopen(file, "re");
-> > +	if (!f) {
-> > +		err = -errno;
-> > +		printf("failed to open '%s': %d\n", file, err);
-> > +		return err;
-> > +	}
-> > +	err = fscanf(f, fmt, &ret);
-> > +	if (err != 1) {
-> > +		err = err == EOF ? -EIO : -errno;
-> > +		printf("failed to parse '%s': %d\n", file, err);
-> > +		fclose(f);
-> > +		return err;
-> > +	}
-> > +	fclose(f);
-> > +	return ret;
-> > +}
-> > +
-> > +static int determine_uprobe_perf_type(void)
-> > +{
-> > +	const char *file = "/sys/bus/event_source/devices/uprobe/type";
-> > +
-> > +	return parse_uint_from_file(file, "%d\n");
-> > +}
-> > +
-> > +static int determine_uprobe_retprobe_bit(void)
-> > +{
-> > +	const char *file = "/sys/bus/event_source/devices/uprobe/format/retprobe";
-> > +
-> > +	return parse_uint_from_file(file, "config:%d\n");
-> > +}
-> > +
-> > +static ssize_t get_uprobe_offset(const void *addr)
-> > +{
-> > +	size_t start, end, base;
-> > +	char buf[256];
-> > +	bool found = false;
-> > +	FILE *f;
-> > +
-> > +	f = fopen("/proc/self/maps", "r");
-> > +	if (!f)
-> > +		return -errno;
-> > +
-> > +	while (fscanf(f, "%zx-%zx %s %zx %*[^\n]\n", &start, &end, buf, &base) == 4) {
-> > +		if (buf[2] == 'x' && (uintptr_t)addr >= start && (uintptr_t)addr < end) {
-> > +			found = true;
-> > +			break;
-> > +		}
-> > +	}
-> > +
-> > +	fclose(f);
-> > +
-> > +	if (!found)
-> > +		return -ESRCH;
-> > +
-> > +	return (uintptr_t)addr - start + base;
-> > +}
-> > +
-> > +static __attribute__((noinline)) void uretprobe_trigger(void)
-> > +{
-> > +	asm volatile ("");
-> > +}
-> > +
-> > +/*
-> > + * This test setups return uprobe, which is sensitive to shadow stack
-> > + * (crashes without extra fix). After executing the uretprobe we fail
-> > + * the test if we receive SIGSEGV, no crash means we're good.
-> > + *
-> > + * Helper functions above borrowed from bpf selftests.
-> > + */
-> > +static int test_uretprobe(void)
-> > +{
-> > +	const size_t attr_sz = sizeof(struct perf_event_attr);
-> > +	const char *file = "/proc/self/exe";
-> > +	int bit, fd = 0, type, err = 1;
-> > +	struct perf_event_attr attr;
-> > +	struct sigaction sa = {};
-> > +	ssize_t offset;
-> > +
-> > +	type = determine_uprobe_perf_type();
-> > +	if (type < 0)
-> > +		return 1;
-> > +
-> > +	offset = get_uprobe_offset(uretprobe_trigger);
-> > +	if (offset < 0)
-> > +		return 1;
-> > +
-> > +	bit = determine_uprobe_retprobe_bit();
-> > +	if (bit < 0)
-> > +		return 1;
-> > +
-> > +	sa.sa_sigaction = segv_gp_handler;
-> > +	sa.sa_flags = SA_SIGINFO;
-> > +	if (sigaction(SIGSEGV, &sa, NULL))
-> > +		return 1;
-> > +
-> > +	/* Setup return uprobe through perf event interface. */
-> > +	memset(&attr, 0, attr_sz);
-> > +	attr.size = attr_sz;
-> > +	attr.type = type;
-> > +	attr.config = 1 << bit;
-> > +	attr.config1 = (__u64) (unsigned long) file;
-> > +	attr.config2 = offset;
-> > +
-> > +	fd = syscall(__NR_perf_event_open, &attr, 0 /* pid */, -1 /* cpu */,
-> > +		     -1 /* group_fd */, PERF_FLAG_FD_CLOEXEC);
-> > +	if (fd < 0)
-> > +		goto out;
-> > +
-> > +	if (sigsetjmp(jmp_buffer, 1))
-> > +		goto out;
-> > +
-> > +	ARCH_PRCTL(ARCH_SHSTK_ENABLE, ARCH_SHSTK_SHSTK);
-> > +
-> > +	/*
-> > +	 * This either segfaults and goes through sigsetjmp above
-> > +	 * or succeeds and we're good.
-> > +	 */
-> > +	uretprobe_trigger();
-> > +
-> > +	printf("[OK]\tUretprobe test\n");
-> > +	err = 0;
-> > +
-> > +out:
-> > +	ARCH_PRCTL(ARCH_SHSTK_DISABLE, ARCH_SHSTK_SHSTK);
-> > +	signal(SIGSEGV, SIG_DFL);
-> > +	if (fd)
-> > +		close(fd);
-> > +	return err;
-> > +}
-> > +
-> >  void segv_handler_ptrace(int signum, siginfo_t *si, void *uc)
-> >  {
-> >  	/* The SSP adjustment caused a segfault. */
-> > @@ -867,6 +1003,12 @@ int main(int argc, char *argv[])
-> >  		goto out;
-> >  	}
-> >  
-> > +	if (test_uretprobe()) {
-> > +		ret = 1;
-> > +		printf("[FAIL]\turetprobe test\n");
-> > +		goto out;
-> > +	}
-> > +
-> >  	return ret;
-> >  
-> >  out:
-> > -- 
-> > 2.44.0
-> > 
-> 
-> 
-> -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+index 16122819edfe..315af7b19c97 100644
+--- a/include/uapi/drm/drm.h
++++ b/include/uapi/drm/drm.h
+@@ -35,13 +35,7 @@
+ #ifndef _DRM_H_
+ #define _DRM_H_
+ 
+-#if defined(__KERNEL__)
+-
+-#include <linux/types.h>
+-#include <asm/ioctl.h>
+-typedef unsigned int drm_handle_t;
+-
+-#elif defined(__linux__)
++#if defined(__KERNEL__) || defined(__linux__)
+ 
+ #include <linux/types.h>
+ #include <asm/ioctl.h>
+-- 
+2.45.0
+
 
