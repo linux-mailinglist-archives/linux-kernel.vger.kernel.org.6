@@ -1,179 +1,106 @@
-Return-Path: <linux-kernel+bounces-177166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9CE8C3AFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:29:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59D0E8C3AFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD3A1C20F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:29:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6C7DB20CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 05:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3D614658A;
-	Mon, 13 May 2024 05:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906A014658D;
+	Mon, 13 May 2024 05:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IVko/Bfl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bPNF6x/3"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1D14600F;
-	Mon, 13 May 2024 05:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1EE146585
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 05:34:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715578149; cv=none; b=Rlu8BB4U5kOkGzvl395Qxn+GGTEINAIwWJ1SaRCPieanbUqiZili10LI1zmIQOHwIToYhKA69+tQsqiyoVZa1PCN1EXTuMq1m8eEYLTgRo6KAC6kzTuQTgeE5LO4JbFCGHs49p4f0cEwidYljwRgqTZJyajsf7SAAcmpkVDHh8c=
+	t=1715578454; cv=none; b=uYXGdZBtxib8nymVaqZKXcg8wwMjtZu3LPaa6vQZM6r5HCanAnSI3baj7EjclPA+GN/qBSluixwNNyhN72HasN3YMh3B5TaM+NH1WeAUBiouXKGGQkMB+yvkvWxhzFggmrDVXtQvflBqDseQGElLbZy8VnnR4n0SpX7PZ7ii+hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715578149; c=relaxed/simple;
-	bh=BES6J55ekLIREdDyUEdgA+eV9k/ixyfMejWB90lAq5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KSSDq4q7oU7XpDTWblG1PgPApUO6Nqz4hASga6QeXqskoiFvmsqkB9VD2hA7p5qWlroKx1Lon2EuuPxaBC32BJO+LnLGeik1kliXBmv/YyFet+kO3gTriENbFT0DpHvG5LiV+5AoYcaKQu3FBIqNBs//qcceV6GZtfBzDO8/6kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IVko/Bfl; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715578148; x=1747114148;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=BES6J55ekLIREdDyUEdgA+eV9k/ixyfMejWB90lAq5g=;
-  b=IVko/Bfl9bdiln5DlMzxjjy08l0azIzpqIEgDuiJtAExXaGIKctrBI6b
-   Radi4lwvJ2TOqkmFkqvogRtNAae8fH9+EXN/P1Dg7wJqbNuwsUTdGqmRk
-   mWecMcz5OJGDzRBLdFvdqRJtcZMPY4UauSfSrI4lDOLF1gG3eT2HWOatz
-   OSXVkShlQTxTdnq57kacc5O/6DIC7eCFhZ8TKXpvuGaEU710s+qnHhzlz
-   I9i1MRQng/C1z1hFivNd12JnU8e6zNAizeLCnSx6FLLE7GhDzJ6S0r1pB
-   E9KfhSyTU6Xpx4XoDE39u3g9rFFzS6bitXKs+Kj1VNsJ8hqT//lDFBqZM
-   g==;
-X-CSE-ConnectionGUID: LsiQvLf2T4225qsHUVkHxg==
-X-CSE-MsgGUID: IffDHT2yS1GHcGD2uD655g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11071"; a="22164969"
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="22164969"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 22:29:08 -0700
-X-CSE-ConnectionGUID: phSYPFECSOGkweWUiDr51Q==
-X-CSE-MsgGUID: sLwbJsSRRkGcJJW3S7JJIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,157,1712646000"; 
-   d="scan'208";a="30064946"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 May 2024 22:29:06 -0700
-Message-ID: <70b29862-8305-4642-8b02-80342ccea4f8@intel.com>
-Date: Mon, 13 May 2024 13:29:02 +0800
+	s=arc-20240116; t=1715578454; c=relaxed/simple;
+	bh=3novfxKmuOHtv2/2Uxne6GNAqtrqJ5MvuaL4zalChp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=JyGdmSY8UKeBVbVwgI5rvhe09pUJGaFmc0fZhJwHTMeOEkGbR72d3kMJwzKcjcMLKp7f71k+IDOF6wnk17zvJZ9Tv7ynCyk+x7Bg72/ysqo7xjw6CEEG2uGBhIbSDmDoc8HjhNuA6vhdeQv5I7jnbBal7z2OGwS/KGT3TD1VAlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bPNF6x/3; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1715578448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NtkBKlqRVPiYt0KU2gHHEP+MV+jp5EvYQ4ZKCZH6xvs=;
+	b=bPNF6x/3D3j3GV79OW8FEMCFENYlL3367JFVNkpvFwAj+4hJh6PsD8ntCa1+sBBnBnlI2V
+	EkHkfGP0Osy0bczztTYbcbNGT0iT9/eGfPZwa4BG/I/oYuBP4CQovPJNR1g38DxH7qORLJ
+	+TfxTSq2+/maLlJOVvUJwVtuqTzcUj4=
+From: hao.ge@linux.dev
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	hao.ge@linux.dev,
+	Hao Ge <gehao@kylinos.cn>
+Subject: [PATCH v2] eventfs: Fix a possible null pointer dereference in eventfs_find_events
+Date: Mon, 13 May 2024 13:33:38 +0800
+Message-Id: <20240513053338.63017-1-hao.ge@linux.dev>
+In-Reply-To: <b574c8d6-c000-8673-74de-a7cc092057ad@linux.dev>
+References: <b574c8d6-c000-8673-74de-a7cc092057ad@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/17] KVM: x86: Remove separate "bit" defines for page
- fault error code masks
-To: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>
-References: <20240507155817.3951344-1-pbonzini@redhat.com>
- <20240507155817.3951344-3-pbonzini@redhat.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20240507155817.3951344-3-pbonzini@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
-> From: Sean Christopherson <seanjc@google.com>
-> 
-> Open code the bit number directly in the PFERR_* masks and drop the
-> intermediate PFERR_*_BIT defines, as having to bounce through two macros
-> just to see which flag corresponds to which bit is quite annoying,
+From: Hao Ge <gehao@kylinos.cn>
 
-can't agree more on it.
+In function eventfs_find_events,there is a potential null pointer
+that may be caused by calling update_events_attr which will perform
+some operations on the members of the ei struct when ei is NULL.
 
-> as is
-> having to define two macros just to add recognition of a new flag.
-> 
-> Use ternary operator to derive the bit in permission_fault(), the one
-> function that actually needs the bit number as part of clever shifting
-> to avoid conditional branches.  Generally the compiler is able to turn
-> it into a conditional move, and if not it's not really a big deal.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> Message-ID: <20240228024147.41573-3-seanjc@google.com>
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.co
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Hence,When ei->is_freed is set,return NULL directly.
 
-> ---
->   arch/x86/include/asm/kvm_host.h | 32 ++++++++++----------------------
->   arch/x86/kvm/mmu.h              |  5 ++---
->   2 files changed, 12 insertions(+), 25 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 9f92bdb78504..a047480da5af 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -254,28 +254,16 @@ enum x86_intercept_stage;
->   	KVM_GUESTDBG_INJECT_DB | \
->   	KVM_GUESTDBG_BLOCKIRQ)
->   
-> -
-> -#define PFERR_PRESENT_BIT 0
-> -#define PFERR_WRITE_BIT 1
-> -#define PFERR_USER_BIT 2
-> -#define PFERR_RSVD_BIT 3
-> -#define PFERR_FETCH_BIT 4
-> -#define PFERR_PK_BIT 5
-> -#define PFERR_SGX_BIT 15
-> -#define PFERR_GUEST_FINAL_BIT 32
-> -#define PFERR_GUEST_PAGE_BIT 33
-> -#define PFERR_IMPLICIT_ACCESS_BIT 48
-> -
-> -#define PFERR_PRESENT_MASK	BIT(PFERR_PRESENT_BIT)
-> -#define PFERR_WRITE_MASK	BIT(PFERR_WRITE_BIT)
-> -#define PFERR_USER_MASK		BIT(PFERR_USER_BIT)
-> -#define PFERR_RSVD_MASK		BIT(PFERR_RSVD_BIT)
-> -#define PFERR_FETCH_MASK	BIT(PFERR_FETCH_BIT)
-> -#define PFERR_PK_MASK		BIT(PFERR_PK_BIT)
-> -#define PFERR_SGX_MASK		BIT(PFERR_SGX_BIT)
-> -#define PFERR_GUEST_FINAL_MASK	BIT_ULL(PFERR_GUEST_FINAL_BIT)
-> -#define PFERR_GUEST_PAGE_MASK	BIT_ULL(PFERR_GUEST_PAGE_BIT)
-> -#define PFERR_IMPLICIT_ACCESS	BIT_ULL(PFERR_IMPLICIT_ACCESS_BIT)
-> +#define PFERR_PRESENT_MASK	BIT(0)
-> +#define PFERR_WRITE_MASK	BIT(1)
-> +#define PFERR_USER_MASK		BIT(2)
-> +#define PFERR_RSVD_MASK		BIT(3)
-> +#define PFERR_FETCH_MASK	BIT(4)
-> +#define PFERR_PK_MASK		BIT(5)
-> +#define PFERR_SGX_MASK		BIT(15)
-> +#define PFERR_GUEST_FINAL_MASK	BIT_ULL(32)
-> +#define PFERR_GUEST_PAGE_MASK	BIT_ULL(33)
-> +#define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
->   
->   #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
->   				 PFERR_WRITE_MASK |		\
-> diff --git a/arch/x86/kvm/mmu.h b/arch/x86/kvm/mmu.h
-> index 60f21bb4c27b..2343c9f00e31 100644
-> --- a/arch/x86/kvm/mmu.h
-> +++ b/arch/x86/kvm/mmu.h
-> @@ -213,7 +213,7 @@ static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
->   	 */
->   	u64 implicit_access = access & PFERR_IMPLICIT_ACCESS;
->   	bool not_smap = ((rflags & X86_EFLAGS_AC) | implicit_access) == X86_EFLAGS_AC;
-> -	int index = (pfec + (not_smap << PFERR_RSVD_BIT)) >> 1;
-> +	int index = (pfec | (not_smap ? PFERR_RSVD_MASK : 0)) >> 1;
->   	u32 errcode = PFERR_PRESENT_MASK;
->   	bool fault;
->   
-> @@ -234,8 +234,7 @@ static inline u8 permission_fault(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
->   		pkru_bits = (vcpu->arch.pkru >> (pte_pkey * 2)) & 3;
->   
->   		/* clear present bit, replace PFEC.RSVD with ACC_USER_MASK. */
-> -		offset = (pfec & ~1) +
-> -			((pte_access & PT_USER_MASK) << (PFERR_RSVD_BIT - PT_USER_SHIFT));
-> +		offset = (pfec & ~1) | ((pte_access & PT_USER_MASK) ? PFERR_RSVD_MASK : 0);
->   
->   		pkru_bits &= mmu->pkru_mask >> offset;
->   		errcode |= -pkru_bits & PFERR_PK_MASK;
+Fixes: 8186fff7ab64 ("tracefs/eventfs: Use root and instance inodes as default ownership")
+Signed-off-by: Hao Ge <gehao@kylinos.cn>
+
+---
+v2:
+- adjust title and commit message
+- omit curly brackets
+---
+ fs/tracefs/event_inode.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index a878cea70f4c..0256afdd4acf 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -345,10 +345,9 @@ static struct eventfs_inode *eventfs_find_events(struct dentry *dentry)
+ 		 * If the ei is being freed, the ownership of the children
+ 		 * doesn't matter.
+ 		 */
+-		if (ei->is_freed) {
+-			ei = NULL;
+-			break;
+-		}
++		if (ei->is_freed)
++			return NULL;
++
+ 		// Walk upwards until you find the events inode
+ 	} while (!ei->is_events);
+ 
+-- 
+2.25.1
 
 
