@@ -1,173 +1,244 @@
-Return-Path: <linux-kernel+bounces-178118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1916F8C48FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:47:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A357D8C4901
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 23:47:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B58A1C21858
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ADA51F222AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 21:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B0784A33;
-	Mon, 13 May 2024 21:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF89F84A30;
+	Mon, 13 May 2024 21:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ci05iyCE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="vSR/QEKB"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99A483CD7
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 21:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC0283CD7;
+	Mon, 13 May 2024 21:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715636852; cv=none; b=RcLxWfc6WWI2l6rVTHjbpk3F0iYU7yAyl8dUXpB4OaHi95t0BiU6V+mAabZx00QJPzN0B7LNN55aCmPIhOu1gsRzPRHacXLq+HAZyGhbgGu6HMxHUMwp88DEjUSbxCPHP795RedbWdr8C3gDIWgBh4X6IJGXJdaIWQXopKMBHG0=
+	t=1715636862; cv=none; b=XfSQfE1yQEJ9XoaoWo0Dm5DrpmLiYFCsX9hp969qPBs3MJ+4Pf7Hi4vlKhiKP65AOSifKQcsVdyue0/9DZz/g1qRpvxci0lDFIbqNbTlA4rncEHgLDi18KTMN4YN8gGCiVHrcEUlqpICYuFdxjKwMfL+Yz2r07eJynX2J76PKmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715636852; c=relaxed/simple;
-	bh=GsvEB0jrgKOQaYhaQDNrmbyGu9pT3dQg3hSPhGvs95A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GYW9PREVSyhVAiygc5f8xJrbAlAJZVXKTNZ8XKhngeh0jKJ6SL81fipFkJJczwIt7TIcK1on1H9qBzGyfABXtC1aO8+PnmJ9tyu6DuuUCHWx1URcJtrbZ060f/antc4B0tZXxR2/glWxeIOXb9/3KRd0xQBfewYbdDVArhKTblU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ci05iyCE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715636849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zezx3lgmnnnDtiiLnluAFlp/ntQq1a9r2G/1DoFg4n0=;
-	b=Ci05iyCENLcuSonONEWaz0bcrw9ZlnrpFxer2KrtpmIBFPfm3vLuIaUcqIma3Nw1XucvUq
-	ZwpB2D2E1kaOtGwPlh522IMSKrbMMC0K5+HucSGa74oA14nWP2/GI5U0hhEtUy3G5M6GcB
-	PQ6D5WWbGVbL45mMLRMy6PNb6RzOqzU=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-YTWUQKQAOumbqk80camJoQ-1; Mon, 13 May 2024 17:47:26 -0400
-X-MC-Unique: YTWUQKQAOumbqk80camJoQ-1
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-43e1c1c333bso14551731cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 14:47:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715636845; x=1716241645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zezx3lgmnnnDtiiLnluAFlp/ntQq1a9r2G/1DoFg4n0=;
-        b=d9x/QvdlEjIo3XPJeGLDoyL78wsfvw1cnD6aTp7aqCMN8ohSKSFsT2fiOQYbUwd0i9
-         1qMZeSzrNZPP0capSyhk4tP3Z9i3HTCqP/ujmYp67DrSQcbOksIoGNz4r8Serocg/SqE
-         mvJttMVxWdfypJ0ylN+XR/3douP5sfORLMe6jaSraNJdx/3zjnHyyFAy1LQaqloGZYtH
-         SBIghsIKYFsCNISqItabCpShWry4Uy1L4iTXDJgPqLM/FZCxJB9qVaJC/DfN/klwXO8P
-         kPfNHXByT2gPDFaAscBfa6WnglhVh3WuPpMB92ymdRPl49vp5LAG/AsbWxCfl2BdKo7p
-         ePYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhy1OHn5StXaEAc72BZzIkR3LUDJuQ7RzdpCt324wYf7tJdUx1UMbrcEikXeQQZkZ4XLMHlapwMgWprX2k1++d2pNG7XlVxxqf/Qxd
-X-Gm-Message-State: AOJu0Yzo+D7Qag3+RkoQmJ49BZfaHF8dg2/e0NpKftujgDcTPVj7gIcW
-	OdolBR+RKkDZGTkqv8Bp9CEz2E2piDMucm4Dnf1UZSb7q4Luclnx2uGebiYKtxwE2B9aInPl2ZZ
-	mMh+I9yXOPZs+611Ukia3DmDPwcY1mmYNJNKrMeHuzinXpPJeWVrfOrIK3m7D/L4E68/3PQp5Ur
-	bctK/G07/4GKjwR2K6VEORe6i70ZGk+SK30BVJ
-X-Received: by 2002:a05:622a:148a:b0:43a:dc29:a219 with SMTP id d75a77b69052e-43dfda8e639mr142376891cf.2.1715636845447;
-        Mon, 13 May 2024 14:47:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHl8mtvZ1AqP2eTCQHLv7194Xa2gyO4esR0o+IYBTEGNUDz7XONxYrIUGwyTPc05Dwa+aFhe3D+YU3/19Zu628=
-X-Received: by 2002:a05:622a:148a:b0:43a:dc29:a219 with SMTP id
- d75a77b69052e-43dfda8e639mr142376681cf.2.1715636845074; Mon, 13 May 2024
- 14:47:25 -0700 (PDT)
+	s=arc-20240116; t=1715636862; c=relaxed/simple;
+	bh=jDCQIjVqZVc5wUwm1ijALwsy3NpnKwstDOn1Vl7lrQM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SVdmhUskE6OeLjBwMn4Em95AGUtUeBnzwvtj5sqeJgYz1bYwzMmQ+xCxnQKdbFczj+pE2HbyRrqjFQG3/DZ7UT8maw4SkfsnRAwW2tOG2tt+4bGYSkU+vf8cHO/KZ7+EJzrznhePj7ggKq+vKeVS0ddeGvf3w2HVCDiT4ebIAM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=vSR/QEKB; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 591CE12001C;
+	Tue, 14 May 2024 00:47:29 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 591CE12001C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715636849;
+	bh=ZM+lhNatKFUHF9a5/vTMQlspJzgvNe8FHwZNKI0g9q0=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=vSR/QEKByL5EOOHvOy4bWeZ01VVdtBRk4ratwRSJMeGDlEA7q+1H4RIko65+sPvvw
+	 8pgRVvW9Q5IM2cyfTMoM7glWw6OYHmYHXCzizc1xhHmrRhDMo/Ha+WJAEiu84k30js
+	 HgWDmc6UaAC9mXZ/RPlq/gZ8xo+M2wUUBPwmZJd9eMfyMJ4IMYZ0+vEW73X2Mpz6dk
+	 gWotq29uAjyKzT92Ha++7hStbvYbBoN0E5nCST/lCJZk8/Mr9FnlziwQKoMkUEzVTz
+	 u7V6sXnHeMBol2wYHoVf3qwfp3cnW0QY4cjcO3wjUtbdafjckNvnA4XbPVia0wV49v
+	 v6l6RDAvU8S+A==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 14 May 2024 00:47:29 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 14 May
+ 2024 00:47:28 +0300
+Date: Tue, 14 May 2024 00:47:28 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/7] clk: meson: introduce 'INIT_ONCE' flag to
+ eliminate init for enabled PLL
+Message-ID: <20240513214728.g4isbfisifxalqxy@CAB-WSD-L081021>
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+ <20240510090933.19464-2-ddrokosov@salutedevices.com>
+ <1jfrulzxms.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511020557.1198200-1-leobras@redhat.com> <ZkJsvTH3Nye-TGVa@google.com>
-In-Reply-To: <ZkJsvTH3Nye-TGVa@google.com>
-From: Leonardo Bras Soares Passos <leobras@redhat.com>
-Date: Mon, 13 May 2024 18:47:13 -0300
-Message-ID: <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-To: Sean Christopherson <seanjc@google.com>
-Cc: Frederic Weisbecker <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1jfrulzxms.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185198 [May 13 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/13 16:04:00 #25186646
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Mon, May 13, 2024 at 4:40=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Fri, May 10, 2024, Leonardo Bras wrote:
-> > As of today, KVM notes a quiescent state only in guest entry, which is =
-good
-> > as it avoids the guest being interrupted for current RCU operations.
+On Mon, May 13, 2024 at 02:44:06PM +0200, Jerome Brunet wrote:
+> 
+> On Fri 10 May 2024 at 12:08, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> 
+> > When dealing with certain PLLs, it is necessary to avoid modifying them
+> > if they have already been initialized by lower levels. For instance, in
+> > the A1 SoC Family, the sys_pll is enabled as the parent for the cpuclk,
+> > and it cannot be disabled during the initialization sequence. Therefore,
+> > initialization phase must be skipped.
 > >
-> > While the guest vcpu runs, it can be interrupted by a timer IRQ that wi=
-ll
-> > check for any RCU operations waiting for this CPU. In case there are an=
-y of
-> > such, it invokes rcu_core() in order to sched-out the current thread an=
-d
-> > note a quiescent state.
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > ---
+> >  drivers/clk/meson/clk-pll.c | 37 +++++++++++++++++++++----------------
+> >  drivers/clk/meson/clk-pll.h |  1 +
+> >  2 files changed, 22 insertions(+), 16 deletions(-)
 > >
-> > This occasional schedule work will introduce tens of microsseconds of
-> > latency, which is really bad for vcpus running latency-sensitive
-> > applications, such as real-time workloads.
-> >
-> > So, note a quiescent state in guest exit, so the interrupted guests is =
-able
-> > to deal with any pending RCU operations before being required to invoke
-> > rcu_core(), and thus avoid the overhead of related scheduler work.
->
-> Are there any downsides to this?  E.g. extra latency or anything?  KVM wi=
-ll note
-> a context switch on the next VM-Enter, so even if there is extra latency =
-or
-> something, KVM will eventually take the hit in the common case no matter =
-what.
-> But I know some setups are sensitive to handling select VM-Exits as soon =
-as possible.
->
-> I ask mainly because it seems like a no brainer to me to have both VM-Ent=
-ry and
-> VM-Exit note the context switch, which begs the question of why KVM isn't=
- already
-> doing that.  I assume it was just oversight when commit 126a6a542446 ("kv=
-m,rcu,nohz:
-> use RCU extended quiescent state when running KVM guest") handled the VM-=
-Entry
-> case?
+> > diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> > index 78d17b2415af..47b22a6be2e4 100644
+> > --- a/drivers/clk/meson/clk-pll.c
+> > +++ b/drivers/clk/meson/clk-pll.c
+> > @@ -289,11 +289,32 @@ static int meson_clk_pll_wait_lock(struct clk_hw *hw)
+> >  	return -ETIMEDOUT;
+> >  }
+> >  
+> > +static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+> > +{
+> > +	struct clk_regmap *clk = to_clk_regmap(hw);
+> > +	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+> > +
+> > +	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+> > +	    meson_parm_read(clk->map, &pll->rst))
+> > +		return 0;
+> > +
+> > +	if (!meson_parm_read(clk->map, &pll->en) ||
+> > +	    !meson_parm_read(clk->map, &pll->l))
+> > +		return 0;
+> > +
+> > +	return 1;
+> > +}
+> > +
+> >  static int meson_clk_pll_init(struct clk_hw *hw)
+> >  {
+> >  	struct clk_regmap *clk = to_clk_regmap(hw);
+> >  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+> >  
+> > +	/* Do not init already enabled PLL which marked with 'init_once'
+> > */
+> 
+> That is decribing the code, which we can read. So not really helpful
+> Saying why you do it, like "Keep the clock running from the bootloader
+> stage and avoid glitching it ..." gives more context about what you are
+> trying to do.
+> 
 
-I don't know, by the lore I see it happening in guest entry since the
-first time it was introduced at
-https://lore.kernel.org/all/1423167832-17609-5-git-send-email-riel@redhat.c=
-om/
+Yes, I agree with you.
 
-Noting a quiescent state is cheap, but it may cost a few accesses to
-possibly non-local cachelines. (Not an expert in this, Paul please let
-me know if I got it wrong).
+"Instead of describing the action, provide the reasoning behind it."
 
-I don't have a historic context on why it was just implemented on
-guest_entry, but it would make sense when we don't worry about latency
-to take the entry-only approach:
-- It saves the overhead of calling rcu_virt_note_context_switch()
-twice per guest entry in the loop
-- KVM will probably run guest entry soon after guest exit (in loop),
-so there is no need to run it twice
-- Eventually running rcu_core() may be cheaper than noting quiescent
-state every guest entry/exit cycle
+I will incorporate your feedback in the upcoming version.
 
-Upsides of the new strategy:
-- Noting a quiescent state in guest exit avoids calling rcu_core() if
-there was a grace period request while guest was running, and timer
-interrupt hits the cpu.
-- If the loop re-enter quickly there is a high chance that guest
-entry's rcu_virt_note_context_switch() will be fast (local cacheline)
-as there is low probability of a grace period request happening
-between exit & re-entry.
-- It allows us to use the rcu patience strategy to avoid rcu_core()
-running if any grace period request happens between guest exit and
-guest re-entry, which is very important for low latency workloads
-running on guests as it reduces maximum latency in long runs.
+> > +	if ((pll->flags & CLK_MESON_PLL_INIT_ONCE) &&
+> 
+> I don't like INIT_ONCE. It gives the false impression that
+> 
+> * The PLL is going to be initialized once in Linux if it has the flag
+> * Is initialised multiple times otherwise 
 
-What do you think?
+But that's how things happen. For previous clocks on other platforms, we
+assumed that the PLL could be initialized multiple times: once from the
+bootloader and once from Linux. We didn't have the ability to disable
+initialization from the Linux side before, so it meant that multiple
+initializations were potentially possible by default.
 
-Thanks!
-Leo
+> 
+> I agree that currently that carefully reading the code clears that up
+> but it is misleading
+> 
+> CLK_MESON_PLL_EN_NOINIT ?
+> 
 
+I have been considering this name and its derivatives, such as:
+
+    CLK_MESON_PLL_SKIP_ENABLED
+    CLK_MESON_PLL_NOINIT_ENABLED
+    CLK_MESON_PLL_INIT_DISABLED_ONLY
+
+However, I find all of these names to be quite long and bulky. It
+reminded me of the WARN_ONCE() function, which ensures that a warning
+message is only printed once. In my opinion, the name "INIT_ONCE"
+accurately reflects the situation.  Nevertheless, if it is your
+requirement for me to change the flag name, I am more than willing to do
+so, it's not a problem.
+
+> > +	    meson_clk_pll_is_enabled(hw))
+> > +		return 0;
+> > +
+> >  	if (pll->init_count) {
+> >  		if (MESON_PARM_APPLICABLE(&pll->rst))
+> >  			meson_parm_write(clk->map, &pll->rst, 1);
+> > @@ -308,22 +329,6 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+> >  	return 0;
+> >  }
+> >  
+> > -static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+> > -{
+> > -	struct clk_regmap *clk = to_clk_regmap(hw);
+> > -	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+> > -
+> > -	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+> > -	    meson_parm_read(clk->map, &pll->rst))
+> > -		return 0;
+> > -
+> > -	if (!meson_parm_read(clk->map, &pll->en) ||
+> > -	    !meson_parm_read(clk->map, &pll->l))
+> > -		return 0;
+> > -
+> > -	return 1;
+> > -}
+> > -
+> >  static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
+> >  {
+> >  	int retries = 10;
+> > diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+> > index a2228c0fdce5..23195ea4eae1 100644
+> > --- a/drivers/clk/meson/clk-pll.h
+> > +++ b/drivers/clk/meson/clk-pll.h
+> > @@ -28,6 +28,7 @@ struct pll_mult_range {
+> >  	}
+> >  
+> >  #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
+> > +#define CLK_MESON_PLL_INIT_ONCE		BIT(1)
+> >  
+> >  struct meson_clk_pll_data {
+> >  	struct parm en;
+> 
+> 
+> -- 
+> Jerome
+
+-- 
+Thank you,
+Dmitry
 
