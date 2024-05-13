@@ -1,258 +1,248 @@
-Return-Path: <linux-kernel+bounces-177876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8298C45B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D908C45BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 19:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50F5B1F212C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:08:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728981F214C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 17:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7A61CFA0;
-	Mon, 13 May 2024 17:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40AE91CD26;
+	Mon, 13 May 2024 17:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qi94m12S"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="fNT3p7jK"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4BE1CF8D
-	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CB91CAAE
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715620082; cv=none; b=FCKZ6rZ/0PLqvZkRIVE4HYrdyQOxf/SLdI4sXsdt5sEKK2VgEE7vtIZ5iWgUrsHSHoMGbiFoXgM0l6xhNSPQyLbMpsDmvQ2HnZF++Q2w2HuxxHq+/4AU5XC4fmpKRUVnxxXVWQP2ahnJ4YVRz43uzKeR15gkNpmhMn29Ssp7EnY=
+	t=1715620220; cv=none; b=idQo2458RbWNVSBMhfIceDfR1qnHG3LPCA12unLbxmyki2bk24iyfIcfdZb+3cNzlOXU57B2JN5P9Y4T9ZCEKL6FZSxAdnSiNjWvmFQIZVHfU6xRdPu+/EEcMnynKhwamlu1l2L6L06wZoeoGYPPjYw0qDQOnVae521ZWg041Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715620082; c=relaxed/simple;
-	bh=7/xkmDUbYU1LADb1hqA1THAmOqRq/hd0dIZkwWpfkJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgOFfXsGM+5XS4BoFfeeVRHjKlrDTzo8J8CTaEUEq6R+3f1HcguzgJxQR/3Dv7vKiyiyr2SxS4aii47SNXgpVlalBO0K6/16BgbN0kIT5ibw9DaZLMLkCXqpH9ku7fWJeO+ZDTI0lGpETLYecMfzNGacEwbYBrJKzD+eeA+KUBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qi94m12S; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6f4e59191a1so2344658b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:08:00 -0700 (PDT)
+	s=arc-20240116; t=1715620220; c=relaxed/simple;
+	bh=XSJBROMVrc2KsRXPebm2mlHLU3yXkxYWeY5FcmrQi0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B14ezCQ7VRC7ubutGujYZE+WWUgk2Jk2pB72MT2M0IjUKlskihvnbJHrmRRluZ7nMJlan/DRP1V2VUn3LW6N92ibFU212T3ycDeeM9ZyiPTEw+OusXZzVyO0x8tzOU1AjmIlhhPiZt09HPLLKBOUPMe+3CFdG5CT41QNrGYqwZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=fNT3p7jK; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-43dff9da88fso21721011cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 10:10:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715620080; x=1716224880; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R03ALj5gMTI3HJczT8mvtLqpQZw1vQdw7W4zPWu4U5M=;
-        b=qi94m12SXQWlIw1irpiCADxa/u8RNZdQHbZlMYhpFTucz4IVy+pgoKS0+7kNAlVtlH
-         I/2kqpA20Ti7bt5rTxk1CWoxZkz/UwSC4eGp4y+7Xr4Gi60VlBmwZsUxoa/K0E4aHk7M
-         j8xTOy8rAUTZgkD9DCahmg9zQ902BA9a4/mWlfnIaLqE8wx7CD+yra1AnUvvWd9dzdeR
-         X66yyJ2ohcMl7OYHv4bIgN/ACwQZVJ1cJTYd7uvKPdGJ3BM3hlBM7aLmMoSKOY6Vns8h
-         nTr9mr3OdlcOqKSyFcCjyFXatSU4IBHeiX+uipG7MlFRossKvXs7XLudQVtCbFWpl8nu
-         Sr3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715620080; x=1716224880;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=cloudflare.com; s=google09082023; t=1715620217; x=1716225017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R03ALj5gMTI3HJczT8mvtLqpQZw1vQdw7W4zPWu4U5M=;
-        b=jWmhvYvz7zPZCd/VvsJJDMLTPJme/7C5v70kIFfJ2smH9x4iPIp0LW1o6A3wBJGqxx
-         dskaQEXkVps58wQrdddfl9ctD9a89Ju0WwiQG6bUq8mF8NZx1T/7TI6M9lee/FBCtgKl
-         oFNo9TfkXyFzu4UQR433cv+CY4kwNbN2ipcuAt6dY9cXHnNKOTP75pQxF9juMX6+gjk4
-         yj60x8mFskLELcdZUBe9LXt4nKuGGYeB8BBMHLxMrA53LAvO+qeJ2FuD3MLbZftPJfT5
-         BXvdj1PFs6HVZUHgQ2BKVtWj1Iio0LBT7XkUXVwSeHlTpflyqvuufAfkBRT43WnL1Hwa
-         rcrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLCAKkv0YxdxhnaAthweathjoUZEvUGPTBgDIePBezHhqFqjVWuG0fZMJgvT3OYsBpix1VikDvwl+NTYNsXA2M20dofB4dUaEKkBS3
-X-Gm-Message-State: AOJu0YwBXhnpyerWmLzL0WE9upnyV5Qn59bttknyrCeY9qZv4p6xitlS
-	UfqU/5XSzAbuhnI7tgDLxLC3dPD4ojt+P4wcJq9+R7+pjcydvEhxNNuQn4NgycE=
-X-Google-Smtp-Source: AGHT+IGgitRfxdN9c/jkn+3dztyByZuJHDxryLBrfrJDLCggaquJnKcgfWgSQwb6qIcM1QjSPmZaxA==
-X-Received: by 2002:a05:6a20:431a:b0:1aa:43f4:3562 with SMTP id adf61e73a8af0-1afde0a98d8mr11383826637.11.1715620079928;
-        Mon, 13 May 2024 10:07:59 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2bccsm8222317b3a.170.2024.05.13.10.07.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 10:07:59 -0700 (PDT)
-Date: Mon, 13 May 2024 10:07:54 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: paul.walmsley@sifive.com, rick.p.edgecombe@intel.com,
-	broonie@kernel.org, Szabolcs.Nagy@arm.com, kito.cheng@sifive.com,
-	keescook@chromium.org, ajones@ventanamicro.com,
-	conor.dooley@microchip.com, cleger@rivosinc.com,
-	atishp@atishpatra.org, alex@ghiti.fr, bjorn@rivosinc.com,
-	alexghiti@rivosinc.com, samuel.holland@sifive.com, conor@kernel.org,
-	linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mm@kvack.org, linux-arch@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
-	aou@eecs.berkeley.edu, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, oleg@redhat.com,
-	akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lstoakes@gmail.com,
-	shuah@kernel.org, brauner@kernel.org, andy.chiu@sifive.com,
-	jerry.shih@sifive.com, hankuan.chen@sifive.com,
-	greentime.hu@sifive.com, evan@rivosinc.com, xiao.w.wang@intel.com,
-	apatel@ventanamicro.com, mchitale@ventanamicro.com,
-	dbarboza@ventanamicro.com, sameo@rivosinc.com,
-	shikemeng@huaweicloud.com, willy@infradead.org,
-	vincent.chen@sifive.com, guoren@kernel.org, samitolvanen@google.com,
-	songshuaishuai@tinylab.org, gerg@kernel.org, heiko@sntech.de,
-	bhe@redhat.com, jeeheng.sia@starfivetech.com, cyy@cyyself.name,
-	maskray@google.com, ancientmodern4@gmail.com,
-	mathis.salmen@matsal.de, cuiyunhui@bytedance.com,
-	bgray@linux.ibm.com, mpe@ellerman.id.au, baruch@tkos.co.il,
-	alx@kernel.org, david@redhat.com, catalin.marinas@arm.com,
-	revest@chromium.org, josh@joshtriplett.org, shr@devkernel.io,
-	deller@gmx.de, omosnace@redhat.com, ojeda@kernel.org,
-	jhubbard@nvidia.com
-Subject: Re: [PATCH v3 27/29] riscv: Documentation for landing pad / indirect
- branch tracking
-Message-ID: <ZkJI6lV8du1L+kE2@debug.ba.rivosinc.com>
-References: <20240403234054.2020347-1-debug@rivosinc.com>
- <20240403234054.2020347-28-debug@rivosinc.com>
- <Zj6D6FqfbnEhcfqs@ghost>
+        bh=pU8HU9DBiLf4SlmtDsASYOmsafllI/JgYmU6D8EfnDY=;
+        b=fNT3p7jKZHxNdelF0s5AVli8ozZGYYt4ckQ0UeR8Bndgci0XetEhGG2+RkVVt8KLZb
+         iTpxnsO5QrX+M3/OM7Bmia1NpWiv3xueMpBkHG3FrvSHy51SsiKooTMvOUeI/15bhX11
+         twtE5nerxJH3UXik+hzpIVNsrG+Z8lDVByACwHxDuSI71MwwZKOxJ3Bc5n61cydUaId/
+         KuKjGZBItNQbauSlFVAUh5iBH8YMbgALlKpm2QGzDr76rWeTBMC1PNbcCXYroI4dC+Gv
+         BTgZjzEjgll5rZNmoqBB/TP0V5cGTJBzW7CqUQR+QPo9VW3SzZbhk8MQZlL3B6zLEr6u
+         ilkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715620217; x=1716225017;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pU8HU9DBiLf4SlmtDsASYOmsafllI/JgYmU6D8EfnDY=;
+        b=glf7vkwTKcJdljnpaltIoC+HiXlC61hTOsw3UhaF9UyX++J+/c9f9aa6jHpEFb0WUN
+         bFFPUSE//TJ9KbYotRIaz/f88cbpQ3wqnzsbLWNx5iWugVNUx5qWjHPwQON4H8tPBgUm
+         0q3g80UyI1B9swhhZ25HlgE+ix+8MpTfYzYumeOaPRgsSeOEyyZDGaXvrTUokKnrJsSB
+         8nVl71CzRCgJJuzOOEmK353Wo2NL31u7aEEIPaFz7k46TRXi9jrwBmBouhwghkaglwvi
+         HU/J0GoMHWkET1WmLVPpkshQNRdG10XW2TQo0DB5w2jhvzLCCaaIcnDvN8Ex08wNihCL
+         Hu9A==
+X-Forwarded-Encrypted: i=1; AJvYcCU3iWPfStcw9n3ul272yWCoSMBItdEhEJcPIU5f85pHYOiDz7pY38pTrYV6wMncnsgDvFc84KkyMhZYMN0kpGa4yt89uVqqFFmr7jxk
+X-Gm-Message-State: AOJu0Yz1K96M2owmNxyGNEwYhTfTsDUznAn8U6OrRtqdaw4l+cqTVTbu
+	yB6ZclAgXuzQxwGgwThQIFNavveM2cFuhuEK8harhhGRWN33fdjECMe0JW0NBMYTPreMoSaFQ5s
+	FopcO4xl+xHnOLk43xFWpVu50OEm7/3gH0O8Xa9CtQZmt/uc/YCc=
+X-Google-Smtp-Source: AGHT+IHl2oHRFMJLef//4FI386W05SMQHXZdf4eeeBI3rSCCVptCoUj/vhx/CQlx2KdYKMNAhSEcpwhyhzFU3/w7nP0=
+X-Received: by 2002:a17:90a:5318:b0:2a5:8ff:9d1 with SMTP id
+ 98e67ed59e1d1-2b6cc4547efmr9662680a91.14.1715620196414; Mon, 13 May 2024
+ 10:09:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Zj6D6FqfbnEhcfqs@ghost>
+References: <20240503221634.44274-1-ignat@cloudflare.com> <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org>
+ <ZjY-UU8pROnwlTuH@farprobe> <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org> <D10YYQKT9P1S.25CE053K7MQKI@kernel.org>
+In-Reply-To: <D10YYQKT9P1S.25CE053K7MQKI@kernel.org>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Mon, 13 May 2024 18:09:44 +0100
+Message-ID: <CALrw=nFLa5=bPbYKijNsEo0Kk77_TEpdPmPe3CJ3VJqGNMmBeg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+To: Jarkko Sakkinen <jarkko@kernel.org>, Ben Boeckel <me@benboeckel.net>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 01:30:32PM -0700, Charlie Jenkins wrote:
->On Wed, Apr 03, 2024 at 04:35:15PM -0700, Deepak Gupta wrote:
->> Adding documentation on landing pad aka indirect branch tracking on riscv
->> and kernel interfaces exposed so that user tasks can enable it.
->>
->> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->> ---
->>  Documentation/arch/riscv/zicfilp.rst | 104 +++++++++++++++++++++++++++
->>  1 file changed, 104 insertions(+)
->>  create mode 100644 Documentation/arch/riscv/zicfilp.rst
->>
->> diff --git a/Documentation/arch/riscv/zicfilp.rst b/Documentation/arch/riscv/zicfilp.rst
->> new file mode 100644
->> index 000000000000..3007c81f0465
->> --- /dev/null
->> +++ b/Documentation/arch/riscv/zicfilp.rst
->> @@ -0,0 +1,104 @@
->> +.. SPDX-License-Identifier: GPL-2.0
->> +
->> +:Author: Deepak Gupta <debug@rivosinc.com>
->> +:Date:   12 January 2024
->> +
->> +====================================================
->> +Tracking indirect control transfers on RISC-V Linux
->> +====================================================
->> +
->> +This document briefly describes the interface provided to userspace by Linux
->> +to enable indirect branch tracking for user mode applications on RISV-V
->> +
->> +1. Feature Overview
->> +--------------------
->> +
->> +Memory corruption issues usually result in to crashes, however when in hands of
->> +an adversary and if used creatively can result into variety security issues.
->> +
->> +One of those security issues can be code re-use attacks on program where adversary
->> +can use corrupt function pointers and chain them together to perform jump oriented
->> +programming (JOP) or call oriented programming (COP) and thus compromising control
->> +flow integrity (CFI) of the program.
->> +
->> +Function pointers live in read-write memory and thus are susceptible to corruption
->> +and allows an adversary to reach any program counter (PC) in address space. On
->> +RISC-V zicfilp extension enforces a restriction on such indirect control transfers
->> +
->> +	- indirect control transfers must land on a landing pad instruction `lpad`.
->> +	  There are two exception to this rule
->> +		- rs1 = x1 or rs1 = x5, i.e. a return from a function and returns are
+On Sat, May 4, 2024 at 5:35=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org> =
+wrote:
 >
->What is a return that is not a return from a function?
-Those would be a jump or call (depending on convention of whether return is saved in x1/x5)
+> On Sat May 4, 2024 at 5:51 PM EEST, Jarkko Sakkinen wrote:
+> > On Sat May 4, 2024 at 4:55 PM EEST, Ben Boeckel wrote:
+> > > On Sat, May 04, 2024 at 03:21:11 +0300, Jarkko Sakkinen wrote:
+> > > > I have no idea for what the key created with this is even used, whi=
+ch
+> > > > makes this impossible to review.
+> > >
+> > > Additionally, there is nothing in Documentation/ for how userspace mi=
+ght
+> > > use or create them. This includes things like their description forma=
+t
+> > > and describing available options.
+> >
+> > The whole user story is plain out broken. Documenting a feature that ha=
+s
+> > no provable use case won't fix that part.
+> >
+> > So it is better to start with the cover letter. With the *existing*
+> > knowledge of the *real* issue I don't think we need this tbh.
+>
+> As for code I'd suggest the "Describe your changes" part from
+>
+>   https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+>
+> and most essentially how to split them properly.
+>
+> My best bet could something along the lines that perhaps there is some
+> issue to be sorted out but I don't honestly believe that this will ever
+> be a solution for any possible problem that exist in this planet.
 
->
->> +		  protected using shadow stack (see zicfiss.rst)
->> +
->> +		- rs1 = x7. On RISC-V compiler usually does below to reach function
->> +		  which is beyond the offset possible J-type instruction.
->> +
->> +			"auipc x7, <imm>"
->> +			"jalr (x7)"
->> +
->> +		  Such form of indirect control transfer are still immutable and don't rely
->> +		  on memory and thus rs1=x7 is exempted from tracking and considered software
->> +		  guarded jumps.
->> +
->> +`lpad` instruction is pseudo of `auipc rd, <imm_20bit>` and is a HINT nop. `lpad`
->
->I think this should say "x0" or instead of "rd", or mention that rd=x0.
+Sorry, I must admit I wrote the description hastingly and too
+high-level (it was pre-travelling, so probably not the right focus and
+in a rush). Let me restart from scratch and describe particular
+use-cases we're concerned about:
 
-Yeah I missed that. will fix it.
+Trusted and encrypted keys are a great way to manage cryptographic
+keys inside the kernel, while never exposing plaintext cryptographic
+material to userspace: keys can only be read to userspace as encrypted
+blobs and with trusted keys - these blobs are created with the TPM, so
+only the TPM can unwrap the blobs.
 
->
->> +instruction must be aligned on 4 byte boundary and compares 20 bit immediate with x7.
->> +If `imm_20bit` == 0, CPU don't perform any comparision with x7. If `imm_20bit` != 0,
->> +then `imm_20bit` must match x7 else CPU will raise `software check exception`
->> +(cause=18)with `*tval = 2`.
->> +
->> +Compiler can generate a hash over function signatures and setup them (truncated
->> +to 20bit) in x7 at callsites and function proglogs can have `lpad` with same
->
->"prologues" instead of "proglogs"
+One of the simplest way to create a trusted key is for an application
+to request the kernel to generate a new one [1], like below with the
+help of keyctl utility from keyutils:
+$ keyctl add trusted kmk "new 32 keyhandle=3D0x81000001" @u
 
-Will fix it.
+However, after the application generates a trusted key, it is the
+responsibility of the application to manage/store it. For example, if
+the application wants to reuse the key after a reboot, it needs to
+read the key into userspace as an encrypted blob and store it on
+persistent storage. This is challenging and sometimes not possible for
+stateless/immutable/ephemeral systems, so such systems are effectively
+locked out from using hardware-protected cryptographic keys.
 
->
->> +function hash. This further reduces number of program counters a call site can
->> +reach.
->> +
->> +2. ELF and psABI
->> +-----------------
->> +
->> +Toolchain sets up `GNU_PROPERTY_RISCV_FEATURE_1_FCFI` for property
->> +`GNU_PROPERTY_RISCV_FEATURE_1_AND` in notes section of the object file.
->> +
->> +3. Linux enabling
->> +------------------
->> +
->> +User space programs can have multiple shared objects loaded in its address space
->> +and it's a difficult task to make sure all the dependencies have been compiled
->> +with support of indirect branch. Thus it's left to dynamic loader to enable
->> +indirect branch tracking for the program.
->> +
->> +4. prctl() enabling
->> +--------------------
->> +
->> +`PR_SET_INDIR_BR_LP_STATUS` / `PR_GET_INDIR_BR_LP_STATUS` /
->> +`PR_LOCK_INDIR_BR_LP_STATUS` are three prctls added to manage indirect branch
->> +tracking. prctls are arch agnostic and returns -EINVAL on other arches.
->> +
->> +`PR_SET_INDIR_BR_LP_STATUS`: If arg1 `PR_INDIR_BR_LP_ENABLE` and if CPU supports
->> +`zicfilp` then kernel will enabled indirect branch tracking for the task.
->> +Dynamic loader can issue this `prctl` once it has determined that all the objects
->> +loaded in address space support indirect branch tracking. Additionally if there is
->> +a `dlopen` to an object which wasn't compiled with `zicfilp`, dynamic loader can
->> +issue this prctl with arg1 set to 0 (i.e. `PR_INDIR_BR_LP_ENABLE` being clear)
->> +
->> +`PR_GET_INDIR_BR_LP_STATUS`: Returns current status of indirect branch tracking.
->> +If enabled it'll return `PR_INDIR_BR_LP_ENABLE`
->> +
->> +`PR_LOCK_INDIR_BR_LP_STATUS`: Locks current status of indirect branch tracking on
->> +the task. User space may want to run with strict security posture and wouldn't want
->> +loading of objects without `zicfilp` support in it and thus would want to disallow
->> +disabling of indirect branch tracking. In that case user space can use this prctl
->> +to lock current settings.
->> +
->> +5. violations related to indirect branch tracking
->> +--------------------------------------------------
->> +
->> +Pertaining to indirect branch tracking, CPU raises software check exception in
->> +following conditions
->> +	- missing `lpad` after indirect call / jmp
->> +	- `lpad` not on 4 byte boundary
->> +	- `imm_20bit` embedded in `lpad` instruction doesn't match with `x7`
->> +
->> +In all 3 cases, `*tval = 2` is captured and software check exception is raised
->> +(cause=18)
->> +
->> +Linux kernel will treat this as `SIGSEV`` with code = `SEGV_CPERR` and follow
->> +normal course of signal delivery.
->> --
->> 2.43.2
->>
+Another point: while the fact that the application can't read the
+plaintext cryptographic material into userspace is a feature of
+trusted keys, it can also be a disadvantage. Since keys in plaintext
+exist only in kernel context, they are useful mostly for in-kernel
+systems, like dm-crypt, IMA, ecryptfs. Applications cannot easily use
+trusted keys for cryptographic purposes for their own workloads: for
+example, generating encrypted or MACed configuration files or
+encrypting in-transit data. While since commit 7984ceb134bf ("crypto:
+af_alg - Support symmetric encryption via keyring keys") it is
+possible to use a trusted key via Linux Crypto API userspace interface
+[2], it might not always be practical/desirable:
+  * due to limitations in the Linux Crypto API implementation it is
+not possible to process more than ~64Kb of data using AEAD ciphers [3]
+  * needed algorithm implementations might not be enabled in the
+kernel configuration file
+  * compliance constraints: the utilised cryptographic implementation
+must be FIPS-validated
+  * performance constraints: passing large blobs of data to the kernel
+for encryption is slow even with Crypto API's "zero-copy" interface
+[3]
+
+TPM derived keys attempt to address the above use cases by allowing
+applications to deterministically derive unique cryptographic keys for
+their own purposes directly from the TPM seed in the owner hierarchy.
+The idea is that when an application requests a new key, instead of
+generating a random key and wrapping it with the TPM, the
+implementation generates a key via KDF(hierarchy seed, application
+specific info). Therefore, the resulting keys will always be
+cryptographically bound to the application itself and the device they
+were generated on.
+
+The applications then may either use in-kernel facilities, like [2],
+to do crypto operations inside the kernel, so the generated
+cryptographic material is never exposed to userspace (similar to
+trusted/encrypted keys). Or, if they are subject to
+performance/compliance/other constraints mentioned above, they can
+read the key material to userspace and use a userspace crypto library.
+Even with the latter approach they still get the benefit of using a
+key, security of which is rooted in the TPM.
+
+TPM derived keys also address the key storage problem for
+stateless/immutable/ephemeral systems: since the derivation process is
+deterministic, the same application can always re-create their keys on
+the same system and doesn't need to store or back up any wrapped key
+blobs. One notable use case (ironically not for a stateless system)
+can be setting up proper full-disk encryption (dm-crypt plain mode
+without a LUKS header), for example, to provide deniable encryption or
+better resiliency to damage of encrypted media [4].
+
+Current implementation provides two options for KDF's input for
+application specific info to ensure key uniqueness:
+
+1. A key, which is unique to a filesystem path:
+$ keyctl add derived test '32 path'
+
+Above will derive a 32 byte key based on the TPM seed and the
+filesystem path of the requesting application. That is /usr/bin/keyctl
+and /opt/bin/keyctl would generate different keys.
+
+2. A key, which is cryptographically bound to the code of the
+requesting application:
+$ keyctl add derived test '32 csum'
+
+Above will derive a 32 byte key based on the TPM seed and the IMA
+measurement of the requesting application. That is /usr/bin/keyctl and
+/opt/bin/keyctl would generate the same key if and only if their code
+exactly matches bit for bit. The implementation does not measure the
+requesting binary itself, but rather relies on already available
+measurement. This means for this mode to work IMA needs to be enabled
+and configured for requesting applications. For example:
+# echo 'audit func=3DBPRM_CHECK' > \
+   /sys/kernel/security/integrity/ima/policy
+
+Open questions:
+  * should any other modes/derivation parameters be considered as part
+of application specific info?
+  * apparently in checksum mode, when calling keyring syscalls from
+scripts, we mix in the measurement of the interpreter, not the script
+itself. Is there any way to improve this?
+
+I would like to mention that in Cloudflare we have found large
+infrastructure key management based on derived keys from per-device
+unique seeds quite convenient and almost infinitely scalable and I
+believe TPM derived keys can be the next evolution bringing hardware
+security to the table. I understand that folks here are not required
+to follow links for additional information, but if someone is
+interested in more details for our approach, which has been working
+well for almost 9 years, see [5].
+
+Hope it is better this time.
+
+Ignat
+
+[1]: https://www.kernel.org/doc/html/latest/security/keys/trusted-encrypted=
+html#examples-of-trusted-and-encrypted-key-usage
+[2]: https://www.kernel.org/doc/html/latest/crypto/userspace-if.html
+[3]: https://blog.cloudflare.com/the-linux-crypto-api-for-user-applications
+[4]: https://wiki.archlinux.org/title/Dm-crypt/Encrypting_an_entire_system#=
+Plain_dm-crypt
+[5]: https://youtu.be/2RPcIbP2xsM?si=3DnKbyY0gss50i04CG
+
+> BR, Jarkko
 
