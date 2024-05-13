@@ -1,204 +1,333 @@
-Return-Path: <linux-kernel+bounces-177489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51CE98C3F91
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:12:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BCF8C3F95
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 13:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE91C2158E
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:12:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9758D1C229D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 11:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE7514C593;
-	Mon, 13 May 2024 11:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2790614BFA2;
+	Mon, 13 May 2024 11:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEyCCncm"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="YRq/UkVo"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FB81C683;
-	Mon, 13 May 2024 11:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFE7548E1
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 11:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715598757; cv=none; b=Vo3HcaNoodA/aDHx30BKYlDgcw0ufUOl+o8h+etQmxhvpv43gsfynqu7/RZduY6DyPWn2swTlY6mUpjqOtcW7feb+/37Ymi9M/fePd8m++Pi0BCevZ5Ud6spePxH4kXSRsEA7z9pIq2aDgYly4G5zYszCecOz/+cfYnN55EMWrQ=
+	t=1715598904; cv=none; b=gNizm9VpTsF5R4TJbDwCL/r/5nmNTP+oAU+tgz/7i3LSTNmUh6uCCj1gfvjQpL0Cn2aREGPTdW9c/EZbySseUsJRwQC6tjuArtsvLdLX3yNGWJ33srbiyny+hJtmwhWgDB5DXvo4wJ99DhsZ2pYqxKULXxeoThbVO+2el+skJRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715598757; c=relaxed/simple;
-	bh=ovWECFyus9fyusYiUp7lb7F22QlyMqy46p2ZM0gDVzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAs9cs4VezWHKmachxNoLdCeMvCLUN0rOYYbvLUYoH9XfA5X6IE10fQvwr2A4un2K/QtjY57T3mMi7wK9fR423KJiP7LLewELuO/EtsD9bmDR1X4/JNWMZFpKhtxmtCtVa3VVOrrJ+iqtvCxIPX1Ez8UTvaWXefuBhwia5pX4xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dEyCCncm; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2e576057c2bso26691231fa.1;
-        Mon, 13 May 2024 04:12:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715598754; x=1716203554; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CsXgR3w2FhQE+aSDSS2Gv40EZ/tbmCX2jDPHP8DnHb8=;
-        b=dEyCCncmOQTQZFjsEba16Wyf6ihjRTTyisSM4lDK5aSsWbvkErgZRMo3ipM5rf84td
-         iDXymqAfAf0UGzWknw7mFNK394MS7b96DKKSHHIcRRhlAokEgdoy2zQKKoAYo/GEm+JD
-         K7p/r/uHJr8DzzdQruse0/x1+HRPLWBY+X0gMOaSA30BXaFreh+Azq44jr2FmaPFxEDP
-         rxlOP3usuY4Hqp4mf/1gmLf4qf1nnU1o2XwvqWmoXX0YQ3p0xnoa3i7CBRic1oeXzHo8
-         lz66pHtf9tqHlMY8erfXkYs4wgfCx6K70rwmBqrC7hpCajt0GtPpdDGAL4kRGUyrRApZ
-         LsDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715598754; x=1716203554;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CsXgR3w2FhQE+aSDSS2Gv40EZ/tbmCX2jDPHP8DnHb8=;
-        b=Ij1rNjpXW7bldXESGHzCPhcgRkTqq9cOElAJ0MwzIcf9cJURwJGg7DwinbUXP0nqKV
-         N+knpakm7CJND5e85jo3i2Q6BdqnKbZJqfFNPVyCNkajtI6oVbR3rdZe8alIALeBzm0l
-         B+nieDq1a9yUcRi+jFb3FxiGWHOAX9Lp5BBB3Ptaoiiqji9Zz2/Po3HOZzzzUFuVjjtF
-         U+Q9Me9JeM9UhtfXAnJNjfiGW2kwAo8AeAAlWFelRP/4XDF/IqN159KAmV3KiStjidYv
-         95HCCQKNgPw2SNBOfiRd8mHPLdtm1cB5Mc7wPz/LHkaqBNJLZ5i5KRd2WOCWXOpNCP4H
-         WH3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX95XhBk7xVfJlxjqs7pNGgos/7fABRx9hG3hxWOfbEVJu8y2Vbk2Aq3AWQowmEBPeSTUiaqPXZ/PVXEl3Kh5L5isa9cTg81/GLF2HbvWU4WVonDWJNZrFS9FubNgKosD1Jl/1iGuMmAAVSfqVFvzn+KQ6oOV4GsZKODYhzPIK72o5fVD88FIEtkhxC2aAniXVMaj1MqyvNhsFZpIXRNfO4zo0s
-X-Gm-Message-State: AOJu0Yxf3ZXc0R5Mphk1YF2ZWvYSEMvmIQtjTogGNj3/8anmbVyI1Rcn
-	PvkJwLt9f18byrDe2P8h6Aos4MW0cuTTmSXm0bD//Jk8+pTWV5R0zjg29nn/
-X-Google-Smtp-Source: AGHT+IFNrzH1ND0SZWwUAgn/8uMLO2dCcSkwSoLKZfE1t1yAXNHUDLcBvn8cGIMU+gIVm1ldgnIHuA==
-X-Received: by 2002:a05:651c:b0c:b0:2dd:bc53:e80 with SMTP id 38308e7fff4ca-2e52039daccmr90950591fa.51.1715598753491;
-        Mon, 13 May 2024 04:12:33 -0700 (PDT)
-Received: from mobilestation ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0bbd6a7sm14048281fa.6.2024.05.13.04.12.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 04:12:32 -0700 (PDT)
-Date: Mon, 13 May 2024 14:12:29 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Romain Gantois <romain.gantois@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	netdev@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH net-next v7 2/7] net: stmmac: Add dedicated XPCS cleanup
- method
-Message-ID: <u3t3zu4ihqoc44gl2mvw74seamtoas5wvxr7kqzxxhvu3enhbx@7txzs5fsse25>
-References: <20240513-rzn1-gmac1-v7-0-6acf58b5440d@bootlin.com>
- <20240513-rzn1-gmac1-v7-2-6acf58b5440d@bootlin.com>
+	s=arc-20240116; t=1715598904; c=relaxed/simple;
+	bh=7iUwfobNnT2nxOvxAP5Xkuao5iOl4azg6uUFMsPAI3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nDanyHdGXSe95n5GzSWOC1Ce8j7mRwBX3WadcKvgFE3eFDeLZv4KlZ+KduUALUtGUssfByo6XHohiJyEMi6WaacBpQYPQF1/3FqSXkecuraeoWs2mP8n9q8AUblq4qAOWRrAHC2xYUwAQ2DBnEs9uHc+KDNjKneMRAW48cUG9jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=YRq/UkVo; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715598900;
+	bh=7iUwfobNnT2nxOvxAP5Xkuao5iOl4azg6uUFMsPAI3U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YRq/UkVolqToE0Zlrc+rL7szh0o3Mmcpdfa+NnBhXsC30vub2FeUMwrM8yn5EjDGL
+	 V+PfcEEKojXLPVlMlxk1OW5grEeA/hJe5C1K48msL6ZnZ5LG+MypjGgaLy1OmTg3Ws
+	 MMAtX2eudEklJUbfqoCuMpxVociOK8AIDWpUKWb9mw74T6qq8SbccupIFvyu8gtuG0
+	 5bpoFcBE8xowQHlzh7fEC6Et2A3h8yWm5KK+4C6h6hgqJa/1f6SBJI51/eRP0PyI9V
+	 1mFT4svPol6d82/CoPqkzvHYEYOut3r8VANa1zrQQyGpdiHQUz4b1hGQzgX9e1mMML
+	 tIBDM3UXiDa+Q==
+Received: from eldfell (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pq)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0B764378212E;
+	Mon, 13 May 2024 11:14:58 +0000 (UTC)
+Date: Mon, 13 May 2024 14:14:49 +0300
+From: Pekka Paalanen <pekka.paalanen@collabora.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, Melissa Wen
+ <melissa.srw@gmail.com>, =?UTF-8?B?TWHDrXJh?= Canal
+ <mairacanal@riseup.net>, Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ rdunlap@infradead.org, arthurgrillo@riseup.net, Jonathan Corbet
+ <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+ seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+Subject: Re: [PATCH v6 07/17] drm/vkms: Update pixels accessor to support
+ packed and multi-plane formats.
+Message-ID: <20240513141449.662ea39d.pekka.paalanen@collabora.com>
+In-Reply-To: <ZkG-AYWvyA1QOLHZ@localhost.localdomain>
+References: <20240409-yuv-v6-0-de1c5728fd70@bootlin.com>
+	<20240409-yuv-v6-7-de1c5728fd70@bootlin.com>
+	<20240422140757.576e363b.pekka.paalanen@collabora.com>
+	<ZkG-AYWvyA1QOLHZ@localhost.localdomain>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240513-rzn1-gmac1-v7-2-6acf58b5440d@bootlin.com>
+Content-Type: multipart/signed; boundary="Sig_/+HtRlSbEj54KW42m5d4eUu+";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Romain
+--Sig_/+HtRlSbEj54KW42m5d4eUu+
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 09:25:13AM +0200, Romain Gantois wrote:
-> From: Serge Semin <fancer.lancer@gmail.com>
-> 
-> Currently the XPCS handler destruction is performed in the
-> stmmac_mdio_unregister() method. It doesn't look good because the handler
-> isn't originally created in the corresponding protagonist
-> stmmac_mdio_unregister(), but in the stmmac_xpcs_setup() function. In
-> order to have more coherent MDIO and XPCS setup/cleanup procedures,
-> let's move the DW XPCS destruction to the dedicated stmmac_pcs_clean()
-> method.
-> 
-> This method will also be used to cleanup PCS hardware using the
-> pcs_exit() callback that will be introduced to stmmac in a subsequent
-> patch.
-> 
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> Co-developed-by: Romain Gantois <romain.gantois@bootlin.com>
-> Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
-> Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+On Mon, 13 May 2024 09:15:13 +0200
+Louis Chauvet <louis.chauvet@bootlin.com> wrote:
 
-Looking good. Thanks!
-* Not sure whether my explicit Rb tag will be required in such the tags
-disposition.)
+> Le 22/04/24 - 14:07, Pekka Paalanen a =C3=A9crit :
+> > On Tue, 09 Apr 2024 15:25:25 +0200
+> > Louis Chauvet <louis.chauvet@bootlin.com> wrote:
+> >  =20
+> > > Introduce the usage of block_h/block_w to compute the offset and the
+> > > pointer of a pixel. The previous implementation was specialized for
+> > > planes with block_h =3D=3D block_w =3D=3D 1. To avoid confusion and a=
+llow easier
+> > > implementation of tiled formats. It also remove the usage of the
+> > > deprecated format field `cpp`.
+> > >=20
+> > > Introduce the plane_index parameter to get an offset/pointer on a
+> > > different plane.
+> > >=20
+> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> > > ---
+> > >  drivers/gpu/drm/vkms/vkms_formats.c | 110 ++++++++++++++++++++++++++=
+++--------
+> > >  1 file changed, 87 insertions(+), 23 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vk=
+ms/vkms_formats.c
+> > > index 69cf9733fec5..9a1400ad4db6 100644
+> > > --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> > > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> > > @@ -10,22 +10,43 @@
+> > >  #include "vkms_formats.h"
+> > > =20
+> > >  /**
+> > > - * pixel_offset() - Get the offset of the pixel at coordinates x/y i=
+n the first plane
+> > > + * packed_pixels_offset() - Get the offset of the block containing t=
+he pixel at coordinates x/y
+> > >   *
+> > >   * @frame_info: Buffer metadata
+> > >   * @x: The x coordinate of the wanted pixel in the buffer
+> > >   * @y: The y coordinate of the wanted pixel in the buffer
+> > > + * @plane_index: The index of the plane to use
+> > > + * @offset: The returned offset inside the buffer of the block
+> > > + * @rem_x,@rem_y: The returned coordinate of the requested pixel in =
+the block
+> > >   *
+> > > - * The caller must ensure that the framebuffer associated with this =
+request uses a pixel format
+> > > - * where block_h =3D=3D block_w =3D=3D 1.
+> > > - * If this requirement is not fulfilled, the resulting offset can po=
+int to an other pixel or
+> > > - * outside of the buffer.
+> > > + * As some pixel formats store multiple pixels in a block (DRM_FORMA=
+T_R* for example), some
+> > > + * pixels are not individually addressable. This function return 3 v=
+alues: the offset of the
+> > > + * whole block, and the coordinate of the requested pixel inside thi=
+s block.
+> > > + * For example, if the format is DRM_FORMAT_R1 and the requested coo=
+rdinate is 13,5, the offset
+> > > + * will point to the byte 5*pitches + 13/8 (second byte of the 5th l=
+ine), and the rem_x/rem_y
+> > > + * coordinates will be (13 % 8, 5 % 1) =3D (5, 0)
+> > > + *
+> > > + * With this function, the caller just have to extract the correct p=
+ixel from the block.
+> > >   */
+> > > -static size_t pixel_offset(const struct vkms_frame_info *frame_info,=
+ int x, int y)
+> > > +static void packed_pixels_offset(const struct vkms_frame_info *frame=
+_info, int x, int y,
+> > > +				 int plane_index, int *offset, int *rem_x, int *rem_y)
+> > >  {
+> > >  	struct drm_framebuffer *fb =3D frame_info->fb;
+> > > +	const struct drm_format_info *format =3D frame_info->fb->format;
+> > > +	/* Directly using x and y to multiply pitches and format->ccp is no=
+t sufficient because
+> > > +	 * in some formats a block can represent multiple pixels.
+> > > +	 *
+> > > +	 * Dividing x and y by the block size allows to extract the correct=
+ offset of the block
+> > > +	 * containing the pixel.
+> > > +	 */
+> > > =20
+> > > -	return fb->offsets[0] + (y * fb->pitches[0]) + (x * fb->format->cpp=
+[0]);
+> > > +	int block_x =3D x / drm_format_info_block_width(format, plane_index=
+);
+> > > +	int block_y =3D y / drm_format_info_block_height(format, plane_inde=
+x);
+> > > +	*rem_x =3D x % drm_format_info_block_width(format, plane_index);
+> > > +	*rem_y =3D y % drm_format_info_block_height(format, plane_index);
+> > > +	*offset =3D fb->offsets[plane_index] +
+> > > +		  block_y * fb->pitches[plane_index] +
+> > > +		  block_x * format->char_per_block[plane_index]; =20
+> >=20
+> > I started thinking... is
+> >=20
+> > +		  block_y * fb->pitches[plane_index] +
+> >=20
+> > correct, or should it be
+> >=20
+> > +		  y * fb->pitches[plane_index] +
+> >=20
+> > ? =20
+>=20
+> The documentation is not very clear about that:
+>=20
+>        	 * @pitches: Line stride per buffer. For userspace created object=
+ this
+>        	 * is copied from drm_mode_fb_cmd2.
+>=20
+> If I look at the drm_mode_fb_cmd2, there is this documentation:
+>=20
+>        	/** @pitches: Pitch (aka. stride) in bytes, one per plane. */
+>=20
+> For me, I interpret "stride" as it is used in matrix calculation, where it
+> means "the number of bytes between two number adjacent verticaly"
+> (&matrix[x,y] + stride =3D=3D &matrix[x,y+1]).
+>=20
+> So in a graphic context, I interpret a stride as the number of byte to
+> reach the next line of blocks (as pixels can not always be accessed
+> individually).
+>=20
+> So, for me, buffer_size_in_byte >=3D stride * number_of_lines.
 
--Serge(y)
+This is the definition, yes. Even for blocky formats, it is still
+number of 1-pixel-high lines, even though one cannot address a line as
+such. For blocky formats it is a theoretical value, and computing with
+it only makes sense when your number of lines is a multiple of block
+height.
 
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac.h      |  1 +
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c |  6 +++++-
->  drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c | 14 +++++++++++---
->  3 files changed, 17 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> index dddcaa9220cc3..badfe686a5702 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-> @@ -361,6 +361,7 @@ int stmmac_mdio_unregister(struct net_device *ndev);
->  int stmmac_mdio_register(struct net_device *ndev);
->  int stmmac_mdio_reset(struct mii_bus *mii);
->  int stmmac_xpcs_setup(struct mii_bus *mii);
-> +void stmmac_pcs_clean(struct net_device *ndev);
->  void stmmac_set_ethtool_ops(struct net_device *netdev);
->  
->  int stmmac_init_tstamp_counter(struct stmmac_priv *priv, u32 systime_flags);
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index 3d828904db0d3..0ac99c132733d 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -7789,8 +7789,9 @@ int stmmac_dvr_probe(struct device *device,
->  
->  error_netdev_register:
->  	phylink_destroy(priv->phylink);
-> -error_xpcs_setup:
->  error_phy_setup:
-> +	stmmac_pcs_clean(ndev);
-> +error_xpcs_setup:
->  	if (priv->hw->pcs != STMMAC_PCS_TBI &&
->  	    priv->hw->pcs != STMMAC_PCS_RTBI)
->  		stmmac_mdio_unregister(ndev);
-> @@ -7832,6 +7833,9 @@ void stmmac_dvr_remove(struct device *dev)
->  	if (priv->plat->stmmac_rst)
->  		reset_control_assert(priv->plat->stmmac_rst);
->  	reset_control_assert(priv->plat->stmmac_ahb_rst);
-> +
-> +	stmmac_pcs_clean(ndev);
-> +
->  	if (priv->hw->pcs != STMMAC_PCS_TBI &&
->  	    priv->hw->pcs != STMMAC_PCS_RTBI)
->  		stmmac_mdio_unregister(ndev);
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-> index 0542cfd1817e6..73ba9901a4439 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_mdio.c
-> @@ -523,6 +523,17 @@ int stmmac_xpcs_setup(struct mii_bus *bus)
->  	return 0;
->  }
->  
-> +void stmmac_pcs_clean(struct net_device *ndev)
-> +{
-> +	struct stmmac_priv *priv = netdev_priv(ndev);
-> +
-> +	if (!priv->hw->xpcs)
-> +		return;
-> +
-> +	xpcs_destroy(priv->hw->xpcs);
-> +	priv->hw->xpcs = NULL;
-> +}
-> +
->  /**
->   * stmmac_mdio_register
->   * @ndev: net device structure
-> @@ -679,9 +690,6 @@ int stmmac_mdio_unregister(struct net_device *ndev)
->  	if (!priv->mii)
->  		return 0;
->  
-> -	if (priv->hw->xpcs)
-> -		xpcs_destroy(priv->hw->xpcs);
-> -
->  	mdiobus_unregister(priv->mii);
->  	priv->mii->priv = NULL;
->  	mdiobus_free(priv->mii);
-> 
-> -- 
-> 2.44.0
-> 
+That's my recollection. This has been hashed in issues like
+https://gitlab.freedesktop.org/wayland/weston/-/issues/896
+
+> > I'm looking at drm_format_info_min_pitch() which sounds like it should
+> > be the latter? Because of
+> >
+> >         return DIV_ROUND_UP_ULL((u64)buffer_width * info->char_per_bloc=
+k[plane],
+> >                             drm_format_info_block_width(info, plane) *
+> >                             drm_format_info_block_height(info, plane));
+> >
+> > in drm_format_info_min_pitch(). =20
+>=20
+> This function doesn't make sense to me. I can't understand how it could
+> work.
+>=20
+> If I consider the X0L2 format, with block_h =3D=3D block_w =3D=3D 2,
+> char_per_block =3D 8, and a framebuffer of 1 * 10 pixels, the result of
+> drm_format_info_min_pitch is 2.
+
+If buffer_width is 1, then buffer_width / block_w is 1 because of
+rounding up. Cannot have images with partial blocks. That is a
+block-row of one block. That block takes char_per_block bytes, that is,
+8 bytes here. But block height is 2, and stride is computed for
+1-pixel-high line, so we divide by block_h, and the result is stride =3D
+4 bytes.
+
+However, 1 * 8 / (2 * 2) =3D 2. I think the code is bugged, and the
+round-up happens at a wrong point. The correct form would be
+
+div_round_up(div_round_up(buffer_width, block_w) * char_per_block, block_h)
+
+in my opinion. There must always be an integer number of blocks on a
+block-row. If a block-row has multiple blocks, doing a
+div_round_up(char_per_block, block_h) would over-estimate the per-block
+bytes and add the extra for each block rather than averaging it out.
+So, multiplying by char_per_block before dividing by block_h gives a
+stricter minimum stride.
+
+The condition buffer_size_bytes >=3D buffer_height * stride is necessary
+but not always sufficient, because the buffer must hold an integer
+number of block-rows.
+
+> However, for this format and this framebuffer, I think the stride should
+> be at least 8 bytes (the buffer is "1 block width").
+
+I believe the stride is 4 bytes, because stride for a 1-pixel-high line
+on average, rounded up.
+
+Stride allows for unused blocks per block-row, but its use for buffer
+size checking with buffer_height is incomplete, I believe. For the
+question "is buffer_size enough?" it may produce false-positives, but
+it cannot produce false-negatives.
+
+
+Thanks,
+pq
+
+
+> If pitch equals 2 (as suggested by the test), it implies that
+> height * pitch is not valid for calculating the minimum size of the buffer
+> (in our case, 10 * 2 =3D 20 bytes, but the minimum framebuffer size should
+> be 5 blocks * 8 bytes_per_block =3D 40 bytes). And I don't understand what
+> the 2 represents in this context.
+> Is it the number of pixels on a line (which is strange, because pitch=20
+> should be in byte)? The width in byte of the first line, but by using the=
+=20
+> "byte per pixel" value (which make no sense when using block formats)?
+>=20
+> If pitch equals 8 (as I would expect), height * pitch is not optimal (but
+> at least sufficient to contain the entire framebuffer), and height * pitch
+> / block_h is optimal (which is logical, because height/block_h is the=20
+> number of block per columns).
+>=20
+> > Btw. maybe this should check that the result is not negative (e.g. due
+> > to overflow)? Or does that even work since signed overflow is undefined
+> > behavior (UB) and compilers may assume UB does not happen, causing the
+> > check to be eliminated as dead code?
+> >
+> > Otherwise this patch looks ok to me.
+> >=20
+> >=20
+> > Thanks,
+> > pq
+> >  =20
+>=20
+> [...]
+>=20
+> --
+> Louis Chauvet, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+--Sig_/+HtRlSbEj54KW42m5d4eUu+
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEJQjwWQChkWOYOIONI1/ltBGqqqcFAmZB9ioACgkQI1/ltBGq
+qqcUJA/+IdlwBdr+FJmO3CcHiS+nrrHFGN++uZ9PuwM5Lgej732L7EpemDQfTiUH
+wOm+QjnvbS+RxHlKDyCqD1fmHyH+nf0i1cuo6UtqeobUmaPzsKlNYdliB5nMO/ux
+czIQuObrdhSiEXeEgM8SHrY5iuKnMCwpYm9nQ4jBXCDZrzMUYgEHQXLvwRYvzVsf
+Koeoo0LMnsKzA6gDwWJpqV559x5GTFX0io2fYDHUsb6oND22fOOkPQtVE21wYjyg
+3dM58JGblCUJeP5XMrGayfCOFgB96D6p9ldjnhoXV8tAdpZnv+Xi8goDzs8gTtZV
+dINLToRWldysnAD6O7QfEPAyycp4bMupkMSZY7tyB8lHr1n/HflJndAczZwq6uza
+XeRzn88hZ0j/JA/lOvHq7kG1Bwyo3FLCmFeb5jdpiqYLvSB1EbFqonZMTjjr91YB
+bThcslH1m7mrbePXGnDMbHN2gAmRTH96uncMYCL3vZ2KPK6kxekq3FQVpclcz/1i
+qJ9H0ngeEZaTJGJTbrl6GKvGj0kxKctPVNm+v5iTzabo560gdLQPbJeD/cy2nN3J
+tMc3qKc00en9U3xCkZQyUAtcvpiOIRiQsJiuyuauA6l4DmEiIARIc8xRSjhGIDdm
+ASvVvGuGd1JON7tZHRS8BlJ1yrlg8RRZWaTIzmk1RVQ9INsndTk=
+=gM+J
+-----END PGP SIGNATURE-----
+
+--Sig_/+HtRlSbEj54KW42m5d4eUu+--
 
