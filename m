@@ -1,143 +1,163 @@
-Return-Path: <linux-kernel+bounces-177831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766098C451B
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:29:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC64D8C451D
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 18:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16D6E1F22747
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19EC41C228BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 16:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB0E1553A8;
-	Mon, 13 May 2024 16:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EE6155388;
+	Mon, 13 May 2024 16:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NG+ULLTA"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z95o1QHt"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9719155326;
-	Mon, 13 May 2024 16:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172A814D2BF;
+	Mon, 13 May 2024 16:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715617760; cv=none; b=q99GKTut89ntaQso+gU/P2TjdPwF1MCZ1I5xf2NWr0dRYPc/sPu8ruDNNyYYK7dwVmmEp7f9F0tNn28kS6tFMC/M3d8XqosSLf0WCL228fXewtFHCI3GTCN/O5ztiHRFJ3+B9GRz6ZVLQBgpIbyPmDo3AeAaalyKXwbdpwq2fvU=
+	t=1715617790; cv=none; b=Fxh1T1ZI0rEr1wwTC7Dz53BbjdAPwJvgN/WUFrmIyyY8B+dU/Kdo/JfXZwfTSaxmWQcsf0o4IKTOnWSXiPVlt3Yh1YAb6iEzdN0UXip82LDH81qVEqm3CsdAaiapIHPxxw7pI5PP4wM+ZZwr0o/wYiGrl6Iq5Vujx6wew73By2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715617760; c=relaxed/simple;
-	bh=9oirvRjInAAK2WGeTpkg13GutqE/g028MxGLEUfVJ4U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tGiBihIVDYI56sdTPygqmM6bdFVMUrUCDBNU8zwrKmcSnRf60Jdk5E83j9JeFO7BBR9dqhDMZCewloJ5k/yE4ZDneIN+E6P9Yfu4JEkCrL+678t7ECctJklBdf/wKdhJYQ12xGlf9RP0MNQMt8k7QqddcBogRZhHAXU0S+eH97E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NG+ULLTA; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e3fa13f018so57505521fa.3;
-        Mon, 13 May 2024 09:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715617757; x=1716222557; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sABAyDDibQeTUxaqpap0tAGtEYkahruaupGbesZnVxw=;
-        b=NG+ULLTALVnG8nXbcS05WAmLq6FOjMRDQy0Tu9YTARNmlmfml3Ke2lwizJlDNY+/v3
-         F30xl2dXDSmcKuSba8+uOl9zVO7faz35ipRJcN4v79B8l7KUiKevTwywf6WVE2pKdEWp
-         aUjcWZd1eH/b7toN/EmTWHwbtZGqldINkFPSrxd5jkBKE+p6uh5LD3ip2TFxIbYD4oPp
-         c6hBs+nCoxGsa7uIhY+dQcq1b7unhnj65JSL4VWa43Otx9ABIQ6FtBFYzrnmSXFMke6K
-         CiQ144uqhUXIWjlEo3ZK8R9TB73mwrXrrO9kdD6wljaKTTsB7GF5pqEs/G2kfkO1EbGn
-         9URw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715617757; x=1716222557;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sABAyDDibQeTUxaqpap0tAGtEYkahruaupGbesZnVxw=;
-        b=K4/vfjwm7ZErzxSX5lmSpG4ciJppK/v38WlmGHWmcW6BHyL1W9BURBWdXqV6NL71oB
-         50ZC/oEzqF1XnvBmQMtRsInWqpnOZHcWXuQYUwk0S9Te3LFxXaMHGqK4RabSscHqpROI
-         IBxUityXIKQwFxvTa/aCBP4Fl1WFjVBuv2ZXblLao6biN4piur8F/f/qIyZsMhsAQwJ3
-         wYuHKkXib5yzRyCXf3RXvDdZsEbzEgMaUNlt6c1R0TmxbNW6QNoZXDN31Cs1InVfp9QT
-         gkoQlGU7oZewynVu9O0g0B+/BN8ULaztvx54dwJT7ybafflkYWi2GU7csP6B5Npr7gV/
-         qO5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXAyAUGjPBCfTpdUXsQ1F9OzoIrFJelCRWuqll6rCiPcJXPL4ORUuAvQfpwkXD+hFkZ/0ImwFR1SVcIidrSLbosXm+WgbH79t0Q/PxgN4R08CeO/tCg+02ZEWbG1c/Xg6rnKbxxhoaxXELQ5h4xwVyULfLrMFT4/JKrdw2aR8WgBafLcco5Ra3iFWFp8j43WpTzZ6IwOh1/qATBlIm/AeYyr6TsT11Q
-X-Gm-Message-State: AOJu0Yx7tQ2g1XdErnVU4jl2+pPMbQb2c3cblRJ8P5+r2tVI6GxHxue1
-	xy7CDgSH7N04caxq+SW95ECyCCB9dQId+4aFqWkzOtZZOQB7t+LCk+nlDYMq+q9S0PIHp/3z++Y
-	JFClQ/AcjUQ2TuxzJYIBlY5y0Bz8=
-X-Google-Smtp-Source: AGHT+IEzW3swQESCG1PQZCau4vY6voiOCRmeopxeRXdBZmXXzeygMwKz9BndpIVFZiSJ3rYSQcVeLpqTsjWpyxNmprY=
-X-Received: by 2002:a2e:91ce:0:b0:2df:1e3e:327f with SMTP id
- 38308e7fff4ca-2e52039bcb3mr71238121fa.38.1715617756547; Mon, 13 May 2024
- 09:29:16 -0700 (PDT)
+	s=arc-20240116; t=1715617790; c=relaxed/simple;
+	bh=P5p3YJgaSryQWCWTT7Yw2Cx0iDBf43rEw9xJhuxZSOQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LfmAw4G2LM0DhQRsGtJPOuZGbVvpc0Z6iGFEtGVdsAIowbAjX2OaASVA8WFNWXt/e28qYkiwqPtEWILj4TiAg5yQPJAtGNn9CaNIyyHezzb907+KtvW3P54sZ+RraONj7iALZx5dZUXf7Q2ZOBuvQNh0sfsRm/K3tHAj/jni4ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z95o1QHt; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9CFD8C0006;
+	Mon, 13 May 2024 16:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715617784;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rGyJ9+fBQ8mBfRdwi06YujJsGzmctZRxczZm1z9IHuM=;
+	b=Z95o1QHtJyY9muhfAuCZ77XJ226rG84KnkvCO51HCCcAH8QtwR8LrUwze8xucvkTSn3kr9
+	glKvgzCUnLPZHd+jsPt2KN46k2yEVoTojuspEdwubHLABSo3VwJ/yeWLyilLlQogCSHcFJ
+	3p2WqWYEPk84g3j0GXZk1Utpn/FplJW0lueaS3OpkaxQlfsmrMRnwpstio0hKOoR3NDZmq
+	S1BlxQLNyicprYr/JAOfNAlhs7ktuUOZVSFlZKgVbEjbhdq5+XMdRhfi0Bo2z8+E1VZHc0
+	QeBMLIDrSCHFobIiP9yjsvq2p/dKkIaASjakF0QWX8hcXi0BzWe8cxcWI6gjPg==
+From: Richard Genoud <richard.genoud@bootlin.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Esteban Blanc <eblanc@baylibre.com>,
+	linux-rtc@vger.kernel.org,
+	Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Richard Genoud <richard.genoud@bootlin.com>
+Subject: [PATCH] rtc: tps6594: Add power management support
+Date: Mon, 13 May 2024 18:29:42 +0200
+Message-ID: <20240513162942.68484-1-richard.genoud@bootlin.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AS8PR02MB7237262C62B054FABD7229168BE12@AS8PR02MB7237.eurprd02.prod.outlook.com>
- <d11dacfa-5925-4040-b60b-02ab731d5f1a@kernel.org>
-In-Reply-To: <d11dacfa-5925-4040-b60b-02ab731d5f1a@kernel.org>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 13 May 2024 12:29:04 -0400
-Message-ID: <CABBYNZ+4CcoBvkj8ze7mZ4vVfWfm_tyBxdFspvreVASi0VR=6A@mail.gmail.com>
-Subject: Re: [PATCH v2] tty: rfcomm: prefer struct_size over open coded arithmetic
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Erick Archer <erick.archer@outlook.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kees Cook <keescook@chromium.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: richard.genoud@bootlin.com
 
-Hi Jiri, Eric,
+Add power management support to the driver. This allows a SoC to wake
+from suspend using the nINT provided by the RTC.
+It takes care of the case when the interrupt has not been caught because
+the kernel has not yet woke up.
+(This is the case when only edges interrupt are caught)
 
-On Mon, May 13, 2024 at 1:07=E2=80=AFAM Jiri Slaby <jirislaby@kernel.org> w=
-rote:
->
-> On 12. 05. 24, 13:17, Erick Archer wrote:
-> > This is an effort to get rid of all multiplications from allocation
-> > functions in order to prevent integer overflows [1][2].
-> >
-> > As the "dl" variable is a pointer to "struct rfcomm_dev_list_req" and
-> > this structure ends in a flexible array:
-> ...
-> > --- a/include/net/bluetooth/rfcomm.h
-> > +++ b/include/net/bluetooth/rfcomm.h
-> ...
-> > @@ -528,12 +527,12 @@ static int rfcomm_get_dev_list(void __user *arg)
-> >       list_for_each_entry(dev, &rfcomm_dev_list, list) {
-> >               if (!tty_port_get(&dev->port))
-> >                       continue;
-> > -             (di + n)->id      =3D dev->id;
-> > -             (di + n)->flags   =3D dev->flags;
-> > -             (di + n)->state   =3D dev->dlc->state;
-> > -             (di + n)->channel =3D dev->channel;
-> > -             bacpy(&(di + n)->src, &dev->src);
-> > -             bacpy(&(di + n)->dst, &dev->dst);
-> > +             di[n].id      =3D dev->id;
-> > +             di[n].flags   =3D dev->flags;
-> > +             di[n].state   =3D dev->dlc->state;
-> > +             di[n].channel =3D dev->channel;
-> > +             bacpy(&di[n].src, &dev->src);
-> > +             bacpy(&di[n].dst, &dev->dst);
->
-> This does not relate much to "prefer struct_size over open coded
-> arithmetic". It should have been in a separate patch.
+Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
+---
+ drivers/rtc/rtc-tps6594.c   | 46 +++++++++++++++++++++++++++++++++++++
+ include/linux/mfd/tps6594.h |  1 +
+ 2 files changed, 47 insertions(+)
 
-+1, please split these changes into its own patch so we can apply it separa=
-tely.
+diff --git a/drivers/rtc/rtc-tps6594.c b/drivers/rtc/rtc-tps6594.c
+index 838ae8562a35..b769d120c624 100644
+--- a/drivers/rtc/rtc-tps6594.c
++++ b/drivers/rtc/rtc-tps6594.c
+@@ -415,6 +415,8 @@ static int tps6594_rtc_probe(struct platform_device *pdev)
+ 	if (irq < 0)
+ 		return dev_err_probe(dev, irq, "Failed to get irq\n");
+ 
++	tps->irq_rtc = irq;
++
+ 	ret = devm_request_threaded_irq(dev, irq, NULL, tps6594_rtc_interrupt,
+ 					IRQF_ONESHOT, TPS6594_IRQ_NAME_ALARM,
+ 					dev);
+@@ -434,6 +436,49 @@ static int tps6594_rtc_probe(struct platform_device *pdev)
+ 	return devm_rtc_register_device(rtc);
+ }
+ 
++static int tps6594_rtc_resume(struct device *dev)
++{
++	struct tps6594 *tps = dev_get_drvdata(dev->parent);
++	struct rtc_device *rtc_dev = dev_get_drvdata(dev);
++	int ret;
++
++	ret = regmap_test_bits(tps->regmap, TPS6594_REG_INT_STARTUP,
++			       TPS6594_BIT_RTC_INT);
++	if (ret < 0) {
++		dev_err(dev, "failed to read REG_INT_STARTUP: %d\n", ret);
++		goto out;
++	}
++
++	if (ret > 0) {
++		/*
++		 * If the alarm bit is set, it means that the IRQ has been
++		 * fired. But, the kernel may not have woke up yet when it
++		 * happened. So, we have to clear it.
++		 */
++		ret = regmap_write(tps->regmap, TPS6594_REG_RTC_STATUS,
++				   TPS6594_BIT_ALARM);
++		if (ret < 0)
++			dev_err(dev, "error clearing alarm bit: %d", ret);
++
++		rtc_update_irq(rtc_dev, 1, RTC_IRQF | RTC_AF);
++	}
++out:
++	disable_irq_wake(tps->irq_rtc);
++
++	return 0;
++}
++
++static int tps6594_rtc_suspend(struct device *dev)
++{
++	struct tps6594 *tps = dev_get_drvdata(dev->parent);
++
++	enable_irq_wake(tps->irq_rtc);
++
++	return 0;
++}
++
++SIMPLE_DEV_PM_OPS(tps6594_rtc_pm_ops, tps6594_rtc_suspend, tps6594_rtc_resume);
++
+ static const struct platform_device_id tps6594_rtc_id_table[] = {
+ 	{ "tps6594-rtc", },
+ 	{}
+@@ -444,6 +489,7 @@ static struct platform_driver tps6594_rtc_driver = {
+ 	.probe		= tps6594_rtc_probe,
+ 	.driver		= {
+ 		.name	= "tps6594-rtc",
++		.pm = pm_sleep_ptr(&tps6594_rtc_pm_ops),
+ 	},
+ 	.id_table = tps6594_rtc_id_table,
+ };
+diff --git a/include/linux/mfd/tps6594.h b/include/linux/mfd/tps6594.h
+index 3f7c5e23cd4c..85933f1519c4 100644
+--- a/include/linux/mfd/tps6594.h
++++ b/include/linux/mfd/tps6594.h
+@@ -1011,6 +1011,7 @@ struct tps6594 {
+ 	bool use_crc;
+ 	struct regmap *regmap;
+ 	int irq;
++	int irq_rtc;
+ 	struct regmap_irq_chip_data *irq_data;
+ };
+ 
+-- 
+2.43.0
 
-> Other than that, LGTM.
->
-> thanks,
-> --
-> js
-> suse labs
->
-
-
---=20
-Luiz Augusto von Dentz
 
