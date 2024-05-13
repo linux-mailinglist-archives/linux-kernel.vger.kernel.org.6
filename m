@@ -1,186 +1,234 @@
-Return-Path: <linux-kernel+bounces-177144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 440D98C3AC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:41:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B48458C3AC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 06:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68221F2119D
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E483BB20D00
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 04:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF46145FFD;
-	Mon, 13 May 2024 04:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA9B146006;
+	Mon, 13 May 2024 04:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eLKSFZvi"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2052.outbound.protection.outlook.com [40.107.93.52])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KnRZnZBi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FEEF4C81;
-	Mon, 13 May 2024 04:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715575301; cv=fail; b=c81t8hhwx31akLPt34sQ/F4yki0CNk3tMPUuEtVYP1Ows4bHK25rr38QMFuBZP+kE+u1nAP4f97q8zT0OkIlc5UMXDVOJ62CPXJjYqBUi0ojLNqDIR38rqsoRDNsfdXZM5C8BZjejr90wgEK/boDFHfbEcexjAFUtKb1FCRSHBI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715575301; c=relaxed/simple;
-	bh=g0YPbXI/ven5yTYtDhlAorCYFSdl3hYGQJYdJwKhMNU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t0LayuBoVg7KPFiugQpXXFSb+R1xwvU9qc8wwjchTcv6J7BEojztPDDCwitqOdbG7vMhTq1r/WzR+H0hC31nmfPoTsykPugFEqvwO8lDiTwPvt4bz8biXQxKXHZSfq0/JCIpmP6UcZifz2WBRDtbvppKvXxGmpFJX/KPrAjMmsY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eLKSFZvi; arc=fail smtp.client-ip=40.107.93.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VPZ/D47yXezXa1GpHJ03kulTBWgii7P9YehgUIkYuLgtdeKnNuSEOg+PFhsY3hr9lfWdqjO87xSU4mfJBzHk7VSjNwvK8i9B9tq4grfh1MCPdqGL5xHpb+St7IGnZrXOQSp1bKhMx5FqJFXi8eyQIFN71cu2QuvM5hX0p+u7n4rlibDxzGQ7Tabd2xnTU1W4ry4cVBPDbEREHbQiUnbGbzAenRUgoWymYWbAhkBffO7MgpkUKTZcEiQZ1McV2YdQTNpFK4420C8pJI4/68qxaOyWjUUEVHSY3HQNcKaPm0WxO890o0/nAuq270rCHfqn7KLvVTzyrBdhaVP+rlIwLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9BiAkJDe4FT7gkzs2WEROXalACr1RS5l+mknpigm4gE=;
- b=ntu77oXzOrSRa7J9fqoYsz5KSHhKbp6lC/PqllMesT8EDpITqNanB7h//EsE/gdMyczqCVBSvAceh2c5jdwoz02q3FycrONgG8GsOMYhZiu+mhbzHc90000GyJ+SSK4yCJaFidCDOV+WD/dpsWroOIBTXpCy6cvT30ziMIJ81l6Fl9F9iN0IaluOCXnGB5Scz493Ap13Y3mhzGRnAt8QFQsipDqAUKnhQZbyreig6Z44ILo6iUh8dqXVzYwaMQa749Jo1goalici9p2Haw+1gytnYbOELB4UnRuWQh38ac7oCaDVrivzcciQE4FzXjRrL3b/OxDV3ahzIEjC58wZ0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9BiAkJDe4FT7gkzs2WEROXalACr1RS5l+mknpigm4gE=;
- b=eLKSFZviyqlCqN+skz/WIoACkkzxB+e8La0RQafF14CzunAOXICjINgxMcR/q9sojC4LQ0dmCmWFu//3gocU7HNN4VHjOR4g3u5E6TGFty1X52M3kmoIZ+dV0IrcAvXmwPK9StQlFZloP6zMSQfvWZZSchcQhKhmighGD8519Ztp0SkCbMQ9tB+0/ygxQZfz0FDtvM1UjXzUVeU2J6bnY6EGxxyn/kBAozlyvQBsijRBMtGB3CPEkwMlCdq6+CGLyTzX79u3IcgotJDcNnq1cJ7H+RZPqiSV6cs1G8Lydh3DhlXsqTT1LUydK3GM0JO9WTCYfaD7TNvA5jTBjol0TA==
-Received: from SJ0PR03CA0108.namprd03.prod.outlook.com (2603:10b6:a03:333::23)
- by MW4PR12MB6873.namprd12.prod.outlook.com (2603:10b6:303:20c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 04:41:37 +0000
-Received: from SJ1PEPF00001CE8.namprd03.prod.outlook.com
- (2603:10b6:a03:333:cafe::ca) by SJ0PR03CA0108.outlook.office365.com
- (2603:10b6:a03:333::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.54 via Frontend
- Transport; Mon, 13 May 2024 04:41:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF00001CE8.mail.protection.outlook.com (10.167.242.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7587.21 via Frontend Transport; Mon, 13 May 2024 04:41:37 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
- 2024 21:41:28 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 12 May
- 2024 21:41:27 -0700
-Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Sun, 12 May 2024 21:41:22 -0700
-Date: Sun, 12 May 2024 21:41:19 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <will@kernel.org>, <robin.murphy@arm.com>, <kevin.tian@intel.com>,
-	<suravee.suthikulpanit@amd.com>, <joro@8bytes.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-tegra@vger.kernel.org>,
-	<yi.l.liu@intel.com>, <eric.auger@redhat.com>, <vasant.hegde@amd.com>,
-	<jon.grimm@amd.com>, <santosh.shukla@amd.com>, <Dhaval.Giani@amd.com>,
-	<shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH RFCv1 12/14] iommufd: Add IOMMUFD_OBJ_VQUEUE and
- IOMMUFD_CMD_VQUEUE_ALLOC
-Message-ID: <ZkGZ7+37HnLlT6Jn@nvidia.com>
-References: <cover.1712978212.git.nicolinc@nvidia.com>
- <b0ee53af3f59602834e67ddf86c748ca304da175.1712978213.git.nicolinc@nvidia.com>
- <ZkDZ/YO0jqZOlRtA@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4482110F;
+	Mon, 13 May 2024 04:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715575434; cv=none; b=uzrfgjD9Lr0rdDiE7knO9tj4YK/qDDTNanhMEEaJeQLxx1wchOQByhCsWi/iuzu9qTvJoAYEjwi7PpMuJQcc9wITbA7eBgPKrSyKzTD5lTvDfmZIKXaOYtN++Fhszmjvuq5ZJ3VdBsmuW9wRySZaS4CXlkbZozhd2IYxAXp4o00=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715575434; c=relaxed/simple;
+	bh=f2hRnqnMpqjqK9xq/EnAefNcHhujuWO4M7G+A9jFyxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BOpj+D8y9dsHwLSqKyU3cEIy/Jc8YbNjHWAQsuPhkucI9ntoZBt7xaNBNLcpOLNQsvmdX+YN2OWRXVh9sxj7MkwLoL8Jr/LpwcIvI7s/L7nwhj6t5oNW83WxMibhHIfEcTQTxkooWo8WqwZvjRs9ODAC6LRFQOczeH0+HMZXKKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KnRZnZBi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7674C113CC;
+	Mon, 13 May 2024 04:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715575433;
+	bh=f2hRnqnMpqjqK9xq/EnAefNcHhujuWO4M7G+A9jFyxw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KnRZnZBiCEqHPjRBiDJXkGZFxA1MD81ZDlBN5aBceUv6w5WovzbrMuIS2jq89htjC
+	 DZvnUrdk7G2/YEgAyihzMtxLbxO2wBe4jebtf15zGRufSFrUGarGmsCmyjR5gRYPME
+	 WmRNOJbVd+Blh3Uze7GhhmyHje0ZPkUbSQaNPScCJWPuJjE3MaOgJEy41c0FPEzvDp
+	 06mGN7dd4PE3VeNXfzEhVupnlVy+GmM9b4fFL9R4gPllx4Ow9SWVLzZ+xUEUhaTjfu
+	 a/8MUk4FGDPph0AjhACmoeEwnLHqd5pUqrT5a+9cVNDnBOOdUmBEXZa/TK1FlE6P64
+	 yMOMc1JBLS5lA==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2e27277d2c1so51096711fa.2;
+        Sun, 12 May 2024 21:43:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWrKvMwzeclU1JkQEmRcukiTplMcVBkMVLDETqAjLMWM/WaiOZlMSXZxLRZ2pFB3aiM3w36LT8ZEfAxDif6CzeWZMCSn0/zGl2gwtCip4WsEO1E/tprx+sjGFw80f9AMz5q3UJ2VWOc93MDFuFmpgqskEO9+XfyD2u3GfP0el9sAjfCEITddhpYkjMGNRtHjA==
+X-Gm-Message-State: AOJu0Yx1ijkBwJ/QZVjAvHUUI9IBo/dodBez4JqkPa291jI+c/JjKwxd
+	jvEI/+ClxW0LANBGYygWeO/6nYRmH3UefvwzT6Fk8hz1GbRxCKd9hXqtojCSwtb8Ck3YHeA0/dc
+	lIm3Yh/+EL/9+eUKfyOp7kbo70eQ=
+X-Google-Smtp-Source: AGHT+IH+GcVG/AnLQ4PfEDzfNh+gYR0Re2MrA/t7vDkubHmAlPo1YCWxRHlsnnEHrBsYZiZlxNkPGxwJHeJT8BqoqJQ=
+X-Received: by 2002:a2e:1309:0:b0:2e6:a87e:6df9 with SMTP id
+ 38308e7fff4ca-2e6ac4bb517mr3086031fa.20.1715575432301; Sun, 12 May 2024
+ 21:43:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZkDZ/YO0jqZOlRtA@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE8:EE_|MW4PR12MB6873:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a2b4760-8b87-41ad-e00f-08dc7306f97f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|376005|1800799015|36860700004|82310400017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jBFqUFoatkBznTin2qJwkVR7tUDCKQdOKBaUyMzEjgCl6FsO9kwnB5Q8n3Sp?=
- =?us-ascii?Q?B3YRaOMvfsiBmBx/PXhDN4ud5C0BqzHMIeNb8GBlyhDAEW8YjOPbmOhIQayJ?=
- =?us-ascii?Q?AU6nP8NMCnOyQ4HHLvNJzxmrg2a8khooxyGOsts6SpHL/LfANiw17liEC6yJ?=
- =?us-ascii?Q?0mxcCY5IZkDkwz9ayIH1qnK9e6sB+eo5OEi7Kfgq+19x4t8ke5j3O46tbE/s?=
- =?us-ascii?Q?5ZgkSnosMgS7hCJyaVHIJOxdXJX/3N6IoRH1A5FbuFBJY3k6o2DDsyyt6IO5?=
- =?us-ascii?Q?kOMh3J2Anxt00gXFZQn2MTa+bowzRGaxqd/CMFdCZ2PLEHvMPqMRPcafVBav?=
- =?us-ascii?Q?P/k7nUzihY66+zJ6dPSwhVZhZFFs9P69rgvdu+CAAdwgkOKM+xbj0YXLwuOg?=
- =?us-ascii?Q?pfazUpEnJ1nHorJcp9AXB0IgsnUXJBrTyCc2s+hhJf4TIow/k7zKUsaXqDhv?=
- =?us-ascii?Q?ONF6UAfkG33VTvYux9fZnrqf6xZ2+zYLe8jUJjqL3h0SdQ0iGN2aKXGtRAZ4?=
- =?us-ascii?Q?+cHT3Nd8b9TZ+yK7WgPwzmP4BPh1O17rkfCtzKAjwuUJVJTdnS/HyI1SPAKV?=
- =?us-ascii?Q?IWqOvXHTga8oJUch9+9gPnt15kyJI5sYJ5DOJbqhTqtUlVvJJESVX+wgNnJd?=
- =?us-ascii?Q?KujbURERXg6L1UrnCJdcuFoTyV4xs3WXbN/SgcpIvl8G4QbmWurTyEYC9wpj?=
- =?us-ascii?Q?HR99iq2Pdxfc1ka9U3IZncJ9Laq5u2lPaXhdOLs+PtErZ9x0v/a7NVzbwRCz?=
- =?us-ascii?Q?15h4a16N4LEiT+/VPruajEPZCX3TICp3MlmvUaWUcjx0Q9mv/b6ambvS2OhT?=
- =?us-ascii?Q?4/d5uy0K6DZUmDhYS9cHrXlIAwKF6VWjFFqkZzeAOls9dPxSB7UfuKwhgyHn?=
- =?us-ascii?Q?AFf9cwS+Oeh33tn82TPH0c/mOstXKUtg1RivcSFnd9bz3ALjXIZ9OUm2Z4eh?=
- =?us-ascii?Q?x2ym/k9A1KQ02qZgOGy1qmyRyU1j667IBUPy6y0f4OOwMisbPub/XLFkBv2Z?=
- =?us-ascii?Q?o/RiYdJV0eySyljN/ny2bQNg3DNARKfUeW1OwEEVyHDW0intVNuGURUzXJ3r?=
- =?us-ascii?Q?zyX9K4woXy6KTJZtDQIxxb2R/tNpFrhq1PE0XbhOEx+vcqOGL4117vEhdQS5?=
- =?us-ascii?Q?GMYkNZDPloUeNabFM+afUh2uUhd2DT+gH/k0ycjPn2xf/B3LDxO1T5a6Gbvv?=
- =?us-ascii?Q?TK3DQrfd3fIdOPK2fKXGRdsI56lpaeR+HI5kqq7cTx9aAduRGobIl3cwqu5Q?=
- =?us-ascii?Q?FUU7RiOq/FDa98N/KaKRUcb2qJ82eYwr7OsA6X0WsZQTYUZzbRmjjJmMUJdZ?=
- =?us-ascii?Q?yC7Gq6Z31xRf4/VoUt8tSgbBBQCsKYetDZeJlCDTNUx4fZCerQsy1/3c7ys4?=
- =?us-ascii?Q?UxGk1yMntzeloBYJUmv1Ed+EN2jo?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230031)(7416005)(376005)(1800799015)(36860700004)(82310400017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 04:41:37.0641
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a2b4760-8b87-41ad-e00f-08dc7306f97f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6873
+References: <20240511224035.27775-1-kris.van.hees@oracle.com>
+In-Reply-To: <20240511224035.27775-1-kris.van.hees@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 13 May 2024 13:43:15 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com>
+Message-ID: <CAK7LNATwSDyAWR2FqccF5RFLpw5CYFyndR0N814nC7G7EaL2Tw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/6] Generate address range data for built-in modules
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Steven Rostedt <rostedt@goodmis.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Jiri Olsa <olsajiri@gmail.com>, Elena Zannoni <elena.zannoni@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 12, 2024 at 12:02:21PM -0300, Jason Gunthorpe wrote:
-> On Fri, Apr 12, 2024 at 08:47:09PM -0700, Nicolin Chen wrote:
-> 
-> > +/**
-> > + * struct iommu_vqueue_alloc - ioctl(IOMMU_VQUEUE_ALLOC)
-> > + * @size: sizeof(struct iommu_vqueue_alloc)
-> > + * @flags: Must be 0
-> > + * @viommu_id: viommu ID to associate the virtual queue with
-> > + * @out_vqueue_id: The ID of the new virtual queue
-> > + * @data_type: One of enum iommu_vqueue_data_type
-> > + * @data_len: Length of the type specific data
-> > + * @data_uptr: User pointer to the type specific data
-> > + *
-> > + * Allocate an virtual queue object for driver-specific HW-accelerated queue
-> > + */
-> > +
-> > +struct iommu_vqueue_alloc {
-> > +	__u32 size;
-> > +	__u32 flags;
-> > +	__u32 viommu_id;
-> > +	__u32 out_vqueue_id;
-> > +	__u32 data_type;
-> > +	__u32 data_len;
-> > +	__aligned_u64 data_uptr;
-> 
-> Some of the iommus will want an IPA here not a user pointer. I think
-> it is fine API wise, we'd just add a flag to indicate data_uptr is an
-> IPA.
+On Sun, May 12, 2024 at 7:42=E2=80=AFAM Kris Van Hees <kris.van.hees@oracle=
+com> wrote:
+>
+> Especially for tracing applications, it is convenient to be able to
+> refer to a symbol using a <module name, symbol name> pair and to be able
+> to translate an address into a <nodule mname, symbol name> pair.  But
+> that does not work if the module is built into the kernel because the
+> object files that comprise the built-in module implementation are simply
+> linked into the kernel image along with all other kernel object files.
+>
+> This is especially visible when providing tracing scripts for support
+> purposes, where the developer of the script targets a particular kernel
+> version, but does not have control over whether the target system has
+> a particular module as loadable module or built-in module.  When tracing
+> symbols within a module, referring them by <module name, symbol name>
+> pairs is both convenient and aids symbol lookup.  But that naming will
+> not work if the module name information is lost if the module is built
+> into the kernel on the target system.
+>
+> Earlier work addressing this loss of information for built-in modules
+> involved adding module name information to the kallsyms data, but that
+> required more invasive code in the kernel proper.  This work never did
+> get merged into the kernel tree.
+>
+> All that is really needed is knowing whether a given address belongs to
+> a particular module (or multiple modules if they share an object file).
+> Or in other words, whether that address falls within an address range
+> that is associated with one or more modules.
+>
+> This patch series is baaed on Luis Chamberlain's patch to generate
+> modules.builtin.objs, associating built-in modules with their object
+> files.  Using this data, vmlinux.o.map and vmlinux.map can be parsed in
+> a single pass to generate a modules.buitin.ranges file with offset range
+> information (relative to the base address of the associated section) for
+> built-in modules.  The file gets installed along with the other
+> modules.builtin.* files.
 
-Ack.
 
-Nicolin
+
+I still do not want to see modules.builtin.objs.
+
+
+During the vmlinux.o.map parse, every time an object path
+is encountered, you can open the corresponding .cmd file.
+
+
+
+Let's say, you have the following in vmlinux.o.map:
+
+text          0x00000000007d4fe0     0x46c8 drivers/i2c/i2c-core-base.o
+
+
+
+You can check drivers/i2c/.i2c-core-base.o.cmd
+
+
+$ cat drivers/i2c/.i2c-core-base.o.cmd | tr ' ' '\n' | grep KBUILD_MODFILE
+-DKBUILD_MODFILE=3D'"drivers/i2c/i2c-core"'
+
+
+Now you know this object is part of drivers/i2c/i2c-core
+(that is, its modname is "i2c-core")
+
+
+
+
+Next, you will get the following:
+
+ .text          0x00000000007dc550     0x13c4 drivers/i2c/i2c-core-acpi.o
+
+
+$ cat drivers/i2c/.i2c-core-acpi.o.cmd | tr ' ' '\n' | grep KBUILD_MODFILE
+-DKBUILD_MODFILE=3D'"drivers/i2c/i2c-core"'
+
+
+This one is also a part of drivers/i2c/i2c-core
+
+
+You will get the address range of "i2c-core" without changing Makefiles.
+
+You still need to modify scripts/Makefile.vmlinux(_o)
+but you can implement everything else in your script,
+although I did not fully understand the gawk script.
+
+
+Now, you can use Python if you like:
+
+  https://lore.kernel.org/lkml/20240512-python-version-v2-1-382870a1fa1d@li=
+naro.org/
+
+Presumably, python code will be more readable for many people.
+
+
+GNU awk is not documented in Documentation/process/changes.rst
+If you insist on using gawk, you need to add it to the doc.
+
+
+
+
+
+Having said that, I often hope to filter traced functions
+by an object path instead of a modname because modname
+filtering is only useful tristate code.
+For example, filter by "path:drivers/i2c/" or "path:drivers/i2c/i2c-core*"
+rather than "mod:i2c-core"
+
+<object path, symbol name> reference will be useful for always-builtin code=
+.
+
+
+
+
+>
+> The impact on the kernel build is minimal because everything is done
+> using a single-pass AWK script.  The generated data size is minimal as
+> well, (depending on the exact kernel configuration) usually in the range
+> of 500-700 lines, with a file size of 20-40KB.
+>
+> Changes since v1:
+>  - Renamed CONFIG_BUILTIN_RANGES to CONFIG_BUILTIN_MODULE_RANGES
+>  - Moved the config option to the tracers section
+>  - 2nd arg to generate_builtin_ranges.awk should be vmlinux.map
+>
+> Kris Van Hees (5):
+>   trace: add CONFIG_BUILTIN_MODULE_RANGES option
+>   kbuild: generate a linker map for vmlinux.o
+>   module: script to generate offset ranges for builtin modules
+>   kbuild: generate modules.builtin.ranges when linking the kernel
+>   module: add install target for modules.builtin.ranges
+>
+> Luis Chamberlain (1):
+>   kbuild: add modules.builtin.objs
+>
+>  .gitignore                          |   2 +-
+>  Documentation/dontdiff              |   2 +-
+>  Documentation/kbuild/kbuild.rst     |   5 ++
+>  Makefile                            |   8 +-
+>  include/linux/module.h              |   4 +-
+>  kernel/trace/Kconfig                |  17 ++++
+>  scripts/Makefile.lib                |   5 +-
+>  scripts/Makefile.modinst            |  11 ++-
+>  scripts/Makefile.vmlinux            |  17 ++++
+>  scripts/Makefile.vmlinux_o          |  18 ++++-
+>  scripts/generate_builtin_ranges.awk | 149 ++++++++++++++++++++++++++++++=
+++++++
+>  11 files changed, 228 insertions(+), 10 deletions(-)
+>  create mode 100755 scripts/generate_builtin_ranges.awk
+>
+>
+> base-commit: dd5a440a31fae6e459c0d6271dddd62825505361
+> --
+> 2.42.0
+>
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
