@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-177319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DEC8C3CDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:06:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1958C3CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 10:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D69E2820DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:05:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297331F21CBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 08:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCCC1474B9;
-	Mon, 13 May 2024 08:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f3DMme5d"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB264146D56;
+	Mon, 13 May 2024 08:05:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDABE146D51;
-	Mon, 13 May 2024 08:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D86146D50
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 08:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715587539; cv=none; b=r6n5vlhy5y79TV3WXPAoJaqhA1ieIGFKl0QtNvBDcLyuc2ttvPr71wtblFtFChAQLXZP9yzseVdWMkmX8Vkwwn4QXZBHsp0axb10Jiol/TJAKX3KEGN9VZBXH9ml4joq0eae/5TBDAgwz/3aFDMjHPVGMacga40XcQB9tb4bQ6c=
+	t=1715587538; cv=none; b=HUbjaRe2XPKI/xHU+Rz861N852UZvS62MTmhOSr+Sa9dz3mEWKOczpV6I7ElS7v2IDXl1g/ZPPJoekad89iFdBJ3ywtUey+Bo9ZmXMeeBN4+3E/RCMHaDEqzC4cw38HKgPcnwCRnxkL7QhErH2OqWhOJoSAJZsg1ToceGrtjA5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715587539; c=relaxed/simple;
-	bh=QjIzxQ8TAmkDr4YCdHB7dm8/MlbtW8LqG4Iu2oj6sHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cLugZrSxtmjQHKFMwEA2zTM0TJ81FSWNRvrW1mPY3fFUyTrH/19wom9RBrgK9nTMv5tZVK69eD8Hzpc+mKz7Upg73Fiajaaxwx/LhDXEZsEURvIB350c38hg093AqlihcUv/61oGw4ep6yI3sEwpRjvWJBj1oITpe1p/3c0pgsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f3DMme5d; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C90EC0005;
-	Mon, 13 May 2024 08:05:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715587529;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iyoZN19SXhcNpowY087583lyuLXsiKEVgwfckAcf1+w=;
-	b=f3DMme5dxtAT4mt5HSyw2dTwDS4cj1aQP7DTsF7JEASt6rAPey2MD6dQjtqCv/f//7ygwr
-	80tVcE3yboCLUBnrFQNlSPQbNERb3wwFmlBAzZULm6qLGkekBcWFHmAR+nso3/P5/3xKUi
-	jeo8olmnvjtndE9Z8cObUyAS+2gNhW5Uv3rCLkHEncVjQ2OFRVXHs1lDRzno4Td6rkDMdf
-	XX3MudMxRzLYEKTNr8IbYiINhlFGkBVlnKNAg19ttCrWo7nXUqBsYV3UhNtI8o0A55+6oO
-	9WX0VTKscxls9YA1fYGNpPorXUQ22t0JENtl1Og8jDDN/lrQznxUw6FTyswgOA==
-Date: Mon, 13 May 2024 10:05:23 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
- <nicolas.ferre@microchip.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Gregory Clement
- <gregory.clement@bootlin.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
- UNGLinuxDriver@microchip.com, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, Yisen Zhuang <yisen.zhuang@huawei.com>,
- Salil Mehta <salil.mehta@huawei.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-Message-ID: <20240513100523.4a23d58c@xps-13>
-In-Reply-To: <20240513-timing-snippet-38983a6b3e2f@spud>
-References: <20240510123018.3902184-1-robh@kernel.org>
-	<20240513095504.37776289@xps-13>
-	<20240513-timing-snippet-38983a6b3e2f@spud>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715587538; c=relaxed/simple;
+	bh=fbAGScRhVQHSB6uzeuUiqvEOgLOrxU0SyVLG4IG4kcA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QpOCyVmotviA2WaSEEqJZgumfs1S9hvacUPODUPXYpbpyK4x/stmjzmnsFGBkSymFHapeQf/1xOzQrtCbMoUxFrLviN3ClMsPDxLbi+3FT8Z+bCHC9HflhLBF6lj+4Bx8cWUUsblGNcSuRVPOldQds2MK7q056wmZ1LRpxA9/zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s6Qgf-0001zw-3x; Mon, 13 May 2024 10:05:33 +0200
+Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s6Qge-001851-Mj; Mon, 13 May 2024 10:05:32 +0200
+Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ukl@pengutronix.de>)
+	id 1s6Qge-003CrH-1w;
+	Mon, 13 May 2024 10:05:32 +0200
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: [PATCH] regulator: Drop explicit initialization of struct i2c_device_id::driver_data to 0
+Date: Mon, 13 May 2024 10:05:26 +0200
+Message-ID: <20240513080525.2353168-2-u.kleine-koenig@pengutronix.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,47 +57,322 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9909; i=u.kleine-koenig@pengutronix.de; h=from:subject; bh=fbAGScRhVQHSB6uzeuUiqvEOgLOrxU0SyVLG4IG4kcA=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBmQcnGk4c6n+sJdkwYHH0jL0h6/Ec20qU0t7hPJ cOXf0lRDgaJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZkHJxgAKCRCPgPtYfRL+ TqWsCACnO5VXsISoC9nEPCVARLqOgmo9Fgh0BCQBZmmQoq07TW4y3tTPkih9IJXGrVnA8TaOYqd 5vw5b2HJsB8MK75tQiYpZ+858c21mA35u2f/ubvBNfnHTcGjX/PQrlbSnDSTlGSffCB0k5goR1g 8cooZoCYS+5mFBA255gGjsPKJ+hQT+g82akS2+vBrKp0bxrISDqMbo1snSRPuBnGzjCtbbNJYfX 0CWrYSZUpz8K3BJXyeIWbzLj5Y2gzVrA0utYWxEGqXR28ltNxIlB9GtOa0/RP3w0hnbZ3QX/wb5 2NIa2EDk9DDLLQd4N1++eXdJkdFVNfsNRjnAlBDAhcaa54U6
+X-Developer-Key: i=u.kleine-koenig@pengutronix.de; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Conor,
+These drivers don't use the driver_data member of struct i2c_device_id,
+so don't explicitly initialize this member.
 
-conor@kernel.org wrote on Mon, 13 May 2024 08:59:34 +0100:
+This prepares putting driver_data in an anonymous union which requires
+either no initialization or named designators. But it's also a nice
+cleanup on its own.
 
-> On Mon, May 13, 2024 at 09:55:04AM +0200, Miquel Raynal wrote:
-> > Hi Rob,
-> >=20
-> > robh@kernel.org wrote on Fri, 10 May 2024 07:30:14 -0500:
-> >  =20
-> > > Add another batch of various "simple" syscon compatibles which were
-> > > undocumented or still documented with old text bindings. Remove the o=
-ld
-> > > text binding docs for the ones which were documented. =20
-> >=20
-> > ...
-> >  =20
-> > >  .../devicetree/bindings/mtd/atmel-nand.txt    |  9 ------ =20
-> >=20
-> > I don't know how useful are these compatibles, but if I take the case
-> > of atmel,sama5d3-nfc-io, it is only described in this file, while
-> > several DTSI reference it. After this change they will no longer be
-> > referenced at all but still in use. Is this intended? Shall these
-> > compatibles be totally dropped from the device trees as well?
-> >=20
-> > $ git grep -c atmel,sama5d3-nfc-io arch/
-> > arch/arm/boot/dts/microchip/sama5d2.dtsi:1
-> > arch/arm/boot/dts/microchip/sama5d3.dtsi:1
-> > arch/arm/boot/dts/microchip/sama5d4.dtsi:1
-> > arch/arm/boot/dts/microchip/sama7g5.dtsi:1 =20
->=20
-> atmel,sama5d3-nfc-io is added to the syscon yaml binding in this patch,
-> so it's a move not a removal, no?
+While add it, also remove commas after the sentinel entries.
 
-Ah sorry, I missed the additions in this file, fine then, sorry for the
-misunderstanding.
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+---
+ drivers/regulator/da9210-regulator.c   |  4 ++--
+ drivers/regulator/lp3971.c             |  2 +-
+ drivers/regulator/lp3972.c             |  2 +-
+ drivers/regulator/lp8755.c             |  2 +-
+ drivers/regulator/max1586.c            |  2 +-
+ drivers/regulator/max20411-regulator.c |  4 ++--
+ drivers/regulator/max8649.c            |  2 +-
+ drivers/regulator/max8893.c            |  4 ++--
+ drivers/regulator/max8952.c            |  4 ++--
+ drivers/regulator/mcp16502.c           |  2 +-
+ drivers/regulator/mt6311-regulator.c   |  4 ++--
+ drivers/regulator/pf8x00-regulator.c   |  8 ++++----
+ drivers/regulator/pv88060-regulator.c  |  4 ++--
+ drivers/regulator/pv88090-regulator.c  |  4 ++--
+ drivers/regulator/slg51000-regulator.c |  4 ++--
+ drivers/regulator/sy8106a-regulator.c  |  4 ++--
+ drivers/regulator/tps6286x-regulator.c | 10 +++++-----
+ drivers/regulator/tps6287x-regulator.c | 10 +++++-----
+ 18 files changed, 38 insertions(+), 38 deletions(-)
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com> # mtd
+diff --git a/drivers/regulator/da9210-regulator.c b/drivers/regulator/da9210-regulator.c
+index 02b85ca4a6fc..39ade0dba40f 100644
+--- a/drivers/regulator/da9210-regulator.c
++++ b/drivers/regulator/da9210-regulator.c
+@@ -202,8 +202,8 @@ static int da9210_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id da9210_i2c_id[] = {
+-	{"da9210", 0},
+-	{},
++	{ "da9210" },
++	{}
+ };
+ 
+ MODULE_DEVICE_TABLE(i2c, da9210_i2c_id);
+diff --git a/drivers/regulator/lp3971.c b/drivers/regulator/lp3971.c
+index e1b5c45f97f4..d4dab86fe385 100644
+--- a/drivers/regulator/lp3971.c
++++ b/drivers/regulator/lp3971.c
+@@ -439,7 +439,7 @@ static int lp3971_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id lp3971_i2c_id[] = {
+-	{ "lp3971", 0 },
++	{ "lp3971" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lp3971_i2c_id);
+diff --git a/drivers/regulator/lp3972.c b/drivers/regulator/lp3972.c
+index 7bd6f05edd8d..1b918fb72134 100644
+--- a/drivers/regulator/lp3972.c
++++ b/drivers/regulator/lp3972.c
+@@ -537,7 +537,7 @@ static int lp3972_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id lp3972_i2c_id[] = {
+-	{ "lp3972", 0 },
++	{ "lp3972" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, lp3972_i2c_id);
+diff --git a/drivers/regulator/lp8755.c b/drivers/regulator/lp8755.c
+index 8d01e18046f3..5509bee49bda 100644
+--- a/drivers/regulator/lp8755.c
++++ b/drivers/regulator/lp8755.c
+@@ -430,7 +430,7 @@ static void lp8755_remove(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id lp8755_id[] = {
+-	{LP8755_NAME, 0},
++	{ LP8755_NAME },
+ 	{}
+ };
+ 
+diff --git a/drivers/regulator/max1586.c b/drivers/regulator/max1586.c
+index 0f133129252e..4242fbb7b147 100644
+--- a/drivers/regulator/max1586.c
++++ b/drivers/regulator/max1586.c
+@@ -276,7 +276,7 @@ static int max1586_pmic_probe(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id max1586_id[] = {
+-	{ "max1586", 0 },
++	{ "max1586" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max1586_id);
+diff --git a/drivers/regulator/max20411-regulator.c b/drivers/regulator/max20411-regulator.c
+index 8c09dc71b16d..ce430c925c71 100644
+--- a/drivers/regulator/max20411-regulator.c
++++ b/drivers/regulator/max20411-regulator.c
+@@ -145,8 +145,8 @@ static const struct of_device_id of_max20411_match_tbl[] = {
+ MODULE_DEVICE_TABLE(of, of_max20411_match_tbl);
+ 
+ static const struct i2c_device_id max20411_id[] = {
+-	{ "max20411", 0 },
+-	{ },
++	{ "max20411" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max20411_id);
+ 
+diff --git a/drivers/regulator/max8649.c b/drivers/regulator/max8649.c
+index 24e1dfba78c8..f57c588bcf28 100644
+--- a/drivers/regulator/max8649.c
++++ b/drivers/regulator/max8649.c
+@@ -240,7 +240,7 @@ static int max8649_regulator_probe(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id max8649_id[] = {
+-	{ "max8649", 0 },
++	{ "max8649" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max8649_id);
+diff --git a/drivers/regulator/max8893.c b/drivers/regulator/max8893.c
+index 30592425e193..5a90633d8536 100644
+--- a/drivers/regulator/max8893.c
++++ b/drivers/regulator/max8893.c
+@@ -162,8 +162,8 @@ MODULE_DEVICE_TABLE(of, max8893_dt_match);
+ #endif
+ 
+ static const struct i2c_device_id max8893_ids[] = {
+-	{ "max8893", 0 },
+-	{ },
++	{ "max8893" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max8893_ids);
+ 
+diff --git a/drivers/regulator/max8952.c b/drivers/regulator/max8952.c
+index 0b0b841d214a..1f94315bfb02 100644
+--- a/drivers/regulator/max8952.c
++++ b/drivers/regulator/max8952.c
+@@ -307,8 +307,8 @@ static int max8952_pmic_probe(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id max8952_ids[] = {
+-	{ "max8952", 0 },
+-	{ },
++	{ "max8952" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, max8952_ids);
+ 
+diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
+index 0c15a19fe83a..5de9d4fa5113 100644
+--- a/drivers/regulator/mcp16502.c
++++ b/drivers/regulator/mcp16502.c
+@@ -577,7 +577,7 @@ static const struct dev_pm_ops mcp16502_pm_ops = {
+ };
+ #endif
+ static const struct i2c_device_id mcp16502_i2c_id[] = {
+-	{ "mcp16502", 0 },
++	{ "mcp16502" },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, mcp16502_i2c_id);
+diff --git a/drivers/regulator/mt6311-regulator.c b/drivers/regulator/mt6311-regulator.c
+index c00638cd2d1e..2ebc1c0b5e6f 100644
+--- a/drivers/regulator/mt6311-regulator.c
++++ b/drivers/regulator/mt6311-regulator.c
+@@ -133,8 +133,8 @@ static int mt6311_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id mt6311_i2c_id[] = {
+-	{"mt6311", 0},
+-	{},
++	{ "mt6311" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, mt6311_i2c_id);
+ 
+diff --git a/drivers/regulator/pf8x00-regulator.c b/drivers/regulator/pf8x00-regulator.c
+index 9fd8e0949b32..ea3611de42b4 100644
+--- a/drivers/regulator/pf8x00-regulator.c
++++ b/drivers/regulator/pf8x00-regulator.c
+@@ -596,10 +596,10 @@ static const struct of_device_id pf8x00_dt_ids[] = {
+ MODULE_DEVICE_TABLE(of, pf8x00_dt_ids);
+ 
+ static const struct i2c_device_id pf8x00_i2c_id[] = {
+-	{ "pf8100", 0 },
+-	{ "pf8121a", 0 },
+-	{ "pf8200", 0 },
+-	{},
++	{ "pf8100" },
++	{ "pf8121a" },
++	{ "pf8200" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, pf8x00_i2c_id);
+ 
+diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
+index aa90360fa046..ae1c4b9daaa1 100644
+--- a/drivers/regulator/pv88060-regulator.c
++++ b/drivers/regulator/pv88060-regulator.c
+@@ -360,8 +360,8 @@ static int pv88060_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id pv88060_i2c_id[] = {
+-	{"pv88060", 0},
+-	{},
++	{ "pv88060" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, pv88060_i2c_id);
+ 
+diff --git a/drivers/regulator/pv88090-regulator.c b/drivers/regulator/pv88090-regulator.c
+index f4acde4d56c8..3c48757bbbda 100644
+--- a/drivers/regulator/pv88090-regulator.c
++++ b/drivers/regulator/pv88090-regulator.c
+@@ -381,8 +381,8 @@ static int pv88090_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id pv88090_i2c_id[] = {
+-	{"pv88090", 0},
+-	{},
++	{ "pv88090" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, pv88090_i2c_id);
+ 
+diff --git a/drivers/regulator/slg51000-regulator.c b/drivers/regulator/slg51000-regulator.c
+index 59aa16825d8a..3bbd4a29e6d3 100644
+--- a/drivers/regulator/slg51000-regulator.c
++++ b/drivers/regulator/slg51000-regulator.c
+@@ -497,8 +497,8 @@ static int slg51000_i2c_probe(struct i2c_client *client)
+ }
+ 
+ static const struct i2c_device_id slg51000_i2c_id[] = {
+-	{"slg51000", 0},
+-	{},
++	{ "slg51000" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, slg51000_i2c_id);
+ 
+diff --git a/drivers/regulator/sy8106a-regulator.c b/drivers/regulator/sy8106a-regulator.c
+index 1bcfdd6dcfc1..d79a4cc25a0d 100644
+--- a/drivers/regulator/sy8106a-regulator.c
++++ b/drivers/regulator/sy8106a-regulator.c
+@@ -130,8 +130,8 @@ static const struct of_device_id sy8106a_i2c_of_match[] = {
+ MODULE_DEVICE_TABLE(of, sy8106a_i2c_of_match);
+ 
+ static const struct i2c_device_id sy8106a_i2c_id[] = {
+-	{ "sy8106a", 0 },
+-	{ },
++	{ "sy8106a" },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, sy8106a_i2c_id);
+ 
+diff --git a/drivers/regulator/tps6286x-regulator.c b/drivers/regulator/tps6286x-regulator.c
+index 758c70269653..67e4c8d316d9 100644
+--- a/drivers/regulator/tps6286x-regulator.c
++++ b/drivers/regulator/tps6286x-regulator.c
+@@ -136,11 +136,11 @@ static int tps6286x_i2c_probe(struct i2c_client *i2c)
+ }
+ 
+ static const struct i2c_device_id tps6286x_i2c_id[] = {
+-	{ "tps62864", 0 },
+-	{ "tps62866", 0 },
+-	{ "tps62868", 0 },
+-	{ "tps62869", 0 },
+-	{},
++	{ "tps62864" },
++	{ "tps62866" },
++	{ "tps62868" },
++	{ "tps62869" },
++	{}
+ };
+ MODULE_DEVICE_TABLE(i2c, tps6286x_i2c_id);
+ 
+diff --git a/drivers/regulator/tps6287x-regulator.c b/drivers/regulator/tps6287x-regulator.c
+index 9b7c3d77789e..8e4d44e2b1af 100644
+--- a/drivers/regulator/tps6287x-regulator.c
++++ b/drivers/regulator/tps6287x-regulator.c
+@@ -164,11 +164,11 @@ static const struct of_device_id tps6287x_dt_ids[] = {
+ MODULE_DEVICE_TABLE(of, tps6287x_dt_ids);
+ 
+ static const struct i2c_device_id tps6287x_i2c_id[] = {
+-	{ "tps62870", 0 },
+-	{ "tps62871", 0 },
+-	{ "tps62872", 0 },
+-	{ "tps62873", 0 },
+-	{},
++	{ "tps62870" },
++	{ "tps62871" },
++	{ "tps62872" },
++	{ "tps62873" },
++	{}
+ };
+ 
+ MODULE_DEVICE_TABLE(i2c, tps6287x_i2c_id);
 
-Thanks,
-Miqu=C3=A8l
+base-commit: 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
+-- 
+2.43.0
+
 
