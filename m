@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-177312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-177308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4AB8C3CC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:57:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F948C3CB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 09:54:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7EBC287E25
-	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:57:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97C81C212C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 13 May 2024 07:54:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8D71474C5;
-	Mon, 13 May 2024 07:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D28147C8E;
+	Mon, 13 May 2024 07:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JD9XVGjf"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="el8EcEvF"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB0F1474A0;
-	Mon, 13 May 2024 07:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807EA146D62
+	for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 07:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715587036; cv=none; b=IF0nOo0W7d3D3kqClvzCX7zHS3s7bY9bmoHBoyl9px0ocfY6m/bsHIbLIn8aTqH22p8A9xfbOp7+fTz7iIgsErH9bdNISP884yKF0Kn3+/MT+jhRI1yTf6ITMkl9y0VDyYuJ+Sv3o2TFZb4fiq/NkoMhq3vvH/QW5au+NRph4P8=
+	t=1715586826; cv=none; b=GlSsuVd8R8IrfaBFrfWjpUbjwn2EuHOXfmT2pjLHfiZ5lQ9EX1gtgJkrHpqjy39FijYanAiG5FCkDUEYy6algRzDr71NlEmjJ9e8hfGZBRB9myZ8gFzTpnH956tDKJq5idv5O/ZTmiTebUda8Su7qfQ2V3RRfYjilxliB73eJHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715587036; c=relaxed/simple;
-	bh=b2qyThKrEXROa5UsqCfJs5RqQ6LvqWVkpGEAlf5h7zo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=YjkBVway6VVWvGq5Cn5VBXewdzbYEG69Vl4++Eo/HzhN3nxupUZaFW8sBWVWNFIv1nOl3kCrOwGTCqbaWK2a5gOUFS+NNeHbnRsOvN1iKTE5JB4kB/zp7iX03ZQuU6etgOMa3tv276tJ3BUenDH/lzpa3kltfyjS1R+rDz5pWWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JD9XVGjf; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1715586792; x=1716191592; i=markus.elfring@web.de;
-	bh=afouwgxXsDL3wwqwmPj0DrSGZAI4iej4a0NwiQc/opQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JD9XVGjfwWsXwGsMNEne9Laq2+6O9huzgUeHey/rSmtqC1sDyiZw0hxTqAFObbV6
-	 MhOQvONjmLNumTiKm+lnuBCEd6R7gZ9Lof7IV0AUm9mgQej4jJrb+HJmgARBhDnxs
-	 UKUYvPK8mHAGrcdbybejEcigTdtqxhpygmzq8lyi0HWWWpIx5W4pSA8AVNihKvso8
-	 1G69wmB5F0qWhJg/kIsjWAc3gQbgmPRva2bZmuO76XziGwH7a41vJlbWYnyuLjMPp
-	 Pe6kbekSxDg8YeYjFjkTnUkNnAi4sQTAuFhx3cxOsFIHT4+OGEDCcfe5ypdWY9yI6
-	 rNltlO36/0IrtKMeDg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1JEu-1s9BNi2VuE-002mNB; Mon, 13
- May 2024 09:53:12 +0200
-Message-ID: <5dca19e5-6dd2-40f3-ae54-a4154e7d00be@web.de>
-Date: Mon, 13 May 2024 09:52:57 +0200
+	s=arc-20240116; t=1715586826; c=relaxed/simple;
+	bh=tFCvM4pFGIcP2IcDFlxXwVmOqzhfygrr2i84mudsx8U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l9OitUjlUjl3N0qp9s5X8TiiUt/LLzmAL75f+ihFrx9aKzddGG2/jocgLTgdFaE5Blm/uNVu1VNvh7okjq6i4zV1eENFtsnL/oMjRucWp9lixDzdBv7xEBARYGgdHfgtpjUe3ed0pP0i8/BsF5EfGPwavgQAzry+8X5w/gmHt9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=el8EcEvF; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6ee13f19e7eso3608994b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 00:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1715586825; x=1716191625; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mrJul58J3vgdAQnlLZkyjKnsoAlgZLs+CwOV6iqswxg=;
+        b=el8EcEvFVO7E2jxycYfJspuv6Ztxa3XCW5MqpfNsUJ1jZDgJFtVo2qAF6x2viKZ+15
+         v4dNeZC/7qpAy4LBZG1hewR03uaWyKDGSq9aVgaEOa6RGwdk2u4tjqBhAwHCG7z4YbSJ
+         q5E8HBG8P+FH5k/0dx1duwTnm/FrLePO2j0eWb4UFA04f/+cd1zyugGpMPMCkqCLK2VN
+         Q4MzlKytlhI0MHVZVu/1hpVdDbWKk8yoeeAp14J58/Bi+scPdiB9naP05mJUdJyUMlO8
+         XAmzufThEHsEX+OTjOuQ5M4azUfhcS0xDSNhzFRNFyykh+/TdUIbk3X50PDUrMsGwUFq
+         cgDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715586825; x=1716191625;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrJul58J3vgdAQnlLZkyjKnsoAlgZLs+CwOV6iqswxg=;
+        b=LwNtcGghP6jRu+YYcuEGNdrglgwgJSbl4qn4VQuBtmQDUuSnoBflFxG8X2Mv5ZXw48
+         tnUqbqNXRi91+NFrc97GDsnBKvWETL4znQs6t5D3ZrTHHwkxDBE1LXqalR25yc4Ediq7
+         kHZuWzb0gfrETZHn97rBGenUnhdn4UMe7YNrLDo8S5YFtS+at73Zvz95YQpLPSrv1XNi
+         iM/Ao40aLgTE+76JgpRg0XvT5OhiLJJiXSwP8SNsbBuZv+0GOQ4ZWAhwGY2hu5zd82X+
+         4yo3lFWjYxywDUP6jINTKFRITmdpVrpLxRdisv9U+0+9BZTDLxdJcSL7WsI5UkhBFBJA
+         V5Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHDtjIGFQY3gSmn7XFSP9Wdow6DJmKtLfzX1nqAks/MhZmxiekl/FjATMV3DWfOrxWAuW3NKoKFpM//6rXHqE2UgvLfoEfFpW3kcuF
+X-Gm-Message-State: AOJu0YweY0vD1r0O7hfWFkac6mYU+eGgmdrPEwYrXPQIiQ2+Y8+Hf/G5
+	sPPm1JKB+VTemJrb4HbKtWp/5hrRqyrA7V6uxjLehpIO+TL7ZZJ1PYQqdX68PLHLmsjPRtAhqvU
+	Z
+X-Google-Smtp-Source: AGHT+IH3Fi9ZOB+eCpu3j60i34taduaB2ndb4SXYBkghT/tUfdR3N9HWEEGSmDP+Ba7lZEpAPPvamQ==
+X-Received: by 2002:a05:6a20:9e4c:b0:1a7:4944:d49 with SMTP id adf61e73a8af0-1afddee52d6mr8366132637.0.1715586824785;
+        Mon, 13 May 2024 00:53:44 -0700 (PDT)
+Received: from [10.70.146.105] ([203.208.189.6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d3e26sm73088345ad.43.2024.05.13.00.53.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 00:53:43 -0700 (PDT)
+Message-ID: <a476b77f-4d7d-4dbb-b58f-cfc39c07e91e@bytedance.com>
+Date: Mon, 13 May 2024 15:53:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,59 +76,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Kunwu Chan <chentao@kylinos.cn>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
- KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Song Liu <song@kernel.org>, Stanislav Fomichev <sdf@google.com>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, Kunwu Chan <kunwu.chan@linux.dev>,
- Kunwu Chan <kunwu.chan@hotmail.com>
-References: <20240510095803.472840-2-kunwu.chan@linux.dev>
-Subject: Re: [PATCH bpf-next v2 1/4] selftests/bpf: Add some null pointer
- checks
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240510095803.472840-2-kunwu.chan@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0qk556X1UoKRP1d2KUauvi0VtAOXwmbAC6L/EY2Q15ZO1iJRJbc
- d77Fky6GThq/k9gouG6fF5OqxAIIpSXeG10tGR0S5QoBNvLPYG2wQT6YO3Qk7igdkuqqk4e
- ZxadIQ1wbisRXc93q7N7bwqh9e3MLrHwwKhOfSrKXtiRMsMhq9LnbvOfH3WhhL6ElMcCmAA
- 4yvCu1pRWJJIOj6hMtH9Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ul5fiYkhqWw=;Diwge/DZwN1fc5Y2JRQzn3zMuVW
- 6Cl3u/3RgS0oPiw/6ht2sQxev4EFBdf+leywX1BBO6WQ4KcwZCzN7pABbqVbIvDXnCYRK3jLt
- /srMMw+mJm2Q0KQzj3cqZIBfAcIR/RI/3CYtNJ1IJgdBDB0S3tzDkPm00yzaeu2plrfyO5to1
- tjZkRH5y+o2S0fagXOUsyKmRtN8RJtcJGHWe0AxAqgnMKPQrkSZRZes6AqBpT9aXPu0MdQSbh
- Ff47a7jTW7SbeS5MQQZcvCfAuTDsbfdKUPbVJTFpV+dypRjBARI+34+d5l/eBx2hxDeXNoMR+
- FVjuKzc5yAt4XT3SBt1zO2wgoswdbZ7bRcks7qh82GJLu0Nju5IJdnYiP4Y+8yfnTrrL81Z6H
- xKqrkyDQxVECSsMovYbultCBK3fZcOAuUGmFyhtAy3JIuHb1pspU+070rD1SD3Ir84ec1DRIY
- IJssxTAaabqD0q/9pijMDbLe3re2HBZDgQ4fnjeJtZWTPwOjKJxMEgK3cO9mkitQMYaUVMMgd
- x6J2bl0jRz/rjHB9AMxRrkmJ8bF1dNF5c2mZS6+dtZBuwSs20+V46yg2lrYcDi7ch+uiDG5nt
- mFXko9o4+PQdZI6FaHuc9fpCedvn3p/tn9o6GsgKc5CeeC9wFZrTdn4dG8mNekPiqrKhElEmD
- LRV0TBl3B1AjVOE0p6dBbmlS39hSFpVdSvvFyRg+ty3otrdAWvyoAELJfKKMrMhc7flJW5muE
- CLW8Z+g1uQUCandg5gT04LzUiyNhbBXD1wd+ZK9eX9gcFVoUfIxyApw7OwfzTK/gTrxgl0z3a
- XOwM3SelmRf7DkjQbk5uWgcqzuqCSceiZbOsltYfgsFBw=
+Subject: Re: [PATCH] perf build: Specify libtraceevent dir to rpath for
+ asan/msan build
+To: Ian Rogers <irogers@google.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com, james.clark@arm.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240506081648.3890067-1-yangjihong@bytedance.com>
+ <CAP-5=fXYH4JnfQH98vPRttViBfYAWGA-aoGXO7q+R_Wt8AqFSw@mail.gmail.com>
+Content-Language: en-US
+From: Yang Jihong <yangjihong@bytedance.com>
+In-Reply-To: <CAP-5=fXYH4JnfQH98vPRttViBfYAWGA-aoGXO7q+R_Wt8AqFSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> There is a 'malloc' call, which can be unsuccessful.
+Hello,
 
-                  two calls?
+On 5/9/24 07:18, Ian Rogers wrote:
+> On Mon, May 6, 2024 at 1:17 AM Yang Jihong <yangjihong@bytedance.com> wrote:
+>>
+>> perf built by asan/msan will not search for shared libraries in the
+>> -L directory. For cross-compilation, we assume that sanitizers is
+>> generally not enabled and add libtraceevent dir to rpath in a simple way.
+>>
+>> 1. msan build
+>>
+>> Before:
+>>    $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=memory -fsanitize-memory-track-origins" CC=clang CXX=clang++ HOSTCC=clang NO_LIBELF=1 BUILD_BPF_SKEL=0 NO_LIBPFM=1 LIBTRACEEVENT_DIR=/opt/libtraceevent
+>>    ...
+>>    $ /tmp/perf/perf
+>>    /tmp/perf/perf: error while loading shared libraries: libtraceevent.so.1: cannot open shared object file: No such file or directory
+>>
+>> After:
+>>    $ make -C tools/perf O=/tmp/perf DEBUG=1 EXTRA_CFLAGS="-O0 -g -fno-omit-frame-pointer -fsanitize=memory -fsanitize-memory-track-origins" CC=clang CXX=clang++ HOSTCC=clang NO_LIBELF=1 BUILD_BPF_SKEL=0 NO_LIBPFM=1 LIBTRACEEVENT_DIR=/opt/libtraceevent
+>>    ...
+>>    $ /tmp/perf/perf --build-options
+>>    perf version 6.9.0-rc5
+>>    <SNIP>
+>>             libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+>>    <SNIP>
+>>
+>>   2. asan build
+>>
+>> Before:
+>>    $ make DEBUG=1 EXTRA_CFLAGS='-fno-omit-frame-pointer -fsanitize=address' LIBTRACEEVENT_DIR=/opt/libtraceevent
+>>    ...
+>>    $ ./perf
+>>    ./perf: error while loading shared libraries: libtraceevent.so.1: cannot open shared object file: No such file or directory
+>>
+>> After:
+>>     $ make DEBUG=1 EXTRA_CFLAGS='-fno-omit-frame-pointer -fsanitize=address' LIBTRACEEVENT_DIR=/opt/libtraceevent
+>>     ...
+>>     $ ./perf --build-options
+>>     perf version 6.9.0-rc5
+>>     <SNIP>
+>>              libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+>>     <SNIP>
+>>
+>> Signed-off-by: Yang Jihong <yangjihong@bytedance.com>
+>> ---
+>>   tools/perf/Makefile.config | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+>> index 7f1e016a9253..a9a923358604 100644
+>> --- a/tools/perf/Makefile.config
+>> +++ b/tools/perf/Makefile.config
+>> @@ -188,6 +188,10 @@ TRACEEVENTLIBS := -ltraceevent
+>>   ifdef LIBTRACEEVENT_DIR
+>>     LIBTRACEEVENT_CFLAGS  := -I$(LIBTRACEEVENT_DIR)/include
+>>     LIBTRACEEVENT_LDFLAGS := -L$(LIBTRACEEVENT_DIR)/lib
+>> +  # Specify rpath for asan/msan build. Generally, cross-compilation will not enable sanitizers.
+>> +  ifeq ($(findstring -fsanitize=,${EXTRA_CFLAGS}),-fsanitize=)
+>> +    LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib
+>> +  endif
+> 
+> Thanks for this! I found I need the following to make it work:
+> ```
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index a9a923358604..bcf4ab292462 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -190,7 +190,11 @@ ifdef LIBTRACEEVENT_DIR
+>    LIBTRACEEVENT_LDFLAGS := -L$(LIBTRACEEVENT_DIR)/lib
+>    # Specify rpath for asan/msan build. Generally, cross-compilation
+> will not enable sanitizers.
+>    ifeq ($(findstring -fsanitize=,${EXTRA_CFLAGS}),-fsanitize=)
+> -    LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib
+> +    ifeq (${IS_64_BIT}, 1)
+> +      LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib64
+> +    else
+> +      LIBTRACEEVENT_LDFLAGS += -Wl,-rpath,$(LIBTRACEEVENT_DIR)/lib
+> +    endif
+>    endif
+> endif
+> FEATURE_CHECK_CFLAGS-libtraceevent := $(LIBTRACEEVENT_CFLAGS)
+> ```
+> 
+> My libtraceevent build command is:
+> $ make EXTRA_CFLAGS="-O0 -g -fsanitize=address" DESTDIR=~/libtrace install
+My build environment only uses make, not make install, so the library 
+path is lib, not lib64, which leads to this difference.
+
+   # cd /opt/libtraceevent
+   # CROSS_COMPILE=aarch64-linux-gnu- make
+
+In order to be compatible with both situations, would it be better for 
+us to also add the lib64 path to -L and rpath?
+
+I have sent the v2 version and added it to path2. Please help me see if 
+this solution is OK:
+https://lore.kernel.org/all/20240513074910.1660373-1-yangjihong@bytedance.com/
 
 
-> This patch will add the malloc failure checking
-=E2=80=A6
-
-Please use imperative wordings for improved change descriptions also in yo=
-ur patches.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-Regards,
-Markus
+Thanks,
+Yang
 
