@@ -1,250 +1,152 @@
-Return-Path: <linux-kernel+bounces-178425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF8348C4D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7175C8C4D76
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6734C1F22897
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:06:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4081C21550
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE79182B5;
-	Tue, 14 May 2024 08:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FAE1F60A;
+	Tue, 14 May 2024 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="EW+TjDsH"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qFC9MbDA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B2D125A9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FD5125A9;
+	Tue, 14 May 2024 08:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715673995; cv=none; b=NZEPPOBezny5jSIq3bkCfp4mF5eLg7JXdRfSddNe7SK5UPw+e9Bn8KaCYQALjcI6B1T+d5v6tw817p1ySlhMhTI8uPF2157GdNMN6BsT5w4OrTVYuWK9aAxzWWbhlK7J/+13+dbshU0bzr2hBygM4ycg2qtDoin7xNCQx8S+u/E=
+	t=1715674001; cv=none; b=J9JTwKBgAxdwcf93uOPtLM/afsC2Gq69IHuF+CCHa0t3b2CJIOooEp/4NLwCf9m5v10BQ5Ops7GrQFN7hfoFkVHE9lwWuEA/VwRvROk1RcFfv1plOqkesQdbQg+iLRiFbclXpKSncYORq3ZOQuaVyM1fJc+owW8mBq3TkaMLAwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715673995; c=relaxed/simple;
-	bh=wa4C6Ee4ECOYeCIj8wjhLw3SuJWijNKeWZClb1WFn2U=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=djfIQf6g/euKLbyNT9A+NeHOqiP2eDKHy8UqqmqPGyWadXEeM1xP4uJJvn05aTQTQjpT9vAzeBFzRvLO0NIm1mHn/Wyz2+YhAnL0DtzZO6XtqFrUQNGDE6pS24DgcJ2kSIOLm7I6+LIHJz2CdC9dsOBsNUUXa2gy41yRXZ7VmME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=EW+TjDsH; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-420139ea1c4so2329345e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 01:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715673992; x=1716278792; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pjopg8Hd6ezoM2VPeWMeiUlmhpM5PP4esFYOJITTIpM=;
-        b=EW+TjDsHm2Pxm+1mvV9BATFejR590jZ9rWX5XYDjndrAu6rrUUgl+M+nGys1t37I57
-         IyrRyBL1Jkn46bIWrPdDhJKIs2EH8Se+/BEs26amQxTZJnAuvyEgwZ3B3NgyP/OmdI/V
-         WO0lAWP74Qd4tPq7B3DP6fUVIJdcxJz5xtjSUKV77YVrHN57TkTsqfSI2kfPCbb1xNhE
-         z96FgnoePIEwmB480adOdnnNii6OqgNr7wbqtfXGvhbE9bhNJWHmkOpxR8mn8R6yOkex
-         QXc30dy2J/8i3ppfBKIuw5s2nSGpQvnJLdC+v5ybk3bM/botPQjtgKmvWDTJ5TcBIQtC
-         AjWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715673992; x=1716278792;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pjopg8Hd6ezoM2VPeWMeiUlmhpM5PP4esFYOJITTIpM=;
-        b=DS0uuL4Iy0+a191pp9Syx6FPPlSCF++HugjuXqg7iZWHxIXVzgLbRcs8Yq6voeDJeL
-         mHM7Si/rwE3v4qdNj/Rr0qlLKhaZKlgES4IVlVNlVXSR9n8ty0ai6t5y+xTnCfvNOB90
-         TzGIMWDQhiATMmcf1WnseJgMI4y1o4iZfE+ukZDwSsM9P5cSv8WK6KmmN8x3Daojb67W
-         D6Y6d2xdVt94HJbY9GFj4tWE7Y7y6FuMdItlzOfzbT81dWtYqPAP9r/fVj6E19KAjRZm
-         A05pqP5RaFCGax2CuUw0avTJ+JsiFZpfu3hDMU7XtzVdz+e876P6wQ7DE4ma43NNwZQU
-         yk7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDwJ5lAq7bDll+wZ4FNJEhdsZZhB7mTiinDU4AdHqKKW/6VY4dC8R6WywefesHmmNleFJYVn5eR0tlbG1CMoNQ9spUwNt1zCuJrke+
-X-Gm-Message-State: AOJu0YyFizTLhqRZXzsa0ebdcI2gh7CrSg7ebyGAxCWqyhxkEgBdh3ea
-	5B7GdYf/wg6p13ObHmEWwIo6SCjYaoBNZ/5w99FUETXeJeyK5CO5poYhHTZIhhY=
-X-Google-Smtp-Source: AGHT+IHrTYyJeDAN6oeeNkuklJ3k4rzrTPEj0NJCPsHETslMiuk4YMPVJXS8JcMds7tACAEYtoHs+w==
-X-Received: by 2002:adf:ff92:0:b0:34d:8ccf:c9ce with SMTP id ffacd0b85a97d-3504a967162mr8354223f8f.5.1715673992206;
-        Tue, 14 May 2024 01:06:32 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:999:a3a0:1660:5f6e:2f9c:91b9? ([2a01:e0a:999:a3a0:1660:5f6e:2f9c:91b9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b896b0bsm13038230f8f.46.2024.05.14.01.06.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 01:06:31 -0700 (PDT)
-Message-ID: <e33b8eba-85f0-44b7-8a6f-802a6979f6c8@rivosinc.com>
-Date: Tue, 14 May 2024 10:06:31 +0200
+	s=arc-20240116; t=1715674001; c=relaxed/simple;
+	bh=N34ThgQd0DAt0wVs05B2Jna+Ohlf1SF698RKdtXprvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bYHaUgGnej1xyz/2AUJbG0K9wW6OQM8koKGN6FLbNwdjeJ+Tz2NbnS4HdudEyl7441aGfVzucoZzyX7VLzJCi3+QeJHQos7oXA9IPAKW7Kla5Cc75sELrd/Q8qWy9AoPaAKFLf3WcaQxPgry+g5zn4Lxn6SaW9NQZQEGcwxWKBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qFC9MbDA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71464C2BD10;
+	Tue, 14 May 2024 08:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715674001;
+	bh=N34ThgQd0DAt0wVs05B2Jna+Ohlf1SF698RKdtXprvQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qFC9MbDAqXMBEKQOAZcQKthbdtSWGuG13AGjjl4wN61HX2uQa0flzwQRhjMHucY6p
+	 OG9WbbNBKmaDuCqHtk19AyD7FjuXklOhhWbvEw1SMKDfYJKmtZ/pzxVcC8/ifCcC6K
+	 QBCR6+J3Z42dd1Vkv3dxYNivkKiG1Ao8lPuqGlgYFz5P3HiFoI6ayzuo2HBXzNfPO/
+	 bnJepdgfUyYKZadHNHBBsu4uINkXW2cRfcLeo6ERT6kRrMWfwMT0Mq+KeV8I5rFEJq
+	 tWrmBOIsUDIb2rAtSXeQc2HIzJ42Rw8FiW8jf4H2jKUSLOX6scIFbIX440XbW4jrTb
+	 EKHkmdlykHO5Q==
+Message-ID: <76755d03-04a7-4489-a155-355026ad998f@kernel.org>
+Date: Tue, 14 May 2024 10:06:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Subject: Re: [RFC PATCH 5/7] riscv: add double trap driver
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>,
- linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- kvm-riscv@lists.infradead.org, Ved Shanbhogue <ved@rivosinc.com>
-References: <20240418142701.1493091-1-cleger@rivosinc.com>
- <20240418142701.1493091-6-cleger@rivosinc.com>
- <Ziw//90J0WfOY/tl@debug.ba.rivosinc.com>
-Content-Language: en-US
-In-Reply-To: <Ziw//90J0WfOY/tl@debug.ba.rivosinc.com>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next 0/8] mptcp: small improvements, fix and clean-ups
+Content-Language: en-GB
+To: Mat Martineau <martineau@kernel.org>, Jakub Kicinski <kuba@kernel.org>
+Cc: mptcp@lists.linux.dev, Geliang Tang <geliang@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Florian Westphal <fw@strlen.de>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Detal <gregory.detal@gmail.com>
+References: <20240510-upstream-net-next-20240509-misc-improvements-v1-0-4f25579e62ba@kernel.org>
+ <20240513160630.545c3024@kernel.org>
+ <f60cac35-5a2b-16cf-4706-b2e41acfacae@kernel.org>
+ <20240513172941.290cc5cd@kernel.org>
+ <8829dfe5-d05a-4103-34af-90f0434ef390@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <8829dfe5-d05a-4103-34af-90f0434ef390@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+Hi Mat, Jakub,
 
-
-On 27/04/2024 01:59, Deepak Gupta wrote:
-> On Thu, Apr 18, 2024 at 04:26:44PM +0200, Clément Léger wrote:
->> Add a small driver to request double trap enabling as well as
->> registering a SSE handler for double trap. This will also be used by KVM
->> SBI FWFT extension support to detect if it is possible to enable double
->> trap in VS-mode.
+On 14/05/2024 02:33, Mat Martineau wrote:
+> On Mon, 13 May 2024, Jakub Kicinski wrote:
+> 
+>> On Mon, 13 May 2024 17:24:08 -0700 (PDT) Mat Martineau wrote:
+>>> The conflict here is purely in the diff context, patch 2 of this series
+>>> and "tcp: socket option to check for MPTCP fallback to TCP" add cases to
+>>> the same switch statement and have a couple of unmodified lines between
+>>> their additions.
+>>>
+>>> "git am -3" handles it cleanly in this case, if you have time and
+>>> inclination for a second attempt. But I realize you're working through a
+>>> backlog and net-next is now closed, so that time might not be available.
+>>> We'll try again when net-next reopens if needed.
 >>
->> Signed-off-by: Clément Léger <cleger@rivosinc.com>
->> ---
->> arch/riscv/include/asm/sbi.h    |  1 +
->> drivers/firmware/Kconfig        |  7 +++
->> drivers/firmware/Makefile       |  1 +
->> drivers/firmware/riscv_dbltrp.c | 95 +++++++++++++++++++++++++++++++++
->> include/linux/riscv_dbltrp.h    | 19 +++++++
->> 5 files changed, 123 insertions(+)
->> create mode 100644 drivers/firmware/riscv_dbltrp.c
->> create mode 100644 include/linux/riscv_dbltrp.h
+>> Your -3 must be more powerful somehow, or my scripts are broken because
+>> it isn't enough on my end.
 >>
->> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
->> index 744aa1796c92..9cd4ca66487c 100644
->> --- a/arch/riscv/include/asm/sbi.h
->> +++ b/arch/riscv/include/asm/sbi.h
->> @@ -314,6 +314,7 @@ enum sbi_sse_attr_id {
->> #define SBI_SSE_ATTR_INTERRUPTED_FLAGS_SPIE    (1 << 2)
->>
->> #define SBI_SSE_EVENT_LOCAL_RAS        0x00000000
->> +#define SBI_SSE_EVENT_LOCAL_DOUBLE_TRAP    0x00000001
->> #define SBI_SSE_EVENT_GLOBAL_RAS    0x00008000
->> #define SBI_SSE_EVENT_LOCAL_PMU        0x00010000
->> #define SBI_SSE_EVENT_LOCAL_SOFTWARE    0xffff0000
->> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
->> index 59f611288807..a037f6e89942 100644
->> --- a/drivers/firmware/Kconfig
->> +++ b/drivers/firmware/Kconfig
->> @@ -197,6 +197,13 @@ config RISCV_SSE_TEST
->>       Select if you want to enable SSE extension testing at boot time.
->>       This will run a series of test which verifies SSE sanity.
->>
->> +config RISCV_DBLTRP
->> +    bool "Enable Double trap handling"
->> +    depends on RISCV_SSE && RISCV_SBI
->> +    default n
->> +    help
->> +      Select if you want to enable SSE double trap handler.
->> +
->> config SYSFB
->>     bool
->>     select BOOT_VESA_SUPPORT
->> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
->> index fb7b0c08c56d..ad67a1738c0f 100644
->> --- a/drivers/firmware/Makefile
->> +++ b/drivers/firmware/Makefile
->> @@ -18,6 +18,7 @@ obj-$(CONFIG_RASPBERRYPI_FIRMWARE) += raspberrypi.o
->> obj-$(CONFIG_FW_CFG_SYSFS)    += qemu_fw_cfg.o
->> obj-$(CONFIG_RISCV_SSE)        += riscv_sse.o
->> obj-$(CONFIG_RISCV_SSE_TEST)    += riscv_sse_test.o
->> +obj-$(CONFIG_RISCV_DBLTRP)    += riscv_dbltrp.o
->> obj-$(CONFIG_SYSFB)        += sysfb.o
->> obj-$(CONFIG_SYSFB_SIMPLEFB)    += sysfb_simplefb.o
->> obj-$(CONFIG_TI_SCI_PROTOCOL)    += ti_sci.o
->> diff --git a/drivers/firmware/riscv_dbltrp.c
->> b/drivers/firmware/riscv_dbltrp.c
->> new file mode 100644
->> index 000000000000..72f9a067e87a
->> --- /dev/null
->> +++ b/drivers/firmware/riscv_dbltrp.c
->> @@ -0,0 +1,95 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (C) 2023 Rivos Inc.
->> + */
+>> If you can do a quick resend there's still a chance. The patches look
+>> quite simple.
 > 
-> nit: fix copyright year
->> +
->> +#define pr_fmt(fmt) "riscv-dbltrp: " fmt
->> +
->> +#include <linux/cpu.h>
->> +#include <linux/init.h>
->> +#include <linux/riscv_dbltrp.h>
->> +#include <linux/riscv_sse.h>
->> +
->> +#include <asm/sbi.h>
->> +
->> +static bool double_trap_enabled;
->> +
->> +static int riscv_sse_dbltrp_handle(uint32_t evt, void *arg,
->> +                   struct pt_regs *regs)
->> +{
->> +    __show_regs(regs);
->> +    panic("Double trap !\n");
->> +
->> +    return 0;
-> Curious:
-> Does panic return?
-> What's the point of returning from here?
-
-Hi Deepak,
-
-No, panic() does not return and indeed, the "return 0" is useless. It's
-a leftover of a previous implementation without panic in order to keep
-GCC mouth shut ;).
-
 > 
->> +}
->> +
->> +struct cpu_dbltrp_data {
->> +    int error;
->> +};
->> +
->> +static void
->> +sbi_cpu_enable_double_trap(void *data)
->> +{
->> +    struct sbiret ret;
->> +    struct cpu_dbltrp_data *cdd = data;
->> +
->> +    ret = sbi_ecall(SBI_EXT_FWFT, SBI_EXT_FWFT_SET,
->> +            SBI_FWFT_DOUBLE_TRAP_ENABLE, 1, 0, 0, 0, 0);
->> +
->> +    if (ret.error) {
->> +        cdd->error = 1;
->> +        pr_err("Failed to enable double trap on cpu %d\n",
->> smp_processor_id());
->> +    }
->> +}
->> +
->> +static int sbi_enable_double_trap(void)
->> +{
->> +    struct cpu_dbltrp_data cdd = {0};
->> +
->> +    on_each_cpu(sbi_cpu_enable_double_trap, &cdd, 1);
->> +    if (cdd.error)
->> +        return -1;
-> 
-> There is a bug here. If `sbi_cpu_enable_double_trap` failed on all cpus
-> but last cpu.
-> Then cdd.error would not record error and will be reflect as if double
-> trap was enabled.
+> Thanks Jakub! Spinning a quick v2 right now.
 
-cdd.error is only written in case of error by the per-cpu callbacks, so
-it is only set if enabled failed. Is there something I'm missing ?
+Thank you for having sent a v2, and for having applied them!
 
-Thanks,
+I'm sorry about the conflicts: I moved the code around on purpose to
+avoid them, but it looks like it was not enough. Like Mat, I didn't have
+these conflicts locally when I tested before sending the patches. I will
+check if there is something I can do to have the same error as the one
+you had, to prevent such issues next time.
 
-Clément
-
-> 
-> Its less likely to happen that FW would return success for one cpu and
-> fail for others.
-> But there is non-zero probablity here.
-> 
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
