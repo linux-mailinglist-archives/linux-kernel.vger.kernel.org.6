@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-178509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B320B8C4ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:19:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC488C4ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D4D282856
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3627FB21A42
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A6D1292FC;
-	Tue, 14 May 2024 09:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287C12A172;
+	Tue, 14 May 2024 09:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Kg9oIGwM"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfYcL/Qk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D8C12839D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C2A8594C;
+	Tue, 14 May 2024 09:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715678899; cv=none; b=jy+7+SWAFKzqJhGuaq8VUHt2ortzOhXZ8wu8kKqlecd+Wm+oMDD9n9u8PD+YauF1pXmA6Bc3QwXeNQIhGfMay+f8Q48KtDnzOUFDW5sAakHnaqOkIFAjtq/+6i8i7YlsJ2Q8jqwXV1BXfRBotAOd3oV2aUL7aL70XUOKQGe80Jo=
+	t=1715678925; cv=none; b=nOqCnnIzzK1e3sFAc76Gbg8AoUks3lrBPSDi23rhkrOmGOlgTJI7hhTktH4Xk+Wk77B1CUPR1VvpD6eYZkqKN1KntzuK+rG1ALDKJZDckxCQ9GkwC4FE8A48bOPl9cKU9fD+t8KsDX5PpmXfsJqV9YiO7qV2nTvKnrC2XVR8NN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715678899; c=relaxed/simple;
-	bh=DqHHoI65OvUgPEHL2oxMDBqzW8QRLCa0rCxkgZXC7xU=;
+	s=arc-20240116; t=1715678925; c=relaxed/simple;
+	bh=HwGGfmR6sqS6WP0aIbowQLShPEm7IIhjY9D4SqgUD2M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V6vlIuf6PVaU1V6jIYsEA1iE6QNJWVC2gr89PL0rfU2mtnTbJT6zU0bKcrJFencaiAp4ADMba1kIw4wWdILqMhYOuS1Nf6UIg8/xo7YdYFIhXrRl3hsl64qWylBabjT5RmPe7BcoxyIfM4U+jOohASmNj7SB8Wwz+9G/PWIpitg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Kg9oIGwM; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C015C40E01A3;
-	Tue, 14 May 2024 09:28:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ftB-Th5vj2rx; Tue, 14 May 2024 09:27:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1715678879; bh=6ucOCJE4+Kar9qDgY6QHWqSgiolWFSGwPos5dUJhWG4=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=f2Hhws9gttplsJT4eZ8ZAxhCa1BjXAkcrV/NRVOSFUeOZSs9pSORaOfisCWrlhllNPZyrYXZFGqSukPnGxeJNkak+wouoB0avvgAR1q2/LdFR42NLW2BzdOlx2OVJ9eT+d2G9jT6eRwaaNIuaAsAcrI7h0gFJKMw2t4quasm8nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfYcL/Qk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62E81C2BD10;
+	Tue, 14 May 2024 09:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715678924;
+	bh=HwGGfmR6sqS6WP0aIbowQLShPEm7IIhjY9D4SqgUD2M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kg9oIGwMHviI3+7vHsiI0dLgh7uikScL6rkglz9cOKMfjAViJ8EzJp3EzdVmrSPC4
-	 FAi/dej/C8dhVKdUDhlje2j4T0a/zp9LSZYImDDZvcD8UdddmzqYTdvpKx5qMTnMsa
-	 EKMcBJwxEFLkS0dJNq6qTUcOrTjdc7pE7lvy9gnD/YesgQnD/L3hXCGM+Iyw+ZlQao
-	 hL16GEuLD5wSq7gCBPZ4ht5yTzulgxB5TvHg7hJOdJzCgFTiCQgugHAK5UKoq697NK
-	 S0CJ0AxVw1yTanENoomOOV0SnxNe3Jc90w31yDqQv/5b9/RDXZLm30Nrn20DTuEeGU
-	 TbKfmtuLXRu3xMZcAOz8wA7YZgfGiwyzoiQ+fHojuuUjAOscFM2wuVwbx8rx54Av4l
-	 m/A9wmrODQDch9/MXJ701gnXmYmUVHlin3MMJavn1WHzp7FS665Ig1Xe/2nhgg/MQJ
-	 OWkCKMaWpGxZuIR0q2pq+oVcHMUDZbeBc5UTbDNrpdIJ4sZLqWgx8BWfDrxvAHY39h
-	 KzXPmbDbWrMxf+NHlHvQU3sCncWUv4nsoKXqFDCJabAEt2BupIMeeb8AfN+OdwbZ+q
-	 3AKUtKS3CkU0dVMieCQ8ZLrMgN/rgjfKlcLD5/ePUPiS9sSUNtGZuaGvTN8qJ+hNNA
-	 jjwleKIf1SQ8apEQhhLCywU0=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8CB2C40E016A;
-	Tue, 14 May 2024 09:27:53 +0000 (UTC)
-Date: Tue, 14 May 2024 11:27:46 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-	the arch/x86 maintainers <x86@kernel.org>,
-	"H.J. Lu" <hjl.tools@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [GIT PULL] x86/shstk change for v6.10
-Message-ID: <20240514092746.GAZkMukkJ_q59aZQTH@fat_crate.local>
-References: <ZkHLrqO1HdfQb71Z@gmail.com>
- <CAHk-=wiAXOLja2AqBzPZE+k9DKX0wjBGKZT+m2DN_hariyA0Pw@mail.gmail.com>
+	b=GfYcL/QkIkE5PyQHM6b+a0gOfkH5yNZSZ3mxJt7ajzRnDnfnS0M3o0HiU1jhxfNCP
+	 p4h2hiT8rutj76sSkfZxwJqSGaUHji8hFAeLtvvA0sTeWfmp3oWIh2IdjW/q4YDxEt
+	 /3E7usTuEDyX3LJ6fPe+XTgnmGSiL9nQ4+Giz/zunWs03LJ+PvWkOr05qS+2h+Dpdu
+	 0DN8P5XPHbJMQYgs2PccGG8Fa9T8BEY3W7tXZuyRI1f7KyXqp6vcFnTOlDboMJq8ay
+	 F/7TjQuD97ExUfjAwCSkF8HBOTdB9IQ6X2m8oPBjBoTtBy2rtkEvKt5VlYpviFqqw1
+	 XHpl48Quz2AZA==
+Date: Tue, 14 May 2024 11:28:38 +0200
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, johan+linaro@kernel.org,
+	bmasney@redhat.com, djakov@kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	vireshk@kernel.org, quic_vbadigan@quicinc.com,
+	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com,
+	quic_parass@quicinc.com, krzysztof.kozlowski@linaro.org
+Subject: Re: [PATCH v12 6/6] PCI: qcom: Add OPP support to scale performance
+Message-ID: <20240514092838.GE2463@thinkpad>
+References: <20240427-opp_support-v12-0-f6beb0a1f2fc@quicinc.com>
+ <20240427-opp_support-v12-6-f6beb0a1f2fc@quicinc.com>
+ <20240430052613.GD3301@thinkpad>
+ <8b213eba-7ab6-ae9c-7683-937a9d6aaf08@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,21 +72,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiAXOLja2AqBzPZE+k9DKX0wjBGKZT+m2DN_hariyA0Pw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8b213eba-7ab6-ae9c-7683-937a9d6aaf08@quicinc.com>
 
-On Mon, May 13, 2024 at 07:38:13PM -0700, Linus Torvalds wrote:
-> I've pulled this, but does anybody actually use x32? I feel like it
-> was a failed experiment. No?
+On Thu, May 09, 2024 at 09:21:55PM +0530, Krishna Chaitanya Chundru wrote:
+> 
+> 
+> On 4/30/2024 10:56 AM, Manivannan Sadhasivam wrote:
+> > On Sat, Apr 27, 2024 at 07:22:39AM +0530, Krishna chaitanya chundru wrote:
+> > > QCOM Resource Power Manager-hardened (RPMh) is a hardware block which
+> > > maintains hardware state of a regulator by performing max aggregation of
+> > > the requests made by all of the clients.
+> > > 
+> > > PCIe controller can operate on different RPMh performance state of power
+> > > domain based on the speed of the link. And this performance state varies
+> > > from target to target, like some controllers support GEN3 in NOM (Nominal)
+> > > voltage corner, while some other supports GEN3 in low SVS (static voltage
+> > > scaling).
+> > > 
+> > > The SoC can be more power efficient if we scale the performance state
+> > > based on the aggregate PCIe link bandwidth.
+> > > 
+> > > Add Operating Performance Points (OPP) support to vote for RPMh state based
+> > > on the aggregate link bandwidth.
+> > > 
+> > > OPP can handle ICC bw voting also, so move ICC bw voting through OPP
+> > > framework if OPP entries are present.
+> > > 
+> > > As we are moving ICC voting as part of OPP, don't initialize ICC if OPP
+> > > is supported.
+> > > 
+> > > Before PCIe link is initialized vote for highest OPP in the OPP table,
+> > > so that we are voting for maximum voltage corner for the link to come up
+> > > in maximum supported speed.
+> > > 
+> > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> > > ---
+> > >   drivers/pci/controller/dwc/pcie-qcom.c | 81 ++++++++++++++++++++++++++++------
+> > >   1 file changed, 67 insertions(+), 14 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > index 465d63b4be1c..40c875c518d8 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > 
+> > [...]
+> > 
+> > > @@ -1661,6 +1711,9 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+> > >   		ret = icc_disable(pcie->icc_cpu);
+> > >   		if (ret)
+> > >   			dev_err(dev, "Failed to disable CPU-PCIe interconnect path: %d\n", ret);
+> > > +
+> > > +		if (!pcie->icc_mem)
+> > > +			dev_pm_opp_set_opp(pcie->pci->dev, NULL);
+> > 
+> > At the start of the suspend, there is a call to icc_set_bw() for PCIe-MEM path.
+> > Don't you want to update it too?
+> > 
+> > - Mani
+> > 
+> if opp is supported we just need to call dev_pm_opp_set_opp() only once
+> which will take care for both PCIe-MEM & CPU-PCIe path.
+> so we are not adding explicitly there.
 
-Well, I did ask that at the time:
+No, I was asking you why you are not adding a check for the existing
+icc_set_bw() at the start like you were doing elsewhere.
 
-https://lore.kernel.org/r/20240322164912.GAZf22iBdqdkIFcrsl@fat_crate.local
-
-The answer on another subthread was: "Because it just works?"
+- Mani
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+மணிவண்ணன் சதாசிவம்
 
