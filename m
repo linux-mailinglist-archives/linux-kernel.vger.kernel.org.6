@@ -1,171 +1,128 @@
-Return-Path: <linux-kernel+bounces-179075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F1D8C5B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:43:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF158C5B47
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:43:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683FF283ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3BFB1F2149D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CD5181321;
-	Tue, 14 May 2024 18:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDEC180A85;
+	Tue, 14 May 2024 18:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jnStNrpy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="TdYQVhB3"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B70181303;
-	Tue, 14 May 2024 18:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD973181D1B
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712139; cv=none; b=sNV2/oxRoVXBYwVuvt7aO67gsfOiEz/ljeS4pUryjWHCeMqWrAE37OibBv5dLTuUwy2RUDa+bjVCoe7mT985VgVRGtu795NDbDDrrz3nterd7orl8rEP9l2ZL7Cisu8Oy4pZ+M8YOIeGG6/tBLYoDnPmu3h0luikFPpFKDrWKRo=
+	t=1715712130; cv=none; b=GQHQTjfmV8td/5LRUDqfR0PtMMgod/BNkZEb6vJZRdCnJ5qHbNNg4G/ELWB0PTM8wC6MEvRnnqD9S34cUGXpNLqr9z/+KSIM+qcuq6cFT5Kd/Af+Uf/WJavXtGYDUDPFrxk+un8kx9cNbo7trbHO6LYPKHSh1gllh5RbWgz/ey4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715712139; c=relaxed/simple;
-	bh=0wNd6nOWp7TDgA5f8KCU5SkKx3B7tcndAHrRejtSNbM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJtww9zL78P3CStqvfxduyO736wsTvt93IJGkVILzsNBiDdhaChJxgNl+3AOQGdn2dTAzRsfgZlKk8d9RK9VaYquxrs0mlDYi1etI2dp3Uy2J4deYW1i5OwXcJ393izDT62BRTP/ngVuSkb2CB/Dgd5g179RPxGmBJY8lxd3UHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jnStNrpy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44EIHZlF010411;
-	Tue, 14 May 2024 18:42:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	date:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=qcppdkim1; bh=fqmbST24fPtvgiBuCK/vt
-	w9KZSeJV3pS8ZQtIGx96Ds=; b=jnStNrpyLdapYPAS1whCEp3bsUiRQFnr/RgHX
-	bH2CX+EVz6m1gNYT3m4gu0h9PyA4cgOHurrykpTNY2v4kUtmGR0txkZpyb7B6SJu
-	JQboeVuJcPgcvI52D0UkezzusnS3me0tLUsybnZoUcRIVfr8JYJL779RD4IG0YX4
-	wJn3yOE9I3vH/MOrSaGvkfl7cOYpBzH+XyDLIPiRfYDIods5wn4Yw2/kb80ZQsUV
-	PQ/4DHLlmhszjWmTPE4biMTYb3NR/G1nqV8bIUHrbgGEormQj774TXtlmsuyNjPe
-	YM0fSIsHoSkdrtH2x+LXVHQWDvx04q0xQYpHLGKlB3Nw8pDvQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y21edf1hm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 18:42:05 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44EIg4Lw000804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 18:42:04 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 14 May 2024 11:41:59 -0700
-Date: Wed, 15 May 2024 00:11:55 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
-        <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@chromium.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Bjorn
- Andersson" <quic_bjorande@quicinc.com>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Ruan Jinjie <ruanjinjie@huawei.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm: Add obj flags to gpu devcoredump
-Message-ID: <20240514184155.lt2stiohrh4sfsxy@hu-akhilpo-hyd.qualcomm.com>
-References: <20240513155150.166924-1-robdclark@gmail.com>
+	s=arc-20240116; t=1715712130; c=relaxed/simple;
+	bh=hCWkqLqTv3ItUHoFzIgYNgbikvR26cFj8jMx1uex/2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MsCpxkRWIRRC1oWtHbzjBJtslV2cdoK4+XMB35qWnIHzBiljroaRq0nHV/8X01Fljl2xv+99L2APdpOFJSGZGtOtYtJ2l3Q8YPl9K8sGTvRmriwpIS1NkbZwyAegdmOcmeM/oH33rNBuhuQjs8HS2LiH+YK2ucBwfV5QbT9xH+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=TdYQVhB3; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-572a93890d1so641934a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:42:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715712127; x=1716316927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x6ryeUi7qTJoBD/62OgqeYM1G6ocyge361mggTj3ews=;
+        b=TdYQVhB3Isq1myW6mEzdVYsmN5zUejFysulaz6CHYZowW1kr6qTBGjymR0TPEINdyh
+         sgrlzpoXETSyf4XEWFjew5nTpbZKQ/AvtKUtBv83q7eUzLL/VhQH0YoIO6yttJwIqk6z
+         X7QQLiSJvZTIjkfUV+oWX/ltYdP0yN1cHOZ2NhIqtnRvPd+GKbr1lCXGafvPiKg76GEg
+         50u0wEeA8bLcA7GmyixI+2RYvI/qCffNRMhrG7W/K+DWBNeqet2ESLytYG7mrC4I5aN1
+         W7FrUfWvw5bpYDQO6JniDh1a6uP7/kIEohPvsiVl6/rhDNHmFBiWnZwJ3TcjLMvgMy5W
+         mmiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715712127; x=1716316927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=x6ryeUi7qTJoBD/62OgqeYM1G6ocyge361mggTj3ews=;
+        b=VG88I+L+cYLJt8NJ1c5OOgngK9LG0w9xoEIzUJ4S1b/P9mxThFnLPegaheKicGaTYZ
+         bR4nFFvSj1NzuRjxPUYHSuD6/vV4CmR2CozVsXI8LmTt7mO1DpSGCH/fKzqz6J8IoXM7
+         UFnAGLTYFm6kGYK1xNvnlZfq/Atwy2VeC6bmsUi83jUdqZqulI3j8hHjgsRVl8wE668H
+         IXSsd1rxgPdPi9w2xG/vxgKecL7POCsTKc81JjNC5TlejZUDLL+QCXUsXnnOw++xQD9g
+         MGZPZPSt06P7n+R3qXi2ByxujWXb1h9SVf5Vh4QanQd/NfPdU+SB27LIBEHyRrNOZEtc
+         v2tA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXp3v/udV1X36owu2STiHp7b99uNy3uBcfmBmUhxsSbHX/JsRlm9JDwghWuEYgzMGNdEzrM8J1y0F18LBBEzIhH0wej/++0vUtjMqo
+X-Gm-Message-State: AOJu0Yy6AhjT7joxGXe7nb+jYzxztgq028PtZQqZhU8w8wUnnAdSH9Et
+	urWiCzsS74vNxFu++kOS8E4Nl6nHde0Y2911N+Gp2LXxJcOiP9pnNcz45nNNmm+1n48IsKscU6r
+	YKRl8HxX/i9cPe4vn0LrodgNW+szI8UqFsxhywg==
+X-Google-Smtp-Source: AGHT+IFbMwiOYUAb7e/8vZthTHtvmc7pKqYbGlejzDyPWTizt9LTFfXax18by9Z28FgBfafwz7WSCj7y4vYaV87ykNE=
+X-Received: by 2002:a50:9b05:0:b0:572:47be:a81e with SMTP id
+ 4fb4d7f45d1cf-5734d707234mr10945519a12.40.1715712127280; Tue, 14 May 2024
+ 11:42:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240513155150.166924-1-robdclark@gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cl505ZX_pPUkI21mYcHeK5e7l2VPlpXM
-X-Proofpoint-ORIG-GUID: cl505ZX_pPUkI21mYcHeK5e7l2VPlpXM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_11,2024-05-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=898 adultscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
- suspectscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405140132
+References: <20240514140446.538622-1-bjorn@kernel.org> <20240514140446.538622-7-bjorn@kernel.org>
+ <CAHVXubi6Hv_FCTi=a5FFoxqiUBucrX_NhVGBAWE6qXRXdzOYsA@mail.gmail.com> <87r0e4l0m6.fsf@all.your.base.are.belong.to.us>
+In-Reply-To: <87r0e4l0m6.fsf@all.your.base.are.belong.to.us>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 14 May 2024 20:41:56 +0200
+Message-ID: <CAHVXubhbckKD=z74_Y+uukf4FQodnz4-fNdB94fK9OK++xz=nQ@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] riscv: Enable memory hotplugging for RISC-V
+To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	linux-riscv@lists.infradead.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Andrew Bresticker <abrestic@rivosinc.com>, 
+	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes <lstoakes@gmail.com>, 
+	Oscar Salvador <osalvador@suse.de>, Santosh Mamila <santosh.mamila@catalinasystems.io>, 
+	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 08:51:47AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> When debugging faults, it is useful to know how the BO is mapped (cached
-> vs WC, gpu readonly, etc).
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
+On Tue, May 14, 2024 at 8:17=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel=
+org> wrote:
+>
+> Alexandre Ghiti <alexghiti@rivosinc.com> writes:
+>
+> > On Tue, May 14, 2024 at 4:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@ke=
+rnel.org> wrote:
+> >>
+> >> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+> >>
+> >> Enable ARCH_ENABLE_MEMORY_HOTPLUG and ARCH_ENABLE_MEMORY_HOTREMOVE for
+> >> RISC-V.
+> >>
+> >> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+> >> ---
+> >>  arch/riscv/Kconfig | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> >> index 6bec1bce6586..b9398b64bb69 100644
+> >> --- a/arch/riscv/Kconfig
+> >> +++ b/arch/riscv/Kconfig
+> >> @@ -16,6 +16,8 @@ config RISCV
+> >>         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+> >>         select ARCH_DMA_DEFAULT_COHERENT
+> >>         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRA=
+TION
+> >> +       select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM && 64BIT && MMU
+> >
+> > I think this should be SPARSEMEM_VMEMMAP here.
+>
+> Hmm, care to elaborate? I thought that was optional.
 
-Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-
--Akhil
-
-> ---
->  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 1 +
->  drivers/gpu/drm/msm/msm_gpu.c           | 6 ++++--
->  drivers/gpu/drm/msm/msm_gpu.h           | 1 +
->  3 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> index b7bbef2eeff4..d9ea15994ae9 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
-> @@ -887,6 +887,7 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
->  			drm_printf(p, "  - iova: 0x%016llx\n",
->  				state->bos[i].iova);
->  			drm_printf(p, "    size: %zd\n", state->bos[i].size);
-> +			drm_printf(p, "    flags: 0x%x\n", state->bos[i].flags);
->  			drm_printf(p, "    name: %-32s\n", state->bos[i].name);
->  
->  			adreno_show_object(p, &state->bos[i].data,
-> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-> index d14ec058906f..ceaee23a4d22 100644
-> --- a/drivers/gpu/drm/msm/msm_gpu.c
-> +++ b/drivers/gpu/drm/msm/msm_gpu.c
-> @@ -222,14 +222,16 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
->  		struct drm_gem_object *obj, u64 iova, bool full)
->  {
->  	struct msm_gpu_state_bo *state_bo = &state->bos[state->nr_bos];
-> +	struct msm_gem_object *msm_obj = to_msm_bo(obj);
->  
->  	/* Don't record write only objects */
->  	state_bo->size = obj->size;
-> +	state_bo->flags = msm_obj->flags;
->  	state_bo->iova = iova;
->  
-> -	BUILD_BUG_ON(sizeof(state_bo->name) != sizeof(to_msm_bo(obj)->name));
-> +	BUILD_BUG_ON(sizeof(state_bo->name) != sizeof(msm_obj->name));
->  
-> -	memcpy(state_bo->name, to_msm_bo(obj)->name, sizeof(state_bo->name));
-> +	memcpy(state_bo->name, msm_obj->name, sizeof(state_bo->name));
->  
->  	if (full) {
->  		void *ptr;
-> diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
-> index 685470b84708..05bb247e7210 100644
-> --- a/drivers/gpu/drm/msm/msm_gpu.h
-> +++ b/drivers/gpu/drm/msm/msm_gpu.h
-> @@ -527,6 +527,7 @@ struct msm_gpu_submitqueue {
->  struct msm_gpu_state_bo {
->  	u64 iova;
->  	size_t size;
-> +	u32 flags;
->  	void *data;
->  	bool encoded;
->  	char name[32];
-> -- 
-> 2.45.0
-> 
+My bad, I thought VMEMMAP was required in your patchset. Sorry for the nois=
+e!
 
