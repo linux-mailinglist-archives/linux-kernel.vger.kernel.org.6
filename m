@@ -1,102 +1,180 @@
-Return-Path: <linux-kernel+bounces-179240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD82D8C5DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:49:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FEF88C5DDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AFE61C20C75
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB70282C73
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A31A182C8C;
-	Tue, 14 May 2024 22:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C98B182C90;
+	Tue, 14 May 2024 22:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EU402y/J"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="VG/cQyQn"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A11A181D1F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 22:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4F11DDEE;
+	Tue, 14 May 2024 22:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715726935; cv=none; b=hStN4n9m0U8s6CPEy1bgZQFJaVmKATyhLwYwykJ8n7fiw5KU+MM5hoXC2uKhFKgCCLyKy4T2dvqOAxSROzY9TpQ98HHN831/KHViazMbR7/hFpTErg+e4Ddy9BWzuK69km9t7ypxA3MI0VMbq9sbrRIyRb+8OI7vKTqhFedpsGw=
+	t=1715727112; cv=none; b=jSIM83B+TxB9pNOkSgrEpVzoeIOELXs+Ip9RVkGcXST+943ngo9NS6EOhsPOWx5V651JOnE2R+6kP4OLRB46bIcgX5RFLXxnuA1HK+L3uD/3oBcuU/FYXUqKYFs/fvAzGzda/qbWAQ11UhU711/SEEh5hrywYGp/2cwf5kxv2Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715726935; c=relaxed/simple;
-	bh=0nhAafwxI5HWL8JnwaWyPULuU+OENNhkR2+xS32Iz2E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9E/FwyI/LVeoWTHgIW6NjSS15+SR8z9zT5q1QUzN8ztaUEX47lxpAap3Kd+5fo0IWv08CoeUB/dFtV2OGk1n8pmnj/pkm/ZxP/GF648UoyrMA0sQ+pk6/jQAgwnxJGOH9/rJ4d5LPEf3spvwPlGTD1R8ldwCdt7kK6aWU1WNMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EU402y/J; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6f4472561f1so5620839b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:48:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715726933; x=1716331733; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GUJPFVJdz44IFmC7tap3c4+RPSoDFQyAX7g5ibPkXFE=;
-        b=EU402y/JKIyMJuAB2SE8tcVmdT2F5hPBKtJyOcXjOKjuC0bi1A+jvE3BTYF8SihD33
-         bOUs8cLbHJSVey7GGLQdKIevzMcEEmYsXn4AHOZiahg7p5gbWoEcA54SWJCXn2s/4NPK
-         0VwFCmJ2fNMkhgpbb9l81RK2iAZ2l7dgAPs0Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715726933; x=1716331733;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GUJPFVJdz44IFmC7tap3c4+RPSoDFQyAX7g5ibPkXFE=;
-        b=daM0I3h/2lOygqDUlTmNzut2qSuvGWeKUA7cawZZc0tCPFe99YhIhc1wIi+8fyvQyb
-         SyJq+fZssQEOuY15MAPDoOa1HCV/aKqLdn6nqkddnSN7FaZWnE2BwhRRkrDBrHG+mFGo
-         pXypRj6bF0EPOxF9Hnf6nbhlW9A6dyWCQH/jMmQThF+Uc+CKHMvUThXN0MQ/wgaiOEKz
-         /erjRFS25vhMymJk9AzGfyw88dL7Xmm3o0I1mPAIEB3LSNqO3IiWcVuU9vCleEB992lH
-         R4UFfhgdjazal/JCzJlx3B/HMsLLieewPeIM1fU01PGX2HuK7p3Dls0GB00tYu/qOFLx
-         Ugzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVOAGmk9w+OaNr8Y/XN6ayA0m52HPB2G22O91MLCZuvCoPtDTLQRBOjBwqb3j6nbBoTV6nthCB/jbfEliLDAHF3YDAEJRojf01Or+w
-X-Gm-Message-State: AOJu0Yw6am1aa42KuI9ehG16oRBSDac55iu8ZCFxBSLLwZnoN8oJaaJL
-	Tn0gXVg6Q9sL7K0UmNv2XC8WTOuffIUlwkrTzzkTVuAcVuCVNZYqWo5aY0WsCA==
-X-Google-Smtp-Source: AGHT+IGU9RLXGa4w3EJiT/EMc0/Mkh53TeXUez1pHBLj1KnUfvY+4gA+rMJz4t5enAU3FThgSiFSvw==
-X-Received: by 2002:a05:6a20:244b:b0:1af:dd56:76f0 with SMTP id adf61e73a8af0-1afde0b7407mr22397136637.22.1715726932891;
-        Tue, 14 May 2024 15:48:52 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340a6327besm8838766a12.6.2024.05.14.15.48.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 15:48:52 -0700 (PDT)
-Date: Tue, 14 May 2024 15:48:51 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] locking/atomic: fix trivial typo in comment
-Message-ID: <202405141548.E76E681@keescook>
-References: <20240514224625.3280818-1-cmllamas@google.com>
+	s=arc-20240116; t=1715727112; c=relaxed/simple;
+	bh=uRxlDnelWdvGg7i9x9hTB/zJNxGNpEoVorUMP1xDlGY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bXXN8SZ6BscD8zSy1MOTH/Z/BpbOBdKXt0oIwz9zc+ApiQdk7rQh5brtBdP5G20mHfSmyKGnfTQgxyoU8kWOmoY01D4p0oXDXme/V+U7vgKcWEMejWt9yAqzLhUKIcND6jBFFtn95Vq70D1dllSPTbezv/96HahB6JhCsYwX3D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=VG/cQyQn; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [94.142.239.106])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id 2A87A6356CD1;
+	Wed, 15 May 2024 00:51:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1715727109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M/yx0LBa6BWxJcFbM41dPpkzsmx1uZjRYOaKe6bmwRA=;
+	b=VG/cQyQnDLqz4Fw5M0R4xhc1in07k4Ww03a7FezDAlyes8JWwfW5sBdVy8dvEoTncQ6VeG
+	p+BiQ+Cqvw4BQpgs0wDisTtmgrqbn+eu8S1OBM/qx7xYn3cQMIYZm15hfuCh9buSUMtAtR
+	Bsn2gGRXMVYx/EosG8muwRDltjZR8D0=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
+ "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Felix Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Ryder Lee <ryder.lee@mediatek.com>, Shayne Chen <shayne.chen@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Kalle Valo <kvalo@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Peter Chiu <chui-hao.chiu@mediatek.com>,
+ StanleyYP Wang <StanleyYP.Wang@mediatek.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Johannes Berg <johannes.berg@intel.com>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+Date: Wed, 15 May 2024 00:51:38 +0200
+Message-ID: <2341660.ElGaqSPkdT@natalenko.name>
+In-Reply-To: <6061263.lOV4Wx5bFT@natalenko.name>
+References: <6061263.lOV4Wx5bFT@natalenko.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514224625.3280818-1-cmllamas@google.com>
+Content-Type: multipart/signed; boundary="nextPart4908084.GXAFRqVoOG";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-On Tue, May 14, 2024 at 10:46:03PM +0000, Carlos Llamas wrote:
-> For atomic_sub_and_test() the @i parameter is the value to subtract, not
-> add. Fix the kerneldoc comment accordingly.
-> 
-> Fixes: ad8110706f38 ("locking/atomic: scripts: generate kerneldoc comments")
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Carlos Llamas <cmllamas@google.com>
+--nextPart4908084.GXAFRqVoOG
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Subject: Re: [REGRESSION] MT7915E doesn't work any more with v6.9
+Date: Wed, 15 May 2024 00:51:38 +0200
+Message-ID: <2341660.ElGaqSPkdT@natalenko.name>
+In-Reply-To: <6061263.lOV4Wx5bFT@natalenko.name>
+References: <6061263.lOV4Wx5bFT@natalenko.name>
+MIME-Version: 1.0
 
-Thanks!
+Also /cc Johannes because of this commit:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+6092077ad09ce wifi: mac80211: introduce 'channel request'
 
--- 
-Kees Cook
+On st=C5=99eda 15. kv=C4=9Btna 2024 0:43:40, SEL=C4=8C Oleksandr Natalenko =
+wrote:
+> Hello Felix, Lorenzo et al.
+>=20
+> With v6.9 kernel the following card:
+>=20
+> 01:00.0 Unclassified device [0002]: MEDIATEK Corp. MT7915E 802.11ax PCI E=
+xpress Wireless Network Adapter [14c3:7915]
+>=20
+> doesn't work any more. Upon mt7915e module insertion the following splat =
+happens:
+>=20
+> mt7915e 0000:01:00.0: enabling device (0000 -> 0002)
+> WARNING: CPU: 3 PID: 1648 at net/mac80211/main.c:794 ieee80211_alloc_hw_n=
+m+0x9a3/0x9f0 [mac80211]
+> Call Trace:
+>  <TASK>
+>  mt76_alloc_device+0x24/0x290 [mt76 46e2c4f11be089903469a4d6045c71cb7842b=
+4cd]
+>  mt7915_mmio_probe+0x33/0x1d0 [mt7915e 9657e1926e619568545a08636674805d5e=
+665c85]
+>  mt7915_pci_probe+0xe1/0x3a0 [mt7915e 9657e1926e619568545a08636674805d5e6=
+65c85]
+>  pci_device_probe+0xf0/0x2d0
+>  really_probe+0xde/0x3b0
+>  __driver_probe_device+0x78/0x110
+>  driver_probe_device+0x1f/0x130
+>  __driver_attach+0x91/0x1e0
+>  bus_for_each_dev+0x105/0x160
+>  bus_add_driver+0x137/0x270
+>  driver_register+0x72/0xd0
+>  mt7915_init+0x44/0xff0 [mt7915e 9657e1926e619568545a08636674805d5e665c85]
+>  do_one_initcall+0x5b/0x310
+>  do_init_module+0x60/0x220
+>  init_module_from_file+0x89/0xe0
+>  idempotent_init_module+0x121/0x2b0
+>  __x64_sys_finit_module+0x5e/0xb0
+>  do_syscall_64+0x82/0x160
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> mt7915e 0000:01:00.0: probe with driver mt7915e failed with error -12
+>=20
+> and the card stays non-functional. Re-inserting the module triggers the s=
+ame behaviour.
+>=20
+> The following condition is triggered:
+>=20
+>  794                 if (WARN_ON(!ops->add_chanctx ||
+>  795                             !ops->remove_chanctx ||
+>  796                             !ops->change_chanctx ||
+>  797                             !ops->assign_vif_chanctx ||
+>  798                             !ops->unassign_vif_chanctx))
+>  799                         return NULL;
+>=20
+> This worked with v6.8 and earlier just fine.
+>=20
+> Please help.
+>=20
+> Thank you.
+>=20
+>=20
+
+
+=2D-=20
+Oleksandr Natalenko (post-factum)
+--nextPart4908084.GXAFRqVoOG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAmZD6voACgkQil/iNcg8
+M0slkBAA30d+dHMeOTWd6mWGNfJP06Ntug/dXjfFyRQeTnRqIXhfp5uTamhIDg1Q
+1lbgClmG3vBtyw5vyYHemn9c3GjAPGSpVO5FvFAb72vHy/84KTfbrNU2jk9czRsP
+kOVx1OxjWnn1wYgK3nJXgV+dVNft6/kphxSUFEtLFfkOR3KBpTCXwram74Dfx2O5
+iK+X6damnucy+KB++AeimhjEY0tuLhXmRP/5me1m8SE5HojbCbBazBV8E/xPmPIx
+Xy3K+mQIN8DZW3PNtVlgGVxwSwCB2Zeta6yfOrAnyt+ifA8mrIk/JeB+30IKFsUo
+wEFc/yapWR1QXUzWK/Q2mi6bYprbHGYPusrrCHh/O3va2PuDvOksClCwaC8B36Lh
+6k7ydaHrTeIH5fqwnCBTDk7Y/WRHQfOpZhuEtfmASXRGOR6nOaHwZoUxxUVr/kTk
+K4SXM7h3A7kBPokz/EsVjWmV4tWmFmpm2XAIj0zP6S7ll8QCa6gZp31dknlezrHX
+/dYvPnVgCf2yZ5ZH6s33lqB9HBj6uxmXKk/UnGSETtY+cEIfpDih6oat9TazyKS1
+naiLMD51BfE+1SjAOokQqcZpFQOEB8eh8+DHK/5NaUh6u87pB9F03GFRaR2nEZvp
+KWDoYnNLBWaEEoaD4fQzx8pbFOgWO88HcaSavorkESHcsE2EEFs=
+=bD45
+-----END PGP SIGNATURE-----
+
+--nextPart4908084.GXAFRqVoOG--
+
+
+
 
