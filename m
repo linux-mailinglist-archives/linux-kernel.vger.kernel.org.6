@@ -1,119 +1,107 @@
-Return-Path: <linux-kernel+bounces-179225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CE08C5DA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:32:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBD98C5DAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372971F2178D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 477FF283B93
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE6D182C80;
-	Tue, 14 May 2024 22:32:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34D1182C82;
+	Tue, 14 May 2024 22:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OTUwxiZ4"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGiQtCwc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 241C21DDEE;
-	Tue, 14 May 2024 22:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20ADD1DDEE;
+	Tue, 14 May 2024 22:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715725962; cv=none; b=G2XfSdyhabs67hZe/z2owWnymbdTSKTAqJrKkB2tWhYgiYMH6tYlUkP7V2oRdrktagDnB+Gxh+GsyQqQLndfh6Nmgte9aj0pwMwQn3o5zTsZKcI0SQ5ydJ1qAheEf6hORG4vsOGMTZ1RLRq1fZPICtmAOEahzr0gQqUdckbmYvI=
+	t=1715726151; cv=none; b=qiDkAkX/Imgv8sKFnNUW3MCnbCthCHJeL+nzB+Mkrs92019aP/8usinf5inWpQlGG4mzntix825YsM0SOm7DvzBMta0kLG/riwuraLr5G8CimsppL7XnA0hRUpQKr0fmmU0uTY0irzkFNO+H16i9JwdzypN7yBGoJ62YtwHDJZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715725962; c=relaxed/simple;
-	bh=RennY2C6Z+oSU0oRQjAqTe75OFRCviPgBEI+D3LQn6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Icwiakl2z7uQSfaPzZMECfjGyKnYKqMBt0XSDAlchC0ndSRhW5b7K8/q7eoNWMjtl0GSqb0qQNt0JZeF8pUI5sAgrbhG+hN+6q+YChquUH2TM8mJbL4xSqRDr0jehIeOBEM6yI8oOv0CRve88eN8bnJao0IJAyptpZeGu44BqOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OTUwxiZ4; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2b33e342c03so5335691a91.0;
-        Tue, 14 May 2024 15:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715725959; x=1716330759; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s74EzR4awKr3eLr45eszTkAhWZLBmsDf/EkYyc0o3kg=;
-        b=OTUwxiZ4mgmHabf4ALQ0UcH5VsLY5z+ApUjEvf6l9geEs+rbb7zYHA5MebhGUgdhF9
-         1LguRuTtaFhklo2vXzro39ha8+eTWLmFuml6AsURJmwwIe0XOuunEPCTb62tVEZLNlqT
-         zCjS3GlWADf/dshJUrvVXSyFpQIk+k5EABrrAVV7uxAxaSzzKEG2TCUpxevjBNRz+O8L
-         qgS3SAV1DLTQxkoBG+xmrdXFgomQZ5rg7O1uba0dCJGTJgNkNlgVU1/iHYU/SDAkBbs8
-         xV4ObMMwlG+rCs14DcFNVDBP8rEf6FQsEnZZk5L4HBxbGpB3sBDbnL8wypeKtCqu3ju3
-         gVCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715725959; x=1716330759;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s74EzR4awKr3eLr45eszTkAhWZLBmsDf/EkYyc0o3kg=;
-        b=bUmzHWchrYmZMJkLHearH6Wr2ZL6gozc+dktyXAU3lRW40amiNk8rAOUWpt/RONkVy
-         H4pf3bFXYnIHotzRMQHTZKIBYhcrrvzWSuzUaWBQf+nSnMC0dteHmG+aD28r+Wfigf+C
-         qdB2+ENQ+DxX2QryS2zdFLpqdhO98dlHRtemFjIU4y0ua/cWtbc/qjVKuflFcyD4gYx2
-         BlQ3mEOGYcGO762/NmPpBWeO90VWG7Bdbr97FC+KkkKiWUt5N6a0YCNlq5EvhIw3qfYh
-         g1jAXz5aHip3GwimUXppVZL6dH8FzYtQ7YxatqzyXhLoRsC/xwBpiGXK1k07N/f7VLLA
-         QsIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1e6eyyHpvo8yTYhZ1bnENs6h2RTo1+KuHvnrRh+vnmt7aLwxGsMzP1H2D2V8xOpvB3pRJbkUzcJUtIkjAa3chBC3U/g5JB30ncyDDKvZRHv4rQPa7rmdtQVTKUSBo1horLSXE
-X-Gm-Message-State: AOJu0YwFOb1NsjPYtY3TdM3cubicXnTL7D/E+CAGFRDkKPr9VykFFjw2
-	Stvne3tc4GJ1+xLdjr9Q0w2zUqs0VckHk/hRY4KVOne7H/SqFB8Q
-X-Google-Smtp-Source: AGHT+IG9Iy319cNgBaxrp94szNVyTaeCn09v6tx7NwkuFYWrhwte1QksURJFD6r6MHMHsOk5icmZCA==
-X-Received: by 2002:a17:90a:e507:b0:2b3:bcf7:3a9b with SMTP id 98e67ed59e1d1-2b6ccd8e078mr11850683a91.43.1715725959324;
-        Tue, 14 May 2024 15:32:39 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2b5e02bcf6asm10965137a91.1.2024.05.14.15.32.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 15:32:38 -0700 (PDT)
-Message-ID: <7a3889c6-2e6a-444c-9827-56ca94aa89f9@gmail.com>
-Date: Tue, 14 May 2024 15:32:36 -0700
+	s=arc-20240116; t=1715726151; c=relaxed/simple;
+	bh=x7tUxf7jfIVDoQyzXs6S/E8tZSxfh6CAU+jLxpsTgbQ=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=t5UYgJlZpG5IirlVod7gRBXVSUPYbmDafsMkeGR7B6tFSkD2Q95bfTPQw+AkMYhE1nu6g4wtxDikVxTo9iYMDjzYQ/Murf/s86shFZftrUbx/H+uiV8ROxRSZpxcfb2umWzLH+fw3vN6lnI2adfX+jcMAmAtaRrmI6KdsCX/ARo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGiQtCwc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 669E6C2BD10;
+	Tue, 14 May 2024 22:35:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715726150;
+	bh=x7tUxf7jfIVDoQyzXs6S/E8tZSxfh6CAU+jLxpsTgbQ=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=WGiQtCwcvpIFYCaEfv0VX2ev/dp60ppCc3OmYH+/oLaM6BoDiziPnYU2FFBsOnslU
+	 PaEh4PZPeYsJPnMiEGzN677cNKieI7oUatv6Fsh9vR2zlEdttICtInbQi5HjlGl3yk
+	 B1q+SjEvx6daWjA+5IQqruHkxC5mzO0/h2xxgiTN3L0pa1NjsfJIHh/pri4+QVlXE0
+	 Zq76EbqOCpWn0nS30zAVhV9fNTuGmyE6NSkMPdNY1GD6Zx2Ev5suYeVf8+yK3wVMdS
+	 /lSth/CUi8xWQvypdaTBS3NuzCVW5v0D1ysboER9UfcgI1ol407bGrLfIQqu8KpjIp
+	 erY6MKj97ZLbw==
+Date: Tue, 14 May 2024 17:35:49 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 00/84] 5.4.276-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240514100951.686412426@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240514100951.686412426@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Eddie James <eajames@linux.ibm.com>
+Cc: joel@jms.id.au, krzk+dt@kernel.org, devicetree@vger.kernel.org, 
+ linux-fsi@lists.ozlabs.org, andrew@codeconstruct.com.au, 
+ conor+dt@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240514195435.155372-2-eajames@linux.ibm.com>
+References: <20240514195435.155372-1-eajames@linux.ibm.com>
+ <20240514195435.155372-2-eajames@linux.ibm.com>
+Message-Id: <171572614925.2391901.12172648988051515568.robh@kernel.org>
+Subject: Re: [PATCH v5 1/9] dt-bindings: fsi: fsi2spi: Document SPI
+ controller child nodes
 
-On 5/14/24 03:19, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.276 release.
-> There are 84 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.276-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+On Tue, 14 May 2024 14:54:27 -0500, Eddie James wrote:
+> The FSI2SPI bridge has several SPI controllers behind it, which
+> should be documented. Also, therefore the node needs to specify
+> address and size cells.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+> Depends on https://lore.kernel.org/all/20240514192630.152747-1-eajames@linux.ibm.com/
+> 
+>  .../devicetree/bindings/fsi/ibm,fsi2spi.yaml  | 36 ++++++++++++++++---
+>  1 file changed, 32 insertions(+), 4 deletions(-)
+> 
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/fsi/ibm,fsi2spi.yaml:
+Error in referenced schema matching $id: http://devicetree.org/schemas/spi/ibm,spi-fsi.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/fsi/ibm,fsi2spi.example.dtb: fsi2spi@1c00: spi@0: False schema does not allow {'compatible': ['ibm,spi-fsi'], 'reg': [[0]], '#address-cells': [[1]], '#size-cells': [[0]], 'eeprom@0': {'compatible': ['atmel,at25'], 'reg': [[0]], 'address-width': [[24]], 'pagesize': [[256]], 'size': [[524288]], 'spi-max-frequency': [[1000000]]}}
+	from schema $id: http://devicetree.org/schemas/fsi/ibm,fsi2spi.yaml#
+Documentation/devicetree/bindings/fsi/ibm,fsi2spi.example.dtb: /example-0/fsi2spi@1c00/spi@0: failed to match any schema with compatible: ['ibm,spi-fsi']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240514195435.155372-2-eajames@linux.ibm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
