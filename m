@@ -1,109 +1,117 @@
-Return-Path: <linux-kernel+bounces-178699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED03D8C569A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:10:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0998C569C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AC161C21DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420701C21D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB061420C8;
-	Tue, 14 May 2024 13:09:29 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58946143755;
+	Tue, 14 May 2024 13:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ABow6UCU"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D731411CF
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548EA1411DB;
+	Tue, 14 May 2024 13:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692169; cv=none; b=oTPQ1eB0du+ErgsMPWlnAYZrCqcW3Z9KP81sCbXch34UMyaD5I6UB7Sm7lxbvalzKypO2RLV1/JXdreOhnubHe4Ktw3mmT0T9L4eH7ubh5ze7kQ183wiWNPNZM+Jpz2YADXZD3SEgkV2+t3v+0I2cAJ0jHUAGypId5QQscs1/zo=
+	t=1715692174; cv=none; b=TS0Pf91AeGNvQnxOj18J1+tqUG9NM0sVLvL0R3/3HtqFnsJYkfCv7G49e4H7GGFVuosNvCt7zHtwq5tRC+mwXVrksIWY/vWvFG87KO2d86fqZiOd+nkWtzMGsr8EjDFgkrBVMPLusfIbClZO911NBFR6Ukz9y0doe3XMopgstxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692169; c=relaxed/simple;
-	bh=65edET6jm+UN4MrjA0dVXg2bXDSEpLCbz9A1nWNT5T8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DJ283SngK0D0sGFrUPJX22Gj68fhgNhMBujZN/Euwk5kP1gSWbBhWEDQcIEviC2Sxv1y3UDXsfPACmQZYROidpCiliugzkegEauhvFzzz9M+9qrharqvSZO71IHX4nfoeKfyTDYb4ifTKiOUmMxRPFz9jfLDkilUKlC10/Lry2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4VdxS26w8VzvYcl
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:05:54 +0800 (CST)
-Received: from kwepemi500008.china.huawei.com (unknown [7.221.188.139])
-	by mail.maildlp.com (Postfix) with ESMTPS id D96761400CD
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:09:22 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi500008.china.huawei.com
- (7.221.188.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Tue, 14 May
- 2024 21:09:22 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] genirq: Clean code for handle_edge_irq()
-Date: Tue, 14 May 2024 21:09:15 +0800
-Message-ID: <20240514130915.2613753-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715692174; c=relaxed/simple;
+	bh=WQXVJuUter3IICEpN6ZuyqFUO2+Lf+4sBc8m7CrrHX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DfP/tlyKV4rj59YLfE7zj2tnhu+MvuhHBmN8cw3B2yn5RJxPeQKt94Ps65iMDAw/nQrrKq773dMbKmTMNtcwPaMUQGdJ8Hlk192ZEuVCmb1RpbnvL2ss6zDoMFNLt1n/WnN2EHruKDJyA6wAxHoKJ8h1kWA1wYN2bEYEsYJUYSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ABow6UCU; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 00FA460002;
+	Tue, 14 May 2024 13:09:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715692170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8DZyeKSJbCNjlJ0OhBvh+xCLA4DX/WKG0IiWWke/Gaw=;
+	b=ABow6UCUzEaSrG6RDTBUxcVxPwxR3TBoKZBWQgHbrrBf6a3kbHe9gPb5iGw6/3gpXsrupF
+	Tj0FOKo7c5YdKngbhBP7+NpnowjMBUefBZ4zWtd5zyj9mhbvItswDc6nQWCvzfS9rje85Y
+	HJ+hXCmz6v0xkKXDxmrngU+/6kfmUw9r9fMxp5pbIRPu4lJ5urFMuXzh6jaP7mNngnTU06
+	8nvwaasRbPmqryaxUj3kJ5uvlO0VA/goUP9/bWD6+ypJgMiEhh7cD2BVfh/13sjm+7kxuQ
+	EeVt2XYbKcRzK6uKUCyJx4xUtJZKMbjqsUvmc1mnBIs/b1uwWx4ayo6VO1k/0A==
+Message-ID: <3f53441d-b8b0-448a-aaaa-fb7e64aa86c0@bootlin.com>
+Date: Tue, 14 May 2024 15:09:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] wifi: wilc1000: set net device registration as last
+ step during interface creation
+To: Kalle Valo <kvalo@kernel.org>
+Cc: Ajay Singh <ajay.kathat@microchip.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
+ <171569074600.2017278.13914732662896657638.kvalo@kernel.org>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <171569074600.2017278.13914732662896657638.kvalo@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi500008.china.huawei.com (7.221.188.139)
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-The pending set and mask_ack_irq() repeated twice, a new goto label can
-reduce a few lines of code, with no functional changes.
+Hello Kalle,
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- kernel/irq/chip.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+On 5/14/24 14:45, Kalle Valo wrote:
+> Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
+> 
+>> net device registration is currently done in wilc_netdev_ifc_init but
+>> other initialization operations are still done after this registration.
+>> Since net device is assumed to be usable right after registration, it
+>> should be the very last step of initialization.
+>>
+>> Move netdev registration at the very end of wilc_netdev_ifc_init to let
+>> this function completely initialize netdevice before registering it.
+>>
+>> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+> 
+> I see errors:
+> 
+> ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
+> ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
+> ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
+> ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
+> make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+> make[1]: *** [/home/kvalo/projects/personal/wireless-drivers/src/wireless-next/Makefile:1871: modpost] Error 2
+> make: *** [Makefile:240: __sub-make] Error 2
+> 
+> 6 patches set to Changes Requested.
+> 
+> 13633102 [1/6] wifi: wilc1000: set net device registration as last step during interface creation
+> 13633103 [2/6] wifi: wilc1000: register net device only after bus being fully initialized
+> 13633104 [3/6] wifi: wilc1000: set wilc_set_mac_address parameter as const
+> 13633105 [4/6] wifi: wilc1000: add function to read mac address from eFuse
+> 13633106 [5/6] wifi: wilc1000: make sdio deinit function really deinit the sdio card
+> 13633107 [6/6] wifi: wilc1000: read MAC address from fuse at probe
 
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 638cf5eee04b..4613dc9ff6b6 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -775,21 +775,15 @@ void handle_edge_irq(struct irq_desc *desc)
- 
- 	desc->istate &= ~(IRQS_REPLAY | IRQS_WAITING);
- 
--	if (!irq_may_run(desc)) {
--		desc->istate |= IRQS_PENDING;
--		mask_ack_irq(desc);
--		goto out_unlock;
--	}
-+	if (!irq_may_run(desc))
-+		goto out_mask_ack;
- 
- 	/*
- 	 * If its disabled or no action available then mask it and get
- 	 * out of here.
- 	 */
--	if (irqd_irq_disabled(&desc->irq_data) || !desc->action) {
--		desc->istate |= IRQS_PENDING;
--		mask_ack_irq(desc);
--		goto out_unlock;
--	}
-+	if (irqd_irq_disabled(&desc->irq_data) || !desc->action)
-+		goto out_mask_ack;
- 
- 	kstat_incr_irqs_this_cpu(desc);
- 
-@@ -818,6 +812,9 @@ void handle_edge_irq(struct irq_desc *desc)
- 	} while ((desc->istate & IRQS_PENDING) &&
- 		 !irqd_irq_disabled(&desc->irq_data));
- 
-+out_mask_ack:
-+	desc->istate |= IRQS_PENDING;
-+	mask_ack_irq(desc);
- out_unlock:
- 	raw_spin_unlock(&desc->lock);
- }
+Shame on me, I missed those basic errors since I worked with drivers as built-in
+instead of modules. I'll update my workflow and send a v2.
+
+Thanks,
+
+Alexis
 -- 
-2.34.1
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
