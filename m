@@ -1,63 +1,57 @@
-Return-Path: <linux-kernel+bounces-178587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FF98C51BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:32:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D3EF8C50CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0321D1C21836
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 205C4282461
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707E413B791;
-	Tue, 14 May 2024 11:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD6C85C5D;
+	Tue, 14 May 2024 10:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zBFdNruK"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rz3kHAwf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC96113B287;
-	Tue, 14 May 2024 11:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6A084D23;
+	Tue, 14 May 2024 10:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715684979; cv=none; b=Ldm7auyCKDdrARj5AgkzoXGsHVFYvkYta+TYXUuyPraVhadBjY6PD2vX0df4HtZSt0B2W20yNJTfdE2GxDiv/xogRfvqgD0YaS3VTSlUx601NCcUBOC+0ZoWrGELTjRIamxIwVr7A18DfGe2kqBfCzPbsMdDhq1oiH7GKV0cUHY=
+	t=1715683688; cv=none; b=jATgp7Y99BErp05o/0Qur5pQlqOTrm+T1KcaUZdLTND/z6FzZk913VW69o8Ndm7GGH7Snk1bxp7Pd8uHjZr4lbSL/8aENL+DvYsh32Lex6STsZsrYBogiKFnUZxNptgcZQ768N1aYHGo4JhksJmJhfRuDYZexgfb/KuouL4WPqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715684979; c=relaxed/simple;
-	bh=Eb4+G+aHG2Vm3e3joQm1/LUC2P6jFfU1JpRJhMDV0UU=;
+	s=arc-20240116; t=1715683688; c=relaxed/simple;
+	bh=JMWo4w7F3EPtehsG03RW5xqidd/t+WrU1yoW/MymqBY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jjUtHb79eAwwM2yn+8q0MehlhnHMCaxTEkWObUGnGMV3dRvae8KgIkwy7IYddiZaJb5bGYMoTpQd5gttxVLHT0/RgVllIqSFCuTmTMrJW9X9FO1llAei2ooiXpaEQcASGKJvcoUEwQbdSGunFCkLQcBt5BVFeRBc9gI3ECBIznw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zBFdNruK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50E00C2BD10;
-	Tue, 14 May 2024 11:09:38 +0000 (UTC)
+	 MIME-Version; b=gSaReuWDqN1LbXEPECn+0lIl59lLRxDXM8rYrRQGqjzVuNDrLuodX34h5bc5LOYiJEw1EBs8Y0+VDWxNfMUfHfiuaB1K1JG/VJAdTmhVmwpnDlOixuFVo7TLiXy4n0nCOpkl2btxbM/gAaOu/i6xzFTuHFi80zyV9nA01el5ARI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rz3kHAwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 088D3C2BD10;
+	Tue, 14 May 2024 10:48:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715684979;
-	bh=Eb4+G+aHG2Vm3e3joQm1/LUC2P6jFfU1JpRJhMDV0UU=;
+	s=korg; t=1715683688;
+	bh=JMWo4w7F3EPtehsG03RW5xqidd/t+WrU1yoW/MymqBY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=zBFdNruKfagjLlrNQIjHDwJW8akndQYTS7s2XRDE0sKBz+TH42qeTn6v/zlqqtp/n
-	 BuoGUq6cAxV4bEA8EBiZxUKT0ekM5G8k/2wZZBM+P4yiTKSUecFcC2YXMAmu5Sthip
-	 Oo3FbofbC3kT3aUxwOWhn3Pe6DpAAA9TMSX781JA=
+	b=rz3kHAwfhkM9UgplMJjEe9pocJBKwlRlU4wgit50v1T6BZ8e9C+SxTNaq3k4rXDno
+	 5sgAGu/HCfzjvk+ZnmnYaZARhV+44mgXz/XM0R3/IFtKZ8vTwaKmltBEEYSfkLZTcr
+	 XeXmGnsUGqHPjiJt/ZSFxoxXWtq8R05LeaqITjbk=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Mark Rutland <mark.rutland@arm.com>,
-	Aishwarya TCV <aishwarya.tcv@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.6 116/301] selftests/ftrace: Fix event filter target_func selection
-Date: Tue, 14 May 2024 12:16:27 +0200
-Message-ID: <20240514101036.629901920@linuxfoundation.org>
+	Mark Brown <broonie@kernel.org>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH 6.8 257/336] usb: typec: tcpm: unregister existing source caps before re-registration
+Date: Tue, 14 May 2024 12:17:41 +0200
+Message-ID: <20240514101048.319410880@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240514101032.219857983@linuxfoundation.org>
-References: <20240514101032.219857983@linuxfoundation.org>
+In-Reply-To: <20240514101038.595152603@linuxfoundation.org>
+References: <20240514101038.595152603@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -69,98 +63,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.6-stable review patch.  If anyone has any objections, please let me know.
+6.8-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Amit Sunil Dhamne <amitsd@google.com>
 
-[ Upstream commit 8ecab2e64572f1aecdfc5a8feae748abda6e3347 ]
+commit 230ecdf71a644c9c73e0e6735b33173074ae3f94 upstream.
 
-The event filter function test has been failing in our internal test
-farm:
+Check and unregister existing source caps in tcpm_register_source_caps
+function before registering new ones. This change fixes following
+warning when port partner resends source caps after negotiating PD contract
+for the purpose of re-negotiation.
 
-| # not ok 33 event filter function - test event filtering on functions
+[  343.135030][  T151] sysfs: cannot create duplicate filename '/devices/virtual/usb_power_delivery/pd1/source-capabilities'
+[  343.135071][  T151] Call trace:
+[  343.135076][  T151]  dump_backtrace+0xe8/0x108
+[  343.135099][  T151]  show_stack+0x18/0x24
+[  343.135106][  T151]  dump_stack_lvl+0x50/0x6c
+[  343.135119][  T151]  dump_stack+0x18/0x24
+[  343.135126][  T151]  sysfs_create_dir_ns+0xe0/0x140
+[  343.135137][  T151]  kobject_add_internal+0x228/0x424
+[  343.135146][  T151]  kobject_add+0x94/0x10c
+[  343.135152][  T151]  device_add+0x1b0/0x4c0
+[  343.135187][  T151]  device_register+0x20/0x34
+[  343.135195][  T151]  usb_power_delivery_register_capabilities+0x90/0x20c
+[  343.135209][  T151]  tcpm_pd_rx_handler+0x9f0/0x15b8
+[  343.135216][  T151]  kthread_worker_fn+0x11c/0x260
+[  343.135227][  T151]  kthread+0x114/0x1bc
+[  343.135235][  T151]  ret_from_fork+0x10/0x20
+[  343.135265][  T151] kobject: kobject_add_internal failed for source-capabilities with -EEXIST, don't try to register things with the same name in the same directory.
 
-Running the test in verbose mode indicates that this is because the test
-erroneously determines that kmem_cache_free() is the most common caller
-of kmem_cache_free():
-
-  # # + cut -d: -f3 trace
-  # # + sed s/call_site=([^+]*)+0x.*/1/
-  # # + sort
-  # # + uniq -c
-  # # + sort
-  # # + tail -n 1
-  # # + sed s/^[ 0-9]*//
-  # # + target_func=kmem_cache_free
-
-.. and as kmem_cache_free() doesn't call itself, setting this as the
-filter function for kmem_cache_free() results in no hits, and
-consequently the test fails:
-
-  # # + grep kmem_cache_free trace
-  # # + grep kmem_cache_free
-  # # + wc -l
-  # # + hitcnt=0
-  # # + grep kmem_cache_free trace
-  # # + grep -v kmem_cache_free
-  # # + wc -l
-  # # + misscnt=0
-  # # + [ 0 -eq 0 ]
-  # # + exit_fail
-
-This seems to be because the system in question has tasks with ':' in
-their name (which a number of kernel worker threads have). These show up
-in the trace, e.g.
-
-  test:.sh-1299    [004] .....  2886.040608: kmem_cache_free: call_site=putname+0xa4/0xc8 ptr=000000000f4d22f4 name=names_cache
-
-.. and so when we try to extact the call_site with:
-
-  cut -d: -f3 trace | sed 's/call_site=\([^+]*\)+0x.*/\1/'
-
-.. the 'cut' command will extrace the column containing
-'kmem_cache_free' rather than the column containing 'call_site=...', and
-the 'sed' command will leave this unchanged. Consequently, the test will
-decide to use 'kmem_cache_free' as the filter function, resulting in the
-failure seen above.
-
-Fix this by matching the 'call_site=<func>' part specifically to extract
-the function name.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reported-by: Aishwarya TCV <aishwarya.tcv@arm.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
+Fixes: 8203d26905ee ("usb: typec: tcpm: Register USB Power Delivery Capabilities")
+Cc: linux-usb@vger.kernel.org
+Cc: stable@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Cc: linux-kselftest@vger.kernel.org
-Cc: linux-trace-kernel@vger.kernel.org
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Signed-off-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Link: https://lore.kernel.org/r/20240424223227.1807844-1-amitsd@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- .../selftests/ftrace/test.d/filter/event-filter-function.tc     | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/typec/tcpm/tcpm.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-index 2de7c61d1ae30..3f74c09c56b62 100644
---- a/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-+++ b/tools/testing/selftests/ftrace/test.d/filter/event-filter-function.tc
-@@ -24,7 +24,7 @@ echo 0 > events/enable
- echo "Get the most frequently calling function"
- sample_events
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -2435,7 +2435,7 @@ static int tcpm_register_sink_caps(struc
+ {
+ 	struct usb_power_delivery_desc desc = { port->negotiated_rev };
+ 	struct usb_power_delivery_capabilities_desc caps = { };
+-	struct usb_power_delivery_capabilities *cap;
++	struct usb_power_delivery_capabilities *cap = port->partner_source_caps;
  
--target_func=`cut -d: -f3 trace | sed 's/call_site=\([^+]*\)+0x.*/\1/' | sort | uniq -c | sort | tail -n 1 | sed 's/^[ 0-9]*//'`
-+target_func=`cat trace | grep -o 'call_site=\([^+]*\)' | sed 's/call_site=//' | sort | uniq -c | sort | tail -n 1 | sed 's/^[ 0-9]*//'`
- if [ -z "$target_func" ]; then
-     exit_fail
- fi
--- 
-2.43.0
-
+ 	if (!port->partner_pd)
+ 		port->partner_pd = usb_power_delivery_register(NULL, &desc);
+@@ -2445,6 +2445,9 @@ static int tcpm_register_sink_caps(struc
+ 	memcpy(caps.pdo, port->sink_caps, sizeof(u32) * port->nr_sink_caps);
+ 	caps.role = TYPEC_SINK;
+ 
++	if (cap)
++		usb_power_delivery_unregister_capabilities(cap);
++
+ 	cap = usb_power_delivery_register_capabilities(port->partner_pd, &caps);
+ 	if (IS_ERR(cap))
+ 		return PTR_ERR(cap);
 
 
 
