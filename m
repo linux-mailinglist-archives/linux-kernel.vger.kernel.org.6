@@ -1,112 +1,183 @@
-Return-Path: <linux-kernel+bounces-179098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3785C8C5BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:25:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E050E8C5BAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:26:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85F8282F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:25:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 649B9B20C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FA618131F;
-	Tue, 14 May 2024 19:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9532518131B;
+	Tue, 14 May 2024 19:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/F6zMUI"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ajz4KHEC"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF807144D0B;
-	Tue, 14 May 2024 19:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7876E1802A1;
+	Tue, 14 May 2024 19:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715714720; cv=none; b=rMpuqaWkN8Tsc6Ps16SyE8GUo3FESFxx9/++bnjKbVkZxqgYRYc+qngM4BLSOukj/L4t3Otio7hmPySVmiIrEPOJo7w3RrUvmHo51lqBOnF8AMNDw/I/h9OCknmwmsUNe5wIUfZUg+sBSmKp2z652lka2YnduQIDCJgZKKUmrEQ=
+	t=1715714801; cv=none; b=Hx9x5zxMIv52I+NLAL9ePksyEiwk/uBphhtNChNtFS0eW6c259EGOakgd6yUWICcUxCEFU7TUdx46JZSQE/pEO31p3Yoayx91lR+Xf1lf47OzilIkG/dk9rzlGBq7SqFxCgdp8+xl79FGkaIJ96f3+UDVlCgJipAkXOl7+XWWA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715714720; c=relaxed/simple;
-	bh=BKkPQ6MUtsS8ScL8KN3xo+e8VCvzKFbPixFMlTSPPhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rs/H3SoH/ExIpe2s7BpkkpJQ32m4jSkG5GjcmgO9KaQn4DJ3L/AycgKf9xnxepqYptU9o7JbLkN+Xq6CU5DJD+yX9js7GHLtwjZAjWeg3TKPeXnfCvlQ0epfYMp9A1IShYAtJjw8Yn6fKESBa9LeAt3Le2VhN8wn9KCatswIrPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/F6zMUI; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2e3e18c240fso66925791fa.0;
-        Tue, 14 May 2024 12:25:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715714717; x=1716319517; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BKkPQ6MUtsS8ScL8KN3xo+e8VCvzKFbPixFMlTSPPhE=;
-        b=T/F6zMUIRJ+CaHt9xzy66G0VOTpHDn80s6tnKcesbNu+0KVPaglK+XOKsgO09SJGL7
-         LKSodrLunyd+ElAcxNTTI/lg7z4EW3TxsD/DDRO2qoVIKFLVNqAecUzCsBA8Y8QZq3Em
-         cJOuULzXuh3oYOwlGIPi/8LLmqTmv9XqmoF7+y7RhCqmKrLC8xDCITdZarz1guNJ3ljS
-         Yw3jjcJyM4BiVUIkb6oDHbiYo+jBMu6YI0dHZHUXZBAsDpSN+AvhP8sbfA7VwbmeoIFX
-         sNo1L0d4GPJttod5en5dNnfUTbNn0tmDNTtEmJXP4eg47WVPwqLxPUhF9TU6uy8EAh7H
-         50aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715714717; x=1716319517;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BKkPQ6MUtsS8ScL8KN3xo+e8VCvzKFbPixFMlTSPPhE=;
-        b=m71qttQKMuAJzIzoDZGrwTs1zzZjB8Cd0OPAf2PzxBtpSJ7PqpU2fXP8VIRKB2uoFv
-         Mfs0FTu1o/ALomykI+mrYupsT6Uf5qugCPL929gJ/YD5ZbgSzIce2wYj2Q8x95kcySWL
-         MW1nboAxKJEm+6NIMxygvr3q/3k5B8JdlwRrDtUzfpG6bMvRVwAAZr67WVi0FcpjUUrU
-         BxtrtD8jJXVUuVCCIMZFEJtSvcgv+3YC6az8+j7wPkWLupzOb9Ez9EocSKRKaguCXc37
-         TgY72fsi5jDqdNh9TTPibmVSlYQd/ujrC+bg2korJeUjMCw7ukrPX1AIwMruk0Jq1G26
-         gPhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVomJc4xUNo1GmjWAZ9pVAGjEp+AWB27VFV3wYpxEXsTsU1O5Yyq5zr7E//0B8NnDGTgqO8URSE9MbIvh0nY6f+Akg27hent04HAcdS+7Le2H3GdiKGwU/RW3uR8W2DBbolRbtVYA==
-X-Gm-Message-State: AOJu0YzTqGxvJ4IwdU7Npv1XC0BMFldaGcpwD6j3sHQXHxpvYk22aG5b
-	6tM22WxBQXb/68UWYoalv8rX/41CgM7ixgFHVk44aslim6nfvJTy
-X-Google-Smtp-Source: AGHT+IGP3P1+UwL6FCmnidu99mpLnYJnZSJQSrp8iNFTaTkPkNeIyLAHQx+RTr4FFfO4iye8vXDULQ==
-X-Received: by 2002:a19:6914:0:b0:51f:2f2:d66 with SMTP id 2adb3069b0e04-52210277cbamr11726964e87.61.1715714716487;
-        Tue, 14 May 2024 12:25:16 -0700 (PDT)
-Received: from dschatzberg-fedora-PF3DHTBV ([2620:10d:c091:500::5:4a5c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-523714d3785sm342275e87.301.2024.05.14.12.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 12:25:15 -0700 (PDT)
-Date: Tue, 14 May 2024 15:25:11 -0400
-From: Dan Schatzberg <schatzberg.dan@gmail.com>
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>
-Cc: linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: cgroup io.stat propagation regression
-Message-ID: <ZkO6l/ODzadSgdhC@dschatzberg-fedora-PF3DHTBV>
+	s=arc-20240116; t=1715714801; c=relaxed/simple;
+	bh=HdrW6TpOnmlSBEmxz3ThXhmRZsvj0qD4Y08+LUS+3KU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H6A0V3I8F5voIt1LPgkLErIGTYpUX+44upCfonV9ptVT0KsPFMjlo4VWM7g/0PApVl385xbo+xprXz+4WxFBmA6FzmgaMte8Ud1fvvoZlmVWdnc2C/SM3qv15BbsaaVoe64eIAAniZkahFFFj7uGFxA28ktRBQwg+/CJSU1Jmzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ajz4KHEC; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EH4MOj011005;
+	Tue, 14 May 2024 19:26:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=4Xgs1ZzCYvuXqy2SUX4WGoMI2AHx/GyrrcDQa088Ve4=;
+ b=Ajz4KHECHhMJ5oXUDUcK0moBXjA7Rmzew7RP6LGQwIbYlV+L+RqzMeyZDgUXMbK1lF7s
+ eT/25fjEia9fyWsZPAXhCtqGo8bITFTJIVd2NC5TMmJ1/Q20lgjPaKHPn27g6n8FZ0iE
+ BpVftk4ZI0IviTUbEPvlmmkgYt8y0CL0WlpVmEy2pRCMnpTTxZuAWnZodb65mc94muFj
+ 2Svls98pUWPZXaT22g3DpvJtwjxcH/k1NQM1av8T6XBpv/tGdKUdzd5C3fahO+H9zgG6
+ 9vlj8B6iJEoPfDQvCQtPlFkg8fRNmvRXfrP11IOqriZwyjNuGV9OTVxfWV/WSqMCHgdG kA== 
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4bg40cj7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 19:26:35 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EHX1Tj020368;
+	Tue, 14 May 2024 19:26:33 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2kcyycb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 19:26:33 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EJQVj855837038
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 19:26:33 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 119D058064;
+	Tue, 14 May 2024 19:26:31 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D350358058;
+	Tue, 14 May 2024 19:26:30 +0000 (GMT)
+Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 19:26:30 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: linux-spi@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, eajames@linux.ibm.com
+Subject: [PATCH v5] spi: dt-bindings: Document the IBM FSI-attached SPI controller
+Date: Tue, 14 May 2024 14:26:30 -0500
+Message-Id: <20240514192630.152747-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: JIRZ8mzxi8ATm0aI35CLjCRjD_Y0r_Fu
+X-Proofpoint-ORIG-GUID: JIRZ8mzxi8ATm0aI35CLjCRjD_Y0r_Fu
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_11,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 mlxscore=0 spamscore=0 clxscore=1011
+ mlxlogscore=999 bulkscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405140138
 
-Hi Waiman,
+IBM Power processors have a SPI controller that can be accessed
+over FSI from a service processor. Document it.
 
-I've noticed that on recent kernels io.stat metrics don't propagate
-all the way up the hierarchy. Specifically, io.stat metrics of some
-leaf cgroup will be propagated to the parent, but not its grandparent.
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+This patch was previously included in https://lore.kernel.org/all/20240429210131.373487-1-eajames@linux.ibm.com/
 
-For a simple repro, run the following:
+No changes since v3.
 
-systemd-run --slice test-test dd if=/dev/urandom of=/tmp/test bs=4096 count=1
+Changes since v2:
+ - Change name from ibm,p10-spi to ibm,spi-fsi for two reasons. One, this
+   matches the I2C controller binding (ibm,i2c-fsi), and two, this binding
+   is specifically for the FSI-attached SPI controllers on the P10 but
+   accessed from the service processor. P10 SPI controllers accessed from
+   the P10 would have different bindings.
+ - Fix warnings by using generic FSI parent node
+ - Fix prefix
 
-Then:
+ .../devicetree/bindings/spi/ibm,spi-fsi.yaml  | 55 +++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/ibm,spi-fsi.yaml
 
-cat /sys/fs/cgroup/test.slice/test-test.slice/io.stat
+diff --git a/Documentation/devicetree/bindings/spi/ibm,spi-fsi.yaml b/Documentation/devicetree/bindings/spi/ibm,spi-fsi.yaml
+new file mode 100644
+index 0000000000000..d7fec4c3a8016
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/ibm,spi-fsi.yaml
+@@ -0,0 +1,55 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/spi/ibm,spi-fsi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IBM FSI-attached SPI Controller
++
++maintainers:
++  - Eddie James <eajames@linux.ibm.com>
++
++description:
++  A SPI controller found on IBM Power processors, accessed over FSI from a
++  service processor. This node will always be a child node of an ibm,fsi2spi
++  node.
++
++properties:
++  compatible:
++    enum:
++      - ibm,spi-fsi
++
++  reg:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++
++allOf:
++  - $ref: spi-controller.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    fsi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        spi@0 {
++            compatible = "ibm,spi-fsi";
++            reg = <0>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            eeprom@0 {
++                compatible = "atmel,at25";
++                reg = <0>;
++                size = <0x80000>;
++                address-width = <24>;
++                pagesize = <256>;
++                spi-max-frequency = <1000000>;
++            };
++        };
++    };
+-- 
+2.39.3
 
-Shows the parent cgroup stats and I see wbytes=4096 but the grandparent cgroup:
-
-cat /sys/fs/cgroup/test.slice/io.stat
-
-shows no writes.
-
-I believe this was caused by the change in "blk-cgroup: Optimize
-blkcg_rstat_flush()". When blkcg_rstat_flush is called on the parent
-cgroup, it exits early because the lockless list is empty since the
-parent cgroup never issued writes itself (e.g. in
-blk_cgroup_bio_start). However, in doing so it never propagated stats
-to its parent.
-
-Can you confirm if my understanding of the logic here is correct and
-advise on a fix?
 
