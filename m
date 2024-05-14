@@ -1,139 +1,163 @@
-Return-Path: <linux-kernel+bounces-178330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6838C4C01
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:41:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC6A8C4C03
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BAE1F229E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A995F1F239CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED6F18622;
-	Tue, 14 May 2024 05:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A85E1862A;
+	Tue, 14 May 2024 05:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kSq4+5+4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NnmN6ckR"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACEC17FF;
-	Tue, 14 May 2024 05:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EFB171AB
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 05:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715665256; cv=none; b=pzoAKQDO3i2bQlbpTj4dtFx969fOyNEA9anU6WTOiTJTO+LDxQ1VTLJIZOxnjXMcY1YM/QOqY+6l7fJrVzzgtYtic5Az338U7aQGZPKSkPZ04BVtfixFJHtgAtq3QKthOEkSSOqIHW+wxtf06LDWzlpD+G0sxF3FqYE3Cv42rO8=
+	t=1715665340; cv=none; b=ajK32Qgn/gmiLpqt/QensYPnDKblgMRHokOng0Zs+nanSQgEJ/thAi8+yOzR6mydzX4JYLoYAI/K/m3TMQz+k5OyfPlP+li1r5ejml1Dq3CWsmL7WPnQKeG1UGdayFXLCsuGPBIMDF+l40ZJTr+OaeQF0evyxr42QFHg5wAqf1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715665256; c=relaxed/simple;
-	bh=Pu/7+bRXOsXzA1dbf5qN3S1loGmvxS5Xgd1PfNlSCcU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WwzrUvUH63QUk+Rq5IikQ/D4yIeL9byIM5iuvXaVEiEqny5RR8bVdU6tAhFQTChU6Oa4yTDysbxxJ0bGPhexCLGwziUix3y1GOHro4SgtlPNoBSiZZO5jbsqrmAq6xbvJV0wB0c8WjCCYa8F3TBGpFmtcys8vk6tuB1g+pWdvGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kSq4+5+4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=wGQ2BN7dODhp2l12BVwJ1rFeeAjNCfz9WxnSHzHK97I=; b=kSq4+5+4366RAk2fuBgmmgIpnf
-	T8K3mtJuQNBpm5J2SFdJnRaEbsRb1iUUYvlBfZ7JBTeg4gZjZqF+iOri+ozUL2nbyj8FIL/vWMEo/
-	/LeVcu5wr0pKjc5jBgBbOClyciPeeAi2e9gUzNMaAeyauLALMgxAze6KWZobUHo0hLY2LSQ218nCt
-	p/LBPBOC+htOB9rZTssNr14NOeu0bbxrplhEYtovXgjWmZMSLifprUh6bD78HsqvHY1q7nGJoanP2
-	zrfto5OZUPQRWiJxR5k6RuQ3qhRFo5Pj+iAMXL8xzeTGWmUV47BmU9ShjRPqUE73UwquARF1iz8wA
-	lzsQ7BFA==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1s6ku6-0000000F3Q4-1p7E;
-	Tue, 14 May 2024 05:40:46 +0000
-Message-ID: <793876b1-fd4d-42ef-91e2-88b4a48794b7@infradead.org>
-Date: Mon, 13 May 2024 22:40:44 -0700
+	s=arc-20240116; t=1715665340; c=relaxed/simple;
+	bh=NV+RKllgW4MfDzgJ3TMIxNxUBbHxwtsBD59kkdTT2P4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EMHhmmsS/fI0xlOxEslIa5K4ve8ozObUbZQ0CdeVH9asUgBe4iw6TWM24rgUOXwYZUR4nmaBDfHldor5sbbiq9q/AAFH5cCieJJGujK+szw5+AcoYY+CUi7hg3eUuUjsfJRSIJ8NkDdGL6a9KMnk1ziyMj9UTRww9Hj/LNeKMc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NnmN6ckR; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-518931f8d23so5256969e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:42:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715665336; x=1716270136; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghNup/0cb2n25xmrVjov+0XGCdmbyoDz8Ij++yEdNjA=;
+        b=NnmN6ckRuGATYDvFD8oNyNnEkzP3V1Y4Rnkux6ftC0kTua8FTrFHb5/JKnOY/Qpk+p
+         wjwDDLKfMJ9OavQ9WFWr3+yq65tg/Y/JEjrZa9SzZR3QlG1jM/zV9MaMEchvWMVRXKse
+         xrj2iCtsj57QrT6Tv08akA0cp2BSKGDSX/+Xk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715665336; x=1716270136;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ghNup/0cb2n25xmrVjov+0XGCdmbyoDz8Ij++yEdNjA=;
+        b=PGcN2/2r4v4rXFllDZzgKk/rcyG1pk80Qc6Xl/RWNeWOZUT+JHH3Psj6Z+TU2WkBhl
+         grSF/8yW9JciK3mcLYbscoJ1fYKpegaZWL11pMia9/AQ+raHR9TbQY8v9c/BUrJhtqhB
+         fnOVXGizdbxsttAIhCZyEady0vlEPjcvUrSnjgN70R92Pm5bBLkVc9+ANlw7kdTdC1mx
+         Pchp5iwEIFGOx4mxZXwNjvx6YHo+049YjVS1yWx2QHEzxruTy+XxGnb+/sSdScELu0s4
+         Qtu2WR51uU5XnvDJXyw4OQLY1oUGu3jXGYjD0SuIiZQxuxR7xMNcu5j3Kp6bT/GdoOGN
+         9YVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY5aRGKHLzbn9ipJg5Jkl60Lu1hrtp2H6z6DdirSNrx56zcXYrsevAXPAbX3TV+Mwh3SUp/fhcI+Ty7WZDX3GuKiOhpRo+K/be4zTq
+X-Gm-Message-State: AOJu0Yygwd3bPqR4J+n5gm7pp+fEHDsZPlf5obV9dsdvc9UVjI1NHnIr
+	1QYkIf/5eKic6OHihdGuBots+Eugl9DuiYOJrNXtY7c0b3J6XDWPbS9+njAVMJLOMTbcRp2tmVS
+	elNm9zQ==
+X-Google-Smtp-Source: AGHT+IF2yVkPlmjZ1p66EllP1/1XxbUTVq7dqkACO79czRWe2uoUjmdx3twmMoP8U90Pld0LgzTK4w==
+X-Received: by 2002:a05:6512:2209:b0:51b:180a:7b7c with SMTP id 2adb3069b0e04-5220fb76cebmr9584729e87.3.1715665336165;
+        Mon, 13 May 2024 22:42:16 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cc7esm686618666b.19.2024.05.13.22.42.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 22:42:15 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a59b49162aeso1284104366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:42:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMUUhttRgu9DY8QeL6ZSV3qzEH///I/mCClMzRzO84MvMSz9SkW6Bs55c2OUsvbqzmNonO3TztQWx+GWmuaInR9e4dz3Izyp47IFV5
+X-Received: by 2002:a17:906:903:b0:a5a:81b1:6cab with SMTP id
+ a640c23a62f3a-a5a81b1716dmr81680366b.51.1715665334991; Mon, 13 May 2024
+ 22:42:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1] perf Documentation: Describe the PMU naming
- convention
-To: Ian Rogers <irogers@google.com>,
- Tuan Phan <tuanphan@os.amperecomputing.com>,
- Robin Murphy <robin.murphy@arm.com>, Thomas Richter <tmricht@linux.ibm.com>,
- Bhaskara Budiredla <bbudiredla@marvell.com>,
- Bharat Bhushan <bbhushan2@marvell.com>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@arm.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
- Stephane Eranian <eranian@google.com>
-References: <20240514005817.2902473-1-irogers@google.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240514005817.2902473-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <Y5mGGrBJaDL6mnQJ@gondor.apana.org.au> <Y/MDmL02XYfSz8XX@gondor.apana.org.au>
+ <ZEYLC6QsKnqlEQzW@gondor.apana.org.au> <ZJ0RSuWLwzikFr9r@gondor.apana.org.au>
+ <ZOxnTFhchkTvKpZV@gondor.apana.org.au> <ZUNIBcBJ0VeZRmT9@gondor.apana.org.au>
+ <ZZ3F/Pp1pxkdqfiD@gondor.apana.org.au> <ZfO6zKtvp2jSO4vF@gondor.apana.org.au>
+ <ZkGN64ulwzPVvn6-@gondor.apana.org.au> <CAHk-=wjmwmWv3sDCNq8c4VHWZUtZH72tDqR=TcgfpxTegL=aZw@mail.gmail.com>
+ <ZkLz31t6ZJmbsj3o@gondor.apana.org.au>
+In-Reply-To: <ZkLz31t6ZJmbsj3o@gondor.apana.org.au>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 13 May 2024 22:41:58 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi1T6wq1USBfU=NjdpSaTiKzV4H2gnUQfKa_mcXqOSk_w@mail.gmail.com>
+Message-ID: <CAHk-=wi1T6wq1USBfU=NjdpSaTiKzV4H2gnUQfKa_mcXqOSk_w@mail.gmail.com>
+Subject: Re: [GIT PULL] Crypto Update for 6.10
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Lukas Wunner <lukas@wunner.de>, "David S. Miller" <davem@davemloft.net>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Mon, 13 May 2024 at 22:17, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> Yes he did try this out:
+>
+> https://lore.kernel.org/all/20240302082751.GA25828@wunner.de/
+>
+> It resulted in an increase in total vmlinux size although I don't
+> think anyone looked into the reason for it.
 
-On 5/13/24 5:58 PM, Ian Rogers wrote:
-> It is an existing convention to use suffixes with PMU names. Try to
-> capture that convention so that future PMU devices may adhere to it.
-> 
-> The name of the file and date within the file try to follow existing
-> conventions, particularly sysfs-bus-event_source-devices-events.
-> ---
->  .../testing/sysfs-bus-event_source-devices    | 24 +++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices b/Documentation/ABI/testing/sysfs-bus-event_source-devices
-> new file mode 100644
-> index 000000000000..3f7e53e82de7
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices
-> @@ -0,0 +1,24 @@
-> +What: /sys/bus/event_source/devices/<pmu>
-> +Date: 2014/02/24
-> +Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
-> +Description:	Performance Monitoring Unit (<pmu>)
-> +
+I think the basic issue is that the whole 'assume()' logic of "if (x)
+unreachable()" is very fragile.
 
-Mostly looks good to me. I prefer a small change (below).
+Basically, it *can* generate the exact code you want by basically
+telling the compiler that if some condition is true, then the compiler
+can jump to unreachable code, and then depending on the phase of the
+moon, the compiler may get the whole "I can assume this is never
+true".
 
-> +		Each <pmu> directory, for a PMU device, is a name
-> +		optionally followed by an underscore and then either a
-> +		decimal or hexadecimal number. For example, cpu is a
-> +		PMU name without a suffix as is intel_bts,
-> +		uncore_imc_0 is a PMU name with a 0 numeric suffix,
-> +		ddr_pmu_87e1b0000000 is a PMU name with a hex
-> +		suffix. The hex suffix must be more than two
-> +		characters long to avoid ambiguity with PMUs like the
-> +		S390 cpum_cf.
-> +
-> +		Tools can treat PMUs with the same name that differ by
-> +		suffix as instances of the same PMU for the sake of,
-> +		for example, opening an event. For example, the PMUs
-> +		uncore_imc_free_running_0 and
-> +		uncore_imc_free_running_1 have an event data_read,
+BUT.
 
-s/,/;/
-or: s/,/./ and begin the next sentence with a capital letter.
+The reason I hated seeing it so much is exactly that it's basically
+depending on everything going just right.
 
-> +		opening the data_read event on a PMU specified as
-> +		uncore_imc_free_running should be treated as opening
-> +		the data_read event on PMU uncore_imc_free_running_0
-> +		and PMU uncore_imc_free_running_1.
+When things do *not* go right, it causes the compiler to instead
+actually generate the extra code for the conditional, and actually
+generate a conditional jump to something that the compiler then
+decides it can do anything to, since it's unreachable.
 
-With that change, you may add:
+So now you generate extra code, and generate a branch to nonsense.
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> However, this patch still has two outstanding build defects which
+> have not been addressed:
+>
+> https://lore.kernel.org/all/202404240904.Qi3nM37B-lkp@intel.com/
 
-thanks.
--- 
-#Randy
-https://people.kernel.org/tglx/notes-about-netiquette
-https://subspace.kernel.org/etiquette.html
+This one just seems to be a sanity check for "you shouldn't check
+kmalloc() for ERR_PTR", so it's a validation test that then doesn't
+like the new test in that 'assume()'.
+
+And the second one:
+
+> https://lore.kernel.org/all/202404252210.KJE6Uw1h-lkp@intel.com/
+
+looks *very* much like the cases we've seen with clang in particular
+where clang goes "this code isn't reachable, so I'll just drop
+everything on the floor", and then it just becomes a fallthrough to
+whatever else code happens to come next. Most of the time that's just
+more (unrelated) code in the same function, but sometimes it causes
+that "falls through to next function" instead, entirely randomly
+depending on how the code was laid out.
+
+> So I might end up just reverting it.
+
+I suspect that because I removed the whole 'assume()' hackery, neither
+of the above issues will now happen, and the code nwo works.
+
+But yes, the above is *exactly* why I don't want to see that
+'unreachable()' hackery.
+
+Now, if we had some *other* way to tell the compiler "this condition
+never happens", that would be fine. Some compiler builtin for
+asserting some condition.
+
+But a conditional "unreachable()" is absolutely not it.
+
+               Linus
 
