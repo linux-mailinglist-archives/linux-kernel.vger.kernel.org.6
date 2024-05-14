@@ -1,182 +1,133 @@
-Return-Path: <linux-kernel+bounces-178955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015958C59C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:33:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB118C59C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3B72814CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:33:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 081841C21148
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD3E1E4A0;
-	Tue, 14 May 2024 16:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572C95FEE4;
+	Tue, 14 May 2024 16:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WTI29hSi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="vMkDV0cB"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE2D28366
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5300612E7F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715704393; cv=none; b=LkNcwmwDvjKdMyJkr6B66Mee6OwI28Aq1PAXfkLWgEN1WQV9jr7TCyuveKzr30f6VA4mBwAbzEJ4D9D3UKPpkxrXC9BkJZJFf1+H+pxMdRSLSJIBTPkcOGVbsRldUmRi/sYkIH8b1Ap3pNMOm5DnMq/VNOmKlyIwFZmBTZSXB/o=
+	t=1715704427; cv=none; b=QeVBh9OPQlXmX55BPmtg7vLFHl04h2jEBKFZ5bcxV/VUSaFQvn+ZeSNgO4Xu5gyKAilaYfJ6NbmHYXYkIPE4YS5TInZgABfeAMYd3Fg40eJFRkbY+oXCNJpIWNpEckrZ+l1diofKK31HFEMf8NR96V5928odLBPtdr2oXL+RGaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715704393; c=relaxed/simple;
-	bh=2O3FVoVp95G4P4aUBtb5SLdBJuD22ckBazyVVu22ZDA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qQyzVGscLZJgKaQSF29oPQFljaQ8sCx+Zq5794MBuB1+RYvHZlP1Zh+c0z/tjJbSvk6m9np2GKdTFaVuhMn8fv2Yr74R9vp6PgzMBA/cgzVk99sU/VMcPdoLAmsa40zoklpX8IXjVwqYaiORW2f1geA4QehNtKQXfIHGgWeUgx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WTI29hSi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40F1BC2BD10;
-	Tue, 14 May 2024 16:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715704392;
-	bh=2O3FVoVp95G4P4aUBtb5SLdBJuD22ckBazyVVu22ZDA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=WTI29hSiyDCBZ/ISmRKtXANpO+MIhVZR4JWCVcJqN9/o+DiUQ5X0GEXAdrgRbrqyZ
-	 b+wMqcBFG+zX/Kql95Loc0oVKFWI3aDu/VsJ6sUjSCyxr34W2VMnjPBg7uvGlV/hZf
-	 58sTwPUhjQ7JMumSjb2rr2cwE1QWDF6sGQYy+c8i5MpLLEcO/yEfjel9AzUt4f9Ndw
-	 iHHJc31d3f817J5K1WR8DjMU2QpBKILOiQ3F5iJ+kPtnSXMw28vI/Wyx4ymQyRvfsG
-	 S0fOOCFPj7SWbYL/SpOwoFMZPh2UYXNv3uMEs0lkKg9UHfVRQRY8cPajbAQF84TznI
-	 /HHuZ+HKrZCgw==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org,
- =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Andrew Bresticker <abrestic@rivosinc.com>, Chethan
- Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Oscar Salvador <osalvador@suse.de>, Santosh Mamila
- <santosh.mamila@catalinasystems.io>, Sivakumar Munnangi
- <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 1/8] riscv: mm: Pre-allocate vmemmap/direct map PGD
- entries
-In-Reply-To: <CAHVXubhfsvDZrw_Cvg8AnEm00P0TQvrSOV_jVSBRckmJLp6EFQ@mail.gmail.com>
-References: <20240514140446.538622-1-bjorn@kernel.org>
- <20240514140446.538622-2-bjorn@kernel.org>
- <CAHVXubhfsvDZrw_Cvg8AnEm00P0TQvrSOV_jVSBRckmJLp6EFQ@mail.gmail.com>
-Date: Tue, 14 May 2024 18:33:09 +0200
-Message-ID: <87wmnwtku2.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1715704427; c=relaxed/simple;
+	bh=ZveMAhEpxPkTHD7VDMcwAi8X3FGU/ioBy7n4/jBydvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Si4V2H8RuW1f/cDSxxq9l6tw4SrmaSj5Ld1t7txd3k5DN+yVtDF38HmfMsHAeD7KlCGyAiNLCLu7i+ae8vC5SysftJCKYHV+IRSYbVffxU6XR7Ti860YIIMhOx/XPjiBd2vRtAHxbmBMSZsxroex0YGregF1YftgXTXeGKy8pos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vMkDV0cB; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-de46b113a5dso5628021276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:33:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715704425; x=1716309225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nv1f0KwnCkLw87/jdn7pXfBoRVPGPnbjvCSHZ433+XE=;
+        b=vMkDV0cBF9yKDmN0CrkCDpwEvQboypA/hQX76774IlgU3XwqZqBbwUkX0bncGd8f7E
+         n/+bLFE82J4CFRlKqRyuxH0iFpo+Ymb60JHw/dMMC69djcwaVf7wQMBNKXqD3CgAv5sA
+         Uns0SQEckyDIthn+mY7PL5g01nRXvh5v0/ZLSe5w3/mRQESvHeMCb4y97W70um2IDLF/
+         ut7MRdt22FMi5tRYTWKOjc0fqhbwti/qNQP2LgwPri3A62LGIqJuy3LWQvcFpcqKtR/X
+         6vQHL4TWIQe/gc56i+YW5aDU3pcXULKD7BGJUT8IctwSQP58VpK8i1TIusTqaHafO+YC
+         K0lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715704425; x=1716309225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nv1f0KwnCkLw87/jdn7pXfBoRVPGPnbjvCSHZ433+XE=;
+        b=DsJe0XFHf/FwEGPx6KyOy81c45k2rCfFQgNlwcgzFxSdKQ5uCq1xXG2+I8PWum2uN0
+         ntLMKN51EMC5HXKsAHOpdYKkL4HHNvqZd+ulIUYky/Q+tcPh5WNnm4ZY/M1QiA7Uusyp
+         JqLZBTZr80oJfKh/4Q2gILBcC8Hy1ZrWEue7Lq9ekPvoaBXezg1AbAUZ575qGqzQKXeS
+         6cTeGMXni5gzNZmlX19vg/vogQ22K/a+k1o1goBkATVcSvn4xQOvCeJnchp7a9+AbZ5c
+         WQb5IZE4w5qrmxBUnoXjkX0JSkh+CVQesOGc08gRQm6hMQHf77Tbry6XMiDgGX/T/MDJ
+         5Ebw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3EoxiuZQb1cff54RfUSJCNaTc24PMQXTzwR9ouJ6g2fpQvZciR3HOWbQIL4MnvJ9GE8RdhW8uX+w18WNIcuit6xap3jH2QCNwHGPk
+X-Gm-Message-State: AOJu0YwDhVF6FOmKsGb8Br+3E/ZNe/9P0u0nP7kbmeImRafkPQtzB+1g
+	KxqR5O78jAeQRGjYmh0IH67hqqX2SWqpOWCfZkfjXBNoiP29lZ7nZSb819OWF3UbWnbOS5qiLIi
+	NrmX+e/N3++EFs01/fUrsBC8fKFnbDHWd3RfS
+X-Google-Smtp-Source: AGHT+IFXAhCGaHN00zLb69EIyY6q0TTwNMCUOErAVF3O54yE63mv0vw48TLat8wi/llUL4sBRr0HPLAvGtQ1nDzkffU=
+X-Received: by 2002:a25:b283:0:b0:dcb:b072:82d5 with SMTP id
+ 3f1490d57ef6-dee4f39c9bamr12638368276.64.1715704425109; Tue, 14 May 2024
+ 09:33:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240514153532.3622371-1-surenb@google.com> <CA+CK2bCmy1PhDgDvEX2Pg=_HvLLD2msJmTV_rgMxifbd-y1wRA@mail.gmail.com>
+In-Reply-To: <CA+CK2bCmy1PhDgDvEX2Pg=_HvLLD2msJmTV_rgMxifbd-y1wRA@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 14 May 2024 09:33:32 -0700
+Message-ID: <CAJuCfpGfcY9NLM2ShxBaspwzOK5=B4WFrT0cGDRwTPJMkE+wWQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] lib: add version into /proc/allocinfo output
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	keescook@chromium.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Alexandre Ghiti <alexghiti@rivosinc.com> writes:
-
-> Hi Bj=C3=B6rn,
+On Tue, May 14, 2024 at 8:56=E2=80=AFAM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
 >
-> On Tue, May 14, 2024 at 4:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
-el.org> wrote:
->>
->> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->>
->> The RISC-V port copies the PGD table from init_mm/swapper_pg_dir to
->> all userland page tables, which means that if the PGD level table is
->> changed, other page tables has to be updated as well.
->>
->> Instead of having the PGD changes ripple out to all tables, the
->> synchronization can be avoided by pre-allocating the PGD entries/pages
->> at boot, avoiding the synchronization all together.
->>
->> This is currently done for the bpf/modules, and vmalloc PGD regions.
->> Extend this scheme for the PGD regions touched by memory hotplugging.
->>
->> Prepare the RISC-V port for memory hotplug by pre-allocate
->> vmemmap/direct map entries at the PGD level. This will roughly waste
->> ~128 worth of 4K pages when memory hotplugging is enabled in the
->> kernel configuration.
->>
->> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/kasan.h | 4 ++--
->>  arch/riscv/mm/init.c           | 7 +++++++
->>  2 files changed, 9 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/riscv/include/asm/kasan.h b/arch/riscv/include/asm/kas=
-an.h
->> index 0b85e363e778..e6a0071bdb56 100644
->> --- a/arch/riscv/include/asm/kasan.h
->> +++ b/arch/riscv/include/asm/kasan.h
->> @@ -6,8 +6,6 @@
->>
->>  #ifndef __ASSEMBLY__
->>
->> -#ifdef CONFIG_KASAN
->> -
->>  /*
->>   * The following comment was copied from arm64:
->>   * KASAN_SHADOW_START: beginning of the kernel virtual addresses.
->> @@ -34,6 +32,8 @@
->>   */
->>  #define KASAN_SHADOW_START     ((KASAN_SHADOW_END - KASAN_SHADOW_SIZE) =
-& PGDIR_MASK)
->>  #define KASAN_SHADOW_END       MODULES_LOWEST_VADDR
->> +
->> +#ifdef CONFIG_KASAN
->>  #define KASAN_SHADOW_OFFSET    _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
->>
->>  void kasan_init(void);
->> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->> index 2574f6a3b0e7..5b8cdfafb52a 100644
->> --- a/arch/riscv/mm/init.c
->> +++ b/arch/riscv/mm/init.c
->> @@ -27,6 +27,7 @@
->>
->>  #include <asm/fixmap.h>
->>  #include <asm/io.h>
->> +#include <asm/kasan.h>
->>  #include <asm/numa.h>
->>  #include <asm/pgtable.h>
->>  #include <asm/sections.h>
->> @@ -1488,10 +1489,16 @@ static void __init preallocate_pgd_pages_range(u=
-nsigned long start, unsigned lon
->>         panic("Failed to pre-allocate %s pages for %s area\n", lvl, area=
-);
->>  }
->>
->> +#define PAGE_END KASAN_SHADOW_START
->> +
->>  void __init pgtable_cache_init(void)
->>  {
->>         preallocate_pgd_pages_range(VMALLOC_START, VMALLOC_END, "vmalloc=
-");
->>         if (IS_ENABLED(CONFIG_MODULES))
->>                 preallocate_pgd_pages_range(MODULES_VADDR, MODULES_END, =
-"bpf/modules");
->> +       if (IS_ENABLED(CONFIG_MEMORY_HOTPLUG)) {
->> +               preallocate_pgd_pages_range(VMEMMAP_START, VMEMMAP_END, =
-"vmemmap");
->> +               preallocate_pgd_pages_range(PAGE_OFFSET, PAGE_END, "dire=
-ct map");
->> +       }
->>  }
->>  #endif
->> --
->> 2.40.1
->>
+> On Tue, May 14, 2024 at 9:35=E2=80=AFAM Suren Baghdasaryan <surenb@google=
+com> wrote:
+> >
+> > Add version string at the beginning of /proc/allocinfo to allow later
+> > format changes. Exampe output:
+> >
+> > > head /proc/allocinfo
+> > allocinfo - version: 1.0
+> >            0        0 init/main.c:1314 func:do_initcalls
+> >            0        0 init/do_mounts.c:353 func:mount_nodev_root
+> >            0        0 init/do_mounts.c:187 func:mount_root_generic
+> >            0        0 init/do_mounts.c:158 func:do_mount_root
+> >            0        0 init/initramfs.c:493 func:unpack_to_rootfs
+> >            0        0 init/initramfs.c:492 func:unpack_to_rootfs
+> >            0        0 init/initramfs.c:491 func:unpack_to_rootfs
+> >          512        1 arch/x86/events/rapl.c:681 func:init_rapl_pmus
+> >          128        1 arch/x86/events/rapl.c:571 func:rapl_cpu_online
 >
-> As you asked, with
-> https://lore.kernel.org/linux-riscv/20240514133614.87813-1-alexghiti@rivo=
-sinc.com/T/#u,
-> you will be able to remove the usage of KASAN_SHADOW_START.
-
-Very nice -- consistency! I'll need to respin, so I'll clean this up for
-the next version.
-
-> But anyhow, you can add:
+> It would be also useful to add a header line:
 >
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> $ head /proc/allocinfo
+> allocinfo - version: 1.0
+> # <size> <calls> <tag>
+>             0        0 init/main.c:1314 func:do_initcalls
+>             0        0 init/do_mounts.c:353 func:mount_nodev_root
+>             0        0 init/do_mounts.c:187 func:mount_root_generic
+>             0        0 init/do_mounts.c:158 func:do_mount_root
+> ...
+>
+> This would be the same as in /proc/slabinfo:
+> $ sudo head /proc/slabinfo
+> slabinfo - version: 2.1
+> # name            <active_objs> <num_objs> <objsize> <objperslab>
+> <pagesperslab> : tunables <limit> <batchcount> <sharedfactor> :
+> slabdata <active_slabs> <num_slabs> <sharedavail>
+> pid_3               2730   2730    192   42    2 : tunables    0    0
+>   0 : slabdata     65     65      0
+> ..
 
+Thanks! Addressed in v2:
+https://lore.kernel.org/all/20240514163128.3662251-1-surenb@google.com/
 
-Thank you!
-Bj=C3=B6rn
+>
+> Pasha
 
