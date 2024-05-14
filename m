@@ -1,140 +1,176 @@
-Return-Path: <linux-kernel+bounces-178649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEF78C55D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:11:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2D18C55D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:12:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CAB1F23261
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D0531F22E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860A140862;
-	Tue, 14 May 2024 12:11:17 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E8D40862;
+	Tue, 14 May 2024 12:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RSU5IvbS"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB43320F;
-	Tue, 14 May 2024 12:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D35E1E4B1;
+	Tue, 14 May 2024 12:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688677; cv=none; b=ZV8HW7K3ELJEgymTi+yymMgQYE9U59dusoeoRKDnfSebkN5zT1NEsf3TPTCUrKMHW9HrBHfVMUXRiJfBQsvwery8Xf7xHfWpvBCmK3a5V7+M0L5bzfMOc85Lam5xeHPOopZA0gkLLiT4r8Di6ccKFwYI8WrCkW7751JOzRv+2zY=
+	t=1715688744; cv=none; b=m6owmcfQ1sjU+a8z0XR/PcSiZRmyk6ec4Mc++1Pzn7IGP3L0K1nUJLNHyoxIm/Omp0NPMajWcWYTaIb3/zmJsvYsm4NvDxQ4W/aq7vA3ZcD22S3Kd5PgCht7azpA8KveA0rU6K/a+xc+HopRpAvvEzlJh+pmBHJdKPOSzdQilgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688677; c=relaxed/simple;
-	bh=LLAcg8dgAcq42TteRCQbf45yE6Bj+8PkBxYFXSDJRvk=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=LM9irKrSdKmVlyZcVxZ6LUiRstDQ/fDzeXA8/qAM1VJ/gfnRjcsnxhMtn/wsRmrrZpmZZ4LAWjqMUIeEVxlSl4s/M2IfACOkHnx7pPLlpGME8ZMfeDmdbwHheJSE7F4o/iBo7DafWoDR/Zr4WJ6ExpRbssSb1du9QflCWJsPBq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VdwDk62y6z8XrX5;
-	Tue, 14 May 2024 20:11:02 +0800 (CST)
-Received: from xaxapp03.zte.com.cn ([10.88.97.17])
-	by mse-fl1.zte.com.cn with SMTP id 44ECAwb2004590;
-	Tue, 14 May 2024 20:10:58 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 14 May 2024 20:11:02 +0800 (CST)
-Date: Tue, 14 May 2024 20:11:02 +0800 (CST)
-X-Zmail-TransId: 2af9664354d614f-9c8c9
-X-Mailer: Zmail v1.0
-Message-ID: <20240514201102055dD2Ba45qKbLlUMxu_DTHP@zte.com.cn>
+	s=arc-20240116; t=1715688744; c=relaxed/simple;
+	bh=yvyZt27ScHuMAxnq3bm6Nvou2bxi4i+h6DRBGE2LOE4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsFZ0YBaDm/ujgTT1xgrMCmjCsQDexITLGnfmyis0NGLlt72dKXQBacAIeECQhTIxyIfBaHmme2pkesm/st4En6zDynb4Fjc02p+0xiVTGekNpF/BFX3Msl/9zl9aGPQHCd8YGWFIZbYfWhw75FabLTcg4pbY/9N6E1gzV+P+YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RSU5IvbS; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44ECBo3G115948;
+	Tue, 14 May 2024 07:11:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715688710;
+	bh=OsXgZbCTz/uuKLSGsGQZvWLyWdVYSJ4fAsjKQWfCgac=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=RSU5IvbSkiCst0Z228ER9IBFdciijquqVWZfTKVGX1ee0iIlHHlsagsqJOcixTQ7D
+	 hhNHtB5B8skwhev606unk2HF9CYAzk9c0NOeKc0q/KAXdZFSk7qGSS2xNAQNMPDfJc
+	 UN6eaNPGYAJjGZQWLALBYzvrIeqKp4fexuoorAy0=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44ECBo39105112
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 May 2024 07:11:50 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
+ May 2024 07:11:50 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 14 May 2024 07:11:50 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.227.9])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44ECBnnY006071;
+	Tue, 14 May 2024 07:11:50 -0500
+Date: Tue, 14 May 2024 17:41:48 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: Siddharth Vadapalli <s-vadapalli@ti.com>, <lpieralisi@kernel.org>,
+        <kw@linux.com>, <robh@kernel.org>, <bhelgaas@google.com>,
+        <manivannan.sadhasivam@linaro.org>, <fancer.lancer@gmail.com>,
+        <u.kleine-koenig@pengutronix.de>, <cassel@kernel.org>,
+        <dlemoal@kernel.org>, <yoshihiro.shimoda.uh@renesas.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH v7 2/2] PCI: keystone: Fix pci_ops for AM654x SoC
+Message-ID: <8b56604d-a2b8-4227-8a6f-c477332416b4@ti.com>
+References: <20240328085041.2916899-3-s-vadapalli@ti.com>
+ <20240513215350.GA1996021@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dsahern@gmail.com>, <xu.xin16@zte.com.cn>, <fan.yu9@zte.com.cn>,
-        <yang.yang29@zte.com.cn>, <si.hao@zte.com.cn>,
-        <zhang.yunkai@zte.com.cn>, <he.peilin@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBuZXQvaXB2NjogRml4IHJvdXRlIGRlbGV0aW5nIGZhaWx1cmUgd2hlbiBtZXRyaWMgZXF1YWxzIDA=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 44ECAwb2004590
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 664354D6.001/4VdwDk62y6z8XrX5
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240513215350.GA1996021@bhelgaas>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: xu xin <xu.xin16@zte.com.cn>
+On Mon, May 13, 2024 at 04:53:50PM -0500, Bjorn Helgaas wrote:
+> On Thu, Mar 28, 2024 at 02:20:41PM +0530, Siddharth Vadapalli wrote:
+> > In the process of converting .scan_bus() callbacks to .add_bus(), the
+> > ks_pcie_v3_65_scan_bus() function was changed to ks_pcie_v3_65_add_bus().
+> > The .scan_bus() method belonged to ks_pcie_host_ops which was specific
+> > to controller version 3.65a, while the .add_bus() method had been added
+> > to ks_pcie_ops which is shared between the controller versions 3.65a and
+> > 4.90a. Neither the older ks_pcie_v3_65_scan_bus() method, nor the newer
+> > ks_pcie_v3_65_add_bus() method is applicable to the controller version
+> > 4.90a which is present in AM654x SoCs.
+> > 
+> > Thus, as a fix, remove "ks_pcie_v3_65_add_bus()" and move its contents
+> > to the .msi_init callback "ks_pcie_msi_host_init()" which is specific to
+> > the 3.65a controller.
+> > 
+> > Fixes: 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus")
+> > Suggested-by: Serge Semin <fancer.lancer@gmail.com>
+> > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
+> > Suggested-by: Niklas Cassel <cassel@kernel.org>
+> > Reviewed-by: Niklas Cassel <cassel@kernel.org>
+> > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> 
+> Thanks for splitting this into two patches.  Krzysztof has applied
+> both to pci/controller/keystone and we hope to merge them for v6.10.
+> 
+> I *would* like the commit log to be at a little higher level if
+> possible.  Right now it's a detailed description at the level of the
+> code edits, but it doesn't say *why* we want this change.
+> 
+> I think the first cut at this was
+> https://lore.kernel.org/linux-pci/20231011123451.34827-1-s-vadapalli@ti.com/t/#u,
+> which mentioned Completion Timeouts during MSI-X configuration and 45
+> second delays during boot.
+> 
+> IIUC, prior to 6ab15b5e7057, ks_pcie_v3_65_scan_bus() initialized BAR
+> 0 and was only used for v3.65a devices.  6ab15b5e7057 renamed it to
+> ks_pcie_v3_65_add_bus() and called it for both v3.65a and v4.90a.
+> 
+> I think the problem is that in the current code, the
+> ks_pcie_ops.add_bus() method (ks_pcie_v3_65_add_bus()) is used for all
+> devices (both v3.65a and v4.90a).  So I guess doing the BAR 0 setup on
+> v4.90a broke something there?
 
-Problem
-=========
-After commit 67f695134703 ("ipv6: Move setting default metric for routes"),
-we noticed that the logic of assigning the default value of fc_metirc
-changed in the ioctl process. That is, when users use ioctl(fd, SIOCADDRT,
-rt) with a non-zero metric to add a route,  then they may fail to delete a
-route with passing in a metric value of 0 to the kernel by ioctl(fd,
-SIOCDELRT, rt). But iproute can succeed in deleting it.
+BAR0 was set to a different value on AM654x SoC which has the v4.90a
+controller, which is identical to what is set even for the v3.65a
+controller. The difference is that BAR0 is programmed to a different
+value for enabling inbound MSI writes on top of the common configuration
+performed for BAR0.
 
-As a reference, when using iproute tools by netlink to delete routes with
-a metric parameter equals 0, like the command as follows:
+Common configuration for BAR0:
+ks_pcie_probe
+  dw_pcie_host_init
+    dw_pcie_setup_rc
+    ...
+     /* Setup RC BARs */
+     dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
+     dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
+     ...
+     dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
+    ...
 
-	ip -6 route del fe80::/64 via fe81::5054:ff:fe11:3451 dev eth0 metric 0
+MSI specific configuration of BAR0 performed after the common
+configuration via the ks_pcie_v3_65_scan_bus() callback:
+	/* Configure and set up BAR0 */
+	ks_pcie_set_dbi_mode(ks_pcie);
 
-the user can still succeed in deleting the route entry with the smallest
-metric.
+	/* Enable BAR0 */
+	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 1);
+	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, SZ_4K - 1);
 
-Root Reason
-===========
-After commit 67f695134703 ("ipv6: Move setting default metric for routes"),
-When ioctl() pass in SIOCDELRT with a zero metric, rtmsg_to_fib6_config()
-will set a defalut value (1024) to cfg->fc_metric in kernel, and in
-ip6_route_del() and the line 4074 at net/ipv3/route.c, it will check by
+	ks_pcie_clear_dbi_mode(ks_pcie);
 
-	if (cfg->fc_metric && cfg->fc_metric != rt->fib6_metric)
-		continue;
+	 /*
+	  * For BAR0, just setting bus address for inbound writes (MSI) should
+	  * be sufficient.  Use physical address to avoid any conflicts.
+	  */
+	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, ks_pcie->app.start);
 
-and the condition is true and skip the later procedure (deleting route)
-because cfg->fc_metric != rt->fib6_metric. But before that commit,
-cfg->fc_metric is still zero there, so the condition is false and it
-will do the following procedure (deleting).
+The above configuration of BAR0 shouldn't be performed for AM654x SoC.
+While I am not certain, the timeouts are probably a result of the BAR
+being programmed to a wrong value which results in a "no match" outcome.
 
-Solution
-========
-In order to keep a consistent behaviour across netlink() and ioctl(), we
-should allow to delete a route with a metric value of 0. So we only do
-the default setting of fc_metric in route adding.
+> 
+> I'm not quite clear on the mechanism, but it would be helpful to at
+> least know what's wrong and on what platform.  E.g., currently v4.90
+> suffers Completion Timeouts and 45 second boot delays?  And this patch
+> fixes that?
 
-CC: stable@vger.kernel.org # 5.4+
-Fixes: 67f695134703 ("ipv6: Move setting default metric for routes")
-Co-developed-by: Fan Yu <fan.yu9@zte.com.cn>
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
- net/ipv6/route.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Yes, the Completion Timeouts cause the 45 second boot delays and this
+patch fixes that.
 
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index c43b0616742e..bbc2a0dd9314 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -4445,7 +4445,7 @@ static void rtmsg_to_fib6_config(struct net *net,
- 		.fc_table = l3mdev_fib_table_by_index(net, rtmsg->rtmsg_ifindex) ?
- 			 : RT6_TABLE_MAIN,
- 		.fc_ifindex = rtmsg->rtmsg_ifindex,
--		.fc_metric = rtmsg->rtmsg_metric ? : IP6_RT_PRIO_USER,
-+		.fc_metric = rtmsg->rtmsg_metric,
- 		.fc_expires = rtmsg->rtmsg_info,
- 		.fc_dst_len = rtmsg->rtmsg_dst_len,
- 		.fc_src_len = rtmsg->rtmsg_src_len,
-@@ -4475,6 +4475,9 @@ int ipv6_route_ioctl(struct net *net, unsigned int cmd, struct in6_rtmsg *rtmsg)
- 	rtnl_lock();
- 	switch (cmd) {
- 	case SIOCADDRT:
-+		/* Only do the default setting of fc_metric in route adding */
-+		if (cfg.fc_metric == 0)
-+			cfg.fc_metric = IP6_RT_PRIO_USER;
- 		err = ip6_route_add(&cfg, GFP_KERNEL, NULL);
- 		break;
- 	case SIOCDELRT:
--- 
-2.15.2
+Regards,
+Siddharth.
 
