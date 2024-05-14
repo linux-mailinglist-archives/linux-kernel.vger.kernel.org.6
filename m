@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-178470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409DE8C4E29
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CC78C4E2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:53:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC1601F214F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58291F210FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9625E2C69A;
-	Tue, 14 May 2024 08:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DB53219F;
+	Tue, 14 May 2024 08:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5GvxS3j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aRROseLO"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D6E2C182;
-	Tue, 14 May 2024 08:51:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4455120DC8
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715676679; cv=none; b=SNYiugb1NYBMrzcWb8+eDtsZASi0yRH1knTm1kTrHX0xQmRDwcKLRcW6R0IBJqcYqCaFh5WJAWt/Yk3delDwahfg5MgY7x5pQjGs3QAWIeNy+4vcGmAvyZmNI2ZUlba4WHfN6o14whw0ymtiJqWtv+7UsCRD/wlVaZDjyJmr6vA=
+	t=1715676691; cv=none; b=XdMvUgxNQWc4m3VBOLtVgFYXVDep6u+jf0Fs7N0aJ/r5xq5Vk7fmBeAz/Km1pCILdcv9Zc96qAHBw+fUwaFcdNgbuzIX6wb4U4WTTb7VLN/SeIfXEYmrSckynnxe3dv0u2gknlfu4Yjg2GlTM341R0BiuF0GCHrz/zAWwTBC7q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715676679; c=relaxed/simple;
-	bh=dl9xK7NMauuyzjNTNgcvu+mipCW/bKmup0pxO3DFFko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bVpVEGezdCqfcb9SWSlZ/q7agZ2U0DM+hfryIK0jRmM7bIi6sV4IvDP3c4yGlfglSyS4hI1Y92M7PIPE2sV6nsCLcADe38sQcXxFLcjOMgn9OFXWvg42eHOO81YXPx8k5xbzteTuZWRAO2QWh5Z6mrmSApzpQZ42reUcsQhUF6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5GvxS3j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404FDC4DE12;
-	Tue, 14 May 2024 08:51:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715676679;
-	bh=dl9xK7NMauuyzjNTNgcvu+mipCW/bKmup0pxO3DFFko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W5GvxS3jvoInC+tPo/qJ0nW9Vfq+0oFTT9NxWgMVjQe7Eg7l7j7LhFr/hZoaTzRkb
-	 btxK7WRl+TeQ/wXm4no7rFxrNOZUvcB9xjsxbspOar/rmGFNVdxIGt9BSuNOvOdqUv
-	 BTrrDdIF+5tzbB7hZ4hiDj4G0abLOyaa4hycmSWCblITved3A0NU6bwl94YL41izYP
-	 biDE0e8kAzLsT+Pco/2Ehkf+AV2NtFKpiE+bY/ulT3xBXKQ5UE4ZmZIIZ7XpY+hx6l
-	 77a0v/YTVuEgKPOkr2bN9OY0Gtsp0Ao9SeItld0fCG6kC7Usb59mFyzrZD1rLfECOB
-	 Zr1B5vboceM4g==
-Date: Tue, 14 May 2024 09:51:14 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ben Wolsieffer <ben.wolsieffer@hefring.com>
-Cc: Leonard =?iso-8859-1?Q?G=F6hrs?= <l.goehrs@pengutronix.de>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com, linux-spi@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alain Volmat <alain.volmat@foss.st.com>
-Subject: Re: [PATCH v2] spi: stm32: enable controller before asserting CS
-Message-ID: <32d2be34-07e5-4f99-bd31-12aeb9bdce09@sirena.org.uk>
-References: <20240424135237.1329001-2-ben.wolsieffer@hefring.com>
- <39033ed7-3e57-4339-80b4-fc8919e26aa7@pengutronix.de>
- <ZkJBqSbJakye6BBc@dell-precision-5540>
+	s=arc-20240116; t=1715676691; c=relaxed/simple;
+	bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=si36xau98UVNIN+k8tYEh86xQqcT7TTlwt1ymOm1kUZo0NSKttrXiiydTSbqwDYu2VUxNqWS3iOIi630DdwYrroDIbxfuF6dzhO4TjSzju5Dl6UKCV+heZTzBsvMPGFPYG7EoEezE3LgBww6inkv3xG9LNXaT/wgeglVkolhvvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aRROseLO; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-61be4b986aaso60028697b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 01:51:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715676689; x=1716281489; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
+        b=aRROseLOaMavXA0W5FbArPt54GVcGw2KyvkFMM3HFHdY6mACaXTJhq8t8zbq+vn6w2
+         BfpffEqbZPfUrVabsn+zmw8bM+6BlU0E1V2z5ecE0yA8wsk9m/9w/dUVz548CwFaQ6rd
+         k4lgsEV8Wu3VpoWWCvfKfRsDHiB5gfIbRNulki3sFNRHLnZB4fFt7AG9v7QbJhA5Rbr6
+         A9Jz50a0f244tlx/aMQx9q/M9QfYQGvMRITJ2syn1mDd/IdftNvx3wipW1adTdUfzAPe
+         v757RLhfmoY1/rybimu+7VmI7AAuGosrBymG/oroajTu4Ty3iZJ0jIISwkdlr9RD6q3y
+         YNGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715676689; x=1716281489;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
+        b=eK2KArTMfrUJpXKc29kqGPQr7s1LGhMLZ873K09V+FVsLWIr5SfFHrD6qDyujdbPDv
+         ktI9x1S0pkqUF7c9fHQ4C7l811M5Pd7fp9ul/qE3jGBOWf6dJZ0PPJ7jzHiEtImTqXW5
+         +VMIEBNMJGCqZAg9m2sr54NAGVRooKDwNaFoyQS7WrS7mErLMs75swBYu6bawP6DfrBC
+         xA6iT5tMfNjkIQ27xlNS/Unna8UgMX1e7zfUwfPuSV9/fTeFutpvzMwbruJFJj2joA4s
+         AWPyVmQERjmQh/GYZb6q6gx7+B9JkOfKLhJFiaLuKVkmeM3RDzMmqbsBRIyT786tAw3o
+         5uSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ5dxUlhbJBOiYAdFtMRy3q8j82bRnWA7Y9FjVxWN1j3QtL034Ta6ovH9X9GHXN1Mh6dQKt9QumF/c+6kngxIUJT+bAMF35yM+raxQ
+X-Gm-Message-State: AOJu0Yya1D2YKzukEDq07Yj3U5TEdtIBupKsa0MlXqGXFsm05VEvy/4V
+	WElHAaIpqBO5+RElmUluUIQWJwnQsefTlyKAMHNmmAja4JBy10Z9dVt0wuIpMdf1CFPsu1mxEq1
+	ijxREK912X0qAjG4eOhn+AXDS/LdGbekrsUyW3A==
+X-Google-Smtp-Source: AGHT+IEEXncSLeYlRp50wZguJ1swNJ7Rn/eiIzeOU7YbZYMQO/MhNJglXYcod5TE7cTXRGpqohgHa7iMGT7HvYhCpa4=
+X-Received: by 2002:a81:7255:0:b0:61b:748:55a1 with SMTP id
+ 00721157ae682-622b7fc3cc6mr111470377b3.13.1715676689254; Tue, 14 May 2024
+ 01:51:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Qd3XkgjD6LiVNaV5"
-Content-Disposition: inline
-In-Reply-To: <ZkJBqSbJakye6BBc@dell-precision-5540>
-X-Cookie: In the war of wits, he's unarmed.
-
-
---Qd3XkgjD6LiVNaV5
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
+ <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain> <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
+ <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
+In-Reply-To: <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 14 May 2024 10:51:17 +0200
+Message-ID: <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
+To: Patrick Rudolph <patrick.rudolph@9elements.com>, Mark Brown <broonie@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, naresh.solanki@9elements.com, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 13, 2024 at 12:36:57PM -0400, Ben Wolsieffer wrote:
-> On Mon, May 13, 2024 at 10:29:49AM +0200, Leonard G=F6hrs wrote:
+On Tue, May 14, 2024 at 10:39=E2=80=AFAM Patrick Rudolph
+<patrick.rudolph@9elements.com> wrote:
 
-> > Reverting this commit fixes the issue for me. It may be some time before
-> > I get around to investigating the issue in detail, so I thought I should
-> > ask if anyone else has already noticed this as well.
+> Do you have an example where muxed registers are used in a regmap?
+> Is there some documentation available explaining the existing
+> mechanism? I'm not aware of anything.
 
-> Sorry about that; it looks like the STM32H7/MP platforms require the
-> controller to be enabled later. I agree that it should be reverted and
-> I'll try to think of another approach.
+The regmap is sadly undocumented I have had it on my list for a long
+time to document this gem, but I never find the time.
 
-Can one of you please send a patch with the revert and a changelog
-explaining the issue?
+You have to mark registers that cannot be cached as volatile, then
+enable caching in the regmap with e.g. .cache_type =3D REGCACHE_FLAT
+in the regmap config, then it pretty much caches itself.
+<linux/regmap.h> has some cache maintenance functions if you
+run into corner cases.
 
-> The STM32H7/MP devices are significantly different from the F4/7
-> devices, which makes it difficult to change shared code without causing
-> problems like this. I wonder if it might be better to split the F4/7
-> support into a separate driver. This would duplicate a bit of code,
-> namely the initialization in probe, the baud rate divider calculation
-> and the SPI mode config, but would make testing easier and get rid of
-> the indirection that handles the different register offsets and field
-> masks on each platform. The code for actually transcieving data and
-> handling IRQs is already platform specific.
+(Mark will correct me if I say something wrong...)
 
-That might make sense.
-
---Qd3XkgjD6LiVNaV5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZDJgEACgkQJNaLcl1U
-h9AzgwgAgs2oYQ4OnaMxz5ePCOZWtN8efc/rTzOMHKcGBE5yg1KaEr5ZsAB+m+nm
-uE6aHtctR6iZkebjfWUjAPCTCIxSBMOqZZcDvJpAz6Vyg4knJCWuwd9ZJNW+/7xr
-CeDdED9zn9UC92dYCaP0f6v9P4O/DPsoKf/A4OnhH/4AF+umWPAdRi06BQThEhDM
-yljfm3v4Odbuf1YadUqsNgb9Kd5iHwL9lhjTWImT+KjNhT4h7xKX9K33c1STBy9F
-mKgOkzHnTJt+f7whV+hSQkP549BZxql15/PXADZOytyC+D/n66YXx2WZKcWITA/E
-61OwRBpdr3KpqxnnzwnzB5LLeCnRQQ==
-=wxj6
------END PGP SIGNATURE-----
-
---Qd3XkgjD6LiVNaV5--
+Yours,
+Linus Walleij
 
