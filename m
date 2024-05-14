@@ -1,105 +1,162 @@
-Return-Path: <linux-kernel+bounces-178350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B778C4C69
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:41:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C81A8C4C6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E611C20B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:41:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB07FB20F17
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4FBE541;
-	Tue, 14 May 2024 06:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A8AF9CC;
+	Tue, 14 May 2024 06:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="JRvbgVHn"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Hon4hOu/"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01olkn2061.outbound.protection.outlook.com [40.92.52.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C2A9386
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715668902; cv=none; b=jgFKbXePa3y25NKlIzngJK3dnUVwPoSwOh0pqavmlkCVrhHnonA0v9FDYtFdz/vnRd3ILWM7jN0RtnqR985AqQJGhiECcfJCNwCrpmsnSwhRqWfAVhZFC869+jN5XffacZryH10wZvNrQPQnmx6Ldb/y3rkXwsq5bZrxtjSfJzw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715668902; c=relaxed/simple;
-	bh=lnFsYaVZ9mk+akNFRVvwXwFr24R9BjCu6nIkuWkhF6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hFPazaMMDerrXDN0fMrRwErrAKGXA2ECNFmIBSGvmK4jKwUZQIIDXfpLWLjAPX1TC8DOvZ8YzQNip4aRMIKQiI5EXD/JKnlNgIC6ypl7Pf/4Rk00TMig24sywc5C9gipIy8ahoW1E6E6JauYFDEIHoH5s2T7VKmKwB575qpCoQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=JRvbgVHn; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715668890; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qq9BIghgoJ+LZ1XpMSxI2larmjAnvQoJQ/47VqjuHhc=;
-	b=JRvbgVHnVOCOxk+LgcNUGZjP8LE9HWYrqeeUvbc63kjUEKPW05as9t+dUypSHwCq1+Si61jgtotiPYW26ESh6dg1yT+CmANLGRXnVMXPIGJk477hEVzplODvGVI1QTexoLjWtk3sTPBCc/19bLMG4PJYmvL6kXZOePvK3X8Yu0E=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0W6TyffK_1715668887;
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W6TyffK_1715668887)
-          by smtp.aliyun-inc.com;
-          Tue, 14 May 2024 14:41:28 +0800
-Message-ID: <f22c9fc8-2356-46c6-ac8e-dc97328d7fcc@linux.alibaba.com>
-Date: Tue, 14 May 2024 14:41:27 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29C1386;
+	Tue, 14 May 2024 06:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.52.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715669050; cv=fail; b=as2GosRYXnxU/CEHw/g9TPT2j9AwTZJmN1m6hDx9Z/BavrqpC+ELFHUjRdchfecyqEOBB4XnWZ5u9Nvcwpt+0NjkhUYY5Q6RChmu8lLju8Im+x/n2L6mvOVRRRj/rePomc+BM2kDFIGcPBgGHRjnj6PyWmZv0DtCgbYmwJ5weKY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715669050; c=relaxed/simple;
+	bh=AA6xVIjeoFuG2Z4CnzdPtgqDguqJkdlXakW3sceZEUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XvyxSfBGIG3yC3wB2NMd007uVRvr8rBGn4fDhq/Z0XGnye5wrG/7JVFi6KI4OrSxDtroZHtk72v8dDfLIW4cgsx0zpiVg5IN8gR/xuHyYq6hIJap1Ft9zpkBUcUi7L1SzV03D6TuxyJNX+9ILPXBUPuRlh+dLFi4sztwIBW4xDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Hon4hOu/; arc=fail smtp.client-ip=40.92.52.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xy5SjC0zsh0dqekcwpgp1WQmsuPiyuOzXGNRSht0Ja+++oxRwj+tg5jWe7Tk8qFy45OKOcxBcHqQxzyBS9VuyTXyjJPiAqr7biHULIVjeX93ptRu4XgAezWWh2OUkeor33hdEh4CwH0/G+OP7VBHIBUjfinVdA05XwTeRt6/F2zRoDNsPGFye3yRVpDNA5u5HoV4JyV6Blemrc5wFtof0XfoHgAy96o9t3gcQ6GCkDu6xvPBfPSt9i1Grq5PU1nStEAk79MasxJrOS0xN4W5iLI6OxhRIhYRVTIWNfvbh3jNrfU+Q7oSM0r/2NBRlQX06AW+xZwJ0R6Vwq/j+SGlLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vw+kMVPBU5qw+FtPWzKyveXpNVmR04EyH7e4nYIG8mk=;
+ b=cUH9NUQVuwjgMp9Bi9CsKZ1XM3gd0tWX9u0CjbPuKzJ64T8wJ03V49KzHxmrNgFT0RtNwGkCEp5ms0pSQLWQbRYJiqvk7XvT9LZ/Gpb1JqHQbK8T3wzY474OeaTM2Af8cDjWnql05WmZda4z2+64EHPnWWXRQx6sosFyyNnTIe2LUy5uY2/TZ0flrDlI4Jwe71GdJv+1wlikGWCP2o2d2ogo/9yNjIo8gk7PYkEVEypO3++3tpuO90UIZieQSQxOFNAkzkYZJAbOVOy4uRAsbnpjlVzygkuXkXEYkUcPJhAXNdNUxIFridy9PvTAf0D2VsHYNcwLxlFWYBO/RB128w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vw+kMVPBU5qw+FtPWzKyveXpNVmR04EyH7e4nYIG8mk=;
+ b=Hon4hOu/o9XG6PUYTJSqgVBfuEU/up3/XaUw/yJq6ZrTcsLAJuXhQumgSW336M/6njxBj4BjXNY8/utBgTRM2DkoXFpz4Ls/k1PE8qcxhvDQuZBHRFMuGQ+flXHP04o52tDq3LslPKDPF+UTXcnjD2xZp/biP6QL9Ossdi9TKKB8EF1TCNYUcBOi4ft2utPQGXjcChIuUN3PzxBzjGEwAMK4yFE6LdAFo68yH5tWLtSZLamfbISPN3Pmt6CIfMRegZrhNOPUmuyFlt5DQ+nnElcuLyp2v8UZmgC6Dygu1hDaDWnBPR2sebbikca9RsBWhSVyXRx3ZNqx6ihnJ67CTQ==
+Received: from PUZPR01MB5120.apcprd01.prod.exchangelabs.com
+ (2603:1096:301:110::8) by SEZPR01MB4453.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:71::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
+ 2024 06:44:05 +0000
+Received: from PUZPR01MB5120.apcprd01.prod.exchangelabs.com
+ ([fe80::c050:3818:262f:8ddd]) by PUZPR01MB5120.apcprd01.prod.exchangelabs.com
+ ([fe80::c050:3818:262f:8ddd%7]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 06:44:05 +0000
+From: zhida312@outlook.com
+To: rafael@kernel.org,
+	viresh.kumar@linaro.org
+Cc: andypma <andypma@tencent.com>,
+	Huang Rui <ray.huang@amd.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [v2] cpufreq: amd-pstate: fix the memory to free after epp exist
+Date: Tue, 14 May 2024 14:43:27 +0800
+Message-ID:
+ <PUZPR01MB51206C1D9F3E2005B5BECCBA92E32@PUZPR01MB5120.apcprd01.prod.exchangelabs.com>
+X-Mailer: git-send-email 2.41.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [7cp6/NcEvHTFzuXDbmBavEulT9/Q9ivn]
+X-ClientProxiedBy: BY3PR03CA0009.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::14) To PUZPR01MB5120.apcprd01.prod.exchangelabs.com
+ (2603:1096:301:110::8)
+X-Microsoft-Original-Message-ID: <20240514064351.36746-1-zhida312@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v5 3/4] mm/mlock: check for THP missing the mlock
- in try_to_unmap_one()
-To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, sj@kernel.org, maskray@google.com, ziy@nvidia.com,
- ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, mhocko@suse.com,
- fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
- xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240513074712.7608-1-ioworker0@gmail.com>
- <20240513074712.7608-4-ioworker0@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240513074712.7608-4-ioworker0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR01MB5120:EE_|SEZPR01MB4453:EE_
+X-MS-Office365-Filtering-Correlation-Id: 764f445f-5521-407b-3b36-08dc73e13f49
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199019|440099019|3412199016|3430499023|3420499023;
+X-Microsoft-Antispam-Message-Info:
+	syjQjQ1U8Xn3cbh2X523XKNBZHgzSggUY5brFNRFD4BMa4ypd6Dsu11hOAOmxYg+KwN+6VTgzi84Ppy3nu7VGTBo85ZjMSXLH2JoQbuRIkVGON2zSpyygtB0uzIhPOYV8LT3wmh3bRsQwMe57nGoyVb38/XWP6fYt2b0my5IMM1ef/CKUzARex2BZvNq4rIAoNhpE/27jPNMI7tPXXrOtWMDpwo7I5zWpQJMoW9xhYyEi6L6dROyP6hJWqHtTDzKtFJQEHHqa5q+BPYqap3dg/kVMjvCAYc3egFsXUedJ5FJkcrqiebRm4cujHeIhkEMHma84ztMEuI6xE9jaD1qDsLMTcNmUkWtGjgepGZG+IBkBoMCggQIiKuvfUoRukl3LhozRXYuF6VNFr38DZ++ixpR8Cg5dmeH+V9LrJKWY7/W4zw/th8G0BDKfSypYt/NFnPXEFjci6IVnuvo+g0KSMXfofg6qrgBhwWL64kHw9xLb/Qg8uJaCnHKDG8PjEV0c6whJzr5e9MO1jbFyQDSPaf8q8H41unaCWfC3seFAtSSSL7ZzuGyigHrs86xt7J/
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BcSJ8nO9WCLGGAfNzbYLr9y9eomWx70KrfvFhLflC19a0GyG6UU+FTdGV51l?=
+ =?us-ascii?Q?WZs57ZO8UlOPCq4xIxBtHyZHzfPqZa/wuo9dOBS49ccf157pqtNkMhcszk2x?=
+ =?us-ascii?Q?psDOekSgjvrCzbGcLMtWlCUgfJD4cWJ43gg7v2n5+F2I6Kgv239udSCheQfp?=
+ =?us-ascii?Q?9l8YvDzOU+ytBE36gcTRQVjjd9XbWKi+1sY9wGkVAgNYnEm/EJYerZ4xI8Ha?=
+ =?us-ascii?Q?2CQ4fFYIS53cO6eBi3FOO50cE8p6HQfnYzX6YwoARcBG6xQt81pbz2yPBoK3?=
+ =?us-ascii?Q?A+EFbLK9kPno4pfG0uZyVN/JL9hmjEfQzvNz4utefAZSaFzR0bQQPDDn+zhn?=
+ =?us-ascii?Q?+jZW5FUzWByy7caqd+r/+6nKN+8fRFKjLrOanxbYHJ3U9vzwWJ0wFakYECMy?=
+ =?us-ascii?Q?71kxSvsnwASMLHxJtXhuwKz0hh4g409xmGjiXT0tsGtVB1t+JVK8DsO2mRl9?=
+ =?us-ascii?Q?S0co2NeSzNtL0SjwaQnpxX9b1Ok0JwcQzIs7L7qztea9W/Qlg68Oapve6lfl?=
+ =?us-ascii?Q?Qz2WsZM0nEHTuTtL8V3EMbmEtuX7gdDcU2W/kG4myBiJtQQdfVVkrrATyWUV?=
+ =?us-ascii?Q?8Fb29lc/nRpZPnvSva5vpkUC2h2JnhLlHoYvH/cAPXt64sGFkrw4jl5LdBUp?=
+ =?us-ascii?Q?4I+zfzZ5PNTazuxTJ7Mg8QWGT6MugNBeoCZrhhKUDseK562+XxmIbXZRoeVi?=
+ =?us-ascii?Q?MaHfrKfiRQinhHXAefO0adOdJv2HdB+uFd6j+/LbxBiph+J+xwbU0XJg4b3H?=
+ =?us-ascii?Q?Ns/YMEc6wl5vFketLSilZIQmifbXZOOU4BfiraAaCAlEEm5NVepi/LDBAkul?=
+ =?us-ascii?Q?qJn30JMcKaNWhDlfTAHoAaAq1Z6G5vK+FfjQ05PtYzVRn5hsda63aPvstHCz?=
+ =?us-ascii?Q?UYvCaklKJD+8mJtwq96yWOjkj9svHfwQfZcU6n3Tm1pjr3XSGYFJM8C6z3jB?=
+ =?us-ascii?Q?jSUy0QrX4uHbn5OveKIbL7oHQzJE0xKdWVJg4Qu5IEVzqcUzfJle0WyjjhCC?=
+ =?us-ascii?Q?cr2jdy6QscrhhQfrZS3ZCPIejau5I6WJ+BnHahpG2tXgwWl6HZwkUE6Fse6n?=
+ =?us-ascii?Q?R/z+rXTeQFZ4WqUW0drdE3XvUr1tqZUdFpjq1IjkeWtWckUK97j48pUv/ywd?=
+ =?us-ascii?Q?EGYykIv3MbXdO5sshzGbA4OxsUuk/34bMcHBf6sX9kPNfaC7/v407YJlP/5s?=
+ =?us-ascii?Q?7gqlURu7rpY8ytg71ZT8XpkycvWzOGYMGgkFCfQnXgTiUn5ab+3TUN5Szhw?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 764f445f-5521-407b-3b36-08dc73e13f49
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR01MB5120.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 06:44:04.9743
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB4453
 
+From: andypma <andypma.tencent.com>
 
+the cpudata memory from kzmalloc in epp init function is
+not free after epp exist, so we should free it.
 
-On 2024/5/13 15:47, Lance Yang wrote:
-> The TTU_SPLIT_HUGE_PMD will no longer perform immediately, so we might
-> encounter a PMD-mapped THP missing the mlock in the VM_LOCKED range
-> during the pagewalk. It's likely necessary to mlock this THP to prevent
-> it from being picked up during page reclaim.
-> 
-> Suggested-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
+Signed-off-by: andypma <andypma@tencent.com>
 
-IMO, this patch should be merged into patch 2, otherwise patch 2 is 
-buggy. Quote the description in the 'submission patches.rst' document:
+Changes since v1:
+	check whether it is empty before releasing.
+	set driver_data is NULL after free.
+---
+ drivers/cpufreq/amd-pstate.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-"When dividing your change into a series of patches, take special care 
-to ensure that the kernel builds and runs properly after each patch in 
-the series.  Developers using ``git bisect`` to track down a problem can 
-end up splitting your patch series at any point; they will not thank you 
-if you introduce bugs in the middle."
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 6a342b0c0140..e100c5b6c9b2 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -1441,6 +1441,13 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
+ 
+ static int amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
+ {
++	struct amd_cpudata *cpudata = policy->driver_data;
++
++	if(cpudata) {
++		kfree(cpudata);
++		policy->driver_data = NULL;
++	}
++
+ 	pr_debug("CPU %d exiting\n", policy->cpu);
+ 	return 0;
+ }
+-- 
+2.33.0
 
-> ---
->   mm/rmap.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 4c4d14325f2e..08a93347f283 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1671,7 +1671,8 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->   		if (!(flags & TTU_IGNORE_MLOCK) &&
->   		    (vma->vm_flags & VM_LOCKED)) {
->   			/* Restore the mlock which got missed */
-> -			if (!folio_test_large(folio))
-> +			if (!folio_test_large(folio) ||
-> +			    (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)))
->   				mlock_vma_folio(folio, vma);
->   			goto walk_done_err;
->   		}
 
