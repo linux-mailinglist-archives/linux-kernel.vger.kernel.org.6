@@ -1,253 +1,134 @@
-Return-Path: <linux-kernel+bounces-178806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5644B8C57E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:26:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80FB8C57EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99853B21EE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:26:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6448C281EDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01007144D0D;
-	Tue, 14 May 2024 14:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBCE145326;
+	Tue, 14 May 2024 14:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ao/PUCT5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N2P4OVPF"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591BE144D0B;
-	Tue, 14 May 2024 14:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715696767; cv=fail; b=ogfFLo81EkOjCjyPcyNoiKcBhpdXk3FBtOgz4rkshM0EZb5GRtNcamZaYwFuz2aBOJ80Lkf/4Suyi0Rcz6BRjePITNENRYoKNjVxbR0jGfGdsAF1zuChFZKBV95jfYenVZmUzJNK/M1TJ9PFyZjHO7S7shwV8YXfAc0Xq65/QMc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715696767; c=relaxed/simple;
-	bh=yCbJMG+rItny0+1Qogp67PlK+RRDihhhYT35+oDoHwM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CD5wxQQMCafIBvXr2qAhJODLFWweieliSJNQvO00OEn6PAWgmL80OFhtvHSEePSFqN2riMPXi4PypDBtU9KgKFeSE8BsBQvelhtYp64vyDddjExgSUziOf5cjcN3fvwBtdXrc4SfKfs8CzS4/4PL8t6NhyDO7leiLFhvoCIFWL4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ao/PUCT5; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715696766; x=1747232766;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=yCbJMG+rItny0+1Qogp67PlK+RRDihhhYT35+oDoHwM=;
-  b=Ao/PUCT5f0g2O9Kwxb5DmsQdXU35YdDFi3iO+WA3GWoeUbrZmt4419+n
-   hVT87sUca086SgfS5RW6W4v24vTEErEX9hhHQcuSTuFx3Jzu78rpwT6yy
-   ReNzqEIwgRVmQ8X9DQEbOe/EdxTytYAdtcq76vlH+4eyyr9u70RBDgFQF
-   MzhZ/AhgI2RQJ0uSJDypBh0oPsnKOYZ6aYJ/YD7LpVeVX0uWAwjMXJ6YZ
-   T6YnuDjbVr7tPOcWDFYYeimcFJuT7WVsRV9guFvaizy9TcOZKA4KiKykm
-   sY5J+jcQLhDS9siY/KHrQv+mNgV3BmQxesM6p5ciuHYuBATGP7aRlOodq
-   A==;
-X-CSE-ConnectionGUID: MvYOqhqnSSqgGA/Md03JcA==
-X-CSE-MsgGUID: kg7tEg+tQNiHgdgMr16qSQ==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11539138"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11539138"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 07:26:05 -0700
-X-CSE-ConnectionGUID: ZJWhVpwmR4ic4cUzAqb9TQ==
-X-CSE-MsgGUID: vxBNhJtkQP2IgWamGbd+BA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="35224588"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 14 May 2024 07:26:06 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 14 May 2024 07:26:05 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 14 May 2024 07:26:05 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 14 May 2024 07:26:04 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mjEWPOkgFO4WU7gOp+ISj+kIKQN3vbbnt5rbyrZCFjgMwcE4AHahI/zn0nksU0rlyba54L3vyk6vixcPaDx+wIYUF1sqA1KW4Jr3/90sUKEig829lX3rGYnRf9N5vk4x069f6RifGbAW2QkaaE+5pyAUwAKwPLM/U4j/OhoVk4c4CBKbQ53zYPPxP/tbPClWk4xlR1XtCN2LiVgqPVpJ/qRfzE++goAyRgv4G8PmoKvT9BRZxRDVyAZEx6bH9eJgfVXGQfhyfw4Rzme89amLnkO+bNmxW0fVPaFLcL/37YGBvsSVm6zJqP4aCR8djhlmc21EMQvNR1h9FlWOtF9jig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yXqxWHg14qV01kdPq5ssI7W2ZoM/uS3P8yeLQs/B3X0=;
- b=kZhytQB0FkFO2621WTMCAE5hvWc3XJyJTA9Jb2xLzDLd556VL4doKjIHpRoGcKf1VdiovdOp42oIVK+l3fwTclbJj4K2feZgLLXJgiycEaREcHgkNEe70kBVjU2f9eE/ZeUmajhRsXGlWEBULcjLzWpL1v8O09q+O7TllRrWAkLLOrEWddF5AvZjHHUiXYzHPUWhNc+T+V4o6b9b717v11+5g/+OdlK9wXP/ym5G4DrEFAOizB3XA188ugUcDTGRvjpYYwcyWXYgS1kKinly2qrlfqpA3oRMWENx0vnPUTLNeFuz9Gg2hS09IZhrtpJzgvYsvIMPQ6RbGZ0m8dosZg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by CH3PR11MB8442.namprd11.prod.outlook.com (2603:10b6:610:1ae::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 14:26:00 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%5]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 14:26:00 +0000
-Date: Tue, 14 May 2024 09:25:55 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-CC: <mcgrof@kernel.org>, <linux-modules@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] module: create weak dependecies
-Message-ID: <4rfixlve7indkkudtsgyl7bfp5xykzlh3sf2xzlesjbo7xrh44@b4tdzwxxribv>
-References: <20240510085726.327831-1-jtornosm@redhat.com>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240510085726.327831-1-jtornosm@redhat.com>
-X-ClientProxiedBy: MW4PR03CA0211.namprd03.prod.outlook.com
- (2603:10b6:303:b9::6) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA1144D1C;
+	Tue, 14 May 2024 14:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715696985; cv=none; b=aW4V5lGcqmH+RZJC7cPnkdvBaIrPnwsl3AEZc+HFZGHL9Qe1lZlOxPmN7CqvrhDcpTYU5atdlF+LHtWh8cA/R+0OhbTMHP68D0YI89+pCyJnGlv+4FWRfLKkzhaUYh6ZzUoU1RSresjFaSDvlPuZWIu/EpOXkpAVjWGkI1eINbo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715696985; c=relaxed/simple;
+	bh=dwNVR7ca4QlNEsSuPL8Sp2uaU6DNnzNYe3WImPBpFsA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=YDMG6FkD0viNvVPNR9E4a9+WKq2cae1F4CexmxWqVNbKlzJGvpPaF6+1Ij/nrDVAKSLOZjaxJruxPns7kM+0rBjsRm9+15bTbOs0tDh+C34RfskMv4SlL3xQ7yAKRVpKoflnSShcjhmGmVFh/EfPz9VOBN+TY4YdgltuS8qkw20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N2P4OVPF; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44EETT5C017469;
+	Tue, 14 May 2024 09:29:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715696969;
+	bh=J+2Dx63m3rl/avn6WlrRF0ewymLz6wPP3CDkECjxYqo=;
+	h=Date:Subject:From:To:CC:References:In-Reply-To;
+	b=N2P4OVPFpRWLPxmxd6L2IzL3sr2/+S0SoG5DtOlW+KgBhsj2z7rVmvjHp+9lRF01u
+	 sPe+mymPxjfx9o1qz9bOSCG0kK5ku+EQvqEklnguu2z1yUqBwajSa+aqsUCKBAjxb3
+	 cU2Wu/AhVPVlofozCvNXwiJA0rztOCryB/goprHE=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44EETT57061774
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 May 2024 09:29:29 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
+ May 2024 09:29:29 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 14 May 2024 09:29:29 -0500
+Received: from [172.24.227.193] (devarsht.dhcp.ti.com [172.24.227.193] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44EETNm1001116;
+	Tue, 14 May 2024 09:29:24 -0500
+Message-ID: <0eee0424-f177-808f-3a86-499443155ddb@ti.com>
+Date: Tue, 14 May 2024 19:59:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|CH3PR11MB8442:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0173bced-e1f4-4b3c-8073-08dc7421c748
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?UTIocNZp3odTARaOJC+f3Wy/YdJcFWANKv/qoMl+Z2k23rS5Ww9YuXAX0JVz?=
- =?us-ascii?Q?SZUbbsmsnMLC9K3zvpqpGNzV40pPSxA0XjxQ+BmNvXc0u3ZDEy1BnJBaknss?=
- =?us-ascii?Q?m9V4TWoAS7Qiu4U+KOzlBtbUrbnVFeGgaEDrw+C761hZHrl4VvhSS+lwsQbC?=
- =?us-ascii?Q?baEoQEPy6Ez7i6oa/zopEuD7A4gwALrj6r/FzWUcpC/GsQq7jbuIMM3Tq/fN?=
- =?us-ascii?Q?xnmsd6xKOiDTLMY1vsaKfVWhQO0iloZh4FE9wwKYGv622IZJGQL2WNCEmMMu?=
- =?us-ascii?Q?Hl3Fqn/jcCIcaXMORigjpQTa8D+dxGj3xTzOiuMJAcpWPrqGBQdV4/6bR1KV?=
- =?us-ascii?Q?33epp412NYXXDEabI7PFyuOZ6yiSZc6LyHRoIx396yzL9/WBlOPdMUmkwkPH?=
- =?us-ascii?Q?EugcZJNc4lRFYUKAQE63vbkx0kE6KjOme+zfCA9/hPPdUMyimFUEErZeuYq5?=
- =?us-ascii?Q?jOU126JSLzHqN5L+zu0Wd+4q5Lp7zXVzrTShywTc/4jrYn77sTIP0uVCmxTs?=
- =?us-ascii?Q?EoBbsTqkbWDUH7FeP6RKGkVQ8jmTAHReaAcmsoZmB1M8GfMg4EAXpiBz5cKG?=
- =?us-ascii?Q?uSq6ogWjHZb4EpnXxgM/hTiULYEQdM6oKkj8PQu5fsiL3NzGzItfALUJ9ESB?=
- =?us-ascii?Q?EAxwmgI8RTVEJ9dOi1N2GUop7d8e8CKMi72HXJ0Wz7N8rIdAGIUvhnfpOr/4?=
- =?us-ascii?Q?qqr/GOfZCorU95kSzDgTA5n9c6incOWdkprofC8RX+BhmdTA5LSXPQeMJl25?=
- =?us-ascii?Q?u1KmX2Ic0yJvokzZ+x/4coOZNVMIWHJyYR4YfTYjw5lDkhxPFZCJIO05xHcS?=
- =?us-ascii?Q?HD4k4J2yk/kwML4o/V0+QsFqyLLq3oDp3FcwuEO9pwMPrJPMPzFPMS31dof0?=
- =?us-ascii?Q?3kadY5ocFuj7f4DOJ95/PmpNF7nslwpDi69JsuT4ZWgQi6Z/DBdmxK6rSY8v?=
- =?us-ascii?Q?lrgvgSyLBR+uUQr2hQSPFB6ALEE/6ZWYG8SK8KYK8hRL+KnYW+f+2s33an17?=
- =?us-ascii?Q?hnzXMDWcPyAVzalwyReHtRc948B197bNXk2Spz1XbUSSYPernpFFsJYJF9/6?=
- =?us-ascii?Q?6+H4rqrXNRmgpog5lBPHp+w3SfOtJiWvU+Dcg6CXVXKak+gZ/0ryiKW9YZes?=
- =?us-ascii?Q?lbNbQdfcqitIwmUzxy8luJP4sj9iUUuRzMed7hH7JCtv8hxI03Qg4x5cMI+y?=
- =?us-ascii?Q?qv8c0IYnJObWCTklOfWVvVKSO1C6kbDMuRMWV68FOxKbpDlBMdDd9PGv/Rk?=
- =?us-ascii?Q?=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?SIuXqjebDS2O7HeDwRlVE3CWkJC6ccd/s2ziTslZMFmjGyy+B+zOgA/X+hCJ?=
- =?us-ascii?Q?iwFhsrURjsYO8qFfQzt3A1K3CC3tDlPu87I+8ZlsR5jEKzJAwmwL/wLayq7X?=
- =?us-ascii?Q?XdL8DdSbJcLZ0qwCntA6r477wJ6WFK7YJ5ZulJJNX+CKXkT78Y7U+G+ecxBv?=
- =?us-ascii?Q?YrchQPdrQigoxLkrgE4jmKQkZst3NRTOiwf5z7SW4Uh9Fa3Od2QAaae7qEsN?=
- =?us-ascii?Q?fLxmgSIYXqWW5sJuKynNQL9v8E16pN90WXHeLhjsgo/KNFJOLp/FyVE50vVh?=
- =?us-ascii?Q?1i1GzG491pI9nm+K6lgGgJADVT3yybaz/7fE1uqJCDDFFra388SENHIa08hy?=
- =?us-ascii?Q?ktyWZW+wku7UJxHJM0QCKEDJbj8heQU137zDBQWP8Tbk3dCDNdQMIt9Jaj1U?=
- =?us-ascii?Q?Cltlrj0gu1t9TsjZFakHdTou9+5DRomOunO6GLAmjlQP34cdxscrSz4Zi2r7?=
- =?us-ascii?Q?BUUHXb8S/zl0GHsOcxhRmw6ixEQU+ysAZyPWLQDL3qlRZS3TS0GaX4lXq7me?=
- =?us-ascii?Q?Bsaxpce6+TSW8+dO+Cu5Jy3lYAExPXhVUNozzMLYQfqOGkEjt0tvIxGSc/m/?=
- =?us-ascii?Q?+4Be/efLAgRsJZAEPCp9aejVDzFgzvG51ydmDtnXmMbOPKks3HSqrLC0QKLS?=
- =?us-ascii?Q?NrhXA74xQ2FVxQXVJgY8ySW9ZAsDRgOfhpgXQUJXpdqo/q91xpI7cl93JOWe?=
- =?us-ascii?Q?wFhPhETH6acTKKBem2AezNZZs9EXKYvN7PgFXd2DPdzblRH7CikCxEii8tMg?=
- =?us-ascii?Q?2KZWVwextHoQOoG9b0o0wtS3xALm+2NrW6V/+t8myPZlbSOKRmOPe04EFBvi?=
- =?us-ascii?Q?hLkzlYZmRhjab8VVOtnTImQXldrCagmDbqAzsT/F5Cl2YtmoX+fPAOZxy8A4?=
- =?us-ascii?Q?QPlFm5GyuRU1EgZdKooRSXCKtGN8zLJlrXG7CW+2ptNp4m/TfCgYlFr83DM9?=
- =?us-ascii?Q?27lzjpFCKkUNW8v3iwggmEgfunapy0pIjXxGEpu+zNuWyK8W3dCXdLzfra5+?=
- =?us-ascii?Q?3GCoYat55liT9ohhXKXaBEtKW+0Sb/M5fPkodWoj+7l315PJcUDSzcYPWkIn?=
- =?us-ascii?Q?U5nH16/y+pqH7MhtA/TmJ/3UnDPXZP9qTngStG0jFz50Q9jFzhK3HIlF5Esi?=
- =?us-ascii?Q?yoXJ8gs6F8ft9+4cPNEEL2RKgdB5W2H3KvrXVZJqrU03l2hrgO8ZIjKPTcux?=
- =?us-ascii?Q?beQlZb/r5JkGyo/MPYCc3wVvRUrgyMj1WFT+1DI3q2g0oorZQJVTG3aVopOW?=
- =?us-ascii?Q?chAnk3IAfCBtf8Wg9Mp6z3PGRz9xkLJUJOpcMBTQs1YT2dRrgB+RLo9GvOZf?=
- =?us-ascii?Q?UHNoBsO0lx7sE3zXBct64nozoajHL6r7hEK/6YIuQDqNWuoYAAaZlHFfrJJC?=
- =?us-ascii?Q?m/BDqxRNviKMvPNTs4xiQxUX/+WAp/UNmiNL+GRIOAca0nWkK4vz2WnJjtkF?=
- =?us-ascii?Q?eKt5LUSaYQohZcI4OFCdWLQGiwLtoEpKTMqR9//Tyei1w8Ia7/0wMaz7Q5UW?=
- =?us-ascii?Q?rCN6TvLPHa4Z4tUnrzJc5iknL6mYgKK84zrBNsfrH8gQuUgzlk2ExdyTEwo+?=
- =?us-ascii?Q?Iig2Tkn/hsfaoAON3y15HvTG+xJqAQKpdBuiguDPOv4DGiybFU+y4ig2NwrY?=
- =?us-ascii?Q?Jw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0173bced-e1f4-4b3c-8073-08dc7421c748
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 14:26:00.7937
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NSpOBpNbwrC8Esu/QKtJllXKY4wVS8Ks93kXLG/h6QPaM7QvUfusiCLCvUWkzx3ojjPIwaU1EPDd97y354gi8tVZ9TIAtROtfkocBkiLXwg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8442
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62x-sk-common: Reserve 128MiB of
+ global CMA
+Content-Language: en-US
+From: Devarsh Thakkar <devarsht@ti.com>
+To: Andrew Davis <afd@ti.com>, Nishanth Menon <nm@ti.com>,
+        "Raghavendra,
+ Vignesh" <vigneshr@ti.com>
+CC: <kristo@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <praneeth@ti.com>, <j-choudhary@ti.com>, <gregkh@linuxfoundation.org>,
+        Brandon <b-brnich@ti.com>, "Pothukuchi, Vijay" <vijayp@ti.com>,
+        "Etheridge,
+ Darren" <detheridge@ti.com>
+References: <20230803111455.811339-1-devarsht@ti.com>
+ <20230805193355.o657pwbq2w3tciui@vehicular>
+ <9b61e8a0-fec0-b33f-259c-c744aa5a88b9@ti.com>
+ <18bb47b8-c441-00b1-7ac7-f9038dffedc4@ti.com>
+ <d2c6c120-5d3b-4975-5972-155343c1c0ca@ti.com>
+In-Reply-To: <d2c6c120-5d3b-4975-5972-155343c1c0ca@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Fri, May 10, 2024 at 10:57:22AM GMT, Jose Ignacio Tornos Martinez wrote:
->It has been seen that for some network mac drivers (i.e. lan78xx) the
->related module for the phy is loaded dynamically depending on the current
->hardware. In this case, the associated phy is read using mdio bus and then
->the associated phy module is loaded during runtime (kernel function
->phy_request_driver_module). However, no software dependency is defined, so
->the user tools will no be able to get this dependency. For example, if
->dracut is used and the hardware is present, lan78xx will be included but no
->phy module will be added, and in the next restart the device will not work
->from boot because no related phy will be found during initramfs stage.
->
->In order to solve this, we could define a normal 'pre' software dependency
->in lan78xx module with all the possible phy modules (there may be some),
->but proceeding in that way, all the possible phy modules would be loaded
->while only one is necessary.
->
->The idea is to create a new type of dependency, that we are going to call
->'weak' to be used only by the user tools that need to detect this situation.
->In that way, for example, dracut could check the 'weak' dependency of the
->modules involved in order to install these dependencies in initramfs too.
->That is, for the commented lan78xx module, defining the 'weak' dependency
->with the possible phy modules list, only the necessary phy would be loaded
->on demand keeping the same behavior, but all the possible phy modules would
->be available from initramfs.
->
->The 'weak' dependency support has been included in kmod:
->https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
->But, take into account that this can only be used if depmod is new enough.
->If it isn't, depmod will have the same behavior as always (keeping backward
->compatibility) and the information for the 'weak' dependency will not be
->provided.
->
->Signed-off-by: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Hi Andrew, Vignesh, Nishanth,
+
+On 08/08/23 13:44, Devarsh Thakkar wrote:
+[...]
+>>>>> Reserve 128MiB of global CMA which is also marked as re-usable
+>>>>> so that OS can also use the same if peripheral drivers are not using the
+>>>>> same.
+>>>>>
+
+I wanted to re-initiate discussion on this. Per discussion with few of the
+maintainers in OSS 2023 Summit, the suggestion was either to have MMU in the
+devices or use the CMA region as done with this patch.
+There was not much traction for the idea/suggestion to have some updates in
+CMA API to dynamically increase the CMA region per the requirement (for e.g.
+move the MIGRATE_MOVABLE pages to CMA area dynamically). Also I see some
+efforts in the past made on that direction for introducing CMA_AGGRESSIVE
+Kconfig to allocate from ZONE_MOVEABLE but were not accepted [1] and
+nevertheless it still requires CMA region to be available to begin with and
+only gives a bit of extra margin for the CMA.
+
+My vote is still to use global cma region with re-usable flag (as done with
+this patch) and 128 MiB is well estimated per the use-cases AM62x EVM is meant
+to cater (the vendor specific kernel has been using it) and is very much
+needed to provided out-of-box experience as otherwise basic display and camera
+use-cases don't work out-of-box. Besides I see many other boards [presumably
+mmu-less] using a similar approach :
+
+     $git grep linux,cma-default arch/ | wc
+     36      72    2538
 
 
-Reviewed-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Kindly let us know your opinion on this if we are aligned to proceed with this
+approach or not.
 
-thanks
-Lucas De Marchi
+[1]:
+https://lore.kernel.org/all/20141107070655.GA3486@bbox/
+https://linux-mm.kvack.narkive.com/LCGSAqAp/patch-0-4-cma-aggressive-make-cma-memory-be-more-aggressive-about-allocation
 
->---
->V2 -> V3:
->- Include note about backward compatibility.
->- Balance the /* and */.
->V1 -> V2:
->- Include reference to 'weak' dependency support in kmod.
->
-> include/linux/module.h | 6 ++++++
-> 1 file changed, 6 insertions(+)
->
->diff --git a/include/linux/module.h b/include/linux/module.h
->index 1153b0d99a80..2a056017df5b 100644
->--- a/include/linux/module.h
->+++ b/include/linux/module.h
->@@ -173,6 +173,12 @@ extern void cleanup_module(void);
->  */
-> #define MODULE_SOFTDEP(_softdep) MODULE_INFO(softdep, _softdep)
->
->+/*
->+ * Weak module dependencies. See man modprobe.d for details.
->+ * Example: MODULE_WEAKDEP("module-foo")
->+ */
->+#define MODULE_WEAKDEP(_weakdep) MODULE_INFO(weakdep, _weakdep)
->+
-> /*
->  * MODULE_FILE is used for generating modules.builtin
->  * So, make it no-op when this is being built as a module
->-- 
->2.44.0
->
+
+Regards
+Devarsh
 
