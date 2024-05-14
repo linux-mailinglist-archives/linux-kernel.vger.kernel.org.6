@@ -1,108 +1,262 @@
-Return-Path: <linux-kernel+bounces-179162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8046A8C5C86
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:54:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5A48C5C89
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9421F229BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:54:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35043B21907
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE57180A6C;
-	Tue, 14 May 2024 20:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABD2180A73;
+	Tue, 14 May 2024 20:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="3OmKJQvT"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CT17wuo2"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD25C1DDD6;
-	Tue, 14 May 2024 20:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7396C1DFD1;
+	Tue, 14 May 2024 20:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715720063; cv=none; b=Zx88V7oiwzZoz9Onl/r9IdNAx2eaz0Ur2rSP+O57Y7iRmzQ8fvAeGz2veRwqtyVktJII7MbSXplAT0XOrvzq4iukM77JSTizrPY28zI0kPvdLy1XhuzM7eVIlv/rnaU0iHeUNTlb/Kso5VARI74DNhIy87BtrNFS7QNv2m4bfnY=
+	t=1715720105; cv=none; b=bl/YwLIbM+FL8jNqDhgww10jRF8WRdz3m0dmGWsDQP8HWJpkHSnnxMWSZVgOFBlvj1Xu2Y/Re9vMgwP94jCVnWcUZOPhATnqoCu3Ki/UOWMo5Ku41DwscsUkFYLLIM6HpePFUz46aZKQ3H8HIVm1GLMAP13NXseIQM9GKae8FR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715720063; c=relaxed/simple;
-	bh=k9c4buxNu05Aufa9vu+21j4fvkSF4Yhlj0w7eGVwrtQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G4j9nvC7Qx77WAfEIvHDV7awlU4CY0ceXkYhQoZG5N1i2g1+VjG6V1/s/GAYZ/FQxVj4rMI6evzUu8rwxFzdERxzuqg90KmsgFGRGwstaRFuyokUwsPERwWyev6ibzVMRlbIqEpvBkqzrpZe3Ny/13/cDC/piabRL9JEBpEv8Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=3OmKJQvT; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Vf7rX6CxWz6Cnk90;
-	Tue, 14 May 2024 20:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1715720058; x=1718312059; bh=IrNZfvETl7WV5WxVHxU5OxkN
-	BAGTJ7bQra6C27GqQbQ=; b=3OmKJQvTWxx5XaT0ZKR+B39EHIuBkyUSELFQXCH3
-	MvbwbdjlwfQtwIVum7Rl/xVjBqg8rUdrl0FhafoxtND1l2yJTv1ql5ohTJm9g0Qb
-	fhVfmRsGGYnErQpnBx7cHKa3o2GgW926ukb0ymdFgK2Ag4wLjd0T7fdWq869OxrJ
-	GCXlj88K1bjARurv5/Sbvs244lBrvyOvBeYES4jBfSE73Q/b+c6ZSAzCKcRf2XUH
-	YpFRNlw+1U8fS2xRZj1/YTgzJ4DYusFxbhMggw4un+XY1jYLWjv0fPuDZFLonigJ
-	1qkN5JhaR4+3YP0rhJsA27X08OdvpFyu+MrQJ1nZr6mB9A==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id cBeT42pl3TTG; Tue, 14 May 2024 20:54:18 +0000 (UTC)
-Received: from [172.21.16.125] (unknown [50.204.89.30])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Vf7rT3lxnz6Cnk8s;
-	Tue, 14 May 2024 20:54:17 +0000 (UTC)
-Message-ID: <0300cd4e-46d6-499a-98d5-72360c94ae49@acm.org>
-Date: Tue, 14 May 2024 14:54:14 -0600
+	s=arc-20240116; t=1715720105; c=relaxed/simple;
+	bh=7v/bVjsePiglsRUfkVi81JD5l8PJ6pE/YvALtxqA0Vk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OhvjUUlCKjqdJLBbWNCkZljMvxvtk/9FTzYcUu574oA5jiZxLNaQ31CBV33Vhfjoty1DM/vsJ2G5BdD5KpPe2mSEy605U13ehdD8eH8ONmnKKFECeihUqJgF9NWvRE0SLe6hi7GNlW3Z22trtGKoXOITUIFm5dk2BdkF6QF2r9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CT17wuo2; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EKrBqJ031386;
+	Tue, 14 May 2024 20:54:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=93rGCrwcTBFV8zElPM3lXUtYbTSn32BTScf2EBDSl9E=;
+ b=CT17wuo2c5yLTtmvTZ8g5/oG1duwOQybaNolGmbCRc+urZgZbGDREyrY/v5fef9uMfng
+ boHPnv5olLiigF8u0FoUjwhqmXXRab3bnC/G3BdWn/onbZn/mCI0lCP5NOf8PqKH7bUR
+ WRKpfUYlTQG8VLq5u7kmGxXoluAq8jfwoDOM5PY8QCKnWjHzrKOhXlPDliqHRYZuWYEt
+ NIFHg07BAqUaOyPina0C1v1SIfgAkJR2rWBkfjBks6W0QMSJMf28xoiAEHKtPfjco/xY
+ j22VPf2iYxJkBdCzyixkfgPKl2Pvw2amoRBWFRTz9+hUhdEzfh3TTymzB0U9SNSvtxTd rA== 
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4fch009b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 20:54:57 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EITO8M002298;
+	Tue, 14 May 2024 20:54:57 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2m0p7k0v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 20:54:57 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EKst8W27263666
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 20:54:57 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E2E225805B;
+	Tue, 14 May 2024 20:54:54 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 64AAD5805F;
+	Tue, 14 May 2024 20:54:54 +0000 (GMT)
+Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 20:54:54 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: linux-i2c@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eajames@linux.ibm.com, conor+dt@kernel.org, krzk+dt@kernel.org,
+        robh@kernel.org, andi.shyti@kernel.org
+Subject: [PATCH v5] dt-bindings: i2c: i2c-fsi: Convert to json-schema
+Date: Tue, 14 May 2024 15:54:54 -0500
+Message-Id: <20240514205454.158157-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nSJIpjoyYvuBLtxfgpRJnK3Hu1AQ36BK
+X-Proofpoint-ORIG-GUID: nSJIpjoyYvuBLtxfgpRJnK3Hu1AQ36BK
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] scsi: ufs: Allow RTT negotiation
-To: Avri Altman <Avri.Altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bean Huo <beanhuo@micron.com>, Peter Wang <peter.wang@mediatek.com>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20240514050823.735-1-avri.altman@wdc.com>
- <34c50f23-82dc-4b53-b8cb-e5c07c6e0106@acm.org>
- <DM6PR04MB6575CE65772D92073360FE64FCE32@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <DM6PR04MB6575CE65772D92073360FE64FCE32@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_12,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ bulkscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405140150
 
-On 5/14/24 14:34, Avri Altman wrote:
->> On 5/13/24 23:08, Avri Altman wrote:
->>> +/* bMaxNumOfRTT is equal to two after device manufacturing */
->>> +#define DEFAULT_MAX_NUM_RTT 2
->>> [ ... ]
->>> +     /* do not override if it was already written */
->>> +     if (dev_rtt != DEFAULT_MAX_NUM_RTT)
->>> +             return;
->>
->> I haven't found any text in the UFSHCI 4.0 specification that says
->> that the default value for the number of outstanding RTT requests
->> should be 2. Did I perhaps overlook something? If I didn't overlook
->> anything, the driver should not try to check whether dev_rtt is at its
->> default value.
-> JEDEC Standard No. 220F Page 150 Line 2837 says: "bMaxNumOfRTT is equal to two after device manufacturing,"
+Convert to json-schema for the FSI-attached I2C controller.
 
-Thanks Avri for having looked this up.
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+---
+This patch was previously included in
+https://lore.kernel.org/all/20240429210131.373487-1-eajames@linux.ibm.com/
 
-My understanding is that the above check won't work as intended if
-ufshcd_rtt_set() does not modify the RTT value. Wouldn't it be better
-to add a boolean in struct ufs_hba that indicates whether or not
-ufshcd_rtt_set() has been called before?
+Changes since v4:
+ - Add patternProperties for the busses that will reference the i2c-controller
+   schema, since the root node provides multiple i2c busses.
 
-Thanks,
+Changes since v3:
+ - Update MAINTAINERS
+ - Change commit message to match similar commits
 
-Bart.
+ .../devicetree/bindings/i2c/i2c-fsi.txt       | 40 ----------
+ .../devicetree/bindings/i2c/ibm,i2c-fsi.yaml  | 76 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 77 insertions(+), 41 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/ibm,i2c-fsi.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-fsi.txt b/Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+deleted file mode 100644
+index b1be2ceb7e696..0000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-fsi.txt
++++ /dev/null
+@@ -1,40 +0,0 @@
+-Device-tree bindings for FSI-attached I2C master and busses
+------------------------------------------------------------
+-
+-Required properties:
+- - compatible = "ibm,i2c-fsi";
+- - reg = < address size >;		: The FSI CFAM address and address
+-					  space size.
+- - #address-cells = <1>;		: Number of address cells in child
+-					  nodes.
+- - #size-cells = <0>;			: Number of size cells in child nodes.
+- - child nodes				: Nodes to describe busses off the I2C
+-					  master.
+-
+-Child node required properties:
+- - reg = < port number >		: The port number on the I2C master.
+-
+-Child node optional properties:
+- - child nodes				: Nodes to describe devices on the I2C
+-					  bus.
+-
+-Examples:
+-
+-    i2c@1800 {
+-        compatible = "ibm,i2c-fsi";
+-        reg = < 0x1800 0x400 >;
+-        #address-cells = <1>;
+-        #size-cells = <0>;
+-
+-        i2c-bus@0 {
+-            reg = <0>;
+-        };
+-
+-        i2c-bus@1 {
+-            reg = <1>;
+-
+-            eeprom@50 {
+-                compatible = "vendor,dev-name";
+-            };
+-        };
+-    };
+diff --git a/Documentation/devicetree/bindings/i2c/ibm,i2c-fsi.yaml b/Documentation/devicetree/bindings/i2c/ibm,i2c-fsi.yaml
+new file mode 100644
+index 0000000000000..62e70aaea9d56
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/ibm,i2c-fsi.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/ibm,i2c-fsi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: IBM FSI-attached I2C controller
++
++maintainers:
++  - Eddie James <eajames@linux.ibm.com>
++
++description:
++  This I2C controller is an FSI CFAM engine, providing access to a number of
++  I2C busses. Therefore this node will always be a child of an FSI CFAM node.
++
++properties:
++  compatible:
++    enum:
++      - ibm,i2c-fsi
++
++  reg:
++    items:
++      - description: FSI slave address
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^i2c(@.*)?":
++    type: object
++    properties:
++      reg:
++        maxItems: 1
++
++    required:
++      - reg
++
++    allOf:
++      - $ref: /schemas/i2c/i2c-controller.yaml#
++
++    unevaluatedProperties: false
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c@1800 {
++        compatible = "ibm,i2c-fsi";
++        reg = <0x1800 0x400>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        i2c-bus@0 {
++            reg = <0>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++        };
++
++        i2c-bus@1 {
++            reg = <1>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            eeprom@50 {
++                compatible = "atmel,24c64";
++                reg = <0x50>;
++            };
++        };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b2df2cc60dc78..86c1c8dd86093 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8976,7 +8976,7 @@ M:	Eddie James <eajames@linux.ibm.com>
+ L:	linux-i2c@vger.kernel.org
+ L:	openbmc@lists.ozlabs.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/i2c/i2c-fsi.txt
++F:	Documentation/devicetree/bindings/i2c/ibm,i2c-fsi.yaml
+ F:	drivers/i2c/busses/i2c-fsi.c
+ 
+ FSI-ATTACHED SPI DRIVER
+-- 
+2.39.3
+
 
