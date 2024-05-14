@@ -1,92 +1,134 @@
-Return-Path: <linux-kernel+bounces-178708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977058C56B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:14:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256C48C56B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37537B20EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:14:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0A01F2507B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6E9144312;
-	Tue, 14 May 2024 13:14:30 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495571448C3;
+	Tue, 14 May 2024 13:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZnqWVaoX"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC3355C36;
-	Tue, 14 May 2024 13:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A3455C36;
+	Tue, 14 May 2024 13:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692470; cv=none; b=ZNylUndMi9k8NEVgmhnxHSY9mA98cWqar4/Lmt+oNQmjXSNOfxSXieGdZPJ6dX6xJw4q82EgqQQEx3enE6aV8aVgOuaSExxLU2058lvPQXFG+ye4mSaKR01JMnHZKlrOMre/AOllIva5SyLkaMBYZEQX0RvKbrTHeHE7pBDKI7A=
+	t=1715692542; cv=none; b=eQz6maV0HJlOgVtSC2/Li9NPbE+cLkDRVnTiT8fqe4dajDH5V4/UGWaaILcb2QFN7r+syqVWomWU5R6vepar1h5bW5NjNkONr0qdwTRTjdTs4QhP3KmjIben1sH0UDjM0l7awIx3Jg6TQdwj0aIKBPPMoKL3Lj4cZuz4ZoBdC4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692470; c=relaxed/simple;
-	bh=aBFCmY6j4ZdKlpS+bF126DoAG+Z5M38yFjHqoFqhRnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oYBsWNq8KR2tW41lqHLnZrLimusLT6UgbugWtf/8DFUb1yCHDZVjoLxtaS699TO3NUKsmyrJFshgbR1x+oSk2FJ/3wL7Imm0aCx5aAKs18WrJhB3VDAsk5do4UM+Sz8oUeqEvprdgU/VxegLWFooo4j4oLwftTl9SaWMeKxRCyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: KqK7Dr9RQviC6yGtQfvwuw==
-X-CSE-MsgGUID: hAMhlfE+Q6W2b9yP8LcOzg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11795001"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11795001"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 06:14:28 -0700
-X-CSE-ConnectionGUID: FjXU9ezWSISVotfcWt+PqQ==
-X-CSE-MsgGUID: IQn0NWX2RMqvARMjxO5DeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="31221097"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 06:14:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.97)
-	(envelope-from <andy@kernel.org>)
-	id 1s6rz1-00000007RDh-3p9c;
-	Tue, 14 May 2024 16:14:19 +0300
-Date: Tue, 14 May 2024 16:14:19 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Alisa-Dariana Roman <alisadariana@gmail.com>
-Cc: michael.hennerich@analog.com, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	lars@metafoo.de, jic23@kernel.org, robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	lgirdwood@gmail.com, broonie@kernel.org, nuno.sa@analog.com,
-	marcelo.schmitt@analog.com, bigunclemax@gmail.com,
-	dlechner@baylibre.com, okan.sahin@analog.com, fr0st61te@gmail.com,
-	alisa.roman@analog.com, marcus.folkesson@gmail.com,
-	schnelle@linux.ibm.com, liambeguin@gmail.com
-Subject: Re: [PATCH v8 0/6] iio: adc: ad7192: Add AD7194 support
-Message-ID: <ZkNjq8aaBeP89cNf@smile.fi.intel.com>
-References: <20240514120222.56488-1-alisa.roman@analog.com>
+	s=arc-20240116; t=1715692542; c=relaxed/simple;
+	bh=DKXSl2fJUbIXFw2H4Ort5sM2RiJbkna9cmj1WYKqJtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JjADsDCklrmfZWIUpbcY95MguD8jnX2hgVXSvuCN7BrYRC8sOZ8XOgvWy4SAAbkiyGwrhSMMk8hc9N0hxBGo1hjELi3ryxGN5wfLTnrEwelWEygyD94lIaXjMZQLpCI+SPCWFyAKC55ShHOHZAeAiCwfLTRFmOqxm1xW4PYLx/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZnqWVaoX; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 46AEF1BF210;
+	Tue, 14 May 2024 13:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715692537;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pc/gRfiTuzZ5RPyjwYBjvgMJyRnkMP8vwPGwGwzIh8Y=;
+	b=ZnqWVaoXCMXFIbdg04aEVwpQG9lCPWSBd/cUpysvbjOO6qSMVxcdWn9y8U3ll9Aw2lEaLb
+	lxnOh12VLederDvkZgQGlxfRdCTpLux3/c7rCnxXPU+eEq/wk5kA4jF+/E7UoOCRFWoLkW
+	Z285enE+GdIoP9DYsWUUnX49bSzhifHAK285WsVkwDk6Rovxcg9fYXFT2MlrqQO0bJR5B0
+	QuAQvLN8XL4IpgP28nIwy3MGPYBXW80M+pvGZB6bxJImGXS2cg9x8HLYbwzJG5o9if0HgS
+	oiWrRcXZvmq+VmYUUeCva144eM8jwi+nKiFrP6bT4Mj9xuLqGj96mee3Ey4a3A==
+Message-ID: <56b2bbcb-7181-4640-93b3-0cf3e2029367@bootlin.com>
+Date: Tue, 14 May 2024 15:15:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514120222.56488-1-alisa.roman@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 05/11] PCI: cadence: Extract link setup sequence from
+ cdns_pcie_host_setup()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Tony Lindgren <tony@atomide.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, gregory.clement@bootlin.com,
+ theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com
+References: <20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com>
+ <20240102-j7200-pcie-s2r-v5-5-4b8c46711ded@bootlin.com>
+ <111df2a5-7e05-480c-a5a5-57cf8d83c0d0@moroto.mountain>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <111df2a5-7e05-480c-a5a5-57cf8d83c0d0@moroto.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: thomas.richard@bootlin.com
 
-On Tue, May 14, 2024 at 03:02:16PM +0300, Alisa-Dariana Roman wrote:
-> Dear maintainers,
+On 4/16/24 16:16, Dan Carpenter wrote:
+> On Tue, Apr 16, 2024 at 03:29:54PM +0200, Thomas Richard wrote:
+>> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
+>> index 5b14f7ee3c79..93d9922730af 100644
+>> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
+>> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
+>> @@ -497,6 +497,30 @@ static int cdns_pcie_host_init(struct device *dev,
+>>  	return cdns_pcie_host_init_address_translation(rc);
+>>  }
+>>  
+>> +int cdns_pcie_host_link_setup(struct cdns_pcie_rc *rc)
+>> +{
+>> +	struct cdns_pcie *pcie = &rc->pcie;
+>> +	struct device *dev = rc->pcie.dev;
+>> +	int ret;
+>> +
+>> +	if (rc->quirk_detect_quiet_flag)
+>> +		cdns_pcie_detect_quiet_min_delay_set(&rc->pcie);
+>> +
+>> +	cdns_pcie_host_enable_ptm_response(pcie);
+>> +
+>> +	ret = cdns_pcie_start_link(pcie);
+>> +	if (ret) {
+>> +		dev_err(dev, "Failed to start link\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = cdns_pcie_host_start_link(rc);
+>> +	if (ret)
+>> +		dev_dbg(dev, "PCIe link never came up\n");
 > 
-> Thank you all for the feedback!
-> 
-> I am submitting the upgraded series of patches for the ad7192 driver.
-> 
-> Please consider applying in order.
+> If we're going to ignore this error the message should be a dev_err()
+> at least.
 
-Jonathan, LGTM, I have left a few non-critical comments, they may be fixed
-when applying or dropped (most of them), depending on your preference.
+Hello Dan,
+
+In fact it could not be really an error.
+If you physically don't have a device on the PCIe bus,
+cdns_pcie_host_start_link() will not return 0.
+
+So if we use dev_err(), we will always have the error if there is no
+device on the PCIe bus.
+
+Regards,
+
+Thomas
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Thomas Richard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
