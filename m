@@ -1,57 +1,81 @@
-Return-Path: <linux-kernel+bounces-179178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00A68C5CB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:15:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EE798C5CBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0211C219BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:15:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84938282A2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8794181BA6;
-	Tue, 14 May 2024 21:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA13D181BA6;
+	Tue, 14 May 2024 21:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="np6fuxKT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4dVJGaV6"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00D62A1D4;
-	Tue, 14 May 2024 21:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2D01E491
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715721295; cv=none; b=phKcQYYErq8HyZ4S3fKXl3AQuHKXyGG66BHAj7sP9pgQGc5OU2XBJRhWROGHQl2+6bBfcyFJVJ821kUvNKamyIph0OYTfGloKA+Zqm7E/tsYhxCZpy0zmIaPDsB77cQZ0LiIFK55jKqxt4JCq/Ps8SGZob/XMcP0f/wAnpppXu0=
+	t=1715721664; cv=none; b=unEIo7Yt3daeFMNwDscB7owNtiC3EslB9J0OPry8N+4EMfdlheSHYFuu1sZlIb7UH3pyxUZxq8aEzuuWTKYhkyLPhZEx+qKvPUav5MiYMYJhEYAJim6hmR6644V6J9cLEvnHH35P/xMjPFFn620drF96V0D542UuVnmhEUwYb54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715721295; c=relaxed/simple;
-	bh=i3fN9h2+CLDQOAZAAbIsEy+v+HuuQjcOK3oDgaeItMk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Y+jRRz9hr5wNuTXHdkXWjEpShLkxPRVdz3Rwe8doFe5N43Z34bMJZi7lW+LjemO1cFyH+WswUailZ1bxhD743PAZEwv9254aWinhWO9/0Uk7D5aIflaLBuL0LEd/4HU3+8c8Yf5gV3Gg3hB//WwOWYXMCcX/eo0OCBy5i9YXioM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=np6fuxKT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 421F9C2BD10;
-	Tue, 14 May 2024 21:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715721294;
-	bh=i3fN9h2+CLDQOAZAAbIsEy+v+HuuQjcOK3oDgaeItMk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=np6fuxKTqtPRT8iipzJ0RN510tW9hfBsYEmH9a2GlWjn8JhGRwNOmTvi99QDfxHIx
-	 8CmplmCYmbWUT1mYloKdL+lia6l+0IiPVmPRkD3ykqIoW4/808Xj7O69npgPCLMSwu
-	 8oiIwFSyc5Z+TsdhJ5Uw4yT2xB9lrK5IOj/ByXPO2SPKPYYvgtPqIsTMYt9LuOl/qj
-	 rJov5HhZJSyqYKS7lizxMhy2z5VYOfKzAO9ghIhnnpt/e/RehsrfWFPle4hmWfw4Qd
-	 rh+kXH2kRHi8xnU7UDNZRpNi8YKU7tUwHTLOAsdeBYVoJkFIj1p6RlFUnsWKQJ85Ue
-	 saTzqVOwH53Og==
-Date: Tue, 14 May 2024 16:14:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, manivannan.sadhasivam@linaro.org,
-	fancer.lancer@gmail.com, u.kleine-koenig@pengutronix.de,
-	cassel@kernel.org, dlemoal@kernel.org,
-	yoshihiro.shimoda.uh@renesas.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	srk@ti.com
-Subject: Re: [PATCH v7 2/2] PCI: keystone: Fix pci_ops for AM654x SoC
-Message-ID: <20240514211452.GA2082543@bhelgaas>
+	s=arc-20240116; t=1715721664; c=relaxed/simple;
+	bh=CwPBPu20Q373SE94/2W5Gs5lJ3zjrSanPFx9uYehg0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YgqiPS+CfVU1pc37Y0xiHwtcsHVEl6dSz8pmfxR1PE+Kmck5CKuQCOp8Ws2kBlLCvKORpuJKqHfJGTLr2h+RAWwlpMq2jiRpz3Zlt7bmcRSK7ylBmz0mNK2wmsO2oOEdD3muYV2n5Bu6QeCMlB+6qVKwjw7P516/V8usFtex6Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4dVJGaV6; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42012c85e61so211565e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:21:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715721661; x=1716326461; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CwPBPu20Q373SE94/2W5Gs5lJ3zjrSanPFx9uYehg0M=;
+        b=4dVJGaV6gbT/74k+v2vX01UiSQm5+J3cdbUp13Ajx0HY0QhCG10FRaeB59efSxCcJ1
+         ChieX2dM1//AptnKX2SoKrrwFi3SEGKNX9MSsqenII5v0oOa620JgsQUXoDmcuiyQnXy
+         hr1Rl2+sLGwGG2wEQR6DO08/KWVlowi/1Zbp0Qg8hzBGNfc4sTGGeFfJfdvW3L2XxRoR
+         j14DfxP24Ef7V5us8d76+nvzFUQdfN6ujqkeACuyTMgmKh7EelBZhgdCw8Co+2YkN9Wu
+         V7PpdbLVNRxjKXFyT/Xl5vcgOzDTYO8adtyi/p2vG1KEYOQiJWV/Mq5VemKkz4XRi9YH
+         /cdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715721661; x=1716326461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CwPBPu20Q373SE94/2W5Gs5lJ3zjrSanPFx9uYehg0M=;
+        b=D9zVSSBvFQlxsroaLdRI1ASCE1tKIZjnec+I4xJMsLrxr94roeHY1Tg+brr8kjAuBa
+         Nw3sklumTO/CWBS+t7n0qV/iRyFr1kSrOR0brOP+7NPl/Z9YTdKbyabCg3jsDW2li88b
+         nEFJp5MhDKXYnNKf24kFt2VTsUTIkBVTS1I9tMw6Df+c+uF5UkFr2arHoL/6ZanuXYYB
+         U4PZElrlVdYqVr7m/OqOc9RUeJ99Z+pItHy6SCmZbUQVNg/DJ4VLOpSfTvgmMtgxrWrN
+         uVLREuwoRRv0Z48VJTO9rli0p8e4j2wRihT+xKykf35GHrwWfAuTBtdg7AhWPGxJVixc
+         cqbg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbrkOZKcfumEdYm0NJvW2QySSrLSbnZvT6MHElwSKe/kcNKoWgtmxwMMFYXiPqHSmrm5wbvx+jlB8QWjXmroBPFcvNuAEaEOpo2MDf
+X-Gm-Message-State: AOJu0Yy8kOcisbTpfuAJOfzDpqYV5YBgh5PgwCB4t3p/8JuP7v5ia+VR
+	uRT9rJUvsYr0zu7s9YzilNOZdZ790WNcP89uG0vfYwGl8cGXbP8ztzwtWX2OHQ==
+X-Google-Smtp-Source: AGHT+IFK25M0wgeXLfHIqwddgM4kRtbQlKmkMGa4V1C30HfAGSGO4wDqOPGaTUCXpXxxKks9YftHWQ==
+X-Received: by 2002:a05:600c:1e12:b0:419:b16:9c14 with SMTP id 5b1f17b1804b1-4200f8697eemr7227225e9.1.1715721660799;
+        Tue, 14 May 2024 14:21:00 -0700 (PDT)
+Received: from google.com (49.222.77.34.bc.googleusercontent.com. [34.77.222.49])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fd491c712sm117556485e9.0.2024.05.14.14.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 14:21:00 -0700 (PDT)
+Date: Tue, 14 May 2024 21:20:55 +0000
+From: Brendan Jackman <jackmanb@google.com>
+To: Daniel Latypov <dlatypov@google.com>, corbet@lwn.net
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>, davidgow@google.com,
+	rmoar@google.com, corbet@lwn.net
+Subject: Re: [PATCH v2] Documentation: kunit: Clarify test filter format
+Message-ID: <ZkPVt9wyu7f-fC3c@google.com>
+References: <20240402125109.1251232-1-jackmanb@google.com>
+ <CAGS_qxpBmmafnQnDXYf5RftPzxghd+i8Ly4CK=EkcpidpCPP6g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,139 +84,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8b56604d-a2b8-4227-8a6f-c477332416b4@ti.com>
+In-Reply-To: <CAGS_qxpBmmafnQnDXYf5RftPzxghd+i8Ly4CK=EkcpidpCPP6g@mail.gmail.com>
 
-On Tue, May 14, 2024 at 05:41:48PM +0530, Siddharth Vadapalli wrote:
-> On Mon, May 13, 2024 at 04:53:50PM -0500, Bjorn Helgaas wrote:
-> > On Thu, Mar 28, 2024 at 02:20:41PM +0530, Siddharth Vadapalli wrote:
-> > > In the process of converting .scan_bus() callbacks to .add_bus(), the
-> > > ks_pcie_v3_65_scan_bus() function was changed to ks_pcie_v3_65_add_bus().
-> > > The .scan_bus() method belonged to ks_pcie_host_ops which was specific
-> > > to controller version 3.65a, while the .add_bus() method had been added
-> > > to ks_pcie_ops which is shared between the controller versions 3.65a and
-> > > 4.90a. Neither the older ks_pcie_v3_65_scan_bus() method, nor the newer
-> > > ks_pcie_v3_65_add_bus() method is applicable to the controller version
-> > > 4.90a which is present in AM654x SoCs.
-> > > 
-> > > Thus, as a fix, remove "ks_pcie_v3_65_add_bus()" and move its contents
-> > > to the .msi_init callback "ks_pcie_msi_host_init()" which is specific to
-> > > the 3.65a controller.
-> > > 
-> > > Fixes: 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus() callback to use add_bus")
-> > > Suggested-by: Serge Semin <fancer.lancer@gmail.com>
-> > > Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-> > > Suggested-by: Niklas Cassel <cassel@kernel.org>
-> > > Reviewed-by: Niklas Cassel <cassel@kernel.org>
-> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
-> > 
-> > Thanks for splitting this into two patches.  Krzysztof has applied
-> > both to pci/controller/keystone and we hope to merge them for v6.10.
-> > 
-> > I *would* like the commit log to be at a little higher level if
-> > possible.  Right now it's a detailed description at the level of the
-> > code edits, but it doesn't say *why* we want this change.
-> > 
-> > I think the first cut at this was
-> > https://lore.kernel.org/linux-pci/20231011123451.34827-1-s-vadapalli@ti.com/t/#u,
-> > which mentioned Completion Timeouts during MSI-X configuration and 45
-> > second delays during boot.
-> > 
-> > IIUC, prior to 6ab15b5e7057, ks_pcie_v3_65_scan_bus() initialized BAR
-> > 0 and was only used for v3.65a devices.  6ab15b5e7057 renamed it to
-> > ks_pcie_v3_65_add_bus() and called it for both v3.65a and v4.90a.
-> > 
-> > I think the problem is that in the current code, the
-> > ks_pcie_ops.add_bus() method (ks_pcie_v3_65_add_bus()) is used for all
-> > devices (both v3.65a and v4.90a).  So I guess doing the BAR 0 setup on
-> > v4.90a broke something there?
-> 
-> BAR0 was set to a different value on AM654x SoC which has the v4.90a
-> controller, which is identical to what is set even for the v3.65a
-> controller. The difference is that BAR0 is programmed to a different
-> value for enabling inbound MSI writes on top of the common configuration
-> performed for BAR0.
-> 
-> Common configuration for BAR0:
-> ks_pcie_probe
->   dw_pcie_host_init
->     dw_pcie_setup_rc
->     ...
->      /* Setup RC BARs */
->      dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0x00000004);
->      dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_1, 0x00000000);
+On Wed, Apr 03, 2024 at 02:59:43PM -0700, Daniel Latypov wrote:
+> Reviewed-by: Daniel Latypov <dlatypov@google.com>
 
-Tangential questions that don't need to be addressed for this patch:
-There's a bunch of code between these writes and the one below.  Does
-that code in the middle depend on the above, or should all three of
-these writes be together?  Is there some magic in writing
-PCI_BASE_ADDRESS_0 twice?  This is common code for all DWC devices, so
-it must work OK, but it looks strange.
+Hi Jonathan, I think this is ready to be applied?
 
->      dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 0);
-
-What's the net effect of these three writes?  Disabling BAR 0 and
-BAR 1, as suggested at [1, 2]?
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pci-keystone.c?id=v6.9#n399
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/dwc/pcie-rcar-gen4.c?id=v6.9#n280
-
-> MSI specific configuration of BAR0 performed after the common
-> configuration via the ks_pcie_v3_65_scan_bus() callback:
-> 	/* Configure and set up BAR0 */
-> 	ks_pcie_set_dbi_mode(ks_pcie);
-> 
-> 	/* Enable BAR0 */
-> 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, 1);
-> 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, SZ_4K - 1);
-
-I assume that in DBI mode, this actually writes a mask, not a value?
-If writing a 0xfff mask means that the low 12 bits could not be set,
-maybe this configures it to be a 4K memory BAR?
-
-But is there some reason to do two writes to the same register?
-
-> 	ks_pcie_clear_dbi_mode(ks_pcie);
-> 
-> 	 /*
-> 	  * For BAR0, just setting bus address for inbound writes (MSI) should
-> 	  * be sufficient.  Use physical address to avoid any conflicts.
-> 	  */
-> 	dw_pcie_writel_dbi(pci, PCI_BASE_ADDRESS_0, ks_pcie->app.start);
-
-After clearing DBI mode, this looks like it would set BAR 0 to the
-ks_pcie->app.start address, which makes some sense, since the low 4
-bits would all be zero (assuming the address is page aligned), which
-would make it a 32-bit memory BAR.
-
-> The above configuration of BAR0 shouldn't be performed for AM654x SoC.
-> While I am not certain, the timeouts are probably a result of the BAR
-> being programmed to a wrong value which results in a "no match" outcome.
-> 
-> > I'm not quite clear on the mechanism, but it would be helpful to at
-> > least know what's wrong and on what platform.  E.g., currently v4.90
-> > suffers Completion Timeouts and 45 second boot delays?  And this patch
-> > fixes that?
-> 
-> Yes, the Completion Timeouts cause the 45 second boot delays and this
-> patch fixes that.
-
-And this problem happens on AM654x/v4.90a, right?  I really want the
-commit log to say what platform is affected!
-
-Maybe something like this?
-
-  PCI: keystone: Enable BAR 0 only for v3.65a
-
-  The BAR 0 initialization done by ks_pcie_v3_65_add_bus() should
-  happen for v3.65a devices only.  On other devices, BAR 0 should be
-  left disabled, as it is by dw_pcie_setup_rc().
-
-  After 6ab15b5e7057 ("PCI: dwc: keystone: Convert .scan_bus()
-  callback to use add_bus"), ks_pcie_v3_65_add_bus() enabled BAR 0 for
-  both v3.65a and v4.90a devices.  On the AM654x SoC, which uses
-  v4.90a, enabling BAR 0 causes Completion Timeouts when setting up
-  MSI-X.  These timeouts delay boot of the AM654x by about 45 seconds.
-
-  Move the BAR 0 initialization to ks_pcie_msi_host_init(), which is
-  only used for v3.65a devices, and remove ks_pcie_v3_65_add_bus().
+Thanks,
+Brendan
 
