@@ -1,353 +1,79 @@
-Return-Path: <linux-kernel+bounces-179015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5885E8C5A7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:45:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50048C5A84
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75561F231E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021D31C21BCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F00F1802A5;
-	Tue, 14 May 2024 17:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0609D1802B6;
+	Tue, 14 May 2024 17:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G054jbzd"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Yc1eIr/5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537555A0F9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 17:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC055A0F9;
+	Tue, 14 May 2024 17:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715708732; cv=none; b=eyN3tuC4O9kYaviQjw2gyTThe9rUscFA+pZDo220RcOnJ6qxGSa8wNETv9RPapCyIdqtzIq04ras3U2eu2jQWFuD8YXNckjO+M0A02fCgaafyk7c6yKr0pUj8TlHQUTYNlvo8BhbYLVnemff6nyIzAiJbyn7KTLC9erhIEmhxjI=
+	t=1715708808; cv=none; b=DC4PaGOKtmmb2lWyKrdVCW0GHm5ocUwvLyCdR4hzN4mrq3GuZvCHjjqjJTBWa9sWMj7d9a3NE08g2mv/mn4BqcPjH/OhtEmYPkrgtAtX9/g27Qs9F/Cb3fwlrx5+CcThVoQIbc9ytAESJxy2ndIWDv0mQA5YFSGRTnIjlFYEE4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715708732; c=relaxed/simple;
-	bh=Y5u1qb3o8jFWtGibc8YJEuaQWEpyo58a0wSHycQXleQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Pm0llDQTMErgGX5scu6plmk0vr3/OSZGtc1SvUWRgVFTW9O4018kxszjoq1TbamA3KemWVnPerHhxkZOHnmvD7LvzH/aWZcTtXIL0mUTLTCvPjLsZze1YXOwD2KN9aKJ/BmV0PzJIa/ESv7d0Q0/7stk4qd79t9bIUiCGPD/XB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G054jbzd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7236BC2BD10;
-	Tue, 14 May 2024 17:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715708730;
-	bh=Y5u1qb3o8jFWtGibc8YJEuaQWEpyo58a0wSHycQXleQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=G054jbzd+J9V/nAGuyYQaXf4T9BMH783EEmaCmvg66SJTcqK7jZ9+ElWJEwLEyt7E
-	 XJmKsFWNKmYKPmovj1YBED2fdBYb6tbJGguRkEogzYlK7PJcLWf8OfpMAlW7x47MgL
-	 yPS0EFZGjP3X8yK93NmWAecIbgT5z3OitiNLoeE5aKPnIYqvtEUiMt/wKbWDbOwXVg
-	 0GoKGunjUjvRldCr09m0npf42Kd/q8BsJpdid5urLb7jWZLOTH03MgJ1VLFKaDCOXh
-	 0LtUamA7Cke/CuemSovSYmQhF8MqtV3WpsnY+06nu1P1tQFj2G2eUv8NhNuRHGV7uB
-	 c9PCS0Vmow/gQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org,
- =?utf-8?B?QmrDtnJuIFTDtnBlbA==?=
- <bjorn@rivosinc.com>, Andrew Bresticker <abrestic@rivosinc.com>, Chethan
- Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Oscar Salvador <osalvador@suse.de>, Santosh Mamila
- <santosh.mamila@catalinasystems.io>, Sivakumar Munnangi
- <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 2/8] riscv: mm: Change attribute from __init to
- __meminit for page functions
-In-Reply-To: <CAHVXubgYfi6hNjUAGeXoOcAbAS8Bvd_TtrTD8FhJP1EpPGDKMw@mail.gmail.com>
-References: <20240514140446.538622-1-bjorn@kernel.org>
- <20240514140446.538622-3-bjorn@kernel.org>
- <CAHVXubgYfi6hNjUAGeXoOcAbAS8Bvd_TtrTD8FhJP1EpPGDKMw@mail.gmail.com>
-Date: Tue, 14 May 2024 19:45:27 +0200
-Message-ID: <87ikzg479k.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1715708808; c=relaxed/simple;
+	bh=pf3snsT4ApUggqxUuq5WXr4dWvJsY8A0cMtELbN6iyw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=N6jB7q4Ehxj0gef+CFI84OHGGd2u1RC3KPHHmxwH6YpB5M7sQDyLY+91HiiQj6DOwUHLpJMQ0L9xr0gBE4l5eMcSUPvtgX71qsuLfqOH6kMQl1sGqK2F9YAoVE/ZNfcIZSEXq8JHSL7IEWJ4CqyluRZWvTN6cri8ckij9XUrUX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Yc1eIr/5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B082CC2BD10;
+	Tue, 14 May 2024 17:46:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1715708807;
+	bh=pf3snsT4ApUggqxUuq5WXr4dWvJsY8A0cMtELbN6iyw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Yc1eIr/5mrQpnqcpaIGwTMHtbnLOFYPLR2tOanTod3JH8rW5KkZOPwwLHdSGt8lXJ
+	 OIygOx/TZA9ysjw8XzqPaVjlozr0S8wX4sEa10bzBrJG2Uc5tGix+gvH1xBLzy2ZRP
+	 c7oXQDmeEFMcA3hKNhiBK19J9Q4n6iAyNWGKRRVI=
+Date: Tue, 14 May 2024 10:46:46 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: jeffxu@chromium.org
+Cc: keescook@chromium.org, jannh@google.com, sroettger@google.com,
+ willy@infradead.org, gregkh@linuxfoundation.org,
+ torvalds@linux-foundation.org, usama.anjum@collabora.com, corbet@lwn.net,
+ Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com,
+ rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org,
+ groeck@chromium.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ pedro.falcato@gmail.com, dave.hansen@intel.com,
+ linux-hardening@vger.kernel.org, deraadt@openbsd.org
+Subject: Re: [PATCH v10 0/5] Introduce mseal
+Message-Id: <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+In-Reply-To: <20240415163527.626541-1-jeffxu@chromium.org>
+References: <20240415163527.626541-1-jeffxu@chromium.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Alexandre Ghiti <alexghiti@rivosinc.com> writes:
+On Mon, 15 Apr 2024 16:35:19 +0000 jeffxu@chromium.org wrote:
 
-> On Tue, May 14, 2024 at 4:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kern=
-el.org> wrote:
->>
->> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->>
->> Prepare for memory hotplugging support by changing from __init to
->> __meminit for the page table functions that are used by the upcoming
->> architecture specific callbacks.
->>
->> Changing the __init attribute to __meminit, avoids that the functions
->> are removed after init. The __meminit attribute makes sure the
->> functions are kept in the kernel text post init, but only if memory
->> hotplugging is enabled for the build.
->>
->> Also, make sure that the altmap parameter is properly passed on to
->> vmemmap_populate_hugepages().
->>
->> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->> ---
->>  arch/riscv/include/asm/mmu.h     |  4 +--
->>  arch/riscv/include/asm/pgtable.h |  2 +-
->>  arch/riscv/mm/init.c             | 58 ++++++++++++++------------------
->>  3 files changed, 29 insertions(+), 35 deletions(-)
->>
->> diff --git a/arch/riscv/include/asm/mmu.h b/arch/riscv/include/asm/mmu.h
->> index 60be458e94da..c09c3c79f496 100644
->> --- a/arch/riscv/include/asm/mmu.h
->> +++ b/arch/riscv/include/asm/mmu.h
->> @@ -28,8 +28,8 @@ typedef struct {
->>  #endif
->>  } mm_context_t;
->>
->> -void __init create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_t p=
-a,
->> -                              phys_addr_t sz, pgprot_t prot);
->> +void __meminit create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_=
-t pa, phys_addr_t sz,
->> +                                 pgprot_t prot);
->>  #endif /* __ASSEMBLY__ */
->>
->>  #endif /* _ASM_RISCV_MMU_H */
->> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/p=
-gtable.h
->> index 58fd7b70b903..7933f493db71 100644
->> --- a/arch/riscv/include/asm/pgtable.h
->> +++ b/arch/riscv/include/asm/pgtable.h
->> @@ -162,7 +162,7 @@ struct pt_alloc_ops {
->>  #endif
->>  };
->>
->> -extern struct pt_alloc_ops pt_ops __initdata;
->> +extern struct pt_alloc_ops pt_ops __meminitdata;
->>
->>  #ifdef CONFIG_MMU
->>  /* Number of PGD entries that a user-mode program can use */
->> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->> index 5b8cdfafb52a..c969427eab88 100644
->> --- a/arch/riscv/mm/init.c
->> +++ b/arch/riscv/mm/init.c
->> @@ -295,7 +295,7 @@ static void __init setup_bootmem(void)
->>  }
->>
->>  #ifdef CONFIG_MMU
->> -struct pt_alloc_ops pt_ops __initdata;
->> +struct pt_alloc_ops pt_ops __meminitdata;
->>
->>  pgd_t swapper_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
->>  pgd_t trampoline_pg_dir[PTRS_PER_PGD] __page_aligned_bss;
->> @@ -357,7 +357,7 @@ static inline pte_t *__init get_pte_virt_fixmap(phys=
-_addr_t pa)
->>         return (pte_t *)set_fixmap_offset(FIX_PTE, pa);
->>  }
->>
->> -static inline pte_t *__init get_pte_virt_late(phys_addr_t pa)
->> +static inline pte_t *__meminit get_pte_virt_late(phys_addr_t pa)
->>  {
->>         return (pte_t *) __va(pa);
->>  }
->> @@ -376,7 +376,7 @@ static inline phys_addr_t __init alloc_pte_fixmap(ui=
-ntptr_t va)
->>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
->>  }
->>
->> -static phys_addr_t __init alloc_pte_late(uintptr_t va)
->> +static phys_addr_t __meminit alloc_pte_late(uintptr_t va)
->>  {
->>         struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL & ~__GFP_HI=
-GHMEM, 0);
->>
->> @@ -384,9 +384,8 @@ static phys_addr_t __init alloc_pte_late(uintptr_t v=
-a)
->>         return __pa((pte_t *)ptdesc_address(ptdesc));
->>  }
->>
->> -static void __init create_pte_mapping(pte_t *ptep,
->> -                                     uintptr_t va, phys_addr_t pa,
->> -                                     phys_addr_t sz, pgprot_t prot)
->> +static void __meminit create_pte_mapping(pte_t *ptep, uintptr_t va, phy=
-s_addr_t pa, phys_addr_t sz,
->> +                                        pgprot_t prot)
->>  {
->>         uintptr_t pte_idx =3D pte_index(va);
->>
->> @@ -440,7 +439,7 @@ static pmd_t *__init get_pmd_virt_fixmap(phys_addr_t=
- pa)
->>         return (pmd_t *)set_fixmap_offset(FIX_PMD, pa);
->>  }
->>
->> -static pmd_t *__init get_pmd_virt_late(phys_addr_t pa)
->> +static pmd_t *__meminit get_pmd_virt_late(phys_addr_t pa)
->>  {
->>         return (pmd_t *) __va(pa);
->>  }
->> @@ -457,7 +456,7 @@ static phys_addr_t __init alloc_pmd_fixmap(uintptr_t=
- va)
->>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
->>  }
->>
->> -static phys_addr_t __init alloc_pmd_late(uintptr_t va)
->> +static phys_addr_t __meminit alloc_pmd_late(uintptr_t va)
->>  {
->>         struct ptdesc *ptdesc =3D pagetable_alloc(GFP_KERNEL & ~__GFP_HI=
-GHMEM, 0);
->>
->> @@ -465,9 +464,9 @@ static phys_addr_t __init alloc_pmd_late(uintptr_t v=
-a)
->>         return __pa((pmd_t *)ptdesc_address(ptdesc));
->>  }
->>
->> -static void __init create_pmd_mapping(pmd_t *pmdp,
->> -                                     uintptr_t va, phys_addr_t pa,
->> -                                     phys_addr_t sz, pgprot_t prot)
->> +static void __meminit create_pmd_mapping(pmd_t *pmdp,
->> +                                        uintptr_t va, phys_addr_t pa,
->> +                                        phys_addr_t sz, pgprot_t prot)
->>  {
->>         pte_t *ptep;
->>         phys_addr_t pte_phys;
->> @@ -503,7 +502,7 @@ static pud_t *__init get_pud_virt_fixmap(phys_addr_t=
- pa)
->>         return (pud_t *)set_fixmap_offset(FIX_PUD, pa);
->>  }
->>
->> -static pud_t *__init get_pud_virt_late(phys_addr_t pa)
->> +static pud_t *__meminit get_pud_virt_late(phys_addr_t pa)
->>  {
->>         return (pud_t *)__va(pa);
->>  }
->> @@ -521,7 +520,7 @@ static phys_addr_t __init alloc_pud_fixmap(uintptr_t=
- va)
->>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
->>  }
->>
->> -static phys_addr_t alloc_pud_late(uintptr_t va)
->> +static phys_addr_t __meminit alloc_pud_late(uintptr_t va)
->>  {
->>         unsigned long vaddr;
->>
->> @@ -541,7 +540,7 @@ static p4d_t *__init get_p4d_virt_fixmap(phys_addr_t=
- pa)
->>         return (p4d_t *)set_fixmap_offset(FIX_P4D, pa);
->>  }
->>
->> -static p4d_t *__init get_p4d_virt_late(phys_addr_t pa)
->> +static p4d_t *__meminit get_p4d_virt_late(phys_addr_t pa)
->>  {
->>         return (p4d_t *)__va(pa);
->>  }
->> @@ -559,7 +558,7 @@ static phys_addr_t __init alloc_p4d_fixmap(uintptr_t=
- va)
->>         return memblock_phys_alloc(PAGE_SIZE, PAGE_SIZE);
->>  }
->>
->> -static phys_addr_t alloc_p4d_late(uintptr_t va)
->> +static phys_addr_t __meminit alloc_p4d_late(uintptr_t va)
->>  {
->>         unsigned long vaddr;
->>
->> @@ -568,9 +567,8 @@ static phys_addr_t alloc_p4d_late(uintptr_t va)
->>         return __pa(vaddr);
->>  }
->>
->> -static void __init create_pud_mapping(pud_t *pudp,
->> -                                     uintptr_t va, phys_addr_t pa,
->> -                                     phys_addr_t sz, pgprot_t prot)
->> +static void __meminit create_pud_mapping(pud_t *pudp, uintptr_t va, phy=
-s_addr_t pa, phys_addr_t sz,
->> +                                        pgprot_t prot)
->>  {
->>         pmd_t *nextp;
->>         phys_addr_t next_phys;
->> @@ -595,9 +593,8 @@ static void __init create_pud_mapping(pud_t *pudp,
->>         create_pmd_mapping(nextp, va, pa, sz, prot);
->>  }
->>
->> -static void __init create_p4d_mapping(p4d_t *p4dp,
->> -                                     uintptr_t va, phys_addr_t pa,
->> -                                     phys_addr_t sz, pgprot_t prot)
->> +static void __meminit create_p4d_mapping(p4d_t *p4dp, uintptr_t va, phy=
-s_addr_t pa, phys_addr_t sz,
->> +                                        pgprot_t prot)
->>  {
->>         pud_t *nextp;
->>         phys_addr_t next_phys;
->> @@ -653,9 +650,8 @@ static void __init create_p4d_mapping(p4d_t *p4dp,
->>  #define create_pmd_mapping(__pmdp, __va, __pa, __sz, __prot) do {} whil=
-e(0)
->>  #endif /* __PAGETABLE_PMD_FOLDED */
->>
->> -void __init create_pgd_mapping(pgd_t *pgdp,
->> -                                     uintptr_t va, phys_addr_t pa,
->> -                                     phys_addr_t sz, pgprot_t prot)
->> +void __meminit create_pgd_mapping(pgd_t *pgdp, uintptr_t va, phys_addr_=
-t pa, phys_addr_t sz,
->> +                                 pgprot_t prot)
->>  {
->>         pgd_next_t *nextp;
->>         phys_addr_t next_phys;
->> @@ -680,8 +676,7 @@ void __init create_pgd_mapping(pgd_t *pgdp,
->>         create_pgd_next_mapping(nextp, va, pa, sz, prot);
->>  }
->>
->> -static uintptr_t __init best_map_size(phys_addr_t pa, uintptr_t va,
->> -                                     phys_addr_t size)
->> +static uintptr_t __meminit best_map_size(phys_addr_t pa, uintptr_t va, =
-phys_addr_t size)
->>  {
->>         if (pgtable_l5_enabled &&
->>             !(pa & (P4D_SIZE - 1)) && !(va & (P4D_SIZE - 1)) && size >=
-=3D P4D_SIZE)
->> @@ -714,7 +709,7 @@ asmlinkage void __init __copy_data(void)
->>  #endif
->>
->>  #ifdef CONFIG_STRICT_KERNEL_RWX
->> -static __init pgprot_t pgprot_from_va(uintptr_t va)
->> +static __meminit pgprot_t pgprot_from_va(uintptr_t va)
->>  {
->>         if (is_va_kernel_text(va))
->>                 return PAGE_KERNEL_READ_EXEC;
->> @@ -739,7 +734,7 @@ void mark_rodata_ro(void)
->>                                   set_memory_ro);
->>  }
->>  #else
->> -static __init pgprot_t pgprot_from_va(uintptr_t va)
->> +static __meminit pgprot_t pgprot_from_va(uintptr_t va)
->>  {
->>         if (IS_ENABLED(CONFIG_64BIT) && !is_kernel_mapping(va))
->>                 return PAGE_KERNEL;
->> @@ -1231,9 +1226,8 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
->>         pt_ops_set_fixmap();
->>  }
->>
->> -static void __init create_linear_mapping_range(phys_addr_t start,
->> -                                              phys_addr_t end,
->> -                                              uintptr_t fixed_map_size)
->> +static void __meminit create_linear_mapping_range(phys_addr_t start, ph=
-ys_addr_t end,
->> +                                                 uintptr_t fixed_map_si=
-ze)
->>  {
->>         phys_addr_t pa;
->>         uintptr_t va, map_size;
->> @@ -1435,7 +1429,7 @@ int __meminit vmemmap_populate(unsigned long start=
-, unsigned long end, int node,
->>          * memory hotplug, we are not able to update all the page tables=
- with
->>          * the new PMDs.
->>          */
->> -       return vmemmap_populate_hugepages(start, end, node, NULL);
->> +       return vmemmap_populate_hugepages(start, end, node, altmap);
->
-> Is this a fix? Does this deserve to be split into another patch then?
+> This patchset proposes a new mseal() syscall for the Linux kernel.
 
-It's enablement. The altmap can't be used unless there's ZONE_DEVICE
-support AFAIU.
+I have not moved this into mm-stable for a 6.10 merge.  Mainly because
+of the total lack of Reviewed-by:s and Acked-by:s.
 
+The code appears to be stable enough for a merge.
 
-Bj=C3=B6rn
+It's awkward that we're in conference this week, but I ask people to
+give consideration to the desirability of moving mseal() into mainline
+sometime over the next week, please.
+
 
