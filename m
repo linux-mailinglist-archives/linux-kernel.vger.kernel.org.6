@@ -1,170 +1,179 @@
-Return-Path: <linux-kernel+bounces-179019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17668C5A94
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:52:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5023E8C5A96
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0EFE1C2127A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:52:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85982B21A3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4230D1802BF;
-	Tue, 14 May 2024 17:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CA51802C4;
+	Tue, 14 May 2024 17:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cBSn7cCs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GFP9iZDf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797682AD1C;
-	Tue, 14 May 2024 17:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B10D1802AA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 17:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715709166; cv=none; b=OUz46lMHrsOkgV/cFKapYTmPJ4YckLJAB91y/cFE+NmQdFVCWdTP+WAFoTbBkayLgdXb495Xgb8rOghIprWJN6BGZpLyCbIaj+K7/l/uZAmPyHy9aiUMIXsTdSb3V5l+gm0pisZICvyCzh2wZ3syAuROf8qWrDfZdt152xDnoIU=
+	t=1715709214; cv=none; b=ao0Ov5WoRDSJdXqIxVlmAQWZR+yKgG9YqmkRH11IvFSXsOg+skqB1h6o6BwKdwEu/D8HFWlTh/NGFDkowvaf3ln4hKLmk638iT3vb74js1tprsQ6dvqpCVC04+UmuWFUtyqf+v2fkyqhK0Sid/vqEXqDx7uW60+cF3cccrvzfBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715709166; c=relaxed/simple;
-	bh=qNjfAu4NG8Akw8mfYF0kzZEJKjB5jWGN4i5QOPlFrB8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GNlcULcK7uYlBPVGK8mdmUeBI50Vmt6jz5Dc92EiycdEj3jIrVfMyRjjmKm8yKaPo+Itxm59D4/NlGIGE1dkLrN2C2gmAN0mtdmw0zEBz1vfGt0L07+5z3vy+0aXljL0P8Jf15aPCbTZ5j7NcUzM1CiLodu/V/CR76P2Mp9r1j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cBSn7cCs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 162D2C2BD10;
-	Tue, 14 May 2024 17:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715709166;
-	bh=qNjfAu4NG8Akw8mfYF0kzZEJKjB5jWGN4i5QOPlFrB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cBSn7cCsiYFVHEcWWUE6cMnbPTvP4BFaM+w3KWH/7v//xyStDoT5EBv7cudLYy8Df
-	 GS3oSxPvx+AIHWGPD8rj7FXwF1CEquWs9hT99rG2N1LiJE+M7bQs34COp8B5FBiU3j
-	 72GxDJ/PYklcDkTyeA9oAYpOUepbHXsVoI/oKAE28SHZAhfnSnmbeSpU1UyZLBLeP4
-	 AQcdwsjGzh6P/aRKS6vta/ZCh1FTzUwNxrWoaeW1nmJQ26Y9YP2AdidzldlVngz0Ha
-	 tUUkpYrBtEzlMWYbMsOFKJOaYkP/f7OFVo/hJnFTLVWHVtH46pjKPmdKRgc8Ev54UZ
-	 eez/SBZ6fYYqQ==
-Date: Tue, 14 May 2024 18:52:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	valentina.fernandezalanis@microchip.com
-Subject: Re: [PATCH v2 1/3] spi: dt-bindings: Add num-cs property for mpfs-spi
-Message-ID: <20240514-parmesan-enslave-444763e785ff@spud>
-References: <20240514104508.938448-1-prajna.rajendrakumar@microchip.com>
- <20240514104508.938448-2-prajna.rajendrakumar@microchip.com>
+	s=arc-20240116; t=1715709214; c=relaxed/simple;
+	bh=FJaZmjT1hm0xa3Y4JcEKdowyRdIxVEbdxk+ZXFURNAI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-type; b=M+OJD4KM4loUBFRYlZhcKo8kZta/OJ7GWALPuHvzj+u5XWnox70puOAw2b54aQJj301k1qf7iV3e+vrXLixzdc2gGF3D+YnCiAi4quoC4RQV2no6K1n0RBqQtJ6jS0b3ZFl5d1UHCy38ouFMMSXKMoaNBxE4/11xUY44lXECX8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GFP9iZDf; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715709212;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=hA07+p0uKBTYe5MM+SIwGglBUwF6JyBwXXElS6xBHO8=;
+	b=GFP9iZDfKNaX6p4V/qtE3rIV+GkrEK/Ekm24hizx0WKOvhR/tXb5bnqVpNkBMwz7+Wf/Mk
+	HejCvUO6LWbSuiL3Au7VFd/s+k+iYcUxo2T3xcb91N3sGpWV8KTX4cC79NNeiZlc/UNofp
+	lJAlqxswhTHfbG//vY2ZA4tTZ9zWyIk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-253-X-Vf1AQEN72eU3Xt6z5nRA-1; Tue, 14 May 2024 13:53:29 -0400
+X-MC-Unique: X-Vf1AQEN72eU3Xt6z5nRA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5C960841C61;
+	Tue, 14 May 2024 17:53:28 +0000 (UTC)
+Received: from jmeneghi.bos.com (unknown [10.2.17.24])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id EEEFF400057;
+	Tue, 14 May 2024 17:53:26 +0000 (UTC)
+From: John Meneghini <jmeneghi@redhat.com>
+To: tj@kernel.org,
+	josef@toxicpanda.com,
+	axboe@kernel.dk,
+	kbusch@kernel.org,
+	hch@lst.de,
+	sagi@grimberg.me,
+	emilne@redhat.com,
+	hare@kernel.org
+Cc: linux-block@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	jmeneghi@redhat.com,
+	jrani@purestorage.com,
+	randyj@purestorage.com
+Subject: [PATCH v4 0/6] block,nvme: queue-depth and latency I/O schedulers
+Date: Tue, 14 May 2024 13:53:16 -0400
+Message-Id: <20240514175322.19073-1-jmeneghi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="l5DifMLtxko3ajhl"
-Content-Disposition: inline
-In-Reply-To: <20240514104508.938448-2-prajna.rajendrakumar@microchip.com>
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
+Changes since V3:
 
---l5DifMLtxko3ajhl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've included Ewan's queue-depth patches in this new series and rebased
+everything on to nvme-6.10.  Also addressed a few review comments and
+modified the commit headers.  The code is unchanged.
 
-On Tue, May 14, 2024 at 11:45:06AM +0100, Prajna Rajendra Kumar wrote:
-> The PolarFire SoC SPI "hard" controller supports eight CS lines, out of
-> which only one CS line is physically wired. The default value of
-> 'num-cs' was never set and it did not didn't impose a maximum value.
->=20
-> To reflect this hardware limitation in the device tree, the binding
-> enforces that the 'num-cs' property cannot exceed 1 unless additional
-> CS lines are explicitly defined using GPIO descriptors.
->=20
-> Fixes: 2da187304e55 ("spi: add bindings for microchip mpfs spi")
-> Signed-off-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-> ---
->  .../bindings/spi/microchip,mpfs-spi.yaml      | 29 +++++++++++++++++--
->  1 file changed, 26 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yam=
-l b/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
-> index 74a817cc7d94..ffa8d1b48f8b 100644
-> --- a/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
-> +++ b/Documentation/devicetree/bindings/spi/microchip,mpfs-spi.yaml
-> @@ -13,9 +13,6 @@ description:
->  maintainers:
->    - Conor Dooley <conor.dooley@microchip.com>
+Changes since V2:
 
-I provided the conditions below, so it's maybe a little disingenuous for
-me to provide a review from a dt-bindings correctness point of view, but
-then again I am the one listed as a maintainer for this particular
-binding and what's being done here does match the hardware, so:
+I've done quite a bit of work cleaning up these patches. There were a
+number of checkpatch.pl problems as well as some compile time errors
+when config BLK_NODE_LATENCY was turned off. After the clean up I
+rebased these patches onto Ewan's "nvme: queue-depth multipath iopolicy"
+patches. This allowed me to test both iopolicy changes together. 
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+All of my test results, together with the scripts I used to generate these
+graphs, are available at:
 
-Cheers,
-Conor.
+  https://github.com/johnmeneghini/iopolicy
 
+Please use the scripts in this repository to do your own testing.
 
-> =20
-> -allOf:
-> -  - $ref: spi-controller.yaml#
-> -
->  properties:
->    compatible:
->      oneOf:
-> @@ -43,6 +40,32 @@ required:
->    - interrupts
->    - clocks
-> =20
-> +allOf:
-> +  - $ref: spi-controller.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: microchip,mpfs-spi
-> +    then:
-> +      properties:
-> +        num-cs:
-> +          default: 1
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: microchip,mpfs-spi
-> +      not:
-> +        required:
-> +          - cs-gpios
-> +    then:
-> +      properties:
-> +        num-cs:
-> +          maximum: 1
-> +
->  unevaluatedProperties: false
-> =20
->  examples:
-> --=20
-> 2.25.1
->=20
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Changes since V1:
 
---l5DifMLtxko3ajhl
-Content-Type: application/pgp-signature; name="signature.asc"
+Hi all,
 
------BEGIN PGP SIGNATURE-----
+there had been several attempts to implement a latency-based I/O
+scheduler for native nvme multipath, all of which had its issues.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkOk6QAKCRB4tDGHoIJi
-0uJUAP4wXa6qR/dXqw/b2iphEzu9Bm1hdToleARl0CE/hfXq0gD+L6NBEDBLxgCv
-w/3GtTtJfnjoa2V5Ll1nAKLqgilP+w4=
-=MaCe
------END PGP SIGNATURE-----
+So time to start afresh, this time using the QoS framework
+already present in the block layer.
+It consists of two parts:
+- a new 'blk-nlatency' QoS module, which is just a simple per-node
+  latency tracker
+- a 'latency' nvme I/O policy
 
---l5DifMLtxko3ajhl--
+Using the 'tiobench' fio script with 512 byte blocksize I'm getting
+the following latencies (in usecs) as a baseline:
+- seq write: avg 186 stddev 331
+- rand write: avg 4598 stddev 7903
+- seq read: avg 149 stddev 65
+- rand read: avg 150 stddev 68
+
+Enabling the 'latency' iopolicy:
+- seq write: avg 178 stddev 113
+- rand write: avg 3427 stddev 6703
+- seq read: avg 140 stddev 59
+- rand read: avg 141 stddev 58
+
+Setting the 'decay' parameter to 10:
+- seq write: avg 182 stddev 65
+- rand write: avg 2619 stddev 5894
+- seq read: avg 142 stddev 57
+- rand read: avg 140 stddev 57  
+
+That's on a 32G FC testbed running against a brd target,
+fio running with 48 threads. So promises are met: latency
+goes down, and we're even able to control the standard
+deviation via the 'decay' parameter.
+
+As usual, comments and reviews are welcome.
+
+Changes to the original version:
+- split the rqos debugfs entries
+- Modify commit message to indicate latency
+- rename to blk-nlatency
+
+Ewan D. Milne (3):
+  nvme: multipath: Implemented new iopolicy "queue-depth"
+  nvme: multipath: only update ctrl->nr_active when using queue-depth
+    iopolicy
+  nvme: multipath: Invalidate current_path when changing iopolicy
+
+Hannes Reinecke (2):
+  block: track per-node I/O latency
+  nvme: add 'latency' iopolicy
+
+John Meneghini (1):
+  nvme: multipath: pr_notice when iopolicy changes
+
+ MAINTAINERS                   |   1 +
+ block/Kconfig                 |   9 +
+ block/Makefile                |   1 +
+ block/blk-mq-debugfs.c        |   2 +
+ block/blk-nlatency.c          | 389 ++++++++++++++++++++++++++++++++++
+ block/blk-rq-qos.h            |   6 +
+ drivers/nvme/host/core.c      |   2 +-
+ drivers/nvme/host/multipath.c | 143 ++++++++++++-
+ drivers/nvme/host/nvme.h      |   9 +
+ include/linux/blk-mq.h        |  11 +
+ 10 files changed, 563 insertions(+), 10 deletions(-)
+ create mode 100644 block/blk-nlatency.c
+
+-- 
+2.39.3
+
 
