@@ -1,155 +1,433 @@
-Return-Path: <linux-kernel+bounces-179270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABF28C5E33
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:54:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A678C5E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2ADB1C20F5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FD91F21DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA6E182CA9;
-	Tue, 14 May 2024 23:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17188182CB4;
+	Tue, 14 May 2024 23:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OpB8C0ff"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KVDdzGwW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E00E1E491;
-	Tue, 14 May 2024 23:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE019182C9F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715730881; cv=none; b=dN9lOCXaQFWfBtFifqCOMXTfStK/R5cvnz0IRDWnQNL3H9vtWp2kLNu3LmyS0f8F1rf2ob0TtQ3F8O275lH+QqXLsw94foUc2MxIciOzc80nN9dJR5UCJaqXYsfy0m0j1odhNKr+524grWdPaPyyY7r/Hm0syJCb/LitqLmxxSU=
+	t=1715731159; cv=none; b=pcAMFTEct+VeUY5KhziqIayu2DtfcURwqYofWmmbYhbin3C6clUqM/djeZUBoyRH+UXTwOOveId2HortepFS4Gq+pM1okNn4HqLzMyqbruHNwn65M5c3XTBP76EpK6BuvCcPBGKzVAOv/YFsh6/uBzO161oLcul5hRW0ootu0ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715730881; c=relaxed/simple;
-	bh=RjP5Ogn2C9mvxZm6Q859Jv0aQl8vHKC+bNk1Sz+BJSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KY+0J/EMrm9WflYpKWpSxGn/pvGkdzPHk7sISeeSTj63XTFDjO82mFa8hGsla4VyEDgw2ZuzXrsE9bwpL//hkekOimu9U2kUHhtmOSHlxk8kWsvfhQf3cvXM1h+UdH3SkKikqZlJASQ3PEw1eGoaI1B3XbmnRNFS6tWGWynESh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OpB8C0ff; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715730875;
-	bh=n+Lj6oCKZ019keo2Ewz/8zUIR6HzYkwEXKlNxnkZGY0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OpB8C0ff3cgFfXrmQqi8aogA87b0vsi0795pE9F0noH3M0ABEDRaSwa7TNA5i43ez
-	 QS1WhKFgsgPOfdVlqHeymSRixrNyMQ1EWL2WrXyg8Kq7rgu2KD4YTT0uAffUDe8lUl
-	 xfIJI9O/M5ClqWfpO+nyu6svQIBe6x+pm3DotdBKahO4rgd1FIlgvYovXHE/e6s3nk
-	 +x1xxzT75amgcTMDwpfytIIFJ2LLSwsBbr4UGx0klc2JViaTbhduyWkRnJ4ADEQaUh
-	 Jv+/bxNgltinH9sUtANiLXvl+oYzet4tatryHa561dUJcF5nLkfsVwRTSNlbW0VYxZ
-	 NBse3Pkvv6WTg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1715731159; c=relaxed/simple;
+	bh=OLUsyhVPhjEd42uMNoECDfh08GFpXNIywCe4kdBpf4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHFd0cW0+ex7GNgXaN6xYDu+CCm/I7oclklqbEqI45Gtbebo3apw5Cs/tOAB8trh8y/CHw5Rudha9PDc+BMcu2BVBG88Sx4Z82hGRhMK6/M3QvRWDBWnAWa9zC51w/xneUZVnmSOcZ2uLrqbMuEZWcAbbfiEKpEnGFOH19YU0SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KVDdzGwW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715731154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gsGXcq5SRCOdcCuxuUZi3nIuEQpczxVsVwRLQG1JRg8=;
+	b=KVDdzGwWvQrDHPQJQZTv/g30Kbl1UAT+MFTmZDbu8ellP7xGoDasq0SVVJNjwd50X/4ULo
+	INWeNUS7bpxytb1ZPQh2q7Un8/LtlIPRdD5dm4AcJFKHFqrAxxspavTWCpvkQXNnFV4Mrr
+	SnbxTSE2Ibr53VhEAxFdDuIdu7MRQ8U=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-49-GmpqE6tBNu2ScdfjY0WdpQ-1; Tue,
+ 14 May 2024 19:58:56 -0400
+X-MC-Unique: GmpqE6tBNu2ScdfjY0WdpQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfCrV6jh6z4wc1;
-	Wed, 15 May 2024 09:54:34 +1000 (AEST)
-Date: Wed, 15 May 2024 09:54:34 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the stm32 tree
-Message-ID: <20240515095434.34aa60ef@canb.auug.org.au>
-In-Reply-To: <20240514083304.0a8b368b@canb.auug.org.au>
-References: <20240430110428.30432b2f@canb.auug.org.au>
-	<20240514083304.0a8b368b@canb.auug.org.au>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A70C3380009F;
+	Tue, 14 May 2024 23:58:55 +0000 (UTC)
+Received: from lorien.usersys.redhat.com (unknown [10.22.10.26])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id F1D7F400059;
+	Tue, 14 May 2024 23:58:53 +0000 (UTC)
+Date: Tue, 14 May 2024 19:58:51 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] sched/rt: Clean up usage of rt_task()
+Message-ID: <20240514235851.GA6845@lorien.usersys.redhat.com>
+References: <20240514234112.792989-1-qyousef@layalina.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/mAn=v9xJ5NGl6X8E47POOmi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514234112.792989-1-qyousef@layalina.io>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
---Sig_/mAn=v9xJ5NGl6X8E47POOmi
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hi Qais,
 
-On Tue, 14 May 2024 08:33:04 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Tue, 30 Apr 2024 11:04:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-> > The following commits are also in the arm-soc tree as different
-> > commits (but the same patches):
-> >=20
-> >   0087ca056c73 ("arm64: dts: st: add all 8 i2c nodes on stm32mp251")
-> >   2886ab7437de ("arm64: dts: st: add rcc support for STM32MP25")
-> >   385ca8e3841f ("arm64: dts: st: add spi3 / spi8 properties on stm32mp2=
-57f-ev1"
-> > )
-> >   3e7d579c9fca ("ARM: dts: stm32: add ETZPC as a system bus for STM32MP=
-15x boar
-> > ds")
-> >   4ef09379d765 ("arm64: dts: st: add i2c2 / i2c8 properties on stm32mp2=
-57f-ev1"
-> > )
-> >   5e6b388d7bcb ("ARM: dts: stm32: move can3 node from stm32f746 to stm3=
-2f769")
-> >   7442597f90ba ("arm64: dts: st: add i2c2/i2c8 pins for stm32mp25")
-> >   7c12d95564a2 ("ARM: dts: stm32: add LTDC pinctrl on STM32MP13x SoC fa=
-mily")
-> >   7c3d4f99a920 ("ARM: dts: stm32: put ETZPC as an access controller for=
- STM32MP
-> > 15x boards")
-> >   808691f7389d ("media: dt-bindings: add access-controllers to STM32MP2=
-5 video=20
-> > codecs")
-> >   881bccce217e ("ARM: dts: stm32: add LTDC support for STM32MP13x SoC f=
-amily")
-> >   8fe31699b83d ("bus: stm32_firewall: fix off by one in stm32_firewall_=
-get_firewall()")
-> >   9e716b41a2b5 ("arm64: dts: st: add RIFSC as an access controller for =
-STM32MP25x boards")
-> >   a012bd75abf6 ("ARM: dts: stm32: enable display support on stm32mp135f=
--dk board")
-> >   aee0ce48516c ("arm64: dts: st: add spi3/spi8 pins for stm32mp25")
-> >   be62e9c0c3fc ("bus: etzpc: introduce ETZPC firewall controller driver=
-")
-> >   c7f2f2c0ace8 ("ARM: dts: stm32: add heartbeat led for stm32mp157c-ed1=
-")
-> >   cab43766e000 ("ARM: dts: stm32: add ETZPC as a system bus for STM32MP=
-13x boards")
-> >   d3740a9fd78c ("dt-bindings: display: simple: allow panel-common prope=
-rties")
-> >   dccdbccb7045 ("arm64: dts: st: correct masks for GIC PPI interrupts o=
-n stm32mp25")
-> >   de9b447d5678 ("ARM: dts: stm32: put ETZPC as an access controller for=
- STM32MP13x boards")
-> >   ede58756bbe5 ("arm64: dts: st: add all 8 spi nodes on stm32mp251")
-> >   f798f7079233 ("ARM: dts: stm32: add PWR regulators support on stm32mp=
-131") =20
->=20
-> Those commits are now duplicates of commits in Linus' tree.
+On Wed, May 15, 2024 at 12:41:12AM +0100 Qais Yousef wrote:
+> rt_task() checks if a task has RT priority. But depends on your
+> dictionary, this could mean it belongs to RT class, or is a 'realtime'
+> task, which includes RT and DL classes.
+> 
+> Since this has caused some confusion already on discussion [1], it
+> seemed a clean up is due.
+> 
+> I define the usage of rt_task() to be tasks that belong to RT class.
+> Make sure that it returns true only for RT class and audit the users and
+> replace them with the new realtime_task() which returns true for RT and
+> DL classes - the old behavior. Introduce similar realtime_prio() to
+> create similar distinction to rt_prio() and update the users.
 
-And are now causing unnecessary conflicts in linux-next :-(
+I think making the difference clear is good. However, I think rt_task() is
+a better name. We have dl_task() still.  And rt tasks are things managed
+by rt.c, basically. Not realtime.c :)  I know that doesn't work for deadline.c
+and dl_ but this change would be the reverse of that pattern.
 
---=20
+> 
+> Move MAX_DL_PRIO to prio.h so it can be used in the new definitions.
+> 
+> Document the functions to make it more obvious what is the difference
+> between them. PI-boosted tasks is a factor that must be taken into
+> account when choosing which function to use.
+> 
+> Rename task_is_realtime() to task_has_realtime_policy() as the old name
+> is confusing against the new realtime_task().
+
+Keeping it rt_task() above could mean this stays as it was but this
+change makes sense as you have written it too. 
+
+
+
 Cheers,
-Stephen Rothwell
+Phil
 
---Sig_/mAn=v9xJ5NGl6X8E47POOmi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+> No functional changes were intended.
+> 
+> [1] https://lore.kernel.org/lkml/20240506100509.GL40213@noisy.programming.kicks-ass.net/
+> 
+> Signed-off-by: Qais Yousef <qyousef@layalina.io>
+> ---
+>  fs/select.c                       |  2 +-
+>  include/linux/ioprio.h            |  2 +-
+>  include/linux/sched/deadline.h    |  6 ++++--
+>  include/linux/sched/prio.h        |  1 +
+>  include/linux/sched/rt.h          | 27 ++++++++++++++++++++++++++-
+>  kernel/locking/rtmutex.c          |  4 ++--
+>  kernel/locking/rwsem.c            |  4 ++--
+>  kernel/locking/ww_mutex.h         |  2 +-
+>  kernel/sched/core.c               |  6 +++---
+>  kernel/time/hrtimer.c             |  6 +++---
+>  kernel/trace/trace_sched_wakeup.c |  2 +-
+>  mm/page-writeback.c               |  4 ++--
+>  mm/page_alloc.c                   |  2 +-
+>  13 files changed, 48 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/select.c b/fs/select.c
+> index 9515c3fa1a03..8d5c1419416c 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -82,7 +82,7 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
+>  	 * Realtime tasks get a slack of 0 for obvious reasons.
+>  	 */
+>  
+> -	if (rt_task(current))
+> +	if (realtime_task(current))
+>  		return 0;
+>  
+>  	ktime_get_ts64(&now);
+> diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
+> index db1249cd9692..6c00342b6166 100644
+> --- a/include/linux/ioprio.h
+> +++ b/include/linux/ioprio.h
+> @@ -40,7 +40,7 @@ static inline int task_nice_ioclass(struct task_struct *task)
+>  {
+>  	if (task->policy == SCHED_IDLE)
+>  		return IOPRIO_CLASS_IDLE;
+> -	else if (task_is_realtime(task))
+> +	else if (task_has_realtime_policy(task))
+>  		return IOPRIO_CLASS_RT;
+>  	else
+>  		return IOPRIO_CLASS_BE;
+> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+> index df3aca89d4f5..5cb88b748ad6 100644
+> --- a/include/linux/sched/deadline.h
+> +++ b/include/linux/sched/deadline.h
+> @@ -10,8 +10,6 @@
+>  
+>  #include <linux/sched.h>
+>  
+> -#define MAX_DL_PRIO		0
+> -
+>  static inline int dl_prio(int prio)
+>  {
+>  	if (unlikely(prio < MAX_DL_PRIO))
+> @@ -19,6 +17,10 @@ static inline int dl_prio(int prio)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Returns true if a task has a priority that belongs to DL class. PI-boosted
+> + * tasks will return true. Use dl_policy() to ignore PI-boosted tasks.
+> + */
+>  static inline int dl_task(struct task_struct *p)
+>  {
+>  	return dl_prio(p->prio);
+> diff --git a/include/linux/sched/prio.h b/include/linux/sched/prio.h
+> index ab83d85e1183..6ab43b4f72f9 100644
+> --- a/include/linux/sched/prio.h
+> +++ b/include/linux/sched/prio.h
+> @@ -14,6 +14,7 @@
+>   */
+>  
+>  #define MAX_RT_PRIO		100
+> +#define MAX_DL_PRIO		0
+>  
+>  #define MAX_PRIO		(MAX_RT_PRIO + NICE_WIDTH)
+>  #define DEFAULT_PRIO		(MAX_RT_PRIO + NICE_WIDTH / 2)
+> diff --git a/include/linux/sched/rt.h b/include/linux/sched/rt.h
+> index b2b9e6eb9683..b31be3c50152 100644
+> --- a/include/linux/sched/rt.h
+> +++ b/include/linux/sched/rt.h
+> @@ -7,18 +7,43 @@
+>  struct task_struct;
+>  
+>  static inline int rt_prio(int prio)
+> +{
+> +	if (unlikely(prio < MAX_RT_PRIO && prio >= MAX_DL_PRIO))
+> +		return 1;
+> +	return 0;
+> +}
+> +
+> +static inline int realtime_prio(int prio)
+>  {
+>  	if (unlikely(prio < MAX_RT_PRIO))
+>  		return 1;
+>  	return 0;
+>  }
+>  
+> +/*
+> + * Returns true if a task has a priority that belongs to RT class. PI-boosted
+> + * tasks will return true. Use rt_policy() to ignore PI-boosted tasks.
+> + */
+>  static inline int rt_task(struct task_struct *p)
+>  {
+>  	return rt_prio(p->prio);
+>  }
+>  
+> -static inline bool task_is_realtime(struct task_struct *tsk)
+> +/*
+> + * Returns true if a task has a priority that belongs to RT or DL classes.
+> + * PI-boosted tasks will return true. Use task_has_realtime_policy() to ignore
+> + * PI-boosted tasks.
+> + */
+> +static inline int realtime_task(struct task_struct *p)
+> +{
+> +	return realtime_prio(p->prio);
+> +}
+> +
+> +/*
+> + * Returns true if a task has a policy that belongs to RT or DL classes.
+> + * PI-boosted tasks will return false.
+> + */
+> +static inline bool task_has_realtime_policy(struct task_struct *tsk)
+>  {
+>  	int policy = tsk->policy;
+>  
+> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+> index 88d08eeb8bc0..55c9dab37f33 100644
+> --- a/kernel/locking/rtmutex.c
+> +++ b/kernel/locking/rtmutex.c
+> @@ -347,7 +347,7 @@ static __always_inline int __waiter_prio(struct task_struct *task)
+>  {
+>  	int prio = task->prio;
+>  
+> -	if (!rt_prio(prio))
+> +	if (!realtime_prio(prio))
+>  		return DEFAULT_PRIO;
+>  
+>  	return prio;
+> @@ -435,7 +435,7 @@ static inline bool rt_mutex_steal(struct rt_mutex_waiter *waiter,
+>  	 * Note that RT tasks are excluded from same priority (lateral)
+>  	 * steals to prevent the introduction of an unbounded latency.
+>  	 */
+> -	if (rt_prio(waiter->tree.prio) || dl_prio(waiter->tree.prio))
+> +	if (realtime_prio(waiter->tree.prio))
+>  		return false;
+>  
+>  	return rt_waiter_node_equal(&waiter->tree, &top_waiter->tree);
+> diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+> index c6d17aee4209..ad8d4438bc91 100644
+> --- a/kernel/locking/rwsem.c
+> +++ b/kernel/locking/rwsem.c
+> @@ -631,7 +631,7 @@ static inline bool rwsem_try_write_lock(struct rw_semaphore *sem,
+>  			 * if it is an RT task or wait in the wait queue
+>  			 * for too long.
+>  			 */
+> -			if (has_handoff || (!rt_task(waiter->task) &&
+> +			if (has_handoff || (!realtime_task(waiter->task) &&
+>  					    !time_after(jiffies, waiter->timeout)))
+>  				return false;
+>  
+> @@ -914,7 +914,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+>  		if (owner_state != OWNER_WRITER) {
+>  			if (need_resched())
+>  				break;
+> -			if (rt_task(current) &&
+> +			if (realtime_task(current) &&
+>  			   (prev_owner_state != OWNER_WRITER))
+>  				break;
+>  		}
+> diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
+> index 3ad2cc4823e5..fa4b416a1f62 100644
+> --- a/kernel/locking/ww_mutex.h
+> +++ b/kernel/locking/ww_mutex.h
+> @@ -237,7 +237,7 @@ __ww_ctx_less(struct ww_acquire_ctx *a, struct ww_acquire_ctx *b)
+>  	int a_prio = a->task->prio;
+>  	int b_prio = b->task->prio;
+>  
+> -	if (rt_prio(a_prio) || rt_prio(b_prio)) {
+> +	if (realtime_prio(a_prio) || realtime_prio(b_prio)) {
+>  
+>  		if (a_prio > b_prio)
+>  			return true;
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 1a914388144a..27f15de3d099 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -162,7 +162,7 @@ static inline int __task_prio(const struct task_struct *p)
+>  	if (p->sched_class == &stop_sched_class) /* trumps deadline */
+>  		return -2;
+>  
+> -	if (rt_prio(p->prio)) /* includes deadline */
+> +	if (realtime_prio(p->prio)) /* includes deadline */
+>  		return p->prio; /* [-1, 99] */
+>  
+>  	if (p->sched_class == &idle_sched_class)
+> @@ -2198,7 +2198,7 @@ static int effective_prio(struct task_struct *p)
+>  	 * keep the priority unchanged. Otherwise, update priority
+>  	 * to the normal priority:
+>  	 */
+> -	if (!rt_prio(p->prio))
+> +	if (!realtime_prio(p->prio))
+>  		return p->normal_prio;
+>  	return p->prio;
+>  }
+> @@ -10282,7 +10282,7 @@ void normalize_rt_tasks(void)
+>  		schedstat_set(p->stats.sleep_start, 0);
+>  		schedstat_set(p->stats.block_start, 0);
+>  
+> -		if (!dl_task(p) && !rt_task(p)) {
+> +		if (!realtime_task(p)) {
+>  			/*
+>  			 * Renice negative nice level userspace
+>  			 * tasks back to 0:
+> diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+> index 70625dff62ce..4150e98847fa 100644
+> --- a/kernel/time/hrtimer.c
+> +++ b/kernel/time/hrtimer.c
+> @@ -1996,7 +1996,7 @@ static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
+>  	 * expiry.
+>  	 */
+>  	if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> -		if (task_is_realtime(current) && !(mode & HRTIMER_MODE_SOFT))
+> +		if (task_has_realtime_policy(current) && !(mode & HRTIMER_MODE_SOFT))
+>  			mode |= HRTIMER_MODE_HARD;
+>  	}
+>  
+> @@ -2096,7 +2096,7 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtimer_mode mode,
+>  	u64 slack;
+>  
+>  	slack = current->timer_slack_ns;
+> -	if (rt_task(current))
+> +	if (realtime_task(current))
+>  		slack = 0;
+>  
+>  	hrtimer_init_sleeper_on_stack(&t, clockid, mode);
+> @@ -2301,7 +2301,7 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
+>  	 * Override any slack passed by the user if under
+>  	 * rt contraints.
+>  	 */
+> -	if (rt_task(current))
+> +	if (realtime_task(current))
+>  		delta = 0;
+>  
+>  	hrtimer_init_sleeper_on_stack(&t, clock_id, mode);
+> diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+> index 0469a04a355f..19d737742e29 100644
+> --- a/kernel/trace/trace_sched_wakeup.c
+> +++ b/kernel/trace/trace_sched_wakeup.c
+> @@ -545,7 +545,7 @@ probe_wakeup(void *ignore, struct task_struct *p)
+>  	 *  - wakeup_dl handles tasks belonging to sched_dl class only.
+>  	 */
+>  	if (tracing_dl || (wakeup_dl && !dl_task(p)) ||
+> -	    (wakeup_rt && !dl_task(p) && !rt_task(p)) ||
+> +	    (wakeup_rt && !realtime_task(p)) ||
+>  	    (!dl_task(p) && (p->prio >= wakeup_prio || p->prio >= current->prio)))
+>  		return;
+>  
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 3e19b87049db..7372e40f225d 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -418,7 +418,7 @@ static void domain_dirty_limits(struct dirty_throttle_control *dtc)
+>  	if (bg_thresh >= thresh)
+>  		bg_thresh = thresh / 2;
+>  	tsk = current;
+> -	if (rt_task(tsk)) {
+> +	if (realtime_task(tsk)) {
+>  		bg_thresh += bg_thresh / 4 + global_wb_domain.dirty_limit / 32;
+>  		thresh += thresh / 4 + global_wb_domain.dirty_limit / 32;
+>  	}
+> @@ -468,7 +468,7 @@ static unsigned long node_dirty_limit(struct pglist_data *pgdat)
+>  	else
+>  		dirty = vm_dirty_ratio * node_memory / 100;
+>  
+> -	if (rt_task(tsk))
+> +	if (realtime_task(tsk))
+>  		dirty += dirty / 4;
+>  
+>  	return dirty;
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 14d39f34d336..0af24a60ade0 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -3877,7 +3877,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
+>  		 */
+>  		if (alloc_flags & ALLOC_MIN_RESERVE)
+>  			alloc_flags &= ~ALLOC_CPUSET;
+> -	} else if (unlikely(rt_task(current)) && in_task())
+> +	} else if (unlikely(realtime_task(current)) && in_task())
+>  		alloc_flags |= ALLOC_MIN_RESERVE;
+>  
+>  	alloc_flags = gfp_to_alloc_flags_cma(gfp_mask, alloc_flags);
+> -- 
+> 2.34.1
+> 
+> 
 
------BEGIN PGP SIGNATURE-----
+-- 
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZD+boACgkQAVBC80lX
-0GzF9wf/dWUygEjf52Y8WZglnvyYs/xwJooOjUwQuJ8tx0S5mBCYSviFXPB+V4c+
-WIivNNJ2k4LTo9tZCtliG7YkK819UYCGFfVIYNoyKE8ZDttHf22Ps+OSTtbH5kT0
-sfYS/5hkHw5Q8INiF93u/bhLexXr9eErkrTNOmFNPmu6LJ5OVHuxf6cBsmF8NXHk
-DJ8zDRgzds9AKhVI5lWQOe41h/zC9ZsIvmzdVmTvJZJ1c5c5pfLVR+7mfkglhwrT
-w5wJDGo2FTQ/ujmknIKbDSXHwoDM06DaJtMSmmCc3J3MLDoJhXH2m3Kw2aj0ixPf
-Ds7GHi1AbhYhufExxaW9sS9Y13O+2A==
-=QKp/
------END PGP SIGNATURE-----
-
---Sig_/mAn=v9xJ5NGl6X8E47POOmi--
 
