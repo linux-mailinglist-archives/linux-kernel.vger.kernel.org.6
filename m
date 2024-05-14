@@ -1,115 +1,134 @@
-Return-Path: <linux-kernel+bounces-178692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6378C567F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:05:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D8D8C5687
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF2A1C21FD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:05:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBCD3B218E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1C8140E50;
-	Tue, 14 May 2024 13:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0A1411CC;
+	Tue, 14 May 2024 13:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bH0xkm4z"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j21QyHbX"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DE612E75;
-	Tue, 14 May 2024 13:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E652B13FD9D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715691925; cv=none; b=jsO7VgXKx/aVkyMkgzzlrtBAtsigDGkEJNb2gNtCbRqGurn98fvbbbcXsNh8VEP+YQGq4NERYGD53p5o0Ysz6XIriA9a68PK8Jn+WunU4BA4N1u302bMjCjnsUa571Q1gpB8v2V5cJItExOYrslrstCpKlkyno93Em+qgNii9Nw=
+	t=1715692129; cv=none; b=nRLKB6xmwYNYkgSADQsv2upUSbBKuhbZPxf10qrZMMGfUxahlvoTaZ1tQOBa+oVnr6RMQPRxvuolrQTynX8N6V4lB1ponCSBg4bEwzwx1GpZQcU95FbfQ9i5mMc2+Kl4UaIfo9GnM2PIUyHqBniS8pWBZL7yFZQqCqQQLGmT2pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715691925; c=relaxed/simple;
-	bh=+Z6R1uNsAOJ+8G02CVd/I1z60HSnWhvLdgPhe1ovvuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IrsdVR9j1kR1kkmDOWHrZK0VXuLdHa+pQRAWU5CgiHoUXC97eAopp3NYQHhe/ZjwqtAbGCtNe/lcNaNQNFXsScDy3lmLYr2Ir0uMKz9GhYMt2nNQR78CydoWm/p5rTYK7sEuhsxx+4wXhOj2UlgwX72VclchBj5Kmeeq/7bfqOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bH0xkm4z; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=dQfWTLYhPweRfGZN+ci+uPjT2T2ohypaGEMZ89n1Fv0=; b=bH0xkm4zsM5ql2lAREgIz9IfKW
-	fqPf1Y/9t6zJUfue1FE8netIA9JAJQtssgIN1q+6l8rG3OrJakWMaTHtuMLu/2YLdvEjzMe/ujibJ
-	XlJ/VniPCoFsoP1IeaWpxIOSEVo00TWDYuMmPcocYKuG3DxcMe9gVVDPoPIa/nQKnMLzXqSNTK90K
-	6gsBDJECghMsXAhf/iRaHaHmiK6Zi30rAZ2xFFKkA34mlud0DXi2A66UFqG2W4HGHfKWBEISXiNn+
-	NOJBF5zhBP44bV3b+fn2WGXT1U80nnym83c5jojreePi2zgW6qhKubaJLJnZzTZgKKUW1xiGMdZ0K
-	n19023Eg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43384)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s6rq2-0002zA-2U;
-	Tue, 14 May 2024 14:05:02 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s6rq1-00074q-WC; Tue, 14 May 2024 14:05:02 +0100
-Date: Tue, 14 May 2024 14:05:01 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Ravi Gunasekaran <r-gunasekaran@ti.com>
-Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
-Message-ID: <ZkNhfXYxFTdB+weJ@shell.armlinux.org.uk>
-References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
- <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
+	s=arc-20240116; t=1715692129; c=relaxed/simple;
+	bh=ZcblkuDSMv7tvtn/vseBea9lWN9fs5R+BIKAqQHnsjM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bnK9yC91Q2RXLIbfoqd1xQykHDMZbA0bfcUilm4XGag4pIVVdfDH2Lq9+ITjDvuRGshnbAoSQX2Ys0lvgmoFP+viqlkkRMD9g09iD2VRUs5MKaZlCVm/eJOn+5aaYADU7oF4U/a3OtR9ty9xXD9kY4V/wLcZerNWsP/AxiOqdN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j21QyHbX; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5a4bc9578cso7032866b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715692126; x=1716296926; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zeT6KnLVfhQXaqC3Lu4DkuZNlc4YLw9XtuNUDZ2X/BE=;
+        b=j21QyHbXXZCSqc50bIZmrSoW8YkiXvRWX4oxNyXkFDVYImoS99hwMNKXNR1GQyFAOd
+         P9O39C8Oc5kPYNgTrh0IhUfP33lzlNmtQeMPkaZ0kVxhQ8YLGf3k1vxOxO7THJ59wJJ+
+         c2UyZNaVhpexrk+uP3a750SWDLTTFqvSFIod1Zr+Xl9+JNj5ZpYomptYLB1nvOM2qpm+
+         rbW330r5k/YTzOyc1eY+pTDF8ixavbkb0Bp+P8gQd2oyVS/YOFRvK7lBsbGcNk3vJcC/
+         Lp2xR8Qkqy0WPN/ZcdItUZpNHbJVlD6542iUjrorQTDTebVTAYSawCYm0jXfP/q90/px
+         W+Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715692126; x=1716296926;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zeT6KnLVfhQXaqC3Lu4DkuZNlc4YLw9XtuNUDZ2X/BE=;
+        b=XrDLcG8Cfz6MDjqeCgz+5IN9IpKcFTzHuDX6/0eraUCB5ENwqwLibqdTn18YaOF36P
+         39DYgZEBv/ZwRltsclhRXKr3YNhquLRlcatub+uGlKrzOCKuCknQHPcWuk9AXQxphtlL
+         6s7Wge3RHxELzXZbCoEzy1CGyI3MY0lMtYKaagXYAsBYMHW93EdG6zfcv1jIekFr7NzY
+         Npjxg70jeidO/YaeIib+lI8u5TmD1GDNo8BsX9FA/j35FuMdzJ8ieBf1uThcWYIb3844
+         6DA7mRFhRlgGJzEdGvJjFgUNvwN6A/JphAPf0aPC76teS+e+F4ETi1qG2r8bTAKnH12t
+         Sjvw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8i0FeHxBWIQeBcCeZkv8ifYpwODYMHV/Axzzx3v3Ty63iPj+DCc4ag8z24V/kXcxVvaeoMXJGU7dhmwx86psGOD9qF6TXyTfsc0nH
+X-Gm-Message-State: AOJu0Yw2T7TtKjutFY0npHlCI1LhBdS3woQEReaiqUsGm2USkAzjyfkW
+	W24wkeC+x+0p8mwFWYV8YRco5ANKu8ae82fEoi2ygkGWEodywYZ/hzyUzaJDUA==
+X-Google-Smtp-Source: AGHT+IEyW5wWXcI0YcuMfRPEURlz7RUMcwyj0jHYGuOT5hpqOwAsP8E1/EwXva+mlyTkLrd58nrF6A==
+X-Received: by 2002:a17:906:fe07:b0:a5a:81b0:a6a9 with SMTP id a640c23a62f3a-a5a81b0a73cmr290104466b.53.1715692126068;
+        Tue, 14 May 2024 06:08:46 -0700 (PDT)
+Received: from [127.0.1.1] ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cf91sm719572466b.1.2024.05.14.06.08.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 06:08:45 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/2] arm64: dts: qcom: Use 'ufshc' as the node name for UFS
+ controller nodes
+Date: Tue, 14 May 2024 15:08:39 +0200
+Message-Id: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFdiQ2YC/x2MQQqAIBAAvyJ7bsFMi/pKdDDbag9ZKEUg/j3pO
+ AMzCSIFpgiDSBDo4cinL1BXAtxu/UbIS2FQUmlpao33GtGfC3l7EK78opZtp2Zn+sYaKNkVqOh
+ /OU45fwYcUmZiAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
+ Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>, 
+ cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1214;
+ i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
+ bh=ZcblkuDSMv7tvtn/vseBea9lWN9fs5R+BIKAqQHnsjM=;
+ b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmQ2JcaJ9euCKId9vPpWsFIdRS2FdM2R5vL6pDl
+ fZWwIiROd2JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZkNiXAAKCRBVnxHm/pHO
+ 9edqCACDqoqsYSw6t2XP/npVZcwSA/XSunW2FkD4mEAfxYKrhfV3MRmsTne0zbB8MSwnmO2r/YJ
+ bf4ZgALL1+P8RkSSRRNQ+0Ly7z08Jb435scJlJVskteLH+clh5Z4CCVxrUFXMhKLOCERZyMJhJB
+ ww2GNgy15M0ewcoqe78aMj9zM0Rc0aA12NlXs643WJG16wH4Fyi62fiDW/D89seZut7pG64Vfhv
+ 97fdlqGmup6lNtv44Vfe1g1wK75VpWHTdVKh3bZlor9Ou9oMgEFTYz02/HXKsn637qoM2Jrn6vG
+ IKG7v4vL/N60ZvTXWG5BGrGWz5aR5t8l1gN/1QFjMkkHA5AB
+X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
+ fpr=C668AEC3C3188E4C611465E7488550E901166008
 
-On Tue, May 14, 2024 at 02:27:28PM +0200, Thomas Gessler wrote:
-> The PHY supports multiple modes of which not all are properly
-> implemented by the driver. In the case of the RGMII-to-SGMII and
-> 1000BASE-X modes, this was primarily due to the use of non-standard
-> registers for auto-negotiation settings and link status. This patch adds
-> device-specific get_features(), config_aneg(), aneg_done(), and
-> read_status() functions for these modes. They are based on the genphy_*
-> versions with the correct registers and fall back to the genphy_*
-> versions for other modes.
+Devicetree binding has documented the node name for UFS controllers as
+'ufshc'. So let's use it instead of 'ufs' which is for the UFS devices.
 
-I'm reading this, and wondering... do you have a use case for this,
-or are you adding it because "the PHY supports this" ?
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+Manivannan Sadhasivam (2):
+      dt-bindings: ufs: qcom: Use 'ufshc' as the node name for UFS controller nodes
+      arm64: dts: qcom: Use 'ufshc' as the node name for UFS controller nodes
 
-> The RGMII-to-SGMII mode is special, because the chip does not really act
-> as a PHY in this mode but rather as a bridge. It requires a connected
-> SGMII PHY and gets the negotiated speed and duplex from it through SGMII
-> auto-negotiation. To use the DP83869 as a virtual PHY, we assume that
-> the connected SGMII PHY supports 10/100/1000M half/full duplex and
-> therefore support and always advertise those settings.
+ Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 +-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi               | 2 +-
+ arch/arm64/boot/dts/qcom/sc7280.dtsi                | 2 +-
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi              | 4 ++--
+ arch/arm64/boot/dts/qcom/sm6115.dtsi                | 2 +-
+ arch/arm64/boot/dts/qcom/sm6125.dtsi                | 2 +-
+ arch/arm64/boot/dts/qcom/sm6350.dtsi                | 2 +-
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                | 2 +-
+ arch/arm64/boot/dts/qcom/sm8650.dtsi                | 2 +-
+ 9 files changed, 10 insertions(+), 10 deletions(-)
+---
+base-commit: 4cece764965020c22cff7665b18a012006359095
+change-id: 20240514-ufs-nodename-fix-40672bc593a5
 
-I call this configuration a "stacked PHY" system, and you're right that
-it's a setup that we have no support for at the moment. We assume that
-there is exactly one PHY in each network device.
-
-I think we would need a lot of re-architecting of the phylib <-> netdev
-linkage to allow stacked PHY systems to work sensibly.
-
-If you don't have a use case for this, then it would be better not to
-add support for it at this stage, otherwise it may restrict what we can
-do in the future when coming up with a solution for stacked PHY support.
-Alternatively, you may wish to discuss this topic and work on a
-solution.
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
 
