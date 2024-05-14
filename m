@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-178793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C158C57BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:11:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82648C57C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184FEB21C4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C34D1F22F93
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE1145339;
-	Tue, 14 May 2024 14:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F67144D2C;
+	Tue, 14 May 2024 14:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="piHCb5b/";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kziy3ax8"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRHLFM1O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7601448FA;
-	Tue, 14 May 2024 14:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA991448FA;
+	Tue, 14 May 2024 14:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715695879; cv=none; b=Eg4tmcb7wGy3uaj3ZSkVvlRD/RkLCcVUEBiiD+dIIbiMBonTAfzdntmyiMMFibKP0EZhPQ9y/mGojF8Y+sesrgQ/G1YJahPm7l1nfBJDH7JU9E1vdSfzoycmFp9gQh4E11jwrbadjuCOO42WOGjBqefmHqzduQZ8jbaz2iBS3ww=
+	t=1715696049; cv=none; b=BGAsBzSjfL2bDHvOCDzP/ZWIZFMrXGtAUenP37dUiW0Y/F/KY/ebEk9TDl/0Fvwf3lP6+/ov27AVKzY/eFdQWrqiaeTaOUkYnWY3xt2xk3Ya+GLGCRT0jhmpr7AhWZFul2OFbUM35I/N/TNV8t7zBsBIyjika0IOtpelohvtTpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715695879; c=relaxed/simple;
-	bh=r2Nahr78aiF4tYkW2zYCQNncVvwBxFAGr+UJ6/ZGIpQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CrpA+40uF/ymOTsa01lMp+3UgDPErTLJUeFFazpRyCMqJ8yutl20d/n5NfXcAm+WmUM20Sk3L2moSw2RPna0YdRKZHTn3h0bDwS1kTTp042JOCzqYLeAQsr3ESak2WP6JiAL2N0Rd/PqXuuq56MgZvMPeJ8luDTZLkNRpo7eBWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=piHCb5b/; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=kziy3ax8; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1715695876;
-	bh=r2Nahr78aiF4tYkW2zYCQNncVvwBxFAGr+UJ6/ZGIpQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=piHCb5b/FbG2smVbhene+15kh7ccoAWtS0G1EBGOXMvkKz3H+P17VYYbce7LNU36R
-	 Sfkh62GBisH1D/e1Nv1e1vm5lmzMJrYHFLlaRWHRGM4v0PBUVSJZ/6xLEC6wAIcgv3
-	 69Yzt56BlomtSbofrZ0YqStcBc8iH2YwMVeyd9Tk=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id F3D361286A24;
-	Tue, 14 May 2024 10:11:15 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id bzeQuPRiwXnQ; Tue, 14 May 2024 10:11:15 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1715695875;
-	bh=r2Nahr78aiF4tYkW2zYCQNncVvwBxFAGr+UJ6/ZGIpQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=kziy3ax8L7uocRtXywqUBFk1VaQX82be3dHcg8Pj/W39cUuGMHZAUICRLO4GWdrbV
-	 nQ9VrRis55hVDLdW502b9Pf/X5UAVNmGrRUIbVL8hXLFs3OXG5865se3L5XB6AqE8i
-	 rW9AcgLO4o6Pt+zHhNfb6tzF0x/E+WFxNUJ5z69Y=
-Received: from [172.21.4.27] (unknown [50.204.89.33])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BCCA31286A09;
-	Tue, 14 May 2024 10:11:10 -0400 (EDT)
-Message-ID: <b53f9fa263e65cd6b23677d9f7a385e5eb85cfdd.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Ignat Korchagin <ignat@cloudflare.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Ben Boeckel <me@benboeckel.net>, 
- Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Paul
- Moore <paul@paul-moore.com>,  James Morris <jmorris@namei.org>,
- serge@hallyn.com, linux-integrity@vger.kernel.org,
- keyrings@vger.kernel.org,  linux-kernel@vger.kernel.org,
- kernel-team@cloudflare.com
-Date: Tue, 14 May 2024 08:11:06 -0600
-In-Reply-To: <CALrw=nFOh0=TXGx-z_oTkLWshVU_AfGRQzcC3zxVTzcRbuRqQQ@mail.gmail.com>
-References: <20240503221634.44274-1-ignat@cloudflare.com>
-	 <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org> <ZjY-UU8pROnwlTuH@farprobe>
-	 <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
-	 <D10YYQKT9P1S.25CE053K7MQKI@kernel.org>
-	 <CALrw=nFLa5=bPbYKijNsEo0Kk77_TEpdPmPe3CJ3VJqGNMmBeg@mail.gmail.com>
-	 <44cd50b60a0a4e376d01544d25187556b8badf94.camel@HansenPartnership.com>
-	 <CALrw=nFOh0=TXGx-z_oTkLWshVU_AfGRQzcC3zxVTzcRbuRqQQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1715696049; c=relaxed/simple;
+	bh=+/XMlJVKnxry0HBzpovXflduCo1gSKAOkS2cYsvQ6BQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bVo9amqxw9V1gw0zThICeXDDf7pp0hQUFo0q6yKsBnaUgVyvM91izd2m1vSRIW0q2PCTSdRE045VOA6AqUxfGvVNZO8PEAy2+aEzb6U/WsNkNGFJeQAjT42IMrLhB1V1Ht1TNOkDu7dr09OajrCEoJ9fdJYGXCqpVBIhEjz3I0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRHLFM1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2930DC2BD10;
+	Tue, 14 May 2024 14:14:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715696048;
+	bh=+/XMlJVKnxry0HBzpovXflduCo1gSKAOkS2cYsvQ6BQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bRHLFM1O2KK0YrmD+afG+KI/52PlB9P4RUmbMEhqQ0QXjJeqbE7P+kMXYJrQiGtXU
+	 MGothE7RUCv+OtPc6icUiX3CGY232Z4KLSw1RHos2UR0XHDflUXzj9ShUstAyUQJql
+	 aicEBJQyolaH/2S3nTa9/g6vvNQZtizc94YekF92CufdUqPI+fu54nFQHQ+tc1HGbb
+	 Qv9qImzK//kR0EUzX+MLQiUN5FaBJLmkXtezjyTQ/uVKh+hAUortGVMbEnqX8d8fh6
+	 zOTfX4s9UV2nuPCr2za0ALTDZfazgo3gY/cBen0YI+8Rq346QgSKwF7TYMXSUPjxZd
+	 7vRWfXia+DfeA==
+Date: Tue, 14 May 2024 07:14:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Richard Gobert <richardbgobert@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, willemdebruijn.kernel@gmail.com,
+ dsahern@kernel.org, alexander.duyck@gmail.com, shuah@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v10 2/3] net: gro: move L3 flush checks to
+ tcp_gro_receive and udp_gro_receive_segment
+Message-ID: <20240514071407.257c0003@kernel.org>
+In-Reply-To: <CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
+References: <20240509190819.2985-1-richardbgobert@gmail.com>
+	<20240509190819.2985-3-richardbgobert@gmail.com>
+	<CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-05-14 at 10:50 +0100, Ignat Korchagin wrote:
-> On Mon, May 13, 2024 at 11:33 PM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > On Mon, 2024-05-13 at 18:09 +0100, Ignat Korchagin wrote:
-> > [...]
-> > > TPM derived keys attempt to address the above use cases by
-> > > allowing applications to deterministically derive unique
-> > > cryptographic keys for their own purposes directly from the TPM
-> > > seed in the owner hierarchy. The idea is that when an application
-> > > requests a new key, instead of generating a random key and
-> > > wrapping it with the TPM, the implementation generates a key via
-> > > KDF(hierarchy seed, application specific info). Therefore, the
-> > > resulting keys will always be cryptographically bound to the
-> > > application itself and the device they were generated on.
-> > 
-> > So I think what confuses me is what the expected cryptographic
-> > secrecy properties of the derived keys are.  I get they're a KDF of
-> > seed and deterministic properties, but if those mixing values are
-> > well known (as the path or binary checksum cases) then anyone with
-> > access to the TPM can derive the key from user space because they
-> > can easily obtain the mixing parameters and there's no protection
-> > to the TPM keyed hash operation.
-> > 
-> > Consider the use case where two users are using derived keys on the
-> > same system (so same TPM).  Assuming they use them to protect
-> > sensitive information, what prevents user1 from simply deriving
-> > user2's key and getting the information, or am I missing the point
-> > of this?
-> 
-> You are correct: it is possible, but in practice it would be limited
-> only to privileged users/applications. I remember there was a push to
-> set a 666 mask for the TPM device file, but it is not how it is done
-> today by default.
+On Tue, 14 May 2024 14:13:21 +0200 Geert Uytterhoeven wrote:
+> On Thu, May 9, 2024 at 9:09=E2=80=AFPM Richard Gobert <richardbgobert@gma=
+il.com> wrote:
+> > {inet,ipv6}_gro_receive functions perform flush checks (ttl, flags,
+> > iph->id, ...) against all packets in a loop. These flush checks are use=
+d in
+> > all merging UDP and TCP flows.
+> >
+> > These checks need to be done only once and only against the found p skb,
+> > since they only affect flush and not same_flow.
+> >
+> > This patch leverages correct network header offsets from the cb for both
+> > outer and inner network headers - allowing these checks to be done only
+> > once, in tcp_gro_receive and udp_gro_receive_segment. As a result,
+> > NAPI_GRO_CB(p)->flush is not used at all. In addition, flush_id checks =
+are
+> > more declarative and contained in inet_gro_flush, thus removing the need
+> > for flush_id in napi_gro_cb.
+> >
+> > This results in less parsing code for non-loop flush tests for TCP and =
+UDP
+> > flows.
+> >
+> > To make sure results are not within noise range - I've made netfilter d=
+rop
+> > all TCP packets, and measured CPU performance in GRO (in this case GRO =
+is
+> > responsible for about 50% of the CPU utilization).
+> >
+> > perf top while replaying 64 parallel IP/TCP streams merging in GRO:
+> > (gro_receive_network_flush is compiled inline to tcp_gro_receive)
+> > net-next:
+> >         6.94% [kernel] [k] inet_gro_receive
+> >         3.02% [kernel] [k] tcp_gro_receive
+> >
+> > patch applied:
+> >         4.27% [kernel] [k] tcp_gro_receive
+> >         4.22% [kernel] [k] inet_gro_receive
+> >
+> > perf top while replaying 64 parallel IP/IP/TCP streams merging in GRO (=
+same
+> > results for any encapsulation, in this case inet_gro_receive is top
+> > offender in net-next)
+> > net-next:
+> >         10.09% [kernel] [k] inet_gro_receive
+> >         2.08% [kernel] [k] tcp_gro_receive
+> >
+> > patch applied:
+> >         6.97% [kernel] [k] inet_gro_receive
+> >         3.68% [kernel] [k] tcp_gro_receive
+> >
+> > Signed-off-by: Richard Gobert <richardbgobert@gmail.com> =20
+>=20
+> Thanks for your patch, which is now commit 4b0ebbca3e167976 ("net: gro:
+> move L3 flush checks to tcp_gro_receive and udp_gro_receive_segment")
+> in net-next/main (next-20240514).
+>=20
+> noreply@ellerman.id.au reports build failures on m68k, e.g.
+> http://kisskb.ellerman.id.au/kisskb/buildresult/15168903/
+>=20
+>     net/core/gro.c: In function =E2=80=98dev_gro_receive=E2=80=99:
+>     ././include/linux/compiler_types.h:460:38: error: call to
+> =E2=80=98__compiletime_assert_654=E2=80=99 declared with attribute error:=
+ BUILD_BUG_ON
+> failed: !IS_ALIGNED(offsetof(struct napi_gro_cb, zeroed), sizeof(u32))
 
-No, it's 660, but in consequence of that every user of the TPM is a
-member of the tpm group which, since TPM use from userspace is growing,
-is everyone, so it might as well have been 666.  In other words relying
-on access restrictions to the TPM itself is largely useless.
-
->  Also I think the same applies to trusted keys as well, at least
-> without any additional authorizations or PCR restrictions on the blob
-> (I remember I could manually unwrap a trusted key blob in userspace
-> as root).
-
-Well, that's correct, but a TPM key file without policy still has two
-protections: the file itself (so the key owner can choose what
-permissions and where it is) and the key authority (or password)
-although for the mechanical (unsupervised insertion) use case keys tend
-not to have an authority.
-
-> It would be fixed if we could limit access to some TPM ops only from
-> the kernel, but I remember from one of your presentations that it is
-> generally a hard problem and that some solution was in the works (was
-> it based on limiting access to a resettable PCR?). I'm happy to
-> consider adopting it here as well somehow.
-
-Well, that was based on constructing a policy that meant only the
-kernel could access the data (so it requires PCR policy).
-
-In addition to the expected secrecy property question which I don't
-think is fully answered I did think of another issue: what if the
-application needs to rotate keys because of a suspected compromise? 
-For sealed keys, we just generate a new one an use that in place of the
-old, but for your derived keys we'd have to change one of the mixing
-values, which all look to be based on fairly permanent properties of
-the system.
-
-James
-
+Hi Richard, any chance of getting this fixed within the next 2 hours?
+I can't send the net-next PR if it doesn't build on one of the arches..
 
