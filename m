@@ -1,106 +1,161 @@
-Return-Path: <linux-kernel+bounces-178398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355168C4D05
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:29:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273CA8C4D11
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E05DB284221
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 565AA1C20F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0333A249F7;
-	Tue, 14 May 2024 07:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KicqaabY"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DC9134A5;
+	Tue, 14 May 2024 07:32:19 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27BA21364;
-	Tue, 14 May 2024 07:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6C0101E2;
+	Tue, 14 May 2024 07:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671707; cv=none; b=Fb40HklPxHuRs83U6tDnsIL+Ek40qy7s7VZwU71v/3oQ8ApIGuNOOR+Ez+dBSNjLI6hmF1u5ROyVYJdeCXXmsnCIG35fm0XOAqNHV9W5AMmBqzMxSteYw163Rwuuj1hKKCCFLoWXZeyot28c0cCHgN2SV09Cq+xu8UfbJAdic7g=
+	t=1715671939; cv=none; b=RGxIwEt/gd7Wt71XEWpQ1tiOcOcLi29Jwgm9opDzn2/Ev6aT7yhDg0kduPtuNgpea38V5x4SU+PkUjrnO/eSGyhKif6Na1MMnAp7Qx7dGh+lmStmLw7NCkxjmPvhgW773hDh0NVtBYpe5GT9OB4y7FeVvO1P84y3fVmQCxxzd2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671707; c=relaxed/simple;
-	bh=FRYTpE+ZKXIh4YyPPKLg4bjtwKieQShpeatsuOLN5z8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WwItr+cklYwRM3qLAWoFp8n69/H3wkB7hN/bLT88aaQ76Lk/uZ1yBgOiks4qhHJ/83zwFdXq28tvGUGijQFIP5ygSytccXY4zcR3GnGRFe/ahjxQQxtbuO91szDcYZbIEUsxSTTDW07DYbMZttfkZHhd4DuVUbMO8jSzGVRAjeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KicqaabY; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a599c55055dso1339106166b.0;
-        Tue, 14 May 2024 00:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715671704; x=1716276504; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fkOAfgx4bguLtu620L16y0kU0KIWqErrwfo8cR4hKAY=;
-        b=KicqaabYoenpZsk6+xeGWBtSFGVV72/Ndw0kxoO/1VyUyd+Ez6Lsnl+gcz5fr3nlyq
-         wI482gKcZFOwSC2BjmzJSNpTDSYic6RF7G499H+EyeLrmDibOr1O9VQ1z1ywX0rJ3UWE
-         LtOv1ntwY1WLe39QblIopMJUVPOZ87WcleNVKmK/G9aNgHfCKweycizrNK6mFUzS8ZLE
-         WR84HjzE+nS7qcatNZeGbJmCn4l2w2smNMFTJV7iqZQXSIAWrU4yLqlYtWRaivIuvfqW
-         G3vhP7u9MWflOlG/Iq92C4H4hjyNoMywHZNbFjDlAQQyffN5/jz/6YJC7DKn0Wv32mG1
-         wqHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715671704; x=1716276504;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkOAfgx4bguLtu620L16y0kU0KIWqErrwfo8cR4hKAY=;
-        b=PMxV88h/gqZESsMaHw61zBlssZq/N9IRXnp2DzjYitutMAAhkyGIhB/dElCTR1Y2T9
-         tbuDVw4A9mVfMWH1YgEnbTniEdjMlVKmmXVtaq9zpkyb6F2hfBur0b/LGCM4Z/eTQkMf
-         5WIJWFLyPN578l+mS2DxO/PZJDQltQ5DjBhO2H0ozAxvFKcXRnRM+uiDByDiEBeBx986
-         mLGMtLZae/mPLx8L8GRQlW1lfTQsHl8KbxfePhddZdc/o+B1Hv64ox4EzDwHphyhn2yi
-         P9WVDG/tJn+VJmh7EGOAbf9V0n6bKqPQBM832ZiM0bYbnTdF2kmr/z5wEHvFWMdoSPyO
-         H0ww==
-X-Forwarded-Encrypted: i=1; AJvYcCXNQeqi5PTwMD6Rkjf7+LRc5/sjvmsexuzPNY1rvtANY+lehrzkOLTe1rAs+vBKODCDQlFsCUeArr37CpTaNkptawvjLbVMFrHZVAX0koTVHI93WqRqBH9fCRCX7vQfW08RviWTc0w1j7EctAfsd7IVstHMD9/6gVj8QWw0fNX3t45V9A==
-X-Gm-Message-State: AOJu0YxzvbN47smNDhgUpumbLlB71kG3lOWNvuinaU9d7KnSg5VkcZrG
-	i3jWhp64GE68NAAXYEIqkfbzL7NoTcEfHcNhd4/ZvtcbFJAcCh+r
-X-Google-Smtp-Source: AGHT+IE1NondGHhAST7tDS6gFOX8bCH78EncM9TLCv5C0qyrSxfln2AbTQ6B2TWE1aZc67h/cD+soQ==
-X-Received: by 2002:a17:906:4443:b0:a59:c728:5420 with SMTP id a640c23a62f3a-a5a2d6786damr777502266b.66.1715671703779;
-        Tue, 14 May 2024 00:28:23 -0700 (PDT)
-Received: from [10.76.84.175] ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a7a944664sm104110266b.37.2024.05.14.00.28.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 00:28:22 -0700 (PDT)
-Message-ID: <82131f75-b03b-4015-9421-548b0fd7be6e@gmail.com>
-Date: Tue, 14 May 2024 10:28:21 +0300
+	s=arc-20240116; t=1715671939; c=relaxed/simple;
+	bh=FPn+wnAGRWQktpQrV94x0y/Pcc2VTrrAFwhpsP2KZFA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pOdxjoOM5CIGrfUgJSFFU5FxCCjI2/DO2mdEQPt+WIoLcnjLCHwj6qO7ehLAIDiu9XVal0OogTp1scp8zOwmiSJhl1T4p/zDOAJ8ZzbdSnc4YYKsXszZ0qX5GOZP3oPYxivn+leTGgzbG58rlczjWr489iqoD9U999EK1Wu9EVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4VdnYw6gCSz9v7JW;
+	Tue, 14 May 2024 15:10:28 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id AF418140419;
+	Tue, 14 May 2024 15:32:06 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAXUCRnE0NmIbQfCA--.1339S2;
+	Tue, 14 May 2024 08:32:05 +0100 (CET)
+Message-ID: <0fbd907e411a10386bdef679864dd3d84f0fa3ad.camel@huaweicloud.com>
+Subject: Re: [PATCH 0/3] kbuild: remove many tool coverage variables
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Kees Cook <keescook@chromium.org>, Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, Vincenzo
+ Frascino <vincenzo.frascino@arm.com>, Marco Elver <elver@google.com>, Josh
+ Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Peter Oberparleiter <oberpar@linux.ibm.com>,  Johannes Berg
+ <johannes@sipsolutions.net>, kasan-dev@googlegroups.com,
+ linux-hardening@vger.kernel.org
+Date: Tue, 14 May 2024 09:31:47 +0200
+In-Reply-To: <202405131136.73E766AA8@keescook>
+References: <20240506133544.2861555-1-masahiroy@kernel.org>
+	 <202405131136.73E766AA8@keescook>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] iio: adc: ad7173: Add support for AD411x devices
-To: David Lechner <dlechner@baylibre.com>, dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240401-ad4111-v1-0-34618a9cc502@analog.com>
- <20240401-ad4111-v1-6-34618a9cc502@analog.com>
- <CAMknhBFdtv84E_S4wa4UW0pO2yiUEk9=jn=_i4F=b8VHdR6v+w@mail.gmail.com>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <CAMknhBFdtv84E_S4wa4UW0pO2yiUEk9=jn=_i4F=b8VHdR6v+w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwAXUCRnE0NmIbQfCA--.1339S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw18Kw1fCF15ur4UGw45ZFb_yoW5GFWfpr
+	WrJ3WqkFWY9r10yF9Ikw1IqF1Sk397uF1Ygr909rW5AF1j9r1vvrs5trs8Z34DCws2y3W0
+	yrW7XFZavr4jvaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZ18PUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj51HGAAAs1
 
-On 01/04/2024 22:45, David Lechner wrote:
->>         unsigned int clock;
->>         unsigned int id;
->>         char *name;
->> +       bool has_current_inputs;
-> Maybe more future-proof to have num_current_inputs instead of bool?
+On Mon, 2024-05-13 at 11:48 -0700, Kees Cook wrote:
+> In the future can you CC the various maintainers of the affected
+> tooling? :)
+>=20
+> On Mon, May 06, 2024 at 10:35:41PM +0900, Masahiro Yamada wrote:
+> >=20
+> > This patch set removes many instances of the following variables:
+> >=20
+> >   - OBJECT_FILES_NON_STANDARD
+> >   - KASAN_SANITIZE
+> >   - UBSAN_SANITIZE
+> >   - KCSAN_SANITIZE
+> >   - KMSAN_SANITIZE
+> >   - GCOV_PROFILE
+> >   - KCOV_INSTRUMENT
+> >=20
+> > Such tools are intended only for kernel space objects, most of which
+> > are listed in obj-y, lib-y, or obj-m.
+>=20
+> This is a reasonable assertion, and the changes really simplify things
+> now and into the future. Thanks for finding such a clean solution! I
+> note that it also immediately fixes the issue noticed and fixed here:
+> https://lore.kernel.org/all/20240513122754.1282833-1-roberto.sassu@huawei=
+cloud.com/
 
- At first I agreed with this, but the way that the current inputs are
-mapped to reg values does not really offer a way to extend them
-without changing completely the numbering scheme. If that happens,
-changing this field will be the least bit to need changing.
+Yes, this patch set fixes the issue too.
+
+Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
+
+Now UBSAN complains about misaligned address, such as:
+
+[    0.150000][    T1] UBSAN: misaligned-access in kernel/workqueue.c:5514:=
+3
+[    0.150000][    T1] member access within misaligned address 0000000064c3=
+6f78 for type 'struct pool_workqueue'
+[    0.150000][    T1] which requires 512 byte alignment
+[    0.150000][    T1] CPU: 0 PID: 1 Comm: swapper Not tainted 6.9.0-dont-u=
+se-00003-g3b621c71dc5e #2244
+
+But I guess this is for a separate thread.
+
+Thanks
+
+Roberto
+
+> > The best guess is, objects in $(obj-y), $(lib-y), $(obj-m) can opt in
+> > such tools. Otherwise, not.
+> >=20
+> > This works in most places.
+>=20
+> I am worried about the use of "guess" and "most", though. :) Before, we
+> had some clear opt-out situations, and now it's more of a side-effect. I
+> think this is okay, but I'd really like to know more about your testing.
+>=20
+> It seems like you did build testing comparing build flags, since you
+> call out some of the explicit changes in patch 2, quoting:
+>=20
+> >  - include arch/mips/vdso/vdso-image.o into UBSAN, GCOV, KCOV
+> >  - include arch/sparc/vdso/vdso-image-*.o into UBSAN
+> >  - include arch/sparc/vdso/vma.o into UBSAN
+> >  - include arch/x86/entry/vdso/extable.o into KASAN, KCSAN, UBSAN, GCOV=
+, KCOV
+> >  - include arch/x86/entry/vdso/vdso-image-*.o into KASAN, KCSAN, UBSAN,=
+ GCOV, KCOV
+> >  - include arch/x86/entry/vdso/vdso32-setup.o into KASAN, KCSAN, UBSAN,=
+ GCOV, KCOV
+> >  - include arch/x86/entry/vdso/vma.o into GCOV, KCOV
+> >  - include arch/x86/um/vdso/vma.o into KASAN, GCOV, KCOV
+>=20
+> I would agree that these cases are all likely desirable.
+>=20
+> Did you find any cases where you found that instrumentation was _removed_
+> where not expected?
+>=20
+> -Kees
+>=20
+
 
