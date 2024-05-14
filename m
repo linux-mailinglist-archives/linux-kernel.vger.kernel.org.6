@@ -1,165 +1,181 @@
-Return-Path: <linux-kernel+bounces-178255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBA18C4B35
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:38:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA178C4B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1927C1C2135B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C911F223C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891E3B65D;
-	Tue, 14 May 2024 02:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UOhjoXpO"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DEA1173F;
+	Tue, 14 May 2024 02:38:01 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1629979D2;
-	Tue, 14 May 2024 02:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1E4111A8;
+	Tue, 14 May 2024 02:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715654269; cv=none; b=CDQn6Dz0Bfe0D7v5gL1ki9nfJd9rzTXKSRLhsSpGPFTLiraOS3JmCSktNoYs1a6HGpaCGWYMXvukXf6Idv4Sb5uiG5/tLTcMYHbPRM90mGFl60X+jNzvl10mkfKCdkydBL/eQtIsE2aIV8DfRDsorvkvZmqLD8WxgBqTVuv/ejU=
+	t=1715654280; cv=none; b=SbwreAUB1bP8gStcFwczf1dUlFtBAJe43a64/ETB4vaPGIYUiAuWhui1zxPAWduPKbNe3q0JqDnBbCNiZjP0HQSS+ZWRTtwJJvecTR5XRBPW0LNBmgwBO2loASsv7oBuB+RoSsBVPlDQ6Ac14XcYkxXf5r+l2fV3g2tbMiptyWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715654269; c=relaxed/simple;
-	bh=ekzT3/ALmq1PjIJdX057ZpcKoIJb0LpnFk9nb9TeOgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLrOMON34Qgon6Hp9bhseMkLcHIG8WVmMF/e+rrtrJHVivRwzC/SomsKv6Iqpo3AGubDQmNTMC/kIbK8/+aVk2grWpW7BlqDSGlCWolqFGK4OeBHstvIFwfEUegZ5jubcGGyawp6CI/BK80GHLNK89o0Pv1mwzBw8c7331j2NMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UOhjoXpO; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-51ef64d051bso5834638e87.1;
-        Mon, 13 May 2024 19:37:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715654266; x=1716259066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OYzw8FYz26q93IeZfDcCF7zSochl7yn4cVs5hUQhg0w=;
-        b=UOhjoXpOn839HQEIUXQbWRFhQL0Xu1FDOAX7kaVJ/jkMVJ5y+ax94VX+4WBKQVAKg7
-         oP93FN/+rlN/PZ2rTaxjH/A10uBg4nz6sE1CEcI6iFFpPMS9H3UkzWjuoW0Awo8Gbp/w
-         cdWFimdVWjEv5MQp0j4exmrzBQrU4kzBCzdPSHj7XBoAg2+rYQe4vdmgnSoqXsXJ5FeB
-         G7MJU9ySotZCUoEWQOWnXHHc2MrsY9mXdQ223bspJAcvg+oZ93XzdV7rgWgTtJ+PlB5T
-         1fPlyzvi2J3Nr5KPreJuMTdRrS5Qk9e/331AjEK8KfV6u1RVQ+taNzVF8oA7rE/6Zy7K
-         8aJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715654266; x=1716259066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OYzw8FYz26q93IeZfDcCF7zSochl7yn4cVs5hUQhg0w=;
-        b=oNNqXAKGRUE3YNiltmhPKw8u4tegAg59VhzKI4jOq4hiHASszLv928OxQAOqO9ZYit
-         D7Pxbkno2q3DfpZumgMpVY6IWcrc4icTbEyuCIghQVc13PxPQ+B0z+NIoBFspoutkPJn
-         dUbAvsRbUlio0ghwC5bxjL+i+s3Oesbw7iyAzIX7M94cSlPz5iwmdJxa1QX79FaLQ8Pp
-         LPYMSglcna+8oXqlDmY1294CrYQEsVcN114WokqA+IgTGL6Ii01wkg7RT/mHjE4lGrxB
-         Hz5d7hqiYO2P8SrcGKZK0Ip32EzYgXw0FjYVCDuNHX7NYzbnP32erHNXFB7gdwriJ/qV
-         JAPw==
-X-Forwarded-Encrypted: i=1; AJvYcCX71/ml//VFKCBOYaX5xfRQMhWZnEbdGkfM+zYUnxNQMrZ7N40V3wzWBZJFDP4kNa93aKQuo9KqNsRZZ4wj1Sd+aCWryJLT7HpnWJY1uKMGmoLuHkpIyi4+Y97YaPxHtqqcX+QUYGueCg97rdHYowfNU/RBxfMoNjJ/6iPaJZy4Rzox
-X-Gm-Message-State: AOJu0Yxw0u1iQQIgmpwhAufBd7fZddkpQnZA6Dl352pPFVUtBWDJ2MpA
-	q2jC+O7rirUZSfccLbUTHavbYrfGfHCYoG8KgroK2ZQ0YbpKSfGFm0F38EvZuXrYTydt0zXs8EN
-	yRFGoV/3FTgMukZVCq+kDKYERs2k=
-X-Google-Smtp-Source: AGHT+IFNDspAwtyzoDLuNze7g9mcZhGYAjP0GU2W7ymEHWo1OP7lcHugnImIwqWWiKNTUnOO1zZoCH3B7ZuG5lEgDsE=
-X-Received: by 2002:a05:6512:1c8:b0:51c:3e9e:98ee with SMTP id
- 2adb3069b0e04-5220fb6b067mr6954023e87.23.1715654265932; Mon, 13 May 2024
- 19:37:45 -0700 (PDT)
+	s=arc-20240116; t=1715654280; c=relaxed/simple;
+	bh=LpHndWUANENyXbWEUWy6ULQGvYKRFduNo9e0num+LF4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=vBk2msm4FBUeEmpw+R8b65VPi600S/e1cMUZFKqejC5o/2jpHT5/Lw/jZjvrA2HLyi744HnLd3MFR6OeQlc4CmerIR/0H0AcQUiX/7ZFBhsswXNh4BC/blcrY7JEUlIio7APDTVfbmmi4rXBj9kmeRAnB5y+qbVmlKLQodzGGZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VdgWH3shKz4f3jLJ;
+	Tue, 14 May 2024 10:37:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 0DE451A017F;
+	Tue, 14 May 2024 10:37:53 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP2 (Coremail) with SMTP id Syh0CgBHaw5_zkJmKsijMw--.49294S3;
+	Tue, 14 May 2024 10:37:52 +0800 (CST)
+Subject: Re: [PATCH v3 08/10] ext4: factor out check for whether a cluster is
+ allocated
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com
+References: <20240508061220.967970-1-yi.zhang@huaweicloud.com>
+ <20240508061220.967970-9-yi.zhang@huaweicloud.com>
+ <20240512154037.x6icodkj2zmzeqtg@quack3>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <0d2c6419-0dad-1bd5-92fe-2239ef6809e0@huaweicloud.com>
+Date: Tue, 14 May 2024 10:37:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509023937.1090421-1-zhaoyang.huang@unisoc.com>
- <20240509023937.1090421-3-zhaoyang.huang@unisoc.com> <Zjw_0UPKvGkPfKFO@casper.infradead.org>
- <CAGWkznGZP3KUBN2M6syrjTmVOdSM0zx23hcJ6+hqE8Drgz2f-A@mail.gmail.com>
- <Zj2R_UH0JMspexp5@casper.infradead.org> <CAGWkznHX3OBeMh7-jvAP1HyVaT=TN6Fs2ArUCkUHtE3nVadaDA@mail.gmail.com>
-In-Reply-To: <CAGWkznHX3OBeMh7-jvAP1HyVaT=TN6Fs2ArUCkUHtE3nVadaDA@mail.gmail.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Tue, 14 May 2024 10:37:34 +0800
-Message-ID: <CAGWkznGYBAWQCBFRbFCVkFcUZsZ77+yf+Pun6NS8EpmdKdsaBQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/2] mm: introduce budgt control in readahead
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240512154037.x6icodkj2zmzeqtg@quack3>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgBHaw5_zkJmKsijMw--.49294S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF1UJFWftFWUZF17GF47twb_yoW5Gr13pF
+	W8GF1UtF13GryxWF4Iqrn8XFya9w4jqrZrJ3y293W8Zrs3AFyfKF1qkF15ua4xCr48Can5
+	ZFWUAry7uF1DKa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
+	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
+	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
+	uYvjxUrR6zUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Sat, May 11, 2024 at 3:35=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gmail=
-com> wrote:
->
-> On Fri, May 10, 2024 at 11:18=E2=80=AFAM Matthew Wilcox <willy@infradead.=
-org> wrote:
-> >
-> > On Fri, May 10, 2024 at 10:43:20AM +0800, Zhaoyang Huang wrote:
-> > > Thanks for the prompt. I did some basic research on soft RAID and
-> > > wonder if applying the bps limit on /dev/md0 like below could make
-> > > this work.
-> >
-> > No.  Look at btrfs' raid support, for example.  it doesn't use md0.
-> If I understand the below command correctly, btrfs uses one of the
-> volumes within RAID as the mount block device, not /dev/md0. However,
-> I think this is a problem of blkio.throttle rather than this commit
-> which means this readahead budget control will work accordingly as
-> long as blkio.throttle's parameter is configured correctly(eg. 50/50
-> on sdb and sdc)
->
-> mkfs.btrfs -m raid0 -d raid0 /dev/sdb /dev/sdc
-> mount -t btrfs /dev/sdb /mnt/btr
->
->
->
-> >
-> > > I didn't find information about 'RAID internally'. Could we set the
-> > > limit on the root device(the one used for mount) to manage the whole
-> > > partition without caring about where the bio finally goes? Or ask the
-> > > user to decide if to use by making sure the device they apply will no=
-t
-> > > do RAID?
-> >
-> > No.
+On 2024/5/12 23:40, Jan Kara wrote:
+> On Wed 08-05-24 14:12:18, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Factor out a common helper ext4_da_check_clu_allocated(), check whether
+>> the cluster containing a delalloc block to be added has been delayed or
+>> allocated, no logic changes.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> I have one suggestion for improvement here.
+> 
+>> +/*
+>> + * Check whether the cluster containing lblk has been delayed or allocated,
+>> + * if not, it means we should reserve a cluster when add delalloc, return 1,
+>> + * otherwise return 0 or error code.
+>> + */
+>> +static int ext4_da_check_clu_allocated(struct inode *inode, ext4_lblk_t lblk,
+>> +				       bool *allocated)
+> 
+> The name of the function does not quite match what it is returning and that
+> is confusing. Essentially we have three states here:
+> 
+> a) cluster allocated
+> b) cluster has delalloc reservation
+> c) cluster doesn't have either
+> 
+> So maybe we could call the function ext4_clu_alloc_state() and return 0 /
+> 1 / 2 based on the state?
+> 
+> 								Honza
 
-@all, Please find below for more test results where we can find this
-commit has the result meet the desired value more closely and enhance
-it by 3% than mainline.
+Sure, thanks for the suggestion, it looks better.
 
-echo "254:48 20000000" > blkio.throttle.read_bps_device
-fio -filename=3D/data/ylog/ap/000-0101_000015_poweron.ylog -rw=3Dread
--direct=3D0 -bs=3D4k -size=3D2000M -numjobs=3D8 -group_reporting -name=3Dmy=
-test
+Thanks,
+Yi.
 
-    before : IOPS=3D37.9k, BW=3D148MiB/s (155MB/s)(11.6GiB/80333msec)
-    after  : IOPS=3D39.0k, BW=3D153MiB/s (160MB/s)(15.6GiB/104914msec)
+> 
+>> +{
+>> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+>> +	int ret;
+>> +
+>> +	*allocated = false;
+>> +	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
+>> +		return 0;
+>> +
+>> +	if (ext4_es_scan_clu(inode, &ext4_es_is_mapped, lblk))
+>> +		goto allocated;
+>> +
+>> +	ret = ext4_clu_mapped(inode, EXT4_B2C(sbi, lblk));
+>> +	if (ret < 0)
+>> +		return ret;
+>> +	if (ret == 0)
+>> +		return 1;
+>> +allocated:
+>> +	*allocated = true;
+>> +	return 0;
+>> +}
+>> +
+>>  /*
+>>   * ext4_insert_delayed_block - adds a delayed block to the extents status
+>>   *                             tree, incrementing the reserved cluster/block
+>> @@ -1682,23 +1710,13 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
+>>  		if (ret != 0)   /* ENOSPC */
+>>  			return ret;
+>>  	} else {   /* bigalloc */
+>> -		if (!ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk)) {
+>> -			if (!ext4_es_scan_clu(inode,
+>> -					      &ext4_es_is_mapped, lblk)) {
+>> -				ret = ext4_clu_mapped(inode,
+>> -						      EXT4_B2C(sbi, lblk));
+>> -				if (ret < 0)
+>> -					return ret;
+>> -				if (ret == 0) {
+>> -					ret = ext4_da_reserve_space(inode, 1);
+>> -					if (ret != 0)   /* ENOSPC */
+>> -						return ret;
+>> -				} else {
+>> -					allocated = true;
+>> -				}
+>> -			} else {
+>> -				allocated = true;
+>> -			}
+>> +		ret = ext4_da_check_clu_allocated(inode, lblk, &allocated);
+>> +		if (ret < 0)
+>> +			return ret;
+>> +		if (ret > 0) {
+>> +			ret = ext4_da_reserve_space(inode, 1);
+>> +			if (ret != 0)   /* ENOSPC */
+>> +				return ret;
+>>  		}
+>>  	}
+>>  
+>> -- 
+>> 2.39.2
+>>
 
-    before : clat (usec): min=3D4, max=3D1056.6k, avg=3D197.23, stdev=3D100=
-80.69
-    after  : clat (usec): min=3D4, max=3D193481, avg=3D188.83, stdev=3D4651=
-29
-
-    before : lat (usec): min=3D5, max=3D1056.6k, avg=3D200.48, stdev=3D1008=
-0.76
-    after  : lat (usec): min=3D5, max=3D193483, avg=3D192.68, stdev=3D4651.=
-87
-
-
-echo "254:48 30000000" > blkio.throttle.read_bps_device
-fio -filename=3D/data/ylog/ap/000-0101_000015_poweron.ylog -rw=3Dread
--direct=3D0 -bs=3D4k -size=3D2000M -numjobs=3D8 -group_reporting -name=3Dmy=
-test
-
-    before : IOPS=3D57.2k, BW=3D224MiB/s (234MB/s)(15.6GiB/71561msec)
-    after  : IOPS=3D58.5k, BW=3D229MiB/s (240MB/s)(15.6GiB/69996msec)
-
-    before : clat (usec): min=3D4, max=3D1105.5k, avg=3D126.20, stdev=3D641=
-9.22
-    after  : clat (usec): min=3D4, max=3D183956, avg=3D120.60, stdev=3D2957=
-28
-
-    before : lat (usec): min=3D5, max=3D1105.5k, avg=3D129.45, stdev=3D6419=
-29
-    after  : lat (usec): min=3D5, max=3D183958, avg=3D124.40, stdev=3D2958.=
-18
 
