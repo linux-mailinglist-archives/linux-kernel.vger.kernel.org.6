@@ -1,198 +1,528 @@
-Return-Path: <linux-kernel+bounces-178592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306A28C5249
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:35:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971218C538F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC0F7282970
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC6E1C22A8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0797312E1D2;
-	Tue, 14 May 2024 11:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9168212A152;
+	Tue, 14 May 2024 11:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="imI0bcqe"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2080.outbound.protection.outlook.com [40.107.117.80])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXP9vZ+p"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CD9612E1C9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715685735; cv=fail; b=FcTG+p7lYqod41ehAPcN2LejznhxRcF8XIdJ/C+LoW2MmD40z8X0cKsAhziyDXpbAYMN6uxsIuTnxHaFhjOuj9fwJIZ8Uq26It9zlL4JG4QvoPM/qoiXpOgjIl22thSZfiYCWo6Z11FgFNMH6PTEDnWqcDHWQ3IOS0FYg6OZf+Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715685735; c=relaxed/simple;
-	bh=h8F3KuWgnRXgy+J/wGYrg0C1GkrAq53/kLLqy7/4iuo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Tso3b/9jtKTGIdxqEDiu/qTLPCbrVJ+Sld+ZFWW7NePAqTLiQ9mHjXthK1hGo7LgupMctD+T0fSysbyCDf/UcteDNsttZPdPDr3F8dXVIhVTWjYt0YBxO2q5f6YGajMwzpsuLSShZJl7io4gGeBn+YpWKzS0NTWaW0WvMmjBBcY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=imI0bcqe; arc=fail smtp.client-ip=40.107.117.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aW72QvCPdg8kp4P+xjxSOYh9IQuvc0rceX9L5xQEZc+b1yTPcYP0crivuFOxFQ/7pH+o18xxmJNg7babzxXZYUwbI2VcGuS5NmGkwq95RqikwLDyvsdQ6L4Ew8hlSyvKHjnqSNlRFdKfsQM4Jk0UJB3PH+RYGBKoXxu0r0Xi2hhOnGcnkICJonvmnhHLDc3511fAtM8IbM9MrRSRLfmjnNVHGxyjwUNv4UShXbtxCjTjzDsyDiYPzMWsAZISOn4Xl2TZW+ruveZ5/Ab2thLg+YzAK/7Fy3PR0I4Tn675adgnAl33ZCieKEYAy29Mn0GeO4j5SdJnwEsmd/rpUSMVpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UKUeMqKhDmAJm6lCIEKlAHVC9sJOd9Q0r0e3I0j29uw=;
- b=TUP1MMmb6OOCoJ1qz2R7Z82cDdSBscLC0Pm+fYUwR039H10UBD+25r+KrXEl6TRsndN7w1A+Lu+xvFc/izhLskJGTtULfAeoP06jU9zVTj5MtblNyKY6a0BNwHZLHI37zaCsDIV/mlFbxWBB92SaKNMmgUfAqtWeNfwEDIz/MXA2jRCCktYAlC9G7LKQbSOO+cuLkJJ26wnSXcEX265Ehj0q2kseg1KQr/mPEDyFJjt/95yJmFDS6No0HZplpdirhKCXuI8ufOpdWmwxxjjPnAIZOleTpyZvlTk058M/w9zT6Cfl4FJkm1ZM4CkwVhVxAqCOGpi7/ZkQwiWdZpzsdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UKUeMqKhDmAJm6lCIEKlAHVC9sJOd9Q0r0e3I0j29uw=;
- b=imI0bcqeABOZB7RW2VRGIuvolGVBDJmkaJqn3X1sS9gn6fJRDfitD08dAE2p7I6X1h8Zqz06sTT0TTxT8c3sv6+K04bktJXP6gCJI4gRd9zGtRwDX2C3SmchYf7aW1Ef63h1XguYQob+bgtwQU5db5BDO2ey9GllGZ2irym4opbiGmrXszo1ztFO1fAlJHRRAeWkKHOyTDXo8i3e2pufw46YqoqG8I41XKEASQSztdNPjWOeE4fUbboTurxImYdjcq7EiD6xsk03ROfFwLYZWyCTCAzfwPSzhoQOlA0HSSHdqSnlp6Ezex18YyEFmMrmz2/FsD3+5onPVUjaaAVvdQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com (2603:1096:301:89::11)
- by SEZPR06MB6040.apcprd06.prod.outlook.com (2603:1096:101:ec::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 11:22:10 +0000
-Received: from PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5]) by PSAPR06MB4486.apcprd06.prod.outlook.com
- ([fe80::43cb:1332:afef:81e5%5]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 11:22:10 +0000
-From: Wu Bo <bo.wu@vivo.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Wu Bo <wubo.oduw@gmail.com>,
-	Wu Bo <bo.wu@vivo.com>
-Subject: [PATCH] f2fs: initialize last_block_in_bio variable
-Date: Tue, 14 May 2024 05:35:29 -0600
-Message-Id: <20240514113529.1498545-1-bo.wu@vivo.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0017.apcprd02.prod.outlook.com
- (2603:1096:4:194::17) To PSAPR06MB4486.apcprd06.prod.outlook.com
- (2603:1096:301:89::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9381292D2;
+	Tue, 14 May 2024 11:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715686609; cv=none; b=J2TC++BkNvVruOmQEPkco1W8WtZldpzdgifwGBkYzX+i/NC9EZJQqAUQtUgGV/CZW+ABv2OgzhlwfwBf0y4KQ1cSM+/pP5zsrN9JpRBYtynMeWZRbPCBqn1x0YPDpv5Jkq7FuoI/RW/RCENa3H5oT0w+iF/5EiK0nqFlAFNFVqU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715686609; c=relaxed/simple;
+	bh=YPOH09Lf8waYjzXH+D9qx0+KCjKdFS1sZnI5Ft7mCnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WwRuqrUIAaKkjYZ8AktCAPi6Aj69/eO1mfZ3dxt9tkOAFDvvu7c5xlFmWjLVSNl3hrFtJpbwjr6eQMcfeXjgz3djAAyGkqJbOTb1fDEmNeuw7d3W89YFMiH5u+nzXv3Sgs8XHnf68eVpXN5gaVAseWEXN0YTKt+8rUt9qCb417g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXP9vZ+p; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715686606; x=1747222606;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YPOH09Lf8waYjzXH+D9qx0+KCjKdFS1sZnI5Ft7mCnw=;
+  b=YXP9vZ+pXRSUQ67n3tpj0sVLWw4LzSORTd3AN9VYsD8baGgarlgDKOAC
+   MZdnvaiKINwL4rZjTCaXz+iH7jZAt1UL8HwoYH4pC8h+ObkK2mLuTNTtj
+   awqn0rQ2yHOxPANfuqIa+GOEXIcRo2b6DNNgYUSBhu3WKIaxDdfcQXRUL
+   eQYewS6J1x+TcVc3Z7KeflvGhVJ9YPdTbzUeuAXXNbdU4yh++EaHihF7T
+   wzx/bA8r1Bh+5nmf5s/MLTIgXs3u3kcKU906JNxL8CzOJLmdIrdYOJJ99
+   viWGfS7giF/Jgp0aKUWjYrXlgTMuqjo8yEo25H9xKmGpgNQt82dLTHZ/7
+   w==;
+X-CSE-ConnectionGUID: mxZOZP/NR+qe6howGIxsCA==
+X-CSE-MsgGUID: h/o3dd1VSZmIouSaPAD/ZQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="29180842"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="29180842"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 04:36:45 -0700
+X-CSE-ConnectionGUID: qPpmPOKNR2mSmQvklq+k7Q==
+X-CSE-MsgGUID: iJUYB5bZRraVzQ+hErEYhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="61485223"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 May 2024 04:36:42 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6qSV-000BRX-2w;
+	Tue, 14 May 2024 11:36:39 +0000
+Date: Tue, 14 May 2024 19:36:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: admiyo@os.amperecomputing.com, Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: Re: [PATCH 1/3] mctp pcc: Implement MCTP over PCC Transport
+Message-ID: <202405141800.J2dxEpiu-lkp@intel.com>
+References: <20240513173546.679061-2-admiyo@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PSAPR06MB4486:EE_|SEZPR06MB6040:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf6887d7-a4a5-453f-44d1-08dc74081877
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|366007|1800799015|52116005|376005|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lbiPq0KGuxsTWcUgviXqRUsSGhO4QzIBI6yFs82NYg34qrBrdP4nBm2lYEpB?=
- =?us-ascii?Q?/OARsslySMy8BGCz7i4wdG3PY7qYEVF4JvBcxXir6wSRWemNG9eLNheko2mi?=
- =?us-ascii?Q?xq98q6VR9BsY4U6lVzvfgYTBDSzxTmwuCzanWm0T8Yx8dRccMYmtQvleIVeP?=
- =?us-ascii?Q?FDFj3qvmNr53PwMS+JGVsjGaWjYC5AhK5iGib2sCajjbaBXowX9vbE13c7gh?=
- =?us-ascii?Q?j5XYDIpq5tx2z5H2X5EOKY5WdYjtj1Y9joE6/W/csvz1W7SCFXtmJOIp5RD4?=
- =?us-ascii?Q?5fRbkUrQSeHiAj3SkuB+gr9Mxm01Dsoz2yGqRhD4cknk8dy/8QCulivI0JZ8?=
- =?us-ascii?Q?EkY1thn1BUNFApdKYBJ4Tv8qbqKfL7+B4A0defaWdIIvy8n88Q1F7CF+xDMK?=
- =?us-ascii?Q?l8RUo4eA3NP5nVlMZZaAYKpLu4HdLOKqIPECAOWq9n82H+PyMtnVCYSdAEkx?=
- =?us-ascii?Q?yyYi6wo0D8tkxsZh5+NCq70uPa/tUfVzP88ExV2GUkrlLuIRLP7LPaOMmTRy?=
- =?us-ascii?Q?c+vS2VFzw2tt55g3mOp5w3rZwSctl01/9x03NAJkNuQWyOdoypwW+jA72q3W?=
- =?us-ascii?Q?WBezqDU9h8lAO5VVjQxPAiEzB0UCOXiAnOmvmDzDNIWHvi1Eem2OzlrWC0WD?=
- =?us-ascii?Q?0UTtmxMGSNZhDzrcR/6E3ZFvw9SliU9CRqE+kQHIgOjBGYAHUMCDTL6MuJm3?=
- =?us-ascii?Q?09QlHgbp2I4e9c5pGg3hQsDx2+S977pDmgZ8DpZ5vE+JvpzOnQZp78uCumKN?=
- =?us-ascii?Q?p8NdcJLSduTmjVJtGFd4LEu5W+xYgmgvaa/S4jOKzssEyom+oQDimPiKwlC4?=
- =?us-ascii?Q?ZhPek5Na7MkyTwBKhmPuKwlQlD+SSiC4PBJAFyk6zvIey0ZGlgvfn95fBD7z?=
- =?us-ascii?Q?dnRdQ/yAXxW6A88pT0Ng6p6Nd+JNDpUCA9LqdLLk82hPfb2Pre9PnpfxGXeu?=
- =?us-ascii?Q?v61q4C26VepFuVSsW+a63/H0LK1gJiuMkF8ucorn8ciuGjkDE4odsqLtugW1?=
- =?us-ascii?Q?dIgS0Qu1zpuMWpApoBafXYU0t+6l5mP36ZYjj0Je2uULswyLKWxlvOHwX0Dh?=
- =?us-ascii?Q?FTzAlRQ+XZ0HG6alrY6c65YfM3WiXaENnCUWratQCDpL/MZy/1oXkq21UAuc?=
- =?us-ascii?Q?nnAypwmb9HFRG3YxjVQXFDoyIoEpw+Jf3btZDSbiByXfdOI9qQWF0uKw7XPl?=
- =?us-ascii?Q?iDNn2L5s2+DdltoptiBJO5g/bXwqn5O1I1YDcOuBTEEWzJe6QfKxZt2FD3/B?=
- =?us-ascii?Q?Gd9KdPTEZuk4U4OxdtF4d9mmmwyMUnQUbfnXY4Ec8ykbfUavHzYnbqqPDBo9?=
- =?us-ascii?Q?JcJWYt5yi8mFhqWjQdciBXzufuNpngoXiQi2/dIBwTnEjA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4486.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(52116005)(376005)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?x+inaD99V/T484TZzLppljuKX6R/kbuJKP61Ajh5T+hngcVtBPeReJi2esJQ?=
- =?us-ascii?Q?ZWA3AcLZjdo7lRn/uuCbEbLY6U00wkaGkSnDbGJKh63IY/PlxkBntByR+Um6?=
- =?us-ascii?Q?VejhZtije9z1JYh5XFyMnnH40DxHNJddp8EmeVpbc1VX0Z/F/ast/Rj+Nwcz?=
- =?us-ascii?Q?04bY9UWBGEgP5p85g//lpEGOqQc903h2LCNmEysMTC/jT4+0ukaloeltV5Z3?=
- =?us-ascii?Q?xyZPUx6FoZhnV0qBZ6hsvJpW0qfhoCJaE2NBOjs9HzO2g4qmBygGHwQBwcb9?=
- =?us-ascii?Q?zAlMf9H1CmHAnbPx/zWA6mr2JZX6Y4I4s4GIMhEDMrqi5GOfx4tQz+a7uZ1n?=
- =?us-ascii?Q?6lPIplh8RnRVFICmkteAFeUwTuHkmcRlXa+HKQw/MzXgCN/KaYciZDoYj38/?=
- =?us-ascii?Q?vV/rtkKC2AUkTxUFXlNYzNcoWSujvOazn5AR6JlMQgt0h5EAJ9NitUelX+B5?=
- =?us-ascii?Q?7GV62cJ0WtFNOaMS3evL2w0dJwaTimx7kdc9yn4059CQuxJTAcVn7IntB+Yh?=
- =?us-ascii?Q?L4T8u+4PLvLGqS9JEPo2sD26rOh1ZK+7sNzTC1GAGNd+UoTDwXszJXyG01tC?=
- =?us-ascii?Q?fVbG5PgfivB/1Our5MYMOd8bqpv6/lkbJW7ZTizd1fjJidDyZBl9lwivU7jW?=
- =?us-ascii?Q?fbmZjSDinV9UbTWyw34Q4rH20b8NpLF15QDvs1h+DGfYKt+q9coGPOBpv2ow?=
- =?us-ascii?Q?dCbsDCc5bc2e6kI3zgv5a+n5yam4svxZh5mho7Zv19brZWuwgwXdsBKJq2Bq?=
- =?us-ascii?Q?nJb7ts0MA/ZvMwrjBq8jfmMlqZo6JNosEoo5jS7Nn6YTbxLqZRTJvxLELbk7?=
- =?us-ascii?Q?m6GLSDqlTG6Ynsh1n9C6fKveYtKuIA/foA6C5mdtlixUTt5ROD+Scl+joLZR?=
- =?us-ascii?Q?YOSV4Ese0hHHDD2g9l8ogSQTb1KCd7N6bT7kpEbwYYZKe94+Y0Tx7ALuIL3T?=
- =?us-ascii?Q?YVLoe/GMwS7rOIpQh+2XsmZISyBkjHIQx9bAT8vIgPoeOI+WGoHiEQ0ZeLFv?=
- =?us-ascii?Q?UJRxcOZy9AifI1dlLO3N4FA9jFI4Nap/R4sr+2DCHTPn2f6Xmh5yVHbc9R3G?=
- =?us-ascii?Q?a5ZIfso8JFfBEwmvi7IzirU7bENzYYrO4ZEdbk1MJrh2Ep7Ic4PVj/POm3nA?=
- =?us-ascii?Q?jNCSyxOZ35aFg+2ZWoKkRLBDHXQOwtNbPsVVictdEwsKc/hrFkbia0/ydzdP?=
- =?us-ascii?Q?H9Wkrc19nJVmgLiqIxj48KfH7lHif5JQhFQmn2hJCZt6+H/ni6HwyU6jJGmW?=
- =?us-ascii?Q?OnySgY0mxc2/EkremUkbTUGCzH+a2YOKZHPvU8JDVB7Yd4qHY81RDNmJjSHR?=
- =?us-ascii?Q?0gEWOd71GcboY21tixya5bMGx4PdgLFayCeAnIDO7BuA+GmXbZFVOyK41H5T?=
- =?us-ascii?Q?DESV4dlHRLOjNYn1SJNXeBXzZiMC//x0vMSzT8VujRw4noV1Vv2egSgv+p93?=
- =?us-ascii?Q?V3JF0p3UEFDLbmIHRDzUApKOqYfmMsx3KKzayYRqPPkzuY7w1EZQOScaM7Pv?=
- =?us-ascii?Q?BC4vP1PTvzkgMtDXlSgod5cQDw2NfHjyIV/gEQ+zsnO9ubCNCDwSjwmdiEEY?=
- =?us-ascii?Q?MC0EVmE9Cnuk5uP6E5tNajqdkvgn/XA7U3gmv+2x?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf6887d7-a4a5-453f-44d1-08dc74081877
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4486.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 11:22:10.1047
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EAck1yrUI0R2RYffWpvuNp2Nmpwn2+lEjrtY0wzGi3Ir92UmkuxtlsvK0njHQDDBKvzKCLX/B5f4Xu2gklLVTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6040
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513173546.679061-2-admiyo@os.amperecomputing.com>
 
-Initialize last_block_in_bio of struct f2fs_bio_info and clean up code.
+Hi,
 
-Signed-off-by: Wu Bo <bo.wu@vivo.com>
----
- fs/f2fs/data.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index bdbd4195cadc..50ceb25b341d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -595,17 +595,20 @@ int f2fs_init_write_merge_io(struct f2fs_sb_info *sbi)
- 			return -ENOMEM;
- 
- 		for (j = HOT; j < n; j++) {
--			init_f2fs_rwsem(&sbi->write_io[i][j].io_rwsem);
--			sbi->write_io[i][j].sbi = sbi;
--			sbi->write_io[i][j].bio = NULL;
--			spin_lock_init(&sbi->write_io[i][j].io_lock);
--			INIT_LIST_HEAD(&sbi->write_io[i][j].io_list);
--			INIT_LIST_HEAD(&sbi->write_io[i][j].bio_list);
--			init_f2fs_rwsem(&sbi->write_io[i][j].bio_list_lock);
-+			struct f2fs_bio_info *io = &sbi->write_io[i][j];
-+
-+			init_f2fs_rwsem(&io->io_rwsem);
-+			io->sbi = sbi;
-+			io->bio = NULL;
-+			io->last_block_in_bio = 0;
-+			spin_lock_init(&io->io_lock);
-+			INIT_LIST_HEAD(&io->io_list);
-+			INIT_LIST_HEAD(&io->bio_list);
-+			init_f2fs_rwsem(&io->bio_list_lock);
- #ifdef CONFIG_BLK_DEV_ZONED
--			init_completion(&sbi->write_io[i][j].zone_wait);
--			sbi->write_io[i][j].zone_pending_bio = NULL;
--			sbi->write_io[i][j].bi_private = NULL;
-+			init_completion(&io->zone_wait);
-+			io->zone_pending_bio = NULL;
-+			io->bi_private = NULL;
- #endif
- 		}
- 	}
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.9 next-20240514]
+[cannot apply to horms-ipvs/master]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/admiyo-os-amperecomputing-com/mctp-pcc-Implement-MCTP-over-PCC-Transport/20240514-013734
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20240513173546.679061-2-admiyo%40os.amperecomputing.com
+patch subject: [PATCH 1/3] mctp pcc: Implement MCTP over PCC Transport
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240514/202405141800.J2dxEpiu-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project b910bebc300dafb30569cecc3017b446ea8eafa0)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405141800.J2dxEpiu-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405141800.J2dxEpiu-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from drivers/net/mctp/mctp-pcc.c:8:
+   In file included from include/linux/if_arp.h:22:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:10:
+   In file included from include/linux/mm.h:2210:
+   include/linux/vmstat.h:522:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     522 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/net/mctp/mctp-pcc.c:8:
+   In file included from include/linux/if_arp.h:22:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/net/mctp/mctp-pcc.c:8:
+   In file included from include/linux/if_arp.h:22:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/net/mctp/mctp-pcc.c:8:
+   In file included from include/linux/if_arp.h:22:
+   In file included from include/linux/skbuff.h:17:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   In file included from drivers/net/mctp/mctp-pcc.c:17:
+>> include/acpi/acpi_drivers.h:72:43: warning: declaration of 'struct acpi_pci_root' will not be visible outside of this function [-Wvisibility]
+      72 | struct pci_bus *pci_acpi_scan_root(struct acpi_pci_root *root);
+         |                                           ^
+>> drivers/net/mctp/mctp-pcc.c:90:70: warning: omitting the parameter name in a function definition is a C23 extension [-Wc23-extensions]
+      90 | static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *)
+         |                                                                      ^
+   drivers/net/mctp/mctp-pcc.c:96:16: warning: variable 'buf_ptr_val' set but not used [-Wunused-but-set-variable]
+      96 |         unsigned long buf_ptr_val;
+         |                       ^
+   drivers/net/mctp/mctp-pcc.c:122:17: warning: variable 'buffer' set but not used [-Wunused-but-set-variable]
+     122 |         unsigned char *buffer;
+         |                        ^
+>> drivers/net/mctp/mctp-pcc.c:287:16: error: incomplete definition of type 'struct acpi_device'
+     287 |         dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+         |                   ~~~~^
+   include/linux/dev_printk.h:150:46: note: expanded from macro 'dev_info'
+     150 |         dev_printk_index_wrap(_dev_info, KERN_INFO, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                     ^~~
+   include/linux/dev_printk.h:110:11: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   include/linux/acpi.h:794:8: note: forward declaration of 'struct acpi_device'
+     794 | struct acpi_device;
+         |        ^
+>> drivers/net/mctp/mctp-pcc.c:287:63: error: call to undeclared function 'acpi_device_hid'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     287 |         dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+         |                                                                      ^
+   drivers/net/mctp/mctp-pcc.c:287:63: note: did you mean 'acpi_device_dep'?
+   include/acpi/acpi_bus.h:41:6: note: 'acpi_device_dep' declared here
+      41 | bool acpi_device_dep(acpi_handle target, acpi_handle match);
+         |      ^
+>> drivers/net/mctp/mctp-pcc.c:288:15: error: call to undeclared function 'acpi_device_handle'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     288 |         dev_handle = acpi_device_handle(adev);
+         |                      ^
+>> drivers/net/mctp/mctp-pcc.c:288:13: error: incompatible integer to pointer conversion assigning to 'acpi_handle' (aka 'void *') from 'int' [-Wint-conversion]
+     288 |         dev_handle = acpi_device_handle(adev);
+         |                    ^ ~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/net/mctp/mctp-pcc.c:293:44: error: incomplete definition of type 'struct acpi_device'
+     293 |                 return create_mctp_pcc_netdev(adev, &adev->dev, inbox_index, outbox_index);
+         |                                                      ~~~~^
+   include/linux/acpi.h:794:8: note: forward declaration of 'struct acpi_device'
+     794 | struct acpi_device;
+         |        ^
+   drivers/net/mctp/mctp-pcc.c:295:15: error: incomplete definition of type 'struct acpi_device'
+     295 |         dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
+         |                  ~~~~^
+   include/linux/dev_printk.h:144:44: note: expanded from macro 'dev_err'
+     144 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
+         |                                                   ^~~
+   include/linux/dev_printk.h:110:11: note: expanded from macro 'dev_printk_index_wrap'
+     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
+         |                         ^~~
+   include/linux/acpi.h:794:8: note: forward declaration of 'struct acpi_device'
+     794 | struct acpi_device;
+         |        ^
+>> drivers/net/mctp/mctp-pcc.c:329:27: error: variable has incomplete type 'struct acpi_driver'
+     329 | static struct acpi_driver mctp_pcc_driver = {
+         |                           ^
+   drivers/net/mctp/mctp-pcc.c:329:15: note: forward declaration of 'struct acpi_driver'
+     329 | static struct acpi_driver mctp_pcc_driver = {
+         |               ^
+>> drivers/net/mctp/mctp-pcc.c:348:7: error: call to undeclared function 'acpi_bus_register_driver'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     348 |         rc = acpi_bus_register_driver(&mctp_pcc_driver);
+         |              ^
+>> drivers/net/mctp/mctp-pcc.c:358:2: error: call to undeclared function 'acpi_bus_unregister_driver'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     358 |         acpi_bus_unregister_driver(&mctp_pcc_driver);
+         |         ^
+   11 warnings and 9 errors generated.
+
+
+vim +287 drivers/net/mctp/mctp-pcc.c
+
+    89	
+  > 90	static void mctp_pcc_client_rx_callback(struct mbox_client *c, void *)
+    91	{
+    92		struct sk_buff *skb;
+    93		struct mctp_pcc_packet *mpp;
+    94		struct mctp_skb_cb *cb;
+    95		int data_len;
+    96		unsigned long buf_ptr_val;
+    97		struct mctp_pcc_ndev *mctp_pcc_dev = container_of(c, struct mctp_pcc_ndev, inbox_client);
+    98		void *skb_buf;
+    99	
+   100		mpp = (struct mctp_pcc_packet *)mctp_pcc_dev->pcc_comm_inbox_addr;
+   101		buf_ptr_val = (unsigned long)mpp;
+   102		data_len = readl(&mpp->pcc_header.length) + MCTP_HEADER_LENGTH;
+   103		skb = netdev_alloc_skb(mctp_pcc_dev->mdev.dev, data_len);
+   104		if (!skb) {
+   105			mctp_pcc_dev->mdev.dev->stats.rx_dropped++;
+   106			return;
+   107		}
+   108		skb->protocol = htons(ETH_P_MCTP);
+   109		skb_buf = skb_put(skb, data_len);
+   110		memcpy_fromio(skb_buf, mpp, data_len);
+   111		skb_reset_mac_header(skb);
+   112		skb_pull(skb, sizeof(struct mctp_pcc_hdr));
+   113		skb_reset_network_header(skb);
+   114		cb = __mctp_cb(skb);
+   115		cb->halen = 0;
+   116		skb->dev =  mctp_pcc_dev->mdev.dev;
+   117		netif_rx(skb);
+   118	}
+   119	
+   120	static netdev_tx_t mctp_pcc_tx(struct sk_buff *skb, struct net_device *ndev)
+   121	{
+   122		unsigned char *buffer;
+   123		struct mctp_pcc_ndev *mpnd;
+   124		struct mctp_pcc_packet  *mpp;
+   125		unsigned long flags;
+   126		int rc;
+   127	
+   128		netif_stop_queue(ndev);
+   129		ndev->stats.tx_bytes += skb->len;
+   130		mpnd = (struct mctp_pcc_ndev *)netdev_priv(ndev);
+   131		spin_lock_irqsave(&mpnd->lock, flags);
+   132		buffer =  mpnd->pcc_comm_outbox_addr;
+   133		mpp = mctp_pcc_extract_data(skb, mpnd->pcc_comm_outbox_addr, mpnd->hw_addr.outbox_index);
+   134		rc = mpnd->out_chan->mchan->mbox->ops->send_data(mpnd->out_chan->mchan, mpp);
+   135		spin_unlock_irqrestore(&mpnd->lock, flags);
+   136	
+   137		dev_consume_skb_any(skb);
+   138		netif_start_queue(ndev);
+   139		if (!rc)
+   140			return NETDEV_TX_OK;
+   141		return NETDEV_TX_BUSY;
+   142	}
+   143	
+   144	static const struct net_device_ops mctp_pcc_netdev_ops = {
+   145		.ndo_start_xmit = mctp_pcc_tx,
+   146		.ndo_uninit = NULL
+   147	};
+   148	
+   149	static void  mctp_pcc_setup(struct net_device *ndev)
+   150	{
+   151		ndev->type = ARPHRD_MCTP;
+   152		ndev->hard_header_len = 0;
+   153		ndev->addr_len = sizeof(struct mctp_pcc_hw_addr);
+   154		ndev->tx_queue_len = DEFAULT_TX_QUEUE_LEN;
+   155		ndev->flags = IFF_NOARP;
+   156		ndev->netdev_ops = &mctp_pcc_netdev_ops;
+   157		ndev->needs_free_netdev = true;
+   158	}
+   159	
+   160	static int create_mctp_pcc_netdev(struct acpi_device *acpi_dev,
+   161					  struct device *dev, int inbox_index,
+   162					  int outbox_index)
+   163	{
+   164		int rc;
+   165		int mctp_pcc_mtu;
+   166		char name[32];
+   167		struct net_device *ndev;
+   168		struct mctp_pcc_ndev *mctp_pcc_dev;
+   169		struct mctp_pcc_hw_addr physical_link_addr;
+   170	
+   171		snprintf(name, sizeof(name), "mctpipcc%x", inbox_index);
+   172		ndev = alloc_netdev(sizeof(struct mctp_pcc_ndev), name, NET_NAME_ENUM, mctp_pcc_setup);
+   173		if (!ndev)
+   174			return -ENOMEM;
+   175		mctp_pcc_dev = (struct mctp_pcc_ndev *)netdev_priv(ndev);
+   176		INIT_LIST_HEAD(&mctp_pcc_dev->head);
+   177		spin_lock_init(&mctp_pcc_dev->lock);
+   178	
+   179		mctp_pcc_dev->outbox_client.tx_prepare = NULL;
+   180		mctp_pcc_dev->outbox_client.tx_done = NULL;
+   181		mctp_pcc_dev->hw_addr.inbox_index = inbox_index;
+   182		mctp_pcc_dev->hw_addr.outbox_index = outbox_index;
+   183		mctp_pcc_dev->inbox_client.rx_callback = mctp_pcc_client_rx_callback;
+   184		mctp_pcc_dev->cleanup_channel = pcc_mbox_free_channel;
+   185		mctp_pcc_dev->out_chan =
+   186			pcc_mbox_request_channel(&mctp_pcc_dev->outbox_client,
+   187						 outbox_index);
+   188		if (IS_ERR(mctp_pcc_dev->out_chan)) {
+   189			rc = PTR_ERR(mctp_pcc_dev->out_chan);
+   190			goto free_netdev;
+   191		}
+   192		mctp_pcc_dev->in_chan =
+   193			pcc_mbox_request_channel(&mctp_pcc_dev->inbox_client,
+   194						 inbox_index);
+   195		if (IS_ERR(mctp_pcc_dev->in_chan)) {
+   196			rc = PTR_ERR(mctp_pcc_dev->in_chan);
+   197			goto cleanup_out_channel;
+   198		}
+   199		mctp_pcc_dev->pcc_comm_inbox_addr =
+   200			devm_ioremap(dev, mctp_pcc_dev->in_chan->shmem_base_addr,
+   201				     mctp_pcc_dev->in_chan->shmem_size);
+   202		if (!mctp_pcc_dev->pcc_comm_inbox_addr) {
+   203			rc = -EINVAL;
+   204			goto cleanup_in_channel;
+   205		}
+   206		mctp_pcc_dev->pcc_comm_outbox_addr =
+   207			devm_ioremap(dev, mctp_pcc_dev->out_chan->shmem_base_addr,
+   208				     mctp_pcc_dev->out_chan->shmem_size);
+   209		if (!mctp_pcc_dev->pcc_comm_outbox_addr) {
+   210			rc = -EINVAL;
+   211			goto cleanup_in_channel;
+   212		}
+   213		mctp_pcc_dev->acpi_device = acpi_dev;
+   214		mctp_pcc_dev->inbox_client.dev = dev;
+   215		mctp_pcc_dev->outbox_client.dev = dev;
+   216		mctp_pcc_dev->mdev.dev = ndev;
+   217	
+   218	/* There is no clean way to pass the MTU to the callback function
+   219	 * used for registration, so set the values ahead of time.
+   220	 */
+   221		mctp_pcc_mtu = mctp_pcc_dev->out_chan->shmem_size -
+   222			sizeof(struct mctp_pcc_hdr);
+   223		ndev->mtu = mctp_pcc_mtu;
+   224		ndev->max_mtu = mctp_pcc_mtu;
+   225		ndev->min_mtu = MCTP_MIN_MTU;
+   226	
+   227		physical_link_addr.inbox_index =
+   228			htonl(mctp_pcc_dev->hw_addr.inbox_index);
+   229		physical_link_addr.outbox_index =
+   230			htonl(mctp_pcc_dev->hw_addr.outbox_index);
+   231		dev_addr_set(ndev, (const u8 *)&physical_link_addr);
+   232		rc = register_netdev(ndev);
+   233		if (rc)
+   234			goto cleanup_in_channel;
+   235		list_add_tail(&mctp_pcc_dev->head, &mctp_pcc_ndevs);
+   236		return 0;
+   237	cleanup_in_channel:
+   238		mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->in_chan);
+   239	cleanup_out_channel:
+   240		mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->out_chan);
+   241	free_netdev:
+   242		unregister_netdev(ndev);
+   243		free_netdev(ndev);
+   244		return rc;
+   245	}
+   246	
+   247	struct lookup_context {
+   248		int index;
+   249		int inbox_index;
+   250		int outbox_index;
+   251	};
+   252	
+   253	static acpi_status lookup_pcct_indices(struct acpi_resource *ares, void *context)
+   254	{
+   255		struct acpi_resource_address32 *addr;
+   256		struct lookup_context *luc = context;
+   257	
+   258		switch (ares->type) {
+   259		case 0x0c:
+   260		case 0x0a:
+   261			break;
+   262		default:
+   263			return AE_OK;
+   264		}
+   265	
+   266		addr = ACPI_CAST_PTR(struct acpi_resource_address32, &ares->data);
+   267		switch (luc->index) {
+   268		case 0:
+   269			luc->outbox_index = addr[0].address.minimum;
+   270			break;
+   271		case 1:
+   272			luc->inbox_index = addr[0].address.minimum;
+   273			break;
+   274		}
+   275		luc->index++;
+   276		return AE_OK;
+   277	}
+   278	
+   279	static int mctp_pcc_driver_add(struct acpi_device *adev)
+   280	{
+   281		int inbox_index;
+   282		int outbox_index;
+   283		acpi_handle dev_handle;
+   284		acpi_status status;
+   285		struct lookup_context context = {0, 0, 0};
+   286	
+ > 287		dev_info(&adev->dev, "Adding mctp_pcc device for HID  %s\n", acpi_device_hid(adev));
+ > 288		dev_handle = acpi_device_handle(adev);
+   289		status = acpi_walk_resources(dev_handle, "_CRS", lookup_pcct_indices, &context);
+   290		if (ACPI_SUCCESS(status)) {
+   291			inbox_index = context.inbox_index;
+   292			outbox_index = context.outbox_index;
+   293			return create_mctp_pcc_netdev(adev, &adev->dev, inbox_index, outbox_index);
+   294		}
+   295		dev_err(&adev->dev, "FAILURE to lookup PCC indexes from CRS");
+   296		return -EINVAL;
+   297	};
+   298	
+   299	/* pass in adev=NULL to remove all devices
+   300	 */
+   301	static void mctp_pcc_driver_remove(struct acpi_device *adev)
+   302	{
+   303		struct mctp_pcc_ndev *mctp_pcc_dev = NULL;
+   304		struct list_head *ptr;
+   305		struct list_head *tmp;
+   306	
+   307		list_for_each_safe(ptr, tmp, &mctp_pcc_ndevs) {
+   308			mctp_pcc_dev = list_entry(ptr, struct mctp_pcc_ndev, head);
+   309			if (!adev || mctp_pcc_dev->acpi_device == adev) {
+   310				struct net_device *ndev;
+   311	
+   312				mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->out_chan);
+   313				mctp_pcc_dev->cleanup_channel(mctp_pcc_dev->in_chan);
+   314				ndev = mctp_pcc_dev->mdev.dev;
+   315				if (ndev)
+   316					mctp_unregister_netdev(ndev);
+   317				list_del(ptr);
+   318				if (adev)
+   319					break;
+   320			}
+   321		}
+   322	};
+   323	
+   324	static const struct acpi_device_id mctp_pcc_device_ids[] = {
+   325		{ "DMT0001", 0},
+   326		{ "", 0},
+   327	};
+   328	
+ > 329	static struct acpi_driver mctp_pcc_driver = {
+   330		.name = "mctp_pcc",
+   331		.class = "Unknown",
+   332		.ids = mctp_pcc_device_ids,
+   333		.ops = {
+   334			.add = mctp_pcc_driver_add,
+   335			.remove = mctp_pcc_driver_remove,
+   336			.notify = NULL,
+   337		},
+   338		.owner = THIS_MODULE,
+   339	
+   340	};
+   341	
+   342	static int __init mctp_pcc_mod_init(void)
+   343	{
+   344		int rc;
+   345	
+   346		pr_info("initializing MCTP over PCC\n");
+   347		INIT_LIST_HEAD(&mctp_pcc_ndevs);
+ > 348		rc = acpi_bus_register_driver(&mctp_pcc_driver);
+   349		if (rc < 0)
+   350			ACPI_DEBUG_PRINT((ACPI_DB_ERROR, "Error registering driver\n"));
+   351		return rc;
+   352	}
+   353	
+   354	static __exit void mctp_pcc_mod_exit(void)
+   355	{
+   356		pr_info("Removing MCTP over PCC transport driver\n");
+   357		mctp_pcc_driver_remove(NULL);
+ > 358		acpi_bus_unregister_driver(&mctp_pcc_driver);
+   359	}
+   360	
+
 -- 
-2.25.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
