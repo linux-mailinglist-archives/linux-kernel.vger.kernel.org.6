@@ -1,113 +1,231 @@
-Return-Path: <linux-kernel+bounces-178528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2FB8C4F0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:31:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F258C4F0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A9201C21126
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:31:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75C7A1C2030D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8CE13664D;
-	Tue, 14 May 2024 09:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910BD1386C6;
+	Tue, 14 May 2024 09:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="kGzY9Grk"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="gLhPoCXh"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357A357880;
-	Tue, 14 May 2024 09:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207111386AB
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715680119; cv=none; b=mIx0JwavA5+i1SW79t6FML+d0JPRRyOMFdgJT/ER/5/JomLn2ktx6hojqK3HNNqaxHXhqIWB0FURJzfJdu31W83OS44p8F6nx1V6COLE1aNqW6TQy2U+r0Pn0LiwP7cGjop/K43hnbxvaqkM4mDUIJOj7/h+nhVJabxXHGgPNqo=
+	t=1715680248; cv=none; b=DV4msxpsORC96bbCuc1MlUT30tA6PSWLnhZhcJt2dECxaB9osQmxdGQ5iPjXk2ZIpVQDqp4l8IQf51esLNyE30RN21Du5DSzFGcPp7dgB3HZq0eIiuxqlYKGDa7QmM+ZMOr/Y70Ux2m+BQJmIkkU7dVBJH9LAbX+dagU20q7S4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715680119; c=relaxed/simple;
-	bh=OftvRN5FYOGb0QnfwZasmhuCm52IoMGg8swzhWcgK/0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5ZxU3CyjklcKyG4KouedCmsJbEkJqZwWJPDkZUzodQ4NuWmd1XB/ZqmThG2TYrON9t1XPRSIPGjI3ODnYf9YwSvW+xQO4jD3xsqD5sLz3gRqoFlmMcy2NHrIKEBciv8Ais7Ff5txxs3b9bEPEKBq5PpPTIuuRdv4yPMfnVjP8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=kGzY9Grk; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=OftvRN5FYOGb0QnfwZasmhuCm52IoMGg8swzhWcgK/0=; t=1715680117;
-	x=1716112117; b=kGzY9Grk6KEhop/IWLfdCtviAVSYObF4RDzRK8WGDttEmW0ipHbWLcgsqk5El
-	Ywfj8LnMtDxg0/2AUlnsolzYvJjkq2rATS7tJT0ZDtZSmYyztGfZUMjCo/LDgpRMWkhXQh6kfYKSy
-	n9Wp5RAMbUyXh4eew5gEL3J4Z9Phwbse7EMwMMoxc83mH4C5R+tVYMKfM4pWhUmV6CMLEE0mw8lgf
-	ANXnE2QmRrZcGaya05MLub5kJ1mcHdg2wX7U6ga6b5UfP6jlmUbhmqJc9egkGxoNWcNZZd/lS9nig
-	z8GxBZVWREFkqMmfcoBm4RQqVNP6zqcmHAtQlQ4vElwKDEngCg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1s6olk-0001jy-TO; Tue, 14 May 2024 11:48:24 +0200
-Message-ID: <ce8b63da-8bc0-456d-8fff-23e937871246@leemhuis.info>
-Date: Tue, 14 May 2024 11:48:22 +0200
+	s=arc-20240116; t=1715680248; c=relaxed/simple;
+	bh=TCkx6SaxQ1bT0hwpMFkeJTA63KBdnOB9RyvhqZLO2qY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qwD0n6tASlPrPOSahv9OMRnazCcIzNkNIBiCZCvMSLp4tKib/tZhz40Ap12jLXD1z/s8Bmibr1/3FJRlDCnVWoC6oa/xbfd4TSwckzFt99MC3nHvoJp457leg80bSUciqmLlIgMvzkjyjM62huc7Mv/NZMoEWg8hZk2+nyChZWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=gLhPoCXh; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c9abbb9efbso595899b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715680246; x=1716285046; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0wKHm6XT5EYm6vl/df7llbv2ZznYvQVbeTCwxvcThXU=;
+        b=gLhPoCXh74TKJF46R2uNADuVzoDDobTXPFvICkjTqHemUIlkrZ04pow8cDTLxFzrQ/
+         Zn4r745jQulc6tYvCPUPT8v8wLl3yfER42aEcM98c+4+QmDtREUELOPLU17r+WZn8r7x
+         qRn9Wv/1I4NzNix4Lu4twgRBUKjxIpdfj/Sb/7xFncQR0I5X2HHOtraWaL547peP+a0R
+         O3/sq35ubxHeQ4ymEIZ1mA7Xoh5ZmXyc0PhB706rWN20bZUZ2ZmAJ+nRUGnLfpzSXbUW
+         jWPaDfOHRNRIsDtXuTmlBErsrolx2O9EqqpwpWf9FWrkP1UJytUhFuOMbD5k1houMCxf
+         rhKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715680246; x=1716285046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0wKHm6XT5EYm6vl/df7llbv2ZznYvQVbeTCwxvcThXU=;
+        b=gudtGjFeoujh02eQlBSt9uqUK7gxP5MttoPXU20W/6H3PX4Lxj3PUKIHstNDREpxzv
+         jQBEIJRLwI0wQaCZsPXWjZkAS6P9i98UvFhWYpGvZQLDIVawOzeRBZEsobrflQDKtOx0
+         dG3MqjDzC3zLppzFA79GZuS0IjfojQldfZuXjjEztDCQlQkaiAthiVa9Pdve8+RbB9Kr
+         K5GMREykAypGkYXCmgftpV4+2p5DyuR9b0DnNcs2M7mZYpJQZiDyWUL3lUZ+cX+qbhw0
+         GU5seaW1sS1OmhK8gHuInaz9V4+P7BX17vayepjRjxOpYOrqEPNFLXmJ/EOG+Ffxv9Pw
+         Upig==
+X-Forwarded-Encrypted: i=1; AJvYcCU3MSMBMCfvn/rsNJoeQX2vxKJmYNCM+XKbazUDH2p5emjcgeDzTTj3yFv/Kflwrx8xxczMu0l2/7hfAALWjfJHm4vZO9Oh8qSRGCZ9
+X-Gm-Message-State: AOJu0YyiXxzMdguSbtCliSrmZRfahiNUyPUbNHUZvzbL7WMAwNoN7vqF
+	KDkTPO25JGArPyMKjvr7oPcyDJcAvpCqXvZjeYHt4Iqvlk6Y75lWjHeM935Ps3cuVJPwv5XnFy3
+	xxcpPKmZu3gyxiVVZZszVNT1CiyQEH/3UOQyZ9g==
+X-Google-Smtp-Source: AGHT+IFZlGka49AMpZnqeQG/0/xoWz38eoC8WUNBIFRNqyMEzju7A9//UVdvie1NQ5rKtQlwZbm11YMHm3N4CSBDIj8=
+X-Received: by 2002:a05:6808:3099:b0:3c7:21b4:6e1 with SMTP id
+ 5614622812f47-3c996c688b8mr6596851b6e.2.1715680244711; Tue, 14 May 2024
+ 02:50:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression of e1000e (I219-LM) from 6.1.90 to 6.6.30
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Regressions <regressions@lists.linux.dev>,
- Linux Networking <netdev@vger.kernel.org>, intel-wired-lan@lists.osuosl.org,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- lukas.probsthain@googlemail.com
-References: <ZkHSipExKpQC8bWJ@archie.me>
- <b2897fda-08e8-40de-b78a-86e92bde41db@lunn.ch>
- <56463a97-eb90-4884-b2f5-c165f6c3516a@gmail.com>
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <56463a97-eb90-4884-b2f5-c165f6c3516a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1715680118;2a0210a5;
-X-HE-SMSGID: 1s6olk-0001jy-TO
+References: <20240226065113.1690534-1-nick.hu@sifive.com> <CAPDyKFph3WsZMmALnzBQKE4S_80Ji5h386Wi0vHda37QUsjMtg@mail.gmail.com>
+ <CAKddAkDcdaXKzpcKN=LCCx9S4Trv+joLX2s=nyhzaRtM5HorqA@mail.gmail.com>
+ <CAKddAkC6N=Cfo0z+F8herKTuJzCyt_MA0vWNbLCr6CbQnj0y8g@mail.gmail.com> <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
+In-Reply-To: <CAPDyKFr_M0NDH0gaunBpybnALOFfz4LpX4_JW2GCUxjwGzdZsg@mail.gmail.com>
+From: Nick Hu <nick.hu@sifive.com>
+Date: Tue, 14 May 2024 17:50:34 +0800
+Message-ID: <CAKddAkC5CRX+ZTh=MgzPYU72SY13+AQYhknhV_CC+=XX9=DKyg@mail.gmail.com>
+Subject: Re: [PATCH] cpuidle: riscv-sbi: Add cluster_pm_enter()/exit()
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: palmer@dabbelt.com, anup@brainfault.org, rafael@kernel.org, 
+	daniel.lezcano@linaro.org, paul.walmsley@sifive.com, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	zong.li@sifive.com, Cyan Yang <cyan.yang@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 14.05.24 06:34, Bagas Sanjaya wrote:
-> On 5/14/24 00:17, Andrew Lunn wrote:
->> On Mon, May 13, 2024 at 03:42:50PM +0700, Bagas Sanjaya wrote:
->>>
->>> <lukas.probsthain@googlemail.com> reported on Bugzilla
->>> (https://bugzilla.kernel.org/show_bug.cgi?id=218826) regression on his Thinkpad
->>> T480 with Intel I219-LM:
+Hi Ulf,
 
-Bagas, why did you start forwarding these bugs by mail yourself again
-after we had agreed you forward them to me, so I can handle it from there?
+Thank you for your valuable suggestion.
+I sincerely apologize for the delay in responding to your message. We
+have diligently worked on experimenting with the suggestion you
+provided.
 
-Yes, you forwarded that particular bug to me a few days ago and I didn't
-do anything. But that was on purpose: I usually wait at least two
-working days before doing so, as some subsystem are active in bugzilla
-and might feel annoyed by starting a separate thread on the mailing list.
+As per your recommendation, we have incorporated the "power-domains=3D<>
+property" into the consumer's node, resulting in modifications to the
+DTS as illustrated below:
 
-Side note: you also apparently make it not obvious enough that you are
-just forwarding the bug, as both here and in the other bug your
-forwarded today the developer apparently thought it was a bug you face.
+cpus {
+    ...
+     domain-idle-states {
+           CLUSTER_SLEEP:cluster-sleep {
+                        compatible =3D "domain-idle-state";
+                        ...
+            }
+     }
+     power-domains {
+            ...
+            ...
+            CLUSTER_PD: clusterpd {
+                    domain-idle-states =3D <&CLUSTER_SLEEP>;
+            };
+     }
+}
+soc {
+      deviceA@xxx{
+             ...
+             power-domains =3D <&CLUSTER_PD>;
+             ...
+      }
+}
 
-Please lets avoid all of that again and switch back to the model we
-agreed on a few months ago.
+However, this adjustment has led to an issue where the probe for
+'deviceA' is deferred by 'device_links_check_suppliers()' within
+'really_probe()'. In an attempt to mitigate this issue, we
+experimented with a workaround by adding the attribute
+"status=3D"disabled"" to the 'CLUSTER_PD' node. This action aimed to
+prevent the creation of a device link between 'deviceA' and
+'CLUSTER_PD'. Nevertheless, we remain uncertain about the
+appropriateness of this solution.
 
->>>> After updating from kernel version 6.1.90 to 6.6.30, the e1000e driver exhibits a regression on a Lenovo Thinkpad T480 with an Intel I219-LM Ethernet controller.
->>
->> Could you try a git bisect between these two kernel versions? You
->> might be able to limit it to drivers/net/ethernet/intel/e1000e, which
->> only had around 15 patches.
+Do you have suggestions on how to effectively address this issue?
+
+Regards,
+Nick
+
+On Tue, Apr 30, 2024 at 4:13=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
 >
-> The BZ reporter (Cc'ed) says that bisection is in progress. You may
-> want to log in to BZ to reach him.
-
-Side note: you should not assume every developer has a BZ account (or is
-willing to create one).
-
-Ciao, Thorsten
+> On Mon, 29 Apr 2024 at 18:26, Nick Hu <nick.hu@sifive.com> wrote:
+> >
+> > On Tue, Apr 30, 2024 at 12:22=E2=80=AFAM Nick Hu <nick.hu@sifive.com> w=
+rote:
+> > >
+> > > Hi Ulf
+> > >
+> > > On Mon, Apr 29, 2024 at 10:32=E2=80=AFPM Ulf Hansson <ulf.hansson@lin=
+aro.org> wrote:
+> > > >
+> > > > On Mon, 26 Feb 2024 at 07:51, Nick Hu <nick.hu@sifive.com> wrote:
+> > > > >
+> > > > > When the cpus in the same cluster are all in the idle state, the =
+kernel
+> > > > > might put the cluster into a deeper low power state. Call the
+> > > > > cluster_pm_enter() before entering the low power state and call t=
+he
+> > > > > cluster_pm_exit() after the cluster woken up.
+> > > > >
+> > > > > Signed-off-by: Nick Hu <nick.hu@sifive.com>
+> > > >
+> > > > I was not cced this patch, but noticed that this patch got queued u=
+p
+> > > > recently. Sorry for not noticing earlier.
+> > > >
+> > > > If not too late, can you please drop/revert it? We should really mo=
+ve
+> > > > away from the CPU cluster notifiers. See more information below.
+> > > >
+> > > > > ---
+> > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c | 24 ++++++++++++++++++++++-=
+-
+> > > > >  1 file changed, 22 insertions(+), 2 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidl=
+e/cpuidle-riscv-sbi.c
+> > > > > index e8094fc92491..298dc76a00cf 100644
+> > > > > --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > > @@ -394,6 +394,7 @@ static int sbi_cpuidle_pd_power_off(struct ge=
+neric_pm_domain *pd)
+> > > > >  {
+> > > > >         struct genpd_power_state *state =3D &pd->states[pd->state=
+_idx];
+> > > > >         u32 *pd_state;
+> > > > > +       int ret;
+> > > > >
+> > > > >         if (!state->data)
+> > > > >                 return 0;
+> > > > > @@ -401,6 +402,10 @@ static int sbi_cpuidle_pd_power_off(struct g=
+eneric_pm_domain *pd)
+> > > > >         if (!sbi_cpuidle_pd_allow_domain_state)
+> > > > >                 return -EBUSY;
+> > > > >
+> > > > > +       ret =3D cpu_cluster_pm_enter();
+> > > > > +       if (ret)
+> > > > > +               return ret;
+> > > >
+> > > > Rather than using the CPU cluster notifiers, consumers of the genpd
+> > > > can register themselves to receive genpd on/off notifiers.
+> > > >
+> > > > In other words, none of this should be needed, right?
+> > > >
+> > > Thanks for the feedback!
+> > > Maybe I miss something, I'm wondering about a case like below:
+> > > If we have a shared L2 cache controller inside the cpu cluster power
+> > > domain and we add this controller to be a consumer of the power
+> > > domain, Shouldn't the genpd invoke the domain idle only after the
+> > > shared L2 cache controller is suspended?
+> > > Is there a way that we can put the L2 cache down while all cpus in th=
+e
+> > > same cluster are idle?
+> > > > [...]
+> > Sorry, I made some mistake in my second question.
+> > Update the question here:
+> > Is there a way that we can save the L2 cache states while all cpus in t=
+he
+> > same cluster are idle and the cluster could be powered down?
+>
+> If the L2 cache is a consumer of the cluster, the consumer driver for
+> the L2 cache should register for genpd on/off notifiers.
+>
+> The device representing the L2 cache needs to be enabled for runtime
+> PM, to be taken into account correctly by the cluster genpd. In this
+> case, the device should most likely remain runtime suspended, but
+> instead rely on the genpd on/off notifiers to understand when
+> save/restore of the cache states should be done.
+>
+> Kind regards
+> Uffe
 
