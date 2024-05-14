@@ -1,128 +1,132 @@
-Return-Path: <linux-kernel+bounces-178346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675128C4C53
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:30:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89B338C4C56
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AF0A1C20ABA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:30:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3097B28216C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E224F9445;
-	Tue, 14 May 2024 06:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4029FE541;
+	Tue, 14 May 2024 06:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g5DNN69z"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="euQya6Xp"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4139D4C9F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE4FAD49
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715668213; cv=none; b=XfkE3WN83bwZnxo6TBT45n6io9mrbZexWYoVzJX0VKiGiI6Yk2MweHJWMYBD7qA6skqkyOEvUxXW2g1GW8BoV5oJR09PmYczKG86C0nMq6XlezgyKZg7dwNGzVzSXVqEu2G6p9ZTS3NE4jL/GVgakpFIDVkFMqyczEKi8n99Rqg=
+	t=1715668367; cv=none; b=Zpp37LjikmadPIz2pXW7pMuWwf62abJPSldchZNWZE19AB3LS6LssoJbvASHeNqXYMF3tWL7M3Xb1KkPx8YqufxA7BbxQTT1hZXI7voCEgYkdAhoLz6VgACdx+uTcQUbXJizKM+QdXG19E0S09yBmRtElpI1a9KYs4IkiUKi/1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715668213; c=relaxed/simple;
-	bh=ZfAjRDouTO7ZvYghB+NJtnhbR2ZdJwmxgXE8P3wfpQ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i03ETR3Spcf4/bwJrpOcgtzr2xJbkFdfrbMtT8aBokvAnPTaukZP3FZZ4wSI1QFuBuZnm00X2Xq5YolQ+R4DQKLi1qUdPg4Svup7p9UxtKHF8h/g+9eCMsO5u9QL2h6HSeHLdexRYtj4Xbmf/IhTHLZARNhkYBj5SVcffW/20DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g5DNN69z; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-61ae4743d36so51858507b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 23:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715668209; x=1716273009; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RL/HT373iFNB5/gmrPBbQbaIWBxFdiHHF2SpPtkNj6E=;
-        b=g5DNN69ziRlus2VeNnifNs5kjD9k5PmggkgQY0giZsCWMvS6W/onDv5rPWHJvV5y29
-         J89koFeZjn57bDbv56DRTcH/gFV/HvOthC7xvf70w95CP+dIC4IG3n+iH8oCfzNn7keS
-         0TTbNKrv3MVEsnoPWHGclVTPk9B0nR/Auj4+t2A7zdiuHGEGQHX3tZziMTEgvmYnoETX
-         +buCp+6EskM6IyF6nzoyxO9UNAEIHQIFYTMliQl7OSJHQIGq2hBAUj9IIwtUga3+KQ71
-         /SllDw4L3JCKbpLrBHmU1xqmCj2htLIGrLNLgPASku0taSTAhh3zn2zLgtCf03uz2z6Z
-         S5qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715668209; x=1716273009;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RL/HT373iFNB5/gmrPBbQbaIWBxFdiHHF2SpPtkNj6E=;
-        b=qhfqdbzzP3QgMMPRTETmICGMGLce3nqxxoQd6TPdaak+4o3POahgUUzvv5AHaAKefB
-         nfr2MYww2FwNz9+g6/FzmYBAtR6MBJAqlFoRsxOqmrFk1SoZKhd/+eCvCPWREZlfq0Ne
-         DW+ZNWPc/CVfgRQyZYQ3WVtyKPIfWsZaX0yibQ9mPf9OcRH8eQxZ+IT+5E2KpT1i1qvE
-         Olq1HsvYsEzfaZ9odA0OFHH3P8+VAPmf5pnuiwmbc1RzUSqRHRomdGao1JnEPc3wkIlk
-         A+lgcI9U+CHgCk7xTgqZTp2+Ot+v/o73cS7gNzq6NAbkAB7OJfrULSep4F4WZu6Xf44b
-         BYHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgd8fX9s6iOYdaDeGKRWgnCNPZSDl1IS3XbNGD8vQrt73nnPe1Q3aXeEMxzYav4cRCGlmd8v8ZLH6Rn0KO14QZOZN4zG6G7Th12xY1
-X-Gm-Message-State: AOJu0YwcoGIzcaKTiVssGYih3XgknMElVaUSI9Gze5LCDqWrw5sjP80V
-	LORATDxtfeb0z2PC16itv2nC129r5xwex2X9kXvWiWZxl95RgmIFW15t11Aw8ZL1Be3yORAynz4
-	qWT2vDT0oXqSNlHrM13NIW192fPUOO6DaKNehuA==
-X-Google-Smtp-Source: AGHT+IEmSQRtsmi9qrBir2bfVjCB/SQEucaaV9YGbI3BoFMzakNXhdNYP6vrUbPSuXDlSiSULIWHOWNxXgTkE8klnbg=
-X-Received: by 2002:a05:690c:60c6:b0:615:c96:1a8f with SMTP id
- 00721157ae682-622affe1b3amr131034567b3.17.1715668207682; Mon, 13 May 2024
- 23:30:07 -0700 (PDT)
+	s=arc-20240116; t=1715668367; c=relaxed/simple;
+	bh=kBAcps8nyWv/1jmLqIvu/lxyDrTrvBsKKoN14C+MCRU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BIqyHv0EVj7rTKYL9AUoyLi8kmhwoegDLPFGCghOxz4DXSgx7X8eHAl4ZmUauKjQXnw+gLnO2QQRLW1Atoxu6h1/bCHdAj/uV7gkF8kBah3A/6ulR01uC0+wuNei9A3sEn/oHCMhsHHQSA/pSsEN250SEIDXRx/zV7jqmJGTwlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=euQya6Xp; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44E6VMF9027337;
+	Tue, 14 May 2024 01:31:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715668282;
+	bh=kBAcps8nyWv/1jmLqIvu/lxyDrTrvBsKKoN14C+MCRU=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To;
+	b=euQya6XpMYTG5ptwemU6BB43YtzDjBM2NtHxsHyFiCADBQhytzV+bgaVkEfSy8SL1
+	 cyqzDt4uuoLViXhu4zTUq3pc11/UTV2WXYRlhp9YiVT/Izge+DRPNXOaaJtWxBl0NC
+	 TKc4eSwj+e6Qj8aaFVgVg3aGsHzgvHlUsOT5R3CI=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44E6VMpD011074
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 May 2024 01:31:22 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
+ May 2024 01:31:22 -0500
+Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
+ DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
+ 15.01.2507.023; Tue, 14 May 2024 01:31:22 -0500
+From: "Ding, Shenghao" <shenghao-ding@ti.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "broonie@kernel.org" <broonie@kernel.org>,
+        "lgirdwood@gmail.com"
+	<lgirdwood@gmail.com>,
+        "perex@perex.cz" <perex@perex.cz>,
+        "pierre-louis.bossart@linux.intel.com"
+	<pierre-louis.bossart@linux.intel.com>,
+        "13916275206@139.com"
+	<13916275206@139.com>,
+        "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "liam.r.girdwood@intel.com"
+	<liam.r.girdwood@intel.com>,
+        "bard.liao@intel.com" <bard.liao@intel.com>,
+        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
+        "Lu,
+ Kevin" <kevin-lu@ti.com>,
+        "cameron.berkenpas@gmail.com"
+	<cameron.berkenpas@gmail.com>,
+        "tiwai@suse.de" <tiwai@suse.de>, "Xu, Baojun"
+	<baojun.xu@ti.com>,
+        "soyer@irl.hu" <soyer@irl.hu>,
+        "Baojun.Xu@fpt.com"
+	<Baojun.Xu@fpt.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v5 2/3] ASoC: tas2781: Fix wrong loading
+ calibrated data sequence
+Thread-Topic: [EXTERNAL] Re: [PATCH v5 2/3] ASoC: tas2781: Fix wrong loading
+ calibrated data sequence
+Thread-Index: AQHapBc5leN0axZoFUGYCdnWILUBZLGVRDAAgAEC+0A=
+Date: Tue, 14 May 2024 06:31:22 +0000
+Message-ID: <d9dd889f18ec4265a50a2490d80999c2@ti.com>
+References: <20240512025040.1276-1-shenghao-ding@ti.com>
+ <20240512025040.1276-2-shenghao-ding@ti.com>
+ <ZkHkjhxIZ8I0s3-D@smile.fi.intel.com>
+In-Reply-To: <ZkHkjhxIZ8I0s3-D@smile.fi.intel.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMSo37UN11V8UeDM4cyD+iXyRR1Us53a00e34wTy+zP6vx935A@mail.gmail.com>
- <20240508075658.7164-1-jtornosm@redhat.com> <CAMSo37XddAvE199QpA_WR5uwQUjzemF8GxqoWfETUNtFw6iCrg@mail.gmail.com>
-In-Reply-To: <CAMSo37XddAvE199QpA_WR5uwQUjzemF8GxqoWfETUNtFw6iCrg@mail.gmail.com>
-From: Yongqin Liu <yongqin.liu@linaro.org>
-Date: Tue, 14 May 2024 08:29:56 +0200
-Message-ID: <CAMSo37XWZ118=R9tFHZqw+wc7Sy_QNHHLdkQhaxjhCeuQQhDJw@mail.gmail.com>
-Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address
- before first reading
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: amit.pundir@linaro.org, davem@davemloft.net, edumazet@google.com, 
-	inventor500@vivaldi.net, jarkko.palviainen@gmail.com, jstultz@google.com, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
-	sumit.semwal@linaro.org, vadim.fedorenko@linux.dev, vmartensson@google.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hi, Jose
-
-On Wed, 8 May 2024 at 12:41, Yongqin Liu <yongqin.liu@linaro.org> wrote:
->
-> Hi, Jose
->
-> On Wed, 8 May 2024 at 15:57, Jose Ignacio Tornos Martinez
-> <jtornosm@redhat.com> wrote:
-> >
-> > Hello Yongqin,
-> >
-> > Sorry for the inconveniences.
-> >
-> > I don't have the db845c, could you provide information about the type of
-> > device and protocol used?
->
-> The db845c uses an RJ45 as the physical interface.
-> It has the translation from PCIe0 to USB and USB to Gigabit Ethernet controller.
->
-> For details, maybe you could check the hardware details from the documents here:
->     https://www.96boards.org/documentation/consumer/dragonboard/dragonboard845c/hardware-docs/
->
-> > Related driver logs would be very helpful for this.
->
-> Here is the log from the serial console side:
->     https://gist.github.com/liuyq/809247d8a12aa1d9e03058e8371a4d44
->
-> Please let me know if I could try and provide more information for the
-> investigation.
-
-Just want to check, not sure if you have checked the serial log file,
-or do you have other suggestions about what we should try next,
-
--- 
-Best Regards,
-Yongqin Liu
----------------------------------------------------------------
-#mailing list
-linaro-android@lists.linaro.org
-http://lists.linaro.org/mailman/listinfo/linaro-android
+SGkgQW5keQ0KVGhhbmtzIGZvciB5b3VyIGNvbW1lbnQuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
+YWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0BsaW51
+eC5pbnRlbC5jb20+DQo+IFNlbnQ6IE1vbmRheSwgTWF5IDEzLCAyMDI0IDY6MDAgUE0NCj4gVG86
+IERpbmcsIFNoZW5naGFvIDxzaGVuZ2hhby1kaW5nQHRpLmNvbT4NCj4gQ2M6IGJyb29uaWVAa2Vy
+bmVsLm9yZzsgbGdpcmR3b29kQGdtYWlsLmNvbTsgcGVyZXhAcGVyZXguY3o7IHBpZXJyZS0NCj4g
+bG91aXMuYm9zc2FydEBsaW51eC5pbnRlbC5jb207IDEzOTE2Mjc1MjA2QDEzOS5jb207IGFsc2Et
+ZGV2ZWxAYWxzYS0NCj4gcHJvamVjdC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
+IGxpYW0uci5naXJkd29vZEBpbnRlbC5jb207DQo+IGJhcmQubGlhb0BpbnRlbC5jb207IHl1bmct
+Y2h1YW4ubGlhb0BsaW51eC5pbnRlbC5jb207IEx1LCBLZXZpbiA8a2V2aW4tDQo+IGx1QHRpLmNv
+bT47IGNhbWVyb24uYmVya2VucGFzQGdtYWlsLmNvbTsgdGl3YWlAc3VzZS5kZTsgWHUsIEJhb2p1
+bg0KPiA8YmFvanVuLnh1QHRpLmNvbT47IHNveWVyQGlybC5odTsgQmFvanVuLlh1QGZwdC5jb20N
+Cj4gU3ViamVjdDogW0VYVEVSTkFMXSBSZTogW1BBVENIIHY1IDIvM10gQVNvQzogdGFzMjc4MTog
+Rml4IHdyb25nIGxvYWRpbmcNCj4gY2FsaWJyYXRlZCBkYXRhIHNlcXVlbmNlDQo+IA0KPiBPbiBT
+dW4sIE1heSAxMiwgMjAyNCBhdCAxMDo1MDozOEFNICswODAwLCBTaGVuZ2hhbyBEaW5nIHdyb3Rl
+Og0KPiA+IENhbGlicmF0ZWQgZGF0YSB3aWxsIGJlIHNldCB0byBkZWZhdWx0IGFmdGVyIGxvYWRp
+bmcgRFNQIGNvbmZpZw0KPiA+IHBhcmFtcywgd2hpY2ggd2lsbCBjYXVzZSBzcGVha2VyIHByb3Rl
+Y3Rpb24gd29yayBhYm5vcm1hbGx5LiBSZWxvYWQNCj4gPiBjYWxpYnJhdGVkIGRhdGEgYWZ0ZXIg
+bG9hZGluZyBEU1AgY29uZmlnIHBhcmFtcy4NCj4gDQo+IC4uLg0KPiANCj4gPiAtaW50IHRhc2Rl
+dmljZV9wcm1nX2NhbGliZGF0YV9sb2FkKHZvaWQgKmNvbnRleHQsIGludCBwcm1fbm8pDQo+IA0K
+PiA+IC1FWFBPUlRfU1lNQk9MX05TX0dQTCh0YXNkZXZpY2VfcHJtZ19jYWxpYmRhdGFfbG9hZCwN
+Cj4gPiAtCVNORF9TT0NfVEFTMjc4MV9GTVdMSUIpOw0KPiANCj4gQUZBSUNTIHRoZSBpMmMgZ2x1
+ZSBkcml2ZXIgc3RpbGwgdXNlcyB0aGlzLCBob3cgY2FuJ3QgdGhpcyBicmVhayB0aGUgYnVpbGQ/
+DQpbUEFUQ0ggdjUgMy8zXSBoYXMgcmVtb3ZlZCB0YXNkZXZpY2VfcHJtZ19jYWxpYmRhdGFfbG9h
+ZCwgYW5kIA0KdGFzZGV2aWNlX3BybWdfbG9hZCh0YXNfcHJpdiwgMCkgaGFzIGJlZW4gY2FsbGVk
+IGluc3RlYWQgb2YgDQp0YXNkZXZpY2VfcHJtZ19jYWxpYmRhdGFfbG9hZA0KPiANCj4gLS0NCj4g
+V2l0aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0KPiANCg0K
 
