@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-179251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A408C5DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160308C5E00
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15BFBB20FE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:02:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC42281D60
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC5E182C96;
-	Tue, 14 May 2024 23:01:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A74182C9C;
+	Tue, 14 May 2024 23:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="rffGIS+E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfRCS1xE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9yUGQPaf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16925181D1B;
-	Tue, 14 May 2024 23:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C12181D1B;
+	Tue, 14 May 2024 23:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715727717; cv=none; b=CZK69uUbFcP38izaa62SNLKkicwQbdUPQFoj2ioTWqY9NHMu7sZ0mZLkO1q3u3qTWJWsVBgqk7p6qsD2hvU4/OvkjNZlxfWNQABSoWuMnL8rlKOP4rrHM/RC42JXuBZmqsqxUt4wUpDO0LKMhNS3iGQFxGWyvqqOz3jPDXDdRic=
+	t=1715727885; cv=none; b=MdPWXNRNxWRVXBm9LUL7ehRcsZz22Qxoygg41byuukxEkJy5J7FOotUY1+u8pRyWFdtYCEBE4brCKn6oQkxch+4+BBBvNv25S9ZP7G2w8GCBqGhNWY8no49xpoKWHoF6Fv2ZLKj/U56reN0uFZ5dcpWnyNarXixF7IN9h6vXH8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715727717; c=relaxed/simple;
-	bh=ql9IruMwPF3jx//u401rl++FzKZuu5086c7g9sy74LI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FTM37K9i7IWAEraH2xaDiSBVl0YH1qpbF4de+KvzN6H8+fUyc/5S29N1F4+3xv2r/XSk/LLdlo4dpJ0Xt4EWxSJ/bJAHt8d0jLfZ5mAQf2nXxHgY5fjrN8r5CnbtTwSmx6Y43RUNjXXOeKY07oUPozL5jVnaq7yeFfDA7eYM+sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=rffGIS+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E06DAC2BD10;
-	Tue, 14 May 2024 23:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1715727716;
-	bh=ql9IruMwPF3jx//u401rl++FzKZuu5086c7g9sy74LI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rffGIS+E3mt0Fj4i8hRGK7jzBkFBu2+Ts1IckYH+2iO2fXNtNyBfKYrztj3owuT+k
-	 kqYni2rDFcl3C36xXwrddcU8GIRwb+1suRtTtsCyCLSAhH3qfBTQkP2NqqbRK7wr5S
-	 05wHzwQfae2uVTicAuWCNkfDhPt5c6OFgiLGDU/I=
-Date: Tue, 14 May 2024 16:01:50 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Theo de Raadt" <deraadt@openbsd.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Jonathan Corbet <corbet@lwn.net>,
- jeffxu@chromium.org, keescook@chromium.org, jannh@google.com,
- sroettger@google.com, gregkh@linuxfoundation.org,
- torvalds@linux-foundation.org, usama.anjum@collabora.com,
- Liam.Howlett@oracle.com, surenb@google.com, merimus@google.com,
- rdunlap@infradead.org, jeffxu@google.com, jorgelo@chromium.org,
- groeck@chromium.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- pedro.falcato@gmail.com, dave.hansen@intel.com,
- linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-Message-Id: <20240514160150.3ed0fda8af5cbd2f17c625e6@linux-foundation.org>
-In-Reply-To: <56001.1715726927@cvs.openbsd.org>
-References: <20240415163527.626541-1-jeffxu@chromium.org>
-	<20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
-	<871q646rea.fsf@meer.lwn.net>
-	<ZkPXcT_JuQeZCAv0@casper.infradead.org>
-	<56001.1715726927@cvs.openbsd.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715727885; c=relaxed/simple;
+	bh=gCqjA9RatKnkSLjN8bz5VWEWDMhZs/6qSocvM+g3FVw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gN8IJk1y3FKZhYZ9d2WLhXETmQGnoIJYupby92sVg8mnPalh9sb3IuyFoj9SsiaJF/ZKI+zRCj0HHJUdn5XMYFjg8oEvFtD3SRyt8u4U5XJIT+ASKCG7kRdiLeMOS0QammJBzF01jvyfap9Epn4D9YW7gd86DP5Qr47a48MQBw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfRCS1xE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9yUGQPaf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715727881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BFDv0vTXoc2NMBBi7ioc7QN0hBYwdSMxX3SrQtikH04=;
+	b=VfRCS1xEuVn0TC+V8CPKMMpTg3JuFGmi1jBVjByv6MhGaNzBh4z6C7kA+3FARjJ5etqwvK
+	fQFirRS8V04Wmofl8iONlOluxowpu2mA9JNjAhhaBJFL6p4lhi/vcHRfT/XaaZj3itFEA4
+	z+kNwnn7Nz5Y9g3APngnjKsXEib0+hJbKOr3iD2sXaVoWfPuO8a2+6wcafJvW+qe/B+1tL
+	o2Havzb+6ZWtr5Z96r7wLQOZNJkNj8/PCkKccvigrqIBHljgUsqLIM8PduSQVSkV4bi+1l
+	Uwig64GlLyIGqppecTYAtaiwl1kJoTmL38MAcZ55SieyQknnd1VcNYvTR8ooGQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715727881;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BFDv0vTXoc2NMBBi7ioc7QN0hBYwdSMxX3SrQtikH04=;
+	b=9yUGQPaf3z81Jk03mDqBPEV01Un1HjiWGSXjawU0tNT7Ltp0VCHiBBhc/2hgLDnJ7ogT/F
+	Rnt3aFPXMmAugjAQ==
+To: Adrian Huang <adrianhuang0701@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jiwei Sun
+ <sunjw10@lenovo.com>, Adrian Huang <ahuang12@lenovo.com>
+Subject: Re: [PATCH 2/2] genirq/proc: Refine percpu kstat_irqs access logic
+In-Reply-To: <20240513120548.14046-3-ahuang12@lenovo.com>
+References: <20240513120548.14046-1-ahuang12@lenovo.com>
+ <20240513120548.14046-3-ahuang12@lenovo.com>
+Date: Wed, 15 May 2024 01:04:41 +0200
+Message-ID: <87h6f0knau.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 14 May 2024 16:48:47 -0600 "Theo de Raadt" <deraadt@openbsd.org> wrote:
+On Mon, May 13 2024 at 20:05, Adrian Huang wrote:
+> @@ -461,7 +461,7 @@ int show_interrupts(struct seq_file *p, void *v)
+>  {
+>  	static int prec;
+>  
+> -	unsigned long flags, any_count = 0;
+> +	unsigned long flags, print_irq = 1;
 
-> Matthew Wilcox <willy@infradead.org> wrote:
-> 
-> > > Not taking a position on merging, but I have to ask: are we convinced at
-> > > this point that mseal() isn't a chrome-only system call?  Did we ever
-> > > see the glibc patches that were promised?
-> > 
-> > I think _this_ version of mseal() is OpenBSD's mimmutable() with a
-> > basically unused extra 'flags' argument.  As such, we have an existance
-> > proof that it's useful beyond Chrome.
-> 
-> Yes, it is close enough.
-> 
-> > I think Liam still had concerns around the
-> > walk-the-vmas-twice-to-error-out-early part of the implementation?
-> > Although we can always fix the implementation later; changing the API
-> > is hard.
-> 
-> Yes I am a bit worried about the point Liam brings up -- we've discussed
-> it privately at length.  Matthew, to keep it short I have a different
-> viewpoint:
-> 
-> Some of the Linux m* system calls have non-conforming, partial-work-then-return-error
-> behaviour.  I cannot find anything like this in any system call in any other
-> operating system, and I believe there is a defacto rule against doing this, and
-> Linux has an optimization which violating this, and I think it could be fixed
-> with fairly minor expense, and can't imagine it affecting a single application.
+What's wrong with making print_irq boolean?
 
-Thanks.
+>  	int i = *(loff_t *) v, j;
+>  	struct irqaction *action;
+>  	struct irq_desc *desc;
+> @@ -488,18 +488,28 @@ int show_interrupts(struct seq_file *p, void *v)
+>  	if (!desc || irq_settings_is_hidden(desc))
+>  		goto outsparse;
+>  
+> -	if (desc->kstat_irqs) {
+> -		for_each_online_cpu(j)
+> -			any_count |= data_race(*per_cpu_ptr(desc->kstat_irqs, j));
+> +	if ((!desc->action || irq_desc_is_chained(desc)) && desc->kstat_irqs) {
 
-> I worry that the non-atomicity will one day be used by an attacker.
+The condition is wrong. Look how the old code evaluated any_count.
 
-How might an attacker exploit this?
+> +		print_irq = 0;
+> +		for_each_online_cpu(j) {
+> +			if (data_race(*per_cpu_ptr(desc->kstat_irqs, j))) {
+> +				print_irq = 1;
+> +				break;
+> +			}
+> +		}
+
+Aside of that this code is just fundamentally wrong in several aspects:
+
+  1) Interrupts which have no action are completely uninteresting as
+     there is no real information attached, i.e. it shows that there
+     were interrupts on some CPUs, but there is zero information from
+     which device they originated.
+
+     Especially with sparse interrupts enabled they are usually gone
+     shortly after the last action was removed.
+
+  2) Chained interrupts do not have a count at all as they completely
+     evade the core kernel entry points.
+
+So all of this can be avoided and the whole nonsense can be reduced to:
+
+	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
+        	goto outsparse;
+
+which in turn allows to convert this:
+
+> -	for_each_online_cpu(j)
+> -		seq_printf(p, "%10u ", desc->kstat_irqs ?
+> -					*per_cpu_ptr(desc->kstat_irqs, j) : 0);
+
+into an unconditional:
+
+	for_each_online_cpu(j)
+		seq_printf(p, "%10u ", *per_cpu_ptr(desc->kstat_irqs, j));
+
+Thanks,
+
+        tglx
 
