@@ -1,124 +1,269 @@
-Return-Path: <linux-kernel+bounces-178856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BAE88C58B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:26:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E9428C58DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103151F22E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:26:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50FCF1C2162B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5556117EBA1;
-	Tue, 14 May 2024 15:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D5617EBA1;
+	Tue, 14 May 2024 15:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZSQRfD3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932681459E4;
-	Tue, 14 May 2024 15:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mecka.net header.i=@mecka.net header.b="WJNXqHYz"
+Received: from mecka.net (mecka.net [159.69.159.214])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C8417EBB5;
+	Tue, 14 May 2024 15:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.159.214
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715700378; cv=none; b=nj98AyK7LkRpZwvoLw7h5AS6Vetldb4AuNBr0wLsrV4YWzpuDE3lh9DXYhSRuktPV95OWNph4mqKAqMSTndi0X47DnUZIqF33jxMa/rBEvGD2SoSih4nWwg/yJwLnJTejJPX5qywxaPZIDigxmVEmTb5kJgnu9SLCGKGqixXwD0=
+	t=1715701071; cv=none; b=Tk8z4pMVQC+7B44BiActzPAP9tkjVvMEb6ku1RUcnMZ6nFOmuVmY5GLteBrbP4aIxwy5j9oLww4UiC108qiKLrjUq3KZytPYKfNRR5eBzzIZ6dOArVDcECHCNq6X9V6EXVXgvqO0pop0SUhNbHoGDvt9ym/mjBQbtoHODILsy7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715700378; c=relaxed/simple;
-	bh=9KMbCQl0+iQEOyt5weo+F3V77somwAtxeW8gev83MFI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ZaKwx6+KBmBQ709PkE+SBmV+Uzr3Wyz/bnIsQD4ViiHh7qLdHPENJle2z3Hy/PzGCgCe9T4aRKBtR6GmqUCKtMJCWP8t0Y+uGZUQIzWjP3oL8QZxJhoFoi1YS/aDomZPh9791QiiLPB5OYNdKHxu20B/XKPmhxIfQwI+55+8YQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZSQRfD3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D816FC32781;
-	Tue, 14 May 2024 15:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715700378;
-	bh=9KMbCQl0+iQEOyt5weo+F3V77somwAtxeW8gev83MFI=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bZSQRfD3b3TmCGmAoNlZP5Z+ti6zRY1bqgMeBI/7dcb1Vkxn0iM8re+TS+Y6IAB4e
-	 YsufHqfDR3/7v+GtCiiZxlY0QN7/ZmTHR0AheCQAX9/sOMwyIFcE7oIuiw9buZy0Ah
-	 qFDwoRQNjXJ7sDKot19XBwyO8RxEufqGNWrocmxJ8Nsxz37SGuRyhKcLKuMXB8hEuc
-	 Pj+747hIVMeDxN2+1JyI/zWLmZW8BzjRVONbq8VZlhBU7VLGAJi9VhNbHptRwmASUC
-	 C86rnMhHXjFIC+QTKvnzESbG1WVTFnxejqvfDeo5D0s9sO3Wt1j95TEUGCJnBoyHns
-	 FCgnCFifkMHQQ==
+	s=arc-20240116; t=1715701071; c=relaxed/simple;
+	bh=iqtol5Q5n/ItXuNrwcXvYs8Rssb6MbCysL3rzdw8tkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXrSdVxdUdvrQcfEMQt7meLfiRYOmN2WANO2WYpRyGs6wq6k6UWKCb8grX2R+jMr9GUy2ocGmZ8yYW2gq+9qHmm7YJqiDs+XKUxaHKyGIfhJzNwnIkSJD+9FfcLyIEIMJ1ZbVuH1J7IGt9GajKwrwCzbig8THYAz99tt4SuCtwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net; spf=pass smtp.mailfrom=mecka.net; dkim=fail (0-bit key) header.d=mecka.net header.i=@mecka.net header.b=WJNXqHYz reason="key not found in DNS"; arc=none smtp.client-ip=159.69.159.214
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mecka.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mecka.net
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mecka.net; s=2016.11;
+	t=1715700491; bh=iqtol5Q5n/ItXuNrwcXvYs8Rssb6MbCysL3rzdw8tkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WJNXqHYzdETZsf3OAagzhm9csiGqgI+jGTWJzPjMlHfRpBTyCQfK1XXA/BO1cepHA
+	 IQDoQ2R5cWy+0KJkS+MX8aw3deEzEzGVn9ABaiA1JYUlmA1NJlg2v0/kUAqJInJVhV
+	 3j7c48Cy1SGNS9uPtFF5+Ki4ue+p8VvWnTEGVbIXgCn48Zd0iL2JcUMZzpUI13hsIO
+	 /iSp8W8k6q+idx5n3aZyHtMnsp33402d4mDulI1NtKlMWdjl495S/8GepBQK4ij5sg
+	 ejOizgR5RyoK6048gA7vqk+frKOBzSNc3a775Hx6D3fbg4oqHEGH51s2Vos1UThWcY
+	 1/44TtY/0nBtA==
+Received: from mecka.net (unknown [185.147.11.134])
+	by mecka.net (Postfix) with ESMTPSA id 9B1C24D463B;
+	Tue, 14 May 2024 17:28:10 +0200 (CEST)
+Date: Tue, 14 May 2024 15:28:09 +0000
+From: Manuel Traut <manut@mecka.net>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org,
+	Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v6 0/3] Replay Protected Memory Block (RPMB) subsystem
+Message-ID: <ZkODCTnCe7l0KiFs@mecka.net>
+References: <20240507091619.2208810-1-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 14 May 2024 18:26:14 +0300
-Message-Id: <D19H0UVF3R0O.3N4GLZWFRZ2DO@kernel.org>
-Cc: "James Bottomley" <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Ignat Korchagin"
- <ignat@cloudflare.com>
-X-Mailer: aerc 0.17.0
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
- <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org>
- <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
- <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org>
- <CALrw=nEZ07U9VhbGsnpchOYw1icUZCnuoHHXkJLzhFqSPe9_fQ@mail.gmail.com>
- <D19F74M6B8UC.2VEOOZHGOS87V@kernel.org>
- <D19FUGDA2CUO.16EF7U9ZEZ4SD@kernel.org>
- <D19GWXHYP2VC.1OY7BOW5LNXVF@kernel.org>
-In-Reply-To: <D19GWXHYP2VC.1OY7BOW5LNXVF@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240507091619.2208810-1-jens.wiklander@linaro.org>
 
-On Tue May 14, 2024 at 6:21 PM EEST, Jarkko Sakkinen wrote:
-> On Tue May 14, 2024 at 5:30 PM EEST, Jarkko Sakkinen wrote:
-> > On Tue May 14, 2024 at 5:00 PM EEST, Jarkko Sakkinen wrote:
-> > > On Tue May 14, 2024 at 4:11 PM EEST, Ignat Korchagin wrote:
-> > > > For example, a cheap NAS box with no internal storage (disks connec=
-ted
-> > > > externally via USB). We want:
-> > > >   * disks to be encrypted and decryptable only by this NAS box
-> > >
-> > > So how this differs from LUKS2 style, which also systemd supports whe=
-re
-> > > the encryption key is anchored to PCR's? If I took hard drive out of =
-my
-> > > Linux box, I could not decrypt it in another machine because of this.
-> >
-> > Maybe you could replace the real LUKS2 header with a dummy LUKS2
-> > header, which would need to be able the describe "do not use this" and
-> > e.g. SHA256 of the actual header. And then treat the looked up header a=
-s
-> > the header when the drive is mounted.
-> >
-> > LUKS2 would also need to be able to have pre-defined (e.g. kernel
-> > command-line or bootconfig) small internal storage, which would be
-> > also encrypted with TPM's PRCs containing an array of LUKS2 header
-> > and then look up that with SHA256 as the key.
-> >
-> > Without knowing LUKS2 implementation to me these do not sound reaching
-> > the impossible engineer problems so maybe this would be worth of
-> > investigating...
->
-> Or why you could not just encrypt the whole header with another key
-> that is only in that device? Then it would appear as random full
-> length.
->
-> I.e. unsealing
->
-> 1. Decrypt LUKS2 header with TPM2 key
-> 2. Use the new resulting header as it was in the place of encrypted
->    stored to the external drive.
-> 3. Decrypt key from the LUK2S header etc.
+Hi Jens,
 
-Maybe something like:
+thank you very much for v6! It took me some time to figure out why it is
+not working.. However it seems to be on the OP-TEE side and not related
+to this kernel series.
 
-1. Asymmetric for LUKS2 (just like it is)
-2. Additional symmetric key, which is created as non-migratable and stored
-   to the TPM2 chip. This deciphers the header, i.e. takes the random
-   away.
+I need this change:
 
-BR, Jarkko
+@@ -1214,12 +1225,13 @@ static TEE_Result tee_rpmb_init(void)
+        }
+
+        if (rpmb_ctx->reinit) {
+                if (rpmb_ctx->legacy_operation || !rpmb_ctx->key_verified) {
+                        rpmb_ctx->wr_cnt_synced = false;
+                        rpmb_ctx->key_derived = false;
+                        rpmb_ctx->dev_info_synced = false;
+                        rpmb_ctx->reinit = false;
+-                       goto next;
+                }
+                res = rpmb_probe_reset();
+                if (res) {
+
+@@ -1236,17 +1248,23 @@ static TEE_Result tee_rpmb_init(void)
+                        if (!memcmp(rpmb_ctx->cid, dev_info.cid,
+                                   RPMB_EMMC_CID_SIZE)) {
+                                rpmb_ctx->reinit = false;
++                               rpmb_ctx->legacy_operation = false;
+                                return TEE_SUCCESS;
+                        }
+                }
+        }
+
+to ensure that the non legacy mode is selected, even if the first RPMB
+request comes from a compiled in TA.
+
+Thanks for your work, it makes it really easy now to implement ARM
+System Ready IR with an fTPM and continue the boot measurements in the
+initrd with the new tpm2.target in systemd v256.
+
+Regards
+Manuel
+
+On Tue, May 07, 2024 at 11:16:16AM +0200, Jens Wiklander wrote:
+> Hi,
+> 
+> This patch set introduces a new RPMB subsystem, based on patches from [1],
+> [2], and [3]. The RPMB subsystem aims at providing access to RPMB
+> partitions to other kernel drivers, in particular the OP-TEE driver. A new
+> user space ABI isn't needed, we can instead continue using the already
+> present ABI when writing the RPMB key during production.
+> 
+> I've added and removed things to keep only what is needed by the OP-TEE
+> driver. Since the posting of [3], there has been major changes in the MMC
+> subsystem so "mmc: block: register RPMB partition with the RPMB subsystem"
+> is in practice completely rewritten.
+> 
+> With this OP-TEE can access RPMB during early boot instead of having to
+> wait for user space to become available as in the current design [4].
+> This will benefit the efi variables [5] since we wont rely on userspace as
+> well as some TPM issues [6] that were solved.
+> 
+> The OP-TEE driver finds the correct RPMB device to interact with by
+> iterating over available devices until one is found with a programmed
+> authentication matching the one OP-TEE is using. This enables coexisting
+> users of other RPMBs since the owner can be determined by who knows the
+> authentication key.
+> 
+> The corresponding secure world OP-TEE patches are available at [7].
+> 
+> I've put myself as a maintainer for the RPMB subsystem as I have an
+> interest in the OP-TEE driver to keep this in good shape. However, if you'd
+> rather see someone else taking the maintainership that's fine too. I'll
+> help keep the subsystem updated regardless.
+> 
+> [1] https://lore.kernel.org/lkml/20230722014037.42647-1-shyamsaini@linux.microsoft.com/
+> [2] https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@linaro.org/
+> [3] https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-tomas.winkler@intel.com/
+> [4] https://optee.readthedocs.io/en/latest/architecture/secure_storage.html#rpmb-secure-storage
+> [5] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c44b6be62e8dd4ee0a308c36a70620613e6fc55f
+> [6] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7269cba53d906cf257c139d3b3a53ad272176bca
+> [7] https://github.com/jenswi-linaro/optee_os/tree/rpmb_probe_v6
+> 
+> Thanks,
+> Jens
+> 
+> Changes since v5:
+> Manuel Traut reported and investigated an error on an i.MX8MM, the root
+> cause was identified as insufficient alignment on frames sent to the RPMB
+> device. Fixed in the OP-TEE driver as described below.
+> * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+>   - Adding a missing EXPORT_SYMBOL_GPL()
+> * "optee: probe RPMB device using RPMB subsystem"
+>   - Replacing the old OPTEE_RPC_CMD_RPMB ABI with OPTEE_RPC_CMD_RPMB_FRAMES
+>     to get rid of the small header struct rpmb_req (now removed) causing
+>     the problem.
+>   - Matching changes on the secure side + support for re-initializing
+>     RPMB in case a boot stage has used RPMB, the latter also reported by 
+>     Manuel Traut.
+> 
+> Changes since v4:
+> * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+>   - Describing struct rpmb_descr as RPMB description instead of descriptor
+> * "mmc: block: register RPMB partition with the RPMB subsystem"
+>   - Addressing review comments
+>   - Adding more comments for struct rpmb_frame
+>   - Fixing assignment of reliable_wr_count and capacity in mmc_blk_rpmb_add()
+> * "optee: probe RPMB device using RPMB subsystem"
+>   - Updating struct rpmb_dev_info to match changes in "rpmb: add Replay
+>     Protected Memory Block (RPMB) subsystem"
+> 
+> Changes since v3:
+> * Move struct rpmb_frame into the MMC driver since the format of the RPMB
+>   frames depend on the implementation, one format for eMMC, another for
+>   UFS, and so on
+> * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+>   - Adding Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>   - Adding more description of the API functions
+>   - Removing the set_dev_info() op from struct rpmb_ops, the needed information
+>     is supplied in the arguments to rpmb_dev_register() instead.
+>   - Getting rid of struct rpmb_ops since only the route_frames() op was
+>     remaining, store that op directly in struct rpmb_dev
+>   - Changed rpmb_interface_register() and rpmb_interface_unregister() to use
+>     notifier_block instead of implementing the same thing ourselves
+> * "mmc: block: register RPMB partition with the RPMB subsystem"
+>   - Moving the call to rpmb_dev_register() to be done at the end of
+>     mmc_blk_probe() when the device is fully available
+> * "optee: probe RPMB device using RPMB subsystem"
+>   - Use IS_REACHABLE(CONFIG_RPMB) to determine if the RPMB subsystem is
+>     available
+>   - Translate TEE_ERROR_STORAGE_NOT_AVAILABLE if encountered in get_devices()
+>     to recognize the error in optee_rpmb_scan()
+>   - Simplified optee_rpmb_scan() and optee_rpmb_intf_rdev()
+> 
+> Changes since v2:
+> * "rpmb: add Replay Protected Memory Block (RPMB) subsystem"
+>   - Fixing documentation issues
+>   - Adding a "depends on MMC" in the Kconfig
+>   - Removed the class-device and the embedded device, struct rpmb_dev now
+>     relies on the parent device for reference counting as requested
+>   - Removed the now unneeded rpmb_ops get_resources() and put_resources()
+>     since references are already taken in mmc_blk_alloc_rpmb_part() before
+>     rpmb_dev_register() is called
+>   - Added rpmb_interface_{,un}register() now that
+>     class_interface_{,un}register() can't be used ay longer
+> * "mmc: block: register RPMB partition with the RPMB subsystem"
+>   - Adding the missing error cleanup in alloc_idata()
+>   - Taking the needed reference to md->disk in mmc_blk_alloc_rpmb_part()
+>     instead of in mmc_rpmb_chrdev_open() and rpmb_op_mmc_get_resources()
+> * "optee: probe RPMB device using RPMB subsystem"
+>   - Registering to get a notification when an RPMB device comes online
+>   - Probes for RPMB devices each time an RPMB device comes online, until
+>     a usable device is found
+>   - When a usable RPMB device is found, call
+>     optee_enumerate_devices(PTA_CMD_GET_DEVICES_RPMB)
+>   - Pass type of rpmb in return value from OPTEE_RPC_CMD_RPMB_PROBE_NEXT
+> 
+> Changes since Shyam's RFC:
+> * Removed the remaining leftover rpmb_cdev_*() function calls
+> * Refactored the struct rpmb_ops with all the previous ops replaced, in
+>   some sense closer to [3] with the route_frames() op
+> * Added rpmb_route_frames()
+> * Added struct rpmb_frame, enum rpmb_op_result, and enum rpmb_type from [3]
+> * Removed all functions not needed in the OP-TEE use case
+> * Added "mmc: block: register RPMB partition with the RPMB subsystem", based
+>   on the commit with the same name in [3]
+> * Added "optee: probe RPMB device using RPMB subsystem" for integration
+>   with OP-TEE
+> * Moved the RPMB driver into drivers/misc/rpmb-core.c
+> * Added my name to MODULE_AUTHOR() in rpmb-core.c
+> * Added an rpmb_mutex to serialize access to the IDA
+> * Removed the target parameter from all rpmb_*() functions since it's
+>   currently unused
+> 
+> Jens Wiklander (3):
+>   rpmb: add Replay Protected Memory Block (RPMB) subsystem
+>   mmc: block: register RPMB partition with the RPMB subsystem
+>   optee: probe RPMB device using RPMB subsystem
+> 
+>  MAINTAINERS                       |   7 +
+>  drivers/misc/Kconfig              |  10 ++
+>  drivers/misc/Makefile             |   1 +
+>  drivers/misc/rpmb-core.c          | 233 +++++++++++++++++++++++++++++
+>  drivers/mmc/core/block.c          | 241 +++++++++++++++++++++++++++++-
+>  drivers/tee/optee/core.c          |  30 ++++
+>  drivers/tee/optee/device.c        |   7 +
+>  drivers/tee/optee/ffa_abi.c       |   8 +
+>  drivers/tee/optee/optee_private.h |  21 ++-
+>  drivers/tee/optee/optee_rpc_cmd.h |  35 +++++
+>  drivers/tee/optee/rpc.c           | 166 ++++++++++++++++++++
+>  drivers/tee/optee/smc_abi.c       |   7 +
+>  include/linux/rpmb.h              | 136 +++++++++++++++++
+>  13 files changed, 899 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/misc/rpmb-core.c
+>  create mode 100644 include/linux/rpmb.h
+> 
+> -- 
+> 2.34.1
+> 
 
