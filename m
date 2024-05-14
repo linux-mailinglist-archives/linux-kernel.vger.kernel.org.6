@@ -1,303 +1,130 @@
-Return-Path: <linux-kernel+bounces-178746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3608C571E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:29:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8938C5720
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8228DB23A45
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:29:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02E8B23CC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7793C1448D9;
-	Tue, 14 May 2024 13:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95101459E4;
+	Tue, 14 May 2024 13:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MKInXMmc"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUoAI4CA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329ED12B72;
-	Tue, 14 May 2024 13:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189D41448C0;
+	Tue, 14 May 2024 13:21:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692813; cv=none; b=ZPMpCT5G+RWrODwRMEs/LvEBoN2JMF+TLggDaRghsVSeFL3vNDY65nMQXOpWYQKOzxqc0yKM3PN24aVVIW28TP1At7QZfBHtQS9ir7JynCUmRrkqPCSV4ACaWPcAXZ9KhlPr05oGcx7wMaNs9BxXrHzW34QJWzeBRr9Wc/9OgI4=
+	t=1715692875; cv=none; b=P7G4DTQR1GNKQR9dthk+ZErjZ8emkSXi+D4xser/q76dQU+u/aaHyn+mwC3euMNq2hEmWMnimeLpqTwsce1a0Z3MqbIf5FufmH1+kfQ8zl5RYj3qTq+4SwpraT9auyWGDFkXGlkQkQJ0M8PDdVeXV0cup8NgOzsGnI2JKOtnsnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692813; c=relaxed/simple;
-	bh=hvvQETWMetj+N3pO8WbrIS73ipYxo50gX7RfK7LF3vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hwYlZ61Z6ZfVCvpTwY5UGTiCkiwdWGbe29GXlMjt9Uz8r4WAYoS0Oe/qWLu9WJLs0gpN37ZS0GZ43rplbV5/pgb66hB0y8fy7EeLhD2ahtavZ7zNdNQz55Ms14OJtnXKisncrh8Td86u/PO3Nv94jWbP0Rsiped+pKveAYpWetg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MKInXMmc; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D08881BF205;
-	Tue, 14 May 2024 13:20:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715692809;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=phG0rMRQAjMUN9aqigoztyM2/6+7Kcz69rOYfUkJiXY=;
-	b=MKInXMmcdSdJliN4APfC/oUDPXGJberVCUaE02yktzmhCDG9/8qhtWIpDQoA17ATvSfLiZ
-	iH6CsbjZTST3e0KHOAQFn4pbUDYlh2btXsg+Hume3aB3Ed3eqbZKlyuLKK5LsadZaaTgrw
-	cxFuJcb7wYqfPn3DPgdbQCkrQDc5XfANcVDXRqKtimHsolbLmuaL1a9uKq0p+I9Nu8uMue
-	es6abvJeDzfP+rvg2Zf5MUEGQPmcGL5IPp+/xFyOMTzW1VHB9Y1ooGWmi2THQy9P22oLLL
-	yUQhz1lJ9MTyzDbDw9Kobj0iR78NNLlhRvfmSBihaaKEaSxeqi0ycctM3Kvdiw==
-Message-ID: <9ba0e257-91fa-485f-b903-04ef08307970@bootlin.com>
-Date: Tue, 14 May 2024 15:20:07 +0200
+	s=arc-20240116; t=1715692875; c=relaxed/simple;
+	bh=+d+x3xrqLLNvB0bbaPBE1svfJd8r+2gvH4Ec5dTMZ40=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=bcA3uy2LngkBfzr3/RlHoteKiD8PBK38eDr2ItA0FB+A7C6Mb+ONj1NHOioD25ozqd++VFJvAvnzxnfqwWrsd5N+mdEAAXZiKc+i+89Zvz4FIPrbqr5s7eZTQ4i4GajtkaDWN8jfcg9DdhK8f12ZQDc/gh8iFk0OsmGVrblzI2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUoAI4CA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4501EC2BD10;
+	Tue, 14 May 2024 13:21:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715692874;
+	bh=+d+x3xrqLLNvB0bbaPBE1svfJd8r+2gvH4Ec5dTMZ40=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=kUoAI4CAz0fTV3x70RnAKMy5FV2rxOSdsFEF3amjvtu9NFCHmUzi9FE2tZmi9btiG
+	 FR/mBFylv3Onecvi4jP4mxleHUWxJRK8aPlaOFbK1urlmVUw+csR3FJ9NF/M0p/OtS
+	 QYkTIRHvun8zT1BTDPdCJCrMFos4zP0A6r4+JngXKmuCtse/0v/9r1cH6PIJC8/S90
+	 nW5nrg1eSb/DZPCDefWHC3CMdepmMNJvufMqtbsnlZZmrAI11FKYxjgBYfiUOtU1vH
+	 TCWrfI4qbjCIZarVfGHhz6kqxnCuOfUIgzDAfGMmjilZjjFfu9rodUCQOcCScC+OH9
+	 sonORoDxb4Ynw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Cc: Ajay Singh <ajay.kathat@microchip.com>,  Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,  Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>,  linux-wireless@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] wifi: wilc1000: set net device registration as last
+ step during interface creation
+References: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
+	<171569074600.2017278.13914732662896657638.kvalo@kernel.org>
+	<3f53441d-b8b0-448a-aaaa-fb7e64aa86c0@bootlin.com>
+Date: Tue, 14 May 2024 16:21:11 +0300
+In-Reply-To: <3f53441d-b8b0-448a-aaaa-fb7e64aa86c0@bootlin.com> ("Alexis
+	=?utf-8?Q?Lothor=C3=A9=22's?= message of "Tue, 14 May 2024 15:09:29 +0200")
+Message-ID: <87wmnwil6g.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] thermal: k3_j72xx_bandgap: implement suspend/resume
- support
-To: rafael@kernel.org, daniel.lezcano@linaro.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, gregory.clement@bootlin.com,
- thomas.petazzoni@bootlin.com, theo.lebrun@bootlin.com, u-kumar1@ti.com,
- j-keerthy@ti.com
-References: <20240425153238.498750-1-thomas.richard@bootlin.com>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <20240425153238.498750-1-thomas.richard@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 4/25/24 17:32, Thomas Richard wrote:
-> From: Théo Lebrun <theo.lebrun@bootlin.com>
-> 
-> This add suspend-to-ram support.
+Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com> writes:
 
-Gentle ping.
-Do you have any comments for this v4 ?
+> Hello Kalle,
+>
+> On 5/14/24 14:45, Kalle Valo wrote:
+>> Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com> wrote:
+>>=20
+>>> net device registration is currently done in wilc_netdev_ifc_init but
+>>> other initialization operations are still done after this registration.
+>>> Since net device is assumed to be usable right after registration, it
+>>> should be the very last step of initialization.
+>>>
+>>> Move netdev registration at the very end of wilc_netdev_ifc_init to let
+>>> this function completely initialize netdevice before registering it.
+>>>
+>>> Signed-off-by: Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com>
+>>=20
+>> I see errors:
+>>=20
+>> ERROR: modpost: "wilc_load_mac_from_nv"
+>> [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko]
+>> undefined!
+>> ERROR: modpost: "wilc_netdev_ifc_init"
+>> [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko]
+>> undefined!
+>> ERROR: modpost: "wilc_load_mac_from_nv"
+>> [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
+>> ERROR: modpost: "wilc_netdev_ifc_init"
+>> [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
+>> make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
+>> make[1]: ***
+>> [/home/kvalo/projects/personal/wireless-drivers/src/wireless-next/Makefi=
+le:1871:
+>> modpost] Error 2
+>> make: *** [Makefile:240: __sub-make] Error 2
+>>=20
+>> 6 patches set to Changes Requested.
+>>=20
+>> 13633102 [1/6] wifi: wilc1000: set net device registration as last
+>> step during interface creation
+>> 13633103 [2/6] wifi: wilc1000: register net device only after bus
+>> being fully initialized
+>> 13633104 [3/6] wifi: wilc1000: set wilc_set_mac_address parameter as con=
+st
+>> 13633105 [4/6] wifi: wilc1000: add function to read mac address from eFu=
+se
+>> 13633106 [5/6] wifi: wilc1000: make sdio deinit function really deinit t=
+he sdio card
+>> 13633107 [6/6] wifi: wilc1000: read MAC address from fuse at probe
+>
+> Shame on me, I missed those basic errors since I worked with drivers as b=
+uilt-in
+> instead of modules. I'll update my workflow and send a v2.
 
-Best Regards,
+No worries, but I'm surprised that Intel's kernel test robot didn't
+report anything.
 
-Thomas
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-> 
-> The derived_table is kept-as is, so the resume is only about
-> pm_runtime_* calls and restoring the same registers as the probe.
-> 
-> Extract the hardware initialization procedure to a function called at
-> both probe-time & resume-time.
-> 
-> The probe-time loop is split in two to ensure doing the hardware
-> initialization before registering thermal zones. That ensures our
-> callbacks cannot be called while in bad state.
-> 
-> The 100ms delay in the hardware initialization sequence was removed.
-> It was initially added to be sure the thresholds are programmed before
-> enabling the interrupt, but in fact it's not needed (tested on J7200
-> platform).
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
-> Acked-by: Keerthy <j-keerthy@ti.com>
-> Signed-off-by: Thomas Richard <thomas.richard@bootlin.com>
-> ---
-> 
-> v4:
->  - Remove the 100ms delay in the hardware initialization sequence
-> v3:
->  - Remove __maybe_unused attributes and use the magic of PTR_IF()
-> v2:
->  - Fix warnings/errors reported by kernel test robot
-> 
->  drivers/thermal/k3_j72xx_bandgap.c | 111 ++++++++++++++++++++---------
->  1 file changed, 78 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/thermal/k3_j72xx_bandgap.c b/drivers/thermal/k3_j72xx_bandgap.c
-> index c74094a86982..9bc279ac131a 100644
-> --- a/drivers/thermal/k3_j72xx_bandgap.c
-> +++ b/drivers/thermal/k3_j72xx_bandgap.c
-> @@ -178,6 +178,7 @@ struct k3_j72xx_bandgap {
->  	void __iomem *base;
->  	void __iomem *cfg2_base;
->  	struct k3_thermal_data *ts_data[K3_VTM_MAX_NUM_TS];
-> +	int cnt;
->  };
->  
->  /* common data structures */
-> @@ -338,24 +339,52 @@ static void print_look_up_table(struct device *dev, int *ref_table)
->  		dev_dbg(dev, "%d       %d %d\n", i, derived_table[i], ref_table[i]);
->  }
->  
-> +static void k3_j72xx_bandgap_init_hw(struct k3_j72xx_bandgap *bgp)
-> +{
-> +	struct k3_thermal_data *data;
-> +	int id, high_max, low_temp;
-> +	u32 val;
-> +
-> +	for (id = 0; id < bgp->cnt; id++) {
-> +		data = bgp->ts_data[id];
-> +		val = readl(bgp->cfg2_base + data->ctrl_offset);
-> +		val |= (K3_VTM_TMPSENS_CTRL_MAXT_OUTRG_EN |
-> +			K3_VTM_TMPSENS_CTRL_SOC |
-> +			K3_VTM_TMPSENS_CTRL_CLRZ | BIT(4));
-> +		writel(val, bgp->cfg2_base + data->ctrl_offset);
-> +	}
-> +
-> +	/*
-> +	 * Program TSHUT thresholds
-> +	 * Step 1: set the thresholds to ~123C and 105C WKUP_VTM_MISC_CTRL2
-> +	 * Step 2: WKUP_VTM_TMPSENS_CTRL_j set the MAXT_OUTRG_EN  bit
-> +	 *         This is already taken care as per of init
-> +	 * Step 3: WKUP_VTM_MISC_CTRL set the ANYMAXT_OUTRG_ALERT_EN  bit
-> +	 */
-> +	high_max = k3_j72xx_bandgap_temp_to_adc_code(MAX_TEMP);
-> +	low_temp = k3_j72xx_bandgap_temp_to_adc_code(COOL_DOWN_TEMP);
-> +
-> +	writel((low_temp << 16) | high_max, bgp->cfg2_base + K3_VTM_MISC_CTRL2_OFFSET);
-> +	writel(K3_VTM_ANYMAXT_OUTRG_ALERT_EN, bgp->cfg2_base + K3_VTM_MISC_CTRL_OFFSET);
-> +}
-> +
->  struct k3_j72xx_bandgap_data {
->  	const bool has_errata_i2128;
->  };
->  
->  static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
->  {
-> -	int ret = 0, cnt, val, id;
-> -	int high_max, low_temp;
-> -	struct resource *res;
-> +	const struct k3_j72xx_bandgap_data *driver_data;
-> +	struct thermal_zone_device *ti_thermal;
->  	struct device *dev = &pdev->dev;
-> +	bool workaround_needed = false;
->  	struct k3_j72xx_bandgap *bgp;
->  	struct k3_thermal_data *data;
-> -	bool workaround_needed = false;
-> -	const struct k3_j72xx_bandgap_data *driver_data;
-> -	struct thermal_zone_device *ti_thermal;
-> -	int *ref_table;
->  	struct err_values err_vals;
->  	void __iomem *fuse_base;
-> +	int ret = 0, val, id;
-> +	struct resource *res;
-> +	int *ref_table;
->  
->  	const s64 golden_factors[] = {
->  		-490019999999999936,
-> @@ -422,10 +451,10 @@ static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
->  
->  	/* Get the sensor count in the VTM */
->  	val = readl(bgp->base + K3_VTM_DEVINFO_PWR0_OFFSET);
-> -	cnt = val & K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK;
-> -	cnt >>= __ffs(K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK);
-> +	bgp->cnt = val & K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK;
-> +	bgp->cnt >>= __ffs(K3_VTM_DEVINFO_PWR0_TEMPSENS_CT_MASK);
->  
-> -	data = devm_kcalloc(bgp->dev, cnt, sizeof(*data), GFP_KERNEL);
-> +	data = devm_kcalloc(bgp->dev, bgp->cnt, sizeof(*data), GFP_KERNEL);
->  	if (!data) {
->  		ret = -ENOMEM;
->  		goto err_alloc;
-> @@ -449,8 +478,8 @@ static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
->  	else
->  		init_table(3, ref_table, pvt_wa_factors);
->  
-> -	/* Register the thermal sensors */
-> -	for (id = 0; id < cnt; id++) {
-> +	/* Precompute the derived table & fill each thermal sensor struct */
-> +	for (id = 0; id < bgp->cnt; id++) {
->  		data[id].bgp = bgp;
->  		data[id].ctrl_offset = K3_VTM_TMPSENS0_CTRL_OFFSET + id * 0x20;
->  		data[id].stat_offset = data[id].ctrl_offset +
-> @@ -470,13 +499,13 @@ static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
->  		else if (id == 0 && !workaround_needed)
->  			memcpy(derived_table, ref_table, TABLE_SIZE * 4);
->  
-> -		val = readl(data[id].bgp->cfg2_base + data[id].ctrl_offset);
-> -		val |= (K3_VTM_TMPSENS_CTRL_MAXT_OUTRG_EN |
-> -			K3_VTM_TMPSENS_CTRL_SOC |
-> -			K3_VTM_TMPSENS_CTRL_CLRZ | BIT(4));
-> -		writel(val, data[id].bgp->cfg2_base + data[id].ctrl_offset);
-> -
->  		bgp->ts_data[id] = &data[id];
-> +	}
-> +
-> +	k3_j72xx_bandgap_init_hw(bgp);
-> +
-> +	/* Register the thermal sensors */
-> +	for (id = 0; id < bgp->cnt; id++) {
->  		ti_thermal = devm_thermal_of_zone_register(bgp->dev, id, &data[id],
->  							   &k3_of_thermal_ops);
->  		if (IS_ERR(ti_thermal)) {
-> @@ -486,21 +515,7 @@ static int k3_j72xx_bandgap_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	/*
-> -	 * Program TSHUT thresholds
-> -	 * Step 1: set the thresholds to ~123C and 105C WKUP_VTM_MISC_CTRL2
-> -	 * Step 2: WKUP_VTM_TMPSENS_CTRL_j set the MAXT_OUTRG_EN  bit
-> -	 *         This is already taken care as per of init
-> -	 * Step 3: WKUP_VTM_MISC_CTRL set the ANYMAXT_OUTRG_ALERT_EN  bit
-> -	 */
-> -	high_max = k3_j72xx_bandgap_temp_to_adc_code(MAX_TEMP);
-> -	low_temp = k3_j72xx_bandgap_temp_to_adc_code(COOL_DOWN_TEMP);
-> -
-> -	writel((low_temp << 16) | high_max, data[0].bgp->cfg2_base +
-> -	       K3_VTM_MISC_CTRL2_OFFSET);
-> -	mdelay(100);
-> -	writel(K3_VTM_ANYMAXT_OUTRG_ALERT_EN, data[0].bgp->cfg2_base +
-> -	       K3_VTM_MISC_CTRL_OFFSET);
-> +	platform_set_drvdata(pdev, bgp);
->  
->  	print_look_up_table(dev, ref_table);
->  	/*
-> @@ -527,6 +542,35 @@ static void k3_j72xx_bandgap_remove(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
->  }
->  
-> +static int k3_j72xx_bandgap_suspend(struct device *dev)
-> +{
-> +	pm_runtime_put_sync(dev);
-> +	pm_runtime_disable(dev);
-> +	return 0;
-> +}
-> +
-> +static int k3_j72xx_bandgap_resume(struct device *dev)
-> +{
-> +	struct k3_j72xx_bandgap *bgp = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	pm_runtime_enable(dev);
-> +	ret = pm_runtime_get_sync(dev);
-> +	if (ret < 0) {
-> +		pm_runtime_put_noidle(dev);
-> +		pm_runtime_disable(dev);
-> +		return ret;
-> +	}
-> +
-> +	k3_j72xx_bandgap_init_hw(bgp);
-> +
-> +	return 0;
-> +}
-> +
-> +static DEFINE_SIMPLE_DEV_PM_OPS(k3_j72xx_bandgap_pm_ops,
-> +				k3_j72xx_bandgap_suspend,
-> +				k3_j72xx_bandgap_resume);
-> +
->  static const struct k3_j72xx_bandgap_data k3_j72xx_bandgap_j721e_data = {
->  	.has_errata_i2128 = true,
->  };
-> @@ -554,6 +598,7 @@ static struct platform_driver k3_j72xx_bandgap_sensor_driver = {
->  	.driver = {
->  		.name = "k3-j72xx-soc-thermal",
->  		.of_match_table	= of_k3_j72xx_bandgap_match,
-> +		.pm = pm_sleep_ptr(&k3_j72xx_bandgap_pm_ops),
->  	},
->  };
->  
--- 
-Thomas Richard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
