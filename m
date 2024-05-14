@@ -1,292 +1,564 @@
-Return-Path: <linux-kernel+bounces-178631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837638C5528
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:55:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFB88C55A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6419B229DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7FA1C21E34
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16C576025;
-	Tue, 14 May 2024 11:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F5F33985;
+	Tue, 14 May 2024 12:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SjtYa0WS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PvG7jrGv"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C133D0D1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7D3F9D4;
+	Tue, 14 May 2024 12:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715687690; cv=none; b=kTPv+a7BeEONuXJOY4B8khp5DFDyckoOF5ZA1g0uY53BqsD0Y1bKfv49zgv+iN7/1Tl/HIsyblriNhIKZOVHC1MHCY0ezSC8CJf8ezoJ4nZp8zhYqT/lo/r4tvzWb23XO1qc0z/1naHxioVAiPffL9PQUkuef5ge5Fl16sQ3SDQ=
+	t=1715688013; cv=none; b=Qu0+SH3QNXtFrRt/N/gyZRL4a5hd3cpT/euOFMmv+bSlHVjR7FmblI6F9lYzIvmLtcdlGfMnIlTAWqK9Isy3WLdrKaXIKYiCjc89ikZO0Yx2UnDSwVS6tZOjR6GwyX1JAij5X7m/N7UxxL5bUjZ4qU/6fdKnGYTfJAeR0h+kJok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715687690; c=relaxed/simple;
-	bh=nnJX6P3EkP1dyPUxV/tx9bKRjnghvW7CbEGyGDRSCGA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tZnDLoJR+SgeqUzKh1+Zh2y1WZg3zRaBrp3Ul+ISCvbTIV1Iv+Dto8fbE4o3XNseCPzOO4WbdcAzzfAJAXQgCZ09IKyWXZBvG43z3sbwWSQLgmcykEZoB96V9NkAO329yc1bWWZwx6bwgiceQG0gVNBGbOFzAolhtK2taW42CjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SjtYa0WS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715687687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZmVpbn0AeBjsEQpU86fpJTQEpZN0TMYC3p/NPKB9WEU=;
-	b=SjtYa0WS11NpdK8ejag5exS2/aM1XyhjtQMHy8ih9ulfOy0LZIlUjzv2iRfhayXN1wgh+F
-	d4qs1yiZWAwXi5DVQuE7wfk5xkDuPBFtsbyz0hWL7C94WcIALZy0GWl8LlctpfA2Pb2kzj
-	3WtPJnkgxMu3Z0LZhzf1gGfXHrmRcLs=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-527-sJN40MZeNf2GsLx66ObpCA-1; Tue, 14 May 2024 07:54:45 -0400
-X-MC-Unique: sJN40MZeNf2GsLx66ObpCA-1
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a599dbd2b6aso318069266b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 04:54:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715687684; x=1716292484;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZmVpbn0AeBjsEQpU86fpJTQEpZN0TMYC3p/NPKB9WEU=;
-        b=XhqSlZydoEJFvhtdxY2ZweWXCSIxSuhJRRVklbtyEDhlzzGz+iZOkxdYWRlu0OPcqz
-         pamHbhtfRaCT+h6RTjcY673GEUdispKNIT/ftzNESwYYDmT3p58A/A4R4XhsVrjJZjl3
-         5Zj2uCThswGckB119P+Rato134GFIievEivfv+ozbo3++azD8PL/qIRu6sD1SxQg3ZBt
-         ZAj1I33F/rMqHVnVLgBygxYePQTqb//EtIR+65YdkLgZ7wwnBj0B20jCiNsyOkj/1RPk
-         kdFnt3mr1E2V7vqU10hUSSYwpxOW4j36Tl5s8qgf7UOiK8UbbFYhVVoGH6svAivSdhjX
-         /Kyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUns7EKDOn0tLdEApKAqJZ0H229Daj1DyBpXnU3IvkPomMp8OsRQK7ksE/6cLiI2q28wyWSsyc2mik/q1GXkjAbmVxWDJHryNqYCwXE
-X-Gm-Message-State: AOJu0Yz3dt49lUPUvoRcU8ljxZ/J5zB/qHm5/GxnsEIi7ey7eWojVMsR
-	7lZ6VyCKs/Gz0klxDEsWE/DjNFCcdX8+Cr3x+VuOZmpsSW7dTjj/xU+LYjShTf93M5RVl5E4b7J
-	zdf5jHeg/VrbHbj8/2dh5GZWcsxM7IwOSyp0NJ8tYhOD4dtNlnJTZyPB4wVhMZQ==
-X-Received: by 2002:a17:906:f1cd:b0:a59:af54:1651 with SMTP id a640c23a62f3a-a5a2d641977mr770409566b.57.1715687684506;
-        Tue, 14 May 2024 04:54:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFDjLdVyLdxEuxHEe+hgxcQWw/qN8QsStaUE90DA4xueTt2WHN4fQhw5JMZD6CMDc+VjV8qZA==
-X-Received: by 2002:a17:906:f1cd:b0:a59:af54:1651 with SMTP id a640c23a62f3a-a5a2d641977mr770406366b.57.1715687683960;
-        Tue, 14 May 2024 04:54:43 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([2a0c:4d80:42:443::2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a8883344bsm49361266b.9.2024.05.14.04.54.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 04:54:43 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 0834F12F64B5; Tue, 14 May 2024 13:54:43 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Jesper Dangaard
- Brouer <hawk@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, LKML
- <linux-kernel@vger.kernel.org>, Network Development
- <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, Boqun
- Feng <boqun.feng@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>, Eric
- Dumazet <edumazet@google.com>, Frederic Weisbecker <frederic@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Waiman Long <longman@redhat.com>, Will
- Deacon <will@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Andrii
- Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Hao
- Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, John Fastabend
- <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Martin KaFai
- Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, Stanislav Fomichev
- <sdf@google.com>, Yonghong Song <yonghong.song@linux.dev>, bpf
- <bpf@vger.kernel.org>
-Subject: Re: [PATCH net-next 14/15 v2] net: Reference bpf_redirect_info via
- task_struct on PREEMPT_RT.
-In-Reply-To: <20240510162121.f-tvqcyf@linutronix.de>
-References: <20240503182957.1042122-1-bigeasy@linutronix.de>
- <20240503182957.1042122-15-bigeasy@linutronix.de> <87y18mohhp.fsf@toke.dk>
- <CAADnVQJkiwaYXUo+LyKoV96VFFCFL0VY5Jgpuv_0oypksrnciA@mail.gmail.com>
- <20240507123636.cTnT7TvU@linutronix.de>
- <93062ce7-8dfa-48a9-a4ad-24c5a3993b41@kernel.org>
- <20240510162121.f-tvqcyf@linutronix.de>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 14 May 2024 13:54:43 +0200
-Message-ID: <87le4cd2ws.fsf@toke.dk>
+	s=arc-20240116; t=1715688013; c=relaxed/simple;
+	bh=JrNPWWFq1v7lmkJ1arWKJUuBmtXIl3IOPJKqYLh+ZXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TNaGZ7PUw0/72gfifDaDaIMSaEPn85bYXUhmFqOwBoHgK+2L5601cDuu6zj+0JA/xy7jrfBsuuxHgpFO5bwX+SRBE3WHUboqmfA54QELYLVyOFjhiYJ4JnbuqEF//6H2QjeTYROLSNsBxFbwTOgK7sAGhT4/so1SMMbytFt4CGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PvG7jrGv; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715688003;
+	bh=JrNPWWFq1v7lmkJ1arWKJUuBmtXIl3IOPJKqYLh+ZXQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PvG7jrGvEcPzJGLWts5GO8MwHzSTCQP8avdVXBg1H5crxVKU3qK6PKktd3KMXg2ec
+	 1ytneVJcr8nghyMXw+jaBywzza5dSevSO7gEl6ZaY/6dMd24kx62M301l/F0jgDFQO
+	 7YnzxeS6BRqc+1+UMMqkS1lKaiIOPRT1MajREKwNr1gxL4smhpzbIwlLPEvHpxtNCa
+	 prIiH2pDzDwiRm/SnN/WDWwWgaLgAitwsdSxNQCkh3VwM1IcxQ+FmlMsWN/9i38Z/K
+	 U8KnAIgXxphbbfXC/C//GIS9wtOoLLoWafgaJn/BUlXXrjyLkkdWTV1I+wuLV8NCH+
+	 IBuIrrFHlg6/g==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 528653782171;
+	Tue, 14 May 2024 12:00:01 +0000 (UTC)
+Message-ID: <2f7ded8d-7fbb-421e-af3f-885af2da1687@collabora.com>
+Date: Tue, 14 May 2024 14:00:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] drm/mediatek: Add support for OF graphs
+To: Alexandre Mergnat <amergnat@baylibre.com>, chunkuang.hu@kernel.org
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
+ ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ wenst@chromium.org, kernel@collabora.com
+References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
+ <1fc23530-89ba-4e36-9e9a-a1289f56a9bc@baylibre.com>
+ <608fdbde-ad06-45ec-9771-18aa9f002f2d@collabora.com>
+ <a77357c7-0442-4478-b375-436eb6b114be@baylibre.com>
+ <1815c5b4-ab7a-410c-b5ea-26ef83813d3c@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <1815c5b4-ab7a-410c-b5ea-26ef83813d3c@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> writes:
+Il 14/05/24 11:46, Alexandre Mergnat ha scritto:
+> Hi Angelo,
+> 
+> Gentle ping because I'm stuck if I rebase my serie on top of yours.
+> 
 
-> The XDP redirect process is two staged:
-> - bpf_prog_run_xdp() is invoked to run a eBPF program which inspects the
->   packet and makes decisions. While doing that, the per-CPU variable
->   bpf_redirect_info is used.
->
-> - Afterwards xdp_do_redirect() is invoked and accesses bpf_redirect_info
->   and it may also access other per-CPU variables like xskmap_flush_list.
->
-> At the very end of the NAPI callback, xdp_do_flush() is invoked which
-> does not access bpf_redirect_info but will touch the individual per-CPU
-> lists.
->
-> The per-CPU variables are only used in the NAPI callback hence disabling
-> bottom halves is the only protection mechanism. Users from preemptible
-> context (like cpu_map_kthread_run()) explicitly disable bottom halves
-> for protections reasons.
-> Without locking in local_bh_disable() on PREEMPT_RT this data structure
-> requires explicit locking.
->
-> PREEMPT_RT has forced-threaded interrupts enabled and every
-> NAPI-callback runs in a thread. If each thread has its own data
-> structure then locking can be avoided.
->
-> Create a struct bpf_net_context which contains struct bpf_redirect_info.
-> Define the variable on stack, use bpf_net_ctx_set() to save a pointer to
-> it. Use the __free() annotation to automatically reset the pointer once
-> function returns.
-> The bpf_net_ctx_set() may nest. For instance a function can be used from
-> within NET_RX_SOFTIRQ/ net_rx_action which uses bpf_net_ctx_set() and
-> NET_TX_SOFTIRQ which does not. Therefore only the first invocations
-> updates the pointer.
-> Use bpf_net_ctx_get_ri() as a wrapper to retrieve the current struct
-> bpf_redirect_info.
->
-> On PREEMPT_RT the pointer to bpf_net_context is saved task's
-> task_struct. On non-PREEMPT_RT builds the pointer saved in a per-CPU
-> variable (which is always NODE-local memory). Using always the
-> bpf_net_context approach has the advantage that there is almost zero
-> differences between PREEMPT_RT and non-PREEMPT_RT builds.
->
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii@kernel.org>
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Hao Luo <haoluo@google.com>
-> Cc: Jesper Dangaard Brouer <hawk@kernel.org>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: John Fastabend <john.fastabend@gmail.com>
-> Cc: KP Singh <kpsingh@kernel.org>
-> Cc: Martin KaFai Lau <martin.lau@linux.dev>
-> Cc: Song Liu <song@kernel.org>
-> Cc: Stanislav Fomichev <sdf@google.com>
-> Cc: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
-> Cc: Yonghong Song <yonghong.song@linux.dev>
-> Cc: bpf@vger.kernel.org
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  include/linux/filter.h | 42 ++++++++++++++++++++++++++++++++-----
->  include/linux/sched.h  |  3 +++
->  kernel/bpf/cpumap.c    |  3 +++
->  kernel/fork.c          |  1 +
->  net/bpf/test_run.c     | 11 +++++++++-
->  net/core/dev.c         | 19 ++++++++++++++++-
->  net/core/filter.c      | 47 +++++++++++++++++++-----------------------
->  net/core/lwt_bpf.c     |  3 +++
->  8 files changed, 96 insertions(+), 33 deletions(-)
->
-> diff --git a/include/linux/filter.h b/include/linux/filter.h
-> index d5fea03cb6e61..6db5a68db6ee1 100644
-> --- a/include/linux/filter.h
-> +++ b/include/linux/filter.h
-> @@ -744,7 +744,39 @@ struct bpf_redirect_info {
->  	struct bpf_nh_params nh;
->  };
->=20=20
-> -DECLARE_PER_CPU(struct bpf_redirect_info, bpf_redirect_info);
-> +struct bpf_net_context {
-> +	struct bpf_redirect_info ri;
-> +};
-> +
-> +static inline struct bpf_net_context *bpf_net_ctx_set(struct bpf_net_con=
-text *bpf_net_ctx)
-> +{
-> +	struct task_struct *tsk =3D current;
-> +
-> +	if (tsk->bpf_net_context !=3D NULL)
-> +		return NULL;
-> +	tsk->bpf_net_context =3D bpf_net_ctx;
-> +	return bpf_net_ctx;
-> +}
-> +
-> +static inline void bpf_net_ctx_clear(struct bpf_net_context *bpf_net_ctx)
-> +{
-> +	if (bpf_net_ctx)
-> +		current->bpf_net_context =3D NULL;
-> +}
-> +
-> +static inline struct bpf_net_context *bpf_net_ctx_get(void)
-> +{
-> +	return current->bpf_net_context;
-> +}
-> +
-> +static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
-> +{
-> +	struct bpf_net_context *bpf_net_ctx =3D bpf_net_ctx_get();
-> +
-> +	return &bpf_net_ctx->ri;
-> +}
-> +
-> +DEFINE_FREE(bpf_net_ctx_clear, struct bpf_net_context *, bpf_net_ctx_cle=
-ar(_T));
->=20=20
->  /* flags for bpf_redirect_info kern_flags */
->  #define BPF_RI_F_RF_NO_DIRECT	BIT(0)	/* no napi_direct on return_frame */
-> @@ -1021,21 +1053,21 @@ void bpf_clear_redirect_map(struct bpf_map *map);
->=20=20
->  static inline bool xdp_return_frame_no_direct(void)
->  {
-> -	struct bpf_redirect_info *ri =3D this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri =3D bpf_net_ctx_get_ri();
->=20=20
->  	return ri->kern_flags & BPF_RI_F_RF_NO_DIRECT;
->  }
->=20=20
->  static inline void xdp_set_return_frame_no_direct(void)
->  {
-> -	struct bpf_redirect_info *ri =3D this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri =3D bpf_net_ctx_get_ri();
->=20=20
->  	ri->kern_flags |=3D BPF_RI_F_RF_NO_DIRECT;
->  }
->=20=20
->  static inline void xdp_clear_return_frame_no_direct(void)
->  {
-> -	struct bpf_redirect_info *ri =3D this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri =3D bpf_net_ctx_get_ri();
->=20=20
->  	ri->kern_flags &=3D ~BPF_RI_F_RF_NO_DIRECT;
->  }
-> @@ -1591,7 +1623,7 @@ static __always_inline long __bpf_xdp_redirect_map(=
-struct bpf_map *map, u64 inde
->  						   u64 flags, const u64 flag_mask,
->  						   void *lookup_elem(struct bpf_map *map, u32 key))
->  {
-> -	struct bpf_redirect_info *ri =3D this_cpu_ptr(&bpf_redirect_info);
-> +	struct bpf_redirect_info *ri =3D bpf_net_ctx_get_ri();
->  	const u64 action_mask =3D XDP_ABORTED | XDP_DROP | XDP_PASS | XDP_TX;
->=20=20
->  	/* Lower bits of the flags are used as return code on lookup failure */
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 6779d3b8f2578..cc9be45de6606 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -53,6 +53,7 @@ struct bio_list;
->  struct blk_plug;
->  struct bpf_local_storage;
->  struct bpf_run_ctx;
-> +struct bpf_net_context;
->  struct capture_control;
->  struct cfs_rq;
->  struct fs_struct;
-> @@ -1504,6 +1505,8 @@ struct task_struct {
->  	/* Used for BPF run context */
->  	struct bpf_run_ctx		*bpf_ctx;
->  #endif
-> +	/* Used by BPF for per-TASK xdp storage */
-> +	struct bpf_net_context		*bpf_net_context;
+Sorry, I was unable to find time to get back to this... I plan to look at it
+between today and tomorrow.
 
-Okay, so if we are going the route of always putting this in 'current',
-why not just embed the whole struct bpf_net_context inside task_struct,
-instead of mucking about with the stack-allocated structures and
-setting/clearing of pointers?
+In the meanwhile - does your platform use OVL_ADAPTOR?
 
--Toke
+If it does, that's the actual issue; otherwise, there may be some mistake on
+your side, because the EPs' ports<->ids relationship was verified before sending
+this to the lists.
+
+Cheers,
+Angelo
+
+> On 02/05/2024 18:53, Alexandre Mergnat wrote:
+>>
+>>
+>> On 30/04/2024 13:33, AngeloGioacchino Del Regno wrote:
+>>> Il 30/04/24 12:17, Alexandre Mergnat ha scritto:
+>>>> Hi Angelo,
+>>>>
+>>>> On 09/04/2024 14:02, AngeloGioacchino Del Regno wrote:
+>>>>> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
+>>>>> NIO-12L with both hardcoded paths, OF graph support and partially
+>>>>> hardcoded paths (meaning main display through OF graph and external
+>>>>> display hardcoded, because of OVL_ADAPTOR).
+>>>>
+>>>> Is that make sense for you to add the DTS changes of these boards into this 
+>>>> serie ?
+>>>> I asked because, IMHO, that could help to understand the serie.
+>>>>
+>>>
+>>> Yes and no... but I imagine that you're asking this because you're trying to
+>>> prepare something with a different SoC+board(s) combination :-)
+>>>
+>>> In that case, I'm preventively sorry because what follows here is not 100%
+>>> perfectly tidy yet as I didn't mean to send the devicetree commits upstream
+>>> before this series got picked....
+>>>
+>>> ... but there you go - I'm sure that you won't mind and that the example will
+>>> be more than good enough for you.
+>>>
+>>> Please note that one of the reasons why I didn't want to add this to the series
+>>> is that the following changes show only a mere 50% of the reasons why we want OF
+>>> graph support on mediatek-drm (but mainly, it's because I didn't have time to
+>>> actually rebase etc :-P )
+>>
+>> Thanks for the explanations and examples.
+>> Unfortunately, I have 2 display but only one is working (the main: DSI0) when I 
+>> use the dts method.
+>> I've probably missed something but I don't know what.
+>>
+>> In my "mmsys" node, if I swap display (the ext endpoint with the main endpoint), 
+>> the DPI0 is working, but not the DSI0. I conclude my both paths are good.
+>>
+>> Then, I've put some trace into "mtk_drm_of_ddp_path_build" to check if it parse 
+>> the two endpoint of the node. Both are parsed, but "of_ep.port" is always = 0. 
+>> According to "of_graph_parse_endpoint" function, "port" is the value of the 
+>> parent "reg", whereas "id" is the value of the endpoint "reg".
+>> So I replaced "of_ep.port" by "of_ep.id". Now I've of_ep.id = 0 for main and 
+>> of_ep.id = 1 for EXT.
+>>
+>> Now I've the good CRTC path, I get this error:
+>>    mediatek-drm mediatek-drm.1.auto: Invalid display hw pipeline. Last component: 
+>> 54 (ret=-2)
+>>    mediatek-drm mediatek-drm.1.auto: probe with driver mediatek-drm failed with 
+>> error -22
+>>
+>> After quick look, the "cpath" into "mtk_drm_of_ddp_path_build_one" (or deeper 
+>> functions) seems not be used as it should, due to the previous "of_ep.port" => 
+>> "of_ep.id" change of course.
+>>
+>> But I probably have to fix "of_ep.port" because I've mis-coded something. Just in 
+>> case, I share you my diff:
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts 
+>> b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>> index 1aa3426f561b..f660481d3fe8 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
+>> @@ -109,15 +109,51 @@ vsys_lcm_reg: regulator-vsys-lcm {
+>>       };
+>>   };
+>>
+>> +&cpu0 {
+>> +    proc-supply = <&mt6357_vproc_reg>;
+>> +    sram-supply = <&mt6357_vsram_proc_reg>;
+>> +};
+>> +
+>> +&cpu1 {
+>> +    proc-supply = <&mt6357_vproc_reg>;
+>> +    sram-supply = <&mt6357_vsram_proc_reg>;
+>> +};
+>> +
+>> +&cpu2 {
+>> +    proc-supply = <&mt6357_vproc_reg>;
+>> +    sram-supply = <&mt6357_vsram_proc_reg>;
+>> +};
+>> +
+>> +&cpu3 {
+>> +    proc-supply = <&mt6357_vproc_reg>;
+>> +    sram-supply = <&mt6357_vsram_proc_reg>;
+>> +};
+>> +
+>> +&dither0_out {
+>> +    remote-endpoint = <&dsi0_in>;
+>> +};
+>> +
+>>   &dpi0 {
+>>       pinctrl-0 = <&dpi_default_pins>;
+>>       pinctrl-1 = <&dpi_idle_pins>;
+>>       pinctrl-names = "default", "sleep";
+>>       status = "okay";
+>> +    ports {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>>
+>> -    port {
+>> -        dpi_out: endpoint {
+>> -            remote-endpoint = <&it66121_in>;
+>> +        port@0 {
+>> +            reg = <0>;
+>> +            dpi0_in: endpoint {
+>> +                remote-endpoint = <&rdma1_out>;
+>> +            };
+>> +        };
+>> +
+>> +        port@1 {
+>> +            reg = <1>;
+>> +            dpi0_out: endpoint {
+>> +                remote-endpoint = <&it66121_in>;
+>> +            };
+>>           };
+>>       };
+>>   };
+>> @@ -137,36 +173,28 @@ panel@0 {
+>>
+>>           port {
+>>               panel_in: endpoint {
+>> -                remote-endpoint = <&dsi_out>;
+>> +                remote-endpoint = <&dsi0_out>;
+>>               };
+>>           };
+>>       };
+>> +    ports {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>>
+>> -    port {
+>> -        dsi_out: endpoint {
+>> -            remote-endpoint = <&panel_in>;
+>> +        port@0 {
+>> +            reg = <0>;
+>> +            dsi0_in: endpoint {
+>> +                remote-endpoint = <&dither0_out>;
+>> +            };
+>>           };
+>> -    };
+>> -};
+>>
+>> -&cpu0 {
+>> -    proc-supply = <&mt6357_vproc_reg>;
+>> -    sram-supply = <&mt6357_vsram_proc_reg>;
+>> -};
+>> -
+>> -&cpu1 {
+>> -    proc-supply = <&mt6357_vproc_reg>;
+>> -    sram-supply = <&mt6357_vsram_proc_reg>;
+>> -};
+>> -
+>> -&cpu2 {
+>> -    proc-supply = <&mt6357_vproc_reg>;
+>> -    sram-supply = <&mt6357_vsram_proc_reg>;
+>> -};
+>> -
+>> -&cpu3 {
+>> -    proc-supply = <&mt6357_vproc_reg>;
+>> -    sram-supply = <&mt6357_vsram_proc_reg>;
+>> +        port@1 {
+>> +            reg = <1>;
+>> +            dsi0_out: endpoint {
+>> +                remote-endpoint = <&panel_in>;
+>> +            };
+>> +        };
+>> +    };
+>>   };
+>>
+>>   &ethernet {
+>> @@ -229,7 +257,7 @@ port@0 {
+>>                   reg = <0>;
+>>                   it66121_in: endpoint {
+>>                       bus-width = <12>;
+>> -                    remote-endpoint = <&dpi_out>;
+>> +                    remote-endpoint = <&dpi0_out>;
+>>                   };
+>>               };
+>>
+>> @@ -557,6 +585,10 @@ &pwm {
+>>       status = "okay";
+>>   };
+>>
+>> +&rdma1_out {
+>> +    remote-endpoint = <&dpi0_in>;
+>> +};
+>> +
+>>   &ssusb {
+>>       dr_mode = "otg";
+>>       maximum-speed = "high-speed";
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi 
+>> b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+>> index d34519a33c90..dbb559959a9d 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
+>> @@ -762,6 +762,19 @@ mmsys: syscon@14000000 {
+>>               compatible = "mediatek,mt8365-mmsys", "syscon";
+>>               reg = <0 0x14000000 0 0x1000>;
+>>               #clock-cells = <1>;
+>> +            port {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                mmsys_main: endpoint@0 {
+>> +                    reg = <0>;
+>> +                    remote-endpoint = <&ovl0_in>;
+>> +                };
+>> +                mmsys_ext: endpoint@1 {
+>> +                    reg = <1>;
+>> +                    remote-endpoint = <&rdma1_in>;
+>> +                };
+>> +            };
+>>           };
+>>
+>>           mutex: mutex@14001000 {
+>> @@ -801,6 +814,24 @@ ovl0: ovl@1400b000 {
+>>               interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_LOW>;
+>>               iommus = <&iommu M4U_PORT_DISP_OVL0>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    ovl0_in: endpoint {
+>> +                        remote-endpoint = <&mmsys_main>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    ovl0_out: endpoint {
+>> +                        remote-endpoint = <&rdma0_in>;
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           rdma0: rdma@1400d000 {
+>> @@ -811,6 +842,24 @@ rdma0: rdma@1400d000 {
+>>               iommus = <&iommu M4U_PORT_DISP_RDMA0>;
+>>               mediatek,rdma-fifo-size = <5120>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    rdma0_in: endpoint {
+>> +                        remote-endpoint = <&ovl0_out>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    rdma0_out: endpoint {
+>> +                        remote-endpoint = <&color0_in>;
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           color0: color@1400f000 {
+>> @@ -819,6 +868,24 @@ color0: color@1400f000 {
+>>               clocks = <&mmsys CLK_MM_MM_DISP_COLOR0>;
+>>               interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_LOW>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    color0_in: endpoint {
+>> +                        remote-endpoint = <&rdma0_out>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    color0_out: endpoint {
+>> +                        remote-endpoint = <&ccorr0_in>;
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           ccorr0: ccorr@14010000 {
+>> @@ -827,6 +894,24 @@ ccorr0: ccorr@14010000 {
+>>               clocks = <&mmsys CLK_MM_MM_DISP_CCORR0>;
+>>               interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_LOW>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    ccorr0_in: endpoint {
+>> +                        remote-endpoint = <&color0_out>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    ccorr0_out: endpoint {
+>> +                        remote-endpoint = <&aal0_in>;
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           aal0: aal@14011000 {
+>> @@ -835,6 +920,24 @@ aal0: aal@14011000 {
+>>               clocks = <&mmsys CLK_MM_MM_DISP_AAL0>;
+>>               interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_LOW>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    aal0_in: endpoint {
+>> +                        remote-endpoint = <&ccorr0_out>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    aal0_out: endpoint {
+>> +                        remote-endpoint = <&gamma0_in>;
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           gamma0: gamma@14012000 {
+>> @@ -843,6 +946,24 @@ gamma0: gamma@14012000 {
+>>               clocks = <&mmsys CLK_MM_MM_DISP_GAMMA0>;
+>>               interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_LOW>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    gamma0_in: endpoint {
+>> +                        remote-endpoint = <&aal0_out>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    gamma0_out: endpoint {
+>> +                        remote-endpoint = <&dither0_in>;
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           dither0: dither@14013000 {
+>> @@ -851,6 +972,23 @@ dither0: dither@14013000 {
+>>               clocks = <&mmsys CLK_MM_MM_DISP_DITHER0>;
+>>               interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_LOW>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    dither0_in: endpoint {
+>> +                        remote-endpoint = <&gamma0_out>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    dither0_out: endpoint {
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           dsi0: dsi@14014000 {
+>> @@ -874,6 +1012,23 @@ rdma1: rdma@14016000 {
+>>               iommus = <&iommu M4U_PORT_DISP_RDMA1>;
+>>               mediatek,rdma-fifo-size = <2048>;
+>>               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    rdma1_in: endpoint {
+>> +                        remote-endpoint = <&mmsys_ext>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    rdma1_out: endpoint {
+>> +                    };
+>> +                };
+>> +            };
+>>           };
+>>
+>>           dpi0: dpi@14018000 {
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c 
+>> b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index dacf4eaa3457..5992b7865310 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -230,22 +230,6 @@ static const unsigned int mt8195_mtk_ddp_ext[] = {
+>>       DDP_COMPONENT_DP_INTF1,
+>>   };
+>>
+>> -static const unsigned int mt8365_mtk_ddp_main[] = {
+>> -    DDP_COMPONENT_OVL0,
+>> -    DDP_COMPONENT_RDMA0,
+>> -    DDP_COMPONENT_COLOR0,
+>> -    DDP_COMPONENT_CCORR,
+>> -    DDP_COMPONENT_AAL0,
+>> -    DDP_COMPONENT_GAMMA,
+>> -    DDP_COMPONENT_DITHER0,
+>> -    DDP_COMPONENT_DSI0,
+>> -};
+>> -
+>> -static const unsigned int mt8365_mtk_ddp_ext[] = {
+>> -    DDP_COMPONENT_RDMA1,
+>> -    DDP_COMPONENT_DPI0,
+>> -};
+>> -
+>>   static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
+>>       .main_path = mt2701_mtk_ddp_main,
+>>       .main_len = ARRAY_SIZE(mt2701_mtk_ddp_main),
+>> @@ -334,10 +318,6 @@ static const struct mtk_mmsys_driver_data 
+>> mt8195_vdosys1_driver_data = {
+>>   };
+>>
+>>   static const struct mtk_mmsys_driver_data mt8365_mmsys_driver_data = {
+>> -    .main_path = mt8365_mtk_ddp_main,
+>> -    .main_len = ARRAY_SIZE(mt8365_mtk_ddp_main),
+>> -    .ext_path = mt8365_mtk_ddp_ext,
+>> -    .ext_len = ARRAY_SIZE(mt8365_mtk_ddp_ext),
+>>       .mmsys_dev_num = 1,
+>>   };
+>>
+>>
+>>
+>> -- 
+>> Regards,
+>> Alexandre
+> 
+
+
 
 
