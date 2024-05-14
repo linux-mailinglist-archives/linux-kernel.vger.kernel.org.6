@@ -1,149 +1,101 @@
-Return-Path: <linux-kernel+bounces-179029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C48B8C5AB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:57:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36BA8C5AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E56EB22464
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F08B2824DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2ED1802C1;
-	Tue, 14 May 2024 17:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0D71802B2;
+	Tue, 14 May 2024 17:59:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rRq3zDXK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uirhTq2r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FCD1791ED;
-	Tue, 14 May 2024 17:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7191802AA;
+	Tue, 14 May 2024 17:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715709429; cv=none; b=Z1gbf+6xs1ZgIKNLWHgTU1kg2aFa+NGC39zgJ0OaFWKc8uoL/wrEYyTVHMwh+VpKTI+K5Sb2u0GYEjUBwhBBr2HNppvw9ChAw3cD4wmRt1HpN1G7NBvbbgEDd9+IIkVDiA2G3BEOI9Bpedc+H8Zqj70orAid7IxzUiVnhFoN/S8=
+	t=1715709597; cv=none; b=Hwhg7sIwF6TSy9F79Ntr/GD9GVVyaNcpfTC2gpmxm2wibrfPZfer4IjgXzKHfZOj9Jo+sjU16uG3bASMz6ICyO7xOW/CBdRwj64MwuhQJM/8oQXKNd/QL09DDeSgQ4yjYEoQPDXcktNXJvV3AE8UpjIvK0SwAVpUqs+nU1KhjwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715709429; c=relaxed/simple;
-	bh=L4rhaJihbyiVB4osf1uPgFvAN8dhp1LCMRxGAjsa0OE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jk446IOzEEjjnn11vyR7qahJjTrpEXx9PmjV1TrbsQ1/QFbubi1k45xPSiC1crhJ98RAcF6CjwQl+7snsSm5wKMc81V9HNmG8cyk+OisXgHyet1gCcB3ZLDJ9ock60MuWPs9w3FU0k1lWN4324GACBKIvHcPXU8QQVijwzBY29c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rRq3zDXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2288AC2BD10;
-	Tue, 14 May 2024 17:57:05 +0000 (UTC)
+	s=arc-20240116; t=1715709597; c=relaxed/simple;
+	bh=mthMsZwME9+4YXzmaJGu9P4k9nP4BlU5JrK6Xkaanns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OnK4s0Id+Bjg5dd8lugXC498qIL3qDxEzBsrfZpd5K6fvM6XVmNhpuHri/LcAKlt5V3uwFH0TyDIKqPKoEUPDdz4MlkFPXmSG8IwLEQ+lHVJjQ/4Yycj2LyVoHXpqeVmI3FRaPXwayPpo0z56dAy4DX0pzKyFHXrmNqp0DS7X8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uirhTq2r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08AFBC2BD10;
+	Tue, 14 May 2024 17:59:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715709428;
-	bh=L4rhaJihbyiVB4osf1uPgFvAN8dhp1LCMRxGAjsa0OE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rRq3zDXKfziGPndKIghDH2Ny/HCHKekmPcybt/UPF+wnk5uRbW+KxG9BFEUwdr/t5
-	 03UcWVvXUHD5aGH4/2k0RLBabcigooyfR24Qoim0iKuoDkMnLWTvKxxI/j9pxKZhDp
-	 TE7U4R+A/so3UmFi1JxX78NJlPikPr8Dsqv8G75blcOFXXA9g02Uf2khoZfjjAXwMR
-	 yjIua2mNhCB4M53pn+/Vfk7FSG9KUkXisPp3I4rBfamcctKwN8Np8W2nA8DD5pETs1
-	 NiXp78pno/+siqfjYqEj2PyXVtNyW+EOQXQ0c+lB/wZUoc1nFCSQKny/CV1/4IplR5
-	 F6A3LvquuLlKw==
-Date: Tue, 14 May 2024 18:57:04 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	valentina.fernandezalanis@microchip.com
-Subject: Re: [PATCH v2 3/3] spi: spi-microchip-core: Add support for GPIO
- based CS
-Message-ID: <20240514-malt-diffuser-2fd207015e72@spud>
-References: <20240514104508.938448-1-prajna.rajendrakumar@microchip.com>
- <20240514104508.938448-4-prajna.rajendrakumar@microchip.com>
+	s=k20201202; t=1715709596;
+	bh=mthMsZwME9+4YXzmaJGu9P4k9nP4BlU5JrK6Xkaanns=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=uirhTq2rzFU6x1vn1qvfUlp+AI56GU8B2lmchTV/ZnY947YWoDEpZDX3vs7cpva7G
+	 Kw8E9hjKixWF68OIl0EBQduqnJZFmV0P27pnr2NgxCbmN3hXnOYH5j5YJU8ihDea2p
+	 K2p+hCWm7ooBf4mBJtd+TOKGGdcQticWnt8hOSpTAriU4yEEsqy77lmpTizA08YJsr
+	 n0q5MDKyzQ7LSUSH825o7HWRzHGnw1VjZ7MBTIEqzzUp7CH3qnmb4JneL/uvDCj6m9
+	 j5u7PVH8TggxEWwfiXDx37ING1e2LCIjiEbPUgaPaaWtK1MNMeRIMoFyWOonTEj7b9
+	 +UHrtOa2JuZbA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.6 000/301] 6.6.31-rc1 review
+Date: Tue, 14 May 2024 19:58:23 +0200
+Message-ID: <20240514175823.24891-1-ojeda@kernel.org>
+In-Reply-To: <20240514101032.219857983@linuxfoundation.org>
+References: <20240514101032.219857983@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Y+iyNK1SdnhbDI8k"
-Content-Disposition: inline
-In-Reply-To: <20240514104508.938448-4-prajna.rajendrakumar@microchip.com>
+Content-Transfer-Encoding: 8bit
 
+On Tue, 14 May 2024 12:14:31 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.31 release.
+> There are 301 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.31-rc1.gz
+> or in the git tree and branch at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 
---Y+iyNK1SdnhbDI8k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Boot-tested under QEMU (x86_64) for Rust:
 
-Prajna, Mark,
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-On Tue, May 14, 2024 at 11:45:08AM +0100, Prajna Rajendra Kumar wrote:
-> The SPI "hard" controller within the PolarFire SoC is capable of
-> handling eight CS lines, but only one CS line is wired. Therefore, use
-> GPIO descriptors to configure additional CS lines.
->=20
-> Signed-off-by: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
-
-I provided an ack on v1, so here it is again:
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-In general you can keep tags between versions, if you intentionally drop
-tags you should mention why you dropped them.
-
-> ---
->  drivers/spi/spi-microchip-core.c | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/drivers/spi/spi-microchip-core.c b/drivers/spi/spi-microchip=
--core.c
-> index c10de45aa472..6246254e1dff 100644
-> --- a/drivers/spi/spi-microchip-core.c
-> +++ b/drivers/spi/spi-microchip-core.c
-> @@ -258,6 +258,9 @@ static int mchp_corespi_setup(struct spi_device *spi)
->  	struct mchp_corespi *corespi =3D spi_controller_get_devdata(spi->contro=
-ller);
->  	u32 reg;
-> =20
-> +	if (spi_is_csgpiod(spi))
-> +		return 0;
-
-Mark,
-
-This has no users outside of core code, but is < 6 months old. Is using
-it in a driver like this okay?
+Thanks!
 
 Cheers,
-Conor.
-
-> +
->  	/*
->  	 * Active high targets need to be specifically set to their inactive
->  	 * states during probe by adding them to the "control group" & thus
-> @@ -516,6 +519,7 @@ static int mchp_corespi_probe(struct platform_device =
-*pdev)
-> =20
->  	host->num_chipselect =3D num_cs;
->  	host->mode_bits =3D SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
-> +	host->use_gpio_descriptors =3D true;
->  	host->setup =3D mchp_corespi_setup;
->  	host->bits_per_word_mask =3D SPI_BPW_MASK(8);
->  	host->transfer_one =3D mchp_corespi_transfer_one;
-> --=20
-> 2.25.1
->=20
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
-
---Y+iyNK1SdnhbDI8k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkOl7wAKCRB4tDGHoIJi
-0vAbAP4s3UDpCqUDZ7kvX4ikM1pgZrQjOVzd/RDR6106Rr5HdAEAsa9NZW8rS76m
-pTMi3kRiV4hfKVd6W17bzh01HOJPtA8=
-=Eyq7
------END PGP SIGNATURE-----
-
---Y+iyNK1SdnhbDI8k--
+Miguel
 
