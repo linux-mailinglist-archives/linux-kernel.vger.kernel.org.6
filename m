@@ -1,401 +1,333 @@
-Return-Path: <linux-kernel+bounces-179124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EEF8C5BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:57:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FA28C5BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18C8C1C21413
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 435AB283DAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E134A181CEA;
-	Tue, 14 May 2024 19:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5C518133B;
+	Tue, 14 May 2024 19:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="f2UB6LSD"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="dmf7h2mk"
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0925181BBE
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814CF180A6C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715716535; cv=none; b=a4Gr/TRRnx8ajcWoK9BOc9dpMb+QXWuMGndBZyL4udEijL/UjzechWqdaMKHDG6u/IHdOfupkR8T4UCPm+AIIEVfSKXN5WT5gU1Eu6EIx6dHMJReN7t/xr1zqKt3QtjswuTARKLX0eQ1sf+nXKgzIF59KeYmDaEn5XVfiXqPZl4=
+	t=1715716753; cv=none; b=aC43EdYtUAPCUVmVLaEwo8kVF8KZ7n6zhj0nbirQNlkYDU6ZLubm56gCbToNpITKYr+rhzreGzeNqevAvV+63ZhPL+DhF434liYwyOpvEZ3srVQSH/bQX9UtOtNxb5FCIAnHXQM2Bo0f/mzG4aLQ6jPIqQ8ZIGaI9LyEfHS6PlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715716535; c=relaxed/simple;
-	bh=wu4wwn/szGPfBtv9Z733SHGKlpn5NpOmM0MbAmAirrg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hQctnPuQD+CivAK/xAjixuUssvpy37PY2uQ4Ec82WM9lQ0A/9pWUl5ZBEie000zSQ087FU+svyNpLSWUyW64tNrm+3QAVUxj0PGPeBYhr/oeHen8sqH4jXcdrh7iKvltTAVgis/eGDCCx2C1Nhu+SaUV57w4r03/iBiwkFXz6Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f2UB6LSD; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-43dfe020675so1609421cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:55:33 -0700 (PDT)
+	s=arc-20240116; t=1715716753; c=relaxed/simple;
+	bh=FfBq4QqQrtwuN3KM/MzvHW/lDpe+7StAMESrxCSJ2tE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o5vnuUd6rdhzhYl3IWm7Yvc7mVHZgZoZyur7d4nQRa4EoXiRVPPzriZy0QdWf0f+IDtYHmlS6G5Nw4X3PU8B3uzDeb80iwpkklvNfNO4LUPqsNgBFH4nAuw2yB8bamygvh0rbjkMOEvy1qGIKjIpqsUK0R3P40N3IRPauMu9MXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=dmf7h2mk; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-7fbe0aeec38so700479241.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:59:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715716533; x=1716321333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JkB5N7IwTZgL/DLJyMJXKJLT8toamvuP/cBz435PCxE=;
-        b=f2UB6LSDm10M+YmyiMqwqX0RR49u/jylY/G0O5fGUOxe7TUDyHati4RbbG+gQG9cOf
-         B5QzECQDoxivJPRbOQaORtFCdU5JAHrakwPn2WoBxijeQaJ8wLxpBQX8bhriCc7LYT2T
-         ACEX90Y+IS2ts6xLm5zRFiPs65KHKANrRQ3Gom/9SeD6w7v3zJZcPORtroi/qPGuLSn1
-         q4E45DAOGNStUxdrXeUavJBtXb3ioy714Bx/0Iy3oXyOrTpIKANOc2oRYwY1PRPE4rCw
-         rqYxtxwTG3FfYuf3Nsq/i1fhkGST48M1LC2MGpjDCKPOGuDBq1BM5xfoyS93HRObbImc
-         Qe+A==
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1715716749; x=1716321549; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/xZ0WCMxWXf6SCbKz4ExR4IGiDhvg8ahEfUt+oFqQ+U=;
+        b=dmf7h2mkxz1kls4SmXQBin/9b5uMFiIFFc9g0mxgMRlbUA+oZQ9BfNhyxKRDXL0N0V
+         BpINKANCgANufRBdY8JOhXcHjnpvy2CG2ZWLumK4DQnWTFF+L0EXXVVTl4ftXmUmF/ac
+         yziiP37YeEGsCqvoLJZSAMlxtQJnHTtRK8/1kQjnLGl9I8rBufGlWT5AFUaj/an/giid
+         T7gznCbGyWU+6llel3zYAjJuiuWob1MdKHZLEYpfmufmmvUvl9r3i8r310XaWt0GNkgp
+         KzCC53J6aciHHdYR96vwuFSNm8gChYlerAz0I8zvV+dz3T3j4+0ci3HSCgwjR8ERGoKH
+         +t+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715716533; x=1716321333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JkB5N7IwTZgL/DLJyMJXKJLT8toamvuP/cBz435PCxE=;
-        b=gVLrY85hRctYlW8lv5C2w/oWxz6l7lUGcZ7SBU+vk53BvbFbpC/QjKixDE+X/eB698
-         GKu3nORvygUh6xf0NzpyeglGuZ+Dd8nnKe1nZ2XKkCm6kGFvtWrszvZdnzRc9ZBCiHSu
-         AS+XDvlGnDQ4VjqNFiRf6KgYvcpw5PrMz+l3OOJnvKUJiZhXrwGXo/6hLHvLUimH5hgn
-         j0v8rddzPb0OLO4HUL/Oug7MRcLukpHS+MfP8gcjQfVlrozi/hXZhktlZLPBth9kKtRU
-         z9Cu5zaf/InVnXKOWDijwykW7oCTW7YgfgyzLmQvMqlQ1++MKjSZIl6BTXi7k3bqAEZa
-         TuZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVkcP7piYokkxHvXOQeXWbjUFkenr1QQ9Z87iFpnc2qIct6xgXgwQoD85rt5zoSaG2MyoRGpgpDVqGU9+/4vxqRXs0vlJl3pnUD4BN
-X-Gm-Message-State: AOJu0YwajU/oRVK54TYyJuhvc7oF3XbfpwCqDbh9sADHoaGfgafZKQlC
-	WgGhWbCNZWw5wTbhYPiXNKTy73GI649WiOs5NhGiZPwYJCBEOluZc9Pi6IQBpxLHJpq1lAPo9T+
-	XoVxuzOUuL1H/ayFcnS2UsaLarJ4ZtK6o6MCMyeR5mSpnAXB+tQ==
-X-Google-Smtp-Source: AGHT+IGtcx05O4q8YAEmuiNgXLzq2h1G5K2WbFqAjjyNqzUiPZ6FBrj3MReSP+NvB/i9vJBT7N9r8plg4S4fUfTNYtQ=
-X-Received: by 2002:a05:622a:98f:b0:43c:554e:b81 with SMTP id
- d75a77b69052e-43e0a28c3c5mr9978891cf.23.1715716532332; Tue, 14 May 2024
- 12:55:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715716749; x=1716321549;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xZ0WCMxWXf6SCbKz4ExR4IGiDhvg8ahEfUt+oFqQ+U=;
+        b=xLOFkZ/At/qeuuDOQnSXe2eTOsw/pFn+ixcFuSG/29S7ubT6FZfSWf1JG78e+CfBYO
+         nzesvsQwwU3M5InFk8WoU/KmmzxAzVeuRvUQtnLoQfmb4q8GkZRquPNToVGup7yxJEBa
+         dfylJDTvvdc2nb900vCgxCkGkPh2f9vKIJm3v4E/MxGsWZze0Dwoj5Qv4YnGvk4OlCcJ
+         ieT67o3QqDdtZZmoMDxDQ0B/rFmU9INsm5gA23towuU8CwZIwgC3yNV8F038fISetllr
+         c/wnXODskRo9i3UTLvIDyztsaVEz9hKzBvcC56F3FKMrjKLt+R12f/N366EAl1ThZaIF
+         xkKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhgZaBTZhkCcvfxyHTBD8r2Q7Q/ios5pj8dK3DmffvxRKL0lL4HswhfYdKugnPSMbPyEs4K3owLfesNskQaMxW6ybEX1tSm5pLfNvU
+X-Gm-Message-State: AOJu0YzqfpvmhZmt6cehlz5/EPPeBmKybg3Y7Q1iyHiivnftM8AGoQo3
+	TRTFgqecu8WxULVcmn/OTs559Inv2/56fk1sAYJP1i8WowgiOytH0jGIWSQAu+4=
+X-Google-Smtp-Source: AGHT+IG+IWhlEvoUTCqaHfj6q+ZQ4VlFYRPUioIxvLtt1oL0T/VaVy8uDa8faCwoKCS9gujmxh3OyQ==
+X-Received: by 2002:a05:6102:dd3:b0:47e:f679:51e2 with SMTP id ada2fe7eead31-48077dcae4cmr14690722137.10.1715716749407;
+        Tue, 14 May 2024 12:59:09 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:17:6448::7a9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1d9161sm56391496d6.120.2024.05.14.12.59.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 12:59:08 -0700 (PDT)
+Message-ID: <0cc8518fc56ef8e8ca31b170314603a6ced04ee7.camel@ndufresne.ca>
+Subject: Re: [PATCH v3 4/4] media: chips-media: wave5: Support YUV422 raw
+ pixel-formats on the encoder.
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: "jackson.lee" <jackson.lee@chipsnmedia.com>, Nas Chung
+	 <nas.chung@chipsnmedia.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+ "sebastian.fricke@collabora.com"
+	 <sebastian.fricke@collabora.com>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,  "lafley.kim"
+ <lafley.kim@chipsnmedia.com>, "b-brnich@ti.com" <b-brnich@ti.com>, 
+ "jackson.lee@chipnsmedia.com" <jackson.lee@chipnsmedia.com>
+Date: Tue, 14 May 2024 15:59:07 -0400
+In-Reply-To: <SE1P216MB1303BCEBEEFD39066A031C31ED182@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+References: <20240430013900.187-1-nas.chung@chipsnmedia.com>
+	 <20240430013900.187-5-nas.chung@chipsnmedia.com>
+	 <131cf8a5ac97ac800e19205c5d2b5359ac266de3.camel@ndufresne.ca>
+	 <SE1P216MB1303BCEBEEFD39066A031C31ED182@SE1P216MB1303.KORP216.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509090546.944808-1-ivan.orlov0322@gmail.com>
- <CA+GJov6hq0WsjqX1LrC2m7YS1nD37+zGmO+i1R1OajwYQZXY8w@mail.gmail.com> <44b5b31f-ac98-4c5c-8bc4-ebff9579b4d7@gmail.com>
-In-Reply-To: <44b5b31f-ac98-4c5c-8bc4-ebff9579b4d7@gmail.com>
-From: Rae Moar <rmoar@google.com>
-Date: Tue, 14 May 2024 15:55:20 -0400
-Message-ID: <CA+GJov7O9Hj1g3mMRjdnkcUCORofkxsqtn06t_JGOkNRBhfGCg@mail.gmail.com>
-Subject: Re: [PATCH v3] kunit: Cover 'assert.c' with tests
-To: Ivan Orlov <ivan.orlov0322@gmail.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kunit-dev@googlegroups.com, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 10:31=E2=80=AFAM Ivan Orlov <ivan.orlov0322@gmail.c=
-om> wrote:
->
-> On 5/14/24 01:17, Rae Moar wrote:
-> > On Thu, May 9, 2024 at 5:05=E2=80=AFAM Ivan Orlov <ivan.orlov0322@gmail=
-com> wrote:
-> >>
-> >> There are multiple assertion formatting functions in the `assert.c`
-> >> file, which are not covered with tests yet. Implement the KUnit test
-> >> for these functions.
-> >>
-> >> The test consists of 11 test cases for the following functions:
-> >>
-> >> 1) 'is_literal'
-> >> 2) 'is_str_literal'
-> >> 3) 'kunit_assert_prologue', test case for multiple assert types
-> >> 4) 'kunit_assert_print_msg'
-> >> 5) 'kunit_unary_assert_format'
-> >> 6) 'kunit_ptr_not_err_assert_format'
-> >> 7) 'kunit_binary_assert_format'
-> >> 8) 'kunit_binary_ptr_assert_format'
-> >> 9) 'kunit_binary_str_assert_format'
-> >> 10) 'kunit_assert_hexdump'
-> >> 11) 'kunit_mem_assert_format'
-> >>
-> >> The test aims at maximizing the branch coverage for the assertion
-> >> formatting functions.
-> >>
-> >> As you can see, it covers some of the static helper functions as
-> >> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
-> >> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
-> >> corresponding definitions to `assert.h`.
-> >>
-> >> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
-> >> how it is done for the string stream test.
-> >
-> > Hello!
-> >
-> > This looks great to me! Thanks for all your work on this! There is
-> > just one comment I have below. Once that is fixed up, I am happy to
-> > add a reviewed-by.
-> >
-> > Thanks!
-> > -Rae
-> >
-> >>
-> >> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> >> ---
-> >> V1 -> V2:
-> >> - Check the output from the string stream for containing the key parts
-> >> instead of comparing the results with expected strings char by char, a=
-s
-> >> it was suggested by Rae Moar <rmoar@google.com>. Define two macros to
-> >> make it possible (ASSERT_TEST_EXPECT_CONTAIN and
-> >> ASSERT_TEST_EXPECT_NCONTAIN).
-> >> - Mark the static functions in `assert.c` as VISIBLE_IF_KUNIT and expo=
-rt
-> >> them conditionally if kunit is enabled instead of including the
-> >> `assert_test.c` file in the end of `assert.c`. This way we will decoup=
-le
-> >> the test from the implementation (SUT).
-> >> - Update the kunit_assert_hexdump test: now it checks for presense of
-> >> the brackets '<>' around the non-matching bytes, instead of comparing
-> >> the kunit_assert_hexdump output char by char.
-> >> V2 -> V3:
-> >> - Make test case array and test suite definitions static
-> >> - Change the condition in `assert.h`: we should declare VISIBLE_IF_KUN=
-IT
-> >> functions in the header file when CONFIG_KUNIT is enabled, not
-> >> CONFIG_KUNIT_TEST. Otherwise, if CONFIG_KUNIT_TEST is disabled,
-> >> VISIBLE_IF_KUNIT functions in the `assert.c` are not static, and
-> >> prototypes for them can't be found.
-> >> - Add MODULE_LICENSE and MODULE_DESCRIPTION macros
-> >>
-> >>   include/kunit/assert.h  |  11 ++
-> >>   lib/kunit/Makefile      |   1 +
-> >>   lib/kunit/assert.c      |  24 ++-
-> >>   lib/kunit/assert_test.c | 391 ++++++++++++++++++++++++++++++++++++++=
-++
-> >>   4 files changed, 419 insertions(+), 8 deletions(-)
-> >>   create mode 100644 lib/kunit/assert_test.c
-> >>
-> >> diff --git a/include/kunit/assert.h b/include/kunit/assert.h
-> >> index 24c2b9fa61e8..7e7490a74b13 100644
-> >> --- a/include/kunit/assert.h
-> >> +++ b/include/kunit/assert.h
-> >> @@ -218,4 +218,15 @@ void kunit_mem_assert_format(const struct kunit_a=
-ssert *assert,
-> >>                               const struct va_format *message,
-> >>                               struct string_stream *stream);
-> >>
-> >> +#if IS_ENABLED(CONFIG_KUNIT)
-> >> +void kunit_assert_print_msg(const struct va_format *message,
-> >> +                           struct string_stream *stream);
-> >> +bool is_literal(const char *text, long long value);
-> >> +bool is_str_literal(const char *text, const char *value);
-> >> +void kunit_assert_hexdump(struct string_stream *stream,
-> >> +                         const void *buf,
-> >> +                         const void *compared_buf,
-> >> +                         const size_t len);
-> >> +#endif
-> >> +
-> >>   #endif /*  _KUNIT_ASSERT_H */
-> >> diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
-> >> index 309659a32a78..be7c9903936f 100644
-> >> --- a/lib/kunit/Makefile
-> >> +++ b/lib/kunit/Makefile
-> >> @@ -18,6 +18,7 @@ endif
-> >>   obj-y +=3D                               hooks.o
-> >>
-> >>   obj-$(CONFIG_KUNIT_TEST) +=3D            kunit-test.o
-> >> +obj-$(CONFIG_KUNIT_TEST) +=3D            assert_test.o
-> >>
-> >>   # string-stream-test compiles built-in only.
-> >>   ifeq ($(CONFIG_KUNIT_TEST),y)
-> >> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
-> >> index dd1d633d0fe2..382eb409d34b 100644
-> >> --- a/lib/kunit/assert.c
-> >> +++ b/lib/kunit/assert.c
-> >> @@ -7,6 +7,7 @@
-> >>    */
-> >>   #include <kunit/assert.h>
-> >>   #include <kunit/test.h>
-> >> +#include <kunit/visibility.h>
-> >>
-> >>   #include "string-stream.h"
-> >>
-> >> @@ -30,12 +31,14 @@ void kunit_assert_prologue(const struct kunit_loc =
-*loc,
-> >>   }
-> >>   EXPORT_SYMBOL_GPL(kunit_assert_prologue);
-> >>
-> >> -static void kunit_assert_print_msg(const struct va_format *message,
-> >> -                                  struct string_stream *stream)
-> >> +VISIBLE_IF_KUNIT
-> >> +void kunit_assert_print_msg(const struct va_format *message,
-> >> +                           struct string_stream *stream)
-> >>   {
-> >>          if (message->fmt)
-> >>                  string_stream_add(stream, "\n%pV", message);
-> >>   }
-> >> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
-> >>
-> >>   void kunit_fail_assert_format(const struct kunit_assert *assert,
-> >>                                const struct va_format *message,
-> >> @@ -89,7 +92,7 @@ void kunit_ptr_not_err_assert_format(const struct ku=
-nit_assert *assert,
-> >>   EXPORT_SYMBOL_GPL(kunit_ptr_not_err_assert_format);
-> >>
-> >>   /* Checks if `text` is a literal representing `value`, e.g. "5" and =
-5 */
-> >> -static bool is_literal(const char *text, long long value)
-> >> +VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
-> >>   {
-> >>          char *buffer;
-> >>          int len;
-> >> @@ -110,6 +113,7 @@ static bool is_literal(const char *text, long long=
- value)
-> >>
-> >>          return ret;
-> >>   }
-> >> +EXPORT_SYMBOL_IF_KUNIT(is_literal);
-> >>
-> >>   void kunit_binary_assert_format(const struct kunit_assert *assert,
-> >>                                  const struct va_format *message,
-> >> @@ -166,7 +170,7 @@ EXPORT_SYMBOL_GPL(kunit_binary_ptr_assert_format);
-> >>   /* Checks if KUNIT_EXPECT_STREQ() args were string literals.
-> >>    * Note: `text` will have ""s where as `value` will not.
-> >>    */
-> >> -static bool is_str_literal(const char *text, const char *value)
-> >> +VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *va=
-lue)
-> >>   {
-> >>          int len;
-> >>
-> >> @@ -178,6 +182,7 @@ static bool is_str_literal(const char *text, const=
- char *value)
-> >>
-> >>          return strncmp(text + 1, value, len - 2) =3D=3D 0;
-> >>   }
-> >> +EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
-> >>
-> >>   void kunit_binary_str_assert_format(const struct kunit_assert *asser=
-t,
-> >>                                      const struct va_format *message,
-> >> @@ -208,10 +213,11 @@ EXPORT_SYMBOL_GPL(kunit_binary_str_assert_format=
-);
-> >>   /* Adds a hexdump of a buffer to a string_stream comparing it with
-> >>    * a second buffer. The different bytes are marked with <>.
-> >>    */
-> >> -static void kunit_assert_hexdump(struct string_stream *stream,
-> >> -                                const void *buf,
-> >> -                                const void *compared_buf,
-> >> -                                const size_t len)
-> >> +VISIBLE_IF_KUNIT
-> >> +void kunit_assert_hexdump(struct string_stream *stream,
-> >> +                         const void *buf,
-> >> +                         const void *compared_buf,
-> >> +                         const size_t len)
-> >>   {
-> >>          size_t i;
-> >>          const u8 *buf1 =3D buf;
-> >> @@ -229,6 +235,7 @@ static void kunit_assert_hexdump(struct string_str=
-eam *stream,
-> >>                          string_stream_add(stream, " %02x ", buf1[i]);
-> >>          }
-> >>   }
-> >> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
-> >>
-> >>   void kunit_mem_assert_format(const struct kunit_assert *assert,
-> >>                               const struct va_format *message,
-> >> @@ -269,4 +276,5 @@ void kunit_mem_assert_format(const struct kunit_as=
-sert *assert,
-> >>                  kunit_assert_print_msg(message, stream);
-> >>          }
-> >>   }
-> >> +
-> >>   EXPORT_SYMBOL_GPL(kunit_mem_assert_format);
-> >> diff --git a/lib/kunit/assert_test.c b/lib/kunit/assert_test.c
-> >> new file mode 100644
-> >> index 000000000000..1347a964204b
-> >> --- /dev/null
-> >> +++ b/lib/kunit/assert_test.c
-> >> @@ -0,0 +1,391 @@
-> >> +// SPDX-License-Identifier: GPL-2.0-or-later
-> >> +/*
-> >> + * KUnit test for the assertion formatting functions.
-> >> + * Author: Ivan Orlov <ivan.orlov0322@gmail.com>
-> >> + */
-> >> +#include <kunit/test.h>
-> >> +#include "string-stream.h"
-> >> +
-> >> +#define TEST_PTR_EXPECTED_BUF_SIZE 32
-> >> +#define HEXDUMP_TEST_BUF_LEN 5
-> >> +#define ASSERT_TEST_EXPECT_CONTAIN(test, str, substr) KUNIT_EXPECT_TR=
-UE(test, strstr(str, substr))
-> >> +#define ASSERT_TEST_EXPECT_NCONTAIN(test, str, substr) KUNIT_EXPECT_F=
-ALSE(test, strstr(str, substr))
-> >> +
-> >> +static void kunit_test_is_literal(struct kunit *test)
-> >> +{
-> >> +       KUNIT_EXPECT_TRUE(test, is_literal("5", 5));
-> >> +       KUNIT_EXPECT_TRUE(test, is_literal("0", 0));
-> >> +       KUNIT_EXPECT_TRUE(test, is_literal("1234567890", 1234567890));
-> >> +       KUNIT_EXPECT_TRUE(test, is_literal("-1234567890", -1234567890)=
-);
-> >> +       KUNIT_EXPECT_FALSE(test, is_literal("05", 5));
-> >> +       KUNIT_EXPECT_FALSE(test, is_literal("", 0));
-> >> +       KUNIT_EXPECT_FALSE(test, is_literal("-0", 0));
-> >> +       KUNIT_EXPECT_FALSE(test, is_literal("12#45", 1245));
-> >> +}
-> >> +
-> >> +static void kunit_test_is_str_literal(struct kunit *test)
-> >> +{
-> >> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"Hello, World!\"", "H=
-ello, World!"));
-> >> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"", ""));
-> >> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"\"", "\""));
-> >> +       KUNIT_EXPECT_FALSE(test, is_str_literal("", ""));
-> >> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"", "\""));
-> >> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba", "Abacaba"=
-));
-> >> +       KUNIT_EXPECT_FALSE(test, is_str_literal("Abacaba\"", "Abacaba"=
-));
-> >> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba\"", "\"Abac=
-aba\""));
-> >> +}
-> >> +
-> >> +KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
-> >> +
-> >> +/* this function is used to get a "char *" string from the string str=
-eam and defer its cleanup  */
-> >> +static char *get_str_from_stream(struct kunit *test, struct string_st=
-ream *stream)
-> >> +{
-> >> +       char *str =3D string_stream_get_string(stream);
-> >> +
-> >
-> > When trying to make the kernel with this test loaded in, I am getting
-> > an error that string_stream_get_string, string_stream_clear, and
-> > kunit_alloc_string_stream are undefined.
-> >
-> > So either these three methods will have to be exported using
-> > EXPORT_SYMBOL_KUNIT or this test cannot be loaded and run as a module.
-> >
-> > But once this is fixed up this should be good to go.
->
-> Hi Rae,
->
-> Thank you so much for the review.
->
-> At the moment, I believe the best approach would be to make this test
-> depend on CONFIG_KUNIT_TEST=3Dy (as it is done for string-stream-test).
->
-> However, I assume that every (standalone) test should be able to run as
-> a module, and I'd like to add EXPORT_SYMBOL_IF_KUNIT to all of the
-> non-static string-stream functions in a separate patch series. It will
-> require updating string-stream-test.c as well (adding MODULE_IMPORT_NS).
-> What do you think?
->
-> Thank you once again,
-> --
-> Kind regards,
-> Ivan Orlov
+Hi,
 
-Hello!
+sorry for the delay
 
-This sounds like a great approach! Happy to review the new patch
-series when it comes in.
+Le jeudi 02 mai 2024 =C3=A0 04:55 +0000, jackson.lee a =C3=A9crit=C2=A0:
+> Hi Nicolas
+>=20
+> > -----Original Message-----
+> > From: Nicolas Dufresne <nicolas@ndufresne.ca>
+> > Sent: Thursday, May 2, 2024 4:46 AM
+> > To: Nas Chung <nas.chung@chipsnmedia.com>; mchehab@kernel.org;
+> > sebastian.fricke@collabora.com
+> > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > hverkuil@xs4all.nl; lafley.kim <lafley.kim@chipsnmedia.com>; b-brnich@t=
+i.com;
+> > jackson.lee@chipnsmedia.com; jackson.lee <jackson.lee@chipsnmedia.com>
+> > Subject: Re: [PATCH v3 4/4] media: chips-media: wave5: Support YUV422 r=
+aw
+> > pixel-formats on the encoder.
+> >=20
+> > Hi Nas,
+> >=20
+> > Le mardi 30 avril 2024 =C3=A0 10:39 +0900, Nas Chung a =C3=A9crit=C2=A0=
+:
+> > > From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
+> > >=20
+> > > Add support for the YUV422P, NV16, NV61, YUV422M, NV16M, NV61M raw pi=
+xel-
+> > formats to the Wave5 encoder.
+> > > All these formats have a chroma subsampling ratio of 4:2:2 and theref=
+ore
+> > require a new image size calculation as the driver previously only hand=
+led a
+> > ratio of 4:2:0.
+> >=20
+> > Same here, run check-patch, before sending your next version, it should=
+ tell
+> > you that this message is not indented properly.
+> >=20
+> > >=20
+> > > Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
+> > > Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
+> > > ---
+> > >  .../chips-media/wave5/wave5-vpu-enc.c         | 59 +++++++++++++++++=
+--
+> > >  1 file changed, 54 insertions(+), 5 deletions(-)
+> > >=20
+> > > diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > index 75d230df45f6..0d6bec4e28d1 100644
+> > > --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> > > @@ -66,6 +66,24 @@ static const struct vpu_format
+> > enc_fmt_list[FMT_TYPES][MAX_FMTS] =3D {
+> > >  			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV21M,
+> > >  			.v4l2_frmsize =3D &enc_frmsize[VPU_FMT_TYPE_RAW],
+> > >  		},
+> > > +		{
+> > > +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_YUV422P,
+> > > +		},
+> > > +		{
+> > > +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV16,
+> > > +		},
+> > > +		{
+> > > +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV61,
+> > > +		},
+> > > +		{
+> > > +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_YUV422M,
+> > > +		},
+> > > +		{
+> > > +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV16M,
+> > > +		},
+> > > +		{
+> > > +			.v4l2_pix_fmt =3D V4L2_PIX_FMT_NV61M,
+> > > +		},
+> > >  	}
+> > >  };
+> > >=20
+> > > @@ -109,13 +127,30 @@ static int start_encode(struct vpu_instance *in=
+st,
+> > u32 *fail_res)
+> > >  	struct vb2_v4l2_buffer *dst_buf;
+> > >  	struct frame_buffer frame_buf;
+> > >  	struct enc_param pic_param;
+> > > -	u32 stride =3D ALIGN(inst->dst_fmt.width, 32);
+> > > -	u32 luma_size =3D (stride * inst->dst_fmt.height);
+> > > -	u32 chroma_size =3D ((stride / 2) * (inst->dst_fmt.height / 2));
+> > > +	u32 stride =3D inst->src_fmt.plane_fmt[0].bytesperline;
+> > > +	u32 luma_size =3D (stride * inst->src_fmt.height);
+> > > +	u32 chroma_size =3D 0;
+> > >=20
+> > >  	memset(&pic_param, 0, sizeof(struct enc_param));
+> > >  	memset(&frame_buf, 0, sizeof(struct frame_buffer));
+> > >=20
+> > > +	if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_YUV420 ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_YUV420M)
+> > > +		chroma_size =3D luma_size / 4;
+> > > +	else if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12 ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21 ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12M ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21M)
+> > > +		chroma_size =3D luma_size / 2;
+> > > +	else if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_YUV422P ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_YUV422M)
+> > > +		chroma_size =3D luma_size / 2;
+> > > +	else if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV16 ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV61 ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV16M ||
+> > > +		 inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV61M)
+> > > +		chroma_size =3D luma_size;
+> > > +
+> >=20
+> > I'm still unhappy to see all the supported format having to be listed a=
+gain
+> > here, this is error prone and a maintenance burden. In general, what I =
+would
+> > do is (and this is simplified to the subset of format we support):
+> >=20
+> > // might want to bug on that the info->pixel_encoding =3D=3D V4L2_PIXEL=
+_ENC_YUV
+> > // if you believe some RGB or bayer formats could be added in the futur=
+e and
+> > // want the devs to notice. I've ignored fractional bytes-per-pixel val=
+ues as
+> > // we don't use that, but another bugon if there is a chance the firmwa=
+re //
+> > will=C2=A0support more complex packing.
+> >=20
+> > info =3D v4l2_format_info(inst->src_fmt.pixelformat);
+> > if (info->mem_planes =3D=3D 1) {
+> > 	luma_size =3D stride * inst->dst_fmt.height;
+> > 	chroma_size =3D luma_size * info->bpp[1] / (info->hdiv * info->vdiv) }
+> > else {
+> > 	luma_size =3D inst->src_fmt.plane_fmt[0].sizeimage;
+> > 	chroma_size =3D inst->src_fmt.plane_fmt[1].sizeimage;
+> > }
+> >=20
+> > Or something similar that works ... (untested code above)
+> >=20
+> > >  	dst_buf =3D v4l2_m2m_next_dst_buf(m2m_ctx);
+> > >  	if (!dst_buf) {
+> > >  		dev_dbg(inst->dev->dev, "%s: No destination buffer found\n",
+> > > __func__); @@ -501,11 +536,15 @@ static int wave5_vpu_enc_s_fmt_out(s=
+truct
+> > file *file, void *fh, struct v4l2_form
+> > >  	}
+> > >=20
+> > >  	if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12 ||
+> > > -	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12M) {
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV12M ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV16 ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV16M) {
+> > >  		inst->cbcr_interleave =3D true;
+> > >  		inst->nv21 =3D false;
+> > >  	} else if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21 ||
+> > > -		   inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21M) {
+> > > +		   inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV21M ||
+> > > +		   inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV61 ||
+> > > +		   inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV61M) {
+> > >  		inst->cbcr_interleave =3D true;
+> >=20
+> > This can be simplified to (avoiding enumerating formats):
+> >=20
+> > 	inst->cbcr_interleave =3D (info->comp_planes =3D=3D 2) ? true : false;
+> >=20
+> > >  		inst->nv21 =3D true;
+> >=20
+> > Could be something to add into the info in the future, but for now this=
+ is
+> > list of formats is needed. Would be a lot more efficient with a switch,=
+ but
+> > not a hot path so not making this mandatory.
+> >=20
+>=20
+> Switch(pixel_format) {
+> Case V4L2_PIX_FMT_NV21:
+> Case V4L2_PIX_FMT_NV21M:
+> Case V4L2_PIX_FMT_NV61:
+> Case V4L2_PIX_FMT_NV61M:
+> 	inst->nv21 =3D true;
+> Default:
+> 	inst->nv21 =3D false;
+> }
+>=20
+> What you are saying is that to set the nv21 variable(using switch) ?
 
-Thanks,
-Rae
+Yes, it seems easier to maintain to me.
 
->
+>=20
+>=20
+>=20
+> > >  	} else {
+> > > @@ -1102,6 +1141,16 @@ static void wave5_set_enc_openparam(struct
+> > enc_open_param *open_param,
+> > >  	u32 num_ctu_row =3D ALIGN(inst->dst_fmt.height, 64) / 64;
+> > >  	u32 num_mb_row =3D ALIGN(inst->dst_fmt.height, 16) / 16;
+> > >=20
+> > > +	if (inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_YUV422P ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV16 ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV61 ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_YUV422M ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV16M ||
+> > > +	    inst->src_fmt.pixelformat =3D=3D V4L2_PIX_FMT_NV61M)
+> > > +		open_param->src_format =3D FORMAT_422;
+> > > +	else
+> > > +		open_param->src_format =3D FORMAT_420;
+> >=20
+> > Can be simplified to:
+> >=20
+> > if (info->hdiv =3D=3D 2 && info->vdiv =3D=3D 2)
+> > 	open_param->src_format =3D FORMAT_422;
+> > else if (info->hdiv =3D=3D 2 && info->vdiv =3D=3D 1)
+> > 	open_param->src_format =3D FORMAT_420;
+> >=20
+>=20
+> I think the above codes should be changed like below.(we should swap the =
+values of the src_format variable.)
+>=20
+>  if (info->hdiv =3D=3D 2 && info->vdiv =3D=3D 2)
+>  	open_param->src_format =3D FORMAT_420;
+>  else if (info->hdiv =3D=3D 2 && info->vdiv =3D=3D 1)
+>  	open_param->src_format =3D FORMAT_422;
+>=20
+
+Good catch.
+
+>=20
+> > > +
+> > >  	open_param->wave_param.gop_preset_idx =3D PRESET_IDX_IPP_SINGLE;
+> > >  	open_param->wave_param.hvs_qp_scale =3D 2;
+> > >  	open_param->wave_param.hvs_max_delta_qp =3D 10;
+> >=20
+> > regards,
+> > Nicolas
+
 
