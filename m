@@ -1,138 +1,159 @@
-Return-Path: <linux-kernel+bounces-178792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0398C57B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:11:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C158C57BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDA31F235D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:11:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184FEB21C4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297DF144D1D;
-	Tue, 14 May 2024 14:11:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9AE1145339;
+	Tue, 14 May 2024 14:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="piHCb5b/";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="kziy3ax8"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB571448EE;
-	Tue, 14 May 2024 14:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7601448FA;
+	Tue, 14 May 2024 14:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715695874; cv=none; b=O1MoTymiDOaVznMAKP9Nk3xnmxoTfs2uGYmfSHY0h+B+Y5FPLhBo8ImmaHzy56NVAIY9AxfL53oPeKP5EvfvTLABGozbyDR3PAMWTsdH7bRD2eMkvf7rTBvsGDsWpZMn+D+yVmAMmVPYRs2R8BATQFmUpMdVsd9htQ911h5hgvk=
+	t=1715695879; cv=none; b=Eg4tmcb7wGy3uaj3ZSkVvlRD/RkLCcVUEBiiD+dIIbiMBonTAfzdntmyiMMFibKP0EZhPQ9y/mGojF8Y+sesrgQ/G1YJahPm7l1nfBJDH7JU9E1vdSfzoycmFp9gQh4E11jwrbadjuCOO42WOGjBqefmHqzduQZ8jbaz2iBS3ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715695874; c=relaxed/simple;
-	bh=NuDUH3lQEQUkn5ow0R+rr288QiNXrvK2VyecYrRxQDM=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gX0lS9nr/hkzJ3ozE6FCOQzvHHibXPmQ01YE9PWScU1rxBeLO75F55GzdEKuXI9A/vkz00oKdTQ3cfwb764u06WE5WAWY+dmOCYZT2R2FjAVLzXwYADracs4BqVCG0DOc2PTq8NQRsQPKQuWuPkPkxlr87UIcVMfZOjQu9rGz0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Vdyv73vgpz4f3jJ6;
-	Tue, 14 May 2024 22:10:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 2D4CE1A0B00;
-	Tue, 14 May 2024 22:11:08 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgDH6w76cENmwvTQMw--.36155S3;
-	Tue, 14 May 2024 22:11:08 +0800 (CST)
-Subject: Re: [PATCH v2 4/9] jbd2: jump to new copy_done tag when b_frozen_data
- is created concurrently
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240514112438.1269037-1-shikemeng@huaweicloud.com>
- <20240514112438.1269037-5-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <28548c0f-f900-4382-b648-bca4d8e0e739@huaweicloud.com>
-Date: Tue, 14 May 2024 22:11:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715695879; c=relaxed/simple;
+	bh=r2Nahr78aiF4tYkW2zYCQNncVvwBxFAGr+UJ6/ZGIpQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CrpA+40uF/ymOTsa01lMp+3UgDPErTLJUeFFazpRyCMqJ8yutl20d/n5NfXcAm+WmUM20Sk3L2moSw2RPna0YdRKZHTn3h0bDwS1kTTp042JOCzqYLeAQsr3ESak2WP6JiAL2N0Rd/PqXuuq56MgZvMPeJ8luDTZLkNRpo7eBWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=piHCb5b/; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=kziy3ax8; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715695876;
+	bh=r2Nahr78aiF4tYkW2zYCQNncVvwBxFAGr+UJ6/ZGIpQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=piHCb5b/FbG2smVbhene+15kh7ccoAWtS0G1EBGOXMvkKz3H+P17VYYbce7LNU36R
+	 Sfkh62GBisH1D/e1Nv1e1vm5lmzMJrYHFLlaRWHRGM4v0PBUVSJZ/6xLEC6wAIcgv3
+	 69Yzt56BlomtSbofrZ0YqStcBc8iH2YwMVeyd9Tk=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id F3D361286A24;
+	Tue, 14 May 2024 10:11:15 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id bzeQuPRiwXnQ; Tue, 14 May 2024 10:11:15 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1715695875;
+	bh=r2Nahr78aiF4tYkW2zYCQNncVvwBxFAGr+UJ6/ZGIpQ=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=kziy3ax8L7uocRtXywqUBFk1VaQX82be3dHcg8Pj/W39cUuGMHZAUICRLO4GWdrbV
+	 nQ9VrRis55hVDLdW502b9Pf/X5UAVNmGrRUIbVL8hXLFs3OXG5865se3L5XB6AqE8i
+	 rW9AcgLO4o6Pt+zHhNfb6tzF0x/E+WFxNUJ5z69Y=
+Received: from [172.21.4.27] (unknown [50.204.89.33])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id BCCA31286A09;
+	Tue, 14 May 2024 10:11:10 -0400 (EDT)
+Message-ID: <b53f9fa263e65cd6b23677d9f7a385e5eb85cfdd.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Ignat Korchagin <ignat@cloudflare.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Ben Boeckel <me@benboeckel.net>, 
+ Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Paul
+ Moore <paul@paul-moore.com>,  James Morris <jmorris@namei.org>,
+ serge@hallyn.com, linux-integrity@vger.kernel.org,
+ keyrings@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ kernel-team@cloudflare.com
+Date: Tue, 14 May 2024 08:11:06 -0600
+In-Reply-To: <CALrw=nFOh0=TXGx-z_oTkLWshVU_AfGRQzcC3zxVTzcRbuRqQQ@mail.gmail.com>
+References: <20240503221634.44274-1-ignat@cloudflare.com>
+	 <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org> <ZjY-UU8pROnwlTuH@farprobe>
+	 <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
+	 <D10YYQKT9P1S.25CE053K7MQKI@kernel.org>
+	 <CALrw=nFLa5=bPbYKijNsEo0Kk77_TEpdPmPe3CJ3VJqGNMmBeg@mail.gmail.com>
+	 <44cd50b60a0a4e376d01544d25187556b8badf94.camel@HansenPartnership.com>
+	 <CALrw=nFOh0=TXGx-z_oTkLWshVU_AfGRQzcC3zxVTzcRbuRqQQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240514112438.1269037-5-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDH6w76cENmwvTQMw--.36155S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1xKrW3Cw13Xr43tr48Crg_yoW8ArW5pr
-	yfKF1jv34vq3srtrn7Wa1DZFW0g3ykWF1jkFZxCrsxJFW3K34kWF1jvw48Kw1UAF97J3yr
-	XFyj9aykWwsIyFUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkE14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUywZ
-	7UUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
 
-On 2024/5/14 19:24, Kemeng Shi wrote:
-> If b_frozen_data is created concurrently, we can update new_folio and
-> new_offset with b_frozen_data and then move forward
+On Tue, 2024-05-14 at 10:50 +0100, Ignat Korchagin wrote:
+> On Mon, May 13, 2024 at 11:33 PM James Bottomley
+> <James.Bottomley@hansenpartnership.com> wrote:
+> > 
+> > On Mon, 2024-05-13 at 18:09 +0100, Ignat Korchagin wrote:
+> > [...]
+> > > TPM derived keys attempt to address the above use cases by
+> > > allowing applications to deterministically derive unique
+> > > cryptographic keys for their own purposes directly from the TPM
+> > > seed in the owner hierarchy. The idea is that when an application
+> > > requests a new key, instead of generating a random key and
+> > > wrapping it with the TPM, the implementation generates a key via
+> > > KDF(hierarchy seed, application specific info). Therefore, the
+> > > resulting keys will always be cryptographically bound to the
+> > > application itself and the device they were generated on.
+> > 
+> > So I think what confuses me is what the expected cryptographic
+> > secrecy properties of the derived keys are.  I get they're a KDF of
+> > seed and deterministic properties, but if those mixing values are
+> > well known (as the path or binary checksum cases) then anyone with
+> > access to the TPM can derive the key from user space because they
+> > can easily obtain the mixing parameters and there's no protection
+> > to the TPM keyed hash operation.
+> > 
+> > Consider the use case where two users are using derived keys on the
+> > same system (so same TPM).  Assuming they use them to protect
+> > sensitive information, what prevents user1 from simply deriving
+> > user2's key and getting the information, or am I missing the point
+> > of this?
 > 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> You are correct: it is possible, but in practice it would be limited
+> only to privileged users/applications. I remember there was a push to
+> set a 666 mask for the TPM device file, but it is not how it is done
+> today by default.
 
-It's more straight forward, looks good to me.
+No, it's 660, but in consequence of that every user of the TPM is a
+member of the tpm group which, since TPM use from userspace is growing,
+is everyone, so it might as well have been 666.  In other words relying
+on access restrictions to the TPM itself is largely useless.
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+>  Also I think the same applies to trusted keys as well, at least
+> without any additional authorizations or PCR restrictions on the blob
+> (I remember I could manually unwrap a trusted key blob in userspace
+> as root).
 
-> ---
->  fs/jbd2/journal.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 714e2ef0115a..5fb5062cf7ae 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -351,7 +351,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	atomic_set(&new_bh->b_count, 1);
->  
->  	spin_lock(&jh_in->b_state_lock);
-> -repeat:
->  	/*
->  	 * If a new transaction has already done a buffer copy-out, then
->  	 * we use that version of the data for the commit.
-> @@ -399,22 +398,22 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  		spin_lock(&jh_in->b_state_lock);
->  		if (jh_in->b_frozen_data) {
->  			jbd2_free(tmp, bh_in->b_size);
-> -			goto repeat;
-> +			goto copy_done;
->  		}
->  
->  		jh_in->b_frozen_data = tmp;
->  		memcpy_from_folio(tmp, new_folio, new_offset, bh_in->b_size);
-> -
-> -		new_folio = virt_to_folio(tmp);
-> -		new_offset = offset_in_folio(new_folio, tmp);
-> -		done_copy_out = 1;
-> -
->  		/*
->  		 * This isn't strictly necessary, as we're using frozen
->  		 * data for the escaping, but it keeps consistency with
->  		 * b_frozen_data usage.
->  		 */
->  		jh_in->b_frozen_triggers = jh_in->b_triggers;
-> +
-> +copy_done:
-> +		new_folio = virt_to_folio(jh_in->b_frozen_data);
-> +		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
-> +		done_copy_out = 1;
->  	}
->  
->  	/*
-> 
+Well, that's correct, but a TPM key file without policy still has two
+protections: the file itself (so the key owner can choose what
+permissions and where it is) and the key authority (or password)
+although for the mechanical (unsupervised insertion) use case keys tend
+not to have an authority.
+
+> It would be fixed if we could limit access to some TPM ops only from
+> the kernel, but I remember from one of your presentations that it is
+> generally a hard problem and that some solution was in the works (was
+> it based on limiting access to a resettable PCR?). I'm happy to
+> consider adopting it here as well somehow.
+
+Well, that was based on constructing a policy that meant only the
+kernel could access the data (so it requires PCR policy).
+
+In addition to the expected secrecy property question which I don't
+think is fully answered I did think of another issue: what if the
+application needs to rotate keys because of a suspected compromise? 
+For sealed keys, we just generate a new one an use that in place of the
+old, but for your derived keys we'd have to change one of the mixing
+values, which all look to be based on fairly permanent properties of
+the system.
+
+James
 
 
