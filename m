@@ -1,134 +1,245 @@
-Return-Path: <linux-kernel+bounces-178709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256C48C56B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:15:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82FC8C56C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0A01F2507B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:15:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1874FB21F1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495571448C3;
-	Tue, 14 May 2024 13:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19BB144D27;
+	Tue, 14 May 2024 13:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZnqWVaoX"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOxXn9Ny"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A3455C36;
-	Tue, 14 May 2024 13:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246541448ED;
+	Tue, 14 May 2024 13:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692542; cv=none; b=eQz6maV0HJlOgVtSC2/Li9NPbE+cLkDRVnTiT8fqe4dajDH5V4/UGWaaILcb2QFN7r+syqVWomWU5R6vepar1h5bW5NjNkONr0qdwTRTjdTs4QhP3KmjIben1sH0UDjM0l7awIx3Jg6TQdwj0aIKBPPMoKL3Lj4cZuz4ZoBdC4w=
+	t=1715692655; cv=none; b=ABM6MBmKi6q2j3GenZv5ShrhAZvOsGzhQh3B8elIlB3e2ETjjZkdrKIsX0pLtuxCH8/s311doFQQwaEnGT5Nrch5Wd1+SBoApVr8wazlNz96Fs1V8uFDldZDLEbHfXwRDq7yAGUKWLDAQio1JFO59K8OKhIMh2kVV/TpbYfRfCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692542; c=relaxed/simple;
-	bh=DKXSl2fJUbIXFw2H4Ort5sM2RiJbkna9cmj1WYKqJtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JjADsDCklrmfZWIUpbcY95MguD8jnX2hgVXSvuCN7BrYRC8sOZ8XOgvWy4SAAbkiyGwrhSMMk8hc9N0hxBGo1hjELi3ryxGN5wfLTnrEwelWEygyD94lIaXjMZQLpCI+SPCWFyAKC55ShHOHZAeAiCwfLTRFmOqxm1xW4PYLx/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZnqWVaoX; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 46AEF1BF210;
-	Tue, 14 May 2024 13:15:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715692537;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pc/gRfiTuzZ5RPyjwYBjvgMJyRnkMP8vwPGwGwzIh8Y=;
-	b=ZnqWVaoXCMXFIbdg04aEVwpQG9lCPWSBd/cUpysvbjOO6qSMVxcdWn9y8U3ll9Aw2lEaLb
-	lxnOh12VLederDvkZgQGlxfRdCTpLux3/c7rCnxXPU+eEq/wk5kA4jF+/E7UoOCRFWoLkW
-	Z285enE+GdIoP9DYsWUUnX49bSzhifHAK285WsVkwDk6Rovxcg9fYXFT2MlrqQO0bJR5B0
-	QuAQvLN8XL4IpgP28nIwy3MGPYBXW80M+pvGZB6bxJImGXS2cg9x8HLYbwzJG5o9if0HgS
-	oiWrRcXZvmq+VmYUUeCva144eM8jwi+nKiFrP6bT4Mj9xuLqGj96mee3Ey4a3A==
-Message-ID: <56b2bbcb-7181-4640-93b3-0cf3e2029367@bootlin.com>
-Date: Tue, 14 May 2024 15:15:34 +0200
+	s=arc-20240116; t=1715692655; c=relaxed/simple;
+	bh=dxfIijSCE4k/vVSJI5jpHtKZm2tg9+OL+IyXy4n8ttk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=risT42oC2b0lQwyifZ0ufSMIeBZiEN1gpsDvYuVqzmWHbTIrYhheoUzlGp1pkc7cXy4FlbIjLM72ZVZVUIYX5gZW+gGOSAbUMJGeaqh45A7VNF7OL1Syd3+ehWRL7KB2mRtfPC/CDQvJpmVooALMu5UiFIGRl6RGPoGaz6kaxp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LOxXn9Ny; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1eca195a7c8so45598935ad.2;
+        Tue, 14 May 2024 06:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715692653; x=1716297453; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=exr7aat/FWCYrncbM0fcEUOaeQqr5aYv8sckR5lfn3E=;
+        b=LOxXn9Ny59zLC+DlpwnE8B4hjoR72a45rmJfyYr4AVmWyGmUV//kYAyky3Uf0Pq22a
+         XlgrzAc6j/wm075GHQJvG3bJfjmoBxIU2Tl5XNmMxDqR7fPu4JVKtzQnur+R+zoIsHiW
+         juixBuUJJym6L/O/jc2/VEsVcfc2kEJyu6q1/zd3tC033ZhTdHt3yg8uQaX1mACCoEGu
+         DN/7oWY3vH/sSAav3nL3kX/ffpx7QXlMWUlLBeZQiLZSicepthPePE3/hyqGTB218iEJ
+         rzG9KrGoFbPtoJQ1yUaUd+87We9IGXP5D08DlhlycXGQVSgGacirj5r46sVULhQm1NUu
+         xINA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715692653; x=1716297453;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=exr7aat/FWCYrncbM0fcEUOaeQqr5aYv8sckR5lfn3E=;
+        b=c/7I4RyDtquJ6EdiGndP6Fn2I/aajYeC+bEysXJODzECrZaIaybgXot0xB3Sg/d+Nh
+         jAduDRocqMvz9EkUi+EjzGS4zTt1OFQwtXNDfk64b0tCl1jGNveBGXn0PCo4EWMKHY0v
+         DAeAdIG7xcEHiiHMJ+HIeRZxFsoAL+AQi3WVavrtY/FaifYor4/yIYHFaC2lZ7qmdQN7
+         k0z7H66T36eQMQCuEpErX/Zk4Cy18fF7Tax0lP2nzNsoM/3PJ1R+c/J2H71pZcfTULj4
+         mzBcr9XenrdhJ7Uo8wGEmqPWu6DivxYbz6jWo5dJ7Lt3AvZ0ZJ1/4T4BeND4HWgt3bzm
+         9/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQXNCi7YrimvK5nqp671WefhZsz6xyHuPDyO8JjLAqcgkp/LdZ1ZDU76eYrUTCrnhBKz4ORV3clB8GOL6w3+rmTxohkpIbMsDBFJFWAIXz36en6P2ihPGXTNe36J6Qn/jmsXKMtj2BE5aJCLdy3t9WrOl/1FHC86p7QOHJrdUufPKGEkpQfOYAlRyp
+X-Gm-Message-State: AOJu0YyS7oyvzoCIMQOANl+bwgxaSO/m0YTS0wpRaKa4f/zLol2js/pX
+	JE1iyFxDTLgGAw1uj4NZ7sgY5/wtWtJ9Dj/qHLCxOz5YptWOz4tL
+X-Google-Smtp-Source: AGHT+IFNUk9FNEeYd3kTqCAwEoYFl8xe6J6nOxovaCuVEKq5dmcbS/qnnHjmFB+qELcW291mGZE4xA==
+X-Received: by 2002:a17:902:efca:b0:1eb:ed2:f74c with SMTP id d9443c01a7336-1ef440596b4mr111334915ad.67.1715692653213;
+        Tue, 14 May 2024 06:17:33 -0700 (PDT)
+Received: from wedsonaf-dev.. ([50.204.89.32])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1ef0b9d18a4sm97277335ad.56.2024.05.14.06.17.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 06:17:32 -0700 (PDT)
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Subject: [RFC PATCH v2 00/30] Rust abstractions for VFS
+Date: Tue, 14 May 2024 10:16:41 -0300
+Message-Id: <20240514131711.379322-1-wedsonaf@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 05/11] PCI: cadence: Extract link setup sequence from
- cdns_pcie_host_setup()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Tony Lindgren <tony@atomide.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>, Vignesh R <vigneshr@ti.com>,
- Andi Shyti <andi.shyti@kernel.org>, Peter Rosin <peda@axentia.se>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Siddharth Vadapalli <s-vadapalli@ti.com>, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, gregory.clement@bootlin.com,
- theo.lebrun@bootlin.com, thomas.petazzoni@bootlin.com, u-kumar1@ti.com
-References: <20240102-j7200-pcie-s2r-v5-0-4b8c46711ded@bootlin.com>
- <20240102-j7200-pcie-s2r-v5-5-4b8c46711ded@bootlin.com>
- <111df2a5-7e05-480c-a5a5-57cf8d83c0d0@moroto.mountain>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <111df2a5-7e05-480c-a5a5-57cf8d83c0d0@moroto.mountain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 4/16/24 16:16, Dan Carpenter wrote:
-> On Tue, Apr 16, 2024 at 03:29:54PM +0200, Thomas Richard wrote:
->> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> index 5b14f7ee3c79..93d9922730af 100644
->> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
->> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
->> @@ -497,6 +497,30 @@ static int cdns_pcie_host_init(struct device *dev,
->>  	return cdns_pcie_host_init_address_translation(rc);
->>  }
->>  
->> +int cdns_pcie_host_link_setup(struct cdns_pcie_rc *rc)
->> +{
->> +	struct cdns_pcie *pcie = &rc->pcie;
->> +	struct device *dev = rc->pcie.dev;
->> +	int ret;
->> +
->> +	if (rc->quirk_detect_quiet_flag)
->> +		cdns_pcie_detect_quiet_min_delay_set(&rc->pcie);
->> +
->> +	cdns_pcie_host_enable_ptm_response(pcie);
->> +
->> +	ret = cdns_pcie_start_link(pcie);
->> +	if (ret) {
->> +		dev_err(dev, "Failed to start link\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = cdns_pcie_host_start_link(rc);
->> +	if (ret)
->> +		dev_dbg(dev, "PCIe link never came up\n");
-> 
-> If we're going to ignore this error the message should be a dev_err()
-> at least.
+This series introduces Rust abstractions that allow read-only file systems to
+be written in Rust.
 
-Hello Dan,
+There are three file systems implementations using these abstractions
+abstractions: ext2, tarfs, and puzzlefs. The first two are part of this series.
 
-In fact it could not be really an error.
-If you physically don't have a device on the PCIe bus,
-cdns_pcie_host_start_link() will not return 0.
+Rust file system modules can be declared with the `module_fs` macro and are
+required to implement the following functions (which are part of the
+`FileSystem` trait):
 
-So if we use dev_err(), we will always have the error if there is no
-device on the PCIe bus.
+    fn fill_super(
+        sb: &mut SuperBlock<Self, sb::New>,
+        mapper: Option<inode::Mapper>,
+    ) -> Result<Self::Data>;
 
-Regards,
+    fn init_root(sb: &SuperBlock<Self>) -> Result<dentry::Root<Self>>;
 
-Thomas
+They can optionally implement the following:
 
+    fn read_xattr(
+        _dentry: &DEntry<Self>,
+        _inode: &INode<Self>,
+        _name: &CStr,
+        _outbuf: &mut [u8],
+    ) -> Result<usize>;
+
+    fn statfs(_dentry: &DEntry<Self>) -> Result<Stat>;
+
+They may also choose the type of the data they can attach to superblocks and/or
+inodes.
+
+Lastly, file systems can implement inode, file, and address space operations
+and attach them to inodes when they're created, similar to how C does it. They
+can get a ro address space operations table from an implementation of iomap
+operations, to be used with generic ro file operations.
+
+A git tree is available here:
+    git://github.com/wedsonaf/linux.git vfs-v2
+
+Web:
+    https://github.com/wedsonaf/linux/commits/vfs-v2
+
+---
+
+Changes in v2:
+
+- Rebased to latest rust-next tree
+- Removed buffer heads
+- Added iomap support
+- Removed `_pin` field from `Registration` as it's not needed anymore
+- Renamed sample filesystem to match the module's name
+- Using typestate instead of a separate type for superblock/new-superblock
+- Created separate submodules for superblocks, inodes, dentries, and files
+- Split out operations from FileSystem to inode/file/address_space ops, similar to how C does it
+- Removed usages of folio_set_error
+- Removed UniqueFolio, for now reading blocks from devices via the pagecache
+- Changed map() to return the entire folio if not in highmem
+- Added support for unlocking the folio asynchronously
+- Added `from_raw` to all new ref-counted types
+- Added explicit types in calls to cast()
+- Added typestate to folio
+- Added support for implementing get_link
+- Fixed data race when reading inode->i_state
+- Added nofs scope support during allocation
+- Link to v1: https://lore.kernel.org/rust-for-linux/20231018122518.128049-1-wedsonaf@gmail.com/
+
+---
+
+Wedson Almeida Filho (30):
+  rust: fs: add registration/unregistration of file systems
+  rust: fs: introduce the `module_fs` macro
+  samples: rust: add initial ro file system sample
+  rust: fs: introduce `FileSystem::fill_super`
+  rust: fs: introduce `INode<T>`
+  rust: fs: introduce `DEntry<T>`
+  rust: fs: introduce `FileSystem::init_root`
+  rust: file: move `kernel::file` to `kernel::fs::file`
+  rust: fs: generalise `File` for different file systems
+  rust: fs: add empty file operations
+  rust: fs: introduce `file::Operations::read_dir`
+  rust: fs: introduce `file::Operations::seek`
+  rust: fs: introduce `file::Operations::read`
+  rust: fs: add empty inode operations
+  rust: fs: introduce `inode::Operations::lookup`
+  rust: folio: introduce basic support for folios
+  rust: fs: add empty address space operations
+  rust: fs: introduce `address_space::Operations::read_folio`
+  rust: fs: introduce `FileSystem::read_xattr`
+  rust: fs: introduce `FileSystem::statfs`
+  rust: fs: introduce more inode types
+  rust: fs: add per-superblock data
+  rust: fs: allow file systems backed by a block device
+  rust: fs: allow per-inode data
+  rust: fs: export file type from mode constants
+  rust: fs: allow populating i_lnk
+  rust: fs: add `iomap` module
+  rust: fs: add memalloc_nofs support
+  tarfs: introduce tar fs
+  WIP: fs: ext2: add rust ro ext2 implementation
+
+ fs/Kconfig                        |   2 +
+ fs/Makefile                       |   2 +
+ fs/rust-ext2/Kconfig              |  13 +
+ fs/rust-ext2/Makefile             |   8 +
+ fs/rust-ext2/defs.rs              | 173 +++++++
+ fs/rust-ext2/ext2.rs              | 551 +++++++++++++++++++++
+ fs/tarfs/Kconfig                  |  15 +
+ fs/tarfs/Makefile                 |   8 +
+ fs/tarfs/defs.rs                  |  80 +++
+ fs/tarfs/tar.rs                   | 394 +++++++++++++++
+ rust/bindings/bindings_helper.h   |  11 +
+ rust/helpers.c                    | 182 +++++++
+ rust/kernel/block.rs              |  10 +-
+ rust/kernel/error.rs              |   8 +-
+ rust/kernel/file.rs               | 251 ----------
+ rust/kernel/folio.rs              | 305 ++++++++++++
+ rust/kernel/fs.rs                 | 492 +++++++++++++++++++
+ rust/kernel/fs/address_space.rs   |  90 ++++
+ rust/kernel/fs/dentry.rs          | 136 ++++++
+ rust/kernel/fs/file.rs            | 607 +++++++++++++++++++++++
+ rust/kernel/fs/inode.rs           | 780 ++++++++++++++++++++++++++++++
+ rust/kernel/fs/iomap.rs           | 281 +++++++++++
+ rust/kernel/fs/sb.rs              | 194 ++++++++
+ rust/kernel/lib.rs                |   6 +-
+ rust/kernel/mem_cache.rs          |   2 -
+ rust/kernel/user.rs               |   1 -
+ samples/rust/Kconfig              |  10 +
+ samples/rust/Makefile             |   1 +
+ samples/rust/rust_rofs.rs         | 202 ++++++++
+ scripts/generate_rust_analyzer.py |   2 +-
+ 30 files changed, 4555 insertions(+), 262 deletions(-)
+ create mode 100644 fs/rust-ext2/Kconfig
+ create mode 100644 fs/rust-ext2/Makefile
+ create mode 100644 fs/rust-ext2/defs.rs
+ create mode 100644 fs/rust-ext2/ext2.rs
+ create mode 100644 fs/tarfs/Kconfig
+ create mode 100644 fs/tarfs/Makefile
+ create mode 100644 fs/tarfs/defs.rs
+ create mode 100644 fs/tarfs/tar.rs
+ delete mode 100644 rust/kernel/file.rs
+ create mode 100644 rust/kernel/folio.rs
+ create mode 100644 rust/kernel/fs.rs
+ create mode 100644 rust/kernel/fs/address_space.rs
+ create mode 100644 rust/kernel/fs/dentry.rs
+ create mode 100644 rust/kernel/fs/file.rs
+ create mode 100644 rust/kernel/fs/inode.rs
+ create mode 100644 rust/kernel/fs/iomap.rs
+ create mode 100644 rust/kernel/fs/sb.rs
+ create mode 100644 samples/rust/rust_rofs.rs
+
+
+base-commit: 183ea65d1fcd71039cf4d111a22d69c337bfd344
 -- 
-Thomas Richard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.34.1
 
 
