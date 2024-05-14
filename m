@@ -1,199 +1,128 @@
-Return-Path: <linux-kernel+bounces-179191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A18E8C5CE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D36008C5CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA434B214DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:35:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42358B2169F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF3C181BBD;
-	Tue, 14 May 2024 21:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15CE1181CE4;
+	Tue, 14 May 2024 21:35:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gJAxq6lY"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04olkn2015.outbound.protection.outlook.com [40.92.45.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DKrLMLsg"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49BE180A77
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.45.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715722503; cv=fail; b=e3SqwLC9UN83++y/u8GEDKwVCfzUMor930j+nhkXtNqgA9QkoGyYwkPSFEaMr456ozZdCYt5BbB9dvmMPQklrs9X18IccO51u1OFi0nE6szZRVcHlva5aRX0nIc95Ze3r5FrwPBuPH9uBANKjWVV/jadJbnOYR5n8uRaqU+Ot7I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715722503; c=relaxed/simple;
-	bh=khyZJimhRe/6i2VXus1jLFx8LuzeWYeJSczy3NkzDJA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BYVI+Xgc+7SnnM+W5S9eb7dEM9iBXyqVWrlM4ETRdD+VwtwskHe5mdemPsL/dgq/Pq8BK1Hrqb6rvYPgXQx0ETg+YynnH0AdeMM0ViAABXFGIKX80cCEEjvcQyv+8P6CLqsN1CMEsR2eb/BKCxtKZljvbAJz/CrVRVmJywaKqi8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gJAxq6lY; arc=fail smtp.client-ip=40.92.45.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NDMkGljFLDCZu1t3hpe+svFrDbRkKSwfMKGtGprC9l6j9Ya3GF9AoWBFbpg627vfn/4OKCQcusU4T4oTmb25w9RiMkKfVW1GeBn0Hpb9lrlXOfJMvnEkxAu4NTo5StN0BgyeYu7FJK6n4HZuekkAmvWIh10fpehCRP3pRh2fAe08VzpYUbIWXLvVxF/dzP3B9MwXmCGo1vdPNI/pqkoQryYxBBZx+BIVDq9YOsrPqB6zNRK0eIqkMazD2mtOj81T4U5QKDl+qIeT47fe12HDqqNFak1Ouf4924iTmKA5gNK5tW3Y/Msqx2HWsjXC7LYZzCjgAvzVVl2iqJWXDPtdvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KacOlsD1THBAX39sIHIiG5ObTJj9X39KDG4UUitcPgk=;
- b=TdQzPNwweiDlYXq2qiWuQiqhtv4cITLkpW6Q+y7X1/hd65BbZUVdxIb5vNgG6rt1VJRO2/U4bv1lRTO3JWYiZ6fRkTf6FEhllxEc4YtNQQbvihh/XjfnSBW2e8mXECcVaGTmeCc/qeLmPqJXPXsQzcbGN4SdMz0w04tC8RAuJc+gyZ9W/rW/ZiOQncwf9gN3BaaYLjKKaSrkpW2sLir4CcPsv7OH3FbWcXQzo/TrQfjRh6okIarh9zGWGYwaqqPpGebeQ8G8vWATfcCethmBGNjBr/F7tnSkJzvvIG1WpMfz5A+W0NQyKUZcUu7nHfU6664gBn7xjuIcvQCdZBEwvw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KacOlsD1THBAX39sIHIiG5ObTJj9X39KDG4UUitcPgk=;
- b=gJAxq6lYnMV9Jh1ukqG1Cks6g6LaIIQkaahMY8tmEUzkVwkDnHR1P1Ivhj1JkbdjlTj/dtv9EKedGAsSCuUXATf6A4qYPh3Bgo6lAl5lK3fRxKocStvZllaz2tukGNxM6+0r6JuxUa1kn/0KNXp4jDxB/NTPsYiZp1CmME/5aN+2GAUO8M+1RvgGFV/KSzGR9TDNgv5Jy91kZ87QopMJNoj2HiZHoExnSWffx2WKslcuqlqwdvpEzOZKEs+yGch4+XyJ1SENj+6Ys/Zsp8wnWjTnVr34dGM858XWVePB9g5Sseb01eG3upmnjkLyzHjL5clbu9yPnXzXazcYygjryQ==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SA0PR02MB7244.namprd02.prod.outlook.com (2603:10b6:806:ed::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 21:34:59 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 21:34:59 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "joro@8bytes.org"
-	<joro@8bytes.org>
-CC: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-	"vasant.hegde@amd.com" <vasant.hegde@amd.com>, "michael.roth@amd.com"
-	<michael.roth@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>
-Subject: RE: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
- SEV-SNP guest kernel
-Thread-Topic: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
- SEV-SNP guest kernel
-Thread-Index: AQHamxKg8G3tDdy39E2idvNw1Py2z7GVp95wgAGEcQCAACJyQA==
-Date: Tue, 14 May 2024 21:34:59 +0000
-Message-ID:
- <SN6PR02MB4157B333B126909197590DE0D4E32@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20240430152430.4245-1-suravee.suthikulpanit@amd.com>
- <SN6PR02MB4157E795C636EBE75CC806A1D4E22@SN6PR02MB4157.namprd02.prod.outlook.com>
- <24a4eb65-5e1b-44f9-a8ae-71f5f8f26ceb@amd.com>
-In-Reply-To: <24a4eb65-5e1b-44f9-a8ae-71f5f8f26ceb@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tmn: [ENJsy41p8Jcx9TU8k9MHkmSl7RKkklEJ]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA0PR02MB7244:EE_
-x-ms-office365-filtering-correlation-id: a37f4312-c52f-4def-ae7f-08dc745db4a6
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199019|102099023|3412199016|440099019;
-x-microsoft-antispam-message-info:
- UFFWo04OuN/mOmF5U34QmOHuREGhkZcs0wrqsl2jlOhD+gV8jox1zOWXTHMAKCcd14ftgTlWKqYK874f10j6kQrhKnwxxJVfcYYNsE7Kz/H5pzs7KNKnJ2fKTsDdzkfxxKnNjcBNdj92wwuHMZKByWoyDBE0cWGIiwB+KmveEMvbta7O9yN7pZgZ0MPJ46cfVAfHyUZBPC6myQCpNr2qVVAYrV1+ubfHZfg+nBljalYr+N02Kr0eh7DaDAh5yCrA9a7Ec2DAkN9+dK/JiWvAk1W+BLTpwdifiD+hiJKXNcsob/k3hieGM3y4TKYG+xGqM9FupdHDOTt2CxPIfwN1AKcEcOaapy4esGD0f4PjsRDTB/9twoORQ7sl7R3kQlRQjT1puC/UP/heTN2cLchxzuB0r1dv22Ag66WTLIyuYD2iR+XkLp2tQJa4Y+lw0FlsK0j3P9xZLgWgs9SrG811BDbDmM+eZ1C9sbDaIaBuC2lfoN7X5FtCFv/8Hle2Bufiw5eQ3SgT5ViA4JIgjIW21cmhijTiFhKECpY0F0cOGtb29vo+zPWoUrrjGFZGKdNO
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?1Og1Xak9byLLyrNEcFw/R99dkqJmM6Os+jCZv04L9EAnrTgnWquOExik7ZeJ?=
- =?us-ascii?Q?LRkmd3cJ0x9Md7IFDh/OdfL7FS4tZI908PK3EgTqtqwdx/C560NyGW7kBOxH?=
- =?us-ascii?Q?UwOr5dj2+aqDs6cox/6BB9LYU3uiPm1ctB6AA6LmMjRXaDU9b2F6UCIY2caI?=
- =?us-ascii?Q?IMBC9E5D8ICEJklj55jDhEbhhBw/cDozPcULCOjkgYDAPRUkfLRqy9rieQ6g?=
- =?us-ascii?Q?JxAKYJGpyvi8ykNg+6koH/Xk/030v3KPUyrFpTtqM+umpYZEYJJLkhw2YiKR?=
- =?us-ascii?Q?rdvM3F2sd8SzKDGZcKfOehTCcfial7arLkGUG9VbSjBdfEoJHHVB8zJkcSpH?=
- =?us-ascii?Q?ZzslzFLpCkjxhrFsxHJXOMQdlyoVo0lFdKHsn+D12cn9pF8kuymUZrrFdr7e?=
- =?us-ascii?Q?iGMGi4OFo75VfDIqH6IL/ofU8h3+OkxbExEPzhmVTLgEF5xJDt7a76l05zwj?=
- =?us-ascii?Q?rA5p4BbX+2r+vSTB6BS3GJteVxNyIZxJK85nkd5vjaOAt2H+bJYGNhTW6haV?=
- =?us-ascii?Q?0Sca6k078VdWbmbWsNIgIpItAyEvF2v/+4n/WHpahbO1zdOmNWG9KR13UcYG?=
- =?us-ascii?Q?Z5NLIZpGlAjihHhcRiYzBwutWaS37tId2dCHGez6wcerNDsy1cXiRIPw8YxS?=
- =?us-ascii?Q?sg5v1Dgw/8RqIQwOz0MIO0t2ScIKk+f7S60GPdBw+sjfW2aGHsDyWKwoff83?=
- =?us-ascii?Q?XMVmg0MtWMq7NmiSWHtseGn5AfQ6gUshuhU2DQJtDk2qTQbRUJO4tRNuYggw?=
- =?us-ascii?Q?G4Au8oK6PsZX1Zw8gtriqe90MBAJmcXDZtrKAVy7y+pkdthnghP9eQCaLjSz?=
- =?us-ascii?Q?2g26Uh7j78+UdonBfgts0hPNEESXguATV5J/6qL6nmVDeZmXCEE94cTt94YG?=
- =?us-ascii?Q?jq+urO5mvIbu+ImiH8OMvq3N0/V0olrlbOQZUSmF0VUVcXvR9yRZ++xLVvs7?=
- =?us-ascii?Q?Kake3Lf4LwYHgYEpiTT7rGfTsHlw89KjELu6L9IrZSF01ZvbfM8cGLmq257S?=
- =?us-ascii?Q?g2FOVmHyJxv9eWWMqpMK4Hhp0njAWJn0MU0byTns5tnqh8Zk/+AD8MhhbO06?=
- =?us-ascii?Q?ueRkQ2RXFpaJ6d+qpNkU4fBqLmIpaLk1PPizu5mmRPtmiMezL2fQ4wtPIOq4?=
- =?us-ascii?Q?uyftiMrPQqkUeVhYCSNX0iIRjJ3OgbRD11ZUIfBVda9kXWo1/rFugPy62/ZV?=
- =?us-ascii?Q?uswp2Uunm1Lp6AjDHdpDl4lMkPgpdgbNnpMYLDFAEsB00tt16kbt+u9n6bs?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB3B180A6A;
+	Tue, 14 May 2024 21:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715722528; cv=none; b=DTOHu31zwKEZFhdcYQIwyqMIvohALboiLAOBFmZ5UioHBNQys8TrUMQPK0B+OuDnl8U3LMGbCW+7kzyw6dLvflFKw7KbCR4tPg3dOXvwKX6HXFrdX5N6pPVjVTPA8okMmLVqj8ydCIXqQ10bcHpSYxKPreOp6FHQDZkx/lC+gbA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715722528; c=relaxed/simple;
+	bh=aF9WqJDnCdLja00O7itEYM9SGXGttlvGBdB6IhdeNP0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VwUxI6hBe3ZQTN3UtK/QOQqEoncK9asRHCkxEuZSBfxFowbX9eB+4E21BRZVBM/qOVJ/aBavZ7eEVzZo4GsuKzv8XLXr9Mzb301HbpgGhSOnAE34jZdkwbnezBstet6spvrLI21UWPsl3aG0Y9Ac4vzkebw23AVkdqACN32drtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DKrLMLsg; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353727.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EKqLiZ026521;
+	Tue, 14 May 2024 21:35:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=XlxC1D8a2ar7YUytuCba9+OD4bQgUK1iL9higa/s9HU=;
+ b=DKrLMLsg6xxNtqqj17h/Jv79RawyBHUDdiS/eW26DvSEHkUu0JEKsn6pYDQddZIxpEKf
+ 0DAyUOpf0e4heGvuwNt+vwX0Scim7c9K3cvwgRXQwYZNvpds1PaNi4nVvESw+cNrbWuP
+ w/zIz5TDGjcwIx4eiGlR/dY7adNoNWn5BV0TIN+mwFpzgmFkI12Aiig5rxTpx18izVTg
+ 4tN7GAQkjmB36wOe4rmzUg7J9+bp/uxEqjklKVPmFOG+c+6Gkpyf7UUTARBOso+eypDo
+ i9Ezlur4YMqMkpsk/xqJHnABOwK69B87+jH63k+7kVFWlVQhp7EbWwTQlgZzsUqSEimA GA== 
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4fcc043b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 21:35:15 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EIlHrw006189;
+	Tue, 14 May 2024 21:35:13 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2mgmfpmj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 21:35:13 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44ELZBpI47382950
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 21:35:13 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 40BAF58055;
+	Tue, 14 May 2024 21:35:11 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0963E58060;
+	Tue, 14 May 2024 21:35:11 +0000 (GMT)
+Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 21:35:10 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: linux-aspeed@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, andrew@codeconstruct.com.au, joel@jms.id.au,
+        conor+dt@kernel.org, eajames@linux.ibm.com, krzk+dt@kernel.org,
+        robh@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/4] ARM: dts: aspeed: Add IBM P11 BMC systems
+Date: Tue, 14 May 2024 16:35:06 -0500
+Message-Id: <20240514213510.159144-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OgrG-qXJ8DAzju17FgNjonMk-yNb2pUZ
+X-Proofpoint-ORIG-GUID: OgrG-qXJ8DAzju17FgNjonMk-yNb2pUZ
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a37f4312-c52f-4def-ae7f-08dc745db4a6
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 21:34:59.1032
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR02MB7244
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_13,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 adultscore=0 mlxlogscore=395 suspectscore=0
+ phishscore=0 lowpriorityscore=0 clxscore=1015 spamscore=0 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405140154
 
-From: Suthikulpanit, Suravee <suravee.suthikulpanit@amd.com> Sent: Tuesday,=
- May 14, 2024 12:02 PM
->=20
-> On 5/14/2024 3:05 AM, Michael Kelley wrote:
-> > From: Suravee Suthikulpanit<suravee.suthikulpanit@amd.com>  Sent: Tuesd=
-ay, April
-> 30, 2024 8:24 AM
-> >> To boot a VM w/ x2APIC ID > 255, guest interrupt remapping emulation
-> >> is required.
-> >
-> > Top-level question:  Is there a reason the MSI extended destination ID =
-mechanism is
-> > insufficient to avoid the need for interrupt remapping?  (see function =
-pointer
-> > "msi_ext_dest_id").  I'm unclear on whether it is or not. If it is not =
-sufficient, perhaps
-> > you could explain why.
->=20
-> In case of running a Linux VM w/ QEMU/KVM as hypervisor, the
-> qemu-system-x86_64 option kvm-msi-ext-dest-id=3Don would allow booting th=
-e
-> VM w/ x2APIC ID > 255. However, for other hypervisor, it might not
-> support this feature.
+This series was previously included in
+https://lore.kernel.org/all/20240429210131.373487-1-eajames@linux.ibm.com/
+The series now depends on
+https://lore.kernel.org/all/20240514212555.158788-1-eajames@linux.ibm.com/
+https://lore.kernel.org/all/20240514205454.158157-1-eajames@linux.ibm.com/
+https://lore.kernel.org/all/20240514195435.155372-1-eajames@linux.ibm.com/
+https://lore.kernel.org/all/20240514192630.152747-1-eajames@linux.ibm.com/
 
-Two observations:
-1) KVM, Hyper-V, and Xen all have support for MSI extended destination ID.
-Is it reasonable to make it a requirement that any hypervisor supporting
-SEV/SEV-ES/SEV-SNP guests must also support MSI extended destination ID
-if the guest is to run with more than 255 vCPUs?  With that requirement,
-you don't need any interrupt remapping or IOMMU emulation.
+Changes since v4:
+ - Update SPI frequencies
+ - Add Blueridge 4U system
 
-2) It would help to be more explicit about the basic premise of this patch
-set.  I *think* the idea is that KVM/QEMU already supports an emulated
-AMD IOMMU in a normal VM.  That emulation depends on QEMU having
-access to data structures in guest memory (just like a physical AMD IOMMU
-would).  But with SEV/SEV-ES/SEV-SNP, guest memory is encrypted and
-QEMU doesn't have the access.  So this patch set changes the IOMMU
-related data structures to be allocated in decrypted guest memory.  Of
-course, as Jason has pointed out, this would seem to open the guest to
-security risks from a compromised hypervisor/VMM, negating what
-SEV* is trying to provide as guest confidentiality.
+Eddie James (4):
+  ARM: dts: aspeed: Add IBM P11 FSI devices
+  ARM: dts: aspeed: Add IBM P11 Blueridge BMC system
+  ARM: dts: aspeed: Add IBM P11 Blueridge 4U BMC system
+  ARM: dts: aspeed: Add IBM P11 Fuji BMC system
 
-My #1 above might be a lot less risky from a security perspective.
+ arch/arm/boot/dts/aspeed/Makefile             |    2 +
+ .../aspeed/aspeed-bmc-ibm-blueridge-4u.dts    |   21 +
+ .../dts/aspeed/aspeed-bmc-ibm-blueridge.dts   | 1691 +++++++
+ .../boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts   | 3880 +++++++++++++++++
+ .../arm/boot/dts/aspeed/ibm-power11-quad.dtsi | 1538 +++++++
+ 5 files changed, 7132 insertions(+)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge-4u.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-blueridge.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-fuji.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/ibm-power11-quad.dtsi
 
->=20
-> >> For SEV guest, this can be achieved using an emulated
-> >> AMD IOMMU.
-> > You've used "SEV" here and in several other places.  I think you intend=
- this to be
-> > the more specific "SEV-SNP", and exclude SEV and SEV-ES. For avoid any =
-confusion,
-> > I'd suggest using "SEV-SNP" throughout if that's what you mean.
->=20
-> Actually, The CC_ATTR_GUEST_MEM_ENCRYPT attribute is true for all SEV
-> guests, so this will enable IOMMU emulation for all SEV guests.
->=20
+-- 
+2.39.3
 
-If that's the case, I'd suggest updating the Subject: line of this cover le=
-tter
-to not be specific to SEV-SNP, and to call out in the text that's your inte=
-nt
-for the patch set to work for all SEV* flavors.  Also, the commit messages
-throughout the patch set sometimes reference "SNP" and sometimes "SEV".
-That's confusing if your intent is applicability to all SEV* flavors.
-
-Michael
 
