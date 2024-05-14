@@ -1,97 +1,141 @@
-Return-Path: <linux-kernel+bounces-178554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4DE8C4F86
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:49:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8FE08C4FB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FD01C209E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:49:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C4D62830D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C557012A151;
-	Tue, 14 May 2024 10:21:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26D74F88C;
-	Tue, 14 May 2024 10:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D628012EBEF;
+	Tue, 14 May 2024 10:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="chr2+39c"
+Received: from mail-41103.protonmail.ch (mail-41103.protonmail.ch [185.70.41.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88173433BE
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.41.103
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715682106; cv=none; b=pvPCHRDaGxDtOMvTdz/1Lq3hMNGMpPFvtEUMJmyGvFWdsSOfXHPDKJtdxyRdDZhDZJ2oQ6Y7lgHY0N/R2GHmxzYp2NNwk8ajb8h2RGP61hzO7Ab7uSQbR1p89duVJ6NnnbnIsd6+tBHDtmaCFIaXsgRUCe2yu6aoQzF4gvO78Ss=
+	t=1715682349; cv=none; b=bwkYzfTXch7muX9SWqBKbBXUSWfRQB1POfpPLnlCRGCU9Dbv3cOFJsvtttFIzCQbmfYuQTinKyGR7sIATpdy9s08duM1vV5rSed7M0O9FRE7O6fyZ47buZWGG7KrYsaW5+EpEkff22ELga8CtApiD1kE2TgAMYLU53lEnHm45Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715682106; c=relaxed/simple;
-	bh=cfXngHl7xisjDpCrf/BadTTuQnGlonr0VClHLZYx6B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqakqzEnBSeq0zXOpD5o6de6/46Vvol1/HmI24v74wBXDc3QgDDdpth+hAa0Ybw9DUULgLbijJkAKV01ryp/8sIYt3QCcuY9Mcy44cU7VpIPfrd/9B9PrI/F+J0TxK7NCIxDnyAHf43vxWwGpPtnE2Pjpt+2BJtXBwVWSQnOjf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D3BD1007;
-	Tue, 14 May 2024 03:22:09 -0700 (PDT)
-Received: from [10.57.81.220] (unknown [10.57.81.220])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EA773F762;
-	Tue, 14 May 2024 03:21:42 -0700 (PDT)
-Message-ID: <6ba1fd72-3bad-44ca-810d-572b70050772@arm.com>
-Date: Tue, 14 May 2024 11:21:40 +0100
+	s=arc-20240116; t=1715682349; c=relaxed/simple;
+	bh=JDcLhSCJdrn8ZStEd9rRtRGA5OR51AVhThaD9Deeyrk=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qB/s5N6ixwIvPdtozAHcMx3epUpXv/brK9p5u1E7htX/9hqSlcQagtpY1vdT7kmo22NaXFqZG6M3QBxsgESzQ1ysIPLcwnv9xi82Ohq2XpOKSIc1IZ+ZuZ5PRSAh5ND9jx+WHJ+f3gM1HPD1U47zuMIIxpSCovedauY5suHWLYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=chr2+39c; arc=none smtp.client-ip=185.70.41.103
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1715682328; x=1715941528;
+	bh=R1qRONO5MU7vQIWaRDZy5P0Ke0gMSK5+59BZXhIZp+I=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=chr2+39crLvbp2O7tVV0J3qAPmkfjIviNI7jX4u0FNE5G8nw8guIXLjSNA2+H+NKk
+	 eH3fef4sP0PbeQxf+bo3rEI4fgmzXQcn2qk/oqlVhlMmEvYOsW0oEoI3uPxBed+PY+
+	 ysASk3HK68o7xzCLspiQS2GbMMjBMfAOZ+S/mdarw1CN64aWkOU6ziDfeBEfdASyUW
+	 xV1sh3uLecsdafYeT6cx9IlAGgIakLmSSSZwI0wwobCfggEZcyjAhK8SW9jtjcRZRA
+	 D4xAsDoKGxeM4jDwSYqDnupE9LtnM5IZpAVVLziuDJtLIOrw/750K33Snq72KGh9N5
+	 C2Pb8cICjoQSw==
+Date: Tue, 14 May 2024 10:25:24 +0000
+To: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>
+From: "SoloSaravanan@proton.me" <SoloSaravanan@proton.me>
+Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
+Message-ID: <sp2Jnio8wbTlQGoA5ti6LOAwDtdur_uZqdZYbXJL8wXHF0h_GVTL8Fr_b9oqmYVl2y7jeT-CgNt5Neg-RWjyKs4LXfKsg_uN_YO0_NFOxmQ=@proton.me>
+Feedback-ID: 84438951:user:proton
+X-Pm-Message-ID: 430f707f918da3149934227d4b45508d9013ac00
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/14] arm64: Override set_fixmap_io
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>,
- Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev, Marc Zyngier
- <maz@kernel.org>, Will Deacon <will@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240412084213.1733764-1-steven.price@arm.com>
- <20240412084213.1733764-7-steven.price@arm.com> <ZkI8TZmEKwrEKhe_@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <ZkI8TZmEKwrEKhe_@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 13/05/2024 17:14, Catalin Marinas wrote:
-> On Fri, Apr 12, 2024 at 09:42:05AM +0100, Steven Price wrote:
->> Override the set_fixmap_io to set shared permission for the host
->> in case of a CC guest. For now we mark it shared unconditionally.
->> Future changes could filter the physical address and make the
->> decision accordingly.
-> [...]
->> +void set_fixmap_io(enum fixed_addresses idx, phys_addr_t phys)
->> +{
->> +	pgprot_t prot = FIXMAP_PAGE_IO;
->> +
->> +	/*
->> +	 * For now we consider all I/O as non-secure. For future
->> +	 * filter the I/O base for setting appropriate permissions.
->> +	 */
->> +	prot = __pgprot(pgprot_val(prot) | PROT_NS_SHARED);
->> +
->> +	return __set_fixmap(idx, phys, prot);
->> +}
-> 
-> I looked through the patches and could not find any place where this
-> function does anything different as per the commit log suggestion. Can
-> we just update FIXMAP_PAGE_IO for now until you have a clear use-case?
-> 
+From 6c5cec6d7a84c140958786bcb082d94f1b147ece Mon Sep 17 00:00:00 2001
+From: SoloSaravanan <SoloSaravanan@proton.me>
+Date: Tue, 14 May 2024 15:01:29 +0530
+Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
 
-This gets used by the earlycon mapping. The commit description could be
-made clear.
+Add VendorID 13d3 & ProdID 3606 for MediaTek MT7921 USB Bluetooth chip.
 
-We may have to revisit this code to optionally apply the PROT_NS_SHARED
-attribute, depending on whether this is a "protected MMIO" or not.
+T: Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D09 Cnt=3D03 Dev#=3D 4 Spd=3D480 MxCh=
+=3D 0=20
+D: Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D 1=20
+P: Vendor=3D13d3 ProdID=3D3606 Rev=3D 1.00
+S: Manufacturer=3DMediaTek Inc.
+S: Product=3DWireless_Device
+S: SerialNumber=3D000000000
+C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
+A: FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01=20
+I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb=20
+E: Ad=3D81(I) Atr=3D03(Int.) MxPS=3D 16 Ivl=3D125us
+E: Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+E: Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 0 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 0 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 9 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 9 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 17 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 17 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 25 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 25 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 33 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 33 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 49 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 49 Ivl=3D1ms
+I: If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+btusb
+E: Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D 63 Ivl=3D1ms
+E: Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D 63 Ivl=3D1ms
+I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3D(none)
+E: Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 64 Ivl=3D125us
+E: Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 64 Ivl=3D125us
+I: If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=3D=
+(none)
+E: Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+E: Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+
+Signed-off-by: SoloSaravanan <SoloSaravanan@proton.me>
+---
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index effa54629..65e4b7fc6 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -615,6 +615,9 @@ static const struct usb_device_id quirks_table[] =3D {
+ =09{ USB_DEVICE(0x0e8d, 0x0608), .driver_info =3D BTUSB_MEDIATEK |
+ =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
+ =09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
++=09{ USB_DEVICE(0x13d3, 0x3606), .driver_info =3D BTUSB_MEDIATEK |
++=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
++=09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
+=20
+ =09/* MediaTek MT7922A Bluetooth devices */
+ =09{ USB_DEVICE(0x0489, 0xe0d8), .driver_info =3D BTUSB_MEDIATEK |
+--=20
+2.45.0
 
 
-Suzuki
 
