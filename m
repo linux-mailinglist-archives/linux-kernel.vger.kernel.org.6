@@ -1,215 +1,199 @@
-Return-Path: <linux-kernel+bounces-179190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64508C5CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:34:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A18E8C5CE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0B61C21AA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:34:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA434B214DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F57181BBD;
-	Tue, 14 May 2024 21:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF3C181BBD;
+	Tue, 14 May 2024 21:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BTIT9KHw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="gJAxq6lY"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04olkn2015.outbound.protection.outlook.com [40.92.45.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D887180A77
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715722477; cv=none; b=LqSJFx+6gh8eR9DFp1rr/RFyoLoPU7xLWN7ng0wx9mdBd54EBu3bd49r07BEYAvUgQqcKiuSs1cspwcoPjbsMYwBl2duK9zGy5Ky/OkxkhrMdwsHszqHp27Wqcj/6VD6N6m+APPteiQblVHkinTSuMwwmt1N9ROLXRWJeX2+qLY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715722477; c=relaxed/simple;
-	bh=dg3D8jzXOepk90HJ2oawVVRby4i/Jql8l3UJpoy8uQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RG9au8Pl+q0+wcmA+6HmG+qVG1IUKEzQfCih83jTtooDlHDmZ+f3xi9Yo5HM+U9uVVYkUbEwoYoGNOXpfCQkkcyWs7oKFqwu1sekEXdhX4w2EoCEGH0r8akeJoJT58HN+pXeUCTve3bVidNoP9OA9Vam/lDzPzloXBfsORewiaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BTIT9KHw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715722475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q2Xu6ycBxA1ncNcxZjTIGSkpvUsVz0mp4Jxa+4CoWmo=;
-	b=BTIT9KHw68mN4wCkOXqiaWaVuqqAC5cOpFTlCr7QNfcppPB8rDIGUjTJiGis4TBWK0wZ5S
-	Gr0j+aBgTggMB27XKFXm1kq0WwFhDv70iQ8JrG55FMq8L9aYQQpTyywwcoSsIr70XpHFL/
-	MZvmKHMadcFzuw7q8Hjt5BtSQIUahsY=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-637-2k4pTwKtNI2NtnTQd_m6Jg-1; Tue, 14 May 2024 17:34:33 -0400
-X-MC-Unique: 2k4pTwKtNI2NtnTQd_m6Jg-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2b83ee6ef60so1484748a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:34:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715722472; x=1716327272;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q2Xu6ycBxA1ncNcxZjTIGSkpvUsVz0mp4Jxa+4CoWmo=;
-        b=kQ7UA0wDwbgCUn8lXp+5mO0I0b+LRGyWQPd9a9Wr5YPM5WqzTlQV37712yiHDBzlTp
-         htdoP9rn6DGtYdumWDUp0llvHPuMbtUe3AfDm0Xd9EwUJcLJHBvixAuMAi0jBoLWn6hw
-         5Eq4xWizbpDlE8rgKsx/W4hCc71JBNa6aRZqx+eXCVfAPNlTo4sd74kWTm638gqC2r/v
-         l9tF4nK2tkFly5h6cMAsUjS/oPRZ4Akoc4q/AH78YJLXblt2DGmRgVFTv86vDEoQBRUS
-         HpkxF2IfNeCL8mIGR8bt8Evhrk5HuLu4uKefiFMBaXqrXDWNJ3N4wHO4+0ti+QQkaUPC
-         ylYw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqsQ1tpr9O7q+pCSZSKqeuyeGfDwldALZge6dGFR9zmU+S2kFHKe2Mg/bVe4Pl+X7LjnSceIEbXJEajJqro1+SmrhhpXvlVAVyyL2J
-X-Gm-Message-State: AOJu0YwVR3a4s91jd1C/6/C2CTDbSL8Bkwltzp/cqYyYjSa9HQmcD6M0
-	Eie/fr/S489xma9jYXrrxexI8Sa3LqM14yWBirJcWugJtC2KMbcGdmUhd9CBeTPMGemFzKgPuIF
-	PEgi4RUHhliopScyFaybxukS//keALGlCMHNZXsrUlveD2rM/1QUIHhtKTvi0KA==
-X-Received: by 2002:a17:903:246:b0:1eb:50eb:c07d with SMTP id d9443c01a7336-1ef441aa0a2mr161489395ad.4.1715722472117;
-        Tue, 14 May 2024 14:34:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlPBl9ea4KstMsjdvAfVmaII4uiOPY4sbbUGcaeXkU+KlSg8op9ntpdI4qQN60DSBg7ZfBtw==
-X-Received: by 2002:a17:903:246:b0:1eb:50eb:c07d with SMTP id d9443c01a7336-1ef441aa0a2mr161488855ad.4.1715722471349;
-        Tue, 14 May 2024 14:34:31 -0700 (PDT)
-Received: from x1n ([50.204.89.32])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad9da4sm102645805ad.107.2024.05.14.14.34.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 14:34:30 -0700 (PDT)
-Date: Tue, 14 May 2024 15:34:24 -0600
-From: Peter Xu <peterx@redhat.com>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Helge Deller <deller@gmx.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Liu Shixin <liushixin2@huawei.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Muchun Song <muchun.song@linux.dev>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, x86@kernel.org
-Subject: Re: [PATCH v2 1/1] arch/fault: don't print logs for pte marker
- poison errors
-Message-ID: <ZkPY4CSnZWZnxjTa@x1n>
-References: <20240510182926.763131-1-axelrasmussen@google.com>
- <20240510182926.763131-2-axelrasmussen@google.com>
- <Zj51rEwZeSK4Vr1G@x1n>
- <ZkPJCc5N1Eotpa4u@localhost.localdomain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49BE180A77
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.45.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715722503; cv=fail; b=e3SqwLC9UN83++y/u8GEDKwVCfzUMor930j+nhkXtNqgA9QkoGyYwkPSFEaMr456ozZdCYt5BbB9dvmMPQklrs9X18IccO51u1OFi0nE6szZRVcHlva5aRX0nIc95Ze3r5FrwPBuPH9uBANKjWVV/jadJbnOYR5n8uRaqU+Ot7I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715722503; c=relaxed/simple;
+	bh=khyZJimhRe/6i2VXus1jLFx8LuzeWYeJSczy3NkzDJA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=BYVI+Xgc+7SnnM+W5S9eb7dEM9iBXyqVWrlM4ETRdD+VwtwskHe5mdemPsL/dgq/Pq8BK1Hrqb6rvYPgXQx0ETg+YynnH0AdeMM0ViAABXFGIKX80cCEEjvcQyv+8P6CLqsN1CMEsR2eb/BKCxtKZljvbAJz/CrVRVmJywaKqi8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=gJAxq6lY; arc=fail smtp.client-ip=40.92.45.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NDMkGljFLDCZu1t3hpe+svFrDbRkKSwfMKGtGprC9l6j9Ya3GF9AoWBFbpg627vfn/4OKCQcusU4T4oTmb25w9RiMkKfVW1GeBn0Hpb9lrlXOfJMvnEkxAu4NTo5StN0BgyeYu7FJK6n4HZuekkAmvWIh10fpehCRP3pRh2fAe08VzpYUbIWXLvVxF/dzP3B9MwXmCGo1vdPNI/pqkoQryYxBBZx+BIVDq9YOsrPqB6zNRK0eIqkMazD2mtOj81T4U5QKDl+qIeT47fe12HDqqNFak1Ouf4924iTmKA5gNK5tW3Y/Msqx2HWsjXC7LYZzCjgAvzVVl2iqJWXDPtdvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KacOlsD1THBAX39sIHIiG5ObTJj9X39KDG4UUitcPgk=;
+ b=TdQzPNwweiDlYXq2qiWuQiqhtv4cITLkpW6Q+y7X1/hd65BbZUVdxIb5vNgG6rt1VJRO2/U4bv1lRTO3JWYiZ6fRkTf6FEhllxEc4YtNQQbvihh/XjfnSBW2e8mXECcVaGTmeCc/qeLmPqJXPXsQzcbGN4SdMz0w04tC8RAuJc+gyZ9W/rW/ZiOQncwf9gN3BaaYLjKKaSrkpW2sLir4CcPsv7OH3FbWcXQzo/TrQfjRh6okIarh9zGWGYwaqqPpGebeQ8G8vWATfcCethmBGNjBr/F7tnSkJzvvIG1WpMfz5A+W0NQyKUZcUu7nHfU6664gBn7xjuIcvQCdZBEwvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KacOlsD1THBAX39sIHIiG5ObTJj9X39KDG4UUitcPgk=;
+ b=gJAxq6lYnMV9Jh1ukqG1Cks6g6LaIIQkaahMY8tmEUzkVwkDnHR1P1Ivhj1JkbdjlTj/dtv9EKedGAsSCuUXATf6A4qYPh3Bgo6lAl5lK3fRxKocStvZllaz2tukGNxM6+0r6JuxUa1kn/0KNXp4jDxB/NTPsYiZp1CmME/5aN+2GAUO8M+1RvgGFV/KSzGR9TDNgv5Jy91kZ87QopMJNoj2HiZHoExnSWffx2WKslcuqlqwdvpEzOZKEs+yGch4+XyJ1SENj+6Ys/Zsp8wnWjTnVr34dGM858XWVePB9g5Sseb01eG3upmnjkLyzHjL5clbu9yPnXzXazcYygjryQ==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SA0PR02MB7244.namprd02.prod.outlook.com (2603:10b6:806:ed::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
+ 2024 21:34:59 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%2]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 21:34:59 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "joro@8bytes.org"
+	<joro@8bytes.org>
+CC: "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+	"vasant.hegde@amd.com" <vasant.hegde@amd.com>, "michael.roth@amd.com"
+	<michael.roth@amd.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>,
+	"rientjes@google.com" <rientjes@google.com>
+Subject: RE: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
+ SEV-SNP guest kernel
+Thread-Topic: [PATCH 0/9] iommu/amd: Add AMD IOMMU emulation support for
+ SEV-SNP guest kernel
+Thread-Index: AQHamxKg8G3tDdy39E2idvNw1Py2z7GVp95wgAGEcQCAACJyQA==
+Date: Tue, 14 May 2024 21:34:59 +0000
+Message-ID:
+ <SN6PR02MB4157B333B126909197590DE0D4E32@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20240430152430.4245-1-suravee.suthikulpanit@amd.com>
+ <SN6PR02MB4157E795C636EBE75CC806A1D4E22@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <24a4eb65-5e1b-44f9-a8ae-71f5f8f26ceb@amd.com>
+In-Reply-To: <24a4eb65-5e1b-44f9-a8ae-71f5f8f26ceb@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-tmn: [ENJsy41p8Jcx9TU8k9MHkmSl7RKkklEJ]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA0PR02MB7244:EE_
+x-ms-office365-filtering-correlation-id: a37f4312-c52f-4def-ae7f-08dc745db4a6
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199019|102099023|3412199016|440099019;
+x-microsoft-antispam-message-info:
+ UFFWo04OuN/mOmF5U34QmOHuREGhkZcs0wrqsl2jlOhD+gV8jox1zOWXTHMAKCcd14ftgTlWKqYK874f10j6kQrhKnwxxJVfcYYNsE7Kz/H5pzs7KNKnJ2fKTsDdzkfxxKnNjcBNdj92wwuHMZKByWoyDBE0cWGIiwB+KmveEMvbta7O9yN7pZgZ0MPJ46cfVAfHyUZBPC6myQCpNr2qVVAYrV1+ubfHZfg+nBljalYr+N02Kr0eh7DaDAh5yCrA9a7Ec2DAkN9+dK/JiWvAk1W+BLTpwdifiD+hiJKXNcsob/k3hieGM3y4TKYG+xGqM9FupdHDOTt2CxPIfwN1AKcEcOaapy4esGD0f4PjsRDTB/9twoORQ7sl7R3kQlRQjT1puC/UP/heTN2cLchxzuB0r1dv22Ag66WTLIyuYD2iR+XkLp2tQJa4Y+lw0FlsK0j3P9xZLgWgs9SrG811BDbDmM+eZ1C9sbDaIaBuC2lfoN7X5FtCFv/8Hle2Bufiw5eQ3SgT5ViA4JIgjIW21cmhijTiFhKECpY0F0cOGtb29vo+zPWoUrrjGFZGKdNO
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?1Og1Xak9byLLyrNEcFw/R99dkqJmM6Os+jCZv04L9EAnrTgnWquOExik7ZeJ?=
+ =?us-ascii?Q?LRkmd3cJ0x9Md7IFDh/OdfL7FS4tZI908PK3EgTqtqwdx/C560NyGW7kBOxH?=
+ =?us-ascii?Q?UwOr5dj2+aqDs6cox/6BB9LYU3uiPm1ctB6AA6LmMjRXaDU9b2F6UCIY2caI?=
+ =?us-ascii?Q?IMBC9E5D8ICEJklj55jDhEbhhBw/cDozPcULCOjkgYDAPRUkfLRqy9rieQ6g?=
+ =?us-ascii?Q?JxAKYJGpyvi8ykNg+6koH/Xk/030v3KPUyrFpTtqM+umpYZEYJJLkhw2YiKR?=
+ =?us-ascii?Q?rdvM3F2sd8SzKDGZcKfOehTCcfial7arLkGUG9VbSjBdfEoJHHVB8zJkcSpH?=
+ =?us-ascii?Q?ZzslzFLpCkjxhrFsxHJXOMQdlyoVo0lFdKHsn+D12cn9pF8kuymUZrrFdr7e?=
+ =?us-ascii?Q?iGMGi4OFo75VfDIqH6IL/ofU8h3+OkxbExEPzhmVTLgEF5xJDt7a76l05zwj?=
+ =?us-ascii?Q?rA5p4BbX+2r+vSTB6BS3GJteVxNyIZxJK85nkd5vjaOAt2H+bJYGNhTW6haV?=
+ =?us-ascii?Q?0Sca6k078VdWbmbWsNIgIpItAyEvF2v/+4n/WHpahbO1zdOmNWG9KR13UcYG?=
+ =?us-ascii?Q?Z5NLIZpGlAjihHhcRiYzBwutWaS37tId2dCHGez6wcerNDsy1cXiRIPw8YxS?=
+ =?us-ascii?Q?sg5v1Dgw/8RqIQwOz0MIO0t2ScIKk+f7S60GPdBw+sjfW2aGHsDyWKwoff83?=
+ =?us-ascii?Q?XMVmg0MtWMq7NmiSWHtseGn5AfQ6gUshuhU2DQJtDk2qTQbRUJO4tRNuYggw?=
+ =?us-ascii?Q?G4Au8oK6PsZX1Zw8gtriqe90MBAJmcXDZtrKAVy7y+pkdthnghP9eQCaLjSz?=
+ =?us-ascii?Q?2g26Uh7j78+UdonBfgts0hPNEESXguATV5J/6qL6nmVDeZmXCEE94cTt94YG?=
+ =?us-ascii?Q?jq+urO5mvIbu+ImiH8OMvq3N0/V0olrlbOQZUSmF0VUVcXvR9yRZ++xLVvs7?=
+ =?us-ascii?Q?Kake3Lf4LwYHgYEpiTT7rGfTsHlw89KjELu6L9IrZSF01ZvbfM8cGLmq257S?=
+ =?us-ascii?Q?g2FOVmHyJxv9eWWMqpMK4Hhp0njAWJn0MU0byTns5tnqh8Zk/+AD8MhhbO06?=
+ =?us-ascii?Q?ueRkQ2RXFpaJ6d+qpNkU4fBqLmIpaLk1PPizu5mmRPtmiMezL2fQ4wtPIOq4?=
+ =?us-ascii?Q?uyftiMrPQqkUeVhYCSNX0iIRjJ3OgbRD11ZUIfBVda9kXWo1/rFugPy62/ZV?=
+ =?us-ascii?Q?uswp2Uunm1Lp6AjDHdpDl4lMkPgpdgbNnpMYLDFAEsB00tt16kbt+u9n6bs?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZkPJCc5N1Eotpa4u@localhost.localdomain>
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: a37f4312-c52f-4def-ae7f-08dc745db4a6
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 21:34:59.1032
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR02MB7244
 
-On Tue, May 14, 2024 at 10:26:49PM +0200, Oscar Salvador wrote:
-> On Fri, May 10, 2024 at 03:29:48PM -0400, Peter Xu wrote:
-> > IMHO we shouldn't mention that detail, but only state the effect which is
-> > to not report the event to syslog.
-> > 
-> > There's no hard rule that a pte marker can't reflect a real page poison in
-> > the future even MCE.  Actually I still remember most places don't care
-> > about the pfn in the hwpoison swap entry so maybe we can even do it? But
-> > that's another story regardless..
-> 
-> But we should not use pte markers for real hwpoisons events (aka MCE), right?
+From: Suthikulpanit, Suravee <suravee.suthikulpanit@amd.com> Sent: Tuesday,=
+ May 14, 2024 12:02 PM
+>=20
+> On 5/14/2024 3:05 AM, Michael Kelley wrote:
+> > From: Suravee Suthikulpanit<suravee.suthikulpanit@amd.com>  Sent: Tuesd=
+ay, April
+> 30, 2024 8:24 AM
+> >> To boot a VM w/ x2APIC ID > 255, guest interrupt remapping emulation
+> >> is required.
+> >
+> > Top-level question:  Is there a reason the MSI extended destination ID =
+mechanism is
+> > insufficient to avoid the need for interrupt remapping?  (see function =
+pointer
+> > "msi_ext_dest_id").  I'm unclear on whether it is or not. If it is not =
+sufficient, perhaps
+> > you could explain why.
+>=20
+> In case of running a Linux VM w/ QEMU/KVM as hypervisor, the
+> qemu-system-x86_64 option kvm-msi-ext-dest-id=3Don would allow booting th=
+e
+> VM w/ x2APIC ID > 255. However, for other hypervisor, it might not
+> support this feature.
 
-The question is whether we can't.
+Two observations:
+1) KVM, Hyper-V, and Xen all have support for MSI extended destination ID.
+Is it reasonable to make it a requirement that any hypervisor supporting
+SEV/SEV-ES/SEV-SNP guests must also support MSI extended destination ID
+if the guest is to run with more than 255 vCPUs?  With that requirement,
+you don't need any interrupt remapping or IOMMU emulation.
 
-Now we reserved a swp entry just for hwpoison and it makes sense only
-because we cached the poisoned pfn inside.  My long standing question is
-why do we ever need that pfn after all.  If we don't need the pfn, we
-simply need a bit in the pgtable entry saying that it's poisoned, if
-accessed we should kill the process using sigbus.
+2) It would help to be more explicit about the basic premise of this patch
+set.  I *think* the idea is that KVM/QEMU already supports an emulated
+AMD IOMMU in a normal VM.  That emulation depends on QEMU having
+access to data structures in guest memory (just like a physical AMD IOMMU
+would).  But with SEV/SEV-ES/SEV-SNP, guest memory is encrypted and
+QEMU doesn't have the access.  So this patch set changes the IOMMU
+related data structures to be allocated in decrypted guest memory.  Of
+course, as Jason has pointed out, this would seem to open the guest to
+security risks from a compromised hypervisor/VMM, negating what
+SEV* is trying to provide as guest confidentiality.
 
-I used to comment on this before, the only path that uses that pfn is
-check_hwpoisoned_entry(), which was introduced in:
+My #1 above might be a lot less risky from a security perspective.
 
-commit a3f5d80ea401ac857f2910e28b15f35b2cf902f4
-Author: Naoya Horiguchi <nao.horiguchi@gmail.com>
-Date:   Mon Jun 28 19:43:14 2021 -0700
+>=20
+> >> For SEV guest, this can be achieved using an emulated
+> >> AMD IOMMU.
+> > You've used "SEV" here and in several other places.  I think you intend=
+ this to be
+> > the more specific "SEV-SNP", and exclude SEV and SEV-ES. For avoid any =
+confusion,
+> > I'd suggest using "SEV-SNP" throughout if that's what you mean.
+>=20
+> Actually, The CC_ATTR_GUEST_MEM_ENCRYPT attribute is true for all SEV
+> guests, so this will enable IOMMU emulation for all SEV guests.
+>=20
 
-    mm,hwpoison: send SIGBUS with error virutal address
-    
-    Now an action required MCE in already hwpoisoned address surely sends a
-    SIGBUS to current process, but the SIGBUS doesn't convey error virtual
-    address.  That's not optimal for hwpoison-aware applications.
-    
-    To fix the issue, make memory_failure() call kill_accessing_process(),
-    that does pagetable walk to find the error virtual address.  It could find
-    multiple virtual addresses for the same error page, and it seems hard to
-    tell which virtual address is correct one.  But that's rare and sending
-    incorrect virtual address could be better than no address.  So let's
-    report the first found virtual address for now.
+If that's the case, I'd suggest updating the Subject: line of this cover le=
+tter
+to not be specific to SEV-SNP, and to call out in the text that's your inte=
+nt
+for the patch set to work for all SEV* flavors.  Also, the commit messages
+throughout the patch set sometimes reference "SNP" and sometimes "SEV".
+That's confusing if your intent is applicability to all SEV* flavors.
 
-So this time I read more on this and Naoya explained why - it's only used
-so far to dump the VA of the poisoned entry.
-
-However what confused me is, if an entry is poisoned already logically we
-dump that message in the fault handler not memory_failure(), which is:
-
-MCE: Killing uffd-unit-tests:650 due to hardware memory corruption fault at 7f3589d7e000
-
-So perhaps we're trying to also dump that when the MCEs (points to the same
-pfn) are only generated concurrently?  I donno much on hwpoison so I cannot
-tell, there's also implication where it's only triggered if
-MF_ACTION_REQUIRED.  But I think it means hwpoison may work without pfn
-encoded, but I don't know the implication to lose that dmesg line.
-
-> I mean, we do have the means to mark a page as hwpoisoned when a real
-> MCE gets triggered, why would we want a pte marker to also reflect that?
-> Or is that something for userfaultd realm?
-
-No it's not userfaultfd realm.. it's just that pte marker should be a
-generic concept, so it logically can be used outside userfaultfd.  That's
-also why it's used in swapin errors, in which case we don't use anything
-else in this case but a bit to reflect "this page is bad".
-
-> 
-> > And also not report swapin error is, IMHO, only because arch errors said
-> > "MCE" in the error logs which may not apply here.  Logically speaking
-> > swapin error should also be reported so admin knows better on why a proc is
-> > killed.  Now it can still confuse the admin if it really happens, iiuc.
-> 
-> I am bit confused by this.
-> It seems we create poisoned pte markers on swap errors (e.g:
-> unuse_pte()), which get passed down the chain with VM_FAULT_HWPOISON,
-> which end up in sigbus (I guess?).
-> 
-> This all seems very subtle to me.
-> 
-> First of all, why not passing VM_FAULT_SIGBUS if that is what will end
-> up happening?
-> I mean, at the moment that is not possible because we convolute swaping
-> errors and uffd poison in the same type of marker, so we do not have any
-> means to differentiate between the two of them.
-> 
-> Would it make sense to create yet another pte marker type to split that
-> up? Because when I look at VM_FAULT_HWPOISON, I get reminded of MCE
-> stuff, and that does not hold here.
-
-We used to not dump error for swapin error.  Note that here what I am
-saying is not that Axel is doing things wrong, but it's just that logically
-swapin error (as pte marker) can also be with !QUIET, so my final point is
-we may want to avoid having the assumption that "pte marker should always
-be QUITE", because I want to make it clear that pte marker can used in any
-form, so itself shouldn't imply anything..
-
-Thanks,
-
--- 
-Peter Xu
-
+Michael
 
