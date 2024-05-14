@@ -1,145 +1,117 @@
-Return-Path: <linux-kernel+bounces-178295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE038C4B87
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:35:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5EC8C4B8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77C581C2117A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79822285E5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C03CF519;
-	Tue, 14 May 2024 03:35:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7CADDBB;
+	Tue, 14 May 2024 03:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWhj5WyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lGJcYTOj"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DC3AD53;
-	Tue, 14 May 2024 03:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE62AD53;
+	Tue, 14 May 2024 03:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715657751; cv=none; b=HPO42QaS7A0t7+1/FRasS7zqC+9U+HcoudA72MBtrEF/JFMjNaJiO+mENpnsvPoI/aZAb+47RQ9GmiHuYhE1XNxdSE52yWtCSbRvQn9MY93RFsp4g5zye5DKLm/L12ZxKJOLC+Z4rhfTir/l6/Krtuw5jK05WPH1pQpWfqqdD6M=
+	t=1715657823; cv=none; b=bMVygC4S3AtsUjqeH52lB7ZLJazIgeUMN2cfKl3kuUTHaPW43tUb/d6BgUfxXb8DHJx5jtJlU3uDg17oARGV8kMR/ebHIZ6y0JioytVw1TucYvpXZooBAIReVDhzdikUsCNZuv4pL3+E/5MLD/uKVghmlu4USnDkVw+9XrHcQDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715657751; c=relaxed/simple;
-	bh=2g51WnteVbDW6Xw9cHo8bze8u9qoK08M7PEKoTNl//U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=i5QPuNqmTH+TZ7Nbmu5T9mEyb4i31vq4UFthc7biMNPjC/DT2LM5aGD32NFHiGEy9N9PfcySKapVH270nriVUn3qlWNlbzM8gKuPidfKwkufhHeoMkWX6TmMQkZ8cbAugOTm70nyZ+kwEXGDTikA79S+cKUajXUJ24paxRQ3M1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWhj5WyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4913AC2BD10;
-	Tue, 14 May 2024 03:35:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715657751;
-	bh=2g51WnteVbDW6Xw9cHo8bze8u9qoK08M7PEKoTNl//U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=RWhj5WyH38Woqr+5eMMlmko6m4W28FqTOEvMn2vnCfh/yJHDfSelrHDdq8V296J2s
-	 ZaDecWJebiToXuNeDOHk8hkAqC0FezOcUWj3+1oEtpAevdnjdHYub5zHelCHV+44sP
-	 sY8B02t11x5Gt58+t0omv/OQ/jp/9HsU7dCOHyrLxej3fMwMunVBzZpc6m1le3F26m
-	 g027xhP7NXsTyu3Uy5iaRfbIQWnwjxHS1vTrUPnzOCbjhqtmU4cmP4ffBK3evUqzSZ
-	 p3b4TXgHAQssXm6Nx/ikd6fGoui/EKPwhF4lWm0v5bRa8FnTkj+tje5PB04f8XHZ47
-	 9b53bYw7AT5Qw==
-Message-ID: <31d4dfdf8bc4b866a2b6d45fc4de0c2d.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715657823; c=relaxed/simple;
+	bh=wNxgEplY1U+bfVyV+K/LzSYBF/hHNlSg+9Si5gIrj/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlP4kOsinycV0HkBTgwhz+g12jaxmQAjz/hmSLOrtOkDZWZN9wzb7mAcB1T2BBBxU0FEHX039Gb1zmUrHN5rGR0wnhjk6gicAOwA72nn/h9AWX/Eu/ZKB5Q9oQJBMHFKkEMz7ZGugueGSyj7yJJbuhpkEWTKUH+O01ML8kt7ePA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lGJcYTOj; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c99aec9598so2027575b6e.0;
+        Mon, 13 May 2024 20:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715657821; x=1716262621; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D4diyAXoylKwq6hu+E7WuTzqNCNKPoRg+9c0MpBL6jk=;
+        b=lGJcYTOjH19Q7TKRIwxXgEcGQkH3Sl5/NPj5Uvz/NKPDT5o36mAr1py/VvG4bE26Li
+         DKR8IfJB1UULKhpxD7GA/fxJPucVM8tNaDA+EePojEY3LPvT0wdVP5Y0WrJf7s+vYTCM
+         YdBNpD7kBwyi3Vd8XmMBm8BcMrZHnRkmNrk58wcCMQu/r2VkeuUiAGKPycAtfAmetfal
+         IPtfJHJLYusqydQ68Eh5Izbrv6BP0IlOh6vfzCWyEblkc6hQ9b5twfDn2l46st8+vCgP
+         37Vx8ykDVJdDsDmR7EX3dZ46JKMrX51KZ6AmqE0aO/GouA4cEZhG3/aFILbAj2X1HuzP
+         4Inw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715657821; x=1716262621;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D4diyAXoylKwq6hu+E7WuTzqNCNKPoRg+9c0MpBL6jk=;
+        b=WbncQDMPRzDwSDNQvZvW8kO9jUDJz1c5IaBL/4+RKv0YW4ar0m2XzKZfAR9kgoDoqb
+         61DM4uQca+DETKFxJaTZdBrkjWKq/he0oR7IwNVGyy99TS1nO/ltaCTXkiCroCdEe4a2
+         Z3rQObzKBrdky2PIPY7VAQpf8w9yPbE0/8CSuOieXhnB93nOpQLY2TftfaAVGAyLcC8d
+         ipadKMASDBjBxkI08Fd8pqJAvF+ZAfOEGNPREj/ZzFun0q/U0d4PSGVuEFbTBIL1Bzes
+         nD9hx22uUIhGAotfq2KpPUsqgQwLuCrHQLm8vggv7AZBQv4dMSxY5shSNp0WzepiLDb3
+         63MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+cd69aRSulraqVhX7IWI8k+Bdyva/tTd8qcupGQHzFO6nHHsILW54+8vlLBT7fb3X16n4Q/jgrEeEYNnTLyMEXzXJO8BW6YraDA==
+X-Gm-Message-State: AOJu0YzBynkKA+T12VTblbWXmwy8WBmfMcajkCMF2/PIrh7Iq6tHdBh7
+	DkO2/9osUwal2Sflqv4zDoukN7lG9rMjMPauocDal/LuCO3xUvr1
+X-Google-Smtp-Source: AGHT+IHqPcEJ9eSsk2AiHKcN+HkBAVAEx/aYvE02nXN4bMR8AR8tZFBYDbXcMng1DJakt/OhYOmzuA==
+X-Received: by 2002:aca:2b18:0:b0:3c6:f339:7f4c with SMTP id 5614622812f47-3c9971db182mr11999860b6e.49.1715657821410;
+        Mon, 13 May 2024 20:37:01 -0700 (PDT)
+Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a85f3fsm8092909b3a.82.2024.05.13.20.36.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 20:37:00 -0700 (PDT)
+Date: Tue, 14 May 2024 11:36:56 +0800
+From: Kent Gibson <warthog618@gmail.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linus.walleij@linaro.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] gpiolib: cdev: fix uninitialised kfifo
+Message-ID: <20240514033656.GA24922@rigel>
+References: <20240510065342.36191-1-warthog618@gmail.com>
+ <171534996897.34114.8159265536879918834.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240422232404.213174-6-sboyd@kernel.org>
-References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-6-sboyd@kernel.org>
-Subject: Re: [PATCH v4 05/10] platform: Add test managed platform_device/driver APIs
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 13 May 2024 20:35:49 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171534996897.34114.8159265536879918834.b4-ty@linaro.org>
 
-Quoting Stephen Boyd (2024-04-22 16:23:58)
-> diff --git a/drivers/base/test/platform_kunit.c b/drivers/base/test/platf=
-orm_kunit.c
-> new file mode 100644
-> index 000000000000..54af6db2a6d8
-> --- /dev/null
-> +++ b/drivers/base/test/platform_kunit.c
-> @@ -0,0 +1,174 @@
-[...]
-> +struct platform_device *
-> +platform_device_alloc_kunit(struct kunit *test, const char *name, int id)
-> +{
-> +       struct platform_device *pdev;
-> +
-> +       pdev =3D platform_device_alloc(name, id);
-> +       if (!pdev)
-> +               return NULL;
-> +
-> +       if (kunit_add_action_or_reset(test, (kunit_action_t *)&platform_d=
-evice_put, pdev))
-> +               return NULL;
-> +
-> +       return pdev;
-> +}
-> +EXPORT_SYMBOL_GPL(platform_device_alloc_kunit);
-> +
-> +static void platform_device_add_kunit_exit(struct kunit_resource *res)
-> +{
-> +       struct platform_device *pdev =3D res->data;
-> +
-> +       platform_device_unregister(pdev);
-> +}
-> +
-> +static bool
-> +platform_device_alloc_kunit_match(struct kunit *test,
-> +                                 struct kunit_resource *res, void *match=
-_data)
-> +{
-> +       struct platform_device *pdev =3D match_data;
-> +
-> +       return res->data =3D=3D pdev;
-> +}
-> +
-> +/**
-> + * platform_device_add_kunit() - Register a KUnit test managed platform =
-device
-> + * @test: test context
-> + * @pdev: platform device to add
-> + *
-> + * Register a test managed platform device. The device is unregistered w=
-hen the
-> + * test completes.
-> + *
-> + * Return: 0 on success, negative errno on failure.
-> + */
-> +int platform_device_add_kunit(struct kunit *test, struct platform_device=
- *pdev)
-> +{
-> +       struct kunit_resource *res;
-> +       int ret;
-> +
-> +       ret =3D platform_device_add(pdev);
-> +       if (ret)
-> +               return ret;
-> +
-> +       res =3D kunit_find_resource(test, platform_device_alloc_kunit_mat=
-ch, pdev);
+On Fri, May 10, 2024 at 04:06:16PM +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+>
+> On Fri, 10 May 2024 14:53:42 +0800, Kent Gibson wrote:
+> > If a line is requested with debounce, and that results in debouncing
+> > in software, and the line is subsequently reconfigured to enable edge
+> > detection then the allocation of the kfifo to contain edge events is
+> > overlooked.  This results in events being written to and read from an
+> > unitialised kfifo.  Read events are returned to userspace.
+> >
+> > Initialise the kfifo in the case where the software debounce is
+> > already active.
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [1/1] gpiolib: cdev: fix uninitialised kfifo
+>       commit: 3c1625fe5a2e0d68cd7b68156f02c1b5de09a161
+>
 
-This doesn't work because platform_device_alloc_kunit() used
-kunit_add_action_or_reset() which has a chained free routine and data
-pointer. I've added a test to make sure the platform device is removed
-from the bus. It's not super great though because when this code fails
-to find a match it will still remove the device by calling
-platform_device_unregister() when the test ends. It will follow that up
-with a call to platform_device_put(), which is the problem as that
-causes an underflow and operates on an already freed device.
+I've got a patch series to tidy this up and catch any similar errors
+earlier going forward.
+It is of course based on this patch, but that isn't in gpio/for-next yet.
+How should I proceed?
 
-I couldn't come up with anything better than searching the platform bus.
-Maybe if there was a way to allocate the memory or redirect where
-platform_device_alloc_kunit() got memory from we could hold the device
-memory around after it should have been freed and make sure the kref for
-the device kobject is 0. That seems pretty invasive to do though so I'm
-just going to leave it for now and add this test to make sure it cleans
-up.
+Cheers,
+Kent.
 
