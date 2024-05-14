@@ -1,143 +1,202 @@
-Return-Path: <linux-kernel+bounces-178335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F198C4C10
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:50:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBD08C4C16
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:51:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C661F24C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14001F24F27
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:51:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA6C1CAA4;
-	Tue, 14 May 2024 05:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CDB1BC5C;
+	Tue, 14 May 2024 05:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b098mQF6"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JNdtdLAt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F236F18AEA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 05:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217FD1862C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 05:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715665798; cv=none; b=rpjF0T/vCh0ABwJ+POXyGSY8xSVpB+rk7UI7/TKEDNpGWeYUcNBIDRKkmO/6BlftNekmJbAJtHo8Q5/4q/rrANULluUWsrhZPDDktms+DIC4W4RO+IiNMHU2Oo6ZLZkXKUuOBWeSxLgfyzUbGPBC5BMgZJCAim5ZOr8ATRs6m/g=
+	t=1715665885; cv=none; b=R4MtmJPDtT/fIpSfeiG4nqX+rxuihGO+IxrMWUxjBaXloHcA8Qu6lIUlBYT8IwL98RP1Qhzn2qUhgIfdBgay80toRgxa8k5uYePv5i/0DMH6CPcXKVZOi8bG17LxtjR1E10FNKUBLhEmclHmhsP/zixPqtozBUWYKuwn7lnE36Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715665798; c=relaxed/simple;
-	bh=N7yQDXUwAdMII/0o6Jb7o7sMy9XOiB5X0F3FoWxeWrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mYyfmQ/MSC++t91Ok48n0fy1pa5zJCjOO1p5c8GLJAsEjgyxXJAkCTVTXo7rdT50KLhc8+pzPf77owTKY9cU7dEXU7fgEsMU+UWxnbWqDRghv+dKb2vaWWSVh08klwcdjFGy0pFDsRm/z4kqtZS8evMqCF69TQtJVej8mi5bQFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b098mQF6; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f45f1179c3so4888172b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:49:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715665796; x=1716270596; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rk/9cCSuKPAzQ7d7k8DYOmgE1U27tp+avu7N/6VE0BI=;
-        b=b098mQF6X9bHmfJOj2UMxXvYNCOYEBZ7lxcJloMkNOepgQOJE/fvCx5/jMqxkaF/Ye
-         t9mmXKtCU4cLwUTnndJ/bvhsoq7dFNVbVqXewwDusQpQ0JVEqVdHc2GDUK5HWCc17s7O
-         0adQnUHRagfAp3L4ShnKjCCiuHsOJpZZUhSDY=
+	s=arc-20240116; t=1715665885; c=relaxed/simple;
+	bh=OF8o9YDp1xbXXS9pK3U5R7wgQQr0jKjnEAPulQ1fMhg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TDFso+klLiS9iQanMsalXwSvQ4Fqe3fJjAZIhmv4onGoY7j4uUpe5Da1x+b4wELa2NKeRAvWuKMjujCVhhajeauDYXpy91EHFIwbzrRvzL8px80HDSGrAkuYTBSvnnA5+3IMY4YRS/xbIkqyXdZiun45OYcM116Zy7Ib460Dn3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JNdtdLAt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715665883;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FiYLFnKZivRpeJ4PWERZJck4xmYEwFKMbyVtwgpr9ws=;
+	b=JNdtdLAtKaHHA9AQZiE1aJz/Dd7t7urHw7fKFfEvaGGTYa26ZtplO+wPWcnX2fE60bIGx6
+	Q0RHj6Rw+rYfzltS51guCYkZW78crNP2R81X3HCC3j63/8F+v5JxotOwhUPffMODzQBPRi
+	POUmw0h6EcLRO8JmHpmTkLaZ8Ydw5Jo=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-PfFsiAmQNgu9AMQxf2CRIQ-1; Tue, 14 May 2024 01:51:21 -0400
+X-MC-Unique: PfFsiAmQNgu9AMQxf2CRIQ-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-635f5006685so3533714a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:51:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715665796; x=1716270596;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rk/9cCSuKPAzQ7d7k8DYOmgE1U27tp+avu7N/6VE0BI=;
-        b=gMgxwU/x5pu3UB+uv7i+xpUV5EzUyqd39LHs9E/43+kyn0zyuT6a9eGxweo4d8D0QS
-         tY+DWLAsgY52wbrBTk7kM1r8Z940KTMWyuDNY2+RDBjarLLTdulNhxIk5KU6QKObWjcD
-         DFkK/7hWlG7K2ArS1Xnx+TbhlP8tondHFbWAJp8LZ04qyVNpGsz7dxMDQOKxMOn0KUtp
-         mPlyWefeIhSJCNxPNwU4hr5JTY2h7G13yo+zHwqx5y3oy9gNNJfzZBa1CJKnKRuQESJu
-         8vhfv60FTHjELeL8nOMtcNYHObGL7VqYNgcho4prBZv0E95CmOej4IfNJafNnqnipgVU
-         dztg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0e/ddbvxT1P3ZLuC0Bib7+YttVLV0TXrtmkWki2oREtr7QDHKOahT7KETYGYocGh21Tyi610gehd9VTnyvjdsepD7o53h72ak3N2u
-X-Gm-Message-State: AOJu0YzSZpvHiRaBPdXv5HnuR4H7am3CVnWRof2gcDhVYNFsbNwAylLx
-	BZ1dng2IdT+nHodzdnpIP7ZgfbRd0dCWbAj/Ag7d0S9wcdX1rySHVF9HCJs+5w==
-X-Google-Smtp-Source: AGHT+IEPTKz5GyCkr08NrFCu81IdrD63NGlNxv736d9HhFlB58SSNTeMeE90nf4HCldQN4VyiI9ANQ==
-X-Received: by 2002:a05:6a00:2d8e:b0:6e6:946b:a983 with SMTP id d2e1a72fcca58-6f4e02ac8e1mr13440522b3a.10.1715665796214;
-        Mon, 13 May 2024 22:49:56 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae0f7fsm8289079b3a.120.2024.05.13.22.49.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 22:49:55 -0700 (PDT)
-Date: Mon, 13 May 2024 22:49:54 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Sam James <sam@gentoo.org>
-Cc: chunkeey@gmail.com, chunkeey@googlemail.com, davem@davemloft.net,
-	edumazet@google.com, helmut.schaa@googlemail.com,
-	johannes@sipsolutions.net, kernel@quicinc.com, kuba@kernel.org,
-	kvalo@kernel.org, linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, pkshih@realtek.com, quic_jjohnson@quicinc.com,
-	stf_xl@wp.pl, toke@toke.dk
-Subject: Re: [PATCH v2 2/2] mac80211: Use flexible array in struct
- ieee80211_tim_ie
-Message-ID: <202405132245.017023A@keescook>
-References: <202308301529.AC90A9EF98@keescook>
- <87jzjxgfnt.fsf@gentoo.org>
+        d=1e100.net; s=20230601; t=1715665881; x=1716270681;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FiYLFnKZivRpeJ4PWERZJck4xmYEwFKMbyVtwgpr9ws=;
+        b=Rv9sALptXA7SHVFQP2lpLYPOqktmIcDjhBd4vLDeYNzXoIH13//s/DaNaOVMSp5bzS
+         50BV0IGobLuyjlNdMB0Dqh5faBCl+0/LtcmptOwD7y/h2dVjeVr0vmtQKc4SdbN0Mrwn
+         vdDQkf/B86XECVueLFJx4AYLHMW9RNI64ZPbDtH/APeEOmAmVPFArQ1GZVnW9uq0E9+T
+         9ADZN5P3b6PAkgDUhS4dA3PrUJUWJHSmcyTn1nivUeC4j7YYOJGRr1547PGVTQ/fssIf
+         KTL17qwBTOw45FXS79yAWYMymkg+NN5j0S1qaKMctW38jgQjNI7Sr66c3QJqJ8Z6WE3F
+         rDrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbAEFZpKh4G0e0LMqCKnEbEZT6H70ir/YJj/yzO8hxifkEwjFb8g+ho2jBNDuj16prPWPV63PaqW5/IYo9G7pYq6k7mrubMNsJEaub
+X-Gm-Message-State: AOJu0YxMFkyWH0a+aHF9YuMVb2lXhUc4mFWQPOxIKDBGRuscOh2xFiLh
+	BNF882vO33hHSre4sq0jnc6sxNbpPPTj4EuXBTdNMSfQgBonW1FjabU6eVjJgJ6vVXqxLBMszKl
+	Oy8nYL9EgXLOjfLL6J6/9ArUj1QqqvVgog+CqqxNiuDOD18GeYICVOpv8KLr6SJgKJlaycDHoZf
+	sxhaZ8/0CBn1yZp7chYaVy0FB9vZJ8d6LQrnv3
+X-Received: by 2002:a05:6a21:9207:b0:1af:fbab:cfba with SMTP id adf61e73a8af0-1affbabd1e5mr3839099637.27.1715665880386;
+        Mon, 13 May 2024 22:51:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEY7xbn2J2Vy9Rqv5L4uLboL7HEssdNiD/t6t5qivKpv4cPvOh/U0ZqSPmB54v090ZDOMRtOFqS27x88F0RbUE=
+X-Received: by 2002:a05:6a21:9207:b0:1af:fbab:cfba with SMTP id
+ adf61e73a8af0-1affbabd1e5mr3839080637.27.1715665880007; Mon, 13 May 2024
+ 22:51:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87jzjxgfnt.fsf@gentoo.org>
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com> <20240509011900.2694291-2-yukuai1@huaweicloud.com>
+In-Reply-To: <20240509011900.2694291-2-yukuai1@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 14 May 2024 13:51:08 +0800
+Message-ID: <CALTww2_2UG49wxNZv1Ay7u9X-2SoV31ca-=2K8uWHH9nRT2Apw@mail.gmail.com>
+Subject: Re: [PATCH md-6.10 1/9] md: rearrange recovery_flage
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org, 
+	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 05:51:02AM +0100, Sam James wrote:
-> I think I've just hit this, unless it's been fixed since and it's just
-> similar.
-> 
-> ```
-> [  291.051876] ================================================================================
-> [  291.051892] UBSAN: array-index-out-of-bounds in /var/tmp/portage/sys-kernel/gentoo-kernel-6.6.30/work/linux-6.6/include/linux/ieee80211.h:4455:28
-> [  291.051901] index 1 is out of range for type 'u8 [1]'
-> [  291.051908] CPU: 2 PID: 627 Comm: kworker/2:3 Not tainted 6.6.30-gentoo-dist-hardened #1
-> [  291.051917] Hardware name: ASUSTeK COMPUTER INC. UX305FA/UX305FA, BIOS UX305FA.216 04/17/2019
-> [  291.051922] Workqueue: events cfg80211_wiphy_work [cfg80211]
-> [  291.052082] Call Trace:
-> [  291.052088]  <TASK>
-> [  291.052096] dump_stack_lvl (lib/dump_stack.c:107) 
-> [  291.052114] __ubsan_handle_out_of_bounds (lib/ubsan.c:218 (discriminator 1) lib/ubsan.c:348 (discriminator 1)) 
-> [  291.052130] ieee80211_rx_mgmt_beacon (include/linux/ieee80211.h:4455 net/mac80211/mlme.c:6047) mac80211
+On Mon, May 13, 2024 at 9:57=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> Currently there are lots of flags and the names are confusing, since
+> there are two main types of flags, sync thread runnng status and sync
+> thread action, rearrange and update comment to improve code readability,
+> there are no functional changes.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md.h | 52 ++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 38 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 029dd0491a36..2a1cb7b889e5 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -551,22 +551,46 @@ struct mddev {
+>  };
+>
+>  enum recovery_flags {
+> +       /* flags for sync thread running status */
+> +
+> +       /*
+> +        * set when one of sync action is set and new sync thread need to=
+ be
+> +        * registered, or just add/remove spares from conf.
+> +        */
+> +       MD_RECOVERY_NEEDED,
+> +       /* sync thread is running, or about to be started */
+> +       MD_RECOVERY_RUNNING,
+> +       /* sync thread needs to be aborted for some reason */
+> +       MD_RECOVERY_INTR,
+> +       /* sync thread is done and is waiting to be unregistered */
+> +       MD_RECOVERY_DONE,
+> +       /* running sync thread must abort immediately, and not restart */
+> +       MD_RECOVERY_FROZEN,
+> +       /* waiting for pers->start() to finish */
+> +       MD_RECOVERY_WAIT,
+> +       /* interrupted because io-error */
+> +       MD_RECOVERY_ERROR,
+> +
+> +       /* flags determines sync action */
+> +
+> +       /* if just this flag is set, action is resync. */
+> +       MD_RECOVERY_SYNC,
+> +       /*
+> +        * paired with MD_RECOVERY_SYNC, if MD_RECOVERY_CHECK is not set,
+> +        * action is repair, means user requested resync.
+> +        */
+> +       MD_RECOVERY_REQUESTED,
+>         /*
+> -        * If neither SYNC or RESHAPE are set, then it is a recovery.
+> +        * paired with MD_RECOVERY_SYNC and MD_RECOVERY_REQUESTED, action=
+ is
+> +        * check.
 
-This looks like it's this line in ieee80211_rx_mgmt_beacon():
+Hi Kuai
 
-            ieee80211_check_tim(elems->tim, elems->tim_len, vif_cfg->aid)) {
+I did a test as follows:
 
-which is:
+echo check > /sys/block/md0/md/sync_action
+I added some logs in md_do_sync to check these bits. It only prints
+MD_RECOVERY_SYNC and MD_RECOVERY_CHECK without MD_RECOVERY_SYNC. So
+the comment is not right?
 
-static inline bool ieee80211_check_tim(const struct ieee80211_tim_ie *tim,
-                                       u8 tim_len, u16 aid)
-{ ...
-        return !!(tim->virtual_map[index] & mask);
-                  ^^^^^^^^^^^^^^^^^^^^^^^
-}
+Best Regards
+Xiao
 
-UBSAN says it's because the array is defined as "virtual_map[1]":
+>          */
+> -       MD_RECOVERY_RUNNING,    /* a thread is running, or about to be st=
+arted */
+> -       MD_RECOVERY_SYNC,       /* actually doing a resync, not a recover=
+y */
+> -       MD_RECOVERY_RECOVER,    /* doing recovery, or need to try it. */
+> -       MD_RECOVERY_INTR,       /* resync needs to be aborted for some re=
+ason */
+> -       MD_RECOVERY_DONE,       /* thread is done and is waiting to be re=
+aped */
+> -       MD_RECOVERY_NEEDED,     /* we might need to start a resync/recove=
+r */
+> -       MD_RECOVERY_REQUESTED,  /* user-space has requested a sync (used =
+with SYNC) */
+> -       MD_RECOVERY_CHECK,      /* user-space request for check-only, no =
+repair */
+> -       MD_RECOVERY_RESHAPE,    /* A reshape is happening */
+> -       MD_RECOVERY_FROZEN,     /* User request to abort, and not restart=
+, any action */
+> -       MD_RECOVERY_ERROR,      /* sync-action interrupted because io-err=
+or */
+> -       MD_RECOVERY_WAIT,       /* waiting for pers->start() to finish */
+> -       MD_RESYNCING_REMOTE,    /* remote node is running resync thread *=
+/
+> +       MD_RECOVERY_CHECK,
+> +       /* recovery, or need to try it */
+> +       MD_RECOVERY_RECOVER,
+> +       /* reshape */
+> +       MD_RECOVERY_RESHAPE,
+> +       /* remote node is running resync thread */
+> +       MD_RESYNCING_REMOTE,
+>  };
+>
+>  enum md_ro_state {
+> --
+> 2.39.2
+>
 
-struct ieee80211_tim_ie {
-        u8 dtim_count;
-        u8 dtim_period;
-        u8 bitmap_ctrl;
-        /* variable size: 1 - 251 bytes */
-        u8 virtual_map[1];
-} __packed;
-
-This was fixed in
-
-	commit 2ae5c9248e06 ("wifi: mac80211: Use flexible array in struct ieee80211_tim_ie")
-
-which was part of the v6.7 release.
-
-> (It was a fun mini-adventure to get the trace usable and I should send
-> some patches to decode_stacktrace.sh, I think...)
-
-Please do! :)
-
--- 
-Kees Cook
 
