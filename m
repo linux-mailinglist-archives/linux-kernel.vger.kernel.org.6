@@ -1,110 +1,243 @@
-Return-Path: <linux-kernel+bounces-178798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D468C57D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 395438C57D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 320961C21AA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:23:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6AF1C21A68
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A954144D3A;
-	Tue, 14 May 2024 14:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25164144D31;
+	Tue, 14 May 2024 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkndv8e7"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X6HDO94R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E456139589;
-	Tue, 14 May 2024 14:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5273C139589;
+	Tue, 14 May 2024 14:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715696609; cv=none; b=S9cGNXZCqnLk0OLOBlrI6XARr6NuXOZVW5N9bo9C+mhS8uDrQsL1/xK1763vLTznlB2ofFO5XEmDpWFfsCJiFgN55g0RRMf/8OxsZ2VKb6flP8Kqm3X9nRGDVBRx+RrzPmqAMC+qJ43FV5APVBIAXK3CUMTMEQ7/ur5Z7DXrjmU=
+	t=1715696568; cv=none; b=p5mWe8ecF7WLpwanXkYawhxQliMhVF/5BvaFMqVEMiCGbY8aobui9cmgfz87Eo+oiPONhuoKGB8ekyDCzerUbWZHqnE/+PUMM4PoBzPEwyDqWz/rnsvbZA2BVekFH+cmwFxTzTElVcfJOcxAIiP90AfhxwXFB32bRfLvVxqOdTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715696609; c=relaxed/simple;
-	bh=BjB/g1fsGgJ3ndb7UWh4o1aNB2C9AwXmQNr5OwDHHdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qf7PNQMmrUOGs759qrwGDdC8O2LQZetacF5+Kzyh5DwBpGb+czq1R4vsqDlQ+xSRPzWdiZrWT0G4qRzKDHHpQDJAZsAN5CTHqqzt2Nd4bfjEh7iQ1jKSlHM7kRM1vR3bA3+JM0DPgIUI+H4Br4q16eD0NoGIHBBuMoM7Bgnk4eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkndv8e7; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2b38f2e95aeso4605357a91.0;
-        Tue, 14 May 2024 07:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715696607; x=1716301407; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BjB/g1fsGgJ3ndb7UWh4o1aNB2C9AwXmQNr5OwDHHdk=;
-        b=gkndv8e75DDRsNJSBOPpRxLTsZTXKqIfCmR8tVoxa+cIyBxiKtiwKNpit1K8KAsDeZ
-         gJ/XcZ5ZTLDzNr23sIGmHfhIs9JNvbcPrx1mYjbtui8rMIPGKyJVtGlvBaxb6/lsyFif
-         TzyB6/LNLGjfSnAWZ+UZHhwW3YMfUG7050tEngG6ydQt5Jd77PTxYu4LD5inT+Ma054x
-         LiEmNyPcg4peJ2JfXPD4WMwkgFyGqLuymYnlFMNGSSoMRPCC3LMGgCYxU33rwUUX9xyH
-         KcR94uREX6oAf2KzaXzCkAF8z8lknG4AJAAe07vgzZ/YR43Ex/Uiuv1X3QRQGgxJgQTv
-         sm5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715696607; x=1716301407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BjB/g1fsGgJ3ndb7UWh4o1aNB2C9AwXmQNr5OwDHHdk=;
-        b=sguttgkb7PFXaO980FlgtWRbymxrgnkebVxTj4F1TA3bSGVRCxqiEv+GDHJUMzccuV
-         2pEzFs6LCDH3DETAFDDJD7MWaq1qU4ZvoHBaovAnUNaZJbtMDxwdf+X7YKVIYhrrCl+v
-         zsMkqdn1BQVpkx2NMp85QZMsDn3mgUNe497Nc4s3wOMQTjiWqotBeS/0qWo+3+08a1zp
-         mYlHgbZYP1I+NvfmXsBN+574t1TxPj3n9vLixnp0JiqjS/9XfALalBELUivg0qA+15IB
-         gi9dezJihc/oAid++MMDPdxfieA7NAFUKWysAKjU1VnYHgERFYrEWo7VVbNCN6dnpglL
-         JyBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhVhwCcZ0NIczPKH+qEJ1g86lfeYGlUWq3Ma94a1OVoo+BxnwTrMGOFrlQmCPJCRDHCNUTNRTgIYXUO9haJB5TpI+swyq6NSo3gqc9HZhVmqjtHlvdlVQcGhyw3VJSRilD/VmowpbNASsWtvY=
-X-Gm-Message-State: AOJu0YxDYASDWHMsYg7fP0MCC7R7DDmiuGJbhqYGRcMYLWMkxsDvcb9/
-	pUEI9O1Y6tDoyRlkQ2eN/0X39oYUd5QfNnf8cf8Y1Jz0PT7HLJJ2F8y3Om/6RO6JZeYMY4V1Xk3
-	rshR45zTKOXzLZ/lxV1cWfurZ9ug=
-X-Google-Smtp-Source: AGHT+IGrpfIPpPXYQ37E8KEWcdmA/jU0l6Zx861SPQ+wHapaO83/5L5t4CbX2hTvpmRfK+jQ/s2HT7ASMDaSvm0oUAY=
-X-Received: by 2002:a17:90a:7309:b0:2b5:9534:56d6 with SMTP id
- 98e67ed59e1d1-2b66001a464mr21043668a91.24.1715696607584; Tue, 14 May 2024
- 07:23:27 -0700 (PDT)
+	s=arc-20240116; t=1715696568; c=relaxed/simple;
+	bh=aR6mJ0hUjWaoRL/cDKUePaTSaotEpb0u/n7K8LdoQ3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z5awuMo20Uzhfrh5S86a8Ganm5o1AQNwqObfo20HIBDfqIP9kl8QBg8C2d0B0NpxGlhAxYlFEKiwZUhOB7lDvXRuyR3HdMKxcdeVEhY9euiRyKnLECtOa/KmF8eSYYynamUFrT17zGo2NoK4WWbLZyyADuMhOJdgc4UQJ51u4gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X6HDO94R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22987C2BD10;
+	Tue, 14 May 2024 14:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715696568;
+	bh=aR6mJ0hUjWaoRL/cDKUePaTSaotEpb0u/n7K8LdoQ3M=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=X6HDO94R7j4ypeQaRVkDn24Pr4VzbzT8R2HaIhlmkRZLmwdoMqpcGP0ZbCTWdUoEg
+	 kS6TbpF1bgmHdjOk30BdwnXs4RS9c9QGTc/HVqRxFNdEQ8UMQHeVa9IOtpu4QSsdT1
+	 4NnZJQQIZb33AtBdZyMTMHOjACthEc7xek+GQn9DUa+OjYQrm9YLCJZOfvd/ivsSFM
+	 j/lkqdRnYl0msMarGPjn1r3hvR6nPdHn1UThOE4JpPv8q8tKLlyZeFA5wZZCSUq5HG
+	 u7ZUBFCWk+eguVIUxQvn1+gVb8QABIf5g2r2rC4maeUJzIjIKMc+I/BeTzyZmGbcet
+	 UseGxl4WawBTA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 5764DCE0443; Tue, 14 May 2024 07:22:47 -0700 (PDT)
+Date: Tue, 14 May 2024 07:22:47 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
+	peterz@infradead.org, dianders@chromium.org, pmladek@suse.com,
+	arnd@arndb.de, torvalds@linux-foundation.org, kernel-team@meta.com,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 cmpxchg 09/13] lib: Add one-byte emulation function
+Message-ID: <29f1d801-9fb4-4ecb-8d5e-cecb7d7a76e1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <b67e79d4-06cb-4a45-a906-b9e0fbae22c5@paulmck-laptop>
+ <20240501230130.1111603-9-paulmck@kernel.org>
+ <ZkInMNOsLO5XbDj5@boqun-archlinux>
+ <9f0ff126-2806-488e-97cc-7258eff0c574@paulmck-laptop>
+ <ZkI4XPJLeCtabfGh@boqun-archlinux>
+ <ZkKD6UqXZozp1p-W@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zigj-lY5lnBSKuib@boqun-archlinux> <87cypvnpwn.ffs@tglx>
- <CANiq72nGHhgRjfMOhz=ss51q2egHYexPMVvWTr0RES9WAmMF=A@mail.gmail.com> <ZkNjVbqR6gYqg4YZ@boqun-archlinux>
-In-Reply-To: <ZkNjVbqR6gYqg4YZ@boqun-archlinux>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 14 May 2024 16:21:50 +0200
-Message-ID: <CANiq72nqkHazs-GRay_4LZViV43tDbCkPqWzqa28CSRE9DV7cw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: time: Use wrapping_sub() for Ktime::sub()
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Miguel Ojeda <ojeda@kernel.org>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	bjorn3_gh@protonmail.com, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kees Cook <keescook@chromium.org>, Mara Bos <m-ou.se@m-ou.se>, 
-	"Amanieu d'Antras" <amanieu@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZkKD6UqXZozp1p-W@boqun-archlinux>
 
-On Tue, May 14, 2024 at 3:13=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> However, I must point out that it needs more than a customized panic
-> handler to work: we also need to change the code generation (or adding
-> a different flag similar to -Coverflow-checks), because the current code
-> generation is Rust panic when overflow happens, which means the
-> subsequent code is unreachable.
+On Mon, May 13, 2024 at 02:19:37PM -0700, Boqun Feng wrote:
+> On Mon, May 13, 2024 at 08:57:16AM -0700, Boqun Feng wrote:
+> > On Mon, May 13, 2024 at 08:41:27AM -0700, Paul E. McKenney wrote:
+> > [...]
+> > > > > +#include <linux/types.h>
+> > > > > +#include <linux/export.h>
+> > > > > +#include <linux/instrumented.h>
+> > > > > +#include <linux/atomic.h>
+> > > > > +#include <linux/panic.h>
+> > > > > +#include <linux/bug.h>
+> > > > > +#include <asm-generic/rwonce.h>
+> > > > > +#include <linux/cmpxchg-emu.h>
+> > > > > +
+> > > > > +union u8_32 {
+> > > > > +	u8 b[4];
+> > > > > +	u32 w;
+> > > > > +};
+> > > > > +
+> > > > > +/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
+> > > > > +uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+> > > > > +{
+> > > > > +	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
+> > > > > +	int i = ((uintptr_t)p) & 0x3;
+> > > > > +	union u8_32 old32;
+> > > > > +	union u8_32 new32;
+> > > > > +	u32 ret;
+> > > > > +
+> > > > > +	ret = READ_ONCE(*p32);
+> > > > > +	do {
+> > > > > +		old32.w = ret;
+> > > > > +		if (old32.b[i] != old)
+> > > > > +			return old32.b[i];
+> > > > > +		new32.w = old32.w;
+> > > > > +		new32.b[i] = new;
+> > > > > +		instrument_atomic_read_write(p, 1);
+> > > > > +		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
+> > > > 
+> > > > Just out of curiosity, why is this `data_race` needed? cmpxchg is atomic
+> > > > so there should be no chance for a data race?
+> > > 
+> > > That is what I thought, too.  ;-)
+> > > 
+> > > The problem is that the cmpxchg() covers 32 bits, and so without that
+> > > data_race(), KCSAN would complain about data races with perfectly
+> > > legitimate concurrent accesses to the other three bytes.
+> > > 
+> > > The instrument_atomic_read_write(p, 1) beforehand tells KCSAN to complain
+> > > about concurrent accesses, but only to that one byte.
+> > > 
+> > 
+> > Oh, I see. For that purpose, maybe we can just use raw_cmpxchg() here,
+> > i.e. a cmpxchg() without any instrument in it. Cc Mark in case I'm
+> > missing something.
+> > 
+> 
+> I just realized that the KCSAN instrumentation is already done in
+> cmpxchg() layer:
+> 
+> 	#define cmpxchg(ptr, ...) \
+> 	({ \
+> 		typeof(ptr) __ai_ptr = (ptr); \
+> 		kcsan_mb(); \
+> 		instrument_atomic_read_write(__ai_ptr, sizeof(*__ai_ptr)); \
+> 		raw_cmpxchg(__ai_ptr, __VA_ARGS__); \
+> 	})
+> 
+> and, this function is lower in the layer, so it shouldn't have the
+> instrumentation itself. How about the following (based on today's RCU
+> dev branch)?
 
-Yeah, definitely. That first step RFC is a bit ambiguous ("custom
-implementations of `panic_*`"), but what we discussed was the ability
-to customize the report and continue, rather than providing a
-different panic handler. So the customization point function should
-not return `!` for our use case, at least in the integer arithmetic
-overflow case.
+The raw_cmpxchg() looks nicer than the added data_race()!
 
-Cheers,
-Miguel
+One question below, though.
+
+							Thanx, Paul
+
+> Regards,
+> Boqun
+> 
+> -------------------------------------------->8
+> Subject: [PATCH] lib: cmpxchg-emu: Make cmpxchg_emu_u8() noinstr
+> 
+> Currently, cmpxchg_emu_u8() is called via cmpxchg() or raw_cmpxchg()
+> which already makes the instrumentation decision:
+> 
+> * cmpxchg() case:
+> 
+> 	cmpxchg():
+> 	  kcsan_mb();
+> 	  instrument_atomic_read_write(...);
+> 	  raw_cmpxchg():
+> 	    arch_cmpxchg():
+> 	      cmpxchg_emu_u8();
+> 
+> ... should have KCSAN instrumentation.
+> 
+> * raw_cmpxchg() case:
+> 
+> 	raw_cmpxchg():
+> 	  arch_cmpxchg():
+> 	    cmpxchg_emu_u8();
+> 
+> ... shouldn't have KCSAN instrumentation.
+> 
+> Therefore it's redundant to put KCSAN instrumentation in
+> cmpxchg_emu_u8() (along with the data_race() to get away the
+> instrumentation).
+> 
+> So make cmpxchg_emu_u8() a noinstr function, and remove the KCSAN
+> instrumentation inside it.
+> 
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+>  include/linux/cmpxchg-emu.h |  4 +++-
+>  lib/cmpxchg-emu.c           | 14 ++++++++++----
+>  2 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/cmpxchg-emu.h b/include/linux/cmpxchg-emu.h
+> index 998deec67740..c4c85f41d9f4 100644
+> --- a/include/linux/cmpxchg-emu.h
+> +++ b/include/linux/cmpxchg-emu.h
+> @@ -10,6 +10,8 @@
+>  #ifndef __LINUX_CMPXCHG_EMU_H
+>  #define __LINUX_CMPXCHG_EMU_H
+>  
+> -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
+> +#include <linux/compiler.h>
+> +
+> +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
+>  
+>  #endif /* __LINUX_CMPXCHG_EMU_H */
+> diff --git a/lib/cmpxchg-emu.c b/lib/cmpxchg-emu.c
+> index 27f6f97cb60d..788c22cd4462 100644
+> --- a/lib/cmpxchg-emu.c
+> +++ b/lib/cmpxchg-emu.c
+> @@ -21,8 +21,13 @@ union u8_32 {
+>  	u32 w;
+>  };
+>  
+> -/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
+> -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+> +/*
+> + * Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg.
+> + *
+> + * This function is marked as 'noinstr' as the instrumentation should be done at
+> + * outer layer.
+> + */
+> +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+>  {
+>  	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
+>  	int i = ((uintptr_t)p) & 0x3;
+> @@ -37,8 +42,9 @@ uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
+>  			return old32.b[i];
+>  		new32.w = old32.w;
+>  		new32.b[i] = new;
+> -		instrument_atomic_read_write(p, 1);
+
+Don't we need to keep that instrument_atomic_read_write() in order
+to allow KCSAN to detect data races with plain C-language reads?
+Or is that being handled some other way?
+
+> -		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
+> +
+> +		// raw_cmpxchg() is used here to avoid instrumentation.
+> +		ret = raw_cmpxchg(p32, old32.w, new32.w); // Overridden above.
+>  	} while (ret != old32.w);
+>  	return old;
+>  }
+> -- 
+> 2.44.0
+> 
 
