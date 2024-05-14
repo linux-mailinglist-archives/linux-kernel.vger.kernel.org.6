@@ -1,249 +1,331 @@
-Return-Path: <linux-kernel+bounces-179076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41868C5B4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:44:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF23E8C5B50
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12A8F1C20A6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911902825E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC615180A8E;
-	Tue, 14 May 2024 18:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FCE181305;
+	Tue, 14 May 2024 18:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="e4p1qzvQ"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2077.outbound.protection.outlook.com [40.107.223.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxlXg+37"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA5117F39F;
-	Tue, 14 May 2024 18:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712261; cv=fail; b=o6N2NHAu9Cjvb12BWdJtaEAAVHN6bpuWVMv2FUMVLEyiW6hl8LVnP1+5QdUKOGSHJTKflfh1JT/Zj1ZOuVhtnaObU1cqUGlylvQ+CwKpSU8u8Y5ypisajtMZnFiRIVB2wH0oyz/FJx+o5f2rvRXut21258EFrYRHPwwxGPlNd+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715712261; c=relaxed/simple;
-	bh=tD6UjklD/U3aO7sl1/RtIbQJrDmBmnIJJU1SZgij6As=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=FyGNLy7sPeYQMcs+UBXambiC4k33lDTaFTLDUwMdkVn6eTIKpoBMNxgMKGso7Tv7fy/9UH4RijNRiHDccKW40hsP2X8oW5shmYyxWlZLba9d4xFJg5mHHmAFxpSZNjdUvzAvivG7vhabc6fOWARKO5D/LQC8dcBWHCukZLyLK4M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=e4p1qzvQ; arc=fail smtp.client-ip=40.107.223.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VXu5h5TBTknrK+zJU9p7gmeRC6K47BLti1rIxam2JEL/jLAY3QR1+l/tjsbPGiRcERXfPlXXvLHQ1oGsBSqKLNXoczQf2NIFy7ylfOXzCN81NoJpNwrfzIjcxqagMJzp1Xp2OsOrHrknU3fgxaG6P2RzVE4UVgr6gn7VhoUOyGIymIxPMDlv6UKD8zLb9OMpEk4JBcnWLeqK66nUs1Tw0hi7MN1LM+dcc8srSmRPpgySKMb8kfqWGpCX7Ep9LxbWNceqWy/pERpaEKmVrQbtaibwEUJdfnUOV42Pw0T4pcod0vDr1RZNIYlnyjj4pQD7O54AfiEu8J+ytOwNclS2rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Ie4p6XaoQl2K6mBDplYLoILpC+yyf7Pzpdtdp37ncs=;
- b=iAU6pNC+VSVCpdQcDHTkLJ8tfAZ8CIf9qh9GEaWfpu6XTKPVoAmy9c7qMy12RwkQA5e/udjYuGwdAIhI9la7u6wLBxmQjvSlZApz5Nyuk+GvGFvlGBm9ulD6XTErw4cquD4IuXeTVKI7EFbiWcUjEMiuRXvPqRykV+GG6Jkq83Zmj8wMpuZgtBHbQH9/zDVV5uPH1/Fdzp2e4CRAcydhrRJFfUrbVh0C7/LH/hp1qCAzss9vMp4CbgOB+HoDnDd94U9UPZXLgIMNx3sfMJH+yTWwpSgE+9eDGQwyV7pFyLoRdICq3CenXhoNSi7oDdikQT9DpE7U+iT2EOF7cd1t5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9Ie4p6XaoQl2K6mBDplYLoILpC+yyf7Pzpdtdp37ncs=;
- b=e4p1qzvQKoLCt5oN8KsssnCLXBhsurCGA6Vm2HhYghlWAEFVmmyS2qpMjRpvT0rXHnC2HjX9zABU9DCdownTb6cjzclN3AL8Js7dWupJA9jpN7YeX9ql4Or9863LMjEcpEVsPBSTi8ovDWonBi4ixFCxmPO8ynYSGRMie2WSRJA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com (2603:10b6:208:39b::20)
- by IA1PR12MB6259.namprd12.prod.outlook.com (2603:10b6:208:3e5::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 18:44:16 +0000
-Received: from BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92]) by BL1PR12MB5995.namprd12.prod.outlook.com
- ([fe80::7298:510:d37d:fa92%4]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 18:44:16 +0000
-Date: Tue, 14 May 2024 13:44:06 -0500
-From: John Allen <john.allen@amd.com>
-To: Zaid Alali <zaidal@os.amperecomputing.com>
-Cc: lenb@kernel.org, james.morse@arm.com, tony.luck@intel.com, bp@alien8.de,
-	robert.moore@intel.com, Avadhut.Naik@amd.com,
-	xueshuai@linux.alibaba.com, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Subject: Re: [RFC PATCH 3/5] ACPI: APEI: EINJ: Add debugfs files for EINJv2
- support
-Message-ID: <ZkOw9nPxf4xoAXXd@AUS-L1-JOHALLEN.amd.com>
-References: <20240312212626.29007-1-zaidal@os.amperecomputing.com>
- <20240312212626.29007-4-zaidal@os.amperecomputing.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240312212626.29007-4-zaidal@os.amperecomputing.com>
-X-ClientProxiedBy: SJ0PR05CA0189.namprd05.prod.outlook.com
- (2603:10b6:a03:330::14) To BL1PR12MB5995.namprd12.prod.outlook.com
- (2603:10b6:208:39b::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2808653E15;
+	Tue, 14 May 2024 18:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715712284; cv=none; b=GC+Qe1972L8OhCHwIcJbJLhlBJGWrCybUVD5Y4KtNnzM3Qw2zwmONS5HMHzPUGW71PzXdfrtZzR3P6gxdylrhd107yRDLcIBdC/7/F4QzZdN2Q9T60TQB6uiR2EYXw17XvQZFGgW3Jw7y45Zxnpju7HMS1/fcJ072aF4e4Vu/vg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715712284; c=relaxed/simple;
+	bh=UDscADR9u6LgEe/wGP7v8bRZ2rHTG/ANDnBXplEUE7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g5i71el/6gmo8irL8YyP27mI0HBUBFWc2oEas5zZ1KK/utSS9zmudbr1ievppAET7Tl47//IB+wQiSu6Phv4CtMNibgaeX5HWAGVD/CClj0SrtRW//P8fcKuYOVWhZ/Ry5ckUSdtG4OOz6ufhKit3B1iMeShAHluKrsUmAYO1YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxlXg+37; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-351b683f2d8so2329318f8f.3;
+        Tue, 14 May 2024 11:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715712280; x=1716317080; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=a/O5pu7k8PMeR8Tslv1tJJZrDPiWbqXszC+oG6XWpEA=;
+        b=WxlXg+37TknwB4WAYRsgA9RwstFYQ0Zvq0QMCqdxjVMjNvTMHENClOnrs0CBSGLhnR
+         rIy/a2Hp8kRw1CR3KIZaITN3LffRxQoUcdpN4PBMNTL/b68It5lbA/etAtL2YEv0JMwO
+         lpk7SBaWZKA9f4m9Z5IHbFkKCHZYTYSDyAQy58s4FbhLmrg/MfzftLj//sNzGbD0vWaQ
+         IfXVZR79s4pHNE3rWvD+j3wLs0VvTQ9E0d6O5rrIfVNeCS8z9ZK58fW6mBza27idMdKA
+         wl49Kg8SBRz18GqJ45LJiywt7PbcAjjsifWSNH9xLYqaF+ucXE3MVCSzmDDse3x2HvNv
+         XInw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715712280; x=1716317080;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a/O5pu7k8PMeR8Tslv1tJJZrDPiWbqXszC+oG6XWpEA=;
+        b=RJs0ERZ8GIQhVJPvlegfgpCoVJfPeMl0C/SBGPQExRjAD9mRI45xYSqi1Mi0tdCF0C
+         yJGlUfZJeuyS5q9S5Wt5gdha/VdzFOnkiwbxScJaE8x4hVjfcB8iHoK60HLWE8jFxJnq
+         5J+lFKDvUaieGHI1PhS+mxr5gwJJky5LQoOzszNXHSQspE3OF6fXttL0hQ0XKP90S9Hx
+         U/gizVzbusmA5hS9JHxW5WRz9DfPYwoppsVyjmb6GW2Fw9arICUu33N1XoNG9EJG4dj0
+         rd8YJxGYxipxJyB+3Qe2SnMGlWIqduHR+/QD/bxkhOurAQBZqBUHQ/GNkx3rKefs4ZKT
+         r2ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWbMyCwESLZYBU55xPARlRpqWWU969NC8ecpq3UnS5hrulZjzSD4U1/DCGl+tk/q18XLVCLuDxYs5dVd/DP/3fJkFhEZfu6dC7LNShYqRq2LkGjS8XlRJWDyKRBECuf9jR6fcxftgLedm1YoB9wnwvGLoO0MrsmPDpeJjIyuyL9Zw==
+X-Gm-Message-State: AOJu0YzgkZIYu5iBrb7JIUsTrGmJH4eqZ3a8YRzKXZQ/Y96EREekVg4z
+	t3VKEz7hFUuIUwGB/P/qt1Diawt1oDGJcVmR+VqiIcXBCetMYNLW
+X-Google-Smtp-Source: AGHT+IGMIN9qFnqjKi3u+xD2Vr5ibU8JBFXZDR0ghnzjHuacTLO5rBFsv7foJ3TCpATudiNRzELejA==
+X-Received: by 2002:a05:6000:18af:b0:351:b4af:c84b with SMTP id ffacd0b85a97d-351b4afc92emr8693915f8f.51.1715712280237;
+        Tue, 14 May 2024 11:44:40 -0700 (PDT)
+Received: from [172.27.21.185] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bc83sm14319687f8f.16.2024.05.14.11.44.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 11:44:39 -0700 (PDT)
+Message-ID: <230701b9-c52a-4b59-9969-4cd5a5d697f4@gmail.com>
+Date: Tue, 14 May 2024 21:44:37 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR12MB5995:EE_|IA1PR12MB6259:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35752a39-5ff3-404f-4146-08dc7445da7b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|376005|7416005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z6wJ6xnVmGTWzkvsiiNuSI3DMtm1mwIeFU5bcweATIhnl0vhWUCX12oHx/+O?=
- =?us-ascii?Q?1NkQle3y06ZO477SZJYtahHoUDQWHv16oi3d5Vd1aMazmmbIIzlzC0dd/36a?=
- =?us-ascii?Q?IXYOoQZQGHJJmOmKGKl5u6xhWLsa1M0kQCPtx2wgHv7JgB9yEbpz19AuZnHq?=
- =?us-ascii?Q?Vgf/TTcBWdc2akPCrLvUURZIDdPMQceG9u/AgRv7NQLi0mkhr4jR7tc34mAL?=
- =?us-ascii?Q?QEALZ5L8IattFcq/mrBTzFjNElnDVyeWm1Rx9Ib02XDYh6hA1/9x0HoOpmt+?=
- =?us-ascii?Q?8j4Sox5AzbiBcYAzs4LYq6/q6HiJrTBiVH87YpckeIa127SH9n46B1S6y9ID?=
- =?us-ascii?Q?2bTsL/nXsOKPo7SnSUOaV8xFHHVHFWsL3OU+YChjVZvy/d4WPzZ5Y3L5UfAB?=
- =?us-ascii?Q?mFHABwUcbEXiwzUc28GV8Yau4zlf/0dnvGxmEqwIy2WZK4P9wd/W9Ou6dzjG?=
- =?us-ascii?Q?7tN5jCVctLLnCtH0Za+qqq91PC1Rfi5gzOelvfOpJh2DRIjUzHF2kKFBt9ou?=
- =?us-ascii?Q?BojRYZzW6uBoEvtD6yxaRmE4ZiSY1QBjbig15D++zQAJR6qm1VSYXa0cmJ5c?=
- =?us-ascii?Q?nNya0e6LIuGJ8hiSypHZTkBtFAihPzpB6zjWJUYSHKljT+KNquCRTSGI9MWz?=
- =?us-ascii?Q?OYcjc2gKwe+M6WI1SnTi035k2KgtnvIb37JtvUlfi8QskvHF2GSVyLn8Fna0?=
- =?us-ascii?Q?yFrgdiz+FboCo+Z+fEe2PEo/MNLA0uy7vnhriFBVYkCPX2/F9hdHpnpIcok1?=
- =?us-ascii?Q?NwIsaJOAYYwOOe5couNYl4UxAY+sTMMpinJG1/yHbVTYW0cEoycnSNpCFtCO?=
- =?us-ascii?Q?TgBwx0Bj5tEBBcDNkGQbdeIjQW9rsg0ZGRQYl6EYxDxZVlkydWj1jTOalWxB?=
- =?us-ascii?Q?izSvKmEjleQManpubBPA3QFxVHz1MU0klw1eBFKdKrDXiSa4n8YRwSndCr96?=
- =?us-ascii?Q?tyS5ChRdnqi/xyZxp9wTyudUfX20NtFNzJUgIStJtKaQemDEWEl9Jjxi0DDu?=
- =?us-ascii?Q?/4fGZiVIAvWaKv4ZrYVGW6ycYPtoFuJ//NMEyKgTeIoN3HEbCXvLGaxAOAP8?=
- =?us-ascii?Q?b4L/RmnOJbOrbcsKPRlCdaWVRuhzyz8UwWBAvNTgykE8j88DulFpGeQN0Vv2?=
- =?us-ascii?Q?7e2wg6vYRtWUS+br7GL4PP5c0c2Y0q2a9C/lDfYfNZnWrfbzjypeJ5gUrb/W?=
- =?us-ascii?Q?/4cC/yx/ANCd5fyjaFevPiNfEpTCqp6ET3a2x/EFFh6axvFv3oNRloUcXjbi?=
- =?us-ascii?Q?GzB7tSlCcAFKs36Tq+Qdl5s6KFFildni2fXzgi97xg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5995.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(376005)(7416005)(1800799015);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Z74gnJYH4ONbJtOVJ1HqaqCwz9Fufwph0xG6d2ouYh9kRY+BENRXVz5suREm?=
- =?us-ascii?Q?vZ61qTtg5KxXd4bLLp0MyZPmqOXYSD/wFYG96rRbpravAxBcJMAHm9sejp5H?=
- =?us-ascii?Q?DssnP8+i63REZqyAgkcQa1sGgugxR3UVOcZ2kC9iCfPZaouB+3NEwFhxOvVF?=
- =?us-ascii?Q?WVfCN2w1gGSqQL6PbNH0nMVyA+5+McL1LDHIGBl1vaQReZ7N7uY4sSTw5+MN?=
- =?us-ascii?Q?AazbdeYgvz8E7GnpJFXMwbZhGfTRoRl5cMkGrgDpbvI1iC+Bo0ACIZnkqf66?=
- =?us-ascii?Q?6A+KsO/rqiAJUVf7tBD7uwOGx3ds3p2K8VxTASPcXSh7Nwy3bLVMReLSJ4ia?=
- =?us-ascii?Q?3kDAXjv7ZPzGsvA+x5c6RUt0plArmuGa9Ms/HQA9Acm3Pd4dccbXGLdOnjya?=
- =?us-ascii?Q?Nmck3xxFXp91BwFFPqh6uYhvF4jzZ5I0zOXbBEUZvbUm1oaiTgSfVwsqZJjt?=
- =?us-ascii?Q?Nn6gbf85xVxXtIj5ZP7R1HWslP6WktS+IDYc3LQfSn6e6xWAMjcX1t/khqpt?=
- =?us-ascii?Q?BB2uP+pkkemhZJJfy+zygF1n7oq5YQA2CehMI2Whfqnra86Uv1dkhBtB/tm0?=
- =?us-ascii?Q?wIdU4C3rKtxhXoWF29PDTQ6XD3xROvXXfiAUsNfEwGD205rLYzrDKAioLg+b?=
- =?us-ascii?Q?Xg7O/uC5MiPXL+T846SOU5PPzzDizvEtRnksAdhf0zSTi7IwzvfoQnIi0MM4?=
- =?us-ascii?Q?AlGiofwUxckeKd7XdV/5zOxt4NfZaSo81imw7hmynN23WBfdcvurNR08KzDf?=
- =?us-ascii?Q?UDxXNclrnqfRRlYNNHZ5uB09bEJtlGX4V1TOx6xaJfRUVe7VCUpiGgoXNgET?=
- =?us-ascii?Q?21ywqpkkLrc14r0LexJLXGbliR0CVycjUBNqlvi/azqMboVkoYmy3KhYOqEo?=
- =?us-ascii?Q?9meYFt46wqp3k/9hakS76zMvOcNr3YpkX4BJ/k88GBLAbEm49eovnM7QEw23?=
- =?us-ascii?Q?6lNOdvpwfpX2d15bit1vy8Jh5y7CkDBPot97LWZZalGHjGCSsPxR+e331JwU?=
- =?us-ascii?Q?mzZzUAV2VBE9IMZ2Uz1WKwdkIZmhFaENreU1lFsc6w5nT2Qbec4rFSxY9gVj?=
- =?us-ascii?Q?pR8geVHOZMEj3LrY+uCBxd4JBPPNvIBhgOMEmIjIVQbfsGbesY4uhJddwYAV?=
- =?us-ascii?Q?51uzKbAyKFeNtRZOZ5QWsjo/TCcbC7cOemgPO2cyi9y+cB5smJiqqW7iAa/m?=
- =?us-ascii?Q?s8y7G8iaBNPGgGzFDBwOuusWF03E1REKbv57RXheel6qjKy4dhTx4aC5IGzH?=
- =?us-ascii?Q?t9M68Bk4qvbQRcUNgcp9qQsMuZEPHSve96+EnEQ7bBPNLx9S3UPrL2nF38Nn?=
- =?us-ascii?Q?a7U+a7zs5HcUU+f6KErbkpjfITPgz+u5QudRdq3jO4vN2azJ7Mb5eEytk8IA?=
- =?us-ascii?Q?+1apQUB3JC15p1gnG/XMH5PHRyynjJHHQQ6TbS5I+SwqUr27us330ies3s9R?=
- =?us-ascii?Q?fuPnbiviYxsiEiJSqwMXTIJ4r76NuOR8Mvhi7aGUMrXdV8/WfLPK+4nRfoA2?=
- =?us-ascii?Q?3GqZpSLx6Ft7EeeSElwztYoma8tsi591CIOA/9KiBAa6ZGlZJv4h0Ud15Ysw?=
- =?us-ascii?Q?00HWkVwRtoxCPLpPK68YLTrXTWOQ6fFb2HEIiNhX?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35752a39-5ff3-404f-4146-08dc7445da7b
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5995.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 18:44:15.9336
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5vyPFzji1G8MesJFB4NA1RHFXlnHHMpXELLq9lcwJVyCt8HPg1rdMRGvuZ1ww7L234vaK6ua1r0sI8cujH512A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6259
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/1] net/mlx5e: Add per queue netdev-genl
+ stats
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: zyjzyj2000@gmail.com, nalramli@fastly.com,
+ Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ "open list:MELLANOX MLX5 core VPI driver" <linux-rdma@vger.kernel.org>,
+ Tariq Toukan <tariqt@nvidia.com>
+References: <20240510041705.96453-1-jdamato@fastly.com>
+ <20240510041705.96453-2-jdamato@fastly.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240510041705.96453-2-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 12, 2024 at 02:26:24PM -0700, Zaid Alali wrote:
-> EINJv2 enables users to inject errors to multiple components/
-> devices at the same time. This commit creates a debugfs blob
 
-Drop "This commit" and write this using imperative mood (as a command).
-For example, "Create a debugfs blob file to be used for reading the user
-input for the component array".
 
-> file to be used for reading the user input for component array.
+On 10/05/2024 7:17, Joe Damato wrote:
+> Add functions to support the netdev-genl per queue stats API.
 > 
-> Signed-off-by: Zaid Alali <zaidal@os.amperecomputing.com>
+> ./cli.py --spec netlink/specs/netdev.yaml \
+> --dump qstats-get --json '{"scope": "queue"}'
+> 
+> ...snip
+> 
+>   {'ifindex': 7,
+>    'queue-id': 62,
+>    'queue-type': 'rx',
+>    'rx-alloc-fail': 0,
+>    'rx-bytes': 105965251,
+>    'rx-packets': 179790},
+>   {'ifindex': 7,
+>    'queue-id': 0,
+>    'queue-type': 'tx',
+>    'tx-bytes': 9402665,
+>    'tx-packets': 17551},
+> 
+> ...snip
+> 
+> Also tested with the script tools/testing/selftests/drivers/net/stats.py
+> in several scenarios to ensure stats tallying was correct:
+> 
+> - on boot (default queue counts)
+> - adjusting queue count up or down (ethtool -L eth0 combined ...)
+> - adding mqprio TCs
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 > ---
->  drivers/acpi/apei/einj.c | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+>   .../net/ethernet/mellanox/mlx5/core/en_main.c | 144 ++++++++++++++++++
+>   1 file changed, 144 insertions(+)
 > 
-> diff --git a/drivers/acpi/apei/einj.c b/drivers/acpi/apei/einj.c
-> index 119f7accd1c9..ceac53aa0d3f 100644
-> --- a/drivers/acpi/apei/einj.c
-> +++ b/drivers/acpi/apei/einj.c
-> @@ -101,6 +101,10 @@ static struct debugfs_blob_wrapper vendor_blob;
->  static struct debugfs_blob_wrapper vendor_errors;
->  static char vendor_dev[64];
->  
-> +static struct debugfs_blob_wrapper einjv2_component_arr;
-> +static u64 component_count;
-> +static void *user_input;
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> index ffe8919494d5..4a675d8b31b5 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+> @@ -39,6 +39,7 @@
+>   #include <linux/debugfs.h>
+>   #include <linux/if_bridge.h>
+>   #include <linux/filter.h>
+> +#include <net/netdev_queues.h>
+>   #include <net/page_pool/types.h>
+>   #include <net/pkt_sched.h>
+>   #include <net/xdp_sock_drv.h>
+> @@ -5282,6 +5283,148 @@ static bool mlx5e_tunnel_any_tx_proto_supported(struct mlx5_core_dev *mdev)
+>   	return (mlx5_vxlan_allowed(mdev->vxlan) || mlx5_geneve_tx_allowed(mdev));
+>   }
+>   
+> +static void mlx5e_get_queue_stats_rx(struct net_device *dev, int i,
+> +				     struct netdev_queue_stats_rx *stats)
+> +{
+> +	struct mlx5e_priv *priv = netdev_priv(dev);
 > +
->  /*
->   * Some BIOSes allow parameters to the SET_ERROR_TYPE entries in the
->   * EINJ table through an unpublished extension. Use with caution as
-> @@ -810,6 +814,8 @@ static int __init einj_init(void)
->  
->  	einj_param = einj_get_parameter_address();
->  	if ((param_extension || acpi5) && einj_param) {
-> +		u32 error_type;
+> +	if (mlx5e_is_uplink_rep(priv))
+> +		return;
 > +
->  		debugfs_create_x32("flags", S_IRUSR | S_IWUSR, einj_debug_dir,
->  				   &error_flags);
->  		debugfs_create_x64("param1", S_IRUSR | S_IWUSR, einj_debug_dir,
-> @@ -820,6 +826,25 @@ static int __init einj_init(void)
->  				   &error_param3);
->  		debugfs_create_x64("param4", S_IRUSR | S_IWUSR, einj_debug_dir,
->  				   &error_param4);
+> +	struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> +	struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
+> +	struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
 > +
-> +		rc = einj_get_available_error_type(&error_type, ACPI_EINJ_GET_ERROR_TYPE);
-> +		if (rc)
-> +			return rc;
+
+Don't we allow variable declaration only at the beginning of a block?
+Is this style accepted in the networking subsystem?
+
+> +	stats->packets = rq_stats->packets + xskrq_stats->packets;
+> +	stats->bytes = rq_stats->bytes + xskrq_stats->bytes;
+> +	stats->alloc_fail = rq_stats->buff_alloc_err +
+> +			    xskrq_stats->buff_alloc_err;
+> +}
 > +
-> +		if (error_type & ACPI65_EINJV2_SUPP) {
-> +			debugfs_create_x64("einjv2_component_count", S_IRUSR | S_IWUSR,
-> +					einj_debug_dir,	&component_count);
-> +			user_input = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> +static void mlx5e_get_queue_stats_tx(struct net_device *dev, int i,
+> +				     struct netdev_queue_stats_tx *stats)
+> +{
+> +	struct mlx5e_priv *priv = netdev_priv(dev);
+> +	struct net_device *netdev = priv->netdev;
+> +	struct mlx5e_txqsq *sq;
+> +	int j;
+> +
+> +	if (mlx5e_is_uplink_rep(priv))
+> +		return;
+> +
+> +	for (j = 0; j < netdev->num_tx_queues; j++) {
+> +		sq = priv->txq2sq[j];
 
-What is the reason for a PAGE_SIZE allocation here?
+No sq instance in case interface is down.
+This should be a simple arithmetic calculation.
+Need to expose the proper functions for this calculation, and use it 
+here and in the sq create flows.
 
-I would guess that a typical user will only supply a couple entries in
-the component array. If this is x86 and PAGE_SIZE is 4k, that's probably
-fine, but IIUC, ARM can have up to 64k pages which seems like a lot more
-than is needed here. I would think that since this is architecture
-independent ACPI code, we want to avoid using something architecture
-dependent like page size here anyway.
+Here it seems that you need a very involved user, so he passes the 
+correct index i of the SQ that he's interested in..
 
-I also think that while 4k may be fine (and usually overkill) in most
-cases, it's much smaller than the maximum possible number of entries.
-While uncommon, we might want to allow for a larger allocation while
-still keeping the default allocation small. Maybe a module parameter
-could be used to allocate a bigger file if needed?
+> +		if (sq->ch_ix == i) {
 
-Thanks,
-John
+So you're looking for the first SQ on channel i?
+But there might be multiple SQs on channel i...
+Also, this SQ might be already included in the base stats.
+In addition, this i might be too large for a channel index 
+(num_tx_queues can be 8 * num_channels)
 
-> +			if (!user_input) {
-> +				rc = -ENOMEM;
-> +				goto err_release;
-> +			}
-> +			einjv2_component_arr.data = user_input;
-> +			einjv2_component_arr.size = PAGE_SIZE;
-> +			debugfs_create_blob("einjv2_component_array", S_IRUSR | S_IWUSR,
-> +					einj_debug_dir, &einjv2_component_arr);
+The logic here (of mapping from i in num_tx_queues to SQ stats) needs 
+careful definition.
+
+> +			stats->packets = sq->stats->packets;
+> +			stats->bytes = sq->stats->bytes;
+> +			return;
+> +		}
+> +	}
+> +}
+> +
+> +static void mlx5e_get_base_stats(struct net_device *dev,
+> +				 struct netdev_queue_stats_rx *rx,
+> +				 struct netdev_queue_stats_tx *tx)
+> +{
+> +	struct mlx5e_priv *priv = netdev_priv(dev);
+> +	int i, j;
+> +
+> +	if (!mlx5e_is_uplink_rep(priv)) {
+> +		rx->packets = 0;
+> +		rx->bytes = 0;
+> +		rx->alloc_fail = 0;
+> +
+> +		/* compute stats for deactivated RX queues
+> +		 *
+> +		 * if priv->channels.num == 0 the device is down, so compute
+> +		 * stats for every queue.
+> +		 *
+> +		 * otherwise, compute only the queues which have been deactivated.
+> +		 */
+> +		if (priv->channels.num == 0)
+> +			i = 0;
+> +		else
+> +			i = priv->channels.params.num_channels;
+> +
+> +		for (; i < priv->stats_nch; i++) {
+> +			struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> +			struct mlx5e_rq_stats *xskrq_stats = &channel_stats->xskrq;
+> +			struct mlx5e_rq_stats *rq_stats = &channel_stats->rq;
+> +
+> +			rx->packets += rq_stats->packets + xskrq_stats->packets;
+> +			rx->bytes += rq_stats->bytes + xskrq_stats->bytes;
+> +			rx->alloc_fail += rq_stats->buff_alloc_err +
+> +					  xskrq_stats->buff_alloc_err;
+
+Isn't this equivalent to mlx5e_get_queue_stats_rx(i) ?
+
 > +		}
 > +
->  		debugfs_create_x32("notrigger", S_IRUSR | S_IWUSR,
->  				   einj_debug_dir, &notrigger);
->  	}
-> @@ -871,6 +896,7 @@ static void __exit einj_exit(void)
->  	apei_resources_fini(&einj_resources);
->  	debugfs_remove_recursive(einj_debug_dir);
->  	acpi_put_table((struct acpi_table_header *)einj_tab);
-> +	kfree(user_input);
->  }
->  
->  module_init(einj_init);
-> -- 
-> 2.34.1
-> 
+> +		if (priv->rx_ptp_opened) {
+> +			struct mlx5e_rq_stats *rq_stats = &priv->ptp_stats.rq;
+> +
+> +			rx->packets += rq_stats->packets;
+> +			rx->bytes += rq_stats->bytes;
+> +		}
+> +	}
+> +
+> +	tx->packets = 0;
+> +	tx->bytes = 0;
+> +
+> +	/* three TX cases to handle:
+> +	 *
+> +	 * case 1: priv->channels.num == 0, get the stats for every TC
+> +	 *         on every queue.
+> +	 *
+> +	 * case 2: priv->channel.num > 0, so get the stats for every TC on
+> +	 *         every deactivated queue.
+> +	 *
+> +	 * case 3: the number of TCs has changed, so get the stats for the
+> +	 *         inactive TCs on active TX queues (handled in the second loop
+> +	 *         below).
+> +	 */
+> +	if (priv->channels.num == 0)
+> +		i = 0;
+> +	else
+> +		i = priv->channels.params.num_channels;
+> +
+
+All reads/writes to priv->channels must be under the priv->state_lock.
+
+> +	for (; i < priv->stats_nch; i++) {
+> +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> +
+> +		for (j = 0; j < priv->max_opened_tc; j++) {
+> +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+> +
+> +			tx->packets += sq_stats->packets;
+> +			tx->bytes += sq_stats->bytes;
+> +		}
+> +	}
+> +
+> +	/* Handle case 3 described above. */
+> +	for (i = 0; i < priv->channels.params.num_channels; i++) {
+> +		struct mlx5e_channel_stats *channel_stats = priv->channel_stats[i];
+> +		u8 dcb_num_tc = mlx5e_get_dcb_num_tc(&priv->channels.params);
+> +
+> +		for (j = dcb_num_tc; j < priv->max_opened_tc; j++) {
+> +			struct mlx5e_sq_stats *sq_stats = &channel_stats->sq[j];
+> +
+> +			tx->packets += sq_stats->packets;
+> +			tx->bytes += sq_stats->bytes;
+> +		}
+> +	}
+> +
+> +	if (priv->tx_ptp_opened) {
+> +		for (j = 0; j < priv->max_opened_tc; j++) {
+> +			struct mlx5e_sq_stats *sq_stats = &priv->ptp_stats.sq[j];
+> +
+> +			tx->packets    += sq_stats->packets;
+> +			tx->bytes      += sq_stats->bytes;
+> +		}
+> +	}
+> +}
+> +
+> +static const struct netdev_stat_ops mlx5e_stat_ops = {
+> +	.get_queue_stats_rx     = mlx5e_get_queue_stats_rx,
+> +	.get_queue_stats_tx     = mlx5e_get_queue_stats_tx,
+> +	.get_base_stats         = mlx5e_get_base_stats,
+> +};
+> +
+>   static void mlx5e_build_nic_netdev(struct net_device *netdev)
+>   {
+>   	struct mlx5e_priv *priv = netdev_priv(netdev);
+> @@ -5299,6 +5442,7 @@ static void mlx5e_build_nic_netdev(struct net_device *netdev)
+>   
+>   	netdev->watchdog_timeo    = 15 * HZ;
+>   
+> +	netdev->stat_ops          = &mlx5e_stat_ops;
+>   	netdev->ethtool_ops	  = &mlx5e_ethtool_ops;
+>   
+>   	netdev->vlan_features    |= NETIF_F_SG;
 
