@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-178693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36D8D8C5687
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:09:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061F98C568C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBCD3B218E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721231F223D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:09:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D0A1411CC;
-	Tue, 14 May 2024 13:08:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86311420A8;
+	Tue, 14 May 2024 13:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j21QyHbX"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iwcHZivL"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E652B13FD9D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6482C140380
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692129; cv=none; b=nRLKB6xmwYNYkgSADQsv2upUSbBKuhbZPxf10qrZMMGfUxahlvoTaZ1tQOBa+oVnr6RMQPRxvuolrQTynX8N6V4lB1ponCSBg4bEwzwx1GpZQcU95FbfQ9i5mMc2+Kl4UaIfo9GnM2PIUyHqBniS8pWBZL7yFZQqCqQQLGmT2pk=
+	t=1715692131; cv=none; b=MdcOXTOGiBw28EZUMAFivL+x6pLO1sz40UpSKArKX0UL+pXYTRP9AlsNBFEY3a0vsRou7rHblRlRnyT2aKSVqVfWNy+nVwfN/3G7l9n60FP7P7UxYjC+p6hOwrpMCRWnMHjClnTMJ5ONy/ZibCNt3x/+3OAZOl66ePfT+WQZu5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692129; c=relaxed/simple;
-	bh=ZcblkuDSMv7tvtn/vseBea9lWN9fs5R+BIKAqQHnsjM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bnK9yC91Q2RXLIbfoqd1xQykHDMZbA0bfcUilm4XGag4pIVVdfDH2Lq9+ITjDvuRGshnbAoSQX2Ys0lvgmoFP+viqlkkRMD9g09iD2VRUs5MKaZlCVm/eJOn+5aaYADU7oF4U/a3OtR9ty9xXD9kY4V/wLcZerNWsP/AxiOqdN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j21QyHbX; arc=none smtp.client-ip=209.85.218.45
+	s=arc-20240116; t=1715692131; c=relaxed/simple;
+	bh=lJ4M28ShGbipfUlXRuryczQZJv4W7HNw0NKMqTL9vm0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NFmLJRdpQfk6KWe9+HYTnRMY3aq1FrqxwObUKy7JTZuS7c+2C5SMnizwOSD9QYdLpisdjItW6oD20U9VnON1Py0/t4qukqQtT0Bp7E09kCIK/GQrGTWh2i0T11sK3rTjojVlDgsn/qx/NN53+MdTEzkyT6N8miQ4zrR3DvIVw1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iwcHZivL; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a5a4bc9578cso7032866b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:08:47 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5a7d28555bso36551866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715692126; x=1716296926; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zeT6KnLVfhQXaqC3Lu4DkuZNlc4YLw9XtuNUDZ2X/BE=;
-        b=j21QyHbXXZCSqc50bIZmrSoW8YkiXvRWX4oxNyXkFDVYImoS99hwMNKXNR1GQyFAOd
-         P9O39C8Oc5kPYNgTrh0IhUfP33lzlNmtQeMPkaZ0kVxhQ8YLGf3k1vxOxO7THJ59wJJ+
-         c2UyZNaVhpexrk+uP3a750SWDLTTFqvSFIod1Zr+Xl9+JNj5ZpYomptYLB1nvOM2qpm+
-         rbW330r5k/YTzOyc1eY+pTDF8ixavbkb0Bp+P8gQd2oyVS/YOFRvK7lBsbGcNk3vJcC/
-         Lp2xR8Qkqy0WPN/ZcdItUZpNHbJVlD6542iUjrorQTDTebVTAYSawCYm0jXfP/q90/px
-         W+Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692126; x=1716296926;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1715692128; x=1716296928; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zeT6KnLVfhQXaqC3Lu4DkuZNlc4YLw9XtuNUDZ2X/BE=;
-        b=XrDLcG8Cfz6MDjqeCgz+5IN9IpKcFTzHuDX6/0eraUCB5ENwqwLibqdTn18YaOF36P
-         39DYgZEBv/ZwRltsclhRXKr3YNhquLRlcatub+uGlKrzOCKuCknQHPcWuk9AXQxphtlL
-         6s7Wge3RHxELzXZbCoEzy1CGyI3MY0lMtYKaagXYAsBYMHW93EdG6zfcv1jIekFr7NzY
-         Npjxg70jeidO/YaeIib+lI8u5TmD1GDNo8BsX9FA/j35FuMdzJ8ieBf1uThcWYIb3844
-         6DA7mRFhRlgGJzEdGvJjFgUNvwN6A/JphAPf0aPC76teS+e+F4ETi1qG2r8bTAKnH12t
-         Sjvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8i0FeHxBWIQeBcCeZkv8ifYpwODYMHV/Axzzx3v3Ty63iPj+DCc4ag8z24V/kXcxVvaeoMXJGU7dhmwx86psGOD9qF6TXyTfsc0nH
-X-Gm-Message-State: AOJu0Yw2T7TtKjutFY0npHlCI1LhBdS3woQEReaiqUsGm2USkAzjyfkW
-	W24wkeC+x+0p8mwFWYV8YRco5ANKu8ae82fEoi2ygkGWEodywYZ/hzyUzaJDUA==
-X-Google-Smtp-Source: AGHT+IEyW5wWXcI0YcuMfRPEURlz7RUMcwyj0jHYGuOT5hpqOwAsP8E1/EwXva+mlyTkLrd58nrF6A==
-X-Received: by 2002:a17:906:fe07:b0:a5a:81b0:a6a9 with SMTP id a640c23a62f3a-a5a81b0a73cmr290104466b.53.1715692126068;
-        Tue, 14 May 2024 06:08:46 -0700 (PDT)
+        bh=L7YTa9xv3vHa0uYpcB9xiMfmcwkDWM/7SRo5P1u8PZg=;
+        b=iwcHZivL7mqNKcRjOHhQyETHzoZi6px1ZUFlTnmW93JbSNfGIUmCPxT+mxaxTd66Il
+         2q6HLWXKyMfbLQalYqMsERAEtVH8KqXUMMp9EehSzvCHOOKXsNwAFclViw8C4Guiij9X
+         lN+BwOKZtWknXtr3mAs0O6EwYz8xjZEh6eYGzKPXgFbLKwnsalCTtxHU1qD99MNmOawX
+         Trk3GEYV/7v20hHDDN3uo9ZrcgverceF+iuRwlepJPcuYnNYdpOX0b2UH18TFCed/Pnt
+         dvNMCEjkT59Q28csMMOPS0gJ+E7Y1XFgCoIbdAx6N5M5R+BLptRvdSFBAvaLzuXVOAgz
+         C01w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715692128; x=1716296928;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L7YTa9xv3vHa0uYpcB9xiMfmcwkDWM/7SRo5P1u8PZg=;
+        b=MUyBobTg0FAPnKmK9V4VHaCJViRj+baqEx2InBu3iNGw//ZgaIC6htfkXH2G+1ng8M
+         iLDQI0xM3i0iN5xkndTXijxHnGiYcK3TcjdF4iHJ6MGpjMYTimI/A9e+aKm+vZsxrOSI
+         ZO2Ze3OJeQiVqb7zSSCsG8MkQDFuiQfd7dLZn+gMU4Nm0F6URVtK9q1wlEqFFUGv+nkN
+         +bd69SOlvgPHQhVyLIhrKYHQj0ugHvQn7LlH6bcqr3lm6Wj9iWbHxcNz5qIKMT5kzTr2
+         gsvLgGmSKbgvUnOMLA0Y24Z4Fjp+ZcQUY0ZKA1h9SqkCxTCOGOz61RD5q0z1SaIuNmru
+         KNxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUat2zWakRLRSh5E5VoTUJokI6B1qwpRLcpxecoJssh8mCxIkQRoSQk6PstcvMKZrYdvpTbhuh4IjgNWoDeYX4d7U0Jaz5quiq4BpJA
+X-Gm-Message-State: AOJu0Yw73ii9Qqm+PpvARgKjv29Rlur3bQGWlE6NTzCb8Y+eWtjU9Joq
+	iPdl94hYrxnbYjWhCcAUittHuBLrW5CObI4GL9vyLbQDSCHoAaD1J09cdvh3sA==
+X-Google-Smtp-Source: AGHT+IEu0s0hnS1XYl6UiC9Z+DGGQBL3NhlIQ4iFpvrPafqjZmv+iQEAeWTewWvrOR5RUBuRVMY6ZA==
+X-Received: by 2002:a17:907:1b28:b0:a5a:5f31:7663 with SMTP id a640c23a62f3a-a5a5f31777bmr549608366b.56.1715692127703;
+        Tue, 14 May 2024 06:08:47 -0700 (PDT)
 Received: from [127.0.1.1] ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cf91sm719572466b.1.2024.05.14.06.08.44
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781cf91sm719572466b.1.2024.05.14.06.08.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 06:08:45 -0700 (PDT)
+        Tue, 14 May 2024 06:08:47 -0700 (PDT)
 From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 0/2] arm64: dts: qcom: Use 'ufshc' as the node name for UFS
- controller nodes
-Date: Tue, 14 May 2024 15:08:39 +0200
-Message-Id: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
+Date: Tue, 14 May 2024 15:08:40 +0200
+Subject: [PATCH 1/2] dt-bindings: ufs: qcom: Use 'ufshc' as the node name
+ for UFS controller nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,9 +78,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFdiQ2YC/x2MQQqAIBAAvyJ7bsFMi/pKdDDbag9ZKEUg/j3pO
- AMzCSIFpgiDSBDo4cinL1BXAtxu/UbIS2FQUmlpao33GtGfC3l7EK78opZtp2Zn+sYaKNkVqOh
- /OU45fwYcUmZiAAAA
+Message-Id: <20240514-ufs-nodename-fix-v1-1-4c55483ac401@linaro.org>
+References: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
+In-Reply-To: <20240514-ufs-nodename-fix-v1-0-4c55483ac401@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
  Konrad Dybcio <konrad.dybcio@linaro.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>, 
@@ -91,16 +92,16 @@ Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1214;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=926;
  i=manivannan.sadhasivam@linaro.org; h=from:subject:message-id;
- bh=ZcblkuDSMv7tvtn/vseBea9lWN9fs5R+BIKAqQHnsjM=;
- b=owEBbQGS/pANAwAKAVWfEeb+kc71AcsmYgBmQ2JcaJ9euCKId9vPpWsFIdRS2FdM2R5vL6pDl
- fZWwIiROd2JATMEAAEKAB0WIQRnpUMqgUjL2KRYJ5dVnxHm/pHO9QUCZkNiXAAKCRBVnxHm/pHO
- 9edqCACDqoqsYSw6t2XP/npVZcwSA/XSunW2FkD4mEAfxYKrhfV3MRmsTne0zbB8MSwnmO2r/YJ
- bf4ZgALL1+P8RkSSRRNQ+0Ly7z08Jb435scJlJVskteLH+clh5Z4CCVxrUFXMhKLOCERZyMJhJB
- ww2GNgy15M0ewcoqe78aMj9zM0Rc0aA12NlXs643WJG16wH4Fyi62fiDW/D89seZut7pG64Vfhv
- 97fdlqGmup6lNtv44Vfe1g1wK75VpWHTdVKh3bZlor9Ou9oMgEFTYz02/HXKsn637qoM2Jrn6vG
- IKG7v4vL/N60ZvTXWG5BGrGWz5aR5t8l1gN/1QFjMkkHA5AB
+ bh=lJ4M28ShGbipfUlXRuryczQZJv4W7HNw0NKMqTL9vm0=;
+ b=owGbwMvMwMUYOl/w2b+J574ynlZLYkhzTor5ZqQpXy/+Q/wqj3ncyaCYBuWC2MqHYUnzWXrPN
+ J+KC9vZyWjMwsDIxSArpsiSvtRZq9Hj9I0lEerTYQaxMoFMYeDiFICJJC9k/8mYybitWIO9tDBy
+ UvthqzbedQcbJNse7M0Rinvu3Fq0v9N13SebGXEix/bvSN99cu0BqTblxlmu95Var9mpRJ2/80T
+ KwKQ/VNTg/e8Q8bqpabs0P39gNrlTYth29Mm+Tfz17ltX9R4V743br514Zp3m6TNGhhtD+t5Fvn
+ 5a398ia/zgUqDh2U/6Ubs4Zuv47or05TUIc9W93Fa8x6qds+/0bc6HHtduTIvwORp6x6P/rVp8l
+ VNOkC5v9+FpBWuC5raFvVDZWMfTu+bNFpHb0UtTWxfNXL2oYePv5Dlyb+uNuPj3RiYa9KnoLzH+
+ u4H/98MzzMHVP/Ok63XMf+/WdfkwRep9WWzscp/cmJlaAA==
 X-Developer-Key: i=manivannan.sadhasivam@linaro.org; a=openpgp;
  fpr=C668AEC3C3188E4C611465E7488550E901166008
 
@@ -109,26 +110,24 @@ Devicetree binding has documented the node name for UFS controllers as
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
-Manivannan Sadhasivam (2):
-      dt-bindings: ufs: qcom: Use 'ufshc' as the node name for UFS controller nodes
-      arm64: dts: qcom: Use 'ufshc' as the node name for UFS controller nodes
-
  Documentation/devicetree/bindings/ufs/qcom,ufs.yaml | 2 +-
- arch/arm64/boot/dts/qcom/sa8775p.dtsi               | 2 +-
- arch/arm64/boot/dts/qcom/sc7280.dtsi                | 2 +-
- arch/arm64/boot/dts/qcom/sc8280xp.dtsi              | 4 ++--
- arch/arm64/boot/dts/qcom/sm6115.dtsi                | 2 +-
- arch/arm64/boot/dts/qcom/sm6125.dtsi                | 2 +-
- arch/arm64/boot/dts/qcom/sm6350.dtsi                | 2 +-
- arch/arm64/boot/dts/qcom/sm8550.dtsi                | 2 +-
- arch/arm64/boot/dts/qcom/sm8650.dtsi                | 2 +-
- 9 files changed, 10 insertions(+), 10 deletions(-)
----
-base-commit: 4cece764965020c22cff7665b18a012006359095
-change-id: 20240514-ufs-nodename-fix-40672bc593a5
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+index 10c146424baa..37112e17e474 100644
+--- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
++++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+@@ -273,7 +273,7 @@ examples:
+         #address-cells = <2>;
+         #size-cells = <2>;
+ 
+-        ufs@1d84000 {
++        ufshc@1d84000 {
+             compatible = "qcom,sm8450-ufshc", "qcom,ufshc",
+                          "jedec,ufs-2.0";
+             reg = <0 0x01d84000 0 0x3000>;
+
 -- 
-Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+2.25.1
 
 
