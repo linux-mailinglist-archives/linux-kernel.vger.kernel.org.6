@@ -1,284 +1,189 @@
-Return-Path: <linux-kernel+bounces-178472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ED58C4E2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06BD8C4E33
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC7F31C21955
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:53:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5735B284669
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ADC37714;
-	Tue, 14 May 2024 08:52:44 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD42723774;
+	Tue, 14 May 2024 08:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="oBSfBvnT"
+Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD46225A8;
-	Tue, 14 May 2024 08:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8280B1D54D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715676763; cv=none; b=PgnMoEhMwHkFJUDeHtE15obKqkVID04xstfYqR+nLzfJ6tvsru5EfxU/lHeFupwCTAmz/kPoT0wOVglIys155mkw0OIJVH0Hkbn+vUplFjVv3l1oqmSeW9cTY6LVlDNAD86aVjttfTW7ucoDp+Prwofr24k0mWFljQkB0NbxenI=
+	t=1715676832; cv=none; b=c9eCZ6IxuznwuQgsm3T5TY+q4OTn/+J77R7QLcnaB6A3ihWlb8MebMP3sUKDNrwYxIS6Zs226+Tojm8GwDGoENFi6675StJMPN2NNSSUGHUI0j5Ccxu6zt+mBJc0CI/rTf3NPWABzZWqhRJPxob9Ap5g5lmwjF56pZvDM79OvqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715676763; c=relaxed/simple;
-	bh=VnwPN1HC0Qg3a/FfvSmXTWKLTyLbOBEkoZkWOJT5MY8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JWamixnO7VLij+0cK9tsY7eURNmhCAQaJ7DadaJl2sYEI5W69jkvqKaPEgSNttyXFBt0HdrybwUctVvfVTZ81t5Wzv4k2WQ+kI3IRWyJ+zytHOxskovBQuvvBCF4/jQ5orAZXlLrHl0yfRgpWuTahc0j1X4JtSX49UAjRaf58XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdqqg3llsz4f3jLc;
-	Tue, 14 May 2024 16:52:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0DCBD1A016E;
-	Tue, 14 May 2024 16:52:37 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP1 (Coremail) with SMTP id cCh0CgBnOBFTJkNmDmeDMg--.26345S3;
-	Tue, 14 May 2024 16:52:36 +0800 (CST)
-Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
-To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
- dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
- <20240509011900.2694291-4-yukuai1@huaweicloud.com>
- <CALTww2-RPH_eYBumjxhHLkj7J2tfHskTYNif93Hwn5ksCN0+kA@mail.gmail.com>
- <06211ae2-9b5f-10c7-7953-9d79d2eacc67@huaweicloud.com>
- <CALTww28LM_b6SMC-vLY3y7R3ZD9z80H+2vZCXMzmAwnoEH-eMA@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2d457d0f-8bb5-39cb-0b8a-0bfdde1f560f@huaweicloud.com>
-Date: Tue, 14 May 2024 16:52:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1715676832; c=relaxed/simple;
+	bh=u490sMsjGbV8jE3M33NlqVKqtAFganfRrAmRY8YSR1s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GU3w7zlry6XYf1BJHubZ7UpYFvlTHCM89cFwghpeUTdZxjaw4waLwnN+QFPNdf7IFJBBUjtPIbNjG98dRME8u2UC8CF8X+1QnM+Vib4phsBDXsobF87q3Oxhlb4NHU8/L9pzKvL+okVS2JRrcOrMoGzuSXI2lQAeh7dtYyuSToI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=oBSfBvnT; arc=none smtp.client-ip=78.40.148.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9skQDCElW1f0fe5e3g4m2gYCa6PmukWW4OcftFfvfL4=; b=oBSfBvnT0l4rT5IsMRkgGm8vf7
+	gN09yabuyRJizlR2yBHlU/PfOyJsDtq3/dk2nuQKm/q880WsxpnRFc07vOeG77/jl0Zt9SBz6d3mI
+	UcQIbITqSg3zNoIK2l9ewg91qruNshvcm1WEs+IRE3y9tVZBq4qPSr7cRB5OnFzUUnGSQnuLN2PBi
+	2PziMr43gMyzoeW/LsNk8N8fxavbVmjrsENDwSfJWM0QdRgHXdSA7y2/ytFT1p2fmXnvxuAYV2dxB
+	YDDefkmJyIpVZ/3KYxTP01+WyTGj8Ro0SLVkbY+U0SpX/ArdmyA1JmXiFYNYtJGuc/eB25WSj6kJb
+	omNY8gNw==;
+Received: from [167.98.27.226] (helo=Pauls-MBP-2.office.codethink.co.uk)
+	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
+	id 1s6nuh-003Crb-GL; Tue, 14 May 2024 09:53:36 +0100
+From: Paul Sherwood <paul.sherwood@codethink.co.uk>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	bristot@redhat.com,
+	vschneid@redhat.com,
+	linux-kernel@vger.kernel.org
+Cc: Paul Sherwood <paul.sherwood@codethink.co.uk>,
+	Phil Auld <pauld@redhat.com>
+Subject: [PATCH v2] sched/deadline: Fix grammar and typos in comments
+Date: Tue, 14 May 2024 09:52:40 +0100
+Message-Id: <20240514085240.54199-1-paul.sherwood@codethink.co.uk>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CALTww28LM_b6SMC-vLY3y7R3ZD9z80H+2vZCXMzmAwnoEH-eMA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBnOBFTJkNmDmeDMg--.26345S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xw4fuw4kCrWUGFW3KF17ZFb_yoW7Kw47pF
-	W0yFn8Zr4UXry7Jr12q3WDta9ayr1IqryUXry3Ga48J3ZxKFn3G3WUJF17Cryvyr15uryj
-	vrWDGFW3uF4YyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
-	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: 7bit
+Sender: paul.sherwood@codethink.co.uk
 
+Fix some typos and grammar issues in sched deadline comments:
 
+- conjugate verb to match subject of sentence
+- s/a entity/an entity/g
+- s/this misbehave/this misbehaviour/
+- a few typos
 
-在 2024/05/14 16:40, Xiao Ni 写道:
-> On Tue, May 14, 2024 at 3:39 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/05/14 14:52, Xiao Ni 写道:
->>> On Mon, May 13, 2024 at 5:31 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>>>
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> The new helpers will get current sync_action of the array, will be used
->>>> in later patches to make code cleaner.
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>> ---
->>>>    drivers/md/md.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
->>>>    drivers/md/md.h |  3 +++
->>>>    2 files changed, 67 insertions(+)
->>>>
->>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
->>>> index 00bbafcd27bb..48ec35342d1b 100644
->>>> --- a/drivers/md/md.c
->>>> +++ b/drivers/md/md.c
->>>> @@ -69,6 +69,16 @@
->>>>    #include "md-bitmap.h"
->>>>    #include "md-cluster.h"
->>>>
->>>> +static char *action_name[NR_SYNC_ACTIONS] = {
->>>> +       [ACTION_RESYNC]         = "resync",
->>>> +       [ACTION_RECOVER]        = "recover",
->>>> +       [ACTION_CHECK]          = "check",
->>>> +       [ACTION_REPAIR]         = "repair",
->>>> +       [ACTION_RESHAPE]        = "reshape",
->>>> +       [ACTION_FROZEN]         = "frozen",
->>>> +       [ACTION_IDLE]           = "idle",
->>>> +};
->>>> +
->>>>    /* pers_list is a list of registered personalities protected by pers_lock. */
->>>>    static LIST_HEAD(pers_list);
->>>>    static DEFINE_SPINLOCK(pers_lock);
->>>> @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const char *buf, size_t len)
->>>>    static struct md_sysfs_entry md_metadata =
->>>>    __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
->>>>
->>>> +enum sync_action md_sync_action(struct mddev *mddev)
->>>> +{
->>>> +       unsigned long recovery = mddev->recovery;
->>>> +
->>>> +       /*
->>>> +        * frozen has the highest priority, means running sync_thread will be
->>>> +        * stopped immediately, and no new sync_thread can start.
->>>> +        */
->>>> +       if (test_bit(MD_RECOVERY_FROZEN, &recovery))
->>>> +               return ACTION_FROZEN;
->>>> +
->>>> +       /*
->>>> +        * idle means no sync_thread is running, and no new sync_thread is
->>>> +        * requested.
->>>> +        */
->>>> +       if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
->>>> +           (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED, &recovery)))
->>>> +               return ACTION_IDLE;
->>>
->>> Hi Kuai
->>>
->>> Can I think the above judgement cover these two situations:
->>> 1. The array is readonly / readauto and it doesn't have
->>> MD_RECOVERY_RUNNING. Now maybe it has MD_RECOVERY_NEEDED, it means one
->>> array may want to do some sync action, but the array state is not
->>> readwrite and it can't start.
->>> 2. The array doesn't have MD_RECOVERY_RUNNING and MD_RECOVERY_NEEDED
->>>
->>>> +
->>>> +       if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
->>>> +           mddev->reshape_position != MaxSector)
->>>> +               return ACTION_RESHAPE;
->>>> +
->>>> +       if (test_bit(MD_RECOVERY_RECOVER, &recovery))
->>>> +               return ACTION_RECOVER;
->>>> +
->>>> +       if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
->>>> +               if (test_bit(MD_RECOVERY_CHECK, &recovery))
->>>> +                       return ACTION_CHECK;
->>>> +               if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
->>>> +                       return ACTION_REPAIR;
->>>> +               return ACTION_RESYNC;
->>>> +       }
->>>> +
->>>> +       return ACTION_IDLE;
->>>
->>> Does it need this? I guess it's the reason in case there are other
->>> situations, right?
->>
->> Yes, we need this, because they are many places to set
->> MD_RECOVERY_NEEDED, while there are no sync action actually, this case
->> is 'idle'.
-> 
-> To be frank, the logic in action_show is easier to understand than the
-> logic above. I have taken more than half an hour to think if the logic
-> here is right or not. In action_show, it only needs to think when it's
-> not idle and it's easy.
-> 
-> Now this patch logic needs to think in the opposite direction: when
-> it's idle. And it returns ACTION_IDLE at two places which means it
-> still needs to think about when it has sync action. So it's better to
-> keep the original logic in action_show now. It's just my 2 cents
-> point.
+Signed-off-by: Paul Sherwood <paul.sherwood@codethink.co.uk>
+Reviewed-by: Phil Auld <pauld@redhat.com>
+---
+ kernel/sched/deadline.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-Hi,
-
-but the logical is exactlly the same as action_show(), and there are
-no functional changes. I just remove the local variable and return
-early, because I think code is cleaner this way...
-
-action_show:
-
-char *type = "idle"
-
-if (test_bit() || xxx) {
-
-  if (xxx)
-   type ="reshape"
-  else if(xxx)
-   type ="resync/check/repair"
-  else if(xxx)
-   type = "recover"
-  else if (xxx)
-   type = "reshape"
-  -> else is idle
-}
--> else is idle
-
-The above two place are corresponding to the new code to return
-ACTION_IDLE.
-
-Thanks,
-Kuai
-
-> 
-> Best Regards
-> Xiao
-> 
->>
->> Thanks,
->> Kuai
->>
->>>
->>> Regards
->>> Xiao
->>>
->>>> +}
->>>> +
->>>> +enum sync_action md_sync_action_by_name(char *page)
->>>> +{
->>>> +       enum sync_action action;
->>>> +
->>>> +       for (action = 0; action < NR_SYNC_ACTIONS; ++action) {
->>>> +               if (cmd_match(page, action_name[action]))
->>>> +                       return action;
->>>> +       }
->>>> +
->>>> +       return NR_SYNC_ACTIONS;
->>>> +}
->>>> +
->>>> +char *md_sync_action_name(enum sync_action action)
->>>> +{
->>>> +       return action_name[action];
->>>> +}
->>>> +
->>>>    static ssize_t
->>>>    action_show(struct mddev *mddev, char *page)
->>>>    {
->>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
->>>> index 2edad966f90a..72ca7a796df5 100644
->>>> --- a/drivers/md/md.h
->>>> +++ b/drivers/md/md.h
->>>> @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct mddev *mddev, struct md_thread __rcu **t
->>>>    extern void md_wakeup_thread(struct md_thread __rcu *thread);
->>>>    extern void md_check_recovery(struct mddev *mddev);
->>>>    extern void md_reap_sync_thread(struct mddev *mddev);
->>>> +extern enum sync_action md_sync_action(struct mddev *mddev);
->>>> +extern enum sync_action md_sync_action_by_name(char *page);
->>>> +extern char *md_sync_action_name(enum sync_action action);
->>>>    extern bool md_write_start(struct mddev *mddev, struct bio *bi);
->>>>    extern void md_write_inc(struct mddev *mddev, struct bio *bi);
->>>>    extern void md_write_end(struct mddev *mddev);
->>>> --
->>>> 2.39.2
->>>>
->>>
->>> .
->>>
->>
->>
-> 
-> .
-> 
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index a04a436af8cc..e9334b11edde 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -4,9 +4,9 @@
+  *
+  * Earliest Deadline First (EDF) + Constant Bandwidth Server (CBS).
+  *
+- * Tasks that periodically executes their instances for less than their
++ * Tasks that periodically execute their instances for less than their
+  * runtime won't miss any of their deadlines.
+- * Tasks that are not periodic or sporadic or that tries to execute more
++ * Tasks that are not periodic or sporadic or that try to execute more
+  * than their reserved bandwidth will be slowed down (and may potentially
+  * miss some of their deadlines), and won't affect any other task.
+  *
+@@ -816,16 +816,16 @@ static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+  * exhausting its runtime.
+  *
+  * Here we are interested in making runtime overrun possible, but we do
+- * not want a entity which is misbehaving to affect the scheduling of all
++ * not want an entity which is misbehaving to affect the scheduling of all
+  * other entities.
+  * Therefore, a budgeting strategy called Constant Bandwidth Server (CBS)
+  * is used, in order to confine each entity within its own bandwidth.
+  *
+  * This function deals exactly with that, and ensures that when the runtime
+- * of a entity is replenished, its deadline is also postponed. That ensures
++ * of an entity is replenished, its deadline is also postponed. That ensures
+  * the overrunning entity can't interfere with other entity in the system and
+- * can't make them miss their deadlines. Reasons why this kind of overruns
+- * could happen are, typically, a entity voluntarily trying to overcome its
++ * can't make them miss their deadlines. Reasons why this kind of overrun
++ * could happen are, typically, an entity voluntarily trying to overcome its
+  * runtime, or it just underestimated it during sched_setattr().
+  */
+ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+@@ -860,7 +860,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+ 	 * At this point, the deadline really should be "in
+ 	 * the future" with respect to rq->clock. If it's
+ 	 * not, we are, for some reason, lagging too much!
+-	 * Anyway, after having warn userspace abut that,
++	 * Anyway, after having warned userspace about that,
+ 	 * we still try to keep the things running by
+ 	 * resetting the deadline and the budget of the
+ 	 * entity.
+@@ -896,8 +896,8 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+  *
+  * IOW we can't recycle current parameters.
+  *
+- * Notice that the bandwidth check is done against the deadline. For
+- * task with deadline equal to period this is the same of using
++ * Notice that the bandwidth check is done against the deadline. For a
++ * task with deadline equal to period this is the same as using
+  * dl_period instead of dl_deadline in the equation above.
+  */
+ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
+@@ -930,8 +930,8 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
+ }
+ 
+ /*
+- * Revised wakeup rule [1]: For self-suspending tasks, rather then
+- * re-initializing task's runtime and deadline, the revised wakeup
++ * Revised wakeup rule [1]: For self-suspending tasks, rather than
++ * re-initializing the task's runtime and deadline, the revised wakeup
+  * rule adjusts the task's runtime to avoid the task to overrun its
+  * density.
+  *
+@@ -941,7 +941,7 @@ static bool dl_entity_overflow(struct sched_dl_entity *dl_se, u64 t)
+  * Therefore, runtime can be adjusted to:
+  *     runtime = (dl_runtime / dl_deadline) * (deadline - t)
+  *
+- * In such way that runtime will be equal to the maximum density
++ * This way the runtime will be equal to the maximum density
+  * the task can use without breaking any rule.
+  *
+  * [1] Luca Abeni, Giuseppe Lipari, and Juri Lelli. 2015. Constant
+@@ -987,9 +987,9 @@ static inline bool dl_is_implicit(struct sched_dl_entity *dl_se)
+  * When the task is starting a new period, the Original CBS is used. In this
+  * case, the runtime is replenished and a new absolute deadline is set.
+  *
+- * When a task is queued before the begin of the next period, using the
+- * remaining runtime and deadline could make the entity to overflow, see
+- * dl_entity_overflow() to find more about runtime overflow. When such case
++ * When a task is queued before the beginning of the next period, using the
++ * remaining runtime and deadline could make the entity overflow, see
++ * dl_entity_overflow() to find more about runtime overflow. When such a case
+  * is detected, the runtime and deadline need to be updated.
+  *
+  * If the task has an implicit deadline, i.e., deadline == period, the Original
+@@ -1002,7 +1002,7 @@ static inline bool dl_is_implicit(struct sched_dl_entity *dl_se)
+  * runtime/deadline in a period. With deadline < period, the task would
+  * overrun the runtime/period allowed bandwidth, breaking the admission test.
+  *
+- * In order to prevent this misbehave, the Revisited CBS is used for
++ * In order to prevent this misbehaviour, the Revisited CBS is used for
+  * constrained deadline tasks when a runtime overflow is detected. In the
+  * Revisited CBS, rather than replenishing & setting a new absolute deadline,
+  * the remaining runtime of the task is reduced to avoid runtime overflow.
+-- 
+2.33.0
 
 
