@@ -1,77 +1,113 @@
-Return-Path: <linux-kernel+bounces-179206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6E5A8C5D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:46:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E5D8C5CFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:39:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03DDE1C21168
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987CD1F22A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0E7181CE5;
-	Tue, 14 May 2024 21:46:09 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014F9180A77;
-	Tue, 14 May 2024 21:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7C0181D14;
+	Tue, 14 May 2024 21:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bieQw72Z"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31489180A77
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715723169; cv=none; b=ctLcyD7o2DFeW5CqPNDThUmmnn33Rp42Gc47gwyG5w50QpPwJ38c0sODMm/m4iT40BjEdzdc1UANT2+HCRzZzaf4ShWxJpKHgWccUa6BREVHrJIhgMZu4yl97WUeZsMIPxLWgUS6otl2ZkE41F2Fdzxo5IXinJmW0fVCsbKisSk=
+	t=1715722775; cv=none; b=nDaVwrAW1Pc4dIu3SB8Zt3i8Pp6/LFLcDGGOSHnGIb87hDC5yNve8pkDCfgrI6juqxG6hSUJUVh2rSzOHBMOerGgUs4FfWQXpWabi8AKlZPd2o4bhRJGC82+foiAXLTB7A/JB9TMyWUpyhXkzR7IHOvCVvYZQMMAsEyWGsd9838=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715723169; c=relaxed/simple;
-	bh=tA0JXE2hoL6cfxV24wwc92Ng3pYIs8abpFOuRnVXY1A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=f50cqnDPUsJWKwy9shL5Ue2Wk+gfwmwLNiBf0TK2KK+A0AklYo5/WIYJZAHbTZ5jWxYtXiJ1F9apIBlDP0y70CJPupKlWTwEeYS3LcsfKRmQ2FgAkerHQXL1zKwWDePRrCJJCcGqghSPHHlmf3WCTL63I4Ntyj6RF/pdWZelPv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 2B44792009C; Tue, 14 May 2024 23:38:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 2116892009B;
-	Tue, 14 May 2024 22:38:19 +0100 (BST)
-Date: Tue, 14 May 2024 22:38:19 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-    Nathan Chancellor <nathan@kernel.org>, 
-    Nick Desaulniers <ndesaulniers@google.com>, 
-    Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-    linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    llvm@lists.linux.dev, Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 6/8] MIPS: Limit MIPS_MT_SMP support by ISA reversion
-In-Reply-To: <20240202-llvm-msym32-v1-6-52f0631057d6@flygoat.com>
-Message-ID: <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk>
-References: <20240202-llvm-msym32-v1-0-52f0631057d6@flygoat.com> <20240202-llvm-msym32-v1-6-52f0631057d6@flygoat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1715722775; c=relaxed/simple;
+	bh=wtVIF8Wge5YdecSIDp9ap1mpirYKwrUhFLT4RyPR9Oo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lpCFmmE5ODV9FTruCUtoez1ZoEG1Jx2g+beGS6gsB0P1PpNeYHuiBeoHGKu4X/OM0hQ2+0VWrpflZ8vxs+j03uGyuqRUGfGBlZwkktbIQEyYe4zZ7BZ3/NXuR//Y3hBntdkGrKhWyMfxPDFThFUr4yRMKUwGB1OFWZFh0jVeOp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bieQw72Z; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EKrB0A031386;
+	Tue, 14 May 2024 21:39:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=DnWgp2QmvAuQ8Do/IwlTa4K4noZyV9DzLZUq1Y7CHso=;
+ b=bieQw72Zs3CfZ8AmraqSJW5A0VLJHSCfsYpmQflH+1DwWD12jIQGRERxzBv3wTQIHLJn
+ ZiiSkpPqP/rs2o+JGh9He0I5zUenUIl+GbqRhA03meCl8X+WhcGL8Ngj9k84WFAbE+9v
+ A7uwYH4X0Yh80MhcNd+d577vcreVpa3Ec94siemHGBkjphresPKfUMjgqUfxyLAVmreG
+ DoFfkOhxMwh/DVAXptCM/QhTYtuiO+eLrYuxrrd7VikdCx1lTPQ5/QOpGILwMwz9MRuZ
+ T21jTQDGMpE3Szhs/jDVrH+jHJDDmKqa9jfCYWwJ3BZua11Hr/DsUtu4nttrZ8BusywJ Ww== 
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4fch048m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 21:39:24 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EJuMaj029568;
+	Tue, 14 May 2024 21:39:23 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2n7kqfhd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 21:39:23 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44ELdLbC24904242
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 21:39:23 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E9EE658055;
+	Tue, 14 May 2024 21:39:20 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81CDE5804B;
+	Tue, 14 May 2024 21:39:20 +0000 (GMT)
+Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 21:39:20 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: linux-fsi@lists.ozlabs.org
+Cc: eajames@linux.ibm.com, linux-kernel@vger.kernel.org, jk@ozlabs.org,
+        joel@jms.id.au, alistair@popple.id.au
+Subject: [PATCH v5 0/3] fsi: Update drivers with latest documentation
+Date: Tue, 14 May 2024 16:39:17 -0500
+Message-Id: <20240514213920.159357-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 8VyQKj-ZfQOpoWcRfck3GddwmUbZMjbl
+X-Proofpoint-ORIG-GUID: 8VyQKj-ZfQOpoWcRfck3GddwmUbZMjbl
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_13,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=484
+ suspectscore=0 phishscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ bulkscore=0 impostorscore=0 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.12.0-2405010000 definitions=main-2405140156
 
-On Fri, 2 Feb 2024, Jiaxun Yang wrote:
+This series was previously included in
+https://lore.kernel.org/all/20240429210131.373487-1-eajames@linux.ibm.com/
 
-> MIPS MT ASE is only available on ISA between Release 1 and Release 5.
+This series updates the SCOM and OCC drivers to be compatible with the
+latest documentation.
 
- R2+ only actually, as also evident from Kconfig...
+Eddie James (3):
+  fsi: occ: Get device number from FSI minor number API
+  fsi: occ: Find next available child rather than node name match
+  fsi: scom: Update compatible string to match documentation
 
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -2171,7 +2171,8 @@ config CPU_R4K_CACHE_TLB
->  config MIPS_MT_SMP
->  	bool "MIPS MT SMP support (1 TC on each available VPE)"
->  	default y
-> -	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MIPSR6 && !CPU_MICROMIPS
-> +	depends on TARGET_ISA_REV > 0 && TARGET_ISA_REV < 6
-> +	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MICROMIPS
->  	select CPU_MIPSR2_IRQ_VI
->  	select CPU_MIPSR2_IRQ_EI
-                   ^^^^^^
- ... here.  I wish people looked beyond the line they change, sigh...
+ drivers/fsi/fsi-occ.c  | 49 +++++++++---------------------------------
+ drivers/fsi/fsi-scom.c |  1 +
+ 2 files changed, 11 insertions(+), 39 deletions(-)
 
-  Maciej
+-- 
+2.39.3
+
 
