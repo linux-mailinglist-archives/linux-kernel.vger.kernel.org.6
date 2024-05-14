@@ -1,78 +1,84 @@
-Return-Path: <linux-kernel+bounces-179204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FDE38C5D01
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C5BD8C5D02
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:45:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B179D1C2175C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:44:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D92B1C21622
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5F9181CF4;
-	Tue, 14 May 2024 21:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3626181D03;
+	Tue, 14 May 2024 21:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSB3y0TF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="ZB7mZQEk"
+Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB53F181CE4;
-	Tue, 14 May 2024 21:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE77B181BB0
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715723088; cv=none; b=K2iUpRbQDq/P6d0ShcfGUAkjAAJdOOck0IZhIrtO1fGJChj722d2sWu55T875E9MOGMEaAVANiFemWUlnnf90GKaDPlSWV/GsL5DqmNb+Yv42HnlU3DOiFhAUNwvkFjXe9fCiYvLXjnVMrkrTBHpt0VqqTYjhaoQOr6JqjUTGG8=
+	t=1715723118; cv=none; b=oFNejv4Edx5iZgOotVuXnavaUWpy1VyCWybcVDdgcLNZEgaV6T5GG+aXirCTvLRjpEEgdxQdQsrkim0y+PS6Dpd5hoUIVJn1qMv+wsG413lwSfuKBmMHdaunTlUxK6zfyAcaE3kW/uC1etOr+WnLQ7clp1vX2qA33WY/8oCxST4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715723088; c=relaxed/simple;
-	bh=YOlc/DsKtz7RwpgN+N4oWeUegv5CDoz/T83fdg6LlPk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=GEZbRvkeNNRfjrgDf2Dox161QTnyJmg7WqXCiedKw7NS8cW3TCy1XybsUHmi615+pEy6Ja6bQuqqoEk2/IRlk7F3z5j2OKMDKmsxNI644yRenzTnpEyAc1U9gckUe1RUlbh2pzuE4pvmYUmcubv+bce23O3Jv6pxSLZJ9pov+A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSB3y0TF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C5F1AC4AF09;
-	Tue, 14 May 2024 21:44:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715723087;
-	bh=YOlc/DsKtz7RwpgN+N4oWeUegv5CDoz/T83fdg6LlPk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=XSB3y0TFehqGNDHSDSGROZiHSBcckKeTcKs7urF0ASNCJMWP2w4R04ZFaW5avwLpG
-	 8abGvOW1jsG/Orc42Al924QhZtOHLGGqDV/WIS5JCOe5pq6TXv7ZjHnl5CdJbpHTJR
-	 Zn51J9//uPbORWrJpkz454TmL7IGrWEvQrB9Na6886ya8XqzjYAhJIyYa2/5Mnyufs
-	 Uso0vbVS4YlhxPHDOZ66wqOdNHbcQPvKbZoY87/gCs8IlinobeZZYhoftiF04jd7cs
-	 XCAdQxTyUE8zPoGvVxeRtOwAqog/OmdQF9WKMt3fztt5GQZ3iA2jvqETUkleTYunp6
-	 immsvgnzkRzCw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C03E0C433A2;
-	Tue, 14 May 2024 21:44:47 +0000 (UTC)
-Subject: Re: [GIT PULL] SPI updates for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <9e996db977142fec01e9cbbbfb79c07d.broonie@kernel.org>
-References: <9e996db977142fec01e9cbbbfb79c07d.broonie@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <9e996db977142fec01e9cbbbfb79c07d.broonie@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.10
-X-PR-Tracked-Commit-Id: d6e7ffd4820f8894eb865890c96852085d3640e1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e2b4a5bf32ffd0f5964e9949a82232fe5363b123
-Message-Id: <171572308778.14334.6915391357636087444.pr-tracker-bot@kernel.org>
-Date: Tue, 14 May 2024 21:44:47 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=arc-20240116; t=1715723118; c=relaxed/simple;
+	bh=tziv604qZlibS++2mEJNNkzIBE7jl7XamSsnA5/dX+A=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fbhV+xASOBV1EWSK2habtoCRIKLgvuux4SawQXX78xaszM/st2057TcsHmAUHfBHCTBlhsRIKD4AHov6prtEOKIlCd8LL5Hqw/xE3Dm5VKYZh5A7CQ+LOYb+TFQSu5zjHXfgmIJmE5q3lIzRLqXz5xCM03WXyCleETViqnDcO/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=ZB7mZQEk; arc=none smtp.client-ip=4.36.192.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codeweavers.com; s=s1; h=Message-ID:Date:Subject:To:From:Cc:Sender;
+	bh=OhI+HzqmcnuBP2LdgO9mbsFMxHDT6dqpMeBbtQADdAM=; b=ZB7mZQEkZXm39446UFhUrUHC/a
+	tFfgZLNOdVYfsmbdy4yDO6IaVDeKNyTFEGjY0xpdJELNngKwyoYdXORxsrLQKyzBnUXLc0jY0NfHF
+	v1ZfnARI9O5+nZmX7RIF4w7KRKiVUGIv8+U1E7vbGUxvu0eQfY+UYjo0cD/+0vZyBhCgs8Bd4MrL6
+	jW0jWeu1d+U8GJrFp1qgnWwfbDGk72IPsB1IIK8OJutb8jVr4tQqQiYjqC88ei3keA3hcUukXBLrG
+	6k8LoTY4x9VbCv1wdwslxokoeIm015PqVlCejKE2Qt7e5nVlblwMa0yWTm4hcdIw8l3mkLh2uB/i1
+	UnuCEZZg==;
+Received: from [10.69.139.17] (helo=watership.localnet)
+	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <zfigura@codeweavers.com>)
+	id 1s6zxS-004lFj-17;
+	Tue, 14 May 2024 16:45:14 -0500
+From: Elizabeth Figura <zfigura@codeweavers.com>
+To: linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject:
+ Re: [PATCH] misc: ntsync: mark driver as "broken" to prevent from building
+Date: Tue, 14 May 2024 16:45:13 -0500
+Message-ID: <12433821.O9o76ZdvQC@watership>
+In-Reply-To: <2024051450-abrasion-swizzle-550b@gregkh>
+References: <2024051450-abrasion-swizzle-550b@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-The pull request you sent on Mon, 13 May 2024 10:39:18 +0100:
+On Tuesday, May 14, 2024 2:16:51=E2=80=AFAM CDT Greg Kroah-Hartman wrote:
+> The ntsync code is only partially enabled in the kernel at this point in
+> time, creating the device node and that's about it.  Don't confuse
+> systems that expect to see a working ntsync interface by teasing it with
+> this basic structure at this point in time, so mark the code as "broken"
+> so that it is not built and enabled just yet.
+>=20
+> Once the rest of the code is accepted, this will be reverted so that the
+> driver can be correctly built and used, but for now, this is the safest
+> way forward.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.10
+Reviewed-by: Elizabeth Figura <zfigura@codeweavers.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e2b4a5bf32ffd0f5964e9949a82232fe5363b123
+=2D-
 
-Thank you!
+I was even thinking of suggesting something like this myself. Sorry for
+taking so long to get the rest of the patches into acceptable shape...
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+
 
