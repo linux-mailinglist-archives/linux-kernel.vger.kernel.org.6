@@ -1,307 +1,176 @@
-Return-Path: <linux-kernel+bounces-178827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5F28C584E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:53:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90C558C5851
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA2C28464F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5F11F236FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83B717EB81;
-	Tue, 14 May 2024 14:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC3317EB81;
+	Tue, 14 May 2024 14:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBri0pjY"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="YRJ6+luM"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC711E487;
-	Tue, 14 May 2024 14:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26ED617B518
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715698416; cv=none; b=UbV5LgoDUq5NQVRczdhnc4GUUuim6rMnnD/vvxyWjWOsFZYL6gnM92g0FQGvj3/EHffUDCOrZxvq400iet4jnT+wBG/7ajyfdkvDh6IQHbs5WERytSDiVz1K31htvq76rPPGC+mZSl7JkQ5xM+xzFe40ep6oYUsTu5WGUoj/g/4=
+	t=1715698454; cv=none; b=NJXyokdbzjWxrltazgsUh7dhE/87zMbhT5KrIxpH1fZV9K0pGb7zxLSjetpzs2K9xBuqE0GU8KOX1WcQfc3pjB8HHIErm0cWcUBa3YCJPHeh0tEcoJHDlWD61vkD/2vbjwZ0KULPoPiMqT95CpUIYK0MRO00qeGhkMqqdK96Ls0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715698416; c=relaxed/simple;
-	bh=OZGLkT0oDKEotX35CeqO+sNDpE6JrfeT19NwbZb8gK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Om6kIdDgIdqmJw38jqN6vGDIs3uUyqqJ77GjyxgdksYJPLzwgeRLE0MSyzLEbVnIMrKWHOWcOkX10EkR3ZpOEQVTL/DjAwgW/pqM16aFCU6cyfWibsktdnPE5GNIszRaVtLwgDsJh9hRHLHQtFiI68rIRvvf5+KIQkqxInJeJ0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBri0pjY; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6ed3587b93bso3160942a34.1;
-        Tue, 14 May 2024 07:53:35 -0700 (PDT)
+	s=arc-20240116; t=1715698454; c=relaxed/simple;
+	bh=MJ+z3nFXsNvqU4RpICcjSdTIlE37ym0IdiJZ2gNDNrY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=B4BqR/DbutsV3VgWYKak7Sjb3JaTWtpFWsuA04qQGs3GXUmLn86k2Kz/5zWcJuymHnqlff070m6lPMG1ZhEoTQLz57zeq86WHaR7bwyOyoxY05BR692AU1PngURfrgBZIb0onAsr9am9qBNo5VLtH9REYA8UsqYxEhfos3htysE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=YRJ6+luM; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-6f0ede03023so1799984a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:54:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715698414; x=1716303214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=cloudflare.com; s=google09082023; t=1715698452; x=1716303252; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bXisbGudY3dtAzfjTejwyHwzxNqxmrPI7H48Yup1GB0=;
-        b=mBri0pjYo7q+T0V1N9J0s3g6M8qYHi95GtTYokR0/ucAfWbihx6iT8+NgWtF+oMDKv
-         Am+W3b6jYOUgcyvgB/23++CYxXtDwJkMhUM37O3VdD6y9kYefdQ/s3S47eg0OGkJO5p0
-         QVq5AdIov8rjBE+3qXqOwLsOPLvSnj02QHDb6PgbyzPO6GbNeK9lPXEEr/RoxcRUAT96
-         TiDfFI5shTogEu9CLVLV6Z56aPnska1pVQR+q87/0NmBsn5i4TpQCnS1D5yHuF0/n4nw
-         ngO+RuSOvajWp5zu4dORTt14NSJmjRdg2kYkeDXjX6YctSufBRjDm9hPYDeWKNSkKPXg
-         QqQA==
+        bh=Wpwk5gqnxfMpdpFSeAltyRUGvYXRaQMydwK8u+++1cM=;
+        b=YRJ6+luMPQe4TxEilwXUUqerihrapxMPF0jtum2jm9aGFq05XB0zGEvqtrxV38Z8xy
+         6zREwpSNh+cnixUCPiBdLBFWtBvraKHsDkcDHf5gqB6F6jPmjHsU1kPYsh2u+YQvDjb6
+         ZzLkonFwzICJk/51fioQ+9Rw7PcNXoC1OQcfy5J2psK3T1ZdOqvjqa2oV0mLDSbRVMJY
+         v350K7jwIKB6HRtPZ4N0Su7SqVsfKSYskqUNcrKLhbz9731E9GzfMcoERM6EG6sRoI0Y
+         z4BEBMIgIXRHUTGrXxWqzuOBb42w4fUfA2F4rW3KD73Ns57U4aRnOUQAsJAt9AGLmiKS
+         kErQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715698414; x=1716303214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1715698452; x=1716303252;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bXisbGudY3dtAzfjTejwyHwzxNqxmrPI7H48Yup1GB0=;
-        b=vNDGTjIJL+twqCQAaOJCi3I8fEf5fQd0J9QHWT+/mmzHsc2Em7lpde4f6PQ/j6sTCI
-         /PTJKddgU034l9ZI5cmkUsWEAVrdLWpfbMi72xKcPNIr9kmANcABRL9cb1Ud+UUrK85o
-         UaHq+T5ip/GPM+8TK5BlVs3qKbd/je7z8fY+RXL96dX2NpWw6dHFy/iIIMr5Do8IrK6d
-         oy4qh3CBPQd+AwRwPbcL9585GXN6xK8LQz6zfv2Wd1gbqja3EP3xNCiirI2fmihdO/BA
-         m0wZomXnNUWYDHs3UAtP3li9TARoqwJQpu6Dc5f5mrIp7UC0T16huUNvT6VKS9vtCn3+
-         EvQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvpppGwyOrSysO+yZEij3/lChOx0++ZUsG/4cjABZliQU7eo8hvOuVA6x8tvPKRJGy0o4gxRTfRyBvhc3J/gYxNlvahjWA/s6FRThT
-X-Gm-Message-State: AOJu0YzPrVW2GeiQT6k9v3ks9gSwsP2YmPAOL13XIwNgiXyxWJFvb5YO
-	O6a78taFqjR7LjMSWCaArhktb/M4mK4In72C1kvh/qJo6BMCrCdN
-X-Google-Smtp-Source: AGHT+IEAzv28vr3QpIJhr8CE5FZuNRCyskVfNxOa/BQlDd4Mcc3IJah3rBONoPpvEt1e2OsSANirIA==
-X-Received: by 2002:a05:6871:1c3:b0:22e:d324:b888 with SMTP id 586e51a60fabf-24172f6b584mr13773119fac.56.1715698414222;
-        Tue, 14 May 2024 07:53:34 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-43e046467a4sm53067841cf.83.2024.05.14.07.53.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 07:53:33 -0700 (PDT)
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 0122D1200069;
-	Tue, 14 May 2024 10:53:33 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute6.internal (MEProxy); Tue, 14 May 2024 10:53:33 -0400
-X-ME-Sender: <xms:7HpDZvNCTL3FROdqKKeLuEmgM2oTz9TdexX8jhQkgUmvarTRjv8rHw>
-    <xme:7HpDZp_vmNex3p1L34dA4kSbnqgjqAGYPn_XLUtxMriZ7J7x0Rj2-qpWpuuwoOV9g
-    1f9QqGus0nxnJWsBQ>
-X-ME-Received: <xmr:7HpDZuQ4W_M66MfbxJ9ZeBT0v5uqZTk__f5Ne1LSiNEoOF2e8dkR5LHSsFQsQA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegiedgkeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:7HpDZjt9BwLVg56D1emvrs-lQLI-b6KMVQVjjCA-9JT3g3JrIfLgYw>
-    <xmx:7HpDZncYW3Cq0hLnjVVVHXQJChAqRqvLxrnOCDdfsVEwFPV6S-WvMg>
-    <xmx:7HpDZv3wXu96_bJAZ4Cv7bG9UluNTMr0L0qxaJcmDd4RWee58_mg9w>
-    <xmx:7HpDZj97yTm38BlGU6MAIeVyG9YkiWJmU_w6f0kXd6CKtFNb0AX0ZA>
-    <xmx:7HpDZq_gSOhNuo9-15LZGMlAABXW58_LaoU6DSSLmdtnwIWdyYYw18ST>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 14 May 2024 10:53:32 -0400 (EDT)
-Date: Tue, 14 May 2024 07:53:20 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	elver@google.com, akpm@linux-foundation.org, tglx@linutronix.de,
-	peterz@infradead.org, dianders@chromium.org, pmladek@suse.com,
-	arnd@arndb.de, torvalds@linux-foundation.org, kernel-team@meta.com,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 cmpxchg 09/13] lib: Add one-byte emulation function
-Message-ID: <ZkN64LAeOfHAXyUM@boqun-archlinux>
-References: <b67e79d4-06cb-4a45-a906-b9e0fbae22c5@paulmck-laptop>
- <20240501230130.1111603-9-paulmck@kernel.org>
- <ZkInMNOsLO5XbDj5@boqun-archlinux>
- <9f0ff126-2806-488e-97cc-7258eff0c574@paulmck-laptop>
- <ZkI4XPJLeCtabfGh@boqun-archlinux>
- <ZkKD6UqXZozp1p-W@boqun-archlinux>
- <29f1d801-9fb4-4ecb-8d5e-cecb7d7a76e1@paulmck-laptop>
+        bh=Wpwk5gqnxfMpdpFSeAltyRUGvYXRaQMydwK8u+++1cM=;
+        b=L1Rh+tRIdyVIz5oS59ZMxafAChJjrkcSO5U00CqslFiEZ2AhxkrBU3vuBcCgvYdvSe
+         1Eqkbq7Uh0k4pUiUehR1o47bOXHopyN7rXGKQJmK7TnHakmiEpZXytJnfy1krAlhtajm
+         4iHZD4qDiwuGYRzZDbnXxOL9qCCxHYsY+plDzmtksyrf8t8qaqLDjD5C+fIJrd7E7ZY8
+         172jsiOmywUFShw69pSiYakulzBdhaHrxfoLQ0KkYCtok67fad1e/uv0pymqcm4sypLP
+         kOqIS1D+UUASXWDC1Cv0I9H6A8cr4iepD5n52on0o2zPyHtPOJ1UgyTq/cSAeozMJajU
+         /iAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW4MLKLgx7d6RIS2RMPzgPTQFdSwnuUisXHZTSOOIH0g7tNB/CysgHvYJGuNkeP04+9Xm9gM+9JgD3jAfHDEaII4waFbtXUpMAskJrd
+X-Gm-Message-State: AOJu0YzZZaW152RPSgV+iZGXJLPi03nYk59ookc2AcfXLDcqwgeXb9OD
+	Z7U6J0SBPCvKiHsI+a91NuspoAro8yw5/pjTd7T3HEFXKub7v8q640nhE93j5gwrEc7T98xym5C
+	mafBz24tvMEVxyXp/P7YNfDdlteD3/79TmQML/w==
+X-Google-Smtp-Source: AGHT+IGQnTMYr06AevH4jz+0Hl80twZxNa0hBXvLSl9Vls1Uucyej7vIQSvyuP6fpP8+OmTmyPVjz5InylwD098Z7Ak=
+X-Received: by 2002:a05:6830:1e72:b0:6f1:1946:9c6d with SMTP id
+ 46e09a7af769-6f11946a5fbmr772361a34.13.1715698452263; Tue, 14 May 2024
+ 07:54:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29f1d801-9fb4-4ecb-8d5e-cecb7d7a76e1@paulmck-laptop>
+References: <20240503221634.44274-1-ignat@cloudflare.com> <D10FIGJ84Q71.2VT5MH1VUDP0R@kernel.org>
+ <ZjY-UU8pROnwlTuH@farprobe> <D10Y0V64JXG8.1F6S3OZDACCGF@kernel.org>
+ <D10YYQKT9P1S.25CE053K7MQKI@kernel.org> <CALrw=nFLa5=bPbYKijNsEo0Kk77_TEpdPmPe3CJ3VJqGNMmBeg@mail.gmail.com>
+ <44cd50b60a0a4e376d01544d25187556b8badf94.camel@HansenPartnership.com>
+ <CALrw=nFOh0=TXGx-z_oTkLWshVU_AfGRQzcC3zxVTzcRbuRqQQ@mail.gmail.com> <b53f9fa263e65cd6b23677d9f7a385e5eb85cfdd.camel@HansenPartnership.com>
+In-Reply-To: <b53f9fa263e65cd6b23677d9f7a385e5eb85cfdd.camel@HansenPartnership.com>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Tue, 14 May 2024 15:54:00 +0100
+Message-ID: <CALrw=nGg7c39Hsb7nX5hCM23_qqeWFMTRJWmvyu+rKgyC75LPg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Ben Boeckel <me@benboeckel.net>, 
+	Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, serge@hallyn.com, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 07:22:47AM -0700, Paul E. McKenney wrote:
-> On Mon, May 13, 2024 at 02:19:37PM -0700, Boqun Feng wrote:
-> > On Mon, May 13, 2024 at 08:57:16AM -0700, Boqun Feng wrote:
-> > > On Mon, May 13, 2024 at 08:41:27AM -0700, Paul E. McKenney wrote:
+On Tue, May 14, 2024 at 3:11=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> On Tue, 2024-05-14 at 10:50 +0100, Ignat Korchagin wrote:
+> > On Mon, May 13, 2024 at 11:33=E2=80=AFPM James Bottomley
+> > <James.Bottomley@hansenpartnership.com> wrote:
+> > >
+> > > On Mon, 2024-05-13 at 18:09 +0100, Ignat Korchagin wrote:
 > > > [...]
-> > > > > > +#include <linux/types.h>
-> > > > > > +#include <linux/export.h>
-> > > > > > +#include <linux/instrumented.h>
-> > > > > > +#include <linux/atomic.h>
-> > > > > > +#include <linux/panic.h>
-> > > > > > +#include <linux/bug.h>
-> > > > > > +#include <asm-generic/rwonce.h>
-> > > > > > +#include <linux/cmpxchg-emu.h>
-> > > > > > +
-> > > > > > +union u8_32 {
-> > > > > > +	u8 b[4];
-> > > > > > +	u32 w;
-> > > > > > +};
-> > > > > > +
-> > > > > > +/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
-> > > > > > +uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> > > > > > +{
-> > > > > > +	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
-> > > > > > +	int i = ((uintptr_t)p) & 0x3;
-> > > > > > +	union u8_32 old32;
-> > > > > > +	union u8_32 new32;
-> > > > > > +	u32 ret;
-> > > > > > +
-> > > > > > +	ret = READ_ONCE(*p32);
-> > > > > > +	do {
-> > > > > > +		old32.w = ret;
-> > > > > > +		if (old32.b[i] != old)
-> > > > > > +			return old32.b[i];
-> > > > > > +		new32.w = old32.w;
-> > > > > > +		new32.b[i] = new;
-> > > > > > +		instrument_atomic_read_write(p, 1);
-> > > > > > +		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
-> > > > > 
-> > > > > Just out of curiosity, why is this `data_race` needed? cmpxchg is atomic
-> > > > > so there should be no chance for a data race?
-> > > > 
-> > > > That is what I thought, too.  ;-)
-> > > > 
-> > > > The problem is that the cmpxchg() covers 32 bits, and so without that
-> > > > data_race(), KCSAN would complain about data races with perfectly
-> > > > legitimate concurrent accesses to the other three bytes.
-> > > > 
-> > > > The instrument_atomic_read_write(p, 1) beforehand tells KCSAN to complain
-> > > > about concurrent accesses, but only to that one byte.
-> > > > 
-> > > 
-> > > Oh, I see. For that purpose, maybe we can just use raw_cmpxchg() here,
-> > > i.e. a cmpxchg() without any instrument in it. Cc Mark in case I'm
-> > > missing something.
-> > > 
-> > 
-> > I just realized that the KCSAN instrumentation is already done in
-> > cmpxchg() layer:
-> > 
-> > 	#define cmpxchg(ptr, ...) \
-> > 	({ \
-> > 		typeof(ptr) __ai_ptr = (ptr); \
-> > 		kcsan_mb(); \
-> > 		instrument_atomic_read_write(__ai_ptr, sizeof(*__ai_ptr)); \
-> > 		raw_cmpxchg(__ai_ptr, __VA_ARGS__); \
-> > 	})
-> > 
-> > and, this function is lower in the layer, so it shouldn't have the
-> > instrumentation itself. How about the following (based on today's RCU
-> > dev branch)?
-> 
-> The raw_cmpxchg() looks nicer than the added data_race()!
-> 
-> One question below, though.
-> 
-> 							Thanx, Paul
-> 
-> > Regards,
-> > Boqun
-> > 
-> > -------------------------------------------->8
-> > Subject: [PATCH] lib: cmpxchg-emu: Make cmpxchg_emu_u8() noinstr
-> > 
-> > Currently, cmpxchg_emu_u8() is called via cmpxchg() or raw_cmpxchg()
-> > which already makes the instrumentation decision:
-> > 
-> > * cmpxchg() case:
-> > 
-> > 	cmpxchg():
-> > 	  kcsan_mb();
-> > 	  instrument_atomic_read_write(...);
-> > 	  raw_cmpxchg():
-> > 	    arch_cmpxchg():
-> > 	      cmpxchg_emu_u8();
-> > 
-> > ... should have KCSAN instrumentation.
-> > 
-> > * raw_cmpxchg() case:
-> > 
-> > 	raw_cmpxchg():
-> > 	  arch_cmpxchg():
-> > 	    cmpxchg_emu_u8();
-> > 
-> > ... shouldn't have KCSAN instrumentation.
-> > 
-> > Therefore it's redundant to put KCSAN instrumentation in
-> > cmpxchg_emu_u8() (along with the data_race() to get away the
-> > instrumentation).
-> > 
-> > So make cmpxchg_emu_u8() a noinstr function, and remove the KCSAN
-> > instrumentation inside it.
-> > 
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
-> >  include/linux/cmpxchg-emu.h |  4 +++-
-> >  lib/cmpxchg-emu.c           | 14 ++++++++++----
-> >  2 files changed, 13 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/include/linux/cmpxchg-emu.h b/include/linux/cmpxchg-emu.h
-> > index 998deec67740..c4c85f41d9f4 100644
-> > --- a/include/linux/cmpxchg-emu.h
-> > +++ b/include/linux/cmpxchg-emu.h
-> > @@ -10,6 +10,8 @@
-> >  #ifndef __LINUX_CMPXCHG_EMU_H
-> >  #define __LINUX_CMPXCHG_EMU_H
-> >  
-> > -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
-> > +#include <linux/compiler.h>
-> > +
-> > +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new);
-> >  
-> >  #endif /* __LINUX_CMPXCHG_EMU_H */
-> > diff --git a/lib/cmpxchg-emu.c b/lib/cmpxchg-emu.c
-> > index 27f6f97cb60d..788c22cd4462 100644
-> > --- a/lib/cmpxchg-emu.c
-> > +++ b/lib/cmpxchg-emu.c
-> > @@ -21,8 +21,13 @@ union u8_32 {
-> >  	u32 w;
-> >  };
-> >  
-> > -/* Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg. */
-> > -uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> > +/*
-> > + * Emulate one-byte cmpxchg() in terms of 4-byte cmpxchg.
-> > + *
-> > + * This function is marked as 'noinstr' as the instrumentation should be done at
-> > + * outer layer.
-> > + */
-> > +noinstr uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> >  {
-> >  	u32 *p32 = (u32 *)(((uintptr_t)p) & ~0x3);
-> >  	int i = ((uintptr_t)p) & 0x3;
-> > @@ -37,8 +42,9 @@ uintptr_t cmpxchg_emu_u8(volatile u8 *p, uintptr_t old, uintptr_t new)
-> >  			return old32.b[i];
-> >  		new32.w = old32.w;
-> >  		new32.b[i] = new;
-> > -		instrument_atomic_read_write(p, 1);
-> 
-> Don't we need to keep that instrument_atomic_read_write() in order
-> to allow KCSAN to detect data races with plain C-language reads?
-> Or is that being handled some other way?
-> 
+> > > > TPM derived keys attempt to address the above use cases by
+> > > > allowing applications to deterministically derive unique
+> > > > cryptographic keys for their own purposes directly from the TPM
+> > > > seed in the owner hierarchy. The idea is that when an application
+> > > > requests a new key, instead of generating a random key and
+> > > > wrapping it with the TPM, the implementation generates a key via
+> > > > KDF(hierarchy seed, application specific info). Therefore, the
+> > > > resulting keys will always be cryptographically bound to the
+> > > > application itself and the device they were generated on.
+> > >
+> > > So I think what confuses me is what the expected cryptographic
+> > > secrecy properties of the derived keys are.  I get they're a KDF of
+> > > seed and deterministic properties, but if those mixing values are
+> > > well known (as the path or binary checksum cases) then anyone with
+> > > access to the TPM can derive the key from user space because they
+> > > can easily obtain the mixing parameters and there's no protection
+> > > to the TPM keyed hash operation.
+> > >
+> > > Consider the use case where two users are using derived keys on the
+> > > same system (so same TPM).  Assuming they use them to protect
+> > > sensitive information, what prevents user1 from simply deriving
+> > > user2's key and getting the information, or am I missing the point
+> > > of this?
+> >
+> > You are correct: it is possible, but in practice it would be limited
+> > only to privileged users/applications. I remember there was a push to
+> > set a 666 mask for the TPM device file, but it is not how it is done
+> > today by default.
+>
+> No, it's 660, but in consequence of that every user of the TPM is a
+> member of the tpm group which, since TPM use from userspace is growing,
+> is everyone, so it might as well have been 666.  In other words relying
+> on access restrictions to the TPM itself is largely useless.
+>
+> >  Also I think the same applies to trusted keys as well, at least
+> > without any additional authorizations or PCR restrictions on the blob
+> > (I remember I could manually unwrap a trusted key blob in userspace
+> > as root).
+>
+> Well, that's correct, but a TPM key file without policy still has two
+> protections: the file itself (so the key owner can choose what
+> permissions and where it is) and the key authority (or password)
+> although for the mechanical (unsupervised insertion) use case keys tend
+> not to have an authority.
+>
+> > It would be fixed if we could limit access to some TPM ops only from
+> > the kernel, but I remember from one of your presentations that it is
+> > generally a hard problem and that some solution was in the works (was
+> > it based on limiting access to a resettable PCR?). I'm happy to
+> > consider adopting it here as well somehow.
+>
+> Well, that was based on constructing a policy that meant only the
+> kernel could access the data (so it requires PCR policy).
+>
+> In addition to the expected secrecy property question which I don't
+> think is fully answered I did think of another issue: what if the
+> application needs to rotate keys because of a suspected compromise?
+> For sealed keys, we just generate a new one an use that in place of the
+> old, but for your derived keys we'd have to change one of the mixing
+> values, which all look to be based on fairly permanent properties of
+> the system.
 
-I think that's already covered by the current code, cmpxchg_emu_u8() is
-called from cmpxchg() macro, which has a:
+For our current (non-TPM based) derived key hierarchy we do allow
+applications to specify a "freeform" mixing value, which in practice
+may contain a key version, like "v1"/"v2" etc. This also allows
+applications to derive multiple different keys for different purposes.
+Perhaps, we can do the same here, for example keyctl add derived test
+"<key len> (path|csum) <the rest is used as is as another mixin>". We
+can also "just ship" a new version of the code (for the csum case),
+which would rotate the key. Another option could be using some
+optional xattr as a mixin, which can specify the version of the key or
+just be a freeform input.
 
-	instrument_atomic_read_write(p, sizeof(*p));
-
-in it, and in the cmpxchg((u8*), ..) case, 'sizeof(*p)' is obviously 1
-;-)
-
-Regards,
-Boqun
-
-> > -		ret = data_race(cmpxchg(p32, old32.w, new32.w)); // Overridden above.
-> > +
-> > +		// raw_cmpxchg() is used here to avoid instrumentation.
-> > +		ret = raw_cmpxchg(p32, old32.w, new32.w); // Overridden above.
-> >  	} while (ret != old32.w);
-> >  	return old;
-> >  }
-> > -- 
-> > 2.44.0
-> > 
+> James
+>
 
