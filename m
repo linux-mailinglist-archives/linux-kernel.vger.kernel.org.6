@@ -1,74 +1,259 @@
-Return-Path: <linux-kernel+bounces-178959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B808C59CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 326D98C59D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597801C2127A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B8A1C21108
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31465339A0;
-	Tue, 14 May 2024 16:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EA217F378;
+	Tue, 14 May 2024 16:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/YTXGVP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="bbcSV4UF"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F45365;
-	Tue, 14 May 2024 16:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E721E504
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715704531; cv=none; b=kU0kGqsjKC/x7QRtkN+sMhCCXSGlTAY0ITV+bcAUumy3V/MCAZrTOyBtgi8Ne6ElTSGjY7C1cD3J2AQtaN+MXtf7HmuoH7hXorMheB9OIvPEonU5bGYq1wTIoUQREWl/a4i709rI1Jz6Twg5+zFBOj6ZmTreyX0SZAf/ryg4xrw=
+	t=1715704580; cv=none; b=Opa1Q1vkE//MTv5PvBTlssfgRInzEYXCz0YJy5XKzrT1N8tqmjbhbR+iASlIVJvyskQVxZgBYvys0HiWA2HtoVtd/mWXaD4XrCgMWV3uRvOQZ/FPWGVLNlp9x0tdOIVPh9OMGDcb2nop8x3g5Lrb0mTRPyZun/K7EEyrvfAzR+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715704531; c=relaxed/simple;
-	bh=us5zpSDDttAqxfqYn77fWVvof2NUi1rtw7ubbf6Thog=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pOQhCuA+jqQ9CUOcfRFjnHmyC5i4VzPilBewLNmEhqRMYkqZSBN9TTDy/+iI76KFnP+nSCAoUJXGQWubg8fPWTGEuY36n7cUpLHTj3UXglI0jnQyAdKqSasr+054AvxC6UmVzW240oAsmFj5dVMwVlKiNQG3xNfpH8Z/4fyJcfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/YTXGVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF94C2BD10;
-	Tue, 14 May 2024 16:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715704531;
-	bh=us5zpSDDttAqxfqYn77fWVvof2NUi1rtw7ubbf6Thog=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=B/YTXGVPHZ1vLFHKQw+vkoJUiOGMjCNRCfln88lY7HEX6xwIMAPazPBVv+YlJ6Tsa
-	 GbNHPWL+mRdCHJjZUA6/IHQPQwtp0T2TqFtkjGHFiwOmHrwjfgvSWhwDFP1eo8fp8v
-	 vgCNqi90Zlq6BhJ06M7ghf0MTY5epDXuRsZMCWbq9+OR0g+4+6A67jDnqO24U2kAle
-	 dcLtQ5hILwtkKZbgZtoM9BSdL0eTUWFGDyrqIklDYhxJBSbmF4CcA7YUE30lkp1P7m
-	 j+7LUW/yGYHmd/6uufWg2DzEa6Qx5FFBU+lZN51Ay1KVnheTgVzRSj0qoJVfATUXtL
-	 PiIrGyn3W3/yA==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>, Jonathan Corbet
- <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: Re: [PATCH] riscv: Extend sv39 linear mapping max size to 128G
-In-Reply-To: <20240514133614.87813-1-alexghiti@rivosinc.com>
-References: <20240514133614.87813-1-alexghiti@rivosinc.com>
-Date: Tue, 14 May 2024 18:35:27 +0200
-Message-ID: <87msostkq8.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1715704580; c=relaxed/simple;
+	bh=lm+zhJ+yPtQcaxB+DKN/ywbe63ow356lfn1e+/P5Zxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H7REbpd9VPhSxwCM3UkcAVXrN7hV+k2M6PiNerqzsv1ZQcgsHzSRhqfR1t1pCmY+KcgJTSL0YFL339V2sZGIdOG2vZIVEOeEoLU+OlgcYNFEGRDx0Y1SJ8oeGqSTos6hMGLhXdRZpRwFYSbSDrw7wZ9/36EveReOlPETq9GQD0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=bbcSV4UF; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c99e8e372fso2275268b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1715704578; x=1716309378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TVXdzVMs1VeoT7/U5XZ7/BvuwzKdJTwIaeZHIZqw7zs=;
+        b=bbcSV4UFzJsbP5mMpHOFYut4XuYNmBfsAL7T60TICH2Cub+lahYkA6RzoU4cg5srgB
+         CEAW61/zCE2oyb2kW68vmsx11r26b7rIHKBqJUIO6mAXg9+kLFAgqqo4ouB6Mt0HWJKM
+         OEqnW0uJhpLfMqtSLMXn1GQElhBO1I8khFoOIXpYDjTDlPlmKxA8WuTlHmyGaypizKb0
+         nr3XhWT1O3ctslWJac8dKpCMbZuKmVV10ennSTDZ+bmL5yGV9vvwuZ6bBpaYz8s2zBP6
+         HQQTLskU/G7XPvmIIIIRpfNNuJVRGC7FMDsuZjhIVSYxuC9973CrC2g3qoD1IwPEBv89
+         rnrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715704578; x=1716309378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TVXdzVMs1VeoT7/U5XZ7/BvuwzKdJTwIaeZHIZqw7zs=;
+        b=bHm7cBlceyu7MdJm3Sh1kP3sZPKwyH6F7Awvpr6FQbJVtWIKQ+aBqUqe7WuH7+iXQV
+         h3E1bPXCnpneBtQCKopNnViY5uyf4RaqqmjSw6tIBB3bgeOtFZBw9BLM8P3rXsGuhlI/
+         CkT9Oxni6QtJD7+YjeDQzm1JqVMqmpU5O5iVCkK+9vnl+lS1jmFynpteHf8CQf8oL+QQ
+         qe4yavCfIy9UgFI0vHkncnjCGZhD+1y62oAEebik5Ii6UHen7whZ70WpvfnLz3o+dfPx
+         bGsawNCbhj4mMS3b+1caQmnnqHJXVTaH20oegLHAAe045pJWNUdHQpJ6PxJiE4nbZMVp
+         wWVA==
+X-Forwarded-Encrypted: i=1; AJvYcCVedyim2VZxbuea1cK86Hz2xrtkQUlVeU4A8asOgR/hNpo2Zn5OLHBWRmVlGlM/zFSgpUdUM++7wMj8pvhkaayWeUBOJwGOA02p0htS
+X-Gm-Message-State: AOJu0YyCZylyBkgYkPEmR9JrygXX1pJdj1MdYLAyaq7+TON6B2H4p375
+	B/ElLqYNGFIqZfynPY5RCVa3x0OQvHQHU7IF3cTp/p4Fd9ydkltNCIzOMUHb2jNqMbd9F2mKrhX
+	pUEZsZ4HQdQCHNfbYIOE0zp8n0EEUMQRzH9g31w==
+X-Google-Smtp-Source: AGHT+IHXhf/LB/P+OFo+FdOeXpiwPNJZ/SCkFpjq//2iG7aZGRrWYAAU+buSwBUrPXCFyNB00v9UP0HfL/s7mpQsvk8=
+X-Received: by 2002:a05:6870:80c9:b0:22e:dd56:a72d with SMTP id
+ 586e51a60fabf-24172901007mr17239397fac.26.1715704577857; Tue, 14 May 2024
+ 09:36:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240514163128.3662251-1-surenb@google.com>
+In-Reply-To: <20240514163128.3662251-1-surenb@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 14 May 2024 10:35:40 -0600
+Message-ID: <CA+CK2bCFWoLL0o2s=WnUyxPaDD09OeuHK5gqkLc6UiGC7r5sRQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] lib: add version into /proc/allocinfo output
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	keescook@chromium.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Alexandre Ghiti <alexghiti@rivosinc.com> writes:
-
-> This harmonizes all virtual addressing modes which can now all map
-> (PGDIR_SIZE * PTRS_PER_PGD) / 4 of physical memory.
+On Tue, May 14, 2024 at 10:31=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
 >
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Add version string and a header at the beginning of /proc/allocinfo to
+> allow later format changes. Example output:
+>
+> > head /proc/allocinfo
+> allocinfo - version: 1.0
+> #     <size>  <calls> <tag info>
+>            0        0 init/main.c:1314 func:do_initcalls
+>            0        0 init/do_mounts.c:353 func:mount_nodev_root
+>            0        0 init/do_mounts.c:187 func:mount_root_generic
+>            0        0 init/do_mounts.c:158 func:do_mount_root
+>            0        0 init/initramfs.c:493 func:unpack_to_rootfs
+>            0        0 init/initramfs.c:492 func:unpack_to_rootfs
+>            0        0 init/initramfs.c:491 func:unpack_to_rootfs
+>          512        1 arch/x86/events/rapl.c:681 func:init_rapl_pmus
+>          128        1 arch/x86/events/rapl.c:571 func:rapl_cpu_online
+>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-Nice!
+Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-Reviewed-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+Thank you,
+Pasha
+
+> ---
+> Changes since v1 [1]:
+> - Added header with field names, per Pasha Tatashin
+> - Fixed a spelling error in the changelog
+>
+> [1] https://lore.kernel.org/all/20240514153532.3622371-1-surenb@google.co=
+m/
+>
+>  Documentation/filesystems/proc.rst |  5 ++--
+>  lib/alloc_tag.c                    | 48 ++++++++++++++++++++----------
+>  2 files changed, 36 insertions(+), 17 deletions(-)
+>
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
+ms/proc.rst
+> index 245269dd6e02..4b71b3903d46 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -961,13 +961,14 @@ Provides information about memory allocations at al=
+l locations in the code
+>  base. Each allocation in the code is identified by its source file, line
+>  number, module (if originates from a loadable module) and the function c=
+alling
+>  the allocation. The number of bytes allocated and number of calls at eac=
+h
+> -location are reported.
+> +location are reported. The first line indicates the version of the file,=
+ the
+> +second line is the header listing fields in the file.
+>
+>  Example output.
+>
+>  ::
+>
+> -    > sort -rn /proc/allocinfo
+> +    > tail -n +3 /proc/allocinfo | sort -rn
+>     127664128    31168 mm/page_ext.c:270 func:alloc_page_ext
+>      56373248     4737 mm/slub.c:2259 func:alloc_slab_page
+>      14880768     3633 mm/readahead.c:247 func:page_cache_ra_unbounded
+> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+> index 531dbe2f5456..cbe93939332d 100644
+> --- a/lib/alloc_tag.c
+> +++ b/lib/alloc_tag.c
+> @@ -16,47 +16,61 @@ EXPORT_SYMBOL(_shared_alloc_tag);
+>  DEFINE_STATIC_KEY_MAYBE(CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT,
+>                         mem_alloc_profiling_key);
+>
+> +struct allocinfo_private {
+> +       struct codetag_iterator iter;
+> +       bool print_header;
+> +
+> +};
+> +
+>  static void *allocinfo_start(struct seq_file *m, loff_t *pos)
+>  {
+> -       struct codetag_iterator *iter;
+> +       struct allocinfo_private *priv;
+>         struct codetag *ct;
+>         loff_t node =3D *pos;
+>
+> -       iter =3D kzalloc(sizeof(*iter), GFP_KERNEL);
+> -       m->private =3D iter;
+> -       if (!iter)
+> +       priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+> +       m->private =3D priv;
+> +       if (!priv)
+>                 return NULL;
+>
+> +       priv->print_header =3D (node =3D=3D 0);
+>         codetag_lock_module_list(alloc_tag_cttype, true);
+> -       *iter =3D codetag_get_ct_iter(alloc_tag_cttype);
+> -       while ((ct =3D codetag_next_ct(iter)) !=3D NULL && node)
+> +       priv->iter =3D codetag_get_ct_iter(alloc_tag_cttype);
+> +       while ((ct =3D codetag_next_ct(&priv->iter)) !=3D NULL && node)
+>                 node--;
+>
+> -       return ct ? iter : NULL;
+> +       return ct ? priv : NULL;
+>  }
+>
+>  static void *allocinfo_next(struct seq_file *m, void *arg, loff_t *pos)
+>  {
+> -       struct codetag_iterator *iter =3D (struct codetag_iterator *)arg;
+> -       struct codetag *ct =3D codetag_next_ct(iter);
+> +       struct allocinfo_private *priv =3D (struct allocinfo_private *)ar=
+g;
+> +       struct codetag *ct =3D codetag_next_ct(&priv->iter);
+>
+>         (*pos)++;
+>         if (!ct)
+>                 return NULL;
+>
+> -       return iter;
+> +       return priv;
+>  }
+>
+>  static void allocinfo_stop(struct seq_file *m, void *arg)
+>  {
+> -       struct codetag_iterator *iter =3D (struct codetag_iterator *)m->p=
+rivate;
+> +       struct allocinfo_private *priv =3D (struct allocinfo_private *)m-=
+>private;
+>
+> -       if (iter) {
+> +       if (priv) {
+>                 codetag_lock_module_list(alloc_tag_cttype, false);
+> -               kfree(iter);
+> +               kfree(priv);
+>         }
+>  }
+>
+> +static void print_allocinfo_header(struct seq_buf *buf)
+> +{
+> +       /* Output format version, so we can change it. */
+> +       seq_buf_printf(buf, "allocinfo - version: 1.0\n");
+> +       seq_buf_printf(buf, "#     <size>  <calls> <tag info>\n");
+> +}
+> +
+>  static void alloc_tag_to_text(struct seq_buf *out, struct codetag *ct)
+>  {
+>         struct alloc_tag *tag =3D ct_to_alloc_tag(ct);
+> @@ -71,13 +85,17 @@ static void alloc_tag_to_text(struct seq_buf *out, st=
+ruct codetag *ct)
+>
+>  static int allocinfo_show(struct seq_file *m, void *arg)
+>  {
+> -       struct codetag_iterator *iter =3D (struct codetag_iterator *)arg;
+> +       struct allocinfo_private *priv =3D (struct allocinfo_private *)ar=
+g;
+>         char *bufp;
+>         size_t n =3D seq_get_buf(m, &bufp);
+>         struct seq_buf buf;
+>
+>         seq_buf_init(&buf, bufp, n);
+> -       alloc_tag_to_text(&buf, iter->ct);
+> +       if (priv->print_header) {
+> +               print_allocinfo_header(&buf);
+> +               priv->print_header =3D false;
+> +       }
+> +       alloc_tag_to_text(&buf, priv->iter.ct);
+>         seq_commit(m, seq_buf_used(&buf));
+>         return 0;
+>  }
+>
+> base-commit: 7e8aafe0636cdcc5c9699ced05ff1f8ffcb937e2
+> --
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+>
 
