@@ -1,140 +1,143 @@
-Return-Path: <linux-kernel+bounces-178334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F898C4C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:49:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F198C4C10
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 844E1B23B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C661F24C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC801BC49;
-	Tue, 14 May 2024 05:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA6C1CAA4;
+	Tue, 14 May 2024 05:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zRqe3R7J"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b098mQF6"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0ECE1802E;
-	Tue, 14 May 2024 05:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F236F18AEA
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 05:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715665744; cv=none; b=YrFmP6Du0Ayxjufv+3z2XJY9A4YuHMHkmD3maWGsvrrBfjUhlFnQC+FJub6rk1XD6RooWI30GtG6+uNbP5TUhoV10kbfj79z8obmGhHmNSGpCvx6sCQdS/zxSyDoP4ad+ycs/DXCQMzqVGnZdmVfctO2TLqQI6XU+FhVVUSZDlI=
+	t=1715665798; cv=none; b=rpjF0T/vCh0ABwJ+POXyGSY8xSVpB+rk7UI7/TKEDNpGWeYUcNBIDRKkmO/6BlftNekmJbAJtHo8Q5/4q/rrANULluUWsrhZPDDktms+DIC4W4RO+IiNMHU2Oo6ZLZkXKUuOBWeSxLgfyzUbGPBC5BMgZJCAim5ZOr8ATRs6m/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715665744; c=relaxed/simple;
-	bh=QEsA9rVW5PEd0GIZ939vlg+hTw7lyZxJmxlffqRFvYo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OHbJGgKaovkgZ7I0qaaS3z5VK/Sqp6jAgncKgZm1TQbyOoqWn/oiJhGI9c+lNdw28OSOunOY25UT2XzTi7AGy9JpRgeIHL2bCgSlgf51nojIBsjHO4IJRcD0P8lEXIyzYvksSkVTl0/GRP+VoqGnLdBnNSQ8LUrBY3xPJMk/lo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zRqe3R7J; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44E5melc116320;
-	Tue, 14 May 2024 00:48:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715665720;
-	bh=QkSC8tfDasMCgcVuKaxBBhub6zp3UOWi2j7PTS//D/g=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=zRqe3R7Jirxm7EdWdg4qhWIO23t+ETRx3OxlZIuMq2pVCgJc+WcIFH9P4F82DxlBG
-	 mul7VJHG2S4lnwCrnslucpAtqQRVW+ZH1fn9B40ajVcx2jTt2f6VhYehm1tdByyOOi
-	 lzsxCabMPO4vvaAPH+nD/TWQC9yoJVFFAuLANU68=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44E5mebX046157
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 14 May 2024 00:48:40 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
- May 2024 00:48:40 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 14 May 2024 00:48:39 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44E5mYcY009227;
-	Tue, 14 May 2024 00:48:35 -0500
-Message-ID: <f0586fff-c47a-4610-bb31-5a5ad743a1be@ti.com>
-Date: Tue, 14 May 2024 11:18:33 +0530
+	s=arc-20240116; t=1715665798; c=relaxed/simple;
+	bh=N7yQDXUwAdMII/0o6Jb7o7sMy9XOiB5X0F3FoWxeWrE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYyfmQ/MSC++t91Ok48n0fy1pa5zJCjOO1p5c8GLJAsEjgyxXJAkCTVTXo7rdT50KLhc8+pzPf77owTKY9cU7dEXU7fgEsMU+UWxnbWqDRghv+dKb2vaWWSVh08klwcdjFGy0pFDsRm/z4kqtZS8evMqCF69TQtJVej8mi5bQFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b098mQF6; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6f45f1179c3so4888172b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715665796; x=1716270596; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rk/9cCSuKPAzQ7d7k8DYOmgE1U27tp+avu7N/6VE0BI=;
+        b=b098mQF6X9bHmfJOj2UMxXvYNCOYEBZ7lxcJloMkNOepgQOJE/fvCx5/jMqxkaF/Ye
+         t9mmXKtCU4cLwUTnndJ/bvhsoq7dFNVbVqXewwDusQpQ0JVEqVdHc2GDUK5HWCc17s7O
+         0adQnUHRagfAp3L4ShnKjCCiuHsOJpZZUhSDY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715665796; x=1716270596;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rk/9cCSuKPAzQ7d7k8DYOmgE1U27tp+avu7N/6VE0BI=;
+        b=gMgxwU/x5pu3UB+uv7i+xpUV5EzUyqd39LHs9E/43+kyn0zyuT6a9eGxweo4d8D0QS
+         tY+DWLAsgY52wbrBTk7kM1r8Z940KTMWyuDNY2+RDBjarLLTdulNhxIk5KU6QKObWjcD
+         DFkK/7hWlG7K2ArS1Xnx+TbhlP8tondHFbWAJp8LZ04qyVNpGsz7dxMDQOKxMOn0KUtp
+         mPlyWefeIhSJCNxPNwU4hr5JTY2h7G13yo+zHwqx5y3oy9gNNJfzZBa1CJKnKRuQESJu
+         8vhfv60FTHjELeL8nOMtcNYHObGL7VqYNgcho4prBZv0E95CmOej4IfNJafNnqnipgVU
+         dztg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0e/ddbvxT1P3ZLuC0Bib7+YttVLV0TXrtmkWki2oREtr7QDHKOahT7KETYGYocGh21Tyi610gehd9VTnyvjdsepD7o53h72ak3N2u
+X-Gm-Message-State: AOJu0YzSZpvHiRaBPdXv5HnuR4H7am3CVnWRof2gcDhVYNFsbNwAylLx
+	BZ1dng2IdT+nHodzdnpIP7ZgfbRd0dCWbAj/Ag7d0S9wcdX1rySHVF9HCJs+5w==
+X-Google-Smtp-Source: AGHT+IEPTKz5GyCkr08NrFCu81IdrD63NGlNxv736d9HhFlB58SSNTeMeE90nf4HCldQN4VyiI9ANQ==
+X-Received: by 2002:a05:6a00:2d8e:b0:6e6:946b:a983 with SMTP id d2e1a72fcca58-6f4e02ac8e1mr13440522b3a.10.1715665796214;
+        Mon, 13 May 2024 22:49:56 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae0f7fsm8289079b3a.120.2024.05.13.22.49.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 22:49:55 -0700 (PDT)
+Date: Mon, 13 May 2024 22:49:54 -0700
+From: Kees Cook <keescook@chromium.org>
+To: Sam James <sam@gentoo.org>
+Cc: chunkeey@gmail.com, chunkeey@googlemail.com, davem@davemloft.net,
+	edumazet@google.com, helmut.schaa@googlemail.com,
+	johannes@sipsolutions.net, kernel@quicinc.com, kuba@kernel.org,
+	kvalo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, pkshih@realtek.com, quic_jjohnson@quicinc.com,
+	stf_xl@wp.pl, toke@toke.dk
+Subject: Re: [PATCH v2 2/2] mac80211: Use flexible array in struct
+ ieee80211_tim_ie
+Message-ID: <202405132245.017023A@keescook>
+References: <202308301529.AC90A9EF98@keescook>
+ <87jzjxgfnt.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] dt-bindings: net: ti: icssg_prueth: Add
- documentation for PA_STATS support
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        <r-gunasekaran@ti.com>, Roger Quadros <rogerq@kernel.org>
-References: <20240430122403.1562769-1-danishanwar@ti.com>
- <8ce66e56-7f41-4f2d-ac10-1328784a51af@kernel.org>
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <8ce66e56-7f41-4f2d-ac10-1328784a51af@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jzjxgfnt.fsf@gentoo.org>
 
-Hi Krzysztof,
-
-On 01/05/24 3:56 pm, Krzysztof Kozlowski wrote:
-> On 30/04/2024 14:24, MD Danish Anwar wrote:
->> Add documentation for ti,pa-stats property which is syscon regmap for
->> PA_STATS register. This will be used to dump statistics maintained by
->> ICSSG firmware.
->>
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> ---
->>  Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
->> index e253fa786092..abf372f7191b 100644
->> --- a/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
->> +++ b/Documentation/devicetree/bindings/net/ti,icssg-prueth.yaml
->> @@ -55,6 +55,11 @@ properties:
->>      description:
->>        phandle to MII_RT module's syscon regmap
->>  
->> +  ti,pa-stats:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      phandle to PA_STATS module's syscon regmap
+On Tue, May 14, 2024 at 05:51:02AM +0100, Sam James wrote:
+> I think I've just hit this, unless it's been fixed since and it's just
+> similar.
 > 
-> One register needed? Then use phandle-array syntax - see examples.
+> ```
+> [  291.051876] ================================================================================
+> [  291.051892] UBSAN: array-index-out-of-bounds in /var/tmp/portage/sys-kernel/gentoo-kernel-6.6.30/work/linux-6.6/include/linux/ieee80211.h:4455:28
+> [  291.051901] index 1 is out of range for type 'u8 [1]'
+> [  291.051908] CPU: 2 PID: 627 Comm: kworker/2:3 Not tainted 6.6.30-gentoo-dist-hardened #1
+> [  291.051917] Hardware name: ASUSTeK COMPUTER INC. UX305FA/UX305FA, BIOS UX305FA.216 04/17/2019
+> [  291.051922] Workqueue: events cfg80211_wiphy_work [cfg80211]
+> [  291.052082] Call Trace:
+> [  291.052088]  <TASK>
+> [  291.052096] dump_stack_lvl (lib/dump_stack.c:107) 
+> [  291.052114] __ubsan_handle_out_of_bounds (lib/ubsan.c:218 (discriminator 1) lib/ubsan.c:348 (discriminator 1)) 
+> [  291.052130] ieee80211_rx_mgmt_beacon (include/linux/ieee80211.h:4455 net/mac80211/mlme.c:6047) mac80211
 
-No this is not one register only. PA_STATS is a set of registers. My bad
-I should have mentioned *registers* in the commit description. Just like
-MII_RT and MII_G_RT modules, PA_STATS is also a set of registers where
-different statistics are dumped by ICSSG firmware. Moduling this as
-syscon will help the driver read/write those statistics using
-regmap_read() / write() just like the driver currently read / write
-registers from mii_rt and mii_g_rt regmaps.
+This looks like it's this line in ieee80211_rx_mgmt_beacon():
 
-I have tried to describe this node *ti,pa-stats* the same way as
-"ti,mii-g-rt" and "ti,mii-rt"
+            ieee80211_check_tim(elems->tim, elems->tim_len, vif_cfg->aid)) {
 
-> Explain in description the purpose of this register in the context of
-> *this* device.
-> 
+which is:
 
-Sure will do that.
+static inline bool ieee80211_check_tim(const struct ieee80211_tim_ie *tim,
+                                       u8 tim_len, u16 aid)
+{ ...
+        return !!(tim->virtual_map[index] & mask);
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+}
 
-> Best regards,
-> Krzysztof
-> 
+UBSAN says it's because the array is defined as "virtual_map[1]":
+
+struct ieee80211_tim_ie {
+        u8 dtim_count;
+        u8 dtim_period;
+        u8 bitmap_ctrl;
+        /* variable size: 1 - 251 bytes */
+        u8 virtual_map[1];
+} __packed;
+
+This was fixed in
+
+	commit 2ae5c9248e06 ("wifi: mac80211: Use flexible array in struct ieee80211_tim_ie")
+
+which was part of the v6.7 release.
+
+> (It was a fun mini-adventure to get the trace usable and I should send
+> some patches to decode_stacktrace.sh, I think...)
+
+Please do! :)
 
 -- 
-Thanks and Regards,
-Danish
+Kees Cook
 
