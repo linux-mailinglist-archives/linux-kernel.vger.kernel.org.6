@@ -1,135 +1,127 @@
-Return-Path: <linux-kernel+bounces-178794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82648C57C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2268C57CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C34D1F22F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52601F22E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F67144D2C;
-	Tue, 14 May 2024 14:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73B4145322;
+	Tue, 14 May 2024 14:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRHLFM1O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P0olyf2r"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA991448FA;
-	Tue, 14 May 2024 14:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD85A1448D7;
+	Tue, 14 May 2024 14:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715696049; cv=none; b=BGAsBzSjfL2bDHvOCDzP/ZWIZFMrXGtAUenP37dUiW0Y/F/KY/ebEk9TDl/0Fvwf3lP6+/ov27AVKzY/eFdQWrqiaeTaOUkYnWY3xt2xk3Ya+GLGCRT0jhmpr7AhWZFul2OFbUM35I/N/TNV8t7zBsBIyjika0IOtpelohvtTpE=
+	t=1715696374; cv=none; b=gXAl18Boy+JXAbV4621Dca8jeAdi+uAncUAzpZf2w1BgXh4jZwV3BqMmgAPqSboi2SEumdIiuSz0+T5J1OWLo7aKztE0Y18E18bKdYHZH4RTTCwU2DLpXeVXwA6rZWaXqDqh9Z0hKysc/V7xtNvDWLdUsxm6VeEIwT1rPw6TUKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715696049; c=relaxed/simple;
-	bh=+/XMlJVKnxry0HBzpovXflduCo1gSKAOkS2cYsvQ6BQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bVo9amqxw9V1gw0zThICeXDDf7pp0hQUFo0q6yKsBnaUgVyvM91izd2m1vSRIW0q2PCTSdRE045VOA6AqUxfGvVNZO8PEAy2+aEzb6U/WsNkNGFJeQAjT42IMrLhB1V1Ht1TNOkDu7dr09OajrCEoJ9fdJYGXCqpVBIhEjz3I0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRHLFM1O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2930DC2BD10;
-	Tue, 14 May 2024 14:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715696048;
-	bh=+/XMlJVKnxry0HBzpovXflduCo1gSKAOkS2cYsvQ6BQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bRHLFM1O2KK0YrmD+afG+KI/52PlB9P4RUmbMEhqQ0QXjJeqbE7P+kMXYJrQiGtXU
-	 MGothE7RUCv+OtPc6icUiX3CGY232Z4KLSw1RHos2UR0XHDflUXzj9ShUstAyUQJql
-	 aicEBJQyolaH/2S3nTa9/g6vvNQZtizc94YekF92CufdUqPI+fu54nFQHQ+tc1HGbb
-	 Qv9qImzK//kR0EUzX+MLQiUN5FaBJLmkXtezjyTQ/uVKh+hAUortGVMbEnqX8d8fh6
-	 zOTfX4s9UV2nuPCr2za0ALTDZfazgo3gY/cBen0YI+8Rq346QgSKwF7TYMXSUPjxZd
-	 7vRWfXia+DfeA==
-Date: Tue, 14 May 2024 07:14:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Richard Gobert <richardbgobert@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, willemdebruijn.kernel@gmail.com,
- dsahern@kernel.org, alexander.duyck@gmail.com, shuah@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v10 2/3] net: gro: move L3 flush checks to
- tcp_gro_receive and udp_gro_receive_segment
-Message-ID: <20240514071407.257c0003@kernel.org>
-In-Reply-To: <CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
-References: <20240509190819.2985-1-richardbgobert@gmail.com>
-	<20240509190819.2985-3-richardbgobert@gmail.com>
-	<CAMuHMdXFJwxexojG+41ppD=2EmyXsVM6bwh+-cxCxfSsM_yJiw@mail.gmail.com>
+	s=arc-20240116; t=1715696374; c=relaxed/simple;
+	bh=r1xN7xUhEHx+dV+kiWuY93GBKrBBL7jDPFL0byrbFjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q3KJESaj/pxt+W7VMig2Qpknj0w0hxQbXWMgHsmXxNSQ78Q+zSfCWwcUrHvxb/4zM4BmXden89KntN1DknVqQrnLcoYUZjSyWdUU1HRVtlD8tNwZeYE4lFbLDtM5vLwVKCsFYjedVn5q4gCzeGBdk83+GsDWwgDLd8YrEoMKnb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P0olyf2r; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a59a0e4b773so45831466b.2;
+        Tue, 14 May 2024 07:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715696371; x=1716301171; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AS/xWef6bfATcw3hLhDNBUVW+/DIL4IeSHNuS3Wsvdg=;
+        b=P0olyf2r/Klzr+Th5s92rpIKelES5nBQdSDiqJCb843mIUTWXv3427BpcnVyBh0pz8
+         ieZI0OigwpCZQOOeCqxjgZ0G0C1+nLHIMvSsheUcG2uT6nFi9j4cXWWTT7YHTlUykAed
+         nKw6+Wdr/naxqLLRasnO5ENXxh+5dfoGie2Fvx8l14jalxlmnTb+WBXTeabfxQkjppry
+         1qlg6g3UKVL3rFYwaQszww1s6p2R+OpADuddESN7Pdk+qOVXdmQ4g6KURGLzrP9RQgAG
+         YI9ux+6MV61N1VJf6L81SyBiDd3aBR0IFcHV9udhkKrtZxUhCXbhYwamG/StUnkfXfJx
+         YRIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715696371; x=1716301171;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AS/xWef6bfATcw3hLhDNBUVW+/DIL4IeSHNuS3Wsvdg=;
+        b=gdXrAM0o7ZSUBVvH6pXsRxETPdUI2SkQMEL9eLQ1hT0yhTDhoYS+2OXOS0bywoWiMv
+         DJEtUmP7UXNwxO4FVbmMURFUGspNl92tDXYaH8Ft8B/tHCWG3qCa1VGOydcgEkTUFt4C
+         sjlYFO+SGVrdq7pL3FxtO7bza6cMg7KMyUc87O8BFrN0N+mzwlGKY3sx6ys/7dh3jyvg
+         F2lC7rhND4u4QLTJ321HIiW4eKYKh2QU1GARPrwG0bp9sutC4EDC33qqsAETx/e1rpa1
+         OwRrHvM1PmT4Nv4JS4Yxxrn9rKSyOQEE9lpHRWfgw2Yfq3l9smWg+44d/siKefjbw2bZ
+         87DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuLl9idAVgPBWMB7+E5EjVtFYojbIcBcYBwjVdo5WTkVTpVMoyFhZCf6XVoINeRJuhMjHvMXMU315wg5ZVQxpP8r3hPJexVDpgqcRrlfJVK8OoS6GAhcDi9ssSy+QYT67ucG8JHYf8SB6neERMISis9hRm8uW66cQsjDYA7UuQ+XiztwnGlmaYeR2tZVvFXHjJ73803YaQT8RF4Uk6wsBwVppZ
+X-Gm-Message-State: AOJu0YxbGySAuuprI5gzBSUQlyXxWUOyxiH7yKbC79tSkEWwgJB1lV1l
+	PwbdkVfSX7qaS33Jtlt9meI8bYEDQz4jE7DFgMVSVhg8MsNSbd4S5bVK4LCgyi7pOyW7XvNelWP
+	m5prg1mWfHveWhp4NquC5u6gvJzk=
+X-Google-Smtp-Source: AGHT+IFQhotJp12K8DqMgmEGSWFR/t8jbLw3SLlqQrPU09u1dcY1cowc2ccw4W4NjSbQ2Zvi1EWeMrcYhXfcp0MQDKY=
+X-Received: by 2002:a17:907:6d01:b0:a59:9f3e:b1ca with SMTP id
+ a640c23a62f3a-a5a2d6657camr1011541766b.55.1715696370835; Tue, 14 May 2024
+ 07:19:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <ZjpMeVk_HiixZUEu@hovoldconsulting.com> <20240514140446.706847-1-quic_skakitap@quicinc.com>
+In-Reply-To: <20240514140446.706847-1-quic_skakitap@quicinc.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 14 May 2024 17:18:54 +0300
+Message-ID: <CAHp75VcfYuukpLg=F36ykddsT9SpfdGNyyvVeyw-Yvz61Lrq7g@mail.gmail.com>
+Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: johan@kernel.org, andersson@kernel.org, broonie@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, johan+linaro@kernel.org, 
+	konrad.dybcio@linaro.org, krzk+dt@kernel.org, lee@kernel.org, 
+	lgirdwood@gmail.com, linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
+	swboyd@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 14 May 2024 14:13:21 +0200 Geert Uytterhoeven wrote:
-> On Thu, May 9, 2024 at 9:09=E2=80=AFPM Richard Gobert <richardbgobert@gma=
-il.com> wrote:
-> > {inet,ipv6}_gro_receive functions perform flush checks (ttl, flags,
-> > iph->id, ...) against all packets in a loop. These flush checks are use=
-d in
-> > all merging UDP and TCP flows.
-> >
-> > These checks need to be done only once and only against the found p skb,
-> > since they only affect flush and not same_flow.
-> >
-> > This patch leverages correct network header offsets from the cb for both
-> > outer and inner network headers - allowing these checks to be done only
-> > once, in tcp_gro_receive and udp_gro_receive_segment. As a result,
-> > NAPI_GRO_CB(p)->flush is not used at all. In addition, flush_id checks =
-are
-> > more declarative and contained in inet_gro_flush, thus removing the need
-> > for flush_id in napi_gro_cb.
-> >
-> > This results in less parsing code for non-loop flush tests for TCP and =
-UDP
-> > flows.
-> >
-> > To make sure results are not within noise range - I've made netfilter d=
-rop
-> > all TCP packets, and measured CPU performance in GRO (in this case GRO =
-is
-> > responsible for about 50% of the CPU utilization).
-> >
-> > perf top while replaying 64 parallel IP/TCP streams merging in GRO:
-> > (gro_receive_network_flush is compiled inline to tcp_gro_receive)
-> > net-next:
-> >         6.94% [kernel] [k] inet_gro_receive
-> >         3.02% [kernel] [k] tcp_gro_receive
-> >
-> > patch applied:
-> >         4.27% [kernel] [k] tcp_gro_receive
-> >         4.22% [kernel] [k] inet_gro_receive
-> >
-> > perf top while replaying 64 parallel IP/IP/TCP streams merging in GRO (=
-same
-> > results for any encapsulation, in this case inet_gro_receive is top
-> > offender in net-next)
-> > net-next:
-> >         10.09% [kernel] [k] inet_gro_receive
-> >         2.08% [kernel] [k] tcp_gro_receive
-> >
-> > patch applied:
-> >         6.97% [kernel] [k] inet_gro_receive
-> >         3.68% [kernel] [k] tcp_gro_receive
-> >
-> > Signed-off-by: Richard Gobert <richardbgobert@gmail.com> =20
->=20
-> Thanks for your patch, which is now commit 4b0ebbca3e167976 ("net: gro:
-> move L3 flush checks to tcp_gro_receive and udp_gro_receive_segment")
-> in net-next/main (next-20240514).
->=20
-> noreply@ellerman.id.au reports build failures on m68k, e.g.
-> http://kisskb.ellerman.id.au/kisskb/buildresult/15168903/
->=20
->     net/core/gro.c: In function =E2=80=98dev_gro_receive=E2=80=99:
->     ././include/linux/compiler_types.h:460:38: error: call to
-> =E2=80=98__compiletime_assert_654=E2=80=99 declared with attribute error:=
- BUILD_BUG_ON
-> failed: !IS_ALIGNED(offsetof(struct napi_gro_cb, zeroed), sizeof(u32))
+On Tue, May 14, 2024 at 5:05=E2=80=AFPM Satya Priya Kakitapalli
+<quic_skakitap@quicinc.com> wrote:
+> > On Thu, May 09, 2024 at 03:07:02PM +0300, Andy Shevchenko wrote:
+> > > Wed, May 08, 2024 at 10:37:50PM +0000, Stephen Boyd kirjoitti:
+> > > > Quoting Johan Hovold (2024-05-06 08:08:29)
 
-Hi Richard, any chance of getting this fixed within the next 2 hours?
-I can't send the net-next PR if it doesn't build on one of the arches..
+..
+
+> > > > > +               BUILD_BUG_ON((ARRAY_SIZE(pldo_ranges) !=3D 1) ||
+> > > >
+> > > > This should be an && not || right?
+> > >
+> > > > > +                               (ARRAY_SIZE(nldo_ranges) !=3D 1))=
+;
+> > >
+> > > In any case BUILD_BUG_ON() is not encouraged for such cases, it would=
+ be much
+> > > better to have a static_assert() near to one of those arrays.
+> >
+> > I think the reason it is placed here is that the above line reads:
+> >
+> >       rdesc->n_linear_ranges =3D 1;
+> >
+> > and that would need to change if anyone expands the arrays.
+>
+> Correct. static_assert() cannot be used in the middle of code here, it ca=
+n only be used at the declarations part which doesn't serve the purpose.
+
+I didn't get this. The ARRAY_SIZE():s are defined at compile time
+globally. How does this prevent from using static_assert()?
+
+> So, BUILD_BUG_ON is the only way to go here.
+
+I don't think so.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
