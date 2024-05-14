@@ -1,201 +1,191 @@
-Return-Path: <linux-kernel+bounces-179503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E608C6093
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 08:04:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 760D88C6210
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 09:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65CCF1C21EE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 06:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26A9B282BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 07:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270833BBDC;
-	Wed, 15 May 2024 06:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9294D9EC;
+	Wed, 15 May 2024 07:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NMI1A9Cr"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MQrGR2ZE"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987323A29F;
-	Wed, 15 May 2024 06:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007A94C61C;
+	Wed, 15 May 2024 07:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715753053; cv=none; b=lcJjnMwfDIHJqFeD17jXgBS4vaq3AGaWO/0lIIlDKnDj54AEEhiMVQFwPDmXCVNoIbvYT9On9KE/X9JygR68SOv0lALfrGQmsnXEx0ymRFIt3CDSmRifuUvfmQlUAcdPnH71I48nTnmbayBnj5CEvNwPgBb/ODJ8g5I7/78yZ2s=
+	t=1715759317; cv=none; b=r+eAWa2XjK1ouUs4Uvs8D8q5StTUyjA7b7/8u174vGJkktoyWztAhu2fQJqKi/fTmJYyVkP2nykALfnVGvCaIEKYJeM0djZ7ngbIovpGytnl8iw2Kf4QOC1Usgn/KWX98P6xr/1IsuPIpH7R3wnPlfwTsJrKHgFeSKQOSbZSI1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715753053; c=relaxed/simple;
-	bh=VWwmMUM1Lbfr5IA5967p41DjlUsSHLh42TM5+wQa6Jw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWS6pt2mMNC4zHz0LgG84r2nv7slqLpIig9KCPkw1OVdaDr0Okr6ncyEJAm0I7HOUmZx3CTh/fB3zX+BLAVWDLQHcXTyzi3STvFKOrcs+Q2ISPg3ifQIbVeziWWl5UlTnWZMBT+ZzCWBYZ2wShPFMUP7zyNhDHtiStrP42L04OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NMI1A9Cr; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44F63OUw111891;
-	Wed, 15 May 2024 01:03:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715753004;
-	bh=DJC3n4YBr4mraORAIsBV0BhFeTokOltNjlCbCW87Qpo=;
-	h=From:To:CC:Subject:Date;
-	b=NMI1A9CrM1xKiE7bU+EGIphgRyeIH1qCWfZCb8yBlMGkey+WSNxJsVVw+Cn7eT1RI
-	 FCMqnoO+/Ztjr5t0YR85Q3jVltaUvDaLzumZ4CGIXE8btuAEMJCCTsmEKrFfrbXXeG
-	 2lwH8oO7CO4SNjSq7xYPM7puQWbG1oLgRk8ySt1Q=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44F63OPO068741
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 15 May 2024 01:03:24 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 15
- May 2024 01:03:24 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 15 May 2024 01:03:24 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44F63OhW038209;
-	Wed, 15 May 2024 01:03:24 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 44F63NVI021283;
-	Wed, 15 May 2024 01:03:23 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-        Jan Kiszka
-	<jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
-        Simon Horman
-	<horms@kernel.org>,
-        Niklas Schnelle <schnelle@linux.ibm.com>,
-        Wolfram Sang
-	<wsa+renesas@sang-engineering.com>,
-        Arnd Bergmann <arnd@arndb.de>, Diogo Ivo
-	<diogo.ivo@siemens.com>,
-        Vladimir Oltean <vladimir.oltean@nxp.com>,
-        Roger
- Quadros <rogerq@kernel.org>,
-        MD Danish Anwar <danishanwar@ti.com>, Paolo
- Abeni <pabeni@redhat.com>,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
-	<edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>, <r-gunasekaran@ti.com>
-Subject: [RFC PATCH net-next v4 0/3] Introduce switch mode support for ICSSG driver
-Date: Wed, 15 May 2024 11:33:17 +0530
-Message-ID: <20240515060320.2783244-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715759317; c=relaxed/simple;
+	bh=L+EtalBx050GUcRTBDs5CyTU3A4dY5J5H6NqthsqOAg=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=MZs+Pd3ki5DN/f8xcUozjvkz7qq+ZcQ6wHZZQcreGmY1ZWlvgo/c48TQcx1dVCWT+Fu2w4+pWp8Jii4YaoiGT49uCh1bNpOvVngNfAcCD3oVxLzGlHbrT39iDBKFBJQVEOWRtDT//uFrPZXeBlnaaD9mkVwqB9vxp4Mgq84AuWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MQrGR2ZE; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240515074831euoutp0258090f9b2aa48961a96b57cde374bcb4~PmgC_-YLD1085310853euoutp02k;
+	Wed, 15 May 2024 07:48:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240515074831euoutp0258090f9b2aa48961a96b57cde374bcb4~PmgC_-YLD1085310853euoutp02k
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715759311;
+	bh=L+EtalBx050GUcRTBDs5CyTU3A4dY5J5H6NqthsqOAg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=MQrGR2ZEXb4YYN4zG0ap5F6S14ex7vo2Dl59Nzw2Es2mraalvuiFljcXTKR40z8Al
+	 dU2gK0FFswWLqZXflvYUWVgmutgvK4w+wMGh/W8yWwzuBhoCiKb8eAuoK50gug8iEt
+	 FDzUqatK6p+en9ntQaIK+9KiRoQlXQ8gP/d7k3zE=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240515074830eucas1p17a73c921e92a77ed51bb27cc4f481c1e~PmgCzjSbx3216832168eucas1p1r;
+	Wed, 15 May 2024 07:48:30 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id A8.A4.09624.EC864466; Wed, 15
+	May 2024 08:48:30 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240515074830eucas1p234221fa03210bdc7d16a4f0e7594e1b8~PmgCdLDHy2525825258eucas1p2b;
+	Wed, 15 May 2024 07:48:30 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240515074830eusmtrp15b8e0ebd6f8fc58dd9ce8949c7803f32~PmgCci_c50644306443eusmtrp1C;
+	Wed, 15 May 2024 07:48:30 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-a7-664468cea736
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.26.08810.EC864466; Wed, 15
+	May 2024 08:48:30 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240515074830eusmtip2783d36eab21c5cd6b9dbc07d1dbaa9fd~PmgCRH87R0432804328eusmtip2C;
+	Wed, 15 May 2024 07:48:30 +0000 (GMT)
+Received: from localhost (106.210.248.3) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 15 May 2024 08:48:29 +0100
+Date: Tue, 14 May 2024 15:40:04 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Kees Cook <keescook@chromium.org>
+CC: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, Luis
+	Chamberlain <mcgrof@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] sysctl: constify ctl_table arguments of utility
+ function
+Message-ID: <20240514134004.vrykjaynv2f5p2fx@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="u33zp4qhf56xbdna"
+Content-Disposition: inline
+In-Reply-To: <202405131246.C27D85E1@keescook>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7rnMlzSDF4/07c4051rsWfvSRaL
+	y7vmsFn8/vGMyeLGhKeMDqwesxsusnhsWtXJ5vF5k5xHf/cx9gCWKC6blNSczLLUIn27BK6M
+	eR92sxX85av41LSfpYHxA08XIyeHhICJxJ8vM1m7GLk4hARWMEqs/TGVGcL5wihxtGMWI4Tz
+	mVFiz+0/LDAtB9cfgKpazigx5/BPhKptx05BZTYzSqw6+gishUVAVWLZ5+esIDabgI7E+Td3
+	mEFsEaD490vNYA3MIKN+zl3KCJIQFvCX6P26HKyBV8BBYvLUdnYIW1Di5MwnYEOZBSokOlv/
+	A9kcQLa0xPJ/HCBhTgFdiQOrlrFDnKoose78FaizayVObbnFBLJLQuA/h8S2jv2MEAkXiUf/
+	H7BB2MISr45vgWqWkTg9uYcFomEyo8T+fx/YIZzVjBLLGr8yQVRZS7RceQLV4Six8fxfdpCL
+	JAT4JG68FYQ4lE9i0rbpzBBhXomONiGIajWJ1ffesExgVJ6F5LVZSF6bhfAaRFhTonX7b3YM
+	YW2JZQtfM0PYthLr1r1nWcDIvopRPLW0ODc9tdgwL7Vcrzgxt7g0L10vOT93EyMwYZ3+d/zT
+	Dsa5rz7qHWJk4mA8xKgC1Pxow+oLjFIsefl5qUoivCJpzmlCvCmJlVWpRfnxRaU5qcWHGKU5
+	WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTIXOG+7nbXl5S+L6WaEAm50tJTs93U8s4r3+
+	sWn6JpUst2Vagotd5t/ctvr+i/8C7LP+v3xtH3aab+f/gCdaFwuZhHeufiN8rsQrbNUM/7Uz
+	I/fEuC0XlStL0PVRWze7677AijPPP/G/TfuQGtjS9JTTurK77PXEHocfS7it7qTkH0ld7584
+	ads21WDRExo7XZ9c95wh/mHVLZ7VXTfUelh+eOcVBXuviUi03bfvrHPSNhFB3jsZrkkrcy/d
+	Cfj47VPngwbzTj2eLUtP3IqKMWSyesJzp+ny2saitTr3vhtNb357RqUtsOpr2nwpu4TTIRtu
+	ej+sOCN19l3w831BsvXeelfYfMOtr32cVm64R0uJpTgj0VCLuag4EQDg7C6m0wMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xe7rnMlzSDE7tEbc4051rsWfvSRaL
+	y7vmsFn8/vGMyeLGhKeMDqwesxsusnhsWtXJ5vF5k5xHf/cx9gCWKD2bovzSklSFjPziElul
+	aEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MaTevMRX85qto2zaHrYHxHU8X
+	IyeHhICJxMH1B5i7GLk4hASWMkpcfLmWHSIhI7Hxy1VWCFtY4s+1LjaIoo+MEr/uTmCEcDYz
+	Suzv/AZWxSKgKrHs83Mwm01AR+L8mzvMILYIUPz7pWYwm1lgOaNEx/JqEFtYwFdi65sDTCA2
+	r4CDxOSp7ewQQ08wSjw7t58VIiEocXLmExaI5jKJ/+3zgM7gALKlJZb/4wAJcwroShxYtQzq
+	akWJdeevsEDYtRKf/z5jnMAoPAvJpFlIJs1CmARhqkusnyeEIgpSrC2xbOFrZgjbVmLduvcs
+	CxjZVzGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG7LZjPzfvYJz36qPeIUYmDsZDjCpAnY82
+	rL7AKMWSl5+XqiTCK5LmnCbEm5JYWZValB9fVJqTWnyI0RQYiBOZpUST84GpJK8k3tDMwNTQ
+	xMzSwNTSzFhJnNezoCNRSCA9sSQ1OzW1ILUIpo+Jg1OqgelEhf6pmXHJ65evbpNa/eKeU076
+	wlca84quz5s9e0vrwXJmlTmCt26LXpnbtyeifC9P8Y28xIkXhRu3mXFvt/H4efpqTvyemoz1
+	UedFMhZzRp3t3H3qT/Ye17TqPVr7t09ZvezwsQbTX0clGvp3KAaseuTx4yyLDmu+tjRPXme3
+	97YQua59ia9ijzN43/6Tu/wGU3udZrjqzdtBH1ulp1xQ8v+UXKW8Nva44UXjkq0G725ucN7r
+	sVUudNmsqw2SlubPdBamLm6/9uGv9pmFR8w+Pd4b6ha9y+hJSmmbeOauTS/e9v+dz7G99sIE
+	46vyvc3LDB5OyZ73/v6LNaGZMyTW+k2X8eqzrl6aeK6mK0FYiaU4I9FQi7moOBEAYi4sVW0D
+	AAA=
+X-CMS-MailID: 20240515074830eucas1p234221fa03210bdc7d16a4f0e7594e1b8
+X-Msg-Generator: CA
+X-RootMTR: 20240513194712eucas1p2f909b8b89a8ea616d8d3defe01000070
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240513194712eucas1p2f909b8b89a8ea616d8d3defe01000070
+References: <20240513-jag-constfy_sysctl_proc_args-v1-1-bba870a480d5@samsung.com>
+	<CGME20240513194712eucas1p2f909b8b89a8ea616d8d3defe01000070@eucas1p2.samsung.com>
+	<202405131246.C27D85E1@keescook>
 
-This series adds support for switch-mode for ICSSG driver. This series
-also introduces helper APIs to configure firmware maintained FDB
-(Forwarding Database) and VLAN tables. These APIs are later used by ICSSG
-driver in switch mode.
+--u33zp4qhf56xbdna
+Content-Type: text/plain; charset="UTF-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Now the driver will boot by default in dual EMAC mode. When first ICSSG
-interface is added to bridge driver will still be in EMAC mode. As soon as
-second ICSSG interface is added to same bridge, switch-mode will be
-enabled and switch firmwares will be loaded to PRU cores. The driver will
-remain in dual EMAC mode if ICSSG interfaces are added to two different
-bridges or if two differnet interfaces (One ICSSG, one other) is added to
-the same bridge. We'll only enable is_switch_mode flag when two ICSSG
-interfaces are added to same bridge.
+On Mon, May 13, 2024 at 12:47:07PM -0700, Kees Cook wrote:
+> On Mon, May 13, 2024 at 11:25:18AM +0200, Joel Granados via B4 Relay wrot=
+e:
+> > From: Thomas Wei=DFschuh <linux@weissschuh.net>
+> >=20
+> > In a future commit the proc_handlers themselves will change to
+> > "const struct ctl_table". As a preparation for that adapt the internal
+> > helper.
+> >=20
+> > Signed-off-by: Thomas Wei=DFschuh <linux@weissschuh.net>
+>=20
+> Yup, looks good. At what point is this safe to apply to Linus's tree?
+> i.e. what prerequisite patches need to land before this?
 
-We start in dual MAC mode. Let's say lan0 and lan1 are ICSSG interfaces
+I was planning to queue this for v6.11. I expect the other patches (1/11 - =
+9/11)
+will make it to mainline at that point.
 
-ip link add name br0 type bridge
-ip link set lan0 master br0
+This patchset has no dependencies and can easily go into v6.11 as it is tri=
+vial,
+the generated assember (in x86_64 at least) is unchanged and it has been te=
+sted
+it in 0-day.
 
-At this point, we get a CHANGEUPPER event. Only one port is a member of
-the bridge, so we will still be in dual MAC mode.
+>=20
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>=20
+> --=20
+> Kees Cook
 
-ip link set lan1 master br0
+--=20
 
-We get a second CHANGEUPPER event, the second interface lan1 is also ICSSG
-interface so we will set the is_switch_mode flag and when interfaces are
-brought up again, ICSSG switch firmwares will be loaded to PRU Cores.
+Joel Granados
 
-There are some other cases to consider as well. 
+--u33zp4qhf56xbdna
+Content-Type: application/pgp-signature; name="signature.asc"
 
-ip link add name br0 type bridge
-ip link add name br1 type bridge
+-----BEGIN PGP SIGNATURE-----
 
-ip link set lan0 master br0
-ip link set ppp0 master br0
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmZDaa8ACgkQupfNUreW
+QU86cAv/U6DPcIOJ418D9RK38qE1Q4PZx5w896pOud5Hn2URsq03PFwLhj8TfODc
+WV6zyKo5KCmoMLJ4DBHFb4ojXYCeRdc5Ne8Q7VW25r4R6iW0w5qxUCcT7sCJ5A7L
+eN/B4E20FkAECNlo/BFsznDhAKdAXtw3PqQPddpAslYh/v0guTB+JflFzddrnhPL
+w1pYuTCpg0cL33Fp0lQPmcF5xZ2aamL7WOBxtIofav3IWRkQsQ8TV7U6CW7I1k7H
+L23nYJgXiZ3K92+Y7OCgWC9PY3lGgncZLunE1wvg/mC4HD/VLAqEYVYhL6375HUs
+rN13BYhhwnIGeNNicLHHBFC1xpr9ADKDqoH9gLV1F4xQaOSfVjv3OVz8IFXJHRSV
+EhuidPdDdIH8qU08rE4OUoi6qGp/0uzM0j489K/ldaxKoJszfbHUKyBcsDGv+Yua
+b7OdfeiWKqrYLQ4qAF+38LVbhkHPdx3hehsi6kS3OXPbXl4/G5To+x4I6Ii67aSp
+QpsREEkh
+=nYJa
+-----END PGP SIGNATURE-----
 
-Here we are adding lan0 (ICSSG) and ppp0 (non ICSSG) to same bridge, as
-they both are not ICSSG, we will still be running in dual EMAC mode.
-
-ip link set lan1 master br1
-ip link set vpn0 master br1
-
-Here we are adding lan1 (ICSSG) and vpn0 (non ICSSG) to same bridge, as
-they both are not ICSSG, we will still be running in dual EMAC mode.
-
-This is v4 of the series. It addresses commenst made on v3.
-Changes from v3 to v4:
-*) Added RFC tag as net-next is closed now.
-*) Modified the driver to remove the need of bringing interfaces up / down
-   for enabling / disabling siwtch mode. Now switch mode can be enabled
-   without bringig interfaces up / down as requested by Andrew Lunn
-   <andrew@lunn.ch>
-*) Modified commit message of patch 3/3.
-
-Changes from v2 to v3:
-*) Dropped RFC tag.
-*) Used ether_addr_copy() instead of manually copying mac address using
-   for loop in patch 1/3 as suggested by Andrew Lunn <andrew@lunn.ch>
-*) Added helper API icssg_fdb_setup() in patch 1/3 to reduce code
-   duplication as suggested by Andrew Lunn <andrew@lunn.ch>
-*) In prueth_switchdev_stp_state_set() removed BR_STATE_LEARNING as
-   learning without forwarding is not supported by ICSSG firmware.
-*) Used ether_addr_equal() wherever possible in patch 2/3 as suggested
-   by Andrew Lunn <andrew@lunn.ch>
-*) Fixed typo "nit: s/prueth_switchdevice_nb/prueth_switchdev_nb/" in
-   patch 2/3 as suggested by Simon Horman <horms@kernel.org>
-*) Squashed "#include "icssg_mii_rt.h" to patch 2/3 from patch 3/3 as
-   suggested by Simon Horman <horms@kernel.org>
-*) Rebased on latest net-next/main.
-
-Changes from v1 to v2:
-*) Removed TAPRIO support patch from this series.
-*) Stopped using devlink for enabling switch-mode as suggested by Andrew L
-*) Added read_poll_timeout() in patch 1 / 3 as suggested by Andrew L.
-
-v1 https://lore.kernel.org/all/20230830110847.1219515-4-danishanwar@ti.com/
-v2 https://lore.kernel.org/all/20240118071005.1514498-1-danishanwar@ti.com/
-v3 https://lore.kernel.org/all/20240327114054.1907278-1-danishanwar@ti.com/
-
-Thanks and Regards,
-Md Danish Anwar
-
-MD Danish Anwar (3):
-  net: ti: icssg-prueth: Add helper functions to configure FDB
-  net: ti: icssg-switch: Add switchdev based driver for ethernet switch
-    support
-  net: ti: icssg-prueth: Add support for ICSSG switch firmware
-
- drivers/net/ethernet/ti/Kconfig               |   1 +
- drivers/net/ethernet/ti/Makefile              |   3 +-
- drivers/net/ethernet/ti/icssg/icssg_common.c  |   2 +
- drivers/net/ethernet/ti/icssg/icssg_config.c  | 306 ++++++++++-
- drivers/net/ethernet/ti/icssg/icssg_config.h  |  26 +
- drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 250 ++++++++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  36 ++
- .../net/ethernet/ti/icssg/icssg_switchdev.c   | 477 ++++++++++++++++++
- .../net/ethernet/ti/icssg/icssg_switchdev.h   |  13 +
- 9 files changed, 1099 insertions(+), 15 deletions(-)
- create mode 100644 drivers/net/ethernet/ti/icssg/icssg_switchdev.c
- create mode 100644 drivers/net/ethernet/ti/icssg/icssg_switchdev.h
-
--- 
-2.34.1
-
+--u33zp4qhf56xbdna--
 
