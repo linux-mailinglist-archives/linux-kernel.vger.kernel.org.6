@@ -1,161 +1,208 @@
-Return-Path: <linux-kernel+bounces-178767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77198C5768
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:53:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBCE8C5773
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:56:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4381F2258E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1A621C218CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBB4144D39;
-	Tue, 14 May 2024 13:53:27 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3251144D12;
+	Tue, 14 May 2024 13:56:39 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2E1448E7;
-	Tue, 14 May 2024 13:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CE31448E7
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715694806; cv=none; b=Hw8nMYMxWSC9l5Gy6ps8YlRHiHQTZ/Vo2ZgshD9ntMw9sxqx9ltOmqG6dcDKTiCulB1cW5+nBugXj3UuKGz26UsXM/GrjwbG9aABHsZVQ1zLFNAi7aWNxvk9Sxpaey46yBWugps9YYvHrOqpTCXlR0C4mGeaVfOPVd/gbOQcRF4=
+	t=1715694999; cv=none; b=on0OG1Mxxe/pn82RJaIEPef9Iaa7hZg71Tq036g60qgXIb6kI2CK3yWLg/9I4X4aTzN28gZwWiZun3clnJQGwyj8vGFwx6q51zsHSo7LQ5+k8L4vavzUu8q68S12eUVzMj7DApdSxerHc5/m01sh19fOTzURDaIwYYgFb//gfQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715694806; c=relaxed/simple;
-	bh=O8hFA/T2LaGjTwRIMxIxq5cA/Tjjnvrs75x/Pq5EtTY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=sLgncJhf6xTVMhTDjvZhSa7noLTdsijarwdnw0R74tqksbf5rmK1100dqk6UB2TzMmXTLJ9hBSRIYpEvFHeR5bseKRN/pcsKqbhdmDbOZzgE7IN/w60YpbFcCOrjTZQmubSKt+Zet/dfhvLGFWzMlssXm+55bIsr6JzMm3BDAvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VdyVY5hNnz4f3m7d;
-	Tue, 14 May 2024 21:53:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E7B351A0199;
-	Tue, 14 May 2024 21:53:19 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgBXfA_ObENm1cfPMw--.37697S3;
-	Tue, 14 May 2024 21:53:19 +0800 (CST)
-Subject: Re: [PATCH v2 2/9] jbd2: remove unused return info from
- jbd2_journal_write_metadata_buffer
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- jack@suse.com
-References: <20240514112438.1269037-1-shikemeng@huaweicloud.com>
- <20240514112438.1269037-3-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <25ddaf34-bd98-2783-f7b3-42ea86d11b3d@huaweicloud.com>
-Date: Tue, 14 May 2024 21:53:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715694999; c=relaxed/simple;
+	bh=nfzLjkF+O8VbA9hAeacLykxNwCTkL1GjlRWOA4oAN7E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JaNwXG3Lg9NKd5yZmNwSNJKsLEfAgH6fJ0CylRGeYRQSt97HJKYuz3iwyY1Gb5FcJNYiL2W9Ca9q2c0DqBj4rn9xcOB7QvojCCuUns2Dx6aBMxpmuCBopyqhUb1qZsTWD75U4yqYyR9eR5tQjmvWSRA9x5vF4x1wt9jHgFeCSuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-7dec4e29827so627463539f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:56:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715694997; x=1716299797;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L9QUw4znG6Zkd8t2vNAPl8dtkMYXTahCd/CeAkVBkiM=;
+        b=caHS55gnw3iGoY5tKPTdvPEmzoMUOYULEYtSMeu1PjARv8qvhozxnjXIHJ5OpOESZv
+         OvrDIZBZgGaKP1mrgT8UC6Xzu1QiYvgQ3Bv4eMtnYck8plxHfo/pCpvk+rq7p7votUrw
+         XHuVSU85p7S6YxzMkMgZ3eEbpFuMHX0wNVTz5fh6wsLHfV2tF22k+PaDjDpk5/K/XIb1
+         cVCoZrNvGOCfNCFW/my8WvuPajdDW7HTMjzR3bZ3hGO3rB6SjQFRsikXR/fcvatYscOC
+         kleauMayY7sUO2kuEeHB6CiSNPa+mYpVnF9ln4JSeIcIJoPjL2kgH1VwJtCyZb0xik6E
+         /UVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwiYN4/QKnBZDs34uLSO96QwtkEEEYzskmsnw4XIXYIdUeMu2iLQVPV/sjp2MulKD4bowH7su0AENGnjxPT1ntvP4nwhSrul45mHaa
+X-Gm-Message-State: AOJu0Yy8BeXyZ5xuDre6zJAHq1i6bZozcYQj3qXFtNPlashA54O0MOid
+	zdbYlihwdKgjdoApl6CYpYrjMIIA9S/2ZqNZuXcOJXkN/Gx6gLd5o141RsatkZ7UHHGLA1HAxBy
+	vxhePgDCv1P8fm50W8h7F2nucYvtEGp2rjCUkmZGetMuS36ut+WsS29k=
+X-Google-Smtp-Source: AGHT+IED5GuYc/qycmxtnmG7IVsKchSO7/U6U0CF4NI/ZjmKXd3MDNYX2hRo9e8zFu9h+VckKMNmgORYNG3u4W5ovnf3QDJFpzwv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240514112438.1269037-3-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBXfA_ObENm1cfPMw--.37697S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF1fWw1furWfXw1rZF1UWrg_yoW5JryUpr
-	95Ca4rAr90vry0yF1xXF4UJFWjgFWUuFyjkr1qk3Z5JayfXwn2gF1Iyr13Kr4jyF93Cw48
-	AF1UCa4kGw4Yv3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
-	Y487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbWCJP
-	UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6638:8696:b0:488:7f72:b3b0 with SMTP id
+ 8926c6da1cb9f-48959031a96mr610608173.5.1715694996552; Tue, 14 May 2024
+ 06:56:36 -0700 (PDT)
+Date: Tue, 14 May 2024 06:56:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d00dce06186a5efc@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: stack-out-of-bounds Read in __bch2_encrypt_bio
+From: syzbot <syzbot+fff6b0fb00259873576a@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/14 19:24, Kemeng Shi wrote:
-> The done_copy_out info from jbd2_journal_write_metadata_buffer is not
-> used. Simply remove it.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Hello,
 
-Thanks, looks good to me.
+syzbot found the following issue on:
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+HEAD commit:    75fa778d74b7 Add linux-next specific files for 20240510
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17a13f70980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccdd3ebd6715749a
+dashboard link: https://syzkaller.appspot.com/bug?extid=fff6b0fb00259873576a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1679303f180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a2743f180000
 
-> ---
->  fs/jbd2/commit.c  | 10 +++++-----
->  fs/jbd2/journal.c |  9 +++------
->  2 files changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 5e122586e06e..67077308b56b 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -353,7 +353,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  	struct buffer_head *descriptor;
->  	struct buffer_head **wbuf = journal->j_wbuf;
->  	int bufs;
-> -	int flags;
-> +	int escape;
->  	int err;
->  	unsigned long long blocknr;
->  	ktime_t start_time;
-> @@ -661,10 +661,10 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  		 */
->  		set_bit(BH_JWrite, &jh2bh(jh)->b_state);
->  		JBUFFER_TRACE(jh, "ph3: write metadata");
-> -		flags = jbd2_journal_write_metadata_buffer(commit_transaction,
-> +		escape = jbd2_journal_write_metadata_buffer(commit_transaction,
->  						jh, &wbuf[bufs], blocknr);
-> -		if (flags < 0) {
-> -			jbd2_journal_abort(journal, flags);
-> +		if (escape < 0) {
-> +			jbd2_journal_abort(journal, escape);
->  			continue;
->  		}
->  		jbd2_file_log_bh(&io_bufs, wbuf[bufs]);
-> @@ -673,7 +673,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->                     buffer */
->  
->  		tag_flag = 0;
-> -		if (flags & 1)
-> +		if (escape)
->  			tag_flag |= JBD2_FLAG_ESCAPE;
->  		if (!first_tag)
->  			tag_flag |= JBD2_FLAG_SAME_UUID;
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 207b24e12ce9..2dca2f613a8e 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -316,11 +316,8 @@ static void journal_kill_thread(journal_t *journal)
->   *
->   * Return value:
->   *  <0: Error
-> - * >=0: Finished OK
-> - *
-> - * On success:
-> - * Bit 0 set == escape performed on the data
-> - * Bit 1 set == buffer copy-out performed (kfree the data after IO)
-> + *  =0: Finished OK without escape
-> + *  =1: Finished OK with escape
->   */
->  
->  int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
-> @@ -455,7 +452,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	set_buffer_shadow(bh_in);
->  	spin_unlock(&jh_in->b_state_lock);
->  
-> -	return do_escape | (done_copy_out << 1);
-> +	return do_escape;
->  }
->  
->  /*
-> 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ad9391835bcf/disk-75fa778d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d827b3da9a26/vmlinux-75fa778d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8f32f0182388/bzImage-75fa778d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/134862d610aa/mount_0.gz
 
+The issue was bisected to:
+
+commit 023f9ac9f70fbb1d94d27583fc06225355c73a67
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Dec 20 02:58:20 2023 +0000
+
+    bcachefs: Delete dio read alignment check
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=130be15c980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=108be15c980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=170be15c980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+fff6b0fb00259873576a@syzkaller.appspotmail.com
+Fixes: 023f9ac9f70f ("bcachefs: Delete dio read alignment check")
+
+==================================================================
+BUG: KASAN: stack-out-of-bounds in sg_mark_end include/linux/scatterlist.h:258 [inline]
+BUG: KASAN: stack-out-of-bounds in __bch2_encrypt_bio+0x84d/0xb10 fs/bcachefs/checksum.c:355
+Read of size 8 at addr ffffc900001176a0 by task kworker/u8:1/12
+
+CPU: 0 PID: 12 Comm: kworker/u8:1 Not tainted 6.9.0-rc7-next-20240510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+Workqueue: events_unbound __bch2_read_endio
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ sg_mark_end include/linux/scatterlist.h:258 [inline]
+ __bch2_encrypt_bio+0x84d/0xb10 fs/bcachefs/checksum.c:355
+ bch2_encrypt_bio fs/bcachefs/checksum.h:97 [inline]
+ __bch2_read_endio+0x8ab/0x23c0 fs/bcachefs/io_read.c:601
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+The buggy address belongs to stack of task kworker/u8:1/12
+ and is located at offset 1120 in frame:
+ __bch2_encrypt_bio+0x0/0xb10 fs/bcachefs/checksum.c:72
+
+This frame has 5 objects:
+ [32, 48) 'nonce.i115'
+ [64, 528) '__req_desc.i116'
+ [592, 608) 'nonce.i'
+ [624, 1088) '__req_desc.i'
+ [1152, 1664) 'sgl'
+
+The buggy address belongs to the virtual mapping at
+ [ffffc90000110000, ffffc90000119000) created by:
+ copy_process+0x5d1/0x3dc0 kernel/fork.c:2220
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x17297
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2dc2(GFP_KERNEL|__GFP_HIGHMEM|__GFP_NOWARN|__GFP_ZERO), pid 2, tgid 2 (kthreadd), ts 2480284041, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1468
+ prep_new_page mm/page_alloc.c:1476 [inline]
+ get_page_from_freelist+0x2ce2/0x2d90 mm/page_alloc.c:3438
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ vm_area_alloc_pages mm/vmalloc.c:3567 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3643 [inline]
+ __vmalloc_node_range_noprof+0x9a4/0x1490 mm/vmalloc.c:3824
+ alloc_thread_stack_node kernel/fork.c:309 [inline]
+ dup_task_struct+0x444/0x8c0 kernel/fork.c:1115
+ copy_process+0x5d1/0x3dc0 kernel/fork.c:2220
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2797
+ kernel_thread+0x1bc/0x240 kernel/fork.c:2859
+ create_kthread kernel/kthread.c:412 [inline]
+ kthreadd+0x60d/0x810 kernel/kthread.c:765
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffffc90000117580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90000117600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90000117680: f2 f2 f2 f2 f2 f2 f2 f2 00 00 00 00 00 00 00 00
+                               ^
+ ffffc90000117700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90000117780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
