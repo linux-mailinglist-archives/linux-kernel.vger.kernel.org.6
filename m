@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-179149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B568C5C5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:39:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C6D8C5C61
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54D08B218AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:39:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1701F23159
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409F71DFFC;
-	Tue, 14 May 2024 20:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7636E1E491;
+	Tue, 14 May 2024 20:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HmAsc7Ct"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZoBC0M+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DBC2AF0D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24890365
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715719178; cv=none; b=gNFRoN0Ptl8AEQW850DSK0WiXlcIY8HDgD2aiuoX8nIhVpgu7aXrlUGnEx+fr5Q2XSrMNQocxp+JKHPstC4crbKtC8ewLPhnKmzfqwoUcxp5Na/lI6qXu0WrkY80qvF9j6hyTvwRoLaIYETdfh3jh2DFOqYkyaFnsuW3BR1LOZE=
+	t=1715719244; cv=none; b=VCjfi5WL+FzcfqBgw5z1DQpLjiBcbBlmiRLdbTBDY6SdtRuhhTUTdCWaYqOiqfjhVhwnk6blEecCHDBkDbBs6eACkbLArc7Q51ITc+GA17rXsI+p7PlosXgzq49A9hpltakk5hJCzUluf0qGSuJUzSi4aw1Y0NuykWTQ/nlQJlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715719178; c=relaxed/simple;
-	bh=dcfRyOLBWot0N4wtJVvYk4o+gibi42/0MoCaLwXR1rg=;
+	s=arc-20240116; t=1715719244; c=relaxed/simple;
+	bh=NQ44bzHV1kkewM1edEMYWaIIvfbxgXRW6y+UbGh/9Qw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K+DC/fZ8rkgwKVOd0xbVC2OA5Ub/BX945PDt0D3Jwe+lciqk+FRaK+43AQbl1+pKFAODrQSgmSupjeonzO+K/KSKw+kwZckSKPd4WSJWPlDzaSK8awErGWDJ0IQx3N51KpHUrj7lI2LxRbsUpsYd1o6T/kfM0gb6rUr505/XtEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HmAsc7Ct; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=MAGUiNxr3KizHuOGf2Q19qXw1ZxNrM7l4nQvZPwU9R+toxYwEBzjpw0k/qrSDSwPsJDdBlXV64euvQfzYedOtd9Au4NfvBLREON5/U2OI4wSWbVi+Tqlp1p0OtfQlanlU7mYbJS+JqgY2zGa0PJppJxDngmCO/O76nerEsQwtVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZoBC0M+; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715719175;
+	s=mimecast20190719; t=1715719242;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ITMhM4TN9IG8BffABJDJLkO9uSK3vlKikLrGNKRSMoc=;
-	b=HmAsc7Cth7Yr3ID2n6GHr1c3dMAd7bf3cslPgjFFN0RVdLyKauNArgAfEoyiWw6RdUlk5n
-	tXkh/JRRh0AqCoPFGi9oegYhXyDW5TPfa0/Ta7Yl+GXZrHYjiQPbtw79EuJELPWn+w400i
-	2rkU9xPUpCUqDi7W6peHZG9AB7tO6ZY=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ERFfx8GtL0+KBqPg/EG0Vzt3dGykVLSh9fvS/DwTqDg=;
+	b=OZoBC0M+lxc3TxQ09O5aq57jxxayKmHhMIsW2SnvSrAMnv/atNV/kz1Fjf/2okNj4NAzWE
+	V+tfbpHxnvQY16lxhTQIMxTdw3ZEg4QqRrQZGoVaUUwl0OrWECjVpPc7CRKE4dF0SCIKF7
+	9f32omLsdTjV+GRZXTazRcNRNldWQKM=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-270-B5hZuHUZM36sIS4w3Wf32g-1; Tue, 14 May 2024 16:39:34 -0400
-X-MC-Unique: B5hZuHUZM36sIS4w3Wf32g-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1ee4e9a73a8so64502945ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:39:33 -0700 (PDT)
+ us-mta-195-UWI25NILPPmKkTjiWrn1IA-1; Tue, 14 May 2024 16:40:30 -0400
+X-MC-Unique: UWI25NILPPmKkTjiWrn1IA-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1ec401f87d3so68267985ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:40:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715719173; x=1716323973;
+        d=1e100.net; s=20230601; t=1715719229; x=1716324029;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ITMhM4TN9IG8BffABJDJLkO9uSK3vlKikLrGNKRSMoc=;
-        b=iypEaFekt8R7gig3Zg+kuB6oljCQRoZxGCF4cCjLphsUCTQvRlPFmoFcsVsxJ27nve
-         2qkQpWd4g77HXLJD5CuC6Eykphb8UF4yUY8GFV2T1mb4D3IRttMAFyEuH2h8Vtqbqe2B
-         rM9eJgC4mK3REmjQoOm3NIh6o57DBlfWEbCIalEvCy2EnAd7/dDvibRm4jAfahfjy0tr
-         cLUgUNBxjKMpyDqJYPy8xp/rJyHnfmEk5SpbBpQBEgEAPHepwun8ilWC+bGPZd62dpFk
-         OETCgS+/touT5AI3u1I4w8F9Y6GmEcLAWGK0pvzsXz3doMXKXruWSXVWA5MCO5eiwT3w
-         1jGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvv3oE3VRYQomsLYMm2QOGvTV5HxyGoDN3II1MhBu7Jg7feakyLwzhwC8M2hb+IQoYuU/etNDZar7NbuP+9w6RUPnoYGoUDm+mGH6A
-X-Gm-Message-State: AOJu0Yy47IpvqR+cGj/l39MaJQs5/rVFTdDCG6Rf4YXzQyL/KuQ0fAfb
-	eWqTbSVzEY7pdvYjPi8V3XGdVZI3ecBsLGSIUk4RkYtEPRAxkOE+cXovWJ66thao71egeOOuRYU
-	FCf5lb3l9BzD/Dxpn3bF+DqUshOGMAkKImxE491DGA9Lir1eKepL3s0/yvJM4tQ==
-X-Received: by 2002:a17:902:f54d:b0:1e2:aa62:2fbf with SMTP id d9443c01a7336-1ef4404a379mr183346865ad.45.1715719172839;
-        Tue, 14 May 2024 13:39:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZIK2cFpjPQfSL+bLZI1/OS2KM8wi7MbrbKIssFODspkwohw7SVfmm+SN9dNhpzxuT3OOpIA==
-X-Received: by 2002:a17:902:f54d:b0:1e2:aa62:2fbf with SMTP id d9443c01a7336-1ef4404a379mr183346485ad.45.1715719172282;
-        Tue, 14 May 2024 13:39:32 -0700 (PDT)
+        bh=ERFfx8GtL0+KBqPg/EG0Vzt3dGykVLSh9fvS/DwTqDg=;
+        b=Uuks21O4SJ2xHtpNRMeh6FHX5v/7Cg7qJSHJ07WbVafZZMfaiN8FW3Brv8BnW/IUOc
+         jqOTxCn7ux/ITm0iZFSdezRqodyfprm3GIubaM9qjgmG3EvAWvtJOgG4PgCTI5zZw10x
+         YJHip8v2g0InrICYlnAilLPfiN9ZcTxJQ7XFkOGgaC+olqLBazNWg5qUUNkHM4nUM7Vh
+         UDac4yrae3eGa04cPlJlFqaZ1Na5HbzM0vuoYDP6L8aeYn9Z0lYDoZ/B4067FCdE25cE
+         BagubRxX9/IVScWfN4ruWbDbhOaZznkUJO8nrLsVt7nebGVXOrIVbTuLizPRQ40nugY3
+         GoXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWai7zjXRvw2Fs+LupZ8XFQ2SlT+AfLBhTPaM/fRwOuo0B7eWhb1/fWhxnMoasinGuW/DtL5VUAFPB03vdsHOeMQY1m83mn22OVVFUQ
+X-Gm-Message-State: AOJu0Yx1enXC4gdm1wKj+xSigQzGL1opDOBgE1lVf4G73Afza0WAzwGO
+	04NgEMI8o3aGkPScTQzrakcGN1qTMTYVjJEOsSUjvwPxhJl9F2K94RRgr6txvDFsDarVq/RXuDm
+	cHsetok+h997s97ELsW+rEcG2YYav8EwJYxlBJV/opswD6PAQfcIOj/I6eBNTBw==
+X-Received: by 2002:a17:902:e84e:b0:1ec:b6e2:da89 with SMTP id d9443c01a7336-1ef440505b8mr190128625ad.61.1715719229638;
+        Tue, 14 May 2024 13:40:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6bA/pLrH5fULGMGrMKQoSFgbTk9N93hyM2xdgCcaLr0iqz/N5xBJQZ4SbpuoqpUbPjsyoFg==
+X-Received: by 2002:a17:902:e84e:b0:1ec:b6e2:da89 with SMTP id d9443c01a7336-1ef440505b8mr190128335ad.61.1715719229168;
+        Tue, 14 May 2024 13:40:29 -0700 (PDT)
 Received: from [172.21.1.2] ([50.204.89.31])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d176fsm101887075ad.58.2024.05.14.13.39.30
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0b9d40besm104795205ad.42.2024.05.14.13.40.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 13:39:31 -0700 (PDT)
-Message-ID: <eb750e53-4b22-47a4-9306-d931628d12c3@redhat.com>
-Date: Tue, 14 May 2024 22:39:30 +0200
+        Tue, 14 May 2024 13:40:28 -0700 (PDT)
+Message-ID: <6f6b0577-51af-4fdf-a46a-d50787346150@redhat.com>
+Date: Tue, 14 May 2024 22:40:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,13 +82,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] riscv: mm: Take memory hotplug read-lock during
- kernel page table dump
+Subject: Re: [PATCH v2 6/8] riscv: Enable memory hotplugging for RISC-V
 To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Alexandre Ghiti <alexghiti@rivosinc.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, linux-riscv@lists.infradead.org,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
  Andrew Bresticker <abrestic@rivosinc.com>,
  Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
  Lorenzo Stoakes <lstoakes@gmail.com>, Oscar Salvador <osalvador@suse.de>,
@@ -97,7 +96,9 @@ Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
  Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org, virtualization@lists.linux-foundation.org
 References: <20240514140446.538622-1-bjorn@kernel.org>
- <20240514140446.538622-6-bjorn@kernel.org>
+ <20240514140446.538622-7-bjorn@kernel.org>
+ <CAHVXubi6Hv_FCTi=a5FFoxqiUBucrX_NhVGBAWE6qXRXdzOYsA@mail.gmail.com>
+ <87r0e4l0m6.fsf@all.your.base.are.belong.to.us>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -145,49 +146,41 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240514140446.538622-6-bjorn@kernel.org>
+In-Reply-To: <87r0e4l0m6.fsf@all.your.base.are.belong.to.us>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 14.05.24 16:04, Björn Töpel wrote:
-> From: Björn Töpel <bjorn@rivosinc.com>
+On 14.05.24 20:17, Björn Töpel wrote:
+> Alexandre Ghiti <alexghiti@rivosinc.com> writes:
 > 
-> During memory hot remove, the ptdump functionality can end up touching
-> stale data. Avoid any potential crashes (or worse), by holding the
-> memory hotplug read-lock while traversing the page table.
+>> On Tue, May 14, 2024 at 4:05 PM Björn Töpel <bjorn@kernel.org> wrote:
+>>>
+>>> From: Björn Töpel <bjorn@rivosinc.com>
+>>>
+>>> Enable ARCH_ENABLE_MEMORY_HOTPLUG and ARCH_ENABLE_MEMORY_HOTREMOVE for
+>>> RISC-V.
+>>>
+>>> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+>>> ---
+>>>   arch/riscv/Kconfig | 2 ++
+>>>   1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>>> index 6bec1bce6586..b9398b64bb69 100644
+>>> --- a/arch/riscv/Kconfig
+>>> +++ b/arch/riscv/Kconfig
+>>> @@ -16,6 +16,8 @@ config RISCV
+>>>          select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+>>>          select ARCH_DMA_DEFAULT_COHERENT
+>>>          select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
+>>> +       select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM && 64BIT && MMU
+>>
+>> I think this should be SPARSEMEM_VMEMMAP here.
 > 
-> This change is analogous to arm64's commit bf2b59f60ee1 ("arm64/mm:
-> Hold memory hotplug lock while walking for kernel page table dump").
-> 
-> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
-> ---
->   arch/riscv/mm/ptdump.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/riscv/mm/ptdump.c b/arch/riscv/mm/ptdump.c
-> index 1289cc6d3700..9d5f657a251b 100644
-> --- a/arch/riscv/mm/ptdump.c
-> +++ b/arch/riscv/mm/ptdump.c
-> @@ -6,6 +6,7 @@
->   #include <linux/efi.h>
->   #include <linux/init.h>
->   #include <linux/debugfs.h>
-> +#include <linux/memory_hotplug.h>
->   #include <linux/seq_file.h>
->   #include <linux/ptdump.h>
->   
-> @@ -370,7 +371,9 @@ bool ptdump_check_wx(void)
->   
->   static int ptdump_show(struct seq_file *m, void *v)
->   {
-> +	get_online_mems();
->   	ptdump_walk(m, m->private);
-> +	put_online_mems();
->   
->   	return 0;
->   }
+> Hmm, care to elaborate? I thought that was optional.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+There was a discussion at LSF/MM today to maybe require 
+SPARSEMEM_VMEMMAP for hotplug. Would that work here as well?
 
 -- 
 Cheers,
