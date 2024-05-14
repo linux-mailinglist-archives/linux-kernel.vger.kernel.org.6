@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-178924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE8B88C597E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:15:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2297E8C5982
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8C1281EC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0031F2503C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A22D17F395;
-	Tue, 14 May 2024 16:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F7218130D;
+	Tue, 14 May 2024 16:15:00 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BF417F370
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503D017F398
 	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715703297; cv=none; b=T5Dpd29kIOQM4zH5Sy1/IIF1vV/q3/pPcch87fN9CmqkZtgrv6RPTRpF/CtXZZHq/xEy0j9ZFY68GgxHrLh+uR6o1GFE4xo17jnuzLkqHR+tPrTVVB3ho1dnfjZacGbvNiur+LYaqm4aIatkPzKtYmXoCi0Q43F+yNZgQc4f1Fk=
+	t=1715703298; cv=none; b=eiiNnieCPMNw1K0TwGaE7QGqCWgIMb91UdEXnd8nHqx7G+u8CCsYx6Tl31VOnFIQ6THBkUkFqRV2NFXerpJIq7MTFf1mJS/mA/Ot+Q31S44SerWCTI/2Kbb8YReGUQmcqXOya5g62P6ywrkoietL+O5ZNolVhR7bhbFbBCcijFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715703297; c=relaxed/simple;
-	bh=plML4HWJuSi8kL6RJveAZUXjgIqw99uTWZgZMDW1oE4=;
+	s=arc-20240116; t=1715703298; c=relaxed/simple;
+	bh=MvNAZ74hBU+Fb/X1FXSdnkak+RI3JAKgG+xFxCEFthg=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Elbi2tUSCYfgKAkPxwaimyH48NTm28fmu0l2P6CiUnsKgwaEqGEvRKJpB+rODZR+/QQnFQ2X03HIw9LzhzSpLyRuzkjAz66fGrqyjKkw3zgPl5WsXpPSrUY8LIFafOpxfAmKrf2Tx0VFdpqc9ZXACx9yv16a9mVpFbzVJ6NAYa0=
+	 Content-Type; b=b1UC2JSfENhro9un3+1Ku87YgcdAscLjRaT56c/CBiRMCbhKnu06TQLVHO4ndmH/XlnCXCjLBPy8SQ9IayCISr5JT6IPR3Thr2sjdFseVePbl/7aIH1IVuFVbB2NgXDc6ipT/4Hpts5rMXSiePwsmcsrOgCCA5gvLB/Pjy7SegI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DC3C4AF0F;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B7DC2BD11;
 	Tue, 14 May 2024 16:14:57 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1s6uoE-00000003t3y-1uf4;
+	id 1s6uoE-00000003t4S-2Z9j;
 	Tue, 14 May 2024 12:15:22 -0400
-Message-ID: <20240514161522.320473028@goodmis.org>
+Message-ID: <20240514161522.476351844@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 14 May 2024 12:14:41 -0400
+Date: Tue, 14 May 2024 12:14:42 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [for-next][PATCH 3/7] tracing: Improve benchmark test performance by using do_div()
+ "Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [for-next][PATCH 4/7] ftrace: Remove unused list ftrace_direct_funcs
 References: <20240514161438.134250861@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,45 +52,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Thorsten Blum <thorsten.blum@toblux.com>
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Partially revert commit d6cb38e10810 ("tracing: Use div64_u64() instead
-of do_div()") and use do_div() again to utilize its faster 64-by-32
-division compared to the 64-by-64 division done by div64_u64().
+Commit 8788ca164eb4b ("ftrace: Remove the legacy _ftrace_direct API")
+stopped using 'ftrace_direct_funcs' (and the associated
+struct ftrace_direct_func).  Remove them.
 
-Explicitly cast the divisor bm_cnt to u32 to prevent a Coccinelle
-warning reported by do_div.cocci. The warning was removed with commit
-d6cb38e10810 ("tracing: Use div64_u64() instead of do_div()").
+Build tested only (on x86-64 with FTRACE and DYNAMIC_FTRACE
+enabled)
 
-Using the faster 64-by-32 division and casting bm_cnt to u32 is safe
-because we return early from trace_do_benchmark() if bm_cnt > UINT_MAX.
-This approach is already used twice in trace_do_benchmark() when
-calculating the standard deviation:
+Link: https://lore.kernel.org/linux-trace-kernel/20240504132303.67538-1-linux@treblig.org
 
-	do_div(stddev, (u32)bm_cnt);
-	do_div(stddev, (u32)bm_cnt - 1);
-
-Link: https://lore.kernel.org/linux-trace-kernel/20240329160229.4874-2-thorsten.blum@toblux.com
-
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_benchmark.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/ftrace.h | 1 -
+ kernel/trace/ftrace.c  | 8 --------
+ 2 files changed, 9 deletions(-)
 
-diff --git a/kernel/trace/trace_benchmark.c b/kernel/trace/trace_benchmark.c
-index 811b08439406..e19c32f2a938 100644
---- a/kernel/trace/trace_benchmark.c
-+++ b/kernel/trace/trace_benchmark.c
-@@ -104,7 +104,7 @@ static void trace_do_benchmark(void)
- 		stddev = 0;
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 54d53f345d14..b01cca36147f 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -83,7 +83,6 @@ static inline void early_trace_init(void) { }
  
- 	delta = bm_total;
--	delta = div64_u64(delta, bm_cnt);
-+	do_div(delta, (u32)bm_cnt);
- 	avg = delta;
+ struct module;
+ struct ftrace_hash;
+-struct ftrace_direct_func;
  
- 	if (stddev > 0) {
+ #if defined(CONFIG_FUNCTION_TRACER) && defined(CONFIG_MODULES) && \
+ 	defined(CONFIG_DYNAMIC_FTRACE)
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index f9223513414a..4613bf67ef2c 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -5318,14 +5318,6 @@ ftrace_set_addr(struct ftrace_ops *ops, unsigned long *ips, unsigned int cnt,
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ 
+-struct ftrace_direct_func {
+-	struct list_head	next;
+-	unsigned long		addr;
+-	int			count;
+-};
+-
+-static LIST_HEAD(ftrace_direct_funcs);
+-
+ static int register_ftrace_function_nolock(struct ftrace_ops *ops);
+ 
+ /*
 -- 
 2.43.0
 
