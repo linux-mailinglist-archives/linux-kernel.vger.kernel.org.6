@@ -1,192 +1,151 @@
-Return-Path: <linux-kernel+bounces-178380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C848C4CDE
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:24:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC238C4CC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2177F1F21BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6141C20CB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB7F37160;
-	Tue, 14 May 2024 07:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3290317996;
+	Tue, 14 May 2024 07:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pa33e/fI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RsG0saWk"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFCD320DC8;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EAA15E81
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671399; cv=none; b=vF2IPN7U0IFQWfZozZ2a8opVc705gKsLPShRb0D/XYdJQJocgFozv7QIvGx3kq1kRwr9D02y1vXzE37jmbUXfo08yHmlXFG0TnSWi76UtY9Ipmq124qK7ZA8wwEbzpR0L0judgz8kknAK0eYy8S9xeh7JqWwf9mnPvhAkasnfvI=
+	t=1715671395; cv=none; b=gPeFShFbY14BSLc742ZeNTCf0Nbo7ob4+Po0a6faX0W/QjaL7GwXuDSEK8mGN+qmTa7OHSTlXhG/JFOr3/olX8losZfalP2jLo3rGRmTNz2S+Bd8fuMbkarYudkVkKXPzMUrALRh/VfC2BCuEtVmaAVeD3gHfO1hkolAo3J5p9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671399; c=relaxed/simple;
-	bh=C5kNeRF0fjlzbyKB5kgQ94Y9IwMiOQIyMWEdVrQHiM4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TNH6DQJA1FXS5CaSRsykyJGtKJHa3Kj0LyysPbg40dzPmRjqQoYrc0aYUix6nZUwPolMJWREwe45vDtFNbkOghWQy6aV8owROgpUS0FMDl7mTuBEEMMMRCCVtCQZMpSrmuNvYLJ7axAh44FJSNPsmegJTdOIwcBtHGvJSmn4Xsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pa33e/fI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 75E62C4AF18;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715671398;
-	bh=C5kNeRF0fjlzbyKB5kgQ94Y9IwMiOQIyMWEdVrQHiM4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=pa33e/fIIiqSzouN0QP4BpV2fI3st58px79WFqPqwFUvk4vLZJZPGllNfSk0IMFxX
-	 Lqa54zG7jjKqOo0ZOTGw54jd1zGdfSDAU10bWLk+LY6BIkk0tBpKdMWUiNi7WAF70Z
-	 GRVzgrdMKv4ejUuZUDRQ3+adK2BwY+N72ymfipMClDZ/pvyga0BVY6YJZdigNbKacg
-	 e6R12Ec+0Y5SUgn+7F4HNdkxfOwSMJ1/3caAmmVu1Ynb5oCsLKb/wrV/+tlhBdzoN3
-	 ckeFlqPSsyRFAMnlaKgy8fbarPxWExW1JIHBdJMi98Mg9hM8rj3c/5ovPzU07diGvS
-	 DXQqUZ7tBOC4w==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64587C25B7C;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Tue, 14 May 2024 10:22:50 +0300
-Subject: [PATCH v2 5/9] iio: adc: ad7173: add support for special inputs
+	s=arc-20240116; t=1715671395; c=relaxed/simple;
+	bh=t7E4Xq+CwDIyBlgpDlmVyy3gj5a/gnFSGaWMtzUgsUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kFcHaSOThtAe1CFz+n+D6jgBxh0aM/bH1mbh075SZxU0sEJ+iAhTFzsCcvIqP2YBpXF1HJzWa1snkjOkih6jzp2tFAzgExaPcDoENeYgTk3DSZtlrM1NO5DiJFoOUsh3VH3iaJxLD5+RKx7KgTQmUvK8Fobiuv0bSY77NvR2hwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RsG0saWk; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715671393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=edf79jeIcR6SIIHgF1L+nP6ohGfiMC191SZcpJswp0Q=;
+	b=RsG0saWk7RiqOrzG/o3OYywJ6M+BhRbKRm5HLs4PLD0dBjd6oO2MIHcziPspulEc0F1fYi
+	jiccuQEeLE7LRFV7lCNeiozpIhDTWHCVThKsM8KF90H8acDBXary00AbpSMBtz59TZaqhi
+	LUpGJq/PBV2c4WrDxT051E0mMCo0Oig=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-106-Mh4UboGvORaMFkv6M4Hrhw-1; Tue, 14 May 2024 03:23:06 -0400
+X-MC-Unique: Mh4UboGvORaMFkv6M4Hrhw-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6a0eca15156so59793436d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:23:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715671386; x=1716276186;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=edf79jeIcR6SIIHgF1L+nP6ohGfiMC191SZcpJswp0Q=;
+        b=VkVBx/kfOSrpWLsSrzLWNUOpUpFsDuPE3zNS1D8YIhPAfddjdHWjTuqoOsqdHCK4rM
+         sp6hUpnDwF4FpKAzjkIzBev/kpKwy3BCUSQYhbUpxlc7v3txBZPxXp7U3nGfF8pNeeBG
+         CfvQsj5bymwtKbBl1QdV/gmaK5GSogPMhnI/lyRGMp6H+g2KlqSaHAJcYPNFFUim43mj
+         zI5ELvTVyUpGraoxJ52qPPPuA4lAt7LghpZ8fCLU9d0IzssNzB7s3YUxcqyhyvrbr2VD
+         UXFdx6J9lnpllxen9jWqHii22l4mHb8pcwhG6bjhY7VncI8/ohCW3ap6PF/ffohDFOPX
+         T0Hw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbPvz7p92JFhsiVWZ+v19TWUktR0kQFEDWdo3RlWJJliAC0uVOl4TqMnBiGX4bvBllq0Z/hoJqIGDDYOj7XoVvxWWB/r9VzxwXC4UP
+X-Gm-Message-State: AOJu0YyHsiFppvMDxARFCIFdWMBVMHmKes2RWSEov29WKjaHZA31KwOq
+	y1zXCCYoIAsxeLlBcZAnKqC6IVfGUUpMhUb5YAO9T7Eayjdi6oi4PN3c49vfliaKxJO9FmT2xlW
+	3ok3LLxz7bhIWQi0sKmN1+oI+BRVUJXqoqstUFAuxi2PhzRSFzXFrb+yk8lBbRA==
+X-Received: by 2002:a0c:fe8b:0:b0:6a3:27b4:9b72 with SMTP id 6a1803df08f44-6a327b49baemr101393816d6.5.1715671386214;
+        Tue, 14 May 2024 00:23:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHH89ioZLBSNiqjRiyo8fWL2ZJPx4atue/rPXREABDqOjqAEr1TFGlquEEfDdLQbtkO/SiRlw==
+X-Received: by 2002:a0c:fe8b:0:b0:6a3:27b4:9b72 with SMTP id 6a1803df08f44-6a327b49baemr101393586d6.5.1715671385677;
+        Tue, 14 May 2024 00:23:05 -0700 (PDT)
+Received: from rh.redhat.com (p200300c93f4cc600a5cdf10de606b5e2.dip0.t-ipconnect.de. [2003:c9:3f4c:c600:a5cd:f10d:e606:b5e2])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f1ccd4esm50917516d6.97.2024.05.14.00.23.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:23:05 -0700 (PDT)
+From: Sebastian Ott <sebott@redhat.com>
+To: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Subject: [PATCH v3 4/6] KVM: arm64: show writable masks for feature registers
+Date: Tue, 14 May 2024 09:22:50 +0200
+Message-ID: <20240514072252.5657-5-sebott@redhat.com>
+X-Mailer: git-send-email 2.45.0
+In-Reply-To: <20240514072252.5657-1-sebott@redhat.com>
+References: <20240514072252.5657-1-sebott@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240514-ad4111-v2-5-29be6a55efb5@analog.com>
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-In-Reply-To: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-To: Ceclan Dumitru <dumitru.ceclan@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715671396; l=3852;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=1Uhyl9BcsVFq4jk+4BvPYG89rnBSYbQT8Qh5MOp47mY=;
- b=ePvDJ8e+5VNgkHCxA8dSG1zcSgt5yuDJgs5NdyfD1WtUVWYwYH2JgXBR2ivSebQlbX+Ii309p
- reONiAIrcx7DlJ4TTERPVyGklVXmYFquQ0hbVd0ekUPR9L5WDeKazfY
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
 
-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Instead of using ~0UL provide the actual writable mask for
+non-id feature registers in the output of the
+KVM_ARM_GET_REG_WRITABLE_MASKS ioctl.
 
- Add support for selecting REF+ and REF- inputs on all models.
- Add support for selecting ((AVDD1 − AVSS)/5) inputs
-  on supported models.
+This changes the mask for the CTR_EL0 and CLIDR_EL1 registers.
 
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Signed-off-by: Sebastian Ott <sebott@redhat.com>
 ---
- drivers/iio/adc/ad7173.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ arch/arm64/kvm/sys_regs.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index fb33534d63a9..1e9ba3070770 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -65,6 +65,10 @@
- 	 FIELD_PREP(AD7173_CH_SETUP_AINNEG_MASK, neg))
- #define AD7173_AIN_TEMP_POS	17
- #define AD7173_AIN_TEMP_NEG	18
-+#define AD7173_AIN_COM_IN_POS	19
-+#define AD7173_AIN_COM_IN_NEG	20
-+#define AD7173_AIN_REF_POS	21
-+#define AD7173_AIN_REF_NEG	22
+diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+index 8e8acf3dd9bd..1b6ab483e21e 100644
+--- a/arch/arm64/kvm/sys_regs.c
++++ b/arch/arm64/kvm/sys_regs.c
+@@ -2562,7 +2562,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
  
- #define AD7172_2_ID			0x00d0
- #define AD7175_ID			0x0cd0
-@@ -145,6 +149,8 @@ struct ad7173_device_info {
- 	unsigned int id;
- 	char *name;
- 	bool has_temp;
-+	/* ((AVDD1 − AVSS)/5) */
-+	bool has_common_input;
- 	bool has_input_buf;
- 	bool has_int_ref;
- 	bool has_ref2;
-@@ -215,6 +221,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_temp = true,
- 		.has_input_buf = true,
- 		.has_int_ref = true,
-+		.has_common_input = true,
- 		.clock = 2 * HZ_PER_MHZ,
- 		.sinc5_data_rates = ad7173_sinc5_data_rates,
- 		.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
-@@ -228,6 +235,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_temp = false,
- 		.has_input_buf = true,
- 		.has_ref2 = true,
-+		.has_common_input = true,
- 		.clock = 2 * HZ_PER_MHZ,
- 		.sinc5_data_rates = ad7173_sinc5_data_rates,
- 		.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
-@@ -243,6 +251,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_input_buf = true,
- 		.has_int_ref = true,
- 		.has_ref2 = true,
-+		.has_common_input = false,
- 		.clock = 2 * HZ_PER_MHZ,
- 		.sinc5_data_rates = ad7173_sinc5_data_rates,
- 		.num_sinc5_data_rates = ARRAY_SIZE(ad7173_sinc5_data_rates),
-@@ -257,6 +266,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_temp = true,
- 		.has_input_buf = true,
- 		.has_int_ref = true,
-+		.has_common_input = true,
- 		.clock = 16 * HZ_PER_MHZ,
- 		.sinc5_data_rates = ad7175_sinc5_data_rates,
- 		.num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
-@@ -271,6 +281,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_input_buf = true,
- 		.has_int_ref = true,
- 		.has_ref2 = true,
-+		.has_common_input = true,
- 		.clock = 16 * HZ_PER_MHZ,
- 		.sinc5_data_rates = ad7175_sinc5_data_rates,
- 		.num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
-@@ -285,6 +296,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_temp = false,
- 		.has_input_buf = false,
- 		.has_int_ref = true,
-+		.has_common_input = false,
- 		.clock = 16 * HZ_PER_MHZ,
- 		.sinc5_data_rates = ad7175_sinc5_data_rates,
- 		.num_sinc5_data_rates = ARRAY_SIZE(ad7175_sinc5_data_rates),
-@@ -298,6 +310,7 @@ static const struct ad7173_device_info ad7173_device_info[] = {
- 		.has_temp = true,
- 		.has_input_buf = true,
- 		.has_int_ref = true,
-+		.has_common_input = true,
- 		.clock = 16 * HZ_PER_MHZ,
- 		.odr_start_value = AD7177_ODR_START_VALUE,
- 		.sinc5_data_rates = ad7175_sinc5_data_rates,
-@@ -920,6 +933,14 @@ static int ad7173_validate_voltage_ain_inputs(struct ad7173_state *st,
- 		if (ain[i] < st->info->num_inputs)
+ 	{ SYS_DESC(SYS_CCSIDR_EL1), access_ccsidr },
+ 	{ SYS_DESC(SYS_CLIDR_EL1), access_clidr, reset_clidr, CLIDR_EL1,
+-	  .set_user = set_clidr },
++	  .set_user = set_clidr, .val = ~CLIDR_EL1_RES0 },
+ 	{ SYS_DESC(SYS_CCSIDR2_EL1), undef_access },
+ 	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
+ 	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
+@@ -4121,20 +4121,11 @@ int kvm_vm_ioctl_get_reg_writable_masks(struct kvm *kvm, struct reg_mask_range *
+ 		if (!is_feature_id_reg(encoding) || !reg->set_user)
  			continue;
  
-+		if (ain[i] == AD7173_AIN_REF_POS || ain[i] == AD7173_AIN_REF_NEG)
+-		/*
+-		 * For ID registers, we return the writable mask. Other feature
+-		 * registers return a full 64bit mask. That's not necessary
+-		 * compliant with a given revision of the architecture, but the
+-		 * RES0/RES1 definitions allow us to do that.
+-		 */
+-		if (is_vm_ftr_id_reg(encoding)) {
+-			if (!reg->val ||
+-			    (is_aa32_id_reg(encoding) && !kvm_supports_32bit_el0()))
+-				continue;
+-			val = reg->val;
+-		} else {
+-			val = ~0UL;
++		if (!reg->val ||
++		    (is_aa32_id_reg(encoding) && !kvm_supports_32bit_el0())) {
 +			continue;
-+
-+		if ((ain[i] == AD7173_AIN_COM_IN_POS ||
-+		     ain[i] == AD7173_AIN_COM_IN_NEG) &&
-+		    st->info->has_common_input)
-+			continue;
-+
- 		return dev_err_probe(dev, -EINVAL,
- 			"Input pin number out of range for pair (%d %d).\n",
- 			ain[0], ain[1]);
-
+ 		}
++		val = reg->val;
+ 
+ 		if (put_user(val, (masks + KVM_ARM_FEATURE_ID_RANGE_INDEX(encoding))))
+ 			return -EFAULT;
 -- 
-2.43.0
-
+2.42.0
 
 
