@@ -1,250 +1,109 @@
-Return-Path: <linux-kernel+bounces-178498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56BEF8C4E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:15:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E7C88C4E8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 797721C2169D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:15:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE850B21FC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D9837152;
-	Tue, 14 May 2024 09:15:02 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9812C85D;
+	Tue, 14 May 2024 09:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qcrYibdz"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF27723763;
-	Tue, 14 May 2024 09:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D5B23776
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715678101; cv=none; b=Mc+2hC4kQFSm6xgPDbk7h23p1481B8mxPM2QwDROM2NzljV3tSyEbvBsYfeT2MeXjmbbo4wkSNT/xMVihxNWvzN9beYzlSp+bbM/697LkuXuZ/3+y2lPhM/2Po8tuGzHwsyqrp3Fm5eo25kQx7m7g/KuWL02+5PrnAkDU9g7VcE=
+	t=1715678099; cv=none; b=kqSa/4mD9v3M6/PA0CijR916XAtlNL1datvtLuFBPoG5Fj5sYNfVFS0dln45R5jIity7XwREZ4YiTd0gF7xi8D7fpwqtvUTI85ftr4MYaCFW+XIfTRoEF+MKR8XpE2AzlYLKF1coMWRA9HCcKMzsJLMVDqm99oqc/wdB+lx9vX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715678101; c=relaxed/simple;
-	bh=dZABI6dQ1NnoPldp7QkmBTIMZLnEPFxbymhBVXPnaQs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RDL4FeMTLQ6C0o3sJ9riAIh4tay8o0Q4kv5zvlj9a2ft76kx+Mlb3xWpqTCbitAzWC50AXZNuYV/JgFDx0MVf1MKVotSTb5i+Vj1Jea+/xQjkXKtNTj3hMqTiMeroHV4tloDLByfhV4QeNZuv2mkOr08NRwb849Gyanqf5DFFRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 264E21A190D;
-	Tue, 14 May 2024 11:14:58 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9832B1A18F7;
-	Tue, 14 May 2024 11:14:57 +0200 (CEST)
-Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id E56B4180222C;
-	Tue, 14 May 2024 17:14:55 +0800 (+08)
-From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-To: marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com,
-	rohit.fule@nxp.com,
-	neeraj.sanjaykale@nxp.com,
-	sherry.sun@nxp.com,
-	ziniu.wang_1@nxp.com,
-	haibo.chen@nxp.com,
-	LnxRevLi@nxp.com,
-	guillaume.legoupil@nxp.com,
-	salim.chebbo@nxp.com
-Subject: [PATCH v3] Bluetooth: btnxpuart: Enable status prints for firmware download
-Date: Tue, 14 May 2024 14:44:44 +0530
-Message-Id: <20240514091444.1508033-1-neeraj.sanjaykale@nxp.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715678099; c=relaxed/simple;
+	bh=icODbfYucz8iEZrgAXkiUdXTmzMqOGwAC8BcHGY3Tbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wl7wqqurecbrZkUB22dJcjSvay0Z8lcUVNqIvhIzszverHlcI87WbRIBSQTYRhE3DiwV7Nrl8MdPYWN+VWxaiJ5+k8JBbMxE4eG36XbTUQ7TsBViCwoPlaJKJbiT6sxNTB5wcWbNEwq2dRi9JjcxkLqFs+wXKRcRoBiJ2FJt0G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qcrYibdz; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-61be4b9869dso56130127b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:14:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715678097; x=1716282897; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HwiEG+/aSeVq+45AIyqwaFB4r49uUU/xCyg6kp9PQPw=;
+        b=qcrYibdzw8ejm3DTwFw0aQ1+8lS7v2cSxPOunX5wyzvQ3VIB47U7vUt+w0Mhhvmp7Z
+         z5P7kDVAcGymKYdHPrjLIaeJK/ImNxN8LnlWBwQ7gZ/zPT1rBmsqgeNyZqgTcqhyA6Vf
+         J1xROsideLdaV4Fo00Swsvk9uNh801DspFGapE3Y7wX0j3udajKlB/tjQbk3+7105lzX
+         miKVMNy8RwOWj9fc+fJxPwImi7TroSZzDytSgAkfdW7PB1PqLbyYQFm+uwLuTGGXuAew
+         wE3bKYXJuE1Kyek921rT/w91vx2Dh98ZXnNatzi+4zPzqP1KnuoqMqWLhVGELXnRlHfy
+         fDEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715678097; x=1716282897;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HwiEG+/aSeVq+45AIyqwaFB4r49uUU/xCyg6kp9PQPw=;
+        b=PIdoDfGjJiGP6XMD185gpdp/MyTrkmTdlJ458PsoxvyB4BMiviPleyTdLxfXuXS7Iy
+         n2bVX80H6lP3ZfsgmzijTiodmFlJL/D9wZKyrCp7SLDgTHj3z2LyFdig15ZxoS02ZOXe
+         prtApBjVE5i6FbU9fqqhjNGCOlfRTo33nQcpCnZZBCNRm4l8bp5t/pys7lY4Ob8Z+Y2c
+         ULlYhB1u9Cq1bJnDI3flUIMLlbIe8vZbQC/WvVZpwSHyruXNDZc9aAz2N50OTK6doMe+
+         ZsNzr8pwW3IZiUi8T1mZLEGyxe9ghjtXcGi6nUNFcWN4BlzcdF5CNlBemCXXSBS2FG4m
+         pAXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWC0Q9mMkHfXWy86tbZ9X5xl1mF+idEVyKd9X4JQJARc8wSRWS5HC6DVkgJLS/W01zozx1v2JBu24eH+DwnTvkGnLsb9zA+/eGKggn/
+X-Gm-Message-State: AOJu0YxJAlelzO8o+RJ6uRlyB9/fnR/X/fD6XBXMXMf2c8tIky5nv/6E
+	SV/7BsmR7TOyRPtvjzOhB+iC9hDQByTqpOTFBttjtMATG2OcDIsGNWR0TR7TrsNmLnLSnPMD24/
+	6jiOFQIppfeTDOS0dGikRYhaKb3L786OI25GrZg==
+X-Google-Smtp-Source: AGHT+IHTndqU8L/COCyzxzWqR9ztoQ2UlOx5uP/3CeJVhfGg7caer2qbn+5Tp3fV+rceU+UurQnOt0LPpOXSqHkDU54=
+X-Received: by 2002:a05:690c:660e:b0:61a:af67:1cfd with SMTP id
+ 00721157ae682-622aff906e3mr134790487b3.5.1715678097010; Tue, 14 May 2024
+ 02:14:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+References: <CAMSo37XWZ118=R9tFHZqw+wc7Sy_QNHHLdkQhaxjhCeuQQhDJw@mail.gmail.com>
+ <20240514070033.5795-1-jtornosm@redhat.com>
+In-Reply-To: <20240514070033.5795-1-jtornosm@redhat.com>
+From: Yongqin Liu <yongqin.liu@linaro.org>
+Date: Tue, 14 May 2024 11:14:46 +0200
+Message-ID: <CAMSo37VywwR8qbNWhOo9kS0QzACE0NcYwJXG_GKT9zcKn4GitQ@mail.gmail.com>
+Subject: Re: [PATCH v2] net: usb: ax88179_178a: avoid writing the mac address
+ before first reading
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+Cc: amit.pundir@linaro.org, davem@davemloft.net, edumazet@google.com, 
+	inventor500@vivaldi.net, jarkko.palviainen@gmail.com, jstultz@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, stable@vger.kernel.org, 
+	sumit.semwal@linaro.org, vadim.fedorenko@linux.dev, vmartensson@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-This enables prints for firmware download which can help automation
-tests to verify firmware download functionality.
+Hi Jose
+On Tue, 14 May 2024 at 09:00, Jose Ignacio Tornos Martinez
+<jtornosm@redhat.com> wrote:
+>
+> Hello Yongqin,
+>
+> I could not get a lot of information from the logs, but at least I
+> identified the device.
+> Anyway, I found the issue and the solution is being applied:
+> https://lore.kernel.org/netdev/171564122955.1634.5508968909715338167.git-patchwork-notify@kernel.org/
+Ah, I was not aware of it:(
 
-A new flag BTNXPUART_FW_DOWNLOAD_ABORT is added which handles the
-situation where driver is removed while firmware download is in
-progress.
+Thanks a lot for the work!
 
-This also adds a check before freeing the rx->skb in flush and close
-functions to handle the kernel crash seen in case of firmware download
-timeout.
-
-Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Tested-by: Guillaume Legoupil <guillaume.legoupil@nxp.com>
----
-v2: Handle firmware download abort scenario. (Guillaume Legoupil)
-v3: Minor corrections. Add details to commit message.
----
- drivers/bluetooth/btnxpuart.c | 67 +++++++++++++++++++++++------------
- 1 file changed, 45 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
-index 0b93c2ff29e4..7aed5298ee6f 100644
---- a/drivers/bluetooth/btnxpuart.c
-+++ b/drivers/bluetooth/btnxpuart.c
-@@ -29,6 +29,7 @@
- #define BTNXPUART_CHECK_BOOT_SIGNATURE	3
- #define BTNXPUART_SERDEV_OPEN		4
- #define BTNXPUART_IR_IN_PROGRESS	5
-+#define BTNXPUART_FW_DOWNLOAD_ABORT	6
- 
- /* NXP HW err codes */
- #define BTNXPUART_IR_HW_ERR		0xb0
-@@ -159,6 +160,7 @@ struct btnxpuart_dev {
- 	u8 fw_name[MAX_FW_FILE_NAME_LEN];
- 	u32 fw_dnld_v1_offset;
- 	u32 fw_v1_sent_bytes;
-+	u32 fw_dnld_v3_offset;
- 	u32 fw_v3_offset_correction;
- 	u32 fw_v1_expected_len;
- 	u32 boot_reg_offset;
-@@ -550,6 +552,7 @@ static int nxp_download_firmware(struct hci_dev *hdev)
- 	nxpdev->fw_v1_sent_bytes = 0;
- 	nxpdev->fw_v1_expected_len = HDR_LEN;
- 	nxpdev->boot_reg_offset = 0;
-+	nxpdev->fw_dnld_v3_offset = 0;
- 	nxpdev->fw_v3_offset_correction = 0;
- 	nxpdev->baudrate_changed = false;
- 	nxpdev->timeout_changed = false;
-@@ -564,14 +567,23 @@ static int nxp_download_firmware(struct hci_dev *hdev)
- 					       !test_bit(BTNXPUART_FW_DOWNLOADING,
- 							 &nxpdev->tx_state),
- 					       msecs_to_jiffies(60000));
-+
-+	release_firmware(nxpdev->fw);
-+	memset(nxpdev->fw_name, 0, sizeof(nxpdev->fw_name));
-+
- 	if (err == 0) {
--		bt_dev_err(hdev, "FW Download Timeout.");
-+		bt_dev_err(hdev, "FW Download Timeout. offset: %d",
-+				nxpdev->fw_dnld_v1_offset ?
-+				nxpdev->fw_dnld_v1_offset :
-+				nxpdev->fw_dnld_v3_offset);
- 		return -ETIMEDOUT;
- 	}
-+	if (test_bit(BTNXPUART_FW_DOWNLOAD_ABORT, &nxpdev->tx_state)) {
-+		bt_dev_err(hdev, "FW Download Aborted");
-+		return -EINTR;
-+	}
- 
- 	serdev_device_set_flow_control(nxpdev->serdev, true);
--	release_firmware(nxpdev->fw);
--	memset(nxpdev->fw_name, 0, sizeof(nxpdev->fw_name));
- 
- 	/* Allow the downloaded FW to initialize */
- 	msleep(1200);
-@@ -693,7 +705,7 @@ static int nxp_request_firmware(struct hci_dev *hdev, const char *fw_name)
- 	if (!strlen(nxpdev->fw_name)) {
- 		snprintf(nxpdev->fw_name, MAX_FW_FILE_NAME_LEN, "%s", fw_name);
- 
--		bt_dev_dbg(hdev, "Request Firmware: %s", nxpdev->fw_name);
-+		bt_dev_info(hdev, "Request Firmware: %s", nxpdev->fw_name);
- 		err = request_firmware(&nxpdev->fw, nxpdev->fw_name, &hdev->dev);
- 		if (err < 0) {
- 			bt_dev_err(hdev, "Firmware file %s not found", nxpdev->fw_name);
-@@ -781,7 +793,7 @@ static int nxp_recv_fw_req_v1(struct hci_dev *hdev, struct sk_buff *skb)
- 	}
- 
- 	if (!len) {
--		bt_dev_dbg(hdev, "FW Downloaded Successfully: %zu bytes",
-+		bt_dev_info(hdev, "FW Download Complete: %zu bytes",
- 			   nxpdev->fw->size);
- 		if (nxp_data->helper_fw_name && !nxpdev->helper_downloaded) {
- 			nxpdev->helper_downloaded = true;
-@@ -934,7 +946,7 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
- 	}
- 
- 	if (req->len == 0) {
--		bt_dev_dbg(hdev, "FW Downloaded Successfully: %zu bytes",
-+		bt_dev_info(hdev, "FW Download Complete: %zu bytes",
- 			   nxpdev->fw->size);
- 		clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
- 		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
-@@ -954,8 +966,9 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
- 		goto free_skb;
- 	}
- 
--	serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data + offset -
--				nxpdev->fw_v3_offset_correction, len);
-+	nxpdev->fw_dnld_v3_offset = offset - nxpdev->fw_v3_offset_correction;
-+	serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data +
-+				nxpdev->fw_dnld_v3_offset, len);
- 
- free_skb:
- 	kfree_skb(skb);
-@@ -1037,7 +1050,7 @@ static int nxp_setup(struct hci_dev *hdev)
- 		if (err < 0)
- 			return err;
- 	} else {
--		bt_dev_dbg(hdev, "FW already running.");
-+		bt_dev_info(hdev, "FW already running.");
- 		clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
- 	}
- 
-@@ -1253,8 +1266,10 @@ static int btnxpuart_close(struct hci_dev *hdev)
- 	ps_wakeup(nxpdev);
- 	serdev_device_close(nxpdev->serdev);
- 	skb_queue_purge(&nxpdev->txq);
--	kfree_skb(nxpdev->rx_skb);
--	nxpdev->rx_skb = NULL;
-+	if (!IS_ERR_OR_NULL(nxpdev->rx_skb)) {
-+		kfree_skb(nxpdev->rx_skb);
-+		nxpdev->rx_skb = NULL;
-+	}
- 	clear_bit(BTNXPUART_SERDEV_OPEN, &nxpdev->tx_state);
- 	return 0;
- }
-@@ -1269,8 +1284,10 @@ static int btnxpuart_flush(struct hci_dev *hdev)
- 
- 	cancel_work_sync(&nxpdev->tx_work);
- 
--	kfree_skb(nxpdev->rx_skb);
--	nxpdev->rx_skb = NULL;
-+	if (!IS_ERR_OR_NULL(nxpdev->rx_skb)) {
-+		kfree_skb(nxpdev->rx_skb);
-+		nxpdev->rx_skb = NULL;
-+	}
- 
- 	return 0;
- }
-@@ -1385,16 +1402,22 @@ static void nxp_serdev_remove(struct serdev_device *serdev)
- 	struct btnxpuart_dev *nxpdev = serdev_device_get_drvdata(serdev);
- 	struct hci_dev *hdev = nxpdev->hdev;
- 
--	/* Restore FW baudrate to fw_init_baudrate if changed.
--	 * This will ensure FW baudrate is in sync with
--	 * driver baudrate in case this driver is re-inserted.
--	 */
--	if (nxpdev->current_baudrate != nxpdev->fw_init_baudrate) {
--		nxpdev->new_baudrate = nxpdev->fw_init_baudrate;
--		nxp_set_baudrate_cmd(hdev, NULL);
-+	if (is_fw_downloading(nxpdev)) {
-+		set_bit(BTNXPUART_FW_DOWNLOAD_ABORT, &nxpdev->tx_state);
-+		clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
-+		wake_up_interruptible(&nxpdev->check_boot_sign_wait_q);
-+		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
-+	} else {
-+		/* Restore FW baudrate to fw_init_baudrate if changed.
-+		 * This will ensure FW baudrate is in sync with
-+		 * driver baudrate in case this driver is re-inserted.
-+		 */
-+		if (nxpdev->current_baudrate != nxpdev->fw_init_baudrate) {
-+			nxpdev->new_baudrate = nxpdev->fw_init_baudrate;
-+			nxp_set_baudrate_cmd(hdev, NULL);
-+		}
-+		ps_cancel_timer(nxpdev);
- 	}
--
--	ps_cancel_timer(nxpdev);
- 	hci_unregister_dev(hdev);
- 	hci_free_dev(hdev);
- }
 -- 
-2.34.1
-
+Best Regards,
+Yongqin Liu
+---------------------------------------------------------------
+#mailing list
+linaro-android@lists.linaro.org
+http://lists.linaro.org/mailman/listinfo/linaro-android
 
