@@ -1,333 +1,316 @@
-Return-Path: <linux-kernel+bounces-178198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42D18C4A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64AF28C4A56
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1794CB23CC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A6F8284F1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51766812;
-	Tue, 14 May 2024 00:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1741816;
+	Tue, 14 May 2024 00:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YydNCKcU";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="cvCyhHzH"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="BKXieJdp"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF5C8473;
-	Tue, 14 May 2024 00:04:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715645063; cv=fail; b=j6N+g9xX1AKaQl98AXGFnITsktD/+pk6ufl9nSIp2FaMGAFV9pZAZe0kR29OgobXzOUaQ04N+jW0598N3RHum9tyEMFaiXRtayqR2MfStbNjOy6DIAjSS6RgQm8gmta9QTQVSBYU7D6OyUwg3AVqrYJhLr5M/S73cax0kPSmRj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715645063; c=relaxed/simple;
-	bh=8xUpM5bn33zzA+aHrLuQVDyHisgsVffQRSrA7UXPjjk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=LFxUb1d+HQLc2DSqeMLQ5ddynOIRWWTo+X+XMhSZDz6tSbrq3Wdxf8KPrTz5rroN9iyyM/0h85FDV1O2Lv8A4TiDTt4G1t0uapojhrH3rP4dBoJce0vTzkvW6j4hZIJkLfLaXBt6WViiMWgMRt809tCzOEPDqq/A51A4wWNJmj8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=YydNCKcU; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=cvCyhHzH; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DNhs02026990;
-	Tue, 14 May 2024 00:04:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : in-reply-to : references : date : message-id : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=6p3YluQOFlYFKWvfGwfkJV/wINV1i87K9gce7nlmCEQ=;
- b=YydNCKcUKwGjaNOeU5c6Z8W0dEhMpgSrE+F1Digeani+RW57VAEF6+4obsWHxHTvQ4wB
- khohH8w30b8K6vDGHmSz+NvXDKxPjSM/GmM0MfE7XsEKszisMBZhGf+U18RV/ZXcWCHk
- OZ34M6FQ6nrQzaaAlWTwY+gAsRZpZwUQqufVCAau0MTPuNIPVv8TnCtiJe/Mx+PIJM7E
- hBbRgoFzyj5QRdYYDrbucAFv/XL1xiKZSglFPPLMBUR7HbuJVrSaMkoDkl5+UNOseTp5
- hVzqUqO6Xkp3Ggv8rfjsHETu0yQmM3gF8At48vUVdMxCiQ+nxdeWfzzMGg2hgZKseHKg 1A== 
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3t4f88rt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 00:04:16 +0000
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44DMFB2C019284;
-	Tue, 14 May 2024 00:04:16 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2041.outbound.protection.outlook.com [104.47.56.41])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3y3r842m30-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 00:04:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mwRiqel4LuFbmKP1pY/ZAxDV0AAqGWzcAJZsUQ6tX97J4G4nfuW8X+E+9q6OU3fI4DKvZd8SJbi7bOgiFO8TFi9DNFYNyfDUWJbmghnyLS+22rnoQF/ipH19XKQkl1ijbxCyOHmZ+x5RDh/LDqubD9Pn/yJLvtHS4rEHBgrUzHejmY8qQX74abkXmHkUSQkDoYlp8JFvIMqyBv767Wn+4lYOFgOPELJEJ4Fd8nVw6STx4rU4VVJTmz1qu7eD36l7lbiPUExlR9ZWeK9u4vhJA893G1x6me7mrlQHcnBWEL0cK91yOhqxlyiDPDHqriQlQt8ITErMWZ3Gq4tuNNcRdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6p3YluQOFlYFKWvfGwfkJV/wINV1i87K9gce7nlmCEQ=;
- b=iTdpagURnbBOLD4oJ5x3meYerM8jKKdiyUn2NmSZ3pR7pYPUEro5Vv32T6tiGnDpugxjl+rXDGFKQVPoz42wDFk+cegELUrapc++6khc4mWB+YzBL58L0PbTF6DlO9CwlVtVsYGPTDQ5wAfonhKURdI1dyMj5Rf5qXqISO6c58Vd5Ehbn/c1pSolIQi1gdHCEpYZy+C0ZvH79GFHfkMg/6sE2njUutCq98PqalEX/rkxbG2C44/DtKYqXJVyXrSi2NLOMkNHc02Y8FfoiuD9qxfpeTyj4Fyecz0GWJIgZ+647nvT5XVG6GSaXfQDOT4OWv9whUTssIuwvUtinTjaCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C69365
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715645242; cv=none; b=rRDS2NaFFiQ3lx7wlcDD8CGB8OYROFX+2LBur44FaJ/xbe4pmn8dnAksiK8usJUY0FNGIMZcSveXkfWp3cJn4PH0UrlL4TJ1PP1UWQa+wC5Sogg0IRSDa1P3KemvKl2ImW9e89cdeusxOS4xbJ5S390uCDHq0y22FgRJA/37PAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715645242; c=relaxed/simple;
+	bh=9fuyaWdoWsUnb39lg1ASeTub/9uhj2XdPKUxDBuWnJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fD6+AlF2Ax4RfbOvVk388sUs/wyZUdN/Rgdd4C6WNodlaM0dA7zDhy74JXVRAFRMpc+UbQYOrrHljTf7M5Yz9DWsYXK/tbVQlEvmNK8KmQYCMBEAngqLLV3os8NGug4sWoeVvkNR7wOdNOKUbllB+8PupCdPtTjkEVAXAS5NqbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=BKXieJdp; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-41fd5dc04e2so30223895e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6p3YluQOFlYFKWvfGwfkJV/wINV1i87K9gce7nlmCEQ=;
- b=cvCyhHzHOLniqv+gkDiM4XruM2FkfLQ6LJpK8EOABuoWVOOjVx17y5BWRncdOnyWT383ZBTBnebm1kTI7U9uhTdfh0CWq3DC/L6PRL8tu44Vt7ROJbHC1OBWpgKV3/AUoH4pUOKhMrQX3FkSpA17T0mgZEAov/l9zPKXbE+W/Dk=
-Received: from PH8PR10MB6597.namprd10.prod.outlook.com (2603:10b6:510:226::20)
- by MW4PR10MB5809.namprd10.prod.outlook.com (2603:10b6:303:185::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 00:04:14 +0000
-Received: from PH8PR10MB6597.namprd10.prod.outlook.com
- ([fe80::6874:4af6:bf0a:6ca]) by PH8PR10MB6597.namprd10.prod.outlook.com
- ([fe80::6874:4af6:bf0a:6ca%3]) with mapi id 15.20.7544.052; Tue, 14 May 2024
- 00:04:14 +0000
-From: Stephen Brennan <stephen.s.brennan@oracle.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] fsnotify: clear PARENT_WATCHED flags lazily
-In-Reply-To: <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
-References: <20240510221901.520546-1-stephen.s.brennan@oracle.com>
- <CAOQ4uxjKdkXLi6w2az9a3dnEkX1-w771ZUz1Lr2ToFFUGvf8Ng@mail.gmail.com>
-Date: Mon, 13 May 2024 17:04:12 -0700
-Message-ID: <87bk59gsxv.fsf@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BYAPR08CA0061.namprd08.prod.outlook.com
- (2603:10b6:a03:117::38) To PH8PR10MB6597.namprd10.prod.outlook.com
- (2603:10b6:510:226::20)
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715645239; x=1716250039; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=a0eU3NqGDNLbCoVdJoz+1meora358TepvHy5sboXoAc=;
+        b=BKXieJdpDRaQ06NSG15s2PtTO9IXZEbrUwT+bgPrGZb6NKDsnKxdRpzz2eFLAm3LF+
+         BMAy0u8nVGL3gZmuZ5qUnJ0c6SWkTAhnmlu3XjLdW8YcNfiEM/hhtvkOvkES9uWr04hU
+         0ZikDO81I0bUevg8yiFO6S6iZt7uVqjt42XU0SVMg7ypPsmfE8q6X+fSAy+9DbYG997J
+         vTBfTIkhJraqg3SqwLOuTGwV932rmd7LVtX0KTNm+DZAlAJGJy30PcMAjPLLxG3xSHSE
+         17dnJW7gCilkLWlXTpy0OG1jHH9MUf1kagLzfNpyyoe60GHZqK1MfG6RJrkV0ZIXNWcu
+         VayQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715645239; x=1716250039;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a0eU3NqGDNLbCoVdJoz+1meora358TepvHy5sboXoAc=;
+        b=aiOmbou8slOclgzExUYuWU/aJt3UNfs9dyWzUmnnXpanvyBMOCHSIXZTbz7WpccASB
+         JlklIdHhtHyHqLqI8X7EMx80xqvEDrQ12FVZP6DGRNTIAgnNJ0tNSVLol+JnYJV6y3C+
+         D+WNdUqa3jhscIxX2aE1OrJgucfwDexb3il9SXL5UHg5XjM2PzTOOGEx5aRlwmLiolq8
+         R6B40ClM528D2+8OQaadRMqcIlUyGqJKFQ2yE75Hh75crLTucMWUDxedS3ERn20W/Di4
+         2jl7qAWwa9jhXYVcsnAa5qcOQV8QeMi3810GZ0MaZkf8Z+nVZXxZJaQSQVHxm0S97r5c
+         knfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU+vCBGYX6O2Ng9yATqtINKz+KVkDftpseZIUq4xqBETeZN9ze1nK4WRHPYegQagQF9sat0yhWQgobnKWBZxPCP27IQKb9kO0pg6+n
+X-Gm-Message-State: AOJu0Yzjx8KYpCXTcSeSara6uv8xGOwDRgaxzIRim+6HG4jtYfocWgnJ
+	f8yuXbW1yAQoPeBBj51Ia+ii/crfJFQY7xVdpy3wuq8Jkhzjbczu7OOqu5Xf6W4=
+X-Google-Smtp-Source: AGHT+IGi3AnqmI7YSRvyBBFoDUACHshmp8TA9I9qm6edK45qdE4LdjhGM1uj9HE22bDLemk0E6CN7g==
+X-Received: by 2002:a05:600c:4589:b0:420:1fa6:a3ee with SMTP id 5b1f17b1804b1-4201fa6a619mr2017625e9.27.1715645238537;
+        Mon, 13 May 2024 17:07:18 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42013b4e9aesm66743835e9.40.2024.05.13.17.07.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 17:07:17 -0700 (PDT)
+Date: Tue, 14 May 2024 01:07:15 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+	torvalds@linux-foundation.org, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <20240514000715.4765jfpwi5ovlizj@airbuntu>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240502084800.GY30852@noisy.programming.kicks-ass.net>
+ <ZjPnb1vdt80FrksA@slm.duckdns.org>
+ <20240503085232.GC30852@noisy.programming.kicks-ass.net>
+ <ZjgWzhruwo8euPC0@slm.duckdns.org>
+ <20240513080359.GI30852@noisy.programming.kicks-ass.net>
+ <20240513142646.4dc5484d@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR10MB6597:EE_|MW4PR10MB5809:EE_
-X-MS-Office365-Filtering-Correlation-Id: fb5d8127-69a7-4bb9-3f00-08dc73a963a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230031|366007|1800799015|376005;
-X-Microsoft-Antispam-Message-Info: 
-	=?utf-8?B?Qzh1bU1IMTJuYXh6VkI4Qyt1alhJQWhOV2VnYjVDd2RTUzhzVHNqTUI5RWV4?=
- =?utf-8?B?TElFMVBCZVFDbU85V2RJTFlEaFNFbytoNllXMkIxa2ZyRmRXWlIzaU5LVlpP?=
- =?utf-8?B?MG9GY1NLMVp1TUtkMGpPQi9BNyt6U3gwQ1RFbWphb3RaWHhCLy9vaTc3VEc5?=
- =?utf-8?B?OHBlU1p5dml2U01QQWNURXBxRGIrb01vWGhTZGxncWVmb1R6S203dG1lRXlI?=
- =?utf-8?B?ZXJMUVNwcnFYa3VEMk5pMzBrVUVsMkcvYWFOQStwK3NVc3RvbXIwVVorUDVy?=
- =?utf-8?B?cDJ1VXJCblF4N0JXS3NvblVNMVg1WktoTHZ1aUFRY0lPUmU2YzNWQTVCVzVo?=
- =?utf-8?B?UEUyakVkcU9PSE1Uc2RrVWlqdFp1SnE4WWQvRktoaFRrR29zMFVSNDJHVktk?=
- =?utf-8?B?eU1YdzAweXhZYStCbzBNUDJjUU9VUTd1VkJZSHFtbnh2K3BUWTZISE1kaEVr?=
- =?utf-8?B?aHVaY011S2sxb2FyZWlyekZDcnQranFkekJTYXpaUEI4ODlCb0h3U3BmMVlB?=
- =?utf-8?B?YjdkUTkyS1NjMFZZRnI5SktUQ1kxcGlPMUVKb2QwTFI4Z3BaalU3LzNYSTBU?=
- =?utf-8?B?Mm9pUlN4TmFGUHpIdnJkUlZ2VUJrajBNQ3hEczl4d09jbk1Tb0pocEpQV2Rk?=
- =?utf-8?B?aVlmN1RhQ00xZWVNL2U2aVdIWG50ZjBWR0FDS1lHeUhBUXBrcWQ5c3FOSmNN?=
- =?utf-8?B?QThsMnpWeW9WTUtoemtlK3pOWHIyQzlVb3FqSXhvekVsOU1TSGFjNFFUZ0tp?=
- =?utf-8?B?c1gzSncrYTVXZXczalc4ckc4b0FxSmpVd1R3bmowYk5wVFB6QW1TY3VtYjhu?=
- =?utf-8?B?eWRYSzhQTnVCeWRzR3Fib09TUE5NWDlmVkhCcTlSY3pLUjdWdExyWXhuK1Rj?=
- =?utf-8?B?WDlZTytrMGk4cDRTRFZrUzllMHFCdkc2UUdoZkl0TkZXSmpudFplY2tERGRE?=
- =?utf-8?B?OVhpQXpsS2VZeWxaRFpTNmlEMFBVbWtBdXk5eTN1WWJLR0hJeFZ4cXdtLzh3?=
- =?utf-8?B?YU9PZGJMRzNVT05mQ1lRREFFOFQzZzZXdk5LcWtwNDl1NEduMmFtajJCOUhO?=
- =?utf-8?B?LzFTUXBWa1RPYUF5d2kvTEJndE5JaFVyNlN3NmZTYTRRMjhYeFNVc3hmNHph?=
- =?utf-8?B?bDNlQkk2b2tOQytuUVR4L1lJVGJ6L044bS9jL2dYdnVNWk15WFRmWnVqeVZo?=
- =?utf-8?B?UEZVcElKeWVJU2dVdHVZRTlKY0dJNWhjU2ltU05jWWdFbWZHUXFBV0dRK3dl?=
- =?utf-8?B?NDRRRVB2bm1uN0huVHZjUmhiWUdUMU5qUGxJcTVQOFdsaDN2TWczMjBmN3hQ?=
- =?utf-8?B?SXk0Rk9jWUpOZ1pNWjM5bmJmNWJ6ZVRubmF5UFZhc2xvRGlRb2pJTGpXMGx4?=
- =?utf-8?B?WVIrMHYwMTRpa3FHdkNTOUZra1FLVE05dnBrdTFwT21XamFMS0hiS3NudUI3?=
- =?utf-8?B?cnFML2t3ZnltR09mU2FOSzI3VXZuQlFUdHFRQnE5NUQyYXlXN0JDRDVkYkV2?=
- =?utf-8?B?SzkxRVN6M2VMVUhYeTVyU3lHRFczRmgzZzdxQmlLVHRWRnRuRkFhUmJOcjVY?=
- =?utf-8?B?YXd5MzExQmFtTnRtckNadXFveDk2NzdMRXI4SE44MFBGNU9Ka0JCWXAwRFd6?=
- =?utf-8?Q?mcDTKMsgSv/nyN3ngLcFv1xA89UyY7D+N6xbgn4Of0Vs=3D?=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6597.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366007)(1800799015)(376005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?dWF5U3dHenlUaE42OUFsMnNUQzdBeGh6TVprQWt1R1hwMlhMZ0tRUWZ4K0lr?=
- =?utf-8?B?cGl2OGk3cDcxb3ZDUGdlYm1HdStyMy9oeGVMdDFOQ21ZcG1SWS9JdlRCdUJK?=
- =?utf-8?B?aFk1enpMUVcrSEg0RFpsd0Q0YVJiRnIrT3djdHV5MkorUXBjMmlKNWZTQkJC?=
- =?utf-8?B?eDg1WFpUMEo5MlN0b2RqSXROMEdzZzYraWRwT1dOYWEwNWFSNllhOFRaWENP?=
- =?utf-8?B?bUNwdUhOUlNram1ZUmdGNnhEVVFjd0huMDh5b3BwdTViL0EyWmZCLzRrbXk3?=
- =?utf-8?B?VndFTzJ3UUEwZUhpR0VsSW80Ym1hYmI1eDFwcjlsd09NR3NycllzaEVZUmRQ?=
- =?utf-8?B?U2FGekxIK1BrTUV1OWZSN25Od3FIZXNTSGljSzR2Zm1veXYvQ2tFU1dnNCt4?=
- =?utf-8?B?WnBkKzgyRzc5S3pkSE5JNTJQS29EbDEyamRzZmp6dlNWSFRKWlBSZGptYWJT?=
- =?utf-8?B?cUZnMFlzV1hmRWZ3aUgxNnlvT0l0WnhVM1lOcHhUTlNNZ01HeFFkaUlhZUFR?=
- =?utf-8?B?U2x2c3p0bG45c1QvR3pMeWNpT3pKcGF3dDBxR1lDbnhISXBpeDRwekVkdDJt?=
- =?utf-8?B?SDYzc0lheUFVclRXdmNXRHVrRmhiSXUzN2xiY01VQUYwL0tTOVllam0rSWRq?=
- =?utf-8?B?NytHeWpuWldndVdiU0J6SjFBQmpyWE1MYmRmdFBOOGI4M3lmOHZZRGVWSGp2?=
- =?utf-8?B?cXE1RGxKNzBTaVdLVWloQkFEUVVnM1hGcnBvcGdSRTJCdzhCOWhManZnckZJ?=
- =?utf-8?B?WVdxR0k1UVppTy8vV21iV0t0RDErQU9EbWxoV21JbWlyRi9TdUd3NzVlL3pv?=
- =?utf-8?B?R1I5c3d5RDRvK2pHSWI2Y3loQTlQRndVOUFOOHJheXJYcUVzSGJNcUtHTWNy?=
- =?utf-8?B?cXQ2QjBjVUkvVDNUWVZ4Z1g1aTN4MFIzY3VjcGJkdXlsRXkxWTNjM2J3eEgz?=
- =?utf-8?B?OGwrT0hmd25iRkVMTVlXTWZ2MGlZQXkwS09zT2tWOXk1NnhRbmZEcEJPNWlB?=
- =?utf-8?B?VUtsVlNHN1RaVDJjZk5wWGI5MDJKUWZqN0daaGQ4TitPQjNoR08zYU5Hc2V0?=
- =?utf-8?B?aEYzUC9JNDlGYXM5MnRsYTFVYUNkMG9Uc3dDOFg0eXNUVlhUUnZNM1VieDJY?=
- =?utf-8?B?SENxRm4vaFBrYk9rQTYrdklhdkFpNWZMbENmanlmOFRPcUZQMjRBMnNHS0xr?=
- =?utf-8?B?NDR1RXJpYTliS2N0WHRheFhBZFpTSXErNXd6VHFSUi9aeEdvM2ZPTlFhaUhr?=
- =?utf-8?B?Y1dKK0xDalBjVlNldFB3VStsbFF3aXR1M0ZsckJSYjVTNGVHZjk5dGNVOXc4?=
- =?utf-8?B?SWZIUE1PU1Q4dGFQUWpYL3dNbzI4ZnU4RVRSVFNaNnc3SkZiN290T1hpOXhB?=
- =?utf-8?B?UzUzTjUyZ3BTNXRoYlJQQzZNZFkyWVVUY3VtL0Y4RmsyUWRhK2YvcjFSNDNm?=
- =?utf-8?B?L1lIUjZIMURNdVliS2VET1JiTTZDWFJrQzhZTm1MVzlpb0JDVmpBSmxGRFFk?=
- =?utf-8?B?TW5KQitvUlZkd0t1TXVsZjNoQldYTVhpelA4UFZkeWx5VTJ1RlhVQUVGYXdj?=
- =?utf-8?B?bGxMRUR3YlYrK1lTb1lQN1daZmtNd0dpdHlkN08vcHQ1dGJzVnhRUHc1dTdZ?=
- =?utf-8?B?YkxJMWpkN1ZGTThMdGl0eW1JRFViTmlWT0ZFNG5STWpkbHdUYmRUSDNkTHBX?=
- =?utf-8?B?QUYwaFE5Uk1LU1FucmN4WFhWVElTMzhWSGlJRFUwTEdsbHo5S3ZhK3NtMFFl?=
- =?utf-8?B?L1U3emVIV3gwZ0lVWFVKYlRvYkUyeTNma0pPR094MUk3WmNOMnFCdnl0Wmd0?=
- =?utf-8?B?UCtVT1ZWN3Q4NWRkeHNFTVVFY1Z2RElnUG9HWDBPWTRsRlVZcERFZEJkZVFy?=
- =?utf-8?B?dW5KVjlXL3ZZNDRyMElPbnBhMkF5bXo4VkJIOVRibGNwV0trcXRrNmJaZkwr?=
- =?utf-8?B?SGw1WG9oRWV0eFRmenp5R0RNNDZpY0Nybnh3SUt6Z1VhcVpRQ2t2SVZJNEdH?=
- =?utf-8?B?eGVHQllwbnRGMEtERzRkMXNzMGtWcnowOVBBTkpxL3FTT3lYVUJNbkNtN0NV?=
- =?utf-8?B?T3A4VGlQeHd3bVN5cHdMUmJNYnZ3ZHJCZ1E3Z2RpdFJwRkZTZEZMaHN6bElY?=
- =?utf-8?B?T1hVUCtBWFJPUjVXdjV0K3NUVldRY1k3NDlXYmVoYkhXUzN2ajkveWNWZGln?=
- =?utf-8?B?ZVp3c20ybngyejlUZXo5NEpnc0VQM1dpbE85VXlzb2MrNE4xM3d6WjVsSGxJ?=
- =?utf-8?Q?vTWp5f8fj5Q+yu3ruDj3J649pLKlbYSXfvp8bfMiYE=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	rq2RZO2uXwGH8LxgErjIx/WLHNR81uTmoGVhfw3xGvLIoT75x4ghcMLV06LIYrqoJ6GQ4TzcxGGtbTeqK/yvVZTkTR16tPsjnhzuHOho6IyHdZ1qyuwFQs+ypcHXtqHpbMv6a8vnkpObP43/KRX+7LM5001HrQ2LqUG/TDDUWNcpXqAMemrJtz+QWj47jWQTHMbILQKVLvTRXrPa0EWsrK2TilLIGGLuqBui1Ec9iVaTZORNHXhSkbSeUesOIqAOCZlazq5127Fjun0qkX+dcQZeq4v4Q2fGvH50eQQba6xXqCGI6WjbBajpacCy3g6Z/o0rqMY37i7XWPIOhPbrYSeJWssiqG4wtsLE0Lsvr8xSPw1pjxz9PMhMr/I41uODsGxcod1tHOdCrx3oQVJIBgmyVDVO1kRfneq5bDwVRUaekTt8sR2Xy1Mk8UwwQCDGShjYQBLnBmSaIYYBjsQustAZ5Ik9egKDSyH6hLiXF+fmpf0weehZ784+oUo+3/KjpjnJz9OspP1HG9frzJr4CE1V843hGjM73/iF1/FTIx+g7DaMZ3SIXI0PR4YSHl85NkjVwDyy6warYy6jAlhjVmV9A9vzm9FqDHePnNXbskI=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb5d8127-69a7-4bb9-3f00-08dc73a963a9
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6597.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 00:04:13.9697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5ngM7c8V7mbh8gUDPPuNO1JXMT9vV3lfbt7juBR+iWpoHEimgFL9Su6rl7XnKSIB8LIFPvkTHzbbU4WJmLrbFpr9ybjQAEfmADiNuzY/2j4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR10MB5809
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-13_17,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 bulkscore=0
- mlxlogscore=999 spamscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2405010000 definitions=main-2405130165
-X-Proofpoint-ORIG-GUID: ZAFd65XRq7SPrQ7NUgAQ4wy7FHCP6HLD
-X-Proofpoint-GUID: ZAFd65XRq7SPrQ7NUgAQ4wy7FHCP6HLD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240513142646.4dc5484d@rorschach.local.home>
 
-Amir Goldstein <amir73il@gmail.com> writes:
+On 05/13/24 14:26, Steven Rostedt wrote:
+> On Mon, 13 May 2024 10:03:59 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > I believe we agree that we want more people contributing to the scheduling
+> > > area.   
+> > 
+> > I think therein lies the rub -- contribution. If we were to do this
+> > thing, random loadable BPF schedulers, then how do we ensure people will
+> > contribute back?
+> 
+> Hi Peter,
+> 
+> I'm somewhat agnostic to sched_ext itself, but I have been an advocate
+> for a plugable scheduler infrastructure. And we are seriously looking
+> at adding it to ChromeOS.
+> 
+> > 
+> > That is, from where I am sitting I see $vendor mandate their $enterprise
+> > product needs their $BPF scheduler. At which point $vendor will have no
+> > incentive to ever contribute back.
+> 
+> Believe me they already have their own scheduler, and because its so
+> different, it's very hard to contribute back.
+> 
+> > 
+> > And customers of $vendor that want to run additional workloads on
+> > their machine are then stuck with that scheduler, irrespective of it
+> > being suitable for them or not. This is not a good experience.
+> 
+> And $vendor usually has a unique workload that their changes will
+> likely cause regressions in other workloads, making it even harder to
+> contribute back.
+> 
+> > 
+> > So I don't at all mind people playing around with schedulers -- they can
+> > do so today, there are a ton of out of tree patches to start or learn
+> > from, or like I said, it really isn't all that hard to just rip out fair
+> > and write something new.
+> 
+> For cloud servers, I bet a lot of schedulers are not public. Although,
+> my company tries to publish the schedulers they use.
+> 
+> > 
+> > Open source, you get to do your own thing. Have at.
+> > 
+> > But part of what made Linux work so well, is in my opinion the GPL. GPL
+> > forces people to contribute back -- to work on the shared project. And I
+> > see the whole BPF thing as a run-around on that.
+> > 
+> > Even the large cloud vendors and service providers (Amazon, Google,
+> > Facebook etc.) contribute back because of rebase pain -- as you well
+> > know. The rebase pain offsets the 'TIVO hole'.
+> 
+> From what I understand (I don't work on production, but Chromebooks), a
+> lot of changes cannot be contributed back because their updates are far
+> from what is upstream. Having a plugable scheduler would actually allow
+> them to contribute *more*.
+> 
+> > 
+> > But with the BPF muck; where is the motivation to help improve things?
+> 
+> For the same reasons you mention about GPL and why it works.
+> Collaboration. Sharing ideas helps everyone. If there's some secret
+> sauce scheduler then they would likely just replace the scheduler, as
+> its more performant. I don't believe it would be worth while to use BPF
+> for that purpose.
+> 
+> > 
+> > Keeping a rando github repo with BPF schedulers is not contributing.
+> 
+> Agreed, and I would guess having them in the Linux kernel tree would be
+> more beneficial.
+> 
+> > That's just a repo with multiple out of tree schedulers to be ignored.
+> > Who will put in the effort of upsteaming things if they can hack up a
+> > BPF and throw it over the wall?
+> 
+> If there's a place in the Linux kernel tree, I'm sure there would be
+> motivation to place it there. Having it in the kernel proper does give
+> more visibility of code, and therefore enhancements to that code. This
+> was the same rationale for putting perf into the kernel proper.
+> 
+> > 
+> > So yeah, I'm very much NOT supportive of this effort. From where I'm
+> > sitting there is simply not a single benefit. You're not making my life
+> > better, so why would I care?
+> > 
+> > How does this BPF muck translate into better quality patches for me?
+> 
+> Here's how we will be using it (we will likely be porting sched_ext to
+> ChromeOS regardless of its acceptance).
+> 
+> Doing testing of scheduler changes in the field is extremely time
+> consuming and complex. We tested EEVDF vs CFS by backporting EEVDF to
+> 5.15 (as that is the kernel version we are using on the chromebooks we
+> were testing on), and then we need to add a user space "switch" to
+> change the scheduler. Note, this also risks causing a bug in adding
+> these changes. Then we push the kernel out, and then start our
+> experiment that enables our feature to a small percentage, and slowly
+> increases the number of users until we have a enough for a statistical
+> result.
+> 
+> What sched_ext would give us is a easy way to try different scheduling
+> algorithms and get feedback much quicker. Once we determine a solution
+> that improves things, we would then spend the time to implement it in
+> the scheduler, and yes, send it upstream.
+> 
+> To me, sched_ext should never be the final solution, but it can be
+> extremely useful in testing various changes quickly in the field. Which
+> to me would encourage more contributions.
 
-> On Fri, May 10, 2024 at 6:21=E2=80=AFPM Stephen Brennan
-> <stephen.s.brennan@oracle.com> wrote:
->>
->> Hi Amir, Jan, et al,
->
-> Hi Stephen,
->
->>
->> It's been a while since I worked with you on the patch series[1] that ai=
-med to
->> make __fsnotify_update_child_dentry_flags() a sleepable function. That w=
-ork got
->> to a point that it was close to ready, but there were some locking issue=
-s which
->> Jan found, and the kernel test robot reported, and I didn't find myself =
-able to
->> tackle them in the amount of time I had.
->>
->> But looking back on that series, I think I threw out the baby with the
->> bathwater. While I may not have resolved the locking issues associated w=
-ith the
->> larger change, there was one patch which Amir shared, that probably reso=
-lves
->> more than 90% of the issues that people may see. I'm sending that here, =
-since it
->> still applies to the latest master branch, and I think it's a very good =
-idea.
->>
->> To refresh you, the underlying issue I was trying to resolve was when
->> directories have many dentries (frequently, a ton of negative dentries),=
- the
->> __fsnotify_update_child_dentry_flags() operation can take a while, and i=
-t
->> happens under spinlock.
->>
->> Case #1 - if the directory has tens of millions of dentries, then you co=
-uld get
->> a soft lockup from a single call to this function. I have seen some case=
-s where
->> a single directory had this many dentries, but it's pretty rare.
->>
->> Case #2 - suppose you have a system with many CPUs and a busy directory.=
- Suppose
->> the directory watch is removed. The caller will begin executing
->> __fsnotify_update_child_dentry_flags() to clear the PARENT_WATCHED flag,=
- but in
->> parallel, many other CPUs could wind up in __fsnotify_parent() and decid=
-e that
->> they, too, must call __fsnotify_update_child_dentry_flags() to clear the=
- flags.
->> These CPUs will all spin waiting their turn, at which point they'll re-d=
-o the
->> long (and likely, useless) call. Even if the original call only took a s=
-econd or
->> two, if you have a dozen or so CPUs that end up in that call, some CPUs =
-will
->> spin a long time.
->>
->> Amir's patch to clear PARENT_WATCHED flags lazily resolves that easily. =
-In
->> __fsnotify_parent(), if callers notice that the parent is no longer watc=
-hing,
->> they merely update the flags for the current dentry (not all the other
->> children). The __fsnotify_recalc_mask() function further avoids excess c=
-alls by
->> only updating children if the parent started watching. This easily handl=
-es case
->> #2 above. Perhaps case #1 could still cause issues, for the cases of tru=
-ly huge
->> dentry counts, but we shouldn't let "perfect" get in the way of "good en=
-ough" :)
->>
->
-> The story sounds good :)
-> Only thing I am worried about is: was case #2 tested to prove that
-> the patch really imploves in practice and not only in theory?
->
-> I am not asking that you write a test for this or even a reproducer
-> just evidence that you collected from a case where improvement is observe=
-d
-> and measurable.
+I really don't think the problems we have are because of EEVDF vs CFS vs
+anything else. Other major OSes have one scheduler, but what they exceed on is
+providing better QoS interfaces and mechanism to handle specific scenarios that
+Linux lacks.
 
-I had not done so when you sent this, but I should have done it
-beforehand. In any case, now I have. I got my hands on a 384-CPU machine
-and extended my negative dentry creation tool so that it can run a
-workload in which it constantly runs "open()" followed by "close()" on
-1000 files in the same directory, per thread (so a total of 384,000
-files, a large but not unreasonable amount of dentries).
+The confusion I see again and again over the years is the fragmentation of
+Linux eco system and app writers don't know how to do things properly on Linux
+vs other OSes. Note our CONFIG system is part of this fragmentation.
 
-Then I simply run "inotifywait /path/to/dir" a few times. Without the
-patch, softlockups are easy to reproduce. With the patch, I haven't been
-able to get a single soft lockup.
+The addition of more flavours which inevitably will lead to custom QoS specific
+to that scheduler and libraries built on top of it that require that particular
+extension available is a recipe for more confusion and fragmentation. Not to
+mention big players are likely to take over, and I wouldn't be surprised if new
+business models start to spring up on top of that. Add to the lot the potential
+security issues with the ease to lure people to download sneaky sched extension
+that gives great promises but full of malware (more dangerous with the greater
+power of BPF/sudo misused).
 
-https://github.com/brenns10/kernel_stuff/tree/master/negdentcreate
+I really don't buy the rapid development aspect too. The scheduler was heavily
+influenced by the early contributors which come from server market that had
+(few) very specific workloads they needed to optimize for and throughput had
+a heavier weight vs latency. Fast forward to now, things are different. Even on
+server market latency/responsiveness has become more important. Power and
+thermal are important on a larger class of systems now too. I'd dare say even
+on server market. How do you know when it's okay for an app/task to consume too
+much power and when it is not? Hint hint, you can't unless someone in userspace
+tells you. Similarly for latency vs throughput. What is the correct way to
+write an application to provide this info? Then we can ask what is missing in
+the scheduler to enable this.
 
-    make
-    mkdir test
+Note the original min/wakeup_granularity_ns, latency_ns etc were tuned by
+default for throughput by the way (server market bias). You can manipulate
+those and get better latencies.
 
-    # create 384k files inside "test"
-    ./negdentcreate -p test -c 384000 -t 384 -o create
+And this brings me to the major point, we really need to stop thinking that we
+must improve everything at system level. Workloads need to evolve to take best
+out of systems and we need new libraries for performance and power management.
+And this means they need to get new APIs and libraries do a be able to do
+a better job and scale well.
 
-    # start a loop opening and closing those files
-    negdentcreate -p test -c 384000 -t 384 -o open -l
+I agree with Peter it is not hard to write something to make specific workload
+better. But what we really need is enable workloads to be written better and be
+more portable to take best of the hardware they run on, AND coexist with other
+workloads. For example, how do you write a good multi threaded application that
+can scale well across systems (including big.LITTLE) and not trip over other
+workloads stealing resources sometimes? You need something like this
 
-    # in another window:
-    inotifywait test
+	https://developer.apple.com/documentation/DISPATCH
 
-Stephen
+which has a linux port
 
->
-> Thanks,
-> Amir.
->
->> [1]: https://lore.kernel.org/all/20221013222719.277923-1-stephen.s.brenn=
-an@oracle.com/
->>
->> Amir Goldstein (1):
->>   fsnotify: clear PARENT_WATCHED flags lazily
->>
->>  fs/notify/fsnotify.c             | 26 ++++++++++++++++++++------
->>  fs/notify/fsnotify.h             |  3 ++-
->>  fs/notify/mark.c                 | 32 +++++++++++++++++++++++++++++---
->>  include/linux/fsnotify_backend.h |  8 +++++---
->>  4 files changed, 56 insertions(+), 13 deletions(-)
->>
->> --
->> 2.43.0
->>
+	https://github.com/apple/swift-corelibs-libdispatch
+
+not a new scheduler.
+
+How do you write an app that can manage bad thermal situations?
+
+	https://developer.android.com/games/optimize/adpf/thermal
+
+POSIX is dormant, and every OS has to wing new interfaces to deal with the new
+realities. And I don't see a lot of these discussions. Linux is lagging behind
+in general in this aspect. The trend I see is how do I make existing stuff
+better, and believe me I've seen strcmp(task->comm, ...) to hand pick things.
+Which I am sure we'll end up down this path if we let things loose.
+
+So I am against any custom extension. I think it all has to be part of the
+kernel tree and adhere to all of its supported interfaces. Which I think what
+we really ought on focusing to evolve and improve. This is the biggest friction
+point IMO, not the scheduler algorithm. If the latter need to change, it needs
+to be as the result of this friction - which what EEVDF came about from to my
+understanding. To enable implementing a latency interface easier. But Vincent
+had a working implementation with CFS too which I think would have worked fine
+by the way.
+
+I do hope we can reconsider some of our default behaviors though (that bias to
+perf and throughput specifically).
+
+FWIW IMO the biggest issues I see in the scheduler is that its testability and
+debuggability is hard. I think BPF can be a good fit for that. For the latter
+I started this project, yet I am still trying to figure out how to add tracer
+for the difficult paths to help people more easily report when a bad decision
+has happened to provide more info about the internal state of the scheduler, in
+hope to accelerate the process of finding solutions. I think people are getting
+stuck explaining why things are failing, which makes finding a common solution
+hard if not impossible. We need better way to understand the problems people
+are seeing
+
+	https://github.com/qais-yousef/sched-analyzer
+
+Similar methodology can be used to create a BPF based sched test framework.
+I don't have cycles to start this, but hope to if no one beats me to it.
+
+I think it would be great to have a clear list of the current limitations
+people see in the scheduler. It could be a failure on my end, but I haven't
+seen specifics of problems and what was tried and failed to the point it is
+impossible to move forward. From what I see, I am hitting bugs here and there
+all the time. But they are hard to debug to truly understand where things went
+wrong. Like this one for example where PTHREAD_PRIO_PI is a NOP for fair tasks.
+Many thought using this flag doesn't help (rather than buggy)..
+
+	https://lore.kernel.org/lkml/20240403005930.1587032-1-qyousef@layalina.io/
 
