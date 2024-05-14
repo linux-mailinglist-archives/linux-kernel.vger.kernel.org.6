@@ -1,78 +1,114 @@
-Return-Path: <linux-kernel+bounces-179210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBB08C5D61
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFC68C5D63
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01053B20940
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C080A2825F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534E0181CF2;
-	Tue, 14 May 2024 22:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B28A181D17;
+	Tue, 14 May 2024 22:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBvR8s0r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fCSceKzd"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDBE181BBB;
-	Tue, 14 May 2024 22:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E761C181CFF
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 22:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715724021; cv=none; b=Q4heyWH7vSLEkuz9Wgd6cT0LwR4DVtkSUafkiRpeTaYa6QLjaj70C+3gQJ7a+hjRN7mTlGr2fuUbdIjnmSNxnKQCriutwkSaJl6bFXf/Mkl0GtwZaCWRvzC7Fn7i9iizUlqAcWbKW0C9RV78hiY9ra0S4c2cZ5x7heGHj0mPCQc=
+	t=1715724043; cv=none; b=uvuLHErmgasEcpI1Q4g1U71hp9UxwfRZbEgdrxlgyzzNkrM9JHl8kB+Pmld8HoZiSXg7YYSv/JCVuNq6vO078Jo33mxqlL4tDiV3URxCBXx9BJ6pynvDQLGruZIAAPmarD4ulRHbxZAYlJEZ2fDpPrHKLPLmhB2sdrqvdtrlEhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715724021; c=relaxed/simple;
-	bh=RgAVT9b0FGE2pjgzTSzULhoTV8L95uztNagoVglzXbI=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Ycsm2jWlsbfwjyyDPue2Nol8yVRoYFHBQCA5ZYuFyKxjznvzTppamPzFm3AxEMjd3VOv7o4lD5doxP6EyMAcKZrVa9S7UkEuAudxANqPUoAV3kvVQz3rs54iPQDt6R34hBkxpujr5DfgSj2X1CjmzYM/mrXXQLvi+8LNWqkq1ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBvR8s0r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 22326C32786;
-	Tue, 14 May 2024 22:00:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715724021;
-	bh=RgAVT9b0FGE2pjgzTSzULhoTV8L95uztNagoVglzXbI=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=eBvR8s0rzNfEYqhJrxQJJgEtWLTVv4glgsL1gY9l/C2lLXDgD6Nln85FwRPT46eku
-	 Oi578rqVYpYUQCZg56BwDvvc2DddUJeN6zWjzFF8XYnX6Suur+qNrkqvwz0BMm600x
-	 uODRsHh1c0FIXoqNSWiiIG6xKsf3wKODMc8Pa78vRRaj27yel0/mN/tdQzC8jvVGpP
-	 1Hm4rnB2wXZDngAM+ofdXVhuqychTUGEzSeIyCJ7xDu+dxfB+sT1Owqo9i7UDhf9Ss
-	 Y1mTRIjlgBUikr6/GKI3oEkeuIJe6pyLIPWhEB+LB8jpvon0t08drF4CYNJmFX2Ax2
-	 RqJ6PkJuNU6fQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 18891C1614E;
-	Tue, 14 May 2024 22:00:21 +0000 (UTC)
-Subject: Re: [GIT PULL] hte: Changes for v6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240514064812.183839-1-dipenp@nvidia.com>
-References: <20240514064812.183839-1-dipenp@nvidia.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240514064812.183839-1-dipenp@nvidia.com>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/pateldipen1984/linux.git tags/for-6.10-rc1
-X-PR-Tracked-Commit-Id: 297f26dbf870d4f19591b74a0ab535c327917b81
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 00fddaf58854717a075f3690c828b61290701e7e
-Message-Id: <171572402109.23495.10986002603633790584.pr-tracker-bot@kernel.org>
-Date: Tue, 14 May 2024 22:00:21 +0000
-To: Dipen Patel <dipenp@nvidia.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, dipenp@nvidia.com, u.kleine-koenig@pengutronix.de, linux-kernel@vger.kernel.org, timestamp@lists.linux.dev
+	s=arc-20240116; t=1715724043; c=relaxed/simple;
+	bh=ZesKsYDyRLqGOwxtVdB1+K8Zx7Lg3+8aB8pP+CHz0Dg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kNVGIC0QAb27NEGRXV8RosmT4Lvv4Tj4XeqGXiB/gKsQMevJvif6VdJAu7NorjI8dB0qKSOs7STBzTyJLvlAiP7Jqa83wXFh5T9QAU6oD/ACvobq963umS7m/lXsWRiggO0qAUWYVuZXT2EhB4GODsowu3rT/l3C0FxlAGHKjiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fCSceKzd; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dee601899c5so7369575276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:00:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1715724041; x=1716328841; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f5EfcMEAUsY+SnBp06Z60R+yACvmNOdhzYQEu5su4rs=;
+        b=fCSceKzdUJgUhkpUWttA2hYbpOAbWGMG3SvjwyjwceF3uL0JisQM25zYW4r9ZvmVJk
+         OTYV6JdZo0lgvc4TP0QksNuKtKSt51oca0doTGW6Ry8bH8nJNbef9l3G4/aHymVpr+Cv
+         Wuh5lw9VxWNjjcD+AezreK+nUpeFPXxYS/v8hUPAgXFMZ45v5umIY7UbFVSXJsNS4kOI
+         UjuPtCGT58BG4it42XQniwFV6klMCs7mOsVZGH0ZxIhdPPXlNhckaOvMCXcNJL7gNXOy
+         NZ64Er6zY2vct2QgcSgmfHAI3BlAS2vdmLjl86GZCdaDTvyXFSALQp8Us4GJEvas7CwS
+         Js1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715724041; x=1716328841;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f5EfcMEAUsY+SnBp06Z60R+yACvmNOdhzYQEu5su4rs=;
+        b=eKOuJLyJP9taTbVNvrVte6h/dePkdQpIEnsDZVdxkb2bbj33o1ahf9qYVuFH1eYncU
+         rGSMxg0aOXVdsndygGfTDsWUGhcnjj4sWlgjK2Z4EFo4VxkfzSTOUBivL6cwi50oGGjN
+         9ZEFnk9XXnKiG+rf0wpx/gpndle4Iwwy3m0MvhQ/A5Y6P56KPVRwFQyJpk3HR2rQ4kdQ
+         IlkZkosavOfkRJSd40cL2J4fzYbd2l0d7rJo+SjXs6urtUPO28dDw51qTzIK9gDFolQd
+         pu/BpfUQ29Hb0JwYeBOWAvjaiya9/1OC8Pyr+YuS/8NVbxdjNt06LKHEI2JQEpPIUPJm
+         Mv1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVMItz3GGp87v9ANGEtwmctkBW8vBzRXozy5LV3bpTday3VDZYqOcuchWk75ex7nhn1Wo94DRSX3kliTizWst/eD/tuCLgGjNcnoAzI
+X-Gm-Message-State: AOJu0YwkyQ9wxh4YpDTpTIVRsOVCZiFEnX3Gv2/bsIa4L+i59l0pyBQq
+	VKpWw1dzMEGD06oZbU8ewwj7hruvUzizwlA8V2l+6W1fKnEvwBn+r/nJLfA0jgoAohNkP+ayBUR
+	CuQ==
+X-Google-Smtp-Source: AGHT+IEHn/IozBdXsx0bX0Dkzx1Eykeu5z0TT4Gh/z+2WrwAmnf+V/tSLSSBrYXzdJT2aMvByp0UpHOfWHw=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6902:2b87:b0:de4:7bae:3333 with SMTP id
+ 3f1490d57ef6-dee4f340733mr3995440276.3.1715724040895; Tue, 14 May 2024
+ 15:00:40 -0700 (PDT)
+Date: Tue, 14 May 2024 15:00:39 -0700
+In-Reply-To: <202405111034432081zGPU1OUESImLVeboZ0zQ@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <Zj4qEG5QfbX4mo48@google.com> <202405111034432081zGPU1OUESImLVeboZ0zQ@zte.com.cn>
+Message-ID: <ZkPfB2VpGkRmMLsi@google.com>
+Subject: Re: [PATCH] KVM: introduce vm's max_halt_poll_ns to debugfs
+From: Sean Christopherson <seanjc@google.com>
+To: cheng.lin130@zte.com.cn
+Cc: pbonzini@redhat.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jiang.yong5@zte.com.cn, wang.liang82@zte.com.cn, jiang.xuexin@zte.com.cn
+Content-Type: text/plain; charset="us-ascii"
 
-The pull request you sent on Mon, 13 May 2024 23:48:12 -0700:
+On Sat, May 11, 2024, cheng.lin130@zte.com.cn wrote:
+> > > > > > From: seanjc <seanjc@google.com>
+> > > > > > > From: Cheng Lin <cheng.lin130@zte.com.cn>
+> > > > > > >
+> > > > > > > Introduce vm's max_halt_poll_ns and override_halt_poll_ns to
+> > > > > > > debugfs. Provide a way to check and modify them.
+> > > > > > Why?
+> > > > > If a vm's max_halt_poll_ns has been set using KVM_CAP_HALT_POLL,
+> > > > > the module parameter kvm.halt_poll.ns will no longer indicate the maximum
+> > > > > halt pooling interval for that vm. After introducing these two attributes into
+> > > > > debugfs, it can be used to check whether the individual configuration of the
+> > > > > vm is enabled and the working value.
+> > > > But why is max_halt_poll_ns special enough to warrant debugfs entries?  There is
+> > > > a _lot_ of state in KVM that is configurable per-VM, it simply isn't feasible to
+> > > > dump everything into debugfs.
+> > > If we want to provide a directly modification interface under /sys for per-vm
+> > > max_halt_poll_ns, like module parameter /sys/module/kvm/parameters/halt_poll_ns,
+> > > using debugfs may be worth.
+> > Yes, but _why_?  I know _what_ a debugs knob allows, but you have yet to explain
+> > why this
+> I think that if such an interface is provided, it can be used to check the source of
+> vm's max_halt_poll_ns, general module parameter or per-vm configuration.
+> When configured through per-vm, such an interface can be used to monitor this
+> configuration. If there is an error in the setting through KVMCAP_HALL_POLL, such
+> an interface can be used to fix or reset it dynamicly.
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/pateldipen1984/linux.git tags/for-6.10-rc1
+But again, that argument can be made for myriad settings in KVM.  And unlike many
+settings, a "bad" max_halt_poll_ns can be fixed simply by redoing KVM_CAP_HALL_POLL.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/00fddaf58854717a075f3690c828b61290701e7e
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+It's not KVM's responsibility to police userspace for bugs/errors, and IMO a
+backdoor into max_halt_poll_ns isn't justified.
 
