@@ -1,97 +1,142 @@
-Return-Path: <linux-kernel+bounces-179244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22EB18C5DE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942C78C5DE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4B11B20C5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:52:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B1F1C20B21
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6796B182C8A;
-	Tue, 14 May 2024 22:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD5C182C8F;
+	Tue, 14 May 2024 22:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bZ0oG5RI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9r6tOa+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E9181CFB;
-	Tue, 14 May 2024 22:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2685A181CFB;
+	Tue, 14 May 2024 22:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715727170; cv=none; b=AF11icv9EVrK0g6KNRNvy/53Ww9rZREyizScFJoZ5xYZxJ+ak0zXC+IdnHTheLzgf/aIYqlh523LJxsrVBBb68ndFhecisysyeBiXCRoN0Hk71ZZTB4tP481qADHbmZjDSE0P+yHATBy11zMs6Pc4scx58sueuB+iHBEP/GWOPs=
+	t=1715727258; cv=none; b=gI16P+qAatg0rt8OgrPb31LhW0s4IkTmME644lbmGyL5Tz9LrWoHBGTy/tjs8V/MRP9D+MrVW2NkY/BzDqLzU67R1lwzogLxHJmso3dLxFJbAch9+dUeoAJRCh5lsGPrDMF3msBIGWLmbugR481Vd4DkOC4Ekay8fSOSm/FjdbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715727170; c=relaxed/simple;
-	bh=OdT4KFAV9v7V5rkLDBZy5koQ2ZG/f6bqAbd2RkcWpE8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=sGVvrAUr41TtvLsAcUGF6J8QWhyqxdABvm6PZIu6WpI3MyxLTdaSmLhtzSn5pNKp0QnOLfCDtOTF/Doge2yce/Ih380PkYuLmAue1kLEaZ2FfDCTXHX4KKJtrvAKUR3nB6/PubvwfQV6vazUjRDEpDaSskgcxKzx9iu6VtV5ctg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bZ0oG5RI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE9C5C2BD10;
-	Tue, 14 May 2024 22:52:47 +0000 (UTC)
+	s=arc-20240116; t=1715727258; c=relaxed/simple;
+	bh=ZW2Nbj8GoOGUug2rnm6oGISqRv9Ml9tWbdtZP+OfDHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TL5U6dgPfpapfrx/3dcodKkRamzdxtqhqZQGKS0/hJfJp6BKTTxLgf62v4+ja+gdhLYSyp9D3ctypLUyM6i2XJbB5BtqGn4aTbjXU7kP8nm06O+FT27hr0eSEYDKA6it5Yq+HNC2peNHpzMwCAk2gEJzqKMDaCNBc5erN/KIXd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9r6tOa+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E79D7C2BD10;
+	Tue, 14 May 2024 22:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715727170;
-	bh=OdT4KFAV9v7V5rkLDBZy5koQ2ZG/f6bqAbd2RkcWpE8=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=bZ0oG5RINe5rxgxiSLdO7FVul3/cEDvqoPKyN6ke/kLbC+t4VZId+rMpE7atp6a2K
-	 Td6+TZANf+Yf1b9Yc+xJ0ffcA0jEAdzcdOW8dJF88IJZEEqxrFTutXF89dDjhG0Mw8
-	 WOBNCHooSJOKe+oKMsInus7QYFE0PmWFbsc2D6lX30ZIlEx2hQONIJgahNZn9qXnL2
-	 8UjHaDyC7aESw5vwZoxXRs9EaBWG1oW5jS8XsOnaFFaEVrodyxNPI2wwflVB/LJ7bc
-	 WTeKx2Ie80L0VqeRGlyYTtGDmxOAFqBWBrd5ncoPW/I3MteZb34OTGeVIKINpHh2dP
-	 11S5hUB+XQYGA==
+	s=k20201202; t=1715727258;
+	bh=ZW2Nbj8GoOGUug2rnm6oGISqRv9Ml9tWbdtZP+OfDHQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=u9r6tOa+h89rC+qs1fFPEQXOaR+IHTxetn5eExiWLaHGsOXkyaUgdQjldcmCF0R6R
+	 gjzG0oda7SLPU4WpK8HErrTcmLZio1DxHD2ryUR+9iPFEva/eKbHn2/pMWnQ9To1WQ
+	 8TXftfroH8kicxlUbEfUcxmsaD0yS2nAwNV2esA+Zbtvhr+VcrShMIyNNg2yeKcJdn
+	 XTHpqPpJyYCJdtnR8g82CKDCJio7RDG6dhpaH/LGya7SgtyNcVkG/AxO4/cWJw2FN1
+	 r6QMMlHRdKIj8ncrlj8y+a8DZ3a4gKaL76c9GJCc94GYhTrR6TGbfshTo4JfUH1FRG
+	 S6DfQcmYZsHRw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 94D09CE0481; Tue, 14 May 2024 15:54:16 -0700 (PDT)
+Date: Tue, 14 May 2024 15:54:16 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Leonardo Bras Soares Passos <leobras@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
+Message-ID: <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240511020557.1198200-1-leobras@redhat.com>
+ <ZkJsvTH3Nye-TGVa@google.com>
+ <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 May 2024 01:52:45 +0300
-Message-Id: <D19QIQS6SU8W.27A70AXVLRD12@kernel.org>
-Cc: <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH 1/2] tpm: add some algorithm and constant
- definitions from the TPM spec
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Ignat Korchagin"
- <ignat@cloudflare.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <20240503221634.44274-2-ignat@cloudflare.com>
- <D19QI1MDD734.3FA17QYMV3TD3@kernel.org>
-In-Reply-To: <D19QI1MDD734.3FA17QYMV3TD3@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com>
 
-On Wed May 15, 2024 at 1:51 AM EEST, Jarkko Sakkinen wrote:
-> > @@ -227,6 +229,7 @@ enum tpm2_command_codes {
-> >  	TPM2_CC_CREATE		        =3D 0x0153,
-> >  	TPM2_CC_LOAD		        =3D 0x0157,
-> >  	TPM2_CC_SEQUENCE_UPDATE         =3D 0x015C,
-> > +	TPM2_CC_SIGN		        =3D 0x015D,
-> >  	TPM2_CC_UNSEAL		        =3D 0x015E,
-> >  	TPM2_CC_CONTEXT_LOAD	        =3D 0x0161,
-> >  	TPM2_CC_CONTEXT_SAVE	        =3D 0x0162,
->
-> Ditto.
->
-> > @@ -234,6 +237,7 @@ enum tpm2_command_codes {
-> >  	TPM2_CC_VERIFY_SIGNATURE        =3D 0x0177,
-> >  	TPM2_CC_GET_CAPABILITY	        =3D 0x017A,
-> >  	TPM2_CC_GET_RANDOM	        =3D 0x017B,
-> > +	TPM2_CC_HASH	        	=3D 0x017D,
-> >  	TPM2_CC_PCR_READ	        =3D 0x017E,
-> >  	TPM2_CC_PCR_EXTEND	        =3D 0x0182,
-> >  	TPM2_CC_EVENT_SEQUENCE_COMPLETE =3D 0x0185,
->
->
-> Ditto.
+On Mon, May 13, 2024 at 06:47:13PM -0300, Leonardo Bras Soares Passos wrote:
+> On Mon, May 13, 2024 at 4:40 PM Sean Christopherson <seanjc@google.com> wrote:
+> >
+> > On Fri, May 10, 2024, Leonardo Bras wrote:
+> > > As of today, KVM notes a quiescent state only in guest entry, which is good
+> > > as it avoids the guest being interrupted for current RCU operations.
+> > >
+> > > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
+> > > check for any RCU operations waiting for this CPU. In case there are any of
+> > > such, it invokes rcu_core() in order to sched-out the current thread and
+> > > note a quiescent state.
+> > >
+> > > This occasional schedule work will introduce tens of microsseconds of
+> > > latency, which is really bad for vcpus running latency-sensitive
+> > > applications, such as real-time workloads.
+> > >
+> > > So, note a quiescent state in guest exit, so the interrupted guests is able
+> > > to deal with any pending RCU operations before being required to invoke
+> > > rcu_core(), and thus avoid the overhead of related scheduler work.
+> >
+> > Are there any downsides to this?  E.g. extra latency or anything?  KVM will note
+> > a context switch on the next VM-Enter, so even if there is extra latency or
+> > something, KVM will eventually take the hit in the common case no matter what.
+> > But I know some setups are sensitive to handling select VM-Exits as soon as possible.
+> >
+> > I ask mainly because it seems like a no brainer to me to have both VM-Entry and
+> > VM-Exit note the context switch, which begs the question of why KVM isn't already
+> > doing that.  I assume it was just oversight when commit 126a6a542446 ("kvm,rcu,nohz:
+> > use RCU extended quiescent state when running KVM guest") handled the VM-Entry
+> > case?
+> 
+> I don't know, by the lore I see it happening in guest entry since the
+> first time it was introduced at
+> https://lore.kernel.org/all/1423167832-17609-5-git-send-email-riel@redhat.com/
+> 
+> Noting a quiescent state is cheap, but it may cost a few accesses to
+> possibly non-local cachelines. (Not an expert in this, Paul please let
+> me know if I got it wrong).
 
-These can be in the same patch but both need a rationale.
+Yes, it is cheap, especially if interrupts are already disabled.
+(As in the scheduler asks RCU to do the same amount of work on its
+context-switch fastpath.)
 
-BR, Jarkko
+> I don't have a historic context on why it was just implemented on
+> guest_entry, but it would make sense when we don't worry about latency
+> to take the entry-only approach:
+> - It saves the overhead of calling rcu_virt_note_context_switch()
+> twice per guest entry in the loop
+> - KVM will probably run guest entry soon after guest exit (in loop),
+> so there is no need to run it twice
+> - Eventually running rcu_core() may be cheaper than noting quiescent
+> state every guest entry/exit cycle
+> 
+> Upsides of the new strategy:
+> - Noting a quiescent state in guest exit avoids calling rcu_core() if
+> there was a grace period request while guest was running, and timer
+> interrupt hits the cpu.
+> - If the loop re-enter quickly there is a high chance that guest
+> entry's rcu_virt_note_context_switch() will be fast (local cacheline)
+> as there is low probability of a grace period request happening
+> between exit & re-entry.
+> - It allows us to use the rcu patience strategy to avoid rcu_core()
+> running if any grace period request happens between guest exit and
+> guest re-entry, which is very important for low latency workloads
+> running on guests as it reduces maximum latency in long runs.
+> 
+> What do you think?
+
+Try both on the workload of interest with appropriate tracing and
+see what happens?  The hardware's opinion overrides mine.  ;-)
+
+							Thanx, Paul
 
