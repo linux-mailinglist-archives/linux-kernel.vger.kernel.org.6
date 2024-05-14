@@ -1,132 +1,148 @@
-Return-Path: <linux-kernel+bounces-178347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B338C4C56
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:32:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2368C4C62
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3097B28216C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130841C20AE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4029FE541;
-	Tue, 14 May 2024 06:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="euQya6Xp"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741A8F513;
+	Tue, 14 May 2024 06:36:23 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE4FAD49
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE01193;
+	Tue, 14 May 2024 06:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715668367; cv=none; b=Zpp37LjikmadPIz2pXW7pMuWwf62abJPSldchZNWZE19AB3LS6LssoJbvASHeNqXYMF3tWL7M3Xb1KkPx8YqufxA7BbxQTT1hZXI7voCEgYkdAhoLz6VgACdx+uTcQUbXJizKM+QdXG19E0S09yBmRtElpI1a9KYs4IkiUKi/1Y=
+	t=1715668583; cv=none; b=GB6uiPKjXepXUlI5w3vco2/bBKbfuwJWI64YEpPqn/42Q+jTwtdlWb9cFdPfs9b1Z7HYf3MRbBCYCFnOH8nZHyXc69PBiBy5sCsCJYduD6WY73i2JTUS9HyAnCySPu1i6lwzx8jjlvWbXY/GLx5Lh+K/G+Pa5Uhtme1LFJDixSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715668367; c=relaxed/simple;
-	bh=kBAcps8nyWv/1jmLqIvu/lxyDrTrvBsKKoN14C+MCRU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=BIqyHv0EVj7rTKYL9AUoyLi8kmhwoegDLPFGCghOxz4DXSgx7X8eHAl4ZmUauKjQXnw+gLnO2QQRLW1Atoxu6h1/bCHdAj/uV7gkF8kBah3A/6ulR01uC0+wuNei9A3sEn/oHCMhsHHQSA/pSsEN250SEIDXRx/zV7jqmJGTwlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=euQya6Xp; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44E6VMF9027337;
-	Tue, 14 May 2024 01:31:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715668282;
-	bh=kBAcps8nyWv/1jmLqIvu/lxyDrTrvBsKKoN14C+MCRU=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To;
-	b=euQya6XpMYTG5ptwemU6BB43YtzDjBM2NtHxsHyFiCADBQhytzV+bgaVkEfSy8SL1
-	 cyqzDt4uuoLViXhu4zTUq3pc11/UTV2WXYRlhp9YiVT/Izge+DRPNXOaaJtWxBl0NC
-	 TKc4eSwj+e6Qj8aaFVgVg3aGsHzgvHlUsOT5R3CI=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44E6VMpD011074
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 14 May 2024 01:31:22 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
- May 2024 01:31:22 -0500
-Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
- DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
- 15.01.2507.023; Tue, 14 May 2024 01:31:22 -0500
-From: "Ding, Shenghao" <shenghao-ding@ti.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: "broonie@kernel.org" <broonie@kernel.org>,
-        "lgirdwood@gmail.com"
-	<lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "pierre-louis.bossart@linux.intel.com"
-	<pierre-louis.bossart@linux.intel.com>,
-        "13916275206@139.com"
-	<13916275206@139.com>,
-        "alsa-devel@alsa-project.org"
-	<alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "liam.r.girdwood@intel.com"
-	<liam.r.girdwood@intel.com>,
-        "bard.liao@intel.com" <bard.liao@intel.com>,
-        "yung-chuan.liao@linux.intel.com" <yung-chuan.liao@linux.intel.com>,
-        "Lu,
- Kevin" <kevin-lu@ti.com>,
-        "cameron.berkenpas@gmail.com"
-	<cameron.berkenpas@gmail.com>,
-        "tiwai@suse.de" <tiwai@suse.de>, "Xu, Baojun"
-	<baojun.xu@ti.com>,
-        "soyer@irl.hu" <soyer@irl.hu>,
-        "Baojun.Xu@fpt.com"
-	<Baojun.Xu@fpt.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v5 2/3] ASoC: tas2781: Fix wrong loading
- calibrated data sequence
-Thread-Topic: [EXTERNAL] Re: [PATCH v5 2/3] ASoC: tas2781: Fix wrong loading
- calibrated data sequence
-Thread-Index: AQHapBc5leN0axZoFUGYCdnWILUBZLGVRDAAgAEC+0A=
-Date: Tue, 14 May 2024 06:31:22 +0000
-Message-ID: <d9dd889f18ec4265a50a2490d80999c2@ti.com>
-References: <20240512025040.1276-1-shenghao-ding@ti.com>
- <20240512025040.1276-2-shenghao-ding@ti.com>
- <ZkHkjhxIZ8I0s3-D@smile.fi.intel.com>
-In-Reply-To: <ZkHkjhxIZ8I0s3-D@smile.fi.intel.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1715668583; c=relaxed/simple;
+	bh=EQGFT7CyM4ztbvWBFaiT0GbdvWqIdCpHOwc42jxh6SE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TDekY6K4/+89WsrZiIE/lBwcZYCyjPYp/ZlKxFnCLCpBdqdlDhYieY+aWKYEju5i/hyPSoXaey2DDQ4wnZOhFidVmJzLsPKJDMhfRw+WSYSF76fSx4bP769Iy8oEkzmNml/REzARxLLwCLlgtR+Q2XRJhgFduBv5pfnP+dY7Pc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-792b8d98a56so495147785a.2;
+        Mon, 13 May 2024 23:36:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715668578; x=1716273378;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SyXm2XZJp7cQccvVHsZwFRorrc4lUY+2faX/WPeRScc=;
+        b=q295c7u7oo/zrKxT+3//ux1dvuOV59PSQgjizW2A2KJd/FzK6qvVF0giEV7xntF3ZN
+         FiujhApWarw7QEo80mu+7F1JIAxheB4SkBT9/sECFG6WNTYmkJHF+1c/t4XWcK7RPetU
+         t/3a0ac/64dphS/ZPrKvDuH4iDKcLCS8dE1soZ2L+Yd4IJ9eVBxQCOFW7L2RdkmNNfvD
+         QX13lnoE95dEfzdshdLclKo50YnFogYJw2txKZArSlACiDC6XaF/gajsMZo3aXY7dtN2
+         qy8A3ouS2j9l+A1zBwrznWcT4BGfpuDWz3K8VNRNzJYdSprwdE3EVmHA2dxMqjxyU26R
+         vOJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGgcRBFsDOi7MweHZKYITb93cdjWZEMahfU9t/pv+H70TbLV6adjWaLrTfGnSBEpZIoYFeA8cLB61iJQzcnW/uYCLPaBpRRJRnqk9Mn7eVOgaXdCUoGRyOuX17aKl5u8QbNf/vHEVUCu5zl+Lb7QHSOllwX2NXgeTcp62axK61Nv0LW5CjVEzErSkG+GoYy82XY1TLndz5HfAr1mzbUbBcpJ+m/Td4qBlajz63TPQmex3uRFpYAy6j3E3BO9j6W3e4i8uAKHAN69dG4g==
+X-Gm-Message-State: AOJu0Yz/f5Bu6Pia+LHOKOTrIZOLnxKABsWHAMC9uILnBoFKI6SXZiXw
+	Ri+u7ms3B6Y4q7ZCawgfzTmTXceHa1+LyEBL+yPAVeHbIuNq0KbkFflr+7oB
+X-Google-Smtp-Source: AGHT+IHb/gpZ6h4LX1YGHekIv67fi8M936g0HJZ4gbtfrHZIikaL3GtALqO6JA8TaZo3T/gO62w3lA==
+X-Received: by 2002:a05:6214:4808:b0:6a0:d4dd:cb44 with SMTP id 6a1803df08f44-6a168279065mr148851546d6.62.1715668578125;
+        Mon, 13 May 2024 23:36:18 -0700 (PDT)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f17a3d6sm50819416d6.18.2024.05.13.23.36.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 23:36:17 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43e0d564136so14416611cf.0;
+        Mon, 13 May 2024 23:36:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXR5o8oqxHDe1AUaUAy5CEk3o15oXGQAU+LSbwoqhPmBBjKmLvBeN4+jNdAKe87n4eezNbfm0Ks7Jd9wIsiikNydPE9UxjuDiG0Fk95a2QA9hymVO4do9pMK0DQBm/nybDD4tPTTRTkU+vKdI8VjH7ZHhUhgnX9GcLgxxTjdSWy8AgsDtCC2iwnwoWrQdgR1qUGk8SYmh8i3hU73zS7ep15E+1QXWafSp9g8tAeI9VlCSgaeMu8omO0MnlTtgOhlhww6oy7H4Gswv4l3g==
+X-Received: by 2002:a5b:f48:0:b0:de5:567b:88f with SMTP id 3f1490d57ef6-dee4f31a205mr14563293276.10.1715668557234;
+ Mon, 13 May 2024 23:35:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
+ <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com> <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
+ <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
+In-Reply-To: <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 14 May 2024 08:35:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWCD+k8=iX8+tcK76DU_m9quR8BV+K68K73SygJzCz5VA@mail.gmail.com>
+Message-ID: <CAMuHMdWCD+k8=iX8+tcK76DU_m9quR8BV+K68K73SygJzCz5VA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
+	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
+	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
+	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
+	Peng Fan <peng.fan@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgQW5keQ0KVGhhbmtzIGZvciB5b3VyIGNvbW1lbnQuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNz
-YWdlLS0tLS0NCj4gRnJvbTogQW5keSBTaGV2Y2hlbmtvIDxhbmRyaXkuc2hldmNoZW5rb0BsaW51
-eC5pbnRlbC5jb20+DQo+IFNlbnQ6IE1vbmRheSwgTWF5IDEzLCAyMDI0IDY6MDAgUE0NCj4gVG86
-IERpbmcsIFNoZW5naGFvIDxzaGVuZ2hhby1kaW5nQHRpLmNvbT4NCj4gQ2M6IGJyb29uaWVAa2Vy
-bmVsLm9yZzsgbGdpcmR3b29kQGdtYWlsLmNvbTsgcGVyZXhAcGVyZXguY3o7IHBpZXJyZS0NCj4g
-bG91aXMuYm9zc2FydEBsaW51eC5pbnRlbC5jb207IDEzOTE2Mjc1MjA2QDEzOS5jb207IGFsc2Et
-ZGV2ZWxAYWxzYS0NCj4gcHJvamVjdC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7
-IGxpYW0uci5naXJkd29vZEBpbnRlbC5jb207DQo+IGJhcmQubGlhb0BpbnRlbC5jb207IHl1bmct
-Y2h1YW4ubGlhb0BsaW51eC5pbnRlbC5jb207IEx1LCBLZXZpbiA8a2V2aW4tDQo+IGx1QHRpLmNv
-bT47IGNhbWVyb24uYmVya2VucGFzQGdtYWlsLmNvbTsgdGl3YWlAc3VzZS5kZTsgWHUsIEJhb2p1
-bg0KPiA8YmFvanVuLnh1QHRpLmNvbT47IHNveWVyQGlybC5odTsgQmFvanVuLlh1QGZwdC5jb20N
-Cj4gU3ViamVjdDogW0VYVEVSTkFMXSBSZTogW1BBVENIIHY1IDIvM10gQVNvQzogdGFzMjc4MTog
-Rml4IHdyb25nIGxvYWRpbmcNCj4gY2FsaWJyYXRlZCBkYXRhIHNlcXVlbmNlDQo+IA0KPiBPbiBT
-dW4sIE1heSAxMiwgMjAyNCBhdCAxMDo1MDozOEFNICswODAwLCBTaGVuZ2hhbyBEaW5nIHdyb3Rl
-Og0KPiA+IENhbGlicmF0ZWQgZGF0YSB3aWxsIGJlIHNldCB0byBkZWZhdWx0IGFmdGVyIGxvYWRp
-bmcgRFNQIGNvbmZpZw0KPiA+IHBhcmFtcywgd2hpY2ggd2lsbCBjYXVzZSBzcGVha2VyIHByb3Rl
-Y3Rpb24gd29yayBhYm5vcm1hbGx5LiBSZWxvYWQNCj4gPiBjYWxpYnJhdGVkIGRhdGEgYWZ0ZXIg
-bG9hZGluZyBEU1AgY29uZmlnIHBhcmFtcy4NCj4gDQo+IC4uLg0KPiANCj4gPiAtaW50IHRhc2Rl
-dmljZV9wcm1nX2NhbGliZGF0YV9sb2FkKHZvaWQgKmNvbnRleHQsIGludCBwcm1fbm8pDQo+IA0K
-PiA+IC1FWFBPUlRfU1lNQk9MX05TX0dQTCh0YXNkZXZpY2VfcHJtZ19jYWxpYmRhdGFfbG9hZCwN
-Cj4gPiAtCVNORF9TT0NfVEFTMjc4MV9GTVdMSUIpOw0KPiANCj4gQUZBSUNTIHRoZSBpMmMgZ2x1
-ZSBkcml2ZXIgc3RpbGwgdXNlcyB0aGlzLCBob3cgY2FuJ3QgdGhpcyBicmVhayB0aGUgYnVpbGQ/
-DQpbUEFUQ0ggdjUgMy8zXSBoYXMgcmVtb3ZlZCB0YXNkZXZpY2VfcHJtZ19jYWxpYmRhdGFfbG9h
-ZCwgYW5kIA0KdGFzZGV2aWNlX3BybWdfbG9hZCh0YXNfcHJpdiwgMCkgaGFzIGJlZW4gY2FsbGVk
-IGluc3RlYWQgb2YgDQp0YXNkZXZpY2VfcHJtZ19jYWxpYmRhdGFfbG9hZA0KPiANCj4gLS0NCj4g
-V2l0aCBCZXN0IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0KPiANCg0K
+Hi Linus,
+
+On Mon, May 13, 2024 at 10:51=E2=80=AFPM Linus Walleij <linus.walleij@linar=
+o.org> wrote:
+> On Mon, May 13, 2024 at 1:59=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp=
+com> wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Use scope based of_node_put() cleanup to simplify code.
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> >
+> > Thanks for your patch!
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> Does this go into the Renesas patch stack?
+>
+> I think the patch stands fine without the rest of the series.
+
+Sure, I can do that.
+From your positive response to v1, I thought that perhaps you just
+wanted to take the full series yourself?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
