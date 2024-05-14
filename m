@@ -1,102 +1,100 @@
-Return-Path: <linux-kernel+bounces-178478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8EED8C4E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:02:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E62A18C4E49
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:04:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948FE282996
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9161C20FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DAB72374E;
-	Tue, 14 May 2024 09:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0ikH23C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D261D23776;
+	Tue, 14 May 2024 09:04:25 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD593FC1F;
-	Tue, 14 May 2024 09:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF96FC1F;
+	Tue, 14 May 2024 09:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715677342; cv=none; b=ioo4vIvGTWhYDC/8C5qpeHyJVPnuTCcHkosxRenZCG2keEZjXtVRJOAQcjGLc8IlGOUKSSWv1bz67KdTnlbXe9ZjsABBjNCCkDSz3n3WKBc2QhEZDluweslCM96JUNtmkFainOkAgiOPbuaepr97q8x3F5NcO2D+L2sEZKGx8vk=
+	t=1715677465; cv=none; b=B42bCzeL4Cdb7YIHqPZCdSfvvyRFwTum1zRZH2K191nI6CqvwoY1FL18Ohu2HbpQkANjGcl798t73h+ZKFVrQU2/2ymmQPYhGTTWFWtvoOfzjDreb6FJM5IvbHI6sFFEOFOgyTtTxCG1Y2vTa1tMPUcTLiX0z+kQfMyQHjcA1x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715677342; c=relaxed/simple;
-	bh=dq+3dNl/Cgn0ftyFaKNE5FIf6AGfTJCK+jxS472G7zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZWYgfgzXb4Uj6u6EHWkHM9hteh+BYZPtuI6r2IHHjdFDEMD/rZ4vJLwEzzpjSkrU7efMTAy8eDp64gCh4ktXRa7tc38amccW3VW0TCj2NOnRLHZVWBvzv6k2izrlninlncP6F+240wrZlS4eqfIuJarVZwPAScfLSHB051ADaeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0ikH23C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 176ABC2BD10;
-	Tue, 14 May 2024 09:02:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715677341;
-	bh=dq+3dNl/Cgn0ftyFaKNE5FIf6AGfTJCK+jxS472G7zo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i0ikH23C4hVvHDm4IApvCPT61MxmuFXQs3Oqyo84bIJJ1gmUvIxkkLAcFX3azrT93
-	 9zyYF80ggjIEmbAaXSpKT1OHBd/Wb1dXkBna/yoUu64g8pOh9i4JqrGhPVpw9K/w6w
-	 sKwZI17ItYeFulmDnbfhZ8Glf/BtdV2fE8kTceUibep/K+NQC+ZN9mLRMm1ahTweHh
-	 0LxFeUy5HASnlxwaQOPvNlSKRaX78pi9N05DfIASHx20b+TGEWPQoZp1yK0GdX9uOv
-	 bSeOhzKACT6NruTmiL9xvOfYPSnRF7O3s0JzvKrATMq1niPdfBiYKVFh9sTpwZsoWw
-	 D/DvJrQJwEo7Q==
-Date: Tue, 14 May 2024 10:02:17 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	naresh.solanki@9elements.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
-Message-ID: <d4c03f3b-a8ce-44bd-8897-8a2f276dede6@sirena.org.uk>
-References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
- <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain>
- <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
- <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
- <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
- <CAHp75VfA8G6KyhD5_HDyKWp5AdpsnnQ27gzTDRRjDRCVXkT-ag@mail.gmail.com>
+	s=arc-20240116; t=1715677465; c=relaxed/simple;
+	bh=DN8MJhZE/6ABuaOgDNbrslUWBDHWkr4DQN1q02HGp+I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=byFJGfOmwmMNDGXg+VwQYQbQD3c6pOmaPR2mivs209D3dH26HlGfXH3BHOFjsavvJtYfgaZZAJ97x/41MHr7iCj5SZU/dxnPs2nY/NhQK7Ihcb5hoqG03jGUzlIgfxcKzEb9ouds0Bt7OG+BoDEjOGBTUJ9jYkQxpG4bCIinTio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E3F461A1D80;
+	Tue, 14 May 2024 11:04:19 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9CD211A1D42;
+	Tue, 14 May 2024 11:04:19 +0200 (CEST)
+Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BE3EE180222C;
+	Tue, 14 May 2024 17:04:17 +0800 (+08)
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	rohit.fule@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	ziniu.wang_1@nxp.com,
+	haibo.chen@nxp.com,
+	LnxRevLi@nxp.com
+Subject: [PATCH v2] Bluetooth: btnxpuart: Enable Power Save feature on startup
+Date: Tue, 14 May 2024 14:32:58 +0530
+Message-Id: <20240514090258.1507934-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4mXBKb/9fYpeNFKE"
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfA8G6KyhD5_HDyKWp5AdpsnnQ27gzTDRRjDRCVXkT-ag@mail.gmail.com>
-X-Cookie: In the war of wits, he's unarmed.
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
+This sets the default power save mode setting to enabled.
 
---4mXBKb/9fYpeNFKE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The power save feature is now stable and stress test issues, such as the
+TX timeout error, have been resolved.
+commit c7ee0bc8db32 ("Bluetooth: btnxpuart: Resolve TX timeout error in
+power save stress test")
 
-On Tue, May 14, 2024 at 11:55:06AM +0300, Andy Shevchenko wrote:
+With this setting, the driver will send the vendor command to FW at
+startup, to enable power save feature.
 
-> It's about introducing pages of virtual registers (from regmap p.o.v.)
-> to access the banks of selectable registers. The cache most likely
-> will be the same, i.e. MAPPLE_TREE.
+User can disable this feature using the following vendor command:
+hcitool cmd 3f 23 03 00 00 (HCI_NXP_AUTO_SLEEP_MODE)
 
-If there's paging of registers then regmap supports this with the ranges
-feature, you can tell regmap where the window is in the physical
-register map and which register to use to switch pages and have regmap
-export the underlying registers as a linear range of virtual registers.
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+---
+v2: Corrected subject line. Added commit reference. (Paul Menzel)
+ drivers/bluetooth/btnxpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---4mXBKb/9fYpeNFKE
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 7f88b6f52f26..42e929f0d141 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -281,7 +281,7 @@ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
+ /* Default configurations */
+ #define DEFAULT_H2C_WAKEUP_MODE	WAKEUP_METHOD_BREAK
+-#define DEFAULT_PS_MODE		PS_MODE_DISABLE
++#define DEFAULT_PS_MODE		PS_MODE_ENABLE
+ #define FW_INIT_BAUDRATE	HCI_NXP_PRI_BAUDRATE
+ 
+ static struct sk_buff *nxp_drv_send_cmd(struct hci_dev *hdev, u16 opcode,
+-- 
+2.34.1
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZDKJgACgkQJNaLcl1U
-h9D3Tgf/eawkpBC+TNPIWZ45IApZ6OiOvaArCouIcTfrOK/a0Dken4Ubf9OnSZAg
-ZoE+nJFnU8aS1uUSWUvU7/VxJLM6GU5DcLG8HJT302vOdDa5WZjlV07bIslTmIVn
-MS7QdSz9V07sryPC9Usipg/gUwxdPbL/umLCu+FcuwO8kI1tE6zAvxAlgSG6QqvF
-Gw8JS6TIWUpKIWbTi7LBHWHhw23uyoTBXJmSjImQ7D6ZvE2agv/BxjK8eQz31pO6
-fIsv0xjVXmdNgQKEBtRZxPByngdNPjp2rRbSvruyLoUO30e53hTYli9uDH2l2v+A
-afmq8bh0jr26UgOjMU+J6TmoS6QL/w==
-=IfmM
------END PGP SIGNATURE-----
-
---4mXBKb/9fYpeNFKE--
 
