@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-179033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84648C5AC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:01:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7191D8C5AC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E95231C21CE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C963B282909
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FD81802CA;
-	Tue, 14 May 2024 18:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC1A180A6A;
+	Tue, 14 May 2024 18:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxWmw0Ta"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVSAm+Q7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFDA1802BC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9982B9D7;
+	Tue, 14 May 2024 18:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715709651; cv=none; b=J6yNxnAouHbdyitdzU05929YCz1a3DjrtjGnSzJXb5PwIj3VKTr3EOX04ZXy0hlsD7A/tUsc+id7WHUVYOou+lHNEXVI6fvbllHaMjEknDbVoyDm9T9bnZ+egYSx7pA58aCIgzN33sE9OBqTiiGwUSo0upHGqOUrKeih/MupBMY=
+	t=1715709686; cv=none; b=qBxKBcd2VoF/yVYXM6M87YGQdMPvjbtcxYovWAfT96cunRY2m1q3irJECAaTjRZf1WNVtDo0Rr6QE5ABRoJlCuKgPvDw42ZB08w5RY4ey/TMTd//nWbWAMQ6UByOMxkLSzqgXfxH3VBYH2EywnDZP1K1fisIfxyelyLdGAIiy2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715709651; c=relaxed/simple;
-	bh=U1yWnXT2Sr4P5dC2uObQWu8ccCunhmR9/1rilnD2jBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aAVA+9y5rhrjUNtblc/S9PxwVnCOIRrqS3CGQOWhv5eUWlsTeUsVASWC7UJQxSyuvzC2JN4sUwq/kB2l9NQ3aV0lz9y/wZC5Lbd7mptnjbIy0CSGZerjyi9g3m+9ZsRJXKNTDDZ0gB9iAAfFiXPGsUUui2tRlToebRAJ6H5XirU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxWmw0Ta; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA626C2BD10;
-	Tue, 14 May 2024 18:00:50 +0000 (UTC)
+	s=arc-20240116; t=1715709686; c=relaxed/simple;
+	bh=Bc0wnqBHezPEtPKq9Cw+J6D4ZphM4Nqpns2kp7JEKHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kezz7jRLPBSRXTnVPnqxMzs/9ldmrCJAjL5p0PoZc3WvB0295Z8I93eSpLy1q/5RfYytFjBGI/JdDVIgBCkaKcmsJK0wbZzxG89FMaaJfSn+RgR9HH5LJC0xABlnO/AxnId40DlnAJ7yNIXlGbKh14uNLnp2g6lEwkXli02Q4dA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVSAm+Q7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8E1C2BD10;
+	Tue, 14 May 2024 18:01:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715709651;
-	bh=U1yWnXT2Sr4P5dC2uObQWu8ccCunhmR9/1rilnD2jBg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oxWmw0TaAaRNZ3X0MvdRTyFoL/SoNARC5pKMO+sapb0WN1m8CtTZxnq1t8OBxWuNh
-	 aUEKCpfw2w+yQMts+xQAmxavfC3+OcRPzkOHL0pY1sdzCTmPVLUxiNihOToWv1IDDU
-	 Pm0ML4l645Qy3DVfZ134gtWjn2d6BKJpqkrNf5T5gnGSOTw5JpLVP/k/xHsYFawCdI
-	 qk2+3iyQ3EUSeGUEGpXfaC5NiEICBqoiZ+iS0eptPMwav5ZuC4u0wC71893Pu3l38X
-	 El+1yh4PAmN2S6lxHRodlnMMk0O/TuQ7tperO9IZ2KIbEb3ywXEYN9hKxGxIRhKpXw
-	 Rv+RswwYubt3w==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Greg Thelen <gthelen@google.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Tuan Phan <tuanphan@os.amperecomputing.com>
-Subject: [PATCH] perf/arm-dmc620: Fix lockdep assert in ->event_init()
-Date: Tue, 14 May 2024 11:00:50 -0700
-Message-ID: <20240514180050.182454-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.45.0.rc1.225.g2a3ae87e7f-goog
+	s=k20201202; t=1715709686;
+	bh=Bc0wnqBHezPEtPKq9Cw+J6D4ZphM4Nqpns2kp7JEKHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CVSAm+Q7jYM0tMpv4biueBN83sAVh5OHFylqNh5+9zQ+7+cMZg8Ntwyu2jg8qlKMa
+	 Du8JgN5ms8MXa0m+vB1PuwbNbRR5EbOuiGlfNZwd3UDv/xNIonLJ1s3nKtk5+WuO1n
+	 Bwx8LvTuk7H3kZeYRYs6C65w5MeUUIIXjNXqLJKrRsU4xqdesxJ1VYMO0BodazZFJi
+	 wEU9DVG84W3FixjeJu5b2dxl/Zhf4gtkOGjQR0d8xM6Q3jknGFkJ7DLkd2rGVvaE0S
+	 /wJt+J/i0x1WzmAVhLrKC1icMGahXzTyKYLsx3sW+HF2YCoom7dZJbIH1Olx/HdENk
+	 P9xE7vvmXUZsA==
+Date: Tue, 14 May 2024 19:01:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alina Yu <alina_yu@richtek.com>, lgirdwood@gmail.com,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, johnny_lai@richtek.com,
+	cy_huang@richtek.com
+Subject: Re: [PATCH v3 6/6] regulator: dt-bindings: rtq2208: Add property to
+ get ldo of RTQ2208 is adjustable or not
+Message-ID: <20240514-plunging-chair-803d9e342e6f@spud>
+References: <cover.1715340537.git.alina_yu@richtek.com>
+ <6a3a90d9aa2022dfb92e124e417f3e72c2f28b0b.1715340537.git.alina_yu@richtek.com>
+ <20240513-tissue-repave-13d2e3bf88fd@spud>
+ <d97752ed-4032-4681-b28f-17f149fdc3d4@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="y6XnTRi+fElIVr2m"
+Content-Disposition: inline
+In-Reply-To: <d97752ed-4032-4681-b28f-17f149fdc3d4@sirena.org.uk>
 
-for_each_sibling_event() checks leader's ctx but it doesn't have the ctx
-yet if it's the leader.  Like in perf_event_validate_size(), we should
-skip checking siblings in that case.
 
-Fixes: f3c0eba287049 ("perf: Add a few assertions")
-Reported-by: Greg Thelen <gthelen@google.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Cc: Tuan Phan <tuanphan@os.amperecomputing.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- drivers/perf/arm_dmc620_pmu.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+--y6XnTRi+fElIVr2m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/perf/arm_dmc620_pmu.c b/drivers/perf/arm_dmc620_pmu.c
-index 8a81be2dd5ec..88c17c1d6d49 100644
---- a/drivers/perf/arm_dmc620_pmu.c
-+++ b/drivers/perf/arm_dmc620_pmu.c
-@@ -542,12 +542,16 @@ static int dmc620_pmu_event_init(struct perf_event *event)
- 	if (event->cpu < 0)
- 		return -EINVAL;
- 
-+	hwc->idx = -1;
-+
-+	if (event->group_leader == event)
-+		return 0;
-+
- 	/*
- 	 * We can't atomically disable all HW counters so only one event allowed,
- 	 * although software events are acceptable.
- 	 */
--	if (event->group_leader != event &&
--			!is_software_event(event->group_leader))
-+	if (!is_software_event(event->group_leader))
- 		return -EINVAL;
- 
- 	for_each_sibling_event(sibling, event->group_leader) {
-@@ -556,7 +560,6 @@ static int dmc620_pmu_event_init(struct perf_event *event)
- 			return -EINVAL;
- 	}
- 
--	hwc->idx = -1;
- 	return 0;
- }
- 
--- 
-2.45.0.rc1.225.g2a3ae87e7f-goog
+On Tue, May 14, 2024 at 11:34:29AM +0100, Mark Brown wrote:
+> On Mon, May 13, 2024 at 05:22:54PM +0100, Conor Dooley wrote:
+> > On Fri, May 10, 2024 at 08:06:25PM +0800, Alina Yu wrote:
+>=20
+> > > +            richtek,fixed-microvolt =3D <1200000>;
+> > >              regulator-min-microvolt =3D <1200000>;
+> > >              regulator-max-microvolt =3D <1200000>;
+>=20
+> > I'm dumb and this example seemed odd to me. Can you explain to me why
+> > it is not sufficient to set min-microvolt =3D=3D max-microvolt to achie=
+ve
+> > the same thing?
+>=20
+> This is for a special mode where the voltage being configured is out of
+> the range usually supported by the regulator, requiring a hardware
+> design change to achieve.  The separate property is because otherwise we
+> can't distinguish the case where the mode is in use from the case where
+> the constraints are nonsense, and we need to handle setting a fixed
+> voltage on a configurable regulator differently to there being a
+> hardware fixed voltage on a normally configurable regulator.
 
+Cool, I think an improved comment message and description would be
+helpful then to describe the desired behaviour that you mention here.
+The commit message in particular isn't great:
+| Since there is no way to check is ldo is adjustable or not.
+| As discussing in v2 series, 'richtek,fixed-microvolt' is added for that.
+| user is supposed to know whether vout of ldo is adjustable.
+
+It also doesn't seem like this sort of behaviour would be limited to
+Richtek either, should this actually be a common property in
+regulator.yaml w/o the vendor prefix?
+
+Cheers,
+Conor.
+
+--y6XnTRi+fElIVr2m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkOm8QAKCRB4tDGHoIJi
+0gEmAP4o7NTdR+NPyO2SBBx+xJS2PcXXapchLf9DJZ9ZomjMwwD5AX40LUjeIKEB
+aR0bZK9YX8u5pX0M5rhLdjRaYib3igU=
+=D1lw
+-----END PGP SIGNATURE-----
+
+--y6XnTRi+fElIVr2m--
 
