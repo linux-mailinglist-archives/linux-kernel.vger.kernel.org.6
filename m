@@ -1,744 +1,373 @@
-Return-Path: <linux-kernel+bounces-178204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1528C4A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:17:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4088C4A67
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 423FDB239F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:17:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615EE284E94
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 00:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5913C7F8;
-	Tue, 14 May 2024 00:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41CA7F8;
+	Tue, 14 May 2024 00:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="CmqE/mQE"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A/yof6dz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E3E191
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6555365
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715645869; cv=none; b=mRy1WiukNPJIZhFeIPjRJN7ovxSDcUSjwqrIQkqekge051oUNZ7cZ4WtSwylOpR8DhZiPkay/o8UDlcgtFrmNN/B36vaugYBcPD/ONNEhL6JJscGBgqScoYCJkDXUTDAlizMxZ25D+cenFtCRSUs87ng1eTQr2A4rghTFDElhd4=
+	t=1715646120; cv=none; b=SaGvBTMlfvmgfDgKSPzpXI7gb8LM/zk7f/Z1JnfE4uYuaAgRVlmin3lhppBQuPOQoFod+D5WHjErN9TxfTbtt4K2FxYeJwrvlhXVOrYtsdrN9Q/s1w+CKJ2zUPQ+tqaSqOziaCIkDunXlhDA7+Mt5b2O7AHzgUWxhyhz6zE/uOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715645869; c=relaxed/simple;
-	bh=QQycI1a7NLA6Ms3Nz4nOrZHxIFEg7ZldpgbSIMVs6Xw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nBKRk4jLVfoiEdGHmyTRVBrSLdY/UjjBWU3cSHAIAmohFBXGXgJEECxHOH5NWpf0wpC+NFZOHRV45DGfR7q3N56DEFYeoAiXmzcBwTGdwR8nrHRBCXan7KYxSMUd4BKCy7u5xHdwXVT4zbjZSmzWB4ZM/iN5TdryVgDzJRoqhvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmqE/mQE; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-43dfe020675so1061571cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 17:17:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715645866; x=1716250666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lMTBeUXGTgrJQmo/fvxLgp+AqPMx0tJvAn1frxYsEgw=;
-        b=CmqE/mQEt0gyU6mTPehRtTE6sK4waIWoI4CFRLvgJrF4bdF3dgm6mB7Cyv0Deei98o
-         VVm/aMZLRJxT8T78md19jF6DSL+G8fenbxmJcP8QM3xbjElSqJF8lV6sbf9/IMGVDJTI
-         aJhTqx1eN2fi+2zURGRp3P8T9NosyGN5jmywAPsqPYjRUq7uRNhavRfHaat6iGBu5PJl
-         tzdodzHviUabVlxEzjo+wYFnPI88qPUN8IDhujytCHdaeN9xntNWAIKp/x/qtVHgokpl
-         OQVV0OP5qFnuecRWVAV7qMS+bjioVi1VwO5l4Vx2+K71o1wi/LMF1hymqs5oVSive/an
-         Kk4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715645866; x=1716250666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lMTBeUXGTgrJQmo/fvxLgp+AqPMx0tJvAn1frxYsEgw=;
-        b=InLddfCU4IIqyYWt/72qssQ9gTSlLz/vFf1mn3tLZCpUrSqTKmAaqxNSFLqTwulixQ
-         oOwMqhOs+LPQQ6uXTkKRy0VfrDtoVw6krBm3KY2wogerwNkQUfquIQ9DnqO94yRdM/fo
-         iIRzBfsEY1FH/FWKI3CaOhb1CE+fePa1lZrFvjycbD1C+7tywpgjEfCiSASpbD7uCtj5
-         LwGgBB0axiVUzz0aH83qc9xTqT6RgzA0ZuY6ldE8WGjVfHysDKxUmkz9SchZGzgYFLhw
-         a0naUBR4QqYJNS06f+GR/yWqrtQK09V59LW9a+u8uy1Lw6UOqJsgaV6cFnYIY7Ljo4Hr
-         PIpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrf2RQGOw9+jVhXFevfN07ARe6RP4pvbuW/mCY7XNDf5qWFb5t+/DnCjv5SBRLVfzuknYNayUL5A8AdLtySHRphJuPO/G0BbFlf2ff
-X-Gm-Message-State: AOJu0Yw5pEXWzta4pA4+W5A6m1htVHT+rDhMaxWZo30tiIdlkAt/kkxX
-	w64SOG0fhzNzca3KK6inkc6Sx2CJX20SGgEOHc488Xeetaq/tue/Z/nC1mOQwZdyAbUOmPYYcY5
-	F3UYsUx2+9IFySl/g9cZFJE7z/cpyePehrRw5
-X-Google-Smtp-Source: AGHT+IHtxUS9h95rKgD+PHiXnQ5DDprKLUFUdmebhC5QpULfOTK//AVr05QpHDXXKSPPV6X6ZePT3eNchamWxHj0Nc8=
-X-Received: by 2002:a05:622a:4818:b0:43d:9a81:ffac with SMTP id
- d75a77b69052e-43e094d0413mr7789021cf.2.1715645866259; Mon, 13 May 2024
- 17:17:46 -0700 (PDT)
+	s=arc-20240116; t=1715646120; c=relaxed/simple;
+	bh=yiGka99JENwMGosH6D29+zkU5TKHKPRm5DDQgv+RtDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZfWLkHlL+tEQzQzZnS28YDY9iwuLbmUu2l9jGFRMznhFTsKf07ESmHO+/+Vri1PpnnxmtiH3VgWw1olA/zc15Y+fLlWcSHrVcH9kClnC1mo5lvy8dh9Hv4c9uIKnW8zc4BuSd/EOf9Vm8UmUD4dF4TAbhkM8Fn5TsUprDCyglw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A/yof6dz; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715646119; x=1747182119;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yiGka99JENwMGosH6D29+zkU5TKHKPRm5DDQgv+RtDQ=;
+  b=A/yof6dzonGiN4ZB6nvN5lbFwmAFIV5xMNoG8qJe8wQVRpIUcxhCKBqA
+   yZhb+C/FeKRq4Y04Wy7n+jUe5EWKSNYq2Z3mN6GX/swbHTG7A4ll5ixaW
+   kTefezCEkahR+l0shkMi/8e5w1TyOxoVeYnAYGSfAOp0Jlv1cCDVIhUFY
+   Z0gF9d9uKgnXl7/gsVy89kIXHCK7da6PmsTfEz0afV4HYUb9DaYSSIyO1
+   z99VDa7ANshUhl5K6u1/45RvUdlmNiP9pFVDKbCxhNPQhVPBRk0JIsmhF
+   SUj3EVJc5Te42XPvWXfdiJwfvE58cUewDpyKv7w9L3UFKjLFBMONXCFx2
+   g==;
+X-CSE-ConnectionGUID: dTMpSWRXTneyl/w3SfZDqA==
+X-CSE-MsgGUID: /cQtz+CmReuygaj9RER1mA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="15442013"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="15442013"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 17:21:58 -0700
+X-CSE-ConnectionGUID: AW56gmIWQDeagz2mqLH1XA==
+X-CSE-MsgGUID: 29wYm/ZEQyyHajPaoWFNMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30536834"
+Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.105])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 17:21:58 -0700
+Date: Mon, 13 May 2024 17:21:56 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>,
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
+	Drew Fustini <dfustini@baylibre.com>,
+	Dave Martin <Dave.Martin@arm.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH v17 7/9] x86/resctrl: Add new monitor files for Sub-NUMA
+ cluster (SNC) monitoring
+Message-ID: <ZkKupOKRu5S7Rkgx@agluck-desk3>
+References: <20240503203325.21512-1-tony.luck@intel.com>
+ <20240503203325.21512-8-tony.luck@intel.com>
+ <0178e84e-d55f-47bf-b8b0-58e05fcaa108@intel.com>
+ <ZkJIZdU2knEUJN7Q@agluck-desk3>
+ <f49931b0-d9bf-45f0-ab35-93b1a78f6b97@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509090546.944808-1-ivan.orlov0322@gmail.com>
-In-Reply-To: <20240509090546.944808-1-ivan.orlov0322@gmail.com>
-From: Rae Moar <rmoar@google.com>
-Date: Mon, 13 May 2024 20:17:33 -0400
-Message-ID: <CA+GJov6hq0WsjqX1LrC2m7YS1nD37+zGmO+i1R1OajwYQZXY8w@mail.gmail.com>
-Subject: Re: [PATCH v3] kunit: Cover 'assert.c' with tests
-To: Ivan Orlov <ivan.orlov0322@gmail.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kunit-dev@googlegroups.com, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f49931b0-d9bf-45f0-ab35-93b1a78f6b97@intel.com>
 
-On Thu, May 9, 2024 at 5:05=E2=80=AFAM Ivan Orlov <ivan.orlov0322@gmail.com=
-> wrote:
->
-> There are multiple assertion formatting functions in the `assert.c`
-> file, which are not covered with tests yet. Implement the KUnit test
-> for these functions.
->
-> The test consists of 11 test cases for the following functions:
->
-> 1) 'is_literal'
-> 2) 'is_str_literal'
-> 3) 'kunit_assert_prologue', test case for multiple assert types
-> 4) 'kunit_assert_print_msg'
-> 5) 'kunit_unary_assert_format'
-> 6) 'kunit_ptr_not_err_assert_format'
-> 7) 'kunit_binary_assert_format'
-> 8) 'kunit_binary_ptr_assert_format'
-> 9) 'kunit_binary_str_assert_format'
-> 10) 'kunit_assert_hexdump'
-> 11) 'kunit_mem_assert_format'
->
-> The test aims at maximizing the branch coverage for the assertion
-> formatting functions.
->
-> As you can see, it covers some of the static helper functions as
-> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
-> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
-> corresponding definitions to `assert.h`.
->
-> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
-> how it is done for the string stream test.
+On Mon, May 13, 2024 at 11:53:17AM -0700, Reinette Chatre wrote:
+> Hi Tony,
+> 
+> On 5/13/2024 10:05 AM, Tony Luck wrote:
+> > On Fri, May 10, 2024 at 02:24:13PM -0700, Reinette Chatre wrote:
+> >> Hi Tony,
+> > 
+> > Hi Reinette,
+> > 
+> > Thanks for the review. Detailed comments below. But overall I'm
+> > going to split patch 7 into a bunch of smaller changes, each with
+> > a better commit message.
+> > 
+> >> On 5/3/2024 1:33 PM, Tony Luck wrote:
+> >>
+> >> (Could you please start the changelog with some context?)
+> >>
+> >>> Add a field to the rdt_resource structure to track whether monitoring
+> >>> resources are tracked by hardware at a different scope (NODE) from
+> >>> the legacy L3 scope.
+> >>
+> >> This seems to describe @mon_scope that was introduced in patch #3?
+> > 
+> > Not really. Patch #3 made the change so that control an monitor
+> > functions can have different scope. That's still needed as with SNC
+> > enabled the underlying data collection is at the node level for
+> > monitoring, while control stays at the L3 cache scope.
+> > 
+> > This new field describes the legacy scope of monitoring, so that
+> > resctrl can provide correctly scoped monitor files for legacy
+> > applications that aren't aware of SNC. So I'm using this both
+> > to indicate when SNC is enabled (with mon_scope != mon_display_scope)
+> > or disabled (when they are the same).
+> 
+> This seems to enforce the idea that these new additions aim to be
+> generic on the surface but the only goal is to support SNC.
 
-Hello!
+If you have some more ideas on how to make this more generic and
+less SNC specific I'm all ears.
 
-This looks great to me! Thanks for all your work on this! There is
-just one comment I have below. Once that is fixed up, I am happy to
-add a reviewed-by.
+> > 
+> >>>
+> >>> Add a field to the rdt_mon_domain structure to track the L3 cache id
+> >>> which can be used to find all the domains that need resource counts
+> >>> summed to provide accurate values in the legacy monitoring files.
+> >>
+> >> Why is this field necessary? Can this not be obtained dynamically?
+> > 
+> > I could compute it each time I need it (when making/removing
+> > directories, or finding which SNC domains share an L3 domain).
+> > 
+> > 	id = get_domain_id_from_scope(cpumask_any(&d->cpu_mask), r->mon_display_scope);
+> > 	if (id < 0)
+> > 		// error path
+> > 
+> > But it seemed better to just discover this once at domain creation time.
+> 
+> This may be more clear in the next version?
 
-Thanks!
--Rae
+My goal is to be more clear next version.
 
->
-> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
-> ---
-> V1 -> V2:
-> - Check the output from the string stream for containing the key parts
-> instead of comparing the results with expected strings char by char, as
-> it was suggested by Rae Moar <rmoar@google.com>. Define two macros to
-> make it possible (ASSERT_TEST_EXPECT_CONTAIN and
-> ASSERT_TEST_EXPECT_NCONTAIN).
-> - Mark the static functions in `assert.c` as VISIBLE_IF_KUNIT and export
-> them conditionally if kunit is enabled instead of including the
-> `assert_test.c` file in the end of `assert.c`. This way we will decouple
-> the test from the implementation (SUT).
-> - Update the kunit_assert_hexdump test: now it checks for presense of
-> the brackets '<>' around the non-matching bytes, instead of comparing
-> the kunit_assert_hexdump output char by char.
-> V2 -> V3:
-> - Make test case array and test suite definitions static
-> - Change the condition in `assert.h`: we should declare VISIBLE_IF_KUNIT
-> functions in the header file when CONFIG_KUNIT is enabled, not
-> CONFIG_KUNIT_TEST. Otherwise, if CONFIG_KUNIT_TEST is disabled,
-> VISIBLE_IF_KUNIT functions in the `assert.c` are not static, and
-> prototypes for them can't be found.
-> - Add MODULE_LICENSE and MODULE_DESCRIPTION macros
->
->  include/kunit/assert.h  |  11 ++
->  lib/kunit/Makefile      |   1 +
->  lib/kunit/assert.c      |  24 ++-
->  lib/kunit/assert_test.c | 391 ++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 419 insertions(+), 8 deletions(-)
->  create mode 100644 lib/kunit/assert_test.c
->
-> diff --git a/include/kunit/assert.h b/include/kunit/assert.h
-> index 24c2b9fa61e8..7e7490a74b13 100644
-> --- a/include/kunit/assert.h
-> +++ b/include/kunit/assert.h
-> @@ -218,4 +218,15 @@ void kunit_mem_assert_format(const struct kunit_asse=
-rt *assert,
->                              const struct va_format *message,
->                              struct string_stream *stream);
->
-> +#if IS_ENABLED(CONFIG_KUNIT)
-> +void kunit_assert_print_msg(const struct va_format *message,
-> +                           struct string_stream *stream);
-> +bool is_literal(const char *text, long long value);
-> +bool is_str_literal(const char *text, const char *value);
-> +void kunit_assert_hexdump(struct string_stream *stream,
-> +                         const void *buf,
-> +                         const void *compared_buf,
-> +                         const size_t len);
-> +#endif
-> +
->  #endif /*  _KUNIT_ASSERT_H */
-> diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
-> index 309659a32a78..be7c9903936f 100644
-> --- a/lib/kunit/Makefile
-> +++ b/lib/kunit/Makefile
-> @@ -18,6 +18,7 @@ endif
->  obj-y +=3D                               hooks.o
->
->  obj-$(CONFIG_KUNIT_TEST) +=3D            kunit-test.o
-> +obj-$(CONFIG_KUNIT_TEST) +=3D            assert_test.o
->
->  # string-stream-test compiles built-in only.
->  ifeq ($(CONFIG_KUNIT_TEST),y)
-> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
-> index dd1d633d0fe2..382eb409d34b 100644
-> --- a/lib/kunit/assert.c
-> +++ b/lib/kunit/assert.c
-> @@ -7,6 +7,7 @@
->   */
->  #include <kunit/assert.h>
->  #include <kunit/test.h>
-> +#include <kunit/visibility.h>
->
->  #include "string-stream.h"
->
-> @@ -30,12 +31,14 @@ void kunit_assert_prologue(const struct kunit_loc *lo=
-c,
->  }
->  EXPORT_SYMBOL_GPL(kunit_assert_prologue);
->
-> -static void kunit_assert_print_msg(const struct va_format *message,
-> -                                  struct string_stream *stream)
-> +VISIBLE_IF_KUNIT
-> +void kunit_assert_print_msg(const struct va_format *message,
-> +                           struct string_stream *stream)
->  {
->         if (message->fmt)
->                 string_stream_add(stream, "\n%pV", message);
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
->
->  void kunit_fail_assert_format(const struct kunit_assert *assert,
->                               const struct va_format *message,
-> @@ -89,7 +92,7 @@ void kunit_ptr_not_err_assert_format(const struct kunit=
-_assert *assert,
->  EXPORT_SYMBOL_GPL(kunit_ptr_not_err_assert_format);
->
->  /* Checks if `text` is a literal representing `value`, e.g. "5" and 5 */
-> -static bool is_literal(const char *text, long long value)
-> +VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
->  {
->         char *buffer;
->         int len;
-> @@ -110,6 +113,7 @@ static bool is_literal(const char *text, long long va=
-lue)
->
->         return ret;
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(is_literal);
->
->  void kunit_binary_assert_format(const struct kunit_assert *assert,
->                                 const struct va_format *message,
-> @@ -166,7 +170,7 @@ EXPORT_SYMBOL_GPL(kunit_binary_ptr_assert_format);
->  /* Checks if KUNIT_EXPECT_STREQ() args were string literals.
->   * Note: `text` will have ""s where as `value` will not.
->   */
-> -static bool is_str_literal(const char *text, const char *value)
-> +VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value=
-)
->  {
->         int len;
->
-> @@ -178,6 +182,7 @@ static bool is_str_literal(const char *text, const ch=
-ar *value)
->
->         return strncmp(text + 1, value, len - 2) =3D=3D 0;
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
->
->  void kunit_binary_str_assert_format(const struct kunit_assert *assert,
->                                     const struct va_format *message,
-> @@ -208,10 +213,11 @@ EXPORT_SYMBOL_GPL(kunit_binary_str_assert_format);
->  /* Adds a hexdump of a buffer to a string_stream comparing it with
->   * a second buffer. The different bytes are marked with <>.
->   */
-> -static void kunit_assert_hexdump(struct string_stream *stream,
-> -                                const void *buf,
-> -                                const void *compared_buf,
-> -                                const size_t len)
-> +VISIBLE_IF_KUNIT
-> +void kunit_assert_hexdump(struct string_stream *stream,
-> +                         const void *buf,
-> +                         const void *compared_buf,
-> +                         const size_t len)
->  {
->         size_t i;
->         const u8 *buf1 =3D buf;
-> @@ -229,6 +235,7 @@ static void kunit_assert_hexdump(struct string_stream=
- *stream,
->                         string_stream_add(stream, " %02x ", buf1[i]);
->         }
->  }
-> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
->
->  void kunit_mem_assert_format(const struct kunit_assert *assert,
->                              const struct va_format *message,
-> @@ -269,4 +276,5 @@ void kunit_mem_assert_format(const struct kunit_asser=
-t *assert,
->                 kunit_assert_print_msg(message, stream);
->         }
->  }
-> +
->  EXPORT_SYMBOL_GPL(kunit_mem_assert_format);
-> diff --git a/lib/kunit/assert_test.c b/lib/kunit/assert_test.c
-> new file mode 100644
-> index 000000000000..1347a964204b
-> --- /dev/null
-> +++ b/lib/kunit/assert_test.c
-> @@ -0,0 +1,391 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * KUnit test for the assertion formatting functions.
-> + * Author: Ivan Orlov <ivan.orlov0322@gmail.com>
-> + */
-> +#include <kunit/test.h>
-> +#include "string-stream.h"
-> +
-> +#define TEST_PTR_EXPECTED_BUF_SIZE 32
-> +#define HEXDUMP_TEST_BUF_LEN 5
-> +#define ASSERT_TEST_EXPECT_CONTAIN(test, str, substr) KUNIT_EXPECT_TRUE(=
-test, strstr(str, substr))
-> +#define ASSERT_TEST_EXPECT_NCONTAIN(test, str, substr) KUNIT_EXPECT_FALS=
-E(test, strstr(str, substr))
-> +
-> +static void kunit_test_is_literal(struct kunit *test)
-> +{
-> +       KUNIT_EXPECT_TRUE(test, is_literal("5", 5));
-> +       KUNIT_EXPECT_TRUE(test, is_literal("0", 0));
-> +       KUNIT_EXPECT_TRUE(test, is_literal("1234567890", 1234567890));
-> +       KUNIT_EXPECT_TRUE(test, is_literal("-1234567890", -1234567890));
-> +       KUNIT_EXPECT_FALSE(test, is_literal("05", 5));
-> +       KUNIT_EXPECT_FALSE(test, is_literal("", 0));
-> +       KUNIT_EXPECT_FALSE(test, is_literal("-0", 0));
-> +       KUNIT_EXPECT_FALSE(test, is_literal("12#45", 1245));
-> +}
-> +
-> +static void kunit_test_is_str_literal(struct kunit *test)
-> +{
-> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"Hello, World!\"", "Hell=
-o, World!"));
-> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"", ""));
-> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"\"", "\""));
-> +       KUNIT_EXPECT_FALSE(test, is_str_literal("", ""));
-> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"", "\""));
-> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba", "Abacaba"));
-> +       KUNIT_EXPECT_FALSE(test, is_str_literal("Abacaba\"", "Abacaba"));
-> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba\"", "\"Abacaba=
-\""));
-> +}
-> +
-> +KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
-> +
-> +/* this function is used to get a "char *" string from the string stream=
- and defer its cleanup  */
-> +static char *get_str_from_stream(struct kunit *test, struct string_strea=
-m *stream)
-> +{
-> +       char *str =3D string_stream_get_string(stream);
-> +
+> ...
+> 
+> >>>  	/*
+> >>>  	 * As per the SDM, when IA32_QM_EVTSEL.EvtID (bits 7:0) is configured
+> >>>  	 * with a valid event code for supported resource type and the bits
+> >>> @@ -207,7 +198,7 @@ static int __rmid_read(u32 rmid, enum resctrl_event_id eventid, u64 *val)
+> >>>  	 * IA32_QM_CTR.Error (bit 63) and IA32_QM_CTR.Unavailable (bit 62)
+> >>>  	 * are error bits.
+> >>>  	 */
+> >>> -	wrmsr(MSR_IA32_QM_EVTSEL, eventid, rmid + rmid_offset);
+> >>> +	wrmsr(MSR_IA32_QM_EVTSEL, eventid, rmid);
+> >>>  	rdmsrl(MSR_IA32_QM_CTR, msr_val);
+> >>>  
+> >>>  	if (msr_val & RMID_VAL_ERROR)
+> >>> @@ -291,7 +282,7 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+> >>>  
+> >>>  	resctrl_arch_rmid_read_context_check();
+> >>>  
+> >>> -	if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
+> >>> +	if (d->display_id != get_cpu_cacheinfo_id(smp_processor_id(), r->mon_display_scope))
+> >>>  		return -EINVAL;
+> >>
+> >> Does this mean that when SNC is enabled then reading data for an event within a particular
+> >> monitor domain ("node scope") can read its data from any CPU within the L3 domain
+> >> ("mon_display_scope") even if that CPU is not associated with the node for which it
+> >> is reading the data?
+> > 
+> > Yes.
+> > 
+> >> If so this really turns many resctrl assumptions and architecture on its head since the
+> >> resctrl expectation is that only CPUs within a domain's cpumask can be used to interact
+> >> with the domain. This in turn makes this seemingly general feature actually SNC specific.
+> > 
+> > This is only an expectation for x86 features using IA32_QM_EVTSEL/IA32_QM_CTR
+> > MSR method to read counters. ARM doesn't have the "CPU must be in
+> > domain" restriction (as far as I can tell). Nor does the Intel IO RDT
+> > (which uses MMIO space for control registers, these can be read/written
+> > from any CPU).
+> > 
+> > We do know that those two MSRs can be read from any CPU that shares an
+> > L3 cache. It would seem to be pointless overhead to force a cross
+> > processor interrupt to read them from a different CPU just to satisfy
+> > a "must be in same domain" non-requirement. I'l split this into its
+> > own patch with suitable description.
+> 
+> I did not suggest that this should be done with multiple IPIs. My comment
+> was related to this addition that claims to be generic but really just focuses
+> on support for SNC. Any  future addition that may want to build on this would
+> need to be aware of these expectations, which are not obvious at this time.
 
-When trying to make the kernel with this test loaded in, I am getting
-an error that string_stream_get_string, string_stream_clear, and
-kunit_alloc_string_stream are undefined.
+I can add some more comments to make this more obvious.
 
-So either these three methods will have to be exported using
-EXPORT_SYMBOL_KUNIT or this test cannot be loaded and run as a module.
+> ...
+> 
+>  
+> >>>  	return 0;
+> >>>  }
+> >>>  
+> >>> +static u32 get_node_rmid(struct rdt_resource *r, struct rdt_mon_domain *d, u32 rmid)
+> >>> +{
+> >>> +	int cpu = cpumask_any(&d->hdr.cpu_mask);
+> >>> +
+> >>> +	return rmid + (cpu_to_node(cpu) % snc_nodes_per_l3_cache) * r->num_rmid;
+> >>> +}
+> >>> +
+> >>> +static int __mon_event_count(u32 closid, u32 rmid, struct rmid_read *rr)
+> >>> +{
+> >>> +	struct rdt_mon_domain *d;
+> >>> +	struct rmid_read tmp;
+> >>> +	u32 node_rmid;
+> >>> +	int ret = 0;
+> >>> +
+> >>> +	if (!rr->sumdomains) {
+> >>> +		node_rmid = get_node_rmid(rr->r, rr->d, rmid);
+> >>> +		return ___mon_event_count(closid, node_rmid, rr, &rr->val);
+> >>> +	}
+> >>> +
+> >>> +	tmp = *rr;
+> >>> +	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
+> >>> +		if (d->display_id == rr->d->display_id) {
+> >>> +			tmp.d = d;
+> >>> +			node_rmid = get_node_rmid(rr->r, d, rmid);
+> >>> +			ret = ___mon_event_count(closid, node_rmid, &tmp, &rr->val);
+> >>
+> >> If I understand correctly this function is run per IPI on a CPU associated
+> >> with one of the monitor domains (depends on which one came online first),
+> >> and then it will read the monitor data of the other domains from the same
+> >> CPU? This is unexpected since the expectation is that monitor data
+> >> needs to be read from a CPU associated with the domain it is
+> >> reading data for.
+> > 
+> > See earlier note. The counter can be read from any CPU sharing the same
+> > L3. Adding unnecessary IPI is pointless overhead. But I will add
+> > comments.
+> 
+> I did not suggest to add extra IPIs, my comment was related to how this
+> feature wedges itself into resctrl.
 
-But once this is fixed up this should be good to go.
+Sorry for my misunderstanding.
 
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, str);
-> +       kunit_add_action(test, kfree_wrapper, (void *)str);
-> +
-> +       return str;
-> +}
-> +
-> +static void kunit_test_assert_prologue(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       char *str;
-> +       const struct kunit_loc location =3D {
-> +               .file =3D "testfile.c",
-> +               .line =3D 1337,
-> +       };
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       /* Test an expectation fail prologue */
-> +       kunit_assert_prologue(&location, KUNIT_EXPECTATION, stream);
-> +       str =3D get_str_from_stream(test, stream);
-> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "EXPECTATION");
-> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
-> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
-> +
-> +       /* Test an assertion fail prologue */
-> +       string_stream_clear(stream);
-> +       kunit_assert_prologue(&location, KUNIT_ASSERTION, stream);
-> +       str =3D get_str_from_stream(test, stream);
-> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "ASSERTION");
-> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "testfile.c");
-> +       ASSERT_TEST_EXPECT_CONTAIN(test, str, "1337");
-> +}
-> +
-> +/*
-> + * This function accepts an arbitrary count of parameters and generates =
-a va_format struct,
-> + * which can be used to validate kunit_assert_print_msg function
-> + */
-> +static void verify_assert_print_msg(struct kunit *test,
-> +                                   struct string_stream *stream,
-> +                                   char *expected, const char *format, .=
-.)
-> +{
-> +       va_list list;
-> +       const struct va_format vformat =3D {
-> +               .fmt =3D format,
-> +               .va =3D &list,
-> +       };
-> +
-> +       va_start(list, format);
-> +       string_stream_clear(stream);
-> +       kunit_assert_print_msg(&vformat, stream);
-> +       KUNIT_EXPECT_STREQ(test, get_str_from_stream(test, stream), expec=
-ted);
-> +}
-> +
-> +static void kunit_test_assert_print_msg(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       verify_assert_print_msg(test, stream, "\nTest", "Test");
-> +       verify_assert_print_msg(test, stream, "\nAbacaba -123 234", "%s %=
-d %u",
-> +                               "Abacaba", -123, 234U);
-> +       verify_assert_print_msg(test, stream, "", NULL);
-> +}
-> +
-> +/*
-> + * Further code contains the tests for different assert format functions=
-.
-> + * This helper function accepts the assert format function, executes it =
-and
-> + * validates the result string from the stream by checking that all of t=
-he
-> + * substrings exist in the output.
-> + */
-> +static void validate_assert(assert_format_t format_func, struct kunit *t=
-est,
-> +                           const struct kunit_assert *assert,
-> +                           struct string_stream *stream, int num_checks,=
- ...)
-> +{
-> +       size_t i;
-> +       va_list checks;
-> +       char *cur_substr_exp;
-> +       struct va_format message =3D { NULL, NULL };
-> +
-> +       va_start(checks, num_checks);
-> +       string_stream_clear(stream);
-> +       format_func(assert, &message, stream);
-> +
-> +       for (i =3D 0; i < num_checks; i++) {
-> +               cur_substr_exp =3D va_arg(checks, char *);
-> +               ASSERT_TEST_EXPECT_CONTAIN(test, get_str_from_stream(test=
-, stream), cur_substr_exp);
-> +       }
-> +}
-> +
-> +static void kunit_test_unary_assert_format(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       struct kunit_assert assert =3D {};
-> +       struct kunit_unary_assert un_assert =3D {
-> +               .assert =3D assert,
-> +               .condition =3D "expr",
-> +               .expected_true =3D true,
-> +       };
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       validate_assert(kunit_unary_assert_format, test, &un_assert.asser=
-t,
-> +                       stream, 2, "true", "is false");
-> +
-> +       un_assert.expected_true =3D false;
-> +       validate_assert(kunit_unary_assert_format, test, &un_assert.asser=
-t,
-> +                       stream, 2, "false", "is true");
-> +}
-> +
-> +static void kunit_test_ptr_not_err_assert_format(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       struct kunit_assert assert =3D {};
-> +       struct kunit_ptr_not_err_assert not_err_assert =3D {
-> +               .assert =3D assert,
-> +               .text =3D "expr",
-> +               .value =3D NULL,
-> +       };
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       /* Value is NULL. The corresponding message should be printed out=
- */
-> +       validate_assert(kunit_ptr_not_err_assert_format, test,
-> +                       &not_err_assert.assert,
-> +                       stream, 1, "null");
-> +
-> +       /* Value is not NULL, but looks like an error pointer. Error shou=
-ld be printed out */
-> +       not_err_assert.value =3D (void *)-12;
-> +       validate_assert(kunit_ptr_not_err_assert_format, test,
-> +                       &not_err_assert.assert, stream, 2,
-> +                       "error", "-12");
-> +}
-> +
-> +static void kunit_test_binary_assert_format(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       struct kunit_assert assert =3D {};
-> +       struct kunit_binary_assert_text text =3D {
-> +               .left_text =3D "1 + 2",
-> +               .operation =3D "=3D=3D",
-> +               .right_text =3D "2",
-> +       };
-> +       const struct kunit_binary_assert binary_assert =3D {
-> +               .assert =3D assert,
-> +               .text =3D &text,
-> +               .left_value =3D 3,
-> +               .right_value =3D 2,
-> +       };
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       /*
-> +        * Printed values should depend on the input we provide: the left=
- text, right text, left
-> +        * value and the right value.
-> +        */
-> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
-assert,
-> +                       stream, 4, "1 + 2", "2", "3", "=3D=3D");
-> +
-> +       text.right_text =3D "4 - 2";
-> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
-assert,
-> +                       stream, 3, "=3D=3D", "1 + 2", "4 - 2");
-> +
-> +       text.left_text =3D "3";
-> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
-assert,
-> +                       stream, 4, "3", "4 - 2", "2", "=3D=3D");
-> +
-> +       text.right_text =3D "2";
-> +       validate_assert(kunit_binary_assert_format, test, &binary_assert.=
-assert,
-> +                       stream, 3, "3", "2", "=3D=3D");
-> +}
-> +
-> +static void kunit_test_binary_ptr_assert_format(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       struct kunit_assert assert =3D {};
-> +       char *addr_var_a, *addr_var_b;
-> +       static const void *var_a =3D (void *)0xDEADBEEF;
-> +       static const void *var_b =3D (void *)0xBADDCAFE;
-> +       struct kunit_binary_assert_text text =3D {
-> +               .left_text =3D "var_a",
-> +               .operation =3D "=3D=3D",
-> +               .right_text =3D "var_b",
-> +       };
-> +       struct kunit_binary_ptr_assert binary_ptr_assert =3D {
-> +               .assert =3D assert,
-> +               .text =3D &text,
-> +               .left_value =3D var_a,
-> +               .right_value =3D var_b,
-> +       };
-> +
-> +       addr_var_a =3D kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GF=
-P_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_a);
-> +       addr_var_b =3D kunit_kzalloc(test, TEST_PTR_EXPECTED_BUF_SIZE, GF=
-P_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, addr_var_b);
-> +       /*
-> +        * Print the addresses to the buffers first.
-> +        * This is necessary as we may have different count of leading ze=
-ros in the pointer
-> +        * on different architectures.
-> +        */
-> +       snprintf(addr_var_a, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_a);
-> +       snprintf(addr_var_b, TEST_PTR_EXPECTED_BUF_SIZE, "%px", var_b);
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +       validate_assert(kunit_binary_ptr_assert_format, test, &binary_ptr=
-_assert.assert,
-> +                       stream, 3, addr_var_a, addr_var_b, "=3D=3D");
-> +}
-> +
-> +static void kunit_test_binary_str_assert_format(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       struct kunit_assert assert =3D {};
-> +       static const char *var_a =3D "abacaba";
-> +       static const char *var_b =3D "kernel";
-> +       struct kunit_binary_assert_text text =3D {
-> +               .left_text =3D "var_a",
-> +               .operation =3D "=3D=3D",
-> +               .right_text =3D "var_b",
-> +       };
-> +       struct kunit_binary_str_assert binary_str_assert =3D {
-> +               .assert =3D assert,
-> +               .text =3D &text,
-> +               .left_value =3D var_a,
-> +               .right_value =3D var_b,
-> +       };
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       validate_assert(kunit_binary_str_assert_format, test,
-> +                       &binary_str_assert.assert,
-> +                       stream, 5, "var_a", "var_b", "\"abacaba\"",
-> +                       "\"kernel\"", "=3D=3D");
-> +
-> +       text.left_text =3D "\"abacaba\"";
-> +       validate_assert(kunit_binary_str_assert_format, test, &binary_str=
-_assert.assert,
-> +                       stream, 4, "\"abacaba\"", "var_b", "\"kernel\"", =
-"=3D=3D");
-> +
-> +       text.right_text =3D "\"kernel\"";
-> +       validate_assert(kunit_binary_str_assert_format, test, &binary_str=
-_assert.assert,
-> +                       stream, 3, "\"abacaba\"", "\"kernel\"", "=3D=3D")=
-;
-> +}
-> +
-> +static const u8 hex_testbuf1[] =3D { 0x26, 0x74, 0x6b, 0x9c, 0x55,
-> +                                  0x45, 0x9d, 0x47, 0xd6, 0x47,
-> +                                  0x2,  0x89, 0x8c, 0x81, 0x94,
-> +                                  0x12, 0xfe, 0x01 };
-> +static const u8 hex_testbuf2[] =3D { 0x26, 0x74, 0x6b, 0x9c, 0x55,
-> +                                  0x45, 0x9d, 0x47, 0x21, 0x47,
-> +                                  0xcd, 0x89, 0x24, 0x50, 0x94,
-> +                                  0x12, 0xba, 0x01 };
-> +static void kunit_test_assert_hexdump(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       char *str;
-> +       size_t i;
-> +       char buf[HEXDUMP_TEST_BUF_LEN];
-> +
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +       /* Check that we are getting output like <xx> for non-matching nu=
-mbers. */
-> +       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf2, sizeof(h=
-ex_testbuf1));
-> +       str =3D get_str_from_stream(test, stream);
-> +       for (i =3D 0; i < sizeof(hex_testbuf1); i++) {
-> +               snprintf(buf, HEXDUMP_TEST_BUF_LEN, "<%02x>", hex_testbuf=
-1[i]);
-> +               if (hex_testbuf1[i] !=3D hex_testbuf2[i])
-> +                       ASSERT_TEST_EXPECT_CONTAIN(test, str, buf);
-> +       }
-> +       /* We shouldn't get any <xx> numbers when comparing the buffer wi=
-th itself. */
-> +       string_stream_clear(stream);
-> +       kunit_assert_hexdump(stream, hex_testbuf1, hex_testbuf1, sizeof(h=
-ex_testbuf1));
-> +       str =3D get_str_from_stream(test, stream);
-> +       ASSERT_TEST_EXPECT_NCONTAIN(test, str, "<");
-> +       ASSERT_TEST_EXPECT_NCONTAIN(test, str, ">");
-> +}
-> +
-> +static void kunit_test_mem_assert_format(struct kunit *test)
-> +{
-> +       struct string_stream *stream;
-> +       struct string_stream *expected_stream;
-> +       struct kunit_assert assert =3D {};
-> +       static const struct kunit_binary_assert_text text =3D {
-> +               .left_text =3D "hex_testbuf1",
-> +               .operation =3D "=3D=3D",
-> +               .right_text =3D "hex_testbuf2",
-> +       };
-> +       struct kunit_mem_assert mem_assert =3D {
-> +               .assert =3D assert,
-> +               .text =3D &text,
-> +               .left_value =3D NULL,
-> +               .right_value =3D hex_testbuf2,
-> +               .size =3D sizeof(hex_testbuf1),
-> +       };
-> +
-> +       expected_stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, expected_stream);
-> +       stream =3D kunit_alloc_string_stream(test, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, stream);
-> +
-> +       /* The left value is NULL */
-> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert=
-,
-> +                       stream, 2, "hex_testbuf1", "is not null");
-> +
-> +       /* The right value is NULL, the left value is not NULL */
-> +       mem_assert.left_value =3D hex_testbuf1;
-> +       mem_assert.right_value =3D NULL;
-> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert=
-,
-> +                       stream, 2, "hex_testbuf2", "is not null");
-> +
-> +       /* Both arguments are not null */
-> +       mem_assert.left_value =3D hex_testbuf1;
-> +       mem_assert.right_value =3D hex_testbuf2;
-> +
-> +       validate_assert(kunit_mem_assert_format, test, &mem_assert.assert=
-,
-> +                       stream, 3, "hex_testbuf1", "hex_testbuf2", "=3D=
-=3D");
-> +}
-> +
-> +static struct kunit_case assert_test_cases[] =3D {
-> +       KUNIT_CASE(kunit_test_is_literal),
-> +       KUNIT_CASE(kunit_test_is_str_literal),
-> +       KUNIT_CASE(kunit_test_assert_prologue),
-> +       KUNIT_CASE(kunit_test_assert_print_msg),
-> +       KUNIT_CASE(kunit_test_unary_assert_format),
-> +       KUNIT_CASE(kunit_test_ptr_not_err_assert_format),
-> +       KUNIT_CASE(kunit_test_binary_assert_format),
-> +       KUNIT_CASE(kunit_test_binary_ptr_assert_format),
-> +       KUNIT_CASE(kunit_test_binary_str_assert_format),
-> +       KUNIT_CASE(kunit_test_assert_hexdump),
-> +       KUNIT_CASE(kunit_test_mem_assert_format),
-> +       {}
-> +};
-> +
-> +static struct kunit_suite assert_test_suite =3D {
-> +       .name =3D "kunit-assert",
-> +       .test_cases =3D assert_test_cases,
-> +};
-> +
-> +MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING);
-> +kunit_test_suites(&assert_test_suite);
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Test for the KUnit assertion format functions.");
-> --
-> 2.34.1
->
+> > 
+> >> Also, providing tmp as well as rr->val seems unnecessary?
+> > 
+> > I think I was unsure about modifying the domain field in the struct
+> > rmid_read in the middle of the call chain. But the original caller
+> > mon_event_read() doesn't look at rr->domain after the smp_call*()
+> > function returns. I will drop "tmp".
+> > 
+> >>> +			if (ret)
+> >>> +				break;
+> >>> +		}
+> >>> +	}
+> >>> +
+> >>> +	return ret;
+> >>> +}
+> >>> +
+> >>>  /*
+> >>>   * mbm_bw_count() - Update bw count from values previously read by
+> >>>   *		    __mon_event_count().
+> >>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> >>> index 0923492a8bd0..a56ae08ca255 100644
+> >>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> >>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
+> >>> @@ -3011,57 +3011,118 @@ static int mon_addfile(struct kernfs_node *parent_kn, const char *name,
+> >>>   * and monitor groups with given domain id.
+> >>>   */
+> >>>  static void rmdir_mondata_subdir_allrdtgrp(struct rdt_resource *r,
+> >>> -					   unsigned int dom_id)
+> >>> +					   struct rdt_mon_domain *d)
+> >>>  {
+> >>>  	struct rdtgroup *prgrp, *crgrp;
+> >>> +	struct rdt_mon_domain *dom;
+> >>> +	bool remove_all = true;
+> >>> +	struct kernfs_node *kn;
+> >>> +	char subname[32];
+> >>>  	char name[32];
+> >>>  
+> >>> +	sprintf(name, "mon_%s_%02d", r->name, d->display_id);
+> >>> +	if (r->mon_scope != r->mon_display_scope) {
+> >>> +		int count = 0;
+> >>> +
+> >>> +		list_for_each_entry(dom, &r->mon_domains, hdr.list)
+> >>> +			if (d->display_id == dom->display_id)
+> >>> +				count++;
+> >>> +		if (count > 1) {
+> >>> +			remove_all = false;
+> >>> +			sprintf(subname, "mon_sub_%s_%02d", r->name, d->hdr.id);
+> >>> +		}
+> >>> +	}
+> >>
+> >>
+> >> This seems awkward. I wonder if it may not be simpler to just
+> >> remove the directory and on completion check if the parent has
+> >> any subdirectories left and remove the parent if there are no
+> >> subdirectories remaining. Something possible via reading the inode's
+> >> i_nlink that is accessible via kernfs_get_inode(). What do you think?
+> > 
+> > kernfs_get_inode() needs a pointer to the "struct super_block" for the
+> > filesystem. Resctrl filesystem code doesn't seem to keep track of that
+> > anywhere. Only mentioned in rdt_kill_sb() where core kernfs code passes
+> > it in as the argument. When registering/mounting the resctrl filesystem
+> > there's a "struct fs_context *fc" ... is there a function to get the
+> > super block from that? Even if there is, I'd need to add a global to
+> > save a copy of the fc_context.
+> 
+> hmmm ... I expected that struct file or struct dentry may be reachable
+> from where sb can be obtained but I can only see that now for the
+> paths that provide struct kernfs_open_file.
+
+I'm going to keep this the same then. The "rmdir" call path doesn't have
+any open files to plumb down to this function.
+
+> 
+> ...
+> 
+> >
+> >>>  	}
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+> >>> +				struct rdt_mon_domain *d,
+> >>> +				struct rdt_resource *r, struct rdtgroup *prgrp)
+> >>> +{
+> >>> +	struct kernfs_node *kn, *ckn;
+> >>> +	char name[32];
+> >>> +	bool do_sum;
+> >>> +	int ret;
+> >>> +
+> >>> +	do_sum = r->mon_scope != r->mon_display_scope;
+> >>> +	sprintf(name, "mon_%s_%02d", r->name, d->display_id);
+> >>> +	kn = kernfs_find_and_get_ns(parent_kn, name, NULL);
+> >>> +	if (!kn) {
+> >>> +		/* create the directory */
+> >>> +		kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+> >>> +		if (IS_ERR(kn))
+> >>> +			return PTR_ERR(kn);
+> >>> +
+> >>> +		ret = rdtgroup_kn_set_ugid(kn);
+> >>> +		if (ret)
+> >>> +			goto out_destroy;
+> >>> +		ret = mon_add_all_files(kn, d, r, prgrp, do_sum);
+> >>
+> >> This does not look right. If I understand correctly the private data
+> >> of these event files will have whichever mon domain came up first as
+> >> its domain id. That seems completely arbitrary and does not reflect
+> >> accurate state for this file. Since "do_sum" is essentially a "flag"
+> >> on how this file can be treated, can its "dom_id" not rather be
+> >> the "monitor scope domain id"? Could that not help to eliminate 
+> >> that per-domain "display_id"?
+> > 
+> > You are correct that this should be the "monitor scope domain id" rather
+> > than the first SNC domain that appears. I'll change to use that. I don't
+> > think it helps in removing the per-domain display_id.
+> 
+> Wouldn't the file metadata then be the "display_id"?
+
+Yes. The metadata is the display_id for files that need to sum across
+SNC nodes, but the domain id for ones where no summation is needed.
+
+> Reinette
+
+-Tony
 
