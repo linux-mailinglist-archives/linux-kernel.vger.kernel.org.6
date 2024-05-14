@@ -1,71 +1,53 @@
-Return-Path: <linux-kernel+bounces-178971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618398C59F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:54:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36ECC8C59F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E591E28310B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3931F22574
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D267E17F360;
-	Tue, 14 May 2024 16:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C77E17F38E;
+	Tue, 14 May 2024 16:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzJjA6Vj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="on5xZ+uQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3B312E7F;
-	Tue, 14 May 2024 16:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5913F12E7F;
+	Tue, 14 May 2024 16:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715705681; cv=none; b=ELLNRqzWb3QSa5lq+pL4n1GzLtKtR9rlDzEDdseK5uaFuBEm3IvoEy28bdqhA8WYH+IXmESYu7towGEA1YgV/gtBouS/G2W2r15sNNA486BG8Unyn7g9VkTwnCZKs5xj+oHUFPsit5njoY+MRu3WBICB5GfgdDg0qndW2UbZQyU=
+	t=1715705734; cv=none; b=Hzuet8yC6uv1bWyPOz6rxVSmHavKZw/D6l7Sb3MaxDTKc3PspyYGkTcrzF0WJG2NRZuQlBLlpjI4MHU1cVBNeQv2w5gM/Dh3TAa8+dvGzyPzrrI6bzeOciZFVe2HsBFFvhD4GM2wwtMaYXqXCCNbjkNEQHyv7gQ7dr8zsf+jVIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715705681; c=relaxed/simple;
-	bh=h8R6NGoxB75DYclazRjbVGVue2yl59BqjU5CnXXHtYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BxlbiU2FaGhusDvyMss2nWW46FVCFfSelTJUfyJT15x+godzjl340e5+Qho4QuP6OLwBq/Of0hefv0SAulDCZe1te7KtYzxeKN4VIrhtwJxOUQ7QuL92zeKYnMKY2dIYqVC1Jl7QpUYPDA32f7Zouo2q/uhLcTu7UETTh4FLKDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzJjA6Vj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF41C2BD10;
-	Tue, 14 May 2024 16:54:40 +0000 (UTC)
+	s=arc-20240116; t=1715705734; c=relaxed/simple;
+	bh=RcCpHcBXxFFCTloM2Ewr/gwuvTCPh3AICe59zua+0yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AgdJbiNfspXGHGfDyGGPygDrSCx9B2FcEXzXo0xX7PJJiLpvFjXO5d/sXGqp6OUJ/Pt8URjbI/fhPXnRFI+kzTPMXqfRJwTM93TVIErSUdhO9sViuOi34DUx+r+nNE28QqcW+aJ9zoU9fm9cJv/4+Fq6r2qWjb7ipyu5PIdsRxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=on5xZ+uQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B20C2BD11;
+	Tue, 14 May 2024 16:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715705680;
-	bh=h8R6NGoxB75DYclazRjbVGVue2yl59BqjU5CnXXHtYE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=VzJjA6VjUCDHRNyUYb34ratDyWIbZRUNyFy7PCrdVRi1Q1DOgd2TbzfVCO6CqwyjJ
-	 CnSw2VMLLhJaskf2wIZQYIg0yGo5reye/xcpPVjbh7m7PMU19rcNfbwIjun5zV75s1
-	 drRVVyKzOVSvf8t8SawtCBGcfifGpTzFVZVRVpQnCtEfQ0/nv4rnacZ9NT6FS1BGGi
-	 6cbBlDjkKHDr+a8+VptoIwlY/+RyWhyw3iXpn2i07FUDGK88dYW5ASTQKFCgFmHqs9
-	 f3OyKH5ck9XSapoUp+WiN0DFpvDZRy6+kAr63ZghE45mDorQYXqxtf19o/2o191+1Y
-	 GhnwtjMC+zciw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 68E1CCE098A; Tue, 14 May 2024 09:54:39 -0700 (PDT)
-Date: Tue, 14 May 2024 09:54:39 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Oleg Nesterov <oleg@redhat.com>,
-	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	RCU <rcu@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
-Message-ID: <4ffb46f8-9b45-472b-93a8-18d0a3bba8d6@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240507093530.3043-1-urezki@gmail.com>
- <20240507093530.3043-26-urezki@gmail.com>
- <ZjpAsYJIfzYSKgdA@redhat.com>
- <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
- <20240510131849.GB24764@redhat.com>
- <20240510135057.GC24764@redhat.com>
- <474ae55c-fe9e-4668-8f9b-23f819c76d10@paulmck-laptop>
- <CANpmjNMUJ6UMwWAEHfm-7WZ=jKD56PH67Zp8dB6B=fEysiK=Hw@mail.gmail.com>
+	s=k20201202; t=1715705733;
+	bh=RcCpHcBXxFFCTloM2Ewr/gwuvTCPh3AICe59zua+0yM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=on5xZ+uQdPApwyrZw+Nu0eiwRaACjMWnf6He/ipOh8FLu7qwEbcXFJsmlXJISu+5u
+	 MQUbw12AAuG0ph4V+fx7GSQAkXay3Kz1ede9Vz63bTD2B4fljnyJO1eA5ek76vY0M5
+	 MqBlLoqxWHWHtzAJjo9oh6hnJebUg+u4mW79vc1d/9QuY/eDniBYolA5WWK/4epizO
+	 Fe7QkUpfXzR8xj1q8L1MKEmCaLluqrBtWEc3xAYHF2DPfuPW1KubMU1TD9H7a6is6l
+	 viEBA7gkvk6gYktXgEbBmdoNTyjOaZrc88yo4Jb2jJzjeh+4Xpp0ghr4v0GMxu91RP
+	 M04KWqlx6lBxA==
+Date: Tue, 14 May 2024 09:55:32 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
+Subject: [GIT PULL] fscrypt update for 6.10
+Message-ID: <20240514165532.GA2965@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,48 +56,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANpmjNMUJ6UMwWAEHfm-7WZ=jKD56PH67Zp8dB6B=fEysiK=Hw@mail.gmail.com>
 
-On Mon, May 13, 2024 at 04:13:35PM +0200, Marco Elver wrote:
-> On Fri, 10 May 2024 at 16:11, Paul E. McKenney <paulmck@kernel.org> wrote:
-> [...]
-> > > > Does this mean that KCSAN/etc treats the files in kernel/rcu/
-> > > > differently than the "Rest of Kernel"? Or what?
-> > > >
-> > > > And how is it enforced?
-> > >
-> > > I can only find the strnstr(buf, "rcu") checks in skip_report(),
-> > > but they only cover the KCSAN_REPORT_VALUE_CHANGE_ONLY case...
-> >
-> > Huh, new one on me!  When I run KCSAN, I set CONFIG_KCSAN_STRICT=y,
-> > which implies CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n, which should
-> > prevent skip_report() from even being invoked.
-> 
-> The strnstr hack goes back to the first version of KCSAN released in
-> v5.8 [1]. It was added in response to Paul wanting the "stricter"
-> treatment for RCU even while KCSAN was still in development, and back
-> then syzbot was the first test system using KCSAN. Shortly after Paul
-> added a KCSAN config for rcutorture with a laundry list of options to
-> make KCSAN "strict" (before we eventually added CONFIG_KCSAN_STRICT
-> which greatly simplified that).
-> 
-> While the strnstr(.., "rcu") rules are redundant when using the
-> stricter rules (at least CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n is
-> set), we're keeping the "rcu" special case around because there are
-> test robots and fuzzers that use the default KCSAN config (unlike
-> rcutorture). And because we know that RCU likes the stricter rules,
-> the "value change only" filter is ignored in all KCSAN configs for
-> rcu-related functions.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/kcsan/report.c?id=v5.8
+The following changes since commit dd5a440a31fae6e459c0d6271dddd62825505361:
 
-Thank you for the background information!
+  Linux 6.9-rc7 (2024-05-05 14:06:01 -0700)
 
-> Back then syzbot occasionally reported RCU data races, but these days
-> rcutorture probably finds all of them before syzbot ever gets its
-> hands on new code.
+are available in the Git repository at:
 
-I do try my best.  ;-)
+  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
-							Thanx, Paul
+for you to fetch changes up to 7f016edaa0f385da0c37eee1ebb64c7f6929c533:
+
+  fscrypt: try to avoid refing parent dentry in fscrypt_file_open (2024-05-08 10:28:58 -0700)
+
+----------------------------------------------------------------
+
+Improve the performance of opening unencrypted files on filesystems that
+support fscrypt.
+
+----------------------------------------------------------------
+Mateusz Guzik (1):
+      fscrypt: try to avoid refing parent dentry in fscrypt_file_open
+
+ fs/crypto/hooks.c | 32 ++++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
