@@ -1,257 +1,136 @@
-Return-Path: <linux-kernel+bounces-178489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA128C4E6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:11:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3368C4E70
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DD81C217BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:11:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A216282325
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E52323774;
-	Tue, 14 May 2024 09:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6156423776;
+	Tue, 14 May 2024 09:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1yPe8vK"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tc9nh6CM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B261D52D;
-	Tue, 14 May 2024 09:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BD62D638;
+	Tue, 14 May 2024 09:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715677872; cv=none; b=fIAkPxrIh9LjjZ5fzfh194AsUwCWs2BFg5g9jB0SKDbFbJRnqFifXJ8sUy4vQDOjpek5kEe4lGKX/X5XEyI9L1j0E8ZwGPcuNLgBkz7bqQ3L1DwwF0FeEX5a3HCcj6q+L7r3YCae1nP6smx5PaoorJjwnGWqtGbQLzFaxOItEaA=
+	t=1715677900; cv=none; b=pBXitaoJoTolaxknMIW/b9SCmjfVoxkNyKgB2sRw+jtmO4OCZj0hZq9ovJgVzE/i5c7rVky4FZYXT3CY0wCA5S6mED45gLyxjr3ljvoVRew00JX3ykBilsc2xN4v8zTjcU7F48YSnGqFTsLoTLeQhWjRlKnsVPPY5IMCgJDVbpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715677872; c=relaxed/simple;
-	bh=7PTgTRv/gPnm/uiQywhTGGmvC+Pdw1Pc1e0e8X51IKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OoXeTnXBw0/bqES4cy4P2M82JLfwKP1QIo9UGKtcWvIhCAcLpv4i7iCfFQGU0S+LY7V5vAk29phpCoT53UzVHFNhVtwOSafJMbJcsCaQUY0YYJZbbzYBQ4j3WprHI6CEB5m0n/mVolghshRf4tdju7XCcakDCZrypf/1cJGC/l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1yPe8vK; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a59cc765c29so347748266b.3;
-        Tue, 14 May 2024 02:11:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715677869; x=1716282669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VeAhMJBtq8CWgf1hZR49e40QzwLCoGUX1qRWLCzbmgM=;
-        b=f1yPe8vKMym9rrlDcuLT63exV3athSswxixHgco135QKI1qUhI2T+cJN2zX/KDan4T
-         2RofAXCDcO33XbH/zNK6tO9UhIa93sUo6R9d5OR7juw4Sj3tZ0QKBJ/f5if/poNFDK/c
-         k+7+ZHOMEt0zXZwJNwyqpCXBHGK1zwpb1X0zT/jzQUIRczaUpNzmuLwPdipUdG+eu3bx
-         Vz3OkPxBA5G+dsvDU510P9v0dzExS0NowRq0xOH7x9MwKUTOQFgcR5DkIlbFaVX8/cMa
-         EqLm7+XV1oeUTDZ+hSTZYLivTAMtXkM8AlH4heYrdHwf2TgrMZu2qIXdbrp39NQOGTif
-         tpUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715677869; x=1716282669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VeAhMJBtq8CWgf1hZR49e40QzwLCoGUX1qRWLCzbmgM=;
-        b=D6QBURwsKS9b3ODfVd8En9lNZ//OPCJq2S9yBjwqCCZ4ahNk7EugCvPfKg7NAamOGr
-         wkWDVllZLZsa1JjprmKM90AJR4s0nIafJQ8264AgxMjRyOSxJUDqgbVEZ1/BPmtLZIaU
-         VlP3Vaa8D6DaWSb7glvG1zJv4BtYQojCFQb6CxNTwQm2VhDRnfblUiLIOETTmHUMbNPH
-         VVpE0BHHO+feuXdotWisdGIEVJF089jPXg9UY/BBCbPGi5DQ3Vwgu68b7JVJC4ew60e/
-         XLO8PuUd1RXFm3ARaoeTWksgTWcaXW9T4NPk8i95pzAPZsw1+ePjGCUTsznurSSh9sls
-         IJ6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSCIChOhe5vZgaHoBAK8gJmvuI+5+gvYA5cmJSul4zwXd4SoLEetCnjECzX/bFXvs/e1V/ukgZjLTScJKwu8SYOFJ0zcL4gI7/MRqI
-X-Gm-Message-State: AOJu0YwCfJYtHZ0q4waQgDkXX3bwOP8kis2JDGRyOJsD9kkWdkEOO00l
-	GdDISnLWZO2RAhf7HW/RsH6s+Odw+0Al8sEPUJZF+LvForyhKl10byllBC6FvoO7LSUJa0E9W2B
-	IbbkyErep+M6pncAnYt1tePUOkQA=
-X-Google-Smtp-Source: AGHT+IGPWSUehLEQZr9WtSRkGgGvOAbA6ON8q4E2LmVCB+2l/MfXxKnlUja5e3c79K7bHiM3gwTfiXkN+xn3oXQ00wE=
-X-Received: by 2002:a17:907:9449:b0:a59:bdb7:73f5 with SMTP id
- a640c23a62f3a-a5a2d6668camr964239066b.52.1715677868928; Tue, 14 May 2024
- 02:11:08 -0700 (PDT)
+	s=arc-20240116; t=1715677900; c=relaxed/simple;
+	bh=F9CTk7uU8n6fRJ0Xnv0+mixI59zdsXErdDdwI6mj28s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fZasuqNYojwVN6suU8phJ6VsPps8X+1i/xkas7ri3OhIzd43EBFqlQwjCaY95oe85WPmsGwvEVlhJb6bpVJnOVwPwz7Dnk9H5KAO66yFn1Zs+EpT+DQdUKRhDrAQeBZ4ipu73W4Ok6cCgYxn4DKclH7+I+qGgFaja29Pcc2dSfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tc9nh6CM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C9ECC2BD10;
+	Tue, 14 May 2024 09:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715677900;
+	bh=F9CTk7uU8n6fRJ0Xnv0+mixI59zdsXErdDdwI6mj28s=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=tc9nh6CMDgVd2IwyTwSXs3N/M4z+bOY6K2jFB/XgVkmcQnKWtC2R0rbdUkdOnT9SR
+	 tFeH+8DccEt4tWjRGORHb93EOCeja30X0pJJBJqvgtUH/ysxCOllUQe4DM4l+BewDN
+	 VHULZ3VrMUk+4OGi6pguUp2Uv63spPGdV+FRgrix78XLhrtGHciD1aQ0GSd5MkWXAi
+	 T/zMf0OFinRG6GYhS4NwSlTnrj0pm315p4oqduOa1cPbug6c915lmJ3kT1t32O8TEd
+	 TMx/WOwz4yokvlVp4sfBau1w/TRwpN5di1w6dYnKSiANhidqt69sKjRwZ6GgD9u42I
+	 SGgKn7n5lUM9w==
+Message-ID: <31769e8d-ab52-4f4c-84ca-2f546287d006@kernel.org>
+Date: Tue, 14 May 2024 11:11:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZkLv3wn62jqMVpSF@archie.me>
-In-Reply-To: <ZkLv3wn62jqMVpSF@archie.me>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 14 May 2024 12:10:32 +0300
-Message-ID: <CAHp75VcjeJ5oZy2JjbyrKn+GVvixJKmfh3Yj1p-HxcJHrm0Wzg@mail.gmail.com>
-Subject: Re: [regression] [bisected] commit 6bb6fa6908ebd3cb4e14cd4f0ce272ec885d2eb0
- corrupts data sent via pseudoterminal device
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Regressions <regressions@lists.linux.dev>, Linux Serial <linux-serial@vger.kernel.org>, 
-	Gilles Buloz <gilles.buloz@kontron.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Vincent Whitchurch <vincent.whitchurch@axis.com>, vkrevs@yahoo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add
+ img,boston-platform-regs
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
+ <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
+ <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 14, 2024 at 8:00=E2=80=AFAM Bagas Sanjaya <bagasdotme@gmail.com=
-> wrote:
->
-> Hi,
->
-> <vkrevs@yahoo.com> reported on Bugzilla
-> (https://bugzilla.kernel.org/show_bug.cgi?id=3D218834) pseudoterminal dat=
-a
-> corruption regression. He wrote:
->
-> > Hello. There appears to be a regression in pseudoterminal support intro=
-duced by commit 6bb6fa6908ebd3cb4e14cd4f0ce272ec885d2eb0.
-> >
-> > We have a wrapper program that uses a pseudoterminal to transform data =
-fed into input/read from output of a child process. Transformed data is wri=
-tten to the master device, the child process, whose stdin/stdout are mapped=
- to the slave device, reads data from parent by reading from its stdin, pro=
-cesses that data and sends it back to parent by writing the response to its=
- stdout, and then data from the child process is read by the wrapper from p=
-seudoterminal master descriptor.
-> >
-> > This used to work fine on various Linux distros such as Amazon Linux2, =
-SLES 12/15, openSUSE 15, RHEL 8/9 with pre 6.0 kernels. However, running ou=
-r regression suite on Amazon Linux 2023 which uses a 6.x kernel revealed re=
-gression. Sometimes, when a lot of data is written by the parent process in=
-to the master device's descriptor, some data is lost or corrupted when the =
-child process is reading it from the slave device's descriptor. We've verif=
-ied that this is a kernel regression introduced via commit 6bb6fa6908ebd3cb=
-4e14cd4f0ce272ec885d2eb0 by performing kernel bisection as described in htt=
-ps://docs.kernel.org/admin-guide/verify-bugs-and-bisect-regressions.html#in=
-troguide-bissbs. Bisection was performed using openSUSE 15.5 in VirtualBox =
-(so the kernels had the tainted flag set) but the issue can also be reprodu=
-ced outside of VirtualBox.
-> >
-> > Bisection logs and a repro test case used to perform bisection are in t=
-he repro+bisect.zip attachment.
-> >
-> > -----------------------------------------------------------------------=
-------------
-> > The test script, ptybug.sh, pipes a large plain text file containing 10=
-27800 plain text records separated by newlines into the wrapper program. Ea=
-ch record is a 0-padded record number padded with spaces to 80 bytes.
-> >
-> > The wrapper program sends the unmodified data read from its stdin to th=
-e child program via a pseudoterminal, reads the output from the child and p=
-rints it on its stdout. Wrapper's stdout is redirected to a file which is t=
-hen compared with expected output.
-> >
-> > The child process reads exactly 1000000 records from its stdin, strips =
-off trailing whitespace, and prints the record on its stdout.
-> >
-> > Both the wrapper and the child process mirror the data written into the=
- pseudoterminal master descriptor/read from the pseudoterminal slave descri=
-ptor into separate files - which are identical on kernels prior to commit 6=
-bb6fa6908ebd3cb4e14cd4f0ce272ec885d2eb0 and which differ on kernels that in=
-clude that commit.
-> >
-> > -----------------------------------------------------------------------=
-------------
-> > How to reproduce:
-> >
-> > tar xvf repro+bisect.tar.zstd
-> > cd repro
-> > ./ptybug.sh
-> >
-> > Expected output (on 5.19.0-rc1* kernels prior to commit 6bb6fa6908ebd3c=
-b4e14cd4f0ce272ec885d2eb0)
-> > rm -f ptybug ptybug_child gen  *.o
-> > cc     ptybug.c   -o ptybug
-> > cc     ptybug_child.c   -o ptybug_child
-> > cc     gen.c   -o gen
-> > Test run 1 ...
-> > Test run 2 ...
-> > Test run 3 ...
-> > Test run 4 ...
-> > Test run 5 ...
-> > PASS
-> >
-> > Actual/bad output (on 5.19.0-rc1* starting from commit 6bb6fa6908ebd3cb=
-4e14cd4f0ce272ec885d2eb0 and later kernels, including latest)
-> > rm -f ptybug ptybug_child gen  *.o
-> > cc     ptybug.c   -o ptybug
-> > cc     ptybug_child.c   -o ptybug_child
-> > cc     gen.c   -o gen
-> > Test run 1 ...
-> > FAIL Actual and expected output does not match (gen1027800)
-> > FAIL
-> >
-> >
-> > To see the difference between data written by the master into the pseud=
-oterminal master descriptor and data read by the child from the pseudotermi=
-nal slace descriptor (stripping off trailing spaces) run:
-> > diff -u gen1027800_sysin.txt.nospace gen1027800_a_out.txt.copy |more
-> >
-> > One possible output is below (every time you run this on a kernel start=
-ing from commit 6bb6fa6908ebd3cb4e14cd4f0ce272ec885d2eb0 the results are sl=
-igtly different). As you can see lines corresponding to records 17861-17862=
- have been erroneourly replaced with lines 17858-17859, and so on.
-> >
-> > --- gen1027800_expected.txt     2024-04-26 14:39:22.287121535 +0100
-> > +++ gen1027800_a_out.txt.copy   2024-05-13 15:52:48.915952662 +0100
-> > @@ -17858,8 +17858,8 @@
-> >  000000000000017858
-> >  000000000000017859
-> >  000000000000017860
-> > -000000000000017861
-> > -000000000000017862
-> > +000000000000017858
-> > +000000000000017859
-> >  000000000000017863
-> >  000000000000017864
-> >  000000000000017865
-> > @@ -51261,7 +51261,7 @@
-> >  000000000000051261
-> >  000000000000051262
-> >  000000000000051263
-> > -000000000000051264
-> > +0000000000000512651264
-> >  000000000000051265
-> >  000000000000051266
-> >  000000000000051267
-> > @@ -104576,9 +104576,9 @@
-> >  000000000000104576
-> >  000000000000104577
-> >  000000000000104578
-> > -000000000000104579
-> > -000000000000104580
-> > -000000000000104581
-> > +000000000000104576
-> > +000000000000104577
-> > +000000000000104578
-> >  000000000000104582
-> >  000000000000104583
-> >  000000000000104584
-> > @@ -110897,8 +110897,8 @@
-> >  000000000000110897
-> >  000000000000110898
-> >  000000000000110899
-> > -000000000000110900
-> > -000000000000110901
-> > +000000000000110898
-> > +000000000000110899
-> >  000000000000110902
-> >  000000000000110903
-> >  000000000000110904
-> > @@ -279673,9 +279673,9 @@
-> >  000000000000279673
-> >  000000000000279674
-> >  000000000000279675
-> > -000000000000279676
-> > -000000000000279677
-> > -000000000000279678
->
-> See Bugzilla link for the reproducer mentioned.
->
-> IMO, this is quite different from the case fixed by 56c14fb4086b2d ("tty:=
- Fix
-> lookahead_buf crash with serdev").
+On 14/05/2024 11:08, Krzysztof Kozlowski wrote:
+> On 13/05/2024 20:58, Jiaxun Yang wrote:
+>> This compatible has been used in arch/mips/boot/dts/img/boston.dts
+>> for a while but never documented properly.
+>>
+>> Add it to simple syscon binding.
+>>
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
+> 
+> It is documented in clock/img,boston-clock.txt. Please fix/convert/work
+> on that.
 
-What's the output of `stty -a -F /dev/...` (dunno if you can do it on
-pty, but at least control tty can do it)?
-Or can you share the pty configuration done for this? (I haven't
-looked into any shared code, maybe it's already there)
+No, that's different device.
 
+Anyway, this is wrong - does no work with your second patch. Please test
+them before sending.
 
---=20
-With Best Regards,
-Andy Shevchenko
+You need proper, dedicated schema.
+
+Best regards,
+Krzysztof
+
 
