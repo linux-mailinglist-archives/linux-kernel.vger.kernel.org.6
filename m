@@ -1,287 +1,188 @@
-Return-Path: <linux-kernel+bounces-178584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039D98C5155
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:28:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86D28C517F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7F61C21455
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:28:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24AAB1F220BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C425C134411;
-	Tue, 14 May 2024 10:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DBA139CE8;
+	Tue, 14 May 2024 11:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qh904XOk"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ld2aBmxS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153CA320F;
-	Tue, 14 May 2024 10:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C73654903;
+	Tue, 14 May 2024 11:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715684324; cv=none; b=Uu5Ypiwx8hQUHjSCOQeSDskpb60CVNFMWkrew8gy1APZesXVma8NmX4K1vr6FHVBJ5Ho5ZwYYQQNTPF4B7wb34z5X6QhrKQjfiqtPjw21iNXH15EejpR20ZD733WloOMXZPLUuFexL3E0YIL4Z1h6AWE7iSE2PfS9Eg9JeCTPag=
+	t=1715684597; cv=none; b=d/rf8LT1wv3KBkNwBpCsFPY4d1lVxPVouvuP9SvjTGbMZgEIO55ZAlzsLj2U33RALhgXP/5hzjJlJKiD9Jr1ZyprY6+/pEGE+Vaqdb/tuqGvHpu3EahCic29ekztTwlve0w3kuleYMHQ+jr8/Pb9CE5gLs/KkIZHNnxWM8uj9bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715684324; c=relaxed/simple;
-	bh=lpcqTqrvcgADw0vPU8bnP14Eq09pMdEMy88+H2lqisc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oXZLo7KEBg+f+Dob9qwXm1hp6XwCOvM4aD2nuXErrdHdbgOk6l+dlWCeegS2XSzQO8kj0s7sNA2Aty+LhM+jhcNH50O3uRbuEri3vzuJd9sSZ9Sc93Tq8JVDTIX9xPrS3+0ms6pHEiKpVf1JzKiBxtTKSikG53t1MgI4bLKkziw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qh904XOk; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-41ff5e3d86aso28248265e9.1;
-        Tue, 14 May 2024 03:58:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715684321; x=1716289121; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zcss4NldlyQ6tiuFcBRQjRJyCadmCYp5vKGWkvqedX8=;
-        b=Qh904XOk7LMUyNy7Q5+GqF0I2UviQeY33yJ5uoLesm/l6BiRfyXFiimax2YzrQWYIt
-         xJA4WrM4Dibyi4WRCHaaRqjTZdbo/3dhScI3CxF6yjVzfw+R7dIBrjaJAXg3eQVZ9W1v
-         owqSwpR0mbps4s8cXRA3pNBzyqXz3CHUVGIR3Z54VhmztTmO2cOo3HcT6K5HlHUp0WTC
-         ch64YeqElZKlSs676krVvvRsK4tGn1WuNCmVIR5/TaC2TZjmW9LKujOmr1WDui3ujv83
-         i9wbXBizJJjlJvq698htrM7eYZzAEPFieLJWOMDdDvNMRots6soyIagtNRv8ep7J4PJ7
-         C64g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715684321; x=1716289121;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zcss4NldlyQ6tiuFcBRQjRJyCadmCYp5vKGWkvqedX8=;
-        b=gt4pL/ow0/lWaeu7FLXu3b2yqlV0Me7bwy+MOqO+cQEtngOm0gWdHfdgpflrS47+GW
-         Ja0NzebhSPSgxhAYVRy/1H1IbO+oJvdz9ZScU18RdKyHLda0vpM7U3NjWgKNURsNKqF0
-         g+8kAb0F+WMHxc3+BCEIZGwJHaF4xu+U1m3IWPAFTo3q4ZPwn8vSqmmXSnVTQ1s8M+we
-         O14R7dv30PPjsMjj2vu4XJJHBhkhHnRwNxAZy3TNsLhJxz4itvkDq5z+Yjl9eBwX3xzS
-         30s+S15VoXNbH6y3bEl8sUoXjbqGThQKlVuB7F/DeblsL8YfZGt/7kxzE7wcPmrmhM9Z
-         Acgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXrlsM7bdFpUjcRAD81Cis/TK7O54Rezw23sNpBbdAnizxpUf3deHGJZeeNI9lKkgPwnHGb7Hr8slza8j5JRPBqwS9j2AXZHlTVGDE9+VLCnLD6eyMZvefHOokUi/UvqMkf020g7opkLHwXVtw6bQG8ODGtA8J9VB8Mmi0VTYwatR4ybAk/D9o8XxXw4rrZvfirOVSbNAfN
-X-Gm-Message-State: AOJu0YzE4qzKFWTuQOyBJRZmzOxLezpvhE2s9VCi1LM1wersH9kxNKgY
-	/qJiN3i2WoHD4/1FwC0F6uEAv/709NUy5QiWJNukk82nCKgX1Cxu
-X-Google-Smtp-Source: AGHT+IHavPP3p7VgtypkEZA30JLLaKH02FZ4mtDF6rpdxpx+nbNFgjPzyo0LtoD2LFO9QdAan7y7bQ==
-X-Received: by 2002:adf:eb12:0:b0:347:9bec:9ba3 with SMTP id ffacd0b85a97d-3504aa64997mr9449373f8f.66.1715684321125;
-        Tue, 14 May 2024 03:58:41 -0700 (PDT)
-Received: from vitor-nb.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b79bca6sm13355328f8f.12.2024.05.14.03.58.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 03:58:40 -0700 (PDT)
-From: Vitor Soares <ivitro@gmail.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Thomas Kopp <thomas.kopp@microchip.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Vitor Soares <vitor.soares@toradex.com>,
-	linux-can@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ivitro@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH v5] can: mcp251xfd: fix infinite loop when xmit fails
-Date: Tue, 14 May 2024 11:58:22 +0100
-Message-Id: <20240514105822.99986-1-ivitro@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715684597; c=relaxed/simple;
+	bh=OywhrLKKbt4A6Kqnheggw+3eARBvAOlcXRI/HHo5cOM=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Jrf7a+4bHr+opBmWfs1wlJyISeAWv3zbw/RODmtxe3R9r4FAWLJBm76/bzQc+8ZSyGfG3TgSWZmMjaxNoKrryA7/wl3Eht1kgeqOBtKv1ISEU4ZHC6pTBLh4vivN+gJO0uZVtXA95AHxgR/8z+6xlPZvIQNkvCwbIy4DwFHhx78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ld2aBmxS; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715684596; x=1747220596;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=OywhrLKKbt4A6Kqnheggw+3eARBvAOlcXRI/HHo5cOM=;
+  b=ld2aBmxSs/pcTm8niDhkptd+6JppT1KxxoYqMTVI27VpPKw4msOAiZBp
+   DvwMOYuUEmXDI2K2nlGrvecWd7ZGRpdkxIboC4LTJBIJ6ZLbnhVeVgPKy
+   O9P40PNl2jP+97Hd0BZKilOSo1Hwy5+H0kg87xH3IfRAVAR/cgOPNTPxJ
+   TZWmqbuabdY9Y4EgcQtVMbi3TF7QrhYOq3cJ2xo67oX+7nmSo1DSE3S3d
+   84jxI2pIH+WQqY/X1VsK+NAtCWyYPwGR3bQ2xAu9G1+o7faeRZcmT7MAB
+   z0m/Pk+tks5Id2K0NosJzkFUD6E1TjiaiMGiF7qmQt4G3m6aAbw3g/GFL
+   w==;
+X-CSE-ConnectionGUID: 0YYnIOmsQoK0hSNZ5fLt8w==
+X-CSE-MsgGUID: JfPfVhlxRcqBBzOaxP7ujw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="15480891"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="15480891"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 04:03:15 -0700
+X-CSE-ConnectionGUID: v8GfHghzRg6zFCFOXcMzdw==
+X-CSE-MsgGUID: WVdmOsTXSlOqgfDU6iUY0g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35407856"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.94])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 04:03:12 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 14 May 2024 14:03:05 +0300 (EEST)
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+    Vadym Krevs <vkrevs@yahoo.com>
+cc: Bagas Sanjaya <bagasdotme@gmail.com>, 
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+    Linux Regressions <regressions@lists.linux.dev>, 
+    Linux Serial <linux-serial@vger.kernel.org>, 
+    Gilles Buloz <gilles.buloz@kontron.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [regression] [bisected] commit 6bb6fa6908ebd3cb4e14cd4f0ce272ec885d2eb0
+ corrupts data sent via pseudoterminal device
+In-Reply-To: <CAHp75VefMFJMAHrKmDf1joSkKOcaRMJWse8yM63Nt5v2W7w3Fw@mail.gmail.com>
+Message-ID: <6bfafddc-cf5b-4829-e09b-2622aaf83093@linux.intel.com>
+References: <ZkLv3wn62jqMVpSF@archie.me> <CAHp75VcjeJ5oZy2JjbyrKn+GVvixJKmfh3Yj1p-HxcJHrm0Wzg@mail.gmail.com> <606328522.1205749.1715678929830@mail.yahoo.com> <CAHp75VefMFJMAHrKmDf1joSkKOcaRMJWse8yM63Nt5v2W7w3Fw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; BOUNDARY="8323328-1185213448-1715683287=:1106"
+Content-ID: <62931513-71c6-d018-32cb-150e9a7156c3@linux.intel.com>
 
-From: Vitor Soares <vitor.soares@toradex.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-When the mcp251xfd_start_xmit() function fails, the driver stops
-processing messages, and the interrupt routine does not return,
-running indefinitely even after killing the running application.
+--8323328-1185213448-1715683287=:1106
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <51f2e973-9ce1-a42f-8b7a-37cd5beb78bd@linux.intel.com>
 
-Error messages:
-[  441.298819] mcp251xfd spi2.0 can0: ERROR in mcp251xfd_start_xmit: -16
-[  441.306498] mcp251xfd spi2.0 can0: Transmit Event FIFO buffer not empty. (seq=0x000017c7, tef_tail=0x000017cf, tef_head=0x000017d0, tx_head=0x000017d3).
-.. and repeat forever.
+On Tue, 14 May 2024, Andy Shevchenko wrote:
 
-The issue can be triggered when multiple devices share the same
-SPI interface. And there is concurrent access to the bus.
+> On Tue, May 14, 2024 at 12:28=E2=80=AFPM Vadym Krevs <vkrevs@yahoo.com> w=
+rote:
+> >
+> > It's a standard setup for an out-of-the box default install of openSUSE=
+ 15.5 with KDE. All tests done in Konsole with bash as shell.
+> >
+> > stty -a -F /dev/pts/1
+> > speed 38400 baud; rows 57; columns 217; line =3D 0;
+> > intr =3D ^C; quit =3D ^\; erase =3D ^?; kill =3D ^U; eof =3D ^D; eol =
+=3D <undef>; eol2 =3D <undef>; swtch =3D <undef>; start =3D ^Q; stop =3D ^S=
+; susp =3D ^Z; rprnt =3D ^R; werase =3D ^W; lnext =3D ^V; discard =3D ^O; m=
+in =3D 1; time =3D 0;
+> > -parenb -parodd -cmspar cs8 -hupcl -cstopb cread -clocal -crtscts
+> > -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon=
+ ixoff -iuclc -ixany -imaxbel iutf8
+> > opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0=
+ vt0 ff0
+> > isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -ech=
+oprt echoctl echoke -flusho -extproc
+>=20
+> Thank you!
+>=20
+> Yeah. SW flow control is enabled, but I don't see which character is
+> being used for that. Anyway, let's give Ilpo a chance to look into
+> this.
 
-The problem occurs because tx_ring->head increments even if
-mcp251xfd_start_xmit() fails. Consequently, the driver skips one
-TX package while still expecting a response in
-mcp251xfd_handle_tefif_one().
+Thanks a lot for pinpointing the commit with bisect. It turns out this=20
+is a quite bad corruption bug and I'm quite surprised I didn't see (or=20
+notice) it while testing the patch.
 
-This patch resolves the issue by starting a workqueue to write
-the tx obj synchronously if err = -EBUSY. In case of another error,
-it decrements tx_ring->head, removes skb from the echo stack, and
-drops the message.
+Could you please test and confirm the patch below fixes the issue?
 
-Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxFD SPI CAN")
+--
+[PATCH] tty: n_tty: Fix buffer offsets when looked ahead is used
+
+When lookahead has "consumed" some characters (la_count > 0),
+n_tty_receive_buf_standard() and n_tty_receive_buf_closing() for
+characters beyond the la_count are given wrong cp/fp offsets which
+leads to duplicating and losing some characters.
+
+If la_count > 0, correct buffer pointers and make count consistency too
+(the latter is not strictly necessary to fix the issue but seems more
+logical to adjust all variables immediately to keep state consistent).
+
+Reported-by: Vadym Krevs <vkrevs@yahoo.com>
+Fixes: 6bb6fa6908eb ("tty: Implement lookahead to process XON/XOFF timely")
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D218834
 Cc: stable@vger.kernel.org
-Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 ---
+ drivers/tty/n_tty.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-V4->V5:
-  - Start a workqueue to write tx obj with spi_sync() when spi_async() == -EBUSY.
-
-V3->V4:
-  - Leave can_put_echo_skb() and stop the queue if needed, before mcp251xfd_tx_obj_write().
-  - Re-sync head and remove echo skb if mcp251xfd_tx_obj_write() fails.
-  - Revert -> return NETDEV_TX_BUSY if mcp251xfd_tx_obj_write() == -EBUSY.
-
-V2->V3:
-  - Add tx_dropped stats.
-  - netdev_sent_queue() only if can_put_echo_skb() succeed.
-
-V1->V2:
-  - Return NETDEV_TX_BUSY if mcp251xfd_tx_obj_write() == -EBUSY.
-  - Rework the commit message to address the change above.
-  - Change can_put_echo_skb() to be called after mcp251xfd_tx_obj_write() succeed.
-    Otherwise, we get Kernel NULL pointer dereference error.
-
- .../net/can/spi/mcp251xfd/mcp251xfd-core.c    | 13 ++++-
- drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c  | 51 ++++++++++++++++---
- drivers/net/can/spi/mcp251xfd/mcp251xfd.h     |  5 ++
- 3 files changed, 60 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-index 1d9057dc44f2..6cca853f2b1e 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
-@@ -2141,15 +2141,25 @@ static int mcp251xfd_probe(struct spi_device *spi)
- 	if (err)
- 		goto out_free_candev;
- 
-+	priv->tx_work_obj = NULL;
-+	priv->wq = alloc_workqueue("mcp251xfd_wq", WQ_FREEZABLE, 0);
-+	if (!priv->wq) {
-+		err = -ENOMEM;
-+		goto out_can_rx_offload_del;
-+	}
-+	INIT_WORK(&priv->tx_work, mcp251xfd_tx_obj_write_sync);
-+
- 	err = mcp251xfd_register(priv);
- 	if (err) {
- 		dev_err_probe(&spi->dev, err, "Failed to detect %s.\n",
- 			      mcp251xfd_get_model_str(priv));
--		goto out_can_rx_offload_del;
-+		goto out_can_free_wq;
- 	}
- 
- 	return 0;
- 
-+ out_can_free_wq:
-+	destroy_workqueue(priv->wq);
-  out_can_rx_offload_del:
- 	can_rx_offload_del(&priv->offload);
-  out_free_candev:
-@@ -2165,6 +2175,7 @@ static void mcp251xfd_remove(struct spi_device *spi)
- 	struct mcp251xfd_priv *priv = spi_get_drvdata(spi);
- 	struct net_device *ndev = priv->ndev;
- 
-+	destroy_workqueue(priv->wq);
- 	can_rx_offload_del(&priv->offload);
- 	mcp251xfd_unregister(priv);
- 	spi->max_speed_hz = priv->spi_max_speed_hz_orig;
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
-index 160528d3cc26..1e7ddf316643 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
-@@ -131,6 +131,41 @@ mcp251xfd_tx_obj_from_skb(const struct mcp251xfd_priv *priv,
- 	tx_obj->xfer[0].len = len;
- }
- 
-+static void mcp251xfd_tx_failure_drop(const struct mcp251xfd_priv *priv,
-+				      struct mcp251xfd_tx_ring *tx_ring,
-+				      int err)
-+{
-+	struct net_device *ndev = priv->ndev;
-+	struct net_device_stats *stats = &ndev->stats;
-+	unsigned int frame_len = 0;
-+	u8 tx_head;
-+
-+	tx_ring->head--;
-+	stats->tx_dropped++;
-+	tx_head = mcp251xfd_get_tx_head(tx_ring);
-+	can_free_echo_skb(ndev, tx_head, &frame_len);
-+	netdev_completed_queue(ndev, 1, frame_len);
-+	netif_wake_queue(ndev);
-+
-+	if (net_ratelimit())
-+		netdev_err(priv->ndev, "ERROR in %s: %d\n", __func__, err);
-+}
-+
-+void mcp251xfd_tx_obj_write_sync(struct work_struct *ws)
-+{
-+	struct mcp251xfd_priv *priv = container_of(ws, struct mcp251xfd_priv,
-+						   tx_work);
-+	struct mcp251xfd_tx_obj *tx_obj = priv->tx_work_obj;
-+	struct mcp251xfd_tx_ring *tx_ring = priv->tx;
-+	int err;
-+
-+	err = spi_sync(priv->spi, &tx_obj->msg);
-+	if (err)
-+		mcp251xfd_tx_failure_drop(priv, tx_ring, err);
-+
-+	priv->tx_work_obj = NULL;
-+}
-+
- static int mcp251xfd_tx_obj_write(const struct mcp251xfd_priv *priv,
- 				  struct mcp251xfd_tx_obj *tx_obj)
- {
-@@ -175,7 +210,7 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *skb,
- 	if (can_dev_dropped_skb(ndev, skb))
- 		return NETDEV_TX_OK;
- 
--	if (mcp251xfd_tx_busy(priv, tx_ring))
-+	if (mcp251xfd_tx_busy(priv, tx_ring) || priv->tx_work_obj)
- 		return NETDEV_TX_BUSY;
- 
- 	tx_obj = mcp251xfd_get_tx_obj_next(tx_ring);
-@@ -193,13 +228,13 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *skb,
- 		netdev_sent_queue(priv->ndev, frame_len);
- 
- 	err = mcp251xfd_tx_obj_write(priv, tx_obj);
--	if (err)
--		goto out_err;
--
--	return NETDEV_TX_OK;
--
-- out_err:
--	netdev_err(priv->ndev, "ERROR in %s: %d\n", __func__, err);
-+	if (err == -EBUSY) {
-+		priv->tx_work_obj = tx_obj;
-+		netif_stop_queue(ndev);
-+		queue_work(priv->wq, &priv->tx_work);
-+	} else if (err) {
-+		mcp251xfd_tx_failure_drop(priv, tx_ring, err);
-+	}
- 
- 	return NETDEV_TX_OK;
- }
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd.h b/drivers/net/can/spi/mcp251xfd/mcp251xfd.h
-index 24510b3b8020..4e27a33f4030 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd.h
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd.h
-@@ -633,6 +633,10 @@ struct mcp251xfd_priv {
- 	struct mcp251xfd_rx_ring *rx[MCP251XFD_FIFO_RX_NUM];
- 	struct mcp251xfd_tx_ring tx[MCP251XFD_FIFO_TX_NUM];
- 
-+	struct workqueue_struct *wq;
-+	struct work_struct tx_work;
-+	struct mcp251xfd_tx_obj *tx_work_obj;
-+
- 	DECLARE_BITMAP(flags, __MCP251XFD_FLAGS_SIZE__);
- 
- 	u8 rx_ring_num;
-@@ -952,6 +956,7 @@ void mcp251xfd_skb_set_timestamp(const struct mcp251xfd_priv *priv,
- void mcp251xfd_timestamp_init(struct mcp251xfd_priv *priv);
- void mcp251xfd_timestamp_stop(struct mcp251xfd_priv *priv);
- 
-+void mcp251xfd_tx_obj_write_sync(struct work_struct *ws);
- netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *skb,
- 				 struct net_device *ndev);
- 
--- 
-2.34.1
-
+diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
+index f252d0b5a434..5e9ca4376d68 100644
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -1619,15 +1619,25 @@ static void __receive_buf(struct tty_struct *tty, c=
+onst u8 *cp, const u8 *fp,
+ =09else if (ldata->raw || (L_EXTPROC(tty) && !preops))
+ =09=09n_tty_receive_buf_raw(tty, cp, fp, count);
+ =09else if (tty->closing && !L_EXTPROC(tty)) {
+-=09=09if (la_count > 0)
++=09=09if (la_count > 0) {
+ =09=09=09n_tty_receive_buf_closing(tty, cp, fp, la_count, true);
+-=09=09if (count > la_count)
+-=09=09=09n_tty_receive_buf_closing(tty, cp, fp, count - la_count, false);
++=09=09=09cp +=3D la_count;
++=09=09=09if (fp)
++=09=09=09=09fp +=3D la_count;
++=09=09=09count -=3D la_count;
++=09=09}
++=09=09if (count > 0)
++=09=09=09n_tty_receive_buf_closing(tty, cp, fp, count, false);
+ =09} else {
+-=09=09if (la_count > 0)
++=09=09if (la_count > 0) {
+ =09=09=09n_tty_receive_buf_standard(tty, cp, fp, la_count, true);
+-=09=09if (count > la_count)
+-=09=09=09n_tty_receive_buf_standard(tty, cp, fp, count - la_count, false);
++=09=09=09cp +=3D la_count;
++=09=09=09if (fp)
++=09=09=09=09fp +=3D la_count;
++=09=09=09count -=3D la_count;
++=09=09}
++=09=09if (count > 0)
++=09=09=09n_tty_receive_buf_standard(tty, cp, fp, count, false);
+=20
+ =09=09flush_echoes(tty);
+ =09=09if (tty->ops->flush_chars)
+--=20
+2.39.2
+--8323328-1185213448-1715683287=:1106--
 
