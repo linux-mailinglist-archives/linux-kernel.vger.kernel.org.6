@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-179187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F0D8C5CDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:30:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CD68C5CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A0B1F228A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0E01C21A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2339181BBB;
-	Tue, 14 May 2024 21:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE53181BBB;
+	Tue, 14 May 2024 21:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pHZK/Hwl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PV/6XtIo"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326FA181CF4;
-	Tue, 14 May 2024 21:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8288F180A6A;
+	Tue, 14 May 2024 21:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715722226; cv=none; b=ZC3StUuzaKSc7xnhphVAOtMADUNG9E8bb9TW08BaPtd1hrt7Uy8t1RJCwgbdTKYPh5s+RHph6bCzqyK3WhsIuXvYQaUK6fh5JpXvgG3w9Ley13O+5M2ANLD79iAY9CmX20zvZODQ+Mh1roaym+5EOfUHdoA3AYEr+vulQ8/OeXc=
+	t=1715722439; cv=none; b=k0ouw1ExQVOCCoA2W/Y/WL8KeiTWnDC3D6MzdukkwtOsGmDSjWAlTBmwKC0wCWdprftCK4Rsw3sjEGoHYj/4wlN28LE9tGKwI3KmmS9dcsZ+lH28hizrYwVD+CVIdRXKp/CW3PpyM+O+9wIJuLdnu/aom6tBHn38eJu2ys0a7CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715722226; c=relaxed/simple;
-	bh=VaL8nFiczpgfRJMQ3pv8cT6KlJb4XCkuMxz7HK4MrbQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dqvcopS8TM6hEABifRhsag//EdvPUbESGItvdfr1YYDg8nCnkCtdOzXJrrnW/0UlVprUb2GXYBnfTcFER9cD0VDbXVTJMxc1/DItjLiLGl6Ksr0nN2ykdl6OBQWVRkiuV3oh42IlZbHY9TS5pwiGH9avuVO97DiI/SXWHdztCM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pHZK/Hwl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0A36CC2BD10;
-	Tue, 14 May 2024 21:30:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715722226;
-	bh=VaL8nFiczpgfRJMQ3pv8cT6KlJb4XCkuMxz7HK4MrbQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=pHZK/HwlN8D7EBWHzpLoZ8NCJemEREw4wTblKa+6+0Uf3QTlWNGYmLhDaYrGUtD4D
-	 y1TEtNYkklwqVfMGra74RPW6VhgcJUjBN9BvMt54dW1ZKfeERJmMQR5YXuIthgYv46
-	 fS9wDdwCL7to0OQTZ9/SE7Nx5Eu7rpUD18OHgCPa2FWDe1NTuHI/9dlAqiQ7J9JuPI
-	 XgzIIHbiw+dJeJz2BhB3kX0M7eo80+ARVpfhEz2bkODOlNxAsFuc/vVNkPLtbiu32i
-	 52Dl2nje7EhLDShNKy08Wpfba8dmufBc2J1DR5wmz/w9aqmdvDMfE0fpVQbQztz48z
-	 ncIPzMn5Lue8w==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E64A5C433A2;
-	Tue, 14 May 2024 21:30:25 +0000 (UTC)
-Subject: Re: [GIT PULL] ACPI updates for v6.10-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0iTaVs5EBUkq0Vs39y+gYCcsZypW5YJNS1n3ES+upM2JQ@mail.gmail.com>
-References: <CAJZ5v0iTaVs5EBUkq0Vs39y+gYCcsZypW5YJNS1n3ES+upM2JQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0iTaVs5EBUkq0Vs39y+gYCcsZypW5YJNS1n3ES+upM2JQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.10-rc1
-X-PR-Tracked-Commit-Id: e573d27e18f8289454b6abb378de531374bd3cde
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 101b7a97143a018b38b1f7516920a7d7d23d1745
-Message-Id: <171572222593.832.7300894485575755490.pr-tracker-bot@kernel.org>
-Date: Tue, 14 May 2024 21:30:25 +0000
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ACPI Devel Maling List <linux-acpi@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
+	s=arc-20240116; t=1715722439; c=relaxed/simple;
+	bh=gQ3cHLBfriWESqMJX8RI6EYiieJnzdTF2TB9WXr93Jo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=txqUbAI/Mbm3RW2NMjjHXR5n3gEWUVjY22PgAuEVQtH9HSRhjLFLF5F3JNvwheG9qwSoyiQfSvihqmrqIggNxhAOvvlzbj3mzolMVn1z9MwtfbOc7R1UpsXHwmtlnaMjDcDPYdX0hC+ltXxN/hGPLwG+dzDjKclJK7Ce3N4A3SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PV/6XtIo; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 85E7A47C5E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1715722433; bh=PLi46UaVrc/Z0uoODzowFmJDuvciXUyoO6N2acvXiQU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PV/6XtIoIwbywu9v9hI5qfTogTxnTYW8Hli6HSI20avtrV/HAlxaBmBFp4ZnUmtTR
+	 jH3WSYrzaZTF5067Ql5OxTiz5iZoKTPL4Efu2tFv9LyT7l12A3ZHXituz1yhyT9pUT
+	 AX9DeXWJ5tJjc0ZyTn/FUeU4LIxk66NoaPTyjpP3ZqqDBsxTidsOnmt9+DSODBWXnM
+	 jH2eRiwlWKKzQpgd3BRCcniLKNmg+QsN6yX8FO2hJfrRMJRJGufaFFAP7CSZwT5x0p
+	 BpHAlVhBrpihOI4fapvZEpgaIMLVS7EsOBL86dKR2OM749ms+tbvk3ZqfdxYWZJBin
+	 oNd2RfYk0Iing==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 85E7A47C5E;
+	Tue, 14 May 2024 21:33:53 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Brendan Jackman <jackmanb@google.com>, Daniel Latypov <dlatypov@google.com>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Brendan Higgins
+ <brendan.higgins@linux.dev>, davidgow@google.com, rmoar@google.com
+Subject: Re: [PATCH v2] Documentation: kunit: Clarify test filter format
+In-Reply-To: <ZkPVt9wyu7f-fC3c@google.com>
+References: <20240402125109.1251232-1-jackmanb@google.com>
+ <CAGS_qxpBmmafnQnDXYf5RftPzxghd+i8Ly4CK=EkcpidpCPP6g@mail.gmail.com>
+ <ZkPVt9wyu7f-fC3c@google.com>
+Date: Tue, 14 May 2024 15:33:52 -0600
+Message-ID: <87wmnw5b9b.fsf@meer.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-The pull request you sent on Mon, 13 May 2024 21:30:05 +0200:
+Brendan Jackman <jackmanb@google.com> writes:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git acpi-6.10-rc1
+> On Wed, Apr 03, 2024 at 02:59:43PM -0700, Daniel Latypov wrote:
+>> Reviewed-by: Daniel Latypov <dlatypov@google.com>
+>
+> Hi Jonathan, I think this is ready to be applied?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/101b7a97143a018b38b1f7516920a7d7d23d1745
+I'm happy to take this, but normally these patches go through the kunit
+tree, so I've not been paying much attention.  Let me know please if I
+should pick it up.
 
-Thank you!
+Thanks,
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+jon
 
