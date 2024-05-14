@@ -1,112 +1,102 @@
-Return-Path: <linux-kernel+bounces-179268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2208C5E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:47:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BDC8C5E31
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DA1FB2169D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:47:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D232B2167C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2BBB182CA0;
-	Tue, 14 May 2024 23:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b="w3jmiolY"
-Received: from cvs.openbsd.org (cvs.openbsd.org [199.185.137.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68FE1E491;
-	Tue, 14 May 2024 23:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.185.137.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F6C182CA5;
+	Tue, 14 May 2024 23:49:37 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612841E491;
+	Tue, 14 May 2024 23:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715730454; cv=none; b=tjziR4e/sCTlYVjK2lskFJJ3dL4W+hgNFwR4yyIRaWdkFyg/JMygtPyIweZzCsDFjThCSZnKKhPqXdUxkuxOaLdBJkZBC71sRcoV8bAsFOMnir83K0mLXMEVtgOOy11GKcZ6qBsd26bfdWgwwyfkdW2Li5uiqpk3ratq2RPfqn0=
+	t=1715730576; cv=none; b=MnCEU1Eba+gFqvyRtGL3jQ6SpuT84qKHHXu2ZZXmFHMZGekgU6zGZgecZDa52ztjuuvHgpKfvc2JhwMqhS12zj9AciSqjaIQgQRyr9NJelERrNHXJn9jD0svrxQkzwI4ETjsn5Xaoqvz6QTQF9P7S53HgV1k6jE8eDL/fXHSBl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715730454; c=relaxed/simple;
-	bh=1rwfNpf50aTPtb80Ip2O+B+pjU7fjXSF51Ls8a9PAtY=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ko3d4GldeWa/4V3ydARYS5sWKSGxRFc5tScgPZxxGTZg5lGIgwmhGKe7hzoP5j1Tz9ZLtJuLyt9ybIcf8jl0mO12kZLIJgWYi3nKFmejV3hKuwgY680CH/2NskCx6FD9h5s+TrwX1GfyIKiAxgsJwxZlbg6Q3gPagWAuvTXDCog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org; spf=pass smtp.mailfrom=openbsd.org; dkim=pass (2048-bit key) header.d=openbsd.org header.i=@openbsd.org header.b=w3jmiolY; arc=none smtp.client-ip=199.185.137.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=openbsd.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openbsd.org
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=selector1; bh=1rwfNpf50a
-	TPtb80Ip2O+B+pjU7fjXSF51Ls8a9PAtY=; h=date:references:in-reply-to:
-	subject:cc:to:from; d=openbsd.org; b=w3jmiolYozzwXCDaJGlzE5ZoZaKGpcix0
-	0z5OoNzmAs0Pm443g2gWqiJee/dXJ8hyt1VSANoXCAjPfbosI7dWN1YGKtnq8Ov6CV/qNG
-	zwkrtcAPKRaLMALsW+JNjcs4cj6NrLtvfYtahvZpBzTZx4IaBRTBu5BRYdvHF/Jfo3fC3B
-	osPSeUaZSTQdt9mWAVJR++Gx5nvHxLWInVSGLBqLUDaJyRAUVb3QNkv8qNdN0/pWS1qYJZ
-	2rHibAKs2IvwBkqQkjTz5jv7Fab+MtUsZl5Dx1M+XBDQIYLMOxG3OnzokZAtPlrQCmfjW8
-	f5KGRZSe4qM95Hm3t7KbGcEFpyL5g==
-Received: from cvs.openbsd.org (localhost [127.0.0.1])
-	by cvs.openbsd.org (OpenSMTPD) with ESMTP id ba1c6f5b;
-	Tue, 14 May 2024 17:47:30 -0600 (MDT)
-From: "Theo de Raadt" <deraadt@openbsd.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-cc: Matthew Wilcox <willy@infradead.org>,
-    Jonathan Corbet <corbet@lwn.net>, jeffxu@chromium.org,
-    keescook@chromium.org, jannh@google.com, sroettger@google.com,
-    gregkh@linuxfoundation.org, torvalds@linux-foundation.org,
-    usama.anjum@collabora.com, Liam.Howlett@oracle.com,
-    surenb@google.com, merimus@google.com, rdunlap@infradead.org,
-    jeffxu@google.com, jorgelo@chromium.org, groeck@chromium.org,
-    linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-    linux-mm@kvack.org, pedro.falcato@gmail.com, dave.hansen@intel.com,
-    linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-In-reply-to: <20240514160150.3ed0fda8af5cbd2f17c625e6@linux-foundation.org>
-References: <20240415163527.626541-1-jeffxu@chromium.org> <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org> <871q646rea.fsf@meer.lwn.net> <ZkPXcT_JuQeZCAv0@casper.infradead.org> <56001.1715726927@cvs.openbsd.org> <20240514160150.3ed0fda8af5cbd2f17c625e6@linux-foundation.org>
-Comments: In-reply-to Andrew Morton <akpm@linux-foundation.org>
-   message dated "Tue, 14 May 2024 16:01:50 -0700."
+	s=arc-20240116; t=1715730576; c=relaxed/simple;
+	bh=qbv3bhwyolQ2fa4CHsQpjgG2qUfpyh+slSW4CMlvmwU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=u/mSud9hkSORck18V5YeF1I7NtHI8N8PXovP1MgWDoXuZ8JTgjpLrx22+CvKRhD8Ez3BKBZqzG5XOQgFvbsKYbfALuN5XNfHe8a17en6xHM9HbsGPyPwsL6PyZrb5V07Ow3mTMz/8MlOurTt6aFvaIWTFil9FqPZV89mL3eA5VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 84BC592009C; Wed, 15 May 2024 01:49:31 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 7EB5A92009B;
+	Wed, 15 May 2024 00:49:31 +0100 (BST)
+Date: Wed, 15 May 2024 00:49:31 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Joe Perches <joe@perches.com>
+cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+    linux-mips@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: sibyte: pointless if tests
+In-Reply-To: <2cf0b77f51b907969ae83993854773961b4e159c.camel@perches.com>
+Message-ID: <alpine.DEB.2.21.2405150010470.45291@angie.orcam.me.uk>
+References: <2cf0b77f51b907969ae83993854773961b4e159c.camel@perches.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <45809.1715730450.1@cvs.openbsd.org>
-Date: Tue, 14 May 2024 17:47:30 -0600
-Message-ID: <92453.1715730450@cvs.openbsd.org>
+Content-Type: text/plain; charset=US-ASCII
 
-Andrew Morton <akpm@linux-foundation.org> wrote:
+On Sat, 24 Feb 2024, Joe Perches wrote:
 
-> > I worry that the non-atomicity will one day be used by an attacker.
+> Here are a couple in sibyte:
 > 
-> How might an attacker exploit this?
+> Maybe this should be documented as:
+> 
+> 	"well, don't know what to do here"
 
-Various ways which are going to be very application specific. Most ways
-will depend on munmap / mprotect arguments being incorrect for some
-reason, and callers not checking the return values.
+ Of course just removing these useless conditionals isn't going to help 
+here because if a console write does fail for some reason, then the index 
+will move backwards regardless.  At least we now have some kind of a 
+placeholder to bring someone's attention (such as yours).
 
-After the system call, the memory is in a very surprising configuration.
+> $ spatch --very-quiet -sp-file if_semi.cocci .
+> diff -u -p ./arch/mips/sibyte/common/cfe_console.c /tmp/nothing/arch/mips/sibyte/common/cfe_console.c
+> --- ./arch/mips/sibyte/common/cfe_console.c
+> +++ /tmp/nothing/arch/mips/sibyte/common/cfe_console.c
+> @@ -22,8 +22,6 @@ static void cfe_console_write(struct con
+>  		if (str[i] == '\n') {
+>  			do {
+>  				written = cfe_write(cfe_cons_handle, &str[last], i-last);
+> -				if (written < 0)
+> -					;
+>  				last += written;
+>  			} while (last < i);
+>  			while (cfe_write(cfe_cons_handle, "\r", 1) <= 0)
 
-Consider a larger memory region containing the following sections:
+ The author indeed clearly was undecided as to what to do as the full last 
+statement here is actually:
 
-  [regular memory]  [sealed memory]  [regular memory containing a secret]
+			while (cfe_write(cfe_cons_handle, "\r", 1) <= 0)
+				;
 
-unmap() gets called on the whole region, for some reason.  The first
-section is removed.  It hits the sealed memory, and returns EPERM.  It does
-not unmap the sealed reason, not the memory containing the secret.
+potentially looping indefinitely.
 
-The return values of mprotect and munmap are *very rarely* checked,
-which adds additional intrigue. They are not checked because these
-system calls never failed in this way on systems before Linux.
+ The CFE API clearly says:
 
-It is difficult to write test programs which fail under the current ENOMEM
-situation (the only current failure mode, AFAIK).  But with the new mseal()
-EPERM condition, it will be very easy to write programs which leave memory
-behind.
+Error codes:
+      Code              Description
+      CFE_ERR_INV_PARAM File handle is invalid
+      others            Device may return device-specific error codes
 
-I don't know how you'll document this trap in the manual page, let me try.
+and maybe CFE never actually fails for a console device write (I'd have to 
+check the sources if there are any "others" for the console device and I'd 
+assume the console file handle is always valid), but IMO the safe approach 
+would be just to chicken out and silently return on a failure from any of 
+these calls.  Also this code has been oddly written IMO and would benefit 
+from some refactoring.  I'll see if I can queue a patch.
 
-    If msealed memory is found inside the range [start, start+len], 
-    earlier memory will be unmapped, but later memory will remain unmapped
-    and the system call returns error EPERM.
-
-    If kernel memory shortage occurs while unmapping the region, early
-    regions may be unmapped but higher regions may remain mapped, and
-    the system call may return ENOMEM.
-
-I feel so gross now, time for a shower..
+  Maciej
 
