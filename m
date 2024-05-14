@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-178689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956768C567A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:03:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CB38C567B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:03:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 328E8B21F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:03:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE361F22C57
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFBD140E50;
-	Tue, 14 May 2024 13:03:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 896EC140394;
+	Tue, 14 May 2024 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N6Gg9Vgn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNSMtgQB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFC612E75;
-	Tue, 14 May 2024 13:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4CF12E75;
+	Tue, 14 May 2024 13:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715691790; cv=none; b=OPVgEg6kgc0Z7V1CafGmKNZStQ6aDBXs+dUx2q9KAbh1G56Bbb+dc5Jzml2R6uLx3XvOFwoSnWXc0IuwF/MZvWthUa9Cj+XBpy/DQFeBYnRhI8+BTVEOCzcn464ixu5hubveRw/wu3L3pR0dwTOSstEty6VTAoVduTvdj/iNsFo=
+	t=1715691828; cv=none; b=PL/L4jXABtcYSNE28AeueLpWNNIInHTKwoFWcZCy4qwHbN9xYuR/Sa5cYyD7AwSOoZgNUbJFty0Zedl+XkYOtdRFNi+T/KrIomQR/tWn8A2+u5y1WTMVAGwNS52qQ3lGBJoa3gKJbPFIr/XeT923bQvntwVMpzsy2s+WgVu0eaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715691790; c=relaxed/simple;
-	bh=2FTtLgcS3g90jTCZ5RW/k0IA6dKK6r07EQMnwhcdDsY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IQtGUCqUffuU08hPHCrsTECCAbZCrImeYuJ5CYcpqWuIoDNDC1+CDc+wwuLNZwKOBdp9ll3Bkheo/LaII4oDYLs9GvXwzmWwQz2SiKoOVKhEtBkDhjUjHGGG0WxGzfl7zkk42smOJi1Cfcleaj575PlqARobYhEWu4unmcCfqu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N6Gg9Vgn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D5EFC2BD10;
-	Tue, 14 May 2024 13:03:09 +0000 (UTC)
+	s=arc-20240116; t=1715691828; c=relaxed/simple;
+	bh=HqBo9A89PNEMl9VLVy5CJp43eeNiSHmRyiXz/Vb2A0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jLesUqTt9WSUmfvtHyj2RMv/vzfHjlEBEJ79S2/L+h9rM/jnbmIUaImzvNkcokrJ9GhHKdv471eU4RTyGw3l7J5yjoUlllbDS6hLiQ7CBvDbwZfqF11VaUMKKBR6pRDB6aOBTldlh6bcGa0Hpd0txYh8zuyZoFJAfp5cVHmxkIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNSMtgQB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37857C4AF0F;
+	Tue, 14 May 2024 13:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715691789;
-	bh=2FTtLgcS3g90jTCZ5RW/k0IA6dKK6r07EQMnwhcdDsY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N6Gg9VgnCAwncIHMa2lhOv9v4evkV0q6kVNau3l1W2CCJMTOCEU0KD2JxGF1P9vkF
-	 3XnMSvaY15fderWIjfSpCrK+jYTRKoHP0RN+Q215f5/ibt9xXGHNBxehDARbZjwZ//
-	 1eQE4lRU8V/oNu94yIabzVLG21iRTi2Uf3my+gM+q3yB6PKT9WNctgaHeoHZDdeJfN
-	 8B3Vtqm1cLqY8jAvb1bTK9bQNj+PN+u50fEjxoka7oQndVrWatnP3iVsbhZMnNe9Ja
-	 LjL5ItFBaONciSjp8U8LZPiZNp3q3kNH9LIsEiKGOkkKnXptYXXcSPRQr8xrRfCJXv
-	 7dbDajh9Eu1Ug==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: David Vernet <void@manifault.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@google.com>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dave Thaler <dthaler1968@googlemail.com>,
-	Will Hawkins <hawkinsw@obs.cr>,
-	bpf@vger.kernel.org,
-	bpf@ietf.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: puranjay12@gmail.com
-Subject: [PATCH bpf] bpf, docs: Fix the description of 'src' in ALU instructions
-Date: Tue, 14 May 2024 13:03:03 +0000
-Message-Id: <20240514130303.113607-1-puranjay@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	s=k20201202; t=1715691828;
+	bh=HqBo9A89PNEMl9VLVy5CJp43eeNiSHmRyiXz/Vb2A0A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=vNSMtgQBy5+FhUDvPnsfj4VjvY8lih4Icl2zSQRbE5lRa7sxxS41M+udD5KrE29hz
+	 qpZ25z5+jQQ8l0DPq63a+trlez0Cd8msSRG7M+aZNP+ou9Ez6f9yxaXsZzHXcZ6P1d
+	 KiPjQWgQw4obgt+Z9RbHpFNE3dxQIarDJHL3dVpcM31kYGdAARGXEhW4ed+V3QFfvf
+	 /BBT7rQFJkC86aCLsE9MpDQKmgtqf518PRFRmC53zHQPpsm3zgJ9JguYRcrHMR84Tv
+	 mVsAzlAh1hApKzQJ7xjpl/+dA3rqexK/4acIsIifp6f9Y9Raxf3CxyzL1wHi5rbqup
+	 JZsiCym2KmKdw==
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5b27cc76e9aso600101eaf.2;
+        Tue, 14 May 2024 06:03:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWN93/GxluvS4ldnF+rQ1ku2ZrKVqnkItMIPseJPFpEYdPlDPc6toO4loUGd3E+pMbH/SXCL9EDB/m8PbcSolVmHB1Au/jAfCpthPXdN9xelmky6es4XTa49Ri3xUGWQImNXygrp9BM0A==
+X-Gm-Message-State: AOJu0YzhMkuVdUTHt6QvfGDoUni8w5dNcQo0E3+OojU5a3RRyy3cMxBu
+	qgRiGnU78D8igjsVJySHhHzzlL9UmP0Qtp27PKqqa30eYuU8wKU83VrnoYjniv5Y4DsBGuA2h7g
+	klM8UW9rk3im9eLvdApvKKhwfrnQ=
+X-Google-Smtp-Source: AGHT+IFkzN0bAkSzxCTo2iZF2l6+nNstB2lidsWaMXQj1Iqp2FDLUZLjXO47zq1eWNcH2/pJmgU1Uq1fQ8vBdxtgvlg=
+X-Received: by 2002:a05:6820:1f16:b0:5b2:7d9f:e708 with SMTP id
+ 006d021491bc7-5b28193e476mr13727969eaf.1.1715691827324; Tue, 14 May 2024
+ 06:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <BYAPR03MB4168E7E5A2616EB82D3883E8ADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+In-Reply-To: <BYAPR03MB4168E7E5A2616EB82D3883E8ADE02@BYAPR03MB4168.namprd03.prod.outlook.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 14 May 2024 15:03:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jfoNqgKZj=vFN53B1GPOA88GWYrF61Yutqs=h8R3fZ4Q@mail.gmail.com>
+Message-ID: <CAJZ5v0jfoNqgKZj=vFN53B1GPOA88GWYrF61Yutqs=h8R3fZ4Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: scan: Add missing check for kstrdup()
+To: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+Cc: rafael@kernel.org, lenb@kernel.org, lv.zheng@intel.com, 
+	rui.zhang@intel.com, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-An ALU instruction's source operand can be the value in the source
-register or the 32-bit immediate value encoded in the instruction. This
-is controlled by the 's' bit of the 'opcode'.
+On Sat, May 11, 2024 at 9:36=E2=80=AFPM Jiasheng Jiang
+<jiashengjiangcool@outlook.com> wrote:
+>
+> Add check for the return value of kstrdup() in order to gurantee
+> the success of allocation.
+> Moreover, move the code forward to simplify the error handling.
+>
+> Fixes: ccf78040265b ("ACPI: Add _UID support for ACPI devices.")
+> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@outlook.com>
+> ---
+>  drivers/acpi/scan.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index d1464324de95..59246757a207 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1385,6 +1385,15 @@ static void acpi_set_pnp_ids(acpi_handle handle, s=
+truct acpi_device_pnp *pnp,
+>                         return;
+>                 }
+>
+> +               if (info->valid & ACPI_VALID_UID) {
+> +                       pnp->unique_id =3D kstrdup(info->unique_id.string=
+,
+> +                                                       GFP_KERNEL);
+> +                       if (!pnp->unique_id) {
+> +                               kfree(info);
+> +                               return;
 
-The current description explicitly uses the phrase 'value of the source
-register' when defining the meaning of 'src'.
+No, this is not sufficient for the function to return.
 
-Change the description to use 'source operand' in place of 'value of the
-source register'.
+> +                       }
+> +               }
+> +
+>                 if (info->valid & ACPI_VALID_HID) {
+>                         acpi_add_id(pnp, info->hardware_id.string);
+>                         pnp->type.platform_id =3D 1;
+> @@ -1398,9 +1407,6 @@ static void acpi_set_pnp_ids(acpi_handle handle, st=
+ruct acpi_device_pnp *pnp,
+>                         pnp->bus_address =3D info->address;
+>                         pnp->type.bus_address =3D 1;
+>                 }
+> -               if (info->valid & ACPI_VALID_UID)
+> -                       pnp->unique_id =3D kstrdup(info->unique_id.string=
+,
+> -                                                       GFP_KERNEL);
 
-Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
----
- Documentation/bpf/standardization/instruction-set.rst | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+This is optional, so it can be NULL.
 
-diff --git a/Documentation/bpf/standardization/instruction-set.rst b/Documentation/bpf/standardization/instruction-set.rst
-index a5ab00ac0b14..2e17b365388e 100644
---- a/Documentation/bpf/standardization/instruction-set.rst
-+++ b/Documentation/bpf/standardization/instruction-set.rst
-@@ -292,8 +292,9 @@ Arithmetic instructions
- ``ALU`` uses 32-bit wide operands while ``ALU64`` uses 64-bit wide operands for
- otherwise identical operations. ``ALU64`` instructions belong to the
- base64 conformance group unless noted otherwise.
--The 'code' field encodes the operation as below, where 'src' and 'dst' refer
--to the values of the source and destination registers, respectively.
-+The 'code' field encodes the operation as below, where 'src' refers to the
-+the source operand and 'dst' refers to the value of the destination
-+register.
- 
- =====  =====  =======  ==========================================================
- name   code   offset   description
--- 
-2.40.1
-
+>                 if (info->valid & ACPI_VALID_CLS)
+>                         acpi_add_id(pnp, info->class_code.string);
+>
+> --
 
