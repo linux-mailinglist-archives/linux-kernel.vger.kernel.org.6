@@ -1,107 +1,96 @@
-Return-Path: <linux-kernel+bounces-179004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2468C5A47
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:24:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9608C5A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F058A1C21B54
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:24:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 607901C218FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5682B1802AE;
-	Tue, 14 May 2024 17:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u//H3XAF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NYUd2FyO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A3A180A61;
+	Tue, 14 May 2024 17:24:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A4417F394
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 17:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4948F17F39E
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 17:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715707420; cv=none; b=rcsUQ4v56dnuREKpk+6ZlIcuYb4UaovbCYVxcEbC4bMoGlg3cRLzgSPqqGeS70CibM957WrdFxFxfbM6zpvUr55ak19Id8wXyYPuQlAXB9dj1GfqovjzLE9V6GKdxpVNg5deoBqUbZAB2C/LpkEpGtF/PKUaZwchxh8obJYAneU=
+	t=1715707445; cv=none; b=hNPnMYRlglRhwXSQTDiLXAzZffEUFfH5NkujLMUc2rqmeTkmLQS7EKVKtYOWIMwd/Sr1worWXaCxheSWCldKxlOtO0TU16vqjLXu+Ajc2hyzWBprWM3nUR3oDaab/n6qmcQZAlf91QQFyCFWwZeyMHzRAIe4t6+DGdm/PEtO3Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715707420; c=relaxed/simple;
-	bh=pJlUi+KXkei8lg6ra/Ca1kaBmxiwkdtHHBcOwgmpYNw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FX3rU2QX84yLfww8cXjUjjZxGyHxq8dYrbPKe+n1+p2gCbYdXEPOoTUkycOyi44ffo1OQocdGJDzLz6UY64BCwfs6yEUYl0QZ35FxDFLaWNdelYHj5bOVfudwCWhX1ZEzDR+hyCSm4AvLIFpxvnFMUFjqYnHtqtTPhi0+k6oZNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u//H3XAF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NYUd2FyO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715707417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6G6DQyPhwSC91Uzzzi51uTfYXPdGZ8cCXSYSci/EkjA=;
-	b=u//H3XAF0bDpgKAq5YmtDErhqrHoq0magXqS2ITQJbedoZntfr20eM0d9IssJ+TxKKu4xO
-	EOeVUdhkHXgMaQqFtQQzhOPAJ3AKy3x8v8oBLZbMVRNhvZ4agQixzb9s43nsW66m+Q69Tv
-	gNFUN4jvIRjK7Jc5Od6AYNYSxBW+KmZofFhieneFOeB+clu/7Fxe57UCueuWWjTW9qZOzH
-	QRSzQGWEMQ+tIJWfwQNTUaDrxGUs3Re7m+ytSTuAK5kOeiB5FIo5tyhGjywW7kxqiY46MS
-	gR4+6bhunpmTbwHJB3Ko/2FHwPmVfmFnWZ52aVLreIbgXw4iH4UZZG73itXCaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715707417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6G6DQyPhwSC91Uzzzi51uTfYXPdGZ8cCXSYSci/EkjA=;
-	b=NYUd2FyOqm1bSC8UdWvEtly0qoG+IbTEQri9l0rM4LUUy6vDdsz2z7iqvruzjfMdyanqbC
-	mLaqVtVsG+UbcpBw==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-kernel@vger.kernel.org
-Cc: ruanjinjie@huawei.com
-Subject: Re: [PATCH] genirq: Refactor the irq_chip_xxx_parent()
-In-Reply-To: <20240514131910.2614027-1-ruanjinjie@huawei.com>
-References: <20240514131910.2614027-1-ruanjinjie@huawei.com>
-Date: Tue, 14 May 2024 19:23:37 +0200
-Message-ID: <87pltol33a.ffs@tglx>
+	s=arc-20240116; t=1715707445; c=relaxed/simple;
+	bh=Nt7kzmwYkg3z/+qBGi8DCs/A+qqr7TXzumkpN8K82Og=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=SP5+BcVzg+IesBxsNao5WjjM4Fk5iEqBfbqnynoH49pJjhl5/o6/4g6IGGQD/9WuLpWrbF7T5vM2etLtDmzxhkXLoaJfP3Smq7KzJCwkCO3mvbUvZP79p/R/qhWH0vXneZIKEF5AOeSbV0itOhg7nf7B0BuwHlpKWLNXj2pS7T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7da4360bbacso722587239f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:24:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715707443; x=1716312243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PpglLF3GjUgpNPy5ZOgoKguxNCERy2murGYTeXb8VZM=;
+        b=EzEGTdLUVZpdSDTwhJvAWyr3JgPKWG7WqvKDgt1JB7iMnRabct+XjPPlY1aMMANmGc
+         CKitsWQXrNnfaQbF2i9tQ3H9etB9/dhqIe0tFmc54kE6YkUXc7Hqs06V8Nwl6WKvom2n
+         TNOBTZphaDF4wvuhNIOCsNIHbUO2EjYuaMSu6mD6WOhXEUuEIo9pTtgfyiCSYs731mZn
+         1zAmHcMmlf0uckDpgAwb4SOG4yxmOyJ0Gr6Bv8Kp4A4DIqnrWIJ3aNVrpKflt2Wcho6H
+         Hw2j/0J0hfF33RFWarXp2tmvSe/NChyfwLxcmeFAHjuSe2DU9PryNagwvUis+xDfGlDk
+         2l4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU8hn2+oRSh7fclkr9gQqHi/QTgzf4gKV4GShxz8t1lYSaXVsjB+f4vaXGpnPRz9/8K8GjtEwV4nmDk6zAug8LBfmJ2TIxbQxnfvsOS
+X-Gm-Message-State: AOJu0YyIusk4Bwzup+/gWYkV8q4Bz4cTHvldwXJhtq1AS2KVbCHNYCOy
+	JcngbQVfUji64uPmj/8ER3pjjuFm2q8Qf9CVH2anCi7CcfZ8lUQK7KRWntPUa8QfHJY+S8f2spE
+	Ouynb2LX0QQxdApEuVY2QAXveV0JDFPi4agImSzOiwRcCAXfwZO3LMjE=
+X-Google-Smtp-Source: AGHT+IF7QyGQ0xCvHt8AkBxfvj8CQW8ltH8uSHctPuqZV3eCEXXtjchifDfUzLV819WqaFCCzSoRSIVR71AXYzbJTHGO0yUWEznq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:6c11:b0:7de:e1c6:c72b with SMTP id
+ ca18e2360f4ac-7e1b51991admr45652839f.1.1715707443527; Tue, 14 May 2024
+ 10:24:03 -0700 (PDT)
+Date: Tue, 14 May 2024 10:24:03 -0700
+In-Reply-To: <00000000000091ad3106157b63e6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b5cd8f06186d446a@google.com>
+Subject: Re: [syzbot] [bpf?] BUG: unable to handle kernel paging request in jhash
+From: syzbot <syzbot+6592955f6080eeb2160f@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	joannekoong@fb.com, john.fastabend@gmail.com, jolsa@kernel.org, kafai@fb.com, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
+	netdev@vger.kernel.org, sdf@google.com, song@kernel.org, 
+	songliubraving@fb.com, syzkaller-bugs@googlegroups.com, yhs@fb.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 14 2024 at 21:19, Jinjie Ruan wrote:
-> +static inline void irq_chip_do_common_parent(void (*chip_action)(struct irq_data *),
-> +					     struct irq_data *data)
-> +{
-> +	data = data->parent_data;
-> +	chip_action(data);
-> +}
+syzbot has bisected this issue to:
 
->  void irq_chip_eoi_parent(struct irq_data *data)
->  {
-> -	data = data->parent_data;
-> -	data->chip->irq_eoi(data);
-> +	irq_chip_do_common_parent(data->chip->irq_eoi, data);
->  }
->  EXPORT_SYMBOL_GPL(irq_chip_eoi_parent);
+commit 9330986c03006ab1d33d243b7cfe598a7a3c1baa
+Author: Joanne Koong <joannekoong@fb.com>
+Date:   Wed Oct 27 23:45:00 2021 +0000
 
-How is this equivalent?
+    bpf: Add bloom filter map implementation
 
-The original code does:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13412248980000
+start commit:   f99c5f563c17 Merge tag 'nf-24-03-21' of git://git.kernel.o..
+git tree:       net
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10c12248980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17412248980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6fb1be60a193d440
+dashboard link: https://syzkaller.appspot.com/bug?extid=6592955f6080eeb2160f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=134c0cad180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11faf09d180000
 
-    data = data->parent_data;
-    data->chip->irq_eoi(data);
+Reported-by: syzbot+6592955f6080eeb2160f@syzkaller.appspotmail.com
+Fixes: 9330986c0300 ("bpf: Add bloom filter map implementation")
 
-which is equivalent to:
-
-    data->parent_data->chip->irq_eoi(data->parent_data);
-
-while your change resolves to:
-
-    data->chip->irq_eoi(data->parent_data);
-
-Seriously?
-
-I'm starting to get tired of your flood of half baken 'cleanup' patches.
-
-Thanks,
-
-        tglx
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
