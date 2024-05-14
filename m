@@ -1,151 +1,214 @@
-Return-Path: <linux-kernel+bounces-179266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FEF48C5E2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:44:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BC28C5E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:47:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EC31C20FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:44:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48736282329
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D082D182CA7;
-	Tue, 14 May 2024 23:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E481A182CA9;
+	Tue, 14 May 2024 23:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQYFAMtV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fEqx0/Ld"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F8F1E491;
-	Tue, 14 May 2024 23:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEB81E491;
+	Tue, 14 May 2024 23:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715730248; cv=none; b=Cxh5RS5kIgH2SQD+WdBQWX7hB0D1Ya1VSz94vt86C3DkMfiGY/IOAfCbl94hc3SOlZhd8e2DyH9H4f6Qruom6y8nt/gEHVlxHbogsKpKDXY+rGQW8Ry+Sfo2W2uyDw4aYdI4ommjdMsCMX8hzrK9tIFKnuS0xQqWJ1A/np3RKNY=
+	t=1715730447; cv=none; b=JgG5IZ4svv61c2hDDwq4FsTPp0S4jmk8DwsShHWXQuZ3cN6RGxqQde25V6s8dwG1Id+2r1ij8hSQQD4m+r1NAqHfRsaRJFrlKoHjIk42fdghxHyR3dRWnMlSHudZ1UH/7qOtUc3vtl7qm71L2K33j6gBWNG5ROILI0LimzLxb10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715730248; c=relaxed/simple;
-	bh=zaif6LgrwelbYbMvOV0avkZGQgzBBS+ZGgSOPvFv5Go=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=mE32Eg5Km5y6AaPAxYRjY2PeQF+X+BGlnVffy8jE9MRdz4NqmlRhJyMoO2rvXG2kRsDC02lvrxSyWA9nxFA3eKS7rte7CswZZcZUkLhJSjTsZ6ybh4WPdFghZc0snsDyKU8VoqwWCH1plPzqLPT5OjtMcwI8RlWoPVk/cdSEA1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQYFAMtV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C09C32781;
-	Tue, 14 May 2024 23:44:04 +0000 (UTC)
+	s=arc-20240116; t=1715730447; c=relaxed/simple;
+	bh=o4JgtoyEfkU/Yd1SUDt14xVTJSlfqvyOqiOw5VQG7/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdoFuJoTSdGBJ4tABYYFyLTwKtXcFsy59uwgreSnFx00S70DPvDW24Bq5wgIrIsnzhOOLfkSN8dSV4f8Y5YnWDirgtiGWTdn3Jr4Z1XRYUhouPS0hhhlaDh8jYKxfne+Tu/Z/6EcKJYkEYhiDpcxYIiGDIWNHdUTRCNXx8KGBps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fEqx0/Ld; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F3DC2BD10;
+	Tue, 14 May 2024 23:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715730247;
-	bh=zaif6LgrwelbYbMvOV0avkZGQgzBBS+ZGgSOPvFv5Go=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=kQYFAMtVoFBQcgm7IkENwgGBRxVdWKIhGeFSGFl6UKu7wczxZE1jxhzMqIyHL19TM
-	 i/OWOc1hNF+hDC/o/V55qJYX3Qffab3Wd4RzgX/gTKKyJ362r1fALXVduScAKMOgkA
-	 CU8V3Xpi/irPUnfOQJPqEZ26qzosvmC8WCYGKANNKFa3zjevIYi2BqBMosI39BShME
-	 vfy38t9sV3aW3EMTKwwh188eVhghphvzDEqdJ/h2uqzWvSjphVhmBxMkjX9twe9J4I
-	 bzM/M1a+9dxX4mS4SmvJAFAlv2Oc4/l1wdiMqZ3wo6qj/CRkBJYX15RixOJgzPVCFv
-	 eTw/uW5Ln7AEA==
+	s=k20201202; t=1715730446;
+	bh=o4JgtoyEfkU/Yd1SUDt14xVTJSlfqvyOqiOw5VQG7/0=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=fEqx0/Ld3CgEOSgmJ7Z6qkwX8v/vX6lnyWZSCIIzlxyXFWuljqPLYD6qhFEAhPw1D
+	 Lb8veeJshWrPcMZhGi7y++JT0PJiHHGwHL0WpxXht1onot6zQhqfKZhbItKiN+Ztyx
+	 oXnKJeN3kFfWHr5P1Cionpx7K0YA1ODVUJVPVDfIVMvYtPvqvpe+9YUlDVpn4PSiSa
+	 SsZaB4WPE6++/usvGoe/bOk6iM6XYlXn7dmsxupmypl4QjqURd9b3M1cMIH/vI9OLA
+	 7Bz3FZxx1ly1+qv0tzlPg43i3COuwbWnvB9v3yehxEelsUa0vBzKCYEV3V3VvJmnuZ
+	 GeZ7/XwTuNw9w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id B82F0CE0481; Tue, 14 May 2024 16:47:20 -0700 (PDT)
+Date: Tue, 14 May 2024 16:47:20 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, Breno Leitao <leitao@debian.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	"open list:BLOCK LAYER" <linux-block@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] block: Annotate a racy read in blk_do_io_stat()
+Message-ID: <dd251dba-0a63-4b57-a05b-bfa02615fae5@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240510141921.883231-1-leitao@debian.org>
+ <ef8c5f6d-17e3-4504-8560-b970912b9eae@acm.org>
+ <de92101c-f9c4-4af4-95f4-19a6f59b636f@paulmck-laptop>
+ <d037f37a-4722-4a1d-a282-63355a97a1a1@acm.org>
+ <c83d9c25-b839-4e31-8dd4-85f3cb938653@paulmck-laptop>
+ <4d230bac-bdb0-4a01-8006-e95156965aa8@acm.org>
+ <447ad732-3ff8-40bf-bd82-f7be66899cee@paulmck-laptop>
+ <ca7c2ef0-7e21-4fb3-ac6b-3dae652a7a0e@acm.org>
+ <59ec96c2-52ce-4da1-92c3-9fe38053cd3d@paulmck-laptop>
+ <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 May 2024 02:44:03 +0300
-Message-Id: <D19RM0OV7YUW.1ZEI72XQUREMQ@kernel.org>
-Cc: <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH 2/2] KEYS: implement derived keys
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Ignat Korchagin"
- <ignat@cloudflare.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <20240503221634.44274-3-ignat@cloudflare.com>
- <D19QW70177QG.2YC9XL0FT7VME@kernel.org>
-In-Reply-To: <D19QW70177QG.2YC9XL0FT7VME@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMj9r1V6Z63fcJxrFC1v4i2vUCEhm1HT77ikxhx0Rghdw@mail.gmail.com>
 
-On Wed May 15, 2024 at 2:10 AM EEST, Jarkko Sakkinen wrote:
-> On Sat May 4, 2024 at 1:16 AM EEST, Ignat Korchagin wrote:
-> > Derived keys are similar to user keys, but their payload is derived fro=
-m the
-> > primary TPM seed and some metadata of the requesting process. This way =
-every
->
-> What is exactly "some metadata"?
->
-> > application can get a unique secret/key, which is cryptographically bou=
-nd to
->
-> What is "cryptographically bound". Please go straight to the point and
-> cut out *all* white paper'ish phrases. We do not need it and will make
-> painful to backtrack this commit once in the mainline.
->
-> > the TPM without the need to provide the key material externally (unlike=
- trusted
-> > keys). Also, the whole key derivation process is deterministic, so as l=
-ong as
->
-> Why trusted keys is inside braces. It is not important for the point
-> you are trying to make here?
->
-> > the TPM is available, applications can always recover their keys, which=
- may
-> > allow for easier key management on stateless systems.
->
-> Please drop "stateless system" unless you provide a rigid definition
-> what it is. I have no idea what you mean by it. Probably not that
-> important, right?
->
+On Mon, May 13, 2024 at 10:13:49AM +0200, Marco Elver wrote:
+> On Sat, 11 May 2024 at 02:41, Paul E. McKenney <paulmck@kernel.org> wrote:
+> [...]
+> > ------------------------------------------------------------------------
 > >
-> > In this implementation the following factors will be used as a key deri=
-vation
-> > factor:
-> >   * requested key length
-> >   * requesting process effective user id
-> >   * either the application executable path or the application integrity
-> >     metadata (if available)
->
-> NAK for path for any possible key derivation. They are racy and
-> and ambiguous.
->
-> This should have been in the beginning instead of "some data". What
-> other implementations exist. For me "this implementation" implies
-> that this one competing alternative to multiple implementations
-> of the same thing.
->
-> I do not like this science/white paper style at all. Just express
-> short, open code everything right at start when you need and cut
-> extras like "stateless system" unless you can provide exact, sound
-> and unambiguous definiton of it.
->
-> Just want to underline how this really needs a complete rewrite with
-> clear and concise explanation :-) This won't ever work.
->
+> > commit 930cb5f711443d8044e88080ee21b0a5edda33bd
+> > Author: Paul E. McKenney <paulmck@kernel.org>
+> > Date:   Fri May 10 15:36:57 2024 -0700
 > >
-> > Key length is used so requests for keys with different sizes result in =
-keys
-> > with different cryptographic material.
->
-> What is "key length"? Please refer the exact attribute.
->
+> >     kcsan: Add example to data_race() kerneldoc header
 > >
-> > User id is mixed, so different users get different keys even when execu=
-ting the
->
-> First of all it would be more clear to just s/User id/UID/
->
-> And make obvious whether we are talking about ruid or euid and how
-> this interacts with GIDs.
->
-> I'll look at the code change next round if the commit message starts
-> making any sense.
+> >     Although the data_race() kerneldoc header accurately states what it does,
+> >     some of the implications and usage patterns are non-obvious.  Therefore,
+> >     add a brief locking example and also state how to have KCSAN ignore
+> >     accesses while also preventing the compiler from folding, spindling,
+> >     or otherwise mutilating the access.
+> >
+> >     [ paulmck: Apply Bart Van Assche feedback. ]
+> >
+> >     Reported-by: Bart Van Assche <bvanassche@acm.org>
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> >     Cc: Marco Elver <elver@google.com>
+> >     Cc: Breno Leitao <leitao@debian.org>
+> >     Cc: Jens Axboe <axboe@kernel.dk>
+> >
+> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> > index c00cc6c0878a1..9249768ec7a26 100644
+> > --- a/include/linux/compiler.h
+> > +++ b/include/linux/compiler.h
+> > @@ -194,9 +194,17 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+> >   * This data_race() macro is useful for situations in which data races
+> >   * should be forgiven.  One example is diagnostic code that accesses
+> >   * shared variables but is not a part of the core synchronization design.
+> > + * For example, if accesses to a given variable are protected by a lock,
+> > + * except for diagnostic code, then the accesses under the lock should
+> > + * be plain C-language accesses and those in the diagnostic code should
+> > + * use data_race().  This way, KCSAN will complain if buggy lockless
+> > + * accesses to that variable are introduced, even if the buggy accesses
+> > + * are protected by READ_ONCE() or WRITE_ONCE().
+> >   *
+> > - * This macro *does not* affect normal code generation, but is a hint
+> > - * to tooling that data races here are to be ignored.
+> > + * This macro *does not* affect normal code generation, but is a hint to
+> > + * tooling that data races here are to be ignored.  If code generation must
+> > + * be protected *and* KCSAN should ignore the access, use both data_race()
+> 
+> "code generation must be protected" seems ambiguous, because
+> protecting code generation could mean a lot of different things to
+> different people.
+> 
+> The more precise thing would be to write that "If the access must be
+> atomic *and* KCSAN should ignore the access, use both ...".
 
-Right and neither UIDs and GIDs are applicable for key derivation for
-quite obvious reasons. So NAK for that too.
+Good point, and I took your wording, thank you.
 
-You can make them point out unlimited different identities...
+> I've also had trouble in the past referring to "miscompilation" or
+> similar, because that also entirely depends on the promised vs.
+> expected semantics: if the code in question assumes for the access to
+> be atomic, the compiler compiling the code in a way that the access is
+> no longer atomic would be a "miscompilation". Although is it still a
+> "miscompilation" if the compiler generated code according to specified
+> language semantics (say according to our own LKMM) - and that's where
+> opinions can diverge because it depends on which side we stand
+> (compiler vs. our code).
 
-BR, Jarkko
+Agreed, use of words like "miscompilation" can annoy people.  What
+word would you suggest using instead?
+
+> > + * and READ_ONCE(), for example, data_race(READ_ONCE(x)).
+> 
+> Having more documentation sounds good to me, thanks for adding!
+> 
+> This extra bit of documentation also exists in a longer form in
+> access-marking.txt, correct? I wonder how it would be possible to
+> refer to it, in case the reader wants to learn even more.
+
+Good point, especially given that I had forgotten about it.
+
+I don't have any immediate ideas for calling attention to this file,
+but would the following update be helpful?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/tools/memory-model/Documentation/access-marking.txt b/tools/memory-model/Documentation/access-marking.txt
+index 65778222183e3..690dd59b7ac59 100644
+--- a/tools/memory-model/Documentation/access-marking.txt
++++ b/tools/memory-model/Documentation/access-marking.txt
+@@ -24,6 +24,12 @@ The Linux kernel provides the following access-marking options:
+ 4.	WRITE_ONCE(), for example, "WRITE_ONCE(a, b);"
+ 	The various forms of atomic_set() also fit in here.
+ 
++5.	ASSERT_EXCLUSIVE_ACCESS() and ASSERT_EXCLUSIVE_WRITER().
++
++6.	The volatile keyword, for example, "int volatile a;"
++
++7.	__data_racy, for example "int __data_racy a;"
++
+ 
+ These may be used in combination, as shown in this admittedly improbable
+ example:
+@@ -205,6 +211,27 @@ because doing otherwise prevents KCSAN from detecting violations of your
+ code's synchronization rules.
+ 
+ 
++Use of volatile and __data_racy
++-------------------------------
++
++Adding the volatile keyword to the declaration of a variable causes both
++the compiler and KCSAN to treat all reads from that variable as if they
++were protected by READ_ONCE() and all writes to that variable as if they
++were protected by WRITE_ONCE().
++
++Adding the __data_racy type qualifier to the declaration of a variable
++causes KCSAN to treat all accesses to that variable as if they were
++enclosed by data_race().  However, __data_racy does not affect the
++compiler, though one could imagine hardened kernel builds treating the
++__data_racy type qualifier as if it was the volatile keyword.
++
++Note well that __data_racy is subject to the same pointer-declaration
++rules as is the volatile keyword.  For example:
++
++	int __data_racy *p; // Pointer to data-racy data.
++	int *__data_racy p; // Data-racy pointer to non-data-racy data.
++
++
+ ACCESS-DOCUMENTATION OPTIONS
+ ============================
+ 
+@@ -342,7 +369,7 @@ as follows:
+ 
+ Because foo is read locklessly, all accesses are marked.  The purpose
+ of the ASSERT_EXCLUSIVE_WRITER() is to allow KCSAN to check for a buggy
+-concurrent lockless write.
++concurrent write, whether marked or not.
+ 
+ 
+ Lock-Protected Writes With Heuristic Lockless Reads
 
