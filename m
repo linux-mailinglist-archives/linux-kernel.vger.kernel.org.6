@@ -1,148 +1,263 @@
-Return-Path: <linux-kernel+bounces-178348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2368C4C62
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:36:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12EF38C4C72
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130841C20AE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE320281C23
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741A8F513;
-	Tue, 14 May 2024 06:36:23 +0000 (UTC)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD75F9CC;
+	Tue, 14 May 2024 06:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NiIOfOA9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE01193;
-	Tue, 14 May 2024 06:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79FDE541
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715668583; cv=none; b=GB6uiPKjXepXUlI5w3vco2/bBKbfuwJWI64YEpPqn/42Q+jTwtdlWb9cFdPfs9b1Z7HYf3MRbBCYCFnOH8nZHyXc69PBiBy5sCsCJYduD6WY73i2JTUS9HyAnCySPu1i6lwzx8jjlvWbXY/GLx5Lh+K/G+Pa5Uhtme1LFJDixSc=
+	t=1715669436; cv=none; b=Ani2TNANA63HcR+/hnfTNoZo4hO6KM6xS119LFhPEA7N+p0Zpa3VbNzef05ge9LsoDfGDbGw5euqVzZHsh9Xic/Hr2Yfv3clVO9iulAhfxrqYsNLEXaicnZ9BP9K3Y7uQVxBOnNw53wcFAjQAkAjmnQVRLZXN05KVLitkZEAndQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715668583; c=relaxed/simple;
-	bh=EQGFT7CyM4ztbvWBFaiT0GbdvWqIdCpHOwc42jxh6SE=;
+	s=arc-20240116; t=1715669436; c=relaxed/simple;
+	bh=LWQ6jexXuSZi5ZpaP1mUHm4kpvFrGFOwvM8Vegc8zdA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TDekY6K4/+89WsrZiIE/lBwcZYCyjPYp/ZlKxFnCLCpBdqdlDhYieY+aWKYEju5i/hyPSoXaey2DDQ4wnZOhFidVmJzLsPKJDMhfRw+WSYSF76fSx4bP769Iy8oEkzmNml/REzARxLLwCLlgtR+Q2XRJhgFduBv5pfnP+dY7Pc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-792b8d98a56so495147785a.2;
-        Mon, 13 May 2024 23:36:20 -0700 (PDT)
+	 To:Cc:Content-Type; b=u4QsY2vv6wEL5dusN3eOKbY9+sjqaz2SdgT+dAhyMntWTl8L9uDuluXKPUwBMNjayrS+LWfVtvMP1/mbG+sy5FWfC4qJUnb2uxTNiRND5MRWBM59U6gWx82CfhaG6gy0vHcWashBoREjYXVts9/ieqzo2pLy3a4HmyBNvinN768=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NiIOfOA9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715669433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y4hSY1d8jq6XzfstUOW1N/hjQcvfLd42t04S3x4l0Nw=;
+	b=NiIOfOA9ozFs1v08BB4quvz4WFRQ2g3Phn31Jc8iMQ3A9hYg8HGTJXEWnYkHqW8VeJtAew
+	/TisaK3HBBJfTVXZnnSsa1kgwIPutyvYyKe850wpHEsdlbhc2GGhkdS5cP4MB+x0ph77sr
+	vCRp3YZ/hK7y5UZkbuhG1ncKL6aDY3A=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-411-hS8dYYQHP9KqI72IErITxg-1; Tue, 14 May 2024 02:39:28 -0400
+X-MC-Unique: hS8dYYQHP9KqI72IErITxg-1
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-61c6560f471so4526203a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 23:39:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715668578; x=1716273378;
+        d=1e100.net; s=20230601; t=1715668767; x=1716273567;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SyXm2XZJp7cQccvVHsZwFRorrc4lUY+2faX/WPeRScc=;
-        b=q295c7u7oo/zrKxT+3//ux1dvuOV59PSQgjizW2A2KJd/FzK6qvVF0giEV7xntF3ZN
-         FiujhApWarw7QEo80mu+7F1JIAxheB4SkBT9/sECFG6WNTYmkJHF+1c/t4XWcK7RPetU
-         t/3a0ac/64dphS/ZPrKvDuH4iDKcLCS8dE1soZ2L+Yd4IJ9eVBxQCOFW7L2RdkmNNfvD
-         QX13lnoE95dEfzdshdLclKo50YnFogYJw2txKZArSlACiDC6XaF/gajsMZo3aXY7dtN2
-         qy8A3ouS2j9l+A1zBwrznWcT4BGfpuDWz3K8VNRNzJYdSprwdE3EVmHA2dxMqjxyU26R
-         vOJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGgcRBFsDOi7MweHZKYITb93cdjWZEMahfU9t/pv+H70TbLV6adjWaLrTfGnSBEpZIoYFeA8cLB61iJQzcnW/uYCLPaBpRRJRnqk9Mn7eVOgaXdCUoGRyOuX17aKl5u8QbNf/vHEVUCu5zl+Lb7QHSOllwX2NXgeTcp62axK61Nv0LW5CjVEzErSkG+GoYy82XY1TLndz5HfAr1mzbUbBcpJ+m/Td4qBlajz63TPQmex3uRFpYAy6j3E3BO9j6W3e4i8uAKHAN69dG4g==
-X-Gm-Message-State: AOJu0Yz/f5Bu6Pia+LHOKOTrIZOLnxKABsWHAMC9uILnBoFKI6SXZiXw
-	Ri+u7ms3B6Y4q7ZCawgfzTmTXceHa1+LyEBL+yPAVeHbIuNq0KbkFflr+7oB
-X-Google-Smtp-Source: AGHT+IHb/gpZ6h4LX1YGHekIv67fi8M936g0HJZ4gbtfrHZIikaL3GtALqO6JA8TaZo3T/gO62w3lA==
-X-Received: by 2002:a05:6214:4808:b0:6a0:d4dd:cb44 with SMTP id 6a1803df08f44-6a168279065mr148851546d6.62.1715668578125;
-        Mon, 13 May 2024 23:36:18 -0700 (PDT)
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6a15f17a3d6sm50819416d6.18.2024.05.13.23.36.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 23:36:17 -0700 (PDT)
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-43e0d564136so14416611cf.0;
-        Mon, 13 May 2024 23:36:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXR5o8oqxHDe1AUaUAy5CEk3o15oXGQAU+LSbwoqhPmBBjKmLvBeN4+jNdAKe87n4eezNbfm0Ks7Jd9wIsiikNydPE9UxjuDiG0Fk95a2QA9hymVO4do9pMK0DQBm/nybDD4tPTTRTkU+vKdI8VjH7ZHhUhgnX9GcLgxxTjdSWy8AgsDtCC2iwnwoWrQdgR1qUGk8SYmh8i3hU73zS7ep15E+1QXWafSp9g8tAeI9VlCSgaeMu8omO0MnlTtgOhlhww6oy7H4Gswv4l3g==
-X-Received: by 2002:a5b:f48:0:b0:de5:567b:88f with SMTP id 3f1490d57ef6-dee4f31a205mr14563293276.10.1715668557234;
- Mon, 13 May 2024 23:35:57 -0700 (PDT)
+        bh=Y4hSY1d8jq6XzfstUOW1N/hjQcvfLd42t04S3x4l0Nw=;
+        b=wUEVCgHWcfgcy+z978z7j8jX2GemM+iLho/UzePtDbNGug4eQom/Ey2wDEu7kbReaz
+         bISsS9PeIKGheVhMvFEeImg3ZavmHhBhs9xgMMZpnlgI/U8JUFfYjBZEQVyPCb2cSi7m
+         AXYS28Tz6uNBbOi0aH8pWCUaUvgVgRmqmY5FVRRr24Qy6/vutWfyLy2EQjoUn6SLI462
+         mez8vdXXB2rORwgh/d3JPJrq5uH68U1V3CL3OVEMYgqnDJs6s3d2W8Xu4Q3kXvaV6Zt8
+         vCyZyf2q39mAAHXgKCsiOzsZiYpuPJ/lpD9i0+pogkiWe1KsRbCIEH5kpEPa5pUiffLc
+         Y53w==
+X-Forwarded-Encrypted: i=1; AJvYcCVnlEx/4SECRKCqWuPgptf8JL47XP5EmDZrTsIlXDoD87MnOMZMp4n4Uv8EH+PgbulaezKh2HVv/b/Gj/Ome9yN1M8+evz9GHN+DI8N
+X-Gm-Message-State: AOJu0Ywrt+VekxO9aXVPGAycSCnRj1p78MIYp0qFbtoxm9+q5K2Hdf6z
+	fRfwqSXQV91RH4kHxEMXDk8x5sQFvL0E8mXc0bOjsqzqvoclrMqeGaMT77GdKi9wdGu9nvPB8KK
+	2kxIvcMAC9ykuO66d3o95WMdMgVxkX3fMOhxw3pkA0Or2ZZLvucINtFR7FgI6S6ZwJIPZ+hNfB5
+	WZbW60s9hU2L1BeeSSv1bfcI+hG2RvVOdUteTB
+X-Received: by 2002:a05:6a20:96cd:b0:1af:dae8:5eaf with SMTP id adf61e73a8af0-1afde1c5d90mr10068827637.56.1715668767299;
+        Mon, 13 May 2024 23:39:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwOuzczaLAqIDR6EoehK9X+UPcltl2JP7zchAX15z0LD6Fbfw4vUmDQODVydh83/kwC9nwsiF6RLX00/wiP5g=
+X-Received: by 2002:a05:6a20:96cd:b0:1af:dae8:5eaf with SMTP id
+ adf61e73a8af0-1afde1c5d90mr10068813637.56.1715668766937; Mon, 13 May 2024
+ 23:39:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-7-26c5f2dc1181@nxp.com> <CAMuHMdUD=1rpns_mLF2rMM-x5EnOK7TExaJxoJVkbXjVz1H8uQ@mail.gmail.com>
- <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
-In-Reply-To: <CACRpkdaUecnwvHFdtGkuM80SObvXpXZkWGYoUMgnNHcvObYF0g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 14 May 2024 08:35:21 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWCD+k8=iX8+tcK76DU_m9quR8BV+K68K73SygJzCz5VA@mail.gmail.com>
-Message-ID: <CAMuHMdWCD+k8=iX8+tcK76DU_m9quR8BV+K68K73SygJzCz5VA@mail.gmail.com>
-Subject: Re: [PATCH v2 07/20] pinctrl: renesas: Use scope based of_node_put() cleanups
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
+ <20240509011900.2694291-2-yukuai1@huaweicloud.com> <CALTww2_2UG49wxNZv1Ay7u9X-2SoV31ca-=2K8uWHH9nRT2Apw@mail.gmail.com>
+ <e71bec08-036b-9dc1-ca12-a187b2aff528@huaweicloud.com>
+In-Reply-To: <e71bec08-036b-9dc1-ca12-a187b2aff528@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 14 May 2024 14:39:15 +0800
+Message-ID: <CALTww2-z_YXTfgxxuTH1Qb_dp46sORiG=iD4S=Lh7_RZYqd8yA@mail.gmail.com>
+Subject: Re: [PATCH md-6.10 1/9] md: rearrange recovery_flage
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org, 
+	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com, 
+	"yukuai (C)" <yukuai3@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
-
-On Mon, May 13, 2024 at 10:51=E2=80=AFPM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
-> On Mon, May 13, 2024 at 1:59=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
-68k.org> wrote:
-> > On Sat, May 4, 2024 at 3:14=E2=80=AFPM Peng Fan (OSS) <peng.fan@oss.nxp=
-com> wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Use scope based of_node_put() cleanup to simplify code.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> >
-> > Thanks for your patch!
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue, May 14, 2024 at 2:16=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
 >
-> Does this go into the Renesas patch stack?
+> Hi,
 >
-> I think the patch stands fine without the rest of the series.
+> =E5=9C=A8 2024/05/14 13:51, Xiao Ni =E5=86=99=E9=81=93:
+> > On Mon, May 13, 2024 at 9:57=E2=80=AFAM Yu Kuai <yukuai1@huaweicloud.co=
+m> wrote:
+> >>
+> >> From: Yu Kuai <yukuai3@huawei.com>
+> >>
+> >> Currently there are lots of flags and the names are confusing, since
+> >> there are two main types of flags, sync thread runnng status and sync
+> >> thread action, rearrange and update comment to improve code readabilit=
+y,
+> >> there are no functional changes.
+> >>
+> >> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> >> ---
+> >>   drivers/md/md.h | 52 ++++++++++++++++++++++++++++++++++++-----------=
+--
+> >>   1 file changed, 38 insertions(+), 14 deletions(-)
+> >>
+> >> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> >> index 029dd0491a36..2a1cb7b889e5 100644
+> >> --- a/drivers/md/md.h
+> >> +++ b/drivers/md/md.h
+> >> @@ -551,22 +551,46 @@ struct mddev {
+> >>   };
+> >>
+> >>   enum recovery_flags {
+> >> +       /* flags for sync thread running status */
+> >> +
+> >> +       /*
+> >> +        * set when one of sync action is set and new sync thread need=
+ to be
+> >> +        * registered, or just add/remove spares from conf.
+> >> +        */
+> >> +       MD_RECOVERY_NEEDED,
+> >> +       /* sync thread is running, or about to be started */
+> >> +       MD_RECOVERY_RUNNING,
+> >> +       /* sync thread needs to be aborted for some reason */
+> >> +       MD_RECOVERY_INTR,
+> >> +       /* sync thread is done and is waiting to be unregistered */
+> >> +       MD_RECOVERY_DONE,
+> >> +       /* running sync thread must abort immediately, and not restart=
+ */
+> >> +       MD_RECOVERY_FROZEN,
+> >> +       /* waiting for pers->start() to finish */
+> >> +       MD_RECOVERY_WAIT,
+> >> +       /* interrupted because io-error */
+> >> +       MD_RECOVERY_ERROR,
+> >> +
+> >> +       /* flags determines sync action */
+> >> +
+> >> +       /* if just this flag is set, action is resync. */
+> >> +       MD_RECOVERY_SYNC,
+> >> +       /*
+> >> +        * paired with MD_RECOVERY_SYNC, if MD_RECOVERY_CHECK is not s=
+et,
+> >> +        * action is repair, means user requested resync.
+> >> +        */
+> >> +       MD_RECOVERY_REQUESTED,
+> >>          /*
+> >> -        * If neither SYNC or RESHAPE are set, then it is a recovery.
+> >> +        * paired with MD_RECOVERY_SYNC and MD_RECOVERY_REQUESTED, act=
+ion is
+> >> +        * check.
+> >
+> > Hi Kuai
+> >
+> > I did a test as follows:
+> >
+> > echo check > /sys/block/md0/md/sync_action
+> > I added some logs in md_do_sync to check these bits. It only prints
+> > MD_RECOVERY_SYNC and MD_RECOVERY_CHECK without MD_RECOVERY_SYNC. So
+> > the comment is not right?
+>
+> There is a typo, I'm not sure what you mean yet. Can you show how you
+> add your logs? I think comment is right.
 
-Sure, I can do that.
-From your positive response to v1, I thought that perhaps you just
-wanted to take the full series yourself?
+Sorry. I added logs in the wrong places. You're right. Data check has
+the three bits. So, the comments are right.
 
-Gr{oetje,eeting}s,
 
-                        Geert
+>
+>  From action_store:
+>
+>                  if (cmd_match(page, "check"))
+>                          set_bit(MD_RECOVERY_CHECK, &mddev->recovery);
+>                  else if (!cmd_match(page, "repair"))
+>                          return -EINVAL;
+>                  clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+>                  set_bit(MD_RECOVERY_REQUESTED, &mddev->recovery);
+>                  set_bit(MD_RECOVERY_SYNC, &mddev->recovery);
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-org
+Yes.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Best Regards
+Xiao
+
+>
+>  From md_do_sync:
+>
+>          if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
+>                  if (test_bit(MD_RECOVERY_CHECK, &mddev->recovery)) {
+>                          desc =3D "data-check";
+>                          action =3D "check";
+>                  } else if (test_bit(MD_RECOVERY_REQUESTED,
+> &mddev->recovery)) {
+>                          desc =3D "requested-resync";
+>                          action =3D "repair";
+>                  } else
+>                          desc =3D "resync";
+>
+> Thanks,
+> Kuai
+>
+> >
+> > Best Regards
+> > Xiao
+> >
+> >>           */
+> >> -       MD_RECOVERY_RUNNING,    /* a thread is running, or about to be=
+ started */
+> >> -       MD_RECOVERY_SYNC,       /* actually doing a resync, not a reco=
+very */
+> >> -       MD_RECOVERY_RECOVER,    /* doing recovery, or need to try it. =
+*/
+> >> -       MD_RECOVERY_INTR,       /* resync needs to be aborted for some=
+ reason */
+> >> -       MD_RECOVERY_DONE,       /* thread is done and is waiting to be=
+ reaped */
+> >> -       MD_RECOVERY_NEEDED,     /* we might need to start a resync/rec=
+over */
+> >> -       MD_RECOVERY_REQUESTED,  /* user-space has requested a sync (us=
+ed with SYNC) */
+> >> -       MD_RECOVERY_CHECK,      /* user-space request for check-only, =
+no repair */
+> >> -       MD_RECOVERY_RESHAPE,    /* A reshape is happening */
+> >> -       MD_RECOVERY_FROZEN,     /* User request to abort, and not rest=
+art, any action */
+> >> -       MD_RECOVERY_ERROR,      /* sync-action interrupted because io-=
+error */
+> >> -       MD_RECOVERY_WAIT,       /* waiting for pers->start() to finish=
+ */
+> >> -       MD_RESYNCING_REMOTE,    /* remote node is running resync threa=
+d */
+> >> +       MD_RECOVERY_CHECK,
+> >> +       /* recovery, or need to try it */
+> >> +       MD_RECOVERY_RECOVER,
+> >> +       /* reshape */
+> >> +       MD_RECOVERY_RESHAPE,
+> >> +       /* remote node is running resync thread */
+> >> +       MD_RESYNCING_REMOTE,
+> >>   };
+> >>
+> >>   enum md_ro_state {
+> >> --
+> >> 2.39.2
+> >>
+> >
+> >
+> > .
+> >
+>
+>
+
 
