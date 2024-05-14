@@ -1,199 +1,108 @@
-Return-Path: <linux-kernel+bounces-179089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDF9C8C5B7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98EC8C5B77
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B47E1F22957
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:07:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA641F21AB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA254181B82;
-	Tue, 14 May 2024 19:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B05181312;
+	Tue, 14 May 2024 19:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Smi8YikN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/N/kmuT"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B6C18131F;
-	Tue, 14 May 2024 19:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497551E504;
+	Tue, 14 May 2024 19:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715713664; cv=none; b=mJp4qktOYM162uGYeTFCNwA1guaGBqQ1LPBvJiftGPMxB5nSj3wCDlWHfg6oe8qlzWTuazAMkLNxm6CcAXnFDLQ89KQERfWg4p0jQ7665PXjNN2L9IEZmczS/eXkt222RY9ReyHtjvTolQFC1htJQmqPX0F/cfrdbP+y7KIyjR0=
+	t=1715713638; cv=none; b=JkYoPwB6UXKJCgRjvJ+Ogj1j3B/0V9x05mpgoxm/oB0gI+n3Xs8MRTP+HzsLDnOYbqvtd1m9JL2eYJAc74HLWMvs49oJgUIJpFAy5VDYGivp13Sf58ZGSSH3OJ9yyx8246Oiosxzb6290oK5KMfuyaLUga2YJHceHf0g3Onmgp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715713664; c=relaxed/simple;
-	bh=JP2NL+OQgH8JB2VUuZFDhCeUgviMydioNwQSSoDCcxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BYQpvwj17xA/QYzvA149PaI02hm61blvXpLT+YAVPTM9WWSQ7iXQkJ7PPhjS2EJP+rNtUzHQyZzIXcG6K9piq14Y1JFPEtUwYA5dSH2x+1o32U2SYOxZLW4A1PPSNOGbCReaiUndf5sldG/+uPNW7xGLj0YHAYgluWxZlUZMeHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Smi8YikN; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715713659; x=1747249659;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JP2NL+OQgH8JB2VUuZFDhCeUgviMydioNwQSSoDCcxA=;
-  b=Smi8YikNJq0AMgQsiNQsyfnoNzXwCGxZHbf5PdusIazwTA1XoIr/kYJh
-   zom5nVoHA+i80Nv622ggreBtq2FVoecKbIs1+LHbNaP6wyKuJPhwwijtz
-   MwfflpWRZ8cTweMvuQvA6kdAQ0U+6x2BT3MJTbvh9vtpnjW8t+PA89s69
-   2lZ8M1MJeGCFx4FVAazVl+h+tDy3ijDzhzLC/Q1QNrG5YWZdQhjs/DEbD
-   RUtx6LTO84Yl+Ir+bw/jNacvGTSkpCO8VpxkEXZWS8I+Md9TUMAhFBr0K
-   uAR6N5F44Z2yn1z8nKg04N8fKOWBe7gOml+OMXzpc5bgBnEiLXXatw+nB
-   w==;
-X-CSE-ConnectionGUID: IPLipkrYTryzBMOO6o6RlQ==
-X-CSE-MsgGUID: /80yWVAiSMuQqjroMt68Yg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="37096483"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="37096483"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 12:07:38 -0700
-X-CSE-ConnectionGUID: v/HURVohSb6rsi44mWmO6g==
-X-CSE-MsgGUID: Is4Z9s7xQS2dKhgVzSWqbQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="68243746"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 14 May 2024 12:07:37 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5876065C; Tue, 14 May 2024 22:07:35 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Vamshi Gajjela <vamshigajjela@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: [PATCH v1 2/2] serial: 8250_dw: Revert "Move definitions to the shared header"
-Date: Tue, 14 May 2024 22:05:54 +0300
-Message-ID: <20240514190730.2787071-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240514190730.2787071-1-andriy.shevchenko@linux.intel.com>
-References: <20240514190730.2787071-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1715713638; c=relaxed/simple;
+	bh=OApaGFXz5UPRbxRAK2WugT1zcfKuYHqKyoDQHaiRW2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G952zDfdZ+rW94JF6tDimsLaSTCvlT8K5WV8tGWBAo2pCBNAj4LYH7Af49StHTaHyk50xZZksc7So7Yjhhttcqsp4G1MfshRdG31yiIgjCnQY6pnOwjOjb5ad/LdJPPTPLHHSvIPssEwcjgKL4Ptlreo0lEL0fcTARA6qjYQy7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/N/kmuT; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-420104e5390so33479355e9.1;
+        Tue, 14 May 2024 12:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715713635; x=1716318435; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9C37JUp/tUGIFgetRggFquZfpmUvmzoZNupVvwtMS08=;
+        b=Q/N/kmuTZCHgi/AzRU/HHNeAPBc73sBkQszEFkjhWsPaXcAQZtSUiSt2GqYajxwrax
+         PsjOXbBEgcNHkIDRBy4yrPDHDOTp+mfdBCP65HKDkzbIKBH0OWkhQKia8wWbbsEcF8vZ
+         TYT0ci6CumsQ4dAN44dIgmhL6EHkp1d7AfXRXYhPU3sb/rAdLesE/IKqxEfpJCMGu137
+         cEZpSA03B0MuOiGq3iqMhjT1ud++ougy8BUJbm/hPxnlnCpFME7WK69Ke3b/hzsiF1Ud
+         1LVm2mFrIBDiaVZIrsICxry2uwPpQLPnpR1nhLDfZVKevtDiBRlvvMG7CtdhaH7e/m1c
+         YTFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715713635; x=1716318435;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9C37JUp/tUGIFgetRggFquZfpmUvmzoZNupVvwtMS08=;
+        b=cKBgztb3d8Af7N9B4zE0BWH4lDkPCX4bn0d19ibbwveDEiElolKfMtv8YShrFrn6ba
+         n6DytZN7ZBfavbhTuMJVGLbw1NoNH15FywWWAQNgg2D9iAy9pSf6jpPL/H3JBzEdGN0i
+         cjbpi/r2v2VS4QnWc4/6fS64nLj8hBSXfim2XJFgC8mt6+gmkJG+xqIgMzdRd9iUc9Pp
+         mA5/bphNei2/MtHM104A+ijay8vEInaUOH19VMWmOyATGgzeESa4GvJx/NdqSepZu182
+         23ol1XRlRJKDBcKXZuMzRzwVyUr9FicOD/LtlsOijVBrFgMyt+Y0cT8hfR5Nx8qAs+es
+         YK3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTY8+QVSLU3mKDmK9uVIfm7UI9rE5mGZjMfh/aWoq07WUY/G5OxEDO8CfDlwYr7d6pkz05Ex1RHq/+LJEHXvpU9EJ2p2JllSZv1GV15XywuNeHsdX9BcNrTjJ73sNDrYBHjmrCxFlDitbshqnJKdw59NafG26EkNmH8PQUoclf1g==
+X-Gm-Message-State: AOJu0YwkY3IjNruG6Ti2JS3+sseQXa5ZSJxHPrDzBd75zEpyTAN2E7c0
+	bfHGI4aUoiWl4GCfCLGnezSYnVna4XyYAHPCXgnSoHpeoeaI5c2b
+X-Google-Smtp-Source: AGHT+IFieuF5kHfIADXEBCRvrZT7p5csOnvYzKzG9wCrW48WSlAkIZN/CXeoYGWzQdt30DQQpKv1KQ==
+X-Received: by 2002:a05:600c:4f04:b0:420:1508:f0ae with SMTP id 5b1f17b1804b1-4201508f2edmr70658025e9.10.1715713635448;
+        Tue, 14 May 2024 12:07:15 -0700 (PDT)
+Received: from [172.27.21.185] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4201088fe8csm123126825e9.32.2024.05.14.12.07.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 12:07:15 -0700 (PDT)
+Message-ID: <d57d65b5-6ecf-48b3-a6de-4b1e2f5c643b@gmail.com>
+Date: Tue, 14 May 2024 22:07:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 3/3] net/mlx4: support per-queue statistics
+ via netlink
+To: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, nalramli@fastly.com,
+ Tariq Toukan <tariqt@nvidia.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ "open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>
+References: <20240513172909.473066-1-jdamato@fastly.com>
+ <20240513172909.473066-4-jdamato@fastly.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20240513172909.473066-4-jdamato@fastly.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This reverts commit d9666dfb314e1ffd6eb9c3c4243fe3e094c047a7.
 
-The container of the struct dw8250_port_data is private to the actual
-driver. In particular, 8250_lpss and 8250_dw use different data types
-that are assigned to the UART port private_data. Hence, it must not
-be used outside the specific driver.
 
-Fix the mistake made in the past by moving the respective definitions
-to the specific driver.
+On 13/05/2024 20:29, Joe Damato wrote:
+> Make mlx4 compatible with the newly added netlink queue stats API.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
+> ---
+>   .../net/ethernet/mellanox/mlx4/en_netdev.c    | 73 +++++++++++++++++++
+>   1 file changed, 73 insertions(+)
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/tty/serial/8250/8250_dw.c    | 27 +++++++++++++++++++++++
- drivers/tty/serial/8250/8250_dwlib.h | 32 ----------------------------
- 2 files changed, 27 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-index 94d680e4b535..a58890fd53e2 100644
---- a/drivers/tty/serial/8250/8250_dw.c
-+++ b/drivers/tty/serial/8250/8250_dw.c
-@@ -57,6 +57,33 @@
- #define DW_UART_QUIRK_APMC0D08		BIT(4)
- #define DW_UART_QUIRK_CPR_VALUE		BIT(5)
- 
-+struct dw8250_platform_data {
-+	u8 usr_reg;
-+	u32 cpr_value;
-+	unsigned int quirks;
-+};
-+
-+struct dw8250_data {
-+	struct dw8250_port_data	data;
-+	const struct dw8250_platform_data *pdata;
-+
-+	int			msr_mask_on;
-+	int			msr_mask_off;
-+	struct clk		*clk;
-+	struct clk		*pclk;
-+	struct notifier_block	clk_notifier;
-+	struct work_struct	clk_work;
-+	struct reset_control	*rst;
-+
-+	unsigned int		skip_autocfg:1;
-+	unsigned int		uart_16550_compatible:1;
-+};
-+
-+static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
-+{
-+	return container_of(data, struct dw8250_data, data);
-+}
-+
- static inline struct dw8250_data *clk_to_dw8250_data(struct notifier_block *nb)
- {
- 	return container_of(nb, struct dw8250_data, clk_notifier);
-diff --git a/drivers/tty/serial/8250/8250_dwlib.h b/drivers/tty/serial/8250/8250_dwlib.h
-index 794a9014cdac..7dd2a8e7b780 100644
---- a/drivers/tty/serial/8250/8250_dwlib.h
-+++ b/drivers/tty/serial/8250/8250_dwlib.h
-@@ -2,15 +2,10 @@
- /* Synopsys DesignWare 8250 library header file. */
- 
- #include <linux/io.h>
--#include <linux/notifier.h>
- #include <linux/types.h>
--#include <linux/workqueue.h>
- 
- #include "8250.h"
- 
--struct clk;
--struct reset_control;
--
- struct dw8250_port_data {
- 	/* Port properties */
- 	int			line;
-@@ -26,36 +21,9 @@ struct dw8250_port_data {
- 	bool			hw_rs485_support;
- };
- 
--struct dw8250_platform_data {
--	u8 usr_reg;
--	u32 cpr_value;
--	unsigned int quirks;
--};
--
--struct dw8250_data {
--	struct dw8250_port_data	data;
--	const struct dw8250_platform_data *pdata;
--
--	int			msr_mask_on;
--	int			msr_mask_off;
--	struct clk		*clk;
--	struct clk		*pclk;
--	struct notifier_block	clk_notifier;
--	struct work_struct	clk_work;
--	struct reset_control	*rst;
--
--	unsigned int		skip_autocfg:1;
--	unsigned int		uart_16550_compatible:1;
--};
--
- void dw8250_do_set_termios(struct uart_port *p, struct ktermios *termios, const struct ktermios *old);
- void dw8250_setup_port(struct uart_port *p);
- 
--static inline struct dw8250_data *to_dw8250_data(struct dw8250_port_data *data)
--{
--	return container_of(data, struct dw8250_data, data);
--}
--
- static inline u32 dw8250_readl_ext(struct uart_port *p, int offset)
- {
- 	if (p->iotype == UPIO_MEM32BE)
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
