@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-178299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960278C4B99
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260678C4B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B952E1C21921
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFDBF2863DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015AA1170F;
-	Tue, 14 May 2024 04:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBC417BD9;
+	Tue, 14 May 2024 04:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVLkeYMb"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="toZTLfXA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D7D1879;
-	Tue, 14 May 2024 04:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE8E125C9;
+	Tue, 14 May 2024 04:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715659951; cv=none; b=VNnxIynTeSxbySG1/iURtKdGdOGFcoShODKh64QSmLLvDNFV7vnFcnkC3ooTVlAH8Dgcy4jbMMMJJowpaTORd/v9XTsSUHlHQY9zQtRHHR7epBZb3WKMGDRdHTRr9L1VdIKoba4XuliCv+VOqACjOTz67iLD75jgXyITMfTeA90=
+	t=1715659957; cv=none; b=VGBo+wM86GlGMM/+wZilQxame+bsAU0pYiAXQQ5DTcoq05Qxp25EZQ20X45omqG4HGxcG0M56qmCsTJFmknpFvD+s1OjBgwsbwjuyvHp2S2eRb0Fnk9QyTodnPDu4MN5E2LTzsdnSVjEYF26UzIq+10w//3Ys9HHTxbJTGSTEF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715659951; c=relaxed/simple;
-	bh=BSNSHZATQNEiFHEX3bIx9iNu5D407arnYgHWBJhIj60=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TknwuW5c4vWSa45eXxsR4d/2hyfWmAyP5rhXZVn7nUWCQ+ifJ0ynRLdnjZIrjZAzPM+FmbuGXPABb6fpx1Mtll3xnAYpGL58gzDOMitu9zTc4bPFy9GvPvKHw6sXrS3tOfUV7QTCFaRXV1xkvFUka5zKNnY0zGd8AzvJ9ww9Zq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kVLkeYMb; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-23f0d4353abso3347151fac.3;
-        Mon, 13 May 2024 21:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715659949; x=1716264749; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRPEnu/ON9I5NtOR1yelgmcp8gSLZwJcxlTGStCRKXM=;
-        b=kVLkeYMbsYmGoft1R4gmmwVW9J6kfhnSe0JqcjEAHfrzwsHYXBMjeSKq8xHCMPUHkH
-         /4uEsdB+vbbeRmgctURFJFGSW2s4jbh9cl279TkZca8y/vu+02t+mbYXzX8WGllCQHwB
-         +JI3AjfRWVF6j2VU+uPx94vWDiYesRuUXSgo6Ll72B8GOsV5yEmbW0w0oNtPo4KGTazN
-         kvK5P1vdkiLe2PzqNcAUuVnPF0sNMXgCwAdCgvRorilAOqcVwunfGcd2FGTYAqcI576g
-         KnlTSbsCVD621NnNH2WRA3iXBjgtGkkxCiT0qTuB7ufAUbuqMhSvOXgBO9AiFOd/m4yI
-         qp2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715659949; x=1716264749;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZRPEnu/ON9I5NtOR1yelgmcp8gSLZwJcxlTGStCRKXM=;
-        b=vdpzzItOhCNasZwKGWupgpWCBndknoQGFDWUF4wlc54cisth7RsxseE7vu+X0HKxEU
-         E98iMBaWFKiQsAZ0JqjKd1moxzgLDHEjL2kUkDFP16L+DAC9enqRdCQAD5f6dEtoo8k2
-         /YggYweEH/4xj0QfvRnEdTn533x9F8TV/jJXnzu5NgR9xDGot/tZ5ooqBJdug5OABtqg
-         pa0os4JUXhDS36m43lJPboCofsHxJU1OG2zdfSJkykHXqjELgdnyNCQ/PRCs25HHhapt
-         ttr6RssJzgbs61244GVpAaEAoVYMElo2Ah561xPYOP47LnP6ClrSuGqJH6Uikdp/otsZ
-         FRxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXlLL+/03avgiEJXmO1572RsrNbxHYtTELzj6mct70Me2ifVYaFxOe70WzHscB+wtGeipY0b0vsmjdmmCuxnhTxH20wds+n2F955rfhoEU5JOMq6R6p8v9ww3mFP5ZhwXMP1b2byud/d8F84/YfLAH/9UY1HLCEH5b5+g4TC+2ZhMrKzg==
-X-Gm-Message-State: AOJu0YyNepug+yWYP15WkUeXSqLpAAnOhnVcE3XOXaVTrjbz1G7L84Vl
-	zpA9eYVhFQmb5AVKC0Q2uvGvBSfc1w0mVlyZIu3D5xizpJIq+eqt
-X-Google-Smtp-Source: AGHT+IEaATE5fgre3nk/hAl6vNSctnTSjsa3d5EP84Nl98mLa0dFA7LL59NvJKmES1RtbuI0BmpVog==
-X-Received: by 2002:a05:6871:e70b:b0:240:851c:e6f1 with SMTP id 586e51a60fabf-24172f87de2mr14243879fac.59.1715659948858;
-        Mon, 13 May 2024 21:12:28 -0700 (PDT)
-Received: from Kuiu.. ([140.110.223.222])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2ae0f1csm8383633b3a.99.2024.05.13.21.12.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 21:12:28 -0700 (PDT)
-From: Huichun Feng <foxhoundsk.tw@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Kent Gibson <warthog618@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: foxhoundsk.tw@gmail.com
-Subject: [PATCH] docs: gpio: prefer pread(2) for interrupt reading
-Date: Tue, 14 May 2024 12:12:23 +0800
-Message-Id: <20240514041223.800811-1-foxhoundsk.tw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715659957; c=relaxed/simple;
+	bh=JoJPDkTeCqIcTVhjT1yZt9m3PNNkIf+4rXg/Qn4WFoM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ODJZkW/ZQmY1v51WA0+b77aEKXjiDI3irxnvNreA0O6egsHeCH65qDfqmCrc5UbWe8GpDX1x1FV/t+DtWcFUUI7jMa48r3Q580RnA84VX5VsIatSsL2FDb2N53znjpSwmrQJsCV7/RRs3c8hwGtnQYoRqCJ4ZSm5hBelGonav2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=toZTLfXA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715659950;
+	bh=O2Wi0l4W7XBeWEz7+/LJud3VO/YTi+yE6nhAkyVPKfY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=toZTLfXA9GzuHJ64Yi9O/lmMUEzo2j0nI3wsXay64JIx/05hYZVnET4Vd6oAlYVxQ
+	 6b6fO/hkb8p8dMZTOmxdgwEjPPJMjBJ7pXyXAt+vAQBnQkS6FcsnrMFm73I+Bpqh1B
+	 3oQFfeZ4aF/tMwUU3wsqlxQaEpvKUgfRYUFK78MmjAF9zAewBJ6F2eit9mosorzM9k
+	 i3r/twHVFmp0TzLfY9tWfYgQOzuOmRoVZ//a6LZYvB90n7R1WZA+ET+Y0wNbavEjKv
+	 5SqkN8DlzXhwF94wTGFsjnQ0aBC8g1iYwYkxpblENLHJJZW4yly+1nZGHrOhP2tYLz
+	 Qf4ztZ1o8sqpg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VdjcZ0Fhdz4wc1;
+	Tue, 14 May 2024 14:12:30 +1000 (AEST)
+Date: Tue, 14 May 2024 14:12:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Rob Herring <robh@kernel.org>, Dave Airlie <airlied@redhat.com>
+Cc: DRI <dri-devel@lists.freedesktop.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>
+Subject: linux-next: manual merge of the devicetree tree with the drm tree
+Message-ID: <20240514141229.5553dc13@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/+Vg_FtOuGI05fZTwkGy3VsR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-In legacy sysfs GPIO, when using poll(2) on the sysfs GPIO value for
-state change awaiting, a subsequent read(2) is required for consuming
-the event, which the doc recommends the use of lseek(2) or
-close-and-reopen to reset the file offset afterwards.
+--Sig_/+Vg_FtOuGI05fZTwkGy3VsR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The recommendations however, require at least 2 syscalls to consume
-the event. Gladly, use of pread(2) require only 1 syscall for the
-consumption. Let's advertise this usage by prioritizing its placement.
+Hi all,
 
-Signed-off-by: Huichun Feng <foxhoundsk.tw@gmail.com>
----
- Documentation/driver-api/gpio/legacy.rst   | 6 ++++--
- Documentation/userspace-api/gpio/sysfs.rst | 7 ++++---
- 2 files changed, 8 insertions(+), 5 deletions(-)
+Today's linux-next merge of the devicetree tree got a conflict in:
 
-diff --git a/Documentation/driver-api/gpio/legacy.rst b/Documentation/driver-api/gpio/legacy.rst
-index b6505914791c..c1a083444b0c 100644
---- a/Documentation/driver-api/gpio/legacy.rst
-+++ b/Documentation/driver-api/gpio/legacy.rst
-@@ -648,8 +648,10 @@ and have the following read/write attributes:
- 		poll(2) will return whenever the interrupt was triggered. If
- 		you use poll(2), set the events POLLPRI. If you use select(2),
- 		set the file descriptor in exceptfds. After poll(2) returns,
--		either lseek(2) to the beginning of the sysfs file and read the
--		new value or close the file and re-open it to read the value.
-+		use pread(2) to read the value at offset zero. Alternatively,
-+		either lseek(2) to the beginning of the sysfs file and read
-+		the new value or close the file and re-open it to read the
-+		value.
- 
- 	"edge" ... reads as either "none", "rising", "falling", or
- 		"both". Write these strings to select the signal edge(s)
-diff --git a/Documentation/userspace-api/gpio/sysfs.rst b/Documentation/userspace-api/gpio/sysfs.rst
-index 116921048b18..bd64896de91a 100644
---- a/Documentation/userspace-api/gpio/sysfs.rst
-+++ b/Documentation/userspace-api/gpio/sysfs.rst
-@@ -97,9 +97,10 @@ and have the following read/write attributes:
- 		poll(2) will return whenever the interrupt was triggered. If
- 		you use poll(2), set the events POLLPRI and POLLERR. If you
- 		use select(2), set the file descriptor in exceptfds. After
--		poll(2) returns, either lseek(2) to the beginning of the sysfs
--		file and read the new value or close the file and re-open it
--		to read the value.
-+		poll(2) returns, use pread(2) to read the value at offset
-+		zero. Alternatively, either lseek(2) to the beginning of the
-+		sysfs file and read the new value or close the file and
-+		re-open it to read the value.
- 
- 	"edge" ...
- 		reads as either "none", "rising", "falling", or
--- 
-2.34.1
+  Documentation/devicetree/bindings/display/panel/novatek,nt36523.yaml
 
+between commit:
+
+  90ed42ceda76 ("dt-bindings: display: novatek, nt36523: define ports")
+
+from the drm tree and commit:
+
+  9fa6bcf23e44 ("dt-bindings: display: panel: constrain 'reg' in DSI panels=
+")
+
+from the devicetree tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc Documentation/devicetree/bindings/display/panel/novatek,nt36523.y=
+aml
+index bbeea8cfa5fb,0447ee724947..000000000000
+--- a/Documentation/devicetree/bindings/display/panel/novatek,nt36523.yaml
++++ b/Documentation/devicetree/bindings/display/panel/novatek,nt36523.yaml
+@@@ -34,7 -40,7 +37,6 @@@ properties
+    vddio-supply:
+      description: regulator that supplies the I/O voltage
+ =20
+-   reg: true
+ -  ports: true
+    rotation: true
+    backlight: true
+ =20
+
+--Sig_/+Vg_FtOuGI05fZTwkGy3VsR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZC5K0ACgkQAVBC80lX
+0Gx/vQf+PTRLh2MO6zTQJ0J7Q6T+fQrXS+4yZPrVmkvktXL2Hxfl8tBSANSzezrR
+wvGkAY/HEhRxB8UrZ8B02Yc4BhTbY3OPH2HroGi4cvb0gyDK1mGKKJyaVj8nDYqU
+Vw8eJdA0GtUKWH6ljmjORY7EkPvIycjnRvoqi8tZzPj4wQYG63/AOcWZx0r3vGPG
+U+rFPZB32/DorRQKKlqG4wnL7t82UDJ95761OPB6lCquDh9Nb7//Kp/GuvLIXrv0
+ks3JIzk/qwrIjef5FBnPTOoo1isV6Q5Y2cG3QV1bHTzLzMUIrJNicdgzvMOnDwrz
+SiOrdA+2j1MQX2Iwihrkrbmkk5oJIg==
+=zFgC
+-----END PGP SIGNATURE-----
+
+--Sig_/+Vg_FtOuGI05fZTwkGy3VsR--
 
