@@ -1,131 +1,212 @@
-Return-Path: <linux-kernel+bounces-178653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA578C55E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:15:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5018C55E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:16:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D936C1F23045
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:15:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFEC41C227BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C1841A87;
-	Tue, 14 May 2024 12:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14A943AB4;
+	Tue, 14 May 2024 12:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNPebhYH"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="KRT/ov4r"
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB57320F;
-	Tue, 14 May 2024 12:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0895C3F9D2
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688922; cv=none; b=gT6g0aALXk3ttd7tHG/bUOYy5gs/xfiTrB3mWMvqy5wIr0dCEeBd689oZLdLRdXpH3wSOg4GYl+9/dr5MK4oCar3oGBKTQS4ReikAnuNCJg6pFVY5ol7oGNGZdZfYl+gP/GcQQKD1ul0IovRXyKpG1d0NyBe6HadWzV8p9cKZh4=
+	t=1715688962; cv=none; b=uJ3A4JcFl4QgkeZ6LNRBMPL/KAcwPgyUY3/eetGBNNtwEtP46OpWDhKFjZpQQmIsGyhBFMydRATMguIpq7LSUg+KCCvm/7WpX63FPRkMnDO/hUsW9nRt0Plt+njUJYeO1SjQhyVU5sZG0qTiVHW8Tt9EkJeaDyP/wfRyAcUh8xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688922; c=relaxed/simple;
-	bh=C8AbzcTH0UDOHtZozDO2s82ZaO9jrv9srhBKUr1ss0o=;
+	s=arc-20240116; t=1715688962; c=relaxed/simple;
+	bh=KcsaRXgxovc8ui3ySSOrB8S+YDkJ4qNfVcefwZBV3F4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mp+QrAQn6+JGpVM0N6WiBRnMisaCWXRk8ASAKwQ5JKVfUlnZ2Lvuj8SRajI5AxUkKBEpE2+5qHB+HzM4Zy6j8MqFpC0yR3UcEuRFlBezyK8rVErlvqcClcdFVE3vftCNnKvFfeQAH/lHkQgpvk4wLooJT/36OHiu2HrMF0YnX0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNPebhYH; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1eca195a7c8so45209445ad.2;
-        Tue, 14 May 2024 05:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715688920; x=1716293720; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pskd4OyVYfOv6TtD0JP21Spo2bkD19tl3Fnn6qpniO0=;
-        b=BNPebhYHx4NpL7w/Coz0w61gjSCfuMaabxWrsV7QbKv48vnQ2+EbcQJ1jPsS50M9Mh
-         0wA0s41utSAq/aV+ks2jkuSMB01c3nmMPJ5f8swBsw+h++vqUoorGUY7sgd2hP7XF15x
-         tDp/CH7PGJC8O6CYptJ8vhx+Ff3rfqN2EG2JN4yBNUwpw8O6DYDiCAuKpB+/KAULNwnh
-         DzAWsUHpwrQ7CCsqEg/BrOTBUHZWeD2d6mt2Nf3dQ3DHH6pOlxPZXCvyn0hHpMEP2hDg
-         lgK5GG/E1jCMCvhyQvWJ9gRzHRnBpPx4D9xIU8/gWkhNXe/N3gjbRxyjS7ryDwWjIOUm
-         lQUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715688920; x=1716293720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pskd4OyVYfOv6TtD0JP21Spo2bkD19tl3Fnn6qpniO0=;
-        b=hOnnnXcT7HcwHE13yAA+8pKNxeSSu/lA5uzYrJCNu/vP6j1AscL4eR5ItTednSiwVe
-         M1ckN07dKPLocSoloKLCOLO9RDI2djwxy6zrTQd4TPWkZeqpQGt/heYMUYmCnjzO/Np4
-         /UQZ3H2rXyEFwdSgAU8AtqYAqLXiJvW1WG6SsbTBuvqcA1R1dJMr58UpHgkljKHTpC9h
-         jDMkmHVdkrbkhze+SHZPnHEShX2cn7RpzyeJr7wsxWt+NTTvxCyK6fA6zyNdlmHg7VXl
-         oo2q5knC1mctkwaJOS0+m4sovgDI5zTGp8Jd+eOQyu8utcepXWC6xEx6II89drMQ8zSR
-         vZIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgHomR8eKStZ0ZiyGL8DSor4j5NJWr8XBzTKIbBOzE3ugwCIiJ30bfHiV+eCmcFu5d263AKUep4C88B9965Hi2Xq/fOHlWnwXhwA+kI7+w1ICIrlncrJ2J8loTpF/rgXDLxOK9eX72FQ==
-X-Gm-Message-State: AOJu0Yz8beFayqD4a3RiCXIxbDAoJ18PvLuSnFNACa8CY7BMylac9ZZX
-	H9q8vhVe0kAVw+USW8Y+mRUmle7ovmJbDEjU/aw+uhDlQCWe/t/A
-X-Google-Smtp-Source: AGHT+IH4mZIj1+A3RtNyc5REPvnbWn8cl+CBwJqHJcC5O4EVt74huk85AhWJipxoDmtWtR8hvEqGBg==
-X-Received: by 2002:a17:902:6ac1:b0:1e2:7dc7:477 with SMTP id d9443c01a7336-1ef440583dbmr106394935ad.57.1715688920056;
-        Tue, 14 May 2024 05:15:20 -0700 (PDT)
-Received: from rigel (60-241-107-82.static.tpgi.com.au. [60.241.107.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c138fa2sm96107365ad.261.2024.05.14.05.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 05:15:19 -0700 (PDT)
-Date: Tue, 14 May 2024 20:15:15 +0800
-From: Kent Gibson <warthog618@gmail.com>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linus.walleij@linaro.org
-Subject: Re: [PATCH] gpiolib: cdev: fix uninitialised kfifo
-Message-ID: <20240514121515.GA72688@rigel>
-References: <20240510065342.36191-1-warthog618@gmail.com>
- <171534996897.34114.8159265536879918834.b4-ty@linaro.org>
- <20240514033656.GA24922@rigel>
- <CACMJSetivWMXNu9dJyMeJTfYSsQaez_7kSHce-5NJL6=72Rd0g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvZisms264h++Z2gFeVqZsNdD/AY7O3BhvXl5XhFjXEHXqqYJ11OF5NjPpZUx2LwTN6L42bo4+t8Su+RMrERhmn3XsADerStXhR7ANlVBWv8Z8JBfNuGS8H5x9D5Z129YsgT49RJ+J80Ia+0sjB+p5KXKBVQO1geTjSysY97iIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=KRT/ov4r; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4VdwLH3dTwzN03;
+	Tue, 14 May 2024 14:15:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1715688951;
+	bh=6cLb3jtwfOqoRKJtvZPYLahhceLlkxg39lBtYJITgWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KRT/ov4rWMykef9xMhIwSZhHfcSSN6GQwPRDurzMGPbliQsS0VO6zSHgJ9Wbadi3l
+	 OGIHTWGzorzDqVpD81oSg4u9D970KQGA1j7nSMc8pi7COPs75RE7gvSRn175mFw02a
+	 0K4edTjsnRc2MHxsDF/mZpD6rApUOvuun3U3rT6U=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4VdwLD3B6RzB4h;
+	Tue, 14 May 2024 14:15:48 +0200 (CEST)
+Date: Tue, 14 May 2024 14:15:46 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Sean Christopherson <seanjc@google.com>, 
+	Nicolas Saenz Julienne <nsaenz@amazon.com>
+Cc: Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Wanpeng Li <wanpengli@tencent.com>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Alexander Graf <graf@amazon.com>, 
+	Angelina Vu <angelinavu@linux.microsoft.com>, Anna Trikalinou <atrikalinou@microsoft.com>, 
+	Chao Peng <chao.p.peng@linux.intel.com>, Forrest Yuan Yu <yuanyu@google.com>, 
+	James Gowans <jgowans@amazon.com>, James Morris <jamorris@linux.microsoft.com>, 
+	John Andersen <john.s.andersen@intel.com>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Marian Rotariu <marian.c.rotariu@gmail.com>, Mihai =?utf-8?B?RG9uyJt1?= <mdontu@bitdefender.com>, 
+	=?utf-8?B?TmljdciZb3IgQ8OuyJt1?= <nicu.citu@icloud.com>, Thara Gopinath <tgopinath@microsoft.com>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>, 
+	Yu Zhang <yu.c.zhang@linux.intel.com>, =?utf-8?Q?=C8=98tefan_=C8=98icleru?= <ssicleru@bitdefender.com>, 
+	dev@lists.cloudhypervisor.org, kvm@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org, 
+	x86@kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [RFC PATCH v3 3/5] KVM: x86: Add notifications for Heki policy
+ configuration and violation
+Message-ID: <20240514.OoPohLaejai6@digikod.net>
+References: <20240503131910.307630-1-mic@digikod.net>
+ <20240503131910.307630-4-mic@digikod.net>
+ <ZjTuqV-AxQQRWwUW@google.com>
+ <20240506.ohwe7eewu0oB@digikod.net>
+ <ZjmFPZd5q_hEBdBz@google.com>
+ <20240507.ieghomae0UoC@digikod.net>
+ <ZjpTxt-Bxia3bRwB@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CACMJSetivWMXNu9dJyMeJTfYSsQaez_7kSHce-5NJL6=72Rd0g@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZjpTxt-Bxia3bRwB@google.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, May 14, 2024 at 08:56:13AM +0200, Bartosz Golaszewski wrote:
-> On Tue, 14 May 2024 at 05:37, Kent Gibson <warthog618@gmail.com> wrote:
-> >
-> > On Fri, May 10, 2024 at 04:06:16PM +0200, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > >
-> > >
-> > > On Fri, 10 May 2024 14:53:42 +0800, Kent Gibson wrote:
-> > > > If a line is requested with debounce, and that results in debouncing
-> > > > in software, and the line is subsequently reconfigured to enable edge
-> > > > detection then the allocation of the kfifo to contain edge events is
-> > > > overlooked.  This results in events being written to and read from an
-> > > > unitialised kfifo.  Read events are returned to userspace.
-> > > >
-> > > > Initialise the kfifo in the case where the software debounce is
-> > > > already active.
-> > > >
-> > > > [...]
-> > >
-> > > Applied, thanks!
-> > >
-> > > [1/1] gpiolib: cdev: fix uninitialised kfifo
-> > >       commit: 3c1625fe5a2e0d68cd7b68156f02c1b5de09a161
-> > >
-> >
-> > I've got a patch series to tidy this up and catch any similar errors
-> > earlier going forward.
-> > It is of course based on this patch, but that isn't in gpio/for-next yet.
-> > How should I proceed?
-> >
-> > Cheers,
-> > Kent.
->
-> Pull in current master into gpio/for-next, apply your series, make
-> sure it works and then wait until v6.10-rc1 is tagged because I won't
-> be picking up anything during merge window.
->
+On Tue, May 07, 2024 at 09:16:06AM -0700, Sean Christopherson wrote:
+> On Tue, May 07, 2024, Mickaël Salaün wrote:
+> > > Actually, potential bad/crazy idea.  Why does the _host_ need to define policy?
+> > > Linux already knows what assets it wants to (un)protect and when.  What's missing
+> > > is a way for the guest kernel to effectively deprivilege and re-authenticate
+> > > itself as needed.  We've been tossing around the idea of paired VMs+vCPUs to
+> > > support VTLs and SEV's VMPLs, what if we usurped/piggybacked those ideas, with a
+> > > bit of pKVM mixed in?
+> > > 
+> > > Borrowing VTL terminology, where VTL0 is the least privileged, userspace launches
+> > > the VM at VTL0.  At some point, the guest triggers the deprivileging sequence and
+> > > userspace creates VTL1.  Userpace also provides a way for VTL0 restrict access to
+> > > its memory, e.g. to effectively make the page tables for the kernel's direct map
+> > > writable only from VTL1, to make kernel text RO (or XO), etc.  And VTL0 could then
+> > > also completely remove its access to code that changes CR0/CR4.
+> > > 
+> > > It would obviously require a _lot_ more upfront work, e.g. to isolate the kernel
+> > > text that modifies CR0/CR4 so that it can be removed from VTL0, but that should
+> > > be doable with annotations, e.g. tag relevant functions with __magic or whatever,
+> > > throw them in a dedicated section, and then free/protect the section(s) at the
+> > > appropriate time.
+> > > 
+> > > KVM would likely need to provide the ability to switch VTLs (or whatever they get
+> > > called), and host userspace would need to provide a decent amount of the backend
+> > > mechanisms and "core" policies, e.g. to manage VTL0 memory, teardown (turn off?)
+> > > VTL1 on kexec(), etc.  But everything else could live in the guest kernel itself.
+> > > E.g. to have CR pinning play nice with kexec(), toss the relevant kexec() code into
+> > > VTL1.  That way VTL1 can verify the kexec() target and tear itself down before
+> > > jumping into the new kernel. 
+> > > 
+> > > This is very off the cuff and have-wavy, e.g. I don't have much of an idea what
+> > > it would take to harden kernel text patching, but keeping the policy in the guest
+> > > seems like it'd make everything more tractable than trying to define an ABI
+> > > between Linux and a VMM that is rich and flexible enough to support all the
+> > > fancy things Linux does (and will do in the future).
+> > 
+> > Yes, we agree that the guest needs to manage its own policy.  That's why
+> > we implemented Heki for KVM this way, but without VTLs because KVM
+> > doesn't support them.
+> > 
+> > To sum up, is the VTL approach the only one that would be acceptable for
+> > KVM?  
+> 
+> Heh, that's not a question you want to be asking.  You're effectively asking me
+> to make an authorative, "final" decision on a topic which I am only passingly
+> familiar with.
+> 
+> But since you asked it... :-)  Probably?
+> 
+> I see a lot of advantages to a VTL/VSM-like approach:
+> 
+>  1. Provides Linux-as-a guest the flexibility it needs to meaningfully advance
+>     its security, with the least amount of policy built into the guest/host ABI.
+> 
+>  2. Largely decouples guest policy from the host, i.e. should allow the guest to
+>     evolve/update it's policy without needing to coordinate changes with the host.
+> 
+>  3. The KVM implementation can be generic enough to be reusable for other features.
+> 
+>  4. Other groups are already working on VTL-like support in KVM, e.g. for VSM
+>     itself, and potentially for VMPL/SVSM support.
+> 
+> IMO, #2 is a *huge* selling point.  Not having to coordinate changes across
+> multiple code bases and/or organizations and/or maintainers is a big win for
+> velocity, long term maintenance, and probably the very viability of HEKI.
 
-Will do.
+Agree, this is our goal.
 
-Thanks,
-Kent.
+> 
+> Providing the guest with the tools to define and implement its own policy means
+> end users don't have to way for some third party, e.g. CSPs, to deploy the
+> accompanying host-side changes, because there are no host-side changes.
+> 
+> And encapsulating everything in the guest drastically reduces the friction with
+> changes in the kernel that interact with hardening, both from a technical and a
+> social perspective.  I.e. giving the kernel (near) complete control over its
+> destiny minimizes the number of moving parts, and will be far, far easier to sell
+> to maintainers.  I would expect maintainers to react much more favorably to being
+> handed tools to harden the kernel, as opposed to being presented a set of APIs
+> that can be used to make the kernel compliant with _someone else's_ vision of
+> what kernel hardening should look like.
+> 
+> E.g. imagine a new feature comes along that requires overriding CR0/CR4 pinning
+> in a way that doesn't fit into existing policy.  If the VMM is involved in
+> defining/enforcing the CR pinning policy, then supporting said new feature would
+> require new guest/host ABI and an updated host VMM in order to make the new
+> feature compatible with HEKI.  Inevitably, even if everything goes smoothly from
+> an upstreaming perspective, that will result in guests that have to choose between
+> HEKI and new feature X, because there is zero chance that all hosts that run Linux
+> as a guest will be updated in advance of new feature X being deployed.
+
+Sure. We need to find a generic-enough KVM interface to be able to
+restrict a wide range of virtualization/hardware mechanisms (to not rely
+too much on KVM changes) and delegate most of enforcement/emulation to
+VTL1.  In short, policy definition owned by VTL0/guest, and policy
+enforcement shared between KVM (coarse grained) and VTL1 (fine grained).
+
+> 
+> And if/when things don't go smoothly, odds are very good that kernel maintainers
+> will eventually tire of having to coordinate and negotiate with QEMU and other
+> VMMs, and will become resistant to continuing to support/extend HEKI.
+
+Yes, that was our concern too and another reason why we choose to let
+the guest handle its own security policy.
+
+> 
+> > If yes, that would indeed require a *lot* of work for something we're not
+> > sure will be accepted later on.
+> 
+> Yes and no.  The AWS folks are pursuing VSM support in KVM+QEMU, and SVSM support
+> is trending toward the paired VM+vCPU model.  IMO, it's entirely feasible to
+> design KVM support such that much of the development load can be shared between
+> the projects.  And having 2+ use cases for a feature (set) makes it _much_ more
+> likely that the feature(s) will be accepted.
+> 
+> And similar to what Paolo said regarding HEKI not having a complete story, I
+> don't see a clear line of sight for landing host-defined policy enforcement, as
+> there are many open, non-trivial questions that need answers. I.e. upstreaming
+> HEKI in its current form is also far from a done deal, and isn't guaranteed to
+> be substantially less work when all is said and done.
+
+I'm not sure to understand why "Heki not having a complete story".  The
+goal is the same as the current kernel self-protection mechanisms.
 
