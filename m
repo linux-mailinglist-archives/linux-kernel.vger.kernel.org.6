@@ -1,131 +1,119 @@
-Return-Path: <linux-kernel+bounces-178659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195568C560C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41638C560D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64841F21ADF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCD3281D03
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F19A5025A;
-	Tue, 14 May 2024 12:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CAC5CDF0;
+	Tue, 14 May 2024 12:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qI0k5HvL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qTpZKrBA"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908542B9B3;
-	Tue, 14 May 2024 12:29:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8335E433CE
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715689789; cv=none; b=qmSbLz98mbI30Cj5nwGMxcygP7ZdkVvcY5zj3Ieo13KqFZy9U/Iby1loruuzUC31IIwacoZdO9h2opDwB3mSqaaOmtC3wNcSvfnFRjWFzDHXJALYHrHSJM57OBk20RX/zjwm65409do09wfon54M/1TN1vgIZ/VrFm1AwwoiC+Y=
+	t=1715689965; cv=none; b=V5YzelkuSCTdelbHlj5CJpgHcnpuMsjynp4pkgodcHLoK1hhILsk6wOHYNLTD0e/6EZkoBmvYysxcANU94bm3qvePd0KM/5oo5s90sw0o9008PiONW2RGhmJRHYdao70HVh6rnLGgQsUOSpLMGOIgqOrHq6RYK4lzuUEwrEm69E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715689789; c=relaxed/simple;
-	bh=6cPrpE0EOmonSqbDlomNuzEI4XBK54BEpKNy1lBWCU4=;
+	s=arc-20240116; t=1715689965; c=relaxed/simple;
+	bh=I9pm5ltuRP7CtyZZABgcYsllXH5JG+kEGVHyLkkT8pU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DqZ11bsga68dRKjbz145A6Wzr/7wygGggkXjldUO1XDHUf+oa1VEw81gRXmNJerF5S/yXk34jm8PslSmw8jMzYvEEEct4zZVckokuw5YFBWHOeW3piZnkCZxIJ+DfW4C/KpWzXmXIuJLihq1/G2+IHhJGxHLt8QYgUEqbGo0NUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qI0k5HvL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06663C2BD10;
-	Tue, 14 May 2024 12:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715689789;
-	bh=6cPrpE0EOmonSqbDlomNuzEI4XBK54BEpKNy1lBWCU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qI0k5HvLfn1CfWJxRrdpit474Aa9aUxoOG7lKfDGJZ4mH86QzX3tmCOKcHdYhEspa
-	 Z81olAP9T5jKFCeYEubMWE6uWxP31811HsJnrqjSwJF9thfFSeATGhHwi4ckomsIch
-	 tO3lrlIV8++649cRA9gyRmBnhHTOunHMMw3OQLCy8EJFoPwXUqRwN3+xSorBEBpYl7
-	 vQD++G3Tkyx5/MrdedtUejyEoqkgfIVtYjOjefsyId/95tPIFGH2TDeK2jb9FjjF7S
-	 aqF84E3Z/R2vVis3YdJjmzv9+FOU/I6aVtD8FSdttZSNrNy3FP/GgTYISNilqIw26E
-	 iAKRAmiemJkLw==
-Date: Tue, 14 May 2024 13:29:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 1/3] mailbox: Make BCM2835_MBOX default to ARCH_BCM2835
-Message-ID: <20240514-amiable-unequal-d4133956c80c@spud>
-References: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
- <20240513235234.1474619-2-florian.fainelli@broadcom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8/1Dv5a50QdG4gKnVN6vXzPgipeUD1O472zlujcYLAiDyg8SF/kW/MqppGNcJ6/HmzhGFRqGNztMfLh0hHJSzVDBavrDIPwwv9Z4zk0EDJc4EeAfcYuKs2Gxv74NPHQZtGJgXTShnNnYC9UfzRLk3YZGJd7NJihUTikJW6Slis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qTpZKrBA; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=h+Th6xmT1MpeIKC5d/s5VDGWqlNBXzjBRZNOOPTDpeU=; b=qT
+	pZKrBAljR+2Owa6RKVtxjKAzMYjwXytVqkeIpY5BkVuJUEl59DrqAKLOmbEo6oXlDDkHo9syWsygS
+	6l9ksWDUvF10kPaiXjKi+p96bJnJIaV/HACVPSUgi1CBMWyz5olSWpgC/8dutZi1QL7XrUPpaBs3h
+	mPVd9BbSLRFnS4g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s6rKi-00FO2N-E8; Tue, 14 May 2024 14:32:40 +0200
+Date: Tue, 14 May 2024 14:32:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Stephen Langstaff <stephenlangstaff1@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>, linux-kernel@vger.kernel.org,
+	OlteanV@gmail.com
+Subject: Re: drivers/net/dsa/dsa_loop_bdinfo.c build problems
+Message-ID: <c8c01e53-0a45-4319-88ff-bfb0caba150c@lunn.ch>
+References: <7efffaa0-6330-4b01-b3d2-63eb063cbbb0@gmail.com>
+ <CAHx5RXD8qFmbEytrPcd40Pj0VRo7uOvZjucrMj6Xxqw73YyS1Q@mail.gmail.com>
+ <212a9464-d52b-4730-95b9-5a0aebd38c91@gmail.com>
+ <CAHx5RXCWW5M-eW5v65bAkQWZemsU2NTvDv3jA9_XKz=+YP56Qg@mail.gmail.com>
+ <688e54ec-3b29-4e3b-a2c3-f2c83b9c97b7@lunn.ch>
+ <CAHx5RXBFdzsgKXR94gdZd2b=uz8PJDg4OjLPJxKtsdhcjJq3Qw@mail.gmail.com>
+ <e307a237-68e3-40c9-be31-4fe3d560ada2@lunn.ch>
+ <CAHx5RXCF0=Soz_k88RGvJFGrajaxn=mVnqpb99GAQ=b7XOcWiw@mail.gmail.com>
+ <732d8bb2-1d4f-4958-b130-0bd15a407271@gmail.com>
+ <CAHx5RXDaweFTF_Qt0GdBH4nBeMqwL4VVto7xzHBvFgFL5n=Ebg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZF82ErRhEId7DTVg"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240513235234.1474619-2-florian.fainelli@broadcom.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHx5RXDaweFTF_Qt0GdBH4nBeMqwL4VVto7xzHBvFgFL5n=Ebg@mail.gmail.com>
 
+On Tue, May 14, 2024 at 10:28:55AM +0100, Stephen Langstaff wrote:
+> On Mon, May 13, 2024 at 8:05 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > Attached is a configuration that I use on a x86-64 VM for testing that
+> > is started with:
+> 
+> That's kind of what I expect to be happening on my target, but it's not.
+> 
+> I notice that your configuration does not define CONFIG_FIXED_PHY as
+> either a module or built-in - could that explain both the fact that my
+> dsa_loop_bdinfo.c does not get compiled when using the default
+> Makefiles, and that if I force compilation to a module it does not
+> appear to create the expected lanX@eth0 interfaces?
+> 
+> I have added some printk debug lines to the dsa_loop_init and
+> dsa_loop_drv_probe functions, and only see the one from the init
+> function, which makes me suspect that something is stopping the probe
+> from happening - I assume this should happen when the dsa_loop_bdinfo
+> module is inserted?
+> 
+> root@machine:~/dsa_test# ls
+> dsa_loop.ko  dsa_loop_bdinfo.ko
+> 
+> root@machine:~/dsa_test# modprobe dsa_core
+> root@machine:~/dsa_test#
+> 
+> root@machine:~/dsa_test# insmod dsa_loop_bdinfo.ko
+> [   51.742367] dsa_loop_bdinfo_init
+> 
+> root@machine:~/dsa_test# insmod dsa_loop.ko
+> [   58.485104] dsa_loop_init
 
---ZF82ErRhEId7DTVg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This is probably an ordering problem.
 
-On Mon, May 13, 2024 at 04:52:32PM -0700, Florian Fainelli wrote:
-> This driver is depended on by CONFIG_FIRMWARE_RASPBERRYPI which provides
-> a number of essential services, including but not limited to a Linux
-> common clock framework provider. Make sure that enable
-> CONFIG_ARCH_BCM2835 does enable the corresponding mailbox driver.
->=20
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  drivers/mailbox/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 42940108a187..2b4cde562a90 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -109,6 +109,7 @@ config ALTERA_MBOX
->  config BCM2835_MBOX
->  	tristate "BCM2835 Mailbox"
->  	depends on ARCH_BCM2835
-> +	default ARCH_BCM2835
+dsa_loop_bdinfo calls mdiobus_register_board_info() with the bus_id
+"fixed-0". That call adds it to a linked list, but does nothing else.
 
-This is just "default y", since I doubt ARCH_BCM2835 can be a module?
+mdiobus_setup_mdiodev_from_board_info() is what walks the linked list
+and sees if an MDIO bus matches the ID, and if so, calls the callback
+to add a device to the bus. mdiobus_setup_mdiodev_from_board_info() is
+only called from __mdiobus_register(). So the boardinfo needs to be
+registered before the bus is registers. The other way around does not
+work.
 
-If so, patch 2 could also just be "default y" and I think patch 3 can
-have the same logic applied to it, given you're defaulting it to a
-dependency also?
+So try to making FIXED_PHY = m, and load it after dsa_loop_bdinfo.ko.
 
-Thanks,
-Conor.
-
->  	help
->  	  An implementation of the BCM2385 Mailbox.  It is used to invoke
->  	  the services of the Videocore. Say Y here if you want to use the
-> --=20
-> 2.34.1
->=20
-
---ZF82ErRhEId7DTVg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkNZNwAKCRB4tDGHoIJi
-0g9yAQCQfW/zAiGbZezyBzVcnkHGAEnFDwul79aAYPQZhc0dGAD9H+asSEG/ICHL
-HtOFDWlh1G+Pmy1k37sMldVMk4wZfAI=
-=1AwS
------END PGP SIGNATURE-----
-
---ZF82ErRhEId7DTVg--
+   Andrew
 
