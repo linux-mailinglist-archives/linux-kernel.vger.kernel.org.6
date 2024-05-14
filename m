@@ -1,135 +1,89 @@
-Return-Path: <linux-kernel+bounces-178393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418928C4CF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC8D8C4CFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA70B22143
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C721C21655
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56649376E7;
-	Tue, 14 May 2024 07:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1AC512E48;
+	Tue, 14 May 2024 07:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFnuYnPi"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHCHIdnh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094E1376E6
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205CC1171D
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671507; cv=none; b=HCPwL0+2gAvo9Av+zbwhDIohyHJu6BTAMXpX305Cw/cEeIMCf3OR9vT8uJjlntDZ/8wMeYkfSmInxX+p3jW0HYRcgPJF2luYhKA7H7GK8uvaCNREB5BuIO2vFHv0YI3lAdZVrdjx2QgCMUzAl1Hvv0ChOjOFv7X6z9cnvQZMTLc=
+	t=1715671648; cv=none; b=l6s98rFZXOOOhMX1QvB75CrNetImeNnJvQETUdm11T4TMgKZKDLbO++D1gr5nPysAkpRdurY0fBElDtOKU7CjbkLwo0LsvTyFFQsmWUhhdRVbsmrzVdE9QP6e7hgE6MhyT96toSPOEBFm4NatjhV6ag4wODDIpReduz1MFbzR6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671507; c=relaxed/simple;
-	bh=MrsK/SOAFyvJ5rW6noiqY2i2AWXHF7hXaxT2Iuly1Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QbOkW4z+/Fdz+HqajQecD5VEY0N3K2HtOy3729/pD1Fd/9byfYacLn4TLMOwKY/bqzm3iPlc3Srs8fDVXEkfupbXkSp8xuQRyvYAv4IyUx74Ygx4L7HDUBu/+xw7xXpwx29eMvrD01UvN9oaYcNE6Pka6MPg6WPcx5KfpbgRfFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VFnuYnPi; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a599a298990so1296326966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715671504; x=1716276304; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JB+Z0CRSJcLUU9yXDS+6zp2SY8ySyHlLC8dbiqLhtlQ=;
-        b=VFnuYnPijUKB5OvXDY4k+InVPo5hmPze9ahmz5tkhJUqO7fsoeww5VCnnSCFttYCwU
-         zcRnuUzTc0WaHbUp03SF28XAAbAaMvDY77hYTr8pVB2nCUfgwtZmN3hb7S0uNp0FrE4R
-         ogOw1rNBSlcUrt6HzNMJEkq1qwAANH0bZMLBpyPvJKg6NdkctCoNbx5ieROcTDHE9ZOK
-         OYbZ8tvx8YLKE/mHQ6yz4+kg/ch95kQuL7LmmsSZcuUg5VemintQU+s42IkTSIAbcZvV
-         CwBdjJrFz1/eroLQ78WGb3KhYpTLgy7vpJXolTI140gMdYwsmZKxccYLggzpmEgE/Kww
-         oKNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715671504; x=1716276304;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JB+Z0CRSJcLUU9yXDS+6zp2SY8ySyHlLC8dbiqLhtlQ=;
-        b=bziw9k9EPr7Ln1qapMPj4F5zbsOpgJdIz/4n8r9w68w4LAADKqVz9LcLlKAEIai9ob
-         Ucj9fh4ck5ZoVXi3VmJPHWwnMqjAT7RHJ1Xsd6GnVsSMfyxbuYPLt5QBnICtbkHGFiZc
-         48Xo7jiRMIpdfejUyeVwCM6LKuwBmEGuXv5MyhxDw2/3HBHwvjPK2iiODQmf1RzZiHu+
-         1TjtdZYLS8ZhU27VMpsohE1VEZ9ePuLmtU4qzF2nb6ccsA196ZhrTyq2dkzzb7fq/wCn
-         iGmvPj80iSS821Rp6OQd5dTZFqH0WShVvyt/Te0w4r+424psijz3Nhyfbp6PxvkHwr9v
-         gJzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJBnoEIo4X2qR5Zo6O0uduWsxZIRSeX2QR3uO/dCwV0R9bKr/I1dE7BryE3+ywtcP1lot6bsAHxQz1QRC120654SN2mnkvah8HYglT
-X-Gm-Message-State: AOJu0YxiUUuXmtZTE/yJnT1ikiNq7xKO1dBl0RsXG8FmiVR6o6755ENm
-	mlutdGr2VvfefxYpCX39Bhr29Lyf2vrWXfl3Swfjt2qVVp1RApBc55ToYZHFzA==
-X-Google-Smtp-Source: AGHT+IEQTQ5t33iG1QpTljAk13ZjKCJq2arLVGhz/pfUDhGt2rL8ANrYeLV7xamqA3YFh7dM+6YrzA==
-X-Received: by 2002:a17:906:ee86:b0:a59:aae5:5840 with SMTP id a640c23a62f3a-a5a2d6759e5mr1063776566b.75.1715671504270;
-        Tue, 14 May 2024 00:25:04 -0700 (PDT)
-Received: from thinkpad ([149.14.240.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d2ecsm703097166b.16.2024.05.14.00.25.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 00:25:03 -0700 (PDT)
-Date: Tue, 14 May 2024 09:25:02 +0200
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: devi priya <quic_devipriy@quicinc.com>, bhelgaas@google.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH V5 3/6] dt-bindings: PCI: qcom: Document the IPQ9574 PCIe
- controller.
-Message-ID: <20240514072502.GA2463@thinkpad>
-References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
- <20240512082858.1806694-4-quic_devipriy@quicinc.com>
- <b3199f40-0983-4185-bd0c-2e2d45d690ad@kernel.org>
+	s=arc-20240116; t=1715671648; c=relaxed/simple;
+	bh=TqhinNFjSGuaDrXWXAqhFvMXWjYHGbbwdwxYawJQ4sw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aj7pkQHiNdHquk760fT1IC+fmnFnmhFHzpFW/6XHNwrEhqeWORbinA1wcUGumzDtuYA6jiiKLi2ChKeoYYPi2LqoHYkRlAykTJrCnkOHRL6PlHdM9GjuuGM9JWjgo7Gg3zywu6PzzhOmIIYGIFlPi7gKL4KmLbo8ZJ4BMi2xi/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHCHIdnh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C02C4AF07
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715671647;
+	bh=TqhinNFjSGuaDrXWXAqhFvMXWjYHGbbwdwxYawJQ4sw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BHCHIdnhPX4RsaleVTOntHFdPgA5VCdTHvBewqlv00zzYBaUErHK5skEPpWvWHHDQ
+	 25zr4OdLD9HKBYf6j94LZaZ6NpKuaII1RjZO8aDPw1xEpvndZ++9Xar77Jp6Oew+QD
+	 abxaC00yNIjpQLOx0F185nOg0mnCAaufsT5xAnoNS1mK5xBZbTORyzNyNkg7iSwo7Q
+	 PztrHYjV6NjIDhdqecSDOb0yFOKBoU8mBtG0B7X/bGYyAzVtWmNTljUVAptBgW1FQa
+	 PuPsQ55oa0Xxep2lMzmnrqbormcxu7oyUCdNnkvmc4iVYKqC3VeKWm4/xyT03EkNCO
+	 fu0ByWbhzICHw==
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-51fdc9af005so8410713e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:27:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWu3ICZcYreh4adRSKlQtTiVrjLcU8bqZlrGzNAFEo3vISmNIa9vZcPfRaq+C2pO3rkDjEHBWnw+57UIBDnvNtZG0x2T5dVJTrip4qi
+X-Gm-Message-State: AOJu0YxnBPTamYrrzIKDwQKlLgX9Y0VH4uI6HMJzBpUSF3HXugLcmdOh
+	eoEdSNrDkjqEM/3ZidUhXhGcsp7Z8tx0PPajNO43gsIjLfdW4UsC8Av+YebpNMAxXQOLCIYfU/Y
+	pfCCRAOJ6SRDrbgsttk2cy2TkfIU=
+X-Google-Smtp-Source: AGHT+IFb2Fu6tbJ7U/OU1BNfRtkuj5gKMgvA3G7Uzj3W7z+HI4TgzIHdON4/eq8tA9A/tjX3D+TSvmuEroH6CpUQMPA=
+X-Received: by 2002:ac2:42c7:0:b0:518:9ce1:a5bb with SMTP id
+ 2adb3069b0e04-522102786bfmr8597991e87.54.1715671645978; Tue, 14 May 2024
+ 00:27:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b3199f40-0983-4185-bd0c-2e2d45d690ad@kernel.org>
+References: <ZkG4cMe1TFI5w7sc@gmail.com> <CAHk-=wgf=jwo1HZjQN7UeFw7iYPtQ_i0ri7JNOci+7Rn5-pDcg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgf=jwo1HZjQN7UeFw7iYPtQ_i0ri7JNOci+7Rn5-pDcg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 14 May 2024 09:27:14 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHm_tmBPNTvnvn3r6myeRo5x1fX3_J73UA1j4bVBo_PSg@mail.gmail.com>
+Message-ID: <CAMj1kXHm_tmBPNTvnvn3r6myeRo5x1fX3_J73UA1j4bVBo_PSg@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/boot changes for v6.10
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	"the arch/x86 maintainers" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, May 13, 2024 at 08:48:19AM +0200, Krzysztof Kozlowski wrote:
-> On 12/05/2024 10:28, devi priya wrote:
-> 
-> >  
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - qcom,pcie-ipq9574
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          minItems: 6
-> > +          maxItems: 6
-> > +        clock-names:
-> > +          items:
-> > +            - const: ahb  # AHB clock
-> > +            - const: aux  # Auxiliary clock
-> > +            - const: axi_m # AXI Master clock
-> > +            - const: axi_s # AXI Slave clock
-> > +            - const: axi_bridge # AXI bridge clock
-> > +            - const: rchng
-> 
-> That's introducing one more order of clocks... Please keep it
-> consistent. The only existing case with ahb has it at after axi_m and
-> others. Why making things everytime differently?
-> 
-> I also to propose to finally drop the obvious comments, like "AHB
-> clock". It cannot be anything else. AXI Master / slave are descriptive,
-> so should stay.
-> 
+On Tue, 14 May 2024 at 03:03, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 12 May 2024 at 23:51, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> >  - Re-introduce a bootloader quirk wrt. CR4 handling
+>
+> I've pulled this, but shouldn't the compressed boot also just stop
+> setting the G flag that it didn't understand?
+>
 
-+1 to drop the names.
+I agree. But not setting CR4 to a known value is what caused the
+regression, and that could cause other problems down the road, so
+fixing it was arguably more important.
 
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+More than happy to send another patch to clear the G bit from the page
+table entries created by the decompressor, but at this point, it
+shouldn't make a difference.
 
