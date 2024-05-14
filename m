@@ -1,158 +1,368 @@
-Return-Path: <linux-kernel+bounces-178813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FDD18C5808
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:34:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C288C580F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C720D28481D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:34:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0CC9B22B69
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7DD17EB88;
-	Tue, 14 May 2024 14:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B75117F370;
+	Tue, 14 May 2024 14:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="H435RsdL"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dad7QvBI"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B9317BB10;
-	Tue, 14 May 2024 14:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D70F17BB10;
+	Tue, 14 May 2024 14:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715697239; cv=none; b=O1g4xahHGzfDeKFN/xRu2bbUpBiOddG68h6XtH3aNTV7oRxpUPuUGUK545aCYAUAiKYTvzbjPLeXOfW+PQZvogSZhkOThidZutfxO7E/xwxhAnGkbFXtYqw0Sjd36wCD7buYLZCJSTQHzG3LtTL/P56mcLusmrjxbj/KBUgM+3Q=
+	t=1715697246; cv=none; b=o1KxjfWNaifcKRqtqowglGal/6BBfCTM6mQBObvAC/Yex1Hkm8OsOrDUKpVtmvcLQDDHjazH6E4K45lhYEWfvbP1G7RZvG6p2LcNmks/fwkud4BDl/ndydyNh6w7AyV9ZBX7Sp+U4PAsXA67fu2jTCPKW8NbpmanSIB06NrxI3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715697239; c=relaxed/simple;
-	bh=9JQ7eiNNZ64JRDb74RE//xWnDSJqnxv76sc+EBu6IA8=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R+LO2KeAI3vsTTvaHU386GjGEM4Qn+JT6M5Bv8HfY2xdXvWsMVxUFPsgTTZtu2pf2yy3j9zfcEmnVaZQ17jQCkRWAfdCuDXgzLBy+0RUeiGQuRadFIdnosalBl5eVr8XxtRiysZgNfSoklapVSZG28DvZ4pBMz7wMu1G/7X+hZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=H435RsdL; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b33d011e5dso3826319a91.0;
-        Tue, 14 May 2024 07:33:58 -0700 (PDT)
+	s=arc-20240116; t=1715697246; c=relaxed/simple;
+	bh=kvSyTsnMXDYsuCW1EWDCcml8RyRRgdNeHZOY1IEZpt0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sdcWXmO37dR3c5D3lZN2dSAlJP17nPuOdX41gOgY0AMySeaGnswOC8CMw+lk4j0XV/kQsHvuCCNPZe03JdvMW40Zz8BTsj903xadZa20kpl7oB++r+t6iA11XJdJT+JBJy9QbXyYjtb1K5t1tnIMjY9Yv8Wl3/tDDrbdYIyjsw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dad7QvBI; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a59ad344f7dso19520366b.0;
+        Tue, 14 May 2024 07:34:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1715697238; x=1716302038; darn=vger.kernel.org;
-        h=content-language:thread-index:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iq8lh+ioOW1FpEAVtAaznZbqqApHq44z6sdGCsyHXFA=;
-        b=H435RsdLm2f3aWzBHUyl3FV2C0V6TjQf3L5YKhN/k9XZBIeih7bLkBi0qeyrbkN+VR
-         JDGhTAz333DMQlhsJU5H7txZUhvWdqdLz1tijafE1ypbUQ/GB8u8t9fpO5hkqcp3o0Og
-         jed9UBPhWaLQLQFY1gvUGwNLBlXEEySdmPHvyc5yDXpoE1wwtY36anyg37klIX1pUmqi
-         58N2jx01DOAV2Y7Eue+kfWxaDJIC1QbafO1IWSEx1Nv/1bc3ume+HDQWXWqG2D/ZVHtW
-         qoblsBrHXfSbRQtQZKze5FnTCmvaH2rM5p26Gq8mIUNnz1FXbRXeQSu9E+vPPDqxT/NA
-         JqhQ==
+        d=gmail.com; s=20230601; t=1715697243; x=1716302043; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kvSyTsnMXDYsuCW1EWDCcml8RyRRgdNeHZOY1IEZpt0=;
+        b=Dad7QvBIgF74tfCij36vbWKoZY0O6RhkxEk+bARQzsQb4gjiruScPzs59dCK3vKLGm
+         Q1XSEzXgKDK3LM7ZtCD3j+sz7CJq1cqOBzEj5rueekqfIKQGVaTKhzP7EH2LGU2lgmJj
+         lCS7RdUXkHZ5yFqErWAEaR8b2EXqDsUO1ODKzyYy4//+S0Y06ec4Y3MxQG3hejoRnWbn
+         zmWfAD6mXjAuSTeP+TOYU6RdErmyUom/Ikrc01n5JoS07dLt7nszOD+Ba1n66Y2P6wXv
+         ku/6X0/T+BP/jYdf5JWOr9VNvSdHia8WYN5eGOORvcaTpb05SK21pof3P5c0AHPCsvXG
+         HhOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715697238; x=1716302038;
-        h=content-language:thread-index:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iq8lh+ioOW1FpEAVtAaznZbqqApHq44z6sdGCsyHXFA=;
-        b=dHPU0h9KrY3Lr2A0FaxL/6xhjg1189bjxohlKkv7zVn5pJRf4aVfp9zvgb6VPJ+Ap1
-         mlYSAGvmKPvVknL3XQ+DwxjAqmrGnTqWfKDce7iYvTIZ4ZOL6uU2+T88gCrmvvg7gDNi
-         1Yl/dUTZsmJCGDbgGm4GiN0qf2bcZwelZETnCdRh1HMmf42OwdCsS1QUd5CYlID6r6FG
-         aNW6IeK2wSJlZGMHOMurqgvGK1Ly65C9iUp8PzjMjRqEBdU9FUL4G4P4ICQuBXGH+8S6
-         G98qQaeIb2Yzeb8zKJTYNGetRLm/HFGNKfFfdlEGfU3fEYztnHE7GwhIywV55X21Q6zl
-         QJCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVarU/u4KasBfN3WX4GUGZR1oICgtpr4wtQKNb9oc7yix8ugXxBmjUEQEGJJqP1Zp+hQB7gj64/S/o6wgToc7P1oNSqr13bA5Q7r3Q4Im3hkXvL+LMxu4F1n9Cwp+E35gbFcovR1SL0yQnINVIykOg68L2ndi+1jMZezKVU
-X-Gm-Message-State: AOJu0YxJYrzv+P8OWfrYVuiW6Elmx0tW//7tYb1bZSNOpos7Vzw4SWml
-	1Wg2QhvwX9HyMCBk7YnHxf+pQWjeiQHZqlU1hDxfrbjfBFCEMHXG
-X-Google-Smtp-Source: AGHT+IEhEBfxmSCDQ+qNmAfruffGpVnoNO3Uk5u3oWLvN0oE6s/d9cI16dDjXJDX2fpa2A9RSrERMQ==
-X-Received: by 2002:a17:90a:7103:b0:2b6:215b:e236 with SMTP id 98e67ed59e1d1-2b6c76f97b7mr19309942a91.23.1715697237523;
-        Tue, 14 May 2024 07:33:57 -0700 (PDT)
-Received: from ArmidaleLaptop ([50.204.89.30])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b99c5eea97sm976337a91.52.2024.05.14.07.33.56
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 14 May 2024 07:33:57 -0700 (PDT)
-From: dthaler1968@googlemail.com
-X-Google-Original-From: <dthaler1968@gmail.com>
-To: "'Puranjay Mohan'" <puranjay@kernel.org>,
-	"'David Vernet'" <void@manifault.com>,
-	"'Alexei Starovoitov'" <ast@kernel.org>,
-	"'Daniel Borkmann'" <daniel@iogearbox.net>,
-	"'Andrii Nakryiko'" <andrii@kernel.org>,
-	"'Martin KaFai Lau'" <martin.lau@linux.dev>,
-	"'Eduard Zingerman'" <eddyz87@gmail.com>,
-	"'Song Liu'" <song@kernel.org>,
-	"'Yonghong Song'" <yonghong.song@linux.dev>,
-	"'John Fastabend'" <john.fastabend@gmail.com>,
-	"'KP Singh'" <kpsingh@kernel.org>,
-	"'Stanislav Fomichev'" <sdf@google.com>,
-	"'Hao Luo'" <haoluo@google.com>,
-	"'Jiri Olsa'" <jolsa@kernel.org>,
-	"'Jonathan Corbet'" <corbet@lwn.net>,
-	"'Dave Thaler'" <dthaler1968@googlemail.com>,
-	"'Will Hawkins'" <hawkinsw@obs.cr>,
-	<bpf@vger.kernel.org>,
-	<bpf@ietf.org>,
-	<linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Cc: <puranjay12@gmail.com>
-References: <20240514130303.113607-1-puranjay@kernel.org>
-In-Reply-To: <20240514130303.113607-1-puranjay@kernel.org>
-Subject: RE: [PATCH bpf] bpf, docs: Fix the description of 'src' in ALU instructions
-Date: Tue, 14 May 2024 08:33:55 -0600
-Message-ID: <019c01daa60b$c08873b0$41995b10$@gmail.com>
+        d=1e100.net; s=20230601; t=1715697243; x=1716302043;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kvSyTsnMXDYsuCW1EWDCcml8RyRRgdNeHZOY1IEZpt0=;
+        b=STmMVzYYGmV81A0yHyi5KhXpSeXTBFwSCIacm2Dlauhige2ajiseQe3SmL2eEHvNiG
+         qwD6lVwK3KVYf7omYegvE2f+yG5jsAI5LOU1KK7GH+fFtE21PQ2bfVqn+OlhPizWtFDS
+         7WYqG0QQKcFlzvANWdrfVLmmDoHipqBm9IvsORSHSooZrSzI4IxbwU+Q/5kDRl/Mpx/s
+         koZGNpSki5XIXvOGytX8Ue5ct48zU3ixOTeTqD4nBDTLAhCQvymSwJnhKo0J6q4jxM+/
+         Cjl3jrelG8uunq08OHesOflao67cayZPvfbajZC+9nJ5gIVGJMGT3z7s5VFu8oKhKcx7
+         bIVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMQ8V8YIyFRMRV7yULQt+2iJoimt5FCD1d06vq5mKmHhTf2n2fPvkNqazIJj8PV8Q+vvtr9DDyCUtRi0sEs8VLwcykg568qce1fkkY6IFJhDG7h6I5+KyXbWB2/rWI1chUj6zwKDQF6cIaJStUZPbdIyAt7q9wjC0FJNmpdcSDMWYkStMo5q3FHgN65vSlaPmJWVATl7qR
+X-Gm-Message-State: AOJu0YzTS7oH5jWDF82BIh0CiMF5tUZ7kuZCfieJ5zt21XKiaUYMHbJQ
+	UEvSOfLOlHvZlHl+jR49Fa7zxDpbPLcMb0EI3OGqbILdZfopRD+b
+X-Google-Smtp-Source: AGHT+IGisZsYYuJpSHO6SXJJ11wxOP84sr7BbJsoJxY9upgHu5lJTphJGKaPF1hhgnvfoBVusGMqjw==
+X-Received: by 2002:a17:906:f809:b0:a59:d063:f5f5 with SMTP id a640c23a62f3a-a5a2d681271mr786990966b.70.1715697242417;
+        Tue, 14 May 2024 07:34:02 -0700 (PDT)
+Received: from [192.168.10.8] (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01631sm728836866b.153.2024.05.14.07.34.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 07:34:02 -0700 (PDT)
+Message-ID: <465a2ddb222beed7c90b36c523633fc5648715bb.camel@gmail.com>
+Subject: Re: [PATCH v5] can: mcp251xfd: fix infinite loop when xmit fails
+From: Vitor Soares <ivitro@gmail.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Thomas Kopp
+ <thomas.kopp@microchip.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Vitor Soares <vitor.soares@toradex.com>,
+ linux-can@vger.kernel.org,  netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Date: Tue, 14 May 2024 15:34:01 +0100
+In-Reply-To: <20240514-corgi-of-marvelous-peace-968f5c-mkl@pengutronix.de>
+References: <20240514105822.99986-1-ivitro@gmail.com>
+	 <20240514-corgi-of-marvelous-peace-968f5c-mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQMgS3ITkG+5x2/Y13ejOoDX0Q3k4K8LgGnA
-Content-Language: en-us
 
-Puranjay Mohan <puranjay@kernel.org> wrote: 
-> An ALU instruction's source operand can be the value in the source
-register or the
-> 32-bit immediate value encoded in the instruction. This is controlled by
-the 's' bit of
-> the 'opcode'.
-> 
-> The current description explicitly uses the phrase 'value of the source
-register'
-> when defining the meaning of 'src'.
-> 
-> Change the description to use 'source operand' in place of 'value of the
-source
-> register'.
-> 
-> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+Hi Marc,
 
-Acked-by: Dave Thaler <dthaler1968@gmail.com>
+Appreciate your feedback.
 
-> ---
->  Documentation/bpf/standardization/instruction-set.rst | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/bpf/standardization/instruction-set.rst
-> b/Documentation/bpf/standardization/instruction-set.rst
-> index a5ab00ac0b14..2e17b365388e 100644
-> --- a/Documentation/bpf/standardization/instruction-set.rst
-> +++ b/Documentation/bpf/standardization/instruction-set.rst
-> @@ -292,8 +292,9 @@ Arithmetic instructions  ``ALU`` uses 32-bit wide
-> operands while ``ALU64`` uses 64-bit wide operands for  otherwise
-identical
-> operations. ``ALU64`` instructions belong to the
->  base64 conformance group unless noted otherwise.
-> -The 'code' field encodes the operation as below, where 'src' and 'dst'
-refer -to the
-> values of the source and destination registers, respectively.
-> +The 'code' field encodes the operation as below, where 'src' refers to
-> +the the source operand and 'dst' refers to the value of the destination
-> +register.
-> 
->  =====  =====  =======
-> ==========================================================
->  name   code   offset   description
-> --
-> 2.40.1
+On Tue, 2024-05-14 at 14:23 +0200, Marc Kleine-Budde wrote:
+> On 14.05.2024 11:58:22, Vitor Soares wrote:
+> > From: Vitor Soares <vitor.soares@toradex.com>
+> >=20
+> > When the mcp251xfd_start_xmit() function fails, the driver stops
+> > processing messages, and the interrupt routine does not return,
+> > running indefinitely even after killing the running application.
+> >=20
+> > Error messages:
+> > [=C2=A0 441.298819] mcp251xfd spi2.0 can0: ERROR in mcp251xfd_start_xmi=
+t: -16
+> > [=C2=A0 441.306498] mcp251xfd spi2.0 can0: Transmit Event FIFO buffer n=
+ot empty.
+> > (seq=3D0x000017c7, tef_tail=3D0x000017cf, tef_head=3D0x000017d0,
+> > tx_head=3D0x000017d3).
+> > ... and repeat forever.
+> >=20
+> > The issue can be triggered when multiple devices share the same
+> > SPI interface. And there is concurrent access to the bus.
+> >=20
+> > The problem occurs because tx_ring->head increments even if
+> > mcp251xfd_start_xmit() fails. Consequently, the driver skips one
+> > TX package while still expecting a response in
+> > mcp251xfd_handle_tefif_one().
+> >=20
+> > This patch resolves the issue by starting a workqueue to write
+> > the tx obj synchronously if err =3D -EBUSY. In case of another error,
+> > it decrements tx_ring->head, removes skb from the echo stack, and
+> > drops the message.
+>=20
+> This looks quite good! Good work!
+>=20
+> I think you better move the allocation/destroy of the wq into the open()
+> and stop() callbacks. You have to destroy the workqueue before putting
+> the interface to sleep.
+>=20
+> >=20
+> > Fixes: 55e5b97f003e ("can: mcp25xxfd: add driver for Microchip MCP25xxF=
+D SPI
+> > CAN")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Vitor Soares <vitor.soares@toradex.com>
+> > ---
+> >=20
+> > V4->V5:
+> > =C2=A0 - Start a workqueue to write tx obj with spi_sync() when spi_asy=
+nc() =3D=3D -
+> > EBUSY.
+> >=20
+> > V3->V4:
+> > =C2=A0 - Leave can_put_echo_skb() and stop the queue if needed, before
+> > mcp251xfd_tx_obj_write().
+> > =C2=A0 - Re-sync head and remove echo skb if mcp251xfd_tx_obj_write() f=
+ails.
+> > =C2=A0 - Revert -> return NETDEV_TX_BUSY if mcp251xfd_tx_obj_write() =
+=3D=3D -EBUSY.
+> >=20
+> > V2->V3:
+> > =C2=A0 - Add tx_dropped stats.
+> > =C2=A0 - netdev_sent_queue() only if can_put_echo_skb() succeed.
+> >=20
+> > V1->V2:
+> > =C2=A0 - Return NETDEV_TX_BUSY if mcp251xfd_tx_obj_write() =3D=3D -EBUS=
+Y.
+> > =C2=A0 - Rework the commit message to address the change above.
+> > =C2=A0 - Change can_put_echo_skb() to be called after mcp251xfd_tx_obj_=
+write()
+> > succeed.
+> > =C2=A0=C2=A0=C2=A0 Otherwise, we get Kernel NULL pointer dereference er=
+ror.
+> >=20
+> > =C2=A0.../net/can/spi/mcp251xfd/mcp251xfd-core.c=C2=A0=C2=A0=C2=A0 | 13=
+ ++++-
+> > =C2=A0drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c=C2=A0 | 51 +++++++++=
++++++++---
+> > =C2=A0drivers/net/can/spi/mcp251xfd/mcp251xfd.h=C2=A0=C2=A0=C2=A0=C2=A0=
+ |=C2=A0 5 ++
+> > =C2=A03 files changed, 60 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> > b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> > index 1d9057dc44f2..6cca853f2b1e 100644
+> > --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> > +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-core.c
+> > @@ -2141,15 +2141,25 @@ static int mcp251xfd_probe(struct spi_device *s=
+pi)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (err)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0goto out_free_candev;
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0priv->tx_work_obj =3D NULL;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0priv->wq =3D alloc_workqueue=
+("mcp251xfd_wq", WQ_FREEZABLE, 0);
+>=20
+> The m_can driver uses a ordered workqueue and you can add the name of
+> the spi device to the wq's name :)
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->wq =3D alloc_ordered_wor=
+kqueue("%s-mcp251xfd_wq", WQ_FREEZABLE |
+> WQ_MEM_RECLAIM, dev_name(&spi->dev));
+>=20
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!priv->wq) {
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0err =3D -ENOMEM;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto out_can_rx_offload_del;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0INIT_WORK(&priv->tx_work, mc=
+p251xfd_tx_obj_write_sync);
+> > +
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0err =3D mcp251xfd_regis=
+ter(priv);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (err) {
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_err_probe(&spi->dev, err, "Failed to detect =
+%s.\n",
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 mcp251xfd_get_model_str(priv));
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto out_can_rx_offload_del;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0goto out_can_free_wq;
+>=20
+> nitpick:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 out_destroy_workqueue;
+>=20
+> to match the function call.
+>=20
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+> > =C2=A0
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return 0;
+> > =C2=A0
+> > + out_can_free_wq:
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0destroy_workqueue(priv->wq);
+> > =C2=A0 out_can_rx_offload_del:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0can_rx_offload_del(&pri=
+v->offload);
+> > =C2=A0 out_free_candev:
+> > @@ -2165,6 +2175,7 @@ static void mcp251xfd_remove(struct spi_device *s=
+pi)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mcp251xfd_priv *=
+priv =3D spi_get_drvdata(spi);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct net_device *ndev=
+ =3D priv->ndev;
+> > =C2=A0
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0destroy_workqueue(priv->wq);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0can_rx_offload_del(&pri=
+v->offload);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mcp251xfd_unregister(pr=
+iv);
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0spi->max_speed_hz =3D p=
+riv->spi_max_speed_hz_orig;
+> > diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
+> > b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
+> > index 160528d3cc26..1e7ddf316643 100644
+> > --- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
+> > +++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tx.c
+> > @@ -131,6 +131,41 @@ mcp251xfd_tx_obj_from_skb(const struct mcp251xfd_p=
+riv
+> > *priv,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tx_obj->xfer[0].len =3D=
+ len;
+> > =C2=A0}
+> > =C2=A0
+> > +static void mcp251xfd_tx_failure_drop(const struct mcp251xfd_priv *pri=
+v,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 st=
+ruct mcp251xfd_tx_ring *tx_ring,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 in=
+t err)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct net_device *ndev =3D =
+priv->ndev;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct net_device_stats *sta=
+ts =3D &ndev->stats;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int frame_len =3D 0=
+;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 tx_head;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tx_ring->head--;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0stats->tx_dropped++;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tx_head =3D mcp251xfd_get_tx=
+_head(tx_ring);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0can_free_echo_skb(ndev, tx_h=
+ead, &frame_len);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0netdev_completed_queue(ndev,=
+ 1, frame_len);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0netif_wake_queue(ndev);
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (net_ratelimit())
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0netdev_err(priv->ndev, "ERROR in %s: %d\n", __func__, =
+err);
+> > +}
+> > +
+> > +void mcp251xfd_tx_obj_write_sync(struct work_struct *ws)
+> > +{
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mcp251xfd_priv *priv =
+=3D container_of(ws, struct
+> > mcp251xfd_priv,
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ tx_work);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mcp251xfd_tx_obj *tx_=
+obj =3D priv->tx_work_obj;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct mcp251xfd_tx_ring *tx=
+_ring =3D priv->tx;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int err;
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0err =3D spi_sync(priv->spi, =
+&tx_obj->msg);
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (err)
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0mcp251xfd_tx_failure_drop(priv, tx_ring, err);
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0priv->tx_work_obj =3D NULL;
+>=20
+> Race condition:
+> - after spi_sync() the CAN frame is send
+> - after the TX complete IRQ the TX queue is restarted
+> - the xmit handler might get BUSY
+> - fill the tx_work_obj again
+>=20
+> > +}
+> > +
+> > =C2=A0static int mcp251xfd_tx_obj_write(const struct mcp251xfd_priv *pr=
+iv,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct mcp251xfd_tx_=
+obj *tx_obj)
+> > =C2=A0{
+> > @@ -175,7 +210,7 @@ netdev_tx_t mcp251xfd_start_xmit(struct sk_buff *sk=
+b,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (can_dev_dropped_skb=
+(ndev, skb))
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0return NETDEV_TX_OK;
+> > =C2=A0
+> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (mcp251xfd_tx_busy(priv, =
+tx_ring))
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (mcp251xfd_tx_busy(priv, =
+tx_ring) || priv->tx_work_obj)
+>=20
+> This should not happen, but better save than sorry.
 
 
+As there is the race condition you mentioned above, on this condition:
+priv->tx_work_obj =3D tx_obj --> xmit will return NETDEV_TX_BUSY
+
+or
+
+priv->tx_work_obj =3D NULL --> It goes through the rest of the code or the
+workqueue may sleep after setting tx_work_obj to NULL. Should I use work_bu=
+sy()
+here instead or do you have another suggestion?
+
+
+Everything else is clear to me and I'm addressing it for the v6.
+
+Best regards,
+Vitor Soares
 
