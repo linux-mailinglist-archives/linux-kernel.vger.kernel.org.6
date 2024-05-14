@@ -1,267 +1,196 @@
-Return-Path: <linux-kernel+bounces-178364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FCA8C4C9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CD38C4CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B3528233C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:09:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD67728288A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0205710A22;
-	Tue, 14 May 2024 07:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E44B15EA6;
+	Tue, 14 May 2024 07:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vNSbGIGp"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FGakXGiG"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C91CF9F5
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA9911720;
+	Tue, 14 May 2024 07:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715670592; cv=none; b=WAKqkB3LIAqlSeSGcWx6HgSjKmpk25Rqf14b/l7Hl4VClJ+Zxe6qw+K/rN7cqHIkkKha9Vudy6hQy0IrqqJpudCMZPAMwAAxXP9ateaknDmCipLmRjdHCC3Zc5UdxjRFpTEywsRo/kNcXCyCjZ811mh6ORM9bJyH2mAmp0eE0eg=
+	t=1715670722; cv=none; b=HWp0dsMdz4O87DIbTs1imLZv5KBD+Tg4C74i1n9oGmnPyg0mOpGPDhU4PVnv0fdPoeX2a2OFDb7CB875ChOkJ9jiPu3zO1xOVqImM9FOY1SzTyRnsVtwJrGYf8wXbHN6bDnp1tfXL3MUPxChX3CU3/aqxKOp7iy4PI5tMqRCUl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715670592; c=relaxed/simple;
-	bh=v+0oAWHsIv9vnLTWYZ9i+V46JUXTu4Vxy3Jo+j45eqg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iL+SVO0eD/dFZdjYYanABgdoULOLqiHFEKE1+7dqVlii4+DMcbz1t1NrX7ZJkZYvQ29gRdgfvbJ8ksO2W+7DJbxVQQdpk2xCwiLXLEEgwYEQ3viaKFX0PXIVHp8ngixPkqvtoNZPylFXJE3TQePqGiUmRbvGCVwPxPyGM4A6fPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vNSbGIGp; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1715670587; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Jo5rH5YIlhlSc6vEql9IJ3mfVIRNd/BxXYvuoQUAM7I=;
-	b=vNSbGIGpR3Op2b0QxeeJu/NsvNqnb5py0VayHiC1dYLVm4HGaT+B0BKczsmDFP3KsLPfpyg9RH9aCkoSOt5uiHXqvrjTdwoahavvfqfegqSeWdj9bNGHiHBc3zdy6SVfmHihZN1oyFmU1g+4XGLLAkw0Kjyl4uTY3ZdnbyE62BM=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=21;SR=0;TI=SMTPD_---0W6U4g0e_1715670584;
-Received: from 30.97.56.67(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W6U4g0e_1715670584)
-          by smtp.aliyun-inc.com;
-          Tue, 14 May 2024 15:09:45 +0800
-Message-ID: <c8f52a60-94a4-48cc-be0c-824b26956934@linux.alibaba.com>
-Date: Tue, 14 May 2024 15:09:43 +0800
+	s=arc-20240116; t=1715670722; c=relaxed/simple;
+	bh=pcnYluDag238mmBsUKSC6PbYsfe7QbcseXtCxzyXERY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c0nFESfzhso/+8X7nd3TNJLsuSVHqAATxB8SKuk3lPGY06jaM2VD06+1+E5BxrzckM0wYpF8yMQ00ZaXo3HDC6Oa8BbSEJ+HSkV7JxvCAK4bJVLfr+FlTcqiV/4IU0MJtzOKn/Rlo424EtxpDQWvNDiSAxxSsYDxm3i+XjxR5fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FGakXGiG; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1eb0e08bfd2so30134385ad.1;
+        Tue, 14 May 2024 00:12:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715670720; x=1716275520; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3uYIr3Ml2AVWzJhE/ggK+DKrQxQADQHuE7nOd7CrufI=;
+        b=FGakXGiGzuOcD3YDjVKFt/g02EXOOvakW/eoyuq3X3Jcrdn7i3mc4SHWiHP2Q/vphq
+         Tp5Bg0WrmXYkHpSKPPBxXUgB2EUJErmUgHLGXCMJJG7mhtmkpL7YGSv+u80JRzsbJyOO
+         M8lgnB4dq23USqxIChVoKF8cYw2xIXcVhHRR+FMi6IIQ/Qs74QUcNpaiLQOnaHuCtTTe
+         tqYDf9grdVK5V+tk59AmNvYI9YZyjiqzMTKrdv4opfqAldV8AsJouPCV0sz16clZ58FP
+         LPooSgH1l7fckNTSzRrtSZBnt20Ak50QPvf/dqWInNLh1qBl2uE6iO6e8JV6kQCyk0t8
+         Q30A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715670720; x=1716275520;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3uYIr3Ml2AVWzJhE/ggK+DKrQxQADQHuE7nOd7CrufI=;
+        b=Y6aGIIkE9sxQvPqm4eBF+FDU6+wjtCGNsg8YnnstooF/bLRM90B325W3TUCW8Q79JO
+         trf6rpM5z4mfxnN2LoPONFT+yUnoNHw2pd3wu5vbXhvErbBjTM9cS/WwsC5dXiS8sq2J
+         AVgPOjXPvmK7g8gkeVXemnLH0ZwxMpBQz9fLu2xk0DffWExo7ZaqGyFSnFmLfwPNIsCS
+         R+mxNurgCVcugF0GiiRQ/8sPDMyou7RVPTSZEgltYAQItO3cDO2YrnAMIeX6SmtkEg/l
+         1AGwpQAiWdClsJX/Q1N6R03qJCg0EbZn6hH4GrNMdzCvXeylDM9b7pHMi2rHh7d1jmjQ
+         PMlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJu61vjky6YVEBlhC/vV9jyT5EJKMVffHJ2Z1o+sKSXgk1uVrJRA38zzlwQPwOCRmbgjf2Drnul30Uj8LY1pwEeBwvII4d2DyPrzQS5ozLc8w3aR+ml5lJYYPOTg1xD5pjBMwa+Y11gyg=
+X-Gm-Message-State: AOJu0Yz3pHBx14Wu+6mEuoZkUmQKhUsli0yCWV7xVFcI4Z6nciDqEZTz
+	Zv/x9Fciq5LrKbQOU9E3LnFoZTYm7IYBXE8hOruDfHz19QPuvVFBIrKKMIxaeow=
+X-Google-Smtp-Source: AGHT+IHjy9RplyYNtkpgjstWh8etxT8+rKaKrPSFQtNG4FdFsK/ntTcQAtLDJAMGDRMI748GfeeLDw==
+X-Received: by 2002:a17:903:2d2:b0:1eb:1008:2dca with SMTP id d9443c01a7336-1ef43f4cf0cmr138053615ad.49.1715670719911;
+        Tue, 14 May 2024 00:11:59 -0700 (PDT)
+Received: from xiaxiShen-ThinkPad.gigstreem.net ([66.160.179.28])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf32f51sm93073275ad.154.2024.05.14.00.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:11:59 -0700 (PDT)
+From: Xiaxi Shen <shenxiaxi26@gmail.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: shenxiaxi26@gmail.com,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	skhan@linuxfoundation.org
+Subject: [PATCH v2] ASoC: dt-bindings: ak4104: convert to dt schema
+Date: Tue, 14 May 2024 00:11:43 -0700
+Message-Id: <20240514071143.438748-1-shenxiaxi26@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v5 4/4] mm/vmscan: avoid split lazyfree THP during
- shrink_folio_list()
-To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
-Cc: willy@infradead.org, sj@kernel.org, maskray@google.com, ziy@nvidia.com,
- ryan.roberts@arm.com, david@redhat.com, 21cnbao@gmail.com, mhocko@suse.com,
- fengwei.yin@intel.com, zokeefe@google.com, shy828301@gmail.com,
- xiehuan09@gmail.com, libang.li@antgroup.com, wangkefeng.wang@huawei.com,
- songmuchun@bytedance.com, peterx@redhat.com, minchan@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240513074712.7608-1-ioworker0@gmail.com>
- <20240513074712.7608-5-ioworker0@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20240513074712.7608-5-ioworker0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Convert ak4104 binding to DT schema
 
+Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
+---
+Changes in v2:
+ - Remove subsystem maintainers
+ - Wrap lines at <80
 
-On 2024/5/13 15:47, Lance Yang wrote:
-> When the user no longer requires the pages, they would use
-> madvise(MADV_FREE) to mark the pages as lazy free. Subsequently, they
-> typically would not re-write to that memory again.
-> 
-> During memory reclaim, if we detect that the large folio and its PMD are
-> both still marked as clean and there are no unexpected references
-> (such as GUP), so we can just discard the memory lazily, improving the
-> efficiency of memory reclamation in this case.
-> 
-> On an Intel i5 CPU, reclaiming 1GiB of lazyfree THPs using
-> mem_cgroup_force_empty() results in the following runtimes in seconds
-> (shorter is better):
-> 
-> --------------------------------------------
-> |     Old       |      New       |  Change  |
-> --------------------------------------------
-> |   0.683426    |    0.049197    |  -92.80% |
-> --------------------------------------------
-> 
-> Suggested-by: Zi Yan <ziy@nvidia.com>
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Lance Yang <ioworker0@gmail.com>
-> ---
->   include/linux/huge_mm.h |  9 +++++
->   mm/huge_memory.c        | 75 +++++++++++++++++++++++++++++++++++++++++
->   mm/rmap.c               | 31 ++++++++++-------
->   3 files changed, 103 insertions(+), 12 deletions(-)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 9fcb0b0b6ed1..cfd7ec2b6d0a 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -411,6 +411,8 @@ static inline bool thp_migration_supported(void)
->   
->   void split_huge_pmd_locked(struct vm_area_struct *vma, unsigned long address,
->   			   pmd_t *pmd, bool freeze, struct folio *folio);
-> +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
-> +			   pmd_t *pmdp, struct folio *folio);
->   
->   #else /* CONFIG_TRANSPARENT_HUGEPAGE */
->   
-> @@ -478,6 +480,13 @@ static inline void split_huge_pmd_locked(struct vm_area_struct *vma,
->   					 unsigned long address, pmd_t *pmd,
->   					 bool freeze, struct folio *folio) {}
->   
-> +static inline bool unmap_huge_pmd_locked(struct vm_area_struct *vma,
-> +					 unsigned long addr, pmd_t *pmdp,
-> +					 struct folio *folio)
-> +{
-> +	return false;
-> +}
-> +
->   #define split_huge_pud(__vma, __pmd, __address)	\
->   	do { } while (0)
->   
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 425272c6c50b..3ceeeb2f42d4 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2687,6 +2687,81 @@ static void unmap_folio(struct folio *folio)
->   	try_to_unmap_flush();
->   }
->   
-> +static bool __discard_trans_pmd_locked(struct vm_area_struct *vma,
-> +				       unsigned long addr, pmd_t *pmdp,
-> +				       struct folio *folio)
-> +{
-> +	struct mm_struct *mm = vma->vm_mm;
-> +	int ref_count, map_count;
-> +	pmd_t orig_pmd = *pmdp;
-> +	struct mmu_gather tlb;
-> +	struct page *page;
-> +
-> +	if (pmd_dirty(orig_pmd) || folio_test_dirty(folio))
-> +		return false;
-> +	if (unlikely(!pmd_present(orig_pmd) || !pmd_trans_huge(orig_pmd)))
-> +		return false;
-> +
-> +	page = pmd_page(orig_pmd);
-> +	if (unlikely(page_folio(page) != folio))
-> +		return false;
+Signed-off-by: Xiaxi Shen <shenxiaxi26@gmail.com>
+---
+ .../devicetree/bindings/sound/ak4104.txt      | 25 ----------
+ .../bindings/sound/asahi-kasei,ak4104.yaml    | 49 +++++++++++++++++++
+ 2 files changed, 49 insertions(+), 25 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/ak4104.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml
 
-The function is called under the ptl lock, so I have no idea why the pmd 
-value can be changed, seems above validation is useless.
+diff --git a/Documentation/devicetree/bindings/sound/ak4104.txt b/Documentation/devicetree/bindings/sound/ak4104.txt
+deleted file mode 100644
+index ae5f7f057dc3..000000000000
+--- a/Documentation/devicetree/bindings/sound/ak4104.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-AK4104 S/PDIF transmitter
+-
+-This device supports SPI mode only.
+-
+-Required properties:
+-
+-  - compatible : "asahi-kasei,ak4104"
+-
+-  - reg : The chip select number on the SPI bus
+-
+-  - vdd-supply : A regulator node, providing 2.7V - 3.6V
+-
+-Optional properties:
+-
+-  - reset-gpios : a GPIO spec for the reset pin. If specified, it will be
+-		  deasserted before communication to the device starts.
+-
+-Example:
+-
+-spdif: ak4104@0 {
+-	compatible = "asahi-kasei,ak4104";
+-	reg = <0>;
+-	spi-max-frequency = <5000000>;
+-	vdd-supply = <&vdd_3v3_reg>;
+-};
+diff --git a/Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml b/Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml
+new file mode 100644
+index 000000000000..91b3a6817a85
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/asahi-kasei,ak4104.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/asahi-kasei,ak4104.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: AK4104 S/PDIF transmitter
++
++allOf:
++  - $ref: dai-common.yaml#
++
++maintainers:
++  - Daniel Mack <github@zonque.org>
++  - Xiaxi Shen <shenxiaxi26@gmail.com>
++
++properties:
++  compatible:
++    const: asahi-kasei,ak4104
++
++  reg:
++    description: Chip select number on the SPI bus 
++    maxItems: 1
++
++  vdd-supply:
++    description: A regulator node providing between 2.7V and 3.6V.
++
++  reset-gpios:
++    maxItems: 1
++    description: Optional GPIO spec for the reset pin, deasserted 
++                  before communication starts.
++    
++required:
++  - compatible
++  - reg
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++   i2c {
++     #address-cells = <1>;
++     #size-cells = <0>;
++     codec@0 {
++       compatible = "asahi-kasei,ak4104";
++       reg = <0>;
++       vdd-supply = <&vdd_3v3_reg>;
++     };
++   };
+-- 
+2.34.1
 
-> +
-> +	tlb_gather_mmu(&tlb, mm);
-
-You missed tlb_finish_mmu() to do tlb flushing, and ...
-
-> +	orig_pmd = pmdp_huge_get_and_clear(mm, addr, pmdp);
-> +	tlb_remove_pmd_tlb_entry(&tlb, pmdp, addr);
-
-I don't think tlb gather is helpful here, since you just flush one PMD 
-entry. Just using pmdp_huge_clear_flush() seems enough.
-
-> +
-> +	/*
-> +	 * Syncing against concurrent GUP-fast:
-> +	 * - clear PMD; barrier; read refcount
-> +	 * - inc refcount; barrier; read PMD
-> +	 */
-> +	smp_mb();
-> +
-> +	ref_count = folio_ref_count(folio);
-> +	map_count = folio_mapcount(folio);
-> +
-> +	/*
-> +	 * Order reads for folio refcount and dirty flag
-> +	 * (see comments in __remove_mapping()).
-> +	 */
-> +	smp_rmb();
-> +
-> +	/*
-> +	 * If the PMD or folio is redirtied at this point, or if there are
-> +	 * unexpected references, we will give up to discard this folio
-> +	 * and remap it.
-> +	 *
-> +	 * The only folio refs must be one from isolation plus the rmap(s).
-> +	 */
-> +	if (ref_count != map_count + 1 || folio_test_dirty(folio) ||
-> +	    pmd_dirty(orig_pmd)) {
-> +		set_pmd_at(mm, addr, pmdp, orig_pmd);
-
-Should we also call 'folio_set_swapbacked()' if the folio was redirtied?
-
-> +		return false;
-> +	}
-> +
-> +	folio_remove_rmap_pmd(folio, page, vma);
-> +	zap_deposited_table(mm, pmdp);
-> +	add_mm_counter(mm, MM_ANONPAGES, -HPAGE_PMD_NR);
-> +	if (vma->vm_flags & VM_LOCKED)
-> +		mlock_drain_local();
-> +	folio_put(folio);
-> +
-> +	return true;
-> +}
-> +
-> +bool unmap_huge_pmd_locked(struct vm_area_struct *vma, unsigned long addr,
-> +			   pmd_t *pmdp, struct folio *folio)
-> +{
-> +	VM_WARN_ON_FOLIO(!folio_test_pmd_mappable(folio), folio);
-> +	VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
-> +	VM_WARN_ON_ONCE(!IS_ALIGNED(addr, HPAGE_PMD_SIZE));
-> +
-> +	if (folio_test_anon(folio) && !folio_test_swapbacked(folio))
-> +		return __discard_trans_pmd_locked(vma, addr, pmdp, folio);
-> +
-> +	return false;
-> +}
-> +
->   static void remap_page(struct folio *folio, unsigned long nr)
->   {
->   	int i = 0;
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 08a93347f283..e09f2141b8dc 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1677,18 +1677,25 @@ static bool try_to_unmap_one(struct folio *folio, struct vm_area_struct *vma,
->   			goto walk_done_err;
->   		}
->   
-> -		if (!pvmw.pte && (flags & TTU_SPLIT_HUGE_PMD)) {
-> -			/*
-> -			 * We temporarily have to drop the PTL and start once
-> -			 * again from that now-PTE-mapped page table.
-> -			 */
-> -			split_huge_pmd_locked(vma, range.start, pvmw.pmd, false,
-> -					      folio);
-> -			pvmw.pmd = NULL;
-> -			spin_unlock(pvmw.ptl);
-> -			pvmw.ptl = NULL;
-> -			flags &= ~TTU_SPLIT_HUGE_PMD;
-> -			continue;
-> +		if (!pvmw.pte) {
-> +			if (unmap_huge_pmd_locked(vma, range.start, pvmw.pmd,
-> +						  folio))
-> +				goto walk_done;
-> +
-> +			if (flags & TTU_SPLIT_HUGE_PMD) {
-> +				/*
-> +				 * We temporarily have to drop the PTL and start
-> +				 * once again from that now-PTE-mapped page
-> +				 * table.
-> +				 */
-> +				split_huge_pmd_locked(vma, range.start,
-> +						      pvmw.pmd, false, folio);
-> +				pvmw.pmd = NULL;
-> +				spin_unlock(pvmw.ptl);
-> +				pvmw.ptl = NULL;
-> +				flags &= ~TTU_SPLIT_HUGE_PMD;
-> +				continue;
-> +			}
->   		}
->   
->   		/* Unexpected PMD-mapped THP? */
 
