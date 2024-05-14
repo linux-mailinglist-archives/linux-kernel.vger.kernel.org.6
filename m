@@ -1,133 +1,159 @@
-Return-Path: <linux-kernel+bounces-179261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3469E8C5E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:38:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44648C5E21
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90EDB21654
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:38:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FD51C20DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3737182CA3;
-	Tue, 14 May 2024 23:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763BF182CA4;
+	Tue, 14 May 2024 23:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XMRYHZwv"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="aNVhnzhr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HIlYpX3L"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA0F13D619
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEF8182C98;
+	Tue, 14 May 2024 23:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715729880; cv=none; b=k/mAfWAsUmwVGEPCYtw4jPIW2uA7JF1YW6uCrf71FKcqOF7NkLOxWWtrdDhs3TUjM7ARrzPrtNDBw4rcsJOzr1RDbFxqlZCeYiq7uHyYN3VNmYaQcTCoJY5zEvVd2i3dSByonj5Gz7yzY9Lb33bCXLAIbganQDSnb8wxxCGaBRo=
+	t=1715729991; cv=none; b=Pf24vn3Nc14qEZx5ojhu1iGKBuGbS8un3SrsWtYUocIB/BLWyHKIc2vO1H2TKbOYhvRBaGnx/VCE393MnjQciEHiwwnGHyjge//KXwWfXfnkffD9QPeqvxzaBMtYlKtBOZOWMCUuEn9UH3sCuh0UgOCOfSG9QLuVXr8eTPEmcE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715729880; c=relaxed/simple;
-	bh=M0ojsRsGu00hlS+3D/N7mtRoW2fXDtGb0dL7Dj9nSEI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BbGgiNcyQTBMX0kDA46Q9BNqQOBiRpVdYXKMSXC3ul4VfmvRHeNNO8brQSydqHwDElGgY/1vBSYsPyE7RFOELRwZKg3Snb2wjiHwkHMMRAqNB3NumoFJxxICeOXidOXKC1fKottEQRh9WZ6FaG7Bcent1rsDd+Gfht7kuDAOYX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XMRYHZwv; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6f44dd41a5cso6157156b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715729878; x=1716334678; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/46gzPRjfsjywIh4JZDG9x4PubRXzjsJhZrxZRHzS8=;
-        b=XMRYHZwv1mBGvBcx6lSEfGBbDW4MMi40t3slgMuu4Pp7Wt3luR+mizh03LmcSf85ak
-         0dVF6s7MQ6VoRzzYEJCkcKS45zOkai1q9OCU4pp+2FqaeaW18bI+ZN9TjjuODgCtMWIy
-         U28Z+B7RIOrtCDbP1zF1L5ovEGmzzBPApfGLA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715729878; x=1716334678;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/46gzPRjfsjywIh4JZDG9x4PubRXzjsJhZrxZRHzS8=;
-        b=gAJjVrbiAMvMeRsFDyP27KDgL/gvkRBaTAiqSEInRnOadutEZgX/ZpMriYDGQHPV9l
-         SIkOFt/M/Ts2JxmJQ7+ZJJA/u41VP6YKN/N83FGl22UZPWiWHQa6Idqt1EaYdlp/Q7MA
-         QBiLBYSDHFr0VjRkrTGalPybgNV2XlrL9B07hKZLF91JkAyDBllqH7gC3cN7bGeY6YyR
-         yo1IKZFiBK+xZZrJdT8hCqekidwOwz6atvNAS9nVIvK4emvPou9/Tcxra9AFAgTHWXWH
-         V6kZU2I/VYB/iiRWfH1XdQJNWP+tE8MQkjWFJd5a+qutkle91UixN0JKSWrmbBL5AjAO
-         AXgw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+xH50DoFAJnMxtKo0ZfMtoKBpEe0W/sSfuj93J7VAChq1wESmeZN101ac/VVAWaK5wgEBGuoIDBspdPnEI4hTyca9GQMKUEkifO8f
-X-Gm-Message-State: AOJu0YxHyrI7rKzZlCYhjoFyFhr1aQl8d7dX9IkuhojIkblnYjTCBuUh
-	RconAe59NI80woayGn8qUCz0wsWHdMMOzfBrr5uSjDhNjCwcDKcjVh7X42GaHA==
-X-Google-Smtp-Source: AGHT+IHkWP0liojNW9LtVuhI4Z2GrRahcPNwxeY6SopHSto2NofFRMQtA1v0XzpbwKOEEaFOcB1wng==
-X-Received: by 2002:a05:6a20:9782:b0:1af:ab0b:1c08 with SMTP id adf61e73a8af0-1afde1b6f80mr14140701637.46.1715729878103;
-        Tue, 14 May 2024 16:37:58 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-6340b76e262sm8858679a12.35.2024.05.14.16.37.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 16:37:57 -0700 (PDT)
-From: Kees Cook <keescook@chromium.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ubsan: Restore dependency on ARCH_HAS_UBSAN
-Date: Tue, 14 May 2024 16:37:48 -0700
-Message-Id: <20240514233747.work.441-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1715729991; c=relaxed/simple;
+	bh=60Ox0a+JCmbAi56j55Bt0YnLVDI15o/pVVrYJoU0WGU=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=ZgvuUbBVO26SDNK3rekOgtGkuE2eapSiZIAbMFLNBjdjVjVKYZ9L7bKbA3HVIj1sYZ2nJlp40jOAKmVrSo8pHS3Fhbf4fJbq4BItV4jVH/iIk6x222Mbivkn4C1EBpVDOwb2YZCgBZ0z6W3mOhR0HRUhgE5vPXPvnevYgzp5rOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=aNVhnzhr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HIlYpX3L; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 06D991381145;
+	Tue, 14 May 2024 19:39:48 -0400 (EDT)
+Received: from imap44 ([10.202.2.94])
+  by compute3.internal (MEProxy); Tue, 14 May 2024 19:39:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1715729988;
+	 x=1715816388; bh=1obXvCkxuWYmqdH7enpj67eu56K1q3VrLcxWZTYvNIw=; b=
+	aNVhnzhrTLEBK1+8J0vnth3FvXxjrCIuk4kby9nRkw9DRG+7hU2S4AGKh6jWWsCe
+	UQXTkQJ6hK0WpD2zg4XwPC+0JNjQcE/gXCxvy3cwS1L+m9EMs6EkBVknmGgX84wx
+	0OYXJ0wC4/3bENyfbmD+JDFy0+XbeG2r9zR1yV9GodGJSmTV6ZPZz+8TyJ/fc5LO
+	26m9OTcOdBgsBsOpQtWBfcafcW0m4F8dhyGXItXUKlON2N9h5yCaOKtH1XOPTI8m
+	Mpd5wjixuAhwBJMLBd7JSPmNZ/nnmc84uJ8EpNpEY1tTiZT1JfZUoJ9m12LGXwPd
+	8RiOkb3L/UQtV2Iq5NvkOg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715729988; x=
+	1715816388; bh=1obXvCkxuWYmqdH7enpj67eu56K1q3VrLcxWZTYvNIw=; b=H
+	IlYpX3LGV3wzZQIW7ZtEAb8RYLjgPML+auk99lQiUhy7QJP94uw+5NUHccqO/Hf1
+	ULUsx16rtB9Okw80vS2BOSQW+AQ9ZoEeaqIDQT7/emdP0uTHugPPIfJJC93kwgLD
+	EMYT3K8GDbxHj4wEj9x/qFW/X8RuSNQGMUSCkOZ01Cc0xMR9sYT51AwCA+DL6jGG
+	i77rIK+Qro7PPuuDu5a+tMe3Bf7fl6RxJOQglks8g9z2JLQkogRXCK3Lw7+na9SU
+	Ym75vLt+6S9XQ2f4Qu8dbv572HakzvMMcoacqpbX7INYT1ssLhPk4tM0AvgsxC4d
+	eUSSq70btxHYcq3JCKqcg==
+X-ME-Sender: <xms:Q_ZDZqm58F7b6YP1Flchbu_Q-MK6XF9mrr1tO0dpLa3bS6DQ7aQBAg>
+    <xme:Q_ZDZh3_DrE8to6UYGBoWbqIK521JNlpVLPacJltpLECG7gsqXu8XvZjc7EQF35eg
+    A1fs2acUSsygdD1P-g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegjedgvdegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
+    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
+    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
+X-ME-Proxy: <xmx:Q_ZDZooFsygNgsQNRGa6bmOkg6j-rZxLw0QSSYxKSZiZderTTKJ0Nw>
+    <xmx:Q_ZDZunDTjdrJUdabGampDyrbXfh82CYOjv48JgndBocI0WyPFrAdg>
+    <xmx:Q_ZDZo2EnDVJ1QhsJ5ShnNDeLT7MYWNQxGLArV_4FZ5mGwMgOVXirA>
+    <xmx:Q_ZDZlu6nWt1-OIUXA9J_ORFy9dBeujO2W3GOdd94lHr1KY5VtqseQ>
+    <xmx:Q_ZDZuywMOvK23ct40AD0B0usuDmwk7TIGrZ7E5LkHhqHcOIt2uuiUDE>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id EDEEB36A0074; Tue, 14 May 2024 19:39:46 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-455-g0aad06e44-fm-20240509.001-g0aad06e4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1157; i=keescook@chromium.org;
- h=from:subject:message-id; bh=M0ojsRsGu00hlS+3D/N7mtRoW2fXDtGb0dL7Dj9nSEI=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBmQ/XL0cMiBAzkKwdeLzy9N0TrgLVfExeGQZ0JN
- BHF7seFPsyJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZkP1ywAKCRCJcvTf3G3A
- JgcVD/wOawyFjlRnf29/qod98RqXmvKGYR/z9gCakCBi8CxR4/Svp5cc0T+1pQzJxoBBpejCMg0
- pxH/ab2G44oXnSULaNGapGZ9ntp42d7DnWiaGdghDJs4jq3mBvhU0185EFH6k8FjNeio8qOlkzv
- LB+qmxeol6rTzNUICQEJtpC7MjGXDrI/JUqDk1fZv6ff4wyQo98trBnhME4QDzoTGzodcr85+MK
- seSwVJg6ecBebIIFhz3DVVzIJnNxeMxEnZpTEssJLlImhYpeycEbBFSR2zDyTvse/FGdwy0pUFK
- QM4cI+mh8yFa/+zN3C68no7tg2X4sBU9dMnRmQbj9mASW8Sb0QSnWVxY3v+5RlMTtESHi/17hNW
- rrv7je0gK4u7WSLM2ayMhcVuGBo6QNx23Jl4PnB/3ONTkgDdcPszSp0ZPMC+ZxifMJF1myji/kE
- JhrrIhEKljsD6Di1P0ATy6w3ZgKnqu0lFKIGkOetXWIFTOYefwC1q4MH7b3xDklAqAlIsBvEaR7
- 1aQCDkbTy/0YQCvK0n2IUMBrFXZR3VYLlbk9MzllZAeApJm3Hv9Kw1O7MDrj9bViSqrlzXNA2H7
- OBDGcCh6D4DMvDBgFJO4rmlnrgsvq0AgWoOTzGdS8A0pH9fGFC06u3z1Jj9A2K/lntAbCWi1qKp
- 9P8N+ld MNH39rig==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Message-Id: <7fc82f8b-df9d-45f5-8e82-27eac7b4b0ab@app.fastmail.com>
+In-Reply-To: <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk>
+References: <20240202-llvm-msym32-v1-0-52f0631057d6@flygoat.com>
+ <20240202-llvm-msym32-v1-6-52f0631057d6@flygoat.com>
+ <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk>
+Date: Wed, 15 May 2024 00:39:21 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Nick Desaulniers" <ndesaulniers@google.com>,
+ "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ "Guenter Roeck" <linux@roeck-us.net>
+Subject: Re: [PATCH 6/8] MIPS: Limit MIPS_MT_SMP support by ISA reversion
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-While removing CONFIG_UBSAN_SANITIZE_ALL, ARCH_HAS_UBSAN wasn't correctly
-depended on. Restore this, as we do not want to attempt UBSAN builds
-unless it's actually been tested on a given architecture.
 
-Reported-by: Masahiro Yamada <masahiroy@kernel.org>
-Closes: https://lore.kernel.org/all/20240514095427.541201-1-masahiroy@kernel.org
-Fixes: 918327e9b7ff ("ubsan: Remove CONFIG_UBSAN_SANITIZE_ALL")
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-Cc: Marco Elver <elver@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: kasan-dev@googlegroups.com
-Cc: linux-hardening@vger.kernel.org
----
- lib/Kconfig.ubsan | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-index e81e1ac4a919..bdda600f8dfb 100644
---- a/lib/Kconfig.ubsan
-+++ b/lib/Kconfig.ubsan
-@@ -4,6 +4,7 @@ config ARCH_HAS_UBSAN
- 
- menuconfig UBSAN
- 	bool "Undefined behaviour sanity checker"
-+	depends on ARCH_HAS_UBSAN
- 	help
- 	  This option enables the Undefined Behaviour sanity checker.
- 	  Compile-time instrumentation is used to detect various undefined
--- 
-2.34.1
+=E5=9C=A82024=E5=B9=B45=E6=9C=8814=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
+=8D=8810:38=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, 2 Feb 2024, Jiaxun Yang wrote:
+>
+>> MIPS MT ASE is only available on ISA between Release 1 and Release 5.
+>
+>  R2+ only actually, as also evident from Kconfig...
 
+Hi Maciej,
+
+Long time no see :-)
+
+There is nothing stopping us to run R1 kernel on R2 hardware, given that
+those features are all detected at boot time. I understand MT was introd=
+uced
+at 34K which is R2.
+
+I tested booting R1 kernel with MT on 1004Kc.
+
+I believe we should give users flexibility on enjoying optional features
+on kernel targeting lower ISA Rev.
+
+>
+>> --- a/arch/mips/Kconfig
+>> +++ b/arch/mips/Kconfig
+>> @@ -2171,7 +2171,8 @@ config CPU_R4K_CACHE_TLB
+>>  config MIPS_MT_SMP
+>>  	bool "MIPS MT SMP support (1 TC on each available VPE)"
+>>  	default y
+>> -	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MIPSR6 && !CPU_MICRO=
+MIPS
+>> +	depends on TARGET_ISA_REV > 0 && TARGET_ISA_REV < 6
+>> +	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MICROMIPS
+>>  	select CPU_MIPSR2_IRQ_VI
+>>  	select CPU_MIPSR2_IRQ_EI
+>                    ^^^^^^
+>  ... here.  I wish people looked beyond the line they change, sigh...
+
+Both features (VI and VEIC) are probed at boot time. Selecting
+them doesn't necessarily mean that CPU has those functions.
+
+Thanks
+- Jiaxun
+>
+>   Maciej
+
+--=20
+- Jiaxun
 
