@@ -1,61 +1,57 @@
-Return-Path: <linux-kernel+bounces-178578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 833D68C50FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:16:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1168C526C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8991F220E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A98E1C218CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:36:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A1C12C549;
-	Tue, 14 May 2024 10:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22813D28A;
+	Tue, 14 May 2024 11:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dG7X0fjW"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A12suBtl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578B16CDC9;
-	Tue, 14 May 2024 10:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE476311D;
+	Tue, 14 May 2024 11:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715683945; cv=none; b=kb4vmKVPHFVAUkV0PSoQORzWzK3BLXlfprfTp4n+RO3ue/S8d5y/sy3m5HHO6A9f/aVq16jo9CTllX0F0buHmO2lVIWz/kvrl/I+MezAU9NyCCmXx3JSbew3C6LPltkmlsNftLlbf/xUOzzBfCsIbT/WK7NfpG1W76YKBw1tOEg=
+	t=1715685887; cv=none; b=Kg5mrSPcsVmIL5IFnWo/7kMivs55IsHaZ0nEJjGeN1/6mcEyP7UMxreWIyhB+dOWLHkn8w9nW5dl6oDhm7I4srKy/aKSD1v5TLgUmLGGE1613KnJU/MMYf0uSm+r1pLw0mmdVlfqyTzyqaVtixv1TDpT/LIG/k8BMdi618H4+E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715683945; c=relaxed/simple;
-	bh=HzymojR6eANGvMHbiOBc1AW1r5RLyDAKnqpjyv7pRuY=;
+	s=arc-20240116; t=1715685887; c=relaxed/simple;
+	bh=LXV+ZjnuDjyDDleo0LoYyUv1WccqMEPwcst/tiipykM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZEoIabHc5ipf4BXmgaUxQ0zqw3xCrmaipHJNXCfWAqPngAy600wDxTG0BkpSrWEkfq2vS6NW9elYBzXHYk9Fg/mJ8EZXy19J0ZSJtsSAB8vV3wz1oPkhaunxntCeirEoQ/hMPPFy9/n5UCWgongvFSXeZpDxfQByWJYkDRQErmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dG7X0fjW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF74CC2BD10;
-	Tue, 14 May 2024 10:52:23 +0000 (UTC)
+	 MIME-Version; b=sxRcOq7skZLep//GTP1VXR7Mt8oePyxA0IWsB88u7BkSiY1caCAIf9QcS03x6Rjk+LLl1QW5gV4gsoF/NNABj18mTFjb8kcS1iBK2VIh0WU6UG/pz2IbaaIt/Tzhn+9XYjVvdWqa8qByZmkvPrfyAO4+PcfitKwioAwFOkHVCMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A12suBtl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4BDEC2BD10;
+	Tue, 14 May 2024 11:24:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715683945;
-	bh=HzymojR6eANGvMHbiOBc1AW1r5RLyDAKnqpjyv7pRuY=;
+	s=korg; t=1715685887;
+	bh=LXV+ZjnuDjyDDleo0LoYyUv1WccqMEPwcst/tiipykM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dG7X0fjWLIhkKP47Q7YVpSi0iPxjnDGHPo/swQyKWkZVbB11/p03gw0KxOIBR0pYx
-	 6iawGyxnaviV5V1ok6U7F4i6T17TJw5h1WuLjVV79kYGGe/LtJzNR0EXceBigD4AGv
-	 5AF9MzCatfHEgz7Ps7vxME6QyO1YOKDu+EYpyhME=
+	b=A12suBtlmZTpHrD5Azhe/DLDCkKtPsgttPoXSRecc/ZB5xfAEnZL2NCO/eXdddrXz
+	 iWTdBvQA6ulwZ07uIT01j5FkOSypdzbB8l5ZdT9Lo8FBvPATfVFXG+aYdIlxXFR8vL
+	 bZtWRnS9XqmE31pl9FX++BB2SSupZv6j4kjWF+po=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Zack Rusin <zack.rusin@broadcom.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	dri-devel@lists.freedesktop.org,
+	linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Maaz Mombasawala <maaz.mombasawala@broadcom.com>,
-	Martin Krastev <martin.krastev@broadcom.com>,
-	zdi-disclosures@trendmicro.com
-Subject: [PATCH 6.8 298/336] drm/vmwgfx: Fix invalid reads in fence signaled events
-Date: Tue, 14 May 2024 12:18:22 +0200
-Message-ID: <20240514101049.868407347@linuxfoundation.org>
+	Mark Brown <broonie@kernel.org>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: [PATCH 6.6 237/301] usb: typec: tcpm: unregister existing source caps before re-registration
+Date: Tue, 14 May 2024 12:18:28 +0200
+Message-ID: <20240514101041.202661931@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240514101038.595152603@linuxfoundation.org>
-References: <20240514101038.595152603@linuxfoundation.org>
+In-Reply-To: <20240514101032.219857983@linuxfoundation.org>
+References: <20240514101032.219857983@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,51 +63,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.8-stable review patch.  If anyone has any objections, please let me know.
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Zack Rusin <zack.rusin@broadcom.com>
+From: Amit Sunil Dhamne <amitsd@google.com>
 
-commit a37ef7613c00f2d72c8fc08bd83fb6cc76926c8c upstream.
+commit 230ecdf71a644c9c73e0e6735b33173074ae3f94 upstream.
 
-Correctly set the length of the drm_event to the size of the structure
-that's actually used.
+Check and unregister existing source caps in tcpm_register_source_caps
+function before registering new ones. This change fixes following
+warning when port partner resends source caps after negotiating PD contract
+for the purpose of re-negotiation.
 
-The length of the drm_event was set to the parent structure instead of
-to the drm_vmw_event_fence which is supposed to be read. drm_read
-uses the length parameter to copy the event to the user space thus
-resuling in oob reads.
+[  343.135030][  T151] sysfs: cannot create duplicate filename '/devices/virtual/usb_power_delivery/pd1/source-capabilities'
+[  343.135071][  T151] Call trace:
+[  343.135076][  T151]  dump_backtrace+0xe8/0x108
+[  343.135099][  T151]  show_stack+0x18/0x24
+[  343.135106][  T151]  dump_stack_lvl+0x50/0x6c
+[  343.135119][  T151]  dump_stack+0x18/0x24
+[  343.135126][  T151]  sysfs_create_dir_ns+0xe0/0x140
+[  343.135137][  T151]  kobject_add_internal+0x228/0x424
+[  343.135146][  T151]  kobject_add+0x94/0x10c
+[  343.135152][  T151]  device_add+0x1b0/0x4c0
+[  343.135187][  T151]  device_register+0x20/0x34
+[  343.135195][  T151]  usb_power_delivery_register_capabilities+0x90/0x20c
+[  343.135209][  T151]  tcpm_pd_rx_handler+0x9f0/0x15b8
+[  343.135216][  T151]  kthread_worker_fn+0x11c/0x260
+[  343.135227][  T151]  kthread+0x114/0x1bc
+[  343.135235][  T151]  ret_from_fork+0x10/0x20
+[  343.135265][  T151] kobject: kobject_add_internal failed for source-capabilities with -EEXIST, don't try to register things with the same name in the same directory.
 
-Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
-Fixes: 8b7de6aa8468 ("vmwgfx: Rework fence event action")
-Reported-by: zdi-disclosures@trendmicro.com # ZDI-CAN-23566
-Cc: David Airlie <airlied@gmail.com>
-CC: Daniel Vetter <daniel@ffwll.ch>
-Cc: Zack Rusin <zack.rusin@broadcom.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: dri-devel@lists.freedesktop.org
+Fixes: 8203d26905ee ("usb: typec: tcpm: Register USB Power Delivery Capabilities")
+Cc: linux-usb@vger.kernel.org
+Cc: stable@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # v3.4+
-Reviewed-by: Maaz Mombasawala <maaz.mombasawala@broadcom.com>
-Reviewed-by: Martin Krastev <martin.krastev@broadcom.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20240425192748.1761522-1-zack.rusin@broadcom.com
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Link: https://lore.kernel.org/r/20240424223227.1807844-1-amitsd@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_fence.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/typec/tcpm/tcpm.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
-@@ -991,7 +991,7 @@ static int vmw_event_fence_action_create
- 	}
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -2422,7 +2422,7 @@ static int tcpm_register_sink_caps(struc
+ {
+ 	struct usb_power_delivery_desc desc = { port->negotiated_rev };
+ 	struct usb_power_delivery_capabilities_desc caps = { };
+-	struct usb_power_delivery_capabilities *cap;
++	struct usb_power_delivery_capabilities *cap = port->partner_source_caps;
  
- 	event->event.base.type = DRM_VMW_EVENT_FENCE_SIGNALED;
--	event->event.base.length = sizeof(*event);
-+	event->event.base.length = sizeof(event->event);
- 	event->event.user_data = user_data;
+ 	if (!port->partner_pd)
+ 		port->partner_pd = usb_power_delivery_register(NULL, &desc);
+@@ -2432,6 +2432,9 @@ static int tcpm_register_sink_caps(struc
+ 	memcpy(caps.pdo, port->sink_caps, sizeof(u32) * port->nr_sink_caps);
+ 	caps.role = TYPEC_SINK;
  
- 	ret = drm_event_reserve_init(dev, file_priv, &event->base, &event->event.base);
++	if (cap)
++		usb_power_delivery_unregister_capabilities(cap);
++
+ 	cap = usb_power_delivery_register_capabilities(port->partner_pd, &caps);
+ 	if (IS_ERR(cap))
+ 		return PTR_ERR(cap);
 
 
 
