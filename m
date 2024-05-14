@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-178812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D378C5804
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:33:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDD18C5808
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AE7FB226F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:33:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C720D28481D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2031F17EB80;
-	Tue, 14 May 2024 14:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7DD17EB88;
+	Tue, 14 May 2024 14:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nu3q4M+7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="H435RsdL"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECDE144D01;
-	Tue, 14 May 2024 14:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B9317BB10;
+	Tue, 14 May 2024 14:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715697218; cv=none; b=jlpZu+EiwdYZyWisAXSC351dkZ4N6013sMWDqIhhmSfHzMXORiU/V6sFtNV5N5uAhc9bRsvxWxyGdy0D4xpiPUHozgXfm2DDVBcufrhXRrgO04p5PCSsHGvd0q8dT7/LbaK3EhYJP6DPFtoZRu2FBPelTQdvwOICtselsDdpUI0=
+	t=1715697239; cv=none; b=O1g4xahHGzfDeKFN/xRu2bbUpBiOddG68h6XtH3aNTV7oRxpUPuUGUK545aCYAUAiKYTvzbjPLeXOfW+PQZvogSZhkOThidZutfxO7E/xwxhAnGkbFXtYqw0Sjd36wCD7buYLZCJSTQHzG3LtTL/P56mcLusmrjxbj/KBUgM+3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715697218; c=relaxed/simple;
-	bh=G4GQTtK/kUGLDea0szwRHFugqKscqEYNp4sHqguTr1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YJmTUZ0TaelKoGmgtOb0nOY2ecT885+Jk0u+6zlcmzhm0y3R4W4bE1WID81JZWv9h1wwt+i8TqIwWuqFjhKshXR2AhERhRkHXjSmjb9tq+Fd8swG/lFgBguLVdD5EYn8E/7WHWH/GM9agT9OrEKsr7EH/0G7nAY7oKpyZHA8n0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nu3q4M+7; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715697217; x=1747233217;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G4GQTtK/kUGLDea0szwRHFugqKscqEYNp4sHqguTr1c=;
-  b=Nu3q4M+7XPwBd5xfNClBV+r4aCLdSVz8BEjVU5XWagOPjqiDzFGDSYTw
-   kKOCH2u9QuCkMlib+qbgxp9v75oSFOPqIFNkO3oXbYkKz4RL3zaM7HBTi
-   Sr7gFDU5irnv0Q9PqnPTmPhkkkREsmQL+KwBAkBUC5kKI5iQt6nOPrLfX
-   QZ8pfREOurEHKznrmXQzFnvZf2At2cb6SxSI13kjUZIInYgUb+S+46Wx5
-   pn7wB3YeRuHD2mWt9uU2lNsvdPrJs0BENDguHixVGt+blCPVNnCK3OQLV
-   25yebOpuraZpBZfy7dlOg0j8tI1QPQrqWR/5P/vsjrhA1sYeT6SRAVMtO
-   A==;
-X-CSE-ConnectionGUID: G+e0SnHAQgqHXxjAlqkcVQ==
-X-CSE-MsgGUID: JD/xDz/mTQeXV6ezRsTiOg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11515953"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11515953"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 07:33:36 -0700
-X-CSE-ConnectionGUID: x2PAaXdbQRaRz856ZA6TaQ==
-X-CSE-MsgGUID: nTnKlSLXR3ieGdLNhsNb3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="68163301"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 07:33:34 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 628DD11F9DB;
-	Tue, 14 May 2024 17:33:31 +0300 (EEST)
-Date: Tue, 14 May 2024 14:33:31 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Bingbu Cao <bingbu.cao@intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] media: ipu-bridge: fix error code in ipu_bridge_init()
-Message-ID: <ZkN2Ow6hASmKvHlz@kekkonen.localdomain>
-References: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+	s=arc-20240116; t=1715697239; c=relaxed/simple;
+	bh=9JQ7eiNNZ64JRDb74RE//xWnDSJqnxv76sc+EBu6IA8=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=R+LO2KeAI3vsTTvaHU386GjGEM4Qn+JT6M5Bv8HfY2xdXvWsMVxUFPsgTTZtu2pf2yy3j9zfcEmnVaZQ17jQCkRWAfdCuDXgzLBy+0RUeiGQuRadFIdnosalBl5eVr8XxtRiysZgNfSoklapVSZG28DvZ4pBMz7wMu1G/7X+hZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=H435RsdL; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2b33d011e5dso3826319a91.0;
+        Tue, 14 May 2024 07:33:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1715697238; x=1716302038; darn=vger.kernel.org;
+        h=content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iq8lh+ioOW1FpEAVtAaznZbqqApHq44z6sdGCsyHXFA=;
+        b=H435RsdLm2f3aWzBHUyl3FV2C0V6TjQf3L5YKhN/k9XZBIeih7bLkBi0qeyrbkN+VR
+         JDGhTAz333DMQlhsJU5H7txZUhvWdqdLz1tijafE1ypbUQ/GB8u8t9fpO5hkqcp3o0Og
+         jed9UBPhWaLQLQFY1gvUGwNLBlXEEySdmPHvyc5yDXpoE1wwtY36anyg37klIX1pUmqi
+         58N2jx01DOAV2Y7Eue+kfWxaDJIC1QbafO1IWSEx1Nv/1bc3ume+HDQWXWqG2D/ZVHtW
+         qoblsBrHXfSbRQtQZKze5FnTCmvaH2rM5p26Gq8mIUNnz1FXbRXeQSu9E+vPPDqxT/NA
+         JqhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715697238; x=1716302038;
+        h=content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iq8lh+ioOW1FpEAVtAaznZbqqApHq44z6sdGCsyHXFA=;
+        b=dHPU0h9KrY3Lr2A0FaxL/6xhjg1189bjxohlKkv7zVn5pJRf4aVfp9zvgb6VPJ+Ap1
+         mlYSAGvmKPvVknL3XQ+DwxjAqmrGnTqWfKDce7iYvTIZ4ZOL6uU2+T88gCrmvvg7gDNi
+         1Yl/dUTZsmJCGDbgGm4GiN0qf2bcZwelZETnCdRh1HMmf42OwdCsS1QUd5CYlID6r6FG
+         aNW6IeK2wSJlZGMHOMurqgvGK1Ly65C9iUp8PzjMjRqEBdU9FUL4G4P4ICQuBXGH+8S6
+         G98qQaeIb2Yzeb8zKJTYNGetRLm/HFGNKfFfdlEGfU3fEYztnHE7GwhIywV55X21Q6zl
+         QJCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVarU/u4KasBfN3WX4GUGZR1oICgtpr4wtQKNb9oc7yix8ugXxBmjUEQEGJJqP1Zp+hQB7gj64/S/o6wgToc7P1oNSqr13bA5Q7r3Q4Im3hkXvL+LMxu4F1n9Cwp+E35gbFcovR1SL0yQnINVIykOg68L2ndi+1jMZezKVU
+X-Gm-Message-State: AOJu0YxJYrzv+P8OWfrYVuiW6Elmx0tW//7tYb1bZSNOpos7Vzw4SWml
+	1Wg2QhvwX9HyMCBk7YnHxf+pQWjeiQHZqlU1hDxfrbjfBFCEMHXG
+X-Google-Smtp-Source: AGHT+IEhEBfxmSCDQ+qNmAfruffGpVnoNO3Uk5u3oWLvN0oE6s/d9cI16dDjXJDX2fpa2A9RSrERMQ==
+X-Received: by 2002:a17:90a:7103:b0:2b6:215b:e236 with SMTP id 98e67ed59e1d1-2b6c76f97b7mr19309942a91.23.1715697237523;
+        Tue, 14 May 2024 07:33:57 -0700 (PDT)
+Received: from ArmidaleLaptop ([50.204.89.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b99c5eea97sm976337a91.52.2024.05.14.07.33.56
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 14 May 2024 07:33:57 -0700 (PDT)
+From: dthaler1968@googlemail.com
+X-Google-Original-From: <dthaler1968@gmail.com>
+To: "'Puranjay Mohan'" <puranjay@kernel.org>,
+	"'David Vernet'" <void@manifault.com>,
+	"'Alexei Starovoitov'" <ast@kernel.org>,
+	"'Daniel Borkmann'" <daniel@iogearbox.net>,
+	"'Andrii Nakryiko'" <andrii@kernel.org>,
+	"'Martin KaFai Lau'" <martin.lau@linux.dev>,
+	"'Eduard Zingerman'" <eddyz87@gmail.com>,
+	"'Song Liu'" <song@kernel.org>,
+	"'Yonghong Song'" <yonghong.song@linux.dev>,
+	"'John Fastabend'" <john.fastabend@gmail.com>,
+	"'KP Singh'" <kpsingh@kernel.org>,
+	"'Stanislav Fomichev'" <sdf@google.com>,
+	"'Hao Luo'" <haoluo@google.com>,
+	"'Jiri Olsa'" <jolsa@kernel.org>,
+	"'Jonathan Corbet'" <corbet@lwn.net>,
+	"'Dave Thaler'" <dthaler1968@googlemail.com>,
+	"'Will Hawkins'" <hawkinsw@obs.cr>,
+	<bpf@vger.kernel.org>,
+	<bpf@ietf.org>,
+	<linux-doc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Cc: <puranjay12@gmail.com>
+References: <20240514130303.113607-1-puranjay@kernel.org>
+In-Reply-To: <20240514130303.113607-1-puranjay@kernel.org>
+Subject: RE: [PATCH bpf] bpf, docs: Fix the description of 'src' in ALU instructions
+Date: Tue, 14 May 2024 08:33:55 -0600
+Message-ID: <019c01daa60b$c08873b0$41995b10$@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f468c4ac-0629-41b5-b5d1-e26f70e44800@moroto.mountain>
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQMgS3ITkG+5x2/Y13ejOoDX0Q3k4K8LgGnA
+Content-Language: en-us
 
-Hi Dan,
-
-On Fri, May 10, 2024 at 06:43:31PM +0300, Dan Carpenter wrote:
-> Return -EINVAL if "bridge->n_sensors == 0".  Don't return success.
+Puranjay Mohan <puranjay@kernel.org> wrote: 
+> An ALU instruction's source operand can be the value in the source
+register or the
+> 32-bit immediate value encoded in the instruction. This is controlled by
+the 's' bit of
+> the 'opcode'.
 > 
-> Fixes: 881ca25978c6 ("media: ipu3-cio2: rename cio2 bridge to ipu bridge and move out of ipu3")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> The current description explicitly uses the phrase 'value of the source
+register'
+> when defining the meaning of 'src'.
+> 
+> Change the description to use 'source operand' in place of 'value of the
+source
+> register'.
+> 
+> Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
+
+Acked-by: Dave Thaler <dthaler1968@gmail.com>
+
 > ---
-> v2: style change
+>  Documentation/bpf/standardization/instruction-set.rst | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
->  drivers/media/pci/intel/ipu-bridge.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> diff --git a/Documentation/bpf/standardization/instruction-set.rst
+> b/Documentation/bpf/standardization/instruction-set.rst
+> index a5ab00ac0b14..2e17b365388e 100644
+> --- a/Documentation/bpf/standardization/instruction-set.rst
+> +++ b/Documentation/bpf/standardization/instruction-set.rst
+> @@ -292,8 +292,9 @@ Arithmetic instructions  ``ALU`` uses 32-bit wide
+> operands while ``ALU64`` uses 64-bit wide operands for  otherwise
+identical
+> operations. ``ALU64`` instructions belong to the
+>  base64 conformance group unless noted otherwise.
+> -The 'code' field encodes the operation as below, where 'src' and 'dst'
+refer -to the
+> values of the source and destination registers, respectively.
+> +The 'code' field encodes the operation as below, where 'src' refers to
+> +the the source operand and 'dst' refers to the value of the destination
+> +register.
 > 
-> diff --git a/drivers/media/pci/intel/ipu-bridge.c b/drivers/media/pci/intel/ipu-bridge.c
-> index 61750cc98d70..44a9d9c15b05 100644
-> --- a/drivers/media/pci/intel/ipu-bridge.c
-> +++ b/drivers/media/pci/intel/ipu-bridge.c
-> @@ -839,9 +839,14 @@ int ipu_bridge_init(struct device *dev,
->  		bridge->data_lanes[i] = i + 1;
->  
->  	ret = ipu_bridge_connect_sensors(bridge);
-> -	if (ret || bridge->n_sensors == 0)
-> +	if (ret)
->  		goto err_unregister_ipu;
->  
-> +	if (bridge->n_sensors == 0) {
-> +		ret = -EINVAL;
-> +		goto err_unregister_ipu;
-> +	}
+>  =====  =====  =======
+> ==========================================================
+>  name   code   offset   description
+> --
+> 2.40.1
 
-This would return an error if there are no sensors.
 
-Neither IPU3-CIO2 or IPU6 ISYS drivers should be of any functional use
-without sensors. But the power states of the devices could be affected by
-this: the drivers should power off these devices but without drivers they
-maybe left powered on. I haven't made any measurements though.
-
-> +
->  	dev_info(dev, "Connected %d cameras\n", bridge->n_sensors);
->  
->  	fwnode = software_node_fwnode(&bridge->ipu_hid_node);
-
--- 
-Kind regards,
-
-Sakari Ailus
 
