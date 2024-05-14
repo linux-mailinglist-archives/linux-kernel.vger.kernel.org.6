@@ -1,411 +1,139 @@
-Return-Path: <linux-kernel+bounces-178641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EFF88C55BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:04:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CFF8C55BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053D81F231D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:04:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970901F23007
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE97A76046;
-	Tue, 14 May 2024 12:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363FC1E4B1;
+	Tue, 14 May 2024 12:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIBAgJhv"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cNn+qXFN"
+Received: from mail-4325.protonmail.ch (mail-4325.protonmail.ch [185.70.43.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF17076033;
-	Tue, 14 May 2024 12:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379FA29D06
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688206; cv=none; b=HIjhU3IkNePkQR9Q18l1OmpPODArvNqC1ZGKWLjESpLeV8O3v5V04BelsOpht0anCniireJRpcSHVxnrOGjknzHLcmeAcVyXLq9kuL3gooNy8cdy/ApFHvo1/BE3hTgrEw/PX8G5UoBD8kNfIefzFEvB4FHVzksQWKLCwNhxYuA=
+	t=1715688272; cv=none; b=VqZkd8ZhVVTBLDc6b4ObpRrxv+PN+1ngS6dhjoq76ZndeWJuiFbZbnMjfs24oGAn+kuvPQhWcjuUdq6dKX6jjqEHAwXhEgjzRR/Wzyn3FZIiCDT9HcsvzLxOTx9gujW62VGuWLsEl5wPYyoj8ZPxeXBUgjqKGtgloiQVRFmtyyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688206; c=relaxed/simple;
-	bh=ikxE01aoGV4tRcZ7NfOLDfnea7FzmDvezDsUlqxjp3A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rHnQNZ8O1lmkBsf8D2lZHQYzihkVtUfB1O3+FWoRHV0VRt83/ISqxWym6o4kJq92lJmBrxFwcRtFvPXa+Xubp6jLE6ldny7m3eCUAvxxc+MruTE5A/nbTRJGgZHMPjed0PdWXAHTRQKjpKg4+KfdSp5JFFEOxLEvZ4Y2i2hugwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aIBAgJhv; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-41ff5e3dc3bso29384635e9.1;
-        Tue, 14 May 2024 05:03:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715688203; x=1716293003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sa7AlJjKWENRhUjEnOGX/dr50bh+bVd2TQ8DfybLZfk=;
-        b=aIBAgJhvxYlLhnVG+P9++8xdbg8re/hLxwoVgCIS2XlmadefzzfPLjyX5LU2D3FEAf
-         p8rLbVktli7Jo2MWPEBvxquC6nsk2A/qSdHKuaSWSaglFJ4To5Xuwk71MeMJKvI9uDYB
-         nN/8D8oXjyoLELr4ncCeyeK9O5LMTXBd6QLwECvTINRUm7Jo0jBWRShRjQMYhRJafSUI
-         PE63UT7cYh8mduoTYHoFmMuJEQUvjyM4X20bi83/e+x+nBxG+53xDuzKYf6cO7CCACrQ
-         JeWqQLZk4AR3ODWjQDGY2jEsnSqpB9E+uV/2DCNHIqs9CpH+f18T83i2oZnYpXmtDd5m
-         ZFAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715688203; x=1716293003;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sa7AlJjKWENRhUjEnOGX/dr50bh+bVd2TQ8DfybLZfk=;
-        b=NpGQ6HN5PA2d8eqzwbp1Yod9mHr2cWWoGJaXMNh2+ehBZx8AYeXDCBXfxZ+o8Gz4qV
-         3OAj6Bopirl0fdFxMh0UOELpWzJ8jqloZmXj+9JReuJ2ti4zuscMpOtbyUQbW79g9/jR
-         9nhfs3VEE+J1pQpzbBh8pOrZfzapNqYu/0E5gKypRlz0idF2Ho47jwcQC7mZcgVaUm6c
-         dVvun1ZBKzAYNNJBL5Us16jQd3aF7EpekEDyK4HVNS/zhubVOSZuAOhIz2zDqcONO4EV
-         U4n0JqPQWWoKitYV3Z63IRl5f7mb0u1/v693XPSdVFP8Q9018EmfBFxlx8kRVCNk/F8c
-         wnzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmHXBazAmRC7IwJ/fns01L/BpBoFLTsuQW+HaW7bLesMwtV1zPCJaI5bR8AD7uz3ghzpKHj9jbIHIeuU8Glf8LvmwD2Xh4FggoDodz3pjFgbOvAsqWZvSla/ttpZhZdwvMwrP9bhDtsF3o+yxZG8lEfJNql3HRPJv3DxDzr0OlRiTIeg==
-X-Gm-Message-State: AOJu0YzIkCuv+LldtKpr11JVn3hmE+RoE3iPHAlvyg0EHGgXLE+Q+bJ9
-	sGoLc/3zCw+d/uUaItbrGiqLWDmuUS/M/w1lJgs+ITQjCBfR+MURl0CnX1RY
-X-Google-Smtp-Source: AGHT+IG1PZv5YOxQMvoy0pL9eOxPBmMPv+OdHDffcmKNQbmO/5jt1P68iXfcYogmvbpXAvJXkfKxrQ==
-X-Received: by 2002:adf:e4c7:0:b0:34d:e252:b57d with SMTP id ffacd0b85a97d-3504a73217emr9942037f8f.17.1715688203152;
-        Tue, 14 May 2024 05:03:23 -0700 (PDT)
-Received: from spiri.. ([2a02:2f08:a105:8300:5179:8171:3530:3b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b896a06sm13593927f8f.27.2024.05.14.05.03.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 05:03:22 -0700 (PDT)
-From: Alisa-Dariana Roman <alisadariana@gmail.com>
-X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
-To: michael.hennerich@analog.com,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	jic23@kernel.org,
-	robh@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	andy@kernel.org,
-	nuno.sa@analog.com,
-	marcelo.schmitt@analog.com,
-	bigunclemax@gmail.com,
-	dlechner@baylibre.com,
-	okan.sahin@analog.com,
-	fr0st61te@gmail.com,
-	alisa.roman@analog.com,
-	marcus.folkesson@gmail.com,
-	schnelle@linux.ibm.com,
-	liambeguin@gmail.com
-Subject: [PATCH v8 6/6] iio: adc: ad7192: Add AD7194 support
-Date: Tue, 14 May 2024 15:02:22 +0300
-Message-Id: <20240514120222.56488-7-alisa.roman@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240514120222.56488-1-alisa.roman@analog.com>
-References: <20240514120222.56488-1-alisa.roman@analog.com>
+	s=arc-20240116; t=1715688272; c=relaxed/simple;
+	bh=FYTpbOaY7Dy+DEpwCa4cMMT++yt+6kZJgcgzapVs0HA=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ujti//ALGb5uK/QX5bxvayv0ATLptK09dVoFGtcdZtpZwnhpFat+by3cvnnCGS6xfcTsK23CSsmGHsgp8II9bux5G8cSjtk0S81WGiTFxCucmHazVr5yRaP4ghY6IYnMjbvVAbkCMj0UgBc5viX/7lgu6YCg0KRCvgwfasLWvoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cNn+qXFN; arc=none smtp.client-ip=185.70.43.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1715688265; x=1715947465;
+	bh=IvTnttTsA/cCJREUZ1zcG1o5RbLcaGHs8QcRvMdki1A=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=cNn+qXFNtKg8RLtPLQLMX1BiXqFURHdph6JsD3UA+WK3Z8E/Ia2H3298/0K00oMea
+	 A8GyDdDPDldFlhC0LqtxHPnVOZ3/SGkC1HEkcuUSBJl2Q6FOqTvMJqUOWj/KYrttIF
+	 fumalJBRxdG22E9wvqlVFy1DOAd3WQQBwTpzVfoLksb3z4W+vLFLJ5Yu7L5P1GAmgo
+	 FUPYjv1Ta3vf9HxVhzTwFBv8DkELK9nRF6T2KX6i29KzTUCn+q4T0PqoLf3ZoHSobC
+	 BAty8pwHbZfOWi7WUob1j+rkpJchXcrreg1nXCn0pK+UYw2YgSB5y+JezdJx1S6rHi
+	 P4fDWVLGwFuCQ==
+Date: Tue, 14 May 2024 12:04:22 +0000
+To: "marcel@holtmann.org" <marcel@holtmann.org>, "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>
+From: "SoloSaravanan@proton.me" <SoloSaravanan@proton.me>
+Cc: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Bluetooth: btusb: Add device 13d3:3606 as MT7921 device
+Message-ID: <uhH49zEgffN2Dn70XKLwBv4_mxoAaSY0e51RI-YzQGTMKyK_BRvH1sz-Fb92NGHC1g5i3DqA86ykWYBoG7lOy3QTHAluqbc7bJcnbGS-I7k=@proton.me>
+Feedback-ID: 84438951:user:proton
+X-Pm-Message-ID: 56591b39972ad328808a57cd1ea5674e8d7673dc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Unlike the other AD719Xs, AD7194 has configurable channels. The user can
-dynamically configure them in the devicetree.
+Add VendorID 13d3 & ProdID 3606 for MediaTek MT7921 USB Bluetooth chip.
 
-Add sigma_delta_info member to chip_info structure. Since AD7194 is the
-only chip that has no channel sequencer, num_slots should remain
-undefined.
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below.
 
-Also modify config AD7192 description for better scaling.
+T:  Bus=3D03 Lev=3D01 Prnt=3D01 Port=3D09 Cnt=3D03 Dev#=3D  4 Spd=3D480  Mx=
+Ch=3D 0
+D:  Ver=3D 2.10 Cls=3Def(misc ) Sub=3D02 Prot=3D01 MxPS=3D64 #Cfgs=3D  1
+P:  Vendor=3D13d3 ProdID=3D3606 Rev=3D 1.00
+S:  Manufacturer=3DMediaTek Inc.
+S:  Product=3DWireless_Device
+S:  SerialNumber=3D000000000
+C:* #Ifs=3D 3 Cfg#=3D 1 Atr=3De0 MxPwr=3D100mA
+A:  FirstIf#=3D 0 IfCount=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01
+I:* If#=3D 0 Alt=3D 0 #EPs=3D 3 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D81(I) Atr=3D03(Int.) MxPS=3D  16 Ivl=3D125us
+E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D 512 Ivl=3D0ms
+I:* If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   0 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D   9 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 2 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  17 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 3 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  25 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 4 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  33 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 5 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  49 Ivl=3D1ms
+I:  If#=3D 1 Alt=3D 6 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3Dbtusb
+E:  Ad=3D83(I) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+E:  Ad=3D03(O) Atr=3D01(Isoc) MxPS=3D  63 Ivl=3D1ms
+I:* If#=3D 2 Alt=3D 0 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3D(none)
+E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
+E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D  64 Ivl=3D125us
+I:  If#=3D 2 Alt=3D 1 #EPs=3D 2 Cls=3De0(wlcon) Sub=3D01 Prot=3D01 Driver=
+=3D(none)
+E:  Ad=3D8a(I) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
+E:  Ad=3D0a(O) Atr=3D03(Int.) MxPS=3D 512 Ivl=3D125us
 
-Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
+Signed-off-by: SoloSaravanan <SoloSaravanan@proton.me>
 ---
- drivers/iio/adc/Kconfig  |  11 ++-
- drivers/iio/adc/ad7192.c | 147 +++++++++++++++++++++++++++++++++++++--
- 2 files changed, 150 insertions(+), 8 deletions(-)
+ drivers/bluetooth/btusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index 8db68b80b391..74fecc284f1a 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -88,12 +88,17 @@ config AD7173
- 	  called ad7173.
- 
- config AD7192
--	tristate "Analog Devices AD7190 AD7192 AD7193 AD7195 ADC driver"
-+	tristate "Analog Devices AD7192 and similar ADC driver"
- 	depends on SPI
- 	select AD_SIGMA_DELTA
- 	help
--	  Say yes here to build support for Analog Devices AD7190,
--	  AD7192, AD7193 or AD7195 SPI analog to digital converters (ADC).
-+	  Say yes here to build support for Analog Devices SPI analog to digital
-+	  converters (ADC):
-+	  - AD7190
-+	  - AD7192
-+	  - AD7193
-+	  - AD7194
-+	  - AD7195
- 	  If unsure, say N (but it's safe to say "Y").
- 
- 	  To compile this driver as a module, choose M here: the
-diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
-index 7160929d32c9..fe2d8d55fa76 100644
---- a/drivers/iio/adc/ad7192.c
-+++ b/drivers/iio/adc/ad7192.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * AD7190 AD7192 AD7193 AD7195 SPI ADC driver
-+ * AD7192 and similar SPI ADC driver
-  *
-  * Copyright 2011-2015 Analog Devices Inc.
-  */
-@@ -129,10 +129,22 @@
- #define AD7193_CH_AIN8		0x480 /* AIN7 - AINCOM */
- #define AD7193_CH_AINCOM	0x600 /* AINCOM - AINCOM */
- 
-+#define AD7194_CH_POS(x)	(((x) - 1) << 4)
-+#define AD7194_CH_NEG(x)	((x) - 1)
-+#define AD7194_CH(p)		(BIT(10) | AD7194_CH_POS(p))
-+				  /* 10th bit corresponds to CON18(Pseudo) */
-+#define AD7194_DIFF_CH(p, n)	(AD7194_CH_POS(p) | AD7194_CH_NEG(n))
-+#define AD7194_CH_TEMP		0x100 /* Temp sensor */
-+#define AD7194_CH_BASE_NR	2
-+#define AD7194_CH_AIN_START	1
-+#define AD7194_CH_AIN_NR	16
-+#define AD7194_CH_MAX_NR	272
-+
- /* ID Register Bit Designations (AD7192_REG_ID) */
- #define CHIPID_AD7190		0x4
- #define CHIPID_AD7192		0x0
- #define CHIPID_AD7193		0x2
-+#define CHIPID_AD7194		0x3
- #define CHIPID_AD7195		0x6
- #define AD7192_ID_MASK		GENMASK(3, 0)
- 
-@@ -170,6 +182,7 @@ enum {
- 	ID_AD7190,
- 	ID_AD7192,
- 	ID_AD7193,
-+	ID_AD7194,
- 	ID_AD7195,
- };
- 
-@@ -178,7 +191,9 @@ struct ad7192_chip_info {
- 	const char			*name;
- 	const struct iio_chan_spec	*channels;
- 	u8				num_channels;
-+	const struct ad_sigma_delta_info	*sigma_delta_info;
- 	const struct iio_info		*info;
-+	int (*parse_channels)(struct iio_dev *indio_dev);
- };
- 
- struct ad7192_state {
-@@ -346,6 +361,18 @@ static const struct ad_sigma_delta_info ad7192_sigma_delta_info = {
- 	.irq_flags = IRQF_TRIGGER_FALLING,
- };
- 
-+static const struct ad_sigma_delta_info ad7194_sigma_delta_info = {
-+	.set_channel = ad7192_set_channel,
-+	.append_status = ad7192_append_status,
-+	.disable_all = ad7192_disable_all,
-+	.set_mode = ad7192_set_mode,
-+	.has_registers = true,
-+	.addr_shift = 3,
-+	.read_mask = BIT(6),
-+	.status_ch_mask = GENMASK(3, 0),
-+	.irq_flags = IRQF_TRIGGER_FALLING,
-+};
-+
- static const struct ad_sd_calib_data ad7192_calib_arr[8] = {
- 	{AD7192_MODE_CAL_INT_ZERO, AD7192_CH_AIN1},
- 	{AD7192_MODE_CAL_INT_FULL, AD7192_CH_AIN1},
-@@ -937,6 +964,14 @@ static const struct iio_info ad7192_info = {
- 	.update_scan_mode = ad7192_update_scan_mode,
- };
- 
-+static const struct iio_info ad7194_info = {
-+	.read_raw = ad7192_read_raw,
-+	.write_raw = ad7192_write_raw,
-+	.write_raw_get_fmt = ad7192_write_raw_get_fmt,
-+	.read_avail = ad7192_read_avail,
-+	.validate_trigger = ad_sd_validate_trigger,
-+};
-+
- static const struct iio_info ad7195_info = {
- 	.read_raw = ad7192_read_raw,
- 	.write_raw = ad7192_write_raw,
-@@ -1028,12 +1063,96 @@ static const struct iio_chan_spec ad7193_channels[] = {
- 	IIO_CHAN_SOFT_TIMESTAMP(14),
- };
- 
-+static int ad7194_validate_ain_channel(struct device *dev, u32 ain)
-+{
-+	if (!in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR))
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Invalid AIN channel: %u\n", ain);
-+
-+	return 0;
-+}
-+
-+static int ad7194_parse_channels(struct iio_dev *indio_dev)
-+{
-+	struct device *dev = indio_dev->dev.parent;
-+	struct iio_chan_spec *ad7194_channels;
-+	const struct iio_chan_spec ad7194_chan = AD7193_CHANNEL(0, 0, 0);
-+	const struct iio_chan_spec ad7194_chan_diff = AD7193_DIFF_CHANNEL(0, 0, 0, 0);
-+	const struct iio_chan_spec ad7194_chan_temp = AD719x_TEMP_CHANNEL(0, 0);
-+	const struct iio_chan_spec ad7194_chan_timestamp = IIO_CHAN_SOFT_TIMESTAMP(0);
-+	unsigned int num_channels, index = 0;
-+	u32 ain[2];
-+	int ret;
-+
-+	num_channels = device_get_child_node_count(dev);
-+	if (num_channels > AD7194_CH_MAX_NR)
-+		return dev_err_probe(dev, -EINVAL,
-+				     "Too many channels: %u\n", num_channels);
-+
-+	num_channels += AD7194_CH_BASE_NR;
-+
-+	ad7194_channels = devm_kcalloc(dev, num_channels,
-+				       sizeof(*ad7194_channels), GFP_KERNEL);
-+	if (!ad7194_channels)
-+		return -ENOMEM;
-+
-+	indio_dev->channels = ad7194_channels;
-+	indio_dev->num_channels = num_channels;
-+
-+	device_for_each_child_node_scoped(dev, child) {
-+		ret = fwnode_property_read_u32_array(child, "diff-channels",
-+						     ain, ARRAY_SIZE(ain));
-+		if (ret == 0) {
-+			ret = ad7194_validate_ain_channel(dev, ain[0]);
-+			if (ret)
-+				return ret;
-+
-+			ret = ad7194_validate_ain_channel(dev, ain[1]);
-+			if (ret)
-+				return ret;
-+
-+			*ad7194_channels = ad7194_chan_diff;
-+			ad7194_channels->scan_index = index++;
-+			ad7194_channels->channel = ain[0];
-+			ad7194_channels->channel2 = ain[1];
-+			ad7194_channels->address = AD7194_DIFF_CH(ain[0], ain[1]);
-+		} else {
-+			ret = fwnode_property_read_u32(child, "single-channel",
-+						       &ain[0]);
-+			if (ret)
-+				return dev_err_probe(dev, ret,
-+						     "Missing channel property\n");
-+
-+			ret = ad7194_validate_ain_channel(dev, ain[0]);
-+			if (ret)
-+				return ret;
-+
-+			*ad7194_channels = ad7194_chan;
-+			ad7194_channels->scan_index = index++;
-+			ad7194_channels->channel = ain[0];
-+			ad7194_channels->address = AD7194_CH(ain[0]);
-+		}
-+		ad7194_channels++;
-+	}
-+
-+	*ad7194_channels = ad7194_chan_temp;
-+	ad7194_channels->scan_index = index++;
-+	ad7194_channels->address = AD7194_CH_TEMP;
-+	ad7194_channels++;
-+
-+	*ad7194_channels = ad7194_chan_timestamp;
-+	ad7194_channels->scan_index = index;
-+
-+	return 0;
-+}
-+
- static const struct ad7192_chip_info ad7192_chip_info_tbl[] = {
- 	[ID_AD7190] = {
- 		.chip_id = CHIPID_AD7190,
- 		.name = "ad7190",
- 		.channels = ad7192_channels,
- 		.num_channels = ARRAY_SIZE(ad7192_channels),
-+		.sigma_delta_info = &ad7192_sigma_delta_info,
- 		.info = &ad7192_info,
- 	},
- 	[ID_AD7192] = {
-@@ -1041,6 +1160,7 @@ static const struct ad7192_chip_info ad7192_chip_info_tbl[] = {
- 		.name = "ad7192",
- 		.channels = ad7192_channels,
- 		.num_channels = ARRAY_SIZE(ad7192_channels),
-+		.sigma_delta_info = &ad7192_sigma_delta_info,
- 		.info = &ad7192_info,
- 	},
- 	[ID_AD7193] = {
-@@ -1048,13 +1168,22 @@ static const struct ad7192_chip_info ad7192_chip_info_tbl[] = {
- 		.name = "ad7193",
- 		.channels = ad7193_channels,
- 		.num_channels = ARRAY_SIZE(ad7193_channels),
-+		.sigma_delta_info = &ad7192_sigma_delta_info,
- 		.info = &ad7192_info,
- 	},
-+	[ID_AD7194] = {
-+		.chip_id = CHIPID_AD7194,
-+		.name = "ad7194",
-+		.info = &ad7194_info,
-+		.sigma_delta_info = &ad7194_sigma_delta_info,
-+		.parse_channels = ad7194_parse_channels,
-+	},
- 	[ID_AD7195] = {
- 		.chip_id = CHIPID_AD7195,
- 		.name = "ad7195",
- 		.channels = ad7192_channels,
- 		.num_channels = ARRAY_SIZE(ad7192_channels),
-+		.sigma_delta_info = &ad7192_sigma_delta_info,
- 		.info = &ad7195_info,
- 	},
- };
-@@ -1161,11 +1290,17 @@ static int ad7192_probe(struct spi_device *spi)
- 	st->chip_info = spi_get_device_match_data(spi);
- 	indio_dev->name = st->chip_info->name;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
--	indio_dev->channels = st->chip_info->channels;
--	indio_dev->num_channels = st->chip_info->num_channels;
- 	indio_dev->info = st->chip_info->info;
-+	if (st->chip_info->parse_channels) {
-+		ret = st->chip_info->parse_channels(indio_dev);
-+		if (ret)
-+			return ret;
-+	} else {
-+		indio_dev->channels = st->chip_info->channels;
-+		indio_dev->num_channels = st->chip_info->num_channels;
-+	}
- 
--	ret = ad_sd_init(&st->sd, indio_dev, spi, &ad7192_sigma_delta_info);
-+	ret = ad_sd_init(&st->sd, indio_dev, spi, st->chip_info->sigma_delta_info);
- 	if (ret)
- 		return ret;
- 
-@@ -1202,6 +1337,7 @@ static const struct of_device_id ad7192_of_match[] = {
- 	{ .compatible = "adi,ad7190", .data = &ad7192_chip_info_tbl[ID_AD7190] },
- 	{ .compatible = "adi,ad7192", .data = &ad7192_chip_info_tbl[ID_AD7192] },
- 	{ .compatible = "adi,ad7193", .data = &ad7192_chip_info_tbl[ID_AD7193] },
-+	{ .compatible = "adi,ad7194", .data = &ad7192_chip_info_tbl[ID_AD7194] },
- 	{ .compatible = "adi,ad7195", .data = &ad7192_chip_info_tbl[ID_AD7195] },
- 	{}
- };
-@@ -1211,6 +1347,7 @@ static const struct spi_device_id ad7192_ids[] = {
- 	{ "ad7190", (kernel_ulong_t)&ad7192_chip_info_tbl[ID_AD7190] },
- 	{ "ad7192", (kernel_ulong_t)&ad7192_chip_info_tbl[ID_AD7192] },
- 	{ "ad7193", (kernel_ulong_t)&ad7192_chip_info_tbl[ID_AD7193] },
-+	{ "ad7194", (kernel_ulong_t)&ad7192_chip_info_tbl[ID_AD7194] },
- 	{ "ad7195", (kernel_ulong_t)&ad7192_chip_info_tbl[ID_AD7195] },
- 	{}
- };
-@@ -1227,6 +1364,6 @@ static struct spi_driver ad7192_driver = {
- module_spi_driver(ad7192_driver);
- 
- MODULE_AUTHOR("Michael Hennerich <michael.hennerich@analog.com>");
--MODULE_DESCRIPTION("Analog Devices AD7190, AD7192, AD7193, AD7195 ADC");
-+MODULE_DESCRIPTION("Analog Devices AD7192 and similar ADC");
- MODULE_LICENSE("GPL v2");
- MODULE_IMPORT_NS(IIO_AD_SIGMA_DELTA);
--- 
-2.34.1
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index e3946f7b736e..aadab04c7456 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -618,6 +618,9 @@ static const struct usb_device_id quirks_table[] =3D {
+ =09{ USB_DEVICE(0x0e8d, 0x0608), .driver_info =3D BTUSB_MEDIATEK |
+ =09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
+ =09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
++=09{ USB_DEVICE(0x13d3, 0x3606), .driver_info =3D BTUSB_MEDIATEK |
++=09=09=09=09=09=09     BTUSB_WIDEBAND_SPEECH |
++=09=09=09=09=09=09     BTUSB_VALID_LE_STATES },
+=20
+ =09/* MediaTek MT7922A Bluetooth devices */
+ =09{ USB_DEVICE(0x0489, 0xe0d8), .driver_info =3D BTUSB_MEDIATEK |
+--=20
+2.45.0
+
 
 
