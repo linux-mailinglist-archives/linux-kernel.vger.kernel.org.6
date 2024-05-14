@@ -1,107 +1,284 @@
-Return-Path: <linux-kernel+bounces-178471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CC78C4E2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:53:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8ED58C4E2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A58291F210FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:53:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC7F31C21955
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DB53219F;
-	Tue, 14 May 2024 08:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aRROseLO"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ADC37714;
+	Tue, 14 May 2024 08:52:44 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4455120DC8
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD46225A8;
+	Tue, 14 May 2024 08:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715676691; cv=none; b=XdMvUgxNQWc4m3VBOLtVgFYXVDep6u+jf0Fs7N0aJ/r5xq5Vk7fmBeAz/Km1pCILdcv9Zc96qAHBw+fUwaFcdNgbuzIX6wb4U4WTTb7VLN/SeIfXEYmrSckynnxe3dv0u2gknlfu4Yjg2GlTM341R0BiuF0GCHrz/zAWwTBC7q4=
+	t=1715676763; cv=none; b=PgnMoEhMwHkFJUDeHtE15obKqkVID04xstfYqR+nLzfJ6tvsru5EfxU/lHeFupwCTAmz/kPoT0wOVglIys155mkw0OIJVH0Hkbn+vUplFjVv3l1oqmSeW9cTY6LVlDNAD86aVjttfTW7ucoDp+Prwofr24k0mWFljQkB0NbxenI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715676691; c=relaxed/simple;
-	bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=si36xau98UVNIN+k8tYEh86xQqcT7TTlwt1ymOm1kUZo0NSKttrXiiydTSbqwDYu2VUxNqWS3iOIi630DdwYrroDIbxfuF6dzhO4TjSzju5Dl6UKCV+heZTzBsvMPGFPYG7EoEezE3LgBww6inkv3xG9LNXaT/wgeglVkolhvvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aRROseLO; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-61be4b986aaso60028697b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 01:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715676689; x=1716281489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
-        b=aRROseLOaMavXA0W5FbArPt54GVcGw2KyvkFMM3HFHdY6mACaXTJhq8t8zbq+vn6w2
-         BfpffEqbZPfUrVabsn+zmw8bM+6BlU0E1V2z5ecE0yA8wsk9m/9w/dUVz548CwFaQ6rd
-         k4lgsEV8Wu3VpoWWCvfKfRsDHiB5gfIbRNulki3sFNRHLnZB4fFt7AG9v7QbJhA5Rbr6
-         A9Jz50a0f244tlx/aMQx9q/M9QfYQGvMRITJ2syn1mDd/IdftNvx3wipW1adTdUfzAPe
-         v757RLhfmoY1/rybimu+7VmI7AAuGosrBymG/oroajTu4Ty3iZJ0jIISwkdlr9RD6q3y
-         YNGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715676689; x=1716281489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YpuRcNL1d/RZc0lAH4iyWYQzjYTZObelGFbgjEqMZa0=;
-        b=eK2KArTMfrUJpXKc29kqGPQr7s1LGhMLZ873K09V+FVsLWIr5SfFHrD6qDyujdbPDv
-         ktI9x1S0pkqUF7c9fHQ4C7l811M5Pd7fp9ul/qE3jGBOWf6dJZ0PPJ7jzHiEtImTqXW5
-         +VMIEBNMJGCqZAg9m2sr54NAGVRooKDwNaFoyQS7WrS7mErLMs75swBYu6bawP6DfrBC
-         xA6iT5tMfNjkIQ27xlNS/Unna8UgMX1e7zfUwfPuSV9/fTeFutpvzMwbruJFJj2joA4s
-         AWPyVmQERjmQh/GYZb6q6gx7+B9JkOfKLhJFiaLuKVkmeM3RDzMmqbsBRIyT786tAw3o
-         5uSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ5dxUlhbJBOiYAdFtMRy3q8j82bRnWA7Y9FjVxWN1j3QtL034Ta6ovH9X9GHXN1Mh6dQKt9QumF/c+6kngxIUJT+bAMF35yM+raxQ
-X-Gm-Message-State: AOJu0Yya1D2YKzukEDq07Yj3U5TEdtIBupKsa0MlXqGXFsm05VEvy/4V
-	WElHAaIpqBO5+RElmUluUIQWJwnQsefTlyKAMHNmmAja4JBy10Z9dVt0wuIpMdf1CFPsu1mxEq1
-	ijxREK912X0qAjG4eOhn+AXDS/LdGbekrsUyW3A==
-X-Google-Smtp-Source: AGHT+IEEXncSLeYlRp50wZguJ1swNJ7Rn/eiIzeOU7YbZYMQO/MhNJglXYcod5TE7cTXRGpqohgHa7iMGT7HvYhCpa4=
-X-Received: by 2002:a81:7255:0:b0:61b:748:55a1 with SMTP id
- 00721157ae682-622b7fc3cc6mr111470377b3.13.1715676689254; Tue, 14 May 2024
- 01:51:29 -0700 (PDT)
+	s=arc-20240116; t=1715676763; c=relaxed/simple;
+	bh=VnwPN1HC0Qg3a/FfvSmXTWKLTyLbOBEkoZkWOJT5MY8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=JWamixnO7VLij+0cK9tsY7eURNmhCAQaJ7DadaJl2sYEI5W69jkvqKaPEgSNttyXFBt0HdrybwUctVvfVTZ81t5Wzv4k2WQ+kI3IRWyJ+zytHOxskovBQuvvBCF4/jQ5orAZXlLrHl0yfRgpWuTahc0j1X4JtSX49UAjRaf58XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdqqg3llsz4f3jLc;
+	Tue, 14 May 2024 16:52:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 0DCBD1A016E;
+	Tue, 14 May 2024 16:52:37 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBFTJkNmDmeDMg--.26345S3;
+	Tue, 14 May 2024 16:52:36 +0800 (CST)
+Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
+To: Xiao Ni <xni@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
+ <20240509011900.2694291-4-yukuai1@huaweicloud.com>
+ <CALTww2-RPH_eYBumjxhHLkj7J2tfHskTYNif93Hwn5ksCN0+kA@mail.gmail.com>
+ <06211ae2-9b5f-10c7-7953-9d79d2eacc67@huaweicloud.com>
+ <CALTww28LM_b6SMC-vLY3y7R3ZD9z80H+2vZCXMzmAwnoEH-eMA@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <2d457d0f-8bb5-39cb-0b8a-0bfdde1f560f@huaweicloud.com>
+Date: Tue, 14 May 2024 16:52:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
- <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain> <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
- <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
-In-Reply-To: <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 14 May 2024 10:51:17 +0200
-Message-ID: <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
-To: Patrick Rudolph <patrick.rudolph@9elements.com>, Mark Brown <broonie@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, naresh.solanki@9elements.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CALTww28LM_b6SMC-vLY3y7R3ZD9z80H+2vZCXMzmAwnoEH-eMA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBFTJkNmDmeDMg--.26345S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xw4fuw4kCrWUGFW3KF17ZFb_yoW7Kw47pF
+	W0yFn8Zr4UXry7Jr12q3WDta9ayr1IqryUXry3Ga48J3ZxKFn3G3WUJF17Cryvyr15uryj
+	vrWDGFW3uF4YyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq
+	3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUoOJ5UUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, May 14, 2024 at 10:39=E2=80=AFAM Patrick Rudolph
-<patrick.rudolph@9elements.com> wrote:
 
-> Do you have an example where muxed registers are used in a regmap?
-> Is there some documentation available explaining the existing
-> mechanism? I'm not aware of anything.
 
-The regmap is sadly undocumented I have had it on my list for a long
-time to document this gem, but I never find the time.
+在 2024/05/14 16:40, Xiao Ni 写道:
+> On Tue, May 14, 2024 at 3:39 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> Hi,
+>>
+>> 在 2024/05/14 14:52, Xiao Ni 写道:
+>>> On Mon, May 13, 2024 at 5:31 PM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>>>
+>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>
+>>>> The new helpers will get current sync_action of the array, will be used
+>>>> in later patches to make code cleaner.
+>>>>
+>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>>> ---
+>>>>    drivers/md/md.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>    drivers/md/md.h |  3 +++
+>>>>    2 files changed, 67 insertions(+)
+>>>>
+>>>> diff --git a/drivers/md/md.c b/drivers/md/md.c
+>>>> index 00bbafcd27bb..48ec35342d1b 100644
+>>>> --- a/drivers/md/md.c
+>>>> +++ b/drivers/md/md.c
+>>>> @@ -69,6 +69,16 @@
+>>>>    #include "md-bitmap.h"
+>>>>    #include "md-cluster.h"
+>>>>
+>>>> +static char *action_name[NR_SYNC_ACTIONS] = {
+>>>> +       [ACTION_RESYNC]         = "resync",
+>>>> +       [ACTION_RECOVER]        = "recover",
+>>>> +       [ACTION_CHECK]          = "check",
+>>>> +       [ACTION_REPAIR]         = "repair",
+>>>> +       [ACTION_RESHAPE]        = "reshape",
+>>>> +       [ACTION_FROZEN]         = "frozen",
+>>>> +       [ACTION_IDLE]           = "idle",
+>>>> +};
+>>>> +
+>>>>    /* pers_list is a list of registered personalities protected by pers_lock. */
+>>>>    static LIST_HEAD(pers_list);
+>>>>    static DEFINE_SPINLOCK(pers_lock);
+>>>> @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const char *buf, size_t len)
+>>>>    static struct md_sysfs_entry md_metadata =
+>>>>    __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, metadata_store);
+>>>>
+>>>> +enum sync_action md_sync_action(struct mddev *mddev)
+>>>> +{
+>>>> +       unsigned long recovery = mddev->recovery;
+>>>> +
+>>>> +       /*
+>>>> +        * frozen has the highest priority, means running sync_thread will be
+>>>> +        * stopped immediately, and no new sync_thread can start.
+>>>> +        */
+>>>> +       if (test_bit(MD_RECOVERY_FROZEN, &recovery))
+>>>> +               return ACTION_FROZEN;
+>>>> +
+>>>> +       /*
+>>>> +        * idle means no sync_thread is running, and no new sync_thread is
+>>>> +        * requested.
+>>>> +        */
+>>>> +       if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
+>>>> +           (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED, &recovery)))
+>>>> +               return ACTION_IDLE;
+>>>
+>>> Hi Kuai
+>>>
+>>> Can I think the above judgement cover these two situations:
+>>> 1. The array is readonly / readauto and it doesn't have
+>>> MD_RECOVERY_RUNNING. Now maybe it has MD_RECOVERY_NEEDED, it means one
+>>> array may want to do some sync action, but the array state is not
+>>> readwrite and it can't start.
+>>> 2. The array doesn't have MD_RECOVERY_RUNNING and MD_RECOVERY_NEEDED
+>>>
+>>>> +
+>>>> +       if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
+>>>> +           mddev->reshape_position != MaxSector)
+>>>> +               return ACTION_RESHAPE;
+>>>> +
+>>>> +       if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+>>>> +               return ACTION_RECOVER;
+>>>> +
+>>>> +       if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
+>>>> +               if (test_bit(MD_RECOVERY_CHECK, &recovery))
+>>>> +                       return ACTION_CHECK;
+>>>> +               if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
+>>>> +                       return ACTION_REPAIR;
+>>>> +               return ACTION_RESYNC;
+>>>> +       }
+>>>> +
+>>>> +       return ACTION_IDLE;
+>>>
+>>> Does it need this? I guess it's the reason in case there are other
+>>> situations, right?
+>>
+>> Yes, we need this, because they are many places to set
+>> MD_RECOVERY_NEEDED, while there are no sync action actually, this case
+>> is 'idle'.
+> 
+> To be frank, the logic in action_show is easier to understand than the
+> logic above. I have taken more than half an hour to think if the logic
+> here is right or not. In action_show, it only needs to think when it's
+> not idle and it's easy.
+> 
+> Now this patch logic needs to think in the opposite direction: when
+> it's idle. And it returns ACTION_IDLE at two places which means it
+> still needs to think about when it has sync action. So it's better to
+> keep the original logic in action_show now. It's just my 2 cents
+> point.
 
-You have to mark registers that cannot be cached as volatile, then
-enable caching in the regmap with e.g. .cache_type =3D REGCACHE_FLAT
-in the regmap config, then it pretty much caches itself.
-<linux/regmap.h> has some cache maintenance functions if you
-run into corner cases.
+Hi,
 
-(Mark will correct me if I say something wrong...)
+but the logical is exactlly the same as action_show(), and there are
+no functional changes. I just remove the local variable and return
+early, because I think code is cleaner this way...
 
-Yours,
-Linus Walleij
+action_show:
+
+char *type = "idle"
+
+if (test_bit() || xxx) {
+
+  if (xxx)
+   type ="reshape"
+  else if(xxx)
+   type ="resync/check/repair"
+  else if(xxx)
+   type = "recover"
+  else if (xxx)
+   type = "reshape"
+  -> else is idle
+}
+-> else is idle
+
+The above two place are corresponding to the new code to return
+ACTION_IDLE.
+
+Thanks,
+Kuai
+
+> 
+> Best Regards
+> Xiao
+> 
+>>
+>> Thanks,
+>> Kuai
+>>
+>>>
+>>> Regards
+>>> Xiao
+>>>
+>>>> +}
+>>>> +
+>>>> +enum sync_action md_sync_action_by_name(char *page)
+>>>> +{
+>>>> +       enum sync_action action;
+>>>> +
+>>>> +       for (action = 0; action < NR_SYNC_ACTIONS; ++action) {
+>>>> +               if (cmd_match(page, action_name[action]))
+>>>> +                       return action;
+>>>> +       }
+>>>> +
+>>>> +       return NR_SYNC_ACTIONS;
+>>>> +}
+>>>> +
+>>>> +char *md_sync_action_name(enum sync_action action)
+>>>> +{
+>>>> +       return action_name[action];
+>>>> +}
+>>>> +
+>>>>    static ssize_t
+>>>>    action_show(struct mddev *mddev, char *page)
+>>>>    {
+>>>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>>>> index 2edad966f90a..72ca7a796df5 100644
+>>>> --- a/drivers/md/md.h
+>>>> +++ b/drivers/md/md.h
+>>>> @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct mddev *mddev, struct md_thread __rcu **t
+>>>>    extern void md_wakeup_thread(struct md_thread __rcu *thread);
+>>>>    extern void md_check_recovery(struct mddev *mddev);
+>>>>    extern void md_reap_sync_thread(struct mddev *mddev);
+>>>> +extern enum sync_action md_sync_action(struct mddev *mddev);
+>>>> +extern enum sync_action md_sync_action_by_name(char *page);
+>>>> +extern char *md_sync_action_name(enum sync_action action);
+>>>>    extern bool md_write_start(struct mddev *mddev, struct bio *bi);
+>>>>    extern void md_write_inc(struct mddev *mddev, struct bio *bi);
+>>>>    extern void md_write_end(struct mddev *mddev);
+>>>> --
+>>>> 2.39.2
+>>>>
+>>>
+>>> .
+>>>
+>>
+>>
+> 
+> .
+> 
+
 
