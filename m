@@ -1,251 +1,105 @@
-Return-Path: <linux-kernel+bounces-179173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99FAC8C5CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:12:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF99C8C5CAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DEE1B22398
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E119D1C21ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:13:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B46180A97;
-	Tue, 14 May 2024 21:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q0z8/quy"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68F2181BA8;
+	Tue, 14 May 2024 21:13:27 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11591DFD1
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8841DFD1;
+	Tue, 14 May 2024 21:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715721132; cv=none; b=XlKTPS/4WoUZOz00V/wU/hjXmoeufYuN929WQwhb+L3dVH/ePp9FkTUzV+tq8Aog2IxpDB3WHJ7WYVQE0wAidj38/dJmBPJX6pDYAMBVNyPfmncaeY+ptYye+IAEyNfTjGRzaxv7MZB4dOoR1q3YuLWXS95xXlM37mp3q5sdfNY=
+	t=1715721207; cv=none; b=QJhJ2LlyjLng6ef+NhNGz9mI5HNAZ3CB0nrjmrvx5ygzGYuwmfeMJL1UCGh/COn7Pnd4Ej+pxUpVLMmzeXwnoAf+sRGbT4FJGa5p2wA0F/rAH4iyKK4bZGZqk10G2gjeOtVMBIoNa1kklzOiM/BDKZHtxx54VRxrRKEosyvxJ2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715721132; c=relaxed/simple;
-	bh=7dJ+Pxg0qmmno8WwNH+I7QAq9VNZQSyiUrKzkkcu5IM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkyoCZcCYkeG7kIfwbCRVc79pw2JxID5DGxaUQOlTgP4wM4yLeYTXmD8fvM8tjDQgR86Q1VLqW9St5d+5Zt8Euhdqhe8OtHS1DcciC/sauzBttt9p8IWfernqyE8wczL/29A4TnO82M+TYAaLlYyv+fXvrLwXmPsb5vLlfLyQPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q0z8/quy; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6f44bcbaae7so5451494b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1715721130; x=1716325930; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=F4UI8jh1QWs+kX0WohCrwVZNbRielxM6MSSN+snrN9k=;
-        b=q0z8/quyqSQfiHnD8x7Z2pBBXa+BhIZotzm0DUJ3BIJXj5tjJdQGGvgjvWcumKCM1c
-         aN3bCdbZEDACo8RVsQBovBkh3dMZJPTWqJFWLfnnOfQNtZthbFV4KHLInabmxl9h8S2J
-         o7odKQPywEEHr6rdkHrtTEUn/M3rMxkB5/7CToxBtKQieaaf+TsUsFV85WORk06lQj9o
-         spqzeLPXyJYBot4LWryBZz7IIKd7JUo1PKp710CN99l+fgOMgzSzifpXEp4zK/I5Sdzu
-         lkajFy5J8Rwk8DVxcUZ4QWgwIz5hfJBNyvFYhHvQPyfWhGcNjBrYppROzvvQ1Pq41IMn
-         n26w==
+	s=arc-20240116; t=1715721207; c=relaxed/simple;
+	bh=SqyRgN9yJXCB1hPDQDjovWg0409sYWzhdJrmQ7geNGI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=erPO1p5/6Hf7+QTRZdx9auVVQRtRmejUSxNb0Ll/OB4PQJnNn3XLYP7FeVytNx40ZKWP+56yS3DcADEjhutQlrjNJpg7cqacNYK9hwD5AhmySKqo8LNc4IBIskJckFcymeIzLsqGZY/0TpM0feOu7Bc/cb5I7rq/PdixqnGgPqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a5a5cb0e6b7so93175466b.1;
+        Tue, 14 May 2024 14:13:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715721130; x=1716325930;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4UI8jh1QWs+kX0WohCrwVZNbRielxM6MSSN+snrN9k=;
-        b=ApRkuGc4ZZkNTHxKXvbbuQ/5Z/Jw2KkRTpQc9ZjLJqFv+yreqQA3/8jzKU2aVioQsW
-         lmFDZwGzyt7LtotjJuiFbkpQwndRATEpITcVrqQT7JH9mu5CKhDYVDfkQ/1tHE2iprUo
-         zLmu41BEUTefGyhRxVgjbSdKBW49v1Om6lZg8lxo1yk5dIxQCw4/DhnPVTiG2AKfvdNv
-         AFMd3d2mdrZxmxw4OlfI7wrazm8mqJM3QO9lc27A9C7xP4jNV3QTNz3+yzipeUQpd1bD
-         7QR4akFfx90OPdzHIP7bINfoOFV9ZCZM4lily6wFMwy2txdd3jswS6cl8pb5oFj6GCdJ
-         6rvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbm1c36q0sH+f76CFh7X2JcQ1Auu8OPm5aJjkCrnbBMZRx+xYakpnfWDz4p2rfhVys0FjfEjHsYQceoMr0N9mRzo4QIepNMV7fCXuK
-X-Gm-Message-State: AOJu0YyylbxfrdpV3/+pLcbiUHAUJ5/B+XGVqi2bUXd7pAQnIgNh/EXX
-	lLy03i0IioVzybNiEuLGYh6PfGTu+mDi/IAbEhV5m2CWjcsQpViGMvuduluFWg==
-X-Google-Smtp-Source: AGHT+IFX4md+l8NXzGXn+Q9inLW7kLUxXGoq7pI4wH8oJHdePgwAWV4w2M5jpkNLcQNX0ZQyb0xglQ==
-X-Received: by 2002:a05:6a20:9c8e:b0:1af:d15a:6b60 with SMTP id adf61e73a8af0-1afde11bbafmr14971805637.28.1715721129994;
-        Tue, 14 May 2024 14:12:09 -0700 (PDT)
-Received: from google.com (57.92.83.34.bc.googleusercontent.com. [34.83.92.57])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2af2a98sm9587604b3a.169.2024.05.14.14.11.55
+        d=1e100.net; s=20230601; t=1715721204; x=1716326004;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FOzSOgRlo+lAzBfpBfmoCWLq0QIm4oZxY1op+56rTOY=;
+        b=S9vP8tbw763xkCHmSrA34CZbSMf5/DxJa+qJM13iIRZsdA36jRI7w+uF5WKjAIqk3t
+         owmqr900t86M7iV4k4MLeN7hqkF+OIabFiBueUQ1GqFdpDAE/pZvNQrfm2naYTv3ClfB
+         +Z+s8DEcevJ+w+tUdf50cZeEMEvQbD4tis0gJVEypay2/IC5gy5+V6hOqxVI+CvdKhVq
+         ej/F+tj6z4KSgghWaCtVKxX3nu/Nqh5WgVNbG9Typ8ve1tboEiuZmZYKztIXKgzNJ36t
+         dvRKVsn6Kc0cdh/zyiwSrQ4sc6c8f4motd7JxAZtZ/ARjA3txfk2ld3P72++SbUzzrvv
+         /O4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXc3ykT+Hp9Nxz9a5N5cs0slI2PY5UAE7UXtqJ+yAG7qMe/uzXDihiGOF28QsbrE0O4nap0GOKwWmT52o4vzZMuJGxB2wjUOmN1nyAMTf9ZrwFZ2xKOikb4L9+M33QKCjsMMpw4EYz50FY=
+X-Gm-Message-State: AOJu0YzD5dBXauA1FamzXrrsv7xCMzrgtA3s7psolWdGtOFoCZIESseH
+	7mcgJrxL7lJFI/tUQwOORVksc3CO5V41nUgrWmdXbTWA9mbhBY45
+X-Google-Smtp-Source: AGHT+IFXtjqFmKDi/x/JxbAEq/Dk4FVDC4BfQpl1suXQobDUiPFJAyK18Nzl48rdJkWxxoM/xlE7kA==
+X-Received: by 2002:a17:906:6b85:b0:a59:c319:f1dc with SMTP id a640c23a62f3a-a5a2d53af75mr925110266b.4.1715721204006;
+        Tue, 14 May 2024 14:13:24 -0700 (PDT)
+Received: from [127.0.0.1] (p200300f6f718be00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f718:be00:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a178a9d73sm760229766b.67.2024.05.14.14.13.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 14:11:59 -0700 (PDT)
-Date: Tue, 14 May 2024 21:11:51 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, kernel-team@android.com,
-	Tim Murray <timmurray@google.com>,
-	Alice Ryhl <aliceryhl@google.com>, John Stultz <jstultz@google.com>,
-	Steven Moreland <smoreland@google.com>,
-	Nick Chen <chenjia3@oppo.com>
-Subject: Re: [PATCH v2] binder: use bitmap for faster descriptor lookup
-Message-ID: <ZkPTl0XC4iYO2hUq@google.com>
-References: <20240514160926.1309778-1-cmllamas@google.com>
- <d5f51c2e-daef-467d-9430-8c2d48819a56@wanadoo.fr>
+        Tue, 14 May 2024 14:13:23 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+Subject: [PATCH 0/2] btrfs: zoned: always set aside a zone for relocation
+Date: Tue, 14 May 2024 23:13:20 +0200
+Message-Id: <20240514-zoned-gc-v1-0-109f1a6c7447@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d5f51c2e-daef-467d-9430-8c2d48819a56@wanadoo.fr>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPDTQ2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDU0MT3ar8vNQU3fRkXaPkVHNLYxNTy9QkcyWg8oKi1LTMCrBR0bG1tQA
+ OuPu6WgAAAA==
+To: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+ David Sterba <dsterba@suse.com>
+Cc: Hans Holmberg <Hans.Holmberg@wdc.com>, linux-btrfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>
+X-Mailer: b4 0.12.4
 
-On Tue, May 14, 2024 at 10:35:56PM +0200, Christophe JAILLET wrote:
-> Le 14/05/2024 à 18:09, Carlos Llamas a écrit :
-> > When creating new binder references, the driver assigns a descriptor id
-> > that is shared with userspace. Regrettably, the driver needs to keep the
-> > descriptors small enough to accommodate userspace potentially using them
-> > as Vector indexes. Currently, the driver performs a linear search on the
-> > rb-tree of references to find the smallest available descriptor id. This
-> > approach, however, scales poorly as the number of references grows.
-> > 
-> > This patch introduces the usage of bitmaps to boost the performance of
-> > descriptor assignments. This optimization results in notable performance
-> > gains, particularly in processes with a large number of references. The
-> > following benchmark with 100,000 references showcases the difference in
-> > latency between the dbitmap implementation and the legacy approach:
-> > 
-> >    [  587.145098] get_ref_desc_olocked: 15us (dbitmap on)
-> >    [  602.788623] get_ref_desc_olocked: 47343us (dbitmap off)
-> > 
-> > Note the bitmap size is dynamically adjusted in line with the number of
-> > references, ensuring efficient memory usage. In cases where growing the
-> > bitmap is not possible, the driver falls back to the slow legacy method.
-> > 
-> > A previous attempt to solve this issue was proposed in [1]. However,
-> > such method involved adding new ioctls which isn't great, plus older
-> > userspace code would not have benefited from the optimizations either.
-> > 
-> > Link: https://lore.kernel.org/all/20240417191418.1341988-1-cmllamas@google.com/ [1]
-> 
-> ...
-> 
-> > +static int get_ref_desc_olocked(struct binder_proc *proc,
-> > +				struct binder_node *node,
-> > +				u32 *desc)
-> > +{
-> > +	struct dbitmap *dmap = &proc->dmap;
-> > +	unsigned long *new, bit;
-> > +	unsigned int nbits;
-> > +
-> > +	/* 0 is reserved for the context manager */
-> > +	if (node == proc->context->binder_context_mgr_node) {
-> > +		*desc = 0;
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (unlikely(!dbitmap_enabled(dmap))) {
-> > +		*desc = slow_desc_lookup_olocked(proc);
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (dbitmap_get_first_zero_bit(dmap, &bit) == 0) {
-> > +		*desc = bit;
-> > +		return 0;
-> > +	}
-> > +
-> > +	/*
-> > +	 * The descriptors bitmap is full and needs to be expanded.
-> > +	 * The proc->outer_lock is briefly released to allocate the
-> > +	 * new bitmap safely.
-> > +	 */
-> > +	nbits = dbitmap_expand_nbits(dmap);
-> > +	binder_proc_unlock(proc);
-> > +	new = bitmap_zalloc(nbits, GFP_KERNEL | __GFP_ZERO);
-> 
-> Hi,
-> 
-> Nitpick: No need to __GFP_ZERO when using zalloc().
+For zoned filesytsems we heavily rely on relocation for garbage collecting
+as we cannot do any in-place updates of disk blocks.
 
-Oops, you are right. I'll drop this for v2.
+But there can be situations where we're running out of space for doing the
+relocation.
 
-> 
-> CJ
-> 
-> > +	binder_proc_lock(proc);
-> > +	dbitmap_expand(dmap, new, nbits);
-> > +
-> > +	return -EAGAIN;
-> > +}
-> 
-> ...
-> 
-> > +#define NBITS_MIN	BITS_PER_TYPE(unsigned long)
-> > +
-> > +struct dbitmap {
-> > +	unsigned int nbits;
-> 
-> Should it be long (or unsigned long) to better match the bitmap API?
+To solve this, always have a zone reserved for relocation.
 
-I picked 'unsigned int' precisely because that is what the bitmap API
-uses for the nbits (mostly). Unfortunately, there seems to be some
-inconsistencies across bitmap.h and the find.h APIs on the bit type.
-Ultimately the decision was made on a type that would work with both.
+This is a subset of another approach to this problem I've submitted in 
+https://lore.kernel.org/r/20240328-hans-v1-0-4cd558959407@kernel.org
 
-For extra fun, checkout the types of set_bit() and clear_bit(). Those
-are using 'long' for the n bit.
+---
+Johannes Thumshirn (2):
+      btrfs: zoned: reserve relocation zone on mount
+      btrfs: reserve new relocation zone after successful relocation
 
-> 
-> (not sure if it can overflow in this use case, but at least for consistancy)
+ fs/btrfs/disk-io.c    |  2 ++
+ fs/btrfs/relocation.c |  4 ++++
+ fs/btrfs/zoned.c      | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/zoned.h      |  3 +++
+ 4 files changed, 69 insertions(+)
+---
+base-commit: d52875a6df98dc77933853e8427bd77f4598a9a7
+change-id: 20240514-zoned-gc-2ce793459eb7
 
-Bitmaps are allocated with "unsigned int" via bitmap_zalloc() so it
-can't overflow.
+Best regards,
+-- 
+Johannes Thumshirn <jth@kernel.org>
 
-> 
-> > +	unsigned long *map;
-> > +};
-> 
-> ...
-> 
-> > +static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
-> > +{
-> > +	unsigned int bit;
-> > +
-> > +	if (dmap->nbits <= NBITS_MIN)
-> > +		return 0;
-> > +
-> > +	bit = find_last_bit(dmap->map, dmap->nbits);
-> 
-> find_last_bit() returns an unsigned long.
-> 
-> (bitmap_get_first_zero_bit() below uses unsigned long)
-
-Yes. However, these are both restricted to the @size parameter.
-
-> 
-> CJ
-> 
-> > +	if (unlikely(bit == dmap->nbits))
-> > +		return NBITS_MIN;
-> > +
-> > +	if (unlikely(bit <= (dmap->nbits >> 2)))
-> > +		return dmap->nbits >> 1;
-> > +
-> > +	return 0;
-> > +}
-> 
-> ...
-> 
-> > +static inline int
-> > +dbitmap_get_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
-> > +{
-> > +	unsigned long n;
-> > +
-> > +	n = find_first_zero_bit(dmap->map, dmap->nbits);
-> > +	if (unlikely(n == dmap->nbits))
-> > +		return -ENOSPC;
-> > +
-> > +	*bit = n;
-> > +	set_bit(n, dmap->map);
-> > +
-> > +	return 0;
-> > +}
-> 
-> ...
-> 
 
