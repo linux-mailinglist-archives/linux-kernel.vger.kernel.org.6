@@ -1,140 +1,121 @@
-Return-Path: <linux-kernel+bounces-178904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3476B8C594E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AC88C5951
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:05:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3376282F4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E50C1F243CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B1C17F37B;
-	Tue, 14 May 2024 16:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D6717F396;
+	Tue, 14 May 2024 16:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ns0gklQ2"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="ip6XRIMP";
+	dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b="C3mQK4qN"
+Received: from honk.sigxcpu.org (honk.sigxcpu.org [24.134.29.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A22B1292D2;
-	Tue, 14 May 2024 16:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413AC1448C0;
+	Tue, 14 May 2024 16:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=24.134.29.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715702739; cv=none; b=qrp2CCZAucxkRT3mA46GONfoMOlf7z4iJoPlAAvif1trEAYAbKjKNwNGQVKCofk4db+A/64culD53DtlCj8VqXfBjafPxppQtoXQ4PKVL3eUTLTsLknMqKFNnpdZVUCoktuZTDN9xy/nrJ1r3fTBy3cLYJmZC6hXAkL/OfPdVKA=
+	t=1715702740; cv=none; b=Wq6UVVMxsCm0maCk1XBcmYuwyUA8xNKQS9yLtRw00rrxZvgvQpEoVzuIISMCfFhT3JTpTAWCeJXUHCEmfToqPUdekgJKH6flkpGw2iteoxugtQ2xDtGtmTX7jmuyhCMMbVEttQZ+e/HEmErxmX0Iv/i1+3UBUTFMpVkc9c87iv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715702739; c=relaxed/simple;
-	bh=tpiw7IYuGjhBXF2DDCwDzTvk5q5Xhwg23VZBJ9+60Y8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJX/c8SodaXVGezLCzGk1lHBPk5wM/0p8Ckle/RjfWBZPXCX014CYYlbH/ZQ4mqH3Y6VjZJt3AAgwqUc5QjM9RWvuBBpMGknINnvBt8Bjiy8Np9h7ZfA0hv5W/1fk26n7y5V2i1T5YLZ5GZub2JBZBSmmAw50UjVIJItdHF6rho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ns0gklQ2; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59a352bbd9so59232066b.1;
-        Tue, 14 May 2024 09:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715702736; x=1716307536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fW1Zk+kCimN2Iqojt/YnfpXJKfkUntvLK6DTSR9T0HM=;
-        b=ns0gklQ2AkBv6MxF/wadcyvr+IXytgX3d4osjkoqrjT3bp3JVv3lV2pP9T662NbErH
-         H/dfQ4QWWmPj4r8OeO+uSTl0mmMuRZ+QOJlL4ROlQ3Y8UvMd7eqy+BylxNXIBIGBAumO
-         tlq7D1pKn0E8JmfNdO1/0sHiRO9HTq+e/qeYRLyh0QmuQb8iUQrm9a+47r9P6KNJJrUw
-         UUMY/pGW6fL+TZemcTOYEvsXt3HSDBxeY8MAimThrtelF2wIP9jGuDwEdXd7ENPWscLC
-         fZNuaX3VKdi298GjlgSI2RtibNNIDn8N+lp9Ev5DFNSYYkbG5iwf+HPWCH9HkXCx9+Wy
-         vxnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715702736; x=1716307536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fW1Zk+kCimN2Iqojt/YnfpXJKfkUntvLK6DTSR9T0HM=;
-        b=lnUJ4CBS9HGSvy4IJncD1+UdFAtKh36i9HUMCyhH08hhBvdGovN3sovDv2KRduns2x
-         f7HNjSH42qHTIRBdsQDAwZSAuRp3J0r4ie505RrbaYxWP66tymGrGmMdSFagpeA95wwB
-         gJ6x6DoCpleoy+ZuW+O+SwH83A77iZ9SXmIr+w8wq2NHdwPYwkMx4rPJmOpH3UyzMP6z
-         IWcKb/LqiR23SjYBx3r1hqwxxeR2+Vt+WfCPaFL90f4kKUOSTnGO+cyr11o2KCJf9Quu
-         gsT4G29Oa70mBk22lTI4JQxP73xSy1ewhRPnxz3X207WOh2ybebRjNXCBHGbF0cEPxD8
-         jbjw==
-X-Forwarded-Encrypted: i=1; AJvYcCW0wXHtli9mhSgeN1I4XV/3sRjxwqSPZZ05cTQnye5WVfoKGQwVaWzsmpKLtBOQWqdzs+1zCbsTX/kS+s4kOYdtNn5l9W9SfjkTzPOEMzqzBK3RdFz7Wl2iDqilodGmCMyK7vcfrLkXtq+MKAYpomPxU3vsoNV/WgyO1OgjSiReDkxgXEOeLAlm6I/kcDR0IJkyEOWfkjrdzSeBxS6RfU+/rjIG
-X-Gm-Message-State: AOJu0Yzdh7KiTiX22DZz2BbWJ41Z/GWQ/mGCycRfV24c0XHhaxrzZWF5
-	8Ukkt9Zq4h6kfIc3UwZ3moRKpEGVEu4ri6KMKJ+AuTzPjdzP67EfYqTP6/bPa5TeL1e3Ci054mX
-	772WpDmIm7q1q6uNbPskR2NLT1d0=
-X-Google-Smtp-Source: AGHT+IF1K9kLqXaF/wSSHniCW4SSJsP6V1e2Eey8FppUfEal0xssx45EV2LSI4Ou5zR7+iz4dGAHI/k3UMcmiX2NRyw=
-X-Received: by 2002:a17:907:86a9:b0:a5a:24ab:f5e with SMTP id
- a640c23a62f3a-a5a2d27d8bcmr1377625766b.25.1715702735782; Tue, 14 May 2024
- 09:05:35 -0700 (PDT)
+	s=arc-20240116; t=1715702740; c=relaxed/simple;
+	bh=/1oqQZPs3WqoeEwclXSM+7tygrmu8dr8chc8eGTmRQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KefMuqedRW8JrJIGCgyAR6ITeS8YqLf5k63DdCKd9O6SZStORAvZO9RMGqcpWaxjVmxPG+aF6QAb6uavEnF7m0e3NendOoh+0Cg+wUazRMB3TVCluIXNXmkx27LuCtpEv/xKq/DEVDql26xVpvT6gdfbJ0WVziCi6hwAYsmMhtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org; spf=pass smtp.mailfrom=sigxcpu.org; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=ip6XRIMP; dkim=pass (2048-bit key) header.d=sigxcpu.org header.i=@sigxcpu.org header.b=C3mQK4qN; arc=none smtp.client-ip=24.134.29.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigxcpu.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigxcpu.org
+Received: from localhost (localhost [127.0.0.1])
+	by honk.sigxcpu.org (Postfix) with ESMTP id 4B17AFB03;
+	Tue, 14 May 2024 18:05:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1715702726; bh=/1oqQZPs3WqoeEwclXSM+7tygrmu8dr8chc8eGTmRQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ip6XRIMPsGM47s+BdcpcMTS9Kd8139GHXiF2LOQ01E8wd5g4jMsbR2f6ECSzHb73c
+	 WTOURN2sgR+hw5qYKoLVH7V/Ry0QB3IIrjPgCVMCkhCDWVVp8uHfJw+c804sL1RCGk
+	 IDohlwBqa2HR2jFIWw9MWoEPldI/ti1N7jHdQQREA13wFwO6z89PB4BIyc8fjb81hg
+	 7q9zCeQXc+RiDJ7NVIuM+MW99+WCFJaw7VxuytOSUdFEa9/Kjp2XvGvUOqwtw6IHOO
+	 9jcEYBVT8lNKaz1y2oefRaMSXJ2GJdQ5TZoavMhaM24hOC1u3l6ub01zM8ZVa0Dv9t
+	 3IlQKB9W6T7vQ==
+Received: from honk.sigxcpu.org ([127.0.0.1])
+	by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id K40O2fvKpbDj; Tue, 14 May 2024 18:05:24 +0200 (CEST)
+Date: Tue, 14 May 2024 18:05:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=sigxcpu.org; s=2024;
+	t=1715702723; bh=/1oqQZPs3WqoeEwclXSM+7tygrmu8dr8chc8eGTmRQM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C3mQK4qNLh8xnbfsvV/nLhpxRj3AC2XHxmsan7Z5CuYvUkqp9Xr24/rjQhBRky2vP
+	 NxuxXAz7xabdDB0j9mN5Ca8NdxQPaPQO22Tfa9nVyuew/N9sii+z2ELVWI07yz2f3z
+	 e9zougneAV2JoSUeZI6IymzJ1TMO+pEsB7S0iCWxxyXOAQig3OMcRE14zW1xD6yHKP
+	 tSaHzlGx6ePIwlYEKVwnFRK/3eHoDHG1eb5Vfx5eLEFt8ZqwJrRjWhgK430feuAyYR
+	 kan9mfzy0LqtVxoEwVECXMytou6ePJNv6zBPPU30cHL+FQZNcmFls+yRF1rlAtogi/
+	 BP7QlxbvTU/NA==
+From: Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Hermes Zhang <chenhuiz@axis.com>, Tony Lindgren <tony@atomide.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	phone-devel@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] Input: gpio-keys - expose wakeup keys in sysfs
+Message-ID: <ZkOLwIEuZ8hfzO4M@qwark.sigxcpu.org>
+References: <cover.1715255980.git.agx@sigxcpu.org>
+ <2b6eb6c3f68509aa35cdf2e2a586689ae97681ab.1715255980.git.agx@sigxcpu.org>
+ <ZkKQoTq2xyNvJlHE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZjpMeVk_HiixZUEu@hovoldconsulting.com> <20240514140446.706847-1-quic_skakitap@quicinc.com>
- <CAHp75VcfYuukpLg=F36ykddsT9SpfdGNyyvVeyw-Yvz61Lrq7g@mail.gmail.com> <0a372307-8887-ac97-54c6-d6080e64540f@quicinc.com>
-In-Reply-To: <0a372307-8887-ac97-54c6-d6080e64540f@quicinc.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 14 May 2024 19:04:58 +0300
-Message-ID: <CAHp75VddpSz9Z785ey1FfgDMPD-zY8gesrqD1rt8yGdc9Pz-PQ@mail.gmail.com>
-Subject: Re: [PATCH 12/13] regulator: add pm8008 pmic regulator driver
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Cc: johan@kernel.org, andersson@kernel.org, broonie@kernel.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, johan+linaro@kernel.org, 
-	konrad.dybcio@linaro.org, krzk+dt@kernel.org, lee@kernel.org, 
-	lgirdwood@gmail.com, linus.walleij@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
-	swboyd@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZkKQoTq2xyNvJlHE@google.com>
 
-On Tue, May 14, 2024 at 6:05=E2=80=AFPM Satya Priya Kakitapalli (Temp)
-<quic_skakitap@quicinc.com> wrote:
-> On 5/14/2024 7:48 PM, Andy Shevchenko wrote:
-> > On Tue, May 14, 2024 at 5:05=E2=80=AFPM Satya Priya Kakitapalli
-> > <quic_skakitap@quicinc.com> wrote:
-> >>> On Thu, May 09, 2024 at 03:07:02PM +0300, Andy Shevchenko wrote:
-> >>>> Wed, May 08, 2024 at 10:37:50PM +0000, Stephen Boyd kirjoitti:
-> >>>>> Quoting Johan Hovold (2024-05-06 08:08:29)
+Hi,
+On Mon, May 13, 2024 at 03:13:53PM -0700, Dmitry Torokhov wrote:
+> Hi Guido,
+> 
+> On Thu, May 09, 2024 at 02:00:28PM +0200, Guido Günther wrote:
+> > This helps user space to figure out which keys should be used to unidle a
+> > device. E.g on phones the volume rocker should usually not unblank the
+> > screen.
+> 
+> How exactly this is supposed to be used? We have "disabled" keys and
+> switches attribute because this function can be controlled at runtime
+> from userspace while wakeup control is a static device setting.
 
-..
+Current Linux userspace usually unblanks/unidles a device on every
+keypress. That is usually not the expected result on phones where often
+only the power button and e.g. some home buttons should do this.
 
-> >>>>>> +               BUILD_BUG_ON((ARRAY_SIZE(pldo_ranges) !=3D 1) ||
-> >>>>> This should be an && not || right?
-> >>>>>> +                               (ARRAY_SIZE(nldo_ranges) !=3D 1));
-> >>>> In any case BUILD_BUG_ON() is not encouraged for such cases, it woul=
-d be much
-> >>>> better to have a static_assert() near to one of those arrays.
-> >>> I think the reason it is placed here is that the above line reads:
-> >>>
-> >>>        rdesc->n_linear_ranges =3D 1;
-> >>>
-> >>> and that would need to change if anyone expands the arrays.
-> >> Correct. static_assert() cannot be used in the middle of code here, it=
- can only be used at the declarations part which doesn't serve the purpose.
-> > I didn't get this. The ARRAY_SIZE():s are defined at compile time
-> > globally. How does this prevent from using static_assert()?
+These keys usually match the keys that are used as wakeup sources to
+bring a device out of suspend. So if we export the wakeup keys to
+userspace we can pick some sensible defaults (overridable via hwdb¹).
 
-> The reason we added it here is to make sure the nlod_ranges and
-> pldo_ranges doesn't become larger, and we forget updating the
-> n_linear_ranges.
+> Kernel also does not really know if the screen should be unblanked or
+> not, if a button or switch is configured for wake up the kernel will go
+> through wakeup process all the same and then userspace can decide if it
+> should stay woken up or not.
 
-> Adding static_assert here is not feasible so adding a
-> BUILD_BUG_ON at this point makes sure the n_linear_ranges is proper.
+Yes, we merely want that as a hint to figure out sensible defaults in
+userspace (which might be a subset of the wakeup keys).
 
-No, static_assert() will do _exactly_ the same with better error
-reporting and location, but what you are trying to say is that the
-location is chosen to be near to the n_liner_ranges assignment which
-happens at runtime, that's why it can't be used as an argument to
-BUILD_BUG_ON(). Based on this discussion I think the comment is
-missing before BUILD_BUG_ON() to explain the semantics of 1 and all
-that was just said.
+Cherrs,
+ -- Guido
 
-> >> So, BUILD_BUG_ON is the only way to go here.
-> > I don't think so.
+¹) See https://gitlab.gnome.org/World/Phosh/gmobile/-/blob/main/data/61-gmobile-wakeup.hwdb?ref_type=heads#L57-L59
 
-As i said.
-
---=20
-With Best Regards,
-Andy Shevchenko
+> 
+> Thanks.
+> 
+> -- 
+> Dmitry
+> 
 
