@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-178774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80748C577A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:00:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0598C577B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B571C21CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDF5C28273A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE4A144D0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133191448FA;
 	Tue, 14 May 2024 14:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFDHNYgh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="flySvlIF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41F51448D2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0D013DDDD
 	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715695242; cv=none; b=I8DdL9/VNAgZsIFFOYeuNbeKeZyModDcLEmaKbq/Swf/aOWj3iVUP23mSdDSfo2YMeJgFuuCvBpxKf6q1JBziZV4GYcxcIPDxhct7NrKqmnYWI82gpaOLAnWME2dN3J4eizVydS8mu3iPno1HYnnU43dGr/Ixw512Zo7OGFZc9Q=
+	t=1715695242; cv=none; b=Xo+MCe3YR4vkIYSzLfgCq79fv6xVQZJF8vOaX0+ZtmGN/ee/A+ZbXh2QtHV5bns1fAJFnvpV2ylTv+3lsXhGci4ICBHuKu2B6N8M0dPwJyVf2ws/k0xTS0+uvAVwwqlRTze0BS/p9afyqnHyKUkHVZnyXYVcFwjBbA1ExPhV+Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715695242; c=relaxed/simple;
-	bh=q4VWeFDoYuUSIevq7piqtaLyouhlVQEVm3uHhS2qql4=;
+	bh=N8ye8kP7p0QXl90QBB1Ui1ORw3dVgGH0prC6aY8G1zI=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZGyYMPYoQoNjcQViqWrOqjHVORheBCCHUVr66h60+rzS+QyORKqD9GnBLZSvt++28OGr/H/pkzJepWcJPHQWG2qz4/rI6BCwn2EYgrA8USSXGKTp6j5h15caU9qJyvmvoN2EFrip8Rk9bmV9WDv6SoyqlzXutYqqYlZaCtEJuY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFDHNYgh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3DCFBC32786;
+	 In-Reply-To:To:Cc; b=IBnZ8SmRcPbl8v2Do8KmZUUNMxGXxiVa81hOBc8T+WMHfKnvLseWMJ1ke4zVUny4edFvfXFebqwapPSV6+zWolI0t0P+zVu2mXnaQMpFTPurUn1jEF+A03aQHxIEop40MT0Lf8aVqQI0mMARiuAbBMbZso01k22cH5HpST5vCkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=flySvlIF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1EE52C32781;
 	Tue, 14 May 2024 14:00:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715695242;
-	bh=q4VWeFDoYuUSIevq7piqtaLyouhlVQEVm3uHhS2qql4=;
+	bh=N8ye8kP7p0QXl90QBB1Ui1ORw3dVgGH0prC6aY8G1zI=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SFDHNYghZQwpvf3B9Oej71J/1ka7QsDyj6yo/Fhb5wd4Phj4BLWY+CZizo9p583Cc
-	 sy7QQSqt3Q0d1tFdVPbgoNETnuXN1MBw7KJU2cDdhywfH2eARKL8575WxSkjkR2a9I
-	 hhb7XD4EJKyAs0OE5fidHtBMkOlr1R7mgsepE25qyaHVCXhgTruKv2z9sQiYUxoBL7
-	 iO2JYaeu/UOi25d3fPhGWSC8UIISr0e5k8OzBk3QPeoQt2FRSmA62RN4w8Us1O5pTH
-	 DoGoG8qr9VO0amBU5UVTVhPUOlzGcNarikz09hKjHceh+04aocgbBOoo5dmQK6Mx31
-	 mF3pbOVG3Omjg==
+	b=flySvlIFxx028oqiyNIAiWkTN29fVn1UrZVagDmGmXIh+kDwmFGPN1xYTtFfgNq0U
+	 OnEiMqPKgiT7ing3LfQm0jBi2+vMyqtntWomEOs0oneNypxvK2jnDtk6Tedol8EJFC
+	 jqXE5I5lfKZNOr+rBHh1BV4o5JmTiJOZ2gjMwmS3oDF20QY042UzmzJj+CK9xXl0Ix
+	 vOh0tAXUIT6B06N2sl8pasATv+SozeVDHNYRBtW108K2oD0KSzY0bhOCg0uI0ktwWM
+	 bA0pAZR6noCawMI41/ip2rPoEy8UNpwL8wlq1Jn5GOfk/bISfzlIL/KkQ4gcNqi7pd
+	 WCfQ96XmYVeMQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 30CB2C3274D;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0F5A4C43339;
 	Tue, 14 May 2024 14:00:42 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,40 +51,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800
+Subject: Re: [PATCH v6 00/13] riscv: ASID-related and UP-related TLB flush
+ enhancements
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <171569524219.4793.14427180278508799172.git-patchwork-notify@kernel.org>
+ <171569524205.4793.10651789416740480698.git-patchwork-notify@kernel.org>
 Date: Tue, 14 May 2024 14:00:42 +0000
-References: <IA1PR20MB49537E8B2D1FAAA7D5B8BDA2BB052@IA1PR20MB4953.namprd20.prod.outlook.com>
-In-Reply-To: <IA1PR20MB49537E8B2D1FAAA7D5B8BDA2BB052@IA1PR20MB4953.namprd20.prod.outlook.com>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, unicorn_wang@outlook.com,
- conor.dooley@microchip.com, guoren@kernel.org, rafael@kernel.org,
- sunilvl@ventanamicro.com, svenjoac@gmx.de,
- prabhakar.mahadev-lad.rj@bp.renesas.com, dfustini@baylibre.com,
- linux-kernel@vger.kernel.org, jszhang@kernel.org
+References: <20240327045035.368512-1-samuel.holland@sifive.com>
+In-Reply-To: <20240327045035.368512-1-samuel.holland@sifive.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org, palmer@dabbelt.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, alexghiti@rivosinc.com,
+ jszhang@kernel.org, cuiyunhui@bytedance.com
 
 Hello:
 
-This patch was applied to riscv/linux.git (for-next)
+This series was applied to riscv/linux.git (for-next)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Thu, 11 Apr 2024 20:12:40 +0800 you wrote:
-> CONFIG_CLK_SOPHGO_CV1800 is required when booting the minimum
-> system for CV1800 series board.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> ---
->  arch/riscv/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+On Tue, 26 Mar 2024 21:49:41 -0700 you wrote:
+> This series converts uniprocessor kernel builds to use the same TLB
+> flushing code as SMP builds, to take advantage of batching and existing
+> range- and ASID-based TLB flush optimizations. It optimizes out IPIs and
+> SBI calls based on the online CPU count, which also covers the scenario
+> where SMP was enabled at build time but only one CPU is present/online.
+> A final optimization is to use single-ASID flushes wherever possible, to
+> avoid unnecessary TLB misses for kernel mappings.
 > 
 > [...]
 
 Here is the summary with links:
-  - riscv: defconfig: Enable CONFIG_CLK_SOPHGO_CV1800
-    https://git.kernel.org/riscv/c/92cce91949a4
+  - [v6,01/13] riscv: Flush the instruction cache during SMP bringup
+    https://git.kernel.org/riscv/c/58661a30f1bc
+  - [v6,02/13] riscv: Factor out page table TLB synchronization
+    https://git.kernel.org/riscv/c/aaa56c8f378d
+  - [v6,03/13] riscv: Use IPIs for remote cache/TLB flushes by default
+    https://git.kernel.org/riscv/c/dc892fb44322
+  - [v6,04/13] riscv: mm: Broadcast kernel TLB flushes only when needed
+    https://git.kernel.org/riscv/c/038ac18aae93
+  - [v6,05/13] riscv: Only send remote fences when some other CPU is online
+    https://git.kernel.org/riscv/c/9546f00410ed
+  - [v6,06/13] riscv: mm: Combine the SMP and UP TLB flush code
+    https://git.kernel.org/riscv/c/c6026d35b6ab
+  - [v6,07/13] riscv: Apply SiFive CIP-1200 workaround to single-ASID sfence.vma
+    https://git.kernel.org/riscv/c/20e03d702e00
+  - [v6,08/13] riscv: Avoid TLB flush loops when affected by SiFive CIP-1200
+    https://git.kernel.org/riscv/c/d6dcdabafcd7
+  - [v6,09/13] riscv: mm: Introduce cntx2asid/cntx2version helper macros
+    https://git.kernel.org/riscv/c/74cd17792d28
+  - [v6,10/13] riscv: mm: Use a fixed layout for the MM context ID
+    https://git.kernel.org/riscv/c/f58e5dc45fa9
+  - [v6,11/13] riscv: mm: Make asid_bits a local variable
+    https://git.kernel.org/riscv/c/8d3e7613f97e
+  - [v6,12/13] riscv: mm: Preserve global TLB entries when switching contexts
+    https://git.kernel.org/riscv/c/8fc21cc672e8
+  - [v6,13/13] riscv: mm: Always use an ASID to flush mm contexts
+    https://git.kernel.org/riscv/c/daef19263fc1
 
 You are awesome, thank you!
 -- 
