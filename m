@@ -1,89 +1,121 @@
-Return-Path: <linux-kernel+bounces-178970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF6388C59F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:54:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 618398C59F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6721EB21675
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E591E28310B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E943617F38E;
-	Tue, 14 May 2024 16:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D267E17F360;
+	Tue, 14 May 2024 16:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V1wWoORH"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VzJjA6Vj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A341D545
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3B312E7F;
+	Tue, 14 May 2024 16:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715705646; cv=none; b=Jl1vFpM2h3cEUH37nAzjDOtJvB9EW2ziXOuJWWna0SdT7gKMPtVm9WSXIzSAdzU02w8HP6Nzhdp7Oge88xrkmx3/DNBzUf4N56h7baXIDG76zKRyQkZNBK+8n/CNnZRmx4NN0eh5gbNghv1dJxv0JQrssBdiIhD6mdAhe7aM3ig=
+	t=1715705681; cv=none; b=ELLNRqzWb3QSa5lq+pL4n1GzLtKtR9rlDzEDdseK5uaFuBEm3IvoEy28bdqhA8WYH+IXmESYu7towGEA1YgV/gtBouS/G2W2r15sNNA486BG8Unyn7g9VkTwnCZKs5xj+oHUFPsit5njoY+MRu3WBICB5GfgdDg0qndW2UbZQyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715705646; c=relaxed/simple;
-	bh=BkM3OZr3jx/95gT12W/si2InAjjxnxbTBt98E/xh/ug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AJ9nAidA1yxmoLbUhqZkbs74SA5xHqC+p0mz5suGZ8PDntoqW9xWFbD5RdqGHpA8bzx8G1+oNUb+PNvMTocDoLziTGPNQKe4b/SpRvlhV8KZUY+h5YcKY/APdQJYY84GHOJWwYeDmYTaaaY/TIqUU173kXEMsw2NLq5393Ho9YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V1wWoORH; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c44480ab-8d6b-4334-8eba-83db9b30ff1a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715705639;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AwKYwvrCkgacfNudOapr20vF6Z2dViM5qKJdT/zY9Es=;
-	b=V1wWoORHtkOwggxidh4UD6sOwetGrWxoKYClXH2O60xxT+ogsroUbhUyGk+8oYAAbHrSjA
-	xwVpm4F5Mx7Wf6YXt301vFcAVl6lmi2LVdZiK9wuf1YyvbnlYW7vgDQ1TTrx4XIDZ6bbGP
-	NbxgZQa8mT6jiUg9EtyGvmiIIoeQWoo=
-Date: Wed, 15 May 2024 00:53:33 +0800
+	s=arc-20240116; t=1715705681; c=relaxed/simple;
+	bh=h8R6NGoxB75DYclazRjbVGVue2yl59BqjU5CnXXHtYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxlbiU2FaGhusDvyMss2nWW46FVCFfSelTJUfyJT15x+godzjl340e5+Qho4QuP6OLwBq/Of0hefv0SAulDCZe1te7KtYzxeKN4VIrhtwJxOUQ7QuL92zeKYnMKY2dIYqVC1Jl7QpUYPDA32f7Zouo2q/uhLcTu7UETTh4FLKDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VzJjA6Vj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF41C2BD10;
+	Tue, 14 May 2024 16:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715705680;
+	bh=h8R6NGoxB75DYclazRjbVGVue2yl59BqjU5CnXXHtYE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=VzJjA6VjUCDHRNyUYb34ratDyWIbZRUNyFy7PCrdVRi1Q1DOgd2TbzfVCO6CqwyjJ
+	 CnSw2VMLLhJaskf2wIZQYIg0yGo5reye/xcpPVjbh7m7PMU19rcNfbwIjun5zV75s1
+	 drRVVyKzOVSvf8t8SawtCBGcfifGpTzFVZVRVpQnCtEfQ0/nv4rnacZ9NT6FS1BGGi
+	 6cbBlDjkKHDr+a8+VptoIwlY/+RyWhyw3iXpn2i07FUDGK88dYW5ASTQKFCgFmHqs9
+	 f3OyKH5ck9XSapoUp+WiN0DFpvDZRy6+kAr63ZghE45mDorQYXqxtf19o/2o191+1Y
+	 GhnwtjMC+zciw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 68E1CCE098A; Tue, 14 May 2024 09:54:39 -0700 (PDT)
+Date: Tue, 14 May 2024 09:54:39 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	RCU <rcu@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Hillf Danton <hdanton@sina.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 25/48] rcu: Mark writes to rcu_sync ->gp_count field
+Message-ID: <4ffb46f8-9b45-472b-93a8-18d0a3bba8d6@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240507093530.3043-1-urezki@gmail.com>
+ <20240507093530.3043-26-urezki@gmail.com>
+ <ZjpAsYJIfzYSKgdA@redhat.com>
+ <4c9e89b5-c981-4809-8bc2-247563ce04e9@paulmck-laptop>
+ <20240510131849.GB24764@redhat.com>
+ <20240510135057.GC24764@redhat.com>
+ <474ae55c-fe9e-4668-8f9b-23f819c76d10@paulmck-laptop>
+ <CANpmjNMUJ6UMwWAEHfm-7WZ=jKD56PH67Zp8dB6B=fEysiK=Hw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 0/2] drm/bridge: Add 'struct device *' field to the
- drm_bridge structure
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240514154045.309925-1-sui.jingfeng@linux.dev>
- <20240514-scarlet-corgi-of-efficiency-faf2bb@penduick>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sui Jingfeng <sui.jingfeng@linux.dev>
-In-Reply-To: <20240514-scarlet-corgi-of-efficiency-faf2bb@penduick>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMUJ6UMwWAEHfm-7WZ=jKD56PH67Zp8dB6B=fEysiK=Hw@mail.gmail.com>
 
-Hi,
+On Mon, May 13, 2024 at 04:13:35PM +0200, Marco Elver wrote:
+> On Fri, 10 May 2024 at 16:11, Paul E. McKenney <paulmck@kernel.org> wrote:
+> [...]
+> > > > Does this mean that KCSAN/etc treats the files in kernel/rcu/
+> > > > differently than the "Rest of Kernel"? Or what?
+> > > >
+> > > > And how is it enforced?
+> > >
+> > > I can only find the strnstr(buf, "rcu") checks in skip_report(),
+> > > but they only cover the KCSAN_REPORT_VALUE_CHANGE_ONLY case...
+> >
+> > Huh, new one on me!  When I run KCSAN, I set CONFIG_KCSAN_STRICT=y,
+> > which implies CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n, which should
+> > prevent skip_report() from even being invoked.
+> 
+> The strnstr hack goes back to the first version of KCSAN released in
+> v5.8 [1]. It was added in response to Paul wanting the "stricter"
+> treatment for RCU even while KCSAN was still in development, and back
+> then syzbot was the first test system using KCSAN. Shortly after Paul
+> added a KCSAN config for rcutorture with a laundry list of options to
+> make KCSAN "strict" (before we eventually added CONFIG_KCSAN_STRICT
+> which greatly simplified that).
+> 
+> While the strnstr(.., "rcu") rules are redundant when using the
+> stricter rules (at least CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=n is
+> set), we're keeping the "rcu" special case around because there are
+> test robots and fuzzers that use the default KCSAN config (unlike
+> rcutorture). And because we know that RCU likes the stricter rules,
+> the "value change only" filter is ignored in all KCSAN configs for
+> rcu-related functions.
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/kcsan/report.c?id=v5.8
 
-On 2024/5/15 00:22, Maxime Ripard wrote:
-> Hi,
->
-> On Tue, May 14, 2024 at 11:40:43PM +0800, Sui Jingfeng wrote:
->> Because a lot of implementations has already added it into their drived
->> class, promote it into drm_bridge core may benifits a lot. drm bridge is
->> a driver, it should know the underlying hardware entity.
-> Is there some actual benefits, or is it theoretical at this point?
+Thank you for the background information!
 
+> Back then syzbot occasionally reported RCU data races, but these days
+> rcutorture probably finds all of them before syzbot ever gets its
+> hands on new code.
 
-I think, DRM bridge drivers could remove the 'struct device *dev'
-member from their derived structure. Rely on the drm bridge core
-when they need the 'struct device *' pointer.
+I do try my best.  ;-)
 
-> Maxime
-
--- 
-Best regards,
-Sui
-
+							Thanx, Paul
 
