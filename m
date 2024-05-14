@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-178499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2898C4E94
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:17:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A658C4E97
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91B41F2299E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82D401C214C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7656123763;
-	Tue, 14 May 2024 09:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SpIiA8mM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7oDLRceR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E055473A;
+	Tue, 14 May 2024 09:18:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F04A2F874
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2CA4F88C
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715678246; cv=none; b=AcgkdDzBg0bfvYBfkIFRyAKY1XsbhQQHjRXUgaKwLHug3sZHxPYLT7nDqD5VSAzCyRK9rx/eXNsXFo09mLi1V9C8fzak1e9+orb4hewaR/RKoQfJDeu9LCVD0o/qW2mgPwv1gpAVuYGCMlFJknB+ldEYI0la9vYq8sdo+4rGw8Y=
+	t=1715678298; cv=none; b=jpn797UyfGqqZtnsMjt3qYZ0L6hPdwyEH9RboA1zu1bXDJWvhbCek8qhWzyKbRlfocnBw1l0xpeyIgmBuZrFY3OqyLKTl5457cRQq/MYNbGZZb8rDkYDL9pln5G+vJdAUsCcIHY/4SxMZM9/gcphLY0pHljT+YxNYtOon8o2/pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715678246; c=relaxed/simple;
-	bh=UWQzSiSNX3y764hb9eyjlKetHfQD4w8G//zFNzrnft0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eLLLeQ8x8IYSKd0kxJIh5gUg05FBHIDXsb9fD5y+bssqtTci6LdqpuI+iu3yO3pRJ3i0RQeBgjvCQrm64Ib8LJ38hshGqs/eaTRHyzUcRZppPs6n/cBS9jEgfYy3JQ27u6OdaBEGSZnZe4f9Z4zvcKPi02aGBv4jr5uR4oWbsMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SpIiA8mM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7oDLRceR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715678244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kA5X0iCNf5JNDOSYIdoDW8OtH47IaeM4S6bNIFPr8zY=;
-	b=SpIiA8mMqoHOvI/05Idu3McxJa4YW52QWSoF7UOb2DU833wDb8dJLnJl5+lWrMrEfr1mw/
-	V1Ne4Bc4YrpxcN4zP6IOBE3MlVR8+MMzpPVmxFqJtbnoj5C52FEhG0asP1N8JLmQJyyzZP
-	cndHyfJ0wYEla1y91d8YOoEYBqMfARPHw9eFBGmw/pwGqlmvNJNPRhnVQjWTjN0+HR0Z3E
-	DTmTSEBPdH0nmdr45VRt0W55q30wnB/C8Kz32MWyw3rbtgxngQ7Wqzza5TmoH5WeWOGHLz
-	pUmCCdMm1Ui1TtAbykBsVBVfDAjRnzh/WoYL+gVsftW02A1K+vWAr4f2SH8qiQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715678244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kA5X0iCNf5JNDOSYIdoDW8OtH47IaeM4S6bNIFPr8zY=;
-	b=7oDLRceREQzqN72Z2EteITBkj4PjqqTzKvb22n125Ytm/Cu8tYQPuf7yRaBASMGqJmXNc8
-	LTKklI5VIbTTVbAg==
-To: Justin Stitt <justinstitt@google.com>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Bill Wendling <morbo@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, Justin Stitt
- <justinstitt@google.com>
-Subject: Re: [PATCH] ntp: safeguard against time_constant overflow case
-In-Reply-To: <20240506-b4-sio-ntp-c-v1-1-a01281aa01ba@google.com>
-References: <20240506-b4-sio-ntp-c-v1-1-a01281aa01ba@google.com>
-Date: Tue, 14 May 2024 11:17:23 +0200
-Message-ID: <87y18clplo.ffs@tglx>
+	s=arc-20240116; t=1715678298; c=relaxed/simple;
+	bh=6WFupDorTnnTbujD8AQ3ipi6gdsL4EaklWex+IzeaJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gva/rM2vsZWsXfFjV1nJte/1HqgJ8zlYnyd/J/ltrFIwr2q6/yBRlYrlbetpgvpQQn1YUBsMkJstNrg5IIolUtfKBNneGIavz9Nyd0otxL3HgPIONSzTHMaZvhyNJELpcHiYB6lSaNlPz7esRzTfnu2pB0c26oXXGRAQaw4NusM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1s6oIP-0000zQ-Fl; Tue, 14 May 2024 11:18:05 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1s6oIN-001KT6-6G; Tue, 14 May 2024 11:18:03 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1s6oIN-00BEFM-0K;
+	Tue, 14 May 2024 11:18:03 +0200
+Date: Tue, 14 May 2024 11:18:03 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] mtd: nand: mxc_nand: implement exec_op
+Message-ID: <ZkMsS1jj-ZTpZyE1@pengutronix.de>
+References: <20240508-mtd-nand-mxc-nand-exec-op-v2-0-6b7366b7831f@pengutronix.de>
+ <20240508-mtd-nand-mxc-nand-exec-op-v2-2-6b7366b7831f@pengutronix.de>
+ <20240513091902.2c00d30a@xps-13>
+ <20240513093256.363861d1@xps-13>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513093256.363861d1@xps-13>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, May 06 2024 at 22:01, Justin Stitt wrote:
+On Mon, May 13, 2024 at 09:32:56AM +0200, Miquel Raynal wrote:
+> 
+> miquel.raynal@bootlin.com wrote on Mon, 13 May 2024 09:19:02 +0200:
+> 
+> > Hi Sascha,
+> > 
+> > > @@ -1717,9 +1465,111 @@ static int mxcnd_setup_interface(struct nand_chip *chip, int chipnr,
+> > >  	return host->devtype_data->setup_interface(chip, chipnr, conf);
+> > >  }
+> > >  
+> > > +static int mxcnd_exec_op(struct nand_chip *chip,
+> > > +			 const struct nand_operation *op,
+> > > +			 bool check_only)
+> > > +{
+> > > +	struct mxc_nand_host *host = nand_get_controller_data(chip);
+> > > +	struct mtd_info *mtd = nand_to_mtd(chip);
+> > > +	int i, j, buf_len;
+> > > +	void *buf_read = NULL;
+> > > +	const void *buf_write = NULL;
+> > > +	const struct nand_op_instr *instr;
+> > > +	bool readid = false;
+> > > +	bool statusreq = false;
+> > > +
+> > > +	dev_dbg(host->dev, "%s: %d instructions\n", __func__, op->ninstrs);  
+> > 
+> > Maybe you want to get rid of this debug line.
 
-> Using syzkaller with the recently reintroduced signed integer overflow
-> sanitizer produces this UBSAN report:
->
-> [   46.809326] ------------[ cut here ]------------
-> [   46.812882] UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:738:18
-> [   46.817676] 9223372036854775806 + 4 cannot be represented in type 'long'
-> [   46.822346] CPU: 1 PID: 685 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00036-g679ee73ec453 #2
-> [   46.828270] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   46.834836] Call Trace:
-> [   46.836625]  <TASK>
-> [   46.838147]  dump_stack_lvl+0x93/0xd0
-> [   46.840771]  handle_overflow+0x171/0x1b0
-> [   46.843516]  __do_adjtimex+0x1236/0x1440
-> [   46.846275]  do_adjtimex+0x2be/0x740
-> [   46.848864]  __x64_sys_clock_adjtime+0x154/0x1d0
-> [   46.852164]  do_syscall_64+0xd7/0x1b0
-> [   46.854783]  ? arch_exit_to_user_mode_prepare+0x11/0x60
-> [   46.858426]  entry_SYSCALL_64_after_hwframe+0x6f/0x77
-> [   46.861914] RIP: 0033:0x7fde90aaf539
-> [   46.864500] Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 8
-> [   46.877151] RSP: 002b:00007ffebfe63358 EFLAGS: 00000246 ORIG_RAX: 0000000000000131
-> [   46.882279] RAX: ffffffffffffffda RBX: 00007fde90be3f80 RCX: 00007fde90aaf539
-> [   46.887270] RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000000
-> [   46.892174] RBP: 00007fde90b0e496 R08: 0000000000000000 R09: 0000000000000000
-> [   46.897061] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> [   46.902020] R13: 0000000000000095 R14: 00007fde90be3f80 R15: 00007fde90be3f80
-> [   46.906946]  </TASK>
-> [   46.908537] ---[ end trace ]---
+Ok.
 
-Please trim stack traces so they contain only useful information.
+> > 
+> > > +
+> > > +	if (check_only)
+> > > +		return 0;
+> > > +
+> > > +	for (i = 0; i < op->ninstrs; i++) {
+> > > +		instr = &op->instrs[i];
+> > > +
+> > > +		nand_op_trace("  ", instr);
+> > > +
+> > > +		switch (instr->type) {
+> > > +		case NAND_OP_WAITRDY_INSTR:
+> > > +			/*
+> > > +			 * NFC handles R/B internally. Therefore, this function
+> > > +			 * always returns status as ready.  
+> > 
+> > This is no longer a standalone function, maybe:
+> > 
+> > "The controller handles the R/B pin internally, therefore there is
+> > nothing to do here."
 
- UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:738:18
- 9223372036854775806 + 4 cannot be represented in type 'long'
- Call Trace:
-  <TASK>
-  handle_overflow+0x171/0x1b0
-  __do_adjtimex+0x1236/0x1440
-  do_adjtimex+0x2be/0x740
-  __x64_sys_clock_adjtime+0x154/0x1d0
-  do_syscall_64+0xd7/0x1b0
+Ok.
 
-Is completely sufficient, no?
+> 
+> And this is actually very wrong.
+> 
+> You should call wait_op_done() instead.
 
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang; It being re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
+No, I don't think so. wait_op_done() is called to wait for the interrupt
+of the controller indicating a basic operation is done. A basic operation
+can be that a command is being sent or an address byte has been sent to
+the chip during an address cycle.
 
-How is that relevant to the problem?
+With this arbitrary example:
 
-> Nonetheless, let's slightly rework the logic surrounding time_constant
+	struct nand_op_instr instrs[] = {
+		NAND_OP_CMD(NAND_CMD_READ0, 0),
+		NAND_OP_ADDR(4, addrs, 0),
+		NAND_OP_CMD(NAND_CMD_READSTART, NAND_COMMON_TIMING_NS(conf, tWB_max)),
+		NAND_OP_WAIT_RDY(NAND_COMMON_TIMING_MS(conf, tR_max),
+				 NAND_COMMON_TIMING_NS(conf, tRR_min)),
+		NAND_OP_DATA_IN(len, buf, 0),
+	};
 
-s/Nonetheless, let's slightly /Rework/
+I'll call wait_op_done() once for NAND_CMD_READ0, four times for the NAND_OP_ADDR,
+then once again for the NAND_CMD_READSTART command and four times (on i.MX27, once
+per subpage) for the NAND_OP_DATA_IN operation. Calling wait_op_done() for the
+NAND_OP_WAIT_RDY operation woul only timeout because there is no operation in flight
+currently.
 
-> and how it is incremented such that we avoid unintentional wrap-around
-> (even though it is extremely unlikely to be hit in non-fuzzing
-> scenarios).
+Sascha
 
-We don't avoid anything. Please write change logs in imperative mood.
-
->  	if (txc->modes & ADJ_TIMECONST) {
->  		time_constant = txc->constant;
-> -		if (!(time_status & STA_NANO))
-> -			time_constant += 4;
-> -		time_constant = min(time_constant, (long)MAXTC);
-> -		time_constant = max(time_constant, 0l);
-> +		if (!(time_status & STA_NANO) &&
-> +		    unlikely(LONG_MAX - time_constant_inc >= time_constant))
-
-What's unlikely about this? Correct operation of adjtimex() will
-increment, no?
-
-As this obviously will be clamped to MAXTC anyway, you can spare that whole
-LONG_MAX - time_constant_inc dance and simply do:
-
-		if (!(time_status & STA_NANO) && time_constant < MAXTC)
-                	time_constant += 4;
-
-No?
-
-> +			time_constant += time_constant_inc;
-> +		time_constant = clamp_t(long, time_constant, 0, MAXTC);
-
-Thanks,
-
-        tglx
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
