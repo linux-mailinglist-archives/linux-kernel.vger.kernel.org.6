@@ -1,175 +1,112 @@
-Return-Path: <linux-kernel+bounces-179242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90638C5DE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:52:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43CD68C5DE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 00:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 168081C21751
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE72F282F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A9A182CBA;
-	Tue, 14 May 2024 22:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAF6181D08;
+	Tue, 14 May 2024 22:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ebmnjwnD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cehaMXCZ"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9561E182CAB;
-	Tue, 14 May 2024 22:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CE61DDEE
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 22:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715727115; cv=none; b=p2s5q38rY2CwkiR5SbQlt3zHCZLfl2kgsSgM27op/5Im2xXS6XIctOlleyCChyuZr/H6sytRLEZE6BAuAoAsUYMriWZlnD+yZs6vSRCbQ+wX/8Sx37j1xHXC0THptivriaLtnYx1zbNJMApHLSr3GIi/bbpVmhXrZnXyxK8pfRU=
+	t=1715727138; cv=none; b=l13RtKEBmPGKh3/xx7jfnPFnnTLNTd4cS+t3C18ZKCCo9jelHwJhQ3xefH54KzOJekDikS1mB2A8leQujV/PLRd7HI0L7hSdjN+YdWIKjt0UZUwQUUt4LaOn/2WiRCj9/bLXDoOWqCGkyqEAlEkKuEuOlI97E3TBuKw2v43j5wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715727115; c=relaxed/simple;
-	bh=m/grOBSTVdvoTG3X6mB7X/hKOmk/rZQ5XUynZJUpfk0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=cV71RIytvzuYOcmDkOq2tj+FdPmxh3pjk2Z9HFCj9F5ErNT3P3CO9W0QUbVVpaJs1nlwLaSNypIVJn948EWT5/pGx8pIJcB5HfeLCDSwC4kJ+7fOjzclFb85FBNUPB0gV5R0Lel1BbtGKap0lT71ZFHEtQcbSuzIkMxtMhQCO14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ebmnjwnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 027D3C4AF07;
-	Tue, 14 May 2024 22:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715727115;
-	bh=m/grOBSTVdvoTG3X6mB7X/hKOmk/rZQ5XUynZJUpfk0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ebmnjwnDamLLx8Es5WxWRMeGllPUR3i0tETeOq9KTJV7cGi5wBFlUqsgTRq3I6h7c
-	 ayaJvuNQbZiC+6mV/Ozo9c/eH/263EcUvhV6XInCyL+F37gPjckMM22JEpUoITsn2V
-	 /ben97VR/zqp62XfcME9l2RbOrupivPbXswx92cpFPXCNq8eIh8ALw4J02Ew7oIHp+
-	 7C7quAv3ye24nqFJvH9xg5WgoZQqX6LYhWTkhr/kPSiBL4JUnvfk+lZiU+cqXMZSHf
-	 ATIHekPqX8XzmBy5X8+2HsV2+IY7BSrn2Q171bL+NTsmXeECJlVW+XPJZhuHKWxOAQ
-	 cKOh3ITpRwbNw==
+	s=arc-20240116; t=1715727138; c=relaxed/simple;
+	bh=0qQ/sc8ONfKMIFEbDmEeKbk7hGENEC1CjPvuVVbodHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RDVL+KEhkZDK8QYPbwQzqP1faqReSO6nlfe/jV3lcU+QH6y60zR3LBNLNSq36Z/ljARnL24asx+DT/s/fYRIJsd2hZoMPJr81Ild5Pw4TGEe2mX1WOWsw8fDnIIwa04yyuRmWC5t63smsPV6NxNq2JW09/nBIl+r51LH5DSEfbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cehaMXCZ; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f05b669b6cso34172975ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1715727137; x=1716331937; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=doHLoOzkV1dAkjUvPPZHC9iFmwa5zDfo9zpyMOeSinc=;
+        b=cehaMXCZsoHjkoCKuFRGlwA8Pol2JIcmEEQ5QYIN5sX133TQ7eYmIa4kxehoHZniWG
+         /2F7Vdo77mOz666RMRHPSyfwGmyC/mb2qdoGmyo7R7+xdHnANd1Ke8h3h+JOwvZtlyBm
+         N7lOz+uxMjMaMTOIQ6e72M5J9Eor8nCs2ec/4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715727137; x=1716331937;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=doHLoOzkV1dAkjUvPPZHC9iFmwa5zDfo9zpyMOeSinc=;
+        b=HfaygOH4q6ImkEk9ixvum6oSm046MCyxqizOLrAnb64nG8gVRDxPV2SsTc3EcVYOuF
+         geic3sENOjUo9ZtwLXhsXEavF1Wx0kY7ALQXgJL/kpwNuiitV0OZanRpfMqHJbbwZdNa
+         v7S0/maFP+TSEv86qxpL1mwLBL3SqIGYGDt83SUDmdvrm63GDPKtHulIqOu5sYDdqKVE
+         AVGY22D5oBI/zR4CbfIdxkJiwCxEiwW7laxkfvYGrpvP2bhxKGZK58NSBmiecLQjkX6P
+         OeNWB7YHp4eyuNeVj1JjoJ2X56ozkPqJXzG11SP3O7sovi0abMaMvx4RyIV4Sedo1dsi
+         f+BQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCcGtvM1tc3C1M2OS3u+D209DDAVazs4n98Qc8JZmfqaYSJpMo9Qdt1GsrxM/CD4dJzLtkwqgWTGCmotRtpy+ywG+NOApJClD+wrxx
+X-Gm-Message-State: AOJu0YwoTp68o02vOHy+CMTdIpkc7y3tNS0lPY1jGcn9OL0jfkfM8zqy
+	/oeVsFrbKGMu91PCakaE5OqbfCJcghnbXzvPI2szI9wmwMIyyrDVNvic3Vivag==
+X-Google-Smtp-Source: AGHT+IHWpFc8GRFfiX7fNqiCpm4+31CydC2UjP1SeqwBmoKCvpRAbRtb3mlF4Yocsg9frEgmjAbqMA==
+X-Received: by 2002:a17:902:8f94:b0:1e3:c610:597d with SMTP id d9443c01a7336-1ef44057ca0mr125104875ad.60.1715727136930;
+        Tue, 14 May 2024 15:52:16 -0700 (PDT)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bad886csm103974935ad.70.2024.05.14.15.52.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 15:52:16 -0700 (PDT)
+From: Kees Cook <keescook@chromium.org>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Stephen Boyd <swboyd@chromium.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-security-module@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] loadpin: Prevent SECURITY_LOADPIN_ENFORCE=y without module decompression
+Date: Tue, 14 May 2024 15:52:13 -0700
+Message-Id: <171572713190.2793228.3146950773342970247.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240514224839.2526112-1-swboyd@chromium.org>
+References: <20240514224839.2526112-1-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 15 May 2024 01:51:50 +0300
-Message-Id: <D19QI1MDD734.3FA17QYMV3TD3@kernel.org>
-Cc: <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH 1/2] tpm: add some algorithm and constant
- definitions from the TPM spec
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ignat Korchagin" <ignat@cloudflare.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.17.0
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <20240503221634.44274-2-ignat@cloudflare.com>
-In-Reply-To: <20240503221634.44274-2-ignat@cloudflare.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-I'll go through the code changes. I've barely skimmed them because I
-needed to understand the gist of the cover letter first and was busy
-with 6.10 release and asymmetric keys.
+On Tue, 14 May 2024 15:48:38 -0700, Stephen Boyd wrote:
+> If modules are built compressed, and LoadPin is enforcing by default, we
+> must have in-kernel module decompression enabled (MODULE_DECOMPRESS).
+> Modules will fail to load without decompression built into the kernel
+> because they'll be blocked by LoadPin. Add a depends on clause to
+> prevent this combination.
+> 
+> 
+> [...]
 
-On Sat May 4, 2024 at 1:16 AM EEST, Ignat Korchagin wrote:
-> In preparation for implementing TPM derived keys we need to use some new =
-TPM
-> functionality in the kernel, so add relevant constant definitions.
+Applied to for-next/hardening, thanks!
 
-Define "TPM derived key" what is. It is *undefined* at this point of the
-Git history.
+[1/1] loadpin: Prevent SECURITY_LOADPIN_ENFORCE=y without module decompression
+      https://git.kernel.org/kees/c/bc9316c14441
 
->
-> Signed-off-by: Ignat Korchagin <ignat@cloudflare.com>
-> ---
->  include/linux/tpm.h | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-> index 4ee9d13749ad..5be0808b1b91 100644
-> --- a/include/linux/tpm.h
-> +++ b/include/linux/tpm.h
-> @@ -35,6 +35,7 @@ struct trusted_key_options;
->  enum tpm_algorithms {
->  	TPM_ALG_ERROR		=3D 0x0000,
->  	TPM_ALG_SHA1		=3D 0x0004,
-> +	TPM_ALG_HMAC		=3D 0x0005,
->  	TPM_ALG_KEYEDHASH	=3D 0x0008,
->  	TPM_ALG_SHA256		=3D 0x000B,
->  	TPM_ALG_SHA384		=3D 0x000C,
+Take care,
 
-I had a point after all when asking for split and it was about this
-patch. This should be a separate comment and with a clear rationale what
-for this is required for the new key type.
+-- 
+Kees Cook
 
-It is a logically separate change [1].
-
-> @@ -209,6 +210,7 @@ enum tpm2_return_codes {
->  	TPM2_RC_DISABLED	=3D 0x0120,
->  	TPM2_RC_UPGRADE		=3D 0x012D,
->  	TPM2_RC_COMMAND_CODE    =3D 0x0143,
-> +	TPM2_RC_OBJECT_MEMORY	=3D 0x0902,
->  	TPM2_RC_TESTING		=3D 0x090A, /* RC_WARN */
->  	TPM2_RC_REFERENCE_H0	=3D 0x0910,
->  	TPM2_RC_RETRY		=3D 0x0922,
-
-Ditto.
-
-> @@ -227,6 +229,7 @@ enum tpm2_command_codes {
->  	TPM2_CC_CREATE		        =3D 0x0153,
->  	TPM2_CC_LOAD		        =3D 0x0157,
->  	TPM2_CC_SEQUENCE_UPDATE         =3D 0x015C,
-> +	TPM2_CC_SIGN		        =3D 0x015D,
->  	TPM2_CC_UNSEAL		        =3D 0x015E,
->  	TPM2_CC_CONTEXT_LOAD	        =3D 0x0161,
->  	TPM2_CC_CONTEXT_SAVE	        =3D 0x0162,
-
-Ditto.
-
-> @@ -234,6 +237,7 @@ enum tpm2_command_codes {
->  	TPM2_CC_VERIFY_SIGNATURE        =3D 0x0177,
->  	TPM2_CC_GET_CAPABILITY	        =3D 0x017A,
->  	TPM2_CC_GET_RANDOM	        =3D 0x017B,
-> +	TPM2_CC_HASH	        	=3D 0x017D,
->  	TPM2_CC_PCR_READ	        =3D 0x017E,
->  	TPM2_CC_PCR_EXTEND	        =3D 0x0182,
->  	TPM2_CC_EVENT_SEQUENCE_COMPLETE =3D 0x0185,
-
-
-Ditto.
-
-> @@ -243,7 +247,8 @@ enum tpm2_command_codes {
->  };
-> =20
->  enum tpm2_permanent_handles {
-> -	TPM2_RS_PW		=3D 0x40000009,
-> +	TPM2_RH_OWNER =3D 0x40000001,
-
-Ditto.
-
-> +	TPM2_RS_PW    =3D 0x40000009,
->  };
-> =20
->  enum tpm2_capabilities {
-> @@ -312,9 +317,12 @@ struct tpm_buf {
->  };
-> =20
->  enum tpm2_object_attributes {
-> -	TPM2_OA_FIXED_TPM		=3D BIT(1),
-> -	TPM2_OA_FIXED_PARENT		=3D BIT(4),
-> -	TPM2_OA_USER_WITH_AUTH		=3D BIT(6),
-> +	TPM2_OA_FIXED_TPM 		=3D BIT(1),
-> +	TPM2_OA_FIXED_PARENT 		=3D BIT(4),
-> +	TPM2_OA_SENSITIVE_DATA_ORIGIN	=3D BIT(5),
-> +	TPM2_OA_USER_WITH_AUTH 		=3D BIT(6),
-> +	TPM2_OA_RESTRICTED 		=3D BIT(16),
-> +	TPM2_OA_SIGN 			=3D BIT(18),
->  };
-> =20
->  enum tpm2_session_attributes {
-
-Ditto.
-
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
-separate-your-changes
-
-BR, Jarkko
 
