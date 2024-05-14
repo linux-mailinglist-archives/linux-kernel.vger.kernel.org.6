@@ -1,64 +1,72 @@
-Return-Path: <linux-kernel+bounces-178302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3B908C4BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:26:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E868C8C4BB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6B91C20D87
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F6C2286B8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB8E11CA1;
-	Tue, 14 May 2024 04:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9913818C36;
+	Tue, 14 May 2024 04:32:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/wxj0XS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qg3t0mV/"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C681879;
-	Tue, 14 May 2024 04:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F72C18026;
+	Tue, 14 May 2024 04:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715660758; cv=none; b=IY6OAge/yQ+xDvCmNLoiBEhgHtVBRfcvA8e3NlWWW5ytJCHrfS4jHtmIQOtQMrLo56GMWU8PlHpTvbl3r4ALyf4Nt1kv7G8fEXJXasNUVHAnFYXFWU3/wYtjAbViDFSYlljAOxpSP1FAy9jfZtWh1ZDHnAbYw1ucWcbNTd36KU0=
+	t=1715661162; cv=none; b=cYjvh7ZKUwmackQlAklA8zs1jmPzFuj0+6tCo+3yJiQiVL6fAN+UBgH7JVYzZ8VoBQgJoWDwEqWClTY8mtf64TflUlVxfLKlPCzmqdaAvEv8c2NHSNALrCYbYGkzQIZGlginNx+qTroYnzU51GWv7eQno6xnicyyzIxx6wos3fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715660758; c=relaxed/simple;
-	bh=lGGF6Zu/yTv80zk6p1pbSg/NpKuwrVgMc2jqi0ss/+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZPwr1dgbxBGPkww0N6lebwclwFBkFG/TaxrVFf5ZffMrwhkpXJiQn4NKu1zxx7O12uu/MVp7fqdcgqtc99IJYVhjT/I1FSl9n1ZsyNHkwwzGH4SHGRMkVHqD7CpNPgucantPp88nTfaZAQ3cEzQ7l5tvQhWiTGrlMtLJtT+2oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/wxj0XS; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715660756; x=1747196756;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lGGF6Zu/yTv80zk6p1pbSg/NpKuwrVgMc2jqi0ss/+g=;
-  b=h/wxj0XSHpeJAU99AIkrSqpmZh7mu8GV/U9U8/ESA0U7w773cSydUZ3q
-   JZYi2LSs0jGROB9U8HEw5FDlsemmO5gnSm6W4BxhQhGw1cSSIVY/hsPBF
-   Mc0etiSBRD/Ur5oxX3+FH1rGbyvXrkMmPSCTXMDAv9wMYbPBNKFX11bDn
-   nHkuf5NTTX3ZDAUej16HWvfwj3GLw+JtZ9jgBuEG1okmBOpI0He0/hhKD
-   XdT6mguWhbcsbXQq6+6WKklPx81qocGwNJVeQhYfxcPoab3WVLNCSdpSD
-   MAm4segydjH7Dzap1yKvRFcY82g22FbwyhREItG58luJhHZL/BRFu62T4
-   w==;
-X-CSE-ConnectionGUID: 8nuOPs7pR4uorhyioMB7kg==
-X-CSE-MsgGUID: isXKuJmuQV+I81NkJaDW0g==
-X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="11567206"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11567206"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 21:25:56 -0700
-X-CSE-ConnectionGUID: cFfoXh4yTzWpPhDH7ge5Tw==
-X-CSE-MsgGUID: ThbL82CCSN2Faz1aJdDJgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="35098358"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.125.243.198]) ([10.125.243.198])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2024 21:25:52 -0700
-Message-ID: <55d00dc8-bfa3-4cf2-9c6a-1d81e5cfd7b3@intel.com>
-Date: Tue, 14 May 2024 12:25:51 +0800
+	s=arc-20240116; t=1715661162; c=relaxed/simple;
+	bh=Y3ORLDWMvf238L0QLHUG319akzxeS7ywqW/nxFGRVj8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=b+LDTZ4a3fKRq764XKsf/k0DWaAIM9wBjJ2iKKGIa4UqnHK2vy84ykt9p7ic3DTCMNlyDyYZuRz7rDVzPYuBp8xM2xxwZWCgKjSamFZuM4WBnjX0n6tO3OMSAlEiB/HP6Mawxa0pyJ1WcdBjJhozi1uZFMX0QSyvvGN07vKLkl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qg3t0mV/; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a59a0906a7aso153634066b.1;
+        Mon, 13 May 2024 21:32:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715661159; x=1716265959; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jgTPDIdjSRWLN5VOr/94gFsl27B1qYJKvP5tv5bWr9g=;
+        b=Qg3t0mV/m4rinEl285AKGu4LerhgxboWlwwvZ/kclFTeTqOPlrBG5u1kUJ4Al2ndBb
+         9+Iqb0Mn1sXOieJ0ehWhba1y2vceORqXW+nVFFszyoMeXD06QW793Md75mMTnfFv/FCq
+         zKPR/A0Thz1dZA1SOzuZwbnQpCf2k4ZUxskNXgXSSxNMsgRK/ATTnMdZtz0xCV1pa0N7
+         YHvfViL0LmQHEmMiiQKDDpcqi5azPsMJeXELFeI+zjAtqWd6H3p3Ue6SI55xG4LnSW3g
+         jTSJvCB0/554SU7jKEb3tO532bUoD/44+ktjQDdZguefXPbkVvZ0BvQeXcvsdKvcIaJV
+         iI8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715661159; x=1716265959;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jgTPDIdjSRWLN5VOr/94gFsl27B1qYJKvP5tv5bWr9g=;
+        b=dpsCiFeKZX3s7MBvoPdmYajomKRPQJw8FaAgiLFP5xwwHciht+mP/X2ZvCbl5U7/XY
+         pwwqGpL28WjuPK221Mra0VYqJhs6TFOD27ATanlGQFqCUQ47ZdoFmaPu21F88e5rPmyu
+         3vvgQQIhuE5m8SSXl4laG7FK6+V8y19Rxd7qDzBebFazcK30G2IjUR9IhYGsxjDX8ofc
+         a9G7lDmix29kSaLqtOkiTPzShkpaBzFxLGbjhFHezLfQ73zR9ysm8+5W0Y6YzcVyC2xm
+         hLTMFPKiZH1CMWED3D6l/dZdIYNOSlSbxIz47PPrKLSEdt51J7sCnNCka/NGdarXgx+X
+         8qpA==
+X-Forwarded-Encrypted: i=1; AJvYcCX02xGeIGopyyrKauLCHsqDMyab8HiB6m5QO4dSMmt272oDMjgRl/9j8ToKaG05n0fYq2DGx7+tKSh+oKvBQLUSlT4rj2vwy4CzoTUYHeVkt5VuXmGYsKF41uAH3FGxj7wGB3ptBh+BQlhb
+X-Gm-Message-State: AOJu0YzOV0yNQKvqs0OQmjliCZVVaZ86y0Y2RbEl6uozWcs1Z1aMl8EO
+	mPmutnuRAYHSB4TgPW16JzFaInjq/2FeDnPP4SD3TYKdlNbF89JW
+X-Google-Smtp-Source: AGHT+IEUoj6f8wyS1jdQZliRA9Ol4cmk941rUs8WpauT7UcvfV4kTC8SuaLV0U4NeE3yMpcDb7bkeA==
+X-Received: by 2002:a17:906:f591:b0:a5a:5bf2:b889 with SMTP id a640c23a62f3a-a5a5bf2b8b4mr633408366b.0.1715661159336;
+        Mon, 13 May 2024 21:32:39 -0700 (PDT)
+Received: from [192.168.0.101] (p57935690.dip0.t-ipconnect.de. [87.147.86.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a17b01724sm674438566b.162.2024.05.13.21.32.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 21:32:38 -0700 (PDT)
+Message-ID: <8fe72cec-adba-42dd-9185-15e777714a81@gmail.com>
+Date: Tue, 14 May 2024 06:32:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,101 +74,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/17] KVM: x86: Move synthetic PFERR_* sanity checks to
- SVM's #NPF handler
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, Kai Huang <kai.huang@intel.com>,
- Binbin Wu <binbin.wu@linux.intel.com>
-References: <20240507155817.3951344-1-pbonzini@redhat.com>
- <20240507155817.3951344-5-pbonzini@redhat.com>
- <3b6bc6ac-276f-4a83-8972-68b98db672c7@intel.com>
- <ZkJOb4zJJnOAYnTi@google.com>
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [Bug] staging: rtl8723bs: Bluetooth stops working after patch:
+ serial: 8250_dw: Do not reclock if already at correct rate
+To: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, linux-serial@vger.kernel.org
+Cc: Peter Collingbourne <pcc@google.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZkJOb4zJJnOAYnTi@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/14/2024 1:31 AM, Sean Christopherson wrote:
-> On Mon, May 13, 2024, Xiaoyao Li wrote:
->> On 5/7/2024 11:58 PM, Paolo Bonzini wrote:
->>> From: Sean Christopherson <seanjc@google.com>
->>>
->>> Move the sanity check that hardware never sets bits that collide with KVM-
->>> define synthetic bits from kvm_mmu_page_fault() to npf_interception(),
->>> i.e. make the sanity check #NPF specific.  The legacy #PF path already
->>> WARNs if _any_ of bits 63:32 are set, and the error code that comes from
->>> VMX's EPT Violatation and Misconfig is 100% synthesized (KVM morphs VMX's
->>> EXIT_QUALIFICATION into error code flags).
->>>
->>> Add a compile-time assert in the legacy #PF handler to make sure that KVM-
->>> define flags are covered by its existing sanity check on the upper bits.
->>>
->>> Opportunistically add a description of PFERR_IMPLICIT_ACCESS, since we
->>> are removing the comment that defined it.
->>>
->>> Signed-off-by: Sean Christopherson <seanjc@google.com>
->>> Reviewed-by: Kai Huang <kai.huang@intel.com>
->>> Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
->>> Message-ID: <20240228024147.41573-8-seanjc@google.com>
->>> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
->>> ---
->>>    arch/x86/include/asm/kvm_host.h |  6 ++++++
->>>    arch/x86/kvm/mmu/mmu.c          | 14 +++-----------
->>>    arch/x86/kvm/svm/svm.c          |  9 +++++++++
->>>    3 files changed, 18 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->>> index 58bbcf76ad1e..12e727301262 100644
->>> --- a/arch/x86/include/asm/kvm_host.h
->>> +++ b/arch/x86/include/asm/kvm_host.h
->>> @@ -267,7 +267,13 @@ enum x86_intercept_stage;
->>>    #define PFERR_GUEST_ENC_MASK	BIT_ULL(34)
->>>    #define PFERR_GUEST_SIZEM_MASK	BIT_ULL(35)
->>>    #define PFERR_GUEST_VMPL_MASK	BIT_ULL(36)
->>> +
->>> +/*
->>> + * IMPLICIT_ACCESS is a KVM-defined flag used to correctly perform SMAP checks
->>> + * when emulating instructions that triggers implicit access.
->>> + */
->>>    #define PFERR_IMPLICIT_ACCESS	BIT_ULL(48)
->>> +#define PFERR_SYNTHETIC_MASK	(PFERR_IMPLICIT_ACCESS)
->>>    #define PFERR_NESTED_GUEST_PAGE (PFERR_GUEST_PAGE_MASK |	\
->>>    				 PFERR_WRITE_MASK |		\
->>> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
->>> index c72a2033ca96..5562d693880a 100644
->>> --- a/arch/x86/kvm/mmu/mmu.c
->>> +++ b/arch/x86/kvm/mmu/mmu.c
->>> @@ -4502,6 +4502,9 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
->>>    		return -EFAULT;
->>>    #endif
->>> +	/* Ensure the above sanity check also covers KVM-defined flags. */
->>
->> 1. There is no sanity check above related to KVM-defined flags yet. It has
->> to be after Patch 6.
-> 
-> Ya, it's not just the comment, the entire changelog expects this patch to land
-> after patch 6.
->>
->> 2. I somehow cannot parse the comment properly, though I know it's to ensure
->> KVM-defined PFERR_SYNTHETIC_MASK not contain any bit below 32-bits.
-> 
-> Hmm, how about this?
-> 
-> 	/*
-> 	 * Ensure that the above sanity check on hardware error code bits 63:32
-> 	 * also prevents false positives on KVM-defined flags.
-> 	 */
-> 
+Hi,
 
-Maybe it's just myself inability, I still cannot interpret it well.
+I have a ODYS Trendbook next 14 with the wlan/bluetooth module rtl8723bs.
 
-Can't we put it above the sanity check of error code, and just with a 
-comment like
+Bluetooth stops working with the following commit:
+commit e5d6bd25f93d6ae158bb4cd04956cb497a85b8ef (HEAD)
+Author: Peter Collingbourne <pcc@google.com>
+Date:   Thu Feb 22 11:26:34 2024 -0800
+     serial: 8250_dw: Do not reclock if already at correct rate
 
-	/*
-  	 * Ensure KVM-defined flags not occupied any bits below 32-bits,
-          * that are used by hardware.
-	 * /
+Please find dmesg below. Module has issues to load firmware.
+
+To enshure that this is the function breaking commit I applied the 
+commit reversed on top of the latest kernel from the staging tree. Then 
+bluetooth is working again.
+
+I can support with further tests. I do not have a good proposal for a 
+fix as I expect a lot of side effects. Please send me proposals for a 
+fix. Comming Thursday I will be OOO.
+
+Thanks for your support.
+
+Bye Philipp
+
+
+dmesg when not working:
+[   26.904914] Bluetooth: Core ver 2.22
+[   26.905130] NET: Registered PF_BLUETOOTH protocol family
+[   26.905136] Bluetooth: HCI device and connection manager initialized
+[   26.905154] Bluetooth: HCI socket layer initialized
+[   26.905161] Bluetooth: L2CAP socket layer initialized
+[   26.905184] Bluetooth: SCO socket layer initialized
+[   27.291346] audit: type=1130 audit(1715629261.116:39): pid=1 uid=0 
+auid=4294967295 ses=4294967295 subj=system_u:system_r:init_t:s0 
+msg='unit=systemd-tmpfiles-setup comm="systemd" 
+exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=? res=success'
+[   27.335410] audit: type=1334 audit(1715629261.160:40): prog-id=57 op=LOAD
+[   29.472422] usb 1-4: Found UVC 1.00 device USB 2.0 Camera (058f:5608)
+[   29.494762] usbcore: registered new interface driver uvcvideo
+[   29.506692] RPC: Registered named UNIX socket transport module.
+[   29.506704] RPC: Registered udp transport module.
+[   29.506707] RPC: Registered tcp transport module.
+[   29.506709] RPC: Registered tcp-with-tls transport module.
+[   29.506711] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[   29.532484] Bluetooth: HCI UART driver ver 2.3
+[   29.532503] Bluetooth: HCI UART protocol H4 registered
+[   29.532507] Bluetooth: HCI UART protocol BCSP registered
+[   29.532594] Bluetooth: HCI UART protocol LL registered
+[   29.532599] Bluetooth: HCI UART protocol ATH3K registered
+[   29.533139] Bluetooth: HCI UART protocol Three-wire (H5) registered
+[   29.533325] Bluetooth: HCI UART protocol Intel registered
+[   29.533506] Bluetooth: HCI UART protocol Broadcom registered
+[   29.533541] Bluetooth: HCI UART protocol QCA registered
+[   29.533546] Bluetooth: HCI UART protocol AG6XX registered
+[   29.533572] Bluetooth: HCI UART protocol Marvell registered
+[   30.114887] cfg80211: Loading compiled-in X.509 certificates for 
+regulatory database
+[   30.172864] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   30.175628] Loaded X.509 cert 'wens: 
+61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[   30.269514] Bluetooth: hci0: RTL: examining hci_ver=06 hci_rev=000b 
+lmp_ver=06 lmp_subver=8723
+[   30.273192] Bluetooth: hci0: RTL: rom_version status=0 version=1
+[   30.273218] Bluetooth: hci0: RTL: loading rtl_bt/rtl8723bs_fw.bin
+[   30.300067] Bluetooth: hci0: RTL: loading 
+rtl_bt/rtl8723bs_config-OBDA8723.bin
+[   30.328993] Bluetooth: hci0: RTL: cfg_sz 64, total sz 24508
+[   30.617609] input: chtnau8824 Headset as 
+/devices/pci0000:00/808622A8:00/cht-bsw-nau8824/sound/card1/input15
+[   31.630950] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[   31.630966] Bluetooth: BNEP filters: protocol multicast
+[   31.631013] Bluetooth: BNEP socket layer initialized
+[   32.388997] Bluetooth: hci0: command 0xfc20 tx timeout
+[   33.397774] NET: Registered PF_QIPCRTR protocol family
+[   35.872260] r8723bs: module is from the staging directory, the 
+quality is unknown, you have been warned.
+[   36.008866] pnetdev = 0000000086c577c1
+[   38.957652] rtl8723bs: acquire FW from file:rtlwifi/rtl8723bs_nic.bin
+[   39.065930] ax88179_178a 2-1:1.0 enp0s20u1: ax88179 - Link status is: 1
+[   40.516641] Bluetooth: hci0: RTL: download fw command failed (-110)
+[   41.754022] ax88179_178a 2-1:1.0 enp0s20u1: ax88179 - Link status is: 1
+[   62.939117] rfkill: input handler disabled
+[   66.873746] intel_sst_acpi 808622A8:00: FW Version 01.0b.02.02
+[   95.201213] systemd-journald[587]: 
+/var/log/journal/deb6c1cc9b434036821e1d20b20e14ec/user-1000.journal: 
+Journal file uses a different sequence number ID, rotating.
+[   96.212917] rfkill: input handler enabled
+[  104.357628] rfkill: input handler disabled
+[  124.215728]  mmcblk1: p1 p2 p3
+[  169.291952] netfs: FS-Cache loaded
+[  169.343759] Key type dns_resolver registered
+[  170.689598] Key type cifs.spnego registered
+[  170.689677] Key type cifs.idmap registered
+[  170.691671] CIFS: Attempting to mount //192.168.2.110/kernelcomp
+[  181.038648]  mmcblk1: p1 p2 p3
 
