@@ -1,180 +1,157 @@
-Return-Path: <linux-kernel+bounces-178791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C1D8C57B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:11:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F7D8C57B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:10:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8F0DB21AC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF281F228F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B73144D0B;
-	Tue, 14 May 2024 14:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B8D144D12;
+	Tue, 14 May 2024 14:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSkfZwZb"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XrAYQPgy";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Z+ahYdDB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB886D1A7;
-	Tue, 14 May 2024 14:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B13C1448D9;
+	Tue, 14 May 2024 14:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715695851; cv=none; b=ZIJcnALkwkJYYaKmUSo8Ko7tfIEthOokpCzGENsmwHBruTTjxP5E20R2lMW85YQSgGOonDKIJ2G4lcTXJVaXuBPNymnxZjoQxTb2eJ9ZcAatVsPOgOhlvuBnzfvEuJCI+iPf3SvoW1J8NHmH4xXVjFov4FeyEBqBSUddqgQBx2E=
+	t=1715695810; cv=none; b=onN+VCCCYByVge14V0//NtScC2li7xFZqnAdCe8zcrtp/Anq/cH4C0c9/K2ZJ4ZmI2JRhTbyD8XMbnllUjeP+Xh/A/MFzRMEMBOu3lrDFDw/hWcs2mGvRghTdNawjR7uOqJnKJcTk3uy0PQgwDfeuA64++6FhG8Vk3kfB6xO6Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715695851; c=relaxed/simple;
-	bh=idsFV/plXziBP7biXwxYVnUuqVUAbKoKYBEZdw5FAvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JA/XdKXEA3f9qH4Bq74rdQCT3f4Jf0FDlswnNTutbc0A9W5B744ojDH7un0+GSQMYhNTW8NEi205OjKXBsmDMRMgslHtxbkH/UkfokNjkp7ORlRftSlJVjV9Gl1fhq0jK/wLydlPfaGDgi8umzBsYpf68S50OgGwdOr8glKaiYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSkfZwZb; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-24157800275so2723306fac.0;
-        Tue, 14 May 2024 07:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715695849; x=1716300649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dKVKT7Rt3U1WpKVzL3CBlHOoKp58lJ+CMFeITZ8zIQc=;
-        b=aSkfZwZbx3umF2pNLEzQnYZ5KFM7V8j0VRQOM7hgEdH1zios7zo5n18cKbb7eW77Uf
-         riinQFEPCHlM5436EIAzlQwLpAnys3yku/gWLvhJsSmdHWa3OO6w5TLGwulwYlGsRLCZ
-         JcduN7UO7v5BSgMTOsfTyaLXpL/46SzLYxw6M2IdIGVCXBmrgbO0+33Cz38RKMwyjgFa
-         qQxOuP2gW+NaaC8WtriIn9CiDwezQuCEMu9Z3br1Ks8jh1CuM7d7t9ZRYC9V9E4M5Un3
-         S384iWrNeArxC3XK5oRB1WeKehIuYGQz9RcWpwdIDV1ZEEXKI6simCVP7C+hncihiGN1
-         Ksrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715695849; x=1716300649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dKVKT7Rt3U1WpKVzL3CBlHOoKp58lJ+CMFeITZ8zIQc=;
-        b=B/zCug4Kyavyask4HiP+0Vwrl69NhFf+OGy+3QJAgw5Cb7zM/5XkKBJYIdEShxsmYO
-         YDd9e+n313Yy12tVHOwvuZJG6y8KAjC9ZSx//uAevCam8UfG4UUA6olk7OtCccNKn8GA
-         3es58V/UUELM1aZMW8rvXRu3BxFGow6V1cP00gQprfsCTQ9E3WBLRjZluViH58GF94GF
-         LnfTaqu35Rb/LXUG/fvHqgqpyae+b6EbEW3G6DlAIEwkifwllk0hay1+WfR4e+KTGZmw
-         JnIs8sK19/dzX2HDmP17dzmRXBeph2vnHzNumR8e8gcSVOQPX62WbWgxbEsabj1nfDSs
-         4oEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZIZ7aIubgJa13UDW/2DtfHmGoGnOhksJVPlCBaEV/luG3wV/TLeh+RZ6Gr4gVzWdmJnKR8aOgIG6yFpcQQoAFgeF9Ai54urMeaaPi89oVK0s=
-X-Gm-Message-State: AOJu0YyOZqZcEqX2I5ZKa1mQu/u+k6GK0chZfGMPW0Taox929awx+s0G
-	QatqkAevgAGizolJD7dtyq/BIWKwFU0e7uMHO+59HWnUPOcRZBEFFHObq9Lx6+1udAig3XQeDP6
-	R+gxAj7C49p/TDUZYdAbm8N3IsFo=
-X-Google-Smtp-Source: AGHT+IHMMVIzd1ymR9V4pGf8QXhdu90ekywDYKwjZulJuTlri4cG2bUPWsLUav+alHG9eZksrLEhZdmotW+OEEGDZDY=
-X-Received: by 2002:a05:6870:d112:b0:23d:225a:9443 with SMTP id
- 586e51a60fabf-24172f5f0acmr15280010fac.41.1715695848695; Tue, 14 May 2024
- 07:10:48 -0700 (PDT)
+	s=arc-20240116; t=1715695810; c=relaxed/simple;
+	bh=iWP8HSVSOriGJffY8FlJsZ27CjnV1fyLluT/GZJnVxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XuTjd9FtLYbePXFfbNkRy6CcpeVFdkA741gABmiEpFxTUjEkgbcoi80+X5x+eq5u2dY+HZPD1XJrq00gwVCSqIMy5kTMNVG5WYsJkk+/52Op7XdTSdCrhSJQIcMucmwM6l1bf9WLjdHTd/FPh/6UjUdcPX2CwZKtUCBN72IUCVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XrAYQPgy; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Z+ahYdDB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DF27060CBA;
+	Tue, 14 May 2024 14:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715695801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QyObfHROCQM34yYn3NOjoIfR1A4DlxepS3b18yjnmzo=;
+	b=XrAYQPgylTEL7g6Yo5/0DgxiLUTRWRRLkiGhCuK6M3u0Jh6IG/5CTKCMWRR+E8dRbQ+6RR
+	hG6t8+TeaIZ6MZT0xraGqIH/czDduJua5MQLpN/yTD7msrAl5QtPiubbmrLiuuPLb6O4Cs
+	ggx/XoJa1QHLVomm+XxUiabdGZRghW8=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1715695800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QyObfHROCQM34yYn3NOjoIfR1A4DlxepS3b18yjnmzo=;
+	b=Z+ahYdDBy7cmu/gmrcLI/7WfPEw2IMCy7EqIruO2VnhI9pqPK0VZVAiFVhLrB3MjAiAaYM
+	xrMhaZsOhffmyJjSHwqXSk0gcz5v55/3zs3DlWvGZ/0TDCKuZ4iQmFBRHp76a7lAJGsaym
+	AaPTg+rL1UCibRfdv8ys7tjDaPIVBUk=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D6FE137C3;
+	Tue, 14 May 2024 14:10:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Sg2vGbhwQ2Z6NwAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Tue, 14 May 2024 14:10:00 +0000
+Date: Tue, 14 May 2024 16:09:58 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Xiu Jianfeng <xiujianfeng@huawei.com>
+Cc: hannes@cmpxchg.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] memcg: don't handle event_list for v2 when
+ offlining
+Message-ID: <ZkNwthw5vJrnQSLL@tiehlicka>
+References: <20240514131106.1326323-1-xiujianfeng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240418132602.509313-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240418132602.509313-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 14 May 2024 15:09:56 +0100
-Message-ID: <CA+V-a8vp32HsQsQDKD7rPK=Z=SoCk1SxxigM4FP1G=B7=jOz9w@mail.gmail.com>
-Subject: Re: [RFC PATCH] reset: Add devm_reset_control_deassert helper
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514131106.1326323-1-xiujianfeng@huawei.com>
+X-Spam-Flag: NO
+X-Spam-Score: -2.82
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.82 / 50.00];
+	BAYES_HAM(-2.02)[95.17%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On Thu, Apr 18, 2024 at 2:26=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> A typical code pattern for reset_control_deassert() call is to call it in
-> the _probe function and to call reset_control_assert() both from _probe
-> error path and from _remove function.
->
-> Add helper function to replace this bolierplate piece of code. Calling
-> devm_reset_control_deassert() removes the need for calling
-> reset_control_assert() both in the probe()'s error path and in the
-> remove() function.
->
-> Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Tue 14-05-24 13:11:06, Xiu Jianfeng wrote:
+> The event_list for memcg is only valid for v1 and not used for v2,
+> so it's unnessesary to handle event_list for v2.
+
+You are right but the code as is works just fine. The list will be
+empty. It is true that we do not need to take event_list_lock lock but
+nobody should be using this lock anyway. Also the offline callback is
+not particularly hot path. So why do we want to change the code?
+
+> 
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 > ---
->  drivers/reset/core.c  | 22 ++++++++++++++++++++++
->  include/linux/reset.h |  6 ++++++
->  2 files changed, 28 insertions(+)
->
-Gentle ping.
-
-Cheers,
-Prabhakar
-
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index dba74e857be6..a2a6eff8e599 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -592,6 +592,28 @@ int reset_control_deassert(struct reset_control *rst=
-c)
->  }
->  EXPORT_SYMBOL_GPL(reset_control_deassert);
->
-> +static void reset_control_assert_action(void *rstc)
-> +{
-> +       reset_control_assert(rstc);
-> +}
-> +
-> +/**
-> + * devm_reset_control_deassert - devres-enabled version of reset_control=
-_deassert()
-> + * @dev: device that requests the reset control
-> + * @rstc: reset controller
-> + */
-> +int devm_reset_control_deassert(struct device *dev, struct reset_control=
- *rstc)
-> +{
-> +       int ret;
-> +
-> +       ret =3D reset_control_deassert(rstc);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return devm_add_action_or_reset(dev, reset_control_assert_action,=
- rstc);
-> +}
-> +EXPORT_SYMBOL_GPL(devm_reset_control_deassert);
-> +
->  /**
->   * reset_control_bulk_deassert - deasserts the reset lines in reverse or=
-der
->   * @num_rstcs: number of entries in rstcs array
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index 514ddf003efc..e41e752ba098 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-> @@ -31,6 +31,7 @@ int reset_control_reset(struct reset_control *rstc);
->  int reset_control_rearm(struct reset_control *rstc);
->  int reset_control_assert(struct reset_control *rstc);
->  int reset_control_deassert(struct reset_control *rstc);
-> +int devm_reset_control_deassert(struct device *dev, struct reset_control=
- *rstc);
->  int reset_control_status(struct reset_control *rstc);
->  int reset_control_acquire(struct reset_control *rstc);
->  void reset_control_release(struct reset_control *rstc);
-> @@ -91,6 +92,11 @@ static inline int reset_control_deassert(struct reset_=
-control *rstc)
->         return 0;
->  }
->
-> +static inline int devm_reset_control_deassert(struct device *dev, struct=
- reset_control *rstc)
-> +{
-> +       return 0;
-> +}
-> +
->  static inline int reset_control_status(struct reset_control *rstc)
->  {
->         return 0;
-> --
+>  mm/memcontrol.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index d127c9c5fabf..4254f9cd05f4 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5881,12 +5881,14 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+>  	 * Notify userspace about cgroup removing only after rmdir of cgroup
+>  	 * directory to avoid race between userspace and kernelspace.
+>  	 */
+> -	spin_lock_irq(&memcg->event_list_lock);
+> -	list_for_each_entry_safe(event, tmp, &memcg->event_list, list) {
+> -		list_del_init(&event->list);
+> -		schedule_work(&event->remove);
+> +	if (!cgroup_subsys_on_dfl(memory_cgrp_subsys)) {
+> +		spin_lock_irq(&memcg->event_list_lock);
+> +		list_for_each_entry_safe(event, tmp, &memcg->event_list, list) {
+> +			list_del_init(&event->list);
+> +			schedule_work(&event->remove);
+> +		}
+> +		spin_unlock_irq(&memcg->event_list_lock);
+>  	}
+> -	spin_unlock_irq(&memcg->event_list_lock);
+>  
+>  	page_counter_set_min(&memcg->memory, 0);
+>  	page_counter_set_low(&memcg->memory, 0);
+> -- 
 > 2.34.1
->
+
+-- 
+Michal Hocko
+SUSE Labs
 
