@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-179152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30C28C5C6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:45:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F311D8C5C70
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAEBEB21B91
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE321C20B12
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CCD339A0;
-	Tue, 14 May 2024 20:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CAE1EA74;
+	Tue, 14 May 2024 20:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZKCeN1KY"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXJiH4b5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F682365;
-	Tue, 14 May 2024 20:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D5212B7F
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715719513; cv=none; b=LBV51L+wYGVxb8vtB5IMyUUjesSwjpM/pZUFW4RQyMrVRMUtjPtXA/FkLpJftlw7bwZbvTAfuvJlaRDH2EiAHCYbkbcU+M/cCNttU+kXc9OQE9e9/IdnZI9IHKyz/BarFfdl2UREvlr3ibEeJ4GAx7BzcbZ4ru4710GI3/XAoO4=
+	t=1715719614; cv=none; b=IROWRNGUK5O4DCKyfW9Y0myrn+r37PEAyy+K4zBLoBA3YydsC1gERn6g23UXaALJqMSNuyO3B0hI/8SMqlkKEgwRo9QX3TJpf5YdWH8AFr8oNAlZVztI+We8byQ9RNdo4tDY1qDjgWs5wB+hsAwgPo05oGk/+MlKKT2L0Ms1wIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715719513; c=relaxed/simple;
-	bh=7eNU9RHOlvYz9X+A7ir7zV3mJIxGAuNlcZEw26tqzm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sw9h2O0MbuNBxzBfloup0b11ZN/wWfNNPOrWRkScdaeEYBuDEJL/uwIlzveJE/xXCIj9IYwGnrv4JOMN9LogSdNYPUAIz4Ly0eUQqc7fgkyB+KkdsN79pxGGGgfdi8wjhMUeK2hQkXvT3xfobcgbHjbg/Chb6cGU4E/JT/1eIZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZKCeN1KY; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 67BDB593;
-	Tue, 14 May 2024 22:45:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1715719501;
-	bh=7eNU9RHOlvYz9X+A7ir7zV3mJIxGAuNlcZEw26tqzm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZKCeN1KYkhnhY66NAPmiMzYSQv5LFSqkmeYl1k1qb/GRN9aUpl7rMKrEU+j7Cm41Q
-	 zXPYNpFuuQHtCdgIB2YCll7gp29X8vuKMcZV3ud1ZyOIqFdL5sdSZAemoY7hCHXGJM
-	 lFaSkTekTJXRBsv4JP2xf+TsKGCPrHKQJjY8jZ24=
-Date: Tue, 14 May 2024 23:45:00 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: Maxime Ripard <mripard@redhat.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Robert Mader <robert.mader@collabora.com>,
-	Sebastien Bacher <sebastien.bacher@canonical.com>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linaro-mm-sig@lists.linaro.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Milan Zamazal <mzamazal@redhat.com>,
-	Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
-Subject: Re: Safety of opening up /dev/dma_heap/* to physically present users
- (udev uaccess tag) ?
-Message-ID: <20240514204500.GO32013@pendragon.ideasonboard.com>
-References: <e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
- <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
- <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
- <20240507183613.GB20390@pendragon.ideasonboard.com>
- <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
- <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
- <20240513-heretic-didactic-newt-1d6daf@penduick>
- <dacacb862275cd7a588c5fcc56fd6c1d85538d12.camel@collabora.com>
- <20240513-auspicious-toucanet-from-heaven-f313af@penduick>
- <643c6d3da9c7f45c32e01dd7179681117557ed4d.camel@collabora.com>
+	s=arc-20240116; t=1715719614; c=relaxed/simple;
+	bh=xdP0Ewn8XMSqDak7kTryjOcPqX3AilVOyY8jEdOiV+c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TjUWdS1kdrsZZXdHyfu9I6tOk7pNWa6Vx8kh0elFbq1cpcYIRpQtYUZaBMJxUh3ZuwyWdIGa6Osl3K4YdjQnu4sEmReZZlB/r1S2/QBLVxynrN3tOlOVPmBWGu0CMyYabNdY2/SRAnWR1GWNRl9tEW9SXMKvHkng81g1saoddqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXJiH4b5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715719611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bpt+oNjtb0oohoclZAzvcZBWQdJHBDL+pCrC+xN8u3o=;
+	b=YXJiH4b5SJIk0fAeP+rohkBAX1IxARY4Wj23//5B3qZJ9NvWx8S5QK0c1A5e0KaamlWTxT
+	lfQmAKKlwLL1hrPHOQC6vrnXQS4kT6Gc6F0gusbHDAwsXIuz72OVCgLgFJ6mEXgQ7GcI8V
+	dx6t3ZxJ+Q2RXbQy4uFjGu7ZNlWU6j4=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-dq5RYYO8PqC8aJdmHs7tNQ-1; Tue, 14 May 2024 16:46:48 -0400
+X-MC-Unique: dq5RYYO8PqC8aJdmHs7tNQ-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2b4330e5119so4922003a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:46:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715719608; x=1716324408;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bpt+oNjtb0oohoclZAzvcZBWQdJHBDL+pCrC+xN8u3o=;
+        b=K2tOL8wRuGogLE3cuzF7NaRcpFOQK6QmiV80Dpo3GCnli9y4UyQJPUMxQA/1P0LOHW
+         5gDSR0+8tCF3ckP8uv15PzJDzIi7hoawa+2/Vj4Mwizj6iwd7JUH+Dcz30lJCzX3Ip8t
+         wzXTyYmbuxrCR6dUqaleYdeBF6KGJFA4c4jvvIS8tKvmgTASr6QltQCDvAIG7dCd4sJl
+         Fda85hjYqWWkvh3c8UbIfQM9qoBqTAWWdg7fZcwbeKfxlutvuxjr6MIY2fbJQZ6aBY6R
+         ER2VthHtXFbgh1mdqSMySXDrnqrvKTMc/EqsqN1AM1zR05Xab8TtzNimgss0mDpkkR+o
+         Yj4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKp16ix0n7C3Yh3BOJJj1X9k+ndC3RrG7UHydGJYGsEsYoo/eOY2Qy7wWVAK6xx3kuubYrvm4E6OsCxoCw0GnTen3PqbytZuDk6Dns
+X-Gm-Message-State: AOJu0Yy0d5/VU/1umevTXk4i4QC2I40ymcNnR6borXqInMiTbFLMbI7l
+	4fwl2+ht00cfyev1nkfhwCVMPdFwt9StD01RVhXKFo7MlS9o3mS6/5p+G4aOOV6xEc3kkgHkkFO
+	Ubx7miwHCecTaRmU8cL4/oT85lekCBSapnnfDiPITSAd4IdlK5XGiJ5iMRcy18Q==
+X-Received: by 2002:a17:90a:6f85:b0:2aa:b57c:b178 with SMTP id 98e67ed59e1d1-2b6ccedd2f8mr12644194a91.34.1715719607691;
+        Tue, 14 May 2024 13:46:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEEuLZlbfPQODHVEWOSPVammiI4pY01wxiAWJNK3AcV4Jn4d9SFUJpEq6tKGQdRlpxdKVlMOw==
+X-Received: by 2002:a17:90a:6f85:b0:2aa:b57c:b178 with SMTP id 98e67ed59e1d1-2b6ccedd2f8mr12644174a91.34.1715719607269;
+        Tue, 14 May 2024 13:46:47 -0700 (PDT)
+Received: from [172.21.1.2] ([50.204.89.31])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67116601fsm10194117a91.23.2024.05.14.13.46.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 May 2024 13:46:46 -0700 (PDT)
+Message-ID: <74a72eeb-122f-453e-baa7-63504e7c4bd8@redhat.com>
+Date: Tue, 14 May 2024 22:46:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <643c6d3da9c7f45c32e01dd7179681117557ed4d.camel@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/ksm: fix possible UAF of stable_node
+To: Chengming Zhou <chengming.zhou@linux.dev>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Andrea Arcangeli <aarcange@redhat.com>, Stefan Roesch <shr@devkernel.io>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ zhouchengming@bytedance.com
+References: <20240513-b4-ksm-stable-node-uaf-v1-1-f687de76f452@linux.dev>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240513-b4-ksm-stable-node-uaf-v1-1-f687de76f452@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 13, 2024 at 11:06:24AM -0400, Nicolas Dufresne wrote:
-> Le lundi 13 mai 2024 à 15:51 +0200, Maxime Ripard a écrit :
-> > On Mon, May 13, 2024 at 09:42:00AM -0400, Nicolas Dufresne wrote:
-> > > Le lundi 13 mai 2024 à 10:29 +0200, Maxime Ripard a écrit :
-> > > > On Wed, May 08, 2024 at 10:36:08AM +0200, Daniel Vetter wrote:
-> > > > > On Tue, May 07, 2024 at 04:07:39PM -0400, Nicolas Dufresne wrote:
-> > > > > > Le mardi 07 mai 2024 à 21:36 +0300, Laurent Pinchart a écrit :
-> > > > > > > Shorter term, we have a problem to solve, and the best option we have
-> > > > > > > found so far is to rely on dma-buf heaps as a backend for the frame
-> > > > > > > buffer allocatro helper in libcamera for the use case described above.
-> > > > > > > This won't work in 100% of the cases, clearly. It's a stop-gap measure
-> > > > > > > until we can do better.
-> > > > > > 
-> > > > > > Considering the security concerned raised on this thread with dmabuf heap
-> > > > > > allocation not be restricted by quotas, you'd get what you want quickly with
-> > > > > > memfd + udmabuf instead (which is accounted already).
-> > > > > > 
-> > > > > > It was raised that distro don't enable udmabuf, but as stated there by Hans, in
-> > > > > > any cases distro needs to take action to make the softISP works. This
-> > > > > > alternative is easy and does not interfere in anyway with your future plan or
-> > > > > > the libcamera API. You could even have both dmabuf heap (for Raspbian) and the
-> > > > > > safer memfd+udmabuf for the distro with security concerns.
-> > > > > > 
-> > > > > > And for the long term plan, we can certainly get closer by fixing that issue
-> > > > > > with accounting. This issue also applied to v4l2 io-ops, so it would be nice to
-> > > > > > find common set of helpers to fix these exporters.
-> > > > > 
-> > > > > Yeah if this is just for softisp, then memfd + udmabuf is also what I was
-> > > > > about to suggest. Not just as a stopgap, but as the real official thing.
-> > > > > 
-> > > > > udmabuf does kinda allow you to pin memory, but we can easily fix that by
-> > > > > adding the right accounting and then either let mlock rlimits or cgroups
-> > > > > kernel memory limits enforce good behavior.
-> > > > 
-> > > > I think the main drawback with memfd is that it'll be broken for devices
-> > > > without an IOMMU, and while you said that it's uncommon for GPUs, it's
-> > > > definitely not for codecs and display engines.
-> > > 
-> > > In the context of libcamera, the allocation and the alignment done to the video
-> > > frame is done completely blindly. In that context, there is a lot more then just
-> > > the allocation type that can go wrong and will lead to a memory copy. The upside
-> > > of memfd, is that the read cache will help speeding up the copies if they are
-> > > needed.
-> > 
-> > dma-heaps provide cacheable buffers too...
+On 13.05.24 05:07, Chengming Zhou wrote:
+> The commit 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page
+> deduplication limit") introduced a possible failure case in the
+> stable_tree_insert(), where we may free the new allocated stable_node_dup
+> if we fail to prepare the missing chain node.
 > 
-> Yes, and why we have cache hints in V4L2 now. There is no clue that softISP code
-> can read to make the right call. The required cache management in undefined
-> until all the importer are known. I also don't think heaps currently care to
-> adapt the dmabuf sync behaviour based on the different importers, or the
-> addition of a new importer. On top of which, there is insufficient information
-> on the device to really deduce what is needed.
+> Then that kfolio return and unlock with a freed stable_node set... And
+> any MM activities can come in to access kfolio->mapping, so UAF.
 > 
-> > > Another important point is that this is only used if the application haven't
-> > > provided frames. If your embedded application is non-generic, and you have
-> > > permissions to access the right heap, the application can solve your specific
-> > > issue. But in the generic Linux space, Linux kernel API are just insufficient
-> > > for the "just work" scenario.
-> > 
-> > ... but they also provide semantics around the memory buffers that no
-> > other allocation API do. There's at least the mediatek secure playback
-> > series and another one that I've started to work on to allocate ECC
-> > protected or unprotected buffers that are just the right use case for
-> > the heaps, and the target frameworks aren't.
+> Fix it by moving folio_set_stable_node() to the end after stable_node
+> is inserted successfully.
 > 
-> Let's agree we are both off topic now. The libcamera softISP is currently purely
-> software, and cannot write to any form of protected memory. As for ECC, I would
-> hope this usage will be coded in the application and that this application has
-> been authorized to access the appropriate heaps.
+> Fixes: 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication limit")
+> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+> ---
+>   mm/ksm.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> And finally, none of this fixes the issue that the heap allocation are not being
-> accounted properly and allow of an easy memory DoS. So uaccess should be granted
-> with care, meaning that defaulting a "desktop" library to that, means it will
-> most of the time not work at all.
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index e1034bf1c937..a8b76af5cf64 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -2153,7 +2153,6 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
+>   
+>   	INIT_HLIST_HEAD(&stable_node_dup->hlist);
+>   	stable_node_dup->kpfn = kpfn;
+> -	folio_set_stable_node(kfolio, stable_node_dup);
+>   	stable_node_dup->rmap_hlist_len = 0;
+>   	DO_NUMA(stable_node_dup->nid = nid);
+>   	if (!need_chain) {
+> @@ -2172,6 +2171,8 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
+>   		stable_node_chain_add_dup(stable_node_dup, stable_node);
+>   	}
+>   
+> +	folio_set_stable_node(kfolio, stable_node_dup);
+> +
+>   	return stable_node_dup;
 
-I think that issue should be fixed, regardless of whether or not we end
-up using dma heaps for libcamera. If we do use them, maybe there will be
-a higher incentive for somebody involved in this conversation to tackle
-that problem first :-) And maybe, as a result, the rest of the Linux
-community will consider with a more open mind usage of dma heaps on
-desktop systems.
+Looks correct to me.
+
+We might now link the node before the folio->mapping is set up. Do we 
+care? Don't think so.
+
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
-Regards,
+Cheers,
 
-Laurent Pinchart
+David / dhildenb
+
 
