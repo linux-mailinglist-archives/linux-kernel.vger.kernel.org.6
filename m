@@ -1,180 +1,123 @@
-Return-Path: <linux-kernel+bounces-179160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63EE8C5C7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:50:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 692658C5C84
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43109B21878
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:50:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7D41C21C87
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7335180A87;
-	Tue, 14 May 2024 20:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2F9180A62;
+	Tue, 14 May 2024 20:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mKTR+aaK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k9frE569";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mKTR+aaK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="k9frE569"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iXEz4+77"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9082A1D4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FAD1DDD6;
+	Tue, 14 May 2024 20:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715719789; cv=none; b=laSr0U1FI6ANup6+8s47UZZWyht2t9Ij7GdSydSC5SelEuy0v4/9CSiWWIizSvhVpAtd7eXWLm8Iv7w8NCsVz5fVtdg4y/onAOfQ6CRk2tK2+15gToC7ySCocLgDxRN+1yQ/hWELQntSfrEdw606fyJ5rc02guspsScAjzrltds=
+	t=1715719972; cv=none; b=MQhzR/W3NWjsMMOlZ8GXUc9xs9F1xIO5cjMnTfXg5789W1oQLIyRo+MePJ6LFSEOuplXQYmX45H+5WONOSvCFmaVwZuaOcZAu0D447jcyEPYU8mfmaHHZEn/sx58H2wFSsW5K6snQCFSdsuncB5S0htwbM9U8UR1VmQwz+B2nc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715719789; c=relaxed/simple;
-	bh=JWldUvsrnIWGGZLfJMS4s8rA7OagaQQUPi1HdgCX6b8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7LUaJc2BH0taaayIiF+Nr7QEdzurNdXJMfkUn3ikOSI4kiXum5oza2er9d3OsxWwF0/uJ7FzQpwWCM6kvM72Y6gwE7ndTOEtk0eXpUmOEhUARFihcz9HGc4LVZoaj/X8RjcULSPWf+rsp/lHqODc+K7b1I+tJv0VRxaM0PYUHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mKTR+aaK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k9frE569; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mKTR+aaK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=k9frE569; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	s=arc-20240116; t=1715719972; c=relaxed/simple;
+	bh=qsQGlGLL57EANB+PD3QWFhzfQ0h2NlQAwY4ihQBaf84=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iWLvEDJ01rK9flMbKkB59Qm0ZwJiJUJ3ENPvFxfAplUqeiPbS5SJJXCtjgwPbZbOxnVvHgY1r5qaSrc9R1EKVpGA99aYsYdWNQE3ttI9Ffc1mRi0o+brmjRmwPzC3BVV3ClSprZ/CH88zO1vgwOYN8polQPhndWzs2tz9yB0h14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iXEz4+77; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715719969;
+	bh=qsQGlGLL57EANB+PD3QWFhzfQ0h2NlQAwY4ihQBaf84=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=iXEz4+77kjBQZcqLz2JN2TfJQ3s3IcQceYBD2VJL4NRlL/yj80BDCJBkJsBLXRu0L
+	 aJv9Njy0cFiflekirHQ0F6kNKlfzIW4P2nHOParnFoDnpXhn+V+tYR6KHPMib8bEwD
+	 SFJ7qPZi99LI5QScwrvueXarRnFbNLGsMcQH52XEdKJ54L0tpdlF5yRMEl1T/xhj92
+	 Pqgjiw4sX/f1THvCnxu/OsBTJFrPdQ2ZeQnSL+YXDRHdy8F/pGwt80r/FJ8XKzXsCC
+	 krLF/OfYAQFCCVdFDgVGBn8fZbOCGj6Ja+frzw6P7IRtqSZ+/pg6M2pK1zWM0Mxnub
+	 bmtwnmaNxkKQg==
+Received: from nicolas-tpx395.localdomain (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 862361FB6C;
-	Tue, 14 May 2024 20:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715719786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G8/TImExnPcn0/P4PnWsqrauOrC1YnmySZaU3kuuKQg=;
-	b=mKTR+aaKzODX7Bm5w+mkknOuaO+jQQbCeLDym0is6AC8PmHYyN73dBi0/hYTnEDofuxj8I
-	Kx6PgXdk12mRN2ld6Yd4E5D27Hlf5mWPJFCGPgE+QXWp915yIRKXeXXDemrCc4ZBJYCb1k
-	WOoKWXyX5jM/nzSiNnnqm5xz7ai09fQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715719786;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G8/TImExnPcn0/P4PnWsqrauOrC1YnmySZaU3kuuKQg=;
-	b=k9frE569ZnCt5JYUlUd2v5N4OV51TvkKRoEmTpdpMQ2eEuLOUzTKFZAGFr82Xh1MKEl6Qr
-	0iBt6+BWhUaPkCDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1715719786; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G8/TImExnPcn0/P4PnWsqrauOrC1YnmySZaU3kuuKQg=;
-	b=mKTR+aaKzODX7Bm5w+mkknOuaO+jQQbCeLDym0is6AC8PmHYyN73dBi0/hYTnEDofuxj8I
-	Kx6PgXdk12mRN2ld6Yd4E5D27Hlf5mWPJFCGPgE+QXWp915yIRKXeXXDemrCc4ZBJYCb1k
-	WOoKWXyX5jM/nzSiNnnqm5xz7ai09fQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1715719786;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G8/TImExnPcn0/P4PnWsqrauOrC1YnmySZaU3kuuKQg=;
-	b=k9frE569ZnCt5JYUlUd2v5N4OV51TvkKRoEmTpdpMQ2eEuLOUzTKFZAGFr82Xh1MKEl6Qr
-	0iBt6+BWhUaPkCDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92F761372E;
-	Tue, 14 May 2024 20:49:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id F3YiIWnOQ2aMJAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Tue, 14 May 2024 20:49:45 +0000
-Date: Tue, 14 May 2024 22:49:44 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	David Hildenbrand <david@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Andrew Bresticker <abrestic@rivosinc.com>,
-	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Santosh Mamila <santosh.mamila@catalinasystems.io>,
-	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
-	Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v2 4/8] riscv: mm: Add memory hotplugging support
-Message-ID: <ZkPOaAUZrRWRGke0@localhost.localdomain>
-References: <20240514140446.538622-1-bjorn@kernel.org>
- <20240514140446.538622-5-bjorn@kernel.org>
+	(Authenticated sender: nicolas)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9700B37810EF;
+	Tue, 14 May 2024 20:52:46 +0000 (UTC)
+Message-ID: <a3a5852587a3a463068b5d45e89e9624e50eb3fe.camel@collabora.com>
+Subject: Re: Safety of opening up /dev/dma_heap/* to physically present
+ users (udev uaccess tag) ?
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maxime Ripard <mripard@redhat.com>, Bryan O'Donoghue
+ <bryan.odonoghue@linaro.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>,  Hans de Goede <hdegoede@redhat.com>, Sumit
+ Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Brian Starkey <Brian.Starkey@arm.com>, 
+ John Stultz <jstultz@google.com>, "T.J. Mercier" <tjmercier@google.com>,
+ Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>, Lennart
+ Poettering <mzxreary@0pointer.de>,  Robert Mader
+ <robert.mader@collabora.com>, Sebastien Bacher
+ <sebastien.bacher@canonical.com>, Linux Media Mailing List
+ <linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>,  linaro-mm-sig@lists.linaro.org, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Milan Zamazal
+ <mzamazal@redhat.com>, Andrey Konovalov <andrey.konovalov.ynk@gmail.com>
+Date: Tue, 14 May 2024 16:52:40 -0400
+In-Reply-To: <20240514204500.GO32013@pendragon.ideasonboard.com>
+References: 
+	<e7ilwp3vc32xze3iu2ejgqlgz44codsktnvyiufjhuf2zxcnnf@tnwzgzoxvbg2>
+	 <d2a512b2-e6b1-4675-b406-478074bbbe95@linaro.org>
+	 <Zjpmu_Xj6BPdkDPa@phenom.ffwll.local>
+	 <20240507183613.GB20390@pendragon.ideasonboard.com>
+	 <4f59a9d78662831123cc7e560218fa422e1c5eca.camel@collabora.com>
+	 <Zjs5eM-rRoh6WYYu@phenom.ffwll.local>
+	 <20240513-heretic-didactic-newt-1d6daf@penduick>
+	 <dacacb862275cd7a588c5fcc56fd6c1d85538d12.camel@collabora.com>
+	 <20240513-auspicious-toucanet-from-heaven-f313af@penduick>
+	 <643c6d3da9c7f45c32e01dd7179681117557ed4d.camel@collabora.com>
+	 <20240514204500.GO32013@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 (3.52.1-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240514140446.538622-5-bjorn@kernel.org>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.63 / 50.00];
-	BAYES_HAM(-1.33)[90.33%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[rivosinc.com,eecs.berkeley.edu,redhat.com,dabbelt.com,sifive.com,lists.infradead.org,catalinasystems.io,gmail.com,ventanamicro.com,vger.kernel.org,kvack.org,lists.linux-foundation.org];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Score: -2.63
-X-Spam-Flag: NO
 
-On Tue, May 14, 2024 at 04:04:42PM +0200, Björn Töpel wrote:
-> +static void __meminit free_vmemmap_storage(struct page *page, size_t size,
-> +					   struct vmem_altmap *altmap)
-> +{
-> +	if (altmap)
-> +		vmem_altmap_free(altmap, size >> PAGE_SHIFT);
-> +	else
-> +		free_pages((unsigned long)page_address(page), get_order(size));
+Hi,
 
-David already pointed this out, but can check
-arch/x86/mm/init_64.c:free_pagetable().
+Le mardi 14 mai 2024 =C3=A0 23:45 +0300, Laurent Pinchart a =C3=A9crit=C2=
+=A0:
+> > And finally, none of this fixes the issue that the heap allocation are =
+not being
+> > accounted properly and allow of an easy memory DoS. So uaccess should b=
+e granted
+> > with care, meaning that defaulting a "desktop" library to that, means i=
+t will
+> > most of the time not work at all.
+>=20
+> I think that issue should be fixed, regardless of whether or not we end
+> up using dma heaps for libcamera. If we do use them, maybe there will be
+> a higher incentive for somebody involved in this conversation to tackle
+> that problem first :-) And maybe, as a result, the rest of the Linux
+> community will consider with a more open mind usage of dma heaps on
+> desktop systems.
 
-You will see that we have to do some magic for bootmem memory (DIMMs
-which were not hotplugged but already present)
+The strict reality is that if libcamera offer no alternatives, some OS will
+enable it and reduce their security. I totally agree this issue needs to be
+fixed regardless of libcamera, or even dma heaps. DMABuf allocation should =
+be
+accounted and limited to quotas whether it comes from a GPU, Display, V4L2 =
+or
+other type of supported devices. I would also not recommend dropping your h=
+eap
+support (or preventing it from being merged) in libcamera.
 
-> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
-> +void __ref vmemmap_free(unsigned long start, unsigned long end, struct vmem_altmap *altmap)
-> +{
-> +	remove_pgd_mapping(start, end, true, altmap);
-> +}
-> +#endif /* CONFIG_SPARSEMEM_VMEMMAP */
-> +#endif /* CONFIG_MEMORY_HOTPLUG */
-
-I will comment on the patch where you add support for hotplug and the
-dependency, but on a track in LSFMM today, we decided that most likely
-we will drop memory-hotplug support for !CONFIG_SPARSEMEM_VMEMMAP
-environments.
-So, since you are adding this plain fresh, please consider to tight the
-hotplug dependency to CONFIG_SPARSEMEM_VMEMMAP.
-As a bonus, you will only have to maintain one flavour of functions.
-
-
--- 
-Oscar Salvador
-SUSE Labs
+Nicolas
 
