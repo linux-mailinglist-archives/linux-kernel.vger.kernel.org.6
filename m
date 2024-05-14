@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-179034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F9078C5AC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:01:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504398C5AC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBACA2829EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:01:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1809B22311
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2282180A6F;
-	Tue, 14 May 2024 18:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40861802CD;
+	Tue, 14 May 2024 18:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qsELbkk/"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LiyRcJ/f"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB051802BC
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DCD2B9D7;
+	Tue, 14 May 2024 18:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715709657; cv=none; b=OJTJpWmwtBe+N/KaI1axNXvzqUgW1b1upCDE5fstmOox237x1IdFa9PF6GpHKHUfucuXUTIrL+fsGjDxT528kvUX4xW8gBFelJs90SKNsrjANVQWUIi2aXNjPXOArPiHI5vJL8vcg+dWHKEFqPdI1TuEOZQxwojhN+/CTegzuec=
+	t=1715709673; cv=none; b=HmNxmqn7fGx+fs1pU6AJMr5j/23rBKinlXpxrgJr9HpUUNqLnXvIyGx7XurfVKt03kj/1hR61s2tM+nWuIZ44zx+xlI0m4xS67kcIVNScsngZuPO4XPxYRX8mMzJRl8q0CAdQ/EvaZaV6KPfqT7hgqnjYpWgzNZZAztRhAaTOY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715709657; c=relaxed/simple;
-	bh=QpLFeA2HlNqOEmnHE/cIxn51kUcvHow4/it0St+9Ios=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X52gHrCrOz242gVyKVtZ4B0P+NEFEa5SMdzsMfkRKwIB03TKFjbGBB05EA7CrhXKLU/QVM/fyUBTYj0m8Vwq1dRZocD9MFxQ6sektpVKugGvOirCgjnbmUaF9h3QxYelsRqmFA2FkPxz6uEn1ae+G0cvjvSUbC0BoC1NpiXL494=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qsELbkk/; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-572baf393ddso1760434a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:00:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715709653; x=1716314453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SPFkuGbhnZyO2YuOasmxxVswDvCK0WBgSsmUFjTxFvY=;
-        b=qsELbkk/YNyiZCI+GNKMpfBlODtyqwmrZjQVHDWo+Otqb/UNbu+arQw2nc2ZaD4Ia/
-         is47yvxW7oWPA27ZeDuqxu4CLgsxY872KmDVdy0DVR1sgVwmotl72pPqzPj8LGnPO5o6
-         kfZGIjKc2S6NfaRBSIgpbntyY8FIPvOQMYpzm8JIkTt6lwSzHcfxlpOCGZqlwoX/srJ1
-         mBKSAKrr/DVQYPaQJgGc0BsNY/+MP+VAy4NzvyzF8cFV6NV72b3bHlIQp4/2CczVpi8L
-         BOUJM1MEVmBs+QUe/HVJQCnARJeIy4zlN3G12A0Q/JjdN+pg4NhqbgjadCIBUSbChP0Y
-         iUmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715709653; x=1716314453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SPFkuGbhnZyO2YuOasmxxVswDvCK0WBgSsmUFjTxFvY=;
-        b=VuXamrjwdjkOFjkq/vbyxaVRWXKnmITOueu+koUQAn+5G2lDvV+hGwE9x6Wiha+uwz
-         SmXpjLxCl83sAyb8iNX1ExWFumMw9ArkEDllM4R0kRMDoxJvp6CWgXvYK/3XkAdvivX1
-         Zi3He/cMpRbBrarYDfoSWnejRheniCrMr8ZKw4gqnnF0j7hpocKHQ+SWuqb+Nn6vwy2p
-         DCoec+vaT6n+rSatsOrQyS7kItWW/4B6a2Cq080Hr/yqzrqCUQ6Ld8Bm9I7daAuXg1xN
-         gPg2KLAcFZ+mG+6MrzBf4Y1kdul1r8EUS/zTJXeaYHDR+8UWjsQ42dWi8aNt6Kl+SRyb
-         fWOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUswKFjkT86KR/8wNjvQOKqsCRvpxN3WUVc6Pv3K1cpDlYKw3QpL//hZI55e4icGQwzN7PgAaWC0OXW1fL6sDwBQuRgB/nRtHAa0JW
-X-Gm-Message-State: AOJu0YwRV2WuJG3Sjz+qOnxSz3/fMr9nxPSeVL0JqvN8En4pFSrslfLi
-	RAtpKV3qry6/Ptj4vPueXLIhjlRLo/tlY0X4kWVnNfkxtig539XF73x5vPZrZirZRQq045/Vy/N
-	pw1TFm4Ix4/PVWuKe8irBaK5W5GhpMsHVuGRncw==
-X-Google-Smtp-Source: AGHT+IEav+Kv/bYUpFPfTWv7r39urrL/VjCf1N0diMj0Pjq5+EuaD+cN5qt0Ndddnyt68aDR99gcExBIUX9EIjG6mjI=
-X-Received: by 2002:aa7:d392:0:b0:572:7014:230a with SMTP id
- 4fb4d7f45d1cf-573328e4ec7mr13569756a12.14.1715709653683; Tue, 14 May 2024
- 11:00:53 -0700 (PDT)
+	s=arc-20240116; t=1715709673; c=relaxed/simple;
+	bh=JdWsjA5RdkgocSrr5UydnbHjGNwJ5hVOhvCzcBJGcaU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K0+E2+V/n6LFubgQN19aLZ8EgMJl5+nTG4SqAmKuoDdEwuysCBlZI/3qsDzDVGqGOEz/iZpyZFNAtIsR+xLylPseKGKLrHIKLGYFz2zDq6Fr7LM8gt6+Z5t5n4T6tYuDi+nPj/sKEW2f7ynB7hqELT+effOstL6+nWYkrxRd2GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LiyRcJ/f; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44EBoZ65004198;
+	Tue, 14 May 2024 18:01:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=qcppdkim1; bh=DKWV1Y0CzS9bbYgyG8c5
+	nTh77jKTFAgVwlBqAJaLQX0=; b=LiyRcJ/f2V0dVcsH+CuDFQrZSO9+Oj3jsNcH
+	NHZyMSbn/VXF6CeNd90aY1EpOnwgytckBXR5kOLdjqKR1P6M5jzZ9r3XuGe4Zn8E
+	HKSaArYnNIcjng/7lYVC5/eHEwYVg+nf+Y3FsRxMDX9Nd110StNXwrAt75jjoNe6
+	FugCUzUklfu+Ldsj6Ai5C5aRMG2lAljLI9KiDMiH6RDR5SCxwFA7wYkVX3k5T2yd
+	D1aQAIQt+4LhqBXTD4O+wp1A00r8YprlHNe8WtDhGhqgKv2gXskYmmH9mKS8SLSV
+	7g9wlCRnc5deHgMHP4ZBxrkIAC+gSDWA/bO6JXaEBm7vkX/6UQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47eg8yd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 18:01:05 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA02.qualcomm.com [127.0.0.1])
+	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44EI0NoT022370;
+	Tue, 14 May 2024 18:01:04 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 3y21rmbx6g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 18:01:03 +0000
+Received: from NALASPPMTA02.qualcomm.com (NALASPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44EI13m1023598;
+	Tue, 14 May 2024 18:01:03 GMT
+Received: from hu-devc-lv-u22-c.qualcomm.com (hu-uchalich-lv.qualcomm.com [10.81.89.1])
+	by NALASPPMTA02.qualcomm.com (PPS) with ESMTPS id 44EI13Qv023584
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 18:01:03 +0000
+Received: by hu-devc-lv-u22-c.qualcomm.com (Postfix, from userid 4184210)
+	id 43E635CE; Tue, 14 May 2024 11:01:03 -0700 (PDT)
+From: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Unnathi Chalicheemala <quic_uchalich@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel@quicinc.com
+Subject: [PATCH] firmware: qcom-scm: Remove QCOM_SMC_WAITQ_FLAG_WAKE_ALL
+Date: Tue, 14 May 2024 11:00:46 -0700
+Message-Id: <20240514180046.543763-1-quic_uchalich@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240514140446.538622-1-bjorn@kernel.org> <20240514140446.538622-7-bjorn@kernel.org>
-In-Reply-To: <20240514140446.538622-7-bjorn@kernel.org>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Tue, 14 May 2024 20:00:42 +0200
-Message-ID: <CAHVXubi6Hv_FCTi=a5FFoxqiUBucrX_NhVGBAWE6qXRXdzOYsA@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] riscv: Enable memory hotplugging for RISC-V
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-riscv@lists.infradead.org, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Andrew Bresticker <abrestic@rivosinc.com>, 
-	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Oscar Salvador <osalvador@suse.de>, Santosh Mamila <santosh.mamila@catalinasystems.io>, 
-	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TNhuPX5eJ39dRjdANG4ECDCNUJA4FUys
+X-Proofpoint-ORIG-GUID: TNhuPX5eJ39dRjdANG4ECDCNUJA4FUys
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_10,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ malwarescore=0 phishscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405140127
 
-On Tue, May 14, 2024 at 4:05=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel=
-org> wrote:
->
-> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->
-> Enable ARCH_ENABLE_MEMORY_HOTPLUG and ARCH_ENABLE_MEMORY_HOTREMOVE for
-> RISC-V.
->
-> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> ---
->  arch/riscv/Kconfig | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 6bec1bce6586..b9398b64bb69 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -16,6 +16,8 @@ config RISCV
->         select ACPI_REDUCED_HARDWARE_ONLY if ACPI
->         select ARCH_DMA_DEFAULT_COHERENT
->         select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATIO=
-N
-> +       select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM && 64BIT && MMU
+This flag was never supported by firmware, so remove it.
 
-I think this should be SPARSEMEM_VMEMMAP here.
+Signed-off-by: Unnathi Chalicheemala <quic_uchalich@quicinc.com>
+---
+ drivers/firmware/qcom/qcom_scm.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-> +       select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
->         select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
->         select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
->         select ARCH_HAS_BINFMT_FLAT
-> --
-> 2.40.1
->
+diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+index 68f4df7e6c3c..d511ede6f172 100644
+--- a/drivers/firmware/qcom/qcom_scm.c
++++ b/drivers/firmware/qcom/qcom_scm.c
+@@ -114,7 +114,6 @@ static const u8 qcom_scm_cpu_warm_bits[QCOM_SCM_BOOT_MAX_CPUS] = {
+ };
+ 
+ #define QCOM_SMC_WAITQ_FLAG_WAKE_ONE	BIT(0)
+-#define QCOM_SMC_WAITQ_FLAG_WAKE_ALL	BIT(1)
+ 
+ #define QCOM_DLOAD_MASK		GENMASK(5, 4)
+ #define QCOM_DLOAD_NODUMP	0
+@@ -1793,9 +1792,8 @@ static irqreturn_t qcom_scm_irq_handler(int irq, void *data)
+ 			goto out;
+ 		}
+ 
+-		if (flags != QCOM_SMC_WAITQ_FLAG_WAKE_ONE &&
+-		    flags != QCOM_SMC_WAITQ_FLAG_WAKE_ALL) {
+-			dev_err(scm->dev, "Invalid flags found for wq_ctx: %u\n", flags);
++		if (flags != QCOM_SMC_WAITQ_FLAG_WAKE_ONE) {
++			dev_err(scm->dev, "Invalid flags received for wq_ctx: %u\n", flags);
+ 			goto out;
+ 		}
+ 
+-- 
+2.34.1
+
 
