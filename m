@@ -1,114 +1,98 @@
-Return-Path: <linux-kernel+bounces-179086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF138C5B72
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:02:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B943A8C5B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3501F225E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:02:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5424BB21F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CDD181304;
-	Tue, 14 May 2024 19:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80BC91E504;
+	Tue, 14 May 2024 19:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qu0sGo/S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aFbQGN0H"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DF61E504;
-	Tue, 14 May 2024 19:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3276E181334;
+	Tue, 14 May 2024 19:07:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715713361; cv=none; b=XnPsZRIJJjY2SMBYT4u/TgKyZN14TC9Y893LO2ZGMiBU6qeCmmPcmTPbV3rf9hATtqX0IDxbN0RitjlBQXwtasA/cFPHm+lAhXAu06oOe0ycFw4vQo/gqRQznBzFOgbo9I9CULd9tNO/aF3d/iPWQAS3GYf41coZhskkmX7xdbc=
+	t=1715713662; cv=none; b=Ent6coGtWNtYN0B/FobG6QW2u05depDh5ACw+wYDTKGiPE57U753BXsLKyFHV96Wd/hWvOlC0aadcpoGeApVVeV60fpx41B45WRg68vHcDxOT7uM8ujXNjFI9J8AGJw5by/yvIZWnniKQNi8CYBZ85gAayQQ+2XLYO/kIZVGsyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715713361; c=relaxed/simple;
-	bh=jxhYiv+J0iyFeK8LIFwYs1oTdF393tkXterG44SitaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oOfrYmY8oHkezzdqQAiBP46NT7Barqf5Ie9WfJM25Ry+9kH5GXdhLDyRaKQ4HMLpeBWBuJddkPsuWZN1hCsN/gDYh5YOQX360hTZOYZQGSF7jUiinbOlcJJiqbnKJZDwWtJj2FUT7KqVWt/pH3X6YvpR+uTKgA9PpffejO36mEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qu0sGo/S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334ECC2BD10;
-	Tue, 14 May 2024 19:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715713361;
-	bh=jxhYiv+J0iyFeK8LIFwYs1oTdF393tkXterG44SitaY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=qu0sGo/SOXkdmYDDFLiu/c4BkLi7e/hwMKaAJssv5GtJxVfoRdhQpXei2KHLDbWb0
-	 Ws7MEHdL6nziU6pdhumvzCxbb6BKHDfytpV/bMGe/II60T5U30mI9gGiRZbXVxigv2
-	 9klutUeql7Y5CZB6jtLHa2T95mSmbcuWc8MZbePGYh1H3WZ5AxBnnUbxPo7rZSLFu4
-	 d+6qIDewPuOuJE/3WDWDUFv7N9TfVJmfK9UzqyXPfYSkB1gcTKZ3WTOIpXoM/ez8W8
-	 nYB6tcLHRWPJXSBG+nsxq6DigVOKp92sE3nRb71LuV0gvL4CjeqgYJgKsCaBXSDvdc
-	 xolQYn0AprKUA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 81A4ACE098A; Tue, 14 May 2024 12:02:40 -0700 (PDT)
-Date: Tue, 14 May 2024 12:02:40 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Andrea Parri <parri.andrea@gmail.com>
-Cc: Puranjay Mohan <puranjay@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	Daniel Lustig <dlustig@nvidia.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	puranjay12@gmail.com
-Subject: Re: [PATCH] tools/memory-model: Add atomic_andnot() with its variants
-Message-ID: <aeba034f-142b-4d8f-9ea8-475f4dbaaf1c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240514094633.48067-1-puranjay@kernel.org>
- <ZkNG2uZEiF1S6M7z@andrea>
+	s=arc-20240116; t=1715713662; c=relaxed/simple;
+	bh=GPfOGPBwuJ7d6QGXIRtIUDFcv8BCupl/0fECOFpb2B8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nh1l0oQ3AgkTDeLjTXuo605UHF6DSz5Q9FdoQdoKMbgEdSck/IcMd3iYG1I4ZY1E6qV068jBEYBo9ifndzcoZ+S5Ec/ff0rEtjeELUBEcB7mTm4gSgQOxjVvHYcfMB5fMm0/K28qqHerp9V9x0e/8fwC4xkelD419zaVwoiKZ2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aFbQGN0H; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715713660; x=1747249660;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=GPfOGPBwuJ7d6QGXIRtIUDFcv8BCupl/0fECOFpb2B8=;
+  b=aFbQGN0HGvKJYlZ4Y1uJK57fYYdMWDA9bpkURw4Qtp8Fw7NOBDEifnTv
+   R1nagvar3Nxius1o4TUGDRyED3WTTFY8RZ2xqUlBozQTsVu6xcm32D6YJ
+   3IwoNL3VnKKIB9SR0EGzqY51Gp0L+0SU8pEMQJr59w+cDpea0Bz2aBq/j
+   i8avbTmSPg89sggvWCKYsBmK3CNheUfkbpcjebAaTnug1MsYKqq2yr/D5
+   RuHBbj7/PGXo7tW84YnsaAAqugfxeu79PiDgAhtaPGaKZ1vrzd9re1ZIH
+   behrFTxcuOtBMQoVesQf7UC3C7Usmrm590xdTLiY846QXFClWvNVuFsQm
+   Q==;
+X-CSE-ConnectionGUID: p2nIZ09xReacCVE/6GK+4Q==
+X-CSE-MsgGUID: OwS+ZH60Tjm+4SKkBlZeuA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11570863"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="11570863"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 12:07:39 -0700
+X-CSE-ConnectionGUID: +gQC/yFeTI6PruSHGMDMTQ==
+X-CSE-MsgGUID: csmr+VY/REy7uDGOODztNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="61604414"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 14 May 2024 12:07:37 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3BEC6452; Tue, 14 May 2024 22:07:35 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Vamshi Gajjela <vamshigajjela@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: [PATCH v1 0/2] serial: 8250_dw: Fix console on Intel Galileo
+Date: Tue, 14 May 2024 22:05:52 +0300
+Message-ID: <20240514190730.2787071-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZkNG2uZEiF1S6M7z@andrea>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 14, 2024 at 01:11:22PM +0200, Andrea Parri wrote:
-> > C andnot
-> > 
-> > {
-> > atomic_t u = ATOMIC_INIT(7);
-> > }
-> > 
-> > P0(atomic_t *u)
-> > {
-> > 
-> >         r0 = atomic_fetch_andnot(3, u);
-> >         r1 = READ_ONCE(*u);
-> > }
-> > 
-> > exists (0:r0=7 /\ 0:r1=4)
-> 
-> Fair enough for the changelog.  If/when submitting proper tests, please
-> check their format using klitmus7 (besides herd7); say,
-> 
->   $ mkdir mymodule
->   $ klitmus7 -o mymodule <.litmus file>
->   $ cd mymodule ; make
->   $ sudo sh run.sh
-> 
-> Documentation/litmus-tests/ provides some examples litmus tests.
-> 
-> 
-> > Signed-off-by: Puranjay Mohan <puranjay@kernel.org>
-> 
-> Acked-by: Andrea Parri <parri.andrea@gmail.com>
+Console on Intel Galileo is broken. Here is the fix and one revert that
+I prefer to have as part of the fix to prevent similar mistakes from
+being made.
 
-Queued and pushed, thank you both!
+Andy Shevchenko (2):
+  serial: 8250_dw: Don't use struct dw8250_data outside of 8250_dw
+  serial: 8250_dw: Revert "Move definitions to the shared header"
 
-Again, I will hold off pushing this until herd7 releases a version
-supporting this.
+ drivers/tty/serial/8250/8250_dw.c    | 36 ++++++++++++++++++++++++++--
+ drivers/tty/serial/8250/8250_dwlib.c |  3 +--
+ drivers/tty/serial/8250/8250_dwlib.h | 33 +------------------------
+ 3 files changed, 36 insertions(+), 36 deletions(-)
 
-							Thanx, Paul
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
