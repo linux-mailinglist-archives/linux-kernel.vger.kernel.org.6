@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-179069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501918C5B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:42:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1828C5B40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BEAB283A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:42:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 559F9283855
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2583181324;
-	Tue, 14 May 2024 18:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C057181327;
+	Tue, 14 May 2024 18:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxsZuE4t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQ7U+pBp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF7553E15;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5825E181307;
 	Tue, 14 May 2024 18:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712117; cv=none; b=nKFu2V4rMbkb5QZTFQxTIACaTOpCbfdnHXqr+MtjM7RJCDQY/55U30ny+ZazIfmJVnz6pePhu2Uc2htE2KGIYMawBkgaqR8Bm2mi/jyN1z4dwNuYAwXQt+Dzd68+ikRk3X/UBn0PsBkBXNl30wpiWXuO/r1fCS65Zy7SuHvBhM0=
+	t=1715712117; cv=none; b=p5SE4p7rzlPy+tGZ4K3Ty8/PVjbnu/pTxENYza9WXkjQx+4cwLF98M5PaEWuh0KXPxEcZaYUbrwLUY3oNFyEphK25m+bIpd99nqRbYxmOY7142HOhbykTk/oV18PEIyMb/0+UNFRTb0Cm6UYS/ovzxs1BcCQZyn7yvZS1zp8mxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715712117; c=relaxed/simple;
-	bh=GKiUqFBOx+LeaZkD6voDe2LlZovQKn01MVI+n6ogXmA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=NX4Z/Sfh1LxEG7jQav7AdgvJIHCX7AJO2rwmHNJnre10mW3joSSzwXTqNGny8XIkX1dyRyyXCCTpkG9/FmzSMfzsAVfZyvCgwl7R+MYYSY6UjJjcgZ/yhV45Td9lUlbgYAaiqmxuU/OQie8e65BRanZ9gUkudNhqoW+8DSHUHFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxsZuE4t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 155AEC2BD10;
+	bh=CrnxRQxTJLYxbveN6wZ3IHPEFJHEKLCxEKpHf5uaAac=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=uErEg8B7eoiMLSXRdwXXOvlMB8CeCOuUPoEre9JlwQ653BU3epREzH8CCLDtKB41iUXyDZrFawe0HnPQXx5RJA8zna7PSKqiiB/M7q0S4Xhn+sh6Pv2v7s5wVQ3oxPbKDNDXo95iXxSyx7FHedAoVpulVZC3sXVzrhNGeyAOwME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQ7U+pBp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 369BEC32782;
 	Tue, 14 May 2024 18:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1715712117;
-	bh=GKiUqFBOx+LeaZkD6voDe2LlZovQKn01MVI+n6ogXmA=;
+	bh=CrnxRQxTJLYxbveN6wZ3IHPEFJHEKLCxEKpHf5uaAac=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GxsZuE4tZyasfiF89t/CT4EiRwl2YEDovp9mzxo6HHDLtZJ9VIy1WWzyxp1gx8TYG
-	 iIfD8vNI+at/pjIt5p78UkMSn8ge9PLC1p3D0NTq1kbgtI/c7yzzgfa3QhsYGl8hji
-	 t89q6AJBpJXLUAMOY2e/cOYDD5Abz8H7gR+WHCn+mVeV3BFrpODZsowmo5r2rqePm8
-	 Fv+Mzqymz2xT5nHPCsLzI3upO3acgzVx3uxsGVzgnuf+Fe4qJiwTyy8Ugw2fqK1Rgm
-	 RJ/8MZWZFoXPxVZH0SJgf4Mu4K/DKUs53vv1INzcW6hDV+ykdmENtZ3g3J72PU9QsF
-	 sJHvzO/Rg3rvQ==
+	b=gQ7U+pBpqSb7ip/vcqoL/FYQQRBO99rEFX8cZv52N3ec8k4qCFAU0SWdaR+wr64ME
+	 if3lGbVR4xUZDJbnYU0Tpf78+D1ngxMaRpu2k1XkPay533bp8i31cx0UF+Hb5IgB5i
+	 y7na+WLDC93jj+gXS8iL8sy2dMJ0T3OX1ZhWL4ZiK4jPjc+z5m27YinSQaexlQ44xs
+	 /RDT9ro6HP/aoizyCETL7X5t4ar7deVXeJEhUVNxNs0dX/QkUTFHAfLGjezKxcj9Lp
+	 MHMTXUmbPnyqAMwJAAf1xIKQxptHLAuhuBvOgjgRzQ5uB6xDAmFK6G7CB4x74bl9oC
+	 mus/31lXaSGeg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 0DCF0C43339;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2CECCC1614E;
 	Tue, 14 May 2024 18:41:57 +0000 (UTC)
-Subject: Re: [GIT PULL] nolibc changes for Linux 6.10-rc1
+Subject: Re: [GIT PULL] KUnit update for Linux 6.10-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <ddb23594-c519-4436-9219-e2f76f8c38b2@linuxfoundation.org>
-References: <ddb23594-c519-4436-9219-e2f76f8c38b2@linuxfoundation.org>
+In-Reply-To: <ba088745-e2ab-4124-bdfd-378cf6ed3c41@linuxfoundation.org>
+References: <ba088745-e2ab-4124-bdfd-378cf6ed3c41@linuxfoundation.org>
 X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
-X-PR-Tracked-Message-Id: <ddb23594-c519-4436-9219-e2f76f8c38b2@linuxfoundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-nolibc-6.10-rc1
-X-PR-Tracked-Commit-Id: 0adab2b6b7336fb6ee3c6456a432dad3b1d25647
+X-PR-Tracked-Message-Id: <ba088745-e2ab-4124-bdfd-378cf6ed3c41@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.10-rc1
+X-PR-Tracked-Commit-Id: 5496b9b77d7420652202b73cf036e69760be5deb
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4b768bf062db22e042a731e4c385bb0b4fa21a0e
-Message-Id: <171571211704.4202.16816500327538975010.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 896d3fce84e7798520eb11b0e53abdcfb47b21be
+Message-Id: <171571211718.4202.6506102403672620697.pr-tracker-bot@kernel.org>
 Date: Tue, 14 May 2024 18:41:57 +0000
 To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Willy Tarreau <w@1wt.eu>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, "Paul E. McKenney" <paulmck@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, Shuah Khan <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, David Gow <davidgow@google.com>, Brendan Higgins <brendanhiggins@google.com>, Shuah Khan <skhan@linuxfoundation.org>, shuah <shuah@kernel.org>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 13 May 2024 09:13:47 -0600:
+The pull request you sent on Mon, 13 May 2024 10:10:38 -0600:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-nolibc-6.10-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.10-rc1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4b768bf062db22e042a731e4c385bb0b4fa21a0e
+https://git.kernel.org/torvalds/c/896d3fce84e7798520eb11b0e53abdcfb47b21be
 
 Thank you!
 
