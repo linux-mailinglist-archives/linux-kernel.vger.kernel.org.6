@@ -1,125 +1,112 @@
-Return-Path: <linux-kernel+bounces-178385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1ADE8C4CE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:25:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D6B8C4CE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7794B1F21AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:25:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 045F61C20FE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9C73BBEB;
-	Tue, 14 May 2024 07:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B23913AF9;
+	Tue, 14 May 2024 07:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKXNoS0e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="COtaSGcd"
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BD525765;
-	Tue, 14 May 2024 07:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D45B11717
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671399; cv=none; b=DpOGmUR/Kj7VGSuCkpnQrwIMrmWzUK4toJqoJVFCf9zG8Ku3Oue4fyxms57cqJ6Dyga+zKm07FfQpxAd9XZ3rmMYUlevNSLryyGAYODDGXl7DTHBiDsASeE/chwjpFPudGOF4oLJ3O3l9VBQY8ZtWZJekBwo4Cn+MzriBDN0t1o=
+	t=1715671426; cv=none; b=BLNsJPM3Wq70oZz5Vf6AVYc3+LGNXrwoGR3K4An3DBIjPPQ6ST2joC+WmPFuacygcPvZcrYEb8CnqOwAf25vsvxHDcvoLrfOc00TPCwVGFSpHmC88fh6kpMzsOeh5XqATHUqyIQygfTvPkc8BaQ1tdg3sM7W0j5q14g+8Odtpg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671399; c=relaxed/simple;
-	bh=1YgStPTBqOXTZn/yGxVC0i4oXFG75QVcdPJh3J/HwHA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qb1Thx8PQxoqx0rYwPZvX5zXo4+CSqHp7rLm5fuJWO72HrSdB4h7XZwoE2cIh7z9KWsBu2aL1o/fTgbq/WV90/YdEBL99gz8sEWiSaps6iSPBM+wsGz4LAtJoC0zhLgxs6qAjQW2H0xuWa4k1pV2p3W3ern7RPpCkiRkNaYlqXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKXNoS0e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AFE86C4DDF2;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715671398;
-	bh=1YgStPTBqOXTZn/yGxVC0i4oXFG75QVcdPJh3J/HwHA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=UKXNoS0efappWY/f21aEeftbGe4DpYwHuV0RA6MbMGGewgXLSTr08oIq1VC1kek6L
-	 i8EwpvjhVwPs8meeE2+KAD/ahapa9FnjqEQlhOMAUgSsyzr+1aZYO/oWtaJ5//L9uK
-	 TBdWp4uo7dL2BcAauGoBK3WRqFdhOE3U9vsCpHpSlCmEx02J/6jOg5VLEzfoxu+GrC
-	 q9pWJLGKc5pIZ6xpq05B4cXVywhyCgpO5HkGJZkTYhe+sFEURoh+6U+yFm0i8IDxZm
-	 Z9BGTkniaNKPzwj3+Pj+VcdMDBw40TyyJ+xjghGYIFNliyopbV2QSnSH539IznlmyQ
-	 1Wa82H5NKZ7dw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9CFC25B75;
-	Tue, 14 May 2024 07:23:18 +0000 (UTC)
-From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
-Date: Tue, 14 May 2024 10:22:54 +0300
-Subject: [PATCH v2 9/9] iio: adc: ad7173: Reduce device info struct size
+	s=arc-20240116; t=1715671426; c=relaxed/simple;
+	bh=DS00xBzbHpMSZfc6ghFoF/lxTdDZGe9GaNKVcrMza4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m021DTo2KHvXqdReRsWNX6cODVZQvkZpYm/uFRti/4wK/FV184a7GClCoWeB/GTI6wNGaOlODL2o378FwVjKxjPpVJLiZjNmF2TSuH09gwdidd0H0npI278ar29Vs8u4n54nqL1L/MU3/EBawhyAAHSKGRC+jICC7vu199VGTWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=COtaSGcd; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=DS00
+	xBzbHpMSZfc6ghFoF/lxTdDZGe9GaNKVcrMza4I=; b=COtaSGcdsFzVOT9Vx7ud
+	jWPtLpwrpU5sSOZ++XsxGToHsLm2pQUJNCa9N+E9LLqiirRPsYW6X5SAfGbBMQ+r
+	kWd71/mS/eQlKU9l913nCfs4+QFuAQnjJw3juHmS5IedJoexdW0XcIfqZBl4Bjhk
+	y72qaKgzjGnwunTgNyL2mUtq0WbKPHqtdF5QYdiEEqr0kNRiD2W6GAPjDBJB3Qg0
+	vMKgM15KanhySzIuw6RZbvvCYf54HXbdxUtE1yC5ceb17YLhWO+uolExHdAbdxLF
+	7qaE/gRvIoyGs73V+3rcBdUKhkGSsO+T6Dcm2TVxRps/QQBcvgqU7fV0musbBS+e
+	GA==
+Received: (qmail 2406829 invoked from network); 14 May 2024 09:23:38 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 May 2024 09:23:38 +0200
+X-UD-Smtp-Session: l3s3148p1@Pntv4WQYvqtehhtP
+Date: Tue, 14 May 2024 09:23:37 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: linux-i2c@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Peter Rosin <peda@axentia.se>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, "Rob Herring (Arm)" <robh@kernel.org>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] power: supply: sbs-manager: Remove class argument from
+ i2c_mux_add_adapter()
+Message-ID: <5j5qm3o5pu6nhvw2in32amvntc5d3qlfgogtkdjxcyy6mgncyk@l3e3z62lppa7>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, linux-i2c@vger.kernel.org, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Peter Rosin <peda@axentia.se>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+	"Rob Herring (Arm)" <robh@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240513201400.16589-2-wsa+renesas@sang-engineering.com>
+ <4g4u2g2nrcpjvx4uswxppw2vsfzwcsy6kbsjp7ukksgfyhgnqb@s5n6jlz6w7af>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240514-ad4111-v2-9-29be6a55efb5@analog.com>
-References: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-In-Reply-To: <20240514-ad4111-v2-0-29be6a55efb5@analog.com>
-To: Ceclan Dumitru <dumitru.ceclan@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dumitru Ceclan <mitrutzceclan@gmail.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1715671396; l=1076;
- i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
- bh=RmIUo6Mi25zkqE47X3KPvkctN+OcwkN8pU6glB5Vkrs=;
- b=rzsfG15wDQ+1f9c6J8mg/V77m6QEu332viIRx2GWiZgtebRG93ls/4H1z9xLYV+VM551lCcq4
- wKwALbRSrbpAfDYDCXinF1na7NgfPMqR2r7GHjJTUm1jyC8MUNx2ZXs
-X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
- pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
-X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
- with auth_id=140
-X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-Reply-To: dumitru.ceclan@analog.com
-
-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-
-Reduce the size used by the device info struct by packing the bool
- fields within the same byte. This reduces the struct size from 52 bytes
- to 44 bytes.
-
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad7173.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index f049d79380ac..f963c731cae3 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -180,15 +180,15 @@ struct ad7173_device_info {
- 	unsigned int clock;
- 	unsigned int id;
- 	char *name;
--	bool has_current_inputs;
--	bool has_vcom_input;
--	bool has_temp;
-+	bool has_current_inputs		:1;
-+	bool has_vcom_input		:1;
-+	bool has_temp			:1;
- 	/* ((AVDD1 − AVSS)/5) */
--	bool has_common_input;
--	bool has_input_buf;
--	bool has_int_ref;
--	bool has_ref2;
--	bool higher_gpio_bits;
-+	bool has_common_input		:1;
-+	bool has_input_buf		:1;
-+	bool has_int_ref		:1;
-+	bool has_ref2			:1;
-+	bool higher_gpio_bits		:1;
- 	u8 num_gpios;
- };
- 
-
--- 
-2.43.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jhvwrlkcfjqma4ff"
+Content-Disposition: inline
+In-Reply-To: <4g4u2g2nrcpjvx4uswxppw2vsfzwcsy6kbsjp7ukksgfyhgnqb@s5n6jlz6w7af>
 
 
+--jhvwrlkcfjqma4ff
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > The to-be-fixed patch is only in linux-next in my i2c/for-next tree. We
+> > want to remove this unneeded parameter in the next mergewindow. I
+> > suggest that I just put it on top of my branch to avoid the
+> > dependencies. A quick ack would be super-awesome! Thanks.
+>=20
+> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+Awesome, thanks a ton!
+
+
+--jhvwrlkcfjqma4ff
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZDEXYACgkQFA3kzBSg
+KbaMdRAAjAeGMkxTpHobXw2NjleV4xBtZa9B0wT9Ig6CpdZ2iLo/JBW39HnHAz3w
+5sKGmOK5E7C9CUg42dyqn3Tje/eDuRyoBl0oaTrGye73gn8CD9gNCNmuPbM8v9ny
+zoErsfuSYbb+QnCFwqCh68aQuzqu+9x+KJRK0bvYSS2zuZoOAXGqb/zgnMtQ4A/x
+vY6SuH3PL44o3XVedDf6IWe3wVxNo6dbFYwlDcoOTIqE6ds7ZKR4tnlUUMtBPneA
+iMNF++K+HEMZ4Ey0Dnty2oYStv+9QOcMnRMjbQ6xVLKskJxBLi672Dd/opBBbSqg
+T949nrWLhOBVYLZpgJj+/+BDaUBvHBkCwHzVLWXQzM5az266adwZq9WNM+g/tRUG
+YRhGwlKO1yBqTWjStmtRPih+od5MgUUCxrmsM9Ah5kcLDBEAiNd8xBKlIcnfS5yv
+evbcg6UAK38acqfX4PYOxO5CiX7hra73plfdrjKcRQrZK6lqJTgQqXiaVYPEPc/8
++nZCjhvp3X70nQ0AWBPFPzUkvWaOsJ2eznDfmixQTwoAyjeoSUWzgpDq2o9CbpDB
+KO7zS5FIEmfNGQiX9RaYKEcqgC6re4HAbqr2l1459TeNEE3CfLFxUJeJwdLlzp/G
+NCAQhssbjwz0bSTnHWCtGxoDcmwlnGEWnbWXOeEHOAftUCPR2Pw=
+=Xqoj
+-----END PGP SIGNATURE-----
+
+--jhvwrlkcfjqma4ff--
 
