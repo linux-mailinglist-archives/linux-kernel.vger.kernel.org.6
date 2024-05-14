@@ -1,558 +1,246 @@
-Return-Path: <linux-kernel+bounces-178523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E138C4EFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:28:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C306F8C4F07
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0864CB2096C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:28:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E63F81C20F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9501130A60;
-	Tue, 14 May 2024 09:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F07541353F3;
+	Tue, 14 May 2024 09:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JXncYxf0"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HHfghEzC";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HKCAz5zG"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962A613328D
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 09:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715680004; cv=none; b=GrukusS88mGTtARkFWmjC0h1svJx07uhNG3Oo7jzyWnrFMoJOWFmHMGfB6txAKmCBRXKTyjoRti+vs3kmxEcAPEDwhnFc2ipoDrxnUoZUqMEyEP3CYKxYxkEtBRFASP1xYM3SzKZ+jTjIckmZUCX2tl7dwJo4bWjo4Z4prlLEHg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715680004; c=relaxed/simple;
-	bh=zoJOKfAzbQnmfNYRz/tyK8a/lQdVRJlqyrfRN2um1oA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZvJuqFI6zKMfLKlpRTxfjnjlhuesczsVsJ+E7lOlEpUy8pUSAN08g0tF7y4Ugao/LUZIs0Righb8u7D+h2gQNbnVw13gfsF4rdLD3T6FW+mR3F6Wzjzpc9fa6LLFFk1FxeLjJDBC/ZxYutkzS+I77Xzp3ifAIlBch0QqBsXwEBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JXncYxf0; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-41fd5dc03easo33266075e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:46:41 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4460013329B;
+	Tue, 14 May 2024 09:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715680031; cv=fail; b=d1bdzLHL/zH8v8GlAFHrFSSN9lkb+3NCj/rsGGF9e598VFqjQU4IRqB0CQTMXci2RBFEzZiPFl7ezeo0lF8aDqQmBiUekTIjBo8fuRTpc6UfGBLTSzEAWMbHce2iL+QYD7RdnpnHv4QQ+c02Lyc3RMrBi/BXdwJHLOlPF+4JWJE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715680031; c=relaxed/simple;
+	bh=m5WST1Kbg32LHgtOsRF22H/1uQRqzdOKlq2JGRRrXrc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q0oyWI9LUACfD5yWTCqmyv7aXvRL3nNAd/BKj9Ifetr8kMZUW27HtJbiRzNKiHNoPot4LHBIdcbdGsFoFb3YkuaDLl1JRe4qA+rIqjq41Z/wBbAzABOH6cF1F0QbDMXkUU9uMJDEr2IHW89BYRb+9g+qDVolQwgERmYbfdqNouk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=HHfghEzC; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HKCAz5zG; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44DNi1O0009231;
+	Tue, 14 May 2024 09:46:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=hANbnUVNnAKKPHMFeLweBOB3WWEEP8cXKnuoTO+HqnQ=;
+ b=HHfghEzCZNhCGv2cHESRlEL9AMYc4uKYq1IrF8j+saZQkjKRx7SbiMCrxnpp2QkUqmbX
+ +MUAxzy7vevlQDiBoHUiChKMmQt5ir1yeSYfyZCdiZ6YwHaNPrHjOd3a4MzJpT1vkzvT
+ GwoOAGDH0XlftdOULensz43sxdNoiIrcI1QLOHSK+Lbpapag56Vh9g3bv3ZtQfIKBmEV
+ uJ+NSkdj9C3JDsDXSXl/YAJinHxKCVCiQSW3IV6xo/usbe8lLF4DCkgbO1+6XtnUYese
+ DbOiYMx8jVWU8hD+S11XnbWxBl3HFasPhH6E+jdO0ZvTzdpPpv1LTvmJLQaSGdDh32xF VA== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3y3rh799xf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 09:46:56 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 44E9UpBG038335;
+	Tue, 14 May 2024 09:46:55 GMT
+Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2041.outbound.protection.outlook.com [104.47.73.41])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3y24pvt7jy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 09:46:55 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=TKimr4pCiz87YertPbmHs0sMcN6PBQvBIZroY8PUO3Y6WU+q8GqCGKi4mDwy9Q2XfaVYuz8IKl/DmNPgIIOfOa76psqQ2Z+Zy5LRT+KOaa5+N3lem9TDq5JPMZoroSVy5LVieK17uxPjrvjfC2AQarAwYQz/k5a2FNpGT8y1GQhPZqSHBY7y7opeb6Ys37xIulkQf8ZHCaIT7V6zUFS+ieDCdLlsBlJsxmMzLZk73aFrtJuk9yuBPpiCOkQFPoUhaUnVdKDPy6PnKTdXmoSlwgpqeaZ8YbJko501k3FYcCTvDNgK8HwZ+/hjGWCC0xRqIxcp4LrR4GGu/5hFS5TpOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hANbnUVNnAKKPHMFeLweBOB3WWEEP8cXKnuoTO+HqnQ=;
+ b=IRLykwHfogl89kaCw4LVDMkDOqrR/7u5nuGS5qvYj8hjyHNQIk79O0tpMBPZ38PRpgwif+BREpgO8cYqNk3UHOvp1gEMBLiCjtro/yKLPBW1YvwL7KN5+CORmam9h5s2SXUc2+dSoKPIjleAmuKVUODWqrhiJ8gzYtb2ErcX97ezgngOq4GFxVj3rnFgI/dMa5pDvYG/Mi6XSUa1mIXyzVmptas66htzea+9OFZLL9QcjK4sY0p8sLT1/JR22EsXkH0BFXCjix2EqCkx/IpsKRuX1bo9nPPBgw+mLYmQfWDhHlbZfXjNH+knRku4pn3TMwrJJBPztkNW7VTKoXnK+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715680000; x=1716284800; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IkB2CmWVoQi8nHsh1zrtwZs7auH/ln4/oBpNWO83qYA=;
-        b=JXncYxf0bQHO9liM+dxMzztO5rKDum2EzRrLfECuHU32s9xOOP2Xf8/VF3oc+Pluf0
-         96XTfist+KW00ZAbv5LsxlukZKTkjJUIyJtnqR9Yac30925PEETT2S19uvSF9JcZ+GhR
-         tkXpQMEZ7ynNozpaxfWzwWD7FFzieWo3NoDnGEq5vm6xnxt4hiY7SXBTSAVT8tBHW4/C
-         uIoltPwLppkXjSuWeLckCFrx2tiVDNjcUtv8IA4h4GY+2qSivJptFoYwJVfppk93Fw9P
-         lP6raE2RV52nBZ0G1qvNgQ3VZ6NDIalO59pRkddIQF9FiaaPuuf6l4We7uZoZJK66EVt
-         MVvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715680000; x=1716284800;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkB2CmWVoQi8nHsh1zrtwZs7auH/ln4/oBpNWO83qYA=;
-        b=IZRkuMjfDunEvgSExpG1CR109bmJcIYwKCe55g3/lF1XRggUlWS/K0fuUWFKFEk6Mm
-         cXZczOYZrAA11n179i1v+FgI5LFhAoovYyAh2gL9o1tSfovrnHKLe6D92szJgYcnro3U
-         5HUklQlZeXeWjkM6Cs7z/D9QVeHHLCBfjaw3uHauy5GRjO32TTbxwG0GhTxBFBL9in6b
-         IZvSXwa/adhW/YI1NssUn9vMceVD6EXkcv3a7+5R3mDKbm2RKtVjZeanKK7QcWu6LFrw
-         biFh0jGSYrZgrmd97u85/wpi7MhaKxQ0SujVF3k15Dm7F+BhyX/9bQCt1bU9ID7QR6tn
-         wvjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0DV8/vSxCaq4VDH8hknS2qsJb9YwGVG86TG7QO+6l+CH9RI3JQ7L3ltnMFS/+a62ISvJVbpKpVoHZFZhjDUboTEihZCW9lhBZnM/r
-X-Gm-Message-State: AOJu0Yy05Gzcti727JssRo4JzTaCADV8QjWTdJNoYqeW2vMe3oNs/Fbi
-	sZp5xRl11dxu/oyeGcGWIvqBg3CiyIIODZ3Zzp9SUSgFDmFX3oRTpNwFxMRcI9Q=
-X-Google-Smtp-Source: AGHT+IHI9NnnEnfZQk9MA7NTlxQwC32L9S31bdQwSyla8T9wKGzvt0e3SXI39TydgYKcKtH5LYQ8qw==
-X-Received: by 2002:a05:600c:4f4e:b0:41b:f577:604 with SMTP id 5b1f17b1804b1-41feac5a675mr86518995e9.30.1715679999836;
-        Tue, 14 May 2024 02:46:39 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4200e518984sm120917605e9.23.2024.05.14.02.46.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 02:46:39 -0700 (PDT)
-Message-ID: <1815c5b4-ab7a-410c-b5ea-26ef83813d3c@baylibre.com>
-Date: Tue, 14 May 2024 11:46:37 +0200
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hANbnUVNnAKKPHMFeLweBOB3WWEEP8cXKnuoTO+HqnQ=;
+ b=HKCAz5zGaWxoOU3y7UZ0r+OmNv70EudYheLJDb2tmZGv+NpaoNqAM0HVJKuZtMvFb4lcnFvNIeBSUJSr2K2B1Ab/KEsATfI5PA6HUNkK9E0e7lbCRaafKDiJmrBrFv2UNoizCySOLRxyQM0+BWpzfm69Eq/hi84uaDuKpTjiVmA=
+Received: from PH8PR10MB6290.namprd10.prod.outlook.com (2603:10b6:510:1c1::7)
+ by SJ0PR10MB4799.namprd10.prod.outlook.com (2603:10b6:a03:2ac::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.25; Tue, 14 May
+ 2024 09:46:53 +0000
+Received: from PH8PR10MB6290.namprd10.prod.outlook.com
+ ([fe80::309b:26bb:11d5:cc76]) by PH8PR10MB6290.namprd10.prod.outlook.com
+ ([fe80::309b:26bb:11d5:cc76%7]) with mapi id 15.20.7544.052; Tue, 14 May 2024
+ 09:46:53 +0000
+Message-ID: <f07e6b92-e133-4515-bfc9-24b24ad178d1@oracle.com>
+Date: Tue, 14 May 2024 15:16:39 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: imx-pxp: fix ERR_PTR dereference in pxp_probe()
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Tretter <m.tretter@pengutronix.de>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, imx@lists.linux.dev,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
+        error27@gmail.com
+References: <20240514094458.3463408-1-harshit.m.mogalapalli@oracle.com>
+Content-Language: en-US
+From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+In-Reply-To: <20240514094458.3463408-1-harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: KL1PR01CA0064.apcprd01.prod.exchangelabs.com
+ (2603:1096:820:5::28) To PH8PR10MB6290.namprd10.prod.outlook.com
+ (2603:10b6:510:1c1::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] drm/mediatek: Add support for OF graphs
-From: Alexandre Mergnat <amergnat@baylibre.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- chunkuang.hu@kernel.org
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- matthias.bgg@gmail.com, shawn.sung@mediatek.com, yu-chang.lee@mediatek.com,
- ck.hu@mediatek.com, jitao.shi@mediatek.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- wenst@chromium.org, kernel@collabora.com
-References: <20240409120211.321153-1-angelogioacchino.delregno@collabora.com>
- <1fc23530-89ba-4e36-9e9a-a1289f56a9bc@baylibre.com>
- <608fdbde-ad06-45ec-9771-18aa9f002f2d@collabora.com>
- <a77357c7-0442-4478-b375-436eb6b114be@baylibre.com>
-Content-Language: en-US
-In-Reply-To: <a77357c7-0442-4478-b375-436eb6b114be@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR10MB6290:EE_|SJ0PR10MB4799:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f0d1c96-5907-4ffa-8d45-08dc73fac8d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: 
+	BCL:0;ARA:13230031|376005|1800799015|366007|7416005|921011;
+X-Microsoft-Antispam-Message-Info: 
+	=?utf-8?B?cFZZYlI4Y3owS1FaRWlQMzkxWVZLQXZuUUdnamR6STJzQm1rRUpOZFVRMnJ4?=
+ =?utf-8?B?TGp6bEVJRkx2Z1NIQnRpYUdib1BmdDUwZitEQk8wSVFscGYrcG5sMEhVcmFz?=
+ =?utf-8?B?Uzk5MGJtSWxUUUl0aU9YZksvaW52aURlY2w4STVJWGVZN3ZrcCtxc1FRM0dl?=
+ =?utf-8?B?Yy80Q3MwdldQUnpqUTVRZEdRejRScjhYY0sxbGhmRXY1d1g2ZEx4aUd5VUdT?=
+ =?utf-8?B?RXFGb1o0aEZPbnZ5WklDVU1jaSs3bVFBZ2hoL1R4bzZZN1g5dVVCSXl3cExv?=
+ =?utf-8?B?RHFFUEhRUGVKNVNyNXAra3FqN2NaaG5EU1dmajBscjBrRlFRYWU1UnlBNkZo?=
+ =?utf-8?B?TTljVGFodmY3ME0zZ0hhcWpMSmxzdXpKYmRwbE5NeTBMeGNGMjUyRTlkdWRU?=
+ =?utf-8?B?ZjFOYWpjR3JMUVE0U2RuY2NNK2VnMnN3a2tQSmZzSW02MWp0Z3p2U3BPeitH?=
+ =?utf-8?B?S3ZnNjJYTGVkVTBPUDA5SnRHdnZqczA2QWpjeWRheG1pL1lycldoNmVKM3Ry?=
+ =?utf-8?B?V3Vsb1FkcEU4UnlFWHpNTllpUjR3NDNkT2VkeVdNeFFkMmxhV2NCSlJYcWNV?=
+ =?utf-8?B?Z3F1YklQbGp2bHcyNmMzanlxSWswS0J3TGg5eU55bFhVVU9ZZjVuQXF0SHRW?=
+ =?utf-8?B?NXF3Rk0vS1p3YWY3QWRIY0U1ZUl2MEgyc3dXUlZFUVV5SXVaTGpQdEFKbUZj?=
+ =?utf-8?B?MENpWXBubTF0bC9oeXgrTkVVcEtqd0hlMjRMODJzUW9YL2hNWlp2U0JVVUZx?=
+ =?utf-8?B?azNxMFZZU1k3Skl5ZG5IV1V0d1JTa3EvaTE0M3ppWUtnQnI2N1o3T2RFeUVp?=
+ =?utf-8?B?Q0lWWGFaSmV0b3BUK0ZJbmV0LzY5ZlFWS3hKMlZZbEYxZXo3TjUwZWxnbHdN?=
+ =?utf-8?B?RFRkdmM5YlVlVVEzUTZWN2xkQlVnNzZxamdzMEJuMk11VzlTRWVDN2w0dmlr?=
+ =?utf-8?B?TmlvQTcvM3JJdmlWVVpZWlZKc3NqbS9ia2ZabFlQMEdPUkZvNHdDUldmaExP?=
+ =?utf-8?B?eXl1UTR1NXdnMTd5TDBKQVJQUitmK3p6OCtGOEM4UWFaNEtQWmNEY2lzak05?=
+ =?utf-8?B?SklURHA3TExhOENYbUd5WGswcHc4Y09sWnVta0VzYUVlOHlhazlocDAyYUpo?=
+ =?utf-8?B?dzVnUlhpZ1k5eFJmdVd0ZXZISWlxVnArZUdkc3pGb1BwRlJobnd1bkw3UENT?=
+ =?utf-8?B?Y002TDVBdEJ3TGhOc2JVKzcvVFdra3AraWl4U242YW05VURhL3BtcnFjemhk?=
+ =?utf-8?B?cVRrdE9KcGQxQ1dMYmJWM3RsUUt0UlZteGNuNWZDWTFpYXhLS0lmWWt4b3pL?=
+ =?utf-8?B?ckl6NzRrMUtZNi9MYjBJV3RvQU9iQVJwci9YRXN4c1JqdWgwTUtKTGVVSnlC?=
+ =?utf-8?B?YU5DVStha1BoSzFLYXptWGNYS2NvbkZPN2ZjZ2NYU09VNmd0R1g5YTRUbU9y?=
+ =?utf-8?B?ZFZoaDBsY3ErQmxTUDd2eDM4R09EWXgxNzhacVNHY1pnVUk1OWFpaCtXLzNK?=
+ =?utf-8?B?dUIzdm81UGJxTUF4dzI1clFvT2ZEaXZuWnJ6a0J6NE1uVTZIb0Y0dHJmcmR1?=
+ =?utf-8?B?aWx1ZlloWGhKcTZYZURaZndCQzh3Tlk4MkRhVVh4K1hvUWozT2tRcmZXZ2ZE?=
+ =?utf-8?B?S1M2VDIzMFNpczRlZ0pIMmhHLytMc3NCcWxzS3FDRVVMNEpZWTRDOVo4WXhB?=
+ =?utf-8?B?NEZRaFhMeVFkdUNWZ2lyb3NCbDZnUnFxWHZ5dzFUVkVnVURlTk1FblpjclZ5?=
+ =?utf-8?Q?sq5ddncJTBhWK0Z4A9edvoM9vUhMZlWZ+3yoT0H?=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR10MB6290.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(1800799015)(366007)(7416005)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?WkY1T2FrditzVXl3eGJsZ1YzaElSZloyZGV1Z3FrVDFqOXJVUDRjU2JGV1hp?=
+ =?utf-8?B?OGpLaWplNitFU2VSTWpJSU9XaWRrWVQwMzl4eElXOXpyOGNxUDV5RG84KzBn?=
+ =?utf-8?B?WHZUUEtUcm9jYm9vd2dnVnBFYWkyYWtEcHRiT3RacjhubG83QldUMFRpdWZF?=
+ =?utf-8?B?TFNzeDJwMDZzckR1Qkg0cjhsSktXSzhPTnpvYWwzeGRLMUNmczRNcVdwVFJD?=
+ =?utf-8?B?akhxYlFVNHFpbCtvRUlvYktES1pkRTVrUUFhNWVzUlFSOU0rb1hUSWlzU2F6?=
+ =?utf-8?B?ZlhWUWorUmdEZUpSNU9KblBrNEplTmpQQkVKRlp4cmlZZmlEeTdtd25RYmpD?=
+ =?utf-8?B?dUk3Qmo5eDY0dW45cS9OMk9PU2E5bDl3MTJkTU4wZ2FXbXVLbktSZkNZVSsr?=
+ =?utf-8?B?a2RnU1FjYzBIOFR3QksycHYwVTRFSlFpM3F2eFhlbERRaC9xZTFzcGRzbUdj?=
+ =?utf-8?B?eGk3Y3hUK1VqL1ZCOEVBMk1hR0haQm9HZC9QTndEcXVPU0RvaTNuYW1menNr?=
+ =?utf-8?B?aU1tYUs3WEN1TmMrWFpweldVcHdyU0t1cGQ2SWMzbmpRYkRBeUlBYVNUVTZ2?=
+ =?utf-8?B?K3FNdkhXZlBkQU1vYTA3Z2Q4MFEwY01jUGF6RkQ1dUJGSzhuOVBnaUVhcGx0?=
+ =?utf-8?B?TzBoRnRIcGE0Tmh3Wlo5ODlOSXR0SHVncWVZenUxdkdxRmtBV0VaNnpzZ3lT?=
+ =?utf-8?B?NUV2Q1VNUnllckpieGU5QnhWU0kzVHYxMFdIYVVqdVE2L1JsTE9SQUV2S3BL?=
+ =?utf-8?B?ZjcvVitxZDNlWUlQRy9JZHBQODJJcEx4MHhiMWJrN0ZtYkZYeTNmTmhURTVM?=
+ =?utf-8?B?a0FMRGNzZkp4MnRHUTFENEk1amNhRGpJc2lvcEFHVjh3YTZvellLVTdLZDV4?=
+ =?utf-8?B?cnNuSGs3RGFjemRyZktCbXBJMzRxZFptSk5kWXpPSkdKZTc0dmZMTTFPNUVK?=
+ =?utf-8?B?THRQRXMrajFsdFpUaTBVbkF2MWkwOGVpY21xbjJra3RFTXptdWZqVHFqaGF3?=
+ =?utf-8?B?K3gyOTBBamtxSnFFR2pQdjY3L0E3UHpkd3IwUFhReDN5U0xpSHB5bnFkaFdv?=
+ =?utf-8?B?Y3hKUXVLRUVoMEtBYjY1UkRHQlRlOFFWb1pqQnVrZyt6NW9Hc3V6ZkVST0tz?=
+ =?utf-8?B?ZUVUd2praUNMWGNLMDhxSWJ6dDRGRmFMVlhPSVhIY0o4VExYUlJ4KzBuMTZK?=
+ =?utf-8?B?NVp2bXFUSENqS1hwRlRBZ0Zpb0prRDVubWhWK2lJQ05INnFtUUd5c29zNmxC?=
+ =?utf-8?B?RnMwa2IvZW5SMTVqUUUzK20xU0ljKy9TQUwzZUV5cExwQTg4eXlXWlllV09j?=
+ =?utf-8?B?UXNwN1p4WTg1WXlNdU1iTkIwVlB4WDBGemdGTkhrTFlobktZSDV2dkxvMFZi?=
+ =?utf-8?B?M1dpYVhORnIyelRDRU1qYU9BdnJIZXVFTGZjZ0JkVmppSUd4Ly95bXpjZCs5?=
+ =?utf-8?B?eVdYR0NKVlpXdkd2SkZaSmw4YWJOb2FaMzk3aVpMUmwwNlJpMWRSY1RLZXVP?=
+ =?utf-8?B?VFduWXdWWTlwb2NueHEwNjlMT3VYUDJVWGViNGJFWVpEbm0rYzIvQ2FHTUQw?=
+ =?utf-8?B?YjlUTTN4TEx3Q0dtL3E1VmJ3T1BYZ1hwT0V6NUcwVEVDbWt1T3FCc21zSzNF?=
+ =?utf-8?B?UE1NcFZRK0ZkSEd4cWp4a0Z4czkwTjIyaHl3cGh5aG9aNEgyYjZwZ0k5SlE1?=
+ =?utf-8?B?SU9MejZUMVNKMmgvenFBbjNOMEc1Z3ZieFdvNDNDOEpDbVRyU3I5eXVxcHdW?=
+ =?utf-8?B?WEtPWnNpYys5NnIyL3hJRFJQMkVMVkxWQjlMM2pLOUZsUWxYVmhrNnVJbnFX?=
+ =?utf-8?B?STNtY2FRSHZUTHY4RFpUc2EwM2FqTWtNeFgrVlZpVlQrZ2d2RGVJSE9GbWZu?=
+ =?utf-8?B?QnFxa3J1bDR5UFh0OWdSd092aXIrL2poUHM5YjhueC9GeUkzZE1uc2Z0NEFa?=
+ =?utf-8?B?TlR4MERvZE9JbjBDaW1Ia3JPT1RXa1FpTWVYSU1wSEZ3SFVkUXd4dllXbHJE?=
+ =?utf-8?B?ZDRVN3BDQk5wQjFsZXZ0eW1VdDFOZjNFNzlpYnFPZmZYbzdYSmZuWFdURkdh?=
+ =?utf-8?B?cHdqYnVpSEMwV2VrUkUxSmIwMm4yUStPN0VRdXExaDJuR2pzanhFMkRRbm5B?=
+ =?utf-8?B?bHRFaW1IZnhpNVRaRVZSb2lCZXNtbzZnSmUrZG0wUXpjQ051Z1gvUm0xWGt3?=
+ =?utf-8?Q?vGYjOfpUrcgZuW6QTXNG79c=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	rdro3pOmh0P9n3tkbOzCKSp1qAYLrGeRAPVub642U9pV66NwN/qs4k7Ol+rRF+FRhbLZMsMP2rwmbNr/zCGmW+P6bSYYxHGEXtpc+NRv3lsxhFX2Z6+pyDkmhe4FHKOigsiX8YRc8ZpWubYWUBUWVyRd5V824oa0/SNXbLj+Bc90GwuL/fHzLY7TTTZD/eZMxWawAkOd8kA1YiS2N35XryixR/oy7rvwTALvw7vUZJ7RtNQsHx21k0QRmL8NUWOZ2Pyw+2WT7m3zxiqkvIi4c5clAXDEe7lCtUCPUCmQPAh9v6VTJT7xaNwnOAXZIi9ER6TSZseqg/tCRvxqBLFaT4a81THulAP2GRmmWirKVHA1vmSvcNhO8mOU2nzIPv3W1dq1TeXBaSTG/Tacoiu+4BkhXsk2hcazOys5PdWsTrR8chXF/81GGj76b41mSvn/ap2iKEaTy1qopA79X2nAToPBbbaqi8YiAAG4VfaHwl0I0O07vPhqPHpSa8bdwE9B12Ldo1mCXX7/OQIKkaBElqe//JhsoGbujts0/Qbtf/OkQBYIqo4d3PkGbDwDe/+bqj1FrQWkZQlAxE+eDKdluH9Nd2JUYblB9Z9Jc0VnAh0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f0d1c96-5907-4ffa-8d45-08dc73fac8d1
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR10MB6290.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 09:46:53.0758
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Uqhk6Dy9aKlYBz8WpkRDyb3e/H0FyVw2YGCnjuTj2rFARALCuMDREl4X/1o417RuWim7DARyEF++tk+T6dsWeQsUL/rnCke7KnbAihl1FyVqwsnzykfMq6f5Pw3wsvOs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4799
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_04,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 adultscore=0 mlxscore=0
+ spamscore=0 phishscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
+ definitions=main-2405140068
+X-Proofpoint-ORIG-GUID: rBTOZiJModipkoVUVi8VLUKTn8nHIIqw
+X-Proofpoint-GUID: rBTOZiJModipkoVUVi8VLUKTn8nHIIqw
 
-Hi Angelo,
+Hi,
+On 14/05/24 15:14, Harshit Mogalapalli wrote:
+> devm_regmap_init_mmio() can fail, add a check and bail out in case of
+> error.
+> 
 
-Gentle ping because I'm stuck if I rebase my serie on top of yours.
+Please ignore this patch, I will send a V2.(v1->v2, I have to remove %d 
+in error message)
 
-On 02/05/2024 18:53, Alexandre Mergnat wrote:
+Thanks,
+Harshit
+> Fixes: 4e5bd3fdbeb3 ("media: imx-pxp: convert to regmap")
+> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+> ---
+>   drivers/media/platform/nxp/imx-pxp.c | 3 +++
+>   1 file changed, 3 insertions(+)
 > 
-> 
-> On 30/04/2024 13:33, AngeloGioacchino Del Regno wrote:
->> Il 30/04/24 12:17, Alexandre Mergnat ha scritto:
->>> Hi Angelo,
->>>
->>> On 09/04/2024 14:02, AngeloGioacchino Del Regno wrote:
->>>> This series was tested on MT8195 Cherry Tomato and on MT8395 Radxa
->>>> NIO-12L with both hardcoded paths, OF graph support and partially
->>>> hardcoded paths (meaning main display through OF graph and external
->>>> display hardcoded, because of OVL_ADAPTOR).
->>>
->>> Is that make sense for you to add the DTS changes of these boards into this serie ?
->>> I asked because, IMHO, that could help to understand the serie.
->>>
->>
->> Yes and no... but I imagine that you're asking this because you're trying to
->> prepare something with a different SoC+board(s) combination :-)
->>
->> In that case, I'm preventively sorry because what follows here is not 100%
->> perfectly tidy yet as I didn't mean to send the devicetree commits upstream
->> before this series got picked....
->>
->> ... but there you go - I'm sure that you won't mind and that the example will
->> be more than good enough for you.
->>
->> Please note that one of the reasons why I didn't want to add this to the series
->> is that the following changes show only a mere 50% of the reasons why we want OF
->> graph support on mediatek-drm (but mainly, it's because I didn't have time to
->> actually rebase etc :-P )
-> 
-> Thanks for the explanations and examples.
-> Unfortunately, I have 2 display but only one is working (the main: DSI0) when I use the dts method.
-> I've probably missed something but I don't know what.
-> 
-> In my "mmsys" node, if I swap display (the ext endpoint with the main endpoint), the DPI0 is 
-> working, but not the DSI0. I conclude my both paths are good.
-> 
-> Then, I've put some trace into "mtk_drm_of_ddp_path_build" to check if it parse the two endpoint of 
-> the node. Both are parsed, but "of_ep.port" is always = 0. According to "of_graph_parse_endpoint" 
-> function, "port" is the value of the parent "reg", whereas "id" is the value of the endpoint "reg".
-> So I replaced "of_ep.port" by "of_ep.id". Now I've of_ep.id = 0 for main and of_ep.id = 1 for EXT.
-> 
-> Now I've the good CRTC path, I get this error:
->    mediatek-drm mediatek-drm.1.auto: Invalid display hw pipeline. Last component: 54 (ret=-2)
->    mediatek-drm mediatek-drm.1.auto: probe with driver mediatek-drm failed with error -22
-> 
-> After quick look, the "cpath" into "mtk_drm_of_ddp_path_build_one" (or deeper functions) seems not 
-> be used as it should, due to the previous "of_ep.port" => "of_ep.id" change of course.
-> 
-> But I probably have to fix "of_ep.port" because I've mis-coded something. Just in case, I share you 
-> my diff:
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-> index 1aa3426f561b..f660481d3fe8 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8365-evk.dts
-> @@ -109,15 +109,51 @@ vsys_lcm_reg: regulator-vsys-lcm {
->       };
->   };
-> 
-> +&cpu0 {
-> +    proc-supply = <&mt6357_vproc_reg>;
-> +    sram-supply = <&mt6357_vsram_proc_reg>;
-> +};
-> +
-> +&cpu1 {
-> +    proc-supply = <&mt6357_vproc_reg>;
-> +    sram-supply = <&mt6357_vsram_proc_reg>;
-> +};
-> +
-> +&cpu2 {
-> +    proc-supply = <&mt6357_vproc_reg>;
-> +    sram-supply = <&mt6357_vsram_proc_reg>;
-> +};
-> +
-> +&cpu3 {
-> +    proc-supply = <&mt6357_vproc_reg>;
-> +    sram-supply = <&mt6357_vsram_proc_reg>;
-> +};
-> +
-> +&dither0_out {
-> +    remote-endpoint = <&dsi0_in>;
-> +};
-> +
->   &dpi0 {
->       pinctrl-0 = <&dpi_default_pins>;
->       pinctrl-1 = <&dpi_idle_pins>;
->       pinctrl-names = "default", "sleep";
->       status = "okay";
-> +    ports {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> 
-> -    port {
-> -        dpi_out: endpoint {
-> -            remote-endpoint = <&it66121_in>;
-> +        port@0 {
-> +            reg = <0>;
-> +            dpi0_in: endpoint {
-> +                remote-endpoint = <&rdma1_out>;
-> +            };
-> +        };
-> +
-> +        port@1 {
-> +            reg = <1>;
-> +            dpi0_out: endpoint {
-> +                remote-endpoint = <&it66121_in>;
-> +            };
->           };
->       };
->   };
-> @@ -137,36 +173,28 @@ panel@0 {
-> 
->           port {
->               panel_in: endpoint {
-> -                remote-endpoint = <&dsi_out>;
-> +                remote-endpoint = <&dsi0_out>;
->               };
->           };
->       };
-> +    ports {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> 
-> -    port {
-> -        dsi_out: endpoint {
-> -            remote-endpoint = <&panel_in>;
-> +        port@0 {
-> +            reg = <0>;
-> +            dsi0_in: endpoint {
-> +                remote-endpoint = <&dither0_out>;
-> +            };
->           };
-> -    };
-> -};
-> 
-> -&cpu0 {
-> -    proc-supply = <&mt6357_vproc_reg>;
-> -    sram-supply = <&mt6357_vsram_proc_reg>;
-> -};
-> -
-> -&cpu1 {
-> -    proc-supply = <&mt6357_vproc_reg>;
-> -    sram-supply = <&mt6357_vsram_proc_reg>;
-> -};
-> -
-> -&cpu2 {
-> -    proc-supply = <&mt6357_vproc_reg>;
-> -    sram-supply = <&mt6357_vsram_proc_reg>;
-> -};
-> -
-> -&cpu3 {
-> -    proc-supply = <&mt6357_vproc_reg>;
-> -    sram-supply = <&mt6357_vsram_proc_reg>;
-> +        port@1 {
-> +            reg = <1>;
-> +            dsi0_out: endpoint {
-> +                remote-endpoint = <&panel_in>;
-> +            };
-> +        };
-> +    };
->   };
-> 
->   &ethernet {
-> @@ -229,7 +257,7 @@ port@0 {
->                   reg = <0>;
->                   it66121_in: endpoint {
->                       bus-width = <12>;
-> -                    remote-endpoint = <&dpi_out>;
-> +                    remote-endpoint = <&dpi0_out>;
->                   };
->               };
-> 
-> @@ -557,6 +585,10 @@ &pwm {
->       status = "okay";
->   };
-> 
-> +&rdma1_out {
-> +    remote-endpoint = <&dpi0_in>;
-> +};
-> +
->   &ssusb {
->       dr_mode = "otg";
->       maximum-speed = "high-speed";
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8365.dtsi b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> index d34519a33c90..dbb559959a9d 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> +++ b/arch/arm64/boot/dts/mediatek/mt8365.dtsi
-> @@ -762,6 +762,19 @@ mmsys: syscon@14000000 {
->               compatible = "mediatek,mt8365-mmsys", "syscon";
->               reg = <0 0x14000000 0 0x1000>;
->               #clock-cells = <1>;
-> +            port {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                mmsys_main: endpoint@0 {
-> +                    reg = <0>;
-> +                    remote-endpoint = <&ovl0_in>;
-> +                };
-> +                mmsys_ext: endpoint@1 {
-> +                    reg = <1>;
-> +                    remote-endpoint = <&rdma1_in>;
-> +                };
-> +            };
->           };
-> 
->           mutex: mutex@14001000 {
-> @@ -801,6 +814,24 @@ ovl0: ovl@1400b000 {
->               interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_LOW>;
->               iommus = <&iommu M4U_PORT_DISP_OVL0>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    ovl0_in: endpoint {
-> +                        remote-endpoint = <&mmsys_main>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    ovl0_out: endpoint {
-> +                        remote-endpoint = <&rdma0_in>;
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           rdma0: rdma@1400d000 {
-> @@ -811,6 +842,24 @@ rdma0: rdma@1400d000 {
->               iommus = <&iommu M4U_PORT_DISP_RDMA0>;
->               mediatek,rdma-fifo-size = <5120>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    rdma0_in: endpoint {
-> +                        remote-endpoint = <&ovl0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    rdma0_out: endpoint {
-> +                        remote-endpoint = <&color0_in>;
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           color0: color@1400f000 {
-> @@ -819,6 +868,24 @@ color0: color@1400f000 {
->               clocks = <&mmsys CLK_MM_MM_DISP_COLOR0>;
->               interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_LOW>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    color0_in: endpoint {
-> +                        remote-endpoint = <&rdma0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    color0_out: endpoint {
-> +                        remote-endpoint = <&ccorr0_in>;
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           ccorr0: ccorr@14010000 {
-> @@ -827,6 +894,24 @@ ccorr0: ccorr@14010000 {
->               clocks = <&mmsys CLK_MM_MM_DISP_CCORR0>;
->               interrupts = <GIC_SPI 165 IRQ_TYPE_LEVEL_LOW>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    ccorr0_in: endpoint {
-> +                        remote-endpoint = <&color0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    ccorr0_out: endpoint {
-> +                        remote-endpoint = <&aal0_in>;
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           aal0: aal@14011000 {
-> @@ -835,6 +920,24 @@ aal0: aal@14011000 {
->               clocks = <&mmsys CLK_MM_MM_DISP_AAL0>;
->               interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_LOW>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    aal0_in: endpoint {
-> +                        remote-endpoint = <&ccorr0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    aal0_out: endpoint {
-> +                        remote-endpoint = <&gamma0_in>;
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           gamma0: gamma@14012000 {
-> @@ -843,6 +946,24 @@ gamma0: gamma@14012000 {
->               clocks = <&mmsys CLK_MM_MM_DISP_GAMMA0>;
->               interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_LOW>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    gamma0_in: endpoint {
-> +                        remote-endpoint = <&aal0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    gamma0_out: endpoint {
-> +                        remote-endpoint = <&dither0_in>;
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           dither0: dither@14013000 {
-> @@ -851,6 +972,23 @@ dither0: dither@14013000 {
->               clocks = <&mmsys CLK_MM_MM_DISP_DITHER0>;
->               interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_LOW>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    dither0_in: endpoint {
-> +                        remote-endpoint = <&gamma0_out>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    dither0_out: endpoint {
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           dsi0: dsi@14014000 {
-> @@ -874,6 +1012,23 @@ rdma1: rdma@14016000 {
->               iommus = <&iommu M4U_PORT_DISP_RDMA1>;
->               mediatek,rdma-fifo-size = <2048>;
->               power-domains = <&spm MT8365_POWER_DOMAIN_MM>;
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    rdma1_in: endpoint {
-> +                        remote-endpoint = <&mmsys_ext>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    rdma1_out: endpoint {
-> +                    };
-> +                };
-> +            };
->           };
-> 
->           dpi0: dpi@14018000 {
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index dacf4eaa3457..5992b7865310 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -230,22 +230,6 @@ static const unsigned int mt8195_mtk_ddp_ext[] = {
->       DDP_COMPONENT_DP_INTF1,
->   };
-> 
-> -static const unsigned int mt8365_mtk_ddp_main[] = {
-> -    DDP_COMPONENT_OVL0,
-> -    DDP_COMPONENT_RDMA0,
-> -    DDP_COMPONENT_COLOR0,
-> -    DDP_COMPONENT_CCORR,
-> -    DDP_COMPONENT_AAL0,
-> -    DDP_COMPONENT_GAMMA,
-> -    DDP_COMPONENT_DITHER0,
-> -    DDP_COMPONENT_DSI0,
-> -};
-> -
-> -static const unsigned int mt8365_mtk_ddp_ext[] = {
-> -    DDP_COMPONENT_RDMA1,
-> -    DDP_COMPONENT_DPI0,
-> -};
-> -
->   static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
->       .main_path = mt2701_mtk_ddp_main,
->       .main_len = ARRAY_SIZE(mt2701_mtk_ddp_main),
-> @@ -334,10 +318,6 @@ static const struct mtk_mmsys_driver_data mt8195_vdosys1_driver_data = {
->   };
-> 
->   static const struct mtk_mmsys_driver_data mt8365_mmsys_driver_data = {
-> -    .main_path = mt8365_mtk_ddp_main,
-> -    .main_len = ARRAY_SIZE(mt8365_mtk_ddp_main),
-> -    .ext_path = mt8365_mtk_ddp_ext,
-> -    .ext_len = ARRAY_SIZE(mt8365_mtk_ddp_ext),
->       .mmsys_dev_num = 1,
->   };
-> 
-> 
-> 
-> -- 
-> Regards,
-> Alexandre
+> diff --git a/drivers/media/platform/nxp/imx-pxp.c b/drivers/media/platform/nxp/imx-pxp.c
+> index e62dc5c1a4ae..58c10156c7a4 100644
+> --- a/drivers/media/platform/nxp/imx-pxp.c
+> +++ b/drivers/media/platform/nxp/imx-pxp.c
+> @@ -1805,6 +1805,9 @@ static int pxp_probe(struct platform_device *pdev)
+>   		return PTR_ERR(mmio);
+>   	dev->regmap = devm_regmap_init_mmio(&pdev->dev, mmio,
+>   					    &pxp_regmap_config);
+> +	if (IS_ERR(dev->regmap))
+> +		return dev_err_probe(&pdev->dev, PTR_ERR(dev->regmap),
+> +				     "Failed to init regmap: %d\n");
+>   
+>   	irq = platform_get_irq(pdev, 0);
+>   	if (irq < 0)
 
--- 
-Regards,
-Alexandre
 
