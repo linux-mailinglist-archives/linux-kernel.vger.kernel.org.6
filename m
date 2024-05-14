@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-178784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367F18C579F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:06:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFB198C57A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:06:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FFD51C22371
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:06:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A178B2258E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68714146D7E;
-	Tue, 14 May 2024 14:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC7E1474D9;
+	Tue, 14 May 2024 14:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnRBLrwi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0t8ZY/k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11EA145322
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED40145340
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715695526; cv=none; b=YkFM7AL93+T8xDzQnfbP2mCs4Co8vylxibV820iD7+cyUie7o5+QaRp102ztrTSVOeIgmwSF1sBHcGjEXGyy2HLjpte0qfxW3GVb7MVi1eN+lO7dIPgYpazSXWuAf7MVTiLEuKWFCa2H1vMn5kX6wVKp9zSG95WyeUVPjLCbbno=
+	t=1715695531; cv=none; b=SjfwkgelxU0suxkL1/5MVmGVUElwxkEux32cH/BngGZU2e/s+NDBGkjPGkT0biYw5T6XefUei9nlzWASWRXUAyRq1boXZza4saS0JSfljV+DDcmVl2+pZJSw01FVudil3/1KkDFvtEX4Krqv36f3XgNHW0JMafH1LleIJKHY+3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715695526; c=relaxed/simple;
-	bh=KbKqzNvXWA/Za9nd3AYnat1xf+LOO0b3PgRZV0HvyKk=;
+	s=arc-20240116; t=1715695531; c=relaxed/simple;
+	bh=0+IP68HpeOuix87ttHx6QCBPaROV37lTjVVbI88agM4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dCxAQBXHYzI9PJzNORWjYQ3w7+ZJoRroNT0s7kkP0jFWj8gcim3EAw6V3xfW65I4TsukivRDsVw+XTEZrCqkZzLwl/bV7bPkBkwRMF1TH7ssRAzmE5sTTygTuLfuSEyW2epNVaPCh4CbtIyAEYcFnVvIFrSrXzirI9DbLYaLD0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnRBLrwi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3894C32781;
-	Tue, 14 May 2024 14:05:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=FpAV/aMnGMm+WG5rlGL7Nosbt7MIUSXbt3Xvu8IXjSx19+t7WKlWoO9P+hUVyM+gMbDJEmyhbF9P1Gh8lNYonFbtCQM/F6f2SU6Euhb6WCvvTKI1lIxCO49dlQJnU9uy2ZodXj4lV+F0HZJYgov96hhGwBmT6k38tDtYFD3oEdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0t8ZY/k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07D16C32781;
+	Tue, 14 May 2024 14:05:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715695526;
-	bh=KbKqzNvXWA/Za9nd3AYnat1xf+LOO0b3PgRZV0HvyKk=;
+	s=k20201202; t=1715695531;
+	bh=0+IP68HpeOuix87ttHx6QCBPaROV37lTjVVbI88agM4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AnRBLrwiGydV55YKVxP1C2hTU/+iQo4dd8w0faa4jtVHR4jHZ5anUbKb5yZ5ye3XS
-	 ys1kla9pYrDzdZbLunoTrtdPNqqAUbKtu1CJ//68MFbQyh5y7aZhC46YK55JtaUZA5
-	 ra5G2sERmBqf/UFx2SPaMVXfoiGS2kPxfZFkZNOUlVD19QOqS/SUV5MZU/mFGOVgDv
-	 IXn6OG9dtirrJO/Dh3vnNlqnjzdI4qDmljqWq0kBU+c0CiDbOdoWE/pFltLXqLokVT
-	 r19LtiBw6rEEkbg+nNadg08rNjWgfdZZVOpJ69iuykQqloruiT2sEewRtB7kCuWmPz
-	 qDl5PWv830HDA==
+	b=T0t8ZY/krMImQEE1pbX37Lqd9otojKaCNU52Jdf+6IsnQPuwbjYf/17i4Dfm9wU/N
+	 cG8ZVIKuEChYfl+ArN6nlpcBLN94ethBeWZaRLHF2O26wOR/YjsM4iypPJlep2EOIs
+	 WnQduiMtRTX6HihYJYNGu+Zvx4ZfY6kifpj7mrb3c0qzOXrMObRZ+pyv1Di+53Y4BR
+	 yVzogJGugSULHDBgRoPYVq0AQf3NMvV11V+DCtVicxdz9nCIPrBc3BZjkQibvEOlkP
+	 LsDeyAlUKQ2u6jbtG/qyTzE50IDMatmyZSG5pDBfnCFVFZOhVoq3W+Su/3lVcXaMJx
+	 OvCy8N0USQs3Q==
 From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
 To: Alexandre Ghiti <alexghiti@rivosinc.com>,
 	Albert Ou <aou@eecs.berkeley.edu>,
@@ -58,9 +58,9 @@ Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	virtualization@lists.linux-foundation.org
-Subject: [PATCH v2 5/8] riscv: mm: Take memory hotplug read-lock during kernel page table dump
-Date: Tue, 14 May 2024 16:04:43 +0200
-Message-Id: <20240514140446.538622-6-bjorn@kernel.org>
+Subject: [PATCH v2 6/8] riscv: Enable memory hotplugging for RISC-V
+Date: Tue, 14 May 2024 16:04:44 +0200
+Message-Id: <20240514140446.538622-7-bjorn@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240514140446.538622-1-bjorn@kernel.org>
 References: <20240514140446.538622-1-bjorn@kernel.org>
@@ -75,40 +75,27 @@ Content-Transfer-Encoding: 8bit
 
 From: Björn Töpel <bjorn@rivosinc.com>
 
-During memory hot remove, the ptdump functionality can end up touching
-stale data. Avoid any potential crashes (or worse), by holding the
-memory hotplug read-lock while traversing the page table.
-
-This change is analogous to arm64's commit bf2b59f60ee1 ("arm64/mm:
-Hold memory hotplug lock while walking for kernel page table dump").
+Enable ARCH_ENABLE_MEMORY_HOTPLUG and ARCH_ENABLE_MEMORY_HOTREMOVE for
+RISC-V.
 
 Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 ---
- arch/riscv/mm/ptdump.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/riscv/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/mm/ptdump.c b/arch/riscv/mm/ptdump.c
-index 1289cc6d3700..9d5f657a251b 100644
---- a/arch/riscv/mm/ptdump.c
-+++ b/arch/riscv/mm/ptdump.c
-@@ -6,6 +6,7 @@
- #include <linux/efi.h>
- #include <linux/init.h>
- #include <linux/debugfs.h>
-+#include <linux/memory_hotplug.h>
- #include <linux/seq_file.h>
- #include <linux/ptdump.h>
- 
-@@ -370,7 +371,9 @@ bool ptdump_check_wx(void)
- 
- static int ptdump_show(struct seq_file *m, void *v)
- {
-+	get_online_mems();
- 	ptdump_walk(m, m->private);
-+	put_online_mems();
- 
- 	return 0;
- }
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 6bec1bce6586..b9398b64bb69 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -16,6 +16,8 @@ config RISCV
+ 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
+ 	select ARCH_DMA_DEFAULT_COHERENT
+ 	select ARCH_ENABLE_HUGEPAGE_MIGRATION if HUGETLB_PAGE && MIGRATION
++	select ARCH_ENABLE_MEMORY_HOTPLUG if SPARSEMEM && 64BIT && MMU
++	select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
+ 	select ARCH_ENABLE_SPLIT_PMD_PTLOCK if PGTABLE_LEVELS > 2
+ 	select ARCH_ENABLE_THP_MIGRATION if TRANSPARENT_HUGEPAGE
+ 	select ARCH_HAS_BINFMT_FLAT
 -- 
 2.40.1
 
