@@ -1,146 +1,118 @@
-Return-Path: <linux-kernel+bounces-178252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6539B8C4B1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:05:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082DC8C4B23
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 970DA1C21844
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8007328618E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D136E10942;
-	Tue, 14 May 2024 02:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5rQJR98"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732A9B662;
+	Tue, 14 May 2024 02:15:41 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F66BCA62;
-	Tue, 14 May 2024 02:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BB1B645
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715652337; cv=none; b=OA6aFA6ZwRYQ+CsTfNdD/c0LfjkxQxSD86jRUTSNgoIJU0r0hdKqaV7LxY2DPc4n3kkpZEXlUAYdkrH8aROYtxr3eGknsXPIRYFzured7AH8pNmx7ypM7EG1u+jfZpK7nY+W0xxIqoECsAiaZJJ2rJukPw8DhP2nZkijTz7ek/w=
+	t=1715652941; cv=none; b=aMGg2X9F448WF9TdXuT5a+2I//WwIveD/PoO1mAiJocgdvxMqsiw3MdlTV4/bXR3umjK3lcVPkddk6+i3RegqaI8A5SwTlEJ3i44s0UCYUefWO40Hsnqa0NK6fsmaJJ//33SUtcv0hT/K3mSKTsmcyPlQ7GeaJwRcAFHcwHJLnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715652337; c=relaxed/simple;
-	bh=NhsZ+C2CYcpDtcwpIljnQcDjOLmdu+fZF7+ROHY/32M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=enuwlan/q0g3TmJb4F5fIqdgvDY/rcMqwLDvhA/picR6L4GrIzpKq5TB0AqQWU50pysUWB22luMIxwcqxRmc/YiHrW+5JG0lmyVw9oIDjVgX1wLgGD2EVUiu1gVqU8Rhp/qQ5Q6jPYjiRZ+D4MY/XwIMPmMEZtgKu9OBG8LO7Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5rQJR98; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51f2ebbd8a7so5641716e87.2;
-        Mon, 13 May 2024 19:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715652333; x=1716257133; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wxFA2X6IJt65tETPWjtrRru5w3XzoCwgMRsrmd+S4lU=;
-        b=Z5rQJR98CJVccS7cUkVlC3TtMD9fHOAa+bmnrkMya3P9ArlPk8VsabJUUGO8ansULN
-         /oF/+YSLImwdPbH769woSwdTYYY06f9gvx/xi3UCFaiC8NU3KW+EuLiS2/QbhQ/yDYu+
-         yCyK68E5tik0ML2M+3RY3Il1ww7S1UbjyLQAaPQFctYYy1CaK/9pCG98Wso34lXJgw5+
-         IyRVYQJoKIOrWdVuKilCBdy5uQJaJlmPQt5Rn8hl2+WzlUKANTh9wfjinENwFqJ2dqAr
-         sDBL5ZFFhsMyLLeF0WjsZNmvTjCyU9uvK5tXN1wtAYQs9H3uaiK8l1Cl76nsGWmzn6zD
-         +fmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715652333; x=1716257133;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wxFA2X6IJt65tETPWjtrRru5w3XzoCwgMRsrmd+S4lU=;
-        b=HMMrkkQUvbM5DFD6RAPMGflGxQeFjkLKP9B8aZ1x3ZIK57JUjaKrp789OTIcp4PMMC
-         GpSM/Is3F6okViAhipthjVUxWhuCpVh7Z6DEZZBd2D3962J7nNB5drIcLKVBBCfTcCN0
-         djXkwUfUhUcALVgS1k76C6kEiNaKOcrTQR20/EZ0NIr+DWpgFtT3jPee98+SQvWrswiW
-         0XeStqesFHLsy5dytlJYgOTEVbxhxMeRRzTaYpjUvzOHVeEV1krIh1f8WHKBv11hyW20
-         Z/wT9MmI4BEHbII7kpVuNgsuBRbEYY5s/DB2bBdyJ61D2CyV4l1GTolYaEiGa4hH+HT+
-         0JrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOXFnarzm7eT6CUunEoWSao2kxJ4G0jhard7by0lG/sgO2c3GzZkJHEk5bsNK6nt3IEhpLVPlte9JA62adyy3obENV4n4qgB451JU=
-X-Gm-Message-State: AOJu0Yx5eIWuxZsDEUup5dSNl/k/HRM/K5PEAp1/T5yTg+DswJHJiB8M
-	nRgWo11Mjnk9VzIWrCp7N+fyf0zOgNhUKmG7RNZPy5mX/+MdQZKl1rfar3DP6SM+yZSdOpWJWDL
-	OQ787XYrrjqhDTWMewZi8CqpA4ek=
-X-Google-Smtp-Source: AGHT+IEEpX8txEQ2kh0R+wJnLXEGVaauqZJdg6f5TnWvPdFjZHEBtUpvYvfS68tNCK/5/jMWRWQWIIerHFZudGqxoQQ=
-X-Received: by 2002:a05:6512:b1a:b0:51d:a4e3:4cb8 with SMTP id
- 2adb3069b0e04-5220ff70b64mr9038580e87.49.1715652333236; Mon, 13 May 2024
- 19:05:33 -0700 (PDT)
+	s=arc-20240116; t=1715652941; c=relaxed/simple;
+	bh=ZFj90tcc6DCZPul7tNZULC7jeoV3sQ05SiShGbBA1tM=;
+	h=From:Subject:To:Cc:Date:Message-ID:References:MIME-Version:
+	 Content-Type; b=uz/ib1YN+1psHGOv+/6LQ+k6eAl3o2QomAW4F39BGa5DCtQprEh5eveGvyMOlwngme2KydYHVH9tI8IAyiqny8XVIN5sY80Vu4h+0ZbZ9bDduiVC96MQpQOMnxZeCBG4FBJ00KLL1ufMYWun9XK55SLBE1WeGcekW+QuO2t1WFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: cf8af8cc119711ef9305a59a3cc225df-20240514
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:5a6287b0-9667-4d3a-8655-21ddd07b874d,IP:30,
+	URL:0,TC:4,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:14
+X-CID-INFO: VERSION:1.1.38,REQID:5a6287b0-9667-4d3a-8655-21ddd07b874d,IP:30,UR
+	L:0,TC:4,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:14
+X-CID-META: VersionHash:82c5f88,CLOUDID:142b61dd6cc60b734346e31b2cc88622,BulkI
+	D:240428152805F31X7C1F,BulkQuantity:2,Recheck:0,SF:66|24|17|19|44|102,TC:0
+	,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL:0
+	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: cf8af8cc119711ef9305a59a3cc225df-20240514
+Received: from node4.com.cn [(39.156.73.12)] by mailgw.kylinos.cn
+	(envelope-from <huanglei@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1561294893; Tue, 14 May 2024 10:15:19 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id 0036C16002082;
+	Tue, 14 May 2024 10:15:18 +0800 (CST)
+Received: by node4.com.cn (NSMail, from userid 0)
+	id E834F16002082; Tue, 14 May 2024 10:15:18 +0800 (CST)
+From: =?UTF-8?B?6buE56OK?= <huanglei@kylinos.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBwYXJwb3J0OiBJbmNyZWFzZSBidWZmZXIgbWF4IGxlbmd0aCB0byBhdm9pZCBtZW1vcnkgb3V0IG9mIGJvdW5kcyBvdmVyZmxvdw==?=
+To: 	=?UTF-8?B?c3VkaXBtLm11a2hlcmplZQ==?= <sudipm.mukherjee@gmail.com>,
+Cc: 	=?UTF-8?B?bGludXgta2VybmVs?= <linux-kernel@vger.kernel.org>,
+Date: Tue, 14 May 2024 10:15:17 +0800
+X-Mailer: NSMAIL 7.0.0
+Message-ID: <2ia1eihqhhv-2ia3ye4kl5g@nsmail7.0.0--kylin--1>
+References: 20240507095558.20828-1-huanglei814@163.com
+X-Israising: 0
+X-Seclevel-1: 0
+X-Seclevel: 0
+X-Delaysendtime: Tue, 14 May 2024 10:15:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEkJfYPxWBfEnuKeCGEsscVTYy8MrNxCJwdbxS=c2-B0H+HfTA@mail.gmail.com>
- <20240513225409.3025-1-hdanton@sina.com>
-In-Reply-To: <20240513225409.3025-1-hdanton@sina.com>
-From: Sam Sun <samsun1006219@gmail.com>
-Date: Tue, 14 May 2024 10:05:21 +0800
-Message-ID: <CAEkJfYMhv8AxxHSVdPT9bCX1cJZXw39+bMFh=2N9uNOB4Hcr=w@mail.gmail.com>
-Subject: Re: [Linux kernel bug] INFO: task hung in blk_mq_get_tag
-To: Hillf Danton <hdanton@sina.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, axboe@kernel.dk, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, syzkaller-bugs@googlegroups.com, 
-	xrivendell7@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; boundary=nsmail-2mc46n1mn86-2mc5gkv1p1z
+X-ns-mid: webmail-6642c935-2m2bzdi8
+X-ope-from: <huanglei@kylinos.cn>
 
-On Tue, May 14, 2024 at 6:54=E2=80=AFAM Hillf Danton <hdanton@sina.com> wro=
-te:
->
-> On Mon, 13 May 2024 20:57:44 +0800 Sam Sun <samsun1006219@gmail.com>
-> >
-> > I applied this patch and tried using the C repro, but it still crashed
-> > with the same task hang kernel dump log.
->
-> Oh low-hanging pear is sour, and try again seeing if there is missing
-> wakeup due to wake batch.
->
-> --- x/lib/sbitmap.c
-> +++ y/lib/sbitmap.c
-> @@ -579,6 +579,8 @@ void sbitmap_queue_wake_up(struct sbitma
->         unsigned int wake_batch =3D READ_ONCE(sbq->wake_batch);
->         unsigned int wakeups;
->
-> +       __sbitmap_queue_wake_up(sbq, nr);
-> +
->         if (!atomic_read(&sbq->ws_active))
->                 return;
->
-> --
+This message is in MIME format.
 
+--nsmail-2mc46n1mn86-2mc5gkv1p1z
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-I applied this patch together with the last patch. Unfortunately it
-still crashed.
+PHA+RnJvbTogaHVhbmdsZWk8L3A+CjxwPiZuYnNwOzwvcD4KPHA+TW9zdCBv
+ZiB0aGUgdGltZe+8jHdpbGwgdXNlIDY0IGJpdCBhZGRyZXNzLjxicj5zdWNo
+IGFzIHBvcnQtJmd0O2Jhc2U9MHhmZmZmZmZjMDEwZTIxMjgwIGFuZCB0aGVu
+IHVzZTxicj5sZW4gKz0gc3ByaW50ZiAoYnVmZmVyLCAiJWx1XHQlbHVcbiIs
+IHBvcnQtJmd0O2Jhc2UsIHBvcnQtJmd0O2Jhc2VfaGkpLDxicj5wb3J0LSZn
+dDtiYXNlIGNvbnZlcnQgdG8gc3RyaW5nIGlzICIxODQ0Njc0Mzc5OTExNDg5
+NjAwMCIgYWRkPGJyPnBvcnQtJmd0O2Jhc2VfaGkgaXMgIjAiIGFuZCAiXHQi
+ICJcbiIgbGVuIHdpbGwgYmUgMjMuPGJyPkJ1dCBidWZmZXIgdGhlIG9yaWdp
+bmFsIG1heCBsZW5ndGggaXMgMjAsIGxlbmd0aCAyMyBpcyBvdXQgb2YgYnVm
+ZmVyLjxicj5TbyB0byBtYWtlIHN1cmUgNjQgYml0IGFkZHJlc3Mgd2lsbCBu
+b3QgZXhwZXJpZW5jZSBidWZmZXIgb3ZlcmZsb3csPGJyPm5lZWQgaW5jcmVh
+c2UgYnVmZmVyIHNpemUgdG8gMzIuPGJyPjxicj5TaWduZWQtb2ZmLWJ5OiBo
+dWFuZ2xlaSA8YnI+LS0tPGJyPmRyaXZlcnMvcGFycG9ydC9wcm9jZnMuYyB8
+IDQgKystLTxicj4xIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAy
+IGRlbGV0aW9ucygtKTxicj48YnI+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvcGFy
+cG9ydC9wcm9jZnMuYyBiL2RyaXZlcnMvcGFycG9ydC9wcm9jZnMuYzxicj5p
+bmRleCBiZDM4ODU2MGVkNTkuLjY3MjJhZTYyMGI2OCAxMDA2NDQ8YnI+LS0t
+IGEvZHJpdmVycy9wYXJwb3J0L3Byb2Nmcy5jPGJyPisrKyBiL2RyaXZlcnMv
+cGFycG9ydC9wcm9jZnMuYzxicj5AQCAtMTE3LDcgKzExNyw3IEBAIHN0YXRp
+YyBpbnQgZG9faGFyZHdhcmVfYmFzZV9hZGRyKHN0cnVjdCBjdGxfdGFibGUg
+KnRhYmxlLCBpbnQgd3JpdGUsPGJyPnZvaWQgKnJlc3VsdCwgc2l6ZV90ICps
+ZW5wLCBsb2ZmX3QgKnBwb3MpPGJyPns8YnI+c3RydWN0IHBhcnBvcnQgKnBv
+cnQgPSAoc3RydWN0IHBhcnBvcnQgKil0YWJsZS0mZ3Q7ZXh0cmExOzxicj4t
+IGNoYXIgYnVmZmVyWzIwXTs8YnI+KyBjaGFyIGJ1ZmZlclszMl07PGJyPmlu
+dCBsZW4gPSAwOzxicj48YnI+aWYgKCpwcG9zKSB7PGJyPkBAIC0xNzEsNyAr
+MTcxLDcgQEAgc3RhdGljIGludCBkb19oYXJkd2FyZV9kbWEoc3RydWN0IGN0
+bF90YWJsZSAqdGFibGUsIGludCB3cml0ZSw8YnI+dm9pZCAqcmVzdWx0LCBz
+aXplX3QgKmxlbnAsIGxvZmZfdCAqcHBvcyk8YnI+ezxicj5zdHJ1Y3QgcGFy
+cG9ydCAqcG9ydCA9IChzdHJ1Y3QgcGFycG9ydCAqKXRhYmxlLSZndDtleHRy
+YTE7PGJyPi0gY2hhciBidWZmZXJbMjBdOzxicj4rIGNoYXIgYnVmZmVyWzMy
+XTs8YnI+aW50IGxlbiA9IDA7PGJyPjxicj5pZiAoKnBwb3MpIHs8YnI+LS0g
+PGJyPjIuMTcuMTwvcD4=
 
-Pointed out by Tetsuo, this kernel panic might be caused by sending
-NMI between cpus. As dump log shows:
-```
-[  429.046960][   T32] NMI backtrace for cpu 0
-[  429.047499][   T32] CPU: 0 PID: 32 Comm: khungtaskd Not tainted
-6.9.0-dirty #6
-[  429.048417][   T32] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
-[  429.049873][   T32] Call Trace:
-[  429.050299][   T32]  <TASK>
-[  429.050672][   T32]  dump_stack_lvl+0x201/0x300
-..
-[  429.063133][   T32]  ret_from_fork_asm+0x11/0x20
-[  429.063735][   T32]  </TASK>
-[  429.064168][   T32] Sending NMI from CPU 0 to CPUs 1:
-[  429.064833][   T32] BUG: unable to handle page fault for address:
-ffffffff813d4cf1
-[  429.065765][   T32] #PF: supervisor write access in kernel mode
-[  429.066502][   T32] #PF: error_code(0x0003) - permissions violation
-[  429.067274][   T32] PGD db38067 P4D db38067 PUD db39063 PMD 12001a1
-[  429.068068][   T32] Oops: 0003 [#1] PREEMPT SMP KASAN NOPTI
-[  429.068767][   T32] CPU: 0 PID: 32 Comm: khungtaskd Not tainted
-6.9.0-dirty #6
-[  429.069666][   T32] Hardware name: QEMU Standard PC (i440FX + PIIX,
-1996), BIOS rel-1.16.1-0-g3208b098f51a-prebuilt.qemu.org 04/01/2014
-[  429.071142][   T32] RIP: 0010:__send_ipi_mask+0x541/0x690
-```
-Should I add them to cc list?
-
-Best,
-Yue
+--nsmail-2mc46n1mn86-2mc5gkv1p1z--
 
