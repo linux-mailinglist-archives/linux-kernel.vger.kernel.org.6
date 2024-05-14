@@ -1,200 +1,112 @@
-Return-Path: <linux-kernel+bounces-178873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079828C58ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0158C58E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B47602817FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39691F22BE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AC217F366;
-	Tue, 14 May 2024 15:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B30417F38C;
+	Tue, 14 May 2024 15:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ER4cPBLa"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Xebpp9ow"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EF61E480;
-	Tue, 14 May 2024 15:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0558E17EBBB
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715701159; cv=none; b=pxNzBwM7P3AnKjvvJHf6F8ZhPi2U18t/pk9S0+po8Q2+4/eON+pZ6H4ipwt8/EtW0Sl8RyyU7XEFSo3JkbHVVju76HTDJtsxkuihez3933TVSiPfs6WnmfdPrmL5dJVQi/1chtCVqfP8UZ01hdv1QIGLHTn8PGLsaJao1sMHmVs=
+	t=1715701149; cv=none; b=jtmIKfMh6IW75OC5XYvbmmxnqnNT/9nxVCaTh8kQtF06OHxCssF1vH5h1hs2wNshov26oK7vHZe6yXquUSkX79lUi5LO8Jz8S6r6jLTnWNdYY2yK+jL7vqMQHdjZSyCRSpPRs1ru2gP4AylKij6LfsOXk8qac7bneAzmiR4GWHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715701159; c=relaxed/simple;
-	bh=TFIjicffkfSAiX7EWr4Uq8n9eqdo38oBcHIaWAKFAgE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=g1z9brJXU0iDJhQK8Fy9kb8TIo+wZ1qds6fpI695HOT2H+tGUpotJtvGKpjYPWc3BMvsFicUwvBDHLLL0iR4ajtW0jm+ubQHDZcQqld6HKdZs4I6VVzECFqkYrzcmwG3pvuir+PlJY/HmJNIXWnviix49nreKj8XeoKjFm1DBwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ER4cPBLa; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EDaZ8m005782;
-	Tue, 14 May 2024 15:38:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=QUu8bBw94LTXyX9BD3qDzghP2sdLwyB4xSVozL91ThY=;
- b=ER4cPBLauHTpdppQycxSKBvBBRVLfIWPWDKeDq7NNCH/nPJ4BASf2gwN5/ARyqP+6HXK
- oH/Ivp8fHZ1mm8vdhIn3F1o+J4yYspSdlIxK735RQ0vodUtfb013IFvChbh4OQivV/d3
- nx1GYPwvMw9qlOmjsY1yQeDkKNRkJMnsgUhaaDkAfGXoB9eWzXEG335mBouEwfPuHdD/
- 9jGwfYdjs4KKg4VkxHzqBlqWBKclNHhb0RHYEYJUoKyhTdPe7NITP8w92zJm8aYrxORR
- zjGoFBOgoQpQw/3Dk/a2a6az8j7yH0Zn4OSL5vPENaNx6BdEcOfMXpXj5Px+Q+EWTkMf 4Q== 
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y48dngeqw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 15:38:57 +0000
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EFTFdl002273;
-	Tue, 14 May 2024 15:38:56 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3y2m0p66f2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 15:38:56 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EFcrN448562508
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 14 May 2024 15:38:55 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 86A9D5805D;
-	Tue, 14 May 2024 15:38:53 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C2ABC5805C;
-	Tue, 14 May 2024 15:38:52 +0000 (GMT)
-Received: from [9.61.107.19] (unknown [9.61.107.19])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 14 May 2024 15:38:52 +0000 (GMT)
-Message-ID: <18011b0e-a479-4d93-947a-a71fe4efdcb5@linux.ibm.com>
-Date: Tue, 14 May 2024 10:38:52 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/17] dt-bindings: fsi: ast2600-fsi-master: Convert to
- json-schema
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-aspeed@lists.ozlabs.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsi@lists.ozlabs.org, linux-spi@vger.kernel.org,
-        linux-i2c@vger.kernel.org, lakshmiy@us.ibm.com, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-        andrew@codeconstruct.com.au, andi.shyti@kernel.org
-References: <20240429210131.373487-1-eajames@linux.ibm.com>
- <20240429210131.373487-9-eajames@linux.ibm.com>
- <af51132f-e4a3-4f45-b066-24b8c348eb28@kernel.org>
- <a7ca71c0-971c-49ab-b9f3-f6e6b32e9567@linux.ibm.com>
- <0a43b522-7c07-43a0-b4b0-155c3cf94177@kernel.org>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <0a43b522-7c07-43a0-b4b0-155c3cf94177@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0rbf2XRZiQi425DQQIeCERRgFQxutBWq
-X-Proofpoint-GUID: 0rbf2XRZiQi425DQQIeCERRgFQxutBWq
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1715701149; c=relaxed/simple;
+	bh=ErRx23DPSPLAwdljs0/tvOWY83daNfEDyClGFeMkYK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O9/CLmPwMM+OKIiFM9cYYHa8ymuu6FHD6Ljkw8KPw/D39JOFX+wXQnbWrZ9qjw8b9tVqF9M1cjgSJEhzlgVD3pXaxJSHlj92sJ2qUdXsbj5CdrapcnIy+pwSx6zJFOxoreK2S7Lo9cbvqqNuSiHo+n2XKb5Y5OKcFI890nbtpOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Xebpp9ow; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-61f2dc31be4so4659531a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1715701147; x=1716305947; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LBawWwjcxALOoVHPnP/xkOR0sFQUYdbuftVX1+1xI+c=;
+        b=Xebpp9owF2Y0a6ZdSXrRLBjCBpcDBumNmc9190FVtZKtR8qmo28RCXHX41Jgu1oNXC
+         Uo8EMuyAHrKp4lRBInxsSetRR7cxx5GRJDdoypTFzO2sRatRdcecuW8Vabq+bfPJS3SZ
+         nmzaRTTkcRwgLTEIm4q6Hl3/ul5h3Orxbv+uSDOJEL0xwo613a87bkWko3Aj+iLQ04b5
+         0rLAPfet464O3eiN6ME+udYV30cu6R16WvhddmgjRRWBSjNmU8oVkXdRpC6kid/xiE3i
+         PtLoUzQUC40nyNZ+xeQHe3Z9o6sxNBQJPG8kmeZehp+2K2NXoAn8YcKMlT+1fb+0m9ff
+         aDhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715701147; x=1716305947;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LBawWwjcxALOoVHPnP/xkOR0sFQUYdbuftVX1+1xI+c=;
+        b=rwyCA73SXzP3TFGqIIh0f3JrKMxMzc3gRdXdIqOEkp2J3EWaJrT/JpiAQohmv7Yit/
+         LHuRLFLxYChIVp9Ln+3mAghAYqTxOu6byOp/iAEXt7sNUNvRL9+6gWmVLqeX1XCQ38ZD
+         BDlbQ+Mn8n/qfv+B438sYGfj8snyyKmU+OWmwZnATtX1fbdPt2GFgCDvlKn/V3hLZMWW
+         fLmwZW9H07gnzByiyBJOqoKkhDgKiJYdzRfZpAXde2FU00pN1sG+K+vmT3jSndDqjcpT
+         LD0TM5dtqaax9lvUqOtExPctAMf4bQZTxK4eOj9RGXnHr/zZrjct7lqK3vY2zz/xoR/5
+         jTlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPOL7FrXIrphTJFdOd+gCBJLnJXkleXChGBAYv1D14r0zdGizlzGoJ9lN+52CtMezkih+Tj7G2hjookcoUZ430eswmEnohN2FyfTj0
+X-Gm-Message-State: AOJu0YxPqKyYfZSBSW3IdXwKkFL+sSkeGxsp1S4j3IGgZWmkU/FY/rtL
+	MKg+wSTFM62W6xSA8NY6KVDW3hJFN4qbXYmMoKOYplG2/QCVddr1j52YvfIjwhwYmJzNFflczUL
+	4YpkTy8UjmVWhC8EJMoHydMG96idLj4UJbKcbXg==
+X-Google-Smtp-Source: AGHT+IHSk3WRMmWu9wJcWqIf1E5fJGz8RUBTaPj3qnqLT5iMFXiBsjcAdOI+LzUzZnBUyAsuXCIieK429Oq/rLRZqXY=
+X-Received: by 2002:a17:90b:1809:b0:2b8:ab23:f2aa with SMTP id
+ 98e67ed59e1d1-2b8ab23f513mr12114313a91.1.1715701147211; Tue, 14 May 2024
+ 08:39:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_08,2024-05-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- impostorscore=0 malwarescore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2405010000
- definitions=main-2405140110
+References: <20240503221634.44274-1-ignat@cloudflare.com> <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
+ <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org> <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
+ <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org> <CALrw=nEZ07U9VhbGsnpchOYw1icUZCnuoHHXkJLzhFqSPe9_fQ@mail.gmail.com>
+ <3bfcacf38d4f5ab5c8008f2d7df539012940222e.camel@HansenPartnership.com>
+In-Reply-To: <3bfcacf38d4f5ab5c8008f2d7df539012940222e.camel@HansenPartnership.com>
+From: Ignat Korchagin <ignat@cloudflare.com>
+Date: Tue, 14 May 2024 16:38:55 +0100
+Message-ID: <CALrw=nE-t6ZWCvPm=3XS_=-UM9D=mMaXL2GOw-QL5GOLtbcHmA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/2] TPM derived keys
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, serge@hallyn.com, linux-integrity@vger.kernel.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On 5/4/24 06:55, Krzysztof Kozlowski wrote:
-> On 01/05/2024 18:12, Eddie James wrote:
->> On 4/30/24 02:04, Krzysztof Kozlowski wrote:
->>> On 29/04/2024 23:01, Eddie James wrote:
->>>> Convert to json-schema for the AST2600 FSI master documentation.
->>> Please mention all the changes from pure conversion.
->>
->> Sure.
->>
->>
->>>> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->>>> ---
->>>> Changes since v3:
->>>>    - Remove quotes around compatible strings
->>>>    - Re-order allOf to below required
->>>>    - Add child node in the example
->>>>    - Change commit message to match similar commits
->>>>
->>>>    .../fsi/aspeed,ast2600-fsi-master.yaml        | 81 +++++++++++++++++++
->>>>    .../bindings/fsi/fsi-master-aspeed.txt        | 36 ---------
->>>>    2 files changed, 81 insertions(+), 36 deletions(-)
->>>>    create mode 100644 Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
->>>>    delete mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml b/Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
->>>> new file mode 100644
->>>> index 000000000000..fcf7c4b93b78
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
->>>> @@ -0,0 +1,81 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Aspeed FSI master
->>>> +
->>>> +maintainers:
->>>> +  - Eddie James <eajames@linux.ibm.com>
->>>> +
->>>> +description:
->>>> +  The AST2600 and later contain two identical FSI masters. They share a
->>>> +  clock and have a separate interrupt line and output pins.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    enum:
->>>> +      - aspeed,ast2600-fsi-master
->>>> +      - aspeed,ast2700-fsi-master
->>> There was no such compatible before.
->>>
->>> How does this even validate? Where is fsi-master? You dropped a
->>> compatible without any explanation.
->>
->> I can make it a separate change to add ast2700.
->>
->>
->> I suppose I don't understand having two compatibles... Aspeed master
->> shouldn't use "fsi-master" as that is too generic, right? Why wouldn't
-> Not necessarily, depends. Dropping it silently is confusing. What about
-> other users? firmware, bootloaders, out-of-tree, other OS? Did you
-> investigate all of them?
-
-
-The old format file actually only used fsi-master in the example, not in 
-the actual properties description. So I didn't really drop a compatible. 
-Device trees using "fsi-master" are just buggy and should be fixed 
-eventually, but I don't think it needs to be part of this series.
-
-
-Thanks,
-
-Eddie
-
-
-
+On Tue, May 14, 2024 at 4:30=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
 >
->> it validate? Devicetrees using "fsi-master" also use
->> "aspeed,ast2600-fsi-master" so they should be OK...
-> No, because the compatibles do not match. Run validation and you will
-> see the errors.
+> On Tue, 2024-05-14 at 14:11 +0100, Ignat Korchagin wrote:
+> >   * if someone steals one of the disks - we don't want them to see it
+> > has encrypted data (no LUKS header)
 >
-> I am fine with dropping such compatible, which is not used by current
-> kernel ABI, but first DTS must be fixed and second some explanation and
-> justification is needed.
->
-> Best regards,
-> Krzysztof
+> What is the use case that makes this important?  In usual operation
+> over the network, the fact that we're setting up encryption is easily
+> identifiable to any packet sniffer (DHE key exchanges are fairly easy
+> to fingerprint), but security relies on the fact that even knowing that
+> we're setting up encryption, the attacker can't gain access to it.  The
+> fact that we are setting up encryption isn't seen as a useful thing to
+> conceal, so why is it important for your encrypted disk use case?
+
+In some "jurisdictions" authorities can demand that you decrypt the
+data for them for "reasons". On the other hand if they can't prove
+there is a ciphertext in the first place - it makes their case harder.
+
+> James
 >
 
