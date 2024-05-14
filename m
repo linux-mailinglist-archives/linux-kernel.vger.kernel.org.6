@@ -1,233 +1,154 @@
-Return-Path: <linux-kernel+bounces-178412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B6D18C4D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:43:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650838C4D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8BE8B21A60
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:43:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952431C21700
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46A314A85;
-	Tue, 14 May 2024 07:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADA517577;
+	Tue, 14 May 2024 07:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToKtV0wL"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AOjU5dzi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDEC1CFBE
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD51413ACC;
+	Tue, 14 May 2024 07:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715672616; cv=none; b=sWhAKkCOK05edmJ6h2Ri9qnCj14/sPwamVG/rp6db1tklMtpKTLe3xAwidWo49Tmnfp0ftAkZTSNeA+8BWX20a8A2KsETdd02GPd2JaFnyv+BDX1B5Ou09XBNEbfeIZJW5edgb6hzYz967ElVvsqWXKpgFUxngE+xwsB5sYrSKc=
+	t=1715672743; cv=none; b=dtAD3DpTwPdueiV91w0J9ZZeO3b7s1TlAVh/9xKIuTZ4q2BkysH3yX++bweniQkhmBMJdq4nip8/6eRCu0kFK5N3P2x740/mufVx5gCmoUkJ4J4tLSG4CSNcwB/nDbB9dBA4qs0/Ykowr7A8KivFtGX/oweezJf8IpwZILE8ZNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715672616; c=relaxed/simple;
-	bh=0jkJlR9ATeBDrDLZcOfKD2f312tTo0MhL9TABgmCgvg=;
+	s=arc-20240116; t=1715672743; c=relaxed/simple;
+	bh=EGS3ZuMGZ+F6WZx/X5Vj2TH/jG0ZBFzj2A5DAjkwPAI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AXSz5YcEqOquLxrR0TXq9Qwo3pMTN3tk7s4RyUd/JEjfIFDKdfUX6cIRG0f4yok1vxO8sefZ9qwbdB9/MHoEFo1/eh/Q+A4jbeSR0uqg0Tb6G+lj/nvlKjYk+zS7LxK6Y1zeyvJ4uKiGlC1vaDnmT1KmwWcGAUYCX+5b2QYCfFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToKtV0wL; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5231efd80f2so2577905e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:43:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715672613; x=1716277413; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/VccQWyT8Bx973VMOtP8EZFRmihEF3ZYyQtstggVOo=;
-        b=ToKtV0wLuYnHzZAFt4k82RwVrY3jyk6lGpkAc0R+130f03bCNyPkSTpD+HMWooDumc
-         rSsWyXn9xTzQmhuavkzgokYVylo5rCd+fe/DUbZSNIZR13ItnBm4SJvHTA5wgX3tOMTh
-         nBbrQbaGuuNfm85trcuH/lcNayZmqZ5MybTrPzWa3JlMshswGua5libdk26aVj7f3AbK
-         cGo3Yv0Bl3YCmobaPbOxI0CRpGzATQFxEGRaXJyrq+ywAoPhFMu2bUrAB9alQI2a/zPh
-         jQ/+ofLFYnApjIGNuTuefyUwd7WUKUq7yZahAlntEa6GDGsYoFXFwG3oipX7qQlN7ADg
-         2XBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715672613; x=1716277413;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4/VccQWyT8Bx973VMOtP8EZFRmihEF3ZYyQtstggVOo=;
-        b=TCbxyU7SYBJ2Rh3P627kG95qRDhjTdRjopJc/VYzduPJhnlEgJRsotOyGto7sTPOVr
-         kimaOmhx0+F/E/bl8wXq029F3hzxPnk0Q2oXnhEMGvCO1LxyNKt0pZnKIdLFsh7fP9gU
-         EV9mM/L41ePjr8Dm2t/jFgWF9H6JyiQEjuDhJrpolvp0Hkt2x5j2f71b2+Im+WEsxokk
-         a8mCQyaPNMRDo2o5swJnz5es8Sxdwv6JKSV55fMMA63/1XMZk5tqXS25FQNwpEqB0bDT
-         2DenZK2TGi9WYn8c0uemGkTRjtDG+cNBXzTBLy8I9PGEn9tDuPiTSOB5cMD6kUzhlPXd
-         ikKA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+v7CMkTDdUliGg7jdYJYBiadxHh/q93ss1Qc19HchgpmzeXxuvJUitFAMbFNWqRARQEdUjOg/eH/PXMxWmuanGDgBRoLgKNdlLNT5
-X-Gm-Message-State: AOJu0YxHEolgZ42gGoPC9fxvL+moIS0a1fp+OdOO292QXxiSBkMQeGnP
-	W75ErGuXIu6Cxi8Tug33cO++hdJXDveOmLDXXFx+0SXcevJrFsM0y0IIKgY3se/jNVtO/M/UUWz
-	40PPoA0FN4bHREiBxUwSpmm/qzJY=
-X-Google-Smtp-Source: AGHT+IHt/JG/ZmyYJllBadnZEpOgJdbG23o910zsW8NOLQGvVoLctHNUu6CNAiEUCuUCPRMHRWRrw2hAWvJKHZ/NG1A=
-X-Received: by 2002:a05:6512:158d:b0:519:5df9:d945 with SMTP id
- 2adb3069b0e04-5220fb77429mr10837058e87.4.1715672613267; Tue, 14 May 2024
- 00:43:33 -0700 (PDT)
+	 To:Cc:Content-Type; b=cuBKKVty5JlT0D6n3v2rlNbjRcQsH+Q5tLv87qtLkFvg7mtmLRNtf1VLIa6Rp5P2fIBxGs5OlHzAstvx5BbP87PTlFzQBKD2bsyQihJp11dt4N0oYTjqTvJUjgWkgjr+IMMQhhTck5jdbCCK1XYtB8T+VYSo3WmkuNwJB0LV+Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AOjU5dzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0CDC4AF07;
+	Tue, 14 May 2024 07:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715672743;
+	bh=EGS3ZuMGZ+F6WZx/X5Vj2TH/jG0ZBFzj2A5DAjkwPAI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AOjU5dzizmJ+ccKgqPrPj4cKxv5pDyunMmD/rI6PXp1uKmJ273a7mFMEh3lp0Oj2t
+	 /6Q4NBUjAAyeUodIuavCcpV8+a/rRHdLFhT1wjNQXtlqP24QOK5A2h++kH43uMfc6d
+	 o16lekPQMIIu8gkTrZ0R76hkCfce2uo/lY3qsnducvDIpRUq6BnHMOnefYLpZvpmIO
+	 WI/VwJIYtOOay2VT2U1o42jtJrF2C78FW16cKmCtQhVoT2KMvhWVOgq6XuSxXrsYpV
+	 nA+6Nrb7gZDwwNW7vl7sYG7eNgoIoqoOmTvLp9UP2r7X7546O0yzvHiKCotwvGsprk
+	 8lT4rGrUyrh5g==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59a8f0d941so1281218166b.2;
+        Tue, 14 May 2024 00:45:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4di7VbMfrYdeMMlwgVD4rK4OaPlT3g3bfqeafUz4mFt9WSnWgDVM71ioNLU8jkwVwV4IfQEi6F7mp6i6TpHXZ0O/IHr8ezC6f0Qc+MkV8ceriJvJt+FtdnzI7SdVhIoEOiBeVWv8ukA==
+X-Gm-Message-State: AOJu0Yxe8eS5WLWBCFIMFXEOwdaCcWsRKVnk+al6dn5e66lEVHoI7H5T
+	Zt/mqlw9/L0eV9xnnlRwQf6+3ie0JbU0E/ejk4L1wfkAYa2333gWVfK+VyfDvm2f6/zUo3XHM3r
+	meWkbaEnmijMr0vlSBC9CcwlX4rM=
+X-Google-Smtp-Source: AGHT+IG/vt7uex7Qy0NM4l2+AXyhPJrZt+Cl6DItLGM2nktOppCoa0s3wse2tMHclrvpOZKL68tnmNP+/iRxh+BiO0c=
+X-Received: by 2002:a17:906:6a1c:b0:a5a:6c0e:90f7 with SMTP id
+ a640c23a62f3a-a5a6c0e91a4mr357298266b.42.1715672741853; Tue, 14 May 2024
+ 00:45:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240513074712.7608-1-ioworker0@gmail.com> <20240513074712.7608-2-ioworker0@gmail.com>
- <2ec286a2-4620-4e6d-ad3d-9b4c0d9e1394@linux.alibaba.com>
-In-Reply-To: <2ec286a2-4620-4e6d-ad3d-9b4c0d9e1394@linux.alibaba.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Tue, 14 May 2024 15:43:21 +0800
-Message-ID: <CAK1f24maLXzb012QOiVitcb-+7gi=64scCtW4H3LLFvbZs7QGw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v5 1/4] mm/rmap: remove duplicated exit code in
- pagewalk loop
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org, sj@kernel.org, 
-	maskray@google.com, ziy@nvidia.com, ryan.roberts@arm.com, david@redhat.com, 
-	21cnbao@gmail.com, mhocko@suse.com, fengwei.yin@intel.com, zokeefe@google.com, 
-	shy828301@gmail.com, xiehuan09@gmail.com, libang.li@antgroup.com, 
-	wangkefeng.wang@huawei.com, songmuchun@bytedance.com, peterx@redhat.com, 
-	minchan@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240514073910.27048-1-yangtiezhu@loongson.cn>
+In-Reply-To: <20240514073910.27048-1-yangtiezhu@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 14 May 2024 15:45:30 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7iOuEEDZNHveirZA9pAH1Ax1+nRo=_miqhyzDSzzCWtw@mail.gmail.com>
+Message-ID: <CAAhV-H7iOuEEDZNHveirZA9pAH1Ax1+nRo=_miqhyzDSzzCWtw@mail.gmail.com>
+Subject: Re: [RFC PATCH] LoongArch: Remove ACPI related ifdefs in platform_init()
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: rafael@kernel.org, loongarch@lists.linux.dev, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Baolin,
+Hi, Tiezhu,
 
-Thanks for taking time to review!
+On Tue, May 14, 2024 at 3:39=E2=80=AFPM Tiezhu Yang <yangtiezhu@loongson.cn=
+> wrote:
+>
+> acpi_table_upgrade() and acpi_boot_table_init() are defined as
+> empty function under !CONFIG_ACPI_TABLE_UPGRADE and !CONFIG_ACPI
+> in include/linux/acpi.h, there are no implicit declaration errors
+> with various configs. Furthermore, CONFIG_ACPI is always set due
+> to config ACPI is selected by config LOONGARCH. Thus, just remove
+> ACPI related ifdefs to call the functions directly.
+>
+>   #ifdef CONFIG_ACPI_TABLE_UPGRADE
+>   void acpi_table_upgrade(void);
+>   #else
+>   static inline void acpi_table_upgrade(void) { }
+>   #endif
+>
+>   #ifdef        CONFIG_ACPI
+>   ...
+>   void acpi_boot_table_init (void);
+>   ...
+>   #else /* !CONFIG_ACPI */
+>   ...
+>   static inline void acpi_boot_table_init(void)
+>   {
+>   }
+>   ...
+>   #endif        /* !CONFIG_ACPI */
+>
+> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+> ---
+>
+> Another way is to guard the related code under CONFIG_ACPI,
+> but I think it is not necessary, like this:
+>
+> @@ -351,10 +351,8 @@ void __init platform_init(void)
+>         arch_reserve_vmcore();
+>         arch_reserve_crashkernel();
+>
+> -#ifdef CONFIG_ACPI_TABLE_UPGRADE
+> -       acpi_table_upgrade();
+> -#endif
+>  #ifdef CONFIG_ACPI
+> +       acpi_table_upgrade();
+>         acpi_gbl_use_default_register_widths =3D false;
+>         acpi_boot_table_init();
+>  #endif
+I agree to remove CONFIG_ACPI_TABLE_UPGRADE since it is ugly and
+unnecessary here. But I prefer to keep CONFIG_ACPI (in addition, put
+acpi_table_upgrade() after CONFIG_ACPI). Because CONFIG_ACPI is not
+just to prevent build error, but also a signal to tell us the code is
+ACPI-specific.
 
-Best,
-Lance
+Huacai
 
-On Tue, May 14, 2024 at 2:26=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
 >
+>  arch/loongarch/kernel/setup.c | 4 ----
+>  1 file changed, 4 deletions(-)
 >
+> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.=
+c
+> index 60e0fe97f61a..da96f871cf73 100644
+> --- a/arch/loongarch/kernel/setup.c
+> +++ b/arch/loongarch/kernel/setup.c
+> @@ -351,13 +351,9 @@ void __init platform_init(void)
+>         arch_reserve_vmcore();
+>         arch_reserve_crashkernel();
 >
-> On 2024/5/13 15:47, Lance Yang wrote:
-> > Introduce the labels walk_done and walk_done_err as exit points to
-> > eliminate duplicated exit code in the pagewalk loop.
-> >
-> > Reviewed-by: Zi Yan <ziy@nvidia.com>
-> > Signed-off-by: Lance Yang <ioworker0@gmail.com>
+> -#ifdef CONFIG_ACPI_TABLE_UPGRADE
+>         acpi_table_upgrade();
+> -#endif
+> -#ifdef CONFIG_ACPI
+>         acpi_gbl_use_default_register_widths =3D false;
+>         acpi_boot_table_init();
+> -#endif
 >
-> LGTM.
-> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>         early_init_fdt_scan_reserved_mem();
+>         unflatten_and_copy_device_tree();
+> --
+> 2.42.0
 >
-> > ---
-> >   mm/rmap.c | 40 +++++++++++++++-------------------------
-> >   1 file changed, 15 insertions(+), 25 deletions(-)
-> >
-> > diff --git a/mm/rmap.c b/mm/rmap.c
-> > index e8fc5ecb59b2..ddffa30c79fb 100644
-> > --- a/mm/rmap.c
-> > +++ b/mm/rmap.c
-> > @@ -1679,9 +1679,7 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >                       /* Restore the mlock which got missed */
-> >                       if (!folio_test_large(folio))
-> >                               mlock_vma_folio(folio, vma);
-> > -                     page_vma_mapped_walk_done(&pvmw);
-> > -                     ret =3D false;
-> > -                     break;
-> > +                     goto walk_done_err;
-> >               }
-> >
-> >               pfn =3D pte_pfn(ptep_get(pvmw.pte));
-> > @@ -1719,11 +1717,8 @@ static bool try_to_unmap_one(struct folio *folio=
-, struct vm_area_struct *vma,
-> >                        */
-> >                       if (!anon) {
-> >                               VM_BUG_ON(!(flags & TTU_RMAP_LOCKED));
-> > -                             if (!hugetlb_vma_trylock_write(vma)) {
-> > -                                     page_vma_mapped_walk_done(&pvmw);
-> > -                                     ret =3D false;
-> > -                                     break;
-> > -                             }
-> > +                             if (!hugetlb_vma_trylock_write(vma))
-> > +                                     goto walk_done_err;
-> >                               if (huge_pmd_unshare(mm, vma, address, pv=
-mw.pte)) {
-> >                                       hugetlb_vma_unlock_write(vma);
-> >                                       flush_tlb_range(vma,
-> > @@ -1738,8 +1733,7 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >                                        * actual page and drop map count
-> >                                        * to zero.
-> >                                        */
-> > -                                     page_vma_mapped_walk_done(&pvmw);
-> > -                                     break;
-> > +                                     goto walk_done;
-> >                               }
-> >                               hugetlb_vma_unlock_write(vma);
-> >                       }
-> > @@ -1811,9 +1805,7 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >                       if (unlikely(folio_test_swapbacked(folio) !=3D
-> >                                       folio_test_swapcache(folio))) {
-> >                               WARN_ON_ONCE(1);
-> > -                             ret =3D false;
-> > -                             page_vma_mapped_walk_done(&pvmw);
-> > -                             break;
-> > +                             goto walk_done_err;
-> >                       }
-> >
-> >                       /* MADV_FREE page check */
-> > @@ -1852,23 +1844,17 @@ static bool try_to_unmap_one(struct folio *foli=
-o, struct vm_area_struct *vma,
-> >                                */
-> >                               set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> >                               folio_set_swapbacked(folio);
-> > -                             ret =3D false;
-> > -                             page_vma_mapped_walk_done(&pvmw);
-> > -                             break;
-> > +                             goto walk_done_err;
-> >                       }
-> >
-> >                       if (swap_duplicate(entry) < 0) {
-> >                               set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> > -                             ret =3D false;
-> > -                             page_vma_mapped_walk_done(&pvmw);
-> > -                             break;
-> > +                             goto walk_done_err;
-> >                       }
-> >                       if (arch_unmap_one(mm, vma, address, pteval) < 0)=
- {
-> >                               swap_free(entry);
-> >                               set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> > -                             ret =3D false;
-> > -                             page_vma_mapped_walk_done(&pvmw);
-> > -                             break;
-> > +                             goto walk_done_err;
-> >                       }
-> >
-> >                       /* See folio_try_share_anon_rmap(): clear PTE fir=
-st. */
-> > @@ -1876,9 +1862,7 @@ static bool try_to_unmap_one(struct folio *folio,=
- struct vm_area_struct *vma,
-> >                           folio_try_share_anon_rmap_pte(folio, subpage)=
-) {
-> >                               swap_free(entry);
-> >                               set_pte_at(mm, address, pvmw.pte, pteval)=
-;
-> > -                             ret =3D false;
-> > -                             page_vma_mapped_walk_done(&pvmw);
-> > -                             break;
-> > +                             goto walk_done_err;
-> >                       }
-> >                       if (list_empty(&mm->mmlist)) {
-> >                               spin_lock(&mmlist_lock);
-> > @@ -1918,6 +1902,12 @@ static bool try_to_unmap_one(struct folio *folio=
-, struct vm_area_struct *vma,
-> >               if (vma->vm_flags & VM_LOCKED)
-> >                       mlock_drain_local();
-> >               folio_put(folio);
-> > +             continue;
-> > +walk_done_err:
-> > +             ret =3D false;
-> > +walk_done:
-> > +             page_vma_mapped_walk_done(&pvmw);
-> > +             break;
-> >       }
-> >
-> >       mmu_notifier_invalidate_range_end(&range);
 
