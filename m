@@ -1,101 +1,139 @@
-Return-Path: <linux-kernel+bounces-179037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC008C5AC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:02:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CD78C5ABA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CD241C20953
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:01:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E844282093
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0B31802CA;
-	Tue, 14 May 2024 18:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WVazgG+d"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451E31802CC;
+	Tue, 14 May 2024 18:00:19 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978395A0F9;
-	Tue, 14 May 2024 18:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9AE1802B6;
+	Tue, 14 May 2024 18:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715709711; cv=none; b=p3zyxboVzX376FPPplp+w0MjXXnQj0ymK+MvZt0exCW0aR6pxBPeCW9MVoEo3mxfcTiPPyYggn7ZuokeXoPmljRnIM73y4RR0XRXxN6Qsu7i+RA+uSMBMy7fb3Una8QatBb/3MAk/FtreFs9etVlVccONV7ElwSYCr2no1IszW4=
+	t=1715709618; cv=none; b=J8iVnm0a3BzL6f9dxMR4wbjQWrJ+mcWvTDNk4q1C2TsvUJciJo6Jx+yNrDPJfAJiQ38uEcGGP0L3AeIDRe9uuHqD3h0PutFPvRQLy+fL9h8+26EVbXwF1LGpWYwDDkDlTArmjYDagnbey0H4RaMdsZNjsRCD+W+FFYdZGQycNug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715709711; c=relaxed/simple;
-	bh=t0pn0JNCna/jpDpULhlRDx6AaFa/UGmj1g52RuWhG/g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Gqxfeq5Tn+Z4yifrkgWmb95Jlt10o1M21Hz9J+SOYvT/QW+xhjH5HNYt5r/9jIqYDxlmH79HLWb/UFd24RdazgLEkO3+pQWApdEHA17Y71Z9GNcXsznE7w5F0omK1XuaNUXPeJyOKEOctdGRkFz3igarf8arhCjhhbVS6/4ATwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WVazgG+d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0375EC2BD10;
-	Tue, 14 May 2024 18:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715709711;
-	bh=t0pn0JNCna/jpDpULhlRDx6AaFa/UGmj1g52RuWhG/g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WVazgG+dkt85H1RC25h9mmqF81xyuDWDu5gCfGxbrgCRS4cy1XPjmbAPmzfSWVWS8
-	 NcvYoDIbeQAeCg9t1M4B8yTjE333wuzC38fGPZBMc5ZvEP+6eq431m7AjHsLzp8RRA
-	 778zSdC/df+F95aWSPsbRcjUyavXyy2gAZ6TFoGP1sIfNa/apzoCwZfBGHGJbISBXw
-	 Q1w3vDH/XL1x+xMKghsgUNeCm5nJw2L1q++qOntor11kMe1eWwQEpi4hyKlWkusRDp
-	 4UUpeZ9/hmzMafm6fSXnxwEsFt2qs3EYaxJEq3yU3SeuE6YNct87wNV9pigqdSryxA
-	 a+Rdj1oTcUj7g==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.8 000/336] 6.8.10-rc1 review
-Date: Tue, 14 May 2024 20:00:11 +0200
-Message-ID: <20240514180011.25153-1-ojeda@kernel.org>
-In-Reply-To: <20240514101038.595152603@linuxfoundation.org>
-References: <20240514101038.595152603@linuxfoundation.org>
+	s=arc-20240116; t=1715709618; c=relaxed/simple;
+	bh=PGg21Fv5zTdyXu46lFNWZlRUE2G+nr6G9MZPkue/+SI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwtc+Gt8OC24W5S6RwYCMqKinTQ0lsQmxI2DS89bsyVI80GZy8fVw9nd5kqL/OYu4OTMDkfbc0COvKpfq98QSUrMzCR5S0sL/nQ+Omn9lwi5qnN3P295EOjJkhKSPr0taYZILNi2EFJXQadlKttWcKt9j8HCeSWBwW5gYzkCdsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235D4C2BD10;
+	Tue, 14 May 2024 18:00:14 +0000 (UTC)
+Date: Tue, 14 May 2024 19:00:12 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [PATCH v2 09/14] arm64: Enable memory encrypt for Realms
+Message-ID: <ZkOmrMIMFCgEKuVw@arm.com>
+References: <20240412084213.1733764-1-steven.price@arm.com>
+ <20240412084213.1733764-10-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240412084213.1733764-10-steven.price@arm.com>
 
-On Tue, 14 May 2024 12:13:24 +0200 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.8.10 release.
-> There are 336 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 16 May 2024 10:09:32 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.8.10-rc1.gz
-> or in the git tree and branch at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.8.y
-> and the diffstat can be found below.
+On Fri, Apr 12, 2024 at 09:42:08AM +0100, Steven Price wrote:
+>  static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
+> @@ -41,6 +45,7 @@ static int change_page_range(pte_t *ptep, unsigned long addr, void *data)
+>  	pte = clear_pte_bit(pte, cdata->clear_mask);
+>  	pte = set_pte_bit(pte, cdata->set_mask);
+>  
+> +	/* TODO: Break before make for PROT_NS_SHARED updates */
+>  	__set_pte(ptep, pte);
+>  	return 0;
 
-Boot-tested under QEMU (x86_64, loongarch64) for Rust:
+Oh, this TODO is problematic, not sure we can do it safely. There are
+some patches on the list to trap faults from other CPUs if they happen
+to access the page when broken but so far we pushed back as complex and
+at risk of getting the logic wrong.
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+From an architecture perspective, you are changing the output address
+and D8.16.1 requires a break-before-make sequence (FEAT_BBM doesn't
+help). So we either come up with a way to do BMM safely (stop_machine()
+maybe if it's not too expensive or some way to guarantee no accesses to
+this page while being changed) or we get the architecture clarified on
+the possible side-effects here ("unpredictable" doesn't help).
 
-Thanks!
+>  }
+> @@ -192,6 +197,43 @@ int set_direct_map_default_noflush(struct page *page)
+>  				   PAGE_SIZE, change_page_range, &data);
+>  }
+>  
+> +static int __set_memory_encrypted(unsigned long addr,
+> +				  int numpages,
+> +				  bool encrypt)
+> +{
+> +	unsigned long set_prot = 0, clear_prot = 0;
+> +	phys_addr_t start, end;
+> +
+> +	if (!is_realm_world())
+> +		return 0;
+> +
+> +	WARN_ON(!__is_lm_address(addr));
 
-Cheers,
-Miguel
+Just return from this function if it's not a linear map address. No
+point in corrupting other areas since __virt_to_phys() will get it
+wrong.
+
+> +	start = __virt_to_phys(addr);
+> +	end = start + numpages * PAGE_SIZE;
+> +
+> +	if (encrypt) {
+> +		clear_prot = PROT_NS_SHARED;
+> +		set_memory_range_protected(start, end);
+> +	} else {
+> +		set_prot = PROT_NS_SHARED;
+> +		set_memory_range_shared(start, end);
+> +	}
+> +
+> +	return __change_memory_common(addr, PAGE_SIZE * numpages,
+> +				      __pgprot(set_prot),
+> +				      __pgprot(clear_prot));
+> +}
+
+Can someone summarise what the point of this protection bit is? The IPA
+memory is marked as protected/unprotected already via the RSI call and
+presumably the RMM disables/permits sharing with a non-secure hypervisor
+accordingly irrespective of which alias the realm guest has the linear
+mapping mapped to. What does it do with the top bit of the IPA? Is it
+that the RMM will prevent (via Stage 2) access if the IPA does not match
+the requested protection? IOW, it unmaps one or the other at Stage 2?
+
+Also, the linear map is not the only one that points to this IPA. What
+if this is a buffer mapped in user-space or remapped as non-cacheable
+(upgraded to cacheable via FWB) in the kernel, the code above does not
+(and cannot) change the user mappings.
+
+It needs some digging into dma_direct_alloc() as well, it uses a
+pgprot_decrypted() but that's not implemented by your patches. Not sure
+it helps, it looks like the remap path in this function does not have a
+dma_set_decrypted() call (or maybe I missed it).
+
+-- 
+Catalin
 
