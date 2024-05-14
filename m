@@ -1,175 +1,231 @@
-Return-Path: <linux-kernel+bounces-178353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409218C4C70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:48:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE038C4C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ECA71C20B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB2281C20CE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 06:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D65E574;
-	Tue, 14 May 2024 06:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8F7F9F5;
+	Tue, 14 May 2024 06:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="entCGTg4"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2040.outbound.protection.outlook.com [40.107.220.40])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aLWAwZFg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48ED3101CA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715669325; cv=fail; b=W6hqNIm0UDK3oub4VlFvykgrtMCS4be7+6xdPbb9h+3GX6NzPxe1IoC1FbbfccjF0oMka3woooaaWg8aD+X9cDTlYdiIxEES9THucrwQVtsTWU8rd/kBYQGk2ae9rCE9b9uNPwkgE0VS1sBj6N2d6jqBZEL9Ms77Co43MnbOS3E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715669325; c=relaxed/simple;
-	bh=T0i0nbOb0s2u0ax1rsABIW9S6BN5wm4Dw3V5WcRarI4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UrZgD1bzcvFrV1cMMlYFDd4F2+gx21Tw1gCoMg/rae2nYe90ksqeDvQFZf0NR2bLImnsEBXkgpkdaK4wLmqr2CYsgkWPFkrkWmlsx/3/CuLaSgRSf/LWEvx3GUhSj9uVbSoGfGj06SkwTMYHZt2Uw/8DrnXdg2xsdTnSJxcjEJ4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=entCGTg4; arc=fail smtp.client-ip=40.107.220.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F8MooboGh48unMKRNNn+AG1KayYD5MKeTNDN53gRUOGJR/jlA6k8OMklpCiS3CsAK6CzHLbxahg7KeK8hjLdTbHS5/pAY4riaIXFZ7rHuYxG3rWBR7jHNwkK7VpG0eOM650xNB3GlBgnT5qEfhJCA6EGbyfbPa0dcXP55PMM+qlCczab9umF9IOkX/D/NcnW9z7GVgH/BaI9jSBa260D686vX+nkT58kwLx84onfhsqyZOQ4uvqF4eoM6HLcv8YX5jFr6lg+HwzqucHeN0GC5JNSY3n50kdcL6KQXYV3AOEevlDJ7Qnr01NTenIMKIUXKUbTJ2wVm2P9rYOMe7tmaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J/+ZZ+snoJ3pRJ6mkpMAPrfGrKR/U0AfW9j3/EaXSzY=;
- b=RbfjjrUzI5k+/YxRqmCTDSWdlqGdpihQJ5Hm13Er/KKtGML4lgFmJfvjWz0OoYf0u5QfvcTfRFP67ebES9qTHjXIeOgeFzq/4np9G+oEFt0GTuvFQFWQCG6MIDe9sU6kQHhIgCUgN4kBC1Dbf6TFNpt9y9ODV2AuDpDR9DAS00x8qVzVcBho6Ny9c6mpgqvMYkJVgwzgPE0Wy8w0FfM2ex+JZehZEj80aJc28LVBHmM++GPEO2x26yUgNQy7saSRniFXZw6tfyf/GDK0OcfHmpmElwwY2VdOl/46SmGg+k2IQV1LYAoRBRFVkJXoPSuCa26HDoKchOoYcAE7vFCItg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linux-foundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=J/+ZZ+snoJ3pRJ6mkpMAPrfGrKR/U0AfW9j3/EaXSzY=;
- b=entCGTg4YlWO0QkTOM0mc/RAC2Fuppk+2ZYAHBDyw2hVSLJkaWHwENdK4FoJsfkdtHrJ5NRbvG2l/GIKS2BWMviHVXPVqqX3Q98MFXk8CBr2F5CecMmBYZNV5H1vnzYMtOT88lfpUxrKJkSxoWw6CIm73hQvgUJr0IsJWqCAoK9N+yB1klSFLPzQ0p4bfzxX+4vyFAfK/lqQhn1XWCT84pheb6FlIYGuj5BuOz/gSwsH5tYxmTb6UhkLc2IPxZ+/6iy68cqf0ZNgJu1XgK1SWM0VmqwUCvyPS7gh2aCEOkUfe+KAvRw32Tlx5+5nIfG30kux2xoUBvGtb0hvKcaQAw==
-Received: from CH2PR17CA0011.namprd17.prod.outlook.com (2603:10b6:610:53::21)
- by DS0PR12MB7629.namprd12.prod.outlook.com (2603:10b6:8:13e::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Tue, 14 May
- 2024 06:48:41 +0000
-Received: from CH1PEPF0000AD7E.namprd04.prod.outlook.com
- (2603:10b6:610:53:cafe::87) by CH2PR17CA0011.outlook.office365.com
- (2603:10b6:610:53::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55 via Frontend
- Transport; Tue, 14 May 2024 06:48:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- CH1PEPF0000AD7E.mail.protection.outlook.com (10.167.244.87) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7452.22 via Frontend Transport; Tue, 14 May 2024 06:48:40 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 13 May
- 2024 23:48:38 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 13 May 2024 23:48:37 -0700
-Received: from 717d7c0-lcedt.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 13 May 2024 23:48:37 -0700
-From: Dipen Patel <dipenp@nvidia.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: <dipenp@nvidia.com>, <u.kleine-koenig@pengutronix.de>,
-	<linux-kernel@vger.kernel.org>, <timestamp@lists.linux.dev>
-Subject: [GIT PULL] hte: Changes for v6.10-rc1
-Date: Mon, 13 May 2024 23:48:12 -0700
-Message-ID: <20240514064812.183839-1-dipenp@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC395E541
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715669842; cv=none; b=ZHX0WQNfmEoLXU+2+PuDmA+iabOS+LP8Jpg98XPHb0J5H3/VpH8pwpwQqWGwdt49uUIgMzSowis1qmNMbPl0NY2zngDtu70Gf3fyZmYbp/+s9Y1LnQ8zhR01m6mVOBiyDBkZhZy7j6vbqyjRenH109WmpwhUh5uDt03/J8M9vZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715669842; c=relaxed/simple;
+	bh=6aIPSi+GUkocJtWzCmsTX5dWm52pyDTisNVEAYOpQmc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E7SLRKrE0t6IcDtYGVTrBNDKMDeB/9vxsWaCE1alpMCKO0WJHXDQXv0+4iXZPnjc604a6LV08MiRfpU9Nd52PRAUP64UQRLpDAxOr/2zeYAHRhpbGyFdszGdI2hNnyvuL4fVc8KtLZawna4mcPNHnLZY/SBQGdT/YGAbutPo3eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aLWAwZFg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1715669839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tt9yK6I/O8EYanlAPHDgSca+ykSFbvnV0w6tvpdiWNs=;
+	b=aLWAwZFgCipLW3NAVlwOecJdWoTFR055JKQ6URJCRmbdGR5NJZol2I7Lek0iN1zQTfT+vI
+	y3l5Ojhky/5Re1zBDsNtuRz0cP8/sDX0NeufSeKZWUl/gEZi5Fh6s+pECrFng9yP8/YqTj
+	iiKasC2mfmcROAjZq+P5Qymel9o13NQ=
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
+ [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-551-7442m_BxOvCvu2k5h7r6kw-1; Tue, 14 May 2024 02:52:18 -0400
+X-MC-Unique: 7442m_BxOvCvu2k5h7r6kw-1
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-635731168f7so2981838a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 23:52:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715669537; x=1716274337;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tt9yK6I/O8EYanlAPHDgSca+ykSFbvnV0w6tvpdiWNs=;
+        b=a5mp22ghap/L6gvAgberFHyLauBHfh9I6vpePFlh1Re5dPMaRFl+TE5MtnMpI2lx3p
+         OCKsxRUQfyyJcZPvqh3qwpnnfqdi3vOpx+o7eHC1YWTBqFz0B+qg3I+8lU9+yia173DO
+         /DIS8bN+X3JC4VDuyQIuQDDsg30C2BFJ7nMeumkTTi+CAhq1NnoQVoIuqXNZmrtj1diP
+         AAybsNcQ11x1gh9vGBS/vO+GXPOMv1R1eriMwLK8wPP5wfvkslT1QJaous6Zvevf42FW
+         ISwoazP5/X5HGXULKTX1hgFAyS1g6Syx8shc0dOoGBm2+3VmQMQdBO2RZVW7SQs4562f
+         I57Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXmx7qxwIDQFU6aVlvN5DV4po4FlE8RxbFC3r1jC6xJtnCH31LTpBUqRd6P1H/CCav3kwQf+DyZHXgtNr8antBJY1elVebj26LDiCnY
+X-Gm-Message-State: AOJu0Yz7vBT/MId4qdHrnZP23V6Mxe5BTxHmg7DStofvsM1w/ojoiHpp
+	vXKSlCB9JXfnxr2dcE+nApXDmVb1lo7JoujxqiRXjUi6mMW6/yhlW/kGZEdFnTZH/jLgXi+KwEE
+	8wZ0cktVR3BiKIlE0ZRMX8SfRSxUTOayUoQXcwY8/H/C6OgNz+zNYrTAM7QkBxyJFPPikBVSiI9
+	3/5l3XWpqdMMsMyLAbhslB+NIZrRwNn0eOOmfS
+X-Received: by 2002:a05:6a20:2d2a:b0:1af:f5d3:b919 with SMTP id adf61e73a8af0-1aff5d3ba1emr5310272637.4.1715669537027;
+        Mon, 13 May 2024 23:52:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH03hiv7dUouGI6qNIM6FbukFBpKI4K+JPWCWHUdhQQ/ueIAvM2k6M9rZP5Vm/SRlGw8FRyKAXO5ebt9NZab3c=
+X-Received: by 2002:a05:6a20:2d2a:b0:1af:f5d3:b919 with SMTP id
+ adf61e73a8af0-1aff5d3ba1emr5310243637.4.1715669536555; Mon, 13 May 2024
+ 23:52:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com> <20240509011900.2694291-4-yukuai1@huaweicloud.com>
+In-Reply-To: <20240509011900.2694291-4-yukuai1@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Tue, 14 May 2024 14:52:05 +0800
+Message-ID: <CALTww2-RPH_eYBumjxhHLkj7J2tfHskTYNif93Hwn5ksCN0+kA@mail.gmail.com>
+Subject: Re: [PATCH md-6.10 3/9] md: add new helpers for sync_action
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org, 
+	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
+	yangerkun@huawei.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD7E:EE_|DS0PR12MB7629:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99ba27a4-7b85-4b21-aff5-08dc73e1e411
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|82310400017|36860700004|376005|1800799015;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eFI4dGVUSFhoOGc3WDZpUVplVnZtZTg4YW5RTXc4OTROVC9Hd0R2WmJLYTRu?=
- =?utf-8?B?SDQvOU41WlRMU0hJdmNBNzZzajBYVlp2eUFwbzk0dGIzZVg2M3hKTzAvRkZV?=
- =?utf-8?B?cklpczIzdkNud3kxTVB4aTdncHYvcys4bDQ4WTJnbkZLNzBTTnh4eEhNY3hl?=
- =?utf-8?B?bG1OTkxBN0JpMFVWeTJkeXlzNjZiL1lZQnlJWGx4ZExncEo5V0RWYXRucDc0?=
- =?utf-8?B?RmduSmFlQUZBcVhjTlVtVzFMN1dwUWorRmowdDVJM1AraTE3a3hxQjAxNVQ3?=
- =?utf-8?B?NlpwRys2bUpqaWZYdmxUditCTVczZmJCdFVMU1MwNzFsNzI3SS92WUNqcUF3?=
- =?utf-8?B?WnlMNU9wSnZ3a1ZlNklqL0lhV3dsdC9Ea2NXLzhTbTBPL2JER0VoSnJxekht?=
- =?utf-8?B?L3c1SFQyazV4RUV1UzdHMHlLS01LQlBnWWdCWHZvdHNKZWQ0dldDSmVkbXcx?=
- =?utf-8?B?RXVLa1VrMndwSWt2VW4vL1JUMjRrM2d4czhNQ1BhS01LZ1pHTVFseUNnUThB?=
- =?utf-8?B?a3A0K0RUZEhTcE5lRzU3S3BZMFBic3d5eXVTajZRWGZ5dldUd3BoeHJCVGNJ?=
- =?utf-8?B?OUFyMzhBbTl4WlJ1SVdvTGZ3UVUyQUZsbVNPV29VNm11RHAwbVZrdWN0akp6?=
- =?utf-8?B?d1lLdzVlWU0wOGR2c2E1bDJNY0EwLzlDVkxQSkd3NTJ6TjVyWTAzL0FHVHRn?=
- =?utf-8?B?U2R3MkFHTUNxVWx4dUZyZVVTWmhiSC9lVW8rMWRBODRKaE05SjkrY1YrUGZx?=
- =?utf-8?B?MnBueUdpVkxlZVFyOVNWL1FLdStSVUw1KzE2UjFUUUdJT2JGeFZ1ZTl2Unc4?=
- =?utf-8?B?UUlNalBCMDFyd3hSQm94UFZqbkxWNFFPRi9aREt4RXErKytxQWpBMzVONVpr?=
- =?utf-8?B?c3k2eVJxazJwWGRUMFkyQjNqNTdvQjRKdUVhSWtkVm0yS2xsYXV3eWV5TGJ4?=
- =?utf-8?B?Tk5lWEdpVWxtd2pVK2N5ellGT1UrTjVCK3pPZlJNSHhCYTdSRzNVMmVXRkhl?=
- =?utf-8?B?ZjI2VEhmRTJpd2JCVTJTTGJwbm5PYnNSZHVPNmh3bE9pb3pjUXRZeFVwZFI5?=
- =?utf-8?B?VWFBSnpqdkxhTG0xa1E2Q0pkL0gzMml1UllJTDJWbGFORWJPdlJPa3ZNR1N6?=
- =?utf-8?B?QmJMVEV1cTVENHVYU2dDc3pxdGFYUmU4MU1aSlZXU2Y2RnVKM2s1Um0yTUh5?=
- =?utf-8?B?bVlmZ2xJanpra3Z6MXJjMFJCVk5tQjJpSUlGS21UaXlYMEExMzh3emVjV09T?=
- =?utf-8?B?cWcwTVdtWTU5d1ZKb2FraWhnMzAxL3BXQkFEUFJhS2dMUlk5YlFIMlVNdDFn?=
- =?utf-8?B?UWdmaUFXQ2ZEaFBpN2lwdm93VUowNVd2aU9sbEsvSDdKSTJoN0R1ZHZURElV?=
- =?utf-8?B?WTlkRjRPbllQUUROY2NYUVREZnlzbjdCV240KzhWVFF1UktpSmZNUHc5NXoy?=
- =?utf-8?B?WTU3U1dlUURJUUdqZEk4UU8vaGxSQzFuVHJhdTJtejZUL1RNeUdtbHdzeks4?=
- =?utf-8?B?N2Z2Rk85UUN3eW9XVUtRQ1FFUkwxaXVaZEphcGExOEhKckg2SzF1Z3JxYld1?=
- =?utf-8?B?aGt6ekF2UmpLQU0wMmxxc1lXQ0tvUWM1Z0xJYTRGVWpPWTYwMXlSWVF3L0Fv?=
- =?utf-8?B?VzRQUUVKK3pHcUYzTUJrNjRBOWxSWFFZNlhwbkZHTmJLZXRha1c2SlA3Z2k2?=
- =?utf-8?B?ckIrWnozaSs4bEFOaEJQLzkwbWJBaVdYQ0FnM1h2RHF2WUprem9OcmNWZ21M?=
- =?utf-8?B?YWhUd3RpakNMOFVBR1phWkFCWG16dDRaUlBaQVpySC9acjhhckNNWTZ0VGRx?=
- =?utf-8?Q?UG1cVw4GoFDtmzXREf9dfcug1ir7ypvYMRLnQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230031)(82310400017)(36860700004)(376005)(1800799015);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 May 2024 06:48:40.9404
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99ba27a4-7b85-4b21-aff5-08dc73e1e411
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD7E.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7629
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+On Mon, May 13, 2024 at 5:31=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> The new helpers will get current sync_action of the array, will be used
+> in later patches to make code cleaner.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/md/md.h |  3 +++
+>  2 files changed, 67 insertions(+)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 00bbafcd27bb..48ec35342d1b 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -69,6 +69,16 @@
+>  #include "md-bitmap.h"
+>  #include "md-cluster.h"
+>
+> +static char *action_name[NR_SYNC_ACTIONS] =3D {
+> +       [ACTION_RESYNC]         =3D "resync",
+> +       [ACTION_RECOVER]        =3D "recover",
+> +       [ACTION_CHECK]          =3D "check",
+> +       [ACTION_REPAIR]         =3D "repair",
+> +       [ACTION_RESHAPE]        =3D "reshape",
+> +       [ACTION_FROZEN]         =3D "frozen",
+> +       [ACTION_IDLE]           =3D "idle",
+> +};
+> +
+>  /* pers_list is a list of registered personalities protected by pers_loc=
+k. */
+>  static LIST_HEAD(pers_list);
+>  static DEFINE_SPINLOCK(pers_lock);
+> @@ -4867,6 +4877,60 @@ metadata_store(struct mddev *mddev, const char *bu=
+f, size_t len)
+>  static struct md_sysfs_entry md_metadata =3D
+>  __ATTR_PREALLOC(metadata_version, S_IRUGO|S_IWUSR, metadata_show, metada=
+ta_store);
+>
+> +enum sync_action md_sync_action(struct mddev *mddev)
+> +{
+> +       unsigned long recovery =3D mddev->recovery;
+> +
+> +       /*
+> +        * frozen has the highest priority, means running sync_thread wil=
+l be
+> +        * stopped immediately, and no new sync_thread can start.
+> +        */
+> +       if (test_bit(MD_RECOVERY_FROZEN, &recovery))
+> +               return ACTION_FROZEN;
+> +
+> +       /*
+> +        * idle means no sync_thread is running, and no new sync_thread i=
+s
+> +        * requested.
+> +        */
+> +       if (!test_bit(MD_RECOVERY_RUNNING, &recovery) &&
+> +           (!md_is_rdwr(mddev) || !test_bit(MD_RECOVERY_NEEDED, &recover=
+y)))
+> +               return ACTION_IDLE;
 
-  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+Hi Kuai
 
-are available in the Git repository at:
+Can I think the above judgement cover these two situations:
+1. The array is readonly / readauto and it doesn't have
+MD_RECOVERY_RUNNING. Now maybe it has MD_RECOVERY_NEEDED, it means one
+array may want to do some sync action, but the array state is not
+readwrite and it can't start.
+2. The array doesn't have MD_RECOVERY_RUNNING and MD_RECOVERY_NEEDED
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/pateldipen1984/linux.git tags/for-6.10-rc1
+> +
+> +       if (test_bit(MD_RECOVERY_RESHAPE, &recovery) ||
+> +           mddev->reshape_position !=3D MaxSector)
+> +               return ACTION_RESHAPE;
+> +
+> +       if (test_bit(MD_RECOVERY_RECOVER, &recovery))
+> +               return ACTION_RECOVER;
+> +
+> +       if (test_bit(MD_RECOVERY_SYNC, &recovery)) {
+> +               if (test_bit(MD_RECOVERY_CHECK, &recovery))
+> +                       return ACTION_CHECK;
+> +               if (test_bit(MD_RECOVERY_REQUESTED, &recovery))
+> +                       return ACTION_REPAIR;
+> +               return ACTION_RESYNC;
+> +       }
+> +
+> +       return ACTION_IDLE;
 
-for you to fetch changes up to 297f26dbf870d4f19591b74a0ab535c327917b81:
+Does it need this? I guess it's the reason in case there are other
+situations, right?
 
-  hte: tegra-194: Convert to platform remove callback returning void (2024-04-12 11:02:58 -0700)
+Regards
+Xiao
 
-----------------------------------------------------------------
-hte: Changes for v6.10-rc1
+> +}
+> +
+> +enum sync_action md_sync_action_by_name(char *page)
+> +{
+> +       enum sync_action action;
+> +
+> +       for (action =3D 0; action < NR_SYNC_ACTIONS; ++action) {
+> +               if (cmd_match(page, action_name[action]))
+> +                       return action;
+> +       }
+> +
+> +       return NR_SYNC_ACTIONS;
+> +}
+> +
+> +char *md_sync_action_name(enum sync_action action)
+> +{
+> +       return action_name[action];
+> +}
+> +
+>  static ssize_t
+>  action_show(struct mddev *mddev, char *page)
+>  {
+> diff --git a/drivers/md/md.h b/drivers/md/md.h
+> index 2edad966f90a..72ca7a796df5 100644
+> --- a/drivers/md/md.h
+> +++ b/drivers/md/md.h
+> @@ -864,6 +864,9 @@ extern void md_unregister_thread(struct mddev *mddev,=
+ struct md_thread __rcu **t
+>  extern void md_wakeup_thread(struct md_thread __rcu *thread);
+>  extern void md_check_recovery(struct mddev *mddev);
+>  extern void md_reap_sync_thread(struct mddev *mddev);
+> +extern enum sync_action md_sync_action(struct mddev *mddev);
+> +extern enum sync_action md_sync_action_by_name(char *page);
+> +extern char *md_sync_action_name(enum sync_action action);
+>  extern bool md_write_start(struct mddev *mddev, struct bio *bi);
+>  extern void md_write_inc(struct mddev *mddev, struct bio *bi);
+>  extern void md_write_end(struct mddev *mddev);
+> --
+> 2.39.2
+>
 
-The changes for the hte/timestamp subsystem include the following:
-- Improve hte-test driver platform remove callback by replacing it
-with the remove_new which returns void instead.
-
-----------------------------------------------------------------
-Uwe Kleine-König (1):
-      hte: tegra-194: Convert to platform remove callback returning void
-
- drivers/hte/hte-tegra194-test.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
 
