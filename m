@@ -1,127 +1,170 @@
-Return-Path: <linux-kernel+bounces-178487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B265E8C4E64
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:09:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D188C4E68
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:09:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33A51C218DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:09:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C22283600
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D992554B;
-	Tue, 14 May 2024 09:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oG4M/ckI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CA228DC1;
+	Tue, 14 May 2024 09:09:27 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E241FC1F;
-	Tue, 14 May 2024 09:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EA5208CE;
+	Tue, 14 May 2024 09:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715677740; cv=none; b=grdShWbHLbteyAGo8XTbZKEufIuxJwHP8Q8wsfc8eg9BMLHjwqbb4lEQND3sA08zcDZ4XsLA4+6aMBb7xvvkjuUQLcjoVeOgio/wWVxvvjCyHRYpR1ofRaTgl3d9IDt7r0w7+2ap24Da6q3WUhJMJs0g3nTqLvlwSNZ1KUkkKJQ=
+	t=1715677767; cv=none; b=SKlzKCtr8sPsiB4KD795690jY6Vq/bRHSXwf0iNzCsDTkTBPolizA0bQk8GUtlKQ7qN2Rn6s4w5geSfUjFLMqeekxFwqgk27GQc4laeMg2/LWQlquIbdFmpx9Mb9/PaW2UgudIbc6WjbCX6dyy/uIVHQ0vBJ8RGRWhi+4ZruWyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715677740; c=relaxed/simple;
-	bh=ap9JnqoWxM+49u1ZymC0acfXzXG2I4pVgX2/+ebPCyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4A0DmmdBEZsiyCBsaxe2/2/qGJUUKxQpi01rN8m6atAzsuL0pkCyshlLip/D+TT5AydLqv5oLyaJXEj0FNZ1/NBCXqj3UifOJBvZeYNP9mjpXAQg+4zGvKwyN0cDM9Nhe8K5JCvxmcTQMbnidDARktX3nwKpTHvpTkUIcBBKZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oG4M/ckI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7060AC2BD10;
-	Tue, 14 May 2024 09:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715677739;
-	bh=ap9JnqoWxM+49u1ZymC0acfXzXG2I4pVgX2/+ebPCyA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oG4M/ckIwYvYT3/HksLmeFm9T2KOi2Z0tUQ6WjIBboE70xEn97v6qqacrW2Yi2SQH
-	 h1dZEraFttdTihnKTHABDJ2dhluN+EIIllIw6EOzVjHZt/OgbOkDd/L2fVlpAvLZo6
-	 v8/E/aZFAPC2WfyjrFEpA674pUAlTg41voD6JMQoSeP1qQLynkcWsA6J9MCrwyuJIG
-	 HxEZySU+QiugFCGhE2ygG+PBQuAqRUUfGucqSvTrWghteKy1WWCtz682nofUPn6HfY
-	 +aCgzTSKhEN99HKo/dSXffYZZog5Aknx1OsSnFE/6I1ocom1PBY+I58PAsI1TVJuWJ
-	 jgPvbLGgmzstw==
-Message-ID: <c7317ea0-fcd6-40e0-9d90-bb1ff349c0e0@kernel.org>
-Date: Tue, 14 May 2024 11:08:55 +0200
+	s=arc-20240116; t=1715677767; c=relaxed/simple;
+	bh=wy1kEIFNWuIKDXwii9P9BWgUPVTkXwG6PerXplT8Hik=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o9K7920lh9AAi1zCZYydSA0Al3mVcdZq0/gChmFfwCuuHTfqRKmAo4xjM+ne/Q8Irxn0aKxPe8lymrEd33aitIWTz1dUd36zy5fcir5axy2ac4cJwQoOq8/bODv/E0yO4f9zf8Mshu0DybdWvd6RAqVhh+fjAnIMYGzAzt/yBXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A083C2015E6;
+	Tue, 14 May 2024 11:09:23 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 591AD201909;
+	Tue, 14 May 2024 11:09:23 +0200 (CEST)
+Received: from pe-lt8779.in-pnq01.nxp.com (pe-lt8779.in-pnq01.nxp.com [10.17.104.141])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7E902180222C;
+	Tue, 14 May 2024 17:09:21 +0800 (+08)
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	rohit.fule@nxp.com,
+	neeraj.sanjaykale@nxp.com,
+	sherry.sun@nxp.com,
+	ziniu.wang_1@nxp.com,
+	haibo.chen@nxp.com,
+	LnxRevLi@nxp.com
+Subject: [PATCH v1 1/1] Bluetooth: btnxpuart: Add handling for boot-signature timeout errors
+Date: Tue, 14 May 2024 14:39:13 +0530
+Message-Id: <20240514090913.1507990-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add
- img,boston-platform-regs
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Lee Jones <lee@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Paul Burton <paulburton@kernel.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20240513-boston-syscon-v1-0-93ff557d3548@flygoat.com>
- <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240513-boston-syscon-v1-1-93ff557d3548@flygoat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 13/05/2024 20:58, Jiaxun Yang wrote:
-> This compatible has been used in arch/mips/boot/dts/img/boston.dts
-> for a while but never documented properly.
-> 
-> Add it to simple syscon binding.
-> 
-> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> ---
->  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
+This handles the timeout errors seen in the bootloader signatures during
+FW download.
 
-It is documented in clock/img,boston-clock.txt. Please fix/convert/work
-on that.
+When the bootloader does not receive a response packet from the host
+within a specific time, it adds an error code to the bootloader
+signature while requesting for the FW chunk from the same offset.
 
-Best regards,
-Krzysztof
+The host is expected to clear this error code with a NAK, and reply to
+only those bootloader signatures which have error code 0.
+
+This error handling is valid for data_req bootloader signatures for V3
+and future bootloader versions.
+
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+---
+ drivers/bluetooth/btnxpuart.c | 46 ++++++++++++++++++++++++++++++++---
+ 1 file changed, 42 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 0b93c2ff29e4..2018513fb961 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -187,6 +187,10 @@ struct btnxpuart_dev {
+ #define NXP_NAK_V3		0x7b
+ #define NXP_CRC_ERROR_V3	0x7c
+ 
++#define NXP_ACK_RX_TIMEOUT	0x0002
++#define NXP_HDR_RX_TIMEOUT	0x0003
++#define NXP_DATA_RX_TIMEOUT	0x0004
++
+ #define HDR_LEN			16
+ 
+ #define NXP_RECV_CHIP_VER_V1 \
+@@ -277,6 +281,12 @@ struct nxp_bootloader_cmd {
+ 	__be32 crc;
+ } __packed;
+ 
++struct nxp_v3_rx_timeout_nak {
++	u8 nak;
++	__le32 offset;
++	u8 crc;
++} __packed;
++
+ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
+ /* Default configurations */
+@@ -899,6 +909,32 @@ static int nxp_recv_chip_ver_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
++static void nxp_handle_fw_dnld_error(struct hci_dev *hdev, struct v3_data_req *req)
++{
++	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
++	__u32 offset = __le32_to_cpu(req->offset);
++	__u16 err = __le16_to_cpu(req->error);
++	struct nxp_v3_rx_timeout_nak nak_tx_buf;
++
++	switch (err) {
++	case NXP_ACK_RX_TIMEOUT:
++	case NXP_HDR_RX_TIMEOUT:
++	case NXP_DATA_RX_TIMEOUT:
++		nak_tx_buf.nak = NXP_NAK_V3;
++		nak_tx_buf.offset = __cpu_to_le32(offset);
++		nak_tx_buf.crc = crc8(crc8_table, (u8 *)&nak_tx_buf,
++				      sizeof(nak_tx_buf) - 1, 0xff);
++		serdev_device_write_buf(nxpdev->serdev, (u8 *)&nak_tx_buf,
++					sizeof(nak_tx_buf));
++		break;
++	default:
++		bt_dev_dbg(hdev, "Unknown bootloader error: %d", err);
++		break;
++
++	}
++
++}
++
+ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ {
+ 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+@@ -913,7 +949,12 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ 	if (!req || !nxpdev->fw)
+ 		goto free_skb;
+ 
+-	nxp_send_ack(NXP_ACK_V3, hdev);
++	if (!req->error) {
++		nxp_send_ack(NXP_ACK_V3, hdev);
++	} else {
++		nxp_handle_fw_dnld_error(hdev, req);
++		goto free_skb;
++	}
+ 
+ 	len = __le16_to_cpu(req->len);
+ 
+@@ -940,9 +981,6 @@ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+ 		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
+ 		goto free_skb;
+ 	}
+-	if (req->error)
+-		bt_dev_dbg(hdev, "FW Download received err 0x%02x from chip",
+-			   req->error);
+ 
+ 	offset = __le32_to_cpu(req->offset);
+ 	if (offset < nxpdev->fw_v3_offset_correction) {
+-- 
+2.34.1
 
 
