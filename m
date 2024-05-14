@@ -1,217 +1,148 @@
-Return-Path: <linux-kernel+bounces-178230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74EA8C4AC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:07:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFEEC8C4AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4C0B1C22B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:07:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D8BD1C22737
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE9A17FF;
-	Tue, 14 May 2024 01:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6C91860;
+	Tue, 14 May 2024 01:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Uf9gQv3T"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="nhWdX3An"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F797ED8;
-	Tue, 14 May 2024 01:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69B5EC5;
+	Tue, 14 May 2024 01:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715648854; cv=none; b=U0M1daqSfHwuAsDD78gQRrtRQnXNC7ii0sMhRBQy5JSloeR1WN3PnSRF9TA9k/+UCaKLJ7SeGwoZOTVU6RnxQTlTus6DXTbJLlRsUC3JAJgL0x4zOsVYpts3gKy8bBcUH5u2k6s81CWxbn/dh7jJ5l9hcLFwm9tZ+tisNIlDPJM=
+	t=1715648956; cv=none; b=gioD83WxgL8NhBuSjnYvrIIRD/Z5XvKVldZA51hOWdWgk3zJ+W7QeyVtrgMdIB5CRTvFcMNGWO3XwAvhySu30eVCv+OVBQKXHaun6ajDY8NUWx04BjMVVoLQrtvv2MQko4rY7Ed8BYBzbnKRuk1TEJy6nLhPvcmzYf9Vm1VSiNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715648854; c=relaxed/simple;
-	bh=f3uKJl77S3XOtyuC/S9DUc5g9aTtxON73vg/NMUwG8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TdPF3fXoyWS0naklc4zXNMqkoUXQ0gPs492G0u69+oLiWwNp+JmiUfRanHBAanQvzuYd/Z5vGT2ujp8RAwkULGe62BVOaRC4mD4Wx2tsurxDz64iTl6arRAFIV29Z8uLIw2lvWqaPaN7ZTbw6WkiAZc/xKHfwCHOYqLSM5DEJQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Uf9gQv3T; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from tr.lan (ip-86-49-120-218.bb.vodafone.cz [86.49.120.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	s=arc-20240116; t=1715648956; c=relaxed/simple;
+	bh=Z0a9zo/oD7Fzoeh2HMvsQbMyP/a4DTsMNsBtVleFWZA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VF6viBxU4cViOEtn5FxgnGBMmU11NcaBkS5YrfUlv3Plm0GNPNSKISCbPaGTI4olYSY0W2gMOxjoQoQgguxbikKO7TnaltQMzzRFbn/uDt4tQkX9G+xdya/doJoneM+kJAVX7AS4IWlLLH1MtJIuPKdDGdrxpGa1VYSFmSEkUXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=nhWdX3An; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1715648950;
+	bh=cJZZq6BaqUzfoKYWBZ/95aiewNAVNaflLJy9ncQn21Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=nhWdX3AnX/lfpTM/3msxKX1vr3ahC0e0aj5/uYWopsMwiOJhDV5Nj/9I89GXiJ3Q/
+	 6aWx/cOv3OZ5Xo/4WZgD4+v03yGXP9Y07XFHKiUgCf6W10BmHEh3ar0Z6HIhINcKMB
+	 Nvk9huz4bBVvkHluHiCMpZ+lJHDL8VkSbohw0wrxlC3wLUTp0h+L99ji3VJ1t4ZXCl
+	 Irb8bpFJpVczlOs7DFojFAjJN7zOYxbbCkp2/BPs86cHpna5tdzFe7teI5Zjk/pgWb
+	 lkRs4aODolq4b60AuGvlOMP8nfOQuE2sioi7ZEaPvpXugmAHNmKLhYBf4LxJH1xpS8
+	 esjU/uxMK+iMQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id D24AF87CDA;
-	Tue, 14 May 2024 03:07:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1715648848;
-	bh=xa8qPwKZOCPA6/bJm4wN473IAF5TnUbKp0w2XO2euGc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Uf9gQv3TS2ZdvuTL4ueqYusy6VjZooHp2Umwz+LKpfP67fFq7AeUWlf5nxC7JquMa
-	 WCvnBbF6UH9Ek4d7p2tT+hiZIWQVcCgZS8li7GrHQwexqLYMLYxF+ETX9a2a4UP+ky
-	 QdB0Ef/gHRzHBilbVNWBEzcSO6zxFaAIpLc3aDGq9WoYGErUK4H3p20CyJuHnGNdOP
-	 QSfdguK/iOhK7hcN9cZeiApKO1NcDl/Jth2UduaKWh5H0fOyH4frlJZkG0YQuOuMdn
-	 T9d853XIJidH0Bft89HtfVa8z10rjMuSJqc+bL9JsvEVwmyKOWP1ucYtkHzO13NaMB
-	 SKF4O9kEzJnfg==
-From: Marek Vasut <marex@denx.de>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Vasut <marex@denx.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	kernel@dh-electronics.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: imx8mp: Enable HDMI on i.MX8MP DHCOM PDK2 and PDK3
-Date: Tue, 14 May 2024 03:06:42 +0200
-Message-ID: <20240514010706.245874-1-marex@denx.de>
-X-Mailer: git-send-email 2.43.0
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VddY15HGZz4wc3;
+	Tue, 14 May 2024 11:09:09 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Puranjay Mohan <puranjay@kernel.org>, Naveen N Rao <naveen@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, "Aneesh Kumar K.V"
+ <aneesh.kumar@kernel.org>, Hari Bathini <hbathini@linux.ibm.com>,
+ bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH bpf v3] powerpc/bpf: enforce full ordering for ATOMIC
+ operations with BPF_FETCH
+In-Reply-To: <mb61pwmnxhfcw.fsf@kernel.org>
+References: <20240513100248.110535-1-puranjay@kernel.org>
+ <wlslraxtexuncmqsfen6gum4sg4viecu4zx73pvlfztjmwxenl@fcoal5io4kse>
+ <mb61pwmnxhfcw.fsf@kernel.org>
+Date: Tue, 14 May 2024 11:09:07 +1000
+Message-ID: <87h6f1w66k.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain
 
-Enable HDMI output on i.MX8MP DHCOM PDK2 and PDK3. The I2C5 on PDK2 and
-I2C mux port 1 on PDK3 respectively are used in regular I2C mode instead
-of HDMI DDC mode to permit connection of other I2C devices on those buses.
-The pinctrl_hdmi node is part of the SoM DTSI already.
+Puranjay Mohan <puranjay@kernel.org> writes:
+> Naveen N Rao <naveen@kernel.org> writes:
+>> On Mon, May 13, 2024 at 10:02:48AM GMT, Puranjay Mohan wrote:
+>>> The Linux Kernel Memory Model [1][2] requires RMW operations that have a
+>>> return value to be fully ordered.
+>>> 
+>>> BPF atomic operations with BPF_FETCH (including BPF_XCHG and
+>>> BPF_CMPXCHG) return a value back so they need to be JITed to fully
+>>> ordered operations. POWERPC currently emits relaxed operations for
+>>> these.
+>>> 
+>>> We can show this by running the following litmus-test:
+>>> 
+>>> PPC SB+atomic_add+fetch
+>>> 
+>>> {
+>>> 0:r0=x;  (* dst reg assuming offset is 0 *)
+>>> 0:r1=2;  (* src reg *)
+>>> 0:r2=1;
+>>> 0:r4=y;  (* P0 writes to this, P1 reads this *)
+>>> 0:r5=z;  (* P1 writes to this, P0 reads this *)
+>>> 0:r6=0;
+>>> 
+>>> 1:r2=1;
+>>> 1:r4=y;
+>>> 1:r5=z;
+>>> }
+>>> 
+>>> P0                      | P1            ;
+>>> stw         r2, 0(r4)   | stw  r2,0(r5) ;
+>>>                         |               ;
+>>> loop:lwarx  r3, r6, r0  |               ;
+>>> mr          r8, r3      |               ;
+>>> add         r3, r3, r1  | sync          ;
+>>> stwcx.      r3, r6, r0  |               ;
+>>> bne         loop        |               ;
+>>> mr          r1, r8      |               ;
+>>>                         |               ;
+>>> lwa         r7, 0(r5)   | lwa  r7,0(r4) ;
+>>> 
+>>> ~exists(0:r7=0 /\ 1:r7=0)
+>>> 
+>>> Witnesses
+>>> Positive: 9 Negative: 3
+>>> Condition ~exists (0:r7=0 /\ 1:r7=0)
+>>> Observation SB+atomic_add+fetch Sometimes 3 9
+>>> 
+>>> This test shows that the older store in P0 is reordered with a newer
+>>> load to a different address. Although there is a RMW operation with
+>>> fetch between them. Adding a sync before and after RMW fixes the issue:
+>>> 
+>>> Witnesses
+>>> Positive: 9 Negative: 0
+>>> Condition ~exists (0:r7=0 /\ 1:r7=0)
+>>> Observation SB+atomic_add+fetch Never 0 9
+>>> 
+>>> [1] https://www.kernel.org/doc/Documentation/memory-barriers.txt
+>>> [2] https://www.kernel.org/doc/Documentation/atomic_t.txt
+>>> 
+>>> Fixes: 65112709115f ("powerpc/bpf/64: add support for BPF_ATOMIC bitwise operations")
+>>
+>> As I noted in v2, I think that is the wrong commit. This fixes the below 
+>
+> Sorry for missing this. Would this need another version or your message
+> below will make it work with the stable process?
 
-Signed-off-by: Marek Vasut <marex@denx.de>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: imx@lists.linux.dev
-Cc: kernel@dh-electronics.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- .../boot/dts/freescale/imx8mp-dhcom-pdk2.dts  | 39 +++++++++++++++++++
- .../boot/dts/freescale/imx8mp-dhcom-pdk3.dts  | 39 +++++++++++++++++++
- 2 files changed, 78 insertions(+)
+No need for another version. b4 should pick up those tags, or if not
+I'll add them by hand.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts
-index 3b1c940860e02..ebdf13e97b4e2 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk2.dts
-@@ -69,6 +69,18 @@ button-3 {
- 		};
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		label = "X38";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_out>;
-+			};
-+		};
-+	};
-+
- 	led {
- 		compatible = "gpio-leds";
- 
-@@ -184,6 +196,33 @@ &flexcan1 {
- 	status = "okay";
- };
- 
-+&hdmi_pvi {
-+	status = "okay";
-+};
-+
-+&hdmi_tx {
-+	ddc-i2c-bus = <&i2c5>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hdmi>;
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			hdmi_tx_out: endpoint {
-+				remote-endpoint = <&hdmi_connector_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi_tx_phy {
-+	status = "okay";
-+};
-+
-+&lcdif3 {
-+	status = "okay";
-+};
-+
- &pcie_phy {
- 	clock-names = "ref";
- 	clocks = <&hsio_blk_ctrl>;
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk3.dts b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk3.dts
-index ac7ec7533a3c8..ef012e8365b1f 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk3.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-dhcom-pdk3.dts
-@@ -75,6 +75,18 @@ button-3 {
- 		};
- 	};
- 
-+	hdmi-connector {
-+		compatible = "hdmi-connector";
-+		label = "X28";
-+		type = "a";
-+
-+		port {
-+			hdmi_connector_in: endpoint {
-+				remote-endpoint = <&hdmi_tx_out>;
-+			};
-+		};
-+	};
-+
- 	led {
- 		compatible = "gpio-leds";
- 
-@@ -248,6 +260,33 @@ &flexcan1 {
- 	status = "okay";
- };
- 
-+&hdmi_pvi {
-+	status = "okay";
-+};
-+
-+&hdmi_tx {
-+	ddc-i2c-bus = <&i2cmuxed1>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hdmi>;
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			hdmi_tx_out: endpoint {
-+				remote-endpoint = <&hdmi_connector_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&hdmi_tx_phy {
-+	status = "okay";
-+};
-+
-+&lcdif3 {
-+	status = "okay";
-+};
-+
- &pcie_phy {
- 	clocks = <&pcieclk 1>;
- 	clock-names = "ref";
--- 
-2.43.0
-
+cheers
 
