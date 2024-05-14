@@ -1,279 +1,162 @@
-Return-Path: <linux-kernel+bounces-178321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56868C4BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:09:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BADD88C4BDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38C06B228F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:09:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4835C1F22FBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5969417736;
-	Tue, 14 May 2024 05:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995661755C;
+	Tue, 14 May 2024 05:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kvL/1Bj/"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="1kBAYggH"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF8712E78;
-	Tue, 14 May 2024 05:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C8156E4
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 05:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715663348; cv=none; b=iP55Lh9aVfATOROuUsGFrbIKdCvAul54dmCw7GMLNuJnlddfAn0BzNp3Uw5MBX+9v5DB0yB4ZBWeiMrB33mBUeFruzrz5qH0tKYXLVLfPAGbVwXmH1kTp+AbLSHQH4JZwXk5cUmw4Olh2GdVSymRY/0G8+4+A22r9a8p5JM3ems=
+	t=1715663305; cv=none; b=QacuFsZYPkiDcdq9JoFhFtBkYHPNFSl3Wr2PV2S+MaKgP3fgwaqPyzypRP3xeOsLzgpfRhU4HJdBbDB6fIt+gyPVNFNKtMxerxJ+EuhgOiI+yhCTcaS0cbUIgBOOxh6mRzCfXy6/NLxQ9lCtI9TX/XGv+DbIVamJIrJMCPfomQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715663348; c=relaxed/simple;
-	bh=4qU1Fk3ItupjU1CGsNwCcxlvT3cuhbTGO4TIzraKwcg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T1rI9nKmLuINfzvyJox0nFoJhwkHkxrRDVuCWNqrHtQ7wxAmUtTMp0Gs+IaNHnz+fFbNKPPn074KzEwsO6MY1jtS46kOQCsNtAEQPrTqhNhDZWJXxNjqfDrMbfS308WRGU4YaP9aEtAs9bK3SB0T6mKiNu7hW2atXOqb2GPBCjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kvL/1Bj/; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44E58O33128134;
-	Tue, 14 May 2024 00:08:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1715663304;
-	bh=yBMKBLuh7D78bOQzhm5+DgKkaea+stGzc4l0jX34Gfw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=kvL/1Bj/paktdHIV9civJ2kyHffBLeL90jDtDMw23/sTPE86oIdS9GCJCC7BBAJ3+
-	 VPVf6IfXSgqBNeQx+SVQS7M7avGWLbWg4v+BG7pp82O/a9eRO6BC8pHFa3Hccm+QyZ
-	 exgEtLVd7BLImCM+OVPP2oZ4gg8XYDP8pvJZXlpk=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44E58OQv041401
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 14 May 2024 00:08:24 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
- May 2024 00:08:24 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 14 May 2024 00:08:23 -0500
-Received: from [10.249.131.75] ([10.249.131.75])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44E58E7Z048288;
-	Tue, 14 May 2024 00:08:15 -0500
-Message-ID: <cbd44252-2abf-4443-ade7-b1aa32d24e3e@ti.com>
-Date: Tue, 14 May 2024 10:38:14 +0530
+	s=arc-20240116; t=1715663305; c=relaxed/simple;
+	bh=ieIbWlqpi3qncOa+DKFbV5vGmc6SVatErRwe1s69pQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUk/LTwny7+SndXdTq0ZCFB5iZHbvCkLxqQ90hkIo6B7JAhPq0NSw/6Abv1Y1grxrrM9/MELhTg3zCspmxiFCnaM3TRsv9NmB8FqV0EJNmUgVnT9KVMsdKGL4SaR8jFJ8IsCJntGRzDmP8i/hC6GZZoPGR7dQCnHrtZ9mHkoa90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=1kBAYggH; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41fd5dc04e2so31173685e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715663302; x=1716268102; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a19HgSmq/trWYOKDNko6X/3OBusO+lp3rPBD1dWx/PQ=;
+        b=1kBAYggHchw1V0d942orl4mFmP/dzlqaPdoVda+RRlePbbq1Lcw3q+btsmYZRjm+Tf
+         CULL8IrLpBY9C0h1NNT9DVPImzciDlP5JrNThKzNI+s+VoSxqUjrckZx/HSPKtd8uFuQ
+         TsjSAT0nyvzmVxDODsOqngYdha1JouyfcrQrEAtabyoF0zIemO4aJuZa5ATPKc4BHUrO
+         ieKE0F1umG0H9/ytMm3LkaK/5SKr5E+KXPkwM8kX9iWAdUfIuewuxbf18zT4uQBhxWtR
+         eV47QyDDev4cH+59U3mik8LrmJSD20qKVwgaZSQF4ELoUisK6FXpVWeNJhQCGohXooF3
+         bNlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715663302; x=1716268102;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a19HgSmq/trWYOKDNko6X/3OBusO+lp3rPBD1dWx/PQ=;
+        b=m+iKxL+zm6NsJRr1fHkPTVF5fxU38EULtsMjJRbwq50WQOL4DvsaFjeLjHsx0xD4Qv
+         21fJD+fD3gHNqSPns/r8RFil7FTbqURHSusroWNEqsyO+x95G3J6v+RHga0GMQDe8pkI
+         ba2eSHFzmdVsrW3lh9kwBvZPVLuupdgOMwKaE69rtKzNuLb/BcabGTr4aJ9RrI7isQFo
+         CigSMj6ZqBtubqMpLbFqFaBgDu8051PLtjTdNamiGTSzSMENAy024TZn8jIsHqRqlNgB
+         fejhmYYuKmU8RCf5HMVuThGJ2ilRNE+4+IemP81E23dMCiUZyL5TdzoLRWsyCUPX3+Kp
+         uRmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCXAXd0RzBrExWN4RZw0eKpR2wTG4CQOxHiz53+M6jLjvWrUdptLJ3q+tOWw5G+8aqG5IPo30CZaomlQKumoO6NVxX99iW305o2Ikj
+X-Gm-Message-State: AOJu0YxKwSSQLjQmQwvHp8laSquBqR4mLNfvvvJrhbZHyJmHxFoNeYls
+	pfgdP7vnqq21LzOISN0orPuhZ/dAR256m0RQ0T2lKW+b5voauoeo54MDsX8A5h4=
+X-Google-Smtp-Source: AGHT+IGlBf3IWKGC+J9VINEwYnh1B9uENrrXQXg3NIcAKjXjFsRFaHL1ijjFWUAjW3iOtpw9ewXEQw==
+X-Received: by 2002:a05:600c:4f12:b0:420:18e9:86d5 with SMTP id 5b1f17b1804b1-42018e98859mr26458475e9.10.1715663301584;
+        Mon, 13 May 2024 22:08:21 -0700 (PDT)
+Received: from vermeer ([2a01:cb1d:81a9:dd00:b570:b34c:ffd4:c805])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87d20488sm213889265e9.25.2024.05.13.22.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 22:08:21 -0700 (PDT)
+Date: Tue, 14 May 2024 07:08:17 +0200
+From: Samuel Ortiz <sameo@rivosinc.com>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Qinkun Bao <qinkun@google.com>,
+	"Yao, Jiewen" <jiewen.yao@intel.com>,
+	"Xing, Cedric" <cedric.xing@intel.com>,
+	Dionna Amalie Glaze <dionnaglaze@google.com>, biao.lu@intel.com,
+	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 4/4] tsm: Allow for extending and reading
+ configured RTMRs
+Message-ID: <ZkLxwacH9nt6U9dk@vermeer>
+References: <20240128212532.2754325-1-sameo@rivosinc.com>
+ <20240128212532.2754325-5-sameo@rivosinc.com>
+ <ec7edddcf8c74e48cb392db0789b03243ab05692.camel@HansenPartnership.com>
+ <ZkHoiYMseU0XqEbR@vermeer>
+ <a8ea533bf30c658508875948f29341663360db57.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: display: ti: Add schema for AM625 OLDI
- Transmitter
-To: Rob Herring <robh@kernel.org>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter
-	<daniel@ffwll.ch>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        DRI Development List
-	<dri-devel@lists.freedesktop.org>,
-        Devicetree List
-	<devicetree@vger.kernel.org>,
-        Linux Kernel List
-	<linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>, Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar
-	<u-kumar1@ti.com>,
-        Francesco Dolcini <francesco@dolcini.it>,
-        Alexander
- Sverdlin <alexander.sverdlin@siemens.com>,
-        Randolph Sapp <rs@ti.com>, Devarsh
- Thakkar <devarsht@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
-	<j-luthra@ti.com>
-References: <20240511193055.1686149-1-a-bhatia1@ti.com>
- <20240511193055.1686149-3-a-bhatia1@ti.com>
- <20240512193459.GF17158@pendragon.ideasonboard.com>
- <e0433619-75c7-40bc-aafb-f0a875ea7dc3@ti.com>
- <20240513193009.GA2986074-robh@kernel.org>
-Content-Language: en-US
-From: Aradhya Bhatia <a-bhatia1@ti.com>
-In-Reply-To: <20240513193009.GA2986074-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a8ea533bf30c658508875948f29341663360db57.camel@HansenPartnership.com>
 
-Hi Rob,
-
-Thank you for reviewing the patches!
-
-On 14/05/24 01:00, Rob Herring wrote:
-> On Mon, May 13, 2024 at 02:07:44PM +0530, Aradhya Bhatia wrote:
->> Hi Laurent,
->>
->> Thank you for reviewing the patches!
->>
->> On 13-May-24 01:04, Laurent Pinchart wrote:
->>> Hi Aradhya,
->>>
->>> Thank you for the patch.
->>>
->>> On Sun, May 12, 2024 at 01:00:53AM +0530, Aradhya Bhatia wrote:
->>>> Add devicetree binding schema for AM625 OLDI Transmitters.
->>>>
->>>> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
->>>> ---
->>>>  .../bindings/display/ti/ti,am625-oldi.yaml    | 153 ++++++++++++++++++
->>>>  MAINTAINERS                                   |   1 +
->>>>  2 files changed, 154 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
->>>> new file mode 100644
->>>> index 000000000000..0a96e600bc0b
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/display/ti/ti,am625-oldi.yaml
->>>> @@ -0,0 +1,153 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/display/ti/ti,am625-oldi.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Texas Instruments AM625 OLDI Transmitter
->>>> +
->>>> +maintainers:
->>>> +  - Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
->>>> +  - Aradhya Bhatia <a-bhatia1@ti.com>
->>>> +
->>>> +description: |
->>>> +  The AM625 TI Keystone OpenLDI transmitter (OLDI TX) supports serialized RGB
->>>> +  pixel data transmission between host and flat panel display over LVDS (Low
->>>> +  Voltage Differential Sampling) interface. The OLDI TX consists of 7-to-1 data
->>>> +  serializers, and 4-data and 1-clock LVDS outputs. It supports the LVDS output
->>>> +  formats "jeida-18", "jeida-24" and "vesa-18", and can accept 24-bit RGB or
->>>> +  padded and un-padded 18-bit RGB bus formats as input.
->>>> +
->>>> +properties:
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  clocks:
->>>> +    maxItems: 1
->>>> +    description: serial clock input for the OLDI transmitters
->>>> +
->>>> +  clock-names:
->>>> +    const: s_clk
->>>> +
->>>> +  ti,companion-oldi:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>> +    description:
->>>> +      phandle to companion OLDI transmitter. This property is mandatory for the
->>>> +      primarty OLDI TX if the OLDI TXes are expected to work either in dual-lvds
->>>> +      mode or in clone mode. This property should point to the secondary OLDI
->>>> +      TX.
->>>> +
->>>> +  ti,secondary-oldi:
->>>> +    type: boolean
->>>> +    description: Boolean property to mark an OLDI TX as secondary node.
->>>> +
->>>> +  ti,oldi-io-ctrl:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>> +    description:
->>>> +      phandle to syscon device node mapping OLDI IO_CTRL registers found in the
->>>> +      control MMR region. This property is needed for OLDI interface to work.
->>>> +
->>>> +  ports:
->>>> +    $ref: /schemas/graph.yaml#/properties/ports
->>>> +
->>>> +    properties:
->>>> +      port@0:
->>>> +        $ref: /schemas/graph.yaml#/properties/port
->>>> +        description: Parallel RGB input port
->>>> +
->>>> +      port@1:
->>>> +        $ref: /schemas/graph.yaml#/properties/port
->>>> +        description: LVDS output port
->>>> +
->>>> +    required:
->>>> +      - port@0
->>>> +      - port@1
->>>> +
->>>> +allOf:
->>>> +  - if:
->>>> +      properties:
->>>> +        ti,secondary-oldi: true
->>>> +    then:
->>>> +      properties:
->>>> +        ti,companion-oldi: false
->>>> +        ti,oldi-io-ctrl: false
->>>> +        clocks: false
->>>> +        clock-names: false
->>>> +
->>>> +    else:
->>>> +      required:
->>>> +        - ti,oldi-io-ctrl
->>>> +        - clocks
->>>> +        - clock-names
->>>> +
->>>> +required:
->>>> +  - reg
->>>> +  - ports
->>>> +
->>>> +additionalProperties: false
->>>> +
->>>> +examples:
->>>> +  - |
->>>> +    #include <dt-bindings/soc/ti,sci_pm_domain.h>
->>>> +
->>>> +    oldi_txes {
->>>> +        #address-cells = <1>;
->>>> +        #size-cells = <0>;
->>>> +        oldi: oldi@0 {
->>>> +            reg = <0>;
->>>> +            clocks = <&k3_clks 186 0>;
->>>> +            clock-names = "s_clk";
->>>> +            ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
->>>
->>> What bus does this device live on ? Couldn't the I/O register space be
->>> referenced by the reg property ?.
->>>
->>
->> These registers are a part of the system-controller register space
->> (ctrl_mmr0). The whole register set is owned by the main_conf[0]
->> devicetree node, with sub-nodes pointing to specific regions. That's why
->> I cannot reference these registers directly.
+On Mon, May 13, 2024 at 08:03:53AM -0600, James Bottomley wrote:
+> On Mon, 2024-05-13 at 12:16 +0200, Samuel Ortiz wrote:
+> > > However, it struck me you missed a third option: use the ima log
+> > > format.  This has the advantage that we can define additional
+> > > events and have them published with a kernel patch (the IMA log
+> > > format is defined in the kernel).  Thanks to the TCG, it's also CEL
+> > > compatible but doesn't require any sort of TCG blessing of the
+> > > events.  Plus we also have existing kernel infrastructure to log to
+> > > that format.
+> > 
+> > That's an interesting idea. It may avoid having to extend the CEL
+> > spec with a new Content Type, but otoh the current spec defines which
+> > IMA events are supported. So adding new ones may require to also
+> > eventually extend the spec. But I guess since IMA is a Linux kernel
+> > subsystem, changing the kernel code and ABI would de-facto extend the
+> > TCG CEL IMA spec.
 > 
-> Then what does 'reg' represent? Looks like you just made up an index. If 
-> so, then this should probably be a child of &dss_oldi_io_ctrl instead. 
-> Or it should just be merged into that node.
+> That's what I was assuming since the TCG is currently deferring to IMA
+> in that regard.
 > 
+> > Here I assume you're talking about the IMA_TEMPLATE CEL specified
+> > format, which is designed to accomodate for the current kernel IMA
+> > log format. The main drawback of this format is that the digest does
+> > not include the whole content event, making the CEL content type, the
+> > IMA tag name and both lengths (for the content event and the IMA
+> > content) untrusted for event log verifiers.
+> 
+> That's only because IMA doesn't yet have such an event.  If we're
+> assuming effectively designing an IMA log format for non repudiation of
+> external events, one can be added. 
 
-I did make up an index when I used the 'reg' property. Similar to how
-ports can be indexed. The AM65 has 1 OLDI TX. AM62 and AM62P have 2 OLDI
-TXes each. The index is to help the driver parse through each of them.
+If we were to follow the IMA_TEMPLATE format as our output RTMR ABI for
+the event log, adding one or more IMA events would not change the fact
+that the event and content type would not be hashed into the extended
+digest. Unless we want to specify a different behaviour for each IMA
+event, and then verifiers would have interpret the digest construction
+differently depending on the IMA_TEMPLATE nested event type. And that's
+not pretty IMHO.
 
-If I push these OLDI TX nodes as child nodes under &dss_oldi_io_ctrl,
-then that would be an inaccurate representation of the hardware.
+Using the IMA_TLV content type would make that cut cleaner at least. A
+digest is built on the whole content event, for all event types. And the
+content and event types are trusted, i.e. the verifier can securely map
+events to the reported event types.
 
-The OLDI TXes are very well a part of the DSS hardware. As such, the
-(three) registers that control the functionality have been made a part
-of the DSS video-port (VP) register space, leaving OLDI TXes with no
-direct access to the primary bus (cbass_main) where the DSS sits.
+> Although I wouldn't want to be
+> hasty: one of the big problems of all options is that no existing log
+> format really covers the measure container use case and we're not
+> completely sure what other use cases will arise (the firewall rules
+> measurements was one that regulated cloud providers seem to think would
+> be important ... and that has a periodic rush of events, but there will
+> be others).
 
-The IO control registers, on the other hand, do not affect OLDI
-functionality in any way. These are just helper registers that merely
-control the power characteristics of the OLDI data and clock lanes.
+Right. A new CEL content type would give us more freedom in that regard,
+as it would allow us to define our own event content value in a more
+flexible way. Instead of the nested TLV approach that IMA_TLV follows,
+having one where the T would be a max length string defining the creator
+of the event (a.k.a. the attester), would avoid having to formally
+define each and every new event. That's where option #2 in the
+presentation was heading to.
 
-Regards
-Aradhya
+Cheers,
+Samuel.
+> 
 
