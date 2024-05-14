@@ -1,298 +1,162 @@
-Return-Path: <linux-kernel+bounces-178968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07218C59EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:51:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398EA8C59ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE0B1C2118B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:51:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2DF728315F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E36017F38D;
-	Tue, 14 May 2024 16:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E50E17F389;
+	Tue, 14 May 2024 16:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o5QPFl7V"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BROGaWjb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEF217BB3A;
-	Tue, 14 May 2024 16:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432B017BB3A;
+	Tue, 14 May 2024 16:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715705495; cv=none; b=Bni0bf5NvpXT+fSwq/98B3wmwxlrCQTNM7nxE6CTQA3IZ2JZIDMEw/yCDR6dZvTzUrgXtgT7Vyew04QV/xQErH2IvNNw1O/bPxYodF00Aq7yZhhijZqRg+8e7Hpdpwi6EicbS+dBfi6vhjvuF+B+96nk6rTZG95dZQNTZNMlXwc=
+	t=1715705596; cv=none; b=ScDD8psy1LvttRKO8HlZ7UkhfJAojc0DIHxZ/ZlCQIdn1jiXhFLfLdsHgy0lljyB/UtXp/YiW1NHi6TW40NlzHoDmpEDTVjdeD7tlBVWPdVVNRTkCyP3As0D7j7UcK/NO6iQ+VYDb56Fs6aFT3TWUByUtyUo9ZJSLebeGzUVsvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715705495; c=relaxed/simple;
-	bh=/sXWbY5bVwW+QaGOyiEOeOR9BsrXCX5TRvPOb8yS0H0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DswD45doQgx2QumwChnbKmaPUDc3uSSZu5gQAMqBKA2jOsexOxpM/Y5bHFwz50y0jTBUilUpmsTbyBVUKVMsv2cHM475k57LlBXp8NqWTbYcYOr4dtw+CWXEK4gwI5ocKTGMOaJS2Onn6tBnuDleBDIyMavbtnWdaPw6KfJwqDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o5QPFl7V; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6407A1BF204;
-	Tue, 14 May 2024 16:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715705490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NVxtV5KZLaCi1f0ZKlrkJa34DV012CIuuGWkdp/l8bM=;
-	b=o5QPFl7V6GBCwRqp77iF+T0hrqht+Nq+9S7EKVI10bjf4j9IyPLWQbcpzTDegaXf2TfIT5
-	N7yFufPPWW+jnmUGoJ8nX6mLSGvunJrQ5K89AaBY+0M2EHBQzo2AneN7r1n3BV2j9D08VC
-	+7borUswfIoF4z6PzmZtLPKf7EvgvP5Or6uceqAXHvLVpbJ9Nh7RdjS9KZAkFgourD4Arv
-	hNIXrLBdbK8mCvXdEXYWibx9J2+3IUC6Oaye83+J0kZySO107UzOYXUiE4tskOMHjiMdG0
-	xhB6HOZEcPLcelR0ZiBpX2321AUqLG/OoTco4eeEACWbFAPZcwN99vUYZizeFQ==
-Date: Tue, 14 May 2024 18:51:25 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Derek Kiernan
- <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, Arnd
- Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, Paul Kocialkowski
- <contact@paulk.fr>, =?UTF-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Paul
- Kocialkowski <paul.kocialkowski@bootlin.com>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v2 1/5] dt-bindings: connector: add GE SUNH hotplug
- addon connector
-Message-ID: <20240514185125.58225238@booty>
-In-Reply-To: <20240510163625.GA336987-robh@kernel.org>
-References: <20240510-hotplug-drm-bridge-v2-0-ec32f2c66d56@bootlin.com>
-	<20240510-hotplug-drm-bridge-v2-1-ec32f2c66d56@bootlin.com>
-	<20240510163625.GA336987-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1715705596; c=relaxed/simple;
+	bh=Pa40YBidriwdqhnqVsNm7zq79tHEROjjGxbT+xUVXCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=piDq0I6r1F/1DmFojjfNv8bY7G1JBDG6r93PPKQqbMPqfKiTG42HtTR3DSdWHShOdrmQddgaTPPiXVqQfu2I3IzMJzSSa2UBhRKQV40twrXZwfrECKq+7z5/ujyZS0yfbxkRaJ0muAdEYuJtmaMExZ/cDzUfsW29V7/0jqo5peI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BROGaWjb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFD0C2BD11;
+	Tue, 14 May 2024 16:53:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715705595;
+	bh=Pa40YBidriwdqhnqVsNm7zq79tHEROjjGxbT+xUVXCI=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=BROGaWjb5BaAJrn2YPvvogN+5s29+caqBK9Of17pdG3UetKG/3qcj3gPgBSWggzgF
+	 WgbUek/80tE/jnkqSr/nIPYuJaWKEnIqhHhPC9e+PmL14zOUQXxKT8OjxkAlQ6WzQL
+	 lTeRfRUUK6jCbuPqUdH61te5xOU+vicIzymUUynVdIQGQDPh7cwXvaIdoqx83fmUPq
+	 AhsdDqdA0v2s1Hl+PCoG5ev9RW6Dwa5IZAKWINLvWN8EKOMvEtLwxClZLa3Gqyg2KM
+	 dTg0BS4LZ8I8n/IcadeB6QdLCtfLBXoxMeJMpnM8boPl1R7AXwV+wTMkAwsL3rvspW
+	 0xppCZ7aQzukg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C4693CE098A; Tue, 14 May 2024 09:53:14 -0700 (PDT)
+Date: Tue, 14 May 2024 09:53:14 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Zqiang <qiang.zhang1211@gmail.com>, neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcu/nocb: Fix using smp_processor_id() in preemptible
+ warning
+Message-ID: <ce095cfd-701d-4ce0-94ef-46dab0f1af64@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240509074046.15629-1-qiang.zhang1211@gmail.com>
+ <d2a9a579-ffcf-4812-a857-2f091f7c65b5@paulmck-laptop>
+ <ZkOAtN9SgTuuVXXT@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZkOAtN9SgTuuVXXT@localhost.localdomain>
 
-Hello Rob,
+On Tue, May 14, 2024 at 05:18:12PM +0200, Frederic Weisbecker wrote:
+> Le Tue, May 14, 2024 at 07:54:40AM -0700, Paul E. McKenney a écrit :
+> > On Thu, May 09, 2024 at 03:40:46PM +0800, Zqiang wrote:
+> > > Currently, the this_cpu_ptr(&rcu_data) in rcu_rdp_is_offloaded() is called
+> > > before the condition "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())"
+> > > is checked, and occurs in preemptible task context, this will trigger the
+> > > following warning.
+> > > 
+> > > [ 4.106221][ T18] BUG: using smp_processor_id() in preemptible [00000000] code: rcuop/0/18
+> > > [ 4.107796][ T18] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
+> > > [ 4.108547][ T18] CPU: 0 PID: 18 Comm: rcuop/0 Not tainted 6.9.0-rc2-00079-g4c66bc7cacc0 #1
+> > > [ 4.109667][ T18] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> > > [ 4.111064][ T18] Call Trace:
+> > > [ 4.111064][ T18]  <TASK>
+> > > [ 4.111064][ T18] dump_stack_lvl (lib/dump_stack.c:116)
+> > > [ 4.111064][ T18] dump_stack (lib/dump_stack.c:124)
+> > > [ 4.111064][ T18] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 (discriminator 15) lib/smp_processor_id.c:53 (discriminator 15))
+> > > [ 4.111064][ T18] debug_smp_processor_id (lib/smp_processor_id.c:61)
+> > > [ 4.111064][ T18] rcu_rdp_is_offloaded (kernel/rcu/tree_plugin.h:27 (discriminator 1))
+> > > [ 4.111064][ T18] nocb_cb_wait (kernel/rcu/tree_nocb.h:936 (discriminator 2))
+> > > [ 4.111064][ T18] rcu_nocb_cb_kthread (kernel/rcu/tree_nocb.h:983 (discriminator 1))
+> > > [ 4.111064][ T18] ? nocb_cb_wait (kernel/rcu/tree_nocb.h:976)
+> > > [ 4.111064][ T18] kthread (kernel/kthread.c:388)
+> > > [ 4.111064][ T18] ? kthread (kernel/kthread.c:373 (discriminator 2))
+> > > [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+> > > [ 4.111064][ T18] ret_from_fork (arch/x86/kernel/process.c:153)
+> > > [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+> > > [ 4.111064][ T18] ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
+> > > [ 4.111064][ T18]  </TASK>
+> > > 
+> > > This commit fix this warning by priority check the condition 
+> > > "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())" , to
+> > > ensure whether the this_cpu_ptr(&rcu_data) can be executed in
+> > > rcu_rdp_is_offloaded().
+> > > 
+> > > Fixes: 8feeeba60711 ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
+> > > Tested-by: kernel test robot <oliver.sang@intel.com>
+> > > Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> > 
+> > Hearing no objections, I have queued this wordsmithed version.  As always,
+> > please let me know if I have messed anything up.
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > commit 5271ad1de0fbcf0bd9caebcf721670c164e5fa9c
+> > Author: Zqiang <qiang.zhang1211@gmail.com>
+> > Date:   Thu May 9 15:40:46 2024 +0800
+> > 
+> >     rcu/nocb: Don't use smp_processor_id() in preemptible code
+> >     
+> >     Currently, rcu_rdp_is_offloaded() invokes this_cpu_ptr(&rcu_data) before
+> >     the condition "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())"
+> >     is checked.  When invoked in preemptible context in preemptible kernels,
+> >     this will trigger the following warning:
+> >     
+> >     [ 4.106221][ T18] BUG: using smp_processor_id() in preemptible [00000000] code: rcuop/0/18
+> >     [ 4.107796][ T18] caller is debug_smp_processor_id (lib/smp_processor_id.c:61)
+> >     [ 4.108547][ T18] CPU: 0 PID: 18 Comm: rcuop/0 Not tainted 6.9.0-rc2-00079-g4c66bc7cacc0 #1
+> >     [ 4.109667][ T18] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> >     [ 4.111064][ T18] Call Trace:
+> >     [ 4.111064][ T18]  <TASK>
+> >     [ 4.111064][ T18] dump_stack_lvl (lib/dump_stack.c:116)
+> >     [ 4.111064][ T18] dump_stack (lib/dump_stack.c:124)
+> >     [ 4.111064][ T18] check_preemption_disabled (arch/x86/include/asm/preempt.h:84 (discriminator 15) lib/smp_processor_id.c:53 (discriminator 15))
+> >     [ 4.111064][ T18] debug_smp_processor_id (lib/smp_processor_id.c:61)
+> >     [ 4.111064][ T18] rcu_rdp_is_offloaded (kernel/rcu/tree_plugin.h:27 (discriminator 1))
+> >     [ 4.111064][ T18] nocb_cb_wait (kernel/rcu/tree_nocb.h:936 (discriminator 2))
+> >     [ 4.111064][ T18] rcu_nocb_cb_kthread (kernel/rcu/tree_nocb.h:983 (discriminator 1))
+> >     [ 4.111064][ T18] ? nocb_cb_wait (kernel/rcu/tree_nocb.h:976)
+> >     [ 4.111064][ T18] kthread (kernel/kthread.c:388)
+> >     [ 4.111064][ T18] ? kthread (kernel/kthread.c:373 (discriminator 2))
+> >     [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+> >     [ 4.111064][ T18] ret_from_fork (arch/x86/kernel/process.c:153)
+> >     [ 4.111064][ T18] ? kthread_complete_and_exit (kernel/kthread.c:341)
+> >     [ 4.111064][ T18] ret_from_fork_asm (arch/x86/entry/entry_64.S:256)
+> >     [ 4.111064][ T18]  </TASK>
+> >     
+> >     This commit therefore fixes this warning by checking the condition
+> >     "!(IS_ENABLED(CONFIG_PREEMPT_COUNT) && preemptible())" before invoking
+> >     this_cpu_ptr(), thus avoiding preemptible invocations.
+> >     
+> >     Fixes: 8feeeba60711 ("rcu/nocb: Use kthread parking instead of ad-hoc implementation")
+> >     Tested-by: kernel test robot <oliver.sang@intel.com>
+> >     Signed-off-by: Zqiang <qiang.zhang1211@gmail.com>
+> >     Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> 
+> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
-+cc Srinivas and Miqu=C3=A8l for the NVMEM cell discussion below
+Applied, thank you!
 
-On Fri, 10 May 2024 11:36:25 -0500
-Rob Herring <robh@kernel.org> wrote:
-
-> On Fri, May 10, 2024 at 09:10:37AM +0200, Luca Ceresoli wrote:
-> > Add bindings for the GE SUNH add-on connector. This is a physical,
-> > hot-pluggable connector that allows to attach and detach at runtime an
-> > add-on adding peripherals on non-discoverable busses.
-> >=20
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-[...]
-
-> > +++ b/Documentation/devicetree/bindings/connector/ge,sunh-addon-connect=
-or.yaml
-> > @@ -0,0 +1,197 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/connector/ge,sunh-addon-connector.y=
-aml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: GE SUNH hotplug add-on connector
-> > +
-> > +maintainers:
-> > +  - Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > +
-> > +description:
-> > +  Represent the physical connector present on GE SUNH devices that all=
-ows
-> > +  to attach and detach at runtime an add-on adding peripherals on
-> > +  non-discoverable busses.
-> > +
-> > +  This connector has status GPIOs to notify the connection status to t=
-he
-> > +  CPU and a reset GPIO to allow the CPU to reset all the peripherals o=
-n the
-> > +  add-on. It also has a 4-lane MIPI DSI bus.
-> > +
-> > +  Add-on removal can happen at any moment under user control and witho=
-ut
-> > +  prior notice to the CPU, making all of its components not usable
-> > +  anymore. Later on, the same or a different add-on model can be conne=
-cted. =20
->=20
-> Is there any documentation for this connector?
->=20
-> Is the connector supposed to be generic in that any board with any SoC=20
-> could have it? If so, the connector needs to be able to remap things so=20
-> overlays aren't tied to the base dts, but only the connector. If not,=20
-> then doing that isn't required, but still a good idea IMO.
-
-It is not generic. The connector pinout is very specific to this
-product, and there is no public documentation.
-
-> > +examples:
-> > +  # Main DTS describing the "main" board up to the connector
-> > +  - |
-> > +    / {
-> > +        #include <dt-bindings/gpio/gpio.h>
-> > +
-> > +        addon_connector: addon-connector { =20
->=20
-> Just 'connector' for the node name.
-
-OK
-
-> > +            compatible =3D "ge,sunh-addon-connector";
-> > +            reset-gpios =3D <&gpio1 1 GPIO_ACTIVE_LOW>;
-> > +            plugged-gpios =3D <&gpio1 2 GPIO_ACTIVE_LOW>;
-> > +            powergood-gpios =3D <&gpio1 3 GPIO_ACTIVE_HIGH>;
-> > +
-> > +            ports {
-> > +                #address-cells =3D <1>;
-> > +                #size-cells =3D <0>;
-> > +
-> > +                port@0 {
-> > +                    reg =3D <0>;
-> > +
-> > +                    hotplug_conn_dsi_in: endpoint {
-> > +                        remote-endpoint =3D <&previous_bridge_out>;
-> > +                    };
-> > +                };
-> > +
-> > +                port@1 {
-> > +                    reg =3D <1>;
-> > +
-> > +                    hotplug_conn_dsi_out: endpoint {
-> > +                        // remote-endpoint to be added by overlay
-> > +                    };
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +  # "base" overlay describing the common components on every add-on th=
-at
-> > +  # are required to read the model ID =20
->=20
-> This is located on the add-on board, right?
-
-Exactly. Each add-on has an EEPROM with the add-on model ID stored
-along with other data.
-
-> Is it really any better to have this as a separate overlay rather than=20
-> just making it an include? Better to have just 1 overlay per board=20
-> applied atomically than splitting it up.
-
-(see below)
-
-> > +  - |
-> > +    &i2c1 { =20
->=20
-> Generally, I think everything on an add-on board should be underneath=20
-> the connector node. For starters, that makes controlling probing and=20
-> removal of devices easier. For example, you'll want to handle=20
-> reset-gpios and powergood-gpios before any devices 'appear'. Otherwise,=20
-> you add devices on i2c1, start probing them, and then reset them at some=
-=20
-> async time?
-
-This is not a problem because the code is asserting reset before
-loading the first overlay. From patch 5/5:
-
-    static int sunh_conn_attach(struct sunh_conn *conn)
-    {
-	int err;
-
-	/* Reset the plugged board in order to start from a stable state */
-	sunh_conn_reset(conn, false);
-
-	err =3D sunh_conn_load_base_overlay(conn);
-        ...
-    }
-
-> For i2c, it could look something like this:
->=20
-> connector {
->   i2c {
-> 	i2c-parent =3D <&i2c1>;
->=20
-> 	eeprom@50 {...};
->   };
-> };
-
-I think this can be done, but I need to evaluate what is needed in the
-driver code to support it.
-
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        eeprom@50 {
-> > +            compatible =3D "atmel,24c64";
-> > +            reg =3D <0x50>;
-> > +
-> > +            nvmem-layout {
-> > +                compatible =3D "fixed-layout";
-> > +                #address-cells =3D <1>;
-> > +                #size-cells =3D <1>;
-> > +
-> > +                addon_model_id: addon-model-id@400 {
-> > +                    reg =3D <0x400 0x1>;
-> > +                };
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +    &addon_connector {
-> > +        nvmem-cells =3D <&addon_model_id>;
-> > +        nvmem-cell-names =3D "id";
-> > +    }; =20
->=20
-> It's kind of sad that an addon board has an eeprom to identify it, but=20
-> it's not itself discoverable...
-
-Not sure I got what you mean exactly here, sorry.
-
-The add-on board is discoverable in the sense that it has a GPIO
-(actually two) to be notified of plug/unplug, and it has a way to
-describe itself by reading a model ID. Conceptually this is what HDMI
-monitors do: an HPD pin and an EEPROM at a fixed address with data at
-fixed locations.
-
-If you mean the addon_connector node might be avoided, then I kind of
-agree, but this seems not what the NVMEM DT representation expects so
-I'm not sure removing it would be correct in the first place.
-
-Srinivas, do you have any insights to share about this? The topic is a
-device tree overlay that describes a hotplug-removable add-on, and in
-particular the EEPROM present on all add-ons to provide the add-on
-model ID.
-
-> Do you load the first overlay and then from it decide which=20
-> specific overlay to apply?
-
-Exactly.
-
-The first overlay (the example you quoted above) describes enough to
-reach the model ID in the EEPROM, and this is identical for all add-on
-models. The second add-on is model-specific, there is one for each
-model, and the model ID allows to know which one to load.
-
-Luca
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+							Thanx, Paul
 
