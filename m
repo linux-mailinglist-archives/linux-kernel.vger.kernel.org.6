@@ -1,96 +1,176 @@
-Return-Path: <linux-kernel+bounces-179078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A8F8C5B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:46:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7648C5B56
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D78E4B20AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59E091F21DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B01D180A94;
-	Tue, 14 May 2024 18:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB6F180A94;
+	Tue, 14 May 2024 18:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RDG2Lk2J"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMzyuieV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3A3180A78
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B379F18AEA;
+	Tue, 14 May 2024 18:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712374; cv=none; b=Id/tWiqAMnf0AWM8p/yyVfXPp3N8Px0XkkgiztpqkTSGls+PTgJuYQwUfvC54RBAhY7bHSfaJmcHrTr+WRog3b9wsTwQ2ERgHUoLq50IkItPDVSr+/YD8T50lEd+d0MP2UH0226uZ3RBCQV8Jiyi1rAVSYdwCgBKDykby1NsOk4=
+	t=1715712416; cv=none; b=IzhfopQz1Df/mW3T6+frXHWt0M9XTGKV94Ba8Stm6K1cfYEsABkMIVLABpYujqVXvUXnRZ3/pAjI6kkC+GFTNaTxO1ZA+/n9rLbBo0VCdddR/bfLt9IKXIkcy2SpEP+m++6F3e6u0kLdVPAnxz2SB2dax4j2mHK9k7ViEQURyC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715712374; c=relaxed/simple;
-	bh=9/KPdGRlEJrAT1NZpQ7pcVvJ7WKkVMm+m6cd6ZNvkDk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ymxpkahx9oy8+gr/fqLwySpmzw9f6W0oP1pnajEYbhXkdZruK2t2lsj3hKU4DRlV8LPJizLedueR1XPeHM+mtdEZTF4KkFJjeGgD7pFRcGPg5/OTQvpyCmd479jLVAFoWMmqNxgqUNeLW9QYN9/YJppXuHdwN2xf19c8FRNVGPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RDG2Lk2J; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1ed0abbf706so44151245ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 11:46:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715712372; x=1716317172; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/KPdGRlEJrAT1NZpQ7pcVvJ7WKkVMm+m6cd6ZNvkDk=;
-        b=RDG2Lk2Jl+CSjnkyy/M4Al/TYbFs43XjviclVxy7zmIdQ1nZ+cGHq4uN1Rp+4m6lhL
-         TIfZylGLA5uNGVIuFU6GWGntyLfKreSYPzieErscZHyA7JjuNajoXqXQXlfAYinf73Oh
-         yWwo1zpFxke3/wQW0yGnMjmSi61MH7/1SYBgHT+0CiUk2V/s076fTD8/IW4rQKkmq5gC
-         VVRnM4lEzq7U2xuv5h+3990D4fQ38yenObXIkDTZg+JedP9/5CvWXLeZoRYygly64bhU
-         qtfxVYXy+oceuZLwzotr+gCfIhWTqfDKUwDO09oh5dcfb3XP7aY2A1GjupHjwSksZAS+
-         Mnfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715712372; x=1716317172;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9/KPdGRlEJrAT1NZpQ7pcVvJ7WKkVMm+m6cd6ZNvkDk=;
-        b=q4S25PDA7hkqV/LYG5LNBFCN7SSl0qk+QO7nMoO8MOy0jE+3xRH7NpOxcaIHtXTE6X
-         7pFRl56YNPQfbh/drsuqG9mqUM2ofcX/pXJhZ0IeJtXPehnv+wOTqLngOJHY+CGDpYIs
-         G0Q5jVu0SvacIYhGBr7zTGDi4XktRIXc7bisKqUrFGOfooY2at/T6Xy+KqRBNlnpO7rm
-         BX3mVlFWcE2dWpmfxkWNCuk0QnxNM7t90YQGnvSHn4QCDBiGwEfNCbYlfcnBQiSK1utD
-         vhYyq5G0fv0Vb+erXzfQGscJHmxFILBFyAW8m/z27aXfqTvNhUs+CNxe5RUt1eHRMclb
-         mIeg==
-X-Forwarded-Encrypted: i=1; AJvYcCWT7QkO3BDxD+U3GC37d6ttmPb1lmVBOF5JTLLIKhV45OlTCe4/RHAFCzIJKE2dkvbt62eVBsLDMqy8ogp2PwYWylduXbGU0W+NrZmm
-X-Gm-Message-State: AOJu0YzPLbQ9WahhzmAuwwprxR1z/tp4uKE+j7vJnGgPhqWy6kVUVY6l
-	+6LqJGp/7cECt5u1Scuv/0LQcU9ZDaPvyFmpR6SbSH+LbSe1ImzQfzXrut/xjgw=
-X-Google-Smtp-Source: AGHT+IEoObsEKnrH0xx3C0KUfwJWip12l93lYXbuldDs11Wqv7w3vbecPBywu++IWnpGBnVA7Y7dRg==
-X-Received: by 2002:a17:902:8f87:b0:1ef:35d5:e3ea with SMTP id d9443c01a7336-1ef44059ad9mr143683265ad.59.1715712372044;
-        Tue, 14 May 2024 11:46:12 -0700 (PDT)
-Received: from localhost (75-172-111-169.tukw.qwest.net. [75.172.111.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf316f7sm101161005ad.164.2024.05.14.11.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 11:46:11 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Vibhore Vardhan <vibhore@ti.com>, Nishanth Menon <nm@ti.com>, Vignesh
- Raghavendra <vigneshr@ti.com>, Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: msp@baylibre.com, d-gole@ti.com, Vibhore
- Vardhan <vibhore@ti.com>, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62a-wakeup: Enable RTC node
-In-Reply-To: <20240429184445.14876-1-vibhore@ti.com>
-References: <20240429184445.14876-1-vibhore@ti.com>
-Date: Tue, 14 May 2024 11:46:10 -0700
-Message-ID: <7hcypo44gd.fsf@baylibre.com>
+	s=arc-20240116; t=1715712416; c=relaxed/simple;
+	bh=UyU5amjgg2PHF9aBCOdyNsPAT8YCHB5QaFm6JaD7EXg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ONl0WISzsGFRke4AQV8LrxWtbiVKxKv9+uHUL+AQRH30EUMsqG2sTndFxwjvS/jBtMW53NhF8U6o7PUy6CEEm8V2DKfbu0qFxqDmKE+m7QKrM7F1TiiLVRpTxSkyEEvcw6F23GQmXmPI6H2HBkdCN6rFU6fgk64+2UXA80znVUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMzyuieV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5610AC2BD10;
+	Tue, 14 May 2024 18:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715712416;
+	bh=UyU5amjgg2PHF9aBCOdyNsPAT8YCHB5QaFm6JaD7EXg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dMzyuieVUnps5Btmqr0nBxxgElHV7q4hzaDiPfr/fbaxy6GYC70ZNJAg/xwGo/MJA
+	 HLdmVCw5BNYoOSspqUDi2syDeAomf2UEikDfPOxipcG9PNt25RGX5LTKC8xC50Jy/z
+	 u8VnWQJccvBC0sUas/jRP3yIj2A4gp5mlrZAQTJ2g3pNxXMyXUeWzyBNCuctoL7Yp4
+	 CZdQtb2/3xEeotue8J6AA+h9kMcvKPFlFcbPuYJMpQ/5/Nf8m9Z8EofuwVrOPdX7qw
+	 S3SOq//QKzNNaYshFy6MYhWnXGd2rPFzIb0/5onZePi+YdTRINqnaH3AwTflegrCbQ
+	 Bus5huDTVQeLw==
+Date: Tue, 14 May 2024 19:46:51 +0100
+From: Conor Dooley <conor@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH RFC v2 1/8] spi: dt-bindings: spi-peripheral-props: add
+ spi-offloads property
+Message-ID: <20240514-aspire-ascension-449556da3615@spud>
+References: <20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com>
+ <20240510-dlech-mainline-spi-engine-offload-2-v2-1-8707a870c435@baylibre.com>
+ <20240513-headsman-hacking-d51fcc811695@spud>
+ <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YoB/os18honPkEB1"
+Content-Disposition: inline
+In-Reply-To: <CAMknhBE5XJzhdJ=PQUXiubw_CiCLcn1jihiscnQZUzDWMASPKw@mail.gmail.com>
 
-Vibhore Vardhan <vibhore@ti.com> writes:
 
-> On-chip RTC is used as a wakeup source on am62a board designs. This
-> patch removes the disabled status property to enable the RTC node.
->
-> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+--YoB/os18honPkEB1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+On Mon, May 13, 2024 at 12:06:17PM -0500, David Lechner wrote:
+> On Mon, May 13, 2024 at 11:46=E2=80=AFAM Conor Dooley <conor@kernel.org> =
+wrote:
+> >
+> > On Fri, May 10, 2024 at 07:44:24PM -0500, David Lechner wrote:
+> > > This adds a new property to the spi-peripheral-props binding for use
+> > > with peripherals connected to controllers that support offloading.
+> > >
+> > > Here, offloading means that the controller has the ability to perform
+> > > complex SPI transactions without CPU intervention in some shape or fo=
+rm.
+> > >
+> > > This property will be used to assign controller offload resources to
+> > > each peripheral that needs them. What these resources are will be
+> > > defined by each specific controller binding.
+> > >
+> > > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > > ---
+> > >
+> > > v2 changes:
+> > >
+> > > In v1, instead of generic SPI bindings, there were only controller-
+> > > specific bindings, so this is a new patch.
+> > >
+> > > In the previous version I also had an offloads object node that descr=
+ibed
+> > > what the offload capabilities were but it was suggested that this was
+> > > not necessary/overcomplicated. So I've gone to the other extreme and
+> > > made it perhaps over-simplified now by requiring all information about
+> > > how each offload is used to be encoded in a single u32.
+> >
+> > The property is a u32-array, so I guess, not a single u32?
+>=20
+> It is an array to handle cases where a peripheral might need more than
+> one offload. But the idea was it put everything about each individual
+> offload in a single u32. e.g. 0x0101 could be offload 1 with hardware
+> trigger 1 and 0x0201 could be offload 1 with hardware trigger 2. Then
+> a peripheral could have spi-offloads =3D <0x0101>, <0x0201>; if it
+> needed to select between both triggers at runtime.
+>=20
+> >
+> > > We could of course consider using #spi-offload-cells instead for
+> > > allowing encoding multiple parameters for each offload instance if th=
+at
+> > > would be preferable.
+> >
+> > A -cells property was my gut reaction to what you'd written here and
+> > seems especially appropriate if there's any likelihood of some future
+> > device using some external resources for spi-offloading.
+> > However, -cells properties go in providers, not consumers, so it wouldn=
+'t
+> > end up in spi-periph-props.yaml, but rather in the controller binding,
+> > and instead there'd be a cell array type property in here. I think you
+> > know that though and I'm interpreting what's been written rather than
+> > what you meant.
+>=20
+> Indeed you guess correctly. So the next question is if it should be
+> the kind of #-cells that implies a phandle like most providers or
+> without phandles like #address-cells?
+
+I'm trying to understand if the offload could ever refer to something
+beyond the controller that you'd need the phandle for. I think it would
+be really helpful to see an example dt of a non-trivial example for how
+this would work. The example in the ad7944 patch has a stub controller
+node & the clocks/dmas in the peripheral node so it is difficult to
+reason about the spi-offloads property there.
+
+> Asking because I got pushback on
+> v1 for using a phandle with offloads (although in that case, the
+> phandle was for the offload instance itself instead for the SPI
+> controller, so maybe this is different in this case?).
+
+Do you have a link to this v1 pushback? I had looked at the v1's binding
+comments and didn't see that type of property being resisted - although
+I did see some resistance to the spi peripheral node containing any of
+the information about the offloads it had been assigned and instead
+doing that mapping in the controller so that the cs was sufficient. I
+don't think that'd work with the scenario you describe above though
+where there could be two different triggers per device tho.
+
+Cheers,
+Conor.
+
+--YoB/os18honPkEB1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkOxmwAKCRB4tDGHoIJi
+0sUTAP4khgtxC6wlzfwZElyG7iZX6IfaDBVnABDW8tZkvQb02QEAnHyPkOG/dtFW
+Y3rBnT0cU80kpSZ/14hIBFDSyGmrtgg=
+=C158
+-----END PGP SIGNATURE-----
+
+--YoB/os18honPkEB1--
 
