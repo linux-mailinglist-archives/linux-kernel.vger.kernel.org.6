@@ -1,78 +1,171 @@
-Return-Path: <linux-kernel+bounces-179068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BE68C5B3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F1D8C5B4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5971E1C21553
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:41:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 683FF283ACE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD57180A85;
-	Tue, 14 May 2024 18:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CD5181321;
+	Tue, 14 May 2024 18:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGPZl12A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jnStNrpy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E8553E15
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 18:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B70181303;
+	Tue, 14 May 2024 18:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715712114; cv=none; b=JgYQL6Rc+H0UGRM47KZ84eyy7OPtC6qVvEPXtd27z7Lz1uV1ssBRzPygEisNWc4O9Rlm7+ZIgk4r+62IGEV/UjnV5UBh+diMAGOFm+SPX2EOuO3gmNPLcbVsEY2glItTThXU7DPHo4reQdL1YH7IJ84ZUHD+vj8RDkxnUNYCKTw=
+	t=1715712139; cv=none; b=sNV2/oxRoVXBYwVuvt7aO67gsfOiEz/ljeS4pUryjWHCeMqWrAE37OibBv5dLTuUwy2RUDa+bjVCoe7mT985VgVRGtu795NDbDDrrz3nterd7orl8rEP9l2ZL7Cisu8Oy4pZ+M8YOIeGG6/tBLYoDnPmu3h0luikFPpFKDrWKRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715712114; c=relaxed/simple;
-	bh=IGXKKg0gm+pLLpxJqZLJdmW0GHpPlV0BBnZwuPBsrKk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ODHVg+MoR9GFNUUprGqg0NQZh0DbMROzZSEK/30xcSt2DnEaljNqMEszQ/H3ayMiLRuVa055casF3vsT/LwN4fT31VJviG8vLY5B60XjoMrGp68XXx/Lyoa8eXsjd8R/Y6RsDwm9zZi53f/dGtqRWCexFImck+Ov9PT35MMIXLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGPZl12A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D4E23C2BD10;
-	Tue, 14 May 2024 18:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715712113;
-	bh=IGXKKg0gm+pLLpxJqZLJdmW0GHpPlV0BBnZwuPBsrKk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=PGPZl12AKSJQCiUak5MPSyaVIehCgXTcrlSudIceCbHJI1CFbZBaIBOIB8PY6qfd5
-	 2TPI4kqGLWsGRBg3xm7axbbYU5CK/kgsO0eFxHzMXwteaek6sVvIdUHKeEnN822Xxb
-	 HFGKqfffwo7fQ9pNnkV+HLUDONU2DneJkSx00xlBuQKuDDVLCyOl3dRB778pIOh010
-	 BJ+R4Pth5cgLZSjMs5qzK3q/QoWw8JFgFVUHIM02nCBeBUx21NaOyii8GTDIMhYqUC
-	 yBCKIjvH8PwA3BBI6CTkETTmHYaaPj7H3dX3IacZJsavRldOr0tmlXzGqC6Xxm7vL4
-	 QVpyfR9+Sm62Q==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CECE5C43339;
-	Tue, 14 May 2024 18:41:53 +0000 (UTC)
-Subject: Re: [GIT PULL] m68k updates for v6.10
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240513111843.2039350-1-geert@linux-m68k.org>
-References: <20240513111843.2039350-1-geert@linux-m68k.org>
-X-PR-Tracked-List-Id: <linux-m68k.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240513111843.2039350-1-geert@linux-m68k.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.10-tag1
-X-PR-Tracked-Commit-Id: ec8c8266373f6283a3e99b036aea7b9428480625
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 1338acfe629ddd955fd524fc01e26bca4f1bb22b
-Message-Id: <171571211384.4202.8418472773044722609.pr-tracker-bot@kernel.org>
-Date: Tue, 14 May 2024 18:41:53 +0000
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Greg Ungerer <gerg@linux-m68k.org>, linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>
+	s=arc-20240116; t=1715712139; c=relaxed/simple;
+	bh=0wNd6nOWp7TDgA5f8KCU5SkKx3B7tcndAHrRejtSNbM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jJtww9zL78P3CStqvfxduyO736wsTvt93IJGkVILzsNBiDdhaChJxgNl+3AOQGdn2dTAzRsfgZlKk8d9RK9VaYquxrs0mlDYi1etI2dp3Uy2J4deYW1i5OwXcJ393izDT62BRTP/ngVuSkb2CB/Dgd5g179RPxGmBJY8lxd3UHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jnStNrpy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44EIHZlF010411;
+	Tue, 14 May 2024 18:42:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	date:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=qcppdkim1; bh=fqmbST24fPtvgiBuCK/vt
+	w9KZSeJV3pS8ZQtIGx96Ds=; b=jnStNrpyLdapYPAS1whCEp3bsUiRQFnr/RgHX
+	bH2CX+EVz6m1gNYT3m4gu0h9PyA4cgOHurrykpTNY2v4kUtmGR0txkZpyb7B6SJu
+	JQboeVuJcPgcvI52D0UkezzusnS3me0tLUsybnZoUcRIVfr8JYJL779RD4IG0YX4
+	wJn3yOE9I3vH/MOrSaGvkfl7cOYpBzH+XyDLIPiRfYDIods5wn4Yw2/kb80ZQsUV
+	PQ/4DHLlmhszjWmTPE4biMTYb3NR/G1nqV8bIUHrbgGEormQj774TXtlmsuyNjPe
+	YM0fSIsHoSkdrtH2x+LXVHQWDvx04q0xQYpHLGKlB3Nw8pDvQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y21edf1hm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 18:42:05 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44EIg4Lw000804
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 18:42:04 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 14 May 2024 11:41:59 -0700
+Date: Wed, 15 May 2024 00:11:55 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-arm-msm@vger.kernel.org>,
+        <freedreno@lists.freedesktop.org>, Rob Clark <robdclark@chromium.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Bjorn
+ Andersson" <quic_bjorande@quicinc.com>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Ruan Jinjie <ruanjinjie@huawei.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm: Add obj flags to gpu devcoredump
+Message-ID: <20240514184155.lt2stiohrh4sfsxy@hu-akhilpo-hyd.qualcomm.com>
+References: <20240513155150.166924-1-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240513155150.166924-1-robdclark@gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: cl505ZX_pPUkI21mYcHeK5e7l2VPlpXM
+X-Proofpoint-ORIG-GUID: cl505ZX_pPUkI21mYcHeK5e7l2VPlpXM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_11,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=898 adultscore=0
+ priorityscore=1501 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ suspectscore=0 impostorscore=0 clxscore=1011 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405140132
 
-The pull request you sent on Mon, 13 May 2024 13:18:43 +0200:
+On Mon, May 13, 2024 at 08:51:47AM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
+> 
+> When debugging faults, it is useful to know how the BO is mapped (cached
+> vs WC, gpu readonly, etc).
+> 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v6.10-tag1
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/1338acfe629ddd955fd524fc01e26bca4f1bb22b
+-Akhil
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> ---
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.c | 1 +
+>  drivers/gpu/drm/msm/msm_gpu.c           | 6 ++++--
+>  drivers/gpu/drm/msm/msm_gpu.h           | 1 +
+>  3 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.c b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> index b7bbef2eeff4..d9ea15994ae9 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.c
+> @@ -887,6 +887,7 @@ void adreno_show(struct msm_gpu *gpu, struct msm_gpu_state *state,
+>  			drm_printf(p, "  - iova: 0x%016llx\n",
+>  				state->bos[i].iova);
+>  			drm_printf(p, "    size: %zd\n", state->bos[i].size);
+> +			drm_printf(p, "    flags: 0x%x\n", state->bos[i].flags);
+>  			drm_printf(p, "    name: %-32s\n", state->bos[i].name);
+>  
+>  			adreno_show_object(p, &state->bos[i].data,
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+> index d14ec058906f..ceaee23a4d22 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.c
+> +++ b/drivers/gpu/drm/msm/msm_gpu.c
+> @@ -222,14 +222,16 @@ static void msm_gpu_crashstate_get_bo(struct msm_gpu_state *state,
+>  		struct drm_gem_object *obj, u64 iova, bool full)
+>  {
+>  	struct msm_gpu_state_bo *state_bo = &state->bos[state->nr_bos];
+> +	struct msm_gem_object *msm_obj = to_msm_bo(obj);
+>  
+>  	/* Don't record write only objects */
+>  	state_bo->size = obj->size;
+> +	state_bo->flags = msm_obj->flags;
+>  	state_bo->iova = iova;
+>  
+> -	BUILD_BUG_ON(sizeof(state_bo->name) != sizeof(to_msm_bo(obj)->name));
+> +	BUILD_BUG_ON(sizeof(state_bo->name) != sizeof(msm_obj->name));
+>  
+> -	memcpy(state_bo->name, to_msm_bo(obj)->name, sizeof(state_bo->name));
+> +	memcpy(state_bo->name, msm_obj->name, sizeof(state_bo->name));
+>  
+>  	if (full) {
+>  		void *ptr;
+> diff --git a/drivers/gpu/drm/msm/msm_gpu.h b/drivers/gpu/drm/msm/msm_gpu.h
+> index 685470b84708..05bb247e7210 100644
+> --- a/drivers/gpu/drm/msm/msm_gpu.h
+> +++ b/drivers/gpu/drm/msm/msm_gpu.h
+> @@ -527,6 +527,7 @@ struct msm_gpu_submitqueue {
+>  struct msm_gpu_state_bo {
+>  	u64 iova;
+>  	size_t size;
+> +	u32 flags;
+>  	void *data;
+>  	bool encoded;
+>  	char name[32];
+> -- 
+> 2.45.0
+> 
 
