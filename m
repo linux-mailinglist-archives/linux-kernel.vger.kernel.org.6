@@ -1,217 +1,421 @@
-Return-Path: <linux-kernel+bounces-179263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4E98C5E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:41:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDB88C5E26
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DD31F216B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:41:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74392281D0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E79D182CA8;
-	Tue, 14 May 2024 23:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7F6182CAC;
+	Tue, 14 May 2024 23:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kG6cxxqN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W6bo8AVv";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kG6cxxqN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W6bo8AVv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="PQaS2CRN"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF911E871;
-	Tue, 14 May 2024 23:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DB213D619
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 23:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715730069; cv=none; b=s3ay0ldJYWOL+h33jQA9Vae90i+FTktOJz5D7gFFLAqK9iao9d6cEPUoifeYVcfsN3+5P02d163lZT2djUm6OepMsEBRNeDMIhCfqNxJKfQusdw1cRkZyk2GiwhQd3xrAuAP49499ElLsX7kBGl8aCN6y5Rak+WhqBSoZXzuqTs=
+	t=1715730085; cv=none; b=Mnt5nyGkasqMEPPVOYX8gM5mN6Tgu0r4LuoQTlfQ1/FZwipn7mbcHU+674rc6XRfjaKYI0OVxMRcRByfa0sBU8QTj7wrlrlo1HD05OFmlva4O7kH5+xoIiJJ15J7QD0LAcTGgdcCDbL21emEMVJrbx4qpxn7o5U04H5o7289dU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715730069; c=relaxed/simple;
-	bh=w2X85Z2HthCEJW9eHGQmyHOLa23xK8+fkZHLn+hr7nY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hi9yr9FV3E2VcCsXwkx6ZLlHqiOgk/GUxaDbILvNL3PvEWdDi8ITT99MDifBlgNWY+V/nh/dXv0QT7UZWAVFanDAnVzZ5uLtn+xyxeyZVTwIk2lBVLd+wNcnVfJ2+touT1zElcKxjvZ2JR8jaZMmR+S7ZM7+Zp/XZxN5TfOw5l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kG6cxxqN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W6bo8AVv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kG6cxxqN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W6bo8AVv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1FC841FED5;
-	Tue, 14 May 2024 23:41:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715730065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
-	b=kG6cxxqN2w4xfnjDvdsuSNRb0HrwXETX1VWGfYj73F7M23SyQkNg+kikALL/yrfKfyzekK
-	BXo6qO0DOqHSGE1BQEtsONylGT7a4M2ZBayISXzZJmTQNjhARJYYXEzDmvfnSd39sgtIU4
-	u6dUFpE6qlplt4v5EQ0ZPQ8fGIj0KFs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715730065;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
-	b=W6bo8AVvxX7pPTyVownj3lUVac7R2+BP0xM+vvNE3spyho6a3tkS1ZcEeI4/aYlzqrX5EZ
-	AXx2jQay/KjoZRDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1715730065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
-	b=kG6cxxqN2w4xfnjDvdsuSNRb0HrwXETX1VWGfYj73F7M23SyQkNg+kikALL/yrfKfyzekK
-	BXo6qO0DOqHSGE1BQEtsONylGT7a4M2ZBayISXzZJmTQNjhARJYYXEzDmvfnSd39sgtIU4
-	u6dUFpE6qlplt4v5EQ0ZPQ8fGIj0KFs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1715730065;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
-	b=W6bo8AVvxX7pPTyVownj3lUVac7R2+BP0xM+vvNE3spyho6a3tkS1ZcEeI4/aYlzqrX5EZ
-	AXx2jQay/KjoZRDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C176D137C3;
-	Tue, 14 May 2024 23:41:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yHktL5D2Q2bvTAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 14 May 2024 23:41:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 98917A08B5; Wed, 15 May 2024 01:41:01 +0200 (CEST)
-Date: Wed, 15 May 2024 01:41:01 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kemeng Shi <shikemeng@huaweicloud.com>
-Cc: tytso@mit.edu, jack@suse.com, yi.zhang@huaweicloud.com,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/9] jbd2: remove unused return info from
- jbd2_journal_write_metadata_buffer
-Message-ID: <20240514234101.2ke6hq4xwitwk7a5@quack3>
-References: <20240514112438.1269037-1-shikemeng@huaweicloud.com>
- <20240514112438.1269037-3-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1715730085; c=relaxed/simple;
+	bh=1Jx0O6Oo2nlnOfO/6AcY+Fr1NWNsgd0wps8Qhj6D2kY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sGJZSVofUWlpBVMz5ozsvvvAvRT/Zh1JCTvH4Bkj7WeE4rPC68RUxWRUtwhwTc3mxDZl0P0kKBZsYzF0UJzrbiQcNbY7DZGk9aUR6lUR2FO31qsfueytDke3VAEbQFChCDq7Eg/oAoVc+HfJxCVpwgC2N4QaiDpZNIAggp4L1hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=PQaS2CRN; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-34f0e55787aso4885788f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 16:41:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1715730081; x=1716334881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cyv4d0BNd/pX9bsHIQA0n79BqkHw7pTrOWISuu/E9o8=;
+        b=PQaS2CRNfLcLHgt7tt1wA9DSSAegR1VrvWQIsMUTJTqDw9kMgqFq1d+p8IXVdrBk/R
+         63DhMLdI7sLDWAXZJB8L4j+dfc1b3dwJY4WXcJE+3P496Y09puEtYEqHhAJe/SHr213F
+         eV4vaLiht8O+02vK2njTrAS236j8ILL5Ht+rXm+GYh5a4Nv70kSMNQdZ3mDTf2SY5w5F
+         GrH94Qae9AFw2ahOBTww1ESp28i45W1H0HzKvzh3UfYLqQcgRd5Jp0hws6R3VoJxNPuw
+         oZz18n8xvKiKLOgncaqcu8CVVWw/0DaYr6QiuZnih0ShSWGRCZwwpVLkLtxuLVCXDQPp
+         UgoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715730081; x=1716334881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cyv4d0BNd/pX9bsHIQA0n79BqkHw7pTrOWISuu/E9o8=;
+        b=XPXri+SqrKCdGDH14g16Y95JCVgf2z0DqRJpiZqjV2SpOi0LvaRNFnTNycjSxRBpYl
+         awQRiID6XkrYnJsmHlyPn1/so+v1Cy7+ZbEBaFJVROxLoqnhW/6sm2mbW0qU4rRgk7Cv
+         U42jHiSJm71cPMHU/jnD6TOaiYJG40Da1VXVGEvjz6uJFghiY1wYzz3SgYov9RCbHGZp
+         cepTzpIDMK5sUphQ9U1KYABmBfXos1mBiJ7U4O9srLRt/pPUvJJqhBuFIWR2teFQOkNV
+         o00ZkmnNsZpuGWGLTzkDqL4lKYXanKi2/tiW8oynLQXFOBsLvOsxXeRifLQgXQxpXFs5
+         443A==
+X-Forwarded-Encrypted: i=1; AJvYcCU6FM9ox9JdilI2vw4XyW57oFxWyc2jzjtkzE7mo/Uvemu3WvgCnv11p0YuOtVni0KYfdoGr31oUBLvnTOkO3dbxrjt44PwugmLG+ly
+X-Gm-Message-State: AOJu0Yy5Od2y6qoRSGj0dgvMTCHR+Sqba9bfi9qaIXyoQuDMs3CLEAU9
+	5hTWIk3L6BXcl20yjrxdmM56a2q4elq3Mf8bQFgIYL9i2LfvLsUHXAd8OPj4ToA=
+X-Google-Smtp-Source: AGHT+IEBy2w3iH8OKtwZdjojFHLLL37I8pr75pLUSWLE4x8ivC4Yc5Dp6aLTJywXCUWt2E70Qh3Gxw==
+X-Received: by 2002:adf:f250:0:b0:34d:414:5f99 with SMTP id ffacd0b85a97d-3504a735149mr8899514f8f.25.1715730080671;
+        Tue, 14 May 2024 16:41:20 -0700 (PDT)
+Received: from airbuntu.. (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a78cdsm14762308f8f.58.2024.05.14.16.41.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 16:41:20 -0700 (PDT)
+From: Qais Yousef <qyousef@layalina.io>
+To: Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Qais Yousef <qyousef@layalina.io>
+Subject: [PATCH] sched/rt: Clean up usage of rt_task()
+Date: Wed, 15 May 2024 00:41:12 +0100
+Message-Id: <20240514234112.792989-1-qyousef@layalina.io>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514112438.1269037-3-shikemeng@huaweicloud.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+Content-Transfer-Encoding: 8bit
 
-On Tue 14-05-24 19:24:31, Kemeng Shi wrote:
-> The done_copy_out info from jbd2_journal_write_metadata_buffer is not
-> used. Simply remove it.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+rt_task() checks if a task has RT priority. But depends on your
+dictionary, this could mean it belongs to RT class, or is a 'realtime'
+task, which includes RT and DL classes.
 
-Looks good. Feel free to add:
+Since this has caused some confusion already on discussion [1], it
+seemed a clean up is due.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I define the usage of rt_task() to be tasks that belong to RT class.
+Make sure that it returns true only for RT class and audit the users and
+replace them with the new realtime_task() which returns true for RT and
+DL classes - the old behavior. Introduce similar realtime_prio() to
+create similar distinction to rt_prio() and update the users.
 
-								Honza
+Move MAX_DL_PRIO to prio.h so it can be used in the new definitions.
 
-> ---
->  fs/jbd2/commit.c  | 10 +++++-----
->  fs/jbd2/journal.c |  9 +++------
->  2 files changed, 8 insertions(+), 11 deletions(-)
-> 
-> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-> index 5e122586e06e..67077308b56b 100644
-> --- a/fs/jbd2/commit.c
-> +++ b/fs/jbd2/commit.c
-> @@ -353,7 +353,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  	struct buffer_head *descriptor;
->  	struct buffer_head **wbuf = journal->j_wbuf;
->  	int bufs;
-> -	int flags;
-> +	int escape;
->  	int err;
->  	unsigned long long blocknr;
->  	ktime_t start_time;
-> @@ -661,10 +661,10 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->  		 */
->  		set_bit(BH_JWrite, &jh2bh(jh)->b_state);
->  		JBUFFER_TRACE(jh, "ph3: write metadata");
-> -		flags = jbd2_journal_write_metadata_buffer(commit_transaction,
-> +		escape = jbd2_journal_write_metadata_buffer(commit_transaction,
->  						jh, &wbuf[bufs], blocknr);
-> -		if (flags < 0) {
-> -			jbd2_journal_abort(journal, flags);
-> +		if (escape < 0) {
-> +			jbd2_journal_abort(journal, escape);
->  			continue;
->  		}
->  		jbd2_file_log_bh(&io_bufs, wbuf[bufs]);
-> @@ -673,7 +673,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
->                     buffer */
->  
->  		tag_flag = 0;
-> -		if (flags & 1)
-> +		if (escape)
->  			tag_flag |= JBD2_FLAG_ESCAPE;
->  		if (!first_tag)
->  			tag_flag |= JBD2_FLAG_SAME_UUID;
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 207b24e12ce9..2dca2f613a8e 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -316,11 +316,8 @@ static void journal_kill_thread(journal_t *journal)
->   *
->   * Return value:
->   *  <0: Error
-> - * >=0: Finished OK
-> - *
-> - * On success:
-> - * Bit 0 set == escape performed on the data
-> - * Bit 1 set == buffer copy-out performed (kfree the data after IO)
-> + *  =0: Finished OK without escape
-> + *  =1: Finished OK with escape
->   */
->  
->  int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
-> @@ -455,7 +452,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->  	set_buffer_shadow(bh_in);
->  	spin_unlock(&jh_in->b_state_lock);
->  
-> -	return do_escape | (done_copy_out << 1);
-> +	return do_escape;
->  }
->  
->  /*
-> -- 
-> 2.30.0
-> 
+Document the functions to make it more obvious what is the difference
+between them. PI-boosted tasks is a factor that must be taken into
+account when choosing which function to use.
+
+Rename task_is_realtime() to task_has_realtime_policy() as the old name
+is confusing against the new realtime_task().
+
+No functional changes were intended.
+
+[1] https://lore.kernel.org/lkml/20240506100509.GL40213@noisy.programming.kicks-ass.net/
+
+Signed-off-by: Qais Yousef <qyousef@layalina.io>
+---
+ fs/select.c                       |  2 +-
+ include/linux/ioprio.h            |  2 +-
+ include/linux/sched/deadline.h    |  6 ++++--
+ include/linux/sched/prio.h        |  1 +
+ include/linux/sched/rt.h          | 27 ++++++++++++++++++++++++++-
+ kernel/locking/rtmutex.c          |  4 ++--
+ kernel/locking/rwsem.c            |  4 ++--
+ kernel/locking/ww_mutex.h         |  2 +-
+ kernel/sched/core.c               |  6 +++---
+ kernel/time/hrtimer.c             |  6 +++---
+ kernel/trace/trace_sched_wakeup.c |  2 +-
+ mm/page-writeback.c               |  4 ++--
+ mm/page_alloc.c                   |  2 +-
+ 13 files changed, 48 insertions(+), 20 deletions(-)
+
+diff --git a/fs/select.c b/fs/select.c
+index 9515c3fa1a03..8d5c1419416c 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -82,7 +82,7 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
+ 	 * Realtime tasks get a slack of 0 for obvious reasons.
+ 	 */
+ 
+-	if (rt_task(current))
++	if (realtime_task(current))
+ 		return 0;
+ 
+ 	ktime_get_ts64(&now);
+diff --git a/include/linux/ioprio.h b/include/linux/ioprio.h
+index db1249cd9692..6c00342b6166 100644
+--- a/include/linux/ioprio.h
++++ b/include/linux/ioprio.h
+@@ -40,7 +40,7 @@ static inline int task_nice_ioclass(struct task_struct *task)
+ {
+ 	if (task->policy == SCHED_IDLE)
+ 		return IOPRIO_CLASS_IDLE;
+-	else if (task_is_realtime(task))
++	else if (task_has_realtime_policy(task))
+ 		return IOPRIO_CLASS_RT;
+ 	else
+ 		return IOPRIO_CLASS_BE;
+diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+index df3aca89d4f5..5cb88b748ad6 100644
+--- a/include/linux/sched/deadline.h
++++ b/include/linux/sched/deadline.h
+@@ -10,8 +10,6 @@
+ 
+ #include <linux/sched.h>
+ 
+-#define MAX_DL_PRIO		0
+-
+ static inline int dl_prio(int prio)
+ {
+ 	if (unlikely(prio < MAX_DL_PRIO))
+@@ -19,6 +17,10 @@ static inline int dl_prio(int prio)
+ 	return 0;
+ }
+ 
++/*
++ * Returns true if a task has a priority that belongs to DL class. PI-boosted
++ * tasks will return true. Use dl_policy() to ignore PI-boosted tasks.
++ */
+ static inline int dl_task(struct task_struct *p)
+ {
+ 	return dl_prio(p->prio);
+diff --git a/include/linux/sched/prio.h b/include/linux/sched/prio.h
+index ab83d85e1183..6ab43b4f72f9 100644
+--- a/include/linux/sched/prio.h
++++ b/include/linux/sched/prio.h
+@@ -14,6 +14,7 @@
+  */
+ 
+ #define MAX_RT_PRIO		100
++#define MAX_DL_PRIO		0
+ 
+ #define MAX_PRIO		(MAX_RT_PRIO + NICE_WIDTH)
+ #define DEFAULT_PRIO		(MAX_RT_PRIO + NICE_WIDTH / 2)
+diff --git a/include/linux/sched/rt.h b/include/linux/sched/rt.h
+index b2b9e6eb9683..b31be3c50152 100644
+--- a/include/linux/sched/rt.h
++++ b/include/linux/sched/rt.h
+@@ -7,18 +7,43 @@
+ struct task_struct;
+ 
+ static inline int rt_prio(int prio)
++{
++	if (unlikely(prio < MAX_RT_PRIO && prio >= MAX_DL_PRIO))
++		return 1;
++	return 0;
++}
++
++static inline int realtime_prio(int prio)
+ {
+ 	if (unlikely(prio < MAX_RT_PRIO))
+ 		return 1;
+ 	return 0;
+ }
+ 
++/*
++ * Returns true if a task has a priority that belongs to RT class. PI-boosted
++ * tasks will return true. Use rt_policy() to ignore PI-boosted tasks.
++ */
+ static inline int rt_task(struct task_struct *p)
+ {
+ 	return rt_prio(p->prio);
+ }
+ 
+-static inline bool task_is_realtime(struct task_struct *tsk)
++/*
++ * Returns true if a task has a priority that belongs to RT or DL classes.
++ * PI-boosted tasks will return true. Use task_has_realtime_policy() to ignore
++ * PI-boosted tasks.
++ */
++static inline int realtime_task(struct task_struct *p)
++{
++	return realtime_prio(p->prio);
++}
++
++/*
++ * Returns true if a task has a policy that belongs to RT or DL classes.
++ * PI-boosted tasks will return false.
++ */
++static inline bool task_has_realtime_policy(struct task_struct *tsk)
+ {
+ 	int policy = tsk->policy;
+ 
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index 88d08eeb8bc0..55c9dab37f33 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -347,7 +347,7 @@ static __always_inline int __waiter_prio(struct task_struct *task)
+ {
+ 	int prio = task->prio;
+ 
+-	if (!rt_prio(prio))
++	if (!realtime_prio(prio))
+ 		return DEFAULT_PRIO;
+ 
+ 	return prio;
+@@ -435,7 +435,7 @@ static inline bool rt_mutex_steal(struct rt_mutex_waiter *waiter,
+ 	 * Note that RT tasks are excluded from same priority (lateral)
+ 	 * steals to prevent the introduction of an unbounded latency.
+ 	 */
+-	if (rt_prio(waiter->tree.prio) || dl_prio(waiter->tree.prio))
++	if (realtime_prio(waiter->tree.prio))
+ 		return false;
+ 
+ 	return rt_waiter_node_equal(&waiter->tree, &top_waiter->tree);
+diff --git a/kernel/locking/rwsem.c b/kernel/locking/rwsem.c
+index c6d17aee4209..ad8d4438bc91 100644
+--- a/kernel/locking/rwsem.c
++++ b/kernel/locking/rwsem.c
+@@ -631,7 +631,7 @@ static inline bool rwsem_try_write_lock(struct rw_semaphore *sem,
+ 			 * if it is an RT task or wait in the wait queue
+ 			 * for too long.
+ 			 */
+-			if (has_handoff || (!rt_task(waiter->task) &&
++			if (has_handoff || (!realtime_task(waiter->task) &&
+ 					    !time_after(jiffies, waiter->timeout)))
+ 				return false;
+ 
+@@ -914,7 +914,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
+ 		if (owner_state != OWNER_WRITER) {
+ 			if (need_resched())
+ 				break;
+-			if (rt_task(current) &&
++			if (realtime_task(current) &&
+ 			   (prev_owner_state != OWNER_WRITER))
+ 				break;
+ 		}
+diff --git a/kernel/locking/ww_mutex.h b/kernel/locking/ww_mutex.h
+index 3ad2cc4823e5..fa4b416a1f62 100644
+--- a/kernel/locking/ww_mutex.h
++++ b/kernel/locking/ww_mutex.h
+@@ -237,7 +237,7 @@ __ww_ctx_less(struct ww_acquire_ctx *a, struct ww_acquire_ctx *b)
+ 	int a_prio = a->task->prio;
+ 	int b_prio = b->task->prio;
+ 
+-	if (rt_prio(a_prio) || rt_prio(b_prio)) {
++	if (realtime_prio(a_prio) || realtime_prio(b_prio)) {
+ 
+ 		if (a_prio > b_prio)
+ 			return true;
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 1a914388144a..27f15de3d099 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -162,7 +162,7 @@ static inline int __task_prio(const struct task_struct *p)
+ 	if (p->sched_class == &stop_sched_class) /* trumps deadline */
+ 		return -2;
+ 
+-	if (rt_prio(p->prio)) /* includes deadline */
++	if (realtime_prio(p->prio)) /* includes deadline */
+ 		return p->prio; /* [-1, 99] */
+ 
+ 	if (p->sched_class == &idle_sched_class)
+@@ -2198,7 +2198,7 @@ static int effective_prio(struct task_struct *p)
+ 	 * keep the priority unchanged. Otherwise, update priority
+ 	 * to the normal priority:
+ 	 */
+-	if (!rt_prio(p->prio))
++	if (!realtime_prio(p->prio))
+ 		return p->normal_prio;
+ 	return p->prio;
+ }
+@@ -10282,7 +10282,7 @@ void normalize_rt_tasks(void)
+ 		schedstat_set(p->stats.sleep_start, 0);
+ 		schedstat_set(p->stats.block_start, 0);
+ 
+-		if (!dl_task(p) && !rt_task(p)) {
++		if (!realtime_task(p)) {
+ 			/*
+ 			 * Renice negative nice level userspace
+ 			 * tasks back to 0:
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 70625dff62ce..4150e98847fa 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -1996,7 +1996,7 @@ static void __hrtimer_init_sleeper(struct hrtimer_sleeper *sl,
+ 	 * expiry.
+ 	 */
+ 	if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+-		if (task_is_realtime(current) && !(mode & HRTIMER_MODE_SOFT))
++		if (task_has_realtime_policy(current) && !(mode & HRTIMER_MODE_SOFT))
+ 			mode |= HRTIMER_MODE_HARD;
+ 	}
+ 
+@@ -2096,7 +2096,7 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtimer_mode mode,
+ 	u64 slack;
+ 
+ 	slack = current->timer_slack_ns;
+-	if (rt_task(current))
++	if (realtime_task(current))
+ 		slack = 0;
+ 
+ 	hrtimer_init_sleeper_on_stack(&t, clockid, mode);
+@@ -2301,7 +2301,7 @@ schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
+ 	 * Override any slack passed by the user if under
+ 	 * rt contraints.
+ 	 */
+-	if (rt_task(current))
++	if (realtime_task(current))
+ 		delta = 0;
+ 
+ 	hrtimer_init_sleeper_on_stack(&t, clock_id, mode);
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index 0469a04a355f..19d737742e29 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -545,7 +545,7 @@ probe_wakeup(void *ignore, struct task_struct *p)
+ 	 *  - wakeup_dl handles tasks belonging to sched_dl class only.
+ 	 */
+ 	if (tracing_dl || (wakeup_dl && !dl_task(p)) ||
+-	    (wakeup_rt && !dl_task(p) && !rt_task(p)) ||
++	    (wakeup_rt && !realtime_task(p)) ||
+ 	    (!dl_task(p) && (p->prio >= wakeup_prio || p->prio >= current->prio)))
+ 		return;
+ 
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3e19b87049db..7372e40f225d 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -418,7 +418,7 @@ static void domain_dirty_limits(struct dirty_throttle_control *dtc)
+ 	if (bg_thresh >= thresh)
+ 		bg_thresh = thresh / 2;
+ 	tsk = current;
+-	if (rt_task(tsk)) {
++	if (realtime_task(tsk)) {
+ 		bg_thresh += bg_thresh / 4 + global_wb_domain.dirty_limit / 32;
+ 		thresh += thresh / 4 + global_wb_domain.dirty_limit / 32;
+ 	}
+@@ -468,7 +468,7 @@ static unsigned long node_dirty_limit(struct pglist_data *pgdat)
+ 	else
+ 		dirty = vm_dirty_ratio * node_memory / 100;
+ 
+-	if (rt_task(tsk))
++	if (realtime_task(tsk))
+ 		dirty += dirty / 4;
+ 
+ 	return dirty;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 14d39f34d336..0af24a60ade0 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3877,7 +3877,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask, unsigned int order)
+ 		 */
+ 		if (alloc_flags & ALLOC_MIN_RESERVE)
+ 			alloc_flags &= ~ALLOC_CPUSET;
+-	} else if (unlikely(rt_task(current)) && in_task())
++	} else if (unlikely(realtime_task(current)) && in_task())
+ 		alloc_flags |= ALLOC_MIN_RESERVE;
+ 
+ 	alloc_flags = gfp_to_alloc_flags_cma(gfp_mask, alloc_flags);
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
