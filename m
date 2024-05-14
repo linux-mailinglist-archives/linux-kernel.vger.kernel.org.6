@@ -1,162 +1,243 @@
-Return-Path: <linux-kernel+bounces-178319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADD88C4BDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:08:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A75358C4BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4835C1F22FBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:08:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3416D1F2434E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:08:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995661755C;
-	Tue, 14 May 2024 05:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C538A1803D;
+	Tue, 14 May 2024 05:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="1kBAYggH"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PuDggRSl"
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C8156E4
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 05:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00D411725;
+	Tue, 14 May 2024 05:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715663305; cv=none; b=QacuFsZYPkiDcdq9JoFhFtBkYHPNFSl3Wr2PV2S+MaKgP3fgwaqPyzypRP3xeOsLzgpfRhU4HJdBbDB6fIt+gyPVNFNKtMxerxJ+EuhgOiI+yhCTcaS0cbUIgBOOxh6mRzCfXy6/NLxQ9lCtI9TX/XGv+DbIVamJIrJMCPfomQ0=
+	t=1715663323; cv=none; b=YRfv1B58qbv7jTaXREWFodSYOIXSSmQmgv9BhAWhQntOo0xqpdrhyEZQAubemFxrTkDdSdyVd8F0B1rRQ8EZ3jlkloth4VJRzZFWE7zSmauwQ8s/gvSnT4PfR/mnAQJqUgA1UE+ow1iFtAV40HDtdq6ZxNywljlbCiUZPgGLQJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715663305; c=relaxed/simple;
-	bh=ieIbWlqpi3qncOa+DKFbV5vGmc6SVatErRwe1s69pQI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUk/LTwny7+SndXdTq0ZCFB5iZHbvCkLxqQ90hkIo6B7JAhPq0NSw/6Abv1Y1grxrrM9/MELhTg3zCspmxiFCnaM3TRsv9NmB8FqV0EJNmUgVnT9KVMsdKGL4SaR8jFJ8IsCJntGRzDmP8i/hC6GZZoPGR7dQCnHrtZ9mHkoa90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=1kBAYggH; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-41fd5dc04e2so31173685e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 22:08:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1715663302; x=1716268102; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=a19HgSmq/trWYOKDNko6X/3OBusO+lp3rPBD1dWx/PQ=;
-        b=1kBAYggHchw1V0d942orl4mFmP/dzlqaPdoVda+RRlePbbq1Lcw3q+btsmYZRjm+Tf
-         CULL8IrLpBY9C0h1NNT9DVPImzciDlP5JrNThKzNI+s+VoSxqUjrckZx/HSPKtd8uFuQ
-         TsjSAT0nyvzmVxDODsOqngYdha1JouyfcrQrEAtabyoF0zIemO4aJuZa5ATPKc4BHUrO
-         ieKE0F1umG0H9/ytMm3LkaK/5SKr5E+KXPkwM8kX9iWAdUfIuewuxbf18zT4uQBhxWtR
-         eV47QyDDev4cH+59U3mik8LrmJSD20qKVwgaZSQF4ELoUisK6FXpVWeNJhQCGohXooF3
-         bNlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715663302; x=1716268102;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a19HgSmq/trWYOKDNko6X/3OBusO+lp3rPBD1dWx/PQ=;
-        b=m+iKxL+zm6NsJRr1fHkPTVF5fxU38EULtsMjJRbwq50WQOL4DvsaFjeLjHsx0xD4Qv
-         21fJD+fD3gHNqSPns/r8RFil7FTbqURHSusroWNEqsyO+x95G3J6v+RHga0GMQDe8pkI
-         ba2eSHFzmdVsrW3lh9kwBvZPVLuupdgOMwKaE69rtKzNuLb/BcabGTr4aJ9RrI7isQFo
-         CigSMj6ZqBtubqMpLbFqFaBgDu8051PLtjTdNamiGTSzSMENAy024TZn8jIsHqRqlNgB
-         fejhmYYuKmU8RCf5HMVuThGJ2ilRNE+4+IemP81E23dMCiUZyL5TdzoLRWsyCUPX3+Kp
-         uRmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCXAXd0RzBrExWN4RZw0eKpR2wTG4CQOxHiz53+M6jLjvWrUdptLJ3q+tOWw5G+8aqG5IPo30CZaomlQKumoO6NVxX99iW305o2Ikj
-X-Gm-Message-State: AOJu0YxKwSSQLjQmQwvHp8laSquBqR4mLNfvvvJrhbZHyJmHxFoNeYls
-	pfgdP7vnqq21LzOISN0orPuhZ/dAR256m0RQ0T2lKW+b5voauoeo54MDsX8A5h4=
-X-Google-Smtp-Source: AGHT+IGlBf3IWKGC+J9VINEwYnh1B9uENrrXQXg3NIcAKjXjFsRFaHL1ijjFWUAjW3iOtpw9ewXEQw==
-X-Received: by 2002:a05:600c:4f12:b0:420:18e9:86d5 with SMTP id 5b1f17b1804b1-42018e98859mr26458475e9.10.1715663301584;
-        Mon, 13 May 2024 22:08:21 -0700 (PDT)
-Received: from vermeer ([2a01:cb1d:81a9:dd00:b570:b34c:ffd4:c805])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f87d20488sm213889265e9.25.2024.05.13.22.08.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 May 2024 22:08:21 -0700 (PDT)
-Date: Tue, 14 May 2024 07:08:17 +0200
-From: Samuel Ortiz <sameo@rivosinc.com>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Qinkun Bao <qinkun@google.com>,
-	"Yao, Jiewen" <jiewen.yao@intel.com>,
-	"Xing, Cedric" <cedric.xing@intel.com>,
-	Dionna Amalie Glaze <dionnaglaze@google.com>, biao.lu@intel.com,
-	linux-coco@lists.linux.dev, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 4/4] tsm: Allow for extending and reading
- configured RTMRs
-Message-ID: <ZkLxwacH9nt6U9dk@vermeer>
-References: <20240128212532.2754325-1-sameo@rivosinc.com>
- <20240128212532.2754325-5-sameo@rivosinc.com>
- <ec7edddcf8c74e48cb392db0789b03243ab05692.camel@HansenPartnership.com>
- <ZkHoiYMseU0XqEbR@vermeer>
- <a8ea533bf30c658508875948f29341663360db57.camel@HansenPartnership.com>
+	s=arc-20240116; t=1715663323; c=relaxed/simple;
+	bh=9yVrBO+AHQnDloFWvZYWWtQBU+q/1LR0KDATw/zbmOI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=haITrrxecaqLsM7ypnxnQjmcUzBsgR+Rki6tdFcqQUNvgDQ9V9B+5HpB9giIeKIJS6ohbCAuCKw3jRfigyw8fcRhhtEuMu2lDUOcvGXtOGhQvvCjH0IQdPl6uV0XAIYT7kTNGnmxWBgVrXlT5yhN6rNdaAACLuIUQop+OeuOYNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=PuDggRSl; arc=none smtp.client-ip=68.232.141.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1715663320; x=1747199320;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9yVrBO+AHQnDloFWvZYWWtQBU+q/1LR0KDATw/zbmOI=;
+  b=PuDggRSl3ZoJNT1fZGw4OQJd+pyQe+pA+Y75i+HhwFnbopfNO2hwE9Bs
+   smS2WzNew7dxcUccfcujQ4ZnF2WsYrGZmpKbx1NxZ/iqucNwVjtEXmQtf
+   AYMkvIPuqgAHAfrUiD3CsYByk4H2ac4gWLPenMNW5qkl7l4uiGtEczU1b
+   eeRRw+ZOCt8uO4Wh6GsTawXkbLx0AylDE7+vmB6cD56KJNitL70iFr9jF
+   nTaRABAkfsT2bkUvgnD2yCF5TD6XHbz9OKnpB6Y3JBm9CtcFF9jJ6KTUF
+   v+2uyCx0QoKkK5A2IaBVdw034TlN1pHhZQNEhguCUey0fe7pDCSrbAm9o
+   g==;
+X-CSE-ConnectionGUID: m5v+ZXkTTdyzLIekbnf1DQ==
+X-CSE-MsgGUID: jGbiQEJdR2WCjlXswkYIPQ==
+X-IronPort-AV: E=Sophos;i="6.08,159,1712592000"; 
+   d="scan'208";a="16511388"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 14 May 2024 13:08:34 +0800
+IronPort-SDR: 6642e440_vp+HjwgzFFKAAuLvFrSsluaGWaGx1ihYuLdWRjcHEN0Eafp
+ bHFQxCCFc1/NRvOtIcGjiBsaZqREYajMifNa87Q==
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 May 2024 21:10:41 -0700
+WDCIronportException: Internal
+Received: from bxygm33.ad.shared ([10.45.31.229])
+  by uls-op-cesaip01.wdc.com with ESMTP; 13 May 2024 22:08:32 -0700
+From: Avri Altman <avri.altman@wdc.com>
+To: "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: Bart Van Assche <bvanassche@acm.org>,
+	Bean Huo <beanhuo@micron.com>,
+	Peter Wang <peter.wang@mediatek.com>,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH v3] scsi: ufs: Allow RTT negotiation
+Date: Tue, 14 May 2024 08:08:22 +0300
+Message-ID: <20240514050823.735-1-avri.altman@wdc.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a8ea533bf30c658508875948f29341663360db57.camel@HansenPartnership.com>
 
-On Mon, May 13, 2024 at 08:03:53AM -0600, James Bottomley wrote:
-> On Mon, 2024-05-13 at 12:16 +0200, Samuel Ortiz wrote:
-> > > However, it struck me you missed a third option: use the ima log
-> > > format.  This has the advantage that we can define additional
-> > > events and have them published with a kernel patch (the IMA log
-> > > format is defined in the kernel).  Thanks to the TCG, it's also CEL
-> > > compatible but doesn't require any sort of TCG blessing of the
-> > > events.  Plus we also have existing kernel infrastructure to log to
-> > > that format.
-> > 
-> > That's an interesting idea. It may avoid having to extend the CEL
-> > spec with a new Content Type, but otoh the current spec defines which
-> > IMA events are supported. So adding new ones may require to also
-> > eventually extend the spec. But I guess since IMA is a Linux kernel
-> > subsystem, changing the kernel code and ABI would de-facto extend the
-> > TCG CEL IMA spec.
-> 
-> That's what I was assuming since the TCG is currently deferring to IMA
-> in that regard.
-> 
-> > Here I assume you're talking about the IMA_TEMPLATE CEL specified
-> > format, which is designed to accomodate for the current kernel IMA
-> > log format. The main drawback of this format is that the digest does
-> > not include the whole content event, making the CEL content type, the
-> > IMA tag name and both lengths (for the content event and the IMA
-> > content) untrusted for event log verifiers.
-> 
-> That's only because IMA doesn't yet have such an event.  If we're
-> assuming effectively designing an IMA log format for non repudiation of
-> external events, one can be added. 
+The rtt-upiu packets precede any data-out upiu packets, thus
+synchronizing the data input to the device: this mostly applies to write
+operations, but there are other operations that requires rtt as well.
 
-If we were to follow the IMA_TEMPLATE format as our output RTMR ABI for
-the event log, adding one or more IMA events would not change the fact
-that the event and content type would not be hashed into the extended
-digest. Unless we want to specify a different behaviour for each IMA
-event, and then verifiers would have interpret the digest construction
-differently depending on the IMA_TEMPLATE nested event type. And that's
-not pretty IMHO.
+There are several rules binding this rtt - data-out dialog, specifically
+There can be at most outstanding bMaxNumOfRTT such packets.  This might
+have an effect on write performance (sequential write in particular), as
+each data-out upiu must wait for its rtt sibling.
 
-Using the IMA_TLV content type would make that cut cleaner at least. A
-digest is built on the whole content event, for all event types. And the
-content and event types are trusted, i.e. the verifier can securely map
-events to the reported event types.
+UFSHCI expects bMaxNumOfRTT to be min(bDeviceRTTCap, NORTT). However,
+as of today, there does not appears to be no-one who sets it: not the
+host controller nor the driver.  It wasn't an issue up to now:
+bMaxNumOfRTT is set to 2 after manufacturing, and wasn't limiting the
+write performance.
 
-> Although I wouldn't want to be
-> hasty: one of the big problems of all options is that no existing log
-> format really covers the measure container use case and we're not
-> completely sure what other use cases will arise (the firewall rules
-> measurements was one that regulated cloud providers seem to think would
-> be important ... and that has a periodic rush of events, but there will
-> be others).
+UFS4.0, and specifically gear 5 changes this, and requires the device to
+be more attentive.  This doesn't come free - the device has to allocate
+more resources to that end, but the sequential write performance
+improvement is significant. Early measurements shows 25% gain when
+moving from rtt 2 to 9. Therefore, set bMaxNumOfRTT to be
+min(bDeviceRTTCap, NORTT) as UFSHCI expects.
 
-Right. A new CEL content type would give us more freedom in that regard,
-as it would allow us to define our own event content value in a more
-flexible way. Instead of the nested TLV approach that IMA_TLV follows,
-having one where the T would be a max length string defining the creator
-of the event (a.k.a. the attester), would avoid having to formally
-define each and every new event. That's where option #2 in the
-presentation was heading to.
+While at it, allow platform vendors to take precedence having their own
+rtt negotiation mechanism.
 
-Cheers,
-Samuel.
-> 
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
+Reviewed-by: Bean Huo <beanhuo@micron.com>
+
+---
+Changes since v2:
+ - Allow platform vendors to take precedence having their own rtt
+   negotiation mechanism (Peter)
+
+Changes since v1:
+- bMaxNumOfRTT is a Persistent attribute - do not override if it was
+  written (Bean)
+
+---
+ drivers/ufs/core/ufshcd.c | 39 +++++++++++++++++++++++++++++++++++++++
+ include/ufs/ufshcd.h      |  4 ++++
+ include/ufs/ufshci.h      |  1 +
+ 3 files changed, 44 insertions(+)
+
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0819ddafe7a6..0407d1064e74 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -102,6 +102,9 @@
+ /* Default RTC update every 10 seconds */
+ #define UFS_RTC_UPDATE_INTERVAL_MS (10 * MSEC_PER_SEC)
+ 
++/* bMaxNumOfRTT is equal to two after device manufacturing */
++#define DEFAULT_MAX_NUM_RTT 2
++
+ /* UFSHC 4.0 compliant HC support this mode. */
+ static bool use_mcq_mode = true;
+ 
+@@ -2405,6 +2408,8 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
+ 	((hba->capabilities & MASK_TASK_MANAGEMENT_REQUEST_SLOTS) >> 16) + 1;
+ 	hba->reserved_slot = hba->nutrs - 1;
+ 
++	hba->nortt = FIELD_GET(MASK_NUMBER_OUTSTANDING_RTT, hba->capabilities) + 1;
++
+ 	/* Read crypto capabilities */
+ 	err = ufshcd_hba_init_crypto_capabilities(hba);
+ 	if (err) {
+@@ -8119,6 +8124,35 @@ static void ufshcd_ext_iid_probe(struct ufs_hba *hba, u8 *desc_buf)
+ 	dev_info->b_ext_iid_en = ext_iid_en;
+ }
+ 
++static void ufshcd_rtt_set(struct ufs_hba *hba, u8 *desc_buf)
++{
++	struct ufs_dev_info *dev_info = &hba->dev_info;
++	u32 rtt = 0;
++	u32 dev_rtt = 0;
++
++	/* RTT override makes sense only for UFS-4.0 and above */
++	if (dev_info->wspecversion < 0x400)
++		return;
++
++	if (ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
++				    QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &dev_rtt)) {
++		dev_err(hba->dev, "failed reading bMaxNumOfRTT\n");
++		return;
++	}
++
++	/* do not override if it was already written */
++	if (dev_rtt != DEFAULT_MAX_NUM_RTT)
++		return;
++
++	rtt = min_t(int, desc_buf[DEVICE_DESC_PARAM_RTT_CAP], hba->nortt);
++	if (rtt == dev_rtt)
++		return;
++
++	if (ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
++				    QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt))
++		dev_err(hba->dev, "failed writing bMaxNumOfRTT\n");
++}
++
+ void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
+ 			     const struct ufs_dev_quirk *fixups)
+ {
+@@ -8278,6 +8312,11 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+ 	if (hba->ext_iid_sup)
+ 		ufshcd_ext_iid_probe(hba, desc_buf);
+ 
++	if (hba->vops && hba->vops->rtt_set)
++		hba->vops->rtt_set(hba, desc_buf);
++	else
++		ufshcd_rtt_set(hba, desc_buf);
++
+ 	/*
+ 	 * ufshcd_read_string_desc returns size of the string
+ 	 * reset the error value
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index bad88bd91995..9237ea65bd26 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -329,6 +329,7 @@ struct ufs_pwr_mode_info {
+  * @get_outstanding_cqs: called to get outstanding completion queues
+  * @config_esi: called to config Event Specific Interrupt
+  * @config_scsi_dev: called to configure SCSI device parameters
++ * @rtt_set: negotiate rtt
+  */
+ struct ufs_hba_variant_ops {
+ 	const char *name;
+@@ -374,6 +375,7 @@ struct ufs_hba_variant_ops {
+ 	int	(*get_outstanding_cqs)(struct ufs_hba *hba,
+ 				       unsigned long *ocqs);
+ 	int	(*config_esi)(struct ufs_hba *hba);
++	void	(*rtt_set)(struct ufs_hba *hba, u8 *desc_buf);
+ };
+ 
+ /* clock gating state  */
+@@ -819,6 +821,7 @@ enum ufshcd_mcq_opr {
+  * @capabilities: UFS Controller Capabilities
+  * @mcq_capabilities: UFS Multi Circular Queue capabilities
+  * @nutrs: Transfer Request Queue depth supported by controller
++ * @nortt - Max outstanding RTTs supported by controller
+  * @nutmrs: Task Management Queue depth supported by controller
+  * @reserved_slot: Used to submit device commands. Protected by @dev_cmd.lock.
+  * @ufs_version: UFS Version to which controller complies
+@@ -957,6 +960,7 @@ struct ufs_hba {
+ 
+ 	u32 capabilities;
+ 	int nutrs;
++	int nortt;
+ 	u32 mcq_capabilities;
+ 	int nutmrs;
+ 	u32 reserved_slot;
+diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
+index 385e1c6b8d60..c50f92bf2e1d 100644
+--- a/include/ufs/ufshci.h
++++ b/include/ufs/ufshci.h
+@@ -68,6 +68,7 @@ enum {
+ /* Controller capability masks */
+ enum {
+ 	MASK_TRANSFER_REQUESTS_SLOTS		= 0x0000001F,
++	MASK_NUMBER_OUTSTANDING_RTT		= 0x0000FF00,
+ 	MASK_TASK_MANAGEMENT_REQUEST_SLOTS	= 0x00070000,
+ 	MASK_EHSLUTRD_SUPPORTED			= 0x00400000,
+ 	MASK_AUTO_HIBERN8_SUPPORT		= 0x00800000,
+-- 
+2.34.1
+
 
