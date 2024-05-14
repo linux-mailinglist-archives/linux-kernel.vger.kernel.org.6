@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-178896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599808C592F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 17:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E868C5932
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 18:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9F71C21B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:59:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56A91C21C6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA6817EBB9;
-	Tue, 14 May 2024 15:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C282F17EBB6;
+	Tue, 14 May 2024 15:59:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QXE2POuO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="grzVqHsf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB7217EB82
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961A417B4E5
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 15:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715702334; cv=none; b=NgdLbSEigu1efwFXvvgfEezHAymQN4Z6eAP9JibLXniXlnfQcrPN716BP+ifxl7ovHi59bGMatljLcsWOrL4HN5jnUZ29sDVCWJJoWYrLeisRdyAoFpqOvkXsUg6Wf11q/achA+sKf0rVEoj1t0eDaFUeCnzCalAldRhUBnLFb4=
+	t=1715702393; cv=none; b=UjF7N060AIcJf8Vy4Re9odO1Zz1Uq07Knnzxm7zjuFc4zGExWsq29sOxQP1y61aueOxsElz0N7XofNQf4JLrwqr33MCOmN+Ant6267CKuCX5nXqlAKJLWYYyeVLL0JW0th9CngGjjg+aSOVRHNm/ELf0bYrNorEyR5/9clavL9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715702334; c=relaxed/simple;
-	bh=T/7tNw3OCSBexRio3ZeLhVbYRbHi05hyDMHnz4+jW6A=;
+	s=arc-20240116; t=1715702393; c=relaxed/simple;
+	bh=Dc2DerwYBgozxyxgZxW1isfyEue8tCw/P3yLn9i7qKw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c8QbDJzOHfHid80f8iPtTU+olficDk/jOBIkD0a/npMXOwu1Ux4JDR0PnUDVoadkteaFCyyICzhsemX5ihYdx7yt/3p2VaTp4e/tEYSSSWNBiomQe7+gj+jPY78IUspoInK6TQ3pRVdEveT2gMLTZIIH5D6XWVOAazaWt1gYrYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QXE2POuO; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=NEzwPrszNoyyBM1oM38lMNSRzhDhRN/X0afskYP1v8F3hqGgxYbRNR+QM2k51HC1V/TeKobM8OAZJO/CWF2j6o4UtGn71+H21L/Ovp7WSGuHll7bnHdzr1zBIIdDZjbxlk8z6fegM4PU5+5loCnZLr8941oISEbfeMShNxORIi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=grzVqHsf; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715702331;
+	s=mimecast20190719; t=1715702390;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kvyD+47vDiVZ1HqZCWc8GW6dp7A4/9KWl6vG9zgnVfU=;
-	b=QXE2POuOnHHskgdYzMmBcwemIBVfydDvAHHeSPEqUezxHQdQPvNBOjYkZVLVW1nKnQ3Lwe
-	n3Yxl0lA3pXeimmiLuONWgPmPIOrV+WgJj/86YiEURWFKE067zZvrcdb4jlzqVgsRL2rW6
-	aIdUNp5V5xNKhuipabhZjSG5C6z9yvs=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=FziVE3UcEfelvdfJHO++cS7G6lDOTnc3Onquu2wEMDc=;
+	b=grzVqHsfREFaHxP16bpHR+ocoegdYnnCV2cH1ZMVgt/zOIItEJ1NMjzT8WNHs8sBgl9BTu
+	hUyaZYZKm5hiPAzKZ+cy5f36TljszhfQGdMkEXKoDH5OJTCPahHiidu3jEObdt2SHL5vBx
+	f11aS2ZgGU8zTAIb8QF3cz+qT3PiB/s=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-490-G_FASNTBNh2kMD0pyW_7UA-1; Tue, 14 May 2024 11:58:50 -0400
-X-MC-Unique: G_FASNTBNh2kMD0pyW_7UA-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6f4739ba7dcso2550795b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:58:50 -0700 (PDT)
+ us-mta-151-UuxEQ01xNKSsXErf8DBS6g-1; Tue, 14 May 2024 11:59:39 -0400
+X-MC-Unique: UuxEQ01xNKSsXErf8DBS6g-1
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-6f468ae6a5eso4880879b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 08:59:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715702329; x=1716307129;
+        d=1e100.net; s=20230601; t=1715702378; x=1716307178;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=kvyD+47vDiVZ1HqZCWc8GW6dp7A4/9KWl6vG9zgnVfU=;
-        b=pKsbb3NcJOQol0vd+Gymll9bLpTI09PZh5Ymiy3NKpKuZs4fjN7e7qbSnn7jMCBKTN
-         iW1TS5ZttckzqG4Jwy37ICPhjen+uHX5nzrLfpmRiBEVThT4mihtBe8kicnF+brEP0AB
-         UAoDTlOwqfntt+QRIFb6KEESknvaa0vitRtrUeevYz0TgIovmQJrVfZeQWmCuxX1Qww+
-         ZVhZTH/PvzVeuMr2k7ms7D1hTbY5dFiHb89f7clNxVH+5zKp3qsfhUBrQLYqWq3Q5N6W
-         N2fYeivL5y8OVU2iWThH/x/i9dvdGF9/ReZ1Wc5a6GDJ7Ia5iZ85rTuquJuKM/Z+UOgW
-         qPCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpuLUcxc1jvnOUF4kfaxS5uqXp+1QjVzjoevvv1/ZPdFJgyGZu6Jt2BPqN5+i8uVxTFnRJaPh8hG/5hC44cKg55CB/XANUsgTd5Rn3
-X-Gm-Message-State: AOJu0YxARfVElWuDdNM4N6RTTBtLrZToQuI4W1a6o7/yZf3qzLDTdLXL
-	+Iwow7Nqe5wb1bEsDkvdgByRcKckYkNF0bVIajMRGnOnOWaIu88JQONIkmbLv//MJ5ES1zqXRlG
-	w3iq5Ay50ZtyyFTs6kL1Qvz2gLveAHbRwtPBo7K6RU1ZomEiuCJy/ER8RB3qooQ==
-X-Received: by 2002:a05:6a00:4f86:b0:6f3:e6ac:1a3f with SMTP id d2e1a72fcca58-6f4e02ad970mr15828916b3a.11.1715702329001;
-        Tue, 14 May 2024 08:58:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGQISvA42hinyusbGdUd1dvzSXFpQXpfUwTKAu99wTKU0rBBgYY71Nyic/65cySNe0tBJdx5g==
-X-Received: by 2002:a05:6a00:4f86:b0:6f3:e6ac:1a3f with SMTP id d2e1a72fcca58-6f4e02ad970mr15828889b3a.11.1715702328570;
-        Tue, 14 May 2024 08:58:48 -0700 (PDT)
+        bh=FziVE3UcEfelvdfJHO++cS7G6lDOTnc3Onquu2wEMDc=;
+        b=uMD/VT9M92rb33w6B3H38OKkN9AXMYD6/JwdKCLBBvlDO8gk705+A58ql+55g1wscR
+         ikU7SGeJiy9HxhLaN3ZRGhOC+ekaVmvVxTxK/OBlQwutz2wKgwwQYa4KWYQYwS6cH15m
+         Hpt5QI8qZiuBmpkyuKE6ggQVUKs0xxIOIMfWa8brr2UgktttJlvNpKaNBRRb3yZ91mmJ
+         u+q8ZrY6tznWu56LFtASNebrhm9vfe5Tf0EV7rrP0+NeQgjT8hJeXU4zXTjRQN3Dl4gX
+         bzvgIszBPE6j7Xb3WQu7ZytbjELNDnYWsF9POcxMhtyCgGe2ZdeOXuyDOmKSnh9aCM/p
+         /P0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVoj3UJjPoV3gdcKW7jxKR+9VfZ+8EWyWm/sYG5Nj9se7WoJoeExjabaRpMypBaypGNQXBBgGA2ebcLt/xMzhJg8ujTraNr4EZvkYy5
+X-Gm-Message-State: AOJu0YxfvIMpj/g5uhJvlWUrpUnv7Ypwa4AYBh4lFF/cfvvov7ykVl80
+	vgzXBMPAwAQR0WEzKTKsQhiPC0j8DlymAWdxJeqC/1ZG40mJJjFzhu76j0h03jqhVWFieK7dL/j
+	cy+nsRIt9PiKnlGqXnLFkRBSdMWmgo1fOnboLLRkECqWBVWM//mgRpTqFA5k28A==
+X-Received: by 2002:a05:6a20:dda5:b0:1af:cf63:3df3 with SMTP id adf61e73a8af0-1afde0dbff0mr11112795637.14.1715702377744;
+        Tue, 14 May 2024 08:59:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSNd/Htfdc4/rdZ1uK+BHQ4z/KWKOxdfhUlRcb1GSDkMKoVb5DPdGteWX7De0DfR/0THKowg==
+X-Received: by 2002:a05:6a20:dda5:b0:1af:cf63:3df3 with SMTP id adf61e73a8af0-1afde0dbff0mr11112771637.14.1715702377262;
+        Tue, 14 May 2024 08:59:37 -0700 (PDT)
 Received: from [172.21.1.2] ([50.204.89.31])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-6f4d2a66590sm9695600b3a.1.2024.05.14.08.58.47
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-63a917264d6sm6709968a12.73.2024.05.14.08.59.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 08:58:48 -0700 (PDT)
-Message-ID: <8b7de899-4150-4da0-8242-507977169bbc@redhat.com>
-Date: Tue, 14 May 2024 17:58:46 +0200
+        Tue, 14 May 2024 08:59:36 -0700 (PDT)
+Message-ID: <4551ca95-8ca2-49d5-92ff-15f490640ed9@redhat.com>
+Date: Tue, 14 May 2024 17:59:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] virtio-mem: Enable virtio-mem for RISC-V
+Subject: Re: [PATCH v2 2/8] riscv: mm: Change attribute from __init to
+ __meminit for page functions
 To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
  Alexandre Ghiti <alexghiti@rivosinc.com>, Albert Ou <aou@eecs.berkeley.edu>,
  Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
@@ -96,7 +97,7 @@ Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
  Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org, virtualization@lists.linux-foundation.org
 References: <20240514140446.538622-1-bjorn@kernel.org>
- <20240514140446.538622-8-bjorn@kernel.org>
+ <20240514140446.538622-3-bjorn@kernel.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -144,39 +145,30 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240514140446.538622-8-bjorn@kernel.org>
+In-Reply-To: <20240514140446.538622-3-bjorn@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 On 14.05.24 16:04, Björn Töpel wrote:
 > From: Björn Töpel <bjorn@rivosinc.com>
 > 
-> Now that RISC-V has memory hotplugging support, virtio-mem can be used
-> on the platform.
+> Prepare for memory hotplugging support by changing from __init to
+> __meminit for the page table functions that are used by the upcoming
+> architecture specific callbacks.
+> 
+> Changing the __init attribute to __meminit, avoids that the functions
+> are removed after init. The __meminit attribute makes sure the
+> functions are kept in the kernel text post init, but only if memory
+> hotplugging is enabled for the build.
+> 
+> Also, make sure that the altmap parameter is properly passed on to
+> vmemmap_populate_hugepages().
 > 
 > Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
 > ---
->   drivers/virtio/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/Kconfig b/drivers/virtio/Kconfig
-> index c17193544268..4e5cebf1b82a 100644
-> --- a/drivers/virtio/Kconfig
-> +++ b/drivers/virtio/Kconfig
-> @@ -122,7 +122,7 @@ config VIRTIO_BALLOON
->   
->   config VIRTIO_MEM
->   	tristate "Virtio mem driver"
-> -	depends on X86_64 || ARM64
-> +	depends on X86_64 || ARM64 || RISCV
->   	depends on VIRTIO
->   	depends on MEMORY_HOTPLUG
->   	depends on MEMORY_HOTREMOVE
 
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-Nice!
-
-Acked-by: David Hildenbrand <david@redhat.com>
 -- 
 Cheers,
 
