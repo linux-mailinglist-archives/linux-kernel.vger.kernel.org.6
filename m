@@ -1,302 +1,145 @@
-Return-Path: <linux-kernel+bounces-179207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC398C5D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:53:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 750D28C5D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AA681F21D28
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9934C1C20EF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0969D181CE5;
-	Tue, 14 May 2024 21:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000FD181BBF;
+	Tue, 14 May 2024 21:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hXnIOwRu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMBEW8ev"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F61E181BAE
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4B6181BA3
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715723585; cv=none; b=nZ/7H2kEQZVfpLNXvDSHZniFoDNf6SE+JsRDgt0Onu5QuF3wYJSXjZlBnj219Jk5FR6r7lLYTfDY+fCQEHtB9N5ZOv50QtUs+zf8WYgb9YKlCiwZXv4eH1KI0Ha9QKqNnS8B3HprSLQ8qFAvm/baP9CErZrtLZwyQSgOMz49l3g=
+	t=1715723768; cv=none; b=n76POCvsmGwHG6vpQ0yyWrN5ffvf7qlq59DW60spBtM4agD2fIhTUqGnCF7ELKbooavjfQICwUWhJr0NVjTKk99J1+ZM8rpu7CGpUogeBUDZMZXajIzWPoK+TgUMbUt63K+HJ1DUEodwvKG73gSE63Mc9yMoziTwWa+gpeqgBAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715723585; c=relaxed/simple;
-	bh=2M+FInE/lrnYInW0wW9bQowLmoHwZVKEyZK4ZsQUCSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTguj1cm+GHrEcnG6SrX4IsGKMLMx94EHp1LDTrJMIUlEhC30GVgmnJB9KSHp7jlex4k2HIfan0W5+KbbzwwhKgTfVzDbueDinkCPt6uhMtKAPkSL28o8BH1F309BREvl+dF4Y5qINrSsAsYg/xuYCuCnlTcHnixG7LCz4FYwaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hXnIOwRu; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715723583; x=1747259583;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2M+FInE/lrnYInW0wW9bQowLmoHwZVKEyZK4ZsQUCSE=;
-  b=hXnIOwRuA02nljjByBwJPi/TkiMnCdaiRTeA5+ZP6zIkWtB8bjlV3qbQ
-   WPJ2MrMcqjkg/AdUhBBJmvU3LRxlfOQYVyTRfkDjH0PYP3wn6sX4SVTre
-   gZsEba5GAQ1lb1Yq8NcXa4ekLhow/ZHob0OsIyaDTt90EfrWOFXTiRN+z
-   CHK48smb9x5X80DBJ6xYX2MGOcXtQs6pgZjVwWRviPMkKvCTzv4Hk6iBq
-   4Tb/WEZYgSEzCJLPo+gGXDTPwKGG7IrD8sN1YIglJrT6QTs5+YT+h1ZN9
-   o6WTav9EvCTxp3lIulArW0A/570cHmRIzFX3UoNAgmk/3u80iIiLi9OYd
-   A==;
-X-CSE-ConnectionGUID: Bz6U+lsbQcG5RVgNI8sWZg==
-X-CSE-MsgGUID: 7zGt/7WsR4ahBJVn0ckaNg==
-X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="11599991"
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="11599991"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 14:53:02 -0700
-X-CSE-ConnectionGUID: 7w534L2IQomymjeaKL+3gg==
-X-CSE-MsgGUID: +VSdj60ATnmZvcKi13jeBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
-   d="scan'208";a="54042189"
-Received: from agluck-desk3.sc.intel.com (HELO agluck-desk3) ([172.25.222.105])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 14:53:03 -0700
-Date: Tue, 14 May 2024 14:53:01 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Yu, Fenghua" <fenghua.yu@intel.com>,
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v17 7/9] x86/resctrl: Add new monitor files for Sub-NUMA
- cluster (SNC) monitoring
-Message-ID: <ZkPdPTbgH-0EpBc4@agluck-desk3>
-References: <20240503203325.21512-1-tony.luck@intel.com>
- <20240503203325.21512-8-tony.luck@intel.com>
- <0178e84e-d55f-47bf-b8b0-58e05fcaa108@intel.com>
- <ZkJIZdU2knEUJN7Q@agluck-desk3>
- <f49931b0-d9bf-45f0-ab35-93b1a78f6b97@intel.com>
- <ZkKupOKRu5S7Rkgx@agluck-desk3>
- <2efcae46-736a-4809-8530-7dde3977f3ce@intel.com>
- <SJ1PR11MB60838E2DB2984EF95D34C692FCE32@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <b718c70b-21ea-4c4d-9ecf-387b8276a721@intel.com>
+	s=arc-20240116; t=1715723768; c=relaxed/simple;
+	bh=uEXWYNYp7VhpTZUElvU88fXfy1QSJP/hcRQ//97RtxM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eZFxOujGOMHjSPUMByqT9duogOC0F7c7fUSaJMj2dEBdZIXC+AmjFU/aKauw/ZVW7rnjWi5lYCmCUvYukfXQHp+Wbhgq79CLcHrWgcAjYXOmUATYrhYbKIPfZDRzGfbbRsTqg2A0c1GGZg8VlmxtjWHXtafHYI2+2DPYEKeHdz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GMBEW8ev; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-47f158ca5a7so2476625137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 14:56:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715723765; x=1716328565; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VqnUZ1TYuNAyNcXd26loTgoWFylrwHFb/LkAEYuc1fU=;
+        b=GMBEW8evRdWOxxt0RVleAFZKxyNr7DBmDQMHOzexyi74Kxg9whFqncpWg3hKpbIM0E
+         IovGo206t5WIi1r7dF3715pGTlAxkXGGqiqakf3N5m/P38Qn9IzMU37Z2P79n7xqlpUP
+         8mu4TdPrFdqe10nVKintXodL/hsgAuI45T22vQHf9hVlOVQKXYFOb26Q9eAt1+OEbe/S
+         i79eapeeK5/4DV01H8DbSie9HO0CtXnt4RK3GtFc6iL2CBRNoOIfx3hQ7QHud8qFlKKx
+         fCQcAINl0ywK+rxP+h3Z3NHohBfVhfe7jHjktAyiDHWm4bhaWyR0786tGjelxc3AP+bI
+         YGew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715723765; x=1716328565;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VqnUZ1TYuNAyNcXd26loTgoWFylrwHFb/LkAEYuc1fU=;
+        b=PiS2hP6QIZLsdpeZbO2OKzCM7ntYbFUadaXZGReUyut3uBbxqM4JLKx3rSwT7xKpRz
+         x7QraCf9taU7PTiJG+hvths9yqeOgJAL1ewjTBY+CW1o2hDcJNcgL3aZPhGB4tWzXIcR
+         Xn+VyWXIzshMOqk1Yo0fC7/yybGLwOvzU/J4khl/TZfpaQcqxDjmxPmV+cSPyvXWn2Ou
+         UkuFt0QB5St+ayP10/wctjPCXF+sBJUUv8zXuYg4rceu57c+6/kRluqUbmS1ueqSKMJS
+         9Oodlk2X2tT+/wm1ImHlI7+Wxlzxh+9C+G57cJYUx2PGK0Jhj40ee2OvCGebnXDJRslu
+         wtlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXg3rL+k7XSW4DmGFww2KqAw3IhpuJ6QQymNkLnCSfvb+JoPsxDgOeEw3ik1yMQmB/Yo71qHQzzSPLwHK94ZKbZ1zPlMgmhrvMIOPb
+X-Gm-Message-State: AOJu0Yyxhw63vUy6L4xSxzdvpkbEAIjzUoevhuSkVka0NCz4SXnnR0/D
+	vjEobng/F9Ssb/A1Yc0v9r7gYhMEMRm8EIvE+gtyzcEa0DfLz5kgiYSvSE1IteC9EQEogzP/iyD
+	27psr3qKOIDl912aJO6pDW3Mk8RA=
+X-Google-Smtp-Source: AGHT+IGLzOBgHUY87f8e0Twy3+9pCPi3j15GjRmTqzdayIiiA3rorIR2aVB42ywo9o9J/htubvmkklO3I3olKk/wmao=
+X-Received: by 2002:a05:6102:951:b0:47c:122b:a3bd with SMTP id
+ ada2fe7eead31-48077db7661mr15052080137.2.1715723765650; Tue, 14 May 2024
+ 14:56:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b718c70b-21ea-4c4d-9ecf-387b8276a721@intel.com>
+References: <20240511035435.1477004-1-linmiaohe@huawei.com>
+ <20240514141439.55fba39c81c1af55c9a100e1@linux-foundation.org>
+ <CAHbLzkq+NBjwjSvU1fQe56nLf5mmGp65TH8hDpb66EFLENctKA@mail.gmail.com> <20240514144204.88790f125b0275ef68acf6de@linux-foundation.org>
+In-Reply-To: <20240514144204.88790f125b0275ef68acf6de@linux-foundation.org>
+From: Yang Shi <shy828301@gmail.com>
+Date: Tue, 14 May 2024 15:55:52 -0600
+Message-ID: <CAHbLzkpQvr2K5yxwmtoHsj_UJ78ak=m-YdZxk=vpnPJ8iZdncw@mail.gmail.com>
+Subject: Re: [PATCH -rc7] mm/huge_memory: mark huge_zero_page reserved
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Miaohe Lin <linmiaohe@huawei.com>, nao.horiguchi@gmail.com, xuyu@linux.alibaba.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 14, 2024 at 01:30:05PM -0700, Reinette Chatre wrote:
-> Hi Tony,
-> 
-> On 5/14/2024 11:26 AM, Luck, Tony wrote:
-> >> On 5/13/2024 5:21 PM, Tony Luck wrote:
-> >>> On Mon, May 13, 2024 at 11:53:17AM -0700, Reinette Chatre wrote:
-> >>>> On 5/13/2024 10:05 AM, Tony Luck wrote:
-> >>>>> On Fri, May 10, 2024 at 02:24:13PM -0700, Reinette Chatre wrote:
-> >>>>> Thanks for the review. Detailed comments below. But overall I'm
-> >>>>> going to split patch 7 into a bunch of smaller changes, each with
-> >>>>> a better commit message.
-> >>>>>
-> >>>>>> On 5/3/2024 1:33 PM, Tony Luck wrote:
-> >>>>>>
-> >>>>>> (Could you please start the changelog with some context?)
-> >>>>>>
-> >>>>>>> Add a field to the rdt_resource structure to track whether monitoring
-> >>>>>>> resources are tracked by hardware at a different scope (NODE) from
-> >>>>>>> the legacy L3 scope.
-> >>>>>>
-> >>>>>> This seems to describe @mon_scope that was introduced in patch #3?
-> >>>>>
-> >>>>> Not really. Patch #3 made the change so that control an monitor
-> >>>>> functions can have different scope. That's still needed as with SNC
-> >>>>> enabled the underlying data collection is at the node level for
-> >>>>> monitoring, while control stays at the L3 cache scope.
-> >>>>>
-> >>>>> This new field describes the legacy scope of monitoring, so that
-> >>>>> resctrl can provide correctly scoped monitor files for legacy
-> >>>>> applications that aren't aware of SNC. So I'm using this both
-> >>>>> to indicate when SNC is enabled (with mon_scope != mon_display_scope)
-> >>>>> or disabled (when they are the same).
-> >>>>
-> >>>> This seems to enforce the idea that these new additions aim to be
-> >>>> generic on the surface but the only goal is to support SNC.
-> >>>
-> >>> If you have some more ideas on how to make this more generic and
-> >>> less SNC specific I'm all ears.
-> >>
-> >> It may not end up being totally generic. It should not pretend to be
-> >> when it is not. It makes the flows difficult to follow when there are
-> >> these unexpected checks/quirks in what claims to be core code.
-> > 
-> > Do you want some sort of warning comments in pieces of code
-> > that are SNC specific?
-> 
-> I cannot think now where warnings will be appropriate but if you
-> find instances then please do. To start the quirks can at least be
-> documented. For example, "Only user of <feature> is SNC, which does
-> not require <custom> so simplify by <describe shortcut> ..."
+On Tue, May 14, 2024 at 3:42=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Tue, 14 May 2024 15:28:12 -0600 Yang Shi <shy828301@gmail.com> wrote:
+>
+> > On Tue, May 14, 2024 at 3:14=E2=80=AFPM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> > >
+> > > On Sat, 11 May 2024 11:54:35 +0800 Miaohe Lin <linmiaohe@huawei.com> =
+wrote:
+> > >
+> > > > When I did memory failure tests recently, below panic occurs:
+> > > >
+> > > >  kernel BUG at include/linux/mm.h:1135!
+> > > >  invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> > > >  CPU: 9 PID: 137 Comm: kswapd1 Not tainted 6.9.0-rc4-00491-gd5ce28f=
+156fe-dirty #14
+> > > >
+> > > > ...
+> > > >
+> > > > --- a/mm/huge_memory.c
+> > > > +++ b/mm/huge_memory.c
+> > > > @@ -208,6 +208,7 @@ static bool get_huge_zero_page(void)
+> > > >               __free_pages(zero_page, compound_order(zero_page));
+> > > >               goto retry;
+> > > >       }
+> > > > +     __SetPageReserved(zero_page);
+> > > >       WRITE_ONCE(huge_zero_pfn, page_to_pfn(zero_page));
+> > > >
+> > > >       /* We take additional reference here. It will be put back by =
+shrinker */
+> > > > @@ -260,6 +261,7 @@ static unsigned long shrink_huge_zero_page_scan=
+(struct shrinker *shrink,
+> > > >               struct page *zero_page =3D xchg(&huge_zero_page, NULL=
+);
+> > > >               BUG_ON(zero_page =3D=3D NULL);
+> > > >               WRITE_ONCE(huge_zero_pfn, ~0UL);
+> > > > +             __ClearPageReserved(zero_page);
+> > > >               __free_pages(zero_page, compound_order(zero_page));
+> > > >               return HPAGE_PMD_NR;
+> > > >       }
+> > >
+> > > This causes a bit of a mess when staged ahead of mm-stable.  So to
+> > > avoid disruption I staged it behind mm-stable.  This means that when
+> > > the -stable maintainers try to merge it, they will ask for a fixed up
+> > > version for older kernels so you can please just send them this
+> > > version.
+> >
+> > Can you please drop this from mm-unstable since both I and David
+> > nack'ed a similar patch in another thread.
+> > https://lore.kernel.org/linux-mm/20240511032801.1295023-1-linmiaohe@hua=
+wei.com/
+>
+> That appears to link to the incorrect email thread?
 
-The main spot that triggered this line of discussion was changing the
-sanity check that operations to read monitors is being done from a
-CPU within the right domain. I've added a short comment on the new
-check:
-
--       if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
-+       /* Event counts can only be read from a CPU on the same L3 cache */
-+       if (d->display_id != get_cpu_cacheinfo_id(smp_processor_id(), r->mon_display_scope))
-                return -EINVAL;
-
-But my change embeds the assumption that monitor events are L3 scoped.
-
-Should it be something like this (to keep the non-SNC case generic):
-
-	if (r->mon_scope == r->mon_display_scope) {
-		if (!cpumask_test_cpu(smp_processor_id(), &d->hdr.cpu_mask))
-			return -EINVAL;
-	} else {
-		/*
-		 * SNC: OK to read events on any CPU sharing same L3
-		 * cache instance.
-		 */
-		 if (d->display_id != get_cpu_cacheinfo_id(smp_processor_id(), r->mon_display_scope))
-		 	return -EINVAL;
-	}
-
-> 
-> > 
-> >>
-> >>>>>>>         }
-> >>>>>>> +
-> >>>>>>> +       return 0;
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>> +static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
-> >>>>>>> +                               struct rdt_mon_domain *d,
-> >>>>>>> +                               struct rdt_resource *r, struct rdtgroup *prgrp)
-> >>>>>>> +{
-> >>>>>>> +       struct kernfs_node *kn, *ckn;
-> >>>>>>> +       char name[32];
-> >>>>>>> +       bool do_sum;
-> >>>>>>> +       int ret;
-> >>>>>>> +
-> >>>>>>> +       do_sum = r->mon_scope != r->mon_display_scope;
-> >>>>>>> +       sprintf(name, "mon_%s_%02d", r->name, d->display_id);
-> >>>>>>> +       kn = kernfs_find_and_get_ns(parent_kn, name, NULL);
-> >>>>>>> +       if (!kn) {
-> >>>>>>> +               /* create the directory */
-> >>>>>>> +               kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
-> >>>>>>> +               if (IS_ERR(kn))
-> >>>>>>> +                       return PTR_ERR(kn);
-> >>>>>>> +
-> >>>>>>> +               ret = rdtgroup_kn_set_ugid(kn);
-> >>>>>>> +               if (ret)
-> >>>>>>> +                       goto out_destroy;
-> >>>>>>> +               ret = mon_add_all_files(kn, d, r, prgrp, do_sum);
-> >>>>>>
-> >>>>>> This does not look right. If I understand correctly the private data
-> >>>>>> of these event files will have whichever mon domain came up first as
-> >>>>>> its domain id. That seems completely arbitrary and does not reflect
-> >>>>>> accurate state for this file. Since "do_sum" is essentially a "flag"
-> >>>>>> on how this file can be treated, can its "dom_id" not rather be
-> >>>>>> the "monitor scope domain id"? Could that not help to eliminate
-> >>>>>
-> >>>>> You are correct that this should be the "monitor scope domain id" rather
-> >>>>> than the first SNC domain that appears. I'll change to use that. I don't
-> >>>>> think it helps in removing the per-domain display_id.
-> >>>>
-> >>>> Wouldn't the file metadata then be the "display_id"?
-> >>>
-> >>> Yes. The metadata is the display_id for files that need to sum across
-> >>> SNC nodes, but the domain id for ones where no summation is needed.
-> >>
-> >> Right ... and there is a "sum" flag to tell which is which?
-> > 
-> > Yes. sum==0 means the domid field is the one and only domain to
-> > report for this resctrl monitor file. sum==1 means the domid field is
-> > the display_id - all domains with this display_id must be summed to
-> > provide the result to present to the user.
-> > 
-> > I've tried to capture that in the kerneldoc comment for struct mon_event.
-> > Here's what I'm planning to include in v18 (Outlook will probably mangle
-> > the formatting ... just imagine that the text lines up neatly):
-> > 
-> > diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-> > index 49440f194253..3411557d761a 100644
-> > --- a/arch/x86/kernel/cpu/resctrl/internal.h
-> > +++ b/arch/x86/kernel/cpu/resctrl/internal.h
-> > @@ -132,14 +132,19 @@ struct mon_evt {
-> >   *                     as kernfs private data
-> >   * @rid:               Resource id associated with the event file
-> >   * @evtid:             Event id associated with the event file
-> > - * @domid:             The domain to which the event file belongs
-> > + * @sum:               Set when event must be summed across multiple
-> > + *                     domains.
-> > + * @domid:             When @sum is zero this is the domain to which
-> > + *                     the event file belongs. When sum is one this
-> > + *                     is the display_id of all domains to be summed
-> 
-> Here is where I would like to understand why it cannot just be
-> "When sum is one this is the domain id of the scope at which (for which?)
-> the events must be summed." Although, you already mentioned this will be
-> clear in next posting.
-> 
-> >   * @u:                 Name of the bit fields struct
-> >   */
-> >  union mon_data_bits {
-> >         void *priv;
-> >         struct {
-> >                 unsigned int rid                : 10;
-> > -               enum resctrl_event_id evtid     : 8;
-> > +               enum resctrl_event_id evtid     : 7;
-> > +               unsigned int sum                : 1;
-> >                 unsigned int domid              : 14;
-> >         } u;
-> >  };
-> > 
-> > -Tony
-
-Maybe an example might help. Assume an SNC system with two sockets,
-three SNC nodes per socket, only supporting monitoring. The only domain
-list created by resctrl is the mon_domains list on the RDT_RESOURCE_L3
-resource. And it looks like this (with "disply_list" abbreviated to
-"dspl" to keep the picture small):
-
-
-       <------ SNC NODES ON SOCKET 0 ----->   <------ SNC NODES ON SOCKET 1 ------>
-----> +----------+ +----------+ +----------+ +----------+ +----------+ +----------+
-      | id = 0   | | id = 1   | | id = 2   | | id = 3   | | id = 4   | | id = 5   |
-      |          | |          | |          | |          | |          | |          |
-      | dspl = 0 | | dspl = 0 | | dspl = 0 | | dspl = 1 | | dspl = 1 | | dspl = 1 |
-      |          | |          | |          | |          | |          | |          |
-      +----------+ +----------+ +----------+ +----------+ +----------+ +----------+
-
-Reading the per-SNC node monitor values looks just the same as the
-non-SNC case. The struct rmid_read passed across the smp_call*() has
-the resource, domain, event, and reading the counters is essentially
-unchanged.
-
-Reading a file to sum event counts for SNC nodes on socket 1 needs to
-find each of the "struct rdt_mon_domain" that are part of socket 1.
-I'm doing that with meta data in the file that says sum=1 (need to add
-up something) and domid=1 (the things to be added are those with
-display_id = 1). So the code reads:
-
-	list_for_each_entry(d, &rr->r->mon_domains, hdr.list) {
-		if (d->display_id == rr->d->display_id) {
-			... call stuff to read and sum for domain "d"
-		}
-	}
-
-The display_id is "the domain id of the scope at which (for which?)
-the events must be summed." in your text above.
-
-> Reinette
-
--Tony
+I meant that patch is actually same with this one. Just used folio
+interface instead of page. I'm not sure why Miaohe posted two. Maybe
+target to different version.
 
