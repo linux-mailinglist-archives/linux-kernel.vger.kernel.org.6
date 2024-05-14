@@ -1,141 +1,196 @@
-Return-Path: <linux-kernel+bounces-178562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14AF88C5035
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B5608C503D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A281F20C3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:59:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED0E1C21465
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A1D13A404;
-	Tue, 14 May 2024 10:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TM1nUYLK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="byghsQKk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB4913AA46;
+	Tue, 14 May 2024 10:38:30 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12CE13A271;
-	Tue, 14 May 2024 10:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C14713A241
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 10:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715683087; cv=none; b=B5Ek35Zrb4O2rRqT+oU14eqR02aS4KeZ95IsVAamvlDLhx1ERtXstZvY7S4De0k3/ierHvnXw4kEBpCwpGL8i1h0oNpbe/L9gE3e0Aj0Fwt5hS2vg0rFLjRq4EF958XjcdNM1b434PviUkr4E5O0Td0hYC3PD9pKIWn7FDO6xIc=
+	t=1715683109; cv=none; b=sv0xoeudnzGgMZVgvi40erL9f7ngNzeQDQ14CzG24W7f2SgIsr/OTWm1CSIxM3HOqXylj/6rebUT+jms+DT87DXXQWWNwdvP4I8BVFQvjSFLZivh/vVfdQgTTxF9E78KwJYQvpWmeYblwKBnaX6d+RZaK9J5JASFVZRNyiDwMKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715683087; c=relaxed/simple;
-	bh=gXV/oqhmaQ1tdC9JRFSJVqEuie1cUMVVNhKnd6xNMRQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=msJ7F9kPHzw5CKtk6+B/kE+obfnciNQ7uplxvyBry7S/P7pLCwfzSTD+rsbp7Sck1eWngvkBi28YHplXgOiIIrxVHbpj7oDPzJ5RytYKFVxGlgCvwCJhpFc6+WWi8jU6ordbT/Y+8KcfoAPuRqusO/8tsErkg3rddyu2kK6W7kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TM1nUYLK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=byghsQKk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715683084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iDStsWVDKLJBA8425Wty2TlT2DjOQySOPO1UJZBTK/s=;
-	b=TM1nUYLKS/rtDO6b+mZa35J2FOZtfg5jpN5AWCz3I8aEFExTnGThvTdTuGyZlrMPr22FYh
-	Pl8roHl3KzZ0U5Ov5TpnAehWZNnQdC7r9rWBa6pnXmzWmbzcypELEmmgSnP85LxmjJbKGQ
-	DQdOaHtl1hH7kZrQvXOaWBDCgDGiVQ9AHMVbTc7fNkamWhibDWbBBdpaXGikoxO5SD3KOb
-	Ub4QGDncE/fW/5pcT/v6HVFxfaxsdjirOvzmUc6PZ0sdB3yn70FbUo3CL1LWAMehLGcyrk
-	ablNYNXbAXWjRR1oz0muqBn/sQ9SISYJ4AVS4XNHs0yiwd67fLYWa1psHVHZlg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715683084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iDStsWVDKLJBA8425Wty2TlT2DjOQySOPO1UJZBTK/s=;
-	b=byghsQKks4BdQGcAkosA2dEhmuZsi2ivt9KDLL4SFctUS/5Linbpj3luNP7BCYw6lOVoh3
-	DGNSvwatQH4TOKCQ==
-To: Justin Stitt <justinstitt@google.com>, John Stultz <jstultz@google.com>,
- Stephen Boyd <sboyd@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Bill Wendling <morbo@google.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- linux-hardening@vger.kernel.org, Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH] ntp: remove accidental integer wrap-around
-In-Reply-To: <20240507-b4-sio-ntp-usec-v1-1-15003fc9c2b4@google.com>
-References: <20240507-b4-sio-ntp-usec-v1-1-15003fc9c2b4@google.com>
-Date: Tue, 14 May 2024 12:38:03 +0200
-Message-ID: <87v83gllv8.ffs@tglx>
+	s=arc-20240116; t=1715683109; c=relaxed/simple;
+	bh=h8Q92DdaiairHNOkDqw++E0u5GkNT2R2/9tsFBAFDUY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hw3iDYDyPBXDs6TmilvXA4cuamO7nUwUGpodohIwL2Rk18GI72aY9rn1DGrMpzYr+chTHYaLpBMDSbz5+vPsbOOz1yL29FkYw8M+mOLUS4z1+QMlvsDgj2hZDRq3VVdGNaL8lnb3sGrIKEd1JQG7XwSAv9irYb+Rf0mthaGbdu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7e1b97c1b19so503783839f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 03:38:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715683107; x=1716287907;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fliv4DnuliadWO8SZntjxBjMS1vRXtFssXEpMtEUoEQ=;
+        b=L4z6Cx6HyGC/OMphTStV4PACmghDQWGstjCwcisZw9cSwS64CtK+HpDha9QFFY5TbA
+         Euk/wA+cBP8IXuk2mWQJ9nZlAQXZMtTHn8MbAJn6S2EcBL5/Rjc7BSHWg7j5E0ozY/oo
+         SUPMJaYhYbZ6PMOAlw4gWknQ70CWDuak5aueXMAS6yCEKI6oGt+2JJHhlcHwCaOSl8zT
+         9TPdCOLJRe+IS0wZe9+1ZqZRCsYpjbI4K3ACeiZZEpnRCvDH3rGvQlWqt0nRp103r+B0
+         b221pudUpR35Pbt1t9hH2ntOEcEtyPwY1nDdkn48zunEaN6LrBqb9GX8NwNlBkDTor/x
+         b4LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU//FYcsTmsiLr1OOdtuRNMpAl2LeIqmy7q1PSUuoVeOJu461XnGSXC/YNeXxtgZL/KICdIvpp9foX4+3/GvRwiarE7LcYnrfrN8nx5
+X-Gm-Message-State: AOJu0YwZrrjasx4tGTUXnWk1cV8dRoiRjsAZVBBKwx+jzIbrSZhihyxz
+	4MwA8rl59qZ3wsLwLfKNYMXqj/QwtaHSTK10Esbf0bKPF2PohxIdFXmKee3J58PJhIIhUUZBDUD
+	qSs6vRvSibu1QNzis8miV5RGoxxtRJFCFqdJN0y/Pnm6KhmvScDp8QXU=
+X-Google-Smtp-Source: AGHT+IFYOUdkrDe9zm3kRHVzey7vDY72H0L+kGhOj6DXemTKxw6+QAeS0LR2Z7xB8kxmUfepGX+mWPsqusixguR3ssQfNHh03W0l
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6602:27ca:b0:7cc:cc9:4332 with SMTP id
+ ca18e2360f4ac-7e1b521fc11mr61703739f.4.1715683107680; Tue, 14 May 2024
+ 03:38:27 -0700 (PDT)
+Date: Tue, 14 May 2024 03:38:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002e433b0618679a5e@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_checksum
+From: syzbot <syzbot+e951ad5349f3a34a715a@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 07 2024 at 04:34, Justin Stitt wrote:
-> Using syzkaller alongside the newly reintroduced signed integer overflow
-> sanitizer spits out this report:
->
-> [  138.454979] ------------[ cut here ]------------
-> [  138.458089] UBSAN: signed-integer-overflow in ../kernel/time/ntp.c:461:16
-> [  138.462134] 9223372036854775807 + 500 cannot be represented in type 'long'
-> [  138.466234] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.8.0-rc2-00038-gc0a509640e93-dirty #10
-> [  138.471498] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  138.477110] Call Trace:
-> [  138.478657]  <IRQ>
-> [  138.479964]  dump_stack_lvl+0x93/0xd0
-> [  138.482276]  handle_overflow+0x171/0x1b0
-> [  138.484699]  second_overflow+0x2d6/0x500
-> [  138.487133]  accumulate_nsecs_to_secs+0x60/0x160
-> [  138.489931]  timekeeping_advance+0x1fe/0x890
-> [  138.492535]  update_wall_time+0x10/0x30
+Hello,
 
-Same comment vs. trimming.
+syzbot found the following issue on:
 
-> Historically, the signed integer overflow sanitizer did not work in the
-> kernel due to its interaction with `-fwrapv` but this has since been
-> changed [1] in the newest version of Clang. It was re-enabled in the
-> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
-> sanitizer").
+HEAD commit:    75fa778d74b7 Add linux-next specific files for 20240510
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10a7705c980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ccdd3ebd6715749a
+dashboard link: https://syzkaller.appspot.com/bug?extid=e951ad5349f3a34a715a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169cb8d0980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12ea5c5c980000
 
-Again. Irrelevant to the problem.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ad9391835bcf/disk-75fa778d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d827b3da9a26/vmlinux-75fa778d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8f32f0182388/bzImage-75fa778d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a1fc97fcc95e/mount_0.gz
 
-> Let's introduce a new macro and use that against NTP_PHASE_LIMIT to
-> properly limit the max size of time_maxerror without overflowing during
-> the check itself.
+The issue was bisected to:
 
-This fails to tell what is causing the issue and just talks about what
-the patch is doing. The latter can be seen from the patch itself, no?
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-Something like this:
+    bcachefs: make btree read errors silent during scan
 
-   On second overflow time_maxerror is unconditionally incremented and
-   the result is checked against NTP_PHASE_LIMIT, but the increment can
-   overflow into negative space.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=122e3084980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=112e3084980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=162e3084980000
 
-   Prevent this by checking the overflow condition before incrementing.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e951ad5349f3a34a715a@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
 
-Hmm?
+loop0: detected capacity change from 0 to 32768
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=xxhash,compression=zstd,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 10
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/checksum.c:236!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 5095 Comm: syz-executor222 Not tainted 6.9.0-rc7-next-20240510-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/02/2024
+RIP: 0010:bch2_checksum+0x717/0x730 fs/bcachefs/checksum.c:236
+Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 0a fe ff ff 48 89 df e8 19 0b dc fd e9 fd fd ff ff e8 1f b4 6a 07 e8 9a 52 76 fd 90 <0f> 0b e8 92 52 76 fd 90 0f 0b e8 8a 52 76 fd 90 0f 0b 0f 1f 80 00
+RSP: 0018:ffffc9000368e340 EFLAGS: 00010293
+RAX: ffffffff841fc9e6 RBX: 20000004b5d608e4 RCX: ffff888027f9da00
+RDX: 0000000000000000 RSI: ffffffff8e92a440 RDI: 000000000000000f
+RBP: ffffc9000368e6b0 R08: 0000000000000005 R09: ffffffff841fc3aa
+R10: 0000000000000008 R11: ffff888027f9da00 R12: ffffc9000368e3e0
+R13: dffffc0000000000 R14: 000000000000000f R15: 1ffff920006d1c70
+FS:  00005555916b4380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd20783dd4 CR3: 00000000799da000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_btree_node_read_done+0x13d4/0x6770 fs/bcachefs/btree_io.c:1110
+ btree_node_read_work+0x68b/0x1260 fs/bcachefs/btree_io.c:1340
+ bch2_btree_node_read+0x2467/0x2a40
+ __bch2_btree_root_read fs/bcachefs/btree_io.c:1764 [inline]
+ bch2_btree_root_read+0x61e/0x970 fs/bcachefs/btree_io.c:1788
+ read_btree_roots+0x22d/0x7b0 fs/bcachefs/recovery.c:472
+ bch2_fs_recovery+0x2346/0x3700 fs/bcachefs/recovery.c:800
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1031
+ bch2_fs_open+0xa8d/0xdf0 fs/bcachefs/super.c:2123
+ bch2_mount+0x71d/0x1320 fs/bcachefs/fs.c:1917
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1780
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x240 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f31632de93a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffdd671fda8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffdd671fdc0 RCX: 00007f31632de93a
+RDX: 0000000020011a00 RSI: 0000000020011a40 RDI: 00007ffdd671fdc0
+RBP: 0000000000000004 R08: 00007ffdd671fe00 R09: 00000000000119f5
+R10: 0000000001200014 R11: 0000000000000282 R12: 0000000001200014
+R13: 00007ffdd671fe00 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bch2_checksum+0x717/0x730 fs/bcachefs/checksum.c:236
+Code: ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 0a fe ff ff 48 89 df e8 19 0b dc fd e9 fd fd ff ff e8 1f b4 6a 07 e8 9a 52 76 fd 90 <0f> 0b e8 92 52 76 fd 90 0f 0b e8 8a 52 76 fd 90 0f 0b 0f 1f 80 00
+RSP: 0018:ffffc9000368e340 EFLAGS: 00010293
+RAX: ffffffff841fc9e6 RBX: 20000004b5d608e4 RCX: ffff888027f9da00
+RDX: 0000000000000000 RSI: ffffffff8e92a440 RDI: 000000000000000f
+RBP: ffffc9000368e6b0 R08: 0000000000000005 R09: ffffffff841fc3aa
+R10: 0000000000000008 R11: ffff888027f9da00 R12: ffffc9000368e3e0
+R13: dffffc0000000000 R14: 000000000000000f R15: 1ffff920006d1c70
+FS:  00005555916b4380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffd20783dd4 CR3: 00000000799da000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-But that obviously begs the question why this can happen at all.
 
-#define MAXPHASE 500000000L       
-#define NTP_PHASE_LIMIT ((MAXPHASE / NSEC_PER_USEC) << 5)
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-==> NTP_PHASE_LIMIT = 1.6e+07 = 0xf42400
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-#define MAXFREQ 500000
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-So how can 0xf42400 + 500000/1000 overflow in the first place?
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-It can't unless time_maxerror is somehow initialized to a bogus
-value and indeed it is:
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-process_adjtimex_modes()
-        ....
-	if (txc->modes & ADJ_MAXERROR)
-		time_maxerror = txc->maxerror;
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-So that wants to be fixed and not the symptom.
-
-Thanks,
-
-        tglx
+If you want to undo deduplication, reply with:
+#syz undup
 
