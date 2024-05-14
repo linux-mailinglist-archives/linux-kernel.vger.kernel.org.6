@@ -1,117 +1,219 @@
-Return-Path: <linux-kernel+bounces-178700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0998C569C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:10:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C8C8C569E
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 420701C21D8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6001F238F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58946143755;
-	Tue, 14 May 2024 13:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ABow6UCU"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F2314038E;
+	Tue, 14 May 2024 13:09:43 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548EA1411DB;
-	Tue, 14 May 2024 13:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567F26DCE8;
+	Tue, 14 May 2024 13:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692174; cv=none; b=TS0Pf91AeGNvQnxOj18J1+tqUG9NM0sVLvL0R3/3HtqFnsJYkfCv7G49e4H7GGFVuosNvCt7zHtwq5tRC+mwXVrksIWY/vWvFG87KO2d86fqZiOd+nkWtzMGsr8EjDFgkrBVMPLusfIbClZO911NBFR6Ukz9y0doe3XMopgstxU=
+	t=1715692182; cv=none; b=p2zH494owuw56xCF4oqvq78zymJ5p638tb+6lUM8QKJzH9cg3DPSfTidIJk1rrRRO6N0CUcz6OlG8sOZLO+4WH6CqgEx8kILmWd/VZT8NGeorzps6zACzh0GEjZ2pL3Bw71qsBtnUWnj9v95x6l2ydET2MRgKQMJJcZ0dNEWMuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692174; c=relaxed/simple;
-	bh=WQXVJuUter3IICEpN6ZuyqFUO2+Lf+4sBc8m7CrrHX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DfP/tlyKV4rj59YLfE7zj2tnhu+MvuhHBmN8cw3B2yn5RJxPeQKt94Ps65iMDAw/nQrrKq773dMbKmTMNtcwPaMUQGdJ8Hlk192ZEuVCmb1RpbnvL2ss6zDoMFNLt1n/WnN2EHruKDJyA6wAxHoKJ8h1kWA1wYN2bEYEsYJUYSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ABow6UCU; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 00FA460002;
-	Tue, 14 May 2024 13:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715692170;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8DZyeKSJbCNjlJ0OhBvh+xCLA4DX/WKG0IiWWke/Gaw=;
-	b=ABow6UCUzEaSrG6RDTBUxcVxPwxR3TBoKZBWQgHbrrBf6a3kbHe9gPb5iGw6/3gpXsrupF
-	Tj0FOKo7c5YdKngbhBP7+NpnowjMBUefBZ4zWtd5zyj9mhbvItswDc6nQWCvzfS9rje85Y
-	HJ+hXCmz6v0xkKXDxmrngU+/6kfmUw9r9fMxp5pbIRPu4lJ5urFMuXzh6jaP7mNngnTU06
-	8nvwaasRbPmqryaxUj3kJ5uvlO0VA/goUP9/bWD6+ypJgMiEhh7cD2BVfh/13sjm+7kxuQ
-	EeVt2XYbKcRzK6uKUCyJx4xUtJZKMbjqsUvmc1mnBIs/b1uwWx4ayo6VO1k/0A==
-Message-ID: <3f53441d-b8b0-448a-aaaa-fb7e64aa86c0@bootlin.com>
-Date: Tue, 14 May 2024 15:09:29 +0200
+	s=arc-20240116; t=1715692182; c=relaxed/simple;
+	bh=bSDbNE0FvS5utQeH0zRsryZzZ0j3KAxp2J5ZDyj6wUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BcZ7Q3NsVHlLDcyGdrRfTPJlEc/69gAmS9w+NuhP3MRsvf/85Yn38AnIY5Y3I/xcUCxxrguR3DBaAU4D0mqawQJ53j3A6ZSBITU/QwQeTAkynyA5Vqper7TeRa0+jX6+euncclz6NsBAjHdJ22xP0ITwy1SFNt4AZN9Kfr++Fo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 4LX+oYvZQrqLZJGE8pUZTg==
+X-CSE-MsgGUID: +2JRT6duRMKoVr08927jbw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11073"; a="15509291"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="15509291"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 06:09:40 -0700
+X-CSE-ConnectionGUID: 54Qh+E3TRlCZjde8Q+yg8Q==
+X-CSE-MsgGUID: yg7Pq/faQw2bfaQjPnS9Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="35440185"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 06:09:35 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.97)
+	(envelope-from <andy@kernel.org>)
+	id 1s6ruO-00000007R9A-3LOw;
+	Tue, 14 May 2024 16:09:32 +0300
+Date: Tue, 14 May 2024 16:09:32 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: michael.hennerich@analog.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	lars@metafoo.de, jic23@kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	lgirdwood@gmail.com, broonie@kernel.org, nuno.sa@analog.com,
+	marcelo.schmitt@analog.com, bigunclemax@gmail.com,
+	dlechner@baylibre.com, okan.sahin@analog.com, fr0st61te@gmail.com,
+	alisa.roman@analog.com, marcus.folkesson@gmail.com,
+	schnelle@linux.ibm.com, liambeguin@gmail.com
+Subject: Re: [PATCH v8 6/6] iio: adc: ad7192: Add AD7194 support
+Message-ID: <ZkNijKz0N7PPvmeU@smile.fi.intel.com>
+References: <20240514120222.56488-1-alisa.roman@analog.com>
+ <20240514120222.56488-7-alisa.roman@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] wifi: wilc1000: set net device registration as last
- step during interface creation
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Ajay Singh <ajay.kathat@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
- <171569074600.2017278.13914732662896657638.kvalo@kernel.org>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <171569074600.2017278.13914732662896657638.kvalo@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514120222.56488-7-alisa.roman@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello Kalle,
+On Tue, May 14, 2024 at 03:02:22PM +0300, Alisa-Dariana Roman wrote:
+> Unlike the other AD719Xs, AD7194 has configurable channels. The user can
+> dynamically configure them in the devicetree.
+> 
+> Add sigma_delta_info member to chip_info structure. Since AD7194 is the
+> only chip that has no channel sequencer, num_slots should remain
+> undefined.
+> 
+> Also modify config AD7192 description for better scaling.
 
-On 5/14/24 14:45, Kalle Valo wrote:
-> Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
-> 
->> net device registration is currently done in wilc_netdev_ifc_init but
->> other initialization operations are still done after this registration.
->> Since net device is assumed to be usable right after registration, it
->> should be the very last step of initialization.
->>
->> Move netdev registration at the very end of wilc_netdev_ifc_init to let
->> this function completely initialize netdevice before registering it.
->>
->> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
-> 
-> I see errors:
-> 
-> ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
-> ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
-> ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
-> ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
-> make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
-> make[1]: *** [/home/kvalo/projects/personal/wireless-drivers/src/wireless-next/Makefile:1871: modpost] Error 2
-> make: *** [Makefile:240: __sub-make] Error 2
-> 
-> 6 patches set to Changes Requested.
-> 
-> 13633102 [1/6] wifi: wilc1000: set net device registration as last step during interface creation
-> 13633103 [2/6] wifi: wilc1000: register net device only after bus being fully initialized
-> 13633104 [3/6] wifi: wilc1000: set wilc_set_mac_address parameter as const
-> 13633105 [4/6] wifi: wilc1000: add function to read mac address from eFuse
-> 13633106 [5/6] wifi: wilc1000: make sdio deinit function really deinit the sdio card
-> 13633107 [6/6] wifi: wilc1000: read MAC address from fuse at probe
+Some non-critical, mostly style related comments below.
 
-Shame on me, I missed those basic errors since I worked with drivers as built-in
-instead of modules. I'll update my workflow and send a v2.
+..
 
-Thanks,
+This...
 
-Alexis
+> +#define AD7194_CH(p)		(BIT(10) | AD7194_CH_POS(p))
+> +				  /* 10th bit corresponds to CON18(Pseudo) */
+
+..should be (you have broken indentation on the comment, btw):
+
+/* 10th bit corresponds to CON18(Pseudo) */
+#define AD7194_CH(p)		(BIT(10) | AD7194_CH_POS(p))
+
+But no need to resend because of this, let's wait others to comment, and
+if everything fine I think Jonathan can massage this when applying.
+
+..
+
+> +#define AD7194_CH_TEMP		0x100 /* Temp sensor */
+
+Not sure that the comment has any value here.
+
+..
+
+> +static int ad7194_validate_ain_channel(struct device *dev, u32 ain)
+> +{
+> +	if (!in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR))
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Invalid AIN channel: %u\n", ain);
+> +
+> +	return 0;
+
+While this uses traditional pattern, it might be better looking in a form of
+
+	if (in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR))
+		return 0;
+
+	return dev_err_probe(dev, -EINVAL, "Invalid AIN channel: %u\n", ain);
+
+But at the same time I would rather expect this to be in the caller and here
+to have a boolean function
+
+static bool ad7194_is_ain_channel_valid(struct device *dev, u32 ain)
+{
+	return in_range(ain, AD7194_CH_AIN_START, AD7194_CH_AIN_NR);
+}
+
+> +}
+
+..
+
+> +		return dev_err_probe(dev, -EINVAL,
+> +				     "Too many channels: %u\n", num_channels);
+
+		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n", num_channels);
+
+?
+
+Or with limit
+
+		return dev_err_probe(dev, -EINVAL, "Too many channels: %u\n",
+				     num_channels);
+
+
+..
+
+> +	ad7194_channels = devm_kcalloc(dev, num_channels,
+> +				       sizeof(*ad7194_channels), GFP_KERNEL);
+
+	ad7194_channels = devm_kcalloc(dev, num_channels, sizeof(*ad7194_channels), GFP_KERNEL);
+
+?
+
+Or
+
+	ad7194_channels = devm_kcalloc(dev, num_channels, sizeof(*ad7194_channels),
+				       GFP_KERNEL);
+
+?
+
+..
+
+> +	device_for_each_child_node_scoped(dev, child) {
+> +		ret = fwnode_property_read_u32_array(child, "diff-channels",
+> +						     ain, ARRAY_SIZE(ain));
+> +		if (ret == 0) {
+
+And here I would rather go for the traditional pattern, i.e.
+
+		if (ret) {
+			...
+		} else {
+			...
+		}
+
+> +			ret = ad7194_validate_ain_channel(dev, ain[0]);
+> +			if (ret)
+> +				return ret;
+> +
+> +			ret = ad7194_validate_ain_channel(dev, ain[1]);
+> +			if (ret)
+> +				return ret;
+> +
+> +			*ad7194_channels = ad7194_chan_diff;
+> +			ad7194_channels->scan_index = index++;
+> +			ad7194_channels->channel = ain[0];
+> +			ad7194_channels->channel2 = ain[1];
+> +			ad7194_channels->address = AD7194_DIFF_CH(ain[0], ain[1]);
+> +		} else {
+> +			ret = fwnode_property_read_u32(child, "single-channel",
+> +						       &ain[0]);
+> +			if (ret)
+> +				return dev_err_probe(dev, ret,
+> +						     "Missing channel property\n");
+> +
+> +			ret = ad7194_validate_ain_channel(dev, ain[0]);
+> +			if (ret)
+> +				return ret;
+> +
+> +			*ad7194_channels = ad7194_chan;
+> +			ad7194_channels->scan_index = index++;
+> +			ad7194_channels->channel = ain[0];
+> +			ad7194_channels->address = AD7194_CH(ain[0]);
+> +		}
+> +		ad7194_channels++;
+> +	}
+
 -- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
+
 
 
