@@ -1,188 +1,115 @@
-Return-Path: <linux-kernel+bounces-178691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13D58C567C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:04:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6378C567F
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FEC71F22EC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:04:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF2A1C21FD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12313140E50;
-	Tue, 14 May 2024 13:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1C8140E50;
+	Tue, 14 May 2024 13:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TwCUzJGd"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="bH0xkm4z"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDB412AACA
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DE612E75;
+	Tue, 14 May 2024 13:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715691857; cv=none; b=Sb1ulMAKHjsCGrDsD2FMW/OD0D1QLJQPXtdDNOApFDTn8R6IgorvdLvqgbJEnYEIaf8FsVRUCiWZlXACnAFi/0Nxa2zVkZPBqf3PKOyOGPVNoJeIqJ83j+/76YtxtjIobqQdLJyz+pAZHHYXU8BIEUMSbEaBsCoC9ewVj/VDLSI=
+	t=1715691925; cv=none; b=jsO7VgXKx/aVkyMkgzzlrtBAtsigDGkEJNb2gNtCbRqGurn98fvbbbcXsNh8VEP+YQGq4NERYGD53p5o0Ysz6XIriA9a68PK8Jn+WunU4BA4N1u302bMjCjnsUa571Q1gpB8v2V5cJItExOYrslrstCpKlkyno93Em+qgNii9Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715691857; c=relaxed/simple;
-	bh=Jh4TmIztiLTImNeNRSwiBdIdG7exX8qTtyZUt3I6qaM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tPG9731EqGRTT6/AQQ4Mnqom9kEYXjkIVz8CdWV046vXibc+XYgLLqgUBc65rvRHJUQkR81IlGwZz1ymqONPZqJ0c75LHjZsJ0U8l94uYk00Hijrxu+asxrHL38wkouDgg9U2w2NATy9uzh5IXXy8hyupj3sqC/J+HsBjcGa8Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TwCUzJGd; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1715691853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qpW/K7dbaciLqMw4mvk0l4DtoGG1mRuhcYtj0BOA+LY=;
-	b=TwCUzJGdlR8Ey5IIrfMkMiszMxv5QoIBg8/wLf3lTioq1Q4dh7STGUMG9tPwNLBxaBfacI
-	6/GinhWQ5j6wuYf+c2wYoOrLOhdTE1vbI0YEj/09O7TL0uP0H0kXkdGkg8gd02pfXlbdcF
-	IVFXKrbN177Nz7JEAd+a/XO216sI+a4=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>,
-  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org,  Theodore Ts'o
- <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,  Harshad Shirwadkar
- <harshadshirwadkar@gmail.com>
-Subject: Re: [PATCH] ext4: fix infinite loop when replaying fast_commit
-In-Reply-To: <2ee78957-b0a6-f346-5957-c4b2ebcea4ce@huaweicloud.com> (Zhang
-	Yi's message of "Sat, 11 May 2024 14:24:17 +0800")
-References: <20240510115252.11850-1-luis.henriques@linux.dev>
-	<2ee78957-b0a6-f346-5957-c4b2ebcea4ce@huaweicloud.com>
-Date: Tue, 14 May 2024 14:04:10 +0100
-Message-ID: <87o798a6k5.fsf@brahms.olymp>
+	s=arc-20240116; t=1715691925; c=relaxed/simple;
+	bh=+Z6R1uNsAOJ+8G02CVd/I1z60HSnWhvLdgPhe1ovvuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IrsdVR9j1kR1kkmDOWHrZK0VXuLdHa+pQRAWU5CgiHoUXC97eAopp3NYQHhe/ZjwqtAbGCtNe/lcNaNQNFXsScDy3lmLYr2Ir0uMKz9GhYMt2nNQR78CydoWm/p5rTYK7sEuhsxx+4wXhOj2UlgwX72VclchBj5Kmeeq/7bfqOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=bH0xkm4z; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=dQfWTLYhPweRfGZN+ci+uPjT2T2ohypaGEMZ89n1Fv0=; b=bH0xkm4zsM5ql2lAREgIz9IfKW
+	fqPf1Y/9t6zJUfue1FE8netIA9JAJQtssgIN1q+6l8rG3OrJakWMaTHtuMLu/2YLdvEjzMe/ujibJ
+	XlJ/VniPCoFsoP1IeaWpxIOSEVo00TWDYuMmPcocYKuG3DxcMe9gVVDPoPIa/nQKnMLzXqSNTK90K
+	6gsBDJECghMsXAhf/iRaHaHmiK6Zi30rAZ2xFFKkA34mlud0DXi2A66UFqG2W4HGHfKWBEISXiNn+
+	NOJBF5zhBP44bV3b+fn2WGXT1U80nnym83c5jojreePi2zgW6qhKubaJLJnZzTZgKKUW1xiGMdZ0K
+	n19023Eg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:43384)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s6rq2-0002zA-2U;
+	Tue, 14 May 2024 14:05:02 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s6rq1-00074q-WC; Tue, 14 May 2024 14:05:02 +0100
+Date: Tue, 14 May 2024 14:05:01 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>
+Subject: Re: [PATCH 2/2] net: phy: dp83869: Fix RGMII-SGMII and 1000BASE-X
+Message-ID: <ZkNhfXYxFTdB+weJ@shell.armlinux.org.uk>
+References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
+ <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514122728.1490156-2-thomas.gessler@brueckmann-gmbh.de>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Sat 11 May 2024 02:24:17 PM +08, Zhang Yi wrote;
+On Tue, May 14, 2024 at 02:27:28PM +0200, Thomas Gessler wrote:
+> The PHY supports multiple modes of which not all are properly
+> implemented by the driver. In the case of the RGMII-to-SGMII and
+> 1000BASE-X modes, this was primarily due to the use of non-standard
+> registers for auto-negotiation settings and link status. This patch adds
+> device-specific get_features(), config_aneg(), aneg_done(), and
+> read_status() functions for these modes. They are based on the genphy_*
+> versions with the correct registers and fall back to the genphy_*
+> versions for other modes.
 
-> On 2024/5/10 19:52, Luis Henriques (SUSE) wrote:
->> When doing fast_commit replay an infinite loop may occur due to an
->> uninitialized extent_status struct.  ext4_ext_determine_insert_hole() does
->> not detect the replay and calls ext4_es_find_extent_range(), which will
->> return immediately without initializing the 'es' variable.
->> 
->> Because 'es' contains garbage, an integer overflow may happen causing an
->> infinite loop in this function, easily reproducible using fstest generic/039.
->> 
->> This commit fixes this issue by detecting the replay in function
->> ext4_ext_determine_insert_hole().  It also adds initialization code to the
->> error path in function ext4_es_find_extent_range().
->> 
->> Thanks to Zhang Yi, for figuring out the real problem!
->> 
->> Fixes: 8016e29f4362 ("ext4: fast commit recovery path")
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->> ---
->> Hi!
->> 
->> Two comments:
->> 1) The change in ext4_ext_map_blocks() could probably use the min_not_zero
->>    macro instead.  I decided not to do so simply because I wasn't sure if
->>    that would be safe, but I'm fine changing that if you think it is.
->> 
->> 2) I thought about returning 'EXT_MAX_BLOCKS' instead of '0' in
->>    ext4_lblk_t ext4_ext_determine_insert_hole(), which would then avoid
->>    the extra change to ext4_ext_map_blocks().  '0' sounds like the right
->>    value to return, but I'm also OK using 'EXT_MAX_BLOCKS' instead.
->> 
->> And again thanks to Zhang Yi for pointing me the *real* problem!
->> 
->>  fs/ext4/extents.c        | 6 +++++-
->>  fs/ext4/extents_status.c | 5 ++++-
->>  2 files changed, 9 insertions(+), 2 deletions(-)
->> 
->> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
->> index e57054bdc5fd..b5bfcb6c18a0 100644
->> --- a/fs/ext4/extents.c
->> +++ b/fs/ext4/extents.c
->> @@ -4052,6 +4052,9 @@ static ext4_lblk_t ext4_ext_determine_insert_hole(struct inode *inode,
->>  	ext4_lblk_t hole_start, len;
->>  	struct extent_status es;
->>  
->> +	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
->> +		return 0;
->> +
->
-> Sorry, I think it's may not correct. When replaying the jouranl, although
-> we don't use the extent statue tree, we still need to query the accurate
-> hole length, e.g. please see skip_hole(). If you do this, the hole length
-> becomes incorrect, right?
+I'm reading this, and wondering... do you have a use case for this,
+or are you adding it because "the PHY supports this" ?
 
-Thank you for your review (and sorry for my delay replying).
+> The RGMII-to-SGMII mode is special, because the chip does not really act
+> as a PHY in this mode but rather as a bridge. It requires a connected
+> SGMII PHY and gets the negotiated speed and duplex from it through SGMII
+> auto-negotiation. To use the DP83869 as a virtual PHY, we assume that
+> the connected SGMII PHY supports 10/100/1000M half/full duplex and
+> therefore support and always advertise those settings.
 
-So, I see three different options to follow your suggestion:
+I call this configuration a "stacked PHY" system, and you're right that
+it's a setup that we have no support for at the moment. We assume that
+there is exactly one PHY in each network device.
 
-1) Initialize 'es' immediately when declaring it in function
-   ext4_ext_determine_insert_hole():
+I think we would need a lot of re-architecting of the phylib <-> netdev
+linkage to allow stacked PHY systems to work sensibly.
 
-	es.es_lblk = es.es_len = es.es_pblk = 0;
+If you don't have a use case for this, then it would be better not to
+add support for it at this stage, otherwise it may restrict what we can
+do in the future when coming up with a solution for stacked PHY support.
+Alternatively, you may wish to discuss this topic and work on a
+solution.
 
-2) Initialize 'es' only in ext4_es_find_extent_range() when checking if an
-   fc replay is in progress (my patch was already doing something like
-   that):
-
-	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) {
-		/* Initialize extent to zero */
-		es->es_lblk = es->es_len = es->es_pblk = 0;
-		return;
-	}
-
-3) Remove the check for fc replay in function ext4_es_find_extent_range(),
-   which will then unconditionally call __es_find_extent_range().  This
-   will effectively also initialize the 'es' fields to '0' and, because
-   __es_tree_search() will return NULL (at least in generic/039 test!),
-   nothing else will be done.
-
-Since all these 3 options seem to have the same result, I believe option
-1) is probably the best as it initializes the structure shortly after it's
-declaration.  Would you agree?  Or did I misunderstood you?
-
-Cheers,
 -- 
-Luis
-
->
-> Thanks,
-> Yi.
->
->>  	hole_start = lblk;
->>  	len = ext4_ext_find_hole(inode, path, &hole_start);
->>  again:
->> @@ -4226,7 +4229,8 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
->>  		len = ext4_ext_determine_insert_hole(inode, path, map->m_lblk);
->>  
->>  		map->m_pblk = 0;
->> -		map->m_len = min_t(unsigned int, map->m_len, len);
->> +		if (len > 0)
->> +			map->m_len = min_t(unsigned int, map->m_len, len);
->>  		goto out;
->>  	}
->>  
->> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
->> index 4a00e2f019d9..acb9616ca119 100644
->> --- a/fs/ext4/extents_status.c
->> +++ b/fs/ext4/extents_status.c
->> @@ -310,8 +310,11 @@ void ext4_es_find_extent_range(struct inode *inode,
->>  			       ext4_lblk_t lblk, ext4_lblk_t end,
->>  			       struct extent_status *es)
->>  {
->> -	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
->> +	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) {
->> +		/* Initialize extent to zero */
->> +		es->es_lblk = es->es_len = es->es_pblk = 0;
->>  		return;
->> +	}
->>  
->>  	trace_ext4_es_find_extent_range_enter(inode, lblk);
->>  
->> 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
