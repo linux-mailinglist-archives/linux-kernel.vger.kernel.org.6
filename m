@@ -1,308 +1,287 @@
-Return-Path: <linux-kernel+bounces-178421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396998C4D65
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABA98C4D70
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D0591C2183A
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED6CA1C21800
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA217C66;
-	Tue, 14 May 2024 07:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D93117BDC;
+	Tue, 14 May 2024 08:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aUxqIK1N"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b="0LsLUgiA";
+	dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b="x9uFUQS4"
+Received: from mail.kernel-space.org (mail.kernel-space.org [195.201.34.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392BD125A9
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 07:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1D617C77;
+	Tue, 14 May 2024 08:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.34.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715673401; cv=none; b=Uq3DHEreFuz1+KEyR/W3jyuB/wBT4OqjX6zjUrV6z/3cG3y43jqR3Ub44DLY+Lu2wBrlaXQjv1p1NOrdFe8Ki/oPYDOfGYCvMYsqK44lACyQXXqHLnnaoKJJC0nJ7qegGCqrk3oul/QBFE4CR1W0aK7K29fp8KsA2/AUMfnthdY=
+	t=1715673869; cv=none; b=FnjzPxDxBYhli2hPsNIAxfurlMy5Wz4Gf+YaXibWcJ9yfuTMvfOXwh5DI1UJbcIX+P5XNGJw9oDHu+4QZs8bbN4IQyg1uzKIErbt2u5PKG9nwQAYxmddKVlWs4ZPCjG2tSmlrfBiiM5SmoOQCy73o3UUM5BtVzFmJQN6tTV+JUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715673401; c=relaxed/simple;
-	bh=wGSRt3if0X9kZ/HrVq/Ne0TEuyWI+bHUBEXOAVzB/s0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=f4VTJQROGTrpaIDX6580Q5GI2zpEZuxNsisWmdI5MV7Er40SXeWtaDrXPSGWY5kKeK2dj//NgYQfcKIRUQoA39MXpA3jzvcL1So9i3zVNMXrYpbBV7NhhZg0VDPMUKT3nSTwABOGmU3IgFiOdUaioH4qVmQsbNkbAW2ydgObPDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aUxqIK1N; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52232d0e5ceso3985698e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 00:56:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715673397; x=1716278197; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uza+DRQEYzKLrkq1gsfl6buXfasHa8vc5/WNhhyABXo=;
-        b=aUxqIK1NA2YxaSiRs2zfhua8VDrnlB8a98MKHXsLQ8yVTW0Xi1FWwvTfvtqqjwO4jk
-         ubXGqwx1CMoo48E/z+9ppzVulO988KrxA4+qT1fXs8PvdReqjuw7QqoK4YegjG1IqE3m
-         czDf5IbflZBA5lFoV2mscBuFFR4Yb9hT0WUpzL8U0mVvgXH382lhQ51SCD7JZnn1H3hG
-         aPdwIrlRqYqevd6idppXB98u5/bZqkHSlGEglRI4LHqPvSJCT0b8XsysPYwmDF9W4NCa
-         lL4vMQugNUE0aHUxI4OczPnRadsGb1/Zf8Vsb7qKLr5x4uvLBIZJvPuSuswo2q0QKwWD
-         2RZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715673397; x=1716278197;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uza+DRQEYzKLrkq1gsfl6buXfasHa8vc5/WNhhyABXo=;
-        b=jR05qdcckRVQw/3mTUcBrnvDk1h8URvmvR+IBAN1FdOtgBwm1EtmNmdum4j3wCdKVu
-         XyF0ipneZseV1v0zK626/DZHEUGVMjUm4Pf5I0RMTU70dlovw6KvwPSqAXaYU0TbPCFR
-         W5iJA3oFMeOQJbuEgJhA/urTnkh2VyelFOrk8TezfXcAUDl2X0qzcJGlcVRnzb2Y93W6
-         4sCawc86okabA/gq+aBoQk9besdGcURnsRIJzkvULnfS4i0wCogMQ3kxxwWfGZSDrhov
-         9pYu4xqvFuzciVQaOgi36y7SXQaGgBcOqPwCpHqzvI2HdEmvQpa/rsBQpcTMRR8EFQZ3
-         l3kw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcLy7XuzEuqke6KmRbZarMkqhWbXtZPSZuXi2FlXZURfNtGCt+Ue4s5MFqzK5MGlX1o6h649IEqPjz3KyWVDzbHafbh18ejN8ouBYn
-X-Gm-Message-State: AOJu0YwNswqtOmROnTYjARnY+H0k8FnR5bMbJRgYVw2WrU/VgxSTlGeq
-	2QtLp4Jr0DQCXud9aEOojYDTDOue1Fb5qWqUk1M4uJ5ysXO/hx7kLZcDr1L5BOg=
-X-Google-Smtp-Source: AGHT+IHesTPiCLOrFGmj/XeJY8txNyCoHRBfg4rInYPaTIZWhF0vQM5h4nqBOehbNTcISungq1+O7w==
-X-Received: by 2002:a05:6512:ba7:b0:51a:e21c:109c with SMTP id 2adb3069b0e04-5220fb7741dmr10969488e87.14.1715673397323;
-        Tue, 14 May 2024 00:56:37 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-521f38d8da1sm2039100e87.233.2024.05.14.00.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 00:56:36 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 14 May 2024 10:56:36 +0300
-Subject: [PATCH] Revert "drm/msm/dpu: drop
- dpu_encoder_phys_ops.atomic_mode_set"
+	s=arc-20240116; t=1715673869; c=relaxed/simple;
+	bh=MnavwG4xDe+bT4+m8GUFgKzjxbVWJw55qnBENhgJS0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQE8OibYSkUed8nyuzauQWYW/8GI0hEr/0DwgODilpzbqirHtHL1W55kRSRyDWAb+QIi1N+U7xEHjgj2yXTSmDRRNKd6epXhjQLbHIh1KlfwHphqrs6GIwKOWErP7E4wS70Me80FrykgKT3lhPUI7ZygLPsWE5wvb1tJSlVhzhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernel-space.org; spf=pass smtp.mailfrom=kernel-space.org; dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b=0LsLUgiA; dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b=x9uFUQS4; arc=none smtp.client-ip=195.201.34.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernel-space.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel-space.org
+Received: from kernel-space.org (localhost [127.0.0.1])
+	by kernel-space.org (OpenSMTPD) with ESMTP id 4843119d;
+	Tue, 14 May 2024 07:56:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=kernel-space.org; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=s1; bh=ca
+	B5PwAVnllql880/2faREzf2Ig=; b=0LsLUgiAZbsT7UjlYhX67sWHogfPBaoFAV
+	VKo6wbZyR1SAtA+ecojae0TgNq1Vmroif1x5M1p4Bz0ZcxCmR7npQqcsumsjQMqy
+	FAtWqZUYOlGZGD4R4HJlRW73a5B2xd4zxtXBnwwirTJJnWUXqUmqkLnLqJPBtEQA
+	jrbCEwprc=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=kernel-space.org; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; q=dns; s=s1; b=
+	afULTwWiVL1PXZxYXhzIFxGe9Q4UA8RjXOAi+kLxw5+uZmq7WGvaVB5rpZr6nTHb
+	iSLejFPX1x+YIHqsFVI+fabNOdkQUNKNK8ScnGTthRASLod3uDYAu8tzLVpMQuKV
+	Pj4X5Bbwh21k5CnAfvkjRazh7Am7UzfQ2jEPveoiTrw=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel-space.org;
+	s=s1; t=1715673395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cVfJiralSHBKIpiyuDV08+v4xxv00fj5z+EYp8KEzMQ=;
+	b=x9uFUQS4YkhuSngcZiX5OrkWmQ4LWw3Cly9Yhsir+BX0rxEfMm0vTdFL0LwRWaoTpBcyMP
+	skgLMtymBLzgHo6SDLYMDG4K4XsAJ/3CKLzAAAcaz0nzxC/kdVAf52wRqDxlTxBjSfaV9t
+	Z8uY3yr835+iEhfcqOTnqREVOFXG+n8=
+Received: from [192.168.0.2] (host-79-16-6-145.retail.telecomitalia.it [79.16.6.145])
+	by kernel-space.org (OpenSMTPD) with ESMTPSA id 5a079902 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 14 May 2024 07:56:35 +0000 (UTC)
+Message-ID: <bd538260-2403-4912-961c-549c74aead76@kernel-space.org>
+Date: Tue, 14 May 2024 09:57:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240514-dpu-revert-ams-v1-1-b13623d6cd5f@linaro.org>
-X-B4-Tracking: v=1; b=H4sIADMZQ2YC/x2MQQqAIBAAvyJ7bkHFoPpKdDDdag+ZaEUg/T3pO
- DAzBTIlpgyDKJDo5sxHqKAaAW6zYSVkXxm01Ea2yqCPF1aR0ol2z9gbJe3sFJHpoEYx0cLPPxy
- n9/0Ay+O6hGAAAAA=
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9165;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=wGSRt3if0X9kZ/HrVq/Ne0TEuyWI+bHUBEXOAVzB/s0=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmQxk0a2SxIbI7dBbA9fHx50oakngD5BMVk4a0R
- wL8deRB19SJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZkMZNAAKCRCLPIo+Aiko
- 1TkDCACaT3qZx+22q1Gtb9GUurVjUlraTv3WBRiAzomJ9LA7qxEpNv8wVPtMauouhCRQmWnrfP8
- qJJxpR6NxW4pi4mmGif1rq/Hza6uz2Mw6FEc8iYoFVoKd2oMw8USG36rh4utp2eX120v1RL/1vy
- rYmhb+FnfOvY22HEB76t2h0XvmrRKlXC98HcBEz3uhQBFf2jbMXktjJa53uEPj0UN470zFk1QFc
- xH1In87JRr5W34bw1YG2AITaLxlh7NHBImw8hsEnN7RTkXtnVxBkkq+0BliIwox1V2g/ZEvy6xq
- mgE/qFjJxYo4gfE/VbriaEaSTUJ3mvFaLNChjswsgLwXTtFr
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dmaengine: fsl-edma: merge mcf-edma into fsl-edma
+ driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Frank Li <Frank.Li@nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+ "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM"
+ <dmaengine@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:FREESCALE eDMA DRIVER" <imx@lists.linux.dev>,
+ Greg Ungerer <gerg@linux-m68k.org>,
+ linux-m68k <linux-m68k@lists.linux-m68k.org>
+References: <20240509193517.3571694-1-Frank.Li@nxp.com>
+ <CAMuHMdVB2PrkxDMoo0y1y6SLj-yuW5o+PJ+sQn2VtB2yrXzkbw@mail.gmail.com>
+Content-Language: en-US
+From: Angelo Dureghello <angelo@kernel-space.org>
+In-Reply-To: <CAMuHMdVB2PrkxDMoo0y1y6SLj-yuW5o+PJ+sQn2VtB2yrXzkbw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-In the DPU driver blank IRQ handling is called from a vblank worker and
-can happen outside of the irq_enable / irq_disable pair. Revert commit
-d13f638c9b88 ("drm/msm/dpu: drop dpu_encoder_phys_ops.atomic_mode_set")
-to fix vblank IRQ assignment for CMD DSI panels.
+Hi,
 
-Fixes: d13f638c9b88 ("drm/msm/dpu: drop dpu_encoder_phys_ops.atomic_mode_set")
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  2 ++
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h   |  5 ++++
- .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c   | 32 ++++++++++++----------
- .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   | 13 +++++++--
- .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c    | 11 +++++++-
- 5 files changed, 46 insertions(+), 17 deletions(-)
+On 13/05/24 8:12 PM, Geert Uytterhoeven wrote:
+> CC coldfire
+>
+> On Thu, May 9, 2024 at 9:35 PM Frank Li <Frank.Li@nxp.com> wrote:
+>> MCF eDMA are almost the same as FSL eDMA driver. Previously link to two
+>> kernel modules, fsl-edma.ko and mcf-edma.ko. These are not problem because
+>> mcf-edma is for m68k ARCH and FSL eDMA is for arm/arm64 ARCH. But often
+>> build both at PPC ARCH. It also makes sense to build two drivers at the
+>> same time. It causes many build warning because share a fsl-edma-common.o.
+>> such as:
+>>
+>>     powerpc64le-linux-ld: warning: orphan section `.stubs' from `drivers/dma/fsl-edma-common.o' being placed in section `.stubs'
+>>     powerpc64le-linux-ld: warning: orphan section `.stubs' from `drivers/dma/fsl-edma-trace.o' being placed in section `.stubs'
+>>
+>> Merge mcf-edma into fsl-edma driver. So use one driver (fsl-edma.ko) for
+>> MCF and FSL eDMA.
+>>
+>> mcf-edma.ko should be replaced by fsl-edma.ko in modules, minimizing user
+>> space impact because MCF eDMA remains confined to legacy ColdFire mcf5441x
+>> production and mcf5441x has been in production for at least a decade and
+>> NXP has long ceased ColdFire development.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 119f3ea50a7c..a7d8ecf3f5be 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -1200,6 +1200,8 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 		phys->hw_ctl = to_dpu_hw_ctl(hw_ctl[i]);
- 
- 		phys->cached_mode = crtc_state->adjusted_mode;
-+		if (phys->ops.atomic_mode_set)
-+			phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
- 	}
- }
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-index 002e89cc1705..30470cd15a48 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-@@ -69,6 +69,8 @@ struct dpu_encoder_phys;
-  * @is_master:			Whether this phys_enc is the current master
-  *				encoder. Can be switched at enable time. Based
-  *				on split_role and current mode (CMD/VID).
-+ * @atomic_mode_set:		DRM Call. Set a DRM mode.
-+ *				This likely caches the mode, for use at enable.
-  * @enable:			DRM Call. Enable a DRM mode.
-  * @disable:			DRM Call. Disable mode.
-  * @control_vblank_irq		Register/Deregister for VBLANK IRQ
-@@ -93,6 +95,9 @@ struct dpu_encoder_phys;
- struct dpu_encoder_phys_ops {
- 	void (*prepare_commit)(struct dpu_encoder_phys *encoder);
- 	bool (*is_master)(struct dpu_encoder_phys *encoder);
-+	void (*atomic_mode_set)(struct dpu_encoder_phys *encoder,
-+			struct drm_crtc_state *crtc_state,
-+			struct drm_connector_state *conn_state);
- 	void (*enable)(struct dpu_encoder_phys *encoder);
- 	void (*disable)(struct dpu_encoder_phys *encoder);
- 	int (*control_vblank_irq)(struct dpu_encoder_phys *enc, bool enable);
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-index 489be1c0c704..95cd39b49668 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c
-@@ -142,6 +142,23 @@ static void dpu_encoder_phys_cmd_underrun_irq(void *arg)
- 	dpu_encoder_underrun_callback(phys_enc->parent, phys_enc);
- }
- 
-+static void dpu_encoder_phys_cmd_atomic_mode_set(
-+		struct dpu_encoder_phys *phys_enc,
-+		struct drm_crtc_state *crtc_state,
-+		struct drm_connector_state *conn_state)
-+{
-+	phys_enc->irq[INTR_IDX_CTL_START] = phys_enc->hw_ctl->caps->intr_start;
-+
-+	phys_enc->irq[INTR_IDX_PINGPONG] = phys_enc->hw_pp->caps->intr_done;
-+
-+	if (phys_enc->has_intf_te)
-+		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_intf->cap->intr_tear_rd_ptr;
-+	else
-+		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_pp->caps->intr_rdptr;
-+
-+	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
-+}
-+
- static int _dpu_encoder_phys_cmd_handle_ppdone_timeout(
- 		struct dpu_encoder_phys *phys_enc)
- {
-@@ -280,14 +297,6 @@ static void dpu_encoder_phys_cmd_irq_enable(struct dpu_encoder_phys *phys_enc)
- 					  phys_enc->hw_pp->idx - PINGPONG_0,
- 					  phys_enc->vblank_refcount);
- 
--	phys_enc->irq[INTR_IDX_CTL_START] = phys_enc->hw_ctl->caps->intr_start;
--	phys_enc->irq[INTR_IDX_PINGPONG] = phys_enc->hw_pp->caps->intr_done;
--
--	if (phys_enc->has_intf_te)
--		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_intf->cap->intr_tear_rd_ptr;
--	else
--		phys_enc->irq[INTR_IDX_RDPTR] = phys_enc->hw_pp->caps->intr_rdptr;
--
- 	dpu_core_irq_register_callback(phys_enc->dpu_kms,
- 				       phys_enc->irq[INTR_IDX_PINGPONG],
- 				       dpu_encoder_phys_cmd_pp_tx_done_irq,
-@@ -318,10 +327,6 @@ static void dpu_encoder_phys_cmd_irq_disable(struct dpu_encoder_phys *phys_enc)
- 	dpu_core_irq_unregister_callback(phys_enc->dpu_kms, phys_enc->irq[INTR_IDX_UNDERRUN]);
- 	dpu_encoder_phys_cmd_control_vblank_irq(phys_enc, false);
- 	dpu_core_irq_unregister_callback(phys_enc->dpu_kms, phys_enc->irq[INTR_IDX_PINGPONG]);
--
--	phys_enc->irq[INTR_IDX_CTL_START] = 0;
--	phys_enc->irq[INTR_IDX_PINGPONG] = 0;
--	phys_enc->irq[INTR_IDX_RDPTR] = 0;
- }
- 
- static void dpu_encoder_phys_cmd_tearcheck_config(
-@@ -698,6 +703,7 @@ static void dpu_encoder_phys_cmd_init_ops(
- 		struct dpu_encoder_phys_ops *ops)
- {
- 	ops->is_master = dpu_encoder_phys_cmd_is_master;
-+	ops->atomic_mode_set = dpu_encoder_phys_cmd_atomic_mode_set;
- 	ops->enable = dpu_encoder_phys_cmd_enable;
- 	ops->disable = dpu_encoder_phys_cmd_disable;
- 	ops->control_vblank_irq = dpu_encoder_phys_cmd_control_vblank_irq;
-@@ -736,8 +742,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_cmd_init(struct drm_device *dev,
- 
- 	dpu_encoder_phys_cmd_init_ops(&phys_enc->ops);
- 	phys_enc->intf_mode = INTF_MODE_CMD;
--	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
--
- 	cmd_enc->stream_sel = 0;
- 
- 	if (!phys_enc->hw_intf) {
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-index ef69c2f408c3..636a97432d51 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-@@ -356,6 +356,16 @@ static bool dpu_encoder_phys_vid_needs_single_flush(
- 	return phys_enc->split_role != ENC_ROLE_SOLO;
- }
- 
-+static void dpu_encoder_phys_vid_atomic_mode_set(
-+		struct dpu_encoder_phys *phys_enc,
-+		struct drm_crtc_state *crtc_state,
-+		struct drm_connector_state *conn_state)
-+{
-+	phys_enc->irq[INTR_IDX_VSYNC] = phys_enc->hw_intf->cap->intr_vsync;
-+
-+	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
-+}
-+
- static int dpu_encoder_phys_vid_control_vblank_irq(
- 		struct dpu_encoder_phys *phys_enc,
- 		bool enable)
-@@ -699,6 +709,7 @@ static int dpu_encoder_phys_vid_get_frame_count(
- static void dpu_encoder_phys_vid_init_ops(struct dpu_encoder_phys_ops *ops)
- {
- 	ops->is_master = dpu_encoder_phys_vid_is_master;
-+	ops->atomic_mode_set = dpu_encoder_phys_vid_atomic_mode_set;
- 	ops->enable = dpu_encoder_phys_vid_enable;
- 	ops->disable = dpu_encoder_phys_vid_disable;
- 	ops->control_vblank_irq = dpu_encoder_phys_vid_control_vblank_irq;
-@@ -737,8 +748,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_vid_init(struct drm_device *dev,
- 
- 	dpu_encoder_phys_vid_init_ops(&phys_enc->ops);
- 	phys_enc->intf_mode = INTF_MODE_VIDEO;
--	phys_enc->irq[INTR_IDX_VSYNC] = phys_enc->hw_intf->cap->intr_vsync;
--	phys_enc->irq[INTR_IDX_UNDERRUN] = phys_enc->hw_intf->cap->intr_underrun;
- 
- 	DPU_DEBUG_VIDENC(phys_enc, "created intf idx:%d\n", p->hw_intf->idx);
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-index d3ea91c1d7d2..356dca5e5ea9 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_wb.c
-@@ -404,6 +404,15 @@ static void dpu_encoder_phys_wb_irq_disable(struct dpu_encoder_phys *phys)
- 		dpu_core_irq_unregister_callback(phys->dpu_kms, phys->irq[INTR_IDX_WB_DONE]);
- }
- 
-+static void dpu_encoder_phys_wb_atomic_mode_set(
-+		struct dpu_encoder_phys *phys_enc,
-+		struct drm_crtc_state *crtc_state,
-+		struct drm_connector_state *conn_state)
-+{
-+
-+	phys_enc->irq[INTR_IDX_WB_DONE] = phys_enc->hw_wb->caps->intr_wb_done;
-+}
-+
- static void _dpu_encoder_phys_wb_handle_wbdone_timeout(
- 		struct dpu_encoder_phys *phys_enc)
- {
-@@ -640,6 +649,7 @@ static bool dpu_encoder_phys_wb_is_valid_for_commit(struct dpu_encoder_phys *phy
- static void dpu_encoder_phys_wb_init_ops(struct dpu_encoder_phys_ops *ops)
- {
- 	ops->is_master = dpu_encoder_phys_wb_is_master;
-+	ops->atomic_mode_set = dpu_encoder_phys_wb_atomic_mode_set;
- 	ops->enable = dpu_encoder_phys_wb_enable;
- 	ops->disable = dpu_encoder_phys_wb_disable;
- 	ops->wait_for_commit_done = dpu_encoder_phys_wb_wait_for_commit_done;
-@@ -685,7 +695,6 @@ struct dpu_encoder_phys *dpu_encoder_phys_wb_init(struct drm_device *dev,
- 
- 	dpu_encoder_phys_wb_init_ops(&phys_enc->ops);
- 	phys_enc->intf_mode = INTF_MODE_WB_LINE;
--	phys_enc->irq[INTR_IDX_WB_DONE] = phys_enc->hw_wb->caps->intr_wb_done;
- 
- 	atomic_set(&wb_enc->wbirq_refcount, 0);
- 
+when i developed mcf-edma, i tried to modify fsl-edma first. Modules are
+similar but there are various edma IP versions, and i remember minimal
+differences in the CF version too, some register bits and, of course,
+endianness.
 
----
-base-commit: 75fa778d74b786a1608d55d655d42b480a6fa8bd
-change-id: 20240514-dpu-revert-ams-9410abc1ee48
+If a merge is possible, welcome, i have here mcf5441x, can give a try to
+this patch as soon as i can.
 
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+>> Update Kconfig to make MCF_EDMA as feature of FSL_EDMA and change Makefile
+>> to link mcl-edma-main.o to fsl-edma.o.
+>>
+>> Create a common module init/exit functions, which call original's
+>> fsl-edma-init[exit]() and mcf-edma-init[exit]().
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202405082029.Es9umH7n-lkp@intel.com/
+>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+>> ---
+>>   drivers/dma/Kconfig           |  8 ++++----
+>>   drivers/dma/Makefile          |  5 ++---
+>>   drivers/dma/fsl-edma-common.c | 28 ++++++++++++++++++++++++++++
+>>   drivers/dma/fsl-edma-common.h |  5 +++++
+>>   drivers/dma/fsl-edma-main.c   |  6 ++----
+>>   drivers/dma/mcf-edma-main.c   |  6 ++----
+>>   6 files changed, 43 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+>> index 002a5ec806207..45110520f6e68 100644
+>> --- a/drivers/dma/Kconfig
+>> +++ b/drivers/dma/Kconfig
+>> @@ -393,14 +393,14 @@ config LS2X_APB_DMA
+>>            It does not support memory to memory data transfer.
+>>
+>>   config MCF_EDMA
+>> -       tristate "Freescale eDMA engine support, ColdFire mcf5441x SoCs"
+>> +       bool "Freescale eDMA engine support, ColdFire mcf5441x SoCs"
+>>          depends on M5441x || COMPILE_TEST
+>>          select DMA_ENGINE
+>>          select DMA_VIRTUAL_CHANNELS
+>>          help
+>> -         Support the Freescale ColdFire eDMA engine, 64-channel
+>> -         implementation that performs complex data transfers with
+>> -         minimal intervention from a host processor.
+>> +         Support the Freescale ColdFire eDMA engine in FSL_EDMA driver,
+>> +         64-channel implementation that performs complex data transfers
+>> +         with minimal intervention from a host processor.
+>>            This module can be found on Freescale ColdFire mcf5441x SoCs.
+>>
+>>   config MILBEAUT_HDMAC
+>> diff --git a/drivers/dma/Makefile b/drivers/dma/Makefile
+>> index 802ca916f05f5..0000922c7cbfe 100644
+>> --- a/drivers/dma/Makefile
+>> +++ b/drivers/dma/Makefile
+>> @@ -33,11 +33,10 @@ obj-$(CONFIG_DW_EDMA) += dw-edma/
+>>   obj-$(CONFIG_EP93XX_DMA) += ep93xx_dma.o
+>>   fsl-edma-trace-$(CONFIG_TRACING) := fsl-edma-trace.o
+>>   CFLAGS_fsl-edma-trace.o := -I$(src)
+>> +mcf-edma-main-$(CONFIG_MCF_EDMA) := mcf-edma-main.o
+>>   obj-$(CONFIG_FSL_DMA) += fsldma.o
+>> -fsl-edma-objs := fsl-edma-main.o fsl-edma-common.o ${fsl-edma-trace-y}
+>> +fsl-edma-objs := fsl-edma-main.o fsl-edma-common.o ${fsl-edma-trace-y} ${mcf-edma-main-y}
+>>   obj-$(CONFIG_FSL_EDMA) += fsl-edma.o
+>> -mcf-edma-objs := mcf-edma-main.o fsl-edma-common.o ${fsl-edma-trace-y}
+>> -obj-$(CONFIG_MCF_EDMA) += mcf-edma.o
+>>   obj-$(CONFIG_FSL_QDMA) += fsl-qdma.o
+>>   obj-$(CONFIG_FSL_RAID) += fsl_raid.o
+>>   obj-$(CONFIG_HISI_DMA) += hisi_dma.o
+>> diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+>> index 3af4307873157..ac04a2ce4fa1f 100644
+>> --- a/drivers/dma/fsl-edma-common.c
+>> +++ b/drivers/dma/fsl-edma-common.c
+>> @@ -888,4 +888,32 @@ void fsl_edma_setup_regs(struct fsl_edma_engine *edma)
+>>          }
+>>   }
+>>
+>> +static int __init fsl_edma_common_init(void)
+>> +{
+>> +       int ret;
+>> +
+>> +       ret = fsl_edma_init();
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +#ifdef CONFIG_MCF_EDMA
+>> +       ret = mcf_edma_init();
+>> +       if (ret)
+>> +               return ret;
+>> +#endif
+>> +       return 0;
+>> +}
+>> +
+>> +subsys_initcall(fsl_edma_common_init);
+>> +
+>> +static void __exit fsl_edma_common_exit(void)
+>> +{
+>> +       fsl_edma_exit();
+>> +
+>> +#ifdef CONFIG_MCF_EDMA
+>> +       mcf_edma_exit();
+>> +#endif
+>> +}
+>> +module_exit(fsl_edma_common_exit);
+>> +
+>>   MODULE_LICENSE("GPL v2");
+>> diff --git a/drivers/dma/fsl-edma-common.h b/drivers/dma/fsl-edma-common.h
+>> index ac66222c16040..dfbdcc922ceea 100644
+>> --- a/drivers/dma/fsl-edma-common.h
+>> +++ b/drivers/dma/fsl-edma-common.h
+>> @@ -488,4 +488,9 @@ void fsl_edma_free_chan_resources(struct dma_chan *chan);
+>>   void fsl_edma_cleanup_vchan(struct dma_device *dmadev);
+>>   void fsl_edma_setup_regs(struct fsl_edma_engine *edma);
+>>
+>> +int __init fsl_edma_init(void);
+>> +void __exit fsl_edma_exit(void);
+>> +int __init mcf_edma_init(void);
+>> +void __exit mcf_edma_exit(void);
+>> +
+>>   #endif /* _FSL_EDMA_COMMON_H_ */
+>> diff --git a/drivers/dma/fsl-edma-main.c b/drivers/dma/fsl-edma-main.c
+>> index 391e4f13dfeb0..a1c3c4ed869c5 100644
+>> --- a/drivers/dma/fsl-edma-main.c
+>> +++ b/drivers/dma/fsl-edma-main.c
+>> @@ -724,17 +724,15 @@ static struct platform_driver fsl_edma_driver = {
+>>          .remove_new     = fsl_edma_remove,
+>>   };
+>>
+>> -static int __init fsl_edma_init(void)
+>> +int __init fsl_edma_init(void)
+>>   {
+>>          return platform_driver_register(&fsl_edma_driver);
+>>   }
+>> -subsys_initcall(fsl_edma_init);
+>>
+>> -static void __exit fsl_edma_exit(void)
+>> +void __exit fsl_edma_exit(void)
+>>   {
+>>          platform_driver_unregister(&fsl_edma_driver);
+>>   }
+>> -module_exit(fsl_edma_exit);
+>>
+>>   MODULE_ALIAS("platform:fsl-edma");
+>>   MODULE_DESCRIPTION("Freescale eDMA engine driver");
+>> diff --git a/drivers/dma/mcf-edma-main.c b/drivers/dma/mcf-edma-main.c
+>> index 78c606f6d0026..d97991a1e9518 100644
+>> --- a/drivers/dma/mcf-edma-main.c
+>> +++ b/drivers/dma/mcf-edma-main.c
+>> @@ -284,17 +284,15 @@ bool mcf_edma_filter_fn(struct dma_chan *chan, void *param)
+>>   }
+>>   EXPORT_SYMBOL(mcf_edma_filter_fn);
+>>
+>> -static int __init mcf_edma_init(void)
+>> +int __init mcf_edma_init(void)
+>>   {
+>>          return platform_driver_register(&mcf_edma_driver);
+>>   }
+>> -subsys_initcall(mcf_edma_init);
+>>
+>> -static void __exit mcf_edma_exit(void)
+>> +void __exit mcf_edma_exit(void)
+>>   {
+>>          platform_driver_unregister(&mcf_edma_driver);
+>>   }
+>> -module_exit(mcf_edma_exit);
+>>
+>>   MODULE_ALIAS("platform:mcf-edma");
+>>   MODULE_DESCRIPTION("Freescale eDMA engine driver, ColdFire family");
+>> --
+>> 2.34.1
+
+Regards,
+angelo
+
 
 
