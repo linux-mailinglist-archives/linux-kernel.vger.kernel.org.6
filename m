@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-178503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6655D8C4EBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:08:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DCE8C4EC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DA91C20E9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:08:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3D0E1C21126
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0A96D1AF;
-	Tue, 14 May 2024 09:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA7A6EB73;
+	Tue, 14 May 2024 09:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOMwTUyS"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NB6HBCBq"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505981D54D;
-	Tue, 14 May 2024 09:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15511D54D;
+	Tue, 14 May 2024 09:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715678640; cv=none; b=DYvLg0VTB89jZc5b/EV0OcjDuyf8Jy80QqgEaam6oydZdrsxavKJmM1cd0V/GGYcTuFnQC3lXR1NFqgkga0d4BtaxRsWf7G+2AEY1ptSTb/oSz87ANOvD8HNk2bzrYuK5/+KKQlvGOjr2JRrvFbsORutToGAdTOkTY1UC8cWD+w=
+	t=1715678672; cv=none; b=p8w6KsWDpvcM4Mj+ouH6Lb8Y2CIyFxseELOEKpkZeQe5mc40DWQaaUVRdccBHtNOiSUDX2W0RWYbNfEC99LmjegVIKpUbyhwLVtmlvp5jl9m6z11xnFKuSsrORgJtskkmqqNm7VrUZE/yQL80EMX0Mb/3a9eZeNv1pDD7+p8Y2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715678640; c=relaxed/simple;
-	bh=K3OTR8ULFJUtDO5a5s60dvblLbZB9QoBi+IviT7ihzk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RXNVUe3rFiXs6gQ/T26aoz7SblJIRWFw6sZFw9X61hj5iGrS1+hWU7QF6poq6RXfpuKFpW/Gavl6WLFcYPCai3WiQlbfz6HDnG0mFA0TkC7K8pB9kFqyzkRDRmCxswIxq7zG862ZJ+wEsTR7+HMqgBtLcuNrmthGWBDgqvZahh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOMwTUyS; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a59cf8140d0so1218180366b.3;
-        Tue, 14 May 2024 02:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715678638; x=1716283438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K3OTR8ULFJUtDO5a5s60dvblLbZB9QoBi+IviT7ihzk=;
-        b=GOMwTUySkErqcwZkiNfs1NobXPyY54lV+tA629amvtV6dZ8EAl70sqEO8GZrxHfQGh
-         zPTymcOIlcv4kZz34YoCrbMms7JvDBPxmXPVbipWSo4TSagi68dPIuugOtEFeH0caY0b
-         lLomWlozFXU8oamiBCNIKvspmiIAQV3UzWT1z77z3foyUj/6SzQZ751Ql9DW3NWIh/c/
-         mVh35AgKtg2Zcv3uEU2sAMN9DRwwWqy2G/W8KobkADD91eDiy6jGNIR9xGoBtgeLwfy+
-         kpYZQsHsr8cMb4rRVXZHat+abD704SnrJKwdMTbqgFzuj/yNGqc18Ssci7HqGbQuIz4r
-         mWjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715678638; x=1716283438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K3OTR8ULFJUtDO5a5s60dvblLbZB9QoBi+IviT7ihzk=;
-        b=QdBqXYxQiVFaK0lcqVC3Rl35NShMMQFXn6w5raWk1YAzO40fvX/xOtbKVlFw7bBNft
-         zlRQOvMaf2R3f/ZmlM9KcpYaWV1zAYcMI1Yk1OUUj7HMDEXl9UMl1AVSRu5FrsyF3fvr
-         ozYLSB+/DoGItFWi2ocz0nWjMXzvDP/LN4JEHXoRK3Eam1lXXzFTSMbML6bw6Ef2M5+a
-         za1OZ5MUgH0aVQJcvqhTNYK+lTNAWMaaty++zdPWXNEFyNERGkf07LCzN8b6r812Lzma
-         YuyfnfCefePnRF/DVF6eR6xaEuy+L1ywDuc2Gtg2iVlsZUgZblPT+xrta0Q0tWEs/cQ8
-         PJUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlteD6w7wyXi9dVMzyKse/Q4TWZFwH/Qy+SeU1zy0mM0vCOIMaS6/Vh7Uzderkr+wxISDrP/3e6Oqwa/ivrv94jP7A4WMpLNSLe6aylRfB1SB6V1HnIe861JYIZ6qfAijh4wT2Js2VAw==
-X-Gm-Message-State: AOJu0YxPJfafuNqjM3e8O4UB94sHiQqwees3TDnRq8oha6fF96t75cud
-	mrt7k5LvWBpy/+umOBac7LTxIbK5yZCpu9xEFme4qbJXuSdSFYr7CzqzXtw6LTj7xtfln6lmsPx
-	nfGZXHIwDyPFb1SqsQ2QcXYKixTU=
-X-Google-Smtp-Source: AGHT+IFv6OwsAth00MXyRFnVnDa1HnU+oO/01HnzLFoICT5ktqWvhDysqnOTP47p2eZaYjhrRl0AluW5r1vQGonrPzg=
-X-Received: by 2002:a17:907:847:b0:a5a:88ff:fe81 with SMTP id
- a640c23a62f3a-a5a88ffffd0mr61625366b.20.1715678637514; Tue, 14 May 2024
- 02:23:57 -0700 (PDT)
+	s=arc-20240116; t=1715678672; c=relaxed/simple;
+	bh=LZRsjaeOjhT3fc7Gt83pixaiOo8NRAcB+1YSU7d7qjU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PTmdLFCIMRsXt68vlqzo0wJtCwsr2j8jeejDYORQLR0WRdee4ha0LKKXaXFu0rKVaeBtGjSr/SJVzSA8BUhO32VsnWGDLDnBM3yD6qbGSBnDHkEZ5CuHR4rBTpjjza3eH5VFQ39iuGb2qNj5G1mU6kZSs45jue62+WH0zLue3Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=NB6HBCBq; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 44E9OOsY077225;
+	Tue, 14 May 2024 04:24:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1715678664;
+	bh=tuo0bZ+HCTL63TZkjOA1UVVSOrf1hVP5mRuCUQGpihA=;
+	h=From:To:CC:Subject:Date;
+	b=NB6HBCBq7UO/pvdNES/3gcnwzgVtHhfSwZ/atZsa4Nk1sEoomScIseJpCqfWVB1Lm
+	 k0ABDKb//AY++1Yh81pfhTB5yvkL/iZHeUjIcGO2ZvOdmoDKV7LIfbFasTK4gSu+99
+	 YZSpN/px8/9FpOab34WbegGUiENx2xh2flr3cf/Y=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 44E9OOPh020947
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 14 May 2024 04:24:24 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 14
+ May 2024 04:24:24 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 14 May 2024 04:24:24 -0500
+Received: from uda0500640.dal.design.ti.com (uda0500640.dhcp.ti.com [172.24.227.88])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 44E9OLp8064099;
+	Tue, 14 May 2024 04:24:22 -0500
+From: Ravi Gunasekaran <r-gunasekaran@ti.com>
+To: <peter.chen@kernel.org>, <pawell@cadence.com>, <rogerq@kernel.org>,
+        <r-gunasekaran@ti.com>
+CC: <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/2] TI AM64/J7: USB Errata i2409 workaround
+Date: Tue, 14 May 2024 14:54:19 +0530
+Message-ID: <20240514092421.20897-1-r-gunasekaran@ti.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231219125350.4031370-1-patrick.rudolph@9elements.com>
- <ZkL2Sdf0NcqaZRZ4@surfacebook.localdomain> <CACRpkdbUye6RhbRNGn6sapARwVUyi5hKS-5VEVBr6ZR6W_KdQw@mail.gmail.com>
- <CALNFmy33wMHBcoU9ei0vVsn0gUM7-0jdkDDq_Loa3=mMWXiWcw@mail.gmail.com>
- <CACRpkdZhY_Yz2jHGXWO5_t8Qdey8me0Gytds7V64GYOFoEC2Dg@mail.gmail.com>
- <CAHp75VfA8G6KyhD5_HDyKWp5AdpsnnQ27gzTDRRjDRCVXkT-ag@mail.gmail.com> <d4c03f3b-a8ce-44bd-8897-8a2f276dede6@sirena.org.uk>
-In-Reply-To: <d4c03f3b-a8ce-44bd-8897-8a2f276dede6@sirena.org.uk>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 14 May 2024 12:23:19 +0300
-Message-ID: <CAHp75VdDMOLuRhDNQ=dzoE6Yyah+k-pGm8vY8B2DmFiyPBuftw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: cy8c95x0: Cache muxed registers
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Patrick Rudolph <patrick.rudolph@9elements.com>, naresh.solanki@9elements.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Tue, May 14, 2024 at 12:02=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
-> On Tue, May 14, 2024 at 11:55:06AM +0300, Andy Shevchenko wrote:
->
-> > It's about introducing pages of virtual registers (from regmap p.o.v.)
-> > to access the banks of selectable registers. The cache most likely
-> > will be the same, i.e. MAPPLE_TREE.
->
-> If there's paging of registers then regmap supports this with the ranges
-> feature, you can tell regmap where the window is in the physical
-> register map and which register to use to switch pages and have regmap
-> export the underlying registers as a linear range of virtual registers.
+This series adds workaround for all TI platforms using
+cdns3,usb IP. i.e. AM64/J7x
 
-In this chip there are two ranges that are dependent on a selector,
-one is for port selection (which the original change is about) and
-another is for PWM (IIRC). Note that they are orthogonal to each
-other, meaning they have their own selector registers.
+Roger Quadros (2):
+  usb: cdns3: Add quirk flag to enable suspend residency
+  usb: cdns3-ti: Add workaround for Errata i2409
 
---=20
-With Best Regards,
-Andy Shevchenko
+ drivers/usb/cdns3/cdns3-ti.c | 15 ++++++++++++++-
+ drivers/usb/cdns3/core.h     |  1 +
+ drivers/usb/cdns3/drd.c      |  9 ++++++++-
+ drivers/usb/cdns3/drd.h      |  3 +++
+ 4 files changed, 26 insertions(+), 2 deletions(-)
+
+
+base-commit: 6ba6c795dc73c22ce2c86006f17c4aa802db2a60
+-- 
+2.17.1
+
 
