@@ -1,148 +1,140 @@
-Return-Path: <linux-kernel+bounces-178648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA6D8C55D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:10:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEF78C55D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AC82829DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:09:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CAB1F23261
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6633F9D9;
-	Tue, 14 May 2024 12:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VP6Bb2sJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860A140862;
+	Tue, 14 May 2024 12:11:17 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EE5320F;
-	Tue, 14 May 2024 12:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB43320F;
+	Tue, 14 May 2024 12:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715688589; cv=none; b=TSUXWxyGY2IQWfikHSVk92xiTUPmb/9VlGl7VqKZpzdiAN/tdrnI3+d4C9nNylQWHvVgi9/VcDgm65KLZXdgc4AsRkVuEdusqyJG+65xmfRHFNgRjeeLk8n3MLqFG6iU0uy3QmoiG0YqVG23lbKvqP6dQInv7cuAJO83YYu5n58=
+	t=1715688677; cv=none; b=ZV8HW7K3ELJEgymTi+yymMgQYE9U59dusoeoRKDnfSebkN5zT1NEsf3TPTCUrKMHW9HrBHfVMUXRiJfBQsvwery8Xf7xHfWpvBCmK3a5V7+M0L5bzfMOc85Lam5xeHPOopZA0gkLLiT4r8Di6ccKFwYI8WrCkW7751JOzRv+2zY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715688589; c=relaxed/simple;
-	bh=PuWBAAEHgLpq0nAuoPCaOMZZyQFaKwKkvo6IpNy8dVE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=f/MVEHeIZL7fAlQf8UzwKx0sjdVRYBscqd+xMxV/OppvaNLeXAqHfxnV1iiYW0iMCLl6Vn8UM0BMUPDZjJgu1vsgcO70VrUdzMPu+4KKgdBgNRvPKllE7Hewnziw0u8CTy3yegn9Bp1ze6IypBdW6yoNgVIkq3qXv/ObwviAS7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VP6Bb2sJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5376C2BD10;
-	Tue, 14 May 2024 12:09:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715688589;
-	bh=PuWBAAEHgLpq0nAuoPCaOMZZyQFaKwKkvo6IpNy8dVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VP6Bb2sJrzOT8ZmlDTi0e5gJtis7Gxs3DXFDB45xqbo//QzdZbfLBrZTTGJlVRgoU
-	 B5rsM9D2HQIcJRzeGRcNJAPeeJPnYFpISE1RD5SMmyq02+mws5U7KjdAgkYNV8a8VI
-	 rvMUP5UMSY74MJr60GmIZSRhdj9aPOBI9Ikp1uSjo5TL8zfei4Kv9yFTjhVekWxJRj
-	 l+t7081FGpBt9VT502qVhsZ9ehWQzkBOCBpYEBEispj++KlxEzlv+qa+2koE3lbI9r
-	 76XiwsqWq5zvXo4xhbxpIRlbgapvECRFTvSYybEwpzVQ7KIfVJkqPRTAYDPWlM7ixT
-	 7DKTkhx/cKQ7A==
+	s=arc-20240116; t=1715688677; c=relaxed/simple;
+	bh=LLAcg8dgAcq42TteRCQbf45yE6Bj+8PkBxYFXSDJRvk=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=LM9irKrSdKmVlyZcVxZ6LUiRstDQ/fDzeXA8/qAM1VJ/gfnRjcsnxhMtn/wsRmrrZpmZZ4LAWjqMUIeEVxlSl4s/M2IfACOkHnx7pPLlpGME8ZMfeDmdbwHheJSE7F4o/iBo7DafWoDR/Zr4WJ6ExpRbssSb1du9QflCWJsPBq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4VdwDk62y6z8XrX5;
+	Tue, 14 May 2024 20:11:02 +0800 (CST)
+Received: from xaxapp03.zte.com.cn ([10.88.97.17])
+	by mse-fl1.zte.com.cn with SMTP id 44ECAwb2004590;
+	Tue, 14 May 2024 20:10:58 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 14 May 2024 20:11:02 +0800 (CST)
+Date: Tue, 14 May 2024 20:11:02 +0800 (CST)
+X-Zmail-TransId: 2af9664354d614f-9c8c9
+X-Mailer: Zmail v1.0
+Message-ID: <20240514201102055dD2Ba45qKbLlUMxu_DTHP@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 14 May 2024 15:09:44 +0300
-Message-Id: <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Ignat Korchagin" <ignat@cloudflare.com>
-Cc: "James Bottomley" <James.Bottomley@hansenpartnership.com>, "Mimi Zohar"
- <zohar@linux.ibm.com>, "David Howells" <dhowells@redhat.com>, "Paul Moore"
- <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- <serge@hallyn.com>, <linux-integrity@vger.kernel.org>,
- <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kernel-team@cloudflare.com>
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-X-Mailer: aerc 0.17.0
-References: <20240503221634.44274-1-ignat@cloudflare.com>
- <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
- <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org>
- <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
-In-Reply-To: <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
+From: <xu.xin16@zte.com.cn>
+To: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+        <kuba@kernel.org>, <pabeni@redhat.com>
+Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dsahern@gmail.com>, <xu.xin16@zte.com.cn>, <fan.yu9@zte.com.cn>,
+        <yang.yang29@zte.com.cn>, <si.hao@zte.com.cn>,
+        <zhang.yunkai@zte.com.cn>, <he.peilin@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIXSBuZXQvaXB2NjogRml4IHJvdXRlIGRlbGV0aW5nIGZhaWx1cmUgd2hlbiBtZXRyaWMgZXF1YWxzIDA=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 44ECAwb2004590
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 664354D6.001/4VdwDk62y6z8XrX5
 
-On Tue May 14, 2024 at 1:05 PM EEST, Ignat Korchagin wrote:
-> On Tue, May 14, 2024 at 1:28=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.or=
-g> wrote:
-> >
-> > On Mon May 13, 2024 at 8:11 PM EEST, Ignat Korchagin wrote:
-> > > On Fri, May 3, 2024 at 11:16=E2=80=AFPM Ignat Korchagin <ignat@cloudf=
-lare.com> wrote:
-> > > I would like to point out to myself I was wrong: it is possible to as=
-k
-> > > the kernel to generate a trusted key inside the kernel locally with
-> > > "keyctl add trusted kmk "new 32" @u"
-> >
-> > Not in a full-time kernel position ATM as I'm working as contract
-> > researcher up until beginning of Oct (took some industry break after
-> > a startup went down of business), so please, politely asking, write
-> > a bit more compact descriptions ;-) I'm trying to find a new position b=
-y
-> > the beginning of Oct but right now I'd appreciate a bit more thought ou=
-t
-> > text descriptions.
-> >
-> > I'm working out a small patch set with James Prestwood to add asymmetri=
-c
-> > TPM2 keys based on his old patch set [1] but laid out on top of the
-> > existing baseline.
-> >
-> > I did already the key type shenanigans etc. for it and James P is layin=
-g
-> > his pre-existing RSA code and new ECDSA on top of that. So this will
->
-> This is great. Perhaps we can finally have ECDSA software signature
-> support as well, which I have been trying to get in for some time now
-> [1]
+From: xu xin <xu.xin16@zte.com.cn>
 
-Yes exactly both.
+Problem
+=========
+After commit 67f695134703 ("ipv6: Move setting default metric for routes"),
+we noticed that the logic of assigning the default value of fc_metirc
+changed in the ioctl process. That is, when users use ioctl(fd, SIOCADDRT,
+rt) with a non-zero metric to add a route,  then they may fail to delete a
+route with passing in a metric value of 0 to the kernel by ioctl(fd,
+SIOCDELRT, rt). But iproute can succeed in deleting it.
 
->
-> > give x.509 compatibility [2]. This patch set will be out soon and likel=
-y
-> > part of 6.11 (or almost guaranteed as most of it is done).
-> >
-> > So by plain guess this might be along the lines what you might want?
->
-> I don't think so. I have seen this patchset, but unless the new
-> version is fundamentally different, it looks to me that the asymmetric
-> TPM keys are the same as trusted keys except they are asymmetric
-> instead of being symmetric. That is, they are still of limited use on
-> stateless systems and are subject to the same restrictions I described
-> in my revised cover description.
+As a reference, when using iproute tools by netlink to delete routes with
+a metric parameter equals 0, like the command as follows:
 
-OK, hmm... can you an "apples and oranges" example what would be
-most trivial use case where these don't cut?
+	ip -6 route del fe80::/64 via fe81::5054:ff:fe11:3451 dev eth0 metric 0
 
+the user can still succeed in deleting the route entry with the smallest
+metric.
 
-> On top of that I'm not sure they would be widely used as "leaf" keys
-> by applications, maybe more as root/intermediate keys in some kind of
-> key hierarchy. TPMs are slow and I don't see a high-performance
-> web-server, for example, using asymmetric TPM keys for TLS operations.
-> Also, as we learned the hard way operating many TPMs in production,
-> some TPMs are quite unreliable and fail really fast, if you "spam"
-> them with a lot of crypto ops. I understand this is a HW/TPM vendor
-> problem, but in practice we're trying to build systems, where TPM is
-> used to protect/generate other keys, but most of the "leaf" crypto
-> operations are done in software, so we don't make the TPM do too much
-> crypto.
+Root Reason
+===========
+After commit 67f695134703 ("ipv6: Move setting default metric for routes"),
+When ioctl() pass in SIOCDELRT with a zero metric, rtmsg_to_fib6_config()
+will set a defalut value (1024) to cfg->fc_metric in kernel, and in
+ip6_route_del() and the line 4074 at net/ipv3/route.c, it will check by
 
-So what about SGX/SNP/TDX?
+	if (cfg->fc_metric && cfg->fc_metric != rt->fib6_metric)
+		continue;
 
-TPM is definitely not made for workloads :-)
+and the condition is true and skip the later procedure (deleting route)
+because cfg->fc_metric != rt->fib6_metric. But before that commit,
+cfg->fc_metric is still zero there, so the condition is false and it
+will do the following procedure (deleting).
 
-> Just to clarify - I'm not arguing about the usefulness of TPM
-> asymmetric keys in the kernel. I would really want to see this
-> building block available as well, but I think it just serves a
-> different purpose/use case from what I'm trying to figure out in this
-> RFC thread.
+Solution
+========
+In order to keep a consistent behaviour across netlink() and ioctl(), we
+should allow to delete a route with a metric value of 0. So we only do
+the default setting of fc_metric in route adding.
 
-Got it :-) NP
+CC: stable@vger.kernel.org # 5.4+
+Fixes: 67f695134703 ("ipv6: Move setting default metric for routes")
+Co-developed-by: Fan Yu <fan.yu9@zte.com.cn>
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
+---
+ net/ipv6/route.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-BR, Jarkko
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index c43b0616742e..bbc2a0dd9314 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -4445,7 +4445,7 @@ static void rtmsg_to_fib6_config(struct net *net,
+ 		.fc_table = l3mdev_fib_table_by_index(net, rtmsg->rtmsg_ifindex) ?
+ 			 : RT6_TABLE_MAIN,
+ 		.fc_ifindex = rtmsg->rtmsg_ifindex,
+-		.fc_metric = rtmsg->rtmsg_metric ? : IP6_RT_PRIO_USER,
++		.fc_metric = rtmsg->rtmsg_metric,
+ 		.fc_expires = rtmsg->rtmsg_info,
+ 		.fc_dst_len = rtmsg->rtmsg_dst_len,
+ 		.fc_src_len = rtmsg->rtmsg_src_len,
+@@ -4475,6 +4475,9 @@ int ipv6_route_ioctl(struct net *net, unsigned int cmd, struct in6_rtmsg *rtmsg)
+ 	rtnl_lock();
+ 	switch (cmd) {
+ 	case SIOCADDRT:
++		/* Only do the default setting of fc_metric in route adding */
++		if (cfg.fc_metric == 0)
++			cfg.fc_metric = IP6_RT_PRIO_USER;
+ 		err = ip6_route_add(&cfg, GFP_KERNEL, NULL);
+ 		break;
+ 	case SIOCDELRT:
+-- 
+2.15.2
 
