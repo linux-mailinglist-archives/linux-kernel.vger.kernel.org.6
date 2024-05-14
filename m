@@ -1,185 +1,180 @@
-Return-Path: <linux-kernel+bounces-178705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 531728C56AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:12:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9608C56AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 15:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3EFFB21B84
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:12:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 331B428356D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96327140E50;
-	Tue, 14 May 2024 13:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2DD14430D;
+	Tue, 14 May 2024 13:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="DBNufP83"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LtDHnUEv"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638E17E116
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F11143740;
+	Tue, 14 May 2024 13:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715692317; cv=none; b=XE9GdqeqvXNWQoG7s4TGb2Hj7XYaS+N+dUQfiaHFmcE1xD8WqmWkY/0XWG5ZIfCBnEjsVHh4RhZHHX5jZR6j7cxxUxfCoe8koO4m4H1aD7R5ckjQFXZJOs3uZvd8LJEQq0B9Vajr8cV55n4yyPXrZ8qqlfsGNYjQKkiKsvSqgyY=
+	t=1715692390; cv=none; b=hs6YxOOVck+la3biKYGE+XRYCnXL2+C9knwK4qyuMN1HL5875dp84keNev6TYBJCIC+UaZYtrf6NtMVq3+5QVbRXqDRJMfijz8whG4ZVfalgIO63VZnFtsJBRIuK5RwzORPFt2qrxYt8G/gPGCSh4lmkebfVQHViFekEBmbyAvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715692317; c=relaxed/simple;
-	bh=i78nag7VwGIylmXT7ULMgiXTvq5zZgYQxOsCzHqZVSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DIohW/hXKngpcVGUxHv5/WmR6AKd1Gy5pTc60W6GazT/jmy5p+jGo1GblTtBLlHuLfEzqHPNjLPj7iTobdyl6M3Lu+Gl0AlePMK7Ct1nVbqn4SfEoIExCvPtsm6Hj48z6gEn7POwiKzzWrJOO+a1knDWxE1TGwWbrTKGweED6ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=DBNufP83; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-602801ea164so3880677a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 06:11:56 -0700 (PDT)
+	s=arc-20240116; t=1715692390; c=relaxed/simple;
+	bh=2lHTd9vD3VaBq8JrPEYGQii+4KayEbxjkulRHrk3MWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rAV0c66vAyMPqKbLSanV9SbEFyVconFT7Hu8bWvrBb98bYVThFMlu5uaYw9ToqalUhQXhMWG/BxikCalJZD6ybByICY/leLPhNYp7Jq6LWoLaetLL1Q4iYrAVm2A2KRKD3Tn7I1I1nUxzfQvPRzIbyV7YdPCR22RloGvbC/g9x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LtDHnUEv; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c999d53e04so2462342b6e.2;
+        Tue, 14 May 2024 06:13:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1715692316; x=1716297116; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gqd1UzTZmwcZdR5n3AwIksJ+CVAmV+O8oPVTGzelpbU=;
-        b=DBNufP83dAzL6zfzTWNDg7DHZcF88tPmTl1W1NZphcsmMNdzvDzBw3uOUrXx8r7iM4
-         p+FP0OH5mpcoWUql52bZb4IkMbeSUt9Eq4e61q3QpdYxRIpdRpDHu+Nc4hBqFERUbNT5
-         M9OJWXO/kK8Zf6AyQqISQDcUrOhRHUi3wEcaJd5HODaVxC75gYbaPUxDZQyNUfjGjmap
-         GOAlhOFK5AB+Al5MMZzdfpKBZujTlNwBrGEzGvkH+cI3EvA1wy8yMjw1NnYRVqnExRS7
-         NDbq6Bo6V0b0qBmHepRXkrvniQ14vH6ased/ZtkXXKmU1poBh45iGK+KfcBu9Ngru/kT
-         Qz+g==
+        d=gmail.com; s=20230601; t=1715692388; x=1716297188; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=aun1f18+4H8YVvMFiItfXiXA+SpbSD5X4Dn6XNELRpk=;
+        b=LtDHnUEvawTvQ9gHc53BkpB99aoyQAL3yGmMl7pAaU1F0JlEJPPaK+clG/Qd0aM1k7
+         rG/q/YhDi/jAyQUYmGMUCtTLiCreP0aGFBkd2zogwbMxUFdox5/9o55j0kdou5FD9/JG
+         7C+dfbI4O4VETLJsyqXrkgpoaKfnKaRp/SomI3ieRPzNwQQuKIgLr06PPI6p805tIfia
+         dnixFos01VL8azYHXEQiiGV3OT5Ia+5HlkqqvfHfHVfAYI3E+R67ZWArT70Yw0JeZsDd
+         +8TaXjHJIYWmfg56noA0e02DVIEs5VSR0iCuhbGOTyvrATKfhvjuswJjLum+wL1w0/xx
+         9y5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715692316; x=1716297116;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gqd1UzTZmwcZdR5n3AwIksJ+CVAmV+O8oPVTGzelpbU=;
-        b=vet4IhJXJ7JRzvfA0gqgjnJB72qmuAfQ1G0RSNVygmE+bgpB+CyzsKMH8nbi5lT/EO
-         p9JCmtGK2UFvI9sRWqdYczQ70hqXYVTUqvnGRyNSHzg1dH9PLyegaYNZtgC7vciVAE0l
-         QNgCPcZHq26gv7JXA46FWTD/SJR0jsQSkOc4ZLQ1RKAr4cIQ8Saa2v2i87UYxGnwP3HA
-         q7oR8PIIeCjmyR3UIUnq4GS8qQrSo7/2V6z6N57eDdYl9nc009xYrVNbAudRyrFaTKPu
-         RC7OGM8jG7C5cibWnuAcOWkglD7AvDgI69jyDcDK2ZJDmEuOpaED17SEOJYCeHMYCZxJ
-         lXnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeFWri3QLke1m4XWcwp4OovlnB7lR3nyxAuWgwZimefp5NtwoizA5zxetcZkqyE6aN616fKVVlWeGD3xCy+wwqoE5VPOg7iyXnn0oE
-X-Gm-Message-State: AOJu0YxIKQRiCmoU/madCbWU8TbH22K7w9QXDRO6Kqpkza1hM7+g0f13
-	rnSxZpKZGQcEIpvu6Tm7dugvlm2WjB0xzmAt+gDzHIm3WA7O6gAYgOkJAwx2fEPnQSCtKy791Oo
-	mt7gAa0nEO+H+UPTTBjTshFt/PjFdGBuKtfW+WxvpDlnySqy0LEk=
-X-Google-Smtp-Source: AGHT+IG3Q9tqDRCoXBSygpP82QqE4qbQOWBmSo9N1FXn0IoBGpcE1d3eSJXcfEiHJ+CEwcufUqu40IQOtB1Md0pSaVI=
-X-Received: by 2002:a17:90a:630c:b0:2b2:6de2:cdc7 with SMTP id
- 98e67ed59e1d1-2b6cc3429f7mr10099479a91.20.1715692315282; Tue, 14 May 2024
- 06:11:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715692388; x=1716297188;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aun1f18+4H8YVvMFiItfXiXA+SpbSD5X4Dn6XNELRpk=;
+        b=Rcuh0OKqzBfecHwsLFNY/fG4GlRYE0z9bxGCeL0ZL33cSfz/JexbQwhwo+Z7CUk1Bv
+         H2lNEEia9lVCrhb+xOYaDAkpaojQkvyfyU57PzJXj0xae58eG41HyOywrbwxoNBD4Ncd
+         /0W4TINug6Ioq/sc85G+C9AOUXC31bm6RwJAQY+9dLRQvV4srw9jlvqXN3pnqjwA7XMp
+         A2gOHqecOEz5Dm1w+WRExitbJa8Rgkc+jIy+U1P5ElgA16eUnXXXwjmylM8372FnHh9T
+         /5KlPWRR8tOiIXCzmq5r7bRCiJMRaWe/+uIjAwYXPEPx3+LzKeQlwhr9lBtkcSHcHjGU
+         S4ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWuUNMJosKkQrM+OC1Eu67pBzuVb4XlWux8PhSnBke6Ofd13rOr3xLoDpG/XgAm2Oa7lVElAlBZdyP/giwBWYFjswR05V8oRNlleafqKYT+aKH8JJ0KXHCDXYirA3YRw/uewue3PvJw68mESi8=
+X-Gm-Message-State: AOJu0YxBtitkM7vPM3PwhCCD196622AU1j4ByccAlZFAMEATLTHzujyk
+	u8NN9n4xqD7S1mx/VFkHJ1AYMq98J2LiUx9c/nmh53SBk3L3WvJt
+X-Google-Smtp-Source: AGHT+IF15FNrz0c/YsAcF06c7l9yWKhemZCZaq1+dTj53wOeDjDUvnmNbB+f+xaDjqjDDDJoEZXahw==
+X-Received: by 2002:a54:4702:0:b0:3c9:9567:e5bd with SMTP id 5614622812f47-3c9970ca982mr13658803b6e.54.1715692387116;
+        Tue, 14 May 2024 06:13:07 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-792bf27f625sm561460185a.33.2024.05.14.06.13.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 06:13:06 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 241F31200066;
+	Tue, 14 May 2024 09:13:06 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Tue, 14 May 2024 09:13:06 -0400
+X-ME-Sender: <xms:YWNDZuiMqNkaiks8U3N61vFl_qq6LfRH2wKzQ0bftso4ZGmDXhQyiQ>
+    <xme:YWNDZvCKMnkSd42lbbDE9yI1Bra6kqYQCD29mTlEOVbTaJVVj4Vo4lFOJJXRan5i1
+    cJFnHZmoedeks40NA>
+X-ME-Received: <xmr:YWNDZmEg-S9JBDv1u6SIRhGRzWEt777fqVTNaDv5a4ROA9KrI31E6OTGFVwHXA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegiedgieduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhepgeekgeettdelffekfedtveelueeiudevjeegieekvdegkedufeetfeei
+    iedvueelnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhht
+    hhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquh
+    hnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:YWNDZnRbeXzQTVFS-8rlP951nqZ441rnFEu49vDRV2BBFzzL_jBPhg>
+    <xmx:YWNDZrzsCSsGm4KOB1fbmgykRDilC9jwZYGL1qqTrw8qv5x4Rh2Qww>
+    <xmx:YWNDZl5QIQRzovoG61DRbawlONVeNTNjFmTrpaus4gCrzl4DiK8hEw>
+    <xmx:YWNDZow9qb3YLxZ3Z9W-S9rTQtkIUC-Re9Bzc_A27CUe7Gs9IJIh9A>
+    <xmx:YmNDZnjJG_xY24h3SYKGk9vThvtAVqoAVaNlKq8fbR9C0FyT2FzU8WJe>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 May 2024 09:13:05 -0400 (EDT)
+Date: Tue, 14 May 2024 06:12:53 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Miguel Ojeda <ojeda@kernel.org>,
+	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+	Mara Bos <m-ou.se@m-ou.se>, Amanieu d'Antras <amanieu@gmail.com>
+Subject: Re: [PATCH 2/2] rust: time: Use wrapping_sub() for Ktime::sub()
+Message-ID: <ZkNjVbqR6gYqg4YZ@boqun-archlinux>
+References: <Zigj-lY5lnBSKuib@boqun-archlinux>
+ <87cypvnpwn.ffs@tglx>
+ <CANiq72nGHhgRjfMOhz=ss51q2egHYexPMVvWTr0RES9WAmMF=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240503221634.44274-1-ignat@cloudflare.com> <CALrw=nGhgRrhJ5mWWC6sV2WYWoijvD9WgFzMfOe6mHmqnza-Hw@mail.gmail.com>
- <D18XXJ373C2V.2M6AOMKD1B89W@kernel.org> <CALrw=nHGLN=dn3fbyAcXsBufw0tAWUT1PKVHDK5RZkHcdd3CUw@mail.gmail.com>
- <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org>
-In-Reply-To: <D19CUF0H9Q3S.3L5Y5S9553S5@kernel.org>
-From: Ignat Korchagin <ignat@cloudflare.com>
-Date: Tue, 14 May 2024 14:11:44 +0100
-Message-ID: <CALrw=nEZ07U9VhbGsnpchOYw1icUZCnuoHHXkJLzhFqSPe9_fQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] TPM derived keys
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@cloudflare.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nGHhgRjfMOhz=ss51q2egHYexPMVvWTr0RES9WAmMF=A@mail.gmail.com>
 
-On Tue, May 14, 2024 at 1:09=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Tue May 14, 2024 at 1:05 PM EEST, Ignat Korchagin wrote:
-> > On Tue, May 14, 2024 at 1:28=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.=
-org> wrote:
-> > >
-> > > On Mon May 13, 2024 at 8:11 PM EEST, Ignat Korchagin wrote:
-> > > > On Fri, May 3, 2024 at 11:16=E2=80=AFPM Ignat Korchagin <ignat@clou=
-dflare.com> wrote:
-> > > > I would like to point out to myself I was wrong: it is possible to =
-ask
-> > > > the kernel to generate a trusted key inside the kernel locally with
-> > > > "keyctl add trusted kmk "new 32" @u"
-> > >
-> > > Not in a full-time kernel position ATM as I'm working as contract
-> > > researcher up until beginning of Oct (took some industry break after
-> > > a startup went down of business), so please, politely asking, write
-> > > a bit more compact descriptions ;-) I'm trying to find a new position=
- by
-> > > the beginning of Oct but right now I'd appreciate a bit more thought =
-out
-> > > text descriptions.
-> > >
-> > > I'm working out a small patch set with James Prestwood to add asymmet=
-ric
-> > > TPM2 keys based on his old patch set [1] but laid out on top of the
-> > > existing baseline.
-> > >
-> > > I did already the key type shenanigans etc. for it and James P is lay=
-ing
-> > > his pre-existing RSA code and new ECDSA on top of that. So this will
+On Mon, May 13, 2024 at 05:04:43PM +0200, Miguel Ojeda wrote:
+> On Thu, May 9, 2024 at 2:14 PM Thomas Gleixner <tglx@linutronix.de> wrote:
 > >
-> > This is great. Perhaps we can finally have ECDSA software signature
-> > support as well, which I have been trying to get in for some time now
-> > [1]
->
-> Yes exactly both.
->
+> > In principle ktime_sub() should not overflow for regular use cases.
 > >
-> > > give x.509 compatibility [2]. This patch set will be out soon and lik=
-ely
-> > > part of 6.11 (or almost guaranteed as most of it is done).
-> > >
-> > > So by plain guess this might be along the lines what you might want?
-> >
-> > I don't think so. I have seen this patchset, but unless the new
-> > version is fundamentally different, it looks to me that the asymmetric
-> > TPM keys are the same as trusted keys except they are asymmetric
-> > instead of being symmetric. That is, they are still of limited use on
-> > stateless systems and are subject to the same restrictions I described
-> > in my revised cover description.
->
-> OK, hmm... can you an "apples and oranges" example what would be
-> most trivial use case where these don't cut?
+> > If the binder example overflows the substraction, then something is
+> > seriously wrong. Though in that case as it's only for debug purposes
+> > panicing would be totally counter productive. A warning might be
+> > appropriate though.
+> 
+> Thanks for the clarification Thomas.
+> 
+> Alice and I pinged about this in the RustNL Unconf, i.e. about having
+> a way to customize what happens on integer overflow (and, in general,
+> other panics too), which I had in:
+> 
+>     https://github.com/Rust-for-Linux/linux/issues/354
+> 
+> e.g. like UBSan that allows a "report and continue" option.
+> 
+> We chatted with Mara and Amanieu, who were receptive. In particular,
+> Mara posted right away:
+> 
+>     https://github.com/rust-lang/rfcs/pull/3632
+> 
+> as a possible first step to eventually have that ability, mentioning
+> Rust for Linux as a user.
+> 
+> If we get the ability to customize those, then this could simply be a
+> normal arithmetic operation, i.e. like any other. That is, considered
+> to be a bug if it overflows.
+> 
 
-For example, a cheap NAS box with no internal storage (disks connected
-externally via USB). We want:
-  * disks to be encrypted and decryptable only by this NAS box
-  * if someone steals one of the disks - we don't want them to see it
-has encrypted data (no LUKS header)
+That is nice to have, thank you guys!
 
-Additionally we may want to SSH into the NAS for configuration and we
-don't want the SSH server key to change after each boot (regardless if
-disks are connected or not).
+> Meanwhile, one alternative is going with Boqun's approach, but I would
+> just use the standard operator (i.e. what we do elsewhere) and try to
+> get the customization happen as soon as possible since we will need it
+> for everything else (plus we avoid to make the code uglier with
+> changes that we will need to revert anyway; and it also allows us to
+> easily test any new customization feature from the compiler/library).
+> 
 
->
-> > On top of that I'm not sure they would be widely used as "leaf" keys
-> > by applications, maybe more as root/intermediate keys in some kind of
-> > key hierarchy. TPMs are slow and I don't see a high-performance
-> > web-server, for example, using asymmetric TPM keys for TLS operations.
-> > Also, as we learned the hard way operating many TPMs in production,
-> > some TPMs are quite unreliable and fail really fast, if you "spam"
-> > them with a lot of crypto ops. I understand this is a HW/TPM vendor
-> > problem, but in practice we're trying to build systems, where TPM is
-> > used to protect/generate other keys, but most of the "leaf" crypto
-> > operations are done in software, so we don't make the TPM do too much
-> > crypto.
->
-> So what about SGX/SNP/TDX?
+However, I must point out that it needs more than a customized panic
+handler to work: we also need to change the code generation (or adding
+a different flag similar to -Coverflow-checks), because the current code
+generation is Rust panic when overflow happens, which means the
+subsequent code is unreachable.
 
-In theory yes, but I have chased the tech for a while on commodity HW
-and it keeps having problems.
+Regards,
+Boqun
 
-> TPM is definitely not made for workloads :-)
->
-> > Just to clarify - I'm not arguing about the usefulness of TPM
-> > asymmetric keys in the kernel. I would really want to see this
-> > building block available as well, but I think it just serves a
-> > different purpose/use case from what I'm trying to figure out in this
-> > RFC thread.
->
-> Got it :-) NP
->
-> BR, Jarkko
+> Cheers,
+> Miguel
 
