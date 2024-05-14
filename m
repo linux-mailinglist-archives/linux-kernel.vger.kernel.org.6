@@ -1,159 +1,217 @@
-Return-Path: <linux-kernel+bounces-179262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44648C5E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:39:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A4E98C5E23
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:41:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FD51C20DE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:39:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DD31F216B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 763BF182CA4;
-	Tue, 14 May 2024 23:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E79D182CA8;
+	Tue, 14 May 2024 23:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="aNVhnzhr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HIlYpX3L"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kG6cxxqN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W6bo8AVv";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kG6cxxqN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="W6bo8AVv"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAEF8182C98;
-	Tue, 14 May 2024 23:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF911E871;
+	Tue, 14 May 2024 23:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715729991; cv=none; b=Pf24vn3Nc14qEZx5ojhu1iGKBuGbS8un3SrsWtYUocIB/BLWyHKIc2vO1H2TKbOYhvRBaGnx/VCE393MnjQciEHiwwnGHyjge//KXwWfXfnkffD9QPeqvxzaBMtYlKtBOZOWMCUuEn9UH3sCuh0UgOCOfSG9QLuVXr8eTPEmcE4=
+	t=1715730069; cv=none; b=s3ay0ldJYWOL+h33jQA9Vae90i+FTktOJz5D7gFFLAqK9iao9d6cEPUoifeYVcfsN3+5P02d163lZT2djUm6OepMsEBRNeDMIhCfqNxJKfQusdw1cRkZyk2GiwhQd3xrAuAP49499ElLsX7kBGl8aCN6y5Rak+WhqBSoZXzuqTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715729991; c=relaxed/simple;
-	bh=60Ox0a+JCmbAi56j55Bt0YnLVDI15o/pVVrYJoU0WGU=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=ZgvuUbBVO26SDNK3rekOgtGkuE2eapSiZIAbMFLNBjdjVjVKYZ9L7bKbA3HVIj1sYZ2nJlp40jOAKmVrSo8pHS3Fhbf4fJbq4BItV4jVH/iIk6x222Mbivkn4C1EBpVDOwb2YZCgBZ0z6W3mOhR0HRUhgE5vPXPvnevYgzp5rOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=aNVhnzhr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HIlYpX3L; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 06D991381145;
-	Tue, 14 May 2024 19:39:48 -0400 (EDT)
-Received: from imap44 ([10.202.2.94])
-  by compute3.internal (MEProxy); Tue, 14 May 2024 19:39:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1715729988;
-	 x=1715816388; bh=1obXvCkxuWYmqdH7enpj67eu56K1q3VrLcxWZTYvNIw=; b=
-	aNVhnzhrTLEBK1+8J0vnth3FvXxjrCIuk4kby9nRkw9DRG+7hU2S4AGKh6jWWsCe
-	UQXTkQJ6hK0WpD2zg4XwPC+0JNjQcE/gXCxvy3cwS1L+m9EMs6EkBVknmGgX84wx
-	0OYXJ0wC4/3bENyfbmD+JDFy0+XbeG2r9zR1yV9GodGJSmTV6ZPZz+8TyJ/fc5LO
-	26m9OTcOdBgsBsOpQtWBfcafcW0m4F8dhyGXItXUKlON2N9h5yCaOKtH1XOPTI8m
-	Mpd5wjixuAhwBJMLBd7JSPmNZ/nnmc84uJ8EpNpEY1tTiZT1JfZUoJ9m12LGXwPd
-	8RiOkb3L/UQtV2Iq5NvkOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1715729988; x=
-	1715816388; bh=1obXvCkxuWYmqdH7enpj67eu56K1q3VrLcxWZTYvNIw=; b=H
-	IlYpX3LGV3wzZQIW7ZtEAb8RYLjgPML+auk99lQiUhy7QJP94uw+5NUHccqO/Hf1
-	ULUsx16rtB9Okw80vS2BOSQW+AQ9ZoEeaqIDQT7/emdP0uTHugPPIfJJC93kwgLD
-	EMYT3K8GDbxHj4wEj9x/qFW/X8RuSNQGMUSCkOZ01Cc0xMR9sYT51AwCA+DL6jGG
-	i77rIK+Qro7PPuuDu5a+tMe3Bf7fl6RxJOQglks8g9z2JLQkogRXCK3Lw7+na9SU
-	Ym75vLt+6S9XQ2f4Qu8dbv572HakzvMMcoacqpbX7INYT1ssLhPk4tM0AvgsxC4d
-	eUSSq70btxHYcq3JCKqcg==
-X-ME-Sender: <xms:Q_ZDZqm58F7b6YP1Flchbu_Q-MK6XF9mrr1tO0dpLa3bS6DQ7aQBAg>
-    <xme:Q_ZDZh3_DrE8to6UYGBoWbqIK521JNlpVLPacJltpLECG7gsqXu8XvZjc7EQF35eg
-    A1fs2acUSsygdD1P-g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdegjedgvdegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdfl
-    ihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedufeegfeetudeghefftdehfefgveffleefgfehhfej
-    ueegveethfduuddvieehgfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhm
-X-ME-Proxy: <xmx:Q_ZDZooFsygNgsQNRGa6bmOkg6j-rZxLw0QSSYxKSZiZderTTKJ0Nw>
-    <xmx:Q_ZDZunDTjdrJUdabGampDyrbXfh82CYOjv48JgndBocI0WyPFrAdg>
-    <xmx:Q_ZDZo2EnDVJ1QhsJ5ShnNDeLT7MYWNQxGLArV_4FZ5mGwMgOVXirA>
-    <xmx:Q_ZDZlu6nWt1-OIUXA9J_ORFy9dBeujO2W3GOdd94lHr1KY5VtqseQ>
-    <xmx:Q_ZDZuywMOvK23ct40AD0B0usuDmwk7TIGrZ7E5LkHhqHcOIt2uuiUDE>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id EDEEB36A0074; Tue, 14 May 2024 19:39:46 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-455-g0aad06e44-fm-20240509.001-g0aad06e4
+	s=arc-20240116; t=1715730069; c=relaxed/simple;
+	bh=w2X85Z2HthCEJW9eHGQmyHOLa23xK8+fkZHLn+hr7nY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hi9yr9FV3E2VcCsXwkx6ZLlHqiOgk/GUxaDbILvNL3PvEWdDi8ITT99MDifBlgNWY+V/nh/dXv0QT7UZWAVFanDAnVzZ5uLtn+xyxeyZVTwIk2lBVLd+wNcnVfJ2+touT1zElcKxjvZ2JR8jaZMmR+S7ZM7+Zp/XZxN5TfOw5l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kG6cxxqN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W6bo8AVv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kG6cxxqN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=W6bo8AVv; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1FC841FED5;
+	Tue, 14 May 2024 23:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715730065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
+	b=kG6cxxqN2w4xfnjDvdsuSNRb0HrwXETX1VWGfYj73F7M23SyQkNg+kikALL/yrfKfyzekK
+	BXo6qO0DOqHSGE1BQEtsONylGT7a4M2ZBayISXzZJmTQNjhARJYYXEzDmvfnSd39sgtIU4
+	u6dUFpE6qlplt4v5EQ0ZPQ8fGIj0KFs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715730065;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
+	b=W6bo8AVvxX7pPTyVownj3lUVac7R2+BP0xM+vvNE3spyho6a3tkS1ZcEeI4/aYlzqrX5EZ
+	AXx2jQay/KjoZRDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715730065; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
+	b=kG6cxxqN2w4xfnjDvdsuSNRb0HrwXETX1VWGfYj73F7M23SyQkNg+kikALL/yrfKfyzekK
+	BXo6qO0DOqHSGE1BQEtsONylGT7a4M2ZBayISXzZJmTQNjhARJYYXEzDmvfnSd39sgtIU4
+	u6dUFpE6qlplt4v5EQ0ZPQ8fGIj0KFs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715730065;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lyV7ngpZjilvk2cY2YRxyfYD5wIrha2SfFGOdjClKe4=;
+	b=W6bo8AVvxX7pPTyVownj3lUVac7R2+BP0xM+vvNE3spyho6a3tkS1ZcEeI4/aYlzqrX5EZ
+	AXx2jQay/KjoZRDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C176D137C3;
+	Tue, 14 May 2024 23:41:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id yHktL5D2Q2bvTAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 14 May 2024 23:41:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 98917A08B5; Wed, 15 May 2024 01:41:01 +0200 (CEST)
+Date: Wed, 15 May 2024 01:41:01 +0200
+From: Jan Kara <jack@suse.cz>
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: tytso@mit.edu, jack@suse.com, yi.zhang@huaweicloud.com,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/9] jbd2: remove unused return info from
+ jbd2_journal_write_metadata_buffer
+Message-ID: <20240514234101.2ke6hq4xwitwk7a5@quack3>
+References: <20240514112438.1269037-1-shikemeng@huaweicloud.com>
+ <20240514112438.1269037-3-shikemeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <7fc82f8b-df9d-45f5-8e82-27eac7b4b0ab@app.fastmail.com>
-In-Reply-To: <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk>
-References: <20240202-llvm-msym32-v1-0-52f0631057d6@flygoat.com>
- <20240202-llvm-msym32-v1-6-52f0631057d6@flygoat.com>
- <alpine.DEB.2.21.2405142235100.45291@angie.orcam.me.uk>
-Date: Wed, 15 May 2024 00:39:21 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Nathan Chancellor" <nathan@kernel.org>,
- "Nick Desaulniers" <ndesaulniers@google.com>,
- "Bill Wendling" <morbo@google.com>, "Justin Stitt" <justinstitt@google.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
- "Guenter Roeck" <linux@roeck-us.net>
-Subject: Re: [PATCH 6/8] MIPS: Limit MIPS_MT_SMP support by ISA reversion
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514112438.1269037-3-shikemeng@huaweicloud.com>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
 
+On Tue 14-05-24 19:24:31, Kemeng Shi wrote:
+> The done_copy_out info from jbd2_journal_write_metadata_buffer is not
+> used. Simply remove it.
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
+Looks good. Feel free to add:
 
-=E5=9C=A82024=E5=B9=B45=E6=9C=8814=E6=97=A5=E4=BA=94=E6=9C=88 =E4=B8=8B=E5=
-=8D=8810:38=EF=BC=8CMaciej W. Rozycki=E5=86=99=E9=81=93=EF=BC=9A
-> On Fri, 2 Feb 2024, Jiaxun Yang wrote:
->
->> MIPS MT ASE is only available on ISA between Release 1 and Release 5.
->
->  R2+ only actually, as also evident from Kconfig...
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Hi Maciej,
+								Honza
 
-Long time no see :-)
-
-There is nothing stopping us to run R1 kernel on R2 hardware, given that
-those features are all detected at boot time. I understand MT was introd=
-uced
-at 34K which is R2.
-
-I tested booting R1 kernel with MT on 1004Kc.
-
-I believe we should give users flexibility on enjoying optional features
-on kernel targeting lower ISA Rev.
-
->
->> --- a/arch/mips/Kconfig
->> +++ b/arch/mips/Kconfig
->> @@ -2171,7 +2171,8 @@ config CPU_R4K_CACHE_TLB
->>  config MIPS_MT_SMP
->>  	bool "MIPS MT SMP support (1 TC on each available VPE)"
->>  	default y
->> -	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MIPSR6 && !CPU_MICRO=
-MIPS
->> +	depends on TARGET_ISA_REV > 0 && TARGET_ISA_REV < 6
->> +	depends on SYS_SUPPORTS_MULTITHREADING && !CPU_MICROMIPS
->>  	select CPU_MIPSR2_IRQ_VI
->>  	select CPU_MIPSR2_IRQ_EI
->                    ^^^^^^
->  ... here.  I wish people looked beyond the line they change, sigh...
-
-Both features (VI and VEIC) are probed at boot time. Selecting
-them doesn't necessarily mean that CPU has those functions.
-
-Thanks
-- Jiaxun
->
->   Maciej
-
---=20
-- Jiaxun
+> ---
+>  fs/jbd2/commit.c  | 10 +++++-----
+>  fs/jbd2/journal.c |  9 +++------
+>  2 files changed, 8 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+> index 5e122586e06e..67077308b56b 100644
+> --- a/fs/jbd2/commit.c
+> +++ b/fs/jbd2/commit.c
+> @@ -353,7 +353,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>  	struct buffer_head *descriptor;
+>  	struct buffer_head **wbuf = journal->j_wbuf;
+>  	int bufs;
+> -	int flags;
+> +	int escape;
+>  	int err;
+>  	unsigned long long blocknr;
+>  	ktime_t start_time;
+> @@ -661,10 +661,10 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>  		 */
+>  		set_bit(BH_JWrite, &jh2bh(jh)->b_state);
+>  		JBUFFER_TRACE(jh, "ph3: write metadata");
+> -		flags = jbd2_journal_write_metadata_buffer(commit_transaction,
+> +		escape = jbd2_journal_write_metadata_buffer(commit_transaction,
+>  						jh, &wbuf[bufs], blocknr);
+> -		if (flags < 0) {
+> -			jbd2_journal_abort(journal, flags);
+> +		if (escape < 0) {
+> +			jbd2_journal_abort(journal, escape);
+>  			continue;
+>  		}
+>  		jbd2_file_log_bh(&io_bufs, wbuf[bufs]);
+> @@ -673,7 +673,7 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>                     buffer */
+>  
+>  		tag_flag = 0;
+> -		if (flags & 1)
+> +		if (escape)
+>  			tag_flag |= JBD2_FLAG_ESCAPE;
+>  		if (!first_tag)
+>  			tag_flag |= JBD2_FLAG_SAME_UUID;
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 207b24e12ce9..2dca2f613a8e 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -316,11 +316,8 @@ static void journal_kill_thread(journal_t *journal)
+>   *
+>   * Return value:
+>   *  <0: Error
+> - * >=0: Finished OK
+> - *
+> - * On success:
+> - * Bit 0 set == escape performed on the data
+> - * Bit 1 set == buffer copy-out performed (kfree the data after IO)
+> + *  =0: Finished OK without escape
+> + *  =1: Finished OK with escape
+>   */
+>  
+>  int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+> @@ -455,7 +452,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  	set_buffer_shadow(bh_in);
+>  	spin_unlock(&jh_in->b_state_lock);
+>  
+> -	return do_escape | (done_copy_out << 1);
+> +	return do_escape;
+>  }
+>  
+>  /*
+> -- 
+> 2.30.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
