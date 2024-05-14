@@ -1,145 +1,209 @@
-Return-Path: <linux-kernel+bounces-178240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59748C4AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:33:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C158C4AF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 03:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7240BB2284C
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46F51C21D6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 01:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615D8469D;
-	Tue, 14 May 2024 01:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="S03oQfYk"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF72C6FB9;
+	Tue, 14 May 2024 01:36:12 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578B81869;
-	Tue, 14 May 2024 01:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA44117C2;
+	Tue, 14 May 2024 01:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715650385; cv=none; b=KnC8FtZAo0IgHa068J1D9q/E6SJX1R1EEhTErdpxW2w/DBhpvzodNTOpUrSExJEXko0IJZfhgTEjEyqSCxyiv04GTgCMzTmNlE5VE2qAX9UbAahSLKud832ZmdgC5Sz4k9X+Gf6PXuvTkt6QULyEvuMmxF9ymlpzgRpt+TvASyE=
+	t=1715650572; cv=none; b=Arb/mYHemJOelXDqdolVfxOAHyz3asJjz8Bt/Kc1EFGGLKHvjcboz7M7CINm2NdWOjIiFnl8G0g1GpYWmGGXWCv4Fe6Gy0ZpZit3ifxFdVsU71xTGE+GV1lpqeqLe+zp24sd0gvhNG+Ph0VXpshXeH43sY1ISQBhADqvamIANX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715650385; c=relaxed/simple;
-	bh=RCAEKDarniAXQCflNxSzHy3FO6jbbnDom4yoPZTVBpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dmOJuNumfnJnPDcpEC2GOT2YfbyO8upajMbShymFQXR7aiNNuRYHSE5NmPue4sV9iZPn+v3d8pUmYDCvD5+FhIizT72OjPYuU/Hkn+NwmO3mohXfDRkKmS+jQtrxupCCeoDl7WtEL1ZY6whnH+ohbd5tKyzYhDnwp+huN2TJTYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=S03oQfYk; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1715650381;
-	bh=RDNndJUAJtBCrnl6i7gFm/qlsrfLVPtq8oKSkptnnBQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S03oQfYkHu5KBxNOv5lxRPjggG6eJiWJoP0w/yFRSZcFcDqrKa2uJmsW41LuXnbk5
-	 qO6BuYtIMZBBgtgVw+3PbUQLvn0XoMGFDkiaMPnv6WZ1VKjMXkid7QUwWUspHKb8j5
-	 /C+h1Rk5Qjq43JmiJMEDf7lDDyhmFA4Tc6iQ3SPAwA41tmLVi9eYUxFyJABu/0XVPf
-	 3GE0lwNliT0OjtpgrcXF9HsIJk+km1be+Gsmy3cZNMT3OT74lCBRu/NhHDfEQVQY5F
-	 U27I0F3ZCFQAfGDrRL13m9i4rXD998xVGtPv3DK0zYEjksPsTCg8Vw1Zg0qD/cj4gq
-	 N0FxCI1RkQgQA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Vdf4X2LrKz4wc8;
-	Tue, 14 May 2024 11:33:00 +1000 (AEST)
-Date: Tue, 14 May 2024 11:32:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Al Viro <viro@ZenIV.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Yu Kuai <yukuai3@huawei.com>
-Subject: Re: linux-next: manual merge of the block tree with the vfs tree
-Message-ID: <20240514113259.7396a7d4@canb.auug.org.au>
-In-Reply-To: <20240510123419.42f727c1@canb.auug.org.au>
-References: <20240510123419.42f727c1@canb.auug.org.au>
+	s=arc-20240116; t=1715650572; c=relaxed/simple;
+	bh=Upsul9NcofEKR67TbzR1JI6SV64CmPDbuIlZIz0tIg8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=L2i3piMWhEX43vQdjskcAKlLhKDH5pr6nTOaXI9fYFLWIqrGNpl1rp09EyLbDJBJux8AQBi8WdrvERDl+V6Ffg9w2l0NIO2f7Wly4L2R/RvwqfPMstnT5KeWziODPT4Mm5TrkscFveTprasrrDothaJKmGOMnnXApDIfqVbptks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Vdf7t4QCcz4f3l1s;
+	Tue, 14 May 2024 09:35:54 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B69421A016E;
+	Tue, 14 May 2024 09:36:04 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP1 (Coremail) with SMTP id cCh0CgBnOBECwEJm7mVnMg--.15054S3;
+	Tue, 14 May 2024 09:36:04 +0800 (CST)
+Subject: Re: [PATCH md-6.10 1/9] md: rearrange recovery_flage
+To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, song@kernel.org,
+ xni@redhat.com, dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240509011900.2694291-1-yukuai1@huaweicloud.com>
+ <20240509011900.2694291-2-yukuai1@huaweicloud.com>
+ <20240513170958.00002282@linux.intel.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <46448c77-894a-1ddc-30b3-42ca00b6ecd4@huaweicloud.com>
+Date: Tue, 14 May 2024 09:36:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/J=sXTYUDcwt/uABqN174z=X";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <20240513170958.00002282@linux.intel.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:cCh0CgBnOBECwEJm7mVnMg--.15054S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFykGrWxAr1xJF4DtFykuFg_yoWrXry5pF
+	W0kFn5Zr4UZr12yry7ta4rX39Y934FvFy5ArW3WF98JasYk3Zayr18J3WUWFZ7t3sxt3W7
+	XF45JF13uFs0y3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E
+	3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
---Sig_/J=sXTYUDcwt/uABqN174z=X
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi all,
+ÔÚ 2024/05/13 23:12, Mariusz Tkaczyk Ð´µÀ:
+> On Thu,  9 May 2024 09:18:52 +0800
+> Yu Kuai <yukuai1@huaweicloud.com> wrote:
+> 
+> There is typo in subject.
 
-On Fri, 10 May 2024 12:34:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the block tree got a conflict in:
->=20
->   block/blk-core.c
->=20
-> between commit:
->=20
->   3f9b8fb46e5d ("Use bdev_is_paritition() instead of open-coding it")
->=20
-> from the vfs tree and commit:
->=20
->   99dc422335d8 ("block: support to account io_ticks precisely")
->=20
-> from the block tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc block/blk-core.c
-> index a4035dc7640d,01186333c88e..000000000000
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@@ -990,11 -986,12 +989,12 @@@ void update_io_ticks(struct block_devic
->   	unsigned long stamp;
->   again:
->   	stamp =3D READ_ONCE(part->bd_stamp);
-> - 	if (unlikely(time_after(now, stamp))) {
-> - 		if (likely(try_cmpxchg(&part->bd_stamp, &stamp, now)))
-> - 			__part_stat_add(part, io_ticks, end ? now - stamp : 1);
-> - 	}
-> + 	if (unlikely(time_after(now, stamp)) &&
-> + 	    likely(try_cmpxchg(&part->bd_stamp, &stamp, now)) &&
-> + 	    (end || part_in_flight(part)))
-> + 		__part_stat_add(part, io_ticks, now - stamp);
-> +=20
->  -	if (part->bd_partno) {
->  +	if (bdev_is_partition(part)) {
->   		part =3D bdev_whole(part);
->   		goto again;
->   	}
+Yes, :)
+> 
+>> From: Yu Kuai <yukuai3@huawei.com>
+>>
+>> Currently there are lots of flags and the names are confusing, since
+>> there are two main types of flags, sync thread runnng status and sync
+>> thread action, rearrange and update comment to improve code readability,
+>> there are no functional changes.
+>>
+>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>> ---
+>>   drivers/md/md.h | 52 ++++++++++++++++++++++++++++++++++++-------------
+>>   1 file changed, 38 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/drivers/md/md.h b/drivers/md/md.h
+>> index 029dd0491a36..2a1cb7b889e5 100644
+>> --- a/drivers/md/md.h
+>> +++ b/drivers/md/md.h
+>> @@ -551,22 +551,46 @@ struct mddev {
+>>   };
+>>   
+>>   enum recovery_flags {
+>> +	/* flags for sync thread running status */
+>> +
+>> +	/*
+>> +	 * set when one of sync action is set and new sync thread need to be
+>> +	 * registered, or just add/remove spares from conf.
+>> +	 */
+>> +	MD_RECOVERY_NEEDED,
+>> +	/* sync thread is running, or about to be started */
+>> +	MD_RECOVERY_RUNNING,
+>> +	/* sync thread needs to be aborted for some reason */
+>> +	MD_RECOVERY_INTR,
+>> +	/* sync thread is done and is waiting to be unregistered */
+>> +	MD_RECOVERY_DONE,
+>> +	/* running sync thread must abort immediately, and not restart */
+>> +	MD_RECOVERY_FROZEN,
+>> +	/* waiting for pers->start() to finish */
+>> +	MD_RECOVERY_WAIT,
+>> +	/* interrupted because io-error */
+>> +	MD_RECOVERY_ERROR,
+>> +
+>> +	/* flags determines sync action */
+>> +
+>> +	/* if just this flag is set, action is resync. */
+>> +	MD_RECOVERY_SYNC,
+>> +	/*
+>> +	 * paired with MD_RECOVERY_SYNC, if MD_RECOVERY_CHECK is not set,
+>> +	 * action is repair, means user requested resync.
+>> +	 */
+>> +	MD_RECOVERY_REQUESTED,
+>>   	/*
+>> -	 * If neither SYNC or RESHAPE are set, then it is a recovery.
+>> +	 * paired with MD_RECOVERY_SYNC and MD_RECOVERY_REQUESTED, action is
+>> +	 * check.
+>>   	 */
+>> -	MD_RECOVERY_RUNNING,	/* a thread is running, or about to be
+>> started */
+>> -	MD_RECOVERY_SYNC,	/* actually doing a resync, not a recovery
+>> */
+>> -	MD_RECOVERY_RECOVER,	/* doing recovery, or need to try it. */
+>> -	MD_RECOVERY_INTR,	/* resync needs to be aborted for some
+>> reason */
+>> -	MD_RECOVERY_DONE,	/* thread is done and is waiting to be
+>> reaped */
+>> -	MD_RECOVERY_NEEDED,	/* we might need to start a
+>> resync/recover */
+>> -	MD_RECOVERY_REQUESTED,	/* user-space has requested a sync
+>> (used with SYNC) */
+>> -	MD_RECOVERY_CHECK,	/* user-space request for check-only, no
+>> repair */
+>> -	MD_RECOVERY_RESHAPE,	/* A reshape is happening */
+>> -	MD_RECOVERY_FROZEN,	/* User request to abort, and not
+>> restart, any action */
+>> -	MD_RECOVERY_ERROR,	/* sync-action interrupted because
+>> io-error */
+>> -	MD_RECOVERY_WAIT,	/* waiting for pers->start() to finish */
+>> -	MD_RESYNCING_REMOTE,	/* remote node is running resync thread
+>> */
+>> +	MD_RECOVERY_CHECK,
+>> +	/* recovery, or need to try it */
+>> +	MD_RECOVERY_RECOVER,
+>> +	/* reshape */
+>> +	MD_RECOVERY_RESHAPE,
+>> +	/* remote node is running resync thread */
+>> +	MD_RESYNCING_REMOTE,
+>>   };
+>>   
+>>   enum md_ro_state {
+> 
+> I don't know if it is better readable but I know that Kernel coding style comes
+> with different approach. I used it for enum mddev_flags in md.h please take a
+> look.
 
-This is now a conflict between the vfs tree and Linus' tree.
+1) There are two kinds of flags here, for sync thread running status and
+for sync action, I think it's better to distinguish them.
+2) The names are confusing, for sync thread status I prefer
+SYNC_THREAD_xxx and for sync action I prefer SYNC_ACTION_xxx, I plan to
+remove the flags to sync action and replace them with enum type in patch
+2.
 
---=20
-Cheers,
-Stephen Rothwell
+> 
+> Also, I get used to comment above, not below enum values but I don't have strong
+> justification here.
 
---Sig_/J=sXTYUDcwt/uABqN174z=X
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I do comment above here.
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+Kuai
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZCv0sACgkQAVBC80lX
-0GzWzQf/fB8NEqFinuZD/N/+bCx9gnWArQPQW4kWoaQ8N9sjmdHbcqxv3lKbWzoa
-HQO20h53YA1JjrEk8WRQCMyOyNNrYsJJHaFUHqUl1hyPzHoLO8jJIcB8/egBIuCj
-G0aZ3qyHf/PhCjo64bJs8IX3n/G7TFosEMcsdTZ+gzXacsx2ICJhRiSm+/1gvhiu
-0Rextv7ZK7JZf7f/ptuUzLZNrPMijNDPwvJtEaPOcRPsp+hsfwwNnOihvLPfO99U
-8rqvlzSlVwbD9Mf6VH48MADxrB0AwfOYCWYkWapwlwCwuKFxwKeAxerhyVYbZQHj
-J00JWhG0uH+Hdq6tuLtQV8EtBewXoQ==
-=FWmv
------END PGP SIGNATURE-----
+> 
+> Thanks,
+> Mariusz
+> 
+> 
+> .
+> 
 
---Sig_/J=sXTYUDcwt/uABqN174z=X--
 
