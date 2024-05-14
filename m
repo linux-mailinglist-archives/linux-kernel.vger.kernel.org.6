@@ -1,115 +1,140 @@
-Return-Path: <linux-kernel+bounces-179112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB098C5BD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BE58C5BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F9B41F22D66
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:52:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9D881C21A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 19:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37CCF181325;
-	Tue, 14 May 2024 19:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF9B181B80;
+	Tue, 14 May 2024 19:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZfnpfGN8"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cbrCSiRO"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD1D180A9C
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 19:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DA32AF09;
+	Tue, 14 May 2024 19:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715716336; cv=none; b=fkxFIffT9Ln+bvGsIM6unhQ/xt1ndwAcXqXDGMrcwv3rgHj4UyljYaN9yedWrg+lcaQp86iDFok4R1ufEQG/KTvyU5VLnreeG8mG6lp1G+9MOxDy356OC3OEH7qSX5vTyX2ap8MODik3agPa8OqotwsUYcuOp7tCf6HYLeQv6E0=
+	t=1715716491; cv=none; b=tgHDJ0Ffo717CFGNLz6EdUO5uZdarT3U/mAMlpGmtTFqCGFDfatNRwg+SwdOaZECtp9ILNe/Cd69e2tIfgm75t2ksqEkeSyUY2YgYF/vLrsvFWXcy/x/5fs8Rjf72dykdpE051R5hol+7352shrQ/Jwa5kCOhPYmkYh4ulqSals=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715716336; c=relaxed/simple;
-	bh=sZP6tHo+9CZUoeCNklvRvOlqbMBw89gzuROoS4J3Mzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqSQokXdmrYVTU7WhV352/A4s2qHLeK83CUTx1i4ATNKdAp7BN0m8HDYc+OtX8KFGu/rQQ2TZinWpj9SdUIJCmMxo6a5iag6lEiUkNATk2tVjuhexQDLI1/niVofXsSEfCVaeB2GeQf5DyAsrOYumLDWFyDPQ7givSym61af/KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZfnpfGN8; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1ed96772f92so48483545ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 12:52:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1715716334; x=1716321134; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh5lqeIFxmDIv6drPBD1UeOlHcOcbwmzayc2S6c55cU=;
-        b=ZfnpfGN87jzG0rt/lfhe7vQg/eTCzaodROzOlcQIx6Vet6mWXxV+LrOwJQblYLeni/
-         dJGrz1RnoNb1mWjELi77HQlSyyf24fbpmVjwXGl052q2NvRXmG4e1GlPytFtJhtpAEx1
-         B0izW07S5S2J58Qg+Fj2123oqlSEPnqklv1WM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715716334; x=1716321134;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xh5lqeIFxmDIv6drPBD1UeOlHcOcbwmzayc2S6c55cU=;
-        b=Vf0XhImmkyqLduS824jofAz5d6R5PzBbJdmsgDP2ehqlSy3pq07cqBrWIccFAtOr2S
-         JTTYAuqIRq3slPnOUOxhhACD6BKZ/ki/YMahmJwKyP+2aWcx3j4kpCHGHUdDVP+rhTFT
-         o0ygZfG74qzvz5DmBNft1eUf/yuMwNVdV9jthOSZDgjU99U9XnADXir0fgvGmt3ywM/3
-         nSMegLXmxYYYrHqBQFCtTyq1PWAfkYNaJDUJuqWg2sn7tYSE+yE2ioeEmJUqU04neDXh
-         w/Bq4VRQ75xSMTgddRTYuHyfW03EdzNU3fnRUd7NxJO6Drit6efzcNKuUgf44g+TXycm
-         Otig==
-X-Forwarded-Encrypted: i=1; AJvYcCWcl+kUO2wjLPrtIZ+vZaELNJzjS9tbsI/5lUGg2T4P6AIGX4VITIxYKZrtDFROCDUSxQertTNoyQYwyuXN7Kw5YEh43xJ83ORjbPVt
-X-Gm-Message-State: AOJu0Yz6Oi2vty5NtKPQiDUX50HfeMBImSH47gXrfMPdW3p+cclMn3bA
-	fMIl3dfVucLXuL8PxwMdmfgXmlnSjdRcP8ifPv8VMw2ysbJBd2+50uS+mibHiA==
-X-Google-Smtp-Source: AGHT+IE4USN+kE7T6RZD7G5inzqpecMh0wnrqgy4EQ6oLTRU7SRnjNyHXsSdHHrK+4e8wMQQLJM0Rg==
-X-Received: by 2002:a17:903:2290:b0:1e0:b2d5:5f46 with SMTP id d9443c01a7336-1ef440495b7mr159207695ad.46.1715716334549;
-        Tue, 14 May 2024 12:52:14 -0700 (PDT)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0c038c4csm104274535ad.226.2024.05.14.12.52.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 12:52:14 -0700 (PDT)
-Date: Tue, 14 May 2024 12:52:13 -0700
-From: Kees Cook <keescook@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: jeffxu@chromium.org, jannh@google.com, sroettger@google.com,
-	willy@infradead.org, gregkh@linuxfoundation.org,
-	torvalds@linux-foundation.org, usama.anjum@collabora.com,
-	corbet@lwn.net, Liam.Howlett@oracle.com, surenb@google.com,
-	merimus@google.com, rdunlap@infradead.org, jeffxu@google.com,
-	jorgelo@chromium.org, groeck@chromium.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org, pedro.falcato@gmail.com, dave.hansen@intel.com,
-	linux-hardening@vger.kernel.org, deraadt@openbsd.org
-Subject: Re: [PATCH v10 0/5] Introduce mseal
-Message-ID: <202405141251.8E9580E@keescook>
-References: <20240415163527.626541-1-jeffxu@chromium.org>
- <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+	s=arc-20240116; t=1715716491; c=relaxed/simple;
+	bh=/5PqzAFlrMJaKZ27IhU+KH4H2iwXQiRSH34L7rgCz1E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r8s0SJe2jBhVo3lxEPnONK0CShF4fyx3mOaFGGWqklNZ/usAoLcGoMXfnIsuL4LEIwzz7p6Yj7NdijKjdijkRxX3scE0qE/m57tplHnBr4kdGUhHY2vrbFBxnsKAolIpLdTthbtLop3hI3D0NW1U+C4wWp4cShzcl3784sQ5BKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cbrCSiRO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 44EIiZ2C025423;
+	Tue, 14 May 2024 19:54:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=2QvCZbuUY0bHh/GhpEelkXTIT2gmf/R7LhhRsf0xJ30=;
+ b=cbrCSiRO5q+Y6dztYEHCUbnR+ymn+t/Npf0teg5fyufzM2XWk/rGZx+XW+AmV97msimG
+ hXEvUa6MKhFhi+kugFiIgiEhDKPWcL4iwwLbtHnrldmUxxFVKdKuai4Fijb9fgS+kcSa
+ Z0JOfQPb0v8erjcpqBOWEc1DO3x1HuGTjxUO01a+O6BeTlbI6AzwYHvX7/WoYWWNzgz7
+ q9ZargUSEhZlHCFGZSN+vDpKrwmuMQjxgMBhs0UE+jkt+gQ7xqZdmgxR9ARLrivfBVKd
+ Wp2wzw2L2s428tNg7tddPqsk8oCBe2iaCgshOMGEbVnwyXZ25z1oECdpntD/Doz2s6mi gg== 
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3y4dg0r5n6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 19:54:39 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 44EHbd2V018828;
+	Tue, 14 May 2024 19:54:38 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3y2k0tfhpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 14 May 2024 19:54:38 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 44EJsajD25952966
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 14 May 2024 19:54:38 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 34E6558056;
+	Tue, 14 May 2024 19:54:36 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F3D9E5803F;
+	Tue, 14 May 2024 19:54:35 +0000 (GMT)
+Received: from slate16.aus.stglabs.ibm.com (unknown [9.61.107.19])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 14 May 2024 19:54:35 +0000 (GMT)
+From: Eddie James <eajames@linux.ibm.com>
+To: linux-fsi@lists.ozlabs.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eajames@linux.ibm.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+        robh@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au
+Subject: [PATCH v5 0/9] dt-bindings: fsi: Convert to json-schema and add missing engines
+Date: Tue, 14 May 2024 14:54:26 -0500
+Message-Id: <20240514195435.155372-1-eajames@linux.ibm.com>
+X-Mailer: git-send-email 2.39.3
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: MN6fqohEi_6rnSalhhpK0yghkFUN1DuQ
+X-Proofpoint-GUID: MN6fqohEi_6rnSalhhpK0yghkFUN1DuQ
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240514104646.e6af4292f19b834777ec1e32@linux-foundation.org>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-14_12,2024-05-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ clxscore=1015 mlxlogscore=544 priorityscore=1501 bulkscore=0 phishscore=0
+ impostorscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2405010000 definitions=main-2405140142
 
-On Tue, May 14, 2024 at 10:46:46AM -0700, Andrew Morton wrote:
-> On Mon, 15 Apr 2024 16:35:19 +0000 jeffxu@chromium.org wrote:
-> 
-> > This patchset proposes a new mseal() syscall for the Linux kernel.
-> 
-> I have not moved this into mm-stable for a 6.10 merge.  Mainly because
-> of the total lack of Reviewed-by:s and Acked-by:s.
+This series was previously included in
+https://lore.kernel.org/all/20240429210131.373487-1-eajames@linux.ibm.com/
 
-Oh, I thought I had already reviewed it. FWIW, please consider it:
+Changes since v4:
+ - Move the addition of AST2700 FSI into a separate patch
+ - Add interrupt controller properties for the common FSI controller properties
+ - Add clock-frequency property to FSI controller and CFAM
+ - Add detail to chip-id property description
+ - Drop pattern properties for occ and hwmon nodes
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+Eddie James (9):
+  dt-bindings: fsi: fsi2spi: Document SPI controller child nodes
+  dt-bindings: fsi: Document the IBM SCOM engine
+  dt-bindings: fsi: p9-occ: Convert to json-schema
+  dt-bindings: fsi: Document the IBM SBEFIFO engine
+  dt-bindings: fsi: Document the FSI controller common properties
+  dt-bindings: fsi: ibm,i2cr-fsi-master: Reference common FSI controller
+  dt-bindings: fsi: ast2600-fsi-master: Convert to json-schema
+  dt-bindings: fsi: Document the AST2700 FSI master
+  dt-bindings: fsi: Document the FSI Hub Controller
 
-> The code appears to be stable enough for a merge.
-
-Agreed.
-
-> It's awkward that we're in conference this week, but I ask people to
-> give consideration to the desirability of moving mseal() into mainline
-> sometime over the next week, please.
-
-Yes please. :)
+ .../fsi/aspeed,ast2600-fsi-master.yaml        | 81 +++++++++++++++++++
+ .../bindings/fsi/fsi-controller.yaml          | 66 +++++++++++++++
+ .../bindings/fsi/fsi-master-aspeed.txt        | 36 ---------
+ .../devicetree/bindings/fsi/ibm,fsi2spi.yaml  | 36 ++++++++-
+ .../bindings/fsi/ibm,i2cr-fsi-master.yaml     |  5 +-
+ .../bindings/fsi/ibm,p9-fsi-controller.yaml   | 45 +++++++++++
+ .../devicetree/bindings/fsi/ibm,p9-occ.txt    | 16 ----
+ .../devicetree/bindings/fsi/ibm,p9-occ.yaml   | 40 +++++++++
+ .../bindings/fsi/ibm,p9-sbefifo.yaml          | 46 +++++++++++
+ .../devicetree/bindings/fsi/ibm,p9-scom.yaml  | 37 +++++++++
+ 10 files changed, 351 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/fsi/aspeed,ast2600-fsi-master.yaml
+ create mode 100644 Documentation/devicetree/bindings/fsi/fsi-controller.yaml
+ delete mode 100644 Documentation/devicetree/bindings/fsi/fsi-master-aspeed.txt
+ create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-fsi-controller.yaml
+ delete mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-occ.txt
+ create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-occ.yaml
+ create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-sbefifo.yaml
+ create mode 100644 Documentation/devicetree/bindings/fsi/ibm,p9-scom.yaml
 
 -- 
-Kees Cook
+2.39.3
+
 
