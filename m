@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-178668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27EB58C5623
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:46:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B348C562A
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2C4F284F72
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97D92859C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 12:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E6B6CDCF;
-	Tue, 14 May 2024 12:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650096D1B4;
+	Tue, 14 May 2024 12:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OhlRL33X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DqO/Qli5"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F262B47F5D;
-	Tue, 14 May 2024 12:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C806BB39;
+	Tue, 14 May 2024 12:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715690750; cv=none; b=Zw3njXyTG56/3USY2WaUqN7AFUXhY01M6Bcw46pfarIx78Fenl5EzmlhdXZSGcn5ZRLqy6HrSfZwOnZPTLWkzLDGqGC1XTDBvKZOzvH5+0vYlVl+kmLKjYwDnmt9ZNXQpeHQvMEXZGGCQSVgpR5urfh7chg9gBVDmFWAYSCyUnc=
+	t=1715690848; cv=none; b=bnqz3ApdgoiaOSEeNo2e5j0Wvy4oUz+adOpv8ktuXrLHlQMClZGYHDODoLRpLrI8o+ZFdN3TeOmlUFYCmOqPxQRhyZMbzifAgRjK8cHzj6QloWMNJI/ygqKC2NvDs7Gm5piQKr4PqKUommOeVxk/YyochKnPnCZP0aiLckdknCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715690750; c=relaxed/simple;
-	bh=wYe+IcdZ5sAPvomkLeOMajQNaay/H+daZsNnHYswfPw=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=B6QYAtYbvWnO7cL0p5vI4JmyEuaiG5ji7YR1R0aHwebD7DVdCg+yDzVjCinovR0ztAUEU0x+L4q8HpChbVUxH+plgPp6NDFKzt6z9HGulRxKBDd8fe5VGlEoZUZvJtFbZ7NXA8raU27WgbLNeJDXcsccGpvv/maS8bdN4jLfAHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OhlRL33X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07C93C2BD10;
-	Tue, 14 May 2024 12:45:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715690749;
-	bh=wYe+IcdZ5sAPvomkLeOMajQNaay/H+daZsNnHYswfPw=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=OhlRL33X47dxZOmzQKr1jHTao8pWiTIsxT6CuVBAIy41IePXpyOV35qN2xZOsKA6T
-	 OTQVcNnSKAZJBWQ+vJkm5g8qclRctWA4rY7KMVFDHx0u5GmUzVqkw5GbFhHcHRc6pq
-	 veh2dHUQ1XNK79xiWmv2KNjbkpmGUiDbEQn4ZTBi6kBE1zwRX0uPx466F1FKfY/AVF
-	 JzfDRnpf57wQ3ZJ/Y5cPhx+8DOQNP5C1hDuFAWn1nd+8VAAVen9PJv9GGU0lyncZIr
-	 TUN9zKrkxU5CapT5zPKVCm8fQl1xMiFWeRZbjivHQyqcS3zwhfi61/sBT6SEPTj98K
-	 TBgHlkOHv5fTQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715690848; c=relaxed/simple;
+	bh=tYB1OhNUKDw8GoD1uJ1/9nUQk/BqbBA+1FOGe3FpxuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rN43cMZui9C0YpMzQrKD4TN+28i5f4MJHLnncV7dx+veBGeTYToJ+B3TFcpjX2RIj3rGeYLaAjbQJDIILY+SegjAqAjsB5x1/aniv+fOq6lleWAkAbIG9iljgvCffO8t30HcxEbYZ/lrZ+vqE8pudNyBu7+No2dm8IIRAwo69bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DqO/Qli5; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ItJZyxADy9lJjdoZnGrHNtUW02zg45BQFvl/bMS5INQ=; b=DqO/Qli5wIMiSwBD8HsI0ETT1W
+	ypcul6vfp2S2yoMv2m8iNDdcu8WHzAKuo+bxKVdYYSWjmkWiUCsPolC2zcauD18tNz/1J44VwyYsU
+	2a3aXsuBnMPmWFJctcr5eLHVMeZ4UAROM6xhQqgQoq7zpIYPto9/HOLqrulbV1M6bvpA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1s6rYi-00FO5D-6S; Tue, 14 May 2024 14:47:08 +0200
+Date: Tue, 14 May 2024 14:47:08 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Thomas Gessler <thomas.gessler@brueckmann-gmbh.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	MD Danish Anwar <danishanwar@ti.com>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>
+Subject: Re: [PATCH 1/2] net: phy: dp83869: Add PHY ID for chip revision 3
+Message-ID: <b2db4e61-8bc1-4076-a2b9-7b6a028461aa@lunn.ch>
+References: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 1/6] wifi: wilc1000: set net device registration as last
- step during interface creation
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
-References: <20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: Ajay Singh <ajay.kathat@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, =?utf-8?q?Al?=
-	=?utf-8?q?exis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <171569074600.2017278.13914732662896657638.kvalo@kernel.org>
-Date: Tue, 14 May 2024 12:45:47 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240514122728.1490156-1-thomas.gessler@brueckmann-gmbh.de>
 
-Alexis Lothoré <alexis.lothore@bootlin.com> wrote:
+On Tue, May 14, 2024 at 02:27:27PM +0200, Thomas Gessler wrote:
+> The recent silicon revision 3 of the DP83869 has a different PHY ID
+> which has to be added to the driver in order for the PHY to be detected.
+> There appear to be no documented differences between the revisions,
+> although there are some discussions in the TI forum about different
+> behavior for some registers.
 
-> net device registration is currently done in wilc_netdev_ifc_init but
-> other initialization operations are still done after this registration.
-> Since net device is assumed to be usable right after registration, it
-> should be the very last step of initialization.
-> 
-> Move netdev registration at the very end of wilc_netdev_ifc_init to let
-> this function completely initialize netdevice before registering it.
-> 
-> Signed-off-by: Alexis Lothoré <alexis.lothore@bootlin.com>
+Do you have the datasheet? What does it say about the ID in registers
+2 and 3? Often the lower nibble is the revision. Meaning there can be
+16 revisions of a PHY.
 
-I see errors:
+>  static struct phy_driver dp83869_driver[] = {
+> -	DP83869_PHY_DRIVER(DP83869_PHY_ID, "TI DP83869"),
+> +	DP83869_PHY_DRIVER(DP83869REV1_PHY_ID, "TI DP83869 Rev. 1"),
+> +	DP83869_PHY_DRIVER(DP83869REV3_PHY_ID, "TI DP83869 Rev. 3"),
+>  	DP83869_PHY_DRIVER(DP83561_PHY_ID, "TI DP83561-SP"),
 
-ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
-ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-sdio.ko] undefined!
-ERROR: modpost: "wilc_load_mac_from_nv" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
-ERROR: modpost: "wilc_netdev_ifc_init" [drivers/net/wireless/microchip/wilc1000/wilc1000-spi.ko] undefined!
-make[2]: *** [scripts/Makefile.modpost:145: Module.symvers] Error 1
-make[1]: *** [/home/kvalo/projects/personal/wireless-drivers/src/wireless-next/Makefile:1871: modpost] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+If you look at DP83869_PHY_DRIVER() it uses:
 
-6 patches set to Changes Requested.
+#define DP83869_PHY_DRIVER(_id, _name)                          \
+{                                                               \
+        PHY_ID_MATCH_MODEL(_id),                                \
 
-13633102 [1/6] wifi: wilc1000: set net device registration as last step during interface creation
-13633103 [2/6] wifi: wilc1000: register net device only after bus being fully initialized
-13633104 [3/6] wifi: wilc1000: set wilc_set_mac_address parameter as const
-13633105 [4/6] wifi: wilc1000: add function to read mac address from eFuse
-13633106 [5/6] wifi: wilc1000: make sdio deinit function really deinit the sdio card
-13633107 [6/6] wifi: wilc1000: read MAC address from fuse at probe
+As the name suggests, it matches on the model. The revision is
+ignored. A mask is applied to ignore the lower nibble. So this change
+looks pointless.
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240417-mac_addr_at_probe-v1-1-67d6c9b3bc2b@bootlin.com/
+>  static struct mdio_device_id __maybe_unused dp83869_tbl[] = {
+> -	{ PHY_ID_MATCH_MODEL(DP83869_PHY_ID) },
+> +	{ PHY_ID_MATCH_MODEL(DP83869REV1_PHY_ID) },
+> +	{ PHY_ID_MATCH_MODEL(DP83869REV3_PHY_ID) },
+>  	{ PHY_ID_MATCH_MODEL(DP83561_PHY_ID) },
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+And this has the same issue. If you want the match to include the
+revision, you need to use PHY_ID_MATCH_EXACT(). If the different
+revisions are supposed to be compatible, a single PHY_ID_MATCH_MODEL()
+is sufficient.
 
+    Andrew
+
+---
+pw-bot: cr
 
