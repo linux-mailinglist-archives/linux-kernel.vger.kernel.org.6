@@ -1,367 +1,252 @@
-Return-Path: <linux-kernel+bounces-178810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A12F78C57F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:31:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5DF8C5801
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 16:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 142DDB222B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:31:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B02E0B21D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 14:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D41158DBD;
-	Tue, 14 May 2024 14:31:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D113717B4F4;
+	Tue, 14 May 2024 14:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NHYfgl6F"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mzL707PF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kjYmueXO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="mzL707PF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kjYmueXO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB63C15AAD1;
-	Tue, 14 May 2024 14:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15FCD144D01;
+	Tue, 14 May 2024 14:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715697101; cv=none; b=scv+EEEGBXH1uh6S23NJmT6grhkq7NIQMCeSzwrquAMWigjD6lIxnvNH/7HD+WQw2rdNghuJ4CJOaVYnwkqgdSdwr8tzlZFLZBJrMriH2W+v+eGo96ZltGHN8VjIFXJibcQ6RE3GJJg/nY802zYOpcB4GRdRFXvPtMejFFRf+k4=
+	t=1715697204; cv=none; b=nm23dxwy5kTCXZk98jfahdyHHITrG/qcLbBdjAyVNOp+bIljdxnidjML2D0CWHeuKN8AVcwWy9t3kx5+F0HvHbssrU22lOz5pOneI63JBEUizMRcHwwdy/9v7F2Xeb24uHrCXwQlkuCH2GGOAgnNNl1+rydz7eMwXhRDr+sbmh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715697101; c=relaxed/simple;
-	bh=jlF/bIe7CN9snURygo8IMALIeLH8XvWGlimge858/UA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cI3R5tx3X+/3EE8CgesGpABox0wF9tmDd69PnrhdLO/v34lAYCyrE+IhdEqjMRDy7svMsncaYdnXrvYAUdIwwg28eK3JQ6vmjld0L0BbEGa7d6reSt/4fIm8b925jxh4maR0xVkjPi+nO1AXAsAAyBJ6IclJMjvRE6karDNSPz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NHYfgl6F; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e453dc8a31so5328631fa.2;
-        Tue, 14 May 2024 07:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715697098; x=1716301898; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lc4MFdELPshu2lsxF3Gx8/NVuPOETuqX5KX3dd0dWsY=;
-        b=NHYfgl6FAwtZ04UY1DYTtxQWHuBQcJjwudfNpfiDt9Dswp43C5xnPcSjpMO672HJHc
-         PFnvqztvwoP6/KdxB/n/l114etW7yaUS0+kc8bGUbFJMOk+CsjbZcTyMB40MoaScvCUd
-         ko1onpZ0pSDU12mvIbFHUb6FT65SZJSBqtuY/nJXw0HUytzfDDPOipOvNy/wXu0eyYfE
-         qhyujrf/jyBboKM4MR3Y9lXrxEQ1bh61fdoU6X0uSVuO7QiT3PoeGeOCM77+XHhoy6dI
-         xn/voWo5X4HvpSf77abEImCafwrdRvBLyQKoAtgUBUgih8BWbNEYISPCqop4yuDC1R43
-         IM8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715697098; x=1716301898;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lc4MFdELPshu2lsxF3Gx8/NVuPOETuqX5KX3dd0dWsY=;
-        b=ga1QHxxmK0m6MKM3nF+Zns0kwgp2mGC0Py8loz+7wNirvq3VVtLf4Ydk1Pbq7BnMuQ
-         STpA3afDKXfdhoPA7azeQkY3ggzoqgNu8MAYH0ajtTEoebQZa1zNYeBmj/qttdnLHbyA
-         P5As80nXez1vaWQqwD6RmWLVoQvQO4C2w7A70DBW5X8aDjMC0w61BmxDJ4MZBiSqDIwV
-         NtvJJCt6mVl5PaG5HjHXhYqx1NCnfgEEECN7HOKwo5mdAsFoydTeHMs24nMgnEIHrxY6
-         MdzLVxVs/4gtExV2lMya2UMwFLzDg88vPrtBiFRnaT6ulHv71qekIKZ8gZzTpsZZgJzp
-         gH1w==
-X-Forwarded-Encrypted: i=1; AJvYcCV6HmR1dJ/vBT6RgVBr2CRvynjLyya7JGtDpeNPPrZQ51BOUxE6gi2lnmsGX5/t9x6sMoJJDcTSpAB3nzu9uJ4OYdyow5aHZs10287qFB5QEouWl+8BtjNjLehdzXMRftx9SbfSQPjV3qY+93dr
-X-Gm-Message-State: AOJu0Yx/gylRNMDonk4Uu2GuiIG7jlegx2JeerzQ9GQgDsHW48jgABVU
-	DeNHuq7FDoCSMRtu9hKW/iGrgMV/MifYQWUFQWsvU1PeIzngPxPf
-X-Google-Smtp-Source: AGHT+IEJ83tg3YBvUTMgcRym9h6R+AUbvxJrTLbuDHPEzWBByQV1AUWM8rlGXQ6QAoyxntDq3wmMNQ==
-X-Received: by 2002:a05:651c:2210:b0:2e4:c5fb:f3ed with SMTP id 38308e7fff4ca-2e5205e8592mr89583301fa.4.1715697097411;
-        Tue, 14 May 2024 07:31:37 -0700 (PDT)
-Received: from [172.16.102.219] ([167.98.27.226])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41ff5e3dcfbsm157880655e9.22.2024.05.14.07.31.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 07:31:36 -0700 (PDT)
-Message-ID: <44b5b31f-ac98-4c5c-8bc4-ebff9579b4d7@gmail.com>
-Date: Tue, 14 May 2024 15:31:33 +0100
+	s=arc-20240116; t=1715697204; c=relaxed/simple;
+	bh=3vP2d1BhUB6PM8bFMgiIuGPsXqeQHZ/ZrrORTNgR7nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/n/pfiojaH9cRn5g2CRyy1eABClPr+yU4C3kT6D90oJsEBXZc503BA6nxe4TGFiqAdBrEeUoSFmQEHHy5NtGIrMmMLRcs5jRImWHsHxOHsCaCHxViPHg8bdAk0YdBqyiU3b6oJ/THnOh0xFteSzmoES17jcOC0KZ/Ibc0/JWlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mzL707PF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kjYmueXO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=mzL707PF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kjYmueXO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 50BB260CF4;
+	Tue, 14 May 2024 14:33:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715697201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
+	b=mzL707PFlrYZYnKLFGKxpAKro8LpD3geI6XczFCtUyPOgBKl/iQJovqsjRH6r+4xRFN41t
+	6bg5dwiJqHCSbqNPhsu+DiiEtjHTas38WMhbcV6H7EinFNI5BusvnizDAklIrlFtF+5HPh
+	qeq7nTXkCmFY9sU5GXPYiBaEgQbNTsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715697201;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
+	b=kjYmueXOJbxv7qD9Fkl8UmX2GsjEwxZ3YOwm6VuKYmsn3wCaEO9hP0Gv2DQGFjNqQMNTe3
+	X/4nb7NhXWo+d0Cw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=mzL707PF;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=kjYmueXO
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1715697201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
+	b=mzL707PFlrYZYnKLFGKxpAKro8LpD3geI6XczFCtUyPOgBKl/iQJovqsjRH6r+4xRFN41t
+	6bg5dwiJqHCSbqNPhsu+DiiEtjHTas38WMhbcV6H7EinFNI5BusvnizDAklIrlFtF+5HPh
+	qeq7nTXkCmFY9sU5GXPYiBaEgQbNTsE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1715697201;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XaWpSIyJedoUka8sdWkGBzyYmR9xVJ8HBD8/Du0duh0=;
+	b=kjYmueXOJbxv7qD9Fkl8UmX2GsjEwxZ3YOwm6VuKYmsn3wCaEO9hP0Gv2DQGFjNqQMNTe3
+	X/4nb7NhXWo+d0Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB99A1372E;
+	Tue, 14 May 2024 14:33:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LSt0OTB2Q2Y8PgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 14 May 2024 14:33:20 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0DB0EA08B5; Tue, 14 May 2024 16:33:15 +0200 (CEST)
+Date: Tue, 14 May 2024 16:33:15 +0200
+From: Jan Kara <jack@suse.cz>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v2] fs: remove accidental overflow during wraparound check
+Message-ID: <20240514143315.wxs3hnetssth2xt5@quack3>
+References: <20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] kunit: Cover 'assert.c' with tests
-To: Rae Moar <rmoar@google.com>
-Cc: brendan.higgins@linux.dev, davidgow@google.com,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- kunit-dev@googlegroups.com, skhan@linuxfoundation.org
-References: <20240509090546.944808-1-ivan.orlov0322@gmail.com>
- <CA+GJov6hq0WsjqX1LrC2m7YS1nD37+zGmO+i1R1OajwYQZXY8w@mail.gmail.com>
-Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <CA+GJov6hq0WsjqX1LrC2m7YS1nD37+zGmO+i1R1OajwYQZXY8w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513-b4-sio-vfs_fallocate-v2-1-db415872fb16@google.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 50BB260CF4
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
 
-On 5/14/24 01:17, Rae Moar wrote:
-> On Thu, May 9, 2024 at 5:05 AM Ivan Orlov <ivan.orlov0322@gmail.com> wrote:
->>
->> There are multiple assertion formatting functions in the `assert.c`
->> file, which are not covered with tests yet. Implement the KUnit test
->> for these functions.
->>
->> The test consists of 11 test cases for the following functions:
->>
->> 1) 'is_literal'
->> 2) 'is_str_literal'
->> 3) 'kunit_assert_prologue', test case for multiple assert types
->> 4) 'kunit_assert_print_msg'
->> 5) 'kunit_unary_assert_format'
->> 6) 'kunit_ptr_not_err_assert_format'
->> 7) 'kunit_binary_assert_format'
->> 8) 'kunit_binary_ptr_assert_format'
->> 9) 'kunit_binary_str_assert_format'
->> 10) 'kunit_assert_hexdump'
->> 11) 'kunit_mem_assert_format'
->>
->> The test aims at maximizing the branch coverage for the assertion
->> formatting functions.
->>
->> As you can see, it covers some of the static helper functions as
->> well, so mark the static functions in `assert.c` as 'VISIBLE_IF_KUNIT'
->> and conditionally export them with EXPORT_SYMBOL_IF_KUNIT. Add the
->> corresponding definitions to `assert.h`.
->>
->> Build the assert test when CONFIG_KUNIT_TEST is enabled, similar to
->> how it is done for the string stream test.
+On Mon 13-05-24 17:50:30, Justin Stitt wrote:
+> Running syzkaller with the newly enabled signed integer overflow
+> sanitizer produces this report:
 > 
-> Hello!
+> [  195.401651] ------------[ cut here ]------------
+> [  195.404808] UBSAN: signed-integer-overflow in ../fs/open.c:321:15
+> [  195.408739] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long')
+> [  195.414683] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+> [  195.420138] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [  195.425804] Call Trace:
+> [  195.427360]  <TASK>
+> [  195.428791]  dump_stack_lvl+0x93/0xd0
+> [  195.431150]  handle_overflow+0x171/0x1b0
+> [  195.433640]  vfs_fallocate+0x459/0x4f0
+> ...
+> [  195.490053] ------------[ cut here ]------------
+> [  195.493146] UBSAN: signed-integer-overflow in ../fs/open.c:321:61
+> [  195.497030] 9223372036854775807 + 562984447377399 cannot be represented in type 'loff_t' (aka 'long long)
+> [  195.502940] CPU: 1 PID: 703 Comm: syz-executor.0 Not tainted 6.8.0-rc2-00039-g14de58dbe653-dirty #11
+> [  195.508395] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [  195.514075] Call Trace:
+> [  195.515636]  <TASK>
+> [  195.517000]  dump_stack_lvl+0x93/0xd0
+> [  195.519255]  handle_overflow+0x171/0x1b0
+> [  195.521677]  vfs_fallocate+0x4cb/0x4f0
+> [  195.524033]  __x64_sys_fallocate+0xb2/0xf0
 > 
-> This looks great to me! Thanks for all your work on this! There is
-> just one comment I have below. Once that is fixed up, I am happy to
-> add a reviewed-by.
+> Historically, the signed integer overflow sanitizer did not work in the
+> kernel due to its interaction with `-fwrapv` but this has since been
+> changed [1] in the newest version of Clang. It was re-enabled in the
+> kernel with Commit 557f8c582a9ba8ab ("ubsan: Reintroduce signed overflow
+> sanitizer").
 > 
-> Thanks!
-> -Rae
+> Let's use the check_add_overflow helper to first verify the addition
+> stays within the bounds of its type (long long); then we can use that
+> sum for the following check.
 > 
->>
->> Signed-off-by: Ivan Orlov <ivan.orlov0322@gmail.com>
->> ---
->> V1 -> V2:
->> - Check the output from the string stream for containing the key parts
->> instead of comparing the results with expected strings char by char, as
->> it was suggested by Rae Moar <rmoar@google.com>. Define two macros to
->> make it possible (ASSERT_TEST_EXPECT_CONTAIN and
->> ASSERT_TEST_EXPECT_NCONTAIN).
->> - Mark the static functions in `assert.c` as VISIBLE_IF_KUNIT and export
->> them conditionally if kunit is enabled instead of including the
->> `assert_test.c` file in the end of `assert.c`. This way we will decouple
->> the test from the implementation (SUT).
->> - Update the kunit_assert_hexdump test: now it checks for presense of
->> the brackets '<>' around the non-matching bytes, instead of comparing
->> the kunit_assert_hexdump output char by char.
->> V2 -> V3:
->> - Make test case array and test suite definitions static
->> - Change the condition in `assert.h`: we should declare VISIBLE_IF_KUNIT
->> functions in the header file when CONFIG_KUNIT is enabled, not
->> CONFIG_KUNIT_TEST. Otherwise, if CONFIG_KUNIT_TEST is disabled,
->> VISIBLE_IF_KUNIT functions in the `assert.c` are not static, and
->> prototypes for them can't be found.
->> - Add MODULE_LICENSE and MODULE_DESCRIPTION macros
->>
->>   include/kunit/assert.h  |  11 ++
->>   lib/kunit/Makefile      |   1 +
->>   lib/kunit/assert.c      |  24 ++-
->>   lib/kunit/assert_test.c | 391 ++++++++++++++++++++++++++++++++++++++++
->>   4 files changed, 419 insertions(+), 8 deletions(-)
->>   create mode 100644 lib/kunit/assert_test.c
->>
->> diff --git a/include/kunit/assert.h b/include/kunit/assert.h
->> index 24c2b9fa61e8..7e7490a74b13 100644
->> --- a/include/kunit/assert.h
->> +++ b/include/kunit/assert.h
->> @@ -218,4 +218,15 @@ void kunit_mem_assert_format(const struct kunit_assert *assert,
->>                               const struct va_format *message,
->>                               struct string_stream *stream);
->>
->> +#if IS_ENABLED(CONFIG_KUNIT)
->> +void kunit_assert_print_msg(const struct va_format *message,
->> +                           struct string_stream *stream);
->> +bool is_literal(const char *text, long long value);
->> +bool is_str_literal(const char *text, const char *value);
->> +void kunit_assert_hexdump(struct string_stream *stream,
->> +                         const void *buf,
->> +                         const void *compared_buf,
->> +                         const size_t len);
->> +#endif
->> +
->>   #endif /*  _KUNIT_ASSERT_H */
->> diff --git a/lib/kunit/Makefile b/lib/kunit/Makefile
->> index 309659a32a78..be7c9903936f 100644
->> --- a/lib/kunit/Makefile
->> +++ b/lib/kunit/Makefile
->> @@ -18,6 +18,7 @@ endif
->>   obj-y +=                               hooks.o
->>
->>   obj-$(CONFIG_KUNIT_TEST) +=            kunit-test.o
->> +obj-$(CONFIG_KUNIT_TEST) +=            assert_test.o
->>
->>   # string-stream-test compiles built-in only.
->>   ifeq ($(CONFIG_KUNIT_TEST),y)
->> diff --git a/lib/kunit/assert.c b/lib/kunit/assert.c
->> index dd1d633d0fe2..382eb409d34b 100644
->> --- a/lib/kunit/assert.c
->> +++ b/lib/kunit/assert.c
->> @@ -7,6 +7,7 @@
->>    */
->>   #include <kunit/assert.h>
->>   #include <kunit/test.h>
->> +#include <kunit/visibility.h>
->>
->>   #include "string-stream.h"
->>
->> @@ -30,12 +31,14 @@ void kunit_assert_prologue(const struct kunit_loc *loc,
->>   }
->>   EXPORT_SYMBOL_GPL(kunit_assert_prologue);
->>
->> -static void kunit_assert_print_msg(const struct va_format *message,
->> -                                  struct string_stream *stream)
->> +VISIBLE_IF_KUNIT
->> +void kunit_assert_print_msg(const struct va_format *message,
->> +                           struct string_stream *stream)
->>   {
->>          if (message->fmt)
->>                  string_stream_add(stream, "\n%pV", message);
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_print_msg);
->>
->>   void kunit_fail_assert_format(const struct kunit_assert *assert,
->>                                const struct va_format *message,
->> @@ -89,7 +92,7 @@ void kunit_ptr_not_err_assert_format(const struct kunit_assert *assert,
->>   EXPORT_SYMBOL_GPL(kunit_ptr_not_err_assert_format);
->>
->>   /* Checks if `text` is a literal representing `value`, e.g. "5" and 5 */
->> -static bool is_literal(const char *text, long long value)
->> +VISIBLE_IF_KUNIT bool is_literal(const char *text, long long value)
->>   {
->>          char *buffer;
->>          int len;
->> @@ -110,6 +113,7 @@ static bool is_literal(const char *text, long long value)
->>
->>          return ret;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(is_literal);
->>
->>   void kunit_binary_assert_format(const struct kunit_assert *assert,
->>                                  const struct va_format *message,
->> @@ -166,7 +170,7 @@ EXPORT_SYMBOL_GPL(kunit_binary_ptr_assert_format);
->>   /* Checks if KUNIT_EXPECT_STREQ() args were string literals.
->>    * Note: `text` will have ""s where as `value` will not.
->>    */
->> -static bool is_str_literal(const char *text, const char *value)
->> +VISIBLE_IF_KUNIT bool is_str_literal(const char *text, const char *value)
->>   {
->>          int len;
->>
->> @@ -178,6 +182,7 @@ static bool is_str_literal(const char *text, const char *value)
->>
->>          return strncmp(text + 1, value, len - 2) == 0;
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(is_str_literal);
->>
->>   void kunit_binary_str_assert_format(const struct kunit_assert *assert,
->>                                      const struct va_format *message,
->> @@ -208,10 +213,11 @@ EXPORT_SYMBOL_GPL(kunit_binary_str_assert_format);
->>   /* Adds a hexdump of a buffer to a string_stream comparing it with
->>    * a second buffer. The different bytes are marked with <>.
->>    */
->> -static void kunit_assert_hexdump(struct string_stream *stream,
->> -                                const void *buf,
->> -                                const void *compared_buf,
->> -                                const size_t len)
->> +VISIBLE_IF_KUNIT
->> +void kunit_assert_hexdump(struct string_stream *stream,
->> +                         const void *buf,
->> +                         const void *compared_buf,
->> +                         const size_t len)
->>   {
->>          size_t i;
->>          const u8 *buf1 = buf;
->> @@ -229,6 +235,7 @@ static void kunit_assert_hexdump(struct string_stream *stream,
->>                          string_stream_add(stream, " %02x ", buf1[i]);
->>          }
->>   }
->> +EXPORT_SYMBOL_IF_KUNIT(kunit_assert_hexdump);
->>
->>   void kunit_mem_assert_format(const struct kunit_assert *assert,
->>                               const struct va_format *message,
->> @@ -269,4 +276,5 @@ void kunit_mem_assert_format(const struct kunit_assert *assert,
->>                  kunit_assert_print_msg(message, stream);
->>          }
->>   }
->> +
->>   EXPORT_SYMBOL_GPL(kunit_mem_assert_format);
->> diff --git a/lib/kunit/assert_test.c b/lib/kunit/assert_test.c
->> new file mode 100644
->> index 000000000000..1347a964204b
->> --- /dev/null
->> +++ b/lib/kunit/assert_test.c
->> @@ -0,0 +1,391 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * KUnit test for the assertion formatting functions.
->> + * Author: Ivan Orlov <ivan.orlov0322@gmail.com>
->> + */
->> +#include <kunit/test.h>
->> +#include "string-stream.h"
->> +
->> +#define TEST_PTR_EXPECTED_BUF_SIZE 32
->> +#define HEXDUMP_TEST_BUF_LEN 5
->> +#define ASSERT_TEST_EXPECT_CONTAIN(test, str, substr) KUNIT_EXPECT_TRUE(test, strstr(str, substr))
->> +#define ASSERT_TEST_EXPECT_NCONTAIN(test, str, substr) KUNIT_EXPECT_FALSE(test, strstr(str, substr))
->> +
->> +static void kunit_test_is_literal(struct kunit *test)
->> +{
->> +       KUNIT_EXPECT_TRUE(test, is_literal("5", 5));
->> +       KUNIT_EXPECT_TRUE(test, is_literal("0", 0));
->> +       KUNIT_EXPECT_TRUE(test, is_literal("1234567890", 1234567890));
->> +       KUNIT_EXPECT_TRUE(test, is_literal("-1234567890", -1234567890));
->> +       KUNIT_EXPECT_FALSE(test, is_literal("05", 5));
->> +       KUNIT_EXPECT_FALSE(test, is_literal("", 0));
->> +       KUNIT_EXPECT_FALSE(test, is_literal("-0", 0));
->> +       KUNIT_EXPECT_FALSE(test, is_literal("12#45", 1245));
->> +}
->> +
->> +static void kunit_test_is_str_literal(struct kunit *test)
->> +{
->> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"Hello, World!\"", "Hello, World!"));
->> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"", ""));
->> +       KUNIT_EXPECT_TRUE(test, is_str_literal("\"\"\"", "\""));
->> +       KUNIT_EXPECT_FALSE(test, is_str_literal("", ""));
->> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"", "\""));
->> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba", "Abacaba"));
->> +       KUNIT_EXPECT_FALSE(test, is_str_literal("Abacaba\"", "Abacaba"));
->> +       KUNIT_EXPECT_FALSE(test, is_str_literal("\"Abacaba\"", "\"Abacaba\""));
->> +}
->> +
->> +KUNIT_DEFINE_ACTION_WRAPPER(kfree_wrapper, kfree, const void *);
->> +
->> +/* this function is used to get a "char *" string from the string stream and defer its cleanup  */
->> +static char *get_str_from_stream(struct kunit *test, struct string_stream *stream)
->> +{
->> +       char *str = string_stream_get_string(stream);
->> +
-> 
-> When trying to make the kernel with this test loaded in, I am getting
-> an error that string_stream_get_string, string_stream_clear, and
-> kunit_alloc_string_stream are undefined.
-> 
-> So either these three methods will have to be exported using
-> EXPORT_SYMBOL_KUNIT or this test cannot be loaded and run as a module.
-> 
-> But once this is fixed up this should be good to go.
+> Link: https://github.com/llvm/llvm-project/pull/82432 [1]
+> Closes: https://github.com/KSPP/linux/issues/356
+> Cc: linux-hardening@vger.kernel.org
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
 
-Hi Rae,
+Looks good. Feel free to add:
 
-Thank you so much for the review.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-At the moment, I believe the best approach would be to make this test 
-depend on CONFIG_KUNIT_TEST=y (as it is done for string-stream-test).
+								Honza
 
-However, I assume that every (standalone) test should be able to run as 
-a module, and I'd like to add EXPORT_SYMBOL_IF_KUNIT to all of the 
-non-static string-stream functions in a separate patch series. It will 
-require updating string-stream-test.c as well (adding MODULE_IMPORT_NS). 
-What do you think?
-
-Thank you once again,
+> ---
+> Changes in v2:
+> - drop the sum < 0 check (thanks Jan)
+> - carry along Kees' RB tag
+> - Link to v1: https://lore.kernel.org/r/20240507-b4-sio-vfs_fallocate-v1-1-322f84b97ad5@google.com
+> ---
+> Here's the syzkaller reproducer:
+> r0 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file1\x00', 0x42, 0x0)
+> fallocate(r0, 0x10, 0x7fffffffffffffff, 0x2000807fffff7)
+> 
+> ... which was used against Kees' tree here (v6.8rc2):
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=wip/v6.9-rc2/unsigned-overflow-sanitizer
+> 
+> ... with this config:
+> https://gist.github.com/JustinStitt/824976568b0f228ccbcbe49f3dee9bf4
+> ---
+>  fs/open.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/open.c b/fs/open.c
+> index ee8460c83c77..23849d487479 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -247,6 +247,7 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  {
+>  	struct inode *inode = file_inode(file);
+>  	long ret;
+> +	loff_t sum;
+>  
+>  	if (offset < 0 || len <= 0)
+>  		return -EINVAL;
+> @@ -319,8 +320,11 @@ int vfs_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  	if (!S_ISREG(inode->i_mode) && !S_ISBLK(inode->i_mode))
+>  		return -ENODEV;
+>  
+> -	/* Check for wrap through zero too */
+> -	if (((offset + len) > inode->i_sb->s_maxbytes) || ((offset + len) < 0))
+> +	/* Check for wraparound */
+> +	if (check_add_overflow(offset, len, &sum))
+> +		return -EFBIG;
+> +
+> +	if (sum > inode->i_sb->s_maxbytes)
+>  		return -EFBIG;
+>  
+>  	if (!file->f_op->fallocate)
+> 
+> ---
+> base-commit: 0106679839f7c69632b3b9833c3268c316c0a9fc
+> change-id: 20240507-b4-sio-vfs_fallocate-7b5223ba3a81
+> 
+> Best regards,
+> --
+> Justin Stitt <justinstitt@google.com>
+> 
 -- 
-Kind regards,
-Ivan Orlov
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
