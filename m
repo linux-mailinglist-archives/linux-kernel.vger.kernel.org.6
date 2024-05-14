@@ -1,135 +1,123 @@
-Return-Path: <linux-kernel+bounces-179252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160308C5E00
-	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:04:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9354B8C5E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 15 May 2024 01:05:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC42281D60
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:04:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B6D1C20BE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A74182C9C;
-	Tue, 14 May 2024 23:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9C1182C97;
+	Tue, 14 May 2024 23:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VfRCS1xE";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9yUGQPaf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NsyRQaSi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C12181D1B;
-	Tue, 14 May 2024 23:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A146181D1B;
+	Tue, 14 May 2024 23:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715727885; cv=none; b=MdPWXNRNxWRVXBm9LUL7ehRcsZz22Qxoygg41byuukxEkJy5J7FOotUY1+u8pRyWFdtYCEBE4brCKn6oQkxch+4+BBBvNv25S9ZP7G2w8GCBqGhNWY8no49xpoKWHoF6Fv2ZLKj/U56reN0uFZ5dcpWnyNarXixF7IN9h6vXH8g=
+	t=1715727926; cv=none; b=PJ/h/+TezuiUtrA2R89ZA9eEOxHWe5ulKkruyxlKMl80Tn//oYI8+8DnkWcM5xuhzpDuSO7AKqH+Xz0Ghj8HEafLYynN0RJkoCyEf83DRHlU0QlQtTZtdL4FKCrrhFUWifk06yCnQyTlCIHCxha3VHbdwJacu6Xp5ZlokVKo+FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715727885; c=relaxed/simple;
-	bh=gCqjA9RatKnkSLjN8bz5VWEWDMhZs/6qSocvM+g3FVw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gN8IJk1y3FKZhYZ9d2WLhXETmQGnoIJYupby92sVg8mnPalh9sb3IuyFoj9SsiaJF/ZKI+zRCj0HHJUdn5XMYFjg8oEvFtD3SRyt8u4U5XJIT+ASKCG7kRdiLeMOS0QammJBzF01jvyfap9Epn4D9YW7gd86DP5Qr47a48MQBw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VfRCS1xE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9yUGQPaf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1715727881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFDv0vTXoc2NMBBi7ioc7QN0hBYwdSMxX3SrQtikH04=;
-	b=VfRCS1xEuVn0TC+V8CPKMMpTg3JuFGmi1jBVjByv6MhGaNzBh4z6C7kA+3FARjJ5etqwvK
-	fQFirRS8V04Wmofl8iONlOluxowpu2mA9JNjAhhaBJFL6p4lhi/vcHRfT/XaaZj3itFEA4
-	z+kNwnn7Nz5Y9g3APngnjKsXEib0+hJbKOr3iD2sXaVoWfPuO8a2+6wcafJvW+qe/B+1tL
-	o2Havzb+6ZWtr5Z96r7wLQOZNJkNj8/PCkKccvigrqIBHljgUsqLIM8PduSQVSkV4bi+1l
-	Uwig64GlLyIGqppecTYAtaiwl1kJoTmL38MAcZ55SieyQknnd1VcNYvTR8ooGQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1715727881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFDv0vTXoc2NMBBi7ioc7QN0hBYwdSMxX3SrQtikH04=;
-	b=9yUGQPaf3z81Jk03mDqBPEV01Un1HjiWGSXjawU0tNT7Ltp0VCHiBBhc/2hgLDnJ7ogT/F
-	Rnt3aFPXMmAugjAQ==
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, Jiwei Sun
- <sunjw10@lenovo.com>, Adrian Huang <ahuang12@lenovo.com>
-Subject: Re: [PATCH 2/2] genirq/proc: Refine percpu kstat_irqs access logic
-In-Reply-To: <20240513120548.14046-3-ahuang12@lenovo.com>
-References: <20240513120548.14046-1-ahuang12@lenovo.com>
- <20240513120548.14046-3-ahuang12@lenovo.com>
-Date: Wed, 15 May 2024 01:04:41 +0200
-Message-ID: <87h6f0knau.ffs@tglx>
+	s=arc-20240116; t=1715727926; c=relaxed/simple;
+	bh=SbLU81ORL7YzL3SUprjij+0aQnGZI8VWXXT68rQXY24=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C+HelsmES35K+GOTnI13RJqI0lpP6cNJ5Ks53qpfcrHhHAutWcpbEEuJwi146YYnYFy/JvrOUIOtetzicjuha69kqJ2fzPXk4fvILjXsZ/2dClboJ0JfeKM0IhxJc0hoWnhoWArpnrlRxZ4AUJADnv9WB/zCSYKeOsZXSXpyVgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NsyRQaSi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1715727922;
+	bh=VpaTSHDEiNrRYywgsRc6OEQ9NT0lMPqheUmE7sxP/5Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NsyRQaSiqbFavwDRHp6BL7PoYiNzsBc/e7jeYxg6K4MwNt17Xo065/Clk2BSczuHA
+	 WgwpTg9qVgR697AuD+0ktbCbfIkJinKe8hWA6XpVXnbyJSv9GcjOlZhhH29jhkltZc
+	 zXigvIU+EZf1ItOMoIatKlJBd+KECBsLXJcY1MRc20EscchIYrLuLVSWKEJ99gBQsC
+	 wmL1VYYrl+l7pbgCmMUvGMThIZWNTnGwR82mtojAa0XPPpvJtfucAFi4VFiyAY9O3P
+	 E0VWvB+aPtM27/AwRv1Pi4RDhTK5P2pI8GqnP/RHE06Db+L0/gp7M1wMz8OAcGjqMd
+	 C7Vk+Hey4Lkmw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4VfBlj2LgGz4wc1;
+	Wed, 15 May 2024 09:05:21 +1000 (AEST)
+Date: Wed, 15 May 2024 09:05:20 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Nathan Chancellor <nathan@kernel.org>, Ryan
+ Roberts <ryan.roberts@arm.com>, Shuah Khan <skhan@linuxfoundation.org>
+Subject: Re: linux-next: manual merge of the kselftest tree with the mm tree
+Message-ID: <20240515090520.64d10d05@canb.auug.org.au>
+In-Reply-To: <20240426154414.4d408fd7@canb.auug.org.au>
+References: <20240426154414.4d408fd7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/7niloPDGA7G/gbEQ2VHM=ef";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, May 13 2024 at 20:05, Adrian Huang wrote:
-> @@ -461,7 +461,7 @@ int show_interrupts(struct seq_file *p, void *v)
->  {
->  	static int prec;
->  
-> -	unsigned long flags, any_count = 0;
-> +	unsigned long flags, print_irq = 1;
+--Sig_/7niloPDGA7G/gbEQ2VHM=ef
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What's wrong with making print_irq boolean?
+Hi all,
 
->  	int i = *(loff_t *) v, j;
->  	struct irqaction *action;
->  	struct irq_desc *desc;
-> @@ -488,18 +488,28 @@ int show_interrupts(struct seq_file *p, void *v)
->  	if (!desc || irq_settings_is_hidden(desc))
->  		goto outsparse;
->  
-> -	if (desc->kstat_irqs) {
-> -		for_each_online_cpu(j)
-> -			any_count |= data_race(*per_cpu_ptr(desc->kstat_irqs, j));
-> +	if ((!desc->action || irq_desc_is_chained(desc)) && desc->kstat_irqs) {
+On Fri, 26 Apr 2024 15:44:14 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the kselftest tree got a conflict in:
+>=20
+>   tools/testing/selftests/mm/soft-dirty.c
+>=20
+> between commit:
+>=20
+>   258ff696db6b ("selftests/mm: soft-dirty should fail if a testcase fails=
+")
+>=20
+> from the mm-unstable branch of the mm tree and commit:
+>=20
+>   e6162a96c81d ("selftests/mm: ksft_exit functions do not return")
+>=20
+> from the kselftest tree.
+>=20
+> I fixed it up (I used the former) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-The condition is wrong. Look how the old code evaluated any_count.
+This is now a conflict between the mm-stable tree and Linus' tree.
 
-> +		print_irq = 0;
-> +		for_each_online_cpu(j) {
-> +			if (data_race(*per_cpu_ptr(desc->kstat_irqs, j))) {
-> +				print_irq = 1;
-> +				break;
-> +			}
-> +		}
+--=20
+Cheers,
+Stephen Rothwell
 
-Aside of that this code is just fundamentally wrong in several aspects:
+--Sig_/7niloPDGA7G/gbEQ2VHM=ef
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-  1) Interrupts which have no action are completely uninteresting as
-     there is no real information attached, i.e. it shows that there
-     were interrupts on some CPUs, but there is zero information from
-     which device they originated.
+-----BEGIN PGP SIGNATURE-----
 
-     Especially with sparse interrupts enabled they are usually gone
-     shortly after the last action was removed.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmZD7jAACgkQAVBC80lX
+0GyiAgf+OCW31GgkHwyWhLANshWwa6jnhh80C9HWB5v+2bXxyXfUbgPEf7ksaWE5
+aqBGFMGttHNiDPlRczBwBoMpznFLYerxNSf1fTP/IZEeJ+2ujyVXKnh40wwPd0QV
+hkO+dfyrLL7+ruafeo9juv+xT41nGyx1FXpxLCm02rn4aRBYiqpeW9GQhOjpuEoN
+vfX4G2L0Sop8o9sjax/hqagNPDP/1W4yKQZwph/UcU55t6Uh+qQpzuh22WX7Acwh
+sDv7i09FodUwFVdaHZ4wHLKASyUh0pS3V9UIgHMzJrQZY5uuoChu+X26cstj32Xp
+qKTd9AAVG2dZnlNTQJpfe81yROGzPA==
+=Ijr+
+-----END PGP SIGNATURE-----
 
-  2) Chained interrupts do not have a count at all as they completely
-     evade the core kernel entry points.
-
-So all of this can be avoided and the whole nonsense can be reduced to:
-
-	if (!desc->action || irq_desc_is_chained(desc) || !desc->kstat_irqs)
-        	goto outsparse;
-
-which in turn allows to convert this:
-
-> -	for_each_online_cpu(j)
-> -		seq_printf(p, "%10u ", desc->kstat_irqs ?
-> -					*per_cpu_ptr(desc->kstat_irqs, j) : 0);
-
-into an unconditional:
-
-	for_each_online_cpu(j)
-		seq_printf(p, "%10u ", *per_cpu_ptr(desc->kstat_irqs, j));
-
-Thanks,
-
-        tglx
+--Sig_/7niloPDGA7G/gbEQ2VHM=ef--
 
