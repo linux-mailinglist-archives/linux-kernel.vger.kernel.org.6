@@ -1,176 +1,166 @@
-Return-Path: <linux-kernel+bounces-178363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B14F8C4C96
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6390A8C4C9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 09:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D630328260F
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5EE2821AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111FD11711;
-	Tue, 14 May 2024 07:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A685B10A1C;
+	Tue, 14 May 2024 07:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="evv0SBhD"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C2FTA2Ds"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CABF9D4;
-	Tue, 14 May 2024 07:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1035F9F5;
+	Tue, 14 May 2024 07:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715670481; cv=none; b=CZE19RMadOPp0dgCc7NWV9YCIqWjMNABNkBO72WvgbATa1YY4H9enAMYG570IBeIHw2uvRo+pOevQl8+/2wrvdGbvCrlO4bi2zzooUcT154pszgMY8bkVcyR/AJjFGUP4D2104i4vnCgL3aIeGylBJi7U6Tmj7W1UbxMWRuE0+E=
+	t=1715670629; cv=none; b=TowYw8xPk2HlZAtoKMhHAITiZ4MXXmIsZBnCtcsQDbq/xTNDxTELoBIpQVsDb0oKGDex3qsB2JHFyZYwyNPukNKIc8YsDKOAgbuW1U1jL6Fq3A+NbbSlSdlnB6wkJBuZ1vo27HRMBif8O49TK+b8Pe/I+uuaMVmh0cI5jixyUIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715670481; c=relaxed/simple;
-	bh=X+YkrXgyWzVE1vkaFzWg3Tm00enAzXXtdq+NMhAjH/M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MavnWkbP3bCm+CJe63upFhLdgFu0N+QEr1C0jcARyUlGsW8sEQYqlLI0NAuOzcHwhEEjJHNhRwMJKniehp+2N3Ly9BuVHTOzFN5hXCmGfRMVBapjXqvunk3wZSkH5bjBMcAolFxoiJLWFoBRgdXmvEE7xi7GnVtwWd7BVLSScXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=evv0SBhD; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-41ffad2426eso36674825e9.3;
-        Tue, 14 May 2024 00:07:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1715670478; x=1716275278; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=X+YkrXgyWzVE1vkaFzWg3Tm00enAzXXtdq+NMhAjH/M=;
-        b=evv0SBhDWUZd9BGlOo8xhU5F+bFnr/Yg6MbO0B3suAdHjc8R1ottIGxd83TosT/Gmb
-         EekuFr1dbrYErDfFwgWQzOw4J2xsh+sjfHdNOJpdcmiNmXQiBCxRkrsXhLanukjYoRN+
-         pKmpfYYsDhTMkKAFAzMJ01SFKJzOO8qoMhlvMlyEYGmk2y2KnSXxlYjup5td/VLpyq0K
-         4TKxCv5saL9shvQAZX3HI1iGNadNdsYjy5OYMgxAE6oruULVkG8veldC/4w6ZHMQA9BY
-         KQc1+2Cs75niQto+hLvY3wfzBd2H8ag1JalX5uF2zjzG8dXNwGrNVBRFo+MfTt8XZ65N
-         T6LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715670478; x=1716275278;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X+YkrXgyWzVE1vkaFzWg3Tm00enAzXXtdq+NMhAjH/M=;
-        b=YaAXd1iTWjevBZSQY7LAVq1qmslWXMiclGSooLWdia1R2NSgJjoo4Hr7XFT1eOY5Rh
-         yqW2tkHCgXnR/f3YeivuF7DCd7VmtceJs/hOWh2Ye1/iqcDcfH7m9RUoSYJipyy9DZVd
-         7s7Ze96I65cKlsqKEwqLAUyimtC0YMAh4vR6ZQyeDCB9xT8ZxQZjxJlYrVxbEXC/iZ1R
-         ELCDdoXOivHu2pgTEnRYtll/rvgo+4gewAKscOEa88Zxg3I6SlJlSnEYC5uEdSLN6hO/
-         Z2rjVHT81pLZdJdtGaUCpHnF34b3fjGAvzgJrrbhb1L4ArWgJjFNF6xYlrQaG2/Y8WKf
-         wi/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXSMEr5i4PhhK7C5Hc9CyrjKgrUNFwTM9JcTbQr+tsCWjywstx7HuKBaX7ob9z6FQrdTWtNtbBTv0d/bfvoFhJC3SKgEehZbKRGuGEIuPG8HaLdrdtL644/vXoaF0R82OMM1sQn
-X-Gm-Message-State: AOJu0YxVnjtvUUUIk3KIs01oCaA9ti9dQGd0RZc3pRCV2XIXooj0PY5y
-	c3uQDVYv4AFSysP4yvZTrWB1uWnN2hAZnxnjMNaK6M9ox53z8NHld3kgHTI=
-X-Google-Smtp-Source: AGHT+IEsS63TXT+CNUHhfxEjLBmwVUfEfHU7Zb1RUnpJaRDD56Nb3r+lUE0Fx0YW+PSVfdn2LDRVhA==
-X-Received: by 2002:a05:600c:5252:b0:420:f8:23d6 with SMTP id 5b1f17b1804b1-42000f82681mr109286795e9.36.1715670477628;
-        Tue, 14 May 2024 00:07:57 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b40c2.dip0.t-ipconnect.de. [91.43.64.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42012d9ace5sm79279885e9.2.2024.05.14.00.07.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 00:07:56 -0700 (PDT)
-Message-ID: <c4e8e0b5-fc32-4e26-8c0e-27a996769903@googlemail.com>
-Date: Tue, 14 May 2024 09:07:55 +0200
+	s=arc-20240116; t=1715670629; c=relaxed/simple;
+	bh=zdNUasxvJx2ymttYyTXszLP8zbd0eSQT87cFGXnRuu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gyTZA+EqiJlDppmzAX5FbSEOZ4LRUCeuzXMVss+XwaoV6oG4Bfp40r9Y7uTdbvkQXQuOnDOk3XVnpUVI7EeP/vh0Fl8Z90zKTqa73iZ+ZD6B419ZqQY7PR9+aWFydiTHvX4jj9lamu5952lu3MsofDG8Ctpyrm/DHIM4uOAGPAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C2FTA2Ds; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1715670627; x=1747206627;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zdNUasxvJx2ymttYyTXszLP8zbd0eSQT87cFGXnRuu8=;
+  b=C2FTA2DsCTC+EfeHkrpwCwWQqC/yLmlUN4Hi3MIG0/tb4pU11A+iW9dZ
+   4BttdP28dJlFcHGaLILBnNbBW+m5QgsRMHRknQLfwLcsMm9w4TFzsofY5
+   4MareU1u0QvNrw/fdyuQ+qGmvX4Qgf9tH3JFea9h7KmwDALRQPs5SsT0g
+   VOerXv86n+sK+zGbNHqDS7jcyNnt6p5h8JC/I+kNTJNihtizhJg8etRf9
+   TblV858V3B2O7jQXYAUz3w6gKC83dt26Dw4+ZdQAgdT9rueYs3qIYKFdc
+   A7i1C2D64fjpWe2zMV3A17W7OlvtIBkWefk5z02dNwz0A/dpAc0nEKBvw
+   A==;
+X-CSE-ConnectionGUID: 5tWW/wQgSzaJm0h75tSRbA==
+X-CSE-MsgGUID: bShBIFGeSq+NCO2PjIQfCQ==
+X-IronPort-AV: E=McAfee;i="6600,9927,11072"; a="23039888"
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="23039888"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 May 2024 00:10:26 -0700
+X-CSE-ConnectionGUID: yByfDjycSuy9TW0L2BpcbA==
+X-CSE-MsgGUID: zGLPV32cQqC5arFh/tkN2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,159,1712646000"; 
+   d="scan'208";a="30540229"
+Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
+  by fmviesa007.fm.intel.com with ESMTP; 14 May 2024 00:10:24 -0700
+Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s6mIn-000BDb-2l;
+	Tue, 14 May 2024 07:10:21 +0000
+Date: Tue, 14 May 2024 15:09:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Richard Genoud <richard.genoud@bootlin.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: oe-kbuild-all@lists.linux.dev, Esteban Blanc <eblanc@baylibre.com>,
+	linux-rtc@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Richard Genoud <richard.genoud@bootlin.com>
+Subject: Re: [PATCH] rtc: tps6594: Add power management support
+Message-ID: <202405141408.o5jSp8nU-lkp@intel.com>
+References: <20240513162942.68484-1-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: Kernel 6.8.4 regression: aacraid controller not initialized any
- more, system boot hangs
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info,
- regressions@lists.linux.dev
-References: <eec6ebbf-061b-4a7b-96dc-ea748aa4d035@googlemail.com>
- <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-Autocrypt: addr=pschneider1968@googlemail.com; keydata=
- xjMEY58biBYJKwYBBAHaRw8BAQdADPnoGTrfCUCyH7SZVkFtnlzsFpeKANckofR4WVLMtMzN
- L1BldGVyIFNjaG5laWRlciA8cHNjaG5laWRlcjE5NjhAZ29vZ2xlbWFpbC5jb20+wpwEExYK
- AEQCGyMFCQW15qgFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQSjgovXlszhGoyt6IZu
- OpLJLD/yRAUCY58b8AIZAQAKCRBuOpLJLD/yRIeIAQD0+/LMdKHM6AJdPCt+e9Z92BMybfnN
- RtGqkdZWtvdhDQD9FJkGh/3PFtDinimB8UOB7Gi6AGxt9Nu9ne7PvHa0KQXOOARjnxuIEgor
- BgEEAZdVAQUBAQdAw2GRwTf5HJlO6CCigzqH6GUKOjqR1xJ+3nR5EbBze0sDAQgHwn4EGBYK
- ACYWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCY58biAIbDAUJBbXmqAAKCRBuOpLJLD/yRONS
- AQCwB9qiEQoSnxHodu8kRuvUxXKIqN7701W+INXtFGtJygEAyPZH3/vSBJ4A7GUG7BZyQRcr
- ryS0CUq77B7ZkcI1Nwo=
-In-Reply-To: <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------3k07hvzCU80C7y4hrWzdZar0"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240513162942.68484-1-richard.genoud@bootlin.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------3k07hvzCU80C7y4hrWzdZar0
-Content-Type: multipart/mixed; boundary="------------XgrnrIbEqmkVi01629oNH2n6";
- protected-headers="v1"
-From: Peter Schneider <pschneider1968@googlemail.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info,
- regressions@lists.linux.dev
-Message-ID: <c4e8e0b5-fc32-4e26-8c0e-27a996769903@googlemail.com>
-Subject: Re: Kernel 6.8.4 regression: aacraid controller not initialized any
- more, system boot hangs
-References: <eec6ebbf-061b-4a7b-96dc-ea748aa4d035@googlemail.com>
- <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1cypvwz5o.fsf@ca-mkp.ca.oracle.com>
+Hi Richard,
 
---------------XgrnrIbEqmkVi01629oNH2n6
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+kernel test robot noticed the following build warnings:
 
-SGkgTWFydGluLA0KDQptZWFud2hpbGUsIHNvbWUgbW9yZSBwZW9wbGUgd2hvIGZhY2UgdGhl
-IHNhbWUgcHJvYmxlbSBoYXZlIGJlZW4gZ2F0aGVyaW5nIGluIHRoaXMgdGhyZWFkIA0KaW4g
-dGhlIFByb3htb3ggdXNlciBmb3J1bToNCg0KaHR0cHM6Ly9mb3J1bS5wcm94bW94LmNvbS90
-aHJlYWRzL3B2ZS04LTIta2VybmVsLTYtOC00LTItZG9lcy1ub3QtYm9vdC1jYW5ub3QtZmlu
-ZC1yb290LWRldmljZS4xNDU3NjQvDQoNClR3byBvZiB0aGVtIGFsc28gaGF2ZSBhbiBBZGFw
-dGVjIGNvbnRyb2xsZXIsIHdoaWxlIGFub3RoZXIgb25lIGhhcyBhIFBFUkMgSDMxMCBNaW5p
-IChMU0kgDQpiYXNlZCkuDQoNCkRpZCB5b3UgaGF2ZSBhbnkgY2hhbmNlIHRvIGxvb2sgaW50
-byB0aGlzIGluIG1vcmUgZGVwdGg/IERvIHlvdSBuZWVkIG1vcmUgaW5mb3JtYXRpb24gZnJv
-bSANCm1lIHRvIHRhY2tsZSB0aGlzIGlzc3VlPyBJJ20gbm90IGEga2VybmVsIGRldmVsb3Bl
-ciwganVzdCBhIHVzZXIsIGJ1dCBJIGd1ZXNzIHdpdGggcHJvcGVyIA0KaW5zdHJ1Y3Rpb24g
-SSB3b3VsZCBiZSBhYmxlIHRvIGNvbXBpbGUgYW5kIHRlc3QgcGF0Y2hlcy4NCg0KQmVzdGUg
-R3LDvMOfZSwNClBldGVyIFNjaG5laWRlcg0KDQotLSANCkNsaW1iIHRoZSBtb3VudGFpbiBu
-b3QgdG8gcGxhbnQgeW91ciBmbGFnLCBidXQgdG8gZW1icmFjZSB0aGUgY2hhbGxlbmdlLA0K
-ZW5qb3kgdGhlIGFpciBhbmQgYmVob2xkIHRoZSB2aWV3LiBDbGltYiBpdCBzbyB5b3UgY2Fu
-IHNlZSB0aGUgd29ybGQsDQpub3Qgc28gdGhlIHdvcmxkIGNhbiBzZWUgeW91LiAgICAgICAg
-ICAgICAgICAgICAgLS0gRGF2aWQgTWNDdWxsb3VnaCBKci4NCg0KT3BlblBHUDogIDB4QTM4
-MjhCRDc5NkNDRTExQThDQURFODg2NkUzQTkyQzkyQzNGRjI0NA0KRG93bmxvYWQ6IGh0dHBz
-Oi8vd3d3LnBldGVycy1uZXR6cGxhdHouZGUvZG93bmxvYWQvcHNjaG5laWRlcjE5NjhfcHVi
-LmFzYw0KaHR0cHM6Ly9rZXlzLm1haWx2ZWxvcGUuY29tL3Brcy9sb29rdXA/b3A9Z2V0JnNl
-YXJjaD1wc2NobmVpZGVyMTk2OEBnb29nbGVtYWlsLmNvbQ0KaHR0cHM6Ly9rZXlzLm1haWx2
-ZWxvcGUuY29tL3Brcy9sb29rdXA/b3A9Z2V0JnNlYXJjaD1wc2NobmVpZGVyMTk2OEBnbWFp
-bC5jb20NCg0KDQoNCg0KQW0gMDkuMDUuMjAyNCB1bSAwMzozOCBzY2hyaWViIE1hcnRpbiBL
-LiBQZXRlcnNlbjoNCj4gDQo+IEhpIFBldGVyIQ0KPiANCj4gVGhhbmtzIGZvciB0aGUgZGV0
-YWlsZWQgYnVnIHJlcG9ydC4NCj4gDQo+PiA2LjguOCsgICAgICAgICAgV09SS1MgICBSZXZl
-cnQgInNjc2k6IGNvcmU6IENvbnN1bHQgc3VwcG9ydGVkIFZQRCBwYWdlDQo+PiBsaXN0IHBy
-aW9yIHRvIGZldGNoaW5nIHBhZ2UiIC0gVGhpcyByZXZlcnRzIGNvbW1pdA0KPj4gYjVmYzA3
-YTVmYjU2MjE2YTQ5ZTZjMWQwYjE3MmQ1NDY0ZDk5YTg5YiAodGhpcyBpcyB0aGUgZmlyc3Qg
-YmFkIGNvbW1pdA0KPj4gb2YgbXkgYmlzZWN0IHNlc3Npb24sIHNlZSBiZWxvdywgYW5kIGEg
-c2luZ2xlIHBhdGNoIGFzIHBhcnQgb2YgdGhlDQo+PiBhYm92ZSBtZXJnZWQgdGFnICdzY3Np
-LWZpeGVzJykNCj4gDQo+IFRoZSBwdXp6bGluZyB0aGluZyBpcyB0aGF0IHRoZSBwYXRjaCBp
-biBxdWVzdGlvbiByZXN0b3JlcyB0aGUgb3JpZ2luYWwNCj4gYmVoYXZpb3IgaW4gd2hpY2gg
-d2UgZG8gbm90IGF0dGVtcHQgdG8gcXVlcnkgYW55IHBhZ2VzIG5vdCBleHBsaWNpdGx5DQo+
-IHJlcG9ydGVkIGJ5IHRoZSBkZXZpY2UuDQo+IA0KPiBDYW4geW91IHBsZWFzZSBzZW5kIG1l
-IHRoZSBvdXRwdXQgb2Y6DQo+IA0KPiAjIHNnX3ZwZCAtYSAvZGV2L3NkYQ0KPiAjIHNnX3Jl
-YWRjYXAgLWwgL2Rldi9zZGENCj4gDQo+IHdoZXJlIHNkYSBpcyBvbmUgb2YgdGhlIGFhY3Jh
-aWQgdm9sdW1lcy4NCj4gDQo+IFRoYW5rcyENCj4gDQo=
+[auto build test WARNING on abelloni/rtc-next]
+[also build test WARNING on lee-mfd/for-mfd-next lee-leds/for-leds-next lee-mfd/for-mfd-fixes linus/master v6.9 next-20240513]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---------------XgrnrIbEqmkVi01629oNH2n6--
+url:    https://github.com/intel-lab-lkp/linux/commits/Richard-Genoud/rtc-tps6594-Add-power-management-support/20240514-003053
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
+patch link:    https://lore.kernel.org/r/20240513162942.68484-1-richard.genoud%40bootlin.com
+patch subject: [PATCH] rtc: tps6594: Add power management support
+config: sparc-randconfig-r081-20240514 (https://download.01.org/0day-ci/archive/20240514/202405141408.o5jSp8nU-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240514/202405141408.o5jSp8nU-lkp@intel.com/reproduce)
 
---------------3k07hvzCU80C7y4hrWzdZar0
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405141408.o5jSp8nU-lkp@intel.com/
 
------BEGIN PGP SIGNATURE-----
+All warnings (new ones prefixed by >>):
 
-wnsEABYIACMWIQSjgovXlszhGoyt6IZuOpLJLD/yRAUCZkMNywUDAAAAAAAKCRBuOpLJLD/yRCwp
-AQCQ7e+Eq4H8veOUlyQswf1miAnfnUuv6gJHx8fzCKZitgEA+ZQiQ7a7hoNcNvVQkvkExdTsC207
-mtXOQ/byiSnliAc=
-=WPgk
------END PGP SIGNATURE-----
+>> drivers/rtc/rtc-tps6594.c:471:12: warning: 'tps6594_rtc_suspend' defined but not used [-Wunused-function]
+     471 | static int tps6594_rtc_suspend(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~~
+>> drivers/rtc/rtc-tps6594.c:439:12: warning: 'tps6594_rtc_resume' defined but not used [-Wunused-function]
+     439 | static int tps6594_rtc_resume(struct device *dev)
+         |            ^~~~~~~~~~~~~~~~~~
 
---------------3k07hvzCU80C7y4hrWzdZar0--
+
+vim +/tps6594_rtc_suspend +471 drivers/rtc/rtc-tps6594.c
+
+   438	
+ > 439	static int tps6594_rtc_resume(struct device *dev)
+   440	{
+   441		struct tps6594 *tps = dev_get_drvdata(dev->parent);
+   442		struct rtc_device *rtc_dev = dev_get_drvdata(dev);
+   443		int ret;
+   444	
+   445		ret = regmap_test_bits(tps->regmap, TPS6594_REG_INT_STARTUP,
+   446				       TPS6594_BIT_RTC_INT);
+   447		if (ret < 0) {
+   448			dev_err(dev, "failed to read REG_INT_STARTUP: %d\n", ret);
+   449			goto out;
+   450		}
+   451	
+   452		if (ret > 0) {
+   453			/*
+   454			 * If the alarm bit is set, it means that the IRQ has been
+   455			 * fired. But, the kernel may not have woke up yet when it
+   456			 * happened. So, we have to clear it.
+   457			 */
+   458			ret = regmap_write(tps->regmap, TPS6594_REG_RTC_STATUS,
+   459					   TPS6594_BIT_ALARM);
+   460			if (ret < 0)
+   461				dev_err(dev, "error clearing alarm bit: %d", ret);
+   462	
+   463			rtc_update_irq(rtc_dev, 1, RTC_IRQF | RTC_AF);
+   464		}
+   465	out:
+   466		disable_irq_wake(tps->irq_rtc);
+   467	
+   468		return 0;
+   469	}
+   470	
+ > 471	static int tps6594_rtc_suspend(struct device *dev)
+   472	{
+   473		struct tps6594 *tps = dev_get_drvdata(dev->parent);
+   474	
+   475		enable_irq_wake(tps->irq_rtc);
+   476	
+   477		return 0;
+   478	}
+   479	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
