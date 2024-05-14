@@ -1,211 +1,225 @@
-Return-Path: <linux-kernel+bounces-179172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340058C5CA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 23:10:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172888C5C5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37D21F22764
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 21:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB142811FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84757180A87;
-	Tue, 14 May 2024 21:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69371E491;
+	Tue, 14 May 2024 20:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="LwaIbRru"
-Received: from msa.smtpout.orange.fr (msa-217.smtpout.orange.fr [193.252.23.217])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZpObK2ca";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UVARiUEa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZpObK2ca";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UVARiUEa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C47114532B
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 21:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDCB365
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715721034; cv=none; b=JANLvABjl/83SvejabqK5fecDnXRR2JMCywCTzKb07vSp9U3/cdwai83ZJDQnWbZHCsmnOozoeVXY7XpzMkJ/Bz38nitp6o7OB6FmYH9vAXeEqXGx5A3QO2kc+erSoN0XxOWu/RBQCM1YE5O6fCPF/UiIuCcJoRG2eqNjcb2XIU=
+	t=1715719059; cv=none; b=AafqLvL+nAu8JvSLQQuv+ZgVcR5AYHa02lj19c/2mTHffDuTCab6hRoAo4mjr+fZfFVTxkgXeQB4lBAsEzyC3kRbowWX49PzTY/xwsG38TlU2F0RH2pT8L9qQ9/jXjlpE2G2ICDDcgg9DU4txwdKYMjwPBG2MC2s7jb3vZQcDm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715721034; c=relaxed/simple;
-	bh=e2KLbrdsks+J6+1FvGS7oH2+UqSVRAnRmGXVo1hlsCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AU8BJaJnkmtB6UKCPTK95BJ0eY4oYAUHVgwshxF/36qFX98r5/ZLqiUkW3ql7PC9LeNRBGjkcqwyBQU+t/Oaq59TWHoVjhJwFO2C3QlRbyiWBn/19TRgcJtm3VxxGt9moU8UHxCpdUYu7X6Osy2XVLxrJscdGJf1PLSb4qrU0Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=LwaIbRru; arc=none smtp.client-ip=193.252.23.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([86.243.17.157])
-	by smtp.orange.fr with ESMTPA
-	id 6ysXsio6Zfcja6ysXstlKb; Tue, 14 May 2024 22:36:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1715718967;
-	bh=nnkV8QffiL7l22gdgN3bgaCjV2cYw/rxwjbuLjaurWA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=LwaIbRruVSX6cMoGHOexSQ95eEEW6+Ns/6TfRrTg9YY0DJgHDxcudQ6EhJH+zkiNR
-	 sAGNhJTxF7kxsGbmpTsCFbjDvzwBH2g4sd6WTUIdJjFOb53fQZ4TMBlwzDNTFhauFP
-	 W3yIeaq8DO2lRcZe3/2tJQGleSJnPOYcTMsaS3Jwpg8hM2VYd0fIfszwBJGIEHqNsO
-	 yFsAxV+pYpvOeG17rsas03P5Ey4Ec4zux5pgRkN1i3R2WsM2nviSB5pyfOG+0hdFsI
-	 zHnsH3Nbj6Sw8Wf1H8tIhM8Ot4TJp4Xnf10ULkPBQvHEK2Ou5Mu22xnY0kox1MXsJR
-	 IEfY7MAuwSjSQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 14 May 2024 22:36:06 +0200
-X-ME-IP: 86.243.17.157
-Message-ID: <d5f51c2e-daef-467d-9430-8c2d48819a56@wanadoo.fr>
-Date: Tue, 14 May 2024 22:35:56 +0200
+	s=arc-20240116; t=1715719059; c=relaxed/simple;
+	bh=qtYRKkRqUl2iLbllESnnPGMb7ZoOLam5WvQiWWaqvhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OB1UzCmpoS4+9Hs6i2Osnm4I7ax8qnZ7i0XAA+FgQcA79hOa0iK6+Ww/4oXwPhy66jwq2dKB+c+6yzhxGJ4+vNnBSuGPROCA9A0vjGdyMgkZXc4PmV3coqv/kwjnYCiFtZNZujVbLXkR8VsGYPTWgr5vwWFtu9YyQEyaKjN/0/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZpObK2ca; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UVARiUEa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZpObK2ca; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UVARiUEa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6E0E01FB48;
+	Tue, 14 May 2024 20:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715719056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VYsW9Vv80A6GLzgjCSYellhzJczA30skEMWWKeZBbJk=;
+	b=ZpObK2cayBrGFB+P30B4ta0PrzL46RFr44vUY5OO1vAowzek8thfNxxeOGE4BRsC7fIwDq
+	+7eTpVOAzgxb7RFh6pnv6Q8JBVIOkawpsPDcTa2ObSEicYd8rCm0YADkPKTN8xOT7XG4tp
+	dPHkjGGM+KVPvwqMxmeWz35c4ilgZQ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715719056;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VYsW9Vv80A6GLzgjCSYellhzJczA30skEMWWKeZBbJk=;
+	b=UVARiUEao8bnM3tGOX6fumiBKcLPbudeKiBmMYfi0BLZlApPyZMjtuUZjjsrk5V1d0PyxV
+	o55zuYS0CbLs8iBA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZpObK2ca;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=UVARiUEa
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1715719056; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VYsW9Vv80A6GLzgjCSYellhzJczA30skEMWWKeZBbJk=;
+	b=ZpObK2cayBrGFB+P30B4ta0PrzL46RFr44vUY5OO1vAowzek8thfNxxeOGE4BRsC7fIwDq
+	+7eTpVOAzgxb7RFh6pnv6Q8JBVIOkawpsPDcTa2ObSEicYd8rCm0YADkPKTN8xOT7XG4tp
+	dPHkjGGM+KVPvwqMxmeWz35c4ilgZQ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1715719056;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VYsW9Vv80A6GLzgjCSYellhzJczA30skEMWWKeZBbJk=;
+	b=UVARiUEao8bnM3tGOX6fumiBKcLPbudeKiBmMYfi0BLZlApPyZMjtuUZjjsrk5V1d0PyxV
+	o55zuYS0CbLs8iBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8341B1372E;
+	Tue, 14 May 2024 20:37:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IqYEHY/LQ2aHIQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 14 May 2024 20:37:35 +0000
+Date: Tue, 14 May 2024 22:37:30 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: =?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@kernel.org>
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	David Hildenbrand <david@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Andrew Bresticker <abrestic@rivosinc.com>,
+	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Santosh Mamila <santosh.mamila@catalinasystems.io>,
+	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>,
+	Sunil V L <sunilvl@ventanamicro.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, virtualization@lists.linux-foundation.org
+Subject: Re: [PATCH v2 3/8] riscv: mm: Refactor create_linear_mapping_range()
+ for memory hot add
+Message-ID: <ZkPLimx-TSkufhjK@localhost.localdomain>
+References: <20240514140446.538622-1-bjorn@kernel.org>
+ <20240514140446.538622-4-bjorn@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] binder: use bitmap for faster descriptor lookup
-To: Carlos Llamas <cmllamas@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
- Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Christian Brauner <brauner@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
- Tim Murray <timmurray@google.com>, Alice Ryhl <aliceryhl@google.com>,
- John Stultz <jstultz@google.com>, Steven Moreland <smoreland@google.com>,
- Nick Chen <chenjia3@oppo.com>
-References: <20240514160926.1309778-1-cmllamas@google.com>
-Content-Language: en-MW
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240514160926.1309778-1-cmllamas@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240514140446.538622-4-bjorn@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-6.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[rivosinc.com,eecs.berkeley.edu,redhat.com,dabbelt.com,sifive.com,lists.infradead.org,catalinasystems.io,gmail.com,ventanamicro.com,vger.kernel.org,kvack.org,lists.linux-foundation.org];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email,rivosinc.com:email];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: 6E0E01FB48
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Score: -6.51
 
-Le 14/05/2024 Ã  18:09, Carlos Llamas a Ã©critÂ :
-> When creating new binder references, the driver assigns a descriptor id
-> that is shared with userspace. Regrettably, the driver needs to keep the
-> descriptors small enough to accommodate userspace potentially using them
-> as Vector indexes. Currently, the driver performs a linear search on the
-> rb-tree of references to find the smallest available descriptor id. This
-> approach, however, scales poorly as the number of references grows.
+On Tue, May 14, 2024 at 04:04:41PM +0200, Björn Töpel wrote:
+> From: Björn Töpel <bjorn@rivosinc.com>
 > 
-> This patch introduces the usage of bitmaps to boost the performance of
-> descriptor assignments. This optimization results in notable performance
-> gains, particularly in processes with a large number of references. The
-> following benchmark with 100,000 references showcases the difference in
-> latency between the dbitmap implementation and the legacy approach:
+> Add a parameter to the direct map setup function, so it can be used in
+> arch_add_memory() later.
 > 
->    [  587.145098] get_ref_desc_olocked: 15us (dbitmap on)
->    [  602.788623] get_ref_desc_olocked: 47343us (dbitmap off)
+> Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+
+> ---
+>  arch/riscv/mm/init.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
 > 
-> Note the bitmap size is dynamically adjusted in line with the number of
-> references, ensuring efficient memory usage. In cases where growing the
-> bitmap is not possible, the driver falls back to the slow legacy method.
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index c969427eab88..6f72b0b2b854 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -1227,7 +1227,7 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+>  }
+>  
+>  static void __meminit create_linear_mapping_range(phys_addr_t start, phys_addr_t end,
+> -						  uintptr_t fixed_map_size)
+> +						  uintptr_t fixed_map_size, const pgprot_t *pgprot)
+>  {
+>  	phys_addr_t pa;
+>  	uintptr_t va, map_size;
+> @@ -1238,7 +1238,7 @@ static void __meminit create_linear_mapping_range(phys_addr_t start, phys_addr_t
+>  					    best_map_size(pa, va, end - pa);
+>  
+>  		create_pgd_mapping(swapper_pg_dir, va, pa, map_size,
+> -				   pgprot_from_va(va));
+> +				   pgprot ? *pgprot : pgprot_from_va(va));
+>  	}
+>  }
+>  
+> @@ -1282,22 +1282,19 @@ static void __init create_linear_mapping_page_table(void)
+>  		if (end >= __pa(PAGE_OFFSET) + memory_limit)
+>  			end = __pa(PAGE_OFFSET) + memory_limit;
+>  
+> -		create_linear_mapping_range(start, end, 0);
+> +		create_linear_mapping_range(start, end, 0, NULL);
+>  	}
+>  
+>  #ifdef CONFIG_STRICT_KERNEL_RWX
+> -	create_linear_mapping_range(ktext_start, ktext_start + ktext_size, 0);
+> -	create_linear_mapping_range(krodata_start,
+> -				    krodata_start + krodata_size, 0);
+> +	create_linear_mapping_range(ktext_start, ktext_start + ktext_size, 0, NULL);
+> +	create_linear_mapping_range(krodata_start, krodata_start + krodata_size, 0, NULL);
+>  
+>  	memblock_clear_nomap(ktext_start,  ktext_size);
+>  	memblock_clear_nomap(krodata_start, krodata_size);
+>  #endif
+>  
+>  #ifdef CONFIG_KFENCE
+> -	create_linear_mapping_range(kfence_pool,
+> -				    kfence_pool + KFENCE_POOL_SIZE,
+> -				    PAGE_SIZE);
+> +	create_linear_mapping_range(kfence_pool, kfence_pool + KFENCE_POOL_SIZE, PAGE_SIZE, NULL);
+>  
+>  	memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
+>  #endif
+> -- 
+> 2.40.1
 > 
-> A previous attempt to solve this issue was proposed in [1]. However,
-> such method involved adding new ioctls which isn't great, plus older
-> userspace code would not have benefited from the optimizations either.
-> 
-> Link: https://lore.kernel.org/all/20240417191418.1341988-1-cmllamas@google.com/ [1]
 
-..
-
-> +static int get_ref_desc_olocked(struct binder_proc *proc,
-> +				struct binder_node *node,
-> +				u32 *desc)
-> +{
-> +	struct dbitmap *dmap = &proc->dmap;
-> +	unsigned long *new, bit;
-> +	unsigned int nbits;
-> +
-> +	/* 0 is reserved for the context manager */
-> +	if (node == proc->context->binder_context_mgr_node) {
-> +		*desc = 0;
-> +		return 0;
-> +	}
-> +
-> +	if (unlikely(!dbitmap_enabled(dmap))) {
-> +		*desc = slow_desc_lookup_olocked(proc);
-> +		return 0;
-> +	}
-> +
-> +	if (dbitmap_get_first_zero_bit(dmap, &bit) == 0) {
-> +		*desc = bit;
-> +		return 0;
-> +	}
-> +
-> +	/*
-> +	 * The descriptors bitmap is full and needs to be expanded.
-> +	 * The proc->outer_lock is briefly released to allocate the
-> +	 * new bitmap safely.
-> +	 */
-> +	nbits = dbitmap_expand_nbits(dmap);
-> +	binder_proc_unlock(proc);
-> +	new = bitmap_zalloc(nbits, GFP_KERNEL | __GFP_ZERO);
-
-Hi,
-
-Nitpick: No need to __GFP_ZERO when using zalloc().
-
-CJ
-
-> +	binder_proc_lock(proc);
-> +	dbitmap_expand(dmap, new, nbits);
-> +
-> +	return -EAGAIN;
-> +}
-
-..
-
-> +#define NBITS_MIN	BITS_PER_TYPE(unsigned long)
-> +
-> +struct dbitmap {
-> +	unsigned int nbits;
-
-Should it be long (or unsigned long) to better match the bitmap API?
-
-(not sure if it can overflow in this use case, but at least for consistancy)
-
-> +	unsigned long *map;
-> +};
-
-..
-
-> +static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
-> +{
-> +	unsigned int bit;
-> +
-> +	if (dmap->nbits <= NBITS_MIN)
-> +		return 0;
-> +
-> +	bit = find_last_bit(dmap->map, dmap->nbits);
-
-find_last_bit() returns an unsigned long.
-
-(bitmap_get_first_zero_bit() below uses unsigned long)
-
-CJ
-
-> +	if (unlikely(bit == dmap->nbits))
-> +		return NBITS_MIN;
-> +
-> +	if (unlikely(bit <= (dmap->nbits >> 2)))
-> +		return dmap->nbits >> 1;
-> +
-> +	return 0;
-> +}
-
-..
-
-> +static inline int
-> +dbitmap_get_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
-> +{
-> +	unsigned long n;
-> +
-> +	n = find_first_zero_bit(dmap->map, dmap->nbits);
-> +	if (unlikely(n == dmap->nbits))
-> +		return -ENOSPC;
-> +
-> +	*bit = n;
-> +	set_bit(n, dmap->map);
-> +
-> +	return 0;
-> +}
-
-..
-
+-- 
+Oscar Salvador
+SUSE Labs
 
