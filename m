@@ -1,243 +1,128 @@
-Return-Path: <linux-kernel+bounces-178320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75358C4BDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:08:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EC48C4BFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 07:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3416D1F2434E
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFB081C22B73
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 05:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C538A1803D;
-	Tue, 14 May 2024 05:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PuDggRSl"
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D20A1804A;
+	Tue, 14 May 2024 05:28:48 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00D411725;
-	Tue, 14 May 2024 05:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.141.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5571A171AB;
+	Tue, 14 May 2024 05:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715663323; cv=none; b=YRfv1B58qbv7jTaXREWFodSYOIXSSmQmgv9BhAWhQntOo0xqpdrhyEZQAubemFxrTkDdSdyVd8F0B1rRQ8EZ3jlkloth4VJRzZFWE7zSmauwQ8s/gvSnT4PfR/mnAQJqUgA1UE+ow1iFtAV40HDtdq6ZxNywljlbCiUZPgGLQJ8=
+	t=1715664528; cv=none; b=u9AHlz2x936g+Nf+H9Y5WA3Zb4T1bXGEPew28I/f4HRRYaxu9gFq9vGkmA+lbq5u3tQIaCPl1azfdiu48Q2bR36Q30y3i/vnPhinWS3ih4kIlKeLlMqLvDlJaIFMbG+HNVyv41BLBzl34zasF/EWQDJBw6Dlnmv99GP9HrwUd8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715663323; c=relaxed/simple;
-	bh=9yVrBO+AHQnDloFWvZYWWtQBU+q/1LR0KDATw/zbmOI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=haITrrxecaqLsM7ypnxnQjmcUzBsgR+Rki6tdFcqQUNvgDQ9V9B+5HpB9giIeKIJS6ohbCAuCKw3jRfigyw8fcRhhtEuMu2lDUOcvGXtOGhQvvCjH0IQdPl6uV0XAIYT7kTNGnmxWBgVrXlT5yhN6rNdaAACLuIUQop+OeuOYNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=PuDggRSl; arc=none smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1715663320; x=1747199320;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9yVrBO+AHQnDloFWvZYWWtQBU+q/1LR0KDATw/zbmOI=;
-  b=PuDggRSl3ZoJNT1fZGw4OQJd+pyQe+pA+Y75i+HhwFnbopfNO2hwE9Bs
-   smS2WzNew7dxcUccfcujQ4ZnF2WsYrGZmpKbx1NxZ/iqucNwVjtEXmQtf
-   AYMkvIPuqgAHAfrUiD3CsYByk4H2ac4gWLPenMNW5qkl7l4uiGtEczU1b
-   eeRRw+ZOCt8uO4Wh6GsTawXkbLx0AylDE7+vmB6cD56KJNitL70iFr9jF
-   nTaRABAkfsT2bkUvgnD2yCF5TD6XHbz9OKnpB6Y3JBm9CtcFF9jJ6KTUF
-   v+2uyCx0QoKkK5A2IaBVdw034TlN1pHhZQNEhguCUey0fe7pDCSrbAm9o
-   g==;
-X-CSE-ConnectionGUID: m5v+ZXkTTdyzLIekbnf1DQ==
-X-CSE-MsgGUID: jGbiQEJdR2WCjlXswkYIPQ==
-X-IronPort-AV: E=Sophos;i="6.08,159,1712592000"; 
-   d="scan'208";a="16511388"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 14 May 2024 13:08:34 +0800
-IronPort-SDR: 6642e440_vp+HjwgzFFKAAuLvFrSsluaGWaGx1ihYuLdWRjcHEN0Eafp
- bHFQxCCFc1/NRvOtIcGjiBsaZqREYajMifNa87Q==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 May 2024 21:10:41 -0700
-WDCIronportException: Internal
-Received: from bxygm33.ad.shared ([10.45.31.229])
-  by uls-op-cesaip01.wdc.com with ESMTP; 13 May 2024 22:08:32 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: Bart Van Assche <bvanassche@acm.org>,
-	Bean Huo <beanhuo@micron.com>,
-	Peter Wang <peter.wang@mediatek.com>,
-	linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1715664528; c=relaxed/simple;
+	bh=NRqzaYlat30Cka6lLWm1QfveJqU5KFy7bW8Zc9IvWpI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=gdS8vyBtbGog4eb3X1H1CgRl+bOIn+VK6WvldPNjT8lKY44LiTlhb5KeECGFw+36viMV3optOmzDToLsfPqUX95UG5JeSrI94qzuPqG4EF+WZC8lnVgwbLgDy2xDDI7sNv2fkwSSrSDJVHKdwGQDnatah38x8XIIjBhrepSMKcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 59DB71A0BC9;
+	Tue, 14 May 2024 07:28:38 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FA831A0BA8;
+	Tue, 14 May 2024 07:28:38 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 56BBC1820F77;
+	Tue, 14 May 2024 13:28:36 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: bhelgaas@google.com,
+	lorenzo.pieralisi@arm.com,
+	frank.li@nxp.com,
+	mani@kernel.org
+Cc: linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v3] scsi: ufs: Allow RTT negotiation
-Date: Tue, 14 May 2024 08:08:22 +0300
-Message-ID: <20240514050823.735-1-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.42.0
+	kernel@pengutronix.de,
+	imx@lists.linux.dev,
+	Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [PATCH v1] PCI: dwc: Fix resume failure if no EP is connected at some platforms.
+Date: Tue, 14 May 2024 13:09:18 +0800
+Message-Id: <1715663358-8900-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The rtt-upiu packets precede any data-out upiu packets, thus
-synchronizing the data input to the device: this mostly applies to write
-operations, but there are other operations that requires rtt as well.
+The dw_pcie_suspend_noirq() function currently returns success directly
+if no endpoint (EP) device is connected. However, on some platforms, power
+loss occurs during suspend, causing dw_resume() to do nothing in this case.
+This results in a system halt because the DWC controller is not initialized
+after power-on during resume.
 
-There are several rules binding this rtt - data-out dialog, specifically
-There can be at most outstanding bMaxNumOfRTT such packets.  This might
-have an effect on write performance (sequential write in particular), as
-each data-out upiu must wait for its rtt sibling.
+Change call to deinit() in suspend and init() at resume regardless of
+whether there are EP device connections or not. It is not harmful to
+perform deinit() and init() again for the no power-off case, and it keeps
+the code simple and consistent in logic.
 
-UFSHCI expects bMaxNumOfRTT to be min(bDeviceRTTCap, NORTT). However,
-as of today, there does not appears to be no-one who sets it: not the
-host controller nor the driver.  It wasn't an issue up to now:
-bMaxNumOfRTT is set to 2 after manufacturing, and wasn't limiting the
-write performance.
-
-UFS4.0, and specifically gear 5 changes this, and requires the device to
-be more attentive.  This doesn't come free - the device has to allocate
-more resources to that end, but the sequential write performance
-improvement is significant. Early measurements shows 25% gain when
-moving from rtt 2 to 9. Therefore, set bMaxNumOfRTT to be
-min(bDeviceRTTCap, NORTT) as UFSHCI expects.
-
-While at it, allow platform vendors to take precedence having their own
-rtt negotiation mechanism.
-
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-
+Fixes: 4774faf854f5 ("PCI: dwc: Implement generic suspend/resume functionality")
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
 ---
-Changes since v2:
- - Allow platform vendors to take precedence having their own rtt
-   negotiation mechanism (Peter)
+https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=controller/dwc
+This patch depends on the branch listed above, because it's not in pci-next.
+But suppose it will be in there soon.
 
-Changes since v1:
-- bMaxNumOfRTT is a Persistent attribute - do not override if it was
-  written (Bean)
+ .../pci/controller/dwc/pcie-designware-host.c | 30 +++++++++----------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
 
----
- drivers/ufs/core/ufshcd.c | 39 +++++++++++++++++++++++++++++++++++++++
- include/ufs/ufshcd.h      |  4 ++++
- include/ufs/ufshci.h      |  1 +
- 3 files changed, 44 insertions(+)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 0819ddafe7a6..0407d1064e74 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -102,6 +102,9 @@
- /* Default RTC update every 10 seconds */
- #define UFS_RTC_UPDATE_INTERVAL_MS (10 * MSEC_PER_SEC)
+diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+index a0822d5371bc5..cb8c3c2bcc790 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-host.c
++++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -933,23 +933,23 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
+ 	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
+ 		return 0;
  
-+/* bMaxNumOfRTT is equal to two after device manufacturing */
-+#define DEFAULT_MAX_NUM_RTT 2
-+
- /* UFSHC 4.0 compliant HC support this mode. */
- static bool use_mcq_mode = true;
+-	if (dw_pcie_get_ltssm(pci) <= DW_PCIE_LTSSM_DETECT_ACT)
+-		return 0;
+-
+-	if (pci->pp.ops->pme_turn_off)
+-		pci->pp.ops->pme_turn_off(&pci->pp);
+-	else
+-		ret = dw_pcie_pme_turn_off(pci);
++	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
++		/* Only send out PME_TURN_OFF when PCIE link is up */
++		if (pci->pp.ops->pme_turn_off)
++			pci->pp.ops->pme_turn_off(&pci->pp);
++		else
++			ret = dw_pcie_pme_turn_off(pci);
  
-@@ -2405,6 +2408,8 @@ static inline int ufshcd_hba_capabilities(struct ufs_hba *hba)
- 	((hba->capabilities & MASK_TASK_MANAGEMENT_REQUEST_SLOTS) >> 16) + 1;
- 	hba->reserved_slot = hba->nutrs - 1;
+-	if (ret)
+-		return ret;
++		if (ret)
++			return ret;
  
-+	hba->nortt = FIELD_GET(MASK_NUMBER_OUTSTANDING_RTT, hba->capabilities) + 1;
-+
- 	/* Read crypto capabilities */
- 	err = ufshcd_hba_init_crypto_capabilities(hba);
- 	if (err) {
-@@ -8119,6 +8124,35 @@ static void ufshcd_ext_iid_probe(struct ufs_hba *hba, u8 *desc_buf)
- 	dev_info->b_ext_iid_en = ext_iid_en;
- }
+-	ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
+-				PCIE_PME_TO_L2_TIMEOUT_US/10,
+-				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
+-	if (ret) {
+-		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
+-		return ret;
++		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
++					PCIE_PME_TO_L2_TIMEOUT_US/10,
++					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
++		if (ret) {
++			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
++			return ret;
++		}
+ 	}
  
-+static void ufshcd_rtt_set(struct ufs_hba *hba, u8 *desc_buf)
-+{
-+	struct ufs_dev_info *dev_info = &hba->dev_info;
-+	u32 rtt = 0;
-+	u32 dev_rtt = 0;
-+
-+	/* RTT override makes sense only for UFS-4.0 and above */
-+	if (dev_info->wspecversion < 0x400)
-+		return;
-+
-+	if (ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+				    QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &dev_rtt)) {
-+		dev_err(hba->dev, "failed reading bMaxNumOfRTT\n");
-+		return;
-+	}
-+
-+	/* do not override if it was already written */
-+	if (dev_rtt != DEFAULT_MAX_NUM_RTT)
-+		return;
-+
-+	rtt = min_t(int, desc_buf[DEVICE_DESC_PARAM_RTT_CAP], hba->nortt);
-+	if (rtt == dev_rtt)
-+		return;
-+
-+	if (ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-+				    QUERY_ATTR_IDN_MAX_NUM_OF_RTT, 0, 0, &rtt))
-+		dev_err(hba->dev, "failed writing bMaxNumOfRTT\n");
-+}
-+
- void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
- 			     const struct ufs_dev_quirk *fixups)
- {
-@@ -8278,6 +8312,11 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 	if (hba->ext_iid_sup)
- 		ufshcd_ext_iid_probe(hba, desc_buf);
- 
-+	if (hba->vops && hba->vops->rtt_set)
-+		hba->vops->rtt_set(hba, desc_buf);
-+	else
-+		ufshcd_rtt_set(hba, desc_buf);
-+
- 	/*
- 	 * ufshcd_read_string_desc returns size of the string
- 	 * reset the error value
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index bad88bd91995..9237ea65bd26 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -329,6 +329,7 @@ struct ufs_pwr_mode_info {
-  * @get_outstanding_cqs: called to get outstanding completion queues
-  * @config_esi: called to config Event Specific Interrupt
-  * @config_scsi_dev: called to configure SCSI device parameters
-+ * @rtt_set: negotiate rtt
-  */
- struct ufs_hba_variant_ops {
- 	const char *name;
-@@ -374,6 +375,7 @@ struct ufs_hba_variant_ops {
- 	int	(*get_outstanding_cqs)(struct ufs_hba *hba,
- 				       unsigned long *ocqs);
- 	int	(*config_esi)(struct ufs_hba *hba);
-+	void	(*rtt_set)(struct ufs_hba *hba, u8 *desc_buf);
- };
- 
- /* clock gating state  */
-@@ -819,6 +821,7 @@ enum ufshcd_mcq_opr {
-  * @capabilities: UFS Controller Capabilities
-  * @mcq_capabilities: UFS Multi Circular Queue capabilities
-  * @nutrs: Transfer Request Queue depth supported by controller
-+ * @nortt - Max outstanding RTTs supported by controller
-  * @nutmrs: Task Management Queue depth supported by controller
-  * @reserved_slot: Used to submit device commands. Protected by @dev_cmd.lock.
-  * @ufs_version: UFS Version to which controller complies
-@@ -957,6 +960,7 @@ struct ufs_hba {
- 
- 	u32 capabilities;
- 	int nutrs;
-+	int nortt;
- 	u32 mcq_capabilities;
- 	int nutmrs;
- 	u32 reserved_slot;
-diff --git a/include/ufs/ufshci.h b/include/ufs/ufshci.h
-index 385e1c6b8d60..c50f92bf2e1d 100644
---- a/include/ufs/ufshci.h
-+++ b/include/ufs/ufshci.h
-@@ -68,6 +68,7 @@ enum {
- /* Controller capability masks */
- enum {
- 	MASK_TRANSFER_REQUESTS_SLOTS		= 0x0000001F,
-+	MASK_NUMBER_OUTSTANDING_RTT		= 0x0000FF00,
- 	MASK_TASK_MANAGEMENT_REQUEST_SLOTS	= 0x00070000,
- 	MASK_EHSLUTRD_SUPPORTED			= 0x00400000,
- 	MASK_AUTO_HIBERN8_SUPPORT		= 0x00800000,
+ 	if (pci->pp.ops->deinit)
 -- 
-2.34.1
+2.37.1
 
 
