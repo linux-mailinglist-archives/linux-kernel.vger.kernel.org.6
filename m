@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-178446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C0C8C4DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:43:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B618C4DD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 10:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A861C210CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:43:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DC7282BE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 08:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB371208CA;
-	Tue, 14 May 2024 08:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EFA156E4;
+	Tue, 14 May 2024 08:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6gv49mc"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iz6tzHlZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TaePvhSw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2191A1799B;
-	Tue, 14 May 2024 08:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600991799B;
+	Tue, 14 May 2024 08:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715676154; cv=none; b=Ik3ijEBC9/VBOk85bsGhJ36GuJPcUaVXci43XSrsyFJbg28ltI4/31/1cwDzaHgB2MH79SqvP2dE/bl+qRI4HzaXWPKaknriWYuwuWJAlFK7+y2zQMmx8xu82yNFMp5h+lVId7a1gFnm/6Qc/01TY3lgGIMrWK3eV0bxCSG3YoA=
+	t=1715676169; cv=none; b=Og6vJVBgTIYOs1BGbW2bHxtS1tMUhXvelPUnXP4+N1aXOV0mbUgN7LiPlAKlC2CAPeimRirEiJtnS7nEBBJllPHQAnD1RweuBVHK+TZvyzkreqVVC/HluHqpxSZYg0ioseg6gi1YLsZvgG/uht4dFR83UyMqULH0/SuzuTItIeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715676154; c=relaxed/simple;
-	bh=UN1Xetleeq5Nz5tLKfuxk8/opVO9kM/FjVJ/CVGswXI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NksaGIogc8baLbsujXb7CQPX0Qx1m8UYoc3yqg0mRaIOigXt1AhoeZDK5DKI71hoZAdZma+cJpLJ9X23DwLbSd+jISiOK8ShC6NvT7ybPj/Asql4wgw8dBQxM4DWu/yX4QuhjB4AJQr98w6bcg5ab01xpFRpjOTAmVZ6KMPOpcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6gv49mc; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2b8efd5ee5dso529214a91.3;
-        Tue, 14 May 2024 01:42:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715676151; x=1716280951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/7grr21+dk77QDv4Gfk7ePfGBs40BXM1/CLzaulLK98=;
-        b=j6gv49mcQ+RSx88xaF1YBosa3sqOgo06gd1o6fy7ytVprR6FGuCyDC81hck2XizBds
-         DdCD7em78PTe8PIOLfyX8UIIY23GFNOux15o7X0vbr78HrHTZ5NNBWUpaovOesIZ+EzJ
-         R6KoNEmG3XqDROVzx28aUU7wCLpGBXJ4h63an2ekb1cFzZDP43lNeZiPd+IkjFjgRmCx
-         nfYbmKzUjCQPfYIcBJlmDxta+JFR5Un+n6upnPFz0yIaJkH0Mx2QRTrOZY+jBvKgId0B
-         ljdIiKCAAU3rRvpHH/ELA7mICJSDYg6evp+qMxOlUN2FxWXt43kXWfClQsyxBCq3dePI
-         JvYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715676151; x=1716280951;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/7grr21+dk77QDv4Gfk7ePfGBs40BXM1/CLzaulLK98=;
-        b=ABEGwQQoWkKGpXsp/JF3KyOltcSaRP25oVNXYj24B0SAKEQSa0jxf18v1k737nU9l1
-         BNSMk/BSTXS8Zb76XLg5ifSuDdHtCnfNWLfRyKOlK6xm7wYg1RmVS8Darb0hD4K5ATAN
-         ybQr9jXj7W+CLtZAUWFIw//mLV7Qp/SIaHkZ/GGcbikNni0HHT6J7d5YKDjkUjCzs1by
-         KB/6uVP8tU5waQyWob/von0AHrZ8OWIk7W55Vn+ioAgKSw1Jrnh+dDU4O1PtA0Zx+oBb
-         N1oEYHJLUY6E5VqpP1YHcHWJmHZwTWEX3l+UUlDMFPpIhxjsBSIqqlS2TD67Ekvit+1J
-         1OOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqGwWzbdNh+kgEv5CIV+yEKu4zjODTCfiiC/K2XjCO4gd3ngPPxis2ovczmTGoWh3Ivacpuz+T0NC8RUxD8ut+H+6FdDVZTIEQEQhiGLcF0sWsxdNXIUfpYD12TZttficwu03PoRhYS4/wI2K986xbriJMr8+P2XSkAaRtXZj+O80VfDnD5DMtOkea2UOAmqtOhiA4+RFfHWKd4XjoyUGYGy/rSFOIvVHbeKRo
-X-Gm-Message-State: AOJu0YzzWevW9o7N3blqd2mUeKHt/4lbbhntO7ghpu9QB22OjScX8U+i
-	EJRiRhXhJBmFnz40bcEkYIwQAcqTc8CxesjiuUMixaxVgO5KPUZU
-X-Google-Smtp-Source: AGHT+IHMszeOY4aAAdI/i4ffwzMWNliSsPw3Q+23+WsNGHJxJXzXpy97GENiceXTiX672LAowbBt0w==
-X-Received: by 2002:a17:902:d507:b0:1dd:b883:3398 with SMTP id d9443c01a7336-1ef44059da0mr141304555ad.4.1715676149503;
-        Tue, 14 May 2024 01:42:29 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf30f96sm92411045ad.179.2024.05.14.01.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 May 2024 01:42:29 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: colyli@suse.de,
-	kent.overstreet@linux.dev,
-	msakai@redhat.com,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	akpm@linux-foundation.org
-Cc: bfoster@redhat.com,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	bagasdotme@gmail.com,
-	jserv@ccns.ncku.edu.tw,
-	linux-bcache@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH v5 02/16] bcache: Fix typo
-Date: Tue, 14 May 2024 16:41:55 +0800
-Message-Id: <20240514084209.556112-3-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240514084209.556112-1-visitorckw@gmail.com>
-References: <20240514084209.556112-1-visitorckw@gmail.com>
+	s=arc-20240116; t=1715676169; c=relaxed/simple;
+	bh=LTyvoXyrXlLqUbyp8anKtFEOFWbs9dtC7E/LhYcNvA8=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YQhaWcImVvXkGpmgmRnbqhbKsSeRzruyJOAr613u78keoE0u705zJtEue7tWe61jcFHfG/P6i0ve7XTqQE7vvf7293W4Avv+ll16lNnoMQ8ZdttOKW6WxTQqpcZUfra4FZuD+wY4jY14zfbH9V79H2rjq3PEaYST/BHjOZW/BHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iz6tzHlZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TaePvhSw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715676166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BKDRuc1srV9gybrmHs64Jn+lPZhJpy610DEDeydMnhA=;
+	b=iz6tzHlZq+DeelfFJI3qyULE+4TJG9X6+b76gAkxetCvGY+PxHJeOerrsUxaT6Qln9CjWk
+	5pEYnzPLt6cWovYNYGsyJSq1YhZoivaHkziYGz86YRv2wCoh3yXpO1cJU5I4t0fLOytMx7
+	nZOyNLcX7Ef0nA9MwzL9iJf2SUcZnySwPuoCRkCmu00LLAeaB8JfB7+cpsUsJAPBSfZOQZ
+	QnGiQ0X/4Mp5kkaWr/mxplrtrkVASBluNQCR4ToqAJcPEHg7fBU5b9U6h7mI+Ib/jYmi6z
+	4uNtPdK0y+NkI8kFyQmnspW/KZkUyAIcVsvIewxPaxTVFZlggOug8ivjRlInpw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715676166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BKDRuc1srV9gybrmHs64Jn+lPZhJpy610DEDeydMnhA=;
+	b=TaePvhSwMtq2SSjRgSe/F8xG4t68FPylVxhieZghkpnQWCu8MaiQfwSjq6NizUx40Xd24g
+	cbTUu+yY0iz5FSDw==
+To: Yury Norov <yury.norov@gmail.com>, linux-kernel@vger.kernel.org, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Anna-Maria
+ Behnsen <anna-maria@linutronix.de>, Ben Segall <bsegall@google.com>, Daniel
+ Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Imran Khan <imran.f.khan@oracle.com>, Ingo Molnar <mingo@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Leonardo Bras <leobras@redhat.com>, Mel Gorman <mgorman@suse.de>, Peter
+ Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, Valentin
+ Schneider <vschneid@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Waiman Long <longman@redhat.com>, Yury Norov
+ <yury.norov@gmail.com>, Zefan Li <lizefan.x@bytedance.com>,
+ cgroups@vger.kernel.org
+Subject: Re: [PATCH 6/6] tick/common: optimize cpumask_equal() usage
+In-Reply-To: <878r0cn6a5.ffs@tglx>
+References: <20240513220146.1461457-1-yury.norov@gmail.com>
+ <20240513220146.1461457-7-yury.norov@gmail.com> <878r0cn6a5.ffs@tglx>
+Date: Tue, 14 May 2024 10:42:46 +0200
+Message-ID: <874jb0n5rt.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Replace 'utiility' with 'utility'.
+On Tue, May 14 2024 at 10:31, Thomas Gleixner wrote:
+> On Mon, May 13 2024 at 15:01, Yury Norov wrote:
+>> Some functions in the file call cpumask_equal() with src1p == src2p.
+>> We can obviously just skip comparison entirely in this case.
+>>
+>> This patch fixes cpumask_equal invocations when boot-test or LTP detect
+>> such condition.
+>
+> Please write your changelogs in imperative mood.
+>
+> git grep 'This patch' Documentation/process/
+>
+> Also please see Documentation/process/maintainer-tip.rst
+>
+>> Signed-off-by: Yury Norov <yury.norov@gmail.com>
+>> ---
+>>  kernel/time/tick-common.c | 15 +++++++++++----
+>>  1 file changed, 11 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+>> index d88b13076b79..b31fef292833 100644
+>> --- a/kernel/time/tick-common.c
+>> +++ b/kernel/time/tick-common.c
+>> @@ -253,7 +253,8 @@ static void tick_setup_device(struct tick_device *td,
+>>  	 * When the device is not per cpu, pin the interrupt to the
+>>  	 * current cpu:
+>>  	 */
+>> -	if (!cpumask_equal(newdev->cpumask, cpumask))
+>> +	if (newdev->cpumask != cpumask &&
+>> +			!cpumask_equal(newdev->cpumask, cpumask))
+>>  		irq_set_affinity(newdev->irq, cpumask);
+>
+> I'm not seeing the benefit. This is slow path setup code so the extra
+> comparison does not really buy anything aside of malformatted line
+> breaks.
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Reviewed-by: Ian Rogers <irogers@google.com>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
----
- drivers/md/bcache/util.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Instead of sprinkling these conditional all over the place, can't you
+just do the obvious and check for ptr1 == ptr2 in bitmap_copy() and
+bitmap_equal()?
 
-diff --git a/drivers/md/bcache/util.c b/drivers/md/bcache/util.c
-index ae380bc3992e..410d8cb49e50 100644
---- a/drivers/md/bcache/util.c
-+++ b/drivers/md/bcache/util.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * random utiility code, for bcache but in theory not specific to bcache
-+ * random utility code, for bcache but in theory not specific to bcache
-  *
-  * Copyright 2010, 2011 Kent Overstreet <kent.overstreet@gmail.com>
-  * Copyright 2012 Google, Inc.
--- 
-2.34.1
+Thanks,
 
+	tglx
 
