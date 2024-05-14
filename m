@@ -1,54 +1,58 @@
-Return-Path: <linux-kernel+bounces-178604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AB098C52A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4538D8C52C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 13:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318DF1F22C28
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9796B2832D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 11:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401914037D;
-	Tue, 14 May 2024 11:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C831411F0;
+	Tue, 14 May 2024 11:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RT9hcJ1+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vOI0X34R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A504F1E5;
-	Tue, 14 May 2024 11:27:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B004F1E5;
+	Tue, 14 May 2024 11:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715686028; cv=none; b=rPLi7JRnHT6iDk6eJD3Id1fksT526lpPn5ayfN53X9axNugwOF/ZGexyOWpiRnEDYfXq/VHsI0v9li0iDLzpWAFCu9oml7xP5lUATmDPGpYMtgBAzny+J0SURjrnPJCI4Fb2rlpBarqy+IQoyWP781qoMTaXssQwz+2WOr0B5YA=
+	t=1715686036; cv=none; b=kRC2xd59aqM+SBHmTcFbJSKBKOMBd9mlKz3V/v7x9G73JhpZwze2+tEKIPQcP3k7CzKaMfNZzrNOdY8UVh5iIh2rlfdVZVx8XzuUujA1nn3fj5w3LWLo+GBT+4d1sDL1AyGkuApyzO8EX0CBu4UqS2IPosy/gzBjdmqYanE489g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715686028; c=relaxed/simple;
-	bh=cdWNtugju7KUp25rkynGb9SgpU4MLHejvyIE1cY3AtU=;
+	s=arc-20240116; t=1715686036; c=relaxed/simple;
+	bh=mIEpkkY3fsKb9mL8uDhkEruO5gEVn/1RwIz+PDKz3k0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V8oZKM95e3jamu9InQSdsoNDlCOOvn/UNJc/kJ34JdMwc0a3f6BM1wU1d8Uc/Y3RSeyoQ2CZgywl2I2jkBOKGNtXbp3ewPuE/KjY33o3au7LBzMGTU3QFV2b51nVB5VwzN6WJF+8v6KmBLTyayOeB9tRX88OZorHlxK3xjIUptk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RT9hcJ1+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A364C32782;
-	Tue, 14 May 2024 11:27:06 +0000 (UTC)
+	 MIME-Version; b=eXy4Y5q8/KeoDlPuSBAio/Xtu3N/pGx5OvbBVjEcaaVAJf6Glqa6WDGk8FuATtA119r3oac2XZEaLUmT69ZU4ncuKMHpreR0d8CeLAG9qzfBxeKQWcj4RRSISv20eJsHcEWZhX1HhcMGP4WFLLYnIyIV+vQ9bBupzucunqixaxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vOI0X34R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5FBC2BD10;
+	Tue, 14 May 2024 11:27:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1715686028;
-	bh=cdWNtugju7KUp25rkynGb9SgpU4MLHejvyIE1cY3AtU=;
+	s=korg; t=1715686036;
+	bh=mIEpkkY3fsKb9mL8uDhkEruO5gEVn/1RwIz+PDKz3k0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RT9hcJ1+A/NV6Hw3nAp7voydPPk4pk4o4fXNvFcVYg0HcfoAbC7WfG6i2txkjU+3n
-	 bnT6PEYTcA0S94aYFsRZBjbGoDp9fGKsbFfY0cmvH9GbRAtVXCw9ejpp2KTQgc4jd/
-	 SckQzkQfqfxTY6YRUpxc+34qbmG1DbOr/2oCGUFw=
+	b=vOI0X34R5H43q3+flmH3LV0lZXA+IqI6FFQs4JIKTJ+uRAMtVY+6vZyHk0451NTjI
+	 WhF1rhs37v7yQUnYSIh9VK95y0vCCGOxcvplErnLHXpODw4SAjIVREpCRP0etHjt0y
+	 5E3aNFRbTTFjECUZm4Hvh2lf2yFSo2WncFfpS8L8=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
 	Zack Rusin <zack.rusin@broadcom.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
 	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.6 269/301] drm/ttm: Print the memory decryption status just once
-Date: Tue, 14 May 2024 12:19:00 +0200
-Message-ID: <20240514101042.419244506@linuxfoundation.org>
+	linux-kernel@vger.kernel.org,
+	Maaz Mombasawala <maaz.mombasawala@broadcom.com>,
+	Martin Krastev <martin.krastev@broadcom.com>,
+	zdi-disclosures@trendmicro.com
+Subject: [PATCH 6.6 271/301] drm/vmwgfx: Fix invalid reads in fence signaled events
+Date: Tue, 14 May 2024 12:19:02 +0200
+Message-ID: <20240514101042.497048157@linuxfoundation.org>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <20240514101032.219857983@linuxfoundation.org>
 References: <20240514101032.219857983@linuxfoundation.org>
@@ -61,7 +65,6 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 6.6-stable review patch.  If anyone has any objections, please let me know.
@@ -70,42 +73,45 @@ Content-Transfer-Encoding: 8bit
 
 From: Zack Rusin <zack.rusin@broadcom.com>
 
-commit 27906e5d78248b19bcdfdae72049338c828897bb upstream.
+commit a37ef7613c00f2d72c8fc08bd83fb6cc76926c8c upstream.
 
-Stop printing the TT memory decryption status info each time tt is created
-and instead print it just once.
+Correctly set the length of the drm_event to the size of the structure
+that's actually used.
 
-Reduces the spam in the system logs when running guests with SEV enabled.
+The length of the drm_event was set to the parent structure instead of
+to the drm_vmw_event_fence which is supposed to be read. drm_read
+uses the length parameter to copy the event to the user space thus
+resuling in oob reads.
 
 Signed-off-by: Zack Rusin <zack.rusin@broadcom.com>
-Fixes: 71ce046327cf ("drm/ttm: Make sure the mapped tt pages are decrypted when needed")
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Cc: Thomas Hellström <thomas.hellstrom@linux.intel.com>
+Fixes: 8b7de6aa8468 ("vmwgfx: Rework fence event action")
+Reported-by: zdi-disclosures@trendmicro.com # ZDI-CAN-23566
+Cc: David Airlie <airlied@gmail.com>
+CC: Daniel Vetter <daniel@ffwll.ch>
+Cc: Zack Rusin <zack.rusin@broadcom.com>
+Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
 Cc: dri-devel@lists.freedesktop.org
 Cc: linux-kernel@vger.kernel.org
-Cc: <stable@vger.kernel.org> # v5.14+
-Link: https://patchwork.freedesktop.org/patch/msgid/20240408155605.1398631-1-zack.rusin@broadcom.com
+Cc: <stable@vger.kernel.org> # v3.4+
+Reviewed-by: Maaz Mombasawala <maaz.mombasawala@broadcom.com>
+Reviewed-by: Martin Krastev <martin.krastev@broadcom.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20240425192748.1761522-1-zack.rusin@broadcom.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/ttm/ttm_tt.c | 2 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ttm/ttm_tt.c b/drivers/gpu/drm/ttm/ttm_tt.c
-index 578a7c37f00b..d776e3f87064 100644
---- a/drivers/gpu/drm/ttm/ttm_tt.c
-+++ b/drivers/gpu/drm/ttm/ttm_tt.c
-@@ -92,7 +92,7 @@ int ttm_tt_create(struct ttm_buffer_object *bo, bool zero_alloc)
- 	 */
- 	if (bdev->pool.use_dma_alloc && cc_platform_has(CC_ATTR_GUEST_MEM_ENCRYPT)) {
- 		page_flags |= TTM_TT_FLAG_DECRYPTED;
--		drm_info(ddev, "TT memory decryption enabled.");
-+		drm_info_once(ddev, "TT memory decryption enabled.");
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_fence.c
+@@ -991,7 +991,7 @@ static int vmw_event_fence_action_create
  	}
  
- 	bo->ttm = bdev->funcs->ttm_tt_create(bo, page_flags);
--- 
-2.45.0
-
+ 	event->event.base.type = DRM_VMW_EVENT_FENCE_SIGNALED;
+-	event->event.base.length = sizeof(*event);
++	event->event.base.length = sizeof(event->event);
+ 	event->event.user_data = user_data;
+ 
+ 	ret = drm_event_reserve_init(dev, file_priv, &event->base, &event->event.base);
 
 
 
