@@ -1,181 +1,110 @@
-Return-Path: <linux-kernel+bounces-178256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-178257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA178C4B37
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:38:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022E78C4B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 04:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C911F223C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:38:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74789B22CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 02:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DEA1173F;
-	Tue, 14 May 2024 02:38:01 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12785B653;
+	Tue, 14 May 2024 02:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Bzur57eW"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1E4111A8;
-	Tue, 14 May 2024 02:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6A3AD32
+	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 02:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715654280; cv=none; b=SbwreAUB1bP8gStcFwczf1dUlFtBAJe43a64/ETB4vaPGIYUiAuWhui1zxPAWduPKbNe3q0JqDnBbCNiZjP0HQSS+ZWRTtwJJvecTR5XRBPW0LNBmgwBO2loASsv7oBuB+RoSsBVPlDQ6Ac14XcYkxXf5r+l2fV3g2tbMiptyWs=
+	t=1715654315; cv=none; b=Jd7RF0Vvz1WtV+eF1ZdNzkhG0DQP4ALzc3pytCQHYZPeRTzGHAD0qm+umswHxqWIjWexrD7GuzP7xB/L3SxCkp4yC5RWt7pz5bwN/uUEjFXBYPWPn+4Q62o7RJm1h2RFAI9US9qNLrxiXmfzvtJrxVUD2QXqY9U7vQFzvodYIa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715654280; c=relaxed/simple;
-	bh=LpHndWUANENyXbWEUWy6ULQGvYKRFduNo9e0num+LF4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=vBk2msm4FBUeEmpw+R8b65VPi600S/e1cMUZFKqejC5o/2jpHT5/Lw/jZjvrA2HLyi744HnLd3MFR6OeQlc4CmerIR/0H0AcQUiX/7ZFBhsswXNh4BC/blcrY7JEUlIio7APDTVfbmmi4rXBj9kmeRAnB5y+qbVmlKLQodzGGZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4VdgWH3shKz4f3jLJ;
-	Tue, 14 May 2024 10:37:47 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 0DE451A017F;
-	Tue, 14 May 2024 10:37:53 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP2 (Coremail) with SMTP id Syh0CgBHaw5_zkJmKsijMw--.49294S3;
-	Tue, 14 May 2024 10:37:52 +0800 (CST)
-Subject: Re: [PATCH v3 08/10] ext4: factor out check for whether a cluster is
- allocated
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240508061220.967970-1-yi.zhang@huaweicloud.com>
- <20240508061220.967970-9-yi.zhang@huaweicloud.com>
- <20240512154037.x6icodkj2zmzeqtg@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <0d2c6419-0dad-1bd5-92fe-2239ef6809e0@huaweicloud.com>
-Date: Tue, 14 May 2024 10:37:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1715654315; c=relaxed/simple;
+	bh=+/kjnNS42NLL3kGckammgIhVGDvPLX3e6wXmHg75qzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A2A3T5E77nN8Zt9sDIBlpuqVlewbR7p4NBJMwhAtd/wvqiYPtvzMDLzoyeMaPUqTJcLyAm5JheRwT+6g6KwO6oBtW+3KvVFHxORy0aisufeFJQuGZpJCXSV83cQ9MxeNgalcHfkJbHv3cpl2HznpBixGFDrlBGLrCZqAnDy4qYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Bzur57eW; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2dcc8d10d39so59525961fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:38:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1715654311; x=1716259111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g1lwNfaaJwPa8lZzRRPRd8svxoAyGNm2U5kEgmIG0UI=;
+        b=Bzur57eW589geNiIgBzE1WznwiRl8kGLBCEtBsPy+U57aTwxnD4vWPJUFhhjik102o
+         pVBVn4+vb3DCqD7+gOM4+UgYqgtV69lVKBT2F8mu2KxLYPPJiouFoLqd75vMwATLUj/I
+         xNs/dBS5YcxLD102cIjsJJDdZCVDV34AMF4OQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715654311; x=1716259111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g1lwNfaaJwPa8lZzRRPRd8svxoAyGNm2U5kEgmIG0UI=;
+        b=FTgCISl0A7NyqYaKddUdCpcjPwWGi0Bal+4yxnf6dCWjulmRQohRmSABd/E5Srylut
+         suXOinqgNowI7pky7NdnpGtaphLkb0TDbWXKQ6QUjUcuz4K68HSjGTIY8RqEWkLYBKMb
+         Vkq2ZjZnRlwdAlnWWHZSr9IVB2o8FoBRNjFT42jsRi5YreeQ6nnafSQFuCWu6nHbj9Uv
+         E9iWsjczW1AibB/1rvo6/b9Ydg+0JchARKA+7+WcpnYxM2A1QL71pYaslnt271SUb5S0
+         xfujRC+1SH8lX+jmKDLbrQNaG6OlHjU5r/vDx//hCVMPTGzqUv0XVADp2wYgZvVWhdfW
+         PGIQ==
+X-Gm-Message-State: AOJu0Yy72SOXOTZs2cvwx8jg+h5UKitkkKtNDeLQWvVysodFgYio6Mme
+	uVs4YrlfQ8jVl23OYXJUr8ow0UZGv4utLNsyVTZW+dZWQD5Vi+DdgTaZ6SFWVLr6PMdxl7HqwtE
+	SiglpCg==
+X-Google-Smtp-Source: AGHT+IGoOkBJJk3USWdalUzIg737M0Uth3C1piVmQUXKPdCA3JGXhbSTIzhTb+u8bUiqENDxBQYhGw==
+X-Received: by 2002:a2e:919a:0:b0:2e1:a726:3dfa with SMTP id 38308e7fff4ca-2e52038a910mr75090691fa.38.1715654311133;
+        Mon, 13 May 2024 19:38:31 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e4d0bbd57fsm15879961fa.22.2024.05.13.19.38.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 19:38:30 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52192578b95so5881308e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 13 May 2024 19:38:30 -0700 (PDT)
+X-Received: by 2002:a05:6512:1314:b0:51f:601f:cbae with SMTP id
+ 2adb3069b0e04-5220ff73602mr8403636e87.56.1715654309838; Mon, 13 May 2024
+ 19:38:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240512154037.x6icodkj2zmzeqtg@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgBHaw5_zkJmKsijMw--.49294S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF1UJFWftFWUZF17GF47twb_yoW5Gr13pF
-	W8GF1UtF13GryxWF4Iqrn8XFya9w4jqrZrJ3y293W8Zrs3AFyfKF1qkF15ua4xCr48Can5
-	ZFWUAry7uF1DKa7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv
-	67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyT
-	uYvjxUrR6zUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <ZkHLrqO1HdfQb71Z@gmail.com>
+In-Reply-To: <ZkHLrqO1HdfQb71Z@gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 13 May 2024 19:38:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiAXOLja2AqBzPZE+k9DKX0wjBGKZT+m2DN_hariyA0Pw@mail.gmail.com>
+Message-ID: <CAHk-=wiAXOLja2AqBzPZE+k9DKX0wjBGKZT+m2DN_hariyA0Pw@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/shstk change for v6.10
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, "the arch/x86 maintainers" <x86@kernel.org>, 
+	"H.J. Lu" <hjl.tools@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/5/12 23:40, Jan Kara wrote:
-> On Wed 08-05-24 14:12:18, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Factor out a common helper ext4_da_check_clu_allocated(), check whether
->> the cluster containing a delalloc block to be added has been delayed or
->> allocated, no logic changes.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> I have one suggestion for improvement here.
-> 
->> +/*
->> + * Check whether the cluster containing lblk has been delayed or allocated,
->> + * if not, it means we should reserve a cluster when add delalloc, return 1,
->> + * otherwise return 0 or error code.
->> + */
->> +static int ext4_da_check_clu_allocated(struct inode *inode, ext4_lblk_t lblk,
->> +				       bool *allocated)
-> 
-> The name of the function does not quite match what it is returning and that
-> is confusing. Essentially we have three states here:
-> 
-> a) cluster allocated
-> b) cluster has delalloc reservation
-> c) cluster doesn't have either
-> 
-> So maybe we could call the function ext4_clu_alloc_state() and return 0 /
-> 1 / 2 based on the state?
-> 
-> 								Honza
+On Mon, 13 May 2024 at 01:13, Ingo Molnar <mingo@kernel.org> wrote:
+>
+> Enable shadow stacks for x32.
+>
+> While we normally don't do such feature-enabling on 32-bit
+> kernels anymore, this change is small, straightforward & tested on
+> upstream glibc.
 
-Sure, thanks for the suggestion, it looks better.
+Color me confused.
 
-Thanks,
-Yi.
+  "feature-enabling on 32-bit kernels"
 
-> 
->> +{
->> +	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->> +	int ret;
->> +
->> +	*allocated = false;
->> +	if (ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk))
->> +		return 0;
->> +
->> +	if (ext4_es_scan_clu(inode, &ext4_es_is_mapped, lblk))
->> +		goto allocated;
->> +
->> +	ret = ext4_clu_mapped(inode, EXT4_B2C(sbi, lblk));
->> +	if (ret < 0)
->> +		return ret;
->> +	if (ret == 0)
->> +		return 1;
->> +allocated:
->> +	*allocated = true;
->> +	return 0;
->> +}
->> +
->>  /*
->>   * ext4_insert_delayed_block - adds a delayed block to the extents status
->>   *                             tree, incrementing the reserved cluster/block
->> @@ -1682,23 +1710,13 @@ static int ext4_insert_delayed_block(struct inode *inode, ext4_lblk_t lblk)
->>  		if (ret != 0)   /* ENOSPC */
->>  			return ret;
->>  	} else {   /* bigalloc */
->> -		if (!ext4_es_scan_clu(inode, &ext4_es_is_delonly, lblk)) {
->> -			if (!ext4_es_scan_clu(inode,
->> -					      &ext4_es_is_mapped, lblk)) {
->> -				ret = ext4_clu_mapped(inode,
->> -						      EXT4_B2C(sbi, lblk));
->> -				if (ret < 0)
->> -					return ret;
->> -				if (ret == 0) {
->> -					ret = ext4_da_reserve_space(inode, 1);
->> -					if (ret != 0)   /* ENOSPC */
->> -						return ret;
->> -				} else {
->> -					allocated = true;
->> -				}
->> -			} else {
->> -				allocated = true;
->> -			}
->> +		ret = ext4_da_check_clu_allocated(inode, lblk, &allocated);
->> +		if (ret < 0)
->> +			return ret;
->> +		if (ret > 0) {
->> +			ret = ext4_da_reserve_space(inode, 1);
->> +			if (ret != 0)   /* ENOSPC */
->> +				return ret;
->>  		}
->>  	}
->>  
->> -- 
->> 2.39.2
->>
+This is not for 32-bit kernels, as far as I can tell. This is just the
+x32 user mode for x86-64 kernels.
 
+Or am I missing something?
+
+I've pulled this, but does anybody actually use x32? I feel like it
+was a failed experiment. No?
+
+              Linus
 
