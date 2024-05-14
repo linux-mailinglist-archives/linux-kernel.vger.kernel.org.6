@@ -1,193 +1,127 @@
-Return-Path: <linux-kernel+bounces-179153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-179154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F311D8C5C70
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:47:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FE28C5C75
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 22:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBE321C20B12
-	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD45B1F215F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 14 May 2024 20:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CAE1EA74;
-	Tue, 14 May 2024 20:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15F317BB0D;
+	Tue, 14 May 2024 20:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YXJiH4b5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G8PUNoqv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8NACxmF7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D5212B7F
-	for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 20:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956851DFD1;
+	Tue, 14 May 2024 20:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715719614; cv=none; b=IROWRNGUK5O4DCKyfW9Y0myrn+r37PEAyy+K4zBLoBA3YydsC1gERn6g23UXaALJqMSNuyO3B0hI/8SMqlkKEgwRo9QX3TJpf5YdWH8AFr8oNAlZVztI+We8byQ9RNdo4tDY1qDjgWs5wB+hsAwgPo05oGk/+MlKKT2L0Ms1wIo=
+	t=1715719682; cv=none; b=slEYcqx9QcY6dPcnbn3lTPM5h5mm7+Z4OO2RropY2CXjfBKSWU+Lm4/2OxgJtxVCzrVUR4OVrq5awTJ4TbHQMtT7aVHTTFRupSxw0cHqUeYlesGrRK9Y8wxrYm6D5j5LEwySW5fJuddA7M6AS9an4iusrapcjczfectfaMX2tms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715719614; c=relaxed/simple;
-	bh=xdP0Ewn8XMSqDak7kTryjOcPqX3AilVOyY8jEdOiV+c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TjUWdS1kdrsZZXdHyfu9I6tOk7pNWa6Vx8kh0elFbq1cpcYIRpQtYUZaBMJxUh3ZuwyWdIGa6Osl3K4YdjQnu4sEmReZZlB/r1S2/QBLVxynrN3tOlOVPmBWGu0CMyYabNdY2/SRAnWR1GWNRl9tEW9SXMKvHkng81g1saoddqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YXJiH4b5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715719611;
+	s=arc-20240116; t=1715719682; c=relaxed/simple;
+	bh=voK/yZS/mI07lLRJzdQ3NNqRzfZtfnrJUYswFWYYp1Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Rk2I1eL7MtSa2dNHgccvAm3bzaCyZB72l2lMWwUm7SHqVGKKW8gijhWdkLqRvlUMvry8N9AdMtYmzeT7qUc9+822dDLqk6SHk7mI17ks2qpsWmmdJ5L3Ou8HIIXdXSsb7HK2J2MgFhn6zCO0oyqZ51wmRPFBivWot4YmL/dDDZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G8PUNoqv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8NACxmF7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1715719678;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bpt+oNjtb0oohoclZAzvcZBWQdJHBDL+pCrC+xN8u3o=;
-	b=YXJiH4b5SJIk0fAeP+rohkBAX1IxARY4Wj23//5B3qZJ9NvWx8S5QK0c1A5e0KaamlWTxT
-	lfQmAKKlwLL1hrPHOQC6vrnXQS4kT6Gc6F0gusbHDAwsXIuz72OVCgLgFJ6mEXgQ7GcI8V
-	dx6t3ZxJ+Q2RXbQy4uFjGu7ZNlWU6j4=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-dq5RYYO8PqC8aJdmHs7tNQ-1; Tue, 14 May 2024 16:46:48 -0400
-X-MC-Unique: dq5RYYO8PqC8aJdmHs7tNQ-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2b4330e5119so4922003a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 14 May 2024 13:46:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715719608; x=1716324408;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bpt+oNjtb0oohoclZAzvcZBWQdJHBDL+pCrC+xN8u3o=;
-        b=K2tOL8wRuGogLE3cuzF7NaRcpFOQK6QmiV80Dpo3GCnli9y4UyQJPUMxQA/1P0LOHW
-         5gDSR0+8tCF3ckP8uv15PzJDzIi7hoawa+2/Vj4Mwizj6iwd7JUH+Dcz30lJCzX3Ip8t
-         wzXTyYmbuxrCR6dUqaleYdeBF6KGJFA4c4jvvIS8tKvmgTASr6QltQCDvAIG7dCd4sJl
-         Fda85hjYqWWkvh3c8UbIfQM9qoBqTAWWdg7fZcwbeKfxlutvuxjr6MIY2fbJQZ6aBY6R
-         ER2VthHtXFbgh1mdqSMySXDrnqrvKTMc/EqsqN1AM1zR05Xab8TtzNimgss0mDpkkR+o
-         Yj4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKp16ix0n7C3Yh3BOJJj1X9k+ndC3RrG7UHydGJYGsEsYoo/eOY2Qy7wWVAK6xx3kuubYrvm4E6OsCxoCw0GnTen3PqbytZuDk6Dns
-X-Gm-Message-State: AOJu0Yy0d5/VU/1umevTXk4i4QC2I40ymcNnR6borXqInMiTbFLMbI7l
-	4fwl2+ht00cfyev1nkfhwCVMPdFwt9StD01RVhXKFo7MlS9o3mS6/5p+G4aOOV6xEc3kkgHkkFO
-	Ubx7miwHCecTaRmU8cL4/oT85lekCBSapnnfDiPITSAd4IdlK5XGiJ5iMRcy18Q==
-X-Received: by 2002:a17:90a:6f85:b0:2aa:b57c:b178 with SMTP id 98e67ed59e1d1-2b6ccedd2f8mr12644194a91.34.1715719607691;
-        Tue, 14 May 2024 13:46:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEEuLZlbfPQODHVEWOSPVammiI4pY01wxiAWJNK3AcV4Jn4d9SFUJpEq6tKGQdRlpxdKVlMOw==
-X-Received: by 2002:a17:90a:6f85:b0:2aa:b57c:b178 with SMTP id 98e67ed59e1d1-2b6ccedd2f8mr12644174a91.34.1715719607269;
-        Tue, 14 May 2024 13:46:47 -0700 (PDT)
-Received: from [172.21.1.2] ([50.204.89.31])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b67116601fsm10194117a91.23.2024.05.14.13.46.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 May 2024 13:46:46 -0700 (PDT)
-Message-ID: <74a72eeb-122f-453e-baa7-63504e7c4bd8@redhat.com>
-Date: Tue, 14 May 2024 22:46:44 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=YWGGR9WNQtfowXxmZrt+1GRML6oRarKOdd0NAWuZUm8=;
+	b=G8PUNoqvKv4z1tIWxNeqOsG3FMX1YDcJSgi7g6DYWHRfxiHx3UQ9KkpdD7HeVJE/wiDCmW
+	if50fXqsOQz8m5tg0xSHvNH69j5kR/0fJcx4IQ/GECKUJoK9KFDrC4NN9TbJEwS15CxiIX
+	aj+VVvsm+c5T8aagiUDFTzo//JPp0aVUrBGGJkFQLT7CvDiW3gYjGOIuyAIkmMTf5NIF1A
+	xq1fTqu19AJtDtnW/8RRjk4cERR9iRuHZMFGBtPyPQqOXiDkt/PZ3yxOVDqBfmP7tKWE/h
+	BV0KTSdUPe0ho8HGiorZ2flBt9ozRPnCra7sY8YJhdRdp4tcZhK3ziS256NJLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1715719678;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YWGGR9WNQtfowXxmZrt+1GRML6oRarKOdd0NAWuZUm8=;
+	b=8NACxmF7BQjmO6dBW+VOwCq0qcvrezGzRoN8f+svY9p4Q0Ha3mUgMqzEkAvreHWjQABzUL
+	TChXfM4eivuek5Dw==
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Ben Segall <bsegall@google.com>, Daniel
+ Bristot de Oliveira <bristot@redhat.com>, Dietmar Eggemann
+ <dietmar.eggemann@arm.com>, Frederic Weisbecker <frederic@kernel.org>,
+ Imran Khan <imran.f.khan@oracle.com>, Ingo Molnar <mingo@redhat.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Leonardo Bras <leobras@redhat.com>, Mel Gorman <mgorman@suse.de>, Peter
+ Zijlstra <peterz@infradead.org>, Rik van Riel <riel@surriel.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>, Valentin
+ Schneider <vschneid@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Waiman Long <longman@redhat.com>, Zefan Li
+ <lizefan.x@bytedance.com>, cgroups@vger.kernel.org
+Subject: Re: [PATCH 6/6] tick/common: optimize cpumask_equal() usage
+In-Reply-To: <CAAH8bW-o_zz_C_NFnjL3uP1BXyC4OF-BAR2Dk2Xd-DFDOZpodQ@mail.gmail.com>
+References: <20240513220146.1461457-1-yury.norov@gmail.com>
+ <20240513220146.1461457-7-yury.norov@gmail.com> <878r0cn6a5.ffs@tglx>
+ <874jb0n5rt.ffs@tglx>
+ <CAAH8bW-o_zz_C_NFnjL3uP1BXyC4OF-BAR2Dk2Xd-DFDOZpodQ@mail.gmail.com>
+Date: Tue, 14 May 2024 22:47:57 +0200
+Message-ID: <87msosktmq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/ksm: fix possible UAF of stable_node
-To: Chengming Zhou <chengming.zhou@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Andrea Arcangeli <aarcange@redhat.com>, Stefan Roesch <shr@devkernel.io>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- zhouchengming@bytedance.com
-References: <20240513-b4-ksm-stable-node-uaf-v1-1-f687de76f452@linux.dev>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240513-b4-ksm-stable-node-uaf-v1-1-f687de76f452@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 13.05.24 05:07, Chengming Zhou wrote:
-> The commit 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page
-> deduplication limit") introduced a possible failure case in the
-> stable_tree_insert(), where we may free the new allocated stable_node_dup
-> if we fail to prepare the missing chain node.
-> 
-> Then that kfolio return and unlock with a freed stable_node set... And
-> any MM activities can come in to access kfolio->mapping, so UAF.
-> 
-> Fix it by moving folio_set_stable_node() to the end after stable_node
-> is inserted successfully.
-> 
-> Fixes: 2c653d0ee2ae ("ksm: introduce ksm_max_page_sharing per page deduplication limit")
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
-> ---
->   mm/ksm.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index e1034bf1c937..a8b76af5cf64 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -2153,7 +2153,6 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
->   
->   	INIT_HLIST_HEAD(&stable_node_dup->hlist);
->   	stable_node_dup->kpfn = kpfn;
-> -	folio_set_stable_node(kfolio, stable_node_dup);
->   	stable_node_dup->rmap_hlist_len = 0;
->   	DO_NUMA(stable_node_dup->nid = nid);
->   	if (!need_chain) {
-> @@ -2172,6 +2171,8 @@ static struct ksm_stable_node *stable_tree_insert(struct folio *kfolio)
->   		stable_node_chain_add_dup(stable_node_dup, stable_node);
->   	}
->   
-> +	folio_set_stable_node(kfolio, stable_node_dup);
-> +
->   	return stable_node_dup;
+On Tue, May 14 2024 at 09:47, Yury Norov wrote:
+>> Instead of sprinkling these conditional all over the place, can't you
+>> just do the obvious and check for ptr1 == ptr2 in bitmap_copy() and
+>> bitmap_equal()?
+>
+> I proposed this a while (few years) ago, and it has been rejected. On
+> bitmaps level we decided not to do that for the reasons memcpy() and
+> memcmp() doesn't, and on cpumasks and nodemasks level it hasn't
+> been discussed at all.
+>
+> Now that most of bitmap ops have inline and outline implementation,
+> we technically can move this checks in outline code, as inline bitmap
+> ops are very lightweight already.
+>
+> So I see the following options:
+>  - Implement these sanity checks in outline bitmap API (lib/bitmap.c);
+>  - Implement them on cpumask and nodemask level; or
+>  - add a new family of helpers that do this check, like
+>   bitmap_copy_if_needed() (better name appreciated).
+>
+> The argument against #1 and #2 these days was that memcpy() and
+> similarly bitmap_copy() with dst == src may be a sign of error, and
+> we don't want to add a code that optimizes for it.
 
-Looks correct to me.
+That's a fair argument.
 
-We might now link the node before the folio->mapping is set up. Do we 
-care? Don't think so.
+> Now, I ran the kernel through the LTP test and in practice all the
+> cases that I spot look pretty normal. So I can continue sprinkling
+> the checks once a few years, or do something like described above.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+I don't see these checks as valuable in most cases and I detest them as
+they make the code harder to read.
 
--- 
-Cheers,
+Except for smp_call_function_many_cond() and to a lesser extent
+irq_do_set_affinity() none of them you added really matters.
 
-David / dhildenb
+Though it might be worth to have helper functions which make it obvious
+that the src == dst case is intentional.
 
+Thanks,
+
+        tglx
 
